@@ -61,6 +61,7 @@
 "Open" = "Open";
 "Quick Look" = "Quick Look";
 "Markup" = "Markup";
+"Hide Part…" = "Hide Part…";
 "Show in Finder" = "Show in Finder";
 "Save to Desktop" = "Save to Desktop";
 "Discard" = "Discard";
@@ -102,3 +103,8 @@
 "Screenshots, one click from any chat." = "Screenshots, one click from any chat.";
 "Made by %@" = "Made by %@";
 "Based on Tendedero by Alejandro Buján, under the MIT License." = "Based on Tendedero by Alejandro Buján, under the MIT License.";
+/* HideEditor */
+"Drag over anything to hide it. Click a box to show it again." = "Drag over anything to hide it. Click a box to show it again.";
+"Remove All" = "Remove All";
+"Cancel" = "Cancel";
+"Done" = "Done";

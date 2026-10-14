@@ -61,6 +61,7 @@
 "Open" = "खोलें";
 "Quick Look" = "क्विक लुक";
 "Markup" = "मार्कअप";
+"Hide Part…" = "कोई हिस्सा छिपाएँ…";
 "Show in Finder" = "Finder में दिखाएँ";
 "Save to Desktop" = "डेस्कटॉप पर सेव करें";
 "Discard" = "हटाएँ";
@@ -102,3 +103,8 @@
 "Screenshots, one click from any chat." = "स्क्रीनशॉट, किसी भी चैट से बस एक क्लिक दूर।";
 "Made by %@" = "%@ द्वारा बनाया गया";
 "Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján के Tendedero पर आधारित, MIT लाइसेंस के तहत।";
+/* HideEditor */
+"Drag over anything to hide it. Click a box to show it again." = "जो छिपाना है उस पर ड्रैग करें। फिर से दिखाने के लिए किसी बॉक्स पर क्लिक करें।";
+"Remove All" = "सभी हटाएँ";
+"Cancel" = "रद्द करें";
+"Done" = "हो गया";

@@ -197,10 +197,13 @@ final class Line: ObservableObject {
     /// Joins several photos into one image, which hangs as the newest and
     /// comes picked and copied, so the send button sends just that one.
     func combine(_ arrangement: Collage.Arrangement? = nil) {
-        let urls = photosToCombine.map(\.url)
-        guard urls.count > 1 else { return }
+        // Parts hidden by hand stay hidden in the joined image; the details
+        // chosen in Settings are found again in it once it hangs.
+        let photos = photosToCombine.map { ($0.url, PrivateDetails.hand($0.url)) }
+        guard photos.count > 1 else { return }
         pickedIDs = []
         DispatchQueue.global(qos: .userInitiated).async {
+            let urls = photos.map { url, hand in hand.isEmpty ? url : Cover.copy(of: url, [], hand: hand) ?? url }
             let joined = Collage.join(urls, arrangement)
             DispatchQueue.main.async { [weak self] in
                 MainActor.assumeIsolated {
@@ -289,8 +292,9 @@ final class Line: ObservableObject {
         guard let item = items.first(where: { $0.id == id }), !item.isRecording else { return }
         let url = item.url
         let chosen = PrivateDetails.details
+        let hand = PrivateDetails.hand(url)
         DispatchQueue.global(qos: .userInitiated).async {
-            let text = Finder.text(of: url, hiding: chosen)
+            let text = Finder.text(of: url, hiding: chosen, hand: hand)
             DispatchQueue.main.async { [weak self] in
                 MainActor.assumeIsolated {
                     guard let self, !text.isEmpty else {
@@ -420,13 +424,25 @@ final class Line: ObservableObject {
     }
 
     /// With Hide private details on, every photo is read ahead of time, so
-    /// copying one stays instant. Off, they show as they are again.
+    /// copying one stays instant. Off, they show as they are again, but for
+    /// parts hidden by hand.
     func readPrivateDetails() {
-        guard PrivateDetails.hidden else {
-            reloadThumbnails()
-            return
+        for item in items where !item.falling { cover(item.url) }
+    }
+
+    /// Hide Part: a box drawn over anything that should not leave the line.
+    func hidePart(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id }), !item.isRecording else { return }
+        let url = item.url
+        HideEditor.shared.edit(url) { [weak self] in self?.cover(url) }
+    }
+
+    private func cover(_ url: URL) {
+        if PrivateDetails.covers(url) {
+            PrivateDetails.prepare(url)
+        } else if items.contains(where: { $0.url == url && $0.covered }) {
+            show(url, for: url)
         }
-        for item in items where !item.falling { PrivateDetails.prepare(item.url) }
     }
 
     /// Quick Look on this photo, with the rest of the line a key press away.
@@ -445,11 +461,10 @@ final class Line: ObservableObject {
         }
     }
 
-    /// With Hide private details on, each photo hangs as it will leave the
-    /// line: with its private details covered, or as it is when the latest
-    /// choice leaves nothing to cover.
+    /// Each photo hangs as it will leave the line: with its private details
+    /// covered, or as it is when the latest choice leaves nothing to cover.
     private func show(_ shown: URL, for url: URL) {
-        guard PrivateDetails.hidden,
+        guard shown == url || PrivateDetails.covers(url),
               let i = items.firstIndex(where: { $0.url == url && !$0.falling }),
               let thumb = makeThumbnail(shown) else { return }
         items[i].thumb = thumb
@@ -478,6 +493,7 @@ final class Line: ObservableObject {
     private func save() {
         let paths = items.filter { !$0.falling }.map(\.url.path)
         UserDefaults.standard.set(paths, forKey: storeKey)
+        PrivateDetails.keepHand(only: Set(paths))
     }
 
     /// Everything comes back as it was. This runs before the line knows its

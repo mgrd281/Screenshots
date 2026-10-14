@@ -59,6 +59,7 @@
 "Open" = "打开";
 "Quick Look" = "快速查看";
 "Markup" = "标记";
+"Hide Part…" = "遮盖部分…";
 "Show in Finder" = "在访达中显示";
 "Save to Desktop" = "存储到桌面";
 "Discard" = "丢弃";
@@ -100,3 +101,8 @@
 "Screenshots, one click from any chat." = "截图，一键发到任何聊天。";
 "Made by %@" = "作者：%@";
 "Based on Tendedero by Alejandro Buján, under the MIT License." = "基于 Alejandro Buján 的 Tendedero，遵循 MIT 许可证。";
+/* HideEditor */
+"Drag over anything to hide it. Click a box to show it again." = "拖过要遮盖的内容。点按方框可重新显示。";
+"Remove All" = "全部移除";
+"Cancel" = "取消";
+"Done" = "完成";

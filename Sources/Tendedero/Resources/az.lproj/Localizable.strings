@@ -61,6 +61,7 @@
 "Open" = "Aç";
 "Quick Look" = "Tez baxış";
 "Markup" = "İşarələmə";
+"Hide Part…" = "Hissəni gizlət…";
 "Show in Finder" = "Finder-də göstər";
 "Save to Desktop" = "İş masasında saxla";
 "Discard" = "At";
@@ -102,3 +103,8 @@
 "Screenshots, one click from any chat." = "Ekran şəkilləri, istənilən söhbətə bir klik uzaqlıqda.";
 "Made by %@" = "Hazırlayan: %@";
 "Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján-ın Tendedero-su əsasında, MIT Lisenziyası ilə.";
+/* HideEditor */
+"Drag over anything to hide it. Click a box to show it again." = "Gizlətmək üçün istənilən yerin üzərindən sürüşdür. Yenidən göstərmək üçün qutuya klik et.";
+"Remove All" = "Hamısını sil";
+"Cancel" = "Ləğv et";
+"Done" = "Hazırdır";

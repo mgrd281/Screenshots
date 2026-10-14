@@ -51,6 +51,38 @@ enum PrivateDetails {
         details = chosen
     }
 
+    // MARK: Hidden by hand
+
+    private static let handKey = "handCovers"
+
+    /// The parts of a screenshot hidden by hand with Hide Part, from 0 to 1
+    /// from the bottom left. They are covered whatever is chosen above.
+    static func hand(_ url: URL) -> [CGRect] {
+        let saved = UserDefaults.standard.dictionary(forKey: handKey)?[url.path] as? [[Double]] ?? []
+        return saved.compactMap { $0.count == 4 ? CGRect(x: $0[0], y: $0[1], width: $0[2], height: $0[3]) : nil }
+    }
+
+    static func setHand(_ boxes: [CGRect], for url: URL) {
+        var all = UserDefaults.standard.dictionary(forKey: handKey) ?? [:]
+        all[url.path] = boxes.isEmpty ? nil : boxes.map {
+            [Double($0.minX), Double($0.minY), Double($0.width), Double($0.height)]
+        }
+        UserDefaults.standard.set(all, forKey: handKey)
+    }
+
+    /// Forgets what was hidden in screenshots that have left the line.
+    static func keepHand(only paths: Set<String>) {
+        guard let all = UserDefaults.standard.dictionary(forKey: handKey),
+              all.keys.contains(where: { !paths.contains($0) }) else { return }
+        UserDefaults.standard.set(all.filter { paths.contains($0.key) }, forKey: handKey)
+    }
+
+    /// Whether anything is covered in a screenshot: details chosen, or parts
+    /// hidden by hand.
+    static func covers(_ url: URL) -> Bool {
+        hidden || !hand(url).isEmpty
+    }
+
     /// For each screenshot as it was when read, with what was chosen then:
     /// its covered copy, or the file itself when there was nothing to hide.
     private static var results: [String: URL] = [:]
@@ -63,10 +95,12 @@ enum PrivateDetails {
     /// What to hand out for a screenshot.
     static func shareable(_ url: URL) -> URL {
         let chosen = details
-        guard !chosen.isEmpty, !isRecording(url), let key = key(for: url, chosen) else { return url }
+        let hand = Self.hand(url)
+        guard !chosen.isEmpty || !hand.isEmpty, !isRecording(url),
+              let key = key(for: url, chosen, hand) else { return url }
         if let done = cached(key) { return done }
         // Not read yet, like a capture copied the instant it hangs.
-        let done = Cover.copy(of: url, chosen) ?? url
+        let done = Cover.copy(of: url, chosen, hand: hand) ?? url
         results[key] = done
         onRead?(url, done)
         return done
@@ -75,14 +109,17 @@ enum PrivateDetails {
     /// What to show on the line for a screenshot already read.
     static func shown(_ url: URL) -> URL? {
         let chosen = details
-        guard !chosen.isEmpty, let key = key(for: url, chosen) else { return nil }
+        let hand = Self.hand(url)
+        guard !chosen.isEmpty || !hand.isEmpty, let key = key(for: url, chosen, hand) else { return nil }
         return cached(key)
     }
 
     /// Reads a screenshot ahead of time, off the main thread.
     static func prepare(_ url: URL) {
         let chosen = details
-        guard !chosen.isEmpty, !isRecording(url), let key = key(for: url, chosen) else { return }
+        let hand = Self.hand(url)
+        guard !chosen.isEmpty || !hand.isEmpty, !isRecording(url),
+              let key = key(for: url, chosen, hand) else { return }
         if let done = cached(key) {
             onRead?(url, done)
             return
@@ -90,7 +127,7 @@ enum PrivateDetails {
         guard !inProgress.contains(key) else { return }
         inProgress.insert(key)
         DispatchQueue.global(qos: .utility).async {
-            let done = Cover.copy(of: url, chosen) ?? url
+            let done = Cover.copy(of: url, chosen, hand: hand) ?? url
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     results[key] = done
@@ -112,12 +149,13 @@ enum PrivateDetails {
     }
 
     /// The file, when it last changed and what to cover, so a screenshot
-    /// edited in Markup, or a new choice, is read again.
-    private static func key(for url: URL, _ chosen: Set<PrivateDetail>) -> String? {
+    /// edited in Markup, a new choice or a part hidden by hand is read again.
+    private static func key(for url: URL, _ chosen: Set<PrivateDetail>, _ hand: [CGRect]) -> String? {
         guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path),
               let date = attributes[.modificationDate] as? Date else { return nil }
         let kinds = chosen.map(\.rawValue).sorted().joined(separator: ",")
-        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)"
+        let parts = hand.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
+        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(parts)"
     }
 }
 
@@ -132,12 +170,26 @@ enum Cover {
         return folder
     }()
 
-    /// A copy of the screenshot with the chosen details covered, under the
-    /// same name. Nil when there is nothing to hide.
-    static func copy(of url: URL, _ chosen: Set<PrivateDetail>) -> URL? {
+    /// Where the chosen details are, as they are covered: from 0 to 1 from
+    /// the bottom left, with a margin around the text.
+    static func areas(in image: CGImage, _ chosen: Set<PrivateDetail>) -> [CGRect] {
+        guard !chosen.isEmpty else { return [] }
+        let width = CGFloat(image.width), height = CGFloat(image.height)
+        return Finder.boxes(in: image, chosen).map { box in
+            // Vision measures from the bottom left, as Core Graphics draws.
+            let text = VNImageRectForNormalizedRect(box, image.width, image.height)
+            let rect = text.insetBy(dx: -text.height * 0.25, dy: -text.height * 0.2)
+            return CGRect(x: rect.minX / width, y: rect.minY / height,
+                          width: rect.width / width, height: rect.height / height)
+        }
+    }
+
+    /// A copy of the screenshot with the chosen details and the parts hidden
+    /// by hand covered, under the same name. Nil when there is nothing to hide.
+    static func copy(of url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect] = []) -> URL? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return nil }
-        let boxes = Finder.boxes(in: image, chosen)
+        let boxes = areas(in: image, chosen) + hand
         guard !boxes.isEmpty else { return nil }
 
         let space = image.colorSpace.flatMap { $0.model == .rgb ? $0 : nil }
@@ -148,9 +200,7 @@ enum Cover {
         context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
         context.setFillColor(CGColor(gray: 0.12, alpha: 1))
         for box in boxes {
-            // Vision measures from the bottom left, as Core Graphics draws.
-            let text = VNImageRectForNormalizedRect(box, image.width, image.height)
-            let rect = text.insetBy(dx: -text.height * 0.25, dy: -text.height * 0.2)
+            let rect = VNImageRectForNormalizedRect(box, image.width, image.height)
             let radius = min(rect.height / 4, rect.width / 2, 8)
             context.addPath(CGPath(roundedRect: rect, cornerWidth: radius, cornerHeight: radius, transform: nil))
             context.fillPath()
@@ -239,9 +289,9 @@ enum Finder {
         }
     }
 
-    /// The text of a screenshot, a line per row, with the chosen details
-    /// left out as dots, for Copy Text.
-    static func text(of url: URL, hiding chosen: Set<PrivateDetail>) -> String {
+    /// The text of a screenshot, a line per row, with the chosen details and
+    /// the words under the parts hidden by hand left out as dots, for Copy Text.
+    static func text(of url: URL, hiding chosen: Set<PrivateDetail>, hand: [CGRect] = []) -> String {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return "" }
         let lines = read(image)
@@ -251,6 +301,16 @@ enum Finder {
             let range = hit.range ?? NSRange(location: 0, length: length)
             let end = min(range.location + range.length, length)
             if range.location < end { hidden[hit.line].insert(integersIn: range.location..<end) }
+        }
+        for (i, line) in lines.enumerated() where hand.contains(where: { $0.intersects(line.box) }) {
+            let string = line.string
+            let all = NSRange(location: 0, length: string.utf16.count)
+            for word in Self.word.matches(in: string, range: all) {
+                guard let part = Range(word.range, in: string),
+                      let box = try? line.text.boundingBox(for: part)?.boundingBox,
+                      hand.contains(where: { $0.contains(CGPoint(x: box.midX, y: box.midY)) }) else { continue }
+                hidden[i].insert(integersIn: word.range.location..<(word.range.location + word.range.length))
+            }
         }
         return lines.indices.map { i -> String in
             let line = lines[i].string as NSString
@@ -263,6 +323,8 @@ enum Finder {
             return kept + line.substring(from: from)
         }.joined(separator: "\n")
     }
+
+    private static let word = try! NSRegularExpression(pattern: "\\S+")
 
     /// Everything to leave out, all three ways.
     private static func hits(in lines: [TextLine], _ chosen: Set<PrivateDetail>) -> [Hit] {

@@ -59,6 +59,7 @@
 "Open" = "열기";
 "Quick Look" = "훑어보기";
 "Markup" = "마크업";
+"Hide Part…" = "일부 가리기…";
 "Show in Finder" = "Finder에서 보기";
 "Save to Desktop" = "데스크탑에 저장";
 "Discard" = "버리기";
@@ -100,3 +101,8 @@
 "Screenshots, one click from any chat." = "스크린샷을 어떤 채팅에도 클릭 한 번으로.";
 "Made by %@" = "만든 사람: %@";
 "Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján의 Tendedero를 바탕으로 MIT 라이선스에 따라 만들었습니다.";
+/* HideEditor */
+"Drag over anything to hide it. Click a box to show it again." = "가릴 부분을 드래그하세요. 상자를 클릭하면 다시 보입니다.";
+"Remove All" = "모두 제거";
+"Cancel" = "취소";
+"Done" = "완료";
