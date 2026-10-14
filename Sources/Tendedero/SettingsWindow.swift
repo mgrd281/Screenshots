@@ -15,7 +15,7 @@ final class Preferences: ObservableObject {
         var setSize: (Layout.Size) -> Void = { _ in }
         var addFolder: () -> Void = {}
         var foldersChanged: () -> Void = {}
-        var changeShortcut: () -> Void = {}
+        var changeShortcut: (Shortcut.Role) -> Void = { _ in }
         var fullScreenChanged: () -> Void = {}
         var openScreenshotsFolder: () -> Void = {}
     }
@@ -110,10 +110,12 @@ final class Preferences: ObservableObject {
         set { change { actions.setKeep(newValue) } }
     }
 
-    var shortcut: String { Shortcut.current?.display ?? L("None") }
+    func shortcut(_ role: Shortcut.Role) -> String {
+        Shortcut.current(role)?.display ?? L("None")
+    }
 
-    func changeShortcut() {
-        actions.changeShortcut()
+    func changeShortcut(_ role: Shortcut.Role) {
+        actions.changeShortcut(role)
     }
 
     // MARK: Privacy
@@ -293,19 +295,24 @@ private struct LinePane: View {
                 }
             }
             Section {
-                LabeledContent(L("Shortcut")) {
-                    HStack {
-                        Text(prefs.shortcut)
-                            .font(.system(.body, design: .rounded).weight(.medium))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(.quaternary, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
-                        Button(L("Change Shortcut…")) { prefs.changeShortcut() }
-                    }
-                }
+                shortcutRow(L("Show or hide the line"), .toggle)
+                shortcutRow(L("Send the newest photo"), .send)
             }
         }
         .formStyle(.grouped)
+    }
+
+    private func shortcutRow(_ title: String, _ role: Shortcut.Role) -> some View {
+        LabeledContent(title) {
+            HStack {
+                Text(prefs.shortcut(role))
+                    .font(.system(.body, design: .rounded).weight(.medium))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                Button(L("Change Shortcut…")) { prefs.changeShortcut(role) }
+            }
+        }
     }
 }
 

@@ -25,7 +25,8 @@
 "Stop Watching" = "إيقاف المراقبة";
 "Watch" = "مراقبة";
 "New images saved to this folder will hang on the line." = "الصور الجديدة المحفوظة في هذا المجلد ستُعلَّق على الحبل.";
-"Shortcut" = "الاختصار";
+"Show or hide the line" = "إظهار الحبل أو إخفاؤه";
+"Send the newest photo" = "إرسال أحدث صورة";
 "Change Shortcut…" = "تغيير الاختصار…";
 "Change Shortcut" = "تغيير الاختصار";
 "None" = "لا يوجد";

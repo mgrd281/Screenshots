@@ -27,13 +27,23 @@ enum Paste {
         let prompt = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         guard frontApp != nil, AXIsProcessTrustedWithOptions(prompt) else { return }
         // At least a moment for the app to see the new clipboard before reading it.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05 + delay) {
-            let source = CGEventSource(stateID: .combinedSessionState)
-            for down in [true, false] {
-                let event = CGEvent(keyboardEventSource: source, virtualKey: CGKeyCode(kVK_ANSI_V), keyDown: down)
-                event?.flags = .maskCommand
-                event?.post(tap: .cghidEventTap)
-            }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05 + delay) { pressCommandV() }
+    }
+
+    /// ⌘V, once the keys of the send shortcut are let go, so the app in
+    /// front never sees ⌃⌥ held with it. Waits a second at most.
+    nonisolated private static func pressCommandV(tries: Int = 50) {
+        let held = CGEventSource.flagsState(.combinedSessionState)
+            .intersection([.maskControl, .maskAlternate, .maskShift, .maskCommand])
+        guard held.isEmpty || tries == 0 else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) { pressCommandV(tries: tries - 1) }
+            return
+        }
+        let source = CGEventSource(stateID: .combinedSessionState)
+        for down in [true, false] {
+            let event = CGEvent(keyboardEventSource: source, virtualKey: CGKeyCode(kVK_ANSI_V), keyDown: down)
+            event?.flags = .maskCommand
+            event?.post(tap: .cghidEventTap)
         }
     }
 

@@ -25,7 +25,8 @@
 "Stop Watching" = "지켜보기 중단";
 "Watch" = "지켜보기";
 "New images saved to this folder will hang on the line." = "이 폴더에 새로 저장되는 이미지가 빨랫줄에 걸려요.";
-"Shortcut" = "단축키";
+"Show or hide the line" = "빨랫줄 보기/숨기기";
+"Send the newest photo" = "최신 사진 보내기";
 "Change Shortcut…" = "단축키 변경…";
 "Change Shortcut" = "단축키 변경";
 "None" = "없음";

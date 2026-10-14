@@ -232,6 +232,16 @@ final class Line: ObservableObject {
         }
     }
 
+    /// The send shortcut: the photos picked, or else the newest one.
+    func pasteNewest() {
+        let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
+        guard let newest = items.last(where: { !$0.falling }) else {
+            NSSound.beep()
+            return
+        }
+        paste(picked.isEmpty ? [newest] : picked)
+    }
+
     /// Flies sent photos over to where they will land, and says how long
     /// until the last one does.
     var onSend: (([Pegged]) -> TimeInterval)?

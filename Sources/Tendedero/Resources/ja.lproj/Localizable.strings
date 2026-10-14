@@ -25,7 +25,8 @@
 "Stop Watching" = "監視を停止";
 "Watch" = "監視";
 "New images saved to this folder will hang on the line." = "このフォルダに保存された新しい画像がロープに吊るされます。";
-"Shortcut" = "ショートカット";
+"Show or hide the line" = "ロープを表示/非表示";
+"Send the newest photo" = "最新の写真を送信";
 "Change Shortcut…" = "ショートカットを変更…";
 "Change Shortcut" = "ショートカットを変更";
 "None" = "なし";

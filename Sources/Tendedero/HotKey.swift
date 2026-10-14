@@ -1,27 +1,32 @@
 import AppKit
 import Carbon
 
-/// A single global shortcut through the Carbon hot key API. Unlike a global
-/// key monitor, it needs no Accessibility permission.
+/// A global shortcut through the Carbon hot key API. Unlike a global key
+/// monitor, it needs no Accessibility permission.
 final class HotKey {
     private var ref: EventHotKeyRef?
-    private static var action: (() -> Void)?
+    /// What each shortcut does, by the role it plays.
+    private static var actions: [UInt32: () -> Void] = [:]
     private static var handlerInstalled = false
 
     /// Nil when the combination cannot be registered, for example because
-    /// another app already took it.
-    init?(_ shortcut: Shortcut, action: @escaping () -> Void) {
-        HotKey.action = action
-        // One handler for the app, however many times the shortcut changes.
+    /// another app, or the other shortcut, already took it.
+    init?(_ shortcut: Shortcut, for role: Shortcut.Role, action: @escaping () -> Void) {
+        HotKey.actions[role.rawValue] = action
+        // One handler for the app, however many times the shortcuts change.
         if !HotKey.handlerInstalled {
             var spec = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
-            InstallEventHandler(GetApplicationEventTarget(), { _, _, _ in
-                DispatchQueue.main.async { HotKey.action?() }
+            InstallEventHandler(GetApplicationEventTarget(), { _, event, _ in
+                var pressed = EventHotKeyID()
+                GetEventParameter(event, EventParamName(kEventParamDirectObject), EventParamType(typeEventHotKeyID),
+                                  nil, MemoryLayout<EventHotKeyID>.size, nil, &pressed)
+                let role = pressed.id
+                DispatchQueue.main.async { HotKey.actions[role]?() }
                 return noErr
             }, 1, &spec, nil, nil)
             HotKey.handlerInstalled = true
         }
-        let id = EventHotKeyID(signature: OSType(0x5445_4E44), id: 1) // "TEND"
+        let id = EventHotKeyID(signature: OSType(0x5445_4E44), id: role.rawValue) // "TEND"
         let status = RegisterEventHotKey(UInt32(shortcut.keyCode), UInt32(shortcut.carbonModifiers), id,
                                          GetApplicationEventTarget(), 0, &ref)
         guard status == noErr, ref != nil else { return nil }
@@ -32,30 +37,47 @@ final class HotKey {
     }
 }
 
-/// The shortcut that shows and hides the line: ⌃⌥T unless changed, or none.
+/// A global shortcut: one that shows and hides the line, ⌃⌥T unless
+/// changed, and one that sends the newest photo, ⌃⌥V. Either can be none.
 struct Shortcut: Equatable {
     var keyCode: Int
     var modifiers: NSEvent.ModifierFlags
     /// The key as typed, for the menu: "t", " ", "1".
     var key: String
 
-    static let standard = Shortcut(keyCode: kVK_ANSI_T, modifiers: [.control, .option], key: "t")
+    enum Role: UInt32, CaseIterable {
+        /// Shows and hides the line.
+        case toggle = 1
+        /// Pastes the photos picked, or the newest one, into the app in front.
+        case send = 2
 
-    private static let defaultsKey = "shortcut"
+        var standard: Shortcut {
+            switch self {
+            case .toggle: Shortcut(keyCode: kVK_ANSI_T, modifiers: [.control, .option], key: "t")
+            case .send: Shortcut(keyCode: kVK_ANSI_V, modifiers: [.control, .option], key: "v")
+            }
+        }
+
+        fileprivate var defaultsKey: String {
+            switch self {
+            case .toggle: "shortcut"
+            case .send: "sendShortcut"
+            }
+        }
+    }
 
     /// The user's choice. Nil means no shortcut at all.
-    static var current: Shortcut? {
-        get {
-            guard let saved = UserDefaults.standard.dictionary(forKey: defaultsKey) else { return standard }
-            guard let code = saved["keyCode"] as? Int, let flags = saved["modifiers"] as? UInt,
-                  let key = saved["key"] as? String else { return nil }
-            return Shortcut(keyCode: code, modifiers: NSEvent.ModifierFlags(rawValue: flags), key: key)
-        }
-        set {
-            UserDefaults.standard.set(newValue.map {
-                ["keyCode": $0.keyCode, "modifiers": $0.modifiers.rawValue, "key": $0.key] as [String: Any]
-            } ?? [:], forKey: defaultsKey)
-        }
+    static func current(_ role: Role) -> Shortcut? {
+        guard let saved = UserDefaults.standard.dictionary(forKey: role.defaultsKey) else { return role.standard }
+        guard let code = saved["keyCode"] as? Int, let flags = saved["modifiers"] as? UInt,
+              let key = saved["key"] as? String else { return nil }
+        return Shortcut(keyCode: code, modifiers: NSEvent.ModifierFlags(rawValue: flags), key: key)
+    }
+
+    static func save(_ shortcut: Shortcut?, for role: Role) {
+        UserDefaults.standard.set(shortcut.map {
+            ["keyCode": $0.keyCode, "modifiers": $0.modifiers.rawValue, "key": $0.key] as [String: Any]
+        } ?? [:], forKey: role.defaultsKey)
     }
 
     /// From a key press, if it makes a usable global shortcut: it needs

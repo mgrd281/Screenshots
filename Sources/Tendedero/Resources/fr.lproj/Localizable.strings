@@ -25,7 +25,8 @@
 "Stop Watching" = "Ne plus surveiller";
 "Watch" = "Surveiller";
 "New images saved to this folder will hang on the line." = "Les nouvelles images enregistrées dans ce dossier s’accrocheront à la corde.";
-"Shortcut" = "Raccourci";
+"Show or hide the line" = "Afficher ou masquer la corde";
+"Send the newest photo" = "Envoyer la photo la plus récente";
 "Change Shortcut…" = "Modifier le raccourci…";
 "Change Shortcut" = "Modifier le raccourci";
 "None" = "Aucun";

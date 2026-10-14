@@ -20,7 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var folderWatchers: [ScreenshotWatcher] = []
     private var clipboardWatcher: ClipboardWatcher!
     private var signalSources: [DispatchSourceSignal] = []
-    private var hotKey: HotKey?
+    private var hotKeys: [Shortcut.Role: HotKey] = [:]
     private var cancellables = Set<AnyCancellable>()
     private var mouseTimer: Timer?
     /// What the settings window shows and changes.
@@ -78,7 +78,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
         if ClipboardWatcher.isEnabled { clipboardWatcher.start() }
 
-        registerShortcut()
+        Shortcut.Role.allCases.forEach(registerShortcut)
 
         setUpStatusItem()
         watchMenuBarClicks()
@@ -584,29 +584,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     // MARK: Shortcut
 
-    private func registerShortcut() {
-        hotKey = nil
-        guard let shortcut = Shortcut.current else { return }
-        hotKey = HotKey(shortcut) { [weak self] in self?.toggle() }
+    private func registerShortcut(_ role: Shortcut.Role) {
+        hotKeys[role] = nil
+        guard let shortcut = Shortcut.current(role) else { return }
+        hotKeys[role] = HotKey(shortcut, for: role) { [weak self] in
+            switch role {
+            case .toggle: self?.toggle()
+            case .send: self?.line.pasteNewest()
+            }
+        }
     }
 
-    private func changeShortcut() {
-        // Off while recording, so pressing the current one records it
-        // instead of showing the line.
-        hotKey = nil
+    private func changeShortcut(_ role: Shortcut.Role) {
+        // All off while recording, so pressing one records it instead of
+        // doing what it does.
+        hotKeys = [:]
         ShortcutRecorder.shared.record { [weak self] result in
             guard let self else { return }
+            for other in Shortcut.Role.allCases where other != role { self.registerShortcut(other) }
             if let result {
-                let previous = Shortcut.current
-                Shortcut.current = result
-                self.registerShortcut()
-                // Taken by another app: keep the one that worked.
-                if result != nil && self.hotKey == nil {
+                let previous = Shortcut.current(role)
+                Shortcut.save(result, for: role)
+                self.registerShortcut(role)
+                // Taken by another app, or the other shortcut: keep the one that worked.
+                if result != nil && self.hotKeys[role] == nil {
                     NSSound.beep()
-                    Shortcut.current = previous
+                    Shortcut.save(previous, for: role)
                 }
             }
-            self.registerShortcut()
+            self.registerShortcut(role)
             self.preferences?.refresh()
         }
     }
@@ -644,7 +650,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             setSize: { [weak self] in self?.setSize($0) },
             addFolder: { [weak self] in self?.chooseExtraFolder() },
             foldersChanged: { [weak self] in self?.startWatcher() },
-            changeShortcut: { [weak self] in self?.changeShortcut() },
+            changeShortcut: { [weak self] in self?.changeShortcut($0) },
             fullScreenChanged: { [weak self] in self?.refresh() },
             openScreenshotsFolder: { [weak self] in
                 guard let self else { return }
@@ -688,7 +694,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let toggleItem = ClosureMenuItem(isRevealed ? L("Hide line") : L("Show line")) { [weak self] in
             self?.toggle()
         }
-        if let shortcut = Shortcut.current, shortcut.key.count == 1 {
+        if let shortcut = Shortcut.current(.toggle), shortcut.key.count == 1 {
             toggleItem.keyEquivalent = shortcut.key
             toggleItem.keyEquivalentModifierMask = shortcut.modifiers
         }
