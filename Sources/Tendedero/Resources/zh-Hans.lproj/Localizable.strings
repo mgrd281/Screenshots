@@ -43,6 +43,8 @@
 "Hang copied images" = "挂上复制的图片";
 "Images you copy hang on the line too" = "复制的图片也会挂上绳";
 "Tendedero, hanging copied images" = "Tendedero，正在挂上复制的图片";
+"Hide private details" = "隐藏隐私信息";
+"Emails, phone numbers, IBANs and card numbers are covered in what you copy or send" = "复制或发送的图片中会遮住电子邮件、电话号码、IBAN 和卡号";
 
 /* GrabArea */
 "Copy" = "复制";

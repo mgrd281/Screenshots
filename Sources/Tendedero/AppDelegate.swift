@@ -662,6 +662,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         clipboard.toolTip = L("Images you copy hang on the line too")
         menu.addItem(clipboard)
 
+        let privacy = ClosureMenuItem(L("Hide private details")) { [weak self] in
+            PrivateDetails.hidden.toggle()
+            self?.line.readPrivateDetails()
+        }
+        privacy.state = PrivateDetails.hidden ? .on : .off
+        privacy.toolTip = L("Emails, phone numbers, IBANs and card numbers are covered in what you copy or send")
+        menu.addItem(privacy)
+
         let bringDown = NSMenuItem(title: L("Bring the line down"), action: nil, keyEquivalent: "")
         let options = NSMenu()
         let hover = ClosureMenuItem(L("When the pointer rests in the menu bar")) {

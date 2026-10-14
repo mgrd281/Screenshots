@@ -43,6 +43,8 @@
 "Hang copied images" = "Colgar imágenes copiadas";
 "Images you copy hang on the line too" = "Las imágenes que copias también se cuelgan";
 "Tendedero, hanging copied images" = "Tendedero, colgando imágenes copiadas";
+"Hide private details" = "Ocultar datos privados";
+"Emails, phone numbers, IBANs and card numbers are covered in what you copy or send" = "Los correos, teléfonos, IBAN y números de tarjeta se tapan en lo que copias o envías";
 
 /* GrabArea */
 "Copy" = "Copiar";

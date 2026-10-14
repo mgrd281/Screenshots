@@ -92,6 +92,15 @@ left alone.
 
 <br>
 
+## Private details, covered.
+
+Turn on Hide private details in the menu bar, and whatever you copy or
+send from the line has its emails, phone numbers, IBANs and card numbers
+covered. The text is read on your Mac, and the screenshot itself is never
+changed. Dragging a photo out still hands over the original.
+
+<br>
+
 ## Private by design.
 
 No account. No network. No analytics.
@@ -151,6 +160,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
 | `LineTag.swift` | The tag at the end of the line: moving it, sending and taking everything down |
 | `Paste.swift` | Pastes into the app in front, for the send button |
+| `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |

@@ -76,6 +76,7 @@ final class Line: ObservableObject {
 
     init() {
         restore()
+        readPrivateDetails()
         scheduleGust()
     }
 
@@ -96,6 +97,7 @@ final class Line: ObservableObject {
             letGo(oldest.id)
         }
         save()
+        PrivateDetails.prepare(url)
         if !quietly { play("Tink", volume: 0.35) }
         return item.id
     }
@@ -210,9 +212,11 @@ final class Line: ObservableObject {
     private func copy(_ photos: [Pegged]) {
         let entries = photos.map { item -> NSPasteboardItem in
             let entry = NSPasteboardItem()
+            // With Hide private details on, a copy with them covered.
+            let url = PrivateDetails.shareable(item.url)
             // A recording is copied as the file, which apps paste as the video.
-            if !item.isRecording, let png = pngData(item.url) { entry.setData(png, forType: .png) }
-            entry.setString(item.url.absoluteString, forType: .fileURL)
+            if !item.isRecording, let png = pngData(url) { entry.setData(png, forType: .png) }
+            entry.setString(url.absoluteString, forType: .fileURL)
             return entry
         }
         let pb = NSPasteboard.general
@@ -335,6 +339,13 @@ final class Line: ObservableObject {
         guard let i = items.firstIndex(where: { $0.url == url && !$0.falling }),
               let thumb = makeThumbnail(url) else { return }
         items[i].thumb = thumb
+        PrivateDetails.prepare(url)
+    }
+
+    /// With Hide private details on, every photo is read ahead of time, so
+    /// copying one stays instant.
+    func readPrivateDetails() {
+        for item in items where !item.falling { PrivateDetails.prepare(item.url) }
     }
 
     /// Quick Look on this photo, with the rest of the line a key press away.
