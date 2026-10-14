@@ -51,6 +51,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | <kbd>⌘</kbd>-click several | Copy them together, to paste them all at once. |
 | Right-click, then Copy Text | Copy the words in it, to paste as text. |
 | Press and hold | Open it in Markup. |
+| Click the paper plane on a photo | Send it straight into the app in front, like a chat. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
 | Drag into an app | Send a copy. It stays on the line. |

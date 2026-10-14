@@ -132,6 +132,20 @@ struct PeggedView: View {
                     .scaleEffect(hovering ? 1 : 0.6)
                     .allowsHitTesting(false)
             }
+            .overlay(alignment: .bottomTrailing) {
+                // Sends this photo into the app in front, like a chat. Drawn
+                // here and clicked through GrabView, like the cross.
+                Image(systemName: "paperplane.fill")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 22, height: 22)
+                    .background(Color.accentColor, in: Circle())
+                    .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
+                    .padding(4)
+                    .opacity(hovering && !dragging ? 1 : 0)
+                    .scaleEffect(hovering ? 1 : 0.6)
+                    .allowsHitTesting(false)
+            }
             .overlay(GrabArea(item: item, line: line))
             .overlay(alignment: .bottom) {
                 if copied {

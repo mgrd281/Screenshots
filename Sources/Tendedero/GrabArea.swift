@@ -9,7 +9,8 @@ import SwiftUI
 /// - The Trash discards it.
 /// - Nowhere that accepts it: the photo flies back to the line.
 ///
-/// Click copies, press and hold opens Markup, the corner cross discards.
+/// Click copies, press and hold opens Markup, the corner cross discards and
+/// the paper plane in the opposite corner sends.
 /// ⌘-click picks several, which copy together.
 struct GrabArea: NSViewRepresentable {
     let item: Pegged
@@ -35,6 +36,7 @@ struct GrabArea: NSViewRepresentable {
         view.outgoingURL = { PrivateDetails.shareable(item.url) }
         view.onClick = { line.copy(id) }
         view.onPick = { line.pick(id) }
+        view.onSend = { line.paste(id) }
         view.onDoubleClick = { line.open(id) }
         view.onDragStart = { line.draggingID = id }
         view.onDragEnd = {
@@ -109,6 +111,8 @@ final class GrabView: NSView, NSDraggingSource {
     var onClick: () -> Void = {}
     /// ⌘-click or ⇧-click: picks the photo, to copy along with others.
     var onPick: () -> Void = {}
+    /// The paper plane: into the app in front.
+    var onSend: () -> Void = {}
     var onDoubleClick: () -> Void = {}
     var onDragStart: () -> Void = {}
     var onDragEnd: () -> Void = {}
@@ -141,6 +145,16 @@ final class GrabView: NSView, NSDraggingSource {
         return corner.contains(p)
     }
 
+    /// The paper plane drawn in the bottom right corner, the cross's opposite.
+    static let sendHitSize: CGFloat = 30
+
+    private func isInSend(_ event: NSEvent) -> Bool {
+        let p = convert(event.locationInWindow, from: nil)
+        let corner = NSRect(x: bounds.width - Self.sendHitSize, y: isFlipped ? bounds.height - Self.sendHitSize : 0,
+                            width: Self.sendHitSize, height: Self.sendHitSize)
+        return corner.contains(p)
+    }
+
     /// Holding ⌘ or ⇧ picks photos one by one, however fast you click.
     private func isPick(_ event: NSEvent) -> Bool {
         !event.modifierFlags.intersection([.command, .shift]).isEmpty
@@ -150,6 +164,11 @@ final class GrabView: NSView, NSDraggingSource {
         if isInCross(event) {
             downPoint = nil
             onDiscard()
+            return
+        }
+        if isInSend(event) && !isPick(event) {
+            downPoint = nil
+            onSend()
             return
         }
         if event.clickCount == 2 && !isPick(event) {
