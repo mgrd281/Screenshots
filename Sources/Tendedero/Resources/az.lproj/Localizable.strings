@@ -67,4 +67,6 @@
 
 /* LineTag, GrabArea */
 "Copy all" = "Hamısını kopyala";
+"Paste into %@" = "%@ tətbiqinə yapışdır";
+"Paste into the app in front" = "Öndəki tətbiqə yapışdır";
 "Move the line" = "İpi tərpət";

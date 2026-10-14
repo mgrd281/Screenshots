@@ -180,6 +180,31 @@ final class Line: ObservableObject {
         copy(items.filter { !$0.falling })
     }
 
+    /// The send button on the tag: the photos picked, or every photo when
+    /// none is, go straight into the app in front, a chat for example.
+    func paste() {
+        let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
+        paste(picked.isEmpty ? items.filter { !$0.falling } : picked)
+    }
+
+    /// From a photo's menu: the photos picked when it is one of them, or
+    /// only this one.
+    func paste(_ id: UUID) {
+        let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
+        if pickedIDs.contains(id) {
+            paste(picked)
+        } else if let item = items.first(where: { $0.id == id }) {
+            paste([item])
+        }
+    }
+
+    private func paste(_ photos: [Pegged]) {
+        guard !photos.isEmpty else { return }
+        copy(photos)
+        pickedIDs = []
+        Paste.intoFrontApp()
+    }
+
     /// Each photo goes on the clipboard as an item of its own, as Finder
     /// copies several files, so apps paste them all, in the order they hang.
     private func copy(_ photos: [Pegged]) {

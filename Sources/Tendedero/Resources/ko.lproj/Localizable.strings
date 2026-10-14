@@ -65,4 +65,6 @@
 
 /* LineTag, GrabArea */
 "Copy all" = "모두 복사하기";
+"Paste into %@" = "%@에 붙여넣기";
+"Paste into the app in front" = "앞에 있는 앱에 붙여넣기";
 "Move the line" = "빨랫줄 옮기기";

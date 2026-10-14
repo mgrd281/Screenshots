@@ -65,4 +65,6 @@
 
 /* LineTag, GrabArea */
 "Copy all" = "Copiar todo";
+"Paste into %@" = "Pegar en %@";
+"Paste into the app in front" = "Pegar na app activa";
 "Move the line" = "Mover a corda";

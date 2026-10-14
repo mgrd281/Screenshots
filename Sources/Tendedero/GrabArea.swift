@@ -53,6 +53,9 @@ struct GrabArea: NSViewRepresentable {
             if line.liveCount > 1 {
                 menu.addItem(ClosureMenuItem(L("Copy all")) { line.copyAll() })
             }
+            if let app = Paste.frontApp?.localizedName {
+                menu.addItem(ClosureMenuItem(String(format: L("Paste into %@"), app)) { line.paste(id) })
+            }
             menu.addItem(ClosureMenuItem(L("Open")) { line.open(id) })
             menu.addItem(ClosureMenuItem(L("Quick Look")) { line.quickLook(id) })
             if !isRecording {

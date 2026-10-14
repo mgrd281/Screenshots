@@ -65,4 +65,6 @@
 
 /* LineTag, GrabArea */
 "Copy all" = "すべてコピー";
+"Paste into %@" = "%@にペースト";
+"Paste into the app in front" = "前面のアプリにペースト";
 "Move the line" = "ロープを動かす";

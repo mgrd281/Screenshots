@@ -67,4 +67,6 @@
 
 /* LineTag, GrabArea */
 "Copy all" = "सब कॉपी करें";
+"Paste into %@" = "%@ में पेस्ट करें";
+"Paste into the app in front" = "सामने वाले ऐप में पेस्ट करें";
 "Move the line" = "रस्सी खिसकाएँ";

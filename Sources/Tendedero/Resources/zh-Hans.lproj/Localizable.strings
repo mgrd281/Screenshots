@@ -65,4 +65,6 @@
 
 /* LineTag, GrabArea */
 "Copy all" = "全部复制";
+"Paste into %@" = "粘贴到“%@”";
+"Paste into the app in front" = "粘贴到前台应用";
 "Move the line" = "移动晾衣绳";
