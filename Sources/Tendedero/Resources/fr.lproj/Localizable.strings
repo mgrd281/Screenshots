@@ -62,3 +62,6 @@
 
 /* PeggedView */
 "Copied" = "Copié";
+
+/* LineTag */
+"Move the line" = "Déplacer la corde";

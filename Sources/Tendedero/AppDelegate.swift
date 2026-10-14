@@ -333,7 +333,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let width = panel.frame.width
         let x = Layout.x(index: index, count: line.items.count, width: width,
                          visible: line.visibleCount, scroll: line.scroll)
-        let viewTop = Layout.ropeY(x: x, width: width) - Layout.pinAbove
+        let viewTop = panel.drop + Layout.ropeY(x: x, width: width) - Layout.pinAbove
         let cardTop = viewTop + PeggedView.cardOffsetBelowTop
         let size = PeggedView.cardSize(for: line.items[index].thumb.size)
         return CGRect(x: panel.frame.minX + x - size.width / 2,
@@ -403,6 +403,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             pinned = false
             peekUntil = .distantPast
             panel.ignoresMouseEvents = true
+            // A grip that went away under the pointer never hears it let go.
+            TagView.isMovingLine = false
         }
     }
 
@@ -517,7 +519,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let inside = NSMouseInRect(mouse, zone, false)
         if inside && pinned { pinned = false }
 
-        let busy = pinned || GrabView.isDragging || GrabView.isShowingMenu
+        let busy = pinned || GrabView.isDragging || GrabView.isShowingMenu || TagView.isMovingLine
             || line.pressedID != nil || now < peekUntil
         if inside || busy {
             awaySince = nil
@@ -532,13 +534,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     /// The panel spans the whole width of the screen, so it only accepts the
-    /// mouse while the cursor is over a photo. Everywhere else, clicks go to
-    /// whatever is underneath.
+    /// mouse while the cursor is over a photo or the tag. Everywhere else,
+    /// clicks go to whatever is underneath.
     private func updateMousePassThrough(_ mouse: NSPoint) {
-        guard !GrabView.isDragging else { return }
+        guard !GrabView.isDragging, !TagView.isMovingLine else { return }
         let local = panel.convertPoint(fromScreen: mouse)
         let flipped = CGPoint(x: local.x, y: panel.frame.height - local.y)
         var overPhoto = line.hitRects.values.contains { $0.insetBy(dx: -4, dy: -4).contains(flipped) }
+            || line.tagRect.insetBy(dx: -4, dy: -4).contains(flipped)
         // A line longer than the screen also takes the band the photos hang
         // in, gaps included, so a swipe anywhere along it moves it.
         if !overPhoto, line.items.count > line.visibleCount, Line.keepOnLine != nil {

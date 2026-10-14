@@ -64,3 +64,6 @@
 
 /* PeggedView */
 "Copied" = "Copied";
+
+/* LineTag */
+"Move the line" = "Move the line";

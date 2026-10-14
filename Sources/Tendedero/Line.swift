@@ -38,6 +38,9 @@ final class Line: ObservableObject {
     /// Card frames in window coordinates, reported by the views. The panel
     /// uses them to only catch clicks over photos and let the rest through.
     var hitRects: [UUID: CGRect] = [:]
+    /// The tag at the end of the line, in the same coordinates. It catches
+    /// clicks too.
+    var tagRect = CGRect.null
 
     var maxItems = 8
     /// How many photos fit across the screen. With Keep on line set, the
@@ -207,6 +210,8 @@ final class Line: ObservableObject {
 
     /// The corner cross and "Take down" both end up here.
     func discard(_ id: UUID, quietly: Bool = false) {
+        // Already on its way down, from a second click on the tag's trash.
+        guard items.contains(where: { $0.id == id && !$0.falling }) else { return }
         if isInInbox(id) { trash(id, quietly: quietly) } else { drop(id, quietly: quietly) }
     }
 

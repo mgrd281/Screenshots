@@ -45,8 +45,27 @@ final class LinePanel: NSPanel {
 
     func placeOnScreen(_ screen: NSScreen? = nil) {
         guard let visible = (screen ?? LinePanel.screenUnderPointer())?.visibleFrame else { return }
-        let target = NSRect(x: visible.minX, y: visible.maxY - Layout.panelHeight,
-                            width: visible.width, height: Layout.panelHeight)
+        // Moved down with its grip, the line still slides out from under the
+        // menu bar, so the strip reaches up to it.
+        let height = Layout.panelHeight + min(Layout.drop, Self.lowestDrop(in: visible))
+        let target = NSRect(x: visible.minX, y: visible.maxY - height,
+                            width: visible.width, height: height)
         if frame != target { setFrame(target, display: true) }
+    }
+
+    /// How far below the menu bar the line hangs on this screen.
+    var drop: CGFloat { max(0, frame.height - Layout.panelHeight) }
+
+    /// As low as the line goes: its photos stay above the bottom of the screen.
+    private static func lowestDrop(in visible: NSRect) -> CGFloat {
+        max(0, visible.height - Layout.panelHeight)
+    }
+
+    /// Dragging the grip on the line's tag moves it up or down. It hangs
+    /// there from then on, on any screen with room for it.
+    func moveLine(to drop: CGFloat) {
+        guard let screen else { return }
+        Layout.drop = min(max(0, drop), Self.lowestDrop(in: screen.visibleFrame))
+        placeOnScreen(screen)
     }
 }

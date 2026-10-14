@@ -62,3 +62,6 @@
 
 /* PeggedView */
 "Copied" = "복사됨";
+
+/* LineTag */
+"Move the line" = "빨랫줄 옮기기";
