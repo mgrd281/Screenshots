@@ -56,6 +56,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Drag into a folder | Keep it there. It leaves the line. |
 | Drag to the Trash, or click the cross | Let it go. |
 | Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
+| <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
 | Click the trash on the tag | Take everything down at once. |
 | Drag the arrows on the tag | Move the line further down the screen, or back up. It stays there. |
 | Rest the pointer in the menu bar | Bring the line down on that screen. |
@@ -158,9 +159,10 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs |
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
-| `LineTag.swift` | The tag at the end of the line: moving it, sending and taking everything down |
+| `LineTag.swift` | The tag at the end of the line: moving it, combining, sending and taking everything down |
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
+| `Collage.swift` | Joins several screenshots into one image |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |

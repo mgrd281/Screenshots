@@ -69,4 +69,7 @@
 "Copy all" = "すべてコピー";
 "Paste into %@" = "%@にペースト";
 "Paste into the app in front" = "前面のアプリにペースト";
+"Combine into one image" = "1枚の画像にまとめる";
+"One under another" = "縦に並べる";
+"Side by side" = "横に並べる";
 "Move the line" = "ロープを動かす";

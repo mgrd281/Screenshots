@@ -56,6 +56,14 @@ struct GrabArea: NSViewRepresentable {
             if let app = Paste.frontApp?.localizedName {
                 menu.addItem(ClosureMenuItem(String(format: L("Paste into %@"), app)) { line.paste(id) })
             }
+            if line.photosToCombine.count > 1 {
+                let combine = NSMenuItem(title: L("Combine into one image"), action: nil, keyEquivalent: "")
+                let ways = NSMenu()
+                ways.addItem(ClosureMenuItem(L("One under another")) { line.combine(.stacked) })
+                ways.addItem(ClosureMenuItem(L("Side by side")) { line.combine(.sideBySide) })
+                combine.submenu = ways
+                menu.addItem(combine)
+            }
             menu.addItem(ClosureMenuItem(L("Open")) { line.open(id) })
             menu.addItem(ClosureMenuItem(L("Quick Look")) { line.quickLook(id) })
             if !isRecording {

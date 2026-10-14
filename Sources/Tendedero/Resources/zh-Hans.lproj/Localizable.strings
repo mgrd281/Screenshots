@@ -69,4 +69,7 @@
 "Copy all" = "全部复制";
 "Paste into %@" = "粘贴到“%@”";
 "Paste into the app in front" = "粘贴到前台应用";
+"Combine into one image" = "合并为一张图片";
+"One under another" = "上下排列";
+"Side by side" = "左右排列";
 "Move the line" = "移动晾衣绳";

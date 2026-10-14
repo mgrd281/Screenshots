@@ -182,6 +182,34 @@ final class Line: ObservableObject {
         copy(items.filter { !$0.falling })
     }
 
+    /// What Combine joins: the photos picked, or every photo when fewer
+    /// than two are. Recordings stay out of it.
+    var photosToCombine: [Pegged] {
+        let still = items.filter { !$0.falling && !$0.isRecording }
+        let picked = still.filter { pickedIDs.contains($0.id) }
+        return picked.count > 1 ? picked : still
+    }
+
+    /// Joins several photos into one image, which hangs as the newest and
+    /// comes picked and copied, so the send button sends just that one.
+    func combine(_ arrangement: Collage.Arrangement? = nil) {
+        let urls = photosToCombine.map(\.url)
+        guard urls.count > 1 else { return }
+        pickedIDs = []
+        DispatchQueue.global(qos: .userInitiated).async {
+            let joined = Collage.join(urls, arrangement)
+            DispatchQueue.main.async { [weak self] in
+                MainActor.assumeIsolated {
+                    guard let self, let joined, let id = self.hang(joined) else {
+                        NSSound.beep()
+                        return
+                    }
+                    self.pick(id)
+                }
+            }
+        }
+    }
+
     /// The send button on the tag: the photos picked, or every photo when
     /// none is, go straight into the app in front, a chat for example.
     func paste() {
