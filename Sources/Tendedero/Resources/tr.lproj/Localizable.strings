@@ -1,8 +1,8 @@
 /* Turkish. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "Ekran görüntülerini Tendedero yönetsin mi?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "Ekran görüntüleri, kayan küçük resim olmadan anında ipin üzerine asılacak ve Masaüstünüzde birikmeyecek. Saklamak için bir klasöre sürükleyin ya da çarpı ile silin. Bunu Ayarlar'dan kapatabilirsiniz; Tendedero kapandığında ayarlarınız geri gelir.";
+"Let Snapfly handle your screenshots?" = "Ekran görüntülerini Snapfly yönetsin mi?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "Ekran görüntüleri, kayan küçük resim olmadan anında ipin üzerine asılacak ve Masaüstünüzde birikmeyecek. Saklamak için bir klasöre sürükleyin ya da çarpı ile silin. Bunu Ayarlar'dan kapatabilirsiniz; Snapfly kapandığında ayarlarınız geri gelir.";
 "Turn on" = "Etkinleştir";
 "Not now" = "Şimdi değil";
 "Hide line" = "İpi gizle";
@@ -14,9 +14,9 @@
 "Sounds" = "Sesler";
 "Open at login" = "Başlangıçta aç";
 "Check for Updates…" = "Güncellemeleri denetle…";
-"Quit Tendedero" = "Tendedero'yu kapat";
+"Quit Snapfly" = "Snapfly'yu kapat";
 "Could not change the login setting" = "Giriş ayarı değiştirilemedi";
-"Move Tendedero to the Applications folder and try again." = "Tendedero'yu Uygulamalar klasörüne taşıyın ve tekrar deneyin.";
+"Move Snapfly to the Applications folder and try again." = "Snapfly'yu Uygulamalar klasörüne taşıyın ve tekrar deneyin.";
 "Keep on line" = "İpte tut";
 "As many as fit" = "Sığdığı kadar";
 "%d photos" = "%d fotoğraf";
@@ -42,7 +42,7 @@
 "Over full screen apps" = "Tam ekran uygulamaların üzerinde";
 "Hang copied images" = "Kopyalanan görselleri as";
 "Images you copy hang on the line too" = "Kopyaladığınız görseller de ipe asılır";
-"Tendedero, hanging copied images" = "Tendedero, kopyalanan görselleri asıyor";
+"Snapfly, hanging copied images" = "Snapfly, kopyalanan görselleri asıyor";
 "Hide private details" = "Özel bilgileri gizle";
 "Names" = "İsimler";
 "Addresses" = "Adresler";
@@ -95,3 +95,6 @@
 "Open Accessibility Settings…" = "Erişilebilirlik Ayarlarını Aç…";
 "The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "Gönder düğmesi öndeki uygulamada ⌘V'ye basar, bu yüzden Erişilebilirlik iznine ihtiyaç duyar.";
 "Version %@" = "Sürüm %@";
+"Screenshots, one click from any chat." = "Ekran görüntüleri, her sohbete bir tık uzaklıkta.";
+"Made by %@" = "Yapan: %@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján'ın Tendedero'suna dayanır, MIT Lisansı ile.";

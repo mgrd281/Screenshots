@@ -3,8 +3,8 @@
    swift scripts/check-strings.swift to check. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "Let Tendedero handle your screenshots?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits.";
+"Let Snapfly handle your screenshots?" = "Let Snapfly handle your screenshots?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits.";
 "Turn on" = "Turn on";
 "Not now" = "Not now";
 "Hide line" = "Hide line";
@@ -16,9 +16,9 @@
 "Sounds" = "Sounds";
 "Open at login" = "Open at login";
 "Check for Updates…" = "Check for Updates…";
-"Quit Tendedero" = "Quit Tendedero";
+"Quit Snapfly" = "Quit Snapfly";
 "Could not change the login setting" = "Could not change the login setting";
-"Move Tendedero to the Applications folder and try again." = "Move Tendedero to the Applications folder and try again.";
+"Move Snapfly to the Applications folder and try again." = "Move Snapfly to the Applications folder and try again.";
 "Keep on line" = "Keep on line";
 "As many as fit" = "As many as fit";
 "%d photos" = "%d photos";
@@ -44,7 +44,7 @@
 "Over full screen apps" = "Over full screen apps";
 "Hang copied images" = "Hang copied images";
 "Images you copy hang on the line too" = "Images you copy hang on the line too";
-"Tendedero, hanging copied images" = "Tendedero, hanging copied images";
+"Snapfly, hanging copied images" = "Snapfly, hanging copied images";
 "Hide private details" = "Hide private details";
 "Names" = "Names";
 "Addresses" = "Addresses";
@@ -97,3 +97,6 @@
 "Open Accessibility Settings…" = "Open Accessibility Settings…";
 "The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "The send button presses ⌘V in the app in front, which needs the Accessibility permission.";
 "Version %@" = "Version %@";
+"Screenshots, one click from any chat." = "Screenshots, one click from any chat.";
+"Made by %@" = "Made by %@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Based on Tendedero by Alejandro Buján, under the MIT License.";

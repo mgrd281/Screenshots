@@ -147,7 +147,7 @@ like any other app.
 git clone git@github.com:alejandrobujan/tendedero.git
 cd tendedero
 scripts/build-app.sh
-open build/Tendedero.app
+open build/Snapfly.app
 ```
 
 Requires the Swift toolchain. Xcode is optional. With the Command Line Tools for macOS 27, the script falls back to the macOS 26 SDK they install alongside, because the new SDK needs a SwiftUI macro plugin only Xcode includes. Local builds are signed ad hoc,
@@ -177,8 +177,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `FullScreen.swift` | Knows when to stay hidden |
 | `Line.swift` | What is hanging, and what you can do with it |
 
-Every image here, the icon included, is drawn in code by
-`scripts/make-icon.swift` and `scripts/make-readme-art.swift`.
+The Snapfly icon is drawn in code by `scripts/make-icon.py` into
+`assets/icon.png`, which the build turns into the app icon.
 `scripts/make-dmg.sh` builds the disk image for releases.
 
 Translations live in `Sources/Tendedero/Resources`, one `.lproj` folder per

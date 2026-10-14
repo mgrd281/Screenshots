@@ -3,8 +3,8 @@
    swift scripts/check-strings.swift to check. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "Ekran şəkillərinizi Tendedero idarə etsin?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "Ekran şəkilləri üzən miniatür olmadan, çəkdiyiniz an ipdən asılacaq və İş masanızda yığılıb qalmayacaq. Saxlamaq istədiyinizi qovluğa sürükləyin, istəmədiyinizi çarpazla atın. Bunu Ayarlardan söndürə bilərsiniz, Tendedero bağlananda isə ayarlarınız əvvəlki halına qayıdır.";
+"Let Snapfly handle your screenshots?" = "Ekran şəkillərinizi Snapfly idarə etsin?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "Ekran şəkilləri üzən miniatür olmadan, çəkdiyiniz an ipdən asılacaq və İş masanızda yığılıb qalmayacaq. Saxlamaq istədiyinizi qovluğa sürükləyin, istəmədiyinizi çarpazla atın. Bunu Ayarlardan söndürə bilərsiniz, Snapfly bağlananda isə ayarlarınız əvvəlki halına qayıdır.";
 "Turn on" = "Aktiv et";
 "Not now" = "İndi yox";
 "Hide line" = "İpi gizlət";
@@ -16,9 +16,9 @@
 "Sounds" = "Səslər";
 "Open at login" = "Sistemə girişdə aç";
 "Check for Updates…" = "Yeniləmələri yoxla…";
-"Quit Tendedero" = "Tendedero-dan çıx";
+"Quit Snapfly" = "Snapfly-dan çıx";
 "Could not change the login setting" = "Giriş ayarını dəyişmək alınmadı";
-"Move Tendedero to the Applications folder and try again." = "Tendedero-nu Applications (Proqramlar) qovluğuna köçürün və yenidən cəhd edin.";
+"Move Snapfly to the Applications folder and try again." = "Snapfly-nu Applications (Proqramlar) qovluğuna köçürün və yenidən cəhd edin.";
 "Keep on line" = "İpdə saxla";
 "As many as fit" = "Sığdığı qədər";
 "%d photos" = "%d şəkil";
@@ -44,7 +44,7 @@
 "Over full screen apps" = "Tam ekran proqramların üzərində";
 "Hang copied images" = "Kopyalanmış şəkilləri as";
 "Images you copy hang on the line too" = "Kopyaladığınız şəkillər də ipdən asılır";
-"Tendedero, hanging copied images" = "Tendedero, kopyalanmış şəkilləri asır";
+"Snapfly, hanging copied images" = "Snapfly, kopyalanmış şəkilləri asır";
 "Hide private details" = "Şəxsi məlumatları gizlət";
 "Names" = "Adlar";
 "Addresses" = "Ünvanlar";
@@ -97,3 +97,6 @@
 "Open Accessibility Settings…" = "Əlçatanlıq ayarlarını aç…";
 "The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "Göndər düyməsi öndəki tətbiqdə ⌘V basır, buna görə Əlçatanlıq icazəsi lazımdır.";
 "Version %@" = "Versiya %@";
+"Screenshots, one click from any chat." = "Ekran şəkilləri, istənilən söhbətə bir klik uzaqlıqda.";
+"Made by %@" = "Hazırlayan: %@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján-ın Tendedero-su əsasında, MIT Lisenziyası ilə.";

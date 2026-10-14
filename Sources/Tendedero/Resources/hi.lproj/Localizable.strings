@@ -3,8 +3,8 @@
    swift scripts/check-strings.swift to check. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "क्या Tendedero आपके स्क्रीनशॉट संभाले?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "स्क्रीनशॉट लेते ही वे रस्सी पर टँग जाएँगे, बिना तैरते थंबनेल के, और आपके डेस्कटॉप पर जमा नहीं होंगे। किसी को रखना हो तो उसे फ़ोल्डर में खींचें, या क्रॉस से हटा दें। आप इसे सेटिंग्स से बंद कर सकते हैं, और Tendedero बंद होने पर आपकी सेटिंग्स वापस आ जाती हैं।";
+"Let Snapfly handle your screenshots?" = "क्या Snapfly आपके स्क्रीनशॉट संभाले?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "स्क्रीनशॉट लेते ही वे रस्सी पर टँग जाएँगे, बिना तैरते थंबनेल के, और आपके डेस्कटॉप पर जमा नहीं होंगे। किसी को रखना हो तो उसे फ़ोल्डर में खींचें, या क्रॉस से हटा दें। आप इसे सेटिंग्स से बंद कर सकते हैं, और Snapfly बंद होने पर आपकी सेटिंग्स वापस आ जाती हैं।";
 "Turn on" = "चालू करें";
 "Not now" = "अभी नहीं";
 "Hide line" = "रस्सी छिपाएँ";
@@ -16,9 +16,9 @@
 "Sounds" = "आवाज़ें";
 "Open at login" = "लॉगिन पर खोलें";
 "Check for Updates…" = "अपडेट देखें…";
-"Quit Tendedero" = "Tendedero बंद करें";
+"Quit Snapfly" = "Snapfly बंद करें";
 "Could not change the login setting" = "लॉगिन सेटिंग बदली नहीं जा सकी";
-"Move Tendedero to the Applications folder and try again." = "Tendedero को Applications फ़ोल्डर में ले जाएँ और फिर से कोशिश करें।";
+"Move Snapfly to the Applications folder and try again." = "Snapfly को Applications फ़ोल्डर में ले जाएँ और फिर से कोशिश करें।";
 "Keep on line" = "रस्सी पर रखें";
 "As many as fit" = "जितने आ सकें";
 "%d photos" = "%d फ़ोटो";
@@ -44,7 +44,7 @@
 "Over full screen apps" = "फ़ुल स्क्रीन ऐप्स के ऊपर";
 "Hang copied images" = "कॉपी की गई तस्वीरें टाँगें";
 "Images you copy hang on the line too" = "आप जो तस्वीरें कॉपी करते हैं, वे भी रस्सी पर टँगती हैं";
-"Tendedero, hanging copied images" = "Tendedero, कॉपी की गई तस्वीरें टाँग रहा है";
+"Snapfly, hanging copied images" = "Snapfly, कॉपी की गई तस्वीरें टाँग रहा है";
 "Hide private details" = "निजी जानकारी छिपाएँ";
 "Names" = "नाम";
 "Addresses" = "पते";
@@ -97,3 +97,6 @@
 "Open Accessibility Settings…" = "Accessibility सेटिंग्स खोलें…";
 "The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "भेजें बटन सामने वाले ऐप में ⌘V दबाता है, इसलिए इसे Accessibility अनुमति चाहिए।";
 "Version %@" = "संस्करण %@";
+"Screenshots, one click from any chat." = "स्क्रीनशॉट, किसी भी चैट से बस एक क्लिक दूर।";
+"Made by %@" = "%@ द्वारा बनाया गया";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján के Tendedero पर आधारित, MIT लाइसेंस के तहत।";

@@ -1,8 +1,8 @@
 /* Arabic. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "هل تريد أن يتولى Tendedero لقطات الشاشة؟";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "ستُعلَّق لقطات الشاشة على الحبل لحظة التقاطها، بدون الصورة المصغّرة العائمة، ولن تتكدّس على سطح المكتب. اسحب لقطة إلى مجلد للاحتفاظ بها، أو تخلّص منها بعلامة ×. يمكنك إيقاف ذلك من الإعدادات، وتعود إعداداتك السابقة عند إنهاء Tendedero.";
+"Let Snapfly handle your screenshots?" = "هل تريد أن يتولى Snapfly لقطات الشاشة؟";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "ستُعلَّق لقطات الشاشة على الحبل لحظة التقاطها، بدون الصورة المصغّرة العائمة، ولن تتكدّس على سطح المكتب. اسحب لقطة إلى مجلد للاحتفاظ بها، أو تخلّص منها بعلامة ×. يمكنك إيقاف ذلك من الإعدادات، وتعود إعداداتك السابقة عند إنهاء Snapfly.";
 "Turn on" = "تشغيل";
 "Not now" = "ليس الآن";
 "Hide line" = "إخفاء الحبل";
@@ -14,9 +14,9 @@
 "Sounds" = "الأصوات";
 "Open at login" = "الفتح عند تسجيل الدخول";
 "Check for Updates…" = "البحث عن تحديثات…";
-"Quit Tendedero" = "إنهاء Tendedero";
+"Quit Snapfly" = "إنهاء Snapfly";
 "Could not change the login setting" = "تعذّر تغيير إعداد تسجيل الدخول";
-"Move Tendedero to the Applications folder and try again." = "انقل Tendedero إلى مجلد التطبيقات ثم حاول مرة أخرى.";
+"Move Snapfly to the Applications folder and try again." = "انقل Snapfly إلى مجلد التطبيقات ثم حاول مرة أخرى.";
 "Keep on line" = "الإبقاء على الحبل";
 "As many as fit" = "بقدر ما يتّسع";
 "%d photos" = "%d صورة";
@@ -42,7 +42,7 @@
 "Over full screen apps" = "فوق التطبيقات بملء الشاشة";
 "Hang copied images" = "تعليق الصور المنسوخة";
 "Images you copy hang on the line too" = "الصور التي تنسخها تُعلَّق على الحبل أيضاً";
-"Tendedero, hanging copied images" = "Tendedero، يعلّق الصور المنسوخة";
+"Snapfly, hanging copied images" = "Snapfly، يعلّق الصور المنسوخة";
 "Hide private details" = "إخفاء المعلومات الخاصة";
 "Names" = "الأسماء";
 "Addresses" = "العناوين";
@@ -95,3 +95,6 @@
 "Open Accessibility Settings…" = "فتح إعدادات إمكانية الوصول…";
 "The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "يضغط زر الإرسال ⌘V في التطبيق الأمامي، ولهذا يحتاج إلى إذن إمكانية الوصول.";
 "Version %@" = "الإصدار %@";
+"Screenshots, one click from any chat." = "لقطات الشاشة، على بُعد نقرة من أي دردشة.";
+"Made by %@" = "من تطوير %@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "مبني على Tendedero من Alejandro Buján، بموجب رخصة MIT.";

@@ -371,18 +371,39 @@ private struct AboutPane: View {
     @ObservedObject var prefs: Preferences
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 0) {
+            Spacer()
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
-                .frame(width: 96, height: 96)
-            Text(verbatim: "Tendedero")
-                .font(.system(size: 26, weight: .semibold, design: .rounded))
-            Text(String(format: L("Version %@"), prefs.version))
+                .frame(width: 128, height: 128)
+                .shadow(color: .black.opacity(0.15), radius: 12, y: 6)
+            Text(verbatim: "Snapfly")
+                .font(.system(size: 34, weight: .bold, design: .rounded))
+                .padding(.top, 14)
+            Text(L("Screenshots, one click from any chat."))
+                .font(.title3)
                 .foregroundStyle(.secondary)
+                .padding(.top, 2)
+            Text(String(format: L("Version %@"), prefs.version))
+                .font(.callout)
+                .foregroundStyle(.tertiary)
+                .padding(.top, 8)
+            Divider()
+                .frame(width: 240)
+                .padding(.vertical, 18)
+            Text(String(format: L("Made by %@"), AppDelegate.author))
+                .font(.headline)
             Button(L("Check for Updates…")) { prefs.checkForUpdates() }
                 .controlSize(.large)
-                .padding(.top, 6)
+                .padding(.top, 12)
+            Spacer()
+            // The MIT License asks for the original's credit to stay.
+            Text(L("Based on Tendedero by Alejandro Buján, under the MIT License."))
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+                .padding(.bottom, 16)
         }
+        .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

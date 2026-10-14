@@ -1,8 +1,8 @@
 /* Japanese. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "スクリーンショットをTendederoに任せますか？";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "スクリーンショットは撮った瞬間にロープに吊るされ、フローティングサムネールは表示されず、デスクトップにたまることもありません。残したいものはフォルダにドラッグし、いらないものは×で破棄します。この機能は設定からオフにでき、Tendederoを終了すると設定は元に戻ります。";
+"Let Snapfly handle your screenshots?" = "スクリーンショットをSnapflyに任せますか？";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "スクリーンショットは撮った瞬間にロープに吊るされ、フローティングサムネールは表示されず、デスクトップにたまることもありません。残したいものはフォルダにドラッグし、いらないものは×で破棄します。この機能は設定からオフにでき、Snapflyを終了すると設定は元に戻ります。";
 "Turn on" = "オンにする";
 "Not now" = "今はしない";
 "Hide line" = "ロープを非表示";
@@ -14,9 +14,9 @@
 "Sounds" = "サウンド";
 "Open at login" = "ログイン時に開く";
 "Check for Updates…" = "アップデートを確認…";
-"Quit Tendedero" = "Tendederoを終了";
+"Quit Snapfly" = "Snapflyを終了";
 "Could not change the login setting" = "ログイン時の設定を変更できませんでした";
-"Move Tendedero to the Applications folder and try again." = "Tendederoを「アプリケーション」フォルダに移動してから、もう一度お試しください。";
+"Move Snapfly to the Applications folder and try again." = "Snapflyを「アプリケーション」フォルダに移動してから、もう一度お試しください。";
 "Keep on line" = "ロープに残す数";
 "As many as fit" = "収まるだけ";
 "%d photos" = "%d枚";
@@ -42,7 +42,7 @@
 "Over full screen apps" = "フルスクリーンのアプリの上にも";
 "Hang copied images" = "コピーした画像を吊るす";
 "Images you copy hang on the line too" = "コピーした画像もロープに吊るされます";
-"Tendedero, hanging copied images" = "Tendedero、コピーした画像を吊るしています";
+"Snapfly, hanging copied images" = "Snapfly、コピーした画像を吊るしています";
 "Hide private details" = "個人情報を隠す";
 "Names" = "名前";
 "Addresses" = "住所";
@@ -95,3 +95,6 @@
 "Open Accessibility Settings…" = "アクセシビリティ設定を開く…";
 "The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "送信ボタンは前面のアプリで⌘Vを押すため、アクセシビリティの許可が必要です。";
 "Version %@" = "バージョン %@";
+"Screenshots, one click from any chat." = "スクリーンショットを、どのチャットにもワンクリックで。";
+"Made by %@" = "制作：%@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján による Tendedero をもとに、MIT ライセンスのもとで作られています。";

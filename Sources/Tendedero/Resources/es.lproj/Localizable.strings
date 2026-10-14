@@ -1,8 +1,8 @@
 /* Spanish. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "¿Quieres que Tendedero se encargue de tus capturas?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "Las capturas se colgarán al instante, sin la miniatura flotante, y no se acumularán en el Escritorio. Arrastra una a una carpeta para guardarla, o descártala con la cruz. Puedes desactivarlo en Ajustes, y tus ajustes vuelven a ser los de antes al salir de Tendedero.";
+"Let Snapfly handle your screenshots?" = "¿Quieres que Snapfly se encargue de tus capturas?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "Las capturas se colgarán al instante, sin la miniatura flotante, y no se acumularán en el Escritorio. Arrastra una a una carpeta para guardarla, o descártala con la cruz. Puedes desactivarlo en Ajustes, y tus ajustes vuelven a ser los de antes al salir de Snapfly.";
 "Turn on" = "Activar";
 "Not now" = "Ahora no";
 "Hide line" = "Ocultar tendedero";
@@ -14,9 +14,9 @@
 "Sounds" = "Sonidos";
 "Open at login" = "Abrir al iniciar sesión";
 "Check for Updates…" = "Buscar actualizaciones…";
-"Quit Tendedero" = "Salir de Tendedero";
+"Quit Snapfly" = "Salir de Snapfly";
 "Could not change the login setting" = "No se pudo cambiar el inicio de sesión";
-"Move Tendedero to the Applications folder and try again." = "Mueve Tendedero a la carpeta Aplicaciones y vuelve a intentarlo.";
+"Move Snapfly to the Applications folder and try again." = "Mueve Snapfly a la carpeta Aplicaciones y vuelve a intentarlo.";
 "Keep on line" = "Guardar en la cuerda";
 "As many as fit" = "Las que quepan";
 "%d photos" = "%d fotos";
@@ -42,7 +42,7 @@
 "Over full screen apps" = "Sobre apps a pantalla completa";
 "Hang copied images" = "Colgar imágenes copiadas";
 "Images you copy hang on the line too" = "Las imágenes que copias también se cuelgan";
-"Tendedero, hanging copied images" = "Tendedero, colgando imágenes copiadas";
+"Snapfly, hanging copied images" = "Snapfly, colgando imágenes copiadas";
 "Hide private details" = "Ocultar datos privados";
 "Names" = "Nombres";
 "Addresses" = "Direcciones";
@@ -95,3 +95,6 @@
 "Open Accessibility Settings…" = "Abrir ajustes de Accesibilidad…";
 "The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "El botón de enviar pulsa ⌘V en la app de delante, y para eso necesita el permiso de Accesibilidad.";
 "Version %@" = "Versión %@";
+"Screenshots, one click from any chat." = "Capturas, a un clic de cualquier chat.";
+"Made by %@" = "Hecho por %@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Basado en Tendedero de Alejandro Buján, con licencia MIT.";

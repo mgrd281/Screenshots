@@ -88,7 +88,7 @@ final class ScreenshotWatcher {
             return
         }
         guard fd >= 0 else {
-            NSLog("Tendedero: cannot watch \(folder.path)")
+            NSLog("Snapfly: cannot watch \(folder.path)")
             return
         }
         let src = DispatchSource.makeFileSystemObjectSource(

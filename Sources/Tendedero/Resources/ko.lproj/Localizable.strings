@@ -1,8 +1,8 @@
 /* Korean. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "Tendedero가 스크린샷을 관리하도록 할까요?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "스크린샷을 찍는 즉시 플로팅 썸네일 없이 빨랫줄에 걸리고, 데스크탑에 쌓이지 않아요. 보관하려면 폴더로 드래그하고, 버리려면 X 버튼을 클릭하세요. 설정에서 언제든 끌 수 있고, Tendedero를 종료하면 원래 설정으로 돌아가요.";
+"Let Snapfly handle your screenshots?" = "Snapfly가 스크린샷을 관리하도록 할까요?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "스크린샷을 찍는 즉시 플로팅 썸네일 없이 빨랫줄에 걸리고, 데스크탑에 쌓이지 않아요. 보관하려면 폴더로 드래그하고, 버리려면 X 버튼을 클릭하세요. 설정에서 언제든 끌 수 있고, Snapfly를 종료하면 원래 설정으로 돌아가요.";
 "Turn on" = "켜기";
 "Not now" = "나중에";
 "Hide line" = "빨랫줄 가리기";
@@ -14,9 +14,9 @@
 "Sounds" = "사운드";
 "Open at login" = "로그인 시 열기";
 "Check for Updates…" = "업데이트 확인…";
-"Quit Tendedero" = "Tendedero 종료";
+"Quit Snapfly" = "Snapfly 종료";
 "Could not change the login setting" = "로그인 설정을 변경할 수 없음";
-"Move Tendedero to the Applications folder and try again." = "Tendedero를 응용 프로그램 폴더로 옮긴 다음 다시 시도하세요.";
+"Move Snapfly to the Applications folder and try again." = "Snapfly를 응용 프로그램 폴더로 옮긴 다음 다시 시도하세요.";
 "Keep on line" = "빨랫줄에 남길 개수";
 "As many as fit" = "들어가는 만큼";
 "%d photos" = "사진 %d장";
@@ -42,7 +42,7 @@
 "Over full screen apps" = "전체 화면 앱 위에서도";
 "Hang copied images" = "복사한 이미지 걸기";
 "Images you copy hang on the line too" = "복사한 이미지도 빨랫줄에 걸려요";
-"Tendedero, hanging copied images" = "Tendedero, 복사한 이미지 거는 중";
+"Snapfly, hanging copied images" = "Snapfly, 복사한 이미지 거는 중";
 "Hide private details" = "개인 정보 가리기";
 "Names" = "이름";
 "Addresses" = "주소";
@@ -95,3 +95,6 @@
 "Open Accessibility Settings…" = "손쉬운 사용 설정 열기…";
 "The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "보내기 버튼은 앞에 있는 앱에서 ⌘V를 누르므로 손쉬운 사용 권한이 필요합니다.";
 "Version %@" = "버전 %@";
+"Screenshots, one click from any chat." = "스크린샷을 어떤 채팅에도 클릭 한 번으로.";
+"Made by %@" = "만든 사람: %@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján의 Tendedero를 바탕으로 MIT 라이선스에 따라 만들었습니다.";

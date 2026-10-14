@@ -1,8 +1,8 @@
 /* German. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "Soll Tendedero deine Bildschirmfotos übernehmen?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "Bildschirmfotos hängen auf der Leine, sobald du sie aufnimmst, ohne die schwebende Miniatur, und stapeln sich nicht mehr auf deinem Schreibtisch. Zieh eines in einen Ordner, um es zu behalten, oder wirf es mit dem Kreuz weg. Du kannst das in den Einstellungen ausschalten, und deine Einstellungen kommen zurück, wenn du Tendedero beendest.";
+"Let Snapfly handle your screenshots?" = "Soll Snapfly deine Bildschirmfotos übernehmen?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "Bildschirmfotos hängen auf der Leine, sobald du sie aufnimmst, ohne die schwebende Miniatur, und stapeln sich nicht mehr auf deinem Schreibtisch. Zieh eines in einen Ordner, um es zu behalten, oder wirf es mit dem Kreuz weg. Du kannst das in den Einstellungen ausschalten, und deine Einstellungen kommen zurück, wenn du Snapfly beendest.";
 "Turn on" = "Einschalten";
 "Not now" = "Jetzt nicht";
 "Hide line" = "Leine ausblenden";
@@ -14,9 +14,9 @@
 "Sounds" = "Töne";
 "Open at login" = "Beim Anmelden öffnen";
 "Check for Updates…" = "Nach Updates suchen …";
-"Quit Tendedero" = "Tendedero beenden";
+"Quit Snapfly" = "Snapfly beenden";
 "Could not change the login setting" = "Die Anmeldeeinstellung konnte nicht geändert werden";
-"Move Tendedero to the Applications folder and try again." = "Bewege Tendedero in den Ordner „Programme“ und versuche es erneut.";
+"Move Snapfly to the Applications folder and try again." = "Bewege Snapfly in den Ordner „Programme“ und versuche es erneut.";
 "Keep on line" = "Auf der Leine behalten";
 "As many as fit" = "So viele wie passen";
 "%d photos" = "%d Fotos";
@@ -42,7 +42,7 @@
 "Over full screen apps" = "Über Apps im Vollbildmodus";
 "Hang copied images" = "Kopierte Bilder aufhängen";
 "Images you copy hang on the line too" = "Bilder, die du kopierst, hängen auch auf der Leine";
-"Tendedero, hanging copied images" = "Tendedero, hängt kopierte Bilder auf";
+"Snapfly, hanging copied images" = "Snapfly, hängt kopierte Bilder auf";
 "Hide private details" = "Private Angaben verbergen";
 "Names" = "Namen";
 "Addresses" = "Adressen";
@@ -95,3 +95,6 @@
 "Open Accessibility Settings…" = "Einstellungen für Bedienungshilfen öffnen …";
 "The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "Die Senden-Taste drückt ⌘V in der App im Vordergrund und braucht dafür die Berechtigung für Bedienungshilfen.";
 "Version %@" = "Version %@";
+"Screenshots, one click from any chat." = "Bildschirmfotos, einen Klick von jedem Chat entfernt.";
+"Made by %@" = "Gemacht von %@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Basiert auf Tendedero von Alejandro Buján, unter der MIT-Lizenz.";
