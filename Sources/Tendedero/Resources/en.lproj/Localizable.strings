@@ -46,7 +46,7 @@
 "Images you copy hang on the line too" = "Images you copy hang on the line too";
 "Tendedero, hanging copied images" = "Tendedero, hanging copied images";
 "Hide private details" = "Hide private details";
-"Emails, phone numbers, IBANs and card numbers are covered in what you copy or send" = "Emails, phone numbers, IBANs and card numbers are covered in what you copy or send";
+"Names, addresses, emails, phone numbers, IBANs and card numbers are covered in whatever leaves the line" = "Names, addresses, emails, phone numbers, IBANs and card numbers are covered in whatever leaves the line";
 
 /* GrabArea */
 "Copy" = "Copy";

@@ -95,10 +95,11 @@ left alone.
 
 ## Private details, covered.
 
-Turn on Hide private details in the menu bar, and whatever you copy or
-send from the line has its emails, phone numbers, IBANs and card numbers
-covered. The text is read on your Mac, and the screenshot itself is never
-changed. Dragging a photo out still hands over the original.
+Turn on Hide private details in the menu bar, and whatever leaves the
+line, copied, sent or dragged out, has its names, addresses, emails, phone
+numbers, IBANs and card numbers covered. The line shows each photo that
+way too, so what you see is what goes. The text is read on your Mac, and
+the screenshot file itself is never changed.
 
 <br>
 

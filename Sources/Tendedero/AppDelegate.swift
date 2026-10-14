@@ -667,7 +667,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self?.line.readPrivateDetails()
         }
         privacy.state = PrivateDetails.hidden ? .on : .off
-        privacy.toolTip = L("Emails, phone numbers, IBANs and card numbers are covered in what you copy or send")
+        privacy.toolTip = L("Names, addresses, emails, phone numbers, IBANs and card numbers are covered in whatever leaves the line")
         menu.addItem(privacy)
 
         let bringDown = NSMenuItem(title: L("Bring the line down"), action: nil, keyEquivalent: "")

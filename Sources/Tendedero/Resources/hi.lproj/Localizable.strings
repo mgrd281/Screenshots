@@ -46,7 +46,7 @@
 "Images you copy hang on the line too" = "आप जो तस्वीरें कॉपी करते हैं, वे भी रस्सी पर टँगती हैं";
 "Tendedero, hanging copied images" = "Tendedero, कॉपी की गई तस्वीरें टाँग रहा है";
 "Hide private details" = "निजी जानकारी छिपाएँ";
-"Emails, phone numbers, IBANs and card numbers are covered in what you copy or send" = "आप जो कॉपी या भेजते हैं, उसमें ईमेल, फ़ोन नंबर, IBAN और कार्ड नंबर ढक दिए जाते हैं";
+"Names, addresses, emails, phone numbers, IBANs and card numbers are covered in whatever leaves the line" = "रस्सी से बाहर जाने वाली हर चीज़ में नाम, पते, ईमेल, फ़ोन नंबर, IBAN और कार्ड नंबर ढक दिए जाते हैं";
 
 /* GrabArea */
 "Copy" = "कॉपी करें";

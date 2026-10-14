@@ -1,11 +1,13 @@
 import AppKit
+import NaturalLanguage
 import UniformTypeIdentifiers
 import Vision
 
-/// Hide private details, from the menu bar: what leaves the line, copied or
-/// sent to a chat, is a copy of the screenshot with emails, phone numbers,
-/// IBANs and card numbers covered. The screenshot itself is never touched,
-/// and dragging a photo out still hands over the original.
+/// Hide private details, from the menu bar: whatever leaves the line,
+/// copied, sent to a chat or dragged out, is a copy of the screenshot with
+/// names, addresses, emails, phone numbers, IBANs and card numbers covered.
+/// The line shows each photo that way too, so what you see is what goes.
+/// The screenshot file itself is never touched.
 ///
 /// Each screenshot is read once, in the background when it hangs, so
 /// copying it stays instant. It is a help, not a promise: text the
@@ -22,20 +24,36 @@ enum PrivateDetails {
     private static var results: [String: URL] = [:]
     private static var inProgress: Set<String> = []
 
+    /// Called once a screenshot has been read, with the screenshot and what
+    /// to hand out for it, so the line can show it that way.
+    static var onRead: ((URL, URL) -> Void)?
+
     /// What to hand out for a screenshot.
     static func shareable(_ url: URL) -> URL {
         guard hidden, !isRecording(url), let key = key(for: url) else { return url }
-        if let done = results[key] { return done }
+        if let done = cached(key) { return done }
         // Not read yet, like a capture copied the instant it hangs.
         let done = Cover.copy(of: url) ?? url
         results[key] = done
+        onRead?(url, done)
         return done
+    }
+
+    /// What to show on the line for a screenshot already read, while the
+    /// option is on.
+    static func shown(_ url: URL) -> URL? {
+        guard hidden, let key = key(for: url) else { return nil }
+        return cached(key)
     }
 
     /// Reads a screenshot ahead of time, off the main thread.
     static func prepare(_ url: URL) {
-        guard hidden, !isRecording(url), let key = key(for: url),
-              results[key] == nil, !inProgress.contains(key) else { return }
+        guard hidden, !isRecording(url), let key = key(for: url) else { return }
+        if let done = cached(key) {
+            onRead?(url, done)
+            return
+        }
+        guard !inProgress.contains(key) else { return }
         inProgress.insert(key)
         DispatchQueue.global(qos: .utility).async {
             let done = Cover.copy(of: url) ?? url
@@ -43,9 +61,20 @@ enum PrivateDetails {
                 MainActor.assumeIsolated {
                     results[key] = done
                     inProgress.remove(key)
+                    onRead?(url, done)
                 }
             }
         }
+    }
+
+    /// A covered copy dragged into a folder is no longer there to hand out.
+    private static func cached(_ key: String) -> URL? {
+        guard let done = results[key] else { return nil }
+        guard FileManager.default.fileExists(atPath: done.path) else {
+            results[key] = nil
+            return nil
+        }
+        return done
     }
 
     /// The file and when it last changed, so a screenshot edited in Markup
@@ -118,18 +147,31 @@ enum Cover {
             log.error("Could not read a screenshot: \(error.localizedDescription, privacy: .public)")
             return []
         }
-        var boxes: [CGRect] = []
+        // All the text at once, a line per row, so an address or a name
+        // that runs over two lines is still found.
+        var full = ""
+        var spans: [(text: VNRecognizedText, range: NSRange)] = []
         for line in request.results ?? [] {
             guard let text = line.topCandidates(1).first else { continue }
-            for range in privateRanges(in: text.string) {
-                if let box = try? text.boundingBox(for: range)?.boundingBox { boxes.append(box) }
+            spans.append((text: text, range: NSRange(location: full.utf16.count, length: text.string.utf16.count)))
+            full += text.string + "\n"
+        }
+        var boxes: [CGRect] = []
+        for found in privateRanges(in: full) {
+            for span in spans {
+                let overlap = NSIntersectionRange(found, span.range)
+                guard overlap.length > 0,
+                      let range = Range(NSRange(location: overlap.location - span.range.location, length: overlap.length),
+                                        in: span.text.string),
+                      let box = try? span.text.boundingBox(for: range)?.boundingBox else { continue }
+                boxes.append(box)
             }
         }
         return boxes
     }
 
-    /// The private parts of one line of text.
-    static func privateRanges(in text: String) -> [Range<String.Index>] {
+    /// The private parts of the text in a screenshot.
+    static func privateRanges(in text: String) -> [NSRange] {
         let whole = NSRange(text.startIndex..., in: text)
         func matches(_ pattern: String, _ options: NSRegularExpression.Options = []) -> [NSRange] {
             (try? NSRegularExpression(pattern: pattern, options: options))?
@@ -143,11 +185,20 @@ enum Cover {
         // Card numbers: 13 to 19 digits, grouped or not, that pass the Luhn check.
         found += matches(#"\b\d(?:[ -]?\d){12,18}\b"#)
             .filter { passesLuhn((text as NSString).substring(with: $0)) }
-        // Phone numbers, as Mail and Messages recognize them.
-        if let phones = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.phoneNumber.rawValue) {
-            found += phones.matches(in: text, range: whole).map(\.range)
+        // Phone numbers and postal addresses, as Mail and Messages recognize them.
+        let types: NSTextCheckingResult.CheckingType = [.phoneNumber, .address]
+        if let detector = try? NSDataDetector(types: types.rawValue) {
+            found += detector.matches(in: text, range: whole).map(\.range)
         }
-        return found.compactMap { Range($0, in: text) }
+        // People's names, as the Natural Language framework tells them apart.
+        let tagger = NLTagger(tagSchemes: [.nameType])
+        tagger.string = text
+        tagger.enumerateTags(in: text.startIndex..<text.endIndex, unit: .word, scheme: .nameType,
+                             options: [.omitPunctuation, .omitWhitespace, .joinNames]) { tag, range in
+            if tag == .personalName { found.append(NSRange(range, in: text)) }
+            return true
+        }
+        return found
     }
 
     private static func passesLuhn(_ number: String) -> Bool {

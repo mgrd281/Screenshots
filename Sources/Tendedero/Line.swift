@@ -76,6 +76,7 @@ final class Line: ObservableObject {
 
     init() {
         restore()
+        PrivateDetails.onRead = { [weak self] url, shown in self?.show(shown, for: url) }
         readPrivateDetails()
         scheduleGust()
     }
@@ -371,8 +372,12 @@ final class Line: ObservableObject {
     }
 
     /// With Hide private details on, every photo is read ahead of time, so
-    /// copying one stays instant.
+    /// copying one stays instant. Off, they show as they are again.
     func readPrivateDetails() {
+        guard PrivateDetails.hidden else {
+            reloadThumbnails()
+            return
+        }
         for item in items where !item.falling { PrivateDetails.prepare(item.url) }
     }
 
@@ -386,8 +391,18 @@ final class Line: ObservableObject {
     /// After a change of size, every photo is redrawn sharp at the new one.
     func reloadThumbnails() {
         for i in items.indices where !items[i].falling {
-            if let thumb = makeThumbnail(items[i].url) { items[i].thumb = thumb }
+            let url = PrivateDetails.shown(items[i].url) ?? items[i].url
+            if let thumb = makeThumbnail(url) { items[i].thumb = thumb }
         }
+    }
+
+    /// With Hide private details on, each photo hangs as it will leave the
+    /// line: with its private details covered.
+    private func show(_ shown: URL, for url: URL) {
+        guard PrivateDetails.hidden, shown != url,
+              let i = items.firstIndex(where: { $0.url == url && !$0.falling }),
+              let thumb = makeThumbnail(shown) else { return }
+        items[i].thumb = thumb
     }
 
     func reveal(_ id: UUID) {

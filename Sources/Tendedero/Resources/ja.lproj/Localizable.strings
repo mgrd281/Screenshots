@@ -44,7 +44,7 @@
 "Images you copy hang on the line too" = "コピーした画像もロープに吊るされます";
 "Tendedero, hanging copied images" = "Tendedero、コピーした画像を吊るしています";
 "Hide private details" = "個人情報を隠す";
-"Emails, phone numbers, IBANs and card numbers are covered in what you copy or send" = "コピーや送信する画像では、メールアドレス、電話番号、IBAN、カード番号が隠されます";
+"Names, addresses, emails, phone numbers, IBANs and card numbers are covered in whatever leaves the line" = "ロープから出す画像では、名前、住所、メールアドレス、電話番号、IBAN、カード番号が隠されます";
 
 /* GrabArea */
 "Copy" = "コピー";

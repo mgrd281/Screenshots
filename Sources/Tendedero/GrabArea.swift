@@ -31,6 +31,8 @@ struct GrabArea: NSViewRepresentable {
         let isRecording = item.isRecording
         view.url = item.url
         view.dragImage = item.thumb
+        // With Hide private details on, a drag hands over the covered copy.
+        view.outgoingURL = { PrivateDetails.shareable(item.url) }
         view.onClick = { line.copy(id) }
         view.onPick = { line.pick(id) }
         view.onDoubleClick = { line.open(id) }
@@ -98,6 +100,8 @@ final class GrabView: NSView, NSDraggingSource {
     static var isShowingMenu = false
 
     var url: URL?
+    /// The file a drag hands over, when it is not the photo's own.
+    var outgoingURL: () -> URL? = { nil }
     var dragImage: NSImage?
     var onClick: () -> Void = {}
     /// ⌘-click or ⇧-click: picks the photo, to copy along with others.
@@ -187,7 +191,7 @@ final class GrabView: NSView, NSDraggingSource {
         startedDrag = true
         endPress()
 
-        let item = NSDraggingItem(pasteboardWriter: url as NSURL)
+        let item = NSDraggingItem(pasteboardWriter: (outgoingURL() ?? url) as NSURL)
         item.setDraggingFrame(imageFrame(), contents: dragImage)
         let session = beginDraggingSession(with: [item], event: event, source: self)
         // Released where nothing accepts it: it flies back to the line.
