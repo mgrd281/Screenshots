@@ -249,14 +249,63 @@ final class Line: ObservableObject {
     /// until the last one does.
     var onSend: (([Pegged]) -> TimeInterval)?
 
-    private func paste(_ photos: [Pegged]) {
+    /// - Parameter caption: text to paste after the photos, like a
+    ///   description in a chat.
+    private func paste(_ photos: [Pegged], then caption: String? = nil) {
         guard !photos.isEmpty else { return }
         copy(photos)
         pickedIDs = []
         // Only when the paste will happen: a photo flying into a chat that
         // never gets it would say the opposite.
-        let flight = Paste.willPaste ? onSend?(photos) ?? 0 : 0
+        let willPaste = Paste.willPaste
+        let flight = willPaste ? onSend?(photos) ?? 0 : 0
         Paste.intoFrontApp(after: flight)
+        // Once the app has taken the photos, the clipboard turns to the text.
+        guard let caption, willPaste else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + flight + 0.5) {
+            MainActor.assumeIsolated { Self.pasteText(caption) }
+        }
+    }
+
+    /// Text, like a translation, straight into the app in front.
+    func sendText(_ text: String) {
+        Self.pasteText(text)
+    }
+
+    private static func pasteText(_ text: String) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(text, forType: .string)
+        Paste.intoFrontApp()
+    }
+
+    /// A photo with a line of text after it, as it goes in a chat.
+    func send(_ id: UUID, caption: String) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }) else {
+            sendText(caption)
+            return
+        }
+        paste([item], then: caption)
+    }
+
+    // MARK: Translate and Describe
+
+    /// Where a photo hangs on screen, for the card that shows what it says.
+    var frameOfPhoto: ((UUID) -> CGRect?)?
+
+    func translate(_ id: UUID, to language: Locale.Language) {
+        showCard(.translation, for: id, target: language)
+    }
+
+    func describe(_ id: UUID) {
+        showCard(.description, for: id, target: Languages.own)
+    }
+
+    private func showCard(_ kind: TextCardModel.Kind, for id: UUID, target: Locale.Language) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), !item.isRecording else { return }
+        let model = TextCardModel(kind, photo: id, url: item.url, line: self, target: target)
+        TextCard.shared.show(model, under: frameOfPhoto?(id))
+        model.start()
     }
 
     /// Each photo goes on the clipboard as an item of its own, as Finder

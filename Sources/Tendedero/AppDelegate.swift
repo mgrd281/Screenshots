@@ -95,6 +95,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         line.onFall = { [weak self] item in self?.fall(item) }
         line.onSend = { [weak self] photos in self?.send(photos) ?? 0 }
+        line.frameOfPhoto = { [weak self] id in self?.cardFrame(for: id) }
 
         line.$items
             .receive(on: RunLoop.main)

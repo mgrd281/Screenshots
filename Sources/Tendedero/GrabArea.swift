@@ -53,46 +53,71 @@ struct GrabArea: NSViewRepresentable {
             let menu = NSMenu()
             // Items say themselves whether they can be used.
             menu.autoenablesItems = false
-            menu.addItem(ClosureMenuItem(L("Copy")) { line.copy(id) })
+            menu.addItem(ClosureMenuItem(L("Copy"), symbol: "doc.on.doc") { line.copy(id) })
             if !isRecording {
-                menu.addItem(ClosureMenuItem(L("Copy Text")) { line.copyText(id) })
+                menu.addItem(ClosureMenuItem(L("Copy Text"), symbol: "text.viewfinder") { line.copyText(id) })
             }
             if line.liveCount > 1 {
-                menu.addItem(ClosureMenuItem(L("Copy all")) { line.copyAll() })
+                menu.addItem(ClosureMenuItem(L("Copy all"), symbol: "square.on.square") { line.copyAll() })
             }
             if let app = Paste.frontApp?.localizedName {
-                menu.addItem(ClosureMenuItem(String(format: L("Paste into %@"), app)) { line.paste(id) })
+                menu.addItem(ClosureMenuItem(String(format: L("Paste into %@"), app), symbol: "paperplane") { line.paste(id) })
             }
             if line.photosToCombine.count > 1 {
                 let combine = NSMenuItem(title: L("Combine into one image"), action: nil, keyEquivalent: "")
+                if #available(macOS 26, *) { combine.image = NSImage(systemSymbolName: "rectangle.stack", accessibilityDescription: nil) }
                 let ways = NSMenu()
                 ways.addItem(ClosureMenuItem(L("One under another")) { line.combine(.stacked) })
                 ways.addItem(ClosureMenuItem(L("Side by side")) { line.combine(.sideBySide) })
                 combine.submenu = ways
                 menu.addItem(combine)
             }
-            menu.addItem(ClosureMenuItem(L("Open")) { line.open(id) })
-            menu.addItem(ClosureMenuItem(L("Quick Look")) { line.quickLook(id) })
             if !isRecording {
-                menu.addItem(ClosureMenuItem(L("Markup")) { line.markup(id) })
-                menu.addItem(ClosureMenuItem(L("Hide Part…")) { line.hidePart(id) })
+                // What the screenshot says, translated or summed up, on this Mac.
+                menu.addItem(.separator())
+                if #available(macOS 15, *) {
+                    let translate = NSMenuItem(title: L("Translate Text"), action: nil, keyEquivalent: "")
+                    if #available(macOS 26, *) { translate.image = NSImage(systemSymbolName: "translate", accessibilityDescription: nil) }
+                    let languages = NSMenu()
+                    for language in Languages.mine {
+                        languages.addItem(ClosureMenuItem(Languages.name(language)) { line.translate(id, to: language) })
+                    }
+                    languages.addItem(.separator())
+                    for language in Languages.others {
+                        languages.addItem(ClosureMenuItem(Languages.name(language)) { line.translate(id, to: language) })
+                    }
+                    translate.submenu = languages
+                    menu.addItem(translate)
+                }
+                menu.addItem(ClosureMenuItem(L("Describe"), symbol: "sparkles") { line.describe(id) })
             }
-            menu.addItem(ClosureMenuItem(L("Show in Finder")) { line.reveal(id) })
+            menu.addItem(.separator())
+            menu.addItem(ClosureMenuItem(L("Open"), symbol: "arrow.up.forward.app") { line.open(id) })
+            menu.addItem(ClosureMenuItem(L("Quick Look"), symbol: "eye") { line.quickLook(id) })
+            if !isRecording {
+                menu.addItem(ClosureMenuItem(L("Markup"), symbol: "pencil.tip.crop.circle") { line.markup(id) })
+                menu.addItem(ClosureMenuItem(L("Hide Part…"), symbol: "rectangle.dashed") { line.hidePart(id) })
+            }
+            menu.addItem(ClosureMenuItem(L("Show in Finder"), symbol: "folder") { line.reveal(id) })
             let inInbox = line.isInInbox(id)
             if inInbox {
-                menu.addItem(ClosureMenuItem(L("Save to Desktop")) { line.saveToDesktop(id) })
+                menu.addItem(ClosureMenuItem(L("Save to Desktop"), symbol: "menubar.dock.rectangle") { line.saveToDesktop(id) })
             }
             menu.addItem(.separator())
             if inInbox {
-                menu.addItem(ClosureMenuItem(L("Discard")) { line.discard(id) })
+                menu.addItem(ClosureMenuItem(L("Discard"), symbol: "trash") { line.discard(id) })
             } else {
-                menu.addItem(ClosureMenuItem(L("Take down")) { line.discard(id) })
-                menu.addItem(ClosureMenuItem(L("Move to Trash")) { line.trash(id) })
+                menu.addItem(ClosureMenuItem(L("Take down"), symbol: "eye.slash") { line.discard(id) })
+                menu.addItem(ClosureMenuItem(L("Move to Trash"), symbol: "trash") { line.trash(id) })
             }
-            let left = ClosureMenuItem(L("Take down everything to the left")) { line.takeDown(id, toTheLeft: true) }
+            let left = ClosureMenuItem(L("Take down everything to the left"), symbol: "arrow.left.to.line") {
+                line.takeDown(id, toTheLeft: true)
+            }
             left.isEnabled = !line.neighbours(of: id, toTheLeft: true).isEmpty
             menu.addItem(left)
-            let right = ClosureMenuItem(L("Take down everything to the right")) { line.takeDown(id, toTheLeft: false) }
+            let right = ClosureMenuItem(L("Take down everything to the right"), symbol: "arrow.right.to.line") {
+                line.takeDown(id, toTheLeft: false)
+            }
             right.isEnabled = !line.neighbours(of: id, toTheLeft: false).isEmpty
             menu.addItem(right)
             return menu
@@ -280,10 +305,14 @@ final class GrabView: NSView, NSDraggingSource {
 final class ClosureMenuItem: NSMenuItem {
     private let handler: () -> Void
 
-    init(_ title: String, key: String = "", handler: @escaping () -> Void) {
+    init(_ title: String, symbol: String? = nil, key: String = "", handler: @escaping () -> Void) {
         self.handler = handler
         super.init(title: title, action: #selector(fire), keyEquivalent: key)
         target = self
+        // Menus have icons from macOS 26 on, as Apple's own apps do.
+        if #available(macOS 26, *), let symbol {
+            image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
+        }
     }
 
     required init(coder: NSCoder) { fatalError() }

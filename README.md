@@ -51,6 +51,8 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | <kbd>⌘</kbd>-click several | Copy them together, to paste them all at once. |
 | Right-click, then Copy Text | Copy the words in it, to paste as text. |
 | Right-click, then Hide Part | Drag a box over anything the covering missed. It stays hidden in whatever leaves the line. |
+| Right-click, then Translate Text | Read it in your language, to copy or send. |
+| Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open it in Markup. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. |
 | Double click | Open it in Preview. |
@@ -109,6 +111,18 @@ Copy Text leaves them out too. Anything it misses, hide by hand with
 Hide Part in a photo's menu. Labels like Billing address, Recipient or Diagnosis tell it
 where a whole block is private. The text is read on your Mac, and the
 screenshot file itself is never changed.
+
+<br>
+
+## Translated and described, on your Mac.
+
+Translate Text reads a screenshot and translates it into the language you
+pick, line by line, with Apple's translation. Describe writes a line about
+what it shows, like the order and its number, with Apple Intelligence,
+ready to send along with the photo. Both start from the text as it leaves
+the line, with private details already left out, and neither sends
+anything off your Mac. Without Apple Intelligence, Describe uses the
+screenshot's title.
 
 <br>
 
@@ -174,6 +188,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
+| `TextCard.swift` | Translate Text and Describe, and the card that shows them |
 | `Collage.swift` | Joins several screenshots into one image |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |

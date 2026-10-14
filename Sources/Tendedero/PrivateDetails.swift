@@ -289,11 +289,32 @@ enum Finder {
         }
     }
 
-    /// The text of a screenshot, a line per row, with the chosen details and
-    /// the words under the parts hidden by hand left out as dots, for Copy Text.
+    /// What a screenshot says, a line per row, with the chosen details and
+    /// the words under the parts hidden by hand left out as dots. Copy Text,
+    /// translations and descriptions all start from it.
+    struct Reading {
+        let lines: [String]
+        /// How tall each line's letters are, from 0 to 1 of the screenshot.
+        let heights: [CGFloat]
+
+        var text: String { lines.joined(separator: "\n") }
+
+        /// The biggest words, most often the page's title, like "Order #1024".
+        var headline: String? {
+            lines.indices
+                .filter { i in lines[i].unicodeScalars.filter { CharacterSet.letters.contains($0) }.count >= 3 }
+                .max { heights[$0] < heights[$1] }
+                .map { lines[$0].trimmingCharacters(in: .whitespaces) }
+        }
+    }
+
     static func text(of url: URL, hiding chosen: Set<PrivateDetail>, hand: [CGRect] = []) -> String {
+        reading(of: url, hiding: chosen, hand: hand).text
+    }
+
+    static func reading(of url: URL, hiding chosen: Set<PrivateDetail>, hand: [CGRect] = []) -> Reading {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
-              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return "" }
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return Reading(lines: [], heights: []) }
         let lines = read(image)
         var hidden = [IndexSet](repeating: IndexSet(), count: lines.count)
         for hit in hits(in: lines, chosen) {
@@ -312,7 +333,7 @@ enum Finder {
                 hidden[i].insert(integersIn: word.range.location..<(word.range.location + word.range.length))
             }
         }
-        return lines.indices.map { i -> String in
+        let kept = lines.indices.map { i -> String in
             let line = lines[i].string as NSString
             var kept = ""
             var from = 0
@@ -321,7 +342,8 @@ enum Finder {
                 from = run.upperBound
             }
             return kept + line.substring(from: from)
-        }.joined(separator: "\n")
+        }
+        return Reading(lines: kept, heights: lines.map(\.box.height))
     }
 
     private static let word = try! NSRegularExpression(pattern: "\\S+")
