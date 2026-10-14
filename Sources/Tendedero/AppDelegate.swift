@@ -662,12 +662,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         clipboard.toolTip = L("Images you copy hang on the line too")
         menu.addItem(clipboard)
 
-        let privacy = ClosureMenuItem(L("Hide private details")) { [weak self] in
-            PrivateDetails.hidden.toggle()
-            self?.line.readPrivateDetails()
+        // What to cover, each kind on its own.
+        let privacy = NSMenuItem(title: L("Hide private details"), action: nil, keyEquivalent: "")
+        let kinds = NSMenu()
+        for detail in PrivateDetail.allCases {
+            let item = ClosureMenuItem(detail.title) { [weak self] in
+                PrivateDetails.toggle(detail)
+                self?.line.readPrivateDetails()
+            }
+            item.state = PrivateDetails.details.contains(detail) ? .on : .off
+            kinds.addItem(item)
         }
+        privacy.submenu = kinds
         privacy.state = PrivateDetails.hidden ? .on : .off
-        privacy.toolTip = L("Names, addresses, emails, phone numbers, IBANs and card numbers are covered in whatever leaves the line")
+        privacy.toolTip = L("What is checked is covered in whatever leaves the line")
         menu.addItem(privacy)
 
         let bringDown = NSMenuItem(title: L("Bring the line down"), action: nil, keyEquivalent: "")

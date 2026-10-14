@@ -95,11 +95,13 @@ left alone.
 
 ## Private details, covered.
 
-Turn on Hide private details in the menu bar, and whatever leaves the
-line, copied, sent or dragged out, has its names, addresses, emails, phone
-numbers, IBANs and card numbers covered. The line shows each photo that
-way too, so what you see is what goes. The text is read on your Mac, and
-the screenshot file itself is never changed.
+Choose under Hide private details in the menu bar what to cover: names,
+addresses, emails, phone numbers, bank cards and accounts, health
+details. Whatever leaves the line, copied, sent or dragged out, has them
+covered, and the line shows each photo that way too, so what you see is
+what goes. Labels like Billing address, Recipient or Diagnosis tell it
+where a whole block is private. The text is read on your Mac, and the
+screenshot file itself is never changed.
 
 <br>
 

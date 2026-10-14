@@ -44,7 +44,13 @@
 "Images you copy hang on the line too" = "Kopyaladığınız görseller de ipe asılır";
 "Tendedero, hanging copied images" = "Tendedero, kopyalanan görselleri asıyor";
 "Hide private details" = "Özel bilgileri gizle";
-"Names, addresses, emails, phone numbers, IBANs and card numbers are covered in whatever leaves the line" = "İpten çıkan her şeyde isimler, adresler, e-postalar, telefon numaraları, IBAN'lar ve kart numaraları kapatılır";
+"Names" = "İsimler";
+"Addresses" = "Adresler";
+"Emails" = "E-postalar";
+"Phone numbers" = "Telefon numaraları";
+"Bank cards and accounts" = "Banka kartları ve hesapları";
+"Health details" = "Sağlık bilgileri";
+"What is checked is covered in whatever leaves the line" = "İşaretlenenler ipten çıkan her şeyde kapatılır";
 
 /* GrabArea */
 "Copy" = "Kopyala";

@@ -44,7 +44,13 @@
 "Images you copy hang on the line too" = "复制的图片也会挂上绳";
 "Tendedero, hanging copied images" = "Tendedero，正在挂上复制的图片";
 "Hide private details" = "隐藏隐私信息";
-"Names, addresses, emails, phone numbers, IBANs and card numbers are covered in whatever leaves the line" = "从晾衣绳上发出的图片中会遮住姓名、地址、电子邮件、电话号码、IBAN 和卡号";
+"Names" = "姓名";
+"Addresses" = "地址";
+"Emails" = "电子邮件";
+"Phone numbers" = "电话号码";
+"Bank cards and accounts" = "银行卡和账户";
+"Health details" = "健康信息";
+"What is checked is covered in whatever leaves the line" = "勾选的内容会在从晾衣绳上发出的图片中被遮住";
 
 /* GrabArea */
 "Copy" = "复制";

@@ -44,7 +44,13 @@
 "Images you copy hang on the line too" = "As imaxes que copias tamén se penduran";
 "Tendedero, hanging copied images" = "Tendedero, pendurando imaxes copiadas";
 "Hide private details" = "Ocultar datos privados";
-"Names, addresses, emails, phone numbers, IBANs and card numbers are covered in whatever leaves the line" = "Os nomes, enderezos, correos, teléfonos, IBAN e números de tarxeta tápanse en todo o que sae da corda";
+"Names" = "Nomes";
+"Addresses" = "Enderezos";
+"Emails" = "Correos";
+"Phone numbers" = "Teléfonos";
+"Bank cards and accounts" = "Tarxetas e contas bancarias";
+"Health details" = "Datos de saúde";
+"What is checked is covered in whatever leaves the line" = "O marcado tápase en todo o que sae da corda";
 
 /* GrabArea */
 "Copy" = "Copiar";

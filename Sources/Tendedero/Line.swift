@@ -397,9 +397,10 @@ final class Line: ObservableObject {
     }
 
     /// With Hide private details on, each photo hangs as it will leave the
-    /// line: with its private details covered.
+    /// line: with its private details covered, or as it is when the latest
+    /// choice leaves nothing to cover.
     private func show(_ shown: URL, for url: URL) {
-        guard PrivateDetails.hidden, shown != url,
+        guard PrivateDetails.hidden,
               let i = items.firstIndex(where: { $0.url == url && !$0.falling }),
               let thumb = makeThumbnail(shown) else { return }
         items[i].thumb = thumb
