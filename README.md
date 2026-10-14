@@ -78,7 +78,8 @@ Same shortcuts. Same muscle memory. Just less mess.
 
 The send button on the tag pastes the photos straight into the app in
 front, like the message box of a chat: the ones you <kbd>⌘</kbd>-clicked,
-or all of them. It works by pressing <kbd>⌘</kbd>&thinsp;<kbd>V</kbd> there for you,
+or all of them, and they fly over and land where you were typing. It works
+by pressing <kbd>⌘</kbd>&thinsp;<kbd>V</kbd> there for you,
 so macOS asks for the Accessibility permission the first time.
 
 <br>

@@ -94,6 +94,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self?.line.scroll(by: event.hasPreciseScrollingDeltas ? delta : delta * 12)
         }
         line.onFall = { [weak self] item in self?.fall(item) }
+        line.onSend = { [weak self] photos in self?.send(photos) ?? 0 }
 
         line.$items
             .receive(on: RunLoop.main)
@@ -328,6 +329,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
               let card = cardFrame(for: item.id),
               let image = item.thumb.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return }
         CaptureFlight.fall(image: image, card: card, tilt: CGFloat(item.tilt), on: screen)
+    }
+
+    /// Sent photos fly from the line into the app in front, a little apart,
+    /// and land where the paste shows up. Returns how long until the last
+    /// one lands; the first few are enough to say it.
+    private func send(_ photos: [Pegged]) -> TimeInterval {
+        guard isPresent, isRevealed, let screen = panel.screen else { return 0 }
+        let landing = Paste.landingPoint(on: screen)
+        var last: TimeInterval?
+        for (n, item) in photos.prefix(5).enumerated() {
+            guard let card = cardFrame(for: item.id),
+                  let image = item.thumb.cgImage(forProposedRect: nil, context: nil, hints: nil) else { continue }
+            // As small as an attachment, keeping the photo's shape.
+            let width: CGFloat = 56
+            let height = width * card.height / max(card.width, 1)
+            let target = CGRect(x: landing.x - width / 2, y: landing.y - height / 2, width: width, height: height)
+            let delay = 0.07 * Double(n)
+            CaptureFlight.send(image: image, card: card, to: target, tilt: CGFloat(item.tilt), on: screen, after: delay)
+            last = delay
+        }
+        return last.map { $0 + CaptureFlight.sendDuration } ?? 0
     }
 
     /// Where a card will hang, in screen coordinates, using the same layout

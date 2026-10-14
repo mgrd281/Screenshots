@@ -229,11 +229,18 @@ final class Line: ObservableObject {
         }
     }
 
+    /// Flies sent photos over to where they will land, and says how long
+    /// until the last one does.
+    var onSend: (([Pegged]) -> TimeInterval)?
+
     private func paste(_ photos: [Pegged]) {
         guard !photos.isEmpty else { return }
         copy(photos)
         pickedIDs = []
-        Paste.intoFrontApp()
+        // Only when the paste will happen: a photo flying into a chat that
+        // never gets it would say the opposite.
+        let flight = Paste.willPaste ? onSend?(photos) ?? 0 : 0
+        Paste.intoFrontApp(after: flight)
     }
 
     /// Each photo goes on the clipboard as an item of its own, as Finder
