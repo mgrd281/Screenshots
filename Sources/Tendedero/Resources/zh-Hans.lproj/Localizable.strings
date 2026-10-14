@@ -63,5 +63,6 @@
 /* PeggedView */
 "Copied" = "已复制";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "全部复制";
 "Move the line" = "移动晾衣绳";

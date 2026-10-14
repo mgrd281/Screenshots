@@ -29,7 +29,10 @@ struct Pegged: Identifiable, Equatable {
 final class Line: ObservableObject {
     @Published private(set) var items: [Pegged] = []
     @Published private(set) var gust = 0
-    @Published var copiedID: UUID?
+    @Published var copiedIDs: Set<UUID> = []
+    /// Photos picked with ⌘-click, to copy together. Cleared when the line
+    /// tucks away.
+    @Published var pickedIDs: Set<UUID> = []
     @Published var draggingID: UUID?
     @Published var pressedID: UUID?
     /// Whether the line has slid down into view.
@@ -112,6 +115,7 @@ final class Line: ObservableObject {
         onFall?(items[i])
         items[i].falling = true
         hitRects[id] = nil
+        pickedIDs.remove(id)
         save()
         if !quietly { play("Pop", volume: 0.25) }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
@@ -158,17 +162,42 @@ final class Line: ObservableObject {
 
     func copy(_ id: UUID) {
         guard let item = items.first(where: { $0.id == id }) else { return }
-        let entry = NSPasteboardItem()
-        // A recording is copied as the file, which apps paste as the video.
-        if !item.isRecording, let png = pngData(item.url) { entry.setData(png, forType: .png) }
-        entry.setString(item.url.absoluteString, forType: .fileURL)
+        pickedIDs = []
+        copy([item])
+    }
+
+    /// ⌘-click: picks the photo, or puts it back, and copies every photo
+    /// picked, so they paste together into a chat or a message.
+    func pick(_ id: UUID) {
+        if pickedIDs.contains(id) { pickedIDs.remove(id) } else { pickedIDs.insert(id) }
+        let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
+        if !picked.isEmpty { copy(picked) }
+    }
+
+    /// Every photo on the line, to paste them all at once.
+    func copyAll() {
+        pickedIDs = []
+        copy(items.filter { !$0.falling })
+    }
+
+    /// Each photo goes on the clipboard as an item of its own, as Finder
+    /// copies several files, so apps paste them all, in the order they hang.
+    private func copy(_ photos: [Pegged]) {
+        let entries = photos.map { item -> NSPasteboardItem in
+            let entry = NSPasteboardItem()
+            // A recording is copied as the file, which apps paste as the video.
+            if !item.isRecording, let png = pngData(item.url) { entry.setData(png, forType: .png) }
+            entry.setString(item.url.absoluteString, forType: .fileURL)
+            return entry
+        }
         let pb = NSPasteboard.general
         pb.clearContents()
-        pb.writeObjects([entry])
+        pb.writeObjects(entries)
 
-        copiedID = id
+        let ids = Set(photos.map(\.id))
+        copiedIDs = ids
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
-            if self?.copiedID == id { self?.copiedID = nil }
+            if self?.copiedIDs == ids { self?.copiedIDs = [] }
         }
     }
 

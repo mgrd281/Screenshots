@@ -65,5 +65,6 @@
 /* PeggedView */
 "Copied" = "कॉपी हो गया";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "सब कॉपी करें";
 "Move the line" = "रस्सी खिसकाएँ";

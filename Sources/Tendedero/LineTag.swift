@@ -2,14 +2,15 @@ import AppKit
 import SwiftUI
 
 /// A small tag clipped on near the right end of the line. Its grip moves the
-/// whole line up or down the screen, and its trash takes everything down at
-/// once, each photo the way of its own corner cross.
+/// whole line up or down the screen, its copy button copies every photo to
+/// paste them all at once, and its trash takes everything down at once, each
+/// photo the way of its own corner cross.
 struct LineTag: View {
     @ObservedObject var line: Line
 
     static let width: CGFloat = 26
-    /// Room for the clip, the grip and the trash. The tag hangs from the top.
-    static let maxHeight: CGFloat = 80
+    /// Room for the clip and the three tools. The tag hangs from the top.
+    static let maxHeight: CGFloat = 104
 
     var body: some View {
         VStack(spacing: -12) {
@@ -20,6 +21,11 @@ struct LineTag: View {
                     // Under the clip is grip too.
                     .padding(.top, 12)
                     .overlay(TagArea(label: L("Move the line"), movesLine: true))
+                if line.liveCount > 1 {
+                    tool("doc.on.doc")
+                        .overlay(TagArea(label: L("Copy all")) { line.copyAll() })
+                        .transition(.opacity)
+                }
                 if line.liveCount > 0 {
                     // Like the corner cross: a trash only when something goes
                     // to the Trash, rather than only off the line.
@@ -37,7 +43,7 @@ struct LineTag: View {
                 }
             )
         }
-        .animation(.easeOut(duration: 0.2), value: line.liveCount > 0)
+        .animation(.easeOut(duration: 0.2), value: min(line.liveCount, 2))
     }
 
     private func tool(_ symbol: String) -> some View {

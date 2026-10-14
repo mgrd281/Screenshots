@@ -63,5 +63,6 @@
 /* PeggedView */
 "Copied" = "Kopyalandı";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "Hepsini kopyala";
 "Move the line" = "İpi taşı";

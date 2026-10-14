@@ -63,5 +63,6 @@
 /* PeggedView */
 "Copied" = "Copiado";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "Copiar tudo";
 "Move the line" = "Mover o varal";

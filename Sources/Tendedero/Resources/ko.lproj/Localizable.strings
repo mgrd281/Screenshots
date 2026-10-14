@@ -63,5 +63,6 @@
 /* PeggedView */
 "Copied" = "복사됨";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "모두 복사하기";
 "Move the line" = "빨랫줄 옮기기";

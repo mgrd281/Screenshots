@@ -63,5 +63,6 @@
 /* PeggedView */
 "Copied" = "コピーしました";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "すべてコピー";
 "Move the line" = "ロープを動かす";

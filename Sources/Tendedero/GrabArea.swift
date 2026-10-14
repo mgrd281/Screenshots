@@ -10,6 +10,7 @@ import SwiftUI
 /// - Nowhere that accepts it: the photo flies back to the line.
 ///
 /// Click copies, press and hold opens Markup, the corner cross discards.
+/// ⌘-click picks several, which copy together.
 struct GrabArea: NSViewRepresentable {
     let item: Pegged
     let line: Line
@@ -31,6 +32,7 @@ struct GrabArea: NSViewRepresentable {
         view.url = item.url
         view.dragImage = item.thumb
         view.onClick = { line.copy(id) }
+        view.onPick = { line.pick(id) }
         view.onDoubleClick = { line.open(id) }
         view.onDragStart = { line.draggingID = id }
         view.onDragEnd = {
@@ -48,6 +50,9 @@ struct GrabArea: NSViewRepresentable {
             // Items say themselves whether they can be used.
             menu.autoenablesItems = false
             menu.addItem(ClosureMenuItem(L("Copy")) { line.copy(id) })
+            if line.liveCount > 1 {
+                menu.addItem(ClosureMenuItem(L("Copy all")) { line.copyAll() })
+            }
             menu.addItem(ClosureMenuItem(L("Open")) { line.open(id) })
             menu.addItem(ClosureMenuItem(L("Quick Look")) { line.quickLook(id) })
             if !isRecording {
@@ -84,6 +89,8 @@ final class GrabView: NSView, NSDraggingSource {
     var url: URL?
     var dragImage: NSImage?
     var onClick: () -> Void = {}
+    /// ⌘-click or ⇧-click: picks the photo, to copy along with others.
+    var onPick: () -> Void = {}
     var onDoubleClick: () -> Void = {}
     var onDragStart: () -> Void = {}
     var onDragEnd: () -> Void = {}
@@ -116,13 +123,18 @@ final class GrabView: NSView, NSDraggingSource {
         return corner.contains(p)
     }
 
+    /// Holding ⌘ or ⇧ picks photos one by one, however fast you click.
+    private func isPick(_ event: NSEvent) -> Bool {
+        !event.modifierFlags.intersection([.command, .shift]).isEmpty
+    }
+
     override func mouseDown(with event: NSEvent) {
         if isInCross(event) {
             downPoint = nil
             onDiscard()
             return
         }
-        if event.clickCount == 2 {
+        if event.clickCount == 2 && !isPick(event) {
             downPoint = nil
             onDoubleClick()
             return
@@ -175,7 +187,9 @@ final class GrabView: NSView, NSDraggingSource {
 
     override func mouseUp(with event: NSEvent) {
         endPress()
-        if downPoint != nil && !startedDrag && !didLongPress && event.clickCount == 1 { onClick() }
+        if downPoint != nil && !startedDrag && !didLongPress {
+            if isPick(event) { onPick() } else if event.clickCount == 1 { onClick() }
+        }
         downPoint = nil
         didLongPress = false
     }

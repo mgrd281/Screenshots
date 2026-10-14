@@ -48,13 +48,15 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | | |
 |:--|:--|
 | Click | Copy the image. |
+| <kbd>⌘</kbd>-click several | Copy them together, to paste them all at once. |
 | Press and hold | Open it in Markup. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
 | Drag into an app | Send a copy. It stays on the line. |
 | Drag into a folder | Keep it there. It leaves the line. |
 | Drag to the Trash, or click the cross | Let it go. |
-| Click the trash on the tag at the end of the line | Take everything down at once. |
+| Click the copy button on the tag at the end of the line | Copy every photo on the line. |
+| Click the trash on the tag | Take everything down at once. |
 | Drag the arrows on the tag | Move the line further down the screen, or back up. It stays there. |
 | Rest the pointer in the menu bar | Bring the line down on that screen. |
 | Click anything in the menu bar | Put it away. |
@@ -142,7 +144,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs |
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
-| `LineTag.swift` | The tag at the end of the line: moving it, and taking everything down |
+| `LineTag.swift` | The tag at the end of the line: moving it, copying and taking everything down |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |

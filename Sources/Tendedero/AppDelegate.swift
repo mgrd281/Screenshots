@@ -405,6 +405,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             panel.ignoresMouseEvents = true
             // A grip that went away under the pointer never hears it let go.
             TagView.isMovingLine = false
+            // What was picked is on the clipboard by now. Next time the line
+            // comes down, a ⌘-click starts afresh.
+            line.pickedIDs = []
         }
     }
 
