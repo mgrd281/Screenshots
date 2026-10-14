@@ -2,7 +2,7 @@
 
 /* AppDelegate */
 "Let Tendedero handle your screenshots?" = "Laisser Tendedero gérer vos captures d’écran ?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits." = "Les captures s’accrocheront à la corde dès que vous les prendrez, sans la vignette flottante, et ne s’entasseront plus sur votre bureau. Faites-en glisser une dans un dossier pour la garder, ou jetez-la avec la croix. Vous pouvez désactiver cette option depuis la barre des menus, et vos réglages reviennent quand vous quittez Tendedero.";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "Les captures s’accrocheront à la corde dès que vous les prendrez, sans la vignette flottante, et ne s’entasseront plus sur votre bureau. Faites-en glisser une dans un dossier pour la garder, ou jetez-la avec la croix. Vous pouvez désactiver cette option dans les Réglages, et vos réglages reviennent quand vous quittez Tendedero.";
 "Turn on" = "Activer";
 "Not now" = "Plus tard";
 "Hide line" = "Masquer la corde";

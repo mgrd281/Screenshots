@@ -2,7 +2,7 @@
 
 /* AppDelegate */
 "Let Tendedero handle your screenshots?" = "让 Tendedero 接管你的截图？";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits." = "你截图的那一瞬间，图片就会挂到晾衣绳上——没有浮动缩略图，也不会堆到桌面上。拖进文件夹即保留，点叉即丢弃。随时可以从菜单栏关掉，退出 Tendedero 后你的设置会自动还原。";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "你截图的那一瞬间，图片就会挂到晾衣绳上——没有浮动缩略图，也不会堆到桌面上。拖进文件夹即保留，点叉即丢弃。随时可以在设置中关掉，退出 Tendedero 后你的设置会自动还原。";
 "Turn on" = "开启";
 "Not now" = "以后再说";
 "Hide line" = "隐藏晾衣绳";

@@ -2,7 +2,7 @@
 
 /* AppDelegate */
 "Let Tendedero handle your screenshots?" = "Queres que Tendedero se encargue das túas capturas?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits." = "As capturas penduraranse na corda no intre en que as fagas, sen a miniatura flotante, e non se amontoarán no Escritorio. Arrastra unha a un cartafol para gardala, ou descártaa coa cruz. Podes desactivalo dende a barra de menús, e os teus axustes volven ser os de antes ao saír de Tendedero.";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "As capturas penduraranse na corda no intre en que as fagas, sen a miniatura flotante, e non se amontoarán no Escritorio. Arrastra unha a un cartafol para gardala, ou descártaa coa cruz. Podes desactivalo nos Axustes, e os teus axustes volven ser os de antes ao saír de Tendedero.";
 "Turn on" = "Activar";
 "Not now" = "Agora non";
 "Hide line" = "Ocultar a corda";

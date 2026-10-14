@@ -1,0 +1,97 @@
+/* German. */
+
+/* AppDelegate */
+"Let Tendedero handle your screenshots?" = "Soll Tendedero deine Bildschirmfotos übernehmen?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "Bildschirmfotos hängen auf der Leine, sobald du sie aufnimmst, ohne die schwebende Miniatur, und stapeln sich nicht mehr auf deinem Schreibtisch. Zieh eines in einen Ordner, um es zu behalten, oder wirf es mit dem Kreuz weg. Du kannst das in den Einstellungen ausschalten, und deine Einstellungen kommen zurück, wenn du Tendedero beendest.";
+"Turn on" = "Einschalten";
+"Not now" = "Jetzt nicht";
+"Hide line" = "Leine ausblenden";
+"Show line" = "Leine einblenden";
+"Take everything down" = "Alles abnehmen";
+"Handle screenshots" = "Bildschirmfotos übernehmen";
+"Screenshots hang instantly and skip the Desktop" = "Bildschirmfotos hängen sofort und landen nicht auf dem Schreibtisch";
+"Open screenshots folder" = "Ordner der Bildschirmfotos öffnen";
+"Sounds" = "Töne";
+"Open at login" = "Beim Anmelden öffnen";
+"Check for Updates…" = "Nach Updates suchen …";
+"Quit Tendedero" = "Tendedero beenden";
+"Could not change the login setting" = "Die Anmeldeeinstellung konnte nicht geändert werden";
+"Move Tendedero to the Applications folder and try again." = "Bewege Tendedero in den Ordner „Programme“ und versuche es erneut.";
+"Keep on line" = "Auf der Leine behalten";
+"As many as fit" = "So viele wie passen";
+"%d photos" = "%d Fotos";
+"Also watch folders" = "Auch Ordner beobachten";
+"Add Folder…" = "Ordner hinzufügen …";
+"Stop Watching" = "Nicht mehr beobachten";
+"Watch" = "Beobachten";
+"New images saved to this folder will hang on the line." = "Neue Bilder, die in diesem Ordner gesichert werden, hängen auf der Leine.";
+"Shortcut" = "Tastenkurzbefehl";
+"Change Shortcut…" = "Tastenkurzbefehl ändern …";
+"Change Shortcut" = "Tastenkurzbefehl ändern";
+"None" = "Keiner";
+"Space" = "Leertaste";
+"Press the new shortcut" = "Drücke den neuen Tastenkurzbefehl";
+"Escape cancels. Delete removes the shortcut." = "Escape bricht ab. Löschen entfernt den Tastenkurzbefehl.";
+"Size" = "Größe";
+"Small" = "Klein";
+"Medium" = "Mittel";
+"Large" = "Groß";
+"Bring the line down" = "Leine herunterholen";
+"When the pointer rests in the menu bar" = "Wenn der Zeiger in der Menüleiste ruht";
+"When something new hangs" = "Wenn etwas Neues aufgehängt wird";
+"Over full screen apps" = "Über Apps im Vollbildmodus";
+"Hang copied images" = "Kopierte Bilder aufhängen";
+"Images you copy hang on the line too" = "Bilder, die du kopierst, hängen auch auf der Leine";
+"Tendedero, hanging copied images" = "Tendedero, hängt kopierte Bilder auf";
+"Hide private details" = "Private Angaben verbergen";
+"Names" = "Namen";
+"Addresses" = "Adressen";
+"Emails" = "E-Mails";
+"Phone numbers" = "Telefonnummern";
+"Bank cards and accounts" = "Bankkarten und Konten";
+"Health details" = "Gesundheitsdaten";
+"What is checked is covered in whatever leaves the line" = "Was angehakt ist, wird in allem verdeckt, was die Leine verlässt";
+
+/* GrabArea */
+"Copy" = "Kopieren";
+"Open" = "Öffnen";
+"Quick Look" = "Übersicht";
+"Markup" = "Markierungen";
+"Show in Finder" = "Im Finder zeigen";
+"Save to Desktop" = "Auf dem Schreibtisch sichern";
+"Discard" = "Verwerfen";
+"Take down" = "Abnehmen";
+"Move to Trash" = "In den Papierkorb legen";
+"Take down everything to the left" = "Alles links davon abnehmen";
+"Take down everything to the right" = "Alles rechts davon abnehmen";
+
+/* LineView */
+"Take a screenshot and it will hang here" = "Mach ein Bildschirmfoto und es hängt hier";
+
+/* PeggedView */
+"Copied" = "Kopiert";
+
+/* LineTag, GrabArea */
+"Copy all" = "Alle kopieren";
+"Paste into %@" = "In %@ einsetzen";
+"Paste into the app in front" = "In die App im Vordergrund einsetzen";
+"Combine into one image" = "Zu einem Bild zusammenfügen";
+"One under another" = "Untereinander";
+"Side by side" = "Nebeneinander";
+"Move the line" = "Leine verschieben";
+
+/* SettingsWindow */
+"Settings…" = "Einstellungen …";
+"Settings" = "Einstellungen";
+"General" = "Allgemein";
+"Line" = "Leine";
+"Privacy" = "Datenschutz";
+"About" = "Über";
+"Preview" = "Vorschau";
+"Take a screenshot to see it here" = "Mach ein Bildschirmfoto, um es hier zu sehen";
+"Send button" = "Senden-Taste";
+"Allowed" = "Erlaubt";
+"Not allowed yet" = "Noch nicht erlaubt";
+"Open Accessibility Settings…" = "Einstellungen für Bedienungshilfen öffnen …";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "Die Senden-Taste drückt ⌘V in der App im Vordergrund und braucht dafür die Berechtigung für Bedienungshilfen.";
+"Version %@" = "Version %@";

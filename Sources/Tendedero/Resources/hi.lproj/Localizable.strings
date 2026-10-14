@@ -4,7 +4,7 @@
 
 /* AppDelegate */
 "Let Tendedero handle your screenshots?" = "क्या Tendedero आपके स्क्रीनशॉट संभाले?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits." = "स्क्रीनशॉट लेते ही वे रस्सी पर टँग जाएँगे, बिना तैरते थंबनेल के, और आपके डेस्कटॉप पर जमा नहीं होंगे। किसी को रखना हो तो उसे फ़ोल्डर में खींचें, या क्रॉस से हटा दें। आप इसे मेनू बार से बंद कर सकते हैं, और Tendedero बंद होने पर आपकी सेटिंग्स वापस आ जाती हैं।";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "स्क्रीनशॉट लेते ही वे रस्सी पर टँग जाएँगे, बिना तैरते थंबनेल के, और आपके डेस्कटॉप पर जमा नहीं होंगे। किसी को रखना हो तो उसे फ़ोल्डर में खींचें, या क्रॉस से हटा दें। आप इसे सेटिंग्स से बंद कर सकते हैं, और Tendedero बंद होने पर आपकी सेटिंग्स वापस आ जाती हैं।";
 "Turn on" = "चालू करें";
 "Not now" = "अभी नहीं";
 "Hide line" = "रस्सी छिपाएँ";

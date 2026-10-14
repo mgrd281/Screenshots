@@ -2,7 +2,7 @@
 
 /* AppDelegate */
 "Let Tendedero handle your screenshots?" = "Ekran görüntülerini Tendedero yönetsin mi?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits." = "Ekran görüntüleri, kayan küçük resim olmadan anında ipin üzerine asılacak ve Masaüstünüzde birikmeyecek. Saklamak için bir klasöre sürükleyin ya da çarpı ile silin. Bunu menü çubuğundan kapatabilirsiniz; Tendedero kapandığında ayarlarınız geri gelir.";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Tendedero quits." = "Ekran görüntüleri, kayan küçük resim olmadan anında ipin üzerine asılacak ve Masaüstünüzde birikmeyecek. Saklamak için bir klasöre sürükleyin ya da çarpı ile silin. Bunu Ayarlar'dan kapatabilirsiniz; Tendedero kapandığında ayarlarınız geri gelir.";
 "Turn on" = "Etkinleştir";
 "Not now" = "Şimdi değil";
 "Hide line" = "İpi gizle";
