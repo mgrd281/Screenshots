@@ -79,3 +79,19 @@
 "One under another" = "上下排列";
 "Side by side" = "左右排列";
 "Move the line" = "移动晾衣绳";
+
+/* SettingsWindow */
+"Settings…" = "设置…";
+"Settings" = "设置";
+"General" = "通用";
+"Line" = "晾衣绳";
+"Privacy" = "隐私";
+"About" = "关于";
+"Preview" = "预览";
+"Take a screenshot to see it here" = "截一张图即可在这里看到";
+"Send button" = "发送按钮";
+"Allowed" = "已允许";
+"Not allowed yet" = "尚未允许";
+"Open Accessibility Settings…" = "打开辅助功能设置…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "发送按钮会在前台应用中按下 ⌘V，因此需要辅助功能权限。";
+"Version %@" = "版本 %@";

@@ -79,3 +79,19 @@
 "One under another" = "縦に並べる";
 "Side by side" = "横に並べる";
 "Move the line" = "ロープを動かす";
+
+/* SettingsWindow */
+"Settings…" = "設定…";
+"Settings" = "設定";
+"General" = "一般";
+"Line" = "ロープ";
+"Privacy" = "プライバシー";
+"About" = "情報";
+"Preview" = "プレビュー";
+"Take a screenshot to see it here" = "スクリーンショットを撮るとここに表示されます";
+"Send button" = "送信ボタン";
+"Allowed" = "許可済み";
+"Not allowed yet" = "まだ許可されていません";
+"Open Accessibility Settings…" = "アクセシビリティ設定を開く…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "送信ボタンは前面のアプリで⌘Vを押すため、アクセシビリティの許可が必要です。";
+"Version %@" = "バージョン %@";

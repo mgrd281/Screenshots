@@ -79,3 +79,19 @@
 "One under another" = "위아래로";
 "Side by side" = "나란히";
 "Move the line" = "빨랫줄 옮기기";
+
+/* SettingsWindow */
+"Settings…" = "설정…";
+"Settings" = "설정";
+"General" = "일반";
+"Line" = "빨랫줄";
+"Privacy" = "개인정보 보호";
+"About" = "정보";
+"Preview" = "미리보기";
+"Take a screenshot to see it here" = "스크린샷을 찍으면 여기에 표시됩니다";
+"Send button" = "보내기 버튼";
+"Allowed" = "허용됨";
+"Not allowed yet" = "아직 허용되지 않음";
+"Open Accessibility Settings…" = "손쉬운 사용 설정 열기…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "보내기 버튼은 앞에 있는 앱에서 ⌘V를 누르므로 손쉬운 사용 권한이 필요합니다.";
+"Version %@" = "버전 %@";

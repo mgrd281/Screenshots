@@ -81,3 +81,19 @@
 "One under another" = "एक के नीचे एक";
 "Side by side" = "अगल-बगल";
 "Move the line" = "रस्सी खिसकाएँ";
+
+/* SettingsWindow */
+"Settings…" = "सेटिंग्स…";
+"Settings" = "सेटिंग्स";
+"General" = "सामान्य";
+"Line" = "रस्सी";
+"Privacy" = "गोपनीयता";
+"About" = "परिचय";
+"Preview" = "पूर्वावलोकन";
+"Take a screenshot to see it here" = "यहाँ देखने के लिए स्क्रीनशॉट लें";
+"Send button" = "भेजें बटन";
+"Allowed" = "अनुमति है";
+"Not allowed yet" = "अभी अनुमति नहीं है";
+"Open Accessibility Settings…" = "Accessibility सेटिंग्स खोलें…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "भेजें बटन सामने वाले ऐप में ⌘V दबाता है, इसलिए इसे Accessibility अनुमति चाहिए।";
+"Version %@" = "संस्करण %@";

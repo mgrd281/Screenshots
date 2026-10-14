@@ -23,6 +23,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var hotKey: HotKey?
     private var cancellables = Set<AnyCancellable>()
     private var mouseTimer: Timer?
+    /// What the settings window shows and changes.
+    private var preferences: Preferences?
 
     /// Whether the panel is ordered in. It can be in and still tucked away
     /// above the top edge, like an auto-hiding Dock.
@@ -80,6 +82,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         setUpStatusItem()
         watchMenuBarClicks()
+
+        setUpPreferences()
 
         Markup.shared.onSaved = { [weak self] url in self?.line.reloadThumbnail(for: url) }
         Trim.shared.onSaved = { [weak self] url in self?.line.reloadThumbnail(for: url) }
@@ -581,6 +585,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 }
             }
             self.registerShortcut()
+            self.preferences?.refresh()
         }
     }
 
@@ -604,6 +609,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let fits = max(3, min(12, Int(usable / Layout.spacing)))
         line.visibleCount = fits
         line.maxItems = max(fits, Line.keepOnLine ?? fits)
+    }
+
+    // MARK: Settings
+
+    private func setUpPreferences() {
+        let preferences = Preferences(line: line)
+        preferences.actions = Preferences.Actions(
+            setInbox: { [weak self] in self?.setInbox($0) },
+            setClipboard: { [weak self] in self?.setClipboard($0) },
+            setKeep: { [weak self] in self?.setKeep($0) },
+            setSize: { [weak self] in self?.setSize($0) },
+            addFolder: { [weak self] in self?.chooseExtraFolder() },
+            foldersChanged: { [weak self] in self?.startWatcher() },
+            changeShortcut: { [weak self] in self?.changeShortcut() },
+            fullScreenChanged: { [weak self] in self?.refresh() },
+            openScreenshotsFolder: { [weak self] in
+                guard let self else { return }
+                NSWorkspace.shared.open(self.watcher.folder)
+            })
+        self.preferences = preferences
+    }
+
+    private func openSettings() {
+        guard let preferences else { return }
+        SettingsWindow.shared.show(preferences)
     }
 
     // MARK: Menu bar
@@ -648,138 +678,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         clearItem.isEnabled = line.liveCount > 0
         menu.addItem(clearItem)
 
-        let inbox = ClosureMenuItem(L("Handle screenshots")) { [weak self] in
-            self?.setInbox(!Inbox.isEnabled)
-        }
-        inbox.state = Inbox.isEnabled ? .on : .off
-        inbox.toolTip = L("Screenshots hang instantly and skip the Desktop")
-        menu.addItem(inbox)
+        menu.addItem(.separator())
 
-        let clipboard = ClosureMenuItem(L("Hang copied images")) { [weak self] in
-            self?.setClipboard(!ClipboardWatcher.isEnabled)
-        }
-        clipboard.state = ClipboardWatcher.isEnabled ? .on : .off
-        clipboard.toolTip = L("Images you copy hang on the line too")
-        menu.addItem(clipboard)
-
-        // What to cover, each kind on its own.
-        let privacy = NSMenuItem(title: L("Hide private details"), action: nil, keyEquivalent: "")
-        let kinds = NSMenu()
-        for detail in PrivateDetail.allCases {
-            let item = ClosureMenuItem(detail.title) { [weak self] in
-                PrivateDetails.toggle(detail)
-                self?.line.readPrivateDetails()
-            }
-            item.state = PrivateDetails.details.contains(detail) ? .on : .off
-            kinds.addItem(item)
-        }
-        privacy.submenu = kinds
-        privacy.state = PrivateDetails.hidden ? .on : .off
-        privacy.toolTip = L("What is checked is covered in whatever leaves the line")
-        menu.addItem(privacy)
-
-        let bringDown = NSMenuItem(title: L("Bring the line down"), action: nil, keyEquivalent: "")
-        let options = NSMenu()
-        let hover = ClosureMenuItem(L("When the pointer rests in the menu bar")) {
-            AppDelegate.opensFromMenuBar.toggle()
-        }
-        hover.state = Self.opensFromMenuBar ? .on : .off
-        options.addItem(hover)
-        let peek = ClosureMenuItem(L("When something new hangs")) {
-            AppDelegate.peeksAtNew.toggle()
-        }
-        peek.state = Self.peeksAtNew ? .on : .off
-        options.addItem(peek)
-        let fullScreen = ClosureMenuItem(L("Over full screen apps")) { [weak self] in
-            FullScreen.showLineOver.toggle()
-            self?.refresh()
-        }
-        fullScreen.state = FullScreen.showLineOver ? .on : .off
-        options.addItem(fullScreen)
-        bringDown.submenu = options
-        menu.addItem(bringDown)
-
-        let folderItem = NSMenuItem(title: L("Also watch folders"), action: nil, keyEquivalent: "")
-        let folderMenu = NSMenu()
-        folderMenu.autoenablesItems = false
-        let folders = Self.extraFolders
-        for folder in folders {
-            let item = ClosureMenuItem(FileManager.default.displayName(atPath: folder.path)) {
-                NSWorkspace.shared.open(folder)
-            }
-            item.state = .on
-            folderMenu.addItem(item)
-        }
-        if !folders.isEmpty { folderMenu.addItem(.separator()) }
-        let add = ClosureMenuItem(L("Add Folder…")) { [weak self] in self?.chooseExtraFolder() }
-        add.isEnabled = folders.count < Self.maxExtraFolders
-        folderMenu.addItem(add)
-        if !folders.isEmpty {
-            let stop = NSMenuItem(title: L("Stop Watching"), action: nil, keyEquivalent: "")
-            let stopMenu = NSMenu()
-            for folder in folders {
-                stopMenu.addItem(ClosureMenuItem(FileManager.default.displayName(atPath: folder.path)) { [weak self] in
-                    AppDelegate.extraFolders.removeAll { $0.standardizedFileURL == folder.standardizedFileURL }
-                    self?.startWatcher()
-                })
-            }
-            stop.submenu = stopMenu
-            folderMenu.addItem(stop)
-        }
-        folderItem.submenu = folderMenu
-        menu.addItem(folderItem)
-
-        let keepItem = NSMenuItem(title: L("Keep on line"), action: nil, keyEquivalent: "")
-        let keeps = NSMenu()
-        let fit = ClosureMenuItem(L("As many as fit")) { [weak self] in self?.setKeep(nil) }
-        fit.state = Line.keepOnLine == nil ? .on : .off
-        keeps.addItem(fit)
-        for n in Line.keepChoices {
-            let item = ClosureMenuItem(String(format: L("%d photos"), n)) { [weak self] in self?.setKeep(n) }
-            item.state = Line.keepOnLine == n ? .on : .off
-            keeps.addItem(item)
-        }
-        keepItem.submenu = keeps
-        menu.addItem(keepItem)
-
-        let sizeItem = NSMenuItem(title: L("Size"), action: nil, keyEquivalent: "")
-        let sizes = NSMenu()
-        for (size, title) in [(Layout.Size.small, L("Small")), (.medium, L("Medium")), (.large, L("Large"))] {
-            let item = ClosureMenuItem(title) { [weak self] in self?.setSize(size) }
-            item.state = Layout.size == size ? .on : .off
-            sizes.addItem(item)
-        }
-        sizeItem.submenu = sizes
-        menu.addItem(sizeItem)
-
-        let shortcutItem = NSMenuItem(title: L("Shortcut"), action: nil, keyEquivalent: "")
-        let shortcuts = NSMenu()
-        let current = NSMenuItem(title: Shortcut.current?.display ?? L("None"), action: nil, keyEquivalent: "")
-        current.isEnabled = false
-        shortcuts.addItem(current)
-        shortcuts.addItem(ClosureMenuItem(L("Change Shortcut…")) { [weak self] in self?.changeShortcut() })
-        shortcutItem.submenu = shortcuts
-        menu.addItem(shortcutItem)
+        // Everything else lives in the settings window.
+        menu.addItem(ClosureMenuItem(L("Settings…"), key: ",") { [weak self] in
+            self?.openSettings()
+        })
 
         menu.addItem(ClosureMenuItem(L("Open screenshots folder")) { [weak self] in
             guard let self else { return }
             NSWorkspace.shared.open(self.watcher.folder)
         })
-
-        menu.addItem(.separator())
-
-        let sound = ClosureMenuItem(L("Sounds")) { [weak self] in
-            guard let self else { return }
-            self.line.soundOn.toggle()
-        }
-        sound.state = line.soundOn ? .on : .off
-        menu.addItem(sound)
-
-        let login = ClosureMenuItem(L("Open at login")) {
-            AppDelegate.toggleLaunchAtLogin()
-        }
-        login.state = SMAppService.mainApp.status == .enabled ? .on : .off
-        menu.addItem(login)
 
         // The app never connects to anything, so it cannot tell when a new
         // version is out. The website can: it is opened with this version
@@ -796,7 +705,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// tendedero.app with the running version, and the menus' language when
     /// the website has it too, so the page answers in the same words.
-    private static var updatesURL: URL {
+    static var updatesURL: URL {
         var components = URLComponents(string: "https://tendedero.app/")!
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
         var query = [URLQueryItem(name: "update", value: version)]
@@ -807,7 +716,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         return components.url!
     }
 
-    private static func toggleLaunchAtLogin() {
+    static func toggleLaunchAtLogin() {
         do {
             if SMAppService.mainApp.status == .enabled {
                 try SMAppService.mainApp.unregister()

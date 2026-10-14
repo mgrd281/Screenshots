@@ -81,3 +81,19 @@
 "One under another" = "Alt-alta";
 "Side by side" = "Yan-yana";
 "Move the line" = "İpi tərpət";
+
+/* SettingsWindow */
+"Settings…" = "Ayarlar…";
+"Settings" = "Ayarlar";
+"General" = "Ümumi";
+"Line" = "İp";
+"Privacy" = "Məxfilik";
+"About" = "Haqqında";
+"Preview" = "Önizləmə";
+"Take a screenshot to see it here" = "Burada görmək üçün ekran şəkli çək";
+"Send button" = "Göndər düyməsi";
+"Allowed" = "İcazə verilib";
+"Not allowed yet" = "Hələ icazə verilməyib";
+"Open Accessibility Settings…" = "Əlçatanlıq ayarlarını aç…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "Göndər düyməsi öndəki tətbiqdə ⌘V basır, buna görə Əlçatanlıq icazəsi lazımdır.";
+"Version %@" = "Versiya %@";

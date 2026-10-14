@@ -79,3 +79,19 @@
 "One under another" = "Unha debaixo doutra";
 "Side by side" = "Unha ao lado doutra";
 "Move the line" = "Mover a corda";
+
+/* SettingsWindow */
+"Settings…" = "Axustes…";
+"Settings" = "Axustes";
+"General" = "Xeral";
+"Line" = "Corda";
+"Privacy" = "Privacidade";
+"About" = "Acerca de";
+"Preview" = "Vista previa";
+"Take a screenshot to see it here" = "Fai unha captura para vela aquí";
+"Send button" = "Botón de enviar";
+"Allowed" = "Permitido";
+"Not allowed yet" = "Aínda sen permiso";
+"Open Accessibility Settings…" = "Abrir axustes de Accesibilidade…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "O botón de enviar preme ⌘V na app de diante, e para iso necesita o permiso de Accesibilidade.";
+"Version %@" = "Versión %@";

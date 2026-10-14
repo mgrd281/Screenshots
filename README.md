@@ -61,7 +61,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Drag the arrows on the tag | Move the line further down the screen, or back up. It stays there. |
 | Rest the pointer in the menu bar | Bring the line down on that screen. |
 | Click anything in the menu bar | Put it away. |
-| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it under Shortcut in the menu bar. |
+| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
 
 <br>
 
@@ -86,7 +86,7 @@ so macOS asks for the Accessibility permission the first time.
 ## Copied images too.
 
 Take a screenshot with <kbd>⌃</kbd> held, or copy an image in Preview, and it
-hangs on the line like any other. Turn on Hang copied images in the menu bar
+hangs on the line like any other. Turn on Hang copied images in Settings
 and the shirt fills in while it is on. Only images: anything copied along
 with text or a file, and anything a password manager marks as private, is
 left alone.
@@ -95,7 +95,7 @@ left alone.
 
 ## Private details, covered.
 
-Choose under Hide private details in the menu bar what to cover: names,
+Choose under Privacy in Settings what to cover: names,
 addresses, emails, phone numbers, bank cards and accounts, health
 details. Whatever leaves the line, copied, sent or dragged out, has them
 covered, and the line shows each photo that way too, so what you see is
@@ -159,6 +159,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | File | Role |
 |:--|:--|
 | `AppDelegate.swift` | Menu bar, shortcut, revealing and tucking away the line |
+| `SettingsWindow.swift` | The settings window: General, Line, Privacy and About |
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs |
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
@@ -189,7 +190,7 @@ language. `swift scripts/check-strings.swift` checks that none is missing.
 ---
 
 <sub>
-1. On first launch, Tendedero offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Tendedero quits or the option is turned off from the menu bar. Tendedero hides automatically while an app is in full screen.
+1. On first launch, Tendedero offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Tendedero quits or the option is turned off in Settings. Tendedero hides automatically while an app is in full screen.
 </sub>
 
 <br>

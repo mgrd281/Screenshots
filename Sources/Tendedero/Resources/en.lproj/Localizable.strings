@@ -81,3 +81,19 @@
 "One under another" = "One under another";
 "Side by side" = "Side by side";
 "Move the line" = "Move the line";
+
+/* SettingsWindow */
+"Settings…" = "Settings…";
+"Settings" = "Settings";
+"General" = "General";
+"Line" = "Line";
+"Privacy" = "Privacy";
+"About" = "About";
+"Preview" = "Preview";
+"Take a screenshot to see it here" = "Take a screenshot to see it here";
+"Send button" = "Send button";
+"Allowed" = "Allowed";
+"Not allowed yet" = "Not allowed yet";
+"Open Accessibility Settings…" = "Open Accessibility Settings…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "The send button presses ⌘V in the app in front, which needs the Accessibility permission.";
+"Version %@" = "Version %@";
