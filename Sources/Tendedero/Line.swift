@@ -15,11 +15,14 @@ struct Pegged: Identifiable, Equatable {
     var falling = false
     /// Still flying in from where it was captured; the card waits hidden.
     var flying = false
+    /// Shown, and handed out, with private details covered.
+    var covered = false
     /// A screen recording rather than a screenshot.
     var isRecording: Bool { Tendedero.isRecording(url) }
 
     static func == (a: Pegged, b: Pegged) -> Bool {
         a.id == b.id && a.falling == b.falling && a.flying == b.flying && a.thumb === b.thumb
+            && a.covered == b.covered
     }
 }
 
@@ -258,11 +261,39 @@ final class Line: ObservableObject {
         let pb = NSPasteboard.general
         pb.clearContents()
         pb.writeObjects(entries)
+        showCopied(Set(photos.map(\.id)))
+    }
 
-        let ids = Set(photos.map(\.id))
+    /// "Copied" under each photo, for a moment.
+    private func showCopied(_ ids: Set<UUID>) {
         copiedIDs = ids
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
             if self?.copiedIDs == ids { self?.copiedIDs = [] }
+        }
+    }
+
+    /// Copy Text: the words in a photo, read on this Mac, as text to paste
+    /// anywhere. Private details chosen in Settings are left out, as they
+    /// are from everything else that leaves the line.
+    func copyText(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id }), !item.isRecording else { return }
+        let url = item.url
+        let chosen = PrivateDetails.details
+        DispatchQueue.global(qos: .userInitiated).async {
+            let text = Finder.text(of: url, hiding: chosen)
+            DispatchQueue.main.async { [weak self] in
+                MainActor.assumeIsolated {
+                    guard let self, !text.isEmpty else {
+                        NSSound.beep()
+                        return
+                    }
+                    let pb = NSPasteboard.general
+                    pb.clearContents()
+                    pb.setString(text, forType: .string)
+                    self.pickedIDs = []
+                    self.showCopied([id])
+                }
+            }
         }
     }
 
@@ -398,8 +429,9 @@ final class Line: ObservableObject {
     /// After a change of size, every photo is redrawn sharp at the new one.
     func reloadThumbnails() {
         for i in items.indices where !items[i].falling {
-            let url = PrivateDetails.shown(items[i].url) ?? items[i].url
-            if let thumb = makeThumbnail(url) { items[i].thumb = thumb }
+            let shown = PrivateDetails.shown(items[i].url) ?? items[i].url
+            if let thumb = makeThumbnail(shown) { items[i].thumb = thumb }
+            items[i].covered = shown != items[i].url
         }
     }
 
@@ -411,6 +443,7 @@ final class Line: ObservableObject {
               let i = items.firstIndex(where: { $0.url == url && !$0.falling }),
               let thumb = makeThumbnail(shown) else { return }
         items[i].thumb = thumb
+        items[i].covered = shown != url
     }
 
     func reveal(_ id: UUID) {

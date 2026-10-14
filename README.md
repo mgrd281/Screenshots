@@ -49,6 +49,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 |:--|:--|
 | Click | Copy the image. |
 | <kbd>⌘</kbd>-click several | Copy them together, to paste them all at once. |
+| Right-click, then Copy Text | Copy the words in it, to paste as text. |
 | Press and hold | Open it in Markup. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
@@ -100,7 +101,8 @@ Choose under Privacy in Settings what to cover: names,
 addresses, emails, phone numbers, bank cards and accounts, health
 details. Whatever leaves the line, copied, sent or dragged out, has them
 covered, and the line shows each photo that way too, so what you see is
-what goes. Labels like Billing address, Recipient or Diagnosis tell it
+what goes, with a small lock on each one that has something covered.
+Copy Text leaves them out too. Labels like Billing address, Recipient or Diagnosis tell it
 where a whole block is private. The text is read on your Mac, and the
 screenshot file itself is never changed.
 

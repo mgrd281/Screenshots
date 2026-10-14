@@ -54,6 +54,7 @@
 
 /* GrabArea */
 "Copy" = "コピー";
+"Copy Text" = "テキストをコピー";
 "Open" = "開く";
 "Quick Look" = "クイックルック";
 "Markup" = "マークアップ";

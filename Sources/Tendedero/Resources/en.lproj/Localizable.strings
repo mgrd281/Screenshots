@@ -56,6 +56,7 @@
 
 /* GrabArea */
 "Copy" = "Copy";
+"Copy Text" = "Copy Text";
 "Open" = "Open";
 "Quick Look" = "Quick Look";
 "Markup" = "Markup";

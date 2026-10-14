@@ -54,6 +54,7 @@
 
 /* GrabArea */
 "Copy" = "Kopyala";
+"Copy Text" = "Metni kopyala";
 "Open" = "Aç";
 "Quick Look" = "Hızlı Bakış";
 "Markup" = "İşaretle";

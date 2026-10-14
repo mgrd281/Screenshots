@@ -54,6 +54,7 @@
 
 /* GrabArea */
 "Copy" = "复制";
+"Copy Text" = "拷贝文本";
 "Open" = "打开";
 "Quick Look" = "快速查看";
 "Markup" = "标记";

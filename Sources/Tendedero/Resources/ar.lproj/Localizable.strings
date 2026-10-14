@@ -54,6 +54,7 @@
 
 /* GrabArea */
 "Copy" = "نسخ";
+"Copy Text" = "نسخ النص";
 "Open" = "فتح";
 "Quick Look" = "نظرة سريعة";
 "Markup" = "التوصيف";

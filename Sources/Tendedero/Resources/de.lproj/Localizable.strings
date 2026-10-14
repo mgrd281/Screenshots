@@ -54,6 +54,7 @@
 
 /* GrabArea */
 "Copy" = "Kopieren";
+"Copy Text" = "Text kopieren";
 "Open" = "Öffnen";
 "Quick Look" = "Übersicht";
 "Markup" = "Markierungen";

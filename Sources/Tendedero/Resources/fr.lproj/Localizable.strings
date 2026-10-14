@@ -54,6 +54,7 @@
 
 /* GrabArea */
 "Copy" = "Copier";
+"Copy Text" = "Copier le texte";
 "Open" = "Ouvrir";
 "Quick Look" = "Coup d’œil";
 "Markup" = "Annotation";

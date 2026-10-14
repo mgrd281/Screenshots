@@ -52,6 +52,9 @@ struct GrabArea: NSViewRepresentable {
             // Items say themselves whether they can be used.
             menu.autoenablesItems = false
             menu.addItem(ClosureMenuItem(L("Copy")) { line.copy(id) })
+            if !isRecording {
+                menu.addItem(ClosureMenuItem(L("Copy Text")) { line.copyText(id) })
+            }
             if line.liveCount > 1 {
                 menu.addItem(ClosureMenuItem(L("Copy all")) { line.copyAll() })
             }

@@ -231,19 +231,49 @@ enum Finder {
     /// Where the chosen details are, in Vision's normalized coordinates.
     static func boxes(in image: CGImage, _ chosen: Set<PrivateDetail>) -> [CGRect] {
         let lines = read(image)
-        guard !lines.isEmpty else { return [] }
+        return hits(in: lines, chosen).compactMap { hit -> CGRect? in
+            let line = lines[hit.line]
+            guard let range = hit.range else { return line.box }
+            guard let part = Range(range, in: line.string) else { return nil }
+            return try? line.text.boundingBox(for: part)?.boundingBox
+        }
+    }
+
+    /// The text of a screenshot, a line per row, with the chosen details
+    /// left out as dots, for Copy Text.
+    static func text(of url: URL, hiding chosen: Set<PrivateDetail>) -> String {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return "" }
+        let lines = read(image)
+        var hidden = [IndexSet](repeating: IndexSet(), count: lines.count)
+        for hit in hits(in: lines, chosen) {
+            let length = lines[hit.line].string.utf16.count
+            let range = hit.range ?? NSRange(location: 0, length: length)
+            let end = min(range.location + range.length, length)
+            if range.location < end { hidden[hit.line].insert(integersIn: range.location..<end) }
+        }
+        return lines.indices.map { i -> String in
+            let line = lines[i].string as NSString
+            var kept = ""
+            var from = 0
+            for run in hidden[i].rangeView {
+                kept += line.substring(with: NSRange(location: from, length: run.lowerBound - from)) + "•••"
+                from = run.upperBound
+            }
+            return kept + line.substring(from: from)
+        }.joined(separator: "\n")
+    }
+
+    /// Everything to leave out, all three ways.
+    private static func hits(in lines: [TextLine], _ chosen: Set<PrivateDetail>) -> [Hit] {
+        guard !lines.isEmpty, !chosen.isEmpty else { return [] }
         let text = Text(lines)
         var learned = Set<String>()
         var hits = patterns(in: text, chosen)
         hits += labelled(in: lines, chosen, learned: &learned)
         if chosen.contains(.names) { hits += names(in: text, learned: learned) }
         if chosen.contains(.health) { hits += medicines(in: lines) }
-        return hits.compactMap { hit -> CGRect? in
-            let line = lines[hit.line]
-            guard let range = hit.range else { return line.box }
-            guard let part = Range(range, in: line.string) else { return nil }
-            return try? line.text.boundingBox(for: part)?.boundingBox
-        }
+        return hits
     }
 
     private static func read(_ image: CGImage) -> [TextLine] {

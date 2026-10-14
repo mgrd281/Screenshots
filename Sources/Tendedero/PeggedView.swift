@@ -98,6 +98,20 @@ struct PeggedView: View {
                     .allowsHitTesting(false)
             }
             .animation(.easeOut(duration: 0.18), value: picked)
+            .overlay(alignment: .bottomLeading) {
+                // Private details are covered in what leaves the line.
+                if item.covered {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 18, height: 18)
+                        .background(Color.black.opacity(0.55), in: Circle())
+                        .padding(5)
+                        .allowsHitTesting(false)
+                        .transition(.opacity)
+                }
+            }
+            .animation(.easeOut(duration: 0.2), value: item.covered)
             .shadow(color: .black.opacity(hovering ? 0.26 : 0.18), radius: hovering ? 14 : 10, y: hovering ? 8 : 5)
             // Holding presses the photo in slowly, so a long press feels like
             // it is building up to something.
