@@ -28,6 +28,15 @@ enum Layout {
     static let ropeTop: CGFloat = 10
     static let pinAbove: CGFloat = 9.5
 
+    /// How far below the menu bar the line hangs, in points, from dragging
+    /// the grip on its tag. 0 is right under the menu bar, where it always
+    /// hung. A screen without room for it gets it as low as fits; see
+    /// LinePanel.drop.
+    static var drop: CGFloat {
+        get { CGFloat(UserDefaults.standard.double(forKey: "lineDrop")) }
+        set { UserDefaults.standard.set(Double(max(0, newValue)), forKey: "lineDrop") }
+    }
+
     /// The rope hangs as a parabola from edge to edge of the screen.
     static func sag(width: CGFloat) -> CGFloat { min(30, width * 0.018) }
 
@@ -59,6 +68,9 @@ struct LineView: View {
     var body: some View {
         GeometryReader { geo in
             let width = geo.size.width
+            // Moved down with its grip, the strip reaches up to the menu bar
+            // and the line hangs this far below its top.
+            let drop = max(0, geo.size.height - Layout.panelHeight)
             ZStack(alignment: .topLeading) {
                 Rope(width: width)
 
@@ -78,17 +90,28 @@ struct LineView: View {
                         .opacity(min(1, max(0, min(x, width - x) / 90)))
                         .position(x: x, y: ropeY - Layout.pinAbove + (Layout.panelHeight - ropeY) / 2)
                 }
+
+                // The tag hangs near the right end, past where the photos
+                // reach and before the line fades out.
+                let tagX = width - 64
+                LineTag(line: line)
+                    .frame(width: LineTag.width, height: LineTag.maxHeight, alignment: .top)
+                    .position(x: tagX, y: Layout.ropeY(x: tagX, width: width) - Layout.pinAbove + LineTag.maxHeight / 2)
             }
             .animation(.spring(response: 0.55, dampingFraction: 0.78), value: line.items.map(\.id))
             .animation(.easeInOut(duration: 0.3), value: line.items.isEmpty)
+            .padding(.top, drop)
             // Tucked away, the whole line waits above the top edge and slides
             // out from under the menu bar, the way an auto-hiding Dock does.
-            .offset(y: line.revealed ? 0 : -(Layout.panelHeight + 12))
+            .offset(y: line.revealed ? 0 : -(drop + Layout.panelHeight + 12))
             .animation(line.revealed ? .spring(response: 0.42, dampingFraction: 0.82)
                                      : .easeIn(duration: 0.22), value: line.revealed)
         }
         .onPreferenceChange(HitRectsKey.self) { rects in
             line.hitRects = rects
+        }
+        .onPreferenceChange(TagRectKey.self) { rect in
+            line.tagRect = rect
         }
     }
 }
@@ -142,5 +165,12 @@ struct HitRectsKey: PreferenceKey {
     static var defaultValue: [UUID: CGRect] = [:]
     static func reduce(value: inout [UUID: CGRect], nextValue: () -> [UUID: CGRect]) {
         value.merge(nextValue()) { $1 }
+    }
+}
+
+struct TagRectKey: PreferenceKey {
+    static var defaultValue = CGRect.null
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        value = value.union(nextValue())
     }
 }
