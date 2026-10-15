@@ -418,8 +418,14 @@ apps.
     on an accent circle of 28 pt, which turns into a checkmark once sent.
   - A 16 pt transparent margin keeps its shadow; only the capsule takes the
     pointer.
+  - Over chats it knows (`ChatLayouts.swift`), it sits at the measured spot
+    of their send button: the trailing end of a centered message box (with
+    the sidebar left out in windows 900 pt wide or more) or the window's
+    trailing edge, above the box's top. A new chat in a browser, told by its
+    address, puts it in the middle of the page. A drag wins, then the
+    message box from Accessibility, then this, then the generic spot.
   - It never becomes key. A click sends, as the tag does; a drag moves it,
-    remembered per app; a right-click offers Put it back and Settings.
+    remembered per app, and for a new chat apart; a right-click offers Put it back and Settings.
   - Hover scales it to 1.04 through `Motion.spring`, and it fades in over
     0.15 s.
   - **Settings › Line › Send button over chats** chooses:

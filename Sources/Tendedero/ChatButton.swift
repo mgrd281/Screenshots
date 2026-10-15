@@ -114,11 +114,11 @@ final class ChatButton {
         }
     }
 
-    /// Browsers that can say which page is open, and how to ask them.
-    /// It shows there only on the chat websites from Settings.
     /// The browsers it can ask, for the Permissions pane.
     static var browserIDs: [String] { Array(browsers.keys) }
 
+    /// Browsers that can say which page is open, and how to ask them.
+    /// It shows there only on the chat websites from Settings.
     private static let browsers: [String: String] = [
         "com.apple.Safari": "URL of current tab of front window",
         "com.apple.SafariTechnologyPreview": "URL of current tab of front window",
@@ -176,9 +176,6 @@ final class ChatButton {
         return host
     }
 
-    /// The page open in a browser, read at every tick so a new tab or page
-    /// hides it at once.
-    private var pageHost: String?
     private var scripts: [String: NSAppleScript] = [:]
 
     init(line: Line) {
@@ -198,7 +195,6 @@ final class ChatButton {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.fieldFrame = nil
-                self?.pageHost = nil
                 self?.ticks = 0
                 self?.update()
             }
@@ -248,23 +244,27 @@ final class ChatButton {
         // The message box moves rarely; once a second is enough to follow it.
         let fresh = ticks % 5 == 0
         ticks += 1
-        // Where it was dragged is kept per app, and per website in a browser.
+        // Where it was dragged is kept per app, and per website in a browser,
+        // apart for a new chat, whose message box sits higher.
         let key: String
+        let layout: ChatLayout?
         if let chat = Self.apps.first(where: { $0.bundleID == id }) {
             guard Self.inApps, chat.on else { return hide() }
             key = id
+            layout = ChatLayouts.layout(forApp: id)
         } else if Self.browsers[id] != nil {
             // Read at every tick: switching to another tab or site hides it
-            // within a fifth of a second.
-            pageHost = readPage(in: id)
-            guard let host = pageHost, let site = Self.site(for: host) else { return hide() }
-            key = site
+            // within a fifth of a second, and a chat just started moves it down.
+            let read = readPage(in: id)
+            guard let read, let host = read.host, let site = Self.site(for: host) else { return hide() }
+            layout = ChatLayouts.layout(for: read)
+            key = layout != nil && ChatLayouts.isNewChat(read) ? site + "#new" : site
         } else {
             return hide()
         }
         if fresh { fieldFrame = Self.messageBox(of: app.processIdentifier, in: window) }
         current = (key, window)
-        place(over: window, app: key)
+        place(over: window, app: key, layout: layout)
         if !panel.isVisible {
             panel.alphaValue = 0
             panel.orderFrontRegardless()
@@ -285,7 +285,7 @@ final class ChatButton {
     /// Asks the browser for the page in front, through Apple Events. macOS
     /// asks once whether Snapfly may; without it, the button stays away
     /// from the browser. A busy browser gets a second at most.
-    private func readPage(in browser: String) -> String? {
+    private func readPage(in browser: String) -> URL? {
         guard let property = Self.browsers[browser] else { return nil }
         let script: NSAppleScript
         if let cached = scripts[browser] {
@@ -302,8 +302,9 @@ final class ChatButton {
         }
         var error: NSDictionary?
         let result = script.executeAndReturnError(&error)
-        guard error == nil, let text = result.stringValue, let url = URL(string: text) else { return nil }
-        return url.host
+        guard error == nil, let text = result.stringValue, let url = URL(string: text), url.host != nil
+        else { return nil }
+        return url
     }
 
     private func hide() {
@@ -334,7 +335,7 @@ final class ChatButton {
         set { UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: spotsKey) }
     }
 
-    private func place(over window: CGRect, app: String) {
+    private func place(over window: CGRect, app: String, layout: ChatLayout?) {
         let size = panel.frame.size
         let margin = ChatButtonPanel.margin
         var corner: CGPoint
@@ -351,6 +352,9 @@ final class ChatButton {
                     // Just above the message box, at its trailing end, where
                     // chats keep their send button.
                     corner = CGPoint(x: field.maxX, y: field.maxY + 10)
+                } else if let layout {
+                    // A chat it knows: where its send button is, measured.
+                    corner = layout.corner(in: window)
                 } else {
                     // Above where a chat's send button usually is: the trailing
                     // end of a message box centered at the bottom, or the
