@@ -339,7 +339,12 @@ apps.
   - pinned: orange pin;
   - copied: "Copied" capsule below;
   - search: dimmed and desaturated when it isn't a match, yellow marks when it
-    is.
+    is;
+  - dragged: 45% opacity in its slot. Dragged along the line (within the
+    cards' height and 24 pt more), its slot moves to where the pointer is,
+    past each neighbour's middle, and the others step aside with the line's
+    order spring; let go there, it stays rather than flying back. A closed
+    stack does not reorder. VoiceOver has Move Earlier and Move Later.
 
 ### Tag
 - A 26 pt wide capsule of SF Symbol tools: grip, combine, search, send and

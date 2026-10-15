@@ -317,3 +317,7 @@
 /* Message with the photos */
 "Add a message…" = "添加消息…";
 "Send with a Message…" = "连同消息发送…";
+
+/* Order on the line */
+"Move Earlier" = "前移";
+"Move Later" = "后移";

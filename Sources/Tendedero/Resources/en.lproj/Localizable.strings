@@ -319,3 +319,7 @@
 /* Message with the photos */
 "Add a message…" = "Add a message…";
 "Send with a Message…" = "Send with a Message…";
+
+/* Order on the line */
+"Move Earlier" = "Move Earlier";
+"Move Later" = "Move Later";

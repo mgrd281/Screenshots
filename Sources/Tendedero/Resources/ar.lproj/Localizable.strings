@@ -317,3 +317,7 @@
 /* Message with the photos */
 "Add a message…" = "أضف رسالة…";
 "Send with a Message…" = "إرسال مع رسالة…";
+
+/* Order on the line */
+"Move Earlier" = "نقل إلى الأمام";
+"Move Later" = "نقل إلى الخلف";

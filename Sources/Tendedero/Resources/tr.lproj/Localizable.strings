@@ -317,3 +317,7 @@
 /* Message with the photos */
 "Add a message…" = "Mesaj ekle…";
 "Send with a Message…" = "Mesajla gönder…";
+
+/* Order on the line */
+"Move Earlier" = "Öne taşı";
+"Move Later" = "Arkaya taşı";

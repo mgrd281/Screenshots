@@ -448,8 +448,53 @@ final class Line: ObservableObject {
 
     // MARK: Translate and Describe
 
-    /// Where a photo hangs on screen, for the card that shows what it says.
+    /// Where a photo hangs on screen, for the card that shows what it says,
+    /// and for moving it among the others.
     var frameOfPhoto: ((UUID) -> CGRect?)?
+
+    // MARK: Order
+
+    /// A photo dragged along the line takes its place among the others where
+    /// the pointer is, as icons do in the Dock, and the others step aside.
+    /// The order is what Send all and Copy all keep. Returns whether the
+    /// pointer is along the line, where letting go keeps the new place.
+    @discardableResult
+    func dragMoved(_ id: UUID, to point: CGPoint) -> Bool {
+        // A closed stack has no order to see.
+        guard !(style == .stack && !spread), let frameOfPhoto, let own = frameOfPhoto(id) else { return false }
+        // Along the line only: within the photos' own height, and a little more.
+        guard point.y >= own.minY - 24, point.y <= own.maxY + 24 else { return false }
+        let live = items.filter { !$0.falling }
+        guard live.count > 1, let current = live.firstIndex(where: { $0.id == id }) else { return true }
+        let frames = live.compactMap { frameOfPhoto($0.id) }
+        guard frames.count == live.count else { return true }
+        let others = live.indices.filter { $0 != current }
+        let slot = Self.slot(for: point.x, among: others.map { frames[$0].midX },
+                             reversed: frames[0].midX > frames[frames.count - 1].midX)
+        guard slot != current else { return true }
+        var order = others.map { live[$0] }
+        order.insert(live[current], at: slot)
+        items = order + items.filter(\.falling)
+        save()
+        return true
+    }
+
+    /// Where a photo goes among the others, from where it is held: after
+    /// each one whose middle it has passed, counting from the line's start,
+    /// which is the right end when the line runs right to left.
+    nonisolated static func slot(for x: CGFloat, among middles: [CGFloat], reversed: Bool) -> Int {
+        let passed = middles.filter { reversed ? $0 > x : $0 < x }.count
+        return passed
+    }
+
+    /// One place earlier or later, for VoiceOver and the keyboard.
+    func move(_ id: UUID, by step: Int) {
+        var live = items.filter { !$0.falling }
+        guard let i = live.firstIndex(where: { $0.id == id }), live.indices.contains(i + step) else { return }
+        live.swapAt(i, i + step)
+        items = live + items.filter(\.falling)
+        save()
+    }
 
     func translate(_ id: UUID, to language: Locale.Language) {
         showCard(.translation, for: id, target: language)
