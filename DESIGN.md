@@ -434,8 +434,10 @@ system to a web page. The brief and direction contract are in
   The line hangs under it, and a chat window sits in front.
   - On the home page the wallpaper stays fixed while the page scrolls over
     it, like a Mac's desktop.
-  - Below the first view a plum wash (55%, or 45% in dark) sits over it, so
-    white words stay at least 4.7:1 on every part.
+  - Below the first view, a light plum wash (28%, or 38% in dark) sits over
+    it, so the wallpaper keeps its colours. A soft, blurred scrim sits only
+    behind the words (plum at 46%, blurred 60 px), so white words stay at least 4.5:1 on
+    every part.
   - Each demo is a native object on that desktop:
     - keycaps;
     - Desktop files that fly onto a rope;
@@ -466,8 +468,8 @@ system to a web page. The brief and direction contract are in
   - The system stack only: SF Pro and SF Arabic on Apple devices. No web
     fonts, so nothing is fetched from another host.
   - Display sizes are allowed on the site: hero to 5.6 rem, section heads to
-    3.5 rem. Tracking is −0.022 em on display lines, −0.018 em on section
-    heads, and 0 in Arabic.
+    3.5 rem. Tracking is −0.015 em on display lines, −0.01 em on section
+    heads, and 0 in Arabic, as SF Pro Display wants.
   - German headlines step down a size for long words.
 - **Motion.**
   - The signature move is the paper plane: the card takes off up and away,

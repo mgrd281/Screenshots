@@ -117,6 +117,9 @@
       frame.appendChild(art.cloneNode(true));
       bubble.appendChild(frame);
       bubble.style.visibility = "hidden";
+      // The hint has done its job once something is sent.
+      const hint = thread.querySelector(".note");
+      if (hint) hint.remove();
       thread.appendChild(bubble);
       thread.scrollTop = thread.scrollHeight;
 
