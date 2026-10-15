@@ -730,9 +730,14 @@ system to a web page. The brief and direction contract are in
 - **One exception to "corner buttons show on hover":** the paper plane on
   each hanging card always shows on the site. The page has to invite the
   first click, and phones have no hover.
-- **Buttons.** The download button on the wallpaper is a white pill with ink
-  text. On the ground, the primary is `web-button` with white text. The
-  app's `#007AFF` gives white text only 4.0:1.
+- **Buttons.** The download link is a badge like the stores' own, at the
+  owner's request: black, a 12 radius, at least 60 tall, a light hairline
+  (white 32%) and the download shadow, a solid white Mac 34 wide, then two
+  lines, "Download for" at 12 (13 in Arabic, 500) over "macOS" at 24 (600).
+  No Apple logo: Apple keeps it for its own badges, and the real App Store
+  badge goes beside it once Snapfly is in the store. On the ground, the
+  primary is `web-button` with white text. The app's `#007AFF` gives white
+  text only 4.0:1.
 - **Type.**
   - The system stack only: SF Pro and SF Arabic on Apple devices. No web
     fonts, so nothing is fetched from another host.

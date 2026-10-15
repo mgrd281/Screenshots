@@ -35,6 +35,7 @@ TEXT["en"] = dict(
 
     hero_sub="Every screenshot you take hangs on a line at the top of your screen. Click one to copy it, or send it straight into the chat you’re typing in. Names and other private details are covered first, whether it goes to ChatGPT or to a person.",
     cta="Download for Mac",
+    badge_for="Download for",
     cta_note="Free · macOS 14 or later · Apple silicon and Intel",
     try_hint="Try it: drag a screenshot along the line to change the order. Send one with its paper plane, or all of them with Snapfly’s button over the chat. Hold that button to add a message.",
     chat_title="Chat",
@@ -274,6 +275,7 @@ TEXT["de"] = dict(
 
     hero_sub="Jedes Bildschirmfoto hängt an einer Leine oben auf deinem Bildschirm. Ein Klick kopiert es, oder du schickst es direkt in den Chat, in dem du gerade schreibst. Namen und andere private Angaben werden vorher verdeckt, ob es an ChatGPT geht oder an einen Menschen.",
     cta="Für Mac laden",
+    badge_for="Laden für",
     cta_note="Kostenlos · ab macOS 14 · Apple Silicon und Intel",
     try_hint="Probier’s aus: Zieh ein Bild an der Leine entlang, um die Reihenfolge zu ändern. Schick eines mit seinem Papierflieger oder alle mit der Taste von Snapfly über dem Chat. Halt diese Taste gedrückt, um eine Nachricht dazuzuschreiben.",
     chat_title="Chat",
@@ -513,6 +515,7 @@ TEXT["ar"] = dict(
 
     hero_sub="كل لقطة شاشة تلتقطها تُعلَّق على حبل في أعلى شاشتك. انقرها لتنسخها، أو أرسلها مباشرة إلى الدردشة التي تكتب فيها. والأسماء وغيرها من المعلومات الخاصة تُغطّى قبل الإرسال، سواء ذهبت إلى ChatGPT أو إلى شخص.",
     cta="تنزيل لجهاز Mac",
+    badge_for="حمّله لنظام",
     cta_note="مجاني · macOS 14 أو أحدث · Apple silicon و Intel",
     try_hint="جرّبه: اسحب لقطة على طول الحبل لتغيّر ترتيبها. أرسل واحدة بطائرتها الورقية، أو كلها بزر Snapfly فوق الدردشة. واضغط على هذا الزر مطوّلًا لتضيف رسالة.",
     chat_title="دردشة",

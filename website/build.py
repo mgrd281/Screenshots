@@ -54,6 +54,7 @@ def icon(name, cls="icon"):
 
 ICONS = {
         "plane": '<path d="M4.1 11.3 19.6 4.6c.6-.3 1.1.3.9.9l-6.7 15.5c-.3.6-1.1.5-1.3-.1l-2-5.7a1 1 0 0 0-.6-.6L4.2 12.6c-.6-.2-.7-1-.1-1.3Z" fill="currentColor"/><path d="m10.4 13.6 9.4-8.8" stroke="var(--plane-crease, rgba(255,255,255,.55))" stroke-width="1.4" stroke-linecap="round" fill="none"/>',
+        "mac": '<path d="M6 4h12a2.5 2.5 0 0 1 2.5 2.5V16h-17V6.5A2.5 2.5 0 0 1 6 4Zm.4 2.4v7.2h11.2V6.4Z" fill="currentColor" fill-rule="evenodd"/><path d="M1 17h22v.7a2.3 2.3 0 0 1-2.3 2.3H3.3A2.3 2.3 0 0 1 1 17.7Z" fill="currentColor"/>',
         "xmark": '<path d="m7 7 10 10M17 7 7 17" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/>',
         "lock": '<rect x="5.5" y="10.5" width="13" height="9.5" rx="2.4" fill="currentColor"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" stroke="currentColor" stroke-width="2" fill="none"/>',
         "check": '<path d="m6 12.5 4 4 8-9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
@@ -367,9 +368,11 @@ def document(lang, page, title, desc, main):
 """
 
 
-def download_button(lang, cls="btn btn-download"):
+def download_button(lang):
+    """The download link as a badge, like the stores' own: two lines beside a Mac."""
     t = TEXT[lang]
-    return f'<a class="{cls}" href="{DOWNLOAD}">{icon("download")}<span>{esc(t["cta"])}</span></a>'
+    return (f'<a class="badge-get" href="{DOWNLOAD}">{icon("mac")}<span class="badge-text">'
+            f'<small>{esc(t["badge_for"])}</small> <span>macOS</span></span></a>')
 
 
 # MARK: The home page
