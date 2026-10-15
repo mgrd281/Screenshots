@@ -220,18 +220,31 @@
 
 /* Hide by saying */
 "Nothing found to hide." = "没有找到要隐藏的内容。";
-"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple 智能无法回答，因此隐藏了包含这些字词的行。";
-"Lines hidden: %d. Click a box to show it again." = "已隐藏的行：%d。点按方框可再次显示。";
 "Say what to hide, like “everything but the amount and the date”" = "说出要隐藏的内容，例如“除金额和日期外全部隐藏”";
 "Words to hide, separated by commas" = "要隐藏的字词，用逗号分隔";
 "Hide" = "隐藏";
 "With Apple Intelligence on, you can say it in a sentence." = "打开 Apple 智能后，可以用一句话说明。";
 /* Timer and screen recording */
-"Take Screenshot in 5 Seconds" = "5 秒后截屏";
 "Record Screen" = "录制屏幕";
 "Stop Recording" = "停止录制";
 "Record the screen" = "录制屏幕";
-"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "选择要截取的内容：拖移选择区域、点按一个窗口，或按 Return 键选择整个屏幕。5 秒后截取。";
 "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "拖移选择区域或点按一个窗口进行录制。按 Return 键录制整个屏幕，按 Esc 取消。";
 "Cancel the timer" = "取消计时器";
 "Snapfly, recording the screen" = "Snapfly，正在录制屏幕";
+
+/* Timer choices, notes, GIF and hiding words */
+"Take Screenshot with Timer" = "定时截屏";
+"3 Seconds" = "3 秒";
+"5 Seconds" = "5 秒";
+"10 Seconds" = "10 秒";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends." = "选择要截取的内容：拖移选择区域、点按一个窗口，或按 Return 键选择整个屏幕。倒计时结束时截取。";
+"Could not take the screenshot." = "无法截屏。";
+"Could not record the screen." = "无法录制屏幕。";
+"Could not save the recording." = "无法存储录制内容。";
+"Could not make the GIF." = "无法制作 GIF。";
+"Make GIF" = "制作 GIF";
+"Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple 智能无法回答，因此在出现输入字词的地方都已隐藏。";
+"Parts hidden: %d. Click a box to show it again." = "已隐藏的部分：%d。点按方框可再次显示。";
+"Names and addresses" = "姓名和地址";
+"Everything but the amount and the date" = "除金额和日期外全部";
+"Phone numbers and emails" = "电话号码和电子邮件";

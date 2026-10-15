@@ -220,18 +220,31 @@
 
 /* Hide by saying */
 "Nothing found to hide." = "لم يُعثر على شيء لإخفائه.";
-"Apple Intelligence could not answer, so the lines with these words are hidden." = "لم يستطع Apple Intelligence الإجابة، لذا أُخفيت الأسطر التي فيها هذه الكلمات.";
-"Lines hidden: %d. Click a box to show it again." = "الأسطر المخفية: %d. انقر على مربع لإظهاره من جديد.";
 "Say what to hide, like “everything but the amount and the date”" = "قل ما تريد إخفاءه، مثل «كل شيء ما عدا المبلغ والتاريخ»";
 "Words to hide, separated by commas" = "كلمات للإخفاء، تفصل بينها فواصل";
 "Hide" = "إخفاء";
 "With Apple Intelligence on, you can say it in a sentence." = "مع تشغيل Apple Intelligence يمكنك قولها في جملة.";
 /* Timer and screen recording */
-"Take Screenshot in 5 Seconds" = "التقاط صورة للشاشة بعد 5 ثوانٍ";
 "Record Screen" = "تسجيل الشاشة";
 "Stop Recording" = "إيقاف التسجيل";
 "Record the screen" = "تسجيل الشاشة";
-"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "اختر ما تريد التقاطه: اسحب فوق منطقة، أو انقر على نافذة، أو اضغط Return للشاشة كلها. يُلتقط بعد 5 ثوانٍ.";
 "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "اسحب فوق منطقة أو انقر على نافذة لتسجيلها. Return يسجّل الشاشة كلها، وEscape للإلغاء.";
 "Cancel the timer" = "إلغاء المؤقت";
 "Snapfly, recording the screen" = "Snapfly، يسجّل الشاشة";
+
+/* Timer choices, notes, GIF and hiding words */
+"Take Screenshot with Timer" = "التقاط صورة للشاشة بمؤقت";
+"3 Seconds" = "3 ثوانٍ";
+"5 Seconds" = "5 ثوانٍ";
+"10 Seconds" = "10 ثوانٍ";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends." = "اختر ما تريد التقاطه: اسحب فوق منطقة، أو انقر على نافذة، أو اضغط Return للشاشة كلها. يُلتقط عند انتهاء العد التنازلي.";
+"Could not take the screenshot." = "تعذّر التقاط صورة الشاشة.";
+"Could not record the screen." = "تعذّر تسجيل الشاشة.";
+"Could not save the recording." = "تعذّر حفظ التسجيل.";
+"Could not make the GIF." = "تعذّر إنشاء صورة GIF.";
+"Make GIF" = "إنشاء GIF";
+"Apple Intelligence could not answer, so the words typed are hidden where they appear." = "لم يستطع Apple Intelligence الإجابة، لذا أُخفيت الكلمات المكتوبة أينما ظهرت.";
+"Parts hidden: %d. Click a box to show it again." = "الأجزاء المخفية: %d. انقر على مربع لإظهاره من جديد.";
+"Names and addresses" = "الأسماء والعناوين";
+"Everything but the amount and the date" = "كل شيء ما عدا المبلغ والتاريخ";
+"Phone numbers and emails" = "أرقام الهواتف والبريد الإلكتروني";

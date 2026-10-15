@@ -220,18 +220,31 @@
 
 /* Hide by saying */
 "Nothing found to hide." = "Nichts zum Ausblenden gefunden.";
-"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligence konnte nicht antworten, deshalb sind die Zeilen mit diesen Wörtern ausgeblendet.";
-"Lines hidden: %d. Click a box to show it again." = "Ausgeblendete Zeilen: %d. Klick auf ein Feld, um es wieder zu zeigen.";
 "Say what to hide, like “everything but the amount and the date”" = "Sag, was ausgeblendet wird, z. B. „alles außer Betrag und Datum“";
 "Words to hide, separated by commas" = "Wörter zum Ausblenden, durch Kommas getrennt";
 "Hide" = "Ausblenden";
 "With Apple Intelligence on, you can say it in a sentence." = "Mit Apple Intelligence kannst du es in einem Satz sagen.";
 /* Timer and screen recording */
-"Take Screenshot in 5 Seconds" = "Bildschirmfoto in 5 Sekunden";
 "Record Screen" = "Bildschirm aufnehmen";
 "Stop Recording" = "Aufnahme beenden";
 "Record the screen" = "Bildschirm aufnehmen";
-"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "Wähl aus, was aufgenommen wird: Zieh über einen Bereich, klick auf ein Fenster oder drück Return für den ganzen Bildschirm. Es wird 5 Sekunden später aufgenommen.";
 "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "Zieh über einen Bereich oder klick auf ein Fenster, um es aufzunehmen. Return nimmt den ganzen Bildschirm auf, Escape bricht ab.";
 "Cancel the timer" = "Timer abbrechen";
 "Snapfly, recording the screen" = "Snapfly, nimmt den Bildschirm auf";
+
+/* Timer choices, notes, GIF and hiding words */
+"Take Screenshot with Timer" = "Bildschirmfoto mit Timer";
+"3 Seconds" = "3 Sekunden";
+"5 Seconds" = "5 Sekunden";
+"10 Seconds" = "10 Sekunden";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends." = "Wähl aus, was aufgenommen wird: Zieh über einen Bereich, klick auf ein Fenster oder drück Return für den ganzen Bildschirm. Aufgenommen wird, wenn der Countdown abläuft.";
+"Could not take the screenshot." = "Das Bildschirmfoto konnte nicht aufgenommen werden.";
+"Could not record the screen." = "Der Bildschirm konnte nicht aufgenommen werden.";
+"Could not save the recording." = "Die Aufnahme konnte nicht gesichert werden.";
+"Could not make the GIF." = "Das GIF konnte nicht erstellt werden.";
+"Make GIF" = "GIF erstellen";
+"Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence konnte nicht antworten, deshalb sind die eingegebenen Wörter überall ausgeblendet, wo sie vorkommen.";
+"Parts hidden: %d. Click a box to show it again." = "Ausgeblendete Stellen: %d. Klick auf ein Feld, um es wieder zu zeigen.";
+"Names and addresses" = "Namen und Adressen";
+"Everything but the amount and the date" = "Alles außer Betrag und Datum";
+"Phone numbers and emails" = "Telefonnummern und E-Mails";

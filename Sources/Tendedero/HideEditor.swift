@@ -59,7 +59,7 @@ final class HideEditor: NSObject, NSWindowDelegate {
     /// Every line of text, with where it sits, for hiding by saying.
     private func readLines(_ url: URL, into model: HideModel) {
         DispatchQueue.global(qos: .userInitiated).async { [weak model] in
-            let lines = Finder.lines(of: url)
+            let lines = Finder.textLines(of: url)
             DispatchQueue.main.async {
                 MainActor.assumeIsolated { model?.lines = lines }
             }
@@ -97,7 +97,7 @@ final class HideModel: ObservableObject {
     /// Said under the field once it has run.
     @Published private(set) var note: String?
     /// The text in the screenshot, once read.
-    var lines: [(text: String, box: CGRect)]? {
+    var lines: [Finder.TextLine]? {
         didSet { if lines != nil, waiting { hideAsSaid() } }
     }
     let understandsSentences = HideBySaying.understandsSentences
@@ -122,15 +122,20 @@ final class HideModel: ObservableObject {
             return
         }
         waiting = false
-        let texts = lines.map(\.text)
+        let texts = lines.map(\.string)
         Task { @MainActor in
-            let outcome = await HideBySaying.lines(toHide: request, in: texts)
-            let chosen: [Int]
+            let outcome = await HideBySaying.pieces(toHide: request, in: texts)
+            let pieces: [HideBySaying.Piece]
             switch outcome {
-            case let .lines(found): chosen = found
-            case let .matched(found): chosen = found
+            case let .understood(found): pieces = found
+            case let .matched(found): pieces = found
             }
-            let boxes = chosen.map { Self.padded(lines[$0].box) }
+            var boxes: [CGRect] = []
+            for piece in pieces {
+                for box in Self.boxes(for: piece, in: lines[piece.line]).map(Self.padded) where !boxes.contains(box) {
+                    boxes.append(box)
+                }
+            }
             hand.removeAll { said.contains($0) }
             hand += boxes
             said = boxes
@@ -138,14 +143,29 @@ final class HideModel: ObservableObject {
             if boxes.isEmpty {
                 note = L("Nothing found to hide.")
             } else if case .matched = outcome, understandsSentences {
-                note = L("Apple Intelligence could not answer, so the lines with these words are hidden.")
+                note = L("Apple Intelligence could not answer, so the words typed are hidden where they appear.")
             } else {
-                note = String(format: L("Lines hidden: %d. Click a box to show it again."), boxes.count)
+                note = String(format: L("Parts hidden: %d. Click a box to show it again."), boxes.count)
             }
         }
     }
 
-    /// A line's box, with a little room so no letter peeks out.
+    /// Where the words are in the line, each time they appear. Words the
+    /// line does not have hide all of it, to be safe.
+    private static func boxes(for piece: HideBySaying.Piece, in line: Finder.TextLine) -> [CGRect] {
+        guard let words = piece.words, !words.isEmpty else { return [line.box] }
+        let string = line.string
+        var boxes: [CGRect] = []
+        var from = string.startIndex
+        while from < string.endIndex,
+              let range = string.range(of: words, options: HideBySaying.insensitive, range: from..<string.endIndex) {
+            if let box = try? line.text.boundingBox(for: range)?.boundingBox { boxes.append(box) }
+            from = range.upperBound
+        }
+        return boxes.isEmpty ? [line.box] : boxes
+    }
+
+    /// A box with a little room around it, so no letter peeks out.
     private static func padded(_ box: CGRect) -> CGRect {
         let room = box.height * 0.15
         return box.insetBy(dx: -room, dy: -room).intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
@@ -243,6 +263,25 @@ private struct HideEditorView: View {
         }
     }
 
+    /// Ready to click, for what is hidden most often.
+    private static let exampleRequests = [
+        L("Names and addresses"),
+        L("Everything but the amount and the date"),
+        L("Phone numbers and emails"),
+    ]
+
+    private var examples: some View {
+        ForEach(Self.exampleRequests, id: \.self) { example in
+            Button(example) {
+                model.request = example
+                model.hideAsSaid()
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+            .disabled(model.working)
+        }
+    }
+
     /// A field to say what to hide, with a note on what it did.
     private var saying: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -270,6 +309,13 @@ private struct HideEditorView: View {
                 }
                 Button(L("Hide")) { model.hideAsSaid() }
                     .disabled(model.working || model.request.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+            if model.understandsSentences {
+                // In a row where they fit, else one under another.
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 6) { examples }
+                    VStack(alignment: .leading, spacing: 6) { examples }
+                }
             }
             if let note = model.note {
                 Text(note)

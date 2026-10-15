@@ -371,7 +371,8 @@ apps.
   - Hide Part has a rounded field above its footer to say what to hide,
     after `sparkles` (or `text.magnifyingglass` without Apple Intelligence)
     in 13 pt semibold `.secondary`, with a Hide button and a small spinner
-    while it works. A callout note in `.secondary` under it says what it did.
+    while it works. With Apple Intelligence, three examples sit under it as
+    small `.bordered` buttons, in a row where they fit, else stacked. A callout note in `.secondary` under it says what it did.
     While the field has the keyboard, Return runs it; empty, Return is Done.
 - **No modal alerts** for things that can be said inline in the card.
 - **History window** (`HistoryWindow.swift`), a standard titled window
@@ -440,6 +441,10 @@ apps.
   - **Recording**: a 22 pt record red circle with a white `stop.fill`, and the
     time so far (13 pt semibold rounded, monospaced digits, minutes and
     seconds).
+  - **Note**: when a capture, a recording or a GIF fails, the
+    `exclamationmark.triangle.fill` symbol (13 pt semibold, `.secondary`) and
+    one line of 13 pt medium text say what went wrong. It goes after 4 s or
+    on a click, and VoiceOver announces it.
   - It never becomes key and is never in what is taken. A click anywhere on
     it cancels or stops; it is one button for VoiceOver, with a tooltip.
   - While recording, the menu bar item turns into `stop.circle`, and its menu

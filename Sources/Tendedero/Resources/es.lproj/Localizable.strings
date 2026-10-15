@@ -220,18 +220,31 @@
 
 /* Hide by saying */
 "Nothing found to hide." = "No se encontró nada que ocultar.";
-"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligence no pudo responder, así que se ocultan las líneas con estas palabras.";
-"Lines hidden: %d. Click a box to show it again." = "Líneas ocultas: %d. Haz clic en un recuadro para volver a mostrarlo.";
 "Say what to hide, like “everything but the amount and the date”" = "Di qué ocultar, como «todo menos el importe y la fecha»";
 "Words to hide, separated by commas" = "Palabras que ocultar, separadas por comas";
 "Hide" = "Ocultar";
 "With Apple Intelligence on, you can say it in a sentence." = "Con Apple Intelligence activado, puedes decirlo con una frase.";
 /* Timer and screen recording */
-"Take Screenshot in 5 Seconds" = "Hacer captura en 5 segundos";
 "Record Screen" = "Grabar pantalla";
 "Stop Recording" = "Detener grabación";
 "Record the screen" = "Grabar la pantalla";
-"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "Elige qué capturar: arrastra sobre una zona, haz clic en una ventana o pulsa Return para toda la pantalla. Se captura 5 segundos después.";
 "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "Arrastra sobre una zona o haz clic en una ventana para grabarla. Return graba toda la pantalla y Escape cancela.";
 "Cancel the timer" = "Cancelar el temporizador";
 "Snapfly, recording the screen" = "Snapfly, grabando la pantalla";
+
+/* Timer choices, notes, GIF and hiding words */
+"Take Screenshot with Timer" = "Hacer captura con temporizador";
+"3 Seconds" = "3 segundos";
+"5 Seconds" = "5 segundos";
+"10 Seconds" = "10 segundos";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends." = "Elige qué capturar: arrastra sobre una zona, haz clic en una ventana o pulsa Return para toda la pantalla. Se captura al terminar la cuenta atrás.";
+"Could not take the screenshot." = "No se pudo hacer la captura.";
+"Could not record the screen." = "No se pudo grabar la pantalla.";
+"Could not save the recording." = "No se pudo guardar la grabación.";
+"Could not make the GIF." = "No se pudo crear el GIF.";
+"Make GIF" = "Crear GIF";
+"Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence no pudo responder, así que se ocultan las palabras escritas donde aparezcan.";
+"Parts hidden: %d. Click a box to show it again." = "Partes ocultas: %d. Haz clic en un recuadro para volver a mostrarlo.";
+"Names and addresses" = "Nombres y direcciones";
+"Everything but the amount and the date" = "Todo menos el importe y la fecha";
+"Phone numbers and emails" = "Teléfonos y correos";

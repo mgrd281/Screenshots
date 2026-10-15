@@ -316,6 +316,13 @@ enum Finder {
         return read(image).map { ($0.string, $0.box) }
     }
 
+    /// The lines as read, so a part of one can be found and boxed.
+    static func textLines(of url: URL) -> [TextLine] {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return [] }
+        return read(image)
+    }
+
     static func text(of url: URL, hiding chosen: Set<PrivateDetail>, hand: [CGRect] = []) -> String {
         reading(of: url, hiding: chosen, hand: hand).text
     }

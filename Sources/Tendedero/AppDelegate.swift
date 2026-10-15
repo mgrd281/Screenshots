@@ -81,6 +81,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onFinish = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onChange = { [weak self] in self?.updateStatusIcon() }
+        Recording.cleanUp()
         History.purge()
         HistoryWindow.shared.onHang = { [weak self] url in self?.hangCapture(url) }
         let chatButton = ChatButton(line: line)
@@ -833,9 +834,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 captureItem.keyEquivalentModifierMask = shortcut.modifiers
             }
             menu.addItem(captureItem)
-            menu.addItem(ClosureMenuItem(L("Take Screenshot in 5 Seconds")) {
-                Capture.shared.start(after: 0.2, mode: .timer)
-            })
+            let timerItem = NSMenuItem(title: L("Take Screenshot with Timer"), action: nil, keyEquivalent: "")
+            let seconds = NSMenu()
+            for n in Capture.timerChoices {
+                seconds.addItem(ClosureMenuItem(Self.secondsTitle(n)) {
+                    Capture.shared.start(after: 0.2, mode: .timer(n))
+                })
+            }
+            timerItem.submenu = seconds
+            menu.addItem(timerItem)
             let recordItem = ClosureMenuItem(L("Record Screen")) {
                 Capture.shared.start(after: 0.2, mode: .record)
             }
@@ -899,6 +906,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(ClosureMenuItem(L("Quit Snapfly"), key: "q") {
             NSApp.terminate(nil)
         })
+    }
+
+    /// A literal key for each choice, so each language can say it its way.
+    private static func secondsTitle(_ n: Int) -> String {
+        switch n {
+        case 3: L("3 Seconds")
+        case 10: L("10 Seconds")
+        default: L("5 Seconds")
+        }
     }
 
     /// Where new versions are published.

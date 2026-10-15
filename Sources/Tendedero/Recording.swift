@@ -2,6 +2,7 @@ import AppKit
 import AVFoundation
 import ScreenCaptureKit
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// Records the screen from Snapfly itself: an area, a window or a whole
 /// screen, chosen on the same still screens as a screenshot. A small capsule
@@ -57,7 +58,7 @@ final class Recording {
                 log.error("Could not record the screen: \(error.localizedDescription, privacy: .public)")
                 isRecording = false
                 onChange()
-                NSSound.beep()
+                CaptureNotice.show(L("Could not record the screen."), on: Capture.screen(of: region))
             }
         }
     }
@@ -75,10 +76,20 @@ final class Recording {
             guard saved, let url = keep(file, from: frame) else {
                 log.error("Could not save a screen recording")
                 try? FileManager.default.removeItem(at: file)
-                NSSound.beep()
+                CaptureNotice.show(L("Could not save the recording."), on: nil)
                 return
             }
             onFinish(url)
+        }
+    }
+
+    /// A recording cut short by quitting is left half written. It goes at
+    /// launch.
+    static func cleanUp() {
+        let fm = FileManager.default
+        let files = (try? fm.contentsOfDirectory(at: Inbox.folder, includingPropertiesForKeys: nil)) ?? []
+        for file in files where file.lastPathComponent.hasPrefix(".recording-") {
+            try? fm.removeItem(at: file)
         }
     }
 
@@ -133,6 +144,34 @@ final class Recording {
         badge = nil
         edge?.orderOut(nil)
         edge = nil
+    }
+}
+
+/// Says what went wrong, in the same capsule above the Dock, for a few
+/// seconds, and to VoiceOver. A click puts it away.
+@MainActor
+enum CaptureNotice {
+    private static var badge: CaptureBadge?
+    private static var hide: DispatchWorkItem?
+
+    static func show(_ text: String, on screen: NSScreen?) {
+        hide?.cancel()
+        badge?.orderOut(nil)
+        let badge = CaptureBadge(kind: .message(text), label: text) { CaptureNotice.dismiss() }
+        badge.show(on: screen ?? NSScreen.main)
+        self.badge = badge
+        NSAccessibility.post(element: NSApplication.shared, notification: .announcementRequested,
+                             userInfo: [.announcement: text, .priority: NSAccessibilityPriorityLevel.high.rawValue])
+        let work = DispatchWorkItem { MainActor.assumeIsolated { CaptureNotice.dismiss() } }
+        hide = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4, execute: work)
+    }
+
+    static func dismiss() {
+        hide?.cancel()
+        hide = nil
+        badge?.orderOut(nil)
+        badge = nil
     }
 }
 
@@ -284,7 +323,11 @@ final class Recorder: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sen
 
 @MainActor
 final class CaptureBadgeModel: ObservableObject {
-    enum Kind { case countdown, recording }
+    enum Kind {
+        case countdown, recording
+        /// Something that went wrong.
+        case message(String)
+    }
 
     let kind: Kind
     /// Left on the countdown, or recorded so far.
@@ -446,6 +489,16 @@ private struct CaptureBadgeLabel: View {
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .monospacedDigit()
                     .padding(.trailing, 8)
+            case let .message(text):
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .padding(.leading, 8)
+                Text(text)
+                    .font(.system(size: 13, weight: .medium))
+                    .lineLimit(1)
+                    .padding(.trailing, 8)
+                    .padding(.vertical, 3)
             }
         }
         .padding(4)
@@ -485,5 +538,64 @@ private final class RecordingEdgeView: NSView {
         let inner = NSBezierPath(rect: bounds.insetBy(dx: 1.5, dy: 1.5))
         inner.lineWidth = 1
         inner.stroke()
+    }
+}
+
+// MARK: - GIF
+
+/// A recording turned into a looping GIF, which every chat plays inline:
+/// at most 10 frames a second and 300 frames, at most 800 points wide.
+/// It is saved next to the recording, in Snapfly's folder.
+enum GIF {
+    static let maxFrames = 300
+    static let maxSide = 800
+
+    static func make(from movie: URL) async -> URL? {
+        let asset = AVURLAsset(url: movie)
+        guard let duration = try? await asset.load(.duration), duration.seconds > 0 else { return nil }
+        let fps = min(10, Double(maxFrames) / duration.seconds)
+        let count = max(1, Int(duration.seconds * fps))
+        let generator = AVAssetImageGenerator(asset: asset)
+        generator.appliesPreferredTrackTransform = true
+        generator.maximumSize = CGSize(width: maxSide, height: maxSide)
+        let tolerance = CMTime(seconds: 0.5 / fps, preferredTimescale: 600)
+        generator.requestedTimeToleranceBefore = tolerance
+        generator.requestedTimeToleranceAfter = tolerance
+
+        let base = movie.deletingPathExtension().lastPathComponent
+        let target = Collage.newFile(base, "gif")
+        // Hidden while it is written, so the folder watcher leaves it alone.
+        let temp = target.deletingLastPathComponent().appendingPathComponent(".gif-\(UUID().uuidString).gif")
+        guard let destination = CGImageDestinationCreateWithURL(temp as CFURL, UTType.gif.identifier as CFString,
+                                                                count, nil) else { return nil }
+        CGImageDestinationSetProperties(destination, [
+            kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 0],
+        ] as CFDictionary)
+        let frame = [
+            kCGImagePropertyGIFDictionary: [
+                kCGImagePropertyGIFDelayTime: 1 / fps,
+                kCGImagePropertyGIFUnclampedDelayTime: 1 / fps,
+            ],
+        ] as CFDictionary
+        var added = 0
+        for i in 0..<count {
+            let time = CMTime(seconds: Double(i) / fps, preferredTimescale: 600)
+            guard let image = try? await generator.image(at: time).image else { continue }
+            CGImageDestinationAddImage(destination, image, frame)
+            added += 1
+        }
+        let fm = FileManager.default
+        guard added == count, CGImageDestinationFinalize(destination) else {
+            try? fm.removeItem(at: temp)
+            return nil
+        }
+        do {
+            try fm.moveItem(at: temp, to: target)
+        } catch {
+            try? fm.removeItem(at: temp)
+            return nil
+        }
+        try? fm.setAttributes([.posixPermissions: 0o600], ofItemAtPath: target.path)
+        return target
     }
 }

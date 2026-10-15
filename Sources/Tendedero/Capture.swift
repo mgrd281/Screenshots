@@ -27,19 +27,19 @@ final class Capture {
     private var mode = Mode.screenshot
 
     /// What the choice on the still screens is for.
-    enum Mode {
+    enum Mode: Equatable {
         /// A screenshot of the still screens, at once.
         case screenshot
-        /// A screenshot of the live screen, a few seconds after the choice,
-        /// so a menu opened meanwhile is in it.
-        case timer
+        /// A screenshot of the live screen, this many seconds after the
+        /// choice, so a menu opened meanwhile is in it.
+        case timer(Int)
         /// A screen recording, until it is stopped.
         case record
 
         var title: String {
             switch self {
             case .screenshot: L("Take Screenshot")
-            case .timer: L("Take Screenshot in 5 Seconds")
+            case .timer: L("Take Screenshot with Timer")
             case .record: L("Record Screen")
             }
         }
@@ -47,14 +47,14 @@ final class Capture {
         var hint: String {
             switch self {
             case .screenshot: L("Drag over an area or click a window. Return takes the whole screen, Escape cancels.")
-            case .timer: L("Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later.")
+            case .timer: L("Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends.")
             case .record: L("Drag over an area or click a window to record it. Return records the whole screen, Escape cancels.")
             }
         }
     }
 
-    /// How long a timed screenshot waits.
-    static let timerSeconds = 5
+    /// How long a timed screenshot can wait, in the menu.
+    static let timerChoices = [3, 5, 10]
 
     /// What is taken once the still screens are gone.
     enum Region {
@@ -196,10 +196,10 @@ final class Capture {
         overlays = []
         NSCursor.arrow.set()
         if mode != .screenshot, let region = Self.region(of: choice) {
-            if mode == .record {
-                Recording.shared.start(region)
+            if case let .timer(seconds) = mode {
+                takeLater(region, after: seconds)
             } else {
-                takeLater(region)
+                Recording.shared.start(region)
             }
             return
         }
@@ -248,7 +248,7 @@ final class Capture {
 
     /// Counts down, then takes the live screen. A window is taken as the
     /// area it covers, so a menu opened over it in the meantime is in it.
-    private func takeLater(_ chosen: Region) {
+    private func takeLater(_ chosen: Region, after seconds: Int) {
         var region = chosen
         if case let .window(target) = chosen {
             let center = CGPoint(x: target.frame.midX, y: target.frame.midY)
@@ -257,7 +257,7 @@ final class Capture {
             region = .area(target.frame.intersection(screen.frame), screen)
         }
         let taken = region
-        Countdown.shared.run(Self.timerSeconds, on: Self.screen(of: taken)) { [weak self] in
+        Countdown.shared.run(seconds, on: Self.screen(of: taken)) { [weak self] in
             Task { @MainActor in await self?.takeLive(taken) }
         }
     }
@@ -265,13 +265,15 @@ final class Capture {
     private func takeLive(_ region: Region) async {
         do {
             let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-            guard let setup = Self.setup(region, in: content, forVideo: false) else { return NSSound.beep() }
+            guard let setup = Self.setup(region, in: content, forVideo: false) else {
+                return CaptureNotice.show(L("Could not take the screenshot."), on: Self.screen(of: region))
+            }
             let image = try await SCScreenshotManager.captureImage(contentFilter: setup.filter,
                                                                     configuration: setup.config)
             save(image, from: setup.frame)
         } catch {
             log.error("Could not take a timed screenshot: \(error.localizedDescription, privacy: .public)")
-            NSSound.beep()
+            CaptureNotice.show(L("Could not take the screenshot."), on: Self.screen(of: region))
         }
     }
 
