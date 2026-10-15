@@ -109,8 +109,10 @@ required by the license and stays.
   setting, icon, copy or motion.
 - **When a change adds a color, radius, size or component,** add it to
   `DESIGN.md` in the same pull request.
-- Two design skills sit in `.claude/skills/`. See `.claude/skills/VENDORED.md`
-  for what was installed and why.
+- Agent skills sit in `.claude/skills/`, and one MCP server is set up for the
+  project in `.mcp.json`. See `.claude/skills/VENDORED.md` for what was
+  installed, what was left out, and why. None of them is part of the app or
+  the website; they only guide the coding agent.
   - **`impeccable`** handles design direction, critique and polish.
     - Commands: `/impeccable critique|audit|polish|layout|typeset|clarify|harden|distill|quieter <target>`.
     - Its launcher and hooks are deliberately not installed. When it says the
@@ -125,6 +127,17 @@ required by the license and stays.
     - Its web advice (CSS, Tailwind, breakpoints, 44 px touch targets) has to
       be translated into SwiftUI and AppKit for a pointer-driven Mac app. Where
       the two disagree, `DESIGN.md` wins.
+  - **`frontend-design`** (Anthropic) gives direction for new visual work.
+    Its advice to pick distinctive typefaces does not apply here: the app and
+    the website use system fonts only.
+  - **`web-design-guidelines`** (Vercel) reviews website code against Vercel's
+    Web Interface Guidelines, which it fetches fresh each time.
+  - **`context7-mcp`** with the **Context7** MCP server looks up current
+    documentation for libraries and frameworks. It reads the key from the
+    `CONTEXT7_API_KEY` environment variable; without one, the shared free quota
+    may already be used up.
+  - Every design skill gives way to `DESIGN.md`, `PRODUCT.md` and the owner's
+    brief.
 - **No redesign without the owner asking.** Refinement keeps the existing
   look.
 
