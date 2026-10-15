@@ -504,6 +504,45 @@
 
   whenSeen(document.querySelector(".keys"), () => document.querySelector(".keys").classList.add("play"), 0.6);
 
+  // MARK: Arrivals
+
+  // The first view's arrival plays once; photos hung on the hero's line
+  // later just hang there.
+  const intro = document.querySelector(".hero.intro");
+  if (intro) setTimeout(() => intro.classList.remove("intro"), 2600);
+
+  // Below the first view, each heading, line of words, window and step
+  // arrives once as it comes into view. What is in view when the page
+  // opens stays as it is, and Reduce Motion leaves everything in place.
+  const arrivals = [
+    [".section h2, .close h2", "arrive-words"],
+    [".section .copy > p, .design .wrap > p, .close .hero-actions, .close .hero-note", "arrive-text"],
+    [".section .window, .desk-frame, .keys, .close-icon", "arrive-window"],
+    [".steps > li", "arrive-card"],
+  ];
+  if (!reduced.matches && "IntersectionObserver" in window) {
+    const kinds = arrivals.map(([, kind]) => kind);
+    const arrive = new IntersectionObserver((entries) => {
+      entries.filter((entry) => entry.isIntersecting).forEach((entry, n) => {
+        const thing = entry.target;
+        arrive.unobserve(thing);
+        thing.style.setProperty("--ad", `${Math.min(n, 4) * 90}ms`);
+        thing.classList.remove("pre");
+        // Afterwards it keeps its own transitions.
+        setTimeout(() => {
+          thing.classList.remove("arrive", ...kinds);
+          thing.style.removeProperty("--ad");
+        }, 1200 + Math.min(n, 4) * 90);
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    arrivals.forEach(([selector, kind]) => document.querySelectorAll(selector).forEach((thing) => {
+      const box = thing.getBoundingClientRect();
+      if (!box.height || box.top < innerHeight) return;
+      thing.classList.add("arrive", kind, "pre");
+      arrive.observe(thing);
+    }));
+  }
+
   // MARK: The Desktop, swept onto the line
 
   const desk = document.querySelector("[data-desk]");
