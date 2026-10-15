@@ -394,6 +394,11 @@ def hero(lang):
     <ul class="pegs" aria-label="{esc(t["line_label"])}">
       {"".join(pegs)}
     </ul>
+    <div class="line-tag">
+      <span class="clip" aria-hidden="true"></span>
+      <button class="tag-send" type="button" data-send-all aria-label="{esc(t["send_all_label"])}">{icon("plane")}</button>
+      <span class="tag-label" aria-hidden="true">{esc(t["send_all"])}</span>
+    </div>
     <p class="vh" role="status" aria-live="polite" data-status data-sent="{esc(t["send_label"])}"></p>
   </div>
   <div class="hero-body">
@@ -411,6 +416,7 @@ def hero(lang):
       </ol>
       <div class="composer" aria-hidden="true"><span class="field">{esc(t["chat_placeholder"])}</span><span class="composer-send">{icon("plane")}</span></div>
       <template data-reply><li class="msg in"><p>{esc(t["chat_reply"])}</p></li></template>
+      <template data-reply-all><li class="msg in"><p>{esc(t["chat_reply_all"])}</p></li></template>
     </section>
   </div>
 </section>"""

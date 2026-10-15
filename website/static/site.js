@@ -54,6 +54,8 @@
     const chat = document.querySelector("[data-chat]");
     const thread = chat && chat.querySelector("[data-thread]");
     const reply = chat && chat.querySelector("template[data-reply]");
+    const replyAll = chat && chat.querySelector("template[data-reply-all]");
+    const tag = line.querySelector("[data-send-all]");
     let replied = false;
     let refilling = false;
 
@@ -67,9 +69,11 @@
       const pegs = hanging();
       if (!pegs.length) return;
       const width = line.clientWidth;
+      const tagRoom = tag ? tag.closest(".line-tag").offsetWidth + 28 : 0;
       const half = pegs[0].offsetWidth / 2 + 18;
+      const span = width - tagRoom;
       pegs.forEach((peg, i) => {
-        const x = pegs.length === 1 ? width / 2 : half + (i * (width - 2 * half)) / (pegs.length - 1);
+        const x = pegs.length === 1 ? span / 2 : half + (i * (span - 2 * half)) / (pegs.length - 1);
         peg.style.setProperty("--t", (x / width).toFixed(4));
       });
     }
@@ -107,80 +111,117 @@
 
     function layoutSoon() { requestAnimationFrame(layout); }
 
-    async function send(peg) {
-      if (!thread) return discard(peg);
-      const art = peg.querySelector(".photo-img svg");
-      const bubble = document.createElement("li");
-      bubble.className = "msg out image";
-      const frame = document.createElement("span");
-      frame.className = "photo-img";
-      frame.appendChild(art.cloneNode(true));
-      bubble.appendChild(frame);
-      bubble.style.visibility = "hidden";
-      // The hint has done its job once something is sent.
+    // Gets the chat ready for what lands: the hint goes, and on a small
+    // screen, where the chat sits below the line, it comes into view.
+    async function readyChat() {
       const hint = thread.querySelector(".note");
       if (hint) hint.remove();
-      thread.appendChild(bubble);
-      thread.scrollTop = thread.scrollHeight;
-
-      // On a small screen the chat sits below the line: bring it into view.
       const box = chat.getBoundingClientRect();
       if (box.top > innerHeight - 160 || box.bottom < 160) {
         chat.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "center" });
         await wait(reduced.matches ? 0 : 520);
       }
+    }
 
-      const photo = peg.querySelector(".photo");
+    // A photo takes off up and away, as on the icon, then lands in the chat.
+    async function fly(photo, to, delay = 0) {
+      if (reduced.matches) return;
       const from = photo.getBoundingClientRect();
-      const to = frame.getBoundingClientRect();
-      peg.classList.add("sending");
-      layout();
+      const ghost = photo.cloneNode(true);
+      ghost.classList.add("ghost");
+      ghost.querySelectorAll("button, .badge-lock").forEach((el) => {
+        if (el.matches(".photo-hit")) el.replaceWith(el.firstElementChild);
+        else el.remove();
+      });
+      Object.assign(ghost.style, { left: from.left + "px", top: from.top + "px", width: from.width + "px" });
+      document.body.appendChild(ghost);
+      const dx = to.left - from.left;
+      const dy = to.top - from.top;
+      const scale = to.width / from.width;
+      const lift = Math.min(-70, dy * -0.15);
+      const away = (rtl ? -1 : 1) * 40;
+      const flight = ghost.animate([
+        { transform: "translate(0, 0) rotate(0deg) scale(1)" },
+        { transform: `translate(${dx * 0.35 + away}px, ${lift}px) rotate(${rtl ? 9 : -9}deg) scale(${(1 + scale) / 2})`, offset: 0.38 },
+        { transform: `translate(${dx}px, ${dy}px) rotate(0deg) scale(${scale})` },
+      ], { duration: 820, delay, easing: "cubic-bezier(.45,.05,.25,1)", fill: "backwards" });
+      await flight.finished.catch(() => {});
+      ghost.remove();
+    }
 
-      if (!reduced.matches) {
-        // It takes off up and away, as on the icon, then lands in the chat.
-        const ghost = photo.cloneNode(true);
-        ghost.classList.add("ghost");
-        ghost.querySelectorAll("button, .badge-lock").forEach((el) => {
-          if (el.matches(".photo-hit")) el.replaceWith(el.firstElementChild);
-          else el.remove();
-        });
-        Object.assign(ghost.style, { left: from.left + "px", top: from.top + "px", width: from.width + "px" });
-        document.body.appendChild(ghost);
-        const dx = to.left - from.left;
-        const dy = to.top - from.top;
-        const scale = to.width / from.width;
-        const lift = Math.min(-70, dy * -0.15);
-        const away = (rtl ? -1 : 1) * 40;
-        const flight = ghost.animate([
-          { transform: "translate(0, 0) rotate(0deg) scale(1)" },
-          { transform: `translate(${dx * 0.35 + away}px, ${lift}px) rotate(${rtl ? 9 : -9}deg) scale(${(1 + scale) / 2})`, offset: 0.38 },
-          { transform: `translate(${dx}px, ${dy}px) rotate(0deg) scale(${scale})` },
-        ], { duration: 820, easing: "cubic-bezier(.45,.05,.25,1)" });
-        await flight.finished.catch(() => {});
-        ghost.remove();
-      }
-
+    function landed(bubble, pegs, answerWith) {
       bubble.style.visibility = "";
       bubble.classList.add("landed");
-      peg.remove();
+      pegs.forEach((peg) => peg.remove());
       layout();
       announce(status.dataset.sent);
       trimThread();
-      if (!replied && reply) {
-        replied = true;
-        setTimeout(answer, 700);
-      }
+      if (answerWith) setTimeout(() => answer(answerWith), 700);
       refillIfEmpty();
     }
 
-    async function answer() {
+    async function send(peg) {
+      if (!thread) return discard(peg);
+      const bubble = document.createElement("li");
+      bubble.className = "msg out image";
+      const frame = document.createElement("span");
+      frame.className = "photo-img";
+      frame.appendChild(peg.querySelector(".photo-img svg").cloneNode(true));
+      bubble.appendChild(frame);
+      bubble.style.visibility = "hidden";
+      await readyChat();
+      thread.appendChild(bubble);
+      thread.scrollTop = thread.scrollHeight;
+      const photo = peg.querySelector(".photo");
+      const to = frame.getBoundingClientRect();
+      peg.classList.add("sending");
+      layout();
+      await fly(photo, to);
+      const first = !replied;
+      replied = true;
+      landed(bubble, [peg], first ? reply : null);
+    }
+
+    // The tag's send button: every photo on the line, at once, into the
+    // chat, where they land together.
+    async function sendAll() {
+      const pegs = hanging();
+      if (!pegs.length || !thread) return;
+      const bubble = document.createElement("li");
+      bubble.className = "msg out album";
+      const grid = document.createElement("span");
+      grid.className = "album-grid";
+      const cells = pegs.map((peg) => {
+        const cell = document.createElement("span");
+        cell.className = "photo-img";
+        cell.appendChild(peg.querySelector(".photo-img svg").cloneNode(true));
+        grid.appendChild(cell);
+        return cell;
+      });
+      bubble.appendChild(grid);
+      bubble.style.visibility = "hidden";
+      await readyChat();
+      thread.appendChild(bubble);
+      thread.scrollTop = thread.scrollHeight;
+      const targets = cells.map((cell) => cell.getBoundingClientRect());
+      const photos = pegs.map((peg) => peg.querySelector(".photo"));
+      const flights = photos.map((photo, i) => fly(photo, targets[i], i * 90));
+      pegs.forEach((peg) => peg.classList.add("sending"));
+      await Promise.all(flights);
+      replied = true;
+      landed(bubble, pegs, replyAll || reply);
+    }
+
+    if (tag) tag.addEventListener("click", sendAll);
+
+    async function answer(template) {
       const typing = document.createElement("li");
       typing.className = "msg in typing pop";
       typing.innerHTML = "<p aria-hidden=\"true\"><i></i><i></i><i></i></p>";
       thread.appendChild(typing);
       thread.scrollTop = thread.scrollHeight;
       await wait(reduced.matches ? 200 : 1100);
-      const message = reply.content.firstElementChild.cloneNode(true);
+      const message = template.content.firstElementChild.cloneNode(true);
       message.classList.add("pop");
       typing.replaceWith(message);
       thread.scrollTop = thread.scrollHeight;
