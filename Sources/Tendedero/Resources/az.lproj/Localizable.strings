@@ -98,11 +98,8 @@
 "About" = "Haqqında";
 "Preview" = "Önizləmə";
 "Take a screenshot to see it here" = "Burada görmək üçün ekran şəkli çək";
-"Send button" = "Göndər düyməsi";
 "Allowed" = "İcazə verilib";
 "Not allowed yet" = "Hələ icazə verilməyib";
-"Open Accessibility Settings…" = "Əlçatanlıq ayarlarını aç…";
-"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "Göndər düyməsi öndəki tətbiqdə ⌘V basır, buna görə Əlçatanlıq icazəsi lazımdır.";
 "Version %@" = "Versiya %@";
 "Screenshots, one click from any chat." = "Ekran şəkilləri, istənilən söhbətə bir klik uzaqlıqda.";
 "Made by %@" = "Hazırlayan: %@";
@@ -289,3 +286,24 @@
 "Target" = "Hədəf";
 "Lightning" = "İldırım";
 "Sparkles" = "Parıltı";
+
+/* Permissions */
+"Permissions" = "İcazələr";
+"Permissions Needed…" = "İcazələr lazımdır…";
+"Screen Recording" = "Ekran yazısı";
+"Accessibility" = "Əlçatanlıq";
+"Browsers" = "Brauzerlər";
+"Allow…" = "İcazə ver…";
+"Open and Allow…" = "Aç və icazə ver…";
+"Not asked yet" = "Hələ soruşulmayıb";
+"Not open" = "Açıq deyil";
+"Reopen Snapfly" = "Snapfly-ı yenidən aç";
+"Snapfly has what it needs." = "Snapfly-ın lazım olan hər şeyi var.";
+"Snapfly asks for each permission only when you use what needs it." = "Snapfly hər icazəni yalnız ona ehtiyac duyan şeyi istifadə edəndə soruşur.";
+"Everything stays on your Mac. You can change these any time in System Settings." = "Hər şey Mac-ində qalır. Bunları istənilən vaxt Sistem Ayarlarında dəyişə bilərsən.";
+"To take screenshots and recordings with Snapfly: ⌃⌥S, the screenshot button and Record Screen." = "Snapfly ilə ekran şəkilləri və yazılar üçün: ⌃⌥S, ekran şəkli düyməsi və Ekranı yaz.";
+"Turned it on and it still says not allowed?" = "Açdın, amma hələ də icazə yoxdur deyir?";
+"macOS applies it once Snapfly opens again." = "macOS bunu Snapfly yenidən açılanda tətbiq edir.";
+"For the send buttons: they press ⌘V in the chat in front, so the photos land where you type." = "Göndərmə düymələri üçün: öndəki söhbətdə ⌘V basırlar, şəkillər yazdığın yerə düşür.";
+"Snapfly not in the list? Click + under it and choose Snapfly in Applications." = "Snapfly siyahıda yoxdur? Altındakı + düyməsinə klik et və Proqramlarda Snapfly-ı seç.";
+"So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read." = "Göndərmə düyməsi yalnız söhbət saytlarında görünsün deyə Snapfly brauzerdən hansı səhifənin açıq olduğunu soruşur. Başqa heç nə oxunmur.";

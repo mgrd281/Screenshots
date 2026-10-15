@@ -791,6 +791,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         SettingsWindow.shared.show(preferences)
     }
 
+    private func openPermissions() {
+        guard let preferences else { return }
+        preferences.showsPermissions = true
+        SettingsWindow.shared.show(preferences)
+    }
+
     // MARK: Menu bar
 
     private func setUpStatusItem() {
@@ -821,6 +827,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
+
+        // Only once something was asked for and not given: nothing nags
+        // about what was never needed.
+        if Permissions.somethingDenied {
+            menu.addItem(ClosureMenuItem(L("Permissions Needed…"), symbol: "exclamationmark.triangle") { [weak self] in
+                self?.openPermissions()
+            })
+            menu.addItem(.separator())
+        }
 
         if Recording.shared.isRecording {
             let stopItem = ClosureMenuItem(L("Stop Recording")) { Recording.shared.stop() }

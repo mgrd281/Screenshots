@@ -65,6 +65,12 @@ final class Capture {
 
     private static let askedKey = "screenCaptureAsked"
 
+    /// Whether macOS has shown its own question about Screen Recording.
+    static var wasAsked: Bool {
+        get { UserDefaults.standard.bool(forKey: askedKey) }
+        set { UserDefaults.standard.set(newValue, forKey: askedKey) }
+    }
+
     /// One window that can be clicked, in AppKit screen coordinates.
     struct Target {
         let frame: CGRect

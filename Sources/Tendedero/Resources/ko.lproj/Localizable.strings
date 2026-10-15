@@ -96,11 +96,8 @@
 "About" = "정보";
 "Preview" = "미리보기";
 "Take a screenshot to see it here" = "스크린샷을 찍으면 여기에 표시됩니다";
-"Send button" = "보내기 버튼";
 "Allowed" = "허용됨";
 "Not allowed yet" = "아직 허용되지 않음";
-"Open Accessibility Settings…" = "손쉬운 사용 설정 열기…";
-"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "보내기 버튼은 앞에 있는 앱에서 ⌘V를 누르므로 손쉬운 사용 권한이 필요합니다.";
 "Version %@" = "버전 %@";
 "Screenshots, one click from any chat." = "스크린샷을 어떤 채팅에도 클릭 한 번으로.";
 "Made by %@" = "만든 사람: %@";
@@ -287,3 +284,24 @@
 "Target" = "표적";
 "Lightning" = "번개";
 "Sparkles" = "반짝임";
+
+/* Permissions */
+"Permissions" = "권한";
+"Permissions Needed…" = "권한 필요…";
+"Screen Recording" = "화면 기록";
+"Accessibility" = "손쉬운 사용";
+"Browsers" = "브라우저";
+"Allow…" = "허용…";
+"Open and Allow…" = "열고 허용…";
+"Not asked yet" = "아직 요청 안 함";
+"Not open" = "열려 있지 않음";
+"Reopen Snapfly" = "Snapfly 다시 열기";
+"Snapfly has what it needs." = "Snapfly에 필요한 권한이 모두 있어요.";
+"Snapfly asks for each permission only when you use what needs it." = "Snapfly는 권한이 필요한 기능을 쓸 때만 그 권한을 요청해요.";
+"Everything stays on your Mac. You can change these any time in System Settings." = "모든 것은 이 Mac 안에 머물러요. 시스템 설정에서 언제든 바꿀 수 있어요.";
+"To take screenshots and recordings with Snapfly: ⌃⌥S, the screenshot button and Record Screen." = "Snapfly로 스크린샷과 기록을 하려면: ⌃⌥S, 스크린샷 버튼, 화면 기록.";
+"Turned it on and it still says not allowed?" = "켰는데도 아직 허용되지 않았다고 나오나요?";
+"macOS applies it once Snapfly opens again." = "Snapfly를 다시 열면 macOS가 적용해요.";
+"For the send buttons: they press ⌘V in the chat in front, so the photos land where you type." = "보내기 버튼용: 앞에 있는 채팅에서 ⌘V를 눌러 입력하는 곳에 사진이 들어가요.";
+"Snapfly not in the list? Click + under it and choose Snapfly in Applications." = "목록에 Snapfly가 없나요? 아래 +를 클릭하고 응용 프로그램에서 Snapfly를 고르세요.";
+"So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read." = "보내기 버튼이 채팅 사이트에서만 보이도록 Snapfly가 브라우저에 어떤 페이지가 열려 있는지 물어봐요. 다른 것은 읽지 않아요.";

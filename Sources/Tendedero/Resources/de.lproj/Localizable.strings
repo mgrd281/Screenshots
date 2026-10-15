@@ -96,11 +96,8 @@
 "About" = "Über";
 "Preview" = "Vorschau";
 "Take a screenshot to see it here" = "Mach ein Bildschirmfoto, um es hier zu sehen";
-"Send button" = "Senden-Taste";
 "Allowed" = "Erlaubt";
 "Not allowed yet" = "Noch nicht erlaubt";
-"Open Accessibility Settings…" = "Einstellungen für Bedienungshilfen öffnen …";
-"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "Die Senden-Taste drückt ⌘V in der App im Vordergrund und braucht dafür die Berechtigung für Bedienungshilfen.";
 "Version %@" = "Version %@";
 "Screenshots, one click from any chat." = "Bildschirmfotos, einen Klick von jedem Chat entfernt.";
 "Made by %@" = "Gemacht von %@";
@@ -287,3 +284,24 @@
 "Target" = "Ziel";
 "Lightning" = "Blitz";
 "Sparkles" = "Funkeln";
+
+/* Permissions */
+"Permissions" = "Berechtigungen";
+"Permissions Needed…" = "Berechtigungen nötig …";
+"Screen Recording" = "Bildschirmaufnahme";
+"Accessibility" = "Bedienungshilfen";
+"Browsers" = "Browser";
+"Allow…" = "Erlauben …";
+"Open and Allow…" = "Öffnen und erlauben …";
+"Not asked yet" = "Noch nicht gefragt";
+"Not open" = "Nicht geöffnet";
+"Reopen Snapfly" = "Snapfly neu öffnen";
+"Snapfly has what it needs." = "Snapfly hat alles, was es braucht.";
+"Snapfly asks for each permission only when you use what needs it." = "Snapfly fragt nach jeder Berechtigung erst, wenn du nutzt, was sie braucht.";
+"Everything stays on your Mac. You can change these any time in System Settings." = "Alles bleibt auf deinem Mac. Du kannst das jederzeit in den Systemeinstellungen ändern.";
+"To take screenshots and recordings with Snapfly: ⌃⌥S, the screenshot button and Record Screen." = "Um mit Snapfly Bildschirmfotos und Aufnahmen zu machen: ⌃⌥S, die Bildschirmfoto-Taste und „Bildschirm aufnehmen“.";
+"Turned it on and it still says not allowed?" = "Eingeschaltet, aber immer noch nicht erlaubt?";
+"macOS applies it once Snapfly opens again." = "macOS übernimmt es, sobald Snapfly neu geöffnet wird.";
+"For the send buttons: they press ⌘V in the chat in front, so the photos land where you type." = "Für die Senden-Tasten: Sie drücken ⌘V im Chat vorne, damit die Fotos dort landen, wo du schreibst.";
+"Snapfly not in the list? Click + under it and choose Snapfly in Applications." = "Snapfly nicht in der Liste? Klick auf + darunter und wähl Snapfly in „Programme“.";
+"So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read." = "Damit die Senden-Taste nur auf Chat-Websites erscheint, fragt Snapfly den Browser, welche Seite offen ist. Sonst wird nichts gelesen.";

@@ -116,6 +116,9 @@ final class ChatButton {
 
     /// Browsers that can say which page is open, and how to ask them.
     /// It shows there only on the chat websites from Settings.
+    /// The browsers it can ask, for the Permissions pane.
+    static var browserIDs: [String] { Array(browsers.keys) }
+
     private static let browsers: [String: String] = [
         "com.apple.Safari": "URL of current tab of front window",
         "com.apple.SafariTechnologyPreview": "URL of current tab of front window",
