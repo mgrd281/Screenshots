@@ -605,9 +605,23 @@ system to a web page. The brief and direction contract are in
     - a whole Mac screen to take screenshots on (below);
     - the Hide Part window, said in a sentence (below).
   - **The Mac screen** (`section_capture`): one SVG at 1000 × 625 points
-    with its own menu bar, wallpaper, a browser on a flight search, a music
-    player and a Dock of plain tiles (no real app's icon), always in light,
-    as a screenshot is. Snapfly sits on top of it as in the app: the shirt
+    with its own menu bar (the app, its menus, Snapfly's shirt, battery,
+    Wi-Fi, Spotlight, Control Center and the clock), a wallpaper of flowing
+    bands in the brand's hues, a browser on a flight search with its
+    toolbar, a music player and a Dock. Always in light, as a screenshot is.
+    - **The laptop round it**, at the owner's request: a black bezel
+      (1.25% of the width, 28 radius at the top) with a 1.5 px aluminium
+      edge, a notch with the camera over the middle of the menu bar, and the
+      base below, 5.5% wider on each side, with the dip where a thumb opens
+      the lid. Aluminium is silver in light (`#E9EAEE` to `#A2A5AB`) and
+      space grey in dark (`#8E9096` to `#4C4E53`). No maker's logo anywhere,
+      on the lid, the base or the menu bar.
+    - **The Dock's icons** are drawn the way a Mac's are (a 100-point
+      rounded square at 22.5, a vertical gradient, a soft sheen on the top
+      half, a hairline edge and a small shadow), but none is a real app's:
+      files, browser, chat, mail, a calendar showing the screen's own day,
+      photos, music, notes and settings, a divider, then Snapfly's real
+      icon. Open apps have a dot under them. Snapfly sits on top of it as in the app: the shirt
     in its menu bar opens Snapfly's real menu (Take Screenshot, Take
     Screenshot with Timer › 3, 5, 10 Seconds, Record Screen, Screenshot
     Button, Take everything down), the screenshot button sits at the
@@ -623,6 +637,16 @@ system to a web page. The brief and direction contract are in
       music it caught while the pointer rests on it, with a duration
       capsule in the PDF capsule's style.
     - ⌃⌥S and ⌃⌥R work while the screen is in view.
+    - **The guide for a first visit** starts by itself the first time the
+      screen is in view, before anything was taken: a card in the popover's
+      glass (14 radius, 290 wide, an arrow toward the thing) with "1 of 5",
+      a title and a line, Skip and Show me, and a white ring with an accent
+      halo pulsing round the thing to try. The steps are: the screenshot
+      button, the window to drag over, the photo on the line, Snapfly's
+      menu, then "You're ready" with Download for Mac. Doing the step moves
+      on; Show me does it with the pointer. The card sits beside the thing
+      where the page has room, else under it. "Show me how" under the
+      laptop starts it again.
   - **Hide Part** (`section_say`): the editor's window with a bank transfer
     in it, the sparkles field, the three examples, the note, and Remove
     All, Cancel and Done. Covers are cover ink at a 3 radius, one per line
@@ -630,6 +654,11 @@ system to a web page. The brief and direction contract are in
     they show an eye and an accent ring, and a click removes one. A drag
     draws a dashed accent box. A few words in English, German and Arabic
     stand in for Apple Intelligence; Done adds the lock badge.
+  - **Start in four steps** (`section_start`), before the close: four
+    cards on `web-surface` (20 radius, the float shadow), each with its
+    number in a 30 pt accent circle, a 44 pt icon tile in the brand
+    gradient, a title and a line. Four across, two on a tablet, one on a
+    phone.
   - **The hero's chat** carries the chat button and its message bar as
     "Chat button" above has them, over the chat's own send button. Its
     photos are the line's newest two. Hold it, or right-click it for Send

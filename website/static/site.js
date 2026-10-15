@@ -725,6 +725,7 @@
         screen.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "center" });
       }
       overlay.focus({ preventScroll: true });
+      did("choose");
     }
 
     function closeOverlay(refocus) {
@@ -810,6 +811,7 @@
     function layout() {
       const pegs = hanging();
       pegs.forEach((peg, i) => peg.style.setProperty("--t", (0.5 + (i - (pegs.length - 1) / 2) * 0.2).toFixed(4)));
+      placeCoach();
     }
 
     function letGo(peg) {
@@ -851,6 +853,7 @@
       await flyPhoto(photo, from, photo.getBoundingClientRect());
       peg.classList.remove("landing");
       announce(screen.dataset.hung);
+      did("hang");
     }
 
     // A recording plays again while the pointer rests on it.
@@ -891,6 +894,7 @@
       peg.copiedTimer = setTimeout(() => peg.classList.remove("is-copied"), 1500);
       announce(screen.dataset.copied);
       copyImage(peg.querySelector(".photo-img svg"), parseFloat(peg.dataset.ratio));
+      did("copy");
     });
 
     // MARK: The timer
@@ -1036,6 +1040,7 @@
       Object.assign(which.style, { left: left + "px", top: top + "px" });
       if (which === menu) statusButton.setAttribute("aria-expanded", "true");
       button.classList.remove("hint");
+      if (which === menu) did("menu");
       const first = which.querySelector(".ctx-item:not(:disabled)");
       if (first) first.focus({ preventScroll: true });
     }
@@ -1140,6 +1145,206 @@
     });
 
     addEventListener("resize", closeMenus);
+
+    // MARK: The guide for a first visit
+
+    // One step at a time: a card beside the thing to try, a ring round it,
+    // and Show me, which does it with the pointer. Doing it moves on.
+    const stage = screen.closest("[data-stage]");
+    const coach = stage.querySelector("[data-coach]");
+    const ring = stage.querySelector(".coach-ring");
+    const words = JSON.parse(stage.querySelector("[data-coach-steps]").textContent);
+    const showButton = coach.querySelector("[data-coach-show]");
+    const skipButton = coach.querySelector("[data-coach-skip]");
+    const getLink = coach.querySelector(".coach-get");
+    const flights = windows.find((w) => w.name === "flights");
+    const newest = () => hanging().pop();
+    const guide = [
+      { target: () => button, side: "start", round: true, until: "choose", show: () => press(button, () => choose("shot")) },
+      { target: () => flights, side: "end", until: "hang", show: drag },
+      { target: () => newest() && newest().querySelector(".photo"), side: "below", until: "copy",
+        show: () => { const hit = newest().querySelector(".photo-hit"); press(hit, () => hit.click()); } },
+      { target: () => statusButton, side: "below", round: true, until: "menu", show: () => press(statusButton, () => openMenu(menu, statusButton)) },
+      { target: () => null, side: "none" },
+    ];
+    let step = -1;
+    let guided = false;
+    let showing = false;
+
+    function did(event) {
+      if (step < 0 || guide[step].until !== event) return;
+      setTimeout(() => go(step + 1), event === "choose" ? 250 : 600);
+    }
+
+    function go(n) {
+      step = n;
+      showing = false;
+      const g = guide[n];
+      coach.querySelector("[data-coach-n]").textContent = coach.dataset.of.replace("{n}", n + 1).replace("{total}", guide.length);
+      coach.querySelector("[data-coach-title]").textContent = words[n].title;
+      coach.querySelector("[data-coach-text]").textContent = words[n].text;
+      const last = n === guide.length - 1;
+      showButton.hidden = last;
+      showButton.disabled = false;
+      getLink.hidden = !last;
+      skipButton.textContent = last ? coach.dataset.done : coach.dataset.skip;
+      coach.hidden = false;
+      coach.classList.remove("fresh");
+      void coach.offsetWidth;
+      coach.classList.add("fresh");
+      placeCoach();
+    }
+
+    function stopGuide() {
+      step = -1;
+      coach.hidden = true;
+      ring.hidden = true;
+    }
+
+    // The card goes on the side asked for when it fits on the page, else
+    // under the thing; the ring follows the thing.
+    function placeCoach() {
+      if (step < 0) return;
+      const g = guide[step];
+      const base = stage.getBoundingClientRect();
+      const box = screen.getBoundingClientRect();
+      let target = g.target();
+      if (target && !(target instanceof Element)) {
+        target = {
+          left: box.left + (target.x / W) * box.width, top: box.top + (target.y / H) * box.height,
+          width: (target.w / W) * box.width, height: (target.h / H) * box.height,
+        };
+        target.right = target.left + target.width;
+        target.bottom = target.top + target.height;
+      } else if (target) {
+        target = target.getBoundingClientRect();
+      }
+      const page = document.documentElement.clientWidth;
+      const w = coach.offsetWidth;
+      const h = coach.offsetHeight;
+      const gap = 16;
+      let side = g.side === "start" ? (rtl ? "right" : "left") : g.side === "end" ? (rtl ? "left" : "right") : g.side;
+      let x;
+      let y;
+      const at = (s) => {
+        if (s === "left") { x = target.left - gap - w; y = target.top + Math.min(target.height / 2, 60) - h / 2; }
+        else if (s === "right") { x = target.right + gap; y = target.top + Math.min(target.height / 2, 60) - h / 2; }
+        else if (s === "below") { x = target.left + target.width / 2 - w / 2; y = target.bottom + gap; }
+        return x >= 8 && x + w <= page - 8;
+      };
+      if (!target) {
+        side = "none";
+        x = box.left + box.width / 2 - w / 2;
+        y = box.top + box.height * 0.42 - h / 2;
+      } else if (!at(side)) {
+        side = "below";
+        at(side);
+      }
+      x = Math.min(Math.max(x, 8), page - w - 8);
+      coach.dataset.side = side;
+      coach.style.left = x - base.left + "px";
+      coach.style.top = y - base.top + "px";
+      if (target) {
+        coach.style.setProperty("--ax", Math.min(Math.max(target.left + target.width / 2 - x, 20), w - 20) + "px");
+        coach.style.setProperty("--ay", Math.min(Math.max(target.top + Math.min(target.height / 2, 60) - y, 20), h - 20) + "px");
+        const pad = g.round ? 5 : 6;
+        Object.assign(ring.style, {
+          left: target.left - base.left - pad + "px", top: target.top - base.top - pad + "px",
+          width: target.width + pad * 2 + "px", height: target.height + pad * 2 + "px",
+        });
+        ring.classList.toggle("round", !!g.round);
+      }
+      ring.hidden = !target;
+    }
+
+    // The pointer goes to a thing, presses it, and it happens.
+    const pointAt = (x, y) => {
+      if (pointer.hidden) {
+        pointer.style.transition = "none";
+        setPointer(rtl ? 0.62 : 0.38, 0.62);
+        pointer.hidden = false;
+        void pointer.offsetWidth;
+        pointer.style.transition = "";
+      }
+      requestAnimationFrame(() => setPointer(x, y));
+    };
+
+    async function press(el, then) {
+      const r = el.getBoundingClientRect();
+      const box = screen.getBoundingClientRect();
+      pointAt((r.left + r.width / 2 - box.left) / box.width, (r.top + r.height / 2 - box.top) / box.height);
+      await wait(reduced.matches ? 50 : 1000);
+      pointer.classList.add("press");
+      await wait(140);
+      pointer.classList.remove("press");
+      then();
+      setTimeout(() => { if (!countdown) pointer.hidden = true; }, 700);
+    }
+
+    // Drags over the flight list, as a person would.
+    async function drag() {
+      if (overlay.hidden) {
+        choose("shot");
+        await wait(300);
+      }
+      const from = { x: rtl ? flights.x + flights.w - 24 : flights.x + 24, y: flights.y + 118 };
+      const to = { x: rtl ? flights.x + 24 : flights.x + flights.w - 24, y: flights.y + flights.h - 10 };
+      pointAt(from.x / W, from.y / H);
+      await wait(reduced.matches ? 50 : 1000);
+      pointer.style.transition = "none";
+      overlay.classList.add("dragging");
+      area.hidden = false;
+      const length = reduced.matches ? 1 : 1000;
+      const began = performance.now();
+      const region = await new Promise((done) => {
+        const frame = (now) => {
+          const k = Math.min((now - began) / length, 1);
+          const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+          const p = { x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e };
+          const r = { x: Math.min(from.x, p.x), y: Math.min(from.y, p.y), w: Math.abs(p.x - from.x), h: Math.abs(p.y - from.y) };
+          place(area, r);
+          size.textContent = `${Math.round(r.w * 1.44)} × ${Math.round(r.h * 1.44)}`;
+          setPointer(p.x / W, p.y / H);
+          if (k < 1) requestAnimationFrame(frame);
+          else done(r);
+        };
+        requestAnimationFrame(frame);
+      });
+      pointer.style.transition = "";
+      await wait(200);
+      if (!overlay.hidden) take(region);
+      setTimeout(() => { pointer.hidden = true; }, 400);
+    }
+
+    showButton.addEventListener("click", () => {
+      if (step < 0 || showing || !guide[step].show) return;
+      showing = true;
+      showButton.disabled = true;
+      guide[step].show();
+    });
+    skipButton.addEventListener("click", stopGuide);
+    addEventListener("resize", placeCoach);
+
+    // It starts by itself the first time the screen is in view, before
+    // anything was taken, and the button under the screen starts it again.
+    if ("IntersectionObserver" in window) {
+      const first = new IntersectionObserver((entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        first.disconnect();
+        setTimeout(() => { if (!guided && !taken && overlay.hidden) { guided = true; go(0); } }, 700);
+      }, { threshold: 0.6 });
+      first.observe(screen);
+    }
+    const again = document.querySelector("[data-tour-again]");
+    if (again) {
+      again.addEventListener("click", () => {
+        guided = true;
+        cancelCountdown();
+        closeOverlay();
+        screen.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "center" });
+        setTimeout(() => go(0), reduced.matches ? 0 : 450);
+      });
+    }
   }
 
   // MARK: Hide Part, said in a sentence

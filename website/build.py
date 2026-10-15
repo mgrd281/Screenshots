@@ -9,6 +9,7 @@ Only the Python standard library is used. The words live in content.py;
 labels the app itself shows come from its Localizable.strings, so the site
 and the app always agree.
 """
+import base64
 import html
 import json
 import re
@@ -511,6 +512,93 @@ class Scene:
         return "".join(self.circle(x + i * gap, cy, r, c) for i, c in enumerate(["#FF5F57", "#FEBC2E", "#28C840"]))
 
 
+def app_icons(day):
+    """The Dock's icons, each on a 100-point square, drawn the way a Mac's
+    are (a rounded square, a gradient and a soft sheen) but none of them a
+    real app's. Snapfly's is its own."""
+    shape = '<rect width="100" height="100" rx="22.5" fill="{}"/>'
+    sheen = '<rect width="100" height="100" rx="22.5" fill="url(#ic-sheen)"/>'
+    edge = '<rect x=".5" y=".5" width="99" height="99" rx="22" fill="none" stroke="#000" stroke-opacity=".1"/>'
+    tile = lambda fill, art: shape.format(fill) + art + sheen + edge
+    gear = "".join(f'<rect x="45.5" y="17" width="9" height="15" rx="2.5" transform="rotate({a} 50 50)"/>' for a in range(0, 360, 45))
+    icon = (STATIC / "icon-128.png").read_bytes()
+    return {
+        "files": tile("url(#ic-files)",
+                      '<path d="M17 33a7 7 0 0 1 7-7h16.5l7 7H76a7 7 0 0 1 7 7v4H17Z" fill="#2A7AD6"/>'
+                      '<rect x="15" y="40" width="70" height="41" rx="7" fill="url(#ic-folder)"/>'
+                      '<path d="M16 47h68" stroke="#FFFFFF" stroke-opacity=".4" stroke-width="1.5"/>'),
+        "browser": tile("url(#ic-browser)",
+                        '<g fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round">'
+                        '<circle cx="50" cy="50" r="29"/><path d="M21 50h58"/>'
+                        '<path d="M50 21c9 8 13.5 18 13.5 29S59 71 50 79c-9-8-13.5-18-13.5-29S41 29 50 21Z"/></g>'
+                        '<path d="M27 36h46M27 64h46" stroke="#FFFFFF" stroke-width="3" stroke-opacity=".8"/>'),
+        "chat": tile("url(#ic-chat)",
+                     '<path d="M50 23c-18.2 0-33 11.9-33 26.6 0 7.8 4.2 14.8 10.8 19.7L25.5 80l13-5.8c3.6 1.1 7.5 1.7 11.5 1.7 18.2 0 33-11.9 33-26.6S68.2 23 50 23Z" fill="#FFFFFF"/>'),
+        "mail": tile("url(#ic-mail)",
+                     '<rect x="16" y="28" width="68" height="46" rx="7" fill="#FFFFFF"/>'
+                     '<path d="M19 32l31 22 31-22" fill="none" stroke="#1A75F0" stroke-opacity=".5" stroke-width="4" stroke-linejoin="round"/>'),
+        "calendar": tile("url(#ic-paper)",
+                         f'<text x="50" y="31" font-size="15" font-weight="600" fill="#FF3B30" text-anchor="middle">{esc(day)}</text>'
+                         '<text x="50" y="79" font-size="49" font-weight="300" fill="#1D1D1F" text-anchor="middle">23</text>'),
+        "photos": tile("url(#ic-paper)",
+                       '<clipPath id="ic-pic"><rect x="15" y="21" width="70" height="58" rx="9"/></clipPath>'
+                       '<g clip-path="url(#ic-pic)"><rect x="15" y="21" width="70" height="58" fill="url(#ic-sky)"/>'
+                       '<circle cx="66" cy="38" r="8" fill="#FFD60A"/>'
+                       '<path d="M15 66l18-16 14 11 12-9 26 19v8H15Z" fill="#34C759"/>'
+                       '<path d="M15 72l22-10 20 8 28-6v15H15Z" fill="#248A3D"/></g>'),
+        "music": tile("url(#ic-music)",
+                      '<g fill="#FFFFFF"><path d="M35 34 69 25.5v9L35 43Z"/><rect x="35" y="34" width="5" height="34"/>'
+                      '<rect x="64" y="26" width="5" height="34"/>'
+                      '<ellipse cx="31" cy="68" rx="10" ry="8" transform="rotate(-18 31 68)"/>'
+                      '<ellipse cx="60" cy="60" rx="10" ry="8" transform="rotate(-18 60 60)"/></g>'),
+        "notes": tile("url(#ic-paper)",
+                      '<clipPath id="ic-top"><rect width="100" height="100" rx="22.5"/></clipPath>'
+                      '<rect width="100" height="30" fill="url(#ic-yellow)" clip-path="url(#ic-top)"/>'
+                      '<path d="M14 49h72M14 62h72M14 75h72" stroke="#D5D5DA" stroke-width="2"/>'),
+        "settings": tile("url(#ic-settings)",
+                         f'<g fill="#3E3F44">{gear}<circle cx="50" cy="50" r="26"/></g>'
+                         '<circle cx="50" cy="50" r="14" fill="#C7C9CE"/><circle cx="50" cy="50" r="6" fill="#3E3F44"/>'),
+        "snapfly": f'<image href="data:image/png;base64,{base64.b64encode(icon).decode()}" x="-5.5" y="-6" width="111" height="111"/>',
+    }
+
+
+def dock(s, t):
+    """The Dock: the apps, a divider, and Snapfly, with a dot under those
+    that are open."""
+    defs = ('<defs>'
+            '<linearGradient id="ic-sheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".3"/>'
+            '<stop offset=".5" stop-color="#FFFFFF" stop-opacity=".04"/><stop offset=".51" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>'
+            + "".join(f'<linearGradient id="ic-{n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{a}"/><stop offset="1" stop-color="{b}"/></linearGradient>'
+                      for n, a, b in [("files", "#F4F8FD", "#D8E6F6"), ("folder", "#78C2FF", "#2D87E8"), ("browser", "#5CC9FF", "#0A63D9"),
+                                      ("chat", "#6BE46E", "#1DB33C"), ("mail", "#6AD0FF", "#1A75F0"), ("paper", "#FFFFFF", "#ECECEF"),
+                                      ("sky", "#8ED4FF", "#3E9DF2"), ("music", "#FF6C8A", "#F7213F"), ("yellow", "#FFD836", "#F6BF14"),
+                                      ("settings", "#BDBFC4", "#77797F")])
+            + '<filter id="ic-shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000" flood-opacity=".28"/></filter>'
+            '</defs>')
+    icons = app_icons(t["day"])
+    order = ["files", "browser", "chat", "mail", "calendar", "photos", "music", "notes", "settings", None, "snapfly"]
+    running = {"files", "browser", "music", "snapfly"}
+    size, gap, divider, pad = 42, 7, 16, 9
+    width = sum(divider if n is None else size for n in order) + gap * (len(order) - 1) + 2 * pad
+    left = (SCREEN_W - width) / 2
+    top = DOCK_TOP - 2
+    out = [defs, f'<rect x="{left:g}" y="{top:g}" width="{width:g}" height="56" rx="18" fill="#FFFFFF" fill-opacity=".3" '
+                 'stroke="#FFFFFF" stroke-opacity=".55" stroke-width=".8"/>']
+    x = left + pad
+    for name in order:
+        if name is None:
+            out.append(f'<path d="M{s.X(x + divider / 2):g} {top + 9:g}v38" stroke="#000" stroke-opacity=".18"/>')
+            x += divider + gap
+            continue
+        ix = s.left(x, size)
+        out.append(f'<g transform="translate({ix:g} {top + 5:g}) scale({size / 100:g})" filter="url(#ic-shadow)">{icons[name]}</g>')
+        if name in running:
+            out.append(s.circle(x + size / 2, top + 51.5, 1.8, "#1D1D1F", ' fill-opacity=".7"'))
+        x += size + gap
+    s.window("dock", left, top, width, 56)
+    return "".join(out)
+
+
 def scene_svg(lang):
     t = TEXT[lang]["scene"]
     s = Scene(lang)
@@ -518,10 +606,13 @@ def scene_svg(lang):
     out = [f'<svg viewBox="0 0 {SCREEN_W} {SCREEN_H}" xmlns="http://www.w3.org/2000/svg" focusable="false" '
            f'font-family="-apple-system, BlinkMacSystemFont, system-ui, sans-serif"{d}>',
            '<defs>'
-           '<linearGradient id="sc-wall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8A5C"/>'
-           '<stop offset=".4" stop-color="#FF5E62"/><stop offset=".74" stop-color="#D9449A"/><stop offset="1" stop-color="#B234D6"/></linearGradient>'
-           '<radialGradient id="sc-amber" cx="0" cy="0" r=".8"><stop offset="0" stop-color="#FFC45C" stop-opacity=".95"/><stop offset=".78" stop-color="#FFC45C" stop-opacity="0"/></radialGradient>'
-           '<radialGradient id="sc-violet" cx="1" cy="1" r=".75"><stop offset="0" stop-color="#B234D6" stop-opacity=".92"/><stop offset=".95" stop-color="#B234D6" stop-opacity="0"/></radialGradient>'
+           '<linearGradient id="sc-sky" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC16A"/>'
+           '<stop offset=".45" stop-color="#FF6D63"/><stop offset="1" stop-color="#9B2FC9"/></linearGradient>'
+           '<linearGradient id="sc-w1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#FF7F5C"/></linearGradient>'
+           '<linearGradient id="sc-w2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8F6B"/><stop offset=".6" stop-color="#F0477B"/><stop offset="1" stop-color="#C2369E"/></linearGradient>'
+           '<linearGradient id="sc-w3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E5408A"/><stop offset=".55" stop-color="#B234D6"/><stop offset="1" stop-color="#7A23C9"/></linearGradient>'
+           '<linearGradient id="sc-w4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7E28C8"/><stop offset="1" stop-color="#46118A"/></linearGradient>'
+           '<linearGradient id="sc-sheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".5"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>'
            '<linearGradient id="sc-album" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6E47D6"/>'
            '<stop offset=".55" stop-color="#FF6D8A"/><stop offset="1" stop-color="#FFB26B"/></linearGradient>'
            '<linearGradient id="sc-brand" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC45C"/>'
@@ -529,9 +620,14 @@ def scene_svg(lang):
            '<filter id="sc-shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="10" stdDeviation="13" flood-color="#2A0A33" flood-opacity=".3"/></filter>'
            '<filter id="sc-pop" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity=".22"/></filter>'
            '</defs>',
-           f'<rect width="{SCREEN_W}" height="{SCREEN_H}" fill="url(#sc-wall)"/>',
-           f'<rect width="{SCREEN_W}" height="{SCREEN_H}" fill="url(#sc-amber)"/>',
-           f'<rect width="{SCREEN_W}" height="{SCREEN_H}" fill="url(#sc-violet)"/>']
+           # The wallpaper: bands that flow across, in the brand's hues.
+           f'<rect width="{SCREEN_W}" height="{SCREEN_H}" fill="url(#sc-sky)"/>',
+           '<path d="M0 150C180 90 330 210 520 170S860 40 1000 90V360C820 300 690 420 500 400S170 300 0 380Z" fill="url(#sc-w1)" opacity=".92"/>',
+           '<path d="M0 300C200 230 360 360 560 320S880 180 1000 230V520C800 470 650 580 450 540S150 430 0 500Z" fill="url(#sc-w2)"/>',
+           '<path d="M0 300C200 230 360 360 560 320S880 180 1000 230V256C880 214 720 348 560 352S210 262 0 330Z" fill="url(#sc-sheen)" opacity=".75"/>',
+           '<path d="M0 440C220 380 420 520 620 470S900 360 1000 400V625H0Z" fill="url(#sc-w3)"/>',
+           '<path d="M0 440C220 380 420 520 620 470S900 360 1000 400V428C900 392 760 488 620 500S230 408 0 470Z" fill="url(#sc-sheen)" opacity=".5"/>',
+           '<path d="M0 560C250 500 520 610 760 560S950 520 1000 535V625H0Z" fill="url(#sc-w4)" opacity=".88"/>']
 
     # The menu bar: the app in front and its menus, then Snapfly, Wi-Fi,
     # the battery and the clock at the far end.
@@ -544,7 +640,14 @@ def scene_svg(lang):
         x += text_width(m, 13) + 20
     clock_w = text_width(t["clock"], 12.5)
     out.append(s.text(982, 17.5, t["clock"], 12.5, 500, anchor="end", extra=' xml:space="preserve"'))
-    wifi = 982 - clock_w - 22
+    center = 982 - clock_w - 20
+    out.append(f'<g transform="translate({s.X(center) - 8:g} 5.5)"><g fill="none" stroke="#1D1D1F" stroke-width="1.4">'
+               '<rect x="1" y="1" width="14" height="5.4" rx="2.7"/><rect x="1" y="9" width="14" height="5.4" rx="2.7"/></g>'
+               '<circle cx="4.6" cy="3.7" r="1.7" fill="#1D1D1F"/><circle cx="11.4" cy="11.7" r="1.7" fill="#1D1D1F"/></g>')
+    spotlight = center - 28
+    out.append(f'<g transform="translate({s.X(spotlight) - 7:g} 6)" fill="none" stroke="#1D1D1F" stroke-width="1.7" stroke-linecap="round">'
+               '<circle cx="6" cy="6" r="4.7"/><path d="m9.6 9.6 3.6 3.6"/></g>')
+    wifi = spotlight - 28
     out.append(f'<g transform="translate({s.X(wifi) - 8:g} 6)" fill="none" stroke="#1D1D1F" stroke-width="1.7" stroke-linecap="round">'
                '<path d="M1 5.2a10 10 0 0 1 14 0M3.6 8a6.2 6.2 0 0 1 8.8 0M6.2 10.8a2.4 2.4 0 0 1 3.6 0"/></g>')
     battery = wifi - 40
@@ -565,6 +668,19 @@ def scene_svg(lang):
     out.append(s.rect(wx, wy + 22, ww, 22, "#F2F2F5"))
     out.append(s.rect(wx, wy + 44, ww, 1, "#E2E2E7"))
     out.append(s.lights(wx + 20, wy + 22))
+    grey = ' fill="none" stroke="#6E6E73" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"'
+    out.append(s.rect(wx + 84, wy + 15, 18, 14, "none", 3, grey))
+    out.append(f'<path d="M{s.X(wx + 90):g} {wy + 15:g}v14"{grey}/>')
+    # Back, and forward dimmed; both turn round for Arabic.
+    sign = -1 if s.rtl else 1
+    out.append(f'<path d="M{s.X(wx + 125):g} {wy + 16:g}l{-5 * sign} 6 {5 * sign} 6"{grey}/>')
+    out.append(f'<path d="M{s.X(wx + 142):g} {wy + 16:g}l{5 * sign} 6 {-5 * sign} 6" opacity=".4"{grey}/>')
+    share = wx + ww - 74
+    out.append(s.rect(share - 6, wy + 18, 12, 11, "none", 2, grey))
+    out.append(f'<path d="M{s.X(share):g} {wy + 12:g}v10m-3.5 -6.5 3.5 -3.5 3.5 3.5"{grey}/>')
+    plus = wx + ww - 46
+    out.append(f'<path d="M{s.X(plus):g} {wy + 15:g}v14m-7 -7h14"{grey}/>')
+    out.append(s.rect(wx + ww - 30, wy + 16, 14, 12, "none", 3, grey))
     out.append(s.rect(wx + (ww - 240) / 2, wy + 10, 240, 24, "#E4E4EA", 7))
     out.append(s.text(wx + ww / 2, wy + 26.5, t["url"], 12, 500, "#3A3A3C", "middle"))
     out.append(s.text(wx + 28, wy + 88, t["route"], 24, 700))
@@ -633,19 +749,7 @@ def scene_svg(lang):
                '<path d="M-28-7-38 0-28 7ZM-38-7-48 0-38 7ZM28-7 38 0 28 7ZM38-7 48 0 38 7Z"/></g>')
     s.window("music", mx, my_, mw, mh)
 
-    # The Dock, with plain tiles rather than any real app's icon.
-    dw, dh = 368, 50
-    dx = (SCREEN_W - dw) / 2
-    out.append(f'<rect x="{dx:g}" y="{DOCK_TOP + 2}" width="{dw}" height="{dh}" rx="17" fill="#FFFFFF" fill-opacity=".3" stroke="#FFFFFF" stroke-opacity=".55"/>')
-    tiles = [("#34C759", "mail"), ("#0A84FF", "globe"), ("#FF9F0A", "plane"), ("#FF2D55", "play"),
-             ("#AF52DE", "sparkles"), ("#5AC8FA", "check"), ("url(#sc-brand)", "shirt")]
-    for k, (fill, sym) in enumerate(tiles):
-        tx = dx + 12 + k * 50
-        out.append(s.rect(tx, DOCK_TOP + 8, 38, 38, fill, 9))
-        out.append(s.glyph(sym, tx + 19, DOCK_TOP + 27, 22, "#FFFFFF", ' style="--plane-crease: transparent"'))
-        if k in (2, 3):
-            out.append(s.circle(tx + 19, DOCK_TOP + 49, 1.8, "#1D1D1F", ' fill-opacity=".6"'))
-    s.window("dock", dx, DOCK_TOP + 2, dw, dh)
+    out.append(dock(s, t))
     out.append("</svg>")
     # Picking order: the window in front first.
     order = {"menubar": 0, "dock": 1, "music": 2, "flights": 3}
@@ -698,7 +802,9 @@ def section_capture(lang):
       <p>{t["cap_p"]}</p>
     </div>
   </div>
-  <div class="screen-stage">
+  <div class="screen-stage" data-stage>
+    <div class="laptop">
+    <div class="lid">
     <div class="screen" role="group" aria-label="{esc(t["cap_label"])}" data-screen data-windows="{data}" data-sort="{sort_data}"
          data-shot-name="{esc(t["cap_shot"])}" data-rec-name="{esc(t["cap_rec"])}" data-hung="{esc(t["cap_hung"])}"
          data-copy="{esc(L(lang, "Copy"))}" data-discard="{esc(L(lang, "Discard"))}" data-copied="{esc(L(lang, "Copied"))}"
@@ -727,14 +833,58 @@ def section_capture(lang):
           <p class="cap-hint"><span data-hint></span> <button type="button" class="cap-cancel">{esc(L(lang, "Cancel"))}</button></p>
         </div>
       </div>
+      <span class="notch" aria-hidden="true"><i></i></span>
       <button class="sf-status" type="button" style="left:{pct(status["x"])};top:{pct(status["y"])}" aria-haspopup="menu" aria-expanded="false" aria-label="Snapfly" title="Snapfly"></button>
       {menu}
       {shot_menu}
       {peg}
       <p class="vh" role="status" aria-live="polite" data-screen-status></p>
     </div>
+    </div>
+    <div class="base" aria-hidden="true"></div>
+    </div>
+    {coach(lang)}
   </div>
-  <p class="screen-try">{esc(t["cap_try"])}</p>
+  <p class="screen-try">{esc(t["cap_try"])} <button class="replay" type="button" data-tour-again>{icon("replay")}<span>{esc(t["tour_again"])}</span></button></p>
+</section>"""
+
+
+def coach(lang):
+    """The guide for a first visit: a card beside each thing to try, in turn,
+    with a ring round it and a button that shows how."""
+    t = TEXT[lang]
+    steps = json.dumps([{"title": a, "text": b} for a, b in t["tour"]], ensure_ascii=False).replace("</", "<\\/")
+    return f"""<div class="coach-ring" aria-hidden="true" hidden></div>
+    <div class="coach" aria-live="polite" hidden data-coach data-of="{esc(t["tour_of"])}" data-skip="{esc(t["tour_skip"])}" data-done="{esc(t["tour_done"])}">
+      <p class="coach-step" data-coach-n></p>
+      <p class="coach-title" data-coach-title></p>
+      <p class="coach-text" data-coach-text></p>
+      <p class="coach-actions">
+        <button type="button" class="coach-skip" data-coach-skip>{esc(t["tour_skip"])}</button>
+        <button type="button" class="coach-show" data-coach-show>{esc(t["tour_show"])}</button>
+        <a class="coach-get" href="{DOWNLOAD}" hidden>{icon("download")}<span>{esc(t["cta"])}</span></a>
+      </p>
+      <span class="coach-arrow" aria-hidden="true"></span>
+    </div>
+    <script type="application/json" data-coach-steps>{steps}</script>"""
+
+
+def section_start(lang):
+    """Four steps from the download to the first screenshot on the line."""
+    t = TEXT[lang]
+    symbols = ["download", "shirt", "lock", "viewfinder"]
+    steps = "".join(
+        f'<li class="step"><span class="step-top"><span class="step-n">{i + 1}</span>'
+        f'<span class="step-icon">{icon(symbols[i])}</span></span><h3>{esc(h)}</h3><p>{esc(b)}</p></li>'
+        for i, (h, b) in enumerate(t["start"]))
+    return f"""<section class="section start" aria-labelledby="start-h">
+  <div class="wrap">
+    <div class="copy center">
+      <h2 id="start-h">{esc(t["start_h"])}</h2>
+      <p>{esc(t["start_p"])}</p>
+    </div>
+    <ol class="steps">{steps}</ol>
+  </div>
 </section>"""
 
 
@@ -1022,7 +1172,8 @@ def section_close(lang):
 def home(lang):
     t = TEXT[lang]
     main = "\n".join([hero(lang), section_send(lang), section_capture(lang), section_desk(lang), section_private(lang),
-                      section_say(lang), section_menu(lang), section_styles(lang), section_design(lang), section_close(lang)])
+                      section_say(lang), section_menu(lang), section_styles(lang), section_design(lang), section_start(lang),
+                      section_close(lang)])
     return document(lang, "index", t["title_home"], t["desc_home"], main)
 
 
