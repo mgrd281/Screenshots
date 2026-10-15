@@ -1,0 +1,7 @@
+{
+  "buildCommand": "SNAPFLY_SITE_URL=${SNAPFLY_SITE_URL:-https://$VERCEL_PROJECT_PRODUCTION_URL/} python3 website/build.py",
+  "outputDirectory": "website/_site",
+  "installCommand": "true",
+  "framework": null,
+  "cleanUrls": false
+}

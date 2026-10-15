@@ -60,6 +60,8 @@ required by the license and stays.
   - Words live in `website/content.py`. Labels the app shows come from its
     `Localizable.strings`, so change them there.
   - System fonts only, and nothing loaded from another host.
+  - `vercel.json` builds the same site on Vercel. `SNAPFLY_SITE_URL` (ending in
+    a slash) sets the address the pages point to; set it to the custom domain.
   - Its design rules are under "Website" in `DESIGN.md`; its brief is
     `website/BRIEF.md`.
 - **Promo video.** `promo/` makes the vertical motion graphic in three
