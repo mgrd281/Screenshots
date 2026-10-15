@@ -214,3 +214,6 @@
 "Off" = "Désactivé";
 "%d days" = "%d jours";
 "What leaves the line stays in the History, from the menu bar, to find and hang again." = "Ce qui quitte la corde reste dans l’Historique, depuis la barre des menus, pour le retrouver et le suspendre à nouveau.";
+"Add App…" = "Ajouter une app…";
+"Chat apps" = "Apps de discussion";
+"It shows over these apps while photos hang." = "Il apparaît sur ces apps tant que des photos sont suspendues.";

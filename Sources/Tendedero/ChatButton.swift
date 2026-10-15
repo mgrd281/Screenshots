@@ -73,14 +73,46 @@ final class ChatButton {
     private var fieldFrame: CGRect?
     private var ticks = 0
 
-    /// Chat apps, where it shows whenever photos hang.
-    private static let chatApps: Set<String> = [
+    /// One chat app it shows over, which can be turned off without
+    /// forgetting it.
+    struct ChatApp: Codable, Hashable, Identifiable {
+        var bundleID: String
+        var on = true
+        var id: String { bundleID }
+
+        /// Where it is installed, if it is.
+        var url: URL? { NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) }
+
+        /// The app's own name, as the Finder shows it.
+        var name: String {
+            guard let url else { return bundleID }
+            return (FileManager.default.displayName(atPath: url.path) as NSString).deletingPathExtension
+        }
+    }
+
+    /// Chat apps it knows from the start: ChatGPT, Claude, Perplexity,
+    /// WhatsApp, Telegram, Messages, Slack, Discord, Signal, Teams,
+    /// Messenger, LINE, Viber and Skype.
+    static let standardApps = [
         "com.openai.chat", "com.anthropic.claudefordesktop", "ai.perplexity.mac",
         "net.whatsapp.WhatsApp", "desktop.WhatsApp", "ru.keepcoder.Telegram", "org.telegram.desktop",
         "com.apple.MobileSMS", "com.tinyspeck.slackmacgap", "com.hnc.Discord",
         "org.whispersystems.signal-desktop", "com.microsoft.teams2", "com.microsoft.teams",
         "com.facebook.archon", "jp.naver.line.mac", "com.viber.osx", "com.skype.skype",
-    ]
+    ].map { ChatApp(bundleID: $0) }
+
+    /// The chat apps, the standard ones first, then any added in Settings.
+    static var apps: [ChatApp] {
+        get {
+            guard let data = UserDefaults.standard.data(forKey: "chatButtonApps"),
+                  let saved = try? JSONDecoder().decode([ChatApp].self, from: data) else { return standardApps }
+            return saved
+        }
+        set {
+            UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: "chatButtonApps")
+            shared?.update()
+        }
+    }
 
     /// Browsers that can say which page is open, and how to ask them.
     /// It shows there only on the chat websites from Settings.
@@ -215,8 +247,8 @@ final class ChatButton {
         ticks += 1
         // Where it was dragged is kept per app, and per website in a browser.
         let key: String
-        if Self.chatApps.contains(id) {
-            guard Self.inApps else { return hide() }
+        if let chat = Self.apps.first(where: { $0.bundleID == id }) {
+            guard Self.inApps, chat.on else { return hide() }
             key = id
         } else if Self.browsers[id] != nil {
             // Read at every tick: switching to another tab or site hides it

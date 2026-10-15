@@ -1,6 +1,7 @@
 import AppKit
 import ApplicationServices
 import ServiceManagement
+import UniformTypeIdentifiers
 import SwiftUI
 
 /// What the settings window shows and changes. Each setting is read where
@@ -139,6 +140,37 @@ final class Preferences: ObservableObject {
     var chatButtonInApps: Bool {
         get { ChatButton.inApps }
         set { change { ChatButton.inApps = newValue } }
+    }
+
+    var chatApps: [ChatButton.ChatApp] {
+        get { ChatButton.apps }
+        set { change { ChatButton.apps = newValue } }
+    }
+
+    func chatAppOn(_ bundleID: String) -> Binding<Bool> {
+        Binding(
+            get: { ChatButton.apps.first { $0.bundleID == bundleID }?.on ?? false },
+            set: { on in
+                self.chatApps = ChatButton.apps.map {
+                    $0.bundleID == bundleID ? ChatButton.ChatApp(bundleID: bundleID, on: on) : $0
+                }
+            })
+    }
+
+    /// Asks for an app in the Applications folder and adds it to the chat apps.
+    func addChatApp() {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.application]
+        panel.directoryURL = URL(fileURLWithPath: "/Applications", isDirectory: true)
+        panel.prompt = L("Add")
+        guard panel.runModal() == .OK, let url = panel.url,
+              let id = Bundle(url: url)?.bundleIdentifier,
+              !chatApps.contains(where: { $0.bundleID == id }) else { return }
+        chatApps.append(ChatButton.ChatApp(bundleID: id))
+    }
+
+    func removeChatApp(_ bundleID: String) {
+        chatApps.removeAll { $0.bundleID == bundleID }
     }
 
     var chatSites: [ChatButton.Site] {
@@ -513,7 +545,45 @@ private struct ChatButtonSection: View {
         }
         .onAppear { prefs.refreshChatButtonPreview() }
 
+        ChatAppsSection(prefs: prefs)
         ChatSitesSection(prefs: prefs)
+    }
+}
+
+/// The chat apps it shows over, by name and icon: those on this Mac from the
+/// standard list, and any added. Each can be turned off or removed.
+private struct ChatAppsSection: View {
+    @ObservedObject var prefs: Preferences
+
+    var body: some View {
+        Section {
+            ForEach(prefs.chatApps.filter { $0.url != nil }) { app in
+                HStack(spacing: 8) {
+                    if let url = app.url {
+                        Image(nsImage: NSWorkspace.shared.icon(forFile: url.path))
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .accessibilityHidden(true)
+                    }
+                    Toggle(isOn: prefs.chatAppOn(app.bundleID)) {
+                        Text(verbatim: app.name)
+                    }
+                    Button { prefs.removeChatApp(app.bundleID) } label: {
+                        Image(systemName: "minus.circle")
+                    }
+                    .buttonStyle(.borderless)
+                    .help(L("Remove"))
+                    .accessibilityLabel(L("Remove"))
+                }
+            }
+            Button(L("Add App…")) { prefs.addChatApp() }
+        } header: {
+            Text(L("Chat apps"))
+        } footer: {
+            Text(L("It shows over these apps while photos hang."))
+                .foregroundStyle(.secondary)
+        }
+        .disabled(!prefs.chatButton || !prefs.chatButtonInApps)
     }
 }
 

@@ -214,3 +214,6 @@
 "Off" = "关闭";
 "%d days" = "%d 天";
 "What leaves the line stays in the History, from the menu bar, to find and hang again." = "离开晾衣绳的内容会保留在菜单栏的“历史记录”中，方便找到并重新挂上。";
+"Add App…" = "添加 App…";
+"Chat apps" = "聊天 App";
+"It shows over these apps while photos hang." = "照片挂着时，它会显示在这些 App 上方。";
