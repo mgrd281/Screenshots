@@ -135,7 +135,9 @@ struct GrabArea: NSViewRepresentable {
             }
             menu.addItem(ClosureMenuItem(L("Show in Finder"), symbol: "folder") { line.reveal(id) })
             let inInbox = line.isInInbox(id)
-            if inInbox {
+            // The App Store edition may not write to the Desktop; a drag
+            // into a folder keeps a photo there instead.
+            if inInbox && !Edition.appStore {
                 menu.addItem(ClosureMenuItem(L("Save to Desktop"), symbol: "menubar.dock.rectangle") { line.saveToDesktop(id) })
             }
             menu.addItem(.separator())

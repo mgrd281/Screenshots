@@ -153,3 +153,10 @@
 "Glass shelf" = "الرف الزجاجي";
 "Island" = "جزيرة النوتش";
 "Card stack" = "كومة البطاقات";
+
+/* App Store edition: the Screenshot app saves to Pictures › Snapfly */
+"Set up screenshots" = "إعداد لقطات الشاشة";
+"Open the Screenshot app, click Options and choose Other Location, then pick the Snapfly folder in Pictures. Turn off Show Floating Thumbnail too, so screenshots hang at once." = "افتح تطبيق «لقطة شاشة»، واضغط «خيارات» واختر «موقع آخر»، ثم اختر مجلد Snapfly داخل «الصور». وأوقف «إظهار الصورة المصغّرة العائمة» أيضًا، لتُعلَّق اللقطات فورًا.";
+"Open Screenshot" = "فتح «لقطة شاشة»";
+"Set Up…" = "إعداد…";
+"Screenshots saved to Pictures › Snapfly hang on the line" = "اللقطات المحفوظة في الصور › Snapfly تُعلَّق على الحبل";

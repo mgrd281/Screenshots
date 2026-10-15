@@ -38,6 +38,16 @@ required by the license and stays.
     `scripts/mac-signing.sh`. It holds the App Store Connect API key, its key
     ID and issuer, and the Developer ID key and certificate.
   - Never write secrets from a workflow or a script: the owner pastes them.
+- **Mac App Store edition.** `STORE=1 scripts/build-app.sh` builds it with
+  `APP_STORE` (`Edition.swift`).
+  - It runs sandboxed: it watches Pictures › Snapfly, shows where to point the
+    Screenshot app instead of changing its settings, keeps watched folders as
+    bookmarks, and has no Check for Updates or Save to Desktop.
+  - The **App Store** workflow (manual) signs and uploads it with
+    `scripts/app-store.sh`. It needs the secrets `SNAPFLY_SIGNING` and
+    `SNAPFLY_STORE` (made by `scripts/mac-store-signing.sh` on the owner's Mac),
+    and the app record in App Store Connect.
+  - The privacy policy for the store listing is `PRIVACY.md`.
 - Swift 5 language mode, macOS 14 deployment target, universal binary.
   Gate newer APIs with `if #available` and `#if canImport(...)`. Examples:
   - Translation needs macOS 15;

@@ -153,3 +153,10 @@
 "Glass shelf" = "玻璃架";
 "Island" = "灵动岛";
 "Card stack" = "卡片堆";
+
+/* App Store edition: the Screenshot app saves to Pictures › Snapfly */
+"Set up screenshots" = "设置截图";
+"Open the Screenshot app, click Options and choose Other Location, then pick the Snapfly folder in Pictures. Turn off Show Floating Thumbnail too, so screenshots hang at once." = "打开“截屏”App，点按“选项”并选择“其他位置”，然后选择“图片”中的 Snapfly 文件夹。也请关闭“显示浮动缩略图”，让截图立刻挂上晾衣绳。";
+"Open Screenshot" = "打开“截屏”";
+"Set Up…" = "设置…";
+"Screenshots saved to Pictures › Snapfly hang on the line" = "存到 图片 › Snapfly 的截图会挂上晾衣绳";

@@ -155,3 +155,10 @@
 "Glass shelf" = "Şüşə rəf";
 "Island" = "Ada";
 "Card stack" = "Kart yığını";
+
+/* App Store edition: the Screenshot app saves to Pictures › Snapfly */
+"Set up screenshots" = "Ekran şəkillərini qur";
+"Open the Screenshot app, click Options and choose Other Location, then pick the Snapfly folder in Pictures. Turn off Show Floating Thumbnail too, so screenshots hang at once." = "Ekran şəkli tətbiqini aç, Seçimlər düyməsini klikləyib Başqa yer seç, sonra Şəkillər daxilindəki Snapfly qovluğunu seç. Üzən miniatürü göstər seçimini də söndür ki, ekran şəkilləri dərhal assın.";
+"Open Screenshot" = "Ekran şəklini aç";
+"Set Up…" = "Qur…";
+"Screenshots saved to Pictures › Snapfly hang on the line" = "Şəkillər › Snapfly qovluğuna saxlanan ekran şəkilləri ipdən asılır";

@@ -1,12 +1,18 @@
 #!/bin/bash
 # Builds Snapfly.app into ./build without needing Xcode.
 # Usage: scripts/build-app.sh [debug|release]
+# With STORE=1 it builds the Mac App Store edition (see Edition.swift),
+# signed ad hoc for scripts/app-store.sh to sign. BUILD_NUMBER sets the
+# build number, which App Store Connect wants higher at every upload.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 CONFIG="${1:-release}"
 APP="build/Snapfly.app"
 VERSION="1.0.0"
+BUILD="${BUILD_NUMBER:-1}"
+DEFINE=""
+if [ -n "${STORE:-}" ]; then DEFINE="-Xswiftc -DAPP_STORE"; fi
 
 # Builds one architecture and prints the binary's path.
 # The Command Line Tools for macOS 27 ship an SDK whose SwiftUI needs a macro
@@ -14,14 +20,17 @@ VERSION="1.0.0"
 # newest macOS 26 SDK installed alongside it.
 build_arch() {
   local triple="$1-apple-macosx14.0"
-  if [ -z "${SDKROOT:-}" ] && ! swift build -c "$CONFIG" --triple "$triple" >&2; then
+  # shellcheck disable=SC2086
+  if [ -z "${SDKROOT:-}" ] && ! swift build -c "$CONFIG" --triple "$triple" $DEFINE >&2; then
     FALLBACK="$(ls -d /Library/Developer/CommandLineTools/SDKs/MacOSX26*.sdk 2>/dev/null | sort -V | tail -1)"
     if [ -z "$FALLBACK" ]; then exit 1; fi
     echo "Retrying with $FALLBACK" >&2
     export SDKROOT="$FALLBACK"
   fi
-  if [ -n "${SDKROOT:-}" ]; then swift build -c "$CONFIG" --triple "$triple" >&2; fi
-  cp "$(swift build -c "$CONFIG" --triple "$triple" --show-bin-path)/Tendedero" "$OUT/Tendedero-$1"
+  # shellcheck disable=SC2086
+  if [ -n "${SDKROOT:-}" ]; then swift build -c "$CONFIG" --triple "$triple" $DEFINE >&2; fi
+  # shellcheck disable=SC2086
+  cp "$(swift build -c "$CONFIG" --triple "$triple" $DEFINE --show-bin-path)/Tendedero" "$OUT/Tendedero-$1"
 }
 
 # A universal binary, so it runs on Apple silicon and on Intel Macs, from
@@ -69,7 +78,9 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>CFBundleIconFile</key><string>Snapfly</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>${VERSION}</string>
-  <key>CFBundleVersion</key><string>1</string>
+  <key>CFBundleVersion</key><string>${BUILD}</string>
+  <key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
+  <key>ITSAppUsesNonExemptEncryption</key><false/>
   <key>CFBundleDevelopmentRegion</key><string>en</string>
   <key>CFBundleLocalizations</key><array>${LANGUAGES}</array>
   <key>LSMinimumSystemVersion</key><string>14.0</string>
@@ -89,7 +100,7 @@ PLIST
 # set), with the hardened runtime and a secure timestamp that notarization
 # requires. Without one, sign ad hoc so the app still runs locally.
 IDENTITY="${SIGN_IDENTITY:-$(security find-identity -v -p codesigning 2>/dev/null | awk -F'"' '/Developer ID Application/{print $2; exit}')}"
-if [ -n "$IDENTITY" ]; then
+if [ -n "$IDENTITY" ] && [ -z "${STORE:-}" ]; then
   codesign --force --options runtime --timestamp --sign "$IDENTITY" "$APP"
   echo "Signed with $IDENTITY"
 else

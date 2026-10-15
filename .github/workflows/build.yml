@@ -29,6 +29,11 @@ jobs:
       - name: Check the translations
         run: swift scripts/check-strings.swift
 
+      - name: Check the App Store scripts
+        run: |
+          swiftc -typecheck scripts/asc.swift
+          for script in scripts/*.sh; do bash -n "$script"; done
+
       - name: Get the Developer ID
         if: env.CAN_SIGN == 'true'
         env:

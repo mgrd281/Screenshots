@@ -153,3 +153,10 @@
 "Glass shelf" = "ガラスの棚";
 "Island" = "アイランド";
 "Card stack" = "カードの山";
+
+/* App Store edition: the Screenshot app saves to Pictures › Snapfly */
+"Set up screenshots" = "スクリーンショットを設定";
+"Open the Screenshot app, click Options and choose Other Location, then pick the Snapfly folder in Pictures. Turn off Show Floating Thumbnail too, so screenshots hang at once." = "スクリーンショットアプリを開き、「オプション」で「その他の場所」を選んで、「ピクチャ」内の Snapfly フォルダを選びます。すぐにロープに掛かるよう、「フローティングサムネールを表示」もオフにしてください。";
+"Open Screenshot" = "スクリーンショットを開く";
+"Set Up…" = "設定…";
+"Screenshots saved to Pictures › Snapfly hang on the line" = "ピクチャ › Snapfly に保存したスクリーンショットがロープに掛かります";

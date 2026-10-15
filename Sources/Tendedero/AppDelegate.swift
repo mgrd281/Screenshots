@@ -72,7 +72,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         panel.placeOnScreen()
         updateCapacity()
 
-        if Inbox.isEnabled { Inbox.apply() }
+        if Inbox.isEnabled || Edition.appStore { Inbox.apply() }
         restoreSettingsOnTermination()
         startWatcher()
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
@@ -166,6 +166,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         safetyWatcher?.stop()
         safetyWatcher = nil
         watcher = ScreenshotWatcher(
+            folder: Edition.appStore ? Inbox.folder : nil,
             onNew: { [weak self] url in self?.hangCapture(url) },
             onChange: { [weak self] in self?.line.prune() })
         watcher.start()
@@ -202,6 +203,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// them hang like screenshots; taking one down leaves the file there.
     static var extraFolders: [URL] {
         get {
+            if Edition.appStore { return bookmarkedFolders }
             let paths = UserDefaults.standard.stringArray(forKey: "extraFolders") ?? []
             return paths.compactMap { path in
                 var isDir: ObjCBool = false
@@ -209,8 +211,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 return URL(fileURLWithPath: path, isDirectory: true)
             }
         }
-        set { UserDefaults.standard.set(newValue.map(\.path), forKey: "extraFolders") }
+        set {
+            if Edition.appStore {
+                bookmarkedFolders = newValue
+            } else {
+                UserDefaults.standard.set(newValue.map(\.path), forKey: "extraFolders")
+            }
+        }
     }
+
+    /// The sandbox lets Snapfly into a folder only once it was picked, and
+    /// again after a relaunch through a bookmark.
+    private static var bookmarkedFolders: [URL] {
+        get {
+            let marks = UserDefaults.standard.array(forKey: "extraFolderBookmarks") as? [Data] ?? []
+            return marks.compactMap { mark in
+                var stale = false
+                guard let url = try? URL(resolvingBookmarkData: mark, options: .withSecurityScope,
+                                         relativeTo: nil, bookmarkDataIsStale: &stale) else { return nil }
+                if !openedFolders.contains(url.path), url.startAccessingSecurityScopedResource() {
+                    openedFolders.insert(url.path)
+                }
+                return url
+            }
+        }
+        set {
+            let marks = newValue.compactMap {
+                try? $0.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
+            }
+            UserDefaults.standard.set(marks, forKey: "extraFolderBookmarks")
+        }
+    }
+
+    private static var openedFolders: Set<String> = []
 
     private func chooseExtraFolder() {
         let panel = NSOpenPanel()
@@ -234,6 +267,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// Asked once. Changing system settings is the user's call, never ours.
     private func offerInbox() {
+        if Edition.appStore { return guideScreenshots() }
         Inbox.wasOffered = true
         let alert = NSAlert()
         alert.messageText = L("Let Snapfly handle your screenshots?")
@@ -244,6 +278,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if let icon = NSApp.applicationIconImage { alert.icon = icon }
         NSApp.activate(ignoringOtherApps: true)
         if alert.runModal() == .alertFirstButtonReturn { setInbox(true) }
+    }
+
+    /// The App Store edition may not change the screenshot settings, so it
+    /// says where to change them, and opens the Screenshot app.
+    private func guideScreenshots() {
+        Inbox.wasOffered = true
+        Inbox.apply()
+        let alert = NSAlert()
+        alert.messageText = L("Set up screenshots")
+        alert.informativeText = L(
+            "Open the Screenshot app, click Options and choose Other Location, then pick the Snapfly folder in Pictures. Turn off Show Floating Thumbnail too, so screenshots hang at once.")
+        alert.addButton(withTitle: L("Open Screenshot"))
+        alert.addButton(withTitle: L("Not now"))
+        if let icon = NSApp.applicationIconImage { alert.icon = icon }
+        NSApp.activate(ignoringOtherApps: true)
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        NSWorkspace.shared.activateFileViewerSelecting([Inbox.folder])
+        NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Utilities/Screenshot.app"))
     }
 
     /// Watching the clipboard is opt in, from the menu bar only.
@@ -703,6 +755,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             foldersChanged: { [weak self] in self?.startWatcher() },
             changeShortcut: { [weak self] in self?.changeShortcut($0) },
             fullScreenChanged: { [weak self] in self?.refresh() },
+            setUpScreenshots: { [weak self] in self?.guideScreenshots() },
             openScreenshotsFolder: { [weak self] in
                 guard let self else { return }
                 NSWorkspace.shared.open(self.watcher.folder)
@@ -779,9 +832,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         // The app never connects to anything, so it cannot tell when a new
         // version is out. The releases page can.
-        menu.addItem(ClosureMenuItem(L("Check for Updates…")) {
-            NSWorkspace.shared.open(AppDelegate.updatesURL)
-        })
+        // From the App Store, updates come through it.
+        if !Edition.appStore {
+            menu.addItem(ClosureMenuItem(L("Check for Updates…")) {
+                NSWorkspace.shared.open(AppDelegate.updatesURL)
+            })
+        }
 
         menu.addItem(.separator())
         menu.addItem(ClosureMenuItem(L("Quit Snapfly"), key: "q") {

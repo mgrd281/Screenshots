@@ -153,3 +153,10 @@
 "Glass shelf" = "유리 선반";
 "Island" = "아일랜드";
 "Card stack" = "카드 더미";
+
+/* App Store edition: the Screenshot app saves to Pictures › Snapfly */
+"Set up screenshots" = "스크린샷 설정";
+"Open the Screenshot app, click Options and choose Other Location, then pick the Snapfly folder in Pictures. Turn off Show Floating Thumbnail too, so screenshots hang at once." = "스크린샷 앱을 열고 옵션에서 다른 위치를 선택한 다음, 사진 폴더의 Snapfly 폴더를 고르세요. 스크린샷이 바로 걸리도록 플로팅 썸네일 보기도 끄세요.";
+"Open Screenshot" = "스크린샷 열기";
+"Set Up…" = "설정…";
+"Screenshots saved to Pictures › Snapfly hang on the line" = "사진 › Snapfly에 저장한 스크린샷이 빨랫줄에 걸립니다";

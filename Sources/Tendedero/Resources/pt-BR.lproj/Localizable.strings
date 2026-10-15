@@ -153,3 +153,10 @@
 "Glass shelf" = "Prateleira de vidro";
 "Island" = "Ilha";
 "Card stack" = "Pilha de cartões";
+
+/* App Store edition: the Screenshot app saves to Pictures › Snapfly */
+"Set up screenshots" = "Configurar capturas de tela";
+"Open the Screenshot app, click Options and choose Other Location, then pick the Snapfly folder in Pictures. Turn off Show Floating Thumbnail too, so screenshots hang at once." = "Abra o app Captura de Tela, clique em Opções e escolha Outro Local; depois, a pasta Snapfly em Imagens. Desative também Mostrar Miniatura Flutuante, para as capturas irem ao varal na hora.";
+"Open Screenshot" = "Abrir Captura de Tela";
+"Set Up…" = "Configurar…";
+"Screenshots saved to Pictures › Snapfly hang on the line" = "Capturas salvas em Imagens › Snapfly vão para o varal";
