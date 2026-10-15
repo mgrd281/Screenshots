@@ -133,3 +133,14 @@
 "Close" = "Pechar";
 "Send" = "Enviar";
 "Send with Photo" = "Enviar coa foto";
+/* Pin and Search */
+"Pin" = "Fixar";
+"Unpin" = "Deixar de fixar";
+"Search screenshots" = "Buscar nas capturas";
+"Search…" = "Buscar…";
+"%d found" = "%d atopadas";
+"No matches" = "Sen resultados";
+"Return picks them, ready to send." = "Return selecciónaas, listas para enviar.";
+/* Sent */
+"Take photos down once sent" = "Retirar as fotos ao envialas";
+"Sent into a chat, they leave the line. Pinned ones stay." = "O que envías a un chat sae da corda. As fixadas quedan.";

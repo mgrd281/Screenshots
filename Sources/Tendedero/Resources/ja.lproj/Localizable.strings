@@ -133,3 +133,14 @@
 "Close" = "閉じる";
 "Send" = "送信";
 "Send with Photo" = "写真と一緒に送信";
+/* Pin and Search */
+"Pin" = "ピンで固定";
+"Unpin" = "ピンを外す";
+"Search screenshots" = "スクリーンショットを検索";
+"Search…" = "検索…";
+"%d found" = "%d件";
+"No matches" = "一致なし";
+"Return picks them, ready to send." = "Returnキーで選択し、送信の準備をします。";
+/* Sent */
+"Take photos down once sent" = "送信したら写真を外す";
+"Sent into a chat, they leave the line. Pinned ones stay." = "チャットに送った写真はロープから外れます。ピンで固定した写真は残ります。";

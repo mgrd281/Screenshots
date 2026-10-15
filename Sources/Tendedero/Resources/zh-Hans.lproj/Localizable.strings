@@ -133,3 +133,14 @@
 "Close" = "关闭";
 "Send" = "发送";
 "Send with Photo" = "连同照片发送";
+/* Pin and Search */
+"Pin" = "固定";
+"Unpin" = "取消固定";
+"Search screenshots" = "搜索截图";
+"Search…" = "搜索…";
+"%d found" = "找到 %d 张";
+"No matches" = "无结果";
+"Return picks them, ready to send." = "按 Return 键选中它们，即可发送。";
+/* Sent */
+"Take photos down once sent" = "发送后取下照片";
+"Sent into a chat, they leave the line. Pinned ones stay." = "发送到聊天中的照片会离开晾衣绳。已固定的照片会保留。";

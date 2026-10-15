@@ -4,13 +4,14 @@ import SwiftUI
 /// Bridges each photo to AppKit's drag and drop, so it can be dragged into
 /// any app as a real file. Each destination means one thing:
 ///
-/// - An app gets a copy, and the photo stays on the line.
+/// - An app gets a copy, and the photo leaves the line, as anything sent does
+///   (unless Take photos down once sent is off, or it is pinned).
 /// - A folder or the Desktop keeps the file, and the photo leaves the line.
 /// - The Trash discards it.
 /// - Nowhere that accepts it: the photo flies back to the line.
 ///
-/// Click copies, press and hold opens Markup, the corner cross discards and
-/// the paper plane in the opposite corner sends.
+/// Click copies, press and hold opens Markup, the corner cross discards, or
+/// unpins a pinned photo, and the paper plane in the opposite corner sends.
 /// ⌘-click picks several, which copy together.
 struct GrabArea: NSViewRepresentable {
     let item: Pegged
@@ -30,12 +31,14 @@ struct GrabArea: NSViewRepresentable {
         let id = item.id
         let line = line
         let isRecording = item.isRecording
+        let pinned = item.pinned
         view.url = item.url
         view.dragImage = item.thumb
         // With Hide private details on, a drag hands over the covered copy.
         view.outgoingURL = { PrivateDetails.shareable(item.url) }
         view.onClick = { line.copy(id) }
         view.onPick = { line.pick(id) }
+        view.onSentByDrag = { line.sentByDrag(id) }
         view.onSend = { line.paste(id) }
         view.onDoubleClick = { line.open(id) }
         view.onDragStart = { line.draggingID = id }
@@ -45,7 +48,8 @@ struct GrabArea: NSViewRepresentable {
             line.prune()
         }
         view.onTrash = { line.trash(id) }
-        view.onDiscard = { line.discard(id) }
+        // A pinned photo's corner holds its pin, which unpins.
+        view.onDiscard = { pinned ? line.togglePin(id) : line.discard(id) }
         view.onLongPress = { line.markup(id) }
         view.onForceClick = { line.quickLook(id) }
         view.onPressChange = { pressed in line.pressedID = pressed ? id : nil }
@@ -72,6 +76,9 @@ struct GrabArea: NSViewRepresentable {
                 combine.submenu = ways
                 menu.addItem(combine)
             }
+            menu.addItem(ClosureMenuItem(pinned ? L("Unpin") : L("Pin"), symbol: pinned ? "pin.slash" : "pin") {
+                line.togglePin(id)
+            })
             if !isRecording {
                 // What the screenshot says, translated or summed up, on this Mac.
                 menu.addItem(.separator())
@@ -139,6 +146,8 @@ final class GrabView: NSView, NSDraggingSource {
     var onPick: () -> Void = {}
     /// The paper plane: into the app in front.
     var onSend: () -> Void = {}
+    /// Dropped into an app, which took a copy.
+    var onSentByDrag: () -> Void = {}
     var onDoubleClick: () -> Void = {}
     var onDragStart: () -> Void = {}
     var onDragEnd: () -> Void = {}
@@ -285,6 +294,8 @@ final class GrabView: NSView, NSDraggingSource {
             return
         }
         onDragEnd()
+        // An app took a copy: it was sent, like with the paper plane.
+        if operation == .copy { onSentByDrag() }
         // Finder finishes a move a moment later. Check again then, so a photo
         // saved into a folder leaves the line.
         if operation.contains(.move) {

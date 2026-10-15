@@ -135,3 +135,14 @@
 "Close" = "बंद करें";
 "Send" = "भेजें";
 "Send with Photo" = "फ़ोटो के साथ भेजें";
+/* Pin and Search */
+"Pin" = "पिन करें";
+"Unpin" = "अनपिन करें";
+"Search screenshots" = "स्क्रीनशॉट में खोजें";
+"Search…" = "खोजें…";
+"%d found" = "%d मिले";
+"No matches" = "कुछ नहीं मिला";
+"Return picks them, ready to send." = "Return दबाने से वे चुन ली जाती हैं, भेजने के लिए तैयार।";
+/* Sent */
+"Take photos down once sent" = "भेजने के बाद फ़ोटो हटाएँ";
+"Sent into a chat, they leave the line. Pinned ones stay." = "चैट में भेजी गई फ़ोटो रस्सी से हट जाती हैं। पिन की गई फ़ोटो बनी रहती हैं।";

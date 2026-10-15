@@ -96,10 +96,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         line.onFall = { [weak self] item in self?.fall(item) }
         line.onSend = { [weak self] photos in self?.send(photos) ?? 0 }
         line.frameOfPhoto = { [weak self] id in self?.cardFrame(for: id) }
+        line.onSearch = { [weak self] in self?.openSearch() }
 
         line.$items
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in self?.itemsChanged() }
+            .store(in: &cancellables)
+        // Picked from a search, the line stays down for the send button,
+        // until the pointer has been to it and left.
+        line.$isSearching
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] searching in
+                guard let self, !searching, self.isRevealed, !self.line.pickedIDs.isEmpty else { return }
+                self.pinned = true
+            }
             .store(in: &cancellables)
         // Photos kept from last time show themselves for a moment.
         if line.liveCount > 0 { comeDown(on: nil) }
@@ -429,6 +440,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if !on {
             pinned = false
             peekUntil = .distantPast
+            SearchBar.shared.close()
             panel.ignoresMouseEvents = true
             // A grip that went away under the pointer never hears it let go.
             TagView.isMovingLine = false
@@ -436,6 +448,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             // comes down, a ⌘-click starts afresh.
             line.pickedIDs = []
         }
+    }
+
+    /// Search: the line comes down, with a bar under it to type into.
+    private func openSearch() {
+        if !isRevealed { toggle() }
+        guard isRevealed else {
+            NSSound.beep()
+            return
+        }
+        SearchBar.shared.show(for: line, at: CGPoint(x: panel.frame.midX, y: panel.frame.minY + 6))
     }
 
     @objc private func toggle() {
@@ -550,7 +572,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if inside && pinned { pinned = false }
 
         let busy = pinned || GrabView.isDragging || GrabView.isShowingMenu || TagView.isMovingLine
-            || line.pressedID != nil || now < peekUntil
+            || line.pressedID != nil || now < peekUntil || line.isSearching
         if inside || busy {
             awaySince = nil
         } else {
@@ -592,6 +614,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             switch role {
             case .toggle: self?.toggle()
             case .send: self?.line.pasteNewest()
+            case .search: self?.openSearch()
             }
         }
     }
@@ -700,6 +723,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             toggleItem.keyEquivalentModifierMask = shortcut.modifiers
         }
         menu.addItem(toggleItem)
+
+        let searchItem = ClosureMenuItem(L("Search…")) { [weak self] in self?.openSearch() }
+        if let shortcut = Shortcut.current(.search), shortcut.key.count == 1 {
+            searchItem.keyEquivalent = shortcut.key
+            searchItem.keyEquivalentModifierMask = shortcut.modifiers
+        }
+        searchItem.isEnabled = line.liveCount > 0
+        menu.addItem(searchItem)
 
         let clearItem = ClosureMenuItem(L("Take everything down")) { [weak self] in
             self?.line.clear()

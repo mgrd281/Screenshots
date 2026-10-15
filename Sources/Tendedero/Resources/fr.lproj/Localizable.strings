@@ -133,3 +133,14 @@
 "Close" = "Fermer";
 "Send" = "Envoyer";
 "Send with Photo" = "Envoyer avec la photo";
+/* Pin and Search */
+"Pin" = "Épingler";
+"Unpin" = "Désépingler";
+"Search screenshots" = "Rechercher dans les captures";
+"Search…" = "Rechercher…";
+"%d found" = "%d trouvées";
+"No matches" = "Aucun résultat";
+"Return picks them, ready to send." = "Retour les sélectionne, prêtes à être envoyées.";
+/* Sent */
+"Take photos down once sent" = "Retirer les photos une fois envoyées";
+"Sent into a chat, they leave the line. Pinned ones stay." = "Ce que vous envoyez dans une discussion quitte la corde. Les photos épinglées restent.";

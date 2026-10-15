@@ -14,6 +14,10 @@ struct PeggedView: View {
     private var picked: Bool { line.pickedIDs.contains(item.id) }
     private var dragging: Bool { line.draggingID == item.id }
     private var pressed: Bool { line.pressedID == item.id }
+    /// Something is typed in Search and this photo does not say it.
+    private var dimmed: Bool { line.found.map { $0[item.id] == nil } ?? false }
+    /// Where this photo says what is typed in Search.
+    private var places: [CGRect] { line.found?[item.id] ?? [] }
 
     var body: some View {
         VStack(spacing: -12) {
@@ -32,6 +36,11 @@ struct PeggedView: View {
         .onChange(of: item.flying) { was, now in if was && !now { land() } }
         .onChange(of: line.gust) { _, _ in breeze() }
         .onChange(of: copied) { _, isCopied in if isCopied { nudge(3) } }
+        .onChange(of: item.pinned) { _, _ in nudge(3) }
+        // Search: what does not say it steps back.
+        .opacity(dimmed ? 0.25 : 1)
+        .saturation(dimmed ? 0 : 1)
+        .animation(.easeOut(duration: 0.2), value: dimmed)
     }
 
     /// The photo fits inside the card area keeping its proportions, so the
@@ -66,6 +75,12 @@ struct PeggedView: View {
                 RoundedRectangle(cornerRadius: Frame.radius - Frame.inset, style: .continuous)
                     .strokeBorder(Color.white.opacity(0.18), lineWidth: 0.5)
             )
+            .overlay(alignment: .topLeading) {
+                // Search: each place the words are, marked like a highlighter.
+                ForEach(Array(places.enumerated()), id: \.offset) { _, place in
+                    Highlight(place: place, photo: photoSize)
+                }
+            }
             .overlay {
                 // A recording says so with a play button over its first frame.
                 if item.isRecording {
@@ -119,18 +134,7 @@ struct PeggedView: View {
             .animation(pressed ? .easeInOut(duration: 0.45) : .spring(response: 0.3, dampingFraction: 0.6), value: pressed)
             .opacity(dragging ? 0.45 : 1)
             .overlay(alignment: .topLeading) {
-                // Drawn here, clicked through GrabView, which sits on top. A
-                // cross sends a file in Tendedero's folder to the Trash; for a
-                // file anywhere else it only hides it from the line.
-                Image(systemName: line.isInInbox(item.id) ? "xmark" : "eye.slash")
-                    .font(.system(size: 8, weight: .bold))
-                    .foregroundStyle(.primary)
-                    .frame(width: 20, height: 20)
-                    .glassFrame(circle: true)
-                    .padding(3)
-                    .opacity(hovering && !dragging ? 1 : 0)
-                    .scaleEffect(hovering ? 1 : 0.6)
-                    .allowsHitTesting(false)
+                Corner(pinned: item.pinned, trashes: line.isInInbox(item.id), hovering: hovering, dragging: dragging)
             }
             .overlay(alignment: .bottomTrailing) {
                 // Sends this photo into the app in front, like a chat. Drawn
@@ -198,6 +202,63 @@ struct PeggedView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             withAnimation(.interpolatingSpring(stiffness: 38, damping: 2.4)) { swing = 0 }
         }
+    }
+}
+
+/// The corner button. Drawn here, clicked through GrabView, which sits on
+/// top. A cross sends a file in Tendedero's folder to the Trash; for a file
+/// anywhere else it only hides it from the line. A pinned photo has a pin
+/// there instead, always showing, which unpins.
+private struct Corner: View {
+    let pinned: Bool
+    let trashes: Bool
+    let hovering: Bool
+    let dragging: Bool
+
+    var body: some View {
+        ZStack {
+            if pinned {
+                Image(systemName: hovering ? "pin.slash.fill" : "pin.fill")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 20, height: 20)
+                    .background(Color.orange.gradient, in: Circle())
+                    .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+                    .transition(.scale(scale: 0.4).combined(with: .opacity))
+            } else {
+                Image(systemName: trashes ? "xmark" : "eye.slash")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(.primary)
+                    .frame(width: 20, height: 20)
+                    .glassFrame(circle: true)
+                    .opacity(hovering && !dragging ? 1 : 0)
+                    .scaleEffect(hovering ? 1 : 0.6)
+            }
+        }
+        .padding(3)
+        .allowsHitTesting(false)
+        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: pinned)
+    }
+}
+
+/// A word found by Search, marked on the photo like a highlighter.
+private struct Highlight: View {
+    /// From 0 to 1 from the bottom left.
+    let place: CGRect
+    let photo: CGSize
+
+    var body: some View {
+        let width: CGFloat = max(place.width * photo.width + 4, 6)
+        let height: CGFloat = max(place.height * photo.height + 2, 5)
+        let x: CGFloat = place.minX * photo.width - 2
+        let y: CGFloat = (1 - place.maxY) * photo.height - 1
+        let shape = RoundedRectangle(cornerRadius: 2, style: .continuous)
+        return shape
+            .fill(Color.yellow.opacity(0.45))
+            .overlay(shape.strokeBorder(Color.yellow, lineWidth: 1))
+            .frame(width: width, height: height)
+            .offset(x: x, y: y)
+            .allowsHitTesting(false)
     }
 }
 

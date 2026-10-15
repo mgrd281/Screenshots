@@ -3,15 +3,16 @@ import SwiftUI
 
 /// A small tag clipped on near the right end of the line. Its grip moves the
 /// whole line up or down the screen, with photos picked it can join them
-/// into one image, its send button pastes the photos into the app in front,
+/// into one image, its magnifying glass searches the words in them, its
+/// send button pastes the photos into the app in front,
 /// like a chat, and its trash takes everything down at once, each photo the
 /// way of its own corner cross.
 struct LineTag: View {
     @ObservedObject var line: Line
 
     static let width: CGFloat = 26
-    /// Room for the clip and the four tools. The tag hangs from the top.
-    static let maxHeight: CGFloat = 128
+    /// Room for the clip and the five tools. The tag hangs from the top.
+    static let maxHeight: CGFloat = 152
 
     var body: some View {
         VStack(spacing: -12) {
@@ -28,6 +29,9 @@ struct LineTag: View {
                         .transition(.opacity)
                 }
                 if line.liveCount > 0 {
+                    tool("magnifyingglass")
+                        .overlay(TagArea(label: L("Search screenshots")) { line.onSearch?() })
+                        .transition(.opacity)
                     // The photos picked with ⌘-click, or all of them.
                     tool("paperplane")
                         .overlay(TagArea(label: L("Paste into the app in front")) { line.paste() })

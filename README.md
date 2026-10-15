@@ -54,20 +54,23 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Right-click, then Translate Text | Read it in your language, to copy or send. |
 | Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open it in Markup. |
-| Click the paper plane on a photo | Send it straight into the app in front, like a chat. |
+| Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
-| Drag into an app | Send a copy. It stays on the line. |
+| Drag into an app | Send a copy. It leaves the line, as anything sent does. |
 | Drag into a folder | Keep it there. It leaves the line. |
 | Drag to the Trash, or click the cross | Let it go. |
 | Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
 | <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
-| Click the trash on the tag | Take everything down at once. |
+| Click the trash on the tag | Take everything down at once, but for the photos pinned. |
+| Right-click, then Pin | Keep it on the line: clearing it or filling it leaves it there. Click its pin to let it go again. |
+| Click the magnifying glass on the tag | Search the words in every photo. Matches stay bright, marked where they say it, and Return picks them, ready to send. |
 | Drag the arrows on the tag | Move the line further down the screen, or back up. It stays there. |
 | Rest the pointer in the menu bar | Bring the line down on that screen. |
 | Click anything in the menu bar | Put it away. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
+| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>F</kbd> | Search the words in your screenshots. Change it in Settings. |
 
 <br>
 
@@ -111,6 +114,16 @@ Copy Text leaves them out too. Anything it misses, hide by hand with
 Hide Part in a photo's menu. Labels like Billing address, Recipient or Diagnosis tell it
 where a whole block is private. The text is read on your Mac, and the
 screenshot file itself is never changed.
+
+<br>
+
+## Sent, and gone.
+
+Whatever you send into a chat, with a paper plane, ⌃⌥V or a drag, leaves
+the line as it lands there, so the line only holds what is still to send.
+Pinned photos stay. A screenshot from Snapfly's own folder goes to the
+Trash a minute later, once the chat has read it. Rather keep them? Turn
+off Take photos down once sent in Settings.
 
 <br>
 
@@ -189,6 +202,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
 | `TextCard.swift` | Translate Text and Describe, and the card that shows them |
+| `Search.swift` | The words in every photo, and the search bar under the line |
 | `Collage.swift` | Joins several screenshots into one image |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
