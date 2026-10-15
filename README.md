@@ -67,6 +67,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Drag into a folder | Keep it there. It leaves the line. |
 | Drag to the Trash, or click the cross | Let it go. |
 | Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
+| Click the send button over a chat | The same, without leaving the message box. Drag it to move it; it stays there for that app. |
 | <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
 | Right-click (or control-click), then Make PDF | Put the photo, or the ones picked with it, in one PDF, a page each and private details covered. It hangs ready to send, marked PDF. |
 | <kbd>⌘</kbd>-click one or more, then the PDF button on the tag | The same PDF, from the tag, where search sits while nothing is picked. |
@@ -99,6 +100,13 @@ front, like the message box of a chat: the ones you <kbd>⌘</kbd>-clicked,
 or all of them, and they fly over and land where you were typing. It works
 by pressing <kbd>⌘</kbd>&thinsp;<kbd>V</kbd> there for you,
 so macOS asks for the Accessibility permission the first time.
+
+While photos hang, the same send button waits over the chat itself, just
+above its own send button: in ChatGPT, Claude, WhatsApp, Messages, Telegram
+and other chats, and in browsers. It shows the newest photo and how many
+will go. One click and they are in, without a trip to the top of the screen.
+Drag it where you like it; it remembers the spot for each app. Turn it off
+in Settings, under Line.
 
 <br>
 
@@ -249,6 +257,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Collage.swift` | Joins several screenshots into one image, or into one PDF |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
+| `ChatButton.swift` | The send button that floats over a chat while photos hang |
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |

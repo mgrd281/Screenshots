@@ -126,6 +126,11 @@ final class Preferences: ObservableObject {
         set { change { Line.takesDownSent = newValue } }
     }
 
+    var chatButton: Bool {
+        get { ChatButton.isEnabled }
+        set { change { ChatButton.isEnabled = newValue } }
+    }
+
     func shortcut(_ role: Shortcut.Role) -> String {
         Shortcut.current(role)?.display ?? L("None")
     }
@@ -325,6 +330,10 @@ private struct LinePane: View {
                 Toggle(isOn: $prefs.takesDownSent) {
                     Text(L("Take photos down once sent"))
                     Text(L("Sent into a chat, they leave the line. Pinned ones stay."))
+                }
+                Toggle(isOn: $prefs.chatButton) {
+                    Text(L("Send button over chats"))
+                    Text(L("While photos hang, a send button waits just above the chat's own. Drag it where you like it."))
                 }
             }
             Section {

@@ -1,0 +1,449 @@
+import AppKit
+import ApplicationServices
+import Combine
+import SwiftUI
+
+/// A send button that floats over a chat while photos hang, just above the
+/// chat's own send button, so they go in without a trip to the top of the
+/// screen. It shows the newest photo and how many will go, and a click
+/// sends them as the tag's send button does: the ones picked, or all.
+///
+/// It appears over chat apps and browsers only, and only while there is
+/// something to send. It never takes focus, so the message box keeps the
+/// keyboard. Dragged somewhere else, it stays there for that app.
+@MainActor
+final class ChatButton {
+    static private(set) var shared: ChatButton?
+
+    /// From Settings. On unless turned off.
+    static var isEnabled: Bool {
+        get { !UserDefaults.standard.bool(forKey: "chatButtonOff") }
+        set {
+            UserDefaults.standard.set(!newValue, forKey: "chatButtonOff")
+            shared?.refresh()
+        }
+    }
+
+    /// Opens Settings, from the button's menu.
+    var openSettings: () -> Void = {}
+
+    private let line: Line
+    private let model = ChatButtonModel()
+    private let panel: ChatButtonPanel
+    private var timer: Timer?
+    private var cancellables = Set<AnyCancellable>()
+    /// The app and window it sits over right now.
+    private var current: (app: String, window: CGRect)?
+    /// Where the message box is, read through Accessibility now and then.
+    private var fieldFrame: CGRect?
+    private var ticks = 0
+
+    /// Chat apps, and browsers for chats on the web like ChatGPT, Claude,
+    /// Gemini or WhatsApp Web.
+    private static let chatApps: Set<String> = [
+        "com.openai.chat", "com.anthropic.claudefordesktop", "ai.perplexity.mac",
+        "net.whatsapp.WhatsApp", "desktop.WhatsApp", "ru.keepcoder.Telegram", "org.telegram.desktop",
+        "com.apple.MobileSMS", "com.tinyspeck.slackmacgap", "com.hnc.Discord",
+        "org.whispersystems.signal-desktop", "com.microsoft.teams2", "com.microsoft.teams",
+        "com.facebook.archon", "jp.naver.line.mac", "com.viber.osx", "com.skype.skype",
+        "com.apple.Safari", "com.apple.SafariTechnologyPreview", "com.google.Chrome",
+        "com.google.Chrome.canary", "company.thebrowser.Browser", "org.mozilla.firefox",
+        "com.microsoft.edgemac", "com.brave.Browser", "com.operasoftware.Opera",
+        "com.vivaldi.Vivaldi", "app.zen-browser.zen",
+    ]
+
+    init(line: Line) {
+        self.line = line
+        panel = ChatButtonPanel(model: model)
+        Self.shared = self
+        panel.content.onClick = { [weak self] in self?.send() }
+        panel.content.onDragEnd = { [weak self] in self?.remember() }
+        panel.content.menu = makeMenu()
+
+        line.$items.combineLatest(line.$pickedIDs)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in self?.refresh() }
+            .store(in: &cancellables)
+        NSWorkspace.shared.notificationCenter
+            .publisher(for: NSWorkspace.didActivateApplicationNotification)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.fieldFrame = nil
+                self?.ticks = 0
+                self?.update()
+            }
+            .store(in: &cancellables)
+    }
+
+    /// The photos a click sends: the ones picked, or all of them.
+    private var toSend: [Pegged] {
+        let live = line.items.filter { !$0.falling }
+        let picked = live.filter { line.pickedIDs.contains($0.id) }
+        return picked.isEmpty ? live : picked
+    }
+
+    /// Something still to send: picked photos, or one that isn't pinned.
+    /// Pinned photos alone stay on the line on purpose and don't call for it.
+    private var hasSomethingToSend: Bool {
+        line.items.contains { !$0.falling && (!$0.pinned || line.pickedIDs.contains($0.id)) }
+    }
+
+    /// Follows the chat's window while there is something to send, and
+    /// rests otherwise.
+    func refresh() {
+        let wanted = Self.isEnabled && hasSomethingToSend
+        if wanted, timer == nil {
+            timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+                MainActor.assumeIsolated { self?.update() }
+            }
+        } else if !wanted {
+            timer?.invalidate()
+            timer = nil
+        }
+        let photos = toSend
+        model.count = photos.count
+        model.thumbs = photos.suffix(2).map(\.thumb)
+        update()
+    }
+
+    private func update() {
+        // Being dragged: it goes where the pointer takes it.
+        if panel.content.isDragging { return }
+        guard timer != nil, Self.isEnabled, hasSomethingToSend,
+              let app = Paste.frontApp, let id = app.bundleIdentifier, Self.chatApps.contains(id),
+              let window = Self.frontWindow(of: app.processIdentifier) else {
+            hide()
+            return
+        }
+        // The message box moves rarely; once a second is enough to follow it.
+        if ticks % 4 == 0 { fieldFrame = Self.messageBox(of: app.processIdentifier, in: window) }
+        ticks += 1
+        current = (id, window)
+        place(over: window, app: id)
+        if !panel.isVisible {
+            panel.alphaValue = 0
+            panel.orderFrontRegardless()
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.15
+                panel.animator().alphaValue = 1
+            }
+        }
+    }
+
+    private func hide() {
+        current = nil
+        guard panel.isVisible else { return }
+        panel.orderOut(nil)
+    }
+
+    // MARK: Where it sits
+
+    /// A spot is where the button's bottom trailing corner sits, measured
+    /// from the window's bottom edge and from its trailing edge or middle,
+    /// whichever it was dropped nearer: a send button at the window's edge,
+    /// as in WhatsApp, or under a centered message box, as in ChatGPT.
+    private struct Spot: Codable {
+        var fromTrailing: Bool
+        var dx: CGFloat
+        var dy: CGFloat
+    }
+
+    private static let spotsKey = "chatButtonSpots"
+
+    private static var spots: [String: Spot] {
+        get {
+            guard let data = UserDefaults.standard.data(forKey: spotsKey) else { return [:] }
+            return (try? JSONDecoder().decode([String: Spot].self, from: data)) ?? [:]
+        }
+        set { UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: spotsKey) }
+    }
+
+    private func place(over window: CGRect, app: String) {
+        let size = panel.frame.size
+        let margin = ChatButtonPanel.margin
+        var corner: CGPoint
+        if let spot = Self.spots[app] {
+            corner = CGPoint(x: (spot.fromTrailing ? window.maxX : window.midX) + spot.dx, y: window.minY + spot.dy)
+        } else if let field = fieldFrame {
+            // Just above the message box, at its trailing end, where chats
+            // keep their send button.
+            corner = CGPoint(x: field.maxX, y: field.maxY + 10)
+        } else {
+            // Above where a chat's send button usually is: the trailing end
+            // of a message box centered at the bottom, or the window's edge.
+            corner = CGPoint(x: window.midX + min(window.width / 2 - 24, 380), y: window.minY + 84)
+        }
+        // Kept inside the window and on its screen.
+        let inner = size.width - 2 * margin
+        let height = size.height - 2 * margin
+        var bounds = window.insetBy(dx: 8, dy: 8)
+        if let screen = NSScreen.screens.first(where: { $0.frame.intersects(window) }) {
+            bounds = bounds.intersection(screen.visibleFrame)
+        }
+        guard !bounds.isNull, bounds.width > inner, bounds.height > height else { return }
+        corner.x = min(max(corner.x, bounds.minX + inner), bounds.maxX)
+        corner.y = min(max(corner.y, bounds.minY), bounds.maxY - height)
+        panel.setFrameOrigin(CGPoint(x: corner.x - inner - margin, y: corner.y - margin))
+    }
+
+    /// Dropped after a drag: that is its place over this app from now on.
+    private func remember() {
+        guard let current else { return }
+        let (app, window) = (current.app, current.window)
+        let margin = ChatButtonPanel.margin
+        let corner = CGPoint(x: panel.frame.maxX - margin, y: panel.frame.minY + margin)
+        let fromTrailing = window.maxX - corner.x < window.width / 4
+        let dx = corner.x - (fromTrailing ? window.maxX : window.midX)
+        Self.spots[app] = Spot(fromTrailing: fromTrailing, dx: dx, dy: corner.y - window.minY)
+    }
+
+    private func makeMenu() -> NSMenu {
+        let menu = NSMenu()
+        menu.addItem(ClosureMenuItem(L("Put it back")) { [weak self] in
+            guard let self, let app = self.current?.app else { return }
+            Self.spots[app] = nil
+            self.update()
+        })
+        menu.addItem(ClosureMenuItem(L("Settings…")) { [weak self] in self?.openSettings() })
+        return menu
+    }
+
+    // MARK: Sending
+
+    private func send() {
+        let count = toSend.count
+        guard count > 0 else { return }
+        line.paste()
+        // When sent photos stay on the line, a check says it went.
+        model.sent = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in
+            self?.model.sent = false
+        }
+    }
+
+    // MARK: The chat
+
+    /// The app's frontmost ordinary window, from the window server, which
+    /// needs no permission and works in the sandbox too.
+    private static func frontWindow(of pid: pid_t) -> CGRect? {
+        guard let main = NSScreen.screens.first,
+              let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID)
+                as? [[String: Any]] else { return nil }
+        for info in list {
+            guard (info[kCGWindowOwnerPID as String] as? Int) == Int(pid),
+                  (info[kCGWindowLayer as String] as? Int) == 0,
+                  let bounds = info[kCGWindowBounds as String] as? NSDictionary,
+                  let b = CGRect(dictionaryRepresentation: bounds as CFDictionary),
+                  b.width > 300, b.height > 200 else { continue }
+            return CGRect(x: b.minX, y: main.frame.maxY - b.maxY, width: b.width, height: b.height)
+        }
+        return nil
+    }
+
+    /// The text field being typed in, when Accessibility may say so and it
+    /// sits in the lower half of the window, as a message box does. The
+    /// store edition cannot ask, and uses the usual spot instead.
+    private static func messageBox(of pid: pid_t, in window: CGRect) -> CGRect? {
+        guard !Edition.appStore, AXIsProcessTrusted(), let main = NSScreen.screens.first else { return nil }
+        let app = AXUIElementCreateApplication(pid)
+        // A busy app must not hold up the main thread.
+        AXUIElementSetMessagingTimeout(app, 0.1)
+        var value: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(app, kAXFocusedUIElementAttribute as CFString, &value) == .success,
+              let value, CFGetTypeID(value) == AXUIElementGetTypeID() else { return nil }
+        let field = value as! AXUIElement
+        var role: CFTypeRef?
+        _ = AXUIElementCopyAttributeValue(field, kAXRoleAttribute as CFString, &role)
+        guard let role = role as? String, [kAXTextAreaRole, kAXTextFieldRole].contains(role) else { return nil }
+        var position: CFTypeRef?
+        var size: CFTypeRef?
+        var point = CGPoint.zero
+        var extent = CGSize.zero
+        guard AXUIElementCopyAttributeValue(field, kAXPositionAttribute as CFString, &position) == .success,
+              AXUIElementCopyAttributeValue(field, kAXSizeAttribute as CFString, &size) == .success,
+              let position, let size,
+              AXValueGetValue(position as! AXValue, .cgPoint, &point),
+              AXValueGetValue(size as! AXValue, .cgSize, &extent),
+              extent.width > 40, extent.height < 300 else { return nil }
+        let frame = CGRect(x: point.x, y: main.frame.maxY - point.y - extent.height,
+                           width: extent.width, height: extent.height)
+        guard window.contains(CGPoint(x: frame.midX, y: frame.midY)), frame.midY < window.midY else { return nil }
+        return frame
+    }
+}
+
+/// What the button shows.
+@MainActor
+final class ChatButtonModel: ObservableObject {
+    @Published var count = 0
+    @Published var thumbs: [NSImage] = []
+    @Published var sent = false
+}
+
+/// A small floating panel that never becomes key, so the chat keeps the
+/// keyboard and ⌘V lands in its message box.
+private final class ChatButtonPanel: NSPanel {
+    /// Room around the capsule for its shadow.
+    static let margin: CGFloat = 16
+
+    let content: ChatButtonView
+
+    init(model: ChatButtonModel) {
+        content = ChatButtonView(model: model, margin: Self.margin)
+        super.init(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel],
+                   backing: .buffered, defer: false)
+        isOpaque = false
+        backgroundColor = .clear
+        hasShadow = false
+        level = .floating
+        collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
+        isReleasedWhenClosed = false
+        hidesOnDeactivate = false
+        contentView = content
+        content.onResize = { [weak self] size in
+            guard let self, self.frame.size != size else { return }
+            let corner = CGPoint(x: self.frame.maxX, y: self.frame.minY)
+            self.setFrame(CGRect(x: corner.x - size.width, y: corner.y, width: size.width, height: size.height),
+                          display: true)
+        }
+        content.layoutSubtreeIfNeeded()
+        setContentSize(content.fittingSize)
+    }
+
+    override var canBecomeKey: Bool { false }
+    override var canBecomeMain: Bool { false }
+}
+
+/// Takes the clicks and drags itself, through AppKit, as the tag does: the
+/// panel never becomes key, so only a view of its own takes the first click.
+private final class ChatButtonView: NSView {
+    var onClick: () -> Void = {}
+    var onDragEnd: () -> Void = {}
+    var onResize: (CGSize) -> Void = { _ in }
+    private(set) var isDragging = false
+
+    private let host: NSHostingView<ChatButtonLabel>
+    private let margin: CGFloat
+    private var downAt: CGPoint?
+    private var startOrigin: CGPoint?
+
+    init(model: ChatButtonModel, margin: CGFloat) {
+        self.margin = margin
+        host = NSHostingView(rootView: ChatButtonLabel(model: model))
+        host.sizingOptions = [.intrinsicContentSize]
+        super.init(frame: .zero)
+        host.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(host)
+        NSLayoutConstraint.activate([
+            host.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margin),
+            host.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -margin),
+            host.topAnchor.constraint(equalTo: topAnchor, constant: margin),
+            host.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -margin),
+        ])
+        setAccessibilityElement(true)
+        setAccessibilityRole(.button)
+        setAccessibilityLabel(L("Paste into the app in front"))
+        toolTip = L("Paste into the app in front")
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    override func layout() {
+        super.layout()
+        let size = CGSize(width: host.intrinsicContentSize.width + 2 * margin,
+                          height: host.intrinsicContentSize.height + 2 * margin)
+        if size.width > 2 * margin { onResize(size) }
+    }
+
+    /// Only the capsule takes the pointer; the shadow's margin lets it through.
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        let local = convert(point, from: superview)
+        return host.frame.contains(local) ? self : nil
+    }
+
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+
+    override func accessibilityPerformPress() -> Bool {
+        onClick()
+        return true
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        downAt = NSEvent.mouseLocation
+        startOrigin = window?.frame.origin
+        isDragging = false
+    }
+
+    override func mouseDragged(with event: NSEvent) {
+        guard let downAt, let startOrigin, let window else { return }
+        let now = NSEvent.mouseLocation
+        let dx = now.x - downAt.x, dy = now.y - downAt.y
+        if !isDragging, hypot(dx, dy) < 4 { return }
+        isDragging = true
+        window.setFrameOrigin(CGPoint(x: startOrigin.x + dx, y: startOrigin.y + dy))
+    }
+
+    override func mouseUp(with event: NSEvent) {
+        defer {
+            downAt = nil
+            startOrigin = nil
+            isDragging = false
+        }
+        if isDragging {
+            onDragEnd()
+        } else if downAt != nil {
+            onClick()
+        }
+    }
+
+    override func rightMouseDown(with event: NSEvent) {
+        guard let menu else { return }
+        NSMenu.popUpContextMenu(menu, with: event, for: self)
+    }
+}
+
+/// The newest photo, how many go, and the paper plane on the accent.
+private struct ChatButtonLabel: View {
+    @ObservedObject var model: ChatButtonModel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var hovering = false
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ZStack {
+                ForEach(Array(model.thumbs.enumerated()), id: \.offset) { index, image in
+                    Image(nsImage: image)
+                        .resizable()
+                        .interpolation(.high)
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 26, height: 26)
+                        .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                        .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                            .strokeBorder(Color.primary.opacity(0.12), lineWidth: 0.5))
+                        // The one behind leans away, like a small stack.
+                        .rotationEffect(.degrees(index == model.thumbs.count - 1 ? 0 : -8))
+                        .offset(x: index == model.thumbs.count - 1 ? 0 : -3)
+                }
+            }
+            .frame(width: 28, height: 28)
+            Text(verbatim: "\(model.count)")
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(.primary)
+            Image(systemName: model.sent ? "checkmark" : "paperplane.fill")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 28, height: 28)
+                .background(Color.accentColor, in: Circle())
+                .contentTransition(.symbolEffect(.replace))
+        }
+        .padding(4)
+        .padding(.leading, 2)
+        .controlGlass(capsule: true)
+        .scaleEffect(hovering && !reduceMotion ? 1.04 : 1)
+        .onHover { hovering = $0 }
+        .animation(Motion.spring(response: 0.3, damping: 0.8, reduced: reduceMotion), value: hovering)
+        .animation(.easeOut(duration: 0.15), value: model.sent)
+        .accessibilityHidden(true)
+    }
+}
