@@ -126,10 +126,10 @@ from where it was taken straight onto the line, with nothing to set up in the
 Screenshot app first. macOS asks for the Screen Recording permission the
 first time.
 
-Faster still: the screenshot button, a small glass circle at the edge of the
+Faster still: the screenshot button, a small round button at the edge of the
 screen, takes one in a single click. In Settings, under Line, choose what a
-click does: choose an area, take the whole screen at once, or take the last
-area again. Drag it anywhere, right-click it for the rest, or turn it off with
+click does (choose an area, take the whole screen at once, or take the last
+area again), its icon and its color, with a preview. Drag it anywhere, right-click it for the rest, or turn it off with
 Screenshot Button in the menu bar. While the screen is recorded, it is the
 stop button.
 

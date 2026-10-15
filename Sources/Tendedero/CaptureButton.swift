@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-/// One click, one screenshot: a small glass button that floats at the edge
+/// One click, one screenshot: a small round button that floats at the edge
 /// of the screen, over every app. A click chooses an area, takes the whole
 /// screen at once, or takes the last area again, as chosen in Settings.
 /// While the screen is recorded it turns into the stop button. Drag it
@@ -26,6 +26,28 @@ final class CaptureButton {
     static var click: Click {
         get { Click(rawValue: UserDefaults.standard.string(forKey: "captureButtonClick") ?? "") ?? .choose }
         set { UserDefaults.standard.set(newValue.rawValue, forKey: "captureButtonClick") }
+    }
+
+    static var symbol: CaptureButtonSymbol {
+        get { CaptureButtonSymbol(rawValue: UserDefaults.standard.string(forKey: "captureButtonSymbol") ?? "")
+            ?? .viewfinder }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: "captureButtonSymbol")
+            shared.model.symbol = newValue
+        }
+    }
+
+    /// The circle's color; nil is glass. The accent at first, so it stands
+    /// out at the edge of the screen.
+    static var tint: ChatButtonTint? {
+        get {
+            let saved = UserDefaults.standard.string(forKey: "captureButtonTint") ?? ChatButtonTint.accent.rawValue
+            return ChatButtonTint(rawValue: saved)
+        }
+        set {
+            UserDefaults.standard.set(newValue?.rawValue ?? "glass", forKey: "captureButtonTint")
+            shared.model.tint = newValue
+        }
     }
 
     var openSettings: () -> Void = {}
@@ -131,6 +153,28 @@ final class CaptureButton {
 @MainActor
 final class CaptureButtonModel: ObservableObject {
     @Published var recording = false
+    @Published var symbol = CaptureButton.symbol
+    @Published var tint = CaptureButton.tint
+}
+
+/// The glyph on the screenshot button, chosen in Settings.
+enum CaptureButtonSymbol: String, CaseIterable, Identifiable {
+    case viewfinder = "camera.viewfinder"
+    case selection = "rectangle.dashed"
+    case aperture = "camera.aperture"
+    case camera = "camera.fill"
+
+    var id: String { rawValue }
+
+    /// Spoken, and shown when the pointer rests on it in Settings.
+    var name: String {
+        switch self {
+        case .viewfinder: L("Viewfinder")
+        case .selection: L("Selection")
+        case .aperture: L("Aperture")
+        case .camera: L("Camera")
+        }
+    }
 }
 
 /// The button's own window: never key, so the app in front keeps the
@@ -239,34 +283,54 @@ private final class CaptureButtonView: NSView {
     }
 }
 
-/// A camera viewfinder on a glass circle; while recording, a white stop on
-/// record red.
+/// The button as it floats, with hover.
 private struct CaptureButtonLabel: View {
     @ObservedObject var model: CaptureButtonModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var hovering = false
 
     var body: some View {
+        CaptureButtonFace(symbol: model.symbol, tint: model.tint, recording: model.recording)
+            .scaleEffect(hovering && !reduceMotion ? 1.08 : 1)
+            .onHover { hovering = $0 }
+            .animation(Motion.spring(response: 0.3, damping: 0.8, reduced: reduceMotion), value: hovering)
+            .animation(.easeOut(duration: 0.15), value: model.recording)
+            .accessibilityHidden(true)
+    }
+}
+
+/// The chosen glyph on the chosen color, or on glass; while recording, a
+/// white stop on record red. Settings shows it as a preview.
+struct CaptureButtonFace: View {
+    let symbol: CaptureButtonSymbol
+    let tint: ChatButtonTint?
+    var recording = false
+
+    var body: some View {
         ZStack {
-            if model.recording {
+            if recording {
                 Circle().fill(Color.red)
                 Image(systemName: "stop.fill")
                     .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(.white)
+            } else if let tint {
+                Circle().fill(tint.color)
+                // A light lit from above, as on the line's glass.
+                Circle().strokeBorder(Color.white.opacity(0.25), lineWidth: 0.75)
+                glyph.foregroundStyle(tint.glyph)
             } else {
-                Image(systemName: "camera.viewfinder")
-                    .font(.system(size: 17, weight: .semibold))
+                glyph
                     .foregroundStyle(.primary)
                     .frame(width: 40, height: 40)
                     .controlGlass(circle: true)
             }
         }
         .frame(width: 40, height: 40)
-        .shadow(color: .black.opacity(hasLiquidGlass ? 0 : 0.18), radius: 6, y: 3)
-        .scaleEffect(hovering && !reduceMotion ? 1.08 : 1)
-        .onHover { hovering = $0 }
-        .animation(Motion.spring(response: 0.3, damping: 0.8, reduced: reduceMotion), value: hovering)
-        .animation(.easeOut(duration: 0.15), value: model.recording)
-        .accessibilityHidden(true)
+        .shadow(color: .black.opacity(tint == nil && hasLiquidGlass ? 0 : 0.18), radius: 6, y: 3)
+    }
+
+    private var glyph: some View {
+        Image(systemName: symbol.rawValue)
+            .font(.system(size: 17, weight: .semibold))
     }
 }

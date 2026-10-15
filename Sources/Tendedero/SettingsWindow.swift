@@ -142,6 +142,16 @@ final class Preferences: ObservableObject {
         set { change { CaptureButton.click = newValue } }
     }
 
+    var captureButtonSymbol: CaptureButtonSymbol {
+        get { CaptureButton.symbol }
+        set { change { CaptureButton.symbol = newValue } }
+    }
+
+    var captureButtonTint: ChatButtonTint? {
+        get { CaptureButton.tint }
+        set { change { CaptureButton.tint = newValue } }
+    }
+
     var chatButton: Bool {
         get { ChatButton.isEnabled }
         set { change { ChatButton.isEnabled = newValue } }
@@ -461,10 +471,44 @@ private struct LinePane: View {
                     Text(L("Show the screenshot button"))
                     Text(L("A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere."))
                 }
-                Picker(L("A click"), selection: $prefs.captureButtonClick) {
-                    Text(L("Chooses an area")).tag(CaptureButton.Click.choose)
-                    Text(L("Takes the whole screen")).tag(CaptureButton.Click.screen)
-                    Text(L("Takes the last area again")).tag(CaptureButton.Click.lastArea)
+                Group {
+                    Picker(L("A click"), selection: $prefs.captureButtonClick) {
+                        Text(L("Chooses an area")).tag(CaptureButton.Click.choose)
+                        Text(L("Takes the whole screen")).tag(CaptureButton.Click.screen)
+                        Text(L("Takes the last area again")).tag(CaptureButton.Click.lastArea)
+                    }
+                    LabeledContent(L("Icon")) {
+                        HStack(spacing: 8) {
+                            ForEach(CaptureButtonSymbol.allCases) { symbol in
+                                let chosen = prefs.captureButtonSymbol == symbol
+                                Button { prefs.captureButtonSymbol = symbol } label: {
+                                    Image(systemName: symbol.rawValue)
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundStyle(chosen ? Color.white : Color.primary)
+                                        .frame(width: 28, height: 28)
+                                        .background(chosen ? Color.accentColor : Color.primary.opacity(0.06), in: Circle())
+                                        .contentShape(Circle())
+                                }
+                                .buttonStyle(.plain)
+                                .help(symbol.name)
+                                .accessibilityLabel(symbol.name)
+                                .accessibilityAddTraits(chosen ? .isSelected : [])
+                            }
+                        }
+                    }
+                    LabeledContent(L("Color")) {
+                        HStack(spacing: 4) {
+                            tintButton(nil, name: L("Glass"))
+                            ForEach(ChatButtonTint.allCases) { tint in
+                                tintButton(tint, name: tint.name)
+                            }
+                        }
+                    }
+                    LabeledContent(L("Preview")) {
+                        CaptureButtonFace(symbol: prefs.captureButtonSymbol, tint: prefs.captureButtonTint)
+                            .padding(.vertical, 6)
+                            .accessibilityHidden(true)
+                    }
                 }
                 .disabled(!prefs.captureButton)
             }
@@ -477,6 +521,29 @@ private struct LinePane: View {
             }
         }
         .formStyle(.grouped)
+    }
+
+    /// A color for the screenshot button; nil is glass, shown frosted.
+    private func tintButton(_ tint: ChatButtonTint?, name: String) -> some View {
+        let chosen = prefs.captureButtonTint == tint
+        return Button { prefs.captureButtonTint = tint } label: {
+            Group {
+                if let tint {
+                    Circle().fill(tint.color)
+                } else {
+                    Circle().fill(.ultraThinMaterial)
+                }
+            }
+            .frame(width: 18, height: 18)
+            .overlay(Circle().strokeBorder(Color.primary.opacity(0.15), lineWidth: 0.5))
+            .padding(3)
+            .overlay(Circle().strokeBorder(chosen ? Color.accentColor : .clear, lineWidth: 2))
+            .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .help(name)
+        .accessibilityLabel(name)
+        .accessibilityAddTraits(chosen ? .isSelected : [])
     }
 
     private func shortcutRow(_ title: String, _ role: Shortcut.Role) -> some View {
