@@ -68,8 +68,11 @@ first view. Every demo is a native object on it:
 - the photo's menu opening from a card on a line;
 - a whole Mac screen with Snapfly on it, where the visitor takes a
   screenshot, a timed one with a menu open, or a recording, and it hangs on
-  that screen's line;
-- the Hide Part window, where the visitor says what to hide.
+  that screen's line. At the owner's request it sits in a drawn laptop
+  (bezel, notch and base, no logo), with Mac-style Dock icons and a wallpaper
+  of its own, and a guide walks a first visitor through it step by step;
+- the Hide Part window, where the visitor says what to hide;
+- four steps from the download to the first screenshot, before the close.
 
 The hero's chat has the send button over chats, with its message bar, and
 its line reorders by dragging, so these can be tried on the page too.
