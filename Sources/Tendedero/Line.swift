@@ -307,6 +307,13 @@ final class Line: ObservableObject {
         paste(picked.isEmpty ? items.filter { !$0.falling } : picked)
     }
 
+    /// The chat button's message: the photos picked, or every photo, then
+    /// the message after them, so they go as one message.
+    func paste(caption: String) {
+        let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
+        paste(picked.isEmpty ? items.filter { !$0.falling } : picked, then: caption.isEmpty ? nil : caption)
+    }
+
     /// From a photo's menu: the photos picked when it is one of them, or
     /// only this one.
     func paste(_ id: UUID) {
