@@ -161,3 +161,8 @@
 "Open Screenshot" = "打开“截屏”";
 "Set Up…" = "设置…";
 "Screenshots saved to Pictures › Snapfly hang on the line" = "存到 图片 › Snapfly 的截图会挂上晾衣绳";
+"Take Screenshot" = "截屏";
+"Take a screenshot" = "截屏";
+"Allow Snapfly to take screenshots" = "允许 Snapfly 截屏";
+"Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "请在“系统设置”›“隐私与安全性”中为 Snapfly 打开屏幕录制，然后再试一次。";
+"Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "拖移选择区域，或点按一个窗口。按 Return 键截取整个屏幕，按 Esc 取消。";

@@ -76,6 +76,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         restoreSettingsOnTermination()
         startWatcher()
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
+        Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         if ClipboardWatcher.isEnabled { clipboardWatcher.start() }
 
         Shortcut.Role.allCases.forEach(registerShortcut)
@@ -686,6 +687,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             case .toggle: self?.toggle()
             case .send: self?.line.pasteNewest()
             case .search: self?.openSearch()
+            case .capture: Capture.shared.start()
             }
         }
     }
@@ -794,6 +796,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
+
+        let captureItem = ClosureMenuItem(L("Take Screenshot")) {
+            // Once the menu has faded, so it is not in the picture.
+            Capture.shared.start(after: 0.2)
+        }
+        if let shortcut = Shortcut.current(.capture), shortcut.key.count == 1 {
+            captureItem.keyEquivalent = shortcut.key
+            captureItem.keyEquivalentModifierMask = shortcut.modifiers
+        }
+        menu.addItem(captureItem)
+        menu.addItem(.separator())
 
         let toggleItem = ClosureMenuItem(isRevealed ? L("Hide line") : L("Show line")) { [weak self] in
             self?.toggle()

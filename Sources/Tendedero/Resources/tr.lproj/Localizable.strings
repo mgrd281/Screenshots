@@ -161,3 +161,8 @@
 "Open Screenshot" = "Ekran Görüntüsü’nü aç";
 "Set Up…" = "Ayarla…";
 "Screenshots saved to Pictures › Snapfly hang on the line" = "Resimler › Snapfly’a kaydedilen ekran görüntüleri ipe asılır";
+"Take Screenshot" = "Ekran görüntüsü al";
+"Take a screenshot" = "Ekran görüntüsü al";
+"Allow Snapfly to take screenshots" = "Snapfly’ın ekran görüntüsü almasına izin ver";
+"Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "Sistem Ayarları › Gizlilik ve Güvenlik’te Snapfly için ekran kaydını aç, sonra yeniden dene.";
+"Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "Bir alanın üzerinde sürükle ya da bir pencereyi tıkla. Return tüm ekranı alır, Escape iptal eder.";

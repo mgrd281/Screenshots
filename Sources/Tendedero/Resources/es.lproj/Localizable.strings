@@ -161,3 +161,8 @@
 "Open Screenshot" = "Abrir Captura de pantalla";
 "Set Up…" = "Configurar…";
 "Screenshots saved to Pictures › Snapfly hang on the line" = "Las capturas guardadas en Imágenes › Snapfly se cuelgan en la cuerda";
+"Take Screenshot" = "Hacer captura";
+"Take a screenshot" = "Hacer una captura";
+"Allow Snapfly to take screenshots" = "Permite que Snapfly haga capturas de pantalla";
+"Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "Activa Snapfly para la grabación de pantalla en Ajustes del Sistema › Privacidad y seguridad y vuelve a intentarlo.";
+"Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "Arrastra sobre una zona o haz clic en una ventana. Return captura toda la pantalla y Escape cancela.";

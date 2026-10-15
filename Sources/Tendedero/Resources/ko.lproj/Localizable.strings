@@ -161,3 +161,8 @@
 "Open Screenshot" = "스크린샷 열기";
 "Set Up…" = "설정…";
 "Screenshots saved to Pictures › Snapfly hang on the line" = "사진 › Snapfly에 저장한 스크린샷이 빨랫줄에 걸립니다";
+"Take Screenshot" = "스크린샷 찍기";
+"Take a screenshot" = "스크린샷 찍기";
+"Allow Snapfly to take screenshots" = "Snapfly가 스크린샷을 찍도록 허용";
+"Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "시스템 설정 › 개인정보 보호 및 보안에서 Snapfly의 화면 기록을 켠 다음 다시 시도하세요.";
+"Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "영역을 드래그하거나 윈도우를 클릭하세요. Return 키는 화면 전체를 찍고, Esc 키는 취소해요.";

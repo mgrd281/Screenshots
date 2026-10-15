@@ -161,3 +161,8 @@
 "Open Screenshot" = "スクリーンショットを開く";
 "Set Up…" = "設定…";
 "Screenshots saved to Pictures › Snapfly hang on the line" = "ピクチャ › Snapfly に保存したスクリーンショットがロープに掛かります";
+"Take Screenshot" = "スクリーンショットを撮る";
+"Take a screenshot" = "スクリーンショットを撮る";
+"Allow Snapfly to take screenshots" = "Snapflyにスクリーンショットの撮影を許可";
+"Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "「システム設定」›「プライバシーとセキュリティ」で、Snapflyの画面収録をオンにしてから、もう一度お試しください。";
+"Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "範囲をドラッグするか、ウインドウをクリックします。Returnキーで画面全体、escでキャンセルします。";
