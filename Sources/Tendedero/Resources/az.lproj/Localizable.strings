@@ -319,3 +319,7 @@
 /* Message with the photos */
 "Add a message…" = "Mesaj əlavə et…";
 "Send with a Message…" = "Mesajla göndər…";
+
+/* Order on the line */
+"Move Earlier" = "Önə köçür";
+"Move Later" = "Arxaya köçür";

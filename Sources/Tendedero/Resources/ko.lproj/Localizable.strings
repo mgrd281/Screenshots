@@ -317,3 +317,7 @@
 /* Message with the photos */
 "Add a message…" = "메시지 추가…";
 "Send with a Message…" = "메시지와 함께 보내기…";
+
+/* Order on the line */
+"Move Earlier" = "앞으로 이동";
+"Move Later" = "뒤로 이동";

@@ -317,3 +317,7 @@
 /* Message with the photos */
 "Add a message…" = "メッセージを追加…";
 "Send with a Message…" = "メッセージ付きで送信…";
+
+/* Order on the line */
+"Move Earlier" = "前へ移動";
+"Move Later" = "後ろへ移動";

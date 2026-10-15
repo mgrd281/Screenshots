@@ -319,3 +319,7 @@
 /* Message with the photos */
 "Add a message…" = "संदेश जोड़ें…";
 "Send with a Message…" = "संदेश के साथ भेजें…";
+
+/* Order on the line */
+"Move Earlier" = "पहले ले जाएँ";
+"Move Later" = "बाद में ले जाएँ";

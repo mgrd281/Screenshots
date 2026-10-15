@@ -43,6 +43,7 @@ struct GrabArea: NSViewRepresentable {
         view.onSend = { line.paste(id) }
         view.onDoubleClick = { line.open(id) }
         view.onDragStart = { line.draggingID = id }
+        view.onDragMoved = { point in line.dragMoved(id, to: point) }
         view.onDragEnd = {
             line.draggingID = nil
             // Moved into a folder: it is saved where you wanted it.
@@ -76,7 +77,15 @@ struct GrabArea: NSViewRepresentable {
             MainActor.assumeIsolated { line.discard(id) }
             return true
         }
-        view.setAccessibilityCustomActions(pinned ? [send, pin] : [send, pin, takeDown])
+        let earlier = NSAccessibilityCustomAction(name: L("Move Earlier")) {
+            MainActor.assumeIsolated { line.move(id, by: -1) }
+            return true
+        }
+        let later = NSAccessibilityCustomAction(name: L("Move Later")) {
+            MainActor.assumeIsolated { line.move(id, by: 1) }
+            return true
+        }
+        view.setAccessibilityCustomActions((pinned ? [send, pin] : [send, pin, takeDown]) + [earlier, later])
         view.menuProvider = {
             let menu = NSMenu()
             // Items say themselves whether they can be used.
@@ -184,6 +193,9 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     var onSentByDrag: () -> Void = {}
     var onDoubleClick: () -> Void = {}
     var onDragStart: () -> Void = {}
+    /// Where the drag is, in screen coordinates; true while it is along the
+    /// line, where letting go keeps the photo's new place.
+    var onDragMoved: (CGPoint) -> Bool = { _ in false }
     var onDragEnd: () -> Void = {}
     var onTrash: () -> Void = {}
     var onDiscard: () -> Void = {}
@@ -367,6 +379,12 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         // Apps pick copy. Finder picks move, so a folder or the Desktop keeps
         // the file. Delete is what lets the Dock's Trash accept it.
         context == .outsideApplication ? [.copy, .move, .delete] : []
+    }
+
+    func draggingSession(_ session: NSDraggingSession, movedTo screenPoint: NSPoint) {
+        // Let go along the line, it stays in its new place instead of
+        // flying back to the old one.
+        session.animatesToStartingPositionsOnCancelOrFail = !onDragMoved(screenPoint)
     }
 
     func draggingSession(_ session: NSDraggingSession, endedAt screenPoint: NSPoint, operation: NSDragOperation) {

@@ -63,6 +63,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
+| Drag along the line | Move it among the others. Send all, Copy all and the send buttons keep that order. |
 | Drag into an app | Send a copy. It leaves the line, as anything sent does. |
 | Drag into a folder | Keep it there. It leaves the line. |
 | Drag to the Trash, or click the cross | Let it go. |

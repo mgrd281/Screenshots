@@ -317,3 +317,7 @@
 /* Message with the photos */
 "Add a message…" = "Nachricht hinzufügen …";
 "Send with a Message…" = "Mit Nachricht senden …";
+
+/* Order on the line */
+"Move Earlier" = "Nach vorne";
+"Move Later" = "Nach hinten";
