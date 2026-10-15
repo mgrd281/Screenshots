@@ -349,7 +349,7 @@ apps.
 
 ### Navigation
 - **Menu bar menu.** Short: Take Screenshot, then Show or Hide line, Search…,
-  Take everything down, Settings…, Open folder, Updates, Quit.
+  History…, Take everything down, Settings…, Open folder, Updates, Quit.
 - **Photo context menu.**
   - Grouped by intent: copy and send; translate and describe; open and edit;
     take down.
@@ -367,6 +367,17 @@ apps.
 - **Full windows** (Hide Part, Settings) for focused work. They are standard
   titled windows with Cancel and Done bound to Escape and Return.
 - **No modal alerts** for things that can be said inline in the card.
+- **History window** (`HistoryWindow.swift`), a standard titled window
+  (760 × 540, at least 480 × 360) for what left the line.
+  - Day headers in 13 pt semibold `.secondary` ("Today" and "Yesterday" come
+    from the system's relative date format), each over an adaptive grid of
+    cards 150–200 pt wide, 16 pt apart, 24 pt around.
+  - A card is the photo fitted on a 12 pt rounded fill of `.primary` at 5%,
+    112 pt high, with its time under it (11 pt, `.secondary`, monospaced
+    digits). On hover it lifts (1.02 and a photo card's hover shadow) and a
+    22 pt accent circle with `arrow.uturn.up` says a click hangs it again.
+  - The search and Clear History… sit in the toolbar. Empty, it uses
+    `ContentUnavailableView`.
 - **Chat button** (`ChatButton.swift`), the one control that floats over
   another app's window. It shows only while photos hang and a chat app or a
   browser is in front, and it sits just above the chat's own send button.
