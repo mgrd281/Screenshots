@@ -217,3 +217,13 @@
 "Add App…" = "إضافة تطبيق…";
 "Chat apps" = "تطبيقات المحادثة";
 "It shows over these apps while photos hang." = "يظهر فوق هذه التطبيقات ما دامت الصور معلّقة.";
+
+/* Timer and screen recording */
+"Take Screenshot in 5 Seconds" = "التقاط صورة للشاشة بعد 5 ثوانٍ";
+"Record Screen" = "تسجيل الشاشة";
+"Stop Recording" = "إيقاف التسجيل";
+"Record the screen" = "تسجيل الشاشة";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "اختر ما تريد التقاطه: اسحب فوق منطقة، أو انقر على نافذة، أو اضغط Return للشاشة كلها. يُلتقط بعد 5 ثوانٍ.";
+"Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "اسحب فوق منطقة أو انقر على نافذة لتسجيلها. Return يسجّل الشاشة كلها، وEscape للإلغاء.";
+"Cancel the timer" = "إلغاء المؤقت";
+"Snapfly, recording the screen" = "Snapfly، يسجّل الشاشة";

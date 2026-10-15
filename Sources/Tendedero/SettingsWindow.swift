@@ -451,6 +451,7 @@ private struct LinePane: View {
                 shortcutRow(L("Send the newest photo"), .send)
                 shortcutRow(L("Search screenshots"), .search)
                 shortcutRow(L("Take a screenshot"), .capture)
+                shortcutRow(L("Record the screen"), .record)
             }
         }
         .formStyle(.grouped)

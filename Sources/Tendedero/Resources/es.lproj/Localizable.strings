@@ -217,3 +217,13 @@
 "Add App…" = "Añadir app…";
 "Chat apps" = "Apps de chat";
 "It shows over these apps while photos hang." = "Aparece sobre estas apps mientras haya fotos colgadas.";
+
+/* Timer and screen recording */
+"Take Screenshot in 5 Seconds" = "Hacer captura en 5 segundos";
+"Record Screen" = "Grabar pantalla";
+"Stop Recording" = "Detener grabación";
+"Record the screen" = "Grabar la pantalla";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "Elige qué capturar: arrastra sobre una zona, haz clic en una ventana o pulsa Return para toda la pantalla. Se captura 5 segundos después.";
+"Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "Arrastra sobre una zona o haz clic en una ventana para grabarla. Return graba toda la pantalla y Escape cancela.";
+"Cancel the timer" = "Cancelar el temporizador";
+"Snapfly, recording the screen" = "Snapfly, grabando la pantalla";

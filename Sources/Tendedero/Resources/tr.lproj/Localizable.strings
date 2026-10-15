@@ -217,3 +217,13 @@
 "Add App…" = "Uygulama ekle…";
 "Chat apps" = "Sohbet uygulamaları";
 "It shows over these apps while photos hang." = "Fotoğraflar asılı oldukça bu uygulamaların üzerinde görünür.";
+
+/* Timer and screen recording */
+"Take Screenshot in 5 Seconds" = "5 saniye sonra ekran görüntüsü al";
+"Record Screen" = "Ekranı kaydet";
+"Stop Recording" = "Kaydı durdur";
+"Record the screen" = "Ekranı kaydet";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "Neyin alınacağını seç: bir alanın üzerinde sürükle, bir pencereyi tıkla ya da tüm ekran için Return’e bas. 5 saniye sonra alınır.";
+"Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "Kaydetmek için bir alanın üzerinde sürükle ya da bir pencereyi tıkla. Return tüm ekranı kaydeder, Escape iptal eder.";
+"Cancel the timer" = "Zamanlayıcıyı iptal et";
+"Snapfly, recording the screen" = "Snapfly, ekranı kaydediyor";

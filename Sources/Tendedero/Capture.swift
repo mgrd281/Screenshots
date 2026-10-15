@@ -1,4 +1,5 @@
 import AppKit
+import AVFoundation
 import ScreenCaptureKit
 import SwiftUI
 
@@ -10,6 +11,9 @@ import SwiftUI
 /// Escape cancels. The screenshot is saved in Snapfly's folder, tagged as a
 /// screenshot with the area it came from, and flies to the line like one
 /// taken with the Screenshot app.
+///
+/// The same screens choose what a timed screenshot takes, a few seconds
+/// later, and what a screen recording records.
 @MainActor
 final class Capture {
     static let shared = Capture()
@@ -20,6 +24,44 @@ final class Capture {
     private var overlays: [CaptureOverlay] = []
     /// Between the shortcut and the still screens showing up.
     private var freezing = false
+    private var mode = Mode.screenshot
+
+    /// What the choice on the still screens is for.
+    enum Mode {
+        /// A screenshot of the still screens, at once.
+        case screenshot
+        /// A screenshot of the live screen, a few seconds after the choice,
+        /// so a menu opened meanwhile is in it.
+        case timer
+        /// A screen recording, until it is stopped.
+        case record
+
+        var title: String {
+            switch self {
+            case .screenshot: L("Take Screenshot")
+            case .timer: L("Take Screenshot in 5 Seconds")
+            case .record: L("Record Screen")
+            }
+        }
+
+        var hint: String {
+            switch self {
+            case .screenshot: L("Drag over an area or click a window. Return takes the whole screen, Escape cancels.")
+            case .timer: L("Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later.")
+            case .record: L("Drag over an area or click a window to record it. Return records the whole screen, Escape cancels.")
+            }
+        }
+    }
+
+    /// How long a timed screenshot waits.
+    static let timerSeconds = 5
+
+    /// What is taken once the still screens are gone.
+    enum Region {
+        case area(CGRect, NSScreen)
+        case screen(NSScreen)
+        case window(Target)
+    }
 
     private static let askedKey = "screenCaptureAsked"
 
@@ -38,9 +80,11 @@ final class Capture {
 
     /// - Parameter delay: lets a menu that started it fade out first, so it
     ///   is not caught in the still screens.
-    func start(after delay: TimeInterval = 0) {
-        guard !freezing, overlays.isEmpty, hasPermission() else { return }
+    func start(after delay: TimeInterval = 0, mode: Mode = .screenshot) {
+        guard !freezing, overlays.isEmpty, !Countdown.shared.isRunning,
+              !(mode == .record && Recording.shared.isRecording), hasPermission() else { return }
         freezing = true
+        self.mode = mode
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             Task { @MainActor in await self.freezeScreens() }
         }
@@ -128,7 +172,7 @@ final class Capture {
     private func show(_ stills: [(NSScreen, CGImage)], targets: [Target]) {
         let pointer = NSEvent.mouseLocation
         for (screen, image) in stills {
-            let overlay = CaptureOverlay(screen: screen, still: image, targets: targets,
+            let overlay = CaptureOverlay(screen: screen, still: image, targets: targets, mode: mode,
                                          showsHint: NSMouseInRect(pointer, screen.frame, false)) { [weak self] choice in
                 self?.finish(choice)
             }
@@ -151,6 +195,14 @@ final class Capture {
         overlays.forEach { $0.orderOut(nil) }
         overlays = []
         NSCursor.arrow.set()
+        if mode != .screenshot, let region = Self.region(of: choice) {
+            if mode == .record {
+                Recording.shared.start(region)
+            } else {
+                takeLater(region)
+            }
+            return
+        }
         switch choice {
         case .cancel:
             return
@@ -181,6 +233,114 @@ final class Capture {
                 }
             }
         }
+    }
+
+    private static func region(of choice: Choice) -> Region? {
+        switch choice {
+        case .cancel: nil
+        case let .area(rect, screen, _): .area(rect, screen)
+        case let .screen(screen, _): .screen(screen)
+        case let .window(target): .window(target)
+        }
+    }
+
+    // MARK: Timer
+
+    /// Counts down, then takes the live screen. A window is taken as the
+    /// area it covers, so a menu opened over it in the meantime is in it.
+    private func takeLater(_ chosen: Region) {
+        var region = chosen
+        if case let .window(target) = chosen {
+            let center = CGPoint(x: target.frame.midX, y: target.frame.midY)
+            guard let screen = NSScreen.screens.first(where: { NSMouseInRect(center, $0.frame, false) })
+                    ?? NSScreen.screens.first else { return }
+            region = .area(target.frame.intersection(screen.frame), screen)
+        }
+        let taken = region
+        Countdown.shared.run(Self.timerSeconds, on: Self.screen(of: taken)) { [weak self] in
+            Task { @MainActor in await self?.takeLive(taken) }
+        }
+    }
+
+    private func takeLive(_ region: Region) async {
+        do {
+            let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+            guard let setup = Self.setup(region, in: content, forVideo: false) else { return NSSound.beep() }
+            let image = try await SCScreenshotManager.captureImage(contentFilter: setup.filter,
+                                                                    configuration: setup.config)
+            save(image, from: setup.frame)
+        } catch {
+            log.error("Could not take a timed screenshot: \(error.localizedDescription, privacy: .public)")
+            NSSound.beep()
+        }
+    }
+
+    // MARK: Live capture
+
+    static func screen(of region: Region) -> NSScreen? {
+        switch region {
+        case let .area(_, screen), let .screen(screen): return screen
+        case let .window(target):
+            let center = CGPoint(x: target.frame.midX, y: target.frame.midY)
+            return NSScreen.screens.first { NSMouseInRect(center, $0.frame, false) }
+        }
+    }
+
+    /// What takes a region of the live screen, with Snapfly's own line and
+    /// controls left out, and where it is in AppKit screen coordinates. Nil
+    /// when its screen or window has gone. A video is kept within 4K, which
+    /// every Mac can encode and every chat can play.
+    static func setup(_ region: Region, in content: SCShareableContent, forVideo: Bool)
+        -> (filter: SCContentFilter, config: SCStreamConfiguration, frame: CGRect)? {
+        let own = content.applications.filter { $0.processID == ProcessInfo.processInfo.processIdentifier }
+        let config = SCStreamConfiguration()
+        config.showsCursor = forVideo
+        config.captureResolution = .best
+        let filter: SCContentFilter
+        let frame: CGRect
+        var width: CGFloat, height: CGFloat
+        switch region {
+        case let .window(target):
+            let window = content.windows.first { $0.windowID == target.window.windowID } ?? target.window
+            filter = SCContentFilter(desktopIndependentWindow: window)
+            config.ignoreShadowsSingleWindow = true
+            frame = target.frame
+            let scale = CGFloat(filter.pointPixelScale)
+            width = filter.contentRect.width * scale
+            height = filter.contentRect.height * scale
+        case let .screen(screen):
+            guard let display = display(of: screen, in: content) else { return nil }
+            filter = SCContentFilter(display: display, excludingApplications: own, exceptingWindows: [])
+            frame = screen.frame
+            width = screen.frame.width * screen.backingScaleFactor
+            height = screen.frame.height * screen.backingScaleFactor
+        case let .area(rect, screen):
+            guard let display = display(of: screen, in: content) else { return nil }
+            filter = SCContentFilter(display: display, excludingApplications: own, exceptingWindows: [])
+            // The display counts from its own top left corner.
+            config.sourceRect = CGRect(x: rect.minX - screen.frame.minX, y: screen.frame.maxY - rect.maxY,
+                                       width: rect.width, height: rect.height)
+            frame = rect
+            width = rect.width * screen.backingScaleFactor
+            height = rect.height * screen.backingScaleFactor
+        }
+        if forVideo {
+            let fit = min(1, 3840 / max(width, height, 1), (3840 * 2160 / max(width * height, 1)).squareRoot())
+            // Video sizes are even.
+            width = max(2, (width * fit / 2).rounded() * 2)
+            height = max(2, (height * fit / 2).rounded() * 2)
+            config.minimumFrameInterval = CMTime(value: 1, timescale: 30)
+            config.queueDepth = 6
+            config.pixelFormat = kCVPixelFormatType_32BGRA
+        }
+        config.width = max(1, Int(width.rounded()))
+        config.height = max(1, Int(height.rounded()))
+        return (filter, config, frame)
+    }
+
+    private static func display(of screen: NSScreen, in content: SCShareableContent) -> SCDisplay? {
+        guard let id = screen.displayID else { return nil }
+        return content.displays.first { $0.displayID == id }
     }
 
     // MARK: Saving
@@ -227,7 +387,7 @@ final class Capture {
         return true
     }
 
-    nonisolated private static func tag(_ url: URL, _ name: String, _ value: Any) {
+    nonisolated static func tag(_ url: URL, _ name: String, _ value: Any) {
         guard let data = try? PropertyListSerialization.data(fromPropertyList: value, format: .binary, options: 0)
         else { return }
         url.withUnsafeFileSystemRepresentation { path in
@@ -236,7 +396,7 @@ final class Capture {
         }
     }
 
-    nonisolated private static func stamp() -> String {
+    nonisolated static func stamp() -> String {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
         f.dateFormat = "yyyy-MM-dd 'at' HH.mm.ss"
@@ -252,7 +412,7 @@ extension NSScreen {
 
 /// One screen, still, over everything else while a screenshot is chosen.
 private final class CaptureOverlay: NSPanel {
-    init(screen: NSScreen, still: CGImage, targets: [Capture.Target], showsHint: Bool,
+    init(screen: NSScreen, still: CGImage, targets: [Capture.Target], mode: Capture.Mode, showsHint: Bool,
          done: @escaping (Capture.Choice) -> Void) {
         super.init(contentRect: screen.frame, styleMask: [.borderless, .nonactivatingPanel],
                    backing: .buffered, defer: false)
@@ -262,10 +422,10 @@ private final class CaptureOverlay: NSPanel {
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle, .stationary]
         acceptsMouseMovedEvents = true
         isReleasedWhenClosed = false
-        let view = CaptureView(screen: screen, still: still, targets: targets, done: done)
+        let view = CaptureView(screen: screen, still: still, targets: targets, title: mode.title, done: done)
         contentView = view
         setFrame(screen.frame, display: false)
-        if showsHint { view.showHint() }
+        if showsHint { view.showHint(mode.hint) }
     }
 
     override var canBecomeKey: Bool { true }
@@ -288,7 +448,8 @@ private final class CaptureView: NSView {
     /// How far the pointer moves before a click becomes a drag.
     private static let dragThreshold: CGFloat = 4
 
-    init(screen: NSScreen, still: CGImage, targets: [Capture.Target], done: @escaping (Capture.Choice) -> Void) {
+    init(screen: NSScreen, still: CGImage, targets: [Capture.Target], title: String,
+         done: @escaping (Capture.Choice) -> Void) {
         self.screen = screen
         self.still = still
         self.targets = targets
@@ -300,14 +461,14 @@ private final class CaptureView: NSView {
                                        owner: self))
         setAccessibilityElement(true)
         setAccessibilityRole(.group)
-        setAccessibilityLabel(L("Take Screenshot"))
+        setAccessibilityLabel(title)
         updateHover()
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
-    func showHint() {
-        let host = NSHostingView(rootView: CaptureHint())
+    func showHint(_ text: String) {
+        let host = NSHostingView(rootView: CaptureHint(text: text))
         host.sizingOptions = [.intrinsicContentSize]
         host.translatesAutoresizingMaskIntoConstraints = false
         addSubview(host)
@@ -462,8 +623,10 @@ private final class CaptureView: NSView {
 /// What to do, at the bottom of the screen with the pointer, until a drag
 /// begins.
 private struct CaptureHint: View {
+    let text: String
+
     var body: some View {
-        Text(L("Drag over an area or click a window. Return takes the whole screen, Escape cancels."))
+        Text(text)
             .font(.system(size: 12, weight: .medium))
             .multilineTextAlignment(.center)
             .padding(.horizontal, 16)
