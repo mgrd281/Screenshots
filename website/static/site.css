@@ -182,15 +182,30 @@ kbd {
 .btn:hover { text-decoration: none; transform: translateY(-1px); }
 .btn:active { transform: translateY(0) scale(0.98); }
 
-.btn-download {
-  min-height: 54px;
-  padding: 0 28px;
-  background: #FFFFFF;
-  color: #1D1D1F;
-  box-shadow: 0 8px 22px rgba(40, 0, 50, 0.28);
+/* The download link: a black badge like the stores' own, a Mac and two
+   lines, with a light hairline so it holds on dark wallpaper too. */
+.badge-get {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 60px;
+  padding-block: 8px;
+  padding-inline: 16px 22px;
+  border-radius: 12px;
+  background: #000000;
+  color: #FFFFFF;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32), 0 8px 22px rgba(40, 0, 50, 0.28);
+  text-decoration: none;
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
 }
-.btn-download:hover { box-shadow: 0 12px 28px rgba(40, 0, 50, 0.34); }
-.btn-download:focus-visible { outline: 3px solid #FFFFFF; outline-offset: 3px; }
+.badge-get:hover { text-decoration: none; transform: translateY(-1px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32), 0 12px 28px rgba(40, 0, 50, 0.34); }
+.badge-get:active { transform: scale(0.98); }
+.badge-get:focus-visible { outline: 3px solid #FFFFFF; outline-offset: 3px; }
+.badge-get .icon { width: 34px; height: 34px; }
+.badge-text { display: flex; flex-direction: column; line-height: 1.1; text-align: start; }
+.badge-text small { font-size: 12px; font-weight: 500; letter-spacing: 0.02em; }
+.badge-text span { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
+:lang(ar) .badge-text small { font-size: 13px; letter-spacing: 0; }
 
 .btn-primary { background: var(--accent); color: #FFFFFF; }
 .btn-primary:hover { background: color-mix(in srgb, var(--accent) 88%, #000); }
