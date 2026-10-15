@@ -146,3 +146,9 @@
 /* Sent */
 "Take photos down once sent" = "Take photos down once sent";
 "Sent into a chat, they leave the line. Pinned ones stay." = "Sent into a chat, they leave the line. Pinned ones stay.";
+/* Line styles */
+"Line style" = "Line style";
+"Clothesline" = "Clothesline";
+"Glass shelf" = "Glass shelf";
+"Island" = "Island";
+"Card stack" = "Card stack";

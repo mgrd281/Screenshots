@@ -146,3 +146,9 @@
 /* Sent */
 "Take photos down once sent" = "भेजने के बाद फ़ोटो हटाएँ";
 "Sent into a chat, they leave the line. Pinned ones stay." = "चैट में भेजी गई फ़ोटो रस्सी से हट जाती हैं। पिन की गई फ़ोटो बनी रहती हैं।";
+/* Line styles */
+"Line style" = "रस्सी की शैली";
+"Clothesline" = "कपड़े की रस्सी";
+"Glass shelf" = "काँच की शेल्फ़";
+"Island" = "आइलैंड";
+"Card stack" = "कार्ड का ढेर";

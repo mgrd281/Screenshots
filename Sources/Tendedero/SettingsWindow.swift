@@ -13,6 +13,7 @@ final class Preferences: ObservableObject {
         var setClipboard: (Bool) -> Void = { _ in }
         var setKeep: (Int?) -> Void = { _ in }
         var setSize: (Layout.Size) -> Void = { _ in }
+        var setStyle: (Layout.Style) -> Void = { _ in }
         var addFolder: () -> Void = {}
         var foldersChanged: () -> Void = {}
         var changeShortcut: (Shortcut.Role) -> Void = { _ in }
@@ -103,6 +104,11 @@ final class Preferences: ObservableObject {
     var size: Layout.Size {
         get { Layout.size }
         set { change { actions.setSize(newValue) } }
+    }
+
+    var style: Layout.Style {
+        get { Layout.style }
+        set { change { actions.setStyle(newValue) } }
     }
 
     var keepOnLine: Int? {
@@ -280,6 +286,9 @@ private struct LinePane: View {
 
     var body: some View {
         Form {
+            Section(L("Line style")) {
+                StylePicker(selection: $prefs.style)
+            }
             Section(L("Bring the line down")) {
                 Toggle(L("When the pointer rests in the menu bar"), isOn: $prefs.opensFromMenuBar)
                 Toggle(L("When something new hangs"), isOn: $prefs.peeksAtNew)
@@ -322,6 +331,141 @@ private struct LinePane: View {
                     .background(.quaternary, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
                 Button(L("Change Shortcut…")) { prefs.changeShortcut(role) }
             }
+        }
+    }
+}
+
+/// The four styles side by side, each as a little picture of the top of a
+/// screen, to pick one by looking.
+private struct StylePicker: View {
+    @Binding var selection: Layout.Style
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            ForEach(Layout.Style.allCases) { style in
+                tile(style)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func tile(_ style: Layout.Style) -> some View {
+        let chosen = style == selection
+        let shape = RoundedRectangle(cornerRadius: 10, style: .continuous)
+        return Button {
+            selection = style
+        } label: {
+            VStack(spacing: 7) {
+                StylePreview(style: style)
+                    .aspectRatio(1.6, contentMode: .fit)
+                    .clipShape(shape)
+                    .overlay(shape.strokeBorder(chosen ? Color.accentColor : Color.primary.opacity(0.12),
+                                                lineWidth: chosen ? 2.5 : 1))
+                    .shadow(color: .black.opacity(chosen ? 0.18 : 0.06), radius: chosen ? 6 : 2, y: 2)
+                Text(style.title)
+                    .font(.system(size: 11, weight: chosen ? .semibold : .regular))
+                    .foregroundStyle(chosen ? Color.primary : Color.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(style.title)
+        .accessibilityAddTraits(chosen ? .isSelected : [])
+    }
+}
+
+/// A style drawn small: a wallpaper, a menu bar and three screenshots on
+/// what that style hangs them on.
+private struct StylePreview: View {
+    let style: Layout.Style
+
+    private static let wallpaper = Gradient(colors: [
+        Color(red: 0.17, green: 0.30, blue: 0.62),
+        Color(red: 0.36, green: 0.52, blue: 0.86),
+        Color(red: 0.93, green: 0.62, blue: 0.45),
+    ])
+    private static let accents: [Color] = [
+        Color(red: 0.18, green: 0.62, blue: 0.36),
+        Color(red: 0.48, green: 0.31, blue: 0.88),
+        Color(red: 0.89, green: 0.51, blue: 0.17),
+    ]
+
+    var body: some View {
+        Canvas { context, size in
+            let w = size.width, h = size.height
+            context.fill(Path(CGRect(origin: .zero, size: size)),
+                         with: .linearGradient(Self.wallpaper, startPoint: .zero, endPoint: CGPoint(x: w, y: h)))
+            context.fill(Path(CGRect(x: 0, y: 0, width: w, height: h * 0.08)), with: .color(.white.opacity(0.32)))
+            let card = CGSize(width: w * 0.2, height: w * 0.15)
+            switch style {
+            case .clothesline:
+                var rope = Path()
+                rope.move(to: CGPoint(x: -2, y: h * 0.2))
+                rope.addQuadCurve(to: CGPoint(x: w + 2, y: h * 0.2), control: CGPoint(x: w / 2, y: h * 0.4))
+                context.stroke(rope, with: .color(Color(white: 0.25, opacity: 0.8)), lineWidth: 1)
+                for (n, fx) in [0.22, 0.5, 0.78].enumerated() {
+                    let x = w * fx
+                    let y = h * 0.2 + 4 * (h * 0.1) * fx * (1 - fx)
+                    Self.drawCard(in: &context, top: CGPoint(x: x, y: y + 2), size: card,
+                                  angle: .degrees([-4, 2, 5][n]), accent: Self.accents[n], clip: true)
+                }
+            case .shelf:
+                let pane = CGRect(x: w * 0.12, y: h * 0.15, width: w * 0.76, height: card.height + h * 0.12)
+                let path = Path(roundedRect: pane, cornerRadius: h * 0.1, style: .continuous)
+                context.fill(path, with: .color(.white.opacity(0.32)))
+                context.stroke(path, with: .color(.white.opacity(0.7)), lineWidth: 0.8)
+                for n in 0..<3 {
+                    let x = pane.minX + pane.width * (0.2 + 0.28 * CGFloat(n))
+                    Self.drawCard(in: &context, top: CGPoint(x: x, y: pane.minY + h * 0.06), size: card,
+                                  angle: .zero, accent: Self.accents[n], clip: false)
+                }
+            case .island:
+                let island = CGRect(x: w * 0.16, y: 0, width: w * 0.68, height: card.height + h * 0.24)
+                context.fill(Path(roundedRect: island, cornerRadii: RectangleCornerRadii(
+                    topLeading: 0, bottomLeading: h * 0.14, bottomTrailing: h * 0.14, topTrailing: 0)),
+                             with: .color(.black))
+                for n in 0..<3 {
+                    let x = island.minX + island.width * (0.2 + 0.3 * CGFloat(n))
+                    Self.drawCard(in: &context, top: CGPoint(x: x, y: h * 0.13), size: card,
+                                  angle: .zero, accent: Self.accents[n], clip: false)
+                }
+            case .stack:
+                let anchor = CGPoint(x: w * 0.74, y: h * 0.17)
+                for (n, angle) in [-12.0, -6.0, 0].enumerated() {
+                    Self.drawCard(in: &context, top: CGPoint(x: anchor.x - CGFloat(2 - n) * 4, y: anchor.y),
+                                  size: card, angle: .degrees(angle), accent: Self.accents[n], clip: false)
+                }
+                let badge = CGRect(x: anchor.x + card.width / 2 - 5, y: anchor.y - 4, width: 9, height: 9)
+                context.fill(Path(ellipseIn: badge), with: .color(.red))
+            }
+        }
+    }
+
+    /// One screenshot, hanging from the middle of its top edge.
+    private static func drawCard(in context: inout GraphicsContext, top: CGPoint, size: CGSize,
+                                 angle: Angle, accent: Color, clip: Bool) {
+        var layer = context
+        layer.translateBy(x: top.x, y: top.y)
+        layer.rotate(by: angle)
+        let rect = CGRect(x: -size.width / 2, y: 0, width: size.width, height: size.height)
+        var shadow = layer
+        shadow.addFilter(.shadow(color: .black.opacity(0.3), radius: 1.5, y: 1))
+        shadow.fill(Path(roundedRect: rect, cornerRadius: 2), with: .color(.white))
+        layer.fill(Path(CGRect(x: rect.minX + size.width * 0.12, y: rect.minY + size.height * 0.16,
+                               width: size.width * 0.5, height: max(1.5, size.height * 0.12))),
+                   with: .color(accent))
+        for row in 0..<2 {
+            layer.fill(Path(CGRect(x: rect.minX + size.width * 0.12,
+                                   y: rect.minY + size.height * (0.42 + 0.2 * CGFloat(row)),
+                                   width: size.width * (row == 0 ? 0.72 : 0.5), height: max(1, size.height * 0.08))),
+                       with: .color(Color(white: 0.86)))
+        }
+        if clip {
+            layer.fill(Path(roundedRect: CGRect(x: -1.5, y: -4, width: 3, height: 6), cornerRadius: 1),
+                       with: .color(Color(white: 0.75)))
         }
     }
 }

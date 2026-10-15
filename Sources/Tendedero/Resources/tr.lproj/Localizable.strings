@@ -144,3 +144,9 @@
 /* Sent */
 "Take photos down once sent" = "Gönderilen fotoğrafları ipten indir";
 "Sent into a chat, they leave the line. Pinned ones stay." = "Sohbete gönderilenler ipten iner. Sabitlenenler kalır.";
+/* Line styles */
+"Line style" = "İpin görünümü";
+"Clothesline" = "Çamaşır ipi";
+"Glass shelf" = "Cam raf";
+"Island" = "Ada";
+"Card stack" = "Kart yığını";

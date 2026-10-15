@@ -330,7 +330,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             line.land(id)
             return
         }
-        CaptureFlight.fly(image: image, from: from, to: to, tilt: CGFloat(item.tilt), on: screen) { [weak self] in
+        CaptureFlight.fly(image: image, from: from, to: to, tilt: tilt(of: id), on: screen) { [weak self] in
             self?.line.land(id)
         }
     }
@@ -340,7 +340,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard isPresent, isRevealed, !item.flying, let screen = panel.screen,
               let card = cardFrame(for: item.id),
               let image = item.thumb.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return }
-        CaptureFlight.fall(image: image, card: card, tilt: CGFloat(item.tilt), on: screen)
+        CaptureFlight.fall(image: image, card: card, tilt: tilt(of: item.id), on: screen)
     }
 
     /// Sent photos fly from the line into the app in front, a little apart,
@@ -358,7 +358,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let height = width * card.height / max(card.width, 1)
             let target = CGRect(x: landing.x - width / 2, y: landing.y - height / 2, width: width, height: height)
             let delay = 0.07 * Double(n)
-            CaptureFlight.send(image: image, card: card, to: target, tilt: CGFloat(item.tilt), on: screen, after: delay)
+            CaptureFlight.send(image: image, card: card, to: target, tilt: tilt(of: item.id), on: screen, after: delay)
             last = delay
         }
         return last.map { $0 + CaptureFlight.sendDuration } ?? 0
@@ -370,13 +370,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard let index = line.items.firstIndex(where: { $0.id == id }) else { return nil }
         let width = panel.frame.width
         let x = Layout.x(index: index, count: line.items.count, width: width,
-                         visible: line.visibleCount, scroll: line.scroll)
+                         visible: line.visibleCount, scroll: line.scroll, spread: line.spread)
         let viewTop = panel.drop + Layout.ropeY(x: x, width: width) - Layout.pinAbove
         let cardTop = viewTop + PeggedView.cardOffsetBelowTop
         let size = PeggedView.cardSize(for: line.items[index].thumb.size)
         return CGRect(x: panel.frame.minX + x - size.width / 2,
                       y: panel.frame.maxY - cardTop - size.height,
                       width: size.width, height: size.height)
+    }
+
+    /// How a card leans where it hangs, for the flights to match it.
+    private func tilt(of id: UUID) -> CGFloat {
+        guard let index = line.items.firstIndex(where: { $0.id == id }) else { return 0 }
+        return CGFloat(Layout.tilt(of: line.items[index], index: index, count: line.items.count, spread: line.spread))
     }
 
     /// Decides whether the panel is ordered in at all: something to show,
@@ -441,6 +447,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             pinned = false
             peekUntil = .distantPast
             SearchBar.shared.close()
+            line.spread = false
             panel.ignoresMouseEvents = true
             // A grip that went away under the pointer never hears it let go.
             TagView.isMovingLine = false
@@ -563,6 +570,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
 
         updateMousePassThrough(mouse)
+        if line.style == .stack { spreadStack(near: mouse) }
 
         // The line's zone runs from its lowest point up to the top of the
         // screen, menu bar included, so moving up never hides it.
@@ -583,6 +591,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 setRevealed(false)
             }
         }
+    }
+
+    /// A card stack spreads out while the pointer is at it, and closes
+    /// again once it has moved away.
+    private func spreadStack(near mouse: NSPoint) {
+        let local = panel.convertPoint(fromScreen: mouse)
+        let flipped = CGPoint(x: local.x, y: panel.frame.height - local.y)
+        let cards = line.hitRects.values.reduce(line.tagRect) { $0.union($1) }
+        let near = !cards.isNull && cards.insetBy(dx: -28, dy: -28).contains(flipped)
+        if near != line.spread { line.spread = near }
     }
 
     /// The panel spans the whole width of the screen, so it only accepts the
@@ -648,6 +666,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         line.trim()
     }
 
+    private func setStyle(_ style: Layout.Style) {
+        guard style != Layout.style else { return }
+        Layout.style = style
+        line.spread = false
+        line.style = style
+    }
+
     private func setSize(_ size: Layout.Size) {
         guard size != Layout.size else { return }
         Layout.size = size
@@ -672,6 +697,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             setClipboard: { [weak self] in self?.setClipboard($0) },
             setKeep: { [weak self] in self?.setKeep($0) },
             setSize: { [weak self] in self?.setSize($0) },
+            setStyle: { [weak self] in self?.setStyle($0) },
             addFolder: { [weak self] in self?.chooseExtraFolder() },
             foldersChanged: { [weak self] in self?.startWatcher() },
             changeShortcut: { [weak self] in self?.changeShortcut($0) },
