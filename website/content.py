@@ -29,7 +29,7 @@ TEXT["en"] = dict(
     lang_label="Language",
     menu_label="Snapfly",
 
-    hero_sub="Every screenshot you take hangs on a line at the top of your screen. Click one to copy it, or send it straight into the chat you’re typing in. Nothing piles up on your Desktop.",
+    hero_sub="Every screenshot you take hangs on a line at the top of your screen. Click one to copy it, or send it straight into the chat you’re typing in. Names and other private details are covered first, whether it goes to ChatGPT or to a person.",
     cta="Download for Mac",
     cta_note="Free · macOS 14 or later · Apple silicon and Intel",
     try_hint="Try it: click a screenshot, or its paper plane.",
@@ -54,8 +54,8 @@ TEXT["en"] = dict(
     desk_label="A Desktop covered in screenshot files, which fly up onto the line",
     replay="Play again",
 
-    priv_h="Private details, covered.",
-    priv_p="Choose what to cover: names, addresses, emails, phone numbers, bank cards and accounts, health details. Whatever leaves the line, copied, sent or dragged out, leaves covered. Snapfly reads the text on your Mac, and the screenshot file itself never changes.",
+    priv_h="Private details stay private.",
+    priv_p="Before a screenshot goes to ChatGPT, another AI or a person, Snapfly covers what you choose: names, addresses, emails, phone numbers, bank cards and accounts, health details. Whatever leaves the line, copied, sent or dragged out, leaves covered. Snapfly reads the text on your Mac, and the screenshot file itself never changes.",
     example="Example",
     inv=dict(title="Invoice 2026-1042", date="October 14, 2026", bill="Billing address",
              name="Lena Hoffmann", street="Lindenstraße 12", city="10969 Berlin",
@@ -195,7 +195,7 @@ TEXT["de"] = dict(
     lang_label="Sprache",
     menu_label="Snapfly",
 
-    hero_sub="Jedes Bildschirmfoto hängt an einer Leine oben auf deinem Bildschirm. Ein Klick kopiert es, oder du schickst es direkt in den Chat, in dem du gerade schreibst. Auf deinem Schreibtisch stapelt sich nichts mehr.",
+    hero_sub="Jedes Bildschirmfoto hängt an einer Leine oben auf deinem Bildschirm. Ein Klick kopiert es, oder du schickst es direkt in den Chat, in dem du gerade schreibst. Namen und andere private Angaben werden vorher verdeckt, ob es an ChatGPT geht oder an einen Menschen.",
     cta="Für Mac laden",
     cta_note="Kostenlos · ab macOS 14 · Apple Silicon und Intel",
     try_hint="Probier’s aus: Klick auf ein Bild oder auf seinen Papierflieger.",
@@ -220,8 +220,8 @@ TEXT["de"] = dict(
     desk_label="Ein Schreibtisch voller Bildschirmfotos, die nach oben an die Leine fliegen",
     replay="Noch mal abspielen",
 
-    priv_h="Private Angaben, verdeckt.",
-    priv_p="Wähle, was verdeckt wird: Namen, Adressen, E-Mails, Telefonnummern, Bankkarten und Konten, Gesundheitsdaten. Was die Leine verlässt – kopiert, gesendet oder herausgezogen –, ist verdeckt. Snapfly liest den Text auf deinem Mac, und die Bilddatei selbst bleibt unverändert.",
+    priv_h="Private Angaben bleiben privat.",
+    priv_p="Bevor ein Bildschirmfoto an ChatGPT, eine andere KI oder einen Menschen geht, verdeckt Snapfly, was du wählst: Namen, Adressen, E-Mails, Telefonnummern, Bankkarten und Konten, Gesundheitsdaten. Was die Leine verlässt – kopiert, gesendet oder herausgezogen –, ist verdeckt. Snapfly liest den Text auf deinem Mac, und die Bilddatei selbst bleibt unverändert.",
     example="Beispiel",
     inv=dict(title="Rechnung 2026-1042", date="14. Oktober 2026", bill="Rechnungsadresse",
              name="Lena Hoffmann", street="Lindenstraße 12", city="10969 Berlin",
@@ -361,7 +361,7 @@ TEXT["ar"] = dict(
     lang_label="اللغة",
     menu_label="Snapfly",
 
-    hero_sub="كل لقطة شاشة تلتقطها تُعلَّق على حبل في أعلى شاشتك. انقرها لتنسخها، أو أرسلها مباشرة إلى الدردشة التي تكتب فيها. لا شيء يتكدّس على سطح المكتب بعد اليوم.",
+    hero_sub="كل لقطة شاشة تلتقطها تُعلَّق على حبل في أعلى شاشتك. انقرها لتنسخها، أو أرسلها مباشرة إلى الدردشة التي تكتب فيها. والأسماء وغيرها من المعلومات الخاصة تُغطّى قبل الإرسال، سواء ذهبت إلى ChatGPT أو إلى شخص.",
     cta="تنزيل لجهاز Mac",
     cta_note="مجاني · macOS 14 أو أحدث · Apple silicon و Intel",
     try_hint="جرّبه: انقر لقطة، أو طائرتها الورقية.",
@@ -386,8 +386,8 @@ TEXT["ar"] = dict(
     desk_label="سطح مكتب مليء بملفات لقطات الشاشة، تطير إلى الحبل",
     replay="إعادة التشغيل",
 
-    priv_h="المعلومات الخاصة، مغطّاة.",
-    priv_p="اختر ما يُغطّى: الأسماء، والعناوين، والبريد الإلكتروني، وأرقام الهواتف، والبطاقات والحسابات البنكية، والمعلومات الصحية. كل ما يغادر الحبل، نسخًا أو إرسالًا أو سحبًا، يغادره مغطّى. يقرأ Snapfly النص على جهازك، ولا يتغيّر ملف اللقطة نفسه.",
+    priv_h="معلوماتك الخاصة تبقى خاصة.",
+    priv_p="قبل أن تذهب اللقطة إلى ChatGPT أو أي ذكاء اصطناعي آخر أو إلى شخص، يغطّي Snapfly ما تختاره: الأسماء، والعناوين، والبريد الإلكتروني، وأرقام الهواتف، والبطاقات والحسابات البنكية، والمعلومات الصحية. كل ما يغادر الحبل، نسخًا أو إرسالًا أو سحبًا، يغادره مغطّى. يقرأ Snapfly النص على جهازك، ولا يتغيّر ملف اللقطة نفسه.",
     example="مثال",
     inv=dict(title="فاتورة 2026-1042", date="14 أكتوبر 2026", bill="عنوان الفاتورة",
              name="لينا هوفمان", street="شارع ليندن 12", city="10969 برلين",

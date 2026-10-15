@@ -648,7 +648,7 @@ def section_close(lang):
 
 def home(lang):
     t = TEXT[lang]
-    main = "\n".join([hero(lang), section_send(lang), section_desk(lang), section_private(lang),
+    main = "\n".join([hero(lang), section_send(lang), section_private(lang), section_desk(lang),
                       section_menu(lang), section_styles(lang), section_design(lang), section_close(lang)])
     return document(lang, "index", t["title_home"], t["desc_home"], main)
 

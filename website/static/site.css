@@ -892,7 +892,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 .doc-top { display: flex; justify-content: space-between; gap: 12px; margin-block: 14px 8px; }
 .doc-title { font-size: 15px; font-weight: 700; line-height: 1.3; }
 .doc-dim { color: #6E6E73; font-size: 11px; }
-.doc-total { text-align: end; }
+.doc-total { text-align: end; white-space: nowrap; }
 .doc-label { color: #6E6E73; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
 .doc-label:lang(ar) { letter-spacing: 0; }
 .doc-items {
