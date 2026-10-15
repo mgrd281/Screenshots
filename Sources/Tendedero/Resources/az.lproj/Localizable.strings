@@ -219,3 +219,12 @@
 "Add App…" = "Tətbiq əlavə et…";
 "Chat apps" = "Söhbət tətbiqləri";
 "It shows over these apps while photos hang." = "Şəkillər asılı qaldıqca bu tətbiqlərin üzərində görünür.";
+
+/* Hide by saying */
+"Nothing found to hide." = "Gizlədiləcək heç nə tapılmadı.";
+"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligence cavab verə bilmədi, ona görə bu sözlər olan sətirlər gizlədildi.";
+"Lines hidden: %d. Click a box to show it again." = "Gizlədilən sətirlər: %d. Yenidən göstərmək üçün qutuya klik et.";
+"Say what to hide, like “everything but the amount and the date”" = "Nəyi gizlətmək istədiyini de, məsələn “məbləğ və tarixdən başqa hər şey”";
+"Words to hide, separated by commas" = "Gizlədiləcək sözlər, vergüllə ayrılmış";
+"Hide" = "Gizlət";
+"With Apple Intelligence on, you can say it in a sentence." = "Apple Intelligence açıq olanda bunu bir cümlə ilə deyə bilərsən.";

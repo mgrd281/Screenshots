@@ -217,3 +217,12 @@
 "Add App…" = "Appを追加…";
 "Chat apps" = "チャットApp";
 "It shows over these apps while photos hang." = "写真が掛かっている間、これらのAppの上に表示されます。";
+
+/* Hide by saying */
+"Nothing found to hide." = "隠すものが見つかりませんでした。";
+"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligenceが応答できなかったため、これらの語を含む行を隠しました。";
+"Lines hidden: %d. Click a box to show it again." = "隠した行：%d。枠をクリックすると再び表示されます。";
+"Say what to hide, like “everything but the amount and the date”" = "隠すものを入力（例：「金額と日付以外すべて」）";
+"Words to hide, separated by commas" = "隠す語句（カンマ区切り）";
+"Hide" = "隠す";
+"With Apple Intelligence on, you can say it in a sentence." = "Apple Intelligenceがオンなら、文章で指示できます。";

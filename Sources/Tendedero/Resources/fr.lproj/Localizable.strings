@@ -217,3 +217,12 @@
 "Add App…" = "Ajouter une app…";
 "Chat apps" = "Apps de discussion";
 "It shows over these apps while photos hang." = "Il apparaît sur ces apps tant que des photos sont suspendues.";
+
+/* Hide by saying */
+"Nothing found to hide." = "Rien à masquer.";
+"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligence n’a pas pu répondre : les lignes contenant ces mots sont masquées.";
+"Lines hidden: %d. Click a box to show it again." = "Lignes masquées : %d. Clique sur un cadre pour le réafficher.";
+"Say what to hide, like “everything but the amount and the date”" = "Dis ce qu’il faut masquer, par exemple « tout sauf le montant et la date »";
+"Words to hide, separated by commas" = "Mots à masquer, séparés par des virgules";
+"Hide" = "Masquer";
+"With Apple Intelligence on, you can say it in a sentence." = "Avec Apple Intelligence activé, tu peux le dire en une phrase.";

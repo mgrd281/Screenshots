@@ -366,6 +366,11 @@ apps.
 - **Search bar.** One field, a result count chip and close.
 - **Full windows** (Hide Part, Settings) for focused work. They are standard
   titled windows with Cancel and Done bound to Escape and Return.
+  - Hide Part has a rounded field above its footer to say what to hide,
+    after `sparkles` (or `text.magnifyingglass` without Apple Intelligence)
+    in 13 pt semibold `.secondary`, with a Hide button and a small spinner
+    while it works. A callout note in `.secondary` under it says what it did.
+    While the field has the keyboard, Return runs it; empty, Return is Done.
 - **No modal alerts** for things that can be said inline in the card.
 - **History window** (`HistoryWindow.swift`), a standard titled window
   (760 × 540, at least 480 × 360) for what left the line.

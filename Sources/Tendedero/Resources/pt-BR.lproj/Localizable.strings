@@ -217,3 +217,12 @@
 "Add App…" = "Adicionar app…";
 "Chat apps" = "Apps de chat";
 "It shows over these apps while photos hang." = "Ele aparece sobre esses apps enquanto houver fotos penduradas.";
+
+/* Hide by saying */
+"Nothing found to hide." = "Nada encontrado para ocultar.";
+"Apple Intelligence could not answer, so the lines with these words are hidden." = "A Apple Intelligence não conseguiu responder, então as linhas com estas palavras foram ocultadas.";
+"Lines hidden: %d. Click a box to show it again." = "Linhas ocultas: %d. Clique em um quadro para mostrá-lo de novo.";
+"Say what to hide, like “everything but the amount and the date”" = "Diga o que ocultar, como “tudo menos o valor e a data”";
+"Words to hide, separated by commas" = "Palavras para ocultar, separadas por vírgulas";
+"Hide" = "Ocultar";
+"With Apple Intelligence on, you can say it in a sentence." = "Com a Apple Intelligence ativada, você pode dizer isso em uma frase.";

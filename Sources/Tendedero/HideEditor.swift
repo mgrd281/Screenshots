@@ -2,9 +2,10 @@ import AppKit
 import SwiftUI
 
 /// Hide Part: the screenshot large, to drag a box over anything that should
-/// not leave the line, like a name the reading missed. What Hide private
-/// details covers shows too, so what you see is what goes. The boxes are
-/// kept with the photo, and the file itself is never changed.
+/// not leave the line, like a name the reading missed, or to say what to
+/// hide in words. What Hide private details covers shows too, so what you
+/// see is what goes. The boxes are kept with the photo, and the file itself
+/// is never changed.
 @MainActor
 final class HideEditor: NSObject, NSWindowDelegate {
     static let shared = HideEditor()
@@ -20,6 +21,7 @@ final class HideEditor: NSObject, NSWindowDelegate {
         }
         let model = HideModel(image: image, hand: PrivateDetails.hand(url))
         readCovered(url, into: model)
+        readLines(url, into: model)
 
         // As large as fits, never larger than the screenshot itself.
         let screen = (NSScreen.main ?? NSScreen.screens[0]).visibleFrame
@@ -54,6 +56,16 @@ final class HideEditor: NSObject, NSWindowDelegate {
         window = nil
     }
 
+    /// Every line of text, with where it sits, for hiding by saying.
+    private func readLines(_ url: URL, into model: HideModel) {
+        DispatchQueue.global(qos: .userInitiated).async { [weak model] in
+            let lines = Finder.lines(of: url)
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated { model?.lines = lines }
+            }
+        }
+    }
+
     /// What Hide private details covers, read in the background.
     private func readCovered(_ url: URL, into model: HideModel) {
         let chosen = PrivateDetails.details
@@ -79,9 +91,64 @@ final class HideModel: ObservableObject {
     /// Covered by Hide private details, the same way.
     @Published var found: [CGRect] = []
 
+    /// What to hide, in words.
+    @Published var request = ""
+    @Published private(set) var working = false
+    /// Said under the field once it has run.
+    @Published private(set) var note: String?
+    /// The text in the screenshot, once read.
+    var lines: [(text: String, box: CGRect)]? {
+        didSet { if lines != nil, waiting { hideAsSaid() } }
+    }
+    let understandsSentences = HideBySaying.understandsSentences
+
+    /// Asked before the text was read.
+    private var waiting = false
+    /// The boxes the last request added, replaced by the next one.
+    private var said: [CGRect] = []
+
     init(image: NSImage, hand: [CGRect]) {
         self.image = image
         self.hand = hand
+    }
+
+    func hideAsSaid() {
+        let request = request.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !request.isEmpty else { return }
+        working = true
+        note = nil
+        guard let lines else {
+            waiting = true
+            return
+        }
+        waiting = false
+        let texts = lines.map(\.text)
+        Task { @MainActor in
+            let outcome = await HideBySaying.lines(toHide: request, in: texts)
+            let chosen: [Int]
+            switch outcome {
+            case let .lines(found): chosen = found
+            case let .matched(found): chosen = found
+            }
+            let boxes = chosen.map { Self.padded(lines[$0].box) }
+            hand.removeAll { said.contains($0) }
+            hand += boxes
+            said = boxes
+            working = false
+            if boxes.isEmpty {
+                note = L("Nothing found to hide.")
+            } else if case .matched = outcome, understandsSentences {
+                note = L("Apple Intelligence could not answer, so the lines with these words are hidden.")
+            } else {
+                note = String(format: L("Lines hidden: %d. Click a box to show it again."), boxes.count)
+            }
+        }
+    }
+
+    /// A line's box, with a little room so no letter peeks out.
+    private static func padded(_ box: CGRect) -> CGRect {
+        let room = box.height * 0.15
+        return box.insetBy(dx: -room, dy: -room).intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
     }
 }
 
@@ -94,6 +161,7 @@ private struct HideEditorView: View {
     @State private var drawing: CGRect?
     @State private var hovered: Int?
     @State private var crosshair = false
+    @FocusState private var fieldFocused: Bool
 
     private static let cover = Color(white: 0.12)
 
@@ -151,6 +219,11 @@ private struct HideEditorView: View {
                 if crosshair { NSCursor.pop() }
             }
 
+            saying
+                .padding(.horizontal, 14)
+                .padding(.top, 14)
+                .frame(width: max(size.width, 520))
+
             HStack(spacing: 10) {
                 Text(L("Drag over anything to hide it. Click a box to show it again."))
                     .font(.callout)
@@ -162,10 +235,53 @@ private struct HideEditorView: View {
                 Button(L("Cancel")) { finish(false) }
                     .keyboardShortcut(.cancelAction)
                 Button(L("Done")) { finish(true) }
-                    .keyboardShortcut(.defaultAction)
+                    // Return in the field hides what it says instead.
+                    .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut.defaultAction)
             }
             .padding(14)
             .frame(width: max(size.width, 520))
+        }
+    }
+
+    /// A field to say what to hide, with a note on what it did.
+    private var saying: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                Image(systemName: model.understandsSentences ? "sparkles" : "text.magnifyingglass")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+                TextField(model.understandsSentences
+                          ? L("Say what to hide, like “everything but the amount and the date”")
+                          : L("Words to hide, separated by commas"),
+                          text: $model.request)
+                    .textFieldStyle(.roundedBorder)
+                    .focused($fieldFocused)
+                    .onSubmit {
+                        // Empty, Return is Done, as everywhere else.
+                        if model.request.trimmingCharacters(in: .whitespaces).isEmpty {
+                            finish(true)
+                        } else {
+                            model.hideAsSaid()
+                        }
+                    }
+                if model.working {
+                    ProgressView().controlSize(.small)
+                }
+                Button(L("Hide")) { model.hideAsSaid() }
+                    .disabled(model.working || model.request.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+            if let note = model.note {
+                Text(note)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else if !model.understandsSentences {
+                Text(L("With Apple Intelligence on, you can say it in a sentence."))
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 
