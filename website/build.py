@@ -29,6 +29,12 @@ OUT = HERE / "_site"
 # keeps Vercel's toolbar off the preview pages.
 REDIRECT_JS = ('try{if(!localStorage.getItem("snapfly-lang")){var l=(navigator.language||"").toLowerCase();'
                'if(l.indexOf("de")==0)location.replace("de/");else if(l.indexOf("ar")==0)location.replace("ar/")}}catch(e){}')
+# Every page's first script: the brand theme chosen on this device, set
+# before the page paints, and the mark that scripts run.
+BRAND_JS = ('try{if(localStorage.getItem("snapfly-brand")==="emerald")'
+            'document.documentElement.setAttribute("data-brand","emerald")}catch(e){}'
+            'document.documentElement.classList.add("js")')
+INLINE_JS = (BRAND_JS, REDIRECT_JS)
 STATIC = HERE / "static"
 STRINGS = HERE.parent / "Sources" / "Tendedero" / "Resources"
 BASE_PATH = urlparse(SITE_URL).path  # "/Screenshots/"
@@ -273,6 +279,13 @@ def menubar(lang, page):
         f'{mark(code)}>{icon("check", "icon tick")}{esc(name)}</a></li>'
         for code, _, name in LANGS)
     current = dict((c, n) for c, _, n in LANGS)[lang]
+    # The brand theme, as two swatches; site.js keeps the checked one in
+    # step with <html data-brand>.
+    brands = "".join(
+        f'<button type="button" class="brand-chip" role="radio" aria-checked="{str(key == "sunset").lower()}"'
+        f' tabindex="{0 if key == "sunset" else -1}" data-brand-pick="{key}" aria-label="{esc(t["brand_" + key])}"'
+        f' data-tip="{esc(t["brand_" + key])}"><span class="brand-dot brand-dot-{key}"></span></button>'
+        for key in ("sunset", "emerald"))
     return f"""<header class="menubar">
   <nav class="menubar-row" aria-label="Snapfly">
     <a class="app-menu" href="{home}"><img src="{prefix(lang)}assets/icon-64.png" alt="" width="18" height="18"><span>Snapfly</span></a>
@@ -282,6 +295,7 @@ def menubar(lang, page):
       <li><a href="{href_to(lang, lang, "support")}"{here("support")}>{esc(t["nav_support"])}</a></li>
     </ul>
     <div class="status">
+      <div class="brand-switch" role="radiogroup" aria-label="{esc(t["brand_label"])}"><span class="brand-thumb" aria-hidden="true"></span>{brands}</div>
       <details class="lang-menu">
         <summary aria-label="{esc(t["lang_label"])}: {esc(current)}">{icon("globe")}<span class="lang-current">{esc(current)}</span></summary>
         <ul class="menu-panel">{langs}</ul>
@@ -356,6 +370,7 @@ def head(lang, page, title, desc):
 <meta property="og:image" content="{SITE_URL}assets/og.png">
 <meta property="og:locale" content="{ {"en": "en_US", "de": "de_DE", "ar": "ar_AR"}[lang] }">
 <meta name="twitter:card" content="summary_large_image">
+<script>{BRAND_JS}</script>
 {redirect}
 <link rel="stylesheet" href="{p}assets/site.css">
 <script src="{p}assets/site.js" defer></script>
@@ -1091,8 +1106,8 @@ def section_styles(lang):
     cards = "".join(f'<span class="sty s{i + 1}" style="--i:{i};--tilt:{TILTS[i]}"><span class="mini-clip"></span><span class="photo"><span class="photo-img">{art(k, lang, f"style{i}")}</span></span></span>'
                     for i, k in enumerate(["map", "invoice", "sunset"]))
     gradient = ('<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>'
-                '<linearGradient id="tile-wall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC45C"/>'
-                '<stop offset=".5" stop-color="#FF5E62"/><stop offset="1" stop-color="#B234D6"/></linearGradient></defs></svg>')
+                '<linearGradient id="tile-wall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--tile-a)"/>'
+                '<stop offset=".5" style="stop-color:var(--tile-b)"/><stop offset="1" style="stop-color:var(--tile-c)"/></linearGradient></defs></svg>')
     return f"""<section class="section styles" aria-labelledby="styles-h" data-style-stage data-style="clothesline">
   <div class="style-line" aria-hidden="true">
     {rope("style-rope")}
@@ -1203,6 +1218,7 @@ def not_found():
 <title>{esc(t["notfound_title"])} · Snapfly</title>
 <meta name="color-scheme" content="light dark">
 <meta name="robots" content="noindex">
+<script>{BRAND_JS}</script>
 <link rel="icon" href="{base}assets/favicon.png" type="image/png">
 <link rel="stylesheet" href="{base}assets/site.css">
 </head>
@@ -1233,13 +1249,14 @@ def sitemap():
 
 
 def check_policy():
-    """Stops the build when vercel.json no longer allows the inline script."""
-    digest = base64.b64encode(hashlib.sha256(REDIRECT_JS.encode()).digest()).decode()
+    """Stops the build when vercel.json no longer allows an inline script."""
     config = json.loads((HERE.parent / "vercel.json").read_text(encoding="utf-8"))
     policy = " ".join(h["value"] for rule in config.get("headers", []) for h in rule["headers"]
                       if h["key"].lower() == "content-security-policy")
-    if f"'sha256-{digest}'" not in policy:
-        sys.exit(f"vercel.json: put 'sha256-{digest}' in script-src of the Content-Security-Policy.")
+    for script in INLINE_JS:
+        digest = base64.b64encode(hashlib.sha256(script.encode()).digest()).decode()
+        if f"'sha256-{digest}'" not in policy:
+            sys.exit(f"vercel.json: put 'sha256-{digest}' in script-src of the Content-Security-Policy.")
 
 
 def main():
