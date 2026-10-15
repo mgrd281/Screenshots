@@ -166,3 +166,6 @@
 "Allow Snapfly to take screenshots" = "Snapfly’ın ekran görüntüsü almasına izin ver";
 "Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "Sistem Ayarları › Gizlilik ve Güvenlik’te Snapfly için ekran kaydını aç, sonra yeniden dene.";
 "Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "Bir alanın üzerinde sürükle ya da bir pencereyi tıkla. Return tüm ekranı alır, Escape iptal eder.";
+"Put it back" = "Yerine koy";
+"Send button over chats" = "Sohbetlerin üzerinde gönder düğmesi";
+"While photos hang, a send button waits just above the chat's own. Drag it where you like it." = "Fotoğraflar asılı oldukça, sohbetin kendi gönder düğmesinin hemen üstünde bir gönder düğmesi bekler. Onu istediğin yere sürükle.";

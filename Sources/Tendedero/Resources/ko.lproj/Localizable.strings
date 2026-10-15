@@ -166,3 +166,6 @@
 "Allow Snapfly to take screenshots" = "Snapfly가 스크린샷을 찍도록 허용";
 "Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "시스템 설정 › 개인정보 보호 및 보안에서 Snapfly의 화면 기록을 켠 다음 다시 시도하세요.";
 "Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "영역을 드래그하거나 윈도우를 클릭하세요. Return 키는 화면 전체를 찍고, Esc 키는 취소해요.";
+"Put it back" = "원래 자리로";
+"Send button over chats" = "채팅 위에 보내기 버튼";
+"While photos hang, a send button waits just above the chat's own. Drag it where you like it." = "사진이 걸려 있는 동안 채팅의 보내기 버튼 바로 위에 보내기 버튼이 나타나요. 원하는 곳으로 드래그하세요.";

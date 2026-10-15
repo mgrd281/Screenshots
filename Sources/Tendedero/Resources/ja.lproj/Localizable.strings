@@ -166,3 +166,6 @@
 "Allow Snapfly to take screenshots" = "Snapflyにスクリーンショットの撮影を許可";
 "Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "「システム設定」›「プライバシーとセキュリティ」で、Snapflyの画面収録をオンにしてから、もう一度お試しください。";
 "Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "範囲をドラッグするか、ウインドウをクリックします。Returnキーで画面全体、escでキャンセルします。";
+"Put it back" = "元の位置に戻す";
+"Send button over chats" = "チャットの上に送信ボタン";
+"While photos hang, a send button waits just above the chat's own. Drag it where you like it." = "写真が掛かっている間、チャットの送信ボタンのすぐ上に送信ボタンが表示されます。好きな場所にドラッグできます。";

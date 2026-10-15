@@ -166,3 +166,6 @@
 "Allow Snapfly to take screenshots" = "اسمح لـ Snapfly بالتقاط صور الشاشة";
 "Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "فعّل Snapfly لتسجيل الشاشة في إعدادات النظام › الخصوصية والأمن، ثم حاول مرة أخرى.";
 "Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "اسحب فوق منطقة أو انقر على نافذة. Return يلتقط الشاشة كلها، وEscape للإلغاء.";
+"Put it back" = "إعادته إلى مكانه";
+"Send button over chats" = "زر إرسال فوق المحادثات";
+"While photos hang, a send button waits just above the chat's own. Drag it where you like it." = "ما دامت الصور معلّقة، ينتظرك زر إرسال فوق زر الإرسال في المحادثة مباشرة. اسحبه إلى المكان الذي يناسبك.";

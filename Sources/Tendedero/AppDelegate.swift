@@ -25,6 +25,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var mouseTimer: Timer?
     /// What the settings window shows and changes.
     private var preferences: Preferences?
+    /// The send button over a chat while photos hang.
+    private var chatButton: ChatButton?
 
     /// Whether the panel is ordered in. It can be in and still tucked away
     /// above the top edge, like an auto-hiding Dock.
@@ -77,6 +79,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         startWatcher()
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
         Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
+        let chatButton = ChatButton(line: line)
+        chatButton.openSettings = { [weak self] in self?.openSettings() }
+        self.chatButton = chatButton
         if ClipboardWatcher.isEnabled { clipboardWatcher.start() }
 
         Shortcut.Role.allCases.forEach(registerShortcut)

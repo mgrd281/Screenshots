@@ -166,3 +166,6 @@
 "Allow Snapfly to take screenshots" = "允许 Snapfly 截屏";
 "Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "请在“系统设置”›“隐私与安全性”中为 Snapfly 打开屏幕录制，然后再试一次。";
 "Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "拖移选择区域，或点按一个窗口。按 Return 键截取整个屏幕，按 Esc 取消。";
+"Put it back" = "放回原处";
+"Send button over chats" = "聊天上方的发送按钮";
+"While photos hang, a send button waits just above the chat's own. Drag it where you like it." = "照片挂着时，聊天自带的发送按钮正上方会有一个发送按钮。可以把它拖到你喜欢的位置。";

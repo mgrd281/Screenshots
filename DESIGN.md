@@ -367,6 +367,19 @@ apps.
 - **Full windows** (Hide Part, Settings) for focused work. They are standard
   titled windows with Cancel and Done bound to Escape and Return.
 - **No modal alerts** for things that can be said inline in the card.
+- **Chat button** (`ChatButton.swift`), the one control that floats over
+  another app's window. It shows only while photos hang and a chat app or a
+  browser is in front, and it sits just above the chat's own send button.
+  - A `controlGlass` capsule with a 4 pt inset. It holds the newest photo
+    (26 pt, 7 pt corners, the one before it leaning behind), the count
+    (13 pt semibold rounded, monospaced digits), and the paper plane in white
+    on an accent circle of 28 pt, which turns into a checkmark once sent.
+  - A 16 pt transparent margin keeps its shadow; only the capsule takes the
+    pointer.
+  - It never becomes key. A click sends, as the tag does; a drag moves it,
+    remembered per app; a right-click offers Put it back and Settings.
+  - Hover scales it to 1.04 through `Motion.spring`, and it fades in over
+    0.15 s.
 - **Capture overlay** (`Capture.swift`), the one surface that covers the
   whole screen. It shows the screens still, captured a moment before.
   - It takes the keyboard without activating the app, as the search bar does.
