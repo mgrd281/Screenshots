@@ -67,8 +67,12 @@ required by the license and stays.
   - `vercel.json` builds the same site on Vercel. `SNAPFLY_SITE_URL` (ending in
     a slash) sets the address the pages point to; set it to the custom domain.
     Its Content Security Policy lets in nothing from another host, which also
-    keeps Vercel's toolbar off the previews, and allows the one inline script
-    (`REDIRECT_JS` in `build.py`) by its hash. The build stops if they drift.
+    keeps Vercel's toolbar off the previews, and allows the inline scripts
+    (`INLINE_JS` in `build.py`) by their hashes. The build stops if they drift.
+  - Two brand themes, Original Sunset (the default) and Emerald Petrol, are
+    chosen with the swatches in the menu bar and kept in `localStorage`
+    (`snapfly-brand`). Light or dark stays the system's. Brand colours are
+    tokens in `site.css`; see "Brand themes" in `DESIGN.md`.
   - Its design rules are under "Website" in `DESIGN.md`; its brief is
     `website/BRIEF.md`.
 - **Promo video.** `promo/` makes the vertical motion graphic in three

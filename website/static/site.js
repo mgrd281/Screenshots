@@ -504,6 +504,57 @@
 
   whenSeen(document.querySelector(".keys"), () => document.querySelector(".keys").classList.add("play"), 0.6);
 
+  // MARK: Brand theme
+
+  // Two looks for the same Mac: Original Sunset and Emerald Petrol. The
+  // choice stays on this device and is set before the page paints, by the
+  // first script in <head>; light or dark is still the system's.
+  const brandSwitch = document.querySelector(".brand-switch");
+  if (brandSwitch) {
+    const root = document.documentElement;
+    const chips = [...brandSwitch.querySelectorAll("[data-brand-pick]")];
+    const bars = { sunset: ["#F5F5F7", "#161618"], emerald: ["#F5F8F5", "#081819"] };
+    const current = () => (root.dataset.brand === "emerald" ? "emerald" : "sunset");
+    const show = (brand) => {
+      chips.forEach((chip) => {
+        const on = chip.dataset.brandPick === brand;
+        chip.setAttribute("aria-checked", String(on));
+        chip.tabIndex = on ? 0 : -1;
+      });
+      document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+        meta.setAttribute("content", bars[brand][/dark/.test(meta.media) ? 1 : 0]);
+      });
+    };
+    const apply = (brand) => {
+      if (brand === "emerald") root.dataset.brand = brand;
+      else delete root.dataset.brand;
+      show(brand);
+    };
+    const choose = (brand) => {
+      if (brand === current()) return;
+      try { localStorage.setItem("snapfly-brand", brand); } catch (e) { /* kept for this visit only */ }
+      if (document.startViewTransition && !reduced.matches) document.startViewTransition(() => apply(brand));
+      else apply(brand);
+    };
+    show(current());
+    chips.forEach((chip) => chip.addEventListener("click", () => choose(chip.dataset.brandPick)));
+    // A radio group: the arrows move to the other theme and choose it.
+    brandSwitch.addEventListener("keydown", (event) => {
+      const steps = { ArrowUp: -1, ArrowDown: 1, ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 };
+      const step = steps[event.key];
+      if (!step) return;
+      event.preventDefault();
+      const at = chips.findIndex((chip) => chip.dataset.brandPick === current());
+      const next = chips[(at + step + chips.length) % chips.length];
+      choose(next.dataset.brandPick);
+      next.focus();
+    });
+    // Another tab that changes the theme changes this one too.
+    addEventListener("storage", (event) => {
+      if (event.key === "snapfly-brand") apply(event.newValue === "emerald" ? "emerald" : "sunset");
+    });
+  }
+
   // MARK: Arrivals
 
   // The first view's arrival plays once; photos hung on the hero's line

@@ -40,6 +40,20 @@
     radial-gradient(75% 65% at 100% 100%, rgba(178, 52, 214, 0.92) 0%, rgba(178, 52, 214, 0) 72%),
     linear-gradient(155deg, #FF8A5C 0%, #FF5E62 40%, #D9449A 74%, #B234D6 100%);
 
+  /* What the brand theme changes beyond the wallpaper: the tint in shadows
+     (as r g b), the gradient on brand tiles and its glow, the download
+     badge, the shine on glass, and the line-style tiles' small wallpaper. */
+  --shade: 40 0 50;
+  --shade-deep: 20 0 30;
+  --brand-gradient: linear-gradient(135deg, var(--amber), var(--coral) 50%, var(--violet));
+  --brand-glow: rgba(178, 52, 214, 0.3);
+  --badge-bg: #000000;
+  --badge-edge: rgba(255, 255, 255, 0.32);
+  --glass-shine: 0 0 #0000;
+  --tile-a: #FFC45C;
+  --tile-b: #FF5E62;
+  --tile-c: #B234D6;
+
   --r-card: 16px;
   --r-inner: 12px;
   --r-window: 18px;
@@ -48,7 +62,7 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --shadow-card: 0 5px 10px rgba(0, 0, 0, 0.18);
   --shadow-card-hover: 0 8px 14px rgba(0, 0, 0, 0.26);
-  --shadow-float: 0 18px 44px rgba(20, 0, 30, 0.24);
+  --shadow-float: 0 18px 44px rgb(var(--shade-deep) / 0.24);
   --card-w: clamp(150px, 15.5vw, 236px);
   --rope-h: clamp(70px, 8vw, 112px);
 }
@@ -77,6 +91,81 @@
       radial-gradient(75% 65% at 100% 100%, rgba(86, 22, 124, 0.95) 0%, rgba(86, 22, 124, 0) 72%),
       linear-gradient(155deg, #5E2B22 0%, #6C1E37 40%, #511651 74%, #300E4C 100%);
     --shadow-float: 0 18px 44px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* MARK: Emerald Petrol
+
+   The second brand theme, chosen with the switcher in the menu bar and set
+   on <html data-brand="emerald"> before the page paints. Where Sunset is a
+   warm sky with the sun in one corner, Emerald Petrol is deep water with
+   cool light falling in from above: petrol in the depths, emerald and teal
+   in the middle, a mint bloom where the light enters, a faint diagonal
+   sheen like light through glass, and a fine matte grain. Glass picks up
+   a hairline of light along its top edge. Windows, text and system
+   controls stay neutral, as on a Mac; the accent becomes Refined Teal,
+   the way a Mac takes on its accent colour. */
+:root[data-brand="emerald"] {
+  --petrol: #062F31;
+  --emerald: #07514E;
+  --teal: #168176;
+  --mint: #B8DED2;
+  --pearl: #F5F8F5;
+
+  --accent: #168176;
+  --link: #07514E;
+  --ground: #F5F8F5;
+  --bar-bg: rgba(245, 248, 245, 0.66);
+  --menu-bg: rgba(244, 248, 246, 0.9);
+  --glass: rgba(245, 248, 245, 0.56);
+  --glass-edge: rgba(255, 255, 255, 0.8);
+  --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --rope: #062F31;
+  --wash: rgba(2, 26, 27, 0.55);
+  --wash-light: rgba(2, 30, 31, 0.3);
+  --scrim: rgba(2, 30, 31, 0.5);
+  --shade: 3 40 41;
+  --shade-deep: 1 22 23;
+  --brand-gradient: linear-gradient(135deg, #3FAE9C, var(--teal) 48%, var(--emerald));
+  --brand-glow: rgba(7, 81, 78, 0.34);
+  --badge-bg: #062F31;
+  --badge-edge: rgba(184, 222, 210, 0.42);
+  --tile-a: #8FD0BF;
+  --tile-b: #168176;
+  --tile-c: #062F31;
+  --wall:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E"),
+    linear-gradient(118deg, rgba(255, 255, 255, 0) 34%, rgba(255, 255, 255, 0.07) 46%, rgba(255, 255, 255, 0) 58%),
+    radial-gradient(62% 56% at 80% -8%, rgba(184, 222, 210, 0.66) 0%, rgba(184, 222, 210, 0) 70%),
+    radial-gradient(85% 70% at 0% 100%, rgba(6, 47, 49, 0.9) 0%, rgba(6, 47, 49, 0) 70%),
+    linear-gradient(160deg, #17806F 0%, #127569 26%, #0B625C 52%, #07514E 76%, #062F31 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-brand="emerald"] {
+    --link: #8FD6C4;
+    --ground: #081819;
+    --bar-bg: rgba(6, 30, 31, 0.64);
+    --menu-bg: rgba(14, 36, 37, 0.92);
+    --glass: rgba(16, 54, 54, 0.52);
+    --glass-edge: rgba(184, 222, 210, 0.2);
+    --glass-shine: inset 0 1px 0 rgba(184, 222, 210, 0.16);
+    --rope: #B8DED2;
+    --wash: rgba(0, 10, 11, 0.45);
+    --wash-light: rgba(0, 12, 13, 0.36);
+    --scrim: rgba(0, 12, 13, 0.42);
+    --brand-glow: rgba(22, 129, 118, 0.3);
+    --badge-bg: #031A1B;
+    --badge-edge: rgba(184, 222, 210, 0.34);
+    --tile-a: #168176;
+    --tile-b: #07514E;
+    --tile-c: #031A1B;
+    --wall:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .045 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E"),
+      linear-gradient(118deg, rgba(184, 222, 210, 0) 34%, rgba(184, 222, 210, 0.05) 46%, rgba(184, 222, 210, 0) 58%),
+      radial-gradient(58% 52% at 80% -10%, rgba(22, 129, 118, 0.6) 0%, rgba(22, 129, 118, 0) 72%),
+      radial-gradient(80% 66% at 0% 100%, rgba(7, 81, 78, 0.5) 0%, rgba(7, 81, 78, 0) 70%),
+      linear-gradient(160deg, #0B3E3B 0%, #08302F 38%, #052627 68%, #021516 100%);
   }
 }
 
@@ -192,13 +281,13 @@ kbd {
   padding-block: 8px;
   padding-inline: 16px 22px;
   border-radius: 12px;
-  background: #000000;
+  background: var(--badge-bg);
   color: #FFFFFF;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32), 0 8px 22px rgba(40, 0, 50, 0.28);
+  box-shadow: inset 0 0 0 1px var(--badge-edge), 0 8px 22px rgb(var(--shade) / 0.28);
   text-decoration: none;
   transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
 }
-.badge-get:hover { text-decoration: none; transform: translateY(-1px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32), 0 12px 28px rgba(40, 0, 50, 0.34); }
+.badge-get:hover { text-decoration: none; transform: translateY(-1px); box-shadow: inset 0 0 0 1px var(--badge-edge), 0 12px 28px rgb(var(--shade) / 0.34); }
 .badge-get:active { transform: scale(0.98); }
 .badge-get:focus-visible { outline: 3px solid #FFFFFF; outline-offset: 3px; }
 .badge-get .icon { width: 34px; height: 34px; }
@@ -231,6 +320,7 @@ kbd {
   -webkit-backdrop-filter: blur(24px) saturate(1.8);
   backdrop-filter: blur(24px) saturate(1.8);
   border-bottom: 0.5px solid var(--hairline);
+  box-shadow: var(--glass-shine);
   font-size: 14px;
 }
 
@@ -270,6 +360,110 @@ kbd {
 
 .status { display: flex; align-items: center; gap: 6px; margin-inline-start: auto; }
 .clock { padding: 4px 8px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* The brand theme switcher: two swatches in a small well, like the accent
+   colours in System Settings, with a raised thumb that slides to the one
+   chosen. It shows once scripts run, and its thumb follows
+   <html data-brand> from the first paint. */
+.brand-switch {
+  position: relative;
+  display: none;
+  align-items: center;
+  margin-inline-end: 4px;
+  padding: 2px;
+  border-radius: 999px;
+  background: var(--fill-2);
+  box-shadow: inset 0 0 0 0.5px var(--hairline);
+}
+.js .brand-switch { display: inline-flex; }
+.brand-thumb {
+  position: absolute;
+  top: 2px;
+  inset-inline-start: 2px;
+  width: 30px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: transform 0.45s var(--ease-out);
+}
+:root[data-brand="emerald"] .brand-thumb { transform: translateX(100%); }
+:root[data-brand="emerald"][dir="rtl"] .brand-thumb { transform: translateX(-100%); }
+.brand-chip {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  cursor: pointer;
+}
+.brand-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.brand-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.25), 0 0.5px 1px rgba(0, 0, 0, 0.2);
+  transition: scale 0.2s var(--ease-out);
+}
+/* Each swatch is its theme in small: the wallpaper's sweep with a soft
+   highlight where the light comes from. */
+.brand-dot-sunset {
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 46%),
+    linear-gradient(140deg, #FFC45C 0%, #FF5E62 48%, #B234D6 100%);
+}
+.brand-dot-emerald {
+  background:
+    radial-gradient(circle at 72% 20%, rgba(184, 222, 210, 0.95), rgba(184, 222, 210, 0) 52%),
+    linear-gradient(160deg, #2E9E8D 0%, #168176 38%, #07514E 74%, #062F31 100%);
+}
+.brand-chip:hover .brand-dot { scale: 1.12; }
+.brand-chip:active .brand-dot { scale: 0.9; }
+.brand-chip[aria-checked="false"] .brand-dot { opacity: 0.86; }
+/* The name, as a help tag under the swatch. */
+.brand-chip::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 9px);
+  inset-inline-end: -4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--menu-bg);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  backdrop-filter: blur(20px) saturate(1.8);
+  box-shadow: 0 0 0 0.5px var(--hairline), 0 4px 12px rgba(0, 0, 0, 0.14);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  translate: 0 -2px;
+  pointer-events: none;
+  transition: opacity 0.15s, translate 0.15s var(--ease-out);
+}
+@media (hover: hover) {
+  .brand-chip:hover::after { opacity: 1; translate: 0 0; transition-delay: 0.45s; }
+}
+.brand-chip:focus-visible::after { opacity: 1; translate: 0 0; }
+@media (prefers-color-scheme: dark) {
+  .brand-thumb { background: rgba(255, 255, 255, 0.2); box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.4), inset 0 0.5px 0 rgba(255, 255, 255, 0.18); }
+}
+@media (pointer: coarse) {
+  .brand-thumb, .brand-chip { width: 34px; height: 28px; }
+  .brand-chip::before { content: ""; position: absolute; inset: -8px 0; }
+}
+
+/* Changing theme cross-fades the whole page once. */
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: 0.5s;
+  animation-timing-function: var(--ease-out);
+}
 
 .lang-menu { position: relative; }
 .lang-menu summary { list-style: none; cursor: pointer; }
@@ -402,7 +596,7 @@ kbd {
   -webkit-backdrop-filter: blur(20px) saturate(1.6);
   backdrop-filter: blur(20px) saturate(1.6);
   border: 0.5px solid var(--glass-edge);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--glass-shine), var(--shadow-card);
   transition: scale 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
 }
 .photo-img { display: block; border-radius: var(--r-inner); overflow: hidden; }
@@ -418,7 +612,7 @@ kbd {
   cursor: pointer;
 }
 
-.peg:hover .photo, .peg:focus-within .photo { scale: 1.035; box-shadow: var(--shadow-card-hover); }
+.peg:hover .photo, .peg:focus-within .photo { scale: 1.035; box-shadow: var(--glass-shine), var(--shadow-card-hover); }
 
 .corner {
   position: absolute;
@@ -529,7 +723,7 @@ kbd {
   background: var(--accent);
   color: #FFFFFF;
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(20, 0, 30, 0.3);
+  box-shadow: 0 8px 18px rgb(var(--shade-deep) / 0.3);
   transition: scale 0.2s var(--ease-out), background-color 0.2s;
 }
 .tag-send .icon { width: 26px; height: 26px; }
@@ -807,7 +1001,7 @@ kbd {
   color: var(--ink);
   border: 1px solid var(--hairline);
   border-bottom-width: 4px;
-  box-shadow: 0 14px 30px rgba(20, 0, 30, 0.28);
+  box-shadow: 0 14px 30px rgb(var(--shade-deep) / 0.28);
   transition: translate 0.12s, border-bottom-width 0.12s;
 }
 .keycap-glyph { align-self: start; font-family: var(--font-rounded); font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 500; line-height: 1; }
@@ -1199,7 +1393,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   color: #FFFFFF;
 }
 .close::after { background: linear-gradient(to bottom, var(--wash-light) 0%, var(--wash-light) 100%); }
-.close-icon { width: clamp(104px, 11vw, 140px); height: auto; margin: 0 auto 28px; filter: drop-shadow(0 16px 26px rgba(40, 0, 50, 0.35)); }
+.close-icon { width: clamp(104px, 11vw, 140px); height: auto; margin: 0 auto 28px; filter: drop-shadow(0 16px 26px rgb(var(--shade) / 0.35)); }
 .close h2 { font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: 1.04; letter-spacing: -0.015em; }
 .close h2:lang(ar) { letter-spacing: 0; line-height: 1.25; }
 .close .hero-note { max-width: 40em; margin-inline: auto; }
@@ -1549,6 +1743,26 @@ input[role="switch"]:checked::before { translate: 16px 0; }
     --d-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
     --d-shadow-2: 0 2px 6px rgba(0, 0, 0, 0.3), 0 12px 28px rgba(0, 0, 0, 0.4);
     --d-shadow-3: 0 4px 12px rgba(0, 0, 0, 0.3), 0 24px 56px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Emerald Petrol on the desktop to try: a desktop of sage and deep
+   petrol, and the Mac's accent turned to teal. Greys stay as they are. */
+:root[data-brand="emerald"] .desk-stage {
+  --d-accent: #168176;
+  --d-accent-text: #0E6B62;
+  --d-accent-soft: rgba(22, 129, 118, 0.24);
+  --d-wall-1: #A7CEC2;
+  --d-wall-2: #8DBDB2;
+  --d-wall-3: #4F8B85;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-brand="emerald"] .desk-stage {
+    --d-accent-text: #5CCDB8;
+    --d-accent-soft: rgba(92, 205, 184, 0.3);
+    --d-wall-1: #0F3A37;
+    --d-wall-2: #134440;
+    --d-wall-3: #061D1E;
   }
 }
 
@@ -2412,9 +2626,9 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--amber), var(--coral) 50%, var(--violet));
+  background: var(--brand-gradient);
   color: #FFFFFF;
-  box-shadow: 0 4px 10px rgba(178, 52, 214, 0.3);
+  box-shadow: 0 4px 10px var(--brand-glow);
 }
 .step-icon .icon { width: 22px; height: 22px; }
 .step h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
@@ -2667,6 +2881,16 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 }
 
 /* MARK: Phones */
+
+/* On the narrowest phones the menu bar keeps Snapfly's icon and drops its
+   name from view, so the theme switcher and the language menu still fit. */
+@media (max-width: 385px) {
+  .app-menu span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+@media (max-width: 340px) {
+  .menus a, .lang-menu summary { padding-inline: 6px; }
+  .brand-switch { margin-inline-end: 0; }
+}
 
 @media (max-width: 640px) {
   .section { padding-block: 72px; }

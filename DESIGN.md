@@ -707,6 +707,58 @@ system to a web page. The brief and direction contract are in
     under it. The hero's photos also reorder by a sideways drag, lifted
     under the pointer (1.06), and by Option and an arrow.
   - The privacy and support pages are documents on `web-ground`.
+- **Brand themes.** The site has two complete looks, at the owner's
+  request, and the visitor picks one; light or dark stays the system's, so
+  there are four in all.
+  - **Original Sunset** is the default and the site as it always was: the
+    warm sky below, with every value it had. Nothing in it changed.
+  - **Emerald Petrol** is deep water with cool light falling in from above.
+    - Palette: Deep Petrol `#062F31`, Emerald `#07514E`, Refined Teal
+      `#168176`, Soft Mint `#B8DED2`, Pearl White `#F5F8F5`.
+    - Wallpaper: a 160° sweep from teal (`#17806F`) through emerald to
+      petrol, a pool of petrol low on the leading side, a mint bloom where
+      the light enters above the line (top, trailing), a faint diagonal
+      sheen like light through glass, and a fine matte grain (5%). In dark,
+      the same water at night: `#0B3E3B` to `#021516`, a teal bloom, the
+      sheen in mint.
+    - Accent: Refined Teal, as a Mac takes on its accent colour, so switches,
+      selection, bubbles and filled buttons turn teal (white on it is
+      4.7:1). Links are Emerald on light (8.6:1 on Pearl) and `#8FD6C4` on
+      dark.
+    - Glass picks up a hairline of light along its top edge (white 60%, or
+      mint 16% in dark), on the menu bar and the photo cards; the menu bar
+      is pearl glass, petrol glass in dark.
+    - Shadows are tinted petrol, not plum. Brand tiles use teal to emerald.
+      The download badge is Deep Petrol with a mint hairline.
+    - The page ground is Pearl White, or `#081819` in dark.
+    - The desktop to try Snapfly on gets a sage desktop (petrol at night) and
+      a teal accent; its greys stay.
+  - **Stays the same in both**: windows, text colours, system controls'
+    shapes, the traffic lights, status colours, the screenshots' content and
+    the app icon.
+  - **Tokens.** Everything a theme changes is a custom property on
+    `:root`: the wallpaper, washes and scrim, menu bar, menu and glass
+    colours, the glass shine, rope, accent, link, ground, the shadow tint
+    (`--shade`, `--shade-deep`, as r g b), the brand gradient and its
+    glow, the badge, and the line-style tiles' small wallpaper. Emerald
+    Petrol overrides them on `:root[data-brand="emerald"]`, in light and in
+    dark; nothing is coloured outside the tokens.
+  - **The switcher** sits in the menu bar before the language menu: a
+    small well (`fill-2`, full radius, hairline) with two 14 pt swatches,
+    each its theme in small with a highlight where its light comes from,
+    and a raised thumb (white, or white 20% in dark) under the chosen one
+    that slides across in 0.45 s. A swatch grows to 112% under the pointer
+    and to 90% when pressed. Its name shows in a help tag after 0.45 s, or
+    at once on keyboard focus. It is a radio group: Tab reaches the chosen
+    swatch, the arrows choose the other one, in the reading direction. On
+    touch the swatches are 34 × 28 with a 44 pt tall target.
+  - **No wrong flash**: the first script in `<head>` reads the choice and
+    sets `data-brand` before the page paints; the switcher only appears once
+    scripts run. Changing theme cross-fades the whole page in 0.5 s, or at
+    once with Reduce Motion. The browser bar colour follows. Another open
+    tab follows the change.
+  - On the narrowest phones (385 px and less) the menu bar keeps Snapfly's
+    icon and hides its name from view so everything fits.
 - **The brand gradient is the wallpaper.** On the site, amber, coral and
   violet are the desktop the app sits on.
   - Nothing that is pressed or read sits on it bare. White text gets the

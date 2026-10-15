@@ -10,7 +10,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'sha256-P7z/HKj4u6dsjiTLww2mrY0B3/v+AT7tggS6wtJWiNE='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'"
+          "value": "default-src 'self'; script-src 'self' 'sha256-hEH/onDiLGP6UZip8Y/QLc5M7wsSdgXOHBIx/C1u1Ms=' 'sha256-P7z/HKj4u6dsjiTLww2mrY0B3/v+AT7tggS6wtJWiNE='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'"
         }
       ]
     }
