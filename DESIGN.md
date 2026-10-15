@@ -348,8 +348,8 @@ apps.
   `.primary` at 10%, or white at 18% on the island, fading in over 0.12 s.
 
 ### Navigation
-- **Menu bar menu.** Short: Show or Hide line, Search…, Take everything down,
-  Settings…, Open folder, Updates, Quit.
+- **Menu bar menu.** Short: Take Screenshot, then Show or Hide line, Search…,
+  Take everything down, Settings…, Open folder, Updates, Quit.
 - **Photo context menu.**
   - Grouped by intent: copy and send; translate and describe; open and edit;
     take down.
@@ -367,6 +367,19 @@ apps.
 - **Full windows** (Hide Part, Settings) for focused work. They are standard
   titled windows with Cancel and Done bound to Escape and Return.
 - **No modal alerts** for things that can be said inline in the card.
+- **Capture overlay** (`Capture.swift`), the one surface that covers the
+  whole screen. It shows the screens still, captured a moment before.
+  - It takes the keyboard without activating the app, as the search bar does.
+    Return takes the whole screen, and Escape or a right-click cancels.
+  - **At rest**, the still screen is dimmed by black at 12%, and the window
+    under the pointer is tinted with the accent at 22%.
+  - **While dragging**, everything outside the area is dimmed by black at
+    35%, and the area has a 1 pt edge of white at 90%.
+  - **The size** of the area, in points, sits in a capsule under its trailing
+    corner: 11 pt medium monospaced digits, white on black at 55%, 20 pt high.
+  - **A hint** sits in a `controlGlass` capsule above the Dock on the screen
+    with the pointer, and hides once a drag begins.
+  - The cursor is the crosshair.
 
 ### Forms and lists
 - Grouped `Form` sections.

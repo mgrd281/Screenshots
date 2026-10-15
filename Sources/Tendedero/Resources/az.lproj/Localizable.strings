@@ -163,3 +163,8 @@
 "Open Screenshot" = "Ekran şəklini aç";
 "Set Up…" = "Qur…";
 "Screenshots saved to Pictures › Snapfly hang on the line" = "Şəkillər › Snapfly qovluğuna saxlanan ekran şəkilləri ipdən asılır";
+"Take Screenshot" = "Ekran şəkli çək";
+"Take a screenshot" = "Ekran şəkli çək";
+"Allow Snapfly to take screenshots" = "Snapfly-a ekran şəkli çəkməyə icazə ver";
+"Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "Sistem Ayarları › Məxfilik və Təhlükəsizlik bölməsində Snapfly üçün ekran yazısını aç, sonra yenidən cəhd et.";
+"Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "Bir sahənin üzərindən sürüşdür və ya pəncərəyə klik et. Return bütün ekranı çəkir, Escape ləğv edir.";

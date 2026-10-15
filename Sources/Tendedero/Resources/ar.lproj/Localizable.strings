@@ -161,3 +161,8 @@
 "Open Screenshot" = "فتح «لقطة شاشة»";
 "Set Up…" = "إعداد…";
 "Screenshots saved to Pictures › Snapfly hang on the line" = "اللقطات المحفوظة في الصور › Snapfly تُعلَّق على الحبل";
+"Take Screenshot" = "التقاط صورة للشاشة";
+"Take a screenshot" = "التقاط صورة للشاشة";
+"Allow Snapfly to take screenshots" = "اسمح لـ Snapfly بالتقاط صور الشاشة";
+"Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "فعّل Snapfly لتسجيل الشاشة في إعدادات النظام › الخصوصية والأمن، ثم حاول مرة أخرى.";
+"Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "اسحب فوق منطقة أو انقر على نافذة. Return يلتقط الشاشة كلها، وEscape للإلغاء.";

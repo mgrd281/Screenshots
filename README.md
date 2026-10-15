@@ -79,6 +79,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>F</kbd> | Search the words in your screenshots. Change it in Settings. |
+| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd> | Take a screenshot: drag over an area, click a window, or press Return for the whole screen. Change it in Settings. |
 
 <br>
 
@@ -98,6 +99,17 @@ front, like the message box of a chat: the ones you <kbd>⌘</kbd>-clicked,
 or all of them, and they fly over and land where you were typing. It works
 by pressing <kbd>⌘</kbd>&thinsp;<kbd>V</kbd> there for you,
 so macOS asks for the Accessibility permission the first time.
+
+<br>
+
+## Or take them with Snapfly.
+
+Press <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd>, or choose Take Screenshot
+in the menu bar. The screen holds still. Drag over an area, click a window,
+or press Return for the whole screen; Escape cancels. The screenshot flies
+from where it was taken straight onto the line, with nothing to set up in the
+Screenshot app first. macOS asks for the Screen Recording permission the
+first time.
 
 <br>
 
@@ -237,6 +249,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Collage.swift` | Joins several screenshots into one image, or into one PDF |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
+| `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |

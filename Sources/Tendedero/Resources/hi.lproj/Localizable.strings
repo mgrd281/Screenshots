@@ -163,3 +163,8 @@
 "Open Screenshot" = "स्क्रीनशॉट खोलें";
 "Set Up…" = "सेट करें…";
 "Screenshots saved to Pictures › Snapfly hang on the line" = "चित्र › Snapfly में सहेजे गए स्क्रीनशॉट रस्सी पर टँगते हैं";
+"Take Screenshot" = "स्क्रीनशॉट लें";
+"Take a screenshot" = "स्क्रीनशॉट लें";
+"Allow Snapfly to take screenshots" = "Snapfly को स्क्रीनशॉट लेने दें";
+"Turn on Snapfly for screen recording in System Settings › Privacy & Security, then try again." = "सिस्टम सेटिंग्स › गोपनीयता और सुरक्षा में Snapfly के लिए स्क्रीन रिकॉर्डिंग चालू करें, फिर दोबारा कोशिश करें।";
+"Drag over an area or click a window. Return takes the whole screen, Escape cancels." = "किसी हिस्से पर खींचें या किसी विंडो पर क्लिक करें। Return पूरी स्क्रीन लेता है, Escape रद्द करता है।";
