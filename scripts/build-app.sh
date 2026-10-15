@@ -1,12 +1,12 @@
 #!/bin/bash
-# Builds Tendedero.app into ./build without needing Xcode.
+# Builds Snapfly.app into ./build without needing Xcode.
 # Usage: scripts/build-app.sh [debug|release]
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 CONFIG="${1:-release}"
-APP="build/Tendedero.app"
-VERSION="1.5.0"
+APP="build/Snapfly.app"
+VERSION="1.0.0"
 
 # Builds one architecture and prints the binary's path.
 # The Command Line Tools for macOS 27 ship an SDK whose SwiftUI needs a macro
@@ -34,18 +34,19 @@ BIN="$OUT/Tendedero"
 
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp "$BIN" "$APP/Contents/MacOS/Tendedero"
+cp "$BIN" "$APP/Contents/MacOS/Snapfly"
 
 # Icon
 WORK="$(mktemp -d)"
-swift scripts/make-icon.swift "$WORK/icon.png"
-ICONSET="$WORK/Tendedero.iconset"
+# Drawn by scripts/make-icon.py; run it again after changing the design.
+cp assets/icon.png "$WORK/icon.png"
+ICONSET="$WORK/Snapfly.iconset"
 mkdir -p "$ICONSET"
 for s in 16 32 128 256 512; do
   sips -z $s $s "$WORK/icon.png" --out "$ICONSET/icon_${s}x${s}.png" >/dev/null
   sips -z $((s*2)) $((s*2)) "$WORK/icon.png" --out "$ICONSET/icon_${s}x${s}@2x.png" >/dev/null
 done
-iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/Tendedero.icns"
+iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/Snapfly.icns"
 rm -rf "$WORK"
 
 # Translations: one folder per language, listed in Info.plist so macOS knows
@@ -61,25 +62,25 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleName</key><string>Tendedero</string>
-  <key>CFBundleDisplayName</key><string>Tendedero</string>
-  <key>CFBundleIdentifier</key><string>app.tendedero.Tendedero</string>
-  <key>CFBundleExecutable</key><string>Tendedero</string>
-  <key>CFBundleIconFile</key><string>Tendedero</string>
+  <key>CFBundleName</key><string>Snapfly</string>
+  <key>CFBundleDisplayName</key><string>Snapfly</string>
+  <key>CFBundleIdentifier</key><string>de.ghazarian.Snapfly</string>
+  <key>CFBundleExecutable</key><string>Snapfly</string>
+  <key>CFBundleIconFile</key><string>Snapfly</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>${VERSION}</string>
-  <key>CFBundleVersion</key><string>6</string>
+  <key>CFBundleVersion</key><string>1</string>
   <key>CFBundleDevelopmentRegion</key><string>en</string>
   <key>CFBundleLocalizations</key><array>${LANGUAGES}</array>
   <key>LSMinimumSystemVersion</key><string>14.0</string>
   <key>LSUIElement</key><true/>
   <key>NSHighResolutionCapable</key><true/>
   <key>NSDesktopFolderUsageDescription</key>
-  <string>Tendedero watches the folder where macOS saves your screenshots so it can hang them on the line.</string>
+  <string>Snapfly watches the folder where macOS saves your screenshots so it can hang them on the line.</string>
   <key>NSDocumentsFolderUsageDescription</key>
-  <string>Tendedero watches the folder you chose so it can hang new images on the line.</string>
+  <string>Snapfly watches the folder you chose so it can hang new images on the line.</string>
   <key>NSDownloadsFolderUsageDescription</key>
-  <string>Tendedero watches the folder you chose so it can hang new images on the line.</string>
+  <string>Snapfly watches the folder you chose so it can hang new images on the line.</string>
 </dict>
 </plist>
 PLIST

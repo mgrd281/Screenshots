@@ -20,9 +20,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var folderWatchers: [ScreenshotWatcher] = []
     private var clipboardWatcher: ClipboardWatcher!
     private var signalSources: [DispatchSourceSignal] = []
-    private var hotKey: HotKey?
+    private var hotKeys: [Shortcut.Role: HotKey] = [:]
     private var cancellables = Set<AnyCancellable>()
     private var mouseTimer: Timer?
+    /// What the settings window shows and changes.
+    private var preferences: Preferences?
 
     /// Whether the panel is ordered in. It can be in and still tucked away
     /// above the top edge, like an auto-hiding Dock.
@@ -76,10 +78,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
         if ClipboardWatcher.isEnabled { clipboardWatcher.start() }
 
-        registerShortcut()
+        Shortcut.Role.allCases.forEach(registerShortcut)
 
         setUpStatusItem()
         watchMenuBarClicks()
+
+        setUpPreferences()
 
         Markup.shared.onSaved = { [weak self] url in self?.line.reloadThumbnail(for: url) }
         Trim.shared.onSaved = { [weak self] url in self?.line.reloadThumbnail(for: url) }
@@ -90,6 +94,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self?.line.scroll(by: event.hasPreciseScrollingDeltas ? delta : delta * 12)
         }
         line.onFall = { [weak self] item in self?.fall(item) }
+        line.onSend = { [weak self] photos in self?.send(photos) ?? 0 }
+        line.frameOfPhoto = { [weak self] id in self?.cardFrame(for: id) }
 
         line.$items
             .receive(on: RunLoop.main)
@@ -219,12 +225,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func offerInbox() {
         Inbox.wasOffered = true
         let alert = NSAlert()
-        alert.messageText = L("Let Tendedero handle your screenshots?")
+        alert.messageText = L("Let Snapfly handle your screenshots?")
         alert.informativeText = L(
-            "Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits.")
+            "Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits.")
         alert.addButton(withTitle: L("Turn on"))
         alert.addButton(withTitle: L("Not now"))
-        if let icon = NSImage(named: "Tendedero") ?? NSApp.applicationIconImage { alert.icon = icon }
+        if let icon = NSApp.applicationIconImage { alert.icon = icon }
         NSApp.activate(ignoringOtherApps: true)
         if alert.runModal() == .alertFirstButtonReturn { setInbox(true) }
     }
@@ -326,6 +332,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         CaptureFlight.fall(image: image, card: card, tilt: CGFloat(item.tilt), on: screen)
     }
 
+    /// Sent photos fly from the line into the app in front, a little apart,
+    /// and land where the paste shows up. Returns how long until the last
+    /// one lands; the first few are enough to say it.
+    private func send(_ photos: [Pegged]) -> TimeInterval {
+        guard isPresent, isRevealed, let screen = panel.screen else { return 0 }
+        let landing = Paste.landingPoint(on: screen)
+        var last: TimeInterval?
+        for (n, item) in photos.prefix(5).enumerated() {
+            guard let card = cardFrame(for: item.id),
+                  let image = item.thumb.cgImage(forProposedRect: nil, context: nil, hints: nil) else { continue }
+            // As small as an attachment, keeping the photo's shape.
+            let width: CGFloat = 56
+            let height = width * card.height / max(card.width, 1)
+            let target = CGRect(x: landing.x - width / 2, y: landing.y - height / 2, width: width, height: height)
+            let delay = 0.07 * Double(n)
+            CaptureFlight.send(image: image, card: card, to: target, tilt: CGFloat(item.tilt), on: screen, after: delay)
+            last = delay
+        }
+        return last.map { $0 + CaptureFlight.sendDuration } ?? 0
+    }
+
     /// Where a card will hang, in screen coordinates, using the same layout
     /// as the line view.
     private func cardFrame(for id: UUID) -> CGRect? {
@@ -405,6 +432,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             panel.ignoresMouseEvents = true
             // A grip that went away under the pointer never hears it let go.
             TagView.isMovingLine = false
+            // What was picked is on the clipboard by now. Next time the line
+            // comes down, a ⌘-click starts afresh.
+            line.pickedIDs = []
         }
     }
 
@@ -555,29 +585,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     // MARK: Shortcut
 
-    private func registerShortcut() {
-        hotKey = nil
-        guard let shortcut = Shortcut.current else { return }
-        hotKey = HotKey(shortcut) { [weak self] in self?.toggle() }
+    private func registerShortcut(_ role: Shortcut.Role) {
+        hotKeys[role] = nil
+        guard let shortcut = Shortcut.current(role) else { return }
+        hotKeys[role] = HotKey(shortcut, for: role) { [weak self] in
+            switch role {
+            case .toggle: self?.toggle()
+            case .send: self?.line.pasteNewest()
+            }
+        }
     }
 
-    private func changeShortcut() {
-        // Off while recording, so pressing the current one records it
-        // instead of showing the line.
-        hotKey = nil
+    private func changeShortcut(_ role: Shortcut.Role) {
+        // All off while recording, so pressing one records it instead of
+        // doing what it does.
+        hotKeys = [:]
         ShortcutRecorder.shared.record { [weak self] result in
             guard let self else { return }
+            for other in Shortcut.Role.allCases where other != role { self.registerShortcut(other) }
             if let result {
-                let previous = Shortcut.current
-                Shortcut.current = result
-                self.registerShortcut()
-                // Taken by another app: keep the one that worked.
-                if result != nil && self.hotKey == nil {
+                let previous = Shortcut.current(role)
+                Shortcut.save(result, for: role)
+                self.registerShortcut(role)
+                // Taken by another app, or the other shortcut: keep the one that worked.
+                if result != nil && self.hotKeys[role] == nil {
                     NSSound.beep()
-                    Shortcut.current = previous
+                    Shortcut.save(previous, for: role)
                 }
             }
-            self.registerShortcut()
+            self.registerShortcut(role)
+            self.preferences?.refresh()
         }
     }
 
@@ -603,6 +640,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         line.maxItems = max(fits, Line.keepOnLine ?? fits)
     }
 
+    // MARK: Settings
+
+    private func setUpPreferences() {
+        let preferences = Preferences(line: line)
+        preferences.actions = Preferences.Actions(
+            setInbox: { [weak self] in self?.setInbox($0) },
+            setClipboard: { [weak self] in self?.setClipboard($0) },
+            setKeep: { [weak self] in self?.setKeep($0) },
+            setSize: { [weak self] in self?.setSize($0) },
+            addFolder: { [weak self] in self?.chooseExtraFolder() },
+            foldersChanged: { [weak self] in self?.startWatcher() },
+            changeShortcut: { [weak self] in self?.changeShortcut($0) },
+            fullScreenChanged: { [weak self] in self?.refresh() },
+            openScreenshotsFolder: { [weak self] in
+                guard let self else { return }
+                NSWorkspace.shared.open(self.watcher.folder)
+            })
+        self.preferences = preferences
+    }
+
+    private func openSettings() {
+        guard let preferences else { return }
+        SettingsWindow.shared.show(preferences)
+    }
+
     // MARK: Menu bar
 
     private func setUpStatusItem() {
@@ -620,7 +682,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// glance that the clipboard is being watched.
     private func updateStatusIcon() {
         let on = ClipboardWatcher.isEnabled
-        let description = on ? L("Tendedero, hanging copied images") : "Tendedero"
+        let description = on ? L("Snapfly, hanging copied images") : "Snapfly"
         let image = NSImage(systemSymbolName: on ? "tshirt.fill" : "tshirt", accessibilityDescription: description)
         image?.isTemplate = true
         statusItem.button?.image = image
@@ -633,7 +695,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let toggleItem = ClosureMenuItem(isRevealed ? L("Hide line") : L("Show line")) { [weak self] in
             self?.toggle()
         }
-        if let shortcut = Shortcut.current, shortcut.key.count == 1 {
+        if let shortcut = Shortcut.current(.toggle), shortcut.key.count == 1 {
             toggleItem.keyEquivalent = shortcut.key
             toggleItem.keyEquivalentModifierMask = shortcut.modifiers
         }
@@ -645,150 +707,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         clearItem.isEnabled = line.liveCount > 0
         menu.addItem(clearItem)
 
-        let inbox = ClosureMenuItem(L("Handle screenshots")) { [weak self] in
-            self?.setInbox(!Inbox.isEnabled)
-        }
-        inbox.state = Inbox.isEnabled ? .on : .off
-        inbox.toolTip = L("Screenshots hang instantly and skip the Desktop")
-        menu.addItem(inbox)
+        menu.addItem(.separator())
 
-        let clipboard = ClosureMenuItem(L("Hang copied images")) { [weak self] in
-            self?.setClipboard(!ClipboardWatcher.isEnabled)
-        }
-        clipboard.state = ClipboardWatcher.isEnabled ? .on : .off
-        clipboard.toolTip = L("Images you copy hang on the line too")
-        menu.addItem(clipboard)
-
-        let bringDown = NSMenuItem(title: L("Bring the line down"), action: nil, keyEquivalent: "")
-        let options = NSMenu()
-        let hover = ClosureMenuItem(L("When the pointer rests in the menu bar")) {
-            AppDelegate.opensFromMenuBar.toggle()
-        }
-        hover.state = Self.opensFromMenuBar ? .on : .off
-        options.addItem(hover)
-        let peek = ClosureMenuItem(L("When something new hangs")) {
-            AppDelegate.peeksAtNew.toggle()
-        }
-        peek.state = Self.peeksAtNew ? .on : .off
-        options.addItem(peek)
-        let fullScreen = ClosureMenuItem(L("Over full screen apps")) { [weak self] in
-            FullScreen.showLineOver.toggle()
-            self?.refresh()
-        }
-        fullScreen.state = FullScreen.showLineOver ? .on : .off
-        options.addItem(fullScreen)
-        bringDown.submenu = options
-        menu.addItem(bringDown)
-
-        let folderItem = NSMenuItem(title: L("Also watch folders"), action: nil, keyEquivalent: "")
-        let folderMenu = NSMenu()
-        folderMenu.autoenablesItems = false
-        let folders = Self.extraFolders
-        for folder in folders {
-            let item = ClosureMenuItem(FileManager.default.displayName(atPath: folder.path)) {
-                NSWorkspace.shared.open(folder)
-            }
-            item.state = .on
-            folderMenu.addItem(item)
-        }
-        if !folders.isEmpty { folderMenu.addItem(.separator()) }
-        let add = ClosureMenuItem(L("Add Folder…")) { [weak self] in self?.chooseExtraFolder() }
-        add.isEnabled = folders.count < Self.maxExtraFolders
-        folderMenu.addItem(add)
-        if !folders.isEmpty {
-            let stop = NSMenuItem(title: L("Stop Watching"), action: nil, keyEquivalent: "")
-            let stopMenu = NSMenu()
-            for folder in folders {
-                stopMenu.addItem(ClosureMenuItem(FileManager.default.displayName(atPath: folder.path)) { [weak self] in
-                    AppDelegate.extraFolders.removeAll { $0.standardizedFileURL == folder.standardizedFileURL }
-                    self?.startWatcher()
-                })
-            }
-            stop.submenu = stopMenu
-            folderMenu.addItem(stop)
-        }
-        folderItem.submenu = folderMenu
-        menu.addItem(folderItem)
-
-        let keepItem = NSMenuItem(title: L("Keep on line"), action: nil, keyEquivalent: "")
-        let keeps = NSMenu()
-        let fit = ClosureMenuItem(L("As many as fit")) { [weak self] in self?.setKeep(nil) }
-        fit.state = Line.keepOnLine == nil ? .on : .off
-        keeps.addItem(fit)
-        for n in Line.keepChoices {
-            let item = ClosureMenuItem(String(format: L("%d photos"), n)) { [weak self] in self?.setKeep(n) }
-            item.state = Line.keepOnLine == n ? .on : .off
-            keeps.addItem(item)
-        }
-        keepItem.submenu = keeps
-        menu.addItem(keepItem)
-
-        let sizeItem = NSMenuItem(title: L("Size"), action: nil, keyEquivalent: "")
-        let sizes = NSMenu()
-        for (size, title) in [(Layout.Size.small, L("Small")), (.medium, L("Medium")), (.large, L("Large"))] {
-            let item = ClosureMenuItem(title) { [weak self] in self?.setSize(size) }
-            item.state = Layout.size == size ? .on : .off
-            sizes.addItem(item)
-        }
-        sizeItem.submenu = sizes
-        menu.addItem(sizeItem)
-
-        let shortcutItem = NSMenuItem(title: L("Shortcut"), action: nil, keyEquivalent: "")
-        let shortcuts = NSMenu()
-        let current = NSMenuItem(title: Shortcut.current?.display ?? L("None"), action: nil, keyEquivalent: "")
-        current.isEnabled = false
-        shortcuts.addItem(current)
-        shortcuts.addItem(ClosureMenuItem(L("Change Shortcut…")) { [weak self] in self?.changeShortcut() })
-        shortcutItem.submenu = shortcuts
-        menu.addItem(shortcutItem)
+        // Everything else lives in the settings window.
+        menu.addItem(ClosureMenuItem(L("Settings…"), key: ",") { [weak self] in
+            self?.openSettings()
+        })
 
         menu.addItem(ClosureMenuItem(L("Open screenshots folder")) { [weak self] in
             guard let self else { return }
             NSWorkspace.shared.open(self.watcher.folder)
         })
 
-        menu.addItem(.separator())
-
-        let sound = ClosureMenuItem(L("Sounds")) { [weak self] in
-            guard let self else { return }
-            self.line.soundOn.toggle()
-        }
-        sound.state = line.soundOn ? .on : .off
-        menu.addItem(sound)
-
-        let login = ClosureMenuItem(L("Open at login")) {
-            AppDelegate.toggleLaunchAtLogin()
-        }
-        login.state = SMAppService.mainApp.status == .enabled ? .on : .off
-        menu.addItem(login)
-
         // The app never connects to anything, so it cannot tell when a new
-        // version is out. The website can: it is opened with this version
-        // and language, and says whether there is a newer one.
+        // version is out. The releases page can.
         menu.addItem(ClosureMenuItem(L("Check for Updates…")) {
             NSWorkspace.shared.open(AppDelegate.updatesURL)
         })
 
         menu.addItem(.separator())
-        menu.addItem(ClosureMenuItem(L("Quit Tendedero"), key: "q") {
+        menu.addItem(ClosureMenuItem(L("Quit Snapfly"), key: "q") {
             NSApp.terminate(nil)
         })
     }
 
-    /// tendedero.app with the running version, and the menus' language when
-    /// the website has it too, so the page answers in the same words.
-    private static var updatesURL: URL {
-        var components = URLComponents(string: "https://tendedero.app/")!
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
-        var query = [URLQueryItem(name: "update", value: version)]
-        if let language = Bundle.main.preferredLocalizations.first, ["en", "es", "gl", "fr", "pt-BR", "ja", "ko", "zh-Hans"].contains(language) {
-            query.append(URLQueryItem(name: "lang", value: language))
-        }
-        components.queryItems = query
-        return components.url!
-    }
+    /// Where new versions are published.
+    static let updatesURL = URL(string: "https://github.com/mgrd281/Screenshots/releases")!
 
-    private static func toggleLaunchAtLogin() {
+    /// Who makes the app, for the About pane.
+    static let author = "Mgrdegh Ghazarian"
+
+    static func toggleLaunchAtLogin() {
         do {
             if SMAppService.mainApp.status == .enabled {
                 try SMAppService.mainApp.unregister()
@@ -798,7 +747,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         } catch {
             let alert = NSAlert()
             alert.messageText = L("Could not change the login setting")
-            alert.informativeText = L("Move Tendedero to the Applications folder and try again.")
+            alert.informativeText = L("Move Snapfly to the Applications folder and try again.")
             NSApp.activate(ignoringOtherApps: true)
             alert.runModal()
         }

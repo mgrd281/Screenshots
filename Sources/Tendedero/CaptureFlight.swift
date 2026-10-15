@@ -44,6 +44,8 @@ final class CaptureFlight {
     private let to: CGRect
     private let tilt: CGFloat
     private var falling = false
+    /// Played backwards: a sent card leaving the line for the app in front.
+    private var sending = false
     private var duration: CFTimeInterval = CaptureFlight.duration
     private var start: CFTimeInterval = 0
     private var timer: Timer?
@@ -53,7 +55,10 @@ final class CaptureFlight {
 
     /// Captures flying to the line right now. Each one holds a large image,
     /// so in a burst of captures only a couple fly and the rest drop in.
-    static var flightsInProgress: Int { current.filter { !$0.falling }.count }
+    static var flightsInProgress: Int { current.filter { !$0.falling && !$0.sending }.count }
+
+    /// How long a sent photo takes to reach the app in front.
+    static let sendDuration: TimeInterval = 0.5
 
     /// - Parameters:
     ///   - from: the captured area, in screen coordinates.
@@ -68,6 +73,22 @@ final class CaptureFlight {
             current.removeAll { $0 === flight }
         }
         flight.run()
+    }
+
+    /// A sent card leaving the line: the capture's flight played backwards.
+    /// It lets go of its glass frame and its clip, straightens, and shrinks
+    /// into the app in front as small as an attachment, where it fades.
+    /// - Parameters:
+    ///   - card: the card's frame on the line, in screen coordinates.
+    ///   - target: where it lands, in screen coordinates.
+    static func send(image: CGImage, card: CGRect, to target: CGRect, tilt: CGFloat, on screen: NSScreen,
+                     after delay: TimeInterval) {
+        let flight = CaptureFlight(image: image, from: target, to: card, tilt: tilt, screen: screen)
+        flight.sending = true
+        flight.duration = sendDuration
+        current.append(flight)
+        flight.completion = { [weak flight] in current.removeAll { $0 === flight } }
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { flight.run() }
     }
 
     /// A discarded card falling off the line, drawn over the whole screen so
@@ -136,7 +157,7 @@ final class CaptureFlight {
     }
 
     private func run() {
-        if falling { update(1); updateFall(0) } else { update(0) }
+        if falling { update(1); updateFall(0) } else { update(sending ? 1 : 0) }
         window.orderFrontRegardless()
         start = CACurrentMediaTime()
         let timer = Timer(timeInterval: 1.0 / 120.0, repeats: true) { [weak self] _ in
@@ -148,7 +169,7 @@ final class CaptureFlight {
 
     private func tick() {
         let k = min(1, (CACurrentMediaTime() - start) / duration)
-        if falling { updateFall(k) } else { update(k) }
+        if falling { updateFall(k) } else { update(sending ? 1 - k : k) }
         guard k >= 1 else { return }
         timer?.invalidate()
         timer = nil

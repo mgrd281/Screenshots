@@ -10,7 +10,8 @@ struct PeggedView: View {
     @State private var arrived = false
     @State private var hovering = false
 
-    private var copied: Bool { line.copiedID == item.id }
+    private var copied: Bool { line.copiedIDs.contains(item.id) }
+    private var picked: Bool { line.pickedIDs.contains(item.id) }
     private var dragging: Bool { line.draggingID == item.id }
     private var pressed: Bool { line.pressedID == item.id }
 
@@ -78,6 +79,39 @@ struct PeggedView: View {
             }
             .padding(Frame.inset)
             .glassFrame(cornerRadius: Frame.radius)
+            // Picked with ⌘-click, to copy along with others: a ring and a
+            // check in the corner opposite the cross.
+            .overlay(
+                RoundedRectangle(cornerRadius: Frame.radius, style: .continuous)
+                    .strokeBorder(Color.accentColor, lineWidth: 2.5)
+                    .opacity(picked ? 1 : 0)
+            )
+            .overlay(alignment: .topTrailing) {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 20, height: 20)
+                    .background(Color.accentColor, in: Circle())
+                    .padding(3)
+                    .opacity(picked ? 1 : 0)
+                    .scaleEffect(picked ? 1 : 0.6)
+                    .allowsHitTesting(false)
+            }
+            .animation(.easeOut(duration: 0.18), value: picked)
+            .overlay(alignment: .bottomLeading) {
+                // Private details are covered in what leaves the line.
+                if item.covered {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 18, height: 18)
+                        .background(Color.black.opacity(0.55), in: Circle())
+                        .padding(5)
+                        .allowsHitTesting(false)
+                        .transition(.opacity)
+                }
+            }
+            .animation(.easeOut(duration: 0.2), value: item.covered)
             .shadow(color: .black.opacity(hovering ? 0.26 : 0.18), radius: hovering ? 14 : 10, y: hovering ? 8 : 5)
             // Holding presses the photo in slowly, so a long press feels like
             // it is building up to something.
@@ -94,6 +128,20 @@ struct PeggedView: View {
                     .frame(width: 20, height: 20)
                     .glassFrame(circle: true)
                     .padding(3)
+                    .opacity(hovering && !dragging ? 1 : 0)
+                    .scaleEffect(hovering ? 1 : 0.6)
+                    .allowsHitTesting(false)
+            }
+            .overlay(alignment: .bottomTrailing) {
+                // Sends this photo into the app in front, like a chat. Drawn
+                // here and clicked through GrabView, like the cross.
+                Image(systemName: "paperplane.fill")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 22, height: 22)
+                    .background(Color.accentColor, in: Circle())
+                    .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
+                    .padding(4)
                     .opacity(hovering && !dragging ? 1 : 0)
                     .scaleEffect(hovering ? 1 : 0.6)
                     .allowsHitTesting(false)

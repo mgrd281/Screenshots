@@ -1,8 +1,8 @@
 /* Korean. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "Tendedero가 스크린샷을 관리하도록 할까요?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits." = "스크린샷을 찍는 즉시 플로팅 썸네일 없이 빨랫줄에 걸리고, 데스크탑에 쌓이지 않아요. 보관하려면 폴더로 드래그하고, 버리려면 X 버튼을 클릭하세요. 메뉴 막대에서 언제든 끌 수 있고, Tendedero를 종료하면 원래 설정으로 돌아가요.";
+"Let Snapfly handle your screenshots?" = "Snapfly가 스크린샷을 관리하도록 할까요?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "스크린샷을 찍는 즉시 플로팅 썸네일 없이 빨랫줄에 걸리고, 데스크탑에 쌓이지 않아요. 보관하려면 폴더로 드래그하고, 버리려면 X 버튼을 클릭하세요. 설정에서 언제든 끌 수 있고, Snapfly를 종료하면 원래 설정으로 돌아가요.";
 "Turn on" = "켜기";
 "Not now" = "나중에";
 "Hide line" = "빨랫줄 가리기";
@@ -14,9 +14,9 @@
 "Sounds" = "사운드";
 "Open at login" = "로그인 시 열기";
 "Check for Updates…" = "업데이트 확인…";
-"Quit Tendedero" = "Tendedero 종료";
+"Quit Snapfly" = "Snapfly 종료";
 "Could not change the login setting" = "로그인 설정을 변경할 수 없음";
-"Move Tendedero to the Applications folder and try again." = "Tendedero를 응용 프로그램 폴더로 옮긴 다음 다시 시도하세요.";
+"Move Snapfly to the Applications folder and try again." = "Snapfly를 응용 프로그램 폴더로 옮긴 다음 다시 시도하세요.";
 "Keep on line" = "빨랫줄에 남길 개수";
 "As many as fit" = "들어가는 만큼";
 "%d photos" = "사진 %d장";
@@ -25,7 +25,8 @@
 "Stop Watching" = "지켜보기 중단";
 "Watch" = "지켜보기";
 "New images saved to this folder will hang on the line." = "이 폴더에 새로 저장되는 이미지가 빨랫줄에 걸려요.";
-"Shortcut" = "단축키";
+"Show or hide the line" = "빨랫줄 보기/숨기기";
+"Send the newest photo" = "최신 사진 보내기";
 "Change Shortcut…" = "단축키 변경…";
 "Change Shortcut" = "단축키 변경";
 "None" = "없음";
@@ -42,13 +43,23 @@
 "Over full screen apps" = "전체 화면 앱 위에서도";
 "Hang copied images" = "복사한 이미지 걸기";
 "Images you copy hang on the line too" = "복사한 이미지도 빨랫줄에 걸려요";
-"Tendedero, hanging copied images" = "Tendedero, 복사한 이미지 거는 중";
+"Snapfly, hanging copied images" = "Snapfly, 복사한 이미지 거는 중";
+"Hide private details" = "개인 정보 가리기";
+"Names" = "이름";
+"Addresses" = "주소";
+"Emails" = "이메일";
+"Phone numbers" = "전화번호";
+"Bank cards and accounts" = "카드와 은행 계좌";
+"Health details" = "건강 정보";
+"What is checked is covered in whatever leaves the line" = "체크한 항목은 빨랫줄에서 내보내는 이미지에서 가려집니다";
 
 /* GrabArea */
 "Copy" = "복사하기";
+"Copy Text" = "텍스트 복사하기";
 "Open" = "열기";
 "Quick Look" = "훑어보기";
 "Markup" = "마크업";
+"Hide Part…" = "일부 가리기…";
 "Show in Finder" = "Finder에서 보기";
 "Save to Desktop" = "데스크탑에 저장";
 "Discard" = "버리기";
@@ -63,5 +74,62 @@
 /* PeggedView */
 "Copied" = "복사됨";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "모두 복사하기";
+"Paste into %@" = "%@에 붙여넣기";
+"Paste into the app in front" = "앞에 있는 앱에 붙여넣기";
+"Combine into one image" = "이미지 하나로 합치기";
+"One under another" = "위아래로";
+"Side by side" = "나란히";
 "Move the line" = "빨랫줄 옮기기";
+
+/* SettingsWindow */
+"Settings…" = "설정…";
+"Settings" = "설정";
+"General" = "일반";
+"Line" = "빨랫줄";
+"Privacy" = "개인정보 보호";
+"About" = "정보";
+"Preview" = "미리보기";
+"Take a screenshot to see it here" = "스크린샷을 찍으면 여기에 표시됩니다";
+"Send button" = "보내기 버튼";
+"Allowed" = "허용됨";
+"Not allowed yet" = "아직 허용되지 않음";
+"Open Accessibility Settings…" = "손쉬운 사용 설정 열기…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "보내기 버튼은 앞에 있는 앱에서 ⌘V를 누르므로 손쉬운 사용 권한이 필요합니다.";
+"Version %@" = "버전 %@";
+"Screenshots, one click from any chat." = "스크린샷을 어떤 채팅에도 클릭 한 번으로.";
+"Made by %@" = "만든 사람: %@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján의 Tendedero를 바탕으로 MIT 라이선스에 따라 만들었습니다.";
+/* HideEditor */
+"Drag over anything to hide it. Click a box to show it again." = "가릴 부분을 드래그하세요. 상자를 클릭하면 다시 보입니다.";
+"Remove All" = "모두 제거";
+"Cancel" = "취소";
+"Done" = "완료";
+/* TextCard, GrabArea */
+"Translate Text" = "텍스트 번역하기";
+"Describe" = "설명 만들기";
+"Translation" = "번역";
+"Description" = "설명";
+"Reading the screenshot…" = "스크린샷 읽는 중…";
+"Translating…" = "번역 중…";
+"Writing a description…" = "설명 작성 중…";
+"There is no text to read in this screenshot." = "이 스크린샷에는 읽을 텍스트가 없습니다.";
+"The language of this text could not be recognised." = "이 텍스트의 언어를 인식할 수 없습니다.";
+"The text is already in %@." = "텍스트가 이미 %@입니다.";
+"Translated from %@ on this Mac." = "이 Mac에서 번역함(원래 언어: %@).";
+"To translate on this Mac, add %@ and %@ under Translation Languages in System Settings." = "이 Mac에서 번역하려면 시스템 설정의 번역 언어에서 %@ 및 %@을(를) 추가하십시오.";
+"Translating from %@ into %@ is not available." = "%@에서 %@(으)로의 번역은 사용할 수 없습니다.";
+"Could not translate this text." = "이 텍스트를 번역할 수 없습니다.";
+"Written by Apple Intelligence on this Mac." = "이 Mac의 Apple Intelligence가 작성함.";
+"Written by Apple Intelligence and translated on this Mac." = "Apple Intelligence가 작성하고 이 Mac에서 번역함.";
+"Apple Intelligence cannot write in %@ yet, so this is in English." = "Apple Intelligence는 아직 %@(으)로 쓸 수 없어 영어로 표시합니다.";
+"Apple Intelligence is off, so this is the screenshot's title. Turn it on in System Settings for a written description." = "Apple Intelligence가 꺼져 있어 스크린샷의 제목을 표시합니다. 설명을 받으려면 시스템 설정에서 켜십시오.";
+"Apple Intelligence is still getting ready, so this is the screenshot's title for now." = "Apple Intelligence가 아직 준비 중이라 우선 스크린샷의 제목을 표시합니다.";
+"Apple Intelligence is not available on this Mac, so this is the screenshot's title." = "이 Mac에서는 Apple Intelligence를 사용할 수 없어 스크린샷의 제목을 표시합니다.";
+"This is the screenshot's title." = "스크린샷의 제목입니다.";
+"Could not describe this screenshot." = "이 스크린샷을 설명할 수 없습니다.";
+"Open System Settings…" = "시스템 설정 열기…";
+"Close" = "닫기";
+"Send" = "보내기";
+"Send with Photo" = "사진과 함께 보내기";

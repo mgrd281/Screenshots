@@ -48,17 +48,26 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | | |
 |:--|:--|
 | Click | Copy the image. |
+| <kbd>⌘</kbd>-click several | Copy them together, to paste them all at once. |
+| Right-click, then Copy Text | Copy the words in it, to paste as text. |
+| Right-click, then Hide Part | Drag a box over anything the covering missed. It stays hidden in whatever leaves the line. |
+| Right-click, then Translate Text | Read it in your language, to copy or send. |
+| Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open it in Markup. |
+| Click the paper plane on a photo | Send it straight into the app in front, like a chat. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
 | Drag into an app | Send a copy. It stays on the line. |
 | Drag into a folder | Keep it there. It leaves the line. |
 | Drag to the Trash, or click the cross | Let it go. |
-| Click the trash on the tag at the end of the line | Take everything down at once. |
+| Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
+| <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
+| Click the trash on the tag | Take everything down at once. |
 | Drag the arrows on the tag | Move the line further down the screen, or back up. It stays there. |
 | Rest the pointer in the menu bar | Bring the line down on that screen. |
 | Click anything in the menu bar | Put it away. |
-| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it under Shortcut in the menu bar. |
+| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
+| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
 
 <br>
 
@@ -73,15 +82,47 @@ Press and hold one to trim it.
 
 Same shortcuts. Same muscle memory. Just less mess.
 
+The send button on the tag pastes the photos straight into the app in
+front, like the message box of a chat: the ones you <kbd>⌘</kbd>-clicked,
+or all of them, and they fly over and land where you were typing. It works
+by pressing <kbd>⌘</kbd>&thinsp;<kbd>V</kbd> there for you,
+so macOS asks for the Accessibility permission the first time.
+
 <br>
 
 ## Copied images too.
 
 Take a screenshot with <kbd>⌃</kbd> held, or copy an image in Preview, and it
-hangs on the line like any other. Turn on Hang copied images in the menu bar
+hangs on the line like any other. Turn on Hang copied images in Settings
 and the shirt fills in while it is on. Only images: anything copied along
 with text or a file, and anything a password manager marks as private, is
 left alone.
+
+<br>
+
+## Private details, covered.
+
+Choose under Privacy in Settings what to cover: names,
+addresses, emails, phone numbers, bank cards and accounts, health
+details. Whatever leaves the line, copied, sent or dragged out, has them
+covered, and the line shows each photo that way too, so what you see is
+what goes, with a small lock on each one that has something covered.
+Copy Text leaves them out too. Anything it misses, hide by hand with
+Hide Part in a photo's menu. Labels like Billing address, Recipient or Diagnosis tell it
+where a whole block is private. The text is read on your Mac, and the
+screenshot file itself is never changed.
+
+<br>
+
+## Translated and described, on your Mac.
+
+Translate Text reads a screenshot and translates it into the language you
+pick, line by line, with Apple's translation. Describe writes a line about
+what it shows, like the order and its number, with Apple Intelligence,
+ready to send along with the photo. Both start from the text as it leaves
+the line, with private details already left out, and neither sends
+anything off your Mac. Without Apple Intelligence, Describe uses the
+screenshot's title.
 
 <br>
 
@@ -98,7 +139,7 @@ Tendedero runs entirely on your Mac, and your screenshots never leave it.
 |:--|:--|
 | **Compatibility** | macOS 14 Sonoma or later, on Apple silicon and Intel. Designed for macOS 27. |
 | **Size** | 1.7 MB |
-| **Languages** | English, Spanish, Galician, French, Portuguese (Brazil), Japanese, Korean, Chinese (Simplified), Turkish, Azerbaijani, Hindi |
+| **Languages** | English, German, Spanish, Galician, French, Portuguese (Brazil), Japanese, Korean, Chinese (Simplified), Turkish, Azerbaijani, Hindi, Arabic |
 | **Built with** | Swift, AppKit and SwiftUI |
 | **Network access** | None |
 | **Price** | Free |
@@ -126,7 +167,7 @@ like any other app.
 git clone git@github.com:alejandrobujan/tendedero.git
 cd tendedero
 scripts/build-app.sh
-open build/Tendedero.app
+open build/Snapfly.app
 ```
 
 Requires the Swift toolchain. Xcode is optional. With the Command Line Tools for macOS 27, the script falls back to the macOS 26 SDK they install alongside, because the new SDK needs a SwiftUI macro plugin only Xcode includes. Local builds are signed ad hoc,
@@ -139,10 +180,16 @@ so macOS asks again for access to the Desktop after each rebuild.
 | File | Role |
 |:--|:--|
 | `AppDelegate.swift` | Menu bar, shortcut, revealing and tucking away the line |
+| `SettingsWindow.swift` | The settings window: General, Line, Privacy and About |
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs |
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
-| `LineTag.swift` | The tag at the end of the line: moving it, and taking everything down |
+| `LineTag.swift` | The tag at the end of the line: moving it, combining, sending and taking everything down |
+| `Paste.swift` | Pastes into the app in front, for the send button |
+| `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
+| `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
+| `TextCard.swift` | Translate Text and Describe, and the card that shows them |
+| `Collage.swift` | Joins several screenshots into one image |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |
@@ -152,8 +199,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `FullScreen.swift` | Knows when to stay hidden |
 | `Line.swift` | What is hanging, and what you can do with it |
 
-Every image here, the icon included, is drawn in code by
-`scripts/make-icon.swift` and `scripts/make-readme-art.swift`.
+The Snapfly icon is drawn in code by `scripts/make-icon.py` into
+`assets/icon.png`, which the build turns into the app icon.
 `scripts/make-dmg.sh` builds the disk image for releases.
 
 Translations live in `Sources/Tendedero/Resources`, one `.lproj` folder per
@@ -166,7 +213,7 @@ language. `swift scripts/check-strings.swift` checks that none is missing.
 ---
 
 <sub>
-1. On first launch, Tendedero offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Tendedero quits or the option is turned off from the menu bar. Tendedero hides automatically while an app is in full screen.
+1. On first launch, Tendedero offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Tendedero quits or the option is turned off in Settings. Tendedero hides automatically while an app is in full screen.
 </sub>
 
 <br>

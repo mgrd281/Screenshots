@@ -2,14 +2,16 @@ import AppKit
 import SwiftUI
 
 /// A small tag clipped on near the right end of the line. Its grip moves the
-/// whole line up or down the screen, and its trash takes everything down at
-/// once, each photo the way of its own corner cross.
+/// whole line up or down the screen, with photos picked it can join them
+/// into one image, its send button pastes the photos into the app in front,
+/// like a chat, and its trash takes everything down at once, each photo the
+/// way of its own corner cross.
 struct LineTag: View {
     @ObservedObject var line: Line
 
     static let width: CGFloat = 26
-    /// Room for the clip, the grip and the trash. The tag hangs from the top.
-    static let maxHeight: CGFloat = 80
+    /// Room for the clip and the four tools. The tag hangs from the top.
+    static let maxHeight: CGFloat = 128
 
     var body: some View {
         VStack(spacing: -12) {
@@ -20,7 +22,16 @@ struct LineTag: View {
                     // Under the clip is grip too.
                     .padding(.top, 12)
                     .overlay(TagArea(label: L("Move the line"), movesLine: true))
+                if line.pickedIDs.count > 1 {
+                    tool("rectangle.split.1x2")
+                        .overlay(TagArea(label: L("Combine into one image")) { line.combine() })
+                        .transition(.opacity)
+                }
                 if line.liveCount > 0 {
+                    // The photos picked with ⌘-click, or all of them.
+                    tool("paperplane")
+                        .overlay(TagArea(label: L("Paste into the app in front")) { line.paste() })
+                        .transition(.opacity)
                     // Like the corner cross: a trash only when something goes
                     // to the Trash, rather than only off the line.
                     tool(line.items.contains { !$0.falling && line.isInInbox($0.id) } ? "trash" : "eye.slash")
@@ -38,6 +49,7 @@ struct LineTag: View {
             )
         }
         .animation(.easeOut(duration: 0.2), value: line.liveCount > 0)
+        .animation(.easeOut(duration: 0.2), value: line.pickedIDs.count > 1)
     }
 
     private func tool(_ symbol: String) -> some View {

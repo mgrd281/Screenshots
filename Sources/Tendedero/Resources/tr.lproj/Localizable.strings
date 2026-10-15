@@ -1,8 +1,8 @@
 /* Turkish. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "Ekran görüntülerini Tendedero yönetsin mi?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits." = "Ekran görüntüleri, kayan küçük resim olmadan anında ipin üzerine asılacak ve Masaüstünüzde birikmeyecek. Saklamak için bir klasöre sürükleyin ya da çarpı ile silin. Bunu menü çubuğundan kapatabilirsiniz; Tendedero kapandığında ayarlarınız geri gelir.";
+"Let Snapfly handle your screenshots?" = "Ekran görüntülerini Snapfly yönetsin mi?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "Ekran görüntüleri, kayan küçük resim olmadan anında ipin üzerine asılacak ve Masaüstünüzde birikmeyecek. Saklamak için bir klasöre sürükleyin ya da çarpı ile silin. Bunu Ayarlar'dan kapatabilirsiniz; Snapfly kapandığında ayarlarınız geri gelir.";
 "Turn on" = "Etkinleştir";
 "Not now" = "Şimdi değil";
 "Hide line" = "İpi gizle";
@@ -14,9 +14,9 @@
 "Sounds" = "Sesler";
 "Open at login" = "Başlangıçta aç";
 "Check for Updates…" = "Güncellemeleri denetle…";
-"Quit Tendedero" = "Tendedero'yu kapat";
+"Quit Snapfly" = "Snapfly'yu kapat";
 "Could not change the login setting" = "Giriş ayarı değiştirilemedi";
-"Move Tendedero to the Applications folder and try again." = "Tendedero'yu Uygulamalar klasörüne taşıyın ve tekrar deneyin.";
+"Move Snapfly to the Applications folder and try again." = "Snapfly'yu Uygulamalar klasörüne taşıyın ve tekrar deneyin.";
 "Keep on line" = "İpte tut";
 "As many as fit" = "Sığdığı kadar";
 "%d photos" = "%d fotoğraf";
@@ -25,7 +25,8 @@
 "Stop Watching" = "İzlemeyi durdur";
 "Watch" = "İzle";
 "New images saved to this folder will hang on the line." = "Bu klasöre kaydedilen yeni görseller ipe asılır.";
-"Shortcut" = "Kısayol";
+"Show or hide the line" = "İpi göster veya gizle";
+"Send the newest photo" = "En yeni fotoğrafı gönder";
 "Change Shortcut…" = "Kısayolu değiştir…";
 "Change Shortcut" = "Kısayolu değiştir";
 "None" = "Yok";
@@ -42,13 +43,23 @@
 "Over full screen apps" = "Tam ekran uygulamaların üzerinde";
 "Hang copied images" = "Kopyalanan görselleri as";
 "Images you copy hang on the line too" = "Kopyaladığınız görseller de ipe asılır";
-"Tendedero, hanging copied images" = "Tendedero, kopyalanan görselleri asıyor";
+"Snapfly, hanging copied images" = "Snapfly, kopyalanan görselleri asıyor";
+"Hide private details" = "Özel bilgileri gizle";
+"Names" = "İsimler";
+"Addresses" = "Adresler";
+"Emails" = "E-postalar";
+"Phone numbers" = "Telefon numaraları";
+"Bank cards and accounts" = "Banka kartları ve hesapları";
+"Health details" = "Sağlık bilgileri";
+"What is checked is covered in whatever leaves the line" = "İşaretlenenler ipten çıkan her şeyde kapatılır";
 
 /* GrabArea */
 "Copy" = "Kopyala";
+"Copy Text" = "Metni kopyala";
 "Open" = "Aç";
 "Quick Look" = "Hızlı Bakış";
 "Markup" = "İşaretle";
+"Hide Part…" = "Bir kısmı gizle…";
 "Show in Finder" = "Finder'da göster";
 "Save to Desktop" = "Masaüstüne kaydet";
 "Discard" = "Sil";
@@ -63,5 +74,62 @@
 /* PeggedView */
 "Copied" = "Kopyalandı";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "Hepsini kopyala";
+"Paste into %@" = "%@ uygulamasına yapıştır";
+"Paste into the app in front" = "Öndeki uygulamaya yapıştır";
+"Combine into one image" = "Tek görselde birleştir";
+"One under another" = "Alt alta";
+"Side by side" = "Yan yana";
 "Move the line" = "İpi taşı";
+
+/* SettingsWindow */
+"Settings…" = "Ayarlar…";
+"Settings" = "Ayarlar";
+"General" = "Genel";
+"Line" = "İp";
+"Privacy" = "Gizlilik";
+"About" = "Hakkında";
+"Preview" = "Önizleme";
+"Take a screenshot to see it here" = "Burada görmek için ekran görüntüsü al";
+"Send button" = "Gönder düğmesi";
+"Allowed" = "İzin verildi";
+"Not allowed yet" = "Henüz izin verilmedi";
+"Open Accessibility Settings…" = "Erişilebilirlik Ayarlarını Aç…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "Gönder düğmesi öndeki uygulamada ⌘V'ye basar, bu yüzden Erişilebilirlik iznine ihtiyaç duyar.";
+"Version %@" = "Sürüm %@";
+"Screenshots, one click from any chat." = "Ekran görüntüleri, her sohbete bir tık uzaklıkta.";
+"Made by %@" = "Yapan: %@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján'ın Tendedero'suna dayanır, MIT Lisansı ile.";
+/* HideEditor */
+"Drag over anything to hide it. Click a box to show it again." = "Gizlemek istediğin yerin üzerinde sürükle. Yeniden göstermek için bir kutuya tıkla.";
+"Remove All" = "Tümünü kaldır";
+"Cancel" = "Vazgeç";
+"Done" = "Bitti";
+/* TextCard, GrabArea */
+"Translate Text" = "Metni çevir";
+"Describe" = "Açıklama yaz";
+"Translation" = "Çeviri";
+"Description" = "Açıklama";
+"Reading the screenshot…" = "Ekran görüntüsü okunuyor…";
+"Translating…" = "Çevriliyor…";
+"Writing a description…" = "Açıklama yazılıyor…";
+"There is no text to read in this screenshot." = "Bu ekran görüntüsünde okunacak metin yok.";
+"The language of this text could not be recognised." = "Bu metnin dili tanınamadı.";
+"The text is already in %@." = "Metin zaten %@ dilinde.";
+"Translated from %@ on this Mac." = "Bu Mac’te çevrildi (kaynak dil: %@).";
+"To translate on this Mac, add %@ and %@ under Translation Languages in System Settings." = "Bu Mac’te çeviri yapmak için Sistem Ayarları’ndaki Çeviri Dilleri bölümüne %@ ve %@ dillerini ekle.";
+"Translating from %@ into %@ is not available." = "%@ dilinden %@ diline çeviri kullanılamıyor.";
+"Could not translate this text." = "Bu metin çevrilemedi.";
+"Written by Apple Intelligence on this Mac." = "Bu Mac’te Apple Intelligence tarafından yazıldı.";
+"Written by Apple Intelligence and translated on this Mac." = "Apple Intelligence tarafından yazıldı ve bu Mac’te çevrildi.";
+"Apple Intelligence cannot write in %@ yet, so this is in English." = "Apple Intelligence henüz %@ dilinde yazamıyor, bu yüzden bu metin İngilizce.";
+"Apple Intelligence is off, so this is the screenshot's title. Turn it on in System Settings for a written description." = "Apple Intelligence kapalı, bu yüzden bu, ekran görüntüsünün başlığı. Yazılı bir açıklama için Sistem Ayarları’ndan aç.";
+"Apple Intelligence is still getting ready, so this is the screenshot's title for now." = "Apple Intelligence hâlâ hazırlanıyor, bu yüzden şimdilik bu, ekran görüntüsünün başlığı.";
+"Apple Intelligence is not available on this Mac, so this is the screenshot's title." = "Apple Intelligence bu Mac’te kullanılamıyor, bu yüzden bu, ekran görüntüsünün başlığı.";
+"This is the screenshot's title." = "Bu, ekran görüntüsünün başlığı.";
+"Could not describe this screenshot." = "Bu ekran görüntüsü açıklanamadı.";
+"Open System Settings…" = "Sistem Ayarları’nı aç…";
+"Close" = "Kapat";
+"Send" = "Gönder";
+"Send with Photo" = "Fotoğrafla gönder";

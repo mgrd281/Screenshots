@@ -1,0 +1,54 @@
+# Builds Snapfly on GitHub's Macs at every push, so nobody needs a
+# Terminal to get it: the app is published as a download on the
+# Releases page, "latest" from main and "preview" from any other branch.
+name: Build Snapfly
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the translations
+        run: swift scripts/check-strings.swift
+
+      - name: Build Snapfly.app
+        run: scripts/build-app.sh
+
+      - name: Pack it
+        run: ditto -c -k --keepParent build/Snapfly.app Snapfly.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Snapfly
+          path: Snapfly.zip
+
+      - name: Publish the download
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$GITHUB_REF_NAME" = "main" ]; then
+            TAG=latest; TITLE="Snapfly"; FLAGS=""
+          else
+            TAG=preview; TITLE="Snapfly (preview)"; FLAGS="--prerelease"
+          fi
+          gh release delete "$TAG" --yes --cleanup-tag || true
+          gh release create "$TAG" Snapfly.zip --target "$GITHUB_SHA" --title "$TITLE" $FLAGS \
+            --notes "Built from ${GITHUB_SHA::7} on $GITHUB_REF_NAME.
+
+          1. Download Snapfly.zip and open it.
+          2. Drag Snapfly to the Applications folder and open it.
+          3. The first time, macOS says it cannot check the app: open System Settings › Privacy & Security, scroll down and click Open Anyway."

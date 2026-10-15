@@ -1,8 +1,8 @@
 /* Japanese. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "スクリーンショットをTendederoに任せますか？";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits." = "スクリーンショットは撮った瞬間にロープに吊るされ、フローティングサムネールは表示されず、デスクトップにたまることもありません。残したいものはフォルダにドラッグし、いらないものは×で破棄します。この機能はメニューバーからオフにでき、Tendederoを終了すると設定は元に戻ります。";
+"Let Snapfly handle your screenshots?" = "スクリーンショットをSnapflyに任せますか？";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "スクリーンショットは撮った瞬間にロープに吊るされ、フローティングサムネールは表示されず、デスクトップにたまることもありません。残したいものはフォルダにドラッグし、いらないものは×で破棄します。この機能は設定からオフにでき、Snapflyを終了すると設定は元に戻ります。";
 "Turn on" = "オンにする";
 "Not now" = "今はしない";
 "Hide line" = "ロープを非表示";
@@ -14,9 +14,9 @@
 "Sounds" = "サウンド";
 "Open at login" = "ログイン時に開く";
 "Check for Updates…" = "アップデートを確認…";
-"Quit Tendedero" = "Tendederoを終了";
+"Quit Snapfly" = "Snapflyを終了";
 "Could not change the login setting" = "ログイン時の設定を変更できませんでした";
-"Move Tendedero to the Applications folder and try again." = "Tendederoを「アプリケーション」フォルダに移動してから、もう一度お試しください。";
+"Move Snapfly to the Applications folder and try again." = "Snapflyを「アプリケーション」フォルダに移動してから、もう一度お試しください。";
 "Keep on line" = "ロープに残す数";
 "As many as fit" = "収まるだけ";
 "%d photos" = "%d枚";
@@ -25,7 +25,8 @@
 "Stop Watching" = "監視を停止";
 "Watch" = "監視";
 "New images saved to this folder will hang on the line." = "このフォルダに保存された新しい画像がロープに吊るされます。";
-"Shortcut" = "ショートカット";
+"Show or hide the line" = "ロープを表示/非表示";
+"Send the newest photo" = "最新の写真を送信";
 "Change Shortcut…" = "ショートカットを変更…";
 "Change Shortcut" = "ショートカットを変更";
 "None" = "なし";
@@ -42,13 +43,23 @@
 "Over full screen apps" = "フルスクリーンのアプリの上にも";
 "Hang copied images" = "コピーした画像を吊るす";
 "Images you copy hang on the line too" = "コピーした画像もロープに吊るされます";
-"Tendedero, hanging copied images" = "Tendedero、コピーした画像を吊るしています";
+"Snapfly, hanging copied images" = "Snapfly、コピーした画像を吊るしています";
+"Hide private details" = "個人情報を隠す";
+"Names" = "名前";
+"Addresses" = "住所";
+"Emails" = "メールアドレス";
+"Phone numbers" = "電話番号";
+"Bank cards and accounts" = "カードと銀行口座";
+"Health details" = "健康情報";
+"What is checked is covered in whatever leaves the line" = "チェックした項目は、ロープから出す画像で隠されます";
 
 /* GrabArea */
 "Copy" = "コピー";
+"Copy Text" = "テキストをコピー";
 "Open" = "開く";
 "Quick Look" = "クイックルック";
 "Markup" = "マークアップ";
+"Hide Part…" = "一部を隠す…";
 "Show in Finder" = "Finderで表示";
 "Save to Desktop" = "デスクトップに保存";
 "Discard" = "破棄";
@@ -63,5 +74,62 @@
 /* PeggedView */
 "Copied" = "コピーしました";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "すべてコピー";
+"Paste into %@" = "%@にペースト";
+"Paste into the app in front" = "前面のアプリにペースト";
+"Combine into one image" = "1枚の画像にまとめる";
+"One under another" = "縦に並べる";
+"Side by side" = "横に並べる";
 "Move the line" = "ロープを動かす";
+
+/* SettingsWindow */
+"Settings…" = "設定…";
+"Settings" = "設定";
+"General" = "一般";
+"Line" = "ロープ";
+"Privacy" = "プライバシー";
+"About" = "情報";
+"Preview" = "プレビュー";
+"Take a screenshot to see it here" = "スクリーンショットを撮るとここに表示されます";
+"Send button" = "送信ボタン";
+"Allowed" = "許可済み";
+"Not allowed yet" = "まだ許可されていません";
+"Open Accessibility Settings…" = "アクセシビリティ設定を開く…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "送信ボタンは前面のアプリで⌘Vを押すため、アクセシビリティの許可が必要です。";
+"Version %@" = "バージョン %@";
+"Screenshots, one click from any chat." = "スクリーンショットを、どのチャットにもワンクリックで。";
+"Made by %@" = "制作：%@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján による Tendedero をもとに、MIT ライセンスのもとで作られています。";
+/* HideEditor */
+"Drag over anything to hide it. Click a box to show it again." = "隠したい部分をドラッグします。ボックスをクリックすると元に戻ります。";
+"Remove All" = "すべて削除";
+"Cancel" = "キャンセル";
+"Done" = "完了";
+/* TextCard, GrabArea */
+"Translate Text" = "テキストを翻訳";
+"Describe" = "説明を作成";
+"Translation" = "翻訳";
+"Description" = "説明";
+"Reading the screenshot…" = "スクリーンショットを読み取り中…";
+"Translating…" = "翻訳中…";
+"Writing a description…" = "説明を作成中…";
+"There is no text to read in this screenshot." = "このスクリーンショットには読み取れるテキストがありません。";
+"The language of this text could not be recognised." = "このテキストの言語を認識できませんでした。";
+"The text is already in %@." = "テキストはすでに%@です。";
+"Translated from %@ on this Mac." = "このMac上で翻訳しました（元の言語: %@）。";
+"To translate on this Mac, add %@ and %@ under Translation Languages in System Settings." = "このMacで翻訳するには、システム設定の「翻訳言語」で%@と%@を追加してください。";
+"Translating from %@ into %@ is not available." = "%@から%@への翻訳は利用できません。";
+"Could not translate this text." = "このテキストを翻訳できませんでした。";
+"Written by Apple Intelligence on this Mac." = "このMac上のApple Intelligenceが作成しました。";
+"Written by Apple Intelligence and translated on this Mac." = "Apple Intelligenceが作成し、このMac上で翻訳しました。";
+"Apple Intelligence cannot write in %@ yet, so this is in English." = "Apple Intelligenceはまだ%@で書けないため、英語で表示しています。";
+"Apple Intelligence is off, so this is the screenshot's title. Turn it on in System Settings for a written description." = "Apple Intelligenceがオフのため、スクリーンショットのタイトルを表示しています。説明を作成するには、システム設定でオンにしてください。";
+"Apple Intelligence is still getting ready, so this is the screenshot's title for now." = "Apple Intelligenceは準備中のため、ひとまずスクリーンショットのタイトルを表示しています。";
+"Apple Intelligence is not available on this Mac, so this is the screenshot's title." = "このMacではApple Intelligenceを利用できないため、スクリーンショットのタイトルを表示しています。";
+"This is the screenshot's title." = "スクリーンショットのタイトルです。";
+"Could not describe this screenshot." = "このスクリーンショットを説明できませんでした。";
+"Open System Settings…" = "システム設定を開く…";
+"Close" = "閉じる";
+"Send" = "送信";
+"Send with Photo" = "写真と一緒に送信";

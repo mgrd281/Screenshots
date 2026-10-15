@@ -3,8 +3,8 @@
    swift scripts/check-strings.swift to check. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "Let Tendedero handle your screenshots?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits." = "Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits.";
+"Let Snapfly handle your screenshots?" = "Let Snapfly handle your screenshots?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits.";
 "Turn on" = "Turn on";
 "Not now" = "Not now";
 "Hide line" = "Hide line";
@@ -16,9 +16,9 @@
 "Sounds" = "Sounds";
 "Open at login" = "Open at login";
 "Check for Updates…" = "Check for Updates…";
-"Quit Tendedero" = "Quit Tendedero";
+"Quit Snapfly" = "Quit Snapfly";
 "Could not change the login setting" = "Could not change the login setting";
-"Move Tendedero to the Applications folder and try again." = "Move Tendedero to the Applications folder and try again.";
+"Move Snapfly to the Applications folder and try again." = "Move Snapfly to the Applications folder and try again.";
 "Keep on line" = "Keep on line";
 "As many as fit" = "As many as fit";
 "%d photos" = "%d photos";
@@ -27,7 +27,8 @@
 "Stop Watching" = "Stop Watching";
 "Watch" = "Watch";
 "New images saved to this folder will hang on the line." = "New images saved to this folder will hang on the line.";
-"Shortcut" = "Shortcut";
+"Show or hide the line" = "Show or hide the line";
+"Send the newest photo" = "Send the newest photo";
 "Change Shortcut…" = "Change Shortcut…";
 "Change Shortcut" = "Change Shortcut";
 "None" = "None";
@@ -44,13 +45,23 @@
 "Over full screen apps" = "Over full screen apps";
 "Hang copied images" = "Hang copied images";
 "Images you copy hang on the line too" = "Images you copy hang on the line too";
-"Tendedero, hanging copied images" = "Tendedero, hanging copied images";
+"Snapfly, hanging copied images" = "Snapfly, hanging copied images";
+"Hide private details" = "Hide private details";
+"Names" = "Names";
+"Addresses" = "Addresses";
+"Emails" = "Emails";
+"Phone numbers" = "Phone numbers";
+"Bank cards and accounts" = "Bank cards and accounts";
+"Health details" = "Health details";
+"What is checked is covered in whatever leaves the line" = "What is checked is covered in whatever leaves the line";
 
 /* GrabArea */
 "Copy" = "Copy";
+"Copy Text" = "Copy Text";
 "Open" = "Open";
 "Quick Look" = "Quick Look";
 "Markup" = "Markup";
+"Hide Part…" = "Hide Part…";
 "Show in Finder" = "Show in Finder";
 "Save to Desktop" = "Save to Desktop";
 "Discard" = "Discard";
@@ -65,5 +76,62 @@
 /* PeggedView */
 "Copied" = "Copied";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "Copy all";
+"Paste into %@" = "Paste into %@";
+"Paste into the app in front" = "Paste into the app in front";
+"Combine into one image" = "Combine into one image";
+"One under another" = "One under another";
+"Side by side" = "Side by side";
 "Move the line" = "Move the line";
+
+/* SettingsWindow */
+"Settings…" = "Settings…";
+"Settings" = "Settings";
+"General" = "General";
+"Line" = "Line";
+"Privacy" = "Privacy";
+"About" = "About";
+"Preview" = "Preview";
+"Take a screenshot to see it here" = "Take a screenshot to see it here";
+"Send button" = "Send button";
+"Allowed" = "Allowed";
+"Not allowed yet" = "Not allowed yet";
+"Open Accessibility Settings…" = "Open Accessibility Settings…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "The send button presses ⌘V in the app in front, which needs the Accessibility permission.";
+"Version %@" = "Version %@";
+"Screenshots, one click from any chat." = "Screenshots, one click from any chat.";
+"Made by %@" = "Made by %@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Based on Tendedero by Alejandro Buján, under the MIT License.";
+/* HideEditor */
+"Drag over anything to hide it. Click a box to show it again." = "Drag over anything to hide it. Click a box to show it again.";
+"Remove All" = "Remove All";
+"Cancel" = "Cancel";
+"Done" = "Done";
+/* TextCard, GrabArea */
+"Translate Text" = "Translate Text";
+"Describe" = "Describe";
+"Translation" = "Translation";
+"Description" = "Description";
+"Reading the screenshot…" = "Reading the screenshot…";
+"Translating…" = "Translating…";
+"Writing a description…" = "Writing a description…";
+"There is no text to read in this screenshot." = "There is no text to read in this screenshot.";
+"The language of this text could not be recognised." = "The language of this text could not be recognised.";
+"The text is already in %@." = "The text is already in %@.";
+"Translated from %@ on this Mac." = "Translated from %@ on this Mac.";
+"To translate on this Mac, add %@ and %@ under Translation Languages in System Settings." = "To translate on this Mac, add %@ and %@ under Translation Languages in System Settings.";
+"Translating from %@ into %@ is not available." = "Translating from %@ into %@ is not available.";
+"Could not translate this text." = "Could not translate this text.";
+"Written by Apple Intelligence on this Mac." = "Written by Apple Intelligence on this Mac.";
+"Written by Apple Intelligence and translated on this Mac." = "Written by Apple Intelligence and translated on this Mac.";
+"Apple Intelligence cannot write in %@ yet, so this is in English." = "Apple Intelligence cannot write in %@ yet, so this is in English.";
+"Apple Intelligence is off, so this is the screenshot's title. Turn it on in System Settings for a written description." = "Apple Intelligence is off, so this is the screenshot's title. Turn it on in System Settings for a written description.";
+"Apple Intelligence is still getting ready, so this is the screenshot's title for now." = "Apple Intelligence is still getting ready, so this is the screenshot's title for now.";
+"Apple Intelligence is not available on this Mac, so this is the screenshot's title." = "Apple Intelligence is not available on this Mac, so this is the screenshot's title.";
+"This is the screenshot's title." = "This is the screenshot's title.";
+"Could not describe this screenshot." = "Could not describe this screenshot.";
+"Open System Settings…" = "Open System Settings…";
+"Close" = "Close";
+"Send" = "Send";
+"Send with Photo" = "Send with Photo";

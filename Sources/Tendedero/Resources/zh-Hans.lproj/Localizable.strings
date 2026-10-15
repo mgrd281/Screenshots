@@ -1,8 +1,8 @@
 /* Chinese (Simplified). */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "让 Tendedero 接管你的截图？";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits." = "你截图的那一瞬间，图片就会挂到晾衣绳上——没有浮动缩略图，也不会堆到桌面上。拖进文件夹即保留，点叉即丢弃。随时可以从菜单栏关掉，退出 Tendedero 后你的设置会自动还原。";
+"Let Snapfly handle your screenshots?" = "让 Snapfly 接管你的截图？";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "你截图的那一瞬间，图片就会挂到晾衣绳上——没有浮动缩略图，也不会堆到桌面上。拖进文件夹即保留，点叉即丢弃。随时可以在设置中关掉，退出 Snapfly 后你的设置会自动还原。";
 "Turn on" = "开启";
 "Not now" = "以后再说";
 "Hide line" = "隐藏晾衣绳";
@@ -14,9 +14,9 @@
 "Sounds" = "声音";
 "Open at login" = "登录时打开";
 "Check for Updates…" = "检查更新…";
-"Quit Tendedero" = "退出 Tendedero";
+"Quit Snapfly" = "退出 Snapfly";
 "Could not change the login setting" = "无法更改登录项设置";
-"Move Tendedero to the Applications folder and try again." = "请先把 Tendedero 移到「应用程序」文件夹，再试一次。";
+"Move Snapfly to the Applications folder and try again." = "请先把 Snapfly 移到「应用程序」文件夹，再试一次。";
 "Keep on line" = "绳上保留";
 "As many as fit" = "放得下的数量";
 "%d photos" = "%d 张";
@@ -25,7 +25,8 @@
 "Stop Watching" = "停止监视";
 "Watch" = "监视";
 "New images saved to this folder will hang on the line." = "保存到此文件夹的新图片会挂到晾衣绳上。";
-"Shortcut" = "快捷键";
+"Show or hide the line" = "显示或隐藏晾衣绳";
+"Send the newest photo" = "发送最新的照片";
 "Change Shortcut…" = "更改快捷键…";
 "Change Shortcut" = "更改快捷键";
 "None" = "无";
@@ -42,13 +43,23 @@
 "Over full screen apps" = "在全屏 App 上";
 "Hang copied images" = "挂上复制的图片";
 "Images you copy hang on the line too" = "复制的图片也会挂上绳";
-"Tendedero, hanging copied images" = "Tendedero，正在挂上复制的图片";
+"Snapfly, hanging copied images" = "Snapfly，正在挂上复制的图片";
+"Hide private details" = "隐藏隐私信息";
+"Names" = "姓名";
+"Addresses" = "地址";
+"Emails" = "电子邮件";
+"Phone numbers" = "电话号码";
+"Bank cards and accounts" = "银行卡和账户";
+"Health details" = "健康信息";
+"What is checked is covered in whatever leaves the line" = "勾选的内容会在从晾衣绳上发出的图片中被遮住";
 
 /* GrabArea */
 "Copy" = "复制";
+"Copy Text" = "拷贝文本";
 "Open" = "打开";
 "Quick Look" = "快速查看";
 "Markup" = "标记";
+"Hide Part…" = "遮盖部分…";
 "Show in Finder" = "在访达中显示";
 "Save to Desktop" = "存储到桌面";
 "Discard" = "丢弃";
@@ -63,5 +74,62 @@
 /* PeggedView */
 "Copied" = "已复制";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "全部复制";
+"Paste into %@" = "粘贴到“%@”";
+"Paste into the app in front" = "粘贴到前台应用";
+"Combine into one image" = "合并为一张图片";
+"One under another" = "上下排列";
+"Side by side" = "左右排列";
 "Move the line" = "移动晾衣绳";
+
+/* SettingsWindow */
+"Settings…" = "设置…";
+"Settings" = "设置";
+"General" = "通用";
+"Line" = "晾衣绳";
+"Privacy" = "隐私";
+"About" = "关于";
+"Preview" = "预览";
+"Take a screenshot to see it here" = "截一张图即可在这里看到";
+"Send button" = "发送按钮";
+"Allowed" = "已允许";
+"Not allowed yet" = "尚未允许";
+"Open Accessibility Settings…" = "打开辅助功能设置…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "发送按钮会在前台应用中按下 ⌘V，因此需要辅助功能权限。";
+"Version %@" = "版本 %@";
+"Screenshots, one click from any chat." = "截图，一键发到任何聊天。";
+"Made by %@" = "作者：%@";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "基于 Alejandro Buján 的 Tendedero，遵循 MIT 许可证。";
+/* HideEditor */
+"Drag over anything to hide it. Click a box to show it again." = "拖过要遮盖的内容。点按方框可重新显示。";
+"Remove All" = "全部移除";
+"Cancel" = "取消";
+"Done" = "完成";
+/* TextCard, GrabArea */
+"Translate Text" = "翻译文本";
+"Describe" = "生成描述";
+"Translation" = "翻译";
+"Description" = "描述";
+"Reading the screenshot…" = "正在读取截图…";
+"Translating…" = "正在翻译…";
+"Writing a description…" = "正在撰写描述…";
+"There is no text to read in this screenshot." = "此截图中没有可读取的文本。";
+"The language of this text could not be recognised." = "无法识别此文本的语言。";
+"The text is already in %@." = "文本已经是%@。";
+"Translated from %@ on this Mac." = "已在此 Mac 上翻译（原文语言：%@）。";
+"To translate on this Mac, add %@ and %@ under Translation Languages in System Settings." = "要在此 Mac 上翻译，请在“系统设置”的“翻译语言”中添加%@和%@。";
+"Translating from %@ into %@ is not available." = "无法从%@翻译为%@。";
+"Could not translate this text." = "无法翻译此文本。";
+"Written by Apple Intelligence on this Mac." = "由此 Mac 上的 Apple 智能撰写。";
+"Written by Apple Intelligence and translated on this Mac." = "由 Apple 智能撰写，并在此 Mac 上翻译。";
+"Apple Intelligence cannot write in %@ yet, so this is in English." = "Apple 智能还不能用%@撰写，因此这是英文。";
+"Apple Intelligence is off, so this is the screenshot's title. Turn it on in System Settings for a written description." = "Apple 智能已关闭，因此这是截图的标题。在“系统设置”中打开 Apple 智能即可获得文字描述。";
+"Apple Intelligence is still getting ready, so this is the screenshot's title for now." = "Apple 智能仍在准备中，因此暂时显示截图的标题。";
+"Apple Intelligence is not available on this Mac, so this is the screenshot's title." = "此 Mac 不支持 Apple 智能，因此这是截图的标题。";
+"This is the screenshot's title." = "这是截图的标题。";
+"Could not describe this screenshot." = "无法描述此截图。";
+"Open System Settings…" = "打开“系统设置”…";
+"Close" = "关闭";
+"Send" = "发送";
+"Send with Photo" = "连同照片发送";

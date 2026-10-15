@@ -3,7 +3,7 @@ import AVFoundation
 import Combine
 import os
 
-let log = Logger(subsystem: "app.tendedero.Tendedero", category: "line")
+let log = Logger(subsystem: "de.ghazarian.Snapfly", category: "line")
 
 /// One screenshot hanging on the line.
 struct Pegged: Identifiable, Equatable {
@@ -15,11 +15,14 @@ struct Pegged: Identifiable, Equatable {
     var falling = false
     /// Still flying in from where it was captured; the card waits hidden.
     var flying = false
+    /// Shown, and handed out, with private details covered.
+    var covered = false
     /// A screen recording rather than a screenshot.
     var isRecording: Bool { Tendedero.isRecording(url) }
 
     static func == (a: Pegged, b: Pegged) -> Bool {
         a.id == b.id && a.falling == b.falling && a.flying == b.flying && a.thumb === b.thumb
+            && a.covered == b.covered
     }
 }
 
@@ -29,7 +32,10 @@ struct Pegged: Identifiable, Equatable {
 final class Line: ObservableObject {
     @Published private(set) var items: [Pegged] = []
     @Published private(set) var gust = 0
-    @Published var copiedID: UUID?
+    @Published var copiedIDs: Set<UUID> = []
+    /// Photos picked with ⌘-click, to copy together. Cleared when the line
+    /// tucks away.
+    @Published var pickedIDs: Set<UUID> = []
     @Published var draggingID: UUID?
     @Published var pressedID: UUID?
     /// Whether the line has slid down into view.
@@ -73,6 +79,8 @@ final class Line: ObservableObject {
 
     init() {
         restore()
+        PrivateDetails.onRead = { [weak self] url, shown in self?.show(shown, for: url) }
+        readPrivateDetails()
         scheduleGust()
     }
 
@@ -93,6 +101,7 @@ final class Line: ObservableObject {
             letGo(oldest.id)
         }
         save()
+        PrivateDetails.prepare(url)
         if !quietly { play("Tink", volume: 0.35) }
         return item.id
     }
@@ -112,6 +121,7 @@ final class Line: ObservableObject {
         onFall?(items[i])
         items[i].falling = true
         hitRects[id] = nil
+        pickedIDs.remove(id)
         save()
         if !quietly { play("Pop", volume: 0.25) }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
@@ -158,17 +168,195 @@ final class Line: ObservableObject {
 
     func copy(_ id: UUID) {
         guard let item = items.first(where: { $0.id == id }) else { return }
-        let entry = NSPasteboardItem()
-        // A recording is copied as the file, which apps paste as the video.
-        if !item.isRecording, let png = pngData(item.url) { entry.setData(png, forType: .png) }
-        entry.setString(item.url.absoluteString, forType: .fileURL)
+        pickedIDs = []
+        copy([item])
+    }
+
+    /// ⌘-click: picks the photo, or puts it back, and copies every photo
+    /// picked, so they paste together into a chat or a message.
+    func pick(_ id: UUID) {
+        if pickedIDs.contains(id) { pickedIDs.remove(id) } else { pickedIDs.insert(id) }
+        let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
+        if !picked.isEmpty { copy(picked) }
+    }
+
+    /// Every photo on the line, to paste them all at once.
+    func copyAll() {
+        pickedIDs = []
+        copy(items.filter { !$0.falling })
+    }
+
+    /// What Combine joins: the photos picked, or every photo when fewer
+    /// than two are. Recordings stay out of it.
+    var photosToCombine: [Pegged] {
+        let still = items.filter { !$0.falling && !$0.isRecording }
+        let picked = still.filter { pickedIDs.contains($0.id) }
+        return picked.count > 1 ? picked : still
+    }
+
+    /// Joins several photos into one image, which hangs as the newest and
+    /// comes picked and copied, so the send button sends just that one.
+    func combine(_ arrangement: Collage.Arrangement? = nil) {
+        // Parts hidden by hand stay hidden in the joined image; the details
+        // chosen in Settings are found again in it once it hangs.
+        let photos = photosToCombine.map { ($0.url, PrivateDetails.hand($0.url)) }
+        guard photos.count > 1 else { return }
+        pickedIDs = []
+        DispatchQueue.global(qos: .userInitiated).async {
+            let urls = photos.map { url, hand in hand.isEmpty ? url : Cover.copy(of: url, [], hand: hand) ?? url }
+            let joined = Collage.join(urls, arrangement)
+            DispatchQueue.main.async { [weak self] in
+                MainActor.assumeIsolated {
+                    guard let self, let joined, let id = self.hang(joined) else {
+                        NSSound.beep()
+                        return
+                    }
+                    self.pick(id)
+                }
+            }
+        }
+    }
+
+    /// The send button on the tag: the photos picked, or every photo when
+    /// none is, go straight into the app in front, a chat for example.
+    func paste() {
+        let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
+        paste(picked.isEmpty ? items.filter { !$0.falling } : picked)
+    }
+
+    /// From a photo's menu: the photos picked when it is one of them, or
+    /// only this one.
+    func paste(_ id: UUID) {
+        let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
+        if pickedIDs.contains(id) {
+            paste(picked)
+        } else if let item = items.first(where: { $0.id == id }) {
+            paste([item])
+        }
+    }
+
+    /// The send shortcut: the photos picked, or else the newest one.
+    func pasteNewest() {
+        let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
+        guard let newest = items.last(where: { !$0.falling }) else {
+            NSSound.beep()
+            return
+        }
+        paste(picked.isEmpty ? [newest] : picked)
+    }
+
+    /// Flies sent photos over to where they will land, and says how long
+    /// until the last one does.
+    var onSend: (([Pegged]) -> TimeInterval)?
+
+    /// - Parameter caption: text to paste after the photos, like a
+    ///   description in a chat.
+    private func paste(_ photos: [Pegged], then caption: String? = nil) {
+        guard !photos.isEmpty else { return }
+        copy(photos)
+        pickedIDs = []
+        // Only when the paste will happen: a photo flying into a chat that
+        // never gets it would say the opposite.
+        let willPaste = Paste.willPaste
+        let flight = willPaste ? onSend?(photos) ?? 0 : 0
+        Paste.intoFrontApp(after: flight)
+        // Once the app has taken the photos, the clipboard turns to the text.
+        guard let caption, willPaste else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + flight + 0.5) {
+            MainActor.assumeIsolated { Self.pasteText(caption) }
+        }
+    }
+
+    /// Text, like a translation, straight into the app in front.
+    func sendText(_ text: String) {
+        Self.pasteText(text)
+    }
+
+    private static func pasteText(_ text: String) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(text, forType: .string)
+        Paste.intoFrontApp()
+    }
+
+    /// A photo with a line of text after it, as it goes in a chat.
+    func send(_ id: UUID, caption: String) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }) else {
+            sendText(caption)
+            return
+        }
+        paste([item], then: caption)
+    }
+
+    // MARK: Translate and Describe
+
+    /// Where a photo hangs on screen, for the card that shows what it says.
+    var frameOfPhoto: ((UUID) -> CGRect?)?
+
+    func translate(_ id: UUID, to language: Locale.Language) {
+        showCard(.translation, for: id, target: language)
+    }
+
+    func describe(_ id: UUID) {
+        showCard(.description, for: id, target: Languages.own)
+    }
+
+    private func showCard(_ kind: TextCardModel.Kind, for id: UUID, target: Locale.Language) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), !item.isRecording else { return }
+        let model = TextCardModel(kind, photo: id, url: item.url, line: self, target: target)
+        TextCard.shared.show(model, under: frameOfPhoto?(id))
+        model.start()
+    }
+
+    /// Each photo goes on the clipboard as an item of its own, as Finder
+    /// copies several files, so apps paste them all, in the order they hang.
+    private func copy(_ photos: [Pegged]) {
+        let entries = photos.map { item -> NSPasteboardItem in
+            let entry = NSPasteboardItem()
+            // With Hide private details on, a copy with them covered.
+            let url = PrivateDetails.shareable(item.url)
+            // A recording is copied as the file, which apps paste as the video.
+            if !item.isRecording, let png = pngData(url) { entry.setData(png, forType: .png) }
+            entry.setString(url.absoluteString, forType: .fileURL)
+            return entry
+        }
         let pb = NSPasteboard.general
         pb.clearContents()
-        pb.writeObjects([entry])
+        pb.writeObjects(entries)
+        showCopied(Set(photos.map(\.id)))
+    }
 
-        copiedID = id
+    /// "Copied" under each photo, for a moment.
+    private func showCopied(_ ids: Set<UUID>) {
+        copiedIDs = ids
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
-            if self?.copiedID == id { self?.copiedID = nil }
+            if self?.copiedIDs == ids { self?.copiedIDs = [] }
+        }
+    }
+
+    /// Copy Text: the words in a photo, read on this Mac, as text to paste
+    /// anywhere. Private details chosen in Settings are left out, as they
+    /// are from everything else that leaves the line.
+    func copyText(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id }), !item.isRecording else { return }
+        let url = item.url
+        let chosen = PrivateDetails.details
+        let hand = PrivateDetails.hand(url)
+        DispatchQueue.global(qos: .userInitiated).async {
+            let text = Finder.text(of: url, hiding: chosen, hand: hand)
+            DispatchQueue.main.async { [weak self] in
+                MainActor.assumeIsolated {
+                    guard let self, !text.isEmpty else {
+                        NSSound.beep()
+                        return
+                    }
+                    let pb = NSPasteboard.general
+                    pb.clearContents()
+                    pb.setString(text, forType: .string)
+                    self.pickedIDs = []
+                    self.showCopied([id])
+                }
+            }
         }
     }
 
@@ -281,6 +469,29 @@ final class Line: ObservableObject {
         guard let i = items.firstIndex(where: { $0.url == url && !$0.falling }),
               let thumb = makeThumbnail(url) else { return }
         items[i].thumb = thumb
+        PrivateDetails.prepare(url)
+    }
+
+    /// With Hide private details on, every photo is read ahead of time, so
+    /// copying one stays instant. Off, they show as they are again, but for
+    /// parts hidden by hand.
+    func readPrivateDetails() {
+        for item in items where !item.falling { cover(item.url) }
+    }
+
+    /// Hide Part: a box drawn over anything that should not leave the line.
+    func hidePart(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id }), !item.isRecording else { return }
+        let url = item.url
+        HideEditor.shared.edit(url) { [weak self] in self?.cover(url) }
+    }
+
+    private func cover(_ url: URL) {
+        if PrivateDetails.covers(url) {
+            PrivateDetails.prepare(url)
+        } else if items.contains(where: { $0.url == url && $0.covered }) {
+            show(url, for: url)
+        }
     }
 
     /// Quick Look on this photo, with the rest of the line a key press away.
@@ -293,8 +504,20 @@ final class Line: ObservableObject {
     /// After a change of size, every photo is redrawn sharp at the new one.
     func reloadThumbnails() {
         for i in items.indices where !items[i].falling {
-            if let thumb = makeThumbnail(items[i].url) { items[i].thumb = thumb }
+            let shown = PrivateDetails.shown(items[i].url) ?? items[i].url
+            if let thumb = makeThumbnail(shown) { items[i].thumb = thumb }
+            items[i].covered = shown != items[i].url
         }
+    }
+
+    /// Each photo hangs as it will leave the line: with its private details
+    /// covered, or as it is when the latest choice leaves nothing to cover.
+    private func show(_ shown: URL, for url: URL) {
+        guard shown == url || PrivateDetails.covers(url),
+              let i = items.firstIndex(where: { $0.url == url && !$0.falling }),
+              let thumb = makeThumbnail(shown) else { return }
+        items[i].thumb = thumb
+        items[i].covered = shown != url
     }
 
     func reveal(_ id: UUID) {
@@ -319,6 +542,7 @@ final class Line: ObservableObject {
     private func save() {
         let paths = items.filter { !$0.falling }.map(\.url.path)
         UserDefaults.standard.set(paths, forKey: storeKey)
+        PrivateDetails.keepHand(only: Set(paths))
     }
 
     /// Everything comes back as it was. This runs before the line knows its

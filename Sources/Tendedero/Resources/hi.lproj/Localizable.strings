@@ -3,8 +3,8 @@
    swift scripts/check-strings.swift to check. */
 
 /* AppDelegate */
-"Let Tendedero handle your screenshots?" = "क्या Tendedero आपके स्क्रीनशॉट संभाले?";
-"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off from the menu bar, and your settings come back when Tendedero quits." = "स्क्रीनशॉट लेते ही वे रस्सी पर टँग जाएँगे, बिना तैरते थंबनेल के, और आपके डेस्कटॉप पर जमा नहीं होंगे। किसी को रखना हो तो उसे फ़ोल्डर में खींचें, या क्रॉस से हटा दें। आप इसे मेनू बार से बंद कर सकते हैं, और Tendedero बंद होने पर आपकी सेटिंग्स वापस आ जाती हैं।";
+"Let Snapfly handle your screenshots?" = "क्या Snapfly आपके स्क्रीनशॉट संभाले?";
+"Screenshots will hang on the line the instant you take them, without the floating thumbnail, and will not pile up on your Desktop. Drag one to a folder to keep it, or discard it with the cross. You can turn this off in Settings, and your settings come back when Snapfly quits." = "स्क्रीनशॉट लेते ही वे रस्सी पर टँग जाएँगे, बिना तैरते थंबनेल के, और आपके डेस्कटॉप पर जमा नहीं होंगे। किसी को रखना हो तो उसे फ़ोल्डर में खींचें, या क्रॉस से हटा दें। आप इसे सेटिंग्स से बंद कर सकते हैं, और Snapfly बंद होने पर आपकी सेटिंग्स वापस आ जाती हैं।";
 "Turn on" = "चालू करें";
 "Not now" = "अभी नहीं";
 "Hide line" = "रस्सी छिपाएँ";
@@ -16,9 +16,9 @@
 "Sounds" = "आवाज़ें";
 "Open at login" = "लॉगिन पर खोलें";
 "Check for Updates…" = "अपडेट देखें…";
-"Quit Tendedero" = "Tendedero बंद करें";
+"Quit Snapfly" = "Snapfly बंद करें";
 "Could not change the login setting" = "लॉगिन सेटिंग बदली नहीं जा सकी";
-"Move Tendedero to the Applications folder and try again." = "Tendedero को Applications फ़ोल्डर में ले जाएँ और फिर से कोशिश करें।";
+"Move Snapfly to the Applications folder and try again." = "Snapfly को Applications फ़ोल्डर में ले जाएँ और फिर से कोशिश करें।";
 "Keep on line" = "रस्सी पर रखें";
 "As many as fit" = "जितने आ सकें";
 "%d photos" = "%d फ़ोटो";
@@ -27,7 +27,8 @@
 "Stop Watching" = "नज़र रखना बंद करें";
 "Watch" = "नज़र रखें";
 "New images saved to this folder will hang on the line." = "इस फ़ोल्डर में सेव होने वाली नई तस्वीरें रस्सी पर टँग जाएँगी।";
-"Shortcut" = "शॉर्टकट";
+"Show or hide the line" = "रस्सी दिखाएँ या छिपाएँ";
+"Send the newest photo" = "सबसे नई फ़ोटो भेजें";
 "Change Shortcut…" = "शॉर्टकट बदलें…";
 "Change Shortcut" = "शॉर्टकट बदलें";
 "None" = "कोई नहीं";
@@ -44,13 +45,23 @@
 "Over full screen apps" = "फ़ुल स्क्रीन ऐप्स के ऊपर";
 "Hang copied images" = "कॉपी की गई तस्वीरें टाँगें";
 "Images you copy hang on the line too" = "आप जो तस्वीरें कॉपी करते हैं, वे भी रस्सी पर टँगती हैं";
-"Tendedero, hanging copied images" = "Tendedero, कॉपी की गई तस्वीरें टाँग रहा है";
+"Snapfly, hanging copied images" = "Snapfly, कॉपी की गई तस्वीरें टाँग रहा है";
+"Hide private details" = "निजी जानकारी छिपाएँ";
+"Names" = "नाम";
+"Addresses" = "पते";
+"Emails" = "ईमेल";
+"Phone numbers" = "फ़ोन नंबर";
+"Bank cards and accounts" = "बैंक कार्ड और खाते";
+"Health details" = "स्वास्थ्य जानकारी";
+"What is checked is covered in whatever leaves the line" = "जो चुना गया है, वह रस्सी से बाहर जाने वाली हर चीज़ में ढक दिया जाता है";
 
 /* GrabArea */
 "Copy" = "कॉपी करें";
+"Copy Text" = "टेक्स्ट कॉपी करें";
 "Open" = "खोलें";
 "Quick Look" = "क्विक लुक";
 "Markup" = "मार्कअप";
+"Hide Part…" = "कोई हिस्सा छिपाएँ…";
 "Show in Finder" = "Finder में दिखाएँ";
 "Save to Desktop" = "डेस्कटॉप पर सेव करें";
 "Discard" = "हटाएँ";
@@ -65,5 +76,62 @@
 /* PeggedView */
 "Copied" = "कॉपी हो गया";
 
-/* LineTag */
+/* LineTag, GrabArea */
+"Copy all" = "सब कॉपी करें";
+"Paste into %@" = "%@ में पेस्ट करें";
+"Paste into the app in front" = "सामने वाले ऐप में पेस्ट करें";
+"Combine into one image" = "एक तस्वीर में जोड़ें";
+"One under another" = "एक के नीचे एक";
+"Side by side" = "अगल-बगल";
 "Move the line" = "रस्सी खिसकाएँ";
+
+/* SettingsWindow */
+"Settings…" = "सेटिंग्स…";
+"Settings" = "सेटिंग्स";
+"General" = "सामान्य";
+"Line" = "रस्सी";
+"Privacy" = "गोपनीयता";
+"About" = "परिचय";
+"Preview" = "पूर्वावलोकन";
+"Take a screenshot to see it here" = "यहाँ देखने के लिए स्क्रीनशॉट लें";
+"Send button" = "भेजें बटन";
+"Allowed" = "अनुमति है";
+"Not allowed yet" = "अभी अनुमति नहीं है";
+"Open Accessibility Settings…" = "Accessibility सेटिंग्स खोलें…";
+"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "भेजें बटन सामने वाले ऐप में ⌘V दबाता है, इसलिए इसे Accessibility अनुमति चाहिए।";
+"Version %@" = "संस्करण %@";
+"Screenshots, one click from any chat." = "स्क्रीनशॉट, किसी भी चैट से बस एक क्लिक दूर।";
+"Made by %@" = "%@ द्वारा बनाया गया";
+"Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján के Tendedero पर आधारित, MIT लाइसेंस के तहत।";
+/* HideEditor */
+"Drag over anything to hide it. Click a box to show it again." = "जो छिपाना है उस पर ड्रैग करें। फिर से दिखाने के लिए किसी बॉक्स पर क्लिक करें।";
+"Remove All" = "सभी हटाएँ";
+"Cancel" = "रद्द करें";
+"Done" = "हो गया";
+/* TextCard, GrabArea */
+"Translate Text" = "टेक्स्ट का अनुवाद करें";
+"Describe" = "वर्णन लिखें";
+"Translation" = "अनुवाद";
+"Description" = "वर्णन";
+"Reading the screenshot…" = "स्क्रीनशॉट पढ़ा जा रहा है…";
+"Translating…" = "अनुवाद हो रहा है…";
+"Writing a description…" = "वर्णन लिखा जा रहा है…";
+"There is no text to read in this screenshot." = "इस स्क्रीनशॉट में पढ़ने के लिए कोई टेक्स्ट नहीं है।";
+"The language of this text could not be recognised." = "इस टेक्स्ट की भाषा पहचानी नहीं जा सकी।";
+"The text is already in %@." = "टेक्स्ट पहले से %@ में है।";
+"Translated from %@ on this Mac." = "इस Mac पर %@ से अनुवादित।";
+"To translate on this Mac, add %@ and %@ under Translation Languages in System Settings." = "इस Mac पर अनुवाद करने के लिए सिस्टम सेटिंग्स में अनुवाद भाषाएँ के अंतर्गत %@ और %@ जोड़ें।";
+"Translating from %@ into %@ is not available." = "%@ से %@ में अनुवाद उपलब्ध नहीं है।";
+"Could not translate this text." = "इस टेक्स्ट का अनुवाद नहीं हो सका।";
+"Written by Apple Intelligence on this Mac." = "इस Mac पर Apple Intelligence द्वारा लिखा गया।";
+"Written by Apple Intelligence and translated on this Mac." = "Apple Intelligence द्वारा लिखा गया और इस Mac पर अनुवादित।";
+"Apple Intelligence cannot write in %@ yet, so this is in English." = "Apple Intelligence अभी %@ में नहीं लिख सकता, इसलिए यह अंग्रेज़ी में है।";
+"Apple Intelligence is off, so this is the screenshot's title. Turn it on in System Settings for a written description." = "Apple Intelligence बंद है, इसलिए यह स्क्रीनशॉट का शीर्षक है। लिखित वर्णन के लिए इसे सिस्टम सेटिंग्स में चालू करें।";
+"Apple Intelligence is still getting ready, so this is the screenshot's title for now." = "Apple Intelligence अभी तैयार हो रहा है, इसलिए फ़िलहाल यह स्क्रीनशॉट का शीर्षक है।";
+"Apple Intelligence is not available on this Mac, so this is the screenshot's title." = "इस Mac पर Apple Intelligence उपलब्ध नहीं है, इसलिए यह स्क्रीनशॉट का शीर्षक है।";
+"This is the screenshot's title." = "यह स्क्रीनशॉट का शीर्षक है।";
+"Could not describe this screenshot." = "इस स्क्रीनशॉट का वर्णन नहीं हो सका।";
+"Open System Settings…" = "सिस्टम सेटिंग्स खोलें…";
+"Close" = "बंद करें";
+"Send" = "भेजें";
+"Send with Photo" = "फ़ोटो के साथ भेजें";
