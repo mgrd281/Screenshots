@@ -131,6 +131,35 @@ final class Preferences: ObservableObject {
         set { change { ChatButton.isEnabled = newValue } }
     }
 
+    var chatButtonInApps: Bool {
+        get { ChatButton.inApps }
+        set { change { ChatButton.inApps = newValue } }
+    }
+
+    var chatSites: [ChatButton.Site] {
+        get { ChatButton.sites }
+        set { change { ChatButton.sites = newValue } }
+    }
+
+    func chatSiteOn(_ host: String) -> Binding<Bool> {
+        Binding(
+            get: { ChatButton.sites.first { $0.host == host }?.on ?? false },
+            set: { on in
+                self.chatSites = ChatButton.sites.map { $0.host == host ? ChatButton.Site(host: host, on: on) : $0 }
+            })
+    }
+
+    /// Adds a website as typed. False when it isn't one, or is there already.
+    func addChatSite(_ text: String) -> Bool {
+        guard let host = ChatButton.host(from: text), !chatSites.contains(where: { $0.host == host }) else { return false }
+        chatSites.append(ChatButton.Site(host: host))
+        return true
+    }
+
+    func removeChatSite(_ host: String) {
+        chatSites.removeAll { $0.host == host }
+    }
+
     /// The button as it looks with these settings, for the preview.
     let chatButtonPreview = ChatButtonModel()
 
@@ -399,6 +428,10 @@ private struct ChatButtonSection: View {
                 Text(L("While photos hang, a send button waits just above the chat's own. Drag it where you like it."))
             }
             Group {
+                Toggle(isOn: $prefs.chatButtonInApps) {
+                    Text(L("In chat apps"))
+                    Text(L("ChatGPT, Claude, WhatsApp, Telegram, Messages and others."))
+                }
                 Picker(L("Position"), selection: $prefs.chatButtonPlacement) {
                     ForEach(ChatButtonPlacement.allCases) { placement in
                         Text(placement.title).tag(placement)
@@ -457,6 +490,60 @@ private struct ChatButtonSection: View {
             .opacity(prefs.chatButton ? 1 : 0.5)
         }
         .onAppear { prefs.refreshChatButtonPreview() }
+
+        ChatSitesSection(prefs: prefs)
+    }
+}
+
+/// The chat websites where the button shows in a browser: each can be
+/// turned off or removed, and any other can be added.
+private struct ChatSitesSection: View {
+    @ObservedObject var prefs: Preferences
+    @State private var newSite = ""
+    @State private var rejected = false
+
+    var body: some View {
+        Section {
+            ForEach(prefs.chatSites) { site in
+                HStack {
+                    Toggle(isOn: prefs.chatSiteOn(site.host)) {
+                        Text(verbatim: site.host)
+                    }
+                    Button { prefs.removeChatSite(site.host) } label: {
+                        Image(systemName: "minus.circle")
+                    }
+                    .buttonStyle(.borderless)
+                    .help(L("Remove"))
+                    .accessibilityLabel(L("Remove"))
+                }
+            }
+            HStack {
+                TextField(L("Add a website"), text: $newSite, prompt: Text(verbatim: "example.com"))
+                    .onSubmit(add)
+                    .onChange(of: newSite) { _, _ in rejected = false }
+                Button(L("Add"), action: add)
+                    .disabled(newSite.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+            if rejected {
+                Text(L("That isn't a website, or it is in the list already."))
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+        } header: {
+            Text(L("Chat websites"))
+        } footer: {
+            Text(L("In Safari, Chrome and other browsers, it shows only on these websites. macOS asks once whether Snapfly may see which page is open."))
+                .foregroundStyle(.secondary)
+        }
+        .disabled(!prefs.chatButton)
+    }
+
+    private func add() {
+        if prefs.addChatSite(newSite) {
+            newSite = ""
+        } else {
+            rejected = true
+        }
     }
 }
 

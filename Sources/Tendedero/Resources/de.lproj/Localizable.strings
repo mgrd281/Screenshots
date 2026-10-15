@@ -191,3 +191,11 @@
 "Orange" = "Orange";
 "Pink" = "Pink";
 "Graphite" = "Graphit";
+"In chat apps" = "In Chat-Apps";
+"ChatGPT, Claude, WhatsApp, Telegram, Messages and others." = "ChatGPT, Claude, WhatsApp, Telegram, Nachrichten und andere.";
+"Remove" = "Entfernen";
+"Add a website" = "Website hinzufügen";
+"Add" = "Hinzufügen";
+"That isn't a website, or it is in the list already." = "Das ist keine Website, oder sie steht schon in der Liste.";
+"Chat websites" = "Chat-Websites";
+"In Safari, Chrome and other browsers, it shows only on these websites. macOS asks once whether Snapfly may see which page is open." = "In Safari, Chrome und anderen Browsern erscheint sie nur auf diesen Websites. macOS fragt einmal, ob Snapfly sehen darf, welche Seite offen ist.";

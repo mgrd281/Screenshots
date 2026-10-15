@@ -191,3 +191,11 @@
 "Orange" = "주황색";
 "Pink" = "분홍색";
 "Graphite" = "그래파이트";
+"In chat apps" = "채팅 앱에서";
+"ChatGPT, Claude, WhatsApp, Telegram, Messages and others." = "ChatGPT, Claude, WhatsApp, Telegram, 메시지 등.";
+"Remove" = "제거";
+"Add a website" = "웹 사이트 추가";
+"Add" = "추가";
+"That isn't a website, or it is in the list already." = "웹 사이트가 아니거나 이미 목록에 있어요.";
+"Chat websites" = "채팅 웹 사이트";
+"In Safari, Chrome and other browsers, it shows only on these websites. macOS asks once whether Snapfly may see which page is open." = "Safari, Chrome 등 브라우저에서는 이 웹 사이트에서만 나타나요. 어떤 페이지가 열려 있는지 Snapfly가 봐도 되는지 macOS가 한 번 물어봐요.";

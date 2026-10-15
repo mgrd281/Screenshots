@@ -103,7 +103,10 @@ so macOS asks for the Accessibility permission the first time.
 
 While photos hang, the same send button waits over the chat itself, just
 above its own send button: in ChatGPT, Claude, WhatsApp, Messages, Telegram
-and other chats, and in browsers. It shows the newest photo and how many
+and other chat apps, and in Safari, Chrome and other browsers only on chat
+websites like chatgpt.com, claude.ai or web.whatsapp.com. Settings lists
+them; turn any off or add your own. To know the page, Snapfly asks the
+browser, and macOS asks you once whether it may. It shows the newest photo and how many
 will go. One click and they are in, without a trip to the top of the screen.
 Drag it where you like it; it remembers the spot for each app. In Settings,
 under Line, choose where it sits (above the chat's send button, a corner of
