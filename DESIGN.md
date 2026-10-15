@@ -429,6 +429,20 @@ apps.
     with the pointer, and hides once a drag begins. It says what the choice
     is for: a screenshot, a timed screenshot or a recording.
   - The cursor is the crosshair.
+- **Screenshot button** (`CaptureButton.swift`), a 40 pt `controlGlass`
+  circle with `camera.viewfinder` (17 pt semibold, `.primary`), floating
+  over every app at the trailing edge of the main screen, 60% up its
+  visible height, until dragged elsewhere (remembered).
+  - A tag's shadow (black 18%, radius 6, y 3; none under Liquid Glass) in a
+    12 pt transparent margin; only the circle takes the pointer.
+  - Hover scales it to 1.08 through `Motion.spring`.
+  - It never becomes key. A click takes a screenshot as Settings says; a
+    drag moves it; a right-click offers Choose an area, Take the whole
+    screen, Record Screen, Hide Screenshot Button and Settings.
+  - While recording it is a record red circle with a white `stop.fill`
+    (13 pt bold), and a click stops.
+  - It is never in what is taken. Settings › Line › Screenshot button and
+    the menu bar's Screenshot Button turn it on and off.
 - **Capture capsule** (`Recording.swift`), for a timed screenshot and a
   recording. A `controlGlass` capsule with a 4 pt inset, centered 16 pt
   above the Dock, with a floating card's shadow (black 25%, radius 14, y 6;

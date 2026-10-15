@@ -132,6 +132,16 @@ final class Preferences: ObservableObject {
         set { change { History.days = newValue } }
     }
 
+    var captureButton: Bool {
+        get { CaptureButton.isEnabled }
+        set { change { CaptureButton.isEnabled = newValue } }
+    }
+
+    var captureButtonClick: CaptureButton.Click {
+        get { CaptureButton.click }
+        set { change { CaptureButton.click = newValue } }
+    }
+
     var chatButton: Bool {
         get { ChatButton.isEnabled }
         set { change { ChatButton.isEnabled = newValue } }
@@ -446,6 +456,18 @@ private struct LinePane: View {
                 }
             }
             ChatButtonSection(prefs: prefs)
+            Section(L("Screenshot button")) {
+                Toggle(isOn: $prefs.captureButton) {
+                    Text(L("Show the screenshot button"))
+                    Text(L("A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere."))
+                }
+                Picker(L("A click"), selection: $prefs.captureButtonClick) {
+                    Text(L("Chooses an area")).tag(CaptureButton.Click.choose)
+                    Text(L("Takes the whole screen")).tag(CaptureButton.Click.screen)
+                    Text(L("Takes the last area again")).tag(CaptureButton.Click.lastArea)
+                }
+                .disabled(!prefs.captureButton)
+            }
             Section {
                 shortcutRow(L("Show or hide the line"), .toggle)
                 shortcutRow(L("Send the newest photo"), .send)

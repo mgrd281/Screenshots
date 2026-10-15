@@ -261,3 +261,16 @@
 "Could not save it to the Desktop." = "无法存储到桌面。";
 "Could not save the changes." = "无法存储更改。";
 "Could not trim the recording." = "无法修剪录制内容。";
+
+/* Screenshot button */
+"Choose an area" = "选择区域";
+"Take the whole screen" = "截取整个屏幕";
+"Hide Screenshot Button" = "隐藏截屏按钮";
+"Screenshot Button" = "截屏按钮";
+"Screenshot button" = "截屏按钮";
+"Show the screenshot button" = "显示截屏按钮";
+"A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere." = "屏幕边缘的小按钮，点按一下即可截屏。可拖到任意位置。";
+"A click" = "点按时";
+"Chooses an area" = "选择区域";
+"Takes the whole screen" = "截取整个屏幕";
+"Takes the last area again" = "再次截取上次的区域";

@@ -261,3 +261,16 @@
 "Could not save it to the Desktop." = "No se pudo guardar en el escritorio.";
 "Could not save the changes." = "No se pudieron guardar los cambios.";
 "Could not trim the recording." = "No se pudo recortar la grabación.";
+
+/* Screenshot button */
+"Choose an area" = "Elegir una zona";
+"Take the whole screen" = "Capturar toda la pantalla";
+"Hide Screenshot Button" = "Ocultar el botón de captura";
+"Screenshot Button" = "Botón de captura";
+"Screenshot button" = "Botón de captura";
+"Show the screenshot button" = "Mostrar el botón de captura";
+"A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere." = "Un pequeño botón en el borde de la pantalla hace una captura con un clic. Arrástralo donde quieras.";
+"A click" = "Un clic";
+"Chooses an area" = "elige una zona";
+"Takes the whole screen" = "captura toda la pantalla";
+"Takes the last area again" = "vuelve a capturar la última zona";

@@ -263,3 +263,16 @@
 "Could not save it to the Desktop." = "इसे डेस्कटॉप पर सहेजा नहीं जा सका।";
 "Could not save the changes." = "बदलाव सहेजे नहीं जा सके।";
 "Could not trim the recording." = "रिकॉर्डिंग छोटी नहीं की जा सकी।";
+
+/* Screenshot button */
+"Choose an area" = "हिस्सा चुनें";
+"Take the whole screen" = "पूरी स्क्रीन लें";
+"Hide Screenshot Button" = "स्क्रीनशॉट बटन छिपाएँ";
+"Screenshot Button" = "स्क्रीनशॉट बटन";
+"Screenshot button" = "स्क्रीनशॉट बटन";
+"Show the screenshot button" = "स्क्रीनशॉट बटन दिखाएँ";
+"A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere." = "स्क्रीन के किनारे पर एक छोटा बटन एक क्लिक में स्क्रीनशॉट लेता है। इसे कहीं भी खींचें।";
+"A click" = "एक क्लिक";
+"Chooses an area" = "हिस्सा चुनता है";
+"Takes the whole screen" = "पूरी स्क्रीन लेता है";
+"Takes the last area again" = "पिछला हिस्सा फिर से लेता है";

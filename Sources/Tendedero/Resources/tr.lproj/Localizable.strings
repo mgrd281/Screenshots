@@ -261,3 +261,16 @@
 "Could not save it to the Desktop." = "Masaüstüne kaydedilemedi.";
 "Could not save the changes." = "Değişiklikler kaydedilemedi.";
 "Could not trim the recording." = "Kayıt kırpılamadı.";
+
+/* Screenshot button */
+"Choose an area" = "Alan seç";
+"Take the whole screen" = "Tüm ekranı al";
+"Hide Screenshot Button" = "Ekran görüntüsü düğmesini gizle";
+"Screenshot Button" = "Ekran görüntüsü düğmesi";
+"Screenshot button" = "Ekran görüntüsü düğmesi";
+"Show the screenshot button" = "Ekran görüntüsü düğmesini göster";
+"A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere." = "Ekranın kenarındaki küçük düğme tek tıkla ekran görüntüsü alır. İstediğin yere sürükle.";
+"A click" = "Bir tık";
+"Chooses an area" = "alan seçer";
+"Takes the whole screen" = "tüm ekranı alır";
+"Takes the last area again" = "son alanı yeniden alır";

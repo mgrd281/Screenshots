@@ -126,6 +126,13 @@ from where it was taken straight onto the line, with nothing to set up in the
 Screenshot app first. macOS asks for the Screen Recording permission the
 first time.
 
+Faster still: the screenshot button, a small glass circle at the edge of the
+screen, takes one in a single click. In Settings, under Line, choose what a
+click does: choose an area, take the whole screen at once, or take the last
+area again. Drag it anywhere, right-click it for the rest, or turn it off with
+Screenshot Button in the menu bar. While the screen is recorded, it is the
+stop button.
+
 For a menu that closes when you press a shortcut, choose Take Screenshot with
 Timer, then 3, 5 or 10 seconds. Choose what to take, open the menu, and a
 countdown above the Dock takes it when it runs out. A click on the countdown
@@ -301,6 +308,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again |
 | `ChatButton.swift` | The send button that floats over a chat while photos hang |
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen, now or after a countdown |
+| `CaptureButton.swift` | The screenshot button: one click takes a screenshot, from the edge of the screen |
 | `Recording.swift` | Records the screen from Snapfly itself, with the countdown, recording and note capsule above the Dock, and makes GIFs of recordings |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |

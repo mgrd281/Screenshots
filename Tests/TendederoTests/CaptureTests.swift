@@ -53,3 +53,10 @@ final class CaptureTests: XCTestCase {
         XCTAssertEqual(Capture.timerChoices, [3, 5, 10])
     }
 }
+
+/// The screenshot button's choice is saved by name, so it survives updates.
+final class CaptureButtonTests: XCTestCase {
+    func testClickChoicesKeepTheirNames() {
+        XCTAssertEqual(CaptureButton.Click.allCases.map(\.rawValue), ["choose", "screen", "lastArea"])
+    }
+}

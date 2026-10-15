@@ -263,3 +263,16 @@
 "Could not save it to the Desktop." = "İş masasında saxlanıla bilmədi.";
 "Could not save the changes." = "Dəyişikliklər saxlanıla bilmədi.";
 "Could not trim the recording." = "Yazı kəsilə bilmədi.";
+
+/* Screenshot button */
+"Choose an area" = "Sahə seç";
+"Take the whole screen" = "Bütün ekranı çək";
+"Hide Screenshot Button" = "Ekran şəkli düyməsini gizlət";
+"Screenshot Button" = "Ekran şəkli düyməsi";
+"Screenshot button" = "Ekran şəkli düyməsi";
+"Show the screenshot button" = "Ekran şəkli düyməsini göstər";
+"A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere." = "Ekranın kənarındakı kiçik düymə bir kliklə ekran şəkli çəkir. İstədiyin yerə sürüşdür.";
+"A click" = "Klik";
+"Chooses an area" = "sahə seçir";
+"Takes the whole screen" = "bütün ekranı çəkir";
+"Takes the last area again" = "son sahəni yenidən çəkir";
