@@ -262,6 +262,13 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     }
 
     override func mouseDown(with event: NSEvent) {
+        // Control-click is the Mac's right click: it opens the menu, rather
+        // than copying the photo or, held, opening Markup.
+        if event.modifierFlags.contains(.control) {
+            downPoint = nil
+            rightMouseDown(with: event)
+            return
+        }
         if isInCross(event) {
             downPoint = nil
             onDiscard()
