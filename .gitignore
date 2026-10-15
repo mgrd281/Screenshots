@@ -7,3 +7,11 @@ website/_site/
 __pycache__/
 promo/promo-*.html
 promo/out/
+
+# What the Playwright MCP server saves while the agent tests the site.
+.playwright-mcp/
+
+# The website tests' packages and results.
+site-tests/node_modules/
+site-tests/test-results/
+site-tests/playwright-report/
