@@ -36,7 +36,7 @@ TEXT["en"] = dict(
     hero_sub="Every screenshot you take hangs on a line at the top of your screen. Click one to copy it, or send it straight into the chat you’re typing in. Names and other private details are covered first, whether it goes to ChatGPT or to a person.",
     cta="Download for Mac",
     cta_note="Free · macOS 14 or later · Apple silicon and Intel",
-    try_hint="Try it: send one screenshot with its paper plane, or all of them with Send all.",
+    try_hint="Try it: drag a screenshot along the line to change the order. Send one with its paper plane, or all of them with Snapfly’s button over the chat. Hold that button to add a message.",
     chat_title="Chat",
     chat_in="Can you send me yesterday’s invoice?",
     chat_reply="Got it, thanks!",
@@ -51,7 +51,7 @@ TEXT["en"] = dict(
     refill="New screenshots",
 
     send_h="All of them into WhatsApp or ChatGPT, with one click.",
-    send_p="The send button at the end of the line pastes every screenshot on it into the app in front, WhatsApp, ChatGPT or any chat, right where you were typing. Each screenshot also carries its own paper plane, to send just that one. <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> sends the newest one without reaching for the mouse. Once sent, it leaves the line, so the line only holds what’s still to send.",
+    send_p="The send button at the end of the line pastes every screenshot on it into the app in front, WhatsApp, ChatGPT or any chat, right where you were typing. Each screenshot also carries its own paper plane, to send just that one. <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> sends the newest one without reaching for the mouse. Once sent, it leaves the line, so the line only holds what’s still to send. Over WhatsApp, ChatGPT and other chats, a send button sits right above their own. Hold it to add a message, which arrives after the photos.",
     keys=["control", "option", ""],
     keys_label="The shortcut Control, Option, V",
 
@@ -90,6 +90,38 @@ TEXT["en"] = dict(
         "Show in Finder": "Shows the file where it’s saved.",
         "Discard": "Lets it go.",
     },
+
+    chatbtn_label="Send all the screenshots to the chat",
+    chatbtn_hold="Hold to add a message",
+    caption_reply="Perfect, thank you!",
+
+    cap_h="One click, and it’s on the line.",
+    cap_p="Press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span> or click the screenshot button at the edge of the screen, then drag over an area, click a window or take the whole screen. It hangs on the line at once: no file on the Desktop, nothing to wait for. A menu that closes when you click? Take it with a timer. Something that moves? Record it.",
+    cap_try="Try it on this Mac: click the screenshot button at the edge of its screen, or press ⌃⌥S. For a timer or a recording, open Snapfly’s menu in its menu bar.",
+    cap_label="A Mac screen with Snapfly. Its menu, screenshot button and line work as in the app.",
+    cap_line="Screenshots taken on this screen",
+    cap_hung="Hung on the line",
+    cap_shot="Screenshot {n}",
+    cap_rec="Recording {n}",
+    scene=dict(app="Flights", menus=["File", "Edit", "View", "Window"], clock="Fri Oct 23  9:41 AM",
+               url="flights.example", route="Berlin → Lisbon", when="Fri, Oct 23 · 1 adult",
+               sort="Sort: Price", sort_items=["Price", "Duration", "Departure"],
+               flights=[("07:10 – 10:05", "3 h 55 min · Nonstop", "€89"),
+                        ("09:30 – 13:45", "4 h 15 min · Nonstop", "€112"),
+                        ("12:20 – 17:55", "5 h 35 min · 1 stop", "€97")],
+               cheapest="Cheapest", song="Sunday Light", artist="The Pegs"),
+
+    say_h="Say what to hide.",
+    say_p="Hold a screenshot, choose Hide Part…, and say it in your own words, like “everything but the amount and the date”. With Apple Intelligence, Snapfly understands the whole sentence, on your Mac. Without it, type the words to hide. Or drag a box over anything.",
+    say_try="Try it: click an example, or write your own.",
+    say_file="Screenshot 2026-10-23 at 09.41.12",
+    say_label="The Hide Part window, with a bank transfer in it",
+    rcpt=dict(title="Transfer sent", date="October 23, 2026 · 09:41", amount="€1,250.00",
+              from_l="From", to_l="To", ref_l="Reference", addr_l="Address", email_l="Email", phone_l="Phone",
+              from_name="Lena Hoffmann", from_iban="DE89 3704 0044 0532 0130 00",
+              to_name="Jonas Weber", to_iban="DE02 1203 0000 0000 2020 51",
+              ref="Rent for November", addr="Lindenstraße 12, 10969 Berlin",
+              email="lena.hoffmann@example.com", phone="+49 30 1234 5678"),
 
     styles_h="Four ways to hang.",
     styles_p="Pick what your screenshots hang on. Everything else works the same on each.",
@@ -130,10 +162,13 @@ TEXT["en"] = dict(
 <li><strong>Your files.</strong> Snapfly reads the screenshots in the folders you let it watch, and in the Mac App Store edition the Snapfly folder in Pictures. It copies, sends, moves or deletes a screenshot only when you ask it to, or, if you leave that setting on, after you have sent it into a chat.</li>
 <li><strong>Copied images.</strong> If you turn on Hang copied images, Snapfly looks at images you copy, to hang them on the line. It leaves alone anything copied together with text or a file, and anything a password manager marks as private.</li>
 <li><strong>The Accessibility permission</strong> lets the send button paste a screenshot into the app you are using, by pressing ⌘V there. Snapfly uses it for nothing else. You can turn it off at any time in System Settings › Privacy &amp; Security › Accessibility.</li>
+<li><strong>The Screen Recording permission</strong> lets Snapfly take the screenshots and recordings you ask for, with ⌃⌥S, the screenshot button or Record Screen. It captures only when you ask, and what it takes stays on your Mac.</li>
+<li><strong>Browsers.</strong> So that the send button shows only on chat websites, Snapfly asks the browser in front for the address of the page that is open, once you allow it. It reads nothing else from the browser and keeps nothing.</li>
+<li>Settings › Permissions shows each of these, whether it is allowed, and how to change it.</li>
 <li><strong>Your settings</strong>, such as the line style and what to cover, are stored on your Mac only.</li>
 </ul>"""),
         ("Apple’s services",
-         """<p>Translate Text uses Apple’s translation on your Mac; macOS may download language files from Apple for it. Describe uses Apple Intelligence on your Mac. When you get Snapfly from the Mac App Store or TestFlight, Apple handles that under its own privacy policy. If you have agreed to share analytics with app developers, Apple may give us anonymous crash reports and usage statistics, which we use only to fix problems. See <a href="https://www.apple.com/legal/privacy/">Apple’s privacy policy</a>.</p>"""),
+         """<p>Translate Text uses Apple’s translation on your Mac; macOS may download language files from Apple for it. Describe, and Hide Part when you say what to hide in a sentence, use Apple Intelligence on your Mac. When you get Snapfly from the Mac App Store or TestFlight, Apple handles that under its own privacy policy. If you have agreed to share analytics with app developers, Apple may give us anonymous crash reports and usage statistics, which we use only to fix problems. See <a href="https://www.apple.com/legal/privacy/">Apple’s privacy policy</a>.</p>"""),
         ("This website",
          """<p>This website is hosted on GitHub Pages, a service of GitHub, Inc. in the United States. When you visit it, GitHub’s servers receive technical data such as your IP address and browser, and GitHub logs it to keep the service secure. We have no access to those logs. The legal basis is our legitimate interest in offering this website securely (Art. 6(1)(f) GDPR). See the <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">GitHub Privacy Statement</a>.</p>
 <p>The website sets no cookies, loads nothing from other services and uses no analytics. If you pick a language, your browser remembers it in its local storage. That never leaves your device.</p>"""),
@@ -160,10 +195,19 @@ TEXT["en"] = dict(
 <p>In the Mac App Store edition, open the Screenshot app, click Options, choose Other Location and pick the Snapfly folder in Pictures.</p>"""),
         ("How do I bring the line down?",
          """<p>Rest the pointer at the top edge of the screen, in the menu bar, and the line glides down. Or press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>T</kbd></span>. Move away and it tucks itself away again.</p>"""),
+        ("How do I take a screenshot with Snapfly?",
+         """<p>Press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span>, or click the screenshot button at the edge of the screen. Then drag over an area, click a window, or press Return for the whole screen. It hangs on the line at once. The first time, macOS asks you to allow Screen Recording for Snapfly.</p>
+<p>For a menu that closes when you click, choose Take Screenshot with Timer in Snapfly’s menu in the menu bar and pick the seconds, then open the menu before the countdown ends.</p>"""),
+        ("How do I record the screen?",
+         """<p>Choose Record Screen in Snapfly’s menu in the menu bar, or press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>R</kbd></span>. Drag over an area or click a window. To stop, click the red button at the bottom of the screen. The recording hangs on the line; hold it and choose Make GIF to turn it into a GIF.</p>"""),
+        ("How do I send a message with the photos?",
+         """<p>Press and hold the send button over the chat, or right-click it and choose Send with a Message…. Write your message and press Return: the photos go first, then your words.</p>"""),
+        ("How do I change the order on the line?",
+         """<p>Drag a screenshot left or right along the line. Send all and Copy all keep that order. With VoiceOver, use Move Earlier and Move Later.</p>"""),
         ("How do I send a screenshot into a chat?",
          """<p>Click into the chat’s message field, then click the paper plane on a screenshot. Or press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> to send the newest one. To send several at once, ⌘-click them first.</p>"""),
         ("The send button says “Not allowed yet”.",
-         """<p>Sending presses ⌘V for you, and macOS asks for the Accessibility permission for that.</p>
+         """<p>Sending presses ⌘V for you, and macOS asks for the Accessibility permission for that. Settings › Permissions in Snapfly shows each permission it uses, whether it is allowed, and one button to allow it.</p>
 <ol>
 <li>Open System Settings › Privacy &amp; Security › Accessibility.</li>
 <li>If Snapfly is in the list, switch it on.</li>
@@ -173,7 +217,7 @@ TEXT["en"] = dict(
         ("How do I make a PDF?",
          """<p>Press and hold a screenshot, or right-click it, and choose Make PDF. To put several screenshots in one PDF, ⌘-click them first, then click the PDF button on the tag at the end of the line.</p>"""),
         ("How do I cover private details?",
-         """<p>Open Settings › Privacy and check what to cover. To cover anything it missed, hold the screenshot and choose Hide Part…</p>"""),
+         """<p>Open Settings › Privacy and check what to cover. To cover anything it missed, hold the screenshot and choose Hide Part…, then drag over it or say what to hide, like “everything but the amount and the date”.</p>"""),
         ("Which Macs does Snapfly run on?",
          """<p>macOS 14 Sonoma or later, on Apple silicon and Intel. Translate Text needs macOS 15. Describe writes with Apple Intelligence where your Mac has it, and uses the screenshot’s title otherwise.</p>"""),
         ("How do I uninstall Snapfly?",
@@ -205,7 +249,7 @@ TEXT["de"] = dict(
     hero_sub="Jedes Bildschirmfoto hängt an einer Leine oben auf deinem Bildschirm. Ein Klick kopiert es, oder du schickst es direkt in den Chat, in dem du gerade schreibst. Namen und andere private Angaben werden vorher verdeckt, ob es an ChatGPT geht oder an einen Menschen.",
     cta="Für Mac laden",
     cta_note="Kostenlos · ab macOS 14 · Apple Silicon und Intel",
-    try_hint="Probier’s aus: Schick ein Bild mit seinem Papierflieger oder alle mit „Alle senden“.",
+    try_hint="Probier’s aus: Zieh ein Bild an der Leine entlang, um die Reihenfolge zu ändern. Schick eines mit seinem Papierflieger oder alle mit der Taste von Snapfly über dem Chat. Halt diese Taste gedrückt, um eine Nachricht dazuzuschreiben.",
     chat_title="Chat",
     chat_in="Kannst du mir die Rechnung von gestern schicken?",
     chat_reply="Ist angekommen, danke!",
@@ -220,7 +264,7 @@ TEXT["de"] = dict(
     refill="Neue Bildschirmfotos",
 
     send_h="Alle auf einmal in WhatsApp oder ChatGPT, mit einem Klick.",
-    send_p="Die Senden-Taste am Ende der Leine setzt alle Bildschirmfotos darauf in die App im Vordergrund ein – WhatsApp, ChatGPT oder jeden Chat –, genau dort, wo du gerade schreibst. Jedes Bildschirmfoto hat außerdem einen eigenen Papierflieger, um nur dieses zu senden. <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> schickt das neueste, ohne dass du zur Maus greifst. Was gesendet ist, verlässt die Leine. So hängt dort nur, was noch zu senden ist.",
+    send_p="Die Senden-Taste am Ende der Leine setzt alle Bildschirmfotos darauf in die App im Vordergrund ein – WhatsApp, ChatGPT oder jeden Chat –, genau dort, wo du gerade schreibst. Jedes Bildschirmfoto hat außerdem einen eigenen Papierflieger, um nur dieses zu senden. <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> schickt das neueste, ohne dass du zur Maus greifst. Was gesendet ist, verlässt die Leine. So hängt dort nur, was noch zu senden ist. Über WhatsApp, ChatGPT und anderen Chats sitzt eine Senden-Taste direkt über ihrer eigenen. Halt sie gedrückt, um eine Nachricht dazuzuschreiben: Sie kommt nach den Bildern an.",
     keys=["ctrl", "alt", ""],
     keys_label="Das Kürzel Control, Option, V",
 
@@ -259,6 +303,38 @@ TEXT["de"] = dict(
         "Show in Finder": "Zeigt die Datei dort, wo sie gespeichert ist.",
         "Discard": "Lässt es los.",
     },
+
+    chatbtn_label="Alle Bildschirmfotos in den Chat senden",
+    chatbtn_hold="Gedrückt halten für eine Nachricht",
+    caption_reply="Perfekt, danke dir!",
+
+    cap_h="Ein Klick, und es hängt an der Leine.",
+    cap_p="Drück <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span> oder klick auf die Bildschirmfoto-Taste am Bildschirmrand, dann zieh über einen Bereich, klick auf ein Fenster oder nimm den ganzen Bildschirm. Es hängt sofort an der Leine: keine Datei auf dem Schreibtisch, kein Warten. Ein Menü, das beim Klicken zugeht? Nimm es mit Timer auf. Etwas bewegt sich? Nimm den Bildschirm auf.",
+    cap_try="Probier’s auf diesem Mac: Klick auf die Bildschirmfoto-Taste am Rand seines Bildschirms oder drück ⌃⌥S. Für Timer oder Aufnahme öffnest du das Menü von Snapfly in seiner Menüleiste.",
+    cap_label="Ein Mac-Bildschirm mit Snapfly. Menü, Bildschirmfoto-Taste und Leine funktionieren wie in der App.",
+    cap_line="Auf diesem Bildschirm aufgenommene Bildschirmfotos",
+    cap_hung="An die Leine gehängt",
+    cap_shot="Bildschirmfoto {n}",
+    cap_rec="Aufnahme {n}",
+    scene=dict(app="Flüge", menus=["Ablage", "Bearbeiten", "Darstellung", "Fenster"], clock="Fr. 23. Okt.  09:41",
+               url="flights.example", route="Berlin → Lissabon", when="Fr., 23. Okt. · 1 Erwachsener",
+               sort="Sortieren: Preis", sort_items=["Preis", "Dauer", "Abflug"],
+               flights=[("07:10 – 10:05", "3 Std. 55 Min. · Direkt", "89 €"),
+                        ("09:30 – 13:45", "4 Std. 15 Min. · Direkt", "112 €"),
+                        ("12:20 – 17:55", "5 Std. 35 Min. · 1 Stopp", "97 €")],
+               cheapest="Am günstigsten", song="Sunday Light", artist="The Pegs"),
+
+    say_h="Sag, was verdeckt wird.",
+    say_p="Halt ein Bildschirmfoto gedrückt, wähl „Bereich verdecken …“ und sag es mit deinen Worten, etwa „alles außer Betrag und Datum“. Mit Apple Intelligence versteht Snapfly den ganzen Satz, auf deinem Mac. Ohne tippst du die Wörter, die weg sollen. Oder zieh ein Rechteck über irgendetwas.",
+    say_try="Probier’s aus: Klick auf ein Beispiel oder schreib selbst etwas.",
+    say_file="Bildschirmfoto 2026-10-23 um 09.41.12",
+    say_label="Das Fenster „Bereich verdecken“ mit einer Überweisung darin",
+    rcpt=dict(title="Überweisung ausgeführt", date="23. Oktober 2026 · 09:41", amount="1.250,00 €",
+              from_l="Von", to_l="An", ref_l="Verwendungszweck", addr_l="Adresse", email_l="E-Mail", phone_l="Telefon",
+              from_name="Lena Hoffmann", from_iban="DE89 3704 0044 0532 0130 00",
+              to_name="Jonas Weber", to_iban="DE02 1203 0000 0000 2020 51",
+              ref="Miete November", addr="Lindenstraße 12, 10969 Berlin",
+              email="lena.hoffmann@example.com", phone="+49 30 1234 5678"),
 
     styles_h="Vier Arten zu hängen.",
     styles_p="Wähle, woran deine Bildschirmfotos hängen. Alles andere funktioniert überall gleich.",
@@ -299,10 +375,13 @@ TEXT["de"] = dict(
 <li><strong>Deine Dateien.</strong> Snapfly liest die Bildschirmfotos in den Ordnern, die du freigibst, in der Mac App Store-Ausgabe außerdem den Ordner „Snapfly“ in „Bilder“. Die App kopiert, sendet, verschiebt oder löscht ein Bildschirmfoto nur, wenn du es willst, oder – wenn du die Einstellung eingeschaltet lässt – nachdem du es in einen Chat gesendet hast.</li>
 <li><strong>Kopierte Bilder.</strong> Wenn du „Kopierte Bilder aufhängen“ einschaltest, sieht sich Snapfly Bilder an, die du kopierst, um sie an die Leine zu hängen. Was zusammen mit Text oder einer Datei kopiert wurde und was ein Passwortmanager als privat markiert, bleibt unberührt.</li>
 <li><strong>Die Berechtigung für Bedienungshilfen</strong> erlaubt der Senden-Taste, ein Bildschirmfoto in die App einzusetzen, die du gerade benutzt, indem sie dort ⌘V drückt. Snapfly nutzt sie für nichts anderes. Du kannst sie jederzeit unter Systemeinstellungen › Datenschutz &amp; Sicherheit › Bedienungshilfen ausschalten.</li>
+<li><strong>Die Berechtigung für Bildschirmaufnahme</strong> erlaubt Snapfly, die Bildschirmfotos und Aufnahmen zu machen, um die du bittest – mit ⌃⌥S, der Bildschirmfoto-Taste oder „Bildschirm aufnehmen“. Snapfly nimmt nur auf, wenn du es willst, und was es aufnimmt, bleibt auf deinem Mac.</li>
+<li><strong>Browser.</strong> Damit die Senden-Taste nur auf Chat-Websites erscheint, fragt Snapfly den Browser im Vordergrund nach der Adresse der geöffneten Seite, sobald du es erlaubst. Sonst liest es nichts aus dem Browser und speichert nichts.</li>
+<li>Einstellungen › Berechtigungen zeigt jede davon, ob sie erlaubt ist und wie du das änderst.</li>
 <li><strong>Deine Einstellungen</strong>, etwa der Stil der Leine und was verdeckt wird, werden nur auf deinem Mac gespeichert.</li>
 </ul>"""),
         ("Dienste von Apple",
-         """<p>„Text übersetzen“ nutzt Apples Übersetzung auf deinem Mac; macOS lädt dafür eventuell Sprachdateien von Apple. „Beschreiben“ nutzt Apple Intelligence auf deinem Mac. Wenn du Snapfly aus dem Mac App Store oder über TestFlight lädst, verarbeitet Apple das nach seiner eigenen Datenschutzrichtlinie. Wenn du zugestimmt hast, Analysedaten mit App-Entwicklern zu teilen, kann Apple uns anonyme Absturzberichte und Nutzungsstatistiken geben, die wir nur zur Fehlerbehebung verwenden. Siehe die <a href="https://www.apple.com/de/legal/privacy/">Datenschutzrichtlinie von Apple</a>.</p>"""),
+         """<p>„Text übersetzen“ nutzt Apples Übersetzung auf deinem Mac; macOS lädt dafür eventuell Sprachdateien von Apple. „Beschreiben“ und „Bereich verdecken“, wenn du in einem Satz sagst, was verdeckt wird, nutzen Apple Intelligence auf deinem Mac. Wenn du Snapfly aus dem Mac App Store oder über TestFlight lädst, verarbeitet Apple das nach seiner eigenen Datenschutzrichtlinie. Wenn du zugestimmt hast, Analysedaten mit App-Entwicklern zu teilen, kann Apple uns anonyme Absturzberichte und Nutzungsstatistiken geben, die wir nur zur Fehlerbehebung verwenden. Siehe die <a href="https://www.apple.com/de/legal/privacy/">Datenschutzrichtlinie von Apple</a>.</p>"""),
         ("Diese Website",
          """<p>Diese Website wird bei GitHub Pages gehostet, einem Dienst der GitHub, Inc. in den USA. Beim Besuch erhalten die Server von GitHub technische Daten wie deine IP-Adresse und deinen Browser, und GitHub protokolliert sie, um den Dienst sicher zu betreiben. Wir haben keinen Zugriff auf diese Protokolle. Rechtsgrundlage ist unser berechtigtes Interesse, diese Website sicher anzubieten (Art. 6 Abs. 1 lit. f DSGVO). Siehe das <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement">Datenschutz-Statement von GitHub</a>.</p>
 <p>Die Website setzt keine Cookies, lädt nichts von anderen Diensten und nutzt keine Analyse. Wenn du eine Sprache wählst, merkt sich dein Browser das in seinem lokalen Speicher. Das verlässt dein Gerät nie.</p>"""),
@@ -329,10 +408,19 @@ TEXT["de"] = dict(
 <p>In der Mac App Store-Ausgabe öffnest du die App „Bildschirmfoto“, klickst auf „Optionen“, wählst „Anderer Ort“ und dann den Ordner „Snapfly“ in „Bilder“.</p>"""),
         ("Wie hole ich die Leine herunter?",
          """<p>Lass den Zeiger am oberen Bildschirmrand in der Menüleiste ruhen, und die Leine gleitet herunter. Oder drück <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>T</kbd></span>. Geh weg, und sie verschwindet wieder.</p>"""),
+        ("Wie mache ich ein Bildschirmfoto mit Snapfly?",
+         """<p>Drück <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span> oder klick auf die Bildschirmfoto-Taste am Bildschirmrand. Dann zieh über einen Bereich, klick auf ein Fenster oder drück Return für den ganzen Bildschirm. Es hängt sofort an der Leine. Beim ersten Mal bittet macOS dich, Snapfly die Bildschirmaufnahme zu erlauben.</p>
+<p>Für ein Menü, das beim Klicken zugeht, wähl im Menü von Snapfly in der Menüleiste „Bildschirmfoto mit Timer“ und die Sekunden. Öffne dann das Menü, bevor der Countdown endet.</p>"""),
+        ("Wie nehme ich den Bildschirm auf?",
+         """<p>Wähl „Bildschirm aufnehmen“ im Menü von Snapfly in der Menüleiste oder drück <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>R</kbd></span>. Zieh über einen Bereich oder klick auf ein Fenster. Zum Beenden klickst du auf die rote Taste unten auf dem Bildschirm. Die Aufnahme hängt an der Leine; halt sie gedrückt und wähl „GIF erstellen“, um ein GIF daraus zu machen.</p>"""),
+        ("Kann ich eine Nachricht mit den Bildern senden?",
+         """<p>Halt die Senden-Taste über dem Chat gedrückt oder klick mit rechts darauf und wähl „Mit Nachricht senden …“. Schreib deine Nachricht und drück Return: Erst kommen die Bilder, dann deine Worte.</p>"""),
+        ("Wie ändere ich die Reihenfolge an der Leine?",
+         """<p>Zieh ein Bildschirmfoto an der Leine nach links oder rechts. „Alle senden“ und „Alle kopieren“ behalten diese Reihenfolge. Mit VoiceOver nutzt du „Nach vorne“ und „Nach hinten“.</p>"""),
         ("Wie sende ich ein Bildschirmfoto in einen Chat?",
          """<p>Klick in das Nachrichtenfeld des Chats und dann auf den Papierflieger eines Bildschirmfotos. Oder drück <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span>, um das neueste zu senden. Um mehrere auf einmal zu senden, klick sie vorher mit ⌘ an.</p>"""),
         ("Die Senden-Taste zeigt „Noch nicht erlaubt“.",
-         """<p>Beim Senden drückt Snapfly für dich ⌘V, und dafür fragt macOS nach der Berechtigung für Bedienungshilfen.</p>
+         """<p>Beim Senden drückt Snapfly für dich ⌘V, und dafür fragt macOS nach der Berechtigung für Bedienungshilfen. Einstellungen › Berechtigungen in Snapfly zeigt jede Berechtigung, die es nutzt, ob sie erlaubt ist, und eine Taste, um sie zu erlauben.</p>
 <ol>
 <li>Öffne Systemeinstellungen › Datenschutz &amp; Sicherheit › Bedienungshilfen.</li>
 <li>Steht Snapfly in der Liste, schalte es ein.</li>
@@ -342,7 +430,7 @@ TEXT["de"] = dict(
         ("Wie erstelle ich ein PDF?",
          """<p>Halt ein Bildschirmfoto gedrückt oder klick mit rechts darauf und wähl „PDF erstellen“. Für mehrere Bildschirmfotos in einem PDF klickst du sie vorher mit ⌘ an und dann auf die PDF-Taste am Schild am Ende der Leine.</p>"""),
         ("Wie verdecke ich private Angaben?",
-         """<p>Öffne Einstellungen › Datenschutz und wähle, was verdeckt werden soll. Um etwas zu verdecken, das übersehen wurde, halt das Bildschirmfoto gedrückt und wähl „Bereich verdecken …“.</p>"""),
+         """<p>Öffne Einstellungen › Datenschutz und wähle, was verdeckt werden soll. Um etwas zu verdecken, das übersehen wurde, halt das Bildschirmfoto gedrückt und wähl „Bereich verdecken …“. Dann zieh darüber oder sag, was verdeckt wird, etwa „alles außer Betrag und Datum“.</p>"""),
         ("Auf welchen Macs läuft Snapfly?",
          """<p>Ab macOS 14 Sonoma, auf Apple Silicon und Intel. „Text übersetzen“ braucht macOS 15. „Beschreiben“ schreibt mit Apple Intelligence, wenn dein Mac es hat, und nimmt sonst den Titel des Bildschirmfotos.</p>"""),
         ("Wie deinstalliere ich Snapfly?",
@@ -374,7 +462,7 @@ TEXT["ar"] = dict(
     hero_sub="كل لقطة شاشة تلتقطها تُعلَّق على حبل في أعلى شاشتك. انقرها لتنسخها، أو أرسلها مباشرة إلى الدردشة التي تكتب فيها. والأسماء وغيرها من المعلومات الخاصة تُغطّى قبل الإرسال، سواء ذهبت إلى ChatGPT أو إلى شخص.",
     cta="تنزيل لجهاز Mac",
     cta_note="مجاني · macOS 14 أو أحدث · Apple silicon و Intel",
-    try_hint="جرّبه: أرسل لقطة واحدة بطائرتها الورقية، أو كلها بزر «إرسال الكل».",
+    try_hint="جرّبه: اسحب لقطة على طول الحبل لتغيّر ترتيبها. أرسل واحدة بطائرتها الورقية، أو كلها بزر Snapfly فوق الدردشة. واضغط على هذا الزر مطوّلًا لتضيف رسالة.",
     chat_title="دردشة",
     chat_in="ممكن ترسل لي فاتورة أمس؟",
     chat_reply="وصلت، شكرًا!",
@@ -389,7 +477,7 @@ TEXT["ar"] = dict(
     refill="لقطات جديدة",
 
     send_h="كلها إلى WhatsApp أو ChatGPT، بنقرة واحدة.",
-    send_p="زر الإرسال في آخر الحبل يلصق كل اللقطات المعلّقة عليه في التطبيق الذي أمامك، WhatsApp أو ChatGPT أو أي دردشة، في المكان الذي تكتب فيه. وعلى كل لقطة أيضًا طائرة ورقية لإرسالها وحدها. واختصار <bdi class=\"chord\" dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></bdi> يرسل أحدث لقطة دون أن تلمس الفأرة. وما يُرسَل يغادر الحبل، فلا يبقى عليه إلا ما لم يُرسَل بعد.",
+    send_p="زر الإرسال في آخر الحبل يلصق كل اللقطات المعلّقة عليه في التطبيق الذي أمامك، WhatsApp أو ChatGPT أو أي دردشة، في المكان الذي تكتب فيه. وعلى كل لقطة أيضًا طائرة ورقية لإرسالها وحدها. واختصار <bdi class=\"chord\" dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></bdi> يرسل أحدث لقطة دون أن تلمس الفأرة. وما يُرسَل يغادر الحبل، فلا يبقى عليه إلا ما لم يُرسَل بعد. وفوق WhatsApp و ChatGPT وغيرهما من الدردشات، يظهر زر إرسال فوق زرّها مباشرة. اضغط عليه مطوّلًا لتضيف رسالة تصل بعد الصور.",
     keys=["control", "option", ""],
     keys_label="الاختصار Control و Option و V",
 
@@ -428,6 +516,38 @@ TEXT["ar"] = dict(
         "Show in Finder": "يُظهر الملف حيث حُفظ.",
         "Discard": "يتخلّص منها.",
     },
+
+    chatbtn_label="إرسال كل اللقطات إلى الدردشة",
+    chatbtn_hold="اضغط مطوّلًا لتضيف رسالة",
+    caption_reply="ممتاز، شكرًا لك!",
+
+    cap_h="نقرة واحدة، وتصبح على الحبل.",
+    cap_p="اضغط <bdi class=\"chord\" dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></bdi> أو انقر زر التصوير عند حافة الشاشة، ثم اسحب فوق منطقة، أو انقر نافذة، أو التقط الشاشة كلها. تُعلَّق اللقطة على الحبل فورًا: لا ملف على سطح المكتب ولا انتظار. قائمة تُغلق حين تنقر؟ التقطها بالمؤقت. شيء يتحرّك؟ سجّل الشاشة.",
+    cap_try="جرّبه على جهاز Mac هذا: انقر زر التصوير عند حافة شاشته، أو اضغط ⌃⌥S. وللمؤقت أو التسجيل، افتح قائمة Snapfly في شريط القوائم.",
+    cap_label="شاشة Mac عليها Snapfly. قائمته وزر التصوير والحبل تعمل كما في التطبيق.",
+    cap_line="لقطات التُقطت على هذه الشاشة",
+    cap_hung="عُلّقت على الحبل",
+    cap_shot="لقطة {n}",
+    cap_rec="تسجيل {n}",
+    scene=dict(app="رحلات", menus=["ملف", "تحرير", "عرض", "نافذة"], clock="الجمعة 23 أكتوبر  9:41 ص",
+               url="flights.example", route="برلين ← لشبونة", when="الجمعة 23 أكتوبر · بالغ واحد",
+               sort="الترتيب: السعر", sort_items=["السعر", "المدة", "الإقلاع"],
+               flights=[("07:10 – 10:05", "3 س 55 د · مباشرة", "89 €"),
+                        ("09:30 – 13:45", "4 س 15 د · مباشرة", "112 €"),
+                        ("12:20 – 17:55", "5 س 35 د · توقف واحد", "97 €")],
+               cheapest="الأرخص", song="Sunday Light", artist="The Pegs"),
+
+    say_h="قل ما تريد إخفاءه.",
+    say_p="اضغط مطوّلًا على لقطة، واختر «إخفاء جزء…»، ثم قلها بكلماتك، مثل «كل شيء ما عدا المبلغ والتاريخ». مع Apple Intelligence يفهم Snapfly الجملة كلها، على جهازك. ومن دونها اكتب الكلمات التي تريد إخفاءها. أو اسحب مربعًا فوق أي شيء.",
+    say_try="جرّبه: انقر مثالًا، أو اكتب ما تريد.",
+    say_file="لقطة شاشة 2026-10-23 في 9.41.12 ص",
+    say_label="نافذة «إخفاء جزء» وفيها تحويل بنكي",
+    rcpt=dict(title="تم التحويل", date="23 أكتوبر 2026 · 09:41", amount="1.250,00 €",
+              from_l="من", to_l="إلى", ref_l="البيان", addr_l="العنوان", email_l="البريد", phone_l="الهاتف",
+              from_name="لينا هوفمان", from_iban="DE89 3704 0044 0532 0130 00",
+              to_name="يوناس فيبر", to_iban="DE02 1203 0000 0000 2020 51",
+              ref="إيجار نوفمبر", addr="شارع ليندن 12، 10969 برلين",
+              email="lena.hoffmann@example.com", phone="+49 30 1234 5678"),
 
     styles_h="أربع طرق للتعليق.",
     styles_p="اختر ما تُعلَّق عليه لقطاتك. وكل شيء آخر يعمل بالطريقة نفسها.",
@@ -468,10 +588,13 @@ TEXT["ar"] = dict(
 <li><strong>ملفاتك.</strong> يقرأ Snapfly لقطات الشاشة في المجلدات التي تسمح له بمراقبتها، وفي نسخة Mac App Store مجلد Snapfly داخل «الصور». ولا ينسخ لقطة أو يرسلها أو ينقلها أو يحذفها إلا حين تطلب ذلك، أو، إن أبقيت هذا الإعداد مفعّلًا، بعد أن ترسلها إلى دردشة.</li>
 <li><strong>الصور المنسوخة.</strong> إن فعّلت «تعليق الصور المنسوخة»، ينظر Snapfly إلى الصور التي تنسخها ليعلّقها على الحبل. ويترك كل ما نُسخ مع نص أو ملف، وكل ما يعلّمه مدير كلمات المرور بأنه خاص.</li>
 <li><strong>إذن تسهيلات الاستخدام</strong> يسمح لزر الإرسال بلصق اللقطة في التطبيق الذي تستخدمه، بالضغط على ⌘V هناك. ولا يستخدمه Snapfly لأي شيء آخر. ويمكنك إيقافه في أي وقت من إعدادات النظام › الخصوصية والأمن › تسهيلات الاستخدام.</li>
+<li><strong>إذن تسجيل الشاشة</strong> يسمح لـ Snapfly بالتقاط اللقطات والتسجيلات التي تطلبها، بـ <bdi dir="ltr">⌃⌥S</bdi> أو زر التصوير أو «تسجيل الشاشة». لا يلتقط شيئًا إلا حين تطلب، وما يلتقطه يبقى على جهازك.</li>
+<li><strong>المتصفحات.</strong> كي يظهر زر الإرسال على مواقع الدردشة وحدها، يسأل Snapfly المتصفح الذي أمامك عن عنوان الصفحة المفتوحة، بعد أن تسمح له. ولا يقرأ من المتصفح شيئًا آخر، ولا يحتفظ بشيء.</li>
+<li>تعرض الإعدادات › الأذونات كل إذن منها، وهل هو مسموح، وكيف تغيّره.</li>
 <li><strong>إعداداتك</strong>، مثل شكل الحبل وما يُغطّى، تُحفظ على جهازك فقط.</li>
 </ul>"""),
         ("خدمات Apple",
-         """<p>تستخدم «ترجمة النص» ترجمة Apple على جهازك، وقد ينزّل macOS ملفات لغة من Apple لذلك. ويستخدم «وصف ذكي» Apple Intelligence على جهازك. وحين تحصل على Snapfly من Mac App Store أو TestFlight، تتولّى Apple ذلك وفق سياسة الخصوصية الخاصة بها. وإن وافقت على مشاركة التحليلات مع مطوّري التطبيقات، فقد تعطينا Apple تقارير أعطال وإحصاءات استخدام مجهولة الهوية، نستخدمها فقط لإصلاح المشكلات. انظر <a href="https://www.apple.com/legal/privacy/">سياسة خصوصية Apple</a>.</p>"""),
+         """<p>تستخدم «ترجمة النص» ترجمة Apple على جهازك، وقد ينزّل macOS ملفات لغة من Apple لذلك. ويستخدم «وصف ذكي»، و«إخفاء جزء» حين تقول بجملة ما تريد إخفاءه، Apple Intelligence على جهازك. وحين تحصل على Snapfly من Mac App Store أو TestFlight، تتولّى Apple ذلك وفق سياسة الخصوصية الخاصة بها. وإن وافقت على مشاركة التحليلات مع مطوّري التطبيقات، فقد تعطينا Apple تقارير أعطال وإحصاءات استخدام مجهولة الهوية، نستخدمها فقط لإصلاح المشكلات. انظر <a href="https://www.apple.com/legal/privacy/">سياسة خصوصية Apple</a>.</p>"""),
         ("هذا الموقع",
          """<p>هذا الموقع مستضاف على GitHub Pages، وهي خدمة من شركة GitHub, Inc. في الولايات المتحدة. حين تزوره، تتلقّى خوادم GitHub بيانات تقنية مثل عنوان IP ونوع المتصفح، وتسجّلها GitHub لحماية الخدمة. ولا نستطيع الوصول إلى هذه السجلات. والأساس القانوني هو مصلحتنا المشروعة في تقديم هذا الموقع بأمان (المادة 6(1)(f) من اللائحة العامة لحماية البيانات GDPR). انظر <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">بيان خصوصية GitHub</a>.</p>
 <p>لا يستخدم الموقع ملفات تعريف الارتباط، ولا يحمّل شيئًا من خدمات أخرى، ولا يستخدم أدوات تحليل. وإن اخترت لغة، يتذكّرها متصفحك في تخزينه المحلي، ولا يغادر ذلك جهازك أبدًا.</p>"""),
@@ -498,10 +621,19 @@ TEXT["ar"] = dict(
 <p>في نسخة Mac App Store، افتح تطبيق «لقطة الشاشة»، وانقر «خيارات»، واختر «موقع آخر»، ثم اختر مجلد Snapfly داخل «الصور».</p>"""),
         ("كيف أُنزل الحبل؟",
          """<p>أرِح المؤشر عند الحافة العليا للشاشة، في شريط القوائم، فينزل الحبل. أو اضغط <bdi class="chord" dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>T</kbd></bdi>. وحين تبتعد يختفي من جديد.</p>"""),
+        ("كيف ألتقط لقطة شاشة بـ Snapfly؟",
+         """<p>اضغط <bdi class="chord" dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></bdi>، أو انقر زر التصوير عند حافة الشاشة. ثم اسحب فوق منطقة، أو انقر نافذة، أو اضغط Return لالتقاط الشاشة كلها. تُعلَّق اللقطة على الحبل فورًا. وفي المرة الأولى يطلب منك macOS السماح لـ Snapfly بتسجيل الشاشة.</p>
+<p>ولالتقاط قائمة تُغلق حين تنقر، اختر «التقاط صورة للشاشة بمؤقت» من قائمة Snapfly في شريط القوائم، واختر عدد الثواني، ثم افتح القائمة قبل أن ينتهي العد.</p>"""),
+        ("كيف أسجّل الشاشة؟",
+         """<p>اختر «تسجيل الشاشة» من قائمة Snapfly في شريط القوائم، أو اضغط <bdi class="chord" dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>R</kbd></bdi>. اسحب فوق منطقة أو انقر نافذة. وللإيقاف انقر الزر الأحمر في أسفل الشاشة. يُعلَّق التسجيل على الحبل؛ اضغط عليه مطوّلًا واختر «إنشاء GIF» لتحوّله إلى صورة GIF.</p>"""),
+        ("هل أستطيع إرسال رسالة مع الصور؟",
+         """<p>اضغط مطوّلًا على زر الإرسال فوق الدردشة، أو انقره بالزر الأيمن واختر «إرسال مع رسالة…». اكتب رسالتك واضغط Return: تذهب الصور أولًا، ثم كلماتك.</p>"""),
+        ("كيف أغيّر ترتيب الصور على الحبل؟",
+         """<p>اسحب اللقطة يمينًا أو يسارًا على طول الحبل. و«إرسال الكل» و«نسخ الكل» يحافظان على هذا الترتيب. ومع VoiceOver استخدم «نقل إلى الأمام» و«نقل إلى الخلف».</p>"""),
         ("كيف أرسل لقطة إلى دردشة؟",
          """<p>انقر في خانة الكتابة في الدردشة، ثم انقر الطائرة الورقية على اللقطة. أو اضغط <bdi class="chord" dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></bdi> لإرسال أحدث لقطة. ولإرسال عدة لقطات معًا، انقرها أولًا وأنت ضاغط على ⌘.</p>"""),
         ("زر الإرسال يقول «غير مسموح بعد».",
-         """<p>عند الإرسال يضغط Snapfly ⌘V نيابة عنك، ولذلك يطلب macOS إذن تسهيلات الاستخدام.</p>
+         """<p>عند الإرسال يضغط Snapfly ⌘V نيابة عنك، ولذلك يطلب macOS إذن تسهيلات الاستخدام. وفي Snapfly تعرض الإعدادات › الأذونات كل إذن يستخدمه، وهل هو مسموح، وزرًّا واحدًا للسماح به.</p>
 <ol>
 <li>افتح إعدادات النظام › الخصوصية والأمن › تسهيلات الاستخدام.</li>
 <li>إن كان Snapfly في القائمة، فشغّله.</li>
@@ -511,7 +643,7 @@ TEXT["ar"] = dict(
         ("كيف أصنع ملف PDF؟",
          """<p>اضغط مطوّلًا على اللقطة، أو انقرها بالزر الأيمن، واختر «إنشاء PDF». ولوضع عدة لقطات في ملف واحد، انقرها أولًا وأنت ضاغط على ⌘، ثم انقر زر PDF على اللافتة في آخر الحبل.</p>"""),
         ("كيف أغطّي المعلومات الخاصة؟",
-         """<p>افتح الإعدادات › الخصوصية واختر ما يُغطّى. ولتغطية شيء فاتته التغطية، اضغط مطوّلًا على اللقطة واختر «إخفاء جزء…».</p>"""),
+         """<p>افتح الإعدادات › الخصوصية واختر ما يُغطّى. ولتغطية شيء فاتته التغطية، اضغط مطوّلًا على اللقطة واختر «إخفاء جزء…»، ثم اسحب فوقه أو قل ما تريد إخفاءه، مثل «كل شيء ما عدا المبلغ والتاريخ».</p>"""),
         ("على أي أجهزة Mac يعمل Snapfly؟",
          """<p>على macOS 14 Sonoma أو أحدث، بمعالجات Apple silicon و Intel. تحتاج «ترجمة النص» إلى macOS 15. ويكتب «وصف ذكي» بـ Apple Intelligence إن كانت في جهازك، وإلا فيستخدم عنوان اللقطة.</p>"""),
         ("كيف أحذف Snapfly؟",

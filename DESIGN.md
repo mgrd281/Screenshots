@@ -601,7 +601,41 @@ system to a web page. The brief and direction contract are in
     - Desktop files that fly onto a rope;
     - Snapfly's own Settings window, on its Privacy and Line panes, with
       the line-style tiles;
-    - the photo's menu opening from a card on a line.
+    - the photo's menu opening from a card on a line;
+    - a whole Mac screen to take screenshots on (below);
+    - the Hide Part window, said in a sentence (below).
+  - **The Mac screen** (`section_capture`): one SVG at 1000 × 625 points
+    with its own menu bar, wallpaper, a browser on a flight search, a music
+    player and a Dock of plain tiles (no real app's icon), always in light,
+    as a screenshot is. Snapfly sits on top of it as in the app: the shirt
+    in its menu bar opens Snapfly's real menu (Take Screenshot, Take
+    Screenshot with Timer › 3, 5, 10 Seconds, Record Screen, Screenshot
+    Button, Take everything down), the screenshot button sits at the
+    trailing edge 60% up, a line hangs under the menu bar, and the capture
+    screen, the capsule and the recording edge follow "Capture overlay",
+    "Screenshot button" and "Capture capsule" above. Sizes inside it scale
+    with the screen (`cqw`); controls keep a 30 px floor to stay tappable.
+    - What is taken is the screen's own SVG with its `viewBox` set to the
+      area, so it is exact, and a click on it copies a real PNG. Snapfly's
+      own parts are never in it.
+    - The timer's countdown opens the sort menu with a moving pointer, so
+      the timed screenshot catches a menu open. A recording replays the
+      music it caught while the pointer rests on it, with a duration
+      capsule in the PDF capsule's style.
+    - ⌃⌥S and ⌃⌥R work while the screen is in view.
+  - **Hide Part** (`section_say`): the editor's window with a bank transfer
+    in it, the sparkles field, the three examples, the note, and Remove
+    All, Cancel and Done. Covers are cover ink at a 3 radius, one per line
+    of a detail, growing in from the reading start 45 ms apart; hovered,
+    they show an eye and an accent ring, and a click removes one. A drag
+    draws a dashed accent box. A few words in English, German and Arabic
+    stand in for Apple Intelligence; Done adds the lock badge.
+  - **The hero's chat** carries the chat button and its message bar as
+    "Chat button" above has them, over the chat's own send button. Its
+    photos are the line's newest two. Hold it, or right-click it for Send
+    with a Message…; the photos land as one album and the message right
+    under it. The hero's photos also reorder by a sideways drag, lifted
+    under the pointer (1.06), and by Option and an arrow.
   - The privacy and support pages are documents on `web-ground`.
 - **The brand gradient is the wallpaper.** On the site, amber, coral and
   violet are the desktop the app sits on.
@@ -641,7 +675,8 @@ system to a web page. The brief and direction contract are in
     as on the icon, then lands in the chat while the line closes the gap.
   - Everything else plays once when seen: the Desktop sweep and the
     keycaps.
-  - Reduce Motion turns flights into fades and stops the sway.
+  - Reduce Motion turns flights into fades and stops the sway, the music
+    and the pulse on the screenshot button.
 - **Images.** The PNGs in `website/static` come from the app icon, drawn by
   `website/make-images.py`. Everything else is inline SVG drawn in
   `build.py`.

@@ -65,7 +65,14 @@ first view. Every demo is a native object on it:
 - the keycaps;
 - the Desktop's files, which fly up onto a rope;
 - Snapfly's own Settings window, on its Privacy and Line panes;
-- the photo's menu opening from a card on a line.
+- the photo's menu opening from a card on a line;
+- a whole Mac screen with Snapfly on it, where the visitor takes a
+  screenshot, a timed one with a menu open, or a recording, and it hangs on
+  that screen's line;
+- the Hide Part window, where the visitor says what to hide.
+
+The hero's chat has the send button over chats, with its message bar, and
+its line reorders by dragging, so these can be tried on the page too.
 
 The signature interaction is the paper plane. It flings a hanging screenshot off the line and into the
 chat, where it lands as a sent image, and the line closes the gap. Holding a
