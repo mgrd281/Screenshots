@@ -102,6 +102,14 @@ or all of them, and they fly over and land where you were typing. It works
 by pressing <kbd>⌘</kbd>&thinsp;<kbd>V</kbd> there for you,
 so macOS asks for the Accessibility permission the first time.
 
+Every permission Snapfly uses sits in one place: Settings › Permissions.
+Screen Recording (for its own screenshots and recordings), Accessibility (for
+the send buttons) and each browser (for the chat button on chat websites),
+each with what it is for, whether it is given, and one button that asks for it
+or opens the right page of System Settings. It updates as you switch things
+in System Settings. Each is asked for only when what needs it is first used,
+and once one was refused, Permissions Needed… appears in the menu bar.
+
 While photos hang, the same send button waits over the chat itself, just
 above its own send button: in ChatGPT, Claude, WhatsApp, Messages, Telegram
 and other chat apps, and in Safari, Chrome and other browsers only on chat
@@ -294,6 +302,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
 | `LineTag.swift` | The tag at the end of the line: moving it, combining, sending and taking everything down |
 | `Paste.swift` | Pastes into the app in front, for the send button |
+| `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |

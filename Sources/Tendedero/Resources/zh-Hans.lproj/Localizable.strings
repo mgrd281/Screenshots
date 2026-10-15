@@ -96,11 +96,8 @@
 "About" = "关于";
 "Preview" = "预览";
 "Take a screenshot to see it here" = "截一张图即可在这里看到";
-"Send button" = "发送按钮";
 "Allowed" = "已允许";
 "Not allowed yet" = "尚未允许";
-"Open Accessibility Settings…" = "打开辅助功能设置…";
-"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "发送按钮会在前台应用中按下 ⌘V，因此需要辅助功能权限。";
 "Version %@" = "版本 %@";
 "Screenshots, one click from any chat." = "截图，一键发到任何聊天。";
 "Made by %@" = "作者：%@";
@@ -287,3 +284,24 @@
 "Target" = "目标";
 "Lightning" = "闪电";
 "Sparkles" = "闪光";
+
+/* Permissions */
+"Permissions" = "权限";
+"Permissions Needed…" = "需要权限…";
+"Screen Recording" = "屏幕录制";
+"Accessibility" = "辅助功能";
+"Browsers" = "浏览器";
+"Allow…" = "允许…";
+"Open and Allow…" = "打开并允许…";
+"Not asked yet" = "尚未询问";
+"Not open" = "未打开";
+"Reopen Snapfly" = "重新打开 Snapfly";
+"Snapfly has what it needs." = "Snapfly 已拥有所需的权限。";
+"Snapfly asks for each permission only when you use what needs it." = "只有在你使用需要某项权限的功能时，Snapfly 才会请求该权限。";
+"Everything stays on your Mac. You can change these any time in System Settings." = "一切都留在你的 Mac 上。你可以随时在“系统设置”中更改。";
+"To take screenshots and recordings with Snapfly: ⌃⌥S, the screenshot button and Record Screen." = "用于通过 Snapfly 截屏和录制：⌃⌥S、截屏按钮和“录制屏幕”。";
+"Turned it on and it still says not allowed?" = "已打开但仍显示未允许？";
+"macOS applies it once Snapfly opens again." = "Snapfly 重新打开后 macOS 才会生效。";
+"For the send buttons: they press ⌘V in the chat in front, so the photos land where you type." = "用于发送按钮：在前台的聊天中按下 ⌘V，让照片出现在你输入的地方。";
+"Snapfly not in the list? Click + under it and choose Snapfly in Applications." = "列表中没有 Snapfly？点按下方的 +，然后在“应用程序”中选择 Snapfly。";
+"So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read." = "为了让发送按钮只在聊天网站上出现，Snapfly 会询问浏览器打开的是哪个页面。不会读取其他任何内容。";

@@ -98,11 +98,8 @@
 "About" = "परिचय";
 "Preview" = "पूर्वावलोकन";
 "Take a screenshot to see it here" = "यहाँ देखने के लिए स्क्रीनशॉट लें";
-"Send button" = "भेजें बटन";
 "Allowed" = "अनुमति है";
 "Not allowed yet" = "अभी अनुमति नहीं है";
-"Open Accessibility Settings…" = "Accessibility सेटिंग्स खोलें…";
-"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "भेजें बटन सामने वाले ऐप में ⌘V दबाता है, इसलिए इसे Accessibility अनुमति चाहिए।";
 "Version %@" = "संस्करण %@";
 "Screenshots, one click from any chat." = "स्क्रीनशॉट, किसी भी चैट से बस एक क्लिक दूर।";
 "Made by %@" = "%@ द्वारा बनाया गया";
@@ -289,3 +286,24 @@
 "Target" = "निशाना";
 "Lightning" = "बिजली";
 "Sparkles" = "चमक";
+
+/* Permissions */
+"Permissions" = "अनुमतियाँ";
+"Permissions Needed…" = "अनुमतियाँ चाहिए…";
+"Screen Recording" = "स्क्रीन रिकॉर्डिंग";
+"Accessibility" = "ऐक्सेसिबिलिटी";
+"Browsers" = "ब्राउज़र";
+"Allow…" = "अनुमति दें…";
+"Open and Allow…" = "खोलें और अनुमति दें…";
+"Not asked yet" = "अभी पूछा नहीं गया";
+"Not open" = "खुला नहीं";
+"Reopen Snapfly" = "Snapfly फिर से खोलें";
+"Snapfly has what it needs." = "Snapfly के पास ज़रूरत की हर चीज़ है।";
+"Snapfly asks for each permission only when you use what needs it." = "Snapfly हर अनुमति तभी माँगता है जब आप वह इस्तेमाल करते हैं जिसे उसकी ज़रूरत है।";
+"Everything stays on your Mac. You can change these any time in System Settings." = "सब कुछ आपके Mac पर रहता है। आप इन्हें कभी भी सिस्टम सेटिंग्स में बदल सकते हैं।";
+"To take screenshots and recordings with Snapfly: ⌃⌥S, the screenshot button and Record Screen." = "Snapfly से स्क्रीनशॉट और रिकॉर्डिंग के लिए: ⌃⌥S, स्क्रीनशॉट बटन और स्क्रीन रिकॉर्ड करें।";
+"Turned it on and it still says not allowed?" = "चालू किया, फिर भी अनुमति नहीं दिखा रहा?";
+"macOS applies it once Snapfly opens again." = "Snapfly फिर से खुलने पर macOS इसे लागू करता है।";
+"For the send buttons: they press ⌘V in the chat in front, so the photos land where you type." = "भेजने वाले बटनों के लिए: वे सामने वाली चैट में ⌘V दबाते हैं, ताकि तस्वीरें वहीं पहुँचें जहाँ आप लिखते हैं।";
+"Snapfly not in the list? Click + under it and choose Snapfly in Applications." = "Snapfly सूची में नहीं है? नीचे + पर क्लिक करें और ऐप्लिकेशन में Snapfly चुनें।";
+"So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read." = "ताकि भेजने वाला बटन सिर्फ़ चैट वेबसाइटों पर दिखे, Snapfly ब्राउज़र से पूछता है कि कौन-सा पेज खुला है। और कुछ नहीं पढ़ा जाता।";

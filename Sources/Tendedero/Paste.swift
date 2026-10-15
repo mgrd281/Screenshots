@@ -30,6 +30,7 @@ enum Paste {
     @discardableResult
     static func askToBeAllowed() -> Bool {
         if isAllowed { return true }
+        Permissions.noteKeysAsked()
         if Edition.appStore { return CGRequestPostEventAccess() }
         let prompt = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         return AXIsProcessTrustedWithOptions(prompt)

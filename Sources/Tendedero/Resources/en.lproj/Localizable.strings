@@ -98,11 +98,8 @@
 "About" = "About";
 "Preview" = "Preview";
 "Take a screenshot to see it here" = "Take a screenshot to see it here";
-"Send button" = "Send button";
 "Allowed" = "Allowed";
 "Not allowed yet" = "Not allowed yet";
-"Open Accessibility Settings…" = "Open Accessibility Settings…";
-"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "The send button presses ⌘V in the app in front, which needs the Accessibility permission.";
 "Version %@" = "Version %@";
 "Screenshots, one click from any chat." = "Screenshots, one click from any chat.";
 "Made by %@" = "Made by %@";
@@ -289,3 +286,24 @@
 "Target" = "Target";
 "Lightning" = "Lightning";
 "Sparkles" = "Sparkles";
+
+/* Permissions */
+"Permissions" = "Permissions";
+"Permissions Needed…" = "Permissions Needed…";
+"Screen Recording" = "Screen Recording";
+"Accessibility" = "Accessibility";
+"Browsers" = "Browsers";
+"Allow…" = "Allow…";
+"Open and Allow…" = "Open and Allow…";
+"Not asked yet" = "Not asked yet";
+"Not open" = "Not open";
+"Reopen Snapfly" = "Reopen Snapfly";
+"Snapfly has what it needs." = "Snapfly has what it needs.";
+"Snapfly asks for each permission only when you use what needs it." = "Snapfly asks for each permission only when you use what needs it.";
+"Everything stays on your Mac. You can change these any time in System Settings." = "Everything stays on your Mac. You can change these any time in System Settings.";
+"To take screenshots and recordings with Snapfly: ⌃⌥S, the screenshot button and Record Screen." = "To take screenshots and recordings with Snapfly: ⌃⌥S, the screenshot button and Record Screen.";
+"Turned it on and it still says not allowed?" = "Turned it on and it still says not allowed?";
+"macOS applies it once Snapfly opens again." = "macOS applies it once Snapfly opens again.";
+"For the send buttons: they press ⌘V in the chat in front, so the photos land where you type." = "For the send buttons: they press ⌘V in the chat in front, so the photos land where you type.";
+"Snapfly not in the list? Click + under it and choose Snapfly in Applications." = "Snapfly not in the list? Click + under it and choose Snapfly in Applications.";
+"So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read." = "So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read.";

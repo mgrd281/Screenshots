@@ -96,11 +96,8 @@
 "About" = "حول";
 "Preview" = "معاينة";
 "Take a screenshot to see it here" = "التقط لقطة شاشة لتراها هنا";
-"Send button" = "زر الإرسال";
 "Allowed" = "مسموح";
 "Not allowed yet" = "غير مسموح بعد";
-"Open Accessibility Settings…" = "فتح إعدادات إمكانية الوصول…";
-"The send button presses ⌘V in the app in front, which needs the Accessibility permission." = "يضغط زر الإرسال ⌘V في التطبيق الأمامي، ولهذا يحتاج إلى إذن إمكانية الوصول.";
 "Version %@" = "الإصدار %@";
 "Screenshots, one click from any chat." = "لقطات الشاشة، على بُعد نقرة من أي دردشة.";
 "Made by %@" = "من تطوير %@";
@@ -287,3 +284,24 @@
 "Target" = "هدف";
 "Lightning" = "برق";
 "Sparkles" = "لمعان";
+
+/* Permissions */
+"Permissions" = "الأذونات";
+"Permissions Needed…" = "أذونات مطلوبة…";
+"Screen Recording" = "تسجيل الشاشة";
+"Accessibility" = "إمكانية الوصول";
+"Browsers" = "المتصفحات";
+"Allow…" = "سماح…";
+"Open and Allow…" = "فتح وسماح…";
+"Not asked yet" = "لم يُطلب بعد";
+"Not open" = "غير مفتوح";
+"Reopen Snapfly" = "إعادة فتح Snapfly";
+"Snapfly has what it needs." = "لدى Snapfly كل ما يحتاجه.";
+"Snapfly asks for each permission only when you use what needs it." = "يطلب Snapfly كل إذن فقط عندما تستخدم ما يحتاجه.";
+"Everything stays on your Mac. You can change these any time in System Settings." = "كل شيء يبقى على جهاز الـ Mac. يمكنك تغيير هذه في أي وقت من إعدادات النظام.";
+"To take screenshots and recordings with Snapfly: ⌃⌥S, the screenshot button and Record Screen." = "لالتقاط الصور والتسجيلات من Snapfly: ⌃⌥S وزر التصوير وتسجيل الشاشة.";
+"Turned it on and it still says not allowed?" = "شغّلته وما زال يقول غير مسموح؟";
+"macOS applies it once Snapfly opens again." = "يطبّقه macOS عندما يُفتح Snapfly من جديد.";
+"For the send buttons: they press ⌘V in the chat in front, so the photos land where you type." = "لأزرار الإرسال: تضغط ⌘V في المحادثة الأمامية، فتصل الصور حيث تكتب.";
+"Snapfly not in the list? Click + under it and choose Snapfly in Applications." = "Snapfly غير موجود في القائمة؟ انقر + تحتها واختر Snapfly من مجلد التطبيقات.";
+"So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read." = "ليظهر زر الإرسال في مواقع الدردشة فقط، يسأل Snapfly المتصفح عن الصفحة المفتوحة. لا يُقرأ أي شيء آخر.";

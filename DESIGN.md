@@ -200,6 +200,8 @@ literal value in a view.
   redaction, not decoration.
 - **Record red** (`Color.red`) is only for the stop button while the screen
   is recorded, as macOS marks recording.
+- **Allowed green** and **not allowed orange** (`.green`, `.orange`) are only
+  for a permission's state, with a symbol beside the word, never color alone.
 - **Island black** is pure black, to blend into the notch and the menu bar
   above it.
 
@@ -375,6 +377,27 @@ apps.
     small `.bordered` buttons, in a row where they fit, else stacked. A callout note in `.secondary` under it says what it did.
     While the field has the keyboard, Return runs it; empty, Return is Done.
 - **No modal alerts** for things that can be said inline in the card.
+- **Permissions pane** (`Permissions.swift`), in Settings between Privacy and
+  About, with `lock.shield` in the sidebar.
+  - A summary row first: `checkmark.shield.fill` in allowed green once all
+    is given, else `lock.shield` in `.secondary`, over the promise that
+    everything stays on the Mac.
+  - One grouped section per permission. A row is a 24 pt symbol (or the
+    browser's own icon), the name with a callout line on what it is for, and
+    on the trailing edge the state and one regular button.
+  - States: Allowed (`checkmark.circle.fill`, green), Not allowed yet
+    (`exclamationmark.circle.fill`, orange), Not asked yet or Not open
+    (`circle.dashed`, `.secondary`), in callout medium.
+  - The button says what happens: Allow…, Open System Settings… once
+    refused, or Open and Allow… for a browser that is not open. None shows
+    once allowed.
+  - Help appears only where it is needed: Reopen Snapfly under a refused
+    Screen Recording, and how to add Snapfly with + under a refused
+    Accessibility.
+  - It reads the states every second while open, so a switch turned in
+    System Settings shows at once.
+  - The menu bar shows Permissions Needed… with `exclamationmark.triangle`
+    at the top only after something was refused, and it opens this pane.
 - **History window** (`HistoryWindow.swift`), a standard titled window
   (760 × 540, at least 480 × 360) for what left the line.
   - Day headers in 13 pt semibold `.secondary` ("Today" and "Yesterday" come

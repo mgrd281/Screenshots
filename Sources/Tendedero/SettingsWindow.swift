@@ -272,16 +272,8 @@ final class Preferences: ObservableObject {
             })
     }
 
-    /// Whether the send button may press ⌘V in the app in front.
-    var canPaste: Bool { Paste.isAllowed }
-
-    /// Asks macOS to list Snapfly under Accessibility, and opens that list.
-    func openAccessibility() {
-        if !Paste.askToBeAllowed(),
-           let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-            NSWorkspace.shared.open(url)
-        }
-    }
+    /// Set to bring the window up on Permissions.
+    @Published var showsPermissions = false
 
     // MARK: About
 
@@ -294,7 +286,7 @@ final class Preferences: ObservableObject {
     }
 }
 
-/// The settings window, laid out like System Settings: a sidebar with four
+/// The settings window, laid out like System Settings: a sidebar with five
 /// panes. Made once and kept, so it opens where it was left.
 @MainActor
 final class SettingsWindow {
@@ -321,7 +313,7 @@ final class SettingsWindow {
 }
 
 private enum Pane: String, CaseIterable, Identifiable {
-    case general, line, privacy, about
+    case general, line, privacy, permissions, about
 
     var id: Self { self }
 
@@ -330,6 +322,7 @@ private enum Pane: String, CaseIterable, Identifiable {
         case .general: L("General")
         case .line: L("Line")
         case .privacy: L("Privacy")
+        case .permissions: L("Permissions")
         case .about: L("About")
         }
     }
@@ -339,6 +332,7 @@ private enum Pane: String, CaseIterable, Identifiable {
         case .general: "gearshape"
         case .line: "tshirt"
         case .privacy: "hand.raised"
+        case .permissions: "lock.shield"
         case .about: "info.circle"
         }
     }
@@ -361,10 +355,19 @@ private struct SettingsView: View {
             case .general: GeneralPane(prefs: prefs)
             case .line: LinePane(prefs: prefs)
             case .privacy: PrivacyPane(prefs: prefs, line: line)
+            case .permissions: PermissionsPane()
             case .about: AboutPane(prefs: prefs)
             }
         }
         .frame(minWidth: 640, minHeight: 440)
+        .onAppear(perform: showPermissionsIfAsked)
+        .onChange(of: prefs.showsPermissions) { _, _ in showPermissionsIfAsked() }
+    }
+
+    private func showPermissionsIfAsked() {
+        guard prefs.showsPermissions else { return }
+        pane = .permissions
+        prefs.showsPermissions = false
     }
 }
 
@@ -901,26 +904,8 @@ private struct PrivacyPane: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            Section(L("Send button")) {
-                HStack {
-                    Label(prefs.canPaste ? L("Allowed") : L("Not allowed yet"),
-                          systemImage: prefs.canPaste ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
-                        .foregroundStyle(prefs.canPaste ? Color.green : Color.orange)
-                    Spacer()
-                    if !prefs.canPaste {
-                        Button(L("Open Accessibility Settings…")) { prefs.openAccessibility() }
-                    }
-                }
-                Text(L("The send button presses ⌘V in the app in front, which needs the Accessibility permission."))
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-            }
         }
         .formStyle(.grouped)
-        // Coming back from System Settings, the permission may have changed.
-        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-            prefs.refresh()
-        }
     }
 }
 
