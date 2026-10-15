@@ -49,6 +49,10 @@ required by the license and stays.
     and the app record in App Store Connect. It runs on every push to `main`
     that touches the app (the owner asked for TestFlight to always be current),
     and by hand.
+  - It may send Apple Events to the browsers listed in `scripts/app-store.sh`
+    (a temporary exception), only to read the front page's address, so the
+    send button over chats shows on chat websites alone. The direct edition
+    signs with `com.apple.security.automation.apple-events` for the same.
   - The privacy policy for the store listing is the website's privacy page
     (below). `PRIVACY.md` is the short version in the repository.
 - **Website.** `website/` builds https://mgrd281.github.io/Screenshots/ (English),

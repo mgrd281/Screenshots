@@ -191,3 +191,11 @@
 "Orange" = "橙色";
 "Pink" = "粉色";
 "Graphite" = "石墨色";
+"In chat apps" = "在聊天 App 中";
+"ChatGPT, Claude, WhatsApp, Telegram, Messages and others." = "ChatGPT、Claude、WhatsApp、Telegram、信息等。";
+"Remove" = "移除";
+"Add a website" = "添加网站";
+"Add" = "添加";
+"That isn't a website, or it is in the list already." = "这不是网站，或已在列表中。";
+"Chat websites" = "聊天网站";
+"In Safari, Chrome and other browsers, it shows only on these websites. macOS asks once whether Snapfly may see which page is open." = "在 Safari、Chrome 和其他浏览器中，它只在这些网站上显示。macOS 会询问一次是否允许 Snapfly 查看打开的是哪个页面。";

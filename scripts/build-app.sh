@@ -92,6 +92,8 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <string>Snapfly watches the folder you chose so it can hang new images on the line.</string>
   <key>NSDownloadsFolderUsageDescription</key>
   <string>Snapfly watches the folder you chose so it can hang new images on the line.</string>
+  <key>NSAppleEventsUsageDescription</key>
+  <string>Snapfly asks your browser which page is open, so its send button shows only on chat websites like ChatGPT.</string>
 </dict>
 </plist>
 PLIST
@@ -101,7 +103,20 @@ PLIST
 # requires. Without one, sign ad hoc so the app still runs locally.
 IDENTITY="${SIGN_IDENTITY:-$(security find-identity -v -p codesigning 2>/dev/null | awk -F'"' '/Developer ID Application/{print $2; exit}')}"
 if [ -n "$IDENTITY" ] && [ -z "${STORE:-}" ]; then
-  codesign --force --options runtime --timestamp --sign "$IDENTITY" "$APP"
+  # The hardened runtime blocks Apple Events unless asked for: the send
+  # button over chats asks the browser which page is open.
+  ENTITLEMENTS="$(mktemp)"
+  cat > "$ENTITLEMENTS" <<ENT
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>com.apple.security.automation.apple-events</key><true/>
+</dict>
+</plist>
+ENT
+  codesign --force --options runtime --timestamp --entitlements "$ENTITLEMENTS" --sign "$IDENTITY" "$APP"
+  rm -f "$ENTITLEMENTS"
   echo "Signed with $IDENTITY"
 else
   codesign --force --deep --sign - "$APP" >/dev/null

@@ -191,3 +191,11 @@
 "Orange" = "Turuncu";
 "Pink" = "Pembe";
 "Graphite" = "Grafit";
+"In chat apps" = "Sohbet uygulamalarında";
+"ChatGPT, Claude, WhatsApp, Telegram, Messages and others." = "ChatGPT, Claude, WhatsApp, Telegram, Mesajlar ve diğerleri.";
+"Remove" = "Kaldır";
+"Add a website" = "Web sitesi ekle";
+"Add" = "Ekle";
+"That isn't a website, or it is in the list already." = "Bu bir web sitesi değil ya da zaten listede.";
+"Chat websites" = "Sohbet web siteleri";
+"In Safari, Chrome and other browsers, it shows only on these websites. macOS asks once whether Snapfly may see which page is open." = "Safari, Chrome ve diğer tarayıcılarda yalnızca bu sitelerde görünür. macOS, Snapfly’ın hangi sayfanın açık olduğunu görüp göremeyeceğini bir kez sorar.";

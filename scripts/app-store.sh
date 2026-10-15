@@ -83,7 +83,8 @@ STORE=1 BUILD_NUMBER="$BUILD" scripts/build-app.sh
 cp "$TMP/profile" "$APP/Contents/embedded.provisionprofile"
 
 # The sandbox, and only the doors Snapfly needs: folders the user picks,
-# and Pictures, where the Screenshot app saves for it.
+# Pictures, where the Screenshot app saves for it, and asking browsers which
+# page is open, so the send button shows only on chat websites.
 cat > "$TMP/entitlements.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -93,6 +94,19 @@ cat > "$TMP/entitlements.plist" <<PLIST
   <key>com.apple.security.files.user-selected.read-write</key><true/>
   <key>com.apple.security.files.bookmarks.app-scope</key><true/>
   <key>com.apple.security.assets.pictures.read-write</key><true/>
+  <key>com.apple.security.automation.apple-events</key><true/>
+  <key>com.apple.security.temporary-exception.apple-events</key>
+  <array>
+    <string>com.apple.Safari</string>
+    <string>com.apple.SafariTechnologyPreview</string>
+    <string>com.google.Chrome</string>
+    <string>com.google.Chrome.canary</string>
+    <string>company.thebrowser.Browser</string>
+    <string>com.microsoft.edgemac</string>
+    <string>com.brave.Browser</string>
+    <string>com.vivaldi.Vivaldi</string>
+    <string>com.operasoftware.Opera</string>
+  </array>
   <key>com.apple.application-identifier</key><string>$TEAM.$BUNDLE_ID</string>
   <key>com.apple.developer.team-identifier</key><string>$TEAM</string>
 </dict>

@@ -73,19 +73,77 @@ final class ChatButton {
     private var fieldFrame: CGRect?
     private var ticks = 0
 
-    /// Chat apps, and browsers for chats on the web like ChatGPT, Claude,
-    /// Gemini or WhatsApp Web.
+    /// Chat apps, where it shows whenever photos hang.
     private static let chatApps: Set<String> = [
         "com.openai.chat", "com.anthropic.claudefordesktop", "ai.perplexity.mac",
         "net.whatsapp.WhatsApp", "desktop.WhatsApp", "ru.keepcoder.Telegram", "org.telegram.desktop",
         "com.apple.MobileSMS", "com.tinyspeck.slackmacgap", "com.hnc.Discord",
         "org.whispersystems.signal-desktop", "com.microsoft.teams2", "com.microsoft.teams",
         "com.facebook.archon", "jp.naver.line.mac", "com.viber.osx", "com.skype.skype",
-        "com.apple.Safari", "com.apple.SafariTechnologyPreview", "com.google.Chrome",
-        "com.google.Chrome.canary", "company.thebrowser.Browser", "org.mozilla.firefox",
-        "com.microsoft.edgemac", "com.brave.Browser", "com.operasoftware.Opera",
-        "com.vivaldi.Vivaldi", "app.zen-browser.zen",
     ]
+
+    /// Browsers that can say which page is open, and how to ask them.
+    /// It shows there only on the chat websites from Settings.
+    private static let browsers: [String: String] = [
+        "com.apple.Safari": "URL of current tab of front window",
+        "com.apple.SafariTechnologyPreview": "URL of current tab of front window",
+        "com.google.Chrome": "URL of active tab of front window",
+        "com.google.Chrome.canary": "URL of active tab of front window",
+        "company.thebrowser.Browser": "URL of active tab of front window",
+        "com.microsoft.edgemac": "URL of active tab of front window",
+        "com.brave.Browser": "URL of active tab of front window",
+        "com.vivaldi.Vivaldi": "URL of active tab of front window",
+        "com.operasoftware.Opera": "URL of active tab of front window",
+    ]
+
+    /// In chat apps, from Settings. On unless turned off.
+    static var inApps: Bool {
+        get { !UserDefaults.standard.bool(forKey: "chatButtonAppsOff") }
+        set {
+            UserDefaults.standard.set(!newValue, forKey: "chatButtonAppsOff")
+            shared?.update()
+        }
+    }
+
+    /// One chat website, which can be turned off without forgetting it.
+    struct Site: Codable, Hashable, Identifiable {
+        var host: String
+        var on = true
+        var id: String { host }
+    }
+
+    static let standardSites = [
+        "chatgpt.com", "claude.ai", "gemini.google.com", "web.whatsapp.com", "perplexity.ai",
+        "copilot.microsoft.com", "chat.deepseek.com", "grok.com", "chat.mistral.ai",
+        "web.telegram.org", "messenger.com", "discord.com", "app.slack.com", "teams.microsoft.com",
+    ].map { Site(host: $0) }
+
+    /// The chat websites, the standard ones first, then any added in Settings.
+    static var sites: [Site] {
+        get {
+            guard let data = UserDefaults.standard.data(forKey: "chatButtonSites"),
+                  let saved = try? JSONDecoder().decode([Site].self, from: data) else { return standardSites }
+            return saved
+        }
+        set {
+            UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: "chatButtonSites")
+            shared?.update()
+        }
+    }
+
+    /// A website as typed, like "https://www.example.com/chat", turned into
+    /// its host, "example.com".
+    static func host(from text: String) -> String? {
+        var text = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if !text.contains("://") { text = "https://" + text }
+        guard var host = URL(string: text)?.host, host.contains(".") else { return nil }
+        if host.hasPrefix("www.") { host.removeFirst(4) }
+        return host
+    }
+
+    /// The page open in a browser, read once a second.
+    private var pageHost: String?
+    private var scripts: [String: NSAppleScript] = [:]
 
     init(line: Line) {
         self.line = line
@@ -104,6 +162,7 @@ final class ChatButton {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.fieldFrame = nil
+                self?.pageHost = nil
                 self?.ticks = 0
                 self?.update()
             }
@@ -145,16 +204,30 @@ final class ChatButton {
         // Being dragged: it goes where the pointer takes it.
         if panel.content.isDragging { return }
         guard timer != nil, Self.isEnabled, hasSomethingToSend,
-              let app = Paste.frontApp, let id = app.bundleIdentifier, Self.chatApps.contains(id),
+              let app = Paste.frontApp, let id = app.bundleIdentifier,
               let window = Self.frontWindow(of: app.processIdentifier) else {
             hide()
             return
         }
-        // The message box moves rarely; once a second is enough to follow it.
-        if ticks % 4 == 0 { fieldFrame = Self.messageBox(of: app.processIdentifier, in: window) }
+        // The message box and the page change rarely; once a second is
+        // enough to follow them.
+        let fresh = ticks % 4 == 0
         ticks += 1
-        current = (id, window)
-        place(over: window, app: id)
+        // Where it was dragged is kept per app, and per website in a browser.
+        let key: String
+        if Self.chatApps.contains(id) {
+            guard Self.inApps else { return hide() }
+            key = id
+        } else if Self.browsers[id] != nil {
+            if fresh { pageHost = readPage(in: id) }
+            guard let host = pageHost, let site = Self.site(for: host) else { return hide() }
+            key = site
+        } else {
+            return hide()
+        }
+        if fresh { fieldFrame = Self.messageBox(of: app.processIdentifier, in: window) }
+        current = (key, window)
+        place(over: window, app: key)
         if !panel.isVisible {
             panel.alphaValue = 0
             panel.orderFrontRegardless()
@@ -163,6 +236,37 @@ final class ChatButton {
                 panel.animator().alphaValue = 1
             }
         }
+    }
+
+    /// The chat website a host belongs to, if it is one that is turned on:
+    /// "chatgpt.com" covers "chatgpt.com" and "www.chatgpt.com".
+    private static func site(for host: String) -> String? {
+        let host = host.lowercased()
+        return sites.first { $0.on && (host == $0.host || host.hasSuffix("." + $0.host)) }?.host
+    }
+
+    /// Asks the browser for the page in front, through Apple Events. macOS
+    /// asks once whether Snapfly may; without it, the button stays away
+    /// from the browser. A busy browser gets a second at most.
+    private func readPage(in browser: String) -> String? {
+        guard let property = Self.browsers[browser] else { return nil }
+        let script: NSAppleScript
+        if let cached = scripts[browser] {
+            script = cached
+        } else {
+            let source = """
+            with timeout of 1 second
+                tell application id "\(browser)" to return \(property)
+            end timeout
+            """
+            guard let made = NSAppleScript(source: source) else { return nil }
+            scripts[browser] = made
+            script = made
+        }
+        var error: NSDictionary?
+        let result = script.executeAndReturnError(&error)
+        guard error == nil, let text = result.stringValue, let url = URL(string: text) else { return nil }
+        return url.host
     }
 
     private func hide() {
