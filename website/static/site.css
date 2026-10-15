@@ -490,6 +490,51 @@ kbd {
 .peg.arriving { opacity: 0; translate: -50% -60px; transition-delay: var(--d, 0ms); }
 [dir="rtl"] .peg.arriving { translate: 50% -60px; }
 
+/* The tag at the end of the line, clipped to the rope: its send button
+   sends every photo on the line at once. */
+.line-tag {
+  position: absolute;
+  z-index: 3;
+  top: calc(var(--rope-h) * 0.16 - 2px);
+  inset-inline-end: clamp(14px, 2.4vw, 32px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-top: 14px;
+}
+.line-tag .clip { top: 0; }
+.tag-send {
+  display: grid;
+  place-items: center;
+  width: 58px; height: 58px;
+  padding: 0;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(20, 0, 30, 0.3);
+  transition: scale 0.2s var(--ease-out), background-color 0.2s;
+}
+.tag-send .icon { width: 26px; height: 26px; }
+[dir="rtl"] .tag-send .icon { transform: scaleX(-1); }
+.tag-send:hover { scale: 1.06; background: color-mix(in srgb, var(--accent) 88%, #000); }
+.tag-send:active { scale: 0.96; }
+.tag-send:focus-visible { outline: 3px solid #FFFFFF; outline-offset: 3px; }
+.tag-label {
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--menu-bg);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
 .ghost {
   position: fixed;
   z-index: 150;
@@ -614,6 +659,20 @@ kbd {
 .msg.image .photo-img { width: min(210px, 70%); border-radius: 16px; border: 0.5px solid var(--hairline); }
 .msg.image.landed .photo-img { animation: land 0.35s var(--ease-out); }
 @keyframes land { from { scale: 0.96; } to { scale: 1; } }
+
+.msg.album { justify-content: flex-end; }
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  width: min(230px, 76%);
+  overflow: hidden;
+  border-radius: 16px;
+  border: 0.5px solid var(--hairline);
+}
+.album-grid .photo-img { border-radius: 0; }
+.album-grid > :last-child:nth-child(odd) { grid-column: span 2; }
+.msg.album.landed .album-grid { animation: land 0.35s var(--ease-out); }
 
 .msg.typing p { display: flex; gap: 4px; padding: 12px 14px; }
 .msg.typing i {
@@ -1215,11 +1274,13 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 }
 
 @media (max-width: 640px) {
-  :root { --card-w: 108px; --rope-h: 60px; }
-  .peg:nth-child(n + 4) { display: none; }
+  :root { --card-w: 100px; --rope-h: 60px; }
+  .tag-send { width: 50px; height: 50px; }
+  .tag-send .icon { width: 22px; height: 22px; }
+  .tag-label { font-size: 12px; padding-inline: 9px; }
+  .peg:nth-child(n + 3) { display: none; }
   .peg:nth-child(1) { --t: 0.18; }
   .peg:nth-child(2) { --t: 0.5; }
-  .peg:nth-child(3) { --t: 0.82; }
   .wide-only, .clock, .lang-current { display: none; }
   .menus a, .lang-menu summary { padding-inline: 8px; }
   .file:nth-child(n + 7) { display: none; }

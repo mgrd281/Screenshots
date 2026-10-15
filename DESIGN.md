@@ -458,6 +458,13 @@ system to a web page. The brief and direction contract are in
   - segmented control;
   - switches and checkboxes in the accent;
   - windows with traffic lights at a 18 radius.
+- **The tag on the site's line:**
+  - It hangs from the rope at the end of the line.
+  - It holds a single tool, Send all: a 58 pt accent circle with a white
+    ring and the paper plane.
+  - Its name sits under it in a "Copied"-style capsule, so the one-click
+    send of every photo is seen and tried at once.
+  - Photos sent together land in the chat as one album bubble.
 - **One exception to "corner buttons show on hover":** the paper plane on
   each hanging card always shows on the site. The page has to invite the
   first click, and phones have no hover.
