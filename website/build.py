@@ -31,8 +31,8 @@ REDIRECT_JS = ('try{if(!localStorage.getItem("snapfly-lang")){var l=(navigator.l
                'if(l.indexOf("de")==0)location.replace("de/");else if(l.indexOf("ar")==0)location.replace("ar/")}}catch(e){}')
 # Every page's first script: the brand theme chosen on this device, set
 # before the page paints, and the mark that scripts run.
-BRAND_JS = ('try{if(localStorage.getItem("snapfly-brand")==="emerald")'
-            'document.documentElement.setAttribute("data-brand","emerald")}catch(e){}'
+BRAND_JS = ('try{var b=localStorage.getItem("snapfly-brand");if(b==="emerald"||b==="orange")'
+            'document.documentElement.setAttribute("data-brand",b)}catch(e){}'
             'document.documentElement.classList.add("js")')
 INLINE_JS = (BRAND_JS, REDIRECT_JS)
 STATIC = HERE / "static"
@@ -285,7 +285,7 @@ def menubar(lang, page):
         f'<button type="button" class="brand-chip" role="radio" aria-checked="{str(key == "sunset").lower()}"'
         f' tabindex="{0 if key == "sunset" else -1}" data-brand-pick="{key}" aria-label="{esc(t["brand_" + key])}"'
         f' data-tip="{esc(t["brand_" + key])}"><span class="brand-dot brand-dot-{key}"></span></button>'
-        for key in ("sunset", "emerald"))
+        for key in ("sunset", "emerald", "orange"))
     return f"""<header class="menubar">
   <nav class="menubar-row" aria-label="Snapfly">
     <a class="app-menu" href="{home}"><img src="{prefix(lang)}assets/icon-64.png" alt="" width="18" height="18"><span>Snapfly</span></a>

@@ -707,9 +707,9 @@ system to a web page. The brief and direction contract are in
     under it. The hero's photos also reorder by a sideways drag, lifted
     under the pointer (1.06), and by Option and an arrow.
   - The privacy and support pages are documents on `web-ground`.
-- **Brand themes.** The site has two complete looks, at the owner's
+- **Brand themes.** The site has three complete looks, at the owner's
   request, and the visitor picks one; light or dark stays the system's, so
-  there are four in all.
+  there are six in all.
   - **Original Sunset** is the default and the site as it always was: the
     warm sky below, with every value it had. Nothing in it changed.
   - **Emerald Petrol** is deep water with cool light falling in from above.
@@ -733,32 +733,62 @@ system to a web page. The brief and direction contract are in
     - The page ground is Pearl White, or `#081819` in dark.
     - The desktop to try Snapfly on gets a sage desktop (petrol at night) and
       a teal accent; its greys stay.
-  - **Stays the same in both**: windows, text colours, system controls'
-    shapes, the traffic lights, status colours, the screenshots' content and
-    the app icon.
+  - **Signature Orange** is one confident colour used with precision, the
+    many-coloured Sunset's opposite.
+    - Palette: Primary Orange `#EC632C`, Deep Orange `#C7461C`, Warm
+      Orange Highlight `#FF8754`, Soft Peach `#FFE4D7`, Pure White, Premium
+      Black `#171717`, Warm Neutral `#FAFAF8`.
+    - Light: the first view and the close are a bold orange field (a warm
+      highlight where the line hangs, a deeper orange low on the trailing
+      side) with Premium Black type (5.5:1). Between them, clean Warm
+      Neutral space with Premium Black words (text at 76%, 8:1), a faint
+      peach glow in two corners, and no washes or scrims. The privacy band
+      ("No account…") is Premium Black with white words, its first words in
+      the Highlight and an orange glow in one corner.
+    - Dark: the page is Premium Black (`#121211`). The orange becomes light:
+      an ambient glow above the line, a glow rising into the close, and a
+      solid Deep Orange privacy band.
+    - Filled controls, switches and bubbles use Deep Orange, so white on
+      them stays 4.9:1; links are `#B23E17` on light (5.6:1) and the
+      Highlight on dark. Brand tiles go Highlight to Deep Orange.
+    - The download badge is Premium Black on orange, Deep Orange on black.
+    - Glass is white (72% on the menu bar) with a white top edge; shadows
+      are warm brown, black in dark. The rope is Premium Black, peach in
+      dark. Keys, pill buttons and the glass shelf on the light page are
+      drawn in black at low opacity instead of white.
+    - The desktop to try Snapfly on gets a warm sand desktop (black at
+      night) and a Deep Orange accent.
+  - **Stays the same in all three**: windows, system controls' shapes, the
+    traffic lights, status colours, the screenshots' content and the app
+    icon. Signature Orange sets text in Premium Black.
   - **Tokens.** Everything a theme changes is a custom property on
     `:root`: the wallpaper, washes and scrim, menu bar, menu and glass
     colours, the glass shine, rope, accent, link, ground, the shadow tint
     (`--shade`, `--shade-deep`, as r g b), the brand gradient and its
-    glow, the badge, and the line-style tiles' small wallpaper. Emerald
-    Petrol overrides them on `:root[data-brand="emerald"]`, in light and in
-    dark; nothing is coloured outside the tokens.
+    glow, the badge, the line-style tiles' small wallpaper, and what sits
+    straight on the wallpaper (`--on-wall` and `--on-wall-2` for words,
+    `--kbd-wall-*`, `--pill-*`, `--file-shadow`, `--shelf-*`), plus the
+    surfaces a theme may give the first view, the close and the privacy
+    band (`--hero-bg`, `--close-bg`, `--band-*`). Each theme overrides
+    them on `:root[data-brand="…"]`, in light and in dark; nothing is
+    coloured outside the tokens.
   - **The switcher** sits in the menu bar before the language menu: a
-    small well (`fill-2`, full radius, hairline) with two 14 pt swatches,
+    small well (`fill-2`, full radius, hairline) with three 14 pt swatches,
     each its theme in small with a highlight where its light comes from,
     and a raised thumb (white, or white 20% in dark) under the chosen one
-    that slides across in 0.45 s. A swatch grows to 112% under the pointer
+    that slides across in 0.45 s. The order is Original Sunset, Emerald
+    Petrol, Signature Orange. A swatch grows to 112% under the pointer
     and to 90% when pressed. Its name shows in a help tag after 0.45 s, or
     at once on keyboard focus. It is a radio group: Tab reaches the chosen
-    swatch, the arrows choose the other one, in the reading direction. On
-    touch the swatches are 34 × 28 with a 44 pt tall target.
+    swatch, the arrows choose the next one and wrap round, in the reading
+    direction. On touch the swatches are 32 × 28 with a 44 pt tall target.
   - **No wrong flash**: the first script in `<head>` reads the choice and
     sets `data-brand` before the page paints; the switcher only appears once
     scripts run. Changing theme cross-fades the whole page in 0.5 s, or at
     once with Reduce Motion. The browser bar colour follows. Another open
     tab follows the change.
-  - On the narrowest phones (385 px and less) the menu bar keeps Snapfly's
-    icon and hides its name from view so everything fits.
+  - On phones (430 px and less) the menu bar keeps Snapfly's icon and hides
+    its name from view (it is still read out) so everything fits.
 - **The brand gradient is the wallpaper.** On the site, amber, coral and
   violet are the desktop the app sits on.
   - Nothing that is pressed or read sits on it bare. White text gets the
