@@ -286,6 +286,8 @@ final class TextCardModel: ObservableObject {
     @Published private(set) var copied = false
     @Published private(set) var target: Locale.Language
     @Published private(set) var pending: Pending?
+    /// The result reads right to left, like Arabic.
+    @Published private(set) var rightToLeft = false
 
     private let photo: UUID
     private let url: URL
@@ -454,6 +456,7 @@ final class TextCardModel: ObservableObject {
     // MARK: Results
 
     private func finish(_ text: String, note: String?, fix: Fix? = nil) {
+        rightToLeft = Languages.isRightToLeft(text)
         state = .done(text)
         self.note = note
         self.fix = fix
@@ -536,9 +539,10 @@ private struct TextCardView: View {
         HStack(spacing: 8) {
             Image(systemName: symbol)
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(LinearGradient(colors: [.purple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .foregroundStyle(Color.accentColor)
                 .frame(width: 26, height: 26)
-                .background(Color.primary.opacity(0.06), in: Circle())
+                .background(Color.accentColor.opacity(0.12), in: Circle())
+                .accessibilityHidden(true)
             Text(title)
                 .font(.system(size: 13, weight: .semibold))
             Spacer(minLength: 8)
@@ -552,6 +556,7 @@ private struct TextCardView: View {
             }
             .buttonStyle(.plain)
             .help(L("Close"))
+            .accessibilityLabel(L("Close"))
         }
     }
 
@@ -602,7 +607,7 @@ private struct TextCardView: View {
     }
 
     private func result(_ text: String) -> some View {
-        let rtl = Languages.isRightToLeft(text)
+        let rtl = model.rightToLeft
         let words = Text(text)
             .font(.system(size: 13))
             .lineSpacing(2)
@@ -663,6 +668,7 @@ private struct TextCardView: View {
 /// Lines of text to come, breathing while the work goes on.
 private struct Placeholder: View {
     @State private var dim = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
@@ -673,8 +679,11 @@ private struct Placeholder: View {
             }
         }
         .onAppear {
+            // Still, with Reduce Motion on; the spinner above still says it works.
+            guard !reduceMotion else { return }
             withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) { dim = true }
         }
+        .accessibilityHidden(true)
     }
 }
 

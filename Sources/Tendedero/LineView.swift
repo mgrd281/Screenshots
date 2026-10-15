@@ -181,6 +181,9 @@ enum Layout {
 
 struct LineView: View {
     @ObservedObject var line: Line
+    /// Reduce Motion: the line fades in and out instead of sliding, and
+    /// photos move without springs.
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         GeometryReader { geo in
@@ -189,6 +192,7 @@ struct LineView: View {
             // and the line hangs this far below its top.
             let drop = max(0, geo.size.height - Layout.panelHeight)
             let count = line.items.count
+            let tucked: CGFloat = line.revealed || reduceMotion ? 0 : -(drop + Layout.panelHeight + 12)
             ZStack(alignment: .topLeading) {
                 holder(width: width)
 
@@ -216,16 +220,16 @@ struct LineView: View {
                     .frame(width: LineTag.width, height: LineTag.maxHeight, alignment: .top)
                     .position(x: tagX, y: Layout.ropeY(x: tagX, width: width) - Layout.pinAbove + LineTag.maxHeight / 2)
             }
-            .animation(.spring(response: 0.55, dampingFraction: 0.78), value: line.items.map(\.id))
+            .animation(Motion.spring(response: 0.55, damping: 0.78, reduced: reduceMotion), value: line.items.map(\.id))
             .animation(.easeInOut(duration: 0.3), value: line.items.isEmpty)
-            .animation(.spring(response: 0.42, dampingFraction: 0.8), value: line.spread)
-            .animation(.spring(response: 0.5, dampingFraction: 0.85), value: line.style)
+            .animation(Motion.spring(response: 0.42, damping: 0.8, reduced: reduceMotion), value: line.spread)
+            .animation(Motion.spring(response: 0.5, damping: 0.85, reduced: reduceMotion), value: line.style)
             .padding(.top, drop)
             // Tucked away, the whole line waits above the top edge and slides
             // out from under the menu bar, the way an auto-hiding Dock does.
-            .offset(y: line.revealed ? 0 : -(drop + Layout.panelHeight + 12))
-            .animation(line.revealed ? .spring(response: 0.42, dampingFraction: 0.82)
-                                     : .easeIn(duration: 0.22), value: line.revealed)
+            .offset(y: tucked)
+            .opacity(line.revealed || !reduceMotion ? 1 : 0)
+            .animation(revealAnimation, value: line.revealed)
         }
         .onPreferenceChange(HitRectsKey.self) { rects in
             line.hitRects = rects
@@ -233,6 +237,11 @@ struct LineView: View {
         .onPreferenceChange(TagRectKey.self) { rect in
             line.tagRect = rect
         }
+    }
+
+    private var revealAnimation: Animation {
+        if reduceMotion { return .easeOut(duration: 0.15) }
+        return line.revealed ? .spring(response: 0.42, dampingFraction: 0.82) : .easeIn(duration: 0.22)
     }
 
     /// What the photos hang on: the rope, the glass shelf or the island.
@@ -348,9 +357,10 @@ private struct StackBadge: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 6)
             .frame(minWidth: 22, minHeight: 22)
-            .background(Color.red.gradient, in: Capsule())
+            .background(Color.red, in: Capsule())
             .shadow(color: .black.opacity(0.25), radius: 3, y: 1)
             .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 }
 
@@ -361,7 +371,7 @@ private struct Hint: View {
             .foregroundStyle(.secondary)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(.regularMaterial, in: Capsule())
+            .controlGlass(capsule: true)
     }
 }
 

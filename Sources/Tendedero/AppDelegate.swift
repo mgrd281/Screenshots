@@ -316,7 +316,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func fly(_ id: UUID, from: CGRect) {
-        guard isPresent, isRevealed, CaptureFlight.flightsInProgress < 2, let screen = panel.screen,
+        // With Reduce Motion on, the capture fades in where it hangs instead.
+        guard !Motion.reduced, isPresent, isRevealed, CaptureFlight.flightsInProgress < 2, let screen = panel.screen,
               let to = cardFrame(for: id),
               let item = line.items.first(where: { $0.id == id }) else {
             line.land(id)
@@ -337,7 +338,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// A discarded card falls over the whole screen, from where it hangs.
     private func fall(_ item: Pegged) {
-        guard isPresent, isRevealed, !item.flying, let screen = panel.screen,
+        guard !Motion.reduced, isPresent, isRevealed, !item.flying, let screen = panel.screen,
               let card = cardFrame(for: item.id),
               let image = item.thumb.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return }
         CaptureFlight.fall(image: image, card: card, tilt: tilt(of: item.id), on: screen)
@@ -347,7 +348,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// and land where the paste shows up. Returns how long until the last
     /// one lands; the first few are enough to say it.
     private func send(_ photos: [Pegged]) -> TimeInterval {
-        guard isPresent, isRevealed, let screen = panel.screen else { return 0 }
+        guard !Motion.reduced, isPresent, isRevealed, let screen = panel.screen else { return 0 }
         let landing = Paste.landingPoint(on: screen)
         var last: TimeInterval?
         for (n, item) in photos.prefix(5).enumerated() {

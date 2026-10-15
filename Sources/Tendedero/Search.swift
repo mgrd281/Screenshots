@@ -173,6 +173,7 @@ private struct SearchBarView: View {
                 }
                 .buttonStyle(.plain)
                 .help(L("Close"))
+                .accessibilityLabel(L("Close"))
             }
             .padding(.horizontal, 16)
             .frame(width: SearchBar.width, height: 50)
@@ -183,7 +184,7 @@ private struct SearchBarView: View {
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
-                .background(.regularMaterial, in: Capsule())
+                .controlGlass(capsule: true)
                 .opacity(count > 0 ? 1 : 0)
         }
         .padding(24)
@@ -209,13 +210,22 @@ private struct SearchBarView: View {
         }
     }
 
+    /// Like Spotlight: Liquid Glass on macOS 26, lifted a little off the
+    /// desktop; frosted glass before it.
+    @ViewBuilder
     private var bar: some View {
         let shape = RoundedRectangle(cornerRadius: 16, style: .continuous)
-        return shape
-            .fill(.regularMaterial)
-            .overlay(shape.strokeBorder(LinearGradient(colors: [Color.white.opacity(0.5), Color.white.opacity(0.1)],
-                                                      startPoint: .top, endPoint: .bottom), lineWidth: 0.75))
-            .overlay(shape.stroke(Color.black.opacity(0.12), lineWidth: 0.5).padding(-0.5))
-            .shadow(color: .black.opacity(0.25), radius: 18, y: 8)
+        if #available(macOS 26, *) {
+            Color.clear
+                .glassEffect(.regular, in: shape)
+                .shadow(color: .black.opacity(0.14), radius: 14, y: 6)
+        } else {
+            shape
+                .fill(.regularMaterial)
+                .overlay(shape.strokeBorder(LinearGradient(colors: [Color.white.opacity(0.5), Color.white.opacity(0.1)],
+                                                          startPoint: .top, endPoint: .bottom), lineWidth: 0.75))
+                .overlay(shape.stroke(Color.black.opacity(0.12), lineWidth: 0.5).padding(-0.5))
+                .shadow(color: .black.opacity(0.25), radius: 18, y: 8)
+        }
     }
 }
