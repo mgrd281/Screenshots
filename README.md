@@ -63,6 +63,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
 | <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
 | Right-click (or control-click), then Make PDF | Put the photo, or the ones picked with it, in one PDF, a page each and private details covered. It hangs ready to send, marked PDF. |
+| <kbd>⌘</kbd>-click one or more, then the PDF button on the tag | The same PDF, from the tag, where search sits while nothing is picked. |
 | Click the trash on the tag | Take everything down at once, but for the photos pinned. |
 | Right-click, then Pin | Keep it on the line: clearing it or filling it leaves it there. Click its pin to let it go again. |
 | Click the magnifying glass on the tag | Search the words in every photo. Matches stay bright, marked where they say it, and Return picks them, ready to send. |
