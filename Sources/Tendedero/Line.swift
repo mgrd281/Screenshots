@@ -371,7 +371,7 @@ final class Line: ObservableObject {
     /// chat has surely read it by then.
     private func leave(_ id: UUID) {
         guard let item = items.first(where: { $0.id == id && !$0.falling }) else { return }
-        if isInInbox(id) { trashLater(item.url) }
+        if isInInbox(id) { trashLater(item.url) } else { History.keep(item.url, owned: false) }
         drop(id, quietly: true, falls: false)
     }
 
@@ -389,14 +389,15 @@ final class Line: ObservableObject {
     }
 
     /// One file, or at launch every one still waiting. A file that hangs on
-    /// the line again stays.
+    /// the line again stays; the history keeps the rest, when there is one.
     private func trashWaiting(only path: String? = nil) {
         let waiting = UserDefaults.standard.stringArray(forKey: Self.trashLaterKey) ?? []
         guard !waiting.isEmpty else { return }
         let hanging = Set(items.filter { !$0.falling }.map(\.url.path))
         let due = waiting.filter { path == nil || $0 == path }
         for file in due where !hanging.contains(file) && FileManager.default.fileExists(atPath: file) {
-            try? FileManager.default.trashItem(at: URL(fileURLWithPath: file), resultingItemURL: nil)
+            let url = URL(fileURLWithPath: file)
+            if !History.keep(url, owned: true) { try? FileManager.default.trashItem(at: url, resultingItemURL: nil) }
         }
         UserDefaults.standard.set(waiting.filter { !due.contains($0) }, forKey: Self.trashLaterKey)
     }
@@ -534,8 +535,25 @@ final class Line: ObservableObject {
     /// The corner cross and "Take down" both end up here.
     func discard(_ id: UUID, quietly: Bool = false) {
         // Already on its way down, from a second click on the tag's trash.
-        guard items.contains(where: { $0.id == id && !$0.falling }) else { return }
-        if isInInbox(id) { trash(id, quietly: quietly) } else { drop(id, quietly: quietly) }
+        guard let item = items.first(where: { $0.id == id && !$0.falling }) else { return }
+        if isInInbox(id) {
+            retire(id, quietly: quietly)
+        } else {
+            History.keep(item.url, owned: false)
+            drop(id, quietly: quietly)
+        }
+    }
+
+    /// A file of Snapfly's own leaves the line into the history, or to the
+    /// Trash when there is no history. Moving to the Trash from a menu or by
+    /// dragging there still deletes it.
+    @discardableResult
+    private func retire(_ id: UUID, quietly: Bool) -> Bool {
+        guard let item = items.first(where: { $0.id == id }) else { return false }
+        guard History.keep(item.url, owned: true) else { return trash(id, quietly: quietly) }
+        if soundOn && !quietly { Line.trashSound?.play() }
+        drop(id, quietly: true)
+        return true
     }
 
     /// The oldest photo falling off a full line. Like the cross, a file from
@@ -558,7 +576,8 @@ final class Line: ObservableObject {
     }
 
     private func letGo(_ id: UUID) {
-        if isInInbox(id), trash(id, quietly: true) { return }
+        if isInInbox(id), retire(id, quietly: true) { return }
+        if let item = items.first(where: { $0.id == id }), !isInInbox(id) { History.keep(item.url, owned: false) }
         drop(id, quietly: true)
     }
 
@@ -774,7 +793,8 @@ final class Line: ObservableObject {
         UserDefaults.standard.set(paths, forKey: storeKey)
         UserDefaults.standard.set(live.filter(\.pinned).map(\.url.path), forKey: pinnedKey)
         PrivateDetails.keepHand(only: Set(paths))
-        TextIndex.keep(only: Set(paths))
+        // The history's words stay known too, for its search.
+        TextIndex.keep(only: Set(paths).union(History.paths))
     }
 
     /// Everything comes back as it was. This runs before the line knows its

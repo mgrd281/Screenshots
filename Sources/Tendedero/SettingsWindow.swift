@@ -126,6 +126,11 @@ final class Preferences: ObservableObject {
         set { change { Line.takesDownSent = newValue } }
     }
 
+    var historyDays: Int? {
+        get { History.days }
+        set { change { History.days = newValue } }
+    }
+
     var chatButton: Bool {
         get { ChatButton.isEnabled }
         set { change { ChatButton.isEnabled = newValue } }
@@ -389,6 +394,23 @@ private struct LinePane: View {
                 Toggle(isOn: $prefs.takesDownSent) {
                     Text(L("Take photos down once sent"))
                     Text(L("Sent into a chat, they leave the line. Pinned ones stay."))
+                }
+                LabeledContent {
+                    HStack {
+                        Picker(L("Keep a history"), selection: $prefs.historyDays) {
+                            Text(L("Off")).tag(Int?.none)
+                            ForEach(History.dayChoices, id: \.self) { n in
+                                Text(String(format: L("%d days"), n)).tag(Int?.some(n))
+                            }
+                        }
+                        .labelsHidden()
+                        .fixedSize()
+                        Button(L("History…")) { HistoryWindow.shared.show() }
+                            .disabled(prefs.historyDays == nil)
+                    }
+                } label: {
+                    Text(L("Keep a history"))
+                    Text(L("What leaves the line stays in the History, from the menu bar, to find and hang again."))
                 }
             }
             ChatButtonSection(prefs: prefs)

@@ -79,6 +79,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         startWatcher()
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
         Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
+        History.purge()
+        HistoryWindow.shared.onHang = { [weak self] url in self?.hangCapture(url) }
         let chatButton = ChatButton(line: line)
         chatButton.openSettings = { [weak self] in self?.openSettings() }
         self.chatButton = chatButton
@@ -829,6 +831,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         searchItem.isEnabled = line.liveCount > 0
         menu.addItem(searchItem)
+
+        let historyItem = ClosureMenuItem(L("History…"), key: "y") { HistoryWindow.shared.show() }
+        historyItem.isEnabled = History.days != nil
+        menu.addItem(historyItem)
 
         let clearItem = ClosureMenuItem(L("Take everything down")) { [weak self] in
             self?.line.clear()

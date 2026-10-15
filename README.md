@@ -175,9 +175,20 @@ float over your screen are made of Liquid Glass.
 
 Whatever you send into a chat, with a paper plane, ⌃⌥V or a drag, leaves
 the line as it lands there, so the line only holds what is still to send.
-Pinned photos stay. A screenshot from Snapfly's own folder goes to the
-Trash a minute later, once the chat has read it. Rather keep them? Turn
-off Take photos down once sent in Settings.
+Pinned photos stay. Rather keep them? Turn off Take photos down once sent
+in Settings.
+
+<br>
+
+## Gone, but not lost.
+
+Everything that leaves the line, sent or taken down, waits in the History
+for 30 days: History… in the menu bar, or <kbd>⌘</kbd>&thinsp;<kbd>Y</kbd>
+while the menu is open. It is grouped by day, and the search finds the words
+in every photo. A click hangs one on the line again. A screenshot from
+Snapfly's own folder moves into its History folder and goes to the Trash once
+its days are up; a file from anywhere else stays where it is. Choose 7 or 30
+days, or turn it off, in Settings, under Line. It all stays on your Mac.
 
 <br>
 
@@ -262,6 +273,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Collage.swift` | Joins several screenshots into one image, or into one PDF |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
+| `History.swift` | What left the line, kept for 7 or 30 days |
+| `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again |
 | `ChatButton.swift` | The send button that floats over a chat while photos hang |
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |
