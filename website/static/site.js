@@ -61,10 +61,17 @@
       !peg.classList.contains("leaving") && !peg.classList.contains("sending") &&
       getComputedStyle(peg).display !== "none");
 
-    // Photos spread evenly along the rope, and close the gap when one goes.
+    // Photos spread evenly along the rope, never closer to the edge than
+    // their own corner buttons, and close the gap when one goes.
     function layout() {
       const pegs = hanging();
-      pegs.forEach((peg, i) => peg.style.setProperty("--t", ((i + 0.5) / pegs.length).toFixed(4)));
+      if (!pegs.length) return;
+      const width = line.clientWidth;
+      const half = pegs[0].offsetWidth / 2 + 18;
+      pegs.forEach((peg, i) => {
+        const x = pegs.length === 1 ? width / 2 : half + (i * (width - 2 * half)) / (pegs.length - 1);
+        peg.style.setProperty("--t", (x / width).toFixed(4));
+      });
     }
     layout();
     addEventListener("resize", layout);
@@ -247,21 +254,22 @@
   if (desk) {
     const tilts = [-4, 3, -2, 4, -3, 2, -1, 3, -2];
 
-    // Where each file hangs is worked out from the layout, not from where
-    // it is drawn, so a sweep in the middle of another lands right.
+    // Each file flies to its place on the rope at the top of the section.
+    // Places come from the layout, not from where a file is drawn, so a
+    // sweep in the middle of another still lands right.
     const sweep = () => {
       const files = [...desk.querySelectorAll(".file")].filter((f) => getComputedStyle(f).display !== "none");
-      const width = desk.clientWidth;
-      const deskBox = desk.getBoundingClientRect();
-      const ropeBox = desk.querySelector(".desk-rope").getBoundingClientRect();
-      const ropeTop = ropeBox.top - deskBox.top;
+      const box = desk.querySelector(".desk-files").getBoundingClientRect();
+      const rope = desk.querySelector(".desk-rope").getBoundingClientRect();
+      const margin = 0.05;
       files.forEach((file, i) => {
-        const center = file.offsetLeft + (rtl ? file.offsetWidth : 0);
-        const t = (i + 0.5) / files.length;
-        const x = (rtl ? 1 - t : t) * width;
-        const y = ropeTop + ropeBox.height * (0.1 + 1.2 * t * (1 - t)) - 2;
-        file.style.setProperty("--dx", `${x - center}px`);
-        file.style.setProperty("--dy", `${y - file.offsetTop}px`);
+        const left = box.left + file.offsetLeft + (rtl ? file.offsetWidth : 0);
+        const top = box.top + file.offsetTop;
+        const t = margin + ((1 - 2 * margin) * (i + 0.5)) / files.length;
+        const x = rope.left + (rtl ? 1 - t : t) * rope.width;
+        const y = rope.top + rope.height * (0.14 + 1.44 * t * (1 - t)) - 3;
+        file.style.setProperty("--dx", `${x - left}px`);
+        file.style.setProperty("--dy", `${y - top}px`);
         file.style.setProperty("--tilt", `${tilts[i % tilts.length]}deg`);
       });
       desk.classList.add("swept");
@@ -283,14 +291,11 @@
   const cover = document.querySelector("[data-cover]");
   const invoice = document.querySelector("[data-invoice]");
   if (cover && invoice) {
-    const master = cover.querySelector("[data-master]");
-    const kinds = cover.querySelector("[data-kinds]");
     const apply = () => {
-      kinds.disabled = !master.checked;
-      const chosen = new Set([...kinds.querySelectorAll("input:checked")].map((box) => box.value));
+      const chosen = new Set([...cover.querySelectorAll("[data-kind]:checked")].map((box) => box.value));
       let any = false;
       invoice.querySelectorAll("[data-pd]").forEach((field) => {
-        const covered = master.checked && chosen.has(field.dataset.pd);
+        const covered = chosen.has(field.dataset.pd);
         field.classList.toggle("covered", covered);
         any = any || covered;
       });
@@ -338,7 +343,7 @@
   // MARK: Line styles
 
   const styles = document.querySelector("[data-styles]");
-  const screen = document.querySelector("[data-style-screen]");
+  const screen = document.querySelector("[data-style-stage]");
   const caption = document.querySelector("[data-style-caption]");
   if (styles && screen) {
     styles.addEventListener("change", (event) => {

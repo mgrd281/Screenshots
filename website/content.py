@@ -44,7 +44,7 @@ TEXT["en"] = dict(
     refill="New screenshots",
 
     send_h="From the line into the chat.",
-    send_p="Every screenshot carries a paper plane. Click it, and Snapfly pastes the screenshot into the app in front, a chat, ChatGPT or an email, right where you were typing. <kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd> sends the newest one without reaching for the mouse. Once sent, it leaves the line, so the line only holds what’s still to send.",
+    send_p="Every screenshot carries a paper plane. Click it, and Snapfly pastes the screenshot into the app in front, a chat, ChatGPT or an email, right where you were typing. <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> sends the newest one without reaching for the mouse. Once sent, it leaves the line, so the line only holds what’s still to send.",
     keys=["control", "option", ""],
     keys_label="The shortcut Control, Option, V",
 
@@ -152,9 +152,9 @@ TEXT["en"] = dict(
          """<p>The first time Snapfly opens, it offers to handle your screenshots. Choose Turn on, and every screenshot you take hangs on the line instead of landing on your Desktop. You can change it any time with Handle screenshots in Snapfly’s menu in the menu bar.</p>
 <p>In the Mac App Store edition, open the Screenshot app, click Options, choose Other Location and pick the Snapfly folder in Pictures.</p>"""),
         ("How do I bring the line down?",
-         """<p>Rest the pointer at the top edge of the screen, in the menu bar, and the line glides down. Or press <kbd>⌃</kbd><kbd>⌥</kbd><kbd>T</kbd>. Move away and it tucks itself away again.</p>"""),
+         """<p>Rest the pointer at the top edge of the screen, in the menu bar, and the line glides down. Or press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>T</kbd></span>. Move away and it tucks itself away again.</p>"""),
         ("How do I send a screenshot into a chat?",
-         """<p>Click into the chat’s message field, then click the paper plane on a screenshot. Or press <kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd> to send the newest one. To send several at once, ⌘-click them first.</p>"""),
+         """<p>Click into the chat’s message field, then click the paper plane on a screenshot. Or press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> to send the newest one. To send several at once, ⌘-click them first.</p>"""),
         ("The send button says “Not allowed yet”.",
          """<p>Sending presses ⌘V for you, and macOS asks for the Accessibility permission for that.</p>
 <ol>
@@ -210,7 +210,7 @@ TEXT["de"] = dict(
     refill="Neue Bildschirmfotos",
 
     send_h="Von der Leine direkt in den Chat.",
-    send_p="Jedes Bildschirmfoto hat einen Papierflieger. Klick darauf, und Snapfly setzt es in die App im Vordergrund ein – einen Chat, ChatGPT oder eine E-Mail –, genau dort, wo du gerade schreibst. <kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd> schickt das neueste, ohne dass du zur Maus greifst. Was gesendet ist, verlässt die Leine. So hängt dort nur, was noch zu senden ist.",
+    send_p="Jedes Bildschirmfoto hat einen Papierflieger. Klick darauf, und Snapfly setzt es in die App im Vordergrund ein – einen Chat, ChatGPT oder eine E-Mail –, genau dort, wo du gerade schreibst. <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> schickt das neueste, ohne dass du zur Maus greifst. Was gesendet ist, verlässt die Leine. So hängt dort nur, was noch zu senden ist.",
     keys=["ctrl", "alt", ""],
     keys_label="Das Kürzel Control, Option, V",
 
@@ -318,9 +318,9 @@ TEXT["de"] = dict(
          """<p>Beim ersten Öffnen bietet Snapfly an, deine Bildschirmfotos zu übernehmen. Wähl „Einschalten“, und jedes Bildschirmfoto hängt an der Leine statt auf deinem Schreibtisch. Du kannst das jederzeit mit „Bildschirmfotos übernehmen“ im Menü von Snapfly in der Menüleiste ändern.</p>
 <p>In der Mac App Store-Ausgabe öffnest du die App „Bildschirmfoto“, klickst auf „Optionen“, wählst „Anderer Ort“ und dann den Ordner „Snapfly“ in „Bilder“.</p>"""),
         ("Wie hole ich die Leine herunter?",
-         """<p>Lass den Zeiger am oberen Bildschirmrand in der Menüleiste ruhen, und die Leine gleitet herunter. Oder drück <kbd>⌃</kbd><kbd>⌥</kbd><kbd>T</kbd>. Geh weg, und sie verschwindet wieder.</p>"""),
+         """<p>Lass den Zeiger am oberen Bildschirmrand in der Menüleiste ruhen, und die Leine gleitet herunter. Oder drück <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>T</kbd></span>. Geh weg, und sie verschwindet wieder.</p>"""),
         ("Wie sende ich ein Bildschirmfoto in einen Chat?",
-         """<p>Klick in das Nachrichtenfeld des Chats und dann auf den Papierflieger eines Bildschirmfotos. Oder drück <kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd>, um das neueste zu senden. Um mehrere auf einmal zu senden, klick sie vorher mit ⌘ an.</p>"""),
+         """<p>Klick in das Nachrichtenfeld des Chats und dann auf den Papierflieger eines Bildschirmfotos. Oder drück <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span>, um das neueste zu senden. Um mehrere auf einmal zu senden, klick sie vorher mit ⌘ an.</p>"""),
         ("Die Senden-Taste zeigt „Noch nicht erlaubt“.",
          """<p>Beim Senden drückt Snapfly für dich ⌘V, und dafür fragt macOS nach der Berechtigung für Bedienungshilfen.</p>
 <ol>
@@ -376,7 +376,7 @@ TEXT["ar"] = dict(
     refill="لقطات جديدة",
 
     send_h="من الحبل إلى الدردشة مباشرة.",
-    send_p="على كل لقطة طائرة ورقية. انقرها فيلصق Snapfly اللقطة في التطبيق الذي أمامك، دردشة أو ChatGPT أو بريد إلكتروني، في المكان الذي تكتب فيه. واختصار <bdi dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></bdi> يرسل أحدث لقطة دون أن تلمس الفأرة. وما يُرسَل يغادر الحبل، فلا يبقى عليه إلا ما لم يُرسَل بعد.",
+    send_p="على كل لقطة طائرة ورقية. انقرها فيلصق Snapfly اللقطة في التطبيق الذي أمامك، دردشة أو ChatGPT أو بريد إلكتروني، في المكان الذي تكتب فيه. واختصار <bdi class=\"chord\" dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></bdi> يرسل أحدث لقطة دون أن تلمس الفأرة. وما يُرسَل يغادر الحبل، فلا يبقى عليه إلا ما لم يُرسَل بعد.",
     keys=["control", "option", ""],
     keys_label="الاختصار Control و Option و V",
 
@@ -484,9 +484,9 @@ TEXT["ar"] = dict(
          """<p>عند فتح Snapfly أول مرة، يعرض أن يتولّى لقطات الشاشة. اختر «تشغيل»، فتُعلَّق كل لقطة تلتقطها على الحبل بدل أن تصل إلى سطح المكتب. ويمكنك تغيير ذلك متى شئت من «تولّي لقطات الشاشة» في قائمة Snapfly في شريط القوائم.</p>
 <p>في نسخة Mac App Store، افتح تطبيق «لقطة الشاشة»، وانقر «خيارات»، واختر «موقع آخر»، ثم اختر مجلد Snapfly داخل «الصور».</p>"""),
         ("كيف أُنزل الحبل؟",
-         """<p>أرِح المؤشر عند الحافة العليا للشاشة، في شريط القوائم، فينزل الحبل. أو اضغط <bdi dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>T</kbd></bdi>. وحين تبتعد يختفي من جديد.</p>"""),
+         """<p>أرِح المؤشر عند الحافة العليا للشاشة، في شريط القوائم، فينزل الحبل. أو اضغط <bdi class="chord" dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>T</kbd></bdi>. وحين تبتعد يختفي من جديد.</p>"""),
         ("كيف أرسل لقطة إلى دردشة؟",
-         """<p>انقر في خانة الكتابة في الدردشة، ثم انقر الطائرة الورقية على اللقطة. أو اضغط <bdi dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></bdi> لإرسال أحدث لقطة. ولإرسال عدة لقطات معًا، انقرها أولًا وأنت ضاغط على ⌘.</p>"""),
+         """<p>انقر في خانة الكتابة في الدردشة، ثم انقر الطائرة الورقية على اللقطة. أو اضغط <bdi class="chord" dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></bdi> لإرسال أحدث لقطة. ولإرسال عدة لقطات معًا، انقرها أولًا وأنت ضاغط على ⌘.</p>"""),
         ("زر الإرسال يقول «غير مسموح بعد».",
          """<p>عند الإرسال يضغط Snapfly ⌘V نيابة عنك، ولذلك يطلب macOS إذن تسهيلات الاستخدام.</p>
 <ol>

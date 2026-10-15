@@ -59,12 +59,31 @@ FIRST VIEWPORT:
 - Lower end side: a chat window in front, cropped by the fold, with one
   incoming question.
 
-FORM: Mac desktop as the page (first of seven). The signature interaction is
-the paper plane. It flings a hanging screenshot off the line and into the
+FORM: Mac desktop as the page (first of seven). The wallpaper stays fixed
+under the whole home page, as a Mac's desktop does, with a wash below the
+first view. Every demo is a native object on it:
+- the keycaps;
+- the Desktop's files, which fly up onto a rope;
+- Snapfly's own Settings window, on its Privacy and Line panes;
+- the photo's menu opening from a card on a line.
+
+The signature interaction is the paper plane. It flings a hanging screenshot off the line and into the
 chat, where it lands as a sent image, and the line closes the gap. Holding a
 screenshot opens its real context menu. The menu doubles as the feature list.
-seed: none (unavailable)
+seed: none (roll not run: the impeccable launcher is not installed in this
+repository)
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the
 finish review, the verdict, DESIGN.md, and every shipping raster carrying its
 provenance
+
+## Raster provenance
+
+- `static/favicon.png`, `static/icon-64.png`, `icon-128.png`, `icon-180.png`
+  and `icon-256.png`: the app icon `assets/icon.png`, resized by
+  `make-images.py`.
+- `static/og.png`: the brand wallpaper with the app icon, drawn by
+  `make-images.py`.
+- Everything else is inline SVG drawn in `build.py`: the synthetic
+  screenshots (invoice, map, chart, calendar, sunset), the icons and the
+  line-style tiles.

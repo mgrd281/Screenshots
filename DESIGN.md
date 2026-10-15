@@ -431,14 +431,22 @@ system to a web page. The brief and direction contract are in
 `website/BRIEF.md`.
 
 - **The page is the Mac screen.** A frosted menu bar carries the navigation.
-  The line hangs under it, and a chat window sits in front. Below the first
-  view, sections sit on the system ground (`web-ground`), and the close
-  returns to the wallpaper.
+  The line hangs under it, and a chat window sits in front.
+  - On the home page the wallpaper stays fixed while the page scrolls over
+    it, like a Mac's desktop.
+  - Below the first view a plum wash (55%, or 45% in dark) sits over it, so
+    white words stay at least 4.7:1 on every part.
+  - Each demo is a native object on that desktop:
+    - keycaps;
+    - Desktop files that fly onto a rope;
+    - Snapfly's own Settings window, on its Privacy and Line panes, with
+      the line-style tiles;
+    - the photo's menu opening from a card on a line.
+  - The privacy and support pages are documents on `web-ground`.
 - **The brand gradient is the wallpaper.** On the site, amber, coral and
-  violet are the desktop the app sits on: the ground of the first view, the
-  desk and line-style demos, and the close.
-  - Nothing that is pressed or read sits on it bare. White text gets a wash
-    (plum at 46% fading up from the bottom), so it stays at least 4.5:1.
+  violet are the desktop the app sits on.
+  - Nothing that is pressed or read sits on it bare. White text gets the
+    wash, fading up from the bottom of the first view.
   - Dark mode swaps in a dusk version of the same three hues.
 - **Everything on the wallpaper is native.** It follows this file's tokens:
   - photo cards: 16/12, 4 pt inset, glass, swaying 1.1° on a clip;
@@ -458,7 +466,8 @@ system to a web page. The brief and direction contract are in
   - The system stack only: SF Pro and SF Arabic on Apple devices. No web
     fonts, so nothing is fetched from another host.
   - Display sizes are allowed on the site: hero to 5.6 rem, section heads to
-    3.5 rem, tracking −0.035 em, and 0 in Arabic.
+    3.5 rem. Tracking is −0.022 em on display lines, −0.018 em on section
+    heads, and 0 in Arabic.
   - German headlines step down a size for long words.
 - **Motion.**
   - The signature move is the paper plane: the card takes off up and away,
@@ -466,6 +475,9 @@ system to a web page. The brief and direction contract are in
   - Everything else plays once when seen: the Desktop sweep and the
     keycaps.
   - Reduce Motion turns flights into fades and stops the sway.
+- **Images.** The PNGs in `website/static` come from the app icon, drawn by
+  `website/make-images.py`. Everything else is inline SVG drawn in
+  `build.py`.
 - **Words.** Labels the app shows come from its `Localizable.strings`.
   Everything else is in `website/content.py`, in English, German (du) and
   Arabic (right to left).

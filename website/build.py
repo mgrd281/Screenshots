@@ -59,6 +59,10 @@ def icon(name, cls="icon"):
         "globe": '<circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7" fill="none"/><path d="M4 12h16M12 4c2.4 2.3 3.5 5 3.5 8s-1.1 5.7-3.5 8c-2.4-2.3-3.5-5-3.5-8S9.6 6.3 12 4Z" stroke="currentColor" stroke-width="1.7" fill="none"/>',
         "arrow": '<path d="M5 12h13M13 6.5 18.5 12 13 17.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
         "replay": '<path d="M5.5 12a6.5 6.5 0 1 0 2-4.7" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M6.8 3.8v3.9h3.9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+        "gear": '<circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M12 3.5v2.2M12 18.3v2.2M3.5 12h2.2M18.3 12h2.2M6 6l1.6 1.6M16.4 16.4 18 18M6 18l1.6-1.6M16.4 7.6 18 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+        "shirt": '<path d="M8.5 4.5 4 7l1.8 4 2.2-1v9.5h8V10l2.2 1L20 7l-4.5-2.5a3.5 3.5 0 0 1-7 0Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" fill="none"/>',
+        "hand": '<path d="M8.5 12V6.2a1.3 1.3 0 0 1 2.6 0V11m0-6.2a1.3 1.3 0 0 1 2.6 0V11m0-5a1.3 1.3 0 0 1 2.6 0V12m0-3.5a1.3 1.3 0 0 1 2.6 0v5.5a6.5 6.5 0 0 1-6.5 6.5h-.6a6 6 0 0 1-4.7-2.3L4.6 14.4a1.4 1.4 0 0 1 2.1-1.8l1.8 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+        "info": '<circle cx="12" cy="12" r="8.3" stroke="currentColor" stroke-width="1.7" fill="none"/><path d="M12 11v5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7.8" r="1.2" fill="currentColor"/>',
         "pointer": '<path d="M5 3.2v15.6l4.1-3.7 2.6 6 2.7-1.2-2.6-5.9 5.6-.3Z" fill="#000" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/>',
     }
     return f'<svg class="{cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">{paths[name]}</svg>'
@@ -113,20 +117,22 @@ def art_invoice(lang, uid, covered=True):
     parts.append(a.text(18, 66, t["date"], 8.5, 400, "#6e6e73"))
     parts.append(a.text(282, 52, t["total_v"], 14, 700, "#1d1d1f", "end"))
     parts.append(a.text(282, 66, t["total"], 8.5, 400, "#6e6e73", "end"))
-    parts.append(a.text(18, 88, t["bill"], 8, 600, "#6e6e73"))
+    parts.append(a.text(18, 84, t["bill"], 8, 600, "#6e6e73"))
     # The name, the street and the email: covered, as Snapfly covers them.
     if covered:
-        parts.append(a.rect(17, 93, 70, 11, ink, 2.5))
-        parts.append(a.rect(17, 107, 86, 11, ink, 2.5))
-        parts.append(a.rect(17, 121, 118, 11, ink, 2.5))
+        parts.append(a.rect(17, 89, 70, 11, ink, 2.5))
+        parts.append(a.rect(17, 103, 86, 11, ink, 2.5))
+        parts.append(a.rect(17, 117, 118, 11, ink, 2.5))
     else:
-        parts.append(a.text(18, 102, t["name"], 9))
-        parts.append(a.text(18, 116, t["street"], 9))
-        parts.append(a.text(18, 130, t["email"], 9))
-    parts.append(f'<line x1="{a.x(18)}" y1="146" x2="{a.x(282)}" y2="146" stroke="#e5e5ea"/>')
+        parts.append(a.text(18, 98, t["name"], 9))
+        parts.append(a.text(18, 112, t["street"], 9))
+        parts.append(a.text(18, 126, t["email"], 9))
+    parts.append(f'<line x1="{a.x(18)}" y1="138" x2="{a.x(282)}" y2="138" stroke="#e5e5ea"/>')
+    # The items sit on the far side, so the lock badge in the near bottom
+    # corner covers nothing.
     for i, (item, price) in enumerate(t["items"]):
-        y = 162 + i * 15
-        parts.append(a.text(18, y, item, 9))
+        y = 154 + i * 14
+        parts.append(a.text(150, y, item, 9))
         parts.append(a.text(282, y, price, 9, 400, "#1d1d1f", "end"))
     parts.append("</svg>")
     return "".join(parts)
@@ -358,6 +364,13 @@ def download_button(lang, cls="btn btn-download"):
 
 # MARK: The home page
 
+ROPE = '<svg class="rope{cls}" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M-20 14 Q500 86 1020 14"/></svg>'
+
+
+def rope(cls=""):
+    return ROPE.replace("{cls}", f" {cls}" if cls else "")
+
+
 def hero(lang):
     t = TEXT[lang]
     copy_word, discard = L(lang, "Copy"), L(lang, "Discard")
@@ -377,7 +390,7 @@ def hero(lang):
 </li>""")
     return f"""<section class="hero" aria-labelledby="hero-title">
   <div class="line" data-line>
-    <svg class="rope" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M-20 14 Q500 86 1020 14"/></svg>
+    {rope()}
     <ul class="pegs" aria-label="{esc(t["line_label"])}">
       {"".join(pegs)}
     </ul>
@@ -418,28 +431,47 @@ def section_send(lang):
 </section>"""
 
 
+def still_pegs(lang, kinds, uid, cls="pegs", held=None):
+    """Screenshots hanging still on a line, for the demos further down."""
+    out = []
+    for i, kind in enumerate(kinds):
+        extra = " held" if i == held else ""
+        out.append(f'<li class="peg still{extra}" style="--t:{(i + 0.5) / len(kinds):.4f};--tilt:{TILTS[i]};--i:{i}">'
+                   f'<span class="clip"></span><div class="photo"><span class="photo-img">{art(kind, lang, f"{uid}{i}")}</span></div></li>')
+    return f'<ul class="{cls}" aria-hidden="true">{"".join(out)}</ul>'
+
+
+def window_titlebar(title):
+    return (f'<div class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>'
+            f'<span class="window-title">{esc(title)}</span></div>')
+
+
+def settings_sidebar(lang, current):
+    items = [("gear", "General"), ("shirt", "Line"), ("hand", "Privacy"), ("info", "About")]
+    mark = lambda key: ' class="on"' if key == current else ""
+    rows = "".join(f'<li{mark(key)}>{icon(sym)}<span>{esc(L(lang, key))}</span></li>' for sym, key in items)
+    return f'<ul class="settings-side" aria-hidden="true">{rows}</ul>'
+
+
 def section_desk(lang):
     t = TEXT[lang]
-    # Where each file sits on the Desktop, in the way macOS arranges icons
-    # from the top corner down.
-    spots = [(86, 14), (86, 34), (86, 54), (72, 14), (72, 34), (72, 54), (58, 22), (58, 44), (44, 30)]
+    # Where each file sits on the Desktop, arranged the way macOS arranges
+    # icons, from the top corner down.
+    spots = [(84, 4), (84, 37), (84, 70), (60, 10), (60, 43), (60, 76), (36, 22), (36, 56), (13, 38)]
     files = []
     for i, (x, y) in enumerate(spots):
         kind = CARDS[i % len(CARDS)]
         name = t["desk_file"].format(m=f"{41 + i:02d}", s=f"{(i * 7 + 12) % 60:02d}")
         files.append(f'<li class="file" style="--x:{x}%;--y:{y}%;--i:{i}"><span class="file-thumb">{art(kind, lang, f"desk{i}")}</span><span class="file-name">{esc(name)}</span></li>')
-    return f"""<section class="section desk" aria-labelledby="desk-h">
-  <div class="wrap">
-    <div class="copy center">
+    return f"""<section class="section desk" aria-labelledby="desk-h" data-desk>
+  {rope("desk-rope")}
+  <div class="wrap split">
+    <div class="copy">
       <h2 id="desk-h">{esc(t["desk_h"])}</h2>
       <p>{esc(t["desk_p"])}</p>
+      <p><button class="replay" type="button" data-replay>{icon("replay")}<span>{esc(t["replay"])}</span></button></p>
     </div>
-    <div class="screen desk-screen" role="img" aria-label="{esc(t["desk_label"])}" data-desk>
-      <div class="screen-menubar" aria-hidden="true"><span class="screen-app"></span></div>
-      <svg class="rope desk-rope" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M-20 10 Q500 70 1020 10"/></svg>
-      <ul class="desk-files" aria-hidden="true">{"".join(files)}</ul>
-    </div>
-    <p class="center"><button class="replay" type="button" data-replay>{icon("replay")}<span>{esc(t["replay"])}</span></button></p>
+    <div class="desk-files" role="img" aria-label="{esc(t["desk_label"])}"><ul aria-hidden="true">{"".join(files)}</ul></div>
   </div>
 </section>"""
 
@@ -448,8 +480,8 @@ def section_private(lang):
     t, inv = TEXT[lang], TEXT[lang]["inv"]
     kinds = [("names", "Names"), ("addresses", "Addresses"), ("emails", "Emails"),
              ("phones", "Phone numbers"), ("bank", "Bank cards and accounts")]
-    checks = "".join(
-        f'<label class="kind"><input type="checkbox" value="{k}" checked data-kind><span>{esc(L(lang, label))}</span></label>'
+    switches = "".join(
+        f'<label class="row"><span>{esc(L(lang, label))}</span><input type="checkbox" role="switch" value="{k}" checked data-kind></label>'
         for k, label in kinds)
     field = lambda kind, text, cls="": f'<span class="pd{(" " + cls) if cls else ""}" data-pd="{kind}">{esc(text)}</span>'
     items = "".join(f'<li><span>{esc(a)}</span><span>{esc(b)}</span></li>' for a, b in inv["items"])
@@ -458,31 +490,39 @@ def section_private(lang):
     <div class="copy">
       <h2 id="priv-h">{esc(t["priv_h"])}</h2>
       <p>{esc(t["priv_p"])}</p>
-      <form class="pane" data-cover onsubmit="return false">
-        <label class="switch-row"><span>{esc(L(lang, "Hide private details"))}</span><input type="checkbox" role="switch" checked data-master></label>
-        <fieldset class="kinds" data-kinds><legend class="vh">{esc(L(lang, "Hide private details"))}</legend>{checks}</fieldset>
-      </form>
     </div>
-    <figure class="shot">
-      <div class="photo photo-large" data-invoice aria-hidden="true">
-        <div class="doc-shot">
-          <div class="doc-bar"><span class="lights"><i></i><i></i><i></i></span></div>
-          <div class="doc-top"><div><p class="doc-title">{esc(inv["title"])}</p><p class="doc-dim">{esc(inv["date"])}</p></div>
-            <div class="doc-total"><p class="doc-title">{esc(inv["total_v"])}</p><p class="doc-dim">{esc(inv["total"])}</p></div></div>
-          <p class="doc-label">{esc(inv["bill"])}</p>
-          <p>{field("names", inv["name"])}</p>
-          <p>{field("addresses", inv["street"])}</p>
-          <p>{field("addresses", inv["city"])}</p>
-          <p>{field("emails", inv["email"], "ltr")}</p>
-          <p>{field("phones", inv["phone"], "ltr")}</p>
-          <ul class="doc-items">{items}</ul>
-          <p class="doc-dim">{esc(inv["pay"])}</p>
-          <p>{field("bank", inv["iban"], "ltr")}</p>
-        </div>
-        <span class="badge-lock">{icon("lock")}</span>
+    <div class="window settings">
+      {window_titlebar(L(lang, "Settings"))}
+      <div class="settings-body">
+        {settings_sidebar(lang, "Privacy")}
+        <form class="settings-pane" data-cover onsubmit="return false">
+          <fieldset class="group">
+            <legend class="group-label">{esc(L(lang, "Hide private details"))}</legend>
+            <div class="group-box">{switches}</div>
+            <p class="group-note">{esc(L(lang, "What is checked is covered in whatever leaves the line"))}</p>
+          </fieldset>
+          <div class="group">
+            <p class="group-label">{esc(L(lang, "Preview"))} · <span class="example">{esc(t["example"])}</span></p>
+            <div class="group-box preview">
+              <div class="photo photo-preview" data-invoice aria-hidden="true">
+                <div class="doc-shot">
+                  <div class="doc-top"><div><p class="doc-title">{esc(inv["title"])}</p><p class="doc-dim">{esc(inv["date"])}</p></div>
+                    <div class="doc-total"><p class="doc-title">{esc(inv["total_v"])}</p><p class="doc-dim">{esc(inv["total"])}</p></div></div>
+                  <p class="doc-label">{esc(inv["bill"])}</p>
+                  <p>{field("names", inv["name"])}</p>
+                  <p>{field("addresses", inv["street"])} · {field("addresses", inv["city"])}</p>
+                  <p>{field("emails", inv["email"], "ltr")}</p>
+                  <p>{field("phones", inv["phone"], "ltr")}</p>
+                  <ul class="doc-items">{items}</ul>
+                  <p>{field("bank", inv["iban"], "ltr")}</p>
+                </div>
+                <span class="badge-lock">{icon("lock")}</span>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
-      <figcaption>{esc(t["example"])}</figcaption>
-    </figure>
+    </div>
   </div>
 </section>"""
 
@@ -506,54 +546,78 @@ def section_menu(lang):
         selected = ' aria-pressed="true"' if key == "Make PDF" else ' aria-pressed="false"'
         chevron = icon("chevron", "icon chev") if sub else ""
         items.append(f'<li><button type="button" class="ctx-item" data-title="{esc(label)}" data-desc="{esc(d[key])}"{selected}><span>{esc(label)}</span>{chevron}</button></li>')
-    first = L(lang, "Make PDF")
     return f"""<section class="section menu-demo" aria-labelledby="menu-h">
   <div class="wrap">
     <div class="copy center">
       <h2 id="menu-h">{esc(t["menu_h"])}</h2>
       <p>{esc(t["menu_p"])}</p>
     </div>
-    <div class="menu-stage">
-      <div class="menu-photo" aria-hidden="true">
-        <div class="photo"><span class="photo-img">{art("calendar", lang, "menu")}</span></div>
-        {icon("pointer", "pointer")}
-      </div>
-      <ul class="ctx-menu" data-menu>{"".join(items)}</ul>
-      <div class="menu-desc" aria-live="polite" data-menu-desc>
-        <p class="menu-desc-title">{esc(first)}</p>
-        <p>{esc(d["Make PDF"])}</p>
-      </div>
+  </div>
+  <div class="menu-stage">
+    {rope("menu-rope")}
+    {still_pegs(lang, ["map", "calendar", "sunset"], "menu", held=1)}
+    {icon("pointer", "pointer")}
+    <ul class="ctx-menu" data-menu>{"".join(items)}</ul>
+    <div class="menu-desc" aria-live="polite" data-menu-desc>
+      <p class="menu-desc-title">{esc(L(lang, "Make PDF"))}</p>
+      <p>{esc(d["Make PDF"])}</p>
+      <p class="menu-hint">{esc(t["menu_hint"])}</p>
     </div>
-    <p class="menu-hint center">{esc(t["menu_hint"])}</p>
   </div>
 </section>"""
+
+
+def tile_art(style):
+    """The little picture on each line-style tile, as in the app's settings."""
+    card = lambda x, y, r=0: f'<rect x="{x}" y="{y}" width="20" height="14" rx="2.5" fill="#fff" transform="rotate({r} {x + 10} {y})"/>'
+    body = {
+        "clothesline": '<path d="M2 9 Q44 26 86 9" stroke="#4a3a4e" stroke-width="1.2" fill="none"/>' + card(16, 14, -5) + card(34, 18, 3) + card(54, 15, -2),
+        "shelf": '<rect x="14" y="34" width="60" height="9" rx="4.5" fill="rgba(255,255,255,.55)"/>' + card(18, 20) + card(34, 20) + card(50, 20),
+        "island": '<path d="M18 0h52v24a10 10 0 0 1-10 10H28a10 10 0 0 1-10-10Z" fill="#000"/>' + card(23, 10) + card(34, 10) + card(45, 10),
+        "stack": card(58, 20, -8) + card(60, 21, 5) + card(61, 22) + '<circle cx="80" cy="18" r="5" fill="#FF3B30"/>',
+    }[style]
+    return (f'<svg viewBox="0 0 88 56" aria-hidden="true" focusable="false">'
+            f'<rect width="88" height="56" rx="6" fill="url(#tile-wall)"/>{body}</svg>')
 
 
 def section_styles(lang):
     t = TEXT[lang]
     styles = [("clothesline", "Clothesline"), ("shelf", "Glass shelf"), ("island", "Island"), ("stack", "Card stack")]
-    radios = "".join(
-        f'<label><input type="radio" name="line-style" value="{v}"{" checked" if v == "clothesline" else ""} data-caption="{esc(t["styles"][k])}"><span>{esc(L(lang, k))}</span></label>'
+    tiles = "".join(
+        f'<label class="tile"><input type="radio" name="line-style" value="{v}"{" checked" if v == "clothesline" else ""} data-caption="{esc(t["styles"][k])}">'
+        f'<span class="tile-art">{tile_art(v)}</span><span class="tile-name">{esc(L(lang, k))}</span></label>'
         for v, k in styles)
-    minis = "".join(f'<span class="mini m{i + 1}" style="--i:{i};--tilt:{TILTS[i]}"><span class="mini-clip"></span><span class="photo-img">{art(k, lang, f"style{i}")}</span></span>'
+    cards = "".join(f'<span class="sty s{i + 1}" style="--i:{i};--tilt:{TILTS[i]}"><span class="mini-clip"></span><span class="photo"><span class="photo-img">{art(k, lang, f"style{i}")}</span></span></span>'
                     for i, k in enumerate(["map", "invoice", "sunset"]))
-    return f"""<section class="section styles" aria-labelledby="styles-h">
-  <div class="wrap">
-    <div class="copy center">
+    gradient = ('<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>'
+                '<linearGradient id="tile-wall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC45C"/>'
+                '<stop offset=".5" stop-color="#FF5E62"/><stop offset="1" stop-color="#B234D6"/></linearGradient></defs></svg>')
+    return f"""<section class="section styles" aria-labelledby="styles-h" data-style-stage data-style="clothesline">
+  <div class="style-line" aria-hidden="true">
+    {rope("style-rope")}
+    <span class="shelf"></span><span class="island"></span>
+    {cards}
+    <span class="count">3</span>
+  </div>
+  <div class="wrap split">
+    <div class="copy">
       <h2 id="styles-h">{esc(t["styles_h"])}</h2>
       <p>{esc(t["styles_p"])}</p>
     </div>
-    <fieldset class="segmented" data-styles><legend class="vh">{esc(L(lang, "Line style"))}</legend>{radios}</fieldset>
-    <div class="screen style-screen" data-style-screen data-style="clothesline" aria-hidden="true">
-      <div class="screen-menubar"><span class="screen-app"></span></div>
-      <div class="mini-line">
-        <svg class="rope mini-rope" viewBox="0 0 1000 100" preserveAspectRatio="none" focusable="false"><path d="M-20 12 Q500 60 1020 12"/></svg>
-        <span class="shelf"></span><span class="island"></span>
-        {minis}
-        <span class="count">3</span>
+    <div class="window settings settings-line">
+      {window_titlebar(L(lang, "Settings"))}
+      <div class="settings-body">
+        {settings_sidebar(lang, "Line")}
+        <div class="settings-pane">
+          {gradient}
+          <fieldset class="group tiles" data-styles>
+            <legend class="group-label">{esc(L(lang, "Line style"))}</legend>
+            <div class="tile-grid">{tiles}</div>
+          </fieldset>
+          <p class="group-note" aria-live="polite" data-style-caption>{esc(t["styles"]["Clothesline"])}</p>
+        </div>
       </div>
     </div>
-    <p class="style-caption center" aria-live="polite" data-style-caption>{esc(t["styles"]["Clothesline"])}</p>
   </div>
 </section>"""
 
