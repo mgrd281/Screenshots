@@ -53,6 +53,28 @@ struct GrabArea: NSViewRepresentable {
         view.onLongPress = { line.markup(id) }
         view.onForceClick = { line.quickLook(id) }
         view.onPressChange = { pressed in line.pressedID = pressed ? id : nil }
+        let inInbox = line.isInInbox(id)
+        view.cornerHelp = pinned ? L("Unpin") : (inInbox ? L("Discard") : L("Take down"))
+        view.sendHelp = L("Paste into the app in front")
+        // VoiceOver hears one button named after the file, and reaches what
+        // the pointer finds on hover as actions.
+        view.setAccessibilityElement(true)
+        view.setAccessibilityRole(.button)
+        view.setAccessibilityLabel(item.url.deletingPathExtension().lastPathComponent)
+        // AppKit runs accessibility actions on the main thread.
+        let send = NSAccessibilityCustomAction(name: L("Paste into the app in front")) {
+            MainActor.assumeIsolated { line.paste(id) }
+            return true
+        }
+        let pin = NSAccessibilityCustomAction(name: pinned ? L("Unpin") : L("Pin")) {
+            MainActor.assumeIsolated { line.togglePin(id) }
+            return true
+        }
+        let takeDown = NSAccessibilityCustomAction(name: inInbox ? L("Discard") : L("Take down")) {
+            MainActor.assumeIsolated { line.discard(id) }
+            return true
+        }
+        view.setAccessibilityCustomActions(pinned ? [send, pin] : [send, pin, takeDown])
         view.menuProvider = {
             let menu = NSMenu()
             // Items say themselves whether they can be used.
@@ -132,7 +154,7 @@ struct GrabArea: NSViewRepresentable {
     }
 }
 
-final class GrabView: NSView, NSDraggingSource {
+final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     static var isDragging = false
     /// A photo's menu is open. It reaches past the line, so the line waits.
     static var isShowingMenu = false
@@ -157,6 +179,11 @@ final class GrabView: NSView, NSDraggingSource {
     var onForceClick: () -> Void = {}
     var onPressChange: (Bool) -> Void = { _ in }
     var menuProvider: () -> NSMenu = { NSMenu() }
+    /// What the corner button and the paper plane do, said when the pointer
+    /// rests on them.
+    var cornerHelp = ""
+    var sendHelp = ""
+    private var tips: [NSView.ToolTipTag] = []
 
     private var downPoint: NSPoint?
     private var startedDrag = false
@@ -173,21 +200,52 @@ final class GrabView: NSView, NSDraggingSource {
     /// handled here because this view sits on top of the SwiftUI card.
     static let crossHitSize: CGFloat = 26
 
+    private var crossRect: NSRect {
+        NSRect(x: 0, y: isFlipped ? 0 : bounds.height - Self.crossHitSize,
+               width: Self.crossHitSize, height: Self.crossHitSize)
+    }
+
     private func isInCross(_ event: NSEvent) -> Bool {
-        let p = convert(event.locationInWindow, from: nil)
-        let corner = NSRect(x: 0, y: isFlipped ? 0 : bounds.height - Self.crossHitSize,
-                            width: Self.crossHitSize, height: Self.crossHitSize)
-        return corner.contains(p)
+        crossRect.contains(convert(event.locationInWindow, from: nil))
     }
 
     /// The paper plane drawn in the bottom right corner, the cross's opposite.
     static let sendHitSize: CGFloat = 30
 
+    private var sendRect: NSRect {
+        NSRect(x: bounds.width - Self.sendHitSize, y: isFlipped ? bounds.height - Self.sendHitSize : 0,
+               width: Self.sendHitSize, height: Self.sendHitSize)
+    }
+
     private func isInSend(_ event: NSEvent) -> Bool {
-        let p = convert(event.locationInWindow, from: nil)
-        let corner = NSRect(x: bounds.width - Self.sendHitSize, y: isFlipped ? bounds.height - Self.sendHitSize : 0,
-                            width: Self.sendHitSize, height: Self.sendHitSize)
-        return corner.contains(p)
+        sendRect.contains(convert(event.locationInWindow, from: nil))
+    }
+
+    // MARK: Tooltips and VoiceOver
+
+    override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        for tip in tips { removeToolTip(tip) }
+        tips = [addToolTip(crossRect, owner: self, userData: nil),
+                addToolTip(sendRect, owner: self, userData: nil)]
+    }
+
+    func view(_ view: NSView, stringForToolTip tag: NSView.ToolTipTag, point: NSPoint,
+              userData data: UnsafeMutableRawPointer?) -> String {
+        crossRect.contains(point) ? cornerHelp : sendHelp
+    }
+
+    /// VoiceOver's press is a click: it copies.
+    override func accessibilityPerformPress() -> Bool {
+        onClick()
+        return true
+    }
+
+    override func accessibilityPerformShowMenu() -> Bool {
+        GrabView.isShowingMenu = true
+        _ = menuProvider().popUp(positioning: nil, at: NSPoint(x: bounds.midX, y: bounds.midY), in: self)
+        GrabView.isShowingMenu = false
+        return true
     }
 
     /// Holding ⌘ or ⇧ picks photos one by one, however fast you click.

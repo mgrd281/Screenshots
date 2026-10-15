@@ -13,6 +13,8 @@ struct PeggedView: View {
     @State private var swing: Double = 0
     @State private var arrived = false
     @State private var hovering = false
+    /// Reduce Motion: no drop, swing or sway; photos fade in where they hang.
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var copied: Bool { line.copiedIDs.contains(item.id) }
     private var picked: Bool { line.pickedIDs.contains(item.id) }
@@ -33,7 +35,7 @@ struct PeggedView: View {
             card
         }
         .rotationEffect(.degrees(swing + tilt), anchor: .top)
-        .offset(y: arrived ? 0 : -46)
+        .offset(y: arrived || reduceMotion ? 0 : -46)
         // The fall itself is drawn over the whole screen by CaptureFlight, so
         // the card here just steps aside at once.
         .opacity(item.falling || item.flying ? 0 : (arrived ? 1 : 0))
@@ -74,6 +76,7 @@ struct PeggedView: View {
         Image(nsImage: item.thumb)
             .resizable()
             .interpolation(.high)
+            .accessibilityHidden(true)
             .frame(width: photoSize.width, height: photoSize.height)
             // Concentric corners: the photo's radius is the frame's minus the
             // inset, the way macOS rounds nested shapes.
@@ -95,8 +98,9 @@ struct PeggedView: View {
                         .font(.system(size: 11, weight: .bold))
                         .foregroundStyle(.primary)
                         .frame(width: 28, height: 28)
-                        .glassFrame(circle: true)
+                        .controlGlass(circle: true)
                         .allowsHitTesting(false)
+                        .accessibilityHidden(true)
                 }
             }
             .padding(Frame.inset)
@@ -118,6 +122,7 @@ struct PeggedView: View {
                     .opacity(picked ? 1 : 0)
                     .scaleEffect(picked ? 1 : 0.6)
                     .allowsHitTesting(false)
+                    .accessibilityHidden(true)
             }
             .animation(.easeOut(duration: 0.18), value: picked)
             .overlay(alignment: .bottomLeading) {
@@ -130,6 +135,7 @@ struct PeggedView: View {
                         .background(Color.black.opacity(0.55), in: Circle())
                         .padding(5)
                         .allowsHitTesting(false)
+                        .accessibilityHidden(true)
                         .transition(.opacity)
                 }
             }
@@ -156,6 +162,7 @@ struct PeggedView: View {
                     .opacity(hovering && !dragging ? 1 : 0)
                     .scaleEffect(hovering ? 1 : 0.6)
                     .allowsHitTesting(false)
+                    .accessibilityHidden(true)
             }
             .overlay(GrabArea(item: item, line: line))
             .overlay(alignment: .bottom) {
@@ -165,7 +172,7 @@ struct PeggedView: View {
                         .foregroundStyle(.primary)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
-                        .glassFrame(capsule: true)
+                        .controlGlass(capsule: true)
                         .offset(y: 16)
                         .transition(.opacity.combined(with: .offset(y: -4)))
                 }
@@ -187,6 +194,10 @@ struct PeggedView: View {
             arrived = true
             return
         }
+        if reduceMotion {
+            withAnimation(.easeOut(duration: 0.2)) { arrived = true }
+            return
+        }
         swing = swings ? 16 : 0
         withAnimation(.spring(response: 0.42, dampingFraction: 0.72)) { arrived = true }
         withAnimation(.interpolatingSpring(stiffness: 46, damping: 2.6)) { swing = 0 }
@@ -198,7 +209,7 @@ struct PeggedView: View {
     }
 
     private func breeze() {
-        guard swings else { return }
+        guard swings, !reduceMotion else { return }
         let delay = Double.random(in: 0...0.35)
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             nudge(Double.random(in: 1.6...3.4))
@@ -206,7 +217,7 @@ struct PeggedView: View {
     }
 
     private func nudge(_ degrees: Double) {
-        guard swings else { return }
+        guard swings, !reduceMotion else { return }
         withAnimation(.easeOut(duration: 0.3)) { swing = degrees }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             withAnimation(.interpolatingSpring(stiffness: 38, damping: 2.4)) { swing = 0 }
@@ -231,7 +242,7 @@ private struct Corner: View {
                     .font(.system(size: 9, weight: .bold))
                     .foregroundStyle(.white)
                     .frame(width: 20, height: 20)
-                    .background(Color.orange.gradient, in: Circle())
+                    .background(Color.orange, in: Circle())
                     .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
                     .transition(.scale(scale: 0.4).combined(with: .opacity))
             } else {
@@ -239,13 +250,14 @@ private struct Corner: View {
                     .font(.system(size: 8, weight: .bold))
                     .foregroundStyle(.primary)
                     .frame(width: 20, height: 20)
-                    .glassFrame(circle: true)
+                    .controlGlass(circle: true)
                     .opacity(hovering && !dragging ? 1 : 0)
                     .scaleEffect(hovering ? 1 : 0.6)
             }
         }
         .padding(3)
         .allowsHitTesting(false)
+        .accessibilityHidden(true)
         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: pinned)
     }
 }
@@ -274,25 +286,6 @@ private struct Highlight: View {
 enum Frame {
     static let radius: CGFloat = 16
     static let inset: CGFloat = 4
-}
-
-extension View {
-    /// A crisp glass: the system's blurred material with a thin specular
-    /// edge, lit from above. No refraction, so the background stays sharp
-    /// around the frame instead of bending like gel.
-    func glassFrame(cornerRadius: CGFloat = 0, circle: Bool = false, capsule: Bool = false) -> some View {
-        let shape: AnyShape = circle ? AnyShape(Circle())
-            : capsule ? AnyShape(Capsule())
-            : AnyShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-        return background(.ultraThinMaterial, in: shape)
-            .overlay(
-                shape.stroke(
-                    LinearGradient(colors: [Color.white.opacity(0.55), Color.white.opacity(0.12)],
-                                   startPoint: .top, endPoint: .bottom),
-                    lineWidth: 0.75)
-            )
-            .overlay(shape.stroke(Color.black.opacity(0.10), lineWidth: 0.5).padding(-0.5))
-    }
 }
 
 /// A minimal aluminium clip: a brushed metal pill with a slot where it

@@ -128,6 +128,16 @@ on each.
 
 <br>
 
+## Calm for everyone.
+
+Turn on Reduce Motion and the line fades in instead of sliding. Photos stop
+swinging and captures appear in place instead of flying. With VoiceOver,
+each photo is a button named after its file. Pressing it copies the photo,
+and its actions send, pin and take it down. On macOS 26, the controls that
+float over your screen are made of Liquid Glass.
+
+<br>
+
 ## Sent, and gone.
 
 Whatever you send into a chat, with a paper plane, ⌃⌥V or a drag, leaves
@@ -213,6 +223,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
 | `TextCard.swift` | Translate Text and Describe, and the card that shows them |
+| `Appearance.swift` | Glass by role, Liquid Glass on macOS 26, and motion that honours Reduce Motion |
 | `Search.swift` | The words in every photo, and the search bar under the line |
 | `Collage.swift` | Joins several screenshots into one image |
 | `GrabArea.swift` | Click, long press, drag and drop |

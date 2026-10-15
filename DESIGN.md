@@ -133,16 +133,29 @@ stays out of the way.
 
 - **Labels.** Every icon-only control has a spoken label
   (`accessibilityLabel`, or `TagArea(label:)` on the tag) and a tooltip
-  (`.help`) where the pointer can rest.
+  where the pointer can rest.
+  - On a photo, `GrabView` gives tooltips for its two hot spots.
+  - SwiftUI controls use `.help`.
+- **VoiceOver on photos.** Each photo is one button, named after its file.
+  - Press copies it, and Show Menu opens its menu.
+  - What the pointer finds on hover is offered as actions: send, pin or
+    unpin, take down.
+  - Decorative overlays drawn on the photo are hidden from it.
 - **Contrast.** Text meets WCAG AA (4.5:1). Glyphs on glass use `.primary`,
   never a fixed grey. White on the accent, orange or red is for glyphs and
   short labels only.
 - **Reduce Motion.** Springs, swings, the stack fan and the photo flights fall
-  back to quick fades. *This is a known gap: the code does not read
-  `accessibilityReduceMotion` yet. New motion must honour it, and touching
-  existing motion is the moment to add it.*
-- **Reduce Transparency.** Materials turn opaque by themselves. Never put text
-  on a custom translucency that has no opaque fallback.
+  back to quick fades.
+  - SwiftUI reads `accessibilityReduceMotion`.
+  - AppKit code reads `Motion.reduced`.
+  - `Motion.spring(response:damping:reduced:)` gives a spring, or a 0.15 s
+    ease-out.
+  - Any new motion goes through them.
+- **Reduce Transparency.** Materials and Liquid Glass turn opaque by
+  themselves. Never put text on a custom translucency that has no opaque
+  fallback.
+- **Increase Contrast.** Frosted glass draws a firmer, darker edge (the
+  `GlassFrame` modifier).
 - **Keyboard.** Return confirms and Escape cancels in every window and panel
   that takes the keyboard. The search bar, Hide Part and the shortcut recorder
   already do.
@@ -181,9 +194,17 @@ literal value in a view.
 - Text uses `.primary`, `.secondary` and `.tertiary`.
 - Fills use `Color.primary.opacity(0.045–0.12)`, so they work in both light
   and dark.
-- Surfaces are materials: `.ultraThinMaterial` on photo frames and the tag,
-  `.regularMaterial` on floating cards and the search bar, Liquid Glass
-  (`glassEffect(.regular)`) on the shelf on macOS 26.
+- **Surfaces split by role.**
+  - **Content** is the photos and the text card's reading panel. It stays
+    frosted material: `glassFrame()` (`.ultraThinMaterial`) around photos, and
+    `.regularMaterial` behind the text card.
+  - **Floating controls** are the tag, corner buttons, the play badge, the
+    "Copied" capsule, the empty-line hint and the search bar. They take Liquid
+    Glass on macOS 26 through `controlGlass()` (`glassEffect(.regular)`), and
+    the same frosted glass before it.
+  - The shelf line style is Liquid Glass too.
+  - This follows Apple's rule that glass is for the layer that floats above
+    content, not for the content.
 
 ### Named Rules
 - **One accent per surface.** A second saturated color needs a semantic job
@@ -253,8 +274,8 @@ apps.
 |---|---|
 | Photo card at rest | black 18%, radius 10, y 5 |
 | Photo card on hover | black 26%, radius 14, y 8, with a 1.035× scale |
-| Tag, closed stack | black 18%, radius 6, y 3 |
-| Floating card, search bar, shelf, island | black 16–35%, radius 18–20, y 8–10 |
+| Tag, closed stack | black 18%, radius 6, y 3 (frosted glass only; Liquid Glass carries its own depth) |
+| Floating card, search bar, shelf, island | black 14–35%, radius 14–20, y 6–10 (the lighter end under Liquid Glass) |
 | Small badges (pin, count, send) | black 20–25%, radius 2–3, y 1 |
 
 ### Named Rules
@@ -309,6 +330,8 @@ apps.
 - It is clipped to the rope on the clothesline and sits inside the holder on
   the shelf and the island.
 - Tools show only when they can act.
+- Under the pointer, a tool's glyph sits on a 22 pt circle of
+  `.primary` at 10%, or white at 18% on the island, fading in over 0.12 s.
 
 ### Navigation
 - **Menu bar menu.** Short: Show or Hide line, Search…, Take everything down,
@@ -321,7 +344,8 @@ apps.
 
 ### Dialogs, sheets and panels
 - **Floating card** (`TextCard`) for results that belong to a photo:
-  - a header with symbol, title and close;
+  - a header with symbol, title and close, the symbol in the accent on a
+    circle of the accent at 12%;
   - one content block on a faint fill;
   - an optional note;
   - footer actions on the trailing edge.
