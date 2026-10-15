@@ -602,51 +602,92 @@ system to a web page. The brief and direction contract are in
     - Snapfly's own Settings window, on its Privacy and Line panes, with
       the line-style tiles;
     - the photo's menu opening from a card on a line;
-    - a whole Mac screen to take screenshots on (below);
+    - a whole Mac desktop to try Snapfly on (below);
     - the Hide Part window, said in a sentence (below).
-  - **The Mac screen** (`section_capture`): one SVG at 1000 × 625 points
-    with its own menu bar (the app, its menus, Snapfly's shirt, battery,
-    Wi-Fi, Spotlight, Control Center and the clock), a wallpaper of flowing
-    bands in the brand's hues, a browser on a flight search with its
-    toolbar, a music player and a Dock. Always in light, as a screenshot is.
-    - **The laptop round it**, at the owner's request: a black bezel
-      (1.25% of the width, 28 radius at the top) with a 1.5 px aluminium
-      edge, a notch with the camera over the middle of the menu bar, and the
-      base below, 5.5% wider on each side, with the dip where a thumb opens
-      the lid. Aluminium is silver in light (`#E9EAEE` to `#A2A5AB`) and
-      space grey in dark (`#8E9096` to `#4C4E53`). No maker's logo anywhere,
-      on the lid, the base or the menu bar.
-    - **The Dock's icons** are drawn the way a Mac's are (a 100-point
-      rounded square at 22.5, a vertical gradient, a soft sheen on the top
-      half, a hairline edge and a small shadow), but none is a real app's:
-      files, browser, chat, mail, a calendar showing the screen's own day,
-      photos, music, notes and settings, a divider, then Snapfly's real
-      icon. Open apps have a dot under them. Snapfly sits on top of it as in the app: the shirt
-    in its menu bar opens Snapfly's real menu (Take Screenshot, Take
-    Screenshot with Timer › 3, 5, 10 Seconds, Record Screen, Screenshot
-    Button, Take everything down), the screenshot button sits at the
-    trailing edge 60% up, a line hangs under the menu bar, and the capture
-    screen, the capsule and the recording edge follow "Capture overlay",
-    "Screenshot button" and "Capture capsule" above. Sizes inside it scale
-    with the screen (`cqw`); controls keep a 30 px floor to stay tappable.
-    - What is taken is the screen's own SVG with its `viewBox` set to the
+  - **The desktop to try Snapfly on** (`section_capture`): a Mac screen
+    with no laptop round it, so its content gets all the room. It is its
+    own small system: every value inside it is a `--d-*` token on
+    `.desk-stage`, and nothing inside uses a free value.
+    - **The screen**: a 16 radius, a hairline and shadow 3, nothing else.
+      Its wallpaper is a calm gradient of muted lavender, rose and violet
+      (a dusk version in dark) under a fine grain (8%, 10% in dark).
+    - **Three layouts**, each drawn at a fixed size and scaled as a whole,
+      so nothing inside ever collides:
+      - wide, 1280 × 800, from 1280 px: a floating Dock, the guide beside
+        the thing it points at;
+      - medium, 1024 × 720, from 768 px: a larger window, a compact Dock
+        (40 pt icons), the guide under the screen, as wide as it and low;
+      - tall, 360 × 572, below 768 px: the window nearly fills the screen,
+        a short menu bar, the Dock a bar under the screen with no
+        magnifying, the guide a sheet just above that bar. Its buttons are
+        44 pt and its words 15 pt.
+      - The screen, and on medium the guide too, fits the height of the
+        browser window, never narrower than 960 px (wide) or 720 px
+        (medium). No horizontal scroll; safe areas kept.
+    - **Type**: the system stack at 11, 13, 15, 17 and 22, weights 400, 500
+      and 600, line height 1.4 (1.2 on titles), tabular figures.
+    - **Spacing** 4, 8, 12, 16, 24, 32, 48, 64. **Radii** 6 (controls), 10
+      (menus, cards, rows), 14 (windows), 16 (the screen) and full.
+    - **Colour**: ten greys, `g0` to `g9` (#FFFFFF to #1D1D1F; in dark
+      #1C1C1E to #F5F5F7), one accent #0071E3 (as text #0066CC, #4DA3FF in
+      dark), success #1E8E3E (#30D158 in dark), warning and error. Every
+      text pair is at least 4.5:1 in both modes, glass included.
+    - **Glass**, two levels only: 64% (menu bar) and 90% (Dock, menus,
+      notes, guide), blurred 20 px at 180% saturation, with a hairline.
+      Without `backdrop-filter`, solid `g1` and `g0` instead.
+    - **Shadows**: 1 for controls, 2 for menus, notes, the Dock and the
+      guide, 3 for windows and the screen.
+    - **Motion**: 120, 200 and 280 ms; in `cubic-bezier(0.2, 0.8, 0.2, 1)`,
+      out `cubic-bezier(0.4, 0, 1, 1)`. Only transform and opacity move.
+      Nothing blinks, pulses or glows: motion only answers an action.
+      Windows fade and scale as they open and close, shrink toward their
+      Dock icon to minimize, and come to the front. Reduce Motion keeps
+      the fades alone.
+    - **What is on it**: a browser on a flight search, the visual focus
+      (its sort menu orders by Price, Duration or Departure, rows slide to
+      their place, the cheapest is marked in success green), and Messages
+      with Lena. Nothing else, nothing as a filler. The traffic lights, the
+      sort button and the send button are real buttons.
+    - **The Dock**: browser, Messages, a divider, the trash. One icon style:
+      48 pt squircles on a 64 grid, a top-lit gradient, a 10% hairline and
+      one shaded glyph; the trash shows papers when full. Glass at 90%, a
+      hairline and shadow 2, no gloss. A fine pointer magnifies the icon
+      under it with a cosine falloff to its neighbours (a scale from the
+      bottom, so nothing moves the layout). A tooltip shows after 300 ms,
+      and on keyboard focus. Pressed is 0.95, the focus ring 2 px with a
+      2 px offset, and an open app has a dot under it. It is a toolbar the
+      arrows move through. The trash opens a small popover with Put Back
+      and Empty Trash.
+    - **Snapfly on it**: the shirt in the menu bar opens Snapfly's real
+      menu (Take Screenshot, with Timer › 3, 5, 10 Seconds, Record Screen,
+      Screenshot Button, Take everything down), the screenshot button sits
+      at the trailing edge, and the line hangs under the menu bar. Cards
+      copy on a click, go to the trash, or go to Lena with the send button
+      over the chat; ⌃⌥S, ⌃⌥R and ⌘V work while the screen is in view. The
+      capture screen takes a drag, a click on a window, Return for the
+      whole screen, or the arrows and Space for a window; Escape cancels.
+      What is taken is the screen's own SVG with its `viewBox` set to the
       area, so it is exact, and a click on it copies a real PNG. Snapfly's
       own parts are never in it.
-    - The timer's countdown opens the sort menu with a moving pointer, so
-      the timed screenshot catches a menu open. A recording replays the
-      music it caught while the pointer rests on it, with a duration
-      capsule in the PDF capsule's style.
-    - ⌃⌥S and ⌃⌥R work while the screen is in view.
-    - **The guide for a first visit** starts by itself the first time the
-      screen is in view, before anything was taken: a card in the popover's
-      glass (14 radius, 290 wide, an arrow toward the thing) with "1 of 5",
-      a title and a line, Skip and Show me, and a white ring with an accent
-      halo pulsing round the thing to try. The steps are: the screenshot
-      button, the window to drag over, the photo on the line, Snapfly's
-      menu, then "You're ready" with Download for Mac. Doing the step moves
-      on; Show me does it with the pointer. The card sits beside the thing
-      where the page has room, else under it. "Show me how" under the
-      laptop starts it again.
+    - **Notes**: one line for each action, above the Dock, in glass with
+      shadow 2: "Screenshot taken", "Copied", "Sent to Lena" and so on,
+      each with Undo where it can be undone (or Paste in Messages, or Open).
+      They go after 4 seconds, wait while the pointer or the keyboard is on
+      them, show two at most, and are read out by a polite live region.
+    - **The guide**: a card in 90% glass (10 radius, 280 wide, an arrow
+      toward the thing) with "Step 2 of 6" and a progress bar, a title of
+      six words at most, two sentences at most, Show me, Skip and a close
+      button. A still 2 px accent ring with a 6 px soft halo marks the
+      thing to try; a Dock icon carries the ring itself. The steps: take a
+      screenshot, choose an area, copy it from the line, open Messages,
+      send everything, Snapfly's menu; then "You did it" with Start over
+      and Download for Mac. Doing a step moves on; Show me does it with a
+      pointer. Return is Show me, the arrows go back and forward, Escape
+      closes. It never covers a window, the Dock or the screenshot button,
+      keeping 8 pt from each: beside the thing, else the nearest free spot
+      either side of the window. It starts once by itself when half the
+      screen is in view, without taking focus; "Start the guide" under the
+      screen starts it again.
   - **Hide Part** (`section_say`): the editor's window with a bank transfer
     in it, the sparkles field, the three examples, the note, and Remove
     All, Cancel and Done. Covers are cover ink at a 3 radius, one per line
@@ -704,8 +745,8 @@ system to a web page. The brief and direction contract are in
     as on the icon, then lands in the chat while the line closes the gap.
   - Everything else plays once when seen: the Desktop sweep and the
     keycaps.
-  - Reduce Motion turns flights into fades and stops the sway, the music
-    and the pulse on the screenshot button.
+  - Reduce Motion turns flights into fades and stops the sway; on the
+    desktop to try Snapfly on, only fades are left.
 - **Images.** The PNGs in `website/static` come from the app icon, drawn by
   `website/make-images.py`. Everything else is inline SVG drawn in
   `build.py`.

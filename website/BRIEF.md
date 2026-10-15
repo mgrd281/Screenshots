@@ -66,11 +66,13 @@ first view. Every demo is a native object on it:
 - the Desktop's files, which fly up onto a rope;
 - Snapfly's own Settings window, on its Privacy and Line panes;
 - the photo's menu opening from a card on a line;
-- a whole Mac screen with Snapfly on it, where the visitor takes a
-  screenshot, a timed one with a menu open, or a recording, and it hangs on
-  that screen's line. At the owner's request it sits in a drawn laptop
-  (bezel, notch and base, no logo), with Mac-style Dock icons and a wallpaper
-  of its own, and a guide walks a first visitor through it step by step;
+- a whole Mac desktop with Snapfly on it, where the visitor takes a
+  screenshot, a timed one with a menu open, or a recording, copies it from
+  that screen's line and sends it to a chat. The owner asked for it to feel
+  like using the app: a real screen with no laptop round it, a browser and
+  Messages as its only windows, a Dock of its own, notes with Undo for each
+  action, and a guide that walks a first visitor through it step by step.
+  It fits phones, tablets and desktops in a layout of its own for each;
 - the Hide Part window, where the visitor says what to hide;
 - four steps from the download to the first screenshot, before the close.
 
