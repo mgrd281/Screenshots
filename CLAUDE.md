@@ -49,6 +49,34 @@ required by the license and stays.
 - In German, address the reader as "du", and put a space before "…"
   ("Suchen …").
 
+## Design
+
+- **`DESIGN.md` is the design system and it wins.** It sets the tokens,
+  components, motion and accessibility rules, plus a list of banned patterns.
+  `PRODUCT.md` holds the product context.
+- **Read both before any UI work.** That means any view, panel, menu, window,
+  setting, icon, copy or motion.
+- **When a change adds a color, radius, size or component,** add it to
+  `DESIGN.md` in the same pull request.
+- Two design skills sit in `.claude/skills/`. See `.claude/skills/VENDORED.md`
+  for what was installed and why.
+  - **`impeccable`** handles design direction, critique and polish.
+    - Commands: `/impeccable critique|audit|polish|layout|typeset|clarify|harden|distill|quieter <target>`.
+    - Its launcher and hooks are deliberately not installed. When it says the
+      launcher is unavailable, that's expected. Follow its fallback and read
+      `PRODUCT.md` and `DESIGN.md`.
+    - Use `audit.native.md` and `adapt.native.md` rather than the web
+      variants.
+  - **`ui-ux-pro-max`** is a searchable guideline database.
+    - Search it like this:
+      `python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --stack swiftui`,
+      or with `--domain ux|style|color|typography` in place of the stack.
+    - Its web advice (CSS, Tailwind, breakpoints, 44 px touch targets) has to
+      be translated into SwiftUI and AppKit for a pointer-driven Mac app. Where
+      the two disagree, `DESIGN.md` wins.
+- **No redesign without the owner asking.** Refinement keeps the existing
+  look.
+
 ## Code
 
 - Match the surrounding style. Comments are plain English sentences about

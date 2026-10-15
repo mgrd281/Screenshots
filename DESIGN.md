@@ -1,0 +1,385 @@
+---
+name: Snapfly
+description: Screenshots on a line at the top of the screen, one click from any chat.
+colors:
+  accent: "#007AFF"            # Color.accentColor: follows the user's macOS accent; the hex is the default
+  brand-amber: "#FFC45C"       # icon gradient, start
+  brand-coral: "#FF5E62"       # icon gradient, middle
+  brand-violet: "#B234D6"      # icon gradient, end
+  pin-orange: "#FF9500"        # Color.orange: a pinned photo
+  count-red: "#FF3B30"         # Color.red: the count on a closed card stack
+  search-mark: "#FFCC00"       # Color.yellow: search highlights, 45% fill and a solid edge
+  cover-ink: "#1F1F1F"         # covers over private details in a photo
+  island-black: "#000000"      # the island line style
+typography:
+  field:
+    fontFamily: "SF Pro, system-ui"
+    fontSize: "17pt"
+    fontWeight: 400
+  title:
+    fontFamily: "SF Pro, system-ui"
+    fontSize: "13pt"
+    fontWeight: 600
+  body:
+    fontFamily: "SF Pro, system-ui"
+    fontSize: "13pt"
+    fontWeight: 400
+    lineHeight: "+2pt"
+  label:
+    fontFamily: "SF Pro, system-ui"
+    fontSize: "12pt"
+    fontWeight: 500
+  caption:
+    fontFamily: "SF Pro, system-ui"
+    fontSize: "11pt"
+    fontWeight: 400
+  numeric:
+    fontFamily: "SF Pro Rounded, system-ui"
+    fontSize: "11pt"
+    fontWeight: 700
+rounded:
+  mark: "2pt"
+  cover: "3pt"
+  keycap: "6pt"
+  tile: "10pt"
+  inner: "12pt"
+  card: "16pt"
+  floating: "20pt"
+  shelf: "24pt"
+  island: "30pt"
+  full: "999pt"
+spacing:
+  hairline: "2pt"
+  inset: "4pt"
+  xs: "6pt"
+  sm: "8pt"
+  md: "12pt"
+  lg: "16pt"
+  xl: "24pt"
+  shadow-margin: "28pt"
+components:
+  photo-card:
+    rounded: "{rounded.card}"
+    padding: "{spacing.inset}"
+  photo-image:
+    rounded: "{rounded.inner}"
+  floating-card:
+    rounded: "{rounded.floating}"
+    padding: "{spacing.lg}"
+    width: "380pt"
+  search-bar:
+    rounded: "{rounded.card}"
+    height: "50pt"
+    width: "440pt"
+    typography: "{typography.field}"
+  button-primary:
+    backgroundColor: "{colors.accent}"
+    textColor: "#FFFFFF"
+    typography: "{typography.body}"
+  corner-button:
+    rounded: "{rounded.full}"
+    size: "20pt"
+  send-button:
+    backgroundColor: "{colors.accent}"
+    textColor: "#FFFFFF"
+    rounded: "{rounded.full}"
+    size: "22pt"
+  pin-button:
+    backgroundColor: "{colors.pin-orange}"
+    textColor: "#FFFFFF"
+    rounded: "{rounded.full}"
+    size: "20pt"
+  count-badge:
+    backgroundColor: "{colors.count-red}"
+    textColor: "#FFFFFF"
+    typography: "{typography.numeric}"
+    rounded: "{rounded.full}"
+    height: "22pt"
+  tag:
+    rounded: "{rounded.full}"
+    width: "26pt"
+---
+
+# Design System: Snapfly
+
+## Overview
+
+Snapfly is a native macOS utility. It should feel like something Apple might
+have shipped: quiet, precise, made of the system's own materials. It should
+not look like a web dashboard put in a window. Its one piece of character is
+the line itself, the place the screenshots hang. Everything around the line
+stays out of the way.
+
+**Principles**
+
+1. **Native first.** Use system materials, SF Pro, SF Symbols, the user's
+   accent color and standard controls. Reach for a custom look only when
+   the system has no equivalent, and then match its proportions.
+2. **The photo is the content.** Chrome around a screenshot is thin glass and
+   one radius. A control appears where the hand already is: on hover, in the
+   corner, or on the tag.
+3. **Refined minimalism.** One accent, the semantic colors listed here, no
+   decoration without a job. Each style shows its one idea with conviction:
+   the rope, the glass, the island or the stack.
+4. **Never steal focus.** Floating surfaces (the line, the text card, the search
+   bar) are non-activating panels. Design them to be operated with the mouse
+   while another app keeps the keyboard. The search bar is the exception: it
+   takes the keyboard without activating the app.
+5. **Calm motion with meaning.** Movement explains where something came from
+   or went: a capture flies in, a sent photo flies out, a stack spreads. It
+   never runs just to decorate.
+
+### Accessibility
+
+- **Labels.** Every icon-only control has a spoken label
+  (`accessibilityLabel`, or `TagArea(label:)` on the tag) and a tooltip
+  (`.help`) where the pointer can rest.
+- **Contrast.** Text meets WCAG AA (4.5:1). Glyphs on glass use `.primary`,
+  never a fixed grey. White on the accent, orange or red is for glyphs and
+  short labels only.
+- **Reduce Motion.** Springs, swings, the stack fan and the photo flights fall
+  back to quick fades. *This is a known gap: the code does not read
+  `accessibilityReduceMotion` yet. New motion must honour it, and touching
+  existing motion is the moment to add it.*
+- **Reduce Transparency.** Materials turn opaque by themselves. Never put text
+  on a custom translucency that has no opaque fallback.
+- **Keyboard.** Return confirms and Escape cancels in every window and panel
+  that takes the keyboard. The search bar, Hide Part and the shortcut recorder
+  already do.
+- **Right to left.** Arabic must read right to left: align and order by
+  reading direction, not by fixed left and right. The text card already
+  aligns RTL results.
+- **Size.** Pointer targets are at least 20×20 pt and spaced so they don't
+  touch. Touch sizes (44 pt) do not apply on the Mac.
+
+## Colors
+
+Colors come from the system first. Name them by their role, never by a
+literal value in a view.
+
+### Primary
+- **Accent** (`Color.accentColor`) marks the one primary action or selection
+  in view. That covers Send, the picked ring and check, the chosen style tile,
+  the search count and links. It follows the user's System Settings accent,
+  so never hardcode the blue.
+
+### Brand
+- The **amber, coral and violet gradient** belongs to the app icon and the
+  About pane only. It is not an interface color: no gradient buttons, no
+  gradient panels.
+
+### Semantic
+- **Pin orange** means "kept on purpose". It is used only for the pin badge.
+- **Count red** is only for the closed stack's count, as on a Dock badge.
+- **Search yellow** is the highlighter on words found by Search.
+- **Cover ink** is the opaque block over private details. It reads as
+  redaction, not decoration.
+- **Island black** is pure black, to blend into the notch and the menu bar
+  above it.
+
+### Neutral
+- Text uses `.primary`, `.secondary` and `.tertiary`.
+- Fills use `Color.primary.opacity(0.045–0.12)`, so they work in both light
+  and dark.
+- Surfaces are materials: `.ultraThinMaterial` on photo frames and the tag,
+  `.regularMaterial` on floating cards and the search bar, Liquid Glass
+  (`glassEffect(.regular)`) on the shelf on macOS 26.
+
+### Named Rules
+- **One accent per surface.** A second saturated color needs a semantic job
+  from the list above.
+- **Light and dark are equals.** Every color is a system color, a material or
+  `.primary` with an opacity, so both appearances work without branching.
+
+## Typography
+
+The face is SF Pro, the system font. Keycaps and counts use the rounded
+design with monospaced digits.
+
+### Hierarchy
+
+| Role | Size | Weight | Used in |
+|---|---|---|---|
+| Field | 17 pt | Regular | Search bar input |
+| Title | 13 pt | Semibold | Card headers ("Translation", "Description") |
+| Body | 13 pt, +2 pt leading | Regular | Translations, descriptions, settings rows |
+| Label | 12 pt | Medium | Language menu, result count, keycaps |
+| Caption | 11 pt | Regular, or Semibold when selected | Notes under results, style tiles, "Copied" |
+| Glyph | 8–10 pt | Bold | SF Symbols on corner buttons and the tag |
+
+### Named Rules
+- **Weight before size.** Hierarchy comes from Semibold against Regular and
+  from `.secondary` against `.primary`, not from big type. Snapfly has no
+  display sizes.
+- **Never below 11 pt for words.** Glyphs may be 8–10 pt. Text may not.
+- **Long words.** Labels must survive German (lineLimit plus
+  `minimumScaleFactor(0.8)` on tight tiles) and Arabic.
+
+## Layout
+
+- **Grid.** Spacing follows a 4 pt rhythm: 2, 4, 6, 8, 12, 16, 24. A photo
+  card has a 4 pt inset of glass around the image.
+- **The line** spans the screen's visible width.
+  - The strip's height is `photoMaxHeight + 106` at the chosen size: Small
+    0.8×, Medium 1×, Large 1.35×.
+  - Photos sit `cardWidth + 24` apart, and how many fit follows from the
+    width.
+  - A longer line scrolls only with Keep on line. Otherwise photos move closer
+    together.
+  - One function, `Layout`, places photos for the view and for every flight.
+    Never position a photo anywhere else.
+- **Floating panels.**
+  - The text card is 380 pt wide; the search bar is 440 pt.
+  - Each keeps a 24–28 pt transparent margin so its shadow isn't clipped.
+  - Each is clamped 8 pt inside the screen's visible frame.
+  - Each opens under the photo it belongs to, or under the line.
+- **Settings** is a sidebar window, at least 640 × 440, using grouped
+  `Form`s. Group rows into sections with headers; no free-floating controls.
+- **Screens and devices.** Snapfly is macOS only; there is no mobile layout.
+  It must handle these instead:
+  - several displays: the line goes to the screen with the pointer;
+  - full screen Spaces;
+  - a line moved down with its grip;
+  - all three sizes;
+  - all four styles.
+
+## Elevation & Depth
+
+There are two levels: things on the line, and things floating over other
+apps.
+
+### Shadow Vocabulary
+| Element | Shadow |
+|---|---|
+| Photo card at rest | black 18%, radius 10, y 5 |
+| Photo card on hover | black 26%, radius 14, y 8, with a 1.035× scale |
+| Tag, closed stack | black 18%, radius 6, y 3 |
+| Floating card, search bar, shelf, island | black 16–35%, radius 18–20, y 8–10 |
+| Small badges (pin, count, send) | black 20–25%, radius 2–3, y 1 |
+
+### Named Rules
+- **A shadow means it floats.** Inner blocks, rows and chips are flat and use
+  a faint fill instead.
+- **One shadow per object.** Never stack shadows, glows or outer borders on
+  the same element.
+
+## Shapes
+
+- **Concentric corners.** An inner radius equals the outer radius minus the
+  inset. A card is 16 with an image of 12; a floating card is 20 with inner
+  blocks of 12.
+- **Continuous corners** (`style: .continuous`) everywhere.
+- **Circles and capsules** are for controls only: corner buttons, send,
+  badges, the tag and chips.
+- The island has rounded shoulders (12) where it meets the menu bar, and
+  30 pt bottom corners.
+
+## Components
+
+### Buttons
+- **Native first.**
+  - Primary is `.borderedProminent`; secondary is `.bordered`.
+  - Both are `.controlSize(.large)` in floating cards and regular in
+    Settings.
+  - A link-style button is for "Open System Settings…"-type escapes.
+- **One primary per surface.** A primary is a verb with an SF Symbol: Send,
+  or Send with Photo.
+- **Labels say what happens.** For example "Copy", which turns into "Copied"
+  with a checkmark.
+- **Corner buttons on a photo** are 20–22 pt circles. They show on hover only,
+  except the pin, which always shows.
+  - Top leading: discard (cross, or eye-slash for files outside Snapfly's
+    folder) or unpin.
+  - Bottom trailing: send.
+  - Each draws in SwiftUI and is hit-tested in `GrabView`.
+
+### Photo card
+- Glass frame, a 4 pt inset and a 12 pt image corner.
+- States:
+  - picked: accent ring and check;
+  - covered: lock badge;
+  - pinned: orange pin;
+  - copied: "Copied" capsule below;
+  - search: dimmed and desaturated when it isn't a match, yellow marks when it
+    is.
+
+### Tag
+- A 26 pt wide capsule of SF Symbol tools: grip, combine, search, send and
+  take down.
+- It is clipped to the rope on the clothesline and sits inside the holder on
+  the shelf and the island.
+- Tools show only when they can act.
+
+### Navigation
+- **Menu bar menu.** Short: Show or Hide line, Search…, Take everything down,
+  Settings…, Open folder, Updates, Quit.
+- **Photo context menu.**
+  - Grouped by intent: copy and send; translate and describe; open and edit;
+    take down.
+  - SF Symbols on macOS 26 only, as Apple's own menus have.
+- **Settings sidebar.** General, Line, Privacy and About.
+
+### Dialogs, sheets and panels
+- **Floating card** (`TextCard`) for results that belong to a photo:
+  - a header with symbol, title and close;
+  - one content block on a faint fill;
+  - an optional note;
+  - footer actions on the trailing edge.
+- **Search bar.** One field, a result count chip and close.
+- **Full windows** (Hide Part, Settings) for focused work. They are standard
+  titled windows with Cancel and Done bound to Escape and Return.
+- **No modal alerts** for things that can be said inline in the card.
+
+### Forms and lists
+- Grouped `Form` sections.
+- A toggle label plus a secondary description line, as in the `Toggle` init
+  with two `Text`s.
+- Pickers: segmented for 2–3 choices, menu for more, and a visual tile picker
+  where the choice is visual (line style).
+
+### Signature: the line styles
+- **Clothesline**: rope, clips and swing.
+- **Glass shelf**: Liquid Glass, with upright photos.
+- **Island**: black, from the notch.
+- **Card stack**: fanned in the corner, spreading on approach.
+
+Each style changes only what holds the photos and how they lean. Everything
+else is shared.
+
+## Do's and Don'ts
+
+### Do:
+- **Do** use system materials, SF Symbols, `Color.accentColor` and semantic
+  colors.
+- **Do** keep one primary action per surface, and put it on the trailing edge.
+- **Do** keep corners concentric and continuous, and keep the 4 pt rhythm.
+- **Do** design the empty, working, done and failed states of every surface.
+  The text card shows the pattern: placeholder lines, then the result, then a
+  note.
+- **Do** check every change in light and dark, in German and Arabic, at all
+  three sizes and in all four line styles.
+- **Do** keep new motion short (0.15–0.55 s springs or ease-out) and honour
+  Reduce Motion.
+
+### Don't:
+- **Don't** make cards oversized; a card is as big as its content.
+- **Don't** make buttons large without a reason. Large control size belongs
+  in floating cards only.
+- **Don't** put colored vertical accent stripes or side rails on cards or
+  rows.
+- **Don't** nest containers: no card in a card in a card. One fill level
+  inside a surface.
+- **Don't** exaggerate shadows or add glows. Follow the shadow table above.
+- **Don't** add gradients that do no work. The brand gradient is for the icon
+  only. The one exception is the tiny glass-edge highlight.
+- **Don't** add badges beyond the semantic ones: pin, count, lock and copied.
+- **Don't** space ad hoc. Use the 4 pt rhythm, and set gaps on the stack, not
+  as margins on each child.
+- **Don't** use colors outside this file, or hex in views. Add a token here
+  first.
+- **Don't** use generic dashboard templates: no KPI tiles, no hero numbers, no
+  sidebar-plus-cards web layouts.
+- **Don't** add decoration without a job: no emoji as icons, no ornamental
+  dividers, no confetti.
+- **Don't** steal focus from the app in front, or block with a modal what a
+  card can say.
