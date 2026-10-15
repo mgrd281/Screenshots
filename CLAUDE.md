@@ -43,10 +43,12 @@ required by the license and stays.
   - It runs sandboxed: it watches Pictures › Snapfly, shows where to point the
     Screenshot app instead of changing its settings, keeps watched folders as
     bookmarks, and has no Check for Updates or Save to Desktop.
-  - The **App Store** workflow (manual) signs and uploads it with
+  - The **App Store** workflow signs and uploads it to TestFlight with
     `scripts/app-store.sh`. It needs the secrets `SNAPFLY_SIGNING` and
     `SNAPFLY_STORE` (made by `scripts/mac-store-signing.sh` on the owner's Mac),
-    and the app record in App Store Connect.
+    and the app record in App Store Connect. It runs on every push to `main`
+    that touches the app (the owner asked for TestFlight to always be current),
+    and by hand.
   - The privacy policy for the store listing is `PRIVACY.md`.
 - Swift 5 language mode, macOS 14 deployment target, universal binary.
   Gate newer APIs with `if #available` and `#if canImport(...)`. Examples:

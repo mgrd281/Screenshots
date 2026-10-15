@@ -1,10 +1,24 @@
 # Builds the Mac App Store edition and uploads it to App Store Connect,
-# where it shows in TestFlight once Apple has processed it. Run it from the
-# Actions tab, or ask Claude; scripts/app-store.sh lists what it needs.
+# where it shows in TestFlight once Apple has processed it. It runs for
+# every change to the app that lands on main, so TestFlight always has the
+# newest; it can also be run by hand from the Actions tab.
+# scripts/app-store.sh lists what it needs.
 name: App Store
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "Sources/**"
+      - "assets/**"
+      - "scripts/build-app.sh"
+      - "scripts/app-store.sh"
   workflow_dispatch:
+
+# One upload at a time, each with a higher build number than the last.
+concurrency:
+  group: app-store
+  cancel-in-progress: false
 
 permissions:
   contents: read
