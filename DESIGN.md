@@ -748,10 +748,29 @@ system to a web page. The brief and direction contract are in
 - **Motion.**
   - The signature move is the paper plane: the card takes off up and away,
     as on the icon, then lands in the chat while the line closes the gap.
+  - **The first view arrives once**, at the owner's request for modern,
+    rich motion: the rope draws across (0.9 s), the photos drop onto it
+    one after another (110 ms apart) and swing to rest on their clips,
+    each swing smaller (1.2 s), the tag hangs last. The headline, the line
+    under it and the download badge rise 22 px out of a 10 px blur
+    (0.9 s, 0.1 to 0.34 s in), and the chat opens like a Mac window, up
+    32 px from 95% (1 s). All on `--ease-out`; it plays on load and never
+    again, so photos hung later just hang.
+  - **Below the first view, each thing arrives once as it comes into
+    view**, by what it is: headings rise 26 px out of a 10 px blur, words
+    rise 18 px, windows and the demo screen open from 95% and 44 px down,
+    the four steps come in as a list (98%, 28 px), each 90 ms after the one
+    before, four at most. 0.8 s for opacity and blur, 1 s for movement.
+    Only what starts out of view waits; nothing is hidden without
+    `site.js`, and print shows everything.
   - Everything else plays once when seen: the Desktop sweep and the
     keycaps.
-  - Reduce Motion turns flights into fades and stops the sway; on the
-    desktop to try Snapfly on, only fades are left.
+  - Reduce Motion turns flights into fades and stops the sway and every
+    arrival; on the desktop to try Snapfly on, only fades are left.
+- **Phones** (640 px and below): sections are 72 px apart, long centred
+  words read from the start of the line, and the Desktop's files sit right
+  under the rope, above the words, so the sweep is a short hop up and never
+  crosses the text.
 - **Images.** The PNGs in `website/static` come from the app icon, drawn by
   `website/make-images.py`. Everything else is inline SVG drawn in
   `build.py`.

@@ -401,7 +401,7 @@ def hero(lang):
   </div>
   <span class="copied" aria-hidden="true">{icon("check")}{esc(L(lang, "Copied"))}</span>
 </li>""")
-    return f"""<section class="hero" aria-labelledby="hero-title">
+    return f"""<section class="hero intro" aria-labelledby="hero-title">
   <div class="line" data-line data-earlier="{esc(L(lang, "Move Earlier"))}" data-later="{esc(L(lang, "Move Later"))}">
     {rope()}
     <ul class="pegs" aria-label="{esc(t["line_label"])}">
