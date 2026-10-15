@@ -133,3 +133,11 @@
 "Close" = "إغلاق";
 "Send" = "إرسال";
 "Send with Photo" = "إرسال مع الصورة";
+/* Pin and Search */
+"Pin" = "تثبيت";
+"Unpin" = "إلغاء التثبيت";
+"Search screenshots" = "البحث في لقطات الشاشة";
+"Search…" = "بحث…";
+"%d found" = "%d نتيجة";
+"No matches" = "لا توجد نتائج";
+"Return picks them, ready to send." = "اضغط Return لتحديدها وتجهيزها للإرسال.";

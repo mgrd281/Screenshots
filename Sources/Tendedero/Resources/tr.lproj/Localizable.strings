@@ -133,3 +133,11 @@
 "Close" = "Kapat";
 "Send" = "Gönder";
 "Send with Photo" = "Fotoğrafla gönder";
+/* Pin and Search */
+"Pin" = "Sabitle";
+"Unpin" = "Sabitlemeyi kaldır";
+"Search screenshots" = "Ekran görüntülerinde ara";
+"Search…" = "Ara…";
+"%d found" = "%d bulundu";
+"No matches" = "Sonuç yok";
+"Return picks them, ready to send." = "Return onları seçer, göndermeye hazır olur.";

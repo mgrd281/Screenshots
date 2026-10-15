@@ -297,6 +297,7 @@ private struct LinePane: View {
             Section {
                 shortcutRow(L("Show or hide the line"), .toggle)
                 shortcutRow(L("Send the newest photo"), .send)
+                shortcutRow(L("Search screenshots"), .search)
             }
         }
         .formStyle(.grouped)

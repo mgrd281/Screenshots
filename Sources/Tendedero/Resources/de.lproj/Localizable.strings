@@ -133,3 +133,11 @@
 "Close" = "Schließen";
 "Send" = "Senden";
 "Send with Photo" = "Mit Foto senden";
+/* Pin and Search */
+"Pin" = "Anheften";
+"Unpin" = "Loslösen";
+"Search screenshots" = "Bildschirmfotos durchsuchen";
+"Search…" = "Suchen …";
+"%d found" = "%d gefunden";
+"No matches" = "Keine Treffer";
+"Return picks them, ready to send." = "Return wählt sie aus, bereit zum Senden.";

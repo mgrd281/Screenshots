@@ -133,3 +133,11 @@
 "Close" = "닫기";
 "Send" = "보내기";
 "Send with Photo" = "사진과 함께 보내기";
+/* Pin and Search */
+"Pin" = "고정하기";
+"Unpin" = "고정 해제";
+"Search screenshots" = "스크린샷 검색";
+"Search…" = "검색…";
+"%d found" = "%d개 찾음";
+"No matches" = "결과 없음";
+"Return picks them, ready to send." = "Return 키를 누르면 선택되어 바로 보낼 수 있습니다.";

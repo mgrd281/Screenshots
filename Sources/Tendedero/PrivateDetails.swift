@@ -308,6 +308,14 @@ enum Finder {
         }
     }
 
+    /// Every line of text in a screenshot, as read, with where it sits,
+    /// from 0 to 1 from the bottom left. Search looks through these.
+    static func lines(of url: URL) -> [(text: String, box: CGRect)] {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return [] }
+        return read(image).map { ($0.string, $0.box) }
+    }
+
     static func text(of url: URL, hiding chosen: Set<PrivateDetail>, hand: [CGRect] = []) -> String {
         reading(of: url, hiding: chosen, hand: hand).text
     }

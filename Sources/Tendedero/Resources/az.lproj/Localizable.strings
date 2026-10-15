@@ -135,3 +135,11 @@
 "Close" = "Bağla";
 "Send" = "Göndər";
 "Send with Photo" = "Şəkillə göndər";
+/* Pin and Search */
+"Pin" = "Bərkit";
+"Unpin" = "Bərkitməni ləğv et";
+"Search screenshots" = "Ekran şəkillərində axtar";
+"Search…" = "Axtar…";
+"%d found" = "%d tapıldı";
+"No matches" = "Heç nə tapılmadı";
+"Return picks them, ready to send." = "Return onları seçir, göndərməyə hazır edir.";

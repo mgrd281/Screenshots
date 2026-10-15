@@ -14,6 +14,10 @@ struct PeggedView: View {
     private var picked: Bool { line.pickedIDs.contains(item.id) }
     private var dragging: Bool { line.draggingID == item.id }
     private var pressed: Bool { line.pressedID == item.id }
+    /// Something is typed in Search and this photo does not say it.
+    private var dimmed: Bool { line.found.map { $0[item.id] == nil } ?? false }
+    /// Where this photo says what is typed in Search.
+    private var places: [CGRect] { line.found?[item.id] ?? [] }
 
     var body: some View {
         VStack(spacing: -12) {
@@ -32,6 +36,11 @@ struct PeggedView: View {
         .onChange(of: item.flying) { was, now in if was && !now { land() } }
         .onChange(of: line.gust) { _, _ in breeze() }
         .onChange(of: copied) { _, isCopied in if isCopied { nudge(3) } }
+        .onChange(of: item.pinned) { _, _ in nudge(3) }
+        // Search: what does not say it steps back.
+        .opacity(dimmed ? 0.25 : 1)
+        .saturation(dimmed ? 0 : 1)
+        .animation(.easeOut(duration: 0.2), value: dimmed)
     }
 
     /// The photo fits inside the card area keeping its proportions, so the
@@ -66,6 +75,20 @@ struct PeggedView: View {
                 RoundedRectangle(cornerRadius: Frame.radius - Frame.inset, style: .continuous)
                     .strokeBorder(Color.white.opacity(0.18), lineWidth: 0.5)
             )
+            .overlay(alignment: .topLeading) {
+                // Search: each place the words are, marked like a highlighter.
+                ForEach(Array(places.enumerated()), id: \.offset) { _, place in
+                    RoundedRectangle(cornerRadius: 2, style: .continuous)
+                        .fill(Color.yellow.opacity(0.45))
+                        .overlay(RoundedRectangle(cornerRadius: 2, style: .continuous)
+                            .strokeBorder(Color.yellow, lineWidth: 1))
+                        .frame(width: max(place.width * photoSize.width + 4, 6),
+                               height: max(place.height * photoSize.height + 2, 5))
+                        .offset(x: place.minX * photoSize.width - 2,
+                                y: (1 - place.maxY) * photoSize.height - 1)
+                        .allowsHitTesting(false)
+                }
+            }
             .overlay {
                 // A recording says so with a play button over its first frame.
                 if item.isRecording {
@@ -121,17 +144,31 @@ struct PeggedView: View {
             .overlay(alignment: .topLeading) {
                 // Drawn here, clicked through GrabView, which sits on top. A
                 // cross sends a file in Tendedero's folder to the Trash; for a
-                // file anywhere else it only hides it from the line.
-                Image(systemName: line.isInInbox(item.id) ? "xmark" : "eye.slash")
-                    .font(.system(size: 8, weight: .bold))
-                    .foregroundStyle(.primary)
-                    .frame(width: 20, height: 20)
-                    .glassFrame(circle: true)
-                    .padding(3)
-                    .opacity(hovering && !dragging ? 1 : 0)
-                    .scaleEffect(hovering ? 1 : 0.6)
-                    .allowsHitTesting(false)
+                // file anywhere else it only hides it from the line. A pinned
+                // photo has a pin there instead, always showing, which unpins.
+                if item.pinned {
+                    Image(systemName: hovering ? "pin.slash.fill" : "pin.fill")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 20, height: 20)
+                        .background(Color.orange.gradient, in: Circle())
+                        .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+                        .padding(3)
+                        .allowsHitTesting(false)
+                        .transition(.scale(scale: 0.4).combined(with: .opacity))
+                } else {
+                    Image(systemName: line.isInInbox(item.id) ? "xmark" : "eye.slash")
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundStyle(.primary)
+                        .frame(width: 20, height: 20)
+                        .glassFrame(circle: true)
+                        .padding(3)
+                        .opacity(hovering && !dragging ? 1 : 0)
+                        .scaleEffect(hovering ? 1 : 0.6)
+                        .allowsHitTesting(false)
+                }
             }
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: item.pinned)
             .overlay(alignment: .bottomTrailing) {
                 // Sends this photo into the app in front, like a chat. Drawn
                 // here and clicked through GrabView, like the cross.

@@ -17,12 +17,14 @@ struct Pegged: Identifiable, Equatable {
     var flying = false
     /// Shown, and handed out, with private details covered.
     var covered = false
+    /// Pinned: it stays when the line is cleared or full, until unpinned.
+    var pinned = false
     /// A screen recording rather than a screenshot.
     var isRecording: Bool { Tendedero.isRecording(url) }
 
     static func == (a: Pegged, b: Pegged) -> Bool {
         a.id == b.id && a.falling == b.falling && a.flying == b.flying && a.thumb === b.thumb
-            && a.covered == b.covered
+            && a.covered == b.covered && a.pinned == b.pinned
     }
 }
 
@@ -76,10 +78,12 @@ final class Line: ObservableObject {
     var liveCount: Int { items.filter { !$0.falling }.count }
 
     private let storeKey = "pegged"
+    private let pinnedKey = "pinnedPhotos"
 
     init() {
         restore()
         PrivateDetails.onRead = { [weak self] url, shown in self?.show(shown, for: url) }
+        TextIndex.onRead = { [weak self] in self?.refreshSearch() }
         readPrivateDetails()
         scheduleGust()
     }
@@ -97,11 +101,12 @@ final class Line: ObservableObject {
         // A full line lets the oldest photo fall off the far end. Only one: a
         // line hung on a wider screen keeps its length here instead of losing
         // several photos to a single capture.
-        if liveCount > maxItems, let oldest = items.first(where: { !$0.falling }) {
+        if liveCount > maxItems, let oldest = items.first(where: { !$0.falling && !$0.pinned }) {
             letGo(oldest.id)
         }
         save()
         PrivateDetails.prepare(url)
+        TextIndex.read(url)
         if !quietly { play("Tink", volume: 0.35) }
         return item.id
     }
@@ -129,16 +134,25 @@ final class Line: ObservableObject {
         }
     }
 
-    /// "Take everything down": every photo goes the way of its corner cross.
+    /// "Take everything down": every photo goes the way of its corner cross,
+    /// but for the ones pinned.
     func clear() {
-        takeDown(items.filter { !$0.falling })
+        takeDown(items.filter { !$0.falling && !$0.pinned })
     }
 
-    /// The photos hung before (left) or after (right) this one.
+    /// The photos hung before (left) or after (right) this one, that would
+    /// go with it: pinned ones stay.
     func neighbours(of id: UUID, toTheLeft: Bool) -> [Pegged] {
         let live = items.filter { !$0.falling }
         guard let i = live.firstIndex(where: { $0.id == id }) else { return [] }
-        return toTheLeft ? Array(live[..<i]) : Array(live[(i + 1)...])
+        return (toTheLeft ? Array(live[..<i]) : Array(live[(i + 1)...])).filter { !$0.pinned }
+    }
+
+    /// Pins a photo to the line, or lets it go with the rest again.
+    func togglePin(_ id: UUID) {
+        guard let i = items.firstIndex(where: { $0.id == id && !$0.falling }) else { return }
+        items[i].pinned.toggle()
+        save()
     }
 
     /// Takes down everything on one side of a photo. Each one goes the way
@@ -416,7 +430,7 @@ final class Line: ObservableObject {
     /// After Keep on line is lowered, the oldest photos past it go the way
     /// of a full line.
     func trim() {
-        while liveCount > maxItems, let oldest = items.first(where: { !$0.falling }) {
+        while liveCount > maxItems, let oldest = items.first(where: { !$0.falling && !$0.pinned }) {
             letGo(oldest.id)
         }
         scroll = 0
@@ -470,6 +484,97 @@ final class Line: ObservableObject {
               let thumb = makeThumbnail(url) else { return }
         items[i].thumb = thumb
         PrivateDetails.prepare(url)
+        TextIndex.read(url)
+    }
+
+    // MARK: Search
+
+    /// Opens the search bar under the line, from the tag.
+    var onSearch: (() -> Void)?
+    /// The search bar under the line is open.
+    @Published private(set) var isSearching = false
+    /// While something is typed: the photos that say every word of it, each
+    /// with where it says them, from 0 to 1 from the bottom left. Nil shows
+    /// every photo as usual.
+    @Published private(set) var found: [UUID: [CGRect]]?
+    /// Photos not read yet, so the search may still find more.
+    @Published private(set) var stillReading = 0
+    private var query = ""
+
+    func beginSearch() {
+        isSearching = true
+        refreshSearch()
+    }
+
+    func search(_ text: String) {
+        query = text
+        refreshSearch()
+    }
+
+    func endSearch() {
+        isSearching = false
+        query = ""
+        found = nil
+        stillReading = 0
+    }
+
+    /// Return in the search bar: what was found is picked, and copied, ready
+    /// for the send or combine button.
+    func pickFound() {
+        guard let found, !found.isEmpty else { return }
+        let picked = items.filter { found[$0.id] != nil && !$0.falling }
+        pickedIDs = Set(picked.map(\.id))
+        copy(picked)
+    }
+
+    private func refreshSearch() {
+        guard isSearching else { return }
+        let terms = TextIndex.fold(query).split(whereSeparator: \.isWhitespace).map { String($0) }
+        var result: [UUID: [CGRect]] = [:]
+        var waiting = 0
+        for item in items where !item.falling && !item.isRecording {
+            guard let rows = TextIndex.rows(for: item.url) else {
+                waiting += 1
+                TextIndex.read(item.url)
+                continue
+            }
+            if !terms.isEmpty, let places = Self.places(of: terms, in: rows) { result[item.id] = places }
+        }
+        stillReading = waiting
+        found = terms.isEmpty ? nil : result
+        // A long line scrolls to the newest photo found.
+        if let newest = items.lastIndex(where: { result[$0.id] != nil }) { scrollToShow(newest) }
+    }
+
+    /// Where each word is said, roughly, or nil when one of them is not.
+    private static func places(of terms: [String], in rows: [TextIndex.Row]) -> [CGRect]? {
+        var places: [CGRect] = []
+        for term in terms {
+            var said = false
+            for row in rows {
+                let text = row.folded
+                let length = CGFloat(max(text.count, 1))
+                var from = text.startIndex
+                while from < text.endIndex, let match = text.range(of: term, range: from..<text.endIndex) {
+                    said = true
+                    let start = CGFloat(text.distance(from: text.startIndex, to: match.lowerBound))
+                    let count = CGFloat(text.distance(from: match.lowerBound, to: match.upperBound))
+                    places.append(CGRect(x: row.box.minX + row.box.width * start / length, y: row.box.minY,
+                                         width: row.box.width * count / length, height: row.box.height))
+                    from = match.upperBound
+                }
+            }
+            if !said { return nil }
+        }
+        return places
+    }
+
+    /// On a line longer than the screen, brings a photo to the middle.
+    private func scrollToShow(_ index: Int) {
+        guard Line.keepOnLine != nil, items.count > visibleCount else { return }
+        let most = CGFloat(items.count - visibleCount) * Layout.spacing
+        let centred = CGFloat(items.count - 1 - index) * Layout.spacing - CGFloat(visibleCount - 1) * Layout.spacing / 2
+        scroll = min(most, max(0, centred))
     }
 
     /// With Hide private details on, every photo is read ahead of time, so
@@ -540,9 +645,12 @@ final class Line: ObservableObject {
     // MARK: Persistence
 
     private func save() {
-        let paths = items.filter { !$0.falling }.map(\.url.path)
+        let live = items.filter { !$0.falling }
+        let paths = live.map(\.url.path)
         UserDefaults.standard.set(paths, forKey: storeKey)
+        UserDefaults.standard.set(live.filter(\.pinned).map(\.url.path), forKey: pinnedKey)
         PrivateDetails.keepHand(only: Set(paths))
+        TextIndex.keep(only: Set(paths))
     }
 
     /// Everything comes back as it was. This runs before the line knows its
@@ -550,10 +658,14 @@ final class Line: ObservableObject {
     /// `hang` would let photos fall off a wide screen's line at every launch.
     private func restore() {
         let paths = UserDefaults.standard.stringArray(forKey: storeKey) ?? []
+        let pinned = Set(UserDefaults.standard.stringArray(forKey: pinnedKey) ?? [])
         for path in paths where FileManager.default.fileExists(atPath: path) {
             let url = URL(fileURLWithPath: path)
             guard !items.contains(where: { $0.url == url }), let thumb = makeThumbnail(url) else { continue }
-            items.append(Pegged(url: url, thumb: thumb))
+            var item = Pegged(url: url, thumb: thumb)
+            item.pinned = pinned.contains(path)
+            items.append(item)
+            TextIndex.read(url)
         }
     }
 

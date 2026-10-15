@@ -38,7 +38,8 @@ final class HotKey {
 }
 
 /// A global shortcut: one that shows and hides the line, ⌃⌥T unless
-/// changed, and one that sends the newest photo, ⌃⌥V. Either can be none.
+/// changed, one that sends the newest photo, ⌃⌥V, and one that searches,
+/// ⌃⌥F. Each can be none.
 struct Shortcut: Equatable {
     var keyCode: Int
     var modifiers: NSEvent.ModifierFlags
@@ -50,11 +51,14 @@ struct Shortcut: Equatable {
         case toggle = 1
         /// Pastes the photos picked, or the newest one, into the app in front.
         case send = 2
+        /// Brings the line down with the search bar under it.
+        case search = 3
 
         var standard: Shortcut {
             switch self {
             case .toggle: Shortcut(keyCode: kVK_ANSI_T, modifiers: [.control, .option], key: "t")
             case .send: Shortcut(keyCode: kVK_ANSI_V, modifiers: [.control, .option], key: "v")
+            case .search: Shortcut(keyCode: kVK_ANSI_F, modifiers: [.control, .option], key: "f")
             }
         }
 
@@ -62,6 +66,7 @@ struct Shortcut: Equatable {
             switch self {
             case .toggle: "shortcut"
             case .send: "sendShortcut"
+            case .search: "searchShortcut"
             }
         }
     }

@@ -135,3 +135,11 @@
 "Close" = "Close";
 "Send" = "Send";
 "Send with Photo" = "Send with Photo";
+/* Pin and Search */
+"Pin" = "Pin";
+"Unpin" = "Unpin";
+"Search screenshots" = "Search screenshots";
+"Search…" = "Search…";
+"%d found" = "%d found";
+"No matches" = "No matches";
+"Return picks them, ready to send." = "Return picks them, ready to send.";
