@@ -283,7 +283,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// Asked once. Changing system settings is the user's call, never ours.
     private func offerInbox() {
-        if Edition.appStore { return guideScreenshots() }
+        if Edition.appStore { return welcomeCapture() }
         Inbox.wasOffered = true
         let alert = NSAlert()
         alert.messageText = L("Let Snapfly handle your screenshots?")
@@ -297,7 +297,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     /// The App Store edition may not change the screenshot settings, so it
-    /// says where to change them, and opens the Screenshot app.
+    /// starts with Snapfly's own screenshots, which need nothing set up, and
+    /// lets the first one be taken right away. Pointing the Screenshot app
+    /// at Snapfly's folder stays a choice, from here or Settings.
+    private func welcomeCapture() {
+        Inbox.wasOffered = true
+        Inbox.apply()
+        let shortcut = Shortcut.current(.capture) ?? Shortcut.Role.capture.standard
+        let alert = NSAlert()
+        alert.messageText = L("Take screenshots with Snapfly")
+        alert.informativeText = String(format: L(
+            "Press %@ or click the screenshot button at the edge of the screen, then drag over an area, click a window, or press Return for the whole screen. It hangs on the line at once, with nothing to set up."),
+            shortcut.display)
+        alert.addButton(withTitle: L("Try It Now"))
+        alert.addButton(withTitle: L("Not now"))
+        alert.addButton(withTitle: L("Use the Screenshot App…"))
+        if let icon = NSApp.applicationIconImage { alert.icon = icon }
+        NSApp.activate(ignoringOtherApps: true)
+        switch alert.runModal() {
+        case .alertFirstButtonReturn:
+            // Once the alert has gone, so it is not in the picture.
+            Capture.shared.start(after: 0.3)
+        case .alertThirdButtonReturn:
+            guideScreenshots()
+        default:
+            break
+        }
+    }
+
+    /// Where to point the Screenshot app, which the App Store edition may
+    /// not do itself, and opens it.
     private func guideScreenshots() {
         Inbox.wasOffered = true
         Inbox.apply()

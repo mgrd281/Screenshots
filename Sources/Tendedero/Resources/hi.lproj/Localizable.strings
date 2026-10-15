@@ -307,3 +307,11 @@
 "For the send buttons: they press ⌘V in the chat in front, so the photos land where you type." = "भेजने वाले बटनों के लिए: वे सामने वाली चैट में ⌘V दबाते हैं, ताकि तस्वीरें वहीं पहुँचें जहाँ आप लिखते हैं।";
 "Snapfly not in the list? Click + under it and choose Snapfly in Applications." = "Snapfly सूची में नहीं है? नीचे + पर क्लिक करें और ऐप्लिकेशन में Snapfly चुनें।";
 "So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read." = "ताकि भेजने वाला बटन सिर्फ़ चैट वेबसाइटों पर दिखे, Snapfly ब्राउज़र से पूछता है कि कौन-सा पेज खुला है। और कुछ नहीं पढ़ा जाता।";
+
+/* App Store edition first run */
+"Take screenshots with Snapfly" = "Snapfly से स्क्रीनशॉट लें";
+"Press %@ or click the screenshot button at the edge of the screen, then drag over an area, click a window, or press Return for the whole screen. It hangs on the line at once, with nothing to set up." = "%@ दबाएँ या स्क्रीन के किनारे पर स्क्रीनशॉट बटन पर क्लिक करें, फिर किसी हिस्से पर खींचें, किसी विंडो पर क्लिक करें, या पूरी स्क्रीन के लिए Return दबाएँ। यह तुरंत रस्सी पर टँग जाता है, कुछ सेट किए बिना।";
+"Try It Now" = "अभी आज़माएँ";
+"Use the Screenshot App…" = "स्क्रीनशॉट ऐप इस्तेमाल करें…";
+"Press %@ or click the screenshot button. Nothing to set up." = "%@ दबाएँ या स्क्रीनशॉट बटन पर क्लिक करें। कुछ सेट नहीं करना।";
+"Also from the Screenshot app" = "स्क्रीनशॉट ऐप से भी";

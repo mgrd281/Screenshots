@@ -342,6 +342,8 @@ language. `swift scripts/check-strings.swift` checks that none is missing.
 
 <sub>
 1. On first launch, Tendedero offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Tendedero quits or the option is turned off in Settings. Tendedero hides automatically while an app is in full screen.
+
+   The Mac App Store edition may not change those settings, so its first launch starts with Snapfly's own screenshots instead, which need nothing set up: Try It Now takes the first one. Pointing the Screenshot app at Pictures › Snapfly stays a choice, in that first window and under General in Settings.
 </sub>
 
 <br>

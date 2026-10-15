@@ -307,3 +307,11 @@
 "For the send buttons: they press ⌘V in the chat in front, so the photos land where you type." = "Göndərmə düymələri üçün: öndəki söhbətdə ⌘V basırlar, şəkillər yazdığın yerə düşür.";
 "Snapfly not in the list? Click + under it and choose Snapfly in Applications." = "Snapfly siyahıda yoxdur? Altındakı + düyməsinə klik et və Proqramlarda Snapfly-ı seç.";
 "So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read." = "Göndərmə düyməsi yalnız söhbət saytlarında görünsün deyə Snapfly brauzerdən hansı səhifənin açıq olduğunu soruşur. Başqa heç nə oxunmur.";
+
+/* App Store edition first run */
+"Take screenshots with Snapfly" = "Snapfly ilə ekran şəkilləri";
+"Press %@ or click the screenshot button at the edge of the screen, then drag over an area, click a window, or press Return for the whole screen. It hangs on the line at once, with nothing to set up." = "%@ bas və ya ekranın kənarındakı ekran şəkli düyməsinə klik et, sonra bir sahənin üzərindən sürüşdür, pəncərəyə klik et və ya bütün ekran üçün Return bas. Dərhal ipdən asılır, heç nə qurmadan.";
+"Try It Now" = "İndi sına";
+"Use the Screenshot App…" = "Ekran şəkli tətbiqindən istifadə et…";
+"Press %@ or click the screenshot button. Nothing to set up." = "%@ bas və ya ekran şəkli düyməsinə klik et. Qurmağa heç nə yoxdur.";
+"Also from the Screenshot app" = "Ekran şəkli tətbiqindən də";
