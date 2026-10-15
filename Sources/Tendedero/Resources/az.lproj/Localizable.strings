@@ -250,3 +250,16 @@
 "Names and addresses" = "Adlar və ünvanlar";
 "Everything but the amount and the date" = "Məbləğ və tarixdən başqa hər şey";
 "Phone numbers and emails" = "Telefon nömrələri və e-poçtlar";
+
+/* Notes instead of beeps */
+"Making GIF…" = "GIF yaradılır…";
+"The line is empty." = "İp boşdur.";
+"Another app already uses this shortcut." = "Bu qısayolu artıq başqa tətbiq istifadə edir.";
+"Could not open the screenshot." = "Ekran şəkli açıla bilmədi.";
+"Could not combine the photos." = "Şəkillər birləşdirilə bilmədi.";
+"Could not make the PDF." = "PDF yaradıla bilmədi.";
+"No text found in this screenshot." = "Bu ekran şəklində mətn tapılmadı.";
+"Could not move it to the Trash." = "Zibil qutusuna köçürülə bilmədi.";
+"Could not save it to the Desktop." = "İş masasında saxlanıla bilmədi.";
+"Could not save the changes." = "Dəyişikliklər saxlanıla bilmədi.";
+"Could not trim the recording." = "Yazı kəsilə bilmədi.";

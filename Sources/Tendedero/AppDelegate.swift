@@ -525,7 +525,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func openSearch() {
         if !isRevealed { toggle() }
         guard isRevealed else {
-            NSSound.beep()
+            Notice.show(L("The line is empty."))
             return
         }
         SearchBar.shared.show(for: line, at: CGPoint(x: panel.frame.midX, y: panel.frame.minY + 6))
@@ -721,7 +721,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 self.registerShortcut(role)
                 // Taken by another app, or the other shortcut: keep the one that worked.
                 if result != nil && self.hotKeys[role] == nil {
-                    NSSound.beep()
+                    Notice.show(L("Another app already uses this shortcut."))
                     Shortcut.save(previous, for: role)
                 }
             }

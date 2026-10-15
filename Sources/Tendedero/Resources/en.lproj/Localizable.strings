@@ -250,3 +250,16 @@
 "Names and addresses" = "Names and addresses";
 "Everything but the amount and the date" = "Everything but the amount and the date";
 "Phone numbers and emails" = "Phone numbers and emails";
+
+/* Notes instead of beeps */
+"Making GIF…" = "Making GIF…";
+"The line is empty." = "The line is empty.";
+"Another app already uses this shortcut." = "Another app already uses this shortcut.";
+"Could not open the screenshot." = "Could not open the screenshot.";
+"Could not combine the photos." = "Could not combine the photos.";
+"Could not make the PDF." = "Could not make the PDF.";
+"No text found in this screenshot." = "No text found in this screenshot.";
+"Could not move it to the Trash." = "Could not move it to the Trash.";
+"Could not save it to the Desktop." = "Could not save it to the Desktop.";
+"Could not save the changes." = "Could not save the changes.";
+"Could not trim the recording." = "Could not trim the recording.";

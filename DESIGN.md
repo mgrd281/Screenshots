@@ -441,10 +441,16 @@ apps.
   - **Recording**: a 22 pt record red circle with a white `stop.fill`, and the
     time so far (13 pt semibold rounded, monospaced digits, minutes and
     seconds).
-  - **Note**: when a capture, a recording or a GIF fails, the
+  - **Note** (`Notice`): when something fails, the
     `exclamationmark.triangle.fill` symbol (13 pt semibold, `.secondary`) and
     one line of 13 pt medium text say what went wrong. It goes after 4 s or
-    on a click, and VoiceOver announces it.
+    on a click, and VoiceOver announces it. While something is being made,
+    like a GIF, a small spinner takes the symbol's place and the note stays
+    until it is done.
+  - **Notes, not beeps.** A failure the user would otherwise have to guess
+    at gets a note. A beep is kept only for a key that does nothing where
+    the keyboard is taken (the capture screens, the shortcut recorder,
+    Return in a search with no results), as macOS does.
   - It never becomes key and is never in what is taken. A click anywhere on
     it cancels or stops; it is one button for VoiceOver, with a tooltip.
   - While recording, the menu bar item turns into `stop.circle`, and its menu

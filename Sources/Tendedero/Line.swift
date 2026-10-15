@@ -237,7 +237,7 @@ final class Line: ObservableObject {
             DispatchQueue.main.async { [weak self] in
                 MainActor.assumeIsolated {
                     guard let self, let joined, let id = self.hang(joined) else {
-                        NSSound.beep()
+                        Notice.show(L("Could not combine the photos."))
                         return
                     }
                     self.pick(id)
@@ -275,7 +275,7 @@ final class Line: ObservableObject {
             DispatchQueue.main.async { [weak self] in
                 MainActor.assumeIsolated {
                     guard let self, let pdf, let id = self.hang(pdf) else {
-                        NSSound.beep()
+                        Notice.show(L("Could not make the PDF."))
                         return
                     }
                     self.pick(id)
@@ -288,10 +288,12 @@ final class Line: ObservableObject {
     /// newest and comes picked and copied, ready to send.
     func makeGIF(_ id: UUID) {
         guard let movie = items.first(where: { $0.id == id && !$0.falling && $0.isRecording })?.url else { return }
+        let note = Notice.show(L("Making GIF…"), working: true)
         Task { @MainActor [weak self] in
             let gif = await GIF.make(from: movie)
+            Notice.end(note)
             guard let self, let gif, let id = self.hang(gif) else {
-                CaptureNotice.show(L("Could not make the GIF."), on: nil)
+                Notice.show(L("Could not make the GIF."))
                 return
             }
             self.pick(id)
@@ -320,7 +322,7 @@ final class Line: ObservableObject {
     func pasteNewest() {
         let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
         guard let newest = items.last(where: { !$0.falling }) else {
-            NSSound.beep()
+            Notice.show(L("The line is empty."))
             return
         }
         paste(picked.isEmpty ? [newest] : picked)
@@ -502,7 +504,7 @@ final class Line: ObservableObject {
             DispatchQueue.main.async { [weak self] in
                 MainActor.assumeIsolated {
                     guard let self, !text.isEmpty else {
-                        NSSound.beep()
+                        Notice.show(L("No text found in this screenshot."))
                         return
                     }
                     let pb = NSPasteboard.general
@@ -534,7 +536,7 @@ final class Line: ObservableObject {
             return true
         } catch {
             log.error("Could not trash \(item.url.path, privacy: .public): \(error.localizedDescription, privacy: .public)")
-            if !quietly { NSSound.beep() }
+            if !quietly { Notice.show(L("Could not move it to the Trash.")) }
             return false
         }
     }
@@ -610,7 +612,7 @@ final class Line: ObservableObject {
             drop(id, quietly: true)
         } catch {
             log.error("Could not save to Desktop: \(error.localizedDescription, privacy: .public)")
-            NSSound.beep()
+            Notice.show(L("Could not save it to the Desktop."))
         }
     }
 

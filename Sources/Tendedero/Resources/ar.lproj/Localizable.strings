@@ -248,3 +248,16 @@
 "Names and addresses" = "الأسماء والعناوين";
 "Everything but the amount and the date" = "كل شيء ما عدا المبلغ والتاريخ";
 "Phone numbers and emails" = "أرقام الهواتف والبريد الإلكتروني";
+
+/* Notes instead of beeps */
+"Making GIF…" = "جارٍ إنشاء GIF…";
+"The line is empty." = "الحبل فارغ.";
+"Another app already uses this shortcut." = "تطبيق آخر يستخدم هذا الاختصار.";
+"Could not open the screenshot." = "تعذّر فتح صورة الشاشة.";
+"Could not combine the photos." = "تعذّر دمج الصور.";
+"Could not make the PDF." = "تعذّر إنشاء ملف PDF.";
+"No text found in this screenshot." = "لا يوجد نص في صورة الشاشة هذه.";
+"Could not move it to the Trash." = "تعذّر نقلها إلى سلة المهملات.";
+"Could not save it to the Desktop." = "تعذّر حفظها على سطح المكتب.";
+"Could not save the changes." = "تعذّر حفظ التغييرات.";
+"Could not trim the recording." = "تعذّر قص التسجيل.";

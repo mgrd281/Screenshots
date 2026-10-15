@@ -248,3 +248,16 @@
 "Names and addresses" = "Namen und Adressen";
 "Everything but the amount and the date" = "Alles außer Betrag und Datum";
 "Phone numbers and emails" = "Telefonnummern und E-Mails";
+
+/* Notes instead of beeps */
+"Making GIF…" = "GIF wird erstellt …";
+"The line is empty." = "Die Leine ist leer.";
+"Another app already uses this shortcut." = "Dieses Kürzel nutzt schon eine andere App.";
+"Could not open the screenshot." = "Das Bildschirmfoto konnte nicht geöffnet werden.";
+"Could not combine the photos." = "Die Fotos konnten nicht zusammengefügt werden.";
+"Could not make the PDF." = "Das PDF konnte nicht erstellt werden.";
+"No text found in this screenshot." = "In diesem Bildschirmfoto wurde kein Text gefunden.";
+"Could not move it to the Trash." = "Konnte nicht in den Papierkorb gelegt werden.";
+"Could not save it to the Desktop." = "Konnte nicht auf dem Schreibtisch gesichert werden.";
+"Could not save the changes." = "Die Änderungen konnten nicht gesichert werden.";
+"Could not trim the recording." = "Die Aufnahme konnte nicht gekürzt werden.";

@@ -7,6 +7,8 @@ let package = Package(
     targets: [
         // Resources holds the translations. scripts/build-app.sh copies them
         // into the app, so SwiftPM leaves them alone.
-        .executableTarget(name: "Tendedero", path: "Sources/Tendedero", exclude: ["Resources"])
+        .executableTarget(name: "Tendedero", path: "Sources/Tendedero", exclude: ["Resources"]),
+        // The logic that needs no screen, checked by CI at every push.
+        .testTarget(name: "TendederoTests", dependencies: ["Tendedero"], path: "Tests/TendederoTests"),
     ]
 )
