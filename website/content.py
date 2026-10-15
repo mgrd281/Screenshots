@@ -3,7 +3,11 @@
 # here: build.py reads them from the app's Localizable.strings, so the site
 # always says what the app says.
 
-SITE_URL = "https://mgrd281.github.io/Screenshots/"
+import os
+
+# Where the site lives. GitHub Pages is the default; a host with its own
+# domain (Vercel) sets SNAPFLY_SITE_URL to that address, ending in a slash.
+SITE_URL = os.environ.get("SNAPFLY_SITE_URL") or "https://mgrd281.github.io/Screenshots/"
 DOWNLOAD = "https://github.com/mgrd281/Screenshots/releases/download/latest/Snapfly.zip"
 REPO = "https://github.com/mgrd281/Screenshots"
 EMAIL = "mgrdegh@gmx.de"
