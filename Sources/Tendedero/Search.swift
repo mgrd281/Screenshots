@@ -32,7 +32,7 @@ enum TextIndex {
     /// Reads a photo's words, unless they are already known. A photo edited
     /// in Markup is read again.
     static func read(_ url: URL) {
-        guard !isRecording(url), let key = key(for: url), rows[key] == nil, !reading.contains(key) else { return }
+        guard isImage(url), let key = key(for: url), rows[key] == nil, !reading.contains(key) else { return }
         reading.insert(key)
         queue.async {
             let found = Finder.lines(of: url).map { Row(folded: fold($0.text), box: $0.box) }

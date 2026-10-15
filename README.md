@@ -62,6 +62,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Drag to the Trash, or click the cross | Let it go. |
 | Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
 | <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
+| Right-click, then Make PDF | Put the photo, or the ones picked with it, in one PDF, a page each and private details covered. It hangs ready to send, marked PDF. |
 | Click the trash on the tag | Take everything down at once, but for the photos pinned. |
 | Right-click, then Pin | Keep it on the line: clearing it or filling it leaves it there. Click its pin to let it go again. |
 | Click the magnifying glass on the tag | Search the words in every photo. Matches stay bright, marked where they say it, and Return picks them, ready to send. |
@@ -225,7 +226,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `TextCard.swift` | Translate Text and Describe, and the card that shows them |
 | `Appearance.swift` | Glass by role, Liquid Glass on macOS 26, and motion that honours Reduce Motion |
 | `Search.swift` | The words in every photo, and the search bar under the line |
-| `Collage.swift` | Joins several screenshots into one image |
+| `Collage.swift` | Joins several screenshots into one image, or into one PDF |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |

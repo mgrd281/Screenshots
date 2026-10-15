@@ -83,6 +83,9 @@
 "Combine into one image" = "एक तस्वीर में जोड़ें";
 "One under another" = "एक के नीचे एक";
 "Side by side" = "अगल-बगल";
+"Make PDF" = "PDF बनाएँ";
+/* The name of a PDF made from several screenshots, followed by the date. */
+"Screenshots" = "स्क्रीनशॉट";
 "Move the line" = "रस्सी खिसकाएँ";
 
 /* SettingsWindow */

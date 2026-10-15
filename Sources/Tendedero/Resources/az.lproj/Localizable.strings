@@ -83,6 +83,9 @@
 "Combine into one image" = "Bir şəkildə birləşdir";
 "One under another" = "Alt-alta";
 "Side by side" = "Yan-yana";
+"Make PDF" = "PDF yarat";
+/* The name of a PDF made from several screenshots, followed by the date. */
+"Screenshots" = "Ekran şəkilləri";
 "Move the line" = "İpi tərpət";
 
 /* SettingsWindow */

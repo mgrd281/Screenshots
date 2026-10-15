@@ -83,6 +83,9 @@
 "Combine into one image" = "Combine into one image";
 "One under another" = "One under another";
 "Side by side" = "Side by side";
+"Make PDF" = "Make PDF";
+/* The name of a PDF made from several screenshots, followed by the date. */
+"Screenshots" = "Screenshots";
 "Move the line" = "Move the line";
 
 /* SettingsWindow */

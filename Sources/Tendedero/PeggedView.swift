@@ -140,6 +140,22 @@ struct PeggedView: View {
                 }
             }
             .animation(.easeOut(duration: 0.2), value: item.covered)
+            .overlay(alignment: .bottomLeading) {
+                // A PDF says so, and how many pages it has when there are
+                // several, where a photo shows its lock.
+                if item.isDocument {
+                    Text(verbatim: item.pages > 1 ? "PDF · \(item.pages)" : "PDF")
+                        .font(.system(size: 9, weight: .bold))
+                        .monospacedDigit()
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 6)
+                        .frame(height: 18)
+                        .background(Color.black.opacity(0.55), in: Capsule())
+                        .padding(5)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                }
+            }
             .shadow(color: .black.opacity(hovering ? 0.26 : 0.18), radius: hovering ? 14 : 10, y: hovering ? 8 : 5)
             // Holding presses the photo in slowly, so a long press feels like
             // it is building up to something.

@@ -81,6 +81,9 @@
 "Combine into one image" = "1枚の画像にまとめる";
 "One under another" = "縦に並べる";
 "Side by side" = "横に並べる";
+"Make PDF" = "PDFを作成";
+/* The name of a PDF made from several screenshots, followed by the date. */
+"Screenshots" = "スクリーンショット";
 "Move the line" = "ロープを動かす";
 
 /* SettingsWindow */

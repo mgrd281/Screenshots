@@ -319,6 +319,8 @@ apps.
 - States:
   - picked: accent ring and check;
   - covered: lock badge;
+  - a PDF: a "PDF" capsule with its page count, in the lock's corner and
+    style (9 pt bold white on black 55%, 18 pt high);
   - pinned: orange pin;
   - copied: "Copied" capsule below;
   - search: dimmed and desaturated when it isn't a match, yellow marks when it
@@ -396,7 +398,8 @@ else is shared.
 - **Don't** exaggerate shadows or add glows. Follow the shadow table above.
 - **Don't** add gradients that do no work. The brand gradient is for the icon
   only. The one exception is the tiny glass-edge highlight.
-- **Don't** add badges beyond the semantic ones: pin, count, lock and copied.
+- **Don't** add badges beyond the semantic ones: pin, count, lock, copied,
+  and the play button and PDF capsule that say what kind of file it is.
 - **Don't** space ad hoc. Use the 4 pt rhythm, and set gaps on the stack, not
   as margins on each child.
 - **Don't** use colors outside this file, or hex in views. Add a token here

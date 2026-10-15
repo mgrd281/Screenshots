@@ -30,7 +30,7 @@ struct GrabArea: NSViewRepresentable {
     private func configure(_ view: GrabView) {
         let id = item.id
         let line = line
-        let isRecording = item.isRecording
+        let isImage = item.isImage
         let pinned = item.pinned
         view.url = item.url
         view.dragImage = item.thumb
@@ -60,7 +60,9 @@ struct GrabArea: NSViewRepresentable {
         // the pointer finds on hover as actions.
         view.setAccessibilityElement(true)
         view.setAccessibilityRole(.button)
-        view.setAccessibilityLabel(item.url.deletingPathExtension().lastPathComponent)
+        // A PDF keeps its extension, so it says what it is.
+        view.setAccessibilityLabel(item.isDocument ? item.url.lastPathComponent
+                                                   : item.url.deletingPathExtension().lastPathComponent)
         // AppKit runs accessibility actions on the main thread.
         let send = NSAccessibilityCustomAction(name: L("Paste into the app in front")) {
             MainActor.assumeIsolated { line.paste(id) }
@@ -80,7 +82,7 @@ struct GrabArea: NSViewRepresentable {
             // Items say themselves whether they can be used.
             menu.autoenablesItems = false
             menu.addItem(ClosureMenuItem(L("Copy"), symbol: "doc.on.doc") { line.copy(id) })
-            if !isRecording {
+            if isImage {
                 menu.addItem(ClosureMenuItem(L("Copy Text"), symbol: "text.viewfinder") { line.copyText(id) })
             }
             if line.liveCount > 1 {
@@ -88,6 +90,10 @@ struct GrabArea: NSViewRepresentable {
             }
             if let app = Paste.frontApp?.localizedName {
                 menu.addItem(ClosureMenuItem(String(format: L("Paste into %@"), app), symbol: "paperplane") { line.paste(id) })
+            }
+            if isImage {
+                // The photos picked with it, or only this one, a page each.
+                menu.addItem(ClosureMenuItem(L("Make PDF"), symbol: "doc.richtext") { line.makePDF(id) })
             }
             if line.photosToCombine.count > 1 {
                 let combine = NSMenuItem(title: L("Combine into one image"), action: nil, keyEquivalent: "")
@@ -101,7 +107,7 @@ struct GrabArea: NSViewRepresentable {
             menu.addItem(ClosureMenuItem(pinned ? L("Unpin") : L("Pin"), symbol: pinned ? "pin.slash" : "pin") {
                 line.togglePin(id)
             })
-            if !isRecording {
+            if isImage {
                 // What the screenshot says, translated or summed up, on this Mac.
                 menu.addItem(.separator())
                 if #available(macOS 15, *) {
@@ -123,7 +129,7 @@ struct GrabArea: NSViewRepresentable {
             menu.addItem(.separator())
             menu.addItem(ClosureMenuItem(L("Open"), symbol: "arrow.up.forward.app") { line.open(id) })
             menu.addItem(ClosureMenuItem(L("Quick Look"), symbol: "eye") { line.quickLook(id) })
-            if !isRecording {
+            if isImage {
                 menu.addItem(ClosureMenuItem(L("Markup"), symbol: "pencil.tip.crop.circle") { line.markup(id) })
                 menu.addItem(ClosureMenuItem(L("Hide Part…"), symbol: "rectangle.dashed") { line.hidePart(id) })
             }
