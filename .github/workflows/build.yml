@@ -64,7 +64,7 @@ jobs:
           fi
           # Notarized, it opens like any app from the internet.
           if [ "${NOTARIZED:-}" = "true" ]; then
-            FIRST_TIME="3. Signed by Mgrdegh Ghazarian and checked by Apple: the first time, click Open."
+            FIRST_TIME="3. Signed and checked by Apple: the first time, macOS asks once, and you click Open."
           else
             FIRST_TIME="3. The first time, macOS says it cannot check the app: open System Settings › Privacy & Security, scroll down and click Open Anyway."
           fi
