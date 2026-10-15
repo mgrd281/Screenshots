@@ -11,6 +11,12 @@
   <a href="../../releases/latest">Download&nbsp;&rsaquo;</a>
   &nbsp;&nbsp;
   <a href="#build-from-source">Build from source&nbsp;&rsaquo;</a>
+  <br>
+  <a href="https://mgrd281.github.io/Screenshots/">Website&nbsp;&rsaquo;</a>
+  &nbsp;&nbsp;
+  <a href="https://mgrd281.github.io/Screenshots/privacy.html">Privacy&nbsp;&rsaquo;</a>
+  &nbsp;&nbsp;
+  <a href="https://mgrd281.github.io/Screenshots/support.html">Support&nbsp;&rsaquo;</a>
   <br><br>
   English&nbsp;·&nbsp;<a href="docs/i18n/README.es.md">Español</a>&nbsp;·&nbsp;<a href="docs/i18n/README.gl.md">Galego</a>&nbsp;·&nbsp;<a href="docs/i18n/README.fr.md">Français</a>&nbsp;·&nbsp;<a href="docs/i18n/README.pt-BR.md">Português (Brasil)</a>&nbsp;·&nbsp;<a href="docs/i18n/README.ja.md">日本語</a>&nbsp;·&nbsp;<a href="docs/i18n/README.ko.md">한국어</a>&nbsp;·&nbsp;<a href="docs/i18n/README.zh-Hans.md">简体中文</a>&nbsp;·&nbsp;<a href="docs/i18n/README.tr.md">Türkçe</a>&nbsp;·&nbsp;<a href="docs/i18n/README.az.md">Azərbaycanca</a>&nbsp;·&nbsp;<a href="docs/i18n/README.hi.md">हिन्दी</a>
 </p>
