@@ -220,18 +220,31 @@
 
 /* Hide by saying */
 "Nothing found to hide." = "가릴 내용을 찾지 못했어요.";
-"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligence가 응답하지 못해 이 단어가 있는 줄을 가렸어요.";
-"Lines hidden: %d. Click a box to show it again." = "가린 줄: %d. 상자를 클릭하면 다시 보여요.";
 "Say what to hide, like “everything but the amount and the date”" = "가릴 내용을 말하세요. 예: ‘금액과 날짜만 빼고 전부’";
 "Words to hide, separated by commas" = "가릴 단어, 쉼표로 구분";
 "Hide" = "가리기";
 "With Apple Intelligence on, you can say it in a sentence." = "Apple Intelligence를 켜면 문장으로 말할 수 있어요.";
 /* Timer and screen recording */
-"Take Screenshot in 5 Seconds" = "5초 후 스크린샷 찍기";
 "Record Screen" = "화면 기록";
 "Stop Recording" = "기록 중단";
 "Record the screen" = "화면 기록";
-"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "찍을 대상을 고르세요: 영역을 드래그하거나 윈도우를 클릭하거나, 화면 전체는 Return 키를 누르세요. 5초 후에 찍혀요.";
 "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "기록할 영역을 드래그하거나 윈도우를 클릭하세요. Return 키는 화면 전체를 기록하고, Esc 키는 취소해요.";
 "Cancel the timer" = "타이머 취소";
 "Snapfly, recording the screen" = "Snapfly, 화면 기록 중";
+
+/* Timer choices, notes, GIF and hiding words */
+"Take Screenshot with Timer" = "타이머로 스크린샷 찍기";
+"3 Seconds" = "3초";
+"5 Seconds" = "5초";
+"10 Seconds" = "10초";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends." = "찍을 대상을 고르세요: 영역을 드래그하거나 윈도우를 클릭하거나, 화면 전체는 Return 키를 누르세요. 카운트다운이 끝나면 찍혀요.";
+"Could not take the screenshot." = "스크린샷을 찍지 못했어요.";
+"Could not record the screen." = "화면을 기록하지 못했어요.";
+"Could not save the recording." = "기록을 저장하지 못했어요.";
+"Could not make the GIF." = "GIF를 만들지 못했어요.";
+"Make GIF" = "GIF 만들기";
+"Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence가 응답하지 못해 입력한 단어를 나오는 곳마다 가렸어요.";
+"Parts hidden: %d. Click a box to show it again." = "가린 부분: %d. 상자를 클릭하면 다시 보여요.";
+"Names and addresses" = "이름과 주소";
+"Everything but the amount and the date" = "금액과 날짜만 빼고 전부";
+"Phone numbers and emails" = "전화번호와 이메일";

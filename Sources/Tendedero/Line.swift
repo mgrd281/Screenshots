@@ -284,6 +284,20 @@ final class Line: ObservableObject {
         }
     }
 
+    /// Make GIF, from a recording's menu: a looping GIF of it hangs as the
+    /// newest and comes picked and copied, ready to send.
+    func makeGIF(_ id: UUID) {
+        guard let movie = items.first(where: { $0.id == id && !$0.falling && $0.isRecording })?.url else { return }
+        Task { @MainActor [weak self] in
+            let gif = await GIF.make(from: movie)
+            guard let self, let gif, let id = self.hang(gif) else {
+                CaptureNotice.show(L("Could not make the GIF."), on: nil)
+                return
+            }
+            self.pick(id)
+        }
+    }
+
     /// The send button on the tag: the photos picked, or every photo when
     /// none is, go straight into the app in front, a chat for example.
     func paste() {
@@ -452,7 +466,12 @@ final class Line: ObservableObject {
             let url = PrivateDetails.shareable(item.url)
             // A recording or a PDF is copied as the file, which apps paste as
             // the video or the document.
-            if item.isImage, let png = pngData(url) { entry.setData(png, forType: .png) }
+            // A GIF keeps moving: it goes as itself, not as a still.
+            if item.isImage, url.pathExtension.lowercased() == "gif", let gif = try? Data(contentsOf: url) {
+                entry.setData(gif, forType: NSPasteboard.PasteboardType("com.compuserve.gif"))
+            } else if item.isImage, let png = pngData(url) {
+                entry.setData(png, forType: .png)
+            }
             entry.setString(url.absoluteString, forType: .fileURL)
             return entry
         }

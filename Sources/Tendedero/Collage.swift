@@ -102,7 +102,7 @@ enum Collage {
 
     /// A name not taken yet in Snapfly's folder, where taking the file down
     /// sends it to the Trash.
-    private static func newFile(_ base: String, _ ext: String) -> URL {
+    static func newFile(_ base: String, _ ext: String) -> URL {
         let fm = FileManager.default
         try? fm.createDirectory(at: Inbox.folder, withIntermediateDirectories: true)
         var target = Inbox.folder.appendingPathComponent(base).appendingPathExtension(ext)

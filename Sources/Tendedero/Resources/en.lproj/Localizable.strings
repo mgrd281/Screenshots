@@ -222,18 +222,31 @@
 
 /* Hide by saying */
 "Nothing found to hide." = "Nothing found to hide.";
-"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligence could not answer, so the lines with these words are hidden.";
-"Lines hidden: %d. Click a box to show it again." = "Lines hidden: %d. Click a box to show it again.";
 "Say what to hide, like “everything but the amount and the date”" = "Say what to hide, like “everything but the amount and the date”";
 "Words to hide, separated by commas" = "Words to hide, separated by commas";
 "Hide" = "Hide";
 "With Apple Intelligence on, you can say it in a sentence." = "With Apple Intelligence on, you can say it in a sentence.";
 /* Timer and screen recording */
-"Take Screenshot in 5 Seconds" = "Take Screenshot in 5 Seconds";
 "Record Screen" = "Record Screen";
 "Stop Recording" = "Stop Recording";
 "Record the screen" = "Record the screen";
-"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later.";
 "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels.";
 "Cancel the timer" = "Cancel the timer";
 "Snapfly, recording the screen" = "Snapfly, recording the screen";
+
+/* Timer choices, notes, GIF and hiding words */
+"Take Screenshot with Timer" = "Take Screenshot with Timer";
+"3 Seconds" = "3 Seconds";
+"5 Seconds" = "5 Seconds";
+"10 Seconds" = "10 Seconds";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends." = "Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends.";
+"Could not take the screenshot." = "Could not take the screenshot.";
+"Could not record the screen." = "Could not record the screen.";
+"Could not save the recording." = "Could not save the recording.";
+"Could not make the GIF." = "Could not make the GIF.";
+"Make GIF" = "Make GIF";
+"Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence could not answer, so the words typed are hidden where they appear.";
+"Parts hidden: %d. Click a box to show it again." = "Parts hidden: %d. Click a box to show it again.";
+"Names and addresses" = "Names and addresses";
+"Everything but the amount and the date" = "Everything but the amount and the date";
+"Phone numbers and emails" = "Phone numbers and emails";

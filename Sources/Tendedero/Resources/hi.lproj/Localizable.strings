@@ -222,18 +222,31 @@
 
 /* Hide by saying */
 "Nothing found to hide." = "छिपाने के लिए कुछ नहीं मिला।";
-"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligence जवाब नहीं दे सका, इसलिए इन शब्दों वाली पंक्तियाँ छिपा दी गईं।";
-"Lines hidden: %d. Click a box to show it again." = "छिपी पंक्तियाँ: %d। फिर से दिखाने के लिए किसी बॉक्स पर क्लिक करें।";
 "Say what to hide, like “everything but the amount and the date”" = "बताएँ कि क्या छिपाना है, जैसे “रकम और तारीख़ के सिवा सब कुछ”";
 "Words to hide, separated by commas" = "छिपाने के शब्द, अल्पविराम से अलग";
 "Hide" = "छिपाएँ";
 "With Apple Intelligence on, you can say it in a sentence." = "Apple Intelligence चालू होने पर आप इसे एक वाक्य में कह सकते हैं।";
 /* Timer and screen recording */
-"Take Screenshot in 5 Seconds" = "5 सेकंड में स्क्रीनशॉट लें";
 "Record Screen" = "स्क्रीन रिकॉर्ड करें";
 "Stop Recording" = "रिकॉर्डिंग रोकें";
 "Record the screen" = "स्क्रीन रिकॉर्ड करें";
-"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "चुनें कि क्या लेना है: किसी हिस्से पर खींचें, किसी विंडो पर क्लिक करें, या पूरी स्क्रीन के लिए Return दबाएँ। यह 5 सेकंड बाद लिया जाता है।";
 "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "रिकॉर्ड करने के लिए किसी हिस्से पर खींचें या किसी विंडो पर क्लिक करें। Return पूरी स्क्रीन रिकॉर्ड करता है, Escape रद्द करता है।";
 "Cancel the timer" = "टाइमर रद्द करें";
 "Snapfly, recording the screen" = "Snapfly, स्क्रीन रिकॉर्ड कर रहा है";
+
+/* Timer choices, notes, GIF and hiding words */
+"Take Screenshot with Timer" = "टाइमर के साथ स्क्रीनशॉट";
+"3 Seconds" = "3 सेकंड";
+"5 Seconds" = "5 सेकंड";
+"10 Seconds" = "10 सेकंड";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends." = "चुनें कि क्या लेना है: किसी हिस्से पर खींचें, किसी विंडो पर क्लिक करें, या पूरी स्क्रीन के लिए Return दबाएँ। उलटी गिनती ख़त्म होने पर लिया जाता है।";
+"Could not take the screenshot." = "स्क्रीनशॉट नहीं लिया जा सका।";
+"Could not record the screen." = "स्क्रीन रिकॉर्ड नहीं हो सकी।";
+"Could not save the recording." = "रिकॉर्डिंग सहेजी नहीं जा सकी।";
+"Could not make the GIF." = "GIF नहीं बन सका।";
+"Make GIF" = "GIF बनाएँ";
+"Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence जवाब नहीं दे सका, इसलिए लिखे गए शब्द जहाँ भी दिखें छिपा दिए गए।";
+"Parts hidden: %d. Click a box to show it again." = "छिपे हिस्से: %d। फिर से दिखाने के लिए किसी बॉक्स पर क्लिक करें।";
+"Names and addresses" = "नाम और पते";
+"Everything but the amount and the date" = "रकम और तारीख़ के सिवा सब कुछ";
+"Phone numbers and emails" = "फ़ोन नंबर और ईमेल";

@@ -126,15 +126,17 @@ from where it was taken straight onto the line, with nothing to set up in the
 Screenshot app first. macOS asks for the Screen Recording permission the
 first time.
 
-For a menu that closes when you press a shortcut, choose Take Screenshot in
-5 Seconds. Choose what to take, open the menu, and a countdown above the Dock
-takes it when it runs out. A click on the countdown cancels it.
+For a menu that closes when you press a shortcut, choose Take Screenshot with
+Timer, then 3, 5 or 10 seconds. Choose what to take, open the menu, and a
+countdown above the Dock takes it when it runs out. A click on the countdown
+cancels it. If something goes wrong, a short note above the Dock says so.
 
 Press <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd>, or choose Record
 Screen, to record an area, a window or the whole screen. A capsule above the
 Dock shows the time; click it, press the shortcut again, or choose Stop
 Recording in the menu bar to stop. The recording hangs on the line, ready to
-trim or send. It has no sound, and Snapfly's own line and controls stay out
+trim or send. Make GIF in its menu turns it into a looping GIF that every chat
+plays, which hangs next to it and stays animated when sent. It has no sound, and Snapfly's own line and controls stay out
 of it.
 
 <br>
@@ -161,10 +163,11 @@ Hide Part in a photo's menu. Labels like Billing address, Recipient or Diagnosis
 where a whole block is private.
 
 In Hide Part you can also say what to hide, like "everything but the amount
-and the date" or "the customer's name". Apple Intelligence picks the lines on
-your Mac, and they show as boxes to check before you press Done; click one to
-show it again. Without Apple Intelligence, type words separated by commas and
-the lines with them are hidden. The text is read on your Mac, and the
+and the date" or "the customer's name", or click one of the examples under the
+field. Apple Intelligence picks the lines, or just the words in them, on your
+Mac, and they show as boxes to check before you press Done; click one to show
+it again. Without Apple Intelligence, type words separated by commas and they
+are hidden wherever they appear. The text is read on your Mac, and the
 screenshot file itself is never changed.
 
 <br>
@@ -285,7 +288,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
-| `HideBySaying.swift` | Hide Part told in words: picks the lines to hide with Apple Intelligence, or by matching words |
+| `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
 | `TextCard.swift` | Translate Text and Describe, and the card that shows them |
 | `Appearance.swift` | Glass by role, Liquid Glass on macOS 26, and motion that honours Reduce Motion |
 | `Search.swift` | The words in every photo, and the search bar under the line |
@@ -297,7 +300,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again |
 | `ChatButton.swift` | The send button that floats over a chat while photos hang |
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen, now or after a countdown |
-| `Recording.swift` | Records the screen from Snapfly itself, with the countdown and recording capsule above the Dock |
+| `Recording.swift` | Records the screen from Snapfly itself, with the countdown, recording and note capsule above the Dock, and makes GIFs of recordings |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |

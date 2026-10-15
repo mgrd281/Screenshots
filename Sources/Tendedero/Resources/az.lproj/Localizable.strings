@@ -222,18 +222,31 @@
 
 /* Hide by saying */
 "Nothing found to hide." = "Gizlədiləcək heç nə tapılmadı.";
-"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligence cavab verə bilmədi, ona görə bu sözlər olan sətirlər gizlədildi.";
-"Lines hidden: %d. Click a box to show it again." = "Gizlədilən sətirlər: %d. Yenidən göstərmək üçün qutuya klik et.";
 "Say what to hide, like “everything but the amount and the date”" = "Nəyi gizlətmək istədiyini de, məsələn “məbləğ və tarixdən başqa hər şey”";
 "Words to hide, separated by commas" = "Gizlədiləcək sözlər, vergüllə ayrılmış";
 "Hide" = "Gizlət";
 "With Apple Intelligence on, you can say it in a sentence." = "Apple Intelligence açıq olanda bunu bir cümlə ilə deyə bilərsən.";
 /* Timer and screen recording */
-"Take Screenshot in 5 Seconds" = "5 saniyəyə ekran şəkli çək";
 "Record Screen" = "Ekranı yaz";
 "Stop Recording" = "Yazmanı dayandır";
 "Record the screen" = "Ekranı yaz";
-"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "Nə çəkiləcəyini seç: bir sahənin üzərindən sürüşdür, pəncərəyə klik et və ya bütün ekran üçün Return bas. 5 saniyə sonra çəkilir.";
 "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "Yazmaq üçün bir sahənin üzərindən sürüşdür və ya pəncərəyə klik et. Return bütün ekranı yazır, Escape ləğv edir.";
 "Cancel the timer" = "Taymeri ləğv et";
 "Snapfly, recording the screen" = "Snapfly, ekranı yazır";
+
+/* Timer choices, notes, GIF and hiding words */
+"Take Screenshot with Timer" = "Taymerlə ekran şəkli";
+"3 Seconds" = "3 saniyə";
+"5 Seconds" = "5 saniyə";
+"10 Seconds" = "10 saniyə";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends." = "Nə çəkiləcəyini seç: bir sahənin üzərindən sürüşdür, pəncərəyə klik et və ya bütün ekran üçün Return bas. Geri sayım bitəndə çəkilir.";
+"Could not take the screenshot." = "Ekran şəkli çəkilə bilmədi.";
+"Could not record the screen." = "Ekran yazıla bilmədi.";
+"Could not save the recording." = "Yazı saxlanıla bilmədi.";
+"Could not make the GIF." = "GIF yaradıla bilmədi.";
+"Make GIF" = "GIF yarat";
+"Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence cavab verə bilmədi, ona görə yazılan sözlər harada görünürsə gizlədildi.";
+"Parts hidden: %d. Click a box to show it again." = "Gizlədilən hissələr: %d. Yenidən göstərmək üçün qutuya klik et.";
+"Names and addresses" = "Adlar və ünvanlar";
+"Everything but the amount and the date" = "Məbləğ və tarixdən başqa hər şey";
+"Phone numbers and emails" = "Telefon nömrələri və e-poçtlar";

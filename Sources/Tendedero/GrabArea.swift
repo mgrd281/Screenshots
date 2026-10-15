@@ -135,6 +135,7 @@ struct GrabArea: NSViewRepresentable {
             }
             if isRecording {
                 menu.addItem(ClosureMenuItem(L("Trim…"), symbol: "scissors") { line.markup(id) })
+                menu.addItem(ClosureMenuItem(L("Make GIF"), symbol: "photo.stack") { line.makeGIF(id) })
             }
             menu.addItem(ClosureMenuItem(L("Show in Finder"), symbol: "folder") { line.reveal(id) })
             let inInbox = line.isInInbox(id)
