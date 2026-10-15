@@ -438,16 +438,16 @@
   }
 
   // A photo takes off up and away, as on the icon, then lands where it goes.
-  async function flyPhoto(photo, from, to, delay = 0) {
+  async function flyPhoto(photo, from, to, delay = 0, host = document.body) {
     if (reduced.matches) return;
     const ghost = photo.cloneNode(true);
     ghost.classList.add("ghost");
-    ghost.querySelectorAll("button, .badge-lock, .badge-video").forEach((el) => {
-      if (el.matches(".photo-hit")) el.replaceWith(el.firstElementChild);
+    ghost.querySelectorAll("button, .badge-lock, .badge-video, .dbadge").forEach((el) => {
+      if (el.matches(".photo-hit, .dcard-hit")) el.replaceWith(el.firstElementChild);
       else el.remove();
     });
     Object.assign(ghost.style, { left: from.left + "px", top: from.top + "px", width: from.width + "px" });
-    document.body.appendChild(ghost);
+    host.appendChild(ghost);
     const dx = to.left - from.left;
     const dy = to.top - from.top;
     const scale = to.width / from.width;
@@ -608,121 +608,574 @@
     });
   }
 
-  // MARK: A Mac screen, to take screenshots on
+  // MARK: A Mac desktop to try Snapfly on
 
-  const screenBox = document.querySelector("[data-screen]");
-  if (screenBox) setUpScreen(screenBox);
+  const deskStage = document.querySelector("[data-try-desk]");
+  if (deskStage) setUpDesk(deskStage);
 
-  function setUpScreen(screen) {
-    const W = 1000;
-    const H = 625;
-    const svg = screen.querySelector(".scene svg");
-    const windows = JSON.parse(screen.dataset.windows);
-    const [sortX, sortY, itemX, itemY] = screen.dataset.sort.split(",").map(Number);
-    const overlay = screen.querySelector(".cap-overlay");
+  function setUpDesk(stage) {
+    const { layouts, words } = JSON.parse(stage.querySelector("[data-desk-data]").textContent);
+    const desk = stage.querySelector(".dscreen");
+    const fit = stage.querySelector(".desk-fit");
+    const scenes = {};
+    desk.querySelectorAll(".desk-svg").forEach((svg) => { scenes[svg.dataset.layout] = svg; });
+    const barApp = desk.querySelector(".bar-app");
+    const statusButton = desk.querySelector(".bar-snapfly");
+    const list = desk.querySelector(".dline-pegs");
+    const template = stage.querySelector("template[data-card]");
+    const controls = { browser: desk.querySelector('.wctl[data-for="browser"]'), chat: desk.querySelector('.wctl[data-for="chat"]') };
+    const sortButton = controls.browser.querySelector(".sort-btn");
+    const sortMenu = desk.querySelector(".sort-menu");
+    const sendButton = controls.chat.querySelector(".dsend");
+    const button = desk.querySelector(".dshot");
+    const pointer = desk.querySelector(".dpointer");
+    const edge = desk.querySelector(".rec-edge");
+    const flash = desk.querySelector(".cap-flash");
+    const overlay = desk.querySelector(".cap-overlay");
     const tint = overlay.querySelector(".cap-win");
     const area = overlay.querySelector(".cap-area");
     const size = overlay.querySelector(".cap-size");
     const hint = overlay.querySelector("[data-hint]");
-    const button = screen.querySelector(".shot-btn");
-    const capsule = screen.querySelector(".capsule");
-    const edge = screen.querySelector(".rec-edge");
-    const flash = screen.querySelector(".cap-flash");
-    const pointer = screen.querySelector(".sim-pointer");
-    const list = screen.querySelector("[data-screen-line] .pegs");
-    const status = screen.querySelector("[data-screen-status]");
-    const template = screen.querySelector("template[data-peg]");
-    const statusButton = screen.querySelector(".sf-status");
-    const menu = screen.querySelector(".sf-menu");
-    const shotMenu = screen.querySelector(".shot-menu");
+    const ring = desk.querySelector(".dring");
+    const toasts = desk.querySelector(".dtoasts");
+    const capsule = desk.querySelector(".capsule");
+    const menu = desk.querySelector(".sf-menu");
+    const shotMenu = desk.querySelector(".shot-menu");
     const sub = menu.querySelector(".has-sub");
-    const subButton = sub.querySelector(":scope > .ctx-item");
-    const sortMenu = svg.querySelector(".sort-menu");
-    const shirt = svg.querySelector(".sf-icon");
-    const stopGlyph = svg.querySelector(".sf-stop");
-    const tilts = ["-3deg", "2.2deg", "-1.6deg", "2.8deg", "-2.4deg"];
-    const whole = { x: 0, y: 0, w: W, h: H };
-    const started = performance.now();
-    let choosing = null;
-    let pick = null;
-    let countdown = null;
-    let recording = null;
+    const subButton = sub.querySelector(":scope > .dmenu-item");
+    const trashPop = desk.querySelector(".trash-pop");
+    const trashList = trashPop.querySelector(".trash-list");
+    const trashClear = trashPop.querySelector(".trash-clear");
+    const dock = stage.querySelector(".dock");
+    const dockItems = [...dock.querySelectorAll(".dock-item")];
+    const dockItem = (app) => dock.querySelector(`.dock-item[data-app="${app}"]`);
+    const guide = stage.querySelector(".guide");
+    const startButton = stage.parentElement.querySelector("[data-guide-start]");
+
+    // The motion tokens, read once, for what the script animates itself.
+    const css = getComputedStyle(stage);
+    const T1 = parseFloat(css.getPropertyValue("--d-t1")) || 120;
+    const T2 = parseFloat(css.getPropertyValue("--d-t2")) || 200;
+    const T3 = parseFloat(css.getPropertyValue("--d-t3")) || 280;
+    const EASE_IN = css.getPropertyValue("--d-in").trim() || "ease-out";
+    const EASE_OUT = css.getPropertyValue("--d-out").trim() || "ease-in";
+    const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+    const time = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+    const tilts = ["-2deg", "1.5deg", "-1deg", "2deg", "-1.5deg"];
+    const fine = matchMedia("(hover: hover) and (pointer: fine)");
+
+    // What the desktop shows. Every change goes through render(), so the
+    // three layouts, a recording and a screenshot all agree.
+    const state = {
+      front: "browser",
+      open: { browser: true, chat: false },
+      min: { browser: false, chat: false },
+      sort: 0,
+      sortOpen: false,
+      sortHover: 0,
+      chat: words.chat_in.map((text) => ({ kind: "in", text })),
+    };
+    const snapshot = () => ({ ...state, open: { ...state.open }, min: { ...state.min }, chat: state.chat.slice() });
+    const visible = (app, st = state) => st.open[app] && !st.min[app] && st.front === app;
+    let trash = [];
+    let copied = null;
     let taken = 0;
     let seen = false;
-    let playing = false;
+    let choosing = null;
+    let pick = null;
+    let keyPick = -1;
+    let countdown = null;
+    let recording = null;
+    let name = "wide";
+    let L = layouts.wide;
 
-    const clock = () => (performance.now() - started) / 1000;
-    const time = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
-    const announce = (text) => {
-      status.textContent = "";
-      requestAnimationFrame(() => { status.textContent = text; });
-    };
+    // MARK: Layout and scale
 
-    // Where the pointer is, in the screen's own points.
-    const at = (event) => {
-      const box = screen.getBoundingClientRect();
-      return {
-        x: Math.min(Math.max(((event.clientX - box.left) / box.width) * W, 0), W),
-        y: Math.min(Math.max(((event.clientY - box.top) / box.height) * H, 0), H),
-      };
-    };
-    const place = (el, r) => Object.assign(el.style, {
-      left: (r.x / W) * 100 + "%", top: (r.y / H) * 100 + "%",
-      width: (r.w / W) * 100 + "%", height: (r.h / H) * 100 + "%",
-    });
-    const windowAt = (p) => windows.find((w) => p.x >= w.x && p.x <= w.x + w.w && p.y >= w.y && p.y <= w.y + w.h);
+    const wideQuery = matchMedia("(min-width: 1280px)");
+    const mediumQuery = matchMedia("(min-width: 768px)");
 
-    // MARK: The music, for something to record
-
-    // Draws the player at a moment, on the screen or in a recording of it.
-    function music(root, t) {
-      const total = 223;
-      const now = (72 + t) % total;
-      root.querySelectorAll(".m-eq").forEach((bar, k) => {
-        const h = 5 + 17 * Math.abs(Math.sin(t * (2.3 + k * 0.61) + k * 1.9));
-        bar.setAttribute("y", (parseFloat(bar.dataset.base) - h).toFixed(1));
-        bar.setAttribute("height", h.toFixed(1));
-      });
-      const bar = root.querySelector(".m-prog");
-      const full = parseFloat(bar.dataset.w);
-      const x0 = parseFloat(bar.dataset.x0);
-      const w = (full * now) / total;
-      bar.setAttribute("width", w.toFixed(1));
-      bar.setAttribute("x", (bar.dataset.rtl === "1" ? x0 + full - w : x0).toFixed(1));
-      root.querySelector(".m-t1").textContent = time(now);
-      root.querySelector(".m-t2").textContent = "-" + time(total - now);
+    function applyLayout() {
+      name = wideQuery.matches ? "wide" : mediumQuery.matches ? "medium" : "tall";
+      L = layouts[name];
+      desk.dataset.layout = name;
+      stage.dataset.layout = name;
+      desk.style.width = L.w + "px";
+      desk.style.height = L.h + "px";
+      desk.style.setProperty("--card-w", L.card + "px");
+      fit.style.aspectRatio = `${L.w} / ${L.h}`;
+      // The Dock and the guide go where this layout keeps them.
+      const dockSlot = stage.querySelector(`.dock-slot[data-slot="${name === "tall" ? "bar" : "desk"}"]`);
+      if (dock.parentElement !== dockSlot) dockSlot.appendChild(dock);
+      const guideSlot = stage.querySelector(`.guide-slot[data-slot="${{ wide: "desk", medium: "below", tall: "sheet" }[name]}"]`);
+      if (guide.parentElement !== guideSlot) guideSlot.appendChild(guide);
+      closeMenus();
+      closeTrash();
+      scale();
+      placeControls();
+      while (cards().length > L.cards) toTrash(cards()[0], true);
+      layoutLine();
+      render();
+      placeGuide();
     }
 
-    const play = () => {
-      if (!playing) return;
-      music(svg, clock());
-      requestAnimationFrame(play);
+    function scale() {
+      desk.style.setProperty("--k", fit.clientWidth / L.w);
+    }
+
+    const k = () => desk.getBoundingClientRect().width / L.w;
+
+    // From the page to the desktop's own pixels, and back.
+    const at = (event) => {
+      const box = desk.getBoundingClientRect();
+      return {
+        x: clamp(((event.clientX - box.left) / box.width) * L.w, 0, L.w),
+        y: clamp(((event.clientY - box.top) / box.height) * L.h, 0, L.h),
+      };
     };
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver((entries) => {
-        seen = entries.some((entry) => entry.isIntersecting);
-        const go = seen && !reduced.matches;
-        if (go && !playing) { playing = true; requestAnimationFrame(play); }
-        if (!go) playing = false;
-      }, { threshold: 0.15 }).observe(screen);
+    const inDesk = (rect) => {
+      const box = desk.getBoundingClientRect();
+      const s = box.width / L.w;
+      return { x: (rect.left - box.left) / s, y: (rect.top - box.top) / s, w: rect.width / s, h: rect.height / s };
+    };
+    const onPage = (r) => {
+      const box = desk.getBoundingClientRect();
+      const s = box.width / L.w;
+      return { left: box.left + r.x * s, top: box.top + r.y * s, width: r.w * s, height: r.h * s };
+    };
+    const place = (el, r) => Object.assign(el.style, { left: r.x + "px", top: r.y + "px", width: r.w + "px", height: r.h + "px" });
+    const winRect = () => ({ x: L.win[0], y: L.win[1], w: L.win[2], h: L.win[3] });
+
+    function placeControls() {
+      ["browser", "chat"].forEach((app) => {
+        controls[app].querySelectorAll(".dlight").forEach((light, i) => {
+          Object.assign(light.style, { left: L.lights[i][0] + "px", top: L.lights[i][1] + "px" });
+        });
+      });
+      place(sortButton, { x: L.sort[0], y: L.sort[1], w: L.sort[2], h: L.sort[3] });
+      Object.assign(sendButton.style, { left: L.chatSend[0] + (rtl ? -14 : 14) + "px", top: L.chatSend[1] - 22 + "px" });
+      Object.assign(button.style, { left: L.shot[0] + "px", top: L.shot[1] + "px" });
+    }
+
+    // MARK: Drawing the windows
+
+    const order = (key) => [0, 1, 2].sort((a, b) => words.flights[a][key] - words.flights[b][key]);
+    const measure = document.createElement("canvas").getContext("2d");
+    const textWidth = (text, px) => {
+      measure.font = `${px}px -apple-system, BlinkMacSystemFont, system-ui, sans-serif`;
+      return measure.measureText(text).width;
+    };
+    const NS = "http://www.w3.org/2000/svg";
+    const make = (tag, attrs) => {
+      const el = document.createElementNS(NS, tag);
+      Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+      return el;
+    };
+
+    function renderScene(svg, st) {
+      const lay = layouts[svg.dataset.layout];
+      ["browser", "chat"].forEach((app) => {
+        const win = svg.querySelector(`.win[data-win="${app}"]`);
+        if (!win) return;
+        if (visible(app, st)) win.removeAttribute("display");
+        else win.setAttribute("display", "none");
+      });
+      const rows = order(st.sort);
+      svg.querySelectorAll(".row").forEach((row) => {
+        row.setAttribute("transform", `translate(0 ${lay.rowsTop + rows.indexOf(Number(row.dataset.i)) * lay.rowStep})`);
+      });
+      const label = svg.querySelector(".sort-label");
+      if (label) label.textContent = `${words.sort}: ${words.sort_items[st.sort]}`;
+      const copy = svg.querySelector(".sort-copy");
+      if (copy) {
+        const top = lay.menuTop - lay.win[1];
+        copy.setAttribute("display", st.sortOpen ? "inline" : "none");
+        copy.querySelector(".sort-hl").setAttribute("y", top + 4 + st.sortHover * 28);
+        const check = copy.querySelector(".sort-check");
+        check.setAttribute("transform", `translate(${check.dataset.x} ${top + 18 + st.sort * 28})`);
+        copy.querySelectorAll(".sort-item").forEach((item) => {
+          item.style.fill = Number(item.dataset.j) === st.sortHover ? "var(--d-on-accent)" : "var(--d-g9)";
+        });
+      }
+      renderChat(svg, st.chat, lay);
+      const app = svg.querySelector(".cap-app");
+      if (app) app.textContent = st.front ? words[st.front] : words.desktop;
+    }
+
+    function renderChat(svg, items, lay) {
+      const group = svg.querySelector(".msgs");
+      if (!group) return;
+      group.replaceChildren();
+      const [ax, ay, aw, ah] = lay.chatArea;
+      const W = lay.win[2];
+      const max = Math.min(aw * 0.72, 300);
+      const mirror = (x, w) => (rtl ? W - x - w : x);
+      let y = ay + 8;
+      items.forEach((item, n) => {
+        if (item.kind === "in") {
+          const w = Math.min(textWidth(item.text, 15) + 28, max);
+          const x = mirror(ax, w);
+          group.appendChild(make("rect", { x, y, width: w, height: 36, rx: 18, style: "fill:var(--d-g2)" }));
+          const text = make("text", { x: rtl ? x + w - 14 : x + 14, y: y + 23, "font-size": 15, style: "fill:var(--d-g9)" });
+          text.textContent = item.text;
+          group.appendChild(text);
+          y += 44;
+          return;
+        }
+        // An album of the photos sent, at the end of the line of messages.
+        const count = item.images.length;
+        const cols = count === 1 ? 1 : 2;
+        const width = Math.min(aw * 0.62, 240);
+        const cell = (width - (cols - 1) * 4) / cols;
+        const cellH = count === 1 ? width / clamp(item.ratios[0], 0.5, 4) : cell * 0.75;
+        const rowsN = Math.ceil(count / cols);
+        const height = rowsN * cellH + (rowsN - 1) * 4;
+        const x = mirror(ax + aw - width, width);
+        const id = `${svg.dataset.layout}-album-${n}-${Math.random().toString(36).slice(2, 7)}`;
+        const clip = make("clipPath", { id });
+        clip.appendChild(make("rect", { x, y, width, height, rx: 14 }));
+        group.appendChild(clip);
+        const album = make("g", { "clip-path": `url(#${id})` });
+        item.images.forEach((image, i) => {
+          const col = i % cols;
+          const row = Math.floor(i / cols);
+          const pic = image.cloneNode(true);
+          const px = rtl ? x + width - (col + 1) * cell - col * 4 : x + col * (cell + 4);
+          Object.entries({ x: px, y: y + row * (cellH + 4), width: cell, height: cellH, preserveAspectRatio: "xMidYMid slice" })
+            .forEach(([key, value]) => pic.setAttribute(key, value));
+          album.appendChild(pic);
+        });
+        group.appendChild(album);
+        y += height + 8;
+      });
+      // The newest stays in view; older messages scroll up out of it.
+      const overflow = y - (ay + ah);
+      if (overflow > 0) group.setAttribute("transform", `translate(0 ${-overflow})`);
+      else group.removeAttribute("transform");
+    }
+
+    // Everything on the page follows the state: the drawings, the controls
+    // over them, the menu bar and the Dock.
+    function render() {
+      Object.values(scenes).forEach((svg) => renderScene(svg, state));
+      controls.browser.hidden = !visible("browser");
+      controls.chat.hidden = !visible("chat");
+      barApp.textContent = state.front ? words[state.front] : words.desktop;
+      dockItem("browser").classList.toggle("open", state.open.browser);
+      dockItem("chat").classList.toggle("open", state.open.chat);
+      dockItem("trash").classList.toggle("full", trash.length > 0);
+      sortButton.querySelector("[data-sort-label]").textContent = `${words.sort}: ${words.sort_items[state.sort]}`;
+      sortMenu.querySelectorAll(".dmenu-item").forEach((item) => item.setAttribute("aria-checked", String(Number(item.dataset.j) === state.sort)));
+      updateSend();
+      updateMenu();
+    }
+
+    // After every change: a frame for a recording under way, and the guide
+    // moves along.
+    function changed() {
+      render();
+      if (recording) recording.frames.push({ t: (performance.now() - recording.from) / 1000, st: snapshot() });
+      placeGuide();
+    }
+
+    // MARK: Windows
+
+    const group = (app) => scenes[name].querySelector(`.win[data-win="${app}"]`);
+    const frontApp = () => ["browser", "chat"].find((app) => visible(app)) || null;
+
+    // With Reduce Motion, only what fades still fades.
+    function animate(el, frames, duration, easing) {
+      if (reduced.matches) {
+        if (frames.every((f) => f.opacity === undefined)) return Promise.resolve();
+        frames = frames.map((f) => ({ opacity: f.opacity }));
+      }
+      return el.animate(frames, { duration, easing }).finished.catch(() => {});
+    }
+
+    // Toward the app's icon in the Dock, or from it.
+    function dockOffset(app) {
+      const icon = inDesk(dockItem(app).getBoundingClientRect());
+      const [x, y, w, h] = L.win;
+      return `translate(${icon.x + icon.w / 2 - (x + w / 2)}px, ${icon.y + icon.h / 2 - (y + h / 2)}px) scale(0.08)`;
+    }
+
+    async function openApp(app) {
+      closeTrash();
+      if (visible(app)) return;
+      const from = state.min[app] ? dockOffset(app) : "scale(0.98)";
+      const old = frontApp();
+      if (old) await animate(group(old), [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "scale(0.98)" }], T2, EASE_OUT);
+      state.open[app] = true;
+      state.min[app] = false;
+      state.front = app;
+      if (app !== "browser") closeSortMenu();
+      changed();
+      animate(group(app), [{ opacity: 0, transform: from }, { opacity: 1, transform: "none" }], T3, EASE_IN);
+      did(app);
+    }
+
+    async function closeApp(app) {
+      closeSortMenu();
+      await animate(group(app), [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "scale(0.96)" }], T3, EASE_OUT);
+      state.open[app] = false;
+      state.min[app] = false;
+      state.front = null;
+      changed();
+      toast(words.toast.closed.replace("{app}", words[app]), words.toast.open, () => openApp(app));
+    }
+
+    async function minimizeApp(app) {
+      closeSortMenu();
+      await animate(group(app), [{ opacity: 1, transform: "none" }, { opacity: 0, transform: dockOffset(app) }], T3, EASE_OUT);
+      state.min[app] = true;
+      state.front = null;
+      changed();
+    }
+
+    Object.entries(controls).forEach(([app, el]) => {
+      el.querySelector('[data-act="close"]').addEventListener("click", () => closeApp(app));
+      el.querySelector('[data-act="min"]').addEventListener("click", () => minimizeApp(app));
+    });
+
+    // MARK: Sorting the flights
+
+    function openSortMenu() {
+      if (!visible("browser")) return;
+      closeMenus();
+      state.sortOpen = true;
+      state.sortHover = state.sort;
+      Object.assign(sortMenu.style, { left: L.sort[0] + "px", top: L.sort[1] + L.sort[3] + 4 + "px", minWidth: L.sort[2] + "px" });
+      sortMenu.hidden = false;
+      sortButton.setAttribute("aria-expanded", "true");
+      changed();
+    }
+
+    function closeSortMenu() {
+      if (sortMenu.hidden && !state.sortOpen) return;
+      sortMenu.hidden = true;
+      sortButton.setAttribute("aria-expanded", "false");
+      state.sortOpen = false;
+      changed();
+    }
+
+    function sortBy(j) {
+      const svg = scenes[name];
+      const before = new Map([...svg.querySelectorAll(".row")].map((row) => [row, row.getBoundingClientRect().top]));
+      state.sort = j;
+      sortMenu.hidden = true;
+      sortButton.setAttribute("aria-expanded", "false");
+      state.sortOpen = false;
+      changed();
+      // Each row slides from where it was to its new place.
+      before.forEach((top, row) => {
+        const dy = (top - row.getBoundingClientRect().top) / k();
+        if (dy) animate(row.querySelector(".row-in"), [{ transform: `translateY(${dy}px)` }, { transform: "none" }], T3, EASE_IN);
+      });
+    }
+
+    sortButton.addEventListener("click", () => (sortMenu.hidden ? openSortMenu() : closeSortMenu()));
+    sortButton.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown" && sortMenu.hidden) {
+        event.preventDefault();
+        openSortMenu();
+        sortMenu.querySelector('[aria-checked="true"]').focus();
+      }
+    });
+    sortMenu.addEventListener("click", (event) => {
+      const item = event.target.closest(".dmenu-item");
+      if (item) { sortBy(Number(item.dataset.j)); sortButton.focus({ preventScroll: true }); }
+    });
+    sortMenu.addEventListener("pointerover", (event) => {
+      const item = event.target.closest(".dmenu-item");
+      if (item && Number(item.dataset.j) !== state.sortHover) { state.sortHover = Number(item.dataset.j); changed(); }
+    });
+    sortMenu.addEventListener("keydown", (event) => menuKeys(event, sortMenu, () => { closeSortMenu(); sortButton.focus(); }));
+
+    // MARK: The line
+
+    const cards = () => [...list.children].filter((card) => !card.classList.contains("leaving"));
+    const newest = () => cards().pop();
+
+    // Spread from the middle, over the window's width, hanging from the rope.
+    function layoutLine() {
+      const all = cards();
+      const gap = name === "tall" ? 12 : 16;
+      const total = all.length * L.card + Math.max(all.length - 1, 0) * gap;
+      const start = (L.w - total) / 2;
+      all.forEach((card, i) => {
+        const offset = start + i * (L.card + gap);
+        const x = rtl ? L.w - offset - L.card : offset;
+        const s = ((x + L.card / 2) / L.w * 1000 + 20) / 1040;
+        const y = (12 + 116 * s * (1 - s)) * 0.48 - 4;
+        card.style.transform = `translate(${x}px, ${y}px) rotate(${card.shot.tilt})`;
+      });
+      updateSend();
+      updateMenu();
+      placeGuide();
+    }
+
+    function makeCard(shot) {
+      const card = template.content.firstElementChild.cloneNode(true);
+      card.shot = shot;
+      card.querySelector(".dcard-hit").setAttribute("aria-label", `${words.copy}: ${shot.name}`);
+      card.querySelector(".dcard-x").setAttribute("aria-label", `${words.discard}: ${shot.name}`);
+      const frame = card.querySelector(".dcard-img");
+      frame.style.aspectRatio = String(shot.ratio);
+      frame.appendChild(shot.image.cloneNode(true));
+      if (shot.video) {
+        card.classList.add("video");
+        card.querySelector(".dbadge span").textContent = time(Math.max(shot.video.seconds, 1));
+        playable(card);
+      }
+      return card;
+    }
+
+    // A photo goes onto the line, at the end, or back where it was.
+    function hangCard(shot, at = null) {
+      while (cards().length >= L.cards) toTrash(cards()[0], true);
+      const card = makeCard(shot);
+      list.insertBefore(card, at === null ? null : cards()[at] || null);
+      layoutLine();
+      return card;
+    }
+
+    function removeCard(card) {
+      card.classList.add("leaving");
+      setTimeout(() => card.remove(), T2);
+      layoutLine();
+    }
+
+    function toTrash(card, quiet) {
+      const index = cards().indexOf(card);
+      trash.push({ ...card.shot, index });
+      removeCard(card);
+      render();
+      if (!quiet) {
+        toast(words.toast.removed, words.toast.undo, () => {
+          const item = trash.find((entry) => entry.image === card.shot.image);
+          if (!item) return;
+          trash = trash.filter((entry) => entry !== item);
+          hangCard(item, index);
+          render();
+        });
+      }
+    }
+
+    list.addEventListener("click", (event) => {
+      const card = event.target.closest(".dcard");
+      if (!card || card.classList.contains("leaving")) return;
+      if (event.target.closest(".dcard-x")) { toTrash(card); return; }
+      if (!event.target.closest(".dcard-hit")) return;
+      copied = card.shot;
+      copyImage(card.querySelector(".dcard-img svg"), card.shot.ratio);
+      toast(words.toast.copied, words.toast.paste, () => paste());
+      did("copy");
+    });
+
+    // A recording plays what it caught while the pointer rests on it.
+    function playable(card) {
+      const { frames, seconds } = card.shot.video;
+      const image = card.querySelector(".dcard-img svg");
+      let frame = 0;
+      let shown = -1;
+      const start = () => {
+        if (frame || reduced.matches || frames.length < 2) return;
+        const from = performance.now();
+        const step = () => {
+          const t = ((performance.now() - from) / 1000) % Math.max(seconds, 0.5);
+          let i = 0;
+          while (i + 1 < frames.length && frames[i + 1].t <= t) i += 1;
+          if (i !== shown) { renderScene(image, frames[i].st); shown = i; }
+          frame = requestAnimationFrame(step);
+        };
+        frame = requestAnimationFrame(step);
+      };
+      const end = () => {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        shown = -1;
+        renderScene(image, frames[0].st);
+      };
+      card.addEventListener("pointerenter", start);
+      card.addEventListener("pointerleave", end);
+      card.addEventListener("focusin", start);
+      card.addEventListener("focusout", end);
+      renderScene(image, frames[0].st);
+    }
+
+    // MARK: Taking it
+
+    function crop(region) {
+      const source = scenes[name];
+      const image = source.cloneNode(true);
+      image.removeAttribute("class");
+      image.setAttribute("viewBox", [region.x, region.y, region.w, region.h].map((v) => v.toFixed(1)).join(" "));
+      image.setAttribute("preserveAspectRatio", "xMidYMid slice");
+      image.querySelectorAll("[data-cap]").forEach((el) => el.setAttribute("display", "inline"));
+      // Colours are frozen as they are now, so the picture keeps them.
+      const from = source.querySelectorAll("*");
+      const to = image.querySelectorAll("*");
+      from.forEach((el, i) => {
+        if (!to[i] || !el.getAttribute("style")) return;
+        const look = getComputedStyle(el);
+        ["fill", "stroke", "stop-color", "color"].forEach((prop) => to[i].style.setProperty(prop, look.getPropertyValue(prop)));
+      });
+      return image;
+    }
+
+    function snap(region) {
+      place(flash, region);
+      flash.classList.remove("go");
+      void flash.offsetWidth;
+      flash.classList.add("go");
+      hang(crop(region), region);
+    }
+
+    async function hang(image, region, video) {
+      taken += 1;
+      const shot = {
+        image, video, tilt: tilts[taken % tilts.length],
+        ratio: clamp(region.w / region.h, 0.8, 2.4),
+        aspect: region.w / region.h,
+        name: (video ? words.rec : words.shot).replace("{n}", taken),
+      };
+      const card = hangCard(shot);
+      await wait(reduced.matches ? 0 : 60);
+      const photo = card.querySelector(".dphoto");
+      await flyPhoto(photo, onPage(region), photo.getBoundingClientRect(), 0, stage);
+      card.classList.remove("landing");
+      const label = video ? `${words.toast.recorded} · ${time(Math.max(video.seconds, 1))}` : words.toast.taken;
+      toast(label, words.toast.undo, () => removeCard(card));
+      did("hang");
     }
 
     // MARK: Choosing what to take
+
+    function candidates() {
+      const out = [];
+      const app = frontApp();
+      if (app) out.push(winRect());
+      out.push({ x: 0, y: 0, w: L.w, h: 28 });
+      if (desk.contains(dock)) out.push(inDesk(dock.getBoundingClientRect()));
+      return out;
+    }
+    const pickAt = (p) => candidates().find((w) => p.x >= w.x && p.x <= w.x + w.w && p.y >= w.y && p.y <= w.y + w.h);
+    const whole = () => ({ x: 0, y: 0, w: L.w, h: L.h });
 
     function choose(kind, n = 0) {
       if (recording) { stop(); return; }
       cancelCountdown();
       closeMenus();
-      button.classList.remove("hint");
+      closeTrash();
       choosing = { kind, n };
-      hint.textContent = overlay.dataset["hint" + kind[0].toUpperCase() + kind.slice(1)];
+      hint.textContent = words.hints[kind];
       overlay.hidden = false;
       overlay.classList.remove("dragging");
       tint.hidden = true;
       area.hidden = true;
-      const box = screen.getBoundingClientRect();
+      keyPick = -1;
+      const box = desk.getBoundingClientRect();
       if (box.top < 0 || box.bottom > innerHeight) {
-        screen.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "center" });
+        desk.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "center" });
       }
       overlay.focus({ preventScroll: true });
       did("choose");
@@ -738,19 +1191,17 @@
     overlay.addEventListener("pointermove", (event) => {
       const p = at(event);
       if (pick) {
-        const r = { x: Math.min(pick.from.x, p.x), y: Math.min(pick.from.y, p.y),
-                    w: Math.abs(p.x - pick.from.x), h: Math.abs(p.y - pick.from.y) };
+        const r = { x: Math.min(pick.from.x, p.x), y: Math.min(pick.from.y, p.y), w: Math.abs(p.x - pick.from.x), h: Math.abs(p.y - pick.from.y) };
         if (!pick.moved && Math.hypot(r.w, r.h) < 6) return;
         pick.moved = true;
         pick.r = r;
         overlay.classList.add("dragging");
         area.hidden = false;
         place(area, r);
-        // In the points of a 1440 × 900 screen.
-        size.textContent = `${Math.round(r.w * 1.44)} × ${Math.round(r.h * 1.44)}`;
+        size.textContent = `${Math.round(r.w)} × ${Math.round(r.h)}`;
         return;
       }
-      const w = windowAt(p);
+      const w = pickAt(p);
       tint.hidden = !w;
       if (w) place(tint, w);
     });
@@ -764,7 +1215,7 @@
       if (!pick) return;
       const p = pick;
       pick = null;
-      take(p.moved && p.r.w >= 10 && p.r.h >= 10 ? p.r : windowAt(p.from) || whole);
+      take(p.moved && p.r.w >= 10 && p.r.h >= 10 ? p.r : pickAt(p.from) || whole());
     });
     overlay.addEventListener("pointercancel", () => {
       pick = null;
@@ -772,9 +1223,22 @@
       area.hidden = true;
     });
     overlay.addEventListener("contextmenu", (event) => { event.preventDefault(); closeOverlay(true); });
+    // Return takes the whole screen, the arrows pick a window and Space
+    // takes it, Escape cancels.
     overlay.addEventListener("keydown", (event) => {
+      const list = candidates();
       if (event.key === "Escape") { event.preventDefault(); closeOverlay(true); }
-      else if (event.key === "Enter") { event.preventDefault(); take(whole); }
+      else if (event.key === "Enter") { event.preventDefault(); take(whole()); }
+      else if (event.key === "ArrowRight" || event.key === "ArrowLeft" || event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        const step = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : -1;
+        keyPick = (keyPick + step + list.length) % list.length;
+        tint.hidden = false;
+        place(tint, list[keyPick]);
+      } else if (event.key === " " && keyPick >= 0) {
+        event.preventDefault();
+        take(list[keyPick]);
+      }
     });
     overlay.querySelector(".cap-cancel").addEventListener("click", () => closeOverlay(true));
 
@@ -786,135 +1250,16 @@
       else snap(region);
     }
 
-    // MARK: Taking it
+    // MARK: The timer and recording
 
-    function crop(region) {
-      const image = svg.cloneNode(true);
-      image.setAttribute("viewBox", [region.x, region.y, region.w, region.h].map((v) => v.toFixed(1)).join(" "));
-      image.setAttribute("preserveAspectRatio", "xMidYMid slice");
-      image.setAttribute("aria-hidden", "true");
-      return image;
-    }
-
-    function snap(region) {
-      button.classList.remove("hint");
-      place(flash, region);
-      flash.classList.remove("go");
-      void flash.offsetWidth;
-      flash.classList.add("go");
-      hang(crop(region), region);
-    }
-
-    const hanging = () => [...list.children].filter((peg) => !peg.classList.contains("leaving"));
-
-    // Up to four, spread from the middle of the line.
-    function layout() {
-      const pegs = hanging();
-      pegs.forEach((peg, i) => peg.style.setProperty("--t", (0.5 + (i - (pegs.length - 1) / 2) * 0.2).toFixed(4)));
-      placeCoach();
-    }
-
-    function letGo(peg) {
-      peg.classList.add("leaving");
-      setTimeout(() => { peg.remove(); layout(); updateMenu(); }, 380);
-      layout();
-      updateMenu();
-    }
-
-    async function hang(image, region, video) {
-      taken += 1;
-      const peg = template.content.firstElementChild.cloneNode(true);
-      const name = (video ? screen.dataset.recName : screen.dataset.shotName).replace("{n}", taken);
-      const ratio = Math.min(Math.max(region.w / region.h, 0.8), 2.4);
-      peg.querySelector(".photo-hit").setAttribute("aria-label", `${screen.dataset.copy}: ${name}`);
-      peg.querySelector(".corner-x").setAttribute("aria-label", `${screen.dataset.discard}: ${name}`);
-      const frame = peg.querySelector(".photo-img");
-      frame.style.aspectRatio = String(ratio);
-      frame.appendChild(image);
-      peg.dataset.ratio = ratio;
-      peg.style.setProperty("--tilt", tilts[taken % tilts.length]);
-      peg.style.setProperty("--i", taken);
-      if (video) playable(peg, image, video);
-      else peg.querySelector(".badge-video").remove();
-      // A full line lets the oldest go.
-      const pegs = hanging();
-      if (pegs.length >= 4) letGo(pegs[0]);
-      list.appendChild(peg);
-      layout();
-      updateMenu();
-      const box = screen.getBoundingClientRect();
-      const from = {
-        left: box.left + (region.x / W) * box.width,
-        top: box.top + (region.y / H) * box.height,
-        width: (region.w / W) * box.width,
-      };
-      await wait(reduced.matches ? 0 : 120);
-      const photo = peg.querySelector(".photo");
-      await flyPhoto(photo, from, photo.getBoundingClientRect());
-      peg.classList.remove("landing");
-      announce(screen.dataset.hung);
-      did("hang");
-    }
-
-    // A recording plays again while the pointer rests on it.
-    function playable(peg, image, video) {
-      peg.querySelector(".badge-video span").textContent = time(Math.max(video.seconds, 1));
-      const length = Math.max(video.t1 - video.t0, 0.5);
-      let frame = 0;
-      const start = () => {
-        if (frame || reduced.matches) return;
-        const from = performance.now();
-        const step = () => {
-          music(image, video.t0 + (((performance.now() - from) / 1000) % length));
-          frame = requestAnimationFrame(step);
-        };
-        frame = requestAnimationFrame(step);
-      };
-      const end = () => {
-        cancelAnimationFrame(frame);
-        frame = 0;
-        music(image, video.t0);
-      };
-      peg.addEventListener("pointerenter", start);
-      peg.addEventListener("pointerleave", end);
-      peg.addEventListener("focusin", start);
-      peg.addEventListener("focusout", end);
-      music(image, video.t0);
-    }
-
-    list.addEventListener("click", (event) => {
-      const peg = event.target.closest(".peg");
-      if (!peg || peg.classList.contains("leaving")) return;
-      if (event.target.closest(".corner-x")) { letGo(peg); return; }
-      if (!event.target.closest(".photo-hit")) return;
-      peg.classList.remove("is-copied");
-      void peg.offsetWidth;
-      peg.classList.add("is-copied");
-      clearTimeout(peg.copiedTimer);
-      peg.copiedTimer = setTimeout(() => peg.classList.remove("is-copied"), 1500);
-      announce(screen.dataset.copied);
-      copyImage(peg.querySelector(".photo-img svg"), parseFloat(peg.dataset.ratio));
-      did("copy");
-    });
-
-    // MARK: The timer
-
-    const setPointer = (x, y) => Object.assign(pointer.style, { left: x * 100 + "%", top: y * 100 + "%" });
+    const setPointer = (x, y) => Object.assign(pointer.style, { transform: `translate(${x}px, ${y}px)` });
 
     function showCapsule(kind) {
       capsule.dataset.kind = kind;
       capsule.hidden = false;
-      const label = kind === "countdown" ? screen.dataset.cancelTimer : screen.dataset.stop;
+      const label = kind === "countdown" ? words.cancelTimer : words.stop;
       capsule.setAttribute("aria-label", label);
       capsule.title = label;
-    }
-
-    function setCount(n) {
-      const count = capsule.querySelector(".cap-count");
-      count.textContent = n;
-      count.classList.remove("tick");
-      void count.offsetWidth;
-      count.classList.add("tick");
     }
 
     function startCountdown(region, n) {
@@ -922,61 +1267,50 @@
       countdown = { timers: [] };
       const later = (ms, run) => countdown.timers.push(setTimeout(run, ms));
       showCapsule("countdown");
-      setCount(left);
-      // Meanwhile someone opens a menu, which is what the timer is for.
-      const open = Math.max(0.3, n - 2.2) * 1000;
-      later(open, () => {
-        pointer.style.transition = "none";
-        setPointer(rtl ? 0.62 : 0.38, 0.82);
-        pointer.hidden = false;
-        void pointer.offsetWidth;
-        pointer.style.transition = "";
-        requestAnimationFrame(() => setPointer(sortX, sortY));
-      });
-      later(open + 950, () => {
-        pointer.classList.add("press");
-        setTimeout(() => pointer.classList.remove("press"), 140);
-        sortMenu.setAttribute("display", "inline");
-      });
-      later(open + 1250, () => setPointer(itemX, itemY));
+      capsule.querySelector(".cap-count").textContent = left;
+      // Meanwhile someone opens the sort menu, which is what the timer is for.
+      if (visible("browser")) {
+        const open = Math.max(0.3, n - 2) * 1000;
+        later(open, () => movePointer(L.sort[0] + L.sort[2] / 2, L.sort[1] + L.sort[3] / 2));
+        later(open + T3 * 3, () => openSortMenu());
+        later(open + T3 * 4, () => {
+          state.sortHover = (state.sort + 1) % 3;
+          changed();
+        });
+      }
       const tick = () => {
         left -= 1;
-        if (left > 0) { setCount(left); later(1000, tick); return; }
+        if (left > 0) {
+          capsule.querySelector(".cap-count").textContent = left;
+          later(1000, tick);
+          return;
+        }
         countdown = null;
         capsule.hidden = true;
         snap(region);
-        setTimeout(closeSortMenu, 1500);
+        setTimeout(() => { if (!countdown) { pointer.hidden = true; closeSortMenu(); } }, 1200);
       };
       later(1000, tick);
     }
 
-    function closeSortMenu() {
-      if (countdown) return;
-      sortMenu.setAttribute("display", "none");
-      pointer.hidden = true;
-    }
-
-    function cancelCountdown() {
+    function cancelCountdown(say) {
       if (!countdown) return;
       countdown.timers.forEach(clearTimeout);
       countdown = null;
       capsule.hidden = true;
+      pointer.hidden = true;
       closeSortMenu();
+      if (say) toast(words.toast.timer_off);
     }
 
-    // MARK: Recording
-
     function startRecording(region) {
-      recording = { region, t0: clock(), from: performance.now() };
+      recording = { region, from: performance.now(), frames: [{ t: 0, st: snapshot() }] };
       place(edge, region);
       edge.hidden = false;
       showCapsule("recording");
       capsule.querySelector(".cap-time").textContent = "0:00";
-      button.classList.add("recording");
-      button.setAttribute("aria-label", screen.dataset.stop);
-      button.title = screen.dataset.stop;
-      shirt.setAttribute("display", "none");
-      stopGlyph.setAttribute("display", "inline");
+      desk.classList.add("recording");
+      button.setAttribute("aria-label", words.stop);
       updateMenu();
       recording.timer = setInterval(() => {
         const s = (performance.now() - recording.from) / 1000;
@@ -992,57 +1326,209 @@
       clearInterval(r.timer);
       edge.hidden = true;
       capsule.hidden = true;
-      button.classList.remove("recording");
-      button.setAttribute("aria-label", screen.dataset.take);
-      button.title = screen.dataset.take;
-      shirt.setAttribute("display", "inline");
-      stopGlyph.setAttribute("display", "none");
+      desk.classList.remove("recording");
+      button.setAttribute("aria-label", words.take);
       updateMenu();
-      hang(crop(r.region), r.region, { t0: r.t0, t1: clock(), seconds: (performance.now() - r.from) / 1000 });
+      hang(crop(r.region), r.region, { frames: r.frames, seconds: (performance.now() - r.from) / 1000 });
     }
 
     capsule.addEventListener("click", () => {
-      if (countdown) cancelCountdown();
+      if (countdown) cancelCountdown(true);
       else if (recording) stop();
     });
 
-    // MARK: The button and the menus
+    // MARK: Sending into the chat
 
-    button.addEventListener("click", () => (recording ? stop() : choose("shot")));
-    button.addEventListener("contextmenu", (event) => {
-      event.preventDefault();
-      if (!recording) openMenu(shotMenu, button, event);
+    function updateSend() {
+      const all = cards();
+      sendButton.hidden = !visible("chat") || !all.length;
+      if (sendButton.hidden) return;
+      sendButton.querySelector(".dsend-count").textContent = all.length;
+      const thumbs = sendButton.querySelectorAll(".dsend-thumbs span");
+      const last = all.slice(-2);
+      thumbs.forEach((thumb) => thumb.replaceChildren());
+      last.forEach((card, i) => thumbs[last.length === 1 ? 1 : i].appendChild(card.shot.image.cloneNode(true)));
+      thumbs[0].hidden = last.length < 2;
+    }
+
+    async function sendAll() {
+      const all = cards();
+      if (!all.length) { toast(words.toast.nothing); return; }
+      if (!visible("chat")) await openApp("chat");
+      const before = state.chat.slice();
+      const shots = all.map((card) => card.shot);
+      state.chat = state.chat.concat({ kind: "album", images: shots.map((s) => s.image), ratios: shots.map((s) => s.aspect) });
+      changed();
+      const photos = all.map((card) => card.querySelector(".dphoto"));
+      const albums = scenes[name].querySelectorAll(".msgs g[clip-path]");
+      const target = albums[albums.length - 1];
+      const to = target ? target.getBoundingClientRect() : sendButton.getBoundingClientRect();
+      all.forEach((card) => card.classList.add("landing"));
+      await Promise.all(photos.map((photo, i) => flyPhoto(photo, photo.getBoundingClientRect(), { left: to.left, top: to.top, width: to.width }, i * 70, stage)));
+      all.forEach((card) => card.remove());
+      layoutLine();
+      setTimeout(() => {
+        if (state.chat.length && state.chat[state.chat.length - 1].kind === "album") {
+          state.chat = state.chat.concat({ kind: "in", text: words.chat_reply });
+          changed();
+        }
+      }, 700);
+      toast(words.toast.sent, words.toast.undo, () => {
+        state.chat = before;
+        shots.forEach((shot) => hangCard(shot));
+        changed();
+      });
+      did("send");
+    }
+
+    // ⌘V in the chat, or the note's action, sends what was copied last.
+    async function paste() {
+      if (!copied) return;
+      if (!visible("chat")) await openApp("chat");
+      const before = state.chat.slice();
+      state.chat = state.chat.concat({ kind: "album", images: [copied.image], ratios: [copied.aspect] });
+      changed();
+      toast(words.toast.sent, words.toast.undo, () => { state.chat = before; changed(); });
+    }
+
+    sendButton.addEventListener("click", sendAll);
+
+    // MARK: The Trash
+
+    function openTrash() {
+      closeMenus();
+      trashList.replaceChildren();
+      trash.slice().reverse().slice(0, 6).forEach((item) => {
+        const li = document.createElement("li");
+        const put = document.createElement("button");
+        put.type = "button";
+        put.className = "trash-item";
+        put.setAttribute("aria-label", `${words.put_back}: ${item.name}`);
+        const thumb = item.image.cloneNode(true);
+        thumb.setAttribute("preserveAspectRatio", "xMidYMid slice");
+        put.appendChild(thumb);
+        const label = document.createElement("span");
+        label.textContent = words.put_back;
+        put.appendChild(label);
+        put.addEventListener("click", () => {
+          trash = trash.filter((entry) => entry !== item);
+          hangCard(item);
+          render();
+          toast(words.toast.restored);
+          closeTrash(true);
+        });
+        li.appendChild(put);
+        trashList.appendChild(li);
+      });
+      trashPop.classList.toggle("has-items", trash.length > 0);
+      trashClear.disabled = !trash.length;
+      trashPop.hidden = false;
+      const w = trashPop.offsetWidth;
+      const h = trashPop.offsetHeight;
+      if (desk.contains(dock)) {
+        const icon = inDesk(dockItem("trash").getBoundingClientRect());
+        Object.assign(trashPop.style, { left: clamp(icon.x + icon.w / 2 - w / 2, 8, L.w - w - 8) + "px", top: icon.y - h - 16 + "px" });
+      } else {
+        Object.assign(trashPop.style, { left: (L.w - w) / 2 + "px", top: L.h - h - 12 + "px" });
+      }
+      dockItem("trash").setAttribute("aria-expanded", "true");
+      (trashPop.querySelector("button:not(:disabled)") || trashPop).focus({ preventScroll: true });
+    }
+
+    function closeTrash(refocus) {
+      if (trashPop.hidden) return;
+      trashPop.hidden = true;
+      dockItem("trash").setAttribute("aria-expanded", "false");
+      if (refocus) dockItem("trash").focus({ preventScroll: true });
+    }
+
+    trashClear.addEventListener("click", () => {
+      const gone = trash;
+      trash = [];
+      render();
+      closeTrash(true);
+      toast(words.toast.emptied, words.toast.undo, () => { trash = gone; render(); });
     });
-    statusButton.addEventListener("click", () => (menu.hidden ? openMenu(menu, statusButton) : closeMenus()));
+    trashPop.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") { event.preventDefault(); closeTrash(true); }
+    });
+
+    // MARK: The Dock
+
+    // The icon under the pointer grows, and its neighbours less, from their
+    // bottom edge, so nothing else moves.
+    function magnify(event) {
+      if (!fine.matches || reduced.matches || name === "tall") return;
+      const reach = (L.w > 1100 ? 120 : 100) * k();
+      dockItems.forEach((item) => {
+        const box = item.getBoundingClientRect();
+        const d = Math.abs(event.clientX - (box.left + box.width / 2));
+        const f = d < reach ? (1 + Math.cos((Math.PI * d) / reach)) / 2 : 0;
+        const mag = 1 + 0.32 * f;
+        item.style.setProperty("--mag", mag.toFixed(3));
+        item.style.setProperty("--lift", ((mag - 1) * item.offsetHeight).toFixed(1) + "px");
+      });
+    }
+    dock.addEventListener("pointermove", magnify);
+    dock.addEventListener("pointerleave", () => dockItems.forEach((item) => { item.style.removeProperty("--mag"); item.style.removeProperty("--lift"); }));
+
+    dockItems.forEach((item) => {
+      let wait300 = 0;
+      item.addEventListener("pointerenter", (event) => {
+        if (event.pointerType !== "mouse") return;
+        wait300 = setTimeout(() => item.classList.add("tip"), 300);
+      });
+      item.addEventListener("pointerleave", () => { clearTimeout(wait300); item.classList.remove("tip"); });
+      item.addEventListener("click", (event) => {
+        const app = item.dataset.app;
+        // A tap shows the name for a moment too, as there is no hover.
+        if (event.pointerType === "touch") {
+          item.classList.add("tip");
+          setTimeout(() => item.classList.remove("tip"), 1200);
+        }
+        if (app === "trash") { if (trashPop.hidden) openTrash(); else closeTrash(); }
+        else openApp(app);
+      });
+    });
+    dock.addEventListener("keydown", (event) => {
+      const at = dockItems.indexOf(document.activeElement);
+      if (at < 0) return;
+      let next = -1;
+      const forward = rtl ? "ArrowLeft" : "ArrowRight";
+      const backward = rtl ? "ArrowRight" : "ArrowLeft";
+      if (event.key === forward) next = (at + 1) % dockItems.length;
+      if (event.key === backward) next = (at - 1 + dockItems.length) % dockItems.length;
+      if (event.key === "Home") next = 0;
+      if (event.key === "End") next = dockItems.length - 1;
+      if (next < 0) return;
+      event.preventDefault();
+      dockItems.forEach((item, i) => { item.tabIndex = i === next ? 0 : -1; });
+      dockItems[next].focus();
+    });
+
+    // MARK: Snapfly's menus
 
     function openMenu(which, anchor, event) {
       closeMenus();
+      closeTrash();
       which.hidden = false;
-      const box = screen.getBoundingClientRect();
-      const a = anchor.getBoundingClientRect();
+      const a = inDesk(anchor.getBoundingClientRect());
       const w = which.offsetWidth;
       let left;
       let top;
       if (which === menu) {
-        // Under the menu bar, from the status item's leading edge.
-        left = rtl ? a.right - box.left - w : a.left - box.left;
-        top = a.bottom - box.top;
+        left = rtl ? a.x : a.x + a.w - w;
+        top = a.y + a.h + 4;
       } else {
-        // Beside the button, toward the middle of the screen.
-        const pointed = event && (event.clientX || event.clientY);
-        const x = pointed ? event.clientX - box.left : rtl ? a.right - box.left : a.left - box.left;
-        left = rtl ? x : x - w;
-        top = pointed ? event.clientY - box.top : a.top - box.top;
+        const p = event && (event.clientX || event.clientY) ? at(event) : { x: rtl ? a.x + a.w : a.x, y: a.y };
+        left = rtl ? p.x : p.x - w;
+        top = p.y;
       }
-      // Kept on the page where the screen is narrow.
-      const page = document.documentElement.clientWidth;
-      left = Math.min(Math.max(left, 8 - box.left), page - box.left - w - 8);
-      Object.assign(which.style, { left: left + "px", top: top + "px" });
+      Object.assign(which.style, { left: clamp(left, 8, L.w - w - 8) + "px", top: clamp(top, 32, L.h - which.offsetHeight - 8) + "px" });
       if (which === menu) statusButton.setAttribute("aria-expanded", "true");
-      button.classList.remove("hint");
-      if (which === menu) did("menu");
-      const first = which.querySelector(".ctx-item:not(:disabled)");
+      const first = which.querySelector(".dmenu-item:not(:disabled)");
       if (first) first.focus({ preventScroll: true });
+      if (which === menu) did("menu");
     }
 
     function closeMenus() {
@@ -1050,16 +1536,17 @@
       shotMenu.hidden = true;
       closeSub();
       statusButton.setAttribute("aria-expanded", "false");
+      if (!sortMenu.hidden) closeSortMenu();
     }
 
     // Beside its item on the trailing side, else the leading side, else
-    // under it where the page is too narrow for either.
+    // under it where the screen is too narrow for either.
     function openSub(focus) {
-      const list = sub.querySelector(".sub");
-      const page = document.documentElement.clientWidth;
+      const box = desk.getBoundingClientRect();
+      const inner = sub.querySelector(".dmenu-sub");
       const fits = () => {
-        const box = list.getBoundingClientRect();
-        return box.left >= 4 && box.right <= page - 4;
+        const r = inner.getBoundingClientRect();
+        return r.left >= box.left + 4 && r.right <= box.right - 4;
       };
       sub.classList.remove("flip", "below");
       sub.classList.add("open");
@@ -1068,7 +1555,7 @@
         sub.classList.add("flip");
         if (!fits()) sub.classList.replace("flip", "below");
       }
-      if (focus) list.querySelector(".ctx-item").focus();
+      if (focus) inner.querySelector(".dmenu-item").focus();
     }
 
     function closeSub() {
@@ -1080,270 +1567,418 @@
     sub.addEventListener("pointerleave", (event) => { if (event.pointerType === "mouse") closeSub(); });
 
     function updateMenu() {
-      const record = menu.querySelector("[data-act='record']");
-      record.querySelector("span").textContent = recording ? record.dataset.stop : record.dataset.record;
-      menu.querySelector("[data-act='clear']").disabled = !hanging().length;
+      const record = menu.querySelector('[data-act="record"] span');
+      record.textContent = recording ? words.stop : words.record;
+      menu.querySelector('[data-act="clear"]').disabled = !cards().length;
+    }
+
+    // Up and down move, the inward arrow opens a submenu, Escape closes.
+    function menuKeys(event, which, close) {
+      const current = event.target.closest(".dmenu");
+      const items = [...current.querySelectorAll(":scope > li > .dmenu-item:not(:disabled)")];
+      const i = items.indexOf(document.activeElement);
+      const inward = rtl ? "ArrowLeft" : "ArrowRight";
+      const outward = rtl ? "ArrowRight" : "ArrowLeft";
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        const step = event.key === "ArrowDown" ? 1 : -1;
+        items[(i + step + items.length) % items.length].focus();
+      } else if (event.key === inward && document.activeElement === subButton) {
+        event.preventDefault();
+        openSub(true);
+      } else if ((event.key === outward || event.key === "Escape") && current.classList.contains("dmenu-sub")) {
+        event.preventDefault();
+        closeSub();
+        subButton.focus();
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        close();
+      } else if (event.key === "Tab") {
+        closeMenus();
+      }
     }
 
     [menu, shotMenu].forEach((which) => {
       which.addEventListener("click", (event) => {
-        const item = event.target.closest(".ctx-item");
+        const item = event.target.closest(".dmenu-item");
         if (!item || item.disabled) return;
         const act = item.dataset.act;
         if (act === "sub") { openSub(true); return; }
         closeMenus();
         // Once the menu has gone, so it is not in the picture.
-        if (act === "shot") setTimeout(() => choose("shot"), 150);
-        else if (act === "timer") setTimeout(() => choose("timer", Number(item.dataset.n)), 150);
-        else if (act === "record") (recording ? stop() : setTimeout(() => choose("record"), 150));
-        else if (act === "whole") setTimeout(() => snap(whole), 150);
+        if (act === "shot") setTimeout(() => choose("shot"), T2);
+        else if (act === "timer") setTimeout(() => choose("timer", Number(item.dataset.n)), T2);
+        else if (act === "record") { if (recording) stop(); else setTimeout(() => choose("record"), T2); }
+        else if (act === "whole") setTimeout(() => snap(whole()), T2);
         else if (act === "button") {
           button.hidden = !button.hidden;
           item.setAttribute("aria-checked", String(!button.hidden));
           statusButton.focus({ preventScroll: true });
-        } else if (act === "clear") hanging().forEach(letGo);
-      });
-      which.addEventListener("keydown", (event) => {
-        const current = event.target.closest(".ctx-menu");
-        const items = [...current.querySelectorAll(":scope > li > .ctx-item:not(:disabled)")];
-        const i = items.indexOf(document.activeElement);
-        const inward = rtl ? "ArrowLeft" : "ArrowRight";
-        const outward = rtl ? "ArrowRight" : "ArrowLeft";
-        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-          event.preventDefault();
-          const step = event.key === "ArrowDown" ? 1 : -1;
-          items[(i + step + items.length) % items.length].focus();
-        } else if (event.key === inward && document.activeElement === subButton) {
-          event.preventDefault();
-          openSub(true);
-        } else if ((event.key === outward || event.key === "Escape") && current.classList.contains("sub")) {
-          event.preventDefault();
-          closeSub();
-          subButton.focus();
-        } else if (event.key === "Escape") {
-          event.preventDefault();
-          closeMenus();
-          (which === menu ? statusButton : button).focus({ preventScroll: true });
-        } else if (event.key === "Tab") {
-          closeMenus();
+          if (button.hidden) {
+            toast(words.toast.button_off, words.toast.undo, () => {
+              button.hidden = false;
+              item.setAttribute("aria-checked", "true");
+            });
+          }
+        } else if (act === "clear") {
+          const gone = cards().map((card) => card.shot);
+          cards().forEach((card) => removeCard(card));
+          toast(words.toast.cleared, words.toast.undo, () => gone.forEach((shot) => hangCard(shot)));
         }
       });
+      which.addEventListener("keydown", (event) => menuKeys(event, which, () => {
+        closeMenus();
+        (which === menu ? statusButton : button).focus({ preventScroll: true });
+      }));
+    });
+
+    statusButton.addEventListener("click", () => (menu.hidden ? openMenu(menu, statusButton) : closeMenus()));
+    button.addEventListener("click", () => (recording ? stop() : choose("shot")));
+    button.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+      if (!recording) openMenu(shotMenu, button, event);
     });
 
     document.addEventListener("pointerdown", (event) => {
-      if (menu.hidden && shotMenu.hidden) return;
-      if (menu.contains(event.target) || shotMenu.contains(event.target) || statusButton.contains(event.target)) return;
-      closeMenus();
+      const inside = (el) => el.contains(event.target);
+      if ((!menu.hidden || !shotMenu.hidden) && !inside(menu) && !inside(shotMenu) && !inside(statusButton)) closeMenus();
+      if (!sortMenu.hidden && !inside(sortMenu) && !inside(sortButton)) closeSortMenu();
+      if (!trashPop.hidden && !inside(trashPop) && !inside(dockItem("trash"))) closeTrash();
     });
 
-    // ⌃⌥S and ⌃⌥R, while the screen is in view.
+    // ⌃⌥S, ⌃⌥R and ⌘V, while the desktop is in view.
     document.addEventListener("keydown", (event) => {
-      if (!seen || !event.ctrlKey || !event.altKey || event.metaKey) return;
+      if (!seen) return;
       if (event.target.closest && event.target.closest("input, textarea, [contenteditable]")) return;
-      if (event.code === "KeyS" && !recording) { event.preventDefault(); choose("shot"); }
-      else if (event.code === "KeyR") { event.preventDefault(); if (recording) stop(); else choose("record"); }
+      if (event.ctrlKey && event.altKey && !event.metaKey) {
+        if (event.code === "KeyS" && !recording) { event.preventDefault(); choose("shot"); }
+        else if (event.code === "KeyR") { event.preventDefault(); if (recording) stop(); else choose("record"); }
+      } else if ((event.metaKey || event.ctrlKey) && event.code === "KeyV" && copied && visible("chat")) {
+        event.preventDefault();
+        paste();
+      }
     });
 
-    addEventListener("resize", closeMenus);
+    // MARK: Notes
 
-    // MARK: The guide for a first visit
+    // A short note for each action, gone after four seconds, held while
+    // the pointer or the keyboard is on it.
+    function toast(text, label, act) {
+      const note = document.createElement("div");
+      note.className = "dtoast";
+      const line = document.createElement("span");
+      line.textContent = text;
+      note.appendChild(line);
+      let left = 4000;
+      let since = 0;
+      let timer = 0;
+      const dismiss = () => {
+        clearTimeout(timer);
+        note.classList.add("out");
+        setTimeout(() => note.remove(), T1);
+      };
+      if (label) {
+        const action = document.createElement("button");
+        action.type = "button";
+        action.textContent = label;
+        action.addEventListener("click", () => { act(); dismiss(); });
+        note.appendChild(action);
+      }
+      const run = () => { since = performance.now(); timer = setTimeout(dismiss, left); };
+      const hold = () => { clearTimeout(timer); left -= performance.now() - since; };
+      note.addEventListener("pointerenter", hold);
+      note.addEventListener("pointerleave", run);
+      note.addEventListener("focusin", hold);
+      note.addEventListener("focusout", run);
+      toasts.appendChild(note);
+      while (toasts.children.length > 2) toasts.firstElementChild.remove();
+      run();
+    }
 
-    // One step at a time: a card beside the thing to try, a ring round it,
-    // and Show me, which does it with the pointer. Doing it moves on.
-    const stage = screen.closest("[data-stage]");
-    const coach = stage.querySelector("[data-coach]");
-    const ring = stage.querySelector(".coach-ring");
-    const words = JSON.parse(stage.querySelector("[data-coach-steps]").textContent);
-    const showButton = coach.querySelector("[data-coach-show]");
-    const skipButton = coach.querySelector("[data-coach-skip]");
-    const getLink = coach.querySelector(".coach-get");
-    const flights = windows.find((w) => w.name === "flights");
-    const newest = () => hanging().pop();
-    const guide = [
-      { target: () => button, side: "start", round: true, until: "choose", show: () => press(button, () => choose("shot")) },
-      { target: () => flights, side: "end", until: "hang", show: drag },
-      { target: () => newest() && newest().querySelector(".photo"), side: "below", until: "copy",
-        show: () => { const hit = newest().querySelector(".photo-hit"); press(hit, () => hit.click()); } },
-      { target: () => statusButton, side: "below", round: true, until: "menu", show: () => press(statusButton, () => openMenu(menu, statusButton)) },
-      { target: () => null, side: "none" },
+    // MARK: The guide
+
+    const guideStep = guide.querySelector("[data-guide-step]");
+    const guideTitle = guide.querySelector(".guide-title");
+    const guideText = guide.querySelector(".guide-text");
+    const guideBar = guide.querySelector(".guide-bar span");
+    const goButton = guide.querySelector("[data-guide-go]");
+    const getLink = guide.querySelector(".guide-get");
+    const skipButton = guide.querySelector("[data-guide-skip]");
+    const visibleRect = (el) => (desk.contains(el) && el.getClientRects().length ? inDesk(el.getBoundingClientRect()) : null);
+
+    const steps = [
+      { target: () => (button.hidden ? statusButton : button), round: true, until: "choose",
+        show: () => press(button.hidden ? statusButton : button, () => (button.hidden ? openMenu(menu, statusButton) : choose("shot"))) },
+      { target: () => (visible("browser") ? winRect() : dockItem("browser")), until: "hang", show: drag },
+      { target: () => (newest() ? newest().querySelector(".dphoto") : button), until: "copy",
+        show: async () => {
+          if (!newest()) await quickShot();
+          const hit = newest().querySelector(".dcard-hit");
+          press(hit, () => hit.click());
+        } },
+      { target: () => dockItem("chat"), until: "chat", show: () => press(dockItem("chat"), () => openApp("chat")) },
+      { target: () => (visible("chat") && cards().length ? sendButton : dockItem("chat")), until: "send",
+        show: async () => {
+          if (!cards().length) await quickShot();
+          if (!visible("chat")) { await openApp("chat"); await wait(T3); }
+          press(sendButton, () => sendAll());
+        } },
+      { target: () => statusButton, round: true, until: "menu", show: () => press(statusButton, () => openMenu(menu, statusButton)) },
     ];
     let step = -1;
     let guided = false;
-    let showing = false;
+    let busy = false;
 
     function did(event) {
-      if (step < 0 || guide[step].until !== event) return;
-      setTimeout(() => go(step + 1), event === "choose" ? 250 : 600);
+      if (step < 0 || step >= steps.length || steps[step].until !== event) return;
+      setTimeout(() => showStep(step + 1), event === "choose" ? T2 : T3 * 2);
     }
 
-    function go(n) {
-      step = n;
-      showing = false;
-      const g = guide[n];
-      coach.querySelector("[data-coach-n]").textContent = coach.dataset.of.replace("{n}", n + 1).replace("{total}", guide.length);
-      coach.querySelector("[data-coach-title]").textContent = words[n].title;
-      coach.querySelector("[data-coach-text]").textContent = words[n].text;
-      const last = n === guide.length - 1;
-      showButton.hidden = last;
-      showButton.disabled = false;
-      getLink.hidden = !last;
-      skipButton.textContent = last ? coach.dataset.done : coach.dataset.skip;
-      coach.hidden = false;
-      coach.classList.remove("fresh");
-      void coach.offsetWidth;
-      coach.classList.add("fresh");
-      placeCoach();
+    function showStep(n, focus) {
+      step = clamp(n, 0, steps.length);
+      busy = false;
+      const finished = step === steps.length;
+      guideStep.textContent = finished ? "" : words.step_of.replace("{n}", step + 1).replace("{total}", steps.length);
+      guideBar.parentElement.hidden = finished;
+      guideBar.style.setProperty("--p", (step + 1) / steps.length);
+      const [title, text] = finished ? words.done : words.steps[step];
+      guideTitle.textContent = title;
+      guideText.textContent = text;
+      goButton.hidden = finished;
+      goButton.disabled = false;
+      getLink.hidden = !finished;
+      skipButton.textContent = finished ? words.again : words.skip;
+      guide.hidden = false;
+      placeGuide();
+      if (focus) (finished ? getLink : goButton).focus({ preventScroll: true });
     }
 
-    function stopGuide() {
+    function closeGuide() {
       step = -1;
-      coach.hidden = true;
+      guide.hidden = true;
       ring.hidden = true;
+      dockItems.forEach((item) => item.classList.remove("hinted"));
     }
 
-    // The card goes on the side asked for when it fits on the page, else
-    // under the thing; the ring follows the thing.
-    function placeCoach() {
-      if (step < 0) return;
-      const g = guide[step];
-      const base = stage.getBoundingClientRect();
-      const box = screen.getBoundingClientRect();
-      let target = g.target();
-      if (target && !(target instanceof Element)) {
-        target = {
-          left: box.left + (target.x / W) * box.width, top: box.top + (target.y / H) * box.height,
-          width: (target.w / W) * box.width, height: (target.h / H) * box.height,
-        };
-        target.right = target.left + target.width;
-        target.bottom = target.top + target.height;
-      } else if (target) {
-        target = target.getBoundingClientRect();
+    function placeGuide() {
+      dockItems.forEach((item) => item.classList.remove("hinted"));
+      if (guide.hidden || step < 0) { ring.hidden = true; return; }
+      const finished = step === steps.length;
+      const s = finished ? null : steps[step];
+      let target = s ? s.target() : null;
+      // The Dock's own icons get their ring from the Dock.
+      if (target instanceof Element && target.classList.contains("dock-item")) {
+        target.classList.add("hinted");
+        ring.hidden = true;
       }
-      const page = document.documentElement.clientWidth;
-      const w = coach.offsetWidth;
-      const h = coach.offsetHeight;
-      const gap = 16;
-      let side = g.side === "start" ? (rtl ? "right" : "left") : g.side === "end" ? (rtl ? "left" : "right") : g.side;
-      let x;
-      let y;
-      const at = (s) => {
-        if (s === "left") { x = target.left - gap - w; y = target.top + Math.min(target.height / 2, 60) - h / 2; }
-        else if (s === "right") { x = target.right + gap; y = target.top + Math.min(target.height / 2, 60) - h / 2; }
-        else if (s === "below") { x = target.left + target.width / 2 - w / 2; y = target.bottom + gap; }
-        return x >= 8 && x + w <= page - 8;
-      };
-      if (!target) {
-        side = "none";
-        x = box.left + box.width / 2 - w / 2;
-        y = box.top + box.height * 0.42 - h / 2;
-      } else if (!at(side)) {
-        side = "below";
-        at(side);
+      const rect = !target ? null : target instanceof Element ? visibleRect(target) : target;
+      if (rect && !(target instanceof Element && target.classList.contains("dock-item"))) {
+        const pad = s.round ? 6 : 8;
+        place(ring, { x: rect.x - pad, y: rect.y - pad, w: rect.w + pad * 2, h: rect.h + pad * 2 });
+        ring.style.setProperty("--ring-r", s.round ? "50%" : "var(--d-r-lg)");
+        ring.hidden = false;
+      } else if (!(target instanceof Element && target.classList.contains("dock-item"))) {
+        ring.hidden = true;
       }
-      x = Math.min(Math.max(x, 8), page - w - 8);
-      coach.dataset.side = side;
-      coach.style.left = x - base.left + "px";
-      coach.style.top = y - base.top + "px";
-      if (target) {
-        coach.style.setProperty("--ax", Math.min(Math.max(target.left + target.width / 2 - x, 20), w - 20) + "px");
-        coach.style.setProperty("--ay", Math.min(Math.max(target.top + Math.min(target.height / 2, 60) - y, 20), h - 20) + "px");
-        const pad = g.round ? 5 : 6;
-        Object.assign(ring.style, {
-          left: target.left - base.left - pad + "px", top: target.top - base.top - pad + "px",
-          width: target.width + pad * 2 + "px", height: target.height + pad * 2 + "px",
+      const goal = rect || (target instanceof Element ? inDesk(target.getBoundingClientRect()) : null);
+      if (name === "wide") placeBeside(goal);
+      else if (name === "medium") pointUp(target instanceof Element ? target.getBoundingClientRect() : goal ? onPage(goal) : null);
+      else guide.dataset.side = "none";
+    }
+
+    // Inside the desktop, beside the thing, never over a window, the Dock
+    // or the screenshot button; where nothing beside it is free, the nearest
+    // free spot in the empty space either side of the window.
+    function placeBeside(goal) {
+      const w = guide.offsetWidth;
+      const h = guide.offsetHeight;
+      const margin = 16;
+      const blocked = [];
+      if (frontApp()) blocked.push(winRect());
+      if (desk.contains(dock)) blocked.push(inDesk(dock.getBoundingClientRect()));
+      if (!button.hidden) blocked.push({ x: L.shot[0] - 24, y: L.shot[1] - 24, w: 48, h: 48 });
+      if (goal) blocked.push(goal);
+      const gap = 8;
+      const hits = (r) => blocked.some((b) => r.x < b.x + b.w + gap && r.x + r.w > b.x - gap && r.y < b.y + b.h + gap && r.y + r.h > b.y - gap);
+      const inside = (r) => r.x >= margin && r.y >= 28 + margin && r.x + r.w <= L.w - margin && r.y + r.h <= L.h - margin;
+      let spot = null;
+      if (goal) {
+        const cy = clamp(goal.y + goal.h / 2 - h / 2, 28 + margin, L.h - h - margin);
+        const cx = clamp(goal.x + goal.w / 2 - w / 2, margin, L.w - w - margin);
+        const tries = [
+          { x: goal.x + goal.w + margin, y: cy },
+          { x: goal.x - margin - w, y: cy },
+          { x: cx, y: goal.y + goal.h + margin },
+          { x: cx, y: goal.y - margin - h },
+        ];
+        if (rtl) [tries[0], tries[1]] = [tries[1], tries[0]];
+        spot = tries.map((p) => ({ ...p, w, h })).find((r) => inside(r) && !hits(r)) || null;
+      }
+      if (!spot) {
+        const target = goal ? { x: goal.x + goal.w / 2, y: goal.y + goal.h / 2 } : { x: L.w, y: L.h / 2 };
+        let best = Infinity;
+        [margin, L.w - w - margin].forEach((x) => {
+          for (let y = 28 + margin; y + h <= L.h - margin; y += 8) {
+            const r = { x, y, w, h };
+            if (hits(r)) continue;
+            const d = Math.hypot(x + w / 2 - target.x, y + h / 2 - target.y);
+            if (d < best) { best = d; spot = r; }
+          }
         });
-        ring.classList.toggle("round", !!g.round);
       }
-      ring.hidden = !target;
+      spot = spot || { x: L.w - w - margin, y: 28 + margin, w, h };
+      Object.assign(guide.style, { left: spot.x + "px", top: spot.y + "px" });
+      if (!goal) { guide.dataset.side = "none"; return; }
+      const gx = goal.x + goal.w / 2;
+      const gy = goal.y + goal.h / 2;
+      let side = "none";
+      if (gx > spot.x + w) side = "left";
+      else if (gx < spot.x) side = "right";
+      else if (gy < spot.y) side = "below";
+      else if (gy > spot.y + h) side = "above";
+      guide.dataset.side = side;
+      guide.style.setProperty("--ax", clamp(gx - spot.x, 20, w - 20) + "px");
+      guide.style.setProperty("--ay", clamp(gy - spot.y, 20, h - 20) + "px");
     }
 
-    // The pointer goes to a thing, presses it, and it happens.
-    const pointAt = (x, y) => {
+    // Under the screen, its arrow pointing up at the thing.
+    function pointUp(rect) {
+      guide.style.left = "";
+      guide.style.top = "";
+      if (!rect) { guide.dataset.side = "none"; return; }
+      guide.dataset.side = "below";
+      const box = guide.getBoundingClientRect();
+      guide.style.setProperty("--ax", clamp(rect.left + rect.width / 2 - box.left, 20, box.width - 20) + "px");
+    }
+
+    // Show me: the pointer goes there, presses, and it happens.
+    function movePointer(x, y) {
       if (pointer.hidden) {
         pointer.style.transition = "none";
-        setPointer(rtl ? 0.62 : 0.38, 0.62);
+        setPointer(rtl ? L.w * 0.35 : L.w * 0.65, L.h * 0.6);
         pointer.hidden = false;
         void pointer.offsetWidth;
-        pointer.style.transition = "";
       }
+      pointer.style.transition = reduced.matches ? "none" : `transform ${T3 * 3}ms ${EASE_IN}`;
       requestAnimationFrame(() => setPointer(x, y));
-    };
+    }
 
     async function press(el, then) {
-      const r = el.getBoundingClientRect();
-      const box = screen.getBoundingClientRect();
-      pointAt((r.left + r.width / 2 - box.left) / box.width, (r.top + r.height / 2 - box.top) / box.height);
-      await wait(reduced.matches ? 50 : 1000);
-      pointer.classList.add("press");
-      await wait(140);
-      pointer.classList.remove("press");
+      if (desk.contains(el)) {
+        const r = inDesk(el.getBoundingClientRect());
+        movePointer(r.x + r.w / 2, r.y + r.h / 2);
+        await wait(reduced.matches ? 60 : T3 * 3 + 80);
+      }
       then();
-      setTimeout(() => { if (!countdown) pointer.hidden = true; }, 700);
+      setTimeout(() => { if (!countdown) pointer.hidden = true; }, T3 * 2);
+    }
+
+    async function ensureBrowser() {
+      if (!visible("browser")) { await openApp("browser"); await wait(T3); }
+    }
+
+    async function quickShot() {
+      await ensureBrowser();
+      const [x, y, w] = L.win;
+      snap({ x: x + 16, y: y + L.rowsTop - 8, w: w - 32, h: L.rowStep * 2 });
+      await wait(reduced.matches ? 100 : 1100);
     }
 
     // Drags over the flight list, as a person would.
     async function drag() {
-      if (overlay.hidden) {
-        choose("shot");
-        await wait(300);
-      }
-      const from = { x: rtl ? flights.x + flights.w - 24 : flights.x + 24, y: flights.y + 118 };
-      const to = { x: rtl ? flights.x + 24 : flights.x + flights.w - 24, y: flights.y + flights.h - 10 };
-      pointAt(from.x / W, from.y / H);
-      await wait(reduced.matches ? 50 : 1000);
+      await ensureBrowser();
+      if (overlay.hidden) { choose("shot"); await wait(T3); }
+      const [x, y, w] = L.win;
+      const from = { x: rtl ? x + w - 16 : x + 16, y: y + L.rowsTop - 8 };
+      const to = { x: rtl ? x + 16 : x + w - 16, y: y + L.rowsTop + L.rowStep * 2 + 4 };
+      movePointer(from.x, from.y);
+      await wait(reduced.matches ? 60 : T3 * 3 + 80);
       pointer.style.transition = "none";
       overlay.classList.add("dragging");
       area.hidden = false;
-      const length = reduced.matches ? 1 : 1000;
+      const length = reduced.matches ? 1 : 900;
       const began = performance.now();
       const region = await new Promise((done) => {
         const frame = (now) => {
-          const k = Math.min((now - began) / length, 1);
-          const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+          const t = Math.min((now - began) / length, 1);
+          const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
           const p = { x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e };
           const r = { x: Math.min(from.x, p.x), y: Math.min(from.y, p.y), w: Math.abs(p.x - from.x), h: Math.abs(p.y - from.y) };
           place(area, r);
-          size.textContent = `${Math.round(r.w * 1.44)} × ${Math.round(r.h * 1.44)}`;
-          setPointer(p.x / W, p.y / H);
-          if (k < 1) requestAnimationFrame(frame);
+          size.textContent = `${Math.round(r.w)} × ${Math.round(r.h)}`;
+          setPointer(p.x, p.y);
+          if (t < 1) requestAnimationFrame(frame);
           else done(r);
         };
         requestAnimationFrame(frame);
       });
-      pointer.style.transition = "";
-      await wait(200);
+      await wait(T2);
       if (!overlay.hidden) take(region);
-      setTimeout(() => { pointer.hidden = true; }, 400);
+      setTimeout(() => { pointer.hidden = true; }, T3);
     }
 
-    showButton.addEventListener("click", () => {
-      if (step < 0 || showing || !guide[step].show) return;
-      showing = true;
-      showButton.disabled = true;
-      guide[step].show();
+    goButton.addEventListener("click", () => {
+      if (step < 0 || step >= steps.length || busy) return;
+      busy = true;
+      goButton.disabled = true;
+      steps[step].show();
     });
-    skipButton.addEventListener("click", stopGuide);
-    addEventListener("resize", placeCoach);
+    skipButton.addEventListener("click", () => {
+      if (step >= steps.length) showStep(0, true);
+      else showStep(step + 1, true);
+    });
+    guide.querySelector("[data-guide-close]").addEventListener("click", () => {
+      closeGuide();
+      startButton.focus({ preventScroll: true });
+    });
+    // Enter does the step, the arrows go back and forth, Escape closes.
+    guide.addEventListener("keydown", (event) => {
+      const forward = rtl ? "ArrowLeft" : "ArrowRight";
+      const backward = rtl ? "ArrowRight" : "ArrowLeft";
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeGuide();
+        startButton.focus({ preventScroll: true });
+      } else if (event.key === forward) {
+        event.preventDefault();
+        showStep(Math.min(step + 1, steps.length), true);
+      } else if (event.key === backward) {
+        event.preventDefault();
+        showStep(Math.max(step - 1, 0), true);
+      } else if (event.key === "Enter" && !event.target.closest("button, a")) {
+        event.preventDefault();
+        if (step >= steps.length) getLink.click();
+        else goButton.click();
+      }
+    });
 
-    // It starts by itself the first time the screen is in view, before
-    // anything was taken, and the button under the screen starts it again.
+    startButton.addEventListener("click", () => {
+      guided = true;
+      cancelCountdown();
+      closeOverlay();
+      desk.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "center" });
+      showStep(0, true);
+    });
+
+    // MARK: Starting
+
+    applyLayout();
+    wideQuery.addEventListener("change", applyLayout);
+    mediumQuery.addEventListener("change", applyLayout);
+    if ("ResizeObserver" in window) new ResizeObserver(() => { scale(); placeGuide(); }).observe(fit);
+    addEventListener("resize", () => { closeMenus(); closeTrash(); });
     if ("IntersectionObserver" in window) {
+      new IntersectionObserver((entries) => {
+        seen = entries.some((entry) => entry.isIntersecting);
+      }, { threshold: 0.15 }).observe(desk);
+      // The guide starts by itself the first time the desktop is in view,
+      // before anything was taken; it never takes the keyboard away.
       const first = new IntersectionObserver((entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
         first.disconnect();
-        setTimeout(() => { if (!guided && !taken && overlay.hidden) { guided = true; go(0); } }, 700);
-      }, { threshold: 0.6 });
-      first.observe(screen);
-    }
-    const again = document.querySelector("[data-tour-again]");
-    if (again) {
-      again.addEventListener("click", () => {
-        guided = true;
-        cancelCountdown();
-        closeOverlay();
-        screen.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "center" });
-        setTimeout(() => go(0), reduced.matches ? 0 : 450);
-      });
+        setTimeout(() => { if (!guided && !taken && overlay.hidden) { guided = true; showStep(0); } }, T3 * 2);
+      }, { threshold: 0.5 });
+      first.observe(desk);
     }
   }
 

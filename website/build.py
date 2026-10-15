@@ -9,7 +9,6 @@ Only the Python standard library is used. The words live in content.py;
 labels the app itself shows come from its Localizable.strings, so the site
 and the app always agree.
 """
-import base64
 import html
 import json
 import re
@@ -462,339 +461,308 @@ def section_send(lang):
 </section>"""
 
 
-# MARK: A Mac screen to take screenshots on
+# MARK: A Mac desktop to try Snapfly on
 
-SCREEN_W, SCREEN_H = 1000, 625
-MENU_H = 26
-DOCK_TOP = 568
+# One desktop in three layouts, each drawn at its own size in CSS pixels and
+# scaled as a whole to fit its column: wide from 1280 px, medium from 768 px,
+# tall below. The browser sits in the middle of each, the same size on wide
+# and medium, so on medium it fills more of the screen.
+DESK = {
+    "wide": dict(w=1280, h=800, win=(304, 156, 672, 396), icon=48, card=160, cards=4, shot=(1244, 304), compact=False),
+    "medium": dict(w=1024, h=720, win=(152, 148, 720, 396), icon=40, card=144, cards=4, shot=(988, 276), compact=False),
+    "tall": dict(w=360, h=572, win=(8, 148, 344, 412), icon=48, card=96, cards=3, shot=(324, 244), compact=True),
+}
+MENU_BAR = 28
+
+# The Dock's icons share one 64-point grid: a rounded square, a gradient lit
+# from the top, a white or grey glyph with a one-point shade under it.
+SQUIRCLE = "M20 0H44C57 0 64 7 64 20V44C64 57 57 64 44 64H20C7 64 0 57 0 44V20C0 7 7 0 20 0Z"
 
 
-def text_width(s, size, bold=False):
-    """A rough width, enough to space menu titles that cannot be measured here."""
-    return len(s) * size * (0.6 if bold else 0.55)
+def dock_icon(kind, uid, full=False):
+    def shaded(art):
+        return f'<g transform="translate(0 1)" opacity=".16">{art.replace("#FFFFFF", "#000000")}</g>{art}'
+    if kind == "browser":
+        top, bottom = "#62C6FF", "#1A6FE0"
+        art = ('<g fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round">'
+               '<circle cx="32" cy="32" r="17"/><path d="M15 32h34"/>'
+               '<path d="M32 15c5.5 4.6 8.2 10.3 8.2 17S37.5 44.4 32 49c-5.5-4.6-8.2-10.3-8.2-17S26.5 19.6 32 15Z"/></g>'
+               '<path d="M17.5 24h29M17.5 40h29" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>')
+        glyph = shaded(art)
+    elif kind == "chat":
+        top, bottom = "#67DE6F", "#1EAD3B"
+        art = ('<path d="M32 15c-10.5 0-19 6.9-19 15.4 0 4.6 2.5 8.7 6.4 11.6L18 50l7.7-3.4c2 .6 4.1.9 6.3.9 '
+               '10.5 0 19-6.9 19-15.4S42.5 15 32 15Z" fill="#FFFFFF"/>')
+        glyph = shaded(art)
+    else:
+        top, bottom = "#FAFAFB", "#D3D3D8"
+        papers = ('<path d="M21 25c2.5-5 6-6.5 10-4.5 3.5-3 8.5-2.5 12 4.5Z" fill="#FFFFFF" stroke="#AEAEB2" stroke-width="1.2"/>'
+                  if full else
+                  '<rect x="17.5" y="18" width="29" height="4" rx="2" fill="#636366"/>'
+                  '<path d="M27 18v-2.5a1.5 1.5 0 0 1 1.5-1.5h7a1.5 1.5 0 0 1 1.5 1.5V18" fill="none" stroke="#636366" stroke-width="2.4"/>')
+        glyph = (papers + '<path d="M20.5 25h23l-2 23.5a3 3 0 0 1-3 2.5h-13a3 3 0 0 1-3-2.5Z" fill="#8E8E93"/>'
+                 '<path d="M27 30v16M32 30v16M37 30v16" stroke="#FFFFFF" stroke-opacity=".75" stroke-width="2" stroke-linecap="round"/>')
+    return (f'<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><defs><linearGradient id="{uid}" x1="0" y1="0" x2="0" y2="1">'
+            f'<stop offset="0" stop-color="{top}"/><stop offset="1" stop-color="{bottom}"/></linearGradient></defs>'
+            f'<path d="{SQUIRCLE}" fill="url(#{uid})"/>'
+            f'<path d="{SQUIRCLE}" fill="none" stroke="#000000" stroke-opacity=".1"/>{glyph}</svg>')
 
 
-class Scene:
-    """Draws on the screen in left-to-right numbers, mirrored for Arabic, and
-    notes where each window ended up, for the script that picks them."""
+class Draw:
+    """Draws in a window's own left-to-right numbers, mirrored for Arabic.
+    Colours are the desktop's tokens, so the windows follow light and dark."""
 
-    def __init__(self, lang):
-        self.rtl = TEXT[lang]["dir"] == "rtl"
-        self.windows = []
+    def __init__(self, w, rtl):
+        self.w, self.rtl = w, rtl
 
     def X(self, x):
-        return SCREEN_W - x if self.rtl else x
+        return self.w - x if self.rtl else x
 
-    def left(self, x, w):
-        return SCREEN_W - x - w if self.rtl else x
+    def L(self, x, w):
+        return self.w - x - w if self.rtl else x
 
-    def rect(self, x, y, w, h, fill, rx=0, extra=""):
+    def rect(self, x, y, w, h, style, rx=0, extra=""):
         r = f' rx="{rx:g}"' if rx else ""
-        return f'<rect x="{self.left(x, w):g}" y="{y:g}" width="{w:g}" height="{h:g}"{r} fill="{fill}"{extra}/>'
+        return f'<rect x="{self.L(x, w):g}" y="{y:g}" width="{w:g}" height="{h:g}"{r} style="{style}"{extra}/>'
 
-    def text(self, x, y, s, size, weight=400, fill="#1D1D1F", anchor="start", extra=""):
-        return (f'<text x="{self.X(x):g}" y="{y:g}" font-size="{size:g}" font-weight="{weight}" fill="{fill}" '
+    def text(self, x, y, s, size, weight=400, style="fill:var(--d-g9)", anchor="start", extra=""):
+        return (f'<text x="{self.X(x):g}" y="{y:g}" font-size="{size:g}" font-weight="{weight}" style="{style}" '
                 f'text-anchor="{anchor}"{extra}>{esc(s)}</text>')
 
-    def circle(self, cx, cy, r, fill, extra=""):
-        return f'<circle cx="{self.X(cx):g}" cy="{cy:g}" r="{r:g}" fill="{fill}"{extra}/>'
+    def circle(self, cx, cy, r, style, extra=""):
+        return f'<circle cx="{self.X(cx):g}" cy="{cy:g}" r="{r:g}" style="{style}"{extra}/>'
 
-    def glyph(self, name, cx, cy, size, color, extra=""):
-        """One of the site's icons, centered on a point."""
+    def glyph(self, name, cx, cy, size, color):
         s = size / 24
-        return (f'<g transform="translate({self.X(cx) - size / 2:g} {cy - size / 2:g}) scale({s:g})" '
-                f'color="{color}"{extra}>{ICONS[name]}</g>')
-
-    def window(self, name, x, y, w, h):
-        self.windows.append({"name": name, "x": self.left(x, w), "y": y, "w": w, "h": h})
-
-    def lights(self, x, cy, r=6, gap=19):
-        return "".join(self.circle(x + i * gap, cy, r, c) for i, c in enumerate(["#FF5F57", "#FEBC2E", "#28C840"]))
+        return (f'<g transform="translate({self.X(cx) - size / 2:g} {cy - size / 2:g}) scale({s:g})" color="{color}" '
+                f'style="--plane-crease: transparent">{ICONS[name]}</g>')
 
 
-def app_icons(day):
-    """The Dock's icons, each on a 100-point square, drawn the way a Mac's
-    are (a rounded square, a gradient and a soft sheen) but none of them a
-    real app's. Snapfly's is its own."""
-    shape = '<rect width="100" height="100" rx="22.5" fill="{}"/>'
-    sheen = '<rect width="100" height="100" rx="22.5" fill="url(#ic-sheen)"/>'
-    edge = '<rect x=".5" y=".5" width="99" height="99" rx="22" fill="none" stroke="#000" stroke-opacity=".1"/>'
-    tile = lambda fill, art: shape.format(fill) + art + sheen + edge
-    gear = "".join(f'<rect x="45.5" y="17" width="9" height="15" rx="2.5" transform="rotate({a} 50 50)"/>' for a in range(0, 360, 45))
-    icon = (STATIC / "icon-128.png").read_bytes()
-    return {
-        "files": tile("url(#ic-files)",
-                      '<path d="M17 33a7 7 0 0 1 7-7h16.5l7 7H76a7 7 0 0 1 7 7v4H17Z" fill="#2A7AD6"/>'
-                      '<rect x="15" y="40" width="70" height="41" rx="7" fill="url(#ic-folder)"/>'
-                      '<path d="M16 47h68" stroke="#FFFFFF" stroke-opacity=".4" stroke-width="1.5"/>'),
-        "browser": tile("url(#ic-browser)",
-                        '<g fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round">'
-                        '<circle cx="50" cy="50" r="29"/><path d="M21 50h58"/>'
-                        '<path d="M50 21c9 8 13.5 18 13.5 29S59 71 50 79c-9-8-13.5-18-13.5-29S41 29 50 21Z"/></g>'
-                        '<path d="M27 36h46M27 64h46" stroke="#FFFFFF" stroke-width="3" stroke-opacity=".8"/>'),
-        "chat": tile("url(#ic-chat)",
-                     '<path d="M50 23c-18.2 0-33 11.9-33 26.6 0 7.8 4.2 14.8 10.8 19.7L25.5 80l13-5.8c3.6 1.1 7.5 1.7 11.5 1.7 18.2 0 33-11.9 33-26.6S68.2 23 50 23Z" fill="#FFFFFF"/>'),
-        "mail": tile("url(#ic-mail)",
-                     '<rect x="16" y="28" width="68" height="46" rx="7" fill="#FFFFFF"/>'
-                     '<path d="M19 32l31 22 31-22" fill="none" stroke="#1A75F0" stroke-opacity=".5" stroke-width="4" stroke-linejoin="round"/>'),
-        "calendar": tile("url(#ic-paper)",
-                         f'<text x="50" y="31" font-size="15" font-weight="600" fill="#FF3B30" text-anchor="middle">{esc(day)}</text>'
-                         '<text x="50" y="79" font-size="49" font-weight="300" fill="#1D1D1F" text-anchor="middle">23</text>'),
-        "photos": tile("url(#ic-paper)",
-                       '<clipPath id="ic-pic"><rect x="15" y="21" width="70" height="58" rx="9"/></clipPath>'
-                       '<g clip-path="url(#ic-pic)"><rect x="15" y="21" width="70" height="58" fill="url(#ic-sky)"/>'
-                       '<circle cx="66" cy="38" r="8" fill="#FFD60A"/>'
-                       '<path d="M15 66l18-16 14 11 12-9 26 19v8H15Z" fill="#34C759"/>'
-                       '<path d="M15 72l22-10 20 8 28-6v15H15Z" fill="#248A3D"/></g>'),
-        "music": tile("url(#ic-music)",
-                      '<g fill="#FFFFFF"><path d="M35 34 69 25.5v9L35 43Z"/><rect x="35" y="34" width="5" height="34"/>'
-                      '<rect x="64" y="26" width="5" height="34"/>'
-                      '<ellipse cx="31" cy="68" rx="10" ry="8" transform="rotate(-18 31 68)"/>'
-                      '<ellipse cx="60" cy="60" rx="10" ry="8" transform="rotate(-18 60 60)"/></g>'),
-        "notes": tile("url(#ic-paper)",
-                      '<clipPath id="ic-top"><rect width="100" height="100" rx="22.5"/></clipPath>'
-                      '<rect width="100" height="30" fill="url(#ic-yellow)" clip-path="url(#ic-top)"/>'
-                      '<path d="M14 49h72M14 62h72M14 75h72" stroke="#D5D5DA" stroke-width="2"/>'),
-        "settings": tile("url(#ic-settings)",
-                         f'<g fill="#3E3F44">{gear}<circle cx="50" cy="50" r="26"/></g>'
-                         '<circle cx="50" cy="50" r="14" fill="#C7C9CE"/><circle cx="50" cy="50" r="6" fill="#3E3F44"/>'),
-        "snapfly": f'<image href="data:image/png;base64,{base64.b64encode(icon).decode()}" x="-5.5" y="-6" width="111" height="111"/>',
-    }
+def window_frame(d, w, h, pid, title=""):
+    """A window: rounded body, title bar, the three lights (the third greyed,
+    as on a window that cannot be zoomed) and an optional title."""
+    out = [d.rect(0, 0, w, h, "fill:var(--d-g0)", 14, f' filter="url(#{pid}shadow)"'),
+           f'<path d="M0 14a14 14 0 0 1 14-14h{w - 28:g}a14 14 0 0 1 14 14v30H0Z" style="fill:var(--d-g1)"/>',
+           d.rect(0, 44, w, 1, "fill:var(--d-g3)"),
+           d.rect(0.25, 0.25, w - 0.5, h - 0.5, "fill:none;stroke:var(--d-hair);stroke-width:.5", 14)]
+    for i, style in enumerate(["fill:var(--d-close)", "fill:var(--d-minimize)", "fill:var(--d-g4)"]):
+        out.append(d.circle(20 + i * 20, 22, 6, style))
+    if title:
+        out.append(d.text(w / 2, 27, title, 13, 600, anchor="middle"))
+    return out
 
 
-def dock(s, t):
-    """The Dock: the apps, a divider, and Snapfly, with a dot under those
-    that are open."""
-    defs = ('<defs>'
-            '<linearGradient id="ic-sheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".3"/>'
-            '<stop offset=".5" stop-color="#FFFFFF" stop-opacity=".04"/><stop offset=".51" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>'
-            + "".join(f'<linearGradient id="ic-{n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{a}"/><stop offset="1" stop-color="{b}"/></linearGradient>'
-                      for n, a, b in [("files", "#F4F8FD", "#D8E6F6"), ("folder", "#78C2FF", "#2D87E8"), ("browser", "#5CC9FF", "#0A63D9"),
-                                      ("chat", "#6BE46E", "#1DB33C"), ("mail", "#6AD0FF", "#1A75F0"), ("paper", "#FFFFFF", "#ECECEF"),
-                                      ("sky", "#8ED4FF", "#3E9DF2"), ("music", "#FF6C8A", "#F7213F"), ("yellow", "#FFD836", "#F6BF14"),
-                                      ("settings", "#BDBFC4", "#77797F")])
-            + '<filter id="ic-shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000" flood-opacity=".28"/></filter>'
-            '</defs>')
-    icons = app_icons(t["day"])
-    order = ["files", "browser", "chat", "mail", "calendar", "photos", "music", "notes", "settings", None, "snapfly"]
-    running = {"files", "browser", "music", "snapfly"}
-    size, gap, divider, pad = 42, 7, 16, 9
-    width = sum(divider if n is None else size for n in order) + gap * (len(order) - 1) + 2 * pad
-    left = (SCREEN_W - width) / 2
-    top = DOCK_TOP - 2
-    out = [defs, f'<rect x="{left:g}" y="{top:g}" width="{width:g}" height="56" rx="18" fill="#FFFFFF" fill-opacity=".3" '
-                 'stroke="#FFFFFF" stroke-opacity=".55" stroke-width=".8"/>']
-    x = left + pad
-    for name in order:
-        if name is None:
-            out.append(f'<path d="M{s.X(x + divider / 2):g} {top + 9:g}v38" stroke="#000" stroke-opacity=".18"/>')
-            x += divider + gap
-            continue
-        ix = s.left(x, size)
-        out.append(f'<g transform="translate({ix:g} {top + 5:g}) scale({size / 100:g})" filter="url(#ic-shadow)">{icons[name]}</g>')
-        if name in running:
-            out.append(s.circle(x + size / 2, top + 51.5, 1.8, "#1D1D1F", ' fill-opacity=".7"'))
-        x += size + gap
-    s.window("dock", left, top, width, 56)
-    return "".join(out)
-
-
-def scene_svg(lang):
-    t = TEXT[lang]["scene"]
-    s = Scene(lang)
-    d = ' direction="rtl"' if s.rtl else ""
-    out = [f'<svg viewBox="0 0 {SCREEN_W} {SCREEN_H}" xmlns="http://www.w3.org/2000/svg" focusable="false" '
-           f'font-family="-apple-system, BlinkMacSystemFont, system-ui, sans-serif"{d}>',
-           '<defs>'
-           '<linearGradient id="sc-sky" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC16A"/>'
-           '<stop offset=".45" stop-color="#FF6D63"/><stop offset="1" stop-color="#9B2FC9"/></linearGradient>'
-           '<linearGradient id="sc-w1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#FF7F5C"/></linearGradient>'
-           '<linearGradient id="sc-w2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8F6B"/><stop offset=".6" stop-color="#F0477B"/><stop offset="1" stop-color="#C2369E"/></linearGradient>'
-           '<linearGradient id="sc-w3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E5408A"/><stop offset=".55" stop-color="#B234D6"/><stop offset="1" stop-color="#7A23C9"/></linearGradient>'
-           '<linearGradient id="sc-w4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7E28C8"/><stop offset="1" stop-color="#46118A"/></linearGradient>'
-           '<linearGradient id="sc-sheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".5"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>'
-           '<linearGradient id="sc-album" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6E47D6"/>'
-           '<stop offset=".55" stop-color="#FF6D8A"/><stop offset="1" stop-color="#FFB26B"/></linearGradient>'
-           '<linearGradient id="sc-brand" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC45C"/>'
-           '<stop offset=".5" stop-color="#FF5E62"/><stop offset="1" stop-color="#B234D6"/></linearGradient>'
-           '<filter id="sc-shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="10" stdDeviation="13" flood-color="#2A0A33" flood-opacity=".3"/></filter>'
-           '<filter id="sc-pop" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity=".22"/></filter>'
-           '</defs>',
-           # The wallpaper: bands that flow across, in the brand's hues.
-           f'<rect width="{SCREEN_W}" height="{SCREEN_H}" fill="url(#sc-sky)"/>',
-           '<path d="M0 150C180 90 330 210 520 170S860 40 1000 90V360C820 300 690 420 500 400S170 300 0 380Z" fill="url(#sc-w1)" opacity=".92"/>',
-           '<path d="M0 300C200 230 360 360 560 320S880 180 1000 230V520C800 470 650 580 450 540S150 430 0 500Z" fill="url(#sc-w2)"/>',
-           '<path d="M0 300C200 230 360 360 560 320S880 180 1000 230V256C880 214 720 348 560 352S210 262 0 330Z" fill="url(#sc-sheen)" opacity=".75"/>',
-           '<path d="M0 440C220 380 420 520 620 470S900 360 1000 400V625H0Z" fill="url(#sc-w3)"/>',
-           '<path d="M0 440C220 380 420 520 620 470S900 360 1000 400V428C900 392 760 488 620 500S230 408 0 470Z" fill="url(#sc-sheen)" opacity=".5"/>',
-           '<path d="M0 560C250 500 520 610 760 560S950 520 1000 535V625H0Z" fill="url(#sc-w4)" opacity=".88"/>']
-
-    # The menu bar: the app in front and its menus, then Snapfly, Wi-Fi,
-    # the battery and the clock at the far end.
-    out.append(f'<rect width="{SCREEN_W}" height="{MENU_H}" fill="#FFFFFF" fill-opacity=".6"/>')
-    x = 20
-    out.append(s.text(x, 17.5, t["app"], 13, 700))
-    x += text_width(t["app"], 13, True) + 22
-    for m in t["menus"]:
-        out.append(s.text(x, 17.5, m, 13))
-        x += text_width(m, 13) + 20
-    clock_w = text_width(t["clock"], 12.5)
-    out.append(s.text(982, 17.5, t["clock"], 12.5, 500, anchor="end", extra=' xml:space="preserve"'))
-    center = 982 - clock_w - 20
-    out.append(f'<g transform="translate({s.X(center) - 8:g} 5.5)"><g fill="none" stroke="#1D1D1F" stroke-width="1.4">'
-               '<rect x="1" y="1" width="14" height="5.4" rx="2.7"/><rect x="1" y="9" width="14" height="5.4" rx="2.7"/></g>'
-               '<circle cx="4.6" cy="3.7" r="1.7" fill="#1D1D1F"/><circle cx="11.4" cy="11.7" r="1.7" fill="#1D1D1F"/></g>')
-    spotlight = center - 28
-    out.append(f'<g transform="translate({s.X(spotlight) - 7:g} 6)" fill="none" stroke="#1D1D1F" stroke-width="1.7" stroke-linecap="round">'
-               '<circle cx="6" cy="6" r="4.7"/><path d="m9.6 9.6 3.6 3.6"/></g>')
-    wifi = spotlight - 28
-    out.append(f'<g transform="translate({s.X(wifi) - 8:g} 6)" fill="none" stroke="#1D1D1F" stroke-width="1.7" stroke-linecap="round">'
-               '<path d="M1 5.2a10 10 0 0 1 14 0M3.6 8a6.2 6.2 0 0 1 8.8 0M6.2 10.8a2.4 2.4 0 0 1 3.6 0"/></g>')
-    battery = wifi - 40
-    out.append(s.rect(battery, 8.5, 22, 10, "none", 3, ' stroke="#1D1D1F" stroke-opacity=".55" stroke-width="1"'))
-    out.append(s.rect(battery + 2, 10.5, 15, 6, "#1D1D1F", 1.5))
-    out.append(s.rect(battery + 23 if not s.rtl else battery - 2, 11.5, 1.6, 4, "#1D1D1F", 0.8, ' fill-opacity=".55"'))
-    snap = battery - 24
-    out.append(s.glyph("shirt", snap, 13, 17, "#1D1D1F", ' class="sf-icon"'))
-    out.append(s.glyph("stop", snap, 13, 18, "#1D1D1F", ' class="sf-stop" display="none"'))
-    s.window("menubar", 0, 0, SCREEN_W, MENU_H)
-    status = {"x": s.X(snap) / SCREEN_W, "y": 13 / SCREEN_H}
-
-    # A browser on a flight search, with a sort menu that a timed screenshot
-    # can catch open.
-    wx, wy, ww, wh = 60, 150, 560, 400
-    out.append(s.rect(wx, wy, ww, wh, "#FFFFFF", 12, ' filter="url(#sc-shadow)"'))
-    out.append(s.rect(wx, wy, ww, 44, "#F2F2F5", 12))
-    out.append(s.rect(wx, wy + 22, ww, 22, "#F2F2F5"))
-    out.append(s.rect(wx, wy + 44, ww, 1, "#E2E2E7"))
-    out.append(s.lights(wx + 20, wy + 22))
-    grey = ' fill="none" stroke="#6E6E73" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"'
-    out.append(s.rect(wx + 84, wy + 15, 18, 14, "none", 3, grey))
-    out.append(f'<path d="M{s.X(wx + 90):g} {wy + 15:g}v14"{grey}/>')
-    # Back, and forward dimmed; both turn round for Arabic.
-    sign = -1 if s.rtl else 1
-    out.append(f'<path d="M{s.X(wx + 125):g} {wy + 16:g}l{-5 * sign} 6 {5 * sign} 6"{grey}/>')
-    out.append(f'<path d="M{s.X(wx + 142):g} {wy + 16:g}l{5 * sign} 6 {-5 * sign} 6" opacity=".4"{grey}/>')
-    share = wx + ww - 74
-    out.append(s.rect(share - 6, wy + 18, 12, 11, "none", 2, grey))
-    out.append(f'<path d="M{s.X(share):g} {wy + 12:g}v10m-3.5 -6.5 3.5 -3.5 3.5 3.5"{grey}/>')
-    plus = wx + ww - 46
-    out.append(f'<path d="M{s.X(plus):g} {wy + 15:g}v14m-7 -7h14"{grey}/>')
-    out.append(s.rect(wx + ww - 30, wy + 16, 14, 12, "none", 3, grey))
-    out.append(s.rect(wx + (ww - 240) / 2, wy + 10, 240, 24, "#E4E4EA", 7))
-    out.append(s.text(wx + ww / 2, wy + 26.5, t["url"], 12, 500, "#3A3A3C", "middle"))
-    out.append(s.text(wx + 28, wy + 88, t["route"], 24, 700))
-    out.append(s.text(wx + 28, wy + 110, t["when"], 12.5, 400, "#6E6E73"))
-    sx, sy, sw, sh = wx + ww - 28 - 160, wy + 66, 160, 30
-    out.append(s.rect(sx, sy, sw, sh, "#FFFFFF", 8, ' stroke="#D1D1D6"'))
-    out.append(s.text(sx + 13, sy + 19.5, t["sort"], 12.5, 500))
-    out.append(f'<path d="M-4 -2 0 2 4 -2" transform="translate({s.X(sx + sw - 16):g} {sy + 15:g})" fill="none" stroke="#6E6E73" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>')
+def browser_window(lang, w, h, compact, pid):
+    t = TEXT[lang]["desk"]
+    d = Draw(w, TEXT[lang]["dir"] == "rtl")
+    out = window_frame(d, w, h, pid)
+    fx, fw = (88, w - 100) if compact else ((w - 280) / 2, 280)
+    out.append(d.rect(fx, 8, fw, 28, "fill:var(--d-g2)", 6))
+    out.append(d.text(fx + fw / 2, 26.5, t["url"], 13, 500, "fill:var(--d-g8)", "middle"))
+    ty = 84
+    out.append(d.text(24, ty, t["route"], 20 if compact else 22, 600))
+    out.append(d.text(24, ty + 22, t["when"], 13, 400, "fill:var(--d-g7)"))
+    sw, sh = 160, 32
+    sx, sy = (24, ty + 36) if compact else (w - 24 - sw, ty - 26)
+    out.append(d.rect(sx, sy, sw, sh, "fill:var(--d-g0);stroke:var(--d-g4)", 6))
+    out.append(d.text(sx + 12, sy + 21, f'{t["sort"]}: {t["sort_items"][0]}', 13, 500, extra=' class="sort-label"'))
+    out.append(f'<path d="M-4 -2 0 2 4 -2" transform="translate({d.X(sx + sw - 16):g} {sy + 16:g})" '
+               'style="fill:none;stroke:var(--d-g7);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round"/>')
+    top = sy + sh + 16 if compact else ty + 40
+    row_h, step = (68, 80) if compact else (72, 88)
     colors = ["#0A84FF", "#FF9F0A", "#BF5AF2"]
-    for i, (times, detail, price) in enumerate(t["flights"]):
-        ry = wy + 128 + i * 88
-        edge = ' stroke="#34C759" stroke-width="1.5"' if i == 0 else ""
-        out.append(s.rect(wx + 28, ry, ww - 56, 76, "#F6F6F8" if i else "#F1FAF3", 12, edge))
-        out.append(s.circle(wx + 58, ry + 38, 14, colors[i]))
-        out.append(s.glyph("plane", wx + 58, ry + 38, 16, "#FFFFFF", ' style="--plane-crease: transparent"'))
-        out.append(s.text(wx + 86, ry + 34, times, 16, 600))
-        out.append(s.text(wx + 86, ry + 55, detail, 12, 400, "#6E6E73"))
-        out.append(s.text(wx + ww - 48, ry + 38, price, 19, 700, anchor="end"))
-        if i == 0:
-            out.append(s.text(wx + ww - 48, ry + 57, t["cheapest"], 11.5, 600, "#248A3D", "end"))
-    # The menu, closed until the timer's script opens it.
+    by_price = sorted(range(3), key=lambda i: t["flights"][i][3])
+    for i, (times, detail, price, *_numbers) in enumerate(t["flights"]):
+        best = i == by_price[0]
+        style = "fill:var(--d-success-wash);stroke:var(--d-success);stroke-width:1.5" if best else "fill:var(--d-g1)"
+        row = [d.rect(24, 0, w - 48, row_h, style, 10),
+               d.circle(52, row_h / 2, 14, f"fill:{colors[i]}"),
+               d.glyph("plane", 52, row_h / 2, 16, "#FFFFFF"),
+               d.text(80, row_h / 2 - 3, times, 15, 600),
+               d.text(80, row_h / 2 + 16, detail, 13, 400, "fill:var(--d-g7)"),
+               d.text(w - 40, row_h / 2 + (0 if best else 6), price, 17, 600, anchor="end")]
+        if best:
+            row.append(d.text(w - 40, row_h / 2 + 18, t["cheapest"], 11, 600, "fill:var(--d-success-text)", "end"))
+        out.append(f'<g class="row" data-i="{i}" transform="translate(0 {top + by_price.index(i) * step:g})"><g class="row-in">{"".join(row)}</g></g>')
+    # The sort menu as it is drawn when open, so a screenshot with a timer
+    # can catch it; the one to use is the page's own menu over it.
     my = sy + sh + 4
-    menu = [s.rect(sx, my, sw, 3 * 28 + 10, "#F6F6F8", 9, ' stroke="#000" stroke-opacity=".12" stroke-width=".6" filter="url(#sc-pop)"')]
+    menu = [d.rect(sx, my, sw, 3 * 28 + 8, "fill:var(--d-g0);stroke:var(--d-hair)", 10, f' filter="url(#{pid}pop)"'),
+            d.rect(sx + 4, my + 4, sw - 8, 28, "fill:var(--d-accent)", 6, ' class="sort-hl"')]
     for j, item in enumerate(t["sort_items"]):
-        iy = my + 5 + j * 28
-        if j == 1:
-            menu.append(s.rect(sx + 5, iy, sw - 10, 26, "#0A84FF", 6))
-        if j == 0:
-            menu.append(f'<path d="M-4 0 -1 3 4.5 -3.5" transform="translate({s.X(sx + 18):g} {iy + 13:g})" fill="none" stroke="#1D1D1F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>')
-        menu.append(s.text(sx + 32, iy + 18, item, 13, 400, "#FFFFFF" if j == 1 else "#1D1D1F"))
-    out.append(f'<g class="sort-menu" display="none">{"".join(menu)}</g>')
-    s.window("flights", wx, wy, ww, wh)
-    sort = {"x": s.X(sx + sw / 2) / SCREEN_W, "y": (sy + sh / 2) / SCREEN_H,
-            "ix": s.X(sx + sw / 2 + 20) / SCREEN_W, "iy": (my + 5 + 28 + 13) / SCREEN_H}
+        menu.append(d.text(sx + 28, my + 22 + j * 28, item, 13, 400, "fill:var(--d-on-accent)" if j == 0 else "fill:var(--d-g9)",
+                           extra=f' class="sort-item" data-j="{j}"'))
+    menu.append(f'<path class="sort-check" data-x="{d.X(sx + 15):g}" d="M-4 0 -1 3 4.5 -3.5" transform="translate({d.X(sx + 15):g} {my + 18:g})" '
+                'style="fill:none;stroke:var(--d-g9);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"/>')
+    out.append(f'<g class="sort-copy" display="none">{"".join(menu)}</g>')
+    meta = {"sort": [d.L(sx, sw), sy, sw, sh], "rowsTop": top, "rowStep": step, "menuTop": my}
+    return "".join(out), meta
 
-    # A music player that keeps playing, for something to record.
-    mx, my_, mw, mh = 652, 318, 286, 206
-    out.append(s.rect(mx, my_, mw, mh, "#FFFFFF", 12, ' filter="url(#sc-shadow)"'))
-    out.append(s.lights(mx + 18, my_ + 18, 5.5, 17))
-    sign = -1 if s.rtl else 1
-    out.append(f'<clipPath id="sc-album-clip">{s.rect(mx + 18, my_ + 38, 84, 84, "#000", 10)}</clipPath>')
-    out.append(f'<g clip-path="url(#sc-album-clip)">{s.rect(mx + 18, my_ + 38, 84, 84, "url(#sc-album)")}'
-               f'{s.circle(mx + 60, my_ + 88, 15, "#FFE4A1")}'
-               f'<path d="M{s.X(mx + 18):g} {my_ + 102:g}q{21 * sign} -14 {42 * sign} -4t{42 * sign} 2v20h{-84 * sign}z" fill="#5A2F8C"/></g>')
-    out.append(s.text(mx + 118, my_ + 62, t["song"], 15, 700))
-    out.append(s.text(mx + 118, my_ + 81, t["artist"], 12, 400, "#6E6E73"))
-    base = my_ + 114
-    heights = [10, 18, 8, 14, 12]
-    for k, h in enumerate(heights):
-        out.append(s.rect(mx + 118 + k * 10, base - h, 6, h, "#FF2D55", 2, f' class="m-eq" data-base="{base:g}"'))
-    track_x0, track_w = mx + 18, mw - 36
-    out.append(s.rect(track_x0, my_ + 142, track_w, 4, "#E5E5EA", 2))
-    x0 = s.left(track_x0, track_w)
-    played = track_w * 72 / 223
-    prog_x = x0 + track_w - played if s.rtl else x0
-    out.append(f'<rect class="m-prog" x="{prog_x:g}" y="{my_ + 142:g}" width="{played:g}" height="4" rx="2" fill="#1D1D1F" '
-               f'data-x0="{x0:g}" data-w="{track_w:g}" data-rtl="{1 if s.rtl else 0}"/>')
-    # The times read left to right in every language, so their anchors
-    # follow the side they sit on.
-    ltr = ' direction="ltr" unicode-bidi="embed"'
-    out.append(s.text(mx + 18, my_ + 162, "1:12", 10.5, 500, "#8E8E93", "end" if s.rtl else "start", ' class="m-t1"' + ltr))
-    out.append(s.text(mx + mw - 18, my_ + 162, "-2:31", 10.5, 500, "#8E8E93", "start" if s.rtl else "end", ' class="m-t2"' + ltr))
-    c = mx + mw / 2
-    out.append(f'<g fill="#1D1D1F" transform="translate({s.X(c):g} {my_ + 185:g})">'
-               '<rect x="-4.5" y="-8" width="3.4" height="16" rx="1.2"/><rect x="1.1" y="-8" width="3.4" height="16" rx="1.2"/>'
-               '<path d="M-28-7-38 0-28 7ZM-38-7-48 0-38 7ZM28-7 38 0 28 7ZM38-7 48 0 38 7Z"/></g>')
-    s.window("music", mx, my_, mw, mh)
 
-    out.append(dock(s, t))
+def chat_window(lang, w, h, pid):
+    t = TEXT[lang]["desk"]
+    d = Draw(w, TEXT[lang]["dir"] == "rtl")
+    out = window_frame(d, w, h, pid, t["person"])
+    area = (12, 52, w - 24, h - 52 - 64)
+    out.append(f'<clipPath id="{pid}msgs"><rect x="{area[0]}" y="{area[1]}" width="{area[2]}" height="{area[3]}"/></clipPath>')
+    out.append(f'<g clip-path="url(#{pid}msgs)"><g class="msgs"></g></g>')
+    out.append(d.rect(0, h - 56, w, 1, "fill:var(--d-g3)"))
+    out.append(d.rect(16, h - 44, w - 72, 32, "fill:var(--d-g0);stroke:var(--d-g4)", 16))
+    out.append(d.text(30, h - 23, t["field"], 13, 400, "fill:var(--d-g7)"))
+    out.append(d.circle(w - 32, h - 28, 14, "fill:var(--d-accent)"))
+    out.append(f'<path d="M0 6V-6M-5 -1 0 -6 5 -1" transform="translate({d.X(w - 32):g} {h - 28:g})" '
+               'style="fill:none;stroke:#FFFFFF;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"/>')
+    meta = {"area": area, "send": [d.X(w - 32), h - 28]}
+    return "".join(out), meta
+
+
+def desk_scene(lang, name):
+    """One layout of the desktop as a single SVG, the source of every
+    screenshot taken on it, with the ids it needs prefixed by layout."""
+    t = TEXT[lang]["desk"]
+    rtl = TEXT[lang]["dir"] == "rtl"
+    lay = DESK[name]
+    W, H = lay["w"], lay["h"]
+    x, y, w, h = lay["win"]
+    pid = f"d{name[0]}-"
+    browser, bmeta = browser_window(lang, w, h, lay["compact"], pid)
+    chat, cmeta = chat_window(lang, w, h, pid)
+    d = ' direction="rtl"' if rtl else ""
+    out = [f'<svg class="desk-svg" data-layout="{name}" viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg" '
+           f'focusable="false" aria-hidden="true" font-family="-apple-system, BlinkMacSystemFont, system-ui, sans-serif"{d}>',
+           f'<defs><linearGradient id="{pid}wall" x1="0" y1="0" x2="1" y2="1">'
+           '<stop offset="0" style="stop-color:var(--d-wall-1)"/><stop offset=".55" style="stop-color:var(--d-wall-2)"/>'
+           '<stop offset="1" style="stop-color:var(--d-wall-3)"/></linearGradient>'
+           f'<filter id="{pid}shadow" x="-20%" y="-20%" width="140%" height="150%">'
+           '<feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity=".1"/>'
+           '<feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#000" flood-opacity=".22"/></filter>'
+           f'<filter id="{pid}pop" x="-20%" y="-20%" width="140%" height="160%">'
+           '<feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000" flood-opacity=".1"/>'
+           '<feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity=".12"/></filter></defs>',
+           f'<rect width="{W}" height="{H}" fill="url(#{pid}wall)"/>',
+           f'<g transform="translate({x} {y})"><g class="win" data-win="browser">{browser}</g></g>',
+           f'<g transform="translate({x} {y})"><g class="win" data-win="chat" display="none">{chat}</g></g>']
+    # The menu bar and the Dock as a screenshot shows them; on the page the
+    # live ones sit over these, which stay hidden.
+    clock = len(t["clock"]) * 13 * 0.55
+    snap = W - 16 - clock - 20 if not rtl else 16 + clock + 20
+    bar = [f'<rect width="{W}" height="{MENU_BAR}" style="fill:var(--d-g0);fill-opacity:.72"/>',
+           f'<text class="cap-app" x="{W - 16 if rtl else 16}" y="18.5" font-size="13" font-weight="600" style="fill:var(--d-g9)">{esc(t["browser"])}</text>',
+           f'<text x="{16 if rtl else W - 16}" y="18.5" font-size="13" text-anchor="end" style="fill:var(--d-g9)" xml:space="preserve">{esc(t["clock"])}</text>',
+           f'<g transform="translate({snap - 8:g} 6) scale(.667)" style="color:var(--d-g9)">{ICONS["shirt"]}</g>']
+    out.append(f'<g data-cap display="none">{"".join(bar)}</g>')
+    if not lay["compact"]:
+        icon, gap, pad = lay["icon"], 12, 8
+        items = ["browser", "chat", None, "trash"]
+        width = 3 * icon + 2 * gap + 1 + gap + 2 * pad
+        dx, dy = (W - width) / 2, H - 16 - (icon + 2 * pad)
+        dock = [f'<rect x="{dx:g}" y="{dy:g}" width="{width:g}" height="{icon + 2 * pad}" rx="16" '
+                'style="fill:var(--d-g0);fill-opacity:.62;stroke:var(--d-hair)"/>']
+        cx = dx + pad
+        for kind in items:
+            if kind is None:
+                dock.append(f'<rect x="{cx:g}" y="{dy + pad + 8:g}" width="1" height="{icon - 16}" style="fill:var(--d-g4)"/>')
+                cx += 1 + gap
+                continue
+            art = dock_icon(kind, f"{pid}cap-{kind}").replace('<svg viewBox="0 0 64 64"',
+                                                               f'<svg class="cap-{kind}" x="{cx:g}" y="{dy + pad:g}" width="{icon}" height="{icon}" viewBox="0 0 64 64"')
+            dock.append(art)
+            cx += icon + gap
+        out.append(f'<g data-cap display="none">{"".join(dock)}</g>')
     out.append("</svg>")
-    # Picking order: the window in front first.
-    order = {"menubar": 0, "dock": 1, "music": 2, "flights": 3}
-    s.windows.sort(key=lambda w: order[w["name"]])
-    return "".join(out), s.windows, status, sort
+    meta = {
+        "w": W, "h": H, "win": [x, y, w, h], "compact": lay["compact"], "card": lay["card"], "cards": lay["cards"],
+        "shot": [W - lay["shot"][0] if rtl else lay["shot"][0], lay["shot"][1]],
+        "sort": [x + bmeta["sort"][0], y + bmeta["sort"][1], bmeta["sort"][2], bmeta["sort"][3]],
+        "rowsTop": bmeta["rowsTop"], "rowStep": bmeta["rowStep"], "menuTop": y + bmeta["menuTop"],
+        "chatArea": cmeta["area"], "chatSend": [x + cmeta["send"][0], y + cmeta["send"][1]],
+        "lights": [[x + (w - 20 - i * 20 if rtl else 20 + i * 20), y + 22] for i in range(3)],
+    }
+    return "".join(out), meta
 
 
 def section_capture(lang):
     t = TEXT[lang]
-    svg, windows, status, sort = scene_svg(lang)
+    D = t["desk"]
     rtl = t["dir"] == "rtl"
-    chord = lambda k: f'<span class="kbd-hint" dir="ltr">⌃⌥{k}</span>'
+    scenes, layouts = [], {}
+    for name in DESK:
+        svg, meta = desk_scene(lang, name)
+        scenes.append(svg)
+        layouts[name] = meta
+    words = {k: D[k] for k in ("browser", "chat", "trash", "desktop", "shot", "rec", "person", "chat_in", "chat_reply",
+                                "sort", "sort_items", "toast", "step_of", "show", "skip", "again", "done", "steps",
+                                "put_back", "trash_empty", "close", "minimize")}
+    words.update({"copy": L(lang, "Copy"), "discard": L(lang, "Discard"), "take": L(lang, "Take Screenshot"),
+                  "stop": L(lang, "Stop Recording"), "record": L(lang, "Record Screen"),
+                  "cancelTimer": L(lang, "Cancel the timer"), "send": t["chatbtn_label"],
+                  "hints": {"shot": L(lang, "Drag over an area or click a window. Return takes the whole screen, Escape cancels."),
+                            "timer": L(lang, "Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends."),
+                            "record": L(lang, "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels.")},
+                  "flights": [list(f[3:]) for f in D["flights"]]})
+    data = json.dumps({"layouts": layouts, "words": words, "menuBar": MENU_BAR}, ensure_ascii=False).replace("</", "<\\/")
+    chord = lambda k: f'<span class="dmenu-key" dir="ltr">⌃⌥{k}</span>'
     seconds = "".join(
-        f'<li role="none"><button type="button" role="menuitem" class="ctx-item" data-act="timer" data-n="{n}"><span>{esc(L(lang, f"{n} Seconds"))}</span></button></li>'
+        f'<li role="none"><button type="button" role="menuitem" class="dmenu-item" data-act="timer" data-n="{n}"><span>{esc(L(lang, f"{n} Seconds"))}</span></button></li>'
         for n in (3, 5, 10))
-    menu = f"""<ul class="ctx-menu sf-menu" role="menu" aria-label="Snapfly" hidden data-menu-for="status">
-        <li role="none"><button type="button" role="menuitem" class="ctx-item" data-act="shot"><span>{esc(L(lang, "Take Screenshot"))}</span>{chord("S")}</button></li>
-        <li role="none" class="has-sub"><button type="button" role="menuitem" class="ctx-item" aria-haspopup="menu" aria-expanded="false" data-act="sub"><span>{esc(L(lang, "Take Screenshot with Timer"))}</span>{icon("chevron", "icon chev")}</button>
-          <ul class="ctx-menu sub" role="menu" aria-label="{esc(L(lang, "Take Screenshot with Timer"))}">{seconds}</ul></li>
-        <li role="none"><button type="button" role="menuitem" class="ctx-item" data-act="record" data-stop="{esc(L(lang, "Stop Recording"))}" data-record="{esc(L(lang, "Record Screen"))}"><span>{esc(L(lang, "Record Screen"))}</span>{chord("R")}</button></li>
-        <li role="none"><button type="button" role="menuitemcheckbox" aria-checked="true" class="ctx-item" data-act="button">{icon("check", "icon tick")}<span>{esc(L(lang, "Screenshot Button"))}</span></button></li>
-        <li class="ctx-sep" role="separator"></li>
-        <li role="none"><button type="button" role="menuitem" class="ctx-item" data-act="clear" disabled><span>{esc(L(lang, "Take everything down"))}</span></button></li>
-      </ul>"""
-    shot_menu = f"""<ul class="ctx-menu shot-menu" role="menu" aria-label="{esc(L(lang, "Screenshot Button"))}" hidden>
-        <li role="none"><button type="button" role="menuitem" class="ctx-item" data-act="shot"><span>{esc(L(lang, "Choose an area"))}</span></button></li>
-        <li role="none"><button type="button" role="menuitem" class="ctx-item" data-act="whole"><span>{esc(L(lang, "Take the whole screen"))}</span></button></li>
-        <li role="none"><button type="button" role="menuitem" class="ctx-item" data-act="record"><span>{esc(L(lang, "Record Screen"))}</span></button></li>
-      </ul>"""
-    peg = f"""<template data-peg><li class="peg landing">
-        <span class="clip" aria-hidden="true"></span>
-        <div class="photo">
-          <button class="photo-hit" type="button"><span class="photo-img"></span></button>
-          <span class="badge-video">{icon("play")}<span dir="ltr"></span></span>
-          <button class="corner corner-x" type="button">{icon("xmark")}</button>
-        </div>
-        <span class="copied" aria-hidden="true">{icon("check")}{esc(L(lang, "Copied"))}</span>
-      </li></template>"""
-    # The screenshot button sits at the trailing edge, 60% up the screen
-    # above the Dock, as in the app.
-    button_y = DOCK_TOP - 0.6 * (DOCK_TOP - MENU_H)
-    button_x = 32 if rtl else SCREEN_W - 32
-    data = esc(json.dumps(windows, separators=(",", ":")))
-    sort_data = ",".join(f"{sort[k]:.4f}" for k in ("x", "y", "ix", "iy"))
-    pct = lambda v: f"{v * 100:.3f}%"
+    sf_menu = f"""<ul class="dmenu sf-menu" role="menu" aria-label="Snapfly" hidden>
+          <li role="none"><button type="button" role="menuitem" class="dmenu-item" data-act="shot"><span>{esc(L(lang, "Take Screenshot"))}</span>{chord("S")}</button></li>
+          <li role="none" class="has-sub"><button type="button" role="menuitem" class="dmenu-item" aria-haspopup="menu" aria-expanded="false" data-act="sub"><span>{esc(L(lang, "Take Screenshot with Timer"))}</span>{icon("chevron", "icon dmenu-chev")}</button>
+            <ul class="dmenu dmenu-sub" role="menu" aria-label="{esc(L(lang, "Take Screenshot with Timer"))}">{seconds}</ul></li>
+          <li role="none"><button type="button" role="menuitem" class="dmenu-item" data-act="record"><span>{esc(L(lang, "Record Screen"))}</span>{chord("R")}</button></li>
+          <li role="none"><button type="button" role="menuitemcheckbox" aria-checked="true" class="dmenu-item" data-act="button"><span>{esc(L(lang, "Screenshot Button"))}</span>{icon("check", "icon dmenu-tick")}</button></li>
+          <li class="dmenu-sep" role="separator"></li>
+          <li role="none"><button type="button" role="menuitem" class="dmenu-item" data-act="clear" disabled><span>{esc(L(lang, "Take everything down"))}</span></button></li>
+        </ul>"""
+    shot_menu = f"""<ul class="dmenu shot-menu" role="menu" aria-label="{esc(L(lang, "Screenshot Button"))}" hidden>
+          <li role="none"><button type="button" role="menuitem" class="dmenu-item" data-act="shot"><span>{esc(L(lang, "Choose an area"))}</span></button></li>
+          <li role="none"><button type="button" role="menuitem" class="dmenu-item" data-act="whole"><span>{esc(L(lang, "Take the whole screen"))}</span></button></li>
+          <li role="none"><button type="button" role="menuitem" class="dmenu-item" data-act="record"><span>{esc(L(lang, "Record Screen"))}</span></button></li>
+        </ul>"""
+    sort_menu = "".join(
+        f'<li role="none"><button type="button" role="menuitemradio" aria-checked="{"true" if j == 0 else "false"}" class="dmenu-item" data-j="{j}">'
+        f'<span>{esc(item)}</span>{icon("check", "icon dmenu-tick")}</button></li>'
+        for j, item in enumerate(D["sort_items"]))
+    lights = lambda app: (f'<button type="button" class="dlight dlight-close" data-act="close" aria-label="{esc(D["close"])}: {esc(D[app])}">{icon("xmark")}</button>'
+                          f'<button type="button" class="dlight dlight-min" data-act="min" aria-label="{esc(D["minimize"])}: {esc(D[app])}"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>')
+    dock_items = []
+    for kind in ("browser", "chat", None, "trash"):
+        if kind is None:
+            dock_items.append('<span class="dock-sep" aria-hidden="true"></span>')
+            continue
+        popup = ' aria-haspopup="dialog" aria-expanded="false"' if kind == "trash" else ""
+        art = dock_icon(kind, f"dock-{kind}")
+        full = dock_icon("trash", "dock-trash-full", full=True).replace("<svg ", '<svg class="dock-full" ', 1) if kind == "trash" else ""
+        dock_items.append(
+            f'<button type="button" class="dock-item" data-app="{kind}" aria-label="{esc(D[kind])}"{popup} tabindex="{0 if kind == "browser" else -1}">'
+            f'<span class="dock-icon">{art}{full}</span><span class="dock-tip" aria-hidden="true">{esc(D[kind])}</span>'
+            f'<span class="dock-dot" aria-hidden="true"></span></button>')
+    dock = f'<div class="dock" role="toolbar" aria-label="{esc(D["dock"])}">{"".join(dock_items)}</div>'
+    send_button = (f'<button type="button" class="dsend" hidden aria-label="{esc(t["chatbtn_label"])}">'
+                   f'<span class="dsend-thumbs" aria-hidden="true"><span></span><span></span></span>'
+                   f'<span class="dsend-count" aria-hidden="true"></span>'
+                   f'<span class="dsend-plane" aria-hidden="true">{icon("plane")}</span></button>')
+    guide = f"""<div class="guide" role="dialog" aria-modal="false" aria-labelledby="guide-title" hidden tabindex="-1">
+          <div class="guide-head"><p class="guide-step" data-guide-step></p>
+            <button type="button" class="guide-x" data-guide-close aria-label="{esc(D["close_guide"])}">{icon("xmark")}</button></div>
+          <div class="guide-bar" aria-hidden="true"><span></span></div>
+          <h3 class="guide-title" id="guide-title"></h3>
+          <p class="guide-text"></p>
+          <div class="guide-actions">
+            <button type="button" class="guide-skip" data-guide-skip>{esc(D["skip"])}</button>
+            <button type="button" class="guide-go" data-guide-go>{esc(D["show"])}</button>
+            <a class="guide-go guide-get" href="{DOWNLOAD}" hidden>{icon("download")}<span>{esc(t["cta"])}</span></a>
+          </div>
+          <span class="guide-arrow" aria-hidden="true"></span>
+        </div>"""
+    card = f"""<template data-card><li class="dcard landing">
+          <span class="dclip" aria-hidden="true"></span>
+          <div class="dphoto">
+            <button type="button" class="dcard-hit"><span class="dcard-img"></span></button>
+            <span class="dbadge" aria-hidden="true">{icon("play")}<span dir="ltr"></span></span>
+            <button type="button" class="dcard-x">{icon("xmark")}</button>
+          </div>
+        </li></template>"""
     return f"""<section class="section capture" aria-labelledby="cap-h">
   <div class="wrap">
     <div class="copy center">
@@ -802,71 +770,69 @@ def section_capture(lang):
       <p>{t["cap_p"]}</p>
     </div>
   </div>
-  <div class="screen-stage" data-stage>
-    <div class="laptop">
-    <div class="lid">
-    <div class="screen" role="group" aria-label="{esc(t["cap_label"])}" data-screen data-windows="{data}" data-sort="{sort_data}"
-         data-shot-name="{esc(t["cap_shot"])}" data-rec-name="{esc(t["cap_rec"])}" data-hung="{esc(t["cap_hung"])}"
-         data-copy="{esc(L(lang, "Copy"))}" data-discard="{esc(L(lang, "Discard"))}" data-copied="{esc(L(lang, "Copied"))}"
-         data-take="{esc(L(lang, "Take Screenshot"))}" data-stop="{esc(L(lang, "Stop Recording"))}" data-cancel-timer="{esc(L(lang, "Cancel the timer"))}">
-      <div class="screen-glass">
-        <div class="scene" aria-hidden="true">{svg}</div>
-        <div class="screen-line" data-screen-line>
-          {rope("screen-rope")}
-          <ul class="pegs" aria-label="{esc(t["cap_line"])}"></ul>
-        </div>
-        <button class="shot-btn hint" type="button" style="left:{pct(button_x / SCREEN_W)};top:{pct(button_y / SCREEN_H)}" aria-label="{esc(L(lang, "Take Screenshot"))}" title="{esc(L(lang, "Take Screenshot"))}">{icon("viewfinder", "icon glyph")}{icon("stop", "icon stop")}</button>
-        <span class="sim-pointer" aria-hidden="true" hidden>{icon("pointer", "icon")}</span>
-        <div class="rec-edge" aria-hidden="true" hidden></div>
-        <div class="cap-flash" aria-hidden="true"></div>
-        <button class="capsule" type="button" hidden>
-          <span class="cap-timer" data-for="countdown">{icon("timer")}</span><span class="cap-count" data-for="countdown" dir="ltr"></span><span class="cap-x" data-for="countdown">{icon("xmark")}</span>
-          <span class="cap-stop" data-for="recording">{icon("stop")}</span><span class="cap-time" data-for="recording" dir="ltr">0:00</span>
-        </button>
-        <div class="cap-overlay" tabindex="-1" hidden role="dialog" aria-label="{esc(L(lang, "Take Screenshot"))}"
-             data-hint-shot="{esc(L(lang, "Drag over an area or click a window. Return takes the whole screen, Escape cancels."))}"
-             data-hint-timer="{esc(L(lang, "Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends."))}"
-             data-hint-record="{esc(L(lang, "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels."))}">
-          <div class="cap-dim"></div>
-          <div class="cap-win" hidden></div>
-          <div class="cap-area" hidden><span class="cap-size" dir="ltr"></span></div>
-          <p class="cap-hint"><span data-hint></span> <button type="button" class="cap-cancel">{esc(L(lang, "Cancel"))}</button></p>
+  <div class="desk-stage" data-try-desk>
+    <script type="application/json" data-desk-data>{data}</script>
+    <div class="desk-frame">
+      <div class="desk-fit">
+        <div class="dscreen" role="group" aria-label="{esc(D["label"])}" data-layout="wide">
+          <div class="desk-scene">{"".join(scenes)}</div>
+          <div class="desk-grain" aria-hidden="true"></div>
+          <header class="desk-bar">
+            <span class="bar-app" aria-live="polite">{esc(D["browser"])}</span>
+            <span class="bar-end">
+              <button type="button" class="bar-snapfly" aria-haspopup="menu" aria-expanded="false" aria-label="Snapfly">{icon("shirt", "icon bar-shirt")}{icon("stop", "icon bar-stop")}</button>
+              <span class="bar-clock" xml:space="preserve">{esc(D["clock"])}</span>
+            </span>
+          </header>
+          <div class="dline">
+            <svg class="dline-rope" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M-20 12 Q500 70 1020 12"/></svg>
+            <ul class="dline-pegs" aria-label="{esc(D["line"])}"></ul>
+          </div>
+          <div class="wctl" data-for="browser">{lights("browser")}
+            <button type="button" class="sort-btn" aria-haspopup="menu" aria-expanded="false"><span class="vh" data-sort-label></span></button>
+          </div>
+          <div class="wctl" data-for="chat" hidden>{lights("chat")}{send_button}</div>
+          <ul class="dmenu sort-menu" role="menu" aria-label="{esc(D["sort"])}" hidden>{sort_menu}</ul>
+          <button type="button" class="dshot" aria-label="{esc(L(lang, "Take Screenshot"))}">{icon("viewfinder", "icon dshot-glyph")}{icon("stop", "icon dshot-stop")}</button>
+          <span class="dpointer" aria-hidden="true" hidden>{icon("pointer")}</span>
+          <div class="rec-edge" aria-hidden="true" hidden></div>
+          <div class="cap-flash" aria-hidden="true"></div>
+          <div class="cap-overlay" tabindex="-1" hidden role="dialog" aria-label="{esc(L(lang, "Take Screenshot"))}" aria-describedby="cap-hint">
+            <div class="cap-dim"></div>
+            <div class="cap-win" hidden></div>
+            <div class="cap-area" hidden><span class="cap-size" dir="ltr"></span></div>
+            <p class="cap-hint" id="cap-hint"><span data-hint></span> <button type="button" class="cap-cancel">{esc(L(lang, "Cancel"))}</button></p>
+          </div>
+          <div class="dring" aria-hidden="true" hidden></div>
+          <div class="dstack">
+            <div class="dtoasts" role="status" aria-live="polite"></div>
+            <button type="button" class="capsule" hidden>
+              <span class="cap-timer" data-for="countdown">{icon("timer")}</span><span class="cap-count" data-for="countdown" dir="ltr"></span><span class="cap-x" data-for="countdown">{icon("xmark")}</span>
+              <span class="cap-stop" data-for="recording">{icon("stop")}</span><span class="cap-time" data-for="recording" dir="ltr">0:00</span>
+            </button>
+          </div>
+          {sf_menu}
+          {shot_menu}
+          <div class="trash-pop" role="dialog" aria-label="{esc(D["trash"])}" hidden>
+            <p class="trash-title">{esc(D["trash"])}</p>
+            <ul class="trash-list"></ul>
+            <p class="trash-empty">{esc(D["trash_empty"])}</p>
+            <button type="button" class="trash-clear">{esc(D["empty_trash"])}</button>
+          </div>
+          <div class="dock-slot" data-slot="desk">{dock}</div>
+          <div class="guide-slot" data-slot="desk">{guide}</div>
         </div>
       </div>
-      <span class="notch" aria-hidden="true"><i></i></span>
-      <button class="sf-status" type="button" style="left:{pct(status["x"])};top:{pct(status["y"])}" aria-haspopup="menu" aria-expanded="false" aria-label="Snapfly" title="Snapfly"></button>
-      {menu}
-      {shot_menu}
-      {peg}
-      <p class="vh" role="status" aria-live="polite" data-screen-status></p>
+      <div class="desk-foot">
+        <div class="guide-slot" data-slot="sheet"></div>
+        <div class="dock-slot" data-slot="bar"></div>
+      </div>
     </div>
-    </div>
-    <div class="base" aria-hidden="true"></div>
-    </div>
-    {coach(lang)}
+    <div class="guide-slot" data-slot="below"></div>
+    {card}
   </div>
-  <p class="screen-try">{esc(t["cap_try"])} <button class="replay" type="button" data-tour-again>{icon("replay")}<span>{esc(t["tour_again"])}</span></button></p>
+  <p class="desk-note">{esc(D["note"])} <button type="button" class="desk-guide-btn" data-guide-start>{icon("replay")}<span>{esc(D["guide"])}</span></button></p>
 </section>"""
-
-
-def coach(lang):
-    """The guide for a first visit: a card beside each thing to try, in turn,
-    with a ring round it and a button that shows how."""
-    t = TEXT[lang]
-    steps = json.dumps([{"title": a, "text": b} for a, b in t["tour"]], ensure_ascii=False).replace("</", "<\\/")
-    return f"""<div class="coach-ring" aria-hidden="true" hidden></div>
-    <div class="coach" aria-live="polite" hidden data-coach data-of="{esc(t["tour_of"])}" data-skip="{esc(t["tour_skip"])}" data-done="{esc(t["tour_done"])}">
-      <p class="coach-step" data-coach-n></p>
-      <p class="coach-title" data-coach-title></p>
-      <p class="coach-text" data-coach-text></p>
-      <p class="coach-actions">
-        <button type="button" class="coach-skip" data-coach-skip>{esc(t["tour_skip"])}</button>
-        <button type="button" class="coach-show" data-coach-show>{esc(t["tour_show"])}</button>
-        <a class="coach-get" href="{DOWNLOAD}" hidden>{icon("download")}<span>{esc(t["cta"])}</span></a>
-      </p>
-      <span class="coach-arrow" aria-hidden="true"></span>
-    </div>
-    <script type="application/json" data-coach-steps>{steps}</script>"""
 
 
 def section_start(lang):
