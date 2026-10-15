@@ -141,3 +141,6 @@
 "%d found" = "%d نتيجة";
 "No matches" = "لا توجد نتائج";
 "Return picks them, ready to send." = "اضغط Return لتحديدها وتجهيزها للإرسال.";
+/* Sent */
+"Take photos down once sent" = "إزالة الصور بعد إرسالها";
+"Sent into a chat, they leave the line. Pinned ones stay." = "ما ترسله إلى الدردشة يختفي من الحبل. الصور المثبتة تبقى.";

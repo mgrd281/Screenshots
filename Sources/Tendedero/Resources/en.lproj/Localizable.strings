@@ -143,3 +143,6 @@
 "%d found" = "%d found";
 "No matches" = "No matches";
 "Return picks them, ready to send." = "Return picks them, ready to send.";
+/* Sent */
+"Take photos down once sent" = "Take photos down once sent";
+"Sent into a chat, they leave the line. Pinned ones stay." = "Sent into a chat, they leave the line. Pinned ones stay.";

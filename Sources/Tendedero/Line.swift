@@ -82,6 +82,7 @@ final class Line: ObservableObject {
 
     init() {
         restore()
+        trashWaiting()
         PrivateDetails.onRead = { [weak self] url, shown in self?.show(shown, for: url) }
         TextIndex.onRead = { [weak self] in self?.refreshSearch() }
         readPrivateDetails()
@@ -121,9 +122,11 @@ final class Line: ObservableObject {
     /// over the whole screen.
     var onFall: ((Pegged) -> Void)?
 
-    func drop(_ id: UUID, quietly: Bool = false) {
+    /// - Parameter falls: whether it falls over the screen. A photo sent
+    ///   into a chat has flown there instead.
+    func drop(_ id: UUID, quietly: Bool = false, falls: Bool = true) {
         guard let i = items.firstIndex(where: { $0.id == id }), !items[i].falling else { return }
-        onFall?(items[i])
+        if falls { onFall?(items[i]) }
         items[i].falling = true
         hitRects[id] = nil
         pickedIDs.remove(id)
@@ -274,11 +277,78 @@ final class Line: ObservableObject {
         let willPaste = Paste.willPaste
         let flight = willPaste ? onSend?(photos) ?? 0 : 0
         Paste.intoFrontApp(after: flight)
+        if willPaste { takeDown(sent: photos, after: flight) }
         // Once the app has taken the photos, the clipboard turns to the text.
         guard let caption, willPaste else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + flight + 0.5) {
             MainActor.assumeIsolated { Self.pasteText(caption) }
         }
+    }
+
+    // MARK: Sent
+
+    /// Take photos down once sent, from Settings. On unless turned off.
+    nonisolated static var takesDownSent: Bool {
+        get { !UserDefaults.standard.bool(forKey: "keepSent") }
+        set { UserDefaults.standard.set(!newValue, forKey: "keepSent") }
+    }
+
+    /// Sent into a chat: the photos leave the line as their copies land in
+    /// it, but for the ones pinned.
+    private func takeDown(sent photos: [Pegged], after flight: TimeInterval) {
+        guard Self.takesDownSent else { return }
+        let ids = photos.filter { !$0.pinned }.map(\.id)
+        // Their cards step aside while the copies fly.
+        for id in ids {
+            if let i = items.firstIndex(where: { $0.id == id && !$0.falling }) { items[i].flying = true }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + flight + 0.2) { [weak self] in
+            MainActor.assumeIsolated {
+                for id in ids { self?.leave(id) }
+            }
+        }
+    }
+
+    /// Dragged into an app, a photo has been sent too.
+    func sentByDrag(_ id: UUID) {
+        guard Self.takesDownSent, let item = items.first(where: { $0.id == id && !$0.falling }),
+              !item.pinned else { return }
+        leave(id)
+    }
+
+    /// Off the line without falling. A file from Snapfly's folder goes the
+    /// way of its corner cross, to the Trash, but a minute later, so the
+    /// chat has surely read it by then.
+    private func leave(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }) else { return }
+        if isInInbox(id) { trashLater(item.url) }
+        drop(id, quietly: true, falls: false)
+    }
+
+    private static let trashLaterKey = "trashLater"
+
+    /// Kept across a quit: what is still waiting goes at the next launch.
+    private func trashLater(_ url: URL) {
+        var waiting = UserDefaults.standard.stringArray(forKey: Self.trashLaterKey) ?? []
+        waiting.append(url.path)
+        UserDefaults.standard.set(waiting, forKey: Self.trashLaterKey)
+        let path = url.path
+        DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
+            MainActor.assumeIsolated { self?.trashWaiting(only: path) }
+        }
+    }
+
+    /// One file, or at launch every one still waiting. A file that hangs on
+    /// the line again stays.
+    private func trashWaiting(only path: String? = nil) {
+        let waiting = UserDefaults.standard.stringArray(forKey: Self.trashLaterKey) ?? []
+        guard !waiting.isEmpty else { return }
+        let hanging = Set(items.filter { !$0.falling }.map(\.url.path))
+        let due = waiting.filter { path == nil || $0 == path }
+        for file in due where !hanging.contains(file) && FileManager.default.fileExists(atPath: file) {
+            try? FileManager.default.trashItem(at: URL(fileURLWithPath: file), resultingItemURL: nil)
+        }
+        UserDefaults.standard.set(waiting.filter { !due.contains($0) }, forKey: Self.trashLaterKey)
     }
 
     /// Text, like a translation, straight into the app in front.

@@ -54,10 +54,10 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Right-click, then Translate Text | Read it in your language, to copy or send. |
 | Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open it in Markup. |
-| Click the paper plane on a photo | Send it straight into the app in front, like a chat. |
+| Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
-| Drag into an app | Send a copy. It stays on the line. |
+| Drag into an app | Send a copy. It leaves the line, as anything sent does. |
 | Drag into a folder | Keep it there. It leaves the line. |
 | Drag to the Trash, or click the cross | Let it go. |
 | Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
@@ -114,6 +114,16 @@ Copy Text leaves them out too. Anything it misses, hide by hand with
 Hide Part in a photo's menu. Labels like Billing address, Recipient or Diagnosis tell it
 where a whole block is private. The text is read on your Mac, and the
 screenshot file itself is never changed.
+
+<br>
+
+## Sent, and gone.
+
+Whatever you send into a chat, with a paper plane, ⌃⌥V or a drag, leaves
+the line as it lands there, so the line only holds what is still to send.
+Pinned photos stay. A screenshot from Snapfly's own folder goes to the
+Trash a minute later, once the chat has read it. Rather keep them? Turn
+off Take photos down once sent in Settings.
 
 <br>
 

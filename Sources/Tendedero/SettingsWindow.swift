@@ -110,6 +110,11 @@ final class Preferences: ObservableObject {
         set { change { actions.setKeep(newValue) } }
     }
 
+    var takesDownSent: Bool {
+        get { Line.takesDownSent }
+        set { change { Line.takesDownSent = newValue } }
+    }
+
     func shortcut(_ role: Shortcut.Role) -> String {
         Shortcut.current(role)?.display ?? L("None")
     }
@@ -292,6 +297,10 @@ private struct LinePane: View {
                     ForEach(Line.keepChoices, id: \.self) { n in
                         Text(String(format: L("%d photos"), n)).tag(Int?.some(n))
                     }
+                }
+                Toggle(isOn: $prefs.takesDownSent) {
+                    Text(L("Take photos down once sent"))
+                    Text(L("Sent into a chat, they leave the line. Pinned ones stay."))
                 }
             }
             Section {

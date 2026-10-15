@@ -141,3 +141,6 @@
 "%d found" = "%d encontradas";
 "No matches" = "Sin resultados";
 "Return picks them, ready to send." = "Return las selecciona, listas para enviar.";
+/* Sent */
+"Take photos down once sent" = "Quitar las fotos al enviarlas";
+"Sent into a chat, they leave the line. Pinned ones stay." = "Lo que envías a un chat sale del tendedero. Las fijadas se quedan.";

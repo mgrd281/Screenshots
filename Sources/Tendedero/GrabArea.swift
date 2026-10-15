@@ -4,7 +4,8 @@ import SwiftUI
 /// Bridges each photo to AppKit's drag and drop, so it can be dragged into
 /// any app as a real file. Each destination means one thing:
 ///
-/// - An app gets a copy, and the photo stays on the line.
+/// - An app gets a copy, and the photo leaves the line, as anything sent does
+///   (unless Take photos down once sent is off, or it is pinned).
 /// - A folder or the Desktop keeps the file, and the photo leaves the line.
 /// - The Trash discards it.
 /// - Nowhere that accepts it: the photo flies back to the line.
@@ -37,6 +38,7 @@ struct GrabArea: NSViewRepresentable {
         view.outgoingURL = { PrivateDetails.shareable(item.url) }
         view.onClick = { line.copy(id) }
         view.onPick = { line.pick(id) }
+        view.onSentByDrag = { line.sentByDrag(id) }
         view.onSend = { line.paste(id) }
         view.onDoubleClick = { line.open(id) }
         view.onDragStart = { line.draggingID = id }
@@ -144,6 +146,8 @@ final class GrabView: NSView, NSDraggingSource {
     var onPick: () -> Void = {}
     /// The paper plane: into the app in front.
     var onSend: () -> Void = {}
+    /// Dropped into an app, which took a copy.
+    var onSentByDrag: () -> Void = {}
     var onDoubleClick: () -> Void = {}
     var onDragStart: () -> Void = {}
     var onDragEnd: () -> Void = {}
@@ -290,6 +294,8 @@ final class GrabView: NSView, NSDraggingSource {
             return
         }
         onDragEnd()
+        // An app took a copy: it was sent, like with the paper plane.
+        if operation == .copy { onSentByDrag() }
         // Finder finishes a move a moment later. Check again then, so a photo
         // saved into a folder leaves the line.
         if operation.contains(.move) {

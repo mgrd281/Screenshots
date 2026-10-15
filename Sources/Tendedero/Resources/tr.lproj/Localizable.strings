@@ -141,3 +141,6 @@
 "%d found" = "%d bulundu";
 "No matches" = "Sonuç yok";
 "Return picks them, ready to send." = "Return onları seçer, göndermeye hazır olur.";
+/* Sent */
+"Take photos down once sent" = "Gönderilen fotoğrafları ipten indir";
+"Sent into a chat, they leave the line. Pinned ones stay." = "Sohbete gönderilenler ipten iner. Sabitlenenler kalır.";

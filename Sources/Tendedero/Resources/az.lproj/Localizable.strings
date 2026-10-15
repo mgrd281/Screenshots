@@ -143,3 +143,6 @@
 "%d found" = "%d tapıldı";
 "No matches" = "Heç nə tapılmadı";
 "Return picks them, ready to send." = "Return onları seçir, göndərməyə hazır edir.";
+/* Sent */
+"Take photos down once sent" = "Göndərilən şəkilləri ipdən götür";
+"Sent into a chat, they leave the line. Pinned ones stay." = "Söhbətə göndərilənlər ipdən gedir. Bərkidilənlər qalır.";
