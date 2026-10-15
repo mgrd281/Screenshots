@@ -315,3 +315,7 @@
 "Use the Screenshot App…" = "Use the Screenshot App…";
 "Press %@ or click the screenshot button. Nothing to set up." = "Press %@ or click the screenshot button. Nothing to set up.";
 "Also from the Screenshot app" = "Also from the Screenshot app";
+
+/* Message with the photos */
+"Add a message…" = "Add a message…";
+"Send with a Message…" = "Send with a Message…";

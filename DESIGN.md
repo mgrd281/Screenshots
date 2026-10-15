@@ -425,7 +425,18 @@ apps.
     address, puts it in the middle of the page. A drag wins, then the
     message box from Accessibility, then this, then the generic spot.
   - It never becomes key. A click sends, as the tag does; a drag moves it,
-    remembered per app, and for a new chat apart; a right-click offers Put it back and Settings.
+    remembered per app, and for a new chat apart; a press and hold (0.45 s
+    without moving) opens the message bar; a right-click offers Send with a
+    Message…, Put it back and Settings.
+  - **Message bar** (`CaptionBar.swift`), 6 pt above the button, its
+    trailing edge on the button's: a 340 × 44 capsule of the search bar's
+    glass and shadow, with a 20 pt margin for it. A plain 15 pt field (Add a
+    message…), the count of photos in a 12 pt semibold rounded chip on
+    `.primary` at 8%, and a 30 pt circle in the chat button's own tint and
+    glyph. It takes the keyboard without activating Snapfly, as the search
+    bar does: Return sends the photos and then the message, Escape or a
+    click elsewhere closes it. VoiceOver reaches it as an action on the
+    button.
   - Hover scales it to 1.04 through `Motion.spring`, and it fades in over
     0.15 s.
   - **Settings › Line › Send button over chats** chooses:

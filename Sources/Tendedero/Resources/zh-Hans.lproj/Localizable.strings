@@ -313,3 +313,7 @@
 "Use the Screenshot App…" = "使用“截屏”App…";
 "Press %@ or click the screenshot button. Nothing to set up." = "按下 %@ 或点按截屏按钮。无需设置。";
 "Also from the Screenshot app" = "也可来自“截屏”App";
+
+/* Message with the photos */
+"Add a message…" = "添加消息…";
+"Send with a Message…" = "连同消息发送…";

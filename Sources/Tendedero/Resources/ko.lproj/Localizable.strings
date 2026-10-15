@@ -313,3 +313,7 @@
 "Use the Screenshot App…" = "스크린샷 앱 사용…";
 "Press %@ or click the screenshot button. Nothing to set up." = "%@ 키를 누르거나 스크린샷 버튼을 클릭하세요. 설정할 것이 없어요.";
 "Also from the Screenshot app" = "스크린샷 앱에서도";
+
+/* Message with the photos */
+"Add a message…" = "메시지 추가…";
+"Send with a Message…" = "메시지와 함께 보내기…";

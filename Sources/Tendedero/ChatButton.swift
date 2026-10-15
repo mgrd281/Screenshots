@@ -183,6 +183,7 @@ final class ChatButton {
         panel = ChatButtonPanel(model: model)
         Self.shared = self
         panel.content.onClick = { [weak self] in self?.send() }
+        panel.content.onLongPress = { [weak self] in self?.askForCaption() }
         panel.content.onDragEnd = { [weak self] in self?.remember() }
         panel.content.menu = makeMenu()
 
@@ -395,6 +396,8 @@ final class ChatButton {
 
     private func makeMenu() -> NSMenu {
         let menu = NSMenu()
+        menu.addItem(ClosureMenuItem(L("Send with a Message…")) { [weak self] in self?.askForCaption() })
+        menu.addItem(.separator())
         menu.addItem(ClosureMenuItem(L("Put it back")) { [weak self] in
             guard let self, let app = self.current?.app else { return }
             Self.spots[app] = nil
@@ -414,6 +417,21 @@ final class ChatButton {
         model.sent = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in
             self?.model.sent = false
+        }
+    }
+
+    /// A press and hold: a line to write a message in, sent after the
+    /// photos as one message.
+    private func askForCaption() {
+        let count = toSend.count
+        guard count > 0 else { return }
+        let margin = ChatButtonPanel.margin
+        CaptionBar.shared.show(above: panel.frame.insetBy(dx: margin, dy: margin), count: count) { [weak self] text in
+            self?.line.paste(caption: text)
+            self?.model.sent = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in
+                self?.model.sent = false
+            }
         }
     }
 
@@ -604,9 +622,13 @@ private final class ChatButtonPanel: NSPanel {
 /// panel never becomes key, so only a view of its own takes the first click.
 private final class ChatButtonView: NSView {
     var onClick: () -> Void = {}
+    var onLongPress: () -> Void = {}
     var onDragEnd: () -> Void = {}
     var onResize: (CGSize) -> Void = { _ in }
     private(set) var isDragging = false
+    /// Held without moving: a press and hold rather than a click.
+    private var hold: Timer?
+    private var held = false
 
     private let host: NSHostingView<ChatButtonLabel>
     private let margin: CGFloat
@@ -629,6 +651,12 @@ private final class ChatButtonView: NSView {
         setAccessibilityElement(true)
         setAccessibilityRole(.button)
         setAccessibilityLabel(L("Paste into the app in front"))
+        setAccessibilityCustomActions([
+            NSAccessibilityCustomAction(name: L("Send with a Message…")) { [weak self] in
+                self?.onLongPress()
+                return true
+            },
+        ])
         toolTip = L("Paste into the app in front")
     }
 
@@ -658,14 +686,24 @@ private final class ChatButtonView: NSView {
         downAt = NSEvent.mouseLocation
         startOrigin = window?.frame.origin
         isDragging = false
+        held = false
+        hold?.invalidate()
+        hold = Timer.scheduledTimer(withTimeInterval: 0.45, repeats: false) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self, !self.isDragging, self.downAt != nil else { return }
+                self.held = true
+                self.onLongPress()
+            }
+        }
     }
 
     override func mouseDragged(with event: NSEvent) {
-        guard let downAt, let startOrigin, let window else { return }
+        guard !held, let downAt, let startOrigin, let window else { return }
         let now = NSEvent.mouseLocation
         let dx = now.x - downAt.x, dy = now.y - downAt.y
         if !isDragging, hypot(dx, dy) < 4 { return }
         isDragging = true
+        hold?.invalidate()
         window.setFrameOrigin(CGPoint(x: startOrigin.x + dx, y: startOrigin.y + dy))
     }
 
@@ -674,8 +712,13 @@ private final class ChatButtonView: NSView {
             downAt = nil
             startOrigin = nil
             isDragging = false
+            held = false
+            hold?.invalidate()
+            hold = nil
         }
-        if isDragging {
+        if held {
+            return
+        } else if isDragging {
             onDragEnd()
         } else if downAt != nil {
             onClick()

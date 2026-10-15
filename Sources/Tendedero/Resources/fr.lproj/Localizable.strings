@@ -313,3 +313,7 @@
 "Use the Screenshot App…" = "Utiliser Capture d’écran…";
 "Press %@ or click the screenshot button. Nothing to set up." = "Appuie sur %@ ou clique sur le bouton de capture. Rien à régler.";
 "Also from the Screenshot app" = "Aussi depuis Capture d’écran";
+
+/* Message with the photos */
+"Add a message…" = "Ajouter un message…";
+"Send with a Message…" = "Envoyer avec un message…";
