@@ -305,3 +305,11 @@
 "For the send buttons: they press ⌘V in the chat in front, so the photos land where you type." = "用于发送按钮：在前台的聊天中按下 ⌘V，让照片出现在你输入的地方。";
 "Snapfly not in the list? Click + under it and choose Snapfly in Applications." = "列表中没有 Snapfly？点按下方的 +，然后在“应用程序”中选择 Snapfly。";
 "So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read." = "为了让发送按钮只在聊天网站上出现，Snapfly 会询问浏览器打开的是哪个页面。不会读取其他任何内容。";
+
+/* App Store edition first run */
+"Take screenshots with Snapfly" = "用 Snapfly 截屏";
+"Press %@ or click the screenshot button at the edge of the screen, then drag over an area, click a window, or press Return for the whole screen. It hangs on the line at once, with nothing to set up." = "按下 %@ 或点按屏幕边缘的截屏按钮，然后拖移选择区域、点按一个窗口，或按 Return 键截取整个屏幕。截图会立刻挂到晾衣绳上，无需任何设置。";
+"Try It Now" = "立即试试";
+"Use the Screenshot App…" = "使用“截屏”App…";
+"Press %@ or click the screenshot button. Nothing to set up." = "按下 %@ 或点按截屏按钮。无需设置。";
+"Also from the Screenshot app" = "也可来自“截屏”App";

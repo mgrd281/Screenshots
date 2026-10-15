@@ -305,3 +305,11 @@
 "For the send buttons: they press ⌘V in the chat in front, so the photos land where you type." = "لأزرار الإرسال: تضغط ⌘V في المحادثة الأمامية، فتصل الصور حيث تكتب.";
 "Snapfly not in the list? Click + under it and choose Snapfly in Applications." = "Snapfly غير موجود في القائمة؟ انقر + تحتها واختر Snapfly من مجلد التطبيقات.";
 "So the send button shows only on chat websites, Snapfly asks the browser which page is open. Nothing else is read." = "ليظهر زر الإرسال في مواقع الدردشة فقط، يسأل Snapfly المتصفح عن الصفحة المفتوحة. لا يُقرأ أي شيء آخر.";
+
+/* App Store edition first run */
+"Take screenshots with Snapfly" = "التقط صور الشاشة مع Snapfly";
+"Press %@ or click the screenshot button at the edge of the screen, then drag over an area, click a window, or press Return for the whole screen. It hangs on the line at once, with nothing to set up." = "اضغط %@ أو انقر زر التصوير على حافة الشاشة، ثم اسحب فوق منطقة، أو انقر على نافذة، أو اضغط Return للشاشة كلها. تعلق الصورة على الحبل فورًا، بلا أي إعداد.";
+"Try It Now" = "جرّبه الآن";
+"Use the Screenshot App…" = "استخدام «لقطة شاشة»…";
+"Press %@ or click the screenshot button. Nothing to set up." = "اضغط %@ أو انقر زر التصوير. لا شيء لإعداده.";
+"Also from the Screenshot app" = "ومن تطبيق «لقطة شاشة» أيضًا";

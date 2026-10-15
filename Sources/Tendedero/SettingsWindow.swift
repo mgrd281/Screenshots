@@ -81,6 +81,11 @@ final class Preferences: ObservableObject {
         actions.openScreenshotsFolder()
     }
 
+    /// The capture screens, from Settings, to try them.
+    func tryCapture() {
+        Capture.shared.start(after: 0.3)
+    }
+
     func setUpScreenshots() {
         actions.setUpScreenshots()
     }
@@ -378,12 +383,21 @@ private struct GeneralPane: View {
         Form {
             Section {
                 if Edition.appStore {
+                    // Snapfly's own screenshots come first: they need
+                    // nothing set up.
+                    LabeledContent {
+                        Button(L("Try It Now")) { prefs.tryCapture() }
+                    } label: {
+                        Text(L("Take screenshots with Snapfly"))
+                        Text(String(format: L("Press %@ or click the screenshot button. Nothing to set up."),
+                                    prefs.shortcut(.capture)))
+                    }
                     // The sandbox keeps Snapfly out of the screenshot
                     // settings, so this shows where to change them.
                     LabeledContent {
                         Button(L("Set Up…")) { prefs.setUpScreenshots() }
                     } label: {
-                        Text(L("Handle screenshots"))
+                        Text(L("Also from the Screenshot app"))
                         Text(L("Screenshots saved to Pictures › Snapfly hang on the line"))
                     }
                 } else {
