@@ -261,3 +261,21 @@
 "Could not save it to the Desktop." = "デスクトップに保存できませんでした。";
 "Could not save the changes." = "変更を保存できませんでした。";
 "Could not trim the recording." = "収録をトリミングできませんでした。";
+
+/* Screenshot button */
+"Choose an area" = "範囲を選択";
+"Take the whole screen" = "画面全体を撮る";
+"Hide Screenshot Button" = "スクリーンショットボタンを隠す";
+"Screenshot Button" = "スクリーンショットボタン";
+"Screenshot button" = "スクリーンショットボタン";
+"Show the screenshot button" = "スクリーンショットボタンを表示";
+"A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere." = "画面の端にある小さなボタンで、ワンクリックでスクリーンショットを撮れます。好きな場所にドラッグできます。";
+"A click" = "クリックで";
+"Chooses an area" = "範囲を選択";
+"Takes the whole screen" = "画面全体を撮る";
+"Takes the last area again" = "前回の範囲をもう一度撮る";
+"Viewfinder" = "ファインダー";
+"Selection" = "選択範囲";
+"Aperture" = "絞り";
+"Camera" = "カメラ";
+"Glass" = "ガラス";

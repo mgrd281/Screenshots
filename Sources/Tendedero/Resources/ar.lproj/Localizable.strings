@@ -261,3 +261,21 @@
 "Could not save it to the Desktop." = "تعذّر حفظها على سطح المكتب.";
 "Could not save the changes." = "تعذّر حفظ التغييرات.";
 "Could not trim the recording." = "تعذّر قص التسجيل.";
+
+/* Screenshot button */
+"Choose an area" = "اختيار منطقة";
+"Take the whole screen" = "التقاط الشاشة كلها";
+"Hide Screenshot Button" = "إخفاء زر التصوير";
+"Screenshot Button" = "زر التصوير";
+"Screenshot button" = "زر التصوير";
+"Show the screenshot button" = "إظهار زر التصوير";
+"A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere." = "زر صغير على حافة الشاشة يلتقط صورة بنقرة واحدة. اسحبه إلى أي مكان.";
+"A click" = "النقرة";
+"Chooses an area" = "تختار منطقة";
+"Takes the whole screen" = "تلتقط الشاشة كلها";
+"Takes the last area again" = "تلتقط آخر منطقة من جديد";
+"Viewfinder" = "عدسة التصوير";
+"Selection" = "تحديد";
+"Aperture" = "فتحة العدسة";
+"Camera" = "كاميرا";
+"Glass" = "زجاج";

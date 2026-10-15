@@ -263,3 +263,21 @@
 "Could not save it to the Desktop." = "Could not save it to the Desktop.";
 "Could not save the changes." = "Could not save the changes.";
 "Could not trim the recording." = "Could not trim the recording.";
+
+/* Screenshot button */
+"Choose an area" = "Choose an area";
+"Take the whole screen" = "Take the whole screen";
+"Hide Screenshot Button" = "Hide Screenshot Button";
+"Screenshot Button" = "Screenshot Button";
+"Screenshot button" = "Screenshot button";
+"Show the screenshot button" = "Show the screenshot button";
+"A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere." = "A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere.";
+"A click" = "A click";
+"Chooses an area" = "Chooses an area";
+"Takes the whole screen" = "Takes the whole screen";
+"Takes the last area again" = "Takes the last area again";
+"Viewfinder" = "Viewfinder";
+"Selection" = "Selection";
+"Aperture" = "Aperture";
+"Camera" = "Camera";
+"Glass" = "Glass";

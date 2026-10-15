@@ -195,6 +195,7 @@ final class Capture {
         overlays.forEach { $0.orderOut(nil) }
         overlays = []
         NSCursor.arrow.set()
+        if case let .area(rect, screen, _) = choice { rememberArea(rect, on: screen) }
         if mode != .screenshot, let region = Self.region(of: choice) {
             if case let .timer(seconds) = mode {
                 takeLater(region, after: seconds)
@@ -233,6 +234,32 @@ final class Capture {
                 }
             }
         }
+    }
+
+    // MARK: One click
+
+    /// Takes a region of the live screen at once, without the still screens:
+    /// the screenshot button's click.
+    func takeNow(_ region: Region) {
+        guard !freezing, overlays.isEmpty, hasPermission() else { return }
+        Task { @MainActor in await takeLive(region) }
+    }
+
+    private static let lastAreaKey = "captureLastArea"
+
+    /// The last area dragged over, while its screen is still there.
+    var lastArea: Region? {
+        guard let saved = UserDefaults.standard.array(forKey: Self.lastAreaKey) as? [Double], saved.count == 5,
+              let screen = NSScreen.screens.first(where: { $0.displayID == CGDirectDisplayID(saved[4]) })
+        else { return nil }
+        let rect = CGRect(x: saved[0], y: saved[1], width: saved[2], height: saved[3]).intersection(screen.frame)
+        return rect.width >= 4 && rect.height >= 4 ? .area(rect, screen) : nil
+    }
+
+    private func rememberArea(_ rect: CGRect, on screen: NSScreen) {
+        guard let id = screen.displayID else { return }
+        let saved = [Double(rect.minX), Double(rect.minY), Double(rect.width), Double(rect.height), Double(id)]
+        UserDefaults.standard.set(saved, forKey: Self.lastAreaKey)
     }
 
     private static func region(of choice: Choice) -> Region? {

@@ -80,7 +80,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
         Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onFinish = { [weak self] url in self?.hangCapture(url) }
-        Recording.shared.onChange = { [weak self] in self?.updateStatusIcon() }
+        Recording.shared.onChange = { [weak self] in
+            self?.updateStatusIcon()
+            CaptureButton.shared.recordingChanged()
+        }
+        CaptureButton.shared.openSettings = { [weak self] in self?.openSettings() }
+        CaptureButton.shared.update()
         Recording.cleanUp()
         History.purge()
         HistoryWindow.shared.onHang = { [weak self] url in self?.hangCapture(url) }
@@ -852,6 +857,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             menu.addItem(recordItem)
         }
+        let buttonItem = ClosureMenuItem(L("Screenshot Button")) { [weak self] in
+            CaptureButton.isEnabled.toggle()
+            self?.preferences?.refresh()
+        }
+        buttonItem.state = CaptureButton.isEnabled ? .on : .off
+        menu.addItem(buttonItem)
         menu.addItem(.separator())
 
         let toggleItem = ClosureMenuItem(isRevealed ? L("Hide line") : L("Show line")) { [weak self] in
