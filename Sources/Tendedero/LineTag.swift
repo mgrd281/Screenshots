@@ -9,19 +9,26 @@ import SwiftUI
 /// way of its own corner cross.
 struct LineTag: View {
     @ObservedObject var line: Line
+    /// On a rope it is clipped on; on a shelf, an island or beside a stack
+    /// its tools sit in the holder, a little closer together.
+    var style: Layout.Style = .clothesline
 
-    static let width: CGFloat = 26
+    static let width: CGFloat = Layout.tagWidth
     /// Room for the clip and the five tools. The tag hangs from the top.
     static let maxHeight: CGFloat = 152
+
+    private var compact: Bool { style != .clothesline }
+    private var toolHeight: CGFloat { compact ? 22 : 24 }
 
     var body: some View {
         VStack(spacing: -12) {
             Clothespin()
+                .opacity(compact ? 0 : 1)
                 .zIndex(1)
             VStack(spacing: 0) {
                 tool("arrow.up.and.down")
                     // Under the clip is grip too.
-                    .padding(.top, 12)
+                    .padding(.top, compact ? 0 : 12)
                     .overlay(TagArea(label: L("Move the line"), movesLine: true))
                 if line.pickedIDs.count > 1 {
                     tool("rectangle.split.1x2")
@@ -44,8 +51,8 @@ struct LineTag: View {
                 }
             }
             .padding(.bottom, 2)
-            .glassFrame(capsule: true)
-            .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
+            .background(backing)
+            .shadow(color: .black.opacity(style == .clothesline || style == .stack ? 0.18 : 0), radius: 6, y: 3)
             .background(
                 GeometryReader { g in
                     Color.clear.preference(key: TagRectKey.self, value: g.frame(in: .global))
@@ -59,8 +66,22 @@ struct LineTag: View {
     private func tool(_ symbol: String) -> some View {
         Image(systemName: symbol)
             .font(.system(size: 10, weight: .bold))
-            .foregroundStyle(.primary)
-            .frame(width: Self.width, height: 24)
+            .foregroundStyle(style == .island ? Color.white.opacity(0.9) : Color.primary)
+            .frame(width: Self.width, height: toolHeight)
+    }
+
+    /// Glass of its own on a rope or beside a stack; on a shelf or an island
+    /// it shares the holder's, with only a faint capsule to group the tools.
+    @ViewBuilder
+    private var backing: some View {
+        switch style {
+        case .clothesline, .stack:
+            Capsule().fill(.clear).glassFrame(capsule: true)
+        case .shelf:
+            Capsule().fill(Color.primary.opacity(0.06))
+        case .island:
+            Capsule().fill(Color.white.opacity(0.1))
+        }
     }
 }
 

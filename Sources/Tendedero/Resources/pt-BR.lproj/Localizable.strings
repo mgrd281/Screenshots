@@ -144,3 +144,9 @@
 /* Sent */
 "Take photos down once sent" = "Tirar as fotos depois de enviar";
 "Sent into a chat, they leave the line. Pinned ones stay." = "O que você envia para um chat sai do varal. As fixadas ficam.";
+/* Line styles */
+"Line style" = "Estilo do varal";
+"Clothesline" = "Varal";
+"Glass shelf" = "Prateleira de vidro";
+"Island" = "Ilha";
+"Card stack" = "Pilha de cartões";

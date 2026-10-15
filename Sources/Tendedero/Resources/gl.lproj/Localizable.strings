@@ -144,3 +144,9 @@
 /* Sent */
 "Take photos down once sent" = "Retirar as fotos ao envialas";
 "Sent into a chat, they leave the line. Pinned ones stay." = "O que envías a un chat sae da corda. As fixadas quedan.";
+/* Line styles */
+"Line style" = "Estilo da corda";
+"Clothesline" = "Tendal";
+"Glass shelf" = "Andel de vidro";
+"Island" = "Illa";
+"Card stack" = "Pila de tarxetas";

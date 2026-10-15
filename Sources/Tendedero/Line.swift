@@ -42,6 +42,10 @@ final class Line: ObservableObject {
     @Published var pressedID: UUID?
     /// Whether the line has slid down into view.
     @Published var revealed = false
+    /// What the photos hang on, from Settings.
+    @Published var style = Layout.style
+    /// A card stack spread out, while the pointer is at it.
+    @Published var spread = false
 
     /// Card frames in window coordinates, reported by the views. The panel
     /// uses them to only catch clicks over photos and let the rest through.

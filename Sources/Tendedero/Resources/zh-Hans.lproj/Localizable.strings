@@ -144,3 +144,9 @@
 /* Sent */
 "Take photos down once sent" = "发送后取下照片";
 "Sent into a chat, they leave the line. Pinned ones stay." = "发送到聊天中的照片会离开晾衣绳。已固定的照片会保留。";
+/* Line styles */
+"Line style" = "晾衣绳样式";
+"Clothesline" = "晾衣绳";
+"Glass shelf" = "玻璃架";
+"Island" = "灵动岛";
+"Card stack" = "卡片堆";

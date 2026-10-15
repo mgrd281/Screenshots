@@ -5,6 +5,10 @@ import SwiftUI
 struct PeggedView: View {
     let item: Pegged
     @ObservedObject var line: Line
+    /// How it leans where it hangs, from Layout.tilt.
+    var tilt: Double = 0
+    /// On a rope: it hangs from a clip, arrives with a swing and sways.
+    var swings = true
 
     @State private var swing: Double = 0
     @State private var arrived = false
@@ -21,11 +25,14 @@ struct PeggedView: View {
 
     var body: some View {
         VStack(spacing: -12) {
+            // Without a rope there is nothing to clip on to; the clip keeps
+            // its room so the card sits where Layout says.
             Clothespin()
+                .opacity(swings ? 1 : 0)
                 .zIndex(1)
             card
         }
-        .rotationEffect(.degrees(swing + item.tilt), anchor: .top)
+        .rotationEffect(.degrees(swing + tilt), anchor: .top)
         .offset(y: arrived ? 0 : -46)
         // The fall itself is drawn over the whole screen by CaptureFlight, so
         // the card here just steps aside at once.
@@ -59,7 +66,7 @@ struct PeggedView: View {
     }
 
     /// Distance from the top of the hanging view (the clip) to the card.
-    static let cardOffsetBelowTop: CGFloat = 26 - 12
+    static let cardOffsetBelowTop: CGFloat = Layout.cardBelowTop
 
     private var photoSize: CGSize { Self.photoSize(for: item.thumb.size) }
 
@@ -180,7 +187,7 @@ struct PeggedView: View {
             arrived = true
             return
         }
-        swing = 16
+        swing = swings ? 16 : 0
         withAnimation(.spring(response: 0.42, dampingFraction: 0.72)) { arrived = true }
         withAnimation(.interpolatingSpring(stiffness: 46, damping: 2.6)) { swing = 0 }
     }
@@ -191,6 +198,7 @@ struct PeggedView: View {
     }
 
     private func breeze() {
+        guard swings else { return }
         let delay = Double.random(in: 0...0.35)
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             nudge(Double.random(in: 1.6...3.4))
@@ -198,6 +206,7 @@ struct PeggedView: View {
     }
 
     private func nudge(_ degrees: Double) {
+        guard swings else { return }
         withAnimation(.easeOut(duration: 0.3)) { swing = degrees }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             withAnimation(.interpolatingSpring(stiffness: 38, damping: 2.4)) { swing = 0 }

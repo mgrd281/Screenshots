@@ -144,3 +144,9 @@
 /* Sent */
 "Take photos down once sent" = "إزالة الصور بعد إرسالها";
 "Sent into a chat, they leave the line. Pinned ones stay." = "ما ترسله إلى الدردشة يختفي من الحبل. الصور المثبتة تبقى.";
+/* Line styles */
+"Line style" = "شكل الحبل";
+"Clothesline" = "حبل الغسيل";
+"Glass shelf" = "الرف الزجاجي";
+"Island" = "جزيرة النوتش";
+"Card stack" = "كومة البطاقات";

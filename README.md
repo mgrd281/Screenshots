@@ -117,6 +117,17 @@ screenshot file itself is never changed.
 
 <br>
 
+## Four ways to hang.
+
+Pick what the photos hang on under Line in Settings: the clothesline,
+crooked photos swaying on clips; a glass shelf of Liquid Glass, upright
+like the Dock; an island, black and hanging from the top of the screen
+like the notch grown wide; or a card stack by the right edge that spreads
+out as you reach it, with a count on top. Everything else works the same
+on each.
+
+<br>
+
 ## Sent, and gone.
 
 Whatever you send into a chat, with a paper plane, ⌃⌥V or a drag, leaves

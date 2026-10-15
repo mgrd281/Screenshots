@@ -144,3 +144,9 @@
 /* Sent */
 "Take photos down once sent" = "보낸 사진 내리기";
 "Sent into a chat, they leave the line. Pinned ones stay." = "채팅으로 보낸 사진은 빨랫줄에서 내려갑니다. 고정한 사진은 남습니다.";
+/* Line styles */
+"Line style" = "빨랫줄 스타일";
+"Clothesline" = "빨랫줄";
+"Glass shelf" = "유리 선반";
+"Island" = "아일랜드";
+"Card stack" = "카드 더미";

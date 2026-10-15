@@ -144,3 +144,9 @@
 /* Sent */
 "Take photos down once sent" = "送信したら写真を外す";
 "Sent into a chat, they leave the line. Pinned ones stay." = "チャットに送った写真はロープから外れます。ピンで固定した写真は残ります。";
+/* Line styles */
+"Line style" = "ロープのスタイル";
+"Clothesline" = "物干しロープ";
+"Glass shelf" = "ガラスの棚";
+"Island" = "アイランド";
+"Card stack" = "カードの山";

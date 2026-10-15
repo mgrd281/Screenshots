@@ -144,3 +144,9 @@
 /* Sent */
 "Take photos down once sent" = "Quitar las fotos al enviarlas";
 "Sent into a chat, they leave the line. Pinned ones stay." = "Lo que envías a un chat sale del tendedero. Las fijadas se quedan.";
+/* Line styles */
+"Line style" = "Estilo del tendedero";
+"Clothesline" = "Tendedero";
+"Glass shelf" = "Estante de cristal";
+"Island" = "Isla";
+"Card stack" = "Pila de tarjetas";
