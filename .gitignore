@@ -5,3 +5,5 @@ build/
 .swiftpm/
 website/_site/
 __pycache__/
+promo/promo-*.html
+promo/out/
