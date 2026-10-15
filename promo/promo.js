@@ -129,18 +129,21 @@ for (let i = 0; i < SEND; i++) {
 const tag = el("div", "tag", document.body, ICON_PLANE);
 const tagPill = el("div", "pill", document.body, T.send_all);
 const ripple = el("div", "ripple");
+// The chat sits high enough that the reply stays above the captions TikTok
+// and Instagram draw over the bottom of the video.
+const CHAT_LEFT = 110, CHAT_WIDTH = 860, CHAT_TOP = 820, ALBUM_TOP = 270;
 const chat = el("div", "chat", document.body,
   `<div class="titlebar"><span class="lights"><i></i><i></i><i></i></span>${T.chat_title}</div>`);
-style(chat, { left: "70px", top: "960px", width: "940px", height: "860px" });
+style(chat, { left: `${X(CHAT_LEFT, CHAT_WIDTH)}px`, top: `${CHAT_TOP}px`, width: `${CHAT_WIDTH}px`, height: "730px" });
 const ask = el("div", "bubble in", chat, T.chat_in);
-style(ask, { top: "120px", [RTL ? "right" : "left"]: "32px" });
+style(ask, { top: "110px", [RTL ? "right" : "left"]: "32px" });
 const album = el("div", "album", chat, DATA.art.slice(0, SEND).map((a) => `<div class="cell">${a}</div>`).join(""));
-style(album, { top: "290px", [RTL ? "left" : "right"]: "32px", width: "460px" });
+style(album, { top: `${ALBUM_TOP}px`, [RTL ? "left" : "right"]: "32px", width: "460px" });
 const cells = [...album.children];
 const typing = el("div", "bubble in typing", chat, "<i></i><i></i><i></i>");
 const answer = el("div", "bubble in", chat, T.chat_reply);
-style(typing, { top: "640px", [RTL ? "right" : "left"]: "32px" });
-style(answer, { top: "640px", [RTL ? "right" : "left"]: "32px" });
+style(typing, { top: "610px", [RTL ? "right" : "left"]: "32px" });
+style(answer, { top: "610px", [RTL ? "right" : "left"]: "32px" });
 const ghosts = sendCards.map(() => {
   const g = el("div", "card", document.body, `<div class="glass"><div class="img"></div></div>`);
   return g;
@@ -148,7 +151,7 @@ const ghosts = sendCards.map(() => {
 ghosts.forEach((g, i) => { g.querySelector(".img").innerHTML = DATA.art[i]; style(g, { width: "176px", transformOrigin: "0 0" }); });
 // Where each card hangs on the send line, as a fraction of the width: spread
 // from the left edge to just before the tag.
-const sendFrac = (i) => (110 + i * ((1080 - 300 - 110) / (SEND - 1))) / 1080;
+const sendFrac = (i) => (105 + i * ((1080 - 365 - 105) / (SEND - 1))) / 1080;
 
 // MARK: Scene 6, hold for the menu
 
@@ -177,10 +180,10 @@ ringCircle.style.strokeDasharray = RING_LEN;
 // MARK: Scene 7, the end card
 
 const endIcon = el("img"); endIcon.src = DATA.icon; style(endIcon, { position: "absolute", width: "300px", height: "300px" });
-const endWord = el("div", "word end-word", document.body, "Snapfly"); style(endWord, { top: "930px", fontFamily: "Inter, sans-serif" });
-const endTag = el("div", "word end-tag", document.body, T.tagline); style(endTag, { top: "1130px" });
+const endWord = el("div", "word end-word", document.body, "Snapfly"); style(endWord, { top: "780px", fontFamily: "Inter, sans-serif" });
+const endTag = el("div", "word end-tag", document.body, T.tagline); style(endTag, { top: "980px" });
 const free = el("div", "free", document.body, T.free);
-const url = el("div", "word url", document.body, "mgrd281.github.io/Screenshots"); style(url, { top: "1560px" });
+const url = el("div", "word url", document.body, "mgrd281.github.io/Screenshots"); style(url, { top: "1400px" });
 
 // MARK: The timeline
 
@@ -289,7 +292,9 @@ function seek(t) {
     style(c, { left: `${X(cx - 88, 176)}px`, top: `${cy - lerp(60, 0, outQuart(arrive))}px`,
                transform: `rotate(${[-4, 3, -2, 4][i] + swing(t - 10.95 - i * 0.07, 6, 0.9, 1.2)}deg)` });
   });
-  const tagX = X(1080 - 160, 124), tagY = 520 + 4 * 46 * 0.93 * 0.07 + 18;
+  // In from the right edge, clear of the buttons the apps draw there.
+  const tagFrac = (1080 - 230 + 62) / 1080;
+  const tagX = X(1080 - 230, 124), tagY = 520 + 4 * 46 * tagFrac * (1 - tagFrac) + 18;
   show(tag, sIn * (1 - sOut)); show(tagPill, sIn * (1 - sOut));
   const press = prog(t, 12.0, 12.25);
   style(tag, { left: `${tagX}px`, top: `${tagY}px`, transform: `scale(${1 - 0.14 * Math.sin(Math.PI * press)})` });
@@ -302,15 +307,15 @@ function seek(t) {
   const askIn = prog(t, 10.95, 11.25);
   show(ask, outQuart(askIn)); ask.style.transform = `scale(${lerp(0.85, 1, outBack(askIn))})`;
   // The flights: from each card on the line to its cell in the album.
-  const chatTop = 960 + lerp(80, 0, sIn);
-  const albumLeft = RTL ? 70 + 32 : 70 + 940 - 32 - 460;
+  const chatTop = CHAT_TOP + lerp(80, 0, sIn);
+  const albumLeft = RTL ? X(CHAT_LEFT, CHAT_WIDTH) + 32 : CHAT_LEFT + CHAT_WIDTH - 32 - 460;
   ghosts.forEach((g, i) => {
     const start = 12.15 + i * 0.1;
     const f = prog(t, start, start + 0.85);
     const frac = sendFrac(i);
     const fromX = X(1080 * frac - 88, 176);
     const fromY = 520 + 4 * 46 * frac * (1 - frac) - 10;
-    const toX = albumLeft + (i % 2) * 233, toY = chatTop + 290 + Math.floor(i / 2) * 156;
+    const toX = albumLeft + (i % 2) * 233, toY = chatTop + ALBUM_TOP + Math.floor(i / 2) * 156;
     const e = inOut(f);
     const x = lerp(fromX, toX, e) + Math.sin(Math.PI * e) * (RTL ? -60 : 60);
     const y = lerp(fromY, toY, e) - Math.sin(Math.PI * e) * 140;
@@ -333,7 +338,7 @@ function seek(t) {
   const mOut = prog(t, 17.15, 17.5);
   show(menuRope, mIn * (1 - mOut));
   menuCards.forEach((c, i) => {
-    const frac = [0.2, 0.5, 0.8][i];
+    const frac = [0.17, 0.45, 0.78][i];
     const cx = 1080 * frac, cy = 540 + 4 * 40 * frac * (1 - frac) - 10;
     const held = i === 1 ? outQuart(prog(t, 15.55, 15.75)) : 0;
     show(c, mIn * (1 - mOut) * (i === 1 ? 1 : lerp(1, 0.5, outQuart(prog(t, 15.7, 16.0)))));
@@ -342,7 +347,7 @@ function seek(t) {
   });
   // The pointer: into place, hold, and later a click.
   const pIn = inOut(prog(t, 14.95, 15.45));
-  const pX = lerp(820, 470, pIn), pY = lerp(1500, 760, pIn);
+  const pX = lerp(820, 420, pIn), pY = lerp(1500, 760, pIn);
   const p5Out = prog(t, 17.1, 17.4);
   const ptrA = prog(t, 14.95, 15.15) * (1 - p5Out);
   const pt = prog(t, 11.05, 11.9);
@@ -371,10 +376,10 @@ function seek(t) {
   show(pdf, outQuart(pd) * (1 - prog(t, 17.25, 17.5)));
   style(pdf, { left: `${X(90, 230)}px`, top: `${1210 - 60 * outQuart(pd)}px`, transform: `rotate(${lerp(-12, 6, outBack(pd))}deg) scale(${lerp(0.5, 1, outBack(pd))})` });
 
-  // 7. The end card on the wallpaper.
+  // 7. The end card on the wallpaper, above the captions the apps draw at the bottom.
   const ei = prog(t, 17.7, 18.3);
   show(endIcon, outQuart(ei));
-  style(endIcon, { left: "390px", top: `${lerp(520, 560, 1) - 120 * (1 - outBack(ei))}px`,
+  style(endIcon, { left: "390px", top: `${410 - 120 * (1 - outBack(ei))}px`,
     transform: `scale(${lerp(0.6, 1, outBack(ei))}) rotate(${lerp(-14, 0, outQuart(ei))}deg)`,
     filter: `drop-shadow(0 30px 50px rgba(40,0,50,${0.45 * outQuart(ei)}))` });
   const ew = prog(t, 18.0, 18.55);
@@ -383,7 +388,7 @@ function seek(t) {
   show(endTag, outQuart(et)); style(endTag, { transform: `translateY(${lerp(30, 0, outQuart(et))}px)` });
   const fr = prog(t, 18.6, 19.05);
   show(free, outQuart(fr));
-  style(free, { left: "540px", top: "1380px", transform: `translateX(-50%) scale(${lerp(0.8, 1, outBack(fr))})` });
+  style(free, { left: "540px", top: "1225px", transform: `translateX(-50%) scale(${lerp(0.8, 1, outBack(fr))})` });
   const ur = prog(t, 18.85, 19.3);
   show(url, outQuart(ur));
   // A slow push in on the end card.

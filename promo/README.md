@@ -31,6 +31,9 @@ found on their own.
   - The screenshots are the website's drawings (`website/build.py`).
   - The menu items and the tagline are the app's own words, from its
     `Localizable.strings`.
+- **Safe area.** TikTok and Instagram draw buttons down the right side and
+  a caption over the bottom. Text and buttons stay above y = 1500 and clear
+  of the right 140 px from y = 850 down.
 - **Fonts.** Inter and Noto Sans Arabic, from Google Fonts under the SIL
   Open Font License, are in `fonts/`.
 - **Sound.** The video has none. Add music in the app it is posted to.
