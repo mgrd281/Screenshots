@@ -30,8 +30,14 @@ required by the license and stays.
   `Snapfly.zip` to the Releases page:
   - **latest** from `main`: https://github.com/mgrd281/Screenshots/releases/tag/latest
   - **preview** from any other branch
-- The build is ad-hoc signed. The first time it opens, macOS asks the owner
-  to allow it under Privacy & Security, Open Anyway.
+- **Signing.** With the repository secret `SNAPFLY_SIGNING`, builds are signed
+  with the owner's Developer ID, and builds from `main` are notarized and
+  stapled (`scripts/signing.sh`). Without it they are ad-hoc signed, and the
+  first open needs Privacy & Security, Open Anyway.
+  - The owner makes that secret once, on their Mac, with
+    `scripts/mac-signing.sh`. It holds the App Store Connect API key, its key
+    ID and issuer, and the Developer ID key and certificate.
+  - Never write secrets from a workflow or a script: the owner pastes them.
 - Swift 5 language mode, macOS 14 deployment target, universal binary.
   Gate newer APIs with `if #available` and `#if canImport(...)`. Examples:
   - Translation needs macOS 15;

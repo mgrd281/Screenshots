@@ -18,14 +18,31 @@ concurrency:
 jobs:
   build:
     runs-on: macos-latest
+    env:
+      # Once the owner has run scripts/mac-signing.sh, builds are signed
+      # with the Developer ID, and those from main are notarized by Apple
+      # too, so they open without a warning. Until then, signed ad hoc.
+      CAN_SIGN: ${{ secrets.SNAPFLY_SIGNING != '' }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Check the translations
         run: swift scripts/check-strings.swift
 
+      - name: Get the Developer ID
+        if: env.CAN_SIGN == 'true'
+        env:
+          SNAPFLY_SIGNING: ${{ secrets.SNAPFLY_SIGNING }}
+        run: scripts/signing.sh developer-id
+
       - name: Build Snapfly.app
         run: scripts/build-app.sh
+
+      - name: Notarize
+        if: env.SIGN_IDENTITY != '' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
+        env:
+          SNAPFLY_SIGNING: ${{ secrets.SNAPFLY_SIGNING }}
+        run: scripts/signing.sh notarize build/Snapfly.app
 
       - name: Pack it
         run: ditto -c -k --keepParent build/Snapfly.app Snapfly.zip
@@ -45,10 +62,20 @@ jobs:
           else
             TAG=preview; TITLE="Snapfly (preview)"; FLAGS="--prerelease"
           fi
+          # Notarized, it opens like any app from the internet.
+          if [ "${NOTARIZED:-}" = "true" ]; then
+            FIRST_TIME="3. Signed by Mgrdegh Ghazarian and checked by Apple: the first time, click Open."
+          else
+            FIRST_TIME="3. The first time, macOS says it cannot check the app: open System Settings › Privacy & Security, scroll down and click Open Anyway."
+          fi
           gh release delete "$TAG" --yes --cleanup-tag || true
           gh release create "$TAG" Snapfly.zip --target "$GITHUB_SHA" --title "$TITLE" $FLAGS \
             --notes "Built from ${GITHUB_SHA::7} on $GITHUB_REF_NAME.
 
           1. Download Snapfly.zip and open it.
           2. Drag Snapfly to the Applications folder and open it.
-          3. The first time, macOS says it cannot check the app: open System Settings › Privacy & Security, scroll down and click Open Anyway."
+          $FIRST_TIME"
+
+      - name: Remove the signing keychain
+        if: always()
+        run: scripts/signing.sh cleanup
