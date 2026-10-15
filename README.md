@@ -81,6 +81,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>F</kbd> | Search the words in your screenshots. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd> | Take a screenshot: drag over an area, click a window, or press Return for the whole screen. Change it in Settings. |
+| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd> | Record the screen, chosen the same way. Press it again to stop. Change it in Settings. |
 
 <br>
 
@@ -124,6 +125,17 @@ or press Return for the whole screen; Escape cancels. The screenshot flies
 from where it was taken straight onto the line, with nothing to set up in the
 Screenshot app first. macOS asks for the Screen Recording permission the
 first time.
+
+For a menu that closes when you press a shortcut, choose Take Screenshot in
+5 Seconds. Choose what to take, open the menu, and a countdown above the Dock
+takes it when it runs out. A click on the countdown cancels it.
+
+Press <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd>, or choose Record
+Screen, to record an area, a window or the whole screen. A capsule above the
+Dock shows the time; click it, press the shortcut again, or choose Stop
+Recording in the menu bar to stop. The recording hangs on the line, ready to
+trim or send. It has no sound, and Snapfly's own line and controls stay out
+of it.
 
 <br>
 
@@ -277,7 +289,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `History.swift` | What left the line, kept for 7 or 30 days |
 | `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again |
 | `ChatButton.swift` | The send button that floats over a chat while photos hang |
-| `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen |
+| `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen, now or after a countdown |
+| `Recording.swift` | Records the screen from Snapfly itself, with the countdown and recording capsule above the Dock |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |

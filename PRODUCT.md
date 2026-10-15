@@ -40,9 +40,9 @@ leaves, and photos that leave the line once sent.
   so the app the user is typing in stays in front.
 - The user works in another app, usually a chat. Snapfly must never steal
   focus from it when sending.
-- The user has shortcuts: ⌃⌥T shows the line, ⌃⌥V sends, ⌃⌥F searches and
-  ⌃⌥S takes a screenshot from Snapfly itself. Settings opens from the menu
-  bar.
+- The user has shortcuts: ⌃⌥T shows the line, ⌃⌥V sends, ⌃⌥F searches,
+  ⌃⌥S takes a screenshot from Snapfly itself and ⌃⌥R starts or stops a screen
+  recording. Settings opens from the menu bar.
 
 ## Capabilities and Constraints
 

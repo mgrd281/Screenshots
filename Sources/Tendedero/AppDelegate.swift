@@ -79,6 +79,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         startWatcher()
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
         Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
+        Recording.shared.onFinish = { [weak self] url in self?.hangCapture(url) }
+        Recording.shared.onChange = { [weak self] in self?.updateStatusIcon() }
         History.purge()
         HistoryWindow.shared.onHang = { [weak self] url in self?.hangCapture(url) }
         let chatButton = ChatButton(line: line)
@@ -695,6 +697,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             case .send: self?.line.pasteNewest()
             case .search: self?.openSearch()
             case .capture: Capture.shared.start()
+            case .record:
+                if Recording.shared.isRecording {
+                    Recording.shared.stop()
+                } else {
+                    Capture.shared.start(mode: .record)
+                }
             }
         }
     }
@@ -791,11 +799,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     /// The shirt fills in while copied images are hung, so it shows at a
-    /// glance that the clipboard is being watched.
+    /// glance that the clipboard is being watched. While the screen is
+    /// recorded it is a stop button, as the Screenshot app's is.
     private func updateStatusIcon() {
         let on = ClipboardWatcher.isEnabled
-        let description = on ? L("Snapfly, hanging copied images") : "Snapfly"
-        let image = NSImage(systemSymbolName: on ? "tshirt.fill" : "tshirt", accessibilityDescription: description)
+        let recording = Recording.shared.isRecording
+        let description = recording ? L("Snapfly, recording the screen")
+            : on ? L("Snapfly, hanging copied images") : "Snapfly"
+        let symbol = recording ? "stop.circle" : on ? "tshirt.fill" : "tshirt"
+        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: description)
         image?.isTemplate = true
         statusItem.button?.image = image
         statusItem.button?.toolTip = description
@@ -804,15 +816,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
 
-        let captureItem = ClosureMenuItem(L("Take Screenshot")) {
-            // Once the menu has faded, so it is not in the picture.
-            Capture.shared.start(after: 0.2)
+        if Recording.shared.isRecording {
+            let stopItem = ClosureMenuItem(L("Stop Recording")) { Recording.shared.stop() }
+            if let shortcut = Shortcut.current(.record), shortcut.key.count == 1 {
+                stopItem.keyEquivalent = shortcut.key
+                stopItem.keyEquivalentModifierMask = shortcut.modifiers
+            }
+            menu.addItem(stopItem)
+        } else {
+            let captureItem = ClosureMenuItem(L("Take Screenshot")) {
+                // Once the menu has faded, so it is not in the picture.
+                Capture.shared.start(after: 0.2)
+            }
+            if let shortcut = Shortcut.current(.capture), shortcut.key.count == 1 {
+                captureItem.keyEquivalent = shortcut.key
+                captureItem.keyEquivalentModifierMask = shortcut.modifiers
+            }
+            menu.addItem(captureItem)
+            menu.addItem(ClosureMenuItem(L("Take Screenshot in 5 Seconds")) {
+                Capture.shared.start(after: 0.2, mode: .timer)
+            })
+            let recordItem = ClosureMenuItem(L("Record Screen")) {
+                Capture.shared.start(after: 0.2, mode: .record)
+            }
+            if let shortcut = Shortcut.current(.record), shortcut.key.count == 1 {
+                recordItem.keyEquivalent = shortcut.key
+                recordItem.keyEquivalentModifierMask = shortcut.modifiers
+            }
+            menu.addItem(recordItem)
         }
-        if let shortcut = Shortcut.current(.capture), shortcut.key.count == 1 {
-            captureItem.keyEquivalent = shortcut.key
-            captureItem.keyEquivalentModifierMask = shortcut.modifiers
-        }
-        menu.addItem(captureItem)
         menu.addItem(.separator())
 
         let toggleItem = ClosureMenuItem(isRevealed ? L("Hide line") : L("Show line")) { [weak self] in

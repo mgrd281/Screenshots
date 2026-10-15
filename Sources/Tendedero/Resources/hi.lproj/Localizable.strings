@@ -219,3 +219,13 @@
 "Add App…" = "ऐप जोड़ें…";
 "Chat apps" = "चैट ऐप्स";
 "It shows over these apps while photos hang." = "जब तक फ़ोटो टंगी हैं, यह इन ऐप्स के ऊपर दिखता है।";
+
+/* Timer and screen recording */
+"Take Screenshot in 5 Seconds" = "5 सेकंड में स्क्रीनशॉट लें";
+"Record Screen" = "स्क्रीन रिकॉर्ड करें";
+"Stop Recording" = "रिकॉर्डिंग रोकें";
+"Record the screen" = "स्क्रीन रिकॉर्ड करें";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "चुनें कि क्या लेना है: किसी हिस्से पर खींचें, किसी विंडो पर क्लिक करें, या पूरी स्क्रीन के लिए Return दबाएँ। यह 5 सेकंड बाद लिया जाता है।";
+"Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "रिकॉर्ड करने के लिए किसी हिस्से पर खींचें या किसी विंडो पर क्लिक करें। Return पूरी स्क्रीन रिकॉर्ड करता है, Escape रद्द करता है।";
+"Cancel the timer" = "टाइमर रद्द करें";
+"Snapfly, recording the screen" = "Snapfly, स्क्रीन रिकॉर्ड कर रहा है";

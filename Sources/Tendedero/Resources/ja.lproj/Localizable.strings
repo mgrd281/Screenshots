@@ -217,3 +217,13 @@
 "Add App…" = "Appを追加…";
 "Chat apps" = "チャットApp";
 "It shows over these apps while photos hang." = "写真が掛かっている間、これらのAppの上に表示されます。";
+
+/* Timer and screen recording */
+"Take Screenshot in 5 Seconds" = "5秒後にスクリーンショットを撮る";
+"Record Screen" = "画面を収録";
+"Stop Recording" = "収録を停止";
+"Record the screen" = "画面を収録";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "撮るものを選びます：範囲をドラッグするか、ウインドウをクリックするか、Returnキーで画面全体を選びます。5秒後に撮影されます。";
+"Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "収録する範囲をドラッグするか、ウインドウをクリックします。Returnキーで画面全体を収録、escでキャンセルします。";
+"Cancel the timer" = "タイマーをキャンセル";
+"Snapfly, recording the screen" = "Snapfly、画面を収録中";

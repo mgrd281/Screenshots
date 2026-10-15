@@ -198,6 +198,8 @@ literal value in a view.
 - **Search yellow** is the highlighter on words found by Search.
 - **Cover ink** is the opaque block over private details. It reads as
   redaction, not decoration.
+- **Record red** (`Color.red`) is only for the stop button while the screen
+  is recorded, as macOS marks recording.
 - **Island black** is pure black, to blend into the notch and the menu bar
   above it.
 
@@ -418,8 +420,28 @@ apps.
   - **The size** of the area, in points, sits in a capsule under its trailing
     corner: 11 pt medium monospaced digits, white on black at 55%, 20 pt high.
   - **A hint** sits in a `controlGlass` capsule above the Dock on the screen
-    with the pointer, and hides once a drag begins.
+    with the pointer, and hides once a drag begins. It says what the choice
+    is for: a screenshot, a timed screenshot or a recording.
   - The cursor is the crosshair.
+- **Capture capsule** (`Recording.swift`), for a timed screenshot and a
+  recording. A `controlGlass` capsule with a 4 pt inset, centered 16 pt
+  above the Dock, with a floating card's shadow (black 25%, radius 14, y 6;
+  14% under Liquid Glass) and a 16 pt transparent margin for it. It fades in
+  over 0.15 s.
+  - **Countdown**: the `timer` symbol (13 pt semibold, `.secondary`), the
+    seconds left (15 pt semibold rounded, monospaced digits, counting down
+    with a numeric content transition), and a cross in a 22 pt circle of
+    `.primary` at 8%.
+  - **Recording**: a 22 pt record red circle with a white `stop.fill`, and the
+    time so far (13 pt semibold rounded, monospaced digits, minutes and
+    seconds).
+  - It never becomes key and is never in what is taken. A click anywhere on
+    it cancels or stops; it is one button for VoiceOver, with a tooltip.
+  - While recording, the menu bar item turns into `stop.circle`, and its menu
+    starts with Stop Recording.
+  - **Recording edge**: around a recorded area, just outside it, a 1 pt line
+    of white at 90% inside a 1 pt line of black at 35%, so it shows on light
+    and dark screens. It lets the pointer through.
 
 ### Forms and lists
 - Grouped `Form` sections.
