@@ -1,0 +1,11 @@
+{
+  "name": "snapfly-site-tests",
+  "private": true,
+  "description": "Browser tests for the Snapfly website. Not part of the site: nothing here is built or shipped.",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}

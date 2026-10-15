@@ -6,6 +6,17 @@
       "headers": {
         "Authorization": "Bearer ${CONTEXT7_API_KEY:-}"
       }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "sh",
+      "args": [
+        ".claude/mcp/playwright-mcp.sh"
+      ]
+    },
+    "motion": {
+      "type": "http",
+      "url": "https://mcp.motion.dev"
     }
   }
 }

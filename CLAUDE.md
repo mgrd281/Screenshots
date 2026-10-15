@@ -70,11 +70,16 @@ required by the license and stays.
     keeps Vercel's toolbar off the previews, and allows the inline scripts
     (`INLINE_JS` in `build.py`) by their hashes. The build stops if they drift.
   - Three brand themes, Original Sunset (the default), Emerald Petrol and
-    Signature Orange, are chosen with the swatches in the menu bar and kept in `localStorage`
-    (`snapfly-brand`). Light or dark stays the system's. Brand colours are
-    tokens in `site.css`; see "Brand themes" in `DESIGN.md`.
+    Signature Orange, are chosen with the swatches in the menu bar and kept
+    in `localStorage` (`snapfly-brand`). Light or dark stays the system's.
+    Brand colours are tokens in `site.css`; see "Brand themes" in
+    `DESIGN.md`.
   - Its design rules are under "Website" in `DESIGN.md`; its brief is
     `website/BRIEF.md`.
+  - `site-tests/` checks it in a real browser with Playwright: every page in
+    three languages, the theme switcher, Reduce Motion. Run `npm ci` and
+    `npm test` there before pushing a change to the site. It is not part of
+    the site and runs in no workflow; see `site-tests/README.md`.
 - **Promo video.** `promo/` makes the vertical motion graphic in three
   languages; see `promo/README.md`. It reuses the website's drawings and the
   app's strings, so update it when either changes in a way the video shows.
@@ -105,14 +110,24 @@ required by the license and stays.
 - **`DESIGN.md` is the design system and it wins.** It sets the tokens,
   components, motion and accessibility rules, plus a list of banned patterns.
   `PRODUCT.md` holds the product context.
+- **The brand and motion documents explain and apply it; they set no values
+  of their own.**
+  - `BRAND_IDENTITY.md`: what the brand is (name, icon, colour layers, the
+    three themes as one brand, type, icons, motifs, voice).
+  - `BRAND_GUIDELINES.md`: how to apply it, including social and store
+    assets, and a checklist before shipping.
+  - `MOTION_SYSTEM.md`: motion tokens named from what ships, the signature
+    (take off and hang), concepts not yet built, engineering rules, and
+    where videos are made.
 - **Read both before any UI work.** That means any view, panel, menu, window,
   setting, icon, copy or motion.
 - **When a change adds a color, radius, size or component,** add it to
   `DESIGN.md` in the same pull request.
-- Agent skills sit in `.claude/skills/`, and one MCP server is set up for the
-  project in `.mcp.json`. See `.claude/skills/VENDORED.md` for what was
-  installed, what was left out, and why. None of them is part of the app or
-  the website; they only guide the coding agent.
+- Agent skills sit in `.claude/skills/`, and three MCP servers (Context7,
+  Playwright, Motion) are set up for the project in `.mcp.json`. See
+  `.claude/skills/VENDORED.md` for what was installed, what was left out,
+  and why. None of them is part of the app or the website; they only guide
+  the coding agent.
   - **`impeccable`** handles design direction, critique and polish.
     - Commands: `/impeccable critique|audit|polish|layout|typeset|clarify|harden|distill|quieter <target>`.
     - Its launcher and hooks are deliberately not installed. When it says the
@@ -136,6 +151,21 @@ required by the license and stays.
     documentation for libraries and frameworks. It reads the key from the
     `CONTEXT7_API_KEY` environment variable; without one, the shared free quota
     may already be used up.
+  - The **Playwright** MCP server gives the agent a browser to try the
+    website in (`.claude/mcp/playwright-mcp.sh`, a pinned version).
+  - **`ui-animation`** and **`motion`** (with the **Motion** docs server)
+    guide motion work. On the website that means CSS and the Web Animations
+    API, not the Motion library or React; values come from
+    `MOTION_SYSTEM.md`.
+  - **`remotion-best-practices`** (with create, markup, studio and render
+    inside it) is for videos only, in their own workspace, never in the
+    website. Nothing is rendered or published without the owner.
+  - **`brand-context`, `brand-identity`, `brand-guidelines`, `brand-audit`,
+    `brand-voice`** document and check the existing brand. They read
+    `.agents/brand-context.md`, a summary that points to the brand
+    documents. Never use them to rename or rebrand.
+  - **`canvas-design`** makes static compositions (store art, boards) on
+    Snapfly's brand, in the system font.
   - Every design skill gives way to `DESIGN.md`, `PRODUCT.md` and the owner's
     brief.
 - **No redesign without the owner asking.** Refinement keeps the existing
