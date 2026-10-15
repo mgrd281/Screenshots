@@ -129,7 +129,8 @@ first time.
 For a menu that closes when you press a shortcut, choose Take Screenshot with
 Timer, then 3, 5 or 10 seconds. Choose what to take, open the menu, and a
 countdown above the Dock takes it when it runs out. A click on the countdown
-cancels it. If something goes wrong, a short note above the Dock says so.
+cancels it. If something goes wrong anywhere in Snapfly, a short note above
+the Dock says what happened, instead of a beep.
 
 Press <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd>, or choose Record
 Screen, to record an area, a window or the whole screen. A capsule above the
@@ -305,6 +306,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |
 | `Trim.swift` | Trims a screen recording and saves the result |
+| `Tests/TendederoTests` | Tests for the logic that needs no screen, run by CI with `swift test` |
 | `FullScreen.swift` | Knows when to stay hidden |
 | `Line.swift` | What is hanging, and what you can do with it |
 

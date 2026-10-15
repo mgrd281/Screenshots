@@ -248,3 +248,16 @@
 "Names and addresses" = "名前と住所";
 "Everything but the amount and the date" = "金額と日付以外すべて";
 "Phone numbers and emails" = "電話番号とメール";
+
+/* Notes instead of beeps */
+"Making GIF…" = "GIFを作成中…";
+"The line is empty." = "ロープは空です。";
+"Another app already uses this shortcut." = "このショートカットはほかのアプリで使われています。";
+"Could not open the screenshot." = "スクリーンショットを開けませんでした。";
+"Could not combine the photos." = "写真を結合できませんでした。";
+"Could not make the PDF." = "PDFを作成できませんでした。";
+"No text found in this screenshot." = "このスクリーンショットにテキストは見つかりませんでした。";
+"Could not move it to the Trash." = "ゴミ箱に入れられませんでした。";
+"Could not save it to the Desktop." = "デスクトップに保存できませんでした。";
+"Could not save the changes." = "変更を保存できませんでした。";
+"Could not trim the recording." = "収録をトリミングできませんでした。";

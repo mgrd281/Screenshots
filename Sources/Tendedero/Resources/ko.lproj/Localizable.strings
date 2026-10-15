@@ -248,3 +248,16 @@
 "Names and addresses" = "이름과 주소";
 "Everything but the amount and the date" = "금액과 날짜만 빼고 전부";
 "Phone numbers and emails" = "전화번호와 이메일";
+
+/* Notes instead of beeps */
+"Making GIF…" = "GIF 만드는 중…";
+"The line is empty." = "빨랫줄이 비어 있어요.";
+"Another app already uses this shortcut." = "다른 앱이 이미 이 단축키를 사용해요.";
+"Could not open the screenshot." = "스크린샷을 열지 못했어요.";
+"Could not combine the photos." = "사진을 합치지 못했어요.";
+"Could not make the PDF." = "PDF를 만들지 못했어요.";
+"No text found in this screenshot." = "이 스크린샷에서 텍스트를 찾지 못했어요.";
+"Could not move it to the Trash." = "휴지통으로 옮기지 못했어요.";
+"Could not save it to the Desktop." = "데스크탑에 저장하지 못했어요.";
+"Could not save the changes." = "변경 사항을 저장하지 못했어요.";
+"Could not trim the recording." = "기록을 다듬지 못했어요.";

@@ -29,6 +29,9 @@ jobs:
       - name: Check the translations
         run: swift scripts/check-strings.swift
 
+      - name: Run the tests
+        run: swift test
+
       - name: Check the App Store scripts
         run: |
           swiftc -typecheck scripts/asc.swift

@@ -16,7 +16,7 @@ final class HideEditor: NSObject, NSWindowDelegate {
     func edit(_ url: URL, saved: @escaping () -> Void) {
         window?.close()
         guard let image = NSImage(contentsOf: url), image.size.width > 0, image.size.height > 0 else {
-            NSSound.beep()
+            Notice.show(L("Could not open the screenshot."))
             return
         }
         let model = HideModel(image: image, hand: PrivateDetails.hand(url))

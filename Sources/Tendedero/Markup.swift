@@ -94,7 +94,7 @@ final class Markup: NSObject, NSSharingServiceDelegate {
             onSaved(target)
         } catch {
             log.error("Could not save markup: \(error.localizedDescription, privacy: .public)")
-            NSSound.beep()
+            Notice.show(L("Could not save the changes."))
         }
     }
 

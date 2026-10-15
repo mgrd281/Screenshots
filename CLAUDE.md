@@ -71,6 +71,11 @@ required by the license and stays.
 - **Promo video.** `promo/` makes the vertical motion graphic in three
   languages; see `promo/README.md`. It reuses the website's drawings and the
   app's strings, so update it when either changes in a way the video shows.
+- **Tests.** `Tests/TendederoTests` holds XCTest tests for logic that needs no
+  screen (parsing, sizes, file kinds). The Build Snapfly workflow runs
+  `swift test` before building, so add a test with each new piece of such
+  logic. A failure that would leave the user guessing gets a `Notice`, not a
+  beep.
 - Swift 5 language mode, macOS 14 deployment target, universal binary.
   Gate newer APIs with `if #available` and `#if canImport(...)`. Examples:
   - Translation needs macOS 15;

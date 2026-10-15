@@ -248,3 +248,16 @@
 "Names and addresses" = "Nomes e enderezos";
 "Everything but the amount and the date" = "Todo agás o importe e a data";
 "Phone numbers and emails" = "Teléfonos e correos";
+
+/* Notes instead of beeps */
+"Making GIF…" = "Creando GIF…";
+"The line is empty." = "A corda está baleira.";
+"Another app already uses this shortcut." = "Outra app xa usa este atallo.";
+"Could not open the screenshot." = "Non se puido abrir a captura.";
+"Could not combine the photos." = "Non se puideron combinar as fotos.";
+"Could not make the PDF." = "Non se puido crear o PDF.";
+"No text found in this screenshot." = "Non se atopou texto nesta captura.";
+"Could not move it to the Trash." = "Non se puido mover ao Lixo.";
+"Could not save it to the Desktop." = "Non se puido gardar no escritorio.";
+"Could not save the changes." = "Non se puideron gardar os cambios.";
+"Could not trim the recording." = "Non se puido recortar a gravación.";

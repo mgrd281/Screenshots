@@ -58,7 +58,7 @@ final class Recording {
                 log.error("Could not record the screen: \(error.localizedDescription, privacy: .public)")
                 isRecording = false
                 onChange()
-                CaptureNotice.show(L("Could not record the screen."), on: Capture.screen(of: region))
+                Notice.show(L("Could not record the screen."), on: Capture.screen(of: region))
             }
         }
     }
@@ -76,7 +76,7 @@ final class Recording {
             guard saved, let url = keep(file, from: frame) else {
                 log.error("Could not save a screen recording")
                 try? FileManager.default.removeItem(at: file)
-                CaptureNotice.show(L("Could not save the recording."), on: nil)
+                Notice.show(L("Could not save the recording."), on: nil)
                 return
             }
             onFinish(url)
@@ -147,31 +147,49 @@ final class Recording {
     }
 }
 
-/// Says what went wrong, in the same capsule above the Dock, for a few
-/// seconds, and to VoiceOver. A click puts it away.
+/// A short note in the same capsule above the Dock: what went wrong, for a
+/// few seconds, or what is being made, until it is done. VoiceOver says it
+/// too. A click puts it away. It is used instead of a beep wherever a beep
+/// would leave the user guessing.
 @MainActor
-enum CaptureNotice {
+enum Notice {
     private static var badge: CaptureBadge?
     private static var hide: DispatchWorkItem?
+    private static var current: UUID?
 
-    static func show(_ text: String, on screen: NSScreen?) {
+    /// Without a screen, on the one with the pointer. Returns which note it
+    /// is, so the work that showed it ends only its own.
+    @discardableResult
+    static func show(_ text: String, on screen: NSScreen? = nil, working: Bool = false) -> UUID {
         hide?.cancel()
         badge?.orderOut(nil)
-        let badge = CaptureBadge(kind: .message(text), label: text) { CaptureNotice.dismiss() }
-        badge.show(on: screen ?? NSScreen.main)
+        let id = UUID()
+        current = id
+        let badge = CaptureBadge(kind: working ? .working(text) : .message(text), label: text) { Notice.end(id) }
+        badge.show(on: screen ?? pointerScreen)
         self.badge = badge
         NSAccessibility.post(element: NSApplication.shared, notification: .announcementRequested,
                              userInfo: [.announcement: text, .priority: NSAccessibilityPriorityLevel.high.rawValue])
-        let work = DispatchWorkItem { MainActor.assumeIsolated { CaptureNotice.dismiss() } }
-        hide = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4, execute: work)
+        if !working {
+            let work = DispatchWorkItem { MainActor.assumeIsolated { Notice.end(id) } }
+            hide = work
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4, execute: work)
+        }
+        return id
     }
 
-    static func dismiss() {
+    /// Puts the note away, unless another one has taken its place.
+    static func end(_ id: UUID) {
+        guard current == id else { return }
+        current = nil
         hide?.cancel()
         hide = nil
         badge?.orderOut(nil)
         badge = nil
+    }
+
+    private static var pointerScreen: NSScreen? {
+        NSScreen.screens.first { NSMouseInRect(NSEvent.mouseLocation, $0.frame, false) } ?? NSScreen.main
     }
 }
 
@@ -327,6 +345,8 @@ final class CaptureBadgeModel: ObservableObject {
         case countdown, recording
         /// Something that went wrong.
         case message(String)
+        /// Something being made, like a GIF.
+        case working(String)
     }
 
     let kind: Kind
@@ -499,6 +519,15 @@ private struct CaptureBadgeLabel: View {
                     .lineLimit(1)
                     .padding(.trailing, 8)
                     .padding(.vertical, 3)
+            case let .working(text):
+                ProgressView()
+                    .controlSize(.small)
+                    .padding(.leading, 6)
+                Text(text)
+                    .font(.system(size: 13, weight: .medium))
+                    .lineLimit(1)
+                    .padding(.trailing, 8)
+                    .padding(.vertical, 3)
             }
         }
         .padding(4)
@@ -550,11 +579,17 @@ enum GIF {
     static let maxFrames = 300
     static let maxSide = 800
 
+    /// How many frames a second, and how many in all, for a recording this
+    /// long: 10 a second, fewer for a long one, so it stays within 300.
+    static func plan(for seconds: Double) -> (fps: Double, count: Int) {
+        let fps = min(10, Double(maxFrames) / max(seconds, 0.1))
+        return (fps, min(maxFrames, max(1, Int(seconds * fps))))
+    }
+
     static func make(from movie: URL) async -> URL? {
         let asset = AVURLAsset(url: movie)
         guard let duration = try? await asset.load(.duration), duration.seconds > 0 else { return nil }
-        let fps = min(10, Double(maxFrames) / duration.seconds)
-        let count = max(1, Int(duration.seconds * fps))
+        let (fps, count) = plan(for: duration.seconds)
         let generator = AVAssetImageGenerator(asset: asset)
         generator.appliesPreferredTrackTransform = true
         generator.maximumSize = CGSize(width: maxSide, height: maxSide)

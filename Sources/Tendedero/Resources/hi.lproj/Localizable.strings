@@ -250,3 +250,16 @@
 "Names and addresses" = "नाम और पते";
 "Everything but the amount and the date" = "रकम और तारीख़ के सिवा सब कुछ";
 "Phone numbers and emails" = "फ़ोन नंबर और ईमेल";
+
+/* Notes instead of beeps */
+"Making GIF…" = "GIF बन रहा है…";
+"The line is empty." = "रस्सी ख़ाली है।";
+"Another app already uses this shortcut." = "यह शॉर्टकट पहले से कोई दूसरा ऐप इस्तेमाल करता है।";
+"Could not open the screenshot." = "स्क्रीनशॉट खोला नहीं जा सका।";
+"Could not combine the photos." = "तस्वीरें जोड़ी नहीं जा सकीं।";
+"Could not make the PDF." = "PDF नहीं बन सका।";
+"No text found in this screenshot." = "इस स्क्रीनशॉट में कोई टेक्स्ट नहीं मिला।";
+"Could not move it to the Trash." = "इसे ट्रैश में नहीं ले जाया जा सका।";
+"Could not save it to the Desktop." = "इसे डेस्कटॉप पर सहेजा नहीं जा सका।";
+"Could not save the changes." = "बदलाव सहेजे नहीं जा सके।";
+"Could not trim the recording." = "रिकॉर्डिंग छोटी नहीं की जा सकी।";

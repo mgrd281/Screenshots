@@ -74,7 +74,7 @@ final class Trim: NSObject, NSWindowDelegate {
         let start = item.reversePlaybackEndTime.isValid ? item.reversePlaybackEndTime : .zero
         let end = item.forwardPlaybackEndTime.isValid ? item.forwardPlaybackEndTime : item.duration
         guard let export = AVAssetExportSession(asset: item.asset, presetName: AVAssetExportPresetPassthrough) else {
-            NSSound.beep()
+            Notice.show(L("Could not trim the recording."))
             return
         }
         let temp = target.deletingLastPathComponent()
@@ -92,7 +92,7 @@ final class Trim: NSObject, NSWindowDelegate {
             } else {
                 log.error("Could not trim \(target.lastPathComponent, privacy: .public): \(export.error?.localizedDescription ?? "", privacy: .public)")
                 try? FileManager.default.removeItem(at: temp)
-                NSSound.beep()
+                Notice.show(L("Could not trim the recording."))
             }
         }
     }

@@ -266,14 +266,15 @@ final class Capture {
         do {
             let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
             guard let setup = Self.setup(region, in: content, forVideo: false) else {
-                return CaptureNotice.show(L("Could not take the screenshot."), on: Self.screen(of: region))
+                Notice.show(L("Could not take the screenshot."), on: Self.screen(of: region))
+                return
             }
             let image = try await SCScreenshotManager.captureImage(contentFilter: setup.filter,
                                                                     configuration: setup.config)
             save(image, from: setup.frame)
         } catch {
             log.error("Could not take a timed screenshot: \(error.localizedDescription, privacy: .public)")
-            CaptureNotice.show(L("Could not take the screenshot."), on: Self.screen(of: region))
+            Notice.show(L("Could not take the screenshot."), on: Self.screen(of: region))
         }
     }
 
@@ -327,10 +328,7 @@ final class Capture {
             height = rect.height * screen.backingScaleFactor
         }
         if forVideo {
-            let fit = min(1, 3840 / max(width, height, 1), (3840 * 2160 / max(width * height, 1)).squareRoot())
-            // Video sizes are even.
-            width = max(2, (width * fit / 2).rounded() * 2)
-            height = max(2, (height * fit / 2).rounded() * 2)
+            (width, height) = videoSize(width, height)
             config.minimumFrameInterval = CMTime(value: 1, timescale: 30)
             config.queueDepth = 6
             config.pixelFormat = kCVPixelFormatType_32BGRA
@@ -338,6 +336,12 @@ final class Capture {
         config.width = max(1, Int(width.rounded()))
         config.height = max(1, Int(height.rounded()))
         return (filter, config, frame)
+    }
+
+    /// Within 4K, at most 3840 on the long side, and even, as video wants.
+    nonisolated static func videoSize(_ width: CGFloat, _ height: CGFloat) -> (CGFloat, CGFloat) {
+        let fit = min(1, 3840 / max(width, height, 1), (3840 * 2160 / max(width * height, 1)).squareRoot())
+        return (max(2, (width * fit / 2).rounded() * 2), max(2, (height * fit / 2).rounded() * 2))
     }
 
     private static func display(of screen: NSScreen, in content: SCShareableContent) -> SCDisplay? {

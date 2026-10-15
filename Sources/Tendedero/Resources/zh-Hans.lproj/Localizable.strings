@@ -248,3 +248,16 @@
 "Names and addresses" = "姓名和地址";
 "Everything but the amount and the date" = "除金额和日期外全部";
 "Phone numbers and emails" = "电话号码和电子邮件";
+
+/* Notes instead of beeps */
+"Making GIF…" = "正在制作 GIF…";
+"The line is empty." = "晾衣绳是空的。";
+"Another app already uses this shortcut." = "另一个 App 已在使用此快捷键。";
+"Could not open the screenshot." = "无法打开截屏。";
+"Could not combine the photos." = "无法合并照片。";
+"Could not make the PDF." = "无法制作 PDF。";
+"No text found in this screenshot." = "此截屏中未找到文字。";
+"Could not move it to the Trash." = "无法移到废纸篓。";
+"Could not save it to the Desktop." = "无法存储到桌面。";
+"Could not save the changes." = "无法存储更改。";
+"Could not trim the recording." = "无法修剪录制内容。";
