@@ -141,7 +141,8 @@ final class ChatButton {
         return host
     }
 
-    /// The page open in a browser, read once a second.
+    /// The page open in a browser, read at every tick so a new tab or page
+    /// hides it at once.
     private var pageHost: String?
     private var scripts: [String: NSAppleScript] = [:]
 
@@ -187,7 +188,7 @@ final class ChatButton {
     func refresh() {
         let wanted = Self.isEnabled && hasSomethingToSend
         if wanted, timer == nil {
-            timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+            timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
                 MainActor.assumeIsolated { self?.update() }
             }
         } else if !wanted {
@@ -209,9 +210,8 @@ final class ChatButton {
             hide()
             return
         }
-        // The message box and the page change rarely; once a second is
-        // enough to follow them.
-        let fresh = ticks % 4 == 0
+        // The message box moves rarely; once a second is enough to follow it.
+        let fresh = ticks % 5 == 0
         ticks += 1
         // Where it was dragged is kept per app, and per website in a browser.
         let key: String
@@ -219,7 +219,9 @@ final class ChatButton {
             guard Self.inApps else { return hide() }
             key = id
         } else if Self.browsers[id] != nil {
-            if fresh { pageHost = readPage(in: id) }
+            // Read at every tick: switching to another tab or site hides it
+            // within a fifth of a second.
+            pageHost = readPage(in: id)
             guard let host = pageHost, let site = Self.site(for: host) else { return hide() }
             key = site
         } else {
