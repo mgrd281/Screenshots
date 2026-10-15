@@ -69,8 +69,8 @@ required by the license and stays.
     Its Content Security Policy lets in nothing from another host, which also
     keeps Vercel's toolbar off the previews, and allows the inline scripts
     (`INLINE_JS` in `build.py`) by their hashes. The build stops if they drift.
-  - Two brand themes, Original Sunset (the default) and Emerald Petrol, are
-    chosen with the swatches in the menu bar and kept in `localStorage`
+  - Three brand themes, Original Sunset (the default), Emerald Petrol and
+    Signature Orange, are chosen with the swatches in the menu bar and kept in `localStorage`
     (`snapfly-brand`). Light or dark stays the system's. Brand colours are
     tokens in `site.css`; see "Brand themes" in `DESIGN.md`.
   - Its design rules are under "Website" in `DESIGN.md`; its brief is

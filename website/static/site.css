@@ -50,6 +50,20 @@
   --badge-bg: #000000;
   --badge-edge: rgba(255, 255, 255, 0.32);
   --glass-shine: 0 0 #0000;
+  /* What sits straight on the wallpaper: its text, keys, pill buttons, the
+     Desktop's file names and the glass shelf; and the surfaces a theme may
+     give the first view, the close and the privacy band of its own. */
+  --on-wall: #FFFFFF;
+  --kbd-wall-bg: rgba(255, 255, 255, 0.16);
+  --kbd-wall-edge: rgba(255, 255, 255, 0.3);
+  --pill-bg: rgba(255, 255, 255, 0.16);
+  --pill-bg-hover: rgba(255, 255, 255, 0.26);
+  --pill-edge: rgba(255, 255, 255, 0.4);
+  --file-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  --shelf-bg: rgba(255, 255, 255, 0.24);
+  --shelf-edge: rgba(255, 255, 255, 0.5);
+  --hero-bg: none;
+  --close-bg: none;
   --tile-a: #FFC45C;
   --tile-b: #FF5E62;
   --tile-c: #B234D6;
@@ -166,6 +180,117 @@
       radial-gradient(58% 52% at 80% -10%, rgba(22, 129, 118, 0.6) 0%, rgba(22, 129, 118, 0) 72%),
       radial-gradient(80% 66% at 0% 100%, rgba(7, 81, 78, 0.5) 0%, rgba(7, 81, 78, 0) 70%),
       linear-gradient(160deg, #0B3E3B 0%, #08302F 38%, #052627 68%, #021516 100%);
+  }
+}
+
+/* MARK: Signature Orange
+
+   The third brand theme. Where Sunset is a many-coloured sky and Emerald
+   Petrol is deep water, Signature Orange is one confident colour used
+   with precision: a bold orange field for the first view and the close,
+   clean warm-white space between them, Premium Black type, and one black
+   band where the page talks about privacy. Gradients stay where they add
+   depth: a warm highlight where the line hangs and a deeper orange low on
+   the trailing side. In dark, the page turns Premium Black and the orange
+   becomes light: an ambient glow above the line, a glow rising into the
+   close, and a solid Deep Orange band. Filled controls use Deep Orange,
+   so white on them stays readable. */
+:root[data-brand="orange"] {
+  --orange: #EC632C;
+  --orange-deep: #C7461C;
+  --orange-high: #FF8754;
+  --peach: #FFE4D7;
+  --black: #171717;
+  --neutral: #FAFAF8;
+
+  --accent: #C7461C;
+  --link: #B23E17;
+  --ink: #171717;
+  --ground: #FAFAF8;
+  --bar-bg: rgba(255, 255, 255, 0.72);
+  --menu-bg: rgba(255, 255, 255, 0.9);
+  --glass: rgba(255, 255, 255, 0.62);
+  --glass-edge: rgba(255, 255, 255, 0.92);
+  --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --rope: #171717;
+  --wash: rgba(0, 0, 0, 0);
+  --wash-light: rgba(0, 0, 0, 0);
+  --scrim: rgba(0, 0, 0, 0);
+  --shade: 90 34 10;
+  --shade-deep: 60 22 6;
+  --brand-gradient: linear-gradient(135deg, #FF8754, #EC632C 52%, #C7461C);
+  --brand-glow: rgba(236, 99, 44, 0.32);
+  --badge-bg: #171717;
+  --badge-edge: rgba(255, 255, 255, 0.16);
+  --tile-a: #FF8754;
+  --tile-b: #EC632C;
+  --tile-c: #C7461C;
+  --on-wall: #171717;
+  --on-wall-2: rgba(23, 23, 23, 0.76);
+  --kbd-wall-bg: rgba(23, 23, 23, 0.05);
+  --kbd-wall-edge: rgba(23, 23, 23, 0.18);
+  --pill-bg: rgba(23, 23, 23, 0.05);
+  --pill-bg-hover: rgba(23, 23, 23, 0.1);
+  --pill-edge: rgba(23, 23, 23, 0.18);
+  --file-shadow: none;
+  --shelf-bg: rgba(255, 255, 255, 0.78);
+  --shelf-edge: rgba(23, 23, 23, 0.08);
+  --wall:
+    radial-gradient(55% 42% at 100% 0%, rgba(255, 228, 215, 0.9) 0%, rgba(255, 228, 215, 0) 70%),
+    radial-gradient(45% 36% at 0% 100%, rgba(255, 228, 215, 0.55) 0%, rgba(255, 228, 215, 0) 70%),
+    #FAFAF8;
+  --hero-bg:
+    radial-gradient(70% 58% at 80% 0%, rgba(255, 135, 84, 0.85) 0%, rgba(255, 135, 84, 0) 70%),
+    radial-gradient(60% 55% at 100% 100%, rgba(199, 70, 28, 0.5) 0%, rgba(199, 70, 28, 0) 70%),
+    #EC632C;
+  --close-bg:
+    radial-gradient(60% 62% at 50% 0%, rgba(255, 135, 84, 0.8) 0%, rgba(255, 135, 84, 0) 72%),
+    #EC632C;
+  --band-bg:
+    radial-gradient(50% 80% at 100% 0%, rgba(236, 99, 44, 0.24) 0%, rgba(236, 99, 44, 0) 70%),
+    #171717;
+  --band-ink: #FFFFFF;
+  --band-ink-2: rgba(255, 255, 255, 0.84);
+  --band-strong: #FF8754;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-brand="orange"] {
+    --link: #FF8754;
+    --ink: #F5F5F7;
+    --ground: #121211;
+    --bar-bg: rgba(23, 23, 23, 0.7);
+    --menu-bg: rgba(32, 32, 31, 0.92);
+    --glass: rgba(40, 40, 38, 0.56);
+    --glass-edge: rgba(255, 255, 255, 0.12);
+    --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    --rope: #FFE4D7;
+    --shade: 0 0 0;
+    --shade-deep: 0 0 0;
+    --badge-bg: #C7461C;
+    --badge-edge: rgba(255, 196, 170, 0.45);
+    --on-wall: #FFFFFF;
+    --on-wall-2: rgba(255, 255, 255, 0.84);
+    --kbd-wall-bg: rgba(255, 255, 255, 0.08);
+    --kbd-wall-edge: rgba(255, 255, 255, 0.2);
+    --pill-bg: rgba(255, 255, 255, 0.07);
+    --pill-bg-hover: rgba(255, 255, 255, 0.13);
+    --pill-edge: rgba(255, 255, 255, 0.2);
+    --shelf-bg: rgba(255, 255, 255, 0.1);
+    --shelf-edge: rgba(255, 255, 255, 0.18);
+    --wall:
+      radial-gradient(50% 40% at 100% 0%, rgba(236, 99, 44, 0.1) 0%, rgba(236, 99, 44, 0) 70%),
+      #121211;
+    --hero-bg:
+      radial-gradient(65% 55% at 80% -6%, rgba(236, 99, 44, 0.55) 0%, rgba(236, 99, 44, 0) 70%),
+      radial-gradient(45% 40% at 8% 0%, rgba(255, 135, 84, 0.14) 0%, rgba(255, 135, 84, 0) 70%),
+      #121211;
+    --close-bg:
+      radial-gradient(62% 72% at 50% 112%, rgba(236, 99, 44, 0.6) 0%, rgba(236, 99, 44, 0) 72%),
+      #121211;
+    --band-bg: linear-gradient(160deg, #D24F21 0%, #C7461C 58%, #B33D17 100%);
+    --band-ink-2: rgba(255, 255, 255, 0.92);
+    --band-strong: #FFFFFF;
   }
 }
 
@@ -389,6 +514,8 @@ kbd {
 }
 :root[data-brand="emerald"] .brand-thumb { transform: translateX(100%); }
 :root[data-brand="emerald"][dir="rtl"] .brand-thumb { transform: translateX(-100%); }
+:root[data-brand="orange"] .brand-thumb { transform: translateX(200%); }
+:root[data-brand="orange"][dir="rtl"] .brand-thumb { transform: translateX(-200%); }
 .brand-chip {
   position: relative;
   z-index: 1;
@@ -421,6 +548,11 @@ kbd {
   background:
     radial-gradient(circle at 72% 20%, rgba(184, 222, 210, 0.95), rgba(184, 222, 210, 0) 52%),
     linear-gradient(160deg, #2E9E8D 0%, #168176 38%, #07514E 74%, #062F31 100%);
+}
+.brand-dot-orange {
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 44%),
+    linear-gradient(150deg, #FF8754 0%, #EC632C 50%, #C7461C 100%);
 }
 .brand-chip:hover .brand-dot { scale: 1.12; }
 .brand-chip:active .brand-dot { scale: 0.9; }
@@ -455,7 +587,7 @@ kbd {
   .brand-thumb { background: rgba(255, 255, 255, 0.2); box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.4), inset 0 0.5px 0 rgba(255, 255, 255, 0.18); }
 }
 @media (pointer: coarse) {
-  .brand-thumb, .brand-chip { width: 34px; height: 28px; }
+  .brand-thumb, .brand-chip { width: 32px; height: 28px; }
   .brand-chip::before { content: ""; position: absolute; inset: -8px 0; }
 }
 
@@ -507,7 +639,8 @@ kbd {
   min-height: min(100svh, 1000px);
   display: flex;
   flex-direction: column;
-  color: #FFFFFF;
+  background: var(--hero-bg);
+  color: var(--on-wall);
 }
 
 /* A wash under the words keeps white text readable on every part of the
@@ -948,7 +1081,7 @@ kbd {
   overflow-x: clip;
   padding-block: clamp(96px, 12vw, 168px);
   background: var(--wash-light);
-  color: #FFFFFF;
+  color: var(--on-wall);
 }
 
 /* The wallpaper keeps its colours below the first view; a soft scrim sits
@@ -977,7 +1110,7 @@ kbd {
 .copy p { max-width: 34em; margin-top: 18px; color: var(--on-wall-2); font-size: clamp(1.05rem, 1.3vw, 1.2rem); line-height: 1.55; }
 .copy.center { max-width: 760px; margin-inline: auto; }
 
-.section kbd { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.3); color: #FFFFFF; }
+.section kbd { background: var(--kbd-wall-bg); border-color: var(--kbd-wall-edge); color: var(--on-wall); }
 .chord { white-space: nowrap; }
 
 .split {
@@ -1051,11 +1184,11 @@ kbd {
   display: -webkit-box;
   margin-top: 5px;
   overflow: hidden;
-  color: #FFFFFF;
+  color: var(--on-wall);
   font-size: 11px;
   line-height: 1.25;
   text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  text-shadow: var(--file-shadow);
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   transition: opacity 0.3s;
@@ -1070,18 +1203,18 @@ kbd {
   gap: 6px;
   margin-top: 26px;
   padding: 8px 16px;
-  border: 0.5px solid rgba(255, 255, 255, 0.4);
+  border: 0.5px solid var(--pill-edge);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.16);
+  background: var(--pill-bg);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
-  color: #FFFFFF;
+  color: var(--on-wall);
   font: inherit;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
-.replay:hover { background: rgba(255, 255, 255, 0.26); }
+.replay:hover { background: var(--pill-bg-hover); }
 .replay .icon { width: 15px; height: 15px; }
 
 /* MARK: Settings windows */
@@ -1307,10 +1440,10 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   top: calc(30px + var(--sw) * 0.62);
   height: 44px;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.24);
+  background: var(--shelf-bg);
   -webkit-backdrop-filter: blur(16px) saturate(1.6);
   backdrop-filter: blur(16px) saturate(1.6);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--shelf-edge);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
 }
 .island {
@@ -1379,9 +1512,10 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 }
 .point { display: block; }
 .section h2.points:lang(ar) { letter-spacing: 0; line-height: 1.3; }
-.design p { max-width: 36em; margin-top: 28px; color: var(--on-wall-2); font-size: 1.15rem; }
-.design strong { color: #FFFFFF; font-weight: 600; }
-.design .link-arrow { margin-top: 4px; color: #FFFFFF; text-decoration: underline; text-underline-offset: 0.22em; }
+.design { background: var(--band-bg, var(--wash-light)); color: var(--band-ink, var(--on-wall)); }
+.design p { max-width: 36em; margin-top: 28px; color: var(--band-ink-2, var(--on-wall-2)); font-size: 1.15rem; }
+.design strong { color: var(--band-strong, #FFFFFF); font-weight: 600; }
+.design .link-arrow { margin-top: 4px; color: var(--band-ink, #FFFFFF); text-decoration: underline; text-underline-offset: 0.22em; }
 
 /* MARK: Close */
 
@@ -1390,7 +1524,8 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   isolation: isolate;
   overflow: hidden;
   padding-block: clamp(96px, 12vw, 168px);
-  color: #FFFFFF;
+  background: var(--close-bg);
+  color: var(--on-wall);
 }
 .close::after { background: linear-gradient(to bottom, var(--wash-light) 0%, var(--wash-light) 100%); }
 .close-icon { width: clamp(104px, 11vw, 140px); height: auto; margin: 0 auto 28px; filter: drop-shadow(0 16px 26px rgb(var(--shade) / 0.35)); }
@@ -1763,6 +1898,26 @@ input[role="switch"]:checked::before { translate: 16px 0; }
     --d-wall-1: #0F3A37;
     --d-wall-2: #134440;
     --d-wall-3: #061D1E;
+  }
+}
+
+/* Signature Orange on the desktop to try: a warm sand desktop, black at
+   night, and Deep Orange as the Mac's accent. */
+:root[data-brand="orange"] .desk-stage {
+  --d-accent: #C7461C;
+  --d-accent-text: #B23E17;
+  --d-accent-soft: rgba(236, 99, 44, 0.24);
+  --d-wall-1: #F4DCCD;
+  --d-wall-2: #EFC2A6;
+  --d-wall-3: #DF9670;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-brand="orange"] .desk-stage {
+    --d-accent-text: #FF8754;
+    --d-accent-soft: rgba(255, 135, 84, 0.3);
+    --d-wall-1: #2A1C15;
+    --d-wall-2: #3A2318;
+    --d-wall-3: #141110;
   }
 }
 
@@ -2565,19 +2720,19 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   gap: 6px;
   margin: 0;
   padding: 8px 16px;
-  border: 0.5px solid rgba(255, 255, 255, 0.4);
+  border: 0.5px solid var(--pill-edge);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.16);
+  background: var(--pill-bg);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
-  color: #FFFFFF;
+  color: var(--on-wall);
   font: inherit;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
 @media (pointer: coarse) { .desk-guide-btn { min-height: 44px; } }
-.desk-guide-btn:hover { background: rgba(255, 255, 255, 0.26); }
+.desk-guide-btn:hover { background: var(--pill-bg-hover); }
 .desk-guide-btn .icon { width: 15px; height: 15px; }
 
 /* Reduce Motion: no magnification, and changes only fade. */
@@ -2882,14 +3037,16 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 
 /* MARK: Phones */
 
-/* On the narrowest phones the menu bar keeps Snapfly's icon and drops its
-   name from view, so the theme switcher and the language menu still fit. */
-@media (max-width: 385px) {
+/* On phones the menu bar keeps Snapfly's icon and drops its name from
+   view, so the theme switcher and the language menu still fit. */
+@media (max-width: 430px) {
   .app-menu span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 }
 @media (max-width: 340px) {
+  .menubar-row { gap: 2px; padding-inline: 4px; }
   .menus a, .lang-menu summary { padding-inline: 6px; }
   .brand-switch { margin-inline-end: 0; }
+  .brand-thumb, .brand-chip { width: 28px; }
 }
 
 @media (max-width: 640px) {

@@ -506,15 +506,17 @@
 
   // MARK: Brand theme
 
-  // Two looks for the same Mac: Original Sunset and Emerald Petrol. The
-  // choice stays on this device and is set before the page paints, by the
-  // first script in <head>; light or dark is still the system's.
+  // Three looks for the same Mac: Original Sunset, Emerald Petrol and
+  // Signature Orange. The choice stays on this device and is set before the
+  // page paints, by the first script in <head>; light or dark is still the
+  // system's.
   const brandSwitch = document.querySelector(".brand-switch");
   if (brandSwitch) {
     const root = document.documentElement;
     const chips = [...brandSwitch.querySelectorAll("[data-brand-pick]")];
-    const bars = { sunset: ["#F5F5F7", "#161618"], emerald: ["#F5F8F5", "#081819"] };
-    const current = () => (root.dataset.brand === "emerald" ? "emerald" : "sunset");
+    const bars = { sunset: ["#F5F5F7", "#161618"], emerald: ["#F5F8F5", "#081819"], orange: ["#FAFAF8", "#121211"] };
+    const known = (brand) => (brand in bars ? brand : "sunset");
+    const current = () => known(root.dataset.brand);
     const show = (brand) => {
       chips.forEach((chip) => {
         const on = chip.dataset.brandPick === brand;
@@ -526,8 +528,8 @@
       });
     };
     const apply = (brand) => {
-      if (brand === "emerald") root.dataset.brand = brand;
-      else delete root.dataset.brand;
+      if (brand === "sunset") delete root.dataset.brand;
+      else root.dataset.brand = brand;
       show(brand);
     };
     const choose = (brand) => {
@@ -551,7 +553,7 @@
     });
     // Another tab that changes the theme changes this one too.
     addEventListener("storage", (event) => {
-      if (event.key === "snapfly-brand") apply(event.newValue === "emerald" ? "emerald" : "sunset");
+      if (event.key === "snapfly-brand") apply(known(event.newValue));
     });
   }
 
