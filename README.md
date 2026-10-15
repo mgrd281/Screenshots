@@ -118,7 +118,11 @@ the apps, by name and icon, and the websites; turn any off, remove it, or add
 your own. To know the page, Snapfly asks the
 browser, and macOS asks you once whether it may. It shows the newest photo and how many
 will go. One click and they are in, without a trip to the top of the screen.
-Drag it where you like it; it remembers the spot for each app. In Settings,
+Over the chats it knows, like ChatGPT, Claude, Gemini, WhatsApp, Telegram
+or Slack, it finds that spot by itself, measured on each one: on a new chat,
+whose message box sits in the middle of the page, it sits higher than once
+the chat has started. Drag it where you like it; it remembers the spot for
+each app, and for a new chat apart. In Settings,
 under Line, choose where it sits (above the chat's send button, a corner of
 the window, or the edge of the screen), how it looks, its icon and its color,
 with a preview, or turn it off.
@@ -315,6 +319,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `ScreenshotWatcher.swift` | Notices new screenshots |
 | `History.swift` | What left the line, kept for 7 or 30 days |
 | `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again |
+| `ChatLayouts.swift` | Where the chat button sits over each chat it knows, on a new chat and once started |
 | `ChatButton.swift` | The send button that floats over a chat while photos hang |
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen, now or after a countdown |
 | `CaptureButton.swift` | The screenshot button: one click takes a screenshot, from the edge of the screen |
