@@ -607,6 +607,7 @@ kbd {
   font-weight: 600;
 }
 .lights { position: absolute; inset-inline-start: 16px; display: flex; gap: 8px; }
+.window-title { max-width: 100%; padding-inline: 74px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lights i { display: block; width: 12px; height: 12px; border-radius: 50%; background: var(--light-red); }
 .lights i:nth-child(2) { background: var(--light-yellow); }
 .lights i:nth-child(3) { background: var(--light-green); }
@@ -1246,6 +1247,568 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 .page-404 img { margin: 0 auto 20px; }
 .page-404 .btn { margin-top: 24px; }
 
+/* MARK: Order on the line */
+
+/* A photo dragged along the line follows the pointer, lifted, while the
+   others step aside; a vertical swipe still scrolls the page. */
+.line .photo-hit { touch-action: pan-y; }
+.peg.dragging {
+  z-index: 6;
+  animation: none;
+  rotate: 0deg;
+  transition: top 0.3s var(--ease-out), opacity 0.2s;
+  cursor: grabbing;
+}
+.peg.dragging .photo { scale: 1.06; box-shadow: var(--shadow-card-hover); }
+.peg.dragging .corner { opacity: 0; }
+.peg.dragging .photo-hit { cursor: grabbing; }
+
+/* MARK: The send button over the chat */
+
+/* Snapfly's own button, just above the chat's send button: the newest photo
+   with the one before leaning behind, the count and the paper plane. */
+.chat-btn {
+  position: absolute;
+  z-index: 3;
+  bottom: calc(var(--crop) + 58px);
+  inset-inline-end: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px;
+  border: 0.5px solid var(--glass-edge);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  backdrop-filter: blur(20px) saturate(1.8);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  transition: scale 0.25s var(--ease-out), opacity 0.2s;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.chat-btn:hover { scale: 1.04; }
+.chat-btn:active { scale: 0.98; }
+.chat-btn[hidden] { display: flex; opacity: 0; scale: 0.8; pointer-events: none; }
+.cb-thumbs { position: relative; width: 30px; height: 26px; margin-inline-start: 3px; }
+.cb-thumb {
+  position: absolute;
+  top: 0;
+  inset-inline-start: 0;
+  width: 26px;
+  height: 26px;
+  overflow: hidden;
+  border-radius: 7px;
+  background: var(--fill-2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7), 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+.cb-thumb:first-child { rotate: -9deg; translate: 4px -1px; opacity: 0.85; }
+[dir="rtl"] .cb-thumb:first-child { rotate: 9deg; translate: -4px -1px; }
+.cb-thumb svg { width: 100%; height: 100%; }
+.cb-count {
+  min-width: 1ch;
+  font-family: var(--font-rounded);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.cb-send {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+}
+.cb-send .icon { grid-area: 1 / 1; width: 15px; height: 15px; transition: opacity 0.2s, scale 0.3s var(--ease-out); }
+[dir="rtl"] .cb-send .icon:first-child, [dir="rtl"] .caption-send .icon { transform: scaleX(-1); }
+.cb-send .done { opacity: 0; scale: 0.5; }
+.chat-btn.sent .cb-send .icon:first-child { opacity: 0; scale: 0.5; }
+.chat-btn.sent .cb-send .done { opacity: 1; scale: 1; }
+.chat-btn.holding { scale: 0.97; }
+
+/* The message bar: a capsule of the search bar's glass, 6 pt above the
+   button, its trailing edge on the button's. */
+.caption-bar {
+  position: absolute;
+  z-index: 4;
+  bottom: calc(var(--crop) + 58px + 44px);
+  inset-inline-end: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(340px, calc(100% - 20px));
+  height: 44px;
+  padding-inline: 16px 7px;
+  border: 0.5px solid var(--glass-edge);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  backdrop-filter: blur(24px) saturate(1.8);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+  animation: fade-in 0.15s ease-out;
+}
+.caption-bar[hidden] { display: none; }
+@keyframes fade-in { from { opacity: 0; } }
+.caption-field {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  outline: none;
+}
+.caption-field::placeholder { color: var(--ink-2); }
+.caption-count {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--fill-2);
+  color: var(--ink-2);
+  font-family: var(--font-rounded);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.caption-send {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+  cursor: pointer;
+}
+.caption-send .icon { width: 14px; height: 14px; }
+
+.chat .chat-menu, .screen .shot-menu, .screen .sf-menu {
+  position: absolute;
+  z-index: 30;
+  inset: auto;
+  width: max-content;
+  min-width: 200px;
+  max-width: min(340px, 92vw);
+}
+.chat-menu[hidden], .shot-menu[hidden], .sf-menu[hidden] { display: none; }
+.chat-menu .ctx-item, .shot-menu .ctx-item, .sf-menu .ctx-item { gap: 18px; font-size: 14px; min-height: 26px; cursor: pointer; }
+.ctx-item:hover:not(:disabled), .ctx-item:focus-visible, .has-sub:hover > .ctx-item, .has-sub.open > .ctx-item { background: var(--accent); color: #FFFFFF; }
+.ctx-item:disabled { color: var(--ink-2); opacity: 0.6; cursor: default; }
+.msg.caption { margin-top: -4px; }
+
+/* MARK: Taking screenshots */
+
+.capture .copy p { margin-inline: auto; }
+.screen-stage { max-width: 1120px; margin: clamp(40px, 6vw, 64px) auto 0; padding-inline: var(--gutter); }
+
+/* A Mac screen with its own menu bar and Dock. Snapfly's line, button and
+   capsule sit on top of it and, as in the app, are never in what is taken. */
+.screen {
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 1000 / 625;
+  border-radius: clamp(10px, 1.6cqw, 18px);
+  box-shadow: 0 30px 70px rgba(20, 0, 30, 0.38), 0 0 0 1px rgba(255, 255, 255, 0.28);
+  color: var(--ink);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.screen-stage .screen { border-radius: clamp(10px, 1.6vw, 18px); }
+.screen-glass { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+.scene svg { width: 100%; height: 100%; }
+
+.screen-line {
+  --card-w: 14cqw;
+  --rope-h: 5.5cqw;
+  position: absolute;
+  inset-inline: 0;
+  top: 4.16%;
+  height: 30%;
+}
+.screen-rope { top: 0; height: var(--rope-h); }
+.screen-rope path { stroke-width: 1.5; }
+.screen-line .clip { top: -1cqw; width: 0.8cqw; height: 1.9cqw; min-width: 5px; min-height: 12px; }
+.screen-line .photo { padding: 0.35cqw; border-radius: 1.4cqw; }
+.screen-line .photo-img { border-radius: 1.05cqw; }
+.screen-line .photo-img svg { height: 100%; }
+.screen-line .corner-x { width: 20px; height: 20px; top: -8px; inset-inline-start: -8px; }
+.screen-line .copied { font-size: 11px; padding: 3px 9px 3px 7px; top: calc(100% + 6px); }
+.screen-line .peg.landing { opacity: 0; transition: none; }
+.screen-line .peg.arriving { opacity: 0; }
+.badge-video {
+  position: absolute;
+  bottom: calc(0.35cqw + 6px);
+  inset-inline-start: calc(0.35cqw + 6px);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 18px;
+  padding: 0 6px 0 5px;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #FFFFFF;
+  font-family: var(--font-rounded);
+  font-size: 9px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.badge-video .icon { width: 9px; height: 9px; }
+
+/* The screenshot button: a 40 pt circle at the screen's trailing edge, in
+   the accent, red with a stop while recording. */
+.shot-btn {
+  position: absolute;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  width: clamp(30px, 4cqw, 46px);
+  height: clamp(30px, 4cqw, 46px);
+  padding: 0;
+  translate: -50% -50%;
+  border: 0.75px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+  transition: scale 0.25s var(--ease-out), background-color 0.2s;
+}
+.shot-btn:hover { scale: 1.08; }
+.shot-btn:active { scale: 0.96; }
+.shot-btn[hidden] { display: none; }
+.shot-btn .icon { grid-area: 1 / 1; width: 46%; height: 46%; }
+.shot-btn .stop { display: none; width: 34%; height: 34%; }
+.shot-btn.recording { background: var(--count); }
+.shot-btn.recording .glyph { display: none; }
+.shot-btn.recording .stop { display: block; }
+.shot-btn.hint::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  animation: ring 2.2s var(--ease-out) infinite;
+  pointer-events: none;
+}
+@keyframes ring { 0% { opacity: 0.9; scale: 1; } 70%, 100% { opacity: 0; scale: 1.9; } }
+
+/* Snapfly in the screen's menu bar. */
+.sf-status {
+  position: absolute;
+  z-index: 10;
+  width: max(2.8cqw, 30px);
+  height: max(2.6cqw, 30px);
+  translate: -50% -50%;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+}
+.sf-status:hover, .sf-status[aria-expanded="true"] { background: rgba(0, 0, 0, 0.1); }
+.sf-status:focus-visible { outline-offset: -2px; }
+
+/* Every row keeps room for a checkmark before its title, as macOS does. */
+.sf-menu .ctx-item { position: relative; justify-content: flex-start; padding-inline-start: 30px; }
+.sf-menu .ctx-item > span:first-of-type { flex: 1; }
+.sf-menu .tick { position: absolute; inset-inline-start: 11px; width: 13px; height: 13px; visibility: hidden; }
+.sf-menu [aria-checked="true"] .tick { visibility: visible; }
+.kbd-hint { color: var(--ink-2); font-size: 13px; letter-spacing: 0.06em; }
+.ctx-item:hover .kbd-hint, .ctx-item:focus-visible .kbd-hint { color: inherit; opacity: 0.85; }
+.has-sub { position: relative; }
+.ctx-menu.sub {
+  position: absolute;
+  top: -6px;
+  inset-inline-start: calc(100% + 2px);
+  display: none;
+  width: max-content;
+  min-width: 150px;
+}
+.has-sub.open > .sub { display: block; }
+.has-sub.flip > .sub { inset-inline-start: auto; inset-inline-end: calc(100% + 2px); }
+/* Where neither side has room, as on a phone, it opens under its item. */
+.has-sub.below > .sub { top: calc(100% + 2px); inset-inline-start: 24px; z-index: 2; background: var(--surface); }
+.sub .ctx-item { padding-inline-start: 14px !important; }
+
+/* The capture screen: the screen dimmed, the window under the pointer
+   tinted, and while dragging, all but the area dimmed further. */
+.cap-overlay {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  overflow: hidden;
+  cursor: crosshair;
+  touch-action: none;
+  outline: none;
+}
+.cap-overlay[hidden] { display: none; }
+.cap-dim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.12); }
+.cap-overlay.dragging .cap-dim, .cap-overlay.dragging .cap-win { display: none; }
+.cap-win { position: absolute; background: color-mix(in srgb, #0A84FF 22%, transparent); border-radius: 6px; pointer-events: none; }
+.cap-win[hidden], .cap-area[hidden] { display: none; }
+.cap-area {
+  position: absolute;
+  outline: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+.cap-size {
+  position: absolute;
+  top: calc(100% + 6px);
+  inset-inline-end: 0;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.cap-hint {
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  max-width: 88%;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  backdrop-filter: blur(20px) saturate(1.8);
+  border: 0.5px solid var(--glass-edge);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  color: var(--ink);
+  font-size: clamp(11px, 1.3cqw, 13px);
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: center;
+  cursor: default;
+  transition: opacity 0.15s;
+}
+.cap-overlay.dragging .cap-hint { opacity: 0; }
+.cap-cancel {
+  display: none;
+  flex: none;
+  padding: 3px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--fill-2);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+@media (pointer: coarse) { .cap-cancel { display: inline-block; } }
+
+.cap-flash { position: absolute; z-index: 19; background: #FFFFFF; opacity: 0; pointer-events: none; }
+.cap-flash.go { animation: flash 0.38s ease-out; }
+@keyframes flash { 0% { opacity: 0; } 25% { opacity: 0.85; } 100% { opacity: 0; } }
+
+/* The recording edge: white just outside the area, black outside that. */
+.rec-edge {
+  position: absolute;
+  z-index: 7;
+  outline: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+.rec-edge[hidden] { display: none; }
+
+/* The capture capsule, centered 16 pt above the Dock. */
+.capsule {
+  position: absolute;
+  z-index: 9;
+  bottom: calc(100% - 568 / 625 * 100% + 2.6cqw);
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: clamp(30px, 3.6cqw, 40px);
+  padding: 4px 12px;
+  border: 0.5px solid var(--glass-edge);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  backdrop-filter: blur(20px) saturate(1.8);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  animation: fade-in 0.15s ease-out;
+}
+.capsule[hidden] { display: none; }
+.capsule[data-kind="countdown"] [data-for="recording"], .capsule[data-kind="recording"] [data-for="countdown"] { display: none; }
+.capsule .icon { width: 15px; height: 15px; }
+.cap-timer { display: flex; color: var(--ink-2); }
+.cap-count, .cap-time { font-family: var(--font-rounded); font-variant-numeric: tabular-nums; font-weight: 600; }
+.cap-count { min-width: 1.2ch; font-size: 16px; text-align: center; }
+.cap-count.tick { animation: count 0.35s var(--ease-out); }
+@keyframes count { from { opacity: 0; translate: 0 -6px; } }
+.cap-time { font-size: 14px; }
+.cap-x { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--fill-2); }
+.cap-x .icon { width: 11px; height: 11px; }
+.cap-stop { display: grid; place-items: center; width: 22px; height: 22px; margin-inline-start: -6px; border-radius: 50%; background: var(--count); color: #FFFFFF; }
+.cap-stop .icon { width: 12px; height: 12px; }
+
+.sim-pointer {
+  position: absolute;
+  z-index: 18;
+  width: clamp(16px, 2.4cqw, 26px);
+  height: clamp(16px, 2.4cqw, 26px);
+  translate: -12% -8%;
+  transition: left 0.9s cubic-bezier(.4, 0, .2, 1), top 0.9s cubic-bezier(.4, 0, .2, 1), scale 0.12s;
+  pointer-events: none;
+}
+.sim-pointer[hidden] { display: none; }
+.sim-pointer .icon { width: 100%; height: 100%; }
+.sim-pointer.press { scale: 0.85; }
+
+.screen-try {
+  max-width: 40em;
+  margin: 28px auto 0;
+  padding-inline: var(--gutter);
+  color: var(--on-wall-2);
+  font-size: 15px;
+  text-align: center;
+}
+
+/* MARK: Say what to hide */
+
+.try-note { font-size: 15px !important; }
+.hide-win { justify-self: end; width: 100%; max-width: 600px; }
+.hide-canvas { padding: 18px 18px 6px; background: var(--fill); }
+.photo-shot {
+  position: relative;
+  max-width: 420px;
+  margin-inline: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  cursor: crosshair;
+  touch-action: none;
+}
+.rc {
+  padding: 20px 22px 18px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  color: #1D1D1F;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.rc-head { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; align-items: center; padding-bottom: 14px; border-bottom: 1px solid #E5E5EA; }
+.rc-check { grid-row: span 2; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #34C759; color: #FFFFFF; }
+.rc-check .icon { width: 20px; height: 20px; }
+.rc-title { font-size: 15px; font-weight: 700; }
+.rc-date { color: #6E6E73; font-size: 12px; }
+.rc-amount { grid-column: 1 / -1; margin-top: 10px; font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+.rc-rows { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 7px 16px; margin: 12px 0 0; }
+.rc-rows div { display: contents; }
+.rc-rows dt { color: #6E6E73; font-size: 12px; }
+.rc-rows dd { margin: 0; }
+.pc.ltr { direction: ltr; unicode-bidi: isolate; }
+.hide-boxes { position: absolute; inset: 0; pointer-events: none; }
+.cover-box {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  background: var(--cover-ink);
+  color: #FFFFFF;
+  pointer-events: auto;
+  cursor: pointer;
+  transform-origin: 0 50%;
+  transition: box-shadow 0.15s;
+}
+[dir="rtl"] .cover-box { transform-origin: 100% 50%; }
+.cover-box.new { animation: cover 0.32s var(--ease-out) both; animation-delay: var(--d, 0ms); }
+@keyframes cover { from { scale: 0 1; } }
+.cover-box .icon { width: 13px; height: 13px; opacity: 0; transition: opacity 0.15s; }
+.cover-box:hover { box-shadow: 0 0 0 2px var(--accent); }
+.cover-box:hover .icon { opacity: 1; }
+.drawing-box {
+  position: absolute;
+  border: 1.5px dashed var(--accent);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  pointer-events: none;
+}
+.photo-shot .badge-lock { opacity: 0; scale: 0.6; transition: opacity 0.2s, scale 0.3s var(--ease-out); }
+.photo-shot.saved .badge-lock { opacity: 1; scale: 1; }
+
+.saying { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 14px 14px 0; }
+.say-row { display: flex; align-items: center; gap: 8px; }
+.say-glyph { display: flex; color: var(--ink-2); }
+.say-glyph .icon { width: 15px; height: 15px; }
+.say-field {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 9px;
+  border: 0.5px solid var(--hairline);
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: inset 0 0.5px 1px rgba(0, 0, 0, 0.12);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+.say-field::placeholder { color: var(--ink-2); }
+.say-field:focus { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 0; }
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--fill-2);
+  border-top-color: var(--ink-2);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+.spinner[hidden] { display: none; }
+@keyframes spin { to { rotate: 360deg; } }
+.say-examples { display: flex; flex-wrap: wrap; gap: 6px; padding-inline-start: 23px; }
+.say-note { min-height: 1.4em; padding-inline-start: 23px; color: var(--ink-2); font-size: 12.5px; }
+
+.mac-btn {
+  height: 24px;
+  padding: 0 11px;
+  border: 0.5px solid var(--hairline);
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.16);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mac-btn:active:not(:disabled) { background: var(--fill-2); }
+.mac-btn:disabled { color: var(--ink-2); opacity: 0.55; cursor: default; }
+.mac-btn.small { height: 22px; padding: 0 9px; font-size: 12px; }
+.mac-btn.primary { border-color: transparent; background: var(--accent); color: #FFFFFF; }
+.mac-btn.primary:active { background: color-mix(in srgb, var(--accent) 85%, #000); }
+
+.hide-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px; padding: 14px; }
+.hide-foot p { flex: 1 1 14em; color: var(--ink-2); font-size: 12.5px; }
+.foot-buttons { display: flex; gap: 8px; }
+
 /* MARK: Narrow screens */
 
 @media (max-width: 860px) {
@@ -1275,6 +1838,10 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 
 @media (max-width: 640px) {
   :root { --card-w: 100px; --rope-h: 60px; }
+  .rc { padding: 16px; font-size: 12.5px; }
+  .rc-amount { font-size: 23px; }
+  .hide-canvas { padding: 12px 12px 4px; }
+  .screen-stage { padding-inline: 12px; }
   .tag-send { width: 50px; height: 50px; }
   .tag-send .icon { width: 22px; height: 22px; }
   .tag-label { font-size: 12px; padding-inline: 9px; }
