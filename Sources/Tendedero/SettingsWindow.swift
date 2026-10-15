@@ -152,12 +152,11 @@ final class Preferences: ObservableObject {
     }
 
     /// Whether the send button may press ⌘V in the app in front.
-    var canPaste: Bool { AXIsProcessTrusted() }
+    var canPaste: Bool { Paste.isAllowed }
 
-    /// Asks macOS to list Tendedero under Accessibility, and opens that list.
+    /// Asks macOS to list Snapfly under Accessibility, and opens that list.
     func openAccessibility() {
-        let prompt = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-        if !AXIsProcessTrustedWithOptions(prompt),
+        if !Paste.askToBeAllowed(),
            let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
             NSWorkspace.shared.open(url)
         }

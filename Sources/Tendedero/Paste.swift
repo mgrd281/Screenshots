@@ -7,25 +7,38 @@ import Carbon
 /// the one you were typing in, like the message box of a chat.
 ///
 /// Pressing a key in another app needs the Accessibility permission, the
-/// only thing in Tendedero that does, and it is asked for the first time
+/// only thing in Snapfly that does, and it is asked for the first time
 /// it is used. Until it is given, the photos are still on the clipboard,
 /// for a ⌘V by hand.
 @MainActor
 enum Paste {
-    /// The app a paste lands in, unless that is Tendedero itself.
+    /// The app a paste lands in, unless that is Snapfly itself.
     static var frontApp: NSRunningApplication? {
         let app = NSWorkspace.shared.frontmostApplication
         return app?.processIdentifier == ProcessInfo.processInfo.processIdentifier ? nil : app
     }
 
     /// Whether a paste would happen now, without asking for anything.
-    static var willPaste: Bool { frontApp != nil && AXIsProcessTrusted() }
+    static var willPaste: Bool { frontApp != nil && isAllowed }
+
+    /// Whether macOS lets Snapfly press keys in other apps.
+    static var isAllowed: Bool { AXIsProcessTrusted() || CGPreflightPostEventAccess() }
+
+    /// Asks macOS for the permission, which also lists Snapfly under
+    /// Accessibility. The sandboxed store edition can only ask to press
+    /// keys: asking for all of Accessibility does nothing there.
+    @discardableResult
+    static func askToBeAllowed() -> Bool {
+        if isAllowed { return true }
+        if Edition.appStore { return CGRequestPostEventAccess() }
+        let prompt = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+        return AXIsProcessTrustedWithOptions(prompt)
+    }
 
     /// - Parameter delay: how long to wait first, so the paste lands with
     ///   the photos flying over.
     static func intoFrontApp(after delay: TimeInterval = 0) {
-        let prompt = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-        guard frontApp != nil, AXIsProcessTrustedWithOptions(prompt) else { return }
+        guard frontApp != nil, askToBeAllowed() else { return }
         // At least a moment for the app to see the new clipboard before reading it.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05 + delay) { pressCommandV() }
     }
