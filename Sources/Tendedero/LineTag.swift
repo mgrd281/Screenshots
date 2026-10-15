@@ -34,11 +34,21 @@ struct LineTag: View {
                     }
                     .transition(.opacity)
                 }
-                if line.liveCount > 0 {
-                    TagTool(symbol: "magnifyingglass", label: L("Search screenshots"), style: style) {
-                        line.onSearch?()
+                // With photos picked, PDF takes search's place, so the tag
+                // never holds more than five tools.
+                if !line.pickedIDs.isEmpty {
+                    TagTool(symbol: "doc.richtext", label: L("Make PDF"), style: style) {
+                        line.makePDF()
                     }
                     .transition(.opacity)
+                }
+                if line.liveCount > 0 {
+                    if line.pickedIDs.isEmpty {
+                        TagTool(symbol: "magnifyingglass", label: L("Search screenshots"), style: style) {
+                            line.onSearch?()
+                        }
+                        .transition(.opacity)
+                    }
                     // The photos picked with ⌘-click, or all of them.
                     TagTool(symbol: "paperplane", label: L("Paste into the app in front"), style: style) {
                         line.paste()
@@ -65,6 +75,7 @@ struct LineTag: View {
         }
         .animation(.easeOut(duration: 0.2), value: line.liveCount > 0)
         .animation(.easeOut(duration: 0.2), value: line.pickedIDs.count > 1)
+        .animation(.easeOut(duration: 0.2), value: line.pickedIDs.isEmpty)
     }
 
     /// Whether anything on the line goes to the Trash when taken down.

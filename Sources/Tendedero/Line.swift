@@ -250,6 +250,12 @@ final class Line: ObservableObject {
     /// them, or only this one, a page each in the order they hang. It hangs
     /// as the newest and comes picked and copied, ready to send, like a
     /// combined image.
+    /// The tag's PDF button: the photos picked.
+    func makePDF() {
+        guard let id = items.first(where: { pickedIDs.contains($0.id) && !$0.falling && $0.isImage })?.id else { return }
+        makePDF(id)
+    }
+
     func makePDF(_ id: UUID) {
         let photos = pickedIDs.contains(id)
             ? items.filter { pickedIDs.contains($0.id) && !$0.falling && $0.isImage }

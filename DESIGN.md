@@ -328,7 +328,8 @@ apps.
 
 ### Tag
 - A 26 pt wide capsule of SF Symbol tools: grip, combine, search, send and
-  take down.
+  take down. While photos are picked, PDF takes search's place, so it never
+  holds more than five.
 - It is clipped to the rope on the clothesline and sits inside the holder on
   the shelf and the island.
 - Tools show only when they can act.
