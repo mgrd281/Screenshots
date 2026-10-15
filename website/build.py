@@ -9,10 +9,13 @@ Only the Python standard library is used. The words live in content.py;
 labels the app itself shows come from its Localizable.strings, so the site
 and the app always agree.
 """
+import base64
+import hashlib
 import html
 import json
 import re
 import shutil
+import sys
 from pathlib import Path
 from urllib.parse import quote, urlparse
 
@@ -20,6 +23,12 @@ from content import DOWNLOAD, EMAIL, LANGS, MAKER, REPO, SITE_URL, TEXT
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "_site"
+
+# The English home page's one inline script. vercel.json's Content Security
+# Policy allows it by its hash, and nothing from another host, which also
+# keeps Vercel's toolbar off the preview pages.
+REDIRECT_JS = ('try{if(!localStorage.getItem("snapfly-lang")){var l=(navigator.language||"").toLowerCase();'
+               'if(l.indexOf("de")==0)location.replace("de/");else if(l.indexOf("ar")==0)location.replace("ar/")}}catch(e){}')
 STATIC = HERE / "static"
 STRINGS = HERE.parent / "Sources" / "Tendedero" / "Resources"
 BASE_PATH = urlparse(SITE_URL).path  # "/Screenshots/"
@@ -321,7 +330,7 @@ def head(lang, page, title, desc):
     # language once, until the visitor picks one.
     redirect = ""
     if lang == "en" and page == "index":
-        redirect = """<script>try{if(!localStorage.getItem("snapfly-lang")){var l=(navigator.language||"").toLowerCase();if(l.indexOf("de")==0)location.replace("de/");else if(l.indexOf("ar")==0)location.replace("ar/")}}catch(e){}</script>"""
+        redirect = f"<script>{REDIRECT_JS}</script>"
     p = prefix(lang)
     return f"""<!doctype html>
 <html lang="{lang}" dir="{t["dir"]}">
@@ -1220,7 +1229,18 @@ def sitemap():
             + "".join(urls) + "</urlset>\n")
 
 
+def check_policy():
+    """Stops the build when vercel.json no longer allows the inline script."""
+    digest = base64.b64encode(hashlib.sha256(REDIRECT_JS.encode()).digest()).decode()
+    config = json.loads((HERE.parent / "vercel.json").read_text(encoding="utf-8"))
+    policy = " ".join(h["value"] for rule in config.get("headers", []) for h in rule["headers"]
+                      if h["key"].lower() == "content-security-policy")
+    if f"'sha256-{digest}'" not in policy:
+        sys.exit(f"vercel.json: put 'sha256-{digest}' in script-src of the Content-Security-Policy.")
+
+
 def main():
+    check_policy()
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "assets").mkdir(parents=True)
