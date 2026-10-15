@@ -56,6 +56,12 @@ final class CaptureTests: XCTestCase {
 
 /// The screenshot button's choice is saved by name, so it survives updates.
 final class CaptureButtonTests: XCTestCase {
+    func testButtonGlyphsAreDistinct() {
+        let names = CaptureButtonSymbol.allCases.map(\.rawValue)
+        XCTAssertEqual(Set(names).count, names.count)
+        XCTAssertEqual(CaptureButtonSymbol.allCases.count, 12)
+    }
+
     func testClickChoicesKeepTheirNames() {
         XCTAssertEqual(CaptureButton.Click.allCases.map(\.rawValue), ["choose", "screen", "lastArea"])
     }

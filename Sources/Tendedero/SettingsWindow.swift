@@ -478,7 +478,8 @@ private struct LinePane: View {
                         Text(L("Takes the last area again")).tag(CaptureButton.Click.lastArea)
                     }
                     LabeledContent(L("Icon")) {
-                        HStack(spacing: 8) {
+                        // Two rows of six, so all of them fit beside the label.
+                        LazyVGrid(columns: Array(repeating: GridItem(.fixed(28), spacing: 8), count: 6), spacing: 8) {
                             ForEach(CaptureButtonSymbol.allCases) { symbol in
                                 let chosen = prefs.captureButtonSymbol == symbol
                                 Button { prefs.captureButtonSymbol = symbol } label: {
@@ -495,6 +496,7 @@ private struct LinePane: View {
                                 .accessibilityAddTraits(chosen ? .isSelected : [])
                             }
                         }
+                        .frame(width: 6 * 28 + 5 * 8)
                     }
                     LabeledContent(L("Color")) {
                         HStack(spacing: 4) {

@@ -279,3 +279,11 @@
 "Aperture" = "光圈";
 "Camera" = "相机";
 "Glass" = "玻璃";
+"Frame" = "边框";
+"Focus" = "对焦";
+"Frame with plus" = "带加号的边框";
+"Screen capture" = "屏幕捕捉";
+"Crop" = "裁剪";
+"Target" = "目标";
+"Lightning" = "闪电";
+"Sparkles" = "闪光";
