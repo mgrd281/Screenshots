@@ -18,6 +18,7 @@ final class Preferences: ObservableObject {
         var foldersChanged: () -> Void = {}
         var changeShortcut: (Shortcut.Role) -> Void = { _ in }
         var fullScreenChanged: () -> Void = {}
+        var setUpScreenshots: () -> Void = {}
         var openScreenshotsFolder: () -> Void = {}
     }
 
@@ -77,6 +78,10 @@ final class Preferences: ObservableObject {
 
     func openScreenshotsFolder() {
         actions.openScreenshotsFolder()
+    }
+
+    func setUpScreenshots() {
+        actions.setUpScreenshots()
     }
 
     // MARK: Line
@@ -249,9 +254,20 @@ private struct GeneralPane: View {
     var body: some View {
         Form {
             Section {
-                Toggle(isOn: $prefs.handlesScreenshots) {
-                    Text(L("Handle screenshots"))
-                    Text(L("Screenshots hang instantly and skip the Desktop"))
+                if Edition.appStore {
+                    // The sandbox keeps Snapfly out of the screenshot
+                    // settings, so this shows where to change them.
+                    LabeledContent {
+                        Button(L("Set Up…")) { prefs.setUpScreenshots() }
+                    } label: {
+                        Text(L("Handle screenshots"))
+                        Text(L("Screenshots saved to Pictures › Snapfly hang on the line"))
+                    }
+                } else {
+                    Toggle(isOn: $prefs.handlesScreenshots) {
+                        Text(L("Handle screenshots"))
+                        Text(L("Screenshots hang instantly and skip the Desktop"))
+                    }
                 }
                 Toggle(isOn: $prefs.hangsCopiedImages) {
                     Text(L("Hang copied images"))
@@ -554,9 +570,11 @@ private struct AboutPane: View {
                 .padding(.vertical, 18)
             Text(String(format: L("Made by %@"), AppDelegate.author))
                 .font(.headline)
-            Button(L("Check for Updates…")) { prefs.checkForUpdates() }
-                .controlSize(.large)
-                .padding(.top, 12)
+            if !Edition.appStore {
+                Button(L("Check for Updates…")) { prefs.checkForUpdates() }
+                    .controlSize(.large)
+                    .padding(.top, 12)
+            }
             Spacer()
             // The MIT License asks for the original's credit to stay.
             Text(L("Based on Tendedero by Alejandro Buján, under the MIT License."))

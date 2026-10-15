@@ -226,6 +226,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `TextCard.swift` | Translate Text and Describe, and the card that shows them |
 | `Appearance.swift` | Glass by role, Liquid Glass on macOS 26, and motion that honours Reduce Motion |
 | `Search.swift` | The words in every photo, and the search bar under the line |
+| `Edition.swift` | The Mac App Store edition: what the sandbox changes |
 | `Collage.swift` | Joins several screenshots into one image, or into one PDF |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |

@@ -155,3 +155,10 @@
 "Glass shelf" = "काँच की शेल्फ़";
 "Island" = "आइलैंड";
 "Card stack" = "कार्ड का ढेर";
+
+/* App Store edition: the Screenshot app saves to Pictures › Snapfly */
+"Set up screenshots" = "स्क्रीनशॉट सेट करें";
+"Open the Screenshot app, click Options and choose Other Location, then pick the Snapfly folder in Pictures. Turn off Show Floating Thumbnail too, so screenshots hang at once." = "स्क्रीनशॉट ऐप खोलें, विकल्प पर क्लिक करके अन्य स्थान चुनें, फिर चित्र में Snapfly फ़ोल्डर चुनें। तैरता थंबनेल दिखाएँ भी बंद करें, ताकि स्क्रीनशॉट तुरंत टँग जाएँ।";
+"Open Screenshot" = "स्क्रीनशॉट खोलें";
+"Set Up…" = "सेट करें…";
+"Screenshots saved to Pictures › Snapfly hang on the line" = "चित्र › Snapfly में सहेजे गए स्क्रीनशॉट रस्सी पर टँगते हैं";

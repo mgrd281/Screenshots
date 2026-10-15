@@ -35,6 +35,11 @@ enum Inbox {
     private static let savedKey = "inboxSavedSettings"
 
     static let folder: URL = {
+        // In the App Store edition: where the Screenshot app can save and
+        // the sandbox lets Snapfly read.
+        if Edition.appStore {
+            return Edition.home.appendingPathComponent("Pictures/Snapfly", isDirectory: true)
+        }
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         return base.appendingPathComponent("Snapfly/Screenshots", isDirectory: true)
     }()
@@ -60,6 +65,9 @@ enum Inbox {
 
     static func apply() {
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        // The sandbox keeps the App Store edition out of the screenshot
+        // settings; the owner points the Screenshot app here instead.
+        if Edition.appStore { return }
         // Never save our own values as the "previous" ones, for example after
         // a crash left them applied.
         var saved = UserDefaults.standard.dictionary(forKey: savedKey) ?? [:]
@@ -92,7 +100,7 @@ enum Inbox {
     }
 
     static func restore() {
-        guard isApplied else { return }
+        guard !Edition.appStore, isApplied else { return }
         let saved = UserDefaults.standard.dictionary(forKey: savedKey) ?? [:]
         set(locationKey, saved["location"])
         set(screenshotLocationKey, saved["locationScreenshot"])
