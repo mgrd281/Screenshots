@@ -57,7 +57,7 @@ final class HideEditor: NSObject, NSWindowDelegate {
     /// What Hide private details covers, read in the background.
     private func readCovered(_ url: URL, into model: HideModel) {
         let chosen = PrivateDetails.details
-        guard !chosen.isEmpty, !isRecording(url) else { return }
+        guard !chosen.isEmpty, isImage(url) else { return }
         DispatchQueue.global(qos: .userInitiated).async { [weak model] in
             guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
                   let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return }

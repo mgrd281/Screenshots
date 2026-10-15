@@ -81,6 +81,9 @@
 "Combine into one image" = "이미지 하나로 합치기";
 "One under another" = "위아래로";
 "Side by side" = "나란히";
+"Make PDF" = "PDF 만들기";
+/* The name of a PDF made from several screenshots, followed by the date. */
+"Screenshots" = "스크린샷";
 "Move the line" = "빨랫줄 옮기기";
 
 /* SettingsWindow */

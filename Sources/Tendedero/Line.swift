@@ -21,6 +21,13 @@ struct Pegged: Identifiable, Equatable {
     var pinned = false
     /// A screen recording rather than a screenshot.
     var isRecording: Bool { Tendedero.isRecording(url) }
+    /// A PDF made from photos on the line.
+    var isDocument: Bool { Tendedero.isDocument(url) }
+    /// A picture, rather than a recording or a PDF: what can be read,
+    /// covered, translated and joined.
+    var isImage: Bool { Tendedero.isImage(url) }
+    /// How many pages a PDF has.
+    var pages = 1
 
     static func == (a: Pegged, b: Pegged) -> Bool {
         a.id == b.id && a.falling == b.falling && a.flying == b.flying && a.thumb === b.thumb
@@ -101,6 +108,7 @@ final class Line: ObservableObject {
               let thumb = makeThumbnail(url) else { return nil }
         var item = Pegged(url: url, thumb: thumb)
         item.flying = flying
+        if item.isDocument { item.pages = pageCount(url) }
         items.append(item)
         scroll = 0
         // A full line lets the oldest photo fall off the far end. Only one: a
@@ -208,9 +216,9 @@ final class Line: ObservableObject {
     }
 
     /// What Combine joins: the photos picked, or every photo when fewer
-    /// than two are. Recordings stay out of it.
+    /// than two are. Recordings and PDFs stay out of it.
     var photosToCombine: [Pegged] {
-        let still = items.filter { !$0.falling && !$0.isRecording }
+        let still = items.filter { !$0.falling && $0.isImage }
         let picked = still.filter { pickedIDs.contains($0.id) }
         return picked.count > 1 ? picked : still
     }
@@ -229,6 +237,38 @@ final class Line: ObservableObject {
             DispatchQueue.main.async { [weak self] in
                 MainActor.assumeIsolated {
                     guard let self, let joined, let id = self.hang(joined) else {
+                        NSSound.beep()
+                        return
+                    }
+                    self.pick(id)
+                }
+            }
+        }
+    }
+
+    /// Make PDF, from a photo's menu: the photos picked when it is one of
+    /// them, or only this one, a page each in the order they hang. It hangs
+    /// as the newest and comes picked and copied, ready to send, like a
+    /// combined image.
+    func makePDF(_ id: UUID) {
+        let photos = pickedIDs.contains(id)
+            ? items.filter { pickedIDs.contains($0.id) && !$0.falling && $0.isImage }
+            : items.filter { $0.id == id && !$0.falling && $0.isImage }
+        guard !photos.isEmpty else { return }
+        // The pages are what leaves the line: private details covered, as
+        // chosen in Settings, and parts hidden by hand.
+        let pages = photos.map { (image: PrivateDetails.shareable($0.url), original: $0.url) }
+        // The name shows in the chat it is sent to.
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH.mm.ss"
+        let name = photos.count == 1 ? photos[0].url.deletingPathExtension().lastPathComponent
+            : "\(L("Screenshots")) \(formatter.string(from: Date()))"
+        pickedIDs = []
+        DispatchQueue.global(qos: .userInitiated).async {
+            let pdf = Collage.pdf(pages, named: name)
+            DispatchQueue.main.async { [weak self] in
+                MainActor.assumeIsolated {
+                    guard let self, let pdf, let id = self.hang(pdf) else {
                         NSSound.beep()
                         return
                     }
@@ -390,7 +430,7 @@ final class Line: ObservableObject {
     }
 
     private func showCard(_ kind: TextCardModel.Kind, for id: UUID, target: Locale.Language) {
-        guard let item = items.first(where: { $0.id == id && !$0.falling }), !item.isRecording else { return }
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
         let model = TextCardModel(kind, photo: id, url: item.url, line: self, target: target)
         TextCard.shared.show(model, under: frameOfPhoto?(id))
         model.start()
@@ -403,8 +443,9 @@ final class Line: ObservableObject {
             let entry = NSPasteboardItem()
             // With Hide private details on, a copy with them covered.
             let url = PrivateDetails.shareable(item.url)
-            // A recording is copied as the file, which apps paste as the video.
-            if !item.isRecording, let png = pngData(url) { entry.setData(png, forType: .png) }
+            // A recording or a PDF is copied as the file, which apps paste as
+            // the video or the document.
+            if item.isImage, let png = pngData(url) { entry.setData(png, forType: .png) }
             entry.setString(url.absoluteString, forType: .fileURL)
             return entry
         }
@@ -426,7 +467,7 @@ final class Line: ObservableObject {
     /// anywhere. Private details chosen in Settings are left out, as they
     /// are from everything else that leaves the line.
     func copyText(_ id: UUID) {
-        guard let item = items.first(where: { $0.id == id }), !item.isRecording else { return }
+        guard let item = items.first(where: { $0.id == id }), item.isImage else { return }
         let url = item.url
         let chosen = PrivateDetails.details
         let hand = PrivateDetails.hand(url)
@@ -542,11 +583,14 @@ final class Line: ObservableObject {
     }
 
     /// Long press: open the photo in the system Markup editor. Markup does
-    /// not edit video, so a recording opens in the trimming editor instead.
+    /// not edit video, so a recording opens in the trimming editor instead,
+    /// and a PDF opens in Preview, which marks up every page.
     func markup(_ id: UUID) {
         guard let item = items.first(where: { $0.id == id }) else { return }
         if item.isRecording {
             Trim.shared.edit(item.url, size: item.thumb.size)
+        } else if item.isDocument {
+            NSWorkspace.shared.open(item.url)
         } else {
             Markup.shared.edit(item.url)
         }
@@ -606,7 +650,7 @@ final class Line: ObservableObject {
         let terms = TextIndex.fold(query).split(whereSeparator: \.isWhitespace).map { String($0) }
         var result: [UUID: [CGRect]] = [:]
         var waiting = 0
-        for item in items where !item.falling && !item.isRecording {
+        for item in items where !item.falling && item.isImage {
             guard let rows = TextIndex.rows(for: item.url) else {
                 waiting += 1
                 TextIndex.read(item.url)
@@ -660,7 +704,7 @@ final class Line: ObservableObject {
 
     /// Hide Part: a box drawn over anything that should not leave the line.
     func hidePart(_ id: UUID) {
-        guard let item = items.first(where: { $0.id == id }), !item.isRecording else { return }
+        guard let item = items.first(where: { $0.id == id }), item.isImage else { return }
         let url = item.url
         HideEditor.shared.edit(url) { [weak self] in self?.cover(url) }
     }
@@ -738,6 +782,7 @@ final class Line: ObservableObject {
             guard !items.contains(where: { $0.url == url }), let thumb = makeThumbnail(url) else { continue }
             var item = Pegged(url: url, thumb: thumb)
             item.pinned = pinned.contains(path)
+            if item.isDocument { item.pages = pageCount(url) }
             items.append(item)
             TextIndex.read(url)
         }
@@ -764,10 +809,25 @@ func isRecording(_ url: URL) -> Bool {
     ["mov", "mp4"].contains(url.pathExtension.lowercased())
 }
 
+/// PDFs, as Make PDF saves them.
+func isDocument(_ url: URL) -> Bool {
+    url.pathExtension.lowercased() == "pdf"
+}
+
+/// A picture, rather than a recording or a PDF.
+func isImage(_ url: URL) -> Bool {
+    !isRecording(url) && !isDocument(url)
+}
+
+func pageCount(_ url: URL) -> Int {
+    CGPDFDocument(url as CFURL)?.numberOfPages ?? 1
+}
+
 /// The default size covers a card at twice its size in points, as on a
 /// Retina screen, and no more: every photo on the line keeps one in memory.
 func makeThumbnail(_ url: URL, maxPixels: Int = Int(320 * Layout.size.scale)) -> NSImage? {
     if isRecording(url) { return firstFrame(url, maxPixels: maxPixels) }
+    if isDocument(url) { return firstPage(url, maxPixels: maxPixels) }
     guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
     let options: [CFString: Any] = [
         kCGImageSourceCreateThumbnailFromImageAlways: true,
@@ -785,4 +845,25 @@ private func firstFrame(_ url: URL, maxPixels: Int) -> NSImage? {
     generator.maximumSize = CGSize(width: maxPixels, height: maxPixels)
     guard let cg = try? generator.copyCGImage(at: .zero, actualTime: nil) else { return nil }
     return NSImage(cgImage: cg, size: NSSize(width: cg.width, height: cg.height))
+}
+
+/// A PDF shows its first page, on white as it prints.
+private func firstPage(_ url: URL, maxPixels: Int) -> NSImage? {
+    guard let page = CGPDFDocument(url as CFURL)?.page(at: 1) else { return nil }
+    let box = page.getBoxRect(.mediaBox)
+    guard box.width > 0, box.height > 0 else { return nil }
+    let scale = CGFloat(maxPixels) / max(box.width, box.height)
+    let width = max(1, Int(box.width * scale)), height = max(1, Int(box.height * scale))
+    guard let space = CGColorSpace(name: CGColorSpace.sRGB),
+          let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                                  space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+    else { return nil }
+    context.setFillColor(CGColor(gray: 1, alpha: 1))
+    context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+    context.interpolationQuality = .high
+    context.scaleBy(x: scale, y: scale)
+    context.translateBy(x: -box.minX, y: -box.minY)
+    context.drawPDFPage(page)
+    guard let cg = context.makeImage() else { return nil }
+    return NSImage(cgImage: cg, size: NSSize(width: width, height: height))
 }

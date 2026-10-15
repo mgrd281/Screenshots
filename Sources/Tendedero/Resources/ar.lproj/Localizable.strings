@@ -81,6 +81,9 @@
 "Combine into one image" = "دمج في صورة واحدة";
 "One under another" = "واحدة تحت الأخرى";
 "Side by side" = "جنباً إلى جنب";
+"Make PDF" = "إنشاء PDF";
+/* The name of a PDF made from several screenshots, followed by the date. */
+"Screenshots" = "لقطات الشاشة";
 "Move the line" = "تحريك الحبل";
 
 /* SettingsWindow */

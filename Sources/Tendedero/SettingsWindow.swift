@@ -477,7 +477,7 @@ private struct PrivacyPane: View {
     /// The newest photo, as it hangs: covered, once read, the way it will
     /// leave the line.
     private var newest: Pegged? {
-        line.items.last { !$0.falling && !$0.isRecording }
+        line.items.last { !$0.falling && $0.isImage }
     }
 
     var body: some View {

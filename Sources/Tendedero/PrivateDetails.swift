@@ -96,7 +96,7 @@ enum PrivateDetails {
     static func shareable(_ url: URL) -> URL {
         let chosen = details
         let hand = Self.hand(url)
-        guard !chosen.isEmpty || !hand.isEmpty, !isRecording(url),
+        guard !chosen.isEmpty || !hand.isEmpty, isImage(url),
               let key = key(for: url, chosen, hand) else { return url }
         if let done = cached(key) { return done }
         // Not read yet, like a capture copied the instant it hangs.
@@ -118,7 +118,7 @@ enum PrivateDetails {
     static func prepare(_ url: URL) {
         let chosen = details
         let hand = Self.hand(url)
-        guard !chosen.isEmpty || !hand.isEmpty, !isRecording(url),
+        guard !chosen.isEmpty || !hand.isEmpty, isImage(url),
               let key = key(for: url, chosen, hand) else { return }
         if let done = cached(key) {
             onRead?(url, done)

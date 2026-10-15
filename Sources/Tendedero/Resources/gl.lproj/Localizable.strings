@@ -81,6 +81,9 @@
 "Combine into one image" = "Xuntar nunha soa imaxe";
 "One under another" = "Unha debaixo doutra";
 "Side by side" = "Unha ao lado doutra";
+"Make PDF" = "Crear PDF";
+/* The name of a PDF made from several screenshots, followed by the date. */
+"Screenshots" = "Capturas de pantalla";
 "Move the line" = "Mover a corda";
 
 /* SettingsWindow */

@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 /// Several screenshots joined into one image, to send one tidy picture
 /// instead of a handful. Each keeps its size, so nothing gets blurry, and
 /// they follow the order they hang in, on white with a little room between.
+/// Or into one PDF, a page each, to send as a document.
 enum Collage {
     enum Arrangement {
         case stacked, sideBySide
@@ -49,20 +50,67 @@ enum Collage {
         }
         guard let joined = context.makeImage() else { return nil }
 
-        let fm = FileManager.default
-        try? fm.createDirectory(at: Inbox.folder, withIntermediateDirectories: true)
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd 'at' HH.mm.ss"
-        let base = "Combined \(formatter.string(from: Date()))"
-        var target = Inbox.folder.appendingPathComponent(base).appendingPathExtension("png")
-        var n = 2
-        while fm.fileExists(atPath: target.path) {
-            target = Inbox.folder.appendingPathComponent("\(base) \(n)").appendingPathExtension("png")
-            n += 1
-        }
+        let target = newFile("Combined \(formatter.string(from: Date()))", "png")
         guard let destination = CGImageDestinationCreateWithURL(target as CFURL, UTType.png.identifier as CFString, 1, nil)
         else { return nil }
         CGImageDestinationAddImage(destination, joined, nil)
         return CGImageDestinationFinalize(destination) ? target : nil
+    }
+
+    /// One PDF with a page for each image, as Finder's Create PDF makes it:
+    /// every page the size its screenshot shows on screen, with every pixel
+    /// kept. Saved in Snapfly's folder under the name given.
+    /// - Parameter pages: each image to draw, with the screenshot it stands
+    ///   for, whose resolution sets the page size.
+    static func pdf(_ pages: [(image: URL, original: URL)], named name: String) -> URL? {
+        guard !pages.isEmpty else { return nil }
+        let target = newFile(name, "pdf")
+        let info: [CFString: Any] = [kCGPDFContextCreator: "Snapfly"]
+        guard let context = CGContext(target as CFURL, mediaBox: nil, info as CFDictionary) else { return nil }
+        var drawn = 0
+        for page in pages {
+            guard let source = CGImageSourceCreateWithURL(page.image as CFURL, nil),
+                  let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { continue }
+            // A Retina screenshot says 144 dpi, so its page is half its size
+            // in pixels. A covered copy may not say, so the original decides.
+            let scale = 72 / dpi(of: page.original)
+            var box = CGRect(x: 0, y: 0, width: CGFloat(image.width) * scale, height: CGFloat(image.height) * scale)
+            context.beginPage(mediaBox: &box)
+            context.setFillColor(CGColor(gray: 1, alpha: 1))
+            context.fill(box)
+            context.interpolationQuality = .high
+            context.draw(image, in: box)
+            context.endPage()
+            drawn += 1
+        }
+        context.closePDF()
+        guard drawn == pages.count else {
+            try? FileManager.default.removeItem(at: target)
+            return nil
+        }
+        return target
+    }
+
+    private static func dpi(of url: URL) -> CGFloat {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+              let dpi = (properties[kCGImagePropertyDPIWidth] as? NSNumber)?.doubleValue, dpi >= 72 else { return 72 }
+        return CGFloat(dpi)
+    }
+
+    /// A name not taken yet in Snapfly's folder, where taking the file down
+    /// sends it to the Trash.
+    private static func newFile(_ base: String, _ ext: String) -> URL {
+        let fm = FileManager.default
+        try? fm.createDirectory(at: Inbox.folder, withIntermediateDirectories: true)
+        var target = Inbox.folder.appendingPathComponent(base).appendingPathExtension(ext)
+        var n = 2
+        while fm.fileExists(atPath: target.path) {
+            target = Inbox.folder.appendingPathComponent("\(base) \(n)").appendingPathExtension(ext)
+            n += 1
+        }
+        return target
     }
 }
