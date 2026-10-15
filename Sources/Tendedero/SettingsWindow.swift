@@ -131,6 +131,36 @@ final class Preferences: ObservableObject {
         set { change { ChatButton.isEnabled = newValue } }
     }
 
+    /// The button as it looks with these settings, for the preview.
+    let chatButtonPreview = ChatButtonModel()
+
+    var chatButtonPlacement: ChatButtonPlacement {
+        get { ChatButton.placement }
+        set { change { ChatButton.placement = newValue } }
+    }
+
+    var chatButtonLook: ChatButtonLook {
+        get { ChatButton.look }
+        set { change { ChatButton.look = newValue; chatButtonPreview.look = newValue } }
+    }
+
+    var chatButtonSymbol: ChatButtonSymbol {
+        get { ChatButton.symbol }
+        set { change { ChatButton.symbol = newValue; chatButtonPreview.symbol = newValue } }
+    }
+
+    var chatButtonTint: ChatButtonTint {
+        get { ChatButton.tint }
+        set { change { ChatButton.tint = newValue; chatButtonPreview.tint = newValue } }
+    }
+
+    /// The preview shows the photos hanging now, or a placeholder.
+    func refreshChatButtonPreview() {
+        let live = line.items.filter { !$0.falling }
+        chatButtonPreview.thumbs = live.suffix(2).map(\.thumb)
+        chatButtonPreview.count = max(1, live.count)
+    }
+
     func shortcut(_ role: Shortcut.Role) -> String {
         Shortcut.current(role)?.display ?? L("None")
     }
@@ -331,11 +361,8 @@ private struct LinePane: View {
                     Text(L("Take photos down once sent"))
                     Text(L("Sent into a chat, they leave the line. Pinned ones stay."))
                 }
-                Toggle(isOn: $prefs.chatButton) {
-                    Text(L("Send button over chats"))
-                    Text(L("While photos hang, a send button waits just above the chat's own. Drag it where you like it."))
-                }
             }
+            ChatButtonSection(prefs: prefs)
             Section {
                 shortcutRow(L("Show or hide the line"), .toggle)
                 shortcutRow(L("Send the newest photo"), .send)
@@ -357,6 +384,79 @@ private struct LinePane: View {
                 Button(L("Change Shortcut…")) { prefs.changeShortcut(role) }
             }
         }
+    }
+}
+
+/// The send button over chats: whether it shows, where, and how it looks,
+/// with a preview of the button itself.
+private struct ChatButtonSection: View {
+    @ObservedObject var prefs: Preferences
+
+    var body: some View {
+        Section(L("Send button over chats")) {
+            Toggle(isOn: $prefs.chatButton) {
+                Text(L("Show it while photos hang"))
+                Text(L("While photos hang, a send button waits just above the chat's own. Drag it where you like it."))
+            }
+            Group {
+                Picker(L("Position"), selection: $prefs.chatButtonPlacement) {
+                    ForEach(ChatButtonPlacement.allCases) { placement in
+                        Text(placement.title).tag(placement)
+                    }
+                }
+                Picker(L("Style"), selection: $prefs.chatButtonLook) {
+                    Text(L("Photo and count")).tag(ChatButtonLook.full)
+                    Text(L("Icon only")).tag(ChatButtonLook.compact)
+                }
+                .pickerStyle(.segmented)
+                LabeledContent(L("Icon")) {
+                    HStack(spacing: 8) {
+                        ForEach(ChatButtonSymbol.allCases) { symbol in
+                            let chosen = prefs.chatButtonSymbol == symbol
+                            Button { prefs.chatButtonSymbol = symbol } label: {
+                                Image(systemName: symbol.rawValue)
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(chosen ? Color.white : Color.primary)
+                                    .frame(width: 28, height: 28)
+                                    .background(chosen ? Color.accentColor : Color.primary.opacity(0.06), in: Circle())
+                                    .contentShape(Circle())
+                            }
+                            .buttonStyle(.plain)
+                            .help(symbol.name)
+                            .accessibilityLabel(symbol.name)
+                            .accessibilityAddTraits(chosen ? .isSelected : [])
+                        }
+                    }
+                }
+                LabeledContent(L("Color")) {
+                    HStack(spacing: 4) {
+                        ForEach(ChatButtonTint.allCases) { tint in
+                            let chosen = prefs.chatButtonTint == tint
+                            Button { prefs.chatButtonTint = tint } label: {
+                                Circle()
+                                    .fill(tint.color)
+                                    .frame(width: 18, height: 18)
+                                    .overlay(Circle().strokeBorder(Color.primary.opacity(0.15), lineWidth: 0.5))
+                                    .padding(3)
+                                    .overlay(Circle().strokeBorder(chosen ? Color.accentColor : .clear, lineWidth: 2))
+                                    .contentShape(Circle())
+                            }
+                            .buttonStyle(.plain)
+                            .help(tint.name)
+                            .accessibilityLabel(tint.name)
+                            .accessibilityAddTraits(chosen ? .isSelected : [])
+                        }
+                    }
+                }
+                LabeledContent(L("Preview")) {
+                    ChatButtonLabel(model: prefs.chatButtonPreview)
+                        .padding(.vertical, 4)
+                }
+            }
+            .disabled(!prefs.chatButton)
+            .opacity(prefs.chatButton ? 1 : 0.5)
+        }
+        .onAppear { prefs.refreshChatButtonPreview() }
     }
 }
 

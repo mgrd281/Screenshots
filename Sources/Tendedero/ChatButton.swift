@@ -24,6 +24,41 @@ final class ChatButton {
         }
     }
 
+    /// Where it sits, from Settings. Choosing again forgets where it was
+    /// dragged, so the choice shows.
+    static var placement: ChatButtonPlacement {
+        get { ChatButtonPlacement(rawValue: UserDefaults.standard.string(forKey: "chatButtonPlacement") ?? "") ?? .sendButton }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: "chatButtonPlacement")
+            spots = [:]
+            shared?.update()
+        }
+    }
+
+    static var look: ChatButtonLook {
+        get { ChatButtonLook(rawValue: UserDefaults.standard.string(forKey: "chatButtonLook") ?? "") ?? .full }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: "chatButtonLook")
+            shared?.model.look = newValue
+        }
+    }
+
+    static var symbol: ChatButtonSymbol {
+        get { ChatButtonSymbol(rawValue: UserDefaults.standard.string(forKey: "chatButtonSymbol") ?? "") ?? .paperplane }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: "chatButtonSymbol")
+            shared?.model.symbol = newValue
+        }
+    }
+
+    static var tint: ChatButtonTint {
+        get { ChatButtonTint(rawValue: UserDefaults.standard.string(forKey: "chatButtonTint") ?? "") ?? .accent }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: "chatButtonTint")
+            shared?.model.tint = newValue
+        }
+    }
+
     /// Opens Settings, from the button's menu.
     var openSettings: () -> Void = {}
 
@@ -162,23 +197,39 @@ final class ChatButton {
         let size = panel.frame.size
         let margin = ChatButtonPanel.margin
         var corner: CGPoint
-        if let spot = Self.spots[app] {
-            corner = CGPoint(x: (spot.fromTrailing ? window.maxX : window.midX) + spot.dx, y: window.minY + spot.dy)
-        } else if let field = fieldFrame {
-            // Just above the message box, at its trailing end, where chats
-            // keep their send button.
-            corner = CGPoint(x: field.maxX, y: field.maxY + 10)
-        } else {
-            // Above where a chat's send button usually is: the trailing end
-            // of a message box centered at the bottom, or the window's edge.
-            corner = CGPoint(x: window.midX + min(window.width / 2 - 24, 380), y: window.minY + 84)
-        }
-        // Kept inside the window and on its screen.
         let inner = size.width - 2 * margin
         let height = size.height - 2 * margin
-        var bounds = window.insetBy(dx: 8, dy: 8)
-        if let screen = NSScreen.screens.first(where: { $0.frame.intersects(window) }) {
-            bounds = bounds.intersection(screen.visibleFrame)
+        let screen = NSScreen.screens.first(where: { $0.frame.intersects(window) })
+        let placement = Self.placement
+        if let spot = Self.spots[app] {
+            corner = CGPoint(x: (spot.fromTrailing ? window.maxX : window.midX) + spot.dx, y: window.minY + spot.dy)
+        } else {
+            switch placement {
+            case .sendButton:
+                if let field = fieldFrame {
+                    // Just above the message box, at its trailing end, where
+                    // chats keep their send button.
+                    corner = CGPoint(x: field.maxX, y: field.maxY + 10)
+                } else {
+                    // Above where a chat's send button usually is: the trailing
+                    // end of a message box centered at the bottom, or the
+                    // window's edge.
+                    corner = CGPoint(x: window.midX + min(window.width / 2 - 24, 380), y: window.minY + 84)
+                }
+            case .windowCorner:
+                corner = CGPoint(x: window.maxX - 16, y: window.minY + 16)
+            case .windowTop:
+                // Under the title bar and toolbar.
+                corner = CGPoint(x: window.maxX - 16, y: window.maxY - 96 - height)
+            case .screenEdge:
+                let visible = screen?.visibleFrame ?? window
+                corner = CGPoint(x: visible.maxX - 8, y: visible.midY - height / 2)
+            }
+        }
+        // Kept inside the window, or the screen for the screen's edge.
+        var bounds = placement == .screenEdge && Self.spots[app] == nil ? .infinite : window.insetBy(dx: 8, dy: 8)
+        if let screen {
+            bounds = bounds.intersection(screen.visibleFrame.insetBy(dx: 4, dy: 4))
         }
         guard !bounds.isNull, bounds.width > inner, bounds.height > height else { return }
         corner.x = min(max(corner.x, bounds.minX + inner), bounds.maxX)
@@ -278,6 +329,96 @@ final class ChatButtonModel: ObservableObject {
     @Published var count = 0
     @Published var thumbs: [NSImage] = []
     @Published var sent = false
+    @Published var look = ChatButton.look
+    @Published var symbol = ChatButton.symbol
+    @Published var tint = ChatButton.tint
+}
+
+/// Where the send button over a chat sits.
+enum ChatButtonPlacement: String, CaseIterable, Identifiable {
+    /// Just above the chat's own send button.
+    case sendButton
+    /// In the bottom trailing corner of the chat's window.
+    case windowCorner
+    /// In the top trailing corner, under the toolbar.
+    case windowTop
+    /// On the trailing edge of the screen, halfway down.
+    case screenEdge
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .sendButton: L("Above the chat's send button")
+        case .windowCorner: L("Bottom corner of the window")
+        case .windowTop: L("Top corner of the window")
+        case .screenEdge: L("Edge of the screen")
+        }
+    }
+}
+
+/// The capsule with the newest photo and the count, or the icon alone.
+enum ChatButtonLook: String, CaseIterable, Identifiable {
+    case full, compact
+    var id: String { rawValue }
+}
+
+/// The glyph on the button.
+enum ChatButtonSymbol: String, CaseIterable, Identifiable {
+    case paperplane = "paperplane.fill"
+    case arrow = "arrow.up"
+    case share = "square.and.arrow.up"
+    case photos = "photo.on.rectangle.angled"
+
+    var id: String { rawValue }
+
+    /// Spoken, and shown when the pointer rests on it in Settings.
+    var name: String {
+        switch self {
+        case .paperplane: L("Paper plane")
+        case .arrow: L("Arrow")
+        case .share: L("Share")
+        case .photos: L("Photos")
+        }
+    }
+}
+
+/// The color of the button's circle. System colors only, so each holds up
+/// in light and dark; the accent follows System Settings.
+enum ChatButtonTint: String, CaseIterable, Identifiable {
+    case accent, blue, green, purple, orange, pink, graphite
+
+    var id: String { rawValue }
+
+    var color: Color {
+        switch self {
+        case .accent: .accentColor
+        case .blue: Color(nsColor: .systemBlue)
+        case .green: Color(nsColor: .systemGreen)
+        case .purple: Color(nsColor: .systemPurple)
+        case .orange: Color(nsColor: .systemOrange)
+        case .pink: Color(nsColor: .systemPink)
+        case .graphite: Color(nsColor: .labelColor)
+        }
+    }
+
+    /// White on the colors; on graphite, the window's own background, so
+    /// it reads in light and dark.
+    var glyph: Color {
+        self == .graphite ? Color(nsColor: .windowBackgroundColor) : .white
+    }
+
+    var name: String {
+        switch self {
+        case .accent: L("System accent")
+        case .blue: L("Blue")
+        case .green: L("Green")
+        case .purple: L("Purple")
+        case .orange: L("Orange")
+        case .pink: L("Pink")
+        case .graphite: L("Graphite")
+        }
+    }
 }
 
 /// A small floating panel that never becomes key, so the chat keeps the
@@ -402,15 +543,38 @@ private final class ChatButtonView: NSView {
     }
 }
 
-/// The newest photo, how many go, and the paper plane on the accent.
-private struct ChatButtonLabel: View {
+/// The newest photo, how many go, and the glyph on its color; or the
+/// glyph alone with the count beside it. Settings shows it as a preview.
+struct ChatButtonLabel: View {
     @ObservedObject var model: ChatButtonModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var hovering = false
 
     var body: some View {
+        Group {
+            switch model.look {
+            case .full: full
+            case .compact: compact
+            }
+        }
+        .scaleEffect(hovering && !reduceMotion ? 1.04 : 1)
+        .onHover { hovering = $0 }
+        .animation(Motion.spring(response: 0.3, damping: 0.8, reduced: reduceMotion), value: hovering)
+        .animation(.easeOut(duration: 0.15), value: model.sent)
+        .accessibilityHidden(true)
+    }
+
+    private var full: some View {
         HStack(spacing: 8) {
             ZStack {
+                if model.thumbs.isEmpty {
+                    Image(systemName: "photo")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 26, height: 26)
+                        .background(Color.primary.opacity(0.06),
+                                    in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+                }
                 ForEach(Array(model.thumbs.enumerated()), id: \.offset) { index, image in
                     Image(nsImage: image)
                         .resizable()
@@ -426,24 +590,37 @@ private struct ChatButtonLabel: View {
                 }
             }
             .frame(width: 28, height: 28)
-            Text(verbatim: "\(model.count)")
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
-                .monospacedDigit()
-                .foregroundStyle(.primary)
-            Image(systemName: model.sent ? "checkmark" : "paperplane.fill")
-                .font(.system(size: 12, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 28, height: 28)
-                .background(Color.accentColor, in: Circle())
-                .contentTransition(.symbolEffect(.replace))
+            count
+            glyph(size: 28)
         }
         .padding(4)
         .padding(.leading, 2)
         .controlGlass(capsule: true)
-        .scaleEffect(hovering && !reduceMotion ? 1.04 : 1)
-        .onHover { hovering = $0 }
-        .animation(Motion.spring(response: 0.3, damping: 0.8, reduced: reduceMotion), value: hovering)
-        .animation(.easeOut(duration: 0.15), value: model.sent)
-        .accessibilityHidden(true)
+    }
+
+    private var compact: some View {
+        HStack(spacing: 6) {
+            count
+            glyph(size: 30)
+        }
+        .padding(4)
+        .padding(.leading, 6)
+        .controlGlass(capsule: true)
+    }
+
+    private var count: some View {
+        Text(verbatim: "\(model.count)")
+            .font(.system(size: 13, weight: .semibold, design: .rounded))
+            .monospacedDigit()
+            .foregroundStyle(.primary)
+    }
+
+    private func glyph(size: CGFloat) -> some View {
+        Image(systemName: model.sent ? "checkmark" : model.symbol.rawValue)
+            .font(.system(size: size * 0.43, weight: .bold))
+            .foregroundStyle(model.tint.glyph)
+            .frame(width: size, height: size)
+            .background(model.tint.color, in: Circle())
+            .contentTransition(.symbolEffect(.replace))
     }
 }

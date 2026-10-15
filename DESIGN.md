@@ -380,6 +380,18 @@ apps.
     remembered per app; a right-click offers Put it back and Settings.
   - Hover scales it to 1.04 through `Motion.spring`, and it fades in over
     0.15 s.
+  - **Settings › Line › Send button over chats** chooses:
+    - where it sits: above the chat's send button, the window's bottom or
+      top corner, or the screen's edge;
+    - its look: photo and count, or the count and the glyph alone (a 30 pt
+      circle);
+    - the glyph: paper plane, arrow, share or photos;
+    - **chat button tints**: the accent (the default), or system blue, green,
+      purple, orange or pink, with a white glyph; or graphite, which is
+      `labelColor` with a `windowBackgroundColor` glyph so it holds in light
+      and dark. The owner picks it, so it is the one place a color other than
+      the accent may mark a primary action.
+  - Settings shows a live preview of the button.
 - **Capture overlay** (`Capture.swift`), the one surface that covers the
   whole screen. It shows the screens still, captured a moment before.
   - It takes the keyboard without activating the app, as the search bar does.
