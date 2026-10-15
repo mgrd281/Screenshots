@@ -53,7 +53,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Right-click, then Hide Part | Drag a box over anything the covering missed. It stays hidden in whatever leaves the line. |
 | Right-click, then Translate Text | Read it in your language, to copy or send. |
 | Right-click, then Describe | A line about what it shows, to send along with it. |
-| Press and hold | Open it in Markup. |
+| Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
@@ -83,7 +83,7 @@ entirely. No floating thumbnail. No five-second wait. Each capture hangs
 the instant you take it, and only what you drag out is kept.
 
 Screen recordings hang there too, with a play button over them.
-Press and hold one to trim it.
+Press and hold one, then Trim, to trim it.
 
 Same shortcuts. Same muscle memory. Just less mess.
 

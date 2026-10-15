@@ -31,6 +31,7 @@ struct GrabArea: NSViewRepresentable {
         let id = item.id
         let line = line
         let isImage = item.isImage
+        let isRecording = item.isRecording
         let pinned = item.pinned
         view.url = item.url
         view.dragImage = item.thumb
@@ -50,7 +51,6 @@ struct GrabArea: NSViewRepresentable {
         view.onTrash = { line.trash(id) }
         // A pinned photo's corner holds its pin, which unpins.
         view.onDiscard = { pinned ? line.togglePin(id) : line.discard(id) }
-        view.onLongPress = { line.markup(id) }
         view.onForceClick = { line.quickLook(id) }
         view.onPressChange = { pressed in line.pressedID = pressed ? id : nil }
         let inInbox = line.isInInbox(id)
@@ -133,6 +133,9 @@ struct GrabArea: NSViewRepresentable {
                 menu.addItem(ClosureMenuItem(L("Markup"), symbol: "pencil.tip.crop.circle") { line.markup(id) })
                 menu.addItem(ClosureMenuItem(L("Hide Part…"), symbol: "rectangle.dashed") { line.hidePart(id) })
             }
+            if isRecording {
+                menu.addItem(ClosureMenuItem(L("Trim…"), symbol: "scissors") { line.markup(id) })
+            }
             menu.addItem(ClosureMenuItem(L("Show in Finder"), symbol: "folder") { line.reveal(id) })
             let inInbox = line.isInInbox(id)
             // The App Store edition may not write to the Desktop; a drag
@@ -183,7 +186,6 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     var onDragEnd: () -> Void = {}
     var onTrash: () -> Void = {}
     var onDiscard: () -> Void = {}
-    var onLongPress: () -> Void = {}
     var onForceClick: () -> Void = {}
     var onPressChange: (Bool) -> Void = { _ in }
     var menuProvider: () -> NSMenu = { NSMenu() }
@@ -198,7 +200,7 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     private var holdTimer: Timer?
     private var didLongPress = false
 
-    /// How long you hold before Markup opens. Long enough not to fire on a
+    /// How long you hold before the menu opens. Long enough not to fire on a
     /// slow click, short enough to feel deliberate.
     private static let holdDuration: TimeInterval = 0.45
 
@@ -294,7 +296,7 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
                 guard let self, self.downPoint != nil, !self.startedDrag else { return }
                 self.didLongPress = true
                 self.onPressChange(false)
-                self.onLongPress()
+                self.showMenuFromHold()
             }
         }
     }
@@ -337,6 +339,17 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         }
         downPoint = nil
         didLongPress = false
+    }
+
+    /// Holding a photo opens its menu, as a long press does on iPhone, so
+    /// Make PDF, Markup and the rest are found without a right-click.
+    private func showMenuFromHold() {
+        guard let start = downPoint else { return }
+        // The menu takes the mouse up, so the press ends here.
+        downPoint = nil
+        GrabView.isShowingMenu = true
+        _ = menuProvider().popUp(positioning: nil, at: convert(start, from: nil), in: self)
+        GrabView.isShowingMenu = false
     }
 
     override func rightMouseDown(with event: NSEvent) {
