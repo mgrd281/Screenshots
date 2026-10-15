@@ -405,7 +405,8 @@ apps.
   - Settings shows a live preview of the button.
   - In a browser it shows only on the chat websites listed in Settings, a
     grouped list of toggles with a remove button each and a field to add
-    one.
+    one. The chat apps are a list too: each app's 20 pt icon and name, a
+    toggle and a remove button, and Add App… to choose another.
 - **Capture overlay** (`Capture.swift`), the one surface that covers the
   whole screen. It shows the screens still, captured a moment before.
   - It takes the keyboard without activating the app, as the search bar does.

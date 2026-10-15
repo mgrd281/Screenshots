@@ -214,3 +214,6 @@
 "Off" = "オフ";
 "%d days" = "%d日";
 "What leaves the line stays in the History, from the menu bar, to find and hang again." = "ロープから外れたものは、メニューバーの「履歴」に残り、見つけてもう一度掛けられます。";
+"Add App…" = "Appを追加…";
+"Chat apps" = "チャットApp";
+"It shows over these apps while photos hang." = "写真が掛かっている間、これらのAppの上に表示されます。";
