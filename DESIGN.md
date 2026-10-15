@@ -11,6 +11,17 @@ colors:
   search-mark: "#FFCC00"       # Color.yellow: search highlights, 45% fill and a solid edge
   cover-ink: "#1F1F1F"         # covers over private details in a photo
   island-black: "#000000"      # the island line style
+  # Website only (website/static/site.css). Light value first, dark after the slash.
+  web-button: "#0071E3"        # the accent as a button fill: white text on it is 4.7:1
+  web-link: "#0066CC"          # links; #3D9BFF in dark
+  web-ink: "#1D1D1F"           # text; #F5F5F7 in dark
+  web-ink-2: "#5E5E63"         # secondary text, 5.9:1 on the ground; #A1A1A6 in dark
+  web-ground: "#F5F5F7"        # page ground; #161618 in dark
+  web-surface: "#FFFFFF"       # windows, panes, keycaps; #232326 in dark
+  web-bubble-in: "#E9E9EB"     # incoming chat bubble; #3A3A3C in dark
+  window-red: "#FF5F57"        # traffic lights on drawn windows
+  window-yellow: "#FEBC2E"
+  window-green: "#28C840"
 typography:
   field:
     fontFamily: "SF Pro, system-ui"
@@ -411,3 +422,64 @@ else is shared.
   dividers, no confetti.
 - **Don't** steal focus from the app in front, or block with a modal what a
   card can say.
+
+## Website
+
+The site in `website/` (GitHub Pages) sells the app and hosts the privacy
+policy and support pages that App Store Connect links to. It extends this
+system to a web page. The brief and direction contract are in
+`website/BRIEF.md`.
+
+- **The page is the Mac screen.** A frosted menu bar carries the navigation.
+  The line hangs under it, and a chat window sits in front.
+  - On the home page the wallpaper stays fixed while the page scrolls over
+    it, like a Mac's desktop.
+  - Below the first view, a light plum wash (28%, or 38% in dark) sits over
+    it, so the wallpaper keeps its colours. A soft, blurred scrim sits only
+    behind the words (plum at 46%, blurred 60 px), so white words stay at least 4.5:1 on
+    every part.
+  - Each demo is a native object on that desktop:
+    - keycaps;
+    - Desktop files that fly onto a rope;
+    - Snapfly's own Settings window, on its Privacy and Line panes, with
+      the line-style tiles;
+    - the photo's menu opening from a card on a line.
+  - The privacy and support pages are documents on `web-ground`.
+- **The brand gradient is the wallpaper.** On the site, amber, coral and
+  violet are the desktop the app sits on.
+  - Nothing that is pressed or read sits on it bare. White text gets the
+    wash, fading up from the bottom of the first view.
+  - Dark mode swaps in a dusk version of the same three hues.
+- **Everything on the wallpaper is native.** It follows this file's tokens:
+  - photo cards: 16/12, 4 pt inset, glass, swaying 1.1° on a clip;
+  - corner buttons;
+  - cover ink;
+  - context menu: 13 radius, 7 radius rows, accent highlight;
+  - segmented control;
+  - switches and checkboxes in the accent;
+  - windows with traffic lights at a 18 radius.
+- **One exception to "corner buttons show on hover":** the paper plane on
+  each hanging card always shows on the site. The page has to invite the
+  first click, and phones have no hover.
+- **Buttons.** The download button on the wallpaper is a white pill with ink
+  text. On the ground, the primary is `web-button` with white text. The
+  app's `#007AFF` gives white text only 4.0:1.
+- **Type.**
+  - The system stack only: SF Pro and SF Arabic on Apple devices. No web
+    fonts, so nothing is fetched from another host.
+  - Display sizes are allowed on the site: hero to 5.6 rem, section heads to
+    3.5 rem. Tracking is −0.015 em on display lines, −0.01 em on section
+    heads, and 0 in Arabic, as SF Pro Display wants.
+  - German headlines step down a size for long words.
+- **Motion.**
+  - The signature move is the paper plane: the card takes off up and away,
+    as on the icon, then lands in the chat while the line closes the gap.
+  - Everything else plays once when seen: the Desktop sweep and the
+    keycaps.
+  - Reduce Motion turns flights into fades and stops the sway.
+- **Images.** The PNGs in `website/static` come from the app icon, drawn by
+  `website/make-images.py`. Everything else is inline SVG drawn in
+  `build.py`.
+- **Words.** Labels the app shows come from its `Localizable.strings`.
+  Everything else is in `website/content.py`, in English, German (du) and
+  Arabic (right to left).

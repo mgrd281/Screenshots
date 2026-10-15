@@ -49,7 +49,19 @@ required by the license and stays.
     and the app record in App Store Connect. It runs on every push to `main`
     that touches the app (the owner asked for TestFlight to always be current),
     and by hand.
-  - The privacy policy for the store listing is `PRIVACY.md`.
+  - The privacy policy for the store listing is the website's privacy page
+    (below). `PRIVACY.md` is the short version in the repository.
+- **Website.** `website/` builds https://mgrd281.github.io/Screenshots/ (English),
+  `/de/` and `/ar/`: the landing page, `privacy.html` and `support.html`, the
+  URLs App Store Connect links to.
+  - `python3 website/build.py` writes it to `website/_site/` (standard
+    library only). The **Website** workflow builds it at every push and
+    publishes it from `main` on GitHub Pages.
+  - Words live in `website/content.py`. Labels the app shows come from its
+    `Localizable.strings`, so change them there.
+  - System fonts only, and nothing loaded from another host.
+  - Its design rules are under "Website" in `DESIGN.md`; its brief is
+    `website/BRIEF.md`.
 - Swift 5 language mode, macOS 14 deployment target, universal binary.
   Gate newer APIs with `if #available` and `#if canImport(...)`. Examples:
   - Translation needs macOS 15;

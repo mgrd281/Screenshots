@@ -17,7 +17,11 @@ does happens on your Mac.
   using when you send a screenshot. You can turn it off at any time in System
   Settings.
 
-Questions: open an issue at https://github.com/mgrd281/Screenshots/issues.
+The full policy, in English, German and Arabic, is at
+https://mgrd281.github.io/Screenshots/privacy.html.
+
+Questions: write to mgrdegh@gmx.de, or open an issue at
+https://github.com/mgrd281/Screenshots/issues.
 
 ---
 

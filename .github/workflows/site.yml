@@ -1,0 +1,60 @@
+# Builds the Snapfly website from website/ and publishes it on GitHub Pages:
+# https://mgrd281.github.io/Screenshots/ (English), /de/ and /ar/.
+# Every push builds it, so a broken page shows before it merges; only main
+# publishes. Pages must be set to "GitHub Actions" once, in the repository's
+# Settings › Pages.
+name: Website
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths:
+      - "website/**"
+      - "Sources/Tendedero/Resources/*.lproj/Localizable.strings"
+      - ".github/workflows/site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the pages
+        run: python3 website/build.py
+      - name: Check the pages
+        run: |
+          # Every page is there, and nothing is loaded from another host.
+          for page in index privacy support; do
+            for dir in "" de/ ar/; do
+              test -s "website/_site/${dir}${page}.html"
+            done
+          done
+          if grep -rEho '(src|href)="https?://[^"]+\.(css|js|woff2?)"' website/_site; then
+            echo "::error::The website must not load styles, scripts or fonts from other hosts."
+            exit 1
+          fi
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          path: website/_site
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
