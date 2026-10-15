@@ -39,7 +39,8 @@ final class HotKey {
 
 /// A global shortcut: one that shows and hides the line, ⌃⌥T unless
 /// changed, one that sends the newest photo, ⌃⌥V, one that searches, ⌃⌥F,
-/// and one that takes a screenshot, ⌃⌥S. Each can be none.
+/// one that takes a screenshot, ⌃⌥S, and one that starts and stops a screen
+/// recording, ⌃⌥R. Each can be none.
 struct Shortcut: Equatable {
     var keyCode: Int
     var modifiers: NSEvent.ModifierFlags
@@ -55,6 +56,8 @@ struct Shortcut: Equatable {
         case search = 3
         /// Takes a screenshot from Snapfly itself.
         case capture = 4
+        /// Starts a screen recording from Snapfly itself, or stops it.
+        case record = 5
 
         var standard: Shortcut {
             switch self {
@@ -62,6 +65,7 @@ struct Shortcut: Equatable {
             case .send: Shortcut(keyCode: kVK_ANSI_V, modifiers: [.control, .option], key: "v")
             case .search: Shortcut(keyCode: kVK_ANSI_F, modifiers: [.control, .option], key: "f")
             case .capture: Shortcut(keyCode: kVK_ANSI_S, modifiers: [.control, .option], key: "s")
+            case .record: Shortcut(keyCode: kVK_ANSI_R, modifiers: [.control, .option], key: "r")
             }
         }
 
@@ -71,6 +75,7 @@ struct Shortcut: Equatable {
             case .send: "sendShortcut"
             case .search: "searchShortcut"
             case .capture: "captureShortcut"
+            case .record: "recordShortcut"
             }
         }
     }

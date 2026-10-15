@@ -228,3 +228,12 @@
 "Words to hide, separated by commas" = "Gizlədiləcək sözlər, vergüllə ayrılmış";
 "Hide" = "Gizlət";
 "With Apple Intelligence on, you can say it in a sentence." = "Apple Intelligence açıq olanda bunu bir cümlə ilə deyə bilərsən.";
+/* Timer and screen recording */
+"Take Screenshot in 5 Seconds" = "5 saniyəyə ekran şəkli çək";
+"Record Screen" = "Ekranı yaz";
+"Stop Recording" = "Yazmanı dayandır";
+"Record the screen" = "Ekranı yaz";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "Nə çəkiləcəyini seç: bir sahənin üzərindən sürüşdür, pəncərəyə klik et və ya bütün ekran üçün Return bas. 5 saniyə sonra çəkilir.";
+"Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "Yazmaq üçün bir sahənin üzərindən sürüşdür və ya pəncərəyə klik et. Return bütün ekranı yazır, Escape ləğv edir.";
+"Cancel the timer" = "Taymeri ləğv et";
+"Snapfly, recording the screen" = "Snapfly, ekranı yazır";

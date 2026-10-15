@@ -226,3 +226,12 @@
 "Words to hide, separated by commas" = "Mots à masquer, séparés par des virgules";
 "Hide" = "Masquer";
 "With Apple Intelligence on, you can say it in a sentence." = "Avec Apple Intelligence activé, tu peux le dire en une phrase.";
+/* Timer and screen recording */
+"Take Screenshot in 5 Seconds" = "Capture dans 5 secondes";
+"Record Screen" = "Enregistrer l’écran";
+"Stop Recording" = "Arrêter l’enregistrement";
+"Record the screen" = "Enregistrer l’écran";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "Choisis ce qui sera capturé : fais glisser sur une zone, clique sur une fenêtre ou appuie sur Retour pour tout l’écran. La capture a lieu 5 secondes plus tard.";
+"Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "Fais glisser sur une zone ou clique sur une fenêtre pour l’enregistrer. Retour enregistre tout l’écran, Échap annule.";
+"Cancel the timer" = "Annuler le minuteur";
+"Snapfly, recording the screen" = "Snapfly, enregistre l’écran";

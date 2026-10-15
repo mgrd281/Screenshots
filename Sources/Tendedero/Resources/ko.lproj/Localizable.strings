@@ -226,3 +226,12 @@
 "Words to hide, separated by commas" = "가릴 단어, 쉼표로 구분";
 "Hide" = "가리기";
 "With Apple Intelligence on, you can say it in a sentence." = "Apple Intelligence를 켜면 문장으로 말할 수 있어요.";
+/* Timer and screen recording */
+"Take Screenshot in 5 Seconds" = "5초 후 스크린샷 찍기";
+"Record Screen" = "화면 기록";
+"Stop Recording" = "기록 중단";
+"Record the screen" = "화면 기록";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "찍을 대상을 고르세요: 영역을 드래그하거나 윈도우를 클릭하거나, 화면 전체는 Return 키를 누르세요. 5초 후에 찍혀요.";
+"Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "기록할 영역을 드래그하거나 윈도우를 클릭하세요. Return 키는 화면 전체를 기록하고, Esc 키는 취소해요.";
+"Cancel the timer" = "타이머 취소";
+"Snapfly, recording the screen" = "Snapfly, 화면 기록 중";

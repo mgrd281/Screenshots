@@ -226,3 +226,12 @@
 "Words to hide, separated by commas" = "要隐藏的字词，用逗号分隔";
 "Hide" = "隐藏";
 "With Apple Intelligence on, you can say it in a sentence." = "打开 Apple 智能后，可以用一句话说明。";
+/* Timer and screen recording */
+"Take Screenshot in 5 Seconds" = "5 秒后截屏";
+"Record Screen" = "录制屏幕";
+"Stop Recording" = "停止录制";
+"Record the screen" = "录制屏幕";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "选择要截取的内容：拖移选择区域、点按一个窗口，或按 Return 键选择整个屏幕。5 秒后截取。";
+"Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "拖移选择区域或点按一个窗口进行录制。按 Return 键录制整个屏幕，按 Esc 取消。";
+"Cancel the timer" = "取消计时器";
+"Snapfly, recording the screen" = "Snapfly，正在录制屏幕";

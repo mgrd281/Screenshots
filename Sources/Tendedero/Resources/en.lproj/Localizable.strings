@@ -228,3 +228,12 @@
 "Words to hide, separated by commas" = "Words to hide, separated by commas";
 "Hide" = "Hide";
 "With Apple Intelligence on, you can say it in a sentence." = "With Apple Intelligence on, you can say it in a sentence.";
+/* Timer and screen recording */
+"Take Screenshot in 5 Seconds" = "Take Screenshot in 5 Seconds";
+"Record Screen" = "Record Screen";
+"Stop Recording" = "Stop Recording";
+"Record the screen" = "Record the screen";
+"Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later." = "Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken 5 seconds later.";
+"Drag over an area or click a window to record it. Return records the whole screen, Escape cancels." = "Drag over an area or click a window to record it. Return records the whole screen, Escape cancels.";
+"Cancel the timer" = "Cancel the timer";
+"Snapfly, recording the screen" = "Snapfly, recording the screen";
