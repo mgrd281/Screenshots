@@ -218,6 +218,14 @@
 "Chat apps" = "Chat-Apps";
 "It shows over these apps while photos hang." = "Sie erscheint über diesen Apps, solange Fotos hängen.";
 
+/* Hide by saying */
+"Nothing found to hide." = "Nichts zum Ausblenden gefunden.";
+"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligence konnte nicht antworten, deshalb sind die Zeilen mit diesen Wörtern ausgeblendet.";
+"Lines hidden: %d. Click a box to show it again." = "Ausgeblendete Zeilen: %d. Klick auf ein Feld, um es wieder zu zeigen.";
+"Say what to hide, like “everything but the amount and the date”" = "Sag, was ausgeblendet wird, z. B. „alles außer Betrag und Datum“";
+"Words to hide, separated by commas" = "Wörter zum Ausblenden, durch Kommas getrennt";
+"Hide" = "Ausblenden";
+"With Apple Intelligence on, you can say it in a sentence." = "Mit Apple Intelligence kannst du es in einem Satz sagen.";
 /* Timer and screen recording */
 "Take Screenshot in 5 Seconds" = "Bildschirmfoto in 5 Sekunden";
 "Record Screen" = "Bildschirm aufnehmen";

@@ -218,6 +218,14 @@
 "Chat apps" = "Apps de chat";
 "It shows over these apps while photos hang." = "Aparece sobre estas apps mentres haxa fotos colgadas.";
 
+/* Hide by saying */
+"Nothing found to hide." = "Non se atopou nada que agochar.";
+"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligence non puido responder, así que se agochan as liñas con estas palabras.";
+"Lines hidden: %d. Click a box to show it again." = "Liñas agochadas: %d. Fai clic nun recadro para volver amosalo.";
+"Say what to hide, like “everything but the amount and the date”" = "Di que agochar, como «todo agás o importe e a data»";
+"Words to hide, separated by commas" = "Palabras que agochar, separadas por comas";
+"Hide" = "Agochar";
+"With Apple Intelligence on, you can say it in a sentence." = "Con Apple Intelligence activado, podes dicilo nunha frase.";
 /* Timer and screen recording */
 "Take Screenshot in 5 Seconds" = "Facer captura en 5 segundos";
 "Record Screen" = "Gravar pantalla";

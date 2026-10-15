@@ -218,6 +218,14 @@
 "Chat apps" = "聊天 App";
 "It shows over these apps while photos hang." = "照片挂着时，它会显示在这些 App 上方。";
 
+/* Hide by saying */
+"Nothing found to hide." = "没有找到要隐藏的内容。";
+"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple 智能无法回答，因此隐藏了包含这些字词的行。";
+"Lines hidden: %d. Click a box to show it again." = "已隐藏的行：%d。点按方框可再次显示。";
+"Say what to hide, like “everything but the amount and the date”" = "说出要隐藏的内容，例如“除金额和日期外全部隐藏”";
+"Words to hide, separated by commas" = "要隐藏的字词，用逗号分隔";
+"Hide" = "隐藏";
+"With Apple Intelligence on, you can say it in a sentence." = "打开 Apple 智能后，可以用一句话说明。";
 /* Timer and screen recording */
 "Take Screenshot in 5 Seconds" = "5 秒后截屏";
 "Record Screen" = "录制屏幕";

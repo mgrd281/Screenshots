@@ -220,6 +220,14 @@
 "Chat apps" = "चैट ऐप्स";
 "It shows over these apps while photos hang." = "जब तक फ़ोटो टंगी हैं, यह इन ऐप्स के ऊपर दिखता है।";
 
+/* Hide by saying */
+"Nothing found to hide." = "छिपाने के लिए कुछ नहीं मिला।";
+"Apple Intelligence could not answer, so the lines with these words are hidden." = "Apple Intelligence जवाब नहीं दे सका, इसलिए इन शब्दों वाली पंक्तियाँ छिपा दी गईं।";
+"Lines hidden: %d. Click a box to show it again." = "छिपी पंक्तियाँ: %d। फिर से दिखाने के लिए किसी बॉक्स पर क्लिक करें।";
+"Say what to hide, like “everything but the amount and the date”" = "बताएँ कि क्या छिपाना है, जैसे “रकम और तारीख़ के सिवा सब कुछ”";
+"Words to hide, separated by commas" = "छिपाने के शब्द, अल्पविराम से अलग";
+"Hide" = "छिपाएँ";
+"With Apple Intelligence on, you can say it in a sentence." = "Apple Intelligence चालू होने पर आप इसे एक वाक्य में कह सकते हैं।";
 /* Timer and screen recording */
 "Take Screenshot in 5 Seconds" = "5 सेकंड में स्क्रीनशॉट लें";
 "Record Screen" = "स्क्रीन रिकॉर्ड करें";

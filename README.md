@@ -158,7 +158,13 @@ covered, and the line shows each photo that way too, so what you see is
 what goes, with a small lock on each one that has something covered.
 Copy Text leaves them out too. Anything it misses, hide by hand with
 Hide Part in a photo's menu. Labels like Billing address, Recipient or Diagnosis tell it
-where a whole block is private. The text is read on your Mac, and the
+where a whole block is private.
+
+In Hide Part you can also say what to hide, like "everything but the amount
+and the date" or "the customer's name". Apple Intelligence picks the lines on
+your Mac, and they show as boxes to check before you press Done; click one to
+show it again. Without Apple Intelligence, type words separated by commas and
+the lines with them are hidden. The text is read on your Mac, and the
 screenshot file itself is never changed.
 
 <br>
@@ -279,6 +285,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
+| `HideBySaying.swift` | Hide Part told in words: picks the lines to hide with Apple Intelligence, or by matching words |
 | `TextCard.swift` | Translate Text and Describe, and the card that shows them |
 | `Appearance.swift` | Glass by role, Liquid Glass on macOS 26, and motion that honours Reduce Motion |
 | `Search.swift` | The words in every photo, and the search bar under the line |
