@@ -158,11 +158,20 @@ final class CaptureButtonModel: ObservableObject {
 }
 
 /// The glyph on the screenshot button, chosen in Settings.
+/// All of them are in SF Symbols on macOS 14.
 enum CaptureButtonSymbol: String, CaseIterable, Identifiable {
     case viewfinder = "camera.viewfinder"
+    case corners = "viewfinder"
+    case focus = "dot.viewfinder"
+    case plus = "plus.viewfinder"
     case selection = "rectangle.dashed"
+    case capture = "rectangle.dashed.badge.record"
+    case crop = "crop"
+    case target = "scope"
     case aperture = "camera.aperture"
     case camera = "camera.fill"
+    case lightning = "bolt.fill"
+    case sparkles = "sparkles"
 
     var id: String { rawValue }
 
@@ -170,9 +179,17 @@ enum CaptureButtonSymbol: String, CaseIterable, Identifiable {
     var name: String {
         switch self {
         case .viewfinder: L("Viewfinder")
+        case .corners: L("Frame")
+        case .focus: L("Focus")
+        case .plus: L("Frame with plus")
         case .selection: L("Selection")
+        case .capture: L("Screen capture")
+        case .crop: L("Crop")
+        case .target: L("Target")
         case .aperture: L("Aperture")
         case .camera: L("Camera")
+        case .lightning: L("Lightning")
+        case .sparkles: L("Sparkles")
         }
     }
 }

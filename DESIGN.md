@@ -439,9 +439,11 @@ apps.
   - It never becomes key. A click takes a screenshot as Settings says; a
     drag moves it; a right-click offers Choose an area, Take the whole
     screen, Record Screen, Hide Screenshot Button and Settings.
-  - **Settings › Line › Screenshot button** chooses the glyph
-    (`camera.viewfinder`, `rectangle.dashed`, `camera.aperture` or
-    `camera.fill`) and the circle: glass (`controlGlass`, `.primary` glyph)
+  - **Settings › Line › Screenshot button** chooses the glyph, from twelve
+    in two rows of six (`camera.viewfinder`, `viewfinder`, `dot.viewfinder`,
+    `plus.viewfinder`, `rectangle.dashed`, `rectangle.dashed.badge.record`,
+    `crop`, `scope`, `camera.aperture`, `camera.fill`, `bolt.fill`,
+    `sparkles`), and the circle: glass (`controlGlass`, `.primary` glyph)
     or one of the chat button tints with its glyph color and a 0.75 pt edge
     of white at 25%. The accent at first, so it stands out at the screen's
     edge. Settings shows a live preview.
