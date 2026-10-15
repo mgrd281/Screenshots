@@ -105,8 +105,10 @@ While photos hang, the same send button waits over the chat itself, just
 above its own send button: in ChatGPT, Claude, WhatsApp, Messages, Telegram
 and other chats, and in browsers. It shows the newest photo and how many
 will go. One click and they are in, without a trip to the top of the screen.
-Drag it where you like it; it remembers the spot for each app. Turn it off
-in Settings, under Line.
+Drag it where you like it; it remembers the spot for each app. In Settings,
+under Line, choose where it sits (above the chat's send button, a corner of
+the window, or the edge of the screen), how it looks, its icon and its color,
+with a preview, or turn it off.
 
 <br>
 
