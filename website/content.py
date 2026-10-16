@@ -40,6 +40,9 @@ TEXT["en"] = dict(
     brand_sunset="Original Sunset",
     brand_emerald="Emerald Petrol",
     brand_orange="Signature Orange",
+    look_label="Design",
+    look_airmail="Airmail",
+    look_classic="Mac desktop",
     menu_label="Snapfly",
 
     hero_sub="Every screenshot you take hangs on a line at the top of your screen. Click one to copy it, or send it straight into the chat you’re typing in. Names and other private details are covered first, whether it goes to ChatGPT or to a person.",
@@ -286,6 +289,9 @@ TEXT["de"] = dict(
     brand_sunset="Original Sunset",
     brand_emerald="Emerald Petrol",
     brand_orange="Signature Orange",
+    look_label="Design",
+    look_airmail="Luftpost",
+    look_classic="Mac-Schreibtisch",
     menu_label="Snapfly",
 
     hero_sub="Jedes Bildschirmfoto hängt an einer Leine oben auf deinem Bildschirm. Ein Klick kopiert es, oder du schickst es direkt in den Chat, in dem du gerade schreibst. Namen und andere private Angaben werden vorher verdeckt, ob es an ChatGPT geht oder an einen Menschen.",
@@ -532,6 +538,9 @@ TEXT["ar"] = dict(
     brand_sunset="الغروب الأصلي",
     brand_emerald="الزمرّد البترولي",
     brand_orange="البرتقالي المميّز",
+    look_label="التصميم",
+    look_airmail="البريد الجوي",
+    look_classic="سطح مكتب الماك",
     menu_label="Snapfly",
 
     hero_sub="كل لقطة شاشة تلتقطها تُعلَّق على حبل في أعلى شاشتك. انقرها لتنسخها، أو أرسلها مباشرة إلى الدردشة التي تكتب فيها. والأسماء وغيرها من المعلومات الخاصة تُغطّى قبل الإرسال، سواء ذهبت إلى ChatGPT أو إلى شخص.",

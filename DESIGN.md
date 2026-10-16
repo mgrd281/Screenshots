@@ -951,9 +951,41 @@ system to a web page. The brief and direction contract are in
     reaches the chosen swatch, the arrows choose the next one and wrap
     round, in the reading direction. On touch the swatches are 32 × 28
     with a 44 pt tall target.
-  - **No wrong flash**: the first script in `<head>` reads the choice
-    (`snapfly-brand`) and sets `data-brand` before the page paints; the
-    switcher only appears once scripts run. Changing theme spreads the new
+  - **The look switch** sits just before it, at the owner's request, so a
+    visitor can go back to the site as it was before the envelope: a well
+    of the same make with two 30 × 22 cells and the same sliding thumb.
+    - Airmail first (the default): a white envelope 18 × 13 inside a
+      2.5 px chevron border (coral `#FF5E62` and violet `#5B2BB8`, 2, 1,
+      2, 1 px at −45°), radius 2.
+    - Then the classic Mac desktop: an 18 × 13 sunset wallpaper (`#FFC45C`
+      to `#FF5E62` to `#B234D6`, 140°) under a white 80% menu bar 2.5 px
+      tall, radius 3.
+    - The pictures keep their colours in every theme. Names: "Airmail" and
+      "Mac desktop" (Luftpost, Mac-Schreibtisch; البريد الجوي, سطح مكتب
+      الماك), under the group label "Design". Grow, press, help tag,
+      arrows and touch size are the swatches'.
+  - **The classic look** is the site as it stood before the airmail
+    envelope: the brand gradient as the Mac desktop, glass photo cards,
+    washes and scrims, in all three themes, light and dark.
+    - `static/classic.css` holds it: the earlier `site.css`, every rule
+      scoped to `<html data-look="classic">`, and loaded after
+      `site.css`. The page's own token blocks carry the attribute outright,
+      so they outweigh `site.css`'s tokens; every other rule wraps it in
+      `:where()`, so it keeps its weight and wins by coming later.
+    - A last block turns off what only the envelope has (the edge, the
+      perforations, postmarks, labels, handstamps, the flight path, the
+      envelopes and the posted photo) and undoes what the envelope added
+      to shared parts, so the classic look matches its old captures pixel
+      for pixel.
+    - New shared rules that must hold in both looks are written with a
+      leading `:root`, which outweighs `classic.css`; the phone menu bar is
+      one.
+    - Each look has its own browser bar colours: classic
+      `#F5F5F7`/`#161618`, `#F5F8F5`/`#081819`, `#FAFAF8`/`#121211`.
+  - **No wrong flash**: the first script in `<head>` reads the choices
+    (`snapfly-brand`, `snapfly-look`) and sets `data-brand` and
+    `data-look` before the page paints; both switches only appear once
+    scripts run. Changing look spreads like changing theme. Changing theme spreads the new
     one over the page in a circle from the swatch that was chosen (0.7 s
     on `--ease-out`, reaching the farthest corner last); with Reduce
     Motion, or without the View Transitions API, it changes at once. The
@@ -961,7 +993,11 @@ system to a web page. The brief and direction contract are in
     `#E6F2EE`/`#0A1E1F`, `#FAFAF8`/`#141312`). Another open tab follows
     the change, at once.
   - On phones (430 px and less) the menu bar keeps Snapfly's icon and hides
-    its name from view (it is still read out) so everything fits.
+    its name from view (it is still read out), packs its items 2 px apart,
+    its links 6 px in, and both switches' cells 26 px wide, so everything
+    fits. At 380 px and less the gaps go and the links sit 4 px in; at 340
+    px and less the cells are 24 px and Support leaves the bar (it stays in
+    the footer).
 - **Everything on the paper that is not postal is native.** It follows
   this file's tokens:
   - the menu bar: 46 px, paper at 86% blurred 20 px, a hairline;

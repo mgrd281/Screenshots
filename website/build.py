@@ -29,10 +29,11 @@ OUT = HERE / "_site"
 # keeps Vercel's toolbar off the preview pages.
 REDIRECT_JS = ('try{if(!localStorage.getItem("snapfly-lang")){var l=(navigator.language||"").toLowerCase();'
                'if(l.indexOf("de")==0)location.replace("de/");else if(l.indexOf("ar")==0)location.replace("ar/")}}catch(e){}')
-# Every page's first script: the brand theme chosen on this device, set
-# before the page paints, and the mark that scripts run.
+# Every page's first script: the brand theme and the look chosen on this
+# device, set before the page paints, and the mark that scripts run.
 BRAND_JS = ('try{var b=localStorage.getItem("snapfly-brand");if(b==="emerald"||b==="orange")'
-            'document.documentElement.setAttribute("data-brand",b)}catch(e){}'
+            'document.documentElement.setAttribute("data-brand",b);'
+            'if(localStorage.getItem("snapfly-look")==="classic")document.documentElement.setAttribute("data-look","classic")}catch(e){}'
             'document.documentElement.classList.add("js")')
 INLINE_JS = (BRAND_JS, REDIRECT_JS)
 STATIC = HERE / "static"
@@ -280,8 +281,14 @@ def menubar(lang, page):
         f'{mark(code)}>{icon("check", "icon tick")}{esc(name)}</a></li>'
         for code, _, name in LANGS)
     current = dict((c, n) for c, _, n in LANGS)[lang]
-    # The brand theme, as two swatches; site.js keeps the checked one in
-    # step with <html data-brand>.
+    # The look, airmail or the classic Mac desktop, and the brand theme, as
+    # swatches; site.js keeps the checked ones in step with <html data-look>
+    # and <html data-brand>.
+    looks = "".join(
+        f'<button type="button" class="look-chip" role="radio" aria-checked="{str(key == "airmail").lower()}"'
+        f' tabindex="{0 if key == "airmail" else -1}" data-look-pick="{key}" aria-label="{esc(t["look_" + key])}"'
+        f' data-tip="{esc(t["look_" + key])}"><span class="look-pic look-pic-{key}"></span></button>'
+        for key in ("airmail", "classic"))
     brands = "".join(
         f'<button type="button" class="brand-chip" role="radio" aria-checked="{str(key == "sunset").lower()}"'
         f' tabindex="{0 if key == "sunset" else -1}" data-brand-pick="{key}" aria-label="{esc(t["brand_" + key])}"'
@@ -296,6 +303,7 @@ def menubar(lang, page):
       <li><a href="{href_to(lang, lang, "support")}"{here("support")}>{esc(t["nav_support"])}</a></li>
     </ul>
     <div class="status">
+      <div class="look-switch" role="radiogroup" aria-label="{esc(t["look_label"])}"><span class="look-thumb" aria-hidden="true"></span>{looks}</div>
       <div class="brand-switch" role="radiogroup" aria-label="{esc(t["brand_label"])}"><span class="brand-thumb" aria-hidden="true"></span>{brands}</div>
       <details class="lang-menu">
         <summary aria-label="{esc(t["lang_label"])}: {esc(current)}">{icon("globe")}<span class="lang-current">{esc(current)}</span></summary>
@@ -374,6 +382,7 @@ def head(lang, page, title, desc):
 <script>{BRAND_JS}</script>
 {redirect}
 <link rel="stylesheet" href="{p}assets/site.css">
+<link rel="stylesheet" href="{p}assets/classic.css">
 <script src="{p}assets/site.js" defer></script>
 </head>"""
 

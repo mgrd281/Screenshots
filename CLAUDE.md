@@ -83,6 +83,11 @@ required by the license and stays.
   - The page is an airmail envelope: aerogramme paper inside a chevron edge
     round the window, every screenshot a perforated stamp on the line, a
     postmark with the time on what is sent. Mac windows on it stay native.
+  - A look switch beside the theme swatches brings back the classic Mac
+    desktop look the site had before (`static/classic.css`, the earlier
+    stylesheet scoped to `<html data-look="classic">`, kept in
+    `localStorage` as `snapfly-look`). The owner asked to keep both. A
+    change to shared parts must hold in both looks; check both.
   - Three brand themes, Original Sunset (the default), Emerald Petrol and
     Signature Orange, are chosen with the swatches in the menu bar and kept
     in `localStorage` (`snapfly-brand`). Light or dark stays the system's.

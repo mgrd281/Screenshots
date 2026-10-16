@@ -544,77 +544,98 @@
 
   whenSeen(document.querySelector(".keys"), () => document.querySelector(".keys").classList.add("play"), 0.6);
 
-  // MARK: Brand theme
+  // MARK: Brand theme and look
 
-  // Three looks for the same Mac: Original Sunset, Emerald Petrol and
-  // Signature Orange. The choice stays on this device and is set before the
-  // page paints, by the first script in <head>; light or dark is still the
+  // Two looks, the airmail envelope and the classic Mac desktop, each in
+  // three brand themes: Original Sunset, Emerald Petrol and Signature
+  // Orange. Both choices stay on this device and are set before the page
+  // paints, by the first script in <head>; light or dark is still the
   // system's.
-  const brandSwitch = document.querySelector(".brand-switch");
-  if (brandSwitch) {
-    const root = document.documentElement;
-    const chips = [...brandSwitch.querySelectorAll("[data-brand-pick]")];
-    const bars = { sunset: ["#ECEBFA", "#15122B"], emerald: ["#E6F2EE", "#0A1E1F"], orange: ["#FAFAF8", "#141312"] };
-    const known = (brand) => (brand in bars ? brand : "sunset");
-    const current = () => known(root.dataset.brand);
-    const show = (brand) => {
+  const root = document.documentElement;
+  const bars = {
+    airmail: { sunset: ["#ECEBFA", "#15122B"], emerald: ["#E6F2EE", "#0A1E1F"], orange: ["#FAFAF8", "#141312"] },
+    classic: { sunset: ["#F5F5F7", "#161618"], emerald: ["#F5F8F5", "#081819"], orange: ["#FAFAF8", "#121211"] },
+  };
+  const paintBars = () => {
+    const look = root.dataset.look === "classic" ? "classic" : "airmail";
+    const brand = root.dataset.brand in bars[look] ? root.dataset.brand : "sunset";
+    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+      meta.setAttribute("content", bars[look][brand][/dark/.test(meta.media) ? 1 : 0]);
+    });
+  };
+
+  // A new choice spreads over the page in a circle from the swatch that was
+  // chosen (site.css), reaching the farthest corner last.
+  let reveal = null;
+  const spread = (from, change) => {
+    if (!document.startViewTransition || reduced.matches) { change(); return; }
+    const box = from.getBoundingClientRect();
+    const x = box.left + box.width / 2;
+    const y = box.top + box.height / 2;
+    root.style.setProperty("--reveal-x", `${x}px`);
+    root.style.setProperty("--reveal-y", `${y}px`);
+    root.style.setProperty("--reveal-r", `${Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))}px`);
+    root.classList.add("brand-reveal");
+    const transition = document.startViewTransition(change);
+    reveal = transition;
+    const done = () => {
+      if (reveal !== transition) return;
+      root.classList.remove("brand-reveal");
+      ["--reveal-x", "--reveal-y", "--reveal-r"].forEach((name) => root.style.removeProperty(name));
+    };
+    // A second choice made at once skips this one; that is fine.
+    transition.ready.catch(() => {});
+    transition.finished.then(done, done);
+  };
+
+  // One radio group of swatches, kept in step with <html data-NAME>; the
+  // first value is the default and leaves the attribute off.
+  function setUpSwitch(group, name, values) {
+    const chips = [...group.querySelectorAll(`[data-${name}-pick]`)];
+    const pick = (chip) => chip.dataset[`${name}Pick`];
+    const known = (value) => (values.includes(value) ? value : values[0]);
+    const current = () => known(root.dataset[name]);
+    const show = (value) => {
       chips.forEach((chip) => {
-        const on = chip.dataset.brandPick === brand;
+        const on = pick(chip) === value;
         chip.setAttribute("aria-checked", String(on));
         chip.tabIndex = on ? 0 : -1;
       });
-      document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
-        meta.setAttribute("content", bars[brand][/dark/.test(meta.media) ? 1 : 0]);
-      });
+      paintBars();
     };
-    const apply = (brand) => {
-      if (brand === "sunset") delete root.dataset.brand;
-      else root.dataset.brand = brand;
-      show(brand);
+    const apply = (value) => {
+      if (value === values[0]) delete root.dataset[name];
+      else root.dataset[name] = value;
+      show(value);
     };
-    // The new theme spreads over the page in a circle from the swatch that
-    // was chosen (site.css), reaching the farthest corner last.
-    let reveal = null;
-    const choose = (brand, from) => {
-      if (brand === current()) return;
-      try { localStorage.setItem("snapfly-brand", brand); } catch (e) { /* kept for this visit only */ }
-      if (!document.startViewTransition || reduced.matches) { apply(brand); return; }
-      const box = from.getBoundingClientRect();
-      const x = box.left + box.width / 2;
-      const y = box.top + box.height / 2;
-      root.style.setProperty("--reveal-x", `${x}px`);
-      root.style.setProperty("--reveal-y", `${y}px`);
-      root.style.setProperty("--reveal-r", `${Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))}px`);
-      root.classList.add("brand-reveal");
-      const transition = document.startViewTransition(() => apply(brand));
-      reveal = transition;
-      const done = () => {
-        if (reveal !== transition) return;
-        root.classList.remove("brand-reveal");
-        ["--reveal-x", "--reveal-y", "--reveal-r"].forEach((name) => root.style.removeProperty(name));
-      };
-      // A second choice made at once skips this one; that is fine.
-      transition.ready.catch(() => {});
-      transition.finished.then(done, done);
+    const choose = (value, from) => {
+      if (value === current()) return;
+      try { localStorage.setItem(`snapfly-${name}`, value); } catch (e) { /* kept for this visit only */ }
+      spread(from, () => apply(value));
     };
     show(current());
-    chips.forEach((chip) => chip.addEventListener("click", () => choose(chip.dataset.brandPick, chip)));
-    // A radio group: the arrows move to the other theme and choose it.
-    brandSwitch.addEventListener("keydown", (event) => {
+    chips.forEach((chip) => chip.addEventListener("click", () => choose(pick(chip), chip)));
+    // A radio group: the arrows move to the next choice and make it.
+    group.addEventListener("keydown", (event) => {
       const steps = { ArrowUp: -1, ArrowDown: 1, ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 };
       const step = steps[event.key];
       if (!step) return;
       event.preventDefault();
-      const at = chips.findIndex((chip) => chip.dataset.brandPick === current());
+      const at = chips.findIndex((chip) => pick(chip) === current());
       const next = chips[(at + step + chips.length) % chips.length];
-      choose(next.dataset.brandPick, next);
+      choose(pick(next), next);
       next.focus();
     });
-    // Another tab that changes the theme changes this one too.
+    // Another tab that changes it changes this one too.
     addEventListener("storage", (event) => {
-      if (event.key === "snapfly-brand") apply(known(event.newValue));
+      if (event.key === `snapfly-${name}`) apply(known(event.newValue));
     });
   }
+
+  const brandSwitch = document.querySelector(".brand-switch");
+  if (brandSwitch) setUpSwitch(brandSwitch, "brand", ["sunset", "emerald", "orange"]);
+  const lookSwitch = document.querySelector(".look-switch");
+  if (lookSwitch) setUpSwitch(lookSwitch, "look", ["airmail", "classic"]);
 
   // Safari on iPhone and iPad shows a pressed state only where a touch is
   // listened for; this listener does nothing else.
