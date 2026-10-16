@@ -407,7 +407,7 @@ def download_button(lang):
 # edges a little rough. Every postmark draws through it.
 INK = ('<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false"><filter id="ink" x="-5%" y="-5%" width="110%" height="110%">'
        '<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="7" result="noise"/>'
-       '<feColorMatrix in="noise" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -2 1.75" result="speckle"/>'
+       '<feColorMatrix in="noise" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -1.4 1.6" result="speckle"/>'
        '<feComposite in="SourceGraphic" in2="speckle" operator="in" result="worn"/>'
        '<feDisplacementMap in="worn" in2="noise" scale="1.4" xChannelSelector="R" yChannelSelector="G"/></filter></svg>')
 
@@ -495,8 +495,8 @@ def hero(lang):
       <div class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><span class="window-title">{esc(t["chat_title"])}</span></div>
       <ol class="thread" data-thread>
         <li class="note">{esc(t["try_hint"])}</li>
-        <li class="msg out image"><span class="photo-img">{art("sunset", lang, "posted")}</span>{postmark("posted")}</li>
         <li class="msg in"><p>{esc(t["chat_in"])}</p></li>
+        <li class="msg out image posted"><span class="photo-img">{art("invoice", lang, "posted")}</span>{postmark("posted")}</li>
       </ol>
       <div class="composer" aria-hidden="true"><span class="field">{esc(t["chat_placeholder"])}</span><span class="composer-send">{icon("plane")}</span></div>
       <button class="chat-btn" type="button" data-chat-btn aria-label="{esc(t["chatbtn_label"])}" aria-description="{esc(t["chatbtn_hold"])}" title="{esc(t["chatbtn_hold"])}">
@@ -844,6 +844,7 @@ def section_capture(lang):
     <div class="copy">
       <h2 id="cap-h">{esc(t["cap_h"])}</h2>
       <p>{t["cap_p"]}</p>
+      {handstamp(TEXT[lang]["desk"]["toast"]["taken"], "cap-stamp")}
     </div>
   </div>
   <div class="desk-stage" data-try-desk>
@@ -956,7 +957,7 @@ def section_say(lang):
       <h2 id="say-h">{esc(t["say_h"])}</h2>
       <p>{esc(t["say_p"])}</p>
       <p class="try-note">{esc(t["say_try"])}</p>
-      {handstamp(t["stamp_covered"], "say-stamp")}
+      {handstamp(L(lang, "Hide Part…"), "say-stamp")}
     </div>
     <div class="window hide-win" role="group" aria-label="{esc(t["say_label"])}" data-hide
          data-note="{esc(L(lang, "Parts hidden: %d. Click a box to show it again."))}" data-nothing="{esc(L(lang, "Nothing found to hide."))}">
