@@ -106,6 +106,9 @@ required by the license and stays.
 - **Promo video.** `promo/` makes the vertical motion graphic in three
   languages; see `promo/README.md`. It reuses the website's drawings and the
   app's strings, so update it when either changes in a way the video shows.
+  - It also makes the German Instagram ad (`ad.js`, `ad-sound.py`), with a
+    voice and music from vidIQ that the owner approved. They are kept out of
+    the repository.
 - **iPhone app.** `iOS/` holds Snapfly for the iPhone: a SwiftUI app with
   the screenshots from Photos covered, and App Intents for Shortcuts and
   Back Tap. Same bundle ID as the Mac app, so one App Store record can hold

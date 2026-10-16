@@ -87,7 +87,42 @@ def page(lang):
     (HERE / f"promo-{lang}.html").write_text(html, encoding="utf-8")
 
 
+# The Instagram ad, in German only (ad.js holds its timeline). Its voice
+# says these words; the captions in ad.js follow them.
+AD = {
+    "de": dict(
+        file="Bildschirmfoto 2026-10-15 um 09.{n}.12",
+        asks=["Kannst du mir die Rechnung schicken?", "Was kann ich für dich tun?", "Schick mal rüber!"],
+        message="Nachricht",
+        free="Kostenlos für deinen Mac",
+    ),
+}
+
+
+def ad(lang):
+    words = dict(AD[lang])
+    words["tagline"] = L(lang, "Screenshots, one click from any chat.")
+    data = {
+        "lang": lang,
+        "text": words,
+        "invoice": SITE[lang]["inv"],
+        "art": [art(k, lang, f"a{i}") for i, k in enumerate(KINDS)],
+        "artByKind": {k: art(k, lang, f"ak{k}") for k in KINDS},
+        "icon": "../assets/icon.png",
+        "url": "mgrd281.github.io/Screenshots",
+    }
+    template = (HERE / "ad.template.html").read_text(encoding="utf-8")
+    html = template.replace("/*DATA*/null", json.dumps(data, ensure_ascii=False))
+    (HERE / f"ad-{lang}.html").write_text(html, encoding="utf-8")
+
+
 if __name__ == "__main__":
-    for lang in (sys.argv[1:] or ["en", "de", "ar"]):
+    args = sys.argv[1:]
+    if args[:1] == ["ad"]:
+        for lang in (args[1:] or ["de"]):
+            ad(lang)
+            print(f"Wrote promo/ad-{lang}.html")
+        sys.exit()
+    for lang in (args or ["en", "de", "ar"]):
         page(lang)
         print(f"Wrote promo/promo-{lang}.html")
