@@ -46,7 +46,7 @@ struct CoverPicture: AppIntent {
     static let description = IntentDescription("Covers names, addresses, emails, phone numbers and bank details in a picture.")
     static let openAppWhenRun = false
 
-    @Parameter(title: "Picture", supportedContentTypes: [.image])
+    @Parameter(title: "Picture", supportedTypeIdentifiers: [UTType.image.identifier])
     var picture: IntentFile
 
     func perform() async throws -> some IntentResult & ReturnsValue<IntentFile> {
