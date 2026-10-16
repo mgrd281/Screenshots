@@ -92,6 +92,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let chatButton = ChatButton(line: line)
         chatButton.openSettings = { [weak self] in self?.openSettings() }
         self.chatButton = chatButton
+        TimeStamp.onReady = { [weak self] _ in self?.line.readPrivateDetails() }
         if ClipboardWatcher.isEnabled { clipboardWatcher.start() }
 
         Shortcut.Role.allCases.forEach(registerShortcut)
@@ -400,6 +401,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // was taken on. On a full line the oldest photo then falls in view as
         // the new one flies in.
         comeDown(on: screen)
+        // Asked now, while the moment and the page in front are fresh.
+        TimeStamp.arrive(url)
         guard let id = line.hang(url, flying: from != nil) else {
             // Nothing hung after all, so an empty line goes away again.
             itemsChanged()

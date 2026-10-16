@@ -198,12 +198,18 @@ screenshot file itself is never changed.
 ## Stamped with the time.
 
 Turn on Stamp the date and time under General in Settings, and every
-screenshot of the whole screen carries the date and time it was taken in
-its bottom corner, in a small dark capsule with a clock. Choose Every
-screenshot to stamp all of them, and type a few words, like your shop's
-name, to stand before the date. Like covered details, the stamp shows on
-the line and goes with whatever leaves it; the file itself stays as it
-was.
+screenshot of the whole screen gets a band above it, like a letterhead,
+that says when and where it was taken: the date and the time to the
+second, from the atomic clock of the PTB in Germany (or the Mac's clock
+when there is no connection); the page that was open in the browser; and
+the screenshot's SHA-256 fingerprint, so anyone can check the copy was
+made from that very file. Choose Every screenshot to stamp all of them,
+and type a few words, like your shop's name, to stand before the date.
+
+The screenshot itself stays as it was. A stamped copy is saved next to it,
+named "… with time stamp", and the stamp also shows on the line and goes
+with whatever leaves it. Asking the PTB for the time is the only thing
+Snapfly ever sends out, and only while the stamp is on.
 
 <br>
 
@@ -323,7 +329,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
-| `TimeStamp.swift` | Stamps the date and time, and the user's own words, in the corner of a screenshot |
+| `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
+| `AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
 | `TextCard.swift` | Translate Text and Describe, and the card that shows them |

@@ -308,6 +308,12 @@ final class ChatButton {
         return url
     }
 
+    /// The page open in the browser in front, for the time stamp.
+    static func pageInFront() -> URL? {
+        guard let shared, let id = Paste.frontApp?.bundleIdentifier, browsers[id] != nil else { return nil }
+        return shared.readPage(in: id)
+    }
+
     private func hide() {
         current = nil
         guard panel.isVisible else { return }

@@ -1,11 +1,17 @@
 import AppKit
 import CoreText
+import CryptoKit
+import UniformTypeIdentifiers
 
-/// The date and time a screenshot was taken, with a word of the user's own
-/// if they want one, stamped in its bottom corner. It is off until turned
-/// on in Settings, and then marks screenshots of the whole screen, or every
-/// screenshot. Like a covered detail, it is drawn on what leaves the line
-/// and on the photo that hangs there; the file itself never changes.
+/// When a screenshot was taken, as evidence: a band above the picture with
+/// the date and time from the PTB's atomic clock, the page that was open in
+/// the browser, and the screenshot's fingerprint, with a word of the user's
+/// own if they want one. It is off until turned on in Settings, and then
+/// marks screenshots of the whole screen, or every screenshot.
+///
+/// The screenshot itself never changes. A stamped copy is saved next to it,
+/// and like a covered detail the stamp shows on the photo that hangs and on
+/// whatever leaves the line.
 enum TimeStamp {
     /// Which screenshots get the stamp.
     enum Scope: String, CaseIterable {
@@ -13,14 +19,33 @@ enum TimeStamp {
         case all
     }
 
-    /// What one stamp says and which corner it sits in. Made on the main
-    /// thread, drawn on any.
+    /// What is known about one screenshot's moment. Written once, as the
+    /// screenshot arrives, and kept with the file.
+    struct Record: Codable, Equatable, Sendable {
+        /// By the atomic clock when `atomic`, by the Mac's clock otherwise.
+        var taken: Date
+        var atomic: Bool
+        /// The page open in the browser in front, if it was one.
+        var page: String?
+        /// SHA-256 of the screenshot as it arrived.
+        var fingerprint: String?
+    }
+
+    /// One line of the band.
+    struct Row: Equatable, Sendable {
+        enum Kind: Sendable { case title, detail, code }
+        var text: String
+        var kind: Kind
+    }
+
+    /// What one stamp says and which way it reads. Made on the main thread,
+    /// drawn on any.
     struct Mark: Equatable, Sendable {
-        var label: String
+        var rows: [Row]
         var rightToLeft: Bool
 
         /// Changes whenever the stamp would look different.
-        var key: String { "\(label)|\(rightToLeft)" }
+        var key: String { rows.map(\.text).joined(separator: "|") + "|\(rightToLeft)" }
     }
 
     static var isOn: Bool {
@@ -40,18 +65,56 @@ enum TimeStamp {
         set { UserDefaults.standard.set(newValue.rawValue, forKey: "timeStampScope") }
     }
 
+    /// Screenshots whose atomic time is still on its way. They show
+    /// unstamped for that moment rather than with a time that then changes.
+    @MainActor private static var pending: Set<String> = []
+
+    /// Called once a screenshot's stamp is ready, so the line can draw it.
+    @MainActor static var onReady: ((URL) -> Void)?
+
     /// The stamp for a screenshot, or nil when it gets none.
     @MainActor
     static func mark(for url: URL) -> Mark? {
-        guard isOn, isImage(url), scope == .all || isWholeScreen(url) else { return nil }
-        let values = try? url.resourceValues(forKeys: [.creationDateKey, .contentModificationDateKey])
-        let taken = values?.creationDate ?? values?.contentModificationDate ?? Date()
-        return Mark(label: label(text: text, date: taken, locale: .autoupdatingCurrent),
-                    rightToLeft: rightToLeft)
+        guard isOn, isImage(url), !pending.contains(url.path), scope == .all || isWholeScreen(url) else { return nil }
+        // A screenshot from before the stamp was turned on has the Mac's
+        // clock to go by, and nothing else.
+        let known = record(of: url) ?? Record(taken: created(url) ?? Date(), atomic: false)
+        return mark(known, text: text, locale: .autoupdatingCurrent, rightToLeft: rightToLeft)
     }
 
-    /// The stamp goes in the trailing corner, away from the lock the line
-    /// shows in the leading one.
+    /// A new screenshot: asks the atomic clock and the browser now, while
+    /// the moment is fresh, keeps the answers with the file and saves the
+    /// stamped copy next to it.
+    @MainActor
+    static func arrive(_ url: URL) {
+        guard isOn, isImage(url), !isStampedCopy(url), record(of: url) == nil,
+              scope == .all || isWholeScreen(url) else { return }
+        // Only a screenshot just taken: one hung again from the history has
+        // no page in front and no moment left to ask about.
+        let taken = created(url) ?? Date()
+        guard Date().timeIntervalSince(taken) < 60 else { return }
+        pending.insert(url.path)
+        let page = ChatButton.pageInFront()?.absoluteString
+        AtomicTime.offset { offset in
+            DispatchQueue.global(qos: .utility).async {
+                let record = Record(taken: taken.addingTimeInterval(offset ?? 0), atomic: offset != nil,
+                                    page: page, fingerprint: fingerprint(of: url))
+                write(record, to: url)
+                DispatchQueue.main.async {
+                    MainActor.assumeIsolated {
+                        pending.remove(url.path)
+                        if let stamp = mark(for: url) {
+                            let name = copyName(for: url)
+                            DispatchQueue.global(qos: .utility).async { saveCopy(of: url, named: name, stamp, record) }
+                        }
+                        onReady?(url)
+                    }
+                }
+            }
+        }
+    }
+
+    /// The band reads from the trailing side in right-to-left languages.
     static var rightToLeft: Bool {
         let language = Bundle.main.preferredLocalizations.first ?? "en"
         return Locale.Language(identifier: language).characterDirection == .rightToLeft
@@ -77,8 +140,43 @@ enum TimeStamp {
     /// What macOS records about how a screenshot was taken: "display",
     /// "window" or "selection".
     private static func captureKind(of url: URL) -> String? {
-        let name = "com.apple.metadata:kMDItemScreenCaptureType"
-        let data: Data? = url.withUnsafeFileSystemRepresentation { path in
+        guard let data = attribute("com.apple.metadata:kMDItemScreenCaptureType", of: url) else { return nil }
+        return (try? PropertyListSerialization.propertyList(from: data, format: nil)) as? String
+    }
+
+    private static func created(_ url: URL) -> Date? {
+        let values = try? url.resourceValues(forKeys: [.creationDateKey, .contentModificationDateKey])
+        return values?.creationDate ?? values?.contentModificationDate
+    }
+
+    // MARK: Kept with the file
+
+    private static let recordName = "com.snapfly.stamp"
+    private static let copyMarker = "com.snapfly.stamped-copy"
+
+    static func record(of url: URL) -> Record? {
+        attribute(recordName, of: url).flatMap { try? JSONDecoder().decode(Record.self, from: $0) }
+    }
+
+    private static func write(_ record: Record, to url: URL) {
+        guard let data = try? JSONEncoder().encode(record) else { return }
+        setAttribute(recordName, data, on: url)
+    }
+
+    /// A copy Snapfly saved, which is not a new screenshot to hang.
+    static func isStampedCopy(_ url: URL) -> Bool {
+        attribute(copyMarker, of: url) != nil
+    }
+
+    /// The screenshot's SHA-256, so anyone can check the copy was made from
+    /// this very file.
+    static func fingerprint(of url: URL) -> String? {
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        return SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    }
+
+    private static func attribute(_ name: String, of url: URL) -> Data? {
+        url.withUnsafeFileSystemRepresentation { path in
             guard let path else { return nil }
             let size = getxattr(path, name, nil, 0, 0, 0)
             guard size > 0 else { return nil }
@@ -86,20 +184,41 @@ enum TimeStamp {
             let read = buffer.withUnsafeMutableBytes { getxattr(path, name, $0.baseAddress, size, 0, 0) }
             return read == size ? buffer : nil
         }
-        guard let data else { return nil }
-        return (try? PropertyListSerialization.propertyList(from: data, format: nil)) as? String
+    }
+
+    private static func setAttribute(_ name: String, _ data: Data, on url: URL) {
+        url.withUnsafeFileSystemRepresentation { path in
+            guard let path else { return }
+            _ = data.withUnsafeBytes { setxattr(path, name, $0.baseAddress, data.count, 0, 0) }
+        }
     }
 
     // MARK: The words
 
-    /// The words on the stamp: the user's own, then the date and time in the
-    /// Mac's own format.
+    /// The lines of the band: the user's words and the date and time; where
+    /// the time comes from; the page; the fingerprint.
+    static func mark(_ record: Record, text: String, locale: Locale,
+                     timeZone: TimeZone = .autoupdatingCurrent, rightToLeft: Bool) -> Mark {
+        var rows = [Row(text: label(text: text, date: record.taken, locale: locale, timeZone: timeZone), kind: .title)]
+        rows.append(Row(text: record.atomic ? L("Atomic time from the PTB, Germany") : L("Time from the Mac’s clock"),
+                        kind: .detail))
+        if let page = record.page {
+            rows.append(Row(text: String(format: L("Page: %@"), page), kind: .detail))
+        }
+        if let fingerprint = record.fingerprint {
+            rows.append(Row(text: String(format: L("Fingerprint (SHA-256): %@"), fingerprint), kind: .code))
+        }
+        return Mark(rows: rows, rightToLeft: rightToLeft)
+    }
+
+    /// The user's own words, then the date and the time to the second, with
+    /// the time zone, in the Mac's own format.
     static func label(text: String, date: Date, locale: Locale, timeZone: TimeZone = .autoupdatingCurrent) -> String {
         let format = DateFormatter()
         format.locale = locale
         format.timeZone = timeZone
         format.dateStyle = .medium
-        format.timeStyle = .short
+        format.timeStyle = .long
         let words = text.trimmingCharacters(in: .whitespacesAndNewlines)
         let when = format.string(from: date)
         return words.isEmpty ? when : "\(words) · \(when)"
@@ -107,95 +226,134 @@ enum TimeStamp {
 
     // MARK: Drawing
 
-    /// The sizes of a stamp on an image, in its pixels: the text grows with
-    /// the image, so it reads the same on any screen.
+    /// The sizes of the band on an image, in its pixels: the text grows with
+    /// the image's width, so it reads the same on any screen.
     struct Metrics: Equatable {
         var font: CGFloat
         var padding: CGFloat
-        var height: CGFloat
-        var margin: CGFloat
         var gap: CGFloat
 
-        init(font: CGFloat) {
-            self.font = font
-            padding = (font * 0.8).rounded()
-            height = (font * 2.1).rounded()
-            margin = (font * 1.2).rounded()
-            gap = (font * 0.45).rounded()
+        init(width: Int) {
+            font = max(11, (CGFloat(width) * 0.0095).rounded())
+            padding = (font * 0.9).rounded()
+            gap = (font * 0.7).rounded()
+        }
+
+        func size(of kind: Row.Kind) -> CGFloat {
+            switch kind {
+            case .title: font
+            case .detail: (font * 0.86).rounded()
+            case .code: (font * 0.8).rounded()
+            }
+        }
+
+        func lineHeight(of kind: Row.Kind) -> CGFloat { (size(of: kind) * 1.4).rounded() }
+
+        /// The band's height for these rows.
+        func height(for rows: [Row]) -> CGFloat {
+            rows.reduce(padding * 2) { $0 + lineHeight(of: $1.kind) }
         }
     }
 
-    static func metrics(width: Int, height: Int) -> Metrics {
-        Metrics(font: max(12, (CGFloat(min(width, height)) * 0.016).rounded()))
-    }
+    /// The image with the band above it: as wide, and taller by the band.
+    static func render(_ image: CGImage, _ mark: Mark) -> CGImage? {
+        let m = Metrics(width: image.width)
+        let band = Int(m.height(for: mark.rows).rounded(.up))
+        let width = image.width, height = image.height + band
+        let space = image.colorSpace.flatMap { $0.model == .rgb ? $0 : nil } ?? CGColorSpace(name: CGColorSpace.sRGB)!
+        guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                                      space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+        else { return nil }
+        // Core Graphics counts from the bottom: the picture below, the band on top.
+        context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
+        let top = CGRect(x: 0, y: CGFloat(image.height), width: CGFloat(width), height: CGFloat(band))
+        context.setFillColor(CGColor(gray: 0.97, alpha: 1))
+        context.fill(top)
+        context.setFillColor(CGColor(gray: 0.82, alpha: 1))
+        context.fill(CGRect(x: 0, y: top.minY, width: top.width, height: max(1, (m.font / 16).rounded())))
 
-    /// Where the capsule goes: in the bottom trailing corner, inside the
-    /// image. Nil when the image is too small to hold it.
-    static func capsule(width: Int, height: Int, content: CGFloat, metrics m: Metrics, rightToLeft: Bool) -> CGRect? {
-        let w = content + m.padding * 2
-        guard w + m.margin * 2 <= CGFloat(width), m.height + m.margin * 2 <= CGFloat(height) else { return nil }
-        let x = rightToLeft ? m.margin : CGFloat(width) - m.margin - w
-        // Core Graphics counts from the bottom.
-        return CGRect(x: x, y: m.margin, width: w, height: m.height)
-    }
+        // The app icon leads in the reading direction, then the words.
+        let icon = min(top.height - m.padding * 2, m.font * 3)
+        let iconX = mark.rightToLeft ? CGFloat(width) - m.padding - icon : m.padding
+        drawIcon(in: CGRect(x: iconX, y: top.maxY - m.padding - icon, width: icon, height: icon), context: context)
+        let room = CGFloat(width) - m.padding * 2 - icon - m.gap
 
-    /// Draws the stamp on an image the size of the context: a dark capsule,
-    /// like the lock on a covered photo, with a clock and the words in white.
-    static func draw(_ mark: Mark, in context: CGContext, width: Int, height: Int) {
-        var m = metrics(width: width, height: height)
-        var line = textLine(mark.label, size: m.font)
-        var content: CGFloat = m.font + m.gap + CGFloat(CTLineGetTypographicBounds(line, nil, nil, nil))
-        // A small image takes a smaller stamp, rather than none.
-        let room = CGFloat(width) - (m.padding + m.margin) * 2
-        if content > room, room > 0 {
-            m = Metrics(font: max(8, (m.font * room / content).rounded(.down)))
-            line = textLine(mark.label, size: m.font)
-            content = m.font + m.gap + CGFloat(CTLineGetTypographicBounds(line, nil, nil, nil))
+        var y = top.maxY - m.padding
+        for row in mark.rows {
+            let lineHeight = m.lineHeight(of: row.kind)
+            y -= lineHeight
+            guard room > 0 else { continue }
+            let line = textLine(row, size: m.size(of: row.kind), room: room)
+            var ascent: CGFloat = 0, descent: CGFloat = 0
+            let textWidth = CGFloat(CTLineGetTypographicBounds(line, &ascent, &descent, nil))
+            let x = mark.rightToLeft ? iconX - m.gap - textWidth : iconX + icon + m.gap
+            context.textPosition = CGPoint(x: x, y: y + (lineHeight - ascent - descent) / 2 + descent)
+            CTLineDraw(line, context)
         }
-        guard let box = capsule(width: width, height: height, content: content, metrics: m,
-                                rightToLeft: mark.rightToLeft) else { return }
-
-        context.saveGState()
-        defer { context.restoreGState() }
-        context.addPath(CGPath(roundedRect: box, cornerWidth: box.height / 2, cornerHeight: box.height / 2,
-                               transform: nil))
-        context.setFillColor(CGColor(gray: 0, alpha: 0.6))
-        context.fillPath()
-
-        // The clock leads in the reading direction, then the words.
-        let iconX = mark.rightToLeft ? box.maxX - m.padding - m.font : box.minX + m.padding
-        let icon = CGRect(x: iconX, y: box.midY - m.font / 2, width: m.font, height: m.font)
-        drawClock(in: icon, context: context)
-
-        var ascent: CGFloat = 0, descent: CGFloat = 0
-        let textWidth = CGFloat(CTLineGetTypographicBounds(line, &ascent, &descent, nil))
-        let textX = mark.rightToLeft ? icon.minX - m.gap - textWidth : icon.maxX + m.gap
-        context.textPosition = CGPoint(x: textX, y: box.midY - (ascent - descent) / 2)
-        CTLineDraw(line, context)
+        return context.makeImage()
     }
 
-    private static func textLine(_ text: String, size: CGFloat) -> CTLine {
-        let font = NSFont.monospacedDigitSystemFont(ofSize: size, weight: .semibold)
-        let words = NSAttributedString(string: text, attributes: [
+    /// One row in its weight and colour, cut short with an ellipsis where
+    /// the image is too narrow for it.
+    private static func textLine(_ row: Row, size: CGFloat, room: CGFloat) -> CTLine {
+        let font: NSFont
+        let gray: CGFloat
+        switch row.kind {
+        case .title: font = .monospacedDigitSystemFont(ofSize: size, weight: .semibold); gray = 0.08
+        case .detail: font = .systemFont(ofSize: size); gray = 0.32
+        case .code: font = .monospacedSystemFont(ofSize: size, weight: .regular); gray = 0.4
+        }
+        let attributes: [NSAttributedString.Key: Any] = [
             NSAttributedString.Key(kCTFontAttributeName as String): font,
-            NSAttributedString.Key(kCTForegroundColorAttributeName as String): CGColor(gray: 1, alpha: 1),
-        ])
-        return CTLineCreateWithAttributedString(words)
+            NSAttributedString.Key(kCTForegroundColorAttributeName as String): CGColor(gray: gray, alpha: 1),
+        ]
+        let line = CTLineCreateWithAttributedString(NSAttributedString(string: row.text, attributes: attributes))
+        let ellipsis = CTLineCreateWithAttributedString(NSAttributedString(string: "…", attributes: attributes))
+        return CTLineCreateTruncatedLine(line, Double(room), .end, ellipsis) ?? line
     }
 
-    private static func drawClock(in rect: CGRect, context: CGContext) {
-        let config = NSImage.SymbolConfiguration(pointSize: rect.height, weight: .semibold)
-            .applying(NSImage.SymbolConfiguration(paletteColors: [.white]))
-        guard let symbol = NSImage(systemSymbolName: "clock", accessibilityDescription: nil)?
-            .withSymbolConfiguration(config) else { return }
+    private static func drawIcon(in rect: CGRect, context: CGContext) {
+        guard rect.width > 0, let icon = NSImage(named: NSImage.applicationIconName) else { return }
         NSGraphicsContext.saveGraphicsState()
         NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
-        // Kept to its own proportions, centred in the square.
-        let size = symbol.size
-        let scale = min(rect.width / size.width, rect.height / size.height)
-        let drawn = CGRect(x: rect.midX - size.width * scale / 2, y: rect.midY - size.height * scale / 2,
-                           width: size.width * scale, height: size.height * scale)
-        symbol.draw(in: drawn)
+        icon.draw(in: rect)
         NSGraphicsContext.restoreGraphicsState()
+    }
+
+    // MARK: The copy next to the screenshot
+
+    @MainActor
+    private static func copyName(for url: URL) -> String {
+        String(format: L("%@ with time stamp"), url.deletingPathExtension().lastPathComponent)
+    }
+
+    /// Writes the stamped copy next to the screenshot, as a PNG that also
+    /// carries the stamp's words in its description. It is marked first and
+    /// named last, so the folder never shows it as a new screenshot.
+    private static func saveCopy(of url: URL, named name: String, _ mark: Mark, _ record: Record) {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil),
+              let stamped = render(image, mark) else { return }
+        let folder = url.deletingLastPathComponent()
+        var target = folder.appendingPathComponent(name).appendingPathExtension("png")
+        var n = 2
+        while FileManager.default.fileExists(atPath: target.path) {
+            target = folder.appendingPathComponent("\(name) \(n)").appendingPathExtension("png")
+            n += 1
+        }
+        let hidden = folder.appendingPathComponent(".snapfly-\(UUID().uuidString).png")
+        guard let destination = CGImageDestinationCreateWithURL(hidden as CFURL, UTType.png.identifier as CFString, 1, nil)
+        else { return }
+        let png: [CFString: Any] = [
+            kCGImagePropertyPNGDescription: mark.rows.map(\.text).joined(separator: "\n"),
+            kCGImagePropertyPNGSoftware: "Snapfly",
+            kCGImagePropertyPNGCreationTime: ISO8601DateFormatter().string(from: record.taken),
+        ]
+        CGImageDestinationAddImage(destination, stamped, [kCGImagePropertyPNGDictionary: png] as CFDictionary)
+        guard CGImageDestinationFinalize(destination) else { return }
+        setAttribute(copyMarker, Data([1]), on: hidden)
+        if (try? FileManager.default.moveItem(at: hidden, to: target)) == nil {
+            try? FileManager.default.removeItem(at: hidden)
+        }
     }
 }

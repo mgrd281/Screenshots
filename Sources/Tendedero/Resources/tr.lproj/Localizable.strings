@@ -325,10 +325,16 @@
 /* Time stamp */
 "Time stamp" = "Zaman damgası";
 "Stamp the date and time" = "Tarih ve saati damgala";
-"In the corner, on the line and in whatever leaves it" = "Köşede, ipte ve ipten çıkan her şeyde";
+"At the top, on the line and in a copy next to the screenshot" = "Üstte, ipte ve ekran görüntüsünün yanındaki bir kopyada";
 "Which screenshots" = "Hangi ekran görüntüleri";
 "Screenshots of the whole screen" = "Tüm ekranın görüntüleri";
 "Every screenshot" = "Her ekran görüntüsü";
 "Words before the date" = "Tarihten önceki sözcükler";
 "Optional, like your shop’s name" = "İsteğe bağlı, örneğin mağazanın adı";
-"The file itself stays as it was." = "Dosyanın kendisi olduğu gibi kalır.";
+"The screenshot itself stays as it was; the stamped copy is saved next to it." = "Ekran görüntüsünün kendisi değişmez; damgalı kopya yanına kaydedilir.";
+"The time comes from the PTB’s atomic clock in Germany, over the internet. Only the question for the time goes out; without a connection, the Mac’s clock is used." = "Saat, internet üzerinden Almanya’daki PTB’nin atom saatinden gelir. Dışarı yalnızca saat sorusu çıkar; bağlantı yoksa Mac’in saati kullanılır.";
+"Atomic time from the PTB, Germany" = "PTB atom saati, Almanya";
+"Time from the Mac’s clock" = "Mac’in saatinden zaman";
+"Page: %@" = "Sayfa: %@";
+"Fingerprint (SHA-256): %@" = "Parmak izi (SHA-256): %@";
+"%@ with time stamp" = "%@ zaman damgalı";

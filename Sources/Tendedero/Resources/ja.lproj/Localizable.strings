@@ -325,10 +325,16 @@
 /* Time stamp */
 "Time stamp" = "タイムスタンプ";
 "Stamp the date and time" = "日付と時刻を入れる";
-"In the corner, on the line and in whatever leaves it" = "隅に入ります。ロープ上の画像にも、ロープから出す画像にも";
+"At the top, on the line and in a copy next to the screenshot" = "上部に入ります。ロープ上の画像と、スクリーンショットの隣のコピーにも";
 "Which screenshots" = "対象のスクリーンショット";
 "Screenshots of the whole screen" = "画面全体のスクリーンショット";
 "Every screenshot" = "すべてのスクリーンショット";
 "Words before the date" = "日付の前に入れる文字";
 "Optional, like your shop’s name" = "省略可。ショップ名など";
-"The file itself stays as it was." = "ファイル自体は変わりません。";
+"The screenshot itself stays as it was; the stamped copy is saved next to it." = "スクリーンショット自体は変わりません。スタンプ入りのコピーが隣に保存されます。";
+"The time comes from the PTB’s atomic clock in Germany, over the internet. Only the question for the time goes out; without a connection, the Mac’s clock is used." = "時刻はインターネット経由でドイツのPTBの原子時計から取得します。送られるのは時刻の問い合わせだけです。接続がないときはMacの時計を使います。";
+"Atomic time from the PTB, Germany" = "PTBの原子時（ドイツ）";
+"Time from the Mac’s clock" = "Macの時計の時刻";
+"Page: %@" = "ページ: %@";
+"Fingerprint (SHA-256): %@" = "フィンガープリント (SHA-256): %@";
+"%@ with time stamp" = "%@（タイムスタンプ付き）";
