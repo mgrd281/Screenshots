@@ -126,8 +126,22 @@
     // Gets the chat ready for what lands: the hint goes, and on a small
     // screen, where the chat sits below the line, it comes into view.
     async function readyChat() {
-      const hint = thread.querySelector(".note");
-      if (hint) hint.remove();
+      const hint = thread.querySelector(".note:not(.going)");
+      if (hint) {
+        if (reduced.matches) hint.remove();
+        else {
+          // It folds to nothing, its gap in the thread included, so the
+          // messages under it close up without a jump.
+          hint.classList.add("going");
+          const style = getComputedStyle(hint);
+          const gap = getComputedStyle(thread).rowGap;
+          hint.style.overflow = "hidden";
+          hint.animate([
+            { opacity: 1, height: `${hint.clientHeight}px`, paddingBlock: `${style.paddingBlockStart} ${style.paddingBlockEnd}`, marginBlockEnd: "0px" },
+            { opacity: 0, height: "0px", paddingBlock: "0px 0px", marginBlockEnd: `-${gap}` },
+          ], { duration: 260, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" }).finished.then(() => hint.remove(), () => hint.remove());
+        }
+      }
       const box = chat.getBoundingClientRect();
       if (box.top > innerHeight - 160 || box.bottom < 160) {
         chat.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "center" });
@@ -532,14 +546,33 @@
       else root.dataset.brand = brand;
       show(brand);
     };
-    const choose = (brand) => {
+    // The new theme spreads over the page in a circle from the swatch that
+    // was chosen (site.css), reaching the farthest corner last.
+    let reveal = null;
+    const choose = (brand, from) => {
       if (brand === current()) return;
       try { localStorage.setItem("snapfly-brand", brand); } catch (e) { /* kept for this visit only */ }
-      if (document.startViewTransition && !reduced.matches) document.startViewTransition(() => apply(brand));
-      else apply(brand);
+      if (!document.startViewTransition || reduced.matches) { apply(brand); return; }
+      const box = from.getBoundingClientRect();
+      const x = box.left + box.width / 2;
+      const y = box.top + box.height / 2;
+      root.style.setProperty("--reveal-x", `${x}px`);
+      root.style.setProperty("--reveal-y", `${y}px`);
+      root.style.setProperty("--reveal-r", `${Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))}px`);
+      root.classList.add("brand-reveal");
+      const transition = document.startViewTransition(() => apply(brand));
+      reveal = transition;
+      const done = () => {
+        if (reveal !== transition) return;
+        root.classList.remove("brand-reveal");
+        ["--reveal-x", "--reveal-y", "--reveal-r"].forEach((name) => root.style.removeProperty(name));
+      };
+      // A second choice made at once skips this one; that is fine.
+      transition.ready.catch(() => {});
+      transition.finished.then(done, done);
     };
     show(current());
-    chips.forEach((chip) => chip.addEventListener("click", () => choose(chip.dataset.brandPick)));
+    chips.forEach((chip) => chip.addEventListener("click", () => choose(chip.dataset.brandPick, chip)));
     // A radio group: the arrows move to the other theme and choose it.
     brandSwitch.addEventListener("keydown", (event) => {
       const steps = { ArrowUp: -1, ArrowDown: 1, ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 };
@@ -548,7 +581,7 @@
       event.preventDefault();
       const at = chips.findIndex((chip) => chip.dataset.brandPick === current());
       const next = chips[(at + step + chips.length) % chips.length];
-      choose(next.dataset.brandPick);
+      choose(next.dataset.brandPick, next);
       next.focus();
     });
     // Another tab that changes the theme changes this one too.
@@ -557,7 +590,19 @@
     });
   }
 
+  // Safari on iPhone and iPad shows a pressed state only where a touch is
+  // listened for; this listener does nothing else.
+  document.addEventListener("touchstart", () => {}, { passive: true });
+
   // MARK: Arrivals
+
+  // The photos on a line sway only while the line is on screen.
+  if ("IntersectionObserver" in window) {
+    const loops = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      entry.target.classList.toggle("loops-paused", !entry.isIntersecting);
+    }));
+    document.querySelectorAll(".line, [data-style-stage]").forEach((holder) => loops.observe(holder));
+  }
 
   // The first view's arrival plays once; photos hung on the hero's line
   // later just hang there.
