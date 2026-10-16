@@ -1,8 +1,8 @@
-// Talks to the App Store Connect API, so the Mac App Store edition needs no
-// Xcode: it lists and creates certificates (scripts/mac-store-signing.sh),
-// registers the bundle ID, makes the App Store provisioning profile and
-// finds the app's Apple ID (scripts/app-store.sh). Only Foundation and
-// CryptoKit.
+// Talks to the App Store Connect API, so the store editions need no Xcode
+// account: it lists and creates certificates (scripts/mac-store-signing.sh,
+// scripts/iphone-signing.sh), registers the bundle ID, makes the App Store
+// provisioning profiles and finds the app's Apple ID (scripts/app-store.sh,
+// scripts/iphone-store.sh). Only Foundation and CryptoKit.
 //
 // It reads the API key from the environment: ASC_KEY_ID, ASC_ISSUER_ID and
 // ASC_KEY, the text of the .p8 file.
@@ -12,7 +12,8 @@
 //   swift scripts/asc.swift certificates <folder>
 //   swift scripts/asc.swift create-certificate <type> <csr file> <out.cer>
 //   swift scripts/asc.swift bundle-id <identifier> <name>
-//   swift scripts/asc.swift profile <bundle ID resource id> <certificate id> <name> <out.provisionprofile>
+//   swift scripts/asc.swift profile <bundle ID resource id> <certificate id> <name> <out.provisionprofile> [type]
+//     (type: MAC_APP_STORE, the default, or IOS_APP_STORE)
 //   swift scripts/asc.swift app <bundle identifier>
 import CryptoKit
 import Foundation
@@ -157,12 +158,13 @@ case "bundle-id" where arguments.count == 3:
         print((json["data"] as? JSON)?["id"] as? String ?? "")
     }
 
-case "profile" where arguments.count == 5:
-    // The Mac App Store profile for one certificate, made once and then
-    // downloaded again while it is still active.
+case "profile" where arguments.count == 5 || arguments.count == 6:
+    // The App Store profile for one certificate, on the Mac or the iPhone,
+    // made once and then downloaded again while it is still active.
     let (bundleID, certificateID, name, out) = (arguments[1], arguments[2], arguments[3], arguments[4])
+    let type = arguments.count == 6 ? arguments[5] : "MAC_APP_STORE"
     let (status, json) = await call("GET", "/v1/profiles",
-                                    query: ["filter[name]": name, "filter[profileType]": "MAC_APP_STORE", "limit": "200"])
+                                    query: ["filter[name]": name, "filter[profileType]": type, "limit": "200"])
     expect(status, json, "Looking up the profile")
     if let found = items(json).first(where: { attributes($0)["name"] as? String == name
                                                 && attributes($0)["profileState"] as? String == "ACTIVE" }) {
@@ -170,7 +172,7 @@ case "profile" where arguments.count == 5:
     } else {
         let body: JSON = ["data": [
             "type": "profiles",
-            "attributes": ["name": name, "profileType": "MAC_APP_STORE"],
+            "attributes": ["name": name, "profileType": type],
             "relationships": [
                 "bundleId": ["data": ["type": "bundleIds", "id": bundleID]],
                 "certificates": ["data": [["type": "certificates", "id": certificateID]]],

@@ -104,10 +104,16 @@ required by the license and stays.
     without touching it.
   - Code both apps use goes in `Sources/Tendedero/Shared`, without AppKit or
     UIKit. The Mac's SwiftPM target compiles it too.
-  - The Build Snapfly workflow's `iphone` job builds it unsigned for a device.
-    `check-strings.swift` reads `iOS/Snapfly` too.
-  - Not yet signed or uploaded: TestFlight for the iPhone needs an Apple
-    Distribution certificate, which the owner makes on their Mac.
+  - The Build Snapfly workflow's `iphone` job archives it unsigned, with the
+    shared scheme `Snapfly`. `check-strings.swift` reads `iOS/Snapfly` too.
+  - `iOS/Snapfly/PrivacyInfo.xcprivacy` declares the APIs Apple asks a reason
+    for (UserDefaults so far). Add to it when the app uses another.
+  - The **iPhone App Store** workflow (`scripts/iphone-store.sh`) archives,
+    signs and uploads it to TestFlight at every push to `main` that touches
+    it, and by hand. It needs `SNAPFLY_SIGNING` and `SNAPFLY_IPHONE`, the
+    Apple Distribution key and certificate, made by `scripts/iphone-signing.sh`
+    on the owner's Mac. Without `SNAPFLY_IPHONE` it uploads nothing. The app's
+    record in App Store Connect needs the iPhone (iOS) added beside macOS.
 - **Tests.** `Tests/TendederoTests` holds XCTest tests for logic that needs no
   screen (parsing, sizes, file kinds). The Build Snapfly workflow runs
   `swift test` before building, so add a test with each new piece of such

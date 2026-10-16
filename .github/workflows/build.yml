@@ -100,7 +100,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Archived the way the iPhone App Store workflow does it, unsigned.
       - name: Build the iPhone app
         run: |
-          xcodebuild -project iOS/Snapfly.xcodeproj -target Snapfly -configuration Release \
-            -sdk iphoneos CODE_SIGNING_ALLOWED=NO -quiet build
+          xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -configuration Release \
+            -destination "generic/platform=iOS" -archivePath build/iphone/Snapfly.xcarchive \
+            CODE_SIGNING_ALLOWED=NO -quiet archive
+          test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/PrivacyInfo.xcprivacy

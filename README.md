@@ -308,6 +308,10 @@ Both apps share the code in `Sources/Tendedero/Shared` (finding and covering
 private details, the atomic time, the translations), so an improvement there
 reaches both. Everything happens on the device.
 
+The iPhone App Store workflow builds it, signs it and sends it to TestFlight
+whenever it changes on `main`. Its certificate is made once, on a Mac, with
+`scripts/iphone-signing.sh`.
+
 <br>
 
 ## Tech Specs

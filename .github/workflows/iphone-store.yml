@@ -1,0 +1,43 @@
+# Builds the iPhone app and uploads it to App Store Connect, where it shows
+# in TestFlight once Apple has processed it. It runs for every change to the
+# iPhone app that lands on main, and by hand from the Actions tab. Until the
+# secret SNAPFLY_IPHONE exists it uploads nothing.
+# scripts/iphone-store.sh lists what it needs.
+name: iPhone App Store
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "iOS/**"
+      - "Sources/Tendedero/Shared/**"
+      - "Sources/Tendedero/Resources/**"
+      - "scripts/iphone-store.sh"
+  workflow_dispatch:
+
+# One upload at a time, each with a higher build number than the last.
+concurrency:
+  group: iphone-store
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    runs-on: macos-latest
+    env:
+      SNAPFLY_SIGNING: ${{ secrets.SNAPFLY_SIGNING }}
+      SNAPFLY_IPHONE: ${{ secrets.SNAPFLY_IPHONE }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the translations
+        run: swift scripts/check-strings.swift
+
+      - name: Build, sign and upload
+        run: scripts/iphone-store.sh
+
+      - name: Remove the keychain and files
+        if: always()
+        run: scripts/iphone-store.sh cleanup
