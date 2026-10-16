@@ -60,6 +60,10 @@ required by the license and stays.
     (a temporary exception), only to read the front page's address, so the
     send button over chats shows on chat websites alone. The direct edition
     signs with `com.apple.security.automation.apple-events` for the same.
+  - No private Apple functions in it: the store refuses the app. Gate them
+    with `#if !APP_STORE` and give the store edition a public way, as
+    `FullScreen.swift` does. `scripts/check-private-apis.sh` checks the
+    binary in both workflows.
   - The privacy policy for the store listing is the website's privacy page
     (below). `PRIVACY.md` is the short version in the repository.
 - **Website.** `website/` builds https://mgrd281.github.io/Screenshots/ (English),

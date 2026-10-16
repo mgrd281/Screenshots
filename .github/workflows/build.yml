@@ -32,6 +32,11 @@ jobs:
       - name: Run the tests
         run: swift test
 
+      - name: Check the App Store edition
+        run: |
+          swift build -Xswiftc -DAPP_STORE
+          scripts/check-private-apis.sh "$(swift build -Xswiftc -DAPP_STORE --show-bin-path)/Tendedero"
+
       - name: Check the App Store scripts
         run: |
           swiftc -typecheck scripts/asc.swift
