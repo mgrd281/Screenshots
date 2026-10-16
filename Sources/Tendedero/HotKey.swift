@@ -58,6 +58,8 @@ struct Shortcut: Equatable {
         case capture = 4
         /// Starts a screen recording from Snapfly itself, or stops it.
         case record = 5
+        /// Captures the whole page in the window in front.
+        case page = 6
 
         var standard: Shortcut {
             switch self {
@@ -66,6 +68,7 @@ struct Shortcut: Equatable {
             case .search: Shortcut(keyCode: kVK_ANSI_F, modifiers: [.control, .option], key: "f")
             case .capture: Shortcut(keyCode: kVK_ANSI_S, modifiers: [.control, .option], key: "s")
             case .record: Shortcut(keyCode: kVK_ANSI_R, modifiers: [.control, .option], key: "r")
+            case .page: Shortcut(keyCode: kVK_ANSI_P, modifiers: [.control, .option], key: "p")
             }
         }
 
@@ -76,6 +79,7 @@ struct Shortcut: Equatable {
             case .search: "searchShortcut"
             case .capture: "captureShortcut"
             case .record: "recordShortcut"
+            case .page: "pageShortcut"
             }
         }
     }

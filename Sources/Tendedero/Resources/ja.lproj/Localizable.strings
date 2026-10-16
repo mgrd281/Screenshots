@@ -338,3 +338,11 @@
 "Page: %@" = "ページ: %@";
 "Fingerprint (SHA-256): %@" = "フィンガープリント (SHA-256): %@";
 "%@ with time stamp" = "%@（タイムスタンプ付き）";
+
+/* Whole page */
+"Capture Whole Page" = "ページ全体をキャプチャ";
+"Capture a whole page" = "ページ全体をキャプチャ";
+"Capturing the whole page…" = "ページ全体をキャプチャしています…";
+"Open the page to capture first, then try again." = "キャプチャするページを先に開いてから、もう一度お試しください。";
+"The page could not be captured." = "ページをキャプチャできませんでした。";
+"To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "ページをスクロールするには、Snapflyが代わりにキーを押す必要があります。システム設定で許可してから、もう一度お試しください。";

@@ -87,7 +87,7 @@ enum TimeStamp {
     /// stamped copy next to it.
     @MainActor
     static func arrive(_ url: URL) {
-        guard isOn, isImage(url), !isStampedCopy(url), record(of: url) == nil,
+        guard isOn, isImage(url), !pending.contains(url.path), !isStampedCopy(url), record(of: url) == nil,
               scope == .all || isWholeScreen(url) else { return }
         // Only a screenshot just taken: one hung again from the history has
         // no page in front and no moment left to ask about.
@@ -124,6 +124,8 @@ enum TimeStamp {
     /// and a capture whose area is a whole screen is one too.
     @MainActor
     static func isWholeScreen(_ url: URL) -> Bool {
+        // A whole page counts too: it is stamped like a whole screen.
+        if attribute(fullPageMarker, of: url) != nil { return true }
         if let kind = captureKind(of: url) { return kind == "display" }
         guard let rect = captureRect(of: url) else { return false }
         return isScreen(rect, among: NSScreen.screens.map(\.frame))
@@ -152,6 +154,8 @@ enum TimeStamp {
     // MARK: Kept with the file
 
     private static let recordName = "com.snapfly.stamp"
+    /// Marks a screenshot of a whole page (`FullPage`).
+    static let fullPageMarker = "com.snapfly.full-page"
     private static let copyMarker = "com.snapfly.stamped-copy"
 
     static func record(of url: URL) -> Record? {

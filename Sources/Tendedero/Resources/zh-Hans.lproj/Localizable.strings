@@ -338,3 +338,11 @@
 "Page: %@" = "页面：%@";
 "Fingerprint (SHA-256): %@" = "指纹 (SHA-256)：%@";
 "%@ with time stamp" = "%@（带时间戳）";
+
+/* Whole page */
+"Capture Whole Page" = "捕捉整个页面";
+"Capture a whole page" = "捕捉一个完整页面";
+"Capturing the whole page…" = "正在捕捉整个页面…";
+"Open the page to capture first, then try again." = "请先打开要捕捉的页面，然后再试一次。";
+"The page could not be captured." = "无法捕捉该页面。";
+"To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "要滚动页面，Snapfly 需要替你按键。请在“系统设置”中允许，然后再试一次。";

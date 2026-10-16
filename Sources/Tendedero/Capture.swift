@@ -100,7 +100,7 @@ final class Capture {
 
     /// macOS asks once, in its own words. After that, a short note says
     /// where to turn it on.
-    private func hasPermission() -> Bool {
+    func hasPermission() -> Bool {
         if CGPreflightScreenCaptureAccess() { return true }
         if !UserDefaults.standard.bool(forKey: Self.askedKey) {
             UserDefaults.standard.set(true, forKey: Self.askedKey)
@@ -415,7 +415,7 @@ final class Capture {
         }
     }
 
-    nonisolated private static func write(_ image: CGImage, to url: URL) -> Bool {
+    nonisolated static func write(_ image: CGImage, to url: URL) -> Bool {
         try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         guard let destination = CGImageDestinationCreateWithURL(url as CFURL, "public.png" as CFString, 1, nil)
         else { return false }

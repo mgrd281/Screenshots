@@ -338,3 +338,11 @@
 "Page: %@" = "Seite: %@";
 "Fingerprint (SHA-256): %@" = "Fingerabdruck (SHA-256): %@";
 "%@ with time stamp" = "%@ mit Zeitstempel";
+
+/* Whole page */
+"Capture Whole Page" = "Ganze Seite aufnehmen";
+"Capture a whole page" = "Eine ganze Seite aufnehmen";
+"Capturing the whole page…" = "Ganze Seite wird aufgenommen …";
+"Open the page to capture first, then try again." = "Öffne zuerst die Seite, die du aufnehmen willst, und versuch es dann noch einmal.";
+"The page could not be captured." = "Die Seite konnte nicht aufgenommen werden.";
+"To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Um die Seite zu scrollen, muss Snapfly für dich Tasten drücken. Erlaube es in den Systemeinstellungen und versuch es dann noch einmal.";

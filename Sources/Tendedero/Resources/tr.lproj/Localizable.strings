@@ -338,3 +338,11 @@
 "Page: %@" = "Sayfa: %@";
 "Fingerprint (SHA-256): %@" = "Parmak izi (SHA-256): %@";
 "%@ with time stamp" = "%@ zaman damgalı";
+
+/* Whole page */
+"Capture Whole Page" = "Tüm sayfayı yakala";
+"Capture a whole page" = "Tüm bir sayfayı yakala";
+"Capturing the whole page…" = "Tüm sayfa yakalanıyor…";
+"Open the page to capture first, then try again." = "Önce yakalamak istediğin sayfayı aç, sonra yeniden dene.";
+"The page could not be captured." = "Sayfa yakalanamadı.";
+"To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Sayfayı kaydırmak için Snapfly’ın senin yerine tuşlara basması gerekir. Sistem Ayarları’nda izin ver, sonra yeniden dene.";
