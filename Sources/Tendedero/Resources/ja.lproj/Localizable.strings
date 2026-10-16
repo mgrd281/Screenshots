@@ -321,3 +321,14 @@
 /* Order on the line */
 "Move Earlier" = "前へ移動";
 "Move Later" = "後ろへ移動";
+
+/* Time stamp */
+"Time stamp" = "タイムスタンプ";
+"Stamp the date and time" = "日付と時刻を入れる";
+"In the corner, on the line and in whatever leaves it" = "隅に入ります。ロープ上の画像にも、ロープから出す画像にも";
+"Which screenshots" = "対象のスクリーンショット";
+"Screenshots of the whole screen" = "画面全体のスクリーンショット";
+"Every screenshot" = "すべてのスクリーンショット";
+"Words before the date" = "日付の前に入れる文字";
+"Optional, like your shop’s name" = "省略可。ショップ名など";
+"The file itself stays as it was." = "ファイル自体は変わりません。";

@@ -109,6 +109,11 @@ components:
   tag:
     rounded: "{rounded.full}"
     width: "26pt"
+  time-stamp:
+    backgroundColor: "#00000099"   # black at 60%, like the lock badge
+    textColor: "#FFFFFF"
+    rounded: "{rounded.full}"
+    size: "1.6% of the image's shorter side, at least 12 px"
 ---
 
 # Design System: Snapfly
@@ -532,6 +537,22 @@ apps.
   with two `Text`s.
 - Pickers: segmented for 2–3 choices, menu for more, and a visual tile picker
   where the choice is visual (line style).
+
+### Time stamp
+
+Drawn into the copy of a screenshot that leaves the line, and onto the
+photo that hangs, when Stamp the date and time is on: never into the file.
+
+- **Where.** The bottom trailing corner, so it never meets the lock badge
+  in the leading one. In right-to-left languages it moves to the left.
+- **What.** A capsule of black at 60% with the SF Symbol `clock` and the
+  words in white, SF Pro Semibold with monospaced digits: the user's own
+  words, a middle dot, then the date and time in the Mac's own format.
+- **Size.** It scales with the image, so it reads the same on any screen:
+  the text is 1.6% of the shorter side, at least 12 px; padding 0.8×,
+  height 2.1× and the margin to the edges 1.2× the text size. A capture too
+  narrow for it gets a smaller stamp, down to 8 px, then none.
+- **No shadow, no border.** It is printed on the picture, not floating.
 
 ### Signature: the line styles
 - **Clothesline**: rope, clips and swing.

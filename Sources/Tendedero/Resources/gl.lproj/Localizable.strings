@@ -321,3 +321,14 @@
 /* Order on the line */
 "Move Earlier" = "Mover antes";
 "Move Later" = "Mover despois";
+
+/* Time stamp */
+"Time stamp" = "Selo de hora";
+"Stamp the date and time" = "Selar a data e a hora";
+"In the corner, on the line and in whatever leaves it" = "Na esquina, na corda e en todo o que sae dela";
+"Which screenshots" = "Que capturas";
+"Screenshots of the whole screen" = "Capturas de toda a pantalla";
+"Every screenshot" = "Todas as capturas";
+"Words before the date" = "Texto antes da data";
+"Optional, like your shop’s name" = "Opcional, como o nome da túa tenda";
+"The file itself stays as it was." = "O ficheiro en si non cambia.";

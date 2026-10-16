@@ -321,3 +321,14 @@
 /* Order on the line */
 "Move Earlier" = "Öne taşı";
 "Move Later" = "Arkaya taşı";
+
+/* Time stamp */
+"Time stamp" = "Zaman damgası";
+"Stamp the date and time" = "Tarih ve saati damgala";
+"In the corner, on the line and in whatever leaves it" = "Köşede, ipte ve ipten çıkan her şeyde";
+"Which screenshots" = "Hangi ekran görüntüleri";
+"Screenshots of the whole screen" = "Tüm ekranın görüntüleri";
+"Every screenshot" = "Her ekran görüntüsü";
+"Words before the date" = "Tarihten önceki sözcükler";
+"Optional, like your shop’s name" = "İsteğe bağlı, örneğin mağazanın adı";
+"The file itself stays as it was." = "Dosyanın kendisi olduğu gibi kalır.";

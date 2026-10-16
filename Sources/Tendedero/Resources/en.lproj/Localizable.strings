@@ -323,3 +323,14 @@
 /* Order on the line */
 "Move Earlier" = "Move Earlier";
 "Move Later" = "Move Later";
+
+/* Time stamp */
+"Time stamp" = "Time stamp";
+"Stamp the date and time" = "Stamp the date and time";
+"In the corner, on the line and in whatever leaves it" = "In the corner, on the line and in whatever leaves it";
+"Which screenshots" = "Which screenshots";
+"Screenshots of the whole screen" = "Screenshots of the whole screen";
+"Every screenshot" = "Every screenshot";
+"Words before the date" = "Words before the date";
+"Optional, like your shop’s name" = "Optional, like your shop’s name";
+"The file itself stays as it was." = "The file itself stays as it was.";
