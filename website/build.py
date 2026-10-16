@@ -383,6 +383,7 @@ def document(lang, page, title, desc, main):
     return f"""{head(lang, page, title, desc)}
 <body class="page-{page}">
 <a class="skip" href="#main">{esc(t["skip"])}</a>
+{INK}
 {menubar(lang, page)}
 <main id="main">
 {main}
@@ -402,20 +403,28 @@ def download_button(lang):
 
 # MARK: Postal pieces
 
+# Rubber-stamp ink: speckled where the stamp met the paper unevenly, its
+# edges a little rough. Every postmark draws through it.
+INK = ('<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false"><filter id="ink" x="-5%" y="-5%" width="110%" height="110%">'
+       '<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="7" result="noise"/>'
+       '<feColorMatrix in="noise" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -2 1.75" result="speckle"/>'
+       '<feComposite in="SourceGraphic" in2="speckle" operator="in" result="worn"/>'
+       '<feDisplacementMap in="worn" in2="noise" scale="1.4" xChannelSelector="R" yChannelSelector="G"/></filter></svg>')
+
 def postmark(uid, cls="postmark"):
     """A postmark: a ring with the date and the time, and wavy lines running
     on. site.js writes the visitor's date and time into it."""
     waves = "".join(f'<path d="M118 {34 + i * 13}q12-7 24 0t24 0t24 0t24 0t24 0t24 0" fill="none" stroke="currentColor" stroke-width="2.4"/>'
                     for i in range(5))
     return (f'<span class="{cls}" aria-hidden="true"><svg viewBox="0 0 260 120" focusable="false">'
-            f'<defs><path id="pm-{uid}" d="M60 60m-42 0a42 42 0 1 1 84 0a42 42 0 1 1-84 0"/></defs>'
+            f'<defs><path id="pm-{uid}" d="M60 60m-42 0a42 42 0 1 1 84 0a42 42 0 1 1-84 0"/></defs><g filter="url(#ink)">'
             f'<circle cx="60" cy="60" r="53" fill="none" stroke="currentColor" stroke-width="2.6"/>'
             f'<circle cx="60" cy="60" r="32" fill="none" stroke="currentColor" stroke-width="1.6"/>'
             f'<g class="pm-words"><text font-size="9.5" font-weight="700" fill="currentColor">'
             f'<textPath href="#pm-{uid}" textLength="262" lengthAdjust="spacing">SNAPFLY · PAR AVION · SNAPFLY · PAR AVION ·</textPath></text>'
             f'<text class="pm-date" x="60" y="57" text-anchor="middle" font-size="12.5" font-weight="800" fill="currentColor">SNAPFLY</text>'
             f'<text class="pm-time" x="60" y="73" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor"></text></g>'
-            f'{waves}</svg></span>')
+            f'{waves}</g></svg></span>')
 
 
 def airmail(lang):
@@ -486,6 +495,7 @@ def hero(lang):
       <div class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><span class="window-title">{esc(t["chat_title"])}</span></div>
       <ol class="thread" data-thread>
         <li class="note">{esc(t["try_hint"])}</li>
+        <li class="msg out image"><span class="photo-img">{art("sunset", lang, "posted")}</span>{postmark("posted")}</li>
         <li class="msg in"><p>{esc(t["chat_in"])}</p></li>
       </ol>
       <div class="composer" aria-hidden="true"><span class="field">{esc(t["chat_placeholder"])}</span><span class="composer-send">{icon("plane")}</span></div>
@@ -522,7 +532,7 @@ def section_send(lang):
       <h2 id="send-h">{esc(t["send_h"])}</h2>
       <p>{t["send_p"]}</p>
     </div>
-    <div class="keys" dir="ltr" role="img" aria-label="{esc(t["keys_label"])}">{keys}</div>
+    <div class="keys" dir="ltr" role="img" aria-label="{esc(t["keys_label"])}">{keys}{postmark("keys")}</div>
   </div>
 </section>"""
 
@@ -831,7 +841,7 @@ def section_capture(lang):
         </li></template>"""
     return f"""<section class="section capture" aria-labelledby="cap-h">
   <div class="wrap">
-    <div class="copy center">
+    <div class="copy">
       <h2 id="cap-h">{esc(t["cap_h"])}</h2>
       <p>{t["cap_p"]}</p>
     </div>
@@ -914,7 +924,7 @@ def section_start(lang):
         for i, (h, b) in enumerate(t["start"]))
     return f"""<section class="section start" aria-labelledby="start-h">
   <div class="wrap">
-    <div class="copy center">
+    <div class="copy">
       <h2 id="start-h">{esc(t["start_h"])}</h2>
       <p>{esc(t["start_p"])}</p>
     </div>
@@ -946,6 +956,7 @@ def section_say(lang):
       <h2 id="say-h">{esc(t["say_h"])}</h2>
       <p>{esc(t["say_p"])}</p>
       <p class="try-note">{esc(t["say_try"])}</p>
+      {handstamp(t["stamp_covered"], "say-stamp")}
     </div>
     <div class="window hide-win" role="group" aria-label="{esc(t["say_label"])}" data-hide
          data-note="{esc(L(lang, "Parts hidden: %d. Click a box to show it again."))}" data-nothing="{esc(L(lang, "Nothing found to hide."))}">
@@ -1109,7 +1120,7 @@ def section_menu(lang):
         items.append(f'<li><button type="button" class="ctx-item" data-title="{esc(label)}" data-desc="{esc(d[key])}"{selected}><span>{esc(label)}</span>{chevron}</button></li>')
     return f"""<section class="section menu-demo" aria-labelledby="menu-h">
   <div class="wrap">
-    <div class="copy center">
+    <div class="copy">
       <h2 id="menu-h">{esc(t["menu_h"])}</h2>
       <p>{esc(t["menu_p"])}</p>
     </div>

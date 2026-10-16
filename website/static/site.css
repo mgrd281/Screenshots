@@ -19,7 +19,7 @@
      surface under white words. */
   --paper: #ECEBFA;
   --paper-2: #E1DFF5;
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .09 0 0 0 0 .27 0 0 0 .055 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .09 0 0 0 0 .27 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
   --stripe-a: #FF5E62;
   --stripe-b: #5B2BB8;
   --stripe-gap: #FFFFFF;
@@ -84,7 +84,7 @@
   --shadow-card: 0 5px 10px rgb(var(--shade) / 0.18);
   --shadow-card-hover: 0 8px 14px rgb(var(--shade) / 0.24);
   --shadow-float: 0 18px 44px rgb(var(--shade-deep) / 0.22);
-  --card-w: clamp(150px, 15.5vw, 236px);
+  --card-w: clamp(150px, min(15.5vw, 22vh), 236px);
   --rope-h: clamp(70px, 8vw, 112px);
 }
 
@@ -92,7 +92,7 @@
   :root {
     --paper: #15122B;
     --paper-2: #1D1938;
-    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .04 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .075 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
     --stripe-a: #FF6B6E;
     --stripe-b: #7B52E8;
     --stripe-gap: #EDEAFF;
@@ -226,7 +226,7 @@
 
   --paper: #FAFAF8;
   --paper-2: #FFEFE6;
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .16 0 0 0 0 .06 0 0 0 .055 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .16 0 0 0 0 .06 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
   --stripe-a: #EC632C;
   --stripe-b: #171717;
   --stripe-gap: #FFFFFF;
@@ -367,6 +367,8 @@ kbd {
   text-align: center;
   font-variant-numeric: tabular-nums;
 }
+
+.defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 
 .vh {
   position: absolute !important;
@@ -672,7 +674,7 @@ kbd {
 .airmail {
   position: absolute;
   z-index: 1;
-  top: calc(var(--bar-h) + var(--edge) + var(--rope-h) + var(--card-w) * 0.72 + 56px);
+  top: calc(var(--bar-h) + var(--edge) + var(--rope-h) * 0.6 + var(--card-w) * 0.72 + 36px);
   inset-inline-end: clamp(28px, 5vw, 80px);
   display: grid;
   justify-items: center;
@@ -684,6 +686,7 @@ kbd {
   box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--post-fill), 0 10px 20px rgb(var(--shade) / 0.18);
   rotate: -4deg;
   text-align: center;
+  text-transform: uppercase;
   pointer-events: none;
 }
 .airmail strong { font-size: clamp(18px, 1.7vw, 25px); font-weight: 800; letter-spacing: 0.07em; line-height: 1.1; }
@@ -695,15 +698,15 @@ kbd {
 .postmark {
   position: absolute;
   z-index: 3;
-  width: calc(var(--card-w) * 1.25);
-  inset-inline-start: -16%;
-  top: 28%;
+  width: calc(var(--card-w) * 1.15);
+  inset-inline-start: -5%;
+  top: 30%;
   color: var(--post-mark);
   opacity: 0.88;
   pointer-events: none;
   rotate: -8deg;
 }
-.postmark svg { width: 100%; height: auto; overflow: visible; }
+.postmark svg { width: 100%; height: auto; overflow: visible; direction: ltr; }
 [dir="rtl"] .postmark svg { scale: -1 1; }
 [dir="rtl"] .postmark .pm-words { scale: -1 1; transform-box: fill-box; transform-origin: center; }
 .pm-time { font-family: var(--font-mono); }
@@ -726,7 +729,7 @@ kbd {
 .line {
   position: relative;
   flex: none;
-  height: calc(var(--rope-h) + var(--card-w) * 0.72 + 44px);
+  height: calc(var(--rope-h) * 0.6 + var(--card-w) * 0.72 + 40px);
 }
 
 .rope {
@@ -777,8 +780,8 @@ kbd {
   height: 24px;
   translate: -50% 0;
   border-radius: 3px;
-  background: linear-gradient(90deg, #A9AEB8, #F4F5F8 45%, #8E949F);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(90deg, #8E949F 0 2px, #D4D7DD 2px calc(100% - 2px), #8E949F calc(100% - 2px));
+  box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.3);
 }
 .clip::after {
   content: "";
@@ -983,11 +986,11 @@ kbd {
   padding-inline: var(--gutter);
 }
 
-.hero-copy { align-self: center; padding-block: 8px clamp(40px, 7vh, 88px); }
+.hero-copy { align-self: start; padding-block: clamp(4px, 2vh, 32px) clamp(48px, 8vh, 96px); }
 
 .hero h1 {
   max-width: 13ch;
-  font-size: clamp(2.6rem, 5.6vw, 5.6rem);
+  font-size: clamp(2.6rem, min(5.6vw, 8.8vh), 5.6rem);
   font-weight: 800;
   line-height: 0.98;
   letter-spacing: -0.035em;
@@ -1052,6 +1055,7 @@ kbd {
 .chat .thread { padding-top: 60px; }
 
 .thread {
+  isolation: isolate;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1173,7 +1177,8 @@ kbd {
   color: var(--ink);
 }
 
-/* Between sections, a tear line of perforations across the sheet. */
+/* Between sections, a tear line of perforations across the sheet; before
+   the two envelopes, an airmail ribbon instead. */
 .section::before, .close::before {
   content: "";
   position: absolute;
@@ -1183,6 +1188,11 @@ kbd {
   translate: 0 -50%;
   background: radial-gradient(circle, color-mix(in srgb, var(--ink) 22%, transparent) 2.4px, transparent 2.9px) 0 50% / 12px 8px repeat-x;
   pointer-events: none;
+}
+.design::before, .close::before {
+  height: 6px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(-45deg, var(--stripe-a) 0 9px, var(--stripe-gap) 9px 13px, var(--stripe-b) 13px 22px, var(--stripe-gap) 22px 26px);
 }
 
 .section h2 {
@@ -1208,7 +1218,9 @@ kbd {
 
 /* MARK: Send: the shortcut */
 
-.keys { display: flex; justify-content: center; gap: clamp(12px, 2vw, 22px); }
+.keys { position: relative; display: flex; justify-content: center; gap: clamp(12px, 2vw, 22px); }
+.keys .postmark { width: clamp(150px, 15vw, 200px); inset-inline-start: auto; inset-inline-end: -6%; top: auto; bottom: -38%; rotate: -12deg; }
+.say-stamp { margin-top: 28px; rotate: -5deg; }
 .keycap {
   position: relative;
   display: grid;
@@ -1280,7 +1292,15 @@ kbd {
   transition: opacity 0.3s;
 }
 .desk.swept .file { transform: translate(var(--dx, 0), var(--dy, 0)) rotate(var(--tilt, 0deg)); }
-.desk.swept .file-thumb { border-radius: 7px; border-width: 3px; }
+/* Swept onto the rope, each file becomes a stamp. */
+.desk.swept .file-thumb {
+  border-radius: 0;
+  border-width: 4px;
+  box-shadow: none;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, radial-gradient(2.2px at 2.2px 2.2px, #0000 94%, #000) -2.2px -2.2px / 6.6px 6.6px round;
+  mask: linear-gradient(#000 0 0) content-box, radial-gradient(2.2px at 2.2px 2.2px, #0000 94%, #000) -2.2px -2.2px / 6.6px 6.6px round;
+}
+.desk.swept .file { filter: drop-shadow(0 3px 4px rgb(var(--shade) / 0.25)); }
 .desk.swept .file-name { opacity: 0; }
 
 .replay {
@@ -1513,8 +1533,8 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   width: 8px; height: 19px;
   translate: -50% 0;
   border-radius: 2px;
-  background: linear-gradient(90deg, #A9AEB8, #F4F5F8 45%, #8E949F);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(90deg, #8E949F 0 2px, #D4D7DD 2px calc(100% - 2px), #8E949F calc(100% - 2px));
+  box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.3);
   transition: opacity 0.3s;
 }
 
@@ -2003,10 +2023,10 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   --d-close: #FF5F57;
   --d-minimize: #FEBC2E;
   --d-light-glyph: rgba(0, 0, 0, 0.55);
-  /* The desktop: a quiet gradient with a fine grain. */
-  --d-wall-1: #B6A7CB;
-  --d-wall-2: #C7A8B8;
-  --d-wall-3: #8E80AF;
+  /* The desktop: one solid colour, as macOS offers, with a fine grain. */
+  --d-wall-1: #C4BDE6;
+  --d-wall-2: #C4BDE6;
+  --d-wall-3: #C4BDE6;
   --d-grain: 0.08;
   /* Overlays while choosing what to take. */
   --d-dim-1: rgba(0, 0, 0, 0.12);
@@ -2049,9 +2069,9 @@ input[role="switch"]:checked::before { translate: 16px 0; }
     --d-success-wash: #1E3325;
     --d-warning: #FFB340;
     --d-error: #FF6961;
-    --d-wall-1: #3B2F4E;
-    --d-wall-2: #4A3141;
-    --d-wall-3: #221D33;
+    --d-wall-1: #2C2652;
+    --d-wall-2: #2C2652;
+    --d-wall-3: #2C2652;
     --d-grain: 0.1;
     --d-hover: rgba(255, 255, 255, 0.07);
     --d-glass-1: rgba(36, 36, 40, 0.64);
@@ -2063,43 +2083,44 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   }
 }
 
-/* Emerald Petrol on the desktop to try: a desktop of sage and deep
-   petrol, and the Mac's accent turned to teal. Greys stay as they are. */
+/* Emerald Petrol on the desktop to try: a solid sage desktop (deep
+   petrol at night), and the Mac's accent turned to teal. Greys stay as
+   they are. */
 :root[data-brand="emerald"] .desk-stage {
   --d-accent: #168176;
   --d-accent-text: #0E6B62;
   --d-accent-soft: rgba(22, 129, 118, 0.24);
-  --d-wall-1: #A7CEC2;
-  --d-wall-2: #8DBDB2;
-  --d-wall-3: #4F8B85;
+  --d-wall-1: #A3CBBF;
+  --d-wall-2: #A3CBBF;
+  --d-wall-3: #A3CBBF;
 }
 @media (prefers-color-scheme: dark) {
   :root[data-brand="emerald"] .desk-stage {
     --d-accent-text: #5CCDB8;
     --d-accent-soft: rgba(92, 205, 184, 0.3);
-    --d-wall-1: #0F3A37;
-    --d-wall-2: #134440;
-    --d-wall-3: #061D1E;
+    --d-wall-1: #11393A;
+    --d-wall-2: #11393A;
+    --d-wall-3: #11393A;
   }
 }
 
-/* Signature Orange on the desktop to try: a warm sand desktop, black at
-   night, and Deep Orange as the Mac's accent. */
+/* Signature Orange on the desktop to try: a solid warm sand desktop
+   (near black at night), and Deep Orange as the Mac's accent. */
 :root[data-brand="orange"] .desk-stage {
   --d-accent: #C7461C;
   --d-accent-text: #B23E17;
   --d-accent-soft: rgba(236, 99, 44, 0.24);
-  --d-wall-1: #F4DCCD;
-  --d-wall-2: #EFC2A6;
-  --d-wall-3: #DF9670;
+  --d-wall-1: #EFD2C1;
+  --d-wall-2: #EFD2C1;
+  --d-wall-3: #EFD2C1;
 }
 @media (prefers-color-scheme: dark) {
   :root[data-brand="orange"] .desk-stage {
     --d-accent-text: #FF8754;
     --d-accent-soft: rgba(255, 135, 84, 0.3);
-    --d-wall-1: #2A1C15;
-    --d-wall-2: #3A2318;
-    --d-wall-3: #141110;
+    --d-wall-1: #2B211C;
+    --d-wall-2: #2B211C;
+    --d-wall-3: #2B211C;
   }
 }
 
@@ -3264,6 +3285,8 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 .arrive-text.pre { transform: translateY(18px); }
 .arrive-window.pre { transform: translateY(44px) scale(0.95); }
 .arrive-card.pre { transform: translateY(28px) scale(0.98); }
+.arrive-strike { transition: opacity 0.2s, transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15); }
+.arrive-strike.pre { transform: scale(1.18) rotate(-6deg); }
 @media print { .arrive.pre { opacity: 1; transform: none; filter: none; } }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3293,11 +3316,14 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 @media (max-width: 960px) {
   .flightpath { display: none; }
 }
+@media (min-width: 641px) and (max-width: 1100px) {
+  :root { --card-w: clamp(104px, 13.5vw, 150px); }
+}
 @media (max-width: 900px) {
   .airmail { position: relative; top: auto; inset-inline-end: auto; align-self: flex-end; margin: 0 calc(var(--gutter) + 6px) 22px; }
 }
 @media (max-width: 640px) {
-  .airmail { padding: 8px 13px 7px; margin-bottom: 18px; }
+  .airmail { padding: 8px 13px 7px; margin-bottom: 30px; }
   .airmail strong { font-size: 17px; }
   .airmail span { font-size: 9.5px; }
 }

@@ -59,11 +59,12 @@ FIRST VIEWPORT: The chevron edge frames the window. Inside it, the paper
 header carries the name, links, the theme swatches (each striped like its
 edge) and the language. Under the header the line runs edge to edge with
 five stamps; a postmark is struck across the second with today's date and
-the visitor's time. The airmail label hangs rotated at the trailing top,
-under the tag. Lower start side: the headline at display size in ink, the
-subline, the download badge in postal ink inside a paper ring, the
-requirements. Lower end side: the chat window, with a dashed flight path
-from the line to it.
+the visitor's time. The airmail label is stuck rotated under the line's
+trailing end, above the chat. Lower start side, right under the line: the
+headline at display size in ink, the subline, the download badge in postal
+ink inside a paper ring, the requirements. Lower end side: the chat window,
+with a dashed flight path from the line to it and one photo already posted
+in it, postmarked.
 
 FORM: Airmail envelope, first of seven (airmail envelope, origami folding
 sheet, airport departure board, darkroom drying line, gallery hang with wall

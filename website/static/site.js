@@ -46,14 +46,14 @@
 
   // Every postmark on the page carries the visitor's date and time; one
   // struck on a sent photo keeps the time it was sent.
-  const stampDate = window.Intl && new Intl.DateTimeFormat(document.documentElement.lang, { day: "2-digit", month: "2-digit", year: "2-digit" });
-  const stampTime = window.Intl && new Intl.DateTimeFormat(document.documentElement.lang, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+  // A postmark's figures read the same in every language, as a post
+  // office's do: 16.10.26 and 14:38.
+  const two = (n) => String(n).padStart(2, "0");
   function datePostmark(mark, when = new Date()) {
-    if (!stampDate) return;
     const date = mark.querySelector(".pm-date");
     const time = mark.querySelector(".pm-time");
-    if (date) date.textContent = stampDate.format(when);
-    if (time) time.textContent = stampTime.format(when);
+    if (date) date.textContent = `${two(when.getDate())}.${two(when.getMonth() + 1)}.${two(when.getFullYear() % 100)}`;
+    if (time) time.textContent = `${two(when.getHours())}:${two(when.getMinutes())}`;
   }
   const datePostmarks = () => document.querySelectorAll(".postmark:not(.struck)").forEach((mark) => datePostmark(mark));
   datePostmarks();
@@ -643,6 +643,7 @@
     [".section .copy > p, .design .wrap > p, .close .hero-actions, .close .hero-note", "arrive-text"],
     [".section .window, .desk-frame, .keys, .close-icon", "arrive-window"],
     [".steps > li", "arrive-card"],
+    [".section .handstamp, .section .postmark", "arrive-strike"],
   ];
   if (!reduced.matches && "IntersectionObserver" in window) {
     const kinds = arrivals.map(([, kind]) => kind);
