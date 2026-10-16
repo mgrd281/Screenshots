@@ -92,9 +92,18 @@ def page(lang):
 AD = {
     "de": dict(
         file="Bildschirmfoto 2026-10-15 um 09.{n}.12",
-        asks=["Kannst du mir die Rechnung schicken?", "Was kann ich für dich tun?", "Schick mal rüber!"],
-        message="Nachricht",
+        apps=dict(
+            claude=dict(ask="Was steht auf dieser Rechnung?",
+                        reply="Eine Rechnung über 74,00 €: eine Schreibtischlampe und ein Kabelset, bezahlt per Überweisung.",
+                        field="Antworten …"),
+            whatsapp=dict(contact="Lena", status="online", ask="Wann hast du nächste Woche Zeit?",
+                          reply="Donnerstag passt perfekt!", field="Nachricht eingeben"),
+            chatgpt=dict(ask="Was zeigt dieses Diagramm?",
+                         reply="Die Balken steigen Monat für Monat: Der Umsatz wächst stetig.",
+                         field="Frag irgendwas"),
+        ),
         free="Kostenlos für deinen Mac",
+        legal="WhatsApp, ChatGPT und Claude sind Marken ihrer Inhaber. Snapfly ist mit ihnen nicht verbunden.",
     ),
 }
 

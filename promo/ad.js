@@ -113,7 +113,7 @@ const LINE_Y = 600, LINE_SAG = 38;
 const sendRope = el("div", "rope light", document.body, `<svg width="1080" height="120"><path d="${ropePath(1080, LINE_SAG)}"/></svg>`);
 style(sendRope, { left: "0", top: `${LINE_Y}px` });
 const CARD_W = 180;
-const SEND_KINDS = ["invoice", "chart", "sunset"];
+const SEND_KINDS = ["invoice", "calendar", "chart"];
 const SEND_FRAC = [0.2, 0.5, 0.8];
 const sendCards = SEND_KINDS.map((k) => {
   const c = el("div", "card", document.body, `<span class="clip"></span><div class="glass"><div class="img">${DATA.artByKind[k]}</div></div><div class="send">${ICON_PLANE}</div>`);
@@ -125,24 +125,34 @@ const flyers = SEND_KINDS.map((k) => {
   style(g, { width: `${CARD_W}px`, transformOrigin: "50% 50%" });
   return g;
 });
-const CHAT_X = 110, CHAT_W = 860, CHAT_Y = 820, CHAT_H = 640;
-const chat = el("div", "chat", document.body, `<div class="titlebar"><span class="lights"><i></i><i></i><i></i></span></div>`);
-style(chat, { left: `${CHAT_X}px`, top: `${CHAT_Y}px`, width: `${CHAT_W}px`, height: `${CHAT_H}px` });
-const titlebar = chat.querySelector(".titlebar");
-const APPS = ["WhatsApp", "ChatGPT", "Telegram", "Claude", "Slack", "Messages", "Telegram"];
-const titles = APPS.map((name) => el("span", "name", titlebar, name));
-const asks = T.asks.map((text) => {
-  const b = el("div", "bubble in", chat, text);
-  style(b, { top: "112px", left: "32px" });
-  return b;
+// Three chats drawn after the apps people send to, Claude, WhatsApp and
+// ChatGPT: their layout and colours, not their logos. Each has a spot where
+// the screenshot lands and an answer that follows.
+const CHAT_X = 110, CHAT_W = 860, CHAT_Y = 800, CHAT_H = 660;
+const UP = '<svg viewBox="0 0 24 24"><path d="M12 19V6M6.5 11.5 12 6l5.5 5.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+const TICKS = '<svg viewBox="0 0 18 11"><path d="m1 6 3 3 6-7M7 8l1 1 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+const LIGHTS = '<span class="lights"><i></i><i></i><i></i></span>';
+const A = T.apps;
+const appHtml = [
+  `<div class="top">${LIGHTS}<span class="name">Claude</span></div>
+   <div class="thread"><div class="me"><div class="pic">${DATA.artByKind[SEND_KINDS[0]]}</div><div class="said">${A.claude.ask}</div></div>
+   <div class="reply">${A.claude.reply}</div></div>
+   <div class="ask"><span>${A.claude.field}</span><span class="go">${UP}</span></div>`,
+  `<div class="top">${LIGHTS}<span class="avatar"></span><span class="who"><b>${A.whatsapp.contact}</b><small>${A.whatsapp.status}</small></span></div>
+   <div class="thread"><div class="in">${A.whatsapp.ask}<small>09:40</small></div>
+   <div class="me"><div class="pic">${DATA.artByKind[SEND_KINDS[1]]}</div><small>09:41 <span class="ticks">${TICKS}</span></small></div>
+   <div class="reply in">${A.whatsapp.reply}<small>09:41</small></div></div>
+   <div class="ask"><span class="field">${A.whatsapp.field}</span></div>`,
+  `<div class="top">${LIGHTS}<span class="name">ChatGPT <span class="chev">&#8964;</span></span></div>
+   <div class="thread"><div class="me"><div class="pic">${DATA.artByKind[SEND_KINDS[2]]}</div><div class="said">${A.chatgpt.ask}</div></div>
+   <div class="reply">${A.chatgpt.reply}</div></div>
+   <div class="ask"><span>${A.chatgpt.field}</span><span class="go">${UP}</span></div>`,
+];
+const apps = ["claude", "wa", "gpt"].map((cls, k) => {
+  const w = el("div", `app ${cls}`, document.body, appHtml[k]);
+  style(w, { left: `${CHAT_X}px`, top: `${CHAT_Y}px`, width: `${CHAT_W}px`, height: `${CHAT_H}px` });
+  return { w, me: w.querySelector(".me"), pic: w.querySelector(".pic"), reply: w.querySelector(".reply") };
 });
-const IMG_W = 300, IMG_X = CHAT_W - 32 - IMG_W, IMG_Y = 232;
-const landed = SEND_KINDS.map((k) => {
-  const b = el("div", "bubble-img", chat, DATA.artByKind[k]);
-  style(b, { left: `${IMG_X}px`, top: `${IMG_Y}px`, width: `${IMG_W}px` });
-  return b;
-});
-const composer = el("div", "composer", chat, `<div class="field">${T.message}</div><div class="go">${ICON_PLANE}</div>`);
 const ripple = el("div", "ripple");
 const pointer = el("div", "pointer", document.body, POINTER);
 
@@ -176,6 +186,7 @@ const endWord = el("div", "end-word", document.body, "Snapfly");
 const endTag = el("div", "end-tag", document.body, T.tagline);
 const free = el("div", "free", document.body, T.free);
 const url = el("div", "url", document.body, DATA.url);
+const legal = el("div", "legal", document.body, T.legal);
 
 // MARK: The timeline
 
@@ -196,8 +207,12 @@ function drawCaptions(t) {
 }
 
 // Where the pointer goes and when it clicks: each card's paper plane, as the
-// voice names the chat.
-const CLICKS = [at(7.81), at(10.99), at(12.09)];
+// voice names the chat. The first flight takes its time; the others are quick.
+const CLICKS = [at(7.81), at(10.15) - 0.05, at(10.99) - 0.05];
+const FLY = [0.75, 0.42, 0.42];
+// When each chat comes to the front, and when all three fan out.
+const ENTER = [at(7.6), at(10.15) - 0.3, at(10.99) - 0.12];
+const FAN = at(12.09);
 function sendButton(i, t) {
   const c = sendCards[i];
   const frac = SEND_FRAC[i];
@@ -248,21 +263,29 @@ function seek(t) {
     d.f.querySelector(".thumb").style.borderRadius = `${lerp(6, 11, fly)}px`;
   });
 
-  // 2. One click on a card's paper plane, and it flies into the chat. Then
-  // the same in ChatGPT, and in any chat.
+  // 2. One click on a card's paper plane, and it flies into Claude. Then
+  // the same into WhatsApp and ChatGPT, and the three fan out: any chat.
   const sIn = outQuart(prog(t, at(7.6), at(8.0)));
   const sOut = prog(t, at(12.85), at(13.2));
   show(sendRope, sIn * (1 - sOut));
-  show(chat, sIn * (1 - sOut));
-  style(chat, { transform: `translateY(${lerp(90, 0, sIn) + 60 * inOut(sOut)}px)` });
-  // Which chat is in front: WhatsApp, then ChatGPT, then a quick run of others.
-  let app = t < CLICKS[1] - 0.05 ? 0 : t < CLICKS[2] ? 1 : 2 + Math.min(4, Math.floor((t - CLICKS[2]) / 0.16));
-  titles.forEach((n, k) => show(n, k === app ? 1 : 0));
-  const thread = t < CLICKS[1] - 0.05 ? 0 : t < CLICKS[2] - 0.05 ? 1 : 2;
-  asks.forEach((b, k) => {
-    const into = prog(t, k === 0 ? at(7.9) : CLICKS[k] - 0.3, (k === 0 ? at(7.9) : CLICKS[k] - 0.3) + 0.25);
-    show(b, k === thread ? outQuart(into) : 0);
-    b.style.transform = `scale(${lerp(0.88, 1, outBack(into))})`;
+  const fan = inOut(prog(t, FAN, FAN + 0.5));
+  apps.forEach((a, k) => {
+    const into = outQuart(prog(t, ENTER[k], ENTER[k] + 0.28));
+    const away = k < 2 ? inOut(prog(t, ENTER[k + 1], ENTER[k + 1] + 0.28)) : 0;
+    const solo = into * (1 - away);
+    const shown = (t >= ENTER[k] ? lerp(solo, 1, fan) : 0) * (1 - sOut);
+    show(a.w, shown);
+    const dx = lerp(90, 0, into) - 90 * away;
+    // Fanned out side by side, each still showing the screenshot it got.
+    const fx = [-358, 0, 358][k], fr = [-4, 0, 4][k];
+    style(a.w, { zIndex: String(2 + k),
+      transform: `translate(${lerp(dx, fx, fan)}px, ${lerp(k === 0 ? lerp(90, 0, sIn) : 0, [-20, 20, -20][k], fan) + 60 * inOut(sOut)}px) rotate(${lerp(0, fr, fan)}deg) scale(${lerp(1, 0.375, fan)})` });
+    const land = prog(t, CLICKS[k] + 0.12 + FLY[k], CLICKS[k] + 0.12 + FLY[k] + 0.22);
+    show(a.me, land > 0 ? 1 : 0);
+    a.me.style.transform = `scale(${lerp(0.92, 1, outBack(land))})`;
+    const said = prog(t, CLICKS[k] + 0.12 + FLY[k] + 0.3, CLICKS[k] + 0.12 + FLY[k] + 0.55);
+    show(a.reply, outQuart(said));
+    a.reply.style.transform = `translateY(${lerp(14, 0, outQuart(said))}px)`;
   });
   sendCards.forEach((c, i) => {
     const frac = SEND_FRAC[i];
@@ -274,35 +297,32 @@ function seek(t) {
                transform: `rotate(${[-4, 3, -3][i] + swing(t - at(8.0) - i * 0.08, 6, 0.9, 1.2)}deg)` });
   });
   // The flights: up off the line, a tilt toward the reading end, and down
-  // into the chat as a picture.
+  // into the chat as a picture, exactly where it lands.
   flyers.forEach((g, i) => {
     const start = CLICKS[i] + 0.12;
-    const f = prog(t, start, start + 0.78);
+    const f = prog(t, start, start + FLY[i]);
+    show(g, f > 0 && f < 1 ? 1 : 0);
+    if (f <= 0 || f >= 1) return;
     const frac = SEND_FRAC[i];
     const fromX = 1080 * frac - CARD_W / 2, fromY = LINE_Y + ropeY(frac, LINE_SAG) - 6;
-    const chatY = CHAT_Y + lerp(90, 0, sIn);
-    const scale = IMG_W / CARD_W;
-    const toX = CHAT_X + IMG_X + (IMG_W - CARD_W) / 2, toY = chatY + IMG_Y + (sendCards[i].offsetHeight * scale - sendCards[i].offsetHeight) / 2;
+    const r = apps[i].pic.getBoundingClientRect();
+    const h = g.offsetHeight;
+    const scale = r.width / CARD_W;
+    const toX = r.left + r.width / 2 - CARD_W / 2, toY = r.top + r.height / 2 - h / 2;
     const e = inOut(f);
     const x = lerp(fromX, toX, e) + Math.sin(Math.PI * e) * 70;
-    const y = lerp(fromY, toY, e) - Math.sin(Math.PI * e) * 170;
-    show(g, f > 0 && f < 1 ? 1 : 0);
-    style(g, { left: `${x}px`, top: `${y}px`, zIndex: "5", transform: `rotate(${-9 * Math.sin(Math.PI * e)}deg) scale(${lerp(1, scale, e)})` });
+    const y = lerp(fromY, toY, e) - Math.sin(Math.PI * e) * (i === 0 ? 170 : 110);
+    style(g, { left: `${x}px`, top: `${y}px`, zIndex: "8", transform: `rotate(${-9 * Math.sin(Math.PI * e)}deg) scale(${lerp(1, scale, e)})` });
     g.querySelector(".glass").style.padding = `${lerp(6, 0, e)}px`;
   });
-  landed.forEach((b, i) => {
-    const land = prog(t, CLICKS[i] + 0.9, CLICKS[i] + 1.15);
-    show(b, i === thread && land > 0 ? 1 : 0);
-    b.style.transform = `scale(${lerp(0.94, 1, outBack(land))})`;
-  });
   // The pointer: to each paper plane in turn, a press, a ripple.
-  const ptrIn = prog(t, at(7.55), at(7.75)) * (1 - prog(t, at(12.6), at(12.85)));
+  const ptrIn = prog(t, at(7.55), at(7.75)) * (1 - prog(t, CLICKS[2] + 0.3, CLICKS[2] + 0.55));
   let px = 900, py = 1500, press = 0, rp = -1;
   for (let k = 0; k < 3; k++) {
     const target = sendButton(k, t);
     const from = k === 0 ? { x: 920, y: 1560 } : sendButton(k - 1, t);
-    const move = inOut(prog(t, CLICKS[k] - (k === 0 ? 0.4 : 0.45), CLICKS[k] - 0.05));
-    if (t >= CLICKS[k] - (k === 0 ? 0.4 : 0.45) || k === 0) {
+    const move = inOut(prog(t, CLICKS[k] - 0.4, CLICKS[k] - 0.05));
+    if (t >= CLICKS[k] - 0.4 || k === 0) {
       px = lerp(from.x, target.x, move); py = lerp(from.y, target.y, move);
       press = Math.sin(Math.PI * prog(t, CLICKS[k] - 0.05, CLICKS[k] + 0.15));
       if (t >= CLICKS[k] - 0.05) rp = prog(t, CLICKS[k], CLICKS[k] + 0.5);
@@ -348,6 +368,8 @@ function seek(t) {
   const ur = prog(t, at(18.9), at(19.4));
   show(url, outQuart(ur));
   style(url, { top: "1385px" });
+  show(legal, outQuart(ur) * 0.8);
+  style(legal, { top: "1450px" });
   const push = 1 + 0.03 * prog(t, at(17), DURATION);
   [endIcon, endWord, endTag].forEach((n) => { n.style.scale = String(push); });
 }

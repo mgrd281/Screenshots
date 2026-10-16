@@ -28,13 +28,15 @@ def at(s):
 
 
 # The moments ad.js shows, in seconds of the video.
-CLICKS = [at(7.81), at(10.99), at(12.09)]
+CLICKS = [at(7.81), at(10.15) - 0.05, at(10.99) - 0.05]
+FLY = [0.75, 0.42, 0.42]
 CUES = (
     [("tick", 0.05 + i * 0.07 + 0.05, 0.22) for i in range(0, 24, 3)]
     + [("chime", at(2.86), 0.5), ("whoosh", at(3.85), 0.55, 1.1), ("whoosh", at(6.3), 0.35, 0.8)]
     + [("click", c, 0.7) for c in CLICKS]
-    + [("whoosh", c + 0.12, 0.5, 0.75) for c in CLICKS]
-    + [("pop", c + 0.9, 0.55) for c in CLICKS]
+    + [("whoosh", c + 0.12, 0.5, f) for c, f in zip(CLICKS, FLY)]
+    + [("pop", c + 0.12 + f, 0.55) for c, f in zip(CLICKS, FLY)]
+    + [("whoosh", at(12.09), 0.35, 0.5)]
     + [("tick", at(13.3), 0.35), ("tick", at(13.8), 0.35)]
     + [("swipe", at(15.3) + i * 0.15, 0.45) for i in range(5)]
     + [("thunk", at(16.0), 0.7), ("whoosh", at(16.45), 0.5, 0.6), ("boom", at(16.95), 0.8), ("pop", at(18.0), 0.6)]
