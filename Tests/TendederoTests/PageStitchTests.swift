@@ -6,18 +6,26 @@ import XCTest
 final class PageStitchTests: XCTestCase {
     /// A row of a long page, different from its neighbours.
     private func pageRow(_ i: Int) -> [UInt8] {
-        (0..<PageStitch.samples).map { UInt8((i * 131 + $0 * 17) % 200) }
+        row { j in (i * 131 + j * 17) % 200 }
+    }
+
+    private func row(_ value: (Int) -> Int) -> [UInt8] {
+        var row: [UInt8] = []
+        for j in 0..<PageStitch.samples { row.append(UInt8(value(j))) }
+        return row
     }
 
     /// A row of the toolbar, the same in every view.
     private func barRow(_ i: Int) -> [UInt8] {
-        (0..<PageStitch.samples).map { UInt8(210 + (i * 7 + $0) % 40) }
+        row { j in 210 + (i * 7 + j) % 40 }
     }
 
     /// What the window shows with the page scrolled this far: a toolbar,
     /// then the page.
     private func view(at offset: Int, bar: Int = 30, height: Int = 400) -> PageStitch.Rows {
-        (0..<bar).map(barRow) + (0..<(height - bar)).map { pageRow(offset + $0) }
+        let bars: PageStitch.Rows = (0..<bar).map(barRow)
+        let rows: PageStitch.Rows = (0..<(height - bar)).map { pageRow(offset + $0) }
+        return bars + rows
     }
 
     func testFindsHowFarThePageMoved() throws {
@@ -32,7 +40,8 @@ final class PageStitchTests: XCTestCase {
     }
 
     func testAPageThatChangedByItselfDoesNotFit() {
-        let other = (0..<400).map { i in (0..<PageStitch.samples).map { UInt8((i * 53 + $0 * 29 + 11) % 197) } }
+        var other: PageStitch.Rows = []
+        for i in 0..<400 { other.append(row { j in (i * 53 + j * 29 + 11) % 197 }) }
         XCTAssertNil(PageStitch.step(from: view(at: 0), to: other, expected: 300))
     }
 
@@ -40,8 +49,10 @@ final class PageStitchTests: XCTestCase {
         // Some text, then a long blank stretch, which lines up at any move:
         // the one asked for wins.
         let blank = [UInt8](repeating: 250, count: PageStitch.samples)
-        let page = (0..<50).map(pageRow) + Array(repeating: blank, count: 950)
-        let window = { (offset: Int) in (0..<30).map(self.barRow) + page[offset..<(offset + 370)] }
+        let text: PageStitch.Rows = (0..<50).map(pageRow)
+        let page: PageStitch.Rows = text + Array(repeating: blank, count: 950)
+        let bars: PageStitch.Rows = (0..<30).map(barRow)
+        let window: (Int) -> PageStitch.Rows = { offset in bars + Array(page[offset..<(offset + 370)]) }
         let step = try XCTUnwrap(PageStitch.step(from: window(0), to: window(120), expected: 120))
         XCTAssertEqual(step.top, 30)
         XCTAssertEqual(step.shift, 120)
