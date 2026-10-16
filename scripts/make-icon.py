@@ -1,13 +1,18 @@
 # Draws the Snapfly app icon: a screenshot card flying up and away, with
 # speed lines behind it, over a warm amber-to-magenta gradient.
 # Usage: python3 scripts/make-icon.py assets/icon.png
+# With --ios it draws the iPhone icon instead: the same picture, full bleed
+# and opaque, since iOS rounds the corners itself.
+#   python3 scripts/make-icon.py --ios iOS/Snapfly/Assets.xcassets/AppIcon.appiconset/AppIcon.png
 import sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
 S = 4                 # drawn four times larger, then scaled down for smooth edges
 N = 1024 * S
-out = sys.argv[1] if len(sys.argv) > 1 else "icon.png"
+ios = "--ios" in sys.argv
+args = [a for a in sys.argv[1:] if a != "--ios"]
+out = args[0] if args else "icon.png"
 
 
 def gradient(w, h, stops, angle_from=(0, 0), angle_to=(1, 1)):
@@ -45,11 +50,12 @@ canvas = Image.new("RGBA", (N, N), (0, 0, 0, 0))
 # The body: 824 of 1024, centred, as the macOS icon grid has it.
 B = 824 * S
 x0 = y0 = 100 * S
-mask = squircle(B, B)
+mask = Image.new("L", (B, B), 255) if ios else squircle(B, B)
 
-shadow = Image.new("RGBA", (N, N), (0, 0, 0, 0))
-shadow.paste((40, 10, 40, 110), (x0, y0 + 14 * S), mask)
-canvas = Image.alpha_composite(canvas, shadow.filter(ImageFilter.GaussianBlur(22 * S)))
+if not ios:
+    shadow = Image.new("RGBA", (N, N), (0, 0, 0, 0))
+    shadow.paste((40, 10, 40, 110), (x0, y0 + 14 * S), mask)
+    canvas = Image.alpha_composite(canvas, shadow.filter(ImageFilter.GaussianBlur(22 * S)))
 
 body = gradient(B, B, [(0.0, (255, 196, 92)), (0.45, (255, 94, 98)), (1.0, (178, 52, 214))],
                 (0.1, 0.0), (0.9, 1.0))
@@ -110,5 +116,8 @@ layer = Image.new("RGBA", (N, N), (0, 0, 0, 0))
 layer.paste(card_r, pos, card_r)
 canvas = Image.alpha_composite(canvas, layer)
 
+if ios:
+    # The body alone, scaled to the whole icon.
+    canvas = canvas.crop((x0, y0, x0 + B, y0 + B)).convert("RGB")
 canvas.resize((1024, 1024), Image.LANCZOS).save(out)
 print("saved", out)

@@ -616,6 +616,19 @@ else is shared.
 - **Don't** steal focus from the app in front, or block with a modal what a
   card can say.
 
+## iPhone
+
+The iPhone app (`iOS/`) is a plain SwiftUI app that follows iOS, as the Mac
+app follows macOS: system fonts, colours, materials and controls, the
+system's accent, Dynamic Type and Dark Mode as they come. It adds no tokens
+of its own.
+
+- Screenshots sit in a grid in the shape of a phone's screen, 10 pt corners.
+- A covered screenshot shows at full width with 12 pt corners; Copy, Share
+  and Save sit under it on the bar material, as bordered buttons.
+- The icon is the Mac icon's picture, full bleed and opaque, since iOS rounds
+  it (`scripts/make-icon.py --ios`).
+
 ## Website
 
 The site in `website/` (GitHub Pages) sells the app and hosts the privacy

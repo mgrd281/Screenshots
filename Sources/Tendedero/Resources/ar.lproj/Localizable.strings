@@ -346,3 +346,29 @@
 "Open the page to capture first, then try again." = "افتح الصفحة التي تريد تصويرها أولًا، ثم حاول مرة أخرى.";
 "The page could not be captured." = "تعذّر تصوير الصفحة.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "كي يمرّر Snapfly الصفحة، يحتاج إلى أن يضغط المفاتيح نيابةً عنك. اسمح له بذلك في إعدادات النظام، ثم حاول مرة أخرى.";
+
+/* iPhone */
+"Cover Private Details" = "تغطية المعلومات الخاصة";
+"No screenshots yet" = "لا توجد لقطات شاشة بعد";
+"Take a screenshot, then come back here." = "التقط لقطة شاشة، ثم عُد إلى هنا.";
+"Allow Snapfly to see your screenshots" = "اسمح لـ Snapfly برؤية لقطات شاشتك";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "يغطي Snapfly الأسماء والعناوين وغيرها من المعلومات الخاصة في لقطات شاشتك، على هذا الآيفون نفسه. لا يُرسل شيء إلى أي مكان.";
+"Allow Access" = "السماح بالوصول";
+"Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "لا يُسمح لـ Snapfly برؤية لقطات شاشتك. اسمح له من الإعدادات › الخصوصية والأمن › الصور.";
+"Covering private details…" = "تُغطّى المعلومات الخاصة…";
+"The picture could not be read." = "تعذّرت قراءة الصورة.";
+"Nothing private found" = "لم يُعثر على شيء خاص";
+"Details covered: %d" = "المعلومات المغطاة: %d";
+"Saved to Photos" = "حُفظت في الصور";
+"The picture could not be saved." = "تعذّر حفظ الصورة.";
+"Save" = "حفظ";
+"What to cover" = "ما يُغطّى";
+"Take a screenshot as usual." = "التقط لقطة شاشة كالمعتاد.";
+"Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "انقر مرتين على ظهر الآيفون: تُغطّى أحدث لقطة شاشة وتُنسخ، جاهزة للّصق في الدردشة.";
+"To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "لضبط ذلك مرة واحدة، افتح الإعدادات › تسهيلات الاستخدام › اللمس › النقر على الظهر › نقر مزدوج، واختر %@.";
+"Cover the Latest Screenshot" = "تغطية أحدث لقطة شاشة";
+"Double tap the back of your iPhone" = "انقر مرتين على ظهر الآيفون";
+"Everything happens on this iPhone. Nothing is sent anywhere." = "كل شيء يحدث على هذا الآيفون. لا يُرسل شيء إلى أي مكان.";
+"Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "لا يُسمح لـ Snapfly برؤية لقطات شاشتك بعد. افتح Snapfly مرة واحدة واسمح له.";
+"There is no screenshot yet." = "لا توجد لقطة شاشة بعد.";
+"Covered and copied, ready to paste." = "غُطّيت ونُسخت، جاهزة للّصق.";

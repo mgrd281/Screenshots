@@ -346,3 +346,29 @@
 "Open the page to capture first, then try again." = "キャプチャするページを先に開いてから、もう一度お試しください。";
 "The page could not be captured." = "ページをキャプチャできませんでした。";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "ページをスクロールするには、Snapflyが代わりにキーを押す必要があります。システム設定で許可してから、もう一度お試しください。";
+
+/* iPhone */
+"Cover Private Details" = "個人情報を隠す";
+"No screenshots yet" = "スクリーンショットはまだありません";
+"Take a screenshot, then come back here." = "スクリーンショットを撮ってから、ここに戻ってください。";
+"Allow Snapfly to see your screenshots" = "Snapflyにスクリーンショットへのアクセスを許可";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapflyは、スクリーンショット内の名前、住所などの個人情報をこのiPhone上で隠します。どこにも送信されません。";
+"Allow Access" = "アクセスを許可";
+"Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapflyはスクリーンショットを見ることができません。設定 › プライバシーとセキュリティ › 写真で許可してください。";
+"Covering private details…" = "個人情報を隠しています…";
+"The picture could not be read." = "画像を読み込めませんでした。";
+"Nothing private found" = "個人情報は見つかりませんでした";
+"Details covered: %d" = "隠した情報: %d";
+"Saved to Photos" = "写真に保存しました";
+"The picture could not be saved." = "画像を保存できませんでした。";
+"Save" = "保存";
+"What to cover" = "隠すもの";
+"Take a screenshot as usual." = "いつものようにスクリーンショットを撮ります。";
+"Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhoneの背面をダブルタップ：最新のスクリーンショットが隠されてコピーされ、チャットにペーストできます。";
+"To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "一度だけ設定するには、設定 › アクセシビリティ › タッチ › 背面タップ › ダブルタップを開き、%@を選びます。";
+"Cover the Latest Screenshot" = "最新のスクリーンショットを隠す";
+"Double tap the back of your iPhone" = "iPhoneの背面をダブルタップ";
+"Everything happens on this iPhone. Nothing is sent anywhere." = "すべてこのiPhone上で行われます。どこにも送信されません。";
+"Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapflyはまだスクリーンショットを見られません。Snapflyを一度開いて許可してください。";
+"There is no screenshot yet." = "スクリーンショットはまだありません。";
+"Covered and copied, ready to paste." = "隠してコピーしました。ペーストできます。";

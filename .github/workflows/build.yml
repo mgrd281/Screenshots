@@ -92,3 +92,15 @@ jobs:
       - name: Remove the signing keychain
         if: always()
         run: scripts/signing.sh cleanup
+
+  # The iPhone app (iOS/), built for a device but not signed, so a change to
+  # the code both apps share is checked on the iPhone too.
+  iphone:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the iPhone app
+        run: |
+          xcodebuild -project iOS/Snapfly.xcodeproj -target Snapfly -configuration Release \
+            -sdk iphoneos CODE_SIGNING_ALLOWED=NO -quiet build
