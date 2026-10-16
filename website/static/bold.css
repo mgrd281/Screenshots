@@ -243,7 +243,7 @@
   letter-spacing: -0.06em;
 }
 :root[data-look="bold"] .hero h1:lang(de) { max-width: 16ch; font-size: clamp(2.6rem, min(6vw, 9.5vh), 6.25rem); }
-:root[data-look="bold"] .hero h1:lang(ar) { max-width: 12ch; line-height: 1.12; letter-spacing: 0; font-size: clamp(2.8rem, min(6.4vw, 9.5vh), 6.5rem); }
+:root[data-look="bold"] .hero h1:lang(ar) { max-width: 15ch; line-height: 1.12; letter-spacing: 0; font-size: clamp(2.8rem, min(6.4vw, 9vh), 6.5rem); }
 :root[data-look="bold"] .hero-sub { max-width: 36em; color: var(--type-2); font-size: clamp(1.05rem, 1.3vw, 1.2rem); }
 :root[data-look="bold"] .hero-note { color: var(--type-2); }
 
