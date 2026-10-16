@@ -42,6 +42,23 @@
     setInterval(tick, 15000);
   }
 
+  // MARK: Postmarks
+
+  // Every postmark on the page carries the visitor's date and time; one
+  // struck on a sent photo keeps the time it was sent.
+  const stampDate = window.Intl && new Intl.DateTimeFormat(document.documentElement.lang, { day: "2-digit", month: "2-digit", year: "2-digit" });
+  const stampTime = window.Intl && new Intl.DateTimeFormat(document.documentElement.lang, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+  function datePostmark(mark, when = new Date()) {
+    if (!stampDate) return;
+    const date = mark.querySelector(".pm-date");
+    const time = mark.querySelector(".pm-time");
+    if (date) date.textContent = stampDate.format(when);
+    if (time) time.textContent = stampTime.format(when);
+  }
+  const datePostmarks = () => document.querySelectorAll(".postmark:not(.struck)").forEach((mark) => datePostmark(mark));
+  datePostmarks();
+  setInterval(datePostmarks, 15000);
+
   // MARK: The line
 
   const line = document.querySelector("[data-line]");
@@ -151,9 +168,18 @@
 
     const fly = (photo, to, delay = 0) => flyPhoto(photo, photo.getBoundingClientRect(), to, delay);
 
+    const postmarkTemplate = chat && chat.querySelector("template[data-postmark]");
+    function strike(bubble) {
+      if (!postmarkTemplate) return;
+      const mark = postmarkTemplate.content.firstElementChild.cloneNode(true);
+      datePostmark(mark);
+      bubble.appendChild(mark);
+    }
+
     function landed(bubble, pegs, answerWith) {
       bubble.style.visibility = "";
       bubble.classList.add("landed");
+      strike(bubble);
       pegs.forEach((peg) => peg.remove());
       layout();
       announce(status.dataset.sent);
@@ -528,7 +554,7 @@
   if (brandSwitch) {
     const root = document.documentElement;
     const chips = [...brandSwitch.querySelectorAll("[data-brand-pick]")];
-    const bars = { sunset: ["#F5F5F7", "#161618"], emerald: ["#F5F8F5", "#081819"], orange: ["#FAFAF8", "#121211"] };
+    const bars = { sunset: ["#ECEBFA", "#15122B"], emerald: ["#E6F2EE", "#0A1E1F"], orange: ["#FAFAF8", "#141312"] };
     const known = (brand) => (brand in bars ? brand : "sunset");
     const current = () => known(root.dataset.brand);
     const show = (brand) => {

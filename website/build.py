@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 from urllib.parse import quote, urlparse
 
-from content import DOWNLOAD, EMAIL, LANGS, MAKER, REPO, SITE_URL, TEXT
+from content import AIRMAIL, DOWNLOAD, EMAIL, LANGS, MAKER, REPO, SITE_URL, TEXT
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "_site"
@@ -356,8 +356,8 @@ def head(lang, page, title, desc):
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#161618" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ECEBFA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15122B" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="{SITE_URL}{path}">
 {alternates}
 {default}
@@ -400,6 +400,38 @@ def download_button(lang):
             f'<small>{esc(t["badge_for"])}</small> <span>macOS</span></span></a>')
 
 
+# MARK: Postal pieces
+
+def postmark(uid, cls="postmark"):
+    """A postmark: a ring with the date and the time, and wavy lines running
+    on. site.js writes the visitor's date and time into it."""
+    waves = "".join(f'<path d="M118 {34 + i * 13}q12-7 24 0t24 0t24 0t24 0t24 0t24 0" fill="none" stroke="currentColor" stroke-width="2.4"/>'
+                    for i in range(5))
+    return (f'<span class="{cls}" aria-hidden="true"><svg viewBox="0 0 260 120" focusable="false">'
+            f'<defs><path id="pm-{uid}" d="M60 60m-42 0a42 42 0 1 1 84 0a42 42 0 1 1-84 0"/></defs>'
+            f'<circle cx="60" cy="60" r="53" fill="none" stroke="currentColor" stroke-width="2.6"/>'
+            f'<circle cx="60" cy="60" r="32" fill="none" stroke="currentColor" stroke-width="1.6"/>'
+            f'<g class="pm-words"><text font-size="9.5" font-weight="700" fill="currentColor">'
+            f'<textPath href="#pm-{uid}" textLength="262" lengthAdjust="spacing">SNAPFLY · PAR AVION · SNAPFLY · PAR AVION ·</textPath></text>'
+            f'<text class="pm-date" x="60" y="57" text-anchor="middle" font-size="12.5" font-weight="800" fill="currentColor">SNAPFLY</text>'
+            f'<text class="pm-time" x="60" y="73" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor"></text></g>'
+            f'{waves}</svg></span>')
+
+
+def airmail(lang):
+    """The airmail label: this page's language large, the others under it."""
+    def word(code):
+        text = esc(AIRMAIL[code])
+        return f'<span lang="ar" dir="rtl">{text}</span>' if code == "ar" else f'<span lang="{code}">{text}</span>'
+    rest = " · ".join(word(code) for code in AIRMAIL if code != lang)
+    return f'<p class="airmail" aria-hidden="true"><strong>{esc(AIRMAIL[lang])}</strong><span class="airmail-rest">{rest}</span></p>'
+
+
+def handstamp(text, cls=""):
+    """A rectangular rubber stamp, double-ruled, struck a little crooked."""
+    return f'<span class="handstamp{(" " + cls) if cls else ""}" aria-hidden="true">{esc(text)}</span>'
+
+
 # MARK: The home page
 
 ROPE = '<svg class="rope{cls}" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M-20 14 Q500 86 1020 14"/></svg>'
@@ -425,6 +457,7 @@ def hero(lang):
     <button class="corner corner-send" type="button" aria-label="{esc(t["send_label"])}: {esc(name)}">{icon("plane")}</button>
   </div>
   <span class="copied" aria-hidden="true">{icon("check")}{esc(L(lang, "Copied"))}</span>
+  {postmark("hero") if i == 1 else ""}
 </li>""")
     return f"""<section class="hero intro" aria-labelledby="hero-title">
   <div class="line" data-line data-earlier="{esc(L(lang, "Move Earlier"))}" data-later="{esc(L(lang, "Move Later"))}">
@@ -439,6 +472,7 @@ def hero(lang):
     </div>
     <p class="vh" role="status" aria-live="polite" data-status data-sent="{esc(t["send_label"])}"></p>
   </div>
+  {airmail(lang)}
   <div class="hero-body">
     <div class="hero-copy">
       <h1 id="hero-title">{esc(L(lang, "Screenshots, one click from any chat."))}</h1>
@@ -446,6 +480,8 @@ def hero(lang):
       <p class="hero-actions">{download_button(lang)}</p>
       <p class="hero-note">{esc(t["cta_note"])}</p>
     </div>
+    <div class="hero-chat">
+    <svg class="flightpath" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M4 2 C 70 10, 150 30, 190 98"/></svg>
     <section class="window chat" aria-label="{esc(t["chat_label"])}" data-chat>
       <div class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><span class="window-title">{esc(t["chat_title"])}</span></div>
       <ol class="thread" data-thread>
@@ -469,7 +505,9 @@ def hero(lang):
       <template data-reply><li class="msg in"><p>{esc(t["chat_reply"])}</p></li></template>
       <template data-reply-all><li class="msg in"><p>{esc(t["chat_reply_all"])}</p></li></template>
       <template data-reply-caption><li class="msg in"><p>{esc(t["caption_reply"])}</p></li></template>
+      <template data-postmark>{postmark("sent", "postmark struck")}</template>
     </section>
+    </div>
   </div>
 </section>"""
 
@@ -1011,6 +1049,8 @@ def section_private(lang):
       <h2 id="priv-h">{esc(t["priv_h"])}</h2>
       <p>{esc(t["priv_p"])}</p>
     </div>
+    <div class="stamped">
+    {handstamp(t["stamp_covered"])}
     <div class="window settings">
       {window_titlebar(L(lang, "Settings"))}
       <div class="settings-body">
@@ -1042,6 +1082,7 @@ def section_private(lang):
           </div>
         </form>
       </div>
+    </div>
     </div>
   </div>
 </section>"""
@@ -1146,22 +1187,30 @@ def section_design(lang):
     t = TEXT[lang]
     points = "".join(f'<span class="point">{esc(p)}</span> ' for p in t["design_points"]).strip()
     return f"""<section class="section design" aria-labelledby="design-h">
-  <div class="wrap narrow">
-    <h2 id="design-h" class="points">{points}</h2>
-    <p><strong>{esc(t["design_h"])}</strong> {esc(t["design_p"])}</p>
-    <p><a class="link-arrow" href="{href_to(lang, lang, "privacy")}">{esc(t["design_link"])}{icon("arrow")}</a></p>
+  <div class="wrap">
+    <div class="envelope">
+      <span class="envelope-stamp" aria-hidden="true"><span class="photo"><img src="{prefix(lang)}assets/icon-256.png" alt="" width="96" height="96"></span>{postmark("design")}</span>
+      <h2 id="design-h" class="points">{points}</h2>
+      <p><strong>{esc(t["design_h"])}</strong> {esc(t["design_p"])}</p>
+      <p><a class="link-arrow" href="{href_to(lang, lang, "privacy")}">{esc(t["design_link"])}{icon("arrow")}</a></p>
+    </div>
   </div>
 </section>"""
 
 
 def section_close(lang):
     t = TEXT[lang]
+    flap = ('<svg class="flap" viewBox="0 0 100 50" preserveAspectRatio="none" aria-hidden="true" focusable="false">'
+            '<path class="flap-top" d="M0 0 L50 50 L100 0 Z"/></svg>')
     return f"""<section class="close" aria-labelledby="close-h">
   <div class="wrap center">
-    <img class="close-icon" src="{prefix(lang)}assets/icon-256.png" alt="" width="128" height="128">
-    <h2 id="close-h">{esc(t["close_h"])}</h2>
-    <p class="hero-actions">{download_button(lang)}</p>
-    <p class="hero-note">{esc(t["close_note"])}</p>
+    <div class="envelope-back">
+      {flap}
+      <img class="close-icon" src="{prefix(lang)}assets/icon-256.png" alt="" width="128" height="128">
+      <h2 id="close-h">{esc(t["close_h"])}</h2>
+      <p class="hero-actions">{download_button(lang)}</p>
+      <p class="hero-note">{esc(t["close_note"])}</p>
+    </div>
   </div>
 </section>"""
 

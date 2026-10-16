@@ -74,9 +74,10 @@ Three layers, each with its own job.
 2. **The brand gradient: amber `#FFC45C`, coral `#FF5E62`, violet
    `#B234D6`.** It belongs to the icon and the About pane in the app. It is
    never an interface colour there: no gradient buttons or panels.
-3. **The website: one brand, three themes.** On the site the brand gradient
-   becomes the desktop wallpaper the app sits on, and the visitor can choose
-   one of three themes (below). Each works in light and in dark.
+3. **The website: one brand, three themes.** The site is an airmail
+   envelope: aerogramme paper inside a chevron edge, with postal ink for
+   labels and postmarks. The visitor can choose one of three themes (below),
+   each a colouring of the same envelope. Each works in light and in dark.
 
 ### One brand, three themes
 
@@ -85,18 +86,19 @@ on the website only; the app has no theme setting and follows macOS.
 
 | Theme | Idea | Palette |
 |---|---|---|
-| **Original Sunset** (default) | The warm sky the icon comes from | Wallpaper `#FF8A5C` → `#FF5E62` → `#D9449A` → `#B234D6`; dusk version in dark. Accent `#0071E3`. |
-| **Emerald Petrol** | Deep water with cool light from above | Deep Petrol `#062F31`, Emerald `#07514E`, Refined Teal `#168176`, Soft Mint `#B8DED2`, Pearl White `#F5F8F5`. |
-| **Signature Orange** | One confident colour, used with precision | Primary Orange `#EC632C`, Deep Orange `#C7461C`, Warm Orange Highlight `#FF8754`, Soft Peach `#FFE4D7`, Premium Black `#171717`, Warm Neutral `#FAFAF8`. |
+| **Original Sunset** (default) | The icon's coral and violet on a lavender-blue aerogramme | Paper `#ECEBFA`, edge coral `#FF5E62` and violet `#5B2BB8`, postal ink `#5B2BB8`, type `#1F1646`; a night sheet `#15122B` in dark. |
+| **Emerald Petrol** | The same envelope in mint, with petrol ink | Paper `#E6F2EE`, edge Refined Teal `#168176` and Deep Petrol `#062F31`, ink Emerald `#07514E`; deep petrol paper at night. |
+| **Signature Orange** | One confident colour, used with precision | Warm Neutral paper `#FAFAF8`, edge Primary Orange `#EC632C` and Premium Black `#171717`, ink Deep Orange `#C7461C`; Premium Black paper at night. |
 
 - **What every theme keeps:** the name, the app icon, the system font, the
-  line and its photo cards, windows and their traffic lights, system
-  controls' shapes, status colours, the screenshots' content, the paper
-  plane, the voice and the motion.
-- **What a theme may change:** the wallpaper and its washes, the accent on
-  the site, links, the page ground, glass tint and shine, the shadow tint,
-  the rope, the download badge, and the small brand tiles. All of it
-  through tokens; see "Brand themes" in `DESIGN.md`.
+  envelope and its parts (the chevron edge, the stamps on the line, the
+  postmark, the airmail label, the handstamp), windows and their traffic
+  lights, system controls' shapes, status colours, the screenshots'
+  content, the paper plane, the voice and the motion.
+- **What a theme may change:** the paper, the edge's two colours, the postal
+  ink, the accent on the site, links, the shadow tint, the rope, the
+  download badge, and the small brand tiles. All of it through tokens; see
+  "Brand themes" in `DESIGN.md`.
 - **Light or dark is the system's,** in every theme. Six looks in all.
 
 ## 4. Typography
@@ -108,8 +110,9 @@ on the website only; the app has no theme setting and follows macOS.
   Regular and from secondary colour, not from large type. The app has no
   display sizes and no words under 11 pt.
 - **On the website, display sizes are allowed:** the hero to 5.6 rem,
-  section heads to 3.5 rem, with slightly tight tracking (−0.015 em, −0.01
-  em) and none in Arabic.
+  section heads to 3.5 rem, heavy (800) with tight tracking (−0.035 em,
+  −0.03 em) and none in Arabic. Postal labels are tracked capitals; the
+  postmark's time is SF Mono.
 - **In the promo video,** which is rendered off the Mac, the fonts travel
   with it: Inter and Noto Sans Arabic (SIL Open Font License) in
   `promo/fonts/`, so every render draws the same frames.
@@ -135,14 +138,17 @@ The brand's motifs all come from the product. Use them; don't add others.
 
 - **The line.** A rope (or the glass shelf, the island, the card stack)
   across the top, with photos hanging on clips. It is the signature shape.
-- **The photo card.** A screenshot in a thin frame of glass, 16 pt corners,
-  hanging slightly tilted, swaying a little.
+- **The photo card.** In the app, a screenshot in a thin frame of glass,
+  16 pt corners, hanging slightly tilted, swaying a little. On the website
+  the same card is a postage stamp: white paper with a perforated edge.
 - **The paper plane.** A card that takes off up and to the right, like the
   icon, and lands in a chat.
-- **The Mac desktop.** On the website the page is a Mac screen: a frosted
-  menu bar on top, the wallpaper behind, windows in front. Demos are native
-  objects on that desktop: keycaps, files, Settings, a context menu, a whole
-  desktop to try Snapfly on.
+- **The airmail envelope.** On the website the page is an envelope: the
+  chevron edge round the window, aerogramme paper, stamps on the line, a
+  postmark with the time on what is sent, the airmail label in every
+  language at once, a rubber handstamp where details are covered. Demos are
+  native Mac objects carried in it: keycaps, files, Settings, a context
+  menu, a whole desktop to try Snapfly on.
 - **Cover ink.** Opaque, near-black blocks over private details. It reads as
   redaction, never decoration.
 - **Illustration** is drawn, not photographed: flat, precise, in the

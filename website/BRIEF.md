@@ -25,65 +25,53 @@ does not copy this file into the site.
 
 ## Direction contract
 
-THESIS: The page is the Mac screen the app lives on. A menu bar carries the
-navigation, Snapfly's line hangs under it with real-looking screenshots, and
-the chat window sits in front. It refuses the category default: a headline
-beside a laptop mockup, over a grid of feature cards.
+The owner asked for a completely new look with a clear identity, kept the
+three brand themes, and chose the airmail direction from three sketched
+first views (airmail, a folding sheet, a departure board).
 
-OWN-WORLD: The brand gradient (amber, coral, violet) is the desktop
-wallpaper, and only the ground. Everything on it is native macOS:
-- a frosted menu bar;
-- a grey rope with steel clips;
-- white glass photo cards (16 pt, 4 pt inset, 12 pt image);
-- accent-blue paper planes;
-- cover-ink redactions;
-- context menus, segmented controls and window chrome drawn to Apple's
-  proportions;
-- SF Pro through the system stack.
+THESIS: The page is an airmail envelope. The chevron edge of an airmail
+envelope, in the theme's two colours, frames the browser window the whole
+time; every screenshot on it is a perforated stamp clipped to the line; and
+sending is posting, so what lands in the chat is struck with a postmark that
+carries the time. It refuses what the site was before, and what the
+category ships: a gradient wallpaper under glass, with centred headings over
+a wash.
 
-Light and dark follow the visitor, like a dynamic wallpaper.
+OWN-WORLD: Aerogramme paper is the ground: lavender blue for Original Sunset,
+mint for Emerald Petrol, warm white for Signature Orange, and a night sheet
+of the same ink in dark, with a fine fibre grain. The chevron edge runs coral
+and violet, teal and petrol, orange and black. Postal ink (violet, petrol,
+deep orange) prints the labels, postmarks and handstamps:
+- white stamps with perforated edges, held by steel clips;
+- round postmarks with wavy cancellation lines and the time in SF Mono;
+- rectangular, double-ruled handstamps, struck a little crooked;
+- the airmail label in every language at once: BY AIR MAIL · LUFTPOST ·
+  بالبريد الجوي · PAR AVION.
+Headlines are heavy SF Pro in ink; postal labels are tracked capitals. Mac
+windows stay native: they are what the envelope carries.
 
-STORY: Screenshots hang at the top of the screen instead of piling up on the
-Desktop. One click copies one, the paper plane sends it into the chat, and
-private details are covered before anything leaves. Nothing leaves the Mac.
-The visitor downloads it.
+STORY: Each screenshot hangs on the line as a stamp. One click copies it;
+the paper plane posts it into the chat, where it lands postmarked. Private
+details are covered before anything is posted, and nothing else leaves the
+Mac. The visitor downloads it.
 
-FIRST VIEWPORT:
-- At the top, a full-width menu bar holds the navigation and the language
-  switch.
-- Under it, the line spans the whole width with five crooked screenshots
-  swaying on clips.
-- Lower start side: the headline (the app's tagline) at display size, the
-  subline, then a white "Download for Mac" pill with the requirements under
-  it.
-- Lower end side: a chat window in front, cropped by the fold, with one
-  incoming question.
+FIRST VIEWPORT: The chevron edge frames the window. Inside it, the paper
+header carries the name, links, the theme swatches (each striped like its
+edge) and the language. Under the header the line runs edge to edge with
+five stamps; a postmark is struck across the second with today's date and
+the visitor's time. The airmail label hangs rotated at the trailing top,
+under the tag. Lower start side: the headline at display size in ink, the
+subline, the download badge in postal ink inside a paper ring, the
+requirements. Lower end side: the chat window, with a dashed flight path
+from the line to it.
 
-FORM: Mac desktop as the page (first of seven). The wallpaper stays fixed
-under the whole home page, as a Mac's desktop does, with a wash below the
-first view. Every demo is a native object on it:
-- the keycaps;
-- the Desktop's files, which fly up onto a rope;
-- Snapfly's own Settings window, on its Privacy and Line panes;
-- the photo's menu opening from a card on a line;
-- a whole Mac desktop with Snapfly on it, where the visitor takes a
-  screenshot, a timed one with a menu open, or a recording, copies it from
-  that screen's line and sends it to a chat. The owner asked for it to feel
-  like using the app: a real screen with no laptop round it, a browser and
-  Messages as its only windows, a Dock of its own, notes with Undo for each
-  action, and a guide that walks a first visitor through it step by step.
-  It fits phones, tablets and desktops in a layout of its own for each;
-- the Hide Part window, where the visitor says what to hide;
-- four steps from the download to the first screenshot, before the close.
-
-The hero's chat has the send button over chats, with its message bar, and
-its line reorders by dragging, so these can be tried on the page too.
-
-The signature interaction is the paper plane. It flings a hanging screenshot off the line and into the
-chat, where it lands as a sent image, and the line closes the gap. Holding a
-screenshot opens its real context menu. The menu doubles as the feature list.
-seed: none (roll not run: the impeccable launcher is not installed in this
-repository)
+FORM: Airmail envelope, first of seven (airmail envelope, origami folding
+sheet, airport departure board, darkroom drying line, gallery hang with wall
+labels, metro map, courtyard washing line). The signature interaction: a
+photo posted into the chat lands with a postmark struck across it, stamping
+the time it was sent. Motion grammar: things are struck (a short thud, from
+118% to 100% with a 2° settle) or flown, never floated.
+seed: none (unavailable)
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the
 finish review, the verdict, DESIGN.md, and every shipping raster carrying its

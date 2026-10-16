@@ -47,6 +47,7 @@ Each token lists where its value ships today. "App" is SwiftUI or AppKit;
 | `duration.medium` | 280–300 ms | Desktop demo `--d-t3` (windows); app empty-line fade (0.3 s) |
 | `duration.hold` | 450 ms | App: a held photo shrinks while its menu builds up |
 | `duration.travel` | 450–600 ms | Site switcher thumb (0.45 s), line reflow (0.6 s); app capture fall (0.55 s) |
+| `duration.strike` | 500 ms | Site: a postmark or the airmail label struck onto the paper |
 | `duration.reveal` | 700 ms | Site: a new theme spreading from its swatch |
 | `duration.flight` | 820 ms | Site paper-plane flight |
 | `duration.entrance` | 0.8–1.2 s | Site first view and arrivals, once per page |
@@ -127,6 +128,7 @@ settle is the point.
 | `scale.press` | 0.95 | A pressed Dock icon; on the site's line a photo gives to 0.98, a corner button to 0.88, a pill button to 0.96, a theme swatch to 0.90 |
 | `scale.open` | 0.95 → 1 | A window opening |
 | `scale.settle` | 0.96–0.98 → 1 | A card or photo landing |
+| `scale.strike` | 1.18 → 1 (label 1.15 → 1) | A postmark or label struck onto the paper, with a slight overshoot (`cubic-bezier(0.2, 0.9, 0.3, 1.15)`) |
 
 ### Rotation
 
@@ -134,6 +136,8 @@ settle is the point.
 - Arrival swing in the app: 16°, settled by `spring.arrive`.
 - Drop on the site: −7° to 3° to −1.2° to 0.4° to rest.
 - Flight tilt: −9° at the top of the arc (9° in right-to-left).
+- Strike: a postmark turns from −14° to its rest angle as it lands (the
+  airmail label from −9°).
 
 ### Blur
 
@@ -177,6 +181,13 @@ to nothing else; don't put them on ordinary buttons.
 - **Hang.** A card drops onto its clip and swings to rest, each swing
   smaller (`hang-in` on the site, `spring.arrive` in the app), then sways
   a little. It means "here, ready".
+
+On the website a third move belongs to the envelope: **strike.** A postmark
+comes down onto what was sent, from 118% to rest in `duration.strike`, a
+short thud and no bounce after it, and stays with the time it was sent. The
+first view ends with one (after the airmail label), and every photo that
+lands in the hero's chat gets one. Nothing on the site floats; things hang,
+fly or are struck.
 
 The same two moves carry over to onboarding, the website and videos, with
 the same curves, so every place feels like one product.

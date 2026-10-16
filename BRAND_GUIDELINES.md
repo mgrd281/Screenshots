@@ -130,8 +130,8 @@ same pull request.
 - **Never publish or replace media without the owner.** Renders and exports
   stay out of the repository (`promo/out/` is ignored).
 - **Static compositions** (boards, posters, store art) use the icon, the
-  line, the photo cards and a theme's wallpaper, nothing borrowed from
-  another brand. The `canvas-design` skill may help with layout, never with
+  line, the photo cards and a theme's envelope (paper, chevron edge,
+  postmark), nothing borrowed from another brand. The `canvas-design` skill may help with layout, never with
   a new style.
 
 ## 14. Responsive and accessibility

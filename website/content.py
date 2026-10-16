@@ -16,6 +16,11 @@ MAKER = "Mgrdegh Ghazarian"
 # Code, folder, name in the language menu.
 LANGS = [("en", "", "English"), ("de", "de/", "Deutsch"), ("ar", "ar/", "العربية")]
 
+# The airmail label, in every language at once, as real airmail labels are:
+# the page's own language large, the others under it. French is the Universal
+# Postal Union's own.
+AIRMAIL = {"en": "By Air Mail", "de": "Luftpost", "ar": "بالبريد الجوي", "fr": "Par Avion"}
+
 TEXT = {}
 
 TEXT["en"] = dict(
@@ -67,6 +72,7 @@ TEXT["en"] = dict(
     replay="Play again",
 
     priv_h="Private details stay private.",
+    stamp_covered="Private details covered",
     priv_p="Before a screenshot goes to ChatGPT, another AI or a person, Snapfly covers what you choose: names, addresses, emails, phone numbers, bank cards and accounts, health details. Whatever leaves the line, copied, sent or dragged out, leaves covered. Snapfly reads the text on your Mac, and the screenshot file itself never changes.",
     example="Example",
     inv=dict(title="Invoice 2026-1042", date="October 14, 2026", bill="Billing address",
@@ -312,6 +318,7 @@ TEXT["de"] = dict(
     replay="Noch mal abspielen",
 
     priv_h="Private Angaben bleiben privat.",
+    stamp_covered="Private Angaben verdeckt",
     priv_p="Bevor ein Bildschirmfoto an ChatGPT, eine andere KI oder einen Menschen geht, verdeckt Snapfly, was du wählst: Namen, Adressen, E-Mails, Telefonnummern, Bankkarten und Konten, Gesundheitsdaten. Was die Leine verlässt – kopiert, gesendet oder herausgezogen –, ist verdeckt. Snapfly liest den Text auf deinem Mac, und die Bilddatei selbst bleibt unverändert.",
     example="Beispiel",
     inv=dict(title="Rechnung 2026-1042", date="14. Oktober 2026", bill="Rechnungsadresse",
@@ -557,6 +564,7 @@ TEXT["ar"] = dict(
     replay="إعادة التشغيل",
 
     priv_h="معلوماتك الخاصة تبقى خاصة.",
+    stamp_covered="المعلومات الخاصة مغطّاة",
     priv_p="قبل أن تذهب اللقطة إلى ChatGPT أو أي ذكاء اصطناعي آخر أو إلى شخص، يغطّي Snapfly ما تختاره: الأسماء، والعناوين، والبريد الإلكتروني، وأرقام الهواتف، والبطاقات والحسابات البنكية، والمعلومات الصحية. كل ما يغادر الحبل، نسخًا أو إرسالًا أو سحبًا، يغادره مغطّى. يقرأ Snapfly النص على جهازك، ولا يتغيّر ملف اللقطة نفسه.",
     example="مثال",
     inv=dict(title="فاتورة 2026-1042", date="14 أكتوبر 2026", bill="عنوان الفاتورة",

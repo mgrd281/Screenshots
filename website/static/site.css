@@ -1,69 +1,76 @@
-/* Snapfly website. The page is the Mac the app lives on: the brand gradient
-   is the desktop wallpaper, and everything on it is drawn the way macOS
-   draws it. Tokens are listed in DESIGN.md under "Website". */
+/* Snapfly website. The page is an airmail envelope: aerogramme paper, the
+   chevron edge round the window, every screenshot a stamp on the line, and
+   a postmark on what is sent. Mac windows on it stay native. Tokens are
+   listed in DESIGN.md under "Website". */
 
 :root {
   color-scheme: light dark;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-ar: -apple-system, BlinkMacSystemFont, "SF Arabic", "Geeza Pro", system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
   --font-rounded: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   --amber: #FFC45C;
   --coral: #FF5E62;
   --violet: #B234D6;
-  --accent: #0071E3;
-  --link: #0066CC;
-  --ink: #1D1D1F;
-  --ink-2: #5E5E63;
-  --ground: #F5F5F7;
+
+  /* The envelope: its paper, the chevron edge, and the postal ink that
+     prints labels, postmarks and handstamps. --post-fill is the ink as a
+     surface under white words. */
+  --paper: #ECEBFA;
+  --paper-2: #E1DFF5;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .09 0 0 0 0 .27 0 0 0 .055 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
+  --stripe-a: #FF5E62;
+  --stripe-b: #5B2BB8;
+  --stripe-gap: #FFFFFF;
+  --post: #5B2BB8;
+  --post-fill: #5B2BB8;
+  --post-mark: #5B2BB8;
+  --stamp: #FFFFFF;
+  --edge: 12px;
+
+  --accent: #5B2BB8;
+  --link: #4B22A0;
+  --ink: #1F1646;
+  --ink-2: #4E4775;
+  --ground: var(--paper);
   --surface: #FFFFFF;
-  --fill: rgba(0, 0, 0, 0.045);
-  --fill-2: rgba(0, 0, 0, 0.085);
-  --hairline: rgba(0, 0, 0, 0.1);
+  --fill: rgba(31, 22, 70, 0.05);
+  --fill-2: rgba(31, 22, 70, 0.09);
+  --hairline: rgba(31, 22, 70, 0.12);
   --cover-ink: #1F1F1F;
   --count: #FF3B30;
   --light-red: #FF5F57;
   --light-yellow: #FEBC2E;
   --light-green: #28C840;
   --bubble-in: #E9E9EB;
-  --bar-bg: rgba(255, 255, 255, 0.62);
-  --menu-bg: rgba(246, 246, 248, 0.88);
-  --glass: rgba(255, 255, 255, 0.55);
-  --glass-edge: rgba(255, 255, 255, 0.7);
-  --rope: #5B4A5F;
-  --wash: rgba(42, 10, 51, 0.55);
-  --wash-light: rgba(42, 10, 51, 0.34);
-  --scrim: rgba(42, 10, 51, 0.38);
-  --on-wall-2: rgba(255, 255, 255, 0.9);
-  --wall:
-    radial-gradient(95% 75% at 0% 0%, rgba(255, 196, 92, 0.95) 0%, rgba(255, 196, 92, 0) 62%),
-    radial-gradient(75% 65% at 100% 100%, rgba(178, 52, 214, 0.92) 0%, rgba(178, 52, 214, 0) 72%),
-    linear-gradient(155deg, #FF8A5C 0%, #FF5E62 40%, #D9449A 74%, #B234D6 100%);
+  --bar-bg: color-mix(in srgb, var(--paper) 86%, transparent);
+  --menu-bg: rgba(250, 249, 255, 0.94);
+  --glass: rgba(255, 255, 255, 0.7);
+  --glass-edge: rgba(255, 255, 255, 0.8);
+  --glass-shine: 0 0 #0000;
+  --rope: #3A2F66;
 
-  /* What the brand theme changes beyond the wallpaper: the tint in shadows
-     (as r g b), the gradient on brand tiles and its glow, the download
-     badge, the shine on glass, and the line-style tiles' small wallpaper. */
-  --shade: 40 0 50;
-  --shade-deep: 20 0 30;
+  /* Shadows are tinted with the ink (as r g b); the gradient on brand
+     tiles and its glow; the download badge. */
+  --shade: 40 22 100;
+  --shade-deep: 24 14 64;
   --brand-gradient: linear-gradient(135deg, var(--amber), var(--coral) 50%, var(--violet));
   --brand-glow: rgba(178, 52, 214, 0.3);
-  --badge-bg: #000000;
-  --badge-edge: rgba(255, 255, 255, 0.32);
-  --glass-shine: 0 0 #0000;
-  /* What sits straight on the wallpaper: its text, keys, pill buttons, the
-     Desktop's file names and the glass shelf; and the surfaces a theme may
-     give the first view, the close and the privacy band of its own. */
-  --on-wall: #FFFFFF;
-  --kbd-wall-bg: rgba(255, 255, 255, 0.16);
-  --kbd-wall-edge: rgba(255, 255, 255, 0.3);
-  --pill-bg: rgba(255, 255, 255, 0.16);
-  --pill-bg-hover: rgba(255, 255, 255, 0.26);
-  --pill-edge: rgba(255, 255, 255, 0.4);
-  --file-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
-  --shelf-bg: rgba(255, 255, 255, 0.24);
-  --shelf-edge: rgba(255, 255, 255, 0.5);
-  --hero-bg: none;
-  --close-bg: none;
+  --badge-bg: var(--post-fill);
+  --badge-edge: rgba(255, 255, 255, 0.22);
+  /* What sits straight on the paper: its words, keys, pill buttons, the
+     Desktop's file names and the glass shelf. */
+  --on-wall: var(--ink);
+  --on-wall-2: var(--ink-2);
+  --kbd-wall-bg: #FFFFFF;
+  --kbd-wall-edge: rgba(31, 22, 70, 0.18);
+  --pill-bg: rgba(31, 22, 70, 0.05);
+  --pill-bg-hover: rgba(31, 22, 70, 0.1);
+  --pill-edge: rgba(31, 22, 70, 0.2);
+  --file-shadow: none;
+  --shelf-bg: rgba(255, 255, 255, 0.72);
+  --shelf-edge: rgba(31, 22, 70, 0.12);
   --tile-a: #FFC45C;
   --tile-b: #FF5E62;
   --tile-c: #B234D6;
@@ -71,39 +78,53 @@
   --r-card: 16px;
   --r-inner: 12px;
   --r-window: 18px;
-  --bar-h: 38px;
+  --bar-h: 46px;
   --gutter: clamp(16px, 4vw, 48px);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --shadow-card: 0 5px 10px rgba(0, 0, 0, 0.18);
-  --shadow-card-hover: 0 8px 14px rgba(0, 0, 0, 0.26);
-  --shadow-float: 0 18px 44px rgb(var(--shade-deep) / 0.24);
+  --shadow-card: 0 5px 10px rgb(var(--shade) / 0.18);
+  --shadow-card-hover: 0 8px 14px rgb(var(--shade) / 0.24);
+  --shadow-float: 0 18px 44px rgb(var(--shade-deep) / 0.22);
   --card-w: clamp(150px, 15.5vw, 236px);
   --rope-h: clamp(70px, 8vw, 112px);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --link: #3D9BFF;
-    --ink: #F5F5F7;
-    --ink-2: #A1A1A6;
-    --ground: #161618;
+    --paper: #15122B;
+    --paper-2: #1D1938;
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .04 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
+    --stripe-a: #FF6B6E;
+    --stripe-b: #7B52E8;
+    --stripe-gap: #EDEAFF;
+    --post: #B39CFF;
+    --post-fill: #6A3FD8;
+    --post-mark: #8462F0;
+    --stamp: #F7F6FF;
+    --accent: #6A3FD8;
+    --link: #BCA8FF;
+    --ink: #EEECFF;
+    --ink-2: #B4AEDB;
     --surface: #232326;
     --fill: rgba(255, 255, 255, 0.06);
     --fill-2: rgba(255, 255, 255, 0.11);
     --hairline: rgba(255, 255, 255, 0.13);
     --bubble-in: #3A3A3C;
-    --bar-bg: rgba(30, 30, 34, 0.62);
-    --menu-bg: rgba(44, 44, 48, 0.9);
+    --menu-bg: rgba(40, 36, 64, 0.94);
     --glass: rgba(70, 70, 78, 0.5);
     --glass-edge: rgba(255, 255, 255, 0.16);
-    --rope: #D8CDE0;
-    --wash: rgba(10, 2, 16, 0.45);
-    --wash-light: rgba(10, 2, 16, 0.38);
-    --scrim: rgba(10, 2, 16, 0.4);
-    --wall:
-      radial-gradient(95% 75% at 0% 0%, rgba(150, 82, 22, 0.9) 0%, rgba(150, 82, 22, 0) 62%),
-      radial-gradient(75% 65% at 100% 100%, rgba(86, 22, 124, 0.95) 0%, rgba(86, 22, 124, 0) 72%),
-      linear-gradient(155deg, #5E2B22 0%, #6C1E37 40%, #511651 74%, #300E4C 100%);
+    --rope: #CFC6F5;
+    --shade: 0 0 0;
+    --shade-deep: 0 0 0;
+    --badge-edge: rgba(255, 255, 255, 0.2);
+    --kbd-wall-bg: #2A2645;
+    --kbd-wall-edge: rgba(255, 255, 255, 0.16);
+    --pill-bg: rgba(255, 255, 255, 0.07);
+    --pill-bg-hover: rgba(255, 255, 255, 0.13);
+    --pill-edge: rgba(255, 255, 255, 0.2);
+    --shelf-bg: rgba(255, 255, 255, 0.1);
+    --shelf-edge: rgba(255, 255, 255, 0.18);
+    --shadow-card: 0 5px 12px rgba(0, 0, 0, 0.45);
+    --shadow-card-hover: 0 8px 16px rgba(0, 0, 0, 0.55);
     --shadow-float: 0 18px 44px rgba(0, 0, 0, 0.5);
   }
 }
@@ -111,14 +132,10 @@
 /* MARK: Emerald Petrol
 
    The second brand theme, chosen with the switcher in the menu bar and set
-   on <html data-brand="emerald"> before the page paints. Where Sunset is a
-   warm sky with the sun in one corner, Emerald Petrol is deep water with
-   cool light falling in from above: petrol in the depths, emerald and teal
-   in the middle, a mint bloom where the light enters, a faint diagonal
-   sheen like light through glass, and a fine matte grain. Glass picks up
-   a hairline of light along its top edge. Windows, text and system
-   controls stay neutral, as on a Mac; the accent becomes Refined Teal,
-   the way a Mac takes on its accent colour. */
+   on <html data-brand="emerald"> before the page paints. The same envelope
+   in mint paper, with a teal and petrol edge and petrol ink; at night the
+   paper is deep petrol and the edge teal and mint. The accent becomes
+   Refined Teal, the way a Mac takes on its accent colour. */
 :root[data-brand="emerald"] {
   --petrol: #062F31;
   --emerald: #07514E;
@@ -126,75 +143,79 @@
   --mint: #B8DED2;
   --pearl: #F5F8F5;
 
+  --paper: #E6F2EE;
+  --paper-2: #D8EBE4;
+  --stripe-a: #168176;
+  --stripe-b: #062F31;
+  --stripe-gap: #FFFFFF;
+  --post: #07514E;
+  --post-fill: #07514E;
+  --post-mark: #07514E;
   --accent: #168176;
   --link: #07514E;
-  --ground: #F5F8F5;
-  --bar-bg: rgba(245, 248, 245, 0.66);
-  --menu-bg: rgba(244, 248, 246, 0.9);
-  --glass: rgba(245, 248, 245, 0.56);
-  --glass-edge: rgba(255, 255, 255, 0.8);
-  --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --ink: #062F31;
+  --ink-2: #2F5554;
+  --fill: rgba(6, 47, 49, 0.05);
+  --fill-2: rgba(6, 47, 49, 0.09);
+  --hairline: rgba(6, 47, 49, 0.13);
+  --menu-bg: rgba(246, 251, 249, 0.94);
   --rope: #062F31;
-  --wash: rgba(2, 26, 27, 0.55);
-  --wash-light: rgba(2, 30, 31, 0.3);
-  --scrim: rgba(2, 30, 31, 0.5);
   --shade: 3 40 41;
   --shade-deep: 1 22 23;
   --brand-gradient: linear-gradient(135deg, #3FAE9C, var(--teal) 48%, var(--emerald));
   --brand-glow: rgba(7, 81, 78, 0.34);
-  --badge-bg: #062F31;
-  --badge-edge: rgba(184, 222, 210, 0.42);
+  --kbd-wall-edge: rgba(6, 47, 49, 0.18);
+  --pill-bg: rgba(6, 47, 49, 0.05);
+  --pill-bg-hover: rgba(6, 47, 49, 0.1);
+  --pill-edge: rgba(6, 47, 49, 0.2);
+  --shelf-edge: rgba(6, 47, 49, 0.12);
   --tile-a: #8FD0BF;
   --tile-b: #168176;
   --tile-c: #062F31;
-  --wall:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E"),
-    linear-gradient(118deg, rgba(255, 255, 255, 0) 34%, rgba(255, 255, 255, 0.07) 46%, rgba(255, 255, 255, 0) 58%),
-    radial-gradient(62% 56% at 80% -8%, rgba(184, 222, 210, 0.66) 0%, rgba(184, 222, 210, 0) 70%),
-    radial-gradient(85% 70% at 0% 100%, rgba(6, 47, 49, 0.9) 0%, rgba(6, 47, 49, 0) 70%),
-    linear-gradient(160deg, #17806F 0%, #127569 26%, #0B625C 52%, #07514E 76%, #062F31 100%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root[data-brand="emerald"] {
+    --paper: #0A1E1F;
+    --paper-2: #0F2829;
+    --stripe-a: #1E9A8C;
+    --stripe-b: #8FD6C4;
+    --stripe-gap: #E8F3EF;
+    --post: #8FD6C4;
+    --post-fill: #168176;
+    --post-mark: #23A08F;
+    --stamp: #F5F8F5;
+    --accent: #168176;
     --link: #8FD6C4;
-    --ground: #081819;
-    --bar-bg: rgba(6, 30, 31, 0.64);
-    --menu-bg: rgba(14, 36, 37, 0.92);
-    --glass: rgba(16, 54, 54, 0.52);
-    --glass-edge: rgba(184, 222, 210, 0.2);
-    --glass-shine: inset 0 1px 0 rgba(184, 222, 210, 0.16);
+    --ink: #E7F5F0;
+    --ink-2: #9FC7BC;
+    --fill: rgba(255, 255, 255, 0.06);
+    --fill-2: rgba(255, 255, 255, 0.11);
+    --hairline: rgba(255, 255, 255, 0.13);
+    --menu-bg: rgba(14, 40, 41, 0.94);
     --rope: #B8DED2;
-    --wash: rgba(0, 10, 11, 0.45);
-    --wash-light: rgba(0, 12, 13, 0.36);
-    --scrim: rgba(0, 12, 13, 0.42);
+    --shade: 0 0 0;
+    --shade-deep: 0 0 0;
     --brand-glow: rgba(22, 129, 118, 0.3);
-    --badge-bg: #031A1B;
-    --badge-edge: rgba(184, 222, 210, 0.34);
+    --kbd-wall-bg: #12302F;
+    --kbd-wall-edge: rgba(255, 255, 255, 0.16);
+    --pill-bg: rgba(255, 255, 255, 0.07);
+    --pill-bg-hover: rgba(255, 255, 255, 0.13);
+    --pill-edge: rgba(255, 255, 255, 0.2);
+    --shelf-edge: rgba(255, 255, 255, 0.18);
     --tile-a: #168176;
     --tile-b: #07514E;
     --tile-c: #031A1B;
-    --wall:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .045 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E"),
-      linear-gradient(118deg, rgba(184, 222, 210, 0) 34%, rgba(184, 222, 210, 0.05) 46%, rgba(184, 222, 210, 0) 58%),
-      radial-gradient(58% 52% at 80% -10%, rgba(22, 129, 118, 0.6) 0%, rgba(22, 129, 118, 0) 72%),
-      radial-gradient(80% 66% at 0% 100%, rgba(7, 81, 78, 0.5) 0%, rgba(7, 81, 78, 0) 70%),
-      linear-gradient(160deg, #0B3E3B 0%, #08302F 38%, #052627 68%, #021516 100%);
   }
 }
 
 /* MARK: Signature Orange
 
-   The third brand theme. Where Sunset is a many-coloured sky and Emerald
-   Petrol is deep water, Signature Orange is one confident colour used
-   with precision: a bold orange field for the first view and the close,
-   clean warm-white space between them, Premium Black type, and one black
-   band where the page talks about privacy. Gradients stay where they add
-   depth: a warm highlight where the line hangs and a deeper orange low on
-   the trailing side. In dark, the page turns Premium Black and the orange
-   becomes light: an ambient glow above the line, a glow rising into the
-   close, and a solid Deep Orange band. Filled controls use Deep Orange,
-   so white on them stays readable. */
+   The third brand theme: one confident colour used with precision. Warm
+   white paper, an edge of orange and Premium Black, deep orange ink and
+   Premium Black type. At night the paper is Premium Black and the edge
+   orange and peach. Filled controls use Deep Orange, so white on them
+   stays readable. */
 :root[data-brand="orange"] {
   --orange: #EC632C;
   --orange-deep: #C7461C;
@@ -203,95 +224,74 @@
   --black: #171717;
   --neutral: #FAFAF8;
 
+  --paper: #FAFAF8;
+  --paper-2: #FFEFE6;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .16 0 0 0 0 .06 0 0 0 .055 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
+  --stripe-a: #EC632C;
+  --stripe-b: #171717;
+  --stripe-gap: #FFFFFF;
+  --post: #C7461C;
+  --post-fill: #C7461C;
+  --post-mark: #C7461C;
   --accent: #C7461C;
   --link: #B23E17;
   --ink: #171717;
-  --ground: #FAFAF8;
-  --bar-bg: rgba(255, 255, 255, 0.72);
-  --menu-bg: rgba(255, 255, 255, 0.9);
-  --glass: rgba(255, 255, 255, 0.62);
-  --glass-edge: rgba(255, 255, 255, 0.92);
-  --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --ink-2: #4A4542;
+  --fill: rgba(23, 23, 23, 0.05);
+  --fill-2: rgba(23, 23, 23, 0.09);
+  --hairline: rgba(23, 23, 23, 0.12);
+  --menu-bg: rgba(255, 255, 255, 0.94);
   --rope: #171717;
-  --wash: rgba(0, 0, 0, 0);
-  --wash-light: rgba(0, 0, 0, 0);
-  --scrim: rgba(0, 0, 0, 0);
   --shade: 90 34 10;
   --shade-deep: 60 22 6;
   --brand-gradient: linear-gradient(135deg, #FF8754, #EC632C 52%, #C7461C);
   --brand-glow: rgba(236, 99, 44, 0.32);
   --badge-bg: #171717;
-  --badge-edge: rgba(255, 255, 255, 0.16);
-  --tile-a: #FF8754;
-  --tile-b: #EC632C;
-  --tile-c: #C7461C;
-  --on-wall: #171717;
-  --on-wall-2: rgba(23, 23, 23, 0.76);
-  --kbd-wall-bg: rgba(23, 23, 23, 0.05);
   --kbd-wall-edge: rgba(23, 23, 23, 0.18);
   --pill-bg: rgba(23, 23, 23, 0.05);
   --pill-bg-hover: rgba(23, 23, 23, 0.1);
-  --pill-edge: rgba(23, 23, 23, 0.18);
-  --file-shadow: none;
-  --shelf-bg: rgba(255, 255, 255, 0.78);
-  --shelf-edge: rgba(23, 23, 23, 0.08);
-  --wall:
-    radial-gradient(55% 42% at 100% 0%, rgba(255, 228, 215, 0.9) 0%, rgba(255, 228, 215, 0) 70%),
-    radial-gradient(45% 36% at 0% 100%, rgba(255, 228, 215, 0.55) 0%, rgba(255, 228, 215, 0) 70%),
-    #FAFAF8;
-  --hero-bg:
-    radial-gradient(70% 58% at 80% 0%, rgba(255, 135, 84, 0.85) 0%, rgba(255, 135, 84, 0) 70%),
-    radial-gradient(60% 55% at 100% 100%, rgba(199, 70, 28, 0.5) 0%, rgba(199, 70, 28, 0) 70%),
-    #EC632C;
-  --close-bg:
-    radial-gradient(60% 62% at 50% 0%, rgba(255, 135, 84, 0.8) 0%, rgba(255, 135, 84, 0) 72%),
-    #EC632C;
-  --band-bg:
-    radial-gradient(50% 80% at 100% 0%, rgba(236, 99, 44, 0.24) 0%, rgba(236, 99, 44, 0) 70%),
-    #171717;
-  --band-ink: #FFFFFF;
-  --band-ink-2: rgba(255, 255, 255, 0.84);
-  --band-strong: #FF8754;
+  --pill-edge: rgba(23, 23, 23, 0.2);
+  --shelf-edge: rgba(23, 23, 23, 0.1);
+  --tile-a: #FF8754;
+  --tile-b: #EC632C;
+  --tile-c: #C7461C;
 }
 
 @media (prefers-color-scheme: dark) {
   :root[data-brand="orange"] {
+    --paper: #141312;
+    --paper-2: #1E1B19;
+    --stripe-a: #EC632C;
+    --stripe-b: #FFE4D7;
+    --stripe-gap: #2A2522;
+    --post: #FF8754;
+    --post-fill: #C7461C;
+    --post-mark: #E8642E;
+    --stamp: #FAFAF8;
+    --accent: #C7461C;
     --link: #FF8754;
     --ink: #F5F5F7;
-    --ground: #121211;
-    --bar-bg: rgba(23, 23, 23, 0.7);
-    --menu-bg: rgba(32, 32, 31, 0.92);
-    --glass: rgba(40, 40, 38, 0.56);
-    --glass-edge: rgba(255, 255, 255, 0.12);
-    --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    --ink-2: #B5AFA9;
+    --fill: rgba(255, 255, 255, 0.06);
+    --fill-2: rgba(255, 255, 255, 0.11);
+    --hairline: rgba(255, 255, 255, 0.13);
+    --menu-bg: rgba(36, 33, 31, 0.94);
     --rope: #FFE4D7;
     --shade: 0 0 0;
     --shade-deep: 0 0 0;
     --badge-bg: #C7461C;
     --badge-edge: rgba(255, 196, 170, 0.45);
-    --on-wall: #FFFFFF;
-    --on-wall-2: rgba(255, 255, 255, 0.84);
-    --kbd-wall-bg: rgba(255, 255, 255, 0.08);
-    --kbd-wall-edge: rgba(255, 255, 255, 0.2);
+    --kbd-wall-bg: #24211F;
+    --kbd-wall-edge: rgba(255, 255, 255, 0.16);
     --pill-bg: rgba(255, 255, 255, 0.07);
     --pill-bg-hover: rgba(255, 255, 255, 0.13);
     --pill-edge: rgba(255, 255, 255, 0.2);
-    --shelf-bg: rgba(255, 255, 255, 0.1);
     --shelf-edge: rgba(255, 255, 255, 0.18);
-    --wall:
-      radial-gradient(50% 40% at 100% 0%, rgba(236, 99, 44, 0.1) 0%, rgba(236, 99, 44, 0) 70%),
-      #121211;
-    --hero-bg:
-      radial-gradient(65% 55% at 80% -6%, rgba(236, 99, 44, 0.55) 0%, rgba(236, 99, 44, 0) 70%),
-      radial-gradient(45% 40% at 8% 0%, rgba(255, 135, 84, 0.14) 0%, rgba(255, 135, 84, 0) 70%),
-      #121211;
-    --close-bg:
-      radial-gradient(62% 72% at 50% 112%, rgba(236, 99, 44, 0.6) 0%, rgba(236, 99, 44, 0) 72%),
-      #121211;
-    --band-bg: linear-gradient(160deg, #D24F21 0%, #C7461C 58%, #B33D17 100%);
-    --band-ink-2: rgba(255, 255, 255, 0.92);
-    --band-strong: #FFFFFF;
   }
+}
+
+@media (max-width: 640px) {
+  :root { --edge: 8px; }
 }
 
 /* MARK: Base */
@@ -307,7 +307,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--ground);
+  background: var(--grain), var(--ground);
   color: var(--ink);
   font-family: var(--font);
   font-size: 17px;
@@ -326,7 +326,26 @@ a:hover { text-decoration-thickness: 2px; }
 h1, h2, h3 { text-wrap: balance; margin: 0; }
 p { margin: 0; text-wrap: pretty; }
 
-::selection { background: color-mix(in srgb, var(--accent) 24%, transparent); }
+::selection { background: color-mix(in srgb, var(--post) 26%, transparent); }
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-thumb { border: 3px solid transparent; border-radius: 99px; background: color-mix(in srgb, var(--ink) 26%, transparent) padding-box; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* The envelope's edge: the airmail chevrons round the whole window, all
+   the time. The page scrolls under it. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  padding: var(--edge);
+  background: repeating-linear-gradient(-45deg, var(--stripe-a) 0 18px, var(--stripe-gap) 18px 27px, var(--stripe-b) 27px 45px, var(--stripe-gap) 45px 54px);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+@media print { body::after { display: none; } }
 
 :focus-visible {
   outline: 3px solid color-mix(in srgb, var(--accent) 70%, transparent);
@@ -399,8 +418,8 @@ kbd {
 }
 .btn:active { transform: translateY(0) scale(0.98); }
 
-/* The download link: a black badge like the stores' own, a Mac and two
-   lines, with a light hairline so it holds on dark wallpaper too. */
+/* The download link: a badge like the stores' own, a Mac and two lines,
+   printed in postal ink inside a ring of paper, like a label. */
 .badge-get {
   display: inline-flex;
   align-items: center;
@@ -411,20 +430,20 @@ kbd {
   border-radius: 12px;
   background: var(--badge-bg);
   color: #FFFFFF;
-  box-shadow: inset 0 0 0 1px var(--badge-edge), 0 8px 22px rgb(var(--shade) / 0.28);
+  box-shadow: inset 0 0 0 1px var(--badge-edge), 0 0 0 2px var(--paper), 0 0 0 4px var(--badge-bg), 0 12px 24px rgb(var(--shade) / 0.24);
   text-decoration: none;
   transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
 }
 .badge-get:hover { text-decoration: none; }
 @media (hover: hover) and (pointer: fine) {
-  .badge-get:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1px var(--badge-edge), 0 12px 28px rgb(var(--shade) / 0.34); }
+  .badge-get:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1px var(--badge-edge), 0 0 0 2px var(--paper), 0 0 0 4px var(--badge-bg), 0 16px 30px rgb(var(--shade) / 0.3); }
 }
 .badge-get:active { transform: scale(0.98); }
-.badge-get:focus-visible { outline: 3px solid #FFFFFF; outline-offset: 3px; }
+.badge-get:focus-visible { outline: 3px solid var(--post); outline-offset: 6px; }
 .badge-get .icon { width: 34px; height: 34px; }
 .badge-text { display: flex; flex-direction: column; line-height: 1.1; text-align: start; }
 .badge-text small { font-size: 12px; font-weight: 500; letter-spacing: 0.02em; }
-.badge-text span { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
+.badge-text span { font-size: 24px; font-weight: 650; letter-spacing: -0.01em; }
 :lang(ar) .badge-text small { font-size: 13px; letter-spacing: 0; }
 
 .btn-primary { background: var(--accent); color: #FFFFFF; }
@@ -444,15 +463,15 @@ kbd {
 
 .menubar {
   position: sticky;
-  top: 0;
+  top: var(--edge);
   z-index: 100;
   height: var(--bar-h);
+  margin-top: var(--edge);
   background: var(--bar-bg);
-  -webkit-backdrop-filter: blur(24px) saturate(1.8);
-  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
   border-bottom: 0.5px solid var(--hairline);
-  box-shadow: var(--glass-shine);
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .menubar-row {
@@ -462,7 +481,7 @@ kbd {
   height: 100%;
   max-width: 1440px;
   margin-inline: auto;
-  padding-inline: calc(var(--gutter) - 8px);
+  padding-inline: calc(var(--gutter) - 8px + var(--edge));
 }
 
 .menubar a { color: var(--ink); text-decoration: none; }
@@ -473,9 +492,11 @@ kbd {
   gap: 8px;
   padding: 4px 8px;
   border-radius: 6px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
 }
-.app-menu img { width: 18px; height: 18px; }
+.app-menu img { width: 22px; height: 22px; }
 
 .menus { display: flex; gap: 2px; margin: 0; padding: 0; list-style: none; }
 .menus a, .lang-menu summary {
@@ -488,7 +509,8 @@ kbd {
 }
 .menus a:hover, .app-menu:hover, .lang-menu summary:hover, .lang-menu[open] summary,
 .menus a:active, .app-menu:active, .lang-menu summary:active { background: var(--fill-2); }
-.menus a[aria-current="page"] { font-weight: 600; }
+.menus a { font-weight: 500; }
+.menus a[aria-current="page"] { font-weight: 650; }
 
 .status { display: flex; align-items: center; gap: 6px; margin-inline-start: auto; }
 .clock { padding: 4px 8px; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -544,23 +566,10 @@ kbd {
   box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.25), 0 0.5px 1px rgba(0, 0, 0, 0.2);
   transition: scale 0.2s var(--ease-out);
 }
-/* Each swatch is its theme in small: the wallpaper's sweep with a soft
-   highlight where the light comes from. */
-.brand-dot-sunset {
-  background:
-    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 46%),
-    linear-gradient(140deg, #FFC45C 0%, #FF5E62 48%, #B234D6 100%);
-}
-.brand-dot-emerald {
-  background:
-    radial-gradient(circle at 72% 20%, rgba(184, 222, 210, 0.95), rgba(184, 222, 210, 0) 52%),
-    linear-gradient(160deg, #2E9E8D 0%, #168176 38%, #07514E 74%, #062F31 100%);
-}
-.brand-dot-orange {
-  background:
-    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 44%),
-    linear-gradient(150deg, #FF8754 0%, #EC632C 50%, #C7461C 100%);
-}
+/* Each swatch is its theme's envelope edge in small. */
+.brand-dot-sunset { background: repeating-linear-gradient(-45deg, #FF5E62 0 3px, #FFFFFF 3px 4.5px, #5B2BB8 4.5px 7.5px, #FFFFFF 7.5px 9px); }
+.brand-dot-emerald { background: repeating-linear-gradient(-45deg, #168176 0 3px, #FFFFFF 3px 4.5px, #062F31 4.5px 7.5px, #FFFFFF 7.5px 9px); }
+.brand-dot-orange { background: repeating-linear-gradient(-45deg, #EC632C 0 3px, #FFFFFF 3px 4.5px, #171717 4.5px 7.5px, #FFFFFF 7.5px 9px); }
 @media (hover: hover) and (pointer: fine) {
   .brand-chip:hover .brand-dot { scale: 1.12; }
 }
@@ -650,26 +659,69 @@ kbd {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  margin-top: calc(-1 * var(--bar-h));
-  padding-top: var(--bar-h);
+  margin-top: calc(-1 * (var(--bar-h) + var(--edge)));
+  padding-top: calc(var(--bar-h) + var(--edge));
   min-height: min(100svh, 1000px);
   display: flex;
   flex-direction: column;
-  background: var(--hero-bg);
-  color: var(--on-wall);
+  color: var(--ink);
 }
 
-/* A wash under the words keeps white text readable on every part of the
-   wallpaper. */
-.hero::after, .close::after {
-  content: "";
+/* The airmail label, in every language at once, stuck a little crooked at
+   the trailing top, under the tag. */
+.airmail {
   position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 32%, var(--wash) 80%, var(--wash-light) 100%);
+  z-index: 1;
+  top: calc(var(--bar-h) + var(--edge) + var(--rope-h) + var(--card-w) * 0.72 + 56px);
+  inset-inline-end: clamp(28px, 5vw, 80px);
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 11px 18px 10px;
+  border-radius: 4px;
+  background: var(--post-fill);
+  color: #FFFFFF;
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--post-fill), 0 10px 20px rgb(var(--shade) / 0.18);
+  rotate: -4deg;
+  text-align: center;
   pointer-events: none;
 }
-.page-index .footer { position: relative; background: var(--ground); }
+.airmail strong { font-size: clamp(18px, 1.7vw, 25px); font-weight: 800; letter-spacing: 0.07em; line-height: 1.1; }
+.airmail span { font-size: 11px; font-weight: 650; letter-spacing: 0.14em; opacity: 0.92; }
+.airmail :lang(ar), .airmail:lang(ar) strong { letter-spacing: 0; }
+
+/* A postmark struck across a stamp: a ring with the date and the time,
+   and wavy lines running on. It prints in the postal ink. */
+.postmark {
+  position: absolute;
+  z-index: 3;
+  width: calc(var(--card-w) * 1.25);
+  inset-inline-start: -16%;
+  top: 28%;
+  color: var(--post-mark);
+  opacity: 0.88;
+  pointer-events: none;
+  rotate: -8deg;
+}
+.postmark svg { width: 100%; height: auto; overflow: visible; }
+[dir="rtl"] .postmark svg { scale: -1 1; }
+[dir="rtl"] .postmark .pm-words { scale: -1 1; transform-box: fill-box; transform-origin: center; }
+.pm-time { font-family: var(--font-mono); }
+
+/* The dashed path a stamp flies along, from the line to the chat. */
+.hero-chat { position: relative; }
+.flightpath {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  inset-inline-start: 18%;
+  width: 46%;
+  height: clamp(60px, 12vh, 150px);
+  color: var(--post);
+  overflow: visible;
+  pointer-events: none;
+}
+.flightpath path { fill: none; stroke: currentColor; stroke-width: 2; stroke-dasharray: 1.5 9; stroke-linecap: round; opacity: 0.55; vector-effect: non-scaling-stroke; }
+[dir="rtl"] .flightpath { scale: -1 1; }
 
 .line {
   position: relative;
@@ -737,18 +789,27 @@ kbd {
   background: rgba(0, 0, 0, 0.18);
 }
 
+/* Each screenshot is a stamp: white paper with a perforated edge, its
+   picture inset, its shadow following the perforations. */
 .photo {
+  --lift: 0 4px 6px rgb(var(--shade) / 0.22);
   position: relative;
-  padding: 4px;
-  border-radius: var(--r-card);
-  background: var(--glass);
-  -webkit-backdrop-filter: blur(20px) saturate(1.6);
-  backdrop-filter: blur(20px) saturate(1.6);
-  border: 0.5px solid var(--glass-edge);
-  box-shadow: var(--glass-shine), var(--shadow-card);
-  transition: scale 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+  isolation: isolate;
+  padding: 9px;
+  filter: drop-shadow(var(--lift));
+  transition: scale 0.25s var(--ease-out), filter 0.25s var(--ease-out);
 }
-.photo-img { display: block; border-radius: var(--r-inner); overflow: hidden; }
+.photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 5px;
+  background: var(--stamp);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, radial-gradient(3.2px at 3.2px 3.2px, #0000 94%, #000) -3.2px -3.2px / 9.6px 9.6px round;
+  mask: linear-gradient(#000 0 0) content-box, radial-gradient(3.2px at 3.2px 3.2px, #0000 94%, #000) -3.2px -3.2px / 9.6px 9.6px round;
+}
+.photo-img { display: block; border-radius: 2px; overflow: hidden; }
 .photo-img svg { width: 100%; height: auto; }
 
 .photo-hit {
@@ -757,11 +818,11 @@ kbd {
   padding: 0;
   border: 0;
   background: none;
-  border-radius: var(--r-inner);
+  border-radius: 2px;
   cursor: pointer;
 }
 
-.peg:hover .photo, .peg:focus-within .photo { scale: 1.035; box-shadow: var(--glass-shine), var(--shadow-card-hover); }
+.peg:hover .photo, .peg:focus-within .photo { --lift: 0 9px 12px rgb(var(--shade) / 0.26); scale: 1.035; }
 
 .corner {
   position: absolute;
@@ -871,34 +932,35 @@ kbd {
   place-items: center;
   width: 58px; height: 58px;
   padding: 0;
-  border: 3px solid rgba(255, 255, 255, 0.85);
+  border: 0;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--post-fill);
   color: #FFFFFF;
   cursor: pointer;
-  box-shadow: 0 8px 18px rgb(var(--shade-deep) / 0.3);
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--post-fill), 0 10px 20px rgb(var(--shade-deep) / 0.28);
   transition: scale 0.2s var(--ease-out), background-color 0.2s;
 }
 .tag-send .icon { width: 26px; height: 26px; }
 [dir="rtl"] .tag-send .icon { transform: scaleX(-1); }
-.tag-send:hover { background: color-mix(in srgb, var(--accent) 88%, #000); }
+.tag-send:hover { background: color-mix(in srgb, var(--post-fill) 88%, #000); }
 @media (hover: hover) and (pointer: fine) {
   .tag-send:hover { scale: 1.06; }
 }
 .tag-send:active { scale: 0.96; }
-.tag-send:focus-visible { outline: 3px solid #FFFFFF; outline-offset: 3px; }
+.tag-send:focus-visible { outline: 3px solid var(--post); outline-offset: 7px; }
 .tag-label {
-  padding: 4px 11px;
-  border-radius: 999px;
-  background: var(--menu-bg);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  color: var(--ink);
-  font-size: 13px;
-  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--post);
+  font-size: 11.5px;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  box-shadow: inset 0 0 0 1.5px currentColor;
 }
+.tag-label:lang(ar) { letter-spacing: 0; font-size: 13px; }
 
 .ghost {
   position: fixed;
@@ -926,9 +988,9 @@ kbd {
 .hero h1 {
   max-width: 13ch;
   font-size: clamp(2.6rem, 5.6vw, 5.6rem);
-  font-weight: 700;
+  font-weight: 800;
   line-height: 0.98;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.035em;
 }
 .hero h1:lang(de) { max-width: 15ch; font-size: clamp(2.2rem, 4.6vw, 4.6rem); }
 .hero h1:lang(ar) { line-height: 1.2; letter-spacing: 0; font-size: clamp(2.3rem, 5vw, 4.8rem); }
@@ -936,11 +998,12 @@ kbd {
 .hero-sub {
   max-width: 34em;
   margin-top: 22px;
+  color: var(--ink-2);
   font-size: clamp(1.05rem, 1.35vw, 1.28rem);
   line-height: 1.5;
 }
 .hero-actions { margin-top: 30px; }
-.hero-note { margin-top: 14px; font-size: 14px; opacity: 0.94; }
+.hero-note { margin-top: 16px; color: var(--ink-2); font-size: 14px; }
 
 /* MARK: Chat window */
 
@@ -1039,6 +1102,21 @@ kbd {
 .album-grid .photo-img { border-radius: 0; }
 .album-grid > :last-child:nth-child(odd) { grid-column: span 2; }
 .msg.album.landed .album-grid { animation: land 0.35s var(--ease-out); }
+/* What lands in the chat is struck with a postmark: the time it was sent.
+   Its wavy lines run back over the picture. */
+.msg.image, .msg.album { position: relative; }
+.msg .postmark {
+  z-index: 2;
+  width: 150px;
+  inset-inline-start: auto;
+  inset-inline-end: 6px;
+  top: auto;
+  bottom: -8px;
+  rotate: -10deg;
+}
+.msg .postmark svg { scale: -1 1; }
+.msg .postmark .pm-words { scale: -1 1; transform-box: fill-box; transform-origin: center; }
+[dir="rtl"] .msg .postmark svg, [dir="rtl"] .msg .postmark .pm-words { scale: 1 1; }
 
 .msg.typing p { display: flex; gap: 4px; padding: 12px 14px; }
 .msg.typing i {
@@ -1085,52 +1163,37 @@ kbd {
 }
 .composer-send .icon { width: 16px; height: 16px; }
 
-/* MARK: The desktop under the page */
-
-/* On the home page the wallpaper stays put, like a Mac's desktop, and the
-   page scrolls over it. Below the first view a wash keeps white words
-   readable on every part of it. */
-.page-index::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: var(--wall);
-}
+/* MARK: Sections on the paper */
 
 .section {
   position: relative;
   isolation: isolate;
   overflow-x: clip;
   padding-block: clamp(96px, 12vw, 168px);
-  background: var(--wash-light);
-  color: var(--on-wall);
+  color: var(--ink);
 }
 
-/* The wallpaper keeps its colours below the first view; a wide, very soft
-   scrim sits behind the words, so white text stays at least 4.5:1 wherever
-   the wallpaper is lightest without a visible shape of its own. */
-.section .copy, .menu-desc, .design .wrap, .close .wrap { position: relative; }
-.section .copy::before, .menu-desc::before, .design .wrap::before, .close .wrap::before {
+/* Between sections, a tear line of perforations across the sheet. */
+.section::before, .close::before {
   content: "";
   position: absolute;
-  z-index: -1;
-  inset: -140px -200px;
-  border-radius: 50%;
-  background: var(--scrim);
-  filter: blur(110px);
+  top: 0;
+  inset-inline: var(--gutter);
+  height: 8px;
+  translate: 0 -50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--ink) 22%, transparent) 2.4px, transparent 2.9px) 0 50% / 12px 8px repeat-x;
   pointer-events: none;
 }
 
 .section h2 {
   font-size: clamp(2rem, 4.2vw, 3.5rem);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.01em;
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
 }
 .section h2:lang(ar) { letter-spacing: 0; line-height: 1.25; }
 
-.copy p { max-width: 34em; margin-top: 18px; color: var(--on-wall-2); font-size: clamp(1.05rem, 1.3vw, 1.2rem); line-height: 1.55; }
+.copy p { max-width: 34em; margin-top: 18px; color: var(--ink-2); font-size: clamp(1.05rem, 1.3vw, 1.2rem); line-height: 1.55; }
 .copy.center { max-width: 760px; margin-inline: auto; }
 
 .section kbd { background: var(--kbd-wall-bg); border-color: var(--kbd-wall-edge); color: var(--on-wall); }
@@ -1303,7 +1366,8 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 [dir="rtl"] input[role="switch"]:checked::before { translate: -16px 0; }
 
 .preview { display: grid; place-items: center; padding: 14px; }
-.photo-preview { width: 100%; max-width: 360px; }
+.photo-preview { width: 100%; max-width: 360px; padding: 0; filter: none; }
+.photo-preview::before { display: none; }
 
 .doc-shot {
   overflow: hidden;
@@ -1354,7 +1418,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 
 .peg.still { animation: none; }
 .peg.held { z-index: 3; }
-.peg.held .photo { scale: 1.035; box-shadow: var(--shadow-card-hover); }
+.peg.held .photo { --lift: 0 9px 12px rgb(var(--shade) / 0.26); scale: 1.035; }
 
 .pointer {
   position: absolute;
@@ -1536,27 +1600,105 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 }
 .point { display: block; }
 .section h2.points:lang(ar) { letter-spacing: 0; line-height: 1.3; }
-.design { background: var(--band-bg, var(--wash-light)); color: var(--band-ink, var(--on-wall)); }
-.design p { max-width: 36em; margin-top: 28px; color: var(--band-ink-2, var(--on-wall-2)); font-size: 1.15rem; }
-.design strong { color: var(--band-strong, #FFFFFF); font-weight: 600; }
-.design .link-arrow { margin-top: 4px; color: var(--band-ink, #FFFFFF); text-decoration: underline; text-underline-offset: 0.22em; }
+.design p { max-width: 36em; margin-top: 28px; color: var(--ink-2); font-size: 1.15rem; }
+.design strong { color: var(--ink); font-weight: 650; }
+.design .link-arrow { margin-top: 4px; color: var(--link); text-decoration: underline; text-underline-offset: 0.22em; }
+
+/* An airmail envelope: white paper inside the chevron edge, with the app
+   icon as its stamp and a postmark struck across it. */
+.envelope, .envelope-back {
+  position: relative;
+  isolation: isolate;
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: var(--shadow-float), 0 1px 3px rgb(var(--shade) / 0.12);
+}
+.envelope::before, .envelope-back::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: clamp(10px, 1.2vw, 14px);
+  border-radius: inherit;
+  background: repeating-linear-gradient(-45deg, var(--stripe-a) 0 15px, var(--stripe-gap) 15px 22px, var(--stripe-b) 22px 37px, var(--stripe-gap) 37px 44px);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+.envelope { padding: clamp(48px, 7vw, 96px) clamp(36px, 7vw, 104px); }
+.envelope-stamp {
+  position: absolute;
+  top: clamp(34px, 4vw, 52px);
+  inset-inline-end: clamp(34px, 4vw, 56px);
+  width: clamp(92px, 9vw, 124px);
+  rotate: 3deg;
+}
+.envelope-stamp .photo { display: block; }
+.envelope-stamp img { width: 100%; height: auto; border-radius: 2px; background: var(--paper-2); }
+.envelope-stamp .postmark { width: 210%; inset-inline-start: -95%; top: 34%; rotate: -10deg; }
+.design .points { max-width: 12ch; padding-inline-end: clamp(80px, 9vw, 120px); }
+
+/* A rubber stamp: tracked capitals in the postal ink inside a double rule,
+   struck a little crooked. */
+.handstamp {
+  display: inline-block;
+  padding: 6px 12px;
+  border: 2.5px solid currentColor;
+  outline: 1.5px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 3px;
+  color: var(--post);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0.9;
+  rotate: -6deg;
+}
+.handstamp:lang(ar), :lang(ar) .handstamp { letter-spacing: 0; font-size: 15px; }
+.stamped { position: relative; justify-self: end; width: 100%; max-width: 640px; }
+.stamped .settings { max-width: none; }
+.stamped .handstamp {
+  position: absolute;
+  z-index: 2;
+  top: -38px;
+  inset-inline-end: -14px;
+  font-size: 12px;
+}
 
 /* MARK: Close */
 
 .close {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
   padding-block: clamp(96px, 12vw, 168px);
-  background: var(--close-bg);
-  color: var(--on-wall);
+  color: var(--ink);
 }
-.close::after { background: linear-gradient(to bottom, var(--wash-light) 0%, var(--wash-light) 100%); }
-/* The close clips what spills over its edges, so its scrim stays well
-   inside them and never shows as a line at the top. */
-.close .wrap::before { inset: -40px -160px; filter: blur(70px); }
-.close-icon { width: clamp(104px, 11vw, 140px); height: auto; margin: 0 auto 28px; filter: drop-shadow(0 16px 26px rgb(var(--shade) / 0.35)); }
-.close h2 { font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: 1.04; letter-spacing: -0.015em; }
+/* The back of the envelope: its flap folded down to a point, sealed with
+   the app icon, the words and the download below the seal. */
+.envelope-back {
+  --flap-h: clamp(110px, 13vw, 170px);
+  max-width: 900px;
+  margin-inline: auto;
+  padding: calc(var(--flap-h) + clamp(64px, 6vw, 80px)) clamp(28px, 6vw, 80px) clamp(52px, 6vw, 80px);
+  overflow: hidden;
+}
+.flap { position: absolute; inset: 0 0 auto; width: 100%; height: var(--flap-h); overflow: visible; }
+.flap-top { fill: var(--paper-2); stroke: var(--hairline); stroke-width: 1; vector-effect: non-scaling-stroke; filter: drop-shadow(0 3px 4px rgb(var(--shade) / 0.12)); }
+.close-icon {
+  position: absolute;
+  z-index: 1;
+  top: var(--flap-h);
+  left: 50%;
+  width: clamp(84px, 8vw, 108px);
+  height: auto;
+  translate: -50% -50%;
+  filter: drop-shadow(0 10px 16px rgb(var(--shade) / 0.3));
+}
+.close h2 { position: relative; font-size: clamp(2.2rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.04; letter-spacing: -0.03em; }
 .close h2:lang(ar) { letter-spacing: 0; line-height: 1.25; }
 .close .hero-note { max-width: 40em; margin-inline: auto; }
 
@@ -1641,7 +1783,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   transition: top 0.3s var(--ease-out), opacity 0.2s;
   cursor: grabbing;
 }
-.peg.dragging .photo { scale: 1.06; box-shadow: var(--shadow-card-hover); }
+.peg.dragging .photo { --lift: 0 14px 18px rgb(var(--shade) / 0.3); scale: 1.06; }
 .peg.dragging .corner { opacity: 0; }
 .peg.dragging .photo-hit { cursor: grabbing; }
 
@@ -2807,12 +2949,29 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 }
 .step {
   position: relative;
-  padding: 22px 22px 24px;
-  border-radius: 20px;
-  background: var(--surface);
-  color: var(--ink);
-  border: 0.5px solid var(--hairline);
-  box-shadow: var(--shadow-float);
+  isolation: isolate;
+  padding: 26px 26px 28px;
+  color: #1D1D1F;
+  filter: drop-shadow(0 6px 10px rgb(var(--shade) / 0.18));
+}
+.step::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 5px;
+  background: var(--stamp);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, radial-gradient(3.2px at 3.2px 3.2px, #0000 94%, #000) -3.2px -3.2px / 9.6px 9.6px round;
+  mask: linear-gradient(#000 0 0) content-box, radial-gradient(3.2px at 3.2px 3.2px, #0000 94%, #000) -3.2px -3.2px / 9.6px 9.6px round;
+}
+/* The stamp's printed frame, a hairline inside the perforations. */
+.step::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  z-index: -1;
+  border: 1px solid color-mix(in srgb, var(--post-fill) 30%, transparent);
+  pointer-events: none;
 }
 .step .clip { display: none; }
 .step-icon {
@@ -2827,10 +2986,21 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   box-shadow: 0 4px 10px var(--brand-glow);
 }
 .step-icon .icon { width: 22px; height: 22px; }
-.step h3 { display: flex; align-items: baseline; gap: 8px; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+.step h3 { font-size: 18px; font-weight: 750; letter-spacing: -0.01em; }
 .step h3:lang(ar) { letter-spacing: 0; }
-.step-n { color: var(--link); font-variant-numeric: tabular-nums; }
-.step p { margin-top: 8px; color: var(--ink-2); font-size: 15px; line-height: 1.5; }
+/* Its number, printed large in the top corner like a stamp's value. */
+.step-n {
+  position: absolute;
+  top: 18px;
+  inset-inline-end: 22px;
+  color: var(--post-fill);
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.step p { margin-top: 8px; color: #4A4A50; font-size: 15px; line-height: 1.5; }
 @media (min-width: 961px) {
   .steps-line { padding-top: 8px; }
   .steps-rope { display: block; top: 8px; }
@@ -3058,6 +3228,15 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 .hero.intro .hero-sub { animation: words-in 0.9s var(--ease-out) 0.22s both; }
 .hero.intro .hero-actions, .hero.intro .hero-note { animation: words-in 0.9s var(--ease-out) 0.34s both; }
 .hero.intro .chat { animation: window-in 1s var(--ease-out) 0.45s both; }
+/* Then the post: the flight path draws toward the chat, the airmail label
+   and the postmark are struck, each a short thud. */
+.hero.intro .flightpath { animation: path-in 0.9s var(--ease-out) 1s both; }
+.hero.intro .airmail { animation: strike-label 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15) 1.25s both; }
+.hero.intro .postmark { animation: strike 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15) 1.6s both; }
+.postmark.struck { animation: strike 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15) 0.12s both; }
+@keyframes strike { from { opacity: 0; scale: 1.18; rotate: -14deg; } }
+@keyframes strike-label { from { opacity: 0; scale: 1.15; rotate: -9deg; } }
+@keyframes path-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 
 @keyframes rope-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 @keyframes rope-in-rtl { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
@@ -3089,7 +3268,8 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .hero.intro .rope, .hero.intro .line-tag, .hero.intro h1, .hero.intro .hero-sub,
-  .hero.intro .hero-actions, .hero.intro .hero-note, .hero.intro .chat { animation: none !important; }
+  .hero.intro .hero-actions, .hero.intro .hero-note, .hero.intro .chat,
+  .hero.intro .flightpath, .hero.intro .airmail, .hero.intro .postmark, .postmark.struck { animation: none !important; }
   .arrive.pre { opacity: 1; transform: none; filter: none; }
 }
 
@@ -3106,6 +3286,27 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .faq::details-content { transition: none; }
+}
+
+/* MARK: Narrow envelopes */
+
+@media (max-width: 960px) {
+  .flightpath { display: none; }
+}
+@media (max-width: 900px) {
+  .airmail { position: relative; top: auto; inset-inline-end: auto; align-self: flex-end; margin: 0 calc(var(--gutter) + 6px) 22px; }
+}
+@media (max-width: 640px) {
+  .airmail { padding: 8px 13px 7px; margin-bottom: 18px; }
+  .airmail strong { font-size: 17px; }
+  .airmail span { font-size: 9.5px; }
+}
+@media (max-width: 640px) {
+  .envelope { padding: 40px 28px 44px; }
+  .envelope-stamp { position: relative; top: auto; inset-inline-end: auto; display: block; width: 84px; margin: 0 0 30px; margin-inline-start: auto; }
+  .envelope-stamp .postmark { width: 190%; inset-inline-start: -110%; }
+  .design .points { padding-inline-end: 0; }
+  .stamped .handstamp { inset-inline-end: 4px; }
 }
 
 /* MARK: Phones */
