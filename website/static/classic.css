@@ -1,0 +1,4023 @@
+/* Snapfly website, the classic look: the Mac desktop the site was before
+   the airmail envelope, kept so a visitor can switch back to it with the
+   look switch in the menu bar. site.js sets <html data-look="classic">,
+   before the page paints, from what the visitor chose.
+
+   Every rule here is the earlier site.css, scoped to that attribute: the
+   page's own token blocks carry it outright, so they win over site.css's
+   tokens; every other rule wraps it in :where(), so it keeps the weight it
+   had and wins over site.css by coming later. Tokens and components are
+   listed in DESIGN.md under "Website", "The classic look". */
+
+:root[data-look="classic"] {
+  color-scheme: light dark;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-ar: -apple-system, BlinkMacSystemFont, "SF Arabic", "Geeza Pro", system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
+  --font-rounded: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --amber: #FFC45C;
+  --coral: #FF5E62;
+  --violet: #B234D6;
+  --accent: #0071E3;
+  --link: #0066CC;
+  --ink: #1D1D1F;
+  --ink-2: #5E5E63;
+  --ground: #F5F5F7;
+  --surface: #FFFFFF;
+  --fill: rgba(0, 0, 0, 0.045);
+  --fill-2: rgba(0, 0, 0, 0.085);
+  --hairline: rgba(0, 0, 0, 0.1);
+  --cover-ink: #1F1F1F;
+  --count: #FF3B30;
+  --light-red: #FF5F57;
+  --light-yellow: #FEBC2E;
+  --light-green: #28C840;
+  --bubble-in: #E9E9EB;
+  --bar-bg: rgba(255, 255, 255, 0.62);
+  --menu-bg: rgba(246, 246, 248, 0.88);
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-edge: rgba(255, 255, 255, 0.7);
+  --rope: #5B4A5F;
+  --wash: rgba(42, 10, 51, 0.55);
+  --wash-light: rgba(42, 10, 51, 0.34);
+  --scrim: rgba(42, 10, 51, 0.38);
+  --on-wall-2: rgba(255, 255, 255, 0.9);
+  --wall:
+  radial-gradient(95% 75% at 0% 0%, rgba(255, 196, 92, 0.95) 0%, rgba(255, 196, 92, 0) 62%),
+  radial-gradient(75% 65% at 100% 100%, rgba(178, 52, 214, 0.92) 0%, rgba(178, 52, 214, 0) 72%),
+  linear-gradient(155deg, #FF8A5C 0%, #FF5E62 40%, #D9449A 74%, #B234D6 100%);
+  --shade: 40 0 50;
+  --shade-deep: 20 0 30;
+  --brand-gradient: linear-gradient(135deg, var(--amber), var(--coral) 50%, var(--violet));
+  --brand-glow: rgba(178, 52, 214, 0.3);
+  --badge-bg: #000000;
+  --badge-edge: rgba(255, 255, 255, 0.32);
+  --glass-shine: 0 0 #0000;
+  --on-wall: #FFFFFF;
+  --kbd-wall-bg: rgba(255, 255, 255, 0.16);
+  --kbd-wall-edge: rgba(255, 255, 255, 0.3);
+  --pill-bg: rgba(255, 255, 255, 0.16);
+  --pill-bg-hover: rgba(255, 255, 255, 0.26);
+  --pill-edge: rgba(255, 255, 255, 0.4);
+  --file-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  --shelf-bg: rgba(255, 255, 255, 0.24);
+  --shelf-edge: rgba(255, 255, 255, 0.5);
+  --hero-bg: none;
+  --close-bg: none;
+  --tile-a: #FFC45C;
+  --tile-b: #FF5E62;
+  --tile-c: #B234D6;
+  --r-card: 16px;
+  --r-inner: 12px;
+  --r-window: 18px;
+  --bar-h: 38px;
+  --gutter: clamp(16px, 4vw, 48px);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-card: 0 5px 10px rgba(0, 0, 0, 0.18);
+  --shadow-card-hover: 0 8px 14px rgba(0, 0, 0, 0.26);
+  --shadow-float: 0 18px 44px rgb(var(--shade-deep) / 0.24);
+  --card-w: clamp(150px, 15.5vw, 236px);
+  --rope-h: clamp(70px, 8vw, 112px);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-look="classic"] {
+    --link: #3D9BFF;
+    --ink: #F5F5F7;
+    --ink-2: #A1A1A6;
+    --ground: #161618;
+    --surface: #232326;
+    --fill: rgba(255, 255, 255, 0.06);
+    --fill-2: rgba(255, 255, 255, 0.11);
+    --hairline: rgba(255, 255, 255, 0.13);
+    --bubble-in: #3A3A3C;
+    --bar-bg: rgba(30, 30, 34, 0.62);
+    --menu-bg: rgba(44, 44, 48, 0.9);
+    --glass: rgba(70, 70, 78, 0.5);
+    --glass-edge: rgba(255, 255, 255, 0.16);
+    --rope: #D8CDE0;
+    --wash: rgba(10, 2, 16, 0.45);
+    --wash-light: rgba(10, 2, 16, 0.38);
+    --scrim: rgba(10, 2, 16, 0.4);
+    --wall:
+    radial-gradient(95% 75% at 0% 0%, rgba(150, 82, 22, 0.9) 0%, rgba(150, 82, 22, 0) 62%),
+    radial-gradient(75% 65% at 100% 100%, rgba(86, 22, 124, 0.95) 0%, rgba(86, 22, 124, 0) 72%),
+    linear-gradient(155deg, #5E2B22 0%, #6C1E37 40%, #511651 74%, #300E4C 100%);
+    --shadow-float: 0 18px 44px rgba(0, 0, 0, 0.5);
+  }
+}
+
+:root[data-look="classic"][data-brand="emerald"] {
+  --petrol: #062F31;
+  --emerald: #07514E;
+  --teal: #168176;
+  --mint: #B8DED2;
+  --pearl: #F5F8F5;
+  --accent: #168176;
+  --link: #07514E;
+  --ground: #F5F8F5;
+  --bar-bg: rgba(245, 248, 245, 0.66);
+  --menu-bg: rgba(244, 248, 246, 0.9);
+  --glass: rgba(245, 248, 245, 0.56);
+  --glass-edge: rgba(255, 255, 255, 0.8);
+  --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --rope: #062F31;
+  --wash: rgba(2, 26, 27, 0.55);
+  --wash-light: rgba(2, 30, 31, 0.3);
+  --scrim: rgba(2, 30, 31, 0.5);
+  --shade: 3 40 41;
+  --shade-deep: 1 22 23;
+  --brand-gradient: linear-gradient(135deg, #3FAE9C, var(--teal) 48%, var(--emerald));
+  --brand-glow: rgba(7, 81, 78, 0.34);
+  --badge-bg: #062F31;
+  --badge-edge: rgba(184, 222, 210, 0.42);
+  --tile-a: #8FD0BF;
+  --tile-b: #168176;
+  --tile-c: #062F31;
+  --wall:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E"),
+  linear-gradient(118deg, rgba(255, 255, 255, 0) 34%, rgba(255, 255, 255, 0.07) 46%, rgba(255, 255, 255, 0) 58%),
+  radial-gradient(62% 56% at 80% -8%, rgba(184, 222, 210, 0.66) 0%, rgba(184, 222, 210, 0) 70%),
+  radial-gradient(85% 70% at 0% 100%, rgba(6, 47, 49, 0.9) 0%, rgba(6, 47, 49, 0) 70%),
+  linear-gradient(160deg, #17806F 0%, #127569 26%, #0B625C 52%, #07514E 76%, #062F31 100%);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-look="classic"][data-brand="emerald"] {
+    --link: #8FD6C4;
+    --ground: #081819;
+    --bar-bg: rgba(6, 30, 31, 0.64);
+    --menu-bg: rgba(14, 36, 37, 0.92);
+    --glass: rgba(16, 54, 54, 0.52);
+    --glass-edge: rgba(184, 222, 210, 0.2);
+    --glass-shine: inset 0 1px 0 rgba(184, 222, 210, 0.16);
+    --rope: #B8DED2;
+    --wash: rgba(0, 10, 11, 0.45);
+    --wash-light: rgba(0, 12, 13, 0.36);
+    --scrim: rgba(0, 12, 13, 0.42);
+    --brand-glow: rgba(22, 129, 118, 0.3);
+    --badge-bg: #031A1B;
+    --badge-edge: rgba(184, 222, 210, 0.34);
+    --tile-a: #168176;
+    --tile-b: #07514E;
+    --tile-c: #031A1B;
+    --wall:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .045 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E"),
+    linear-gradient(118deg, rgba(184, 222, 210, 0) 34%, rgba(184, 222, 210, 0.05) 46%, rgba(184, 222, 210, 0) 58%),
+    radial-gradient(58% 52% at 80% -10%, rgba(22, 129, 118, 0.6) 0%, rgba(22, 129, 118, 0) 72%),
+    radial-gradient(80% 66% at 0% 100%, rgba(7, 81, 78, 0.5) 0%, rgba(7, 81, 78, 0) 70%),
+    linear-gradient(160deg, #0B3E3B 0%, #08302F 38%, #052627 68%, #021516 100%);
+  }
+}
+
+:root[data-look="classic"][data-brand="orange"] {
+  --orange: #EC632C;
+  --orange-deep: #C7461C;
+  --orange-high: #FF8754;
+  --peach: #FFE4D7;
+  --black: #171717;
+  --neutral: #FAFAF8;
+  --accent: #C7461C;
+  --link: #B23E17;
+  --ink: #171717;
+  --ground: #FAFAF8;
+  --bar-bg: rgba(255, 255, 255, 0.72);
+  --menu-bg: rgba(255, 255, 255, 0.9);
+  --glass: rgba(255, 255, 255, 0.62);
+  --glass-edge: rgba(255, 255, 255, 0.92);
+  --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --rope: #171717;
+  --wash: rgba(0, 0, 0, 0);
+  --wash-light: rgba(0, 0, 0, 0);
+  --scrim: rgba(0, 0, 0, 0);
+  --shade: 90 34 10;
+  --shade-deep: 60 22 6;
+  --brand-gradient: linear-gradient(135deg, #FF8754, #EC632C 52%, #C7461C);
+  --brand-glow: rgba(236, 99, 44, 0.32);
+  --badge-bg: #171717;
+  --badge-edge: rgba(255, 255, 255, 0.16);
+  --tile-a: #FF8754;
+  --tile-b: #EC632C;
+  --tile-c: #C7461C;
+  --on-wall: #171717;
+  --on-wall-2: rgba(23, 23, 23, 0.76);
+  --kbd-wall-bg: rgba(23, 23, 23, 0.05);
+  --kbd-wall-edge: rgba(23, 23, 23, 0.18);
+  --pill-bg: rgba(23, 23, 23, 0.05);
+  --pill-bg-hover: rgba(23, 23, 23, 0.1);
+  --pill-edge: rgba(23, 23, 23, 0.18);
+  --file-shadow: none;
+  --shelf-bg: rgba(255, 255, 255, 0.78);
+  --shelf-edge: rgba(23, 23, 23, 0.08);
+  --wall:
+  radial-gradient(55% 42% at 100% 0%, rgba(255, 228, 215, 0.9) 0%, rgba(255, 228, 215, 0) 70%),
+  radial-gradient(45% 36% at 0% 100%, rgba(255, 228, 215, 0.55) 0%, rgba(255, 228, 215, 0) 70%),
+  #FAFAF8;
+  --hero-bg:
+  radial-gradient(70% 58% at 80% 0%, rgba(255, 135, 84, 0.85) 0%, rgba(255, 135, 84, 0) 70%),
+  radial-gradient(60% 55% at 100% 100%, rgba(199, 70, 28, 0.5) 0%, rgba(199, 70, 28, 0) 70%),
+  #EC632C;
+  --close-bg:
+  radial-gradient(60% 62% at 50% 0%, rgba(255, 135, 84, 0.8) 0%, rgba(255, 135, 84, 0) 72%),
+  #EC632C;
+  --band-bg:
+  radial-gradient(50% 80% at 100% 0%, rgba(236, 99, 44, 0.24) 0%, rgba(236, 99, 44, 0) 70%),
+  #171717;
+  --band-ink: #FFFFFF;
+  --band-ink-2: rgba(255, 255, 255, 0.84);
+  --band-strong: #FF8754;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-look="classic"][data-brand="orange"] {
+    --link: #FF8754;
+    --ink: #F5F5F7;
+    --ground: #121211;
+    --bar-bg: rgba(23, 23, 23, 0.7);
+    --menu-bg: rgba(32, 32, 31, 0.92);
+    --glass: rgba(40, 40, 38, 0.56);
+    --glass-edge: rgba(255, 255, 255, 0.12);
+    --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    --rope: #FFE4D7;
+    --shade: 0 0 0;
+    --shade-deep: 0 0 0;
+    --badge-bg: #C7461C;
+    --badge-edge: rgba(255, 196, 170, 0.45);
+    --on-wall: #FFFFFF;
+    --on-wall-2: rgba(255, 255, 255, 0.84);
+    --kbd-wall-bg: rgba(255, 255, 255, 0.08);
+    --kbd-wall-edge: rgba(255, 255, 255, 0.2);
+    --pill-bg: rgba(255, 255, 255, 0.07);
+    --pill-bg-hover: rgba(255, 255, 255, 0.13);
+    --pill-edge: rgba(255, 255, 255, 0.2);
+    --shelf-bg: rgba(255, 255, 255, 0.1);
+    --shelf-edge: rgba(255, 255, 255, 0.18);
+    --wall:
+    radial-gradient(50% 40% at 100% 0%, rgba(236, 99, 44, 0.1) 0%, rgba(236, 99, 44, 0) 70%),
+    #121211;
+    --hero-bg:
+    radial-gradient(65% 55% at 80% -6%, rgba(236, 99, 44, 0.55) 0%, rgba(236, 99, 44, 0) 70%),
+    radial-gradient(45% 40% at 8% 0%, rgba(255, 135, 84, 0.14) 0%, rgba(255, 135, 84, 0) 70%),
+    #121211;
+    --close-bg:
+    radial-gradient(62% 72% at 50% 112%, rgba(236, 99, 44, 0.6) 0%, rgba(236, 99, 44, 0) 72%),
+    #121211;
+    --band-bg: linear-gradient(160deg, #D24F21 0%, #C7461C 58%, #B33D17 100%);
+    --band-ink-2: rgba(255, 255, 255, 0.92);
+    --band-strong: #FFFFFF;
+  }
+}
+
+:where(:root[data-look="classic"]) *, :where(:root[data-look="classic"]) *::before, :where(:root[data-look="classic"]) *::after {
+  box-sizing: border-box;
+}
+:where(:root[data-look="classic"]) {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--bar-h) + 16px);
+}
+:where(:root[data-look="classic"]) body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+:where(:root[data-look="classic"]):lang(ar) body, :where(:root[data-look="classic"]) body:lang(ar) {
+  font-family: var(--font-ar);
+}
+:where(:root[data-look="classic"]) img, :where(:root[data-look="classic"]) svg {
+  display: block; max-width: 100%;
+}
+:where(:root[data-look="classic"]) a {
+  color: var(--link); text-underline-offset: 0.18em; text-decoration-thickness: 1px;
+}
+:where(:root[data-look="classic"]) a:hover {
+  text-decoration-thickness: 2px;
+}
+:where(:root[data-look="classic"]) h1, :where(:root[data-look="classic"]) h2, :where(:root[data-look="classic"]) h3 {
+  text-wrap: balance; margin: 0;
+}
+:where(:root[data-look="classic"]) p {
+  margin: 0; text-wrap: pretty;
+}
+:where(:root[data-look="classic"]) ::selection {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+}
+:where(:root[data-look="classic"]) :focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 2px;
+}
+:where(:root[data-look="classic"]) kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 0.05em 0.4em;
+  margin-inline: 0.06em;
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  background: var(--fill);
+  font-family: var(--font-rounded);
+  font-size: 0.84em;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+:where(:root[data-look="classic"]) .vh {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+:where(:root[data-look="classic"]) .skip {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: -60px;
+  z-index: 200;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: var(--shadow-float);
+}
+:where(:root[data-look="classic"]) .skip:focus {
+  top: 8px;
+}
+:where(:root[data-look="classic"]) .wrap {
+  max-width: 1180px; margin-inline: auto; padding-inline: var(--gutter);
+}
+:where(:root[data-look="classic"]) .narrow {
+  max-width: 760px;
+}
+:where(:root[data-look="classic"]) .center {
+  text-align: center;
+}
+:where(:root[data-look="classic"]) .center p, :where(:root[data-look="classic"]) p.center {
+  margin-inline: auto;
+}
+:where(:root[data-look="classic"]) .muted {
+  color: var(--ink-2);
+}
+:where(:root[data-look="classic"]) .icon {
+  width: 1.15em; height: 1.15em; flex: none;
+}
+:where(:root[data-look="classic"]) .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), background-color 0.2s;
+}
+:where(:root[data-look="classic"]) .btn:hover {
+  text-decoration: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  :where(:root[data-look="classic"]) .btn:hover {
+    transform: translateY(-1px);
+  }
+}
+
+:where(:root[data-look="classic"]) .btn:active {
+  transform: translateY(0) scale(0.98);
+}
+:where(:root[data-look="classic"]) .badge-get {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 60px;
+  padding-block: 8px;
+  padding-inline: 16px 22px;
+  border-radius: 12px;
+  background: var(--badge-bg);
+  color: #FFFFFF;
+  box-shadow: inset 0 0 0 1px var(--badge-edge), 0 8px 22px rgb(var(--shade) / 0.28);
+  text-decoration: none;
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+:where(:root[data-look="classic"]) .badge-get:hover {
+  text-decoration: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  :where(:root[data-look="classic"]) .badge-get:hover {
+    transform: translateY(-1px); box-shadow: inset 0 0 0 1px var(--badge-edge), 0 12px 28px rgb(var(--shade) / 0.34);
+  }
+}
+
+:where(:root[data-look="classic"]) .badge-get:active {
+  transform: scale(0.98);
+}
+:where(:root[data-look="classic"]) .badge-get:focus-visible {
+  outline: 3px solid #FFFFFF; outline-offset: 3px;
+}
+:where(:root[data-look="classic"]) .badge-get .icon {
+  width: 34px; height: 34px;
+}
+:where(:root[data-look="classic"]) .badge-text {
+  display: flex; flex-direction: column; line-height: 1.1; text-align: start;
+}
+:where(:root[data-look="classic"]) .badge-text small {
+  font-size: 12px; font-weight: 500; letter-spacing: 0.02em;
+}
+:where(:root[data-look="classic"]) .badge-text span {
+  font-size: 24px; font-weight: 600; letter-spacing: -0.01em;
+}
+:where(:root[data-look="classic"]):lang(ar) .badge-text small {
+  font-size: 13px; letter-spacing: 0;
+}
+:where(:root[data-look="classic"]) .btn-primary {
+  background: var(--accent); color: #FFFFFF;
+}
+:where(:root[data-look="classic"]) .btn-primary:hover {
+  background: color-mix(in srgb, var(--accent) 88%, #000);
+}
+:where(:root[data-look="classic"]) .link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font-weight: 600;
+  text-decoration: none;
+}
+:where(:root[data-look="classic"]) .link-arrow:hover {
+  text-decoration: underline;
+}
+:where(:root[data-look="classic"])[dir="rtl"] .link-arrow .icon {
+  transform: scaleX(-1);
+}
+:where(:root[data-look="classic"]) .menubar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--bar-h);
+  background: var(--bar-bg);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  backdrop-filter: blur(24px) saturate(1.8);
+  border-bottom: 0.5px solid var(--hairline);
+  box-shadow: var(--glass-shine);
+  font-size: 14px;
+}
+:where(:root[data-look="classic"]) .menubar-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: calc(var(--gutter) - 8px);
+}
+:where(:root[data-look="classic"]) .menubar a {
+  color: var(--ink); text-decoration: none;
+}
+:where(:root[data-look="classic"]) .app-menu {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+:where(:root[data-look="classic"]) .app-menu img {
+  width: 18px; height: 18px;
+}
+:where(:root[data-look="classic"]) .menus {
+  display: flex; gap: 2px; margin: 0; padding: 0; list-style: none;
+}
+:where(:root[data-look="classic"]) .menus a, :where(:root[data-look="classic"]) .lang-menu summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+:where(:root[data-look="classic"]) .menus a:hover, :where(:root[data-look="classic"]) .app-menu:hover, :where(:root[data-look="classic"]) .lang-menu summary:hover, :where(:root[data-look="classic"]) .lang-menu[open] summary, :where(:root[data-look="classic"]) .menus a:active, :where(:root[data-look="classic"]) .app-menu:active, :where(:root[data-look="classic"]) .lang-menu summary:active {
+  background: var(--fill-2);
+}
+:where(:root[data-look="classic"]) .menus a[aria-current="page"] {
+  font-weight: 600;
+}
+:where(:root[data-look="classic"]) .status {
+  display: flex; align-items: center; gap: 6px; margin-inline-start: auto;
+}
+:where(:root[data-look="classic"]) .clock {
+  padding: 4px 8px; font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+:where(:root[data-look="classic"]) .brand-switch {
+  position: relative;
+  display: none;
+  align-items: center;
+  margin-inline-end: 4px;
+  padding: 2px;
+  border-radius: 999px;
+  background: var(--fill-2);
+  box-shadow: inset 0 0 0 0.5px var(--hairline);
+}
+:where(:root[data-look="classic"]).js .brand-switch {
+  display: inline-flex;
+}
+:where(:root[data-look="classic"]) .brand-thumb {
+  position: absolute;
+  top: 2px;
+  inset-inline-start: 2px;
+  width: 30px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: transform 0.45s var(--ease-out);
+}
+:root[data-look="classic"][data-brand="emerald"] .brand-thumb {
+  transform: translateX(100%);
+}
+:root[data-look="classic"][data-brand="emerald"][dir="rtl"] .brand-thumb {
+  transform: translateX(-100%);
+}
+:root[data-look="classic"][data-brand="orange"] .brand-thumb {
+  transform: translateX(200%);
+}
+:root[data-look="classic"][data-brand="orange"][dir="rtl"] .brand-thumb {
+  transform: translateX(-200%);
+}
+:where(:root[data-look="classic"]) .brand-chip {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .brand-chip:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 1px;
+}
+:where(:root[data-look="classic"]) .brand-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.25), 0 0.5px 1px rgba(0, 0, 0, 0.2);
+  transition: scale 0.2s var(--ease-out);
+}
+:where(:root[data-look="classic"]) .brand-dot-sunset {
+  background:
+  radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 46%),
+  linear-gradient(140deg, #FFC45C 0%, #FF5E62 48%, #B234D6 100%);
+}
+:where(:root[data-look="classic"]) .brand-dot-emerald {
+  background:
+  radial-gradient(circle at 72% 20%, rgba(184, 222, 210, 0.95), rgba(184, 222, 210, 0) 52%),
+  linear-gradient(160deg, #2E9E8D 0%, #168176 38%, #07514E 74%, #062F31 100%);
+}
+:where(:root[data-look="classic"]) .brand-dot-orange {
+  background:
+  radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 44%),
+  linear-gradient(150deg, #FF8754 0%, #EC632C 50%, #C7461C 100%);
+}
+@media (hover: hover) and (pointer: fine) {
+  :where(:root[data-look="classic"]) .brand-chip:hover .brand-dot {
+    scale: 1.12;
+  }
+}
+
+:where(:root[data-look="classic"]) .brand-chip:active .brand-dot {
+  scale: 0.9;
+}
+:where(:root[data-look="classic"]) .brand-chip[aria-checked="false"] .brand-dot {
+  opacity: 0.86;
+}
+:where(:root[data-look="classic"]) .brand-chip::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 9px);
+  inset-inline-end: -4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--menu-bg);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  backdrop-filter: blur(20px) saturate(1.8);
+  box-shadow: 0 0 0 0.5px var(--hairline), 0 4px 12px rgba(0, 0, 0, 0.14);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  translate: 0 -2px;
+  pointer-events: none;
+  transition: opacity 0.15s, translate 0.15s var(--ease-out);
+}
+@media (hover: hover) {
+  :where(:root[data-look="classic"]) .brand-chip:hover::after {
+    opacity: 1; translate: 0 0; transition-delay: 0.45s;
+  }
+}
+
+:where(:root[data-look="classic"]) .brand-chip:focus-visible::after {
+  opacity: 1; translate: 0 0;
+}
+@media (prefers-color-scheme: dark) {
+  :where(:root[data-look="classic"]) .brand-thumb {
+    background: rgba(255, 255, 255, 0.2); box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.4), inset 0 0.5px 0 rgba(255, 255, 255, 0.18);
+  }
+}
+
+@media (pointer: coarse) {
+  :where(:root[data-look="classic"]) .brand-thumb, :where(:root[data-look="classic"]) .brand-chip {
+    width: 32px; height: 28px;
+  }
+  :where(:root[data-look="classic"]) .brand-chip::before {
+    content: ""; position: absolute; inset: -8px 0;
+  }
+}
+
+:root[data-look="classic"].brand-reveal::view-transition-old(root) {
+  animation: none;
+}
+:root[data-look="classic"].brand-reveal::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: brand-reveal 0.7s var(--ease-out) both;
+}
+:where(:root[data-look="classic"]) .lang-menu {
+  position: relative;
+}
+:where(:root[data-look="classic"]) .lang-menu summary {
+  list-style: none; cursor: pointer;
+}
+:where(:root[data-look="classic"]) .lang-menu summary::-webkit-details-marker {
+  display: none;
+}
+:where(:root[data-look="classic"]) .lang-menu .icon {
+  width: 16px; height: 16px;
+}
+:where(:root[data-look="classic"]) .menu-panel {
+  position: absolute;
+  inset-inline-end: 0;
+  top: calc(100% + 6px);
+  min-width: 180px;
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  border-radius: 12px;
+  background: var(--menu-bg);
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
+  backdrop-filter: blur(30px) saturate(1.8);
+  border: 0.5px solid var(--hairline);
+  box-shadow: var(--shadow-float);
+}
+:where(:root[data-look="classic"]) .menu-panel a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 6px;
+  border-radius: 6px;
+}
+:where(:root[data-look="classic"]) .menu-panel a:hover, :where(:root[data-look="classic"]) .menu-panel a:focus-visible {
+  background: var(--accent); color: #FFFFFF; outline: none;
+}
+:where(:root[data-look="classic"]) .menu-panel .tick {
+  width: 14px; height: 14px; visibility: hidden;
+}
+:where(:root[data-look="classic"]) .menu-panel a[aria-current] .tick {
+  visibility: visible;
+}
+:where(:root[data-look="classic"]) .hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: calc(-1 * var(--bar-h));
+  padding-top: var(--bar-h);
+  min-height: min(100svh, 1000px);
+  display: flex;
+  flex-direction: column;
+  background: var(--hero-bg);
+  color: var(--on-wall);
+}
+:where(:root[data-look="classic"]) .hero::after, :where(:root[data-look="classic"]) .close::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 32%, var(--wash) 80%, var(--wash-light) 100%);
+  pointer-events: none;
+}
+:where(:root[data-look="classic"]) .page-index .footer {
+  position: relative; background: var(--ground);
+}
+:where(:root[data-look="classic"]) .line {
+  position: relative;
+  flex: none;
+  height: calc(var(--rope-h) + var(--card-w) * 0.72 + 44px);
+}
+:where(:root[data-look="classic"]) .rope {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  width: 100%;
+  height: var(--rope-h);
+  overflow: visible;
+  pointer-events: none;
+}
+:where(:root[data-look="classic"]) .rope path {
+  fill: none;
+  stroke: var(--rope);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+}
+:where(:root[data-look="classic"]) .pegs {
+  margin: 0; padding: 0; list-style: none;
+}
+:where(:root[data-look="classic"]) .peg {
+  position: absolute;
+  top: calc(var(--rope-h) * (0.14 + 1.44 * var(--t) * (1 - var(--t))) - 6px);
+  left: calc(var(--t) * 100%);
+  width: var(--card-w);
+  translate: -50% 0;
+  rotate: var(--tilt);
+  transform-origin: 50% 0;
+  transition: left 0.6s var(--ease-out), top 0.6s var(--ease-out), opacity 0.35s, translate 0.45s var(--ease-out);
+  animation: sway 5.6s ease-in-out calc(var(--i) * -1.3s) infinite alternate;
+}
+:where(:root[data-look="classic"])[dir="rtl"] .peg {
+  left: auto; right: calc(var(--t) * 100%); translate: 50% 0;
+}
+:where(:root[data-look="classic"]) .peg:hover, :where(:root[data-look="classic"]) .peg:focus-within {
+  animation-play-state: paused; z-index: 3;
+}
+:where(:root[data-look="classic"]) .clip {
+  position: absolute;
+  z-index: 2;
+  top: -12px;
+  left: 50%;
+  width: 10px;
+  height: 24px;
+  translate: -50% 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #A9AEB8, #F4F5F8 45%, #8E949F);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+:where(:root[data-look="classic"]) .clip::after {
+  content: "";
+  position: absolute;
+  left: 2px; right: 2px; top: 9px;
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(0, 0, 0, 0.18);
+}
+:where(:root[data-look="classic"]) .photo {
+  position: relative;
+  padding: 4px;
+  border-radius: var(--r-card);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  backdrop-filter: blur(20px) saturate(1.6);
+  border: 0.5px solid var(--glass-edge);
+  box-shadow: var(--glass-shine), var(--shadow-card);
+  transition: scale 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+}
+:where(:root[data-look="classic"]) .photo-img {
+  display: block; border-radius: var(--r-inner); overflow: hidden;
+}
+:where(:root[data-look="classic"]) .photo-img svg {
+  width: 100%; height: auto;
+}
+:where(:root[data-look="classic"]) .photo-hit {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: var(--r-inner);
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .peg:hover .photo, :where(:root[data-look="classic"]) .peg:focus-within .photo {
+  scale: 1.035; box-shadow: var(--glass-shine), var(--shadow-card-hover);
+}
+:where(:root[data-look="classic"]) .corner {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0.5px solid var(--glass-edge);
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  scale: 0.8;
+  transition: opacity 0.15s, scale 0.2s var(--ease-out);
+}
+:where(:root[data-look="classic"]) .peg:hover .corner, :where(:root[data-look="classic"]) .peg:focus-within .corner {
+  opacity: 1; scale: 1;
+}
+:where(:root[data-look="classic"]) .corner-x {
+  top: -7px;
+  inset-inline-start: -7px;
+  width: 22px; height: 22px;
+  background: var(--menu-bg);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+}
+:where(:root[data-look="classic"]) .corner-x .icon {
+  width: 12px; height: 12px;
+}
+:where(:root[data-look="classic"]) .corner-send {
+  bottom: -9px;
+  inset-inline-end: -9px;
+  width: 30px; height: 30px;
+  background: var(--accent);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  opacity: 1;
+  scale: 1;
+}
+:where(:root[data-look="classic"]) .corner-send .icon {
+  width: 17px; height: 17px;
+}
+:where(:root[data-look="classic"])[dir="rtl"] .corner-send .icon, :where(:root[data-look="classic"])[dir="rtl"] .composer-send .icon {
+  transform: scaleX(-1);
+}
+:where(:root[data-look="classic"]) .corner-send:hover {
+  background: color-mix(in srgb, var(--accent) 85%, #000);
+}
+:where(:root[data-look="classic"]) .peg .corner:active {
+  scale: 0.88;
+}
+:where(:root[data-look="classic"]) .peg:not(.dragging) .photo:has(.photo-hit:active) {
+  scale: 0.98;
+}
+:where(:root[data-look="classic"]) .badge-lock {
+  position: absolute;
+  bottom: 12px;
+  inset-inline-start: 12px;
+  display: grid;
+  place-items: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #FFFFFF;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+:where(:root[data-look="classic"]) .badge-lock .icon {
+  width: 12px; height: 12px;
+}
+:where(:root[data-look="classic"]) .copied {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 11px 4px 8px;
+  translate: -50% 4px;
+  border-radius: 999px;
+  background: var(--menu-bg);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transition: opacity 0.2s, translate 0.3s var(--ease-out);
+  pointer-events: none;
+}
+:where(:root[data-look="classic"]) .copied .icon {
+  width: 13px; height: 13px; color: var(--accent);
+}
+:where(:root[data-look="classic"]) .peg.is-copied .copied {
+  opacity: 1; translate: -50% 0;
+}
+:where(:root[data-look="classic"]) .peg.leaving {
+  opacity: 0; translate: -50% 40px; pointer-events: none;
+}
+:where(:root[data-look="classic"])[dir="rtl"] .peg.leaving {
+  translate: 50% 40px;
+}
+:where(:root[data-look="classic"]) .peg.sending {
+  opacity: 0; transition: opacity 0.08s;
+}
+:where(:root[data-look="classic"]) .peg.arriving {
+  opacity: 0; translate: -50% -60px; transition-delay: var(--d, 0ms);
+}
+:where(:root[data-look="classic"])[dir="rtl"] .peg.arriving {
+  translate: 50% -60px;
+}
+:where(:root[data-look="classic"]) .line-tag {
+  position: absolute;
+  z-index: 3;
+  top: calc(var(--rope-h) * 0.16 - 2px);
+  inset-inline-end: clamp(14px, 2.4vw, 32px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-top: 14px;
+}
+:where(:root[data-look="classic"]) .line-tag .clip {
+  top: 0;
+}
+:where(:root[data-look="classic"]) .tag-send {
+  display: grid;
+  place-items: center;
+  width: 58px; height: 58px;
+  padding: 0;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgb(var(--shade-deep) / 0.3);
+  transition: scale 0.2s var(--ease-out), background-color 0.2s;
+}
+:where(:root[data-look="classic"]) .tag-send .icon {
+  width: 26px; height: 26px;
+}
+:where(:root[data-look="classic"])[dir="rtl"] .tag-send .icon {
+  transform: scaleX(-1);
+}
+:where(:root[data-look="classic"]) .tag-send:hover {
+  background: color-mix(in srgb, var(--accent) 88%, #000);
+}
+@media (hover: hover) and (pointer: fine) {
+  :where(:root[data-look="classic"]) .tag-send:hover {
+    scale: 1.06;
+  }
+}
+
+:where(:root[data-look="classic"]) .tag-send:active {
+  scale: 0.96;
+}
+:where(:root[data-look="classic"]) .tag-send:focus-visible {
+  outline: 3px solid #FFFFFF; outline-offset: 3px;
+}
+:where(:root[data-look="classic"]) .tag-label {
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--menu-bg);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+:where(:root[data-look="classic"]) .ghost {
+  position: fixed;
+  z-index: 150;
+  margin: 0;
+  pointer-events: none;
+  transform-origin: 0 0;
+}
+:where(:root[data-look="classic"]) .hero-body {
+  position: relative;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+  align-items: end;
+  gap: clamp(24px, 5vw, 80px);
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+:where(:root[data-look="classic"]) .hero-copy {
+  align-self: center; padding-block: 8px clamp(40px, 7vh, 88px);
+}
+:where(:root[data-look="classic"]) .hero h1 {
+  max-width: 13ch;
+  font-size: clamp(2.6rem, 5.6vw, 5.6rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+}
+:where(:root[data-look="classic"]) .hero h1:lang(de) {
+  max-width: 15ch; font-size: clamp(2.2rem, 4.6vw, 4.6rem);
+}
+:where(:root[data-look="classic"]) .hero h1:lang(ar) {
+  line-height: 1.2; letter-spacing: 0; font-size: clamp(2.3rem, 5vw, 4.8rem);
+}
+:where(:root[data-look="classic"]) .hero-sub {
+  max-width: 34em;
+  margin-top: 22px;
+  font-size: clamp(1.05rem, 1.35vw, 1.28rem);
+  line-height: 1.5;
+}
+:where(:root[data-look="classic"]) .hero-actions {
+  margin-top: 30px;
+}
+:where(:root[data-look="classic"]) .hero-note {
+  margin-top: 14px; font-size: 14px; opacity: 0.94;
+}
+:where(:root[data-look="classic"]) .window {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--r-window);
+  background: var(--surface);
+  color: var(--ink);
+  border: 0.5px solid var(--hairline);
+  box-shadow: var(--shadow-float);
+}
+:where(:root[data-look="classic"]) .chat {
+  height: clamp(340px, 46vh, 470px);
+  margin-bottom: calc(-1 * var(--crop));
+}
+:where(:root[data-look="classic"]) .titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  height: 44px;
+  border-bottom: 0.5px solid var(--hairline);
+  font-size: 13px;
+  font-weight: 600;
+}
+:where(:root[data-look="classic"]) .lights {
+  position: absolute; inset-inline-start: 16px; display: flex; gap: 8px;
+}
+:where(:root[data-look="classic"]) .window-title {
+  max-width: 100%; padding-inline: 74px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+:where(:root[data-look="classic"]) .lights i {
+  display: block; width: 12px; height: 12px; border-radius: 50%; background: var(--light-red);
+}
+:where(:root[data-look="classic"]) .lights i:nth-child(2) {
+  background: var(--light-yellow);
+}
+:where(:root[data-look="classic"]) .lights i:nth-child(3) {
+  background: var(--light-green);
+}
+:where(:root[data-look="classic"]) .chat .titlebar {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  inset-inline: 0;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.8);
+  backdrop-filter: blur(18px) saturate(1.8);
+}
+:where(:root[data-look="classic"]) .chat .thread {
+  padding-top: 60px;
+}
+:where(:root[data-look="classic"]) .thread {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 16px 16px calc(var(--crop, 0px) + 64px);
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--fill-2) transparent;
+}
+:where(:root[data-look="classic"]) .note {
+  align-self: center;
+  max-width: 90%;
+  padding: 2px 0 8px;
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+:where(:root[data-look="classic"]) .msg {
+  display: flex;
+}
+:where(:root[data-look="classic"]) .msg p {
+  max-width: 78%;
+  padding: 8px 13px;
+  border-radius: 18px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+:where(:root[data-look="classic"]) .msg.in p {
+  background: var(--bubble-in);
+}
+:where(:root[data-look="classic"]) .msg.out {
+  justify-content: flex-end;
+}
+:where(:root[data-look="classic"]) .msg.out p {
+  background: var(--accent); color: #FFFFFF;
+}
+:where(:root[data-look="classic"]) .msg.image .photo-img {
+  width: min(210px, 70%); border-radius: 16px; border: 0.5px solid var(--hairline);
+}
+:where(:root[data-look="classic"]) .msg.image.landed .photo-img {
+  animation: land 0.35s var(--ease-out);
+}
+:where(:root[data-look="classic"]) .msg.album {
+  justify-content: flex-end;
+}
+:where(:root[data-look="classic"]) .album-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  width: min(230px, 76%);
+  overflow: hidden;
+  border-radius: 16px;
+  border: 0.5px solid var(--hairline);
+}
+:where(:root[data-look="classic"]) .album-grid .photo-img {
+  border-radius: 0;
+}
+:where(:root[data-look="classic"]) .album-grid > :last-child:nth-child(odd) {
+  grid-column: span 2;
+}
+:where(:root[data-look="classic"]) .msg.album.landed .album-grid {
+  animation: land 0.35s var(--ease-out);
+}
+:where(:root[data-look="classic"]) .msg.typing p {
+  display: flex; gap: 4px; padding: 12px 14px;
+}
+:where(:root[data-look="classic"]) .msg.typing i {
+  display: block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--ink-2);
+  opacity: 0.5;
+  animation: dot 1s infinite ease-in-out;
+}
+:where(:root[data-look="classic"]) .msg.typing i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+:where(:root[data-look="classic"]) .msg.typing i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+:where(:root[data-look="classic"]) .msg.pop {
+  animation: pop 0.3s var(--ease-out);
+}
+:where(:root[data-look="classic"]) .chat {
+  position: relative; --crop: 48px;
+}
+:where(:root[data-look="classic"]) .chat .composer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  inset-inline: 0;
+  bottom: var(--crop);
+  padding: 10px 12px;
+  background: var(--surface);
+  border-top: 0.5px solid var(--hairline);
+}
+:where(:root[data-look="classic"]) .field {
+  flex: 1;
+  padding: 7px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  color: var(--ink-2);
+  font-size: 14px;
+}
+:where(:root[data-look="classic"]) .composer-send {
+  display: grid;
+  place-items: center;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+}
+:where(:root[data-look="classic"]) .composer-send .icon {
+  width: 16px; height: 16px;
+}
+:where(:root[data-look="classic"]) .page-index::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--wall);
+}
+:where(:root[data-look="classic"]) .section {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  padding-block: clamp(96px, 12vw, 168px);
+  background: var(--wash-light);
+  color: var(--on-wall);
+}
+:where(:root[data-look="classic"]) .section .copy, :where(:root[data-look="classic"]) .menu-desc, :where(:root[data-look="classic"]) .design .wrap, :where(:root[data-look="classic"]) .close .wrap {
+  position: relative;
+}
+:where(:root[data-look="classic"]) .section .copy::before, :where(:root[data-look="classic"]) .menu-desc::before, :where(:root[data-look="classic"]) .design .wrap::before, :where(:root[data-look="classic"]) .close .wrap::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -140px -200px;
+  border-radius: 50%;
+  background: var(--scrim);
+  filter: blur(110px);
+  pointer-events: none;
+}
+:where(:root[data-look="classic"]) .section h2 {
+  font-size: clamp(2rem, 4.2vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+:where(:root[data-look="classic"]) .section h2:lang(ar) {
+  letter-spacing: 0; line-height: 1.25;
+}
+:where(:root[data-look="classic"]) .copy p {
+  max-width: 34em; margin-top: 18px; color: var(--on-wall-2); font-size: clamp(1.05rem, 1.3vw, 1.2rem); line-height: 1.55;
+}
+:where(:root[data-look="classic"]) .copy.center {
+  max-width: 760px; margin-inline: auto;
+}
+:where(:root[data-look="classic"]) .section kbd {
+  background: var(--kbd-wall-bg); border-color: var(--kbd-wall-edge); color: var(--on-wall);
+}
+:where(:root[data-look="classic"]) .chord {
+  white-space: nowrap;
+}
+:where(:root[data-look="classic"]) .split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(40px, 6vw, 96px);
+}
+:where(:root[data-look="classic"]) .keys {
+  display: flex; justify-content: center; gap: clamp(12px, 2vw, 22px);
+}
+:where(:root[data-look="classic"]) .keycap {
+  position: relative;
+  display: grid;
+  width: clamp(88px, 10vw, 132px);
+  aspect-ratio: 1;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--hairline);
+  border-bottom-width: 4px;
+  box-shadow: 0 14px 30px rgb(var(--shade-deep) / 0.28);
+  transition: translate 0.12s, border-bottom-width 0.12s;
+}
+:where(:root[data-look="classic"]) .keycap-glyph {
+  align-self: start; font-family: var(--font-rounded); font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 500; line-height: 1;
+}
+:where(:root[data-look="classic"]) .keycap-word {
+  align-self: end; justify-self: end; color: var(--ink-2); font-size: 13px;
+}
+:where(:root[data-look="classic"]) .keycap:last-child .keycap-glyph {
+  align-self: center; justify-self: center; font-family: var(--font);
+}
+:where(:root[data-look="classic"]) .keys.play .keycap {
+  animation: press 0.9s var(--ease-out) both; animation-delay: calc(var(--k) * 140ms + 200ms);
+}
+:where(:root[data-look="classic"]) .keycap:nth-child(1) {
+  --k: 0;
+}
+:where(:root[data-look="classic"]) .keycap:nth-child(2) {
+  --k: 1;
+}
+:where(:root[data-look="classic"]) .keycap:nth-child(3) {
+  --k: 2;
+}
+:where(:root[data-look="classic"]) .desk {
+  padding-top: calc(var(--rope-h) + clamp(150px, 15vw, 210px));
+}
+:where(:root[data-look="classic"]) .desk-rope {
+  top: 36px; height: var(--rope-h);
+}
+:where(:root[data-look="classic"]) .desk-files {
+  position: relative; height: clamp(300px, 30vw, 420px);
+}
+:where(:root[data-look="classic"]) .desk-files ul {
+  margin: 0; padding: 0; list-style: none;
+}
+:where(:root[data-look="classic"]) .file {
+  position: absolute;
+  z-index: 2;
+  inset-inline-start: var(--x);
+  top: var(--y);
+  width: clamp(78px, 7.6vw, 104px);
+  translate: -50% 0;
+  transform-origin: 50% 0;
+  transition: transform 0.9s var(--ease-out);
+  transition-delay: calc(var(--i) * 70ms);
+}
+:where(:root[data-look="classic"])[dir="rtl"] .file {
+  translate: 50% 0;
+}
+:where(:root[data-look="classic"]) .file-thumb {
+  display: block;
+  width: 74%;
+  margin-inline: auto;
+  border: 2px solid #FFFFFF;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  transition: border-radius 0.9s, border-width 0.9s;
+  transition-delay: inherit;
+}
+:where(:root[data-look="classic"]) .file-name {
+  display: -webkit-box;
+  margin-top: 5px;
+  overflow: hidden;
+  color: var(--on-wall);
+  font-size: 11px;
+  line-height: 1.25;
+  text-align: center;
+  text-shadow: var(--file-shadow);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  transition: opacity 0.3s;
+}
+:where(:root[data-look="classic"]) .desk.swept .file {
+  transform: translate(var(--dx, 0), var(--dy, 0)) rotate(var(--tilt, 0deg));
+}
+:where(:root[data-look="classic"]) .desk.swept .file-thumb {
+  border-radius: 7px; border-width: 3px;
+}
+:where(:root[data-look="classic"]) .desk.swept .file-name {
+  opacity: 0;
+}
+:where(:root[data-look="classic"]) .replay {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 26px;
+  padding: 8px 16px;
+  border: 0.5px solid var(--pill-edge);
+  border-radius: 999px;
+  background: var(--pill-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  color: var(--on-wall);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .replay:hover {
+  background: var(--pill-bg-hover);
+}
+:where(:root[data-look="classic"]) .replay:active {
+  scale: 0.96;
+}
+:where(:root[data-look="classic"]) .replay .icon {
+  width: 15px; height: 15px;
+}
+:where(:root[data-look="classic"]) .settings {
+  justify-self: end; width: 100%; max-width: 640px;
+}
+:where(:root[data-look="classic"]) .settings-body {
+  display: grid; grid-template-columns: 172px minmax(0, 1fr);
+}
+:where(:root[data-look="classic"]) .settings-side {
+  margin: 0;
+  padding: 10px 8px;
+  list-style: none;
+  background: var(--fill);
+  border-inline-end: 0.5px solid var(--hairline);
+  font-size: 13px;
+}
+:where(:root[data-look="classic"]) .settings-side li {
+  display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 7px;
+}
+:where(:root[data-look="classic"]) .settings-side li + li {
+  margin-top: 2px;
+}
+:where(:root[data-look="classic"]) .settings-side li.on {
+  background: var(--accent); color: #FFFFFF;
+}
+:where(:root[data-look="classic"]) .settings-side .icon {
+  width: 16px; height: 16px;
+}
+:where(:root[data-look="classic"]) .settings-pane {
+  display: flex; flex-direction: column; gap: 20px; min-width: 0; padding: 18px 20px 22px;
+}
+:where(:root[data-look="classic"]) .group {
+  min-width: 0; margin: 0; padding: 0; border: 0;
+}
+:where(:root[data-look="classic"]) .group-label {
+  display: block; padding: 0 2px 7px; font-size: 13px; font-weight: 600;
+}
+:where(:root[data-look="classic"]) .group-box {
+  padding: 0 12px; border-radius: 10px; background: var(--fill); border: 0.5px solid var(--hairline);
+}
+:where(:root[data-look="classic"]) .group-note {
+  margin-top: 7px; padding-inline: 2px; color: var(--ink-2); font-size: 12px;
+}
+:where(:root[data-look="classic"]) .example {
+  color: var(--ink-2); font-weight: 400;
+}
+:where(:root[data-look="classic"]) .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  font-size: 14px;
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .row + .row {
+  border-top: 0.5px solid var(--hairline);
+}
+:where(:root[data-look="classic"]) input[role="switch"] {
+  appearance: none;
+  position: relative;
+  flex: none;
+  width: 38px; height: 22px;
+  margin: 0;
+  border-radius: 11px;
+  background: var(--fill-2);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+:where(:root[data-look="classic"]) input[role="switch"]::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  inset-inline-start: 2px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: translate 0.25s var(--ease-out);
+}
+:where(:root[data-look="classic"]) input[role="switch"]:checked {
+  background: var(--accent);
+}
+:where(:root[data-look="classic"]) input[role="switch"]:checked::before {
+  translate: 16px 0;
+}
+:where(:root[data-look="classic"])[dir="rtl"] input[role="switch"]:checked::before {
+  translate: -16px 0;
+}
+:where(:root[data-look="classic"]) .preview {
+  display: grid; place-items: center; padding: 14px;
+}
+:where(:root[data-look="classic"]) .photo-preview {
+  width: 100%; max-width: 360px;
+}
+:where(:root[data-look="classic"]) .doc-shot {
+  overflow: hidden;
+  padding-bottom: 36px;
+  border-radius: var(--r-inner);
+  background: #FFFFFF;
+  color: #1D1D1F;
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+:where(:root[data-look="classic"]) .doc-shot > * {
+  margin-inline: 16px;
+}
+:where(:root[data-look="classic"]) .doc-top {
+  display: flex; justify-content: space-between; gap: 12px; margin-block: 14px 8px;
+}
+:where(:root[data-look="classic"]) .doc-title {
+  font-size: 15px; font-weight: 700; line-height: 1.3;
+}
+:where(:root[data-look="classic"]) .doc-dim {
+  color: #6E6E73; font-size: 11px;
+}
+:where(:root[data-look="classic"]) .doc-total {
+  text-align: end; white-space: nowrap;
+}
+:where(:root[data-look="classic"]) .doc-label {
+  color: #6E6E73; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+}
+:where(:root[data-look="classic"]) .doc-label:lang(ar) {
+  letter-spacing: 0;
+}
+:where(:root[data-look="classic"]) .doc-items {
+  margin: 8px 16px 6px;
+  padding: 8px 0 0;
+  list-style: none;
+  border-top: 1px solid #E5E5EA;
+}
+:where(:root[data-look="classic"]) .doc-items li {
+  display: flex; justify-content: space-between; gap: 12px;
+}
+:where(:root[data-look="classic"]) .pd {
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-color 0.25s, color 0.25s;
+}
+:where(:root[data-look="classic"]) .pd.ltr {
+  direction: ltr; unicode-bidi: isolate; white-space: nowrap;
+}
+:where(:root[data-look="classic"]) .pd.covered {
+  background: var(--cover-ink); color: transparent;
+}
+:where(:root[data-look="classic"]) [data-invoice] .badge-lock {
+  opacity: 0; transition: opacity 0.2s;
+}
+:where(:root[data-look="classic"]) [data-invoice].has-cover .badge-lock {
+  opacity: 1;
+}
+:where(:root[data-look="classic"]) .menu-stage {
+  --card-w: clamp(150px, 15vw, 210px);
+  position: relative;
+  max-width: 1240px;
+  height: calc(var(--rope-h) * 0.5 + var(--card-w) * 0.45 + 610px);
+  margin: clamp(40px, 6vw, 72px) auto 0;
+}
+:where(:root[data-look="classic"]) .menu-rope {
+  top: 0; height: var(--rope-h);
+}
+:where(:root[data-look="classic"]) .peg.still {
+  animation: none;
+}
+:where(:root[data-look="classic"]) .peg.held {
+  z-index: 3;
+}
+:where(:root[data-look="classic"]) .peg.held .photo {
+  scale: 1.035; box-shadow: var(--shadow-card-hover);
+}
+:where(:root[data-look="classic"]) .pointer {
+  position: absolute;
+  z-index: 5;
+  left: calc(50% - 4px);
+  top: calc(var(--rope-h) * 0.5 + var(--card-w) * 0.38);
+  width: 28px; height: 28px;
+}
+:where(:root[data-look="classic"]) .ctx-menu {
+  position: absolute;
+  z-index: 4;
+  top: calc(var(--rope-h) * 0.5 + var(--card-w) * 0.45);
+  inset-inline-start: calc(50% + 12px);
+  width: 290px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border-radius: 13px;
+  background: var(--menu-bg);
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
+  backdrop-filter: blur(30px) saturate(1.8);
+  border: 0.5px solid var(--hairline);
+  box-shadow: var(--shadow-float);
+}
+:where(:root[data-look="classic"]) .ctx-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  text-align: start;
+  cursor: default;
+}
+:where(:root[data-look="classic"]) .ctx-item[aria-pressed="true"] {
+  background: var(--accent); color: #FFFFFF;
+}
+:where(:root[data-look="classic"]) .ctx-item:focus-visible {
+  outline: none;
+}
+:where(:root[data-look="classic"]) .chev {
+  width: 14px; height: 14px; opacity: 0.7;
+}
+:where(:root[data-look="classic"])[dir="rtl"] .chev {
+  transform: scaleX(-1);
+}
+:where(:root[data-look="classic"]) .ctx-sep {
+  height: 1px; margin: 5px 12px; background: var(--hairline);
+}
+:where(:root[data-look="classic"]) .menu-desc {
+  position: absolute;
+  inset-inline-start: var(--gutter);
+  top: calc(var(--rope-h) + var(--card-w) * 0.8 + 40px);
+  width: min(32%, 360px);
+}
+:where(:root[data-look="classic"]) .menu-desc-title {
+  font-size: clamp(1.4rem, 2.2vw, 1.9rem); font-weight: 700; letter-spacing: -0.012em;
+}
+:where(:root[data-look="classic"]) .menu-desc-title:lang(ar) {
+  letter-spacing: 0;
+}
+:where(:root[data-look="classic"]) .menu-desc p + p {
+  margin-top: 10px; color: var(--on-wall-2); font-size: 1.05rem;
+}
+:where(:root[data-look="classic"]) .menu-desc .menu-hint {
+  margin-top: 22px; font-size: 14px;
+}
+:where(:root[data-look="classic"]) .styles {
+  padding-top: 24px;
+}
+:where(:root[data-look="classic"]) .style-line {
+  --sw: clamp(130px, 13vw, 184px);
+  position: relative;
+  height: calc(var(--sw) * 0.67 + var(--rope-h) + 90px);
+  margin-bottom: clamp(32px, 5vw, 64px);
+}
+:where(:root[data-look="classic"]) .style-rope {
+  top: 30px; height: var(--rope-h); transition: opacity 0.4s;
+}
+:where(:root[data-look="classic"]) .sty {
+  position: absolute;
+  z-index: 2;
+  width: var(--sw);
+  top: calc(30px + var(--rope-h) * (0.14 + 1.44 * var(--p) * (1 - var(--p))) - 6px);
+  left: calc(var(--p) * 100%);
+  translate: -50% 0;
+  rotate: var(--tilt);
+  transform-origin: 50% 0;
+  transition: top 0.55s var(--ease-out), left 0.55s var(--ease-out), right 0.55s var(--ease-out), rotate 0.55s var(--ease-out);
+}
+:where(:root[data-look="classic"])[dir="rtl"] .sty {
+  left: auto; right: calc(var(--p) * 100%); translate: 50% 0;
+}
+:where(:root[data-look="classic"]) .sty .photo {
+  display: block;
+}
+:where(:root[data-look="classic"]) .sty.s1 {
+  --p: 0.3;
+}
+:where(:root[data-look="classic"]) .sty.s2 {
+  --p: 0.5;
+}
+:where(:root[data-look="classic"]) .sty.s3 {
+  --p: 0.7;
+}
+:where(:root[data-look="classic"]) .mini-clip {
+  position: absolute;
+  z-index: 2;
+  top: -10px; left: 50%;
+  width: 8px; height: 19px;
+  translate: -50% 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #A9AEB8, #F4F5F8 45%, #8E949F);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: opacity 0.3s;
+}
+:where(:root[data-look="classic"]) .shelf, :where(:root[data-look="classic"]) .island, :where(:root[data-look="classic"]) .count {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.4s, scale 0.5s var(--ease-out);
+}
+:where(:root[data-look="classic"]) .shelf {
+  left: 26%; right: 26%;
+  top: calc(30px + var(--sw) * 0.62);
+  height: 44px;
+  border-radius: 22px;
+  background: var(--shelf-bg);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  backdrop-filter: blur(16px) saturate(1.6);
+  border: 1px solid var(--shelf-edge);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+:where(:root[data-look="classic"]) .island {
+  z-index: 1;
+  left: 24%; right: 24%;
+  top: -24px;
+  height: calc(var(--sw) * 0.67 + 96px);
+  border-radius: 0 0 34px 34px;
+  background: #000000;
+  scale: 1 0.6;
+  transform-origin: 50% 0;
+}
+:where(:root[data-look="classic"]) .count {
+  z-index: 4;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 14px;
+  background: var(--count);
+  color: #FFFFFF;
+  font-family: var(--font-rounded);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 28px;
+  text-align: center;
+  inset-inline-end: 4%;
+  top: 34px;
+}
+:where(:root[data-look="classic"]) [data-style="shelf"] .style-rope, :where(:root[data-look="classic"]) [data-style="island"] .style-rope, :where(:root[data-look="classic"]) [data-style="stack"] .style-rope, :where(:root[data-look="classic"]) [data-style="shelf"] .mini-clip, :where(:root[data-look="classic"]) [data-style="island"] .mini-clip, :where(:root[data-look="classic"]) [data-style="stack"] .mini-clip {
+  opacity: 0;
+}
+:where(:root[data-look="classic"]) [data-style="shelf"] .shelf {
+  opacity: 1;
+}
+:where(:root[data-look="classic"]) [data-style="shelf"] .sty {
+  top: 30px; rotate: 0deg;
+}
+:where(:root[data-look="classic"]) [data-style="shelf"] .sty.s1 {
+  --p: 0.37;
+}
+:where(:root[data-look="classic"]) [data-style="shelf"] .sty.s3 {
+  --p: 0.63;
+}
+:where(:root[data-look="classic"]) [data-style="island"] .island {
+  opacity: 1; scale: 1;
+}
+:where(:root[data-look="classic"]) [data-style="island"] .sty {
+  top: 24px; rotate: 0deg;
+}
+:where(:root[data-look="classic"]) [data-style="island"] .sty.s1 {
+  --p: 0.37;
+}
+:where(:root[data-look="classic"]) [data-style="island"] .sty.s3 {
+  --p: 0.63;
+}
+:where(:root[data-look="classic"]) [data-style="stack"] .count {
+  opacity: 1;
+}
+:where(:root[data-look="classic"]) [data-style="stack"] .sty {
+  top: 50px;
+}
+:where(:root[data-look="classic"]) [data-style="stack"] .sty.s1 {
+  --p: 0.86; rotate: -7deg;
+}
+:where(:root[data-look="classic"]) [data-style="stack"] .sty.s2 {
+  --p: 0.875; rotate: 4deg; top: 52px;
+}
+:where(:root[data-look="classic"]) [data-style="stack"] .sty.s3 {
+  --p: 0.89; rotate: -1deg; top: 54px;
+}
+:where(:root[data-look="classic"]) [data-style="clothesline"] .sty {
+  animation: sway 5s ease-in-out calc(var(--i) * -1.4s) infinite alternate;
+}
+:where(:root[data-look="classic"]) .settings-line {
+  max-width: 560px;
+}
+:where(:root[data-look="classic"]) .tile-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding-top: 4px;
+}
+:where(:root[data-look="classic"]) .tile {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 7px; font-size: 12px; text-align: center; cursor: pointer;
+}
+:where(:root[data-look="classic"]) .tile input {
+  position: absolute; opacity: 0; pointer-events: none;
+}
+:where(:root[data-look="classic"]) .tile-art {
+  display: block; width: 100%; padding: 2px; border-radius: 9px; outline: 2px solid transparent; outline-offset: 1px; transition: outline-color 0.2s;
+}
+:where(:root[data-look="classic"]) .tile-art svg {
+  width: 100%; height: auto; border-radius: 7px;
+}
+:where(:root[data-look="classic"]) .tile input:checked + .tile-art {
+  outline-color: var(--accent);
+}
+:where(:root[data-look="classic"]) .tile input:checked ~ .tile-name {
+  font-weight: 600;
+}
+:where(:root[data-look="classic"]) .tile input:focus-visible + .tile-art {
+  outline: 3px solid color-mix(in srgb, var(--accent) 70%, transparent);
+}
+:where(:root[data-look="classic"]) .section h2.points {
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+}
+:where(:root[data-look="classic"]) .point {
+  display: block;
+}
+:where(:root[data-look="classic"]) .section h2.points:lang(ar) {
+  letter-spacing: 0; line-height: 1.3;
+}
+:where(:root[data-look="classic"]) .design {
+  background: var(--band-bg, var(--wash-light)); color: var(--band-ink, var(--on-wall));
+}
+:where(:root[data-look="classic"]) .design p {
+  max-width: 36em; margin-top: 28px; color: var(--band-ink-2, var(--on-wall-2)); font-size: 1.15rem;
+}
+:where(:root[data-look="classic"]) .design strong {
+  color: var(--band-strong, #FFFFFF); font-weight: 600;
+}
+:where(:root[data-look="classic"]) .design .link-arrow {
+  margin-top: 4px; color: var(--band-ink, #FFFFFF); text-decoration: underline; text-underline-offset: 0.22em;
+}
+:where(:root[data-look="classic"]) .close {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(96px, 12vw, 168px);
+  background: var(--close-bg);
+  color: var(--on-wall);
+}
+:where(:root[data-look="classic"]) .close::after {
+  background: linear-gradient(to bottom, var(--wash-light) 0%, var(--wash-light) 100%);
+}
+:where(:root[data-look="classic"]) .close .wrap::before {
+  inset: -40px -160px; filter: blur(70px);
+}
+:where(:root[data-look="classic"]) .close-icon {
+  width: clamp(104px, 11vw, 140px); height: auto; margin: 0 auto 28px; filter: drop-shadow(0 16px 26px rgb(var(--shade) / 0.35));
+}
+:where(:root[data-look="classic"]) .close h2 {
+  font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: 1.04; letter-spacing: -0.015em;
+}
+:where(:root[data-look="classic"]) .close h2:lang(ar) {
+  letter-spacing: 0; line-height: 1.25;
+}
+:where(:root[data-look="classic"]) .close .hero-note {
+  max-width: 40em; margin-inline: auto;
+}
+:where(:root[data-look="classic"]) .footer {
+  padding-block: 44px 56px; border-top: 0.5px solid var(--hairline); color: var(--ink-2); font-size: 14px;
+}
+:where(:root[data-look="classic"]) .footer-grid {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 20px 40px;
+}
+:where(:root[data-look="classic"]) .footer-brand {
+  display: flex; align-items: center; gap: 12px;
+}
+:where(:root[data-look="classic"]) .footer-brand strong {
+  color: var(--ink);
+}
+:where(:root[data-look="classic"]) .footer-links {
+  display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 0; padding: 6px 0 0; list-style: none;
+}
+:where(:root[data-look="classic"]) .footer a {
+  color: var(--ink); text-decoration: none;
+}
+:where(:root[data-look="classic"]) .footer a:hover {
+  text-decoration: underline;
+}
+:where(:root[data-look="classic"]) .footer-langs {
+  display: flex; gap: 14px; padding-top: 6px;
+}
+:where(:root[data-look="classic"]) .footer-langs a[aria-current] {
+  font-weight: 600;
+}
+:where(:root[data-look="classic"]) .fine {
+  grid-column: 1 / -1; padding-top: 16px; border-top: 0.5px solid var(--hairline); font-size: 13px;
+}
+:where(:root[data-look="classic"]) .doc {
+  padding-block: clamp(48px, 7vw, 88px) 104px;
+}
+:where(:root[data-look="classic"]) .doc-head {
+  margin-bottom: 36px;
+}
+:where(:root[data-look="classic"]) .doc-head img {
+  margin-bottom: 20px;
+}
+:where(:root[data-look="classic"]) .doc h1 {
+  font-size: clamp(2.3rem, 5vw, 3.4rem); line-height: 1.05; letter-spacing: -0.02em;
+}
+:where(:root[data-look="classic"]) .doc h1:lang(ar) {
+  letter-spacing: 0; line-height: 1.3;
+}
+:where(:root[data-look="classic"]) .doc-head p {
+  margin-top: 12px; font-size: 1.1rem;
+}
+:where(:root[data-look="classic"]) .doc h2 {
+  margin: 2.2em 0 0.6em; font-size: 1.35rem; letter-spacing: -0.01em;
+}
+:where(:root[data-look="classic"]) .doc p, :where(:root[data-look="classic"]) .doc li {
+  font-size: 1.0625rem; line-height: 1.65;
+}
+:where(:root[data-look="classic"]) .doc p + p {
+  margin-top: 0.9em;
+}
+:where(:root[data-look="classic"]) .doc ul, :where(:root[data-look="classic"]) .doc ol {
+  margin: 0; padding-inline-start: 1.25em;
+}
+:where(:root[data-look="classic"]) .doc li + li {
+  margin-top: 0.6em;
+}
+:where(:root[data-look="classic"]) .doc strong {
+  font-weight: 650;
+}
+:where(:root[data-look="classic"]) .summary {
+  margin-top: 8px; padding: 22px 26px; border-radius: 16px; background: var(--fill);
+}
+:where(:root[data-look="classic"]) .summary h2 {
+  margin: 0 0 6px; font-size: 1.05rem;
+}
+:where(:root[data-look="classic"]) .contact {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 24px;
+}
+:where(:root[data-look="classic"]) .contact .email {
+  color: var(--ink-2); font-size: 15px;
+}
+:where(:root[data-look="classic"]) .faqs {
+  border-top: 0.5px solid var(--hairline);
+}
+:where(:root[data-look="classic"]) .faq {
+  border-bottom: 0.5px solid var(--hairline);
+}
+:where(:root[data-look="classic"]) .faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .faq summary::-webkit-details-marker {
+  display: none;
+}
+:where(:root[data-look="classic"]) .faq summary .chev {
+  flex: none; width: 16px; height: 16px; transition: rotate 0.2s var(--ease-out);
+}
+:where(:root[data-look="classic"]) .faq[open] summary .chev {
+  rotate: 90deg;
+}
+:where(:root[data-look="classic"])[dir="rtl"] .faq[open] summary .chev {
+  rotate: -90deg;
+}
+:where(:root[data-look="classic"]) .faq-body {
+  padding-bottom: 20px; color: var(--ink-2);
+}
+@supports (interpolate-size: allow-keywords) {
+  :where(:root[data-look="classic"]) .faq {
+    interpolate-size: allow-keywords;
+  }
+  :where(:root[data-look="classic"]) .faq::details-content {
+    block-size: 0;
+    overflow: clip;
+    opacity: 0;
+    transition: block-size 0.35s var(--ease-out), opacity 0.25s, content-visibility 0.35s allow-discrete;
+  }
+  :where(:root[data-look="classic"]) .faq[open]::details-content {
+    block-size: auto; opacity: 1;
+  }
+}
+
+:where(:root[data-look="classic"]) .faq-body p, :where(:root[data-look="classic"]) .faq-body li {
+  color: var(--ink-2);
+}
+:where(:root[data-look="classic"]) .page-404 main {
+  padding-top: 18vh;
+}
+:where(:root[data-look="classic"]) .page-404 img {
+  margin: 0 auto 20px;
+}
+:where(:root[data-look="classic"]) .page-404 .btn {
+  margin-top: 24px;
+}
+:where(:root[data-look="classic"]) .line .photo-hit {
+  touch-action: pan-y;
+}
+:where(:root[data-look="classic"]) .peg.dragging {
+  z-index: 6;
+  animation: none;
+  rotate: 0deg;
+  transition: top 0.3s var(--ease-out), opacity 0.2s;
+  cursor: grabbing;
+}
+:where(:root[data-look="classic"]) .peg.dragging .photo {
+  scale: 1.06; box-shadow: var(--shadow-card-hover);
+}
+:where(:root[data-look="classic"]) .peg.dragging .corner {
+  opacity: 0;
+}
+:where(:root[data-look="classic"]) .peg.dragging .photo-hit {
+  cursor: grabbing;
+}
+:where(:root[data-look="classic"]) .chat-btn {
+  position: absolute;
+  z-index: 3;
+  bottom: calc(var(--crop) + 58px);
+  inset-inline-end: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px;
+  border: 0.5px solid var(--glass-edge);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  backdrop-filter: blur(20px) saturate(1.8);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  transition: scale 0.25s var(--ease-out), opacity 0.2s;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  :where(:root[data-look="classic"]) .chat-btn:hover {
+    scale: 1.04;
+  }
+}
+
+:where(:root[data-look="classic"]) .chat-btn:active {
+  scale: 0.98;
+}
+:where(:root[data-look="classic"]) .chat-btn[hidden] {
+  display: flex; opacity: 0; scale: 0.8; pointer-events: none;
+}
+:where(:root[data-look="classic"]) .cb-thumbs {
+  position: relative; width: 30px; height: 26px; margin-inline-start: 3px;
+}
+:where(:root[data-look="classic"]) .cb-thumb {
+  position: absolute;
+  top: 0;
+  inset-inline-start: 0;
+  width: 26px;
+  height: 26px;
+  overflow: hidden;
+  border-radius: 7px;
+  background: var(--fill-2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7), 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+:where(:root[data-look="classic"]) .cb-thumb:first-child {
+  rotate: -9deg; translate: 4px -1px; opacity: 0.85;
+}
+:where(:root[data-look="classic"])[dir="rtl"] .cb-thumb:first-child {
+  rotate: 9deg; translate: -4px -1px;
+}
+:where(:root[data-look="classic"]) .cb-thumb svg {
+  width: 100%; height: 100%;
+}
+:where(:root[data-look="classic"]) .cb-count {
+  min-width: 1ch;
+  font-family: var(--font-rounded);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+:where(:root[data-look="classic"]) .cb-send {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+}
+:where(:root[data-look="classic"]) .cb-send .icon {
+  grid-area: 1 / 1; width: 15px; height: 15px; transition: opacity 0.2s, scale 0.3s var(--ease-out);
+}
+:where(:root[data-look="classic"])[dir="rtl"] .cb-send .icon:first-child, :where(:root[data-look="classic"])[dir="rtl"] .caption-send .icon {
+  transform: scaleX(-1);
+}
+:where(:root[data-look="classic"]) .cb-send .done {
+  opacity: 0; scale: 0.5;
+}
+:where(:root[data-look="classic"]) .chat-btn.sent .cb-send .icon:first-child {
+  opacity: 0; scale: 0.5;
+}
+:where(:root[data-look="classic"]) .chat-btn.sent .cb-send .done {
+  opacity: 1; scale: 1;
+}
+:where(:root[data-look="classic"]) .chat-btn.holding {
+  scale: 0.97;
+}
+:where(:root[data-look="classic"]) .caption-bar {
+  position: absolute;
+  z-index: 4;
+  bottom: calc(var(--crop) + 58px + 44px);
+  inset-inline-end: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(340px, calc(100% - 20px));
+  height: 44px;
+  padding-inline: 16px 7px;
+  border: 0.5px solid var(--glass-edge);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  backdrop-filter: blur(24px) saturate(1.8);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+  animation: fade-in 0.15s ease-out;
+}
+:where(:root[data-look="classic"]) .caption-bar[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .caption-field {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  outline: none;
+}
+:where(:root[data-look="classic"]) .caption-field::placeholder {
+  color: var(--ink-2);
+}
+:where(:root[data-look="classic"]) .caption-count {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--fill-2);
+  color: var(--ink-2);
+  font-family: var(--font-rounded);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+:where(:root[data-look="classic"]) .caption-send {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .caption-send .icon {
+  width: 14px; height: 14px;
+}
+:where(:root[data-look="classic"]) .chat .chat-menu {
+  position: absolute;
+  z-index: 30;
+  inset: auto;
+  width: max-content;
+  min-width: 200px;
+  max-width: min(340px, 92vw);
+}
+:where(:root[data-look="classic"]) .chat-menu[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .chat-menu .ctx-item {
+  gap: 18px; font-size: 14px; min-height: 26px; cursor: pointer;
+}
+:where(:root[data-look="classic"]) .chat-menu .ctx-item:hover, :where(:root[data-look="classic"]) .chat-menu .ctx-item:focus-visible {
+  background: var(--accent); color: #FFFFFF;
+}
+:where(:root[data-look="classic"]) .msg.caption {
+  margin-top: -4px;
+}
+:where(:root[data-look="classic"]) .desk-stage {
+  --d-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
+  --d-fs-1: 11px;
+  --d-fs-2: 13px;
+  --d-fs-3: 15px;
+  --d-fs-4: 17px;
+  --d-fs-5: 22px;
+  --d-lh-text: 1.4;
+  --d-lh-head: 1.2;
+  --d-regular: 400;
+  --d-medium: 500;
+  --d-bold: 600;
+  --d-s1: 4px;
+  --d-s2: 8px;
+  --d-s3: 12px;
+  --d-s4: 16px;
+  --d-s5: 24px;
+  --d-s6: 32px;
+  --d-s7: 48px;
+  --d-s8: 64px;
+  --d-bar: 28px;
+  --d-control: 32px;
+  --d-target: 44px;
+  --d-shot: 40px;
+  --d-icon: 48px;
+  --d-icon-compact: 40px;
+  --d-light: 12px;
+  --d-guide: 280px;
+  --d-guide-room: 160px;
+  --d-menu: 200px;
+  --d-hairline: 1px;
+  --d-ring: 2px;
+  --d-halo: 6px;
+  --d-r-sm: 6px;
+  --d-r-md: 10px;
+  --d-r-lg: 14px;
+  --d-r-xl: 16px;
+  --d-r-full: 999px;
+  --d-g0: #FFFFFF;
+  --d-g1: #F7F7F8;
+  --d-g2: #EFEFF1;
+  --d-g3: #E3E3E6;
+  --d-g4: #D1D1D6;
+  --d-g5: #AEAEB2;
+  --d-g6: #8E8E93;
+  --d-g7: #636366;
+  --d-g8: #3A3A3C;
+  --d-g9: #1D1D1F;
+  --d-accent: #0071E3;
+  --d-accent-text: #0066CC;
+  --d-accent-soft: rgba(0, 113, 227, 0.24);
+  --d-on-accent: #FFFFFF;
+  --d-success: #1E8E3E;
+  --d-success-text: #1A7F37;
+  --d-success-wash: #EEF8F0;
+  --d-warning: #B25000;
+  --d-error: #D70015;
+  --d-close: #FF5F57;
+  --d-minimize: #FEBC2E;
+  --d-light-glyph: rgba(0, 0, 0, 0.55);
+  --d-wall-1: #B6A7CB;
+  --d-wall-2: #C7A8B8;
+  --d-wall-3: #8E80AF;
+  --d-grain: 0.08;
+  --d-dim-1: rgba(0, 0, 0, 0.12);
+  --d-dim-2: rgba(0, 0, 0, 0.35);
+  --d-edge: rgba(255, 255, 255, 0.9);
+  --d-hover: rgba(0, 0, 0, 0.05);
+  --d-glass-1: rgba(255, 255, 255, 0.64);
+  --d-glass-2: rgba(250, 250, 252, 0.9);
+  --d-blur: blur(20px) saturate(180%);
+  --d-hair: rgba(0, 0, 0, 0.12);
+  --d-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.1);
+  --d-shadow-2: 0 2px 6px rgba(0, 0, 0, 0.08), 0 12px 28px rgba(0, 0, 0, 0.14);
+  --d-shadow-3: 0 4px 12px rgba(0, 0, 0, 0.1), 0 24px 56px rgba(0, 0, 0, 0.22);
+  --d-t1: 120ms;
+  --d-t2: 200ms;
+  --d-t3: 280ms;
+  --d-in: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --d-out: cubic-bezier(0.4, 0, 1, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :where(:root[data-look="classic"]) .desk-stage {
+    --d-g0: #1C1C1E;
+    --d-g1: #232326;
+    --d-g2: #2C2C2E;
+    --d-g3: #3A3A3C;
+    --d-g4: #48484A;
+    --d-g5: #636366;
+    --d-g6: #8E8E93;
+    --d-g7: #AEAEB2;
+    --d-g8: #D1D1D6;
+    --d-g9: #F5F5F7;
+    --d-accent-text: #4DA3FF;
+    --d-accent-soft: rgba(77, 163, 255, 0.3);
+    --d-success: #30D158;
+    --d-success-text: #30D158;
+    --d-success-wash: #1E3325;
+    --d-warning: #FFB340;
+    --d-error: #FF6961;
+    --d-wall-1: #3B2F4E;
+    --d-wall-2: #4A3141;
+    --d-wall-3: #221D33;
+    --d-grain: 0.1;
+    --d-hover: rgba(255, 255, 255, 0.07);
+    --d-glass-1: rgba(36, 36, 40, 0.64);
+    --d-glass-2: rgba(44, 44, 48, 0.9);
+    --d-hair: rgba(255, 255, 255, 0.14);
+    --d-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+    --d-shadow-2: 0 2px 6px rgba(0, 0, 0, 0.3), 0 12px 28px rgba(0, 0, 0, 0.4);
+    --d-shadow-3: 0 4px 12px rgba(0, 0, 0, 0.3), 0 24px 56px rgba(0, 0, 0, 0.5);
+  }
+}
+
+:root[data-look="classic"][data-brand="emerald"] .desk-stage {
+  --d-accent: #168176;
+  --d-accent-text: #0E6B62;
+  --d-accent-soft: rgba(22, 129, 118, 0.24);
+  --d-wall-1: #A7CEC2;
+  --d-wall-2: #8DBDB2;
+  --d-wall-3: #4F8B85;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-look="classic"][data-brand="emerald"] .desk-stage {
+    --d-accent-text: #5CCDB8;
+    --d-accent-soft: rgba(92, 205, 184, 0.3);
+    --d-wall-1: #0F3A37;
+    --d-wall-2: #134440;
+    --d-wall-3: #061D1E;
+  }
+}
+
+:root[data-look="classic"][data-brand="orange"] .desk-stage {
+  --d-accent: #C7461C;
+  --d-accent-text: #B23E17;
+  --d-accent-soft: rgba(236, 99, 44, 0.24);
+  --d-wall-1: #F4DCCD;
+  --d-wall-2: #EFC2A6;
+  --d-wall-3: #DF9670;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-look="classic"][data-brand="orange"] .desk-stage {
+    --d-accent-text: #FF8754;
+    --d-accent-soft: rgba(255, 135, 84, 0.3);
+    --d-wall-1: #2A1C15;
+    --d-wall-2: #3A2318;
+    --d-wall-3: #141110;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :where(:root[data-look="classic"]) .desk-stage {
+    --d-glass-1: var(--d-g1); --d-glass-2: var(--d-g0);
+  }
+}
+
+:where(:root[data-look="classic"]) .desk-stage {
+  position: relative;
+  max-width: 1440px;
+  margin: var(--d-s7) auto 0;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
+  color: var(--d-g9);
+  font-family: var(--d-font);
+  font-size: var(--d-fs-2);
+  line-height: var(--d-lh-text);
+}
+:where(:root[data-look="classic"]) .desk-stage[data-layout="tall"] {
+  max-width: 480px;
+}
+:where(:root[data-look="classic"]) .desk-stage[data-layout="wide"] {
+  --d-frame-max: max(960px, calc((100vh - var(--bar-h) - var(--d-s6) * 2) * 1280 / 800));
+}
+:where(:root[data-look="classic"]) .desk-stage[data-layout="medium"] {
+  --d-frame-max: max(720px, calc((100vh - var(--bar-h) - var(--d-guide-room) - var(--d-s6) * 2) * 1024 / 720));
+}
+@supports (height: 100svh) {
+  :where(:root[data-look="classic"]) .desk-stage[data-layout="wide"] {
+    --d-frame-max: max(960px, calc((100svh - var(--bar-h) - var(--d-s6) * 2) * 1280 / 800));
+  }
+  :where(:root[data-look="classic"]) .desk-stage[data-layout="medium"] {
+    --d-frame-max: max(720px, calc((100svh - var(--bar-h) - var(--d-guide-room) - var(--d-s6) * 2) * 1024 / 720));
+  }
+}
+
+:where(:root[data-look="classic"]) .desk-stage button {
+  font: inherit; color: inherit;
+}
+:where(:root[data-look="classic"]) .desk-stage :focus-visible {
+  outline: var(--d-ring) solid var(--d-accent); outline-offset: var(--d-ring);
+}
+:where(:root[data-look="classic"]) .desk-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--d-r-xl);
+  background: var(--d-g1);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-3);
+}
+:where(:root[data-look="classic"]) .desk-frame, :where(:root[data-look="classic"]) .guide-slot[data-slot="below"] {
+  max-width: var(--d-frame-max, none); margin-inline: auto;
+}
+:where(:root[data-look="classic"]) .desk-fit {
+  position: relative; overflow: hidden; aspect-ratio: 1280 / 800;
+}
+:where(:root[data-look="classic"]) .dscreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1280px;
+  height: 800px;
+  overflow: hidden;
+  transform-origin: 0 0;
+  transform: scale(var(--k, 1));
+  -webkit-user-select: none;
+  user-select: none;
+}
+:where(:root[data-look="classic"]) .dscreen svg {
+  text-rendering: geometricPrecision;
+}
+:where(:root[data-look="classic"]) .desk-scene {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--d-wall-1), var(--d-wall-2) 55%, var(--d-wall-3));
+}
+:where(:root[data-look="classic"]) .desk-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: var(--d-grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+:where(:root[data-look="classic"]) .desk-scene .desk-svg {
+  position: absolute; inset: 0; display: none; width: 100%; height: 100%;
+}
+:where(:root[data-look="classic"]) .desk-scene .desk-svg > rect:first-of-type {
+  visibility: hidden;
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="wide"] .desk-svg[data-layout="wide"], :where(:root[data-look="classic"]) .dscreen[data-layout="medium"] .desk-svg[data-layout="medium"], :where(:root[data-look="classic"]) .dscreen[data-layout="tall"] .desk-svg[data-layout="tall"] {
+  display: block;
+}
+:where(:root[data-look="classic"]) .desk-scene .win {
+  transform-box: fill-box; transform-origin: 50% 50%;
+}
+:where(:root[data-look="classic"]) .desk-bar {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  inset-inline: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--d-bar);
+  padding-inline: var(--d-s4);
+  border-bottom: var(--d-hairline) solid var(--d-hair);
+  background: var(--d-glass-1);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  font-size: var(--d-fs-2);
+  line-height: var(--d-lh-head);
+}
+:where(:root[data-look="classic"]) .bar-app {
+  font-weight: var(--d-bold);
+}
+:where(:root[data-look="classic"]) .bar-end {
+  display: flex; align-items: center; gap: var(--d-s3);
+}
+:where(:root[data-look="classic"]) .bar-clock {
+  font-variant-numeric: tabular-nums; white-space: pre;
+}
+:where(:root[data-look="classic"]) .bar-snapfly {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--d-control);
+  height: var(--d-s5);
+  padding: 0;
+  border: 0;
+  border-radius: var(--d-r-sm);
+  background: none;
+  cursor: pointer;
+  transition: background-color var(--d-t1) var(--d-in);
+}
+:where(:root[data-look="classic"]) .bar-snapfly:hover, :where(:root[data-look="classic"]) .bar-snapfly[aria-expanded="true"] {
+  background: var(--d-hover);
+}
+:where(:root[data-look="classic"]) .bar-snapfly .icon {
+  grid-area: 1 / 1; width: var(--d-s4); height: var(--d-s4);
+}
+:where(:root[data-look="classic"]) .bar-stop {
+  display: none; color: var(--d-error);
+}
+:where(:root[data-look="classic"]) .dscreen.recording .bar-shirt {
+  display: none;
+}
+:where(:root[data-look="classic"]) .dscreen.recording .bar-stop {
+  display: block;
+}
+:where(:root[data-look="classic"]) .dline {
+  position: absolute; z-index: 6; top: var(--d-bar); inset-inline: 0; height: 0;
+}
+:where(:root[data-look="classic"]) .dline-rope {
+  position: absolute; top: 0; left: 0; width: 100%; height: var(--d-s7); overflow: visible; pointer-events: none;
+}
+:where(:root[data-look="classic"]) .dline-rope path {
+  fill: none; stroke: var(--d-g6); stroke-width: calc(var(--d-hairline) * 1.5); vector-effect: non-scaling-stroke;
+}
+:where(:root[data-look="classic"]) .dline-pegs {
+  margin: 0; padding: 0; list-style: none;
+}
+:where(:root[data-look="classic"]) .dcard {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--card-w, 160px);
+  transform-origin: 50% 0;
+  transition: transform var(--d-t3) var(--d-in), opacity var(--d-t2) var(--d-in);
+}
+:where(:root[data-look="classic"]) .dcard.landing {
+  opacity: 0; transition: none;
+}
+:where(:root[data-look="classic"]) .dcard.leaving {
+  opacity: 0; transition: opacity var(--d-t2) var(--d-out), transform var(--d-t2) var(--d-out);
+}
+:where(:root[data-look="classic"]) .dclip {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--d-s3) * -1);
+  left: 50%;
+  width: var(--d-s2);
+  height: var(--d-s5);
+  translate: -50% 0;
+  border-radius: var(--d-r-sm);
+  background: linear-gradient(90deg, var(--d-g5), var(--d-g2) 45%, var(--d-g6));
+  box-shadow: var(--d-shadow-1);
+}
+:where(:root[data-look="classic"]) .dphoto {
+  position: relative;
+  padding: var(--d-s1);
+  border-radius: var(--d-r-md);
+  background: var(--d-glass-2);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-2);
+}
+:where(:root[data-look="classic"]) .dcard-hit {
+  display: block; width: 100%; padding: 0; border: 0; border-radius: var(--d-r-sm); background: none; cursor: pointer;
+}
+:where(:root[data-look="classic"]) .dcard-img {
+  display: block; overflow: hidden; border-radius: var(--d-r-sm);
+}
+:where(:root[data-look="classic"]) .dcard-img svg {
+  display: block; width: 100%; height: 100%;
+}
+:where(:root[data-look="classic"]) .dbadge {
+  position: absolute;
+  bottom: var(--d-s3);
+  inset-inline-start: var(--d-s3);
+  display: none;
+  align-items: center;
+  gap: var(--d-s1);
+  height: var(--d-s4);
+  padding-inline: var(--d-s1) var(--d-s2);
+  border-radius: var(--d-r-full);
+  background: var(--d-dim-2);
+  color: var(--d-on-accent);
+  font-size: var(--d-fs-1);
+  font-weight: var(--d-bold);
+  font-variant-numeric: tabular-nums;
+}
+:where(:root[data-look="classic"]) .dcard.video .dbadge {
+  display: inline-flex;
+}
+:where(:root[data-look="classic"]) .dbadge .icon {
+  width: var(--d-s2); height: var(--d-s2);
+}
+:where(:root[data-look="classic"]) .dcard-x {
+  position: absolute;
+  top: calc(var(--d-s2) * -1);
+  inset-inline-start: calc(var(--d-s2) * -1);
+  display: grid;
+  place-items: center;
+  width: calc(var(--d-s4) + var(--d-s1));
+  height: calc(var(--d-s4) + var(--d-s1));
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--d-glass-2);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-1);
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity var(--d-t1) var(--d-in);
+}
+:where(:root[data-look="classic"]) .dcard-x::before {
+  content: ""; position: absolute; inset: calc(var(--d-s3) * -1);
+}
+:where(:root[data-look="classic"]) .dcard-x .icon {
+  width: var(--d-s3); height: var(--d-s3);
+}
+:where(:root[data-look="classic"]) .dcard:hover .dcard-x, :where(:root[data-look="classic"]) .dcard:focus-within .dcard-x {
+  opacity: 1;
+}
+@media (pointer: coarse) {
+  :where(:root[data-look="classic"]) .dcard-x {
+    opacity: 1;
+  }
+}
+
+:where(:root[data-look="classic"]) .wctl {
+  position: absolute; inset: 0; z-index: 5; pointer-events: none;
+}
+:where(:root[data-look="classic"]) .wctl[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .wctl > * {
+  position: absolute; pointer-events: auto;
+}
+:where(:root[data-look="classic"]) .dlight {
+  display: grid;
+  place-items: center;
+  width: var(--d-light);
+  height: var(--d-light);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--d-light-glyph);
+  cursor: pointer;
+  translate: -50% -50%;
+}
+:where(:root[data-look="classic"]) .dlight::before {
+  content: ""; position: absolute; inset: calc(var(--d-s1) * -1); border-radius: 50%;
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="tall"] .dlight::before {
+  inset: calc(var(--d-s4) * -1);
+}
+:where(:root[data-look="classic"]) .dlight .icon {
+  width: var(--d-s2); height: var(--d-s2); opacity: 0; transition: opacity var(--d-t1) var(--d-in);
+}
+:where(:root[data-look="classic"]) .wctl:hover .dlight .icon, :where(:root[data-look="classic"]) .dlight:focus-visible .icon {
+  opacity: 1;
+}
+:where(:root[data-look="classic"]) .sort-btn {
+  padding: 0;
+  border: 0;
+  border-radius: var(--d-r-sm);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color var(--d-t1) var(--d-in);
+}
+:where(:root[data-look="classic"]) .sort-btn:hover, :where(:root[data-look="classic"]) .sort-btn[aria-expanded="true"] {
+  background: var(--d-hover);
+}
+:where(:root[data-look="classic"]) .dsend {
+  display: flex;
+  align-items: center;
+  gap: var(--d-s2);
+  height: calc(var(--d-control) + var(--d-s2));
+  padding: var(--d-s1);
+  padding-inline-start: var(--d-s2);
+  border: 0;
+  border-radius: var(--d-r-full);
+  background: var(--d-glass-2);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-2);
+  cursor: pointer;
+  translate: -100% -100%;
+  transition: transform var(--d-t1) var(--d-in), opacity var(--d-t2) var(--d-in);
+}
+:where(:root[data-look="classic"])[dir="rtl"] .dsend {
+  translate: 0 -100%;
+}
+:where(:root[data-look="classic"]) .dsend[hidden] {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  :where(:root[data-look="classic"]) .dsend:hover {
+    transform: scale(1.04);
+  }
+}
+
+:where(:root[data-look="classic"]) .dsend:active {
+  transform: scale(0.96);
+}
+:where(:root[data-look="classic"]) .dsend-thumbs {
+  position: relative; width: var(--d-s6); height: var(--d-s5);
+}
+:where(:root[data-look="classic"]) .dsend-thumbs span {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  width: var(--d-s5);
+  height: var(--d-s5);
+  overflow: hidden;
+  border-radius: var(--d-r-sm);
+  background: var(--d-g3);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair);
+}
+:where(:root[data-look="classic"]) .dsend-thumbs span:first-child {
+  rotate: -8deg; translate: var(--d-s1) 0;
+}
+:where(:root[data-look="classic"]) .dsend-thumbs span svg {
+  display: block; width: 100%; height: 100%;
+}
+:where(:root[data-look="classic"]) .dsend-count {
+  font-weight: var(--d-bold); font-variant-numeric: tabular-nums;
+}
+:where(:root[data-look="classic"]) .dsend-plane {
+  display: grid;
+  place-items: center;
+  width: var(--d-control);
+  height: var(--d-control);
+  border-radius: 50%;
+  background: var(--d-accent);
+  color: var(--d-on-accent);
+}
+:where(:root[data-look="classic"]) .dsend-plane .icon {
+  width: var(--d-s4); height: var(--d-s4);
+}
+:where(:root[data-look="classic"])[dir="rtl"] .dsend-plane .icon {
+  transform: scaleX(-1);
+}
+:where(:root[data-look="classic"]) .dmenu {
+  position: absolute;
+  z-index: 30;
+  min-width: var(--d-menu);
+  width: max-content;
+  margin: 0;
+  padding: var(--d-s1);
+  list-style: none;
+  border-radius: var(--d-r-md);
+  background: var(--d-glass-2);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-2);
+  font-size: var(--d-fs-2);
+  animation: d-pop var(--d-t2) var(--d-in);
+}
+:where(:root[data-look="classic"]) .dmenu[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .dmenu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--d-s4);
+  width: 100%;
+  min-height: var(--d-s5);
+  padding: 0 var(--d-s3) 0 var(--d-s6);
+  border: 0;
+  border-radius: var(--d-r-sm);
+  background: none;
+  text-align: start;
+  cursor: pointer;
+}
+:where(:root[data-look="classic"])[dir="rtl"] .dmenu-item {
+  padding: 0 var(--d-s6) 0 var(--d-s3);
+}
+:where(:root[data-look="classic"]) .dmenu-item > span:first-child {
+  flex: 1;
+}
+:where(:root[data-look="classic"]) .dmenu-item:hover:not(:disabled), :where(:root[data-look="classic"]) .dmenu-item:focus-visible, :where(:root[data-look="classic"]) .has-sub.open > .dmenu-item {
+  outline: none;
+  background: var(--d-accent);
+  color: var(--d-on-accent);
+}
+:where(:root[data-look="classic"]) .dmenu-item:disabled {
+  color: var(--d-g6); cursor: default;
+}
+:where(:root[data-look="classic"]) .dmenu-key {
+  color: var(--d-g7); font-variant-numeric: tabular-nums;
+}
+:where(:root[data-look="classic"]) .dmenu-item:hover .dmenu-key, :where(:root[data-look="classic"]) .dmenu-item:focus-visible .dmenu-key {
+  color: inherit;
+}
+:where(:root[data-look="classic"]) .dmenu-tick {
+  position: absolute; inset-inline-start: var(--d-s3); width: var(--d-s3); height: var(--d-s3); visibility: hidden;
+}
+:where(:root[data-look="classic"]) .dmenu-item[aria-checked="true"] .dmenu-tick {
+  visibility: visible;
+}
+:where(:root[data-look="classic"]) .dmenu-chev {
+  width: var(--d-s3); height: var(--d-s3);
+}
+:where(:root[data-look="classic"])[dir="rtl"] .dmenu-chev {
+  transform: scaleX(-1);
+}
+:where(:root[data-look="classic"]) .dmenu-sep {
+  height: var(--d-hairline); margin: var(--d-s1) var(--d-s3); background: var(--d-hair);
+}
+:where(:root[data-look="classic"]) .has-sub {
+  position: relative;
+}
+:where(:root[data-look="classic"]) .dmenu-sub {
+  top: calc(var(--d-s1) * -1); inset-inline-start: calc(100% + var(--d-s1)); display: none; min-width: 0;
+}
+:where(:root[data-look="classic"]) .has-sub.open > .dmenu-sub {
+  display: block;
+}
+:where(:root[data-look="classic"]) .has-sub.flip > .dmenu-sub {
+  inset-inline-start: auto; inset-inline-end: calc(100% + var(--d-s1));
+}
+:where(:root[data-look="classic"]) .has-sub.below > .dmenu-sub {
+  top: calc(100% + var(--d-s1)); inset-inline-start: var(--d-s5);
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="tall"] .dmenu {
+  font-size: var(--d-fs-3);
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="tall"] .dmenu-item {
+  min-height: var(--d-target);
+}
+:where(:root[data-look="classic"]) .dshot {
+  position: absolute;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  width: var(--d-shot);
+  height: var(--d-shot);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--d-accent);
+  color: var(--d-on-accent);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-1);
+  cursor: pointer;
+  translate: -50% -50%;
+  transition: transform var(--d-t1) var(--d-in), background-color var(--d-t2) var(--d-in);
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="tall"] .dshot {
+  width: var(--d-target); height: var(--d-target);
+}
+@media (hover: hover) and (pointer: fine) {
+  :where(:root[data-look="classic"]) .dshot:hover {
+    transform: scale(1.08);
+  }
+}
+
+:where(:root[data-look="classic"]) .dshot:active {
+  transform: scale(0.95);
+}
+:where(:root[data-look="classic"]) .dshot[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .dshot .icon {
+  grid-area: 1 / 1; width: var(--d-s5); height: var(--d-s5);
+}
+:where(:root[data-look="classic"]) .dshot-stop {
+  display: none;
+}
+:where(:root[data-look="classic"]) .dscreen.recording .dshot {
+  background: var(--d-error);
+}
+:where(:root[data-look="classic"]) .dscreen.recording .dshot-glyph {
+  display: none;
+}
+:where(:root[data-look="classic"]) .dscreen.recording .dshot-stop {
+  display: block; width: var(--d-s4); height: var(--d-s4);
+}
+:where(:root[data-look="classic"]) .cap-overlay {
+  position: absolute; z-index: 20; inset: 0; overflow: hidden; cursor: crosshair; touch-action: none; outline: none;
+}
+:where(:root[data-look="classic"]) .cap-overlay[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .cap-dim {
+  position: absolute; inset: 0; background: var(--d-dim-1);
+}
+:where(:root[data-look="classic"]) .cap-overlay.dragging .cap-dim, :where(:root[data-look="classic"]) .cap-overlay.dragging .cap-win {
+  display: none;
+}
+:where(:root[data-look="classic"]) .cap-win {
+  position: absolute; border-radius: var(--d-r-lg); background: var(--d-accent-soft); pointer-events: none;
+}
+:where(:root[data-look="classic"]) .cap-win[hidden], :where(:root[data-look="classic"]) .cap-area[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .cap-area {
+  position: absolute; outline: var(--d-hairline) solid var(--d-edge); box-shadow: 0 0 0 9999px var(--d-dim-2); pointer-events: none;
+}
+:where(:root[data-look="classic"]) .cap-size {
+  position: absolute;
+  top: calc(100% + var(--d-s2));
+  inset-inline-end: 0;
+  height: var(--d-s5);
+  padding: 0 var(--d-s2);
+  border-radius: var(--d-r-full);
+  background: var(--d-dim-2);
+  color: var(--d-on-accent);
+  font-size: var(--d-fs-1);
+  font-weight: var(--d-medium);
+  line-height: var(--d-s5);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+:where(:root[data-look="classic"]) .cap-hint {
+  position: absolute;
+  bottom: calc(var(--d-icon) + var(--d-s2) * 2 + var(--d-s4) + var(--d-s3));
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: var(--d-s3);
+  width: max-content;
+  max-width: calc(100% - var(--d-s6));
+  margin: 0;
+  padding: var(--d-s2) var(--d-s4);
+  border-radius: var(--d-r-full);
+  background: var(--d-glass-2);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-2);
+  font-size: var(--d-fs-2);
+  font-weight: var(--d-medium);
+  text-align: center;
+  cursor: default;
+  transition: opacity var(--d-t1) var(--d-out);
+}
+:where(:root[data-look="classic"]) .cap-overlay.dragging .cap-hint {
+  opacity: 0;
+}
+:where(:root[data-look="classic"]) .cap-cancel {
+  display: none;
+  flex: none;
+  min-height: var(--d-control);
+  padding: 0 var(--d-s3);
+  border: 0;
+  border-radius: var(--d-r-full);
+  background: var(--d-g2);
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="medium"] .cap-hint {
+  bottom: calc(var(--d-icon-compact) + var(--d-s2) * 2 + var(--d-s4) + var(--d-s3));
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="tall"] .cap-hint {
+  bottom: var(--d-s4); font-size: var(--d-fs-3); border-radius: var(--d-r-md);
+}
+@media (pointer: coarse) {
+  :where(:root[data-look="classic"]) .cap-cancel {
+    display: inline-block; min-height: var(--d-target);
+  }
+}
+
+:where(:root[data-look="classic"]) .cap-flash {
+  position: absolute; z-index: 19; background: var(--d-g0); opacity: 0; pointer-events: none;
+}
+:where(:root[data-look="classic"]) .cap-flash.go {
+  animation: d-flash var(--d-t3) var(--d-out);
+}
+:where(:root[data-look="classic"]) .rec-edge {
+  position: absolute; z-index: 7; outline: var(--d-hairline) solid var(--d-edge); box-shadow: 0 0 0 var(--d-ring) var(--d-dim-2); pointer-events: none;
+}
+:where(:root[data-look="classic"]) .rec-edge[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .dpointer {
+  position: absolute; z-index: 21; width: var(--d-s5); height: var(--d-s5); pointer-events: none;
+}
+:where(:root[data-look="classic"]) .dpointer[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .dpointer .icon {
+  width: 100%; height: 100%;
+}
+:where(:root[data-look="classic"]) .dstack {
+  position: absolute;
+  z-index: 18;
+  bottom: calc(var(--d-icon) + var(--d-s2) * 2 + var(--d-s4) + var(--d-s3));
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--d-s2);
+  width: max-content;
+  max-width: calc(100% - var(--d-s6));
+  pointer-events: none;
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="medium"] .dstack {
+  bottom: calc(var(--d-icon-compact) + var(--d-s2) * 2 + var(--d-s4) + var(--d-s3));
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="tall"] .dstack {
+  bottom: var(--d-s3);
+}
+:where(:root[data-look="classic"]) .dstack > * {
+  pointer-events: auto;
+}
+:where(:root[data-look="classic"]) .dtoasts {
+  display: flex; flex-direction: column; align-items: center; gap: var(--d-s2);
+}
+:where(:root[data-look="classic"]) .dtoast {
+  display: flex;
+  align-items: center;
+  gap: var(--d-s3);
+  min-height: var(--d-control);
+  padding: var(--d-s1) var(--d-s1) var(--d-s1) var(--d-s4);
+  border-radius: var(--d-r-md);
+  background: var(--d-glass-2);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-2);
+  font-size: var(--d-fs-2);
+  font-weight: var(--d-medium);
+  animation: d-rise var(--d-t2) var(--d-in);
+}
+:where(:root[data-look="classic"])[dir="rtl"] .dtoast {
+  padding: var(--d-s1) var(--d-s4) var(--d-s1) var(--d-s1);
+}
+:where(:root[data-look="classic"]) .dtoast:not(:has(button)) {
+  padding-inline-end: var(--d-s4);
+}
+:where(:root[data-look="classic"]) .dtoast.out {
+  opacity: 0; transition: opacity var(--d-t1) var(--d-out);
+}
+:where(:root[data-look="classic"]) .dtoast button {
+  min-height: calc(var(--d-control) - var(--d-s2));
+  padding: 0 var(--d-s3);
+  border: 0;
+  border-radius: var(--d-r-sm);
+  background: var(--d-hover);
+  color: var(--d-accent-text);
+  font-weight: var(--d-bold);
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="tall"] .dtoast {
+  font-size: var(--d-fs-3);
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="tall"] .dtoast button {
+  min-height: var(--d-target);
+}
+:where(:root[data-look="classic"]) .capsule {
+  display: flex;
+  align-items: center;
+  gap: var(--d-s2);
+  height: var(--d-control);
+  padding: 0 var(--d-s3);
+  border: 0;
+  border-radius: var(--d-r-full);
+  background: var(--d-glass-2);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-2);
+  cursor: pointer;
+  animation: d-rise var(--d-t2) var(--d-in);
+}
+:where(:root[data-look="classic"]) .capsule[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .capsule[data-kind="countdown"] [data-for="recording"], :where(:root[data-look="classic"]) .capsule[data-kind="recording"] [data-for="countdown"] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .capsule .icon {
+  width: var(--d-s4); height: var(--d-s4);
+}
+:where(:root[data-look="classic"]) .cap-timer {
+  display: flex; color: var(--d-g7);
+}
+:where(:root[data-look="classic"]) .cap-count, :where(:root[data-look="classic"]) .cap-time {
+  font-weight: var(--d-bold); font-variant-numeric: tabular-nums;
+}
+:where(:root[data-look="classic"]) .cap-count {
+  min-width: var(--d-s3); font-size: var(--d-fs-3); text-align: center;
+}
+:where(:root[data-look="classic"]) .cap-x, :where(:root[data-look="classic"]) .cap-stop {
+  display: grid; place-items: center; width: var(--d-s5); height: var(--d-s5); border-radius: 50%;
+}
+:where(:root[data-look="classic"]) .cap-x {
+  background: var(--d-g2);
+}
+:where(:root[data-look="classic"]) .cap-x .icon {
+  width: var(--d-s3); height: var(--d-s3);
+}
+:where(:root[data-look="classic"]) .cap-stop {
+  margin-inline-start: calc(var(--d-s1) * -1); background: var(--d-error); color: var(--d-on-accent);
+}
+:where(:root[data-look="classic"]) .cap-stop .icon {
+  width: var(--d-s3); height: var(--d-s3);
+}
+:where(:root[data-look="classic"]) .dock-slot[data-slot="desk"] {
+  position: absolute;
+  z-index: 12;
+  inset-inline: 0;
+  bottom: var(--d-s4);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+:where(:root[data-look="classic"]) .dock {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--d-s3);
+  padding: var(--d-s2);
+  border-radius: var(--d-r-xl);
+  background: var(--d-glass-1);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-2);
+  pointer-events: auto;
+}
+:where(:root[data-look="classic"]) .dock-item {
+  position: relative;
+  width: var(--d-icon);
+  height: var(--d-icon);
+  padding: 0;
+  border: 0;
+  border-radius: var(--d-r-lg);
+  background: none;
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .dscreen[data-layout="medium"] .dock-item {
+  width: var(--d-icon-compact); height: var(--d-icon-compact);
+}
+:where(:root[data-look="classic"]) .dock-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 100%;
+  transform: scale(calc(var(--mag, 1) * var(--press, 1)));
+  transition: transform var(--d-t1) var(--d-in);
+}
+:where(:root[data-look="classic"]) .dock-item:active {
+  --press: 0.95;
+}
+:where(:root[data-look="classic"]) .dock-icon svg {
+  display: block; width: 100%; height: 100%;
+}
+:where(:root[data-look="classic"]) .dock-icon .dock-full, :where(:root[data-look="classic"]) .dock-item.full .dock-icon svg:first-child {
+  display: none;
+}
+:where(:root[data-look="classic"]) .dock-item.full .dock-icon .dock-full {
+  display: block;
+}
+:where(:root[data-look="classic"]) .dock-sep {
+  align-self: stretch; width: var(--d-hairline); margin: var(--d-s2) 0; background: var(--d-hair);
+}
+:where(:root[data-look="classic"]) .dock-dot {
+  position: absolute;
+  bottom: calc(var(--d-s1) * -1.5);
+  left: 50%;
+  width: var(--d-s1);
+  height: var(--d-s1);
+  translate: -50% 0;
+  border-radius: 50%;
+  background: var(--d-g7);
+  opacity: 0;
+  transition: opacity var(--d-t2) var(--d-in);
+}
+:where(:root[data-look="classic"]) .dock-item.open .dock-dot {
+  opacity: 1;
+}
+:where(:root[data-look="classic"]) .dock-item.hinted .dock-icon {
+  border-radius: var(--d-r-lg); box-shadow: 0 0 0 var(--d-ring) var(--d-accent), 0 0 0 var(--d-halo) var(--d-accent-soft);
+}
+:where(:root[data-look="classic"]) .dock-tip {
+  position: absolute;
+  bottom: calc(100% + var(--d-s3) + var(--lift, 0px));
+  left: 50%;
+  translate: -50% var(--d-s1);
+  padding: var(--d-s1) var(--d-s2);
+  border-radius: var(--d-r-sm);
+  background: var(--d-glass-2);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-1);
+  font-size: var(--d-fs-2);
+  font-weight: var(--d-medium);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--d-t1) var(--d-out), translate var(--d-t1) var(--d-out);
+}
+:where(:root[data-look="classic"]) .dock-item.tip .dock-tip, :where(:root[data-look="classic"]) .dock-item:focus-visible .dock-tip {
+  opacity: 1; translate: -50% 0; transition-timing-function: var(--d-in);
+}
+:where(:root[data-look="classic"]) .desk-foot {
+  display: none;
+}
+:where(:root[data-look="classic"]) .desk-stage[data-layout="tall"] .desk-foot {
+  display: block; border-top: var(--d-hairline) solid var(--d-hair); background: var(--d-glass-1);
+}
+:where(:root[data-look="classic"]) .dock-slot[data-slot="bar"] .dock {
+  justify-content: center;
+  gap: var(--d-s5);
+  padding: var(--d-s2) var(--d-s4) calc(var(--d-s3) + env(safe-area-inset-bottom));
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+:where(:root[data-look="classic"]) .trash-pop {
+  position: absolute;
+  z-index: 30;
+  width: var(--d-guide);
+  padding: var(--d-s3);
+  border-radius: var(--d-r-md);
+  background: var(--d-glass-2);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-2);
+  animation: d-pop var(--d-t2) var(--d-in);
+}
+:where(:root[data-look="classic"]) .trash-pop[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .trash-title {
+  margin: 0 0 var(--d-s2); font-weight: var(--d-bold);
+}
+:where(:root[data-look="classic"]) .trash-list {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--d-s2); margin: 0; padding: 0; list-style: none;
+}
+:where(:root[data-look="classic"]) .trash-list:empty {
+  display: none;
+}
+:where(:root[data-look="classic"]) .trash-item {
+  display: grid;
+  gap: var(--d-s1);
+  width: 100%;
+  padding: var(--d-s1);
+  border: 0;
+  border-radius: var(--d-r-sm);
+  background: var(--d-g2);
+  font-size: var(--d-fs-1);
+  font-weight: var(--d-medium);
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .trash-item:hover {
+  background: var(--d-g3);
+}
+:where(:root[data-look="classic"]) .trash-item svg {
+  display: block; width: 100%; aspect-ratio: 4 / 3; border-radius: var(--d-s1);
+}
+:where(:root[data-look="classic"]) .trash-empty {
+  margin: 0; color: var(--d-g7);
+}
+:where(:root[data-look="classic"]) .trash-pop.has-items .trash-empty {
+  display: none;
+}
+:where(:root[data-look="classic"]) .trash-clear {
+  width: 100%;
+  min-height: var(--d-control);
+  margin-top: var(--d-s3);
+  border: 0;
+  border-radius: var(--d-r-sm);
+  background: var(--d-g2);
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .trash-clear:disabled {
+  color: var(--d-g6); cursor: default;
+}
+:where(:root[data-look="classic"]) .dring {
+  position: absolute;
+  z-index: 17;
+  border-radius: var(--ring-r, var(--d-r-md));
+  box-shadow: 0 0 0 var(--d-ring) var(--d-accent), 0 0 0 var(--d-halo) var(--d-accent-soft);
+  pointer-events: none;
+  transition: opacity var(--d-t2) var(--d-in);
+}
+:where(:root[data-look="classic"]) .dring[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .guide {
+  position: absolute;
+  z-index: 40;
+  width: var(--d-guide);
+  padding: var(--d-s4);
+  border-radius: var(--d-r-md);
+  background: var(--d-glass-2);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  box-shadow: 0 0 0 var(--d-hairline) var(--d-hair), var(--d-shadow-2);
+  color: var(--d-g9);
+  font-family: var(--d-font);
+  text-align: start;
+  outline: none;
+  animation: d-rise var(--d-t3) var(--d-in);
+}
+:where(:root[data-look="classic"]) .guide[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .guide-head {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--d-s2);
+}
+:where(:root[data-look="classic"]) .guide-step {
+  margin: 0; color: var(--d-g7); font-size: var(--d-fs-2); font-weight: var(--d-medium); font-variant-numeric: tabular-nums;
+}
+:where(:root[data-look="classic"]) .guide-x {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--d-s5);
+  height: var(--d-s5);
+  margin: calc(var(--d-s1) * -1);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--d-g7);
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .guide-x::before {
+  content: ""; position: absolute; inset: calc(var(--d-s2) * -1);
+}
+:where(:root[data-look="classic"]) .guide-x:hover {
+  background: var(--d-hover); color: var(--d-g9);
+}
+:where(:root[data-look="classic"]) .guide-x .icon {
+  width: var(--d-s3); height: var(--d-s3);
+}
+:where(:root[data-look="classic"]) .guide-bar {
+  height: var(--d-s1); margin-top: var(--d-s2); overflow: hidden; border-radius: var(--d-r-full); background: var(--d-g3);
+}
+:where(:root[data-look="classic"]) .guide-bar span {
+  display: block;
+  height: 100%;
+  background: var(--d-accent);
+  transform-origin: 0 50%;
+  transform: scaleX(var(--p, 0));
+  transition: transform var(--d-t2) var(--d-in);
+}
+:where(:root[data-look="classic"])[dir="rtl"] .guide-bar span {
+  transform-origin: 100% 50%;
+}
+:where(:root[data-look="classic"]) .guide-title {
+  margin: var(--d-s3) 0 0; font-size: var(--d-fs-4); font-weight: var(--d-bold); line-height: var(--d-lh-head); letter-spacing: 0;
+}
+:where(:root[data-look="classic"]) .guide-text {
+  margin: var(--d-s1) 0 0; color: var(--d-g7); font-size: var(--d-fs-3); line-height: var(--d-lh-text);
+}
+:where(:root[data-look="classic"]) .guide-actions {
+  display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--d-s2); margin-top: var(--d-s4);
+}
+:where(:root[data-look="classic"]) .guide-skip, :where(:root[data-look="classic"]) .guide-go {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--d-s2);
+  min-height: var(--d-control);
+  padding: 0 var(--d-s3);
+  border: 0;
+  border-radius: var(--d-r-sm);
+  font-size: var(--d-fs-2);
+  font-weight: var(--d-bold);
+  text-decoration: none;
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .guide-skip {
+  background: var(--d-g2); color: var(--d-g9);
+}
+:where(:root[data-look="classic"]) .guide-go {
+  background: var(--d-accent); color: var(--d-on-accent);
+}
+:where(:root[data-look="classic"]) .guide-go[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .guide-go .icon {
+  width: var(--d-s4); height: var(--d-s4);
+}
+:where(:root[data-look="classic"]) .guide-arrow {
+  position: absolute;
+  width: var(--d-s3);
+  height: var(--d-s3);
+  rotate: 45deg;
+  background: var(--d-glass-2);
+  box-shadow: var(--d-hairline) var(--d-hairline) 0 var(--d-hair);
+}
+:where(:root[data-look="classic"]) .guide[data-side="left"] .guide-arrow {
+  right: calc(var(--d-s3) / -2); top: var(--ay, 50%); translate: 0 -50%; box-shadow: var(--d-hairline) calc(var(--d-hairline) * -1) 0 var(--d-hair);
+}
+:where(:root[data-look="classic"]) .guide[data-side="right"] .guide-arrow {
+  left: calc(var(--d-s3) / -2); top: var(--ay, 50%); translate: 0 -50%; box-shadow: calc(var(--d-hairline) * -1) var(--d-hairline) 0 var(--d-hair);
+}
+:where(:root[data-look="classic"]) .guide[data-side="below"] .guide-arrow {
+  top: calc(var(--d-s3) / -2); left: var(--ax, 50%); translate: -50% 0; box-shadow: calc(var(--d-hairline) * -1) calc(var(--d-hairline) * -1) 0 var(--d-hair);
+}
+:where(:root[data-look="classic"]) .guide[data-side="above"] .guide-arrow {
+  bottom: calc(var(--d-s3) / -2); left: var(--ax, 50%); translate: -50% 0;
+}
+:where(:root[data-look="classic"]) .guide[data-side="none"] .guide-arrow {
+  display: none;
+}
+:where(:root[data-look="classic"]) .guide-slot[data-slot="below"] {
+  position: relative;
+}
+:where(:root[data-look="classic"]) .guide-slot[data-slot="below"] .guide {
+  position: relative;
+  inset: auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: var(--d-s6);
+  width: auto;
+  margin-top: var(--d-s4);
+}
+:where(:root[data-look="classic"]) .guide-slot[data-slot="below"] .guide-head, :where(:root[data-look="classic"]) .guide-slot[data-slot="below"] .guide-bar {
+  grid-column: 1 / -1;
+}
+:where(:root[data-look="classic"]) .guide-slot[data-slot="below"] .guide-title, :where(:root[data-look="classic"]) .guide-slot[data-slot="below"] .guide-text {
+  grid-column: 1;
+}
+:where(:root[data-look="classic"]) .guide-slot[data-slot="below"] .guide-actions {
+  grid-column: 2; grid-row: 3 / span 2; align-self: end; flex-wrap: nowrap; margin-top: 0;
+}
+:where(:root[data-look="classic"]) .guide-slot[data-slot="sheet"] .guide {
+  position: relative;
+  width: auto;
+  border-radius: 0;
+  box-shadow: none;
+  border-bottom: var(--d-hairline) solid var(--d-hair);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: transparent;
+}
+:where(:root[data-look="classic"]) .guide-slot[data-slot="sheet"] .guide-arrow {
+  display: none;
+}
+:where(:root[data-look="classic"]) .guide-slot[data-slot="sheet"] .guide-skip, :where(:root[data-look="classic"]) .guide-slot[data-slot="sheet"] .guide-go {
+  min-height: var(--d-target); font-size: var(--d-fs-3);
+}
+:where(:root[data-look="classic"]) .guide-slot[data-slot="sheet"] .guide-x {
+  width: var(--d-target); height: var(--d-target); margin: calc(var(--d-s3) * -1);
+}
+:where(:root[data-look="classic"]) .guide-slot[data-slot="sheet"] .guide-step {
+  font-size: var(--d-fs-3);
+}
+:where(:root[data-look="classic"]) .desk-note {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 40em;
+  margin: 24px auto 0;
+  padding-inline: var(--gutter);
+  color: var(--on-wall-2);
+  font-size: 15px;
+  text-align: center;
+}
+:where(:root[data-look="classic"]) .desk-guide-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 8px 16px;
+  border: 0.5px solid var(--pill-edge);
+  border-radius: 999px;
+  background: var(--pill-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  color: var(--on-wall);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+@media (pointer: coarse) {
+  :where(:root[data-look="classic"]) .desk-guide-btn {
+    min-height: 44px;
+  }
+}
+
+:where(:root[data-look="classic"]) .desk-guide-btn:hover {
+  background: var(--pill-bg-hover);
+}
+:where(:root[data-look="classic"]) .desk-guide-btn:active {
+  scale: 0.96;
+}
+:where(:root[data-look="classic"]) .desk-guide-btn .icon {
+  width: 15px; height: 15px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(:root[data-look="classic"]) .desk-stage *, :where(:root[data-look="classic"]) .desk-stage *::before {
+    transition-property: opacity !important;
+  }
+  :where(:root[data-look="classic"]) .dock-icon, :where(:root[data-look="classic"]) .dshot, :where(:root[data-look="classic"]) .dsend {
+    transform: none !important;
+  }
+  :where(:root[data-look="classic"]) .dmenu, :where(:root[data-look="classic"]) .guide, :where(:root[data-look="classic"]) .dtoast, :where(:root[data-look="classic"]) .capsule, :where(:root[data-look="classic"]) .trash-pop {
+    animation-name: d-fade !important;
+  }
+}
+
+:where(:root[data-look="classic"]) .steps-line {
+  position: relative; margin-top: clamp(40px, 6vw, 64px);
+}
+:where(:root[data-look="classic"]) .steps-rope {
+  display: none;
+}
+:where(:root[data-look="classic"]) .steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:where(:root[data-look="classic"]) .step {
+  position: relative;
+  padding: 22px 22px 24px;
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 0.5px solid var(--hairline);
+  box-shadow: var(--shadow-float);
+}
+:where(:root[data-look="classic"]) .step .clip {
+  display: none;
+}
+:where(:root[data-look="classic"]) .step-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  background: var(--brand-gradient);
+  color: #FFFFFF;
+  box-shadow: 0 4px 10px var(--brand-glow);
+}
+:where(:root[data-look="classic"]) .step-icon .icon {
+  width: 22px; height: 22px;
+}
+:where(:root[data-look="classic"]) .step h3 {
+  display: flex; align-items: baseline; gap: 8px; font-size: 18px; font-weight: 700; letter-spacing: -0.01em;
+}
+:where(:root[data-look="classic"]) .step h3:lang(ar) {
+  letter-spacing: 0;
+}
+:where(:root[data-look="classic"]) .step-n {
+  color: var(--link); font-variant-numeric: tabular-nums;
+}
+:where(:root[data-look="classic"]) .step p {
+  margin-top: 8px; color: var(--ink-2); font-size: 15px; line-height: 1.5;
+}
+@media (min-width: 961px) {
+  :where(:root[data-look="classic"]) .steps-line {
+    padding-top: 8px;
+  }
+  :where(:root[data-look="classic"]) .steps-rope {
+    display: block; top: 8px;
+  }
+  :where(:root[data-look="classic"]) .step {
+    margin-top: calc(var(--rope-h) * (0.14 + 1.44 * var(--t) * (1 - var(--t))) + 2px);
+    rotate: var(--tilt);
+    transform-origin: 50% 0;
+    transition: rotate 0.5s var(--ease-out);
+  }
+  :where(:root[data-look="classic"]) .step .clip {
+    display: block;
+  }
+  :where(:root[data-look="classic"]) .step.arrive-card.pre {
+    transform: translateY(-40px);
+  }
+}
+
+@media (min-width: 961px) and (hover: hover) and (pointer: fine) {
+  :where(:root[data-look="classic"]) .step:hover {
+    rotate: 0deg;
+  }
+}
+
+:where(:root[data-look="classic"]) .try-note {
+  font-size: 15px !important;
+}
+:where(:root[data-look="classic"]) .hide-win {
+  justify-self: end; width: 100%; max-width: 600px;
+}
+:where(:root[data-look="classic"]) .hide-canvas {
+  padding: 18px 18px 6px; background: var(--fill);
+}
+:where(:root[data-look="classic"]) .photo-shot {
+  position: relative;
+  max-width: 420px;
+  margin-inline: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  cursor: crosshair;
+  touch-action: none;
+}
+:where(:root[data-look="classic"]) .rc {
+  padding: 20px 22px 18px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  color: #1D1D1F;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-user-select: none;
+  user-select: none;
+}
+:where(:root[data-look="classic"]) .rc-head {
+  display: grid; grid-template-columns: auto 1fr; column-gap: 12px; align-items: center; padding-bottom: 14px; border-bottom: 1px solid #E5E5EA;
+}
+:where(:root[data-look="classic"]) .rc-check {
+  grid-row: span 2; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #34C759; color: #FFFFFF;
+}
+:where(:root[data-look="classic"]) .rc-check .icon {
+  width: 20px; height: 20px;
+}
+:where(:root[data-look="classic"]) .rc-title {
+  font-size: 15px; font-weight: 700;
+}
+:where(:root[data-look="classic"]) .rc-date {
+  color: #6E6E73; font-size: 12px;
+}
+:where(:root[data-look="classic"]) .rc-amount {
+  grid-column: 1 / -1; margin-top: 10px; font-size: 26px; font-weight: 700; letter-spacing: -0.01em;
+}
+:where(:root[data-look="classic"]) .rc-rows {
+  display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 7px 16px; margin: 12px 0 0;
+}
+:where(:root[data-look="classic"]) .rc-rows div {
+  display: contents;
+}
+:where(:root[data-look="classic"]) .rc-rows dt {
+  color: #6E6E73; font-size: 12px;
+}
+:where(:root[data-look="classic"]) .rc-rows dd {
+  margin: 0;
+}
+:where(:root[data-look="classic"]) .pc.ltr {
+  direction: ltr; unicode-bidi: isolate;
+}
+:where(:root[data-look="classic"]) .hide-boxes {
+  position: absolute; inset: 0; pointer-events: none;
+}
+:where(:root[data-look="classic"]) .cover-box {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  background: var(--cover-ink);
+  color: #FFFFFF;
+  pointer-events: auto;
+  cursor: pointer;
+  transform-origin: 0 50%;
+  transition: box-shadow 0.15s;
+}
+:where(:root[data-look="classic"])[dir="rtl"] .cover-box {
+  transform-origin: 100% 50%;
+}
+:where(:root[data-look="classic"]) .cover-box.new {
+  animation: cover 0.32s var(--ease-out) both; animation-delay: var(--d, 0ms);
+}
+:where(:root[data-look="classic"]) .cover-box .icon {
+  width: 13px; height: 13px; opacity: 0; transition: opacity 0.15s;
+}
+:where(:root[data-look="classic"]) .cover-box:hover {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+:where(:root[data-look="classic"]) .cover-box:hover .icon {
+  opacity: 1;
+}
+:where(:root[data-look="classic"]) .drawing-box {
+  position: absolute;
+  border: 1.5px dashed var(--accent);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  pointer-events: none;
+}
+:where(:root[data-look="classic"]) .photo-shot .badge-lock {
+  opacity: 0; scale: 0.6; transition: opacity 0.2s, scale 0.3s var(--ease-out);
+}
+:where(:root[data-look="classic"]) .photo-shot.saved .badge-lock {
+  opacity: 1; scale: 1;
+}
+:where(:root[data-look="classic"]) .saying {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 14px 14px 0;
+}
+:where(:root[data-look="classic"]) .say-row {
+  display: flex; align-items: center; gap: 8px;
+}
+:where(:root[data-look="classic"]) .say-glyph {
+  display: flex; color: var(--ink-2);
+}
+:where(:root[data-look="classic"]) .say-glyph .icon {
+  width: 15px; height: 15px;
+}
+:where(:root[data-look="classic"]) .say-field {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 9px;
+  border: 0.5px solid var(--hairline);
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: inset 0 0.5px 1px rgba(0, 0, 0, 0.12);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+:where(:root[data-look="classic"]) .say-field::placeholder {
+  color: var(--ink-2);
+}
+:where(:root[data-look="classic"]) .say-field:focus {
+  outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 0;
+}
+:where(:root[data-look="classic"]) .spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--fill-2);
+  border-top-color: var(--ink-2);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+:where(:root[data-look="classic"]) .spinner[hidden] {
+  display: none;
+}
+:where(:root[data-look="classic"]) .say-examples {
+  display: flex; flex-wrap: wrap; gap: 6px; padding-inline-start: 23px;
+}
+:where(:root[data-look="classic"]) .say-note {
+  min-height: 1.4em; padding-inline-start: 23px; color: var(--ink-2); font-size: 12.5px;
+}
+:where(:root[data-look="classic"]) .mac-btn {
+  height: 24px;
+  padding: 0 11px;
+  border: 0.5px solid var(--hairline);
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.16);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+:where(:root[data-look="classic"]) .mac-btn:active:not(:disabled) {
+  background: var(--fill-2);
+}
+:where(:root[data-look="classic"]) .mac-btn:disabled {
+  color: var(--ink-2); opacity: 0.55; cursor: default;
+}
+:where(:root[data-look="classic"]) .mac-btn.small {
+  height: 22px; padding: 0 9px; font-size: 12px;
+}
+:where(:root[data-look="classic"]) .mac-btn.primary {
+  border-color: transparent; background: var(--accent); color: #FFFFFF;
+}
+:where(:root[data-look="classic"]) .mac-btn.primary:active {
+  background: color-mix(in srgb, var(--accent) 85%, #000);
+}
+:where(:root[data-look="classic"]) .hide-foot {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px; padding: 14px;
+}
+:where(:root[data-look="classic"]) .hide-foot p {
+  flex: 1 1 14em; color: var(--ink-2); font-size: 12.5px;
+}
+:where(:root[data-look="classic"]) .foot-buttons {
+  display: flex; gap: 8px;
+}
+@media (max-width: 960px) {
+  :where(:root[data-look="classic"]) .steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  :where(:root[data-look="classic"]) .hero-body {
+    grid-template-columns: minmax(0, 1fr); align-items: start;
+  }
+  :where(:root[data-look="classic"]) .hero-copy {
+    padding-bottom: 32px;
+  }
+  :where(:root[data-look="classic"]) .chat {
+    --crop: 40px; width: 100%; max-width: 440px; height: 340px; margin-inline: auto;
+  }
+  :where(:root[data-look="classic"]) .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :where(:root[data-look="classic"]) .settings {
+    justify-self: center;
+  }
+  :where(:root[data-look="classic"]) .desk-files {
+    height: 260px;
+  }
+  :where(:root[data-look="classic"]) .menu-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    padding: calc(var(--rope-h) * 0.5 + var(--card-w) * 0.62) var(--gutter) 0;
+  }
+  :where(:root[data-look="classic"]) .menu-stage .peg:not(.held) {
+    display: none;
+  }
+  :where(:root[data-look="classic"]) .menu-stage .peg.held {
+    --t: 0.5 !important;
+  }
+  :where(:root[data-look="classic"]) .pointer {
+    display: none;
+  }
+  :where(:root[data-look="classic"]) .ctx-menu {
+    position: relative; top: auto; inset-inline-start: auto;
+  }
+  :where(:root[data-look="classic"]) .menu-desc {
+    position: static; width: auto; max-width: 30em; margin-top: 28px; text-align: center;
+  }
+  :where(:root[data-look="classic"]) .footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  :root[data-look="classic"] {
+    --card-w: 100px; --rope-h: 60px;
+  }
+  :where(:root[data-look="classic"]) .rc {
+    padding: 16px; font-size: 12.5px;
+  }
+  :where(:root[data-look="classic"]) .rc-amount {
+    font-size: 23px;
+  }
+  :where(:root[data-look="classic"]) .hide-canvas {
+    padding: 12px 12px 4px;
+  }
+  :where(:root[data-look="classic"]) .steps {
+    grid-template-columns: minmax(0, 1fr); gap: 12px;
+  }
+  :where(:root[data-look="classic"]) .tag-send {
+    width: 50px; height: 50px;
+  }
+  :where(:root[data-look="classic"]) .tag-send .icon {
+    width: 22px; height: 22px;
+  }
+  :where(:root[data-look="classic"]) .tag-label {
+    font-size: 12px; padding-inline: 9px;
+  }
+  :where(:root[data-look="classic"]) .peg:nth-child(n + 3) {
+    display: none;
+  }
+  :where(:root[data-look="classic"]) .peg:nth-child(1) {
+    --t: 0.18;
+  }
+  :where(:root[data-look="classic"]) .peg:nth-child(2) {
+    --t: 0.5;
+  }
+  :where(:root[data-look="classic"]) .wide-only, :where(:root[data-look="classic"]) .clock, :where(:root[data-look="classic"]) .lang-current {
+    display: none;
+  }
+  :where(:root[data-look="classic"]) .menus a, :where(:root[data-look="classic"]) .lang-menu summary {
+    padding-inline: 8px;
+  }
+  :where(:root[data-look="classic"]) .file:nth-child(n + 7) {
+    display: none;
+  }
+  :where(:root[data-look="classic"]) .settings-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :where(:root[data-look="classic"]) .settings-side {
+    display: none;
+  }
+  :where(:root[data-look="classic"]) .settings-pane {
+    padding: 16px 14px 18px;
+  }
+  :where(:root[data-look="classic"]) .style-line {
+    --sw: 96px;
+  }
+  :where(:root[data-look="classic"]) .island {
+    left: 10%; right: 10%;
+  }
+  :where(:root[data-look="classic"]) .shelf {
+    left: 12%; right: 12%;
+  }
+  :where(:root[data-look="classic"]) [data-style="shelf"] .sty.s1, :where(:root[data-look="classic"]) [data-style="island"] .sty.s1 {
+    --p: 0.28;
+  }
+  :where(:root[data-look="classic"]) [data-style="shelf"] .sty.s3, :where(:root[data-look="classic"]) [data-style="island"] .sty.s3 {
+    --p: 0.72;
+  }
+  :where(:root[data-look="classic"]) .sty.s1 {
+    --p: 0.2;
+  }
+  :where(:root[data-look="classic"]) .sty.s3 {
+    --p: 0.8;
+  }
+  :where(:root[data-look="classic"]) [data-style="stack"] .sty.s1 {
+    --p: 0.78;
+  }
+  :where(:root[data-look="classic"]) [data-style="stack"] .sty.s2 {
+    --p: 0.8;
+  }
+  :where(:root[data-look="classic"]) [data-style="stack"] .sty.s3 {
+    --p: 0.82;
+  }
+  :where(:root[data-look="classic"]) .tile-grid {
+    gap: 8px;
+  }
+  :where(:root[data-look="classic"]) .ctx-menu {
+    width: 100%; max-width: 320px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(:root[data-look="classic"]) {
+    scroll-behavior: auto;
+  }
+  :where(:root[data-look="classic"]) *, :where(:root[data-look="classic"]) *::before, :where(:root[data-look="classic"]) *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.15s !important;
+    transition-delay: 0s !important;
+  }
+  :where(:root[data-look="classic"]) .peg, :where(:root[data-look="classic"]) .sty {
+    animation: none !important;
+  }
+}
+
+:where(:root[data-look="classic"]) .hero.intro .rope {
+  animation: rope-in 0.9s var(--ease-out) both;
+}
+:where(:root[data-look="classic"]) :where(.hero.intro) .peg {
+  animation: hang-in 1.2s calc(var(--i) * 110ms + 350ms) both, sway 5.6s ease-in-out calc(var(--i) * -1.3s) infinite alternate;
+}
+:where(:root[data-look="classic"]) .hero.intro .line-tag {
+  transform-origin: 50% 0; animation: hang-in 1.2s 800ms both;
+}
+:where(:root[data-look="classic"]) .hero.intro h1 {
+  animation: words-in 0.9s var(--ease-out) 0.1s both;
+}
+:where(:root[data-look="classic"]) .hero.intro .hero-sub {
+  animation: words-in 0.9s var(--ease-out) 0.22s both;
+}
+:where(:root[data-look="classic"]) .hero.intro .hero-actions, :where(:root[data-look="classic"]) .hero.intro .hero-note {
+  animation: words-in 0.9s var(--ease-out) 0.34s both;
+}
+:where(:root[data-look="classic"]) .hero.intro .chat {
+  animation: window-in 1s var(--ease-out) 0.45s both;
+}
+:where(:root[data-look="classic"])[dir="rtl"] .hero.intro .rope {
+  animation-name: rope-in-rtl;
+}
+:where(:root[data-look="classic"]) .arrive {
+  transition: opacity 0.8s var(--ease-out), transform 1s var(--ease-out), filter 0.8s var(--ease-out);
+  transition-delay: var(--ad, 0ms);
+}
+:where(:root[data-look="classic"]) .arrive.pre {
+  opacity: 0;
+}
+:where(:root[data-look="classic"]) .arrive-words.pre {
+  transform: translateY(26px); filter: blur(10px);
+}
+:where(:root[data-look="classic"]) .arrive-text.pre {
+  transform: translateY(18px);
+}
+:where(:root[data-look="classic"]) .arrive-window.pre {
+  transform: translateY(44px) scale(0.95);
+}
+:where(:root[data-look="classic"]) .arrive-card.pre {
+  transform: translateY(28px) scale(0.98);
+}
+@media print {
+  :where(:root[data-look="classic"]) .arrive.pre {
+    opacity: 1; transform: none; filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(:root[data-look="classic"]) .hero.intro .rope, :where(:root[data-look="classic"]) .hero.intro .line-tag, :where(:root[data-look="classic"]) .hero.intro h1, :where(:root[data-look="classic"]) .hero.intro .hero-sub, :where(:root[data-look="classic"]) .hero.intro .hero-actions, :where(:root[data-look="classic"]) .hero.intro .hero-note, :where(:root[data-look="classic"]) .hero.intro .chat {
+    animation: none !important;
+  }
+  :where(:root[data-look="classic"]) .arrive.pre {
+    opacity: 1; transform: none; filter: none;
+  }
+}
+
+:where(:root[data-look="classic"]) .replay, :where(:root[data-look="classic"]) .desk-guide-btn {
+  transition: background-color 0.2s, scale 0.2s var(--ease-out);
+}
+:where(:root[data-look="classic"]) .btn:active, :where(:root[data-look="classic"]) .badge-get:active, :where(:root[data-look="classic"]) .tag-send:active, :where(:root[data-look="classic"]) .chat-btn:active, :where(:root[data-look="classic"]) .replay:active, :where(:root[data-look="classic"]) .desk-guide-btn:active, :where(:root[data-look="classic"]) .peg .corner:active, :where(:root[data-look="classic"]) .brand-chip:active .brand-dot {
+  transition-duration: 0.06s;
+}
+:where(:root[data-look="classic"]) .peg:not(.dragging) .photo:has(.photo-hit:active) {
+  transition-duration: 0.06s;
+}
+:where(:root[data-look="classic"]) .loops-paused .peg, :where(:root[data-look="classic"]) .loops-paused .sty {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(:root[data-look="classic"]) .faq::details-content {
+    transition: none;
+  }
+}
+
+@media (max-width: 430px) {
+  :where(:root[data-look="classic"]) .app-menu span {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+}
+
+@media (max-width: 340px) {
+  :where(:root[data-look="classic"]) .menubar-row {
+    gap: 2px; padding-inline: 4px;
+  }
+  :where(:root[data-look="classic"]) .menus a, :where(:root[data-look="classic"]) .lang-menu summary {
+    padding-inline: 6px;
+  }
+  :where(:root[data-look="classic"]) .brand-switch {
+    margin-inline-end: 0;
+  }
+  :where(:root[data-look="classic"]) .brand-thumb, :where(:root[data-look="classic"]) .brand-chip {
+    width: 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  :where(:root[data-look="classic"]) .section {
+    padding-block: 72px;
+  }
+  :where(:root[data-look="classic"]) .copy.center {
+    text-align: start;
+  }
+  :where(:root[data-look="classic"]) .desk {
+    padding-top: calc(36px + var(--rope-h) + 12px);
+  }
+  :where(:root[data-look="classic"]) .desk .split {
+    gap: 28px;
+  }
+  :where(:root[data-look="classic"]) .desk-files {
+    order: -1; height: 220px;
+  }
+}
+
+/* MARK: What the airmail look adds, put back
+
+   site.css draws the airmail envelope; the rules above restore the Mac
+   desktop look over it. These turn off what only the envelope has, and
+   undo what it added to parts both looks share. */
+:root[data-look="classic"] body::after,
+:root[data-look="classic"] .photo::before,
+:root[data-look="classic"] .step::before,
+:root[data-look="classic"] .step::after,
+:root[data-look="classic"] .section::before,
+:root[data-look="classic"] .close::before,
+:root[data-look="classic"] .envelope::before,
+:root[data-look="classic"] .envelope-back::before { content: none; }
+:root[data-look="classic"] .airmail,
+:root[data-look="classic"] .postmark,
+:root[data-look="classic"] .handstamp,
+:root[data-look="classic"] .flightpath,
+:root[data-look="classic"] .flap,
+:root[data-look="classic"] .envelope-stamp,
+:root[data-look="classic"] .msg.posted { display: none; }
+
+:root[data-look="classic"] .menubar { margin-top: 0; }
+:root[data-look="classic"] .menus a { font-weight: 400; }
+:root[data-look="classic"] .app-menu { font-size: inherit; letter-spacing: normal; }
+:root[data-look="classic"] .photo,
+:root[data-look="classic"] .step,
+:root[data-look="classic"] .desk.swept .file { filter: none; }
+:root[data-look="classic"] .tag-label { letter-spacing: normal; text-transform: none; }
+:root[data-look="classic"] .hero-sub,
+:root[data-look="classic"] .hero-note { color: inherit; }
+:root[data-look="classic"] .desk.swept .file-thumb { -webkit-mask: none; mask: none; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35); }
+:root[data-look="classic"] .close-icon { position: static; top: auto; left: auto; translate: none; }
+:root[data-look="classic"] .close h2 { font-weight: 700; }
+:root[data-look="classic"] .step-n { position: static; top: auto; inset-inline-end: auto; font-size: inherit; font-weight: inherit; line-height: inherit; letter-spacing: inherit; }
+
+/* The two envelopes are plain wrappers here, as the words were before. */
+:root[data-look="classic"] .envelope,
+:root[data-look="classic"] .envelope-back { position: static; isolation: auto; max-width: none; padding: 0; overflow: visible; border-radius: 0; background: none; box-shadow: none; }
+:root[data-look="classic"] .design .wrap { max-width: 760px; }
+:root[data-look="classic"] .design .points { max-width: none; padding-inline-end: 0; }
+
+/* The heads over the demos stand centred, as they did. */
+:root[data-look="classic"] .capture .copy,
+:root[data-look="classic"] .menu-demo .copy,
+:root[data-look="classic"] .start .copy { max-width: 760px; margin-inline: auto; text-align: center; }
+:root[data-look="classic"] .capture .copy p,
+:root[data-look="classic"] .menu-demo .copy p,
+:root[data-look="classic"] .start .copy p { margin-inline: auto; }

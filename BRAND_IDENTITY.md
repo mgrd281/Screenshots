@@ -78,6 +78,8 @@ Three layers, each with its own job.
    envelope: aerogramme paper inside a chevron edge, with postal ink for
    labels and postmarks. The visitor can choose one of three themes (below),
    each a colouring of the same envelope. Each works in light and in dark.
+   A look switch also brings back the classic look, where the brand
+   gradient is the Mac desktop the app sits on; the themes work there too.
 
 ### One brand, three themes
 

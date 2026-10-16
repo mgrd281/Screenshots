@@ -1,5 +1,5 @@
-// The website's pages, languages, theme switcher and Reduce Motion, checked
-// in a real browser. These tests read the site; they never change it.
+// The website's pages, languages, look and theme switchers and Reduce
+// Motion, checked in a real browser. These tests read the site; they never change it.
 const { test, expect } = require("@playwright/test");
 
 const pages = ["", "privacy.html", "support.html"];
@@ -37,6 +37,65 @@ for (const [dir, lang, direction] of languages) for (const path of pages) {
     expect(errors).toEqual([]);
   });
 }
+
+const lookOf = (page) => page.evaluate(() => document.documentElement.dataset.look || "airmail");
+const edgeOf = (page) => page.evaluate(() => getComputedStyle(document.body, "::after").content);
+
+for (const [dir, lang] of languages) for (const path of ["", "privacy.html"]) {
+  test(`${lang} ${path || "home"} loads cleanly in the classic look`, async ({ page }) => {
+    await page.addInitScript(() => { try { localStorage.setItem("snapfly-look", "classic"); } catch (e) {} });
+    const errors = watchErrors(page);
+    await page.goto(dir + path, { waitUntil: "networkidle" });
+    expect(await lookOf(page)).toBe("classic");
+    await expect(page.locator("h1")).toBeVisible();
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForTimeout(300);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), "no sideways scroll").toBeLessThanOrEqual(0);
+    expect(errors).toEqual([]);
+  });
+}
+
+test("the airmail look is the default", async ({ page }) => {
+  await page.goto("");
+  expect(await lookOf(page)).toBe("airmail");
+  await expect(page.locator(".look-switch")).toHaveAttribute("role", "radiogroup");
+  await expect(page.locator(".look-chip")).toHaveCount(2);
+  await expect(page.locator('.look-chip[aria-checked="true"]')).toHaveAttribute("data-look-pick", "airmail");
+  expect(await edgeOf(page), "the chevron edge is drawn").not.toBe("none");
+});
+
+test("choosing the classic look is kept from the first paint, in every theme", async ({ page }) => {
+  await page.addInitScript(() => {
+    document.addEventListener("DOMContentLoaded", () => { window.__first = document.documentElement.dataset.look || "airmail"; });
+  });
+  const errors = watchErrors(page);
+  await page.goto("de/", { waitUntil: "networkidle" });
+  await page.locator('[data-look-pick="classic"]').click();
+  await expect.poll(() => lookOf(page)).toBe("classic");
+  expect(await page.evaluate(() => localStorage.getItem("snapfly-look"))).toBe("classic");
+  expect(await edgeOf(page), "no chevron edge").toBe("none");
+  await page.reload({ waitUntil: "networkidle" });
+  expect(await page.evaluate(() => window.__first)).toBe("classic");
+  // The themes still change the classic look, and its own menu bar colour.
+  await page.locator('[data-brand-pick="orange"]').click();
+  await expect.poll(() => brandOf(page)).toBe("orange");
+  expect(await lookOf(page)).toBe("classic");
+  await expect(page.locator('meta[name="theme-color"]').first()).toHaveAttribute("content", "#FAFAF8");
+  // And back to airmail.
+  await page.locator('[data-look-pick="airmail"]').click();
+  await expect.poll(() => lookOf(page)).toBe("airmail");
+  expect(await edgeOf(page)).not.toBe("none");
+  expect(errors).toEqual([]);
+});
+
+test("the arrows move between the looks", async ({ page }) => {
+  await page.goto("", { waitUntil: "networkidle" });
+  await page.locator('.look-chip[aria-checked="true"]').focus();
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => lookOf(page)).toBe("classic");
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => lookOf(page)).toBe("airmail");
+});
 
 test("Original Sunset is the default", async ({ page }) => {
   await page.goto("");
