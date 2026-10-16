@@ -147,7 +147,7 @@ TEXT["en"] = dict(
     start_p="From the download to your first screenshot on the line.",
     start=[
         ("Download it", "Download Snapfly.zip, open it, and drag Snapfly into your Applications folder. It’s signed and notarized by Apple."),
-        ("Open it", "Snapfly lives in the menu bar as a little shirt, with no Dock icon. The first time, choose Turn on, and your screenshots hang on the line instead of the Desktop."),
+        ("Open it", "Snapfly lives in the menu bar as a little photo on a line, with no Dock icon. The first time, choose Turn on, and your screenshots hang on the line instead of the Desktop."),
         ("Allow it", "The first time you take or send a screenshot, macOS asks you to allow Screen Recording or Accessibility. Settings › Permissions shows each one, with one button to allow it."),
         ("Take your first one", "Press ⌃⌥S and drag over anything. Click it on the line to copy it, or click its paper plane to send it into the chat you’re typing in."),
     ],
@@ -397,7 +397,7 @@ TEXT["de"] = dict(
     start_p="Vom Download bis zu deinem ersten Bildschirmfoto an der Leine.",
     start=[
         ("Laden", "Lade Snapfly.zip, öffne die Datei und zieh Snapfly in deinen Ordner „Programme“. Snapfly ist von Apple signiert und beglaubigt."),
-        ("Öffnen", "Snapfly lebt in der Menüleiste, als kleines T-Shirt, ohne Symbol im Dock. Wähl beim ersten Mal „Einschalten“, dann hängen deine Bildschirmfotos an der Leine statt auf dem Schreibtisch."),
+        ("Öffnen", "Snapfly lebt in der Menüleiste, als kleines Foto an der Leine, ohne Symbol im Dock. Wähl beim ersten Mal „Einschalten“, dann hängen deine Bildschirmfotos an der Leine statt auf dem Schreibtisch."),
         ("Erlauben", "Wenn du zum ersten Mal ein Bildschirmfoto machst oder sendest, bittet macOS um die Bildschirmaufnahme oder die Bedienungshilfen. Einstellungen › Berechtigungen zeigt jede davon, mit einer Taste zum Erlauben."),
         ("Das erste Bild", "Drück ⌃⌥S und zieh über irgendetwas. Klick es an der Leine an, um es zu kopieren, oder auf seinen Papierflieger, um es in den Chat zu schicken, in dem du gerade schreibst."),
     ],
@@ -647,7 +647,7 @@ TEXT["ar"] = dict(
     start_p="من التنزيل حتى أول لقطة على الحبل.",
     start=[
         ("نزّله", "نزّل الملف Snapfly.zip وافتحه، ثم اسحب Snapfly إلى مجلد «التطبيقات». التطبيق موقّع ومُعتمَد من Apple."),
-        ("افتحه", "يعيش Snapfly في شريط القوائم على شكل قميص صغير، وليس له أيقونة في Dock. في المرة الأولى اختر «تشغيل»، فتُعلَّق لقطاتك على الحبل بدل سطح المكتب."),
+        ("افتحه", "يعيش Snapfly في شريط القوائم على شكل صورة صغيرة معلّقة على حبل، وليس له أيقونة في Dock. في المرة الأولى اختر «تشغيل»، فتُعلَّق لقطاتك على الحبل بدل سطح المكتب."),
         ("اسمح له", "أول مرة تلتقط فيها لقطة أو ترسلها، يطلب منك macOS السماح بتسجيل الشاشة أو بتسهيلات الاستخدام. وتعرض الإعدادات › الأذونات كل إذن منها، مع زر واحد للسماح به."),
         ("أول لقطة", "اضغط \u2066⌃⌥S\u2069 واسحب فوق أي شيء. انقرها على الحبل لتنسخها، أو انقر طائرتها الورقية لترسلها إلى الدردشة التي تكتب فيها."),
     ],

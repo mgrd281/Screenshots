@@ -360,13 +360,15 @@ private enum Pane: String, CaseIterable, Identifiable {
         }
     }
 
-    var symbol: String {
+    /// Line shows Snapfly's own mark, the photo on the line, as the menu bar
+    /// does.
+    var icon: Image {
         switch self {
-        case .general: "gearshape"
-        case .line: "tshirt"
-        case .privacy: "hand.raised"
-        case .permissions: "lock.shield"
-        case .about: "info.circle"
+        case .general: Image(systemName: "gearshape")
+        case .line: Image(nsImage: LineIcon.image(filled: false, description: title)).renderingMode(.template)
+        case .privacy: Image(systemName: "hand.raised")
+        case .permissions: Image(systemName: "lock.shield")
+        case .about: Image(systemName: "info.circle")
         }
     }
 }
@@ -379,7 +381,7 @@ private struct SettingsView: View {
     var body: some View {
         NavigationSplitView {
             List(Pane.allCases, selection: $pane) { pane in
-                Label(pane.title, systemImage: pane.symbol)
+                Label { Text(pane.title) } icon: { pane.icon }
             }
             .navigationSplitViewColumnWidth(180)
             .toolbar(removing: .sidebarToggle)

@@ -79,7 +79,7 @@ Os mesmos atalhos. A mesma memória muscular. Só menos bagunça.
 
 Faça uma captura segurando <kbd>⌃</kbd>, ou copie uma imagem no Pré-Visualização,
 e ela vai para o varal como qualquer outra. Ative Pendurar imagens copiadas na
-barra de menus; a camiseta fica preenchida enquanto a opção estiver ativa. Só
+barra de menus; a foto no varal fica preenchida enquanto a opção estiver ativa. Só
 imagens: o que for copiado junto com texto ou um arquivo, e o que um gerenciador
 de senhas marcar como privado, fica de fora.
 

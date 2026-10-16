@@ -79,7 +79,7 @@ Les mêmes raccourcis. Les mêmes réflexes. Juste moins de désordre.
 
 Prenez une capture en maintenant <kbd>⌃</kbd>, ou copiez une image dans Aperçu,
 et elle s’accroche à la corde comme les autres. Activez Accrocher les images
-copiées dans la barre des menus ; le t-shirt se remplit tant que l’option est
+copiées dans la barre des menus ; la photo sur la corde se remplit tant que l’option est
 active. Uniquement des images : ce qui est copié avec du texte ou un fichier, et
 ce qu’un gestionnaire de mots de passe marque comme privé, est laissé de côté.
 

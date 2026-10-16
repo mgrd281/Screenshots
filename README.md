@@ -169,7 +169,7 @@ of it.
 
 Take a screenshot with <kbd>⌃</kbd> held, or copy an image in Preview, and it
 hangs on the line like any other. Turn on Hang copied images in Settings
-and the shirt fills in while it is on. Only images: anything copied along
+and the photo on the line in the menu bar fills in while it is on. Only images: anything copied along
 with text or a file, and anything a password manager marks as private, is
 left alone.
 
@@ -361,6 +361,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | File | Role |
 |:--|:--|
 | `AppDelegate.swift` | Menu bar, shortcut, revealing and tucking away the line |
+| `LineIcon.swift` | Snapfly's mark in the menu bar and Settings: a photo hanging on a line |
 | `SettingsWindow.swift` | The settings window: General, Line, Privacy and About |
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs |

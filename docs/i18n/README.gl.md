@@ -79,7 +79,7 @@ Os mesmos atallos e os mesmos costumes. Pero sen desorde.
 
 Fai unha captura con <kbd>⌃</kbd> premido, ou copia unha imaxe en Vista Previa,
 e pendúrase coma calquera outra. Activa Pendurar imaxes copiadas na barra de
-menús; mentres está activo, a camiseta énchese. Só imaxes: o que se copia
+menús; mentres está activo, a foto na corda énchese. Só imaxes: o que se copia
 xunto con texto ou un ficheiro, e o que un xestor de contrasinais marca como
 privado, déixase tal cal.
 

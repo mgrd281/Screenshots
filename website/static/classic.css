@@ -2445,7 +2445,7 @@
 :where(:root[data-look="classic"]) .bar-stop {
   display: none; color: var(--d-error);
 }
-:where(:root[data-look="classic"]) .dscreen.recording .bar-shirt {
+:where(:root[data-look="classic"]) .dscreen.recording .bar-mark {
   display: none;
 }
 :where(:root[data-look="classic"]) .dscreen.recording .bar-stop {

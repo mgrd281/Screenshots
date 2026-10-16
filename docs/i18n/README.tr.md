@@ -79,7 +79,7 @@ Aynı kısayollar. Aynı kas belleği. Sadece daha az dağınıklık.
 
 <kbd>⌃</kbd> tuşunu basılı tutarak ekran görüntüsü alın ya da Önizleme'de bir görsel kopyalayın;
 herhangi bir görüntü gibi ipe asılır. Menü çubuğundan Kopyalanan görselleri as seçeneğini açın;
-bu açıkken simgedeki gömlek dolar. Yalnızca görseller: metin veya bir dosyayla birlikte kopyalanan
+bu açıkken simgedeki ipteki fotoğraf dolar. Yalnızca görseller: metin veya bir dosyayla birlikte kopyalanan
 içerik ve bir şifre yöneticisinin özel olarak işaretlediği her şey olduğu gibi bırakılır.
 
 <br>

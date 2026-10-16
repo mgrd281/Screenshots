@@ -79,7 +79,7 @@ Los mismos atajos y las mismas costumbres. Pero sin desorden.
 
 Haz una captura con <kbd>⌃</kbd> pulsado, o copia una imagen en Vista Previa,
 y se cuelga como cualquier otra. Activa Colgar imágenes copiadas en la barra
-de menús; mientras está activo, la camiseta se rellena. Solo imágenes: lo que
+de menús; mientras está activo, la foto en la cuerda se rellena. Solo imágenes: lo que
 se copia junto con texto o un archivo, y lo que un gestor de contraseñas marca
 como privado, se deja tal cual.
 
