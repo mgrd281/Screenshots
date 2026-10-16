@@ -40,12 +40,14 @@ Each token lists where its value ships today. "App" is SwiftUI or AppKit;
 
 | Token | Value | Where it ships |
 |---|---|---|
+| `duration.press` | 60 ms | Site: how fast a pressed control gives |
 | `duration.micro` | 120 ms | Site desktop demo `--d-t1` (hover fills, small fades); app 0.12 s fades |
 | `duration.quick` | 150 ms | App `Motion.spring` with Reduce Motion (ease-out); site transitions with Reduce Motion |
 | `duration.short` | 200 ms | App state changes (`.easeOut(duration: 0.2)`); site hover and press; desktop demo `--d-t2` |
 | `duration.medium` | 280–300 ms | Desktop demo `--d-t3` (windows); app empty-line fade (0.3 s) |
 | `duration.hold` | 450 ms | App: a held photo shrinks while its menu builds up |
-| `duration.travel` | 450–600 ms | Site switcher thumb (0.45 s), theme cross-fade (0.5 s), line reflow (0.6 s); app capture fall (0.55 s) |
+| `duration.travel` | 450–600 ms | Site switcher thumb (0.45 s), line reflow (0.6 s); app capture fall (0.55 s) |
+| `duration.reveal` | 700 ms | Site: a new theme spreading from its swatch |
 | `duration.flight` | 820 ms | Site paper-plane flight |
 | `duration.entrance` | 0.8–1.2 s | Site first view and arrivals, once per page |
 | `duration.ambient` | 5.6 s | Site sway of a hanging photo (alternate, loops) |
@@ -121,7 +123,7 @@ settle is the point.
 | `scale.hover.control` | 1.04–1.08 | A floating button under the pointer |
 | `scale.hover.swatch` | 1.12 | A theme swatch under the pointer |
 | `scale.lift` | 1.06 | A photo dragged along the line |
-| `scale.press` | 0.95 | A pressed photo or Dock icon (0.90 for a theme swatch) |
+| `scale.press` | 0.95 | A pressed Dock icon; on the site's line a photo gives to 0.98, a corner button to 0.88, a pill button to 0.96, a theme swatch to 0.90 |
 | `scale.open` | 0.95 → 1 | A window opening |
 | `scale.settle` | 0.96–0.98 → 1 | A card or photo landing |
 
@@ -142,7 +144,7 @@ settle is the point.
 | Moment | Feedback |
 |---|---|
 | Hover | Grows by a `scale.hover` token on its spring; the pointer's target gets no other effect |
-| Press | Shrinks to `scale.press` at once |
+| Press | Shrinks to `scale.press` in `duration.press`; letting go eases back |
 | Hold (a photo) | Shrinks over `duration.hold`, then its menu opens |
 | Copy | A small nudge, and "Copied" shows (`duration.short`) |
 | Send | The paper plane (below); the line closes the gap with `spring.reflow` |
@@ -180,8 +182,9 @@ the same curves, so every place feels like one product.
 
 ## Concepts for future work
 
-Not built. Each needs the owner's go-ahead, and each must keep every rule
-above.
+Not built unless marked "ships today". Each needs the owner's go-ahead,
+and each must keep every rule above. The theme reveal (C) shipped at the
+owner's request in October 2026.
 
 ### A. Hero animation
 
@@ -222,17 +225,15 @@ with one small swing, so the line feels like a rope.
 ### C. Theme switching
 
 Ships today: the head script sets the theme before the first paint, so no
-wrong colour ever flashes. A change cross-fades the whole page through
-the View Transitions API (0.5 s, `ease.out`), the thumb slides to the
-chosen swatch (0.45 s), the browser bar colour follows, other open tabs
-follow, and Reduce Motion or a browser without View Transitions switches
-at once.
-
-A future refinement could reveal the new theme in a circle growing from
-the swatch (`clip-path` on `::view-transition-new(root)`, 0.6 s,
-`ease.out`), keeping the cross-fade as the fallback. Never transition
-colours property by property across the page; one snapshot cross-fade is
-cheaper and has no half-mixed frames.
+wrong colour ever flashes. A change spreads the new theme over the page
+in a circle from the swatch that was chosen, through the View
+Transitions API: a `clip-path` circle on `::view-transition-new(root)`
+over the old page, `duration.reveal` on `ease.out`, reaching the farthest
+corner last. The thumb slides to the chosen swatch (0.45 s), the browser
+bar colour follows, other open tabs follow at once, and Reduce Motion or
+a browser without View Transitions switches at once. Never transition
+colours property by property across the page; one snapshot is cheaper and
+has no half-mixed frames.
 
 ### D. Scroll storytelling
 

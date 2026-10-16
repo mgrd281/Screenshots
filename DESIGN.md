@@ -784,9 +784,11 @@ system to a web page. The brief and direction contract are in
     direction. On touch the swatches are 32 × 28 with a 44 pt tall target.
   - **No wrong flash**: the first script in `<head>` reads the choice and
     sets `data-brand` before the page paints; the switcher only appears once
-    scripts run. Changing theme cross-fades the whole page in 0.5 s, or at
-    once with Reduce Motion. The browser bar colour follows. Another open
-    tab follows the change.
+    scripts run. Changing theme spreads the new one over the page in a
+    circle from the swatch that was chosen (0.7 s on `--ease-out`,
+    reaching the farthest corner last); with Reduce Motion, or without the
+    View Transitions API, it changes at once. The browser bar colour
+    follows. Another open tab follows the change, at once.
   - On phones (430 px and less) the menu bar keeps Snapfly's icon and hides
     its name from view (it is still read out) so everything fits.
 - **The brand gradient is the wallpaper.** On the site, amber, coral and
@@ -847,6 +849,15 @@ system to a web page. The brief and direction contract are in
     `site.js`, and print shows everything.
   - Everything else plays once when seen: the Desktop sweep and the
     keycaps.
+  - **Presses and hovers.** A press answers at once (0.06 s) and letting
+    go eases back: a photo gives to 98%, a corner button to 88%, the pill
+    buttons to 96%, the menu bar's items highlight. Hover that raises or
+    grows something is only for a pointer that hovers, so a tap on a phone
+    leaves nothing raised.
+  - **Nothing teleports.** An FAQ answer slides open and closed (0.35 s)
+    where the browser can size it, and opens at once elsewhere. The chat's
+    hint folds away with its gap (0.26 s) when the first photo lands.
+  - Swaying photos pause while their line is off screen.
   - Reduce Motion turns flights into fades and stops the sway and every
     arrival; on the desktop to try Snapfly on, only fades are left.
 - **Phones** (640 px and below): sections are 72 px apart, long centred

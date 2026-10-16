@@ -107,4 +107,55 @@ test.describe("with Reduce Motion", () => {
       expect(await page.locator(selector).first().evaluate((e) => getComputedStyle(e).opacity), selector).toBe("1");
     }
   });
+
+  test("a new theme comes at once", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("de/", { waitUntil: "networkidle" });
+    const after = await page.evaluate(() => {
+      document.querySelector('[data-brand-pick="emerald"]').click();
+      return { brand: document.documentElement.dataset.brand, revealing: document.documentElement.classList.contains("brand-reveal") };
+    });
+    expect(after).toEqual({ brand: "emerald", revealing: false });
+  });
+});
+
+test("a new theme spreads from the swatch that was chosen", async ({ page }) => {
+  await page.goto("de/", { waitUntil: "networkidle" });
+  const during = await page.evaluate(() => new Promise((resolve) => {
+    const chip = document.querySelector('[data-brand-pick="orange"]');
+    const box = chip.getBoundingClientRect();
+    chip.click();
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve({
+      x: parseFloat(document.documentElement.style.getPropertyValue("--reveal-x")),
+      chip: box.left + box.width / 2,
+      revealing: document.getAnimations().some((a) => a.animationName === "brand-reveal"),
+    })));
+  }));
+  expect(during.revealing).toBe(true);
+  expect(Math.abs(during.x - during.chip)).toBeLessThan(1);
+  // Afterwards nothing is left behind.
+  await expect.poll(() => page.evaluate(() => document.documentElement.classList.contains("brand-reveal") || document.documentElement.getAttribute("style")), { timeout: 3000 }).toBeFalsy();
+  expect(await brandOf(page)).toBe("orange");
+});
+
+test("an answer opens and closes", async ({ page }) => {
+  await page.goto("support.html", { waitUntil: "networkidle" });
+  const faq = page.locator(".faq").first();
+  const height = () => faq.evaluate((d) => d.getBoundingClientRect().height);
+  const closed = await height();
+  await faq.locator("summary").click();
+  await expect.poll(height).toBeGreaterThan(closed + 20);
+  await expect(faq).toHaveAttribute("open", "");
+  await faq.locator("summary").click();
+  await expect.poll(height).toBeLessThan(closed + 1);
+});
+
+test("the photos sway only while their line is on screen", async ({ page }) => {
+  await page.goto("de/", { waitUntil: "networkidle" });
+  const state = () => page.locator(".line .peg").first().evaluate((p) => getComputedStyle(p).animationPlayState.split(", ").pop());
+  await expect.poll(state).toBe("running");
+  await page.evaluate(() => scrollTo({ top: document.body.scrollHeight, behavior: "instant" }));
+  await expect.poll(state).toBe("paused");
+  await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+  await expect.poll(state).toBe("running");
 });
