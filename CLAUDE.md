@@ -9,6 +9,10 @@ required by the license and stays.
 
 - Write to the owner in **Arabic only**, in short, simple words. They are
   not a programmer.
+  - That covers everything they see in the chat: replies, progress notes,
+    and the short description shown with each command or tool call.
+  - A tool's or file's name may stay in Latin letters, with an Arabic word
+    saying what it is. No English sentences.
 - They usually can't reach their Mac. Never ask them to run Terminal
   commands. GitHub builds the app for them (see below).
 
