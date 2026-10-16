@@ -844,16 +844,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         statusItem.menu = menu
     }
 
-    /// The shirt fills in while copied images are hung, so it shows at a
-    /// glance that the clipboard is being watched. While the screen is
-    /// recorded it is a stop button, as the Screenshot app's is.
+    /// The photo on the line fills in while copied images are hung, so it
+    /// shows at a glance that the clipboard is being watched. While the
+    /// screen is recorded it is a stop button, as the Screenshot app's is.
     private func updateStatusIcon() {
         let on = ClipboardWatcher.isEnabled
         let recording = Recording.shared.isRecording
         let description = recording ? L("Snapfly, recording the screen")
             : on ? L("Snapfly, hanging copied images") : "Snapfly"
-        let symbol = recording ? "stop.circle" : on ? "tshirt.fill" : "tshirt"
-        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: description)
+        let image = recording ? NSImage(systemSymbolName: "stop.circle", accessibilityDescription: description)
+            : LineIcon.image(filled: on, description: description)
         image?.isTemplate = true
         statusItem.button?.image = image
         statusItem.button?.toolTip = description

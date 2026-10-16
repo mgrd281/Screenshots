@@ -2360,7 +2360,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 .bar-snapfly:hover, .bar-snapfly[aria-expanded="true"] { background: var(--d-hover); }
 .bar-snapfly .icon { grid-area: 1 / 1; width: var(--d-s4); height: var(--d-s4); }
 .bar-stop { display: none; color: var(--d-error); }
-.dscreen.recording .bar-shirt { display: none; }
+.dscreen.recording .bar-mark { display: none; }
 .dscreen.recording .bar-stop { display: block; }
 
 /* MARK: The line */

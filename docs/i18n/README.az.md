@@ -79,7 +79,7 @@ Eyni qısayollar. Eyni vərdişlər. Sadəcə daha az qarışıqlıq.
 
 <kbd>⌃</kbd> düyməsini basılı saxlayaraq ekran şəkli çəkin və ya Preview-da
 şəkli kopyalayın, o da digərləri kimi ipdən asılacaq. Menyu panelində
-Kopyalanmış şəkilləri as seçimini aktiv edin; aktiv olduğu müddətdə köynək
+Kopyalanmış şəkilləri as seçimini aktiv edin; aktiv olduğu müddətdə ipdəki şəkil
 ikonası dolu görünür. Yalnız şəkillər: mətn və ya fayl ilə birlikdə
 kopyalananlar, həmçinin parol menecerinin məxfi kimi işarələdikləri olduğu
 kimi qalır.

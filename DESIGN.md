@@ -364,6 +364,15 @@ apps.
   `.primary` at 10%, or white at 18% on the island, fading in over 0.12 s.
 
 ### Navigation
+- **Menu bar icon.** Snapfly's own mark, drawn in code as a template
+  (`LineIcon.swift`) on an 18 pt square: a line sagging 1.7 pt across the
+  width (1.25 pt stroke), and a photo hanging from it by a 1.4 × 3.4 pt
+  clip, turned −7° together. The photo is 10 × 8.6 pt at a 1.8 pt radius
+  with a 1.45 pt stroke, a 1.8 pt sun and a hill (1.2 pt stroke) inside so
+  it reads as a picture. It fills, with the sun and hill cut out, while
+  copied images are hung, and becomes `stop.circle` while the screen is
+  recorded. The Line pane in Settings shows the same mark; the website's
+  drawings use it at 24 units.
 - **Menu bar menu.** Short: Take Screenshot, then Show or Hide line, Search…,
   History…, Take everything down, Settings…, Open folder, Updates, Quit.
 - **Photo context menu.**
@@ -727,7 +736,7 @@ system to a web page. The brief and direction contract are in
       2 px offset, and an open app has a dot under it. It is a toolbar the
       arrows move through. The trash opens a small popover with Put Back
       and Empty Trash.
-    - **Snapfly on it**: the shirt in the menu bar opens Snapfly's real
+    - **Snapfly on it**: the photo on the line in the menu bar opens Snapfly's real
       menu (Take Screenshot, with Timer › 3, 5, 10 Seconds, Record Screen,
       Screenshot Button, Take everything down), the screenshot button sits
       at the trailing edge, and the line hangs under the menu bar. Cards

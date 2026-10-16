@@ -81,7 +81,8 @@ ICONS = {
         "arrow": '<path d="M5 12h13M13 6.5 18.5 12 13 17.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
         "replay": '<path d="M5.5 12a6.5 6.5 0 1 0 2-4.7" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M6.8 3.8v3.9h3.9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
         "gear": '<circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M12 3.5v2.2M12 18.3v2.2M3.5 12h2.2M18.3 12h2.2M6 6l1.6 1.6M16.4 16.4 18 18M6 18l1.6-1.6M16.4 7.6 18 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
-        "shirt": '<path d="M8.5 4.5 4 7l1.8 4 2.2-1v9.5h8V10l2.2 1L20 7l-4.5-2.5a3.5 3.5 0 0 1-7 0Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" fill="none"/>',
+        # Snapfly's mark in the menu bar: a photo hanging from a clip on a line.
+        "hanging": '<path d="M.8 4.8Q12 8.3 23.2 4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/><g transform="rotate(-7 12 8)"><rect x="11.1" y="4.9" width="1.8" height="4.6" rx=".7" fill="currentColor"/><rect x="5.3" y="8.8" width="13.4" height="11.5" rx="2.4" stroke="currentColor" stroke-width="1.9" fill="none"/><circle cx="14.9" cy="12.5" r="1.2" fill="currentColor"/><path d="m8.3 17.5 2.8-2.9 3.4 3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>',
         "hand": '<path d="M8.5 12V6.2a1.3 1.3 0 0 1 2.6 0V11m0-6.2a1.3 1.3 0 0 1 2.6 0V11m0-5a1.3 1.3 0 0 1 2.6 0V12m0-3.5a1.3 1.3 0 0 1 2.6 0v5.5a6.5 6.5 0 0 1-6.5 6.5h-.6a6 6 0 0 1-4.7-2.3L4.6 14.4a1.4 1.4 0 0 1 2.1-1.8l1.8 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
         "info": '<circle cx="12" cy="12" r="8.3" stroke="currentColor" stroke-width="1.7" fill="none"/><path d="M12 11v5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7.8" r="1.2" fill="currentColor"/>',
         "pointer": '<path d="M5 3.2v15.6l4.1-3.7 2.6 6 2.7-1.2-2.6-5.9 5.6-.3Z" fill="#000" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/>',
@@ -747,7 +748,7 @@ def desk_scene(lang, name):
     bar = [f'<rect width="{W}" height="{MENU_BAR}" style="fill:var(--d-g0);fill-opacity:.72"/>',
            f'<text class="cap-app" x="{W - 16 if rtl else 16}" y="18.5" font-size="13" font-weight="600" style="fill:var(--d-g9)">{esc(t["browser"])}</text>',
            f'<text x="{16 if rtl else W - 16}" y="18.5" font-size="13" text-anchor="end" style="fill:var(--d-g9)" xml:space="preserve">{esc(t["clock"])}</text>',
-           f'<g transform="translate({snap - 8:g} 6) scale(.667)" style="color:var(--d-g9)">{ICONS["shirt"]}</g>']
+           f'<g transform="translate({snap - 8:g} 6) scale(.667)" style="color:var(--d-g9)">{ICONS["hanging"]}</g>']
     out.append(f'<g data-cap display="none">{"".join(bar)}</g>')
     if not lay["compact"]:
         icon, gap, pad = lay["icon"], 12, 8
@@ -879,7 +880,7 @@ def section_capture(lang):
           <header class="desk-bar">
             <span class="bar-app" aria-live="polite">{esc(D["browser"])}</span>
             <span class="bar-end">
-              <button type="button" class="bar-snapfly" aria-haspopup="menu" aria-expanded="false" aria-label="Snapfly">{icon("shirt", "icon bar-shirt")}{icon("stop", "icon bar-stop")}</button>
+              <button type="button" class="bar-snapfly" aria-haspopup="menu" aria-expanded="false" aria-label="Snapfly">{icon("hanging", "icon bar-mark")}{icon("stop", "icon bar-stop")}</button>
               <span class="bar-clock" xml:space="preserve">{esc(D["clock"])}</span>
             </span>
           </header>
@@ -937,7 +938,7 @@ def section_capture(lang):
 def section_start(lang):
     """Four steps from the download to the first screenshot on the line."""
     t = TEXT[lang]
-    symbols = ["download", "shirt", "lock", "viewfinder"]
+    symbols = ["download", "hanging", "lock", "viewfinder"]
     # On a wide screen the steps hang on a line, each on its clip at its
     # place along the rope, a little crooked, like the photos.
     steps = "".join(
@@ -1039,7 +1040,7 @@ def window_titlebar(title):
 
 
 def settings_sidebar(lang, current):
-    items = [("gear", "General"), ("shirt", "Line"), ("hand", "Privacy"), ("info", "About")]
+    items = [("gear", "General"), ("hanging", "Line"), ("hand", "Privacy"), ("info", "About")]
     mark = lambda key: ' class="on"' if key == current else ""
     rows = "".join(f'<li{mark(key)}>{icon(sym)}<span>{esc(L(lang, key))}</span></li>' for sym, key in items)
     return f'<ul class="settings-side" aria-hidden="true">{rows}</ul>'

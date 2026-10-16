@@ -54,9 +54,11 @@ promo video. It does not invent a new one.
     recoloured to match a theme.
   - The website's PNGs (`website/static/icon-*.png`, `favicon.png`,
     `og.png`) come from it, through `website/make-images.py`.
-- **The menu bar icon** is the SF Symbol `tshirt`: clothes on a line. It
-  fills (`tshirt.fill`) while the line is showing and becomes `stop.circle`
-  while the screen is recorded. It is a template symbol, so macOS colours it.
+- **The menu bar icon** is Snapfly's own mark: a photo hanging from a clip
+  on a line, a little crooked, chosen by the owner in place of the earlier
+  shirt. It fills while copied images are hung and becomes `stop.circle`
+  while the screen is recorded. It is a template image, so macOS colours
+  it; its measurements are under "Navigation" in `DESIGN.md`.
 - **Credit.** The About pane keeps "Based on Tendedero by Alejandro Buján,
   under the MIT License". The license requires it.
 
