@@ -52,6 +52,7 @@ Each token lists where its value ships today. "App" is SwiftUI or AppKit;
 | `duration.flight` | 820 ms | Site paper-plane flight |
 | `duration.entrance` | 0.8–1.2 s | Site first view and arrivals, once per page |
 | `duration.ambient` | 5.6 s | Site sway of a hanging photo (alternate, loops) |
+| `duration.run` | 30 s, linear, loops | Site bold look: the band of words running across the first view |
 
 ### Easing
 
@@ -92,6 +93,7 @@ settle is the point.
 | `stagger.cover` | 45 ms | Hide Part: covers grow in line by line |
 | `stagger.list` | 90 ms, four at most | Site arrivals: the four steps |
 | `stagger.hang` | 110 ms | Site first view: photos drop onto the rope |
+| `stagger.deal` | 90 ms, after 250 ms | Site bold look: cards dealt onto the rope |
 | `stagger.words` | 120 ms | Site first view: headline, line, badge (0.1, 0.22, 0.34 s) |
 | `stagger.keys` | 140 ms | Site keycaps pressed in turn |
 
@@ -116,6 +118,8 @@ settle is the point.
 | `drop.photo` | 56 px | A photo dropping onto its clip |
 | `drop.card` | 40 px | A step card dropping onto its clip as it arrives |
 | `lift.flight` | at least 70 px, 40 px toward the reading end | The paper plane's arc |
+| `deal.card` | from 34 vw toward the trailing side and 10 vh up, turned 16°, at 92% | Bold look: a card dealt onto the line, 1 s on `ease.out` |
+| `rise.mask` | 70% of its own height | Bold look: the headline (1.1 s) and headings (1 s) rising out of a mask that stays where they land |
 
 ### Scale
 
@@ -188,6 +192,13 @@ short thud and no bounce after it, and stays with the time it was sent. The
 first view ends with one (after the airmail label), and every photo that
 lands in the hero's chat gets one. Nothing on the site floats; things hang,
 fly or are struck.
+
+The bold look keeps take off and the sway, and changes the arrival: the
+cards are **dealt** onto the line from the trailing side, turned 16°, each
+straightening as it lands, 90 ms apart; its giant words **rise** out of a
+mask; its band of words **runs** on, the one thing that loops besides the
+sway. With Reduce Motion the cards and words are simply there and the band
+stands still.
 
 The same two moves carry over to onboarding, the website and videos, with
 the same curves, so every place feels like one product.

@@ -15,10 +15,12 @@ phone sizes:
 - the theme switcher: Original Sunset by default, each theme kept after a
   reload from the first paint, the arrows (in reading direction), another
   open tab following;
-- the look switch: the airmail envelope by default, the classic Mac desktop
-  kept after a reload from the first paint and loading cleanly in every
-  language, the themes still working in it, the arrows;
-- with Reduce Motion, the first view is all there at once.
+- the look switch: the airmail envelope by default; the classic Mac desktop
+  and bold colour looks kept after a reload from the first paint and
+  loading cleanly in every language, the themes still working in them, the
+  bold look's band running; the arrows through all three;
+- with Reduce Motion, the first view is all there at once, and in the bold
+  look its band stands still.
 
 ## Running them
 

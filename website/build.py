@@ -33,7 +33,7 @@ REDIRECT_JS = ('try{if(!localStorage.getItem("snapfly-lang")){var l=(navigator.l
 # device, set before the page paints, and the mark that scripts run.
 BRAND_JS = ('try{var b=localStorage.getItem("snapfly-brand");if(b==="emerald"||b==="orange")'
             'document.documentElement.setAttribute("data-brand",b);'
-            'if(localStorage.getItem("snapfly-look")==="classic")document.documentElement.setAttribute("data-look","classic")}catch(e){}'
+            'var k=localStorage.getItem("snapfly-look");if(k==="classic"||k==="bold")document.documentElement.setAttribute("data-look",k)}catch(e){}'
             'document.documentElement.classList.add("js")')
 INLINE_JS = (BRAND_JS, REDIRECT_JS)
 STATIC = HERE / "static"
@@ -281,14 +281,15 @@ def menubar(lang, page):
         f'{mark(code)}>{icon("check", "icon tick")}{esc(name)}</a></li>'
         for code, _, name in LANGS)
     current = dict((c, n) for c, _, n in LANGS)[lang]
-    # The look, airmail or the classic Mac desktop, and the brand theme, as
+    # The look (airmail, the classic Mac desktop or bold colour) and the
+    # brand theme, as
     # swatches; site.js keeps the checked ones in step with <html data-look>
     # and <html data-brand>.
     looks = "".join(
         f'<button type="button" class="look-chip" role="radio" aria-checked="{str(key == "airmail").lower()}"'
         f' tabindex="{0 if key == "airmail" else -1}" data-look-pick="{key}" aria-label="{esc(t["look_" + key])}"'
         f' data-tip="{esc(t["look_" + key])}"><span class="look-pic look-pic-{key}"></span></button>'
-        for key in ("airmail", "classic"))
+        for key in ("airmail", "classic", "bold"))
     brands = "".join(
         f'<button type="button" class="brand-chip" role="radio" aria-checked="{str(key == "sunset").lower()}"'
         f' tabindex="{0 if key == "sunset" else -1}" data-brand-pick="{key}" aria-label="{esc(t["brand_" + key])}"'
@@ -383,6 +384,7 @@ def head(lang, page, title, desc):
 {redirect}
 <link rel="stylesheet" href="{p}assets/site.css">
 <link rel="stylesheet" href="{p}assets/classic.css">
+<link rel="stylesheet" href="{p}assets/bold.css">
 <script src="{p}assets/site.js" defer></script>
 </head>"""
 
@@ -445,6 +447,16 @@ def airmail(lang):
     return f'<p class="airmail" aria-hidden="true"><strong>{esc(AIRMAIL[lang])}</strong><span class="airmail-rest">{rest}</span></p>'
 
 
+def marquee(lang):
+    """A band of what a screenshot can do, in the app's own words, running
+    sideways; the bold look shows it."""
+    words = ["Copy", "Copy Text", "Make PDF", "Combine into one image", "Pin", "Translate Text", "Describe", "Hide Part…", "Markup"]
+    star = ('<svg class="marquee-star" viewBox="0 0 20 20" aria-hidden="true" focusable="false">'
+            '<path d="M10 0c.9 5.4 3.6 8.1 10 10-6.4 1.9-9.1 4.6-10 10-.9-5.4-3.6-8.1-10-10C6.4 8.1 9.1 5.4 10 0Z"/></svg>')
+    run = "".join(f"<span>{esc(L(lang, w))}</span>{star}" for w in words)
+    return f'<div class="marquee" aria-hidden="true"><div class="marquee-track">{run}{run}</div></div>'
+
+
 def handstamp(text, cls=""):
     """A rectangular rubber stamp, double-ruled, struck a little crooked."""
     return f'<span class="handstamp{(" " + cls) if cls else ""}" aria-hidden="true">{esc(text)}</span>'
@@ -491,6 +503,7 @@ def hero(lang):
     <p class="vh" role="status" aria-live="polite" data-status data-sent="{esc(t["send_label"])}"></p>
   </div>
   {airmail(lang)}
+  {marquee(lang)}
   <div class="hero-body">
     <div class="hero-copy">
       <h1 id="hero-title">{esc(L(lang, "Screenshots, one click from any chat."))}</h1>

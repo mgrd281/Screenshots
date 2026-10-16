@@ -1,0 +1,479 @@
+/* Snapfly website, the bold colour look: one confident colour field per
+   theme, giant black type, screenshots dealt onto the line like cards, and
+   a band of what a screenshot can do running sideways. Chosen with the look
+   switch in the menu bar; site.js sets <html data-look="bold"> before the
+   page paints. It restyles the airmail page (site.css) and turns off what
+   only the envelope has. Mac windows on it stay native. Tokens are listed in
+   DESIGN.md under "Website", "The bold colour look". */
+
+/* MARK: Tokens
+
+   --field is the theme's colour, the ground of the first view and of the
+   loud sections; --type sets the words on it. --sheet is the quiet ground
+   between, --night the black sections and the band, --mark the field's
+   colour where it marks something on black. */
+:root[data-look="bold"] {
+  --field: #FF5E62;
+  --glow-a: rgba(255, 196, 92, 0.5);
+  --glow-b: rgba(178, 52, 214, 0.36);
+  --type: #120708;
+  --type-2: rgba(18, 7, 8, 0.78);
+  --sheet: #FFF4EE;
+  --night: #120708;
+  --night-ink: #FFF4EE;
+  --night-ink-2: rgba(255, 244, 238, 0.74);
+  --mark: #FF5E62;
+  --pill: #120708;
+  --pill-ink: #FFF4EE;
+
+  --edge: 0px;
+  --accent: #120708;
+  --link: #120708;
+  --ink: #120708;
+  --ink-2: #4A2A2C;
+  --ground: var(--sheet);
+  --paper: var(--sheet);
+  --paper-2: color-mix(in srgb, var(--sheet) 92%, var(--type));
+  --fill: rgba(18, 7, 8, 0.05);
+  --fill-2: rgba(18, 7, 8, 0.1);
+  --hairline: rgba(18, 7, 8, 0.14);
+  --menu-bg: rgba(255, 250, 247, 0.96);
+  --rope: #120708;
+  --shade: 80 10 20;
+  --shade-deep: 60 6 14;
+  --badge-bg: var(--pill);
+  --badge-edge: transparent;
+  --stamp: #FFFFFF;
+  --kbd-wall-bg: #FFFFFF;
+  --kbd-wall-edge: rgba(18, 7, 8, 0.22);
+  --pill-bg: rgba(18, 7, 8, 0.06);
+  --pill-bg-hover: rgba(18, 7, 8, 0.12);
+  --pill-edge: rgba(18, 7, 8, 0.24);
+  --file-shadow: none;
+  --shelf-bg: rgba(255, 255, 255, 0.8);
+  --shelf-edge: rgba(18, 7, 8, 0.12);
+}
+:root[data-look="bold"][data-brand="emerald"] {
+  --field: #5CC9B2;
+  --glow-a: rgba(184, 222, 210, 0.7);
+  --glow-b: rgba(6, 47, 49, 0.22);
+  --type: #062F31;
+  --type-2: rgba(6, 47, 49, 0.8);
+  --sheet: #EEF8F4;
+  --night: #062F31;
+  --night-ink: #EEF8F4;
+  --night-ink-2: rgba(238, 248, 244, 0.74);
+  --mark: #5CC9B2;
+  --pill: #062F31;
+  --pill-ink: #EEF8F4;
+  --accent: #062F31;
+  --link: #062F31;
+  --ink: #062F31;
+  --ink-2: #2F5554;
+  --fill: rgba(6, 47, 49, 0.05);
+  --fill-2: rgba(6, 47, 49, 0.1);
+  --hairline: rgba(6, 47, 49, 0.14);
+  --menu-bg: rgba(246, 252, 250, 0.96);
+  --rope: #062F31;
+  --shade: 3 40 41;
+  --shade-deep: 1 22 23;
+  --kbd-wall-edge: rgba(6, 47, 49, 0.22);
+  --pill-bg: rgba(6, 47, 49, 0.06);
+  --pill-bg-hover: rgba(6, 47, 49, 0.12);
+  --pill-edge: rgba(6, 47, 49, 0.24);
+  --shelf-edge: rgba(6, 47, 49, 0.12);
+}
+:root[data-look="bold"][data-brand="orange"] {
+  --field: #EC632C;
+  --glow-a: rgba(255, 135, 84, 0.65);
+  --glow-b: rgba(199, 70, 28, 0.42);
+  --type: #171717;
+  --type-2: rgba(23, 23, 23, 0.88);
+  --sheet: #FFF6F0;
+  --night: #171717;
+  --night-ink: #FFF6F0;
+  --night-ink-2: rgba(255, 246, 240, 0.74);
+  --mark: #EC632C;
+  --pill: #171717;
+  --pill-ink: #FFF6F0;
+  --accent: #171717;
+  --link: #171717;
+  --ink: #171717;
+  --ink-2: #4A4542;
+  --fill: rgba(23, 23, 23, 0.05);
+  --fill-2: rgba(23, 23, 23, 0.1);
+  --hairline: rgba(23, 23, 23, 0.14);
+  --rope: #171717;
+  --shade: 90 34 10;
+  --shade-deep: 60 22 6;
+  --kbd-wall-edge: rgba(23, 23, 23, 0.22);
+  --pill-bg: rgba(23, 23, 23, 0.06);
+  --pill-bg-hover: rgba(23, 23, 23, 0.12);
+  --pill-edge: rgba(23, 23, 23, 0.24);
+  --shelf-edge: rgba(23, 23, 23, 0.12);
+}
+
+/* In dark the fields turn near black and the theme's colour becomes the
+   type; the band and the pills take the colour. */
+@media (prefers-color-scheme: dark) {
+  :root[data-look="bold"] {
+    --field: #0F0C0D;
+    --glow-a: rgba(255, 94, 98, 0.2);
+    --glow-b: rgba(178, 52, 214, 0.22);
+    --type: #FF5E62;
+    --type-2: rgba(237, 231, 232, 0.78);
+    --sheet: #161213;
+    --night: #FF5E62;
+    --night-ink: #120708;
+    --night-ink-2: rgba(18, 7, 8, 0.8);
+    --mark: #120708;
+    --pill: #FF5E62;
+    --pill-ink: #120708;
+    --accent: #C2363D;
+    --link: #FF8A8D;
+    --ink: #EDE7E8;
+    --ink-2: #B9AEB0;
+    --fill: rgba(255, 255, 255, 0.06);
+    --fill-2: rgba(255, 255, 255, 0.11);
+    --hairline: rgba(255, 255, 255, 0.13);
+    --menu-bg: rgba(36, 30, 32, 0.96);
+    --rope: #EDE7E8;
+    --shade: 0 0 0;
+    --shade-deep: 0 0 0;
+    --kbd-wall-bg: #241E20;
+    --kbd-wall-edge: rgba(255, 255, 255, 0.2);
+    --pill-bg: rgba(255, 255, 255, 0.07);
+    --pill-bg-hover: rgba(255, 255, 255, 0.13);
+    --pill-edge: rgba(255, 255, 255, 0.22);
+    --shelf-bg: rgba(255, 255, 255, 0.1);
+    --shelf-edge: rgba(255, 255, 255, 0.18);
+  }
+  :root[data-look="bold"][data-brand="emerald"] {
+    --field: #0B1213;
+    --glow-a: rgba(92, 201, 178, 0.2);
+    --glow-b: rgba(22, 129, 118, 0.24);
+    --type: #5CC9B2;
+    --type-2: rgba(231, 241, 238, 0.78);
+    --sheet: #0F1819;
+    --night: #5CC9B2;
+    --night-ink: #062F31;
+    --night-ink-2: rgba(6, 47, 49, 0.82);
+    --mark: #062F31;
+    --pill: #5CC9B2;
+    --pill-ink: #062F31;
+    --accent: #0E7A6C;
+    --link: #8FD6C4;
+    --ink: #E7F1EE;
+    --ink-2: #A6C2BB;
+    --rope: #E7F1EE;
+    --menu-bg: rgba(20, 36, 37, 0.96);
+  }
+  :root[data-look="bold"][data-brand="orange"] {
+    --field: #121110;
+    --glow-a: rgba(236, 99, 44, 0.22);
+    --glow-b: rgba(255, 135, 84, 0.14);
+    --type: #EC632C;
+    --type-2: rgba(240, 236, 233, 0.78);
+    --sheet: #181615;
+    --night: #EC632C;
+    --night-ink: #171717;
+    --night-ink-2: rgba(23, 23, 23, 0.88);
+    --mark: #171717;
+    --pill: #EC632C;
+    --pill-ink: #171717;
+    --accent: #C7461C;
+    --link: #FF8754;
+    --ink: #F0ECE9;
+    --ink-2: #B7AFA9;
+    --rope: #F0ECE9;
+    --menu-bg: rgba(36, 33, 31, 0.96);
+  }
+}
+
+/* MARK: What only the envelope has, off */
+
+:root[data-look="bold"] body::after,
+:root[data-look="bold"] .photo::before,
+:root[data-look="bold"] .step::before,
+:root[data-look="bold"] .step::after,
+:root[data-look="bold"] .section::before,
+:root[data-look="bold"] .close::before,
+:root[data-look="bold"] .envelope::before,
+:root[data-look="bold"] .envelope-back::before { content: none; }
+:root[data-look="bold"] .airmail,
+:root[data-look="bold"] .postmark,
+:root[data-look="bold"] .handstamp,
+:root[data-look="bold"] .flightpath,
+:root[data-look="bold"] .flap,
+:root[data-look="bold"] .envelope-stamp,
+:root[data-look="bold"] .msg.posted { display: none; }
+
+:root[data-look="bold"] body { background: var(--sheet); }
+:root[data-look="bold"] ::selection { background: color-mix(in srgb, var(--field) 45%, transparent); }
+
+/* MARK: Menu bar: the field colour, all the way down the page */
+
+:root[data-look="bold"] .menubar {
+  background: color-mix(in srgb, var(--field) 92%, transparent);
+  border-bottom: 1.5px solid color-mix(in srgb, var(--type) 85%, transparent);
+  color: var(--type);
+}
+:root[data-look="bold"] .menubar a, :root[data-look="bold"] .lang-menu summary, :root[data-look="bold"] .clock { color: var(--type); }
+:root[data-look="bold"] .brand-switch, :root[data-look="bold"] .look-switch { background: color-mix(in srgb, var(--type) 12%, transparent); }
+:root[data-look="bold"] .brand-dot { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3); }
+:root[data-look="bold"] .brand-dot-sunset { background: #FF5E62; }
+:root[data-look="bold"] .brand-dot-emerald { background: #5CC9B2; }
+:root[data-look="bold"] .brand-dot-orange { background: #EC632C; }
+
+/* MARK: First view: the field, the giant words, the dealt cards */
+
+:root[data-look="bold"] .hero {
+  background:
+    radial-gradient(55% 60% at 88% 18%, var(--glow-a), transparent 70%),
+    radial-gradient(48% 55% at 6% 100%, var(--glow-b), transparent 70%),
+    var(--field);
+  color: var(--type);
+}
+:root[data-look="bold"] .hero-copy { padding-block: 0 clamp(24px, 4vh, 56px); }
+:root[data-look="bold"] .hero h1 {
+  max-width: 12.5ch;
+  font-size: clamp(3rem, min(7vw, 10vh), 7.5rem);
+  font-weight: 800;
+  line-height: 0.86;
+  letter-spacing: -0.06em;
+}
+:root[data-look="bold"] .hero h1:lang(de) { max-width: 16ch; font-size: clamp(2.6rem, min(6vw, 9.5vh), 6.25rem); }
+:root[data-look="bold"] .hero h1:lang(ar) { max-width: 12ch; line-height: 1.12; letter-spacing: 0; font-size: clamp(2.8rem, min(6.4vw, 9.5vh), 6.5rem); }
+:root[data-look="bold"] .hero-sub { max-width: 36em; color: var(--type-2); font-size: clamp(1.05rem, 1.3vw, 1.2rem); }
+:root[data-look="bold"] .hero-note { color: var(--type-2); }
+
+/* The download: a pill in the type's colour. */
+:root[data-look="bold"] .badge-get {
+  border-radius: 999px;
+  padding-inline: 20px 30px;
+  background: var(--pill);
+  color: var(--pill-ink);
+  box-shadow: 0 16px 32px rgb(var(--shade-deep) / 0.28);
+}
+:root[data-look="bold"] .badge-get:focus-visible { outline: 3px solid var(--type); outline-offset: 4px; }
+
+/* The cards on the line: white, rounded, a crisp shadow; no glass. */
+:root[data-look="bold"] .rope path { stroke-width: 2.5; }
+:root[data-look="bold"] .photo {
+  padding: 5px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  filter: none;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.04), 0 22px 40px rgb(var(--shade-deep) / 0.3);
+}
+:root[data-look="bold"] .photo-img { border-radius: 11px; }
+:root[data-look="bold"] .peg:hover .photo, :root[data-look="bold"] .peg:focus-within .photo { box-shadow: 0 2px 0 rgba(0, 0, 0, 0.04), 0 30px 50px rgb(var(--shade-deep) / 0.36); }
+:root[data-look="bold"] .photo-preview { padding: 0; box-shadow: none; background: none; }
+:root[data-look="bold"] .corner-send { background: var(--pill); color: var(--pill-ink); border-color: transparent; }
+:root[data-look="bold"] .tag-send { background: var(--pill); color: var(--field); box-shadow: 0 0 0 3px var(--field), 0 0 0 5px var(--pill), 0 12px 24px rgb(var(--shade-deep) / 0.3); }
+:root[data-look="bold"] .tag-label { background: var(--pill); color: var(--pill-ink); box-shadow: none; border-radius: 999px; padding: 4px 11px; }
+
+/* The band of what a screenshot can do, across the foot of the first
+   view, over the chat's cropped edge. */
+:root[data-look="bold"] .marquee {
+  position: relative;
+  z-index: 4;
+  order: 3;
+  display: flex;
+  align-items: center;
+  flex: none;
+  height: clamp(58px, 7vh, 78px);
+  overflow: hidden;
+  background: var(--night);
+  color: var(--night-ink);
+}
+:root[data-look="bold"] .marquee-track {
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 2.4vw, 34px);
+  flex: none;
+  padding-inline-start: clamp(20px, 2.4vw, 34px);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  animation: bold-run 30s linear infinite;
+}
+:lang(ar) .marquee-track { letter-spacing: 0; }
+.marquee-star { width: 0.7em; height: 0.7em; flex: none; fill: var(--mark); }
+@keyframes bold-run { to { transform: translateX(-50%); } }
+@keyframes bold-run-rtl { to { transform: translateX(50%); } }
+:root[data-look="bold"][dir="rtl"] .marquee-track { animation-name: bold-run-rtl; }
+:root[data-look="bold"] .hero-body { order: 2; }
+:root[data-look="bold"] .chat { box-shadow: 0 30px 60px rgb(var(--shade-deep) / 0.35), 0 0 0 1px rgba(0, 0, 0, 0.06); }
+
+/* MARK: Sections: quiet sheets, loud fields and black */
+
+:root[data-look="bold"] .section { background: var(--sheet); color: var(--ink); }
+:root[data-look="bold"] .section h2 {
+  font-size: clamp(2.5rem, 6.2vw, 5.75rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+}
+:root[data-look="bold"] .section h2:lang(ar) { letter-spacing: 0; line-height: 1.15; }
+/* Beside a window, a size that keeps to its half. */
+:root[data-look="bold"] .split h2 { font-size: clamp(2.4rem, 4.4vw, 4.25rem); }
+:root[data-look="bold"] .copy p { color: var(--ink-2); }
+
+/* The loud ones: the field again, with a dot grid in one corner. */
+:root[data-look="bold"] .private,
+:root[data-look="bold"] .design {
+  background:
+    radial-gradient(50% 60% at 92% 10%, var(--glow-a), transparent 70%),
+    var(--field);
+  color: var(--type);
+}
+:root[data-look="bold"] .private .copy p,
+:root[data-look="bold"] .design p { color: var(--type-2); }
+:root[data-look="bold"] .private::after,
+:root[data-look="bold"] .design::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset-inline-end: 4%;
+  bottom: 9%;
+  width: 196px;
+  height: 126px;
+  background: radial-gradient(circle, var(--type) 1.5px, transparent 1.9px) 0 0 / 14px 14px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* The black ones: the desktop to try Snapfly on, and the photo's menu. */
+:root[data-look="bold"] .capture,
+:root[data-look="bold"] .menu-demo {
+  --on-wall: var(--night-ink);
+  --on-wall-2: var(--night-ink-2);
+  --rope: var(--night-ink);
+  --kbd-wall-bg: transparent;
+  --kbd-wall-edge: color-mix(in srgb, var(--night-ink) 40%, transparent);
+  --pill-bg: color-mix(in srgb, var(--night-ink) 10%, transparent);
+  --pill-bg-hover: color-mix(in srgb, var(--night-ink) 18%, transparent);
+  --pill-edge: color-mix(in srgb, var(--night-ink) 30%, transparent);
+  background: var(--night);
+  color: var(--night-ink);
+}
+:root[data-look="bold"] .capture .copy p,
+:root[data-look="bold"] .menu-demo .copy p,
+:root[data-look="bold"] .menu-desc,
+:root[data-look="bold"] .capture .desk-note { color: var(--night-ink-2); }
+:root[data-look="bold"] .menu-desc-title { color: var(--night-ink); }
+
+/* Keys drawn flat and heavy. */
+:root[data-look="bold"] .keycap {
+  border: 2px solid var(--ink);
+  border-bottom-width: 6px;
+  border-radius: 18px;
+  box-shadow: none;
+}
+
+/* The Desktop's files swept onto the rope stay plain cards. */
+:root[data-look="bold"] .desk.swept .file-thumb { -webkit-mask: none; mask: none; border-radius: 7px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); }
+:root[data-look="bold"] .desk.swept .file { filter: none; }
+
+/* No account, no cloud, no analytics: the words, giant, on the field. */
+:root[data-look="bold"] .envelope,
+:root[data-look="bold"] .envelope-back { position: static; isolation: auto; max-width: none; padding: 0; overflow: visible; border-radius: 0; background: none; box-shadow: none; }
+:root[data-look="bold"] .section h2.points {
+  max-width: none;
+  padding-inline-end: 0;
+  font-size: clamp(3rem, 8.4vw, 8rem);
+  line-height: 0.88;
+}
+:root[data-look="bold"] .design strong { color: var(--type); }
+:root[data-look="bold"] .design .link-arrow { color: var(--type); }
+
+/* The four steps: white cards, their number large. */
+:root[data-look="bold"] .step {
+  padding: 24px 24px 26px;
+  border-radius: 22px;
+  background: #FFFFFF;
+  color: #1D1D1F;
+  filter: none;
+  box-shadow: 0 0 0 2px var(--ink), 0 18px 34px rgb(var(--shade-deep) / 0.18);
+}
+:root[data-look="bold"] .step-n { color: var(--ink); font-size: 44px; }
+@media (prefers-color-scheme: dark) {
+  :root[data-look="bold"] .step { box-shadow: 0 0 0 2px var(--type), 0 18px 34px rgba(0, 0, 0, 0.4); }
+  :root[data-look="bold"] .step-n { color: #1D1D1F; }
+}
+:root[data-look="bold"] .step-icon { background: var(--field); color: var(--type); box-shadow: none; }
+@media (prefers-color-scheme: dark) {
+  :root[data-look="bold"] .step-icon { background: var(--type); color: #120708; }
+}
+
+/* The close: the field once more, the icon, the giant line, the pill. */
+:root[data-look="bold"] .close {
+  background:
+    radial-gradient(60% 70% at 50% 0%, var(--glow-a), transparent 70%),
+    var(--field);
+  color: var(--type);
+}
+:root[data-look="bold"] .close-icon { position: static; top: auto; left: auto; translate: none; width: clamp(96px, 9vw, 124px); margin: 0 auto 28px; }
+:root[data-look="bold"] .close h2 { font-size: clamp(3rem, 7.4vw, 7rem); font-weight: 800; line-height: 0.88; letter-spacing: -0.06em; }
+:root[data-look="bold"] .close h2:lang(ar) { letter-spacing: 0; line-height: 1.15; }
+:root[data-look="bold"] .close .hero-note { color: var(--type-2); }
+
+/* The footer on black. */
+:root[data-look="bold"] .footer { background: var(--night); color: var(--night-ink-2); border-top: 0; }
+:root[data-look="bold"] .footer a, :root[data-look="bold"] .footer-brand strong { color: var(--night-ink); }
+:root[data-look="bold"] .footer .muted { color: var(--night-ink-2); }
+:root[data-look="bold"] .fine { border-top-color: color-mix(in srgb, var(--night-ink) 18%, transparent); }
+
+/* MARK: Motion
+
+   The first view: the cards are dealt onto the line from the trailing side,
+   one after another, each turning straight as it lands; the giant words
+   rise out of a mask that stays where they land. Below it, headings arrive
+   the same way. The band runs on. Specificity stays as low as the rules it
+   replaces, so a held or dragged card still stops. */
+:where(:root[data-look="bold"] .hero.intro) .peg {
+  animation: bold-deal 1s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 90ms + 250ms) both, sway 5.6s ease-in-out calc(var(--i) * -1.3s) infinite alternate;
+}
+@keyframes bold-deal {
+  from { opacity: 0; transform: translate(34vw, -10vh) rotate(16deg) scale(0.92); }
+  70% { opacity: 1; }
+}
+[dir="rtl"] :where(:root[data-look="bold"] .hero.intro) .peg { animation-name: bold-deal-rtl, sway; }
+@keyframes bold-deal-rtl {
+  from { opacity: 0; transform: translate(-34vw, -10vh) rotate(-16deg) scale(0.92); }
+  70% { opacity: 1; }
+}
+:where(:root[data-look="bold"]) .hero.intro h1 { animation: bold-rise 1.1s var(--ease-out) 0.05s both; }
+@keyframes bold-rise {
+  from { opacity: 0; clip-path: inset(-10% -6% 70% -6%); transform: translateY(70%); }
+  30% { opacity: 1; }
+  to { opacity: 1; clip-path: inset(-10% -6% -25% -6%); transform: none; }
+}
+:where(:root[data-look="bold"]) .arrive-words {
+  clip-path: inset(-10% -6% -25% -6%);
+  transition: opacity 0.5s var(--ease-out), transform 1s var(--ease-out), clip-path 1s var(--ease-out);
+  transition-delay: var(--ad, 0ms);
+}
+:where(:root[data-look="bold"]) .arrive-words.pre { filter: none; clip-path: inset(-10% -6% 70% -6%); transform: translateY(70%); }
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-look="bold"] .marquee-track { animation: none; }
+  :where(:root[data-look="bold"]) .hero.intro h1 { animation: none; }
+  :where(:root[data-look="bold"]) .arrive-words.pre { clip-path: none; transform: none; }
+}
+
+/* MARK: Phones */
+
+/* The bar has no envelope edge to sit inside, so it keeps its own margin. */
+@media (max-width: 380px) {
+  :root[data-look="bold"] .menubar-row { padding-inline: 10px; }
+}
+@media (max-width: 640px) {
+  :root[data-look="bold"] .hero h1 { font-size: clamp(2.6rem, 13vw, 4rem); }
+  :root[data-look="bold"] .hero h1:lang(de) { font-size: clamp(2.2rem, 10.5vw, 3.4rem); }
+  :root[data-look="bold"] .hero h1:lang(ar) { font-size: clamp(2.4rem, 11vw, 3.6rem); }
+  :root[data-look="bold"] .marquee { height: 54px; }
+  :root[data-look="bold"] .private::after, :root[data-look="bold"] .design::after { display: none; }
+}

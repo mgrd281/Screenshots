@@ -638,6 +638,8 @@ kbd {
 }
 :root[data-look="classic"] .look-thumb { transform: translateX(100%); }
 :root[data-look="classic"][dir="rtl"] .look-thumb { transform: translateX(-100%); }
+:root[data-look="bold"] .look-thumb { transform: translateX(200%); }
+:root[data-look="bold"][dir="rtl"] .look-thumb { transform: translateX(-200%); }
 .look-chip {
   position: relative;
   z-index: 1;
@@ -672,6 +674,14 @@ kbd {
   background:
     linear-gradient(rgba(255, 255, 255, 0.8) 0 2.5px, transparent 2.5px),
     linear-gradient(140deg, #FFC45C 0%, #FF5E62 48%, #B234D6 100%);
+}
+/* Bold colour: two black lines of type on a coral field. */
+.look-pic-bold {
+  border-radius: 3px;
+  background:
+    linear-gradient(#120708 0 0) 3px 3px / 10px 2.5px no-repeat,
+    linear-gradient(#120708 0 0) 3px 7px / 7px 2.5px no-repeat,
+    #FF5E62;
 }
 @media (hover: hover) and (pointer: fine) {
   .look-chip:hover .look-pic { scale: 1.12; }
@@ -811,6 +821,10 @@ kbd {
 [dir="rtl"] .postmark svg { scale: -1 1; }
 [dir="rtl"] .postmark .pm-words { scale: -1 1; transform-box: fill-box; transform-origin: center; }
 .pm-time { font-family: var(--font-mono); }
+
+/* The band of what a screenshot can do; only the bold look shows it
+   (bold.css). */
+.marquee { display: none; }
 
 /* The dashed path a stamp flies along, from the line to the chat. */
 .hero-chat { position: relative; }
@@ -3446,10 +3460,17 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 
 /* MARK: Phones */
 
-/* On phones the menu bar keeps Snapfly's icon and drops its name from
-   view, so the theme switcher and the language menu still fit. */
-@media (max-width: 430px) {
+/* Below a laptop's width the menu bar lets the clock and the language's
+   name go, and on tablets and phones it keeps Snapfly's icon and drops its
+   name from view, so both switches and the language menu still fit, in
+   every look (hence the :root, which outweighs classic.css). */
+@media (max-width: 900px) {
+  :root .clock, :root .lang-current { display: none; }
+}
+@media (max-width: 720px) {
   .app-menu span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+@media (max-width: 430px) {
   /* Both switches and the links pack closer, in either look (hence the
      :root, which outweighs classic.css). */
   :root .menubar-row, :root .status { gap: 2px; }
@@ -3463,11 +3484,13 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   :root .status { gap: 0; }
   :root .menus a, :root .lang-menu summary { padding-inline: 4px; }
 }
+@media (max-width: 400px) {
+  /* Support stays in the footer; the bar keeps Privacy. */
+  :root .menus li:last-child { display: none; }
+}
 @media (max-width: 340px) {
   :root .menubar-row { padding-inline: calc(var(--edge) + 2px); }
   :root .look-thumb, :root .look-chip, :root .brand-thumb, :root .brand-chip { width: 24px; }
-  /* Support stays in the footer; the bar keeps Privacy. */
-  :root .menus li:last-child { display: none; }
 }
 
 @media (max-width: 640px) {

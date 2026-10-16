@@ -1,5 +1,6 @@
-// The website's pages, languages, look and theme switchers and Reduce
-// Motion, checked in a real browser. These tests read the site; they never change it.
+// The website's pages, languages, the look switch (airmail, classic, bold),
+// the theme switcher and Reduce Motion, checked in a real browser. These
+// tests read the site; they never change it.
 const { test, expect } = require("@playwright/test");
 
 const pages = ["", "privacy.html", "support.html"];
@@ -41,12 +42,12 @@ for (const [dir, lang, direction] of languages) for (const path of pages) {
 const lookOf = (page) => page.evaluate(() => document.documentElement.dataset.look || "airmail");
 const edgeOf = (page) => page.evaluate(() => getComputedStyle(document.body, "::after").content);
 
-for (const [dir, lang] of languages) for (const path of ["", "privacy.html"]) {
-  test(`${lang} ${path || "home"} loads cleanly in the classic look`, async ({ page }) => {
-    await page.addInitScript(() => { try { localStorage.setItem("snapfly-look", "classic"); } catch (e) {} });
+for (const look of ["classic", "bold"]) for (const [dir, lang] of languages) for (const path of ["", "privacy.html"]) {
+  test(`${lang} ${path || "home"} loads cleanly in the ${look} look`, async ({ page }) => {
+    await page.addInitScript((l) => { try { localStorage.setItem("snapfly-look", l); } catch (e) {} }, look);
     const errors = watchErrors(page);
     await page.goto(dir + path, { waitUntil: "networkidle" });
-    expect(await lookOf(page)).toBe("classic");
+    expect(await lookOf(page)).toBe(look);
     await expect(page.locator("h1")).toBeVisible();
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.waitForTimeout(300);
@@ -59,7 +60,7 @@ test("the airmail look is the default", async ({ page }) => {
   await page.goto("");
   expect(await lookOf(page)).toBe("airmail");
   await expect(page.locator(".look-switch")).toHaveAttribute("role", "radiogroup");
-  await expect(page.locator(".look-chip")).toHaveCount(2);
+  await expect(page.locator(".look-chip")).toHaveCount(3);
   await expect(page.locator('.look-chip[aria-checked="true"]')).toHaveAttribute("data-look-pick", "airmail");
   expect(await edgeOf(page), "the chevron edge is drawn").not.toBe("none");
 });
@@ -88,13 +89,44 @@ test("choosing the classic look is kept from the first paint, in every theme", a
   expect(errors).toEqual([]);
 });
 
+test("choosing the bold look is kept from the first paint, with its band running", async ({ page }) => {
+  await page.addInitScript(() => {
+    document.addEventListener("DOMContentLoaded", () => { window.__first = document.documentElement.dataset.look || "airmail"; });
+  });
+  const errors = watchErrors(page);
+  await page.goto("ar/", { waitUntil: "networkidle" });
+  await expect(page.locator(".marquee")).toBeHidden();
+  await page.locator('[data-look-pick="bold"]').click();
+  await expect.poll(() => lookOf(page)).toBe("bold");
+  expect(await page.evaluate(() => localStorage.getItem("snapfly-look"))).toBe("bold");
+  expect(await edgeOf(page), "no chevron edge").toBe("none");
+  await expect(page.locator(".marquee")).toBeVisible();
+  await expect(page.locator(".postmark").first()).toBeHidden();
+  await page.reload({ waitUntil: "networkidle" });
+  expect(await page.evaluate(() => window.__first)).toBe("bold");
+  // The band of what a screenshot can do runs, and only screen readers skip it.
+  expect(await page.locator(".marquee-track").evaluate((e) => e.getAnimations().map((a) => a.animationName))).toEqual(["bold-run-rtl"]);
+  await expect(page.locator(".marquee")).toHaveAttribute("aria-hidden", "true");
+  // Each theme brings its own field, and its menu bar colour.
+  await page.locator('[data-brand-pick="orange"]').click();
+  await expect.poll(() => brandOf(page)).toBe("orange");
+  expect(await lookOf(page)).toBe("bold");
+  await expect(page.locator('meta[name="theme-color"]').first()).toHaveAttribute("content", "#EC632C");
+  expect(await page.locator(".hero").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgb(236, 99, 44)");
+  expect(errors).toEqual([]);
+});
+
 test("the arrows move between the looks", async ({ page }) => {
   await page.goto("", { waitUntil: "networkidle" });
   await page.locator('.look-chip[aria-checked="true"]').focus();
   await page.keyboard.press("ArrowRight");
   await expect.poll(() => lookOf(page)).toBe("classic");
   await page.keyboard.press("ArrowRight");
+  await expect.poll(() => lookOf(page)).toBe("bold");
+  await page.keyboard.press("ArrowRight");
   await expect.poll(() => lookOf(page)).toBe("airmail");
+  await page.keyboard.press("ArrowLeft");
+  await expect.poll(() => lookOf(page)).toBe("bold");
 });
 
 test("Original Sunset is the default", async ({ page }) => {
@@ -165,6 +197,20 @@ test.describe("with Reduce Motion", () => {
     for (const selector of ["h1", ".hero-sub", ".chat", ".peg", ".line-tag"]) {
       expect(await page.locator(selector).first().evaluate((e) => getComputedStyle(e).opacity), selector).toBe("1");
     }
+  });
+
+  test("in the bold look nothing moves either, and the band stands still", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.addInitScript(() => { try { localStorage.setItem("snapfly-look", "bold"); } catch (e) {} });
+    await page.goto("", { waitUntil: "networkidle" });
+    expect(await lookOf(page)).toBe("bold");
+    const moving = await page.evaluate(() => document.getAnimations().filter((a) => {
+      const keys = a.effect.getKeyframes().flatMap((k) => Object.keys(k));
+      return keys.some((key) => !["offset", "computedOffset", "easing", "composite", "opacity"].includes(key)) && a.effect.getComputedTiming().duration > 1;
+    }).map((a) => `${a.animationName || a.transitionProperty} on ${a.effect.target.className.baseVal ?? a.effect.target.className}`));
+    expect(moving).toEqual([]);
+    expect(await page.locator(".marquee-track").evaluate((e) => getComputedStyle(e).animationName)).toBe("none");
+    expect(await page.locator(".pre").count()).toBe(0);
   });
 
   test("a new theme comes at once", async ({ page }) => {
