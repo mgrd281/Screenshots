@@ -113,46 +113,71 @@ const LINE_Y = 600, LINE_SAG = 38;
 const sendRope = el("div", "rope light", document.body, `<svg width="1080" height="120"><path d="${ropePath(1080, LINE_SAG)}"/></svg>`);
 style(sendRope, { left: "0", top: `${LINE_Y}px` });
 const CARD_W = 180;
-const SEND_KINDS = ["invoice", "calendar", "chart"];
+// What hangs on the line: the invoice goes to Lena in WhatsApp, the chart
+// to ChatGPT, and the calendar waits its turn.
+const SEND_KINDS = ["invoice", "chart", "calendar"];
 const SEND_FRAC = [0.2, 0.5, 0.8];
 const sendCards = SEND_KINDS.map((k) => {
   const c = el("div", "card", document.body, `<span class="clip"></span><div class="glass"><div class="img">${DATA.artByKind[k]}</div></div><div class="send">${ICON_PLANE}</div>`);
   style(c, { width: `${CARD_W}px` });
   return c;
 });
-const flyers = SEND_KINDS.map((k) => {
+const flyers = SEND_KINDS.slice(0, 2).map((k) => {
   const g = el("div", "card", document.body, `<div class="glass"><div class="img">${DATA.artByKind[k]}</div></div>`);
   style(g, { width: `${CARD_W}px`, transformOrigin: "50% 50%" });
   return g;
 });
-// Three chats drawn after the apps people send to, Claude, WhatsApp and
-// ChatGPT: their layout and colours, not their logos. Each has a spot where
-// the screenshot lands and an answer that follows.
-const CHAT_X = 110, CHAT_W = 860, CHAT_Y = 800, CHAT_H = 660;
+// Three chats drawn after the apps people send to, WhatsApp, ChatGPT and
+// Claude: their layout and colours, not their logos. WhatsApp is a whole
+// conversation with Lena, who asks for the invoice and gets it; the others
+// each have a spot where the screenshot lands and an answer that follows.
 const UP = '<svg viewBox="0 0 24 24"><path d="M12 19V6M6.5 11.5 12 6l5.5 5.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
 const TICKS = '<svg viewBox="0 0 18 11"><path d="m1 6 3 3 6-7M7 8l1 1 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+const MIC = '<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>';
 const LIGHTS = '<span class="lights"><i></i><i></i><i></i></span>';
-const A = T.apps;
-const appHtml = [
-  `<div class="top">${LIGHTS}<span class="name">Claude</span></div>
-   <div class="thread"><div class="me"><div class="pic">${DATA.artByKind[SEND_KINDS[0]]}</div><div class="said">${A.claude.ask}</div></div>
-   <div class="reply">${A.claude.reply}</div></div>
-   <div class="ask"><span>${A.claude.field}</span><span class="go">${UP}</span></div>`,
-  `<div class="top">${LIGHTS}<span class="avatar"></span><span class="who"><b>${A.whatsapp.contact}</b><small>${A.whatsapp.status}</small></span></div>
-   <div class="thread"><div class="in">${A.whatsapp.ask}<small>09:40</small></div>
-   <div class="me"><div class="pic">${DATA.artByKind[SEND_KINDS[1]]}</div><small>09:41 <span class="ticks">${TICKS}</span></small></div>
-   <div class="reply in">${A.whatsapp.reply}<small>09:41</small></div></div>
-   <div class="ask"><span class="field">${A.whatsapp.field}</span></div>`,
-  `<div class="top">${LIGHTS}<span class="name">ChatGPT <span class="chev">&#8964;</span></span></div>
-   <div class="thread"><div class="me"><div class="pic">${DATA.artByKind[SEND_KINDS[2]]}</div><div class="said">${A.chatgpt.ask}</div></div>
+const A = T.apps, W = A.whatsapp;
+const avatar = (c) => `<span class="av" style="background:${c.color}">${c.initial}</span>`;
+const waHtml = `
+  <div class="side">
+    <div class="side-top">${LIGHTS}<b>${W.title}</b></div>
+    <div class="search">${W.search}</div>
+    ${W.chats.map((c, i) => `<div class="row${i === 0 ? " on" : ""}">${avatar(c)}<span class="txt"><b>${c.name}</b><small>${c.last}</small></span><span class="when">${c.time}</span></div>`).join("")}
+  </div>
+  <div class="main">
+    <div class="head">${avatar(W.chats[0])}<span class="who"><b>${W.chats[0].name}</b><small><span class="online">${W.status}</span><span class="typing">${W.typing}</span></small></span></div>
+    <div class="msgs">
+      <div class="day">${W.day}</div>
+      <div class="in">${W.ask}<small>09:38</small></div>
+      <div class="out">${W.wait}<small>09:39 <span class="ticks read">${TICKS}</span></small></div>
+      <div class="slot me-slot"><div class="out me"><div class="pic">${DATA.artByKind[SEND_KINDS[0]]}</div><small>09:41 <span class="ticks sent">${TICKS}</span></small></div></div>
+      <div class="slot reply-slot"><div class="in reply">${W.reply}<small>09:41</small></div></div>
+    </div>
+    <div class="bar"><span class="plus">+</span><span class="field">${W.field}</span><span class="mic">${MIC}</span></div>
+  </div>`;
+const gptHtml = `<div class="top">${LIGHTS}<span class="name">ChatGPT <span class="chev">&#8964;</span></span></div>
+   <div class="thread"><div class="me"><div class="pic">${DATA.artByKind[SEND_KINDS[1]]}</div><div class="said">${A.chatgpt.ask}</div></div>
    <div class="reply">${A.chatgpt.reply}</div></div>
-   <div class="ask"><span>${A.chatgpt.field}</span><span class="go">${UP}</span></div>`,
+   <div class="ask"><span>${A.chatgpt.field}</span><span class="go">${UP}</span></div>`;
+const claudeHtml = `<div class="top">${LIGHTS}<span class="name">Claude</span></div>
+   <div class="thread"><div class="me"><div class="pic">${DATA.artByKind[SEND_KINDS[2]]}</div><div class="said">${A.claude.ask}</div></div>
+   <div class="reply">${A.claude.reply}</div></div>
+   <div class="ask"><span>${A.claude.field}</span><span class="go">${UP}</span></div>`;
+// Left to right as they fan out at the end: Claude, WhatsApp, ChatGPT.
+// WhatsApp is the larger window. They keep clear of Instagram's buttons on
+// the right, and meet in the middle when they fan out.
+const APPS = [
+  { key: "claude", html: claudeHtml, box: [80, 800, 860, 660] },
+  { key: "wa", html: waHtml, box: [20, 800, 920, 720] },
+  { key: "gpt", html: gptHtml, box: [80, 800, 860, 660] },
 ];
-const apps = ["claude", "wa", "gpt"].map((cls, k) => {
-  const w = el("div", `app ${cls}`, document.body, appHtml[k]);
-  style(w, { left: `${CHAT_X}px`, top: `${CHAT_Y}px`, width: `${CHAT_W}px`, height: `${CHAT_H}px` });
-  return { w, me: w.querySelector(".me"), pic: w.querySelector(".pic"), reply: w.querySelector(".reply") };
+const apps = APPS.map(({ key, html, box: [x, y, w, h] }) => {
+  const node = el("div", `app ${key}`, document.body, html);
+  style(node, { left: `${x}px`, top: `${y}px`, width: `${w}px`, height: `${h}px` });
+  return { key, w: node, width: w, toMiddle: [540 - (x + w / 2), 1064 - (y + h * 0.4)], me: node.querySelector(".me"), pic: node.querySelector(".pic"), reply: node.querySelector(".reply"),
+           meSlot: node.querySelector(".me-slot"), replySlot: node.querySelector(".reply-slot"),
+           sent: node.querySelector(".ticks.sent"), online: node.querySelector(".online"), typing: node.querySelector(".typing") };
 });
+const [claudeApp, waApp, gptApp] = apps;
 const ripple = el("div", "ripple");
 const pointer = el("div", "pointer", document.body, POINTER);
 
@@ -206,13 +231,16 @@ function drawCaptions(t) {
   });
 }
 
-// Where the pointer goes and when it clicks: each card's paper plane, as the
-// voice names the chat. The first flight takes its time; the others are quick.
-const CLICKS = [at(7.81), at(10.15) - 0.05, at(10.99) - 0.05];
-const FLY = [0.75, 0.42, 0.42];
+// Where the pointer goes and when it clicks: the invoice's paper plane as
+// the voice says "Ein Klick", the chart's as it says "ChatGPT". The first
+// flight takes its time; the second is quick.
+const CLICKS = [at(7.81), at(10.99) - 0.05];
+const FLY = [0.75, 0.42];
+const LANDS = CLICKS.map((c, i) => c + 0.12 + FLY[i]);
+// Lena reads it, types, and answers, while WhatsApp is still in front.
+const READ = LANDS[0] + 0.45, TYPING = LANDS[0] + 0.55, ANSWER = LANDS[0] + 1.1;
 // When each chat comes to the front, and when all three fan out.
-const ENTER = [at(7.6), at(10.15) - 0.3, at(10.99) - 0.12];
-const FAN = at(12.09);
+const WA_IN = at(7.6), GPT_IN = at(10.99) - 0.12, FAN = at(12.09);
 function sendButton(i, t) {
   const c = sendCards[i];
   const frac = SEND_FRAC[i];
@@ -263,41 +291,64 @@ function seek(t) {
     d.f.querySelector(".thumb").style.borderRadius = `${lerp(6, 11, fly)}px`;
   });
 
-  // 2. One click on a card's paper plane, and it flies into Claude. Then
-  // the same into WhatsApp and ChatGPT, and the three fan out: any chat.
+  // 2. Lena asks for the invoice in WhatsApp; one click on its paper plane
+  // and it lands in the chat, she reads it and thanks. Then the chart into
+  // ChatGPT, and the three chats fan out: any chat.
   const sIn = outQuart(prog(t, at(7.6), at(8.0)));
   const sOut = prog(t, at(12.85), at(13.2));
   show(sendRope, sIn * (1 - sOut));
   const fan = inOut(prog(t, FAN, FAN + 0.5));
   apps.forEach((a, k) => {
-    const into = outQuart(prog(t, ENTER[k], ENTER[k] + 0.28));
-    const away = k < 2 ? inOut(prog(t, ENTER[k + 1], ENTER[k + 1] + 0.28)) : 0;
-    const solo = into * (1 - away);
-    const shown = (t >= ENTER[k] ? lerp(solo, 1, fan) : 0) * (1 - sOut);
+    let solo = 0, dx = 0, dy = 0;
+    if (a === waApp) {
+      const into = outQuart(prog(t, WA_IN, WA_IN + 0.32)), away = inOut(prog(t, GPT_IN, GPT_IN + 0.28));
+      solo = into * (1 - away); dx = -90 * away; dy = lerp(90, 0, into);
+    } else if (a === gptApp) {
+      const into = outQuart(prog(t, GPT_IN, GPT_IN + 0.28));
+      solo = into; dx = lerp(90, 0, into);
+    }
+    const shown = (t >= FAN ? lerp(solo, 1, fan) : solo) * (1 - sOut);
     show(a.w, shown);
-    const dx = lerp(90, 0, into) - 90 * away;
-    // Fanned out side by side, each still showing the screenshot it got.
-    const fx = [-358, 0, 358][k], fr = [-4, 0, 4][k];
+    // Fanned out side by side at one width, each showing what it got.
+    const fs = 330 / a.width, fr = [-4, 0, 4][k];
+    const fx = [-358, 0, 358][k] + a.toMiddle[0], fy = [-20, 20, -20][k] + a.toMiddle[1];
     style(a.w, { zIndex: String(2 + k),
-      transform: `translate(${lerp(dx, fx, fan)}px, ${lerp(k === 0 ? lerp(90, 0, sIn) : 0, [-20, 20, -20][k], fan) + 60 * inOut(sOut)}px) rotate(${lerp(0, fr, fan)}deg) scale(${lerp(1, 0.375, fan)})` });
-    const land = prog(t, CLICKS[k] + 0.12 + FLY[k], CLICKS[k] + 0.12 + FLY[k] + 0.22);
-    show(a.me, land > 0 ? 1 : 0);
-    a.me.style.transform = `scale(${lerp(0.92, 1, outBack(land))})`;
-    const said = prog(t, CLICKS[k] + 0.12 + FLY[k] + 0.3, CLICKS[k] + 0.12 + FLY[k] + 0.55);
-    show(a.reply, outQuart(said));
-    a.reply.style.transform = `translateY(${lerp(14, 0, outQuart(said))}px)`;
+      transform: `translate(${lerp(dx, fx, fan)}px, ${lerp(dy, fy, fan) + 60 * inOut(sOut)}px) rotate(${lerp(0, fr, fan)}deg) scale(${lerp(1, fs, fan)})` });
   });
+  // WhatsApp: room opens for the picture as it flies, the older messages
+  // move up; it lands with grey ticks that turn blue, Lena types, answers.
+  const open = outQuart(prog(t, CLICKS[0] + 0.12, CLICKS[0] + 0.4));
+  waApp.meSlot.style.maxHeight = `${lerp(0, waApp.meSlot.scrollHeight, open)}px`;
+  const land0 = prog(t, LANDS[0], LANDS[0] + 0.22);
+  show(waApp.me, land0 > 0 ? 1 : 0);
+  waApp.me.style.transform = `scale(${lerp(0.94, 1, outBack(land0))})`;
+  waApp.sent.style.color = t >= READ ? "#53BDEB" : "#8696A0";
+  const typing = t >= TYPING && t < ANSWER;
+  show(waApp.online, typing ? 0 : 1); show(waApp.typing, typing ? 1 : 0);
+  const ans = outQuart(prog(t, ANSWER, ANSWER + 0.25));
+  waApp.replySlot.style.maxHeight = `${lerp(0, waApp.replySlot.scrollHeight, ans)}px`;
+  show(waApp.reply, ans);
+  // ChatGPT: the chart lands, the answer follows. Claude shows its own
+  // finished exchange when the three fan out.
+  const land1 = prog(t, LANDS[1], LANDS[1] + 0.22);
+  show(gptApp.me, land1 > 0 ? 1 : 0);
+  gptApp.me.style.transform = `scale(${lerp(0.92, 1, outBack(land1))})`;
+  const said = outQuart(prog(t, LANDS[1] + 0.3, LANDS[1] + 0.55));
+  show(gptApp.reply, said);
+  gptApp.reply.style.transform = `translateY(${lerp(14, 0, said)}px)`;
+  show(claudeApp.me, 1); show(claudeApp.reply, 1);
   sendCards.forEach((c, i) => {
     const frac = SEND_FRAC[i];
     const cx = 1080 * frac;
     const drop = prog(t, at(7.6) + i * 0.08, at(8.0) + i * 0.08);
-    const gone = t >= CLICKS[i] + 0.12;
+    const gone = i < CLICKS.length && t >= CLICKS[i] + 0.12;
     show(c, outQuart(drop) * (1 - sOut) * (gone ? 0 : 1));
     style(c, { left: `${cx - CARD_W / 2}px`, top: `${LINE_Y + ropeY(frac, LINE_SAG) - 6 - lerp(70, 0, outQuart(drop))}px`,
                transform: `rotate(${[-4, 3, -3][i] + swing(t - at(8.0) - i * 0.08, 6, 0.9, 1.2)}deg)` });
   });
   // The flights: up off the line, a tilt toward the reading end, and down
-  // into the chat as a picture, exactly where it lands.
+  // into the chat exactly where the picture lands.
+  const targets = [waApp.pic, gptApp.pic];
   flyers.forEach((g, i) => {
     const start = CLICKS[i] + 0.12;
     const f = prog(t, start, start + FLY[i]);
@@ -305,7 +356,7 @@ function seek(t) {
     if (f <= 0 || f >= 1) return;
     const frac = SEND_FRAC[i];
     const fromX = 1080 * frac - CARD_W / 2, fromY = LINE_Y + ropeY(frac, LINE_SAG) - 6;
-    const r = apps[i].pic.getBoundingClientRect();
+    const r = targets[i].getBoundingClientRect();
     const h = g.offsetHeight;
     const scale = r.width / CARD_W;
     const toX = r.left + r.width / 2 - CARD_W / 2, toY = r.top + r.height / 2 - h / 2;
@@ -316,9 +367,9 @@ function seek(t) {
     g.querySelector(".glass").style.padding = `${lerp(6, 0, e)}px`;
   });
   // The pointer: to each paper plane in turn, a press, a ripple.
-  const ptrIn = prog(t, at(7.55), at(7.75)) * (1 - prog(t, CLICKS[2] + 0.3, CLICKS[2] + 0.55));
+  const ptrIn = prog(t, at(7.55), at(7.75)) * (1 - prog(t, CLICKS[1] + 0.3, CLICKS[1] + 0.55));
   let px = 900, py = 1500, press = 0, rp = -1;
-  for (let k = 0; k < 3; k++) {
+  for (let k = 0; k < CLICKS.length; k++) {
     const target = sendButton(k, t);
     const from = k === 0 ? { x: 920, y: 1560 } : sendButton(k - 1, t);
     const move = inOut(prog(t, CLICKS[k] - 0.4, CLICKS[k] - 0.05));
