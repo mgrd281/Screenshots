@@ -95,9 +95,13 @@ enum TimeStamp {
     /// The words on the stamp: the user's own, then the date and time in the
     /// Mac's own format.
     static func label(text: String, date: Date, locale: Locale, timeZone: TimeZone = .autoupdatingCurrent) -> String {
-        let style = Date.FormatStyle(date: .abbreviated, time: .shortened, locale: locale, timeZone: timeZone)
+        let format = DateFormatter()
+        format.locale = locale
+        format.timeZone = timeZone
+        format.dateStyle = .medium
+        format.timeStyle = .short
         let words = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        let when = date.formatted(style)
+        let when = format.string(from: date)
         return words.isEmpty ? when : "\(words) · \(when)"
     }
 
