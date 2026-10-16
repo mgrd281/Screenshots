@@ -71,7 +71,7 @@ sheet, airport departure board, darkroom drying line, gallery hang with wall
 labels, metro map, courtyard washing line). The signature interaction: a
 photo posted into the chat lands with a postmark struck across it, stamping
 the time it was sent. Motion grammar: things are struck (a short thud, from
-118% to 100% with a 2° settle) or flown, never floated.
+118% to rest while turning onto their rest angle) or flown, never floated.
 seed: none (unavailable)
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the

@@ -634,24 +634,37 @@ of its own.
 The site in `website/` (GitHub Pages) sells the app and hosts the privacy
 policy and support pages that App Store Connect links to. It extends this
 system to a web page. The brief and direction contract are in
-`website/BRIEF.md`.
+`website/BRIEF.md`. Everything below is taken from what ships in
+`build.py`, `static/site.css` and `static/site.js`.
 
-- **The page is the Mac screen.** A frosted menu bar carries the navigation.
-  The line hangs under it, and a chat window sits in front.
-  - On the home page the wallpaper stays fixed while the page scrolls over
-    it, like a Mac's desktop.
-  - Below the first view, a light plum wash (34%, or 38% in dark) sits over
-    it, so the wallpaper keeps its colours. A wide, very soft scrim sits
-    behind the words (plum at 38%, reaching 140 px above and below them
-    and 200 px to the sides, blurred 110 px; in the close, which clips its
-    edges, 40 and 160 px blurred 70 px), so white words stay at least 5:1
-    on every part and the scrim has no visible shape of its own.
-  - Each demo is a native object on that desktop:
-    - keycaps;
-    - Desktop files that fly onto a rope;
+- **The page is an airmail envelope.** Aerogramme paper is the ground, the
+  chevron edge of an airmail envelope frames the browser window the whole
+  time, every screenshot on the line is a perforated stamp held by a steel
+  clip, and sending is posting: what lands in the chat is struck with a
+  postmark that carries the time. Mac windows stay native on it; they are
+  what the envelope carries. There is no wallpaper, no wash and no scrim:
+  words sit on the paper in ink.
+  - **The chevron edge** (`body::after`): fixed over the whole window at
+    z-index 300, `--edge` thick (12 px; 8 px at 640 px and below), drawn as
+    a ring by a mask, so the page scrolls under it and nothing is clicked
+    through it. Stripes run at −45°: `--stripe-a` 18 px, `--stripe-gap`
+    9 px, `--stripe-b` 18 px, `--stripe-gap` 9 px (a 54 px repeat). The
+    menu bar sits `--edge` down from the top, inside it. Print leaves it
+    out.
+  - **Paper and grain**: the body is `var(--grain)` over `--ground`
+    (`--paper`). The grain is an inline SVG fractal noise (base frequency
+    0.9, two octaves, a 220 px tile), tinted with the theme's ink at 10%
+    alpha on light paper and white at 7.5% on dark. `--paper-2` is the
+    paper a shade deeper: the envelope's flap and the background behind the
+    icon stamp.
+  - Below the first view, sections sit straight on the paper, 96 to 168 px
+    apart (`clamp(96px, 12vw, 168px)`), 72 px on phones.
+  - Each demo is a native object on that paper:
+    - keycaps, with a postmark struck across them;
+    - Desktop files that fly onto a rope and become stamps as they land;
     - Snapfly's own Settings window, on its Privacy and Line panes, with
       the line-style tiles;
-    - the photo's menu opening from a card on a line;
+    - the photo's menu opening from a stamp on a line;
     - a whole Mac desktop to try Snapfly on (below);
     - the Hide Part window, said in a sentence (below).
   - **The desktop to try Snapfly on** (`section_capture`): a Mac screen
@@ -659,8 +672,11 @@ system to a web page. The brief and direction contract are in
     own small system: every value inside it is a `--d-*` token on
     `.desk-stage`, and nothing inside uses a free value.
     - **The screen**: a 16 radius, a hairline and shadow 3, nothing else.
-      Its wallpaper is a calm gradient of muted lavender, rose and violet
-      (a dusk version in dark) under a fine grain (8%, 10% in dark).
+      Its desktop is one solid colour, as macOS offers, under a fine grain
+      (8%, 10% in dark): `--d-wall-1`, `-2` and `-3` are equal. Lavender
+      `#C4BDE6` (`#2C2652` in dark) in Original Sunset, sage `#A3CBBF`
+      (`#11393A`) in Emerald Petrol, warm sand `#EFD2C1` (`#2B211C`) in
+      Signature Orange.
     - **Three layouts**, each drawn at a fixed size and scaled as a whole,
       so nothing inside ever collides:
       - wide, 1280 × 800, from 1280 px: a floating Dock, the guide beside
@@ -680,8 +696,11 @@ system to a web page. The brief and direction contract are in
       (menus, cards, rows), 14 (windows), 16 (the screen) and full.
     - **Colour**: ten greys, `g0` to `g9` (#FFFFFF to #1D1D1F; in dark
       #1C1C1E to #F5F5F7), one accent #0071E3 (as text #0066CC, #4DA3FF in
-      dark), success #1E8E3E (#30D158 in dark), warning and error. Every
-      text pair is at least 4.5:1 in both modes, glass included.
+      dark), success #1E8E3E (#30D158 in dark), warning and error. Emerald
+      Petrol turns the accent to `#168176` (text `#0E6B62`, `#5CCDB8` in
+      dark), Signature Orange to `#C7461C` (text `#B23E17`, `#FF8754` in
+      dark); the greys stay. Every text pair is at least 4.5:1 in both
+      modes, glass included.
     - **Glass**, two levels only: 64% (menu bar) and 90% (Dock, menus,
       notes, guide), blurred 20 px at 180% saturation, with a hairline.
       Without `backdrop-filter`, solid `g1` and `g0` instead.
@@ -738,188 +757,305 @@ system to a web page. The brief and direction contract are in
       either side of the window. It starts once by itself when half the
       screen is in view, without taking focus; "Start the guide" under the
       screen starts it again.
+    - On the paper beside it, a handstamp says "Screenshot taken" in the
+      page's language (`.cap-stamp`, 26 px above it, turned 4°).
   - **Hide Part** (`section_say`): the editor's window with a bank transfer
     in it, the sparkles field, the three examples, the note, and Remove
     All, Cancel and Done. Covers are cover ink at a 3 radius, one per line
     of a detail, growing in from the reading start 45 ms apart; hovered,
     they show an eye and an accent ring, and a click removes one. A drag
     draws a dashed accent box. A few words in English, German and Arabic
-    stand in for Apple Intelligence; Done adds the lock badge.
+    stand in for Apple Intelligence; Done adds the lock badge. A handstamp
+    with the app's "Hide Part…" sits on the paper with it (`.say-stamp`,
+    28 px above, turned −5°).
+  - **Private by design** (`section_private`): the Settings window on its
+    Privacy pane, with a handstamp of `stamp_covered` ("Private details
+    covered") struck over its trailing top corner (38 px above, 14 px
+    past the edge; 4 px inside it on phones).
   - **Start in four steps** (`section_start`), before the close: four
-    cards on `web-surface` (20 radius, the float shadow), each with a 44 pt
-    icon tile in the brand gradient, its number in the link colour before
-    the title, and a line. Above 960 px they hang on a rope like photos:
-    each by its clip at the rope's sag, tilted −1.2°, 0.8°, −0.6° and 1.1°,
-    straightening under a fine pointer (0.5 s), and dropping 40 px onto its
-    clip when it arrives. Two across on a tablet and one on a phone, as
-    plain cards without the rope.
+    perforated stamps, each with a 44 pt icon tile in the brand gradient
+    (12 radius, the brand glow), its title (18 px, 750) and a line (15 px).
+    - Each is the stamp component below: 26 px padding (28 at the
+      bottom), a drop shadow `0 6px 10px` at 18% of the shade, and a
+      printed frame, a 1 px hairline of `--post-fill` at 30%, 12 px inside
+      the perforations.
+    - Its number is the stamp's value: printed in `--post-fill` in the top
+      trailing corner (18 px down, 22 px in), 40 px, weight 800, tracking
+      −0.04em, tabular figures. The number stays out of the reading order.
+    - Above 960 px they hang on a rope like the photos: each by its clip at
+      the rope's sag, tilted −1.2°, 0.8°, −0.6° and 1.1°, straightening
+      under a fine pointer (0.5 s), and dropping 40 px onto its clip when
+      it arrives. Two across up to 960 px and one on a phone (640 px and
+      below, 12 px apart), as plain stamps without the rope.
   - **The hero's chat** carries the chat button and its message bar as
     "Chat button" above has them, over the chat's own send button. Its
     photos are the line's newest two. Hold it, or right-click it for Send
     with a Message…; the photos land as one album and the message right
     under it. The hero's photos also reorder by a sideways drag, lifted
-    under the pointer (1.06), and by Option and an arrow.
-  - The privacy and support pages are documents on `web-ground`.
+    under the pointer (1.06), and by Option and an arrow. One photo is
+    already posted in it when the page opens (124 px wide, postmarked),
+    except where the chat is too small to hold it clear of the button
+    (1100 px wide or 860 px tall and less).
+  - The privacy and support pages are documents on the paper.
+- **The postal pieces.** All of them print in the theme's postal ink and
+  are hidden from assistive technology; the words they carry are said
+  elsewhere on the page.
+  - **The stamp** (`.photo`, `.step`): white paper (`--stamp`) behind the
+    picture or the words, with a perforated edge cut by a mask: 5 px of
+    paper, holes 3.2 px in radius on a 9.6 px pitch (`round`, so they fit
+    every side evenly). Its shadow is a `drop-shadow`, so it follows the
+    perforations. A photo stamp has 9 px padding, its picture a 2 radius,
+    and lifts `0 4px 6px` at 22% of the shade, `0 9px 12px` at 26% and
+    103.5% under the pointer. Desktop files that land on a rope become
+    smaller stamps: a 4 px border, holes 2.2 px on a 6.6 px pitch.
+  - **Clips**: steel, 10 × 24 with a 3 radius, a horizontal gradient of
+    `#8E949F` (2 px at each side) and `#D4D7DD`, a dark 2 px bar 9 px down,
+    and a `0 1px 1.5px` shadow. Each stamp hangs from one, 12 px above its
+    top edge, at the rope's sag. The rope is a 2 px `--rope` stroke.
+  - **The postmark** (`postmark()`): an SVG 260 × 120. A ring of radius 53
+    (2.6 stroke) round a ring of radius 36 (1.4), "SNAPFLY · PAR AVION ·"
+    twice round a path of radius 42 (9.5 px, 700), the date in the middle
+    (15 px, 800) over the time (14.5 px, 700, in SF Mono), and five wavy
+    cancellation lines (2.4 stroke, 13 apart) running on from the ring.
+    - It prints in `--post-mark` at 95% opacity, rotated −8° (−10° in the
+      chat, −12° on the keys), and draws through the INK filter.
+    - **The INK filter** (`#ink`, once per page): fractal noise (0.8, two
+      octaves, seed 7) speckles the strokes where the stamp met the paper
+      unevenly, and a 1.4 displacement roughens their edges.
+    - Over a picture (on the line and in the chat) it gets a white halo, a
+      1 px and a 0.5 px white drop shadow at 90%, so it reads on any
+      screenshot.
+    - Its figures are plain and the same in every language, as a post
+      office's: the date as dd.mm.yy and the time as HH:MM, both two
+      digits (16.10.26, 14:38). `site.js` writes the visitor's date and
+      time into every postmark and refreshes them every 15 s; one struck
+      on a sent photo keeps the time it was sent.
+    - In right-to-left pages the drawing mirrors, so the waves run toward
+      the reading end, and its words are mirrored back to read.
+    - It is struck across the line's second stamp (115% of the card
+      width), across the keycaps, across the icon stamp on the envelope,
+      and on every photo that lands in the chat (172 px; 150 px on the one
+      posted before the visit).
+  - **The airmail label** (`airmail()`): the page's language large, the
+    other three under it, from `AIRMAIL` in `content.py`: By Air Mail,
+    Luftpost, بالبريد الجوي, Par Avion. White capitals on `--post-fill`,
+    a 4 radius, 11 × 18 px padding, ringed in 3 px of paper and 2 px more
+    of ink, a soft shadow, and stuck at −4°. The large line is
+    `clamp(18px, 1.7vw, 25px)`, weight 800, tracking 0.07em; the small
+    one 11 px, 650, tracking 0.14em, at 92%. Arabic is never tracked. On
+    a wide page it sits under the trailing end of the line, above the
+    chat; at 900 px and below it is in the flow, at the trailing side.
+  - **The handstamp** (`handstamp()`): a rubber stamp. Tracked capitals in
+    `--post` (13 px, 800, tracking 0.16em; Arabic 15 px, untracked) inside
+    a double rule, a 2.5 px border and a 1.5 px outline 3 px outside it,
+    a 3 radius, 6 × 12 px padding, at 90% and struck a little crooked
+    (−6° by default, each placement its own angle).
+  - **The tag at the end of the line**: Send all, a 58 pt circle in
+    `--post-fill` (50 pt on phones) with the paper plane, ringed in 3 px
+    of paper and 2 px of ink. Under it, its name as a small label: tracked
+    capitals (11.5 px, 750, 0.1em) in `--post` on the surface, a 1.5 px
+    inset rule and a 3 radius. Photos sent together land in the chat as
+    one album bubble.
+  - **The envelope** (`.envelope`, the privacy section "No account…"):
+    white surface paper with a 6 radius and the float shadow, inside its
+    own chevron border (`clamp(10px, 1.2vw, 14px)`; stripes 15, 7, 15,
+    7 px). The app icon is its stamp, in the top trailing corner turned 3°,
+    with a postmark struck across it. The points are a heavy display list
+    (`clamp(2.6rem, 6vw, 5rem)`, tracking −0.015em) kept clear of the
+    stamp. On phones the stamp sits above its words, 84 px wide.
+  - **The envelope back** (`.envelope-back`, the close): the same paper and
+    border, at most 900 px wide, its flap a triangle in `--paper-2` with a
+    hairline folded down to a point, `clamp(110px, 13vw, 170px)` deep.
+    The app icon seals it at the flap's point; the heading, the download
+    badge and the note sit below the seal.
+  - **The seams** between sections: a tear line of perforations across the
+    sheet (holes 2.4 px in ink at 22%, 12 px apart, inside the gutters).
+    Before the two envelopes (the privacy section and the close) an
+    airmail ribbon instead: 6 px tall, a 3 radius, stripes 9, 4, 9, 4 px.
+  - **The flight path**: a dashed curve from the line down to the chat, a
+    2 px `--post` stroke at 55%, dashes 1.5 on 9 with round caps. It is
+    hidden at 960 px and below.
+  - **The steel clips, stamps and postmarks are the world's own devices**;
+    chevron stripes, tilted labels and crooked stamps belong to it. The
+    app's rule against coloured stripes on cards is about the app's cards,
+    not this edge.
 - **Brand themes.** The site has three complete looks, at the owner's
   request, and the visitor picks one; light or dark stays the system's, so
-  there are six in all.
-  - **Original Sunset** is the default and the site as it always was: the
-    warm sky below, with every value it had. Nothing in it changed.
-  - **Emerald Petrol** is deep water with cool light falling in from above.
-    - Palette: Deep Petrol `#062F31`, Emerald `#07514E`, Refined Teal
-      `#168176`, Soft Mint `#B8DED2`, Pearl White `#F5F8F5`.
-    - Wallpaper: a 160° sweep from teal (`#17806F`) through emerald to
-      petrol, a pool of petrol low on the leading side, a mint bloom where
-      the light enters above the line (top, trailing), a faint diagonal
-      sheen like light through glass, and a fine matte grain (5%). In dark,
-      the same water at night: `#0B3E3B` to `#021516`, a teal bloom, the
-      sheen in mint.
-    - Accent: Refined Teal, as a Mac takes on its accent colour, so switches,
-      selection, bubbles and filled buttons turn teal (white on it is
-      4.7:1). Links are Emerald on light (8.6:1 on Pearl) and `#8FD6C4` on
-      dark.
-    - Glass picks up a hairline of light along its top edge (white 60%, or
-      mint 16% in dark), on the menu bar and the photo cards; the menu bar
-      is pearl glass, petrol glass in dark.
-    - Shadows are tinted petrol, not plum. Brand tiles use teal to emerald.
-      The download badge is Deep Petrol with a mint hairline.
-    - The page ground is Pearl White, or `#081819` in dark.
-    - The desktop to try Snapfly on gets a sage desktop (petrol at night) and
-      a teal accent; its greys stay.
-  - **Signature Orange** is one confident colour used with precision, the
-    many-coloured Sunset's opposite.
-    - Palette: Primary Orange `#EC632C`, Deep Orange `#C7461C`, Warm
-      Orange Highlight `#FF8754`, Soft Peach `#FFE4D7`, Pure White, Premium
-      Black `#171717`, Warm Neutral `#FAFAF8`.
-    - Light: the first view and the close are a bold orange field (a warm
-      highlight where the line hangs, a deeper orange low on the trailing
-      side) with Premium Black type (5.5:1). Between them, clean Warm
-      Neutral space with Premium Black words (text at 76%, 8:1), a faint
-      peach glow in two corners, and no washes or scrims. The privacy band
-      ("No account…") is Premium Black with white words, its first words in
-      the Highlight and an orange glow in one corner.
-    - Dark: the page is Premium Black (`#121211`). The orange becomes light:
-      an ambient glow above the line, a glow rising into the close, and a
-      solid Deep Orange privacy band.
-    - Filled controls, switches and bubbles use Deep Orange, so white on
-      them stays 4.9:1; links are `#B23E17` on light (5.6:1) and the
-      Highlight on dark. Brand tiles go Highlight to Deep Orange.
-    - The download badge is Premium Black on orange, Deep Orange on black.
-    - Glass is white (72% on the menu bar) with a white top edge; shadows
-      are warm brown, black in dark. The rope is Premium Black, peach in
-      dark. Keys, pill buttons and the glass shelf on the light page are
-      drawn in black at low opacity instead of white.
-    - The desktop to try Snapfly on gets a warm sand desktop (black at
-      night) and a Deep Orange accent.
+  there are six in all. Each is the same envelope in its own paper, edge
+  and ink.
+  - **Original Sunset** (the default).
+    - Light: paper `#ECEBFA` (lavender aerogramme), `--paper-2` `#E1DFF5`;
+      edge coral `#FF5E62` and violet `#5B2BB8` on white; postal ink,
+      `--post-fill` and `--post-mark` all `#5B2BB8`; stamp `#FFFFFF`;
+      accent `#5B2BB8` (white on it 8.5:1); link `#4B22A0`; ink `#1F1646`
+      (14.1:1), secondary `#4E4775`; rope `#3A2F66`; badge `--post-fill`.
+    - Dark: a night sheet `#15122B` (`--paper-2` `#1D1938`); edge
+      `#FF6B6E` and `#7B52E8` on `#EDEAFF`; postal ink `#B39CFF`,
+      `--post-fill` `#6A3FD8` (white on it 6.3:1), `--post-mark`
+      `#8462F0`; stamp `#F7F6FF`; accent `#6A3FD8`; link `#BCA8FF`; ink
+      `#EEECFF`, secondary `#B4AEDB`; rope `#CFC6F5`.
+    - Amber, coral and violet stay the brand gradient on icon tiles.
+  - **Emerald Petrol**.
+    - Light: mint paper `#E6F2EE` (`--paper-2` `#D8EBE4`); edge teal
+      `#168176` and petrol `#062F31` on white; postal ink, fill and mark
+      Emerald `#07514E` (white on it 9.1:1); accent Refined Teal `#168176`
+      (white on it 4.7:1), as a Mac takes on its accent colour; link
+      `#07514E` (8.0:1); ink `#062F31`, secondary `#2F5554`; rope
+      `#062F31`; badge `--post-fill`.
+    - Dark: deep petrol paper `#0A1E1F` (`#0F2829`); edge `#1E9A8C` and
+      mint `#8FD6C4` on `#E8F3EF`; postal ink `#8FD6C4`, `--post-fill`
+      `#168176`, `--post-mark` `#23A08F`; stamp `#F5F8F5`; accent
+      `#168176`; link `#8FD6C4`; ink `#E7F5F0`, secondary `#9FC7BC`; rope
+      `#B8DED2`.
+    - Shadows are tinted petrol; brand tiles go `#3FAE9C` to teal to
+      emerald.
+  - **Signature Orange**: one confident colour used with precision.
+    - Light: warm white paper `#FAFAF8` (`--paper-2` `#FFEFE6`), a warm
+      grain; edge Primary Orange `#EC632C` and Premium Black `#171717` on
+      white; postal ink, fill and mark Deep Orange `#C7461C` (white on it
+      4.9:1); accent `#C7461C`; link `#B23E17` (5.6:1); ink `#171717`,
+      secondary `#4A4542`; rope `#171717`; badge Premium Black.
+    - Dark: Premium Black paper `#141312` (`#1E1B19`); edge orange
+      `#EC632C` and Soft Peach `#FFE4D7` on `#2A2522`; postal ink
+      `#FF8754`, `--post-fill` `#C7461C`, `--post-mark` `#E8642E`; stamp
+      `#FAFAF8`; accent `#C7461C`; link `#FF8754`; ink `#F5F5F7`,
+      secondary `#B5AFA9`; rope `#FFE4D7`; badge Deep Orange with a peach
+      hairline (`rgba(255, 196, 170, 0.45)`).
+    - Shadows are warm brown; brand tiles go `#FF8754` to Deep Orange.
   - **Stays the same in all three**: windows, system controls' shapes, the
-    traffic lights, status colours, the screenshots' content and the app
-    icon. Signature Orange sets text in Premium Black.
+    traffic lights, status colours, cover ink, the steel clips, the
+    screenshots' content and the app icon. Dark shadows are black in all
+    three.
   - **Tokens.** Everything a theme changes is a custom property on
-    `:root`: the wallpaper, washes and scrim, menu bar, menu and glass
-    colours, the glass shine, rope, accent, link, ground, the shadow tint
-    (`--shade`, `--shade-deep`, as r g b), the brand gradient and its
-    glow, the badge, the line-style tiles' small wallpaper, and what sits
-    straight on the wallpaper (`--on-wall` and `--on-wall-2` for words,
-    `--kbd-wall-*`, `--pill-*`, `--file-shadow`, `--shelf-*`), plus the
-    surfaces a theme may give the first view, the close and the privacy
-    band (`--hero-bg`, `--close-bg`, `--band-*`). Each theme overrides
-    them on `:root[data-brand="…"]`, in light and in dark; nothing is
-    coloured outside the tokens.
+    `:root`: the paper (`--paper`, `--paper-2`, `--ground`, `--grain`),
+    the edge (`--stripe-a`, `--stripe-b`, `--stripe-gap`), the postal ink
+    (`--post` for lines and labels on paper, `--post-fill` as a surface
+    under white words, `--post-mark` for postmarks), `--stamp`, accent,
+    link, ink, fills and hairline, menu bar and menu colours, rope, the
+    shadow tint (`--shade`, `--shade-deep`, as r g b), the brand gradient
+    and its glow, the badge (`--badge-bg`, `--badge-edge`), the line-style
+    tiles (`--tile-*`) and what sits straight on the paper (`--on-wall`,
+    `--on-wall-2`, `--kbd-wall-*`, `--pill-*`, `--file-shadow`,
+    `--shelf-*`). Each theme overrides them on `:root[data-brand="…"]`, in
+    light and in dark. `--edge` and the radii (`--r-card` 16,
+    `--r-inner` 12, `--r-window` 18) are shared.
   - **The switcher** sits in the menu bar before the language menu: a
-    small well (`fill-2`, full radius, hairline) with three 14 pt swatches,
-    each its theme in small with a highlight where its light comes from,
-    and a raised thumb (white, or white 20% in dark) under the chosen one
-    that slides across in 0.45 s. The order is Original Sunset, Emerald
-    Petrol, Signature Orange. A swatch grows to 112% under the pointer
-    and to 90% when pressed. Its name shows in a help tag after 0.45 s, or
-    at once on keyboard focus. It is a radio group: Tab reaches the chosen
-    swatch, the arrows choose the next one and wrap round, in the reading
-    direction. On touch the swatches are 32 × 28 with a 44 pt tall target.
-  - **No wrong flash**: the first script in `<head>` reads the choice and
-    sets `data-brand` before the page paints; the switcher only appears once
-    scripts run. Changing theme spreads the new one over the page in a
-    circle from the swatch that was chosen (0.7 s on `--ease-out`,
-    reaching the farthest corner last); with Reduce Motion, or without the
-    View Transitions API, it changes at once. The browser bar colour
-    follows. Another open tab follows the change, at once.
+    small well (`fill-2`, full radius, hairline) with three 14 pt swatches
+    in 30 × 22 cells, each its theme's edge in small (stripes 3, 1.5, 3,
+    1.5 px at −45°, the two edge colours on white), and a raised thumb
+    (white, or white 20% in dark) under the chosen one that slides across
+    in 0.45 s. The order is Original Sunset, Emerald Petrol, Signature
+    Orange. A swatch grows to 112% under the pointer and to 90% when
+    pressed; the ones not chosen sit at 86%. Its name shows in a help tag
+    after 0.45 s, or at once on keyboard focus. It is a radio group: Tab
+    reaches the chosen swatch, the arrows choose the next one and wrap
+    round, in the reading direction. On touch the swatches are 32 × 28
+    with a 44 pt tall target.
+  - **No wrong flash**: the first script in `<head>` reads the choice
+    (`snapfly-brand`) and sets `data-brand` before the page paints; the
+    switcher only appears once scripts run. Changing theme spreads the new
+    one over the page in a circle from the swatch that was chosen (0.7 s
+    on `--ease-out`, reaching the farthest corner last); with Reduce
+    Motion, or without the View Transitions API, it changes at once. The
+    browser bar colour follows the paper (`#ECEBFA`/`#15122B`,
+    `#E6F2EE`/`#0A1E1F`, `#FAFAF8`/`#141312`). Another open tab follows
+    the change, at once.
   - On phones (430 px and less) the menu bar keeps Snapfly's icon and hides
     its name from view (it is still read out) so everything fits.
-- **The brand gradient is the wallpaper.** On the site, amber, coral and
-  violet are the desktop the app sits on.
-  - Nothing that is pressed or read sits on it bare. White text gets the
-    wash, fading up from the bottom of the first view.
-  - Dark mode swaps in a dusk version of the same three hues.
-- **Everything on the wallpaper is native.** It follows this file's tokens:
-  - photo cards: 16/12, 4 pt inset, glass, swaying 1.1° on a clip;
-  - corner buttons;
+- **Everything on the paper that is not postal is native.** It follows
+  this file's tokens:
+  - the menu bar: 46 px, paper at 86% blurred 20 px, a hairline;
+  - corner buttons on the stamps (22 pt discard, 30 pt accent send);
   - cover ink;
   - context menu: 13 radius, 7 radius rows, accent highlight;
   - segmented control;
   - switches and checkboxes in the accent;
-  - windows with traffic lights at a 18 radius.
-- **The tag on the site's line:**
-  - It hangs from the rope at the end of the line.
-  - It holds a single tool, Send all: a 58 pt accent circle with a white
-    ring and the paper plane.
-  - Its name sits under it in a "Copied"-style capsule, so the one-click
-    send of every photo is seen and tried at once.
-  - Photos sent together land in the chat as one album bubble.
+  - windows with traffic lights at an 18 radius and the float shadow.
 - **One exception to "corner buttons show on hover":** the paper plane on
-  each hanging card always shows on the site. The page has to invite the
+  each hanging stamp always shows on the site. The page has to invite the
   first click, and phones have no hover.
 - **Buttons.** The download link is a badge like the stores' own, at the
-  owner's request: black, a 12 radius, at least 60 tall, a light hairline
-  (white 32%) and the download shadow, a solid white Mac 34 wide, then two
-  lines, "Download for" at 12 (13 in Arabic, 500) over "macOS" at 24 (600).
-  No Apple logo: Apple keeps it for its own badges, and the real App Store
-  badge goes beside it once Snapfly is in the store. On the ground, the
-  primary is `web-button` with white text. The app's `#007AFF` gives white
-  text only 4.0:1.
+  owner's request, printed in postal ink inside a paper ring: `--badge-bg`
+  (`--post-fill`; Premium Black in Signature Orange light, Deep Orange in
+  its dark), a 12 radius, at least 60 tall, an inset 1 px hairline
+  (`--badge-edge`), then 2 px of paper and 2 px more of the badge colour
+  round it, and a `0 12px 24px` shadow at 24% of the shade. A solid white
+  Mac 34 wide, then two lines, "Download for" at 12 (13 in Arabic, 500)
+  over "macOS" at 24 (650). Its focus ring is 3 px of `--post`, 6 px out.
+  No Apple logo: Apple keeps it for its own badges, and the real App
+  Store badge goes beside it once Snapfly is in the store. Other primary
+  buttons are pills in the accent with white text, at least 48 tall.
 - **Type.**
-  - The system stack only: SF Pro and SF Arabic on Apple devices. No web
-    fonts, so nothing is fetched from another host.
-  - Display sizes are allowed on the site: hero to 5.6 rem, section heads to
-    3.5 rem. Tracking is −0.015 em on display lines, −0.01 em on section
-    heads, and 0 in Arabic, as SF Pro Display wants.
-  - German headlines step down a size for long words.
-- **Motion.**
-  - The signature move is the paper plane: the card takes off up and away,
-    as on the icon, then lands in the chat while the line closes the gap.
-  - **The first view arrives once**, at the owner's request for modern,
-    rich motion: the rope draws across (0.9 s), the photos drop onto it
-    one after another (110 ms apart) and swing to rest on their clips,
-    each swing smaller (1.2 s), the tag hangs last. The headline, the line
-    under it and the download badge rise 22 px out of a 10 px blur
-    (0.9 s, 0.1 to 0.34 s in), and the chat opens like a Mac window, up
-    32 px from 95% (1 s). All on `--ease-out`; it plays on load and never
-    again, so photos hung later just hang.
+  - The system stack only: SF Pro and SF Arabic on Apple devices, SF Mono
+    (`ui-monospace`) for the postmark's time. No web fonts, so nothing is
+    fetched from another host.
+  - Headlines are heavy, weight 800, in ink. The hero runs to 5.6 rem
+    (`clamp(2.6rem, min(5.6vw, 8.8vh), 5.6rem)`, line height 0.98,
+    tracking −0.035em, at most 13 characters wide); section heads to
+    3.5 rem (line height 1.04, tracking −0.03em); the close to 4.2 rem.
+    Arabic is never tracked and gets a taller line (1.2 to 1.3).
+  - German headlines step down a size for long words (the hero to
+    4.6 rem, 15 characters wide).
+  - Postal labels are tracked capitals: the airmail label (0.07em and
+    0.14em), handstamps (0.16em), the Send all label (0.1em).
+  - Body text is 17 px at 1.5; lead text `clamp(1.05rem, 1.3vw, 1.2rem)`
+    in the secondary ink.
+- **Motion.** Things are struck or flown, never floated.
+  - The signature move is the paper plane: the stamp takes off up and
+    away, as on the icon, then lands in the chat while the line closes
+    the gap, and a postmark is struck across it with the time it was sent.
+  - **The strike**: 500 ms on `cubic-bezier(0.2, 0.9, 0.3, 1.15)`, from
+    118% and turned 6° further, landing with a small overshoot. The
+    airmail label strikes from 115% and 5° further.
+  - **The first view arrives once**, and never again, so photos hung later
+    just hang. The rope draws across (0.9 s, from the reading start), the
+    photos drop onto it one after another (110 ms apart from 350 ms) and
+    swing to rest on their clips, each swing smaller (1.2 s), the tag
+    hangs last (800 ms). The headline, the line under it and the download
+    badge rise 22 px out of a 10 px blur (0.9 s, 0.1 to 0.34 s in), and
+    the chat opens like a Mac window, up 32 px from 95% (1 s at 0.45 s).
+    Then the post: the flight path draws toward the chat (0.9 s at 1 s),
+    the airmail label is struck (1.25 s) and the postmark on the second
+    stamp is struck (1.6 s). All on `--ease-out`
+    (`cubic-bezier(0.16, 1, 0.3, 1)`) but the strikes.
   - **Below the first view, each thing arrives once as it comes into
     view**, by what it is: headings rise 26 px out of a 10 px blur, words
     rise 18 px, windows and the demo screen open from 95% and 44 px down,
-    the four steps come in as a list (98%, 28 px), each 90 ms after the one
-    before, four at most. 0.8 s for opacity and blur, 1 s for movement.
-    Only what starts out of view waits; nothing is hidden without
-    `site.js`, and print shows everything.
+    the four stamps come in as a list (98%, 28 px), each 90 ms after the
+    one before, four at most. 0.8 s for opacity and blur, 1 s for
+    movement. Handstamps and postmarks are struck as they come in (from
+    118%, 6° further, 0.5 s on the strike curve, opacity in 0.2 s). Only
+    what starts out of view waits; nothing is hidden without `site.js`,
+    and print shows everything.
+  - Every photo that lands in the chat settles from 96% (0.35 s) and is
+    struck with a postmark 120 ms later.
   - Everything else plays once when seen: the Desktop sweep and the
     keycaps.
   - **Presses and hovers.** A press answers at once (0.06 s) and letting
     go eases back: a photo gives to 98%, a corner button to 88%, the pill
-    buttons to 96%, the menu bar's items highlight. Hover that raises or
-    grows something is only for a pointer that hovers, so a tap on a phone
-    leaves nothing raised.
+    buttons to 96%, Send all to 96%, the menu bar's items highlight.
+    Hover that raises or grows something is only for a pointer that
+    hovers, so a tap on a phone leaves nothing raised.
   - **Nothing teleports.** An FAQ answer slides open and closed (0.35 s)
     where the browser can size it, and opens at once elsewhere. The chat's
     hint folds away with its gap (0.26 s) when the first photo lands.
-  - Swaying photos pause while their line is off screen.
-  - Reduce Motion turns flights into fades and stops the sway and every
-    arrival; on the desktop to try Snapfly on, only fades are left.
-- **Phones** (640 px and below): sections are 72 px apart, long centred
-  words read from the start of the line, and the Desktop's files sit right
-  under the rope, above the words, so the sweep is a short hop up and never
-  crosses the text.
+  - Photos sway 1.1° each way (5.6 s), and pause while their line is off
+    screen.
+  - Reduce Motion turns flights into fades and stops the sway, every
+    arrival and every strike: postmarks and labels are simply there. On
+    the desktop to try Snapfly on, only fades are left.
+- **Phones** (640 px and below): the edge is 8 px; sections are 72 px
+  apart; the line holds two stamps 100 px wide; the airmail label sits in
+  the flow under the line, at the trailing side (from 900 px down), with
+  smaller words (17 and 9.5 px); the envelope's stamp sits above its
+  words; long centred words read from the start of the line; and the
+  Desktop's files sit right under the rope, above the words, so the sweep
+  is a short hop up and never crosses the text.
 - **Images.** The PNGs in `website/static` come from the app icon, drawn by
-  `website/make-images.py`. Everything else is inline SVG drawn in
-  `build.py`.
+  `website/make-images.py`. `og.png`, the picture shown when a link is
+  shared, still shows the old gradient wallpaper with the icon; it waits
+  for the owner. Everything else is inline SVG drawn in `build.py`.
 - **Words.** Labels the app shows come from its `Localizable.strings`.
   Everything else is in `website/content.py`, in English, German (du) and
-  Arabic (right to left).
+  Arabic (right to left), including the airmail label's four languages
+  (`AIRMAIL`) and the handstamp on the privacy section (`stamp_covered`).
