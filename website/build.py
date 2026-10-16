@@ -419,11 +419,11 @@ def postmark(uid, cls="postmark"):
     return (f'<span class="{cls}" aria-hidden="true"><svg viewBox="0 0 260 120" focusable="false">'
             f'<defs><path id="pm-{uid}" d="M60 60m-42 0a42 42 0 1 1 84 0a42 42 0 1 1-84 0"/></defs><g filter="url(#ink)">'
             f'<circle cx="60" cy="60" r="53" fill="none" stroke="currentColor" stroke-width="2.6"/>'
-            f'<circle cx="60" cy="60" r="32" fill="none" stroke="currentColor" stroke-width="1.6"/>'
+            f'<circle cx="60" cy="60" r="36" fill="none" stroke="currentColor" stroke-width="1.4"/>'
             f'<g class="pm-words"><text font-size="9.5" font-weight="700" fill="currentColor">'
             f'<textPath href="#pm-{uid}" textLength="262" lengthAdjust="spacing">SNAPFLY · PAR AVION · SNAPFLY · PAR AVION ·</textPath></text>'
-            f'<text class="pm-date" x="60" y="57" text-anchor="middle" font-size="12.5" font-weight="800" fill="currentColor">SNAPFLY</text>'
-            f'<text class="pm-time" x="60" y="73" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor"></text></g>'
+            f'<text class="pm-date" x="60" y="58" text-anchor="middle" font-size="15" font-weight="800" fill="currentColor">SNAPFLY</text>'
+            f'<text class="pm-time" x="60" y="76" text-anchor="middle" font-size="14.5" font-weight="700" fill="currentColor"></text></g>'
             f'{waves}</g></svg></span>')
 
 

@@ -75,8 +75,6 @@
     const tag = line.querySelector("[data-send-all]");
     const chatButton = chat && chat.querySelector("[data-chat-btn]");
     const captionBar = chat && chat.querySelector("[data-caption]");
-    // The newest message shows first, clear of the button over the chat.
-    if (thread) thread.scrollTop = thread.scrollHeight;
     const captionField = captionBar && captionBar.querySelector("input");
     const chatMenu = chat && chat.querySelector(".chat-menu");
     const replyCaption = chat && chat.querySelector("template[data-reply-caption]");
