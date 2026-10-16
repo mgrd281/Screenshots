@@ -93,11 +93,18 @@ AD = {
     "de": dict(
         file="Bildschirmfoto 2026-10-15 um 09.{n}.12",
         apps=dict(
-            claude=dict(ask="Was steht auf dieser Rechnung?",
-                        reply="Eine Rechnung über 74,00 €: eine Schreibtischlampe und ein Kabelset, bezahlt per Überweisung.",
+            claude=dict(ask="Wann habe ich diese Woche noch Zeit?",
+                        reply="Am 14. vormittags ist noch alles frei.",
                         field="Antworten …"),
-            whatsapp=dict(contact="Lena", status="online", ask="Wann hast du nächste Woche Zeit?",
-                          reply="Donnerstag passt perfekt!", field="Nachricht eingeben"),
+            # WhatsApp is a whole conversation: Lena asks for the invoice,
+            # gets the screenshot and thanks. The chat list is made up.
+            whatsapp=dict(title="Chats", search="Suchen", day="Heute", status="online", typing="schreibt …",
+                          ask="Hey! Hast du die Rechnung von gestern? 🙂", wait="Moment, schick ich dir gleich",
+                          reply="Perfekt, danke! 🙏", field="Nachricht eingeben",
+                          chats=[dict(name="Lena", initial="L", color="#E9A178", last="Moment, schick ich dir gleich", time="09:39"),
+                                 dict(name="Familie", initial="F", color="#7FB8A4", last="Mama: Essen um sieben?", time="08:57"),
+                                 dict(name="Büro", initial="B", color="#8EA3D6", last="Tom: Meeting verschoben", time="Gestern"),
+                                 dict(name="Max", initial="M", color="#C495C9", last="Bis Samstag! 👋", time="Gestern")]),
             chatgpt=dict(ask="Was zeigt dieses Diagramm?",
                          reply="Die Balken steigen Monat für Monat: Der Umsatz wächst stetig.",
                          field="Frag irgendwas"),

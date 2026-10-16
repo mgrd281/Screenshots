@@ -47,9 +47,10 @@ one click into any chat, private details covered, and the offer:
 1. "Schon wieder 30 Screenshots auf dem Desktop?" A Desktop fills up.
 2. Snapfly arrives in the menu bar and every file flies onto the line; a
    close look at the top of the screen.
-3. One click on a paper plane, and the screenshot lands in Claude, with
-   its answer; then in WhatsApp and in ChatGPT, and the three fan out:
-   any chat.
+3. In WhatsApp, Lena asks for yesterday's invoice. One click on its paper
+   plane, and the screenshot lands in her chat; the ticks turn blue, she
+   types and thanks. Then a chart into ChatGPT, and three chats fan out,
+   Claude among them: any chat.
 4. The name and the account number on an invoice light up, then are
    covered.
 5. The end card: the icon, "Kostenlos für deinen Mac", the website.
@@ -77,7 +78,9 @@ node promo/render.js ad --stills 2.6,9.6,16.2                # a few frames as P
   on the end card; the effects (ticks, a chime, whooshes, clicks, a
   thunk) are drawn in code. The mix meets Instagram's −14 LUFS.
 - **The chats.** Claude, WhatsApp and ChatGPT are drawn after their own
-  layout and colours, never with their logos, and the end card says they
+  layout and colours, never with their logos. WhatsApp looks like its Mac
+  app, with a made-up chat list and conversation. The chats keep clear of
+  the safe area's right side, and the end card says they
   are their owners' marks and Snapfly is not connected with them. Meta
   can refuse an ad that seems to speak for another company.
 - **Safe area.** As above: words and buttons stay above y = 1500.

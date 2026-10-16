@@ -69,7 +69,9 @@
          box-shadow: 0 40px 90px rgba(0,0,0,.6); transform-origin: 50% 40%; }
   .app .top { flex: none; height: 76px; display: flex; align-items: center; gap: 16px; padding: 0 26px;
               border-bottom: 1px solid rgba(0,0,0,.07); font-size: 28px; }
-  .app .lights { margin-inline-end: 14px; }
+  .lights { display: flex; gap: 10px; margin-inline-end: 14px; }
+  .lights i { width: 16px; height: 16px; border-radius: 50%; background: #FF5F57; }
+  .lights i:nth-child(2) { background: #FEBC2E; } .lights i:nth-child(3) { background: #28C840; }
   .app .thread { flex: 1; display: flex; flex-direction: column; gap: 18px; padding: 26px 28px; overflow: hidden; }
   .app .me { align-self: flex-end; max-width: 330px; }
   .app .pic { width: 300px; border-radius: 18px; overflow: hidden; }
@@ -87,21 +89,58 @@
                  box-shadow: 0 4px 14px rgba(60,50,30,.06); }
   .claude .go { background: #C96442; color: #fff; border-radius: 14px; }
 
-  .wa { background: #EFEAE2; color: #111B21; }
-  .wa .top { background: #F0F2F5; }
-  .wa .avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #C9CFD4, #9AA4AC); }
+  /* WhatsApp as on the Mac: the chat list on the left, the conversation
+     with Lena on the right, her messages white, ours green. */
+  .wa { flex-direction: row; background: #FFFFFF; color: #111B21; }
+  .wa .side { flex: none; width: 300px; display: flex; flex-direction: column; border-right: 1px solid #E9EDEF; }
+  .wa .side-top { height: 86px; display: flex; align-items: center; padding: 0 24px; font-size: 32px; }
+  .wa .side-top b { font-weight: 700; }
+  .wa .search { margin: 0 18px 12px; height: 54px; border-radius: 14px; background: #F0F2F5; color: #667781;
+                display: flex; align-items: center; padding: 0 20px; font-size: 23px; }
+  .wa .row { display: flex; align-items: center; gap: 14px; height: 96px; padding: 0 16px 0 18px; }
+  .wa .row.on { background: #F0F2F5; }
+  .wa .row .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; border-bottom: 1px solid #E9EDEF;
+                  padding: 14px 0; }
+  .wa .row b { font-size: 24px; font-weight: 600; }
+  .wa .row small { font-size: 20px; color: #667781; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wa .when { align-self: flex-start; margin-top: 22px; font-size: 18px; color: #667781; }
+  .wa .av { flex: none; width: 58px; height: 58px; border-radius: 50%; color: #fff; font-size: 26px; font-weight: 700;
+            display: grid; place-items: center; }
+  .wa .main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: #EFEAE2; }
+  .wa .head { flex: none; height: 86px; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: #F0F2F5;
+              border-bottom: 1px solid #E9EDEF; }
+  .wa .head .av { width: 54px; height: 54px; }
   .wa .who { display: flex; flex-direction: column; line-height: 1.2; }
-  .wa .who b { font-size: 28px; font-weight: 600; }
-  .wa .who small { font-size: 21px; color: #667781; }
-  .wa .in, .wa .me { position: relative; border-radius: 14px; box-shadow: 0 1px 1px rgba(0,0,0,.12); font-size: 28px; line-height: 1.35; }
-  .wa .in { align-self: flex-start; background: #FFFFFF; padding: 12px 18px 26px; max-width: 78%; }
-  .wa .me { background: #D9FDD3; padding: 6px 6px 30px; }
-  .wa .thread small { position: absolute; right: 14px; bottom: 6px; font-size: 18px; color: #667781; display: flex; align-items: center; gap: 4px; }
-  .wa .ticks { width: 24px; color: #53BDEB; display: inline-flex; }
-  .wa .ticks svg { width: 24px; height: 15px; }
-  .wa .pic { border-radius: 10px; }
-  .wa .ask { background: #F0F2F5; margin: 0; height: 104px; padding: 0 22px; border-top: 1px solid rgba(0,0,0,.06); }
-  .wa .field { flex: 1; background: #FFFFFF; border-radius: 30px; height: 64px; display: flex; align-items: center; padding: 0 26px; color: #667781; }
+  .wa .who b { font-size: 27px; font-weight: 600; }
+  .wa .who small { display: grid; font-size: 20px; color: #667781; }
+  .wa .who small span { grid-area: 1 / 1; }
+  .wa .typing { color: #1DAA61; }
+  .wa .msgs { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end;
+              padding: 0 30px 16px; }
+  .wa .msgs > * { flex: none; }
+  .wa .slot { overflow: hidden; display: flex; flex-direction: column; }
+  .wa .day { align-self: center; margin-bottom: 4px; padding: 6px 16px; border-radius: 10px; background: #FFFFFF;
+             font-size: 19px; color: #54656F; box-shadow: 0 1px 1px rgba(0,0,0,.08); }
+  .wa .in, .wa .out { position: relative; margin-top: 12px; border-radius: 14px; box-shadow: 0 1px 1px rgba(0,0,0,.12);
+                      font-size: 26px; line-height: 1.35; padding: 10px 16px 30px; max-width: 82%; }
+  .wa .in { align-self: flex-start; background: #FFFFFF; border-top-left-radius: 4px; }
+  .wa .out { align-self: flex-end; background: #D9FDD3; border-top-right-radius: 4px; }
+  .wa .in small, .wa .out small { position: absolute; right: 14px; bottom: 6px; font-size: 17px; color: #667781;
+                                  display: flex; align-items: center; gap: 4px; }
+  .wa .ticks { display: inline-flex; color: #53BDEB; }
+  .wa .ticks svg { width: 23px; height: 14px; }
+  .wa .out.me { padding: 5px; transform-origin: 100% 50%; }
+  .wa .me .pic { width: 380px; border-radius: 10px; }
+  .wa .me::after { content: ""; position: absolute; left: 5px; right: 5px; bottom: 5px; height: 64px; border-radius: 0 0 10px 10px;
+                   background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.4)); }
+  .wa .me small { z-index: 1; right: 16px; bottom: 12px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.6); }
+  .wa .me .ticks { filter: drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+  .wa .bar { flex: none; height: 96px; display: flex; align-items: center; gap: 18px; padding: 0 22px; background: #F0F2F5; }
+  .wa .plus { width: 44px; text-align: center; font-size: 46px; font-weight: 300; line-height: 1; color: #54656F; }
+  .wa .field { flex: 1; height: 62px; display: flex; align-items: center; padding: 0 24px; border-radius: 14px;
+               background: #FFFFFF; color: #667781; font-size: 24px; }
+  .wa .mic { width: 44px; height: 44px; color: #54656F; }
+  .wa .mic svg { width: 100%; height: 100%; }
 
   .gpt { background: #FFFFFF; color: #0D0D0D; }
   .gpt .top { border-bottom: 0; }
