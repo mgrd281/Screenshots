@@ -80,6 +80,7 @@ swift scripts/asc.swift profile "$BUNDLE" "$CERT_ID" "Snapfly Mac App Store $CER
 # Each upload needs a higher build number than the one before.
 BUILD="$(( ${GITHUB_RUN_NUMBER:-1} + 100 ))"
 STORE=1 BUILD_NUMBER="$BUILD" scripts/build-app.sh
+scripts/check-private-apis.sh "$APP/Contents/MacOS/Snapfly"
 cp "$TMP/profile" "$APP/Contents/embedded.provisionprofile"
 
 # The sandbox, and only the doors Snapfly needs: folders the user picks,

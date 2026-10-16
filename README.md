@@ -346,7 +346,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Markup.swift` | Opens the system Markup editor and saves the result |
 | `Trim.swift` | Trims a screen recording and saves the result |
 | `Tests/TendederoTests` | Tests for the logic that needs no screen, run by CI with `swift test` |
-| `FullScreen.swift` | Knows when to stay hidden |
+| `FullScreen.swift` | Knows when to stay hidden (the App Store edition goes by the windows on screen) |
 | `Line.swift` | What is hanging, and what you can do with it |
 
 The Snapfly icon is drawn in code by `scripts/make-icon.py` into
