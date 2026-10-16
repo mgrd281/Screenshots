@@ -81,10 +81,7 @@ enum FullScreen {
     /// server's points, counted from the top.
     static func fills(_ window: CGRect, display: CGRect, notch: CGFloat) -> Bool {
         let below = CGRect(x: display.minX, y: display.minY + notch, width: display.width, height: display.height - notch)
-        return [display, below].contains { area in
-            abs(window.minX - area.minX) <= 1 && abs(window.minY - area.minY) <= 1
-                && abs(window.width - area.width) <= 1 && abs(window.height - area.height) <= 1
-        }
+        return TimeStamp.isScreen(window, among: [display, below])
     }
 
     private static func uuidString(for screen: NSScreen) -> String? {
