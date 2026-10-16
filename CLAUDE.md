@@ -94,6 +94,20 @@ required by the license and stays.
 - **Promo video.** `promo/` makes the vertical motion graphic in three
   languages; see `promo/README.md`. It reuses the website's drawings and the
   app's strings, so update it when either changes in a way the video shows.
+- **iPhone app.** `iOS/` holds Snapfly for the iPhone: a SwiftUI app with
+  the screenshots from Photos covered, and App Intents for Shortcuts and
+  Back Tap. Same bundle ID as the Mac app, so one App Store record can hold
+  both.
+  - `iOS/Snapfly.xcodeproj` is written by hand and uses folder-synced groups:
+    `iOS/Snapfly`, `Sources/Tendedero/Shared` and the translations in
+    `Sources/Tendedero/Resources`. New files in those folders are picked up
+    without touching it.
+  - Code both apps use goes in `Sources/Tendedero/Shared`, without AppKit or
+    UIKit. The Mac's SwiftPM target compiles it too.
+  - The Build Snapfly workflow's `iphone` job builds it unsigned for a device.
+    `check-strings.swift` reads `iOS/Snapfly` too.
+  - Not yet signed or uploaded: TestFlight for the iPhone needs an Apple
+    Distribution certificate, which the owner makes on their Mac.
 - **Tests.** `Tests/TendederoTests` holds XCTest tests for logic that needs no
   screen (parsing, sizes, file kinds). The Build Snapfly workflow runs
   `swift test` before building, so add a test with each new piece of such

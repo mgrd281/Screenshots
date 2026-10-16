@@ -346,3 +346,29 @@
 "Open the page to capture first, then try again." = "Ouvre d’abord la page à capturer, puis réessaie.";
 "The page could not be captured." = "La page n’a pas pu être capturée.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Pour faire défiler la page, Snapfly doit appuyer sur des touches pour toi. Autorise-le dans Réglages Système, puis réessaie.";
+
+/* iPhone */
+"Cover Private Details" = "Masquer les données privées";
+"No screenshots yet" = "Aucune capture pour l’instant";
+"Take a screenshot, then come back here." = "Fais une capture d’écran, puis reviens ici.";
+"Allow Snapfly to see your screenshots" = "Autorise Snapfly à voir tes captures";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly masque les noms, adresses et autres données privées de tes captures, directement sur cet iPhone. Rien n’est envoyé nulle part.";
+"Allow Access" = "Autoriser l’accès";
+"Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly ne peut pas voir tes captures. Autorise-le dans Réglages › Confidentialité et sécurité › Photos.";
+"Covering private details…" = "Masquage des données privées…";
+"The picture could not be read." = "L’image n’a pas pu être lue.";
+"Nothing private found" = "Rien de privé trouvé";
+"Details covered: %d" = "Données masquées : %d";
+"Saved to Photos" = "Enregistrée dans Photos";
+"The picture could not be saved." = "L’image n’a pas pu être enregistrée.";
+"Save" = "Enregistrer";
+"What to cover" = "Ce qui est masqué";
+"Take a screenshot as usual." = "Fais une capture d’écran comme d’habitude.";
+"Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "Touche deux fois le dos de ton iPhone : la dernière capture est masquée et copiée, prête à être collée dans une discussion.";
+"To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Pour le régler une fois, ouvre Réglages › Accessibilité › Toucher › Toucher le dos › Toucher deux fois, et choisis %@.";
+"Cover the Latest Screenshot" = "Masquer la dernière capture";
+"Double tap the back of your iPhone" = "Touche deux fois le dos de ton iPhone";
+"Everything happens on this iPhone. Nothing is sent anywhere." = "Tout se passe sur cet iPhone. Rien n’est envoyé nulle part.";
+"Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly ne peut pas encore voir tes captures. Ouvre Snapfly une fois et autorise-le.";
+"There is no screenshot yet." = "Il n’y a pas encore de capture.";
+"Covered and copied, ready to paste." = "Masquée et copiée, prête à coller.";

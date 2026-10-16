@@ -282,8 +282,31 @@ screenshot's title.
 
 ## Private by design.
 
-No account. No network. No analytics.
-Tendedero runs entirely on your Mac, and your screenshots never leave it.
+No account. No cloud. No analytics.
+Tendedero runs entirely on your Mac, and your screenshots never leave it. The
+only thing it ever asks the internet is the time, from the PTB's atomic clock,
+while the time stamp is on.
+
+<br>
+
+## On the iPhone.
+
+`iOS/` holds Snapfly for the iPhone. iOS lets no app float over the others or
+watch the screen, so there is no line there. What it keeps is the covering:
+
+- **The app** shows your screenshots from Photos, newest first. Tap one and it
+  comes back with names, addresses, emails, phone numbers, bank and health
+  details covered, ready to copy, share or save as a new picture in Photos.
+  The screenshot itself stays as it was. Settings chooses what to cover.
+- **Cover the Latest Screenshot** is a Shortcuts action that needs no opening
+  of the app. Chosen for Back Tap (Settings › Accessibility › Touch › Back Tap
+  › Double Tap), a double tap on the back of the iPhone covers the newest
+  screenshot and copies it, ready to paste into a chat.
+- **Cover Private Details** covers any picture a shortcut hands it.
+
+Both apps share the code in `Sources/Tendedero/Shared` (finding and covering
+private details, the atomic time, the translations), so an improvement there
+reaches both. Everything happens on the device.
 
 <br>
 
@@ -295,7 +318,7 @@ Tendedero runs entirely on your Mac, and your screenshots never leave it.
 | **Size** | 1.7 MB |
 | **Languages** | English, German, Spanish, Galician, French, Portuguese (Brazil), Japanese, Korean, Chinese (Simplified), Turkish, Azerbaijani, Hindi, Arabic |
 | **Built with** | Swift, AppKit and SwiftUI |
-| **Network access** | None |
+| **Network access** | Only the time, from the PTB's atomic clock, while the time stamp is on |
 | **Price** | Free |
 | **License** | MIT for the code. The name and icon are not included. |
 
@@ -341,9 +364,12 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `LineTag.swift` | The tag at the end of the line: moving it, combining, sending and taking everything down |
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
-| `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
+| `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
+| `Shared/PrivateText.swift` | Finds private details in a screenshot and covers them, on the Mac and the iPhone |
+| `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
-| `AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
+| `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
+| `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, and the Shortcuts actions |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
 | `TextCard.swift` | Translate Text and Describe, and the card that shows them |

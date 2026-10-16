@@ -346,3 +346,29 @@
 "Open the page to capture first, then try again." = "请先打开要捕捉的页面，然后再试一次。";
 "The page could not be captured." = "无法捕捉该页面。";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "要滚动页面，Snapfly 需要替你按键。请在“系统设置”中允许，然后再试一次。";
+
+/* iPhone */
+"Cover Private Details" = "隐藏私人信息";
+"No screenshots yet" = "还没有截图";
+"Take a screenshot, then come back here." = "先截个图，再回到这里。";
+"Allow Snapfly to see your screenshots" = "允许 Snapfly 查看你的截图";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly 直接在这台 iPhone 上隐藏截图中的姓名、地址等私人信息。不会发送到任何地方。";
+"Allow Access" = "允许访问";
+"Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly 无法查看你的截图。请在“设置”›“隐私与安全性”›“照片”中允许。";
+"Covering private details…" = "正在隐藏私人信息…";
+"The picture could not be read." = "无法读取图片。";
+"Nothing private found" = "未发现私人信息";
+"Details covered: %d" = "已隐藏的信息：%d";
+"Saved to Photos" = "已存储到“照片”";
+"The picture could not be saved." = "无法存储图片。";
+"Save" = "存储";
+"What to cover" = "要隐藏的内容";
+"Take a screenshot as usual." = "像平常一样截图。";
+"Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "轻点两下 iPhone 背面：最新的截图会被隐藏并拷贝，可直接粘贴到聊天中。";
+"To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "只需设置一次：打开“设置”›“辅助功能”›“触控”›“轻点背面”›“轻点两下”，然后选择 %@。";
+"Cover the Latest Screenshot" = "隐藏最新截图";
+"Double tap the back of your iPhone" = "轻点两下 iPhone 背面";
+"Everything happens on this iPhone. Nothing is sent anywhere." = "一切都在这台 iPhone 上完成。不会发送到任何地方。";
+"Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly 还不能查看你的截图。请打开 Snapfly 一次并允许。";
+"There is no screenshot yet." = "还没有截图。";
+"Covered and copied, ready to paste." = "已隐藏并拷贝，可直接粘贴。";

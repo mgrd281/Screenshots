@@ -346,3 +346,29 @@
 "Open the page to capture first, then try again." = "Önce yakalamak istediğin sayfayı aç, sonra yeniden dene.";
 "The page could not be captured." = "Sayfa yakalanamadı.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Sayfayı kaydırmak için Snapfly’ın senin yerine tuşlara basması gerekir. Sistem Ayarları’nda izin ver, sonra yeniden dene.";
+
+/* iPhone */
+"Cover Private Details" = "Özel bilgileri gizle";
+"No screenshots yet" = "Henüz ekran görüntüsü yok";
+"Take a screenshot, then come back here." = "Bir ekran görüntüsü al, sonra buraya dön.";
+"Allow Snapfly to see your screenshots" = "Snapfly’ın ekran görüntülerini görmesine izin ver";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly ekran görüntülerindeki adları, adresleri ve diğer özel bilgileri doğrudan bu iPhone’da gizler. Hiçbir şey bir yere gönderilmez.";
+"Allow Access" = "Erişime izin ver";
+"Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly ekran görüntülerini göremiyor. Ayarlar › Gizlilik ve Güvenlik › Fotoğraflar’da izin ver.";
+"Covering private details…" = "Özel bilgiler gizleniyor…";
+"The picture could not be read." = "Resim okunamadı.";
+"Nothing private found" = "Özel bir şey bulunamadı";
+"Details covered: %d" = "Gizlenen bilgiler: %d";
+"Saved to Photos" = "Fotoğraflar’a kaydedildi";
+"The picture could not be saved." = "Resim kaydedilemedi.";
+"Save" = "Kaydet";
+"What to cover" = "Neler gizlenecek";
+"Take a screenshot as usual." = "Her zamanki gibi ekran görüntüsü al.";
+"Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhone’unun arkasına iki kez dokun: en yeni ekran görüntüsü gizlenir ve kopyalanır, sohbete yapıştırmaya hazır olur.";
+"To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Bir kez ayarlamak için Ayarlar › Erişilebilirlik › Dokunma › Arkaya Dokunma › Çift Dokunma’yı aç ve %@ seç.";
+"Cover the Latest Screenshot" = "En yeni ekran görüntüsünü gizle";
+"Double tap the back of your iPhone" = "iPhone’unun arkasına iki kez dokun";
+"Everything happens on this iPhone. Nothing is sent anywhere." = "Her şey bu iPhone’da olur. Hiçbir şey bir yere gönderilmez.";
+"Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly ekran görüntülerini henüz göremiyor. Snapfly’ı bir kez aç ve izin ver.";
+"There is no screenshot yet." = "Henüz ekran görüntüsü yok.";
+"Covered and copied, ready to paste." = "Gizlendi ve kopyalandı, yapıştırmaya hazır.";

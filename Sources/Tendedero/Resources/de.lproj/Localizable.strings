@@ -346,3 +346,29 @@
 "Open the page to capture first, then try again." = "Öffne zuerst die Seite, die du aufnehmen willst, und versuch es dann noch einmal.";
 "The page could not be captured." = "Die Seite konnte nicht aufgenommen werden.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Um die Seite zu scrollen, muss Snapfly für dich Tasten drücken. Erlaube es in den Systemeinstellungen und versuch es dann noch einmal.";
+
+/* iPhone */
+"Cover Private Details" = "Private Angaben verdecken";
+"No screenshots yet" = "Noch keine Bildschirmfotos";
+"Take a screenshot, then come back here." = "Mach ein Bildschirmfoto und komm dann hierher zurück.";
+"Allow Snapfly to see your screenshots" = "Erlaube Snapfly, deine Bildschirmfotos zu sehen";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly verdeckt Namen, Adressen und andere private Angaben in deinen Bildschirmfotos, direkt auf diesem iPhone. Nichts wird irgendwohin gesendet.";
+"Allow Access" = "Zugriff erlauben";
+"Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly darf deine Bildschirmfotos nicht sehen. Erlaube es unter Einstellungen › Datenschutz & Sicherheit › Fotos.";
+"Covering private details…" = "Private Angaben werden verdeckt …";
+"The picture could not be read." = "Das Bild konnte nicht gelesen werden.";
+"Nothing private found" = "Nichts Privates gefunden";
+"Details covered: %d" = "Verdeckte Angaben: %d";
+"Saved to Photos" = "In Fotos gesichert";
+"The picture could not be saved." = "Das Bild konnte nicht gesichert werden.";
+"Save" = "Sichern";
+"What to cover" = "Was verdeckt wird";
+"Take a screenshot as usual." = "Mach wie gewohnt ein Bildschirmfoto.";
+"Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "Tippe zweimal auf die Rückseite deines iPhone: Das neueste Bildschirmfoto wird verdeckt und kopiert, bereit zum Einsetzen in einen Chat.";
+"To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Zum einmaligen Einrichten öffne Einstellungen › Bedienungshilfen › Tippen › Auf Rückseite tippen › Doppeltippen und wähle %@.";
+"Cover the Latest Screenshot" = "Neuestes Bildschirmfoto verdecken";
+"Double tap the back of your iPhone" = "Zweimal auf die Rückseite deines iPhone tippen";
+"Everything happens on this iPhone. Nothing is sent anywhere." = "Alles geschieht auf diesem iPhone. Nichts wird irgendwohin gesendet.";
+"Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly darf deine Bildschirmfotos noch nicht sehen. Öffne Snapfly einmal und erlaube es.";
+"There is no screenshot yet." = "Es gibt noch kein Bildschirmfoto.";
+"Covered and copied, ready to paste." = "Verdeckt und kopiert, bereit zum Einsetzen.";

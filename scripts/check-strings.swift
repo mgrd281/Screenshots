@@ -7,6 +7,8 @@ import Foundation
 
 let sources = URL(fileURLWithPath: "Sources/Tendedero")
 let resources = sources.appendingPathComponent("Resources")
+// The iPhone app shares the translations.
+let iPhone = URL(fileURLWithPath: "iOS/Snapfly")
 let fm = FileManager.default
 
 // Every L("...") call. A call that is not a plain string literal cannot be
@@ -16,18 +18,20 @@ var problems: [String] = []
 var warnings: [String] = []
 let literal = try NSRegularExpression(pattern: #"\bL\(\s*"((?:[^"\\]|\\.)*)"\s*\)"#)
 let anyCall = try NSRegularExpression(pattern: #"\bL\("#)
-for case let file as URL in fm.enumerator(at: sources, includingPropertiesForKeys: nil)!
-where file.pathExtension == "swift" && file.lastPathComponent != "Localization.swift" {
-    let text = try String(contentsOf: file, encoding: .utf8)
-    let range = NSRange(text.startIndex..., in: text)
-    let literals = literal.matches(in: text, range: range)
-    for match in literals {
-        let key = String(text[Range(match.range(at: 1), in: text)!])
-        used.insert(key.replacingOccurrences(of: #"\""#, with: #"""#))
-    }
-    let calls = anyCall.numberOfMatches(in: text, range: range)
-    if calls != literals.count {
-        problems.append("\(file.lastPathComponent): \(calls - literals.count) L(...) call(s) without a plain string")
+for folder in [sources, iPhone] {
+    for case let file as URL in fm.enumerator(at: folder, includingPropertiesForKeys: nil)!
+    where file.pathExtension == "swift" && file.lastPathComponent != "Localization.swift" {
+        let text = try String(contentsOf: file, encoding: .utf8)
+        let range = NSRange(text.startIndex..., in: text)
+        let literals = literal.matches(in: text, range: range)
+        for match in literals {
+            let key = String(text[Range(match.range(at: 1), in: text)!])
+            used.insert(key.replacingOccurrences(of: #"\""#, with: #"""#))
+        }
+        let calls = anyCall.numberOfMatches(in: text, range: range)
+        if calls != literals.count {
+            problems.append("\(file.lastPathComponent): \(calls - literals.count) L(...) call(s) without a plain string")
+        }
     }
 }
 

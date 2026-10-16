@@ -348,3 +348,29 @@
 "Open the page to capture first, then try again." = "Open the page to capture first, then try again.";
 "The page could not be captured." = "The page could not be captured.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again.";
+
+/* iPhone */
+"Cover Private Details" = "Cover Private Details";
+"No screenshots yet" = "No screenshots yet";
+"Take a screenshot, then come back here." = "Take a screenshot, then come back here.";
+"Allow Snapfly to see your screenshots" = "Allow Snapfly to see your screenshots";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere.";
+"Allow Access" = "Allow Access";
+"Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos.";
+"Covering private details…" = "Covering private details…";
+"The picture could not be read." = "The picture could not be read.";
+"Nothing private found" = "Nothing private found";
+"Details covered: %d" = "Details covered: %d";
+"Saved to Photos" = "Saved to Photos";
+"The picture could not be saved." = "The picture could not be saved.";
+"Save" = "Save";
+"What to cover" = "What to cover";
+"Take a screenshot as usual." = "Take a screenshot as usual.";
+"Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat.";
+"To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@.";
+"Cover the Latest Screenshot" = "Cover the Latest Screenshot";
+"Double tap the back of your iPhone" = "Double tap the back of your iPhone";
+"Everything happens on this iPhone. Nothing is sent anywhere." = "Everything happens on this iPhone. Nothing is sent anywhere.";
+"Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly may not see your screenshots yet. Open Snapfly once and allow it.";
+"There is no screenshot yet." = "There is no screenshot yet.";
+"Covered and copied, ready to paste." = "Covered and copied, ready to paste.";

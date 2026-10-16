@@ -346,3 +346,29 @@
 "Open the page to capture first, then try again." = "Abre primeiro a páxina que queres capturar e téntao de novo.";
 "The page could not be captured." = "Non se puido capturar a páxina.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Para desprazar a páxina, Snapfly necesita premer teclas por ti. Permíteo nos Axustes do Sistema e téntao de novo.";
+
+/* iPhone */
+"Cover Private Details" = "Ocultar datos privados";
+"No screenshots yet" = "Aínda non hai capturas";
+"Take a screenshot, then come back here." = "Fai unha captura de pantalla e volve aquí.";
+"Allow Snapfly to see your screenshots" = "Permite que Snapfly vexa as túas capturas";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly oculta nomes, enderezos e outros datos privados das túas capturas, neste mesmo iPhone. Non se envía nada a ningures.";
+"Allow Access" = "Permitir acceso";
+"Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly non pode ver as túas capturas. Permíteo en Axustes › Privacidade e seguranza › Fotos.";
+"Covering private details…" = "Ocultando datos privados…";
+"The picture could not be read." = "Non se puido ler a imaxe.";
+"Nothing private found" = "Non se atopou nada privado";
+"Details covered: %d" = "Datos ocultos: %d";
+"Saved to Photos" = "Gardada en Fotos";
+"The picture could not be saved." = "Non se puido gardar a imaxe.";
+"Save" = "Gardar";
+"What to cover" = "Que ocultar";
+"Take a screenshot as usual." = "Fai unha captura de pantalla coma sempre.";
+"Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "Toca dúas veces a parte traseira do teu iPhone: a última captura ocúltase e cópiase, lista para pegar nun chat.";
+"To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Para configuralo unha vez, abre Axustes › Accesibilidade › Tocar › Tocar atrás › Dobre toque, e escolle %@.";
+"Cover the Latest Screenshot" = "Ocultar a última captura";
+"Double tap the back of your iPhone" = "Toca dúas veces a parte traseira do teu iPhone";
+"Everything happens on this iPhone. Nothing is sent anywhere." = "Todo ocorre neste iPhone. Non se envía nada a ningures.";
+"Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly aínda non pode ver as túas capturas. Abre Snapfly unha vez e permíteo.";
+"There is no screenshot yet." = "Aínda non hai ningunha captura.";
+"Covered and copied, ready to paste." = "Oculta e copiada, lista para pegar.";
