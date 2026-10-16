@@ -325,10 +325,16 @@
 /* Time stamp */
 "Time stamp" = "时间戳";
 "Stamp the date and time" = "加上日期和时间";
-"In the corner, on the line and in whatever leaves it" = "加在角落：晾衣绳上的图片和从晾衣绳上发出的图片里都有";
+"At the top, on the line and in a copy next to the screenshot" = "在顶部、晾绳上，以及截图旁的副本中";
 "Which screenshots" = "哪些截图";
 "Screenshots of the whole screen" = "整个屏幕的截图";
 "Every screenshot" = "所有截图";
 "Words before the date" = "日期前的文字";
 "Optional, like your shop’s name" = "可选，比如你的店名";
-"The file itself stays as it was." = "文件本身保持不变。";
+"The screenshot itself stays as it was; the stamped copy is saved next to it." = "截图本身保持不变；带时间戳的副本保存在它旁边。";
+"The time comes from the PTB’s atomic clock in Germany, over the internet. Only the question for the time goes out; without a connection, the Mac’s clock is used." = "时间通过互联网取自德国 PTB 的原子钟。只会发出询问时间的请求；没有网络时使用 Mac 的时钟。";
+"Atomic time from the PTB, Germany" = "PTB 原子时间（德国）";
+"Time from the Mac’s clock" = "Mac 时钟的时间";
+"Page: %@" = "页面：%@";
+"Fingerprint (SHA-256): %@" = "指纹 (SHA-256)：%@";
+"%@ with time stamp" = "%@（带时间戳）";

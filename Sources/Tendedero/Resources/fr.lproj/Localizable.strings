@@ -325,10 +325,16 @@
 /* Time stamp */
 "Time stamp" = "Horodatage";
 "Stamp the date and time" = "Apposer la date et l’heure";
-"In the corner, on the line and in whatever leaves it" = "Dans le coin, sur la corde et dans tout ce qui la quitte";
+"At the top, on the line and in a copy next to the screenshot" = "En haut, sur la corde et dans une copie à côté de la capture";
 "Which screenshots" = "Quelles captures";
 "Screenshots of the whole screen" = "Captures de tout l’écran";
 "Every screenshot" = "Toutes les captures";
 "Words before the date" = "Texte avant la date";
 "Optional, like your shop’s name" = "Facultatif, comme le nom de ta boutique";
-"The file itself stays as it was." = "Le fichier lui-même ne change pas.";
+"The screenshot itself stays as it was; the stamped copy is saved next to it." = "La capture elle-même ne change pas ; la copie horodatée est enregistrée à côté.";
+"The time comes from the PTB’s atomic clock in Germany, over the internet. Only the question for the time goes out; without a connection, the Mac’s clock is used." = "L’heure vient de l’horloge atomique de la PTB en Allemagne, par Internet. Seule la demande d’heure sort ; sans connexion, l’horloge du Mac est utilisée.";
+"Atomic time from the PTB, Germany" = "Heure atomique de la PTB, Allemagne";
+"Time from the Mac’s clock" = "Heure de l’horloge du Mac";
+"Page: %@" = "Page : %@";
+"Fingerprint (SHA-256): %@" = "Empreinte (SHA-256) : %@";
+"%@ with time stamp" = "%@ horodatée";

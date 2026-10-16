@@ -219,8 +219,9 @@ enum Cover {
             context.addPath(CGPath(roundedRect: rect, cornerWidth: radius, cornerHeight: radius, transform: nil))
             context.fillPath()
         }
-        if let stamp { TimeStamp.draw(stamp, in: context, width: image.width, height: image.height) }
-        guard let covered = context.makeImage() else { return nil }
+        guard var covered = context.makeImage() else { return nil }
+        // The stamp's band goes above the picture, which grows by its height.
+        if let stamp, let stamped = TimeStamp.render(covered, stamp) { covered = stamped }
 
         // A folder of its own, so the copy keeps the screenshot's name.
         let target = folder.appendingPathComponent(UUID().uuidString, isDirectory: true)

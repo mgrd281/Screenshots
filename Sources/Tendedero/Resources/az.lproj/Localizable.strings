@@ -327,10 +327,16 @@
 /* Time stamp */
 "Time stamp" = "Vaxt möhürü";
 "Stamp the date and time" = "Tarixi və vaxtı möhürlə";
-"In the corner, on the line and in whatever leaves it" = "Küncdə, ipdə və ipdən çıxan hər şeydə";
+"At the top, on the line and in a copy next to the screenshot" = "Yuxarıda, ipdə və ekran şəklinin yanındakı nüsxədə";
 "Which screenshots" = "Hansı ekran şəkilləri";
 "Screenshots of the whole screen" = "Bütün ekranın şəkilləri";
 "Every screenshot" = "Hər ekran şəkli";
 "Words before the date" = "Tarixdən əvvəlki sözlər";
 "Optional, like your shop’s name" = "İstəyə bağlı, məsələn mağazanın adı";
-"The file itself stays as it was." = "Faylın özü olduğu kimi qalır.";
+"The screenshot itself stays as it was; the stamped copy is saved next to it." = "Ekran şəklinin özü dəyişmir; möhürlü nüsxə yanında saxlanılır.";
+"The time comes from the PTB’s atomic clock in Germany, over the internet. Only the question for the time goes out; without a connection, the Mac’s clock is used." = "Vaxt internet vasitəsilə Almaniyadakı PTB-nin atom saatından gəlir. Yalnız vaxt sualı çıxır; bağlantı olmadıqda Mac-in saatı istifadə olunur.";
+"Atomic time from the PTB, Germany" = "PTB atom vaxtı, Almaniya";
+"Time from the Mac’s clock" = "Mac-in saatından vaxt";
+"Page: %@" = "Səhifə: %@";
+"Fingerprint (SHA-256): %@" = "Barmaq izi (SHA-256): %@";
+"%@ with time stamp" = "%@ vaxt möhürü ilə";

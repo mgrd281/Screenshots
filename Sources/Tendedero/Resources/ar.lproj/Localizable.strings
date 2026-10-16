@@ -325,10 +325,16 @@
 /* Time stamp */
 "Time stamp" = "ختم الوقت";
 "Stamp the date and time" = "اختم التاريخ والوقت";
-"In the corner, on the line and in whatever leaves it" = "في الزاوية، على الحبل وفي كل ما يخرج منه";
+"At the top, on the line and in a copy next to the screenshot" = "في الأعلى، على الحبل وفي نسخة بجانب اللقطة";
 "Which screenshots" = "أي اللقطات";
 "Screenshots of the whole screen" = "لقطات الشاشة كلها";
 "Every screenshot" = "كل لقطة";
 "Words before the date" = "كلمات قبل التاريخ";
 "Optional, like your shop’s name" = "اختياري، مثل اسم متجرك";
-"The file itself stays as it was." = "الملف نفسه يبقى كما هو.";
+"The screenshot itself stays as it was; the stamped copy is saved next to it." = "اللقطة نفسها تبقى كما هي، والنسخة المختومة تُحفظ بجانبها.";
+"The time comes from the PTB’s atomic clock in Germany, over the internet. Only the question for the time goes out; without a connection, the Mac’s clock is used." = "يأتي الوقت عبر الإنترنت من الساعة الذرية لمعهد PTB في ألمانيا. لا يخرج إلا سؤال عن الوقت، ودون اتصال تُستعمل ساعة الـMac.";
+"Atomic time from the PTB, Germany" = "الوقت الذري من PTB، ألمانيا";
+"Time from the Mac’s clock" = "الوقت من ساعة الـMac";
+"Page: %@" = "الصفحة: %@";
+"Fingerprint (SHA-256): %@" = "البصمة (SHA-256): %@";
+"%@ with time stamp" = "%@ مع ختم الوقت";

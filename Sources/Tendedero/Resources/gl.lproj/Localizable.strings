@@ -325,10 +325,16 @@
 /* Time stamp */
 "Time stamp" = "Selo de hora";
 "Stamp the date and time" = "Selar a data e a hora";
-"In the corner, on the line and in whatever leaves it" = "Na esquina, na corda e en todo o que sae dela";
+"At the top, on the line and in a copy next to the screenshot" = "Arriba, na corda e nunha copia xunto á captura";
 "Which screenshots" = "Que capturas";
 "Screenshots of the whole screen" = "Capturas de toda a pantalla";
 "Every screenshot" = "Todas as capturas";
 "Words before the date" = "Texto antes da data";
 "Optional, like your shop’s name" = "Opcional, como o nome da túa tenda";
-"The file itself stays as it was." = "O ficheiro en si non cambia.";
+"The screenshot itself stays as it was; the stamped copy is saved next to it." = "A captura en si non cambia; a copia con selo gárdase ao seu carón.";
+"The time comes from the PTB’s atomic clock in Germany, over the internet. Only the question for the time goes out; without a connection, the Mac’s clock is used." = "A hora vén do reloxo atómico da PTB en Alemaña, por internet. Só sae a pregunta pola hora; sen conexión, úsase o reloxo do Mac.";
+"Atomic time from the PTB, Germany" = "Hora atómica da PTB, Alemaña";
+"Time from the Mac’s clock" = "Hora do reloxo do Mac";
+"Page: %@" = "Páxina: %@";
+"Fingerprint (SHA-256): %@" = "Pegada (SHA-256): %@";
+"%@ with time stamp" = "%@ con selo de tempo";

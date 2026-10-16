@@ -110,10 +110,12 @@ components:
     rounded: "{rounded.full}"
     width: "26pt"
   time-stamp:
-    backgroundColor: "#00000099"   # black at 60%, like the lock badge
-    textColor: "#FFFFFF"
-    rounded: "{rounded.full}"
-    size: "1.6% of the image's shorter side, at least 12 px"
+    backgroundColor: "#F7F7F7"     # a band above the picture, gray 0.97
+    hairline: "#D1D1D1"            # gray 0.82, between band and picture
+    titleColor: "#141414"          # gray 0.08
+    detailColor: "#525252"         # gray 0.32
+    codeColor: "#666666"           # gray 0.4
+    size: "0.95% of the image's width, at least 11 px"
 ---
 
 # Design System: Snapfly
@@ -540,19 +542,31 @@ apps.
 
 ### Time stamp
 
-Drawn into the copy of a screenshot that leaves the line, and onto the
-photo that hangs, when Stamp the date and time is on: never into the file.
+Evidence of when and where a screenshot was taken, when Stamp the date
+and time is on. Drawn into a copy saved next to the screenshot, onto the
+photo that hangs and into the copy that leaves the line: never into the
+screenshot itself.
 
-- **Where.** The bottom trailing corner, so it never meets the lock badge
-  in the leading one. In right-to-left languages it moves to the left.
-- **What.** A capsule of black at 60% with the SF Symbol `clock` and the
-  words in white, SF Pro Semibold with monospaced digits: the user's own
-  words, a middle dot, then the date and time in the Mac's own format.
-- **Size.** It scales with the image, so it reads the same on any screen:
-  the text is 1.6% of the shorter side, at least 12 px; padding 0.8×,
-  height 2.1× and the margin to the edges 1.2× the text size. A capture too
-  narrow for it gets a smaller stamp, down to 8 px, then none.
-- **No shadow, no border.** It is printed on the picture, not floating.
+- **Where.** A band above the picture, as wide as it; the image grows by
+  the band's height, so nothing of the screenshot is covered.
+- **What.** The app icon leads in the reading direction, then up to four
+  lines:
+  1. the user's own words, a middle dot, then the date and the time to the
+     second with the time zone, in the Mac's own format: SF Pro Semibold
+     with monospaced digits, in the title colour;
+  2. where the time came from: the PTB's atomic clock, or the Mac's clock
+     when it could not be reached (regular, 0.86×, detail colour);
+  3. the page open in the browser in front, if one was (the same);
+  4. the screenshot's SHA-256 fingerprint (SF Mono, 0.8×, code colour).
+  A line too long for the image ends in "…".
+- **Size.** The text is 0.95% of the image's width, at least 11 px; each
+  line is 1.4× its text size, the padding 0.9× and the gap after the icon
+  0.7× the title size. The icon is at most three title sizes tall. A
+  hairline, 1/16 of the title size and at least 1 px, separates band and
+  picture.
+- **Right to left.** The icon moves to the right and the lines align right.
+- **No shadow, no rounded corners.** It reads as a document's letterhead,
+  not as something floating.
 
 ### Signature: the line styles
 - **Clothesline**: rope, clips and swing.

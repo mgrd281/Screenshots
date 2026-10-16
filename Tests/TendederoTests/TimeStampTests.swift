@@ -1,7 +1,7 @@
 import XCTest
 @testable import Tendedero
 
-/// The time stamp: its words, its size on an image, its corner, and which
+/// The time stamp: its words, the band's size, what it records, and which
 /// captures are of a whole screen.
 final class TimeStampTests: XCTestCase {
     private let utc = TimeZone(identifier: "UTC")!
@@ -28,26 +28,57 @@ final class TimeStampTests: XCTestCase {
         XCTAssertTrue(label.contains("17"))
     }
 
-    func testStampGrowsWithTheImage() {
-        // A Retina screen: the text is 29 pixels, about 15 points.
-        XCTAssertEqual(TimeStamp.metrics(width: 2880, height: 1800).font, 29)
+    func testBandGrowsWithTheImage() {
+        // A Retina screen: the text is 27 pixels, about 14 points.
+        XCTAssertEqual(TimeStamp.Metrics(width: 2880).font, 27)
         // A small capture keeps a readable minimum.
-        XCTAssertEqual(TimeStamp.metrics(width: 800, height: 600).font, 12)
+        XCTAssertEqual(TimeStamp.Metrics(width: 800).font, 11)
     }
 
-    func testStampSitsInTheTrailingCorner() {
-        let m = TimeStamp.metrics(width: 2880, height: 1800)
-        let ltr = TimeStamp.capsule(width: 2880, height: 1800, content: 400, metrics: m, rightToLeft: false)
-        XCTAssertEqual(ltr?.maxX, 2880 - m.margin)
-        XCTAssertEqual(ltr?.minY, m.margin)
-        let rtl = TimeStamp.capsule(width: 2880, height: 1800, content: 400, metrics: m, rightToLeft: true)
-        XCTAssertEqual(rtl?.minX, m.margin)
-        XCTAssertEqual(rtl?.width, 400 + m.padding * 2)
+    func testBandIsTallerForMoreLines() {
+        let m = TimeStamp.Metrics(width: 2880)
+        let short = TimeStamp.mark(TimeStamp.Record(taken: taken, atomic: false), text: "", locale: german,
+                                   timeZone: utc, rightToLeft: false)
+        let full = TimeStamp.mark(TimeStamp.Record(taken: taken, atomic: true, page: "https://example.com/",
+                                                   fingerprint: "ab12"),
+                                  text: "", locale: german, timeZone: utc, rightToLeft: false)
+        XCTAssertEqual(short.rows.count, 2)
+        XCTAssertEqual(full.rows.count, 4)
+        XCTAssertGreaterThan(m.height(for: full.rows), m.height(for: short.rows))
     }
 
-    func testNoStampWhereItDoesNotFit() {
-        let m = TimeStamp.metrics(width: 120, height: 40)
-        XCTAssertNil(TimeStamp.capsule(width: 120, height: 40, content: 300, metrics: m, rightToLeft: false))
+    func testBandSaysWhereTheTimeCameFrom() {
+        let atomic = TimeStamp.mark(TimeStamp.Record(taken: taken, atomic: true), text: "Officehauss",
+                                    locale: german, timeZone: utc, rightToLeft: false)
+        XCTAssertTrue(atomic.rows[0].text.hasPrefix("Officehauss · "))
+        XCTAssertTrue(atomic.rows[1].text.contains("PTB"))
+        let mac = TimeStamp.mark(TimeStamp.Record(taken: taken, atomic: false), text: "",
+                                 locale: german, timeZone: utc, rightToLeft: false)
+        XCTAssertFalse(mac.rows[1].text.contains("PTB"))
+    }
+
+    func testPageAndFingerprintAreWritten() {
+        let mark = TimeStamp.mark(TimeStamp.Record(taken: taken, atomic: true, page: "https://www.kaufland.de/shops/LLC/",
+                                                   fingerprint: "0f3a"),
+                                  text: "", locale: german, timeZone: utc, rightToLeft: true)
+        XCTAssertTrue(mark.rows[2].text.contains("https://www.kaufland.de/shops/LLC/"))
+        XCTAssertEqual(mark.rows[3].kind, .code)
+        XCTAssertTrue(mark.rows[3].text.contains("0f3a"))
+        XCTAssertTrue(mark.rightToLeft)
+    }
+
+    func testRecordSurvivesTheRoundTrip() throws {
+        let record = TimeStamp.Record(taken: taken, atomic: true, page: "https://example.com/", fingerprint: "ab")
+        let data = try JSONEncoder().encode(record)
+        XCTAssertEqual(try JSONDecoder().decode(TimeStamp.Record.self, from: data), record)
+    }
+
+    func testFingerprintIsSHA256() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("stamp-\(UUID().uuidString).txt")
+        try Data("abc".utf8).write(to: url)
+        defer { try? FileManager.default.removeItem(at: url) }
+        XCTAssertEqual(TimeStamp.fingerprint(of: url),
+                       "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
     }
 
     func testWholeScreenIsOneOfTheScreens() {

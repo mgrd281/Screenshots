@@ -442,7 +442,7 @@ private struct GeneralPane: View {
             Section {
                 Toggle(isOn: $prefs.stampsTime) {
                     Text(L("Stamp the date and time"))
-                    Text(L("In the corner, on the line and in whatever leaves it"))
+                    Text(L("At the top, on the line and in a copy next to the screenshot"))
                 }
                 Picker(L("Which screenshots"), selection: $prefs.stampScope) {
                     Text(L("Screenshots of the whole screen")).tag(TimeStamp.Scope.wholeScreen)
@@ -455,8 +455,11 @@ private struct GeneralPane: View {
             } header: {
                 Text(L("Time stamp"))
             } footer: {
-                Text(L("The file itself stays as it was."))
-                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(L("The screenshot itself stays as it was; the stamped copy is saved next to it."))
+                    Text(L("The time comes from the PTB’s atomic clock in Germany, over the internet. Only the question for the time goes out; without a connection, the Mac’s clock is used."))
+                }
+                .foregroundStyle(.secondary)
             }
             Section {
                 Toggle(L("Sounds"), isOn: $prefs.sounds)

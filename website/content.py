@@ -23,7 +23,7 @@ TEXT["en"] = dict(
     title_home="Snapfly: screenshots, one click from any chat",
     desc_home="Snapfly hangs every screenshot on a line at the top of your Mac's screen, ready to copy or send into any chat, with private details covered. Free for macOS 14 or later.",
     title_privacy="Privacy Policy · Snapfly",
-    desc_privacy="Snapfly collects no data. It runs entirely on your Mac and never connects to the internet.",
+    desc_privacy="Snapfly collects no data. It runs entirely on your Mac, and the only thing it asks the internet is the time.",
     title_support="Support · Snapfly",
     desc_support="Help with Snapfly, the screenshot line for the Mac, and how to reach us.",
     skip="Skip to content",
@@ -164,8 +164,8 @@ TEXT["en"] = dict(
     },
 
     design_h="Nothing leaves your Mac.",
-    design_points=["No account.", "No network.", "No analytics."],
-    design_p="Reading text, covering details, translating and describing all happen on your Mac, with Apple’s own frameworks. Snapfly never connects to the internet.",
+    design_points=["No account.", "No cloud.", "No analytics."],
+    design_p="Reading text, covering details, translating and describing all happen on your Mac, with Apple’s own frameworks. Nothing you capture is uploaded anywhere.",
     design_link="Read the privacy policy",
 
     close_h="Hang your first screenshot.",
@@ -178,23 +178,24 @@ TEXT["en"] = dict(
     footer_contact="Contact",
 
     updated_label="Last updated",
-    updated="October 15, 2026",
+    updated="October 16, 2026",
 
     privacy_title="Privacy Policy",
     privacy_short_h="In short",
-    privacy_short="Snapfly collects no personal data. It works entirely on your Mac and never connects to the internet. This website sets no cookies and uses no analytics.",
+    privacy_short="Snapfly collects no personal data. It works entirely on your Mac; its only connection is to ask an atomic clock for the time, for the time stamp. This website sets no cookies and uses no analytics.",
     privacy=[
         ("Who is responsible",
          f"""<p>Snapfly is made by {MAKER}. For any question about privacy, write to <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>"""),
         ("The Snapfly app",
          """<ul>
 <li><strong>No data is collected.</strong> Snapfly has no account, no analytics, no advertising and no tracking. It does not send your screenshots, their text or anything about you to us or to anyone else.</li>
-<li><strong>No network.</strong> The app never connects to the internet. Reading the text in a screenshot, covering private details, searching, translating and describing all run on your Mac, with Apple’s frameworks.</li>
+<li><strong>Nothing leaves your Mac.</strong> Reading the text in a screenshot, covering private details, searching, translating and describing all run on your Mac, with Apple’s frameworks.</li>
+<li><strong>The time stamp.</strong> While Stamp the date and time is on, Snapfly asks the atomic clock of the PTB, Germany’s national metrology institute (ptbtime1.ptb.de), for the exact time of each new screenshot, the way a clock sets itself (NTP). Only that question goes out, with no data about you or your screenshots. With the stamp off, the app never connects to the internet.</li>
 <li><strong>Your files.</strong> Snapfly reads the screenshots in the folders you let it watch, and in the Mac App Store edition the Snapfly folder in Pictures. It copies, sends, moves or deletes a screenshot only when you ask it to, or, if you leave that setting on, after you have sent it into a chat.</li>
 <li><strong>Copied images.</strong> If you turn on Hang copied images, Snapfly looks at images you copy, to hang them on the line. It leaves alone anything copied together with text or a file, and anything a password manager marks as private.</li>
 <li><strong>The Accessibility permission</strong> lets the send button paste a screenshot into the app you are using, by pressing ⌘V there. Snapfly uses it for nothing else. You can turn it off at any time in System Settings › Privacy &amp; Security › Accessibility.</li>
 <li><strong>The Screen Recording permission</strong> lets Snapfly take the screenshots and recordings you ask for, with ⌃⌥S, the screenshot button or Record Screen. It captures only when you ask, and what it takes stays on your Mac.</li>
-<li><strong>Browsers.</strong> So that the send button shows only on chat websites, Snapfly asks the browser in front for the address of the page that is open, once you allow it. It reads nothing else from the browser and keeps nothing.</li>
+<li><strong>Browsers.</strong> So that the send button shows only on chat websites, Snapfly asks the browser in front for the address of the page that is open, once you allow it. While the time stamp is on, it also writes that address on the stamp of a new screenshot, which stays on your Mac with it. It reads nothing else from the browser.</li>
 <li>Settings › Permissions shows each of these, whether it is allowed, and how to change it.</li>
 <li><strong>Your settings</strong>, such as the line style and what to cover, are stored on your Mac only.</li>
 </ul>"""),
@@ -267,7 +268,7 @@ TEXT["de"] = dict(
     title_home="Snapfly: Bildschirmfotos, einen Klick von jedem Chat entfernt",
     desc_home="Snapfly hängt jedes Bildschirmfoto an eine Leine oben auf dem Bildschirm deines Mac – bereit zum Kopieren oder Senden in jeden Chat, private Angaben verdeckt. Kostenlos ab macOS 14.",
     title_privacy="Datenschutzerklärung · Snapfly",
-    desc_privacy="Snapfly erhebt keine Daten. Die App läuft vollständig auf deinem Mac und verbindet sich nie mit dem Internet.",
+    desc_privacy="Snapfly erhebt keine Daten. Die App läuft vollständig auf deinem Mac, und das Internet fragt sie nur nach der Uhrzeit.",
     title_support="Support · Snapfly",
     desc_support="Hilfe zu Snapfly, der Leine für Bildschirmfotos auf dem Mac, und wie du uns erreichst.",
     skip="Zum Inhalt springen",
@@ -408,8 +409,8 @@ TEXT["de"] = dict(
     },
 
     design_h="Nichts verlässt deinen Mac.",
-    design_points=["Kein Konto.", "Kein Netzwerk.", "Keine Analyse."],
-    design_p="Text lesen, Angaben verdecken, übersetzen und beschreiben: Das alles passiert auf deinem Mac, mit Apples eigenen Frameworks. Snapfly verbindet sich nie mit dem Internet.",
+    design_points=["Kein Konto.", "Keine Cloud.", "Keine Analyse."],
+    design_p="Text lesen, Angaben verdecken, übersetzen und beschreiben: Das alles passiert auf deinem Mac, mit Apples eigenen Frameworks. Nichts, was du aufnimmst, wird irgendwohin hochgeladen.",
     design_link="Datenschutzerklärung lesen",
 
     close_h="Häng dein erstes Bildschirmfoto auf.",
@@ -422,23 +423,24 @@ TEXT["de"] = dict(
     footer_contact="Kontakt",
 
     updated_label="Stand",
-    updated="15. Oktober 2026",
+    updated="16. Oktober 2026",
 
     privacy_title="Datenschutzerklärung",
     privacy_short_h="Kurz gesagt",
-    privacy_short="Snapfly erhebt keine personenbezogenen Daten. Die App arbeitet vollständig auf deinem Mac und verbindet sich nie mit dem Internet. Diese Website setzt keine Cookies und nutzt keine Analyse.",
+    privacy_short="Snapfly erhebt keine personenbezogenen Daten. Die App arbeitet vollständig auf deinem Mac; ihre einzige Verbindung fragt für den Zeitstempel eine Atomuhr nach der Uhrzeit. Diese Website setzt keine Cookies und nutzt keine Analyse.",
     privacy=[
         ("Verantwortlich",
          f"""<p>Snapfly wird von {MAKER} entwickelt. Bei Fragen zum Datenschutz schreib an <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>"""),
         ("Die App Snapfly",
          """<ul>
 <li><strong>Es werden keine Daten erhoben.</strong> Snapfly hat kein Konto, keine Analyse, keine Werbung und kein Tracking. Die App sendet weder deine Bildschirmfotos noch deren Text noch irgendetwas über dich an uns oder an Dritte.</li>
-<li><strong>Kein Netzwerk.</strong> Die App verbindet sich nie mit dem Internet. Texterkennung, das Verdecken privater Angaben, die Suche, das Übersetzen und Beschreiben laufen auf deinem Mac, mit Apples Frameworks.</li>
+<li><strong>Nichts verlässt deinen Mac.</strong> Texterkennung, das Verdecken privater Angaben, die Suche, das Übersetzen und Beschreiben laufen auf deinem Mac, mit Apples Frameworks.</li>
+<li><strong>Der Zeitstempel.</strong> Solange „Datum und Uhrzeit stempeln“ eingeschaltet ist, fragt Snapfly für jedes neue Bildschirmfoto die Atomuhr der PTB, der Physikalisch-Technischen Bundesanstalt (ptbtime1.ptb.de), nach der genauen Uhrzeit – so, wie sich eine Uhr stellt (NTP). Nur diese Frage geht hinaus, ohne Daten über dich oder deine Bildschirmfotos. Ist der Stempel aus, verbindet sich die App nie mit dem Internet.</li>
 <li><strong>Deine Dateien.</strong> Snapfly liest die Bildschirmfotos in den Ordnern, die du freigibst, in der Mac App Store-Ausgabe außerdem den Ordner „Snapfly“ in „Bilder“. Die App kopiert, sendet, verschiebt oder löscht ein Bildschirmfoto nur, wenn du es willst, oder – wenn du die Einstellung eingeschaltet lässt – nachdem du es in einen Chat gesendet hast.</li>
 <li><strong>Kopierte Bilder.</strong> Wenn du „Kopierte Bilder aufhängen“ einschaltest, sieht sich Snapfly Bilder an, die du kopierst, um sie an die Leine zu hängen. Was zusammen mit Text oder einer Datei kopiert wurde und was ein Passwortmanager als privat markiert, bleibt unberührt.</li>
 <li><strong>Die Berechtigung für Bedienungshilfen</strong> erlaubt der Senden-Taste, ein Bildschirmfoto in die App einzusetzen, die du gerade benutzt, indem sie dort ⌘V drückt. Snapfly nutzt sie für nichts anderes. Du kannst sie jederzeit unter Systemeinstellungen › Datenschutz &amp; Sicherheit › Bedienungshilfen ausschalten.</li>
 <li><strong>Die Berechtigung für Bildschirmaufnahme</strong> erlaubt Snapfly, die Bildschirmfotos und Aufnahmen zu machen, um die du bittest – mit ⌃⌥S, der Bildschirmfoto-Taste oder „Bildschirm aufnehmen“. Snapfly nimmt nur auf, wenn du es willst, und was es aufnimmt, bleibt auf deinem Mac.</li>
-<li><strong>Browser.</strong> Damit die Senden-Taste nur auf Chat-Websites erscheint, fragt Snapfly den Browser im Vordergrund nach der Adresse der geöffneten Seite, sobald du es erlaubst. Sonst liest es nichts aus dem Browser und speichert nichts.</li>
+<li><strong>Browser.</strong> Damit die Senden-Taste nur auf Chat-Websites erscheint, fragt Snapfly den Browser im Vordergrund nach der Adresse der geöffneten Seite, sobald du es erlaubst. Ist der Zeitstempel eingeschaltet, schreibt es diese Adresse auch auf den Stempel eines neuen Bildschirmfotos, der mit ihm auf deinem Mac bleibt. Sonst liest es nichts aus dem Browser.</li>
 <li>Einstellungen › Berechtigungen zeigt jede davon, ob sie erlaubt ist und wie du das änderst.</li>
 <li><strong>Deine Einstellungen</strong>, etwa der Stil der Leine und was verdeckt wird, werden nur auf deinem Mac gespeichert.</li>
 </ul>"""),
@@ -511,7 +513,7 @@ TEXT["ar"] = dict(
     title_home="Snapfly: لقطات الشاشة، على بُعد نقرة من أي دردشة",
     desc_home="يعلّق Snapfly كل لقطة شاشة على حبل في أعلى شاشة جهاز Mac، جاهزة للنسخ أو الإرسال إلى أي دردشة، والمعلومات الخاصة مغطّاة. مجاني لنظام macOS 14 أو أحدث.",
     title_privacy="سياسة الخصوصية · Snapfly",
-    desc_privacy="لا يجمع Snapfly أي بيانات. يعمل بالكامل على جهاز Mac ولا يتصل بالإنترنت أبدًا.",
+    desc_privacy="لا يجمع Snapfly أي بيانات. يعمل بالكامل على جهاز Mac، ولا يسأل الإنترنت إلا عن الوقت.",
     title_support="الدعم · Snapfly",
     desc_support="مساعدة في استخدام Snapfly، حبل لقطات الشاشة على Mac، وطريقة التواصل معنا.",
     skip="انتقل إلى المحتوى",
@@ -652,8 +654,8 @@ TEXT["ar"] = dict(
     },
 
     design_h="لا شيء يغادر جهازك.",
-    design_points=["بلا حساب.", "بلا إنترنت.", "بلا تتبّع."],
-    design_p="قراءة النص وتغطية المعلومات والترجمة والوصف، كلها تحدث على جهاز Mac الخاص بك، بأدوات Apple نفسها. لا يتصل Snapfly بالإنترنت أبدًا.",
+    design_points=["بلا حساب.", "بلا سحابة.", "بلا تتبّع."],
+    design_p="قراءة النص وتغطية المعلومات والترجمة والوصف، كلها تحدث على جهاز Mac الخاص بك، بأدوات Apple نفسها. لا يُرفع شيء مما تلتقطه إلى أي مكان.",
     design_link="اقرأ سياسة الخصوصية",
 
     close_h="علّق أول لقطة شاشة لك.",
@@ -666,23 +668,24 @@ TEXT["ar"] = dict(
     footer_contact="تواصل معنا",
 
     updated_label="آخر تحديث",
-    updated="15 أكتوبر 2026",
+    updated="16 أكتوبر 2026",
 
     privacy_title="سياسة الخصوصية",
     privacy_short_h="باختصار",
-    privacy_short="لا يجمع Snapfly أي بيانات شخصية. يعمل بالكامل على جهاز Mac ولا يتصل بالإنترنت أبدًا. وهذا الموقع لا يستخدم ملفات تعريف الارتباط (الكوكيز) ولا أدوات تحليل.",
+    privacy_short="لا يجمع Snapfly أي بيانات شخصية. يعمل بالكامل على جهاز Mac، واتصاله الوحيد سؤال ساعة ذرية عن الوقت من أجل ختم الوقت. وهذا الموقع لا يستخدم ملفات تعريف الارتباط (الكوكيز) ولا أدوات تحليل.",
     privacy=[
         ("المسؤول",
          f"""<p>يطوّر Snapfly <bdi>{MAKER}</bdi>. لأي سؤال عن الخصوصية، راسلنا على <a href="mailto:{EMAIL}"><bdi>{EMAIL}</bdi></a>.</p>"""),
         ("تطبيق Snapfly",
          """<ul>
 <li><strong>لا تُجمع أي بيانات.</strong> لا حساب في Snapfly، ولا تحليلات، ولا إعلانات، ولا تتبّع. لا يرسل التطبيق لقطاتك ولا نصوصها ولا أي شيء عنك إلينا أو إلى أي أحد.</li>
-<li><strong>بلا إنترنت.</strong> لا يتصل التطبيق بالإنترنت أبدًا. قراءة النص في اللقطة، وتغطية المعلومات الخاصة، والبحث، والترجمة، والوصف، كلها تعمل على جهازك بأدوات Apple.</li>
+<li><strong>لا يخرج شيء من جهازك.</strong> قراءة النص في اللقطة، وتغطية المعلومات الخاصة، والبحث، والترجمة، والوصف، كلها تعمل على جهازك بأدوات Apple.</li>
+<li><strong>ختم الوقت.</strong> ما دام «اختم التاريخ والوقت» مفعّلًا، يسأل Snapfly الساعة الذرية لمعهد PTB الألماني للقياس (<bdi>ptbtime1.ptb.de</bdi>) عن الوقت الدقيق لكل لقطة جديدة، بالطريقة التي تضبط بها الساعات نفسها (NTP). لا يخرج إلا هذا السؤال، بلا أي بيانات عنك أو عن لقطاتك. وحين يكون الختم مطفأً، لا يتصل التطبيق بالإنترنت أبدًا.</li>
 <li><strong>ملفاتك.</strong> يقرأ Snapfly لقطات الشاشة في المجلدات التي تسمح له بمراقبتها، وفي نسخة Mac App Store مجلد Snapfly داخل «الصور». ولا ينسخ لقطة أو يرسلها أو ينقلها أو يحذفها إلا حين تطلب ذلك، أو، إن أبقيت هذا الإعداد مفعّلًا، بعد أن ترسلها إلى دردشة.</li>
 <li><strong>الصور المنسوخة.</strong> إن فعّلت «تعليق الصور المنسوخة»، ينظر Snapfly إلى الصور التي تنسخها ليعلّقها على الحبل. ويترك كل ما نُسخ مع نص أو ملف، وكل ما يعلّمه مدير كلمات المرور بأنه خاص.</li>
 <li><strong>إذن تسهيلات الاستخدام</strong> يسمح لزر الإرسال بلصق اللقطة في التطبيق الذي تستخدمه، بالضغط على ⌘V هناك. ولا يستخدمه Snapfly لأي شيء آخر. ويمكنك إيقافه في أي وقت من إعدادات النظام › الخصوصية والأمن › تسهيلات الاستخدام.</li>
 <li><strong>إذن تسجيل الشاشة</strong> يسمح لـ Snapfly بالتقاط اللقطات والتسجيلات التي تطلبها، بـ <bdi dir="ltr">⌃⌥S</bdi> أو زر التصوير أو «تسجيل الشاشة». لا يلتقط شيئًا إلا حين تطلب، وما يلتقطه يبقى على جهازك.</li>
-<li><strong>المتصفحات.</strong> كي يظهر زر الإرسال على مواقع الدردشة وحدها، يسأل Snapfly المتصفح الذي أمامك عن عنوان الصفحة المفتوحة، بعد أن تسمح له. ولا يقرأ من المتصفح شيئًا آخر، ولا يحتفظ بشيء.</li>
+<li><strong>المتصفحات.</strong> كي يظهر زر الإرسال على مواقع الدردشة وحدها، يسأل Snapfly المتصفح الذي أمامك عن عنوان الصفحة المفتوحة، بعد أن تسمح له. وحين يكون ختم الوقت مفعّلًا، يكتب هذا العنوان أيضًا على ختم اللقطة الجديدة، ويبقى معها على جهازك. ولا يقرأ من المتصفح شيئًا آخر.</li>
 <li>تعرض الإعدادات › الأذونات كل إذن منها، وهل هو مسموح، وكيف تغيّره.</li>
 <li><strong>إعداداتك</strong>، مثل شكل الحبل وما يُغطّى، تُحفظ على جهازك فقط.</li>
 </ul>"""),
