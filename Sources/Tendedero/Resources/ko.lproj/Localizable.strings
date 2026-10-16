@@ -321,3 +321,14 @@
 /* Order on the line */
 "Move Earlier" = "앞으로 이동";
 "Move Later" = "뒤로 이동";
+
+/* Time stamp */
+"Time stamp" = "타임스탬프";
+"Stamp the date and time" = "날짜와 시간 찍기";
+"In the corner, on the line and in whatever leaves it" = "모서리에 들어가요. 빨랫줄 위에서도, 빨랫줄에서 내보내는 이미지에도요";
+"Which screenshots" = "적용할 스크린샷";
+"Screenshots of the whole screen" = "화면 전체 스크린샷";
+"Every screenshot" = "모든 스크린샷";
+"Words before the date" = "날짜 앞에 넣을 글자";
+"Optional, like your shop’s name" = "선택 사항이에요. 예: 가게 이름";
+"The file itself stays as it was." = "파일 자체는 그대로예요.";

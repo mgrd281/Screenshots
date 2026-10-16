@@ -323,3 +323,14 @@
 /* Order on the line */
 "Move Earlier" = "पहले ले जाएँ";
 "Move Later" = "बाद में ले जाएँ";
+
+/* Time stamp */
+"Time stamp" = "समय की मुहर";
+"Stamp the date and time" = "तारीख़ और समय की मुहर लगाएँ";
+"In the corner, on the line and in whatever leaves it" = "कोने में, रस्सी पर और रस्सी से बाहर जाने वाली हर चीज़ में";
+"Which screenshots" = "कौन-से स्क्रीनशॉट";
+"Screenshots of the whole screen" = "पूरी स्क्रीन के स्क्रीनशॉट";
+"Every screenshot" = "हर स्क्रीनशॉट";
+"Words before the date" = "तारीख़ से पहले के शब्द";
+"Optional, like your shop’s name" = "वैकल्पिक, जैसे आपकी दुकान का नाम";
+"The file itself stays as it was." = "फ़ाइल ख़ुद वैसी ही रहती है।";

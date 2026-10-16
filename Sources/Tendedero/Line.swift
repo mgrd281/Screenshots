@@ -17,6 +17,9 @@ struct Pegged: Identifiable, Equatable {
     var flying = false
     /// Shown, and handed out, with private details covered.
     var covered = false
+    /// Shown as the copy that leaves the line: covered, stamped with the
+    /// time, or both.
+    var altered = false
     /// Pinned: it stays when the line is cleared or full, until unpinned.
     var pinned = false
     /// A screen recording rather than a screenshot.
@@ -808,9 +811,9 @@ final class Line: ObservableObject {
     }
 
     private func cover(_ url: URL) {
-        if PrivateDetails.covers(url) {
+        if PrivateDetails.alters(url) {
             PrivateDetails.prepare(url)
-        } else if items.contains(where: { $0.url == url && $0.covered }) {
+        } else if items.contains(where: { $0.url == url && $0.altered }) {
             show(url, for: url)
         }
     }
@@ -827,18 +830,22 @@ final class Line: ObservableObject {
         for i in items.indices where !items[i].falling {
             let shown = PrivateDetails.shown(items[i].url) ?? items[i].url
             if let thumb = makeThumbnail(shown) { items[i].thumb = thumb }
-            items[i].covered = shown != items[i].url
+            items[i].altered = shown != items[i].url
+            items[i].covered = items[i].altered && PrivateDetails.covers(items[i].url)
         }
     }
 
     /// Each photo hangs as it will leave the line: with its private details
-    /// covered, or as it is when the latest choice leaves nothing to cover.
+    /// covered and its time stamped, or as it is when the latest choice
+    /// leaves nothing to change. The lock shows only when something is
+    /// covered.
     private func show(_ shown: URL, for url: URL) {
-        guard shown == url || PrivateDetails.covers(url),
+        guard shown == url || PrivateDetails.alters(url),
               let i = items.firstIndex(where: { $0.url == url && !$0.falling }),
               let thumb = makeThumbnail(shown) else { return }
         items[i].thumb = thumb
-        items[i].covered = shown != url
+        items[i].altered = shown != url
+        items[i].covered = shown != url && PrivateDetails.covers(url)
     }
 
     func reveal(_ id: UUID) {

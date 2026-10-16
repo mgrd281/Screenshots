@@ -323,3 +323,14 @@
 /* Order on the line */
 "Move Earlier" = "Önə köçür";
 "Move Later" = "Arxaya köçür";
+
+/* Time stamp */
+"Time stamp" = "Vaxt möhürü";
+"Stamp the date and time" = "Tarixi və vaxtı möhürlə";
+"In the corner, on the line and in whatever leaves it" = "Küncdə, ipdə və ipdən çıxan hər şeydə";
+"Which screenshots" = "Hansı ekran şəkilləri";
+"Screenshots of the whole screen" = "Bütün ekranın şəkilləri";
+"Every screenshot" = "Hər ekran şəkli";
+"Words before the date" = "Tarixdən əvvəlki sözlər";
+"Optional, like your shop’s name" = "İstəyə bağlı, məsələn mağazanın adı";
+"The file itself stays as it was." = "Faylın özü olduğu kimi qalır.";

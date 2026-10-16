@@ -321,3 +321,14 @@
 /* Order on the line */
 "Move Earlier" = "نقل إلى الأمام";
 "Move Later" = "نقل إلى الخلف";
+
+/* Time stamp */
+"Time stamp" = "ختم الوقت";
+"Stamp the date and time" = "اختم التاريخ والوقت";
+"In the corner, on the line and in whatever leaves it" = "في الزاوية، على الحبل وفي كل ما يخرج منه";
+"Which screenshots" = "أي اللقطات";
+"Screenshots of the whole screen" = "لقطات الشاشة كلها";
+"Every screenshot" = "كل لقطة";
+"Words before the date" = "كلمات قبل التاريخ";
+"Optional, like your shop’s name" = "اختياري، مثل اسم متجرك";
+"The file itself stays as it was." = "الملف نفسه يبقى كما هو.";

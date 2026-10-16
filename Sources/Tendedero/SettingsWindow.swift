@@ -90,6 +90,34 @@ final class Preferences: ObservableObject {
         actions.setUpScreenshots()
     }
 
+    // MARK: Time stamp
+
+    var stampsTime: Bool {
+        get { TimeStamp.isOn }
+        set { change { TimeStamp.isOn = newValue; line.readPrivateDetails() } }
+    }
+
+    var stampScope: TimeStamp.Scope {
+        get { TimeStamp.scope }
+        set { change { TimeStamp.scope = newValue; line.readPrivateDetails() } }
+    }
+
+    /// Kept as it is typed; the photos are stamped again once typing stops.
+    var stampText: String {
+        get { TimeStamp.text }
+        set {
+            change { TimeStamp.text = newValue }
+            restamp?.cancel()
+            let work = DispatchWorkItem { [weak self] in
+                MainActor.assumeIsolated { self?.line.readPrivateDetails() }
+            }
+            restamp = work
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6, execute: work)
+        }
+    }
+
+    private var restamp: DispatchWorkItem?
+
     // MARK: Line
 
     var opensFromMenuBar: Bool {
@@ -410,6 +438,25 @@ private struct GeneralPane: View {
                     Text(L("Hang copied images"))
                     Text(L("Images you copy hang on the line too"))
                 }
+            }
+            Section {
+                Toggle(isOn: $prefs.stampsTime) {
+                    Text(L("Stamp the date and time"))
+                    Text(L("In the corner, on the line and in whatever leaves it"))
+                }
+                Picker(L("Which screenshots"), selection: $prefs.stampScope) {
+                    Text(L("Screenshots of the whole screen")).tag(TimeStamp.Scope.wholeScreen)
+                    Text(L("Every screenshot")).tag(TimeStamp.Scope.all)
+                }
+                .disabled(!prefs.stampsTime)
+                TextField(L("Words before the date"), text: $prefs.stampText,
+                          prompt: Text(L("Optional, like your shop’s name")))
+                    .disabled(!prefs.stampsTime)
+            } header: {
+                Text(L("Time stamp"))
+            } footer: {
+                Text(L("The file itself stays as it was."))
+                    .foregroundStyle(.secondary)
             }
             Section {
                 Toggle(L("Sounds"), isOn: $prefs.sounds)

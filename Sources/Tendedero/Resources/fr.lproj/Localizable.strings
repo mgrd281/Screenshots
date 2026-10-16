@@ -321,3 +321,14 @@
 /* Order on the line */
 "Move Earlier" = "Déplacer avant";
 "Move Later" = "Déplacer après";
+
+/* Time stamp */
+"Time stamp" = "Horodatage";
+"Stamp the date and time" = "Apposer la date et l’heure";
+"In the corner, on the line and in whatever leaves it" = "Dans le coin, sur la corde et dans tout ce qui la quitte";
+"Which screenshots" = "Quelles captures";
+"Screenshots of the whole screen" = "Captures de tout l’écran";
+"Every screenshot" = "Toutes les captures";
+"Words before the date" = "Texte avant la date";
+"Optional, like your shop’s name" = "Facultatif, comme le nom de ta boutique";
+"The file itself stays as it was." = "Le fichier lui-même ne change pas.";

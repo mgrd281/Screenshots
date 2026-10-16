@@ -321,3 +321,14 @@
 /* Order on the line */
 "Move Earlier" = "前移";
 "Move Later" = "后移";
+
+/* Time stamp */
+"Time stamp" = "时间戳";
+"Stamp the date and time" = "加上日期和时间";
+"In the corner, on the line and in whatever leaves it" = "加在角落：晾衣绳上的图片和从晾衣绳上发出的图片里都有";
+"Which screenshots" = "哪些截图";
+"Screenshots of the whole screen" = "整个屏幕的截图";
+"Every screenshot" = "所有截图";
+"Words before the date" = "日期前的文字";
+"Optional, like your shop’s name" = "可选，比如你的店名";
+"The file itself stays as it was." = "文件本身保持不变。";

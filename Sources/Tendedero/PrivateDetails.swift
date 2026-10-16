@@ -83,6 +83,12 @@ enum PrivateDetails {
         hidden || !hand(url).isEmpty
     }
 
+    /// Whether a screenshot leaves the line changed: covered, stamped with
+    /// the time, or both.
+    static func alters(_ url: URL) -> Bool {
+        covers(url) || TimeStamp.mark(for: url) != nil
+    }
+
     /// For each screenshot as it was when read, with what was chosen then:
     /// its covered copy, or the file itself when there was nothing to hide.
     private static var results: [String: URL] = [:]
@@ -96,11 +102,12 @@ enum PrivateDetails {
     static func shareable(_ url: URL) -> URL {
         let chosen = details
         let hand = Self.hand(url)
-        guard !chosen.isEmpty || !hand.isEmpty, isImage(url),
-              let key = key(for: url, chosen, hand) else { return url }
+        let stamp = TimeStamp.mark(for: url)
+        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil, isImage(url),
+              let key = key(for: url, chosen, hand, stamp) else { return url }
         if let done = cached(key) { return done }
         // Not read yet, like a capture copied the instant it hangs.
-        let done = Cover.copy(of: url, chosen, hand: hand) ?? url
+        let done = Cover.copy(of: url, chosen, hand: hand, stamp: stamp) ?? url
         results[key] = done
         onRead?(url, done)
         return done
@@ -110,7 +117,9 @@ enum PrivateDetails {
     static func shown(_ url: URL) -> URL? {
         let chosen = details
         let hand = Self.hand(url)
-        guard !chosen.isEmpty || !hand.isEmpty, let key = key(for: url, chosen, hand) else { return nil }
+        let stamp = TimeStamp.mark(for: url)
+        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil,
+              let key = key(for: url, chosen, hand, stamp) else { return nil }
         return cached(key)
     }
 
@@ -118,8 +127,9 @@ enum PrivateDetails {
     static func prepare(_ url: URL) {
         let chosen = details
         let hand = Self.hand(url)
-        guard !chosen.isEmpty || !hand.isEmpty, isImage(url),
-              let key = key(for: url, chosen, hand) else { return }
+        let stamp = TimeStamp.mark(for: url)
+        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil, isImage(url),
+              let key = key(for: url, chosen, hand, stamp) else { return }
         if let done = cached(key) {
             onRead?(url, done)
             return
@@ -127,7 +137,7 @@ enum PrivateDetails {
         guard !inProgress.contains(key) else { return }
         inProgress.insert(key)
         DispatchQueue.global(qos: .utility).async {
-            let done = Cover.copy(of: url, chosen, hand: hand) ?? url
+            let done = Cover.copy(of: url, chosen, hand: hand, stamp: stamp) ?? url
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     results[key] = done
@@ -148,14 +158,16 @@ enum PrivateDetails {
         return done
     }
 
-    /// The file, when it last changed and what to cover, so a screenshot
-    /// edited in Markup, a new choice or a part hidden by hand is read again.
-    private static func key(for url: URL, _ chosen: Set<PrivateDetail>, _ hand: [CGRect]) -> String? {
+    /// The file, when it last changed, what to cover and the stamp, so a
+    /// screenshot edited in Markup, a new choice, a part hidden by hand or
+    /// new words on the stamp are drawn again.
+    private static func key(for url: URL, _ chosen: Set<PrivateDetail>, _ hand: [CGRect],
+                            _ stamp: TimeStamp.Mark?) -> String? {
         guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path),
               let date = attributes[.modificationDate] as? Date else { return nil }
         let kinds = chosen.map(\.rawValue).sorted().joined(separator: ",")
         let parts = hand.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
-        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(parts)"
+        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(parts)|\(stamp?.key ?? "")"
     }
 }
 
@@ -185,12 +197,14 @@ enum Cover {
     }
 
     /// A copy of the screenshot with the chosen details and the parts hidden
-    /// by hand covered, under the same name. Nil when there is nothing to hide.
-    static func copy(of url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect] = []) -> URL? {
+    /// by hand covered, and the time stamped when there is a stamp, under
+    /// the same name. Nil when there is nothing to hide or stamp.
+    static func copy(of url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect] = [],
+                     stamp: TimeStamp.Mark? = nil) -> URL? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return nil }
         let boxes = areas(in: image, chosen) + hand
-        guard !boxes.isEmpty else { return nil }
+        guard !boxes.isEmpty || stamp != nil else { return nil }
 
         let space = image.colorSpace.flatMap { $0.model == .rgb ? $0 : nil }
             ?? CGColorSpace(name: CGColorSpace.sRGB)!
@@ -205,6 +219,7 @@ enum Cover {
             context.addPath(CGPath(roundedRect: rect, cornerWidth: radius, cornerHeight: radius, transform: nil))
             context.fillPath()
         }
+        if let stamp { TimeStamp.draw(stamp, in: context, width: image.width, height: image.height) }
         guard let covered = context.makeImage() else { return nil }
 
         // A folder of its own, so the copy keeps the screenshot's name.

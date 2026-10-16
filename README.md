@@ -195,6 +195,18 @@ screenshot file itself is never changed.
 
 <br>
 
+## Stamped with the time.
+
+Turn on Stamp the date and time under General in Settings, and every
+screenshot of the whole screen carries the date and time it was taken in
+its bottom corner, in a small dark capsule with a clock. Choose Every
+screenshot to stamp all of them, and type a few words, like your shop's
+name, to stand before the date. Like covered details, the stamp shows on
+the line and goes with whatever leaves it; the file itself stays as it
+was.
+
+<br>
+
 ## Four ways to hang.
 
 Pick what the photos hang on under Line in Settings: the clothesline,
@@ -311,6 +323,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | Finds private details in a screenshot and covers them |
+| `TimeStamp.swift` | Stamps the date and time, and the user's own words, in the corner of a screenshot |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
 | `TextCard.swift` | Translate Text and Describe, and the card that shows them |
