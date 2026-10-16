@@ -592,10 +592,12 @@ system to a web page. The brief and direction contract are in
   The line hangs under it, and a chat window sits in front.
   - On the home page the wallpaper stays fixed while the page scrolls over
     it, like a Mac's desktop.
-  - Below the first view, a light plum wash (28%, or 38% in dark) sits over
-    it, so the wallpaper keeps its colours. A soft, blurred scrim sits only
-    behind the words (plum at 46%, blurred 60 px), so white words stay at least 4.5:1 on
-    every part.
+  - Below the first view, a light plum wash (34%, or 38% in dark) sits over
+    it, so the wallpaper keeps its colours. A wide, very soft scrim sits
+    behind the words (plum at 38%, reaching 140 px above and below them
+    and 200 px to the sides, blurred 110 px; in the close, which clips its
+    edges, 40 and 160 px blurred 70 px), so white words stay at least 5:1
+    on every part and the scrim has no visible shape of its own.
   - Each demo is a native object on that desktop:
     - keycaps;
     - Desktop files that fly onto a rope;
@@ -696,10 +698,13 @@ system to a web page. The brief and direction contract are in
     draws a dashed accent box. A few words in English, German and Arabic
     stand in for Apple Intelligence; Done adds the lock badge.
   - **Start in four steps** (`section_start`), before the close: four
-    cards on `web-surface` (20 radius, the float shadow), each with its
-    number in a 30 pt accent circle, a 44 pt icon tile in the brand
-    gradient, a title and a line. Four across, two on a tablet, one on a
-    phone.
+    cards on `web-surface` (20 radius, the float shadow), each with a 44 pt
+    icon tile in the brand gradient, its number in the link colour before
+    the title, and a line. Above 960 px they hang on a rope like photos:
+    each by its clip at the rope's sag, tilted −1.2°, 0.8°, −0.6° and 1.1°,
+    straightening under a fine pointer (0.5 s), and dropping 40 px onto its
+    clip when it arrives. Two across on a tablet and one on a phone, as
+    plain cards without the rope.
   - **The hero's chat** carries the chat button and its message bar as
     "Chat button" above has them, over the chat's own send button. Its
     photos are the line's newest two. Hold it, or right-click it for Send

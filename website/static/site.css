@@ -32,8 +32,8 @@
   --glass-edge: rgba(255, 255, 255, 0.7);
   --rope: #5B4A5F;
   --wash: rgba(42, 10, 51, 0.55);
-  --wash-light: rgba(42, 10, 51, 0.28);
-  --scrim: rgba(42, 10, 51, 0.46);
+  --wash-light: rgba(42, 10, 51, 0.34);
+  --scrim: rgba(42, 10, 51, 0.38);
   --on-wall-2: rgba(255, 255, 255, 0.9);
   --wall:
     radial-gradient(95% 75% at 0% 0%, rgba(255, 196, 92, 0.95) 0%, rgba(255, 196, 92, 0) 62%),
@@ -1107,18 +1107,18 @@ kbd {
   color: var(--on-wall);
 }
 
-/* The wallpaper keeps its colours below the first view; a soft scrim sits
-   only behind the words, so white text stays at least 4.5:1 wherever the
-   wallpaper is lightest. */
+/* The wallpaper keeps its colours below the first view; a wide, very soft
+   scrim sits behind the words, so white text stays at least 4.5:1 wherever
+   the wallpaper is lightest without a visible shape of its own. */
 .section .copy, .menu-desc, .design .wrap, .close .wrap { position: relative; }
 .section .copy::before, .menu-desc::before, .design .wrap::before, .close .wrap::before {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: -80px -96px;
+  inset: -140px -200px;
   border-radius: 50%;
   background: var(--scrim);
-  filter: blur(60px);
+  filter: blur(110px);
   pointer-events: none;
 }
 
@@ -1552,6 +1552,9 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   color: var(--on-wall);
 }
 .close::after { background: linear-gradient(to bottom, var(--wash-light) 0%, var(--wash-light) 100%); }
+/* The close clips what spills over its edges, so its scrim stays well
+   inside them and never shows as a line at the top. */
+.close .wrap::before { inset: -40px -160px; filter: blur(70px); }
 .close-icon { width: clamp(104px, 11vw, 140px); height: auto; margin: 0 auto 28px; filter: drop-shadow(0 16px 26px rgb(var(--shade) / 0.35)); }
 .close h2 { font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: 1.04; letter-spacing: -0.015em; }
 .close h2:lang(ar) { letter-spacing: 0; line-height: 1.25; }
@@ -2788,49 +2791,62 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 
 /* MARK: Start in four steps */
 
+/* Four cards, each with its app-icon tile, its number and its line. On a
+   wide screen they hang on a rope by their clips, a little crooked like
+   the photos, and straighten under the pointer. */
+.steps-line { position: relative; margin-top: clamp(40px, 6vw, 64px); }
+.steps-rope { display: none; }
 .steps {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
   gap: 18px;
-  margin: clamp(40px, 6vw, 64px) 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 .step {
-  padding: 20px 20px 22px;
+  position: relative;
+  padding: 22px 22px 24px;
   border-radius: 20px;
   background: var(--surface);
   color: var(--ink);
   border: 0.5px solid var(--hairline);
   box-shadow: var(--shadow-float);
 }
-.step-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.step-n {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #FFFFFF;
-  font-family: var(--font-rounded);
-  font-size: 15px;
-  font-weight: 700;
-}
+.step .clip { display: none; }
 .step-icon {
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
+  margin-bottom: 18px;
   border-radius: 12px;
   background: var(--brand-gradient);
   color: #FFFFFF;
   box-shadow: 0 4px 10px var(--brand-glow);
 }
 .step-icon .icon { width: 22px; height: 22px; }
-.step h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+.step h3 { display: flex; align-items: baseline; gap: 8px; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
 .step h3:lang(ar) { letter-spacing: 0; }
-.step p { margin-top: 6px; color: var(--ink-2); font-size: 15px; line-height: 1.5; }
+.step-n { color: var(--link); font-variant-numeric: tabular-nums; }
+.step p { margin-top: 8px; color: var(--ink-2); font-size: 15px; line-height: 1.5; }
+@media (min-width: 961px) {
+  .steps-line { padding-top: 8px; }
+  .steps-rope { display: block; top: 8px; }
+  .step {
+    margin-top: calc(var(--rope-h) * (0.14 + 1.44 * var(--t) * (1 - var(--t))) + 2px);
+    rotate: var(--tilt);
+    transform-origin: 50% 0;
+    transition: rotate 0.5s var(--ease-out);
+  }
+  .step .clip { display: block; }
+  /* Arriving, each one drops onto its clip. */
+  .step.arrive-card.pre { transform: translateY(-40px); }
+}
+@media (min-width: 961px) and (hover: hover) and (pointer: fine) {
+  .step:hover { rotate: 0deg; }
+}
 
 /* MARK: Say what to hide */
 

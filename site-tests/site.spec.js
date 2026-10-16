@@ -159,3 +159,16 @@ test("the photos sway only while their line is on screen", async ({ page }) => {
   await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
   await expect.poll(state).toBe("running");
 });
+
+test("the four steps hang on a line on a wide screen, and stack on a phone", async ({ page }, info) => {
+  await page.goto("de/", { waitUntil: "networkidle" });
+  const rope = await page.locator(".steps-rope").evaluate((r) => getComputedStyle(r).display);
+  const tilts = await page.locator(".step").evaluateAll((steps) => steps.map((s) => getComputedStyle(s).rotate));
+  if (info.project.name === "desktop") {
+    expect(rope).toBe("block");
+    expect(tilts.every((t) => t !== "none")).toBe(true);
+  } else {
+    expect(rope).toBe("none");
+    expect(tilts.every((t) => t === "none")).toBe(true);
+  }
+});
