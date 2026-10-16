@@ -13,6 +13,9 @@ required by the license and stays.
     and the short description shown with each command or tool call.
   - A tool's or file's name may stay in Latin letters, with an Arabic word
     saying what it is. No English sentences.
+  - Answer in Arabic even when they write or send screenshots in German or
+    English. Don't quote German or English words back; describe in Arabic
+    what to tap (its place and look) instead.
 - They usually can't reach their Mac. Never ask them to run Terminal
   commands. GitHub builds the app for them (see below).
 
