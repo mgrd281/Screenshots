@@ -952,18 +952,22 @@ system to a web page. The brief and direction contract are in
     round, in the reading direction. On touch the swatches are 32 × 28
     with a 44 pt tall target.
   - **The look switch** sits just before it, at the owner's request, so a
-    visitor can go back to the site as it was before the envelope: a well
-    of the same make with two 30 × 22 cells and the same sliding thumb.
+    visitor can go back to the site as it was before the envelope, or on
+    to the bold colour look: a well of the same make with three 30 × 22
+    cells and the same sliding thumb.
     - Airmail first (the default): a white envelope 18 × 13 inside a
       2.5 px chevron border (coral `#FF5E62` and violet `#5B2BB8`, 2, 1,
       2, 1 px at −45°), radius 2.
     - Then the classic Mac desktop: an 18 × 13 sunset wallpaper (`#FFC45C`
       to `#FF5E62` to `#B234D6`, 140°) under a white 80% menu bar 2.5 px
       tall, radius 3.
-    - The pictures keep their colours in every theme. Names: "Airmail" and
-      "Mac desktop" (Luftpost, Mac-Schreibtisch; البريد الجوي, سطح مكتب
-      الماك), under the group label "Design". Grow, press, help tag,
-      arrows and touch size are the swatches'.
+    - Then bold colour: an 18 × 13 coral `#FF5E62` field with two bars of
+      type in `#120708` (10 × 2.5 and 7 × 2.5 px, 3 px in), radius 3.
+    - The pictures keep their colours in every theme. Names: "Airmail",
+      "Mac desktop" and "Bold colour" (Luftpost, Mac-Schreibtisch,
+      Kräftige Farbe; البريد الجوي, سطح مكتب الماك, اللون الجريء), under
+      the group label "Design". Grow, press, help tag, arrows and touch
+      size are the swatches'.
   - **The classic look** is the site as it stood before the airmail
     envelope: the brand gradient as the Mac desktop, glass photo cards,
     washes and scrims, in all three themes, light and dark.
@@ -977,11 +981,58 @@ system to a web page. The brief and direction contract are in
       envelopes and the posted photo) and undoes what the envelope added
       to shared parts, so the classic look matches its old captures pixel
       for pixel.
-    - New shared rules that must hold in both looks are written with a
-      leading `:root`, which outweighs `classic.css`; the phone menu bar is
-      one.
-    - Each look has its own browser bar colours: classic
-      `#F5F5F7`/`#161618`, `#F5F8F5`/`#081819`, `#FAFAF8`/`#121211`.
+    - New shared rules that must hold in every look are written with a
+      leading `:root`, which outweighs `classic.css`; the menu bar's
+      narrow-screen rules are some.
+  - **The bold colour look** is the third, chosen by the owner as a
+    luxury, modern brand look: one confident colour field per theme, giant
+    type, the screenshots dealt onto the line like cards, and a band of
+    what a screenshot can do running across the foot of the first view.
+    Mac windows on it stay native.
+    - `static/bold.css` holds it, every rule scoped to
+      `<html data-look="bold">` and loaded after `classic.css`. Like the
+      classic look it restyles the airmail page's own parts and turns off
+      what only the envelope has.
+    - Its tokens, in light: `--field`, the theme's colour (`#FF5E62`,
+      `#5CC9B2`, `#EC632C`) under two soft radial glows (`--glow-a`,
+      `--glow-b`); `--type`, the words on it (`#120708`, `#062F31`,
+      `#171717`), and `--type-2`, the same at 78–88%; `--sheet`, the quiet
+      ground between (`#FFF4EE`, `#EEF8F4`, `#FFF6F0`); `--night`, the
+      black sections, the band and the footer (the type's colour), with
+      `--night-ink` and `--night-ink-2` on them; `--mark`, the field's
+      colour where it marks something on black; `--pill` and `--pill-ink`
+      for the download and the send buttons.
+    - In dark the field turns near black (`#0F0C0D`, `#0B1213`, `#121110`)
+      and the theme's colour becomes the type (6.5, 9.4 and 5.7 to 1); the
+      night sections, the band and the footer take the theme's colour,
+      with black words on them. Every text pair is at least 4.5 to 1.
+    - Down the page: field (first view), sheet (send), night (try it),
+      sheet (Desktop), field (private), sheet (say), night (menu), sheet
+      (line styles), field (no account), sheet (steps), field (close),
+      night (footer).
+    - Type: the headline at weight 800, −0.06 em, line height 0.86, up to
+      7.5 rem (`min(7vw, 10vh)`), 12.5 ch wide; headings 800, −0.055 em,
+      up to 5.75 rem, or 4.25 rem beside a window; "No account…" up to
+      8 rem. Arabic keeps 0 tracking and a 1.12–1.15 line height.
+    - Parts: the photo cards white at radius 16 (their pictures 11) with a
+      crisp shadow and no perforations; the download a full pill in
+      `--pill`; the send-all button a `--pill` circle ringed in the field;
+      keycaps flat with a 2 px border and a 6 px foot; the four steps white
+      cards at radius 22 with a 2 px ring in the type's colour; a dot grid
+      (1.5 px dots every 14 px, 30%) in a corner of the private and "no
+      account" fields, off on phones.
+    - The band: `--night`, 58–78 px tall (54 on phones), the app's own menu
+      words at 1.25–1.75 rem, weight 700, between four-pointed stars in
+      `--mark`. Screen readers skip it; the menu section says the same.
+    - The menu bar: the field at 92% over a 1.5 px rule in the type's
+      colour; the theme swatches solid dots of their colour. At 380 px and
+      less it keeps a 10 px margin of its own, having no edge to sit in.
+    - Motion (deal, rise, run) is in `MOTION_SYSTEM.md`. Reduce Motion
+      stops the band and every arrival.
+  - Each look has its own browser bar colours: classic
+    `#F5F5F7`/`#161618`, `#F5F8F5`/`#081819`, `#FAFAF8`/`#121211`; bold
+    the field, `#FF5E62`/`#0F0C0D`, `#5CC9B2`/`#0B1213`,
+    `#EC632C`/`#121110`.
   - **No wrong flash**: the first script in `<head>` reads the choices
     (`snapfly-brand`, `snapfly-look`) and sets `data-brand` and
     `data-look` before the page paints; both switches only appear once
@@ -992,12 +1043,14 @@ system to a web page. The brief and direction contract are in
     browser bar colour follows the paper (`#ECEBFA`/`#15122B`,
     `#E6F2EE`/`#0A1E1F`, `#FAFAF8`/`#141312`). Another open tab follows
     the change, at once.
-  - On phones (430 px and less) the menu bar keeps Snapfly's icon and hides
-    its name from view (it is still read out), packs its items 2 px apart,
-    its links 6 px in, and both switches' cells 26 px wide, so everything
-    fits. At 380 px and less the gaps go and the links sit 4 px in; at 340
-    px and less the cells are 24 px and Support leaves the bar (it stays in
-    the footer).
+  - Below 900 px the menu bar lets the clock and the language's name go;
+    at 720 px and less it keeps Snapfly's icon and hides its name from
+    view (it is still read out). On phones (430 px and less) it packs its
+    items 2 px apart, its links 6 px in, and both switches' cells 26 px
+    wide, so everything fits in every look and language. At 400 px and
+    less Support leaves the bar (it stays in the footer); at 380 px and
+    less the gaps go and the links sit 4 px in; at 340 px and less the
+    cells are 24 px.
 - **Everything on the paper that is not postal is native.** It follows
   this file's tokens:
   - the menu bar: 46 px, paper at 86% blurred 20 px, a hairline;

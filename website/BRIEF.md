@@ -17,9 +17,12 @@ does not copy this file into the site.
   `Snapfly.zip` on the `latest` release. An App Store badge comes later,
   once Apple approves the app.
 - **Contact:** mgrdegh@gmx.de, which the owner chose to publish.
-- **Two looks:** the airmail envelope (the default, the direction contract
-  below) and, at the owner's request, the classic Mac desktop the site had
-  before, chosen with a switch in the menu bar (`static/classic.css`).
+- **Three looks,** chosen with a switch in the menu bar: the airmail
+  envelope (the default, the direction contract below); at the owner's
+  request, the classic Mac desktop the site had before
+  (`static/classic.css`); and the bold colour look the owner chose as a
+  luxury, modern third (`static/bold.css`; see "The bold colour look" in
+  `DESIGN.md`).
 - **Constraints:**
   - System fonts only, and nothing loaded from another host (no Google
     Fonts, no analytics, no cookies).

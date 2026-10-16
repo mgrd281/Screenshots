@@ -89,7 +89,8 @@ same pull request.
 - **In the app,** colours are system colours, materials, or `.primary` with
   an opacity, so both work without branching.
 - **On the website,** each theme overrides its tokens in light and in dark,
-  so there are six looks; text pairs stay at least 4.5:1 in all six.
+  so each of the three designs (airmail, classic, bold) has six colourings;
+  text pairs stay at least 4.5:1 in all of them.
 - **The appearance is the system's.** The site never offers its own light or
   dark switch; the theme switcher only chooses the theme.
 - **Assets for both:** store screenshots and social images come in the
@@ -101,8 +102,9 @@ same pull request.
 - **Original Sunset is the default** and stays exactly as it is.
 - **Everything a theme changes is a token** on `:root[data-brand="…"]`, in
   light and in dark. Nothing is coloured outside the tokens.
-- **A new section or component must work in all six looks** before it ships:
-  three themes, light and dark.
+- **A new section or component must work in all six colourings of every
+  design** before it ships: three themes, light and dark, in the airmail,
+  classic and bold designs.
 - **The switcher, its order, its names and its storage stay as they are:**
   Original Sunset, Emerald Petrol, Signature Orange; `localStorage` key
   `snapfly-brand`; the choice is applied before the first paint.

@@ -79,7 +79,9 @@ Three layers, each with its own job.
    labels and postmarks. The visitor can choose one of three themes (below),
    each a colouring of the same envelope. Each works in light and in dark.
    A look switch also brings back the classic look, where the brand
-   gradient is the Mac desktop the app sits on; the themes work there too.
+   gradient is the Mac desktop the app sits on, and offers the bold colour
+   look: one confident field of the theme's colour, giant type and a band
+   of the app's own words. The themes work in all three.
 
 ### One brand, three themes
 

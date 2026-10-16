@@ -546,18 +546,19 @@
 
   // MARK: Brand theme and look
 
-  // Two looks, the airmail envelope and the classic Mac desktop, each in
-  // three brand themes: Original Sunset, Emerald Petrol and Signature
-  // Orange. Both choices stay on this device and are set before the page
+  // Three looks, the airmail envelope, the classic Mac desktop and bold
+  // colour, each in three brand themes: Original Sunset, Emerald Petrol and
+  // Signature Orange. Both choices stay on this device and are set before the page
   // paints, by the first script in <head>; light or dark is still the
   // system's.
   const root = document.documentElement;
   const bars = {
     airmail: { sunset: ["#ECEBFA", "#15122B"], emerald: ["#E6F2EE", "#0A1E1F"], orange: ["#FAFAF8", "#141312"] },
     classic: { sunset: ["#F5F5F7", "#161618"], emerald: ["#F5F8F5", "#081819"], orange: ["#FAFAF8", "#121211"] },
+    bold: { sunset: ["#FF5E62", "#0F0C0D"], emerald: ["#5CC9B2", "#0B1213"], orange: ["#EC632C", "#121110"] },
   };
   const paintBars = () => {
-    const look = root.dataset.look === "classic" ? "classic" : "airmail";
+    const look = root.dataset.look in bars ? root.dataset.look : "airmail";
     const brand = root.dataset.brand in bars[look] ? root.dataset.brand : "sunset";
     document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
       meta.setAttribute("content", bars[look][brand][/dark/.test(meta.media) ? 1 : 0]);
@@ -635,7 +636,7 @@
   const brandSwitch = document.querySelector(".brand-switch");
   if (brandSwitch) setUpSwitch(brandSwitch, "brand", ["sunset", "emerald", "orange"]);
   const lookSwitch = document.querySelector(".look-switch");
-  if (lookSwitch) setUpSwitch(lookSwitch, "look", ["airmail", "classic"]);
+  if (lookSwitch) setUpSwitch(lookSwitch, "look", ["airmail", "classic", "bold"]);
 
   // Safari on iPhone and iPad shows a pressed state only where a touch is
   // listened for; this listener does nothing else.
