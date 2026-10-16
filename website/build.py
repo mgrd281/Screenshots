@@ -244,6 +244,7 @@ ART = {
 }
 CARDS = ["invoice", "map", "chart", "calendar", "sunset"]
 TILTS = ["-3deg", "2.2deg", "-1.4deg", "3deg", "-2.2deg"]
+STEP_TILTS = ["-1.2deg", "0.8deg", "-0.6deg", "1.1deg"]
 
 
 def art(kind, lang, uid):
@@ -866,9 +867,12 @@ def section_start(lang):
     """Four steps from the download to the first screenshot on the line."""
     t = TEXT[lang]
     symbols = ["download", "shirt", "lock", "viewfinder"]
+    # On a wide screen the steps hang on a line, each on its clip at its
+    # place along the rope, a little crooked, like the photos.
     steps = "".join(
-        f'<li class="step"><span class="step-top"><span class="step-n">{i + 1}</span>'
-        f'<span class="step-icon">{icon(symbols[i])}</span></span><h3>{esc(h)}</h3><p>{esc(b)}</p></li>'
+        f'<li class="step" style="--t:{(i + 0.5) / 4:.4f};--tilt:{STEP_TILTS[i]}"><span class="clip" aria-hidden="true"></span>'
+        f'<span class="step-icon">{icon(symbols[i])}</span>'
+        f'<h3><span class="step-n" aria-hidden="true">{i + 1}</span>{esc(h)}</h3><p>{esc(b)}</p></li>'
         for i, (h, b) in enumerate(t["start"]))
     return f"""<section class="section start" aria-labelledby="start-h">
   <div class="wrap">
@@ -876,7 +880,7 @@ def section_start(lang):
       <h2 id="start-h">{esc(t["start_h"])}</h2>
       <p>{esc(t["start_p"])}</p>
     </div>
-    <ol class="steps">{steps}</ol>
+    <div class="steps-line">{rope("steps-rope")}<ol class="steps">{steps}</ol></div>
   </div>
 </section>"""
 

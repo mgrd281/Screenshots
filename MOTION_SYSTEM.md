@@ -113,6 +113,7 @@ settle is the point.
 | `rise.card` | 28 px | A card in a list arriving |
 | `rise.window` | 32–44 px | A window opening |
 | `drop.photo` | 56 px | A photo dropping onto its clip |
+| `drop.card` | 40 px | A step card dropping onto its clip as it arrives |
 | `lift.flight` | at least 70 px, 40 px toward the reading end | The paper plane's arc |
 
 ### Scale
@@ -258,7 +259,8 @@ Take off and hang (above) are the signature. To use them elsewhere:
 
 - **Onboarding (app):** the first screenshot after install hangs with
   `spring.arrive`; the first send takes off. No extra tour animation.
-- **Website:** every send in a demo takes off; every new photo hangs.
+- **Website:** every send in a demo takes off; every new photo hangs, and
+  the four steps hang on their own line.
 - **Videos:** scenes join with a take-off. A card leaving one scene is the
   card arriving in the next, instead of generic wipes.
 - **Never:** on loaders, on buttons that don't send, or as decoration.
