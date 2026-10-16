@@ -340,3 +340,11 @@
 "Page: %@" = "पेज: %@";
 "Fingerprint (SHA-256): %@" = "फ़िंगरप्रिंट (SHA-256): %@";
 "%@ with time stamp" = "%@ समय मुहर के साथ";
+
+/* Whole page */
+"Capture Whole Page" = "पूरा पेज कैप्चर करें";
+"Capture a whole page" = "पूरा पेज कैप्चर करें";
+"Capturing the whole page…" = "पूरा पेज कैप्चर हो रहा है…";
+"Open the page to capture first, then try again." = "पहले वह पेज खोलें जिसे कैप्चर करना है, फिर दोबारा कोशिश करें।";
+"The page could not be captured." = "पेज कैप्चर नहीं हो सका।";
+"To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "पेज स्क्रॉल करने के लिए Snapfly को आपकी जगह कुंजियाँ दबानी होंगी। सिस्टम सेटिंग्स में इसकी अनुमति दें, फिर दोबारा कोशिश करें।";

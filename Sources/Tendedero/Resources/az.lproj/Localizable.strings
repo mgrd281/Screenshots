@@ -340,3 +340,11 @@
 "Page: %@" = "Səhifə: %@";
 "Fingerprint (SHA-256): %@" = "Barmaq izi (SHA-256): %@";
 "%@ with time stamp" = "%@ vaxt möhürü ilə";
+
+/* Whole page */
+"Capture Whole Page" = "Bütün səhifəni çək";
+"Capture a whole page" = "Bütün bir səhifəni çək";
+"Capturing the whole page…" = "Bütün səhifə çəkilir…";
+"Open the page to capture first, then try again." = "Əvvəlcə çəkmək istədiyin səhifəni aç, sonra yenidən cəhd et.";
+"The page could not be captured." = "Səhifəni çəkmək mümkün olmadı.";
+"To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Səhifəni sürüşdürmək üçün Snapfly sənin yerinə düymələri basmalıdır. Sistem Parametrlərində icazə ver, sonra yenidən cəhd et.";

@@ -79,6 +79,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         startWatcher()
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
         Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
+        FullPage.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onFinish = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onChange = { [weak self] in
             self?.updateStatusIcon()
@@ -741,6 +742,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 } else {
                     Capture.shared.start(mode: .record)
                 }
+            case .page: FullPage.shared.start()
             }
         }
     }
@@ -895,6 +897,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             timerItem.submenu = seconds
             menu.addItem(timerItem)
+            let pageItem = ClosureMenuItem(L("Capture Whole Page")) {
+                FullPage.shared.start(after: 0.2)
+            }
+            if let shortcut = Shortcut.current(.page), shortcut.key.count == 1 {
+                pageItem.keyEquivalent = shortcut.key
+                pageItem.keyEquivalentModifierMask = shortcut.modifiers
+            }
+            menu.addItem(pageItem)
             let recordItem = ClosureMenuItem(L("Record Screen")) {
                 Capture.shared.start(after: 0.2, mode: .record)
             }

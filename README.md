@@ -83,6 +83,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>F</kbd> | Search the words in your screenshots. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd> | Take a screenshot: drag over an area, click a window, or press Return for the whole screen. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd> | Record the screen, chosen the same way. Press it again to stop. Change it in Settings. |
+| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>P</kbd> | Capture the whole page in the window in front, from top to bottom. Change it in Settings. |
 
 <br>
 
@@ -192,6 +193,18 @@ Mac, and they show as boxes to check before you press Done; click one to show
 it again. Without Apple Intelligence, type words separated by commas and they
 are hidden wherever they appear. The text is read on your Mac, and the
 screenshot file itself is never changed.
+
+<br>
+
+## The whole page.
+
+Press ⌃⌥P, or choose Capture Whole Page in the menu, and Snapfly scrolls the
+window in front from top to bottom and joins what it sees into one long
+picture, with no seams: the toolbar and a site's sticky header appear once,
+at the top. It works in any browser and in any window that scrolls. The
+picture hangs on the line like any screenshot, and with the time stamp on, it
+is stamped with the time and the page's address. It needs the permission to
+press keys, the same one the send button uses.
 
 <br>
 
@@ -346,6 +359,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `ChatLayouts.swift` | Where the chat button sits over each chat it knows, on a new chat and once started |
 | `ChatButton.swift` | The send button that floats over a chat while photos hang |
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen, now or after a countdown |
+| `FullPage.swift` | Captures a whole page by scrolling the window in front |
+| `PageStitch.swift` | Joins the views of a scrolled page into one picture |
 | `CaptureButton.swift` | The screenshot button: one click takes a screenshot, from the edge of the screen |
 | `Recording.swift` | Records the screen from Snapfly itself, with the countdown, recording and note capsule above the Dock, and makes GIFs of recordings |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |
