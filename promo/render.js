@@ -5,6 +5,7 @@
 //   node promo/render.js de         one language
 //   node promo/render.js de --stills 1,3.5,9   a few frames as PNGs, to look at
 //   node promo/render.js ad --audio mix.m4a    the Instagram ad (ad-de.html), with its sound
+//   node promo/render.js ad-long --audio mix.m4a   its long cut (ad-long-de.html)
 //
 // Needs Playwright (with its Chromium) and ffmpeg.
 const path = require("path");
@@ -17,9 +18,10 @@ const args = process.argv.slice(2);
 const stillsAt = args.includes("--stills") ? args[args.indexOf("--stills") + 1].split(",").map(Number) : null;
 const langs = args.filter((a) => /^(en|de|ar)$/.test(a));
 const audio = args.includes("--audio") ? path.resolve(args[args.indexOf("--audio") + 1]) : null;
-// The ad is German only; the motion graphic comes in three languages.
-const isAd = args.includes("ad");
-const pages = isAd ? [["de", "ad-de.html", "Snapfly-ad-de.mp4"]]
+// The ads are German only; the motion graphic comes in three languages.
+const ad = args.includes("ad-long") ? "ad-long" : args.includes("ad") ? "ad" : null;
+const isAd = ad !== null;
+const pages = isAd ? [["de", `${ad}-de.html`, `Snapfly-${ad}-de.mp4`]]
   : (langs.length ? langs : ["en", "de", "ar"]).map((l) => [l, `promo-${l}.html`, `Snapfly-${l}.mp4`]);
 const out = process.env.OUT || path.join(here, "out");
 
@@ -33,7 +35,7 @@ const out = process.env.OUT || path.join(here, "out");
     if (stillsAt) {
       for (const t of stillsAt) {
         await page.evaluate((t) => window.seek(t), t);
-        await page.screenshot({ path: path.join(out, `still-${isAd ? "ad-" : ""}${lang}-${String(t).replace(".", "_")}.png`) });
+        await page.screenshot({ path: path.join(out, `still-${isAd ? ad + "-" : ""}${lang}-${String(t).replace(".", "_")}.png`) });
       }
       continue;
     }

@@ -110,34 +110,54 @@ AD = {
                          field="Frag irgendwas"),
         ),
         free="Kostenlos für deinen Mac",
+        # The long cut's scenes: search, a PDF, a translation, the history.
+        search="Rechnung",
+        pages="3 Seiten",
+        langs="Englisch → Deutsch",
+        source=dict(title="Your order has shipped", body="Thank you for shopping with us. Your parcel arrives on Friday.",
+                    button="Track parcel"),
+        translated=dict(title="Deine Bestellung ist unterwegs", body="Danke für deinen Einkauf. Dein Paket kommt am Freitag.",
+                        button="Sendung verfolgen"),
+        today="Heute",
+        yesterday="Gestern",
         legal="WhatsApp, ChatGPT und Claude sind Marken ihrer Inhaber. Snapfly ist mit ihnen nicht verbunden.",
     ),
 }
 
 
-def ad(lang):
+def ad(lang, cut="short"):
     words = dict(AD[lang])
     words["tagline"] = L(lang, "Screenshots, one click from any chat.")
+    # Labels the app shows, as it shows them.
+    words["searchHint"] = L(lang, "Search…")
+    words["menu"] = [L(lang, k) for k in ("Copy Text", "Translate Text", "Describe", "Make PDF")]
+    words["history"] = L(lang, "History")
+    words["days"] = L(lang, "%d days").replace("%d", "30")
     data = {
         "lang": lang,
+        "cut": cut,
         "text": words,
         "invoice": SITE[lang]["inv"],
         "art": [art(k, lang, f"a{i}") for i, k in enumerate(KINDS)],
         "artByKind": {k: art(k, lang, f"ak{k}") for k in KINDS},
+        # More copies for the long cut, where one kind shows in several places.
+        "art2": {k: art(k, lang, f"b{k}") for k in KINDS},
+        "art3": {k: art(k, lang, f"c{k}") for k in KINDS},
         "icon": "../assets/icon.png",
         "url": "mgrd281.github.io/Screenshots",
     }
     template = (HERE / "ad.template.html").read_text(encoding="utf-8")
     html = template.replace("/*DATA*/null", json.dumps(data, ensure_ascii=False))
-    (HERE / f"ad-{lang}.html").write_text(html, encoding="utf-8")
+    name = f"ad-{lang}.html" if cut == "short" else f"ad-{cut}-{lang}.html"
+    (HERE / name).write_text(html, encoding="utf-8")
+    return name
 
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    if args[:1] == ["ad"]:
+    if args[:1] in (["ad"], ["ad-long"]):
         for lang in (args[1:] or ["de"]):
-            ad(lang)
-            print(f"Wrote promo/ad-{lang}.html")
+            print(f"Wrote promo/{ad(lang, 'long' if args[0] == 'ad-long' else 'short')}")
         sys.exit()
     for lang in (args or ["en", "de", "ar"]):
         page(lang)

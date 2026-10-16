@@ -1,12 +1,11 @@
-// The Snapfly Instagram ad: a 21.5-second, 1080 × 1920 timeline in German,
-// timed to its voice. seek(t) draws the frame at t seconds; render.js steps
-// through it at 30 frames a second. DATA is written into the page by
-// build.py. The voice starts VO seconds in; every cue below is a moment in
-// the voice plus VO.
+// The Snapfly Instagram ads, 1080 × 1920 in German and timed to their voice:
+// a short cut, and a long one that explains more. seek(t) draws the frame at
+// t seconds; render.js steps through it at 30 frames a second. DATA is
+// written into the page by build.py, with the cut to play. The voice starts
+// VO seconds in; every cue below is a moment in the voice, and at() adds VO.
 "use strict";
 
 const T = DATA.text;
-const DURATION = 21.5;
 const VO = 0.2;
 document.documentElement.lang = DATA.lang;
 
@@ -22,6 +21,66 @@ const swing = (tau, amp = 7, freq = 2.1, damp = 2.6) => (tau <= 0 ? 0 : amp * Ma
 const at = (s) => s + VO;
 // A steady pseudo-random number for item i, so every render is the same.
 const rnd = (i, salt = 1) => { const x = Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453; return x - Math.floor(x); };
+
+// MARK: The cuts
+
+// Each cut has its captions and, for each scene, the moments in its voice.
+// A scene a cut leaves out is not built.
+const CUTS = {
+  short: {
+    duration: 21.5,
+    blocks: [
+      { from: 0, to: at(2.85), lines: [[["Schon wieder", 0.05, "small"]], [["30 ", at(0.6), "grad"], ["Screenshots", at(0.95), "grad"]], [["auf dem ", at(1.65), "small"], ["Desktop?", at(2.0)]]] },
+      { from: at(2.86), to: at(4.62), lines: [[["Mit Snapfly", at(2.86), "small"]], [["hängt jeder", at(3.55)]], [["Screenshot", at(3.95)]]] },
+      { from: at(4.66), to: at(6.3), lines: [[["sofort an", at(4.66), "small"]], [["einer Leine,", at(5.15), "grad"]]] },
+      { from: at(6.38), to: at(7.62), lines: [[["oben am", at(6.38), "small"]], [["Bildschirm.", at(6.75), "grad"]]] },
+      { from: at(7.81), to: at(9.95), lines: [[["Ein Klick,", at(7.81), "grad"]], [["und er ist", at(8.6)]], [["im Chat.", at(9.05)]]] },
+      { from: at(10.15), to: at(12.9), lines: [[["WhatsApp.", at(10.15)]], [["ChatGPT.", at(10.99)]], [["Egal wo.", at(12.09), "grad"]]] },
+      { from: at(13.26), to: at(14.9), lines: [[["Namen und", at(13.26), "small"]], [["Kontonummern?", at(13.75), "grad"]]] },
+      { from: at(15.1), to: at(16.62), lines: [[["Werden", at(15.1), "small"]], [["automatisch", at(15.35), "grad"]], [["verdeckt.", at(15.95)]]] },
+    ],
+    desk: { mark: 2.86, rope: 3.6, sweep: 3.85, zoom: [6.3, 7.1], out: [7.45, 7.8], push: 2.8 },
+    chat: { in: 7.6, clicks: [7.81, 10.94], gptIn: 10.87, fan: 12.09, out: [12.85, 13.2] },
+    doc: { in: [13.05, 13.45], name: 13.3, iban: 13.8, cover: 15.3, lock: 16.0, out: [16.45, 16.8] },
+    end: { wall: 16.5, icon: 16.7, word: 16.84, tag: 17.3, free: 17.99, url: 18.9 },
+  },
+  long: {
+    duration: 52.6,
+    blocks: [
+      { from: 0, to: at(2.5), lines: [[["Schon wieder", 0.05, "small"]], [["30 ", at(0.55), "grad"], ["Screenshots", at(0.9), "grad"]], [["auf dem ", at(1.55), "small"], ["Desktop?", at(1.85)]]] },
+      { from: at(3.0), to: at(4.82), lines: [[["Und welcher war", at(3.0), "small"]], [["noch mal der", at(3.75), "small"]], [["richtige?", at(4.15), "grad"]]] },
+      { from: at(5.57), to: at(7.3), lines: [[["Mit Snapfly", at(5.57), "small"]], [["hängt jeder", at(6.25)]], [["Screenshot", at(6.71)]]] },
+      { from: at(7.35), to: at(9.02), lines: [[["sofort an", at(7.35), "small"]], [["einer Leine,", at(7.85), "grad"]]] },
+      { from: at(9.4), to: at(10.47), lines: [[["oben am", at(9.4), "small"]], [["Bildschirm.", at(9.75), "grad"]]] },
+      { from: at(10.97), to: at(12.92), lines: [[["Dein ", at(10.97), "small"], ["Desktop", at(11.15), "small"]], [["bleibt", at(11.75)]], [["aufgeräumt.", at(11.97), "grad"]]] },
+      { from: at(13.28), to: at(14.85), lines: [[["Ein Klick", at(13.28), "grad"]], [["auf den ", at(13.67), "small"], ["Papierflieger,", at(13.9), "small"]]] },
+      { from: at(15.04), to: at(16.1), lines: [[["und er ist", at(15.04)]], [["im Chat.", at(15.55)]]] },
+      { from: at(16.54), to: at(19.4), lines: [[["WhatsApp.", at(16.54)]], [["ChatGPT.", at(17.34)]], [["Egal wo.", at(18.65), "grad"]]] },
+      { from: at(19.74), to: at(21.05), lines: [[["Namen und", at(19.74), "small"]], [["Kontonummern?", at(20.35), "grad"]]] },
+      { from: at(21.6), to: at(24.38), lines: [[["Werden", at(21.6), "small"]], [["automatisch", at(21.95), "grad"]], [["verdeckt,", at(22.55)]], [["bevor ", at(23.16), "small"], ["etwas ", at(23.55), "small"], ["rausgeht.", at(23.9), "small"]]] },
+      { from: at(24.93), to: at(26.43), lines: [[["Du suchst eine ", at(24.93), "small"], ["alte", at(25.4), "small"]], [["Rechnung?", at(25.95), "grad"]]] },
+      { from: at(26.94), to: at(29.97), lines: [[["Snapfly findet", at(26.94), "small"]], [["jedes Wort", at(27.95), "grad"]], [["in deinen ", at(28.7), "small"], ["Screenshots.", at(29.2), "small"]]] },
+      { from: at(30.25), to: at(31.56), lines: [[["Mehrere", at(30.25), "small"]], [["Screenshots?", at(30.8), "grad"]]] },
+      { from: at(31.99), to: at(33.36), lines: [[["Werden zu", at(31.99), "small"]], [["einem ", at(32.3)], ["PDF.", at(32.6), "grad"]]] },
+      { from: at(33.68), to: at(34.61), lines: [[["Fremde", at(33.68), "small"]], [["Sprache?", at(34.14), "grad"]]] },
+      { from: at(35.07), to: at(37.4), lines: [[["Wird", at(35.07), "small"]], [["übersetzt,", at(35.3), "grad"]], [["direkt ", at(36.24), "small"], ["auf deinem ", at(36.6), "small"], ["Mac.", at(37.0), "small"]]] },
+      { from: at(37.9), to: at(40.5), lines: [[["Was gesendet ist,", at(37.9), "small"]], [["verschwindet", at(39.18), "grad"]], [["von der Leine.", at(39.8), "small"]]] },
+      { from: at(41.0), to: at(43.18), lines: [[["Der Verlauf", at(41.0), "small"]], [["hebt es", at(41.74)]], [["30 Tage", at(42.0), "grad"], [" auf.", at(42.9)]]] },
+      { from: at(43.69), to: at(47.4), lines: [[["Kein Konto.", at(43.69)]], [["Keine Cloud.", at(44.74)]], [["Alles bleibt ", at(45.99), "small"], ["auf deinem Mac.", at(46.6), "small"]]] },
+    ],
+    desk: { hunt: [3.05, 3.65, 4.25], mark: 5.57, rope: 6.3, sweep: 6.5, zoom: [9.4, 10.2], tidy: 10.97, clean: 11.97, out: [12.85, 13.2], push: 5.3 },
+    chat: { in: 12.98, clicks: [13.92, 17.29], gptIn: 17.22, fan: 18.65, out: [19.45, 19.8] },
+    doc: { in: [19.5, 19.9], name: 19.74, iban: 20.35, cover: 22.55, lock: 23.1, send: 23.5, out: [24.2, 24.45] },
+    search: { in: 24.45, type: 25.95, find: 26.94, zoom: 27.95, out: 29.85 },
+    pdf: { in: 30.1, picks: [30.55, 30.85, 31.15], merge: 31.99, badge: 32.6, out: 33.4 },
+    translate: { in: 33.55, menu: 34.15, click: 34.7, swap: 35.07, out: 37.5 },
+    sent: { in: 37.75, click: 38.25, close: 39.18, history: 40.9, days: 42.0, out: 43.4 },
+    privacy: { account: 43.69, cloud: 44.74, mac: 45.99, out: 47.25 },
+    end: { wall: 47.35, icon: 47.55, word: 47.74, tag: 48.2, free: 48.8, url: 49.6 },
+  },
+};
+const CUT = CUTS[DATA.cut || "short"];
+const DURATION = CUT.duration;
 
 // MARK: Building
 
@@ -40,6 +99,14 @@ const ICON_LOCK = '<svg viewBox="0 0 24 24"><rect x="5.5" y="10.5" width="13" he
 const POINTER = '<svg viewBox="0 0 24 24"><path d="M5 3.2v15.6l4.1-3.7 2.6 6 2.7-1.2-2.6-5.9 5.6-.3Z" fill="#000" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/></svg>';
 // Snapfly's mark in the menu bar: a photo hanging from a clip on a line.
 const MARK = '<svg viewBox="0 0 24 24"><path d="M.8 4.8Q12 8.3 23.2 4.8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" fill="none"/><g transform="rotate(-7 12 8)"><rect x="11.1" y="4.9" width="1.8" height="4.6" rx=".7" fill="currentColor"/><rect x="5.3" y="8.8" width="13.4" height="11.5" rx="2.4" stroke="currentColor" stroke-width="2.1" fill="none"/><circle cx="14.9" cy="12.5" r="1.3" fill="currentColor"/><path d="m8.3 17.5 2.8-2.9 3.4 3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g></svg>';
+const ICON_FIND = '<svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" stroke="currentColor" stroke-width="2.2" fill="none"/><path d="m15 15 5 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+const ICON_CHECK = '<svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+const ICON_CLOCK = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2.2" fill="none"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>';
+const SPARKLE = '<svg viewBox="0 0 24 24"><path d="M12 1.5c.7 5.6 4.9 9.8 10.5 10.5-5.6.7-9.8 4.9-10.5 10.5C11.3 16.9 7.1 12.7 1.5 12 7.1 11.3 11.3 7.1 12 1.5Z" fill="currentColor"/></svg>';
+const line24 = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const ICON_PERSON = line24('<circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 19.5c1.2-3.6 4-5.2 7.2-5.2s6 1.6 7.2 5.2"/>');
+const ICON_CLOUD = line24('<path d="M7.2 18.5h10a3.8 3.8 0 0 0 .6-7.55A5.6 5.6 0 0 0 7 9.6a4.45 4.45 0 0 0 .2 8.9Z"/>');
+const ICON_MAC = line24('<rect x="4.5" y="5.5" width="15" height="10" rx="1.6"/><path d="M2.5 18.5h19M10.8 10.2V9.4a1.2 1.2 0 0 1 2.4 0v.8"/><rect x="10" y="10.2" width="4" height="3" rx=".6" fill="currentColor" stroke="none"/>');
 const ropePath = (w, sag) => `M0 0 Q${w / 2} ${sag * 2} ${w} 0`;
 const ropeY = (frac, sag) => 4 * sag * frac * (1 - frac);
 
@@ -53,17 +120,7 @@ const wallWash = el("div", "layer"); wallWash.id = "wallWash";
 // MARK: Captions
 
 // Each block is lines of chunks; a chunk appears when it is spoken.
-const BLOCKS = [
-  { from: 0, to: at(2.85), lines: [[["Schon wieder", 0.05, "small"]], [["30 ", at(0.6), "grad"], ["Screenshots", at(0.95), "grad"]], [["auf dem ", at(1.65), "small"], ["Desktop?", at(2.0)]]] },
-  { from: at(2.86), to: at(4.62), lines: [[["Mit Snapfly", at(2.86), "small"]], [["hängt jeder", at(3.55)]], [["Screenshot", at(3.95)]]] },
-  { from: at(4.66), to: at(6.3), lines: [[["sofort an", at(4.66), "small"]], [["einer Leine,", at(5.15), "grad"]]] },
-  { from: at(6.38), to: at(7.62), lines: [[["oben am", at(6.38), "small"]], [["Bildschirm.", at(6.75), "grad"]]] },
-  { from: at(7.81), to: at(9.95), lines: [[["Ein Klick,", at(7.81), "grad"]], [["und er ist", at(8.6)]], [["im Chat.", at(9.05)]]] },
-  { from: at(10.15), to: at(12.9), lines: [[["WhatsApp.", at(10.15)]], [["ChatGPT.", at(10.99)]], [["Egal wo.", at(12.09), "grad"]]] },
-  { from: at(13.26), to: at(14.9), lines: [[["Namen und", at(13.26), "small"]], [["Kontonummern?", at(13.75), "grad"]]] },
-  { from: at(15.1), to: at(16.62), lines: [[["Werden", at(15.1), "small"]], [["automatisch", at(15.35), "grad"]], [["verdeckt.", at(15.95)]]] },
-];
-const blocks = BLOCKS.map((b) => {
+const blocks = CUT.blocks.map((b) => {
   const node = el("div", "kin");
   const chunks = [];
   b.lines.forEach((line) => {
@@ -106,6 +163,17 @@ for (let i = 0; i < FILES; i++) {
   const y = 70 + row * 140 + (rnd(i, 2) - 0.5) * 60;
   files.push({ f, x, y, tilt: (rnd(i, 3) - 0.5) * 16, hangTilt: (rnd(i, 4) - 0.5) * 9, spot: i % SPOTS, layer: Math.floor(i / SPOTS) });
 }
+
+// The long cut asks "which one was it?": a pointer looks from file to file.
+// Later the cleared Desktop sparkles.
+const HUNT = [20, 17, 22];
+const hunter = CUT.desk.hunt ? el("div", "pointer", screen, POINTER) : null;
+if (hunter) HUNT.forEach((i) => style(files[i].f.querySelector(".name"), { borderRadius: "4px", padding: "0 3px" }));
+const sparkles = CUT.desk.clean ? [[230, 330], [560, 430], [820, 290]].map(([x, y]) => {
+  const k = el("div", "sparkle", screen, SPARKLE);
+  style(k, { left: `${x}px`, top: `${y}px` });
+  return k;
+}) : [];
 
 // MARK: Scene 2, one click and it is in the chat
 
@@ -203,6 +271,7 @@ const fields = [...doc.querySelectorAll(".pd")];
 const NAME = 0, IBAN = fields.length - 1;
 const lock = el("div", "lock", doc, ICON_LOCK);
 style(lock, { right: "40px", bottom: "36px" });
+const docSend = CUT.doc.send ? el("div", "send doc-send", doc, ICON_PLANE) : null;
 
 // MARK: Scene 4, the end card
 
@@ -212,6 +281,249 @@ const endTag = el("div", "end-tag", document.body, T.tagline);
 const free = el("div", "free", document.body, T.free);
 const url = el("div", "url", document.body, DATA.url);
 const legal = el("div", "legal", document.body, T.legal);
+
+// MARK: The long cut's own scenes
+
+// A pointer of the scene's own, with its ripple.
+function makePointer() {
+  const r = el("div", "ripple"), p = el("div", "pointer", document.body, POINTER);
+  return (x, y, alpha, press = 0, rp = -1) => {
+    show(p, alpha);
+    style(p, { left: `${x - 12}px`, top: `${y - 8}px`, zIndex: "9", transform: `scale(${1 - 0.15 * press})` });
+    show(r, alpha > 0.01 && rp >= 0 && rp < 1 ? 1 - rp : 0);
+    style(r, { zIndex: "9", left: `${x - 50 * (1 + rp)}px`, top: `${y - 50 * (1 + rp)}px`, width: `${100 * (1 + rp)}px`, height: `${100 * (1 + rp)}px` });
+  };
+}
+// Where a pointer is at t: it glides to each stop in turn and clicks there.
+function pointerPath(t, from, stops) {
+  let x = from.x, y = from.y, press = 0, rp = -1;
+  for (let k = 0; k < stops.length; k++) {
+    const s = stops[k];
+    if (t < s.t - 0.4) break;
+    const a = k === 0 ? from : stops[k - 1];
+    const m = inOut(prog(t, s.t - 0.4, s.t - 0.05));
+    x = lerp(a.x, s.x, m); y = lerp(a.y, s.y, m);
+    press = Math.sin(Math.PI * prog(t, s.t - 0.05, s.t + 0.15));
+    rp = t >= s.t - 0.05 ? prog(t, s.t, s.t + 0.5) : -1;
+  }
+  return { x, y, press, rp };
+}
+// A line across the stage with screenshots on clips.
+function makeLine(svgs, w, send = false) {
+  const rope = el("div", "rope light", document.body, `<svg width="1080" height="120"><path d="${ropePath(1080, LINE_SAG)}"/></svg>`);
+  style(rope, { left: "0", top: `${LINE_Y}px` });
+  const cards = svgs.map((svg) => {
+    const c = el("div", "card", document.body, `<span class="clip"></span><div class="glass"><div class="img">${svg}</div></div>${send ? `<div class="send">${ICON_PLANE}</div>` : ""}`);
+    style(c, { width: `${w}px` });
+    return c;
+  });
+  return { rope, cards };
+}
+// Where a card hangs at frac along the line; it drops in from above at `drop`.
+function hangAt(w, frac, t, drop, tilt) {
+  const d = outQuart(prog(t, drop, drop + 0.4));
+  return { d, x: 1080 * frac - w / 2, y: LINE_Y + ropeY(frac, LINE_SAG) - 6 - lerp(70, 0, d), r: tilt + swing(t - drop - 0.4, 6, 0.9, 1.2) };
+}
+function hang(c, w, frac, t, drop, tilt) {
+  const h = hangAt(w, frac, t, drop, tilt);
+  style(c, { left: `${h.x}px`, top: `${h.y}px`, transform: `rotate(${h.r}deg)` });
+  return h.d;
+}
+
+// "Du suchst eine alte Rechnung?": the word is typed, the screenshots that
+// say it stay bright and show where, the others fade, and one comes close.
+function searchScene(S) {
+  const W = 170, FR = [0.1, 0.3, 0.5, 0.7, 0.9], TILT = [-4, 3, -2, 4, -3], HITS = [1, 3];
+  const { rope, cards } = makeLine([DATA.art2.map, DATA.art2.invoice, DATA.art2.sunset, DATA.art3.invoice, DATA.art2.chart], W);
+  const mark = (img) => { img.style.position = "relative"; return el("span", "hit", img); };
+  const hits = HITS.map((i) => mark(cards[i].querySelector(".img")));
+  const field = el("div", "find", document.body, `${ICON_FIND}<span class="q"></span><span class="caret"></span>`);
+  const q = field.querySelector(".q"), caret = field.querySelector(".caret");
+  const big = el("div", "card big", document.body, `<div class="glass"><div class="img">${DATA.artByKind.invoice}</div></div>`);
+  const bigHit = mark(big.querySelector(".img"));
+  const BW = 720;
+  return (t) => {
+    const a = at(S.in), out = prog(t, at(S.out), at(S.out) + 0.35);
+    show(rope, outQuart(prog(t, a, a + 0.4)) * (1 - out));
+    const find = outQuart(prog(t, at(S.find), at(S.find) + 0.4));
+    cards.forEach((c, i) => {
+      const d = hang(c, W, FR[i], t, a + i * 0.06, TILT[i]);
+      const hit = HITS.includes(i);
+      show(c, d * (1 - out) * (hit ? 1 : lerp(1, 0.25, find)));
+      if (hit) c.querySelector(".glass").style.boxShadow = `0 0 0 ${4 * find}px rgba(255,196,92,${0.95 * find}), 0 10px 22px rgba(0,0,0,.35)`;
+    });
+    hits.forEach((h) => { show(h, find); h.style.transform = `scaleX(${find})`; });
+    // The search field under the line: the hint, then the word as typed.
+    const fIn = outQuart(prog(t, a + 0.3, a + 0.7));
+    show(field, fIn * (1 - out));
+    style(field, { transform: `translateX(-50%) translateY(${lerp(30, 0, fIn)}px)` });
+    const n = Math.round(T.search.length * prog(t, at(S.type), at(S.type) + 0.55));
+    q.textContent = n ? T.search.slice(0, n) : T.searchHint;
+    q.style.opacity = n ? 1 : 0.55;
+    const typing = t > at(S.type) - 0.2 && t < at(S.type) + 0.8;
+    show(caret, typing || Math.floor(t * 2.4) % 2 === 0 ? 1 : 0);
+    // One of them comes close, the word marked where it says it.
+    const z = inOut(prog(t, at(S.zoom), at(S.zoom) + 0.6));
+    show(big, z > 0 ? 1 - out : 0);
+    const src = cards[HITS[0]].getBoundingClientRect();
+    style(big, { width: `${BW}px`, zIndex: "7", transformOrigin: "0 0", left: `${lerp(src.left, 180, z)}px`,
+                 top: `${lerp(src.top, 980, z) - 40 * inOut(out)}px`, transform: `scale(${lerp(src.width / BW, 1, z)})` });
+    const bh = outQuart(prog(t, at(S.zoom) + 0.45, at(S.zoom) + 0.8));
+    show(bigHit, bh); bigHit.style.transform = `scaleX(${bh})`;
+  };
+}
+
+// "Mehrere Screenshots? Werden zu einem PDF.": three are picked, then come
+// together as the pages of one PDF.
+function pdfScene(P) {
+  const W = 210, FR = [0.2, 0.5, 0.8], TILT = [-3, 2, -4];
+  const { rope, cards } = makeLine([DATA.art3.invoice, DATA.art3.chart, DATA.art3.calendar], W);
+  const picks = cards.map((c) => el("span", "pick", c, ICON_CHECK));
+  const key = el("div", "key", document.body, "⌘");
+  const pointer = makePointer();
+  const tag = el("div", "pdf-tag", document.body, `<b>PDF</b><span>${T.pages}</span>`);
+  // How the pages lie in the stack, the first one on top.
+  const STACK = [{ x: -10, y: 18, r: -2 }, { x: 14, y: 0, r: 3 }, { x: -4, y: -18, r: -5 }];
+  return (t) => {
+    const a = at(P.in), out = prog(t, at(P.out), at(P.out) + 0.35);
+    show(rope, outQuart(prog(t, a, a + 0.4)) * (1 - out));
+    const stops = cards.map((c, k) => {
+      const h = hangAt(W, FR[k], t, a + k * 0.06, TILT[k]);
+      return { x: h.x + W * 0.55, y: h.y + 80, t: at(P.picks[k]) };
+    });
+    cards.forEach((c, k) => {
+      const h = hangAt(W, FR[k], t, a + k * 0.06, TILT[k]);
+      const m = inOut(prog(t, at(P.merge) + k * 0.06, at(P.merge) + 0.6 + k * 0.06));
+      const s = STACK[k];
+      show(c, h.d * (1 - out));
+      style(c, { zIndex: String(6 - k), transformOrigin: "50% 50%",
+        left: `${lerp(h.x, 540 - W / 2 + s.x, m)}px`, top: `${lerp(h.y, 1000 + s.y, m) - 50 * inOut(out)}px`,
+        transform: `rotate(${lerp(h.r, s.r, m)}deg) scale(${lerp(1, 1.75, m)})` });
+      c.querySelector(".clip").style.opacity = 1 - m;
+      const pk = prog(t, at(P.picks[k]), at(P.picks[k]) + 0.25);
+      show(picks[k], outQuart(pk) * (1 - m));
+      picks[k].style.transform = `scale(${lerp(0.3, 1, outBack(pk))})`;
+    });
+    const p = pointerPath(t, { x: 930, y: 1500 }, stops);
+    const pa = prog(t, a + 0.2, a + 0.45) * (1 - prog(t, at(P.picks[2]) + 0.3, at(P.picks[2]) + 0.5));
+    pointer(p.x, p.y, pa, p.press, p.rp);
+    show(key, pa);
+    style(key, { left: `${p.x + 40}px`, top: `${p.y + 60}px`, zIndex: "9" });
+    const b = prog(t, at(P.badge), at(P.badge) + 0.35);
+    show(tag, outQuart(b) * (1 - out));
+    style(tag, { top: "1250px", transform: `translateX(-50%) scale(${lerp(0.6, 1, outBack(b))})` });
+  };
+}
+
+// "Fremde Sprache? Wird übersetzt": the photo's menu, Translate Text, and
+// the words turn German where they stand.
+function translateScene(R) {
+  const KEYS = ["title", "body", "button"];
+  const win = el("div", "doc tr", document.body, `<div class="bar">${LIGHTS}</div><div class="body">${KEYS.map((k) =>
+    `<div class="swap l-${k}"><span><span>${T.source[k]}</span></span><span><span>${T.translated[k]}</span></span></div>`).join("")}</div>`);
+  const lines = [...win.querySelectorAll(".swap")];
+  const chip = el("div", "lang-chip", document.body, T.langs);
+  const menu = el("div", "menu", document.body, T.menu.map((m) => `<div>${m}</div>`).join(""));
+  const item = menu.children[1];
+  const pointer = makePointer();
+  return (t) => {
+    const a = at(R.in), out = prog(t, at(R.out), at(R.out) + 0.35);
+    const wIn = outQuart(prog(t, a, a + 0.4));
+    show(win, wIn * (1 - out));
+    style(win, { left: "110px", top: "700px", transform: `translateY(${lerp(70, 0, wIn) - 50 * inOut(out)}px) scale(${lerp(0.94, 1, wIn)})` });
+    lines.forEach((ln, i) => {
+      const s = inOut(prog(t, at(R.swap) + i * 0.14, at(R.swap) + 0.45 + i * 0.14));
+      const [en, de] = ln.children;
+      style(en, { opacity: 1 - s, transform: `translateY(${-18 * s}px)`, filter: `blur(${6 * s}px)` });
+      style(de, { opacity: s, transform: `translateY(${18 * (1 - s)}px)`, filter: `blur(${6 * (1 - s)}px)` });
+    });
+    const mIn = outQuart(prog(t, at(R.menu), at(R.menu) + 0.2)) * (1 - prog(t, at(R.click) + 0.2, at(R.click) + 0.4));
+    show(menu, mIn);
+    style(menu, { left: "500px", top: "1030px", zIndex: "8", transform: `scale(${lerp(0.9, 1, mIn)})` });
+    item.classList.toggle("lit", t >= at(R.click) - 0.3);
+    const r = item.getBoundingClientRect();
+    const p = pointerPath(t, { x: 930, y: 1520 }, [{ x: 575, y: 1040, t: at(R.menu) - 0.05 }, { x: r.left + 120, y: r.top + r.height / 2, t: at(R.click) }]);
+    pointer(p.x, p.y, prog(t, a + 0.15, a + 0.4) * (1 - prog(t, at(R.click) + 0.35, at(R.click) + 0.6)), p.press, p.rp);
+    const c = prog(t, at(R.swap) + 0.3, at(R.swap) + 0.65);
+    show(chip, outQuart(c) * (1 - out));
+    style(chip, { transform: `translateX(-50%) scale(${lerp(0.7, 1, outBack(c))})` });
+  };
+}
+
+// "Was gesendet ist, verschwindet von der Leine. Der Verlauf hebt es dreißig
+// Tage auf.": one is sent and leaves, the others close up, and the history
+// still holds it.
+function sentScene(H) {
+  const W = 200, FR0 = [0.22, 0.5, 0.78], FR1 = [0.36, 0.5, 0.64], TILT = [-3, 2, -4];
+  const { rope, cards } = makeLine([DATA.art3.map, DATA.art3.sunset, DATA.art2.calendar], W, true);
+  const pointer = makePointer();
+  const th = (svg, ring) => `<div class="th${ring ? " ring" : ""}">${svg}</div>`;
+  const hist = el("div", "hist", document.body, `
+    <div class="bar">${LIGHTS}<b>${T.history}</b></div>
+    <div class="hsearch">${ICON_FIND}<span>${T.searchHint}</span></div>
+    <div class="day">${T.today}</div>
+    <div class="row">${th(DATA.art[4], true)}${th(DATA.art[0])}${th(DATA.art[2])}</div>
+    <div class="day">${T.yesterday}</div>
+    <div class="row">${th(DATA.art[1])}${th(DATA.art[3])}${th(DATA.art2.chart)}</div>`);
+  const ring = hist.querySelector(".ring");
+  const days = el("div", "days", document.body, `${ICON_CLOCK}<span>${T.days}</span>`);
+  return (t) => {
+    const a = at(H.in), out = prog(t, at(H.out), at(H.out) + 0.35);
+    show(rope, outQuart(prog(t, a, a + 0.4)) * (1 - out));
+    const close = inOut(prog(t, at(H.close), at(H.close) + 0.6));
+    const f = inOut(prog(t, at(H.click) + 0.1, at(H.click) + 0.85));
+    let button = { x: 0, y: 0 };
+    cards.forEach((c, k) => {
+      const h = hangAt(W, lerp(FR0[k], FR1[k], k === 1 ? 0 : close), t, a + k * 0.06, TILT[k]);
+      if (k === 1) {
+        button = { x: h.x + W - 13, y: h.y + c.offsetHeight - 13 };
+        // Sent: off it flies, toward the chat.
+        show(c, h.d * (f < 1 ? 1 - 0.6 * prog(f, 0.6, 1) : 0));
+        style(c, { left: `${lerp(h.x, 1180, f)}px`, top: `${lerp(h.y, 60, f) - Math.sin(Math.PI * f) * 140}px`,
+                   transform: `rotate(${lerp(h.r, 24, f)}deg) scale(${lerp(1, 0.45, f)})` });
+      } else {
+        show(c, h.d * (1 - out));
+        style(c, { left: `${h.x}px`, top: `${h.y}px`, transform: `rotate(${h.r}deg)` });
+      }
+    });
+    const p = pointerPath(t, { x: 930, y: 1500 }, [{ ...button, t: at(H.click) }]);
+    pointer(p.x, p.y, prog(t, a + 0.1, a + 0.3) * (1 - prog(t, at(H.click) + 0.3, at(H.click) + 0.5)), p.press, p.rp);
+    const hIn = outQuart(prog(t, at(H.history), at(H.history) + 0.45));
+    show(hist, hIn * (1 - out));
+    style(hist, { left: "90px", top: "800px", transform: `translateY(${lerp(80, 0, hIn) - 50 * inOut(out)}px) scale(${lerp(0.94, 1, hIn)})` });
+    const rg = prog(t, at(H.history) + 0.5, at(H.history) + 0.8);
+    ring.style.boxShadow = `0 0 0 ${5 * outQuart(rg)}px #FF7A59`;
+    const d = prog(t, at(H.days), at(H.days) + 0.4);
+    show(days, outQuart(d) * (1 - out));
+    style(days, { left: "650px", top: "760px", zIndex: "8", transform: `scale(${lerp(0.5, 1, outBack(d))}) rotate(${lerp(-10, 3, outQuart(d))}deg)` });
+  };
+}
+
+// "Kein Konto. Keine Cloud. Alles bleibt auf deinem Mac."
+function privacyScene(V) {
+  const tiles = [ICON_PERSON, ICON_CLOUD, ICON_MAC].map((svg, i) =>
+    el("div", "tile" + (i === 2 ? " mac" : ""), document.body, svg + (i < 2 ? '<svg class="strike" viewBox="0 0 100 100"><path d="M20 20 80 80"/></svg>' : "")));
+  const CUES = [V.account, V.cloud, V.mac];
+  return (t) => {
+    const out = prog(t, at(V.out), at(V.out) + 0.35);
+    tiles.forEach((tile, i) => {
+      const p = prog(t, at(CUES[i]), at(CUES[i]) + 0.45);
+      show(tile, outQuart(p) * (1 - out));
+      const grow = i === 2 ? lerp(1, 1.1, inOut(prog(t, at(CUES[2]) + 0.4, at(V.out)))) : 1;
+      style(tile, { left: `${[100, 410, 720][i]}px`, top: "880px",
+                    transform: `translateY(${lerp(50, 0, outQuart(p)) - 40 * inOut(out)}px) scale(${lerp(0.6, 1, outBack(p)) * grow})` });
+      const st = tile.querySelector(".strike path");
+      if (st) st.style.strokeDashoffset = 100 * (1 - outQuart(prog(t, at(CUES[i]) + 0.25, at(CUES[i]) + 0.55)));
+    });
+  };
+}
+
+const extras = [];
+if (CUT.search) extras.push(searchScene(CUT.search));
+if (CUT.pdf) extras.push(pdfScene(CUT.pdf));
+if (CUT.translate) extras.push(translateScene(CUT.translate));
+if (CUT.sent) extras.push(sentScene(CUT.sent));
+if (CUT.privacy) extras.push(privacyScene(CUT.privacy));
 
 // MARK: The timeline
 
@@ -234,13 +546,13 @@ function drawCaptions(t) {
 // Where the pointer goes and when it clicks: the invoice's paper plane as
 // the voice says "Ein Klick", the chart's as it says "ChatGPT". The first
 // flight takes its time; the second is quick.
-const CLICKS = [at(7.81), at(10.99) - 0.05];
+const CLICKS = CUT.chat.clicks.map(at);
 const FLY = [0.75, 0.42];
 const LANDS = CLICKS.map((c, i) => c + 0.12 + FLY[i]);
 // Lena reads it, types, and answers, while WhatsApp is still in front.
 const READ = LANDS[0] + 0.45, TYPING = LANDS[0] + 0.55, ANSWER = LANDS[0] + 1.1;
 // When each chat comes to the front, and when all three fan out.
-const WA_IN = at(7.6), GPT_IN = at(10.99) - 0.12, FAN = at(12.09);
+const WA_IN = at(CUT.chat.in), GPT_IN = at(CUT.chat.gptIn), FAN = at(CUT.chat.fan);
 function sendButton(i, t) {
   const c = sendCards[i];
   const frac = SEND_FRAC[i];
@@ -255,7 +567,8 @@ function seek(t) {
   // The glows drift; the wallpaper takes over for the end card.
   style(blobA, { transform: `translate(${Math.sin(t * 0.35) * 60}px, ${Math.cos(t * 0.3) * 40}px)` });
   style(blobB, { transform: `translate(${Math.cos(t * 0.3) * 70}px, ${Math.sin(t * 0.25) * 50}px)` });
-  const wallIn = outQuart(prog(t, at(16.5), at(16.9)));
+  const E = CUT.end;
+  const wallIn = outQuart(prog(t, at(E.wall), at(E.wall) + 0.4));
   show(blobA, 1 - wallIn); show(blobB, 1 - wallIn);
   show(wall, wallIn); show(wallWash, wallIn);
 
@@ -263,24 +576,26 @@ function seek(t) {
 
   // 1. The Desktop fills, Snapfly arrives in the menu bar, and every file
   // flies up onto the line; then a close look at the top of the screen.
+  const D = CUT.desk;
   const scrIn = outQuart(prog(t, 0, 0.25));
-  const scrOut = prog(t, at(7.45), at(7.8));
-  const zoom = inOut(prog(t, at(6.3), at(7.1)));
+  const scrOut = prog(t, at(D.out[0]), at(D.out[1]));
+  // In the long cut the view pulls back out to show the Desktop left clear.
+  const zoom = inOut(prog(t, at(D.zoom[0]), at(D.zoom[1]))) * (D.tidy ? 1 - inOut(prog(t, at(D.tidy), at(D.tidy) + 0.8)) : 1);
   show(screen, scrIn * (1 - scrOut));
-  style(screen, { transform: `translateY(${lerp(40, 0, scrIn) - 120 * inOut(scrOut)}px) scale(${lerp(0.96, 1.0, scrIn) * lerp(1, 1.04, prog(t, 0.3, at(2.8))) * lerp(1, 1.62, zoom)})` });
-  const mk = prog(t, at(2.86), at(3.25));
+  style(screen, { transform: `translateY(${lerp(40, 0, scrIn) - 120 * inOut(scrOut)}px) scale(${lerp(0.96, 1.0, scrIn) * lerp(1, 1.04, prog(t, 0.3, at(D.push))) * lerp(1, 1.62, zoom)})` });
+  const mk = prog(t, at(D.mark), at(D.mark) + 0.39);
   show(mark, outQuart(mk));
   mark.style.transform = `scale(${lerp(0.2, 1, outBack(mk))})`;
-  const gl = prog(t, at(2.9), at(3.7));
+  const gl = prog(t, at(D.mark) + 0.04, at(D.mark) + 0.84);
   show(markGlow, Math.sin(Math.PI * gl) * 0.9);
   markGlow.style.transform = `scale(${lerp(0.4, 1.6, gl)})`;
-  deskRopePath.style.strokeDashoffset = 1100 * (1 - outQuart(prog(t, at(3.6), at(4.1))));
+  deskRopePath.style.strokeDashoffset = 1100 * (1 - outQuart(prog(t, at(D.rope), at(D.rope) + 0.5)));
   files.forEach((d, i) => {
     const pop = prog(t, 0.05 + i * 0.07, 0.05 + i * 0.07 + 0.3);
     const frac = (d.spot + 0.6) / (SPOTS + 0.2);
     const hx = SW * frac - 52 + d.layer * 9;
     const hy = 56 + ropeY(frac, 26) - 4 + d.layer * 5;
-    const start = at(3.85) + i * 0.035;
+    const start = at(D.sweep) + i * 0.035;
     const fly = inOut(prog(t, start, start + 0.7));
     const x = lerp(d.x, hx, fly), y = lerp(d.y, hy, fly) - Math.sin(Math.PI * fly) * 80;
     const rot = lerp(d.tilt, d.hangTilt, fly) + swing(t - start - 0.7, 8);
@@ -291,11 +606,28 @@ function seek(t) {
     d.f.querySelector(".thumb").style.borderRadius = `${lerp(6, 11, fly)}px`;
   });
 
+  if (hunter) {
+    const stops = HUNT.map((i, k) => ({ x: files[i].x + 52, y: files[i].y + 40, t: at(D.hunt[k]) }));
+    const p = pointerPath(t, { x: 700, y: 620 }, stops);
+    show(hunter, prog(t, at(D.hunt[0]) - 0.6, at(D.hunt[0]) - 0.4) * (1 - prog(t, at(D.mark) - 0.3, at(D.mark))));
+    style(hunter, { left: `${p.x - 12}px`, top: `${p.y - 8}px`, zIndex: "9", transform: `scale(${1 - 0.15 * p.press})` });
+    HUNT.forEach((i, k) => {
+      const on = t >= at(D.hunt[k]) && t < (k < HUNT.length - 1 ? at(D.hunt[k + 1]) : at(D.mark));
+      style(files[i].f.querySelector(".name"), { background: on ? "#0A63D8" : "", textShadow: on ? "none" : "" });
+      files[i].f.querySelector(".thumb").style.boxShadow = on ? "0 0 0 5px rgba(255,255,255,.6), 0 3px 8px rgba(0,0,0,.35)" : "";
+    });
+  }
+  sparkles.forEach((k, i) => {
+    const from = at(D.clean) + i * 0.14, p = prog(t, from, from + 0.9);
+    show(k, Math.sin(Math.PI * p));
+    k.style.transform = `scale(${lerp(0.2, 1.1, outBack(prog(t, from, from + 0.45)))}) rotate(${90 * p}deg)`;
+  });
+
   // 2. Lena asks for the invoice in WhatsApp; one click on its paper plane
   // and it lands in the chat, she reads it and thanks. Then the chart into
   // ChatGPT, and the three chats fan out: any chat.
-  const sIn = outQuart(prog(t, at(7.6), at(8.0)));
-  const sOut = prog(t, at(12.85), at(13.2));
+  const sIn = outQuart(prog(t, WA_IN, WA_IN + 0.4));
+  const sOut = prog(t, at(CUT.chat.out[0]), at(CUT.chat.out[1]));
   show(sendRope, sIn * (1 - sOut));
   const fan = inOut(prog(t, FAN, FAN + 0.5));
   apps.forEach((a, k) => {
@@ -340,11 +672,11 @@ function seek(t) {
   sendCards.forEach((c, i) => {
     const frac = SEND_FRAC[i];
     const cx = 1080 * frac;
-    const drop = prog(t, at(7.6) + i * 0.08, at(8.0) + i * 0.08);
+    const drop = prog(t, WA_IN + i * 0.08, WA_IN + 0.4 + i * 0.08);
     const gone = i < CLICKS.length && t >= CLICKS[i] + 0.12;
     show(c, outQuart(drop) * (1 - sOut) * (gone ? 0 : 1));
     style(c, { left: `${cx - CARD_W / 2}px`, top: `${LINE_Y + ropeY(frac, LINE_SAG) - 6 - lerp(70, 0, outQuart(drop))}px`,
-               transform: `rotate(${[-4, 3, -3][i] + swing(t - at(8.0) - i * 0.08, 6, 0.9, 1.2)}deg)` });
+               transform: `rotate(${[-4, 3, -3][i] + swing(t - WA_IN - 0.4 - i * 0.08, 6, 0.9, 1.2)}deg)` });
   });
   // The flights: up off the line, a tilt toward the reading end, and down
   // into the chat exactly where the picture lands.
@@ -367,7 +699,7 @@ function seek(t) {
     g.querySelector(".glass").style.padding = `${lerp(6, 0, e)}px`;
   });
   // The pointer: to each paper plane in turn, a press, a ripple.
-  const ptrIn = prog(t, at(7.55), at(7.75)) * (1 - prog(t, CLICKS[1] + 0.3, CLICKS[1] + 0.55));
+  const ptrIn = prog(t, WA_IN - 0.05, WA_IN + 0.15) * (1 - prog(t, CLICKS[1] + 0.3, CLICKS[1] + 0.55));
   let px = 900, py = 1500, press = 0, rp = -1;
   for (let k = 0; k < CLICKS.length; k++) {
     const target = sendButton(k, t);
@@ -386,42 +718,56 @@ function seek(t) {
 
   // 3. The invoice: the name and the account number light up as they are
   // said, then everything private is covered.
-  const dIn = outQuart(prog(t, at(13.05), at(13.45)));
-  const dOut = prog(t, at(16.45), at(16.8));
+  const K = CUT.doc;
+  const dIn = outQuart(prog(t, at(K.in[0]), at(K.in[1])));
+  const dOut = prog(t, at(K.out[0]), at(K.out[1]));
   show(doc, dIn * (1 - dOut));
-  style(doc, { left: "110px", top: "640px", transform: `translateY(${lerp(70, 0, dIn) - 50 * inOut(dOut)}px) scale(${lerp(0.94, 1, dIn) * lerp(1, 1.03, prog(t, at(13.4), at(16.4)))})` });
+  const dScale = lerp(0.94, 1, dIn) * lerp(1, 1.03, prog(t, at(K.in[0]) + 0.35, at(K.out[0]) - 0.05));
+  if (K.send) {
+    // The long cut sends it: a press on its paper plane, and off it flies.
+    const fly = inOut(prog(t, at(K.send) + 0.15, at(K.send) + 0.9));
+    style(doc, { left: "110px", top: "640px", transform: `translate(${1050 * fly}px, ${lerp(70, 0, dIn) - 40 * fly - Math.sin(Math.PI * fly) * 40}px) rotate(${-10 * fly}deg) scale(${dScale * lerp(1, 0.45, fly)})` });
+    const sb = prog(t, at(K.send) - 0.3, at(K.send));
+    show(docSend, outQuart(sb));
+    docSend.style.transform = `scale(${lerp(0.3, 1, outBack(sb)) * (1 - 0.15 * Math.sin(Math.PI * prog(t, at(K.send) - 0.05, at(K.send) + 0.15)))})`;
+  } else {
+    style(doc, { left: "110px", top: "640px", transform: `translateY(${lerp(70, 0, dIn) - 50 * inOut(dOut)}px) scale(${dScale})` });
+  }
   fields.forEach((fd, i) => {
-    const lit = i === NAME ? prog(t, at(13.3), at(13.55)) : i === IBAN ? prog(t, at(13.8), at(14.05)) : 0;
-    const coverAt = at(15.3) + i * 0.15;
+    const lit = i === NAME ? prog(t, at(K.name), at(K.name) + 0.25) : i === IBAN ? prog(t, at(K.iban), at(K.iban) + 0.25) : 0;
+    const coverAt = at(K.cover) + i * 0.15;
     const cover = outQuart(prog(t, coverAt, coverAt + 0.3));
     show(fd.querySelector(".mark-hl"), outQuart(lit) * (1 - cover));
     fd.querySelector(".ink").style.transform = `scaleX(${cover})`;
   });
-  const lk = prog(t, at(16.0), at(16.3));
+  const lk = prog(t, at(K.lock), at(K.lock) + 0.3);
   show(lock, outQuart(lk));
   lock.style.transform = `scale(${lerp(0.3, 1, outBack(lk))})`;
 
+  // The long cut's own scenes.
+  extras.forEach((draw) => draw(t));
+
   // 4. The end card: the icon lands as the name is said, then the offer.
-  const ei = prog(t, at(16.7), at(17.25));
+  const ei = prog(t, at(E.icon), at(E.icon) + 0.55);
   show(endIcon, outQuart(ei));
   style(endIcon, { left: "390px", top: `${430 - 140 * (1 - outBack(ei))}px`,
     transform: `scale(${lerp(0.55, 1, outBack(ei))}) rotate(${lerp(-16, 0, outQuart(ei))}deg)`,
     filter: `drop-shadow(0 30px 50px rgba(40,0,50,${0.45 * outQuart(ei)}))` });
-  const ew = prog(t, at(16.84), at(17.3));
+  const ew = prog(t, at(E.word), at(E.word) + 0.46);
   show(endWord, outQuart(ew));
   style(endWord, { top: "780px", transform: `translateY(${lerp(44, 0, outQuart(ew))}px)`, letterSpacing: `${lerp(0.12, -0.04, outQuart(ew))}em` });
-  const et = prog(t, at(17.3), at(17.8));
+  const et = prog(t, at(E.tag), at(E.tag) + 0.5);
   show(endTag, outQuart(et));
   style(endTag, { top: "1000px", transform: `translateY(${lerp(30, 0, outQuart(et))}px)` });
-  const fr = prog(t, at(17.99), at(18.4));
+  const fr = prog(t, at(E.free), at(E.free) + 0.41);
   show(free, outQuart(fr));
   style(free, { left: "540px", top: "1205px", transform: `translateX(-50%) scale(${lerp(0.7, 1, outBack(fr))})` });
-  const ur = prog(t, at(18.9), at(19.4));
+  const ur = prog(t, at(E.url), at(E.url) + 0.5);
   show(url, outQuart(ur));
   style(url, { top: "1385px" });
   show(legal, outQuart(ur) * 0.8);
   style(legal, { top: "1450px" });
-  const push = 1 + 0.03 * prog(t, at(17), DURATION);
+  const push = 1 + 0.03 * prog(t, at(E.icon) + 0.3, DURATION);
   [endIcon, endWord, endTag].forEach((n) => { n.style.scale = String(push); });
 }
 

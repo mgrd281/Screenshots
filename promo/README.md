@@ -62,6 +62,34 @@ node promo/render.js ad --audio ad-sound.m4a                 # renders promo/out
 node promo/render.js ad --stills 2.6,9.6,16.2                # a few frames as PNGs
 ```
 
+### The long cut
+
+A 52.6-second version that explains more, with its own voice. After the
+hook it asks "which one was it?" while a pointer looks from file to file.
+The line then leaves the Desktop clear, and the WhatsApp chat and the
+covering follow, as in the short cut; the covered invoice is sent off.
+Then come the scenes the short cut leaves out:
+
+1. Search: "Rechnung" is typed, and the screenshots that say it stay
+   bright, marked where they say it.
+2. Three screenshots are picked with ⌘ and become one PDF.
+3. An English screenshot, Translate Text from its menu, and the words turn
+   German where they stand.
+4. One is sent and leaves the line, and the History still holds it for 30
+   days.
+5. No account, no cloud: everything stays on the Mac.
+6. The end card.
+
+```sh
+python3 promo/build.py ad-long                                            # writes promo/ad-long-de.html
+python3 promo/ad-sound.py --long voice-long.mp3 music.wav ad-long-sound.m4a
+node promo/render.js ad-long --audio ad-long-sound.m4a                    # renders promo/out/Snapfly-ad-long-de.mp4
+```
+
+Both cuts share `ad.js`. Each cut in its `CUTS` table has its captions and
+the moments of each scene in its own voice; a scene a cut leaves out is not
+built. The long cut reuses the same music, which is long enough.
+
 - **Timing.** `ad.js` holds the timeline and the captions, each chunk at
   the moment the voice says it. `ad-sound.py` holds the same moments for
   the effects. The voice starts 0.2 s in (`VO` in both). A new voice
@@ -73,7 +101,17 @@ node promo/render.js ad --stills 2.6,9.6,16.2                # a few frames as P
   Snapfly hängt jeder Screenshot sofort an einer Leine, oben am
   Bildschirm. Ein Klick, und er ist im Chat. WhatsApp, ChatGPT, egal wo.
   Namen und Kontonummern? Werden automatisch verdeckt. Snapfly. Kostenlos
-  für deinen Mac."
+  für deinen Mac." The long cut's script: "Schon wieder dreißig Screenshots
+  auf dem Desktop? Und welcher war noch mal der richtige? Mit Snapfly hängt
+  jeder Screenshot sofort an einer Leine, oben am Bildschirm. Dein Desktop
+  bleibt aufgeräumt. Ein Klick auf den Papierflieger, und er ist im Chat.
+  WhatsApp, ChatGPT, egal wo. Namen und Kontonummern? Werden automatisch
+  verdeckt, bevor etwas rausgeht. Du suchst eine alte Rechnung? Snapfly
+  findet jedes Wort in deinen Screenshots. Mehrere Screenshots? Werden zu
+  einem PDF. Fremde Sprache? Wird übersetzt, direkt auf deinem Mac. Was
+  gesendet ist, verschwindet von der Leine. Der Verlauf hebt es dreißig Tage
+  auf. Kein Konto. Keine Cloud. Alles bleibt auf deinem Mac. Snapfly.
+  Kostenlos für deinen Mac."
 - **Sound.** The music steps back while the voice speaks and fades out
   on the end card; the effects (ticks, a chime, whooshes, clicks, a
   thunk) are drawn in code. The mix meets Instagram's −14 LUFS.
