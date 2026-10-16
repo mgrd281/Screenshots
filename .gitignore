@@ -8,6 +8,7 @@ build/
 website/_site/
 __pycache__/
 promo/promo-*.html
+promo/ad-*.html
 promo/out/
 
 # What the Playwright MCP server saves while the agent tests the site.
