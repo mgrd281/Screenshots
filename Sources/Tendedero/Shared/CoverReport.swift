@@ -44,4 +44,24 @@ struct CoverReport: Equatable {
     var sentence: String? {
         isEmpty ? nil : String(format: L("Covered: %@"), summary)
     }
+
+    /// What was covered, to keep: the kinds' stored names in Settings'
+    /// order, then "rules" and "hand".
+    var keys: [String] {
+        var keys = PrivateDetail.allCases.filter { kinds[$0, default: 0] > 0 }.map(\.rawValue)
+        if rules > 0 { keys.append("rules") }
+        if hand > 0 { keys.append("hand") }
+        return keys
+    }
+
+    /// Kept keys read back in words, as Settings names them.
+    static func titles(of keys: [String]) -> [String] {
+        keys.compactMap { key in
+            switch key {
+            case "rules": L("Your own rules")
+            case "hand": L("Hidden by hand")
+            default: PrivateDetail(rawValue: key)?.title
+            }
+        }
+    }
 }

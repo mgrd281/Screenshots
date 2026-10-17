@@ -335,8 +335,16 @@ while the menu is open. It is grouped by day, and the search finds the words
 in every photo. A click hangs one on the line again; Send Again in its menu
 hangs it and sends it, covered, into the chat you had in front. A screenshot from
 Snapfly's own folder moves into its History folder and goes to the Trash once
-its days are up; a file from anywhere else stays where it is. Choose 7 or 30
-days, or turn it off, in Settings, under Line. It all stays on your Mac.
+its days are up; a file from anywhere else stays where it is. Choose 7, 30
+or 90 days, a year or forever, or turn it off, in Settings, under Line. It
+all stays on your Mac.
+
+Sent, at the top of the window, lists what went into which chat: the date
+and time, the photo, the chat (the website in a browser, else the app),
+what was covered and the message sent with it. Search it like the photos,
+and Export… saves it as a table for a spreadsheet, with semicolons where
+numbers use a decimal comma. It keeps only these facts, no pictures, for
+as long as the History keeps photos.
 
 <br>
 
@@ -464,7 +472,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
 | `History.swift` | What left the line, kept for 7 or 30 days |
-| `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again |
+| `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again; Sent lists what went where |
+| `SendLog.swift` | What was sent into which chat, when and with what covered, and the table it exports |
 | `CaptionBar.swift` | The line over the chat button to write a message sent with the photos |
 | `ChatLayouts.swift` | Where the chat button sits over each chat it knows, on a new chat and once started |
 | `ChatButton.swift` | The send button that floats over a chat while photos hang |

@@ -662,7 +662,7 @@ private struct LinePane: View {
                         Picker(L("Keep a history"), selection: $prefs.historyDays) {
                             Text(L("Off")).tag(Int?.none)
                             ForEach(History.dayChoices, id: \.self) { n in
-                                Text(String(format: L("%d days"), n)).tag(Int?.some(n))
+                                Text(History.title(days: n)).tag(Int?.some(n))
                             }
                         }
                         .labelsHidden()

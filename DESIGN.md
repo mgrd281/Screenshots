@@ -585,8 +585,14 @@ apps.
     once the app in front before it is back, the photo goes in, covered;
     else it stays copied with a note), Copy, Open, Show in Finder, and
     Remove from History.
-  - The search and Clear History… sit in the toolbar. Empty, it uses
-    `ContentUnavailableView`.
+  - The toolbar holds a segmented Photos | Sent picker in the middle, then
+    the search, Export… (`square.and.arrow.up`, Sent only) and Clear
+    History…, which clears both. Empty, each page uses
+    `ContentUnavailableView` (Sent with `paperplane`).
+  - **Sent** is a standard `Table`, newest first: Date (day, month, year,
+    hour and minute, monospaced digits), Photo, Sent to, Covered (the kinds'
+    titles in `.secondary`) and Message. Its context menu has Remove from
+    History. Export… opens a save panel for "Sent with Snapfly.csv".
 - **Chat button** (`ChatButton.swift`), the one control that floats over
   another app's window. It shows only while photos hang and a chat app or a
   browser is in front, and it sits just above the chat's own send button.
