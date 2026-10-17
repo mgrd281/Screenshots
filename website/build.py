@@ -1395,9 +1395,13 @@ def section_close(lang):
 </section>"""
 
 
+NEW_PARTS_LANGS = ("de",)
+
+
 def home(lang):
     t = TEXT[lang]
-    main = "\n".join([hero(lang), section_send(lang), section_story(lang), section_capture(lang), section_desk(lang), section_private(lang),
+    story = [section_story(lang)] if lang in NEW_PARTS_LANGS else []
+    main = "\n".join([hero(lang), section_send(lang), *story, section_capture(lang), section_desk(lang), section_private(lang),
                       section_say(lang), section_menu(lang), section_styles(lang), section_design(lang), section_start(lang),
                       section_close(lang)])
     return document(lang, "index", t["title_home"], t["desc_home"], main)
@@ -1432,14 +1436,21 @@ FAQ_ICONS = ["download", "hanging", "line-down", "viewfinder", "record", "messag
 FAQ_TURN = {"message", "send"}
 
 
+def faq_question(lang, sym, text):
+    """A question's words, led by its glyph where the new parts are shown."""
+    if lang not in NEW_PARTS_LANGS:
+        return esc(text)
+    turn = "icon faq-icon turn" if sym in FAQ_TURN else "icon faq-icon"
+    return f'{icon(sym, turn)}<span class="faq-q">{esc(text)}</span>'
+
+
 def support(lang):
     t = TEXT[lang]
     mail = f"mailto:{EMAIL}?subject={quote(t['support_subject'])}"
     contact = f"""<p class="muted">{esc(t["support_intro"])}</p>
     <p class="contact"><a class="btn btn-primary" href="{mail}">{icon("mail")}<span>{esc(t["support_mail"])}</span></a> <bdi class="email">{EMAIL}</bdi></p>"""
     assert len(FAQ_ICONS) == len(t["faq"]), f"{lang}: one glyph per question"
-    faq = "\n".join(f'<details class="faq"><summary>{icon(sym, "icon faq-icon turn" if sym in FAQ_TURN else "icon faq-icon")}'
-                    f'<span class="faq-q">{esc(q)}</span>{icon("chevron", "icon chev")}</summary><div class="faq-body">{a}</div></details>'
+    faq = "\n".join(f'<details class="faq"><summary>{faq_question(lang, sym, q)}{icon("chevron", "icon chev")}</summary><div class="faq-body">{a}</div></details>'
                     for sym, (q, a) in zip(FAQ_ICONS, t["faq"]))
     main = f"""<article class="doc wrap narrow">
   {doc_head(lang, t["support_title"], contact)}

@@ -1983,7 +1983,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
    up under the words, in every look (hence the :root). */
 :root .faq-icon { flex: none; width: 22px; height: 22px; color: var(--accent); }
 :root .faq-q { flex: 1; }
-:root .faq-body { padding-inline-start: 38px; }
+:root .faq:has(.faq-icon) .faq-body { padding-inline-start: 38px; }
 [dir="rtl"] .faq-icon.turn { transform: scaleX(-1); }
 
 .page-404 main { padding-top: 18vh; }

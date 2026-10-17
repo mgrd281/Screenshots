@@ -76,6 +76,11 @@ the website's footer. Both stay.
     publishes it from `main` on GitHub Pages.
   - Words live in `website/content.py`. Labels the app shows come from its
     `Localizable.strings`, so change them there.
+  - **For now, site edits are German only** (the owner's request). Words in
+    `website/content.py` change in `de` alone. The newest parts (the scroll
+    story and the question glyphs) show only in the languages listed in
+    `NEW_PARTS_LANGS` in `build.py`, which is German. English and Arabic stay
+    as they were until the owner says the others follow.
   - System fonts only, and nothing loaded from another host.
   - `vercel.json` builds the same site on Vercel. `SNAPFLY_SITE_URL` (ending in
     a slash) sets the address the pages point to; set it to the custom domain.

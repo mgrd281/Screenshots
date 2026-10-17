@@ -383,7 +383,7 @@ test("every one of the eight line styles can be picked and shows its holder", as
 // its first frame and plays once when it is well in view; the ones further
 // down wait for the eye to get there.
 test("the story's moments each play once as they come into view", async ({ page }) => {
-  await page.goto("", { waitUntil: "networkidle" });
+  await page.goto("de/", { waitUntil: "networkidle" });
   const order = await page.evaluate(() => [...document.querySelectorAll("main > section")].map((s) => s.classList[1] || s.classList[0]));
   expect(order.slice(1, 4), "after the send section, before the desktop to try").toEqual(["send", "story", "capture"]);
   const story = page.locator("[data-story]");
@@ -406,7 +406,7 @@ test("the story's moments each play once as they come into view", async ({ page 
 
 test("with Reduce Motion the story shows how each moment ends", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("ar/", { waitUntil: "networkidle" });
+  await page.goto("de/", { waitUntil: "networkidle" });
   await expect(page.locator("[data-story]")).not.toHaveClass(/staged/);
   const opacity = (selector) => page.locator(selector).evaluate((e) => getComputedStyle(e).opacity);
   expect(await opacity(".sc-hang .sc-peg")).toBe("1");
@@ -418,10 +418,21 @@ test("with Reduce Motion the story shows how each moment ends", async ({ page })
 
 // Every question on the support page leads with its own glyph.
 test("every question on the support page has its glyph", async ({ page }) => {
-  for (const dir of ["", "ar/"]) {
+  for (const dir of ["de/"]) {
     await page.goto(dir + "support.html", { waitUntil: "networkidle" });
     const questions = await page.locator(".faq").count();
     expect(questions).toBeGreaterThan(10);
     expect(await page.locator(".faq summary > svg.faq-icon").count()).toBe(questions);
+  }
+});
+
+// The newest parts of the site are German only for now (NEW_PARTS_LANGS in
+// build.py); English and Arabic keep their pages as they were.
+test("the story and the question glyphs are German for now", async ({ page }) => {
+  for (const dir of ["", "ar/"]) {
+    await page.goto(dir, { waitUntil: "networkidle" });
+    await expect(page.locator("[data-story]")).toHaveCount(0);
+    await page.goto(dir + "support.html", { waitUntil: "networkidle" });
+    await expect(page.locator(".faq-icon")).toHaveCount(0);
   }
 });

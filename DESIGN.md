@@ -841,6 +841,8 @@ system to a web page. The brief and direction contract are in
     title (`clamp(1.5rem, 2.4vw, 2rem)`, 800) and a line beside a small Mac
     screen, the sides alternating; one column at 960 px and below, the words
     above the screen.
+    German only for now, at the owner's request (`NEW_PARTS_LANGS` in
+    `build.py`).
     - **The screen** is drawn at 460 × 280 and scaled as a whole to its
       column, 460 wide at most: `scale(tan(atan2(100cqw, 460px)))`, so CSS
       divides the two lengths. It takes the desktop demo's tokens (`--d-*`,
@@ -1022,7 +1024,7 @@ system to a web page. The brief and direction contract are in
   - The privacy and support pages are documents on the paper. On the
     support page each question leads with its glyph (22 px, in the accent,
     from Lucide in the site's single stroke), and its answer lines up under
-    the words, 38 px in.
+    the words, 38 px in. German only for now (`NEW_PARTS_LANGS`).
 - **The postal pieces.** All of them print in the theme's postal ink and
   are hidden from assistive technology; the words they carry are said
   elsewhere on the page.
