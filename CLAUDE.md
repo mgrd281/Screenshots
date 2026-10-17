@@ -9,15 +9,16 @@ the website's footer. Both stay.
 
 ## Talking with the owner
 
-- Write to the owner in **Arabic only**, in short, simple words. They are
-  not a programmer.
+- **Always answer the owner in Arabic**, whatever language they write in
+  (the owner's request). Even when they write, or send screenshots, in
+  German or English, the answer is in Arabic, in short, simple words. They
+  are not a programmer.
   - That covers everything they see in the chat: replies, progress notes,
     and the short description shown with each command or tool call.
   - A tool's or file's name may stay in Latin letters, with an Arabic word
     saying what it is. No English sentences.
-  - Answer in Arabic even when they write or send screenshots in German or
-    English. Don't quote German or English words back; describe in Arabic
-    what to tap (its place and look) instead.
+  - Don't quote German or English words back; describe in Arabic what to
+    tap (its place and look) instead.
 - They usually can't reach their Mac. Never ask them to run Terminal
   commands. GitHub builds the app for them (see below).
 - Send them one update when a task is finished, not a note at each step
