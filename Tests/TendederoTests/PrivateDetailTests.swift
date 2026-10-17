@@ -177,6 +177,23 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertEqual(Finder.areas(in: image, [.emails, .orders], rules: rules).count, areas.count)
     }
 
+    // MARK: Small print
+
+    /// A whole screen at Retina size, as a screenshot is: text at the size
+    /// of a page's body is read, and so is the small print of a footer.
+    func testSmallPrintOnAWholeScreenIsRead() throws {
+        let image = try screen([("Lena Hoffmann, lena.hoffmann@example.com", 26, 1500),
+                                ("IBAN DE89 3704 0044 0532 0130 00", 26, 1400),
+                                ("Fragen? kontakt@shop-example.de", 18, 200),
+                                ("Kleingedrucktes: info@shop-example.de", 14, 120)])
+        let lines = Finder.textLines(in: image).map(\.string)
+        let found = Finder.areas(in: image, [.emails], rules: [])
+        XCTAssertGreaterThanOrEqual(found.count, 1, "body text: \(lines)")
+        XCTAssertTrue(found.contains { $0.midY > 0.7 }, "the body's email: \(lines)")
+        XCTAssertTrue(found.contains { $0.midY < 0.13 && $0.midY > 0.08 }, "the 18 px footer: \(lines)")
+        XCTAssertTrue(found.contains { $0.midY < 0.08 }, "the 14 px small print: \(lines)")
+    }
+
     // MARK: The owner's own rules
 
     func testAWordIsCoveredWholeWhereverItAppears() {
@@ -244,6 +261,24 @@ final class PrivateDetailTests: XCTestCase {
         context.fill(CGRect(x: 0, y: 0, width: size, height: size))
         context.interpolationQuality = .none
         context.draw(drawn, in: CGRect(origin: origin, size: CGSize(width: drawn.width, height: drawn.height)))
+        return try XCTUnwrap(context.makeImage())
+    }
+
+    /// A Retina screen, 2880 by 1800, with lines of text of the given size
+    /// at the given height from the bottom.
+    private func screen(_ lines: [(text: String, size: CGFloat, y: CGFloat)]) throws -> CGImage {
+        let width = 2880, height = 1800
+        let context = try XCTUnwrap(CGContext(data: nil, width: width, height: height, bitsPerComponent: 8,
+                                              bytesPerRow: 0, space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                              bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.setFillColor(CGColor(gray: 1, alpha: 1))
+        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        for line in lines {
+            let font = CTFontCreateWithName("Helvetica" as CFString, line.size, nil)
+            let text = NSAttributedString(string: line.text, attributes: [.font: font, .foregroundColor: CGColor(gray: 0.1, alpha: 1)])
+            context.textPosition = CGPoint(x: 120, y: line.y)
+            CTLineDraw(CTLineCreateWithAttributedString(text as CFAttributedString), context)
+        }
         return try XCTUnwrap(context.makeImage())
     }
 
