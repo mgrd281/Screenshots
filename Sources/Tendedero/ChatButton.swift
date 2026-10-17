@@ -478,7 +478,8 @@ final class ChatButton {
         let count = toSend.count
         guard count > 0 else { return }
         let margin = ChatButtonPanel.margin
-        CaptionBar.shared.show(above: panel.frame.insetBy(dx: margin, dy: margin), count: count) { [weak self] text in
+        CaptionBar.shared.show(above: panel.frame.insetBy(dx: margin, dy: margin), count: count,
+                               photo: toSend.last(where: \.isImage)?.url) { [weak self] text in
             self?.line.paste(caption: text)
             self?.model.sent = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in

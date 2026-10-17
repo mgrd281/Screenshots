@@ -347,6 +347,10 @@
 
 /* Message with the photos */
 "Add a message…" = "メッセージを追加…";
+"Saved messages" = "保存したメッセージ";
+"Add Message" = "メッセージを追加";
+"Here is the invoice for your order {order}." = "ご注文 {order} の請求書です。";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "メッセージバーの上に表示されます。{order}、{total}、{date}、{name}、{tracking} は写真から入力されます。隠している種類のものは空のままです。";
 "Send with a Message…" = "メッセージ付きで送信…";
 
 /* Order on the line */

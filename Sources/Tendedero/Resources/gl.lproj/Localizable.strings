@@ -347,6 +347,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Engadir unha mensaxe…";
+"Saved messages" = "Mensaxes gardadas";
+"Add Message" = "Engadir mensaxe";
+"Here is the invoice for your order {order}." = "Aquí tes a factura do teu pedido {order}.";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "Agardan enriba da barra de mensaxe. {order}, {total}, {date}, {name} e {tracking} énchense coa foto; o dun tipo que cubres queda baleiro.";
 "Send with a Message…" = "Enviar cunha mensaxe…";
 
 /* Order on the line */

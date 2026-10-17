@@ -347,6 +347,10 @@
 
 /* Message with the photos */
 "Add a message…" = "添加消息…";
+"Saved messages" = "存储的消息";
+"Add Message" = "添加消息";
+"Here is the invoice for your order {order}." = "这是你的订单 {order} 的发票。";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "它们会显示在消息栏上方。{order}、{total}、{date}、{name} 和 {tracking} 会根据照片填写；你遮盖的类型则留空。";
 "Send with a Message…" = "连同消息发送…";
 
 /* Order on the line */

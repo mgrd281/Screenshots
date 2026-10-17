@@ -242,6 +242,17 @@ enum Writer {
     #endif
 }
 
+extension OrderCard {
+    /// The order a screenshot file shows, read on this Mac as it is.
+    static func read(_ url: URL) -> [Field] {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let image = Cover.upright(source) else { return [] }
+        let lines = Finder.textLines(in: image)
+        let codes = Finder.codes(in: image, [.barcodes]).compactMap(\.payload)
+        return fields(from: Finder.details(in: lines), lines: lines.map(\.string), codes: codes)
+    }
+}
+
 // MARK: - Model
 
 @MainActor
@@ -315,13 +326,7 @@ final class TextCardModel: ObservableObject {
         let url = url
         if kind == .order {
             Task { [weak self] in
-                let fields = await Task.detached(priority: .userInitiated) { () -> [OrderCard.Field] in
-                    guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
-                          let image = Cover.upright(source) else { return [] }
-                    let lines = Finder.textLines(in: image)
-                    let codes = Finder.codes(in: image, [.barcodes]).compactMap(\.payload)
-                    return OrderCard.fields(from: Finder.details(in: lines), lines: lines.map(\.string), codes: codes)
-                }.value
+                let fields = await Task.detached(priority: .userInitiated) { OrderCard.read(url) }.value
                 self?.list(fields)
             }
             return
