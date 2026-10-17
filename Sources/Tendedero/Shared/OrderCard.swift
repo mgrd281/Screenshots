@@ -53,8 +53,67 @@ enum OrderCard {
         values[.email] = first(.emails)
         values[.phone] = first(.phones)
         values[.tracking] = first(.tracking)
-        values[.code] = codes.first.map { $0.split(whereSeparator: \.isNewline).joined(separator: " · ") }
+        if let code = codes.first {
+            // A transfer reads as who is paid, the account, the amount and
+            // what for; its amount is the total when the text has none.
+            if let payment = payment(in: code) {
+                values[.code] = payment.summary
+                if values[.total] == nil, !payment.amount.isEmpty { values[.total] = payment.amount }
+            } else {
+                values[.code] = code.split(whereSeparator: \.isNewline).joined(separator: " · ")
+            }
+        }
         return Part.allCases.compactMap { part in values[part].map { Field(part: part, value: $0) } }
+    }
+
+    /// A transfer a code holds: the GiroCode of European banks or the Swiss
+    /// QR bill.
+    struct Payment: Equatable {
+        var name = ""
+        var iban = ""
+        var amount = ""
+        var reference = ""
+
+        /// "DE89 3704 0044 0532 0130 00 · Lena Hoffmann · EUR 74.00 · RE-1024"
+        var summary: String {
+            let account = stride(from: 0, to: iban.count, by: 4).map { start -> String in
+                let from = iban.index(iban.startIndex, offsetBy: start)
+                return String(iban[from..<(iban.index(from, offsetBy: 4, limitedBy: iban.endIndex) ?? iban.endIndex)])
+            }.joined(separator: " ")
+            return [account, name, amount, reference].filter { !$0.isEmpty }.joined(separator: " · ")
+        }
+    }
+
+    /// The transfer in a code's text, line by line as the two formats lay
+    /// it out; nil for anything else, or one without an account.
+    static func payment(in payload: String) -> Payment? {
+        let lines = payload.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n")
+        func line(_ i: Int) -> String {
+            lines.indices.contains(i) ? lines[i].trimmingCharacters(in: .whitespaces) : ""
+        }
+        var payment: Payment
+        switch line(0) {
+        case "BCD":
+            // EPC: version, characters, SCT, BIC, name, IBAN, amount like
+            // "EUR74.00", purpose, reference, text.
+            var amount = line(7)
+            if amount.count > 3, amount.prefix(3).allSatisfy(\.isLetter) {
+                amount = String(amount.prefix(3)) + " " + String(amount.dropFirst(3))
+            }
+            payment = Payment(name: line(5), iban: line(6), amount: amount,
+                              reference: line(9).isEmpty ? line(10) : line(9))
+        case "SPC":
+            // Swiss: version, coding, IBAN, the creditor's seven lines, seven
+            // empty ones, amount, currency, the debtor's seven, then the
+            // reference's type, the reference and a message.
+            payment = Payment(name: line(5), iban: line(3),
+                              amount: line(18).isEmpty ? "" : line(19) + " " + line(18),
+                              reference: line(28).isEmpty ? line(29) : line(28))
+        default:
+            return nil
+        }
+        payment.iban = payment.iban.filter { !$0.isWhitespace }
+        return payment.iban.isEmpty ? nil : payment
     }
 
     /// The amount to pay: the one on a line with a word like "Total", the

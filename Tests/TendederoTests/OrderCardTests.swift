@@ -48,6 +48,42 @@ final class OrderCardTests: XCTestCase {
         XCTAssertEqual(fields, [OrderCard.Field(part: .code, value: "BCD · 002 · 1 · SCT")])
     }
 
+    private let giroCode = "BCD\n002\n1\nSCT\nCOBADEFFXXX\nLena Hoffmann\nDE89370400440532013000\nEUR74.00\n\nRE-1024\n"
+
+    func testAGiroCodeReadsAsATransfer() {
+        let payment = OrderCard.payment(in: giroCode)
+        XCTAssertEqual(payment, OrderCard.Payment(name: "Lena Hoffmann", iban: "DE89370400440532013000",
+                                                  amount: "EUR 74.00", reference: "RE-1024"))
+        XCTAssertEqual(payment?.summary, "DE89 3704 0044 0532 0130 00 · Lena Hoffmann · EUR 74.00 · RE-1024")
+        // Without a reference, the text for the payee stands in.
+        let text = "BCD\r\n001\r\n1\r\nSCT\r\n\r\nShop GmbH\r\nDE89 3704 0044 0532 0130 00\r\nEUR12.5\r\n\r\n\r\nInvoice 77"
+        XCTAssertEqual(OrderCard.payment(in: text),
+                       OrderCard.Payment(name: "Shop GmbH", iban: "DE89370400440532013000", amount: "EUR 12.5", reference: "Invoice 77"))
+    }
+
+    func testASwissQRBillReadsAsATransfer() {
+        let bill = ["SPC", "0200", "1", "CH4431999123000889012", "S", "Robert Schneider AG", "Rue du Lac", "1268",
+                    "2501", "Biel", "CH", "", "", "", "", "", "", "", "1949.75", "CHF", "S",
+                    "Pia-Maria Rutschmann-Schnyder", "Grosse Marktgasse", "28", "9400", "Rorschach", "CH", "QRR",
+                    "210000000003139471430009017", "Order of 15 June 2020", "EPD"].joined(separator: "\n")
+        XCTAssertEqual(OrderCard.payment(in: bill),
+                       OrderCard.Payment(name: "Robert Schneider AG", iban: "CH4431999123000889012",
+                                         amount: "CHF 1949.75", reference: "210000000003139471430009017"))
+    }
+
+    func testOtherCodesAreNoTransfer() {
+        XCTAssertNil(OrderCard.payment(in: "https://shop.example.com/orders/1024"))
+        XCTAssertNil(OrderCard.payment(in: "BCD\n002\n1\nSCT"))
+    }
+
+    func testATransferFillsTheTotalWhenTheTextHasNone() {
+        let fields = OrderCard.fields(from: [], lines: [], codes: [giroCode])
+        XCTAssertEqual(fields, [
+            OrderCard.Field(part: .total, value: "EUR 74.00"),
+            OrderCard.Field(part: .code, value: "DE89 3704 0044 0532 0130 00 · Lena Hoffmann · EUR 74.00 · RE-1024"),
+        ])
+    }
+
     /// Read from a picture, as the app does.
     func testAnOrderIsReadOffAPicture() throws {
         let image = try drawn(["Bestellung #1024", "lena.hoffmann@example.com", "Gesamt 74,00 €"])

@@ -6,6 +6,8 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Order Details reads a GiroCode or a Swiss QR bill as a transfer: the
+  account, who is paid, the amount and the reference.
 - Send with Shop Header, in a photo's menu: the covered screenshot goes
   under a band with your shop's name and logo, the order and the day. Set
   them under Line in Settings.
