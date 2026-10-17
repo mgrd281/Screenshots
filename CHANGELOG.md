@@ -54,6 +54,8 @@ keeps a download of each version.
   the photo's menu, for "Covered: Names · QR codes and barcodes". VoiceOver
   says it too, and the iPhone shows it under the covered picture. The lock
   now shows only when something was covered.
+- On the iPhone: rules of your own under Also hide, as on the Mac, and
+  Check All, Recommended and Uncheck All in Settings.
 
 ## 1.0.0
 
