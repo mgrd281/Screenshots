@@ -530,3 +530,7 @@
 "A square picture works best." = "वर्गाकार चित्र सबसे अच्छा रहता है।";
 "Shop header" = "दुकान का शीर्ष";
 "Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "फ़ोटो के मेनू में “दुकान के शीर्ष के साथ भेजें” ढके हुए स्क्रीनशॉट के ऊपर आपकी दुकान के नाम और लोगो, ऑर्डर और दिन वाली पट्टी लगाता है।";
+"As typed" = "जैसा लिखा";
+"Send in another language" = "दूसरी भाषा में भेजें";
+"Sent in %@" = "%@ में भेजा जाता है";
+"Language of the message" = "संदेश की भाषा";

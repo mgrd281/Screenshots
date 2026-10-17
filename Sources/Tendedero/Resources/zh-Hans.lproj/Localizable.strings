@@ -528,3 +528,7 @@
 "A square picture works best." = "方形图片效果最好。";
 "Shop header" = "店铺抬头";
 "Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "照片菜单中的“附店铺抬头发送”会在遮盖后的截屏上方加一条带有店铺名称和标志、订单号和日期的横条。";
+"As typed" = "按原文";
+"Send in another language" = "用其他语言发送";
+"Sent in %@" = "以%@发送";
+"Language of the message" = "消息语言";

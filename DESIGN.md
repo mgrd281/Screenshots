@@ -680,6 +680,13 @@ apps.
     bar does: Return sends the photos and then the message, Escape or a
     click elsewhere closes it. VoiceOver reaches it as an action on the
     button.
+  - On macOS 15 and later a language menu sits between the field and the
+    count: `globe` at 13 pt `.secondary`, or the chosen language's two
+    letters in an 11 pt semibold rounded chip like the count's. Its menu
+    holds As typed, then the Mac's languages, the user's own first. With
+    one chosen, Return first translates the message in place, on this Mac,
+    while the send circle shows a small spinner; the next Return sends what
+    the field shows. The choice is kept for each chat.
   - While the field is empty, the saved messages (`bookmark`, no cross),
     then the last five messages sent (`RecentCaptions`,
     newest first, kept on the Mac) stand 6 pt above the bar in a list of the
