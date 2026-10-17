@@ -11,8 +11,9 @@ import SwiftUI
 /// - Nowhere that accepts it: the photo flies back to the line.
 ///
 /// Click copies, press and hold opens Markup, the corner cross discards, or
-/// unpins a pinned photo, and the paper plane in the opposite corner sends.
-/// ⌘-click picks several, which copy together.
+/// unpins a pinned photo, and the paper plane in the opposite corner sends,
+/// with ChatGPT and Claude beside it. ⌘-click, or the circle opposite the
+/// cross, picks several, which go together.
 struct GrabArea: NSViewRepresentable {
     let item: Pegged
     let line: Line
@@ -39,6 +40,8 @@ struct GrabArea: NSViewRepresentable {
         view.outgoingURL = { PrivateDetails.shareable(item.url, covering: CoveringProfile.detailsNow) }
         view.onClick = { line.copy(id) }
         view.onPick = { line.pick(id) }
+        view.onPickCircle = { line.pick(id, quietly: true) }
+        view.onSendToChat = { chat in line.send(id, to: chat) }
         view.onSentByDrag = { line.sentByDrag(id) }
         view.onSend = { line.paste(id) }
         view.onDoubleClick = { line.open(id) }
@@ -64,6 +67,11 @@ struct GrabArea: NSViewRepresentable {
         let said = [covered, sent].compactMap { $0 }
         view.lockHelp = said.joined(separator: "\n")
         view.lockBadges = (item.covered ? 1 : 0) + (sent == nil ? 0 : 1)
+        let picked = line.pickedIDs.contains(id)
+        view.picked = picked
+        // ChatGPT and Claude beside the paper plane, where the photo has room.
+        view.leadingRoom = PhotoButtons.leadingRoom(badges: item.isDocument ? 0 : view.lockBadges, document: item.isDocument)
+        view.chats = AIChat.takes(item) ? AIChat.onPhotosNow : []
         // VoiceOver hears one button named after the file, and reaches what
         // the pointer finds on hover as actions.
         view.setAccessibilityElement(true)
@@ -93,7 +101,17 @@ struct GrabArea: NSViewRepresentable {
             MainActor.assumeIsolated { line.move(id, by: 1) }
             return true
         }
-        view.setAccessibilityCustomActions((pinned ? [send, pin] : [send, pin, takeDown]) + [earlier, later])
+        let pick = NSAccessibilityCustomAction(name: picked ? L("Unpick") : L("Pick")) {
+            MainActor.assumeIsolated { line.pick(id, quietly: true) }
+            return true
+        }
+        let chats = AIChat.takes(item) ? AIChat.allCases.map { chat in
+            NSAccessibilityCustomAction(name: String(format: L("Send to %@"), chat.name)) {
+                MainActor.assumeIsolated { line.send(id, to: chat) }
+                return true
+            }
+        } : []
+        view.setAccessibilityCustomActions((pinned ? [send, pin] : [send, pin, takeDown]) + chats + [pick, earlier, later])
         view.menuProvider = {
             let menu = NSMenu()
             // Items say themselves whether they can be used.
@@ -119,12 +137,31 @@ struct GrabArea: NSViewRepresentable {
             }
             if line.liveCount > 1 {
                 menu.addItem(ClosureMenuItem(L("Copy all"), symbol: "square.on.square") { line.copyAll() })
+                if line.pickedIDs.count < line.liveCount {
+                    menu.addItem(ClosureMenuItem(L("Pick All"), symbol: "checkmark.circle") { line.pickAll() })
+                }
+            }
+            if !line.pickedIDs.isEmpty {
+                menu.addItem(ClosureMenuItem(L("Unpick All"), symbol: "circle") { line.unpickAll() })
             }
             if let app = Paste.frontApp?.localizedName {
                 menu.addItem(ClosureMenuItem(String(format: L("Paste into %@"), app), symbol: "paperplane") { line.paste(id) })
                 if isImage {
                     // For a customer: under a band with the shop's name, logo, order and day.
                     menu.addItem(ClosureMenuItem(L("Send with Shop Header"), symbol: "storefront") { line.sendWithHeader(id) })
+                }
+            }
+            // Straight into ChatGPT or Claude: their app, or else their website.
+            if AIChat.takes(item) {
+                for chat in AIChat.allCases {
+                    let send = ClosureMenuItem(String(format: L("Send to %@"), chat.name), symbol: "bubble.left") {
+                        line.send(id, to: chat)
+                    }
+                    if #available(macOS 26, *), let icon = chat.icon?.copy() as? NSImage {
+                        icon.size = NSSize(width: 16, height: 16)
+                        send.image = icon
+                    }
+                    menu.addItem(send)
                 }
             }
             if isImage {
@@ -223,6 +260,10 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     var onClick: () -> Void = {}
     /// ⌘-click or ⇧-click: picks the photo, to copy along with others.
     var onPick: () -> Void = {}
+    /// The circle opposite the cross: picks the photo, or puts it back.
+    var onPickCircle: () -> Void = {}
+    /// ChatGPT or Claude beside the paper plane.
+    var onSendToChat: (AIChat) -> Void = { _ in }
     /// The paper plane: into the app in front.
     var onSend: () -> Void = {}
     /// Dropped into an app, which took a copy.
@@ -252,6 +293,16 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     var lockBadges = 1 {
         didSet { if lockBadges != oldValue { placeTips() } }
     }
+    /// The photo is picked: its circle puts it back.
+    var picked = false
+    /// The AI chats beside the paper plane, and the room the lock's corner
+    /// takes, which together say where they fit.
+    var chats: [AIChat] = [] {
+        didSet { if chats != oldValue { placeTips() } }
+    }
+    var leadingRoom: CGFloat = 0 {
+        didSet { if leadingRoom != oldValue { placeTips() } }
+    }
     private var tips: [NSView.ToolTipTag] = []
 
     private var downPoint: NSPoint?
@@ -265,29 +316,57 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
 
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 
-    /// The discard cross drawn in the top left corner of the card. It is
+    /// A rect counted from the card's top left, left to right, as this view
+    /// counts: from the bottom unless flipped, and mirrored for right to
+    /// left, where SwiftUI draws the leading corner on the right.
+    private func placed(_ rect: CGRect) -> NSRect {
+        let x = userInterfaceLayoutDirection == .rightToLeft ? bounds.width - rect.maxX : rect.minX
+        return NSRect(x: x, y: isFlipped ? rect.minY : bounds.height - rect.maxY, width: rect.width, height: rect.height)
+    }
+
+    /// The discard cross drawn in the top leading corner of the card. It is
     /// handled here because this view sits on top of the SwiftUI card.
     static let crossHitSize: CGFloat = 26
 
     private var crossRect: NSRect {
-        NSRect(x: 0, y: isFlipped ? 0 : bounds.height - Self.crossHitSize,
-               width: Self.crossHitSize, height: Self.crossHitSize)
+        placed(CGRect(x: 0, y: 0, width: Self.crossHitSize, height: Self.crossHitSize))
     }
 
     private func isInCross(_ event: NSEvent) -> Bool {
         crossRect.contains(convert(event.locationInWindow, from: nil))
     }
 
-    /// The paper plane drawn in the bottom right corner, the cross's opposite.
+    /// The paper plane drawn in the bottom trailing corner, the cross's opposite.
     static let sendHitSize: CGFloat = 30
 
     private var sendRect: NSRect {
-        NSRect(x: bounds.width - Self.sendHitSize, y: isFlipped ? bounds.height - Self.sendHitSize : 0,
-               width: Self.sendHitSize, height: Self.sendHitSize)
+        placed(CGRect(x: bounds.width - Self.sendHitSize, y: bounds.height - Self.sendHitSize,
+                      width: Self.sendHitSize, height: Self.sendHitSize))
     }
 
     private func isInSend(_ event: NSEvent) -> Bool {
         sendRect.contains(convert(event.locationInWindow, from: nil))
+    }
+
+    /// The pick circle in the top trailing corner, kept clear of the cross
+    /// on a narrow photo.
+    private var pickRect: NSRect {
+        var rect = PhotoButtons.pick(card: bounds.size).insetBy(dx: -3, dy: -3)
+        rect.origin.x = max(rect.minX, Self.crossHitSize)
+        rect.size.width = max(0, bounds.width - rect.minX)
+        return placed(rect)
+    }
+
+    /// ChatGPT's and Claude's icons beside the paper plane, where they fit.
+    private var chatRects: [NSRect] {
+        let card = bounds.size
+        let arrangement = PhotoButtons.arrangement(card: card, chats: chats.count, leadingRoom: leadingRoom)
+        return PhotoButtons.chats(card: card, count: chats.count, arrangement: arrangement)
+            .map { placed($0.insetBy(dx: -2, dy: -2)) }
+    }
+
+    private func chat(at point: NSPoint) -> AIChat? {
+        zip(chats, chatRects).first { $0.1.contains(point) }?.0
     }
 
     /// The lock of a covered photo, in the bottom corner where lines of
@@ -312,13 +391,18 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     private func placeTips() {
         for tip in tips { removeToolTip(tip) }
         tips = [addToolTip(crossRect, owner: self, userData: nil),
+                addToolTip(pickRect, owner: self, userData: nil),
                 addToolTip(sendRect, owner: self, userData: nil)]
+        tips += chatRects.map { addToolTip($0, owner: self, userData: nil) }
         if !lockHelp.isEmpty { tips.append(addToolTip(lockRect, owner: self, userData: nil)) }
     }
 
     func view(_ view: NSView, stringForToolTip tag: NSView.ToolTipTag, point: NSPoint,
               userData data: UnsafeMutableRawPointer?) -> String {
         if crossRect.contains(point) { return cornerHelp }
+        if pickRect.contains(point) { return picked ? L("Unpick") : L("Pick") }
+        if sendRect.contains(point) { return sendHelp }
+        if let target = chat(at: point) { return String(format: L("Send to %@"), target.name) }
         if !lockHelp.isEmpty && lockRect.contains(point) { return lockHelp }
         return sendHelp
     }
@@ -354,9 +438,20 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
             onDiscard()
             return
         }
+        let point = convert(event.locationInWindow, from: nil)
+        if pickRect.contains(point) {
+            downPoint = nil
+            onPickCircle()
+            return
+        }
         if isInSend(event) && !isPick(event) {
             downPoint = nil
             onSend()
+            return
+        }
+        if let target = chat(at: point), !isPick(event) {
+            downPoint = nil
+            onSendToChat(target)
             return
         }
         if event.clickCount == 2 && !isPick(event) {

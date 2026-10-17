@@ -393,16 +393,34 @@ apps.
 - **Labels say what happens.** For example "Copy", which turns into "Copied"
   with a checkmark.
 - **Corner buttons on a photo** are 20–22 pt circles. They show on hover only,
-  except the pin, which always shows.
+  except the pin and a picked photo's check, which always show.
   - Top leading: discard (cross, or eye-slash for files outside Snapfly's
     folder) or unpin.
-  - Bottom trailing: send.
-  - Each draws in SwiftUI and is hit-tested in `GrabView`.
+  - Top trailing: the pick circle, 20 pt glass with an 8 pt bold
+    `checkmark` in `.primary`, as the cross is drawn. A click picks the
+    photo to go with others, without the "Copied" capsule; picked, it is
+    the accent circle with a 9 pt bold white check, and a click puts it
+    back. Its tip says Pick or Unpick.
+  - Bottom trailing: send, a 22 pt accent circle with `paperplane.fill`.
+    Beside it, ChatGPT and Claude: each app's own icon, as macOS draws it
+    (`NSWorkspace.icon(forFile:)`), 22 pt with the icon drawn at 122% so
+    its shape matches the circle, under the small badge shadow. Snapfly
+    carries no logo of theirs, so an icon shows only while its app is on
+    the Mac, and only with ChatGPT and Claude on photos on (Settings ›
+    Line, under Mark photos sent before, on at first). `PhotoButtons` places them: in a row along the bottom, 4 pt
+    apart, when the card is wide enough beside its lock badges or PDF
+    capsule; else in a column above the paper plane, clear of the pick
+    circle; else not at all, and the photo's menu has Send to ChatGPT and
+    Send to Claude. Not on recordings, which the chats don't take.
+  - Each draws in SwiftUI and is hit-tested in `GrabView`, mirrored for
+    right to left as SwiftUI draws leading and trailing.
 
 ### Photo card
 - Glass frame, a 4 pt inset and a 12 pt image corner.
 - States:
-  - picked: accent ring and check;
+  - picked: accent ring and the pick circle's check. A photo stays picked
+    when the line goes up, until it is sent, a click copies one photo
+    alone, or Unpick All in its menu;
   - covered: lock badge, shown only when something was covered. Resting on
     it shows a tip naming what was, kinds in Settings' order joined by " · ",
     then "Your own rules" and "Hidden by hand": "Covered: Names · Emails".

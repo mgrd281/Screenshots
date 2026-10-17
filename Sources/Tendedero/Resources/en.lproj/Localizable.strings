@@ -112,6 +112,15 @@
 /* LineTag, GrabArea */
 "Copy all" = "Copy all";
 "Paste into %@" = "Paste into %@";
+"Pick" = "Pick";
+"Unpick" = "Unpick";
+"Pick All" = "Pick All";
+"Unpick All" = "Unpick All";
+"Send to %@" = "Send to %@";
+"Opening %@…" = "Opening %@…";
+"Could not open %@. The photos stay on the line." = "Could not open %@. The photos stay on the line.";
+"ChatGPT and Claude on photos" = "ChatGPT and Claude on photos";
+"Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there." = "Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there.";
 "Paste into the app in front" = "Paste into the app in front";
 "Combine into one image" = "Combine into one image";
 "One under another" = "One under another";

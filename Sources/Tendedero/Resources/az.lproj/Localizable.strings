@@ -112,6 +112,15 @@
 /* LineTag, GrabArea */
 "Copy all" = "Hamısını kopyala";
 "Paste into %@" = "%@ tətbiqinə yapışdır";
+"Pick" = "Seç";
+"Unpick" = "Seçimi ləğv et";
+"Pick All" = "Hamısını seç";
+"Unpick All" = "Seçimləri ləğv et";
+"Send to %@" = "Göndər: %@";
+"Opening %@…" = "%@ açılır…";
+"Could not open %@. The photos stay on the line." = "%@ açılmadı. Fotolar ipdə qalır.";
+"ChatGPT and Claude on photos" = "Fotolarda ChatGPT və Claude";
+"Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there." = "Tətbiqləri bu Mac-də olanda nişanları kağız təyyarənin yanında görünür. Bir klik fotonu və ya onunla seçilənləri oradakı söhbətə göndərir.";
 "Paste into the app in front" = "Öndəki tətbiqə yapışdır";
 "Combine into one image" = "Bir şəkildə birləşdir";
 "One under another" = "Alt-alta";

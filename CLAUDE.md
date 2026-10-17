@@ -20,6 +20,8 @@ the website's footer. Both stay.
     what to tap (its place and look) instead.
 - They usually can't reach their Mac. Never ask them to run Terminal
   commands. GitHub builds the app for them (see below).
+- Send them one update when a task is finished, not a note at each step
+  (the owner's request).
 
 ## Merging
 
@@ -31,6 +33,15 @@ the website's footer. Both stay.
 - Speak up only when something goes wrong: a red build you can't fix, or a
   merge conflict that needs a decision.
 - Never merge a red build. Fix it first.
+- **Push once per task** (the owner's request). Commit as you go, but push
+  the branch only when the whole task is done and checked: code, strings,
+  tests and docs. Every push, and every merge into `main`, makes a Vercel
+  deployment, and the free plan allows 100 a day; it ran out in October
+  2026.
+  - A fix for a red build is the one exception. Check it well first, so one
+    push does it.
+  - Vercel's status reading "Deployment rate limited" is that limit, not the
+    pull request's fault. It doesn't gate merging; Build Snapfly does.
 
 ## Building and releases
 

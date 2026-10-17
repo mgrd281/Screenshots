@@ -29,6 +29,8 @@ struct PeggedView: View {
     private var places: [CGRect] { line.found?[item.id] ?? [] }
     /// One like it was sent lately, and Settings marks it.
     private var sentBefore: Bool { Line.marksSentBefore && line.sentBefore[item.id] != nil }
+    /// The badges in the bottom leading corner, which the send buttons keep clear of.
+    private var badges: Int { item.isDocument ? 0 : (item.covered ? 1 : 0) + (sentBefore ? 1 : 0) }
 
     var body: some View {
         VStack(spacing: -12) {
@@ -110,25 +112,13 @@ struct PeggedView: View {
             }
             .padding(Frame.inset)
             .glassFrame(cornerRadius: Frame.radius)
-            // Picked with ⌘-click, to copy along with others: a ring and a
-            // check in the corner opposite the cross.
+            // Picked, to go along with others: a ring, and the check in the
+            // pick circle, in the corner opposite the cross.
             .overlay(
                 RoundedRectangle(cornerRadius: Frame.radius, style: .continuous)
                     .strokeBorder(Color.accentColor, lineWidth: 2.5)
                     .opacity(picked ? 1 : 0)
             )
-            .overlay(alignment: .topTrailing) {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 20, height: 20)
-                    .background(Color.accentColor, in: Circle())
-                    .padding(3)
-                    .opacity(picked ? 1 : 0)
-                    .scaleEffect(picked ? 1 : 0.6)
-                    .allowsHitTesting(false)
-                    .accessibilityHidden(true)
-            }
             .animation(.easeOut(duration: 0.18), value: picked)
             .overlay(alignment: .bottomLeading) {
                 // Private details are covered in what leaves the line, and a
@@ -187,16 +177,14 @@ struct PeggedView: View {
             .overlay(alignment: .topLeading) {
                 Corner(pinned: item.pinned, trashes: line.isInInbox(item.id), hovering: hovering, dragging: dragging)
             }
+            .overlay(alignment: .topTrailing) {
+                PickCircle(picked: picked, hovering: hovering && !dragging)
+            }
             .overlay(alignment: .bottomTrailing) {
-                // Sends this photo into the app in front, like a chat. Drawn
-                // here and clicked through GrabView, like the cross.
-                Image(systemName: "paperplane.fill")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 22, height: 22)
-                    .background(Color.accentColor, in: Circle())
-                    .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
-                    .padding(4)
+                // The paper plane sends this photo into the app in front, like
+                // a chat; ChatGPT and Claude beside it, into a chat of theirs.
+                // Drawn here and clicked through GrabView, like the cross.
+                sendButtons
                     .opacity(hovering && !dragging ? 1 : 0)
                     .scaleEffect(hovering ? 1 : 0.6)
                     .allowsHitTesting(false)
@@ -224,6 +212,45 @@ struct PeggedView: View {
                                            value: item.falling ? [:] : [item.id: g.frame(in: .global)])
                 }
             )
+    }
+
+    /// The paper plane, with the AI chats' icons beside it where the photo
+    /// has room for them, as `PhotoButtons` places them.
+    private var sendButtons: some View {
+        let chats = AIChat.takes(item) ? AIChat.onPhotosNow : []
+        let arrangement = PhotoButtons.arrangement(card: Self.cardSize(for: item.thumb.size), chats: chats.count,
+                                                   leadingRoom: PhotoButtons.leadingRoom(badges: badges, document: item.isDocument))
+        let stack = arrangement == .column ? AnyLayout(VStackLayout(spacing: PhotoButtons.gap))
+                                           : AnyLayout(HStackLayout(spacing: PhotoButtons.gap))
+        return stack {
+            if arrangement != .none {
+                ForEach(chats) { chat in
+                    chatIcon(chat)
+                }
+            }
+            Image(systemName: "paperplane.fill")
+                .font(.system(size: 9, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: PhotoButtons.size, height: PhotoButtons.size)
+                .background(Color.accentColor, in: Circle())
+                .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
+        }
+        .padding(PhotoButtons.inset)
+    }
+
+    /// The chat app's own icon. An app icon keeps a margin round its shape,
+    /// so it is drawn a little larger to look as large as the paper plane.
+    private func chatIcon(_ chat: AIChat) -> some View {
+        ZStack {
+            if let icon = chat.icon {
+                Image(nsImage: icon)
+                    .resizable()
+                    .interpolation(.high)
+                    .frame(width: PhotoButtons.size * 1.22, height: PhotoButtons.size * 1.22)
+            }
+        }
+        .frame(width: PhotoButtons.size, height: PhotoButtons.size)
+        .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
     }
 
     /// A white glyph on the photo badge, as the lock is drawn.
@@ -309,6 +336,40 @@ private struct Corner: View {
     }
 }
 
+/// The circle in the top trailing corner. On a photo under the pointer a
+/// click picks it, to go with others; picked, it holds the accent check,
+/// always showing, and a click puts it back. Drawn here, clicked through
+/// GrabView, which sits on top.
+private struct PickCircle: View {
+    let picked: Bool
+    let hovering: Bool
+
+    var body: some View {
+        ZStack {
+            if picked {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: PhotoButtons.pickSize, height: PhotoButtons.pickSize)
+                    .background(Color.accentColor, in: Circle())
+                    .transition(.scale(scale: 0.6).combined(with: .opacity))
+            } else {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(.primary)
+                    .frame(width: PhotoButtons.pickSize, height: PhotoButtons.pickSize)
+                    .controlGlass(circle: true)
+                    .opacity(hovering ? 1 : 0)
+                    .scaleEffect(hovering ? 1 : 0.6)
+            }
+        }
+        .padding(PhotoButtons.pickInset)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+        .animation(.easeOut(duration: 0.18), value: picked)
+    }
+}
+
 /// A word found by Search, marked on the photo like a highlighter.
 private struct Highlight: View {
     /// From 0 to 1 from the bottom left.
@@ -333,6 +394,65 @@ private struct Highlight: View {
 enum Frame {
     static let radius: CGFloat = 16
     static let inset: CGFloat = 4
+}
+
+/// Where the buttons on a photo under the pointer sit, for drawing them and
+/// for clicking them through GrabView. The pick circle takes the top
+/// trailing corner, as the cross takes the top leading one. The paper plane
+/// takes the bottom trailing corner, with the AI chats' icons beside it in a
+/// row, or above it on a narrow photo, or left out on one too small for
+/// either: the photo's menu has them all the same. Counted from the card's
+/// top left, left to right; GrabView mirrors them for right to left.
+enum PhotoButtons {
+    /// A send button across, and the room between them and round them.
+    static let size: CGFloat = 22
+    static let gap: CGFloat = 4
+    static let inset: CGFloat = 4
+    /// The pick circle, drawn as the corner cross is.
+    static let pickSize: CGFloat = 20
+    static let pickInset: CGFloat = 3
+
+    enum Arrangement: Equatable {
+        case row, column, none
+    }
+
+    /// The room the bottom leading corner takes, which a row keeps clear
+    /// of: the lock and the paper plane of a photo sent before, each 18 pt
+    /// and 4 apart, or a PDF's capsule.
+    static func leadingRoom(badges: Int, document: Bool) -> CGFloat {
+        if document { return 72 }
+        guard badges > 0 else { return 0 }
+        return 5 + CGFloat(badges) * 18 + CGFloat(badges - 1) * 4 + gap
+    }
+
+    /// How a card of this size holds the paper plane and that many chats.
+    static func arrangement(card: CGSize, chats: Int, leadingRoom: CGFloat) -> Arrangement {
+        guard chats > 0 else { return .none }
+        let length = inset + CGFloat(chats + 1) * size + CGFloat(chats) * gap
+        if card.width >= length + leadingRoom { return .row }
+        if card.height >= length + pickInset + pickSize + gap { return .column }
+        return .none
+    }
+
+    /// The paper plane, in the bottom trailing corner.
+    static func plane(card: CGSize) -> CGRect {
+        CGRect(x: card.width - inset - size, y: card.height - inset - size, width: size, height: size)
+    }
+
+    /// Each chat's icon, the first the farthest from the paper plane.
+    static func chats(card: CGSize, count: Int, arrangement: Arrangement) -> [CGRect] {
+        guard arrangement != .none, count > 0 else { return [] }
+        let corner = Self.plane(card: card)
+        return (0..<count).map { i in
+            let step = CGFloat(count - i) * (size + gap)
+            return arrangement == .row ? corner.offsetBy(dx: -step, dy: 0) : corner.offsetBy(dx: 0, dy: -step)
+        }
+    }
+
+    /// The pick circle, in the top trailing corner.
+    static func pick(card: CGSize) -> CGRect {
+        CGRect(x: card.width - pickInset - pickSize, y: pickInset, width: pickSize, height: pickSize)
+    }
 }
 
 /// A minimal aluminium clip: a brushed metal pill with a slot where it

@@ -61,6 +61,21 @@ enum Paste {
         }
     }
 
+    /// Whether the app in front has a field to type in with the keyboard,
+    /// like a chat's message box; false where Accessibility can't tell.
+    static var isTypingInField: Bool {
+        guard AXIsProcessTrusted() else { return false }
+        let system = AXUIElementCreateSystemWide()
+        // An app still starting answers slowly: a moment, not the usual seconds.
+        AXUIElementSetMessagingTimeout(system, 0.2)
+        guard let field = element(system, kAXFocusedUIElementAttribute) else { return false }
+        AXUIElementSetMessagingTimeout(field, 0.2)
+        var role: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(field, kAXRoleAttribute as CFString, &role) == .success,
+              let role = role as? String else { return false }
+        return [kAXTextAreaRole, kAXTextFieldRole, kAXComboBoxRole].map { $0 as String }.contains(role)
+    }
+
     /// Where a paste shows up on the given screen, in AppKit screen
     /// coordinates: the field being typed in, like a chat's message box,
     /// near its start; else the bottom of the app's window, where message

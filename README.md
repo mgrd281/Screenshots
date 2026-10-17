@@ -52,7 +52,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | | |
 |:--|:--|
 | Click | Copy the image. |
-| <kbd>⌘</kbd>-click several | Copy them together, to paste them all at once. |
+| <kbd>⌘</kbd>-click several, or click the circle on each | Pick them, to send or copy just those together. They stay picked, even when the line goes up, until they are sent. Pick All in a photo's menu, then put back the few that should stay. |
 | Right-click, then Copy Text | Copy the words in it, to paste as text. |
 | Right-click, then Hide Part | Drag a box over anything the covering missed. It stays hidden in whatever leaves the line. |
 | Right-click, then Draw on Photo | Point things out with an arrow, a box, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
@@ -60,6 +60,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
+| Click ChatGPT or Claude beside the paper plane | Send it, or the photos picked with it, into ChatGPT or Claude: the app comes to the front with its chat, or opens on a new one, and they are pasted in; with the website open in the browser in front, they go there. The icons are the apps' own and show while the apps are on your Mac; without them, Send to ChatGPT and Send to Claude in a photo's menu open the website instead. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
 | Right-click, then Keep on Top | Float it over every app in a small window of its own, to read from while you write in a chat. Drag it anywhere, resize it at its edges, and close it with its cross. Up to three float at once. |
@@ -398,6 +399,14 @@ sent twice by mistake. Snapfly knows it again by a print of its words kept
 with the History, not by the words themselves. Turn it off with Mark photos
 sent before, under Line.
 
+Ten of fifteen to send? Click the circle on each, in the corner opposite
+the cross, and only those go: with the send button on the tag, with the one
+over a chat, or with ChatGPT or Claude beside the paper plane. Those two
+send straight into the app, which comes to the front with the chat it
+shows, or opens on a new one; the photos are pasted in once it is ready,
+covered as in any AI chat, after the check before sending. Turn the icons
+off with ChatGPT and Claude on photos, under Line.
+
 <br>
 
 ## Gone, but not lost.
@@ -564,6 +573,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
 | `LineTag.swift` | The tag at the end of the line: moving it, combining, sending and taking everything down |
 | `Paste.swift` | Pastes into the app in front, for the send button |
+| `AIChat.swift` | ChatGPT and Claude beside the paper plane: their app or website, opened on a chat and waited for |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
 | `FolderCover.swift` | Cover a folder: watches one folder and saves covered copies of what lands there in another |
