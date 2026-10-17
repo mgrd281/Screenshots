@@ -528,6 +528,14 @@
 "Nothing to cover in %@. Take a look." = "%@ には隠すものがありませんでした。確認してください。";
 "Could not cover %@." = "%@ を隠せませんでした。";
 "Watched folder" = "監視するフォルダ";
+"Test on a Sample" = "サンプルでテスト";
+"Testing…" = "テスト中…";
+"Test" = "テスト";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "上でチェックした内容で架空の注文を隠し、それぞれの種類が何を隠すかを示します。このサンプルについてだけの結果です。実際のスクリーンショットは違って読まれることがあります。";
+"Covered on this sample: %@" = "このサンプルで隠したもの：%@";
+"Nothing checked was found on this sample." = "このサンプルでは、チェックしたものは見つかりませんでした。";
+"Checked, but not on this sample: %@" = "チェック済みですが、このサンプルにないもの：%@";
+"Could not run the test." = "テストを実行できませんでした。";
 "Send with Shop Header" = "ショップのヘッダー付きで送信";
 "Add your shop's name or logo under Line in Settings." = "設定の「ロープ」で、ショップの名前かロゴを追加してください。";
 "Adding the shop header…" = "ショップのヘッダーを追加中…";

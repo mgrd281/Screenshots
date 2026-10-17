@@ -9,6 +9,8 @@ keeps a download of each version.
 - Cover what lands in a folder, under Privacy: every picture or PDF that
   lands in a folder you choose gets a covered copy in another, in the
   background, with one note when a run is done.
+- Test on a Sample, under Privacy: a made-up order covered with what you
+  checked, to see what each kind hides.
 - Send with Shop Header, in a photo's menu: the covered screenshot goes
   under a band with your shop's name and logo, the order and the day. Set
   them under Line in Settings.

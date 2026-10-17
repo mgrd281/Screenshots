@@ -528,6 +528,14 @@
 "Nothing to cover in %@. Take a look." = "Nada para cobrir em %@. Dê uma olhada.";
 "Could not cover %@." = "Não foi possível cobrir %@.";
 "Watched folder" = "Pasta observada";
+"Test on a Sample" = "Testar em um exemplo";
+"Testing…" = "Testando…";
+"Test" = "Teste";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "Cobre um pedido inventado com o que está marcado acima, para mostrar o que cada tipo esconde. Vale só para este exemplo: uma captura real pode ser lida de outro jeito.";
+"Covered on this sample: %@" = "Coberto neste exemplo: %@";
+"Nothing checked was found on this sample." = "Nada do que está marcado foi encontrado neste exemplo.";
+"Checked, but not on this sample: %@" = "Marcado, mas não neste exemplo: %@";
+"Could not run the test." = "Não foi possível fazer o teste.";
 "Send with Shop Header" = "Enviar com o cabeçalho da loja";
 "Add your shop's name or logo under Line in Settings." = "Adicione o nome ou o logotipo da sua loja em Ajustes, em Varal.";
 "Adding the shop header…" = "Adicionando o cabeçalho da loja…";

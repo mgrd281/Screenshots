@@ -528,6 +528,14 @@
 "Nothing to cover in %@. Take a look." = "%@ 中没有需要遮盖的内容，请看一下。";
 "Could not cover %@." = "无法遮盖 %@。";
 "Watched folder" = "被监视的文件夹";
+"Test on a Sample" = "用示例测试";
+"Testing…" = "正在测试…";
+"Test" = "测试";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "用上面勾选的内容遮盖一份虚构的订单，展示每一类会遮住什么。结果只针对这个示例：真实的截屏可能会被读成不同的样子。";
+"Covered on this sample: %@" = "此示例中已遮盖：%@";
+"Nothing checked was found on this sample." = "在此示例中没有找到勾选的内容。";
+"Checked, but not on this sample: %@" = "已勾选，但此示例中没有：%@";
+"Could not run the test." = "无法运行测试。";
 "Send with Shop Header" = "附店铺抬头发送";
 "Add your shop's name or logo under Line in Settings." = "请在设置的“晾衣绳”中添加店铺名称或标志。";
 "Adding the shop header…" = "正在添加店铺抬头…";

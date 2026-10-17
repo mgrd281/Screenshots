@@ -220,6 +220,14 @@ holds is a kind you chose, like the IBAN in a payment code under bank
 accounts or a link under links. A kind added in an update starts on when it
 is recommended and you cover anything; turn it off and it stays off.
 
+To see what each kind hides, Test on a Sample under Privacy covers a
+made-up order confirmation with what you checked: an order number, a
+name, an address, an email, a phone number, an IBAN, a tax number, a
+tracking number, a PIN, a username, a total, a date, a link, a medicine
+and a QR code. It says what was covered there, and what you checked that
+the sample does not show. It speaks for that sample only; a real
+screenshot can read differently.
+
 Under Also hide, add rules of your own: a word, like your shop's name,
 covered wherever it appears; a label, like Customer number, whose value is
 covered, on its line or the line below; or, for whoever knows them, a
@@ -518,6 +526,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
 | `FolderCover.swift` | Cover a folder: watches one folder and saves covered copies of what lands there in another |
+| `SelfTest.swift` | Test on a Sample: a made-up order with nearly every kind of detail, covered as Settings says |
 | `CoveringProfile.swift` | Cover everything in AI chats: which chats count, and what to cover for the app in front |
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |

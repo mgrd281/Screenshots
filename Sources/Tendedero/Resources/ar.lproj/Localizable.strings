@@ -528,6 +528,14 @@
 "Nothing to cover in %@. Take a look." = "لا شيء يُغطّى في %@. ألقِ نظرة.";
 "Could not cover %@." = "تعذّرت تغطية %@.";
 "Watched folder" = "المجلد المراقَب";
+"Test on a Sample" = "اختبار على نموذج";
+"Testing…" = "جارٍ الاختبار…";
+"Test" = "اختبار";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "يغطّي طلباً مختلَقاً بما حدّدته أعلاه، ليُظهر ما يخفيه كل نوع. النتيجة تخصّ هذا النموذج وحده: لقطة الشاشة الحقيقية قد تُقرأ بشكل مختلف.";
+"Covered on this sample: %@" = "المغطّى في هذا النموذج: %@";
+"Nothing checked was found on this sample." = "لم يُعثر في هذا النموذج على شيء مما حدّدته.";
+"Checked, but not on this sample: %@" = "محدّد، لكنه ليس في هذا النموذج: %@";
+"Could not run the test." = "تعذّر إجراء الاختبار.";
 "Send with Shop Header" = "إرسال مع شريط المتجر";
 "Add your shop's name or logo under Line in Settings." = "أضف اسم متجرك أو شعاره في الإعدادات، تحت «الحبل».";
 "Adding the shop header…" = "جارٍ إضافة شريط المتجر…";

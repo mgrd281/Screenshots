@@ -528,6 +528,14 @@
 "Nothing to cover in %@. Take a look." = "In %@ gab es nichts zu verdecken. Schau es dir an.";
 "Could not cover %@." = "%@ konnte nicht verdeckt werden.";
 "Watched folder" = "Beobachteter Ordner";
+"Test on a Sample" = "An einem Beispiel testen";
+"Testing…" = "Wird getestet …";
+"Test" = "Test";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "Verdeckt eine erfundene Bestellung mit dem, was oben angehakt ist, um zu zeigen, was jede Art verbirgt. Das gilt nur für dieses Beispiel: Ein echtes Bildschirmfoto kann anders gelesen werden.";
+"Covered on this sample: %@" = "In diesem Beispiel verdeckt: %@";
+"Nothing checked was found on this sample." = "Nichts Angehaktes wurde in diesem Beispiel gefunden.";
+"Checked, but not on this sample: %@" = "Angehakt, aber nicht in diesem Beispiel: %@";
+"Could not run the test." = "Der Test konnte nicht laufen.";
 "Send with Shop Header" = "Mit Shop-Kopf senden";
 "Add your shop's name or logo under Line in Settings." = "Füge in den Einstellungen unter „Leine“ den Namen oder das Logo deines Shops hinzu.";
 "Adding the shop header…" = "Shop-Kopf wird hinzugefügt …";

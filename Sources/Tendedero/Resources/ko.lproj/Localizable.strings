@@ -528,6 +528,14 @@
 "Nothing to cover in %@. Take a look." = "%@에는 가릴 것이 없었어요. 확인해 보세요.";
 "Could not cover %@." = "%@을(를) 가릴 수 없어요.";
 "Watched folder" = "지켜보는 폴더";
+"Test on a Sample" = "샘플로 테스트";
+"Testing…" = "테스트 중…";
+"Test" = "테스트";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "위에서 체크한 항목으로 가상의 주문을 가려 각 종류가 무엇을 가리는지 보여 줘요. 이 샘플에만 해당해요. 실제 스크린샷은 다르게 읽힐 수 있어요.";
+"Covered on this sample: %@" = "이 샘플에서 가린 항목: %@";
+"Nothing checked was found on this sample." = "이 샘플에서는 체크한 항목을 찾지 못했어요.";
+"Checked, but not on this sample: %@" = "체크했지만 이 샘플에 없는 항목: %@";
+"Could not run the test." = "테스트를 실행할 수 없어요.";
 "Send with Shop Header" = "상점 머리글과 함께 보내기";
 "Add your shop's name or logo under Line in Settings." = "설정의 ‘빨랫줄’에서 상점 이름이나 로고를 추가하세요.";
 "Adding the shop header…" = "상점 머리글 추가 중…";

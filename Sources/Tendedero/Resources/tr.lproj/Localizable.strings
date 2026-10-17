@@ -528,6 +528,14 @@
 "Nothing to cover in %@. Take a look." = "%@ içinde kapatılacak bir şey yok. Bir göz at.";
 "Could not cover %@." = "%@ kapatılamadı.";
 "Watched folder" = "İzlenen klasör";
+"Test on a Sample" = "Bir örnekte dene";
+"Testing…" = "Deneniyor…";
+"Test" = "Deneme";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "Yukarıda işaretlenenlerle uydurma bir siparişi kapatır, her türün neyi gizlediğini gösterir. Yalnızca bu örnek için geçerlidir: gerçek bir ekran görüntüsü farklı okunabilir.";
+"Covered on this sample: %@" = "Bu örnekte gizlenenler: %@";
+"Nothing checked was found on this sample." = "Bu örnekte işaretlenenlerden hiçbiri bulunamadı.";
+"Checked, but not on this sample: %@" = "İşaretli ama bu örnekte yok: %@";
+"Could not run the test." = "Deneme yapılamadı.";
 "Send with Shop Header" = "Mağaza başlığıyla gönder";
 "Add your shop's name or logo under Line in Settings." = "Ayarlar’da “İp” altında mağazanın adını ya da logosunu ekle.";
 "Adding the shop header…" = "Mağaza başlığı ekleniyor…";

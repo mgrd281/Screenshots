@@ -591,8 +591,13 @@ apps.
   `SettingsButton`. Two folders that are the same or one inside the other
   are refused with a note. Its work is said in one note above the Dock two
   seconds after the last file of a run: how many copies were saved, up to
-  three names where nothing was found, and what could not be read. Last
-  the Preview. The iPhone's Settings use the same three groups.
+  three names where nothing was found, and what could not be read. Then
+  "Test": Test on a Sample, a `SettingsButton` on the trailing edge
+  ("Testing…" and off while it runs), over a footer that it covers a
+  made-up order and speaks for that sample only; once run, the covered
+  sample above it (at most 280 pt high, 10 pt corners), what was covered on
+  it, and in `.secondary` what is checked and not on it. A new choice of
+  kinds puts the result away. Last the Preview. The iPhone's Settings use the same three groups.
 - **About pane.** The icon at 128 under its shadow, the name in 34 pt
   rounded bold, the tagline in title3 `.secondary`, the version in callout
   `.tertiary`. Then one line, "Made by" in `.secondary` before the maker's
