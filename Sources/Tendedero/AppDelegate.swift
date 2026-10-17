@@ -661,7 +661,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// How a card leans where it hangs, for the flights to match it.
     private func tilt(of id: UUID) -> CGFloat {
         guard let index = line.items.firstIndex(where: { $0.id == id }) else { return 0 }
-        return CGFloat(Layout.tilt(of: line.items[index], index: index, count: line.items.count, spread: line.spread))
+        let width = panel.frame.width
+        let x = Layout.x(index: index, count: line.items.count, width: width,
+                         visible: line.visibleCount, scroll: line.scroll, spread: line.spread)
+        return CGFloat(Layout.tilt(of: line.items[index], index: index, count: line.items.count, spread: line.spread,
+                                   x: x, width: width))
     }
 
     /// Decides whether the panel is ordered in at all: something to show,
