@@ -9,6 +9,8 @@ keeps a download of each version.
 - The message bar sends in another language: choose it with the globe, and
   Return translates your message on your Mac, to read before the next
   Return sends it. Kept for each chat, on macOS 15 and later.
+- Test on a Sample, under Privacy: a made-up order covered with what you
+  checked, to see what each kind hides.
 - Send with Shop Header, in a photo's menu: the covered screenshot goes
   under a band with your shop's name and logo, the order and the day. Set
   them under Line in Settings.

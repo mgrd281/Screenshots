@@ -517,6 +517,14 @@
 "Image" = "画像";
 "Plain file names" = "シンプルなファイル名";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "画像は新しいファイルとして送られ、いつ・どこで・何で作られたかの情報は含まれません。シンプルなファイル名にすると、撮影日時ではなく「画像」という名前にもなります。";
+"Test on a Sample" = "サンプルでテスト";
+"Testing…" = "テスト中…";
+"Test" = "テスト";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "上でチェックした内容で架空の注文を隠し、それぞれの種類が何を隠すかを示します。このサンプルについてだけの結果です。実際のスクリーンショットは違って読まれることがあります。";
+"Covered on this sample: %@" = "このサンプルで隠したもの：%@";
+"Nothing checked was found on this sample." = "このサンプルでは、チェックしたものは見つかりませんでした。";
+"Checked, but not on this sample: %@" = "チェック済みですが、このサンプルにないもの：%@";
+"Could not run the test." = "テストを実行できませんでした。";
 "Send with Shop Header" = "ショップのヘッダー付きで送信";
 "Add your shop's name or logo under Line in Settings." = "設定の「ロープ」で、ショップの名前かロゴを追加してください。";
 "Adding the shop header…" = "ショップのヘッダーを追加中…";

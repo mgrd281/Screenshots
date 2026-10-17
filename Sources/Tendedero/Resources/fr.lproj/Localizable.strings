@@ -517,6 +517,14 @@
 "Image" = "Image";
 "Plain file names" = "Noms de fichier simples";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Les images partent en fichiers neufs, sans notes sur quand, où ou avec quoi elles ont été faites. Avec des noms simples, elles s’appellent aussi « Image » et non d’après le moment de la capture.";
+"Test on a Sample" = "Tester sur un exemple";
+"Testing…" = "Test en cours…";
+"Test" = "Test";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "Masque une commande inventée avec ce qui est coché ci-dessus, pour montrer ce que cache chaque type. Cela ne vaut que pour cet exemple : une vraie capture peut se lire autrement.";
+"Covered on this sample: %@" = "Masqué sur cet exemple : %@";
+"Nothing checked was found on this sample." = "Rien de ce qui est coché n’a été trouvé sur cet exemple.";
+"Checked, but not on this sample: %@" = "Coché, mais absent de cet exemple : %@";
+"Could not run the test." = "Impossible de faire le test.";
 "Send with Shop Header" = "Envoyer avec l’en-tête de la boutique";
 "Add your shop's name or logo under Line in Settings." = "Ajoute le nom ou le logo de ta boutique dans Réglages, sous Corde.";
 "Adding the shop header…" = "Ajout de l’en-tête de la boutique…";

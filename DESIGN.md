@@ -575,7 +575,12 @@ apps.
   covered there, checked or not. Then one with Plain file names (off at
   first), over a footer saying pictures leave as fresh files without notes
   on when, where or with what they were made, and are named "Image" with it
-  on. Then "Also hide", the
+  on. Then "Test": Test on a Sample, a `SettingsButton` on the trailing
+  edge ("Testing…" and off while it runs), over a footer that it covers a
+  made-up order and speaks for that sample only; once run, the covered
+  sample above it (at most 280 pt high, 10 pt corners), what was covered
+  on it, and in `.secondary` what is checked and not on it. A new choice
+  of kinds puts the result away. Then "Also hide", the
   owner's own rules: one row per rule with a 160 pt menu picker for its kind
   (Word, After a label, Pattern), a rounded field with a prompt for that
   kind, and a borderless `minus.circle` to remove it; an Add Rule button

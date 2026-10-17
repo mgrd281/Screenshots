@@ -519,6 +519,14 @@
 "Image" = "Image";
 "Plain file names" = "Plain file names";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken.";
+"Test on a Sample" = "Test on a Sample";
+"Testing…" = "Testing…";
+"Test" = "Test";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently.";
+"Covered on this sample: %@" = "Covered on this sample: %@";
+"Nothing checked was found on this sample." = "Nothing checked was found on this sample.";
+"Checked, but not on this sample: %@" = "Checked, but not on this sample: %@";
+"Could not run the test." = "Could not run the test.";
 "Send with Shop Header" = "Send with Shop Header";
 "Add your shop's name or logo under Line in Settings." = "Add your shop's name or logo under Line in Settings.";
 "Adding the shop header…" = "Adding the shop header…";

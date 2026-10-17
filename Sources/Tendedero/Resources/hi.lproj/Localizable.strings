@@ -519,6 +519,14 @@
 "Image" = "चित्र";
 "Plain file names" = "सादे फ़ाइल नाम";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "चित्र नई फ़ाइलों के रूप में जाते हैं, इस जानकारी के बिना कि वे कब, कहाँ या किससे बनाए गए। सादे फ़ाइल नामों के साथ उनका नाम भी “चित्र” होता है, न कि लेने के समय के अनुसार।";
+"Test on a Sample" = "नमूने पर जाँचें";
+"Testing…" = "जाँच हो रही है…";
+"Test" = "जाँच";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "ऊपर चुने गए प्रकारों से एक काल्पनिक ऑर्डर को ढकता है, ताकि दिखे कि हर प्रकार क्या छिपाता है। यह केवल इसी नमूने के लिए है: असली स्क्रीनशॉट अलग तरह पढ़ा जा सकता है।";
+"Covered on this sample: %@" = "इस नमूने में ढका गया: %@";
+"Nothing checked was found on this sample." = "इस नमूने में चुना गया कुछ भी नहीं मिला।";
+"Checked, but not on this sample: %@" = "चुना गया, पर इस नमूने में नहीं: %@";
+"Could not run the test." = "जाँच नहीं चल सकी।";
 "Send with Shop Header" = "दुकान के शीर्ष के साथ भेजें";
 "Add your shop's name or logo under Line in Settings." = "सेटिंग्स में “रस्सी” के नीचे अपनी दुकान का नाम या लोगो जोड़ें।";
 "Adding the shop header…" = "दुकान का शीर्ष जोड़ा जा रहा है…";
