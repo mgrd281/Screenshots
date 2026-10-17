@@ -364,8 +364,9 @@ final class Preferences: ObservableObject {
     }
 }
 
-/// The settings window, laid out like System Settings: a sidebar with five
-/// panes. Made once and kept, so it opens where it was left.
+/// The settings window, laid out like System Settings: a sidebar with six
+/// panes. It can be made larger or smaller by its edges and filled with the
+/// green button, and opens at the size and place it was left.
 @MainActor
 final class SettingsWindow {
     static let shared = SettingsWindow()
@@ -374,13 +375,18 @@ final class SettingsWindow {
     func show(_ preferences: Preferences) {
         if window == nil {
             let host = NSHostingController(rootView: SettingsView(prefs: preferences, line: preferences.line))
+            // The window sets the size; the panes fill it.
+            host.sizingOptions = []
             let window = NSWindow(contentViewController: host)
             window.title = L("Settings")
-            window.styleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
+            window.styleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
             window.toolbarStyle = .unified
-            window.setContentSize(NSSize(width: 700, height: 500))
+            window.contentMinSize = NSSize(width: 640, height: 440)
+            window.setContentSize(NSSize(width: 760, height: 560))
             window.isReleasedWhenClosed = false
             window.center()
+            // Where it was left, if it was moved or resized before.
+            window.setFrameAutosaveName("SnapflySettings")
             self.window = window
         }
         preferences.refresh()
