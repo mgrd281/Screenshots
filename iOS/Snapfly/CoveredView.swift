@@ -83,7 +83,7 @@ struct CoveredView: View {
             return
         }
         let chosen = Choice.details
-        let result = await Task.detached(priority: .userInitiated) { Covering.cover(image, chosen) }.value
+        let result = await Covering.cover(image, chosen)
         png = Covering.png(result.image)
         covered = UIImage(cgImage: result.image)
         report = result.report

@@ -23,10 +23,16 @@ enum Choice {
 
 /// A screenshot with its private details covered, and the ways it leaves.
 enum Covering {
-    /// The picture with the chosen details covered, and what was.
-    static func cover(_ image: CGImage, _ chosen: Set<PrivateDetail>) -> (image: CGImage, report: CoverReport) {
-        let areas = Finder.coveredAreas(in: image, chosen)
-        return (Finder.cover(image, areas: areas) ?? image, CoverReport(areas))
+    /// The picture with the chosen details covered and checked, and what
+    /// was covered. Worked out on a queue of its own, where Apple
+    /// Intelligence may be waited for without holding up anything else.
+    static func cover(_ image: CGImage, _ chosen: Set<PrivateDetail>) async -> (image: CGImage, report: CoverReport) {
+        await withCheckedContinuation { done in
+            DispatchQueue.global(qos: .userInitiated).async {
+                let made = Finder.covered(image, chosen)
+                done.resume(returning: (made?.image ?? image, CoverReport(made?.areas ?? [])))
+            }
+        }
     }
 
     static func png(_ image: CGImage) -> Data? {

@@ -638,3 +638,10 @@
 "Keep the last four digits" = "下4桁を残す";
 "Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement." = "カード番号、口座番号、電話番号は、銀行の明細のように下4桁で見分けられます。";
 "Every look hides for good: blur, pixels, dots and erased are drawn from the colors around what is covered, never from it, so it cannot be brought back." = "どの隠し方でも完全に隠れます。ぼかし、モザイク、ドット、消去は、隠した部分ではなく周りの色から描くので、元に戻せません。";
+"Protection" = "保護";
+"Strongest protection" = "最強の保護";
+"Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was." = "個人的な情報を含む行は、周りの余白を広くとって行ごと隠すので、長さも含めて何も見えません。";
+"Find more with Apple Intelligence" = "Apple Intelligenceでさらに見つける";
+"Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device." = "この端末上で文字を読み取り、文中の名前のように、パターンでは見落とすものも隠します。何もこの端末の外に出ません。";
+"Needs Apple Intelligence on this device." = "この端末でApple Intelligenceが必要です。";
+"Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "どのコピーも送る前に、誰でも読めるのと同じように読み直し、まだ見える個人情報があればそれも隠します。";

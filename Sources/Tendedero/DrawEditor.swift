@@ -81,20 +81,21 @@ final class DrawEditor: NSObject, NSWindowDelegate {
 
     /// What Hide private details covers, read in the background, and the
     /// picture with it and the parts hidden by hand covered in the chosen
-    /// look, as it goes out.
+    /// look and checked, as it goes out.
     private func readCovered(_ url: URL, into model: DrawModel) {
         let chosen = PrivateDetails.details
-        let hidden = model.hand.map { Finder.Area(rect: $0, kind: nil) }
-        guard !chosen.isEmpty || !hidden.isEmpty else { return }
+        let hand = model.hand
+        guard !chosen.isEmpty || !hand.isEmpty else { return }
         let size = model.image.size
         DispatchQueue.global(qos: .userInitiated).async { [weak model] in
             guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
-                  let image = Cover.upright(source) else { return }
-            let found = chosen.isEmpty ? [] : Finder.coveredAreas(in: image, chosen)
-            let covered = Finder.cover(image, areas: found + hidden).map { NSImage(cgImage: $0, size: size) }
+                  let image = Cover.upright(source),
+                  let made = Finder.covered(image, chosen, hand: hand) else { return }
+            let found = made.areas.map(\.rect)
+            let covered = NSImage(cgImage: made.image, size: size)
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
-                    model?.found = found.map(\.rect)
+                    model?.found = found
                     model?.covered = covered
                 }
             }

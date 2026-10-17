@@ -29,7 +29,7 @@ struct CoverLatestScreenshot: AppIntent {
             throw Problem(text: L("The picture could not be read."))
         }
         let chosen = Choice.details
-        let covered = await Task.detached(priority: .userInitiated) { Covering.cover(image, chosen) }.value
+        let covered = await Covering.cover(image, chosen)
         guard let png = Covering.png(covered.image) else {
             throw Problem(text: L("The picture could not be read."))
         }
@@ -54,7 +54,7 @@ struct CoverPicture: AppIntent {
               let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
             throw Problem(text: L("The picture could not be read."))
         }
-        let covered = Covering.cover(image, Choice.details)
+        let covered = await Covering.cover(image, Choice.details)
         guard let png = Covering.png(covered.image) else {
             throw Problem(text: L("The picture could not be read."))
         }

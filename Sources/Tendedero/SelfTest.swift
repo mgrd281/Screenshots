@@ -74,14 +74,14 @@ enum SelfTest {
     /// screenshot is read.
     static func run(_ chosen: Set<PrivateDetail>) -> (png: Data, report: CoverReport)? {
         guard let sample = sample() else { return nil }
-        let areas = Finder.coveredAreas(in: sample, chosen)
-        guard let covered = Finder.cover(sample, areas: areas) else { return nil }
+        // The same each time: Apple Intelligence does not read along here.
+        guard let made = Finder.covered(sample, chosen, intelligence: false) else { return nil }
         let data = NSMutableData()
         guard let destination = CGImageDestinationCreateWithData(data, UTType.png.identifier as CFString, 1, nil)
         else { return nil }
-        CGImageDestinationAddImage(destination, covered, nil)
+        CGImageDestinationAddImage(destination, made.image, nil)
         guard CGImageDestinationFinalize(destination) else { return nil }
-        return (data as Data, CoverReport(areas))
+        return (data as Data, CoverReport(made.areas))
     }
 
     /// The kinds checked that nothing on the sample was covered as, in

@@ -106,7 +106,9 @@ enum PrivateDetail: String, CaseIterable {
 /// Finds private details in the text of a screenshot, three ways together:
 /// patterns that are private wherever they appear, like an email address;
 /// labels that announce one, like "Rechnungsadresse" above a name and an
-/// address; and names found once and met again elsewhere.
+/// address; and names found once and met again elsewhere. Where it is on,
+/// Apple Intelligence reads along and names what those miss. Each copy is
+/// then read again, as anyone could read it, and covered further if need be.
 enum Finder {
     struct TextLine {
         let text: VNRecognizedText
@@ -252,6 +254,10 @@ enum Finder {
     struct Area: Equatable {
         let rect: CGRect
         let kind: PrivateDetail?
+        /// What it hides, while a copy is made, so the copy can be checked
+        /// for any of it still showing; nil for a face, a code or a part
+        /// hidden by hand.
+        var text: String? = nil
     }
 
     /// Where the chosen details and the owner's own rules are, as they are
@@ -263,23 +269,118 @@ enum Finder {
 
     /// The same places, each with the kind it is covered as, so the line can
     /// tell what was covered.
+    /// - Parameter intelligence: whether Apple Intelligence may read along,
+    ///   where it is on; not for the sample, which must read the same each time.
     static func coveredAreas(in image: CGImage, _ chosen: Set<PrivateDetail>,
-                             rules: [OwnRule] = OwnRules.all) -> [Area] {
+                             rules: [OwnRule] = OwnRules.all, intelligence: Bool = true) -> [Area] {
         let rules = rules.filter { !$0.isBlank }
         guard !chosen.isEmpty || !rules.isEmpty else { return [] }
-        let width = CGFloat(image.width), height = CGFloat(image.height)
         let codes = Self.codes(in: image, chosen)
-        var areas = boxes(in: image, chosen, rules: rules, printed: codes.compactMap(\.payload)).map { box -> Area in
-            // Vision measures from the bottom left, as Core Graphics draws.
-            let text = VNImageRectForNormalizedRect(box.rect, image.width, image.height)
-            let rect = text.insetBy(dx: -text.height * 0.25, dy: -text.height * 0.2)
-            return Area(rect: CGRect(x: rect.minX / width, y: rect.minY / height,
-                                     width: rect.width / width, height: rect.height / height),
-                        kind: box.kind)
+        var areas = boxes(in: image, chosen, rules: rules, printed: codes.compactMap(\.payload),
+                          intelligence: intelligence).map { box in
+            Area(rect: withMargin(box.rect, in: image), kind: box.kind, text: box.text)
         }
         if chosen.contains(.faces) { areas += faces(in: image).map { Area(rect: $0, kind: .faces) } }
         areas += codes.map { Area(rect: $0.box, kind: $0.kind) }
         return areas
+    }
+
+    /// Text's box with room around it, as it is covered, from 0 to 1 from
+    /// the bottom left; more room with the strongest protection, so no
+    /// letter's tail or accent shows.
+    private static func withMargin(_ box: CGRect, in image: CGImage) -> CGRect {
+        let width = CGFloat(image.width), height = CGFloat(image.height)
+        // Vision measures from the bottom left, as Core Graphics draws.
+        let text = VNImageRectForNormalizedRect(box, image.width, image.height)
+        let room: (across: CGFloat, up: CGFloat) = strongest ? (0.45, 0.35) : (0.25, 0.2)
+        let rect = text.insetBy(dx: -text.height * room.across, dy: -text.height * room.up)
+        return CGRect(x: rect.minX / width, y: rect.minY / height, width: rect.width / width, height: rect.height / height)
+    }
+
+    // MARK: Covered, and checked
+
+    /// The picture with the chosen details, the owner's rules and the parts
+    /// hidden by hand covered in the chosen look, then read again as anyone
+    /// could read it: whatever private still shows, and any piece of what
+    /// was hidden left beside its cover, is covered too, in two more rounds
+    /// at most. The places come with it, for the lock to say what was
+    /// covered; nil only when the picture cannot be drawn.
+    static func covered(_ image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all,
+                        hand: [CGRect] = [], intelligence: Bool = true,
+                        style: CoverStyle = .current) -> (image: CGImage, areas: [Area])? {
+        let rules = rules.filter { !$0.isBlank }
+        var areas = coveredAreas(in: image, chosen, rules: rules, intelligence: intelligence)
+        let hidden = hand.map { Area(rect: $0, kind: nil) }
+        guard !areas.isEmpty || !hidden.isEmpty else { return (image, []) }
+        guard var covered = cover(image, areas: areas + hidden, style: style) else { return nil }
+        // Only what is read can be read again.
+        guard !chosen.subtracting([.faces, .barcodes]).isEmpty || !rules.isEmpty else { return (covered, areas) }
+        for _ in 0..<2 {
+            let more = stillReadable(in: covered, hidden: areas + hidden, chosen, rules: rules)
+            guard !more.isEmpty, let again = cover(image, areas: areas + more + hidden, style: style) else { break }
+            areas += more
+            covered = again
+        }
+        return (covered, areas)
+    }
+
+    /// What still shows in a covered copy, read as anyone could read it: a
+    /// detail the kinds or the owner's rules find where nothing covers it,
+    /// and a piece of three letters or more of what was hidden, left on the
+    /// row beside its cover. What is drawn on a cover is never read as text.
+    static func stillReadable(in covered: CGImage, hidden: [Area], _ chosen: Set<PrivateDetail>,
+                              rules: [OwnRule] = OwnRules.all) -> [Area] {
+        let rules = rules.filter { !$0.isBlank }
+        let lines = read(covered)
+        guard !lines.isEmpty else { return [] }
+        let covers = hidden.map(\.rect)
+        func underCover(_ box: CGRect) -> Bool {
+            covers.contains { $0.contains(CGPoint(x: box.midX, y: box.midY)) }
+        }
+        var found: [Area] = []
+        for hit in keepingLastDigits(hits(in: lines, chosen, rules: rules), in: lines) {
+            guard let place = Self.area(of: hit, in: lines), !underCover(place.rect) else { continue }
+            found.append(Area(rect: withMargin(place.rect, in: covered), kind: place.kind, text: place.text))
+        }
+        // A number keeping its last four digits shows them on purpose.
+        let pieces = hidden.filter { area in
+            guard let text = area.text, !text.isEmpty else { return false }
+            return !(keepsLastDigits && !strongest && area.kind.map(lastDigitKinds.contains) == true)
+        }
+        guard !pieces.isEmpty else { return found }
+        let size = CGSize(width: covered.width, height: covered.height)
+        for line in lines {
+            let string = line.string
+            for word in Self.word.matches(in: string, range: NSRange(string.startIndex..., in: string)) {
+                guard let range = Range(word.range, in: string), let box = line.box(for: range),
+                      !underCover(box) else { continue }
+                let piece = letters(String(string[range]))
+                guard piece.count >= 3,
+                      let source = pieces.first(where: { beside(box, $0.rect, in: size) && letters($0.text ?? "").contains(piece) })
+                else { continue }
+                found.append(Area(rect: withMargin(box, in: covered), kind: source.kind, text: String(string[range])))
+            }
+        }
+        return found
+    }
+
+    /// Letters and digits alone, in small letters, so a piece of hidden text
+    /// is known however it was read.
+    private static func letters(_ text: String) -> String {
+        String(text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+            .filter { $0.isLetter || $0.isNumber })
+    }
+
+    /// Whether a word sits on a cover's row, just before or after it.
+    private static func beside(_ box: CGRect, _ cover: CGRect, in size: CGSize) -> Bool {
+        let a = CGRect(x: box.minX * size.width, y: box.minY * size.height,
+                       width: box.width * size.width, height: box.height * size.height)
+        let b = CGRect(x: cover.minX * size.width, y: cover.minY * size.height,
+                       width: cover.width * size.width, height: cover.height * size.height)
+        let overlap = min(a.maxY, b.maxY) - max(a.minY, b.minY)
+        guard overlap >= min(a.height, b.height) * 0.5 else { return false }
+        let gap = max(0, max(a.minX, b.minX) - min(a.maxX, b.maxX))
+        return gap <= a.height * 1.5
     }
 
     /// A QR code or a barcode, with what it says when that is text, and the
@@ -384,23 +485,45 @@ enum Finder {
     }
 
     /// Where the chosen details are, in Vision's normalized coordinates,
-    /// each with the kind it is covered as.
+    /// each with the kind it is covered as and what it says.
     /// - Parameter printed: what the covered codes say, covered too where it
     ///   is printed beside them.
     static func boxes(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all,
-                      printed: [String] = []) -> [Area] {
+                      printed: [String] = [], intelligence: Bool = true) -> [Area] {
         // Faces and codes are not read as text: with nothing else chosen, no reading.
         let patterns = printed.compactMap(printedPattern(ofCode:))
         guard !chosen.subtracting([.faces, .barcodes]).isEmpty || rules.contains(where: { !$0.isBlank })
             || !patterns.isEmpty else { return [] }
         let lines = read(image)
         let printedHits = patterns.isEmpty ? [] : Text(lines).hits(forPatterns: patterns)
-        let found = keepingLastDigits(hits(in: lines, chosen, rules: rules), in: lines) + printedHits
-        return found.compactMap { hit -> Area? in
-            let line = lines[hit.line]
-            guard let range = hit.range else { return Area(rect: line.box, kind: hit.kind) }
-            guard let part = Range(range, in: line.string), let box = line.box(for: part) else { return nil }
-            return Area(rect: box, kind: hit.kind)
+        var found = hits(in: lines, chosen, rules: rules)
+        if intelligence { found += intelligentHits(in: lines, chosen) }
+        return (keepingLastDigits(found, in: lines) + printedHits).compactMap { Self.area(of: $0, in: lines) }
+    }
+
+    /// Where a detail found in a line is, and what it says: just its words,
+    /// or with the strongest protection, the whole line, so nothing of it
+    /// shows, not even how long it is.
+    private static func area(of hit: Hit, in lines: [TextLine]) -> Area? {
+        let line = lines[hit.line]
+        guard let range = hit.range, !strongest else { return Area(rect: line.box, kind: hit.kind, text: line.string) }
+        guard let part = Range(range, in: line.string), let box = line.box(for: part) else { return nil }
+        return Area(rect: box, kind: hit.kind, text: String(line.string[part]))
+    }
+
+    /// What Apple Intelligence names in the lines, of the kinds chosen, where
+    /// it is on: never on a guess, only words that are in their line.
+    /// - Parameter waits: whether to wait for an answer not yet given; else
+    ///   only one given before counts.
+    private static func intelligentHits(in lines: [TextLine], _ chosen: Set<PrivateDetail>,
+                                        waits: Bool = true) -> [Hit] {
+        guard usesIntelligence, !chosen.isDisjoint(with: intelligentKinds.values), intelligenceAvailable,
+              let pieces = intelligentPieces(for: lines.map(\.string), waits: waits) else { return [] }
+        return pieces.compactMap { piece -> Hit? in
+            guard chosen.contains(piece.kind), piece.line < lines.count else { return nil }
+            let line = lines[piece.line].string
+            guard let found = line.range(of: piece.words, options: sameWords) else { return nil }
+            return Hit(line: piece.line, range: NSRange(found, in: line), kind: piece.kind)
         }
     }
 
@@ -454,9 +577,12 @@ enum Finder {
               let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return Reading(lines: [], heights: []) }
         let lines = read(image)
         var hidden = [IndexSet](repeating: IndexSet(), count: lines.count)
-        for hit in keepingLastDigits(hits(in: lines, chosen, rules: rules), in: lines) {
+        // What Apple Intelligence found when the photo was read, never waited for here.
+        let found = hits(in: lines, chosen, rules: rules) + intelligentHits(in: lines, chosen, waits: false)
+        for hit in keepingLastDigits(found, in: lines) {
             let length = lines[hit.line].string.utf16.count
-            let range = hit.range ?? NSRange(location: 0, length: length)
+            // The strongest protection leaves out whole lines, as it covers them.
+            let range = (strongest ? nil : hit.range) ?? NSRange(location: 0, length: length)
             let end = min(range.location + range.length, length)
             if range.location < end { hidden[hit.line].insert(integersIn: range.location..<end) }
         }

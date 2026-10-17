@@ -241,6 +241,15 @@ the look you chose; Hide Part shows ink while you draw. Keep the last four
 digits leaves a card, account or phone number recognisable, as on a bank
 statement: "•••• 1111". It holds for copies and for Copy Text alike.
 
+Every copy is checked before it leaves: once covered, it is read again as
+anyone could read it, and whatever private still shows, or any piece of what
+was hidden left beside its cover, is covered too. Under Protection, Find more
+with Apple Intelligence (on where the Mac has it) lets the model on the Mac
+read the words as well and cover what the patterns miss, like a name in a
+sentence; it only ever adds covers, and nothing leaves the Mac. Strongest
+protection covers every line with something private whole, with more room
+around it, so not even how long it was shows.
+
 QR codes and barcodes are covered whole, since nobody can read what they
 hold: a payment, a sign-in, a ticket or a parcel. The number printed under
 a barcode goes with it. Turned off, a code is still covered when what it
@@ -533,8 +542,11 @@ watch the screen, so there is no line there. What it keeps is the covering:
   the same three groups as on the Mac, with Check All, Recommended and
   Uncheck All, and the recommended kinds are on until you change them. Cover
   look picks how covers look, from the same six as on the Mac, and Keep the
-  last four digits is there too. Under Also hide, add rules of your own, as
-  on the Mac: a word, a label whose value is covered, or a pattern.
+  last four digits is there too, and so is Protection: every copy is read
+  again and covered further if need be, Apple Intelligence can find more on
+  an iPhone that has it, and Strongest protection covers whole lines. Under
+  Also hide, add rules of your own, as on the Mac: a word, a label whose
+  value is covered, or a pattern.
 - **Cover the Latest Screenshot** is a Shortcuts action that needs no opening
   of the app. Chosen for Back Tap (Settings › Accessibility › Touch › Back Tap
   › Double Tap), a double tap on the back of the iPhone covers the newest
@@ -616,6 +628,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/PrivateText.swift` | Finds private details in a screenshot, eighteen kinds and the owner's own rules, on the Mac and the iPhone |
 | `Shared/CoverLook.swift` | How covers look (ink, labelled, blur, pixels, dots, erased), drawn from the colors around what is covered; keeping the last four digits; the samples Settings shows |
 | `Shared/CoverLookPicker.swift` | The tiles to choose the look by, in Settings on the Mac and on the iPhone |
+| `Shared/Protection.swift` | Strongest protection, and Apple Intelligence finding what the patterns miss, on the device, kept per screenshot |
 | `Shared/OwnRules.swift` | The owner's own rules: a word, a label or a pattern, kept with the settings |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |

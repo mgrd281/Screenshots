@@ -638,3 +638,10 @@
 "Keep the last four digits" = "Son dört rakamı göster";
 "Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement." = "Kart, hesap ve telefon numaraları, banka ekstresindeki gibi son dört rakamından tanınır.";
 "Every look hides for good: blur, pixels, dots and erased are drawn from the colors around what is covered, never from it, so it cannot be brought back." = "Her görünüm kalıcı olarak gizler: bulanık, pikselli, noktalar ve silinmiş, gizlenen yerin kendisinden değil, çevresindeki renklerden çizilir; bu yüzden geri getirilemez.";
+"Protection" = "Koruma";
+"Strongest protection" = "En güçlü koruma";
+"Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was." = "Özel bir şey içeren her satır, çevresinde daha fazla boşlukla tamamen gizlenir; böylece hiçbir şeyi, uzunluğu bile görünmez.";
+"Find more with Apple Intelligence" = "Apple Intelligence ile daha fazlasını bul";
+"Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device." = "Sözcükleri burada okur ve kalıpların kaçırdıklarını, örneğin bir cümledeki adı gizler. Hiçbir şey bu cihazdan çıkmaz.";
+"Needs Apple Intelligence on this device." = "Bu cihazda Apple Intelligence gerekir.";
+"Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "Her kopya çıkmadan önce, herkesin okuyabileceği gibi yeniden okunur ve hâlâ görünen özel ne varsa o da gizlenir.";

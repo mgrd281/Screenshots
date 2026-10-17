@@ -638,3 +638,10 @@
 "Keep the last four digits" = "마지막 네 자리 남기기";
 "Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement." = "카드, 계좌, 전화번호는 은행 거래 내역처럼 마지막 네 자리로 알아볼 수 있습니다.";
 "Every look hides for good: blur, pixels, dots and erased are drawn from the colors around what is covered, never from it, so it cannot be brought back." = "어떤 스타일이든 완전히 가립니다. 흐림, 모자이크, 점, 지움은 가린 부분이 아니라 그 주변의 색으로 그리므로 되살릴 수 없습니다.";
+"Protection" = "보호";
+"Strongest protection" = "가장 강한 보호";
+"Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was." = "개인적인 내용이 있는 줄은 주변 여백을 넓혀 줄 전체를 가리므로, 길이조차 드러나지 않습니다.";
+"Find more with Apple Intelligence" = "Apple Intelligence로 더 찾기";
+"Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device." = "이 기기에서 글자를 읽고, 문장 속 이름처럼 패턴이 놓치는 것도 가립니다. 이 기기 밖으로는 아무것도 나가지 않습니다.";
+"Needs Apple Intelligence on this device." = "이 기기에 Apple Intelligence가 필요합니다.";
+"Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "모든 사본은 나가기 전에 누구나 읽을 수 있는 방식으로 다시 읽고, 아직 보이는 개인 정보가 있으면 그것도 가립니다.";

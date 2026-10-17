@@ -358,6 +358,32 @@ final class Preferences: ObservableObject {
         }
     }
 
+    /// Whole lines covered, with more room: the photos hanging are drawn
+    /// again.
+    var strongest: Bool {
+        get { Finder.strongest }
+        set {
+            change {
+                Finder.strongest = newValue
+                line.readPrivateDetails()
+                selfTest = nil
+            }
+        }
+    }
+
+    /// Apple Intelligence reading along, where this Mac has it.
+    var usesIntelligence: Bool {
+        get { Finder.usesIntelligence && Finder.intelligenceAvailable }
+        set {
+            change {
+                Finder.usesIntelligence = newValue
+                line.readPrivateDetails()
+            }
+        }
+    }
+
+    var intelligenceAvailable: Bool { Finder.intelligenceAvailable }
+
     /// Test on a Sample: the sample as the kinds checked now cover it, and
     /// what that covered, while it is shown.
     struct SelfTestOutcome {
@@ -1395,6 +1421,24 @@ private struct PrivacyPane: View {
                 Text(L("Cover look"))
             } footer: {
                 Text(L("Every look hides for good: blur, pixels, dots and erased are drawn from the colors around what is covered, never from it, so it cannot be brought back."))
+                    .foregroundStyle(.secondary)
+            }
+            Section {
+                Toggle(isOn: $prefs.strongest) {
+                    Text(L("Strongest protection"))
+                    Text(L("Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was."))
+                }
+                Toggle(isOn: $prefs.usesIntelligence) {
+                    Text(L("Find more with Apple Intelligence"))
+                    Text(prefs.intelligenceAvailable
+                         ? L("Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device.")
+                         : L("Needs Apple Intelligence on this device."))
+                }
+                .disabled(!prefs.intelligenceAvailable)
+            } header: {
+                Text(L("Protection"))
+            } footer: {
+                Text(L("Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too."))
                     .foregroundStyle(.secondary)
             }
             Section {

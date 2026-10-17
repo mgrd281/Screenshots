@@ -12,6 +12,13 @@ keeps a download of each version.
   never from it, so nothing can be brought back.
 - Keep the last four digits, under Privacy: card, account and phone numbers
   stay recognisable, as on a bank statement.
+- Every copy is checked before it leaves: read again as anyone could read
+  it, with whatever private still shows covered too.
+- Find more with Apple Intelligence, under Privacy, on a Mac or iPhone that
+  has it: the model on the device covers what the patterns miss, like a
+  name in a sentence. Nothing leaves the device.
+- Strongest protection, under Privacy: every line with something private is
+  covered whole, with more room around it.
 - Two new kinds to cover: API keys and tokens (on from the start), and IP
   addresses. Crypto wallets count as bank accounts, a map's coordinates as
   an address, and Wi-Fi passwords, licence keys and booking codes as codes.

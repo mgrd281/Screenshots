@@ -99,15 +99,13 @@ enum DocumentCover {
         for index in 0..<document.pageCount {
             let done: Bool = autoreleasepool {
                 guard let page = document.page(at: index), let image = render(page) else { return false }
-                let found = Finder.coveredAreas(in: image, chosen)
                 let byHand = hand[index + 1] ?? []
-                let places = found + byHand.map { Finder.Area(rect: $0, kind: nil) }
-                guard let covered = Finder.cover(image, areas: places) else { return false }
-                report.add(CoverReport(found, hand: byHand.count))
+                guard let made = Finder.covered(image, chosen, hand: byHand) else { return false }
+                report.add(CoverReport(made.areas, hand: byHand.count))
                 var box = CGRect(origin: .zero, size: pageSize(of: page))
                 context.beginPage(mediaBox: &box)
                 context.interpolationQuality = .high
-                context.draw(compressed(covered) ?? covered, in: box)
+                context.draw(compressed(made.image) ?? made.image, in: box)
                 context.endPage()
                 return true
             }
