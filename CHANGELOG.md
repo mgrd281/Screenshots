@@ -6,8 +6,6 @@ keeps a download of each version.
 
 ## 1.1.0
 
-- On the iPhone: rules of your own under Also hide, as on the Mac, and
-  Check All, Recommended and Uncheck All in Settings.
 - Test on a Sample, under Privacy: a made-up order covered with what you
   checked, to see what each kind hides.
 - Send with Shop Header, in a photo's menu: the covered screenshot goes
@@ -50,6 +48,8 @@ keeps a download of each version.
   the photo's menu, for "Covered: Names · QR codes and barcodes". VoiceOver
   says it too, and the iPhone shows it under the covered picture. The lock
   now shows only when something was covered.
+- On the iPhone: rules of your own under Also hide, as on the Mac, and
+  Check All, Recommended and Uncheck All in Settings.
 
 ## 1.0.0
 
