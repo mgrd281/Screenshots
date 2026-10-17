@@ -109,6 +109,20 @@
 /* TextCard, GrabArea */
 "Translate Text" = "텍스트 번역하기";
 "Describe" = "설명 만들기";
+"Order Details" = "주문 세부 정보";
+"Order" = "주문";
+"Total" = "합계";
+"Name" = "이름";
+"Address" = "주소";
+"Email" = "이메일";
+"Phone" = "전화";
+"Tracking number" = "운송장 번호";
+"Code" = "코드";
+"Copy Row" = "행으로 복사";
+"Copy All" = "모두 복사";
+"No order details were found in this screenshot." = "이 스크린샷에서 주문 세부 정보를 찾지 못했습니다.";
+"Read on this Mac as the screenshot shows them, not covered." = "이 Mac에서 스크린샷에 보이는 그대로 읽었습니다. 가리지 않았어요.";
+"Every part in one row, for a spreadsheet" = "모든 항목을 한 행에, 스프레드시트용";
 "Translation" = "번역";
 "Description" = "설명";
 "Reading the screenshot…" = "스크린샷 읽는 중…";

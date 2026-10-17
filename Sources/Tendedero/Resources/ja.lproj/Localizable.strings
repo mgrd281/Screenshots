@@ -109,6 +109,20 @@
 /* TextCard, GrabArea */
 "Translate Text" = "テキストを翻訳";
 "Describe" = "説明を作成";
+"Order Details" = "注文の詳細";
+"Order" = "注文";
+"Total" = "合計";
+"Name" = "名前";
+"Address" = "住所";
+"Email" = "メール";
+"Phone" = "電話";
+"Tracking number" = "追跡番号";
+"Code" = "コード";
+"Copy Row" = "行としてコピー";
+"Copy All" = "すべてコピー";
+"No order details were found in this screenshot." = "このスクリーンショットに注文の詳細は見つかりませんでした。";
+"Read on this Mac as the screenshot shows them, not covered." = "このMacで、スクリーンショットのとおりに読み取りました（隠していません）。";
+"Every part in one row, for a spreadsheet" = "すべての項目を1行に（表計算用）";
 "Translation" = "翻訳";
 "Description" = "説明";
 "Reading the screenshot…" = "スクリーンショットを読み取り中…";

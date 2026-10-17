@@ -109,6 +109,20 @@
 /* TextCard, GrabArea */
 "Translate Text" = "ترجمة النص";
 "Describe" = "وصف ذكي";
+"Order Details" = "تفاصيل الطلب";
+"Order" = "الطلب";
+"Total" = "المجموع";
+"Name" = "الاسم";
+"Address" = "العنوان";
+"Email" = "البريد الإلكتروني";
+"Phone" = "الهاتف";
+"Tracking number" = "رقم التتبع";
+"Code" = "الرمز";
+"Copy Row" = "نسخ كصف";
+"Copy All" = "نسخ الكل";
+"No order details were found in this screenshot." = "لم يُعثر على تفاصيل طلب في هذه اللقطة.";
+"Read on this Mac as the screenshot shows them, not covered." = "قُرئت على هذا الماك كما تظهر في اللقطة، دون تغطية.";
+"Every part in one row, for a spreadsheet" = "كل الأجزاء في صف واحد، لجدول بيانات";
 "Translation" = "الترجمة";
 "Description" = "الوصف";
 "Reading the screenshot…" = "جارٍ قراءة لقطة الشاشة…";

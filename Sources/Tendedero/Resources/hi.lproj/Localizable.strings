@@ -111,6 +111,20 @@
 /* TextCard, GrabArea */
 "Translate Text" = "टेक्स्ट का अनुवाद करें";
 "Describe" = "वर्णन लिखें";
+"Order Details" = "ऑर्डर का विवरण";
+"Order" = "ऑर्डर";
+"Total" = "कुल";
+"Name" = "नाम";
+"Address" = "पता";
+"Email" = "ईमेल";
+"Phone" = "फ़ोन";
+"Tracking number" = "ट्रैकिंग नंबर";
+"Code" = "कोड";
+"Copy Row" = "पंक्ति के रूप में कॉपी करें";
+"Copy All" = "सब कॉपी करें";
+"No order details were found in this screenshot." = "इस स्क्रीनशॉट में ऑर्डर का कोई विवरण नहीं मिला।";
+"Read on this Mac as the screenshot shows them, not covered." = "इस Mac पर वैसे ही पढ़ा गया जैसा स्क्रीनशॉट में है, बिना ढके।";
+"Every part in one row, for a spreadsheet" = "सभी हिस्से एक पंक्ति में, स्प्रेडशीट के लिए";
 "Translation" = "अनुवाद";
 "Description" = "वर्णन";
 "Reading the screenshot…" = "स्क्रीनशॉट पढ़ा जा रहा है…";
