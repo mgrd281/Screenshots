@@ -663,3 +663,9 @@
 "What should I reply to this?" = "我该怎么回复这个？";
 "What is wrong here, and how do I fix it?" = "这里哪里有问题，我该怎么解决？";
 "Explain this step by step." = "一步一步解释一下这个。";
+"In the last 7 days, Snapfly covered one detail in a photo you sent." = "过去 7 天，Snapfly 在你发送的 1 张照片中遮住了 1 处信息。";
+"In the last 7 days, Snapfly covered %d details in one photo you sent." = "过去 7 天，Snapfly 在你发送的 1 张照片中遮住了 %d 处信息。";
+"In the last 7 days, Snapfly covered %1$d details in %2$d photos you sent." = "过去 7 天，Snapfly 在你发送的 %2$d 张照片中遮住了 %1$d 处信息。";
+"Count on the menu bar icon" = "在菜单栏图标上显示数量";
+"How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "图标旁显示晾着几张照片；有晾衣绳还没展示过的新照片时，图标上会有一个小圆点。";
+"something new" = "有新内容";

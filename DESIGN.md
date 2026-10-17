@@ -542,6 +542,16 @@ apps.
   copied images are hung, and becomes `stop.circle` while the screen is
   recorded. The Line pane in Settings shows the same mark; the website's
   drawings use it at 24 units.
+  - **Count and dot** (Count on the menu bar icon, Settings › Line, on at
+    first). While photos hang, how many follows the icon, in 12 pt medium
+    monospaced digits raised 0.5 pt, "99+" past 99; the item grows to fit
+    and goes back to a square when the line is empty. While something new
+    hangs that the line has not shown (it hung with Bring the line down
+    when something new hangs off, or during a call), a 4.6 pt dot sits at
+    the icon's bottom trailing corner, cut free of the photo by a 1.2 pt
+    gap; it goes once the line comes down. Both are in the template, so
+    macOS colours them, and in the tip and the spoken label: "Snapfly, 4
+    photos on the line, something new".
 - **Menu bar menu.** In groups, by purpose, as Apple's menu bar extras are.
   - First what hangs, as a disabled line ("3 photos on the line", "Nothing
     on the line"), and the main act: Paste into <the app in front>, with
@@ -836,6 +846,13 @@ apps.
     hour and minute, monospaced digits), Photo, Sent to, Covered (the kinds'
     titles in `.secondary`) and Message. Its context menu has Remove from
     History. Export… opens a save panel for "Sent with Snapfly.csv".
+- **The week's line** (`CoverTally`), at the top of Settings › Privacy, on
+  its own: `checkmark.shield` and one sentence in `.secondary`, "In the last
+  7 days, Snapfly covered 143 details in 38 photos you sent." It counts the
+  places covered in each photo sent (paper plane, ⌃⌥V, the chat button, the
+  AI chats, a drag into an app), and keeps only counts, day by day, for two
+  weeks. Nothing shows until something was covered; it never shows
+  anywhere else.
 - **Not during a call** (`Calls.swift`). Zoom, Teams, FaceTime and a call
   in the browser all open the microphone, so the Mac's default input device
   being in use says a call is on, whatever the app; Snapfly hears nothing.

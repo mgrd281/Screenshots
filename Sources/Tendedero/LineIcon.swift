@@ -2,13 +2,15 @@ import AppKit
 
 /// Snapfly's mark in the menu bar and in Settings: a photo hanging from a
 /// clip on a line, a little crooked, drawn as a template so macOS colours
-/// it. Filled, it says copied images are hung too.
+/// it. Filled, it says copied images are hung too. A small dot at its
+/// corner says something new hangs that the line has not shown yet.
 enum LineIcon {
     static let size = NSSize(width: 18, height: 18)
 
-    static func image(filled: Bool, description: String) -> NSImage {
+    static func image(filled: Bool, dot: Bool = false, description: String) -> NSImage {
         let image = NSImage(size: size, flipped: true) { _ in
             draw(filled: filled)
+            if dot { drawDot() }
             return true
         }
         image.isTemplate = true
@@ -59,5 +61,15 @@ enum LineIcon {
         hill.stroke()
 
         NSGraphicsContext.restoreGraphicsState()
+    }
+
+    /// A dot at the bottom trailing corner, cut free of the photo by a thin
+    /// gap so it reads apart from it.
+    private static func drawDot() {
+        let dot = NSRect(x: 13.4, y: 12.4, width: 4.6, height: 4.6)
+        NSGraphicsContext.current?.compositingOperation = .destinationOut
+        NSBezierPath(ovalIn: dot.insetBy(dx: -1.2, dy: -1.2)).fill()
+        NSGraphicsContext.current?.compositingOperation = .sourceOver
+        NSBezierPath(ovalIn: dot).fill()
     }
 }

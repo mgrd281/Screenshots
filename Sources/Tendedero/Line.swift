@@ -470,6 +470,7 @@ final class Line: ObservableObject {
         if let destination {
             SendLog.note(photos.map(\.url), to: destination, message: caption, covering: chosen)
         }
+        if willPaste { tally(photos.map(\.url), covering: chosen) }
         let flight = willPaste ? onSend?(photos) ?? 0 : 0
         Paste.intoFrontApp(after: flight)
         if willPaste { takeDown(sent: photos, after: flight, to: destination) }
@@ -544,7 +545,16 @@ final class Line: ObservableObject {
     func sentByDrag(_ id: UUID) {
         guard Self.takesDownSent, let item = items.first(where: { $0.id == id && !$0.falling }),
               !item.pinned else { return }
+        tally([item.url], covering: CoveringProfile.detailsNow)
         if let url = leave(id) { sayLeft([url], to: nil) }
+    }
+
+    /// Counted for the week's line in Settings › Privacy: how many places
+    /// were covered in each photo that went.
+    private func tally(_ urls: [URL], covering chosen: Set<PrivateDetail>) {
+        for url in urls {
+            if let report = PrivateDetails.report(for: url, covering: chosen) { CoverTally.note(details: report.total) }
+        }
     }
 
     /// Off the line without falling. A file from Snapfly's folder goes the

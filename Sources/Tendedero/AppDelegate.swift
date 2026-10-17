@@ -418,6 +418,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// An empty line goes away, unless it was opened on purpose.
     private func itemsChanged() {
+        // New on a line that did not come down for it: the dot says so.
+        let count = line.liveCount
+        if count > lastCount && !isRevealed { unseen = true }
+        if count == 0 { unseen = false }
+        if count != lastCount {
+            lastCount = count
+            updateStatusIcon()
+        }
         guard line.liveCount == 0, !keepOpen else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak self] in
             guard let self, self.line.liveCount == 0, !self.keepOpen else { return }
@@ -766,6 +774,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard on != isRevealed else { return }
         isRevealed = on
         line.revealed = on
+        if on { unseen = false }
         // It always comes down showing the newest.
         if on { line.scroll = 0 }
         // Tucked away, the line leaves no window behind: an invisible strip
@@ -1050,7 +1059,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 guard let self else { return }
                 NSWorkspace.shared.open(self.watcher.folder)
             },
-            screenshotsFolder: { [weak self] in self?.watcher.folder })
+            screenshotsFolder: { [weak self] in self?.watcher.folder },
+            menuBarCountChanged: { [weak self] in self?.updateStatusIcon() })
         self.preferences = preferences
     }
 
@@ -1081,17 +1091,56 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// The photo on the line fills in while copied images are hung, so it
     /// shows at a glance that the clipboard is being watched. While the
     /// screen is recorded it is a stop button, as the Screenshot app's is.
+    /// Beside it, how many photos hang, and on it a dot while something new
+    /// hangs that the line has not shown, with Count on the menu bar icon on.
     private func updateStatusIcon() {
         let on = ClipboardWatcher.isEnabled
         let recording = Recording.shared.isRecording
-        let description = recording ? L("Snapfly, recording the screen")
+        let counts = Self.countsInMenuBar
+        let count = counts ? line.liveCount : 0
+        let dot = counts && unseen && !recording
+        var description = recording ? L("Snapfly, recording the screen")
             : on ? L("Snapfly, hanging copied images") : "Snapfly"
+        if let said = Self.statusCount(count, new: dot) { description += ", " + said }
         let image = recording ? NSImage(systemSymbolName: "stop.circle", accessibilityDescription: description)
-            : LineIcon.image(filled: on, description: description)
+            : LineIcon.image(filled: on, dot: dot, description: description)
         image?.isTemplate = true
-        statusItem.button?.image = image
-        statusItem.button?.toolTip = description
+        guard let button = statusItem.button else { return }
+        button.image = image
+        button.toolTip = description
+        button.setAccessibilityLabel(description)
+        if count > 0 {
+            statusItem.length = NSStatusItem.variableLength
+            button.imagePosition = .imageLeading
+            button.attributedTitle = NSAttributedString(string: count > 99 ? "99+" : "\(count)", attributes: [
+                .font: NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium),
+                .baselineOffset: 0.5,
+            ])
+        } else {
+            button.title = ""
+            button.imagePosition = .imageOnly
+            statusItem.length = NSStatusItem.squareLength
+        }
     }
+
+    /// Count on the menu bar icon, from Settings › Line. On unless turned off.
+    static var countsInMenuBar: Bool {
+        get { !UserDefaults.standard.bool(forKey: "menuBarCountOff") }
+        set { UserDefaults.standard.set(!newValue, forKey: "menuBarCountOff") }
+    }
+
+    /// What the count and the dot say to VoiceOver and in the tip.
+    nonisolated static func statusCount(_ count: Int, new: Bool) -> String? {
+        guard count > 0 else { return nil }
+        let photos = count == 1 ? L("One photo on the line") : String(format: L("%d photos on the line"), count)
+        return new ? photos + ", " + L("something new") : photos
+    }
+
+    /// Something new hangs that the line has not shown yet.
+    private var unseen = false {
+        didSet { if unseen != oldValue { updateStatusIcon() } }
+    }
+    private var lastCount = 0
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()

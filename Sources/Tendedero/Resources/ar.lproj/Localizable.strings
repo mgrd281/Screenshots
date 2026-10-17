@@ -663,3 +663,9 @@
 "What should I reply to this?" = "بماذا أردّ على هذا؟";
 "What is wrong here, and how do I fix it?" = "ما الخطأ هنا، وكيف أصلحه؟";
 "Explain this step by step." = "اشرح هذا خطوة بخطوة.";
+"In the last 7 days, Snapfly covered one detail in a photo you sent." = "في آخر 7 أيام، غطّى Snapfly تفصيلًا واحدًا في صورة أرسلتها.";
+"In the last 7 days, Snapfly covered %d details in one photo you sent." = "في آخر 7 أيام، غطّى Snapfly %d تفاصيل في صورة واحدة أرسلتها.";
+"In the last 7 days, Snapfly covered %1$d details in %2$d photos you sent." = "في آخر 7 أيام، غطّى Snapfly %1$d تفصيلًا في %2$d صورة أرسلتها.";
+"Count on the menu bar icon" = "العدد على أيقونة شريط القوائم";
+"How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "يظهر عدد الصور المعلّقة بجانب الأيقونة، ونقطة صغيرة عليها ما دام شيء جديد معلّقًا لم يعرضه الحبل بعد.";
+"something new" = "شيء جديد";

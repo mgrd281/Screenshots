@@ -663,3 +663,9 @@
 "What should I reply to this?" = "¿Qué respondo a esto?";
 "What is wrong here, and how do I fix it?" = "¿Qué falla aquí y cómo lo arreglo?";
 "Explain this step by step." = "Explica esto paso a paso.";
+"In the last 7 days, Snapfly covered one detail in a photo you sent." = "En los últimos 7 días, Snapfly tapó un dato en una foto que enviaste.";
+"In the last 7 days, Snapfly covered %d details in one photo you sent." = "En los últimos 7 días, Snapfly tapó %d datos en una foto que enviaste.";
+"In the last 7 days, Snapfly covered %1$d details in %2$d photos you sent." = "En los últimos 7 días, Snapfly tapó %1$d datos en %2$d fotos que enviaste.";
+"Count on the menu bar icon" = "Número en el icono de la barra de menús";
+"How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "Junto al icono se ve cuántas fotos cuelgan, y un pequeño punto encima mientras cuelga algo nuevo que el tendedero aún no ha mostrado.";
+"something new" = "algo nuevo";

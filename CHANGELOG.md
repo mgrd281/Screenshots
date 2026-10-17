@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The menu bar icon says how many photos hang, and shows a small dot while
+  something new hangs that the line has not shown yet. Count on the menu
+  bar icon, under Line, turns it off.
+- One quiet line at the top of Settings › Privacy: how many details
+  Snapfly covered in the photos you sent in the last 7 days.
 - Sent, and a way back: once sent photos leave the line, a note above the
   Dock says where they went, and a click on it hangs them again.
 - Not during a call, under Line: while the microphone is in use, in Zoom,

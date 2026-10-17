@@ -665,3 +665,9 @@
 "What should I reply to this?" = "इसका क्या जवाब दूँ?";
 "What is wrong here, and how do I fix it?" = "यहाँ क्या गलत है, और इसे कैसे ठीक करूँ?";
 "Explain this step by step." = "इसे कदम-दर-कदम समझाओ।";
+"In the last 7 days, Snapfly covered one detail in a photo you sent." = "पिछले 7 दिनों में Snapfly ने आपकी भेजी एक फ़ोटो में एक जानकारी ढकी।";
+"In the last 7 days, Snapfly covered %d details in one photo you sent." = "पिछले 7 दिनों में Snapfly ने आपकी भेजी एक फ़ोटो में %d जानकारियाँ ढकीं।";
+"In the last 7 days, Snapfly covered %1$d details in %2$d photos you sent." = "पिछले 7 दिनों में Snapfly ने आपकी भेजी %2$d फ़ोटो में %1$d जानकारियाँ ढकीं।";
+"Count on the menu bar icon" = "मेन्यू बार आइकन पर गिनती";
+"How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "कितनी फ़ोटो टँगी हैं, यह आइकन के पास दिखता है, और जब कोई नई चीज़ टँगी हो जिसे रस्सी ने अभी नहीं दिखाया, तब उस पर एक छोटा बिंदु।";
+"something new" = "कुछ नया";

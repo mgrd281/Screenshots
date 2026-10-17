@@ -665,3 +665,9 @@
 "What should I reply to this?" = "What should I reply to this?";
 "What is wrong here, and how do I fix it?" = "What is wrong here, and how do I fix it?";
 "Explain this step by step." = "Explain this step by step.";
+"In the last 7 days, Snapfly covered one detail in a photo you sent." = "In the last 7 days, Snapfly covered one detail in a photo you sent.";
+"In the last 7 days, Snapfly covered %d details in one photo you sent." = "In the last 7 days, Snapfly covered %d details in one photo you sent.";
+"In the last 7 days, Snapfly covered %1$d details in %2$d photos you sent." = "In the last 7 days, Snapfly covered %1$d details in %2$d photos you sent.";
+"Count on the menu bar icon" = "Count on the menu bar icon";
+"How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet.";
+"something new" = "something new";
