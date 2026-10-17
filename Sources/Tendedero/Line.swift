@@ -902,6 +902,13 @@ final class Line: ObservableObject {
         }
     }
 
+    /// Keep on Top, from a photo's menu: the photo floats over every app in
+    /// a small window of its own, to read from while writing in a chat.
+    func keepOnTop(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
+        FloatingPhotos.shared.show(item.url, from: frameOfPhoto?(id))
+    }
+
     /// Quick Look on this photo, with the rest of the line a key press away.
     /// A PDF brought in shows as it will leave, so every page can be checked.
     func quickLook(_ id: UUID) {

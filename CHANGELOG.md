@@ -38,6 +38,8 @@ keeps a download of each version.
   ↓, to send it again.
 - Send Again in the History: a photo sent before goes into the chat in
   front once more, covered.
+- Keep on Top, in a photo's menu: it floats over every app in a small
+  window, to read from while you write in a chat.
 - Snapfly has version numbers of its own now, and this list says what each
   one brings. Settings › About shows yours.
 - QR codes and barcodes are covered, a new kind under Privacy, on the Mac

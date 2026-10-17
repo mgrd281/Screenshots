@@ -61,6 +61,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
+| Right-click, then Keep on Top | Float it over every app in a small window of its own, to read from while you write in a chat. Drag it anywhere, resize it at its edges, and close it with its cross. Up to three float at once. |
 | Drag along the line | Move it among the others. Send all, Copy all and the send buttons keep that order. |
 | Drag into an app | Send a copy. It leaves the line, as anything sent does. |
 | Drag into a folder | Keep it there. It leaves the line. |
@@ -517,6 +518,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
+| `FloatingPhotos.swift` | Keep on Top: a photo floating over every app in a small window of its own |
 | `SelfTest.swift` | Test on a Sample: a made-up order with nearly every kind of detail, covered as Settings says |
 | `CoveringProfile.swift` | Cover everything in AI chats: which chats count, and what to cover for the app in front |
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
