@@ -512,7 +512,7 @@ final class ChatButton {
 
     /// The app's frontmost ordinary window, from the window server, which
     /// needs no permission and works in the sandbox too.
-    private static func frontWindow(of pid: pid_t) -> CGRect? {
+    static func frontWindow(of pid: pid_t) -> CGRect? {
         guard let main = NSScreen.screens.first,
               let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID)
                 as? [[String: Any]] else { return nil }

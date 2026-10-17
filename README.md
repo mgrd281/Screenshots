@@ -60,7 +60,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
-| Click ChatGPT or Claude beside the paper plane | Send it, or the photos picked with it, into ChatGPT or Claude: the app comes to the front with its chat, or opens on a new one, and they are pasted in. The icons are the apps' own and show while the apps are on your Mac; without them, Send to ChatGPT and Send to Claude in a photo's menu open the website instead. |
+| Click ChatGPT or Claude beside the paper plane | Send it, or the photos picked with it, into ChatGPT or Claude: the app comes to the front with its chat, or opens on a new one, and they are pasted in; with the website open in the browser in front, they go there. The icons are the apps' own and show while the apps are on your Mac; without them, Send to ChatGPT and Send to Claude in a photo's menu open the website instead. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
 | Right-click, then Keep on Top | Float it over every app in a small window of its own, to read from while you write in a chat. Drag it anywhere, resize it at its edges, and close it with its cross. Up to three float at once. |

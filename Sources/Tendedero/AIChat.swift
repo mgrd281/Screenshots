@@ -101,17 +101,18 @@ enum AIChat: String, CaseIterable, Identifiable {
     /// The send waiting for its chat; a newer one takes its place.
     @MainActor private static var waiting: UUID?
 
-    /// Brings the chat to the front, ready to paste into: its app, opened or
-    /// brought back with the chat it shows, else the website, on the chat
-    /// open in the browser in front or on a new one. Calls back once the
-    /// chat is in front and has had a moment to put its message box in
-    /// reach; if it never comes, a note says so instead.
+    /// Brings the chat to the front, ready to paste into: the one in front
+    /// already, in its app or on its website in a browser; else its app,
+    /// opened or brought back with the chat it shows; else its website, on
+    /// a new chat. Calls back once the chat is in front and has had a moment
+    /// to put its message box in reach; if it never comes, a note says so
+    /// instead.
     @MainActor
     func open(then ready: @escaping () -> Void) {
         let front = Paste.frontApp?.bundleIdentifier
-        if appURL != nil {
-            if front == appID { return ready() }
-        } else if let front, ChatButton.browserIDs.contains(front), owns(host: ChatButton.pageInFront()?.host) {
+        if front == appID { return ready() }
+        // Asking a browser for its page takes a moment: only a browser.
+        if let front, ChatButton.browserIDs.contains(front), owns(host: ChatButton.pageInFront()?.host) {
             return ready()
         }
         let token = UUID()
@@ -136,7 +137,8 @@ enum AIChat: String, CaseIterable, Identifiable {
     }
 
     /// Opens the app, or brings it back with a window, and waits for it in
-    /// front: a little longer when it has to start first.
+    /// front with its window on screen: a little longer when it has to start
+    /// first, since its chat then still has to load.
     @MainActor
     private func openApp(at app: URL, then finish: @escaping (Bool) -> Void) {
         let bundle = appID
@@ -147,9 +149,12 @@ enum AIChat: String, CaseIterable, Identifiable {
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     guard error == nil else { return finish(false) }
-                    Self.wait(within: 15, every: 0.1, for: { Paste.frontApp?.bundleIdentifier == bundle }) { front in
-                        guard front else { return finish(false) }
-                        Self.settle(within: started ? 0.6 : 2, least: started ? 0.2 : 0.8) { finish(true) }
+                    Self.wait(within: 20, every: 0.1, for: {
+                        guard let front = Paste.frontApp, front.bundleIdentifier == bundle else { return false }
+                        return ChatButton.frontWindow(of: front.processIdentifier) != nil
+                    }) { shown in
+                        guard shown else { return finish(false) }
+                        Self.settle(within: started ? 0.6 : 3, least: started ? 0.2 : 1.2) { finish(true) }
                     }
                 }
             }
