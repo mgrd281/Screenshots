@@ -471,6 +471,15 @@ apps.
 - **Photo context menu.**
   - Grouped by intent: copy and send; translate, describe and Order Details;
     open and edit; take down.
+  - **Keep on Top** (`pip`) follows Quick Look for a photo: it floats over
+    every app in a utility panel with a transparent title bar and its close
+    button, the photo filling it, its longer side 360 pt at first and never
+    larger than the photo. It keeps the photo's shape when resized (120 pt
+    at least), moves when dragged anywhere, never takes the keyboard, and
+    shows on every Space. It opens 16 pt below the photo on the line, the
+    next 24 pt down and along from the last, kept 8 pt inside the screen,
+    and fades in over 0.15 s. Up to three float; a fourth closes the
+    oldest. It shows the screenshot as it is, for the user alone.
   - **Order Details** opens the text card with `list.bullet.rectangle` and
     the order's parts as rows on the reading panel's fill: the part's name
     in 12 pt `.secondary` in a 104 pt column, the value in 13 pt,

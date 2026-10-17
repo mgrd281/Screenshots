@@ -160,6 +160,9 @@ struct GrabArea: NSViewRepresentable {
             menu.addItem(ClosureMenuItem(L("Open"), symbol: "arrow.up.forward.app") { line.open(id) })
             menu.addItem(ClosureMenuItem(L("Quick Look"), symbol: "eye") { line.quickLook(id) })
             if isImage {
+                menu.addItem(ClosureMenuItem(L("Keep on Top"), symbol: "pip") { line.keepOnTop(id) })
+            }
+            if isImage {
                 menu.addItem(ClosureMenuItem(L("Markup"), symbol: "pencil.tip.crop.circle") { line.markup(id) })
                 menu.addItem(ClosureMenuItem(L("Hide Part…"), symbol: "rectangle.dashed") { line.hidePart(id) })
             }
