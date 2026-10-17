@@ -1,7 +1,9 @@
 # Website libraries, ready but unused
 
 Installed at the owner's request on October 17, 2026, so they are at hand
-when a design needs one. **No page loads any of them.** `build.py` copies only
+when a design needs one. **No page loads any of them.** So far eleven Lucide
+glyphs are copied from here into `LUCIDE` in `build.py`, for the support
+page's questions. `build.py` copies only
 the files directly in `website/static/`, so this folder is never published
 and visitors download none of it.
 

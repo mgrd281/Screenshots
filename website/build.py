@@ -33,7 +33,7 @@ REDIRECT_JS = ('try{if(!localStorage.getItem("snapfly-lang")){var l=(navigator.l
 # device, set before the page paints, and the mark that scripts run.
 BRAND_JS = ('try{var b=localStorage.getItem("snapfly-brand");if(b==="emerald"||b==="orange")'
             'document.documentElement.setAttribute("data-brand",b);'
-            'var k=localStorage.getItem("snapfly-look");if(k==="classic"||k==="bold")document.documentElement.setAttribute("data-look",k)}catch(e){}'
+            'var k=localStorage.getItem("snapfly-look");document.documentElement.setAttribute("data-look",k==="bold"?"bold":"classic")}catch(e){}'
             'document.documentElement.classList.add("js")')
 INLINE_JS = (BRAND_JS, REDIRECT_JS)
 STATIC = HERE / "static"
@@ -94,6 +94,24 @@ ICONS = {
         "play": '<path d="M8 5.6v12.8c0 .8.9 1.3 1.6.9l10-6.4c.6-.4.6-1.4 0-1.8l-10-6.4c-.7-.4-1.6.1-1.6.9Z" fill="currentColor"/>',
         "eye": '<g fill="none" stroke="currentColor" stroke-width="1.9"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" stroke-linejoin="round"/><circle cx="12" cy="12" r="3"/></g>',
 }
+
+# Glyphs for the support page's questions, from Lucide (website/vendor/lucide,
+# ISC), in the same single stroke as the icons above.
+LUCIDE = {
+    "line-down": '<path d="M19 3H5"/><path d="M12 21V7"/><path d="m6 15 6 6 6-6"/>',
+    "record": '<circle cx="12" cy="12" r="1"/><circle cx="12" cy="12" r="10"/>',
+    "message": '<path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/><path d="M7 11h10"/><path d="M7 15h6"/><path d="M7 7h8"/>',
+    "reorder": '<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
+    "send": '<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
+    "permission": '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+    "document": '<path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+    "padlock": '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    "laptop": '<path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z"/><path d="M20.054 15.987H3.946"/>',
+    "trash": '<path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+    "lifebuoy": '<circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/>',
+}
+ICONS.update({name: f'<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{paths}</g>'
+              for name, paths in LUCIDE.items()})
 
 
 # MARK: The screenshots that hang on the line, drawn as illustrations
@@ -287,10 +305,10 @@ def menubar(lang, page):
     # swatches; site.js keeps the checked ones in step with <html data-look>
     # and <html data-brand>.
     looks = "".join(
-        f'<button type="button" class="look-chip" role="radio" aria-checked="{str(key == "airmail").lower()}"'
-        f' tabindex="{0 if key == "airmail" else -1}" data-look-pick="{key}" aria-label="{esc(t["look_" + key])}"'
+        f'<button type="button" class="look-chip" role="radio" aria-checked="{str(key == "classic").lower()}"'
+        f' tabindex="{0 if key == "classic" else -1}" data-look-pick="{key}" aria-label="{esc(t["look_" + key])}"'
         f' data-tip="{esc(t["look_" + key])}"><span class="look-pic look-pic-{key}"></span></button>'
-        for key in ("airmail", "classic", "bold"))
+        for key in ("classic", "bold"))
     brands = "".join(
         f'<button type="button" class="brand-chip" role="radio" aria-checked="{str(key == "sunset").lower()}"'
         f' tabindex="{0 if key == "sunset" else -1}" data-brand-pick="{key}" aria-label="{esc(t["brand_" + key])}"'
@@ -359,7 +377,7 @@ def head(lang, page, title, desc):
         redirect = f"<script>{REDIRECT_JS}</script>"
     p = prefix(lang)
     return f"""<!doctype html>
-<html lang="{lang}" dir="{t["dir"]}">
+<html lang="{lang}" dir="{t["dir"]}" data-look="classic">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -556,6 +574,103 @@ def section_send(lang):
       <p>{t["send_p"]}</p>
     </div>
     <div class="keys" dir="ltr" role="img" aria-label="{esc(t["keys_label"])}">{keys}{postmark("keys")}</div>
+  </div>
+</section>"""
+
+
+# MARK: How a screenshot travels
+
+# Five moments of one screenshot, each a small Mac screen drawn at 460 × 280
+# and scaled to its column (site.css). Each plays once as it comes into view
+# (site.js); without scripts, or with Reduce Motion, each shows how its moment
+# ends. Positions are in the screen's own pixels, from the reading start.
+STORY_KINDS = ["take", "hang", "cover", "fly", "clear"]
+
+
+def scene_bar():
+    """The screen's menu bar: a few menu titles, and Snapfly's mark at the
+    trailing end beside the clock."""
+    return (f'<div class="sc-bar"><i></i><i></i><i></i><i></i>'
+            f'<span class="sc-snap">{icon("hanging")}</span><i class="sc-clock"></i></div>')
+
+
+def scene_rope():
+    return ('<svg class="sc-rope" viewBox="0 0 460 80" aria-hidden="true" focusable="false">'
+            '<path d="M-10 30 Q230 66 470 30"/></svg>')
+
+
+def scene_stamp(x, y, w, tilt, inner, extra=""):
+    """A stamp on the screen's line: its clip and the photo, hung at x (its
+    middle) with its top at y."""
+    return (f'<div class="sc-peg" style="--x:{x}px;--y:{y}px;--w:{w}px;--tilt:{tilt}">'
+            f'<span class="clip"></span><div class="photo sc-flier"><span class="photo-img">{inner}</span>{extra}</div></div>')
+
+
+def scene_covers(lang, uid):
+    """Cover ink over the invoice's name, street and email, as the app
+    covers them, sized to each line's words."""
+    a, inv = Art(lang, uid), TEXT[lang]["inv"]
+    rtl = TEXT[lang]["dir"] == "rtl"
+    rects = []
+    for n, (key, y) in enumerate([("name", 89), ("street", 103), ("email", 117)]):
+        latin = key == "email" or not rtl
+        w = min(266, round(len(inv[key]) * 9 * (0.56 if latin else 0.5) + 7))
+        rects.append(a.rect(15, y, w, 11, "#1F1F1F", 2.5, f"cv cv{n}"))
+    return (f'<svg class="sc-covers" viewBox="0 0 300 200" aria-hidden="true" focusable="false">{"".join(rects)}</svg>')
+
+
+def scene_chat(lang, uid):
+    """The chat the screenshot is sent to, with the photo in it, struck."""
+    t = TEXT[lang]
+    return (f'<div class="sc-chat"><div class="sc-chat-bar"><span class="sc-lights"><i></i><i></i><i></i></span>'
+            f'<span>{esc(t["desk"]["person"])}</span></div>'
+            f'<p class="sc-in">{esc(t["chat_in"])}</p>'
+            f'<div class="sc-img"><span class="sc-img-pic">{art("invoice", lang, f"story-{uid}")}</span>{postmark(f"story-{uid}")}</div>'
+            f'<div class="sc-compose"><span></span><span class="sc-compose-send">{icon("plane")}</span></div></div>')
+
+
+def story_scene(lang, kind):
+    lock = f'<span class="badge-lock">{icon("lock")}</span>'
+    if kind == "take":
+        window = f'<div class="sc-win">{art_invoice(lang, "story-win", covered=False)}</div>'
+        cross = ('<svg viewBox="0 0 20 20" focusable="false"><path d="M10 1v7M10 12v7M1 10h7M12 10h7" '
+                 'stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M10 1v7M10 12v7M1 10h7M12 10h7" '
+                 'stroke="#1d1d1f" stroke-width="1.4" stroke-linecap="round"/></svg>')
+        inner = (f'{window}<span class="sc-sel"></span><span class="sc-flash"></span>'
+                 f'<span class="sc-cross">{cross}</span>'
+                 '<span class="sc-keys" dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span>')
+    elif kind == "hang":
+        stamp = scene_stamp(230, 42, 156, "-2deg", art_invoice(lang, "story-hang", covered=False))
+        inner = f'<div class="sc-line">{scene_rope()}{stamp}</div>'
+    elif kind == "cover":
+        pic = art_invoice(lang, "story-cover", covered=False) + scene_covers(lang, "cover")
+        stamp = scene_stamp(230, 42, 236, "-1deg", pic, lock)
+        inner = f'<div class="sc-line">{scene_rope()}{stamp}</div>'
+    elif kind == "fly":
+        send = f'<span class="sc-send">{icon("plane")}</span>'
+        stamp = scene_stamp(118, 38, 112, "-2deg", art_invoice(lang, "story-fly"), lock + send)
+        path = ('<svg class="sc-path" viewBox="0 0 460 280" aria-hidden="true" focusable="false">'
+                '<path d="M126 72C182 8 312 26 366 146"/></svg>')
+        inner = f'{scene_chat(lang, "fly")}<div class="sc-line">{scene_rope()}{stamp}</div>{path}'
+    else:
+        inner = f'{scene_chat(lang, "clear")}<div class="sc-line">{scene_rope()}</div>'
+    return (f'<div class="scene-fit"><div class="scene sc-{kind}"><div class="sc-screen">{scene_bar()}{inner}</div>'
+            f'</div></div>')
+
+
+def section_story(lang):
+    t = TEXT[lang]
+    beats = "".join(
+        f'<li class="beat"><div class="beat-words"><h3>{esc(h)}</h3><p>{p}</p></div>'
+        f'<div class="beat-art" aria-hidden="true">{story_scene(lang, kind)}</div></li>'
+        for kind, (h, p) in zip(STORY_KINDS, t["story"]))
+    return f"""<section class="section story" aria-labelledby="story-h" data-story>
+  <div class="wrap">
+    <div class="copy center">
+      <h2 id="story-h">{esc(t["story_h"])}</h2>
+      <p>{esc(t["story_p"])}</p>
+    </div>
+    <ol class="beats">{beats}</ol>
   </div>
 </section>"""
 
@@ -1280,9 +1395,13 @@ def section_close(lang):
 </section>"""
 
 
+NEW_PARTS_LANGS = ("de",)
+
+
 def home(lang):
     t = TEXT[lang]
-    main = "\n".join([hero(lang), section_send(lang), section_capture(lang), section_desk(lang), section_private(lang),
+    story = [section_story(lang)] if lang in NEW_PARTS_LANGS else []
+    main = "\n".join([hero(lang), section_send(lang), *story, section_capture(lang), section_desk(lang), section_private(lang),
                       section_say(lang), section_menu(lang), section_styles(lang), section_design(lang), section_start(lang),
                       section_close(lang)])
     return document(lang, "index", t["title_home"], t["desc_home"], main)
@@ -1310,13 +1429,29 @@ def privacy(lang):
     return document(lang, "privacy", t["title_privacy"], t["desc_privacy"], main)
 
 
+# Each question's glyph, in the order of the questions in content.py; the
+# ones that point toward the reading end turn round in Arabic.
+FAQ_ICONS = ["download", "hanging", "line-down", "viewfinder", "record", "message", "reorder", "send",
+             "permission", "document", "padlock", "laptop", "trash", "lifebuoy"]
+FAQ_TURN = {"message", "send"}
+
+
+def faq_question(lang, sym, text):
+    """A question's words, led by its glyph where the new parts are shown."""
+    if lang not in NEW_PARTS_LANGS:
+        return esc(text)
+    turn = "icon faq-icon turn" if sym in FAQ_TURN else "icon faq-icon"
+    return f'{icon(sym, turn)}<span class="faq-q">{esc(text)}</span>'
+
+
 def support(lang):
     t = TEXT[lang]
     mail = f"mailto:{EMAIL}?subject={quote(t['support_subject'])}"
     contact = f"""<p class="muted">{esc(t["support_intro"])}</p>
     <p class="contact"><a class="btn btn-primary" href="{mail}">{icon("mail")}<span>{esc(t["support_mail"])}</span></a> <bdi class="email">{EMAIL}</bdi></p>"""
-    faq = "\n".join(f'<details class="faq"><summary>{esc(q)}{icon("chevron", "icon chev")}</summary><div class="faq-body">{a}</div></details>'
-                    for q, a in t["faq"])
+    assert len(FAQ_ICONS) == len(t["faq"]), f"{lang}: one glyph per question"
+    faq = "\n".join(f'<details class="faq"><summary>{faq_question(lang, sym, q)}{icon("chevron", "icon chev")}</summary><div class="faq-body">{a}</div></details>'
+                    for sym, (q, a) in zip(FAQ_ICONS, t["faq"]))
     main = f"""<article class="doc wrap narrow">
   {doc_head(lang, t["support_title"], contact)}
   <h2>{esc(t["faq_h"])}</h2>

@@ -1,4 +1,4 @@
-// The website's pages, languages, the look switch (airmail, classic, bold),
+// The website's pages, languages, the look switch (classic, bold),
 // the theme switcher and Reduce Motion, checked in a real browser. These
 // tests read the site; they never change it.
 const { test, expect } = require("@playwright/test");
@@ -39,7 +39,7 @@ for (const [dir, lang, direction] of languages) for (const path of pages) {
   });
 }
 
-const lookOf = (page) => page.evaluate(() => document.documentElement.dataset.look || "airmail");
+const lookOf = (page) => page.evaluate(() => document.documentElement.dataset.look || "classic");
 const edgeOf = (page) => page.evaluate(() => getComputedStyle(document.body, "::after").content);
 
 for (const look of ["classic", "bold"]) for (const [dir, lang] of languages) for (const path of ["", "privacy.html"]) {
@@ -56,21 +56,24 @@ for (const look of ["classic", "bold"]) for (const [dir, lang] of languages) for
   });
 }
 
-test("the airmail look is the default", async ({ page }) => {
+test("the Mac desktop look is the default, and there is no airmail look", async ({ page }) => {
   await page.goto("");
-  expect(await lookOf(page)).toBe("airmail");
+  expect(await lookOf(page)).toBe("classic");
   await expect(page.locator(".look-switch")).toHaveAttribute("role", "radiogroup");
-  await expect(page.locator(".look-chip")).toHaveCount(3);
-  await expect(page.locator('.look-chip[aria-checked="true"]')).toHaveAttribute("data-look-pick", "airmail");
-  expect(await edgeOf(page), "the chevron edge is drawn").not.toBe("none");
+  await expect(page.locator(".look-chip")).toHaveCount(2);
+  await expect(page.locator('.look-chip[aria-checked="true"]')).toHaveAttribute("data-look-pick", "classic");
+  expect(await edgeOf(page), "no chevron edge").toBe("none");
+  await expect(page.locator(".airmail")).toBeHidden();
 });
 
-test("choosing the classic look is kept from the first paint, in every theme", async ({ page }) => {
+test("the classic look is kept from the first paint, in every theme", async ({ page }) => {
   await page.addInitScript(() => {
-    document.addEventListener("DOMContentLoaded", () => { window.__first = document.documentElement.dataset.look || "airmail"; });
+    document.addEventListener("DOMContentLoaded", () => { window.__first = document.documentElement.dataset.look || "classic"; });
   });
   const errors = watchErrors(page);
   await page.goto("de/", { waitUntil: "networkidle" });
+  await page.locator('[data-look-pick="bold"]').click();
+  await expect.poll(() => lookOf(page)).toBe("bold");
   await page.locator('[data-look-pick="classic"]').click();
   await expect.poll(() => lookOf(page)).toBe("classic");
   expect(await page.evaluate(() => localStorage.getItem("snapfly-look"))).toBe("classic");
@@ -82,16 +85,12 @@ test("choosing the classic look is kept from the first paint, in every theme", a
   await expect.poll(() => brandOf(page)).toBe("orange");
   expect(await lookOf(page)).toBe("classic");
   await expect(page.locator('meta[name="theme-color"]').first()).toHaveAttribute("content", "#FAFAF8");
-  // And back to airmail.
-  await page.locator('[data-look-pick="airmail"]').click();
-  await expect.poll(() => lookOf(page)).toBe("airmail");
-  expect(await edgeOf(page)).not.toBe("none");
   expect(errors).toEqual([]);
 });
 
 test("choosing the bold look is kept from the first paint, with its band running", async ({ page }) => {
   await page.addInitScript(() => {
-    document.addEventListener("DOMContentLoaded", () => { window.__first = document.documentElement.dataset.look || "airmail"; });
+    document.addEventListener("DOMContentLoaded", () => { window.__first = document.documentElement.dataset.look || "classic"; });
   });
   const errors = watchErrors(page);
   await page.goto("ar/", { waitUntil: "networkidle" });
@@ -120,11 +119,9 @@ test("the arrows move between the looks", async ({ page }) => {
   await page.goto("", { waitUntil: "networkidle" });
   await page.locator('.look-chip[aria-checked="true"]').focus();
   await page.keyboard.press("ArrowRight");
-  await expect.poll(() => lookOf(page)).toBe("classic");
-  await page.keyboard.press("ArrowRight");
   await expect.poll(() => lookOf(page)).toBe("bold");
   await page.keyboard.press("ArrowRight");
-  await expect.poll(() => lookOf(page)).toBe("airmail");
+  await expect.poll(() => lookOf(page)).toBe("classic");
   await page.keyboard.press("ArrowLeft");
   await expect.poll(() => lookOf(page)).toBe("bold");
 });
@@ -289,7 +286,7 @@ test("a mouse picks each look and brand chip 24 pt tall", async ({ page }, info)
     const hit = (y) => { const el = document.elementFromPoint(x, y); return !!el && chip.contains(el); };
     return { name: chip.getAttribute("aria-label"), above: hit(r.top - 0.5), below: hit(r.bottom + 0.5) };
   }));
-  expect(reach.length).toBe(6);
+  expect(reach.length).toBe(5);
   for (const chip of reach) expect.soft(chip.above && chip.below, chip.name).toBe(true);
 });
 
@@ -377,4 +374,62 @@ test("every one of the eight line styles can be picked and shows its holder", as
     const [left, right] = await page.locator(".style-line .sty").evaluateAll((all) => [all[0], all[2]].map((s) => parseFloat(getComputedStyle(s).rotate)));
     return left > 0 && right < 0;
   }).toBe(true);
+});
+
+// How a screenshot travels: five moments, each a small screen that waits at
+// its first frame and plays once when it is well in view; the ones further
+// down wait for the eye to get there.
+test("the story's moments each play once as they come into view", async ({ page }) => {
+  await page.goto("de/", { waitUntil: "networkidle" });
+  const order = await page.evaluate(() => [...document.querySelectorAll("main > section")].map((s) => s.classList[1] || s.classList[0]));
+  expect(order.slice(1, 4), "after the send section, before the desktop to try").toEqual(["send", "story", "capture"]);
+  const story = page.locator("[data-story]");
+  await expect(story).toHaveClass(/staged/);
+  const beats = story.locator(".beat");
+  await expect(beats).toHaveCount(5);
+  const stamp = page.locator(".sc-hang .sc-peg");
+  expect(await stamp.evaluate((e) => getComputedStyle(e).opacity), "waits at its first frame").toBe("0");
+  await page.locator(".sc-hang").evaluate((e) => e.scrollIntoView({ block: "center", behavior: "instant" }));
+  await expect(beats.nth(1)).toHaveClass(/play/);
+  await expect.poll(() => stamp.evaluate((e) => getComputedStyle(e).opacity), { timeout: 4000 }).toBe("1");
+  await expect(beats.nth(4)).not.toHaveClass(/play/);
+  // Each scene keeps to its column, scaled as a whole.
+  const fits = await page.locator(".scene-fit").evaluateAll((all) => all.map((fit) => {
+    const box = fit.getBoundingClientRect(), screen = fit.querySelector(".sc-screen").getBoundingClientRect();
+    return Math.abs(box.width - screen.width) < 1 && Math.abs(box.height - screen.height) < 1;
+  }));
+  expect(fits).toEqual([true, true, true, true, true]);
+});
+
+test("with Reduce Motion the story shows how each moment ends", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("de/", { waitUntil: "networkidle" });
+  await expect(page.locator("[data-story]")).not.toHaveClass(/staged/);
+  const opacity = (selector) => page.locator(selector).evaluate((e) => getComputedStyle(e).opacity);
+  expect(await opacity(".sc-hang .sc-peg")).toBe("1");
+  expect(await opacity(".sc-cover .badge-lock")).toBe("1");
+  expect(await opacity(".sc-fly .sc-flier")).toBe("0");
+  expect(await opacity(".sc-fly .sc-img")).toBe("1");
+  expect(await page.locator(".sc-clear .sc-line").evaluate((e) => getComputedStyle(e).transform)).not.toBe("none");
+});
+
+// Every question on the support page leads with its own glyph.
+test("every question on the support page has its glyph", async ({ page }) => {
+  for (const dir of ["de/"]) {
+    await page.goto(dir + "support.html", { waitUntil: "networkidle" });
+    const questions = await page.locator(".faq").count();
+    expect(questions).toBeGreaterThan(10);
+    expect(await page.locator(".faq summary > svg.faq-icon").count()).toBe(questions);
+  }
+});
+
+// The newest parts of the site are German only for now (NEW_PARTS_LANGS in
+// build.py); English and Arabic keep their pages as they were.
+test("the story and the question glyphs are German for now", async ({ page }) => {
+  for (const dir of ["", "ar/"]) {
+    await page.goto(dir, { waitUntil: "networkidle" });
+    await expect(page.locator("[data-story]")).toHaveCount(0);
+    await page.goto(dir + "support.html", { waitUntil: "networkidle" });
+    await expect(page.locator(".faq-icon")).toHaveCount(0);
+  }
 });

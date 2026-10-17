@@ -132,7 +132,7 @@ on the website only; the app has no theme setting and follows macOS.
   match SF Symbols' proportions: one stroke weight, round caps, no fills
   where the symbol has none. Lucide and Phosphor sit in `website/vendor/`
   to draw from; an icon taken from them is copied into `build.py` and held
-  to the same rule.
+  to the same rule, as the support page's question glyphs are (`LUCIDE`).
 - **One icon, one meaning.** The paper plane always means "send". The lock
   always means "private details covered".
 - **No emoji as icons,** and no decorative icons without a job.

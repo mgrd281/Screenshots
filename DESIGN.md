@@ -800,6 +800,11 @@ of its own.
 
 ## Website
 
+> **Airmail removed (October 2026).** The owner asked to drop the airmail
+> look. The Mac desktop is now the default, the look switch offers it and bold
+> colour, and `<html data-look>` is always set. The airmail passages below
+> describe the base styles in `site.css` that those two looks restyle.
+
 The site in `website/` (GitHub Pages) sells the app and hosts the privacy
 policy and support pages that App Store Connect links to. It extends this
 system to a web page. The brief and direction contract are in
@@ -836,6 +841,40 @@ system to a web page. The brief and direction contract are in
     - the photo's menu opening from a stamp on a line;
     - a whole Mac desktop to try Snapfly on (below);
     - the Hide Part window, said in a sentence (below).
+  - **How a screenshot travels** (`section_story`), between the send
+    section and the desktop to try: five moments of one screenshot, each a
+    title (`clamp(1.5rem, 2.4vw, 2rem)`, 800) and a line beside a small Mac
+    screen, the sides alternating; one column at 960 px and below, the words
+    above the screen.
+    German only for now, at the owner's request (`NEW_PARTS_LANGS` in
+    `build.py`).
+    - **The screen** is drawn at 460 × 280 and scaled as a whole to its
+      column, 460 wide at most: `scale(tan(atan2(100cqw, 460px)))`, so CSS
+      divides the two lengths. It takes the desktop demo's tokens (`--d-*`,
+      set on `.story` too): one solid desktop with its grain, a 14 radius, a
+      hairline and shadow 2, a 20 px menu bar in glass 1 with four menu
+      titles, Snapfly's mark and the clock. In right-to-left pages it
+      mirrors.
+    - **The moments.** Take it: the shortcut in a dark key strip (22 pt
+      keys, 82% black), pressed 140 ms apart, then a dashed accent selection
+      dragged corner to corner over an invoice window, and the flash. It
+      hangs: the line comes down from under the menu bar (0.6 s) and the
+      stamp drops onto its clip (`hang-in`). Private details get covered:
+      cover ink grows over the name, the street and the email, 140 ms
+      apart, then the lock badge. It flies into the chat: its paper plane
+      is pressed, and the stamp takes off up and toward the reading end at
+      −9° and lands in Lena's chat (820 ms on `ease.flight`) along a dashed
+      flight path, and is struck with a postmark. The line tucks itself
+      away: the empty line goes back up (0.5 s, ease-in).
+    - Its stamps are the page's own, 7 px padding: perforated in airmail;
+      glass without the blur in classic and white cards in bold, both 4 px
+      padding at a 10 radius. The postmark and the flight path belong to
+      airmail. In bold the section is a field and, in light, its screens
+      take the sheet.
+    - Each moment plays once, when three quarters of its screen is in view
+      above the window's bottom quarter; until then it holds its first
+      frame. Without scripts, with Reduce Motion and in print, each shows
+      how it ends.
   - **The desktop to try Snapfly on** (`section_capture`): a Mac screen
     with no laptop round it, so its content gets all the room. It is its
     own small system: every value inside it is a `--d-*` token on
@@ -987,7 +1026,10 @@ system to a web page. The brief and direction contract are in
     already posted in it when the page opens (124 px wide, postmarked),
     except where the chat is too small to hold it clear of the button
     (1100 px wide or 860 px tall and less).
-  - The privacy and support pages are documents on the paper.
+  - The privacy and support pages are documents on the paper. On the
+    support page each question leads with its glyph (22 px, in the accent,
+    from Lucide in the site's single stroke), and its answer lines up under
+    the words, 38 px in. German only for now (`NEW_PARTS_LANGS`).
 - **The postal pieces.** All of them print in the theme's postal ink and
   are hidden from assistive technology; the words they carry are said
   elsewhere on the page.
@@ -1199,7 +1241,8 @@ system to a web page. The brief and direction contract are in
       and the theme's colour becomes the type (6.5, 9.4 and 5.7 to 1); the
       night sections, the band and the footer take the theme's colour,
       with black words on them. Every text pair is at least 4.5 to 1.
-    - Down the page: field (first view), sheet (send), night (try it),
+    - Down the page: field (first view), sheet (send), field (how a
+      screenshot travels), night (try it),
       sheet (Desktop), field (private), sheet (say), night (menu), sheet
       (line styles), field (no account), sheet (steps), field (close),
       night (footer).

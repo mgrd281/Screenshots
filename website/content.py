@@ -322,6 +322,15 @@ TEXT["de"] = dict(
     send_p="Die Senden-Taste am Ende der Leine setzt alle Bildschirmfotos darauf in die App im Vordergrund ein – WhatsApp, ChatGPT oder jeden Chat –, genau dort, wo du gerade schreibst. Jedes Bildschirmfoto hat außerdem einen eigenen Papierflieger, um nur dieses zu senden. <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> schickt das neueste, ohne dass du zur Maus greifst. Was gesendet ist, verlässt die Leine. So hängt dort nur, was noch zu senden ist. Über WhatsApp, ChatGPT und anderen Chats sitzt eine Senden-Taste direkt über ihrer eigenen. Halt sie gedrückt, um eine Nachricht dazuzuschreiben: Sie kommt nach den Bildern an.",
     keys=["ctrl", "alt", ""],
     keys_label="Das Kürzel Control, Option, V",
+    story_h="So reist ein Bildschirmfoto.",
+    story_p="Folg einem Bildschirmfoto von deiner Tastatur bis in einen Chat.",
+    story=[
+        ("Aufnehmen.", "Drück <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span> und zieh über das, was du brauchst, oder klick auf ein Fenster."),
+        ("Es hängt an der Leine.", "Die Leine kommt damit oben auf deinem Bildschirm herunter, auf dem Schreibtisch landet nichts. Ein Klick kopiert es."),
+        ("Privates wird verdeckt.", "Die Namen, E-Mail-Adressen und Kontonummern, die du gewählt hast, sind in allem verdeckt, was die Leine verlässt."),
+        ("Es fliegt in den Chat.", "Klick auf seinen Papierflieger, und es landet dort, wo du gerade geschrieben hast: in WhatsApp, ChatGPT oder jedem anderen Chat."),
+        ("Die Leine verschwindet wieder.", "Was gesendet ist, verlässt die Leine, und eine leere Leine fährt wieder hoch. Dein Bildschirm ist frei für das nächste."),
+    ],
 
     desk_h="Endlich ein aufgeräumter Schreibtisch.",
     desk_p="Überlass Snapfly deine Bildschirmfotos, und sie landen nicht mehr auf dem Schreibtisch. Keine schwebende Vorschau, keine fünf Sekunden Warten: Jedes hängt sofort an der Leine. Zieh eines in einen Ordner, um es zu behalten. Alles andere verschwindet, wenn du fertig bist.",

@@ -586,7 +586,7 @@
     bold: { sunset: ["#FF5E62", "#0F0C0D"], emerald: ["#5CC9B2", "#0B1213"], orange: ["#EC632C", "#121110"] },
   };
   const paintBars = () => {
-    const look = root.dataset.look in bars ? root.dataset.look : "airmail";
+    const look = root.dataset.look in bars ? root.dataset.look : "classic";
     const brand = root.dataset.brand in bars[look] ? root.dataset.brand : "sunset";
     document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
       meta.setAttribute("content", bars[look][brand][/dark/.test(meta.media) ? 1 : 0]);
@@ -619,7 +619,7 @@
 
   // One radio group of swatches, kept in step with <html data-NAME>; the
   // first value is the default and leaves the attribute off.
-  function setUpSwitch(group, name, values) {
+  function setUpSwitch(group, name, values, keepDefault = false) {
     const chips = [...group.querySelectorAll(`[data-${name}-pick]`)];
     const pick = (chip) => chip.dataset[`${name}Pick`];
     const known = (value) => (values.includes(value) ? value : values[0]);
@@ -633,7 +633,7 @@
       paintBars();
     };
     const apply = (value) => {
-      if (value === values[0]) delete root.dataset[name];
+      if (value === values[0] && !keepDefault) delete root.dataset[name];
       else root.dataset[name] = value;
       show(value);
     };
@@ -664,7 +664,7 @@
   const brandSwitch = document.querySelector(".brand-switch");
   if (brandSwitch) setUpSwitch(brandSwitch, "brand", ["sunset", "emerald", "orange"]);
   const lookSwitch = document.querySelector(".look-switch");
-  if (lookSwitch) setUpSwitch(lookSwitch, "look", ["airmail", "classic", "bold"]);
+  if (lookSwitch) setUpSwitch(lookSwitch, "look", ["classic", "bold"], true);
 
   // Safari on iPhone and iPad shows a pressed state only where a touch is
   // listened for; this listener does nothing else.
@@ -677,7 +677,7 @@
     const loops = new IntersectionObserver((entries) => entries.forEach((entry) => {
       entry.target.classList.toggle("loops-paused", !entry.isIntersecting);
     }));
-    document.querySelectorAll(".line, [data-style-stage]").forEach((holder) => loops.observe(holder));
+    document.querySelectorAll(".line, [data-style-stage], .scene").forEach((holder) => loops.observe(holder));
   }
 
   // The first view's arrival plays once; photos hung on the hero's line
@@ -716,6 +716,23 @@
       thing.classList.add("arrive", kind, "pre");
       arrive.observe(thing);
     }));
+  }
+
+  // MARK: How a screenshot travels
+
+  // Each moment of the story plays once, when most of its screen is in view
+  // above the window's bottom quarter, so the next one waits until the eye
+  // gets there; until then it holds its first frame (site.css). Without
+  // scripts, or with Reduce Motion, every moment shows how it ends.
+  const story = document.querySelector("[data-story]");
+  if (story && !reduced.matches && "IntersectionObserver" in window) {
+    story.classList.add("staged");
+    const play = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      play.unobserve(entry.target);
+      entry.target.closest(".beat").classList.add("play");
+    }), { rootMargin: "0px 0px -25% 0px", threshold: 0.75 });
+    story.querySelectorAll(".scene-fit").forEach((scene) => play.observe(scene));
   }
 
   // MARK: The Desktop, swept onto the line

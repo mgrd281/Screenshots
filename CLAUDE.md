@@ -76,12 +76,21 @@ the website's footer. Both stay.
     publishes it from `main` on GitHub Pages.
   - Words live in `website/content.py`. Labels the app shows come from its
     `Localizable.strings`, so change them there.
+  - **For now, site edits are German only** (the owner's request). Words in
+    `website/content.py` change in `de` alone. The newest parts (the scroll
+    story and the question glyphs) show only in the languages listed in
+    `NEW_PARTS_LANGS` in `build.py`, which is German. English and Arabic stay
+    as they were until the owner says the others follow.
   - System fonts only, and nothing loaded from another host.
   - `vercel.json` builds the same site on Vercel. `SNAPFLY_SITE_URL` (ending in
     a slash) sets the address the pages point to; set it to the custom domain.
     Its Content Security Policy lets in nothing from another host, which also
     keeps Vercel's toolbar off the previews, and allows the inline scripts
     (`INLINE_JS` in `build.py`) by their hashes. The build stops if they drift.
+  - **The airmail look was removed at the owner's request (October 2026).**
+    The site now has two looks, the Mac desktop (the default) and bold
+    colour. Its envelope rules remain in `site.css` as the base the two
+    restyle; `DESIGN.md`'s airmail passages describe that base.
   - The page is an airmail envelope: aerogramme paper inside a chevron edge
     round the window, every screenshot a perforated stamp on the line, a
     postmark with the time on what is sent. Mac windows on it stay native.

@@ -204,6 +204,7 @@
 :root[data-look="bold"] .postmark,
 :root[data-look="bold"] .handstamp,
 :root[data-look="bold"] .flightpath,
+:root[data-look="bold"] .sc-path,
 :root[data-look="bold"] .flap,
 :root[data-look="bold"] .envelope-stamp,
 :root[data-look="bold"] .msg.posted { display: none; }
@@ -323,6 +324,7 @@
 
 /* The loud ones: the field again, with a dot grid in one corner. */
 :root[data-look="bold"] .private,
+:root[data-look="bold"] .story,
 :root[data-look="bold"] .design {
   background:
     radial-gradient(50% 60% at 92% 10%, var(--glow-a), transparent 70%),
@@ -330,6 +332,7 @@
   color: var(--type);
 }
 :root[data-look="bold"] .private .copy p,
+:root[data-look="bold"] .story p,
 :root[data-look="bold"] .design p { color: var(--type-2); }
 :root[data-look="bold"] .private::after,
 :root[data-look="bold"] .design::after {
@@ -364,6 +367,18 @@
 :root[data-look="bold"] .menu-desc,
 :root[data-look="bold"] .capture .desk-note { color: var(--night-ink-2); }
 :root[data-look="bold"] .menu-desc-title { color: var(--night-ink); }
+
+/* The story's moments: the titles heavy like the headings, its stamps
+   white cards like the line's, small. */
+:root[data-look="bold"] .beat-words h3 { font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 0.95; letter-spacing: -0.045em; }
+:root[data-look="bold"] .beat-words h3:lang(ar) { letter-spacing: 0; line-height: 1.2; }
+:root[data-look="bold"] .scene .photo { padding: 4px; border-radius: 10px; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.04), 0 10px 22px rgb(var(--shade-deep) / 0.28); }
+:root[data-look="bold"] .scene .photo-img { border-radius: 7px; }
+/* In light, its screens take the quiet sheet, so the field stays the one
+   loud colour. */
+@media (prefers-color-scheme: light) {
+  :root[data-look="bold"] .story { --d-wall-1: var(--sheet); }
+}
 
 /* Keys drawn flat and heavy. */
 :root[data-look="bold"] .keycap {
