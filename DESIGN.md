@@ -12,6 +12,13 @@ colors:
   cover-ink: "#1F1F1F"         # covers over private details in a photo; the ink tiles in Settings
   tile-paper: "#EBEBEB"        # the ink tiles in the dark, their symbol in #1A1A1A
   island-black: "#000000"      # the island line style
+  # Draw on Photo's inks, drawn into the copy's pixels, so fixed in light and dark.
+  draw-red: "#FF3B30"          # the first ink; white words and numbers on it
+  draw-yellow: "#FFCC00"       # the highlighter's first ink; dark words on it
+  draw-green: "#34C759"        # dark words on it
+  draw-blue: "#007AFF"         # white words on it
+  draw-black: "#1C1C1E"        # also the dark words on the light inks
+  draw-white: "#FFFFFF"        # a step's rim on the other inks
   # Website only (website/static/site.css). Light value first, dark after the slash.
   web-button: "#0071E3"        # the accent as a button fill: white text on it is 4.7:1
   web-link: "#0066CC"          # links; #3D9BFF in dark
@@ -120,6 +127,17 @@ components:
   canvas:
     margin: "{spacing.xl}"         # around the picture in Hide Part, on NSColor.underPageBackgroundColor
     minWindow: "760pt × 480pt"
+  draw-tool:
+    rounded: "{rounded.keycap}"
+    size: "34pt × 28pt"            # a tool in Draw on Photo's row; chosen: the accent at 16% behind the accent glyph
+  draw-swatch:
+    size: "18pt"                   # an ink, with a 1pt hairline of .primary at 18%; chosen: a 2pt accent ring 3pt out
+  draw-handle:
+    size: "9pt"                    # white, a 1.5pt accent edge, at a chosen mark's ends or corners
+  draw-mark:
+    line: "0.25%, 0.4% or 0.65% of the unit"   # Thin, Medium, Thick; the unit is √(width × height), at least 640 px
+    step: "2%, 2.8% or 3.8% of the unit"       # a numbered circle across, its rim 8% of that
+    words: "1.6%, 2.2% or 3% of the unit"      # semibold, on a label rounded 30% of its height
   time-stamp:
     backgroundColor: "#F7F7F7"     # a band above the picture, gray 0.97
     hairline: "#D1D1D1"            # gray 0.82, between band and picture
@@ -228,6 +246,12 @@ literal value in a view.
   be read, with a symbol beside the word, never color alone.
 - **Island black** is pure black, to blend into the notch and the menu bar
   above it.
+- **Drawing inks** (`Drawing.Ink`) are the six colours Draw on Photo draws
+  in: red (the first), yellow (the highlighter's first), green, blue, black
+  and white. They go into the copy's pixels, so they are fixed values, never
+  system colours that change with the appearance. Words and numbers on them
+  are white on red, blue and black, and black on yellow, green and white.
+  They appear only in the picture and in the window's swatches.
 - **Ink tiles** (`InkTile`): cover ink with a white symbol in the light,
   paper (grey 0.92) with the symbol in ink (grey 0.1) in the dark, never a
   colour. Behind the Settings sidebar's symbols and the Support pane's rows.
@@ -583,6 +607,45 @@ apps.
     button reads Save Copy… and opens a save sheet in the folder of the
     original, under the name "… (covered)". A small spinner shows in the
     footer while the copy is written, and the window closes only once it is.
+- **Draw on Photo** (`DrawEditor.swift`) is Hide Part's window, laid out
+  the same (`HidePartLayout`), for arrows, boxes, highlights, numbered steps
+  and words drawn on a photo, and the part of it to keep.
+  - The **canvas** shows the picture with what Hide private details covers
+    and the parts hidden by hand, then the marks drawn by the same code as
+    the copy (`Drawing.draw`), so what you see is what goes. A highlight
+    multiplies into the picture, so words under it stay as dark as they
+    were.
+    - A chosen mark has a dashed accent outline (1 pt, 4 and 3) 4 pt out,
+      and a 9 pt white handle with an accent edge at an arrow's ends or a
+      box's corners. The canvas keeps 12 pt round the picture so handles at
+      its edges show whole.
+    - Outside a crop is dimmed, black 60%, with a white hairline round
+      it. While cropping it is 45%, with thirds in white at 35% and 18 pt
+      white corners, 3 pt and rounded, to drag.
+    - The pointer is the arrow for Select, the I-beam for Text, and the
+      crosshair for the rest.
+  - The **inspector**: first "Tool", a row of seven 34 × 28 pt tools,
+    `cursorarrow`, `arrow.up.right`, `rectangle`, `highlighter`, `1.circle`,
+    `textformat` and `crop`, each with its help tag and its key (V, A, R, H,
+    N, T, C), the chosen one in the accent on the accent at 16%, rounded 6;
+    the section's footer says how to use the tool. Then Color, six 18 pt
+    swatches, and Size, a segmented Thin, Medium, Thick; they change the
+    chosen mark and the next one, and the highlighter keeps an ink of its
+    own. A chosen mark gets a section with its name and Delete (⌫), and for
+    words a rounded field to type them in, which takes the keyboard when
+    words are put down. Crop shows the pixels kept and Keep Whole Photo.
+    Last, the number of drawings, with Remove All on the trailing edge and a
+    subtitle saying they are drawn on what is sent.
+  - The **footer** holds Undo and Redo (⌘Z, ⇧⌘Z) as icons on the leading
+    edge, and Cancel and Done on the trailing. While the words' field has
+    the keyboard, the letters, Delete and Return are typing: Return and
+    Escape end it, and the next Return is Done.
+  - Marks are flat: no shadow, no glow. A step is a circle of the ink with
+    a white rim (a black one on white) and its number in SF Pro Rounded
+    bold; words sit on a label of the ink, a white one with a hairline. An
+    arrow narrows towards its tail under a solid head. Drawing explains and
+    never hides: blur and pixelate are not offered, and nothing drawn counts
+    on the lock.
 - **No modal alerts** for things that can be said inline in the card.
 - **Privacy pane.** Grouped form. First a row of three small `.bordered`
   buttons, Check All, Recommended and Uncheck All, sharing the row in equal

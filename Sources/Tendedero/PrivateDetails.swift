@@ -112,10 +112,11 @@ enum PrivateDetails {
     }
 
     /// Whether a screenshot leaves the line changed: covered, stamped with
-    /// the time, or both. A photo also leaves without where it was taken.
+    /// the time, drawn on, or all of them. A photo also leaves without where
+    /// it was taken.
     static func alters(_ url: URL) -> Bool {
         if isDocument(url) { return covers(url) }
-        return covers(url) || TimeStamp.mark(for: url) != nil || strips(url)
+        return covers(url) || TimeStamp.mark(for: url) != nil || strips(url) || !Drawings.saved(url).isEmpty
     }
 
     /// Whether a picture carries where or with what it was taken, read once
@@ -163,7 +164,8 @@ enum PrivateDetails {
     static func report(for url: URL, covering chosen: Set<PrivateDetail>) -> CoverReport? {
         if chosen == details { return report(for: url) }
         if isDocument(url) { return documentKey(url, chosen).flatMap { reports[$0] } }
-        return key(for: url, chosen, hand(url), TimeStamp.mark(for: url), strips(url)).flatMap { reports[$0] }
+        return key(for: url, chosen, hand(url), TimeStamp.mark(for: url), strips(url), Drawings.saved(url))
+            .flatMap { reports[$0] }
     }
 
     /// What was covered in what went out with the given kinds covered, as
@@ -200,11 +202,12 @@ enum PrivateDetails {
         let hand = Self.hand(url)
         let stamp = TimeStamp.mark(for: url)
         let clean = strips(url)
-        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean, isImage(url),
-              let key = key(for: url, chosen, hand, stamp, clean) else { return url }
+        let drawing = Drawings.saved(url)
+        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty, isImage(url),
+              let key = key(for: url, chosen, hand, stamp, clean, drawing) else { return url }
         if let done = cached(key) { return done }
         // Not read yet, like a capture copied the instant it hangs.
-        let made = Cover.covering(url, chosen, hand: hand, stamp: stamp, clean: clean)
+        let made = Cover.covering(url, chosen, hand: hand, stamp: stamp, clean: clean, drawing: drawing)
         let done = made?.url ?? url
         results[key] = done
         reports[key] = made?.report ?? CoverReport()
@@ -222,8 +225,9 @@ enum PrivateDetails {
         let hand = Self.hand(url)
         let stamp = TimeStamp.mark(for: url)
         let clean = strips(url)
-        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean,
-              let key = key(for: url, chosen, hand, stamp, clean), let done = cached(key) else { return nil }
+        let drawing = Drawings.saved(url)
+        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty,
+              let key = key(for: url, chosen, hand, stamp, clean, drawing), let done = cached(key) else { return nil }
         shownKeys[url.path] = key
         return done
     }
@@ -248,8 +252,9 @@ enum PrivateDetails {
         let hand = Self.hand(url)
         let stamp = TimeStamp.mark(for: url)
         let clean = strips(url)
-        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean, isImage(url),
-              let key = key(for: url, chosen, hand, stamp, clean) else {
+        let drawing = Drawings.saved(url)
+        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty, isImage(url),
+              let key = key(for: url, chosen, hand, stamp, clean, drawing) else {
             // Nothing to change: it leaves as a fresh file all the same.
             preparePlain(url)
             return
@@ -266,7 +271,7 @@ enum PrivateDetails {
         guard !inProgress.contains(key) else { return }
         inProgress.insert(key)
         DispatchQueue.global(qos: .utility).async {
-            let made = Cover.covering(url, chosen, hand: hand, stamp: stamp, clean: clean)
+            let made = Cover.covering(url, chosen, hand: hand, stamp: stamp, clean: clean, drawing: drawing)
             let done = made?.url ?? url
             let report = made?.report ?? CoverReport()
             DispatchQueue.main.async {
@@ -415,16 +420,17 @@ enum PrivateDetails {
         return done
     }
 
-    /// The file, when it last changed, what to cover and the stamp, so a
-    /// screenshot edited in Markup, a new choice, a part hidden by hand, new
-    /// words on the stamp or a changed rule of the owner's are drawn again.
+    /// The file, when it last changed, what to cover, the stamp and the
+    /// drawing, so a screenshot edited in Markup, a new choice, a part hidden
+    /// by hand, new words on the stamp, a changed drawing or a changed rule
+    /// of the owner's are drawn again.
     private static func key(for url: URL, _ chosen: Set<PrivateDetail>, _ hand: [CGRect],
-                            _ stamp: TimeStamp.Mark?, _ clean: Bool) -> String? {
+                            _ stamp: TimeStamp.Mark?, _ clean: Bool, _ drawing: Drawing) -> String? {
         guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path),
               let date = attributes[.modificationDate] as? Date else { return nil }
         let kinds = chosen.map(\.rawValue).sorted().joined(separator: ",")
         let parts = hand.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
-        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(parts)|\(stamp?.key ?? "")|\(clean)|\(OwnRules.fingerprint)|\(Cover.plainNames)"
+        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(parts)|\(stamp?.key ?? "")|\(clean)|\(drawing.key)|\(OwnRules.fingerprint)|\(Cover.plainNames)"
     }
 }
 
@@ -454,26 +460,31 @@ enum Cover {
     }
 
     /// A copy of the screenshot with the chosen details and the parts hidden
-    /// by hand covered, and the time stamped when there is a stamp, under
-    /// the same name. Nil when there is nothing to hide or stamp.
+    /// by hand covered, what was drawn on it, and the time stamped when there
+    /// is a stamp, under the same name. Nil when there is nothing to hide,
+    /// draw or stamp.
     /// - Parameter clean: a photo that carries where or with what it was
     ///   taken: a copy is made even with nothing to cover, without any of
     ///   it, and as a JPEG, which suits a photo and keeps it small to send.
     static func copy(of url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect] = [],
-                     stamp: TimeStamp.Mark? = nil, clean: Bool = false) -> URL? {
-        covering(url, chosen, hand: hand, stamp: stamp, clean: clean)?.url
+                     stamp: TimeStamp.Mark? = nil, clean: Bool = false, drawing: Drawing = .empty) -> URL? {
+        covering(url, chosen, hand: hand, stamp: stamp, clean: clean, drawing: drawing)?.url
     }
 
     /// The same copy, with what was covered in it.
+    /// - Parameter drawing: drawn over what is covered, then cut to the part
+    ///   kept. What the reading covers is found in the whole picture first.
     static func covering(_ url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect] = [],
-                         stamp: TimeStamp.Mark? = nil, clean: Bool = false) -> (url: URL, report: CoverReport)? {
+                         stamp: TimeStamp.Mark? = nil, clean: Bool = false,
+                         drawing: Drawing = .empty) -> (url: URL, report: CoverReport)? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = upright(source) else { return nil }
         let found = Finder.coveredAreas(in: image, chosen)
         let boxes = found.map(\.rect) + hand
-        guard !boxes.isEmpty || stamp != nil || clean else { return nil }
+        guard !boxes.isEmpty || stamp != nil || clean || !drawing.isEmpty else { return nil }
 
         guard var covered = Finder.cover(image, boxes) else { return nil }
+        if !drawing.isEmpty, let drawn = Drawing.render(covered, drawing) { covered = drawn }
         // The stamp's band goes above the picture, which grows by its height.
         if let stamp, let stamped = TimeStamp.render(covered, stamp) { covered = stamped }
 

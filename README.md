@@ -55,6 +55,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | <kbd>⌘</kbd>-click several | Copy them together, to paste them all at once. |
 | Right-click, then Copy Text | Copy the words in it, to paste as text. |
 | Right-click, then Hide Part | Drag a box over anything the covering missed. It stays hidden in whatever leaves the line. |
+| Right-click, then Draw on Photo | Point things out with an arrow, a box, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
 | Right-click, then Translate Text | Read it in your language, to copy or send. |
 | Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
@@ -278,6 +279,24 @@ Mac, and they show as boxes to check before you press Done; click one to show
 it again. Without Apple Intelligence, type words separated by commas and they
 are hidden wherever they appear. The text is read on your Mac, and the
 screenshot file itself is never changed.
+
+<br>
+
+## Pointed out, before it goes.
+
+Draw on Photo, in a photo's menu, opens the same wide window to point
+things out: an arrow from where it starts to what it points at, a box round
+a button, a highlighter over a line of text, numbered steps clicked one
+after another, and words on a label. Crop keeps only the part that matters.
+Each tool has its key: V selects, A draws arrows, R boxes, H highlights, N
+numbers, T puts words down and C crops. Click a drawing to change its
+colour or size, drag it or its handles, or press Delete; ⌘Z undoes.
+
+What you draw goes on the copy that leaves the line, over what is covered,
+and the line shows the photo that way. The file itself stays as it is, and
+the drawing stays with the photo until it leaves the line. Drawing explains
+a picture; it never hides anything, so the lock counts only what is
+covered.
 
 <br>
 
@@ -564,6 +583,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, and the Shortcuts actions |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
+| `Drawing.swift` | Draw on Photo's arrows, boxes, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |
+| `DrawEditor.swift` | Draw on Photo: the window to draw on a photo, with its tools, inks, sizes and Undo |
 | `TextCard.swift` | Translate Text, Describe and Order Details, and the card that shows them |
 | `Appearance.swift` | Glass by role, Liquid Glass on macOS 26, and motion that honours Reduce Motion |
 | `Search.swift` | The words in every photo, and the search bar under the line |

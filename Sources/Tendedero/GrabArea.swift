@@ -176,6 +176,7 @@ struct GrabArea: NSViewRepresentable {
             if isImage {
                 menu.addItem(ClosureMenuItem(L("Markup"), symbol: "pencil.tip.crop.circle") { line.markup(id) })
                 menu.addItem(ClosureMenuItem(L("Hide Part…"), symbol: "rectangle.dashed") { line.hidePart(id) })
+                menu.addItem(ClosureMenuItem(L("Draw on Photo…"), symbol: "scribble.variable") { line.drawOn(id) })
             }
             if isRecording {
                 menu.addItem(ClosureMenuItem(L("Trim…"), symbol: "scissors") { line.markup(id) })
