@@ -387,3 +387,12 @@
 "Page %d of %d" = "Página %d de %d";
 "Previous Page" = "Página anterior";
 "Next Page" = "Próxima página";
+
+/* Hide private details in a copy, beside a photo or PDF from Finder */
+"Hide in this copy" = "Ocultar nesta cópia";
+"The copy has no place or camera details. The original stays as it is." = "A cópia não tem dados de local nem de câmera. O original não muda.";
+"Save Copy…" = "Salvar cópia…";
+"%@ (covered)" = "%@ (coberto)";
+"Saved beside the original as %@." = "Salva ao lado do original como %@.";
+"Could not save the copy." = "Não foi possível salvar a cópia.";
+"Choose one photo or PDF at a time." = "Escolha uma foto ou um PDF de cada vez.";

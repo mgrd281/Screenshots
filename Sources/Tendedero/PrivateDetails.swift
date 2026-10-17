@@ -291,6 +291,14 @@ enum Cover {
         Finder.areas(in: image, chosen)
     }
 
+    /// The picture as it is covered, upright and with nothing of the file but
+    /// its pixels: what a copy saved beside the original is made from.
+    static func covered(of url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect]) -> CGImage? {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let image = upright(source) else { return nil }
+        return Finder.cover(image, areas(in: image, chosen) + hand)
+    }
+
     /// A copy of the screenshot with the chosen details and the parts hidden
     /// by hand covered, and the time stamped when there is a stamp, under
     /// the same name. Nil when there is nothing to hide or stamp.

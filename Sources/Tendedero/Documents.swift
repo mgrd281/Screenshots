@@ -74,13 +74,19 @@ enum DocumentCover {
     /// half done.
     /// - Parameter hand: the parts hidden by hand, by page number from 1.
     static func copy(of url: URL, _ chosen: Set<PrivateDetail>, hand: [Int: [CGRect]]) -> URL? {
+        guard let target = Cover.newCopy(of: url, ext: "pdf"),
+              write(url, chosen, hand: hand, to: target) else { return nil }
+        return target
+    }
+
+    /// Writes the protected PDF to `target`, replacing a file there. Nothing
+    /// is left behind when a page could not be drawn.
+    static func write(_ url: URL, _ chosen: Set<PrivateDetail>, hand: [Int: [CGRect]], to target: URL) -> Bool {
         guard let document = PDFDocument(url: url), !document.isLocked,
-              document.pageCount > 0, document.pageCount <= maxPages else { return nil }
-        let target = Cover.newCopy(of: url, ext: "pdf")
-        guard let target,
+              document.pageCount > 0, document.pageCount <= maxPages,
               // Only the app that made it; none of the original's details.
               let context = CGContext(target as CFURL, mediaBox: nil, [kCGPDFContextCreator: "Snapfly"] as CFDictionary)
-        else { return nil }
+        else { return false }
         var drawn = 0
         for index in 0..<document.pageCount {
             let done: Bool = autoreleasepool {
@@ -100,9 +106,9 @@ enum DocumentCover {
         context.closePDF()
         guard drawn == document.pageCount else {
             try? FileManager.default.removeItem(at: target)
-            return nil
+            return false
         }
-        return target
+        return true
     }
 
     /// The page as JPEG, which a PDF keeps as it is: a page of a few hundred

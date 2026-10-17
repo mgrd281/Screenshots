@@ -400,9 +400,11 @@ apps.
 - **Menu bar menu.** Short: Take Screenshot and Add Files… (⌘O), then Show or
   Hide line, Search…, History…, Take everything down, Settings…, Open
   folder, Updates, Quit.
-- **Finder's Services menu.** Send Safely with Snapfly, for photos and PDFs,
-  translated like the app (`ServicesMenu.strings`). Open With lists Snapfly
-  as an alternative, never as what opens them.
+- **Finder's Services menu.** Send Safely with Snapfly and Hide Private
+  Details with Snapfly, for photos and PDFs, translated like the app
+  (`ServicesMenu.strings`). Open With lists Snapfly as an alternative, never
+  as what opens them. Hide Private Details opens Hide Part for one file, to
+  save a copy beside it.
 - **Photo context menu.**
   - Grouped by intent: copy and send; translate and describe; open and edit;
     take down.
@@ -425,6 +427,14 @@ apps.
     while it works. With Apple Intelligence, three examples sit under it as
     small `.bordered` buttons, in a row where they fit, else stacked. A callout note in `.secondary` under it says what it did.
     While the field has the keyboard, Return runs it; empty, Return is Done.
+  - Hide Private Details in a copy (from Finder) is the same window with a
+    block titled "Hide in this copy" above the footer: six checkboxes in an
+    adaptive grid, named as Settings names them, starting with what Settings
+    hides, and a note in `.secondary` that the copy has no place or camera
+    details. The primary button reads Save Copy… and opens a save sheet in the
+    folder of the original, under the name "… (covered)". A small spinner
+    shows in the footer while the copy is written, and the window closes only
+    once it is.
   - For a PDF, the footer starts with its pages: `chevron.backward` and
     `chevron.forward` buttons, each with its help tag, around "Page 2 of 5" in
     callout `.secondary` with monospaced digits. Each page keeps its own

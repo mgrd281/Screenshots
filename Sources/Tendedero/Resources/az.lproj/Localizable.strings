@@ -389,3 +389,12 @@
 "Page %d of %d" = "Səhifə %d / %d";
 "Previous Page" = "Əvvəlki səhifə";
 "Next Page" = "Növbəti səhifə";
+
+/* Hide private details in a copy, beside a photo or PDF from Finder */
+"Hide in this copy" = "Bu nüsxədə gizlət";
+"The copy has no place or camera details. The original stays as it is." = "Nüsxədə yer və kamera məlumatı yoxdur. Orijinal dəyişmir.";
+"Save Copy…" = "Nüsxəni saxla…";
+"%@ (covered)" = "%@ (örtülü)";
+"Saved beside the original as %@." = "Orijinalın yanında %@ adı ilə saxlanıldı.";
+"Could not save the copy." = "Nüsxə saxlanıla bilmədi.";
+"Choose one photo or PDF at a time." = "Hər dəfə bir şəkil və ya PDF seçin.";

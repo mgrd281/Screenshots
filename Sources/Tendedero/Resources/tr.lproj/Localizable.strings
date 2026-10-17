@@ -387,3 +387,12 @@
 "Page %d of %d" = "Sayfa %d / %d";
 "Previous Page" = "Önceki sayfa";
 "Next Page" = "Sonraki sayfa";
+
+/* Hide private details in a copy, beside a photo or PDF from Finder */
+"Hide in this copy" = "Bu kopyada gizle";
+"The copy has no place or camera details. The original stays as it is." = "Kopyada konum ve kamera bilgisi yok. Orijinal değişmez.";
+"Save Copy…" = "Kopyayı kaydet…";
+"%@ (covered)" = "%@ (kapalı)";
+"Saved beside the original as %@." = "Orijinalin yanına %@ adıyla kaydedildi.";
+"Could not save the copy." = "Kopya kaydedilemedi.";
+"Choose one photo or PDF at a time." = "Her seferinde bir fotoğraf veya PDF seçin.";

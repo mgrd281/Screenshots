@@ -389,3 +389,12 @@
 "Page %d of %d" = "पेज %d / %d";
 "Previous Page" = "पिछला पेज";
 "Next Page" = "अगला पेज";
+
+/* Hide private details in a copy, beside a photo or PDF from Finder */
+"Hide in this copy" = "इस प्रति में छिपाएँ";
+"The copy has no place or camera details. The original stays as it is." = "प्रति में जगह या कैमरे की जानकारी नहीं है। मूल फ़ाइल नहीं बदलती।";
+"Save Copy…" = "प्रति सहेजें…";
+"%@ (covered)" = "%@ (ढका हुआ)";
+"Saved beside the original as %@." = "मूल फ़ाइल के साथ %@ नाम से सहेजा गया।";
+"Could not save the copy." = "प्रति सहेजी नहीं जा सकी।";
+"Choose one photo or PDF at a time." = "एक बार में एक फ़ोटो या PDF चुनें।";

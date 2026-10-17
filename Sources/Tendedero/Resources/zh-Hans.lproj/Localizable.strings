@@ -387,3 +387,12 @@
 "Page %d of %d" = "第 %d 页，共 %d 页";
 "Previous Page" = "上一页";
 "Next Page" = "下一页";
+
+/* Hide private details in a copy, beside a photo or PDF from Finder */
+"Hide in this copy" = "在此副本中隐藏";
+"The copy has no place or camera details. The original stays as it is." = "副本不含拍摄地点和相机信息。原件保持不变。";
+"Save Copy…" = "存储副本…";
+"%@ (covered)" = "%@（已遮盖）";
+"Saved beside the original as %@." = "已存为原件旁边的 %@。";
+"Could not save the copy." = "无法存储副本。";
+"Choose one photo or PDF at a time." = "每次请只选择一张照片或一个 PDF。";

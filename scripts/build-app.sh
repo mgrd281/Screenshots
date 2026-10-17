@@ -94,14 +94,22 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <string>Snapfly watches the folder you chose so it can hang new images on the line.</string>
   <key>NSAppleEventsUsageDescription</key>
   <string>Snapfly asks your browser which page is open, so its send button shows only on chat websites like ChatGPT.</string>
-  <!-- Photos and PDFs from anywhere: Finder's "Send Safely with Snapfly",
-       translated in each language's ServicesMenu.strings, and Open With.
-       Snapfly is only ever an alternative, never what opens them. -->
+  <!-- Photos and PDFs from anywhere: Finder's "Send Safely with Snapfly" and
+       "Hide Private Details with Snapfly", translated in each language's
+       ServicesMenu.strings, and Open With. Snapfly is only ever an
+       alternative, never what opens them. -->
   <key>NSServices</key>
   <array>
     <dict>
       <key>NSMenuItem</key><dict><key>default</key><string>Send Safely with Snapfly</string></dict>
       <key>NSMessage</key><string>sendSafely</string>
+      <key>NSPortName</key><string>Snapfly</string>
+      <key>NSRequiredContext</key><dict/>
+      <key>NSSendFileTypes</key><array><string>public.image</string><string>com.adobe.pdf</string></array>
+    </dict>
+    <dict>
+      <key>NSMenuItem</key><dict><key>default</key><string>Hide Private Details with Snapfly</string></dict>
+      <key>NSMessage</key><string>hideDetails</string>
       <key>NSPortName</key><string>Snapfly</string>
       <key>NSRequiredContext</key><dict/>
       <key>NSSendFileTypes</key><array><string>public.image</string><string>com.adobe.pdf</string></array>
