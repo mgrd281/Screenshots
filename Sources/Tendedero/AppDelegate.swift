@@ -1049,24 +1049,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             menu.addItem(.separator())
         }
 
-        if Recording.shared.isRecording {
-            let stopItem = ClosureMenuItem(L("Stop Recording")) { Recording.shared.stop() }
-            if let shortcut = Shortcut.current(.record), shortcut.key.count == 1 {
-                stopItem.keyEquivalent = shortcut.key
-                stopItem.keyEquivalentModifierMask = shortcut.modifiers
+        // First what hangs, then the main act: the photos picked, or the
+        // newest, into the app in front, as the send shortcut does.
+        let count = line.liveCount
+        let status = NSMenuItem(title: count == 0 ? L("Nothing on the line")
+                                : count == 1 ? L("One photo on the line")
+                                : String(format: L("%d photos on the line"), count),
+                                action: nil, keyEquivalent: "")
+        status.isEnabled = false
+        menu.addItem(status)
+        if let app = Paste.frontApp?.localizedName {
+            let sendItem = ClosureMenuItem(String(format: L("Paste into %@"), app), symbol: "paperplane") { [weak self] in
+                self?.line.pasteNewest()
             }
+            Self.show(Shortcut.current(.send), on: sendItem)
+            sendItem.isEnabled = count > 0
+            menu.addItem(sendItem)
+        }
+        menu.addItem(.separator())
+
+        // The ways onto the line.
+        if Recording.shared.isRecording {
+            let stopItem = ClosureMenuItem(L("Stop Recording"), symbol: "stop.circle") { Recording.shared.stop() }
+            Self.show(Shortcut.current(.record), on: stopItem)
             menu.addItem(stopItem)
         } else {
-            let captureItem = ClosureMenuItem(L("Take Screenshot")) {
+            let captureItem = ClosureMenuItem(L("Take Screenshot"), symbol: "camera.viewfinder") {
                 // Once the menu has faded, so it is not in the picture.
                 Capture.shared.start(after: 0.2)
             }
-            if let shortcut = Shortcut.current(.capture), shortcut.key.count == 1 {
-                captureItem.keyEquivalent = shortcut.key
-                captureItem.keyEquivalentModifierMask = shortcut.modifiers
-            }
+            Self.show(Shortcut.current(.capture), on: captureItem)
             menu.addItem(captureItem)
             let timerItem = NSMenuItem(title: L("Take Screenshot with Timer"), action: nil, keyEquivalent: "")
+            Self.symbol("timer", on: timerItem)
             let seconds = NSMenu()
             for n in Capture.timerChoices {
                 seconds.addItem(ClosureMenuItem(Self.secondsTitle(n)) {
@@ -1075,26 +1090,56 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             timerItem.submenu = seconds
             menu.addItem(timerItem)
-            let pageItem = ClosureMenuItem(L("Capture Whole Page")) {
+            let pageItem = ClosureMenuItem(L("Capture Whole Page"), symbol: "scroll") {
                 FullPage.shared.start(after: 0.2)
             }
-            if let shortcut = Shortcut.current(.page), shortcut.key.count == 1 {
-                pageItem.keyEquivalent = shortcut.key
-                pageItem.keyEquivalentModifierMask = shortcut.modifiers
-            }
+            Self.show(Shortcut.current(.page), on: pageItem)
             menu.addItem(pageItem)
-            let recordItem = ClosureMenuItem(L("Record Screen")) {
+            let recordItem = ClosureMenuItem(L("Record Screen"), symbol: "record.circle") {
                 Capture.shared.start(after: 0.2, mode: .record)
             }
-            if let shortcut = Shortcut.current(.record), shortcut.key.count == 1 {
-                recordItem.keyEquivalent = shortcut.key
-                recordItem.keyEquivalentModifierMask = shortcut.modifiers
-            }
+            Self.show(Shortcut.current(.record), on: recordItem)
             menu.addItem(recordItem)
         }
         // Photos and PDFs from anywhere on the Mac, to send protected.
-        menu.addItem(ClosureMenuItem(L("Add Files…"), key: "o") { [weak self] in self?.chooseFiles() })
-        let buttonItem = ClosureMenuItem(L("Screenshot Button")) { [weak self] in
+        menu.addItem(ClosureMenuItem(L("Add Files…"), symbol: "folder.badge.plus", key: "o") { [weak self] in
+            self?.chooseFiles()
+        })
+        menu.addItem(.separator())
+
+        // The line itself.
+        let toggleItem = ClosureMenuItem(isRevealed ? L("Hide line") : L("Show line"),
+                                         symbol: isRevealed ? "arrow.up.to.line" : "arrow.down.to.line") { [weak self] in
+            self?.toggle()
+        }
+        Self.show(Shortcut.current(.toggle), on: toggleItem)
+        menu.addItem(toggleItem)
+
+        let searchItem = ClosureMenuItem(L("Search…"), symbol: "magnifyingglass") { [weak self] in self?.openSearch() }
+        Self.show(Shortcut.current(.search), on: searchItem)
+        searchItem.isEnabled = count > 0
+        menu.addItem(searchItem)
+
+        let historyItem = ClosureMenuItem(L("History…"), symbol: "clock.arrow.circlepath", key: "y") {
+            HistoryWindow.shared.show()
+        }
+        historyItem.isEnabled = History.days != nil
+        menu.addItem(historyItem)
+
+        let clearItem = ClosureMenuItem(L("Take everything down"), symbol: "eye.slash") { [weak self] in
+            self?.line.clear()
+        }
+        clearItem.isEnabled = count > 0
+        menu.addItem(clearItem)
+        menu.addItem(.separator())
+
+        // The two switches: what leaves covered, and the button at the edge.
+        let privacyItem = ClosureMenuItem(L("Hide private details"), symbol: "hand.raised") { [weak self] in
+            self?.togglePrivateDetails()
+        }
+        privacyItem.state = PrivateDetails.hidden ? .on : .off
+        menu.addItem(privacyItem)
+        let buttonItem = ClosureMenuItem(L("Screenshot Button"), symbol: "camera.circle") { [weak self] in
             CaptureButton.isEnabled.toggle()
             self?.preferences?.refresh()
         }
@@ -1102,50 +1147,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(buttonItem)
         menu.addItem(.separator())
 
-        let toggleItem = ClosureMenuItem(isRevealed ? L("Hide line") : L("Show line")) { [weak self] in
-            self?.toggle()
-        }
-        if let shortcut = Shortcut.current(.toggle), shortcut.key.count == 1 {
-            toggleItem.keyEquivalent = shortcut.key
-            toggleItem.keyEquivalentModifierMask = shortcut.modifiers
-        }
-        menu.addItem(toggleItem)
-
-        let searchItem = ClosureMenuItem(L("Search…")) { [weak self] in self?.openSearch() }
-        if let shortcut = Shortcut.current(.search), shortcut.key.count == 1 {
-            searchItem.keyEquivalent = shortcut.key
-            searchItem.keyEquivalentModifierMask = shortcut.modifiers
-        }
-        searchItem.isEnabled = line.liveCount > 0
-        menu.addItem(searchItem)
-
-        let historyItem = ClosureMenuItem(L("History…"), key: "y") { HistoryWindow.shared.show() }
-        historyItem.isEnabled = History.days != nil
-        menu.addItem(historyItem)
-
-        let clearItem = ClosureMenuItem(L("Take everything down")) { [weak self] in
-            self?.line.clear()
-        }
-        clearItem.isEnabled = line.liveCount > 0
-        menu.addItem(clearItem)
-
-        menu.addItem(.separator())
-
         // Everything else lives in the settings window.
-        menu.addItem(ClosureMenuItem(L("Settings…"), key: ",") { [weak self] in
+        menu.addItem(ClosureMenuItem(L("Settings…"), symbol: "gearshape", key: ",") { [weak self] in
             self?.openSettings()
         })
-
-        menu.addItem(ClosureMenuItem(L("Open screenshots folder")) { [weak self] in
+        menu.addItem(ClosureMenuItem(L("Open screenshots folder"), symbol: "folder") { [weak self] in
             guard let self else { return }
             NSWorkspace.shared.open(self.watcher.folder)
         })
-
+        menu.addItem(ClosureMenuItem(L("Help & Support…"), symbol: "questionmark.circle") {
+            NSWorkspace.shared.open(AppDelegate.supportURL)
+        })
         // The app never connects to anything, so it cannot tell when a new
         // version is out. The releases page can.
         // From the App Store, updates come through it.
         if !Edition.appStore {
-            menu.addItem(ClosureMenuItem(L("Check for Updates…")) {
+            menu.addItem(ClosureMenuItem(L("Check for Updates…"), symbol: "arrow.down.circle") {
                 NSWorkspace.shared.open(AppDelegate.updatesURL)
             })
         }
@@ -1154,6 +1171,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(ClosureMenuItem(L("Quit Snapfly"), key: "q") {
             NSApp.terminate(nil)
         })
+    }
+
+    /// A shortcut's key on its menu item, when it is one key.
+    private static func show(_ shortcut: Shortcut?, on item: NSMenuItem) {
+        guard let shortcut, shortcut.key.count == 1 else { return }
+        item.keyEquivalent = shortcut.key
+        item.keyEquivalentModifierMask = shortcut.modifiers
+    }
+
+    /// A symbol on a plain menu item, from macOS 26 on, as ClosureMenuItem
+    /// gives its own.
+    private static func symbol(_ name: String, on item: NSMenuItem) {
+        if #available(macOS 26, *) {
+            item.image = NSImage(systemSymbolName: name, accessibilityDescription: nil)
+        }
+    }
+
+    /// The menu's switch for all of Hide private details. Off keeps the kinds
+    /// that were chosen, so on brings them back as they were; with none
+    /// kept, the recommended ones.
+    private static let detailsBeforeKey = "hiddenDetailsBefore"
+
+    private func togglePrivateDetails() {
+        if PrivateDetails.hidden {
+            UserDefaults.standard.set(PrivateDetails.details.map(\.rawValue).sorted(), forKey: Self.detailsBeforeKey)
+            PrivateDetails.details = []
+        } else {
+            let kept = (UserDefaults.standard.stringArray(forKey: Self.detailsBeforeKey) ?? [])
+                .compactMap(PrivateDetail.init(rawValue:))
+            PrivateDetails.details = kept.isEmpty ? PrivateDetail.recommended : Set(kept)
+        }
+        line.readPrivateDetails()
+        preferences?.refresh()
     }
 
     /// A literal key for each choice, so each language can say it its way.
@@ -1167,6 +1217,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// Where new versions are published.
     static let updatesURL = URL(string: "https://github.com/mgrd281/Screenshots/releases")!
+
+    /// The support page of the website, in German or Arabic where the Mac
+    /// speaks them, else in English.
+    static var supportURL: URL {
+        let language = String(Locale.preferredLanguages.first?.prefix(2) ?? "")
+        let folder = ["de", "ar"].contains(language) ? language + "/" : ""
+        return URL(string: "https://mgrd281.github.io/Screenshots/" + folder + "support.html")!
+    }
 
     /// Who makes the app, for the About pane.
     static let author = "Mgrdegh Ghazarian"

@@ -424,3 +424,9 @@
 "A pattern, like SKU-[0-9]+" = "कोई पैटर्न, जैसे SKU-[0-9]+";
 "Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "शब्द जहाँ भी दिखें, ढक दिए जाते हैं। लेबल के बाद जो आता है वह ढका जाता है: पंक्ति का बाक़ी हिस्सा, या नीचे की पंक्ति।";
 "This pattern cannot be read." = "यह पैटर्न पढ़ा नहीं जा सकता।";
+
+/* The menu bar menu: what hangs, and help */
+"Nothing on the line" = "रस्सी पर कुछ नहीं";
+"One photo on the line" = "रस्सी पर एक फ़ोटो";
+"%d photos on the line" = "रस्सी पर %d फ़ोटो";
+"Help & Support…" = "सहायता और समर्थन…";

@@ -422,3 +422,9 @@
 "A pattern, like SKU-[0-9]+" = "パターン、たとえば SKU-[0-9]+";
 "Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "単語はどこに現れても隠されます。ラベルの後では、その続きが隠されます。行の残り、または下の行です。";
 "This pattern cannot be read." = "このパターンは読み取れません。";
+
+/* The menu bar menu: what hangs, and help */
+"Nothing on the line" = "ロープには何もありません";
+"One photo on the line" = "ロープに写真が1枚";
+"%d photos on the line" = "ロープに写真が%d枚";
+"Help & Support…" = "ヘルプとサポート…";

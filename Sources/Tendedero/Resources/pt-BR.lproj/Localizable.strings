@@ -422,3 +422,9 @@
 "A pattern, like SKU-[0-9]+" = "Um padrão, como SKU-[0-9]+";
 "Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "As palavras são cobertas onde aparecerem. Após um rótulo, o que vem depois é coberto: o resto da linha, ou a linha de baixo.";
 "This pattern cannot be read." = "Este padrão não pode ser lido.";
+
+/* The menu bar menu: what hangs, and help */
+"Nothing on the line" = "Nada no varal";
+"One photo on the line" = "Uma foto no varal";
+"%d photos on the line" = "%d fotos no varal";
+"Help & Support…" = "Ajuda e suporte…";
