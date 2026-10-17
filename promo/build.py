@@ -107,6 +107,9 @@ AD = {
                                  dict(name="Max", initial="M", color="#C495C9", last="Bis Samstag! 👋", time="Gestern")]),
             chatgpt=dict(ask="Was zeigt dieses Diagramm?",
                          reply="Die Balken steigen Monat für Monat: Der Umsatz wächst stetig.",
+                         # The long cut sends two at once with the button over the chat.
+                         askMany="Was zeigen diese Bilder?",
+                         replyMany="Ein Diagramm mit steigendem Umsatz und dein Kalender für diese Woche.",
                          field="Frag irgendwas"),
         ),
         free="Kostenlos für deinen Mac",
@@ -120,6 +123,9 @@ AD = {
                         button="Sendung verfolgen"),
         today="Heute",
         yesterday="Gestern",
+        mail=dict(title="Neue E-Mail", to="An:", toName="Lena Hoffmann", subject="Betreff:", subjectText="Deine Rechnung",
+                  hello="Hallo Lena,", text="anbei die Rechnung von gestern.", bye="Viele Grüße"),
+        cta="Entdecke viel mehr!",
         legal="WhatsApp, ChatGPT und Claude sind Marken ihrer Inhaber. Snapfly ist mit ihnen nicht verbunden.",
     ),
 }
@@ -133,6 +139,7 @@ def ad(lang, cut="short"):
     words["menu"] = [L(lang, k) for k in ("Copy Text", "Translate Text", "Describe", "Make PDF")]
     words["history"] = L(lang, "History")
     words["days"] = L(lang, "%d days").replace("%d", "30")
+    words["more"] = [L(lang, "Record Screen"), L(lang, "Capture Whole Page"), "Zeitstempel", "und vieles mehr"]
     data = {
         "lang": lang,
         "cut": cut,
