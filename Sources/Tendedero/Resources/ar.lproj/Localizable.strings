@@ -205,6 +205,7 @@
 "Photos that leave the line stay here for %d days." = "الصور التي تخرج من الحبل تبقى هنا %d يومًا.";
 "History is off. Turn it on in Settings, under Line." = "السجل متوقف. شغّله من الإعدادات، تحت الحبل.";
 "Hang on the line" = "تعليقها على الحبل";
+"Send Again" = "إرسال مرة أخرى";
 "Remove from History" = "إزالة من السجل";
 "Keep a history" = "الاحتفاظ بسجل";
 "Off" = "متوقف";

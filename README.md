@@ -137,7 +137,9 @@ whose message box sits in the middle of the page, it sits higher than once
 the chat has started. Drag it where you like it; it remembers the spot for
 each app, and for a new chat apart. Press and hold it, or right-click and
 choose Send with a Message…, to write a line like "Here is your invoice":
-Return sends the photos with the message after them, as one message. In Settings,
+Return sends the photos with the message after them, as one message. The
+last five messages wait above the empty field: click one, or press ↑ and ↓,
+to send it again; its cross takes it off the list. In Settings,
 under Line, choose where it sits (above the chat's send button, a corner of
 the window, or the edge of the screen), how it looks, its icon and its color,
 with a preview, or turn it off.
@@ -328,7 +330,8 @@ in Settings.
 Everything that leaves the line, sent or taken down, waits in the History
 for 30 days: History… in the menu bar, or <kbd>⌘</kbd>&thinsp;<kbd>Y</kbd>
 while the menu is open. It is grouped by day, and the search finds the words
-in every photo. A click hangs one on the line again. A screenshot from
+in every photo. A click hangs one on the line again; Send Again in its menu
+hangs it and sends it, covered, into the chat you had in front. A screenshot from
 Snapfly's own folder moves into its History folder and goes to the Trash once
 its days are up; a file from anywhere else stays where it is. Choose 7 or 30
 days, or turn it off, in Settings, under Line. It all stays on your Mac.

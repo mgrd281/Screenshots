@@ -205,6 +205,7 @@
 "Photos that leave the line stay here for %d days." = "离开晾衣绳的照片会在这里保留 %d 天。";
 "History is off. Turn it on in Settings, under Line." = "历史记录已关闭。请在“设置”的“晾衣绳”中打开。";
 "Hang on the line" = "挂回晾衣绳";
+"Send Again" = "再次发送";
 "Remove from History" = "从历史记录中移除";
 "Keep a history" = "保留历史记录";
 "Off" = "关闭";

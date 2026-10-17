@@ -3,13 +3,16 @@ import SwiftUI
 
 /// The history in a window: what left the line, newest first and grouped by
 /// day, with a search through the words in each photo. A click hangs one
-/// on the line again.
+/// on the line again; Send Again sends it into the chat once more.
 @MainActor
 final class HistoryWindow: NSObject, NSWindowDelegate {
     static let shared = HistoryWindow()
 
     /// Hangs a photo on the line, flying in as a new capture does.
     var onHang: (URL) -> Void = { _ in }
+    /// Hangs a photo on the line and sends it into the app that was in
+    /// front before the window.
+    var onSendAgain: (URL) -> Void = { _ in }
 
     private var window: NSWindow?
     private let model = HistoryModel()
@@ -18,9 +21,11 @@ final class HistoryWindow: NSObject, NSWindowDelegate {
         History.purge()
         model.reload()
         if window == nil {
-            let host = NSHostingController(rootView: HistoryView(model: model) { [weak self] url in
+            let host = NSHostingController(rootView: HistoryView(model: model, hang: { [weak self] url in
                 self?.onHang(url)
-            })
+            }, sendAgain: { [weak self] url in
+                self?.onSendAgain(url)
+            }))
             // The search field and the clear button go in the window's toolbar.
             host.sceneBridgingOptions = [.toolbars, .title]
             let window = NSWindow(contentViewController: host)
@@ -36,6 +41,10 @@ final class HistoryWindow: NSObject, NSWindowDelegate {
         }
         NSApp.activate(ignoringOtherApps: true)
         window?.makeKeyAndOrderFront(nil)
+    }
+
+    func close() {
+        window?.close()
     }
 
     func windowWillClose(_ notification: Notification) {
@@ -99,6 +108,7 @@ final class HistoryModel: ObservableObject {
 private struct HistoryView: View {
     @ObservedObject var model: HistoryModel
     let hang: (URL) -> Void
+    let sendAgain: (URL) -> Void
     @State private var confirmClear = false
 
     private static let dayFormat: DateFormatter = {
@@ -162,7 +172,7 @@ private struct HistoryView: View {
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 200), spacing: 16)],
                                   alignment: .leading, spacing: 16) {
                             ForEach(group.entries) { entry in
-                                HistoryCard(entry: entry, thumb: model.thumbs[entry.path], hang: hang)
+                                HistoryCard(entry: entry, thumb: model.thumbs[entry.path], hang: hang, sendAgain: sendAgain)
                             }
                         }
                     }
@@ -178,6 +188,7 @@ private struct HistoryCard: View {
     let entry: History.Entry
     let thumb: NSImage?
     let hang: (URL) -> Void
+    let sendAgain: (URL) -> Void
     @State private var hovering = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -228,6 +239,7 @@ private struct HistoryCard: View {
         .help(L("Hang on the line"))
         .contextMenu {
             Button(L("Hang on the line")) { takeBack() }
+            Button(L("Send Again")) { send() }
             Button(L("Copy")) {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.writeObjects([entry.url as NSURL])
@@ -246,5 +258,10 @@ private struct HistoryCard: View {
     private func takeBack() {
         guard let url = History.takeBack(entry) else { return }
         hang(url)
+    }
+
+    private func send() {
+        guard let url = History.takeBack(entry) else { return }
+        sendAgain(url)
     }
 }
