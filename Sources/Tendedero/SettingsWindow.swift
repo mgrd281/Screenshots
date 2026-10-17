@@ -304,6 +304,7 @@ final class Preferences: ObservableObject {
                     self.change {
                         PrivateDetails.toggle(detail)
                         self.line.readPrivateDetails()
+                        self.selfTest = nil
                     }
                 }
             })
@@ -316,6 +317,36 @@ final class Preferences: ObservableObject {
         change {
             PrivateDetails.details = kinds
             line.readPrivateDetails()
+            selfTest = nil
+        }
+    }
+
+    /// Test on a Sample: the sample as the kinds checked now cover it, and
+    /// what that covered, while it is shown.
+    struct SelfTestOutcome {
+        let image: NSImage
+        let covered: String
+        let missing: String?
+    }
+
+    @Published private(set) var selfTest: SelfTestOutcome?
+    @Published private(set) var testing = false
+
+    func runSelfTest() {
+        guard !testing else { return }
+        testing = true
+        let chosen = PrivateDetails.details
+        Task { @MainActor [weak self] in
+            let result = await Task.detached(priority: .userInitiated) { SelfTest.run(chosen) }.value
+            guard let self else { return }
+            self.testing = false
+            guard let result, let image = NSImage(data: result.png) else {
+                self.selfTest = nil
+                Notice.show(L("Could not run the test."))
+                return
+            }
+            let words = SelfTest.sentences(chosen, result.report)
+            self.selfTest = SelfTestOutcome(image: image, covered: words.covered, missing: words.missing)
         }
     }
 
@@ -1302,6 +1333,32 @@ private struct PrivacyPane: View {
             }
             .onChange(of: prefs.rules) { _, _ in prefs.rulesChanged() }
             .onDisappear { prefs.saveRules() }
+            Section {
+                if let test = prefs.selfTest {
+                    Image(nsImage: test.image)
+                        .resizable()
+                        .interpolation(.high)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: .infinity, maxHeight: 280)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .accessibilityLabel(test.covered)
+                    Text(test.covered)
+                    if let missing = test.missing {
+                        Text(missing)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                HStack {
+                    Spacer()
+                    SettingsButton(prefs.testing ? L("Testing…") : L("Test on a Sample")) { prefs.runSelfTest() }
+                        .disabled(prefs.testing)
+                }
+            } header: {
+                Text(L("Test"))
+            } footer: {
+                Text(L("Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently."))
+                    .foregroundStyle(.secondary)
+            }
             Section(L("Preview")) {
                 if let photo = newest {
                     Image(nsImage: photo.thumb)
