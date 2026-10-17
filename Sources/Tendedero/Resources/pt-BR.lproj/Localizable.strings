@@ -362,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Adicionar uma mensagem…";
+"As typed" = "Como digitado";
+"Send in another language" = "Enviar em outro idioma";
+"Sent in %@" = "Enviado em %@";
+"Language of the message" = "Idioma da mensagem";
 "Saved messages" = "Mensagens salvas";
 "Add Message" = "Adicionar mensagem";
 "Here is the invoice for your order {order}." = "Aqui está a fatura do seu pedido {order}.";

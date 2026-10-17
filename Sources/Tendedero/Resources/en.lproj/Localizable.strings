@@ -364,6 +364,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Add a message…";
+"As typed" = "As typed";
+"Send in another language" = "Send in another language";
+"Sent in %@" = "Sent in %@";
+"Language of the message" = "Language of the message";
 "Saved messages" = "Saved messages";
 "Add Message" = "Add Message";
 "Here is the invoice for your order {order}." = "Here is the invoice for your order {order}.";

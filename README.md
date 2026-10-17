@@ -144,7 +144,11 @@ saved messages, written under Saved messages in Settings, under Line, like
 "Here is the invoice for your order {order}": {order}, {total}, {date},
 {name} and {tracking} fill in from the newest photo, read on your Mac. A
 blank of a kind you cover stays empty, shown as "…", so the message never
-says what the photo hides, and nothing goes until you press Return. In Settings,
+says what the photo hides, and nothing goes until you press Return. To
+write in your language and send in your customer's, choose a language with
+the globe in the bar, on macOS 15 or later: Return first translates the
+message there, on your Mac, so you can read it, and the next Return sends
+it. The bar keeps the language for each chat. In Settings,
 under Line, choose where it sits (above the chat's send button, a corner of
 the window, or the edge of the screen), how it looks, its icon and its color,
 with a preview, or turn it off.

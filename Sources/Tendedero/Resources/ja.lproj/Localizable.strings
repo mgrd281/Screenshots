@@ -362,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "メッセージを追加…";
+"As typed" = "入力したまま";
+"Send in another language" = "別の言語で送信";
+"Sent in %@" = "%@で送信";
+"Language of the message" = "メッセージの言語";
 "Saved messages" = "保存したメッセージ";
 "Add Message" = "メッセージを追加";
 "Here is the invoice for your order {order}." = "ご注文 {order} の請求書です。";

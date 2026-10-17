@@ -362,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Ajouter un message…";
+"As typed" = "Tel que saisi";
+"Send in another language" = "Envoyer dans une autre langue";
+"Sent in %@" = "Envoyé en %@";
+"Language of the message" = "Langue du message";
 "Saved messages" = "Messages enregistrés";
 "Add Message" = "Ajouter un message";
 "Here is the invoice for your order {order}." = "Voici la facture de ta commande {order}.";

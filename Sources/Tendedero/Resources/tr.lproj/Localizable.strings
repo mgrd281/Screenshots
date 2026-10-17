@@ -362,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Mesaj ekle…";
+"As typed" = "Yazıldığı gibi";
+"Send in another language" = "Başka bir dilde gönder";
+"Sent in %@" = "%@ olarak gönderilir";
+"Language of the message" = "Mesajın dili";
 "Saved messages" = "Kayıtlı mesajlar";
 "Add Message" = "Mesaj ekle";
 "Here is the invoice for your order {order}." = "{order} numaralı siparişinin faturası burada.";

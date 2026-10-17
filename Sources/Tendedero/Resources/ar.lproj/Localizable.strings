@@ -362,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "أضف رسالة…";
+"As typed" = "كما كُتبت";
+"Send in another language" = "إرسال بلغة أخرى";
+"Sent in %@" = "تُرسل باللغة: %@";
+"Language of the message" = "لغة الرسالة";
 "Saved messages" = "رسائل محفوظة";
 "Add Message" = "إضافة رسالة";
 "Here is the invoice for your order {order}." = "هذه فاتورة طلبك رقم {order}.";

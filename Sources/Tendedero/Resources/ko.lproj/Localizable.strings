@@ -362,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "메시지 추가…";
+"As typed" = "입력한 그대로";
+"Send in another language" = "다른 언어로 보내기";
+"Sent in %@" = "%@(으)로 보내요";
+"Language of the message" = "메시지 언어";
 "Saved messages" = "저장된 메시지";
 "Add Message" = "메시지 추가";
 "Here is the invoice for your order {order}." = "주문 {order}의 청구서입니다.";

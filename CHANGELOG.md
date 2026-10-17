@@ -36,6 +36,9 @@ keeps a download of each version.
   keeps photos 90 days, a year or forever too.
 - The message bar keeps the last five messages: click one, or press ↑ and
   ↓, to send it again.
+- The message bar sends in another language: choose it with the globe, and
+  Return translates your message on your Mac, to read before the next
+  Return sends it. Kept for each chat, on macOS 15 and later.
 - Send Again in the History: a photo sent before goes into the chat in
   front once more, covered.
 - Snapfly has version numbers of its own now, and this list says what each

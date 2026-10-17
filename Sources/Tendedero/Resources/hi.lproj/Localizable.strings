@@ -364,6 +364,10 @@
 
 /* Message with the photos */
 "Add a message…" = "संदेश जोड़ें…";
+"As typed" = "जैसा लिखा";
+"Send in another language" = "दूसरी भाषा में भेजें";
+"Sent in %@" = "%@ में भेजा जाता है";
+"Language of the message" = "संदेश की भाषा";
 "Saved messages" = "सहेजे गए संदेश";
 "Add Message" = "संदेश जोड़ें";
 "Here is the invoice for your order {order}." = "यह रहा आपके ऑर्डर {order} का बिल।";
