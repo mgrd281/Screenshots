@@ -517,6 +517,14 @@
 "Image" = "Bild";
 "Plain file names" = "Schlichte Dateinamen";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Bilder gehen als frische Dateien hinaus, ohne Angaben dazu, wann, wo oder womit sie entstanden sind. Mit schlichten Dateinamen heißen sie außerdem „Bild“ statt nach dem Zeitpunkt der Aufnahme.";
+"Test on a Sample" = "An einem Beispiel testen";
+"Testing…" = "Wird getestet …";
+"Test" = "Test";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "Verdeckt eine erfundene Bestellung mit dem, was oben angehakt ist, um zu zeigen, was jede Art verbirgt. Das gilt nur für dieses Beispiel: Ein echtes Bildschirmfoto kann anders gelesen werden.";
+"Covered on this sample: %@" = "In diesem Beispiel verdeckt: %@";
+"Nothing checked was found on this sample." = "Nichts Angehaktes wurde in diesem Beispiel gefunden.";
+"Checked, but not on this sample: %@" = "Angehakt, aber nicht in diesem Beispiel: %@";
+"Could not run the test." = "Der Test konnte nicht laufen.";
 "Send with Shop Header" = "Mit Shop-Kopf senden";
 "Add your shop's name or logo under Line in Settings." = "Füge in den Einstellungen unter „Leine“ den Namen oder das Logo deines Shops hinzu.";
 "Adding the shop header…" = "Shop-Kopf wird hinzugefügt …";
