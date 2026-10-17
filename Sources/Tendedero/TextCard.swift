@@ -350,6 +350,8 @@ final class TextCardModel: ObservableObject {
         switch kind {
         case .translation: translate()
         case .description: Task { await describe() }
+        // Order Details reads the screenshot as it is, in start().
+        case .order: break
         }
     }
 
