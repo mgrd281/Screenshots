@@ -491,6 +491,13 @@
 "Hide in this copy" = "In dieser Kopie abdecken";
 "The copy has no place or camera details. The original stays as it is." = "Die Kopie enthält keine Angaben zum Ort oder zur Kamera. Das Original bleibt unverändert.";
 "Save Copy…" = "Kopie sichern …";
+"%@ (edited)" = "%@ (bearbeitet)";
+"Saved to %@. Click to show it in Finder." = "Gespeichert in: %@. Klick, um es im Finder zu zeigen.";
+"Saved as %1$@ in %2$@. Click to show it in Finder." = "Als %1$@ in %2$@ gespeichert. Klick, um es im Finder zu zeigen.";
+"Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Mit dem Foto gespeichert. Es wird so gezeichnet gesendet; die Datei in %@ bleibt, wie sie ist.";
+"Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Mit dem Foto gespeichert. Diese Bereiche bleiben in allem, was gesendet wird, verdeckt; die Datei in %@ bleibt, wie sie ist.";
+"Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Sichert das Foto so, wie es gesendet wird, gezeichnet und zugeschnitten, als eigene Datei.";
+"Keep as a file" = "Als Datei behalten";
 "%@ (covered)" = "%@ (abgedeckt)";
 "Saved beside the original as %@." = "Neben dem Original als %@ gesichert.";
 "Could not save the copy." = "Die Kopie konnte nicht gesichert werden.";

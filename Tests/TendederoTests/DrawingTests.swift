@@ -191,6 +191,13 @@ final class DrawingTests: XCTestCase {
         XCTAssertNil(Cover.covering(url, [], drawing: .empty))
     }
 
+    func testASavedCopyIsNamedAfterTheOriginal() {
+        // In the kind the copy is, whatever the original was.
+        let url = URL(fileURLWithPath: "/tmp/Screenshot 2026-10-17 at 14.05.32.png")
+        XCTAssertEqual(Line.copyName(for: url, as: "jpg"),
+                       String(format: L("%@ (edited)"), "Screenshot 2026-10-17 at 14.05.32") + ".jpg")
+    }
+
     // MARK: Helpers
 
     private func cg(_ color: (r: UInt8, g: UInt8, b: UInt8)) -> CGColor {

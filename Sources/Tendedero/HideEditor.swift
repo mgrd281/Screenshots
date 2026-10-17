@@ -132,7 +132,8 @@ final class HideEditor: NSObject, NSWindowDelegate {
                 MainActor.assumeIsolated {
                     model?.saving = false
                     if written {
-                        Notice.show(String(format: L("Saved beside the original as %@."), target.lastPathComponent))
+                        Notice.show(String(format: L("Saved beside the original as %@."), target.lastPathComponent),
+                                    done: true)
                         self?.window?.close()
                     } else {
                         Notice.show(L("Could not save the copy."))
