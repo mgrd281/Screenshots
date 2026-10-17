@@ -347,6 +347,10 @@
 
 /* Message with the photos */
 "Add a message…" = "أضف رسالة…";
+"Saved messages" = "رسائل محفوظة";
+"Add Message" = "إضافة رسالة";
+"Here is the invoice for your order {order}." = "هذه فاتورة طلبك رقم {order}.";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "تنتظر فوق شريط الرسالة. تُملأ {order} و{total} و{date} و{name} و{tracking} من الصورة، ويبقى فارغاً ما كان من نوع تغطيه.";
 "Send with a Message…" = "إرسال مع رسالة…";
 
 /* Order on the line */

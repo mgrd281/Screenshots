@@ -349,6 +349,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Add a message…";
+"Saved messages" = "Saved messages";
+"Add Message" = "Add Message";
+"Here is the invoice for your order {order}." = "Here is the invoice for your order {order}.";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty.";
 "Send with a Message…" = "Send with a Message…";
 
 /* Order on the line */

@@ -349,6 +349,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Mesaj əlavə et…";
+"Saved messages" = "Saxlanmış mesajlar";
+"Add Message" = "Mesaj əlavə et";
+"Here is the invoice for your order {order}." = "Budur, {order} sifarişinin fakturası.";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "Mesaj zolağının üstündə gözləyirlər. {order}, {total}, {date}, {name} və {tracking} şəkildən doldurulur; gizlətdiyin növdən olan boş qalır.";
 "Send with a Message…" = "Mesajla göndər…";
 
 /* Order on the line */

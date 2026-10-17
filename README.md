@@ -139,7 +139,12 @@ each app, and for a new chat apart. Press and hold it, or right-click and
 choose Send with a Message…, to write a line like "Here is your invoice":
 Return sends the photos with the message after them, as one message. The
 last five messages wait above the empty field: click one, or press ↑ and ↓,
-to send it again; its cross takes it off the list. In Settings,
+to send it again; its cross takes it off the list. Above them wait your
+saved messages, written under Saved messages in Settings, under Line, like
+"Here is the invoice for your order {order}": {order}, {total}, {date},
+{name} and {tracking} fill in from the newest photo, read on your Mac. A
+blank of a kind you cover stays empty, shown as "…", so the message never
+says what the photo hides, and nothing goes until you press Return. In Settings,
 under Line, choose where it sits (above the chat's send button, a corner of
 the window, or the edge of the screen), how it looks, its icon and its color,
 with a preview, or turn it off.

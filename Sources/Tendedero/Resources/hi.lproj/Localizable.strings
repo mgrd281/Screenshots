@@ -349,6 +349,10 @@
 
 /* Message with the photos */
 "Add a message…" = "संदेश जोड़ें…";
+"Saved messages" = "सहेजे गए संदेश";
+"Add Message" = "संदेश जोड़ें";
+"Here is the invoice for your order {order}." = "यह रहा आपके ऑर्डर {order} का बिल।";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "ये संदेश बार के ऊपर इंतज़ार करते हैं। {order}, {total}, {date}, {name} और {tracking} फ़ोटो से भर जाते हैं; जिस प्रकार को आप ढकते हैं, वह खाली रहता है।";
 "Send with a Message…" = "संदेश के साथ भेजें…";
 
 /* Order on the line */

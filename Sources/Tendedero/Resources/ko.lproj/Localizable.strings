@@ -347,6 +347,10 @@
 
 /* Message with the photos */
 "Add a message…" = "메시지 추가…";
+"Saved messages" = "저장된 메시지";
+"Add Message" = "메시지 추가";
+"Here is the invoice for your order {order}." = "주문 {order}의 청구서입니다.";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "메시지 막대 위에 표시됩니다. {order}, {total}, {date}, {name}, {tracking}는 사진에서 채워지고, 가리는 종류는 비워 둡니다.";
 "Send with a Message…" = "메시지와 함께 보내기…";
 
 /* Order on the line */
