@@ -342,7 +342,10 @@ apps.
   - picked: accent ring and check;
   - covered: lock badge;
   - a PDF: a "PDF" capsule with its page count, in the lock's corner and
-    style (9 pt bold white on black 55%, 18 pt high);
+    style (9 pt bold white on black 55%, 18 pt high). A PDF brought in from
+    elsewhere leads the capsule with a mini white spinner while its pages
+    are covered, then the 8 pt bold `lock.fill` once something is. The
+    capsule takes the lock badge's place, so a card never shows both;
   - pinned: orange pin;
   - copied: "Copied" capsule below;
   - search: dimmed and desaturated when it isn't a match, yellow marks when it
@@ -352,6 +355,27 @@ apps.
     past each neighbour's middle, and the others step aside with the line's
     order spring; let go there, it stays rather than flying back. A closed
     stack does not reorder. VoiceOver has Move Earlier and Move Later.
+
+### Drop slot
+- While photos or PDFs from another app are dragged towards the top of a
+  screen, the line comes down there and keeps a place for them where the
+  newest photo hangs. The others make room with the line's order spring
+  (0.42 s, 0.8 damping).
+- The slot is a card's outline: a glass frame the card's width and 72% of a
+  photo's tallest height, with a 1.5 pt dashed border (6 on 4) in
+  `.secondary` at 70%, and `arrow.down.doc` at 20 pt medium in `.secondary`.
+- While the files are over the line it lights up: the border and the symbol
+  turn to the accent, the border to 2 pt, and the slot grows to 104%, over
+  0.15 s ease-out.
+- Under it, a capsule like the empty line's hint (12 pt medium rounded,
+  `.secondary`, control glass) says what letting go does: `lock.fill` with
+  "Drop here – private details get covered" while Hide private details is
+  on, else `arrow.down` with "Drop here to hang it". The empty line's own
+  hint steps aside meanwhile.
+- The menu bar icon takes the same files, with its pressed highlight while
+  they are over it.
+- Let go, each file flies in from where it was dropped, 80 ms apart, the way
+  a capture does.
 
 ### Tag
 - A 26 pt wide capsule of SF Symbol tools: grip, combine, search, send and
@@ -373,8 +397,12 @@ apps.
   copied images are hung, and becomes `stop.circle` while the screen is
   recorded. The Line pane in Settings shows the same mark; the website's
   drawings use it at 24 units.
-- **Menu bar menu.** Short: Take Screenshot, then Show or Hide line, Search…,
-  History…, Take everything down, Settings…, Open folder, Updates, Quit.
+- **Menu bar menu.** Short: Take Screenshot and Add Files… (⌘O), then Show or
+  Hide line, Search…, History…, Take everything down, Settings…, Open
+  folder, Updates, Quit.
+- **Finder's Services menu.** Send Safely with Snapfly, for photos and PDFs,
+  translated like the app (`ServicesMenu.strings`). Open With lists Snapfly
+  as an alternative, never as what opens them.
 - **Photo context menu.**
   - Grouped by intent: copy and send; translate and describe; open and edit;
     take down.
@@ -397,6 +425,10 @@ apps.
     while it works. With Apple Intelligence, three examples sit under it as
     small `.bordered` buttons, in a row where they fit, else stacked. A callout note in `.secondary` under it says what it did.
     While the field has the keyboard, Return runs it; empty, Return is Done.
+  - For a PDF, the footer starts with its pages: `chevron.backward` and
+    `chevron.forward` buttons, each with its help tag, around "Page 2 of 5" in
+    callout `.secondary` with monospaced digits. Each page keeps its own
+    boxes, and saying what to hide reads the page showing.
 - **No modal alerts** for things that can be said inline in the card.
 - **Permissions pane** (`Permissions.swift`), in Settings between Privacy and
   About, with `lock.shield` in the sidebar.

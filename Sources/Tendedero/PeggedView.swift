@@ -126,8 +126,9 @@ struct PeggedView: View {
             }
             .animation(.easeOut(duration: 0.18), value: picked)
             .overlay(alignment: .bottomLeading) {
-                // Private details are covered in what leaves the line.
-                if item.covered {
+                // Private details are covered in what leaves the line. A PDF
+                // says so in its own capsule.
+                if item.covered && !item.isDocument {
                     Image(systemName: "lock.fill")
                         .font(.system(size: 8, weight: .bold))
                         .foregroundStyle(.white)
@@ -144,16 +145,31 @@ struct PeggedView: View {
                 // A PDF says so, and how many pages it has when there are
                 // several, where a photo shows its lock.
                 if item.isDocument {
-                    Text(verbatim: item.pages > 1 ? "PDF · \(item.pages)" : "PDF")
-                        .font(.system(size: 9, weight: .bold))
-                        .monospacedDigit()
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 6)
-                        .frame(height: 18)
-                        .background(Color.black.opacity(0.55), in: Capsule())
-                        .padding(5)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
+                    HStack(spacing: 4) {
+                        // While its pages are being covered, a spinner; once
+                        // they are, the lock, as on a photo.
+                        if item.preparing {
+                            ProgressView()
+                                .controlSize(.mini)
+                                .tint(.white)
+                                .scaleEffect(0.7)
+                                .frame(width: 10, height: 10)
+                        } else if item.covered {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 8, weight: .bold))
+                        }
+                        Text(verbatim: item.pages > 1 ? "PDF · \(item.pages)" : "PDF")
+                            .font(.system(size: 9, weight: .bold))
+                            .monospacedDigit()
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 6)
+                    .frame(height: 18)
+                    .background(Color.black.opacity(0.55), in: Capsule())
+                    .padding(5)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+                    .animation(.easeOut(duration: 0.2), value: item.preparing)
                 }
             }
             .shadow(color: .black.opacity(hovering ? 0.26 : 0.18), radius: hovering ? 14 : 10, y: hovering ? 8 : 5)

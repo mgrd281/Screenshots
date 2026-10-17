@@ -77,6 +77,9 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Click the magnifying glass on the tag | Search the words in every photo. Matches stay bright, marked where they say it, and Return picks them, ready to send. |
 | Drag the arrows on the tag | Move the line further down the screen, or back up. It stays there. |
 | Rest the pointer in the menu bar | Bring the line down on that screen. |
+| Drag photos or PDFs to the top of the screen, or onto the menu bar icon | Hang them on the line, to send with their private details covered. The files stay where they are. |
+| Right-click photos or PDFs in Finder, then Services › Send Safely with Snapfly | The same, from Finder. Open With › Snapfly does it too. |
+| Add Files… in the menu bar | Pick photos or PDFs to hang. |
 | Click anything in the menu bar | Put it away. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
@@ -193,6 +196,27 @@ Mac, and they show as boxes to check before you press Done; click one to show
 it again. Without Apple Intelligence, type words separated by commas and they
 are hidden wherever they appear. The text is read on your Mac, and the
 screenshot file itself is never changed.
+
+<br>
+
+## Photos and PDFs too.
+
+Anything you want to send can hang on the line, not only screenshots. Drag
+photos or PDFs from Finder, Mail or anywhere else towards the top of the
+screen: the line comes down, opens a place for them and hangs them where you
+let go. You can also drop them on the menu bar icon, choose Send Safely with
+Snapfly under Services in Finder's right-click menu, open them with Snapfly,
+or choose Add Files… in the menu bar.
+
+They leave the line the way a screenshot does, protected. The details chosen
+under Privacy are covered, and Hide Part works on them too, page by page in a
+PDF. A photo goes without where and with what it was taken: its location,
+camera and captions stay behind, and it goes as a JPEG. A PDF is read page by
+page on your Mac and drawn again into a new PDF, so what is covered is gone,
+not painted over, and no text, links or document details come along. Its card
+shows a spinner while its pages are covered, then a lock. The file itself is
+never changed. Save Word or Excel documents as a PDF first; a PDF locked with
+a password, or longer than 200 pages, stays out.
 
 <br>
 
@@ -370,6 +394,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
+| `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
+| `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
 | `Shared/PrivateText.swift` | Finds private details in a screenshot and covers them, on the Mac and the iPhone |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |

@@ -75,7 +75,9 @@ enum TimeStamp {
     /// The stamp for a screenshot, or nil when it gets none.
     @MainActor
     static func mark(for url: URL) -> Mark? {
-        guard isOn, isImage(url), !pending.contains(url.path), scope == .all || isWholeScreen(url) else { return nil }
+        // A photo brought in from elsewhere was not taken now.
+        guard isOn, isImage(url), !pending.contains(url.path), scope == .all || isWholeScreen(url),
+              !Outside.isBrought(url) else { return nil }
         // A screenshot from before the stamp was turned on has the Mac's
         // clock to go by, and nothing else.
         let known = record(of: url) ?? Record(taken: created(url) ?? Date(), atomic: false)

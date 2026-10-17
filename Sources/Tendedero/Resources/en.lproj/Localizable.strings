@@ -374,3 +374,18 @@
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly may not see your screenshots yet. Open Snapfly once and allow it.";
 "There is no screenshot yet." = "There is no screenshot yet.";
 "Covered and copied, ready to paste." = "Covered and copied, ready to paste.";
+
+/* Photos and PDFs from anywhere on the Mac */
+"Add Files…" = "Add Files…";
+"Hang" = "Hang";
+"Photos and PDFs hang on the line, ready to send with their private details covered." = "Photos and PDFs hang on the line, ready to send with their private details covered.";
+"Drop here – private details get covered" = "Drop here – private details get covered";
+"Drop here to hang it" = "Drop here to hang it";
+"Only photos and PDFs can hang on the line." = "Only photos and PDFs can hang on the line.";
+"This PDF is locked with a password." = "This PDF is locked with a password.";
+"This PDF is too long: up to %d pages." = "This PDF is too long: up to %d pages.";
+"Still covering the private details…" = "Still covering the private details…";
+"Could not cover the private details in this PDF." = "Could not cover the private details in this PDF.";
+"Page %d of %d" = "Page %d of %d";
+"Previous Page" = "Previous Page";
+"Next Page" = "Next Page";

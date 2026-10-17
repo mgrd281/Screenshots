@@ -372,3 +372,18 @@
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "O Snapfly ainda não pode ver suas capturas. Abra o Snapfly uma vez e permita.";
 "There is no screenshot yet." = "Ainda não há nenhuma captura.";
 "Covered and copied, ready to paste." = "Ocultada e copiada, pronta para colar.";
+
+/* Photos and PDFs from anywhere on the Mac */
+"Add Files…" = "Adicionar arquivos…";
+"Hang" = "Pendurar";
+"Photos and PDFs hang on the line, ready to send with their private details covered." = "Fotos e PDFs ficam pendurados no varal, prontos para enviar com os dados privados ocultos.";
+"Drop here – private details get covered" = "Solte aqui – os dados privados ficam ocultos";
+"Drop here to hang it" = "Solte aqui para pendurar";
+"Only photos and PDFs can hang on the line." = "Só fotos e PDFs podem ser pendurados no varal.";
+"This PDF is locked with a password." = "Este PDF está protegido por senha.";
+"This PDF is too long: up to %d pages." = "Este PDF é longo demais: até %d páginas.";
+"Still covering the private details…" = "Ainda ocultando os dados privados…";
+"Could not cover the private details in this PDF." = "Não foi possível ocultar os dados privados deste PDF.";
+"Page %d of %d" = "Página %d de %d";
+"Previous Page" = "Página anterior";
+"Next Page" = "Próxima página";

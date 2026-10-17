@@ -372,3 +372,18 @@
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly가 아직 스크린샷을 볼 수 없습니다. Snapfly를 한 번 열고 허용하세요.";
 "There is no screenshot yet." = "아직 스크린샷이 없습니다.";
 "Covered and copied, ready to paste." = "가리고 복사했습니다. 붙여넣을 수 있습니다.";
+
+/* Photos and PDFs from anywhere on the Mac */
+"Add Files…" = "파일 추가…";
+"Hang" = "걸기";
+"Photos and PDFs hang on the line, ready to send with their private details covered." = "사진과 PDF가 빨랫줄에 걸려요. 개인 정보를 가린 채 바로 보낼 수 있어요.";
+"Drop here – private details get covered" = "여기에 놓으세요 – 개인 정보는 가려져요";
+"Drop here to hang it" = "걸려면 여기에 놓으세요";
+"Only photos and PDFs can hang on the line." = "빨랫줄에는 사진과 PDF만 걸 수 있어요.";
+"This PDF is locked with a password." = "이 PDF는 암호로 잠겨 있어요.";
+"This PDF is too long: up to %d pages." = "이 PDF는 너무 길어요. 최대 %d쪽까지 돼요.";
+"Still covering the private details…" = "아직 개인 정보를 가리는 중이에요…";
+"Could not cover the private details in this PDF." = "이 PDF의 개인 정보를 가리지 못했어요.";
+"Page %d of %d" = "%d/%d쪽";
+"Previous Page" = "이전 쪽";
+"Next Page" = "다음 쪽";

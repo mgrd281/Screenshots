@@ -5,7 +5,8 @@ import SwiftUI
 /// not leave the line, like a name the reading missed, or to say what to
 /// hide in words. What Hide private details covers shows too, so what you
 /// see is what goes. The boxes are kept with the photo, and the file itself
-/// is never changed.
+/// is never changed. A PDF brought in is shown a page at a time, with a way
+/// to turn the pages; each keeps its own boxes.
 @MainActor
 final class HideEditor: NSObject, NSWindowDelegate {
     static let shared = HideEditor()
@@ -15,23 +16,41 @@ final class HideEditor: NSObject, NSWindowDelegate {
     /// Calls back once new boxes are saved; not when cancelled.
     func edit(_ url: URL, saved: @escaping () -> Void) {
         window?.close()
-        guard let image = NSImage(contentsOf: url), image.size.width > 0, image.size.height > 0 else {
+        let document = isDocument(url)
+        let pages = document ? DocumentCover.pageCount(url) : 1
+        guard let image = document ? Self.page(1, of: url) : NSImage(contentsOf: url),
+              image.size.width > 0, image.size.height > 0 else {
             Notice.show(L("Could not open the screenshot."))
             return
         }
-        let model = HideModel(image: image, hand: PrivateDetails.hand(url))
-        readCovered(url, into: model)
-        readLines(url, into: model)
+        let model = HideModel(image: image, hand: document ? PrivateDetails.hand(url, page: 1) : PrivateDetails.hand(url))
+        model.pageCount = pages
+        if document {
+            model.turn = { [weak self, weak model] page in
+                guard let model, let image = Self.page(page, of: url) else { return }
+                model.show(page: page, image: image, hand: PrivateDetails.hand(url, page: page))
+                self?.read(image, into: model)
+            }
+            read(image, into: model)
+        } else {
+            readCovered(url, into: model)
+            readLines(url, into: model)
+        }
 
         // As large as fits, never larger than the screenshot itself.
         let screen = (NSScreen.main ?? NSScreen.screens[0]).visibleFrame
         let room = CGSize(width: screen.width * 0.8, height: screen.height * 0.8 - 60)
-        let scale = min(1, room.width / image.size.width, room.height / image.size.height)
-        let size = CGSize(width: (image.size.width * scale).rounded(), height: (image.size.height * scale).rounded())
 
-        let view = HideEditorView(model: model, size: size) { [weak self] save in
+        let view = HideEditorView(model: model, room: room) { [weak self] save in
             if save {
-                PrivateDetails.setHand(model.hand, for: url)
+                if document {
+                    model.keepPage()
+                    for page in 1...max(1, pages) where model.handByPage[page] != nil {
+                        PrivateDetails.setHand(model.handByPage[page] ?? [], for: url, page: page)
+                    }
+                } else {
+                    PrivateDetails.setHand(model.hand, for: url)
+                }
                 saved()
             }
             self?.window?.close()
@@ -56,10 +75,40 @@ final class HideEditor: NSObject, NSWindowDelegate {
         window = nil
     }
 
+    /// A page of a PDF, at the size it shows on screen.
+    private static func page(_ number: Int, of url: URL) -> NSImage? {
+        guard let page = DocumentCover.page(number, of: url) else { return nil }
+        let scale = 72 / DocumentCover.dpi
+        return NSImage(cgImage: page, size: NSSize(width: CGFloat(page.width) * scale, height: CGFloat(page.height) * scale))
+    }
+
+    /// A page's text and what Hide private details covers on it, read in
+    /// the background.
+    private func read(_ image: NSImage, into model: HideModel) {
+        guard let page = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return }
+        let chosen = PrivateDetails.details
+        let shown = model.page
+        DispatchQueue.global(qos: .userInitiated).async { [weak model] in
+            let lines = Finder.textLines(in: page)
+            let areas = chosen.isEmpty ? [] : Cover.areas(in: page, chosen)
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated {
+                    // Read for a page that is still the one showing.
+                    guard let model, model.page == shown else { return }
+                    model.found = areas
+                    model.lines = lines
+                }
+            }
+        }
+    }
+
     /// Every line of text, with where it sits, for hiding by saying.
     private func readLines(_ url: URL, into model: HideModel) {
         DispatchQueue.global(qos: .userInitiated).async { [weak model] in
-            let lines = Finder.textLines(of: url)
+            // Upright, as it shows: a photo from a phone may be stored turned.
+            guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+                  let image = Cover.upright(source) else { return }
+            let lines = Finder.textLines(in: image)
             DispatchQueue.main.async {
                 MainActor.assumeIsolated { model?.lines = lines }
             }
@@ -72,7 +121,7 @@ final class HideEditor: NSObject, NSWindowDelegate {
         guard !chosen.isEmpty, isImage(url) else { return }
         DispatchQueue.global(qos: .userInitiated).async { [weak model] in
             guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
-                  let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return }
+                  let image = Cover.upright(source) else { return }
             let areas = Cover.areas(in: image, chosen)
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
@@ -85,9 +134,16 @@ final class HideEditor: NSObject, NSWindowDelegate {
 
 @MainActor
 final class HideModel: ObservableObject {
-    let image: NSImage
+    @Published private(set) var image: NSImage
     /// Hidden by hand, from 0 to 1 from the bottom left.
     @Published var hand: [CGRect]
+    /// A PDF's pages: the one showing, from 1, and how many there are.
+    @Published private(set) var page = 1
+    var pageCount = 1
+    /// The boxes of the pages already seen, kept while turning.
+    private(set) var handByPage: [Int: [CGRect]] = [:]
+    /// Shows another page.
+    var turn: ((Int) -> Void)?
     /// Covered by Hide private details, the same way.
     @Published var found: [CGRect] = []
 
@@ -112,6 +168,31 @@ final class HideModel: ObservableObject {
         self.hand = hand
     }
 
+    /// Keeps the boxes of the page showing, before turning or saving.
+    func keepPage() {
+        handByPage[page] = hand
+    }
+
+    func go(to page: Int) {
+        guard page >= 1, page <= pageCount, page != self.page else { return }
+        keepPage()
+        turn?(page)
+    }
+
+    /// The page turned to, with its boxes as they were left, or as saved.
+    func show(page: Int, image: NSImage, hand saved: [CGRect]) {
+        self.page = page
+        self.image = image
+        hand = handByPage[page] ?? saved
+        found = []
+        waiting = false
+        lines = nil
+        said = []
+        request = ""
+        note = nil
+        working = false
+    }
+
     func hideAsSaid() {
         let request = request.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !request.isEmpty else { return }
@@ -123,8 +204,11 @@ final class HideModel: ObservableObject {
         }
         waiting = false
         let texts = lines.map(\.string)
+        let asked = page
         Task { @MainActor in
             let outcome = await HideBySaying.pieces(toHide: request, in: texts)
+            // The answer belongs to the page it was asked on.
+            guard page == asked else { return }
             let pieces: [HideBySaying.Piece]
             switch outcome {
             case let .understood(found): pieces = found
@@ -174,8 +258,17 @@ final class HideModel: ObservableObject {
 
 private struct HideEditorView: View {
     @ObservedObject var model: HideModel
-    let size: CGSize
+    /// The most room the picture may take.
+    let room: CGSize
     let finish: (Bool) -> Void
+
+    /// As large as fits, never larger than the picture itself.
+    private var size: CGSize {
+        let image = model.image.size
+        guard image.width > 0, image.height > 0 else { return room }
+        let scale = min(1, room.width / image.width, room.height / image.height)
+        return CGSize(width: (image.width * scale).rounded(), height: (image.height * scale).rounded())
+    }
 
     /// The box being drawn, in the view.
     @State private var drawing: CGRect?
@@ -245,6 +338,9 @@ private struct HideEditorView: View {
                 .frame(width: max(size.width, 520))
 
             HStack(spacing: 10) {
+                if model.pageCount > 1 {
+                    pages
+                }
                 Text(L("Drag over anything to hide it. Click a box to show it again."))
                     .font(.callout)
                     .foregroundStyle(.secondary)
@@ -260,6 +356,33 @@ private struct HideEditorView: View {
             }
             .padding(14)
             .frame(width: max(size.width, 520))
+        }
+    }
+
+    /// A PDF's pages, one at a time.
+    private var pages: some View {
+        HStack(spacing: 4) {
+            Button {
+                model.go(to: model.page - 1)
+            } label: {
+                Image(systemName: "chevron.backward")
+            }
+            .disabled(model.page <= 1)
+            .help(L("Previous Page"))
+            .accessibilityLabel(L("Previous Page"))
+            Text(String(format: L("Page %d of %d"), model.page, model.pageCount))
+                .font(.callout)
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+                .fixedSize()
+            Button {
+                model.go(to: model.page + 1)
+            } label: {
+                Image(systemName: "chevron.forward")
+            }
+            .disabled(model.page >= model.pageCount)
+            .help(L("Next Page"))
+            .accessibilityLabel(L("Next Page"))
         }
     }
 
