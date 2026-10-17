@@ -484,7 +484,22 @@ apps.
     Dock; the second opens the system's new email with the copy attached.
   - **Settings › Line › Bookkeeping**: the folder's name in `.secondary`,
     truncated in the middle, with a Choose… `SettingsButton`, and the
-    address in a field with a prompt.
+    address in a field with a prompt. Then Monthly pack: a menu of the
+    months the table has receipts for, newest first and named as people
+    say them, and a Make PDF `SettingsButton`, both off until there is one.
+    It works under a working note above the Dock and shows the PDF in the
+    Finder.
+  - **The monthly pack** is an A4 PDF in the system font, black on white.
+    Its first page has the title (20 pt semibold), a 9.5 pt grey note that
+    it is a help for the tax advisor, then the list: 8.5 pt semibold grey
+    headings over a 0.5 pt rule, rows 18 pt high in 10 pt (the fingerprint,
+    16 hex digits, in 8 pt monospaced), hairlines between them, amounts and
+    pages aligned to the numbers' side, and a receipt not found in grey with
+    a dash for its page. The count, the sum and what was not found close
+    it in 10 pt medium. Each receipt follows on a page of its own under a
+    9 pt grey caption, as large as fits; every page has "n / total" at the
+    foot in 8 pt grey. In right-to-left languages the columns run from the
+    right.
   - SF Symbols on macOS 26 only, as Apple's own menus have.
 - **Settings sidebar.** General, Line, Privacy, Permissions, Support and
   About, each on its tile (see Layout).

@@ -503,6 +503,17 @@
 "Cover everything in AI chats" = "Yapay zekâ sohbetlerinde her şeyi kapat";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "ChatGPT, Claude, Gemini veya başka bir yapay zekâ sohbeti öndeyken gönderdiğin ya da kopyaladığın her şeyde, işaretli olsun olmasın yukarıdaki her tür kapatılır.";
 "Everything is covered in AI chats" = "Yapay zekâ sohbetlerinde her şey kapatılır";
+"Receipts %@" = "Fişler %@";
+"Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "Snapfly tarafından %@ tarihinde mali müşavirine vermen için derlendi. Her fiş, muhasebe için kaydedilen kapatılmış kopyadır.";
+"Receipts: %ld" = "Fişler: %ld";
+"Sum of the totals: %@" = "Tutarların toplamı: %@";
+"Not found in the folder: %ld" = "Klasörde bulunamayan: %ld";
+"Page" = "Sayfa";
+"Fingerprint" = "Parmak izi";
+"Making the PDF…" = "PDF oluşturuluyor…";
+"Month" = "Ay";
+"Monthly pack" = "Aylık paket";
+"A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Bir ayın fişleri, onları listeleyen bir sayfayla tek bir PDF’te, mali müşavirine vermen için.";
 "Image" = "Görsel";
 "Plain file names" = "Sade dosya adları";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Görseller ne zaman, nerede ya da neyle yapıldıklarına dair notlar olmadan yeni dosyalar olarak çıkar. Sade dosya adlarıyla ayrıca çekildikleri zamana göre değil, “Görsel” diye adlandırılır.";
