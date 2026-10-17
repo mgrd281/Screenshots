@@ -173,6 +173,9 @@
 /* Sent */
 "Take photos down once sent" = "Gönderilen fotoğrafları ipten indir";
 "Sent into a chat, they leave the line. Pinned ones stay." = "Sohbete gönderilenler ipten iner. Sabitlenenler kalır.";
+"Mark photos sent before" = "Daha önce gönderilen fotoğrafları işaretle";
+"A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history." = "Bir fotoğraftaki kâğıt uçak, benzerinin yakın zamanda gönderildiğini söyler. Menüsü nereye ve ne zaman gittiğini gösterir. Geçmiş gerekir.";
+"Sent to %@ · %@" = "%@ adresine gönderildi · %@";
 /* Line styles */
 "Line style" = "İpin görünümü";
 "Clothesline" = "Çamaşır ipi";
@@ -506,6 +509,17 @@
 "Fan" = "Yelpaze";
 "Cover everything in AI chats" = "Yapay zekâ sohbetlerinde her şeyi kapat";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "ChatGPT, Claude, Gemini veya başka bir yapay zekâ sohbeti öndeyken gönderdiğin ya da kopyaladığın her şeyde, işaretli olsun olmasın yukarıdaki her tür kapatılır.";
+"Check before sending" = "Göndermeden önce denetle";
+"In AI chats and unknown apps" = "Yapay zekâ sohbetlerinde ve bilinmeyen uygulamalarda";
+"Every time" = "Her seferinde";
+"Never" = "Asla";
+"A card shows the photos as they will go, and what is covered, before they go in. Return sends them, Escape keeps them on the line." = "Fotoğraflar gitmeden önce bir kart onları gidecekleri hâliyle ve neyin kapatıldığını gösterir. Return gönderir, Escape ipte tutar.";
+"Send to %@?" = "%@ adresine gönderilsin mi?";
+"Don't Send" = "Gönderme";
+"AI chats can keep what they are sent." = "Yapay zekâ sohbetleri kendilerine gönderileni saklayabilir.";
+"Snapfly doesn't know this app or website as a chat." = "Snapfly bu uygulamayı veya web sitesini sohbet olarak tanımıyor.";
+"Hide private details is off." = "Özel bilgileri gizle kapalı.";
+"Sent before: %1$d of %2$d" = "Daha önce gönderildi: %2$d fotoğraftan %1$d";
 "Everything is covered in AI chats" = "Yapay zekâ sohbetlerinde her şey kapatılır";
 "Receipts %@" = "Fişler %@";
 "Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "Snapfly tarafından %@ tarihinde mali müşavirine vermen için derlendi. Her fiş, muhasebe için kaydedilen kapatılmış kopyadır.";

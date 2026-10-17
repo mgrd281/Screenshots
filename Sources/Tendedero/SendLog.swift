@@ -18,6 +18,8 @@ enum SendLog {
         var covered: [String]
         /// The message sent after the photos, if any.
         var message: String?
+        /// What the photo said, as a print to know it again by, not its words.
+        var textPrint: TextPrint?
     }
 
     /// Newest first.
@@ -25,11 +27,14 @@ enum SendLog {
         didSet {
             save()
             onChange?()
+            NotificationCenter.default.post(name: changed, object: nil)
         }
     }
 
     /// The History window listens, to show what changed.
     static var onChange: (() -> Void)?
+    /// Posted as the log changes, for the line's paper planes.
+    nonisolated static let changed = Notification.Name("SnapflySendLogChanged")
 
     /// In Snapfly's own Application Support folder, inside the sandbox for
     /// the App Store edition.
@@ -68,9 +73,26 @@ enum SendLog {
         let now = Date()
         let sent = urls.map { url in
             Sent(date: now, name: url.lastPathComponent, to: destination,
-                 covered: PrivateDetails.coveredKeys(url, covering: chosen), message: message)
+                 covered: PrivateDetails.coveredKeys(url, covering: chosen), message: message,
+                 textPrint: TextIndex.rows(for: url).flatMap { rows in TextPrint.of(rows.map(\.text)) })
         }
         entries.insert(contentsOf: sent, at: 0)
+    }
+
+    /// The newest send of a photo that said what this print says.
+    static func lastSent(like textPrint: TextPrint) -> Sent? {
+        entries.first { $0.textPrint?.matches(textPrint) == true }
+    }
+
+    /// "Sent to WhatsApp · Today at 14:05", for a photo's menu and the check
+    /// before sending.
+    nonisolated static func sentence(_ sent: Sent, locale: Locale = .current) -> String {
+        let format = DateFormatter()
+        format.locale = locale
+        format.dateStyle = .medium
+        format.timeStyle = .short
+        format.doesRelativeDateFormatting = true
+        return String(format: L("Sent to %@ · %@"), sent.to, format.string(from: sent.date))
     }
 
     static func remove(_ sent: Sent) {

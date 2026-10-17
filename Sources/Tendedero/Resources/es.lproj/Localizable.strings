@@ -173,6 +173,9 @@
 /* Sent */
 "Take photos down once sent" = "Quitar las fotos al enviarlas";
 "Sent into a chat, they leave the line. Pinned ones stay." = "Lo que envías a un chat sale del tendedero. Las fijadas se quedan.";
+"Mark photos sent before" = "Marcar las fotos ya enviadas";
+"A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history." = "Un avión de papel en una foto indica que se envió hace poco una igual. Su menú dice adónde y cuándo. Necesita un historial.";
+"Sent to %@ · %@" = "Enviado a %@ · %@";
 /* Line styles */
 "Line style" = "Estilo del tendedero";
 "Clothesline" = "Tendedero";
@@ -506,6 +509,17 @@
 "Fan" = "Abanico";
 "Cover everything in AI chats" = "Tapar todo en los chats de IA";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "En todo lo que envíes o copies mientras ChatGPT, Claude, Gemini u otro chat de IA esté activo se tapa cada tipo de arriba, marcado o no.";
+"Check before sending" = "Comprobar antes de enviar";
+"In AI chats and unknown apps" = "En chats de IA y apps desconocidas";
+"Every time" = "Cada vez";
+"Never" = "Nunca";
+"A card shows the photos as they will go, and what is covered, before they go in. Return sends them, Escape keeps them on the line." = "Antes de que entren, una tarjeta muestra las fotos tal como saldrán y lo que se cubre. Return las envía y Escape las deja en la cuerda.";
+"Send to %@?" = "¿Enviar a %@?";
+"Don't Send" = "No enviar";
+"AI chats can keep what they are sent." = "Los chats de IA pueden guardar lo que se les envía.";
+"Snapfly doesn't know this app or website as a chat." = "Snapfly no conoce esta app o web como chat.";
+"Hide private details is off." = "Ocultar datos privados está desactivado.";
+"Sent before: %1$d of %2$d" = "Ya enviadas: %1$d de %2$d";
 "Everything is covered in AI chats" = "En los chats de IA se tapa todo";
 "Receipts %@" = "Recibos %@";
 "Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "Reunido por Snapfly el %@ para entregarlo a tu asesor fiscal. Cada recibo es la copia tapada guardada para la contabilidad.";

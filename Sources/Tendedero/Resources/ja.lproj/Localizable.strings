@@ -173,6 +173,9 @@
 /* Sent */
 "Take photos down once sent" = "送信したら写真を外す";
 "Sent into a chat, they leave the line. Pinned ones stay." = "チャットに送った写真はロープから外れます。ピンで固定した写真は残ります。";
+"Mark photos sent before" = "送信済みの写真に印を付ける";
+"A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history." = "写真の紙飛行機は、同じ内容の写真が最近送信されたことを示します。メニューで送信先と日時を確認できます。履歴が必要です。";
+"Sent to %@ · %@" = "%@に送信 · %@";
 /* Line styles */
 "Line style" = "ロープのスタイル";
 "Clothesline" = "物干しロープ";
@@ -506,6 +509,17 @@
 "Fan" = "扇";
 "Cover everything in AI chats" = "AIチャットではすべて隠す";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "ChatGPT、Claude、Gemini などの AI チャットが前面にあるときに送信・コピーしたものでは、チェックの有無にかかわらず、上のすべての種類が隠されます。";
+"Check before sending" = "送信前に確認";
+"In AI chats and unknown apps" = "AIチャットと不明なアプリで";
+"Every time" = "毎回";
+"Never" = "しない";
+"A card shows the photos as they will go, and what is covered, before they go in. Return sends them, Escape keeps them on the line." = "写真を送る前に、送られるとおりの写真と隠した内容をカードで表示します。Returnで送信、Escapeでロープに残します。";
+"Send to %@?" = "%@に送信しますか？";
+"Don't Send" = "送信しない";
+"AI chats can keep what they are sent." = "AIチャットは送られた内容を保存することがあります。";
+"Snapfly doesn't know this app or website as a chat." = "Snapflyはこのアプリやウェブサイトをチャットとして認識していません。";
+"Hide private details is off." = "個人情報を隠す機能はオフです。";
+"Sent before: %1$d of %2$d" = "送信済み：%2$d枚中%1$d枚";
 "Everything is covered in AI chats" = "AIチャットではすべて隠されます";
 "Receipts %@" = "レシート %@";
 "Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "%@ に Snapfly が税理士に渡すためにまとめました。各レシートは経理用に保存した、隠したコピーです。";

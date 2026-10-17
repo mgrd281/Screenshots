@@ -173,6 +173,9 @@
 /* Sent */
 "Take photos down once sent" = "Retirer les photos une fois envoyées";
 "Sent into a chat, they leave the line. Pinned ones stay." = "Ce que vous envoyez dans une discussion quitte la corde. Les photos épinglées restent.";
+"Mark photos sent before" = "Marquer les photos déjà envoyées";
+"A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history." = "Un avion en papier sur une photo indique qu’une photo identique a été envoyée récemment. Son menu dit où et quand. Nécessite un historique.";
+"Sent to %@ · %@" = "Envoyé à %@ · %@";
 /* Line styles */
 "Line style" = "Style de la corde";
 "Clothesline" = "Corde à linge";
@@ -506,6 +509,17 @@
 "Fan" = "Éventail";
 "Cover everything in AI chats" = "Tout masquer dans les chats d’IA";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "Dans tout ce que tu envoies ou copies pendant que ChatGPT, Claude, Gemini ou un autre chat d’IA est au premier plan, chaque type ci-dessus est masqué, coché ou non.";
+"Check before sending" = "Vérifier avant d’envoyer";
+"In AI chats and unknown apps" = "Dans les chats d’IA et les apps inconnues";
+"Every time" = "À chaque fois";
+"Never" = "Jamais";
+"A card shows the photos as they will go, and what is covered, before they go in. Return sends them, Escape keeps them on the line." = "Avant leur envoi, une carte montre les photos telles qu’elles partiront, et ce qui est masqué. Retour les envoie, Échap les garde sur la corde.";
+"Send to %@?" = "Envoyer à %@ ?";
+"Don't Send" = "Ne pas envoyer";
+"AI chats can keep what they are sent." = "Les chats d’IA peuvent garder ce qu’on leur envoie.";
+"Snapfly doesn't know this app or website as a chat." = "Snapfly ne connaît pas cette app ou ce site comme un chat.";
+"Hide private details is off." = "Masquer les données privées est désactivé.";
+"Sent before: %1$d of %2$d" = "Déjà envoyées : %1$d sur %2$d";
 "Everything is covered in AI chats" = "Tout est masqué dans les chats d’IA";
 "Receipts %@" = "Reçus %@";
 "Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "Rassemblé par Snapfly le %@ pour ton conseiller fiscal. Chaque reçu est la copie masquée enregistrée pour la comptabilité.";

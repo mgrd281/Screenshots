@@ -173,6 +173,9 @@
 /* Sent */
 "Take photos down once sent" = "إزالة الصور بعد إرسالها";
 "Sent into a chat, they leave the line. Pinned ones stay." = "ما ترسله إلى الدردشة يختفي من الحبل. الصور المثبتة تبقى.";
+"Mark photos sent before" = "تمييز الصور المرسلة من قبل";
+"A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history." = "طائرة ورقية على الصورة تعني أن صورة مثلها أُرسلت مؤخرًا. قائمتها تقول إلى أين ومتى. يحتاج ذلك إلى سجل.";
+"Sent to %@ · %@" = "أُرسلت إلى %@ · %@";
 /* Line styles */
 "Line style" = "شكل الحبل";
 "Clothesline" = "حبل الغسيل";
@@ -506,6 +509,17 @@
 "Fan" = "مروحة";
 "Cover everything in AI chats" = "تغطية كل شيء في محادثات الذكاء الاصطناعي";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "كل ما يُرسل أو يُنسخ بينما ChatGPT أو Claude أو Gemini أو محادثة ذكاء اصطناعي أخرى في الأمام تُغطّى فيه كل الأنواع أعلاه، محدّدة أم لا.";
+"Check before sending" = "التحقق قبل الإرسال";
+"In AI chats and unknown apps" = "في محادثات الذكاء الاصطناعي والتطبيقات غير المعروفة";
+"Every time" = "في كل مرة";
+"Never" = "أبدًا";
+"A card shows the photos as they will go, and what is covered, before they go in. Return sends them, Escape keeps them on the line." = "قبل أن تدخل الصور، تظهر بطاقة تعرضها كما ستُرسل، وما غُطّي فيها. مفتاح Return يرسلها، ومفتاح Escape يبقيها على الحبل.";
+"Send to %@?" = "إرسال إلى %@؟";
+"Don't Send" = "عدم الإرسال";
+"AI chats can keep what they are sent." = "قد تحتفظ محادثات الذكاء الاصطناعي بما يُرسل إليها.";
+"Snapfly doesn't know this app or website as a chat." = "لا يعرف Snapfly هذا التطبيق أو الموقع كمحادثة.";
+"Hide private details is off." = "إخفاء المعلومات الخاصة متوقف.";
+"Sent before: %1$d of %2$d" = "أُرسلت من قبل: %1$d من %2$d";
 "Everything is covered in AI chats" = "كل شيء يُغطّى في محادثات الذكاء الاصطناعي";
 "Receipts %@" = "إيصالات %@";
 "Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "جمعها Snapfly في %@ لتسليمها إلى مستشارك الضريبي. كل إيصال هو النسخة المغطّاة المحفوظة للمحاسبة.";

@@ -173,6 +173,9 @@
 /* Sent */
 "Take photos down once sent" = "보낸 사진 내리기";
 "Sent into a chat, they leave the line. Pinned ones stay." = "채팅으로 보낸 사진은 빨랫줄에서 내려갑니다. 고정한 사진은 남습니다.";
+"Mark photos sent before" = "이미 보낸 사진 표시";
+"A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history." = "사진의 종이비행기는 같은 내용의 사진을 최근에 보냈다는 뜻입니다. 메뉴에서 어디로 언제 보냈는지 알려 줍니다. 기록이 필요합니다.";
+"Sent to %@ · %@" = "%@(으)로 보냄 · %@";
 /* Line styles */
 "Line style" = "빨랫줄 스타일";
 "Clothesline" = "빨랫줄";
@@ -506,6 +509,17 @@
 "Fan" = "부채꼴";
 "Cover everything in AI chats" = "AI 채팅에서는 모두 가리기";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "ChatGPT, Claude, Gemini 같은 AI 채팅이 앞에 있을 때 보내거나 복사하는 것에서는 체크 여부와 관계없이 위의 모든 종류가 가려집니다.";
+"Check before sending" = "보내기 전에 확인";
+"In AI chats and unknown apps" = "AI 채팅과 알 수 없는 앱에서";
+"Every time" = "매번";
+"Never" = "안 함";
+"A card shows the photos as they will go, and what is covered, before they go in. Return sends them, Escape keeps them on the line." = "사진이 들어가기 전에, 보내질 모습 그대로의 사진과 가린 항목을 카드로 보여 줍니다. Return은 보내고, Escape는 빨랫줄에 남겨 둡니다.";
+"Send to %@?" = "%@(으)로 보낼까요?";
+"Don't Send" = "보내지 않기";
+"AI chats can keep what they are sent." = "AI 채팅은 받은 내용을 보관할 수 있습니다.";
+"Snapfly doesn't know this app or website as a chat." = "Snapfly는 이 앱이나 웹사이트를 채팅으로 알지 못합니다.";
+"Hide private details is off." = "개인 정보 가리기가 꺼져 있습니다.";
+"Sent before: %1$d of %2$d" = "이미 보냄: %2$d개 중 %1$d개";
 "Everything is covered in AI chats" = "AI 채팅에서는 모두 가려집니다";
 "Receipts %@" = "영수증 %@";
 "Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "%@에 Snapfly가 세무사에게 전달하도록 모았어요. 각 영수증은 회계용으로 저장한 가린 사본이에요.";

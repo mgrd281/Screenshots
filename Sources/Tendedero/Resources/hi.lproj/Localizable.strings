@@ -175,6 +175,9 @@
 /* Sent */
 "Take photos down once sent" = "भेजने के बाद फ़ोटो हटाएँ";
 "Sent into a chat, they leave the line. Pinned ones stay." = "चैट में भेजी गई फ़ोटो रस्सी से हट जाती हैं। पिन की गई फ़ोटो बनी रहती हैं।";
+"Mark photos sent before" = "पहले भेजी गई फ़ोटो चिह्नित करें";
+"A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history." = "फ़ोटो पर काग़ज़ का हवाई जहाज़ बताता है कि उस जैसी फ़ोटो हाल में भेजी गई थी। उसका मेनू बताता है कहाँ और कब। इसके लिए इतिहास चाहिए।";
+"Sent to %@ · %@" = "%@ को भेजी गई · %@";
 /* Line styles */
 "Line style" = "रस्सी की शैली";
 "Clothesline" = "कपड़े की रस्सी";
@@ -508,6 +511,17 @@
 "Fan" = "पंखा";
 "Cover everything in AI chats" = "AI चैट में सब कुछ ढकें";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "जब ChatGPT, Claude, Gemini या कोई दूसरी AI चैट सामने हो, तब भेजी या कॉपी की गई हर चीज़ में ऊपर का हर प्रकार ढक दिया जाता है, चुना गया हो या नहीं।";
+"Check before sending" = "भेजने से पहले जाँचें";
+"In AI chats and unknown apps" = "AI चैट और अनजान ऐप में";
+"Every time" = "हर बार";
+"Never" = "कभी नहीं";
+"A card shows the photos as they will go, and what is covered, before they go in. Return sends them, Escape keeps them on the line." = "फ़ोटो जाने से पहले एक कार्ड उन्हें वैसे दिखाता है जैसे वे जाएँगी, और क्या ढका गया है। Return उन्हें भेजता है, Escape उन्हें रस्सी पर रखता है।";
+"Send to %@?" = "%@ को भेजें?";
+"Don't Send" = "न भेजें";
+"AI chats can keep what they are sent." = "AI चैट उन्हें भेजी गई चीज़ें रख सकते हैं।";
+"Snapfly doesn't know this app or website as a chat." = "Snapfly इस ऐप या वेबसाइट को चैट के रूप में नहीं जानता।";
+"Hide private details is off." = "निजी जानकारी छिपाना बंद है।";
+"Sent before: %1$d of %2$d" = "पहले भेजी गईं: %2$d में से %1$d";
 "Everything is covered in AI chats" = "AI चैट में सब कुछ ढका जाता है";
 "Receipts %@" = "रसीदें %@";
 "Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "Snapfly ने %@ को आपके टैक्स सलाहकार को देने के लिए इकट्ठा किया। हर रसीद लेखा के लिए सहेजी गई ढकी हुई कॉपी है।";

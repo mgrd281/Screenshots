@@ -173,6 +173,9 @@
 /* Sent */
 "Take photos down once sent" = "Retirar as fotos ao envialas";
 "Sent into a chat, they leave the line. Pinned ones stay." = "O que envías a un chat sae da corda. As fixadas quedan.";
+"Mark photos sent before" = "Marcar as fotos xa enviadas";
+"A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history." = "Un avión de papel nunha foto indica que se enviou hai pouco unha igual. O seu menú di onde e cando. Precisa un historial.";
+"Sent to %@ · %@" = "Enviado a %@ · %@";
 /* Line styles */
 "Line style" = "Estilo da corda";
 "Clothesline" = "Tendal";
@@ -506,6 +509,17 @@
 "Fan" = "Abano";
 "Cover everything in AI chats" = "Tapar todo nos chats de IA";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "En todo o que envíes ou copies mentres ChatGPT, Claude, Gemini ou outro chat de IA estea activo tápase cada tipo de arriba, marcado ou non.";
+"Check before sending" = "Comprobar antes de enviar";
+"In AI chats and unknown apps" = "Nos chats de IA e nas apps descoñecidas";
+"Every time" = "Cada vez";
+"Never" = "Nunca";
+"A card shows the photos as they will go, and what is covered, before they go in. Return sends them, Escape keeps them on the line." = "Antes de que entren, unha tarxeta mostra as fotos tal como sairán e o que se tapa. Return envíaas e Escape déixaas na corda.";
+"Send to %@?" = "Enviar a %@?";
+"Don't Send" = "Non enviar";
+"AI chats can keep what they are sent." = "Os chats de IA poden gardar o que se lles envía.";
+"Snapfly doesn't know this app or website as a chat." = "Snapfly non coñece esta app ou web como chat.";
+"Hide private details is off." = "Ocultar datos privados está desactivado.";
+"Sent before: %1$d of %2$d" = "Xa enviadas: %1$d de %2$d";
 "Everything is covered in AI chats" = "Nos chats de IA tápase todo";
 "Receipts %@" = "Recibos %@";
 "Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "Reunido por Snapfly o %@ para entregarllo á túa asesoría fiscal. Cada recibo é a copia tapada gardada para a contabilidade.";

@@ -57,9 +57,13 @@ struct GrabArea: NSViewRepresentable {
         let inInbox = line.isInInbox(id)
         view.cornerHelp = pinned ? L("Unpin") : (inInbox ? L("Discard") : L("Take down"))
         view.sendHelp = L("Paste into the app in front")
-        // What was covered, said by the lock and to VoiceOver.
+        // What was covered, and where one like it went lately, said by the
+        // badges in the lock's corner and to VoiceOver.
         let covered = item.covered ? PrivateDetails.report(for: item.url)?.sentence : nil
-        view.lockHelp = covered ?? ""
+        let sent = Line.marksSentBefore ? line.sentSentence(id) : nil
+        let said = [covered, sent].compactMap { $0 }
+        view.lockHelp = said.joined(separator: "\n")
+        view.lockBadges = (item.covered ? 1 : 0) + (sent == nil ? 0 : 1)
         // VoiceOver hears one button named after the file, and reaches what
         // the pointer finds on hover as actions.
         view.setAccessibilityElement(true)
@@ -67,7 +71,7 @@ struct GrabArea: NSViewRepresentable {
         // A PDF keeps its extension, so it says what it is.
         view.setAccessibilityLabel(item.isDocument ? item.url.lastPathComponent
                                                    : item.url.deletingPathExtension().lastPathComponent)
-        view.setAccessibilityValue(covered)
+        view.setAccessibilityValue(said.isEmpty ? nil : said.joined(separator: ". "))
         // AppKit runs accessibility actions on the main thread.
         let send = NSAccessibilityCustomAction(name: L("Paste into the app in front")) {
             MainActor.assumeIsolated { line.paste(id) }
@@ -94,14 +98,21 @@ struct GrabArea: NSViewRepresentable {
             let menu = NSMenu()
             // Items say themselves whether they can be used.
             menu.autoenablesItems = false
-            // First, what was covered in what leaves the line.
+            // First, what was covered in what leaves the line, and where a
+            // photo like it went lately.
             if let covered = line.coveredSentence(id) {
                 let what = NSMenuItem(title: covered, action: nil, keyEquivalent: "")
                 what.isEnabled = false
                 if #available(macOS 26, *) { what.image = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: nil) }
                 menu.addItem(what)
-                menu.addItem(.separator())
             }
+            if let sent = line.sentSentence(id) {
+                let when = NSMenuItem(title: sent, action: nil, keyEquivalent: "")
+                when.isEnabled = false
+                if #available(macOS 26, *) { when.image = NSImage(systemSymbolName: "paperplane", accessibilityDescription: nil) }
+                menu.addItem(when)
+            }
+            if !menu.items.isEmpty { menu.addItem(.separator()) }
             menu.addItem(ClosureMenuItem(L("Copy"), symbol: "doc.on.doc") { line.copy(id) })
             if isImage {
                 menu.addItem(ClosureMenuItem(L("Copy Text"), symbol: "text.viewfinder") { line.copyText(id) })
@@ -227,10 +238,15 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     /// rests on them.
     var cornerHelp = ""
     var sendHelp = ""
-    /// What was covered, said when the pointer rests on the lock; empty
-    /// without one.
+    /// What was covered, and where one like it went lately, said when the
+    /// pointer rests on the lock's corner; empty with no badge there.
     var lockHelp = "" {
         didSet { if lockHelp != oldValue { placeTips() } }
+    }
+    /// How many badges sit in the lock's corner: the lock, and the paper
+    /// plane of a photo sent before.
+    var lockBadges = 1 {
+        didSet { if lockBadges != oldValue { placeTips() } }
     }
     private var tips: [NSView.ToolTipTag] = []
 
@@ -275,9 +291,11 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     static let lockHitSize: CGFloat = 28
 
     private var lockRect: NSRect {
-        let x = userInterfaceLayoutDirection == .rightToLeft ? bounds.width - Self.lockHitSize : 0
+        // Each badge after the first adds its 18 pt and the 4 between them.
+        let width = Self.lockHitSize + CGFloat(max(0, lockBadges - 1)) * 22
+        let x = userInterfaceLayoutDirection == .rightToLeft ? bounds.width - width : 0
         return NSRect(x: x, y: isFlipped ? bounds.height - Self.lockHitSize : 0,
-                      width: Self.lockHitSize, height: Self.lockHitSize)
+                      width: width, height: Self.lockHitSize)
     }
 
     // MARK: Tooltips and VoiceOver

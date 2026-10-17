@@ -52,7 +52,7 @@ struct LineTag: View {
                     }
                     // The photos picked with ⌘-click, or all of them.
                     TagTool(symbol: "paperplane", label: L("Paste into the app in front"), style: style) {
-                        line.paste()
+                        _ = line.paste()
                     }
                     .transition(.opacity)
                     // Like the corner cross: a trash only when something goes

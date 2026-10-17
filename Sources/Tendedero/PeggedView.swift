@@ -27,6 +27,8 @@ struct PeggedView: View {
     private var dimmed: Bool { line.found.map { $0[item.id] == nil } ?? false }
     /// Where this photo says what is typed in Search.
     private var places: [CGRect] { line.found?[item.id] ?? [] }
+    /// One like it was sent lately, and Settings marks it.
+    private var sentBefore: Bool { Line.marksSentBefore && line.sentBefore[item.id] != nil }
 
     var body: some View {
         VStack(spacing: -12) {
@@ -129,21 +131,22 @@ struct PeggedView: View {
             }
             .animation(.easeOut(duration: 0.18), value: picked)
             .overlay(alignment: .bottomLeading) {
-                // Private details are covered in what leaves the line. A PDF
-                // says so in its own capsule.
-                if item.covered && !item.isDocument {
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 8, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 18, height: 18)
-                        .background(PhotoBadge.fill(reduced: reduceTransparency), in: Circle())
-                        .padding(5)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
-                        .transition(.opacity)
+                // Private details are covered in what leaves the line, and a
+                // paper plane after the lock says one like it went lately. A
+                // PDF says so in its own capsule.
+                if !item.isDocument && (item.covered || sentBefore) {
+                    HStack(spacing: 4) {
+                        if item.covered { badge("lock.fill") }
+                        if sentBefore { badge("paperplane.fill") }
+                    }
+                    .padding(5)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+                    .transition(.opacity)
                 }
             }
             .animation(.easeOut(duration: 0.2), value: item.covered)
+            .animation(.easeOut(duration: 0.2), value: sentBefore)
             .overlay(alignment: .bottomLeading) {
                 // A PDF says so, and how many pages it has when there are
                 // several, where a photo shows its lock.
@@ -221,6 +224,15 @@ struct PeggedView: View {
                                            value: item.falling ? [:] : [item.id: g.frame(in: .global)])
                 }
             )
+    }
+
+    /// A white glyph on the photo badge, as the lock is drawn.
+    private func badge(_ symbol: String) -> some View {
+        Image(systemName: symbol)
+            .font(.system(size: 8, weight: .bold))
+            .foregroundStyle(.white)
+            .frame(width: 18, height: 18)
+            .background(PhotoBadge.fill(reduced: reduceTransparency), in: Circle())
     }
 
     private func arrive() {

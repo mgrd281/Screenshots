@@ -173,6 +173,9 @@
 /* Sent */
 "Take photos down once sent" = "发送后取下照片";
 "Sent into a chat, they leave the line. Pinned ones stay." = "发送到聊天中的照片会离开晾衣绳。已固定的照片会保留。";
+"Mark photos sent before" = "标记已发送过的照片";
+"A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history." = "照片上的纸飞机表示最近发送过内容相同的照片。它的菜单会说明发到哪里、何时发送。需要开启历史记录。";
+"Sent to %@ · %@" = "已发送到 %@ · %@";
 /* Line styles */
 "Line style" = "晾衣绳样式";
 "Clothesline" = "晾衣绳";
@@ -506,6 +509,17 @@
 "Fan" = "扇形";
 "Cover everything in AI chats" = "在 AI 聊天中遮住全部";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "当 ChatGPT、Claude、Gemini 或其他 AI 聊天在前台时，发送或拷贝的内容都会遮住上面的每一类，无论是否勾选。";
+"Check before sending" = "发送前检查";
+"In AI chats and unknown apps" = "在 AI 聊天和未知应用中";
+"Every time" = "每次";
+"Never" = "从不";
+"A card shows the photos as they will go, and what is covered, before they go in. Return sends them, Escape keeps them on the line." = "照片发出前，卡片会按发出时的样子显示它们以及遮盖的内容。按 Return 发送，按 Escape 留在晾衣绳上。";
+"Send to %@?" = "发送到 %@？";
+"Don't Send" = "不发送";
+"AI chats can keep what they are sent." = "AI 聊天可能会保留发给它的内容。";
+"Snapfly doesn't know this app or website as a chat." = "Snapfly 不知道这个应用或网站是聊天工具。";
+"Hide private details is off." = "隐藏隐私信息已关闭。";
+"Sent before: %1$d of %2$d" = "已发送过：%2$d 张中的 %1$d 张";
 "Everything is covered in AI chats" = "在 AI 聊天中会遮住全部";
 "Receipts %@" = "收据 %@";
 "Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "由 Snapfly 于 %@ 整理，方便交给你的税务顾问。每张收据都是为记账存储的遮盖副本。";
