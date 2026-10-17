@@ -190,6 +190,12 @@ enum PrivateDetails {
     /// or more, like every kind for an AI chat. The line goes on showing
     /// the photo as Settings covers it.
     static func shareable(_ url: URL, covering chosen: Set<PrivateDetail>) -> URL {
+        let done = handOut(url, covering: chosen)
+        // With nothing to change, a picture still leaves as a fresh file.
+        return done == url && isImage(url) ? plain(url) : done
+    }
+
+    private static func handOut(_ url: URL, covering chosen: Set<PrivateDetail>) -> URL {
         if isDocument(url) { return shareableDocument(url, chosen) }
         let hand = Self.hand(url)
         let stamp = TimeStamp.mark(for: url)
@@ -243,8 +249,13 @@ enum PrivateDetails {
         let stamp = TimeStamp.mark(for: url)
         let clean = strips(url)
         guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean, isImage(url),
-              let key = key(for: url, chosen, hand, stamp, clean) else { return }
+              let key = key(for: url, chosen, hand, stamp, clean) else {
+            // Nothing to change: it leaves as a fresh file all the same.
+            preparePlain(url)
+            return
+        }
         if let done = cached(key) {
+            if done == url { preparePlain(url) }
             if shows {
                 shownKeys[url.path] = key
                 onRead?(url, done)
@@ -263,9 +274,41 @@ enum PrivateDetails {
                     results[key] = done
                     reports[key] = report
                     inProgress.remove(key)
+                    if done == url { preparePlain(url) }
                     guard waitingToShow.remove(key) != nil else { return }
                     shownKeys[url.path] = key
                     onRead?(url, done)
+                }
+            }
+        }
+    }
+
+    // MARK: A fresh file
+
+    /// A picture as a fresh file, made once for each version of it.
+    private static func plain(_ url: URL) -> URL {
+        guard let key = plainKey(url) else { return url }
+        if let done = cached(key) { return done }
+        let done = Cover.plain(url) ?? url
+        results[key] = done
+        return done
+    }
+
+    private static func plainKey(_ url: URL) -> String? {
+        modified(url).map { "plain|\(url.path)|\($0.timeIntervalSinceReferenceDate)|\(Cover.plainNames)" }
+    }
+
+    /// The fresh file made ahead of time, off the main thread, so copying a
+    /// picture with nothing to cover stays instant.
+    private static func preparePlain(_ url: URL) {
+        guard isImage(url), let key = plainKey(url), cached(key) == nil, !inProgress.contains(key) else { return }
+        inProgress.insert(key)
+        DispatchQueue.global(qos: .utility).async {
+            let made = Cover.plain(url)
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated {
+                    results[key] = made ?? url
+                    inProgress.remove(key)
                 }
             }
         }
@@ -381,7 +424,7 @@ enum PrivateDetails {
               let date = attributes[.modificationDate] as? Date else { return nil }
         let kinds = chosen.map(\.rawValue).sorted().joined(separator: ",")
         let parts = hand.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
-        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(parts)|\(stamp?.key ?? "")|\(clean)|\(OwnRules.fingerprint)"
+        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(parts)|\(stamp?.key ?? "")|\(clean)|\(OwnRules.fingerprint)|\(Cover.plainNames)"
     }
 }
 
@@ -448,11 +491,44 @@ enum Cover {
     /// Where a copy goes: a folder of its own, so it keeps the original's
     /// name, which is what the chat shows.
     static func newCopy(of url: URL, ext: String) -> URL? {
+        // A PDF keeps its name, which is mostly its title.
+        let name = plainNames && ext != "pdf" ? L("Image") : url.deletingPathExtension().lastPathComponent
         let target = folder.appendingPathComponent(UUID().uuidString, isDirectory: true)
-            .appendingPathComponent(url.deletingPathExtension().lastPathComponent)
+            .appendingPathComponent(name)
             .appendingPathExtension(ext)
         guard (try? FileManager.default.createDirectory(at: target.deletingLastPathComponent(),
                                                         withIntermediateDirectories: true)) != nil else { return nil }
+        return target
+    }
+
+    /// Plain file names, from Settings › Privacy: pictures leave named
+    /// “Image”, not after the file, whose name often says when it was taken.
+    /// Off unless turned on.
+    static var plainNames: Bool {
+        get { UserDefaults.standard.bool(forKey: "plainFileNames") }
+        set { UserDefaults.standard.set(newValue, forKey: "plainFileNames") }
+    }
+
+    /// A fresh copy of a picture with nothing of the file but what it shows:
+    /// none of the notes a file carries on when, where and with what it was
+    /// made, and none of the Finder's, like where it was downloaded from. A
+    /// PNG stays a PNG, pixel for pixel; a JPEG or HEIC photo goes as a JPEG,
+    /// any other picture as a PNG. Nil for a GIF, which goes as itself so it
+    /// keeps moving, and for what cannot be read.
+    static func plain(_ url: URL) -> URL? {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              CGImageSourceGetCount(source) == 1 else { return nil }
+        let type = (CGImageSourceGetType(source) as String?).flatMap { UTType($0) }
+        if type?.conforms(to: .gif) == true { return nil }
+        guard let image = upright(source) else { return nil }
+        let photo = type.map { $0.conforms(to: .jpeg) || $0.conforms(to: .heic) || $0.conforms(to: .heif) } ?? false
+        guard let target = newCopy(of: url, ext: photo ? "jpg" : "png"),
+              let destination = CGImageDestinationCreateWithURL(
+                target as CFURL, (photo ? UTType.jpeg : UTType.png).identifier as CFString, 1, nil)
+        else { return nil }
+        let options: [CFString: Any] = photo ? [kCGImageDestinationLossyCompressionQuality: 0.95] : [:]
+        CGImageDestinationAddImage(destination, image, options as CFDictionary)
+        guard CGImageDestinationFinalize(destination) else { return nil }
         return target
     }
 
