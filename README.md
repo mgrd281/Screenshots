@@ -280,14 +280,17 @@ Snapfly ever sends out, and only while the stamp is on.
 
 <br>
 
-## Four ways to hang.
+## Eight ways to hang.
 
 Pick what the photos hang on under Line in Settings: the clothesline,
 crooked photos swaying on clips; a glass shelf of Liquid Glass, upright
 like the Dock; an island, black and hanging from the top of the screen
-like the notch grown wide; or a card stack by the right edge that spreads
-out as you reach it, with a count on top. Everything else works the same
-on each.
+like the notch grown wide; a card stack by the right edge that spreads
+out as you reach it, with a count on top; a taut wire, the photos straight
+on clips; floating, the photos alone with nothing behind them; a
+filmstrip, dark with its holes along the edges; or a fan, the photos
+arcing down from the middle like cards in a hand. Everything else works
+the same on each.
 
 <br>
 

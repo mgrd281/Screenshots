@@ -322,7 +322,7 @@ design with monospaced digits.
   - full screen Spaces;
   - a line moved down with its grip;
   - all three sizes;
-  - all four styles.
+  - all eight styles.
 
 ## Elevation & Depth
 
@@ -731,6 +731,17 @@ screenshot itself.
 - **Glass shelf**: Liquid Glass, with upright photos.
 - **Island**: black, from the notch.
 - **Card stack**: fanned in the corner, spreading on approach.
+- **Wire**: a taut, straight wire (grey 0.32, 0.9 pt, a 0.3 pt glint), the
+  photos upright on clips and still; the tag clipped on as on the rope.
+- **Floating**: nothing behind the photos; they float upright in a row,
+  each on its own glass, the tag on its own glass after them.
+- **Filmstrip**: a dark strip (grey 0.09, radius 12) with a 16 pt band of
+  holes (9 × 6, 17 apart, grey 0.82) along its top and bottom; the photos
+  sit between as frames, the tag's tools light on it as on the island.
+- **Fan**: no holder; the photos arc down from the middle, 6 pt × the
+  square of their places out (44 at most), each leaning out 4° a place
+  (14° at most), like cards held in a hand.
+- Settings shows them four to a row, each as a small picture.
 
 Each style changes only what holds the photos and how they lean. Everything
 else is shared.
@@ -746,7 +757,7 @@ else is shared.
   The text card shows the pattern: placeholder lines, then the result, then a
   note.
 - **Do** check every change in light and dark, in German and Arabic, at all
-  three sizes and in all four line styles.
+  three sizes and in all eight line styles.
 - **Do** keep new motion short (0.15–0.55 s springs or ease-out) and honour
   Reduce Motion.
 

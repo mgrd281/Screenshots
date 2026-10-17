@@ -23,9 +23,10 @@ enum Layout {
 
     /// What the photos hang on, from Settings: the original clothesline, a
     /// glass shelf, an island hanging from the top of the screen like the
-    /// notch grown, or a stack of cards that spreads out when you reach it.
+    /// notch grown, a stack of cards that spreads out when you reach it; a
+    /// taut wire, photos floating on their own, a filmstrip, or a fan.
     enum Style: String, CaseIterable, Identifiable {
-        case clothesline, shelf, island, stack
+        case clothesline, shelf, island, stack, wire, floating, filmstrip, fan
 
         var id: String { rawValue }
 
@@ -35,11 +36,26 @@ enum Layout {
             case .shelf: L("Glass shelf")
             case .island: L("Island")
             case .stack: L("Card stack")
+            case .wire: L("Wire")
+            case .floating: L("Floating")
+            case .filmstrip: L("Filmstrip")
+            case .fan: L("Fan")
             }
         }
 
         /// Only on a rope do photos hang from clips, crooked, and sway.
         var swings: Bool { self == .clothesline }
+
+        /// Photos hang from clips on a rope or a wire; elsewhere they sit
+        /// or float without one.
+        var clipped: Bool { self == .clothesline || self == .wire }
+
+        /// Something stands behind the photos and the tag, which then shares
+        /// it instead of having glass of its own.
+        var held: Bool { self == .shelf || self == .island || self == .filmstrip }
+
+        /// The holder is dark, so the tag's tools are drawn light.
+        var dark: Bool { self == .island || self == .filmstrip }
     }
 
     private static var savedStyle: Style?
@@ -82,7 +98,8 @@ enum Layout {
     static func sag(width: CGFloat) -> CGFloat { min(30, width * 0.018) }
 
     /// Where the photos hang from. Only a rope sags; the island holds them
-    /// right under the top of the screen, a shelf and a stack a little lower.
+    /// right under the top of the screen, a shelf and a stack a little lower;
+    /// a wire runs straight; a fan arcs down from the middle.
     static func ropeY(x: CGFloat, width: CGFloat) -> CGFloat {
         switch style {
         case .clothesline:
@@ -90,8 +107,30 @@ enum Layout {
             let f = x / width
             return ropeTop + 4 * sag(width: width) * f * (1 - f)
         case .island: return ropeTop + 4
-        case .shelf, .stack: return ropeTop + 14
+        case .wire: return ropeTop + 2
+        case .shelf, .stack, .floating: return ropeTop + 14
+        case .filmstrip: return ropeTop + 18
+        case .fan: return ropeTop + 14 + fanDrop(x: x, width: width)
         }
+    }
+
+    // MARK: The fan
+
+    /// How far a photo in a fan hangs below the middle one: more the further
+    /// out it is, as on an arc, and never more than fits in the strip.
+    static let fanCurve: CGFloat = 6
+    static let fanDeepest: CGFloat = 44
+
+    static func fanDrop(x: CGFloat, width: CGFloat) -> CGFloat {
+        let k = (x - width / 2) / spacing
+        return min(fanDeepest, fanCurve * k * k)
+    }
+
+    /// The lean of a photo in a fan: out from the middle, a few degrees for
+    /// each place, like cards held in a hand; 14° at most.
+    static func fanTilt(x: CGFloat, width: CGFloat) -> Double {
+        let k = Double((x - width / 2) / spacing)
+        return min(14, max(-14, -4 * k))
     }
 
     /// Photos hang `spacing` apart, centred. When there are more than the
@@ -135,47 +174,52 @@ enum Layout {
     }
 
     /// How much a photo leans: crooked on a rope, fanned in a closed stack,
-    /// upright everywhere else.
-    static func tilt(of item: Pegged, index: Int, count: Int, spread: Bool) -> Double {
+    /// square to the arc in a fan, upright everywhere else.
+    static func tilt(of item: Pegged, index: Int, count: Int, spread: Bool,
+                     x: CGFloat = 0, width: CGFloat = 0) -> Double {
         switch style {
         case .clothesline: return item.tilt
         case .stack:
             guard !spread else { return 0 }
             let fan: [Double] = [0, -5, -10, -14]
             return fan[min(count - 1 - index, 3)]
-        case .shelf, .island: return 0
+        case .fan: return fanTilt(x: x, width: width)
+        case .shelf, .island, .wire, .floating, .filmstrip: return 0
         }
     }
 
     // MARK: The tag and what holds the photos
 
-    /// Near the right end of a rope; right after the photos on a shelf or an
-    /// island; beside a stack.
+    /// Near the right end of a rope or a wire; right after the photos on a
+    /// shelf, an island, a filmstrip or with floating photos; beside a stack
+    /// and past the end of a fan.
     static func tagX(count: Int, width: CGFloat, visible: Int, scroll: CGFloat) -> CGFloat {
         switch style {
-        case .clothesline:
+        case .clothesline, .wire:
             return width - 64
         case .stack:
             return stackAnchor(width: width) + cardWidth / 2 + 22 + tagWidth / 2
-        case .shelf, .island:
+        case .shelf, .island, .floating, .filmstrip, .fan:
             guard count > 0 else { return width / 2 }
             let last = x(index: count - 1, count: count, width: width, visible: visible, scroll: scroll)
             return min(last + cardWidth / 2 + 14 + tagWidth / 2, width - 40)
         }
     }
 
-    /// The glass shelf or the island behind the photos and the tag, in the
-    /// line view's coordinates. Nil for the other styles.
+    /// The glass shelf, the island or the filmstrip behind the photos and
+    /// the tag, in the line view's coordinates. Nil for the other styles. A
+    /// filmstrip leaves room above and below the photos for its holes.
     static func holder(count: Int, width: CGFloat, visible: Int, scroll: CGFloat) -> CGRect? {
-        guard count > 0, style == .shelf || style == .island else { return nil }
+        guard count > 0, style.held else { return nil }
         let first = x(index: 0, count: count, width: width, visible: visible, scroll: scroll)
         let tag = tagX(count: count, width: width, visible: visible, scroll: scroll)
         let left = max(12, first - cardWidth / 2 - 14)
         let right = min(width - 12, tag + tagWidth / 2 + 14)
         let cardTop = ropeY(x: first, width: width) - pinAbove + cardBelowTop
         let tallest = max(photoMaxHeight + Frame.inset * 2, compactToolsHeight)
-        let top = style == .island ? 0 : cardTop - 14
-        return CGRect(x: left, y: top, width: right - left, height: cardTop + tallest + 14 - top)
+        let margin: CGFloat = style == .filmstrip ? FilmStrip.band + 4 : 14
+        let top = style == .island ? 0 : cardTop - margin
+        return CGRect(x: left, y: top, width: right - left, height: cardTop + tallest + margin - top)
     }
 }
 
@@ -261,24 +305,31 @@ struct LineView: View {
         return line.revealed ? .spring(response: 0.42, dampingFraction: 0.82) : .easeIn(duration: 0.22)
     }
 
-    /// What the photos hang on: the rope, the glass shelf or the island.
-    /// A stack has nothing behind it.
+    /// What the photos hang on: the rope, the wire, the glass shelf, the
+    /// island or the filmstrip. A stack, floating photos and a fan have
+    /// nothing behind them.
     @ViewBuilder
     private func holder(width: CGFloat, count: Int) -> some View {
         switch line.style {
         case .clothesline:
             Rope(width: width)
-        case .shelf, .island:
+        case .wire:
+            Wire(width: width)
+        case .shelf, .island, .filmstrip:
             if let frame = Layout.holder(count: count, width: width,
                                          visible: line.visibleCount, scroll: line.scroll) {
                 Group {
-                    if line.style == .shelf { GlassShelf() } else { Island() }
+                    switch line.style {
+                    case .shelf: GlassShelf()
+                    case .island: Island()
+                    default: FilmStrip()
+                    }
                 }
                 .frame(width: frame.width, height: frame.height)
                 .position(x: frame.midX, y: frame.midY)
                 .transition(.opacity)
             }
-        case .stack:
+        case .stack, .floating, .fan:
             EmptyView()
         }
     }
@@ -293,8 +344,8 @@ struct LineView: View {
         // Photos scrolled towards an edge fade out before they reach it.
         let fade: CGFloat = buried ? 0 : min(1, max(0, min(x, width - x) / 90))
         return PeggedView(item: item, line: line,
-                          tilt: Layout.tilt(of: item, index: index, count: count, spread: spread),
-                          swings: line.style.swings)
+                          tilt: Layout.tilt(of: item, index: index, count: count, spread: spread, x: x, width: width),
+                          swings: line.style.swings, clipped: line.style.clipped)
             .frame(width: Layout.cardWidth, height: height, alignment: .top)
             .opacity(fade)
             .allowsHitTesting(!buried)
@@ -323,6 +374,39 @@ private struct GlassShelf: View {
                 )
                 .shadow(color: .black.opacity(0.18), radius: 18, y: 8)
         }
+    }
+}
+
+/// The filmstrip: a dark strip with a row of holes along its top and its
+/// bottom edge, the photos on it like frames of a film.
+struct FilmStrip: View {
+    /// The band along each edge that holds the holes.
+    static let band: CGFloat = 16
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
+        shape
+            .fill(Color(white: 0.09))
+            .overlay {
+                Canvas { context, size in
+                    let hole = CGSize(width: 9, height: 6)
+                    let step: CGFloat = 17
+                    let count = Int((size.width - 16) / step)
+                    let start = (size.width - CGFloat(count - 1) * step) / 2
+                    for row in [(Self.band - hole.height) / 2, size.height - (Self.band + hole.height) / 2] {
+                        for i in 0..<max(count, 0) {
+                            let rect = CGRect(x: start + CGFloat(i) * step - hole.width / 2, y: row,
+                                              width: hole.width, height: hole.height)
+                            context.fill(Path(roundedRect: rect, cornerRadius: 1.6),
+                                         with: .color(Color(white: 0.82, opacity: 0.9)))
+                        }
+                    }
+                }
+                .clipShape(shape)
+            }
+            .overlay(shape.stroke(Color.white.opacity(0.08), lineWidth: 0.75))
+            .shadow(color: .black.opacity(0.3), radius: 18, y: 8)
+            .allowsHitTesting(false)
     }
 }
 
@@ -465,6 +549,37 @@ struct Rope: View {
                 .init(color: .clear, location: 0),
                 .init(color: .black, location: 0.08),
                 .init(color: .black, location: 0.92),
+                .init(color: .clear, location: 1),
+            ], startPoint: .leading, endPoint: .trailing)
+        )
+        .allowsHitTesting(false)
+    }
+}
+
+/// A taut wire from edge to edge: straight, finer than the rope and darker,
+/// with a glint along its top, fading out at both ends like the rope.
+struct Wire: View {
+    let width: CGFloat
+
+    private var path: Path {
+        Path { p in
+            let y = Layout.ropeY(x: 0, width: width)
+            p.move(to: CGPoint(x: -20, y: y))
+            p.addLine(to: CGPoint(x: width + 20, y: y))
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            path.stroke(Color.black.opacity(0.25), lineWidth: 1.2).offset(y: 1).blur(radius: 1)
+            path.stroke(Color(white: 0.32), lineWidth: 0.9)
+            path.stroke(Color.white.opacity(0.55), lineWidth: 0.3).offset(y: -0.3)
+        }
+        .mask(
+            LinearGradient(stops: [
+                .init(color: .clear, location: 0),
+                .init(color: .black, location: 0.05),
+                .init(color: .black, location: 0.95),
                 .init(color: .clear, location: 1),
             ], startPoint: .leading, endPoint: .trailing)
         )

@@ -9,15 +9,16 @@ import SwiftUI
 /// way of its own corner cross.
 struct LineTag: View {
     @ObservedObject var line: Line
-    /// On a rope it is clipped on; on a shelf, an island or beside a stack
-    /// its tools sit in the holder, a little closer together.
+    /// On a rope or a wire it is clipped on; in a holder, beside a stack,
+    /// with floating photos or at the end of a fan its tools sit a little
+    /// closer together.
     var style: Layout.Style = .clothesline
 
     static let width: CGFloat = Layout.tagWidth
     /// Room for the clip and the five tools. The tag hangs from the top.
     static let maxHeight: CGFloat = 152
 
-    private var compact: Bool { style != .clothesline }
+    private var compact: Bool { !style.clipped }
 
     var body: some View {
         VStack(spacing: -12) {
@@ -83,22 +84,22 @@ struct LineTag: View {
         line.items.contains { !$0.falling && line.isInInbox($0.id) }
     }
 
-    /// On a rope or beside a stack the tag floats on its own.
+    /// Without a holder the tag floats on its own.
     private var lifted: Bool {
-        (style == .clothesline || style == .stack) && !hasLiquidGlass
+        !style.held && !hasLiquidGlass
     }
 
-    /// Glass of its own on a rope or beside a stack; on a shelf or an island
-    /// it shares the holder's, with only a faint capsule to group the tools.
+    /// Glass of its own without a holder; on a shelf, an island or a
+    /// filmstrip it shares the holder's, with only a faint capsule to group
+    /// the tools.
     @ViewBuilder
     private var backing: some View {
-        switch style {
-        case .clothesline, .stack:
+        if !style.held {
             Capsule().fill(.clear).controlGlass(capsule: true)
-        case .shelf:
-            Capsule().fill(Color.primary.opacity(0.06))
-        case .island:
+        } else if style.dark {
             Capsule().fill(Color.white.opacity(0.1))
+        } else {
+            Capsule().fill(Color.primary.opacity(0.06))
         }
     }
 }
@@ -115,13 +116,13 @@ private struct TagTool: View {
 
     @State private var hovering = false
 
-    private var onDark: Bool { style == .island }
+    private var onDark: Bool { style.dark }
 
     var body: some View {
         Image(systemName: symbol)
             .font(.system(size: 10, weight: .bold))
             .foregroundStyle(onDark ? Color.white.opacity(0.9) : Color.primary)
-            .frame(width: LineTag.width, height: style == .clothesline ? 24 : 22)
+            .frame(width: LineTag.width, height: style.clipped ? 24 : 22)
             .background(
                 Circle()
                     .fill(onDark ? Color.white.opacity(0.18) : Color.primary.opacity(0.1))
