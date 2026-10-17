@@ -29,10 +29,13 @@ struct Pegged: Identifiable, Equatable {
     var isImage: Bool { Tendedero.isImage(url) }
     /// How many pages a PDF has.
     var pages = 1
+    /// A PDF still being covered, page by page. Nothing of it leaves until
+    /// it is done.
+    var preparing = false
 
     static func == (a: Pegged, b: Pegged) -> Bool {
         a.id == b.id && a.falling == b.falling && a.flying == b.flying && a.thumb === b.thumb
-            && a.covered == b.covered && a.pinned == b.pinned
+            && a.covered == b.covered && a.pinned == b.pinned && a.preparing == b.preparing
     }
 }
 
@@ -54,6 +57,11 @@ final class Line: ObservableObject {
     @Published var style = Layout.style
     /// A card stack spread out, while the pointer is at it.
     @Published var spread = false
+    /// Files from another app are being dragged to the line: a place opens
+    /// for them where the newest photo hangs, and it lights up while they
+    /// are over the line.
+    @Published var dropping = false
+    @Published var dropOver = false
 
     /// Card frames in window coordinates, reported by the views. The panel
     /// uses them to only catch clicks over photos and let the rest through.
@@ -93,9 +101,13 @@ final class Line: ObservableObject {
     private let pinnedKey = "pinnedPhotos"
 
     init() {
+        // In the App Store edition, photos and PDFs brought in before can
+        // only be read again through their bookmarks.
+        Outside.reopen()
         restore()
         trashWaiting()
         PrivateDetails.onRead = { [weak self] url, shown in self?.show(shown, for: url) }
+        PrivateDetails.onStart = { [weak self] url in self?.preparing(url) }
         TextIndex.onRead = { [weak self] in self?.refreshSearch() }
         readPrivateDetails()
         scheduleGust()
@@ -343,7 +355,7 @@ final class Line: ObservableObject {
     /// - Parameter caption: text to paste after the photos, like a
     ///   description in a chat.
     private func paste(_ photos: [Pegged], then caption: String? = nil) {
-        guard !photos.isEmpty else { return }
+        guard !photos.isEmpty, !stillCovering(photos) else { return }
         copy(photos)
         pickedIDs = []
         // Only when the paste will happen: a photo flying into a chat that
@@ -515,6 +527,7 @@ final class Line: ObservableObject {
     /// Each photo goes on the clipboard as an item of its own, as Finder
     /// copies several files, so apps paste them all, in the order they hang.
     private func copy(_ photos: [Pegged]) {
+        guard !stillCovering(photos) else { return }
         let entries = photos.map { item -> NSPasteboardItem in
             let entry = NSPasteboardItem()
             // With Hide private details on, a copy with them covered.
@@ -524,6 +537,10 @@ final class Line: ObservableObject {
             // A GIF keeps moving: it goes as itself, not as a still.
             if item.isImage, url.pathExtension.lowercased() == "gif", let gif = try? Data(contentsOf: url) {
                 entry.setData(gif, forType: NSPasteboard.PasteboardType("com.compuserve.gif"))
+            } else if item.isImage, url != item.url, url.pathExtension == "jpg", let jpeg = try? Data(contentsOf: url) {
+                // A photo's clean copy goes as the JPEG it is, rather than
+                // a PNG several times its size.
+                entry.setData(jpeg, forType: NSPasteboard.PasteboardType("public.jpeg"))
             } else if item.isImage, let png = pngData(url) {
                 entry.setData(png, forType: .png)
             }
@@ -534,6 +551,20 @@ final class Line: ObservableObject {
         pb.clearContents()
         pb.writeObjects(entries)
         showCopied(Set(photos.map(\.id)))
+    }
+
+    /// A PDF still being covered cannot leave yet: a note says so, rather
+    /// than sending it half done or as it is.
+    private func stillCovering(_ photos: [Pegged]) -> Bool {
+        guard photos.contains(where: \.preparing) else { return false }
+        Notice.show(L("Still covering the private details…"))
+        return true
+    }
+
+    /// A PDF has started being covered.
+    private func preparing(_ url: URL) {
+        guard let i = items.firstIndex(where: { $0.url == url && !$0.falling }) else { return }
+        items[i].preparing = true
     }
 
     /// "Copied" under each photo, for a moment.
@@ -801,9 +832,11 @@ final class Line: ObservableObject {
         for item in items where !item.falling { cover(item.url) }
     }
 
-    /// Hide Part: a box drawn over anything that should not leave the line.
+    /// Hide Part: a box drawn over anything that should not leave the line,
+    /// on a photo or on any page of a PDF brought in.
     func hidePart(_ id: UUID) {
-        guard let item = items.first(where: { $0.id == id }), item.isImage else { return }
+        guard let item = items.first(where: { $0.id == id }),
+              item.isImage || DocumentCover.protects(item.url) else { return }
         let url = item.url
         HideEditor.shared.edit(url) { [weak self] in self?.cover(url) }
     }
@@ -817,10 +850,13 @@ final class Line: ObservableObject {
     }
 
     /// Quick Look on this photo, with the rest of the line a key press away.
+    /// A PDF brought in shows as it will leave, so every page can be checked.
     func quickLook(_ id: UUID) {
         let live = items.filter { !$0.falling }
         guard let index = live.firstIndex(where: { $0.id == id }) else { return }
-        QuickLook.shared.show(live.map(\.url), at: index)
+        QuickLook.shared.show(live.map { item in
+            item.isDocument && item.altered ? PrivateDetails.shown(item.url) ?? item.url : item.url
+        }, at: index)
     }
 
     /// After a change of size, every photo is redrawn sharp at the new one.
@@ -838,6 +874,9 @@ final class Line: ObservableObject {
     /// leaves nothing to change. The lock shows only when something is
     /// covered.
     private func show(_ shown: URL, for url: URL) {
+        if let i = items.firstIndex(where: { $0.url == url && !$0.falling }), items[i].preparing {
+            items[i].preparing = false
+        }
         guard shown == url || PrivateDetails.alters(url),
               let i = items.firstIndex(where: { $0.url == url && !$0.falling }),
               let thumb = makeThumbnail(shown) else { return }

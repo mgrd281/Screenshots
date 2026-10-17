@@ -158,6 +158,11 @@ enum Finder {
         return read(image)
     }
 
+    /// The lines of a picture already open, like a page of a PDF.
+    static func textLines(in image: CGImage) -> [TextLine] {
+        read(image)
+    }
+
     static func text(of url: URL, hiding chosen: Set<PrivateDetail>, hand: [CGRect] = []) -> String {
         reading(of: url, hiding: chosen, hand: hand).text
     }

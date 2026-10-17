@@ -372,3 +372,18 @@
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly 还不能查看你的截图。请打开 Snapfly 一次并允许。";
 "There is no screenshot yet." = "还没有截图。";
 "Covered and copied, ready to paste." = "已隐藏并拷贝，可直接粘贴。";
+
+/* Photos and PDFs from anywhere on the Mac */
+"Add Files…" = "添加文件…";
+"Hang" = "挂上";
+"Photos and PDFs hang on the line, ready to send with their private details covered." = "照片和 PDF 会挂到晾衣绳上，隐私信息已遮盖，随时可以发送。";
+"Drop here – private details get covered" = "拖放到这里——隐私信息会被遮盖";
+"Drop here to hang it" = "拖放到这里即可挂上";
+"Only photos and PDFs can hang on the line." = "只有照片和 PDF 可以挂到晾衣绳上。";
+"This PDF is locked with a password." = "此 PDF 已用密码锁定。";
+"This PDF is too long: up to %d pages." = "此 PDF 太长：最多 %d 页。";
+"Still covering the private details…" = "仍在遮盖隐私信息…";
+"Could not cover the private details in this PDF." = "无法遮盖此 PDF 中的隐私信息。";
+"Page %d of %d" = "第 %d 页，共 %d 页";
+"Previous Page" = "上一页";
+"Next Page" = "下一页";

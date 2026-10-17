@@ -4,6 +4,7 @@ import Combine
 import Quartz
 import ServiceManagement
 import SwiftUI
+import UniformTypeIdentifiers
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
@@ -27,6 +28,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var preferences: Preferences?
     /// The send button over a chat while photos hang.
     private var chatButton: ChatButton?
+    /// Photos and PDFs dragged towards the line from other apps.
+    private let fileDrags = FileDragWatcher()
+    /// Finder's "Send Safely with Snapfly".
+    private let services = ServiceProvider()
+    /// Files dropped on the menu bar icon.
+    private let statusDrop = StatusDrop()
+    /// Files are being dragged near the line, which waits for them.
+    private var dropping = false
+    /// Whether the line was being kept open before the drag came.
+    private var keptOpenBeforeDrop = false
+    /// Files opened with Snapfly before it had finished launching.
+    private var waitingFiles: [URL] = []
+    private var launched = false
 
     /// Whether the panel is ordered in. It can be in and still tucked away
     /// above the top edge, like an auto-hiding Dock.
@@ -70,7 +84,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         let host = NSHostingView(rootView: LineView(line: line))
         host.sizingOptions = []
-        panel = LinePanel(content: host)
+        // The strip takes photos and PDFs dropped on it from other apps.
+        let dropView = DropView(frame: .zero)
+        host.autoresizingMask = [.width, .height]
+        dropView.addSubview(host)
+        dropView.onTarget = { [weak self] over in
+            if self?.line.dropOver != over { self?.line.dropOver = over }
+        }
+        dropView.onDrop = { [weak self] urls, point in self?.hangFiles(urls, from: point) ?? false }
+        panel = LinePanel(content: dropView)
         panel.placeOnScreen()
         updateCapacity()
 
@@ -100,6 +122,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         setUpStatusItem()
         watchMenuBarClicks()
+        setUpFiles()
 
         setUpPreferences()
 
@@ -171,6 +194,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 self.refresh()
             }
         }
+    }
+
+    /// "Open With › Snapfly", or a file dropped on Snapfly's icon in Finder.
+    func application(_ application: NSApplication, open urls: [URL]) {
+        guard launched else {
+            waitingFiles += urls
+            return
+        }
+        hangFiles(urls, from: nil)
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -387,6 +419,131 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         wanted = true
         refresh()
         if Self.peeksAtNew { reveal(peekFor: 2.5) }
+    }
+
+    // MARK: Photos and PDFs from anywhere
+
+    /// Every way a file comes onto the line besides a screenshot: dragged
+    /// to the line or the menu bar icon, Finder's menu, Open With, and Add
+    /// Files… in the menu bar.
+    private func setUpFiles() {
+        fileDrags.onMove = { [weak self] point in self?.fileDragMoved(to: point) }
+        fileDrags.onEnd = { [weak self] in self?.fileDragEnded() }
+        fileDrags.start()
+        services.onFiles = { [weak self] urls in self?.hangFiles(urls, from: nil) }
+        NSApp.servicesProvider = services
+        NSUpdateDynamicServices()
+        if let button = statusItem.button {
+            statusDrop.button = button
+            statusDrop.onDrop = { [weak self] urls, point in self?.hangFiles(urls, from: point) }
+            button.window?.registerForDraggedTypes([.fileURL])
+            button.window?.delegate = statusDrop
+        }
+        launched = true
+        if !waitingFiles.isEmpty {
+            let urls = waitingFiles
+            waitingFiles = []
+            hangFiles(urls, from: nil)
+        }
+    }
+
+    /// Files dragged to the top of a screen bring the line down there to
+    /// take them, however the line is set to come down: the drag says what
+    /// is wanted.
+    private func fileDragMoved(to point: CGPoint) {
+        guard !dropping, let screen = NSScreen.screens.first(where: { NSMouseInRect(point, $0.frame, false) }),
+              !FullScreen.blocksLine(on: screen) else { return }
+        let menuBar = Self.menuBarBand(of: screen)
+        // Up in the menu bar, or over the line where it already hangs.
+        let near = isRevealed && panel.screen == screen ? point.y >= panel.frame.minY : point.y >= menuBar.minY - 24
+        guard near else { return }
+        dropping = true
+        line.dropping = true
+        if panel.screen != screen || !isRevealed {
+            panel.placeOnScreen(screen)
+            updateCapacity()
+        }
+        keptOpenBeforeDrop = keepOpen
+        keepOpen = true
+        wanted = true
+        refresh()
+        reveal(pinned: true)
+        panel.ignoresMouseEvents = false
+    }
+
+    /// Dropped or let go. A moment later, so a drop on the line has hung
+    /// first; an empty line nothing was dropped on goes away again.
+    private func fileDragEnded() {
+        guard dropping else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            guard let self, self.dropping else { return }
+            self.dropping = false
+            self.line.dropping = false
+            self.line.dropOver = false
+            self.keepOpen = self.keptOpenBeforeDrop
+            if self.line.liveCount == 0 && !self.keepOpen {
+                self.wanted = false
+                self.refresh()
+            }
+        }
+    }
+
+    /// Photos and PDFs from anywhere on the Mac. Each flies in from where it
+    /// was let go, or drops in, and hangs like a screenshot; the file itself
+    /// stays where it is. Returns whether anything could hang.
+    @discardableResult
+    private func hangFiles(_ urls: [URL], from point: CGPoint?) -> Bool {
+        let files = Outside.sort(urls)
+        if !files.locked.isEmpty {
+            Notice.show(L("This PDF is locked with a password."))
+        } else if !files.tooLong.isEmpty {
+            Notice.show(String(format: L("This PDF is too long: up to %d pages."), DocumentCover.maxPages))
+        } else if !files.refused.isEmpty {
+            Notice.show(L("Only photos and PDFs can hang on the line."))
+        }
+        let accepted = Array(files.accepted.prefix(Outside.maxAtOnce))
+        guard !accepted.isEmpty else { return false }
+        // The place kept for them closes as they fly into it.
+        line.dropping = false
+        line.dropOver = false
+        let screen = point.flatMap { point in NSScreen.screens.first { NSMouseInRect(point, $0.frame, false) } }
+        comeDown(on: screen)
+        // Brought on purpose: it stays down until the pointer has been to it.
+        reveal(pinned: true)
+        for (n, url) in accepted.enumerated() {
+            Outside.remember(url)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.08 * Double(n)) { [weak self] in
+                self?.hangFile(url, from: point)
+            }
+        }
+        return true
+    }
+
+    private func hangFile(_ url: URL, from point: CGPoint?) {
+        let from = point.map { CGRect(x: $0.x - 60, y: $0.y - 45, width: 120, height: 90) }
+        guard let id = line.hang(url, flying: from != nil) else {
+            itemsChanged()
+            return
+        }
+        guard let from else { return }
+        // Let the line lay out before measuring the landing spot.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self] in
+            self?.fly(id, from: from)
+        }
+    }
+
+    /// Add Files… in the menu bar.
+    private func chooseFiles() {
+        let open = NSOpenPanel()
+        open.canChooseFiles = true
+        open.canChooseDirectories = false
+        open.allowsMultipleSelection = true
+        open.allowedContentTypes = [.image, .pdf]
+        open.prompt = L("Hang")
+        open.message = L("Photos and PDFs hang on the line, ready to send with their private details covered.")
+        NSApp.activate(ignoringOtherApps: true)
+        guard open.runModal() == .OK else { return }
+        hangFiles(open.urls, from: nil)
     }
 
     // MARK: The capture flying to the line
@@ -682,7 +839,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if inside && pinned { pinned = false }
 
         let busy = pinned || GrabView.isDragging || GrabView.isShowingMenu || TagView.isMovingLine
-            || line.pressedID != nil || now < peekUntil || line.isSearching
+            || line.pressedID != nil || now < peekUntil || line.isSearching || dropping
         if inside || busy {
             awaySince = nil
         } else {
@@ -709,7 +866,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// mouse while the cursor is over a photo or the tag. Everywhere else,
     /// clicks go to whatever is underneath.
     private func updateMousePassThrough(_ mouse: NSPoint) {
-        guard !GrabView.isDragging, !TagView.isMovingLine else { return }
+        // While files are dragged to it, the whole strip takes them.
+        guard !GrabView.isDragging, !TagView.isMovingLine, !dropping else { return }
         let local = panel.convertPoint(fromScreen: mouse)
         let flipped = CGPoint(x: local.x, y: panel.frame.height - local.y)
         var overPhoto = line.hitRects.values.contains { $0.insetBy(dx: -4, dy: -4).contains(flipped) }
@@ -914,6 +1072,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             menu.addItem(recordItem)
         }
+        // Photos and PDFs from anywhere on the Mac, to send protected.
+        menu.addItem(ClosureMenuItem(L("Add Files…"), key: "o") { [weak self] in self?.chooseFiles() })
         let buttonItem = ClosureMenuItem(L("Screenshot Button")) { [weak self] in
             CaptureButton.isEnabled.toggle()
             self?.preferences?.refresh()

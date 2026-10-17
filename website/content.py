@@ -188,7 +188,7 @@ TEXT["en"] = dict(
     footer_contact="Contact",
 
     updated_label="Last updated",
-    updated="October 16, 2026",
+    updated="October 17, 2026",
 
     privacy_title="Privacy Policy",
     privacy_short_h="In short",
@@ -201,7 +201,7 @@ TEXT["en"] = dict(
 <li><strong>No data is collected.</strong> Snapfly has no account, no analytics, no advertising and no tracking. It does not send your screenshots, their text or anything about you to us or to anyone else.</li>
 <li><strong>Nothing leaves your Mac.</strong> Reading the text in a screenshot, covering private details, searching, translating and describing all run on your Mac, with Apple’s frameworks.</li>
 <li><strong>The time stamp.</strong> While Stamp the date and time is on, Snapfly asks the atomic clock of the PTB, Germany’s national metrology institute (ptbtime1.ptb.de), for the exact time of each new screenshot, the way a clock sets itself (NTP). Only that question goes out, with no data about you or your screenshots. With the stamp off, the app never connects to the internet.</li>
-<li><strong>Your files.</strong> Snapfly reads the screenshots in the folders you let it watch, and in the Mac App Store edition the Snapfly folder in Pictures. It copies, sends, moves or deletes a screenshot only when you ask it to, or, if you leave that setting on, after you have sent it into a chat.</li>
+<li><strong>Your files.</strong> Snapfly reads the screenshots in the folders you let it watch, and in the Mac App Store edition the Snapfly folder in Pictures, and the photos and PDFs you bring to it yourself. It copies, sends, moves or deletes a screenshot only when you ask it to, or, if you leave that setting on, after you have sent it into a chat. A photo or PDF you bring stays where it is, unchanged. What leaves the line is a copy: a photo without where and with what it was taken, a PDF drawn again page by page with the details you chose covered.</li>
 <li><strong>Copied images.</strong> If you turn on Hang copied images, Snapfly looks at images you copy, to hang them on the line. It leaves alone anything copied together with text or a file, and anything a password manager marks as private.</li>
 <li><strong>The Accessibility permission</strong> lets the send button paste a screenshot into the app you are using, by pressing ⌘V there. Snapfly uses it for nothing else. You can turn it off at any time in System Settings › Privacy &amp; Security › Accessibility.</li>
 <li><strong>The Screen Recording permission</strong> lets Snapfly take the screenshots and recordings you ask for, with ⌃⌥S, the screenshot button or Record Screen. It captures only when you ask, and what it takes stays on your Mac.</li>
@@ -438,7 +438,7 @@ TEXT["de"] = dict(
     footer_contact="Kontakt",
 
     updated_label="Stand",
-    updated="16. Oktober 2026",
+    updated="17. Oktober 2026",
 
     privacy_title="Datenschutzerklärung",
     privacy_short_h="Kurz gesagt",
@@ -451,7 +451,7 @@ TEXT["de"] = dict(
 <li><strong>Es werden keine Daten erhoben.</strong> Snapfly hat kein Konto, keine Analyse, keine Werbung und kein Tracking. Die App sendet weder deine Bildschirmfotos noch deren Text noch irgendetwas über dich an uns oder an Dritte.</li>
 <li><strong>Nichts verlässt deinen Mac.</strong> Texterkennung, das Verdecken privater Angaben, die Suche, das Übersetzen und Beschreiben laufen auf deinem Mac, mit Apples Frameworks.</li>
 <li><strong>Der Zeitstempel.</strong> Solange „Datum und Uhrzeit stempeln“ eingeschaltet ist, fragt Snapfly für jedes neue Bildschirmfoto die Atomuhr der PTB, der Physikalisch-Technischen Bundesanstalt (ptbtime1.ptb.de), nach der genauen Uhrzeit – so, wie sich eine Uhr stellt (NTP). Nur diese Frage geht hinaus, ohne Daten über dich oder deine Bildschirmfotos. Ist der Stempel aus, verbindet sich die App nie mit dem Internet.</li>
-<li><strong>Deine Dateien.</strong> Snapfly liest die Bildschirmfotos in den Ordnern, die du freigibst, in der Mac App Store-Ausgabe außerdem den Ordner „Snapfly“ in „Bilder“. Die App kopiert, sendet, verschiebt oder löscht ein Bildschirmfoto nur, wenn du es willst, oder – wenn du die Einstellung eingeschaltet lässt – nachdem du es in einen Chat gesendet hast.</li>
+<li><strong>Deine Dateien.</strong> Snapfly liest die Bildschirmfotos in den Ordnern, die du freigibst, in der Mac App Store-Ausgabe außerdem den Ordner „Snapfly“ in „Bilder“, und die Fotos und PDFs, die du der App selbst gibst. Die App kopiert, sendet, verschiebt oder löscht ein Bildschirmfoto nur, wenn du es willst, oder – wenn du die Einstellung eingeschaltet lässt – nachdem du es in einen Chat gesendet hast. Ein Foto oder PDF, das du ihr gibst, bleibt unverändert, wo es ist. Was die Leine verlässt, ist eine Kopie: ein Foto ohne Aufnahmeort und Kameradaten, ein PDF Seite für Seite neu gezeichnet, mit den gewählten Angaben abgedeckt.</li>
 <li><strong>Kopierte Bilder.</strong> Wenn du „Kopierte Bilder aufhängen“ einschaltest, sieht sich Snapfly Bilder an, die du kopierst, um sie an die Leine zu hängen. Was zusammen mit Text oder einer Datei kopiert wurde und was ein Passwortmanager als privat markiert, bleibt unberührt.</li>
 <li><strong>Die Berechtigung für Bedienungshilfen</strong> erlaubt der Senden-Taste, ein Bildschirmfoto in die App einzusetzen, die du gerade benutzt, indem sie dort ⌘V drückt. Snapfly nutzt sie für nichts anderes. Du kannst sie jederzeit unter Systemeinstellungen › Datenschutz &amp; Sicherheit › Bedienungshilfen ausschalten.</li>
 <li><strong>Die Berechtigung für Bildschirmaufnahme</strong> erlaubt Snapfly, die Bildschirmfotos und Aufnahmen zu machen, um die du bittest – mit ⌃⌥S, der Bildschirmfoto-Taste oder „Bildschirm aufnehmen“. Snapfly nimmt nur auf, wenn du es willst, und was es aufnimmt, bleibt auf deinem Mac.</li>
@@ -688,7 +688,7 @@ TEXT["ar"] = dict(
     footer_contact="تواصل معنا",
 
     updated_label="آخر تحديث",
-    updated="16 أكتوبر 2026",
+    updated="17 أكتوبر 2026",
 
     privacy_title="سياسة الخصوصية",
     privacy_short_h="باختصار",
@@ -701,7 +701,7 @@ TEXT["ar"] = dict(
 <li><strong>لا تُجمع أي بيانات.</strong> لا حساب في Snapfly، ولا تحليلات، ولا إعلانات، ولا تتبّع. لا يرسل التطبيق لقطاتك ولا نصوصها ولا أي شيء عنك إلينا أو إلى أي أحد.</li>
 <li><strong>لا يخرج شيء من جهازك.</strong> قراءة النص في اللقطة، وتغطية المعلومات الخاصة، والبحث، والترجمة، والوصف، كلها تعمل على جهازك بأدوات Apple.</li>
 <li><strong>ختم الوقت.</strong> ما دام «اختم التاريخ والوقت» مفعّلًا، يسأل Snapfly الساعة الذرية لمعهد PTB الألماني للقياس (<bdi>ptbtime1.ptb.de</bdi>) عن الوقت الدقيق لكل لقطة جديدة، بالطريقة التي تضبط بها الساعات نفسها (NTP). لا يخرج إلا هذا السؤال، بلا أي بيانات عنك أو عن لقطاتك. وحين يكون الختم مطفأً، لا يتصل التطبيق بالإنترنت أبدًا.</li>
-<li><strong>ملفاتك.</strong> يقرأ Snapfly لقطات الشاشة في المجلدات التي تسمح له بمراقبتها، وفي نسخة Mac App Store مجلد Snapfly داخل «الصور». ولا ينسخ لقطة أو يرسلها أو ينقلها أو يحذفها إلا حين تطلب ذلك، أو، إن أبقيت هذا الإعداد مفعّلًا، بعد أن ترسلها إلى دردشة.</li>
+<li><strong>ملفاتك.</strong> يقرأ Snapfly لقطات الشاشة في المجلدات التي تسمح له بمراقبتها، وفي نسخة Mac App Store مجلد Snapfly داخل «الصور»، والصور وملفات PDF التي تعطيه إياها بنفسك. ولا ينسخ لقطة أو يرسلها أو ينقلها أو يحذفها إلا حين تطلب ذلك، أو، إن أبقيت هذا الإعداد مفعّلًا، بعد أن ترسلها إلى دردشة. والصورة أو ملف PDF الذي تعطيه إياه يبقى في مكانه دون تغيير، وما يخرج من الحبل نسخة منه: صورة بلا مكان التقاطها ولا بيانات الكاميرا، وملف PDF أُعيد رسمه صفحةً صفحة مع تغطية البيانات التي اخترتها.</li>
 <li><strong>الصور المنسوخة.</strong> إن فعّلت «تعليق الصور المنسوخة»، ينظر Snapfly إلى الصور التي تنسخها ليعلّقها على الحبل. ويترك كل ما نُسخ مع نص أو ملف، وكل ما يعلّمه مدير كلمات المرور بأنه خاص.</li>
 <li><strong>إذن تسهيلات الاستخدام</strong> يسمح لزر الإرسال بلصق اللقطة في التطبيق الذي تستخدمه، بالضغط على ⌘V هناك. ولا يستخدمه Snapfly لأي شيء آخر. ويمكنك إيقافه في أي وقت من إعدادات النظام › الخصوصية والأمن › تسهيلات الاستخدام.</li>
 <li><strong>إذن تسجيل الشاشة</strong> يسمح لـ Snapfly بالتقاط اللقطات والتسجيلات التي تطلبها، بـ <bdi dir="ltr">⌃⌥S</bdi> أو زر التصوير أو «تسجيل الشاشة». لا يلتقط شيئًا إلا حين تطلب، وما يلتقطه يبقى على جهازك.</li>

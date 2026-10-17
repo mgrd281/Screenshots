@@ -191,12 +191,14 @@ struct LineView: View {
             // Moved down with its grip, the strip reaches up to the menu bar
             // and the line hangs this far below its top.
             let drop = max(0, geo.size.height - Layout.panelHeight)
-            let count = line.items.count
+            // Files being dragged here take a place of their own, where the
+            // newest photo hangs, and the others make room for it.
+            let count = line.items.count + (line.dropping ? 1 : 0)
             let tucked: CGFloat = line.revealed || reduceMotion ? 0 : -(drop + Layout.panelHeight + 12)
             ZStack(alignment: .topLeading) {
-                holder(width: width)
+                holder(width: width, count: count)
 
-                if line.items.isEmpty {
+                if line.items.isEmpty && !line.dropping {
                     Hint()
                         .position(x: width / 2, y: Layout.ropeY(x: width / 2, width: width) + 34)
                         .transition(.opacity)
@@ -204,6 +206,19 @@ struct LineView: View {
 
                 ForEach(Array(line.items.enumerated()), id: \.element.id) { index, item in
                     photo(item, index: index, count: count, width: width)
+                }
+
+                if line.dropping {
+                    let x = Layout.x(index: count - 1, count: count, width: width,
+                                     visible: line.visibleCount, scroll: line.scroll, spread: line.spread)
+                    let top = Layout.ropeY(x: x, width: width) - Layout.pinAbove + PeggedView.cardOffsetBelowTop
+                    DropSlot(over: line.dropOver)
+                        .position(x: x, y: top + DropSlot.height / 2)
+                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                    DropHint()
+                        .fixedSize()
+                        .position(x: min(max(x, 160), width - 160), y: top + DropSlot.height + 22)
+                        .transition(.opacity)
                 }
 
                 if line.style == .stack, !line.spread, line.liveCount > 1 {
@@ -224,6 +239,8 @@ struct LineView: View {
             .animation(.easeInOut(duration: 0.3), value: line.items.isEmpty)
             .animation(Motion.spring(response: 0.42, damping: 0.8, reduced: reduceMotion), value: line.spread)
             .animation(Motion.spring(response: 0.5, damping: 0.85, reduced: reduceMotion), value: line.style)
+            .animation(Motion.spring(response: 0.42, damping: 0.8, reduced: reduceMotion), value: line.dropping)
+            .animation(.easeOut(duration: 0.15), value: line.dropOver)
             .padding(.top, drop)
             // Tucked away, the whole line waits above the top edge and slides
             // out from under the menu bar, the way an auto-hiding Dock does.
@@ -247,12 +264,12 @@ struct LineView: View {
     /// What the photos hang on: the rope, the glass shelf or the island.
     /// A stack has nothing behind it.
     @ViewBuilder
-    private func holder(width: CGFloat) -> some View {
+    private func holder(width: CGFloat, count: Int) -> some View {
         switch line.style {
         case .clothesline:
             Rope(width: width)
         case .shelf, .island:
-            if let frame = Layout.holder(count: line.items.count, width: width,
+            if let frame = Layout.holder(count: count, width: width,
                                          visible: line.visibleCount, scroll: line.scroll) {
                 Group {
                     if line.style == .shelf { GlassShelf() } else { Island() }
@@ -361,6 +378,52 @@ private struct StackBadge: View {
             .shadow(color: .black.opacity(0.25), radius: 3, y: 1)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
+    }
+}
+
+/// Where files dragged to the line will hang: a card's outline, which turns
+/// to the accent while they are over the line, as a place to drop does.
+private struct DropSlot: View {
+    let over: Bool
+
+    static var height: CGFloat { (Layout.photoMaxHeight * 0.72).rounded() + Frame.inset * 2 }
+    private var shape: RoundedRectangle { RoundedRectangle(cornerRadius: Frame.radius, style: .continuous) }
+
+    var body: some View {
+        Color.clear
+            .frame(width: Layout.cardWidth - 14 + Frame.inset * 2, height: Self.height)
+            .glassFrame(cornerRadius: Frame.radius)
+            .overlay(
+                shape.strokeBorder(over ? Color.accentColor : Color.secondary.opacity(0.7),
+                                   style: StrokeStyle(lineWidth: over ? 2 : 1.5, dash: [6, 4]))
+            )
+            .overlay(
+                Image(systemName: "arrow.down.doc")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundStyle(over ? Color.accentColor : Color.secondary)
+            )
+            .scaleEffect(over ? 1.04 : 1)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+}
+
+/// What letting go does: the photos and PDFs hang, their private details
+/// covered when that is chosen.
+private struct DropHint: View {
+    var body: some View {
+        let covers = PrivateDetails.hidden
+        Label {
+            Text(covers ? L("Drop here – private details get covered") : L("Drop here to hang it"))
+        } icon: {
+            Image(systemName: covers ? "lock.fill" : "arrow.down")
+        }
+        .font(.system(size: 12, weight: .medium, design: .rounded))
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .controlGlass(capsule: true)
+        .allowsHitTesting(false)
     }
 }
 
