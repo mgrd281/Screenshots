@@ -182,6 +182,7 @@ final class Capture {
                                          showsHint: NSMouseInRect(pointer, screen.frame, false)) { [weak self] choice in
                 self?.finish(choice)
             }
+            overlay.solidBadges = PhotoBadge.reduced
             overlays.append(overlay)
         }
         // The keyboard goes to the screen with the pointer, for Return and
@@ -451,6 +452,11 @@ extension NSScreen {
 
 /// One screen, still, over everything else while a screenshot is chosen.
 private final class CaptureOverlay: NSPanel {
+    /// The size label is solid with Reduce Transparency on; see `PhotoBadge`.
+    var solidBadges = false {
+        didSet { (contentView as? CaptureView)?.solidBadges = solidBadges }
+    }
+
     init(screen: NSScreen, still: CGImage, targets: [Capture.Target], mode: Capture.Mode, showsHint: Bool,
          done: @escaping (Capture.Choice) -> Void) {
         super.init(contentRect: screen.frame, styleMask: [.borderless, .nonactivatingPanel],
@@ -477,6 +483,9 @@ private final class CaptureView: NSView {
     private let still: CGImage
     private let targets: [Capture.Target]
     private let done: (Capture.Choice) -> Void
+
+    /// Whether the size label is solid, with Reduce Transparency on.
+    var solidBadges = false
 
     private var dragStart: CGPoint?
     private var area: CGRect?
@@ -653,7 +662,7 @@ private final class CaptureView: NSView {
                              width: size.width + 16, height: 20)
         if capsule.minY < bounds.minY + 4 { capsule.origin.y = area.minY + 6 }
         capsule.origin.x = max(bounds.minX + 4, min(capsule.origin.x, bounds.maxX - capsule.width - 4))
-        NSColor.black.withAlphaComponent(0.55).setFill()
+        (solidBadges ? NSColor(white: 0.12, alpha: 1) : NSColor.black.withAlphaComponent(0.55)).setFill()
         NSBezierPath(roundedRect: capsule, xRadius: 10, yRadius: 10).fill()
         text.draw(at: CGPoint(x: capsule.minX + 8, y: capsule.midY - size.height / 2), withAttributes: attributes)
     }

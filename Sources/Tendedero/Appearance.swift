@@ -7,6 +7,23 @@ var hasLiquidGlass: Bool {
     return false
 }
 
+/// The dark badge on a photo: a lock, the PDF capsule, the size while an area
+/// is chosen. Its white text or glyph sits on translucent black, the one
+/// see-through surface of our own with text on it, so it turns solid when
+/// Reduce Transparency is on. Materials and Liquid Glass turn opaque by
+/// themselves.
+enum PhotoBadge {
+    /// The fill for SwiftUI, from the environment's Reduce Transparency.
+    static func fill(reduced: Bool) -> Color {
+        reduced ? Color(white: 0.12) : Color.black.opacity(0.55)
+    }
+
+    /// Whether the system asks for less transparency, for what AppKit draws.
+    @MainActor static var reduced: Bool {
+        NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
+    }
+}
+
 /// How things move, and how they keep still when Reduce Motion is on in
 /// System Settings › Accessibility › Display: slides, swings and flights
 /// give way to short fades.

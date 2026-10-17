@@ -272,7 +272,8 @@ on each.
 ## Calm for everyone.
 
 Turn on Reduce Motion and the line fades in instead of sliding. Photos stop
-swinging and captures appear in place instead of flying. With VoiceOver,
+swinging and captures appear in place instead of flying. Turn on Reduce
+Transparency and the glass turns solid, and the dark badges on photos do too. With VoiceOver,
 each photo is a button named after its file. Pressing it copies the photo,
 and its actions send, pin and take it down. On macOS 26, the controls that
 float over your screen are made of Liquid Glass.

@@ -170,8 +170,9 @@ stays out of the way.
     ease-out.
   - Any new motion goes through them.
 - **Reduce Transparency.** Materials and Liquid Glass turn opaque by
-  themselves. Never put text on a custom translucency that has no opaque
-  fallback.
+  themselves. Our own see-through surface with text on it is the photo badge
+  (`PhotoBadge`): with Reduce Transparency it is the cover ink, solid. Never
+  put text on a custom translucency that has no opaque fallback.
 - **Increase Contrast.** Frosted glass draws a firmer, darker edge (the
   `GlassFrame` modifier).
 - **Keyboard.** Return confirms and Escape cancels in every window and panel
@@ -205,6 +206,9 @@ literal value in a view.
 - **Search yellow** is the highlighter on words found by Search.
 - **Cover ink** is the opaque block over private details. It reads as
   redaction, not decoration.
+- **Photo badge** is black 55% with a white glyph or text, over a picture: the
+  lock, the PDF capsule, and the size while an area is chosen. With Reduce
+  Transparency on, it is the cover ink instead (grey 12%, solid).
 - **Record red** (`Color.red`) is only for the stop button while the screen
   is recorded, as macOS marks recording.
 - **Allowed green** and **not allowed orange** (`.green`, `.orange`) are only
