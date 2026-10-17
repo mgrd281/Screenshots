@@ -45,38 +45,53 @@ const CUTS = {
     end: { wall: 16.5, icon: 16.7, word: 16.84, tag: 17.3, free: 17.99, url: 18.9 },
   },
   long: {
-    duration: 52.6,
+    duration: 75.2,
     blocks: [
-      { from: 0, to: at(2.5), lines: [[["Schon wieder", 0.05, "small"]], [["30 ", at(0.55), "grad"], ["Screenshots", at(0.9), "grad"]], [["auf dem ", at(1.55), "small"], ["Desktop?", at(1.85)]]] },
-      { from: at(3.0), to: at(4.82), lines: [[["Und welcher war", at(3.0), "small"]], [["noch mal der", at(3.75), "small"]], [["richtige?", at(4.15), "grad"]]] },
-      { from: at(5.57), to: at(7.3), lines: [[["Mit Snapfly", at(5.57), "small"]], [["hängt jeder", at(6.25)]], [["Screenshot", at(6.71)]]] },
-      { from: at(7.35), to: at(9.02), lines: [[["sofort an", at(7.35), "small"]], [["einer Leine,", at(7.85), "grad"]]] },
-      { from: at(9.4), to: at(10.47), lines: [[["oben am", at(9.4), "small"]], [["Bildschirm.", at(9.75), "grad"]]] },
-      { from: at(10.97), to: at(12.92), lines: [[["Dein ", at(10.97), "small"], ["Desktop", at(11.15), "small"]], [["bleibt", at(11.75)]], [["aufgeräumt.", at(11.97), "grad"]]] },
-      { from: at(13.28), to: at(14.85), lines: [[["Ein Klick", at(13.28), "grad"]], [["auf den ", at(13.67), "small"], ["Papierflieger,", at(13.9), "small"]]] },
-      { from: at(15.04), to: at(16.1), lines: [[["und er ist", at(15.04)]], [["im Chat.", at(15.55)]]] },
-      { from: at(16.54), to: at(19.4), lines: [[["WhatsApp.", at(16.54)]], [["ChatGPT.", at(17.34)]], [["Egal wo.", at(18.65), "grad"]]] },
-      { from: at(19.74), to: at(21.05), lines: [[["Namen und", at(19.74), "small"]], [["Kontonummern?", at(20.35), "grad"]]] },
-      { from: at(21.6), to: at(24.38), lines: [[["Werden", at(21.6), "small"]], [["automatisch", at(21.95), "grad"]], [["verdeckt,", at(22.55)]], [["bevor ", at(23.16), "small"], ["etwas ", at(23.55), "small"], ["rausgeht.", at(23.9), "small"]]] },
-      { from: at(24.93), to: at(26.43), lines: [[["Du suchst eine ", at(24.93), "small"], ["alte", at(25.4), "small"]], [["Rechnung?", at(25.95), "grad"]]] },
-      { from: at(26.94), to: at(29.97), lines: [[["Snapfly findet", at(26.94), "small"]], [["jedes Wort", at(27.95), "grad"]], [["in deinen ", at(28.7), "small"], ["Screenshots.", at(29.2), "small"]]] },
-      { from: at(30.25), to: at(31.56), lines: [[["Mehrere", at(30.25), "small"]], [["Screenshots?", at(30.8), "grad"]]] },
-      { from: at(31.99), to: at(33.36), lines: [[["Werden zu", at(31.99), "small"]], [["einem ", at(32.3)], ["PDF.", at(32.6), "grad"]]] },
-      { from: at(33.68), to: at(34.61), lines: [[["Fremde", at(33.68), "small"]], [["Sprache?", at(34.14), "grad"]]] },
-      { from: at(35.07), to: at(37.4), lines: [[["Wird", at(35.07), "small"]], [["übersetzt,", at(35.3), "grad"]], [["direkt ", at(36.24), "small"], ["auf deinem ", at(36.6), "small"], ["Mac.", at(37.0), "small"]]] },
-      { from: at(37.9), to: at(40.5), lines: [[["Was gesendet ist,", at(37.9), "small"]], [["verschwindet", at(39.18), "grad"]], [["von der Leine.", at(39.8), "small"]]] },
-      { from: at(41.0), to: at(43.18), lines: [[["Der Verlauf", at(41.0), "small"]], [["hebt es", at(41.74)]], [["30 Tage", at(42.0), "grad"], [" auf.", at(42.9)]]] },
-      { from: at(43.69), to: at(47.4), lines: [[["Kein Konto.", at(43.69)]], [["Keine Cloud.", at(44.74)]], [["Alles bleibt ", at(45.99), "small"], ["auf deinem Mac.", at(46.6), "small"]]] },
+      { from: 0, to: at(2.64), lines: [[["Schon wieder", 0.05, "small"]], [["30 ", at(0.58), "grad"], ["Screenshots", at(0.95), "grad"]], [["auf dem ", at(1.64), "small"], ["Desktop?", at(1.96)]]] },
+      { from: at(3.06), to: at(4.75), lines: [[["Und welcher war", at(3.06), "small"]], [["noch mal der", at(3.85), "small"]], [["richtige?", at(4.11), "grad"]]] },
+      { from: at(5.32), to: at(7.0), lines: [[["Mit Snapfly", at(5.32), "small"]], [["hängt jeder", at(5.95)]], [["Screenshot", at(6.43)]]] },
+      { from: at(7.05), to: at(9.0), lines: [[["sofort an", at(7.05), "small"]], [["einer Leine,", at(7.6), "grad"]]] },
+      { from: at(9.26), to: at(10.3), lines: [[["oben am", at(9.26), "small"]], [["Bildschirm.", at(9.6), "grad"]]] },
+      { from: at(10.81), to: at(12.55), lines: [[["Dein ", at(10.81), "small"], ["Desktop", at(11.0), "small"]], [["bleibt", at(11.54)]], [["aufgeräumt.", at(11.78), "grad"]]] },
+      { from: at(12.88), to: at(14.05), lines: [[["Neuer", at(12.88), "small"]], [["Screenshot?", at(13.2), "grad"]]] },
+      { from: at(14.29), to: at(16.35), lines: [[["Ein Klick", at(14.29), "grad"]], [["auf den Knopf", at(14.73)]], [["am Bildschirmrand.", at(15.4), "small"]]] },
+      { from: at(16.53), to: at(17.2), lines: [[["Fertig.", at(16.53), "grad"]]] },
+      { from: at(17.57), to: at(19.35), lines: [[["Ein Klick", at(17.57), "grad"]], [["auf den ", at(17.95), "small"], ["Papierflieger,", at(18.1), "small"]]] },
+      { from: at(19.49), to: at(20.5), lines: [[["und er ist", at(19.49)]], [["im Chat.", at(19.98)]]] },
+      { from: at(20.82), to: at(21.75), lines: [[["Noch", at(20.82), "small"]], [["schneller:", at(21.05), "grad"]]] },
+      { from: at(21.94), to: at(24.95), lines: [[["Der Knopf ", at(21.94), "small"], ["über dem Chat", at(22.36), "small"]], [["schickt", at(23.11)]], [["alle Fotos", at(23.48), "grad"]], [["auf einmal.", at(24.2), "small"]]] },
+      { from: at(25.18), to: at(28.0), lines: [[["WhatsApp.", at(25.18)]], [["ChatGPT.", at(26.06)]], [["Egal wo.", at(27.3), "grad"]]] },
+      { from: at(28.53), to: at(29.5), lines: [[["Und per", at(28.53), "small"]], [["E-Mail?", at(28.85), "grad"]]] },
+      { from: at(29.94), to: at(30.95), lines: [[["Genauso", at(29.94)]], [["einfach.", at(30.45), "grad"]]] },
+      { from: at(31.41), to: at(32.9), lines: [[["Namen und", at(31.41), "small"]], [["Kontonummern?", at(32.13), "grad"]]] },
+      { from: at(33.41), to: at(36.48), lines: [[["Werden", at(33.41), "small"]], [["automatisch", at(33.8), "grad"]], [["verdeckt,", at(34.45)]], [["bevor ", at(34.98), "small"], ["etwas ", at(35.5), "small"], ["rausgeht.", at(35.97), "small"]]] },
+      { from: at(36.74), to: at(38.25), lines: [[["Du suchst eine ", at(36.74), "small"], ["alte", at(37.2), "small"]], [["Rechnung?", at(37.75), "grad"]]] },
+      { from: at(38.65), to: at(41.85), lines: [[["Snapfly findet", at(38.65), "small"]], [["jedes Wort", at(39.7), "grad"]], [["in deinen ", at(40.5), "small"], ["Screenshots.", at(41.0), "small"]]] },
+      { from: at(42.34), to: at(43.82), lines: [[["Mehrere", at(42.34), "small"]], [["Screenshots?", at(42.9), "grad"]]] },
+      { from: at(44.05), to: at(45.35), lines: [[["Werden zu", at(44.05), "small"]], [["einem ", at(44.5)], ["PDF.", at(44.75), "grad"]]] },
+      { from: at(45.63), to: at(46.55), lines: [[["Fremde", at(45.63), "small"]], [["Sprache?", at(46.1), "grad"]]] },
+      { from: at(47.02), to: at(49.32), lines: [[["Wird", at(47.02), "small"]], [["übersetzt,", at(47.25), "grad"]], [["direkt ", at(48.11), "small"], ["auf deinem ", at(48.5), "small"], ["Mac.", at(48.85), "small"]]] },
+      { from: at(49.87), to: at(52.5), lines: [[["Was gesendet ist,", at(49.87), "small"]], [["verschwindet", at(50.9), "grad"]], [["von der Leine.", at(51.55), "small"]]] },
+      { from: at(52.65), to: at(54.9), lines: [[["Der Verlauf", at(52.65), "small"]], [["hebt es", at(53.42)]], [["30 Tage", at(53.69), "grad"], [" auf.", at(54.15)]]] },
+      { from: at(55.38), to: at(59.45), lines: [[["Kein Konto.", at(55.38)]], [["Keine Cloud.", at(56.58)]], [["Alles bleibt ", at(57.91), "small"], ["auf deinem Mac.", at(58.6), "small"]]] },
+      { from: at(59.92), to: at(61.4), lines: [[["Und das ist", at(59.92), "small"]], [["nicht alles!", at(60.48), "grad"]]] },
+      { from: at(61.6), to: at(62.85), lines: [[["Bildschirm", at(61.6)]], [["aufnehmen,", at(61.95), "grad"]]] },
+      { from: at(63.05), to: at(64.6), lines: [[["ganze Seiten", at(63.05)]], [["erfassen,", at(63.7), "grad"]]] },
+      { from: at(64.78), to: at(65.7), lines: [[["Zeitstempel", at(64.78), "grad"]]] },
+      { from: at(65.76), to: at(66.85), lines: [[["und vieles", at(65.76)]], [["mehr!", at(66.1), "grad"]]] },
     ],
-    desk: { hunt: [3.05, 3.65, 4.25], mark: 5.57, rope: 6.3, sweep: 6.5, zoom: [9.4, 10.2], tidy: 10.97, clean: 11.97, out: [12.85, 13.2], push: 5.3 },
-    chat: { in: 12.98, clicks: [13.92, 17.29], gptIn: 17.22, fan: 18.65, out: [19.45, 19.8] },
-    doc: { in: [19.5, 19.9], name: 19.74, iban: 20.35, cover: 22.55, lock: 23.1, send: 23.5, out: [24.2, 24.45] },
-    search: { in: 24.45, type: 25.95, find: 26.94, zoom: 27.95, out: 29.85 },
-    pdf: { in: 30.1, picks: [30.55, 30.85, 31.15], merge: 31.99, badge: 32.6, out: 33.4 },
-    translate: { in: 33.55, menu: 34.15, click: 34.7, swap: 35.07, out: 37.5 },
-    sent: { in: 37.75, click: 38.25, close: 39.18, history: 40.9, days: 42.0, out: 43.4 },
-    privacy: { account: 43.69, cloud: 44.74, mac: 45.99, out: 47.25 },
-    end: { wall: 47.35, icon: 47.55, word: 47.74, tag: 48.2, free: 48.8, url: 49.6 },
+    desk: { hunt: [3.15, 3.75, 4.3], mark: 5.32, rope: 6.0, sweep: 6.2, zoom: [9.26, 10.05], tidy: 10.81, clean: 11.78,
+            button: { in: 12.7, click: 14.52, drag: [14.9, 15.55], flash: 15.75, hang: 16.53 }, out: [17.1, 17.45], push: 5.1 },
+    chat: { in: 17.2, clicks: [18.1, 23.11], button: true, gptIn: 20.7, fan: 25.18, out: [28.0, 28.35] },
+    mail: { in: 28.3, click: 29.94, out: 31.05 },
+    doc: { in: [31.15, 31.55], name: 31.41, iban: 32.13, cover: 34.45, lock: 34.98, send: 35.45, out: [36.15, 36.4] },
+    search: { in: 36.45, type: 37.75, find: 38.65, zoom: 39.7, out: 41.75 },
+    pdf: { in: 41.95, picks: [42.45, 42.75, 43.05], merge: 44.05, badge: 44.75, out: 45.45 },
+    translate: { in: 45.5, menu: 46.1, click: 46.65, swap: 47.02, out: 49.5 },
+    sent: { in: 49.7, click: 50.25, close: 50.9, history: 52.6, days: 53.69, out: 54.85 },
+    privacy: { account: 55.38, cloud: 56.58, mac: 57.91, out: 59.55 },
+    more: { hit: 60.48, items: [61.6, 63.05, 64.78, 65.76], out: 66.85 },
+    end: { wall: 66.95, icon: 67.1, word: 67.3, tag: 67.8, free: 68.59, url: 69.5, cta: 71.21, boom: 71.72 },
   },
 };
 const CUT = CUTS[DATA.cut || "short"];
@@ -106,7 +121,13 @@ const SPARKLE = '<svg viewBox="0 0 24 24"><path d="M12 1.5c.7 5.6 4.9 9.8 10.5 1
 const line24 = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
 const ICON_PERSON = line24('<circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 19.5c1.2-3.6 4-5.2 7.2-5.2s6 1.6 7.2 5.2"/>');
 const ICON_CLOUD = line24('<path d="M7.2 18.5h10a3.8 3.8 0 0 0 .6-7.55A5.6 5.6 0 0 0 7 9.6a4.45 4.45 0 0 0 .2 8.9Z"/>');
+const ICON_REC = line24('<rect x="2.5" y="4.5" width="19" height="13" rx="2"/><path d="M8.5 20.5h7"/><circle cx="12" cy="11" r="3.4" fill="#FF453A" stroke="none"/>');
+const ICON_PAGE = line24('<rect x="7" y="2" width="10" height="20" rx="1.8"/><path d="M9.5 6h5M9.5 9h5M9.5 12h3M12 14.5v4.5M10 17.2l2 2 2-2"/>');
+const ICON_STOPWATCH = line24('<circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4.2l2.8 1.7M9.5 2.8h5M12 2.8V6"/>');
 const ICON_MAC = line24('<rect x="4.5" y="5.5" width="15" height="10" rx="1.6"/><path d="M2.5 18.5h19M10.8 10.2V9.4a1.2 1.2 0 0 1 2.4 0v.8"/><rect x="10" y="10.2" width="4" height="3" rx=".6" fill="currentColor" stroke="none"/>');
+const ICON_VIEWFINDER = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V5.5A2.5 2.5 0 0 1 5.5 3H8M16 3h2.5A2.5 2.5 0 0 1 21 5.5V8M21 16v2.5a2.5 2.5 0 0 1-2.5 2.5H16M8 21H5.5A2.5 2.5 0 0 1 3 18.5V16"/><rect x="7" y="9" width="10" height="7" rx="1.5"/><circle cx="12" cy="12.5" r="1.8"/></svg>';
+const ICON_CROSS = '<svg viewBox="0 0 48 48"><path d="M24 2v18M24 28v18M2 24h18M28 24h18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>';
+const ICON_PLANE_LINE = '<svg viewBox="0 0 24 24"><path d="M4.1 11.3 19.6 4.6c.6-.3 1.1.3.9.9l-6.7 15.5c-.3.6-1.1.5-1.3-.1l-2-5.7a1 1 0 0 0-.6-.6L4.2 12.6c-.6-.2-.7-1-.1-1.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
 const ropePath = (w, sag) => `M0 0 Q${w / 2} ${sag * 2} ${w} 0`;
 const ropeY = (frac, sag) => 4 * sag * frac * (1 - frac);
 
@@ -184,13 +205,16 @@ const CARD_W = 180;
 // What hangs on the line: the invoice goes to Lena in WhatsApp, the chart
 // to ChatGPT, and the calendar waits its turn.
 const SEND_KINDS = ["invoice", "chart", "calendar"];
+// In the long cut the button over the chat sends the chart and the calendar
+// into ChatGPT together, where the short cut sends the chart by its plane.
+const BUTTON = !!CUT.chat.button;
 const SEND_FRAC = [0.2, 0.5, 0.8];
 const sendCards = SEND_KINDS.map((k) => {
   const c = el("div", "card", document.body, `<span class="clip"></span><div class="glass"><div class="img">${DATA.artByKind[k]}</div></div><div class="send">${ICON_PLANE}</div>`);
   style(c, { width: `${CARD_W}px` });
   return c;
 });
-const flyers = SEND_KINDS.slice(0, 2).map((k) => {
+const flyers = SEND_KINDS.slice(0, BUTTON ? 3 : 2).map((k) => {
   const g = el("div", "card", document.body, `<div class="glass"><div class="img">${DATA.artByKind[k]}</div></div>`);
   style(g, { width: `${CARD_W}px`, transformOrigin: "50% 50%" });
   return g;
@@ -222,7 +246,9 @@ const waHtml = `
     </div>
     <div class="bar"><span class="plus">+</span><span class="field">${W.field}</span><span class="mic">${MIC}</span></div>
   </div>`;
-const gptHtml = `<div class="top">${LIGHTS}<span class="name">ChatGPT <span class="chev">&#8964;</span></span></div>
+const gptHtml = BUTTON ? `<div class="top">${LIGHTS}<span class="name">ChatGPT <span class="chev">&#8964;</span></span></div>
+   <div class="thread"><div class="me"><div class="album">${SEND_KINDS.slice(1).map((k) => `<div class="pic">${DATA.art2[k]}</div>`).join("")}</div><div class="said">${A.chatgpt.askMany}</div></div>
+   <div class="reply">${A.chatgpt.replyMany}</div></div>` : `<div class="top">${LIGHTS}<span class="name">ChatGPT <span class="chev">&#8964;</span></span></div>
    <div class="thread"><div class="me"><div class="pic">${DATA.artByKind[SEND_KINDS[1]]}</div><div class="said">${A.chatgpt.ask}</div></div>
    <div class="reply">${A.chatgpt.reply}</div></div>
    <div class="ask"><span>${A.chatgpt.field}</span><span class="go">${UP}</span></div>`;
@@ -241,11 +267,15 @@ const APPS = [
 const apps = APPS.map(({ key, html, box: [x, y, w, h] }) => {
   const node = el("div", `app ${key}`, document.body, html);
   style(node, { left: `${x}px`, top: `${y}px`, width: `${w}px`, height: `${h}px` });
-  return { key, w: node, width: w, toMiddle: [540 - (x + w / 2), 1064 - (y + h * 0.4)], me: node.querySelector(".me"), pic: node.querySelector(".pic"), reply: node.querySelector(".reply"),
+  return { key, w: node, width: w, pics: [...node.querySelectorAll(".pic")], toMiddle: [540 - (x + w / 2), 1064 - (y + h * 0.4)], me: node.querySelector(".me"), pic: node.querySelector(".pic"), reply: node.querySelector(".reply"),
            meSlot: node.querySelector(".me-slot"), replySlot: node.querySelector(".reply-slot"),
            sent: node.querySelector(".ticks.sent"), online: node.querySelector(".online"), typing: node.querySelector(".typing") };
 });
 const [claudeApp, waApp, gptApp] = apps;
+// The button over the chat, just above its own send button: the newest
+// photo with the one before it leaning behind, how many will go, and the
+// paper plane, which turns into a check once they are sent.
+const chatBtn = BUTTON ? el("div", "chatbtn", gptApp.w, `<span class="thumbs"><i>${DATA.art3.chart}</i><i>${DATA.art3.calendar}</i></span><b>2</b><span class="cb-go"><span class="plane">${ICON_PLANE}</span><span class="done">${ICON_CHECK}</span></span>`) : null;
 const ripple = el("div", "ripple");
 const pointer = el("div", "pointer", document.body, POINTER);
 
@@ -281,6 +311,7 @@ const endTag = el("div", "end-tag", document.body, T.tagline);
 const free = el("div", "free", document.body, T.free);
 const url = el("div", "url", document.body, DATA.url);
 const legal = el("div", "legal", document.body, T.legal);
+const endCta = CUT.end.cta ? el("div", "end-cta", document.body, T.cta) : null;
 
 // MARK: The long cut's own scenes
 
@@ -294,6 +325,9 @@ function makePointer() {
     style(r, { zIndex: "9", left: `${x - 50 * (1 + rp)}px`, top: `${y - 50 * (1 + rp)}px`, width: `${100 * (1 + rp)}px`, height: `${100 * (1 + rp)}px` });
   };
 }
+// A ring that swells and settles twice between a and b, to point out a
+// button before it is clicked.
+const ring = (t, a, b) => (t > a && t < b ? 14 * Math.abs(Math.sin(2 * Math.PI * prog(t, a, b))) : 0);
 // Where a pointer is at t: it glides to each stop in turn and clicks there.
 function pointerPath(t, from, stops) {
   let x = from.x, y = from.y, press = 0, rp = -1;
@@ -518,12 +552,151 @@ function privacyScene(V) {
   };
 }
 
+// "Neuer Screenshot? Ein Klick auf den Knopf am Bildschirmrand. Fertig.":
+// the screenshot button at the screen's edge, a drag over the order, a
+// flash, and the screenshot hangs on the line, ahead of the others.
+function deskShotScene(B) {
+  const win = el("div", "deskwin", screen, `<div class="bar">${LIGHTS}</div><div class="img">${DATA.art2.invoice}</div>`);
+  const btn = el("div", "shotbtn", screen, ICON_VIEWFINDER);
+  const dim = el("div", "layer", screen);
+  style(dim, { background: "rgba(0,0,0,.32)", zIndex: "7" });
+  const sel = el("div", "shotsel", screen);
+  const cross = el("div", "cross", screen, ICON_CROSS);
+  const flash = el("div", "layer", screen);
+  style(flash, { background: "#fff", zIndex: "10" });
+  const shot = el("div", "file shot", screen, `<div class="thumb">${DATA.art3.invoice}</div>`);
+  const ptr = el("div", "pointer", screen, POINTER);
+  const S0 = { x: 236, y: 188 }, S1 = { x: 664, y: 498 }, BTN = { x: 944, y: 396 }, SHOT_W = 150;
+  return (t) => {
+    const a = at(B.in), click = at(B.click), d0 = at(B.drag[0]), d1 = at(B.drag[1]), fl = at(B.flash);
+    const wi = outQuart(prog(t, a, a + 0.4));
+    show(win, wi);
+    style(win, { left: "250px", top: "200px", width: "400px", zIndex: "4", transform: `translateY(${lerp(30, 0, wi)}px) scale(${lerp(0.94, 1, wi)})` });
+    const bi = prog(t, a + 0.2, a + 0.55);
+    show(btn, outQuart(bi));
+    style(btn, { transform: `scale(${lerp(0.3, 1, outBack(bi)) * (1 - 0.12 * Math.sin(Math.PI * prog(t, click - 0.05, click + 0.15)))})`,
+                 boxShadow: `0 6px 16px rgba(0,0,0,.35), 0 0 0 ${ring(t, a + 0.6, click - 0.3)}px rgba(10,132,255,.35)` });
+    // The pointer goes to the button and clicks; then a crosshair drags
+    // over the order.
+    const p = pointerPath(t, { x: 640, y: 600 }, [{ ...BTN, t: click }]);
+    show(ptr, prog(t, a + 0.3, a + 0.5) * (t < click + 0.2 ? 1 : 0));
+    style(ptr, { left: `${p.x - 12}px`, top: `${p.y - 8}px`, zIndex: "9", transform: `scale(${1 - 0.15 * p.press})` });
+    show(dim, prog(t, click + 0.15, click + 0.3) * (1 - prog(t, fl, fl + 0.1)));
+    const toStart = inOut(prog(t, click + 0.2, d0)), drag = inOut(prog(t, d0, d1));
+    const cx = t < d0 ? lerp(BTN.x, S0.x, toStart) : lerp(S0.x, S1.x, drag);
+    const cy = t < d0 ? lerp(BTN.y, S0.y, toStart) : lerp(S0.y, S1.y, drag);
+    show(cross, t >= click + 0.2 && t < fl ? 1 : 0);
+    style(cross, { left: `${cx - 24}px`, top: `${cy - 24}px` });
+    show(sel, t >= d0 && t < fl + 0.05 ? 1 : 0);
+    style(sel, { left: `${S0.x}px`, top: `${S0.y}px`, width: `${Math.max(0, cx - S0.x)}px`, height: `${Math.max(0, cy - S0.y)}px` });
+    const f = prog(t, fl, fl + 0.3);
+    show(flash, f > 0 && f < 1 ? 0.85 * (1 - f) : 0);
+    // The screenshot flies up onto the line and hangs there.
+    const f0 = fl + 0.1, f1 = at(B.hang), fly = inOut(prog(t, f0, f1));
+    show(shot, t >= f0 ? 1 : 0);
+    const fromW = S1.x - S0.x;
+    style(shot, { width: `${SHOT_W}px`, zIndex: "9",
+      left: `${lerp(S0.x + (fromW - SHOT_W) / 2, 500 - SHOT_W / 2, fly)}px`, top: `${lerp(S0.y, 56 + ropeY(0.5, 26) - 6, fly) - Math.sin(Math.PI * fly) * 60}px`,
+      transform: `scale(${lerp(fromW / SHOT_W, 1, fly)}) rotate(${lerp(0, -3, fly) + swing(t - f1, 9)}deg)` });
+    shot.querySelector(".thumb").style.boxShadow = `0 0 0 ${8 * Math.sin(Math.PI * prog(t, f1, f1 + 0.6))}px rgba(255,196,92,.9), 0 3px 8px rgba(0,0,0,.35)`;
+  };
+}
+
+// "Und per E-Mail? Genauso einfach.": one click on the plane, and the
+// screenshot lands in the new e-mail to Lena.
+function mailScene(M) {
+  const W = 200;
+  const { rope, cards } = makeLine([DATA.art3.invoice], W, true);
+  const m = T.mail;
+  const win = el("div", "mail", document.body, `
+    <div class="bar">${LIGHTS}<span class="send-i">${ICON_PLANE_LINE}</span><b>${m.title}</b></div>
+    <div class="f"><span>${m.to}</span><em>${m.toName}</em></div>
+    <div class="f"><span>${m.subject}</span>${m.subjectText}</div>
+    <div class="mbody"><p>${m.hello}</p><p>${m.text}</p><div class="slot"><div class="pic">${DATA.art3.invoice}</div></div><p>${m.bye}</p></div>`);
+  const slot = win.querySelector(".slot"), pic = slot.querySelector(".pic");
+  const flyer = el("div", "card", document.body, `<div class="glass"><div class="img">${DATA.art3.invoice}</div></div>`);
+  style(flyer, { width: `${W}px`, transformOrigin: "50% 50%" });
+  const pointer = makePointer();
+  return (t) => {
+    const a = at(M.in), out = prog(t, at(M.out), at(M.out) + 0.35);
+    show(rope, outQuart(prog(t, a, a + 0.4)) * (1 - out));
+    const h = hangAt(W, 0.5, t, a, -3);
+    const start = at(M.click) + 0.12, f = prog(t, start, start + 0.6);
+    show(cards[0], h.d * (t < start ? 1 : 0));
+    style(cards[0], { left: `${h.x}px`, top: `${h.y}px`, transform: `rotate(${h.r}deg)` });
+    const wIn = outQuart(prog(t, a + 0.1, a + 0.5));
+    show(win, wIn * (1 - out));
+    style(win, { left: "70px", top: "790px", transform: `translateY(${lerp(80, 0, wIn) - 50 * inOut(out)}px) scale(${lerp(0.94, 1, wIn)})` });
+    slot.style.maxHeight = `${lerp(0, slot.scrollHeight, outQuart(prog(t, start, start + 0.35)))}px`;
+    show(pic, f >= 1 ? 1 : 0);
+    show(flyer, f > 0 && f < 1 ? 1 : 0);
+    if (f > 0 && f < 1) {
+      const r = pic.getBoundingClientRect(), fh = flyer.offsetHeight, e = inOut(f);
+      const x = lerp(h.x, r.left + r.width / 2 - W / 2, e) + Math.sin(Math.PI * e) * 70;
+      const y = lerp(h.y, r.top + r.height / 2 - fh / 2, e) - Math.sin(Math.PI * e) * 150;
+      style(flyer, { left: `${x}px`, top: `${y}px`, zIndex: "8", transform: `rotate(${-9 * Math.sin(Math.PI * e)}deg) scale(${lerp(1, r.width / W, e)})` });
+      flyer.querySelector(".glass").style.padding = `${lerp(6, 0, e)}px`;
+    }
+    const button = { x: h.x + W - 13, y: h.y + cards[0].offsetHeight - 13 };
+    const p = pointerPath(t, { x: 930, y: 1500 }, [{ ...button, t: at(M.click) }]);
+    pointer(p.x, p.y, prog(t, a + 0.2, a + 0.4) * (1 - prog(t, at(M.click) + 0.3, at(M.click) + 0.5)), p.press, p.rp);
+  };
+}
+
+// "Und das ist nicht alles!": what else it does, a tile at each word.
+function moreScene(V) {
+  const glow = el("div", "layer boost");
+  const ICONS = [ICON_REC, ICON_PAGE, ICON_STOPWATCH, SPARKLE];
+  const POS = [[100, 700], [530, 700], [100, 1050], [530, 1050]];
+  const tiles = T.more.map((label, i) => el("div", "mtile" + (i === 3 ? " hot" : ""), document.body, `${ICONS[i]}<span>${label}</span>`));
+  return (t) => {
+    const out = prog(t, at(V.out), at(V.out) + 0.35);
+    let pulse = t >= at(V.hit) ? Math.exp(-(t - at(V.hit)) * 4) : 0;
+    tiles.forEach((tile, i) => {
+      const c = at(V.items[i]), p = prog(t, c, c + 0.45);
+      show(tile, outQuart(p) * (1 - out));
+      const tilt = i % 2 ? 1 : -1;
+      style(tile, { left: `${POS[i][0]}px`, top: `${POS[i][1]}px`,
+        transform: `translateY(${-40 * inOut(out)}px) scale(${lerp(0.3, 1, outBack(p))}) rotate(${lerp(10 * tilt, 2 * tilt, outQuart(p))}deg)` });
+      if (t >= c) pulse = Math.max(pulse, Math.exp(-(t - c) * 5));
+    });
+    show(glow, 0.55 * pulse * (1 - out));
+  };
+}
+
+// The long cut's last words: "Entdecke viel mehr!" takes the tagline's
+// place, and confetti bursts as it is said.
+function ctaScene(E) {
+  const COLORS = ["#FFC45C", "#FF7A59", "#FF5E62", "#D25BF0", "#FFFFFF", "#0A84FF"];
+  const bits = Array.from({ length: 80 }, (_, i) => {
+    const b = el("div", "conf");
+    style(b, { background: COLORS[i % COLORS.length], width: `${10 + rnd(i, 5) * 12}px`, height: `${14 + rnd(i, 6) * 16}px` });
+    return { b, ang: -Math.PI / 2 + (rnd(i, 7) - 0.5) * 2.6, v: 900 + rnd(i, 8) * 1200, spin: (rnd(i, 9) - 0.5) * 1440, delay: rnd(i, 10) * 0.15 };
+  });
+  return (t) => {
+    const c = prog(t, at(E.cta), at(E.cta) + 0.45);
+    show(endCta, outQuart(c));
+    style(endCta, { top: "1000px", transform: `scale(${lerp(0.5, 1, outBack(c)) * (1 + 0.035 * Math.sin(Math.max(0, t - at(E.boom)) * 7))})` });
+    bits.forEach((d) => {
+      const tau = t - at(E.boom) - d.delay;
+      if (tau <= 0 || tau > 3.2) { show(d.b, 0); return; }
+      show(d.b, 1 - prog(tau, 2.4, 3.2));
+      style(d.b, { left: `${540 + Math.cos(d.ang) * d.v * tau * 0.85}px`, top: `${1060 + Math.sin(d.ang) * d.v * tau + 1100 * tau * tau}px`,
+                   transform: `rotate(${d.spin * tau}deg)` });
+    });
+  };
+}
+
 const extras = [];
+if (CUT.desk.button) extras.push(deskShotScene(CUT.desk.button));
+if (CUT.mail) extras.push(mailScene(CUT.mail));
 if (CUT.search) extras.push(searchScene(CUT.search));
 if (CUT.pdf) extras.push(pdfScene(CUT.pdf));
 if (CUT.translate) extras.push(translateScene(CUT.translate));
 if (CUT.sent) extras.push(sentScene(CUT.sent));
 if (CUT.privacy) extras.push(privacyScene(CUT.privacy));
+if (CUT.more) extras.push(moreScene(CUT.more));
+if (CUT.end.cta) extras.push(ctaScene(CUT.end));
 
 // MARK: The timeline
 
@@ -548,11 +721,15 @@ function drawCaptions(t) {
 // flight takes its time; the second is quick.
 const CLICKS = CUT.chat.clicks.map(at);
 const FLY = [0.75, 0.42];
-const LANDS = CLICKS.map((c, i) => c + 0.12 + FLY[i]);
+const LANDS = CLICKS.map((c, i) => c + 0.12 + (BUTTON && i > 0 ? 0.5 : FLY[i]));
+// When each flight leaves the line; the button sends its two a beat apart.
+const flightStart = (i) => (BUTTON && i > 0 ? CLICKS[1] + 0.12 + (i - 1) * 0.12 : CLICKS[i] + 0.12);
+const flightLen = (i) => (BUTTON && i > 0 ? 0.5 : FLY[i]);
 // Lena reads it, types, and answers, while WhatsApp is still in front.
 const READ = LANDS[0] + 0.45, TYPING = LANDS[0] + 0.55, ANSWER = LANDS[0] + 1.1;
 // When each chat comes to the front, and when all three fan out.
 const WA_IN = at(CUT.chat.in), GPT_IN = at(CUT.chat.gptIn), FAN = at(CUT.chat.fan);
+const centre = (node) => { const r = node.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
 function sendButton(i, t) {
   const c = sendCards[i];
   const frac = SEND_FRAC[i];
@@ -669,21 +846,29 @@ function seek(t) {
   show(gptApp.reply, said);
   gptApp.reply.style.transform = `translateY(${lerp(14, 0, said)}px)`;
   show(claudeApp.me, 1); show(claudeApp.reply, 1);
+  if (chatBtn) {
+    gptApp.pics.forEach((p, k) => show(p, t >= flightStart(k + 1) + 0.5 ? 1 : 0));
+    const sent = t >= CLICKS[1] + 0.1;
+    show(chatBtn.querySelector(".plane"), sent ? 0 : 1); show(chatBtn.querySelector(".done"), sent ? 1 : 0);
+    show(chatBtn, 1 - prog(t, CLICKS[1] + 0.8, CLICKS[1] + 1.1));
+    chatBtn.style.transform = `scale(${1 - 0.06 * Math.sin(Math.PI * prog(t, CLICKS[1] - 0.05, CLICKS[1] + 0.15))})`;
+    chatBtn.style.boxShadow = `0 10px 28px rgba(0,0,0,.22), 0 0 0 ${ring(t, GPT_IN + 0.5, CLICKS[1] - 0.3)}px rgba(10,132,255,.3)`;
+  }
   sendCards.forEach((c, i) => {
     const frac = SEND_FRAC[i];
     const cx = 1080 * frac;
     const drop = prog(t, WA_IN + i * 0.08, WA_IN + 0.4 + i * 0.08);
-    const gone = i < CLICKS.length && t >= CLICKS[i] + 0.12;
+    const gone = BUTTON ? t >= flightStart(i) : i < CLICKS.length && t >= CLICKS[i] + 0.12;
     show(c, outQuart(drop) * (1 - sOut) * (gone ? 0 : 1));
     style(c, { left: `${cx - CARD_W / 2}px`, top: `${LINE_Y + ropeY(frac, LINE_SAG) - 6 - lerp(70, 0, outQuart(drop))}px`,
                transform: `rotate(${[-4, 3, -3][i] + swing(t - WA_IN - 0.4 - i * 0.08, 6, 0.9, 1.2)}deg)` });
   });
   // The flights: up off the line, a tilt toward the reading end, and down
   // into the chat exactly where the picture lands.
-  const targets = [waApp.pic, gptApp.pic];
+  const targets = BUTTON ? [waApp.pic, ...gptApp.pics] : [waApp.pic, gptApp.pic];
   flyers.forEach((g, i) => {
-    const start = CLICKS[i] + 0.12;
-    const f = prog(t, start, start + FLY[i]);
+    const start = flightStart(i);
+    const f = prog(t, start, start + flightLen(i));
     show(g, f > 0 && f < 1 ? 1 : 0);
     if (f <= 0 || f >= 1) return;
     const frac = SEND_FRAC[i];
@@ -702,7 +887,7 @@ function seek(t) {
   const ptrIn = prog(t, WA_IN - 0.05, WA_IN + 0.15) * (1 - prog(t, CLICKS[1] + 0.3, CLICKS[1] + 0.55));
   let px = 900, py = 1500, press = 0, rp = -1;
   for (let k = 0; k < CLICKS.length; k++) {
-    const target = sendButton(k, t);
+    const target = BUTTON && k === 1 ? centre(chatBtn.querySelector(".cb-go")) : sendButton(k, t);
     const from = k === 0 ? { x: 920, y: 1560 } : sendButton(k - 1, t);
     const move = inOut(prog(t, CLICKS[k] - 0.4, CLICKS[k] - 0.05));
     if (t >= CLICKS[k] - 0.4 || k === 0) {
@@ -757,7 +942,7 @@ function seek(t) {
   show(endWord, outQuart(ew));
   style(endWord, { top: "780px", transform: `translateY(${lerp(44, 0, outQuart(ew))}px)`, letterSpacing: `${lerp(0.12, -0.04, outQuart(ew))}em` });
   const et = prog(t, at(E.tag), at(E.tag) + 0.5);
-  show(endTag, outQuart(et));
+  show(endTag, outQuart(et) * (E.cta ? 1 - prog(t, at(E.cta) - 0.2, at(E.cta)) : 1));
   style(endTag, { top: "1000px", transform: `translateY(${lerp(30, 0, outQuart(et))}px)` });
   const fr = prog(t, at(E.free), at(E.free) + 0.41);
   show(free, outQuart(fr));

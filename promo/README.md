@@ -64,21 +64,30 @@ node promo/render.js ad --stills 2.6,9.6,16.2                # a few frames as P
 
 ### The long cut
 
-A 52.6-second version that explains more, with its own voice. After the
-hook it asks "which one was it?" while a pointer looks from file to file.
-The line then leaves the Desktop clear, and the WhatsApp chat and the
-covering follow, as in the short cut; the covered invoice is sent off.
-Then come the scenes the short cut leaves out:
+A 75-second version that explains more and ends on a high, with its own
+voice and its own upbeat music. After the hook it asks "which one was it?"
+while a pointer looks from file to file, and the line leaves the Desktop
+clear. Then:
 
-1. Search: "Rechnung" is typed, and the screenshots that say it stay
+1. The screenshot button at the screen's edge: one click, a drag over an
+   order, a flash, and the screenshot hangs on the line.
+2. The paper plane sends the invoice to Lena in WhatsApp.
+3. The button over the chat sends two photos into ChatGPT at once, and
+   three chats fan out.
+4. One click sends the invoice into a new e-mail to Lena.
+5. The covering, after which the covered invoice is sent off.
+6. Search: "Rechnung" is typed, and the screenshots that say it stay
    bright, marked where they say it.
-2. Three screenshots are picked with ⌘ and become one PDF.
-3. An English screenshot, Translate Text from its menu, and the words turn
+7. Three screenshots are picked with ⌘ and become one PDF.
+8. An English screenshot, Translate Text from its menu, and the words turn
    German where they stand.
-4. One is sent and leaves the line, and the History still holds it for 30
+9. One is sent and leaves the line, and the History still holds it for 30
    days.
-5. No account, no cloud: everything stays on the Mac.
-6. The end card.
+10. No account, no cloud: everything stays on the Mac.
+11. "Und das ist nicht alles!": tiles for Record Screen, Capture Whole
+    Page, the time stamp and much more.
+12. The end card, where "Entdecke viel mehr!" takes the tagline's place
+    with a burst of confetti.
 
 ```sh
 python3 promo/build.py ad-long                                            # writes promo/ad-long-de.html
@@ -88,7 +97,7 @@ node promo/render.js ad-long --audio ad-long-sound.m4a                    # rend
 
 Both cuts share `ad.js`. Each cut in its `CUTS` table has its captions and
 the moments of each scene in its own voice; a scene a cut leaves out is not
-built. The long cut reuses the same music, which is long enough.
+built.
 
 - **Timing.** `ad.js` holds the timeline and the captions, each chunk at
   the moment the voice says it. `ad-sound.py` holds the same moments for
@@ -101,17 +110,22 @@ built. The long cut reuses the same music, which is long enough.
   Snapfly hängt jeder Screenshot sofort an einer Leine, oben am
   Bildschirm. Ein Klick, und er ist im Chat. WhatsApp, ChatGPT, egal wo.
   Namen und Kontonummern? Werden automatisch verdeckt. Snapfly. Kostenlos
-  für deinen Mac." The long cut's script: "Schon wieder dreißig Screenshots
-  auf dem Desktop? Und welcher war noch mal der richtige? Mit Snapfly hängt
+  für deinen Mac." The long cut's script: "Schon wieder 30 Screenshots auf
+  dem Desktop? Und welcher war noch mal der richtige? Mit Snapfly hängt
   jeder Screenshot sofort an einer Leine, oben am Bildschirm. Dein Desktop
-  bleibt aufgeräumt. Ein Klick auf den Papierflieger, und er ist im Chat.
-  WhatsApp, ChatGPT, egal wo. Namen und Kontonummern? Werden automatisch
-  verdeckt, bevor etwas rausgeht. Du suchst eine alte Rechnung? Snapfly
-  findet jedes Wort in deinen Screenshots. Mehrere Screenshots? Werden zu
-  einem PDF. Fremde Sprache? Wird übersetzt, direkt auf deinem Mac. Was
-  gesendet ist, verschwindet von der Leine. Der Verlauf hebt es dreißig Tage
-  auf. Kein Konto. Keine Cloud. Alles bleibt auf deinem Mac. Snapfly.
-  Kostenlos für deinen Mac."
+  bleibt aufgeräumt. Neuer Screenshot? Ein Klick auf den Knopf am
+  Bildschirmrand. Fertig. Ein Klick auf den Papierflieger, und er ist im
+  Chat. Noch schneller: Der Knopf über dem Chat schickt alle Fotos auf
+  einmal. WhatsApp, ChatGPT, egal wo. Und per E-Mail? Genauso einfach.
+  Namen und Kontonummern? Werden automatisch verdeckt, bevor etwas
+  rausgeht. Du suchst eine alte Rechnung? Snapfly findet jedes Wort in
+  deinen Screenshots. Mehrere Screenshots? Werden zu einem PDF. Fremde
+  Sprache? Wird übersetzt, direkt auf deinem Mac. Was gesendet ist,
+  verschwindet von der Leine. Der Verlauf hebt es 30 Tage auf. Kein Konto.
+  Keine Cloud. Alles bleibt auf deinem Mac. Und das ist nicht alles:
+  Bildschirm aufnehmen, ganze Seiten erfassen, Zeitstempel und vieles mehr.
+  Snapfly. Kostenlos für deinen Mac. Hol es dir und entdecke viel mehr!"
+  Its music is a separate upbeat track; pass it to `ad-sound.py --long`.
 - **Sound.** The music steps back while the voice speaks and fades out
   on the end card; the effects (ticks, a chime, whooshes, clicks, a
   thunk) are drawn in code. The mix meets Instagram's −14 LUFS.

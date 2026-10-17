@@ -229,6 +229,60 @@
   .tile.mac { background: linear-gradient(160deg, rgba(255,138,92,.95), rgba(217,68,154,.95) 60%, rgba(178,52,214,.95));
               border-color: rgba(255,255,255,.6); }
 
+  /* The long cut's newer scenes: the screenshot button, the button over
+     the chat, an e-mail, what else it does, and the call at the end. */
+  .app .album { display: flex; gap: 10px; }
+  .app .album .pic { width: 250px; }
+  .chatbtn { position: absolute; right: 26px; bottom: 122px; height: 84px; display: flex; align-items: center; gap: 14px; padding: 0 10px 0 14px;
+             border-radius: 42px; background: rgba(250,250,252,.94); border: 1px solid rgba(0,0,0,.08); box-shadow: 0 10px 28px rgba(0,0,0,.22);
+             transform-origin: 100% 100%; }
+  .chatbtn .thumbs { position: relative; width: 76px; height: 64px; }
+  .chatbtn .thumbs i { position: absolute; top: 2px; width: 60px; height: 60px; border-radius: 16px; overflow: hidden;
+                       box-shadow: 0 0 0 2px #fff, 0 2px 6px rgba(0,0,0,.25); }
+  .chatbtn .thumbs i:first-child { left: 0; transform: rotate(-10deg); }
+  .chatbtn .thumbs i:last-child { left: 14px; }
+  .chatbtn .thumbs svg { display: block; width: 150%; height: 100%; margin-left: -25%; }
+  .chatbtn b { font-size: 32px; font-weight: 700; color: #1D1D1F; font-variant-numeric: tabular-nums; }
+  .chatbtn .cb-go { width: 64px; height: 64px; border-radius: 50%; background: #0A84FF; display: grid; place-items: center; }
+  .chatbtn .cb-go > span { grid-area: 1 / 1; display: grid; place-items: center; }
+  .chatbtn .cb-go svg { width: 32px; height: 32px; }
+  .deskwin { position: absolute; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+  .deskwin .bar { height: 26px; display: flex; align-items: center; padding: 0 10px; background: #F2F2F4; }
+  .deskwin .lights { gap: 6px; }
+  .deskwin .lights i { width: 10px; height: 10px; }
+  .deskwin .img svg { display: block; width: 100%; height: auto; }
+  .shotbtn { position: absolute; left: 912px; top: 364px; z-index: 8; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center;
+             background: #0A84FF; box-shadow: 0 6px 16px rgba(0,0,0,.35), inset 0 0 0 1.5px rgba(255,255,255,.25); }
+  .shotbtn svg { width: 34px; height: 34px; }
+  .shotsel { position: absolute; z-index: 8; border: 2px solid #fff; background: rgba(255,255,255,.12); box-shadow: 0 0 0 1px rgba(0,0,0,.25); }
+  .cross { position: absolute; z-index: 9; width: 48px; height: 48px; filter: drop-shadow(0 0 1.5px rgba(0,0,0,.8)); }
+  .cross svg { width: 100%; height: 100%; }
+  .file.shot .thumb { width: 100%; border-width: 4px; border-radius: 10px; }
+  .mail { position: absolute; width: 870px; border-radius: 28px; overflow: hidden; background: #fff; color: #1D1D1F;
+          box-shadow: 0 40px 90px rgba(0,0,0,.6); }
+  .mail .bar { height: 76px; display: flex; align-items: center; gap: 20px; padding: 0 28px; background: #F2F2F4; font-size: 30px; }
+  .mail .bar b { font-weight: 700; }
+  .mail .send-i { width: 40px; height: 40px; color: #0071E3; }
+  .mail .send-i svg { width: 100%; height: 100%; }
+  .mail .f { display: flex; align-items: center; gap: 14px; height: 68px; margin: 0 34px; border-bottom: 1.5px solid #E5E5EA; font-size: 29px; }
+  .mail .f span { color: #8A8A8E; }
+  .mail .f em { font-style: normal; padding: 4px 16px; border-radius: 10px; color: #0A63D8; background: rgba(10,99,216,.1); }
+  .mail .mbody { padding: 24px 34px 30px; font-size: 31px; line-height: 1.45; }
+  .mail .mbody p { margin: 0 0 8px; }
+  .mail .slot { overflow: hidden; }
+  .mail .slot .pic { width: 440px; margin: 8px 0 18px; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1.5px rgba(0,0,0,.1); }
+  .mail .slot .pic svg { display: block; width: 100%; height: auto; }
+  .boost { background: radial-gradient(60% 45% at 50% 58%, rgba(255,190,140,.55), rgba(255,94,98,.18) 55%, rgba(0,0,0,0) 80%); }
+  .mtile { position: absolute; width: 400px; height: 310px; box-sizing: border-box; border-radius: 48px; display: flex; flex-direction: column;
+           align-items: center; justify-content: center; gap: 20px; padding: 0 26px; color: #fff; font-size: 36px; font-weight: 800; line-height: 1.15;
+           text-align: center; letter-spacing: -0.01em; background: rgba(255,255,255,.1); border: 2px solid rgba(255,255,255,.3);
+           box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+  .mtile svg { flex: none; width: 120px; height: 120px; }
+  .mtile.hot { background: linear-gradient(160deg, rgba(255,138,92,.95), rgba(217,68,154,.95) 60%, rgba(178,52,214,.95)); border-color: rgba(255,255,255,.6); }
+  .conf { position: absolute; z-index: 12; border-radius: 3px; }
+  .end-cta { position: absolute; left: 60px; right: 60px; text-align: center; font-size: 76px; font-weight: 900; line-height: 1.05;
+             letter-spacing: -0.03em; color: #fff; text-shadow: 0 6px 24px rgba(60,0,60,.35); }
+
   .end-icon { position: absolute; width: 300px; height: 300px; }
   .end-word { position: absolute; left: 0; right: 0; text-align: center; font-size: 168px; font-weight: 800; letter-spacing: -0.04em; }
   .end-tag { position: absolute; left: 90px; right: 90px; text-align: center; font-size: 50px; font-weight: 700; line-height: 1.2; text-wrap: balance; }

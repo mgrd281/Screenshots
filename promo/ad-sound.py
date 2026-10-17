@@ -58,27 +58,43 @@ CUTS = {
               + sends([at(7.81), at(10.99) - 0.05], at(12.09))
               + covering(at(13.3), at(13.8), at(15.3), at(16.0))
               + ending(at(16.45), at(16.95), at(18.0))),
-    "long": (52.6, FILES
-             + [("tick", at(h), 0.3) for h in (3.05, 3.65, 4.25)]
-             + [("chime", at(5.57), 0.5), ("whoosh", at(6.5), 0.55, 1.1), ("whoosh", at(9.4), 0.35, 0.8),
-                ("whoosh", at(10.97), 0.3, 0.8), ("chime", at(11.97), 0.25)]
-             + sends([at(13.92), at(17.29)], at(18.65))
-             + covering(at(19.74), at(20.35), at(22.55), at(23.1))
-             + [("click", at(23.5), 0.6), ("whoosh", at(23.65), 0.5, 0.75)]
+    "long": (75.2, FILES
+             + [("tick", at(h), 0.3) for h in (3.15, 3.75, 4.3)]
+             + [("chime", at(5.32), 0.5), ("whoosh", at(6.2), 0.55, 1.1), ("whoosh", at(9.26), 0.35, 0.8),
+                ("whoosh", at(10.81), 0.3, 0.8), ("chime", at(11.78), 0.25)]
+             # The screenshot button: it appears, a click, the drag, the shutter, onto the line.
+             + [("pop", at(12.9), 0.35), ("click", at(14.52), 0.7), ("swipe", at(14.9), 0.3),
+                ("shutter", at(15.75), 0.8), ("whoosh", at(15.85), 0.45, 0.7), ("pop", at(16.53), 0.6)]
+             # The plane into WhatsApp, Lena's answer; the button over the chat sends two.
+             + [("click", at(18.1), 0.7), ("whoosh", at(18.1) + 0.12, 0.5, 0.75), ("pop", at(18.1) + 0.87, 0.55),
+                ("pop", at(18.1) + 1.97, 0.35)]
+             + [("click", at(23.11), 0.7), ("whoosh", at(23.11) + 0.12, 0.5, 0.5), ("whoosh", at(23.11) + 0.24, 0.4, 0.5),
+                ("pop", at(23.11) + 0.62, 0.5), ("pop", at(23.11) + 0.74, 0.5), ("whoosh", at(25.18), 0.35, 0.5)]
+             # Into the e-mail.
+             + [("whoosh", at(28.4), 0.3, 0.5), ("click", at(29.94), 0.7), ("whoosh", at(29.94) + 0.12, 0.5, 0.6),
+                ("pop", at(29.94) + 0.72, 0.55)]
+             + covering(at(31.41), at(32.13), at(34.45), at(34.98))
+             + [("click", at(35.45), 0.6), ("whoosh", at(35.6), 0.5, 0.75)]
              # Search: the word typed, the matches, one comes close.
-             + [("tick", at(25.95) + i * 0.07, 0.25) for i in range(8)]
-             + [("chime", at(26.94), 0.3), ("whoosh", at(27.95), 0.35, 0.6)]
+             + [("tick", at(37.75) + i * 0.07, 0.25) for i in range(8)]
+             + [("chime", at(38.65), 0.3), ("whoosh", at(39.7), 0.35, 0.6)]
              # Three picked, one PDF.
-             + [("click", at(p), 0.5) for p in (30.55, 30.85, 31.15)]
-             + [("whoosh", at(31.99), 0.45, 0.7), ("pop", at(32.6), 0.5)]
+             + [("click", at(p), 0.5) for p in (42.45, 42.75, 43.05)]
+             + [("whoosh", at(44.05), 0.45, 0.7), ("pop", at(44.75), 0.5)]
              # The menu, Translate Text, the words change.
-             + [("pop", at(34.15), 0.3), ("click", at(34.7), 0.6), ("whoosh", at(35.07), 0.3, 0.7)]
+             + [("pop", at(46.1), 0.3), ("click", at(46.65), 0.6), ("whoosh", at(47.02), 0.3, 0.7)]
              # Sent and gone; the history.
-             + [("click", at(38.25), 0.7), ("whoosh", at(38.35), 0.5, 0.75), ("swipe", at(39.18), 0.35),
-                ("whoosh", at(40.9), 0.35, 0.6), ("pop", at(42.0), 0.5)]
+             + [("click", at(50.25), 0.7), ("whoosh", at(50.35), 0.5, 0.75), ("swipe", at(50.9), 0.35),
+                ("whoosh", at(52.6), 0.35, 0.6), ("pop", at(53.69), 0.5)]
              # No account, no cloud, your Mac.
-             + [("thunk", at(43.69), 0.5), ("thunk", at(44.74), 0.5), ("chime", at(45.99), 0.4)]
-             + ending(at(47.3), at(47.8), at(48.8))),
+             + [("thunk", at(55.38), 0.5), ("thunk", at(56.58), 0.5), ("chime", at(57.91), 0.4)]
+             # And much more: a hit, then a tile on each word.
+             + [("boom", at(60.48), 0.6)]
+             + [s for c in (61.6, 63.05, 64.78, 65.76) for s in (("boom", at(c), 0.45), ("pop", at(c), 0.5))]
+             + ending(at(66.95), at(67.5), at(68.59))
+             # The call, and the confetti.
+             + [("chime", at(71.21), 0.5), ("boom", at(71.72), 0.8)]
+             + [("pop", at(71.72) + k * 0.06, 0.25) for k in range(6)]),
 }
 
 
@@ -129,6 +145,21 @@ def whoosh(amp, length):
     return out
 
 
+def shutter(amp):
+    """A camera's shutter: two quick clicks with a breath of noise."""
+    n = int(0.16 * RATE)
+    rnd = random.Random(11)
+    out = []
+    for i in range(n):
+        v = 0.0
+        for start in (0.0, 0.07):
+            d = i / RATE - start
+            if d >= 0:
+                v += 0.8 * rnd.uniform(-1, 1) * math.exp(-d / 0.006) + 0.3 * math.sin(2 * math.pi * 1800 * d) * math.exp(-d / 0.01)
+        out.append(amp * v)
+    return out
+
+
 def swipe(amp):
     n = int(0.14 * RATE)
     rnd = random.Random(3)
@@ -161,7 +192,7 @@ def boom(amp):
 
 
 SOUNDS = {"tick": tick, "chime": chime, "click": click, "pop": pop, "whoosh": whoosh,
-          "swipe": swipe, "thunk": thunk, "boom": boom}
+          "swipe": swipe, "thunk": thunk, "boom": boom, "shutter": shutter}
 
 
 def effects(path, duration, cues):
