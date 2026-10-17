@@ -56,6 +56,7 @@ final class Markup: NSObject, NSSharingServiceDelegate {
             load(provider, into: target)
         default:
             log.error("Markup returned an unexpected item")
+            Notice.show(L("Could not save the changes."))
         }
     }
 
@@ -73,7 +74,10 @@ final class Markup: NSObject, NSSharingServiceDelegate {
         let original = UTType(filenameExtension: target.pathExtension)?.identifier
         let imageType = types.first { $0 == original }
             ?? types.first { UTType($0)?.conforms(to: .image) == true }
-        guard let imageType else { return }
+        guard let imageType else {
+            Notice.show(L("Could not save the changes."))
+            return
+        }
         provider.loadDataRepresentation(forTypeIdentifier: imageType) { data, _ in
             DispatchQueue.main.async { self.write(data: data, to: target) }
         }
@@ -88,7 +92,10 @@ final class Markup: NSObject, NSSharingServiceDelegate {
     }
 
     private func write(data: Data?, to target: URL) {
-        guard let data else { return }
+        guard let data else {
+            Notice.show(L("Could not save the changes."))
+            return
+        }
         do {
             try data.write(to: target, options: .atomic)
             onSaved(target)

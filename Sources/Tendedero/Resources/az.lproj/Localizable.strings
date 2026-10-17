@@ -493,6 +493,13 @@
 "Hide in this copy" = "Bu nüsxədə gizlət";
 "The copy has no place or camera details. The original stays as it is." = "Nüsxədə yer və kamera məlumatı yoxdur. Orijinal dəyişmir.";
 "Save Copy…" = "Nüsxəni saxla…";
+"%@ (edited)" = "%@ (düzəldilmiş)";
+"Saved to %@. Click to show it in Finder." = "Saxlanıldı: %@. Finder-də göstərmək üçün klik et.";
+"Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@ qovluğunda %1$@ kimi saxlanıldı. Finder-də göstərmək üçün klik et.";
+"Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Fotoyla birlikdə saxlanıldı. Çəkdiyin kimi göndərilir; %@ qovluğundakı fayl olduğu kimi qalır.";
+"Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Fotoyla birlikdə saxlanıldı. Bu hissələr göndərilən hər şeydə gizli qalır; %@ qovluğundakı fayl olduğu kimi qalır.";
+"Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Fotonu göndərildiyi kimi, çəkilmiş və kəsilmiş halda ayrıca fayl kimi saxlayır.";
+"Keep as a file" = "Fayl kimi saxla";
 "%@ (covered)" = "%@ (örtülü)";
 "Saved beside the original as %@." = "Orijinalın yanında %@ adı ilə saxlanıldı.";
 "Could not save the copy." = "Nüsxə saxlanıla bilmədi.";

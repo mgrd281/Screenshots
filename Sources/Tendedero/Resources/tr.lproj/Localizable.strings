@@ -491,6 +491,13 @@
 "Hide in this copy" = "Bu kopyada gizle";
 "The copy has no place or camera details. The original stays as it is." = "Kopyada konum ve kamera bilgisi yok. Orijinal değişmez.";
 "Save Copy…" = "Kopyayı kaydet…";
+"%@ (edited)" = "%@ (düzenlenmiş)";
+"Saved to %@. Click to show it in Finder." = "Kaydedildi: %@. Finder'da göstermek için tıkla.";
+"Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@ içine %1$@ olarak kaydedildi. Finder'da göstermek için tıkla.";
+"Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Fotoğrafla birlikte kaydedildi. Çizdiğin gibi gider; %@ içindeki dosya olduğu gibi kalır.";
+"Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Fotoğrafla birlikte kaydedildi. Bu kısımlar gönderilen her şeyde gizli kalır; %@ içindeki dosya olduğu gibi kalır.";
+"Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Fotoğrafı gittiği gibi, çizilmiş ve kırpılmış hâliyle ayrı bir dosya olarak kaydeder.";
+"Keep as a file" = "Dosya olarak sakla";
 "%@ (covered)" = "%@ (kapalı)";
 "Saved beside the original as %@." = "Orijinalin yanına %@ adıyla kaydedildi.";
 "Could not save the copy." = "Kopya kaydedilemedi.";

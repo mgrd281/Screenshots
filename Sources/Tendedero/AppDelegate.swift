@@ -128,8 +128,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         setUpPreferences()
 
-        Markup.shared.onSaved = { [weak self] url in self?.line.reloadThumbnail(for: url) }
-        Trim.shared.onSaved = { [weak self] url in self?.line.reloadThumbnail(for: url) }
+        // Written over the file itself: a note says where it is.
+        Markup.shared.onSaved = { [weak self] url in
+            self?.line.reloadThumbnail(for: url)
+            Notice.saved(url)
+        }
+        Trim.shared.onSaved = { [weak self] url in
+            self?.line.reloadThumbnail(for: url)
+            Notice.saved(url)
+        }
         panel.onScroll = { [weak self] event in
             // Sideways on a trackpad, or the wheel of a mouse.
             let delta = abs(event.scrollingDeltaX) >= abs(event.scrollingDeltaY)

@@ -220,6 +220,11 @@ struct GrabArea: NSViewRepresentable {
                 menu.addItem(ClosureMenuItem(L("Make GIF"), symbol: "photo.stack") { line.makeGIF(id) })
             }
             menu.addItem(ClosureMenuItem(L("Show in Finder"), symbol: "folder") { line.reveal(id) })
+            // What goes out differs from the file: drawn on, cropped,
+            // covered or stamped. It can be kept as a file of its own.
+            if !isRecording && PrivateDetails.alters(item.url) {
+                menu.addItem(ClosureMenuItem(L("Save Copy…"), symbol: "square.and.arrow.down") { line.saveCopy(id) })
+            }
             let inInbox = line.isInInbox(id)
             // The App Store edition may not write to the Desktop; a drag
             // into a folder keeps a photo there instead.

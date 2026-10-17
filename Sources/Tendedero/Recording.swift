@@ -159,13 +159,24 @@ enum Notice {
 
     /// Without a screen, on the one with the pointer. Returns which note it
     /// is, so the work that showed it ends only its own.
+    /// - Parameters:
+    ///   - done: something went as it should, like a file saved, rather
+    ///     than wrong.
+    ///   - seconds: how long it stays, unless it is working.
+    ///   - onClick: what a click does before putting it away, like showing a
+    ///     file just saved in Finder.
     @discardableResult
-    static func show(_ text: String, on screen: NSScreen? = nil, working: Bool = false) -> UUID {
+    static func show(_ text: String, on screen: NSScreen? = nil, working: Bool = false, done: Bool = false,
+                     lasting seconds: TimeInterval = 4, onClick: (() -> Void)? = nil) -> UUID {
         hide?.cancel()
         badge?.orderOut(nil)
         let id = UUID()
         current = id
-        let badge = CaptureBadge(kind: working ? .working(text) : .message(text), label: text) { Notice.end(id) }
+        let kind: CaptureBadgeModel.Kind = working ? .working(text) : (done ? .done(text) : .message(text))
+        let badge = CaptureBadge(kind: kind, label: text) {
+            onClick?()
+            Notice.end(id)
+        }
         badge.show(on: screen ?? pointerScreen)
         self.badge = badge
         NSAccessibility.post(element: NSApplication.shared, notification: .announcementRequested,
@@ -173,9 +184,27 @@ enum Notice {
         if !working {
             let work = DispatchWorkItem { MainActor.assumeIsolated { Notice.end(id) } }
             hide = work
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4, execute: work)
+            DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: work)
         }
         return id
+    }
+
+    /// A file written over, or moved, and where it is now, from the home
+    /// folder down: "Saved to Pictures › Snapfly." A click shows it in Finder.
+    static func saved(_ file: URL) {
+        let place = Folders.placeName(file.deletingLastPathComponent())
+        show(String(format: L("Saved to %@. Click to show it in Finder."), place), done: true, lasting: 6) {
+            NSWorkspace.shared.activateFileViewerSelecting([file])
+        }
+    }
+
+    /// A copy saved as a file of its own, its name and where it is.
+    static func savedCopy(_ file: URL) {
+        let place = Folders.placeName(file.deletingLastPathComponent())
+        show(String(format: L("Saved as %1$@ in %2$@. Click to show it in Finder."), file.lastPathComponent, place),
+             done: true, lasting: 6) {
+            NSWorkspace.shared.activateFileViewerSelecting([file])
+        }
     }
 
     /// Puts the note away, unless another one has taken its place.
@@ -345,6 +374,8 @@ final class CaptureBadgeModel: ObservableObject {
         case countdown, recording
         /// Something that went wrong.
         case message(String)
+        /// Something that went as it should, like a file saved.
+        case done(String)
         /// Something being made, like a GIF.
         case working(String)
     }
@@ -511,6 +542,16 @@ private struct CaptureBadgeLabel: View {
                     .padding(.trailing, 8)
             case let .message(text):
                 Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .padding(.leading, 8)
+                Text(text)
+                    .font(.system(size: 13, weight: .medium))
+                    .lineLimit(1)
+                    .padding(.trailing, 8)
+                    .padding(.vertical, 3)
+            case let .done(text):
+                Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.secondary)
                     .padding(.leading, 8)

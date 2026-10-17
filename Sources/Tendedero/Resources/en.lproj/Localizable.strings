@@ -493,6 +493,13 @@
 "Hide in this copy" = "Hide in this copy";
 "The copy has no place or camera details. The original stays as it is." = "The copy has no place or camera details. The original stays as it is.";
 "Save Copy…" = "Save Copy…";
+"%@ (edited)" = "%@ (edited)";
+"Saved to %@. Click to show it in Finder." = "Saved to %@. Click to show it in Finder.";
+"Saved as %1$@ in %2$@. Click to show it in Finder." = "Saved as %1$@ in %2$@. Click to show it in Finder.";
+"Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Saved with the photo. It goes out as drawn; the file in %@ stays as it is.";
+"Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is.";
+"Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Saves the photo as it goes out, drawn on and cropped, as a file of its own.";
+"Keep as a file" = "Keep as a file";
 "%@ (covered)" = "%@ (covered)";
 "Saved beside the original as %@." = "Saved beside the original as %@.";
 "Could not save the copy." = "Could not save the copy.";

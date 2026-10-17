@@ -6,6 +6,12 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Every edit says where it went: after Markup or Trim, a note names the
+  folder the photo was saved in, and a click on it shows the photo in
+  Finder. Done in Draw on Photo and Hide Part says the edit is kept with
+  the photo, and the file stays as it is.
+- Save Copy…, in a photo's menu and in Draw on Photo, keeps the photo as it
+  goes out, drawn on, cropped or covered, as a file of its own.
 - Pick photos with the circle on each, opposite the cross, to send just
   those. Picked photos stay picked when the line goes up, so the send
   button over a chat sends them alone. Pick All and Unpick All are in a

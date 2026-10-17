@@ -491,6 +491,13 @@
 "Hide in this copy" = "Ocultar nesta copia";
 "The copy has no place or camera details. The original stays as it is." = "A copia non ten datos de lugar nin de cámara. O orixinal non cambia.";
 "Save Copy…" = "Gardar a copia…";
+"%@ (edited)" = "%@ (editado)";
+"Saved to %@. Click to show it in Finder." = "Gardado en %@. Fai clic para amosalo no Finder.";
+"Saved as %1$@ in %2$@. Click to show it in Finder." = "Gardado como %1$@ en %2$@. Fai clic para amosalo no Finder.";
+"Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Gardado coa foto. Sae tal como a debuxaches; o ficheiro en %@ queda como está.";
+"Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Gardado coa foto. Esas partes quedan agochadas no que se envía; o ficheiro en %@ queda como está.";
+"Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Garda a foto tal como sae, debuxada e recortada, nun ficheiro propio.";
+"Keep as a file" = "Gardar como ficheiro";
 "%@ (covered)" = "%@ (cuberto)";
 "Saved beside the original as %@." = "Gardada xunto ao orixinal como %@.";
 "Could not save the copy." = "Non se puido gardar a copia.";

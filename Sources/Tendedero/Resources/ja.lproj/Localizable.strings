@@ -491,6 +491,13 @@
 "Hide in this copy" = "このコピーで隠す";
 "The copy has no place or camera details. The original stays as it is." = "コピーには場所やカメラの情報は含まれません。元のファイルは変わりません。";
 "Save Copy…" = "コピーを保存…";
+"%@ (edited)" = "%@（編集済み）";
+"Saved to %@. Click to show it in Finder." = "%@に保存しました。クリックするとFinderに表示します。";
+"Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@に%1$@として保存しました。クリックするとFinderに表示します。";
+"Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "写真と一緒に保存しました。描いたとおりに送られます。%@のファイルはそのままです。";
+"Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "写真と一緒に保存しました。送るものではその部分が隠れたままです。%@のファイルはそのままです。";
+"Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "写真を送られるとおり、描いた内容と切り取りを含めて、別のファイルとして保存します。";
+"Keep as a file" = "ファイルとして残す";
 "%@ (covered)" = "%@（カバー済み）";
 "Saved beside the original as %@." = "元のファイルの隣に %@ として保存しました。";
 "Could not save the copy." = "コピーを保存できませんでした。";

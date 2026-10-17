@@ -2,6 +2,7 @@ import AppKit
 import AVFoundation
 import Combine
 import os
+import UniformTypeIdentifiers
 
 /// One screenshot hanging on the line.
 struct Pegged: Identifiable, Equatable {
@@ -846,6 +847,7 @@ final class Line: ObservableObject {
         do {
             try FileManager.default.moveItem(at: item.url, to: target)
             drop(id, quietly: true)
+            Notice.saved(target)
         } catch {
             log.error("Could not save to Desktop: \(error.localizedDescription, privacy: .public)")
             Notice.show(L("Could not save it to the Desktop."))
@@ -992,7 +994,15 @@ final class Line: ObservableObject {
         guard let item = items.first(where: { $0.id == id }),
               item.isImage || DocumentCover.protects(item.url) else { return }
         let url = item.url
-        HideEditor.shared.edit(url) { [weak self] in self?.cover(url) }
+        HideEditor.shared.edit(url) { [weak self] in
+            self?.cover(url)
+            // Kept with the photo, not in its file: a note says so.
+            let hidden = isDocument(url) ? !PrivateDetails.handPages(url).isEmpty : !PrivateDetails.hand(url).isEmpty
+            guard hidden else { return }
+            let place = Folders.placeName(url.deletingLastPathComponent())
+            Notice.show(String(format: L("Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is."),
+                               place), done: true, lasting: 6)
+        }
     }
 
     /// Draw on Photo: arrows, boxes, highlights, numbered steps and words
@@ -1001,7 +1011,61 @@ final class Line: ObservableObject {
     func drawOn(_ id: UUID) {
         guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
         let url = item.url
-        DrawEditor.shared.edit(url) { [weak self] in self?.cover(url) }
+        DrawEditor.shared.edit(url) { [weak self] copy in
+            self?.cover(url)
+            if copy {
+                self?.saveCopy(of: url)
+                return
+            }
+            // Kept with the photo, not in its file: a note says so.
+            guard !Drawings.saved(url).isEmpty else { return }
+            let place = Folders.placeName(url.deletingLastPathComponent())
+            Notice.show(String(format: L("Saved with the photo. It goes out as drawn; the file in %@ stays as it is."),
+                               place), done: true, lasting: 6)
+        }
+    }
+
+    /// Save Copy…, from a photo's menu or Draw on Photo: the photo as it
+    /// leaves the line, drawn on, cropped, covered and stamped, saved as a
+    /// file of its own where the owner picks, in the original's folder at
+    /// first. The original stays as it is.
+    func saveCopy(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), !item.isRecording else { return }
+        saveCopy(of: item.url)
+    }
+
+    private func saveCopy(of url: URL) {
+        guard !PrivateDetails.stillCovering(url, PrivateDetails.details) else {
+            Notice.show(L("Still covering the private details…"))
+            return
+        }
+        let made = PrivateDetails.shareable(url)
+        let panel = NSSavePanel()
+        panel.directoryURL = url.deletingLastPathComponent()
+        panel.nameFieldStringValue = Self.copyName(for: url, as: made.pathExtension)
+        if let type = UTType(filenameExtension: made.pathExtension) { panel.allowedContentTypes = [type] }
+        panel.canCreateDirectories = true
+        NSApp.activate(ignoringOtherApps: true)
+        panel.begin { response in
+            MainActor.assumeIsolated {
+                guard response == .OK, let target = panel.url else { return }
+                do {
+                    // The panel has already asked whether to replace it.
+                    if FileManager.default.fileExists(atPath: target.path) { try FileManager.default.removeItem(at: target) }
+                    try FileManager.default.copyItem(at: made, to: target)
+                    Notice.savedCopy(target)
+                } catch {
+                    log.error("Could not save a copy: \(error.localizedDescription, privacy: .public)")
+                    Notice.show(L("Could not save the copy."))
+                }
+            }
+        }
+    }
+
+    /// The original's name with a mark, so the copy is never taken for it,
+    /// in the kind the copy is: "Screenshot (edited).png".
+    nonisolated static func copyName(for url: URL, as ext: String) -> String {
+        String(format: L("%@ (edited)"), url.deletingPathExtension().lastPathComponent) + "." + ext
     }
 
     private func cover(_ url: URL) {

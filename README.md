@@ -56,6 +56,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Right-click, then Copy Text | Copy the words in it, to paste as text. |
 | Right-click, then Hide Part | Drag a box over anything the covering missed. It stays hidden in whatever leaves the line. |
 | Right-click, then Draw on Photo | Point things out with an arrow, a box, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
+| Right-click, then Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
 | Right-click, then Translate Text | Read it in your language, to copy or send. |
 | Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
@@ -298,6 +299,14 @@ and the line shows the photo that way. The file itself stays as it is, and
 the drawing stays with the photo until it leaves the line. Drawing explains
 a picture; it never hides anything, so the lock counts only what is
 covered.
+
+Every edit says where it went. Done says the drawing is kept with the
+photo, and Save Copy…, under Keep as a file in the window, keeps the photo
+as it goes out as a file of its own, wherever you choose; a photo's menu
+has it too. Markup and
+Trim write over the file itself, and the note after them names its folder,
+"Saved to Pictures › Snapfly"; a click on the note shows the file in
+Finder.
 
 <br>
 

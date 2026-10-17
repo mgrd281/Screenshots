@@ -653,7 +653,10 @@ apps.
     words a rounded field to type them in, which takes the keyboard when
     words are put down. Crop shows the pixels kept and Keep Whole Photo.
     Last, the number of drawings, with Remove All on the trailing edge and a
-    subtitle saying they are drawn on what is sent.
+    subtitle saying they are drawn on what is sent, then "Keep as a file"
+    with Save Copy…, which saves the drawing and then the photo as it goes
+    out as a file of its own, in a save panel opening in the original's
+    folder.
   - The **footer** holds Undo and Redo (⌘Z, ⇧⌘Z) as icons on the leading
     edge, and Cancel and Done on the trailing. While the words' field has
     the keyboard, the letters, Delete and Return are typing: Return and
@@ -917,6 +920,16 @@ apps.
     on a click, and VoiceOver announces it. While something is being made,
     like a GIF, a small spinner takes the symbol's place and the note stays
     until it is done.
+    - Something that went as it should, like a file saved, leads with
+      `checkmark.circle.fill` in the same size and style instead.
+    - **Every edit says where it went** (`Notice.saved`, `Notice.savedCopy`):
+      Markup and Trim, which write over the file, and Save to Desktop, which
+      moves it, say "Saved to Pictures › Snapfly", the folder named from the
+      home folder down as Settings names it; a copy saved as a file of its
+      own says its name and its folder. These stay 6 s, and a click shows
+      the file in Finder. Done in Draw on Photo and in Hide Part says the
+      edit is kept with the photo and goes out with it, while the file in
+      its folder stays as it is.
   - **Notes, not beeps.** A failure the user would otherwise have to guess
     at gets a note. A beep is kept only for a key that does nothing where
     the keyboard is taken (the capture screens, the shortcut recorder,

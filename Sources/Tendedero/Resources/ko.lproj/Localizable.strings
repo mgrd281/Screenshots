@@ -491,6 +491,13 @@
 "Hide in this copy" = "이 사본에서 가리기";
 "The copy has no place or camera details. The original stays as it is." = "사본에는 위치와 카메라 정보가 없습니다. 원본은 그대로 남습니다.";
 "Save Copy…" = "사본 저장…";
+"%@ (edited)" = "%@ (편집됨)";
+"Saved to %@. Click to show it in Finder." = "%@에 저장했습니다. Finder에서 보려면 클릭하세요.";
+"Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@에 %1$@(으)로 저장했습니다. Finder에서 보려면 클릭하세요.";
+"Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "사진과 함께 저장했습니다. 그린 대로 보내지며, %@에 있는 파일은 그대로입니다.";
+"Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "사진과 함께 저장했습니다. 보내는 것에서는 그 부분이 계속 가려지며, %@에 있는 파일은 그대로입니다.";
+"Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "사진을 보내지는 그대로, 그린 것과 자른 것을 담아 별도의 파일로 저장합니다.";
+"Keep as a file" = "파일로 보관";
 "%@ (covered)" = "%@ (가림)";
 "Saved beside the original as %@." = "원본 옆에 %@(으)로 저장했습니다.";
 "Could not save the copy." = "사본을 저장할 수 없습니다.";

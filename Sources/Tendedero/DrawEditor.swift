@@ -12,8 +12,15 @@ final class DrawEditor: NSObject, NSWindowDelegate {
 
     private var window: NSWindow?
 
-    /// Calls back once the drawing is saved; not when cancelled.
-    func edit(_ url: URL, saved: @escaping () -> Void) {
+    /// How the window was left: the drawing saved, or saved with a copy of
+    /// the photo as it goes out, or neither.
+    enum Ending {
+        case cancel, done, saveCopy
+    }
+
+    /// Calls back once the drawing is saved, saying whether a copy is to be
+    /// saved too; not when cancelled.
+    func edit(_ url: URL, saved: @escaping (_ copy: Bool) -> Void) {
         window?.close()
         guard let image = NSImage(contentsOf: url), image.size.width > 0, image.size.height > 0 else {
             Notice.show(L("Could not open the screenshot."))
@@ -23,13 +30,14 @@ final class DrawEditor: NSObject, NSWindowDelegate {
                               drawing: Drawings.saved(url), hand: PrivateDetails.hand(url))
         readCovered(url, into: model)
         let title = url.deletingPathExtension().lastPathComponent
-        let view = DrawEditorView(model: model, title: title) { [weak self] save in
-            if save {
+        let view = DrawEditorView(model: model, title: title) { [weak self] ending in
+            if ending != .cancel {
                 model.end()
                 Drawings.set(model.drawing.tidied, for: url)
-                saved()
             }
             self?.window?.close()
+            // After the window, so the save panel comes up on its own.
+            if ending != .cancel { saved(ending == .saveCopy) }
         }
         let window = NSWindow(contentRect: .zero, styleMask: [.titled, .closable, .miniaturizable, .resizable],
                               backing: .buffered, defer: false)
@@ -370,7 +378,7 @@ final class DrawModel: ObservableObject {
 private struct DrawEditorView: View {
     @ObservedObject var model: DrawModel
     let title: String
-    let finish: (Bool) -> Void
+    let finish: (DrawEditor.Ending) -> Void
 
     /// What the drag in progress does.
     @State private var action: Action?
@@ -782,7 +790,8 @@ private struct DrawEditorView: View {
         }
     }
 
-    /// How many marks there are, and a way to take them all away.
+    /// How many marks there are, a way to take them all away, and a way to
+    /// keep the photo as it goes out as a file of its own.
     private var drawn: some View {
         Section {
             LabeledContent {
@@ -791,6 +800,12 @@ private struct DrawEditorView: View {
             } label: {
                 Text(String(format: L("Drawings: %d"), model.drawing.marks.count))
                 Text(L("Drawn on what is sent. The photo itself stays as it is."))
+            }
+            LabeledContent {
+                Button(L("Save Copy…")) { finish(.saveCopy) }
+            } label: {
+                Text(L("Keep as a file"))
+                Text(L("Saves the photo as it goes out, drawn on and cropped, as a file of its own."))
             }
         }
     }
@@ -817,9 +832,9 @@ private struct DrawEditorView: View {
             .accessibilityLabel(L("Redo"))
             .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("z", modifiers: [.command, .shift]))
             Spacer()
-            Button(L("Cancel")) { finish(false) }
+            Button(L("Cancel")) { finish(.cancel) }
                 .keyboardShortcut(.cancelAction)
-            Button(L("Done")) { finish(true) }
+            Button(L("Done")) { finish(.done) }
                 // Return in the words' field ends the typing instead.
                 .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut.defaultAction)
         }
