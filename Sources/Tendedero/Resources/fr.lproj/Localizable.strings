@@ -422,3 +422,9 @@
 "A pattern, like SKU-[0-9]+" = "Un motif, comme SKU-[0-9]+";
 "Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "Les mots sont masqués partout où ils apparaissent. Après un libellé, ce qui suit est masqué : le reste de la ligne, ou la ligne en dessous.";
 "This pattern cannot be read." = "Ce motif ne peut pas être lu.";
+
+/* The menu bar menu: what hangs, and help */
+"Nothing on the line" = "Rien sur la corde";
+"One photo on the line" = "Une photo sur la corde";
+"%d photos on the line" = "%d photos sur la corde";
+"Help & Support…" = "Aide et assistance…";

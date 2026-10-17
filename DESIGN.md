@@ -402,9 +402,30 @@ apps.
   copied images are hung, and becomes `stop.circle` while the screen is
   recorded. The Line pane in Settings shows the same mark; the website's
   drawings use it at 24 units.
-- **Menu bar menu.** Short: Take Screenshot and Add Files… (⌘O), then Show or
-  Hide line, Search…, History…, Take everything down, Settings…, Open
-  folder, Updates, Quit.
+- **Menu bar menu.** In groups, by purpose, as Apple's menu bar extras are.
+  - First what hangs, as a disabled line ("3 photos on the line", "Nothing
+    on the line"), and the main act: Paste into <the app in front>, with
+    the send shortcut, enabled while something hangs.
+  - Then the ways onto the line: Take Screenshot, Take Screenshot with
+    Timer, Capture Whole Page, Record Screen (Stop Recording while it runs),
+    Add Files… (⌘O).
+  - Then the line: Show or Hide line, Search…, History…, Take everything
+    down; the last three enabled only when they can act.
+  - Then two switches with a checkmark: Hide private details, which keeps
+    the kinds chosen when turned off and brings them back when turned on
+    (the recommended ones when none were kept), and Screenshot Button.
+  - Then Settings… (⌘,), Open screenshots folder, Help & Support… (the
+    website's support page, in German or Arabic where the Mac speaks them)
+    and, outside the App Store, Check for Updates…. Quit last.
+  - Permissions Needed… comes first of all, only once a permission was
+    refused.
+  - SF Symbols on macOS 26 only, as the photo context menu: `paperplane`,
+    `camera.viewfinder`, `timer`, `scroll`, `record.circle` (`stop.circle`
+    while recording), `folder.badge.plus`, `arrow.down.to.line` or
+    `arrow.up.to.line`, `magnifyingglass`, `clock.arrow.circlepath`,
+    `eye.slash`, `hand.raised`, `camera.circle`, `gearshape`, `folder`,
+    `questionmark.circle`, `arrow.down.circle`. None on Quit, as in Apple's
+    menus.
 - **Finder's Services menu.** Send Safely with Snapfly and Hide Private
   Details with Snapfly, for photos and PDFs, translated like the app
   (`ServicesMenu.strings`). Open With lists Snapfly as an alternative, never

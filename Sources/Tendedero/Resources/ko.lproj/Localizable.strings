@@ -422,3 +422,9 @@
 "A pattern, like SKU-[0-9]+" = "패턴, 예를 들어 SKU-[0-9]+";
 "Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "단어는 나타나는 곳마다 가려집니다. 라벨 뒤에서는 그 다음 내용이 가려집니다. 줄의 나머지이거나 아래 줄입니다.";
 "This pattern cannot be read." = "이 패턴을 읽을 수 없습니다.";
+
+/* The menu bar menu: what hangs, and help */
+"Nothing on the line" = "빨랫줄에 아무것도 없음";
+"One photo on the line" = "빨랫줄에 사진 1장";
+"%d photos on the line" = "빨랫줄에 사진 %d장";
+"Help & Support…" = "도움말 및 지원…";

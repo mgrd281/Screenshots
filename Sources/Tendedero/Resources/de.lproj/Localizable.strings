@@ -422,3 +422,9 @@
 "A pattern, like SKU-[0-9]+" = "Ein Muster, etwa SKU-[0-9]+";
 "Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "Wörter werden überall verdeckt, wo sie vorkommen. Nach einer Bezeichnung wird verdeckt, was ihr folgt: der Rest der Zeile oder die Zeile darunter.";
 "This pattern cannot be read." = "Dieses Muster kann nicht gelesen werden.";
+
+/* The menu bar menu: what hangs, and help */
+"Nothing on the line" = "Nichts an der Leine";
+"One photo on the line" = "Ein Foto an der Leine";
+"%d photos on the line" = "%d Fotos an der Leine";
+"Help & Support…" = "Hilfe & Support …";

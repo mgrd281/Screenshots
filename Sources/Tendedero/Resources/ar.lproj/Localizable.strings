@@ -422,3 +422,9 @@
 "A pattern, like SKU-[0-9]+" = "نمط، مثل SKU-[0-9]+";
 "Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "تُغطّى الكلمات أينما ظهرت. وبعد التسمية يُغطّى ما يليها: بقية السطر، أو السطر الذي تحته.";
 "This pattern cannot be read." = "تعذّر قراءة هذا النمط.";
+
+/* The menu bar menu: what hangs, and help */
+"Nothing on the line" = "لا شيء على الحبل";
+"One photo on the line" = "صورة واحدة على الحبل";
+"%d photos on the line" = "%d من الصور على الحبل";
+"Help & Support…" = "المساعدة والدعم…";
