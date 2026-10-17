@@ -974,9 +974,11 @@ def section_say(lang):
     examples = "".join(f'<button type="button" class="mac-btn small" data-example>{esc(L(lang, k))}</button>'
                        for k in ("Names and addresses", "Everything but the amount and the date", "Phone numbers and emails"))
     say = L(lang, "Say what to hide, like “everything but the amount and the date”")
+    # The window as the app opens it: the picture on its canvas, and on the
+    # trailing edge the inspector, a grouped form over Cancel and Done.
     return f"""<section class="section say" aria-labelledby="say-h">
-  <div class="wrap split">
-    <div class="copy">
+  <div class="wrap">
+    <div class="copy center">
       <h2 id="say-h">{esc(t["say_h"])}</h2>
       <p>{esc(t["say_p"])}</p>
       <p class="try-note">{esc(t["say_try"])}</p>
@@ -985,39 +987,55 @@ def section_say(lang):
     <div class="window hide-win" role="group" aria-label="{esc(t["say_label"])}" data-hide
          data-note="{esc(L(lang, "Parts hidden: %d. Click a box to show it again."))}" data-nothing="{esc(L(lang, "Nothing found to hide."))}">
       {window_titlebar(t["say_file"])}
-      <div class="hide-canvas" data-hide-canvas>
-        <div class="photo-shot">
-          <div class="rc" data-doc>
-            <div class="rc-head">
-              <span class="rc-check" aria-hidden="true">{icon("check")}</span>
-              <p class="rc-title">{esc(r["title"])}</p>
-              <p class="rc-date">{piece("date", r["date"])}</p>
-              <p class="rc-amount">{piece("amount", r["amount"], True)}</p>
+      <div class="hide-body">
+        <div class="hide-canvas" data-hide-canvas>
+          <div class="photo-shot">
+            <div class="rc" data-doc>
+              <div class="rc-head">
+                <span class="rc-check" aria-hidden="true">{icon("check")}</span>
+                <p class="rc-title">{esc(r["title"])}</p>
+                <p class="rc-date">{piece("date", r["date"])}</p>
+                <p class="rc-amount">{piece("amount", r["amount"], True)}</p>
+              </div>
+              <dl class="rc-rows">{dl}</dl>
             </div>
-            <dl class="rc-rows">{dl}</dl>
+            <div class="hide-boxes" data-boxes></div>
+            <span class="badge-lock" aria-hidden="true">{icon("lock")}</span>
           </div>
-          <div class="hide-boxes" data-boxes></div>
-          <span class="badge-lock" aria-hidden="true">{icon("lock")}</span>
+          <template data-eye>{icon("eye")}</template>
         </div>
-        <template data-eye>{icon("eye")}</template>
-      </div>
-      <form class="saying" data-saying>
-        <div class="say-row">
-          <span class="say-glyph" aria-hidden="true">{icon("sparkles")}</span>
-          <input class="say-field" type="text" placeholder="{esc(say)}" aria-label="{esc(say)}" autocomplete="off" enterkeyhint="done">
-          <span class="spinner" aria-hidden="true" hidden></span>
-          <button type="submit" class="mac-btn" data-hide-btn disabled>{esc(L(lang, "Hide"))}</button>
+        <div class="hide-side">
+          <form class="saying" data-saying>
+            <div class="group">
+              <p class="group-label">{esc(L(lang, "Say what to hide"))}</p>
+              <div class="group-box">
+                <div class="say-row">
+                  <span class="say-glyph" aria-hidden="true">{icon("sparkles")}</span>
+                  <input class="say-field" type="text" placeholder="{esc(say)}" aria-label="{esc(say)}" autocomplete="off" enterkeyhint="done">
+                  <span class="spinner" aria-hidden="true" hidden></span>
+                  <button type="submit" class="mac-btn" data-hide-btn disabled>{esc(L(lang, "Hide"))}</button>
+                </div>
+                <div class="say-examples">{examples}</div>
+              </div>
+              <p class="say-note group-note" aria-live="polite" data-note-text></p>
+            </div>
+            <div class="group">
+              <div class="group-box">
+                <div class="hand-row">
+                  <span class="hand-text">
+                    <span class="hand-title">{esc(L(lang, "By hand"))}</span>
+                    <span class="hand-hint">{esc(L(lang, "Drag over anything to hide it. Click a box to show it again."))}</span>
+                  </span>
+                  <button type="button" class="mac-btn" data-remove-all disabled>{esc(L(lang, "Remove All"))}</button>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="hide-foot">
+            <button type="button" class="mac-btn" data-cancel>{esc(L(lang, "Cancel"))}</button>
+            <button type="button" class="mac-btn primary" data-done>{esc(L(lang, "Done"))}</button>
+          </div>
         </div>
-        <div class="say-examples">{examples}</div>
-        <p class="say-note" aria-live="polite" data-note-text></p>
-      </form>
-      <div class="hide-foot">
-        <p>{esc(L(lang, "Drag over anything to hide it. Click a box to show it again."))}</p>
-        <span class="foot-buttons">
-          <button type="button" class="mac-btn" data-remove-all disabled>{esc(L(lang, "Remove All"))}</button>
-          <button type="button" class="mac-btn" data-cancel>{esc(L(lang, "Cancel"))}</button>
-          <button type="button" class="mac-btn primary" data-done>{esc(L(lang, "Done"))}</button>
-        </span>
       </div>
     </div>
   </div>
