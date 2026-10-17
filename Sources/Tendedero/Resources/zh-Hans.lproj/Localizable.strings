@@ -358,7 +358,9 @@
 "Covering private details…" = "正在隐藏私人信息…";
 "The picture could not be read." = "无法读取图片。";
 "Nothing private found" = "未发现私人信息";
-"Details covered: %d" = "已隐藏的信息：%d";
+"Covered: %@" = "已遮盖：%@";
+"Your own rules" = "你的自定义规则";
+"Hidden by hand" = "手动遮盖";
 "Saved to Photos" = "已存储到“照片”";
 "The picture could not be saved." = "无法存储图片。";
 "Save" = "存储";

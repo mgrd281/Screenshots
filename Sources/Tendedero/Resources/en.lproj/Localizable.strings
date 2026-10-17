@@ -360,7 +360,9 @@
 "Covering private details…" = "Covering private details…";
 "The picture could not be read." = "The picture could not be read.";
 "Nothing private found" = "Nothing private found";
-"Details covered: %d" = "Details covered: %d";
+"Covered: %@" = "Covered: %@";
+"Your own rules" = "Your own rules";
+"Hidden by hand" = "Hidden by hand";
 "Saved to Photos" = "Saved to Photos";
 "The picture could not be saved." = "The picture could not be saved.";
 "Save" = "Save";

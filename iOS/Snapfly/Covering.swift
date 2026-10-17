@@ -23,10 +23,10 @@ enum Choice {
 
 /// A screenshot with its private details covered, and the ways it leaves.
 enum Covering {
-    /// The picture with the chosen details covered, and how many places were.
-    static func cover(_ image: CGImage, _ chosen: Set<PrivateDetail>) -> (image: CGImage, count: Int) {
-        let areas = Finder.areas(in: image, chosen)
-        return (Finder.cover(image, areas) ?? image, areas.count)
+    /// The picture with the chosen details covered, and what was.
+    static func cover(_ image: CGImage, _ chosen: Set<PrivateDetail>) -> (image: CGImage, report: CoverReport) {
+        let areas = Finder.coveredAreas(in: image, chosen)
+        return (Finder.cover(image, areas.map(\.rect)) ?? image, CoverReport(areas))
     }
 
     static func png(_ image: CGImage) -> Data? {
