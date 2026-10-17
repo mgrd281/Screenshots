@@ -533,8 +533,7 @@ apps.
   `.tertiary`. Then one line, "Made by" in `.secondary` before the maker's
   name in semibold, and "© year name" in callout `.tertiary` under it;
   Check for Updates… (direct edition only) as a regular `.bordered` button.
-  No monogram, no card, nothing else: help lives in Support, and so does
-  the credit the licence asks for.
+  No monogram, no card, nothing else: help lives in Support.
 - **Support pane** (`Support.swift`), between Permissions and About, with
   `lifepreserver.fill` in the sidebar. A grouped form of rows, each a 28 pt
   ink tile (7 radius) with its symbol, the name with a callout line on what
@@ -544,8 +543,8 @@ apps.
   with the subject and the diagnostic details filled in, room left above
   them for what happened), then Diagnostic details (Copy, reading Copied
   for two seconds): the version and build, macOS and the Mac, the language,
-  and each permission's state; nothing personal. The section's footer
-  carries the credit the MIT License asks for.
+  and each permission's state; nothing personal. No licence credit anywhere
+  in the interface: the notice lives in `LICENSE`, inside the app bundle.
 - **Permissions pane** (`Permissions.swift`), in Settings between Privacy and
   About, with `lock.shield` in the sidebar.
   - A summary row first: `checkmark.shield.fill` in allowed green once all

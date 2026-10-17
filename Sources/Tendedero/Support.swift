@@ -3,7 +3,7 @@ import SwiftUI
 
 /// Settings › Support: where to find help, a way to write about a problem
 /// or an idea with the details that help already in the email, and those
-/// details to copy. The credit the licence asks for ends the pane.
+/// details to copy.
 @MainActor
 struct SupportPane: View {
     @ObservedObject var prefs: Preferences
@@ -32,10 +32,6 @@ struct SupportPane: View {
                     SettingsButton(copied ? L("Copied") : L("Copy")) { copy() }
                         .disabled(copied)
                 }
-            } footer: {
-                // The MIT License asks for the original's credit to stay.
-                Text(L("Based on Tendedero by Alejandro Buján, under the MIT License."))
-                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)

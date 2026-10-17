@@ -66,6 +66,9 @@ for dir in Sources/Tendedero/Resources/*.lproj; do
   LANGUAGES="$LANGUAGES<string>$(basename "$dir" .lproj)</string>"
 done
 
+# The licence of the code this began as travels with every copy, as it asks.
+cp LICENSE "$APP/Contents/Resources/LICENSE"
+
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
