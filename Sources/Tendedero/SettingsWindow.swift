@@ -333,6 +333,31 @@ final class Preferences: ObservableObject {
         }
     }
 
+    /// A new look for covers draws the photos hanging again, and puts the
+    /// test's result away.
+    var coverStyle: CoverStyle {
+        get { CoverStyle.current }
+        set {
+            guard newValue != CoverStyle.current else { return }
+            change {
+                CoverStyle.current = newValue
+                line.readPrivateDetails()
+                selfTest = nil
+            }
+        }
+    }
+
+    var keepsLastDigits: Bool {
+        get { Finder.keepsLastDigits }
+        set {
+            change {
+                Finder.keepsLastDigits = newValue
+                line.readPrivateDetails()
+                selfTest = nil
+            }
+        }
+    }
+
     /// Test on a Sample: the sample as the kinds checked now cover it, and
     /// what that covered, while it is shown.
     struct SelfTestOutcome {
@@ -1359,6 +1384,18 @@ private struct PrivacyPane: View {
                         Toggle(detail.title, isOn: prefs.hides(detail))
                     }
                 }
+            }
+            Section {
+                CoverLookPicker(selection: $prefs.coverStyle)
+                Toggle(isOn: $prefs.keepsLastDigits) {
+                    Text(L("Keep the last four digits"))
+                    Text(L("Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement."))
+                }
+            } header: {
+                Text(L("Cover look"))
+            } footer: {
+                Text(L("Every look hides for good: blur, pixels, dots and erased are drawn from the colors around what is covered, never from it, so it cannot be brought back."))
+                    .foregroundStyle(.secondary)
             }
             Section {
                 Toggle(L("Cover everything in AI chats"), isOn: $prefs.coversAllInAIChats)

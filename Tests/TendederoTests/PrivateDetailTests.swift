@@ -2,6 +2,7 @@ import CoreGraphics
 import CoreImage
 import CoreText
 import Foundation
+import ImageIO
 import XCTest
 @testable import Tendedero
 
@@ -18,9 +19,12 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertTrue(PrivateDetail.recommended.contains(.ids))
         XCTAssertTrue(PrivateDetail.recommended.contains(.codes))
         XCTAssertTrue(PrivateDetail.recommended.contains(.barcodes))
+        XCTAssertTrue(PrivateDetail.recommended.contains(.keys))
         XCTAssertEqual(PrivateDetail.barcodes.group, .sensitive)
+        XCTAssertEqual(PrivateDetail.keys.group, .sensitive)
+        XCTAssertEqual(PrivateDetail.ipAddresses.group, .people)
         // What a screenshot is usually sent for stays visible until chosen.
-        for kind in [PrivateDetail.amounts, .dates, .links, .orders, .faces] {
+        for kind in [PrivateDetail.amounts, .dates, .links, .orders, .faces, .ipAddresses] {
             XCTAssertFalse(PrivateDetail.recommended.contains(kind), "\(kind) should wait to be chosen")
         }
         // The stored names of the first six stay what they were.
@@ -54,6 +58,53 @@ final class PrivateDetailTests: XCTestCase {
     func testPasswordsAndCodes() {
         let text = "Dein Code lautet 482913\nPIN: 1234\nTAN 123 456\nCode of conduct"
         XCTAssertEqual(pieces(text, [.codes]), ["482913", "1234", "123 456"])
+    }
+
+    func testLicenceKeysAndPasswordsInSettings() {
+        let text = "Lizenz: ABCD1-EFGH2-IJKL3-MNOP4-QRST5\npassword=hunter22\nUUID 123E4567-E89B-12D3-A456-426614174000"
+        XCTAssertEqual(pieces(text, [.codes]), ["ABCD1-EFGH2-IJKL3-MNOP4-QRST5", "hunter22"])
+    }
+
+    func testAPIKeysAndTokens() {
+        let text = """
+            OPENAI_API_KEY=sk-proj-4fGh7Kp2Qx9Lm3Vb8Nc1Zr6Td
+            ghp_16C7e42F292c6912E7710c838347Ae178B4a
+            AKIAIOSFODNN7EXAMPLE
+            Authorization: Bearer abcDEF123456ghiJKL789
+            max_tokens: 4096
+            commit 3f09f680585c6ab69e45d7b7623a6aabbccdd11
+            testTheSampleShowsEveryKindButFaces42
+            """
+        XCTAssertEqual(pieces(text, [.keys]), ["sk-proj-4fGh7Kp2Qx9Lm3Vb8Nc1Zr6Td", "ghp_16C7e42F292c6912E7710c838347Ae178B4a",
+                                               "AKIAIOSFODNN7EXAMPLE", "abcDEF123456ghiJKL789"])
+        // A key reads as chance made it; words run together, or a commit, do not.
+        XCTAssertTrue(Finder.looksRandom("dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U"))
+        XCTAssertFalse(Finder.looksRandom("MozillaFirefoxDeveloperEdition2026Beta"))
+        XCTAssertFalse(Finder.looksRandom("3f09f680585c6ab69e45d7b7623a6aabbccdd11"))
+    }
+
+    func testIPAddresses() {
+        let text = """
+            Server 203.0.113.42 is up
+            Router 192.168.0.1/24.
+            Version 1.2.3.4.5
+            Time 12:30:45
+            2001:db8::8a2e:370:7334
+            MAC a4:83:e7:12:34:56
+            """
+        XCTAssertEqual(pieces(text, [.ipAddresses]), ["203.0.113.42", "192.168.0.1/24", "2001:db8::8a2e:370:7334"])
+        XCTAssertTrue(Finder.isIPv6("fe80::1%en0"))
+        XCTAssertFalse(Finder.isIPv6("12:30:45"))
+    }
+
+    func testWalletsAndCoordinates() {
+        XCTAssertEqual(pieces("Send to 0x52908400098527886E0F7030069857D2E4169EE7 now", [.bank]),
+                       ["0x52908400098527886E0F7030069857D2E4169EE7"])
+        XCTAssertEqual(pieces("bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq", [.bank]),
+                       ["bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq"])
+        let places = "Pin at 52.520008, 13.404954\n52°31'12.0\"N 13°24'17.8\"E\nTotal 12.50, 13.00"
+        XCTAssertEqual(pieces(places, [.addresses]), ["52.520008, 13.404954", "52°31'12.0\"N 13°24'17.8\"E"])
+        XCTAssertEqual(pieces("NI number AB 12 34 56 C", [.ids]), ["AB 12 34 56 C"])
     }
 
     func testAmounts() {
@@ -101,6 +152,7 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertTrue(Finder.kinds(ofCode: "https://shop.example.com/t/1024").contains(.links))
         XCTAssertTrue(Finder.kinds(ofCode: "M1HOFFMANN/LENA       E1A2B3C FRAJFKLH 0400").isSuperset(of: [.names, .ids]))
         XCTAssertTrue(Finder.kinds(ofCode: "00340434161094015902").contains(.tracking))
+        XCTAssertTrue(Finder.kinds(ofCode: "geo:52.520008,13.404954").contains(.addresses))
         XCTAssertEqual(Finder.kinds(ofCode: "Hello"), [])
     }
 
@@ -136,17 +188,20 @@ final class PrivateDetailTests: XCTestCase {
     }
 
     func testANewRecommendedKindStartsOnOnceForWhoeverCoversAnything() throws {
-        XCTAssertEqual(PrivateDetail.added(to: [.names], known: nil), [.barcodes])
+        XCTAssertEqual(PrivateDetail.added(to: [.names], known: nil), [.barcodes, .keys])
         XCTAssertEqual(PrivateDetail.added(to: [], known: nil), [])
         XCTAssertEqual(PrivateDetail.added(to: [.names], known: PrivateDetail.allCases.map(\.rawValue)), [])
-        XCTAssertEqual(PrivateDetail.added(to: [.names, .barcodes], known: nil), [])
+        XCTAssertEqual(PrivateDetail.added(to: [.names, .barcodes, .keys], known: nil), [])
+        // Keys came after the sixteen; IP addresses came too, but wait to be chosen.
+        let sixteen = PrivateDetail.allCases.filter { $0 != .keys && $0 != .ipAddresses }.map(\.rawValue)
+        XCTAssertEqual(PrivateDetail.added(to: [.names], known: sixteen), [.keys])
 
         let suite = "PrivateDetailTests-\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
         defaults.set(["names"], forKey: "hiddenDetails")
         PrivateDetail.bringUpToDate(["hiddenDetails", "notSaved"], in: defaults)
-        XCTAssertEqual(defaults.stringArray(forKey: "hiddenDetails"), ["barcodes", "names"])
+        XCTAssertEqual(defaults.stringArray(forKey: "hiddenDetails"), ["barcodes", "keys", "names"])
         XCTAssertNil(defaults.stringArray(forKey: "notSaved"))
         // Turned off afterwards, it stays off.
         defaults.set(["names"], forKey: "hiddenDetails")
@@ -181,6 +236,22 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertTrue(kinds.contains(nil), "\(areas)")
         XCTAssertFalse(kinds.contains(.names), "only what is chosen")
         XCTAssertEqual(Finder.areas(in: image, [.emails, .orders], rules: rules).count, areas.count)
+    }
+
+    /// Read from a picture, as Copy Text does: with Keep the last four
+    /// digits on, an IBAN's last four stay, in the text as in a copy.
+    func testTheLastFourDigitsStayInTheTextToo() throws {
+        let key = "keepLastDigits"
+        let before = UserDefaults.standard.object(forKey: key)
+        defer { UserDefaults.standard.set(before, forKey: key) }
+        let url = try saved(drawn(["IBAN: DE89 3704 0044 0532 0130 00"]))
+        defer { try? FileManager.default.removeItem(at: url.deletingLastPathComponent()) }
+        Finder.keepsLastDigits = true
+        let kept = Finder.text(of: url, hiding: [.bank], rules: [])
+        XCTAssertTrue(kept.hasSuffix("30 00"), kept)
+        XCTAssertFalse(kept.contains("3704"), kept)
+        Finder.keepsLastDigits = false
+        XCTAssertFalse(Finder.text(of: url, hiding: [.bank], rules: []).contains("30 00"))
     }
 
     // MARK: Small print
@@ -286,6 +357,17 @@ final class PrivateDetailTests: XCTestCase {
             CTLineDraw(CTLineCreateWithAttributedString(text as CFAttributedString), context)
         }
         return try XCTUnwrap(context.makeImage())
+    }
+
+    /// A picture as a PNG in a folder of its own.
+    private func saved(_ image: CGImage) throws -> URL {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let url = folder.appendingPathComponent("page.png")
+        let destination = try XCTUnwrap(CGImageDestinationCreateWithURL(url as CFURL, "public.png" as CFString, 1, nil))
+        CGImageDestinationAddImage(destination, image, nil)
+        XCTAssertTrue(CGImageDestinationFinalize(destination))
+        return url
     }
 
     /// Lines of large black text on white, one under another.

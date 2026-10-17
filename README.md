@@ -204,9 +204,10 @@ left alone.
 ## Private details, covered.
 
 Choose under Privacy in Settings what to cover, in three groups. People:
-names, addresses, emails, phone numbers, usernames and faces. Money,
-identity and health: bank cards and accounts, ID and tax numbers,
-passwords and codes, QR codes and barcodes, health details. Orders and
+names, addresses, emails, phone numbers, usernames, faces and IP addresses.
+Money, identity and health: bank cards and accounts (crypto wallets too), ID
+and tax numbers, passwords and codes (Wi-Fi passwords and licence keys too),
+API keys and tokens, QR codes and barcodes, health details. Orders and
 documents: order and customer numbers, tracking numbers, amounts, dates and
 links. Check All,
 Recommended and Uncheck All set the whole list at once; the recommended
@@ -221,6 +222,25 @@ it misses, hide by hand with Hide Part in a photo's menu. Labels like Billing
 address, Recipient, Kundennummer or Diagnosis tell it where a whole block is
 private.
 
+API keys and tokens are found by how services start them, like `sk-`,
+`ghp_` or `AKIA`, by what follows Bearer or a setting like `API_KEY=`, by a
+private key's first line, and by any long run of letters and digits that
+reads as chance made it, which a name in code or a commit's number does
+not. IP addresses are both kinds, IPv4 and IPv6, read as the system reads
+them, so a time like 12:30:45 or a version like 1.2.3.4.5 is left. A map's
+coordinates are covered as an address.
+
+Choose how covers look under Cover look: ink, as always; labelled, the ink
+with what it hides named on it, like Name or Phone; blur; pixels; dots, as
+a password field shows; or erased, as if nothing had been there.
+Each tile is a little chat covered by the same code as a copy. Every look
+hides for good: blur, pixels, dots and erased are drawn from the colors
+just around what is covered, never from it, so unlike a real blur or
+pixelation of text, nothing covered can be brought back. Draw on Photo shows
+the look you chose; Hide Part shows ink while you draw. Keep the last four
+digits leaves a card, account or phone number recognisable, as on a bank
+statement: "•••• 1111". It holds for copies and for Copy Text alike.
+
 QR codes and barcodes are covered whole, since nobody can read what they
 hold: a payment, a sign-in, a ticket or a parcel. The number printed under
 a barcode goes with it. Turned off, a code is still covered when what it
@@ -231,8 +251,8 @@ is recommended and you cover anything; turn it off and it stays off.
 To see what each kind hides, Test on a Sample under Privacy covers a
 made-up order confirmation with what you checked: an order number, a
 name, an address, an email, a phone number, an IBAN, a tax number, a
-tracking number, a PIN, a username, a total, a date, a link, a medicine
-and a QR code. It says what was covered there, and what you checked that
+tracking number, a PIN, an API key, an IP address, a username, a total, a
+date, a link, a medicine and a QR code. It says what was covered there, and what you checked that
 the sample does not show. It speaks for that sample only; a real
 screenshot can read differently.
 
@@ -511,9 +531,10 @@ watch the screen, so there is no line there. What it keeps is the covering:
   new picture in Photos.
   The screenshot itself stays as it was. Settings chooses what to cover, in
   the same three groups as on the Mac, with Check All, Recommended and
-  Uncheck All, and the recommended kinds are on until you change them. Under
-  Also hide, add rules of your own, as on the Mac: a word, a label whose
-  value is covered, or a pattern.
+  Uncheck All, and the recommended kinds are on until you change them. Cover
+  look picks how covers look, from the same six as on the Mac, and Keep the
+  last four digits is there too. Under Also hide, add rules of your own, as
+  on the Mac: a word, a label whose value is covered, or a pattern.
 - **Cover the Latest Screenshot** is a Shortcuts action that needs no opening
   of the app. Chosen for Back Tap (Settings › Accessibility › Touch › Back Tap
   › Double Tap), a double tap on the back of the iPhone covers the newest
@@ -592,7 +613,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
-| `Shared/PrivateText.swift` | Finds private details in a screenshot, sixteen kinds and the owner's own rules, and covers them, on the Mac and the iPhone |
+| `Shared/PrivateText.swift` | Finds private details in a screenshot, eighteen kinds and the owner's own rules, on the Mac and the iPhone |
+| `Shared/CoverLook.swift` | How covers look (ink, labelled, blur, pixels, dots, erased), drawn from the colors around what is covered; keeping the last four digits; the samples Settings shows |
+| `Shared/CoverLookPicker.swift` | The tiles to choose the look by, in Settings on the Mac and on the iPhone |
 | `Shared/OwnRules.swift` | The owner's own rules: a word, a label or a pattern, kept with the settings |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |

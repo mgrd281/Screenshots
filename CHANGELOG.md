@@ -6,6 +6,16 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Six looks for covers, under Privacy: ink, labelled (the ink says what it
+  hides, like Name or Phone), blur, pixels, dots and erased. Each hides
+  for good: the soft ones are drawn from the colors around what is covered,
+  never from it, so nothing can be brought back.
+- Keep the last four digits, under Privacy: card, account and phone numbers
+  stay recognisable, as on a bank statement.
+- Two new kinds to cover: API keys and tokens (on from the start), and IP
+  addresses. Crypto wallets count as bank accounts, a map's coordinates as
+  an address, and Wi-Fi passwords, licence keys and booking codes as codes.
+  More labels are known, like a contract, member or insurance number.
 - Every edit says where it went: after Markup or Trim, a note names the
   folder the photo was saved in, and a click on it shows the photo in
   Finder. Done in Draw on Photo and Hide Part says the edit is kept with

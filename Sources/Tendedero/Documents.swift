@@ -101,7 +101,8 @@ enum DocumentCover {
                 guard let page = document.page(at: index), let image = render(page) else { return false }
                 let found = Finder.coveredAreas(in: image, chosen)
                 let byHand = hand[index + 1] ?? []
-                guard let covered = Finder.cover(image, found.map(\.rect) + byHand) else { return false }
+                let places = found + byHand.map { Finder.Area(rect: $0, kind: nil) }
+                guard let covered = Finder.cover(image, areas: places) else { return false }
                 report.add(CoverReport(found, hand: byHand.count))
                 var box = CGRect(origin: .zero, size: pageSize(of: page))
                 context.beginPage(mediaBox: &box)

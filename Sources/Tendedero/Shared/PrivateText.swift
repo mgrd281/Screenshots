@@ -9,7 +9,7 @@ import Vision
 /// under Privacy in Settings, on the Mac and on the iPhone.
 enum PrivateDetail: String, CaseIterable {
     case names, addresses, emails, phones, bank, health
-    case usernames, faces, ids, codes, barcodes, orders, tracking, amounts, dates, links
+    case usernames, faces, ipAddresses, ids, codes, keys, barcodes, orders, tracking, amounts, dates, links
 
     var title: String {
         switch self {
@@ -21,8 +21,10 @@ enum PrivateDetail: String, CaseIterable {
         case .health: L("Health details")
         case .usernames: L("Usernames")
         case .faces: L("Faces")
+        case .ipAddresses: L("IP addresses")
         case .ids: L("ID and tax numbers")
         case .codes: L("Passwords and codes")
+        case .keys: L("API keys and tokens")
         case .barcodes: L("QR codes and barcodes")
         case .orders: L("Order and customer numbers")
         case .tracking: L("Tracking numbers")
@@ -32,7 +34,7 @@ enum PrivateDetail: String, CaseIterable {
         }
     }
 
-    /// How Settings groups the kinds, so sixteen read as three short lists.
+    /// How Settings groups the kinds, so eighteen read as three short lists.
     enum Group: CaseIterable {
         case people, sensitive, business
 
@@ -49,8 +51,8 @@ enum PrivateDetail: String, CaseIterable {
 
     var group: Group {
         switch self {
-        case .names, .addresses, .emails, .phones, .usernames, .faces: .people
-        case .bank, .ids, .codes, .barcodes, .health: .sensitive
+        case .names, .addresses, .emails, .phones, .usernames, .faces, .ipAddresses: .people
+        case .bank, .ids, .codes, .keys, .barcodes, .health: .sensitive
         case .orders, .tracking, .amounts, .dates, .links: .business
         }
     }
@@ -59,10 +61,12 @@ enum PrivateDetail: String, CaseIterable {
     /// rest, like the amount and the date, is often what a screenshot is
     /// sent for, so it waits to be chosen. A code is private more often than
     /// not: a payment, a sign-in, a ticket or a parcel, unreadable to the eye.
+    /// A key opens an account to whoever reads it. An IP address is often
+    /// what a screenshot of a network is sent for.
     var isRecommended: Bool {
         switch self {
-        case .names, .addresses, .emails, .phones, .bank, .health, .ids, .codes, .barcodes: true
-        case .usernames, .faces, .orders, .tracking, .amounts, .dates, .links: false
+        case .names, .addresses, .emails, .phones, .bank, .health, .ids, .codes, .keys, .barcodes: true
+        case .usernames, .faces, .ipAddresses, .orders, .tracking, .amounts, .dates, .links: false
         }
     }
 
@@ -74,7 +78,9 @@ enum PrivateDetail: String, CaseIterable {
     static let knownKey = "knownDetails"
 
     /// The kinds there were before Snapfly noted which it knew.
-    private static let firstKnown = Set(allCases.filter { $0 != .barcodes }.map(\.rawValue))
+    private static let firstKnown: Set<String> = ["names", "addresses", "emails", "phones", "bank", "health",
+                                                  "usernames", "faces", "ids", "codes", "orders", "tracking",
+                                                  "amounts", "dates", "links"]
 
     /// The recommended kinds added since a choice was made, which start on
     /// for whoever covers anything. A kind turned off after that stays off.
@@ -143,6 +149,8 @@ enum Finder {
     private static let parcel = Block(first: .tracking, rest: .tracking, lines: 1)
     private static let identity = Block(first: .ids, rest: .ids, lines: 1)
     private static let code = Block(first: .codes, rest: .codes, lines: 1)
+    private static let key = Block(first: .keys, rest: .keys, lines: 1)
+    private static let network = Block(first: .ipAddresses, rest: .ipAddresses, lines: 1)
     private static let user = Block(first: .usernames, rest: .usernames, lines: 1)
 
     /// Labels, lowercased, in the languages screenshots tend to come in.
@@ -175,7 +183,12 @@ enum Finder {
                       "invoice #", "kundennummer", "kunden-nr", "kunden-nr.", "kundennr", "customer number",
                       "customer no", "customer no.", "customer id", "belegnummer", "beleg-nr", "vorgangsnummer",
                       "transaktionsnummer", "transaktions-id", "transaction id", "transaction number",
-                      "رقم الطلب", "رقم الفاتورة", "رقم العميل", "رقم المعاملة"] {
+                      "vertragsnummer", "vertrags-nr", "vertrags-nr.", "contract number", "policennummer",
+                      "policy number", "mitgliedsnummer", "mitglieds-nr", "member number", "membership number",
+                      "member id", "buchungsnummer", "booking number", "reservierungsnummer", "reservation number",
+                      "ticketnummer", "ticket number", "referenznummer", "reference number", "aktenzeichen",
+                      "case number", "zählernummer", "meter number",
+                      "رقم الطلب", "رقم الفاتورة", "رقم العميل", "رقم المعاملة", "رقم العقد", "رقم الحجز"] {
             labels[label] = order
         }
         for label in ["sendungsnummer", "sendungs-nr", "sendungs-nr.", "sendungsverfolgung", "trackingnummer",
@@ -190,8 +203,13 @@ enum Finder {
                       "ausweisnummer", "ausweis-nr", "passnummer", "reisepassnummer", "passport", "passport number",
                       "passport no", "passport no.", "id number", "id no", "id no.", "sozialversicherungsnummer",
                       "sv-nummer", "rentenversicherungsnummer", "ssn", "social security number", "kennzeichen",
-                      "amtliches kennzeichen", "license plate", "licence plate",
-                      "رقم الهوية", "رقم الجواز", "رقم جواز السفر", "الرقم الضريبي"] {
+                      "amtliches kennzeichen", "license plate", "licence plate", "fahrgestellnummer",
+                      "fahrzeug-identifizierungsnummer", "vehicle identification number",
+                      "führerscheinnummer", "führerschein-nr", "driver's license number", "driving licence number",
+                      "license number", "licence number", "versichertennummer", "krankenversichertennummer",
+                      "versicherungsnummer", "insurance number", "national insurance number", "ni number",
+                      "personalnummer", "employee id", "employee number", "matrikelnummer", "student id",
+                      "رقم الهوية", "رقم الجواز", "رقم جواز السفر", "الرقم الضريبي", "رقم الرخصة", "رقم التأمين"] {
             labels[label] = identity
         }
         for label in ["passwort", "password", "kennwort", "pin", "pin-code", "tan", "code", "sicherheitscode",
@@ -199,8 +217,28 @@ enum Finder {
                       "bestaetigungscode", "otp", "einmalpasswort", "one-time code", "one-time password",
                       "zugangscode", "access code", "gutscheincode", "gutschein", "coupon", "coupon code",
                       "promo code", "rabattcode", "discount code", "voucher", "voucher code",
-                      "كلمة المرور", "كلمة السر", "رمز التحقق", "الرمز", "رمز الخصم"] {
+                      "wlan-passwort", "wlan passwort", "wlan-schlüssel", "wlan-schluessel", "wlan-kennwort",
+                      "wi-fi password", "wifi password", "wi-fi-passwort", "netzwerkschlüssel", "network key",
+                      "network password", "wpa key", "wpa2 key", "license key", "licence key", "lizenzschlüssel",
+                      "product key", "produktschlüssel", "activation key", "aktivierungsschlüssel",
+                      "aktivierungscode", "activation code", "seriennummer", "serial number", "buchungscode",
+                      "booking code", "booking reference", "confirmation code", "recovery code",
+                      "wiederherstellungscode", "backup code", "sicherungscode",
+                      "كلمة المرور", "كلمة السر", "رمز التحقق", "الرمز", "رمز الخصم", "كلمة مرور الشبكة",
+                      "مفتاح الترخيص", "رمز الحجز"] {
             labels[label] = code
+        }
+        for label in ["api key", "api-key", "apikey", "api_key", "api-schlüssel", "api-schluessel", "api token",
+                      "secret", "secret key", "client secret", "access key", "access key id", "secret access key",
+                      "access token", "auth token", "authentication token", "bearer token", "refresh token",
+                      "token", "private key", "privater schlüssel", "geheimer schlüssel", "webhook secret",
+                      "signing secret", "zugriffsschlüssel", "zugriffstoken",
+                      "مفتاح api", "المفتاح السري", "رمز الوصول"] {
+            labels[label] = key
+        }
+        for label in ["ip", "ip address", "ip-adresse", "ipv4", "ipv6", "ipv4 address", "ipv6 address",
+                      "ipv4-adresse", "ipv6-adresse", "public ip", "öffentliche ip", "عنوان ip"] {
+            labels[label] = network
         }
         for label in ["benutzername", "nutzername", "username", "user name", "benutzer", "anmeldename", "login",
                       "login name", "handle", "اسم المستخدم"] {
@@ -305,6 +343,8 @@ enum Finder {
         if starts("begin:vcard", "mecard:") { kinds.formUnion([.names, .addresses, .emails, .phones]) }
         if starts("mailto:", "matmsg:") { kinds.insert(.emails) }
         if starts("tel:", "sms:", "smsto:") { kinds.insert(.phones) }
+        // A place on a map.
+        if starts("geo:") { kinds.insert(.addresses) }
         // A boarding pass starts with the passenger's name.
         if payload.range(of: #"^M[1-4][A-Z]+/[A-Z ]+"#, options: .regularExpression) != nil {
             kinds.formUnion([.names, .ids])
@@ -343,25 +383,6 @@ enum Finder {
         }
     }
 
-    /// The picture with the given areas, from 0 to 1 from the bottom left,
-    /// covered in opaque ink with softened corners.
-    static func cover(_ image: CGImage, _ areas: [CGRect]) -> CGImage? {
-        let space = image.colorSpace.flatMap { $0.model == .rgb ? $0 : nil }
-            ?? CGColorSpace(name: CGColorSpace.sRGB)!
-        guard let context = CGContext(data: nil, width: image.width, height: image.height,
-                                      bitsPerComponent: 8, bytesPerRow: 0, space: space,
-                                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
-        context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
-        context.setFillColor(CGColor(gray: 0.12, alpha: 1))
-        for box in areas {
-            let rect = VNImageRectForNormalizedRect(box, image.width, image.height)
-            let radius = min(rect.height / 4, rect.width / 2, 8)
-            context.addPath(CGPath(roundedRect: rect, cornerWidth: radius, cornerHeight: radius, transform: nil))
-            context.fillPath()
-        }
-        return context.makeImage()
-    }
-
     /// Where the chosen details are, in Vision's normalized coordinates,
     /// each with the kind it is covered as.
     /// - Parameter printed: what the covered codes say, covered too where it
@@ -374,7 +395,8 @@ enum Finder {
             || !patterns.isEmpty else { return [] }
         let lines = read(image)
         let printedHits = patterns.isEmpty ? [] : Text(lines).hits(forPatterns: patterns)
-        return (hits(in: lines, chosen, rules: rules) + printedHits).compactMap { hit -> Area? in
+        let found = keepingLastDigits(hits(in: lines, chosen, rules: rules), in: lines) + printedHits
+        return found.compactMap { hit -> Area? in
             let line = lines[hit.line]
             guard let range = hit.range else { return Area(rect: line.box, kind: hit.kind) }
             guard let part = Range(range, in: line.string), let box = line.box(for: part) else { return nil }
@@ -432,7 +454,7 @@ enum Finder {
               let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return Reading(lines: [], heights: []) }
         let lines = read(image)
         var hidden = [IndexSet](repeating: IndexSet(), count: lines.count)
-        for hit in hits(in: lines, chosen, rules: rules) {
+        for hit in keepingLastDigits(hits(in: lines, chosen, rules: rules), in: lines) {
             let length = lines[hit.line].string.utf16.count
             let range = hit.range ?? NSRange(location: 0, length: length)
             let end = min(range.location + range.length, length)
@@ -492,6 +514,16 @@ enum Finder {
         if chosen.contains(.health) { hits += medicines(in: lines) }
         hits += own(in: text, rules)
         return hits
+    }
+
+    /// With Keep the last four digits on, a long number's last four stay
+    /// readable, in a copy and in its text alike, as on a bank statement.
+    private static func keepingLastDigits(_ hits: [Hit], in lines: [TextLine]) -> [Hit] {
+        guard keepsLastDigits else { return hits }
+        return hits.map { hit in
+            guard let kind = hit.kind, lastDigitKinds.contains(kind) else { return hit }
+            return Hit(line: hit.line, range: keepingLastDigits(hit.range, in: lines[hit.line].string), kind: kind)
+        }
     }
 
     /// The owner's own rules: words and patterns wherever they appear, and
@@ -715,15 +747,37 @@ enum Finder {
             found += matches(#"\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){2,7}(?: ?[A-Z0-9]{1,4})?\b"#)
             // Card numbers: 13 to 19 digits, grouped or not, that pass the Luhn check.
             found += matches(#"\b\d(?:[ -]?\d){12,18}\b"#).filter { passesLuhn(text.substring(with: $0)) }
+            // Crypto wallets: an Ethereum address, and Bitcoin's two kinds.
+            found += matches(#"\b0x[0-9a-fA-F]{40}\b"#)
+            found += matches(#"\b(?:bc1|tb1)[02-9ac-hj-np-z]{25,62}\b"#)
+            found += matches(#"\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\b"#).filter { hasBothCases(text.substring(with: $0)) }
+        }
+        if chosen.contains(.addresses) {
+            // Coordinates, as maps give them: "52.520008, 13.404954",
+            // 52.52° N, 13.40° E or 52°31'12.0"N 13°24'17.8"E. A plain pair
+            // needs five decimals, so two numbers in a table are left. The
+            // street is found with the rest below.
+            found += matches(#"(?<![\d.])-?\d{1,2}\.\d{5,},\s?-?\d{1,3}\.\d{5,}(?![\d.])"#)
+                .filter { isCoordinate(text.substring(with: $0)) }
+            found += matches(#"(?<![\d.])\d{1,2}(?:\.\d+)?°\s?[NS],?\s+\d{1,3}(?:\.\d+)?°\s?[EOW]\b"#)
+            found += matches(#"\b\d{1,2}°\s?\d{1,2}['′’]\s?\d{1,2}(?:[.,]\d+)?["″”]?\s?[NS][\s,]+\d{1,3}°\s?\d{1,2}['′’]\s?\d{1,2}(?:[.,]\d+)?["″”]?\s?[EOW]\b"#)
         }
         if chosen.contains(.phones) {
             found += detected(.phoneNumber).map(\.range)
+        }
+        if chosen.contains(.ipAddresses) {
+            // IPv4, with a network's size or not, but not a version with more parts.
+            let octet = #"(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)"#
+            found += matches(#"(?<![\d.])"# + octet + #"(?:\."# + octet + #"){3}(?:/\d{1,2})?(?!\.?\d)"#)
+            // IPv6, as the system reads it, so a time like 12:30:45 is left.
+            found += matches(#"(?<![\w:.])(?:[0-9A-Fa-f]{0,4}:){2,7}[0-9A-Fa-f]{0,4}(?:%[\w.]+)?(?![\w:])"#)
+                .filter { isIPv6(text.substring(with: $0)) }
         }
         if chosen.contains(.orders) {
             // "#1024", and the number after "Order No.", "Rechnung" or
             // "Kundennummer", which must hold a digit.
             found += matches(#"(?<![\w#])#\s?(\d{3,}[\w-]*)"#, [], group: 1)
-            found += matches(#"\b(?:Bestellung|Bestell-?Nr|Auftrag|Auftrags-?Nr|Order|Rechnung|Rechnungs-?Nr|Invoice|Kundennummer|Kunden-?Nr|Customer|Beleg|Vorgang|Transaktion|Transaction)\.?[ \t]*(?:Nr\.?|No\.?|Number|ID|#)?[ \t]*[:#]?[ \t]*((?=[A-Z0-9/-]*\d)[A-Z0-9][A-Z0-9/-]{2,})\b"#,
+            found += matches(#"\b(?:Bestellung|Bestell-?Nr|Auftrag|Auftrags-?Nr|Order|Rechnung|Rechnungs-?Nr|Invoice|Kundennummer|Kunden-?Nr|Customer|Beleg|Vorgang|Transaktion|Transaction|Vertrag|Vertrags-?Nr|Contract|Policy|Mitglied|Mitglieds-?Nr|Member|Buchung|Buchungs-?Nr|Booking|Reservierung|Reservation|Ticket|Referenz|Reference|Aktenzeichen)\.?[ \t]*(?:Nr\.?|No\.?|Number|ID|#)?[ \t]*[:#]?[ \t]*((?=[A-Z0-9/-]*\d)[A-Z0-9][A-Z0-9/-]{2,})\b"#,
                              .caseInsensitive, group: 1)
         }
         if chosen.contains(.tracking) {
@@ -739,11 +793,39 @@ enum Finder {
             found += matches(#"\b\d{2,3}/\d{3}/\d{4,5}\b"#)
             found += matches(#"\b\d{3}-\d{2}-\d{4}\b"#)
             found += matches(#"\b\d{2} ?\d{6} ?[A-Z] ?\d{3}\b"#)
+            // The British National Insurance number.
+            found += matches(#"\b[A-CEGHJ-PR-TW-Z][A-CEGHJ-NPR-TW-Z] ?\d{2} ?\d{2} ?\d{2} ?[A-D]\b"#)
         }
         if chosen.contains(.codes) {
             // "Dein Code lautet 482913", "PIN: 1234", "TAN 123 456": the digits after the word.
             found += matches(#"\b(?:code|pin|tan|otp|passwort|password|kennwort)\b[^\n\d]{0,30}?(\d(?:[ -]?\d){3,7})(?!\d)"#,
                              .caseInsensitive, group: 1)
+            // A password given in a setting or in the middle of a line: "password=…".
+            found += matches(#"\b(?:password|passwort|passwd|kennwort)["']?\s*[:=]\s*["']?([^\s"',;]{4,})"#,
+                             .caseInsensitive, group: 1)
+            // A licence key or a gift card's code, in four groups or more.
+            found += matches(#"\b[A-Z0-9]{4,6}(?:-[A-Z0-9]{4,6}){3,7}\b"#)
+                .filter { hasLettersAndDigits(text.substring(with: $0)) }
+        }
+        if chosen.contains(.keys) {
+            // Keys and tokens services hand out, known by how they start:
+            // OpenAI, Anthropic, Stripe, GitHub, GitLab, Slack, Hugging Face,
+            // npm, Amazon and Google.
+            found += matches(#"(?<![\w-])(?:sk|rk)-(?:proj-|svcacct-|admin-|ant-(?:api|admin)\d{2}-)?[A-Za-z0-9_-]{20,}"#)
+            found += matches(#"(?<!\w)(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{16,}"#)
+            found += matches(#"(?<!\w)(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|glpat-[A-Za-z0-9_-]{20,}|xox[abposr]-[A-Za-z0-9-]{10,}|whsec_[A-Za-z0-9]{20,}|hf_[A-Za-z0-9]{30,}|npm_[A-Za-z0-9]{30,})"#)
+            found += matches(#"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b"#)
+            found += matches(#"\bAIza[0-9A-Za-z_-]{35}"#)
+            // A signed token in three parts, the first two JSON.
+            found += matches(#"\beyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}"#)
+            // What follows "Bearer", and a key or a secret given in a setting or in code.
+            found += matches(#"\bBearer\s+([A-Za-z0-9._~+/-]{16,}=*)"#, [], group: 1)
+            found += matches(#"\b[A-Za-z_]*(?:api[_-]?key|secret|token|access[_-]?key|private[_-]?key)[A-Za-z_]*["']?\s*[:=]\s*["']?([^\s"',;]{8,})"#,
+                             .caseInsensitive, group: 1)
+            // A private key, from its first line to its last.
+            found += matches(#"-----BEGIN [A-Z ]*PRIVATE KEY-----(?:\n[A-Za-z0-9+/= ]{16,})*(?:\n-----END [A-Z ]*PRIVATE KEY-----)?"#)
+            // Any other long run of letters and digits that reads as chance made it.
+            found += matches(#"(?<![\w-])[A-Za-z0-9_-]{32,}(?![\w-])"#).filter { looksRandom(text.substring(with: $0)) }
         }
         if chosen.contains(.amounts) {
             let number = #"\d{1,3}(?:[.,\x{00A0} ]\d{3})*(?:[.,]\d{2})?|\d+(?:[.,]\d{2})?"#
@@ -925,6 +1007,57 @@ enum Finder {
                 || line.range(of: pharmacy, options: .regularExpression) != nil
             return named ? Hit(line: i, range: nil, kind: .health) : nil
         }
+    }
+
+    /// Whether a long run of letters and digits reads as chance made it, as
+    /// a key does, rather than as words run together, as names in code are:
+    /// both cases and a digit, and few runs of four small letters or more.
+    /// A long hex number, like a commit's, is one case only and stays.
+    static func looksRandom(_ run: String) -> Bool {
+        let characters = Array(run)
+        guard characters.count >= 32, !run.hasPrefix("0x"),
+              characters.filter(\.isUppercase).count >= 2, characters.filter(\.isLowercase).count >= 2,
+              characters.contains(where: \.isNumber) else { return false }
+        var wordy = 0, streak = 0
+        for character in characters + ["!"] {
+            if character.isLowercase {
+                streak += 1
+            } else {
+                if streak >= 4 { wordy += streak }
+                streak = 0
+            }
+        }
+        var counts: [Character: Int] = [:]
+        for character in characters { counts[character, default: 0] += 1 }
+        let n = Double(characters.count)
+        let entropy = counts.values.reduce(0.0) { $0 - Double($1) / n * log2(Double($1) / n) }
+        return Double(wordy) / n < 0.3 && entropy >= 3.5
+    }
+
+    /// Whether text is an IPv6 address as the system reads one, with two
+    /// colons at least, so a time like 12:30:45 is not.
+    static func isIPv6(_ candidate: String) -> Bool {
+        let address = candidate.split(separator: "%", maxSplits: 1).first.map(String.init) ?? candidate
+        var parsed = in6_addr()
+        return address.filter { $0 == ":" }.count >= 2 && inet_pton(AF_INET6, address, &parsed) == 1
+    }
+
+    /// Whether two numbers can be a place on Earth: a latitude, then a
+    /// longitude.
+    private static func isCoordinate(_ pair: String) -> Bool {
+        let parts = pair.split(separator: ",", maxSplits: 1).map { part in
+            Double(part.filter { "0123456789.-".contains($0) })
+        }
+        guard parts.count == 2, let latitude = parts[0], let longitude = parts[1] else { return false }
+        return abs(latitude) <= 90 && abs(longitude) <= 180
+    }
+
+    private static func hasLettersAndDigits(_ text: String) -> Bool {
+        text.contains(where: \.isLetter) && text.contains(where: \.isNumber)
+    }
+
+    private static func hasBothCases(_ text: String) -> Bool {
+        text.contains(where: \.isUppercase) && text.contains(where: \.isLowercase)
     }
 
     private static func passesLuhn(_ number: String) -> Bool {
