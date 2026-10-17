@@ -362,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Añadir un mensaje…";
+"As typed" = "Tal como se escribió";
+"Send in another language" = "Enviar en otro idioma";
+"Sent in %@" = "Se envía en %@";
+"Language of the message" = "Idioma del mensaje";
 "Saved messages" = "Mensajes guardados";
 "Add Message" = "Añadir mensaje";
 "Here is the invoice for your order {order}." = "Aquí tienes la factura de tu pedido {order}.";
@@ -536,7 +540,3 @@
 "A square picture works best." = "Una imagen cuadrada es lo mejor.";
 "Shop header" = "Cabecera de la tienda";
 "Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "Enviar con cabecera de la tienda, en el menú de una foto, pone sobre la captura tapada una franja con el nombre y el logotipo de tu tienda, el pedido y el día.";
-"As typed" = "Tal como se escribió";
-"Send in another language" = "Enviar en otro idioma";
-"Sent in %@" = "Se envía en %@";
-"Language of the message" = "Idioma del mensaje";

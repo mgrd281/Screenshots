@@ -362,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "메시지 추가…";
+"As typed" = "입력한 그대로";
+"Send in another language" = "다른 언어로 보내기";
+"Sent in %@" = "%@(으)로 보내요";
+"Language of the message" = "메시지 언어";
 "Saved messages" = "저장된 메시지";
 "Add Message" = "메시지 추가";
 "Here is the invoice for your order {order}." = "주문 {order}의 청구서입니다.";
@@ -536,7 +540,3 @@
 "A square picture works best." = "정사각형 이미지가 가장 좋아요.";
 "Shop header" = "상점 머리글";
 "Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "사진 메뉴의 ‘상점 머리글과 함께 보내기’는 가린 스크린샷 위에 상점 이름과 로고, 주문, 날짜가 담긴 띠를 붙여요.";
-"As typed" = "입력한 그대로";
-"Send in another language" = "다른 언어로 보내기";
-"Sent in %@" = "%@(으)로 보내요";
-"Language of the message" = "메시지 언어";

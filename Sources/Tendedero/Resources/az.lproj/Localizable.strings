@@ -364,6 +364,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Mesaj əlavə et…";
+"As typed" = "Yazıldığı kimi";
+"Send in another language" = "Başqa dildə göndər";
+"Sent in %@" = "%@ dilində göndərilir";
+"Language of the message" = "Mesajın dili";
 "Saved messages" = "Saxlanmış mesajlar";
 "Add Message" = "Mesaj əlavə et";
 "Here is the invoice for your order {order}." = "Budur, {order} sifarişinin fakturası.";
@@ -538,7 +542,3 @@
 "A square picture works best." = "Kvadrat şəkil ən yaxşısıdır.";
 "Shop header" = "Mağaza başlığı";
 "Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "Şəklin menyusundakı “Mağaza başlığı ilə göndər” örtülü ekran şəklinin üstünə mağazanın adı və loqosu, sifariş və gün olan zolaq qoyur.";
-"As typed" = "Yazıldığı kimi";
-"Send in another language" = "Başqa dildə göndər";
-"Sent in %@" = "%@ dilində göndərilir";
-"Language of the message" = "Mesajın dili";
