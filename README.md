@@ -231,8 +231,9 @@ everything in AI chats under Privacy, and whatever you send, copy or drag
 out while ChatGPT, Claude, Gemini or another AI chat is in front, as an app
 or a website, has every kind covered, checked or not; Copy Text,
 translations and the blanks of saved messages leave them all out too. It
-only ever covers more than you chose, and the line still shows your choice. Over an AI chat, the send button shows a small lock by
-the count meanwhile, and Sent in the History lists what was covered.
+only ever covers more than you chose, and the line still shows your choice.
+Over an AI chat, the send button shows a small lock by the count meanwhile,
+and Sent in the History lists what was covered.
 
 Hide Part opens wide: the picture on the left, as large as fits, and on the
 right everything to choose; drag a corner to make the window larger or
