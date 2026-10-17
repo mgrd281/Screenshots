@@ -506,3 +506,11 @@
 "Image" = "이미지";
 "Plain file names" = "간단한 파일 이름";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "이미지는 언제, 어디서, 무엇으로 만들었는지에 대한 정보 없이 새 파일로 나갑니다. 간단한 파일 이름을 켜면 찍은 시간 대신 ‘이미지’라는 이름도 붙습니다.";
+"Test on a Sample" = "샘플로 테스트";
+"Testing…" = "테스트 중…";
+"Test" = "테스트";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "위에서 체크한 항목으로 가상의 주문을 가려 각 종류가 무엇을 가리는지 보여 줘요. 이 샘플에만 해당해요. 실제 스크린샷은 다르게 읽힐 수 있어요.";
+"Covered on this sample: %@" = "이 샘플에서 가린 항목: %@";
+"Nothing checked was found on this sample." = "이 샘플에서는 체크한 항목을 찾지 못했어요.";
+"Checked, but not on this sample: %@" = "체크했지만 이 샘플에 없는 항목: %@";
+"Could not run the test." = "테스트를 실행할 수 없어요.";

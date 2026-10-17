@@ -6,6 +6,8 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Test on a Sample, under Privacy: a made-up order covered with what you
+  checked, to see what each kind hides.
 - Pictures leave as fresh files: what they show, without the notes a file
   carries on when, where and with what it was made, or where it was
   downloaded from. Plain file names, under Privacy, call them "Image" too.

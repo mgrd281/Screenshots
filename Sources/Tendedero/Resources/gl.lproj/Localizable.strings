@@ -506,3 +506,11 @@
 "Image" = "Imaxe";
 "Plain file names" = "Nomes de ficheiro simples";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "As imaxes saen como ficheiros novos, sen notas de cando, onde nin con que se fixeron. Con nomes simples chámanse ademais «Imaxe», non segundo cando se tomaron.";
+"Test on a Sample" = "Probar cun exemplo";
+"Testing…" = "Probando…";
+"Test" = "Proba";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "Tapa un pedido inventado co que está marcado arriba, para amosar o que oculta cada tipo. Vale só para este exemplo: unha captura real pode lerse doutro xeito.";
+"Covered on this sample: %@" = "Cuberto neste exemplo: %@";
+"Nothing checked was found on this sample." = "Non se atopou nada do marcado neste exemplo.";
+"Checked, but not on this sample: %@" = "Marcado, pero non neste exemplo: %@";
+"Could not run the test." = "Non se puido facer a proba.";

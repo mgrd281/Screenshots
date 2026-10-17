@@ -506,3 +506,11 @@
 "Image" = "Imagem";
 "Plain file names" = "Nomes de arquivo simples";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "As imagens saem como arquivos novos, sem notas sobre quando, onde ou com o que foram feitas. Com nomes simples, elas também se chamam “Imagem”, e não pelo momento em que foram tiradas.";
+"Test on a Sample" = "Testar em um exemplo";
+"Testing…" = "Testando…";
+"Test" = "Teste";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "Cobre um pedido inventado com o que está marcado acima, para mostrar o que cada tipo esconde. Vale só para este exemplo: uma captura real pode ser lida de outro jeito.";
+"Covered on this sample: %@" = "Coberto neste exemplo: %@";
+"Nothing checked was found on this sample." = "Nada do que está marcado foi encontrado neste exemplo.";
+"Checked, but not on this sample: %@" = "Marcado, mas não neste exemplo: %@";
+"Could not run the test." = "Não foi possível fazer o teste.";

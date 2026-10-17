@@ -506,3 +506,11 @@
 "Image" = "图像";
 "Plain file names" = "简单文件名";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "图片会作为新文件发出，不带何时、何地或用什么制作的信息。开启简单文件名后，它们还会被命名为“图像”，而不是拍摄时间。";
+"Test on a Sample" = "用示例测试";
+"Testing…" = "正在测试…";
+"Test" = "测试";
+"Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently." = "用上面勾选的内容遮盖一份虚构的订单，展示每一类会遮住什么。结果只针对这个示例：真实的截屏可能会被读成不同的样子。";
+"Covered on this sample: %@" = "此示例中已遮盖：%@";
+"Nothing checked was found on this sample." = "在此示例中没有找到勾选的内容。";
+"Checked, but not on this sample: %@" = "已勾选，但此示例中没有：%@";
+"Could not run the test." = "无法运行测试。";
