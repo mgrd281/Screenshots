@@ -500,3 +500,6 @@
 "Floating" = "フローティング";
 "Filmstrip" = "フィルムストリップ";
 "Fan" = "扇";
+"Cover everything in AI chats" = "AIチャットではすべて隠す";
+"Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "ChatGPT、Claude、Gemini などの AI チャットが前面にあるときに送信・コピーしたものでは、チェックの有無にかかわらず、上のすべての種類が隠されます。";
+"Everything is covered in AI chats" = "AIチャットではすべて隠されます";

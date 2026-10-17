@@ -36,7 +36,7 @@ struct GrabArea: NSViewRepresentable {
         view.url = item.url
         view.dragImage = item.thumb
         // With Hide private details on, a drag hands over the covered copy.
-        view.outgoingURL = { PrivateDetails.shareable(item.url) }
+        view.outgoingURL = { PrivateDetails.shareable(item.url, covering: CoveringProfile.detailsNow) }
         view.onClick = { line.copy(id) }
         view.onPick = { line.pick(id) }
         view.onSentByDrag = { line.sentByDrag(id) }

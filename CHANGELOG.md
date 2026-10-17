@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Cover everything in AI chats, under Privacy: whatever goes into ChatGPT,
+  Claude, Gemini or another AI chat has every kind covered, checked or not.
+  The send button over the chat shows a lock by the count meanwhile.
 - Save for Bookkeeping and Email to Bookkeeping…, in a photo's menu: a
   covered copy named for its day, order and total, with a line in
   Snapfly.csv, or in a new email to whoever keeps the books.

@@ -538,7 +538,10 @@ apps.
   parts, under the header "Hide private details" and over the footer that
   says what is checked is covered.
   Then the sixteen kinds in three sections named for their group: People;
-  Money, identity and health; Orders and documents. Then "Also hide", the
+  Money, identity and health; Orders and documents. Then a section of its
+  own with one toggle, Cover everything in AI chats (off at first), over a
+  footer naming ChatGPT, Claude and Gemini and saying every kind above is
+  covered there, checked or not. Then "Also hide", the
   owner's own rules: one row per rule with a 160 pt menu picker for its kind
   (Word, After a label, Pattern), a rounded field with a prompt for that
   kind, and a borderless `minus.circle` to remove it; an Add Rule button
@@ -618,6 +621,10 @@ apps.
     (26 pt, 7 pt corners, the one before it leaning behind), the count
     (13 pt semibold rounded, monospaced digits), and the paper plane in white
     on an accent circle of 28 pt, which turns into a checkmark once sent.
+  - Over an AI chat with Cover everything in AI chats on, a 9 pt bold
+    `lock.fill` in `.secondary` leads the count, 3 pt before it, fading in
+    over 0.2 s, in both looks. The tip adds "Everything is covered in AI
+    chats" on a second line, and VoiceOver hears it as the button's value.
   - A 16 pt transparent margin keeps its shadow; only the capsule takes the
     pointer.
   - Over chats it knows (`ChatLayouts.swift`), it sits at the measured spot

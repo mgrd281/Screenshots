@@ -107,7 +107,7 @@ enum PrivateDetails {
     /// Whether anything is covered in a screenshot: details chosen, or parts
     /// hidden by hand. A PDF of Snapfly's own was covered as it was made.
     static func covers(_ url: URL) -> Bool {
-        if isDocument(url) { return DocumentCover.protects(url) && (hidden || !handPages(url).isEmpty) }
+        if isDocument(url) { return coversDocument(url, details) }
         return hidden || !hand(url).isEmpty
     }
 
@@ -148,11 +148,29 @@ enum PrivateDetails {
     /// copy, and the key of the version each file last showed.
     private static var reports: [String: CoverReport] = [:]
     private static var shownKeys: [String: String] = [:]
+    /// Versions being read that the line is to show once they are: not the
+    /// copies read only for AI chats.
+    private static var waitingToShow: Set<String> = []
 
     /// What was covered in what the line shows for a screenshot or a PDF;
     /// nil until it has been read.
     static func report(for url: URL) -> CoverReport? {
         shownKeys[url.path].flatMap { reports[$0] }
+    }
+
+    /// What was covered in the copy with the given kinds covered, like the
+    /// one for AI chats; nil until it has been made.
+    static func report(for url: URL, covering chosen: Set<PrivateDetail>) -> CoverReport? {
+        if chosen == details { return report(for: url) }
+        if isDocument(url) { return documentKey(url, chosen).flatMap { reports[$0] } }
+        return key(for: url, chosen, hand(url), TimeStamp.mark(for: url), strips(url)).flatMap { reports[$0] }
+    }
+
+    /// What was covered in what went out with the given kinds covered, as
+    /// `CoverReport.keys`, for the send log.
+    static func coveredKeys(_ url: URL, covering chosen: Set<PrivateDetail>) -> [String] {
+        if chosen == details { return isCovered(url) ? report(for: url)?.keys ?? [] : [] }
+        return report(for: url, covering: chosen)?.keys ?? []
     }
 
     /// Whether what leaves the line has anything covered: something is to
@@ -165,8 +183,14 @@ enum PrivateDetails {
 
     /// What to hand out for a screenshot.
     static func shareable(_ url: URL) -> URL {
-        if isDocument(url) { return shareableDocument(url) }
-        let chosen = details
+        shareable(url, covering: details)
+    }
+
+    /// What to hand out with the given kinds covered: what Settings checks,
+    /// or more, like every kind for an AI chat. The line goes on showing
+    /// the photo as Settings covers it.
+    static func shareable(_ url: URL, covering chosen: Set<PrivateDetail>) -> URL {
+        if isDocument(url) { return shareableDocument(url, chosen) }
         let hand = Self.hand(url)
         let stamp = TimeStamp.mark(for: url)
         let clean = strips(url)
@@ -178,14 +202,16 @@ enum PrivateDetails {
         let done = made?.url ?? url
         results[key] = done
         reports[key] = made?.report ?? CoverReport()
-        shownKeys[url.path] = key
-        onRead?(url, done)
+        if chosen == details {
+            shownKeys[url.path] = key
+            onRead?(url, done)
+        }
         return done
     }
 
     /// What to show on the line for a screenshot already read.
     static func shown(_ url: URL) -> URL? {
-        if isDocument(url) { return documentKey(url).flatMap(cached) }
+        if isDocument(url) { return documentKey(url, details).flatMap(cached) }
         let chosen = details
         let hand = Self.hand(url)
         let stamp = TimeStamp.mark(for: url)
@@ -196,20 +222,36 @@ enum PrivateDetails {
         return done
     }
 
-    /// Reads a screenshot ahead of time, off the main thread.
+    /// Reads a screenshot ahead of time, off the main thread, and, with
+    /// Cover Everything in AI Chats on, its copy for them too.
     static func prepare(_ url: URL) {
-        if isDocument(url) { return prepareDocument(url) }
-        let chosen = details
+        prepare(url, covering: details, shows: true)
+        prepareForAIChats(url)
+    }
+
+    /// The copy for AI chats, read ahead of time while Cover Everything in
+    /// AI Chats is on, so sending into one stays instant.
+    static func prepareForAIChats(_ url: URL) {
+        guard CoveringProfile.coversAllInAIChats else { return }
+        prepare(url, covering: CoveringProfile.everything, shows: false)
+    }
+
+    /// - Parameter shows: whether the line shows this version once read.
+    private static func prepare(_ url: URL, covering chosen: Set<PrivateDetail>, shows: Bool) {
+        if isDocument(url) { return prepareDocument(url, chosen, shows: shows) }
         let hand = Self.hand(url)
         let stamp = TimeStamp.mark(for: url)
         let clean = strips(url)
         guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean, isImage(url),
               let key = key(for: url, chosen, hand, stamp, clean) else { return }
         if let done = cached(key) {
-            shownKeys[url.path] = key
-            onRead?(url, done)
+            if shows {
+                shownKeys[url.path] = key
+                onRead?(url, done)
+            }
             return
         }
+        if shows { waitingToShow.insert(key) }
         guard !inProgress.contains(key) else { return }
         inProgress.insert(key)
         DispatchQueue.global(qos: .utility).async {
@@ -220,46 +262,60 @@ enum PrivateDetails {
                 MainActor.assumeIsolated {
                     results[key] = done
                     reports[key] = report
-                    shownKeys[url.path] = key
                     inProgress.remove(key)
+                    guard waitingToShow.remove(key) != nil else { return }
+                    shownKeys[url.path] = key
                     onRead?(url, done)
                 }
             }
         }
     }
 
+    /// Whether a PDF is still being covered with the given kinds, so it
+    /// cannot leave yet.
+    static func stillCovering(_ url: URL, _ chosen: Set<PrivateDetail>) -> Bool {
+        guard isDocument(url), let key = documentKey(url, chosen) else { return false }
+        return inProgress.contains(key)
+    }
+
     // MARK: A PDF from outside
 
     /// Its protected copy, made now if it is not ready yet, so nothing
     /// private leaves uncovered. A PDF with nothing to cover goes as it is.
-    private static func shareableDocument(_ url: URL) -> URL {
-        guard covers(url), let key = documentKey(url) else { return url }
+    private static func shareableDocument(_ url: URL, _ chosen: Set<PrivateDetail>) -> URL {
+        guard coversDocument(url, chosen), let key = documentKey(url, chosen) else { return url }
         if let done = cached(key) { return done }
-        guard let made = DocumentCover.covering(url, details, hand: handPages(url)) else {
+        guard let made = DocumentCover.covering(url, chosen, hand: handPages(url)) else {
             log.error("Could not cover \(url.lastPathComponent, privacy: .public)")
             return url
         }
         results[key] = made.url
         reports[key] = made.report
-        shownKeys[url.path] = key
         inProgress.remove(key)
-        onRead?(url, made.url)
+        if chosen == details {
+            shownKeys[url.path] = key
+            onRead?(url, made.url)
+        }
         return made.url
     }
 
     /// Covers every page in the background as soon as it hangs, which for
     /// a long document takes a while; the line shows it is working.
-    private static func prepareDocument(_ url: URL) {
-        guard covers(url), let key = documentKey(url) else { return }
+    private static func prepareDocument(_ url: URL, _ chosen: Set<PrivateDetail>, shows: Bool) {
+        guard coversDocument(url, chosen), let key = documentKey(url, chosen) else { return }
         if let done = cached(key) {
-            shownKeys[url.path] = key
-            onRead?(url, done)
+            if shows {
+                shownKeys[url.path] = key
+                onRead?(url, done)
+            }
             return
+        }
+        if shows {
+            waitingToShow.insert(key)
+            onStart?(url)
         }
         guard !inProgress.contains(key) else { return }
         inProgress.insert(key)
-        onStart?(url)
-        let chosen = details
         let hand = handPages(url)
         DispatchQueue.global(qos: .userInitiated).async {
             let made = DocumentCover.covering(url, chosen, hand: hand)
@@ -269,6 +325,9 @@ enum PrivateDetails {
                     if let made {
                         results[key] = made.url
                         reports[key] = made.report
+                    }
+                    guard waitingToShow.remove(key) != nil else { return }
+                    if made != nil {
                         shownKeys[url.path] = key
                     } else {
                         Notice.show(L("Could not cover the private details in this PDF."))
@@ -279,11 +338,20 @@ enum PrivateDetails {
         }
     }
 
+    /// Whether anything is to be covered in a PDF brought in: kinds chosen,
+    /// or parts hidden by hand. Make PDF's own were covered as Settings
+    /// checks; more than that, like every kind for an AI chat, is covered
+    /// in them again.
+    private static func coversDocument(_ url: URL, _ chosen: Set<PrivateDetail>) -> Bool {
+        let protects = DocumentCover.protects(url) || (isDocument(url) && !chosen.isSubset(of: details))
+        return protects && (!chosen.isEmpty || !handPages(url).isEmpty)
+    }
+
     /// The file, when it last changed, what to cover and what was hidden by
     /// hand on each page.
-    private static func documentKey(_ url: URL) -> String? {
+    private static func documentKey(_ url: URL, _ chosen: Set<PrivateDetail>) -> String? {
         guard let date = modified(url) else { return nil }
-        let kinds = details.map(\.rawValue).sorted().joined(separator: ",")
+        let kinds = chosen.map(\.rawValue).sorted().joined(separator: ",")
         let pages = handPages(url).sorted { $0.key < $1.key }.map { page, boxes in
             "\(page):" + boxes.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
         }.joined(separator: "/")

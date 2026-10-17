@@ -226,6 +226,15 @@ covered, on its line or the line below; or, for whoever knows them, a
 pattern. They apply to everything that leaves the line, and to the copies
 saved from Finder.
 
+AI chats may keep what goes into them on their servers. Turn on Cover
+everything in AI chats under Privacy, and whatever you send, copy or drag
+out while ChatGPT, Claude, Gemini or another AI chat is in front, as an app
+or a website, has every kind covered, checked or not; Copy Text,
+translations and the blanks of saved messages leave them all out too. It
+only ever covers more than you chose, and the line still shows your choice.
+Over an AI chat, the send button shows a small lock by the count meanwhile,
+and Sent in the History lists what was covered.
+
 Hide Part opens wide: the picture on the left, as large as fits, and on the
 right everything to choose; drag a corner to make the window larger or
 smaller. There you can also say what to hide, like "everything but the amount
@@ -481,6 +490,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
+| `CoveringProfile.swift` | Cover everything in AI chats: which chats count, and what to cover for the app in front |
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |

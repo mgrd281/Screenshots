@@ -319,6 +319,19 @@ final class Preferences: ObservableObject {
         }
     }
 
+    /// Turned on, the photos hanging are read for AI chats at once, and the
+    /// send button over one says so.
+    var coversAllInAIChats: Bool {
+        get { CoveringProfile.coversAllInAIChats }
+        set {
+            change {
+                CoveringProfile.coversAllInAIChats = newValue
+                line.readPrivateDetails()
+                ChatButton.shared?.refresh()
+            }
+        }
+    }
+
     /// The owner's own rules, edited in place. They are saved a moment
     /// after the typing stops, since each change reads every photo again.
     @Published var rules = OwnRules.all
@@ -1194,6 +1207,12 @@ private struct PrivacyPane: View {
                         Toggle(detail.title, isOn: prefs.hides(detail))
                     }
                 }
+            }
+            Section {
+                Toggle(L("Cover everything in AI chats"), isOn: $prefs.coversAllInAIChats)
+            } footer: {
+                Text(L("Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not."))
+                    .foregroundStyle(.secondary)
             }
             Section {
                 ForEach($prefs.rules) { $rule in

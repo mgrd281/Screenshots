@@ -355,14 +355,16 @@ final class Line: ObservableObject {
     /// - Parameter caption: text to paste after the photos, like a
     ///   description in a chat.
     private func paste(_ photos: [Pegged], then caption: String? = nil) {
-        guard !photos.isEmpty, !stillCovering(photos) else { return }
-        copy(photos)
+        // Into an AI chat with Cover Everything there on, every kind.
+        let chosen = CoveringProfile.detailsNow
+        guard !photos.isEmpty, !stillCovering(photos, chosen) else { return }
+        copy(photos, covering: chosen)
         pickedIDs = []
         // Only when the paste will happen: a photo flying into a chat that
         // never gets it would say the opposite.
         let willPaste = Paste.willPaste
         if willPaste, let destination = SendLog.destination {
-            SendLog.note(photos.map(\.url), to: destination, message: caption)
+            SendLog.note(photos.map(\.url), to: destination, message: caption, covering: chosen)
         }
         let flight = willPaste ? onSend?(photos) ?? 0 : 0
         Paste.intoFrontApp(after: flight)
@@ -535,11 +537,15 @@ final class Line: ObservableObject {
     /// Each photo goes on the clipboard as an item of its own, as Finder
     /// copies several files, so apps paste them all, in the order they hang.
     private func copy(_ photos: [Pegged]) {
-        guard !stillCovering(photos) else { return }
+        copy(photos, covering: CoveringProfile.detailsNow)
+    }
+
+    private func copy(_ photos: [Pegged], covering chosen: Set<PrivateDetail>) {
+        guard !stillCovering(photos, chosen) else { return }
         let entries = photos.map { item -> NSPasteboardItem in
             let entry = NSPasteboardItem()
             // With Hide private details on, a copy with them covered.
-            let url = PrivateDetails.shareable(item.url)
+            let url = PrivateDetails.shareable(item.url, covering: chosen)
             // A recording or a PDF is copied as the file, which apps paste as
             // the video or the document.
             // A GIF keeps moving: it goes as itself, not as a still.
@@ -562,9 +568,11 @@ final class Line: ObservableObject {
     }
 
     /// A PDF still being covered cannot leave yet: a note says so, rather
-    /// than sending it half done or as it is.
-    private func stillCovering(_ photos: [Pegged]) -> Bool {
-        guard photos.contains(where: \.preparing) else { return false }
+    /// than sending it half done or as it is. Its copy for AI chats is
+    /// covered apart.
+    private func stillCovering(_ photos: [Pegged], _ chosen: Set<PrivateDetail>) -> Bool {
+        guard photos.contains(where: { $0.preparing || PrivateDetails.stillCovering($0.url, chosen) })
+        else { return false }
         Notice.show(L("Still covering the private details…"))
         return true
     }
@@ -589,7 +597,7 @@ final class Line: ObservableObject {
     func copyText(_ id: UUID) {
         guard let item = items.first(where: { $0.id == id }), item.isImage else { return }
         let url = item.url
-        let chosen = PrivateDetails.details
+        let chosen = CoveringProfile.detailsNow
         let hand = PrivateDetails.hand(url)
         DispatchQueue.global(qos: .userInitiated).async {
             let text = Finder.text(of: url, hiding: chosen, hand: hand)
@@ -852,7 +860,10 @@ final class Line: ObservableObject {
     private func cover(_ url: URL) {
         if PrivateDetails.alters(url) {
             PrivateDetails.prepare(url)
-        } else if items.contains(where: { $0.url == url && $0.altered }) {
+            return
+        }
+        PrivateDetails.prepareForAIChats(url)
+        if items.contains(where: { $0.url == url && $0.altered }) {
             show(url, for: url)
         }
     }

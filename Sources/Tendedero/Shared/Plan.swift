@@ -13,7 +13,8 @@ enum Plan {
         case sendLog
         /// The details of an order read off a screenshot, ready to copy.
         case orderCard
-        /// How much to cover, chosen for each chat or person sent to.
+        /// How much to cover, chosen for each chat or person sent to; to
+        /// begin with, everything in AI chats.
         case coveringProfiles
         /// Messages kept ready to go with the photos, their blanks filled in.
         case savedMessages

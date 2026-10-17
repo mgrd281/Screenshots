@@ -331,7 +331,9 @@ final class TextCardModel: ObservableObject {
             }
             return
         }
-        let chosen = PrivateDetails.details
+        // Its text can be sent into the chat in front: into an AI chat with
+        // Cover Everything there on, every kind is left out.
+        let chosen = CoveringProfile.detailsNow
         let hand = PrivateDetails.hand(url)
         Task { [weak self] in
             let reading = await Task.detached(priority: .userInitiated) {

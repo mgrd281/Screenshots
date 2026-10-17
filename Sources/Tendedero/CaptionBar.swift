@@ -213,7 +213,8 @@ private struct CaptionBarView: View {
             text = message.text
             return
         }
-        let covering = PrivateDetails.details
+        // Over an AI chat with Cover Everything there on, every kind's blank stays empty.
+        let covering = CoveringProfile.detailsNow
         Task {
             let fields = await Task.detached(priority: .userInitiated) { OrderCard.read(photo) }.value
             text = SavedMessages.fill(message.text, with: fields, covering: covering)
