@@ -928,6 +928,22 @@ system to a web page. The brief and direction contract are in
       screen starts it again.
     - On the paper beside it, a handstamp says "Screenshot taken" in the
       page's language (`.cap-stamp`, 26 px above it, turned 4°).
+  - **Eight ways to hang** (`section_styles`): three stamps on a stage over
+    Snapfly's Settings window on its Line pane, whose eight style tiles,
+    four to a row, set `data-style` on the section. Each style moves the
+    same three stamps (0.55 s, `--ease-out`) and shows what holds them:
+    the rope (swaying), the shelf, the island, the stack and its count, as
+    before; the **wire**, a 1.5 px straight line in `--rope` fading at both
+    ends, the stamps upright on their clips; **floating**, nothing behind
+    them, a deeper lift and a ±3 px drift (6 s); the **filmstrip**, `#161616`
+    with a 12 radius, a white hairline at 10% and rows of 9 × 6 px holes
+    (`#D2D2D2`, 17 px apart) 5 px inside its top and bottom edges; the
+    **fan**, the middle stamp highest and on top, the outer two 18 px lower
+    and turned 9° outwards (mirrored right to left). The tiles draw each
+    style small; for the wire, floating and the filmstrip their cards are
+    16 × 11, so the gaps between photos show. On phones the outer stamps
+    sit wider apart and the filmstrip spans 80%. Reduce Motion stops the
+    sway and the drift.
   - **Hide Part** (`section_say`): the editor's window as the app opens it,
     under the centred copy and 880 px wide at most. On the leading side the
     canvas (`--fill`, 24 px margin) with a bank transfer on it, under a

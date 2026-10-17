@@ -1184,11 +1184,22 @@ def section_menu(lang):
 def tile_art(style):
     """The little picture on each line-style tile, as in the app's settings."""
     card = lambda x, y, r=0: f'<rect x="{x}" y="{y}" width="20" height="14" rx="2.5" fill="#fff" transform="rotate({r} {x + 10} {y})"/>'
+    # A smaller card, for the styles that show the gaps between photos.
+    small = lambda x, y: f'<rect x="{x}" y="{y}" width="16" height="11" rx="2" fill="#fff"/>'
     body = {
         "clothesline": '<path d="M2 9 Q44 26 86 9" stroke="#4a3a4e" stroke-width="1.2" fill="none"/>' + card(16, 14, -5) + card(34, 18, 3) + card(54, 15, -2),
         "shelf": '<rect x="14" y="34" width="60" height="9" rx="4.5" fill="rgba(255,255,255,.55)"/>' + card(18, 20) + card(34, 20) + card(50, 20),
         "island": '<path d="M18 0h52v24a10 10 0 0 1-10 10H28a10 10 0 0 1-10-10Z" fill="#000"/>' + card(23, 10) + card(34, 10) + card(45, 10),
         "stack": card(58, 20, -8) + card(60, 21, 5) + card(61, 22) + '<circle cx="80" cy="18" r="5" fill="#FF3B30"/>',
+        "wire": '<path d="M0 11H88" stroke="#26262b" stroke-width=".9"/>'
+                + "".join(small(x, 13) + f'<rect x="{x + 7}" y="8" width="2" height="6" rx=".6" fill="#d4d7dd"/>' for x in (17, 36, 55)),
+        "floating": "".join(f'<rect x="{x + .8}" y="20.5" width="16" height="11" rx="2" fill="rgba(40,10,60,.28)"/>' + small(x, 18)
+                            for x in (17, 36, 55)),
+        "filmstrip": '<rect x="10" y="9" width="68" height="32" rx="3" fill="#161616"/>'
+                     + "".join(f'<rect x="{13 + i * 6.4:.1f}" y="{y}" width="3" height="2" rx=".5" fill="#d2d2d2"/>'
+                               for i in range(10) for y in (11, 37))
+                     + small(18, 19.5) + small(36, 19.5) + small(54, 19.5),
+        "fan": card(13, 17, 9) + card(54, 17, -9) + card(34, 12),
     }[style]
     return (f'<svg viewBox="0 0 88 56" aria-hidden="true" focusable="false">'
             f'<rect width="88" height="56" rx="6" fill="url(#tile-wall)"/>{body}</svg>')
@@ -1196,7 +1207,8 @@ def tile_art(style):
 
 def section_styles(lang):
     t = TEXT[lang]
-    styles = [("clothesline", "Clothesline"), ("shelf", "Glass shelf"), ("island", "Island"), ("stack", "Card stack")]
+    styles = [("clothesline", "Clothesline"), ("shelf", "Glass shelf"), ("island", "Island"), ("stack", "Card stack"),
+              ("wire", "Wire"), ("floating", "Floating"), ("filmstrip", "Filmstrip"), ("fan", "Fan")]
     tiles = "".join(
         f'<label class="tile"><input type="radio" name="line-style" value="{v}"{" checked" if v == "clothesline" else ""} data-caption="{esc(t["styles"][k])}">'
         f'<span class="tile-art">{tile_art(v)}</span><span class="tile-name">{esc(L(lang, k))}</span></label>'
@@ -1209,7 +1221,7 @@ def section_styles(lang):
     return f"""<section class="section styles" aria-labelledby="styles-h" data-style-stage data-style="clothesline">
   <div class="style-line" aria-hidden="true">
     {rope("style-rope")}
-    <span class="shelf"></span><span class="island"></span>
+    <span class="wire"></span><span class="shelf"></span><span class="island"></span><span class="filmstrip"></span>
     {cards}
     <span class="count">3</span>
   </div>
