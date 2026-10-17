@@ -288,10 +288,12 @@ final class ChatButton {
         // apart for a new chat, whose message box sits higher.
         let key: String
         let layout: ChatLayout?
+        let aiChat: Bool
         if let chat = Self.apps.first(where: { $0.bundleID == id }) {
             guard Self.inApps, chat.on else { return hide() }
             key = id
             layout = ChatLayouts.layout(forApp: id)
+            aiChat = CoveringProfile.isAIChat(app: id, host: nil)
         } else if Self.browsers[id] != nil {
             // Read at every tick: switching to another tab or site hides it
             // within a fifth of a second, and a chat just started moves it down.
@@ -299,9 +301,11 @@ final class ChatButton {
             guard let read, let host = read.host, let site = Self.site(for: host) else { return hide() }
             layout = ChatLayouts.layout(for: read)
             key = layout != nil && ChatLayouts.isNewChat(read) ? site + "#new" : site
+            aiChat = CoveringProfile.isAIChat(app: nil, host: host)
         } else {
             return hide()
         }
+        showsCoveringAll(aiChat && CoveringProfile.coversAllInAIChats)
         if fresh { fieldFrame = Self.messageBox(of: app.processIdentifier, in: window) }
         current = (key, window)
         place(over: window, app: key, layout: layout)
@@ -364,6 +368,14 @@ final class ChatButton {
         current = nil
         guard panel.isVisible else { return }
         panel.orderOut(nil)
+    }
+
+    /// Over an AI chat with Cover Everything there on, a lock by the count,
+    /// and a word on it for the tip and VoiceOver.
+    private func showsCoveringAll(_ all: Bool) {
+        guard model.coversAll != all else { return }
+        model.coversAll = all
+        panel.content.coversAll = all
     }
 
     // MARK: Where it sits
@@ -544,6 +556,8 @@ final class ChatButtonModel: ObservableObject {
     @Published var count = 0
     @Published var thumbs: [NSImage] = []
     @Published var sent = false
+    /// Over an AI chat, with every kind covered there.
+    @Published var coversAll = false
     @Published var look = ChatButton.look
     @Published var symbol = ChatButton.symbol
     @Published var tint = ChatButton.tint
@@ -678,6 +692,15 @@ private final class ChatButtonView: NSView {
     var onDragEnd: () -> Void = {}
     var onResize: (CGSize) -> Void = { _ in }
     private(set) var isDragging = false
+    /// Over an AI chat with every kind covered there: the tip says so, and
+    /// VoiceOver too.
+    var coversAll = false {
+        didSet {
+            let note = coversAll ? L("Everything is covered in AI chats") : nil
+            toolTip = ([L("Paste into the app in front")] + [note].compactMap { $0 }).joined(separator: "\n")
+            setAccessibilityValue(note)
+        }
+    }
     /// Held without moving: a press and hold rather than a click.
     private var hold: Timer?
     private var held = false
@@ -801,6 +824,7 @@ struct ChatButtonLabel: View {
         .onHover { hovering = $0 }
         .animation(Motion.spring(response: 0.3, damping: 0.8, reduced: reduceMotion), value: hovering)
         .animation(.easeOut(duration: 0.15), value: model.sent)
+        .animation(.easeOut(duration: 0.2), value: model.coversAll)
         .accessibilityHidden(true)
     }
 
@@ -848,11 +872,20 @@ struct ChatButtonLabel: View {
         .controlGlass(capsule: true)
     }
 
+    /// The count, led by a lock over an AI chat where every kind is covered.
     private var count: some View {
-        Text(verbatim: "\(model.count)")
-            .font(.system(size: 13, weight: .semibold, design: .rounded))
-            .monospacedDigit()
-            .foregroundStyle(.primary)
+        HStack(spacing: 3) {
+            if model.coversAll {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.secondary)
+                    .transition(.opacity)
+            }
+            Text(verbatim: "\(model.count)")
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(.primary)
+        }
     }
 
     private func glyph(size: CGFloat) -> some View {

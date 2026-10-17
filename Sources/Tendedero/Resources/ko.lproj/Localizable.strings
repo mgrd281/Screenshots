@@ -467,3 +467,6 @@
 "Floating" = "떠 있는";
 "Filmstrip" = "필름 스트립";
 "Fan" = "부채꼴";
+"Cover everything in AI chats" = "AI 채팅에서는 모두 가리기";
+"Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "ChatGPT, Claude, Gemini 같은 AI 채팅이 앞에 있을 때 보내거나 복사하는 것에서는 체크 여부와 관계없이 위의 모든 종류가 가려집니다.";
+"Everything is covered in AI chats" = "AI 채팅에서는 모두 가려집니다";

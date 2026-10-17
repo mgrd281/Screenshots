@@ -60,13 +60,15 @@ enum SendLog {
     }
 
     /// Photos just sent into a chat, noted while the History is on.
-    static func note(_ urls: [URL], to destination: String, message: String?) {
+    /// - Parameter chosen: the kinds covered in what went, more than Settings
+    ///   checks in an AI chat with Cover Everything on.
+    static func note(_ urls: [URL], to destination: String, message: String?,
+                     covering chosen: Set<PrivateDetail> = PrivateDetails.details) {
         guard History.days != nil, !urls.isEmpty else { return }
         let now = Date()
         let sent = urls.map { url in
             Sent(date: now, name: url.lastPathComponent, to: destination,
-                 covered: PrivateDetails.isCovered(url) ? PrivateDetails.report(for: url)?.keys ?? [] : [],
-                 message: message)
+                 covered: PrivateDetails.coveredKeys(url, covering: chosen), message: message)
         }
         entries.insert(contentsOf: sent, at: 0)
     }

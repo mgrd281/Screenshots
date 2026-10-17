@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Cover everything in AI chats, under Privacy: whatever goes into ChatGPT,
+  Claude, Gemini or another AI chat has every kind covered, checked or not.
+  The send button over the chat shows a lock by the count meanwhile.
 - Orders, in the History window: photos with an order, invoice or customer
   number together under that number.
 - Sent, in the History window: what went into which chat, when, with what

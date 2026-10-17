@@ -467,3 +467,6 @@
 "Floating" = "悬浮";
 "Filmstrip" = "胶片";
 "Fan" = "扇形";
+"Cover everything in AI chats" = "在 AI 聊天中遮住全部";
+"Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "当 ChatGPT、Claude、Gemini 或其他 AI 聊天在前台时，发送或拷贝的内容都会遮住上面的每一类，无论是否勾选。";
+"Everything is covered in AI chats" = "在 AI 聊天中会遮住全部";

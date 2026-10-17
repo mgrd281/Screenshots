@@ -467,3 +467,6 @@
 "Floating" = "Yüzen";
 "Filmstrip" = "Film şeridi";
 "Fan" = "Yelpaze";
+"Cover everything in AI chats" = "Yapay zekâ sohbetlerinde her şeyi kapat";
+"Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "ChatGPT, Claude, Gemini veya başka bir yapay zekâ sohbeti öndeyken gönderdiğin ya da kopyaladığın her şeyde, işaretli olsun olmasın yukarıdaki her tür kapatılır.";
+"Everything is covered in AI chats" = "Yapay zekâ sohbetlerinde her şey kapatılır";
