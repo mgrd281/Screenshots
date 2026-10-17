@@ -299,6 +299,8 @@ design with monospaced digits.
   - Each opens under the photo it belongs to, or under the line.
 - **Settings** is a sidebar window, at least 640 × 440, using grouped
   `Form`s. Group rows into sections with headers; no free-floating controls.
+  - It opens at 760 × 560, can be resized from its edges and zoomed with
+    the green button, and remembers its size and place.
   - The sidebar names each pane after a 24 pt tile, rounded 6 (the keycap
     radius), as System Settings does, but all six tiles are ink
     (`InkTile.fill`, the cover ink) with the symbol knocked out in white
