@@ -347,9 +347,9 @@ For every future implementation:
 |---|---|---|
 | CSS, Web Animations API, View Transitions | **Used** | Everything the site does today runs on them, with no bytes added and nothing loaded from another host. |
 | Motion (motion.dev) | Future option, not a dependency | For a gesture CSS can't do well (a throw with inertia, a spring that follows the pointer). Then the vanilla `animate()` only, saved into `website/static` (the policy allows nothing from another host), and never alongside GSAP. The agent has the Motion skill and docs server for this. |
-| GSAP | Future option, not a dependency | For a long, scrubbed, many-track timeline. Same rules as Motion; only one of the two, ever. |
-| Rive | Not adopted | Adds a WebAssembly runtime for state-machine illustrations. Only for an interactive illustration SVG and CSS cannot do. |
-| dotLottie | Not adopted | There are no Lottie assets; inline SVG and CSS cover icons and success marks. Only if a designer delivers Lottie files worth the player. |
+| GSAP | Installed in `website/vendor/gsap`, used by no page | For a long, scrubbed, many-track timeline. Same rules as Motion; only one of the two, ever. |
+| Rive | Installed in `website/vendor/rive`, used by no page | Adds a WebAssembly runtime for state-machine illustrations. Only for an interactive illustration SVG and CSS cannot do. |
+| dotLottie | Installed in `website/vendor/dotlottie`, used by no page | There are no Lottie assets; inline SVG and CSS cover icons and success marks. Only if a designer delivers Lottie files worth the player. |
 | Remotion | For videos only, in its own workspace | Never in the website. See below. |
 
 ## Creative production

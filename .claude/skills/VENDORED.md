@@ -2,7 +2,8 @@
 
 These are tools for the coding agent, not parts of Snapfly. None of them is a
 dependency of the app or the website: nothing here is built, shipped or loaded
-by a visitor.
+by a visitor. The website libraries in `website/vendor/` are the same until a
+page adopts one.
 
 - **Skills.** Third-party Claude Code skills live in this folder. Each was
   copied from its official source and read before it was added. Claude Code
@@ -30,6 +31,8 @@ by a visitor.
 | `remotion-best-practices/` | https://github.com/remotion-dev/skills, `skills/remotion-best-practices` | 4.0.535, commit 7ba4dcf | none stated (no license file or field) |
 | `brand-context/`, `brand-identity/`, `brand-guidelines/`, `brand-audit/`, `brand-voice/` | https://github.com/arnabbagxd/Brand-building-skills | commit 4a0a8b5 | MIT (`LICENSE` in each) |
 | `canvas-design/` | https://github.com/anthropics/skills, `skills/canvas-design` | commit dbd4588 | Apache 2.0 (`canvas-design/LICENSE.txt`) |
+| shadcn MCP server (`.mcp.json`, `.claude/mcp/shadcn-mcp.sh`) | https://github.com/shadcn-ui/ui, npm `shadcn` | 4.21.1, pinned | MIT |
+| `website/vendor/` (GSAP, Rive, dotLottie, Floating UI, daisyUI, Lucide, Phosphor) | npm, see `website/vendor/README.md` | pinned there | see `website/vendor/README.md` |
 
 ## Impeccable
 
@@ -242,6 +245,29 @@ by a visitor.
   (`BRAND_IDENTITY.md`, `BRAND_GUIDELINES.md`), not on a new style of its
   own. Nothing it makes is committed unless the owner wants it.
 
+## Website libraries and the shadcn MCP server
+
+- **Asked for by the owner on October 17, 2026,** after an earlier review
+  had left them out, to have them at hand for the website's design.
+- **Installed, unused:** GSAP, Rive, dotLottie, Floating UI, daisyUI, and
+  the Lucide and Phosphor icons, in `website/vendor/`. No page loads them,
+  and `build.py` never publishes that folder, so visitors download nothing
+  new. Versions, licenses, the two small changes made, the browser check and
+  how to adopt one are in `website/vendor/README.md`.
+- **shadcn/ui** is React and Tailwind source, so it is not copied in. Its
+  MCP server is, scope project, type `stdio`: `.claude/mcp/shadcn-mcp.sh`
+  runs `npx -y shadcn@4.21.1 mcp` at that pinned version, with install
+  scripts off. Its seven tools list, search and show the components and
+  examples of shadcn/ui's registry, as references to rebuild in the site's
+  own HTML and CSS.
+  - **Checked on October 17, 2026,** the way Claude Code drives it
+    (initialize, list tools, call one): a search for "dialog" in `@shadcn`
+    found nine items.
+  - Its `get_add_command_for_items` would add React components to a
+    project; don't run what it suggests here.
+- **Not installed:** any of them through a CDN, `npx shadcn init`, or
+  Tailwind.
+
 ## Evaluated, not installed
 
 - **AgentsORG DESIGN (`.design`).** Its skill drives a `.design` YAML file
@@ -252,25 +278,6 @@ by a visitor.
   neither the skill nor a `.design` file was added. What it would offer
   (tokens, motion tokens, decisions, voice) is in `DESIGN.md`,
   `MOTION_SYSTEM.md` and `BRAND_IDENTITY.md`.
-- **GSAP, Rive, dotLottie.** Runtime libraries for the website, not tools
-  for the agent. None has a job that CSS, SVG and the Web Animations API
-  don't already do; each would add weight a visitor downloads. They are
-  documented as future options in `MOTION_SYSTEM.md`. Asked for again on
-  October 17, 2026; there is still no job for them.
-- **shadcn/ui and daisyUI** (reviewed October 17, 2026). Component kits for
-  websites built with React and Tailwind CSS. shadcn/ui copies React
-  components into a project, and its MCP server (`npx shadcn mcp`) does the
-  same from a registry. daisyUI is a Tailwind plugin. The website is plain
-  HTML and CSS written by `build.py`, with no React, Tailwind or Node build
-  step, and the app is SwiftUI. Either kit would mean rebuilding the site,
-  and its components would replace the three looks the owner chose.
-- **Lucide and Phosphor** (reviewed October 17, 2026). Icon sets. The app
-  uses SF Symbols, and the website draws its own icons in `build.py` to
-  match them ("Iconography" in `BRAND_IDENTITY.md`). A second family would
-  break that match.
-- **Floating UI** (reviewed October 17, 2026). A script that places menus
-  and tooltips next to what opens them. The website's menus already open
-  in place with CSS alone, so it would be weight with no job.
 - **Vercel's React, deploy and optimisation skills.** As before, under "Web
   Interface Guidelines".
 

@@ -130,7 +130,9 @@ on the website only; the app has no theme setting and follows macOS.
   `magnifyingglass`, `timer`, `xmark`, `play.fill` and so on.
 - **On the website,** icons are inline SVG drawn in `website/build.py` to
   match SF Symbols' proportions: one stroke weight, round caps, no fills
-  where the symbol has none.
+  where the symbol has none. Lucide and Phosphor sit in `website/vendor/`
+  to draw from; an icon taken from them is copied into `build.py` and held
+  to the same rule.
 - **One icon, one meaning.** The paper plane always means "send". The lock
   always means "private details covered".
 - **No emoji as icons,** and no decorative icons without a job.
