@@ -73,8 +73,13 @@ enum DocumentCover {
     /// read, or a page could not be drawn: then nothing is handed out
     /// half done.
     /// - Parameter hand: the parts hidden by hand, by page number from 1.
-    static func copy(of url: URL, _ chosen: Set<PrivateDetail>,
-                     hand: [Int: [CGRect]]) -> (url: URL, report: CoverReport)? {
+    static func copy(of url: URL, _ chosen: Set<PrivateDetail>, hand: [Int: [CGRect]]) -> URL? {
+        covering(url, chosen, hand: hand)?.url
+    }
+
+    /// The same copy, with what was covered on its pages.
+    static func covering(_ url: URL, _ chosen: Set<PrivateDetail>,
+                         hand: [Int: [CGRect]]) -> (url: URL, report: CoverReport)? {
         guard let target = Cover.newCopy(of: url, ext: "pdf"),
               let report = write(url, chosen, hand: hand, to: target) else { return nil }
         return (target, report)

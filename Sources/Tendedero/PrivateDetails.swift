@@ -235,7 +235,7 @@ enum PrivateDetails {
     private static func shareableDocument(_ url: URL) -> URL {
         guard covers(url), let key = documentKey(url) else { return url }
         if let done = cached(key) { return done }
-        guard let made = DocumentCover.copy(of: url, details, hand: handPages(url)) else {
+        guard let made = DocumentCover.covering(url, details, hand: handPages(url)) else {
             log.error("Could not cover \(url.lastPathComponent, privacy: .public)")
             return url
         }
@@ -262,7 +262,7 @@ enum PrivateDetails {
         let chosen = details
         let hand = handPages(url)
         DispatchQueue.global(qos: .userInitiated).async {
-            let made = DocumentCover.copy(of: url, chosen, hand: hand)
+            let made = DocumentCover.covering(url, chosen, hand: hand)
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     inProgress.remove(key)
