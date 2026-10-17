@@ -530,3 +530,14 @@
 "Nothing to cover in %@. Take a look." = "%@ में ढकने को कुछ नहीं मिला। एक बार देख लें।";
 "Could not cover %@." = "%@ को ढका नहीं जा सका।";
 "Watched folder" = "देखा जा रहा फ़ोल्डर";
+"Send with Shop Header" = "दुकान के शीर्ष के साथ भेजें";
+"Add your shop's name or logo under Line in Settings." = "सेटिंग्स में “रस्सी” के नीचे अपनी दुकान का नाम या लोगो जोड़ें।";
+"Adding the shop header…" = "दुकान का शीर्ष जोड़ा जा रहा है…";
+"Could not add the shop header." = "दुकान का शीर्ष नहीं जोड़ा जा सका।";
+"Choose your shop's logo." = "अपनी दुकान का लोगो चुनें।";
+"Shop name" = "दुकान का नाम";
+"Your shop's name" = "आपकी दुकान का नाम";
+"Logo" = "लोगो";
+"A square picture works best." = "वर्गाकार चित्र सबसे अच्छा रहता है।";
+"Shop header" = "दुकान का शीर्ष";
+"Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "फ़ोटो के मेनू में “दुकान के शीर्ष के साथ भेजें” ढके हुए स्क्रीनशॉट के ऊपर आपकी दुकान के नाम और लोगो, ऑर्डर और दिन वाली पट्टी लगाता है।";

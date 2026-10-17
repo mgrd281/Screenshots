@@ -528,3 +528,14 @@
 "Nothing to cover in %@. Take a look." = "In %@ gab es nichts zu verdecken. Schau es dir an.";
 "Could not cover %@." = "%@ konnte nicht verdeckt werden.";
 "Watched folder" = "Beobachteter Ordner";
+"Send with Shop Header" = "Mit Shop-Kopf senden";
+"Add your shop's name or logo under Line in Settings." = "Füge in den Einstellungen unter „Leine“ den Namen oder das Logo deines Shops hinzu.";
+"Adding the shop header…" = "Shop-Kopf wird hinzugefügt …";
+"Could not add the shop header." = "Der Shop-Kopf konnte nicht hinzugefügt werden.";
+"Choose your shop's logo." = "Wähle das Logo deines Shops.";
+"Shop name" = "Shopname";
+"Your shop's name" = "Name deines Shops";
+"Logo" = "Logo";
+"A square picture works best." = "Ein quadratisches Bild passt am besten.";
+"Shop header" = "Shop-Kopf";
+"Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "„Mit Shop-Kopf senden“ im Menü eines Fotos setzt einen Streifen mit dem Namen und Logo deines Shops, der Bestellung und dem Tag über das verdeckte Bildschirmfoto.";

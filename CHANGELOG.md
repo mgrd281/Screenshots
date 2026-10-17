@@ -9,6 +9,9 @@ keeps a download of each version.
 - Cover what lands in a folder, under Privacy: every picture or PDF that
   lands in a folder you choose gets a covered copy in another, in the
   background, with one note when a run is done.
+- Send with Shop Header, in a photo's menu: the covered screenshot goes
+  under a band with your shop's name and logo, the order and the day. Set
+  them under Line in Settings.
 - Monthly pack, under Bookkeeping in Settings: a month's receipts in one
   PDF for the tax advisor, a page listing them with the sum of the totals,
   then each receipt on a page of its own.
