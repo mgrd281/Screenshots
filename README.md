@@ -31,6 +31,12 @@
 Every screenshot you take hangs on a line just above your screen.
 Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 
+During a call, in Zoom, Teams, FaceTime or the browser, the line stays up
+unless you bring it down with the shortcut or the menu, the send button
+over chats stays away, and nothing of Snapfly shows in what you share.
+Snapfly only asks the Mac whether the microphone is in use; it hears
+nothing. Not during a call, in Settings under Line, turns this off.
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/demo-dark.gif">
   <img src="docs/images/demo-light.gif" alt="The pointer rests against the top edge, the line slides down with three screenshots swinging gently, a click copies one, and the line tucks away when the pointer leaves.">
@@ -62,6 +68,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
 | Click ChatGPT or Claude beside the paper plane | Send it, or the photos picked with it, into ChatGPT or Claude: the app comes to the front with its chat, or opens on a new one, and they are pasted in; with the website open in the browser in front, they go there. The icons are the apps' own and show while the apps are on your Mac; without them, Send to ChatGPT and Send to Claude in a photo's menu open the website instead. |
+| Right-click ChatGPT or Claude beside the paper plane | Ask a question with it: the photo goes into the chat with the question after it, like "Summarize this in a few lines". Ask ChatGPT and Ask Claude in a photo's menu do the same. The questions are yours to write in Settings, under Line. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
 | Right-click, then Keep on Top | Float it over every app in a small window of its own, to read from while you write in a chat. Drag it anywhere, resize it at its edges, and close it with its cross. Up to three float at once. |
@@ -428,8 +435,10 @@ float over your screen are made of Liquid Glass.
 
 Whatever you send into a chat, with a paper plane, ⌃⌥V or a drag, leaves
 the line as it lands there, so the line only holds what is still to send.
-Pinned photos stay. Rather keep them? Turn off Take photos down once sent
-in Settings.
+Pinned photos stay. As they leave, a note above the Dock says where they
+went, for a few seconds: "Sent to WhatsApp". Wrong chat? A click on the
+note hangs them on the line again. Rather keep them on the line? Turn off
+Take photos down once sent in Settings.
 
 A photo that says what one sent lately said gets a paper plane after its
 lock, and its menu says where that went and when, so the same invoice isn't
@@ -444,6 +453,14 @@ send straight into the app, which comes to the front with the chat it
 shows, or opens on a new one; the photos are pasted in once it is ready,
 covered as in any AI chat, after the check before sending. Turn the icons
 off with ChatGPT and Claude on photos, under Line.
+
+Something to ask about it? Right-click ChatGPT or Claude on the photo, or
+choose Ask ChatGPT or Ask Claude in its menu, and the photo goes with a
+question after it, like "Summarize this in a few lines" or "What should I
+reply to this?"; the chat answers in the language you ask in. The five
+questions that come with Snapfly are yours to change under Questions for
+ChatGPT and Claude in Settings, under Line. Nothing is sent until you
+press Return in the chat.
 
 <br>
 
@@ -616,6 +633,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `LineTag.swift` | The tag at the end of the line: moving it, combining, sending and taking everything down |
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `AIChat.swift` | ChatGPT and Claude beside the paper plane: their app or website, opened on a chat and waited for |
+| `Shared/AIQuestions.swift` | The questions a photo goes into ChatGPT or Claude with: the standard five, and the owner's own from Settings |
+| `Calls.swift` | Not during a call: whether the microphone is in use, and Snapfly's windows kept out of a shared screen while it is |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
 | `FolderCover.swift` | Cover a folder: watches one folder and saves covered copies of what lands there in another |

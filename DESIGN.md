@@ -453,6 +453,15 @@ apps.
     capsule; else in a column above the paper plane, clear of the pick
     circle; else not at all, and the photo's menu has Send to ChatGPT and
     Send to Claude. Not on recordings, which the chats don't take.
+    - A right-click on one of them opens the questions from Settings › Line
+      › Questions for ChatGPT and Claude: Ask ChatGPT as a disabled header
+      over a separator, then one item per question. A click sends the photo
+      as the icon does and pastes the question after it; nothing is sent
+      until Return is pressed in the chat. The photo's menu has the same
+      under Ask ChatGPT ▸ and Ask Claude ▸, after Send to ChatGPT and Send
+      to Claude, with `questionmark.bubble` from macOS 26. The icon's tip
+      then reads "Send to ChatGPT. Right-click to ask a question." With no
+      question written, a right-click opens the photo's own menu.
   - Each draws in SwiftUI and is hit-tested in `GrabView`, mirrored for
     right to left as SwiftUI draws leading and trailing.
 
@@ -827,6 +836,17 @@ apps.
     hour and minute, monospaced digits), Photo, Sent to, Covered (the kinds'
     titles in `.secondary`) and Message. Its context menu has Remove from
     History. Export… opens a save panel for "Sent with Snapfly.csv".
+- **Not during a call** (`Calls.swift`). Zoom, Teams, FaceTime and a call
+  in the browser all open the microphone, so the Mac's default input device
+  being in use says a call is on, whatever the app; Snapfly hears nothing.
+  While it lasts, with Not during a call on (Settings › Line › Bring the
+  line down, on at first): the line comes down only for the shortcut or the
+  menu, not for a new screenshot or the pointer in the menu bar, and tucks
+  away as the call begins unless it was opened on purpose; the chat button
+  stays away; and every panel and titled window of Snapfly's has
+  `sharingType = .none`, so a shared screen or a recording by another app
+  shows none of them. Menus and the menu bar item are the system's and
+  stay as they are. Off, calls change nothing.
 - **Chat button** (`ChatButton.swift`), the one control that floats over
   another app's window. It shows only while photos hang and a chat app or a
   browser is in front, and it sits just above the chat's own send button.
@@ -880,6 +900,12 @@ apps.
     field with an example as its prompt and a borderless `minus.circle`;
     Add Message under them; a footer naming the blanks. Saved 0.8 s after
     the typing stops, like the owner's rules.
+  - **Settings › Line › Questions for ChatGPT and Claude**: the same rows,
+    the field prompted with the first standard question, under them Add
+    Question and, once the questions were changed, Standard Questions,
+    which puts the five back; a footer saying where they are offered. Saved
+    like the messages. The standard five are localized, so a chat answers
+    in the user's language.
   - Hover scales it to 1.04 through `Motion.spring`, and it fades in over
     0.15 s.
   - **Settings › Line › Send button over chats** chooses:
@@ -989,6 +1015,13 @@ apps.
       the file in Finder. Done in Draw on Photo and in Hide Part says the
       edit is kept with the photo and goes out with it, while the file in
       its folder stays as it is.
+    - **Sent, and a way back** (`Line.leftNote`): once sent photos leave
+      the line, a done note names where they went, "Sent to WhatsApp. Click
+      to put it back on the line.", with the count first for several and
+      without a place after a drag, for 5 s. A click hangs them again as
+      the newest, takes them out of the History, and brings the line down
+      as for files brought on purpose. The copies already in the chat stay
+      there; only the line takes the photos back.
   - **Notes, not beeps.** A failure the user would otherwise have to guess
     at gets a note. A beep is kept only for a key that does nothing where
     the keyboard is taken (the capture screens, the shortcut recorder,

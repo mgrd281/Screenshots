@@ -145,6 +145,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         line.onFall = { [weak self] item in self?.fall(item) }
         line.onSend = { [weak self] photos in self?.send(photos) ?? 0 }
+        line.onPutBack = { [weak self] in self?.putBack() }
+        Calls.shared.onChange = { [weak self] in self?.callChanged() }
+        Calls.shared.start()
         line.frameOfPhoto = { [weak self] id in self?.cardFrame(for: id) }
         line.onSearch = { [weak self] in self?.openSearch() }
 
@@ -430,7 +433,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         updateCapacity()
         wanted = true
         refresh()
-        if Self.peeksAtNew { reveal(peekFor: 2.5) }
+        // Not during a call: what hangs there is for no shared screen.
+        if Self.peeksAtNew && !Calls.shared.keepingAway { reveal(peekFor: 2.5) }
+    }
+
+    /// Photos put back from the note after a send: the line comes down to
+    /// show them, as it does for files brought on purpose.
+    private func putBack() {
+        comeDown(on: nil)
+        reveal(pinned: true)
+    }
+
+    /// A call begins: the line tucks away, unless it was opened on purpose,
+    /// and the send button over chats goes. It ends: the button comes back.
+    private func callChanged() {
+        if Calls.shared.keepingAway, isRevealed, !pinned { setRevealed(false) }
+        chatButton?.refresh()
     }
 
     // MARK: Photos and PDFs from anywhere
@@ -866,8 +884,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             // Resting in the menu bar brings the line down on that screen.
             // Pushing against the top edge is part of it, and it also works
             // when another display sits above and the pointer never stops.
-            if Self.opensFromMenuBar, let screen = screenUnderPointer, inMenuBar, !menuBarSuppressed,
-               !FullScreen.blocksLine(on: screen) {
+            if Self.opensFromMenuBar, !Calls.shared.keepingAway, let screen = screenUnderPointer, inMenuBar,
+               !menuBarSuppressed, !FullScreen.blocksLine(on: screen) {
                 let since = hotZoneSince ?? now
                 hotZoneSince = since
                 if now.timeIntervalSince(since) >= Self.revealDelay {

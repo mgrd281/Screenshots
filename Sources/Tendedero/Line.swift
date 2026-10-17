@@ -386,7 +386,9 @@ final class Line: ObservableObject {
     /// chat. Its app comes to the front, or its website opens, on the chat
     /// open there or a new one, and they are pasted in once it is ready.
     /// Recordings stay behind: the chats don't take them.
-    func send(_ id: UUID, to chat: AIChat) {
+    /// - Parameter question: one of the questions from Settings, pasted into
+    ///   the message box after the photos, to send with them.
+    func send(_ id: UUID, to chat: AIChat, asking question: String? = nil) {
         let photos = pickedIDs.contains(id)
             ? items.filter { pickedIDs.contains($0.id) && !$0.falling && AIChat.takes($0) }
             : items.filter { $0.id == id && !$0.falling && AIChat.takes($0) }
@@ -395,7 +397,7 @@ final class Line: ObservableObject {
                                              coversAll: CoveringProfile.coversAllInAIChats)
         guard !photos.isEmpty, !stillCovering(photos, chosen) else { return }
         let go = { [weak self] in
-            chat.open { self?.deliver(photos, then: nil, replacing: [:], covering: chosen) }
+            chat.open { self?.deliver(photos, then: question, replacing: [:], covering: chosen) }
         }
         // The card first, as for any AI chat, before the chat opens.
         guard let reason = SendCheck.reason(SendCheck.when, app: chat.appID, host: chat.hosts.first, inBrowser: false,
@@ -464,12 +466,13 @@ final class Line: ObservableObject {
         // Only when the paste will happen: a photo flying into a chat that
         // never gets it would say the opposite.
         let willPaste = Paste.willPaste
-        if willPaste, let destination = SendLog.destination {
+        let destination = willPaste ? SendLog.destination : nil
+        if let destination {
             SendLog.note(photos.map(\.url), to: destination, message: caption, covering: chosen)
         }
         let flight = willPaste ? onSend?(photos) ?? 0 : 0
         Paste.intoFrontApp(after: flight)
-        if willPaste { takeDown(sent: photos, after: flight) }
+        if willPaste { takeDown(sent: photos, after: flight, to: destination) }
         // Once the app has taken the photos, the clipboard turns to the text.
         guard let caption, willPaste else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + flight + 0.5) {
@@ -521,7 +524,8 @@ final class Line: ObservableObject {
 
     /// Sent into a chat: the photos leave the line as their copies land in
     /// it, but for the ones pinned.
-    private func takeDown(sent photos: [Pegged], after flight: TimeInterval) {
+    /// - Parameter destination: where they went, for the note that follows.
+    private func takeDown(sent photos: [Pegged], after flight: TimeInterval, to destination: String?) {
         guard Self.takesDownSent else { return }
         let ids = photos.filter { !$0.pinned }.map(\.id)
         // Their cards step aside while the copies fly.
@@ -530,7 +534,8 @@ final class Line: ObservableObject {
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + flight + 0.2) { [weak self] in
             MainActor.assumeIsolated {
-                for id in ids { self?.leave(id) }
+                guard let self else { return }
+                self.sayLeft(ids.compactMap { self.leave($0) }, to: destination)
             }
         }
     }
@@ -539,16 +544,54 @@ final class Line: ObservableObject {
     func sentByDrag(_ id: UUID) {
         guard Self.takesDownSent, let item = items.first(where: { $0.id == id && !$0.falling }),
               !item.pinned else { return }
-        leave(id)
+        if let url = leave(id) { sayLeft([url], to: nil) }
     }
 
     /// Off the line without falling. A file from Snapfly's folder goes the
     /// way of its corner cross, to the Trash, but a minute later, so the
-    /// chat has surely read it by then.
-    private func leave(_ id: UUID) {
-        guard let item = items.first(where: { $0.id == id && !$0.falling }) else { return }
+    /// chat has surely read it by then. Returns the file that left.
+    @discardableResult
+    private func leave(_ id: UUID) -> URL? {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }) else { return nil }
         if isInInbox(id) { trashLater(item.url) } else { History.keep(item.url, owned: false) }
         drop(id, quietly: true, falls: false)
+        return item.url
+    }
+
+    /// Sent photos have left the line: a note says where they went, for a
+    /// moment, and a click on it hangs them again, in case they went into
+    /// the wrong chat. What went is still in the chat; the line only
+    /// takes the photos back.
+    private func sayLeft(_ urls: [URL], to destination: String?) {
+        guard !urls.isEmpty else { return }
+        Notice.show(Self.leftNote(count: urls.count, to: destination), done: true, lasting: 5) { [weak self] in
+            self?.putBack(urls)
+        }
+    }
+
+    /// "Sent to WhatsApp. Click to put it back on the line."
+    nonisolated static func leftNote(count: Int, to destination: String?) -> String {
+        switch (count, destination) {
+        case (1, let to?): String(format: L("Sent to %@. Click to put it back on the line."), to)
+        case (1, nil): L("Sent. Click to put it back on the line.")
+        case (_, let to?): String(format: L("%1$d sent to %2$@. Click to put them back on the line."), count, to)
+        case (_, nil): String(format: L("%d sent. Click to put them back on the line."), count)
+        }
+    }
+
+    /// The line comes down to show photos put back.
+    var onPutBack: (() -> Void)?
+
+    /// Back on the line as the newest, and out of the History again. A
+    /// file of Snapfly's own is still where it was: it waits a minute
+    /// before it goes, and stays once it hangs again.
+    func putBack(_ urls: [URL]) {
+        var hung = false
+        for url in urls where FileManager.default.fileExists(atPath: url.path) {
+            if let entry = History.entries.first(where: { $0.path == url.path }) { _ = History.takeBack(entry) }
+            if hang(url) != nil { hung = true }
+        }
+        if hung { onPutBack?() }
     }
 
     private static let trashLaterKey = "trashLater"
