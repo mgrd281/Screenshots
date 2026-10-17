@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Saved messages, under Line in Settings, wait above the message bar.
+  {order}, {total}, {date}, {name} and {tracking} fill in from the photo; a
+  blank of a covered kind stays empty.
 - Order Details, in a photo's menu: the order number, date, total, name,
   address, email, phone and tracking number read off a screenshot, each
   ready to copy, or all of them as a row for a spreadsheet.
