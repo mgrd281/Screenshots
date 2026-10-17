@@ -9,6 +9,9 @@ keeps a download of each version.
 - Monthly pack, under Bookkeeping in Settings: a month's receipts in one
   PDF for the tax advisor, a page listing them with the sum of the totals,
   then each receipt on a page of its own.
+- Pictures leave as fresh files: what they show, without the notes a file
+  carries on when, where and with what it was made, or where it was
+  downloaded from. Plain file names, under Privacy, call them "Image" too.
 - Cover everything in AI chats, under Privacy: whatever goes into ChatGPT,
   Claude, Gemini or another AI chat has every kind covered, checked or not.
   The send button over the chat shows a lock by the count meanwhile.

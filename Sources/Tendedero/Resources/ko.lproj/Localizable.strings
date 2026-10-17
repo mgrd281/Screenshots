@@ -514,3 +514,6 @@
 "Month" = "월";
 "Monthly pack" = "월별 묶음";
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "한 달 치 영수증을 목록 페이지와 함께 PDF 하나로 묶어 세무사에게 전달해요.";
+"Image" = "이미지";
+"Plain file names" = "간단한 파일 이름";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "이미지는 언제, 어디서, 무엇으로 만들었는지에 대한 정보 없이 새 파일로 나갑니다. 간단한 파일 이름을 켜면 찍은 시간 대신 ‘이미지’라는 이름도 붙습니다.";

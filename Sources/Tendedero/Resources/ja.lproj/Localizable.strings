@@ -514,3 +514,6 @@
 "Month" = "月";
 "Monthly pack" = "月ごとのまとめ";
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "1か月分のレシートを、一覧ページ付きの1つのPDFにまとめて税理士に渡せます。";
+"Image" = "画像";
+"Plain file names" = "シンプルなファイル名";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "画像は新しいファイルとして送られ、いつ・どこで・何で作られたかの情報は含まれません。シンプルなファイル名にすると、撮影日時ではなく「画像」という名前にもなります。";

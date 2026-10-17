@@ -319,6 +319,13 @@ final class Preferences: ObservableObject {
         }
     }
 
+    /// Copies made before keep their names; the photos hanging are read
+    /// again, so what leaves next is named anew.
+    var plainNames: Bool {
+        get { Cover.plainNames }
+        set { change { Cover.plainNames = newValue; line.readPrivateDetails() } }
+    }
+
     /// Turned on, the photos hanging are read for AI chats at once, and the
     /// send button over one says so.
     var coversAllInAIChats: Bool {
@@ -1228,6 +1235,12 @@ private struct PrivacyPane: View {
                 Toggle(L("Cover everything in AI chats"), isOn: $prefs.coversAllInAIChats)
             } footer: {
                 Text(L("Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not."))
+                    .foregroundStyle(.secondary)
+            }
+            Section {
+                Toggle(L("Plain file names"), isOn: $prefs.plainNames)
+            } footer: {
+                Text(L("Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken."))
                     .foregroundStyle(.secondary)
             }
             Section {

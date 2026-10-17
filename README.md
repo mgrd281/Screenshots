@@ -226,6 +226,13 @@ covered, on its line or the line below; or, for whoever knows them, a
 pattern. They apply to everything that leaves the line, and to the copies
 saved from Finder.
 
+Whatever picture leaves the line is a fresh file: what it shows, without
+the notes a file carries on when, where and with what it was made, or the
+Finder's note of where it was downloaded from. A PNG stays a PNG, pixel for
+pixel; a photo goes as a JPEG; a GIF goes as itself, so it keeps moving.
+Turn on Plain file names under Privacy, and pictures are called Image too,
+rather than after when they were taken.
+
 AI chats may keep what goes into them on their servers. Turn on Cover
 everything in AI chats under Privacy, and whatever you send, copy or drag
 out while ChatGPT, Claude, Gemini or another AI chat is in front, as an app

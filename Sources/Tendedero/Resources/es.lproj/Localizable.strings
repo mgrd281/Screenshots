@@ -514,3 +514,6 @@
 "Month" = "Mes";
 "Monthly pack" = "Paquete mensual";
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Los recibos de un mes en un PDF, con una página que los enumera, para entregar a tu asesor fiscal.";
+"Image" = "Imagen";
+"Plain file names" = "Nombres de archivo simples";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Las imágenes salen como archivos nuevos, sin notas de cuándo, dónde ni con qué se hicieron. Con nombres simples se llaman además «Imagen», no según cuándo se tomaron.";
