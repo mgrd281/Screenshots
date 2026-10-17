@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Order Details, in a photo's menu: the order number, date, total, name,
+  address, email, phone and tracking number read off a screenshot, each
+  ready to copy, or all of them as a row for a spreadsheet.
 - Orders, in the History window: photos with an order, invoice or customer
   number together under that number.
 - Sent, in the History window: what went into which chat, when, with what

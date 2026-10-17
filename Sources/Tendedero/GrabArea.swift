@@ -146,6 +146,7 @@ struct GrabArea: NSViewRepresentable {
                     menu.addItem(translate)
                 }
                 menu.addItem(ClosureMenuItem(L("Describe"), symbol: "sparkles") { line.describe(id) })
+                menu.addItem(ClosureMenuItem(L("Order Details"), symbol: "list.bullet.rectangle") { line.orderDetails(id) })
             }
             menu.addItem(.separator())
             menu.addItem(ClosureMenuItem(L("Open"), symbol: "arrow.up.forward.app") { line.open(id) })

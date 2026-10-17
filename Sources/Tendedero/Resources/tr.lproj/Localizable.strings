@@ -109,6 +109,20 @@
 /* TextCard, GrabArea */
 "Translate Text" = "Metni çevir";
 "Describe" = "Açıklama yaz";
+"Order Details" = "Sipariş ayrıntıları";
+"Order" = "Sipariş";
+"Total" = "Toplam";
+"Name" = "Ad";
+"Address" = "Adres";
+"Email" = "E-posta";
+"Phone" = "Telefon";
+"Tracking number" = "Takip numarası";
+"Code" = "Kod";
+"Copy Row" = "Satır olarak kopyala";
+"Copy All" = "Tümünü kopyala";
+"No order details were found in this screenshot." = "Bu ekran görüntüsünde sipariş ayrıntısı bulunamadı.";
+"Read on this Mac as the screenshot shows them, not covered." = "Bu Mac’te ekran görüntüsünde göründüğü gibi okundu, gizlenmeden.";
+"Every part in one row, for a spreadsheet" = "Tüm bilgiler tek satırda, bir tablo için";
 "Translation" = "Çeviri";
 "Description" = "Açıklama";
 "Reading the screenshot…" = "Ekran görüntüsü okunuyor…";

@@ -469,8 +469,15 @@ apps.
   as what opens them. Hide Private Details opens Hide Part for one file, to
   save a copy beside it.
 - **Photo context menu.**
-  - Grouped by intent: copy and send; translate and describe; open and edit;
-    take down.
+  - Grouped by intent: copy and send; translate, describe and Order Details;
+    open and edit; take down.
+  - **Order Details** opens the text card with `list.bullet.rectangle` and
+    the order's parts as rows on the reading panel's fill: the part's name
+    in 12 pt `.secondary` in a 104 pt column, the value in 13 pt,
+    selectable, and a borderless `doc.on.doc` that turns into a checkmark
+    once copied, with a divider between rows. The note says it is read as
+    the screenshot shows it, not covered. Its footer has Copy Row and Copy
+    All (the primary); it sends nothing.
   - SF Symbols on macOS 26 only, as Apple's own menus have.
 - **Settings sidebar.** General, Line, Privacy, Permissions, Support and
   About, each on its tile (see Layout).

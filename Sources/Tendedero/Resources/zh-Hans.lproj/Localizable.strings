@@ -109,6 +109,20 @@
 /* TextCard, GrabArea */
 "Translate Text" = "翻译文本";
 "Describe" = "生成描述";
+"Order Details" = "订单详情";
+"Order" = "订单";
+"Total" = "总计";
+"Name" = "姓名";
+"Address" = "地址";
+"Email" = "电子邮件";
+"Phone" = "电话";
+"Tracking number" = "运单号";
+"Code" = "码";
+"Copy Row" = "拷贝为一行";
+"Copy All" = "全部拷贝";
+"No order details were found in this screenshot." = "此截屏中未找到订单详情。";
+"Read on this Mac as the screenshot shows them, not covered." = "已在此 Mac 上按截屏原样读取，未遮盖。";
+"Every part in one row, for a spreadsheet" = "所有项目放在一行，用于电子表格";
 "Translation" = "翻译";
 "Description" = "描述";
 "Reading the screenshot…" = "正在读取截图…";

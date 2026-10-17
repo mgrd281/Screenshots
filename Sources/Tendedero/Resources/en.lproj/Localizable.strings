@@ -111,6 +111,20 @@
 /* TextCard, GrabArea */
 "Translate Text" = "Translate Text";
 "Describe" = "Describe";
+"Order Details" = "Order Details";
+"Order" = "Order";
+"Total" = "Total";
+"Name" = "Name";
+"Address" = "Address";
+"Email" = "Email";
+"Phone" = "Phone";
+"Tracking number" = "Tracking number";
+"Code" = "Code";
+"Copy Row" = "Copy Row";
+"Copy All" = "Copy All";
+"No order details were found in this screenshot." = "No order details were found in this screenshot.";
+"Read on this Mac as the screenshot shows them, not covered." = "Read on this Mac as the screenshot shows them, not covered.";
+"Every part in one row, for a spreadsheet" = "Every part in one row, for a spreadsheet";
 "Translation" = "Translation";
 "Description" = "Description";
 "Reading the screenshot…" = "Reading the screenshot…";

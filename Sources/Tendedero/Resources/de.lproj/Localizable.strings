@@ -109,6 +109,20 @@
 /* TextCard, GrabArea */
 "Translate Text" = "Text übersetzen";
 "Describe" = "Beschreiben";
+"Order Details" = "Bestelldetails";
+"Order" = "Bestellung";
+"Total" = "Gesamt";
+"Name" = "Name";
+"Address" = "Adresse";
+"Email" = "E-Mail";
+"Phone" = "Telefon";
+"Tracking number" = "Sendungsnummer";
+"Code" = "Code";
+"Copy Row" = "Als Zeile kopieren";
+"Copy All" = "Alles kopieren";
+"No order details were found in this screenshot." = "In diesem Bildschirmfoto wurden keine Bestelldetails gefunden.";
+"Read on this Mac as the screenshot shows them, not covered." = "Auf diesem Mac gelesen, so wie das Bildschirmfoto sie zeigt, nicht verdeckt.";
+"Every part in one row, for a spreadsheet" = "Alle Angaben in einer Zeile, für eine Tabelle";
 "Translation" = "Übersetzung";
 "Description" = "Beschreibung";
 "Reading the screenshot…" = "Bildschirmfoto wird gelesen …";

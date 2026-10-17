@@ -13,7 +13,8 @@ import FoundationModels
 /// says, translated, or summed up in a line to send along with it. Both
 /// run on this Mac, with Apple's translation and Apple Intelligence, and
 /// start from the text as it leaves the line, private details left out.
-/// The result shows in a card under the photo, to copy or send.
+/// The result shows in a card under the photo, to copy or send. Order
+/// Details lists the order's parts as the screenshot shows them, to copy.
 @MainActor
 final class TextCard {
     static let shared = TextCard()
@@ -246,7 +247,7 @@ enum Writer {
 @MainActor
 final class TextCardModel: ObservableObject {
     enum Kind {
-        case translation, description
+        case translation, description, order
     }
 
     enum State: Equatable {
@@ -284,6 +285,9 @@ final class TextCardModel: ObservableObject {
     @Published private(set) var note: String?
     @Published private(set) var fix: Fix?
     @Published private(set) var copied = false
+    /// Order Details: the order's parts, and the one copied last.
+    @Published private(set) var fields: [OrderCard.Field] = []
+    @Published private(set) var copiedField: OrderCard.Part?
     @Published private(set) var target: Locale.Language
     @Published private(set) var pending: Pending?
     /// The result reads right to left, like Arabic.
@@ -309,6 +313,19 @@ final class TextCardModel: ObservableObject {
 
     func start() {
         let url = url
+        if kind == .order {
+            Task { [weak self] in
+                let fields = await Task.detached(priority: .userInitiated) { () -> [OrderCard.Field] in
+                    guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+                          let image = Cover.upright(source) else { return [] }
+                    let lines = Finder.textLines(in: image)
+                    let codes = Finder.codes(in: image, [.barcodes]).compactMap(\.payload)
+                    return OrderCard.fields(from: Finder.details(in: lines), lines: lines.map(\.string), codes: codes)
+                }.value
+                self?.list(fields)
+            }
+            return
+        }
         let chosen = PrivateDetails.details
         let hand = PrivateDetails.hand(url)
         Task { [weak self] in
@@ -329,6 +346,32 @@ final class TextCardModel: ObservableObject {
         case .translation: translate()
         case .description: Task { await describe() }
         }
+    }
+
+    // MARK: Order Details
+
+    private func list(_ fields: [OrderCard.Field]) {
+        guard !fields.isEmpty else {
+            fail(L("No order details were found in this screenshot."))
+            return
+        }
+        self.fields = fields
+        finish(OrderCard.text(fields), note: L("Read on this Mac as the screenshot shows them, not covered."))
+    }
+
+    func copy(_ field: OrderCard.Field) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(field.value, forType: .string)
+        copiedField = field.part
+    }
+
+    /// Every part in one row with tabs between, for a spreadsheet.
+    func copyRow() {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(OrderCard.row(fields), forType: .string)
+        copied = true
     }
 
     // MARK: Translating
@@ -487,6 +530,7 @@ final class TextCardModel: ObservableObject {
         switch kind {
         case .translation: line.sendText(text)
         case .description: line.send(photo, caption: text)
+        case .order: break
         }
     }
 }
@@ -498,11 +542,19 @@ private struct TextCardView: View {
     let close: () -> Void
 
     private var title: String {
-        model.kind == .translation ? L("Translation") : L("Description")
+        switch model.kind {
+        case .translation: L("Translation")
+        case .description: L("Description")
+        case .order: L("Order Details")
+        }
     }
 
     private var symbol: String {
-        model.kind == .translation ? "translate" : "sparkles"
+        switch model.kind {
+        case .translation: "translate"
+        case .description: "sparkles"
+        case .order: "list.bullet.rectangle"
+        }
     }
 
     var body: some View {
@@ -594,7 +646,7 @@ private struct TextCardView: View {
                 Placeholder()
             }
         case .done(let text):
-            result(text)
+            if model.kind == .order { orderRows } else { result(text) }
         case .failed(let message):
             HStack(alignment: .top, spacing: 8) {
                 Image(systemName: "exclamationmark.triangle.fill")
@@ -628,7 +680,67 @@ private struct TextCardView: View {
         .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
-    private var footer: some View {
+    /// Each part of the order on a row: its name, its value to select, and
+    /// a button that copies it.
+    private var orderRows: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(model.fields) { field in
+                HStack(alignment: .firstTextBaseline, spacing: 10) {
+                    Text(field.label)
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 104, alignment: .leading)
+                    Text(field.value)
+                        .font(.system(size: 13))
+                        .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button { model.copy(field) } label: {
+                        Image(systemName: model.copiedField == field.part ? "checkmark" : "doc.on.doc")
+                            .font(.system(size: 11))
+                            .frame(width: 20, height: 20)
+                    }
+                    .buttonStyle(.borderless)
+                    .help(L("Copy"))
+                    .accessibilityLabel(L("Copy"))
+                }
+                .padding(.vertical, 6)
+                if field.id != model.fields.last?.id { Divider() }
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 4)
+        .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    @ViewBuilder private var footer: some View {
+        if model.kind == .order { orderFooter } else { sendFooter }
+    }
+
+    /// The whole order as a row for a spreadsheet, or as lines to read.
+    private var orderFooter: some View {
+        HStack(spacing: 8) {
+            Spacer()
+            Button {
+                model.copyRow()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { close() }
+            } label: {
+                Label(L("Copy Row"), systemImage: "tablecells")
+            }
+            .controlSize(.large)
+            .help(L("Every part in one row, for a spreadsheet"))
+            Button {
+                model.copy()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { close() }
+            } label: {
+                Label(model.copied ? L("Copied") : L("Copy All"), systemImage: model.copied ? "checkmark" : "doc.on.doc")
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+        }
+    }
+
+    private var sendFooter: some View {
         HStack(spacing: 8) {
             Spacer()
             Button {
