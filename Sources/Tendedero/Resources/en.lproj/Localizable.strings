@@ -505,3 +505,14 @@
 "Cover everything in AI chats" = "Cover everything in AI chats";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not.";
 "Everything is covered in AI chats" = "Everything is covered in AI chats";
+"Receipts %@" = "Receipts %@";
+"Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books.";
+"Receipts: %ld" = "Receipts: %ld";
+"Sum of the totals: %@" = "Sum of the totals: %@";
+"Not found in the folder: %ld" = "Not found in the folder: %ld";
+"Page" = "Page";
+"Fingerprint" = "Fingerprint";
+"Making the PDF…" = "Making the PDF…";
+"Month" = "Month";
+"Monthly pack" = "Monthly pack";
+"A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor.";

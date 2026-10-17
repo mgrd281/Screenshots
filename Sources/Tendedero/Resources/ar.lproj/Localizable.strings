@@ -503,3 +503,14 @@
 "Cover everything in AI chats" = "تغطية كل شيء في محادثات الذكاء الاصطناعي";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "كل ما يُرسل أو يُنسخ بينما ChatGPT أو Claude أو Gemini أو محادثة ذكاء اصطناعي أخرى في الأمام تُغطّى فيه كل الأنواع أعلاه، محدّدة أم لا.";
 "Everything is covered in AI chats" = "كل شيء يُغطّى في محادثات الذكاء الاصطناعي";
+"Receipts %@" = "إيصالات %@";
+"Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "جمعها Snapfly في %@ لتسليمها إلى مستشارك الضريبي. كل إيصال هو النسخة المغطّاة المحفوظة للمحاسبة.";
+"Receipts: %ld" = "الإيصالات: %ld";
+"Sum of the totals: %@" = "مجموع المبالغ: %@";
+"Not found in the folder: %ld" = "غير موجودة في المجلد: %ld";
+"Page" = "الصفحة";
+"Fingerprint" = "البصمة";
+"Making the PDF…" = "جارٍ إنشاء ملف PDF…";
+"Month" = "الشهر";
+"Monthly pack" = "ملف الشهر";
+"A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "إيصالات شهر كامل في ملف PDF واحد، مع صفحة تسردها، لتسليمها إلى مستشارك الضريبي.";

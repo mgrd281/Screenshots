@@ -137,6 +137,42 @@ enum Bookkeeping {
         }
     }
 
+    // MARK: The monthly pack
+
+    /// The months the folder's table has receipts for, newest first, like
+    /// "2026-10".
+    static func months() -> [String] {
+        guard let folder else { return [] }
+        let opened = folder.startAccessingSecurityScopedResource()
+        defer { if opened { folder.stopAccessingSecurityScopedResource() } }
+        guard let table = try? String(contentsOf: folder.appendingPathComponent(tableName), encoding: .utf8) else { return [] }
+        return ReceiptsPack.months(in: ReceiptsPack.rows(fromTable: table))
+    }
+
+    /// A month's receipts in one PDF, made beside them in the folder and
+    /// shown in the Finder, to hand to the tax advisor.
+    static func makePack(month: String) {
+        guard let folder else { return }
+        let rightToLeft = NSApp.userInterfaceLayoutDirection == .rightToLeft
+        let file = folder.appendingPathComponent(tableName)
+        let note = Notice.show(L("Making the PDF…"), working: true)
+        Task {
+            let made = await Task.detached(priority: .userInitiated) { () -> URL? in
+                let opened = folder.startAccessingSecurityScopedResource()
+                defer { if opened { folder.stopAccessingSecurityScopedResource() } }
+                guard let table = try? String(contentsOf: file, encoding: .utf8) else { return nil }
+                return ReceiptsPack.make(month: month, rows: ReceiptsPack.rows(fromTable: table), in: folder,
+                                         rightToLeft: rightToLeft)
+            }.value
+            Notice.end(note)
+            guard let made else {
+                Notice.show(L("Could not make the PDF."))
+                return
+            }
+            NSWorkspace.shared.activateFileViewerSelecting([made])
+        }
+    }
+
     /// A line added to the folder's table, which starts with its headings.
     private static func note(_ line: String, in folder: URL) throws {
         let table = folder.appendingPathComponent(tableName)

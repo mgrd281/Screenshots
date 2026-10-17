@@ -503,3 +503,14 @@
 "Cover everything in AI chats" = "Cobrir tudo em chats de IA";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "Em tudo o que você enviar ou copiar enquanto o ChatGPT, o Claude, o Gemini ou outro chat de IA estiver ativo, cada tipo acima é coberto, marcado ou não.";
 "Everything is covered in AI chats" = "Tudo é coberto em chats de IA";
+"Receipts %@" = "Recibos %@";
+"Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "Reunido pelo Snapfly em %@ para entregar ao seu contador. Cada recibo é a cópia coberta salva para a contabilidade.";
+"Receipts: %ld" = "Recibos: %ld";
+"Sum of the totals: %@" = "Soma dos totais: %@";
+"Not found in the folder: %ld" = "Não encontrados na pasta: %ld";
+"Page" = "Página";
+"Fingerprint" = "Impressão digital";
+"Making the PDF…" = "Criando o PDF…";
+"Month" = "Mês";
+"Monthly pack" = "Pacote do mês";
+"A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Os recibos de um mês em um PDF, com uma página que os lista, para entregar ao seu contador.";

@@ -503,3 +503,14 @@
 "Cover everything in AI chats" = "AI 채팅에서는 모두 가리기";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "ChatGPT, Claude, Gemini 같은 AI 채팅이 앞에 있을 때 보내거나 복사하는 것에서는 체크 여부와 관계없이 위의 모든 종류가 가려집니다.";
 "Everything is covered in AI chats" = "AI 채팅에서는 모두 가려집니다";
+"Receipts %@" = "영수증 %@";
+"Put together by Snapfly on %@ to hand to your tax advisor. Each receipt is the covered copy saved for the books." = "%@에 Snapfly가 세무사에게 전달하도록 모았어요. 각 영수증은 회계용으로 저장한 가린 사본이에요.";
+"Receipts: %ld" = "영수증: %ld";
+"Sum of the totals: %@" = "합계: %@";
+"Not found in the folder: %ld" = "폴더에 없는 항목: %ld";
+"Page" = "페이지";
+"Fingerprint" = "지문";
+"Making the PDF…" = "PDF 만드는 중…";
+"Month" = "월";
+"Monthly pack" = "월별 묶음";
+"A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "한 달 치 영수증을 목록 페이지와 함께 PDF 하나로 묶어 세무사에게 전달해요.";

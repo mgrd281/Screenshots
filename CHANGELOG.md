@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Monthly pack, under Bookkeeping in Settings: a month's receipts in one
+  PDF for the tax advisor, a page listing them with the sum of the totals,
+  then each receipt on a page of its own.
 - Cover everything in AI chats, under Privacy: whatever goes into ChatGPT,
   Claude, Gemini or another AI chat has every kind covered, checked or not.
   The send button over the chat shows a lock by the count meanwhile.
