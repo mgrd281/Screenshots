@@ -198,6 +198,9 @@
 "History" = "Geçmiş";
 "History…" = "Geçmiş…";
 "Clear History…" = "Geçmişi temizle…";
+"Orders" = "Siparişler";
+"No order numbers yet" = "Henüz sipariş numarası yok";
+"Photos with an order, invoice or customer number show here, together by their number." = "Sipariş, fatura veya müşteri numarası olan fotoğraflar burada numaralarına göre bir arada görünür.";
 "Sent" = "Gönderilenler";
 "Date" = "Tarih";
 "Photo" = "Fotoğraf";

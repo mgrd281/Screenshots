@@ -200,6 +200,9 @@
 "History" = "Tarixçə";
 "History…" = "Tarixçə…";
 "Clear History…" = "Tarixçəni təmizlə…";
+"Orders" = "Sifarişlər";
+"No order numbers yet" = "Hələ sifariş nömrəsi yoxdur";
+"Photos with an order, invoice or customer number show here, together by their number." = "Sifariş, faktura və ya müştəri nömrəsi olan şəkillər burada nömrəyə görə bir yerdə görünür.";
 "Sent" = "Göndərilənlər";
 "Date" = "Tarix";
 "Photo" = "Şəkil";

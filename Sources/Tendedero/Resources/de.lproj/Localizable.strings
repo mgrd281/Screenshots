@@ -198,6 +198,9 @@
 "History" = "Verlauf";
 "History…" = "Verlauf …";
 "Clear History…" = "Verlauf löschen …";
+"Orders" = "Bestellungen";
+"No order numbers yet" = "Noch keine Bestellnummern";
+"Photos with an order, invoice or customer number show here, together by their number." = "Fotos mit einer Bestell-, Rechnungs- oder Kundennummer stehen hier, nach ihrer Nummer zusammen.";
 "Sent" = "Gesendet";
 "Date" = "Datum";
 "Photo" = "Foto";

@@ -200,6 +200,9 @@
 "History" = "इतिहास";
 "History…" = "इतिहास…";
 "Clear History…" = "इतिहास साफ़ करें…";
+"Orders" = "ऑर्डर";
+"No order numbers yet" = "अभी तक कोई ऑर्डर नंबर नहीं";
+"Photos with an order, invoice or customer number show here, together by their number." = "जिन फ़ोटो में ऑर्डर, इनवॉइस या ग्राहक नंबर है, वे यहाँ अपने नंबर के हिसाब से साथ दिखती हैं।";
 "Sent" = "भेजे गए";
 "Date" = "तारीख";
 "Photo" = "फ़ोटो";

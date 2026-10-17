@@ -198,6 +198,9 @@
 "History" = "历史记录";
 "History…" = "历史记录…";
 "Clear History…" = "清除历史记录…";
+"Orders" = "订单";
+"No order numbers yet" = "尚无订单号";
+"Photos with an order, invoice or customer number show here, together by their number." = "带有订单号、发票号或客户号的照片会按号码归在一起显示在这里。";
 "Sent" = "已发送";
 "Date" = "日期";
 "Photo" = "照片";

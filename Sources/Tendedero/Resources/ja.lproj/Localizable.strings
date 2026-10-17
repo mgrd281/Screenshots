@@ -198,6 +198,9 @@
 "History" = "履歴";
 "History…" = "履歴…";
 "Clear History…" = "履歴を消去…";
+"Orders" = "注文";
+"No order numbers yet" = "注文番号はまだありません";
+"Photos with an order, invoice or customer number show here, together by their number." = "注文番号、請求書番号、顧客番号のある写真が、番号ごとにまとめてここに表示されます。";
 "Sent" = "送信済み";
 "Date" = "日時";
 "Photo" = "写真";

@@ -198,6 +198,9 @@
 "History" = "Historique";
 "History…" = "Historique…";
 "Clear History…" = "Effacer l’historique…";
+"Orders" = "Commandes";
+"No order numbers yet" = "Pas encore de numéros de commande";
+"Photos with an order, invoice or customer number show here, together by their number." = "Les photos avec un numéro de commande, de facture ou de client s’affichent ici, regroupées par numéro.";
 "Sent" = "Envoyés";
 "Date" = "Date";
 "Photo" = "Photo";

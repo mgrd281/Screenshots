@@ -198,6 +198,9 @@
 "History" = "Historial";
 "History…" = "Historial…";
 "Clear History…" = "Borrar historial…";
+"Orders" = "Pedidos";
+"No order numbers yet" = "Aínda non hai números de pedido";
+"Photos with an order, invoice or customer number show here, together by their number." = "As fotos cun número de pedido, factura ou cliente aparecen aquí, agrupadas polo seu número.";
 "Sent" = "Enviados";
 "Date" = "Data";
 "Photo" = "Foto";

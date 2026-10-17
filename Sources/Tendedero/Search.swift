@@ -7,7 +7,9 @@ import SwiftUI
 @MainActor
 enum TextIndex {
     struct Row: Sendable {
-        /// The line's text, folded so case and accents do not matter.
+        /// The line's text, as read.
+        let text: String
+        /// The same, folded so case and accents do not matter.
         let folded: String
         /// Where it sits, from 0 to 1 from the bottom left.
         let box: CGRect
@@ -35,7 +37,7 @@ enum TextIndex {
         guard isImage(url), let key = key(for: url), rows[key] == nil, !reading.contains(key) else { return }
         reading.insert(key)
         queue.async {
-            let found = Finder.lines(of: url).map { Row(folded: fold($0.text), box: $0.box) }
+            let found = Finder.lines(of: url).map { Row(text: $0.text, folded: fold($0.text), box: $0.box) }
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     reading.remove(key)

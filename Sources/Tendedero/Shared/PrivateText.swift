@@ -750,6 +750,15 @@ enum Finder {
         return found
     }
 
+    /// The order, invoice or customer number a screenshot is about: the
+    /// first one found, top to bottom, like "1024" in "Order #1024". Pure
+    /// text, so it can be checked without a picture.
+    static func orderNumber(in lines: [String]) -> String? {
+        let full = lines.joined(separator: "\n")
+        let first = patternRanges(in: full, [.orders]).min { $0.location < $1.location }
+        return first.map { (full as NSString).substring(with: $0) }
+    }
+
     /// A postcode with its town, or a town or country on its own.
     private static func looksLikeAddress(_ line: String) -> Bool {
         let words = line.split(separator: " ")
