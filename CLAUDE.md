@@ -172,11 +172,18 @@ the website's footer. Both stay.
   setting, icon, copy or motion.
 - **When a change adds a color, radius, size or component,** add it to
   `DESIGN.md` in the same pull request.
-- Agent skills sit in `.claude/skills/`, and three MCP servers (Context7,
-  Playwright, Motion) are set up for the project in `.mcp.json`. See
+- Agent skills sit in `.claude/skills/`, and four MCP servers (Context7,
+  Playwright, Motion, shadcn) are set up for the project in `.mcp.json`. See
   `.claude/skills/VENDORED.md` for what was installed, what was left out,
   and why. None of them is part of the app or the website; they only guide
   the coding agent.
+  - **Website libraries** the owner asked for (GSAP, Rive, dotLottie,
+    Floating UI, daisyUI, Lucide and Phosphor icons) sit unused in
+    `website/vendor/`, which is never published. A page takes one only for a
+    job `DESIGN.md` allows; `website/vendor/README.md` says how.
+  - The **shadcn** MCP server browses shadcn/ui's React components, as
+    references to rebuild in the site's own HTML and CSS, never to add
+    React.
   - **`impeccable`** handles design direction, critique and polish.
     - Commands: `/impeccable critique|audit|polish|layout|typeset|clarify|harden|distill|quieter <target>`.
     - Its launcher and hooks are deliberately not installed. When it says the

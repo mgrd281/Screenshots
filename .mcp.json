@@ -17,6 +17,13 @@
     "motion": {
       "type": "http",
       "url": "https://mcp.motion.dev"
+    },
+    "shadcn": {
+      "type": "stdio",
+      "command": "sh",
+      "args": [
+        ".claude/mcp/shadcn-mcp.sh"
+      ]
     }
   }
 }
