@@ -26,7 +26,7 @@ enum Covering {
     /// The picture with the chosen details covered, and what was.
     static func cover(_ image: CGImage, _ chosen: Set<PrivateDetail>) -> (image: CGImage, report: CoverReport) {
         let areas = Finder.coveredAreas(in: image, chosen)
-        return (Finder.cover(image, areas.map(\.rect)) ?? image, CoverReport(areas))
+        return (Finder.cover(image, areas: areas) ?? image, CoverReport(areas))
     }
 
     static func png(_ image: CGImage) -> Data? {

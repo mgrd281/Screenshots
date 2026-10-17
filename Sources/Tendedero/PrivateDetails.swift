@@ -395,15 +395,15 @@ enum PrivateDetails {
         return protects && (!chosen.isEmpty || !handPages(url).isEmpty)
     }
 
-    /// The file, when it last changed, what to cover and what was hidden by
-    /// hand on each page.
+    /// The file, when it last changed, what to cover, what was hidden by
+    /// hand on each page and how covers look.
     private static func documentKey(_ url: URL, _ chosen: Set<PrivateDetail>) -> String? {
         guard let date = modified(url) else { return nil }
         let kinds = chosen.map(\.rawValue).sorted().joined(separator: ",")
         let pages = handPages(url).sorted { $0.key < $1.key }.map { page, boxes in
             "\(page):" + boxes.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
         }.joined(separator: "/")
-        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(pages)|\(OwnRules.fingerprint)"
+        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(pages)|\(OwnRules.fingerprint)|\(Finder.lookKey)"
     }
 
     private static func modified(_ url: URL) -> Date? {
@@ -422,15 +422,15 @@ enum PrivateDetails {
 
     /// The file, when it last changed, what to cover, the stamp and the
     /// drawing, so a screenshot edited in Markup, a new choice, a part hidden
-    /// by hand, new words on the stamp, a changed drawing or a changed rule
-    /// of the owner's are drawn again.
+    /// by hand, new words on the stamp, a changed drawing, a changed rule of
+    /// the owner's or a new look for covers are drawn again.
     private static func key(for url: URL, _ chosen: Set<PrivateDetail>, _ hand: [CGRect],
                             _ stamp: TimeStamp.Mark?, _ clean: Bool, _ drawing: Drawing) -> String? {
         guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path),
               let date = attributes[.modificationDate] as? Date else { return nil }
         let kinds = chosen.map(\.rawValue).sorted().joined(separator: ",")
         let parts = hand.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
-        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(parts)|\(stamp?.key ?? "")|\(clean)|\(drawing.key)|\(OwnRules.fingerprint)|\(Cover.plainNames)"
+        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(parts)|\(stamp?.key ?? "")|\(clean)|\(drawing.key)|\(OwnRules.fingerprint)|\(Cover.plainNames)|\(Finder.lookKey)"
     }
 }
 
@@ -456,7 +456,8 @@ enum Cover {
     static func covered(of url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect]) -> CGImage? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = upright(source) else { return nil }
-        return Finder.cover(image, areas(in: image, chosen) + hand)
+        let hidden = hand.map { Finder.Area(rect: $0, kind: nil) }
+        return Finder.cover(image, areas: Finder.coveredAreas(in: image, chosen) + hidden)
     }
 
     /// A copy of the screenshot with the chosen details and the parts hidden
@@ -480,10 +481,10 @@ enum Cover {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = upright(source) else { return nil }
         let found = Finder.coveredAreas(in: image, chosen)
-        let boxes = found.map(\.rect) + hand
-        guard !boxes.isEmpty || stamp != nil || clean || !drawing.isEmpty else { return nil }
+        let places = found + hand.map { Finder.Area(rect: $0, kind: nil) }
+        guard !places.isEmpty || stamp != nil || clean || !drawing.isEmpty else { return nil }
 
-        guard var covered = Finder.cover(image, boxes) else { return nil }
+        guard var covered = Finder.cover(image, areas: places) else { return nil }
         if !drawing.isEmpty, let drawn = Drawing.render(covered, drawing) { covered = drawn }
         // The stamp's band goes above the picture, which grows by its height.
         if let stamp, let stamped = TimeStamp.render(covered, stamp) { covered = stamped }

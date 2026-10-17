@@ -79,16 +79,24 @@ final class DrawEditor: NSObject, NSWindowDelegate {
         return (5...8).contains(orientation) ? CGSize(width: height, height: width) : CGSize(width: width, height: height)
     }
 
-    /// What Hide private details covers, read in the background.
+    /// What Hide private details covers, read in the background, and the
+    /// picture with it and the parts hidden by hand covered in the chosen
+    /// look, as it goes out.
     private func readCovered(_ url: URL, into model: DrawModel) {
         let chosen = PrivateDetails.details
-        guard !chosen.isEmpty else { return }
+        let hidden = model.hand.map { Finder.Area(rect: $0, kind: nil) }
+        guard !chosen.isEmpty || !hidden.isEmpty else { return }
+        let size = model.image.size
         DispatchQueue.global(qos: .userInitiated).async { [weak model] in
             guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
                   let image = Cover.upright(source) else { return }
-            let areas = Cover.areas(in: image, chosen)
+            let found = chosen.isEmpty ? [] : Finder.coveredAreas(in: image, chosen)
+            let covered = Finder.cover(image, areas: found + hidden).map { NSImage(cgImage: $0, size: size) }
             DispatchQueue.main.async {
-                MainActor.assumeIsolated { model?.found = areas }
+                MainActor.assumeIsolated {
+                    model?.found = found.map(\.rect)
+                    model?.covered = covered
+                }
             }
         }
     }
@@ -172,6 +180,9 @@ final class DrawModel: ObservableObject {
     /// 0 to 1 from the bottom left.
     let hand: [CGRect]
     @Published var found: [CGRect] = []
+    /// The picture as it goes out, covered in the chosen look, once read.
+    /// Until then, what is covered shows as ink.
+    @Published var covered: NSImage?
 
     @Published var drawing: Drawing
     @Published var tool: DrawTool = .arrow {
@@ -436,11 +447,13 @@ private struct DrawEditorView: View {
     /// The picture at that size, under what is covered, the marks and the
     /// crop, drawn the way the copy is.
     private func picture(_ size: CGSize) -> some View {
-        let layer = Overlay(image: model.image, drawing: model.drawing, covers: model.found + model.hand,
+        let shown = model.covered ?? model.image
+        let covers = model.covered == nil ? model.found + model.hand : []
+        let layer = Overlay(image: shown, drawing: model.drawing, covers: covers,
                             unit: model.unit(in: size), selected: model.selectedMark, cropping: model.tool == .crop,
                             placeholder: L("Text"), accent: NSColor.controlAccentColor.cgColor)
         let room = Self.handleRoom
-        return Image(nsImage: model.image)
+        return Image(nsImage: shown)
             .resizable()
             .interpolation(.high)
             .frame(width: size.width, height: size.height)

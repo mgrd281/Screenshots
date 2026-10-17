@@ -151,7 +151,7 @@ final class FolderCover {
               let image = Cover.upright(source) else { return nil }
         let areas = Finder.coveredAreas(in: image, chosen)
         let target = unique(name, ext: "png", in: folder)
-        guard let covered = Finder.cover(image, areas.map(\.rect)),
+        guard let covered = Finder.cover(image, areas: areas),
               let destination = CGImageDestinationCreateWithURL(target as CFURL, UTType.png.identifier as CFString, 1, nil)
         else { return nil }
         CGImageDestinationAddImage(destination, covered, nil)

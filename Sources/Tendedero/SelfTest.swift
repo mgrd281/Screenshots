@@ -19,6 +19,8 @@ enum SelfTest {
         "Tax ID: DE123456789",
         "Tracking: 1Z999AA10123456784",
         "PIN: 4821",
+        "API key: sk-proj-4fGh7Kp2Qx9Lm3Vb8Nc1Zr6Td",
+        "IP: 203.0.113.42",
         "@lena_h",
         "Total: 74,00 €",
         "https://shop.example.com/orders/1024",
@@ -73,7 +75,7 @@ enum SelfTest {
     static func run(_ chosen: Set<PrivateDetail>) -> (png: Data, report: CoverReport)? {
         guard let sample = sample() else { return nil }
         let areas = Finder.coveredAreas(in: sample, chosen)
-        guard let covered = Finder.cover(sample, areas.map(\.rect)) else { return nil }
+        guard let covered = Finder.cover(sample, areas: areas) else { return nil }
         let data = NSMutableData()
         guard let destination = CGImageDestinationCreateWithData(data, UTType.png.identifier as CFString, 1, nil)
         else { return nil }

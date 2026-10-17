@@ -10,6 +10,13 @@ colors:
   count-red: "#FF3B30"         # Color.red: the count on a closed card stack
   search-mark: "#FFCC00"       # Color.yellow: search highlights, 45% fill and a solid edge
   cover-ink: "#1F1F1F"         # covers over private details in a photo; the ink tiles in Settings
+  cover-label: "#FFFFFF"       # a labelled cover's word, at 92%, on the cover ink
+  cover-dot-dark: "#2E2E2E"    # the dots look on a light ground (gray 0.18), at 92%
+  cover-dot-light: "#F0F0F0"   # the dots look on a dark ground (gray 0.94), at 92%
+  # The cover looks' sample in Settings, a little chat, fixed in the picture.
+  sample-ground: "#FFFFFF"     # #1C1C1E in dark
+  sample-bubble-in: "#E9E9EB"  # the grey bubble, with a name; #3A3A3C in dark
+  sample-bubble-out: "#007AFF" # the blue bubble, with a number, in both
   tile-paper: "#EBEBEB"        # the ink tiles in the dark, their symbol in #1A1A1A
   island-black: "#000000"      # the island line style
   # Draw on Photo's inks, drawn into the copy's pixels, so fixed in light and dark.
@@ -134,6 +141,15 @@ components:
     size: "18pt"                   # an ink, with a 1pt hairline of .primary at 18%; chosen: a 2pt accent ring 3pt out
   draw-handle:
     size: "9pt"                    # white, a 1.5pt accent edge, at a chosen mark's ends or corners
+  cover-look-tile:
+    rounded: "{rounded.tile}"
+    sample: "132pt × 82.5pt"       # three to a row; a 1pt hairline of .primary at 12%; chosen: a 2.5pt accent ring
+  cover-label:
+    size: "64% of the letters covered, at most 2.2% of the unit"   # semibold system font; under 6 px, or no room, plain ink
+  cover-dots:
+    size: "46% of the letters covered, 70% of that between them"   # centred on the line
+  cover-pixels:
+    tile: "a third of a line's height; on a face or a code, 2% of the unit, at least 12 px"
   draw-mark:
     line: "0.25%, 0.4% or 0.65% of the unit"   # Thin, Medium, Thick; the unit is √(width × height), at least 640 px
     step: "2%, 2.8% or 3.8% of the unit"       # a numbered circle across, its rim 8% of that
@@ -235,6 +251,20 @@ literal value in a view.
 - **Search yellow** is the highlighter on words found by Search.
 - **Cover ink** is the opaque block over private details. It reads as
   redaction, not decoration.
+- **Cover looks** (`CoverStyle`, chosen under Privacy, ink at first) are
+  how a covered place looks in what leaves the line: ink; labelled, the ink
+  with the kind's short word on it (`PrivateDetail.label`, "Hidden" for a
+  rule or a part hidden by hand); blur, word-shaped smudges over the colors
+  around with a fine grain; pixels, square tiles darker toward a line's
+  middle; dots, a row of round dots over the colors around; erased, the
+  colors around carried across. **Every look hides for good**: blur,
+  pixels, dots and erased are drawn only from a thin band just outside the
+  place (its middle value, so a stray letter does not tint it), leaving out
+  every covered place, plus noise seeded by the place's position, never
+  from the pixels under it. A real blur or pixelation of text can be read
+  back; these cannot. Places that overlap on one line are drawn as one, and
+  lines of one height get labels, dots and tiles of one size. A face or a
+  code takes pixels in the dots look.
 - **Photo badge** is black 55% with a white glyph or text, over a picture: the
   lock, the paper plane of a photo sent before, the PDF capsule, and the size
   while an area is chosen. With Reduce Transparency on, it is the cover ink
@@ -620,7 +650,7 @@ apps.
     "Hide in this copy" in the inspector: Check All, Recommended and Uncheck
     All, small, sharing the row in equal parts (stacked where they don't
     fit), a footer saying the copy has no place or camera details, then the
-    sixteen kinds as switches in the three groups Settings has, named as
+    eighteen kinds as switches in the three groups Settings has, named as
     Settings names them, starting with what Settings hides. The primary
     button reads Save Copy… and opens a save sheet in the folder of the
     original, under the name "… (covered)". A small spinner shows in the
@@ -629,8 +659,10 @@ apps.
   the same (`HidePartLayout`), for arrows, boxes, highlights, numbered steps
   and words drawn on a photo, and the part of it to keep.
   - The **canvas** shows the picture with what Hide private details covers
-    and the parts hidden by hand, then the marks drawn by the same code as
-    the copy (`Drawing.draw`), so what you see is what goes. A highlight
+    and the parts hidden by hand, in the cover look chosen under Privacy
+    (ink until they are read), then the marks drawn by the same code as
+    the copy (`Drawing.draw`), so what you see is what goes. Hide Part shows
+    covers as ink while you draw. A highlight
     multiplies into the picture, so words under it stay as dark as they
     were.
     - A chosen mark has a dashed accent outline (1 pt, 4 and 3) 4 pt out,
@@ -672,8 +704,17 @@ apps.
   buttons, Check All, Recommended and Uncheck All, sharing the row in equal
   parts, under the header "Hide private details" and over the footer that
   says what is checked is covered.
-  Then the sixteen kinds in three sections named for their group: People;
-  Money, identity and health; Orders and documents. Then a section of its
+  Then the eighteen kinds in three sections named for their group: People;
+  Money, identity and health; Orders and documents. Then "Cover look": the
+  six looks as tiles three to a row (`CoverLookPicker`), each a little chat,
+  a grey bubble with a name and a blue one with a number, covered by the
+  same code as a copy, light or dark as the system is, with its name under
+  it, chosen as a line style tile is; then the toggle Keep the last four
+  digits (off at first) with a subtitle naming card, account and phone
+  numbers and the bank statement; over a footer that every look hides for
+  good, the soft ones drawn from the colors around, never from what is
+  covered. A new look or the toggle draws the photos hanging again and puts
+  the test's result away. Then a section of its
   own with one toggle, Cover everything in AI chats (off at first), over a
   footer naming ChatGPT, Claude and Gemini and saying every kind above is
   covered there, checked or not. Then one with a menu picker, Check before
@@ -1050,7 +1091,8 @@ of its own.
   it (`scripts/make-icon.py --ios`).
 - Settings opens with Check All, Recommended and Uncheck All as small
   bordered buttons sharing a row, under "Hide private details", then the
-  three groups, then "Also hide": a row per rule of the owner's own, its
+  three groups, then "Cover look", the Mac's tiles three to a row with
+  Keep the last four digits under them, then "Also hide": a row per rule of the owner's own, its
   kind as a menu over a field with the kind's prompt, swiped away to remove,
   and Add Rule. A pattern that cannot be read says so under its field with
   `exclamationmark.triangle.fill` in orange. Rules are kept as they change,

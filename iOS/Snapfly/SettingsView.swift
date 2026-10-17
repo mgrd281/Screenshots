@@ -1,10 +1,12 @@
 import SwiftUI
 
-/// What to cover, rules of the owner's own, and how to cover a screenshot
-/// with a double tap on the back of the iPhone.
+/// What to cover and how covers look, rules of the owner's own, and how to
+/// cover a screenshot with a double tap on the back of the iPhone.
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var chosen = Choice.details
+    @State private var look = CoverStyle.current
+    @State private var keepsLastDigits = Finder.keepsLastDigits
     @State private var rules = OwnRules.all
 
     var body: some View {
@@ -28,6 +30,24 @@ struct SettingsView: View {
                         }
                     }
                 }
+
+                Section {
+                    CoverLookPicker(selection: $look)
+                    Toggle(isOn: $keepsLastDigits) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(L("Keep the last four digits"))
+                            Text(L("Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement."))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } header: {
+                    Text(L("Cover look"))
+                } footer: {
+                    Text(L("Every look hides for good: blur, pixels, dots and erased are drawn from the colors around what is covered, never from it, so it cannot be brought back."))
+                }
+                .onChange(of: look) { _, new in CoverStyle.current = new }
+                .onChange(of: keepsLastDigits) { _, new in Finder.keepsLastDigits = new }
 
                 Section {
                     ForEach($rules) { $rule in
