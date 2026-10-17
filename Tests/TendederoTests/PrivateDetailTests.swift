@@ -35,6 +35,12 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertEqual(pieces(text, [.names]), [])
     }
 
+    func testTheOrderNumberIsTheFirstFoundTopToBottom() {
+        XCTAssertEqual(Finder.orderNumber(in: ["Danke für deine Bestellung", "Bestellung #1024", "Kundennummer: K-88210"]), "1024")
+        XCTAssertEqual(Finder.orderNumber(in: ["Kundennummer: K-88210", "Order No. 55512"]), "K-88210")
+        XCTAssertNil(Finder.orderNumber(in: ["Vielen Dank", "In order to help you"]))
+    }
+
     func testTrackingNumbers() {
         let text = "UPS 1Z999AA10123456784\nDHL 00340434161094015902\nTel 030 1234567"
         XCTAssertEqual(pieces(text, [.tracking]), ["1Z999AA10123456784", "00340434161094015902"])

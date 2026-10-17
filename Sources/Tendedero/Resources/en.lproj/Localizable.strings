@@ -200,6 +200,9 @@
 "History" = "History";
 "History…" = "History…";
 "Clear History…" = "Clear History…";
+"Orders" = "Orders";
+"No order numbers yet" = "No order numbers yet";
+"Photos with an order, invoice or customer number show here, together by their number." = "Photos with an order, invoice or customer number show here, together by their number.";
 "Sent" = "Sent";
 "Date" = "Date";
 "Photo" = "Photo";

@@ -585,7 +585,11 @@ apps.
     once the app in front before it is back, the photo goes in, covered;
     else it stays copied with a note), Copy, Open, Show in Finder, and
     Remove from History.
-  - The toolbar holds a segmented Photos | Sent picker in the middle, then
+  - **Orders** groups the photos with an order, invoice or customer number
+    (the first one read, top to bottom) under that number, as a `number`
+    label in the day headers' style, selectable, over the same grid; the
+    order with the newest photo comes first.
+  - The toolbar holds a segmented Photos | Orders | Sent picker in the middle, then
     the search, Export… (`square.and.arrow.up`, Sent only) and Clear
     History…, which clears both. Empty, each page uses
     `ContentUnavailableView` (Sent with `paperplane`).

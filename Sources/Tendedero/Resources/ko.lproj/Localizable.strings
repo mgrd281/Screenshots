@@ -198,6 +198,9 @@
 "History" = "기록";
 "History…" = "기록…";
 "Clear History…" = "기록 지우기…";
+"Orders" = "주문";
+"No order numbers yet" = "아직 주문 번호가 없습니다";
+"Photos with an order, invoice or customer number show here, together by their number." = "주문, 청구서 또는 고객 번호가 있는 사진이 번호별로 모여 여기에 표시됩니다.";
 "Sent" = "보낸 항목";
 "Date" = "날짜";
 "Photo" = "사진";

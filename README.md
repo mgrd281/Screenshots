@@ -339,7 +339,11 @@ its days are up; a file from anywhere else stays where it is. Choose 7, 30
 or 90 days, a year or forever, or turn it off, in Settings, under Line. It
 all stays on your Mac.
 
-Sent, at the top of the window, lists what went into which chat: the date
+Orders, at the top of the window, puts the photos that show an order,
+invoice or customer number together under that number, the order with the
+newest photo first; search finds an order by its number too.
+
+Sent lists what went into which chat: the date
 and time, the photo, the chat (the website in a browser, else the app),
 what was covered and the message sent with it. Search it like the photos,
 and Export… saves it as a table for a spreadsheet, with semicolons where

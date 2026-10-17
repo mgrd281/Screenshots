@@ -198,6 +198,9 @@
 "History" = "السجل";
 "History…" = "السجل…";
 "Clear History…" = "مسح السجل…";
+"Orders" = "الطلبات";
+"No order numbers yet" = "لا أرقام طلبات بعد";
+"Photos with an order, invoice or customer number show here, together by their number." = "الصور التي فيها رقم طلب أو فاتورة أو عميل تظهر هنا، مجمّعة حسب الرقم.";
 "Sent" = "المُرسَل";
 "Date" = "التاريخ";
 "Photo" = "الصورة";

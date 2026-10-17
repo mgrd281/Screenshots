@@ -59,7 +59,7 @@ final class HistoryWindow: NSObject, NSWindowDelegate {
 final class HistoryModel: ObservableObject {
     /// Which list the window shows: the photos, or what was sent where.
     enum Page: Hashable {
-        case photos, sent
+        case photos, orders, sent
     }
 
     @Published var page = Page.photos
@@ -118,6 +118,35 @@ final class HistoryModel: ObservableObject {
         }
     }
 
+    /// The order number read in each photo, once its words are known.
+    private var orderOf: [String: String] = [:]
+    private var withoutOrder: Set<String> = []
+
+    /// The shown photos with an order number, together by their number,
+    /// the order with the newest photo first.
+    var orders: [(order: String, entries: [History.Entry])] {
+        var groups: [String: [History.Entry]] = [:]
+        for entry in shown {
+            guard let order = order(of: entry) else { continue }
+            groups[order, default: []].append(entry)
+        }
+        return groups.map { (order: $0.key, entries: $0.value.sorted { $0.left > $1.left }) }
+            .sorted { $0.entries[0].left > $1.entries[0].left }
+    }
+
+    private func order(of entry: History.Entry) -> String? {
+        if let known = orderOf[entry.path] { return known }
+        if withoutOrder.contains(entry.path) { return nil }
+        // Not read yet: asked again once it is.
+        guard let rows = TextIndex.rows(for: entry.url) else { return nil }
+        guard let order = Finder.orderNumber(in: rows.map(\.text)) else {
+            withoutOrder.insert(entry.path)
+            return nil
+        }
+        orderOf[entry.path] = order
+        return order
+    }
+
     /// The shown entries by day, newest day first.
     var days: [(day: Date, entries: [History.Entry])] {
         let calendar = Calendar.current
@@ -145,6 +174,7 @@ private struct HistoryView: View {
         Group {
             switch model.page {
             case .photos: photos
+            case .orders: orders
             case .sent: sentList
             }
         }
@@ -154,6 +184,7 @@ private struct HistoryView: View {
             ToolbarItem(placement: .principal) {
                 Picker(L("History"), selection: $model.page) {
                     Text(L("Photos")).tag(HistoryModel.Page.photos)
+                    Text(L("Orders")).tag(HistoryModel.Page.orders)
                     Text(L("Sent")).tag(HistoryModel.Page.sent)
                 }
                 .pickerStyle(.segmented)
@@ -189,6 +220,36 @@ private struct HistoryView: View {
             ContentUnavailableView.search(text: model.search)
         } else {
             grid
+        }
+    }
+
+    /// The photos with an order, invoice or customer number, together by
+    /// their number, the order with the newest photo first.
+    @ViewBuilder private var orders: some View {
+        let orders = model.orders
+        if !orders.isEmpty {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 24) {
+                    ForEach(orders, id: \.order) { group in
+                        VStack(alignment: .leading, spacing: 12) {
+                            Label(group.order, systemImage: "number")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.secondary)
+                                .textSelection(.enabled)
+                            cards(group.entries)
+                        }
+                    }
+                }
+                .padding(24)
+            }
+        } else if !model.search.isEmpty {
+            ContentUnavailableView.search(text: model.search)
+        } else {
+            ContentUnavailableView {
+                Label(L("No order numbers yet"), systemImage: "number")
+            } description: {
+                Text(L("Photos with an order, invoice or customer number show here, together by their number."))
+            }
         }
     }
 
@@ -250,16 +311,21 @@ private struct HistoryView: View {
                         Text(Self.dayFormat.string(from: group.day))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(.secondary)
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 200), spacing: 16)],
-                                  alignment: .leading, spacing: 16) {
-                            ForEach(group.entries) { entry in
-                                HistoryCard(entry: entry, thumb: model.thumbs[entry.path], hang: hang, sendAgain: sendAgain)
-                            }
-                        }
+                        cards(group.entries)
                     }
                 }
             }
             .padding(24)
+        }
+    }
+
+    /// Photos as cards, side by side and wrapping.
+    private func cards(_ entries: [History.Entry]) -> some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 200), spacing: 16)],
+                  alignment: .leading, spacing: 16) {
+            ForEach(entries) { entry in
+                HistoryCard(entry: entry, thumb: model.thumbs[entry.path], hang: hang, sendAgain: sendAgain)
+            }
         }
     }
 }

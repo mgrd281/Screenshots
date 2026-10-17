@@ -6,6 +6,8 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Orders, in the History window: photos with an order, invoice or customer
+  number together under that number.
 - Sent, in the History window: what went into which chat, when, with what
   covered and the message, to search or export as a table. The History
   keeps photos 90 days, a year or forever too.
