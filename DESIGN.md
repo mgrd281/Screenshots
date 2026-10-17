@@ -114,6 +114,11 @@ components:
   sidebar-tile:
     rounded: "{rounded.keycap}"
     size: "24pt"
+  inspector:
+    width: "340pt"                 # Hide Part's trailing column, a grouped form over a footer
+  canvas:
+    margin: "{spacing.xl}"         # around the picture in Hide Part, on NSColor.underPageBackgroundColor
+    minWindow: "760pt × 480pt"
   time-stamp:
     backgroundColor: "#F7F7F7"     # a band above the picture, gray 0.97
     hairline: "#D1D1D1"            # gray 0.82, between band and picture
@@ -229,6 +234,8 @@ literal value in a view.
 - Text uses `.primary`, `.secondary` and `.tertiary`.
 - Fills use `Color.primary.opacity(0.045–0.12)`, so they work in both light
   and dark.
+- **Canvas** (`NSColor.underPageBackgroundColor`) is the desk a page lies on
+  in Hide Part, light and dark from the system, as Preview has it.
 - **Surfaces split by role.**
   - **Content** is the photos and the text card's reading panel. It stays
     frosted material: `glassFrame()` (`.ultraThinMaterial`) around photos, and
@@ -469,24 +476,39 @@ apps.
 - **Search bar.** One field, a result count chip and close.
 - **Full windows** (Hide Part, Settings) for focused work. They are standard
   titled windows with Cancel and Done bound to Escape and Return.
-  - Hide Part has a rounded field above its footer to say what to hide,
-    after `sparkles` (or `text.magnifyingglass` without Apple Intelligence)
-    in 13 pt semibold `.secondary`, with a Hide button and a small spinner
-    while it works. With Apple Intelligence, three examples sit under it as
-    small `.bordered` buttons, in a row where they fit, else stacked. A callout note in `.secondary` under it says what it did.
-    While the field has the keyboard, Return runs it; empty, Return is Done.
-  - Hide Private Details in a copy (from Finder) is the same window with a
-    block titled "Hide in this copy" above the footer: six checkboxes in an
-    adaptive grid, named as Settings names them, starting with what Settings
-    hides, and a note in `.secondary` that the copy has no place or camera
-    details. The primary button reads Save Copy… and opens a save sheet in the
-    folder of the original, under the name "… (covered)". A small spinner
-    shows in the footer while the copy is written, and the window closes only
-    once it is.
-  - For a PDF, the footer starts with its pages: `chevron.backward` and
-    `chevron.forward` buttons, each with its help tag, around "Page 2 of 5" in
-    callout `.secondary` with monospaced digits. Each page keeps its own
-    boxes, and saying what to hide reads the page showing.
+  - Hide Part (`HideEditor.swift`) is a resizable window of two columns,
+    never smaller than 760 × 480, opening as large as the picture needs and
+    at most 80% of the screen (`HidePartLayout`), so a tall page opens a
+    wide window.
+    - The **canvas** on the leading side, `underPageBackgroundColor`, holds
+      the picture centred with a 24 pt margin, as large as fits and never
+      larger than itself, under the floating card's shadow (black 18%,
+      radius 14, y 6): the one thing in the window that floats. For a PDF,
+      a 36 pt row under it turns the pages: `chevron.backward` and
+      `chevron.forward`, small, each with its help tag, around "Page 2 of 5"
+      in callout `.secondary` with monospaced digits. Each page keeps its
+      own boxes, and saying what to hide reads the page showing.
+    - The **inspector** on the trailing edge, 340 pt, is a grouped `Form`
+      over a footer. First "Say what to hide": a rounded field after
+      `sparkles` (or `text.magnifyingglass` without Apple Intelligence) in
+      13 pt semibold `.secondary`, a Hide button and a small spinner while
+      it works; with Apple Intelligence, three examples under it as small
+      `.bordered` buttons, in a row where they fit, else stacked; the
+      section's footer says what it did. While the field has the keyboard,
+      Return runs it; empty, Return is Done. For a copy, "Hide in this
+      copy" follows (below). Last, "By hand": the drag hint as a row's
+      subtitle, Remove All on its trailing edge.
+    - The **footer**, under a divider, holds Cancel and Done on the
+      trailing edge.
+  - Hide Private Details in a copy (from Finder) is the same window with
+    "Hide in this copy" in the inspector: Check All, Recommended and Uncheck
+    All, small, sharing the row in equal parts (stacked where they don't
+    fit), a footer saying the copy has no place or camera details, then the
+    fifteen kinds as switches in the three groups Settings has, named as
+    Settings names them, starting with what Settings hides. The primary
+    button reads Save Copy… and opens a save sheet in the folder of the
+    original, under the name "… (covered)". A small spinner shows in the
+    footer while the copy is written, and the window closes only once it is.
 - **No modal alerts** for things that can be said inline in the card.
 - **Privacy pane.** Grouped form. First a row of three small `.bordered`
   buttons, Check All, Recommended and Uncheck All, sharing the row in equal
@@ -503,8 +525,6 @@ apps.
   saved 0.8 s after the typing stops, and at once when one is added, removed
   or the pane leaves, since every change reads the photos again. Last the
   Preview. The iPhone's Settings use the same three groups.
-- **Hide Part for a copy** gets Check All and Uncheck All, small, at the end
-  of the "Hide in this copy" row.
 - **Permissions pane** (`Permissions.swift`), in Settings between Privacy and
   About, with `lock.shield` in the sidebar.
   - A summary row first: `checkmark.shield.fill` in allowed green once all

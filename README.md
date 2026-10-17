@@ -203,7 +203,9 @@ covered, on its line or the line below; or, for whoever knows them, a
 pattern. They apply to everything that leaves the line, and to the copies
 saved from Finder.
 
-In Hide Part you can also say what to hide, like "everything but the amount
+Hide Part opens wide: the picture on the left, as large as fits, and on the
+right everything to choose; drag a corner to make the window larger or
+smaller. There you can also say what to hide, like "everything but the amount
 and the date" or "the customer's name", or click one of the examples under the
 field. Apple Intelligence picks the lines, or just the words in them, on your
 Mac, and they show as boxes to check before you press Done; click one to show

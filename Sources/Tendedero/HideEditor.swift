@@ -60,11 +60,7 @@ final class HideEditor: NSObject, NSWindowDelegate {
             }
         }
 
-        // As large as fits, never larger than the screenshot itself.
-        let screen = (NSScreen.main ?? NSScreen.screens[0]).visibleFrame
-        let room = CGSize(width: screen.width * 0.8, height: screen.height * 0.8 - 60)
-
-        let view = HideEditorView(model: model, room: room) { [weak self] save in
+        let view = HideEditorView(model: model) { [weak self] save in
             guard save else {
                 self?.window?.close()
                 return
@@ -84,11 +80,19 @@ final class HideEditor: NSObject, NSWindowDelegate {
             saved()
             self?.window?.close()
         }
-        let window = NSWindow(contentRect: .zero, styleMask: [.titled, .closable], backing: .buffered, defer: false)
+        let window = NSWindow(contentRect: .zero, styleMask: [.titled, .closable, .miniaturizable, .resizable],
+                              backing: .buffered, defer: false)
         window.title = url.deletingPathExtension().lastPathComponent
         let hosting = NSHostingView(rootView: view)
+        // The window sets the size; the view fills it.
+        hosting.sizingOptions = []
         window.contentView = hosting
-        window.setContentSize(hosting.fittingSize)
+        window.contentMinSize = HidePartLayout.minimum
+        // As large as fits the screen, with the picture never larger than
+        // itself; it can be made larger or smaller after.
+        let screen = (NSScreen.main ?? NSScreen.screens[0]).visibleFrame
+        let room = CGSize(width: screen.width * 0.8, height: screen.height * 0.8)
+        window.setContentSize(HidePartLayout.windowSize(for: image.size, pages: pages, in: room))
         window.isReleasedWhenClosed = false
         // Over the line, which floats.
         window.level = .floating
@@ -341,19 +345,44 @@ final class HideModel: ObservableObject {
     }
 }
 
-private struct HideEditorView: View {
-    @ObservedObject var model: HideModel
-    /// The most room the picture may take.
-    let room: CGSize
-    let finish: (Bool) -> Void
+/// How the Hide Part window is laid out: the picture on a canvas, as large
+/// as fits, beside an inspector with everything to choose, and how large the
+/// window opens for a picture.
+enum HidePartLayout {
+    /// The inspector on the trailing edge.
+    static let panelWidth: CGFloat = 340
+    /// Around the picture on its canvas.
+    static let margin: CGFloat = 24
+    /// The page control under a PDF's page.
+    static let pagesHeight: CGFloat = 36
+    /// The least the window may be.
+    static let minimum = CGSize(width: 760, height: 480)
 
-    /// As large as fits, never larger than the picture itself.
-    private var size: CGSize {
-        let image = model.image.size
-        guard image.width > 0, image.height > 0 else { return room }
-        let scale = min(1, room.width / image.width, room.height / image.height)
+    /// The picture as large as fits the area, never larger than itself.
+    static func fitted(_ image: CGSize, in area: CGSize) -> CGSize {
+        guard image.width > 0, image.height > 0 else { return .zero }
+        let scale = max(0, min(1, area.width / image.width, area.height / image.height))
         return CGSize(width: (image.width * scale).rounded(), height: (image.height * scale).rounded())
     }
+
+    /// The window to open: the picture as large as fits the room beside the
+    /// inspector, and the window never smaller than the minimum.
+    static func windowSize(for image: CGSize, pages: Int, in room: CGSize) -> CGSize {
+        let bar = pages > 1 ? pagesHeight : 0
+        let area = CGSize(width: room.width - panelWidth - 2 * margin, height: room.height - 2 * margin - bar)
+        let picture = fitted(image, in: area)
+        let wanted = CGSize(width: picture.width + 2 * margin + panelWidth, height: picture.height + 2 * margin + bar)
+        return CGSize(width: max(minimum.width, min(room.width, wanted.width)).rounded(),
+                      height: max(minimum.height, min(room.height, wanted.height)).rounded())
+    }
+}
+
+/// The window: the picture on its canvas, and on the trailing edge the
+/// inspector, a grouped form of what to hide over the Cancel and Done
+/// buttons.
+private struct HideEditorView: View {
+    @ObservedObject var model: HideModel
+    let finish: (Bool) -> Void
 
     /// The box being drawn, in the view.
     @State private var drawing: CGRect?
@@ -364,131 +393,95 @@ private struct HideEditorView: View {
     private static let cover = Color(white: 0.12)
 
     var body: some View {
+        HStack(spacing: 0) {
+            canvas
+            Divider()
+            inspector
+        }
+        .frame(minWidth: HidePartLayout.minimum.width, minHeight: HidePartLayout.minimum.height)
+    }
+
+    // MARK: The canvas
+
+    /// The picture as large as fits, centred on the canvas, with a PDF's
+    /// pages under it.
+    private var canvas: some View {
         VStack(spacing: 0) {
-            ZStack(alignment: .topLeading) {
-                Image(nsImage: model.image)
-                    .resizable()
-                    .interpolation(.high)
-                    .frame(width: size.width, height: size.height)
-                ForEach(Array(model.found.enumerated()), id: \.offset) { _, box in
-                    place(RoundedRectangle(cornerRadius: 3, style: .continuous).fill(Self.cover), box)
-                        .allowsHitTesting(false)
-                }
-                ForEach(Array(model.hand.enumerated()), id: \.offset) { i, box in
-                    place(handBox(hovering: hovered == i), box)
-                        .onHover { inside in
-                            if inside { hovered = i } else if hovered == i { hovered = nil }
-                        }
-                        .onTapGesture {
-                            hovered = nil
-                            model.hand.remove(at: i)
-                        }
-                }
-                if let drawing {
-                    RoundedRectangle(cornerRadius: 3, style: .continuous)
-                        .fill(Color.accentColor.opacity(0.25))
-                        .overlay(RoundedRectangle(cornerRadius: 3, style: .continuous)
-                            .strokeBorder(Color.accentColor, style: StrokeStyle(lineWidth: 1.5, dash: [5, 3])))
-                        .frame(width: drawing.width, height: drawing.height)
-                        .offset(x: drawing.minX, y: drawing.minY)
-                        .allowsHitTesting(false)
-                }
+            GeometryReader { geometry in
+                let margin = HidePartLayout.margin
+                let size = HidePartLayout.fitted(model.image.size,
+                                                 in: CGSize(width: geometry.size.width - 2 * margin,
+                                                            height: geometry.size.height - 2 * margin))
+                picture(size)
+                    .shadow(color: .black.opacity(0.18), radius: 14, y: 6)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
             }
-            .frame(width: size.width, height: size.height)
-            .clipped()
-            .contentShape(Rectangle())
-            // Alongside the boxes' clicks, so a drag can start on one too.
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 3)
-                    .onChanged { drawing = rect(from: $0.startLocation, to: $0.location) }
-                    .onEnded { value in
-                        let rect = rect(from: value.startLocation, to: value.location)
-                        drawing = nil
-                        guard rect.width >= 4, rect.height >= 4 else { return }
-                        model.hand.append(normalized(rect))
+            if model.pageCount > 1 {
+                pages
+                    .frame(height: HidePartLayout.pagesHeight)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(nsColor: .underPageBackgroundColor))
+    }
+
+    /// The picture at that size, with what is covered and the boxes drawn
+    /// by hand over it, ready for another box to be dragged.
+    private func picture(_ size: CGSize) -> some View {
+        ZStack(alignment: .topLeading) {
+            Image(nsImage: model.image)
+                .resizable()
+                .interpolation(.high)
+                .frame(width: size.width, height: size.height)
+            ForEach(Array(model.found.enumerated()), id: \.offset) { _, box in
+                place(RoundedRectangle(cornerRadius: 3, style: .continuous).fill(Self.cover), box, in: size)
+                    .allowsHitTesting(false)
+            }
+            ForEach(Array(model.hand.enumerated()), id: \.offset) { i, box in
+                place(handBox(hovering: hovered == i), box, in: size)
+                    .onHover { inside in
+                        if inside { hovered = i } else if hovered == i { hovered = nil }
                     }
-            )
-            .onHover { inside in
-                guard inside != crosshair else { return }
-                if inside { NSCursor.crosshair.push() } else { NSCursor.pop() }
-                crosshair = inside
+                    .onTapGesture {
+                        hovered = nil
+                        model.hand.remove(at: i)
+                    }
             }
-            .onDisappear {
-                if crosshair { NSCursor.pop() }
+            if let drawing {
+                RoundedRectangle(cornerRadius: 3, style: .continuous)
+                    .fill(Color.accentColor.opacity(0.25))
+                    .overlay(RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .strokeBorder(Color.accentColor, style: StrokeStyle(lineWidth: 1.5, dash: [5, 3])))
+                    .frame(width: drawing.width, height: drawing.height)
+                    .offset(x: drawing.minX, y: drawing.minY)
+                    .allowsHitTesting(false)
             }
-
-            saying
-                .padding(.horizontal, 14)
-                .padding(.top, 14)
-                .frame(width: max(size.width, 520))
-
-            if model.copying {
-                copyOptions
-                    .padding(.horizontal, 14)
-                    .padding(.top, 14)
-                    .frame(width: max(size.width, 520), alignment: .leading)
-            }
-
-            HStack(spacing: 10) {
-                if model.pageCount > 1 {
-                    pages
+        }
+        .frame(width: size.width, height: size.height)
+        .clipped()
+        .contentShape(Rectangle())
+        // Alongside the boxes' clicks, so a drag can start on one too.
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 3)
+                .onChanged { drawing = box(from: $0.startLocation, to: $0.location, in: size) }
+                .onEnded { value in
+                    let drawn = box(from: value.startLocation, to: value.location, in: size)
+                    drawing = nil
+                    guard drawn.width >= 4, drawn.height >= 4 else { return }
+                    model.hand.append(normalized(drawn, in: size))
                 }
-                Text(L("Drag over anything to hide it. Click a box to show it again."))
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 12)
-                Button(L("Remove All")) { model.hand = [] }
-                    .disabled(model.hand.isEmpty)
-                if model.saving {
-                    ProgressView().controlSize(.small)
-                }
-                Button(L("Cancel")) { finish(false) }
-                    .keyboardShortcut(.cancelAction)
-                    .disabled(model.saving)
-                Button(model.copying ? L("Save Copy…") : L("Done")) { finish(true) }
-                    // Return in the field hides what it says instead.
-                    .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut.defaultAction)
-                    .disabled(model.saving)
-            }
-            .padding(14)
-            .frame(width: max(size.width, 520))
+        )
+        .onHover { inside in
+            guard inside != crosshair else { return }
+            if inside { NSCursor.crosshair.push() } else { NSCursor.pop() }
+            crosshair = inside
+        }
+        .onDisappear {
+            if crosshair { NSCursor.pop() }
         }
     }
 
-    /// What the copy hides, checked for that copy alone. It starts with what
-    /// Settings hides; the same kinds, in the same words.
-    private var copyOptions: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(L("Hide in this copy"))
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Button(L("Check All")) { model.chosen = Set(PrivateDetail.allCases) }
-                Button(L("Uncheck All")) { model.chosen = [] }
-            }
-            .controlSize(.small)
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 170), alignment: .leading)],
-                      alignment: .leading, spacing: 6) {
-                ForEach(PrivateDetail.allCases, id: \.self) { detail in
-                    Toggle(detail.title, isOn: Binding(
-                        get: { model.chosen.contains(detail) },
-                        set: { on in
-                            if on { model.chosen.insert(detail) } else { model.chosen.remove(detail) }
-                        }
-                    ))
-                    .toggleStyle(.checkbox)
-                }
-            }
-            Text(L("The copy has no place or camera details. The original stays as it is."))
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-    }
-
-    /// A PDF's pages, one at a time.
+    /// A PDF's pages, one at a time, under the page showing.
     private var pages: some View {
         HStack(spacing: 4) {
             Button {
@@ -513,39 +506,38 @@ private struct HideEditorView: View {
             .help(L("Next Page"))
             .accessibilityLabel(L("Next Page"))
         }
+        .controlSize(.small)
     }
 
-    /// Ready to click, for what is hidden most often.
-    private static let exampleRequests = [
-        L("Names and addresses"),
-        L("Everything but the amount and the date"),
-        L("Phone numbers and emails"),
-    ]
+    // MARK: The inspector
 
-    private var examples: some View {
-        ForEach(Self.exampleRequests, id: \.self) { example in
-            Button(example) {
-                model.request = example
-                model.hideAsSaid()
+    private var inspector: some View {
+        VStack(spacing: 0) {
+            Form {
+                saying
+                if model.copying {
+                    copyChoice
+                }
+                byHand
             }
-            .buttonStyle(.bordered)
-            .controlSize(.small)
-            .disabled(model.working)
+            .formStyle(.grouped)
+            Divider()
+            footer
         }
+        .frame(width: HidePartLayout.panelWidth)
     }
 
-    /// A field to say what to hide, with a note on what it did.
+    /// A field to say what to hide, examples ready to click, and a note on
+    /// what it did.
     private var saying: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        Section {
             HStack(spacing: 8) {
                 Image(systemName: model.understandsSentences ? "sparkles" : "text.magnifyingglass")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.secondary)
                     .accessibilityHidden(true)
-                TextField(model.understandsSentences
-                          ? L("Say what to hide, like “everything but the amount and the date”")
-                          : L("Words to hide, separated by commas"),
-                          text: $model.request)
+                TextField(L("Say what to hide"), text: $model.request, prompt: Text(prompt))
+                    .labelsHidden()
                     .textFieldStyle(.roundedBorder)
                     .focused($fieldFocused)
                     .onSubmit {
@@ -569,19 +561,121 @@ private struct HideEditorView: View {
                     VStack(alignment: .leading, spacing: 6) { examples }
                 }
             }
+        } header: {
+            Text(L("Say what to hide"))
+        } footer: {
             if let note = model.note {
                 Text(note)
-                    .font(.callout)
                     .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
             } else if !model.understandsSentences {
                 Text(L("With Apple Intelligence on, you can say it in a sentence."))
-                    .font(.callout)
                     .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
+
+    private var prompt: String {
+        model.understandsSentences
+            ? L("Say what to hide, like “everything but the amount and the date”")
+            : L("Words to hide, separated by commas")
+    }
+
+    /// Ready to click, for what is hidden most often.
+    private static let exampleRequests = [
+        L("Names and addresses"),
+        L("Everything but the amount and the date"),
+        L("Phone numbers and emails"),
+    ]
+
+    private var examples: some View {
+        ForEach(Self.exampleRequests, id: \.self) { example in
+            Button(example) {
+                model.request = example
+                model.hideAsSaid()
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+            .disabled(model.working)
+        }
+    }
+
+    /// What the copy hides, chosen for that copy alone: every kind, the
+    /// recommended ones or none at once, then the kinds in the three groups
+    /// Settings has, in the same words.
+    @ViewBuilder private var copyChoice: some View {
+        Section {
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 8) { choices }
+                VStack(spacing: 8) { choices }
+            }
+            .controlSize(.small)
+        } header: {
+            Text(L("Hide in this copy"))
+        } footer: {
+            Text(L("The copy has no place or camera details. The original stays as it is."))
+                .foregroundStyle(.secondary)
+        }
+        ForEach(PrivateDetail.Group.allCases, id: \.self) { group in
+            Section(group.title) {
+                ForEach(group.kinds, id: \.self) { detail in
+                    Toggle(detail.title, isOn: Binding(
+                        get: { model.chosen.contains(detail) },
+                        set: { on in
+                            if on { model.chosen.insert(detail) } else { model.chosen.remove(detail) }
+                        }
+                    ))
+                }
+            }
+        }
+    }
+
+    private var choices: some View {
+        Group {
+            choice(L("Check All"), Set(PrivateDetail.allCases))
+            choice(L("Recommended"), PrivateDetail.recommended)
+            choice(L("Uncheck All"), [])
+        }
+    }
+
+    private func choice(_ title: String, _ kinds: Set<PrivateDetail>) -> some View {
+        Button { model.chosen = kinds } label: {
+            Text(title).frame(maxWidth: .infinity)
+        }
+    }
+
+    /// The boxes dragged over the picture, and a way to take them all away.
+    private var byHand: some View {
+        Section {
+            LabeledContent {
+                Button(L("Remove All")) { model.hand = [] }
+                    .disabled(model.hand.isEmpty)
+            } label: {
+                Text(L("By hand"))
+                Text(L("Drag over anything to hide it. Click a box to show it again."))
+            }
+        }
+    }
+
+    /// Cancel and Done, or Save Copy… for a copy, with a spinner while the
+    /// copy is written.
+    private var footer: some View {
+        HStack(spacing: 10) {
+            if model.saving {
+                ProgressView().controlSize(.small)
+            }
+            Spacer()
+            Button(L("Cancel")) { finish(false) }
+                .keyboardShortcut(.cancelAction)
+                .disabled(model.saving)
+            Button(model.copying ? L("Save Copy…") : L("Done")) { finish(true) }
+                // Return in the field hides what it says instead.
+                .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut.defaultAction)
+                .disabled(model.saving)
+        }
+        .padding(16)
+    }
+
+    // MARK: Boxes
 
     private func handBox(hovering: Bool) -> some View {
         RoundedRectangle(cornerRadius: 3, style: .continuous)
@@ -598,8 +692,8 @@ private struct HideEditorView: View {
             .contentShape(Rectangle())
     }
 
-    /// A box from 0 to 1 from the bottom left, placed over the image.
-    private func place(_ view: some View, _ box: CGRect) -> some View {
+    /// A box from 0 to 1 from the bottom left, placed over the picture.
+    private func place(_ view: some View, _ box: CGRect, in size: CGSize) -> some View {
         let rect = CGRect(x: box.minX * size.width, y: (1 - box.maxY) * size.height,
                           width: box.width * size.width, height: box.height * size.height)
         return view
@@ -607,14 +701,14 @@ private struct HideEditorView: View {
             .offset(x: rect.minX, y: rect.minY)
     }
 
-    /// Between two points of a drag, kept on the image.
-    private func rect(from a: CGPoint, to b: CGPoint) -> CGRect {
+    /// Between two points of a drag, kept on the picture.
+    private func box(from a: CGPoint, to b: CGPoint, in size: CGSize) -> CGRect {
         let minX = max(0, min(a.x, b.x)), maxX = min(size.width, max(a.x, b.x))
         let minY = max(0, min(a.y, b.y)), maxY = min(size.height, max(a.y, b.y))
         return CGRect(x: minX, y: minY, width: max(0, maxX - minX), height: max(0, maxY - minY))
     }
 
-    private func normalized(_ rect: CGRect) -> CGRect {
+    private func normalized(_ rect: CGRect, in size: CGSize) -> CGRect {
         CGRect(x: rect.minX / size.width, y: 1 - rect.maxY / size.height,
                width: rect.width / size.width, height: rect.height / size.height)
     }
