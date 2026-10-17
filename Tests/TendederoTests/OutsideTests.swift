@@ -180,6 +180,59 @@ final class OutsideTests: XCTestCase {
         XCTAssertEqual(image.height, 40)
     }
 
+    /// The copy takes the original's name with a mark, so it is never mistaken
+    /// for the original, and keeps the kind of the photo or PDF.
+    func testACopyIsNamedBesideTheOriginal() {
+        XCTAssertEqual(SaveCopy.suggestedName(for: URL(fileURLWithPath: "/tmp/IMG_1.HEIC")),
+                       String(format: L("%@ (covered)"), "IMG_1") + ".jpg")
+        XCTAssertEqual(SaveCopy.suggestedName(for: URL(fileURLWithPath: "/tmp/Scan.png")),
+                       String(format: L("%@ (covered)"), "Scan") + ".png")
+        XCTAssertEqual(SaveCopy.suggestedName(for: URL(fileURLWithPath: "/tmp/Rechnung.pdf")),
+                       String(format: L("%@ (covered)"), "Rechnung") + ".pdf")
+        XCTAssertEqual(SaveCopy.fileType(for: URL(fileURLWithPath: "/tmp/IMG_1.HEIC")), .jpeg)
+        XCTAssertEqual(SaveCopy.fileType(for: URL(fileURLWithPath: "/tmp/Scan.png")), .png)
+        XCTAssertEqual(SaveCopy.fileType(for: URL(fileURLWithPath: "/tmp/Rechnung.pdf")), .pdf)
+    }
+
+    /// A photo's copy covers what is chosen and what is hidden by hand, and
+    /// comes out without where or with what it was taken.
+    func testAPhotoCopyCoversWhatIsChosenAndKeepsNoPlace() throws {
+        let photo = folder.appendingPathComponent("IMG_0002.jpg")
+        try makeImage(at: photo, type: .jpeg, properties: [
+            kCGImagePropertyGPSDictionary: [kCGImagePropertyGPSLatitude: 52.52, kCGImagePropertyGPSLatitudeRef: "N",
+                                            kCGImagePropertyGPSLongitude: 13.40, kCGImagePropertyGPSLongitudeRef: "E"],
+            kCGImagePropertyTIFFDictionary: [kCGImagePropertyTIFFMake: "Apple", kCGImagePropertyTIFFModel: "iPhone"],
+        ])
+        let target = folder.appendingPathComponent(SaveCopy.suggestedName(for: photo))
+        XCTAssertTrue(SaveCopy.write(photo, [], hand: [CGRect(x: 0, y: 0, width: 0.5, height: 1)], pages: [:], to: target))
+        XCTAssertEqual(target.lastPathComponent, String(format: L("%@ (covered)"), "IMG_0002") + ".jpg")
+
+        let source = try XCTUnwrap(CGImageSourceCreateWithURL(target as CFURL, nil))
+        let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] ?? [:]
+        XCTAssertNil(properties[kCGImagePropertyGPSDictionary])
+        let tiff = properties[kCGImagePropertyTIFFDictionary] as? [CFString: Any]
+        XCTAssertNil(tiff?[kCGImagePropertyTIFFMake])
+        XCTAssertNil(tiff?[kCGImagePropertyTIFFModel])
+        let image = try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, nil))
+        // The left half is covered in ink; the right half keeps its colour.
+        XCTAssertLessThan(lightness(of: image, x: 0.25, y: 0.5), 0.25)
+        XCTAssertGreaterThan(lightness(of: image, x: 0.75, y: 0.5), 0.35)
+    }
+
+    /// A PDF's copy has every page, with the page's boxes covered, and is
+    /// written to the place it was asked for.
+    func testAPDFCopyIsWrittenWhereAsked() throws {
+        let pdf = folder.appendingPathComponent("Invoice.pdf")
+        try makePDF(at: pdf, pages: 2)
+        let target = folder.appendingPathComponent(SaveCopy.suggestedName(for: pdf))
+        XCTAssertTrue(SaveCopy.write(pdf, [], hand: [], pages: [2: [CGRect(x: 0, y: 0, width: 1, height: 1)]], to: target))
+        XCTAssertEqual(target.lastPathComponent, String(format: L("%@ (covered)"), "Invoice") + ".pdf")
+
+        let copy = try XCTUnwrap(PDFDocument(url: target))
+        XCTAssertEqual(copy.pageCount, 2)
+        XCTAssertTrue((copy.string ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+    }
+
     // MARK: Helpers
 
     private func makePDF(at url: URL, size: CGSize = CGSize(width: 300, height: 200), pages: Int = 1) throws {

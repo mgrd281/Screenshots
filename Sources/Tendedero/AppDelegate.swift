@@ -431,6 +431,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         fileDrags.onEnd = { [weak self] in self?.fileDragEnded() }
         fileDrags.start()
         services.onFiles = { [weak self] urls in self?.hangFiles(urls, from: nil) }
+        services.onHide = { [weak self] urls in self?.hideDetails(urls) }
         NSApp.servicesProvider = services
         NSUpdateDynamicServices()
         if let button = statusItem.button {
@@ -494,13 +495,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @discardableResult
     private func hangFiles(_ urls: [URL], from point: CGPoint?) -> Bool {
         let files = Outside.sort(urls)
-        if !files.locked.isEmpty {
-            Notice.show(L("This PDF is locked with a password."))
-        } else if !files.tooLong.isEmpty {
-            Notice.show(String(format: L("This PDF is too long: up to %d pages."), DocumentCover.maxPages))
-        } else if !files.refused.isEmpty {
-            Notice.show(L("Only photos and PDFs can hang on the line."))
-        }
+        showRefusals(files)
         let accepted = Array(files.accepted.prefix(Outside.maxAtOnce))
         guard !accepted.isEmpty else { return false }
         // The place kept for them closes as they fly into it.
@@ -544,6 +539,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         NSApp.activate(ignoringOtherApps: true)
         guard open.runModal() == .OK else { return }
         hangFiles(open.urls, from: nil)
+    }
+
+    /// Says why a file cannot be used, when it cannot: locked, too long, or
+    /// not a photo or PDF at all.
+    private func showRefusals(_ files: Outside.Sorted) {
+        if !files.locked.isEmpty {
+            Notice.show(L("This PDF is locked with a password."))
+        } else if !files.tooLong.isEmpty {
+            Notice.show(String(format: L("This PDF is too long: up to %d pages."), DocumentCover.maxPages))
+        } else if !files.refused.isEmpty {
+            Notice.show(L("Only photos and PDFs can hang on the line."))
+        }
+    }
+
+    /// Finder's "Hide Private Details with Snapfly": one photo or PDF at a
+    /// time, so the owner decides what its copy hides.
+    private func hideDetails(_ urls: [URL]) {
+        let files = Outside.sort(urls)
+        if files.accepted.count > 1 {
+            Notice.show(L("Choose one photo or PDF at a time."))
+        } else if let url = files.accepted.first {
+            HideEditor.shared.hideInCopy(url)
+        } else {
+            showRefusals(files)
+        }
     }
 
     // MARK: The capture flying to the line

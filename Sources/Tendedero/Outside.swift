@@ -103,10 +103,23 @@ enum Outside {
 /// Finder's menu offers "Send Safely with Snapfly" for photos and PDFs, as a
 /// service (Info.plist, NSServices). What it sends hangs on the line.
 final class ServiceProvider: NSObject {
+    /// Finder's "Send Safely with Snapfly".
     var onFiles: (([URL]) -> Void)?
+    /// Finder's "Hide Private Details with Snapfly".
+    var onHide: (([URL]) -> Void)?
 
     @objc func sendSafely(_ pasteboard: NSPasteboard, userData: String?,
                           error: AutoreleasingUnsafeMutablePointer<NSString?>) {
+        deliver(pasteboard, error: error, to: onFiles)
+    }
+
+    @objc func hideDetails(_ pasteboard: NSPasteboard, userData: String?,
+                           error: AutoreleasingUnsafeMutablePointer<NSString?>) {
+        deliver(pasteboard, error: error, to: onHide)
+    }
+
+    private func deliver(_ pasteboard: NSPasteboard, error: AutoreleasingUnsafeMutablePointer<NSString?>,
+                         to handle: (([URL]) -> Void)?) {
         let urls = pasteboard.readObjects(forClasses: [NSURL.self],
                                           options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []
         guard !urls.isEmpty else {
@@ -114,7 +127,7 @@ final class ServiceProvider: NSObject {
             return
         }
         // Services are called on the main thread.
-        onFiles?(urls)
+        handle?(urls)
     }
 }
 

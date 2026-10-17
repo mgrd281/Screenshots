@@ -70,6 +70,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 | Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
 | Click the send button over a chat | The same, without leaving the message box. Drag it to move it; it stays there for that app. |
 | <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
+| Right-click a photo or PDF in Finder, then Services › Hide Private Details with Snapfly | Choose what to hide and save a covered copy beside the original. The original stays as it is. |
 | Right-click (or control-click), then Make PDF | Put the photo, or the ones picked with it, in one PDF, a page each and private details covered. It hangs ready to send, marked PDF. |
 | <kbd>⌘</kbd>-click one or more, then the PDF button on the tag | The same PDF, from the tag, where search sits while nothing is picked. |
 | Click the trash on the tag | Take everything down at once, but for the photos pinned. |
@@ -217,6 +218,13 @@ not painted over, and no text, links or document details come along. Its card
 shows a spinner while its pages are covered, then a lock. The file itself is
 never changed. Save Word or Excel documents as a PDF first; a PDF locked with
 a password, or longer than 200 pages, stays out.
+
+In Finder, right-click a photo or PDF and choose Services › Hide Private
+Details with Snapfly. The window shows the photo, or each page of the PDF:
+tick what to hide in this copy, drag a box over anything else, or say what to
+hide. Save Copy… puts a covered copy beside the original, under the same name
+with "(covered)" added, after you have chosen the place. The original stays as
+it is.
 
 <br>
 
@@ -396,6 +404,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
+| `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
 | `Shared/PrivateText.swift` | Finds private details in a screenshot and covers them, on the Mac and the iPhone |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |

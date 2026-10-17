@@ -1,2 +1,3 @@
 /* Finder's menu, for photos and PDFs (Info.plist, NSServices) */
 "Send Safely with Snapfly" = "Snapfly로 안전하게 보내기";
+"Hide Private Details with Snapfly" = "Snapfly로 개인 정보 가리기";

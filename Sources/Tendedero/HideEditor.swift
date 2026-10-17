@@ -15,6 +15,17 @@ final class HideEditor: NSObject, NSWindowDelegate {
 
     /// Calls back once new boxes are saved; not when cancelled.
     func edit(_ url: URL, saved: @escaping () -> Void) {
+        show(url, copying: false, saved: saved)
+    }
+
+    /// Hide private details for a copy beside a photo or PDF from Finder.
+    /// What is hidden is chosen in the window, for that copy alone: the
+    /// original stays as it is.
+    func hideInCopy(_ url: URL) {
+        show(url, copying: true) {}
+    }
+
+    private func show(_ url: URL, copying: Bool, saved: @escaping () -> Void) {
         window?.close()
         let document = isDocument(url)
         let pages = document ? DocumentCover.pageCount(url) : 1
@@ -23,12 +34,17 @@ final class HideEditor: NSObject, NSWindowDelegate {
             Notice.show(L("Could not open the screenshot."))
             return
         }
-        let model = HideModel(image: image, hand: document ? PrivateDetails.hand(url, page: 1) : PrivateDetails.hand(url))
+        // A copy starts with nothing hidden by hand: its boxes are its own.
+        let stored: (Int) -> [CGRect] = { page in
+            guard !copying else { return [] }
+            return document ? PrivateDetails.hand(url, page: page) : PrivateDetails.hand(url)
+        }
+        let model = HideModel(image: image, hand: stored(1), chosen: PrivateDetails.details, copying: copying)
         model.pageCount = pages
         if document {
             model.turn = { [weak self, weak model] page in
                 guard let model, let image = Self.page(page, of: url) else { return }
-                model.show(page: page, image: image, hand: PrivateDetails.hand(url, page: page))
+                model.show(page: page, image: image, hand: stored(page))
                 self?.read(image, into: model)
             }
             read(image, into: model)
@@ -36,23 +52,36 @@ final class HideEditor: NSObject, NSWindowDelegate {
             readCovered(url, into: model)
             readLines(url, into: model)
         }
+        if copying {
+            // Changing what is chosen covers the picture again at once.
+            model.refresh = { [weak self, weak model] in
+                guard let self, let model else { return }
+                if document { self.read(model.image, into: model) } else { self.readCovered(url, into: model) }
+            }
+        }
 
         // As large as fits, never larger than the screenshot itself.
         let screen = (NSScreen.main ?? NSScreen.screens[0]).visibleFrame
         let room = CGSize(width: screen.width * 0.8, height: screen.height * 0.8 - 60)
 
         let view = HideEditorView(model: model, room: room) { [weak self] save in
-            if save {
-                if document {
-                    model.keepPage()
-                    for page in 1...max(1, pages) where model.handByPage[page] != nil {
-                        PrivateDetails.setHand(model.handByPage[page] ?? [], for: url, page: page)
-                    }
-                } else {
-                    PrivateDetails.setHand(model.hand, for: url)
-                }
-                saved()
+            guard save else {
+                self?.window?.close()
+                return
             }
+            if copying {
+                self?.saveCopy(of: url, model: model)
+                return
+            }
+            if document {
+                model.keepPage()
+                for page in 1...max(1, pages) where model.handByPage[page] != nil {
+                    PrivateDetails.setHand(model.handByPage[page] ?? [], for: url, page: page)
+                }
+            } else {
+                PrivateDetails.setHand(model.hand, for: url)
+            }
+            saved()
             self?.window?.close()
         }
         let window = NSWindow(contentRect: .zero, styleMask: [.titled, .closable], backing: .buffered, defer: false)
@@ -68,6 +97,45 @@ final class HideEditor: NSObject, NSWindowDelegate {
         self.window = window
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
+    }
+
+    /// Asks where the copy goes: in the folder of the original, under a name
+    /// of its own. Nothing is written until the owner confirms the place.
+    private func saveCopy(of url: URL, model: HideModel) {
+        guard let window, !model.saving else { return }
+        model.keepPage()
+        let panel = NSSavePanel()
+        panel.directoryURL = url.deletingLastPathComponent()
+        panel.nameFieldStringValue = SaveCopy.suggestedName(for: url)
+        panel.allowedContentTypes = [SaveCopy.fileType(for: url)]
+        panel.canCreateDirectories = true
+        panel.beginSheetModal(for: window) { [weak self, weak model] response in
+            guard response == .OK, let target = panel.url, let model else { return }
+            MainActor.assumeIsolated { self?.export(url, model: model, to: target) }
+        }
+    }
+
+    /// Writes the copy in the background, with a spinner meanwhile, and then
+    /// says where it went.
+    private func export(_ url: URL, model: HideModel, to target: URL) {
+        let chosen = model.chosen
+        let hand = model.hand
+        let pages = model.handByPage
+        model.saving = true
+        DispatchQueue.global(qos: .userInitiated).async {
+            let written = SaveCopy.write(url, chosen, hand: hand, pages: pages, to: target)
+            DispatchQueue.main.async { [weak self, weak model] in
+                MainActor.assumeIsolated {
+                    model?.saving = false
+                    if written {
+                        Notice.show(String(format: L("Saved beside the original as %@."), target.lastPathComponent))
+                        self?.window?.close()
+                    } else {
+                        Notice.show(L("Could not save the copy."))
+                    }
+                }
+            }
+        }
     }
 
     func windowWillClose(_ notification: Notification) {
@@ -86,15 +154,15 @@ final class HideEditor: NSObject, NSWindowDelegate {
     /// the background.
     private func read(_ image: NSImage, into model: HideModel) {
         guard let page = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return }
-        let chosen = PrivateDetails.details
+        let chosen = model.chosen
         let shown = model.page
         DispatchQueue.global(qos: .userInitiated).async { [weak model] in
             let lines = Finder.textLines(in: page)
             let areas = chosen.isEmpty ? [] : Cover.areas(in: page, chosen)
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
-                    // Read for a page that is still the one showing.
-                    guard let model, model.page == shown else { return }
+                    // Read for a page that is still the one showing, and the choice still in place.
+                    guard let model, model.page == shown, model.chosen == chosen else { return }
                     model.found = areas
                     model.lines = lines
                 }
@@ -117,15 +185,20 @@ final class HideEditor: NSObject, NSWindowDelegate {
 
     /// What Hide private details covers, read in the background.
     private func readCovered(_ url: URL, into model: HideModel) {
-        let chosen = PrivateDetails.details
-        guard !chosen.isEmpty, isImage(url) else { return }
+        let chosen = model.chosen
+        guard !chosen.isEmpty else {
+            model.found = []
+            return
+        }
+        guard isImage(url) else { return }
         DispatchQueue.global(qos: .userInitiated).async { [weak model] in
             guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
                   let image = Cover.upright(source) else { return }
             let areas = Cover.areas(in: image, chosen)
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
-                    if let model { model.found = areas }
+                    // Only for the choice still in place.
+                    if let model, model.chosen == chosen { model.found = areas }
                 }
             }
         }
@@ -163,9 +236,25 @@ final class HideModel: ObservableObject {
     /// The boxes the last request added, replaced by the next one.
     private var said: [CGRect] = []
 
-    init(image: NSImage, hand: [CGRect]) {
+    /// What is covered. A copy sets its own choice, starting from Settings.
+    @Published var chosen: Set<PrivateDetail> {
+        didSet {
+            if chosen != oldValue { refresh?() }
+        }
+    }
+    /// Whether this is a copy beside a photo or PDF from Finder: it has a
+    /// choice of its own and a save button.
+    let copying: Bool
+    /// Covers the picture again after a change of choice.
+    var refresh: (() -> Void)?
+    /// The copy is being written.
+    @Published var saving = false
+
+    init(image: NSImage, hand: [CGRect], chosen: Set<PrivateDetail>, copying: Bool) {
         self.image = image
         self.hand = hand
+        self.chosen = chosen
+        self.copying = copying
     }
 
     /// Keeps the boxes of the page showing, before turning or saving.
@@ -337,6 +426,13 @@ private struct HideEditorView: View {
                 .padding(.top, 14)
                 .frame(width: max(size.width, 520))
 
+            if model.copying {
+                copyOptions
+                    .padding(.horizontal, 14)
+                    .padding(.top, 14)
+                    .frame(width: max(size.width, 520), alignment: .leading)
+            }
+
             HStack(spacing: 10) {
                 if model.pageCount > 1 {
                     pages
@@ -348,14 +444,45 @@ private struct HideEditorView: View {
                 Spacer(minLength: 12)
                 Button(L("Remove All")) { model.hand = [] }
                     .disabled(model.hand.isEmpty)
+                if model.saving {
+                    ProgressView().controlSize(.small)
+                }
                 Button(L("Cancel")) { finish(false) }
                     .keyboardShortcut(.cancelAction)
-                Button(L("Done")) { finish(true) }
+                    .disabled(model.saving)
+                Button(model.copying ? L("Save Copy…") : L("Done")) { finish(true) }
                     // Return in the field hides what it says instead.
                     .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut.defaultAction)
+                    .disabled(model.saving)
             }
             .padding(14)
             .frame(width: max(size.width, 520))
+        }
+    }
+
+    /// What the copy hides, checked for that copy alone. It starts with what
+    /// Settings hides; the same kinds, in the same words.
+    private var copyOptions: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(L("Hide in this copy"))
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(.secondary)
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 170), alignment: .leading)],
+                      alignment: .leading, spacing: 6) {
+                ForEach(PrivateDetail.allCases, id: \.self) { detail in
+                    Toggle(detail.title, isOn: Binding(
+                        get: { model.chosen.contains(detail) },
+                        set: { on in
+                            if on { model.chosen.insert(detail) } else { model.chosen.remove(detail) }
+                        }
+                    ))
+                    .toggleStyle(.checkbox)
+                }
+            }
+            Text(L("The copy has no place or camera details. The original stays as it is."))
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
