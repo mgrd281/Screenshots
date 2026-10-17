@@ -378,7 +378,11 @@ apps.
 - Glass frame, a 4 pt inset and a 12 pt image corner.
 - States:
   - picked: accent ring and check;
-  - covered: lock badge;
+  - covered: lock badge, shown only when something was covered. Resting on
+    it shows a tip naming what was, kinds in Settings' order joined by " · ",
+    then "Your own rules" and "Hidden by hand": "Covered: Names · Emails".
+    The same line is the photo's accessibility value, and the first item of
+    its menu, disabled, with `lock.fill` from macOS 26, over a separator;
   - a PDF: a "PDF" capsule with its page count, in the lock's corner and
     style (9 pt bold white on black 55%, 18 pt high). A PDF brought in from
     elsewhere leads the capsule with a mini white spinner while its pages

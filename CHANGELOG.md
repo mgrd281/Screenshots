@@ -16,6 +16,10 @@ keeps a download of each version.
   and the iPhone. Nobody can read what a code holds by looking, so it is
   covered whole, with the number printed under a barcode. It starts on for
   everyone who covers anything.
+- The lock on a photo says what was covered: rest the pointer on it, or open
+  the photo's menu, for "Covered: Names · QR codes and barcodes". VoiceOver
+  says it too, and the iPhone shows it under the covered picture. The lock
+  now shows only when something was covered.
 
 ## 1.0.0
 

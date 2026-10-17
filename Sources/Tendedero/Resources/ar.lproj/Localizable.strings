@@ -358,7 +358,9 @@
 "Covering private details…" = "تُغطّى المعلومات الخاصة…";
 "The picture could not be read." = "تعذّرت قراءة الصورة.";
 "Nothing private found" = "لم يُعثر على شيء خاص";
-"Details covered: %d" = "المعلومات المغطاة: %d";
+"Covered: %@" = "المغطّى: %@";
+"Your own rules" = "قواعدك الخاصة";
+"Hidden by hand" = "ما أُخفي يدويًا";
 "Saved to Photos" = "حُفظت في الصور";
 "The picture could not be saved." = "تعذّر حفظ الصورة.";
 "Save" = "حفظ";

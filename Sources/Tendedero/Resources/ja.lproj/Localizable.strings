@@ -358,7 +358,9 @@
 "Covering private details…" = "個人情報を隠しています…";
 "The picture could not be read." = "画像を読み込めませんでした。";
 "Nothing private found" = "個人情報は見つかりませんでした";
-"Details covered: %d" = "隠した情報: %d";
+"Covered: %@" = "隠したもの：%@";
+"Your own rules" = "自分のルール";
+"Hidden by hand" = "手動で隠した部分";
 "Saved to Photos" = "写真に保存しました";
 "The picture could not be saved." = "画像を保存できませんでした。";
 "Save" = "保存";
