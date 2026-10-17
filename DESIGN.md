@@ -9,7 +9,8 @@ colors:
   pin-orange: "#FF9500"        # Color.orange: a pinned photo
   count-red: "#FF3B30"         # Color.red: the count on a closed card stack
   search-mark: "#FFCC00"       # Color.yellow: search highlights, 45% fill and a solid edge
-  cover-ink: "#1F1F1F"         # covers over private details in a photo
+  cover-ink: "#1F1F1F"         # covers over private details in a photo; the ink tiles in Settings
+  tile-paper: "#EBEBEB"        # the ink tiles in the dark, their symbol in #1A1A1A
   island-black: "#000000"      # the island line style
   # Website only (website/static/site.css). Light value first, dark after the slash.
   web-button: "#0071E3"        # the accent as a button fill: white text on it is 4.7:1
@@ -206,10 +207,9 @@ literal value in a view.
   so never hardcode the blue.
 
 ### Brand
-- The **amber, coral and violet gradient** (`Brand.gradient`) belongs to
-  the app icon and the About pane only, where it is the ring round the
-  maker's monogram. It is not an interface color: no gradient buttons, no
-  gradient panels.
+- The **amber, coral and violet gradient** belongs to the app icon only. It
+  is not an interface color: no gradient buttons, no gradient panels, no
+  monograms.
 
 ### Semantic
 - **Pin orange** means "kept on purpose". It is used only for the pin badge.
@@ -227,8 +227,9 @@ literal value in a view.
   be read, with a symbol beside the word, never color alone.
 - **Island black** is pure black, to blend into the notch and the menu bar
   above it.
-- **Sidebar tiles** are ink (`.primary`) with the symbol in `.background`,
-  never a colour: the Settings sidebar is monochrome.
+- **Ink tiles** (`InkTile`): cover ink with a white symbol in the light,
+  paper (grey 0.92) with the symbol in ink (grey 0.1) in the dark, never a
+  colour. Behind the Settings sidebar's symbols and the Support pane's rows.
 
 ### Neutral
 - Text uses `.primary`, `.secondary` and `.tertiary`.
@@ -299,10 +300,11 @@ design with monospaced digits.
 - **Settings** is a sidebar window, at least 640 × 440, using grouped
   `Form`s. Group rows into sections with headers; no free-floating controls.
   - The sidebar names each pane after a 24 pt tile, rounded 6 (the keycap
-    radius), as System Settings does, but all five tiles are ink
-    (`.primary`) with the symbol knocked out in the window's background
-    colour (`.background`): one colour, so the sidebar stays quiet and
-    reads the same in light and dark.
+    radius), as System Settings does, but all six tiles are ink
+    (`InkTile.fill`, the cover ink) with the symbol knocked out in white
+    (`InkTile.glyph`); in the dark, paper with the symbol in ink. One
+    colour, so the sidebar stays quiet. They are fixed colours on purpose:
+    `.primary` and `.background` go vibrant in a sidebar and wash out.
   - A button on a row sits at the trailing edge, in a `LabeledContent` whose
     label says what the button is for, and is a `SettingsButton`: regular
     `.bordered`, at least 128 pt wide, so the buttons down a pane line up as
@@ -464,8 +466,8 @@ apps.
   - Grouped by intent: copy and send; translate and describe; open and edit;
     take down.
   - SF Symbols on macOS 26 only, as Apple's own menus have.
-- **Settings sidebar.** General, Line, Privacy, Permissions and About, each
-  on its tile (see Layout).
+- **Settings sidebar.** General, Line, Privacy, Permissions, Support and
+  About, each on its tile (see Layout).
 
 ### Dialogs, sheets and panels
 - **Floating card** (`TextCard`) for results that belong to a photo:
@@ -528,12 +530,22 @@ apps.
   Preview. The iPhone's Settings use the same three groups.
 - **About pane.** The icon at 128 under its shadow, the name in 34 pt
   rounded bold, the tagline in title3 `.secondary`, the version in callout
-  `.tertiary`. Then the maker card: a 40 pt circle ringed in the brand
-  gradient (2.5 pt) with the maker's initials in `.primary`, 15 pt rounded
-  semibold, beside "Made by" in caption `.secondary` over the name in
-  headline, all on a faint fill (12 radius). Under it, regular `.bordered`
-  buttons: Check for Updates… (direct edition only) and Help & Support….
-  The MIT credit is the last line, caption `.tertiary`, at the bottom edge.
+  `.tertiary`. Then one line, "Made by" in `.secondary` before the maker's
+  name in semibold, and "© year name" in callout `.tertiary` under it;
+  Check for Updates… (direct edition only) as a regular `.bordered` button.
+  No monogram, no card, nothing else: help lives in Support, and so does
+  the credit the licence asks for.
+- **Support pane** (`Support.swift`), between Permissions and About, with
+  `lifepreserver.fill` in the sidebar. A grouped form of rows, each a 28 pt
+  ink tile (7 radius) with its symbol, the name with a callout line on what
+  it does, and a `SettingsButton` on the trailing edge: Help & Support
+  (Open: the website's support page in the Mac's language), Report a
+  Problem and Suggest a Feature (Write…: an email to the support address
+  with the subject and the diagnostic details filled in, room left above
+  them for what happened), then Diagnostic details (Copy, reading Copied
+  for two seconds): the version and build, macOS and the Mac, the language,
+  and each permission's state; nothing personal. The section's footer
+  carries the credit the MIT License asks for.
 - **Permissions pane** (`Permissions.swift`), in Settings between Privacy and
   About, with `lock.shield` in the sidebar.
   - A summary row first: `checkmark.shield.fill` in allowed green once all

@@ -17,13 +17,4 @@ final class SettingsTests: XCTestCase {
         XCTAssertEqual(Folders.placeName(URL(fileURLWithPath: "/Volumes/Backup/Scans", isDirectory: true)),
                        "Volumes › Backup › Scans")
     }
-
-    /// The monogram in the About pane: two letters at most, in capitals.
-    func testTheMakersInitials() {
-        XCTAssertEqual(Maker.initials(of: "Mgrdegh Ghazarian"), "MG")
-        XCTAssertEqual(Maker.initials(of: "alejandro buján"), "AB")
-        XCTAssertEqual(Maker.initials(of: "  Snapfly "), "S")
-        XCTAssertEqual(Maker.initials(of: "Anna Maria Lind"), "AM")
-        XCTAssertEqual(Maker.initials(of: ""), "")
-    }
 }

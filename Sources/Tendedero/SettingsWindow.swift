@@ -391,7 +391,7 @@ final class SettingsWindow {
 }
 
 private enum Pane: String, CaseIterable, Identifiable {
-    case general, line, privacy, permissions, about
+    case general, line, privacy, permissions, support, about
 
     var id: Self { self }
 
@@ -401,6 +401,7 @@ private enum Pane: String, CaseIterable, Identifiable {
         case .line: L("Line")
         case .privacy: L("Privacy")
         case .permissions: L("Permissions")
+        case .support: L("Support")
         case .about: L("About")
         }
     }
@@ -413,6 +414,7 @@ private enum Pane: String, CaseIterable, Identifiable {
         case .line: Image(nsImage: LineIcon.image(filled: false, description: title)).renderingMode(.template)
         case .privacy: Image(systemName: "hand.raised.fill")
         case .permissions: Image(systemName: "lock.shield.fill")
+        case .support: Image(systemName: "lifepreserver.fill")
         case .about: Image(systemName: "info.circle.fill")
         }
     }
@@ -436,9 +438,9 @@ private struct PaneLabel: View {
                     pane.icon.font(.system(size: 12, weight: .semibold))
                 }
             }
-            .foregroundStyle(.background)
+            .foregroundStyle(InkTile.glyph)
             .frame(width: 24, height: 24)
-            .background(Color.primary, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+            .background(InkTile.fill, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
         }
     }
 }
@@ -482,6 +484,7 @@ private struct SettingsView: View {
             case .line: LinePane(prefs: prefs)
             case .privacy: PrivacyPane(prefs: prefs, line: line)
             case .permissions: PermissionsPane()
+            case .support: SupportPane(prefs: prefs)
             case .about: AboutPane(prefs: prefs)
             }
         }
@@ -601,10 +604,7 @@ enum Folders {
     /// disk. The home folder is the user's own, even in the sandbox.
     static func placeName(_ url: URL) -> String {
         let parts = url.standardizedFileURL.pathComponents
-        var home = URL(fileURLWithPath: NSHomeDirectory())
-        if let dir = getpwuid(getuid())?.pointee.pw_dir {
-            home = URL(fileURLWithPath: String(cString: dir))
-        }
+        let home = Edition.home
         let top = home.standardizedFileURL.pathComponents
         var place = URL(fileURLWithPath: "/")
         var below = Array(parts.dropFirst())
@@ -1203,62 +1203,25 @@ private struct AboutPane: View {
                 .font(.callout)
                 .foregroundStyle(.tertiary)
                 .padding(.top, 8)
-            MakerCard(name: AppDelegate.author)
-                .padding(.top, 26)
-            HStack(spacing: 10) {
-                if !Edition.appStore {
-                    Button(L("Check for Updates…")) { prefs.checkForUpdates() }
-                }
-                Button(L("Help & Support…")) { NSWorkspace.shared.open(AppDelegate.supportURL) }
+            // Who made it, and whose it is.
+            HStack(spacing: 5) {
+                Text(L("Made by"))
+                    .foregroundStyle(.secondary)
+                Text(verbatim: AppDelegate.author)
+                    .fontWeight(.semibold)
             }
-            .padding(.top, 16)
-            Spacer()
-            // The MIT License asks for the original's credit to stay. It is
-            // the last line, at the bottom edge.
-            Text(L("Based on Tendedero by Alejandro Buján, under the MIT License."))
-                .font(.caption)
+            .padding(.top, 22)
+            Text(verbatim: "© \(Calendar.current.component(.year, from: Date())) \(AppDelegate.author)")
+                .font(.callout)
                 .foregroundStyle(.tertiary)
-                .padding(.bottom, 14)
+                .padding(.top, 4)
+            if !Edition.appStore {
+                Button(L("Check for Updates…")) { prefs.checkForUpdates() }
+                    .padding(.top, 18)
+            }
+            Spacer()
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-/// Who made it: their initials in a ring of the brand's colours, the one
-/// place in the interface those colours appear, beside the name on a faint
-/// fill.
-private struct MakerCard: View {
-    let name: String
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Text(Maker.initials(of: name))
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                .frame(width: 40, height: 40)
-                .overlay(Circle().strokeBorder(Brand.gradient, lineWidth: 2.5))
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 1) {
-                Text(L("Made by"))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text(verbatim: name)
-                    .font(.headline)
-            }
-        }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 14)
-        .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .accessibilityElement(children: .combine)
-    }
-}
-
-/// Who made it, as the About pane shows them.
-enum Maker {
-    /// The first letter of each of the first two words of the name, in
-    /// capitals: "Mgrdegh Ghazarian" is "MG".
-    static func initials(of name: String) -> String {
-        name.split(whereSeparator: \.isWhitespace).prefix(2)
-            .compactMap(\.first).map { String($0).uppercased() }.joined()
     }
 }

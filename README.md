@@ -117,6 +117,11 @@ or opens the right page of System Settings. It updates as you switch things
 in System Settings. Each is asked for only when what needs it is first used,
 and once one was refused, Permissions Needed… appears in the menu bar.
 
+Help sits beside it, in Settings › Support: the support page, Report a
+Problem and Suggest a Feature, which open an email with the version, macOS
+and permission details already in it, and those details to copy for any
+other way of asking. Nothing personal is in them.
+
 While photos hang, the same send button waits over the chat itself, just
 above its own send button: in ChatGPT, Claude, WhatsApp, Messages, Telegram
 and other chat apps, and in Safari, Chrome and other browsers only on chat
@@ -412,7 +417,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 |:--|:--|
 | `AppDelegate.swift` | Menu bar, shortcut, revealing and tucking away the line |
 | `LineIcon.swift` | Snapfly's mark in the menu bar and Settings: a photo hanging on a line |
-| `SettingsWindow.swift` | The settings window: General, Line, Privacy, Permissions and About |
+| `SettingsWindow.swift` | The settings window: General, Line, Privacy, Permissions, Support and About |
+| `Support.swift` | Settings › Support: the help page, an email about a problem or an idea with the details filled in, and those details to copy |
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs |
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
