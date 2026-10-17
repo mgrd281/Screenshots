@@ -523,6 +523,17 @@
 "Image" = "Image";
 "Plain file names" = "Plain file names";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken.";
+"Cover what lands in a folder" = "Cover what lands in a folder";
+"Save copies in" = "Save copies in";
+"Cover a folder" = "Cover a folder";
+"Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder." = "Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder.";
+"Choose the folder to watch." = "Choose the folder to watch.";
+"Choose the folder for the covered copies." = "Choose the folder for the covered copies.";
+"Choose two folders apart from each other." = "Choose two folders apart from each other.";
+"Covered copies saved: %ld" = "Covered copies saved: %ld";
+"Nothing to cover in %@. Take a look." = "Nothing to cover in %@. Take a look.";
+"Could not cover %@." = "Could not cover %@.";
+"Watched folder" = "Watched folder";
 "Test on a Sample" = "Test on a Sample";
 "Testing…" = "Testing…";
 "Test" = "Test";

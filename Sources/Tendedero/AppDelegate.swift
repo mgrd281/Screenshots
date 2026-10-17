@@ -99,6 +99,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if Inbox.isEnabled || Edition.appStore { Inbox.apply() }
         restoreSettingsOnTermination()
         startWatcher()
+        FolderCover.shared.restart()
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
         Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         FullPage.shared.onCapture = { [weak self] url in self?.hangCapture(url) }

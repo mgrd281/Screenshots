@@ -523,6 +523,17 @@
 "Image" = "Şəkil";
 "Plain file names" = "Sadə fayl adları";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Şəkillər nə vaxt, harada və nə ilə yaradıldığı barədə qeydlər olmadan yeni fayllar kimi çıxır. Sadə fayl adları ilə onlar həm də çəkildiyi vaxta görə yox, “Şəkil” adlanır.";
+"Cover what lands in a folder" = "Qovluğa düşənləri ört";
+"Save copies in" = "Nüsxələri saxla";
+"Cover a folder" = "Qovluğu ört";
+"Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder." = "İzlənən qovluğa düşən hər şəkil və ya PDF üçün yuxarıda işarələnənlər örtülmüş bir nüsxə öz adı ilə digər qovluqda saxlanır.";
+"Choose the folder to watch." = "İzlənəcək qovluğu seç.";
+"Choose the folder for the covered copies." = "Örtülü nüsxələr üçün qovluğu seç.";
+"Choose two folders apart from each other." = "Bir-birindən ayrı iki qovluq seç.";
+"Covered copies saved: %ld" = "Saxlanan örtülü nüsxələr: %ld";
+"Nothing to cover in %@. Take a look." = "%@ içində örtüləcək heç nə yoxdur. Bir bax.";
+"Could not cover %@." = "%@ örtülə bilmədi.";
+"Watched folder" = "İzlənən qovluq";
 "Test on a Sample" = "Nümunədə yoxla";
 "Testing…" = "Yoxlanılır…";
 "Test" = "Yoxlama";

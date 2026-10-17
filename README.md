@@ -245,6 +245,14 @@ pixel; a photo goes as a JPEG; a GIF goes as itself, so it keeps moving.
 Turn on Plain file names under Privacy, and pictures are called Image too,
 rather than after when they were taken.
 
+To cover a whole folder, turn on Cover what lands in a folder under
+Privacy and choose two folders, like the one invoices are downloaded to
+and another for the copies. Every picture or PDF that lands in the first
+gets a copy with what you checked covered, saved under its name in the
+second, one after another in the background. A note says how many were
+saved, and names the files where nothing was found, so you can take a
+look. What was in the folder before stays as it is.
+
 AI chats may keep what goes into them on their servers. Turn on Cover
 everything in AI chats under Privacy, and whatever you send, copy or drag
 out while ChatGPT, Claude, Gemini or another AI chat is in front, as an app
@@ -521,6 +529,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
+| `FolderCover.swift` | Cover a folder: watches one folder and saves covered copies of what lands there in another |
 | `SelfTest.swift` | Test on a Sample: a made-up order with nearly every kind of detail, covered as Settings says |
 | `CoveringProfile.swift` | Cover everything in AI chats: which chats count, and what to cover for the app in front |
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |

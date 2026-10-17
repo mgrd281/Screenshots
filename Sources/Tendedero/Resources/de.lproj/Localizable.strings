@@ -521,6 +521,17 @@
 "Image" = "Bild";
 "Plain file names" = "Schlichte Dateinamen";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Bilder gehen als frische Dateien hinaus, ohne Angaben dazu, wann, wo oder womit sie entstanden sind. Mit schlichten Dateinamen heißen sie außerdem „Bild“ statt nach dem Zeitpunkt der Aufnahme.";
+"Cover what lands in a folder" = "Abdecken, was in einem Ordner landet";
+"Save copies in" = "Kopien sichern in";
+"Cover a folder" = "Ordner abdecken";
+"Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder." = "Jedes Bild und jedes PDF, das im beobachteten Ordner landet, bekommt eine Kopie, in der verdeckt ist, was oben angehakt ist, gesichert unter seinem Namen im anderen Ordner.";
+"Choose the folder to watch." = "Wähle den Ordner, der beobachtet wird.";
+"Choose the folder for the covered copies." = "Wähle den Ordner für die verdeckten Kopien.";
+"Choose two folders apart from each other." = "Wähle zwei Ordner, die getrennt sind.";
+"Covered copies saved: %ld" = "Verdeckte Kopien gesichert: %ld";
+"Nothing to cover in %@. Take a look." = "In %@ gab es nichts zu verdecken. Schau es dir an.";
+"Could not cover %@." = "%@ konnte nicht verdeckt werden.";
+"Watched folder" = "Beobachteter Ordner";
 "Test on a Sample" = "An einem Beispiel testen";
 "Testing…" = "Wird getestet …";
 "Test" = "Test";

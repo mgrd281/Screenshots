@@ -521,6 +521,17 @@
 "Image" = "Imagen";
 "Plain file names" = "Nombres de archivo simples";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Las imágenes salen como archivos nuevos, sin notas de cuándo, dónde ni con qué se hicieron. Con nombres simples se llaman además «Imagen», no según cuándo se tomaron.";
+"Cover what lands in a folder" = "Tapar lo que llega a una carpeta";
+"Save copies in" = "Guardar copias en";
+"Cover a folder" = "Tapar una carpeta";
+"Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder." = "Cada imagen o PDF que llega a la carpeta vigilada recibe una copia con lo marcado arriba tapado, guardada con su nombre en la otra carpeta.";
+"Choose the folder to watch." = "Elige la carpeta que se vigila.";
+"Choose the folder for the covered copies." = "Elige la carpeta para las copias tapadas.";
+"Choose two folders apart from each other." = "Elige dos carpetas separadas.";
+"Covered copies saved: %ld" = "Copias tapadas guardadas: %ld";
+"Nothing to cover in %@. Take a look." = "No había nada que tapar en %@. Échale un vistazo.";
+"Could not cover %@." = "No se pudo tapar %@.";
+"Watched folder" = "Carpeta vigilada";
 "Test on a Sample" = "Probar con un ejemplo";
 "Testing…" = "Probando…";
 "Test" = "Prueba";

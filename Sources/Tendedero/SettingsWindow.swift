@@ -350,6 +350,32 @@ final class Preferences: ObservableObject {
         }
     }
 
+    // MARK: Cover a folder
+
+    /// Turned on, both folders are asked for if they are not chosen yet.
+    var coversFolder: Bool {
+        get { FolderCover.isOn }
+        set {
+            change {
+                FolderCover.isOn = newValue
+                if newValue, FolderCover.source == nil { chooseFolderCover(source: true) }
+                if newValue, FolderCover.target == nil { chooseFolderCover(source: false) }
+                // Without both, it stays off.
+                if FolderCover.source == nil || FolderCover.target == nil { FolderCover.isOn = false }
+                FolderCover.shared.restart()
+            }
+        }
+    }
+
+    @Published var folderCoverSource = FolderCover.source?.lastPathComponent
+    @Published var folderCoverTarget = FolderCover.target?.lastPathComponent
+
+    func chooseFolderCover(source: Bool) {
+        guard let url = FolderCover.choose(source: source) else { return }
+        if source { folderCoverSource = url.lastPathComponent } else { folderCoverTarget = url.lastPathComponent }
+        FolderCover.shared.restart()
+    }
+
     /// Copies made before keep their names; the photos hanging are read
     /// again, so what leaves next is named anew.
     var plainNames: Bool {
@@ -1334,6 +1360,16 @@ private struct PrivacyPane: View {
             .onChange(of: prefs.rules) { _, _ in prefs.rulesChanged() }
             .onDisappear { prefs.saveRules() }
             Section {
+                Toggle(L("Cover what lands in a folder"), isOn: $prefs.coversFolder)
+                folderRow(L("Watched folder"), prefs.folderCoverSource) { prefs.chooseFolderCover(source: true) }
+                folderRow(L("Save copies in"), prefs.folderCoverTarget) { prefs.chooseFolderCover(source: false) }
+            } header: {
+                Text(L("Cover a folder"))
+            } footer: {
+                Text(L("Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder."))
+                    .foregroundStyle(.secondary)
+            }
+            Section {
                 if let test = prefs.selfTest {
                     Image(nsImage: test.image)
                         .resizable()
@@ -1374,6 +1410,19 @@ private struct PrivacyPane: View {
             }
         }
         .formStyle(.grouped)
+    }
+
+    /// A folder's name, or that none is chosen, with a button to choose one.
+    private func folderRow(_ title: String, _ name: String?, choose: @escaping () -> Void) -> some View {
+        LabeledContent(title) {
+            HStack(spacing: 8) {
+                Text(name ?? L("Not chosen yet"))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                SettingsButton(L("Choose…"), action: choose)
+            }
+        }
     }
 
     private func choiceButton(_ title: String, _ kinds: Set<PrivateDetail>) -> some View {
