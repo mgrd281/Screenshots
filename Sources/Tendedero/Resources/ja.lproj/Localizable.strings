@@ -503,3 +503,6 @@
 "Cover everything in AI chats" = "AIチャットではすべて隠す";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "ChatGPT、Claude、Gemini などの AI チャットが前面にあるときに送信・コピーしたものでは、チェックの有無にかかわらず、上のすべての種類が隠されます。";
 "Everything is covered in AI chats" = "AIチャットではすべて隠されます";
+"Image" = "画像";
+"Plain file names" = "シンプルなファイル名";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "画像は新しいファイルとして送られ、いつ・どこで・何で作られたかの情報は含まれません。シンプルなファイル名にすると、撮影日時ではなく「画像」という名前にもなります。";

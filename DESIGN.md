@@ -541,7 +541,10 @@ apps.
   Money, identity and health; Orders and documents. Then a section of its
   own with one toggle, Cover everything in AI chats (off at first), over a
   footer naming ChatGPT, Claude and Gemini and saying every kind above is
-  covered there, checked or not. Then "Also hide", the
+  covered there, checked or not. Then one with Plain file names (off at
+  first), over a footer saying pictures leave as fresh files without notes
+  on when, where or with what they were made, and are named "Image" with it
+  on. Then "Also hide", the
   owner's own rules: one row per rule with a 160 pt menu picker for its kind
   (Word, After a label, Pattern), a rounded field with a prompt for that
   kind, and a borderless `minus.circle` to remove it; an Add Rule button

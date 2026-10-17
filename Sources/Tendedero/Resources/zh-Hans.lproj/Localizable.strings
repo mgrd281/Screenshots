@@ -503,3 +503,6 @@
 "Cover everything in AI chats" = "在 AI 聊天中遮住全部";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "当 ChatGPT、Claude、Gemini 或其他 AI 聊天在前台时，发送或拷贝的内容都会遮住上面的每一类，无论是否勾选。";
 "Everything is covered in AI chats" = "在 AI 聊天中会遮住全部";
+"Image" = "图像";
+"Plain file names" = "简单文件名";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "图片会作为新文件发出，不带何时、何地或用什么制作的信息。开启简单文件名后，它们还会被命名为“图像”，而不是拍摄时间。";

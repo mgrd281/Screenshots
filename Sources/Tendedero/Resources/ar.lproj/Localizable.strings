@@ -503,3 +503,6 @@
 "Cover everything in AI chats" = "تغطية كل شيء في محادثات الذكاء الاصطناعي";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "كل ما يُرسل أو يُنسخ بينما ChatGPT أو Claude أو Gemini أو محادثة ذكاء اصطناعي أخرى في الأمام تُغطّى فيه كل الأنواع أعلاه، محدّدة أم لا.";
 "Everything is covered in AI chats" = "كل شيء يُغطّى في محادثات الذكاء الاصطناعي";
+"Image" = "صورة";
+"Plain file names" = "أسماء ملفات بسيطة";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "تخرج الصور ملفاتٍ جديدة، بلا ملاحظات عن متى وأين وبماذا صُنعت. ومع الأسماء البسيطة تُسمّى أيضاً «صورة»، لا باسم وقت التقاطها.";

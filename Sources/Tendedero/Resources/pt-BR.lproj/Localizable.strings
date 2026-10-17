@@ -503,3 +503,6 @@
 "Cover everything in AI chats" = "Cobrir tudo em chats de IA";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "Em tudo o que você enviar ou copiar enquanto o ChatGPT, o Claude, o Gemini ou outro chat de IA estiver ativo, cada tipo acima é coberto, marcado ou não.";
 "Everything is covered in AI chats" = "Tudo é coberto em chats de IA";
+"Image" = "Imagem";
+"Plain file names" = "Nomes de arquivo simples";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "As imagens saem como arquivos novos, sem notas sobre quando, onde ou com o que foram feitas. Com nomes simples, elas também se chamam “Imagem”, e não pelo momento em que foram tiradas.";

@@ -503,3 +503,6 @@
 "Cover everything in AI chats" = "Yapay zekâ sohbetlerinde her şeyi kapat";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "ChatGPT, Claude, Gemini veya başka bir yapay zekâ sohbeti öndeyken gönderdiğin ya da kopyaladığın her şeyde, işaretli olsun olmasın yukarıdaki her tür kapatılır.";
 "Everything is covered in AI chats" = "Yapay zekâ sohbetlerinde her şey kapatılır";
+"Image" = "Görsel";
+"Plain file names" = "Sade dosya adları";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Görseller ne zaman, nerede ya da neyle yapıldıklarına dair notlar olmadan yeni dosyalar olarak çıkar. Sade dosya adlarıyla ayrıca çekildikleri zamana göre değil, “Görsel” diye adlandırılır.";

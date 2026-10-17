@@ -858,12 +858,9 @@ final class Line: ObservableObject {
     }
 
     private func cover(_ url: URL) {
-        if PrivateDetails.alters(url) {
-            PrivateDetails.prepare(url)
-            return
-        }
-        PrivateDetails.prepareForAIChats(url)
-        if items.contains(where: { $0.url == url && $0.altered }) {
+        // Read ahead even with nothing to change: it leaves as a fresh file.
+        PrivateDetails.prepare(url)
+        if !PrivateDetails.alters(url), items.contains(where: { $0.url == url && $0.altered }) {
             show(url, for: url)
         }
     }

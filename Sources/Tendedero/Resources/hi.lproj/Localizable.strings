@@ -505,3 +505,6 @@
 "Cover everything in AI chats" = "AI चैट में सब कुछ ढकें";
 "Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not." = "जब ChatGPT, Claude, Gemini या कोई दूसरी AI चैट सामने हो, तब भेजी या कॉपी की गई हर चीज़ में ऊपर का हर प्रकार ढक दिया जाता है, चुना गया हो या नहीं।";
 "Everything is covered in AI chats" = "AI चैट में सब कुछ ढका जाता है";
+"Image" = "चित्र";
+"Plain file names" = "सादे फ़ाइल नाम";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "चित्र नई फ़ाइलों के रूप में जाते हैं, इस जानकारी के बिना कि वे कब, कहाँ या किससे बनाए गए। सादे फ़ाइल नामों के साथ उनका नाम भी “चित्र” होता है, न कि लेने के समय के अनुसार।";
