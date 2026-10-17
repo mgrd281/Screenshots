@@ -437,8 +437,10 @@ watch the screen, so there is no line there. What it keeps is the covering:
   details covered, saying what was covered, ready to copy, share or save as a
   new picture in Photos.
   The screenshot itself stays as it was. Settings chooses what to cover, in
-  the same three groups as on the Mac, and the recommended kinds are on
-  until you change them.
+  the same three groups as on the Mac, with Check All, Recommended and
+  Uncheck All, and the recommended kinds are on until you change them. Under
+  Also hide, add rules of your own, as on the Mac: a word, a label whose
+  value is covered, or a pattern.
 - **Cover the Latest Screenshot** is a Shortcuts action that needs no opening
   of the app. Chosen for Back Tap (Settings › Accessibility › Touch › Back Tap
   › Double Tap), a double tap on the back of the iPhone covers the newest

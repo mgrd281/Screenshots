@@ -884,6 +884,13 @@ of its own.
   and Save sit under it on the bar material, as bordered buttons.
 - The icon is the Mac icon's picture, full bleed and opaque, since iOS rounds
   it (`scripts/make-icon.py --ios`).
+- Settings opens with Check All, Recommended and Uncheck All as small
+  bordered buttons sharing a row, under "Hide private details", then the
+  three groups, then "Also hide": a row per rule of the owner's own, its
+  kind as a menu over a field with the kind's prompt, swiped away to remove,
+  and Add Rule. A pattern that cannot be read says so under its field with
+  `exclamationmark.triangle.fill` in orange. Rules are kept as they change,
+  and the Mac's and the iPhone's are the same kind of rule.
 
 ## Website
 

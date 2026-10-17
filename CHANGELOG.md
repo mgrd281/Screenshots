@@ -6,6 +6,8 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone: rules of your own under Also hide, as on the Mac, and
+  Check All, Recommended and Uncheck All in Settings.
 - Send with Shop Header, in a photo's menu: the covered screenshot goes
   under a band with your shop's name and logo, the order and the day. Set
   them under Line in Settings.
