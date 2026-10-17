@@ -1979,6 +1979,12 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   .faq[open]::details-content { block-size: auto; opacity: 1; }
 }
 .faq-body p, .faq-body li { color: var(--ink-2); }
+/* Each question leads with its glyph in the accent, and its answer lines
+   up under the words, in every look (hence the :root). */
+:root .faq-icon { flex: none; width: 22px; height: 22px; color: var(--accent); }
+:root .faq-q { flex: 1; }
+:root .faq-body { padding-inline-start: 38px; }
+[dir="rtl"] .faq-icon.turn { transform: scaleX(-1); }
 
 .page-404 main { padding-top: 18vh; }
 .page-404 img { margin: 0 auto 20px; }
@@ -2150,7 +2156,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
    shadow and motion inside it comes from these tokens. It is drawn at a
    fixed size per layout and scaled as a whole, so nothing inside it ever
    collides: wide from 1280 px, medium from 768 px, tall below. */
-.desk-stage {
+.desk-stage, .story {
   /* Type: five sizes, three weights. */
   --d-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
   --d-fs-1: 11px;
@@ -2244,7 +2250,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 }
 
 @media (prefers-color-scheme: dark) {
-  .desk-stage {
+  .desk-stage, .story {
     --d-g0: #1C1C1E;
     --d-g1: #232326;
     --d-g2: #2C2C2E;
@@ -2279,7 +2285,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 /* Emerald Petrol on the desktop to try: a solid sage desktop (deep
    petrol at night), and the Mac's accent turned to teal. Greys stay as
    they are. */
-:root[data-brand="emerald"] .desk-stage {
+:root[data-brand="emerald"] .desk-stage, :root[data-brand="emerald"] .story {
   --d-accent: #168176;
   --d-accent-text: #0E6B62;
   --d-accent-soft: rgba(22, 129, 118, 0.24);
@@ -2288,7 +2294,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   --d-wall-3: #A3CBBF;
 }
 @media (prefers-color-scheme: dark) {
-  :root[data-brand="emerald"] .desk-stage {
+  :root[data-brand="emerald"] .desk-stage, :root[data-brand="emerald"] .story {
     --d-accent-text: #5CCDB8;
     --d-accent-soft: rgba(92, 205, 184, 0.3);
     --d-wall-1: #11393A;
@@ -2299,7 +2305,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 
 /* Signature Orange on the desktop to try: a solid warm sand desktop
    (near black at night), and Deep Orange as the Mac's accent. */
-:root[data-brand="orange"] .desk-stage {
+:root[data-brand="orange"] .desk-stage, :root[data-brand="orange"] .story {
   --d-accent: #C7461C;
   --d-accent-text: #B23E17;
   --d-accent-soft: rgba(236, 99, 44, 0.24);
@@ -2308,7 +2314,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   --d-wall-3: #EFD2C1;
 }
 @media (prefers-color-scheme: dark) {
-  :root[data-brand="orange"] .desk-stage {
+  :root[data-brand="orange"] .desk-stage, :root[data-brand="orange"] .story {
     --d-accent-text: #FF8754;
     --d-accent-soft: rgba(255, 135, 84, 0.3);
     --d-wall-1: #2B211C;
@@ -2319,7 +2325,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 
 /* Without a backdrop to blur, glass turns solid so text stays readable. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .desk-stage { --d-glass-1: var(--d-g1); --d-glass-2: var(--d-g0); }
+  .desk-stage, .story { --d-glass-1: var(--d-g1); --d-glass-2: var(--d-g0); }
 }
 
 .desk-stage {
@@ -2377,7 +2383,7 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   inset: 0;
   background: linear-gradient(135deg, var(--d-wall-1), var(--d-wall-2) 55%, var(--d-wall-3));
 }
-.desk-scene::before {
+.desk-scene::before, .sc-screen::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -3429,6 +3435,294 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   .ctx-menu { width: 100%; max-width: 320px; }
 }
 
+/* MARK: How a screenshot travels
+
+   Five moments of one screenshot, each on a small Mac screen drawn at
+   460 × 280 and scaled to its column as a whole (100cqw over 460 px, as
+   tan(atan2()) so CSS can divide two lengths). The screen uses the desktop
+   demo's tokens. Each moment plays once as it comes into view: site.js
+   marks the section staged and holds every moment at its first frame until
+   half of it shows. Without scripts, with Reduce Motion or in print, each
+   shows how its moment ends. Positions run from the reading start. */
+.beats {
+  display: grid;
+  gap: clamp(56px, 7vw, 104px);
+  max-width: 1040px;
+  margin: clamp(48px, 6vw, 80px) auto 0;
+  padding: 0;
+  list-style: none;
+}
+.beat {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  align-items: center;
+  gap: clamp(32px, 5vw, 80px);
+}
+.beat:nth-child(even) .beat-words { order: 2; }
+.beat-words h3 {
+  margin: 0 0 12px;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.beat-words h3:lang(ar) { letter-spacing: 0; line-height: 1.3; }
+.beat-words p { max-width: 30em; margin: 0; color: var(--ink-2); line-height: 1.55; }
+
+.scene-fit {
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  aspect-ratio: 460 / 280;
+  margin-inline: auto;
+}
+.scene {
+  --k: tan(atan2(100cqw, 460px));
+  --dir: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 460px;
+  height: 280px;
+  transform: scale(var(--k));
+  transform-origin: 0 0;
+  color: var(--d-g9);
+  font-family: var(--d-font);
+  font-size: 11px;
+  line-height: 1.3;
+  -webkit-user-select: none;
+  user-select: none;
+}
+[dir="rtl"] .scene { --dir: -1; left: auto; right: 0; transform-origin: 100% 0; }
+
+/* The screen: its desktop, a hairline and shadow 2, and the menu bar with
+   Snapfly's mark at the trailing end. */
+.sc-screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 14px;
+  background: var(--d-wall-1);
+  box-shadow: 0 0 0 1px var(--d-hair), var(--d-shadow-2);
+}
+.sc-bar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 20px;
+  padding-inline: 12px;
+  background: var(--d-glass-1);
+  -webkit-backdrop-filter: var(--d-blur);
+  backdrop-filter: var(--d-blur);
+  box-shadow: 0 0.5px 0 var(--d-hair);
+}
+.sc-bar i { width: 20px; height: 4px; border-radius: 2px; background: var(--d-g8); opacity: 0.4; }
+.sc-bar i:first-child { width: 26px; opacity: 0.75; }
+.sc-bar i:nth-child(3) { width: 14px; }
+.sc-bar .sc-clock { width: 40px; opacity: 0.6; }
+.sc-snap { display: grid; width: 14px; height: 14px; margin-inline-start: auto; color: var(--d-g9); }
+.sc-snap .icon { width: 100%; height: 100%; }
+
+.sc-win {
+  position: absolute;
+  inset-inline-start: 120px;
+  top: 50px;
+  width: 270px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 0 0 0.5px var(--d-hair), var(--d-shadow-2);
+  line-height: 0;
+}
+.sc-win svg { display: block; width: 100%; height: auto; }
+
+/* Taking it: the shortcut shown as it is pressed, a drag from corner to
+   corner, the flash. */
+.sc-sel, .sc-flash {
+  position: absolute;
+  inset-inline-start: 112px;
+  top: 42px;
+  width: 286px;
+  height: 196px;
+  border-radius: 3px;
+}
+.sc-sel { border: 1.5px dashed var(--d-accent); background: color-mix(in srgb, var(--d-accent) 9%, transparent); }
+.sc-flash { background: #FFFFFF; opacity: 0; }
+.sc-cross { position: absolute; inset-inline-start: 103px; top: 33px; width: 18px; height: 18px; translate: calc(var(--dir) * 286px) 196px; }
+.sc-cross svg { display: block; width: 100%; height: 100%; }
+.sc-keys {
+  position: absolute;
+  inset-inline-start: 14px;
+  bottom: 12px;
+  z-index: 3;
+  display: flex;
+  gap: 3px;
+  padding: 4px;
+  border-radius: 9px;
+  background: rgba(28, 28, 30, 0.82);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.section .sc-keys kbd {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  min-width: 0;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #FFFFFF;
+  font: 600 12px/1 var(--d-font);
+}
+
+/* The line under the menu bar, and the stamps on it. */
+.sc-line { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.sc-rope { position: absolute; top: 0; left: 0; width: 460px; height: 80px; overflow: visible; }
+.sc-rope path { fill: none; stroke: var(--rope); stroke-width: 2; stroke-linecap: round; }
+.sc-peg {
+  position: absolute;
+  inset-inline-start: calc(var(--x) - var(--w) / 2);
+  top: var(--y);
+  width: var(--w);
+  transform-origin: 50% 0;
+  rotate: var(--tilt);
+  animation: sway 5.6s ease-in-out infinite alternate;
+}
+.scene .photo { padding: 7px; }
+.scene .photo-img { position: relative; }
+.scene .badge-lock { bottom: 11px; inset-inline-start: 11px; width: 18px; height: 18px; }
+.scene .badge-lock .icon { width: 10px; height: 10px; }
+.sc-cover .badge-lock { bottom: 15px; inset-inline-start: 15px; width: 24px; height: 24px; }
+.sc-cover .badge-lock .icon { width: 13px; height: 13px; }
+.sc-covers { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cv { transform-box: fill-box; transform-origin: 0 50%; }
+[dir="rtl"] .cv { transform-origin: 100% 50%; }
+.sc-send {
+  position: absolute;
+  bottom: -7px;
+  inset-inline-end: -7px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+.sc-send .icon { width: 13px; height: 13px; }
+[dir="rtl"] .sc-send .icon { transform: scaleX(-1); }
+
+/* The chat it is sent to: a small window with Lena's question, the photo
+   that landed, struck with a postmark, and the field to type in. */
+.sc-chat {
+  position: absolute;
+  inset-inline-start: 238px;
+  top: 58px;
+  z-index: 1;
+  width: 202px;
+  height: 208px;
+  border-radius: 10px;
+  background: var(--d-g0);
+  box-shadow: 0 0 0 0.5px var(--d-hair), var(--d-shadow-2);
+}
+.sc-chat-bar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 22px;
+  border-radius: 10px 10px 0 0;
+  border-bottom: 0.5px solid var(--d-g3);
+  background: var(--d-g1);
+  font-size: 10px;
+  font-weight: 600;
+}
+.sc-lights { position: absolute; inset-inline-start: 8px; top: 8px; display: flex; gap: 4px; }
+.sc-lights i { width: 6px; height: 6px; border-radius: 50%; background: var(--d-close); }
+.sc-lights i:nth-child(2) { background: var(--d-minimize); }
+.sc-lights i:nth-child(3) { background: #28C840; }
+.sc-in { max-width: 124px; margin: 10px 10px 0; padding: 6px 9px; border-radius: 12px; background: var(--d-g2); font-size: 10px; }
+.sc-img { position: absolute; inset-inline-end: 10px; top: 86px; width: 122px; }
+.sc-img-pic { display: block; overflow: hidden; border-radius: 9px; box-shadow: 0 0 0 0.5px var(--d-hair); line-height: 0; }
+.sc-img-pic svg { display: block; width: 100%; height: auto; }
+.scene .postmark { width: 116px; inset-inline-start: -46px; top: 18px; rotate: -10deg; }
+.scene .postmark svg { filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 0.5px rgba(255, 255, 255, 0.9)); }
+.sc-compose { position: absolute; inset-inline: 10px; bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.sc-compose > span:first-child { flex: 1; height: 18px; border-radius: 9px; background: var(--d-g0); box-shadow: inset 0 0 0 0.5px var(--d-g4); }
+.sc-compose-send { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--d-accent); color: #FFFFFF; }
+.sc-compose-send .icon { width: 10px; height: 10px; }
+[dir="rtl"] .sc-compose-send .icon { transform: scaleX(-1); }
+.sc-path { position: absolute; inset: 0; z-index: 3; width: 460px; height: 280px; overflow: visible; color: var(--post); pointer-events: none; }
+.sc-path path { fill: none; stroke: currentColor; stroke-width: 2; stroke-dasharray: 1.5 9; stroke-linecap: round; opacity: 0.55; }
+[dir="rtl"] .sc-path { scale: -1 1; }
+
+/* How each moment ends. */
+.sc-fly .sc-peg { animation: none; }
+.sc-fly .sc-peg .clip, .sc-fly .sc-flier { opacity: 0; }
+.sc-clear .sc-line { transform: translateY(-58px); }
+
+/* And how it gets there, once it is in view; until then it holds its
+   first frame. */
+.story.staged .beat:not(.play) .scene * { animation-play-state: paused !important; }
+.story.staged .sc-take .sc-keys kbd { animation: sc-key 0.32s var(--ease-out) both; }
+.story.staged .sc-take .sc-keys kbd:nth-child(2) { animation-delay: 0.14s; }
+.story.staged .sc-take .sc-keys kbd:nth-child(3) { animation-delay: 0.28s; }
+.story.staged .sc-take .sc-sel { animation: sc-select 0.85s var(--ease-out) 0.62s both; }
+.story.staged .sc-take .sc-cross { animation: sc-drag 0.85s var(--ease-out) 0.62s both; }
+.story.staged .sc-take .sc-flash { animation: d-flash 0.5s ease-out 1.55s both; }
+.story.staged .sc-hang .sc-line { animation: sc-down 0.6s var(--ease-out) 0.1s both; }
+.story.staged .sc-hang .sc-peg { animation: hang-in 1.2s 0.45s both, sway 5.6s ease-in-out 1.65s infinite alternate; }
+.story.staged .sc-cover .cv { animation: sc-cover 0.45s var(--ease-out) 0.3s both; }
+.story.staged .sc-cover .cv1 { animation-delay: 0.44s; }
+.story.staged .sc-cover .cv2 { animation-delay: 0.58s; }
+.story.staged .sc-cover .badge-lock { animation: sc-pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.25) 1.1s both; }
+.story.staged .sc-fly .sc-send { animation: sc-tap 0.3s var(--ease-out) 0.15s both, sc-gone 0.15s linear 0.5s both; }
+.story.staged .sc-fly .sc-flier { animation: sc-takeoff 0.82s cubic-bezier(0.45, 0.05, 0.25, 1) 0.45s both, sc-gone 0.14s linear 1.25s both; }
+.story.staged .sc-fly .sc-peg .clip { animation: sc-gone 0.2s linear 0.6s both; }
+.story.staged .sc-fly .sc-path { animation: path-in 0.82s var(--ease-out) 0.45s both; }
+.story.staged .sc-fly .sc-img { animation: sc-land 0.35s var(--ease-out) 1.22s both; }
+.story.staged .sc-fly .postmark { animation: strike 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15) 1.4s both; }
+.story.staged .sc-clear .sc-line { animation: sc-up 0.5s cubic-bezier(0.4, 0, 1, 1) 0.5s both; }
+@keyframes sc-key { 40% { transform: scale(0.84); background: rgba(255, 255, 255, 0.42); } }
+@keyframes sc-select { 0% { width: 0; height: 0; opacity: 0; } 1% { opacity: 1; } }
+@keyframes sc-drag { 0% { translate: 0 0; opacity: 0; } 4% { opacity: 1; } }
+@keyframes sc-down { from { transform: translateY(-60px); } }
+@keyframes sc-cover { from { transform: scaleX(0); } }
+@keyframes sc-pop { from { opacity: 0; transform: scale(0.5); } }
+@keyframes sc-tap { 40% { transform: scale(0.8); } }
+/* Take off: up and toward the reading end, tilted, then a glide down into
+   the chat, where the photo lands in its bubble. */
+@keyframes sc-takeoff {
+  35% { transform: translate(calc(var(--dir) * 60px), -36px) rotate(calc(var(--dir) * -9deg)); }
+  to { transform: translate(calc(var(--dir) * 251px), 106px) scale(1.09); }
+}
+@keyframes sc-gone { from { opacity: 1; } to { opacity: 0; } }
+@keyframes sc-land { from { opacity: 0; transform: scale(0.96); } }
+@keyframes sc-up { from { transform: none; } }
+
+@media print {
+  .story.staged .beat * { animation: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sc-peg { animation: none !important; }
+}
+@media (max-width: 960px) {
+  .beat { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .beat:nth-child(even) .beat-words { order: 0; }
+  .beat-words p { max-width: 36em; }
+}
+@media (max-width: 640px) {
+  .beats { gap: 56px; }
+}
+
 /* MARK: Reduce Motion */
 
 @media (prefers-reduced-motion: reduce) {
@@ -3514,6 +3808,8 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 
 /* The photos sway only while their line is on screen. */
 .loops-paused .peg, .loops-paused .sty { animation-play-state: paused; }
+/* The story's stamps too, over the animations their moment gives them. */
+.loops-paused .sc-peg { animation-play-state: paused !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .faq::details-content { transition: none; }

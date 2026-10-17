@@ -68,6 +68,15 @@ TEXT["en"] = dict(
     send_p="The send button at the end of the line pastes every screenshot on it into the app in front, WhatsApp, ChatGPT or any chat, right where you were typing. Each screenshot also carries its own paper plane, to send just that one. <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> sends the newest one without reaching for the mouse. Once sent, it leaves the line, so the line only holds what’s still to send. Over WhatsApp, ChatGPT and other chats, a send button sits right above their own. Hold it to add a message, which arrives after the photos.",
     keys=["control", "option", ""],
     keys_label="The shortcut Control, Option, V",
+    story_h="How a screenshot travels.",
+    story_p="Follow one screenshot from your keyboard into a chat.",
+    story=[
+        ("Take it.", "Press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span> and drag over what you need, or click a window."),
+        ("It hangs on the line.", "The line comes down at the top of your screen with it, so nothing lands on your Desktop. A click copies it."),
+        ("Private details get covered.", "The names, emails and account numbers you chose are covered in whatever leaves the line."),
+        ("It flies into the chat.", "Click its paper plane, and it’s pasted where you were typing, in WhatsApp, ChatGPT or any chat."),
+        ("The line tucks itself away.", "Sent screenshots leave the line, and an empty line goes back up. Your screen is clear for the next one."),
+    ],
 
     desk_h="Your Desktop, finally clear.",
     desk_p="Let Snapfly handle your screenshots and they skip the Desktop. No floating thumbnail, no five-second wait: each one hangs the instant you take it. Drag one into a folder to keep it. Everything else lets go when you’re done.",
@@ -322,6 +331,15 @@ TEXT["de"] = dict(
     send_p="Die Senden-Taste am Ende der Leine setzt alle Bildschirmfotos darauf in die App im Vordergrund ein – WhatsApp, ChatGPT oder jeden Chat –, genau dort, wo du gerade schreibst. Jedes Bildschirmfoto hat außerdem einen eigenen Papierflieger, um nur dieses zu senden. <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> schickt das neueste, ohne dass du zur Maus greifst. Was gesendet ist, verlässt die Leine. So hängt dort nur, was noch zu senden ist. Über WhatsApp, ChatGPT und anderen Chats sitzt eine Senden-Taste direkt über ihrer eigenen. Halt sie gedrückt, um eine Nachricht dazuzuschreiben: Sie kommt nach den Bildern an.",
     keys=["ctrl", "alt", ""],
     keys_label="Das Kürzel Control, Option, V",
+    story_h="So reist ein Bildschirmfoto.",
+    story_p="Folg einem Bildschirmfoto von deiner Tastatur bis in einen Chat.",
+    story=[
+        ("Aufnehmen.", "Drück <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span> und zieh über das, was du brauchst, oder klick auf ein Fenster."),
+        ("Es hängt an der Leine.", "Die Leine kommt damit oben auf deinem Bildschirm herunter, auf dem Schreibtisch landet nichts. Ein Klick kopiert es."),
+        ("Privates wird verdeckt.", "Die Namen, E-Mail-Adressen und Kontonummern, die du gewählt hast, sind in allem verdeckt, was die Leine verlässt."),
+        ("Es fliegt in den Chat.", "Klick auf seinen Papierflieger, und es landet dort, wo du gerade geschrieben hast: in WhatsApp, ChatGPT oder jedem anderen Chat."),
+        ("Die Leine verschwindet wieder.", "Was gesendet ist, verlässt die Leine, und eine leere Leine fährt wieder hoch. Dein Bildschirm ist frei für das nächste."),
+    ],
 
     desk_h="Endlich ein aufgeräumter Schreibtisch.",
     desk_p="Überlass Snapfly deine Bildschirmfotos, und sie landen nicht mehr auf dem Schreibtisch. Keine schwebende Vorschau, keine fünf Sekunden Warten: Jedes hängt sofort an der Leine. Zieh eines in einen Ordner, um es zu behalten. Alles andere verschwindet, wenn du fertig bist.",
@@ -576,6 +594,15 @@ TEXT["ar"] = dict(
     send_p="زر الإرسال في آخر الحبل يلصق كل اللقطات المعلّقة عليه في التطبيق الذي أمامك، WhatsApp أو ChatGPT أو أي دردشة، في المكان الذي تكتب فيه. وعلى كل لقطة أيضًا طائرة ورقية لإرسالها وحدها. واختصار <bdi class=\"chord\" dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></bdi> يرسل أحدث لقطة دون أن تلمس الفأرة. وما يُرسَل يغادر الحبل، فلا يبقى عليه إلا ما لم يُرسَل بعد. وفوق WhatsApp و ChatGPT وغيرهما من الدردشات، يظهر زر إرسال فوق زرّها مباشرة. اضغط عليه مطوّلًا لتضيف رسالة تصل بعد الصور.",
     keys=["control", "option", ""],
     keys_label="الاختصار Control و Option و V",
+    story_h="هكذا تسافر لقطة الشاشة.",
+    story_p="تابع لقطة شاشة واحدة من لوحة المفاتيح حتى الدردشة.",
+    story=[
+        ("التقطها.", "اضغط <bdi class=\"chord\" dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></bdi> واسحب فوق ما تحتاجه، أو انقر نافذة."),
+        ("تُعلَّق على الحبل.", "ينزل الحبل بها في أعلى شاشتك، فلا يصل شيء إلى سطح المكتب. ونقرة واحدة تنسخها."),
+        ("تُغطّى التفاصيل الخاصة.", "الأسماء وعناوين البريد وأرقام الحسابات التي اخترتها تبقى مغطّاة في كل ما يغادر الحبل."),
+        ("تطير إلى الدردشة.", "انقر طائرتها الورقية، فتُلصق حيث كنت تكتب: في WhatsApp أو ChatGPT أو أي دردشة."),
+        ("يختفي الحبل من جديد.", "ما يُرسَل يغادر الحبل، والحبل الفارغ يرتفع إلى أعلى. شاشتك جاهزة للقطة التالية."),
+    ],
 
     desk_h="سطح مكتب نظيف أخيرًا.",
     desk_p="اترك لقطات الشاشة لـ Snapfly فلا تصل إلى سطح المكتب أبدًا. لا صورة مصغّرة عائمة ولا انتظار خمس ثوانٍ: كل لقطة تُعلَّق لحظة التقاطها. اسحب واحدة إلى مجلد لتحتفظ بها، والباقي يختفي حين تنتهي.",

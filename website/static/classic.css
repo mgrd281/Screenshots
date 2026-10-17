@@ -3967,6 +3967,26 @@
   }
 }
 
+/* MARK: How a screenshot travels
+
+   The story's words sit on the wall in its ink, over the same soft scrim as
+   the other words on it; its stamps are glass cards without the blur, as
+   they move. */
+:where(:root[data-look="classic"]) .beat-words { position: relative; }
+:where(:root[data-look="classic"]) .beat-words::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -90px -120px;
+  border-radius: 50%;
+  background: var(--scrim);
+  filter: blur(90px);
+  pointer-events: none;
+}
+:where(:root[data-look="classic"]) .beat-words p { color: var(--on-wall-2); }
+:where(:root[data-look="classic"]) .scene .photo { padding: 4px; border-radius: 10px; -webkit-backdrop-filter: none; backdrop-filter: none; }
+:where(:root[data-look="classic"]) .scene .photo-img { border-radius: 7px; }
+
 /* MARK: What the airmail look adds, put back
 
    site.css draws the airmail envelope; the rules above restore the Mac
@@ -3984,6 +4004,7 @@
 :root[data-look="classic"] .postmark,
 :root[data-look="classic"] .handstamp,
 :root[data-look="classic"] .flightpath,
+:root[data-look="classic"] .sc-path,
 :root[data-look="classic"] .flap,
 :root[data-look="classic"] .envelope-stamp,
 :root[data-look="classic"] .msg.posted { display: none; }

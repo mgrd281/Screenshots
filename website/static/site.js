@@ -677,7 +677,7 @@
     const loops = new IntersectionObserver((entries) => entries.forEach((entry) => {
       entry.target.classList.toggle("loops-paused", !entry.isIntersecting);
     }));
-    document.querySelectorAll(".line, [data-style-stage]").forEach((holder) => loops.observe(holder));
+    document.querySelectorAll(".line, [data-style-stage], .scene").forEach((holder) => loops.observe(holder));
   }
 
   // The first view's arrival plays once; photos hung on the hero's line
@@ -716,6 +716,23 @@
       thing.classList.add("arrive", kind, "pre");
       arrive.observe(thing);
     }));
+  }
+
+  // MARK: How a screenshot travels
+
+  // Each moment of the story plays once, when most of its screen is in view
+  // above the window's bottom quarter, so the next one waits until the eye
+  // gets there; until then it holds its first frame (site.css). Without
+  // scripts, or with Reduce Motion, every moment shows how it ends.
+  const story = document.querySelector("[data-story]");
+  if (story && !reduced.matches && "IntersectionObserver" in window) {
+    story.classList.add("staged");
+    const play = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      play.unobserve(entry.target);
+      entry.target.closest(".beat").classList.add("play");
+    }), { rootMargin: "0px 0px -25% 0px", threshold: 0.75 });
+    story.querySelectorAll(".scene-fit").forEach((scene) => play.observe(scene));
   }
 
   // MARK: The Desktop, swept onto the line

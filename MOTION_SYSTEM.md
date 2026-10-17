@@ -96,6 +96,7 @@ settle is the point.
 | `stagger.deal` | 90 ms, after 250 ms | Site bold look: cards dealt onto the rope |
 | `stagger.words` | 120 ms | Site first view: headline, line, badge (0.1, 0.22, 0.34 s) |
 | `stagger.keys` | 140 ms | Site keycaps pressed in turn |
+| `stagger.moment` | 140 ms | Site story: keys pressed, then covers grown, one after another within a moment |
 
 ### Opacity
 
@@ -167,8 +168,9 @@ settle is the point.
   sway and the stack fan become fades; AppKit reads `Motion.reduced`.
 - **Site:** `prefers-reduced-motion` cuts animations to an instant,
   transitions to 0.15 s, stops the sway and every arrival, skips the
-  paper-plane flight and the theme cross-fade. The desktop demo keeps fades
-  alone. The `site-tests` suite checks this.
+  paper-plane flight and the theme cross-fade, and shows each of the
+  story's moments as it ends. The desktop demo keeps fades alone. The
+  `site-tests` suite checks this.
 - **Video:** has no reduced form; it is opt-in media the viewer starts.
 - **Rule:** a change that adds motion defines its reduced form in the same
   change.
@@ -206,8 +208,8 @@ the same curves, so every place feels like one product.
 ## Concepts for future work
 
 Not built unless marked "ships today". Each needs the owner's go-ahead,
-and each must keep every rule above. The theme reveal (C) shipped at the
-owner's request in October 2026.
+and each must keep every rule above. The theme reveal (C) and the scroll
+story (D) shipped at the owner's request in October 2026.
 
 ### A. Hero animation
 
@@ -260,15 +262,26 @@ has no half-mixed frames.
 
 ### D. Scroll storytelling
 
-Restrained: things arrive once as they come into view (ships today). A
-future "how it works" story could follow one screenshot through five
-beats, each triggered once at half visibility, never scrubbed:
+Restrained: things arrive once as they come into view (ships today). The
+"how a screenshot travels" section (ships today) follows one screenshot
+through five beats, each on a small Mac screen, each played once and never
+scrubbed, when three quarters of its screen is in view above the window's
+bottom quarter, so the next one waits for the eye:
 
-1. Take it (the keycaps press ⌃⌥S).
-2. It hangs on the line.
-3. A name is covered.
-4. It takes off into the chat.
-5. The line is empty again.
+1. Take it: ⌃⌥S pressed in turn (`stagger.moment`), a selection dragged
+   corner to corner (0.85 s, `ease.out`), the flash.
+2. It hangs on the line: the line comes down from under the menu bar
+   (0.6 s), the stamp drops onto its clip (`hang-in`), then sways.
+3. A name is covered: cover ink grows line by line (`stagger.moment`),
+   then the lock badge springs in.
+4. It takes off into the chat: the signature take-off (`duration.flight`,
+   `ease.flight`, −9°), a dashed path drawn behind it, a postmark struck as
+   it lands.
+5. The line tucks away: the empty line goes back up (0.5 s, ease-in), as
+   the app's does.
+
+Until its turn a beat holds its first frame; without scripts, with Reduce
+Motion and in print each shows how it ends.
 
 Rules: no scroll-jacking, no pinned section taller than one screen,
 nothing that hides content until a scroll. Scroll-driven CSS
