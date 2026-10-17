@@ -102,7 +102,7 @@
 "Not allowed yet" = "Not allowed yet";
 "Version %@" = "Version %@";
 "Screenshots, one click from any chat." = "Screenshots, one click from any chat.";
-"Made by %@" = "Made by %@";
+"Made by" = "Made by";
 "Based on Tendedero by Alejandro Buján, under the MIT License." = "Based on Tendedero by Alejandro Buján, under the MIT License.";
 /* HideEditor */
 "Drag over anything to hide it. Click a box to show it again." = "Drag over anything to hide it. Click a box to show it again.";

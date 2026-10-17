@@ -417,20 +417,11 @@ private enum Pane: String, CaseIterable, Identifiable {
         }
     }
 
-    /// The tile behind the symbol in the sidebar, from System Settings' own
-    /// palette: grey for the app itself, the accent for the line.
-    var tint: Color {
-        switch self {
-        case .general, .about: .gray
-        case .line: .accentColor
-        case .privacy: .blue
-        case .permissions: .indigo
-        }
-    }
 }
 
-/// A sidebar row as System Settings draws them: the symbol in white on a
-/// small coloured tile, then the name.
+/// A sidebar row as System Settings draws them: the symbol on a small tile,
+/// then the name. The tiles are all ink, the symbol knocked out of them, so
+/// the sidebar stays quiet.
 private struct PaneLabel: View {
     let pane: Pane
 
@@ -445,9 +436,9 @@ private struct PaneLabel: View {
                     pane.icon.font(.system(size: 12, weight: .semibold))
                 }
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(.background)
             .frame(width: 24, height: 24)
-            .background(pane.tint, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+            .background(Color.primary, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
         }
     }
 }
@@ -1212,24 +1203,62 @@ private struct AboutPane: View {
                 .font(.callout)
                 .foregroundStyle(.tertiary)
                 .padding(.top, 8)
-            Divider()
-                .frame(width: 240)
-                .padding(.vertical, 18)
-            Text(String(format: L("Made by %@"), AppDelegate.author))
-                .font(.headline)
-            if !Edition.appStore {
-                Button(L("Check for Updates…")) { prefs.checkForUpdates() }
-                    .controlSize(.large)
-                    .padding(.top, 12)
+            MakerCard(name: AppDelegate.author)
+                .padding(.top, 26)
+            HStack(spacing: 10) {
+                if !Edition.appStore {
+                    Button(L("Check for Updates…")) { prefs.checkForUpdates() }
+                }
+                Button(L("Help & Support…")) { NSWorkspace.shared.open(AppDelegate.supportURL) }
             }
+            .padding(.top, 16)
             Spacer()
-            // The MIT License asks for the original's credit to stay.
+            // The MIT License asks for the original's credit to stay. It is
+            // the last line, at the bottom edge.
             Text(L("Based on Tendedero by Alejandro Buján, under the MIT License."))
                 .font(.caption)
                 .foregroundStyle(.tertiary)
-                .padding(.bottom, 16)
+                .padding(.bottom, 14)
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+/// Who made it: their initials in a ring of the brand's colours, the one
+/// place in the interface those colours appear, beside the name on a faint
+/// fill.
+private struct MakerCard: View {
+    let name: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(Maker.initials(of: name))
+                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .frame(width: 40, height: 40)
+                .overlay(Circle().strokeBorder(Brand.gradient, lineWidth: 2.5))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(L("Made by"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(verbatim: name)
+                    .font(.headline)
+            }
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 14)
+        .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// Who made it, as the About pane shows them.
+enum Maker {
+    /// The first letter of each of the first two words of the name, in
+    /// capitals: "Mgrdegh Ghazarian" is "MG".
+    static func initials(of name: String) -> String {
+        name.split(whereSeparator: \.isWhitespace).prefix(2)
+            .compactMap(\.first).map { String($0).uppercased() }.joined()
     }
 }

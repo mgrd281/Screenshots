@@ -100,7 +100,7 @@
 "Not allowed yet" = "尚未允许";
 "Version %@" = "版本 %@";
 "Screenshots, one click from any chat." = "截图，一键发到任何聊天。";
-"Made by %@" = "作者：%@";
+"Made by" = "作者";
 "Based on Tendedero by Alejandro Buján, under the MIT License." = "基于 Alejandro Buján 的 Tendedero，遵循 MIT 许可证。";
 /* HideEditor */
 "Drag over anything to hide it. Click a box to show it again." = "拖过要遮盖的内容。点按方框可重新显示。";

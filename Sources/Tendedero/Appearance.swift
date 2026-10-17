@@ -92,3 +92,13 @@ private struct GlassFrame: ViewModifier {
             .overlay(shape.stroke(Color.black.opacity(firm ? 0.45 : 0.10), lineWidth: firm ? 1 : 0.5).padding(-0.5))
     }
 }
+
+/// The brand's colours, amber to coral to violet, as the app icon has them.
+/// They belong to the icon and the About pane only, never to a control.
+enum Brand {
+    static let amber = Color(red: 1.0, green: 0.769, blue: 0.361)
+    static let coral = Color(red: 1.0, green: 0.369, blue: 0.384)
+    static let violet = Color(red: 0.698, green: 0.204, blue: 0.839)
+
+    static let gradient = LinearGradient(colors: [amber, coral, violet], startPoint: .topLeading, endPoint: .bottomTrailing)
+}
