@@ -31,6 +31,15 @@ enum PageStitch {
         return true
     }
 
+    /// Two views show the same place on the page, give or take a few rows
+    /// that move by themselves, like a carousel or a spinner: at least nine
+    /// rows in ten are the same.
+    static func alike(_ a: Rows, _ b: Rows) -> Bool {
+        guard a.count == b.count, !a.isEmpty else { return false }
+        let differing = a.indices.filter { !same(a[$0], b[$0]) }.count
+        return differing * 10 <= a.count
+    }
+
     /// The rows of an image, as gray samples.
     static func rows(of image: CGImage) -> Rows? {
         let height = image.height

@@ -248,10 +248,12 @@ it is.
 Press ⌃⌥P, or choose Capture Whole Page in the menu, and Snapfly scrolls the
 window in front from top to bottom and joins what it sees into one long
 picture, with no seams: the toolbar and a site's sticky header appear once,
-at the top. It works in any browser and in any window that scrolls. The
-picture hangs on the line like any screenshot, and with the time stamp on, it
-is stamped with the time and the page's address. It needs the permission to
-press keys, the same one the send button uses.
+at the top. It works in any browser and in any window that scrolls. It turns
+the scroll wheel in small turns, as a hand would, and if the page does not
+follow the wheel, it presses Page Down instead. The picture hangs on the line
+like any screenshot, and with the time stamp on, it is stamped with the time
+and the page's address. It needs the permission to press keys, the same one
+the send button uses.
 
 <br>
 
