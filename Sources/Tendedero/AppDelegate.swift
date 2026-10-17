@@ -994,7 +994,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             openScreenshotsFolder: { [weak self] in
                 guard let self else { return }
                 NSWorkspace.shared.open(self.watcher.folder)
-            })
+            },
+            screenshotsFolder: { [weak self] in self?.watcher.folder })
         self.preferences = preferences
     }
 

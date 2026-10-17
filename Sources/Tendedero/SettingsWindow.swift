@@ -21,6 +21,7 @@ final class Preferences: ObservableObject {
         var fullScreenChanged: () -> Void = {}
         var setUpScreenshots: () -> Void = {}
         var openScreenshotsFolder: () -> Void = {}
+        var screenshotsFolder: () -> URL? = { nil }
     }
 
     var actions = Actions()
@@ -80,6 +81,9 @@ final class Preferences: ObservableObject {
     func openScreenshotsFolder() {
         actions.openScreenshotsFolder()
     }
+
+    /// Where the screenshots are saved, named under the button that opens it.
+    var screenshotsFolder: URL? { actions.screenshotsFolder() }
 
     /// The capture screens, from Settings, to try them.
     func tryCapture() {
@@ -407,9 +411,64 @@ private enum Pane: String, CaseIterable, Identifiable {
         switch self {
         case .general: Image(systemName: "gearshape")
         case .line: Image(nsImage: LineIcon.image(filled: false, description: title)).renderingMode(.template)
-        case .privacy: Image(systemName: "hand.raised")
-        case .permissions: Image(systemName: "lock.shield")
-        case .about: Image(systemName: "info.circle")
+        case .privacy: Image(systemName: "hand.raised.fill")
+        case .permissions: Image(systemName: "lock.shield.fill")
+        case .about: Image(systemName: "info.circle.fill")
+        }
+    }
+
+    /// The tile behind the symbol in the sidebar, from System Settings' own
+    /// palette: grey for the app itself, the accent for the line.
+    var tint: Color {
+        switch self {
+        case .general, .about: .gray
+        case .line: .accentColor
+        case .privacy: .blue
+        case .permissions: .indigo
+        }
+    }
+}
+
+/// A sidebar row as System Settings draws them: the symbol in white on a
+/// small coloured tile, then the name.
+private struct PaneLabel: View {
+    let pane: Pane
+
+    var body: some View {
+        Label {
+            Text(pane.title)
+        } icon: {
+            Group {
+                if pane == .line {
+                    pane.icon.resizable().frame(width: 15, height: 15)
+                } else {
+                    pane.icon.font(.system(size: 12, weight: .semibold))
+                }
+            }
+            .foregroundStyle(.white)
+            .frame(width: 24, height: 24)
+            .background(pane.tint, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+        }
+    }
+}
+
+/// A button at the trailing edge of a settings row. They all share one
+/// width, so the column of buttons lines up down the pane; a longer label
+/// still gets its room.
+struct SettingsButton: View {
+    static let width: CGFloat = 128
+
+    let title: String
+    let action: () -> Void
+
+    init(_ title: String, action: @escaping () -> Void) {
+        self.title = title
+        self.action = action
+    }
+
+    var body: some View {
+        Button(action: action) {
+            Text(title).frame(minWidth: Self.width)
         }
     }
 }
@@ -422,7 +481,7 @@ private struct SettingsView: View {
     var body: some View {
         NavigationSplitView {
             List(Pane.allCases, selection: $pane) { pane in
-                Label { Text(pane.title) } icon: { pane.icon }
+                PaneLabel(pane: pane)
             }
             .navigationSplitViewColumnWidth(180)
             .toolbar(removing: .sidebarToggle)
@@ -452,12 +511,12 @@ private struct GeneralPane: View {
 
     var body: some View {
         Form {
-            Section {
+            Section(L("Screenshots")) {
                 if Edition.appStore {
                     // Snapfly's own screenshots come first: they need
                     // nothing set up.
                     LabeledContent {
-                        Button(L("Try It Now")) { prefs.tryCapture() }
+                        SettingsButton(L("Try It Now")) { prefs.tryCapture() }
                     } label: {
                         Text(L("Take screenshots with Snapfly"))
                         Text(String(format: L("Press %@ or click the screenshot button. Nothing to set up."),
@@ -466,7 +525,7 @@ private struct GeneralPane: View {
                     // The sandbox keeps Snapfly out of the screenshot
                     // settings, so this shows where to change them.
                     LabeledContent {
-                        Button(L("Set Up…")) { prefs.setUpScreenshots() }
+                        SettingsButton(L("Set Up…")) { prefs.setUpScreenshots() }
                     } label: {
                         Text(L("Also from the Screenshot app"))
                         Text(L("Screenshots saved to Pictures › Snapfly hang on the line"))
@@ -511,19 +570,63 @@ private struct GeneralPane: View {
             Section(L("Also watch folders")) {
                 ForEach(prefs.folders, id: \.self) { folder in
                     HStack {
-                        Label(FileManager.default.displayName(atPath: folder.path), systemImage: "folder")
+                        Label(Folders.placeName(folder), systemImage: "folder")
                         Spacer()
-                        Button(L("Stop Watching")) { prefs.stopWatching(folder) }
+                        Button { prefs.stopWatching(folder) } label: {
+                            Image(systemName: "minus.circle")
+                        }
+                        .buttonStyle(.borderless)
+                        .help(L("Stop Watching"))
+                        .accessibilityLabel(L("Stop Watching"))
                     }
                 }
-                Button(L("Add Folder…")) { prefs.addFolder() }
-                    .disabled(prefs.folders.count >= AppDelegate.maxExtraFolders)
+                LabeledContent {
+                    SettingsButton(L("Add Folder…")) { prefs.addFolder() }
+                        .disabled(prefs.folders.count >= AppDelegate.maxExtraFolders)
+                } label: {
+                    Text(L("Watch another folder"))
+                    Text(L("Pictures saved into it hang on the line too"))
+                }
             }
             Section {
-                Button(L("Open screenshots folder")) { prefs.openScreenshotsFolder() }
+                LabeledContent {
+                    SettingsButton(L("Show in Finder")) { prefs.openScreenshotsFolder() }
+                } label: {
+                    Text(L("Screenshots folder"))
+                    if let folder = prefs.screenshotsFolder {
+                        Text(Folders.placeName(folder))
+                    }
+                }
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+/// Folders as the rows name them.
+enum Folders {
+    /// A folder as the Finder names it, from the home folder down, like
+    /// "Pictures › Snapfly". Outside the home folder, from the top of the
+    /// disk. The home folder is the user's own, even in the sandbox.
+    static func placeName(_ url: URL) -> String {
+        let parts = url.standardizedFileURL.pathComponents
+        var home = URL(fileURLWithPath: NSHomeDirectory())
+        if let dir = getpwuid(getuid())?.pointee.pw_dir {
+            home = URL(fileURLWithPath: String(cString: dir))
+        }
+        let top = home.standardizedFileURL.pathComponents
+        var place = URL(fileURLWithPath: "/")
+        var below = Array(parts.dropFirst())
+        if parts.count >= top.count, Array(parts.prefix(top.count)) == top {
+            place = home
+            below = Array(parts.dropFirst(top.count))
+        }
+        var names: [String] = []
+        for part in below {
+            place.appendPathComponent(part)
+            names.append(FileManager.default.displayName(atPath: place.path))
+        }
+        return names.isEmpty ? FileManager.default.displayName(atPath: url.path) : names.joined(separator: " › ")
     }
 }
 
@@ -567,7 +670,7 @@ private struct LinePane: View {
                         }
                         .labelsHidden()
                         .fixedSize()
-                        Button(L("History…")) { HistoryWindow.shared.show() }
+                        SettingsButton(L("History…")) { HistoryWindow.shared.show() }
                             .disabled(prefs.historyDays == nil)
                     }
                 } label: {
@@ -667,7 +770,7 @@ private struct LinePane: View {
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
                     .background(.quaternary, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
-                Button(L("Change Shortcut…")) { prefs.changeShortcut(role) }
+                SettingsButton(L("Change Shortcut…")) { prefs.changeShortcut(role) }
             }
         }
     }
@@ -779,7 +882,7 @@ private struct ChatAppsSection: View {
                     .accessibilityLabel(L("Remove"))
                 }
             }
-            Button(L("Add App…")) { prefs.addChatApp() }
+            SettingsButton(L("Add App…")) { prefs.addChatApp() }
         } header: {
             Text(L("Chat apps"))
         } footer: {
@@ -990,11 +1093,12 @@ private struct PrivacyPane: View {
     var body: some View {
         Form {
             Section {
-                // Every kind at once, the recommended ones, or none.
+                // Every kind at once, the recommended ones, or none. The
+                // three share the row in equal parts.
                 HStack(spacing: 8) {
-                    Button(L("Check All")) { prefs.hide(Set(PrivateDetail.allCases)) }
-                    Button(L("Recommended")) { prefs.hide(PrivateDetail.recommended) }
-                    Button(L("Uncheck All")) { prefs.hide([]) }
+                    choiceButton(L("Check All"), Set(PrivateDetail.allCases))
+                    choiceButton(L("Recommended"), PrivateDetail.recommended)
+                    choiceButton(L("Uncheck All"), [])
                 }
                 .controlSize(.small)
             } header: {
@@ -1038,6 +1142,12 @@ private struct PrivacyPane: View {
             }
         }
         .formStyle(.grouped)
+    }
+
+    private func choiceButton(_ title: String, _ kinds: Set<PrivateDetail>) -> some View {
+        Button { prefs.hide(kinds) } label: {
+            Text(title).frame(maxWidth: .infinity)
+        }
     }
 }
 
