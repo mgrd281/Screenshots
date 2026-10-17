@@ -259,13 +259,16 @@ final class Line: ObservableObject {
     /// Joins several photos into one image, which hangs as the newest and
     /// comes picked and copied, so the send button sends just that one.
     func combine(_ arrangement: Collage.Arrangement? = nil) {
-        // Parts hidden by hand stay hidden in the joined image; the details
-        // chosen in Settings are found again in it once it hangs.
-        let photos = photosToCombine.map { ($0.url, PrivateDetails.hand($0.url)) }
+        // Parts hidden by hand stay hidden in the joined image, and what was
+        // drawn stays drawn; the details chosen in Settings are found again in
+        // it once it hangs.
+        let photos = photosToCombine.map { ($0.url, PrivateDetails.hand($0.url), Drawings.saved($0.url)) }
         guard photos.count > 1 else { return }
         pickedIDs = []
         DispatchQueue.global(qos: .userInitiated).async {
-            let urls = photos.map { url, hand in hand.isEmpty ? url : Cover.copy(of: url, [], hand: hand) ?? url }
+            let urls = photos.map { url, hand, drawing in
+                hand.isEmpty && drawing.isEmpty ? url : Cover.copy(of: url, [], hand: hand, drawing: drawing) ?? url
+            }
             let joined = Collage.join(urls, arrangement)
             DispatchQueue.main.async { [weak self] in
                 MainActor.assumeIsolated {
@@ -947,6 +950,15 @@ final class Line: ObservableObject {
         HideEditor.shared.edit(url) { [weak self] in self?.cover(url) }
     }
 
+    /// Draw on Photo: arrows, boxes, highlights, numbered steps and words
+    /// over a photo, and the part of it to keep, drawn on what leaves the
+    /// line. The file stays as it is.
+    func drawOn(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
+        let url = item.url
+        DrawEditor.shared.edit(url) { [weak self] in self?.cover(url) }
+    }
+
     private func cover(_ url: URL) {
         // Read ahead even with nothing to change: it leaves as a fresh file.
         PrivateDetails.prepare(url)
@@ -1058,6 +1070,7 @@ final class Line: ObservableObject {
         UserDefaults.standard.set(paths, forKey: storeKey)
         UserDefaults.standard.set(live.filter(\.pinned).map(\.url.path), forKey: pinnedKey)
         PrivateDetails.keepHand(only: Set(paths))
+        Drawings.keep(only: Set(paths))
         // The history's words stay known too, for its search.
         TextIndex.keep(only: Set(paths).union(History.paths))
     }
