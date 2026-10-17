@@ -343,6 +343,18 @@ final class Preferences: ObservableObject {
         }
     }
 
+    // MARK: Bookkeeping
+
+    /// The folder's name, once one is chosen.
+    @Published var bookkeepingFolder = Bookkeeping.folder?.lastPathComponent
+    @Published var bookkeepingAddress = Bookkeeping.address {
+        didSet { Bookkeeping.address = bookkeepingAddress }
+    }
+
+    func chooseBookkeepingFolder() {
+        if let url = Bookkeeping.chooseFolder() { bookkeepingFolder = url.lastPathComponent }
+    }
+
     // MARK: Saved messages
 
     /// Messages kept ready for the message bar, edited in place and saved
@@ -708,6 +720,7 @@ private struct LinePane: View {
             }
             ChatButtonSection(prefs: prefs)
             SavedMessagesSection(prefs: prefs)
+            BookkeepingSection(prefs: prefs)
             Section(L("Screenshot button")) {
                 Toggle(isOn: $prefs.captureButton) {
                     Text(L("Show the screenshot button"))
@@ -1215,6 +1228,34 @@ private struct PrivacyPane: View {
     private func choiceButton(_ title: String, _ kinds: Set<PrivateDetail>) -> some View {
         Button { prefs.hide(kinds) } label: {
             Text(title).frame(maxWidth: .infinity)
+        }
+    }
+}
+
+/// Where receipts go for the books, and who keeps them.
+private struct BookkeepingSection: View {
+    @ObservedObject var prefs: Preferences
+
+    var body: some View {
+        Section {
+            LabeledContent {
+                HStack(spacing: 8) {
+                    Text(prefs.bookkeepingFolder ?? L("Not chosen yet"))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    SettingsButton(L("Choose…")) { prefs.chooseBookkeepingFolder() }
+                }
+            } label: {
+                Text(L("Folder"))
+                Text(L("Receipts saved for the books go here, each with a line in Snapfly.csv."))
+            }
+            TextField(L("Email"), text: $prefs.bookkeepingAddress, prompt: Text(L("Who keeps the books")))
+        } header: {
+            Text(L("Bookkeeping"))
+        } footer: {
+            Text(L("A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total."))
+                .foregroundStyle(.secondary)
         }
     }
 }

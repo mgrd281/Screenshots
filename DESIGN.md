@@ -478,6 +478,13 @@ apps.
     once copied, with a divider between rows. The note says it is read as
     the screenshot shows it, not covered. Its footer has Copy Row and Copy
     All (the primary); it sends nothing.
+  - **Save for Bookkeeping** (`folder.badge.plus`) and **Email to
+    Bookkeeping…** (`envelope`) follow it. The first asks for the folder
+    once with an open panel, then saves and says so in a note above the
+    Dock; the second opens the system's new email with the copy attached.
+  - **Settings › Line › Bookkeeping**: the folder's name in `.secondary`,
+    truncated in the middle, with a Choose… `SettingsButton`, and the
+    address in a field with a prompt.
   - SF Symbols on macOS 26 only, as Apple's own menus have.
 - **Settings sidebar.** General, Line, Privacy, Permissions, Support and
   About, each on its tile (see Layout).

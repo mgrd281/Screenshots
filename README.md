@@ -367,6 +367,15 @@ button; Copy All copies them as lines, and Copy Row as one row with a tab
 between the parts, always in the same order, to paste into a spreadsheet.
 It is read on your Mac as the screenshot shows it, not covered.
 
+For the books, Save for Bookkeeping in the same menu puts the photo,
+covered as it leaves the line, in a folder you choose once, under a name
+that says what it is, like "2026-10-17 Order 1024 74,00 €", and adds a
+line to Snapfly.csv there: the day, the file, the order and the total.
+Email to Bookkeeping… puts the covered copy in a new email to whoever
+keeps your books, the same name as its subject. Choose the folder and the
+address in Settings, under Line. Whatever you cover stays out of the name
+and the table too.
+
 <br>
 
 ## Translated and described, on your Mac.
@@ -495,6 +504,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `History.swift` | What left the line, kept for 7 or 30 days |
 | `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again; Sent lists what went where |
 | `Shared/OrderCard.swift` | The parts of an order read off a screenshot, for Order Details: number, date, total, name, address, email, phone, tracking, code |
+| `Bookkeeping.swift` | Save for Bookkeeping and Email to Bookkeeping…: a covered copy named for its day, order and total, and its line in Snapfly.csv |
 | `SendLog.swift` | What was sent into which chat, when and with what covered, and the table it exports |
 | `CaptionBar.swift` | The line over the chat button to write a message sent with the photos |
 | `ChatLayouts.swift` | Where the chat button sits over each chat it knows, on a new chat and once started |

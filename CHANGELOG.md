@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Save for Bookkeeping and Email to Bookkeeping…, in a photo's menu: a
+  covered copy named for its day, order and total, with a line in
+  Snapfly.csv, or in a new email to whoever keeps the books.
 - Saved messages, under Line in Settings, wait above the message bar.
   {order}, {total}, {date}, {name} and {tracking} fill in from the photo; a
   blank of a covered kind stays empty.
