@@ -48,7 +48,10 @@ jobs:
           SNAPFLY_SIGNING: ${{ secrets.SNAPFLY_SIGNING }}
         run: scripts/signing.sh developer-id
 
+      # Each build has its own number, so a report names the very build.
       - name: Build Snapfly.app
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
         run: scripts/build-app.sh
 
       - name: Notarize
@@ -81,13 +84,24 @@ jobs:
           else
             FIRST_TIME="3. The first time, macOS says it cannot check the app: open System Settings › Privacy & Security, scroll down and click Open Anyway."
           fi
-          gh release delete "$TAG" --yes --cleanup-tag || true
-          gh release create "$TAG" Snapfly.zip --target "$GITHUB_SHA" --title "$TITLE" $FLAGS \
-            --notes "Built from ${GITHUB_SHA::7} on $GITHUB_REF_NAME.
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          # What this version brings, from its section of CHANGELOG.md.
+          NEWS="$(awk -v heading="## $VERSION" '$0 == heading { on = 1; next } /^## / { on = 0 } on' CHANGELOG.md)"
+          NOTES="Snapfly $VERSION, built from ${GITHUB_SHA::7} on $GITHUB_REF_NAME.
+          $NEWS
 
           1. Download Snapfly.zip and open it.
           2. Drag Snapfly to the Applications folder and open it.
           $FIRST_TIME"
+          gh release delete "$TAG" --yes --cleanup-tag || true
+          gh release create "$TAG" Snapfly.zip --target "$GITHUB_SHA" --title "$TITLE" $FLAGS --notes "$NOTES"
+          # Each version also keeps a release of its own, with its newest
+          # build, beside the one that always moves to the newest.
+          if [ "$GITHUB_REF_NAME" = "main" ]; then
+            gh release delete "v$VERSION" --yes --cleanup-tag || true
+            gh release create "v$VERSION" Snapfly.zip --target "$GITHUB_SHA" --title "Snapfly $VERSION" \
+              --latest=false --notes "$NOTES"
+          fi
 
       - name: Remove the signing keychain
         if: always()
@@ -105,5 +119,5 @@ jobs:
         run: |
           xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -configuration Release \
             -destination "generic/platform=iOS" -archivePath build/iphone/Snapfly.xcarchive \
-            CODE_SIGNING_ALLOWED=NO -quiet archive
+            MARKETING_VERSION="$(tr -d '[:space:]' < VERSION)" CODE_SIGNING_ALLOWED=NO -quiet archive
           test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/PrivacyInfo.xcprivacy

@@ -9,7 +9,17 @@ cd "$(dirname "$0")/.."
 
 CONFIG="${1:-release}"
 APP="build/Snapfly.app"
-VERSION="1.0.0"
+# Every edition carries the version in the VERSION file, and CHANGELOG.md
+# says what it brings, so the build stops when that section is missing.
+VERSION="$(tr -d '[:space:]' < VERSION)"
+if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "VERSION should read like 1.2.3, not '$VERSION'" >&2
+  exit 1
+fi
+if ! grep -qxF "## $VERSION" CHANGELOG.md; then
+  echo "CHANGELOG.md has no '## $VERSION' section" >&2
+  exit 1
+fi
 BUILD="${BUILD_NUMBER:-1}"
 DEFINE=""
 if [ -n "${STORE:-}" ]; then DEFINE="-Xswiftc -DAPP_STORE"; fi
