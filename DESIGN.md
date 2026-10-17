@@ -581,6 +581,10 @@ apps.
     112 pt high, with its time under it (11 pt, `.secondary`, monospaced
     digits). On hover it lifts (1.02 and a photo card's hover shadow) and a
     22 pt accent circle with `arrow.uturn.up` says a click hangs it again.
+    Its menu: Hang on the line, Send Again (it hangs, the window closes, and
+    once the app in front before it is back, the photo goes in, covered;
+    else it stays copied with a note), Copy, Open, Show in Finder, and
+    Remove from History.
   - The search and Clear History… sit in the toolbar. Empty, it uses
     `ContentUnavailableView`.
 - **Chat button** (`ChatButton.swift`), the one control that floats over
@@ -611,6 +615,14 @@ apps.
     bar does: Return sends the photos and then the message, Escape or a
     click elsewhere closes it. VoiceOver reaches it as an action on the
     button.
+  - While the field is empty, the last five messages sent (`RecentCaptions`,
+    newest first, kept on the Mac) stand 6 pt above the bar in a list of the
+    same width and glass with 12 pt corners and 4 pt inset: rows 28 pt high,
+    `clock.arrow.circlepath` at 11 pt `.secondary`, the message in 13 pt on
+    one line, truncated, and on hover a fill of `.primary` at 8% (8 pt
+    corners) and an `xmark.circle.fill` in `.tertiary` that removes it. A
+    click puts the message in the field; ↑ and ↓ step through them. The bar
+    keeps its place when the list goes.
   - Hover scales it to 1.04 through `Motion.spring`, and it fades in over
     0.15 s.
   - **Settings › Line › Send button over chats** chooses:

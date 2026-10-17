@@ -205,6 +205,7 @@
 "Photos that leave the line stay here for %d days." = "Las fotos que salen de la cuerda se quedan aquí %d días.";
 "History is off. Turn it on in Settings, under Line." = "El historial está desactivado. Actívalo en Ajustes, en Cuerda.";
 "Hang on the line" = "Colgar en la cuerda";
+"Send Again" = "Enviar de nuevo";
 "Remove from History" = "Quitar del historial";
 "Keep a history" = "Guardar un historial";
 "Off" = "Desactivado";

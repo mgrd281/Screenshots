@@ -112,6 +112,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         Recording.cleanUp()
         History.purge()
         HistoryWindow.shared.onHang = { [weak self] url in self?.hangCapture(url) }
+        HistoryWindow.shared.onSendAgain = { [weak self] url in self?.sendAgain(url) }
         let chatButton = ChatButton(line: line)
         chatButton.openSettings = { [weak self] in self?.openSettings() }
         self.chatButton = chatButton
@@ -566,6 +567,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             HideEditor.shared.hideInCopy(url)
         } else {
             showRefusals(files)
+        }
+    }
+
+    // MARK: Send Again
+
+    /// From the History: the photo hangs on the line again and, once the app
+    /// that was in front before the History window is back in front, goes
+    /// into it, covered like anything that leaves the line. Should no app
+    /// come back, it stays copied for ⌘V.
+    private func sendAgain(_ url: URL) {
+        HistoryWindow.shared.close()
+        NSApp.deactivate()
+        comeDown(on: nil)
+        guard let id = line.hang(url) else {
+            itemsChanged()
+            return
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                if !Paste.willPaste { Notice.show(L("Covered and copied, ready to paste.")) }
+                self.line.paste(id)
+            }
         }
     }
 

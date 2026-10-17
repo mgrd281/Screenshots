@@ -207,6 +207,7 @@
 "Photos that leave the line stay here for %d days." = "रस्सी से हटने वाली फ़ोटो यहाँ %d दिन रहती हैं।";
 "History is off. Turn it on in Settings, under Line." = "इतिहास बंद है। इसे सेटिंग्स में, रस्सी के नीचे चालू करें।";
 "Hang on the line" = "रस्सी पर टाँगें";
+"Send Again" = "फिर से भेजें";
 "Remove from History" = "इतिहास से हटाएँ";
 "Keep a history" = "इतिहास रखें";
 "Off" = "बंद";

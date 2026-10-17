@@ -205,6 +205,7 @@
 "Photos that leave the line stay here for %d days." = "İpten çıkan fotoğraflar burada %d gün kalır.";
 "History is off. Turn it on in Settings, under Line." = "Geçmiş kapalı. Ayarlar’da, İp altında aç.";
 "Hang on the line" = "İpe as";
+"Send Again" = "Yeniden gönder";
 "Remove from History" = "Geçmişten kaldır";
 "Keep a history" = "Geçmiş tut";
 "Off" = "Kapalı";

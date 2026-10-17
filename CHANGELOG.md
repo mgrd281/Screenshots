@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The message bar keeps the last five messages: click one, or press ↑ and
+  ↓, to send it again.
+- Send Again in the History: a photo sent before goes into the chat in
+  front once more, covered.
 - Snapfly has version numbers of its own now, and this list says what each
   one brings. Settings › About shows yours.
 - QR codes and barcodes are covered, a new kind under Privacy, on the Mac

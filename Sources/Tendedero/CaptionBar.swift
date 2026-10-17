@@ -23,6 +23,7 @@ final class CaptionBar: NSObject, NSWindowDelegate {
     func show(above anchor: CGRect, count: Int, send: @escaping (String) -> Void) {
         close()
         let view = CaptionBarView(count: count, send: { [weak self] text in
+            RecentCaptions.note(text)
             // The keyboard goes back to the chat before anything is pasted.
             self?.close()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { send(text) }
@@ -79,16 +80,77 @@ private final class CaptionPanel: NSPanel {
     override var canBecomeMain: Bool { false }
 }
 
-/// The field and the send button, in the chat button's own glyph and color.
+/// The last messages sent with photos, newest first, to pick again in the
+/// message bar. They stay on this Mac.
+enum RecentCaptions {
+    static let key = "recentCaptions"
+    static let limit = 5
+
+    static var all: [String] {
+        get { UserDefaults.standard.stringArray(forKey: key) ?? [] }
+        set { UserDefaults.standard.set(newValue, forKey: key) }
+    }
+
+    /// The list with a message just sent at the top, once, and the oldest
+    /// left out past the limit.
+    static func adding(_ text: String, to list: [String]) -> [String] {
+        let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return list }
+        return Array(([text] + list.filter { $0 != text }).prefix(limit))
+    }
+
+    static func note(_ text: String) {
+        all = adding(text, to: all)
+    }
+
+    static func remove(_ text: String) {
+        all.removeAll { $0 == text }
+    }
+}
+
+/// The field and the send button, in the chat button's own glyph and color,
+/// and over them, while the field is empty, the messages sent lately.
 private struct CaptionBarView: View {
     let count: Int
     let send: (String) -> Void
     let close: () -> Void
 
     @State private var text = ""
+    @State private var recent = RecentCaptions.all
+    /// Which recent message ↑ and ↓ have put in the field; nil for none.
+    @State private var browsing: Int?
     @FocusState private var focused: Bool
 
     var body: some View {
+        VStack(alignment: .trailing, spacing: 6) {
+            if text.isEmpty && !recent.isEmpty { recentList }
+            field
+        }
+        .padding(CaptionBar.margin)
+        // The bar keeps its place by the button when the list goes.
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+    }
+
+    /// Each message sent lately, a click putting it in the field, and its
+    /// cross on hover taking it off the list.
+    private var recentList: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(recent, id: \.self) { message in
+                RecentRow(message: message) {
+                    text = message
+                    focused = true
+                } remove: {
+                    RecentCaptions.remove(message)
+                    recent = RecentCaptions.all
+                }
+            }
+        }
+        .padding(4)
+        .frame(width: CaptionBar.width)
+        .background(listBackground)
+    }
+
+    private var field: some View {
         HStack(spacing: 8) {
             TextField(L("Add a message…"), text: $text)
                 .textFieldStyle(.plain)
@@ -96,6 +158,10 @@ private struct CaptionBarView: View {
                 .focused($focused)
                 .onSubmit(submit)
                 .onExitCommand(perform: close)
+                // ↑ brings back the messages sent lately, newest first; ↓
+                // goes the other way, down to an empty field.
+                .onKeyPress(.upArrow) { browse(by: 1) }
+                .onKeyPress(.downArrow) { browse(by: -1) }
             Text(count, format: .number)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
                 .monospacedDigit()
@@ -121,7 +187,6 @@ private struct CaptionBarView: View {
         .padding(.trailing, 7)
         .frame(width: CaptionBar.width, height: 44)
         .background(bar)
-        .padding(CaptionBar.margin)
         .onAppear {
             DispatchQueue.main.async { focused = true }
         }
@@ -129,6 +194,33 @@ private struct CaptionBarView: View {
 
     private func submit() {
         send(text.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+
+    private func browse(by step: Int) -> KeyPress.Result {
+        guard !recent.isEmpty else { return .ignored }
+        let next = (browsing ?? -1) + step
+        guard next >= -1, next < recent.count else { return .handled }
+        browsing = next < 0 ? nil : next
+        text = next < 0 ? "" : recent[next]
+        return .handled
+    }
+
+    /// The bar's glass, with the corners of a list.
+    @ViewBuilder
+    private var listBackground: some View {
+        let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
+        if #available(macOS 26, *) {
+            Color.clear
+                .glassEffect(.regular, in: shape)
+                .shadow(color: .black.opacity(0.14), radius: 14, y: 6)
+        } else {
+            shape
+                .fill(.regularMaterial)
+                .overlay(shape.strokeBorder(LinearGradient(colors: [Color.white.opacity(0.5), Color.white.opacity(0.1)],
+                                                           startPoint: .top, endPoint: .bottom), lineWidth: 0.75))
+                .overlay(shape.stroke(Color.black.opacity(0.12), lineWidth: 0.5).padding(-0.5))
+                .shadow(color: .black.opacity(0.25), radius: 18, y: 8)
+        }
     }
 
     /// The search bar's glass, in a capsule.
@@ -146,5 +238,46 @@ private struct CaptionBarView: View {
                 .overlay(Capsule().stroke(Color.black.opacity(0.12), lineWidth: 0.5).padding(-0.5))
                 .shadow(color: .black.opacity(0.25), radius: 18, y: 8)
         }
+    }
+}
+
+/// A message sent lately: the clock, the message on one line, and on hover
+/// a cross to take it off the list.
+private struct RecentRow: View {
+    let message: String
+    let pick: () -> Void
+    let remove: () -> Void
+    @State private var hovering = false
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "clock.arrow.circlepath")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+            Text(message)
+                .font(.system(size: 13))
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Button(action: remove) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.tertiary)
+            }
+            .buttonStyle(.plain)
+            .opacity(hovering ? 1 : 0)
+            .help(L("Remove"))
+            .accessibilityLabel(L("Remove"))
+        }
+        .padding(.horizontal, 10)
+        .frame(height: 28)
+        .background(Color.primary.opacity(hovering ? 0.08 : 0), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .contentShape(Rectangle())
+        .onHover { hovering = $0 }
+        .onTapGesture(perform: pick)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { pick() }
     }
 }

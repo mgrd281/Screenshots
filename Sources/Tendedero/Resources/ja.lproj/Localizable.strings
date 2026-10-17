@@ -205,6 +205,7 @@
 "Photos that leave the line stay here for %d days." = "ロープから外れた写真はここに%d日間残ります。";
 "History is off. Turn it on in Settings, under Line." = "履歴はオフです。「設定」の「ロープ」でオンにしてください。";
 "Hang on the line" = "ロープに掛ける";
+"Send Again" = "もう一度送信";
 "Remove from History" = "履歴から削除";
 "Keep a history" = "履歴を残す";
 "Off" = "オフ";

@@ -205,6 +205,7 @@
 "Photos that leave the line stay here for %d days." = "Les photos qui quittent la corde restent ici %d jours.";
 "History is off. Turn it on in Settings, under Line." = "L’historique est désactivé. Active-le dans Réglages, sous Corde.";
 "Hang on the line" = "Suspendre à la corde";
+"Send Again" = "Renvoyer";
 "Remove from History" = "Retirer de l’historique";
 "Keep a history" = "Garder un historique";
 "Off" = "Désactivé";
