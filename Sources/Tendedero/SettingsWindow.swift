@@ -404,6 +404,67 @@ final class Preferences: ObservableObject {
 
     func chooseBookkeepingFolder() {
         if let url = Bookkeeping.chooseFolder() { bookkeepingFolder = url.lastPathComponent }
+        refreshPackMonths()
+    }
+
+    /// The months the folder's table has receipts for, newest first, and
+    /// the one chosen for a pack.
+    @Published var packMonths: [String] = []
+    @Published var packMonth = ""
+
+    func refreshPackMonths() {
+        packMonths = Bookkeeping.months()
+        if !packMonths.contains(packMonth) { packMonth = packMonths.first ?? "" }
+    }
+
+    func makeReceiptsPack() {
+        guard !packMonth.isEmpty else { return }
+        Bookkeeping.makePack(month: packMonth)
+    }
+
+    // MARK: Shop header
+
+    @Published var shopName = ShopHeader.name {
+        didSet {
+            ShopHeader.name = shopName
+            refreshShopPreview()
+        }
+    }
+    @Published private(set) var shopLogo: NSImage? = ShopHeader.hasLogo ? NSImage(contentsOf: ShopHeader.logoFile) : nil
+    /// The band as a customer will see it, over nothing.
+    @Published private(set) var shopPreview: NSImage?
+
+    func chooseShopLogo() {
+        guard ShopHeader.chooseLogo() else { return }
+        shopLogo = NSImage(contentsOf: ShopHeader.logoFile)
+        refreshShopPreview()
+    }
+
+    func removeShopLogo() {
+        ShopHeader.removeLogo()
+        shopLogo = nil
+        refreshShopPreview()
+    }
+
+    func refreshShopPreview() {
+        let rightToLeft = NSApp.userInterfaceLayoutDirection == .rightToLeft
+        // The band as it is on a wide screenshot, and of it the end with the
+        // logo and the words, at twice the size, so they can be read.
+        guard ShopHeader.isSet,
+              let blank = CGContext(data: nil, width: 2080, height: 1, bitsPerComponent: 8, bytesPerRow: 0,
+                                    space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)?.makeImage(),
+              let band = ShopHeader.render(blank, name: ShopHeader.name,
+                                           logo: shopLogo?.cgImage(forProposedRect: nil, context: nil, hints: nil),
+                                           detail: ShopHeader.detail(order: "1024", day: Date()),
+                                           rightToLeft: rightToLeft),
+              let end = band.cropping(to: CGRect(x: rightToLeft ? band.width - 960 : 0, y: 0,
+                                                 width: 960, height: band.height - 1))
+        else {
+            shopPreview = nil
+            return
+        }
+        shopPreview = NSImage(cgImage: end, size: NSSize(width: end.width / 2, height: end.height / 2))
     }
 
     // MARK: Saved messages
@@ -772,6 +833,7 @@ private struct LinePane: View {
             ChatButtonSection(prefs: prefs)
             SavedMessagesSection(prefs: prefs)
             BookkeepingSection(prefs: prefs)
+            ShopHeaderSection(prefs: prefs)
             Section(L("Screenshot button")) {
                 Toggle(isOn: $prefs.captureButton) {
                     Text(L("Show the screenshot button"))
@@ -1340,12 +1402,80 @@ private struct BookkeepingSection: View {
                 Text(L("Receipts saved for the books go here, each with a line in Snapfly.csv."))
             }
             TextField(L("Email"), text: $prefs.bookkeepingAddress, prompt: Text(L("Who keeps the books")))
+            LabeledContent {
+                HStack(spacing: 8) {
+                    Picker(L("Month"), selection: $prefs.packMonth) {
+                        ForEach(prefs.packMonths, id: \.self) { month in
+                            Text(ReceiptsPack.title(month: month)).tag(month)
+                        }
+                    }
+                    .labelsHidden()
+                    .fixedSize()
+                    SettingsButton(L("Make PDF")) { prefs.makeReceiptsPack() }
+                }
+                .disabled(prefs.packMonths.isEmpty)
+            } label: {
+                Text(L("Monthly pack"))
+                Text(L("A month's receipts in one PDF, with a page listing them, to hand to your tax advisor."))
+            }
         } header: {
             Text(L("Bookkeeping"))
         } footer: {
             Text(L("A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total."))
                 .foregroundStyle(.secondary)
         }
+        .onAppear { prefs.refreshPackMonths() }
+    }
+}
+
+/// The shop's name and logo, for the band of Send with Shop Header.
+private struct ShopHeaderSection: View {
+    @ObservedObject var prefs: Preferences
+
+    var body: some View {
+        Section {
+            TextField(L("Shop name"), text: $prefs.shopName, prompt: Text(L("Your shop's name")))
+            LabeledContent {
+                HStack(spacing: 8) {
+                    if let logo = prefs.shopLogo {
+                        Image(nsImage: logo)
+                            .resizable()
+                            .interpolation(.high)
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 24, height: 24)
+                            .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                            .accessibilityHidden(true)
+                        Button { prefs.removeShopLogo() } label: {
+                            Image(systemName: "minus.circle")
+                        }
+                        .buttonStyle(.borderless)
+                        .help(L("Remove"))
+                        .accessibilityLabel(L("Remove"))
+                    }
+                    SettingsButton(L("Choose…")) { prefs.chooseShopLogo() }
+                }
+            } label: {
+                Text(L("Logo"))
+                Text(L("A square picture works best."))
+            }
+            if let preview = prefs.shopPreview {
+                Image(nsImage: preview)
+                    .resizable()
+                    .interpolation(.high)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: preview.size.width)
+                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .strokeBorder(Color.primary.opacity(0.12), lineWidth: 0.5))
+                    .accessibilityLabel(L("Preview"))
+            }
+        } header: {
+            Text(L("Shop header"))
+        } footer: {
+            Text(L("Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot."))
+                .foregroundStyle(.secondary)
+        }
+        .onAppear { prefs.refreshShopPreview() }
     }
 }
 

@@ -484,7 +484,38 @@ apps.
     Dock; the second opens the system's new email with the copy attached.
   - **Settings › Line › Bookkeeping**: the folder's name in `.secondary`,
     truncated in the middle, with a Choose… `SettingsButton`, and the
-    address in a field with a prompt.
+    address in a field with a prompt. Then Monthly pack: a menu of the
+    months the table has receipts for, newest first and named as people
+    say them, and a Make PDF `SettingsButton`, both off until there is one.
+    It works under a working note above the Dock and shows the PDF in the
+    Finder.
+  - **The monthly pack** is an A4 PDF in the system font, black on white.
+    Its first page has the title (20 pt semibold), a 9.5 pt grey note that
+    it is a help for the tax advisor, then the list: 8.5 pt semibold grey
+    headings over a 0.5 pt rule, rows 18 pt high in 10 pt (the fingerprint,
+    16 hex digits, in 8 pt monospaced), hairlines between them, amounts and
+    pages aligned to the numbers' side, and a receipt not found in grey with
+    a dash for its page. The count, the sum and what was not found close
+    it in 10 pt medium. Each receipt follows on a page of its own under a
+    9 pt grey caption, as large as fits; every page has "n / total" at the
+    foot in 8 pt grey. In right-to-left languages the columns run from the
+    right.
+  - **Send with Shop Header** (`storefront`) follows Paste into … for a
+    photo. It works under a working note above the Dock, then sends as
+    Paste does. With no shop name or logo yet, a note says where to add
+    them.
+  - **The shop's band** sits above the covered screenshot, as wide, white,
+    with a hairline of grey 86% between them. Its sizes grow with the
+    picture as the time stamp's do (a font of 1.25% of the width, 13 px at
+    least): the logo leads in the reading direction as a square the band's
+    height less its padding, filled and with corners of 22% of its side,
+    then the shop's name (semibold, grey 8%) over the order and the day
+    (regular, grey 36%), centred as a block and cut short with an ellipsis.
+  - **Settings › Line › Shop header**: the name in a field with a prompt;
+    the logo as a 24 pt square with 5 pt corners, a borderless
+    `minus.circle` to remove it and a Choose… `SettingsButton`; and a
+    preview of the band's leading end, at twice its size, with 6 pt corners
+    and a 0.5 pt edge of `.primary` at 12%.
   - SF Symbols on macOS 26 only, as Apple's own menus have.
 - **Settings sidebar.** General, Line, Privacy, Permissions, Support and
   About, each on its tile (see Layout).
