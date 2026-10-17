@@ -473,10 +473,18 @@ final class ChatButton {
 
     // MARK: Sending
 
+    /// The capsule while it shows, in screen coordinates, for a card that
+    /// belongs to it, like Check Before Sending.
+    var capsuleFrame: CGRect? {
+        guard panel.isVisible else { return nil }
+        let margin = ChatButtonPanel.margin
+        return panel.frame.insetBy(dx: margin, dy: margin)
+    }
+
     private func send() {
         let count = toSend.count
-        guard count > 0 else { return }
-        line.paste()
+        // Waiting on Check Before Sending, it hasn't gone yet.
+        guard count > 0, line.paste() else { return }
         // When sent photos stay on the line, a check says it went.
         model.sent = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in
@@ -492,7 +500,7 @@ final class ChatButton {
         let margin = ChatButtonPanel.margin
         CaptionBar.shared.show(above: panel.frame.insetBy(dx: margin, dy: margin), count: count,
                                photo: toSend.last(where: \.isImage)?.url) { [weak self] text in
-            self?.line.paste(caption: text)
+            guard self?.line.paste(caption: text) == true else { return }
             self?.model.sent = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in
                 self?.model.sent = false

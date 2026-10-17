@@ -23,6 +23,9 @@ keeps a download of each version.
 - Cover everything in AI chats, under Privacy: whatever goes into ChatGPT,
   Claude, Gemini or another AI chat has every kind covered, checked or not.
   The send button over the chat shows a lock by the count meanwhile.
+- Check before sending, under Privacy: before photos go into an AI chat, or
+  an app or website not known as a chat, a card shows them as they will go
+  and what is covered. Return sends them, Escape keeps them on the line.
 - Save for Bookkeeping and Email to Bookkeeping…, in a photo's menu: a
   covered copy named for its day, order and total, with a line in
   Snapfly.csv, or in a new email to whoever keeps the books.
@@ -58,6 +61,9 @@ keeps a download of each version.
   the photo's menu, for "Covered: Names · QR codes and barcodes". VoiceOver
   says it too, and the iPhone shows it under the covered picture. The lock
   now shows only when something was covered.
+- A paper plane after the lock marks a photo that says what one sent lately
+  said. Its menu says where that went and when, and so does Check before
+  sending. It needs the History, and turns off under Line in Settings.
 - On the iPhone: rules of your own under Also hide, as on the Mac, and
   Check All, Recommended and Uncheck All in Settings.
 

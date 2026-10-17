@@ -164,6 +164,12 @@ final class Preferences: ObservableObject {
         set { change { Line.takesDownSent = newValue } }
     }
 
+    /// The paper planes come and go on the line at once.
+    var marksSentBefore: Bool {
+        get { Line.marksSentBefore }
+        set { change { Line.marksSentBefore = newValue; line.objectWillChange.send() } }
+    }
+
     var historyDays: Int? {
         get { History.days }
         set { change { History.days = newValue } }
@@ -381,6 +387,11 @@ final class Preferences: ObservableObject {
     var plainNames: Bool {
         get { Cover.plainNames }
         set { change { Cover.plainNames = newValue; line.readPrivateDetails() } }
+    }
+
+    var checkBeforeSending: SendCheck.When {
+        get { SendCheck.when }
+        set { change { SendCheck.when = newValue } }
     }
 
     /// Turned on, the photos hanging are read for AI chats at once, and the
@@ -838,6 +849,11 @@ private struct LinePane: View {
                     Text(L("Take photos down once sent"))
                     Text(L("Sent into a chat, they leave the line. Pinned ones stay."))
                 }
+                Toggle(isOn: $prefs.marksSentBefore) {
+                    Text(L("Mark photos sent before"))
+                    Text(L("A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history."))
+                }
+                .disabled(prefs.historyDays == nil)
                 LabeledContent {
                     HStack {
                         Picker(L("Keep a history"), selection: $prefs.historyDays) {
@@ -1338,6 +1354,16 @@ private struct PrivacyPane: View {
                 Toggle(L("Cover everything in AI chats"), isOn: $prefs.coversAllInAIChats)
             } footer: {
                 Text(L("Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not."))
+                    .foregroundStyle(.secondary)
+            }
+            Section {
+                Picker(L("Check before sending"), selection: $prefs.checkBeforeSending) {
+                    ForEach(SendCheck.When.allCases) { when in
+                        Text(when.title).tag(when)
+                    }
+                }
+            } footer: {
+                Text(L("A card shows the photos as they will go, and what is covered, before they go in. Return sends them, Escape keeps them on the line."))
                     .foregroundStyle(.secondary)
             }
             Section {

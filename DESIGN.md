@@ -218,8 +218,9 @@ literal value in a view.
 - **Cover ink** is the opaque block over private details. It reads as
   redaction, not decoration.
 - **Photo badge** is black 55% with a white glyph or text, over a picture: the
-  lock, the PDF capsule, and the size while an area is chosen. With Reduce
-  Transparency on, it is the cover ink instead (grey 12%, solid).
+  lock, the paper plane of a photo sent before, the PDF capsule, and the size
+  while an area is chosen. With Reduce Transparency on, it is the cover ink
+  instead (grey 12%, solid).
 - **Record red** (`Color.red`) is only for the stop button while the screen
   is recorded, as macOS marks recording.
 - **Allowed green** and **not allowed orange** (`.green`, `.orange`) are only
@@ -388,6 +389,16 @@ apps.
     elsewhere leads the capsule with a mini white spinner while its pages
     are covered, then the 8 pt bold `lock.fill` once something is. The
     capsule takes the lock badge's place, so a card never shows both;
+  - sent before: an 18 pt photo badge circle with an 8 pt bold
+    `paperplane.fill`, 4 pt after the lock in reading order (in its place
+    when nothing is covered), fading in over 0.2 s; still, without sound.
+    It shows while Mark photos sent before is on (Settings › Line, under
+    Take photos down once sent, on at first, off without a history) for a
+    photo whose print (`TextPrint`) matches a send in the History. Resting
+    on the corner says "Sent to WhatsApp · Today at 14:05" under the lock's
+    line; the menu has it disabled with `paperplane` from macOS 26, after the
+    lock's line and before the separator, mark or no mark; VoiceOver hears
+    both lines as the value;
   - pinned: orange pin;
   - copied: "Copied" capsule below;
   - search: dimmed and desaturated when it isn't a match, yellow marks when it
@@ -581,7 +592,10 @@ apps.
   Money, identity and health; Orders and documents. Then a section of its
   own with one toggle, Cover everything in AI chats (off at first), over a
   footer naming ChatGPT, Claude and Gemini and saying every kind above is
-  covered there, checked or not. Then one with Plain file names (off at
+  covered there, checked or not. Then one with a menu picker, Check before
+  sending: In AI chats and unknown apps (at first), Every time or Never,
+  over a footer saying what the card shows and that Return sends and Escape
+  keeps the photos. Then one with Plain file names (off at
   first), over a footer saying pictures leave as fresh files without notes
   on when, where or with what they were made, and are named "Image" with it
   on. Then "Also hide", the
@@ -741,6 +755,33 @@ apps.
     grouped list of toggles with a remove button each and a field to add
     one. The chat apps are a list too: each app's 20 pt icon and name, a
     toggle and a remove button, and Add App… to choose another.
+- **Check before sending** (`SendCheck.swift`), a floating card in the text
+  card's look (380 pt, 20 pt corners, `.regularMaterial`, 28 pt margin) that
+  shows before photos are pasted into an AI chat, or an app or website not
+  in the chat lists, as Settings › Privacy chooses.
+  - Header: `checkmark.shield` in the accent on its 12% circle, "Send to
+    ChatGPT?" in 13 pt semibold on one line, truncated in the middle, and
+    the close button.
+  - One block on the reading panel's fill: the copies as they will go, up
+    to four, each fitted in 76 pt with 6 pt corners and a 0.5 pt edge of
+    `.primary` at 12%, 8 pt apart, then "+2" in the count's chip; under
+    them, after a 10 pt semibold `.secondary` glyph, the covered line
+    (`lock.fill`: "Covered: Names · Emails", "Nothing private found" or
+    "Hide private details is off.") and, for photos like ones sent before,
+    `paperplane.fill` with "Sent to WhatsApp · Today at 14:05", or "Sent
+    before: 2 of 3" for several.
+  - A caption note says why it shows: AI chats can keep what they are
+    sent, or Snapfly doesn't know the place as a chat; none for Every time.
+  - Footer: Don't Send (`.bordered`, Escape) and Send with `paperplane.fill`
+    (`.borderedProminent`, Return), both large, on the trailing edge.
+  - It takes the keyboard without activating Snapfly, as the message bar
+    does, and hears Return and Escape without a focused control. A click in
+    another app puts it away unsent. It sits 6 pt above the send button
+    over the chat, trailing edges lined up, when that shows; else centred
+    under the line's strip on the screen with the pointer, 8 pt inside it.
+    It fades in over 0.15 s. Escape, Don't Send or the cross leave the
+    photos hanging; Send closes it, gives the keyboard back to the chat and
+    pastes 0.15 s later.
 - **Capture overlay** (`Capture.swift`), the one surface that covers the
   whole screen. It shows the screens still, captured a moment before.
   - It takes the keyboard without activating the app, as the search bar does.

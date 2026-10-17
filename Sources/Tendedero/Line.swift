@@ -97,6 +97,20 @@ final class Line: ObservableObject {
 
     var liveCount: Int { items.filter { !$0.falling }.count }
 
+    /// For each photo that says what one sent lately said, the newest such
+    /// send: a paper plane by its lock, a line in its menu, and a word in
+    /// Check Before Sending.
+    @Published private(set) var sentBefore: [UUID: SendLog.Sent] = [:]
+    /// Each photo's print, by its path, once its words are read.
+    private var prints: [String: TextPrint] = [:]
+    private var sendLogWatch: NSObjectProtocol?
+
+    /// Mark photos sent before, from Settings. On unless turned off.
+    nonisolated static var marksSentBefore: Bool {
+        get { !UserDefaults.standard.bool(forKey: "sentBeforeOff") }
+        set { UserDefaults.standard.set(!newValue, forKey: "sentBeforeOff") }
+    }
+
     private let storeKey = "pegged"
     private let pinnedKey = "pinnedPhotos"
 
@@ -108,7 +122,13 @@ final class Line: ObservableObject {
         trashWaiting()
         PrivateDetails.onRead = { [weak self] url, shown in self?.show(shown, for: url) }
         PrivateDetails.onStart = { [weak self] url in self?.preparing(url) }
-        TextIndex.onRead = { [weak self] in self?.refreshSearch() }
+        TextIndex.onRead = { [weak self] in
+            self?.refreshSearch()
+            self?.refreshSent()
+        }
+        sendLogWatch = NotificationCenter.default.addObserver(forName: SendLog.changed, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.refreshSent() }
+        }
         readPrivateDetails()
         scheduleGust()
     }
@@ -315,16 +335,20 @@ final class Line: ObservableObject {
 
     /// The send button on the tag: the photos picked, or every photo when
     /// none is, go straight into the app in front, a chat for example.
-    func paste() {
+    /// Returns whether they went at once, rather than waiting on Check
+    /// Before Sending.
+    @discardableResult
+    func paste() -> Bool {
         let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
-        paste(picked.isEmpty ? items.filter { !$0.falling } : picked)
+        return paste(picked.isEmpty ? items.filter { !$0.falling } : picked)
     }
 
     /// The chat button's message: the photos picked, or every photo, then
     /// the message after them, so they go as one message.
-    func paste(caption: String) {
+    @discardableResult
+    func paste(caption: String) -> Bool {
         let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
-        paste(picked.isEmpty ? items.filter { !$0.falling } : picked, then: caption.isEmpty ? nil : caption)
+        return paste(picked.isEmpty ? items.filter { !$0.falling } : picked, then: caption.isEmpty ? nil : caption)
     }
 
     /// From a photo's menu: the photos picked when it is one of them, or
@@ -357,10 +381,37 @@ final class Line: ObservableObject {
     ///     chat.
     ///   - files: what goes for some of the photos instead of their copies,
     ///     like one under the shop's header.
-    private func paste(_ photos: [Pegged], then caption: String? = nil, replacing files: [UUID: URL] = [:]) {
+    /// - Returns: whether they went at once, rather than waiting on Check
+    ///   Before Sending.
+    @discardableResult
+    private func paste(_ photos: [Pegged], then caption: String? = nil, replacing files: [UUID: URL] = [:]) -> Bool {
         // Into an AI chat with Cover Everything there on, every kind.
         let chosen = CoveringProfile.detailsNow
-        guard !photos.isEmpty, !stillCovering(photos, chosen) else { return }
+        guard !photos.isEmpty, !stillCovering(photos, chosen) else { return false }
+        // Into an AI chat, or a place not known as a chat: the card first.
+        if Paste.willPaste, let destination = SendLog.destination, let reason = SendCheck.reasonNow {
+            var covered = CoverReport()
+            for photo in photos {
+                if let report = PrivateDetails.report(for: photo.url, covering: chosen) { covered.add(report) }
+            }
+            SendCheck.shared.show(photos.map { files[$0.id] ?? PrivateDetails.shareable($0.url, covering: chosen) },
+                                  to: destination, reason: reason, covered: covered, hides: !chosen.isEmpty,
+                                  sentBefore: photos.compactMap { sentBefore[$0.id] },
+                                  above: ChatButton.shared?.capsuleFrame) { [weak self] in
+                self?.deliver(photos, then: caption, replacing: files, covering: chosen)
+            }
+            return false
+        }
+        deliver(photos, then: caption, replacing: files, covering: chosen)
+        return true
+    }
+
+    /// The photos on their way: copied, flown over and pasted into the app in
+    /// front, then noted in the History. Any taken down meanwhile stay down.
+    private func deliver(_ chosenPhotos: [Pegged], then caption: String?, replacing files: [UUID: URL],
+                         covering chosen: Set<PrivateDetail>) {
+        let photos = chosenPhotos.filter { photo in items.contains { $0.id == photo.id && !$0.falling } }
+        guard !photos.isEmpty else { return }
         copy(photos, covering: chosen, replacing: files)
         pickedIDs = []
         // Only when the paste will happen: a photo flying into a chat that
@@ -785,6 +836,8 @@ final class Line: ObservableObject {
               let thumb = makeThumbnail(url) else { return }
         items[i].thumb = thumb
         PrivateDetails.prepare(url)
+        // Edited, it says something new.
+        prints[url.path] = nil
         TextIndex.read(url)
     }
 
@@ -949,6 +1002,35 @@ final class Line: ObservableObject {
     func coveredSentence(_ id: UUID) -> String? {
         guard let item = items.first(where: { $0.id == id }), item.covered else { return nil }
         return PrivateDetails.report(for: item.url)?.sentence
+    }
+
+    /// "Sent to WhatsApp · Today at 14:05": where a photo like this one went
+    /// lately, and when.
+    func sentSentence(_ id: UUID) -> String? {
+        sentBefore[id].map { SendLog.sentence($0) }
+    }
+
+    /// Which photos say what one sent lately said, as the History tells it.
+    /// Run as words are read and as the History changes.
+    func refreshSent() {
+        let live = items.filter { !$0.falling && $0.isImage }
+        prints = prints.filter { entry in live.contains { $0.url.path == entry.key } }
+        var found: [UUID: SendLog.Sent] = [:]
+        if SendLog.entries.contains(where: { $0.textPrint != nil }) {
+            for item in live {
+                guard let said = textPrint(of: item.url), let sent = SendLog.lastSent(like: said) else { continue }
+                found[item.id] = sent
+            }
+        }
+        if found != sentBefore { sentBefore = found }
+    }
+
+    /// A photo's print, once its words are read.
+    private func textPrint(of url: URL) -> TextPrint? {
+        if let known = prints[url.path] { return known }
+        guard let rows = TextIndex.rows(for: url), let said = TextPrint.of(rows.map(\.text)) else { return nil }
+        prints[url.path] = said
+        return said
     }
 
     func reveal(_ id: UUID) {

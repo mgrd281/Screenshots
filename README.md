@@ -263,6 +263,12 @@ only ever covers more than you chose, and the line still shows your choice.
 Over an AI chat, the send button shows a small lock by the count meanwhile,
 and Sent in the History lists what was covered.
 
+Before photos go into an AI chat, or an app or website Snapfly doesn't know
+as a chat, a card shows them as they will go, what is covered in them, and
+when photos like them were sent before. Return sends them, Escape keeps them
+on the line. Choose every time or never instead with Check before sending,
+under Privacy.
+
 Hide Part opens wide: the picture on the left, as large as fits, and on the
 right everything to choose; drag a corner to make the window larger or
 smaller. There you can also say what to hide, like "everything but the amount
@@ -366,6 +372,12 @@ Whatever you send into a chat, with a paper plane, ⌃⌥V or a drag, leaves
 the line as it lands there, so the line only holds what is still to send.
 Pinned photos stay. Rather keep them? Turn off Take photos down once sent
 in Settings.
+
+A photo that says what one sent lately said gets a paper plane after its
+lock, and its menu says where that went and when, so the same invoice isn't
+sent twice by mistake. Snapfly knows it again by a print of its words kept
+with the History, not by the words themselves. Turn it off with Mark photos
+sent before, under Line.
 
 <br>
 
@@ -566,6 +578,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `ShopHeader.swift` | Send with Shop Header: the shop's name and logo, and the band drawn above the covered screenshot |
 | `ReceiptsPack.swift` | The monthly pack: Snapfly.csv read back, the sum of the totals, and one PDF with the list and a page a receipt |
 | `SendLog.swift` | What was sent into which chat, when and with what covered, and the table it exports |
+| `TextPrint.swift` | A print of what a picture says, to know a photo sent before without keeping its words |
+| `SendCheck.swift` | Check before sending: when the card shows, and the card with what goes and what is covered |
 | `CaptionBar.swift` | The line over the chat button to write a message sent with the photos |
 | `ChatLayouts.swift` | Where the chat button sits over each chat it knows, on a new chat and once started |
 | `ChatButton.swift` | The send button that floats over a chat while photos hang |
