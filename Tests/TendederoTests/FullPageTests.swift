@@ -18,9 +18,13 @@ final class FullPageTests: XCTestCase {
     func testThePointerRestsInsideTheWindowTowardsItsTrailingSide() {
         let frame = CGRect(x: 100, y: 50, width: 1000, height: 800)
         let point = Scrolling.restingPoint(in: frame)
-        XCTAssertEqual(point.x, 1000)
-        XCTAssertEqual(point.y, 490)
+        XCTAssertEqual(point.x, 1000, accuracy: 0.001)
+        XCTAssertEqual(point.y, 490, accuracy: 0.001)
         XCTAssertTrue(frame.insetBy(dx: 50, dy: 50).contains(point))
+        // Whole points, whatever the window's size.
+        let odd = Scrolling.restingPoint(in: CGRect(x: 33.3, y: 7.7, width: 1013, height: 777))
+        XCTAssertEqual(odd.x, odd.x.rounded())
+        XCTAssertEqual(odd.y, odd.y.rounded())
     }
 
     func testThePointerMovesClearOfSnapflysOwnWindows() {

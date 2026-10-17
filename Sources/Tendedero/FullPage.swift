@@ -19,7 +19,7 @@ final class FullPage {
 
     private(set) var isRunning = false
     /// Long enough for a page that loads its pictures as they come into view.
-    private static let settle: UInt64 = 450_000_000
+    private nonisolated static let settle: UInt64 = 450_000_000
     /// A page longer than this many views is cut there.
     private static let maxViews = 60
     /// Taller than this, a picture is hard to open; the page is cut there.
@@ -296,9 +296,9 @@ enum Scrolling {
 
     /// Where the pointer rests over a window to scroll it: 90% across and
     /// 55% down, away from the edges, where a page's own scrolling boxes
-    /// seldom are.
+    /// seldom are. On whole points, as a pointer is.
     static func restingPoint(in frame: CGRect) -> CGPoint {
-        CGPoint(x: frame.minX + frame.width * 0.9, y: frame.minY + frame.height * 0.55)
+        CGPoint(x: (frame.minX + frame.width * 0.9).rounded(), y: (frame.minY + frame.height * 0.55).rounded())
     }
 
     /// The point moved left, 80 points at a time, until it is 12 points clear
