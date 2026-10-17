@@ -78,6 +78,15 @@ final class PageStitchTests: XCTestCase {
         XCTAssertEqual(PageStitch.slices(height: 400, steps: []).map(\.rows), [0..<400])
     }
 
+    func testTwoViewsOfTheSamePlaceAreAlikeDespiteAFewMovingRows() {
+        var moving = view(at: 100)
+        // A carousel of twenty rows changes by itself.
+        for i in 200..<220 { moving[i] = pageRow(5000 + i) }
+        XCTAssertTrue(PageStitch.alike(view(at: 100), moving))
+        XCTAssertFalse(PageStitch.alike(view(at: 100), view(at: 150)))
+        XCTAssertFalse(PageStitch.alike(view(at: 100), []))
+    }
+
     func testComposeStacksTheRows() throws {
         let context = try XCTUnwrap(CGContext(data: nil, width: 4, height: 10, bitsPerComponent: 8, bytesPerRow: 0,
                                               space: CGColorSpace(name: CGColorSpace.sRGB)!,
