@@ -199,7 +199,9 @@ kinds are the ones private in nearly every screenshot, and the amount or
 the date a screenshot is often sent for wait to be chosen. Whatever leaves
 the line, copied, sent or dragged out, has them covered, and the line shows
 each photo that way too, so what you see is what goes, with a small lock on
-each one that has something covered. Copy Text leaves them out too. Anything
+each one that has something covered. Rest the pointer on the lock, or open
+the photo's menu, and it says what was covered, like Names · QR codes and
+barcodes; VoiceOver says it too. Copy Text leaves them out too. Anything
 it misses, hide by hand with Hide Part in a photo's menu. Labels like Billing
 address, Recipient, Kundennummer or Diagnosis tell it where a whole block is
 private.
@@ -363,7 +365,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
 
 - **The app** shows your screenshots from Photos, newest first. Tap one and it
   comes back with names, addresses, emails, phone numbers, bank and health
-  details covered, ready to copy, share or save as a new picture in Photos.
+  details covered, saying what was covered, ready to copy, share or save as a
+  new picture in Photos.
   The screenshot itself stays as it was. Settings chooses what to cover, in
   the same three groups as on the Mac, and the recommended kinds are on
   until you change them.
@@ -445,6 +448,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
+| `Shared/CoverReport.swift` | What was covered in a picture, kind by kind, for the lock, the photo's menu, VoiceOver and the iPhone |
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, and the Shortcuts actions |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |

@@ -36,7 +36,7 @@ enum SaveCopy {
     static func write(_ url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect], pages: [Int: [CGRect]],
                       to target: URL) -> Bool {
         if isPDF(url) {
-            return DocumentCover.write(url, chosen, hand: pages, to: target)
+            return DocumentCover.write(url, chosen, hand: pages, to: target) != nil
         }
         guard let image = Cover.covered(of: url, chosen, hand: hand) else { return false }
         return writePicture(image, to: target, type: fileType(for: url))

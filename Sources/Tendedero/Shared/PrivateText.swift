@@ -119,10 +119,12 @@ enum Finder {
         }
     }
 
-    /// One thing to cover: part of a line, or all of it.
+    /// One thing to cover: part of a line, or all of it, and the kind it
+    /// is covered as; nil for a rule of the owner's own.
     fileprivate struct Hit {
         let line: Int
         let range: NSRange?
+        let kind: PrivateDetail?
     }
 
     /// What a label announces: the kind of its first line, the kind of the
@@ -207,31 +209,48 @@ enum Finder {
         return labels
     }()
 
+    /// One place to cover, and the kind it is covered as; nil for a rule of
+    /// the owner's own.
+    struct Area: Equatable {
+        let rect: CGRect
+        let kind: PrivateDetail?
+    }
+
     /// Where the chosen details and the owner's own rules are, as they are
     /// covered: from 0 to 1 from the bottom left, with a margin around the
     /// text, the faces when those are chosen, and the codes.
     static func areas(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all) -> [CGRect] {
+        coveredAreas(in: image, chosen, rules: rules).map(\.rect)
+    }
+
+    /// The same places, each with the kind it is covered as, so the line can
+    /// tell what was covered.
+    static func coveredAreas(in image: CGImage, _ chosen: Set<PrivateDetail>,
+                             rules: [OwnRule] = OwnRules.all) -> [Area] {
         let rules = rules.filter { !$0.isBlank }
         guard !chosen.isEmpty || !rules.isEmpty else { return [] }
         let width = CGFloat(image.width), height = CGFloat(image.height)
         let codes = Self.codes(in: image, chosen)
-        var areas = boxes(in: image, chosen, rules: rules, printed: codes.compactMap(\.payload)).map { box -> CGRect in
+        var areas = boxes(in: image, chosen, rules: rules, printed: codes.compactMap(\.payload)).map { box -> Area in
             // Vision measures from the bottom left, as Core Graphics draws.
-            let text = VNImageRectForNormalizedRect(box, image.width, image.height)
+            let text = VNImageRectForNormalizedRect(box.rect, image.width, image.height)
             let rect = text.insetBy(dx: -text.height * 0.25, dy: -text.height * 0.2)
-            return CGRect(x: rect.minX / width, y: rect.minY / height,
-                          width: rect.width / width, height: rect.height / height)
+            return Area(rect: CGRect(x: rect.minX / width, y: rect.minY / height,
+                                     width: rect.width / width, height: rect.height / height),
+                        kind: box.kind)
         }
-        if chosen.contains(.faces) { areas += faces(in: image) }
-        areas += codes.map(\.box)
+        if chosen.contains(.faces) { areas += faces(in: image).map { Area(rect: $0, kind: .faces) } }
+        areas += codes.map { Area(rect: $0.box, kind: $0.kind) }
         return areas
     }
 
-    /// A QR code or a barcode, with what it says when that is text.
+    /// A QR code or a barcode, with what it says when that is text, and the
+    /// kind it is covered as.
     struct Code {
         /// From 0 to 1 from the bottom left, with a quiet margin around it.
         let box: CGRect
         let payload: String?
+        let kind: PrivateDetail
     }
 
     /// The codes to cover: every one when codes are chosen, otherwise those
@@ -247,11 +266,12 @@ enum Finder {
             request.revision = VNDetectBarcodesRequestRevision3
             guard (try? VNImageRequestHandler(cgImage: image, options: [:]).perform([request])) != nil else { return [] }
         }
-        return (request.results ?? []).filter { coversCode($0.payloadStringValue, chosen) }.map { code in
+        return (request.results ?? []).compactMap { code in
+            guard let kind = Self.kind(ofCode: code.payloadStringValue, chosen) else { return nil }
             let box = code.boundingBox
             return Code(box: box.insetBy(dx: -box.width * 0.1, dy: -box.height * 0.1)
                             .intersection(CGRect(x: 0, y: 0, width: 1, height: 1)),
-                        payload: code.payloadStringValue)
+                        payload: code.payloadStringValue, kind: kind)
         }
     }
 
@@ -259,9 +279,16 @@ enum Finder {
     /// when its contents hold a chosen detail. Pure text, so it can be
     /// checked without a picture.
     static func coversCode(_ payload: String?, _ chosen: Set<PrivateDetail>) -> Bool {
-        if chosen.contains(.barcodes) { return true }
-        guard let payload, !payload.isEmpty else { return false }
-        return !kinds(ofCode: payload).isDisjoint(with: chosen)
+        kind(ofCode: payload, chosen) != nil
+    }
+
+    /// The kind a code is covered as: a code, when codes are chosen,
+    /// otherwise the first chosen kind it holds; nil when it is not covered.
+    static func kind(ofCode payload: String?, _ chosen: Set<PrivateDetail>) -> PrivateDetail? {
+        if chosen.contains(.barcodes) { return .barcodes }
+        guard let payload, !payload.isEmpty else { return nil }
+        let held = kinds(ofCode: payload)
+        return PrivateDetail.allCases.first { held.contains($0) && chosen.contains($0) }
     }
 
     /// The kinds of detail a code's contents hold: by the formats codes use,
@@ -335,22 +362,23 @@ enum Finder {
         return context.makeImage()
     }
 
-    /// Where the chosen details are, in Vision's normalized coordinates.
+    /// Where the chosen details are, in Vision's normalized coordinates,
+    /// each with the kind it is covered as.
     /// - Parameter printed: what the covered codes say, covered too where it
     ///   is printed beside them.
     static func boxes(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all,
-                      printed: [String] = []) -> [CGRect] {
+                      printed: [String] = []) -> [Area] {
         // Faces and codes are not read as text: with nothing else chosen, no reading.
         let patterns = printed.compactMap(printedPattern(ofCode:))
         guard !chosen.subtracting([.faces, .barcodes]).isEmpty || rules.contains(where: { !$0.isBlank })
             || !patterns.isEmpty else { return [] }
         let lines = read(image)
         let printedHits = patterns.isEmpty ? [] : Text(lines).hits(forPatterns: patterns)
-        return (hits(in: lines, chosen, rules: rules) + printedHits).compactMap { hit -> CGRect? in
+        return (hits(in: lines, chosen, rules: rules) + printedHits).compactMap { hit -> Area? in
             let line = lines[hit.line]
-            guard let range = hit.range else { return line.box }
-            guard let part = Range(range, in: line.string) else { return nil }
-            return line.box(for: part)
+            guard let range = hit.range else { return Area(rect: line.box, kind: hit.kind) }
+            guard let part = Range(range, in: line.string), let box = line.box(for: part) else { return nil }
+            return Area(rect: box, kind: hit.kind)
         }
     }
 
@@ -452,7 +480,7 @@ enum Finder {
     /// The owner's own rules: words and patterns wherever they appear, and
     /// what follows a label, on its line or on the line below.
     private static func own(in text: Text, _ rules: [OwnRule]) -> [Hit] {
-        var hits = ruleRanges(in: text.full, rules).flatMap { text.hits($0) }
+        var hits = ruleRanges(in: text.full, rules).flatMap { text.hits($0, nil) }
         for rule in rules where rule.kind == .label && !rule.isBlank {
             let label = rule.text.trimmingCharacters(in: .whitespaces)
             for (i, line) in text.lines.enumerated() {
@@ -462,9 +490,9 @@ enum Finder {
                 if found.upperBound < string.endIndex, string[found.upperBound].isLetter { continue }
                 let rest = string[found.upperBound...].drop { ": -–\t".contains($0) }
                 if !rest.isEmpty {
-                    hits.append(Hit(line: i, range: NSRange(rest.startIndex..<string.endIndex, in: string)))
+                    hits.append(Hit(line: i, range: NSRange(rest.startIndex..<string.endIndex, in: string), kind: nil))
                 } else if let next = Self.line(below: i, in: text.lines, gap: 2) {
-                    hits.append(Hit(line: next, range: nil))
+                    hits.append(Hit(line: next, range: nil, kind: nil))
                 }
             }
         }
@@ -596,13 +624,14 @@ enum Finder {
 
         var whole: NSRange { NSRange(full.startIndex..., in: full) }
 
-        /// A range of the whole text, line by line.
-        func hits(_ range: NSRange) -> [Hit] {
+        /// A range of the whole text, line by line, covered as this kind.
+        func hits(_ range: NSRange, _ kind: PrivateDetail?) -> [Hit] {
             lines.indices.compactMap { i -> Hit? in
                 let span = NSRange(location: starts[i], length: lines[i].string.utf16.count)
                 let overlap = NSIntersectionRange(range, span)
                 guard overlap.length > 0 else { return nil }
-                return Hit(line: i, range: NSRange(location: overlap.location - span.location, length: overlap.length))
+                return Hit(line: i, range: NSRange(location: overlap.location - span.location, length: overlap.length),
+                           kind: kind)
             }
         }
 
@@ -611,9 +640,10 @@ enum Finder {
                 .matches(in: full, range: whole).map(\.range) ?? []
         }
 
-        /// Every match of these patterns, in any case, line by line.
+        /// Every match of these patterns, in any case, line by line: what a
+        /// covered code says, where it is printed.
         func hits(forPatterns patterns: [String]) -> [Hit] {
-            patterns.flatMap { matches($0, .caseInsensitive) }.flatMap { hits($0) }
+            patterns.flatMap { matches($0, .caseInsensitive) }.flatMap { hits($0, .barcodes) }
         }
     }
 
@@ -621,11 +651,12 @@ enum Finder {
 
     /// Details that are private wherever they appear.
     private static func patterns(in text: Text, _ chosen: Set<PrivateDetail>) -> [Hit] {
-        var hits = patternRanges(in: text.full, chosen).flatMap { text.hits($0) }
+        // Kind by kind, so each place is known by the kind that found it.
+        var hits = chosen.flatMap { kind in patternRanges(in: text.full, [kind]).flatMap { text.hits($0, kind) } }
         if chosen.contains(.addresses),
            let addresses = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.address.rawValue) {
             for match in addresses.matches(in: text.full, range: text.whole) {
-                let lines = text.hits(match.range)
+                let lines = text.hits(match.range, .addresses)
                 hits += lines
                 // The detector often stops at the street. The postcode, the
                 // town and the country follow just below.
@@ -633,7 +664,7 @@ enum Finder {
                 for _ in 0..<3 {
                     guard let next = Self.line(below: last, in: text.lines, gap: 1.1),
                           looksLikeAddress(text.lines[next].string) else { break }
-                    hits.append(Hit(line: next, range: nil))
+                    hits.append(Hit(line: next, range: nil, kind: .addresses))
                     last = next
                 }
             }
@@ -741,7 +772,7 @@ enum Finder {
                 if !value.isEmpty {
                     let detail = kind(of: value, first: true, in: block)
                     if chosen.contains(detail), let part = line.string.range(of: value) {
-                        hits.append(Hit(line: i, range: NSRange(part, in: line.string)))
+                        hits.append(Hit(line: i, range: NSRange(part, in: line.string), kind: detail))
                         if detail == .names { learn(value, into: &learned) }
                     }
                     continue
@@ -757,7 +788,7 @@ enum Finder {
                       labels[normalized(lines[next].string)] == nil else { break }
                 let detail = kind(of: lines[next].string, first: n == 0, in: block)
                 if chosen.contains(detail) {
-                    hits.append(Hit(line: next, range: nil))
+                    hits.append(Hit(line: next, range: nil, kind: detail))
                     if detail == .names { learn(lines[next].string, into: &learned) }
                 }
                 last = next
@@ -832,7 +863,7 @@ enum Finder {
             // A whole name, not a lone word: German capitalizes every noun,
             // and the tagger takes some of them for names.
             if tag == .personalName, text.full[range].contains(" ") {
-                for hit in text.hits(NSRange(range, in: text.full)) { tagged.insert(hit.line) }
+                for hit in text.hits(NSRange(range, in: text.full), .names) { tagged.insert(hit.line) }
             }
             return true
         }
@@ -855,7 +886,7 @@ enum Finder {
                 }
             }
         }
-        return found.map { Hit(line: $0, range: nil) }
+        return found.map { Hit(line: $0, range: nil, kind: .names) }
     }
 
     /// Lines with a dose or a pharmacy number, where medicines are named.
@@ -866,7 +897,7 @@ enum Finder {
             let line = lines[i].string
             let named = line.range(of: dose, options: [.regularExpression, .caseInsensitive]) != nil
                 || line.range(of: pharmacy, options: .regularExpression) != nil
-            return named ? Hit(line: i, range: nil) : nil
+            return named ? Hit(line: i, range: nil, kind: .health) : nil
         }
     }
 

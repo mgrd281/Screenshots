@@ -107,6 +107,10 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertFalse(Finder.coversCode("https://shop.example.com/t/1024", [.bank]))
         XCTAssertTrue(Finder.coversCode("https://shop.example.com/t/1024", [.links]))
         XCTAssertFalse(Finder.coversCode(giro, []))
+        // Covered as a code when codes are chosen, otherwise as what it holds.
+        XCTAssertEqual(Finder.kind(ofCode: nil, [.barcodes, .links]), .barcodes)
+        XCTAssertEqual(Finder.kind(ofCode: "https://shop.example.com/t/1024", [.links, .emails]), .links)
+        XCTAssertNil(Finder.kind(ofCode: "Hello", [.links]))
     }
 
     func testTheNumberPrintedUnderABarcodeGoesWithIt() throws {
@@ -154,6 +158,23 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertTrue(codes.contains { $0.contains(middle) }, "\(codes)")
         XCTAssertTrue(Finder.areas(in: image, [.links], rules: []).contains { $0.contains(middle) })
         XCTAssertFalse(Finder.areas(in: image, [.emails], rules: []).contains { $0.contains(middle) })
+        // And the lock says why it was covered.
+        XCTAssertEqual(Finder.coveredAreas(in: image, [.barcodes], rules: []).first?.kind, .barcodes)
+        XCTAssertEqual(Finder.coveredAreas(in: image, [.links], rules: []).first { $0.rect.contains(middle) }?.kind, .links)
+    }
+
+    /// Each place covered is known by the kind that found it, and a rule's
+    /// place as the owner's own, so the lock can say what was covered.
+    func testEachPlaceIsKnownByTheKindThatFoundIt() throws {
+        let image = try drawn(["lena.hoffmann@example.com", "Bestellung #1024", "Kundennummer: 88210"])
+        let rules = [OwnRule(text: "Kundennummer", kind: .label)]
+        let areas = Finder.coveredAreas(in: image, [.emails, .orders], rules: rules)
+        let kinds = Set(areas.map(\.kind))
+        XCTAssertTrue(kinds.contains(.emails), "\(areas)")
+        XCTAssertTrue(kinds.contains(.orders), "\(areas)")
+        XCTAssertTrue(kinds.contains(nil), "\(areas)")
+        XCTAssertFalse(kinds.contains(.names), "only what is chosen")
+        XCTAssertEqual(Finder.areas(in: image, [.emails, .orders], rules: rules).count, areas.count)
     }
 
     // MARK: Small print

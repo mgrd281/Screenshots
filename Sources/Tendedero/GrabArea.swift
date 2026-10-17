@@ -57,6 +57,9 @@ struct GrabArea: NSViewRepresentable {
         let inInbox = line.isInInbox(id)
         view.cornerHelp = pinned ? L("Unpin") : (inInbox ? L("Discard") : L("Take down"))
         view.sendHelp = L("Paste into the app in front")
+        // What was covered, said by the lock and to VoiceOver.
+        let covered = item.covered ? PrivateDetails.report(for: item.url)?.sentence : nil
+        view.lockHelp = covered ?? ""
         // VoiceOver hears one button named after the file, and reaches what
         // the pointer finds on hover as actions.
         view.setAccessibilityElement(true)
@@ -64,6 +67,7 @@ struct GrabArea: NSViewRepresentable {
         // A PDF keeps its extension, so it says what it is.
         view.setAccessibilityLabel(item.isDocument ? item.url.lastPathComponent
                                                    : item.url.deletingPathExtension().lastPathComponent)
+        view.setAccessibilityValue(covered)
         // AppKit runs accessibility actions on the main thread.
         let send = NSAccessibilityCustomAction(name: L("Paste into the app in front")) {
             MainActor.assumeIsolated { line.paste(id) }
@@ -90,6 +94,14 @@ struct GrabArea: NSViewRepresentable {
             let menu = NSMenu()
             // Items say themselves whether they can be used.
             menu.autoenablesItems = false
+            // First, what was covered in what leaves the line.
+            if let covered = line.coveredSentence(id) {
+                let what = NSMenuItem(title: covered, action: nil, keyEquivalent: "")
+                what.isEnabled = false
+                if #available(macOS 26, *) { what.image = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: nil) }
+                menu.addItem(what)
+                menu.addItem(.separator())
+            }
             menu.addItem(ClosureMenuItem(L("Copy"), symbol: "doc.on.doc") { line.copy(id) })
             if isImage {
                 menu.addItem(ClosureMenuItem(L("Copy Text"), symbol: "text.viewfinder") { line.copyText(id) })
@@ -206,6 +218,11 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     /// rests on them.
     var cornerHelp = ""
     var sendHelp = ""
+    /// What was covered, said when the pointer rests on the lock; empty
+    /// without one.
+    var lockHelp = "" {
+        didSet { if lockHelp != oldValue { placeTips() } }
+    }
     private var tips: [NSView.ToolTipTag] = []
 
     private var downPoint: NSPoint?
@@ -244,18 +261,35 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         sendRect.contains(convert(event.locationInWindow, from: nil))
     }
 
+    /// The lock of a covered photo, in the bottom corner where lines of
+    /// text start.
+    static let lockHitSize: CGFloat = 28
+
+    private var lockRect: NSRect {
+        let x = userInterfaceLayoutDirection == .rightToLeft ? bounds.width - Self.lockHitSize : 0
+        return NSRect(x: x, y: isFlipped ? bounds.height - Self.lockHitSize : 0,
+                      width: Self.lockHitSize, height: Self.lockHitSize)
+    }
+
     // MARK: Tooltips and VoiceOver
 
     override func setFrameSize(_ newSize: NSSize) {
         super.setFrameSize(newSize)
+        placeTips()
+    }
+
+    private func placeTips() {
         for tip in tips { removeToolTip(tip) }
         tips = [addToolTip(crossRect, owner: self, userData: nil),
                 addToolTip(sendRect, owner: self, userData: nil)]
+        if !lockHelp.isEmpty { tips.append(addToolTip(lockRect, owner: self, userData: nil)) }
     }
 
     func view(_ view: NSView, stringForToolTip tag: NSView.ToolTipTag, point: NSPoint,
               userData data: UnsafeMutableRawPointer?) -> String {
-        crossRect.contains(point) ? cornerHelp : sendHelp
+        if crossRect.contains(point) { return cornerHelp }
+        if !lockHelp.isEmpty && lockRect.contains(point) { return lockHelp }
+        return sendHelp
     }
 
     /// VoiceOver's press is a click: it copies.

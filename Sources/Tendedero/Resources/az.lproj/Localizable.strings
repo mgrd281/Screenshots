@@ -359,7 +359,9 @@
 "Covering private details…" = "Şəxsi məlumatlar gizlədilir…";
 "The picture could not be read." = "Şəkli oxumaq mümkün olmadı.";
 "Nothing private found" = "Şəxsi heç nə tapılmadı";
-"Details covered: %d" = "Gizlədilən məlumatlar: %d";
+"Covered: %@" = "Gizlədilən: %@";
+"Your own rules" = "Öz qaydaların";
+"Hidden by hand" = "Əl ilə gizlədilən";
 "Saved to Photos" = "Şəkillərə yadda saxlanıldı";
 "The picture could not be saved." = "Şəkli yadda saxlamaq mümkün olmadı.";
 "Save" = "Yadda saxla";

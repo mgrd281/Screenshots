@@ -144,6 +144,25 @@ enum PrivateDetails {
     /// to hand out for it, so the line can show it that way.
     static var onRead: ((URL, URL) -> Void)?
 
+    /// What was covered in each version read, under the same key as its
+    /// copy, and the key of the version each file last showed.
+    private static var reports: [String: CoverReport] = [:]
+    private static var shownKeys: [String: String] = [:]
+
+    /// What was covered in what the line shows for a screenshot or a PDF;
+    /// nil until it has been read.
+    static func report(for url: URL) -> CoverReport? {
+        shownKeys[url.path].flatMap { reports[$0] }
+    }
+
+    /// Whether what leaves the line has anything covered: something is to
+    /// be, and, once read, something was found. A PDF is drawn again page by
+    /// page whatever is found, so it counts as covered once read.
+    static func isCovered(_ url: URL) -> Bool {
+        if isDocument(url) { return covers(url) }
+        return covers(url) && report(for: url).map { !$0.isEmpty } != false
+    }
+
     /// What to hand out for a screenshot.
     static func shareable(_ url: URL) -> URL {
         if isDocument(url) { return shareableDocument(url) }
@@ -155,8 +174,11 @@ enum PrivateDetails {
               let key = key(for: url, chosen, hand, stamp, clean) else { return url }
         if let done = cached(key) { return done }
         // Not read yet, like a capture copied the instant it hangs.
-        let done = Cover.copy(of: url, chosen, hand: hand, stamp: stamp, clean: clean) ?? url
+        let made = Cover.covering(url, chosen, hand: hand, stamp: stamp, clean: clean)
+        let done = made?.url ?? url
         results[key] = done
+        reports[key] = made?.report ?? CoverReport()
+        shownKeys[url.path] = key
         onRead?(url, done)
         return done
     }
@@ -169,8 +191,9 @@ enum PrivateDetails {
         let stamp = TimeStamp.mark(for: url)
         let clean = strips(url)
         guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean,
-              let key = key(for: url, chosen, hand, stamp, clean) else { return nil }
-        return cached(key)
+              let key = key(for: url, chosen, hand, stamp, clean), let done = cached(key) else { return nil }
+        shownKeys[url.path] = key
+        return done
     }
 
     /// Reads a screenshot ahead of time, off the main thread.
@@ -183,16 +206,21 @@ enum PrivateDetails {
         guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean, isImage(url),
               let key = key(for: url, chosen, hand, stamp, clean) else { return }
         if let done = cached(key) {
+            shownKeys[url.path] = key
             onRead?(url, done)
             return
         }
         guard !inProgress.contains(key) else { return }
         inProgress.insert(key)
         DispatchQueue.global(qos: .utility).async {
-            let done = Cover.copy(of: url, chosen, hand: hand, stamp: stamp, clean: clean) ?? url
+            let made = Cover.covering(url, chosen, hand: hand, stamp: stamp, clean: clean)
+            let done = made?.url ?? url
+            let report = made?.report ?? CoverReport()
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     results[key] = done
+                    reports[key] = report
+                    shownKeys[url.path] = key
                     inProgress.remove(key)
                     onRead?(url, done)
                 }
@@ -207,14 +235,16 @@ enum PrivateDetails {
     private static func shareableDocument(_ url: URL) -> URL {
         guard covers(url), let key = documentKey(url) else { return url }
         if let done = cached(key) { return done }
-        guard let done = DocumentCover.copy(of: url, details, hand: handPages(url)) else {
+        guard let made = DocumentCover.covering(url, details, hand: handPages(url)) else {
             log.error("Could not cover \(url.lastPathComponent, privacy: .public)")
             return url
         }
-        results[key] = done
+        results[key] = made.url
+        reports[key] = made.report
+        shownKeys[url.path] = key
         inProgress.remove(key)
-        onRead?(url, done)
-        return done
+        onRead?(url, made.url)
+        return made.url
     }
 
     /// Covers every page in the background as soon as it hangs, which for
@@ -222,6 +252,7 @@ enum PrivateDetails {
     private static func prepareDocument(_ url: URL) {
         guard covers(url), let key = documentKey(url) else { return }
         if let done = cached(key) {
+            shownKeys[url.path] = key
             onRead?(url, done)
             return
         }
@@ -231,14 +262,18 @@ enum PrivateDetails {
         let chosen = details
         let hand = handPages(url)
         DispatchQueue.global(qos: .userInitiated).async {
-            let done = DocumentCover.copy(of: url, chosen, hand: hand)
+            let made = DocumentCover.covering(url, chosen, hand: hand)
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     inProgress.remove(key)
-                    if let done { results[key] = done } else {
+                    if let made {
+                        results[key] = made.url
+                        reports[key] = made.report
+                        shownKeys[url.path] = key
+                    } else {
                         Notice.show(L("Could not cover the private details in this PDF."))
                     }
-                    onRead?(url, done ?? url)
+                    onRead?(url, made?.url ?? url)
                 }
             }
         }
@@ -315,9 +350,16 @@ enum Cover {
     ///   it, and as a JPEG, which suits a photo and keeps it small to send.
     static func copy(of url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect] = [],
                      stamp: TimeStamp.Mark? = nil, clean: Bool = false) -> URL? {
+        covering(url, chosen, hand: hand, stamp: stamp, clean: clean)?.url
+    }
+
+    /// The same copy, with what was covered in it.
+    static func covering(_ url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect] = [],
+                         stamp: TimeStamp.Mark? = nil, clean: Bool = false) -> (url: URL, report: CoverReport)? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = upright(source) else { return nil }
-        let boxes = areas(in: image, chosen) + hand
+        let found = Finder.coveredAreas(in: image, chosen)
+        let boxes = found.map(\.rect) + hand
         guard !boxes.isEmpty || stamp != nil || clean else { return nil }
 
         guard var covered = Finder.cover(image, boxes) else { return nil }
@@ -331,7 +373,8 @@ enum Cover {
         else { return nil }
         let options: [CFString: Any] = clean ? [kCGImageDestinationLossyCompressionQuality: 0.9] : [:]
         CGImageDestinationAddImage(destination, covered, options as CFDictionary)
-        return CGImageDestinationFinalize(destination) ? target : nil
+        guard CGImageDestinationFinalize(destination) else { return nil }
+        return (target, CoverReport(found, hand: hand.count))
     }
 
     /// Where a copy goes: a folder of its own, so it keeps the original's
