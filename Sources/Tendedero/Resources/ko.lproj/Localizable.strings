@@ -663,3 +663,9 @@
 "What should I reply to this?" = "이것에 뭐라고 답하면 좋을까?";
 "What is wrong here, and how do I fix it?" = "여기서 뭐가 잘못됐고, 어떻게 고치면 될까?";
 "Explain this step by step." = "이것을 단계별로 설명해 줘.";
+"In the last 7 days, Snapfly covered one detail in a photo you sent." = "지난 7일 동안 Snapfly가 보낸 사진 한 장에서 정보 1개를 가렸습니다.";
+"In the last 7 days, Snapfly covered %d details in one photo you sent." = "지난 7일 동안 Snapfly가 보낸 사진 한 장에서 정보 %d개를 가렸습니다.";
+"In the last 7 days, Snapfly covered %1$d details in %2$d photos you sent." = "지난 7일 동안 Snapfly가 보낸 사진 %2$d장에서 정보 %1$d개를 가렸습니다.";
+"Count on the menu bar icon" = "메뉴 막대 아이콘에 개수 표시";
+"How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "걸려 있는 사진 수가 아이콘 옆에 보이고, 빨랫줄이 아직 보여 주지 않은 새 사진이 걸리면 아이콘에 작은 점이 생깁니다.";
+"something new" = "새 항목 있음";

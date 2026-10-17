@@ -665,3 +665,9 @@
 "What should I reply to this?" = "Buna nə cavab verim?";
 "What is wrong here, and how do I fix it?" = "Burada nə səhvdir və bunu necə düzəldim?";
 "Explain this step by step." = "Bunu addım-addım izah et.";
+"In the last 7 days, Snapfly covered one detail in a photo you sent." = "Son 7 gündə Snapfly göndərdiyin bir şəkildə bir detalı örtdü.";
+"In the last 7 days, Snapfly covered %d details in one photo you sent." = "Son 7 gündə Snapfly göndərdiyin bir şəkildə %d detalı örtdü.";
+"In the last 7 days, Snapfly covered %1$d details in %2$d photos you sent." = "Son 7 gündə Snapfly göndərdiyin %2$d şəkildə %1$d detalı örtdü.";
+"Count on the menu bar icon" = "Menyu sətri ikonunda say";
+"How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "Neçə şəklin asıldığı ikonun yanında görünür, ip hələ göstərmədiyi yeni bir şey asılanda isə üstündə kiçik nöqtə olur.";
+"something new" = "yeni bir şey";

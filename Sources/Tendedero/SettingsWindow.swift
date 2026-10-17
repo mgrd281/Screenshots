@@ -22,6 +22,7 @@ final class Preferences: ObservableObject {
         var setUpScreenshots: () -> Void = {}
         var openScreenshotsFolder: () -> Void = {}
         var screenshotsFolder: () -> URL? = { nil }
+        var menuBarCountChanged: () -> Void = {}
     }
 
     var actions = Actions()
@@ -163,6 +164,14 @@ final class Preferences: ObservableObject {
         get { Line.keepOnLine }
         set { change { actions.setKeep(newValue) } }
     }
+
+    var countsInMenuBar: Bool {
+        get { AppDelegate.countsInMenuBar }
+        set { change { AppDelegate.countsInMenuBar = newValue; actions.menuBarCountChanged() } }
+    }
+
+    /// The week's line at the top of Settings › Privacy, read as the pane opens.
+    var coveredThisWeek: String? { CoverTally.sentence(CoverTally.week()) }
 
     var takesDownSent: Bool {
         get { Line.takesDownSent }
@@ -952,6 +961,10 @@ private struct LinePane: View {
                         Text(String(format: L("%d photos"), n)).tag(Int?.some(n))
                     }
                 }
+                Toggle(isOn: $prefs.countsInMenuBar) {
+                    Text(L("Count on the menu bar icon"))
+                    Text(L("How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet."))
+                }
                 Toggle(isOn: $prefs.takesDownSent) {
                     Text(L("Take photos down once sent"))
                     Text(L("Sent into a chat, they leave the line. Pinned ones stay."))
@@ -1440,6 +1453,19 @@ private struct PrivacyPane: View {
 
     var body: some View {
         Form {
+            // One quiet line on what was covered lately; nothing until then.
+            if let week = prefs.coveredThisWeek {
+                Section {
+                    Label {
+                        Text(week)
+                            .foregroundStyle(.secondary)
+                    } icon: {
+                        Image(systemName: "checkmark.shield")
+                            .foregroundStyle(.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                }
+            }
             Section {
                 // Every kind at once, the recommended ones, or none. The
                 // three share the row in equal parts.

@@ -91,6 +91,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click photos or PDFs in Finder, then Services › Send Safely with Snapfly | The same, from Finder. Open With › Snapfly does it too. |
 | Add Files… in the menu bar | Pick photos or PDFs to hang. |
 | Click anything in the menu bar | Put it away. |
+| Glance at the Snapfly icon in the menu bar | How many photos hang, beside it, and a small dot on it while something new hangs that the line has not shown yet. Turn it off with Count on the menu bar icon, under Line. |
 | Click the Snapfly icon in the menu bar | The menu: how many photos hang and Paste into the app in front, the ways to take or add, the line, the Hide private details and Screenshot Button switches, Settings and Help & Support. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
@@ -209,6 +210,10 @@ left alone.
 <br>
 
 ## Private details, covered.
+
+At the top of Privacy in Settings, one quiet line says how much was
+covered lately: "In the last 7 days, Snapfly covered 143 details in 38
+photos you sent." Only those counts are kept, for two weeks.
 
 Choose under Privacy in Settings what to cover, in three groups. People:
 names, addresses, emails, phone numbers, usernames, faces and IP addresses.
@@ -634,6 +639,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `AIChat.swift` | ChatGPT and Claude beside the paper plane: their app or website, opened on a chat and waited for |
 | `Shared/AIQuestions.swift` | The questions a photo goes into ChatGPT or Claude with: the standard five, and the owner's own from Settings |
+| `Shared/CoverTally.swift` | The week's line in Settings › Privacy: how many details were covered in how many photos sent, counts only, day by day |
 | `Calls.swift` | Not during a call: whether the microphone is in use, and Snapfly's windows kept out of a shared screen while it is |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |

@@ -663,3 +663,9 @@
 "What should I reply to this?" = "これにはどう返信すればいい？";
 "What is wrong here, and how do I fix it?" = "ここの何が問題で、どう直せばいい？";
 "Explain this step by step." = "これを順を追って説明して。";
+"In the last 7 days, Snapfly covered one detail in a photo you sent." = "過去7日間に、送信した写真1枚でSnapflyが1件の情報を隠しました。";
+"In the last 7 days, Snapfly covered %d details in one photo you sent." = "過去7日間に、送信した写真1枚でSnapflyが%d件の情報を隠しました。";
+"In the last 7 days, Snapfly covered %1$d details in %2$d photos you sent." = "過去7日間に、送信した写真%2$d枚でSnapflyが%1$d件の情報を隠しました。";
+"Count on the menu bar icon" = "メニューバーのアイコンに枚数を表示";
+"How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "吊るしている写真の枚数がアイコンの横に出て、ロープがまだ見せていない新しいものがあるとアイコンに小さな点が付きます。";
+"something new" = "新着あり";
