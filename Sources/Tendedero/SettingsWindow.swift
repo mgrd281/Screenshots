@@ -942,13 +942,14 @@ private struct ChatSitesSection: View {
     }
 }
 
-/// The four styles side by side, each as a little picture of the top of a
+/// The styles four to a row, each as a little picture of the top of a
 /// screen, to pick one by looking.
 private struct StylePicker: View {
     @Binding var selection: Layout.Style
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12, alignment: .top), count: 4),
+                  spacing: 14) {
             ForEach(Layout.Style.allCases) { style in
                 tile(style)
             }
@@ -1047,6 +1048,44 @@ private struct StylePreview: View {
                 }
                 let badge = CGRect(x: anchor.x + card.width / 2 - 5, y: anchor.y - 4, width: 9, height: 9)
                 context.fill(Path(ellipseIn: badge), with: .color(.red))
+            case .wire:
+                var wire = Path()
+                wire.move(to: CGPoint(x: -2, y: h * 0.2))
+                wire.addLine(to: CGPoint(x: w + 2, y: h * 0.2))
+                context.stroke(wire, with: .color(Color(white: 0.15, opacity: 0.85)), lineWidth: 0.8)
+                for (n, fx) in [0.22, 0.5, 0.78].enumerated() {
+                    Self.drawCard(in: &context, top: CGPoint(x: w * fx, y: h * 0.2 + 2), size: card,
+                                  angle: .zero, accent: Self.accents[n], clip: true)
+                }
+            case .floating:
+                for (n, fx) in [0.28, 0.5, 0.72].enumerated() {
+                    Self.drawCard(in: &context, top: CGPoint(x: w * fx, y: h * 0.2), size: card,
+                                  angle: .zero, accent: Self.accents[n], clip: false)
+                }
+            case .filmstrip:
+                let strip = CGRect(x: w * 0.12, y: h * 0.13, width: w * 0.76, height: card.height + h * 0.18)
+                context.fill(Path(roundedRect: strip, cornerRadius: h * 0.05, style: .continuous),
+                             with: .color(Color(white: 0.09)))
+                let holes = 9
+                for i in 0..<holes {
+                    let hx = strip.minX + strip.width * (CGFloat(i) + 0.5) / CGFloat(holes) - 1.5
+                    for hy in [strip.minY + h * 0.025, strip.maxY - h * 0.025 - 2] {
+                        context.fill(Path(roundedRect: CGRect(x: hx, y: hy, width: 3, height: 2), cornerRadius: 0.5),
+                                     with: .color(Color(white: 0.85)))
+                    }
+                }
+                for n in 0..<3 {
+                    let x = strip.minX + strip.width * (0.2 + 0.28 * CGFloat(n))
+                    Self.drawCard(in: &context, top: CGPoint(x: x, y: strip.minY + h * 0.09), size: card,
+                                  angle: .zero, accent: Self.accents[n], clip: false)
+                }
+            case .fan:
+                for (n, k) in [-1.0, 0.0, 1.0].enumerated() {
+                    let x = w * 0.5 + CGFloat(k) * w * 0.22
+                    let y = h * 0.18 + CGFloat(k * k) * h * 0.06
+                    Self.drawCard(in: &context, top: CGPoint(x: x, y: y), size: card,
+                                  angle: .degrees(-9 * k), accent: Self.accents[n], clip: false)
+                }
             }
         }
     }

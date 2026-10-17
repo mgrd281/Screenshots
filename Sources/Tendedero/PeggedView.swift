@@ -9,6 +9,8 @@ struct PeggedView: View {
     var tilt: Double = 0
     /// On a rope: it hangs from a clip, arrives with a swing and sways.
     var swings = true
+    /// On a rope or a wire: it hangs from a clip.
+    var clipped = true
 
     @State private var swing: Double = 0
     @State private var arrived = false
@@ -28,10 +30,10 @@ struct PeggedView: View {
 
     var body: some View {
         VStack(spacing: -12) {
-            // Without a rope there is nothing to clip on to; the clip keeps
-            // its room so the card sits where Layout says.
+            // Without a rope or a wire there is nothing to clip on to; the
+            // clip keeps its room so the card sits where Layout says.
             Clothespin()
-                .opacity(swings ? 1 : 0)
+                .opacity(clipped ? 1 : 0)
                 .zIndex(1)
             card
         }
