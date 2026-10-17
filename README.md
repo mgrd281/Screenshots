@@ -410,7 +410,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 |:--|:--|
 | `AppDelegate.swift` | Menu bar, shortcut, revealing and tucking away the line |
 | `LineIcon.swift` | Snapfly's mark in the menu bar and Settings: a photo hanging on a line |
-| `SettingsWindow.swift` | The settings window: General, Line, Privacy and About |
+| `SettingsWindow.swift` | The settings window: General, Line, Privacy, Permissions and About |
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs |
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |

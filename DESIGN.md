@@ -109,6 +109,11 @@ components:
   tag:
     rounded: "{rounded.full}"
     width: "26pt"
+  settings-button:
+    minWidth: "128pt"              # every button at a settings row's trailing edge
+  sidebar-tile:
+    rounded: "{rounded.keycap}"
+    size: "24pt"
   time-stamp:
     backgroundColor: "#F7F7F7"     # a band above the picture, gray 0.97
     hairline: "#D1D1D1"            # gray 0.82, between band and picture
@@ -216,6 +221,9 @@ literal value in a view.
   be read, with a symbol beside the word, never color alone.
 - **Island black** is pure black, to blend into the notch and the menu bar
   above it.
+- **Sidebar tiles** (`.gray`, the accent, `.blue`, `.indigo`) are only the
+  tiles behind the Settings sidebar's symbols, System Settings' own palette.
+  Indigo appears nowhere else.
 
 ### Neutral
 - Text uses `.primary`, `.secondary` and `.tertiary`.
@@ -283,6 +291,19 @@ design with monospaced digits.
   - Each opens under the photo it belongs to, or under the line.
 - **Settings** is a sidebar window, at least 640 × 440, using grouped
   `Form`s. Group rows into sections with headers; no free-floating controls.
+  - The sidebar names each pane after a 24 pt tile, rounded 6 (the keycap
+    radius), with the pane's symbol in white on it, as System Settings does:
+    grey for General and About, the accent for Line, blue for Privacy,
+    indigo for Permissions.
+  - A button on a row sits at the trailing edge, in a `LabeledContent` whose
+    label says what the button is for, and is a `SettingsButton`: regular
+    `.bordered`, at least 128 pt wide, so the buttons down a pane line up as
+    one column. A longer label still gets its room. A row in a list is
+    removed with a borderless `minus.circle` and its help tag, never a
+    worded button.
+  - General names the screenshots folder under "Screenshots folder", from
+    the home folder down ("Pictures › Snapfly"), with Show in Finder beside
+    it; watched folders are named the same way.
 - **Screens and devices.** Snapfly is macOS only; there is no mobile layout.
   It must handle these instead:
   - several displays: the line goes to the screen with the pointer;
@@ -435,7 +456,8 @@ apps.
   - Grouped by intent: copy and send; translate and describe; open and edit;
     take down.
   - SF Symbols on macOS 26 only, as Apple's own menus have.
-- **Settings sidebar.** General, Line, Privacy and About.
+- **Settings sidebar.** General, Line, Privacy, Permissions and About, each
+  on its tile (see Layout).
 
 ### Dialogs, sheets and panels
 - **Floating card** (`TextCard`) for results that belong to a photo:
@@ -467,8 +489,9 @@ apps.
     boxes, and saying what to hide reads the page showing.
 - **No modal alerts** for things that can be said inline in the card.
 - **Privacy pane.** Grouped form. First a row of three small `.bordered`
-  buttons, Check All, Recommended and Uncheck All, under the header "Hide
-  private details" and over the footer that says what is checked is covered.
+  buttons, Check All, Recommended and Uncheck All, sharing the row in equal
+  parts, under the header "Hide private details" and over the footer that
+  says what is checked is covered.
   Then the fifteen kinds in three sections named for their group: People;
   Money, identity and health; Orders and documents. Then "Also hide", the
   owner's own rules: one row per rule with a 160 pt menu picker for its kind

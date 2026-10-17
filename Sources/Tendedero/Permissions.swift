@@ -217,7 +217,7 @@ struct PermissionsPane: View {
                 }
                 if model.screen == .denied {
                     LabeledContent {
-                        Button(L("Reopen Snapfly")) { Permissions.reopen() }
+                        SettingsButton(L("Reopen Snapfly")) { Permissions.reopen() }
                     } label: {
                         Text(L("Turned it on and it still says not allowed?"))
                         Text(L("macOS applies it once Snapfly opens again."))
@@ -315,7 +315,7 @@ private struct PermissionRow: View {
             Spacer(minLength: 12)
             PermissionStatus(status: status)
             if status != .allowed {
-                Button(buttonTitle, action: act)
+                SettingsButton(buttonTitle, action: act)
             }
         }
         .accessibilityElement(children: .combine)
