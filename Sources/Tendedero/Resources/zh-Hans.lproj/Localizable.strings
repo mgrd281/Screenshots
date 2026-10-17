@@ -362,7 +362,6 @@
 "Saved to Photos" = "已存储到“照片”";
 "The picture could not be saved." = "无法存储图片。";
 "Save" = "存储";
-"What to cover" = "要隐藏的内容";
 "Take a screenshot as usual." = "像平常一样截图。";
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "轻点两下 iPhone 背面：最新的截图会被隐藏并拷贝，可直接粘贴到聊天中。";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "只需设置一次：打开“设置”›“辅助功能”›“触控”›“轻点背面”›“轻点两下”，然后选择 %@。";
@@ -396,3 +395,30 @@
 "Saved beside the original as %@." = "已存为原件旁边的 %@。";
 "Could not save the copy." = "无法存储副本。";
 "Choose one photo or PDF at a time." = "每次请只选择一张照片或一个 PDF。";
+
+/* Privacy: more kinds of private detail, in groups, and the owner's own rules */
+"Usernames" = "用户名";
+"Faces" = "人脸";
+"ID and tax numbers" = "证件号和税号";
+"Passwords and codes" = "密码和验证码";
+"Order and customer numbers" = "订单号和客户号";
+"Tracking numbers" = "快递单号";
+"Amounts" = "金额";
+"Dates" = "日期";
+"Links" = "链接";
+"People" = "人物";
+"Money, identity and health" = "钱款、身份和健康";
+"Orders and documents" = "订单和文件";
+"Check All" = "全选";
+"Recommended" = "推荐";
+"Uncheck All" = "全不选";
+"Also hide" = "另外隐藏";
+"Add Rule" = "添加规则";
+"Word" = "词语";
+"After a label" = "标签之后";
+"Pattern" = "模式";
+"A word, like your shop’s name" = "一个词，比如你的店名";
+"A label, like Customer number" = "一个标签，比如客户编号";
+"A pattern, like SKU-[0-9]+" = "一个模式，比如 SKU-[0-9]+";
+"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "词语无论出现在哪里都会被遮盖。标签之后，紧随其后的内容会被遮盖：该行其余部分，或下一行。";
+"This pattern cannot be read." = "无法读取此模式。";

@@ -364,7 +364,6 @@
 "Saved to Photos" = "Şəkillərə yadda saxlanıldı";
 "The picture could not be saved." = "Şəkli yadda saxlamaq mümkün olmadı.";
 "Save" = "Yadda saxla";
-"What to cover" = "Nə gizlədilsin";
 "Take a screenshot as usual." = "Həmişəki kimi ekran şəkli çək.";
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhone-un arxasına iki dəfə toxun: ən yeni ekran şəkli gizlədilir və kopyalanır, söhbətə yapışdırmağa hazırdır.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Bir dəfə qurmaq üçün Parametrlər › Əlçatımlılıq › Toxunma › Arxaya toxunma › İki dəfə toxunma bölməsini aç və %@ seç.";
@@ -398,3 +397,30 @@
 "Saved beside the original as %@." = "Orijinalın yanında %@ adı ilə saxlanıldı.";
 "Could not save the copy." = "Nüsxə saxlanıla bilmədi.";
 "Choose one photo or PDF at a time." = "Hər dəfə bir şəkil və ya PDF seçin.";
+
+/* Privacy: more kinds of private detail, in groups, and the owner's own rules */
+"Usernames" = "İstifadəçi adları";
+"Faces" = "Üzlər";
+"ID and tax numbers" = "Şəxsiyyət və vergi nömrələri";
+"Passwords and codes" = "Parollar və kodlar";
+"Order and customer numbers" = "Sifariş və müştəri nömrələri";
+"Tracking numbers" = "İzləmə nömrələri";
+"Amounts" = "Məbləğlər";
+"Dates" = "Tarixlər";
+"Links" = "Keçidlər";
+"People" = "İnsanlar";
+"Money, identity and health" = "Pul, şəxsiyyət və sağlamlıq";
+"Orders and documents" = "Sifarişlər və sənədlər";
+"Check All" = "Hamısını seç";
+"Recommended" = "Tövsiyə olunan";
+"Uncheck All" = "Hamısını ləğv et";
+"Also hide" = "Bunları da gizlət";
+"Add Rule" = "Qayda əlavə et";
+"Word" = "Söz";
+"After a label" = "Etiketdən sonra";
+"Pattern" = "Şablon";
+"A word, like your shop’s name" = "Bir söz, məsələn mağazanın adı";
+"A label, like Customer number" = "Etiket, məsələn Müştəri nömrəsi";
+"A pattern, like SKU-[0-9]+" = "Şablon, məsələn SKU-[0-9]+";
+"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "Sözlər harada görünsə örtülür. Etiketdən sonra gələn örtülür: sətrin qalanı və ya altındakı sətir.";
+"This pattern cannot be read." = "Bu şablon oxuna bilmir.";

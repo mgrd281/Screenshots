@@ -158,7 +158,7 @@ final class HideEditor: NSObject, NSWindowDelegate {
         let shown = model.page
         DispatchQueue.global(qos: .userInitiated).async { [weak model] in
             let lines = Finder.textLines(in: page)
-            let areas = chosen.isEmpty ? [] : Cover.areas(in: page, chosen)
+            let areas = Cover.areas(in: page, chosen)
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     // Read for a page that is still the one showing, and the choice still in place.
@@ -186,10 +186,6 @@ final class HideEditor: NSObject, NSWindowDelegate {
     /// What Hide private details covers, read in the background.
     private func readCovered(_ url: URL, into model: HideModel) {
         let chosen = model.chosen
-        guard !chosen.isEmpty else {
-            model.found = []
-            return
-        }
         guard isImage(url) else { return }
         DispatchQueue.global(qos: .userInitiated).async { [weak model] in
             guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
@@ -464,9 +460,15 @@ private struct HideEditorView: View {
     /// Settings hides; the same kinds, in the same words.
     private var copyOptions: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(L("Hide in this copy"))
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(.secondary)
+            HStack {
+                Text(L("Hide in this copy"))
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button(L("Check All")) { model.chosen = Set(PrivateDetail.allCases) }
+                Button(L("Uncheck All")) { model.chosen = [] }
+            }
+            .controlSize(.small)
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 170), alignment: .leading)],
                       alignment: .leading, spacing: 6) {
                 ForEach(PrivateDetail.allCases, id: \.self) { detail in

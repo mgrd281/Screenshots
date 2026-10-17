@@ -181,14 +181,26 @@ left alone.
 
 ## Private details, covered.
 
-Choose under Privacy in Settings what to cover: names,
-addresses, emails, phone numbers, bank cards and accounts, health
-details. Whatever leaves the line, copied, sent or dragged out, has them
-covered, and the line shows each photo that way too, so what you see is
-what goes, with a small lock on each one that has something covered.
-Copy Text leaves them out too. Anything it misses, hide by hand with
-Hide Part in a photo's menu. Labels like Billing address, Recipient or Diagnosis tell it
-where a whole block is private.
+Choose under Privacy in Settings what to cover, in three groups. People:
+names, addresses, emails, phone numbers, usernames and faces. Money,
+identity and health: bank cards and accounts, ID and tax numbers,
+passwords and codes, health details. Orders and documents: order and
+customer numbers, tracking numbers, amounts, dates and links. Check All,
+Recommended and Uncheck All set the whole list at once; the recommended
+kinds are the ones private in nearly every screenshot, and the amount or
+the date a screenshot is often sent for wait to be chosen. Whatever leaves
+the line, copied, sent or dragged out, has them covered, and the line shows
+each photo that way too, so what you see is what goes, with a small lock on
+each one that has something covered. Copy Text leaves them out too. Anything
+it misses, hide by hand with Hide Part in a photo's menu. Labels like Billing
+address, Recipient, Kundennummer or Diagnosis tell it where a whole block is
+private.
+
+Under Also hide, add rules of your own: a word, like your shop's name,
+covered wherever it appears; a label, like Customer number, whose value is
+covered, on its line or the line below; or, for whoever knows them, a
+pattern. They apply to everything that leaves the line, and to the copies
+saved from Finder.
 
 In Hide Part you can also say what to hide, like "everything but the amount
 and the date" or "the customer's name", or click one of the examples under the
@@ -330,7 +342,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
 - **The app** shows your screenshots from Photos, newest first. Tap one and it
   comes back with names, addresses, emails, phone numbers, bank and health
   details covered, ready to copy, share or save as a new picture in Photos.
-  The screenshot itself stays as it was. Settings chooses what to cover.
+  The screenshot itself stays as it was. Settings chooses what to cover, in
+  the same three groups as on the Mac, and the recommended kinds are on
+  until you change them.
 - **Cover the Latest Screenshot** is a Shortcuts action that needs no opening
   of the app. Chosen for Back Tap (Settings › Accessibility › Touch › Back Tap
   › Double Tap), a double tap on the back of the iPhone covers the newest
@@ -406,7 +420,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
-| `Shared/PrivateText.swift` | Finds private details in a screenshot and covers them, on the Mac and the iPhone |
+| `Shared/PrivateText.swift` | Finds private details in a screenshot, fifteen kinds and the owner's own rules, and covers them, on the Mac and the iPhone |
+| `Shared/OwnRules.swift` | The owner's own rules: a word, a label or a pattern, kept with the settings |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |

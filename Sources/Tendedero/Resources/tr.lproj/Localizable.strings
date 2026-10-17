@@ -362,7 +362,6 @@
 "Saved to Photos" = "Fotoğraflar’a kaydedildi";
 "The picture could not be saved." = "Resim kaydedilemedi.";
 "Save" = "Kaydet";
-"What to cover" = "Neler gizlenecek";
 "Take a screenshot as usual." = "Her zamanki gibi ekran görüntüsü al.";
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhone’unun arkasına iki kez dokun: en yeni ekran görüntüsü gizlenir ve kopyalanır, sohbete yapıştırmaya hazır olur.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Bir kez ayarlamak için Ayarlar › Erişilebilirlik › Dokunma › Arkaya Dokunma › Çift Dokunma’yı aç ve %@ seç.";
@@ -396,3 +395,30 @@
 "Saved beside the original as %@." = "Orijinalin yanına %@ adıyla kaydedildi.";
 "Could not save the copy." = "Kopya kaydedilemedi.";
 "Choose one photo or PDF at a time." = "Her seferinde bir fotoğraf veya PDF seçin.";
+
+/* Privacy: more kinds of private detail, in groups, and the owner's own rules */
+"Usernames" = "Kullanıcı adları";
+"Faces" = "Yüzler";
+"ID and tax numbers" = "Kimlik ve vergi numaraları";
+"Passwords and codes" = "Parolalar ve kodlar";
+"Order and customer numbers" = "Sipariş ve müşteri numaraları";
+"Tracking numbers" = "Kargo takip numaraları";
+"Amounts" = "Tutarlar";
+"Dates" = "Tarihler";
+"Links" = "Bağlantılar";
+"People" = "Kişiler";
+"Money, identity and health" = "Para, kimlik ve sağlık";
+"Orders and documents" = "Siparişler ve belgeler";
+"Check All" = "Tümünü seç";
+"Recommended" = "Önerilenler";
+"Uncheck All" = "Tümünü kaldır";
+"Also hide" = "Ayrıca gizle";
+"Add Rule" = "Kural ekle";
+"Word" = "Sözcük";
+"After a label" = "Bir etiketten sonra";
+"Pattern" = "Desen";
+"A word, like your shop’s name" = "Bir sözcük, örneğin mağazanın adı";
+"A label, like Customer number" = "Bir etiket, örneğin Müşteri numarası";
+"A pattern, like SKU-[0-9]+" = "Bir desen, örneğin SKU-[0-9]+";
+"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "Sözcükler geçtikleri her yerde kapatılır. Bir etiketten sonra onu izleyen kapatılır: satırın kalanı ya da alttaki satır.";
+"This pattern cannot be read." = "Bu desen okunamıyor.";

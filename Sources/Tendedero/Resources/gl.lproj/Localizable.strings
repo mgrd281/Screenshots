@@ -362,7 +362,6 @@
 "Saved to Photos" = "Gardada en Fotos";
 "The picture could not be saved." = "Non se puido gardar a imaxe.";
 "Save" = "Gardar";
-"What to cover" = "Que ocultar";
 "Take a screenshot as usual." = "Fai unha captura de pantalla coma sempre.";
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "Toca dúas veces a parte traseira do teu iPhone: a última captura ocúltase e cópiase, lista para pegar nun chat.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Para configuralo unha vez, abre Axustes › Accesibilidade › Tocar › Tocar atrás › Dobre toque, e escolle %@.";
@@ -396,3 +395,30 @@
 "Saved beside the original as %@." = "Gardada xunto ao orixinal como %@.";
 "Could not save the copy." = "Non se puido gardar a copia.";
 "Choose one photo or PDF at a time." = "Escolle unha foto ou un PDF de cada vez.";
+
+/* Privacy: more kinds of private detail, in groups, and the owner's own rules */
+"Usernames" = "Nomes de usuario";
+"Faces" = "Caras";
+"ID and tax numbers" = "Números de identidade e fiscais";
+"Passwords and codes" = "Contrasinais e códigos";
+"Order and customer numbers" = "Números de pedido e de cliente";
+"Tracking numbers" = "Números de seguimento";
+"Amounts" = "Importes";
+"Dates" = "Datas";
+"Links" = "Ligazóns";
+"People" = "Persoas";
+"Money, identity and health" = "Diñeiro, identidade e saúde";
+"Orders and documents" = "Pedidos e documentos";
+"Check All" = "Marcar todo";
+"Recommended" = "Recomendados";
+"Uncheck All" = "Desmarcar todo";
+"Also hide" = "Ocultar tamén";
+"Add Rule" = "Engadir regra";
+"Word" = "Palabra";
+"After a label" = "Tras unha etiqueta";
+"Pattern" = "Patrón";
+"A word, like your shop’s name" = "Unha palabra, como o nome da túa tenda";
+"A label, like Customer number" = "Unha etiqueta, como Número de cliente";
+"A pattern, like SKU-[0-9]+" = "Un patrón, como SKU-[0-9]+";
+"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "As palabras cóbrense onde aparezan. Tras unha etiqueta cóbrese o que segue: o resto da liña, ou a liña de abaixo.";
+"This pattern cannot be read." = "Non se pode ler este patrón.";

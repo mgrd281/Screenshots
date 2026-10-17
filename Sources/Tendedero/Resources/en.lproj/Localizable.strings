@@ -364,7 +364,6 @@
 "Saved to Photos" = "Saved to Photos";
 "The picture could not be saved." = "The picture could not be saved.";
 "Save" = "Save";
-"What to cover" = "What to cover";
 "Take a screenshot as usual." = "Take a screenshot as usual.";
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@.";
@@ -398,3 +397,30 @@
 "Saved beside the original as %@." = "Saved beside the original as %@.";
 "Could not save the copy." = "Could not save the copy.";
 "Choose one photo or PDF at a time." = "Choose one photo or PDF at a time.";
+
+/* Privacy: more kinds of private detail, in groups, and the owner's own rules */
+"Usernames" = "Usernames";
+"Faces" = "Faces";
+"ID and tax numbers" = "ID and tax numbers";
+"Passwords and codes" = "Passwords and codes";
+"Order and customer numbers" = "Order and customer numbers";
+"Tracking numbers" = "Tracking numbers";
+"Amounts" = "Amounts";
+"Dates" = "Dates";
+"Links" = "Links";
+"People" = "People";
+"Money, identity and health" = "Money, identity and health";
+"Orders and documents" = "Orders and documents";
+"Check All" = "Check All";
+"Recommended" = "Recommended";
+"Uncheck All" = "Uncheck All";
+"Also hide" = "Also hide";
+"Add Rule" = "Add Rule";
+"Word" = "Word";
+"After a label" = "After a label";
+"Pattern" = "Pattern";
+"A word, like your shop’s name" = "A word, like your shop’s name";
+"A label, like Customer number" = "A label, like Customer number";
+"A pattern, like SKU-[0-9]+" = "A pattern, like SKU-[0-9]+";
+"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below.";
+"This pattern cannot be read." = "This pattern cannot be read.";

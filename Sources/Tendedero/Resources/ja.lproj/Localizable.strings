@@ -362,7 +362,6 @@
 "Saved to Photos" = "写真に保存しました";
 "The picture could not be saved." = "画像を保存できませんでした。";
 "Save" = "保存";
-"What to cover" = "隠すもの";
 "Take a screenshot as usual." = "いつものようにスクリーンショットを撮ります。";
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhoneの背面をダブルタップ：最新のスクリーンショットが隠されてコピーされ、チャットにペーストできます。";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "一度だけ設定するには、設定 › アクセシビリティ › タッチ › 背面タップ › ダブルタップを開き、%@を選びます。";
@@ -396,3 +395,30 @@
 "Saved beside the original as %@." = "元のファイルの隣に %@ として保存しました。";
 "Could not save the copy." = "コピーを保存できませんでした。";
 "Choose one photo or PDF at a time." = "一度に選べるのは写真かPDFを1つだけです。";
+
+/* Privacy: more kinds of private detail, in groups, and the owner's own rules */
+"Usernames" = "ユーザー名";
+"Faces" = "顔";
+"ID and tax numbers" = "身分証番号と税番号";
+"Passwords and codes" = "パスワードとコード";
+"Order and customer numbers" = "注文番号と顧客番号";
+"Tracking numbers" = "追跡番号";
+"Amounts" = "金額";
+"Dates" = "日付";
+"Links" = "リンク";
+"People" = "人物";
+"Money, identity and health" = "お金・身元・健康";
+"Orders and documents" = "注文と書類";
+"Check All" = "すべて選択";
+"Recommended" = "おすすめ";
+"Uncheck All" = "すべて解除";
+"Also hide" = "さらに隠す";
+"Add Rule" = "ルールを追加";
+"Word" = "単語";
+"After a label" = "ラベルの後";
+"Pattern" = "パターン";
+"A word, like your shop’s name" = "単語、たとえば店名";
+"A label, like Customer number" = "ラベル、たとえば顧客番号";
+"A pattern, like SKU-[0-9]+" = "パターン、たとえば SKU-[0-9]+";
+"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "単語はどこに現れても隠されます。ラベルの後では、その続きが隠されます。行の残り、または下の行です。";
+"This pattern cannot be read." = "このパターンは読み取れません。";

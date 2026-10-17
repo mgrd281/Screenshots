@@ -362,7 +362,6 @@
 "Saved to Photos" = "In Fotos gesichert";
 "The picture could not be saved." = "Das Bild konnte nicht gesichert werden.";
 "Save" = "Sichern";
-"What to cover" = "Was verdeckt wird";
 "Take a screenshot as usual." = "Mach wie gewohnt ein Bildschirmfoto.";
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "Tippe zweimal auf die Rückseite deines iPhone: Das neueste Bildschirmfoto wird verdeckt und kopiert, bereit zum Einsetzen in einen Chat.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Zum einmaligen Einrichten öffne Einstellungen › Bedienungshilfen › Tippen › Auf Rückseite tippen › Doppeltippen und wähle %@.";
@@ -396,3 +395,30 @@
 "Saved beside the original as %@." = "Neben dem Original als %@ gesichert.";
 "Could not save the copy." = "Die Kopie konnte nicht gesichert werden.";
 "Choose one photo or PDF at a time." = "Wähle jeweils ein Foto oder eine PDF.";
+
+/* Privacy: more kinds of private detail, in groups, and the owner's own rules */
+"Usernames" = "Benutzernamen";
+"Faces" = "Gesichter";
+"ID and tax numbers" = "Ausweis- und Steuernummern";
+"Passwords and codes" = "Passwörter und Codes";
+"Order and customer numbers" = "Bestell- und Kundennummern";
+"Tracking numbers" = "Sendungsnummern";
+"Amounts" = "Beträge";
+"Dates" = "Datumsangaben";
+"Links" = "Links";
+"People" = "Personen";
+"Money, identity and health" = "Geld, Identität und Gesundheit";
+"Orders and documents" = "Bestellungen und Dokumente";
+"Check All" = "Alle auswählen";
+"Recommended" = "Empfohlene";
+"Uncheck All" = "Alle abwählen";
+"Also hide" = "Außerdem verbergen";
+"Add Rule" = "Regel hinzufügen";
+"Word" = "Wort";
+"After a label" = "Nach einer Bezeichnung";
+"Pattern" = "Muster";
+"A word, like your shop’s name" = "Ein Wort, etwa der Name deines Shops";
+"A label, like Customer number" = "Eine Bezeichnung, etwa Kundennummer";
+"A pattern, like SKU-[0-9]+" = "Ein Muster, etwa SKU-[0-9]+";
+"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "Wörter werden überall verdeckt, wo sie vorkommen. Nach einer Bezeichnung wird verdeckt, was ihr folgt: der Rest der Zeile oder die Zeile darunter.";
+"This pattern cannot be read." = "Dieses Muster kann nicht gelesen werden.";

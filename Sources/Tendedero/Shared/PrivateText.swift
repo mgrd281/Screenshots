@@ -6,9 +6,10 @@ import os
 import Vision
 
 /// The kinds of private detail that can be covered, each chosen on its own
-/// under Hide private details in the menu bar, or in Settings on the iPhone.
+/// under Privacy in Settings, on the Mac and on the iPhone.
 enum PrivateDetail: String, CaseIterable {
     case names, addresses, emails, phones, bank, health
+    case usernames, faces, ids, codes, orders, tracking, amounts, dates, links
 
     var title: String {
         switch self {
@@ -18,8 +19,52 @@ enum PrivateDetail: String, CaseIterable {
         case .phones: L("Phone numbers")
         case .bank: L("Bank cards and accounts")
         case .health: L("Health details")
+        case .usernames: L("Usernames")
+        case .faces: L("Faces")
+        case .ids: L("ID and tax numbers")
+        case .codes: L("Passwords and codes")
+        case .orders: L("Order and customer numbers")
+        case .tracking: L("Tracking numbers")
+        case .amounts: L("Amounts")
+        case .dates: L("Dates")
+        case .links: L("Links")
         }
     }
+
+    /// How Settings groups the kinds, so fifteen read as three short lists.
+    enum Group: CaseIterable {
+        case people, sensitive, business
+
+        var title: String {
+            switch self {
+            case .people: L("People")
+            case .sensitive: L("Money, identity and health")
+            case .business: L("Orders and documents")
+            }
+        }
+
+        var kinds: [PrivateDetail] { PrivateDetail.allCases.filter { $0.group == self } }
+    }
+
+    var group: Group {
+        switch self {
+        case .names, .addresses, .emails, .phones, .usernames, .faces: .people
+        case .bank, .ids, .codes, .health: .sensitive
+        case .orders, .tracking, .amounts, .dates, .links: .business
+        }
+    }
+
+    /// What is private in nearly every screenshot, on until turned off. The
+    /// rest, like the amount and the date, is often what a screenshot is
+    /// sent for, so it waits to be chosen.
+    var isRecommended: Bool {
+        switch self {
+        case .names, .addresses, .emails, .phones, .bank, .health, .ids, .codes: true
+        case .usernames, .faces, .orders, .tracking, .amounts, .dates, .links: false
+        }
+    }
+
+    static var recommended: Set<PrivateDetail> { Set(allCases.filter(\.isRecommended)) }
 }
 
 /// Finds private details in the text of a screenshot, three ways together:
@@ -52,6 +97,11 @@ enum Finder {
     private static let name = Block(first: .names, rest: .names, lines: 1)
     private static let health = Block(first: .health, rest: .health, lines: 4)
     private static let bank = Block(first: .bank, rest: .bank, lines: 1)
+    private static let order = Block(first: .orders, rest: .orders, lines: 1)
+    private static let parcel = Block(first: .tracking, rest: .tracking, lines: 1)
+    private static let identity = Block(first: .ids, rest: .ids, lines: 1)
+    private static let code = Block(first: .codes, rest: .codes, lines: 1)
+    private static let user = Block(first: .usernames, rest: .usernames, lines: 1)
 
     /// Labels, lowercased, in the languages screenshots tend to come in.
     private static let labels: [String: Block] = {
@@ -77,20 +127,78 @@ enum Finder {
                       "blz", "bankleitzahl", "sort code", "routing number", "cvv", "cvc"] {
             labels[label] = bank
         }
+        for label in ["bestellnummer", "bestell-nr", "bestell-nr.", "bestellnr", "auftragsnummer", "auftrags-nr",
+                      "order number", "order no", "order no.", "order #", "order id", "rechnungsnummer",
+                      "rechnungs-nr", "rechnungs-nr.", "rechnung nr", "invoice number", "invoice no", "invoice no.",
+                      "invoice #", "kundennummer", "kunden-nr", "kunden-nr.", "kundennr", "customer number",
+                      "customer no", "customer no.", "customer id", "belegnummer", "beleg-nr", "vorgangsnummer",
+                      "transaktionsnummer", "transaktions-id", "transaction id", "transaction number",
+                      "رقم الطلب", "رقم الفاتورة", "رقم العميل", "رقم المعاملة"] {
+            labels[label] = order
+        }
+        for label in ["sendungsnummer", "sendungs-nr", "sendungs-nr.", "sendungsverfolgung", "trackingnummer",
+                      "tracking", "tracking number", "tracking no", "tracking no.", "tracking id", "paketnummer",
+                      "paket-nr", "shipment number", "shipment id", "رقم الشحنة", "رقم التتبع"] {
+            labels[label] = parcel
+        }
+        for label in ["ust-idnr", "ust-idnr.", "ust-id", "ust-id.", "umsatzsteuer-id",
+                      "umsatzsteuer-identifikationsnummer", "steuernummer", "steuer-nr", "steuer-nr.", "steuer-id",
+                      "steuerliche identifikationsnummer", "identifikationsnummer", "vat", "vat id", "vat number",
+                      "vat no", "vat no.", "tax id", "tax number", "tax no", "tax no.", "ein", "personalausweis",
+                      "ausweisnummer", "ausweis-nr", "passnummer", "reisepassnummer", "passport", "passport number",
+                      "passport no", "passport no.", "id number", "id no", "id no.", "sozialversicherungsnummer",
+                      "sv-nummer", "rentenversicherungsnummer", "ssn", "social security number", "kennzeichen",
+                      "amtliches kennzeichen", "license plate", "licence plate",
+                      "رقم الهوية", "رقم الجواز", "رقم جواز السفر", "الرقم الضريبي"] {
+            labels[label] = identity
+        }
+        for label in ["passwort", "password", "kennwort", "pin", "pin-code", "tan", "code", "sicherheitscode",
+                      "security code", "verification code", "verifizierungscode", "bestätigungscode",
+                      "bestaetigungscode", "otp", "einmalpasswort", "one-time code", "one-time password",
+                      "zugangscode", "access code", "gutscheincode", "gutschein", "coupon", "coupon code",
+                      "promo code", "rabattcode", "discount code", "voucher", "voucher code",
+                      "كلمة المرور", "كلمة السر", "رمز التحقق", "الرمز", "رمز الخصم"] {
+            labels[label] = code
+        }
+        for label in ["benutzername", "nutzername", "username", "user name", "benutzer", "anmeldename", "login",
+                      "login name", "handle", "اسم المستخدم"] {
+            labels[label] = user
+        }
         return labels
     }()
 
-    /// Where the chosen details are, as they are covered: from 0 to 1 from
-    /// the bottom left, with a margin around the text.
-    static func areas(in image: CGImage, _ chosen: Set<PrivateDetail>) -> [CGRect] {
-        guard !chosen.isEmpty else { return [] }
+    /// Where the chosen details and the owner's own rules are, as they are
+    /// covered: from 0 to 1 from the bottom left, with a margin around the
+    /// text, and the faces when those are chosen.
+    static func areas(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all) -> [CGRect] {
+        let rules = rules.filter { !$0.isBlank }
+        guard !chosen.isEmpty || !rules.isEmpty else { return [] }
         let width = CGFloat(image.width), height = CGFloat(image.height)
-        return boxes(in: image, chosen).map { box in
+        var areas = boxes(in: image, chosen, rules: rules).map { box -> CGRect in
             // Vision measures from the bottom left, as Core Graphics draws.
             let text = VNImageRectForNormalizedRect(box, image.width, image.height)
             let rect = text.insetBy(dx: -text.height * 0.25, dy: -text.height * 0.2)
             return CGRect(x: rect.minX / width, y: rect.minY / height,
                           width: rect.width / width, height: rect.height / height)
+        }
+        if chosen.contains(.faces) { areas += faces(in: image) }
+        return areas
+    }
+
+    /// The faces in a photo, with room around each so the hair and the chin
+    /// go with it. From 0 to 1 from the bottom left, like the text.
+    static func faces(in image: CGImage) -> [CGRect] {
+        let request = VNDetectFaceRectanglesRequest()
+        do {
+            try VNImageRequestHandler(cgImage: image, options: [:]).perform([request])
+        } catch {
+            log.error("Could not look for faces: \(error.localizedDescription, privacy: .public)")
+            return []
+        }
+        return (request.results ?? []).map { face in
+            let box = face.boundingBox
+            return box.insetBy(dx: -box.width * 0.2, dy: -box.height * 0.3)
+                .intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
         }
     }
 
@@ -114,9 +222,11 @@ enum Finder {
     }
 
     /// Where the chosen details are, in Vision's normalized coordinates.
-    static func boxes(in image: CGImage, _ chosen: Set<PrivateDetail>) -> [CGRect] {
+    static func boxes(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all) -> [CGRect] {
+        // Faces are not read as text: with nothing else chosen, no reading.
+        guard !chosen.subtracting([.faces]).isEmpty || rules.contains(where: { !$0.isBlank }) else { return [] }
         let lines = read(image)
-        return hits(in: lines, chosen).compactMap { hit -> CGRect? in
+        return hits(in: lines, chosen, rules: rules).compactMap { hit -> CGRect? in
             let line = lines[hit.line]
             guard let range = hit.range else { return line.box }
             guard let part = Range(range, in: line.string) else { return nil }
@@ -163,16 +273,18 @@ enum Finder {
         read(image)
     }
 
-    static func text(of url: URL, hiding chosen: Set<PrivateDetail>, hand: [CGRect] = []) -> String {
-        reading(of: url, hiding: chosen, hand: hand).text
+    static func text(of url: URL, hiding chosen: Set<PrivateDetail>, hand: [CGRect] = [],
+                     rules: [OwnRule] = OwnRules.all) -> String {
+        reading(of: url, hiding: chosen, hand: hand, rules: rules).text
     }
 
-    static func reading(of url: URL, hiding chosen: Set<PrivateDetail>, hand: [CGRect] = []) -> Reading {
+    static func reading(of url: URL, hiding chosen: Set<PrivateDetail>, hand: [CGRect] = [],
+                        rules: [OwnRule] = OwnRules.all) -> Reading {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return Reading(lines: [], heights: []) }
         let lines = read(image)
         var hidden = [IndexSet](repeating: IndexSet(), count: lines.count)
-        for hit in hits(in: lines, chosen) {
+        for hit in hits(in: lines, chosen, rules: rules) {
             let length = lines[hit.line].string.utf16.count
             let range = hit.range ?? NSRange(location: 0, length: length)
             let end = min(range.location + range.length, length)
@@ -203,16 +315,66 @@ enum Finder {
 
     private static let word = try! NSRegularExpression(pattern: "\\S+")
 
-    /// Everything to leave out, all three ways.
-    private static func hits(in lines: [TextLine], _ chosen: Set<PrivateDetail>) -> [Hit] {
-        guard !lines.isEmpty, !chosen.isEmpty else { return [] }
+    /// Everything to leave out, all three ways, and the owner's own rules.
+    private static func hits(in lines: [TextLine], _ chosen: Set<PrivateDetail>, rules: [OwnRule]) -> [Hit] {
+        let rules = rules.filter { !$0.isBlank }
+        guard !lines.isEmpty, !chosen.isEmpty || !rules.isEmpty else { return [] }
         let text = Text(lines)
         var learned = Set<String>()
         var hits = patterns(in: text, chosen)
         hits += labelled(in: lines, chosen, learned: &learned)
         if chosen.contains(.names) { hits += names(in: text, learned: learned) }
         if chosen.contains(.health) { hits += medicines(in: lines) }
+        hits += own(in: text, rules)
         return hits
+    }
+
+    /// The owner's own rules: words and patterns wherever they appear, and
+    /// what follows a label, on its line or on the line below.
+    private static func own(in text: Text, _ rules: [OwnRule]) -> [Hit] {
+        var hits = ruleRanges(in: text.full, rules).flatMap { text.hits($0) }
+        for rule in rules where rule.kind == .label && !rule.isBlank {
+            let label = rule.text.trimmingCharacters(in: .whitespaces)
+            for (i, line) in text.lines.enumerated() {
+                let string = line.string
+                guard let found = string.range(of: label, options: [.caseInsensitive, .diacriticInsensitive, .anchored]) else { continue }
+                // The whole label, not the start of a longer word.
+                if found.upperBound < string.endIndex, string[found.upperBound].isLetter { continue }
+                let rest = string[found.upperBound...].drop { ": -–\t".contains($0) }
+                if !rest.isEmpty {
+                    hits.append(Hit(line: i, range: NSRange(rest.startIndex..<string.endIndex, in: string)))
+                } else if let next = Self.line(below: i, in: text.lines, gap: 2) {
+                    hits.append(Hit(line: next, range: nil))
+                }
+            }
+        }
+        return hits
+    }
+
+    /// The owner's words and patterns in plain text: a word whole, wherever
+    /// it appears, in any case; a pattern as it matches. A pattern that
+    /// cannot be read covers nothing. Pure text, so it can be checked
+    /// without a picture.
+    static func ruleRanges(in full: String, _ rules: [OwnRule]) -> [NSRange] {
+        let whole = NSRange(full.startIndex..., in: full)
+        var found: [NSRange] = []
+        for rule in rules where !rule.isBlank {
+            let text = rule.text.trimmingCharacters(in: .whitespaces)
+            let pattern: String
+            switch rule.kind {
+            case .word:
+                let edge: (Character?) -> Bool = { $0.map { $0.isLetter || $0.isNumber } == true }
+                pattern = (edge(text.first) ? #"(?<!\w)"# : "") + NSRegularExpression.escapedPattern(for: text)
+                    + (edge(text.last) ? #"(?!\w)"# : "")
+            case .pattern:
+                pattern = text
+            case .label:
+                continue
+            }
+            guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { continue }
+            found += regex.matches(in: full, range: whole).map(\.range).filter { $0.length > 0 }
+        }
+        return found
     }
 
     private static func read(_ image: CGImage) -> [TextLine] {
@@ -273,22 +435,7 @@ enum Finder {
 
     /// Details that are private wherever they appear.
     private static func patterns(in text: Text, _ chosen: Set<PrivateDetail>) -> [Hit] {
-        var found: [NSRange] = []
-        if chosen.contains(.emails) {
-            found += text.matches(emailPattern, .caseInsensitive)
-        }
-        if chosen.contains(.bank) {
-            // IBANs, in groups of four with or without spaces between them.
-            found += text.matches(#"\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){2,7}(?: ?[A-Z0-9]{1,4})?\b"#)
-            // Card numbers: 13 to 19 digits, grouped or not, that pass the Luhn check.
-            found += text.matches(#"\b\d(?:[ -]?\d){12,18}\b"#)
-                .filter { passesLuhn((text.full as NSString).substring(with: $0)) }
-        }
-        if chosen.contains(.phones),
-           let phones = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.phoneNumber.rawValue) {
-            found += phones.matches(in: text.full, range: text.whole).map(\.range)
-        }
-        var hits = found.flatMap { text.hits($0) }
+        var hits = patternRanges(in: text.full, chosen).flatMap { text.hits($0) }
         if chosen.contains(.addresses),
            let addresses = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.address.rawValue) {
             for match in addresses.matches(in: text.full, range: text.whole) {
@@ -306,6 +453,84 @@ enum Finder {
             }
         }
         return hits
+    }
+
+    /// The details found by their shape alone, in plain text: an email, an
+    /// IBAN, "Order #1024", a code after the word "Code". Pure text, so it
+    /// can be checked without a picture.
+    static func patternRanges(in full: String, _ chosen: Set<PrivateDetail>) -> [NSRange] {
+        let whole = NSRange(full.startIndex..., in: full)
+        let text = full as NSString
+        /// The whole match, or one group of it: the number after the word.
+        func matches(_ pattern: String, _ options: NSRegularExpression.Options = [], group: Int = 0) -> [NSRange] {
+            guard let regex = try? NSRegularExpression(pattern: pattern, options: options) else { return [] }
+            return regex.matches(in: full, range: whole).compactMap { match in
+                let range = match.range(at: group)
+                return range.location == NSNotFound || range.length == 0 ? nil : range
+            }
+        }
+        func detected(_ type: NSTextCheckingResult.CheckingType) -> [NSTextCheckingResult] {
+            (try? NSDataDetector(types: type.rawValue))?.matches(in: full, range: whole) ?? []
+        }
+        var found: [NSRange] = []
+        if chosen.contains(.emails) {
+            found += matches(emailPattern, .caseInsensitive)
+        }
+        if chosen.contains(.bank) {
+            // IBANs, in groups of four with or without spaces between them.
+            found += matches(#"\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){2,7}(?: ?[A-Z0-9]{1,4})?\b"#)
+            // Card numbers: 13 to 19 digits, grouped or not, that pass the Luhn check.
+            found += matches(#"\b\d(?:[ -]?\d){12,18}\b"#).filter { passesLuhn(text.substring(with: $0)) }
+        }
+        if chosen.contains(.phones) {
+            found += detected(.phoneNumber).map(\.range)
+        }
+        if chosen.contains(.orders) {
+            // "#1024", and the number after "Order No.", "Rechnung" or
+            // "Kundennummer", which must hold a digit.
+            found += matches(#"(?<![\w#])#\s?(\d{3,}[\w-]*)"#, [], group: 1)
+            found += matches(#"\b(?:Bestellung|Bestell-?Nr|Auftrag|Auftrags-?Nr|Order|Rechnung|Rechnungs-?Nr|Invoice|Kundennummer|Kunden-?Nr|Customer|Beleg|Vorgang|Transaktion|Transaction)\.?[ \t]*(?:Nr\.?|No\.?|Number|ID|#)?[ \t]*[:#]?[ \t]*((?=[A-Z0-9/-]*\d)[A-Z0-9][A-Z0-9/-]{2,})\b"#,
+                             .caseInsensitive, group: 1)
+        }
+        if chosen.contains(.tracking) {
+            // UPS, DHL Express, and the runs of 12, 14 or 20 digits DHL, DPD,
+            // GLS, Hermes and FedEx print.
+            found += matches(#"\b1Z[A-Z0-9]{16}\b"#)
+            found += matches(#"\bJJD\d{16,20}\b"#)
+            found += matches(#"\b(?:\d{12}|\d{14}|\d{20})\b"#)
+        }
+        if chosen.contains(.ids) {
+            // VAT numbers, the German Steuernummer and Sozialversicherungsnummer, the US SSN.
+            found += matches(#"\b(?:DE\d{9}|ATU\d{8}|NL\d{9}B\d{2}|FR[A-Z0-9]{2}\d{9}|CHE-?\d{3}\.?\d{3}\.?\d{3})\b"#)
+            found += matches(#"\b\d{2,3}/\d{3}/\d{4,5}\b"#)
+            found += matches(#"\b\d{3}-\d{2}-\d{4}\b"#)
+            found += matches(#"\b\d{2} ?\d{6} ?[A-Z] ?\d{3}\b"#)
+        }
+        if chosen.contains(.codes) {
+            // "Dein Code lautet 482913", "PIN: 1234", "TAN 123 456": the digits after the word.
+            found += matches(#"\b(?:code|pin|tan|otp|passwort|password|kennwort)\b[^\n\d]{0,30}?(\d(?:[ -]?\d){3,7})(?!\d)"#,
+                             .caseInsensitive, group: 1)
+        }
+        if chosen.contains(.amounts) {
+            let number = #"\d{1,3}(?:[.,\x{00A0} ]\d{3})*(?:[.,]\d{2})?|\d+(?:[.,]\d{2})?"#
+            found += matches(#"(?:€|EUR|US\$|\$|USD|£|GBP|CHF|SFr\.?)[ \x{00A0}]?(?:"# + number + #")"#)
+            found += matches(#"\b(?:"# + number + #")[ \x{00A0}]?(?:€|EUR|US\$|\$|USD|£|GBP|CHF|SFr\.?|,-|,–)"#)
+        }
+        if chosen.contains(.dates) {
+            found += detected(.date).map(\.range)
+            found += matches(#"\b\d{1,2}[./]\d{1,2}[./]\d{2,4}\b|\b\d{4}-\d{2}-\d{2}\b"#)
+            found += matches(#"\b\d{1,2}\.?\s(?:Jan|Feb|Mär|Mar|Apr|Mai|May|Jun|Jul|Aug|Sep|Okt|Oct|Nov|Dez|Dec)[a-zäö]*\.?\s\d{4}\b"#,
+                             .caseInsensitive)
+        }
+        if chosen.contains(.links) {
+            // Web addresses; an email address is its own kind.
+            found += detected(.link).filter { $0.url?.scheme?.lowercased() != "mailto" }.map(\.range)
+        }
+        if chosen.contains(.usernames) {
+            // "@lena_h", but not the "@" inside an email address.
+            found += matches(#"(?<![\w.@])@[A-Za-z0-9_][A-Za-z0-9_.]{1,29}\b"#)
+        }
+        return found
     }
 
     /// A postcode with its town, or a town or country on its own.

@@ -364,7 +364,6 @@
 "Saved to Photos" = "फ़ोटो में सहेजी गई";
 "The picture could not be saved." = "तस्वीर सहेजी नहीं जा सकी।";
 "Save" = "सहेजें";
-"What to cover" = "क्या छिपाना है";
 "Take a screenshot as usual." = "हमेशा की तरह स्क्रीनशॉट लें।";
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "अपने iPhone के पीछे दो बार टैप करें: नया स्क्रीनशॉट छिप कर कॉपी हो जाता है, चैट में पेस्ट करने के लिए तैयार।";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "एक बार सेट करने के लिए सेटिंग्ज़ › ऐक्सेसिबिलिटी › स्पर्श › बैक टैप › डबल टैप खोलें और %@ चुनें।";
@@ -398,3 +397,30 @@
 "Saved beside the original as %@." = "मूल फ़ाइल के साथ %@ नाम से सहेजा गया।";
 "Could not save the copy." = "प्रति सहेजी नहीं जा सकी।";
 "Choose one photo or PDF at a time." = "एक बार में एक फ़ोटो या PDF चुनें।";
+
+/* Privacy: more kinds of private detail, in groups, and the owner's own rules */
+"Usernames" = "उपयोगकर्ता नाम";
+"Faces" = "चेहरे";
+"ID and tax numbers" = "पहचान और कर संख्याएँ";
+"Passwords and codes" = "पासवर्ड और कोड";
+"Order and customer numbers" = "ऑर्डर और ग्राहक संख्याएँ";
+"Tracking numbers" = "ट्रैकिंग नंबर";
+"Amounts" = "राशियाँ";
+"Dates" = "तारीख़ें";
+"Links" = "लिंक";
+"People" = "लोग";
+"Money, identity and health" = "पैसा, पहचान और स्वास्थ्य";
+"Orders and documents" = "ऑर्डर और दस्तावेज़";
+"Check All" = "सभी चुनें";
+"Recommended" = "अनुशंसित";
+"Uncheck All" = "सभी हटाएँ";
+"Also hide" = "ये भी छिपाएँ";
+"Add Rule" = "नियम जोड़ें";
+"Word" = "शब्द";
+"After a label" = "किसी लेबल के बाद";
+"Pattern" = "पैटर्न";
+"A word, like your shop’s name" = "कोई शब्द, जैसे आपकी दुकान का नाम";
+"A label, like Customer number" = "कोई लेबल, जैसे ग्राहक संख्या";
+"A pattern, like SKU-[0-9]+" = "कोई पैटर्न, जैसे SKU-[0-9]+";
+"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "शब्द जहाँ भी दिखें, ढक दिए जाते हैं। लेबल के बाद जो आता है वह ढका जाता है: पंक्ति का बाक़ी हिस्सा, या नीचे की पंक्ति।";
+"This pattern cannot be read." = "यह पैटर्न पढ़ा नहीं जा सकता।";

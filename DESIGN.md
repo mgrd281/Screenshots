@@ -212,7 +212,8 @@ literal value in a view.
 - **Record red** (`Color.red`) is only for the stop button while the screen
   is recorded, as macOS marks recording.
 - **Allowed green** and **not allowed orange** (`.green`, `.orange`) are only
-  for a permission's state, with a symbol beside the word, never color alone.
+  for a permission's state, and the orange for a rule's pattern that cannot
+  be read, with a symbol beside the word, never color alone.
 - **Island black** is pure black, to blend into the notch and the menu bar
   above it.
 
@@ -444,6 +445,22 @@ apps.
     callout `.secondary` with monospaced digits. Each page keeps its own
     boxes, and saying what to hide reads the page showing.
 - **No modal alerts** for things that can be said inline in the card.
+- **Privacy pane.** Grouped form. First a row of three small `.bordered`
+  buttons, Check All, Recommended and Uncheck All, under the header "Hide
+  private details" and over the footer that says what is checked is covered.
+  Then the fifteen kinds in three sections named for their group: People;
+  Money, identity and health; Orders and documents. Then "Also hide", the
+  owner's own rules: one row per rule with a 160 pt menu picker for its kind
+  (Word, After a label, Pattern), a rounded field with a prompt for that
+  kind, and a borderless `minus.circle` to remove it; an Add Rule button
+  under them; a footer that says how a word and a label are covered. A
+  pattern that cannot be read shows `exclamationmark.triangle.fill` in
+  not-allowed orange beside the field and a callout line under it. Rules are
+  saved 0.8 s after the typing stops, and at once when one is added, removed
+  or the pane leaves, since every change reads the photos again. Last the
+  Preview. The iPhone's Settings use the same three groups.
+- **Hide Part for a copy** gets Check All and Uncheck All, small, at the end
+  of the "Hide in this copy" row.
 - **Permissions pane** (`Permissions.swift`), in Settings between Privacy and
   About, with `lock.shield` in the sidebar.
   - A summary row first: `checkmark.shield.fill` in allowed green once all

@@ -2,13 +2,13 @@ import Photos
 import UIKit
 import UniformTypeIdentifiers
 
-/// What to cover: every kind, until some are turned off in Settings. The
+/// What to cover: the recommended kinds, until Settings says otherwise. The
 /// same choice, under the same name, as on the Mac.
 enum Choice {
     static var details: Set<PrivateDetail> {
         get {
             guard let raw = UserDefaults.standard.stringArray(forKey: "hiddenDetails") else {
-                return Set(PrivateDetail.allCases)
+                return PrivateDetail.recommended
             }
             return Set(raw.compactMap(PrivateDetail.init(rawValue:)))
         }
