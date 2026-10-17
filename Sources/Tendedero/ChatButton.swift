@@ -92,26 +92,53 @@ final class ChatButton {
 
     /// Chat apps it knows from the start: ChatGPT, Claude, Perplexity,
     /// WhatsApp, Telegram, Messages, Slack, Discord, Signal, Teams,
-    /// Messenger, LINE, Viber and Skype.
+    /// Messenger, LINE, Viber and Skype; and the mail apps, Mail and
+    /// Outlook, where a photo goes into the message being written.
     static let standardApps = [
         "com.openai.chat", "com.anthropic.claudefordesktop", "ai.perplexity.mac",
         "net.whatsapp.WhatsApp", "desktop.WhatsApp", "ru.keepcoder.Telegram", "org.telegram.desktop",
         "com.apple.MobileSMS", "com.tinyspeck.slackmacgap", "com.hnc.Discord",
         "org.whispersystems.signal-desktop", "com.microsoft.teams2", "com.microsoft.teams",
         "com.facebook.archon", "jp.naver.line.mac", "com.viber.osx", "com.skype.skype",
+        "com.apple.mail", "com.microsoft.Outlook",
     ].map { ChatApp(bundleID: $0) }
 
     /// The chat apps, the standard ones first, then any added in Settings.
+    /// Standard ones that came with a later version join a list already
+    /// saved, once; one removed after that stays removed.
     static var apps: [ChatApp] {
         get {
             guard let data = UserDefaults.standard.data(forKey: "chatButtonApps"),
                   let saved = try? JSONDecoder().decode([ChatApp].self, from: data) else { return standardApps }
-            return saved
+            let offered = Set(UserDefaults.standard.stringArray(forKey: "chatButtonAppsOffered") ?? []).union(firstApps)
+            let (list, now) = Self.joining(standardApps, to: saved, offered: offered, id: \.bundleID)
+            if now != offered {
+                UserDefaults.standard.set(Array(now).sorted(), forKey: "chatButtonAppsOffered")
+                UserDefaults.standard.set(try? JSONEncoder().encode(list), forKey: "chatButtonApps")
+            }
+            return list
         }
         set {
             UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: "chatButtonApps")
+            // Saved now, every standard app has been offered.
+            UserDefaults.standard.set(standardApps.map(\.bundleID).sorted(), forKey: "chatButtonAppsOffered")
             shared?.update()
         }
+    }
+
+    /// The standard apps and websites before mail joined them: a list saved
+    /// back then has already offered them, kept or removed.
+    private static let firstApps: Set<String> = Set(standardApps.prefix(17).map(\.bundleID))
+    private static let firstSites: Set<String> = Set(standardSites.prefix(14).map(\.host))
+
+    /// A saved list with the standard entries it has not offered yet added
+    /// at the end, and what it has offered now. What was offered before and
+    /// is missing was removed on purpose, and stays out.
+    static func joining<T>(_ standard: [T], to saved: [T], offered: Set<String>,
+                           id: (T) -> String) -> (list: [T], offered: Set<String>) {
+        let have = Set(saved.map(id))
+        let new = standard.filter { !offered.contains(id($0)) && !have.contains(id($0)) }
+        return (saved + new, offered.union(standard.map(id)))
     }
 
     /// The browsers it can ask, for the Permissions pane.
@@ -147,21 +174,33 @@ final class ChatButton {
         var id: String { host }
     }
 
+    /// Chat websites it knows from the start, then webmail: Gmail, Outlook,
+    /// Yahoo Mail, Telekom Mail, WEB.DE and GMX.
     static let standardSites = [
         "chatgpt.com", "claude.ai", "gemini.google.com", "web.whatsapp.com", "perplexity.ai",
         "copilot.microsoft.com", "chat.deepseek.com", "grok.com", "chat.mistral.ai",
         "web.telegram.org", "messenger.com", "discord.com", "app.slack.com", "teams.microsoft.com",
+        "mail.google.com", "outlook.live.com", "outlook.office.com", "outlook.office365.com",
+        "mail.yahoo.com", "email.t-online.de", "web.de", "gmx.net", "gmx.de",
     ].map { Site(host: $0) }
 
     /// The chat websites, the standard ones first, then any added in Settings.
+    /// New standard ones join a saved list once, as with the apps.
     static var sites: [Site] {
         get {
             guard let data = UserDefaults.standard.data(forKey: "chatButtonSites"),
                   let saved = try? JSONDecoder().decode([Site].self, from: data) else { return standardSites }
-            return saved
+            let offered = Set(UserDefaults.standard.stringArray(forKey: "chatButtonSitesOffered") ?? []).union(firstSites)
+            let (list, now) = Self.joining(standardSites, to: saved, offered: offered, id: \.host)
+            if now != offered {
+                UserDefaults.standard.set(Array(now).sorted(), forKey: "chatButtonSitesOffered")
+                UserDefaults.standard.set(try? JSONEncoder().encode(list), forKey: "chatButtonSites")
+            }
+            return list
         }
         set {
             UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: "chatButtonSites")
+            UserDefaults.standard.set(standardSites.map(\.host).sorted(), forKey: "chatButtonSitesOffered")
             shared?.update()
         }
     }

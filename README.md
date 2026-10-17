@@ -125,7 +125,10 @@ other way of asking. Nothing personal is in them.
 While photos hang, the same send button waits over the chat itself, just
 above its own send button: in ChatGPT, Claude, WhatsApp, Messages, Telegram
 and other chat apps, and in Safari, Chrome and other browsers only on chat
-websites like chatgpt.com, claude.ai or web.whatsapp.com. Settings lists
+websites like chatgpt.com, claude.ai or web.whatsapp.com. Email counts too:
+Mail and Outlook, and Gmail, Outlook on the web, Yahoo Mail, Telekom Mail,
+WEB.DE and GMX in a browser, where the photos go into the message being
+written. Settings lists
 the apps, by name and icon, and the websites; turn any off, remove it, or add
 your own. To know the page, Snapfly asks the
 browser, and macOS asks you once whether it may. It shows the newest photo and how many
