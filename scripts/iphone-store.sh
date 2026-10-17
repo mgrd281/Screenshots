@@ -90,13 +90,14 @@ for folder in "${PROFILES[@]}"; do
   cp "$TMP/profile.mobileprovision" "$folder/$(cat "$TMP/uuid").mobileprovision"
 done
 
-# Each upload needs a higher build number than the one before.
+# Each upload needs a higher build number than the one before. The version
+# is the Mac's, from the VERSION file.
 BUILD="$(( ${GITHUB_RUN_NUMBER:-1} + 100 ))"
 xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -configuration Release \
   -destination "generic/platform=iOS" -archivePath "$OUT/Snapfly.xcarchive" \
   CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_IDENTITY="$SIGNER" \
   PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN" \
-  CURRENT_PROJECT_VERSION="$BUILD" -quiet archive
+  MARKETING_VERSION="$(tr -d '[:space:]' < VERSION)" CURRENT_PROJECT_VERSION="$BUILD" -quiet archive
 
 cat > "$TMP/export.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>

@@ -39,6 +39,18 @@ the website's footer. Both stay.
   `Snapfly.zip` to the Releases page:
   - **latest** from `main`: https://github.com/mgrd281/Screenshots/releases/tag/latest
   - **preview** from any other branch
+- **Versions.** `VERSION` holds the version every edition carries (x.y.z),
+  and `CHANGELOG.md` needs a `## x.y.z` section for it, or the build stops.
+  - Add a line there with each change people notice.
+  - Raise the middle number for a batch of features and the last for fixes,
+    and always after a version goes to App Review: the store takes no more
+    builds of it.
+  - From `main`, the build also keeps a release of each version (`v1.1.0`)
+    with its newest build, beside `latest`.
+- **Pro, later.** `Shared/Plan.swift` lists the features that will need Pro.
+  Nothing is held back until `Plan.proStarts` is set, which waits for the
+  owner. A new feature of that kind joins the list and ships free. Covering
+  private details is never Pro. See "Plans" in `PRODUCT.md`.
 - **Signing.** With the repository secret `SNAPFLY_SIGNING`, builds are signed
   with the owner's Developer ID, and builds from `main` are notarized and
   stapled (`scripts/signing.sh`). Without it they are ad-hoc signed, and the

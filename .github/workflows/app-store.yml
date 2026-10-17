@@ -13,6 +13,7 @@ on:
       - "assets/**"
       - "scripts/build-app.sh"
       - "scripts/app-store.sh"
+      - "VERSION"
   workflow_dispatch:
 
 # One upload at a time, each with a higher build number than the last.

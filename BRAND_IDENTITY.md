@@ -59,8 +59,9 @@ promo video. It does not invent a new one.
   shirt. It fills while copied images are hung and becomes `stop.circle`
   while the screen is recorded. It is a template image, so macOS colours
   it; its measurements are under "Navigation" in `DESIGN.md`.
-- **Credit.** The About pane keeps "Based on Tendedero by Alejandro Buján,
-  under the MIT License". The license requires it.
+- **Credit.** The app's interface names no other project. The MIT License
+  is satisfied by `LICENSE`, which travels inside the app, and by the
+  website's footer, which credits Tendedero.
 
 Usage rules for the icon are in `BRAND_GUIDELINES.md`.
 

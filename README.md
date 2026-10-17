@@ -3,8 +3,6 @@
   <img src="docs/images/hero-light.png" alt="Tendedero. Screenshots, hung out to dry. Three screenshots in glass frames hang from a thin line under the macOS menu bar.">
 </picture>
 
-<h3 align="center"><a href="https://tendedero.app/?lang=en">Try it in your browser at tendedero.app&nbsp;&rsaquo;</a></h3>
-
 <p align="center">
   Free and open source. For macOS 14 and later.
   <br>
@@ -94,7 +92,7 @@ Rest the pointer in the menu bar and it glides down. Move away and it's gone.
 
 ## Your Desktop. Finally clear.
 
-Hand Tendedero your screenshots<sup>1</sup> and they skip the Desktop
+Hand Snapfly your screenshots<sup>1</sup> and they skip the Desktop
 entirely. No floating thumbnail. No five-second wait. Each capture hangs
 the instant you take it, and only what you drag out is kept.
 
@@ -344,7 +342,7 @@ screenshot's title.
 ## Private by design.
 
 No account. No cloud. No analytics.
-Tendedero runs entirely on your Mac, and your screenshots never leave it. The
+Snapfly runs entirely on your Mac, and your screenshots never leave it. The
 only thing it ever asks the internet is the time, from the PTB's atomic clock,
 while the time stamp is on.
 
@@ -393,23 +391,20 @@ whenever it changes on `main`. Its certificate is made once, on a Mac, with
 
 ## Install
 
-Download the disk image from the [latest release](../../releases/latest),
-open it and drag Tendedero to Applications. Or install it with Homebrew:
+Download Snapfly.zip from the [latest release](../../releases/latest), open
+it and drag Snapfly to Applications. Builds from `main` are signed with a
+Developer ID and notarized by Apple, so they open like any other app.
 
-```sh
-brew install --cask alejandrobujan/tap/tendedero
-```
-
-Tendedero is signed with a Developer ID and notarized by Apple, so it opens
-like any other app.
+Each version also keeps a release of its own on the [Releases](../../releases)
+page, and [CHANGELOG.md](CHANGELOG.md) says what each one brings.
 
 <br>
 
 ## Build from source
 
 ```sh
-git clone git@github.com:alejandrobujan/tendedero.git
-cd tendedero
+git clone https://github.com/mgrd281/Screenshots.git
+cd Screenshots
 scripts/build-app.sh
 open build/Snapfly.app
 ```
@@ -442,6 +437,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
+| `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, and the Shortcuts actions |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
@@ -484,7 +480,7 @@ language. `swift scripts/check-strings.swift` checks that none is missing.
 ---
 
 <sub>
-1. On first launch, Tendedero offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Tendedero quits or the option is turned off in Settings. Tendedero hides automatically while an app is in full screen.
+1. On first launch, Snapfly offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Snapfly quits or the option is turned off in Settings. Snapfly hides automatically while an app is in full screen.
 
    The Mac App Store edition may not change those settings, so its first launch starts with Snapfly's own screenshots instead, which need nothing set up: Try It Now takes the first one. Pointing the Screenshot app at Pictures › Snapfly stays a choice, in that first window and under General in Settings.
 </sub>
@@ -497,5 +493,5 @@ language. `swift scripts/check-strings.swift` checks that none is missing.
   <br>
   <sub>The code is MIT licensed. The Tendedero name and icon are not, so forks need their own. See <a href="LICENSE">LICENSE</a>.</sub>
   <br>
-  <sub>Designed and built by <a href="https://alejandrobujan.com">Alejandro Buján</a>.</sub>
+  <sub>Made by Mgrdegh Ghazarian. It began as Tendedero by <a href="https://alejandrobujan.com">Alejandro Buján</a>.</sub>
 </p>

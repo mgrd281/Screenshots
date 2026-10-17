@@ -55,8 +55,8 @@ leaves, and photos that leave the line once sent.
   German (long words) and in Arabic (RTL).
 - Builds come from GitHub Actions only. Nobody can run the app here, so
   visual changes ship unseen until the owner tries the build.
-- Four line styles: clothesline, glass shelf, island and card stack. Every
-  feature must work in all four.
+- Eight line styles: clothesline, glass shelf, island, card stack, wire,
+  floating, filmstrip and fan. Every feature must work in all eight.
 
 ## Brand Commitments
 
@@ -64,8 +64,8 @@ leaves, and photos that leave the line once sent.
 - The icon is a screenshot card taking off up and to the right, on a gradient
   from amber through coral to violet (`assets/icon.png`, drawn by
   `scripts/make-icon.py`).
-- The About pane keeps the credit "Based on Tendedero by Alejandro Buján, under
-  the MIT License".
+- The app names no other project. The MIT notice travels in `LICENSE` inside
+  the app, and the website's footer credits Tendedero.
 - Voice: plain and short. German copy addresses the reader as "du".
 
 ## Evidence on Hand
@@ -82,6 +82,21 @@ leaves, and photos that leave the line once sent.
 4. Quiet until needed. The line stays tucked away and nothing nags.
 5. One feature, every style. A capability added for one line style must work
    in all of them.
+
+## Plans
+
+- Everything in Snapfly is free for now.
+- Pro, a subscription, comes later. It adds the features listed in
+  `Shared/Plan.swift` for people who send orders and receipts every day: the
+  order binder, the send log, the order card, covering profiles, saved
+  messages and the hand-off to bookkeeping. Each is built free first.
+- Nothing is held back until the owner sets the day Pro begins
+  (`Plan.proStarts`). Whoever used Snapfly before that day keeps every
+  feature.
+- Covering private details, of every kind, is never Pro, and neither is
+  anything Snapfly does today.
+- Pro needs no account, no server and no tracking.
+- At most one note about Pro a day, and never a badge on the line.
 
 ## Accessibility & Inclusion
 

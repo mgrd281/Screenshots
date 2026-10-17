@@ -7,6 +7,11 @@ import SwiftUI
 /// own (`Shared/PrivateText.swift`), and like there it happens on the device.
 @main
 struct SnapflyApp: App {
+    init() {
+        // Whoever used Snapfly before Pro begins keeps every feature.
+        Plan.recordFirstLaunch()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
