@@ -357,7 +357,9 @@
 "Covering private details…" = "Özel bilgiler gizleniyor…";
 "The picture could not be read." = "Resim okunamadı.";
 "Nothing private found" = "Özel bir şey bulunamadı";
-"Details covered: %d" = "Gizlenen bilgiler: %d";
+"Covered: %@" = "Gizlenenler: %@";
+"Your own rules" = "Kendi kuralların";
+"Hidden by hand" = "Elle gizlenen";
 "Saved to Photos" = "Fotoğraflar’a kaydedildi";
 "The picture could not be saved." = "Resim kaydedilemedi.";
 "Save" = "Kaydet";

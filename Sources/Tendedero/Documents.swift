@@ -73,26 +73,31 @@ enum DocumentCover {
     /// read, or a page could not be drawn: then nothing is handed out
     /// half done.
     /// - Parameter hand: the parts hidden by hand, by page number from 1.
-    static func copy(of url: URL, _ chosen: Set<PrivateDetail>, hand: [Int: [CGRect]]) -> URL? {
+    static func copy(of url: URL, _ chosen: Set<PrivateDetail>,
+                     hand: [Int: [CGRect]]) -> (url: URL, report: CoverReport)? {
         guard let target = Cover.newCopy(of: url, ext: "pdf"),
-              write(url, chosen, hand: hand, to: target) else { return nil }
-        return target
+              let report = write(url, chosen, hand: hand, to: target) else { return nil }
+        return (target, report)
     }
 
-    /// Writes the protected PDF to `target`, replacing a file there. Nothing
-    /// is left behind when a page could not be drawn.
-    static func write(_ url: URL, _ chosen: Set<PrivateDetail>, hand: [Int: [CGRect]], to target: URL) -> Bool {
+    /// Writes the protected PDF to `target`, replacing a file there, and
+    /// says what was covered on its pages. Nil, with nothing left behind,
+    /// when a page could not be drawn.
+    static func write(_ url: URL, _ chosen: Set<PrivateDetail>, hand: [Int: [CGRect]], to target: URL) -> CoverReport? {
         guard let document = PDFDocument(url: url), !document.isLocked,
               document.pageCount > 0, document.pageCount <= maxPages,
               // Only the app that made it; none of the original's details.
               let context = CGContext(target as CFURL, mediaBox: nil, [kCGPDFContextCreator: "Snapfly"] as CFDictionary)
-        else { return false }
+        else { return nil }
         var drawn = 0
+        var report = CoverReport()
         for index in 0..<document.pageCount {
             let done: Bool = autoreleasepool {
                 guard let page = document.page(at: index), let image = render(page) else { return false }
-                let boxes = Cover.areas(in: image, chosen) + (hand[index + 1] ?? [])
-                guard let covered = Finder.cover(image, boxes) else { return false }
+                let found = Finder.coveredAreas(in: image, chosen)
+                let byHand = hand[index + 1] ?? []
+                guard let covered = Finder.cover(image, found.map(\.rect) + byHand) else { return false }
+                report.add(CoverReport(found, hand: byHand.count))
                 var box = CGRect(origin: .zero, size: pageSize(of: page))
                 context.beginPage(mediaBox: &box)
                 context.interpolationQuality = .high
@@ -106,9 +111,9 @@ enum DocumentCover {
         context.closePDF()
         guard drawn == document.pageCount else {
             try? FileManager.default.removeItem(at: target)
-            return false
+            return nil
         }
-        return true
+        return report
     }
 
     /// The page as JPEG, which a PDF keeps as it is: a page of a few hundred

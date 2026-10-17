@@ -357,7 +357,9 @@
 "Covering private details…" = "Ocultando dados privados…";
 "The picture could not be read." = "Não foi possível ler a imagem.";
 "Nothing private found" = "Nada privado encontrado";
-"Details covered: %d" = "Dados ocultos: %d";
+"Covered: %@" = "Coberto: %@";
+"Your own rules" = "Suas próprias regras";
+"Hidden by hand" = "Ocultado à mão";
 "Saved to Photos" = "Salva em Fotos";
 "The picture could not be saved." = "Não foi possível salvar a imagem.";
 "Save" = "Salvar";

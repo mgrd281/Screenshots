@@ -865,7 +865,7 @@ final class Line: ObservableObject {
             let shown = PrivateDetails.shown(items[i].url) ?? items[i].url
             if let thumb = makeThumbnail(shown) { items[i].thumb = thumb }
             items[i].altered = shown != items[i].url
-            items[i].covered = items[i].altered && PrivateDetails.covers(items[i].url)
+            items[i].covered = items[i].altered && PrivateDetails.isCovered(items[i].url)
         }
     }
 
@@ -882,7 +882,13 @@ final class Line: ObservableObject {
               let thumb = makeThumbnail(shown) else { return }
         items[i].thumb = thumb
         items[i].altered = shown != url
-        items[i].covered = shown != url && PrivateDetails.covers(url)
+        items[i].covered = shown != url && PrivateDetails.isCovered(url)
+    }
+
+    /// What was covered in a photo, for its menu; nil when nothing was.
+    func coveredSentence(_ id: UUID) -> String? {
+        guard let item = items.first(where: { $0.id == id }), item.covered else { return nil }
+        return PrivateDetails.report(for: item.url)?.sentence
     }
 
     func reveal(_ id: UUID) {

@@ -7,7 +7,7 @@ struct CoveredView: View {
     let assetID: String
     @State private var covered: UIImage?
     @State private var png: Data?
-    @State private var count = 0
+    @State private var report = CoverReport()
     @State private var working = true
     @State private var note: String?
 
@@ -36,7 +36,7 @@ struct CoveredView: View {
 
     private func actions(_ image: UIImage, _ png: Data) -> some View {
         VStack(spacing: 10) {
-            Text(count == 0 ? L("Nothing private found") : String(format: L("Details covered: %d"), count))
+            Text(report.sentence ?? L("Nothing private found"))
                 .font(.footnote)
                 .foregroundStyle(.secondary)
             HStack(spacing: 10) {
@@ -86,7 +86,7 @@ struct CoveredView: View {
         let result = await Task.detached(priority: .userInitiated) { Covering.cover(image, chosen) }.value
         png = Covering.png(result.image)
         covered = UIImage(cgImage: result.image)
-        count = result.count
+        report = result.report
         working = false
     }
 }
