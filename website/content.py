@@ -164,13 +164,17 @@ TEXT["en"] = dict(
               ref="Rent for November", addr="Lindenstraße 12, 10969 Berlin",
               email="lena.hoffmann@example.com", phone="+49 30 1234 5678"),
 
-    styles_h="Four ways to hang.",
+    styles_h="Eight ways to hang.",
     styles_p="Pick what your screenshots hang on. Everything else works the same on each.",
     styles={
         "Clothesline": "Crooked photos swaying on clips.",
         "Glass shelf": "Upright on a shelf of Liquid Glass, like the Dock.",
         "Island": "Black, hanging from the top of the screen like the notch grown wide.",
         "Card stack": "A stack by the right edge that spreads out as you reach it, with a count on top.",
+        "Wire": "Straight on a taut wire, still on their clips.",
+        "Floating": "Alone in a row, with nothing behind them.",
+        "Filmstrip": "Frames on a dark strip, with its holes along both edges.",
+        "Fan": "Arcing down from the middle, like cards in a hand.",
     },
 
     design_h="Nothing leaves your Mac.",
@@ -414,13 +418,17 @@ TEXT["de"] = dict(
               ref="Miete November", addr="Lindenstraße 12, 10969 Berlin",
               email="lena.hoffmann@example.com", phone="+49 30 1234 5678"),
 
-    styles_h="Vier Arten zu hängen.",
+    styles_h="Acht Arten zu hängen.",
     styles_p="Wähle, woran deine Bildschirmfotos hängen. Alles andere funktioniert überall gleich.",
     styles={
         "Clothesline": "Schiefe Bilder, die an Klammern schaukeln.",
         "Glass shelf": "Aufrecht auf einem Regal aus Liquid Glass, wie das Dock.",
         "Island": "Schwarz, von oben herab, wie eine breit gewordene Notch.",
         "Card stack": "Ein Stapel am rechten Rand, der sich auffächert, wenn du hingehst, mit der Anzahl obendrauf.",
+        "Wire": "Gerade an einem gespannten Draht, still an ihren Klammern.",
+        "Floating": "Allein in einer Reihe, ohne etwas dahinter.",
+        "Filmstrip": "Bilder auf einem dunklen Streifen, mit Löchern an beiden Rändern.",
+        "Fan": "Im Bogen von der Mitte aus, wie Karten in der Hand.",
     },
 
     design_h="Nichts verlässt deinen Mac.",
@@ -664,13 +672,17 @@ TEXT["ar"] = dict(
               ref="إيجار نوفمبر", addr="شارع ليندن 12، 10969 برلين",
               email="lena.hoffmann@example.com", phone="+49 30 1234 5678"),
 
-    styles_h="أربع طرق للتعليق.",
+    styles_h="ثماني طرق للتعليق.",
     styles_p="اختر ما تُعلَّق عليه لقطاتك. وكل شيء آخر يعمل بالطريقة نفسها.",
     styles={
         "Clothesline": "صور مائلة تتأرجح على المشابك.",
         "Glass shelf": "صور منتصبة على رف من Liquid Glass، مثل Dock.",
         "Island": "سوداء، تتدلّى من أعلى الشاشة كأن النوتش اتّسعت.",
         "Card stack": "كومة عند حافة الشاشة تنفرد حين تقترب منها، وفوقها العدد.",
+        "Wire": "مستقيمة على سلك مشدود، ثابتة على مشابكها.",
+        "Floating": "وحدها في صف، بلا شيء خلفها.",
+        "Filmstrip": "لقطات على شريط داكن، بثقوب على حافتيه.",
+        "Fan": "في قوس ينزل من الوسط، مثل ورق اللعب في اليد.",
     },
 
     design_h="لا شيء يغادر جهازك.",

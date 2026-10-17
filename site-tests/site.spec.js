@@ -348,3 +348,33 @@ test("an example covers parts of the receipt, and Done locks it", async ({ page 
   await win.locator("[data-cancel]").click();
   await expect(win.locator(".cover-box")).toHaveCount(0);
 });
+
+// The styles section offers the app's eight line styles: each tile sets
+// the stage's style, names it in the caption, and shows what holds the
+// photos: a wire, a filmstrip, or a fan whose outer photos lean out.
+test("every one of the eight line styles can be picked and shows its holder", async ({ page }) => {
+  await page.goto("de/", { waitUntil: "networkidle" });
+  const stage = page.locator("[data-style-stage]");
+  await stage.scrollIntoViewIfNeeded();
+  const tiles = page.locator("[data-styles] input");
+  expect(await tiles.count()).toBe(8);
+  const values = await tiles.evaluateAll((all) => all.map((i) => i.value));
+  expect(values).toEqual(["clothesline", "shelf", "island", "stack", "wire", "floating", "filmstrip", "fan"]);
+  for (const value of values) {
+    const tile = page.locator(`[data-styles] input[value="${value}"]`);
+    await tile.evaluate((input) => input.closest("label").click());
+    await expect(stage).toHaveAttribute("data-style", value);
+    await expect(page.locator("[data-style-caption]")).toHaveText(await tile.getAttribute("data-caption"));
+  }
+  const shown = async (style, selector) => {
+    await page.locator(`[data-styles] input[value="${style}"]`).evaluate((input) => input.closest("label").click());
+    await expect.poll(() => page.locator(selector).evaluate((e) => getComputedStyle(e).opacity)).toBe("1");
+  };
+  await shown("wire", ".style-line .wire");
+  await shown("filmstrip", ".style-line .filmstrip");
+  await page.locator('[data-styles] input[value="fan"]').evaluate((input) => input.closest("label").click());
+  await expect.poll(async () => {
+    const [left, right] = await page.locator(".style-line .sty").evaluateAll((all) => [all[0], all[2]].map((s) => parseFloat(getComputedStyle(s).rotate)));
+    return left > 0 && right < 0;
+  }).toBe(true);
+});

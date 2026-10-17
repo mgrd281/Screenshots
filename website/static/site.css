@@ -1729,6 +1729,71 @@ input[role="switch"]:checked::before { translate: 16px 0; }
 [data-style="stack"] .sty.s3 { --p: 0.89; rotate: -1deg; top: 54px; }
 [data-style="clothesline"] .sty { animation: sway 5s ease-in-out calc(var(--i) * -1.4s) infinite alternate; }
 
+/* A taut wire: straight across, fading at both ends like the rope, the
+   photos upright and still on their clips. */
+.wire, .filmstrip {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s, scale 0.5s var(--ease-out);
+}
+.wire {
+  left: 0; right: 0;
+  top: calc(30px + var(--rope-h) * 0.2);
+  height: 1.5px;
+  background: var(--rope);
+  -webkit-mask: linear-gradient(90deg, transparent, #000 6% 94%, transparent);
+  mask: linear-gradient(90deg, transparent, #000 6% 94%, transparent);
+}
+[data-style="wire"] .wire { opacity: 1; }
+[data-style="wire"] .style-rope { opacity: 0; }
+[data-style="wire"] .sty { top: calc(30px + var(--rope-h) * 0.2 - 6px); rotate: 0deg; }
+
+/* Floating: nothing behind them, each on its own deeper shadow, drifting
+   a little. */
+[data-style="floating"] .style-rope, [data-style="floating"] .mini-clip,
+[data-style="filmstrip"] .style-rope, [data-style="filmstrip"] .mini-clip,
+[data-style="fan"] .style-rope, [data-style="fan"] .mini-clip { opacity: 0; }
+[data-style="floating"] .sty { top: 34px; rotate: 0deg; animation: drift 6s ease-in-out calc(var(--i) * -2s) infinite alternate; }
+[data-style="floating"] .sty .photo { --lift: 0 12px 18px rgb(var(--shade) / 0.3); }
+[data-style="floating"] .sty.s1 { --p: 0.37; }
+[data-style="floating"] .sty.s3 { --p: 0.63; }
+@keyframes drift {
+  from { transform: translateY(-3px); }
+  to { transform: translateY(3px); }
+}
+
+/* A filmstrip: a dark strip with a band of holes along its top and its
+   bottom edge, the photos on it as frames. */
+.filmstrip {
+  z-index: 1;
+  left: 25%; right: 25%;
+  top: 12px;
+  height: calc(var(--sw) * 0.67 + 70px);
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(90deg, #D2D2D2 0 9px, transparent 9px 17px) 50% 5px / calc(100% - 24px) 6px no-repeat,
+    repeating-linear-gradient(90deg, #D2D2D2 0 9px, transparent 9px 17px) 50% calc(100% - 5px) / calc(100% - 24px) 6px no-repeat,
+    #161616;
+  /* A hairline of white keeps its edge on a dark page, as in the app. */
+  box-shadow: 0 0 0 0.75px rgba(255, 255, 255, 0.1), 0 10px 24px rgba(0, 0, 0, 0.3);
+  scale: 1 0.85;
+  transform-origin: 50% 0;
+}
+[data-style="filmstrip"] .filmstrip { opacity: 1; scale: 1; }
+[data-style="filmstrip"] .sty { top: 26px; rotate: 0deg; }
+[data-style="filmstrip"] .sty.s1 { --p: 0.37; }
+[data-style="filmstrip"] .sty.s3 { --p: 0.63; }
+
+/* A fan: the photos arc down from the middle and lean out, like cards in
+   a hand; the middle one on top. */
+[data-style="fan"] .sty { top: 30px; rotate: 0deg; }
+[data-style="fan"] .sty.s1 { --p: 0.36; top: 48px; rotate: 9deg; }
+[data-style="fan"] .sty.s2 { z-index: 3; }
+[data-style="fan"] .sty.s3 { --p: 0.64; top: 48px; rotate: -9deg; }
+[dir="rtl"] [data-style="fan"] .sty.s1 { rotate: -9deg; }
+[dir="rtl"] [data-style="fan"] .sty.s3 { rotate: 9deg; }
+
 .settings-line { max-width: 560px; }
 .tile-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding-top: 4px; }
 .tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 7px; font-size: 12px; text-align: center; cursor: pointer; }
@@ -3355,6 +3420,11 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   [data-style="stack"] .sty.s1 { --p: 0.78; }
   [data-style="stack"] .sty.s2 { --p: 0.8; }
   [data-style="stack"] .sty.s3 { --p: 0.82; }
+  .filmstrip { left: 10%; right: 10%; }
+  [data-style="floating"] .sty.s1, [data-style="filmstrip"] .sty.s1 { --p: 0.28; }
+  [data-style="floating"] .sty.s3, [data-style="filmstrip"] .sty.s3 { --p: 0.72; }
+  [data-style="fan"] .sty.s1 { --p: 0.26; top: 42px; }
+  [data-style="fan"] .sty.s3 { --p: 0.74; top: 42px; }
   .tile-grid { gap: 8px; }
   .ctx-menu { width: 100%; max-width: 320px; }
 }
