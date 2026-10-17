@@ -99,6 +99,29 @@ final class OutsideTests: XCTestCase {
         XCTAssertGreaterThan(lightness(of: turned, x: 0.15, y: 0.9), 0.8)
     }
 
+    /// A page cut down to part of its sheet shows only that part, from its
+    /// own top left corner, as a PDF reader shows it.
+    func testACroppedPageShowsOnlyItsPart() throws {
+        let pdf = folder.appendingPathComponent("Cropped.pdf")
+        var box = CGRect(x: 0, y: 0, width: 300, height: 200)
+        let context = try XCTUnwrap(CGContext(pdf as CFURL, mediaBox: &box, nil))
+        context.beginPDFPage(nil)
+        context.setFillColor(CGColor(gray: 0, alpha: 1))
+        context.fill(CGRect(x: 100, y: 120, width: 30, height: 30))
+        context.endPDFPage()
+        context.closePDF()
+        let document = try XCTUnwrap(PDFDocument(url: pdf))
+        let page = try XCTUnwrap(document.page(at: 0))
+        page.setBounds(CGRect(x: 100, y: 50, width: 150, height: 100), for: .cropBox)
+
+        XCTAssertEqual(DocumentCover.pageSize(of: page), CGSize(width: 150, height: 100))
+        let image = try XCTUnwrap(DocumentCover.render(page))
+        XCTAssertLessThan(lightness(of: image, x: 0.1, y: 0.15), 0.2)
+        XCTAssertGreaterThan(lightness(of: image, x: 0.9, y: 0.15), 0.8)
+        XCTAssertGreaterThan(lightness(of: image, x: 0.1, y: 0.85), 0.8)
+        XCTAssertGreaterThan(lightness(of: image, x: 0.9, y: 0.85), 0.8)
+    }
+
     /// The protected copy has every page, under the same name, and no text
     /// left to copy out from under a cover.
     func testTheCopyIsDrawnNotWritten() throws {

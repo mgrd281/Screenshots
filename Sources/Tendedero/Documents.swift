@@ -56,7 +56,7 @@ enum DocumentCover {
         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
         context.interpolationQuality = .high
         context.scaleBy(x: scale, y: scale)
-        page.transform(context, for: .cropBox)
+        // PDFKit turns a turned page and starts at the box's corner itself.
         page.draw(with: .cropBox, to: context)
         return context.makeImage()
     }
