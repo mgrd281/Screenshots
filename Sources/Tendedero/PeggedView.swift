@@ -15,6 +15,7 @@ struct PeggedView: View {
     @State private var hovering = false
     /// Reduce Motion: no drop, swing or sway; photos fade in where they hang.
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
     private var copied: Bool { line.copiedIDs.contains(item.id) }
     private var picked: Bool { line.pickedIDs.contains(item.id) }
@@ -133,7 +134,7 @@ struct PeggedView: View {
                         .font(.system(size: 8, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(width: 18, height: 18)
-                        .background(Color.black.opacity(0.55), in: Circle())
+                        .background(PhotoBadge.fill(reduced: reduceTransparency), in: Circle())
                         .padding(5)
                         .allowsHitTesting(false)
                         .accessibilityHidden(true)
@@ -165,7 +166,7 @@ struct PeggedView: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 6)
                     .frame(height: 18)
-                    .background(Color.black.opacity(0.55), in: Capsule())
+                    .background(PhotoBadge.fill(reduced: reduceTransparency), in: Capsule())
                     .padding(5)
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
