@@ -517,3 +517,14 @@
 "Image" = "صورة";
 "Plain file names" = "أسماء ملفات بسيطة";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "تخرج الصور ملفاتٍ جديدة، بلا ملاحظات عن متى وأين وبماذا صُنعت. ومع الأسماء البسيطة تُسمّى أيضاً «صورة»، لا باسم وقت التقاطها.";
+"Cover what lands in a folder" = "تغطية ما يصل إلى مجلد";
+"Save copies in" = "حفظ النسخ في";
+"Cover a folder" = "تغطية مجلد";
+"Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder." = "كل صورة أو ملف PDF يصل إلى المجلد المراقَب تُحفظ منه نسخة مغطّى فيها ما حدّدته أعلاه، باسمه نفسه في المجلد الآخر.";
+"Choose the folder to watch." = "اختر المجلد الذي يُراقَب.";
+"Choose the folder for the covered copies." = "اختر مجلد النسخ المغطّاة.";
+"Choose two folders apart from each other." = "اختر مجلدين منفصلين.";
+"Covered copies saved: %ld" = "النسخ المغطّاة المحفوظة: %ld";
+"Nothing to cover in %@. Take a look." = "لا شيء يُغطّى في %@. ألقِ نظرة.";
+"Could not cover %@." = "تعذّرت تغطية %@.";
+"Watched folder" = "المجلد المراقَب";

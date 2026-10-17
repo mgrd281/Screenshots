@@ -517,3 +517,14 @@
 "Image" = "Imagem";
 "Plain file names" = "Nomes de arquivo simples";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "As imagens saem como arquivos novos, sem notas sobre quando, onde ou com o que foram feitas. Com nomes simples, elas também se chamam “Imagem”, e não pelo momento em que foram tiradas.";
+"Cover what lands in a folder" = "Cobrir o que chega a uma pasta";
+"Save copies in" = "Salvar cópias em";
+"Cover a folder" = "Cobrir uma pasta";
+"Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder." = "Cada imagem ou PDF que chega à pasta observada ganha uma cópia com o que está marcado acima coberto, salva com o nome dela na outra pasta.";
+"Choose the folder to watch." = "Escolha a pasta a observar.";
+"Choose the folder for the covered copies." = "Escolha a pasta para as cópias cobertas.";
+"Choose two folders apart from each other." = "Escolha duas pastas separadas.";
+"Covered copies saved: %ld" = "Cópias cobertas salvas: %ld";
+"Nothing to cover in %@. Take a look." = "Nada para cobrir em %@. Dê uma olhada.";
+"Could not cover %@." = "Não foi possível cobrir %@.";
+"Watched folder" = "Pasta observada";

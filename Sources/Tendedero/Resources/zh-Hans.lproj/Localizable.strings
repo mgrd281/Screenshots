@@ -517,3 +517,14 @@
 "Image" = "图像";
 "Plain file names" = "简单文件名";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "图片会作为新文件发出，不带何时、何地或用什么制作的信息。开启简单文件名后，它们还会被命名为“图像”，而不是拍摄时间。";
+"Cover what lands in a folder" = "遮盖放入文件夹的内容";
+"Save copies in" = "副本存储到";
+"Cover a folder" = "遮盖文件夹";
+"Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder." = "每个放入被监视文件夹的图片或 PDF，都会以原名在另一个文件夹中存一份遮盖了上面勾选内容的副本。";
+"Choose the folder to watch." = "选取要监视的文件夹。";
+"Choose the folder for the covered copies." = "选取存放遮盖副本的文件夹。";
+"Choose two folders apart from each other." = "请选取两个彼此独立的文件夹。";
+"Covered copies saved: %ld" = "已存储的遮盖副本：%ld";
+"Nothing to cover in %@. Take a look." = "%@ 中没有需要遮盖的内容，请看一下。";
+"Could not cover %@." = "无法遮盖 %@。";
+"Watched folder" = "被监视的文件夹";

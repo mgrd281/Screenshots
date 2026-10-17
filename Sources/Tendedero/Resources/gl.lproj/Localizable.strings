@@ -517,3 +517,14 @@
 "Image" = "Imaxe";
 "Plain file names" = "Nomes de ficheiro simples";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "As imaxes saen como ficheiros novos, sen notas de cando, onde nin con que se fixeron. Con nomes simples chámanse ademais «Imaxe», non segundo cando se tomaron.";
+"Cover what lands in a folder" = "Tapar o que chega a un cartafol";
+"Save copies in" = "Gardar copias en";
+"Cover a folder" = "Tapar un cartafol";
+"Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder." = "Cada imaxe ou PDF que chega ao cartafol vixiado recibe unha copia co marcado arriba tapado, gardada co seu nome no outro cartafol.";
+"Choose the folder to watch." = "Escolle o cartafol que se vixía.";
+"Choose the folder for the covered copies." = "Escolle o cartafol para as copias tapadas.";
+"Choose two folders apart from each other." = "Escolle dous cartafoles separados.";
+"Covered copies saved: %ld" = "Copias tapadas gardadas: %ld";
+"Nothing to cover in %@. Take a look." = "Non había nada que tapar en %@. Bótalle un ollo.";
+"Could not cover %@." = "Non se puido tapar %@.";
+"Watched folder" = "Cartafol vixiado";

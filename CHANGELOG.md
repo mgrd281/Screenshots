@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Cover what lands in a folder, under Privacy: every picture or PDF that
+  lands in a folder you choose gets a covered copy in another, in the
+  background, with one note when a run is done.
 - Monthly pack, under Bookkeeping in Settings: a month's receipts in one
   PDF for the tax advisor, a page listing them with the sum of the totals,
   then each receipt on a page of its own.

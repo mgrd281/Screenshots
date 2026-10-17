@@ -517,3 +517,14 @@
 "Image" = "이미지";
 "Plain file names" = "간단한 파일 이름";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "이미지는 언제, 어디서, 무엇으로 만들었는지에 대한 정보 없이 새 파일로 나갑니다. 간단한 파일 이름을 켜면 찍은 시간 대신 ‘이미지’라는 이름도 붙습니다.";
+"Cover what lands in a folder" = "폴더에 들어오는 것 가리기";
+"Save copies in" = "사본 저장 위치";
+"Cover a folder" = "폴더 가리기";
+"Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder." = "지켜보는 폴더에 들어오는 이미지나 PDF마다 위에서 체크한 항목을 가린 사본을 같은 이름으로 다른 폴더에 저장해요.";
+"Choose the folder to watch." = "지켜볼 폴더를 선택하세요.";
+"Choose the folder for the covered copies." = "가린 사본을 저장할 폴더를 선택하세요.";
+"Choose two folders apart from each other." = "서로 다른 폴더 두 개를 선택하세요.";
+"Covered copies saved: %ld" = "저장한 가린 사본: %ld";
+"Nothing to cover in %@. Take a look." = "%@에는 가릴 것이 없었어요. 확인해 보세요.";
+"Could not cover %@." = "%@을(를) 가릴 수 없어요.";
+"Watched folder" = "지켜보는 폴더";

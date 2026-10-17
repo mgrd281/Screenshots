@@ -567,8 +567,16 @@ apps.
   pattern that cannot be read shows `exclamationmark.triangle.fill` in
   not-allowed orange beside the field and a callout line under it. Rules are
   saved 0.8 s after the typing stops, and at once when one is added, removed
-  or the pane leaves, since every change reads the photos again. Last the
-  Preview. The iPhone's Settings use the same three groups.
+  or the pane leaves, since every change reads the photos again. Then
+  "Cover a folder": a toggle, Cover what lands in a folder (off at first;
+  turned on, it asks for any folder not chosen yet and stays off without
+  both), and two rows, Watched folder and Save copies in, each with the
+  folder's name in `.secondary`, truncated in the middle, and a Choose…
+  `SettingsButton`. Two folders that are the same or one inside the other
+  are refused with a note. Its work is said in one note above the Dock two
+  seconds after the last file of a run: how many copies were saved, up to
+  three names where nothing was found, and what could not be read. Last
+  the Preview. The iPhone's Settings use the same three groups.
 - **About pane.** The icon at 128 under its shadow, the name in 34 pt
   rounded bold, the tagline in title3 `.secondary`, the version in callout
   `.tertiary`. Then one line, "Made by" in `.secondary` before the maker's

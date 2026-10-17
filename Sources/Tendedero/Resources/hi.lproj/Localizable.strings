@@ -519,3 +519,14 @@
 "Image" = "चित्र";
 "Plain file names" = "सादे फ़ाइल नाम";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "चित्र नई फ़ाइलों के रूप में जाते हैं, इस जानकारी के बिना कि वे कब, कहाँ या किससे बनाए गए। सादे फ़ाइल नामों के साथ उनका नाम भी “चित्र” होता है, न कि लेने के समय के अनुसार।";
+"Cover what lands in a folder" = "फ़ोल्डर में आने वाली चीज़ें ढकें";
+"Save copies in" = "कॉपियाँ यहाँ सहेजें";
+"Cover a folder" = "फ़ोल्डर ढकें";
+"Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder." = "देखे जा रहे फ़ोल्डर में आने वाले हर चित्र या PDF की एक कॉपी, जिसमें ऊपर चुना गया ढका हो, उसी नाम से दूसरे फ़ोल्डर में सहेजी जाती है।";
+"Choose the folder to watch." = "देखने के लिए फ़ोल्डर चुनें।";
+"Choose the folder for the covered copies." = "ढकी कॉपियों के लिए फ़ोल्डर चुनें।";
+"Choose two folders apart from each other." = "दो अलग-अलग फ़ोल्डर चुनें।";
+"Covered copies saved: %ld" = "सहेजी गई ढकी कॉपियाँ: %ld";
+"Nothing to cover in %@. Take a look." = "%@ में ढकने को कुछ नहीं मिला। एक बार देख लें।";
+"Could not cover %@." = "%@ को ढका नहीं जा सका।";
+"Watched folder" = "देखा जा रहा फ़ोल्डर";
