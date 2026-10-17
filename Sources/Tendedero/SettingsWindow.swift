@@ -787,7 +787,7 @@ private struct ChatButtonSection: View {
             Group {
                 Toggle(isOn: $prefs.chatButtonInApps) {
                     Text(L("In chat apps"))
-                    Text(L("ChatGPT, Claude, WhatsApp, Telegram, Messages and others."))
+                    Text(L("ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others."))
                 }
                 Picker(L("Position"), selection: $prefs.chatButtonPlacement) {
                     ForEach(ChatButtonPlacement.allCases) { placement in
