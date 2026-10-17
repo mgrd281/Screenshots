@@ -21,7 +21,7 @@ enum PrivateDetails {
             if let raw = UserDefaults.standard.stringArray(forKey: "hiddenDetails") {
                 return Set(raw.compactMap(PrivateDetail.init(rawValue:)))
             }
-            return UserDefaults.standard.bool(forKey: "hidePrivateDetails") ? Set(PrivateDetail.allCases) : []
+            return UserDefaults.standard.bool(forKey: "hidePrivateDetails") ? PrivateDetail.recommended : []
         }
         set { UserDefaults.standard.set(newValue.map(\.rawValue).sorted(), forKey: "hiddenDetails") }
     }
@@ -244,7 +244,7 @@ enum PrivateDetails {
         let pages = handPages(url).sorted { $0.key < $1.key }.map { page, boxes in
             "\(page):" + boxes.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
         }.joined(separator: "/")
-        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(pages)"
+        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(pages)|\(OwnRules.fingerprint)"
     }
 
     private static func modified(_ url: URL) -> Date? {
@@ -262,15 +262,15 @@ enum PrivateDetails {
     }
 
     /// The file, when it last changed, what to cover and the stamp, so a
-    /// screenshot edited in Markup, a new choice, a part hidden by hand or
-    /// new words on the stamp are drawn again.
+    /// screenshot edited in Markup, a new choice, a part hidden by hand, new
+    /// words on the stamp or a changed rule of the owner's are drawn again.
     private static func key(for url: URL, _ chosen: Set<PrivateDetail>, _ hand: [CGRect],
                             _ stamp: TimeStamp.Mark?, _ clean: Bool) -> String? {
         guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path),
               let date = attributes[.modificationDate] as? Date else { return nil }
         let kinds = chosen.map(\.rawValue).sorted().joined(separator: ",")
         let parts = hand.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
-        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(parts)|\(stamp?.key ?? "")|\(clean)"
+        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(parts)|\(stamp?.key ?? "")|\(clean)|\(OwnRules.fingerprint)"
     }
 }
 

@@ -362,7 +362,6 @@
 "Saved to Photos" = "사진에 저장됨";
 "The picture could not be saved." = "이미지를 저장할 수 없습니다.";
 "Save" = "저장";
-"What to cover" = "가릴 항목";
 "Take a screenshot as usual." = "평소처럼 스크린샷을 찍으세요.";
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhone 뒷면을 두 번 탭하세요: 최신 스크린샷이 가려지고 복사되어 채팅에 붙여넣을 수 있습니다.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "한 번만 설정하려면 설정 › 손쉬운 사용 › 터치 › 뒷면 탭 › 이중 탭을 열고 %@을(를) 선택하세요.";
@@ -396,3 +395,30 @@
 "Saved beside the original as %@." = "원본 옆에 %@(으)로 저장했습니다.";
 "Could not save the copy." = "사본을 저장할 수 없습니다.";
 "Choose one photo or PDF at a time." = "사진이나 PDF를 한 번에 하나만 선택하세요.";
+
+/* Privacy: more kinds of private detail, in groups, and the owner's own rules */
+"Usernames" = "사용자 이름";
+"Faces" = "얼굴";
+"ID and tax numbers" = "신분증 및 세금 번호";
+"Passwords and codes" = "비밀번호와 코드";
+"Order and customer numbers" = "주문 번호와 고객 번호";
+"Tracking numbers" = "운송장 번호";
+"Amounts" = "금액";
+"Dates" = "날짜";
+"Links" = "링크";
+"People" = "사람";
+"Money, identity and health" = "돈, 신원, 건강";
+"Orders and documents" = "주문과 문서";
+"Check All" = "모두 선택";
+"Recommended" = "추천";
+"Uncheck All" = "모두 해제";
+"Also hide" = "추가로 가리기";
+"Add Rule" = "규칙 추가";
+"Word" = "단어";
+"After a label" = "라벨 뒤";
+"Pattern" = "패턴";
+"A word, like your shop’s name" = "단어, 예를 들어 상점 이름";
+"A label, like Customer number" = "라벨, 예를 들어 고객 번호";
+"A pattern, like SKU-[0-9]+" = "패턴, 예를 들어 SKU-[0-9]+";
+"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "단어는 나타나는 곳마다 가려집니다. 라벨 뒤에서는 그 다음 내용이 가려집니다. 줄의 나머지이거나 아래 줄입니다.";
+"This pattern cannot be read." = "이 패턴을 읽을 수 없습니다.";

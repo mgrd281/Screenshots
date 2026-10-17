@@ -362,7 +362,6 @@
 "Saved to Photos" = "حُفظت في الصور";
 "The picture could not be saved." = "تعذّر حفظ الصورة.";
 "Save" = "حفظ";
-"What to cover" = "ما يُغطّى";
 "Take a screenshot as usual." = "التقط لقطة شاشة كالمعتاد.";
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "انقر مرتين على ظهر الآيفون: تُغطّى أحدث لقطة شاشة وتُنسخ، جاهزة للّصق في الدردشة.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "لضبط ذلك مرة واحدة، افتح الإعدادات › تسهيلات الاستخدام › اللمس › النقر على الظهر › نقر مزدوج، واختر %@.";
@@ -396,3 +395,30 @@
 "Saved beside the original as %@." = "حُفظت بجانب الأصل باسم %@.";
 "Could not save the copy." = "تعذّر حفظ النسخة.";
 "Choose one photo or PDF at a time." = "اختر صورة واحدة أو ملف PDF واحدًا في كل مرة.";
+
+/* Privacy: more kinds of private detail, in groups, and the owner's own rules */
+"Usernames" = "أسماء المستخدمين";
+"Faces" = "الوجوه";
+"ID and tax numbers" = "أرقام الهوية والأرقام الضريبية";
+"Passwords and codes" = "كلمات المرور والرموز";
+"Order and customer numbers" = "أرقام الطلبات والعملاء";
+"Tracking numbers" = "أرقام تتبع الشحنات";
+"Amounts" = "المبالغ";
+"Dates" = "التواريخ";
+"Links" = "الروابط";
+"People" = "الأشخاص";
+"Money, identity and health" = "المال والهوية والصحة";
+"Orders and documents" = "الطلبات والمستندات";
+"Check All" = "تحديد الكل";
+"Recommended" = "الموصى به";
+"Uncheck All" = "إلغاء تحديد الكل";
+"Also hide" = "إخفاء أيضًا";
+"Add Rule" = "إضافة قاعدة";
+"Word" = "كلمة";
+"After a label" = "بعد تسمية";
+"Pattern" = "نمط";
+"A word, like your shop’s name" = "كلمة، مثل اسم متجرك";
+"A label, like Customer number" = "تسمية، مثل رقم العميل";
+"A pattern, like SKU-[0-9]+" = "نمط، مثل SKU-[0-9]+";
+"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "تُغطّى الكلمات أينما ظهرت. وبعد التسمية يُغطّى ما يليها: بقية السطر، أو السطر الذي تحته.";
+"This pattern cannot be read." = "تعذّر قراءة هذا النمط.";

@@ -305,6 +305,47 @@ final class Preferences: ObservableObject {
             })
     }
 
+    /// Every kind, the recommended ones, or none, from the buttons over the
+    /// list.
+    func hide(_ kinds: Set<PrivateDetail>) {
+        guard kinds != PrivateDetails.details else { return }
+        change {
+            PrivateDetails.details = kinds
+            line.readPrivateDetails()
+        }
+    }
+
+    /// The owner's own rules, edited in place. They are saved a moment
+    /// after the typing stops, since each change reads every photo again.
+    @Published var rules = OwnRules.all
+    private var rulesSave: Task<Void, Never>?
+
+    func addRule() {
+        rules.append(OwnRule())
+        saveRules()
+    }
+
+    func removeRule(_ rule: OwnRule) {
+        rules.removeAll { $0.id == rule.id }
+        saveRules()
+    }
+
+    func rulesChanged() {
+        rulesSave?.cancel()
+        rulesSave = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(800))
+            guard !Task.isCancelled else { return }
+            self?.saveRules()
+        }
+    }
+
+    func saveRules() {
+        rulesSave?.cancel()
+        let before = OwnRules.fingerprint
+        OwnRules.all = rules
+        if OwnRules.fingerprint != before { line.readPrivateDetails() }
+    }
+
     /// Set to bring the window up on Permissions.
     @Published var showsPermissions = false
 
@@ -949,15 +990,39 @@ private struct PrivacyPane: View {
     var body: some View {
         Form {
             Section {
-                ForEach(PrivateDetail.allCases, id: \.self) { detail in
-                    Toggle(detail.title, isOn: prefs.hides(detail))
+                // Every kind at once, the recommended ones, or none.
+                HStack(spacing: 8) {
+                    Button(L("Check All")) { prefs.hide(Set(PrivateDetail.allCases)) }
+                    Button(L("Recommended")) { prefs.hide(PrivateDetail.recommended) }
+                    Button(L("Uncheck All")) { prefs.hide([]) }
                 }
+                .controlSize(.small)
             } header: {
                 Text(L("Hide private details"))
             } footer: {
                 Text(L("What is checked is covered in whatever leaves the line"))
                     .foregroundStyle(.secondary)
             }
+            ForEach(PrivateDetail.Group.allCases, id: \.self) { group in
+                Section(group.title) {
+                    ForEach(group.kinds, id: \.self) { detail in
+                        Toggle(detail.title, isOn: prefs.hides(detail))
+                    }
+                }
+            }
+            Section {
+                ForEach($prefs.rules) { $rule in
+                    OwnRuleRow(rule: $rule) { prefs.removeRule(rule) }
+                }
+                Button(L("Add Rule")) { prefs.addRule() }
+            } header: {
+                Text(L("Also hide"))
+            } footer: {
+                Text(L("Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below."))
+                    .foregroundStyle(.secondary)
+            }
+            .onChange(of: prefs.rules) { _, _ in prefs.rulesChanged() }
+            .onDisappear { prefs.saveRules() }
             Section(L("Preview")) {
                 if let photo = newest {
                     Image(nsImage: photo.thumb)
@@ -973,6 +1038,46 @@ private struct PrivacyPane: View {
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+/// One rule of the owner's own: what kind it is, the text, and a way to
+/// take it away. A pattern that cannot be read says so under the field.
+private struct OwnRuleRow: View {
+    @Binding var rule: OwnRule
+    let remove: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                Picker(rule.kind.title, selection: $rule.kind) {
+                    ForEach(OwnRule.Kind.allCases, id: \.self) { kind in
+                        Text(kind.title).tag(kind)
+                    }
+                }
+                .labelsHidden()
+                .frame(width: 160)
+                TextField(rule.kind.title, text: $rule.text, prompt: Text(rule.kind.prompt))
+                    .labelsHidden()
+                    .textFieldStyle(.roundedBorder)
+                if !rule.isReadable {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                        .accessibilityHidden(true)
+                }
+                Button(action: remove) {
+                    Image(systemName: "minus.circle")
+                }
+                .buttonStyle(.borderless)
+                .help(L("Remove"))
+                .accessibilityLabel(L("Remove"))
+            }
+            if !rule.isReadable {
+                Text(L("This pattern cannot be read."))
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+        }
     }
 }
 

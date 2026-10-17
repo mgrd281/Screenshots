@@ -9,12 +9,12 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    ForEach(PrivateDetail.allCases, id: \.self) { detail in
-                        Toggle(detail.title, isOn: binding(for: detail))
+                ForEach(PrivateDetail.Group.allCases, id: \.self) { group in
+                    Section(group.title) {
+                        ForEach(group.kinds, id: \.self) { detail in
+                            Toggle(detail.title, isOn: binding(for: detail))
+                        }
                     }
-                } header: {
-                    Text(L("What to cover"))
                 }
 
                 Section {
