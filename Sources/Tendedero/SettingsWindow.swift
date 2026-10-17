@@ -373,6 +373,22 @@ final class Preferences: ObservableObject {
 
     func chooseBookkeepingFolder() {
         if let url = Bookkeeping.chooseFolder() { bookkeepingFolder = url.lastPathComponent }
+        refreshPackMonths()
+    }
+
+    /// The months the folder's table has receipts for, newest first, and
+    /// the one chosen for a pack.
+    @Published var packMonths: [String] = []
+    @Published var packMonth = ""
+
+    func refreshPackMonths() {
+        packMonths = Bookkeeping.months()
+        if !packMonths.contains(packMonth) { packMonth = packMonths.first ?? "" }
+    }
+
+    func makeReceiptsPack() {
+        guard !packMonth.isEmpty else { return }
+        Bookkeeping.makePack(month: packMonth)
     }
 
     // MARK: Shop header
@@ -1329,12 +1345,29 @@ private struct BookkeepingSection: View {
                 Text(L("Receipts saved for the books go here, each with a line in Snapfly.csv."))
             }
             TextField(L("Email"), text: $prefs.bookkeepingAddress, prompt: Text(L("Who keeps the books")))
+            LabeledContent {
+                HStack(spacing: 8) {
+                    Picker(L("Month"), selection: $prefs.packMonth) {
+                        ForEach(prefs.packMonths, id: \.self) { month in
+                            Text(ReceiptsPack.title(month: month)).tag(month)
+                        }
+                    }
+                    .labelsHidden()
+                    .fixedSize()
+                    SettingsButton(L("Make PDF")) { prefs.makeReceiptsPack() }
+                }
+                .disabled(prefs.packMonths.isEmpty)
+            } label: {
+                Text(L("Monthly pack"))
+                Text(L("A month's receipts in one PDF, with a page listing them, to hand to your tax advisor."))
+            }
         } header: {
             Text(L("Bookkeeping"))
         } footer: {
             Text(L("A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total."))
                 .foregroundStyle(.secondary)
         }
+        .onAppear { prefs.refreshPackMonths() }
     }
 }
 

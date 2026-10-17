@@ -398,6 +398,12 @@ so it is clearly from your shop and still a screenshot. Set the name and
 the logo under Line in Settings; the order shows unless order numbers are
 covered.
 
+Once a month, Monthly pack in the same place makes one PDF of a month's
+receipts for your tax advisor, beside them in the folder: a page listing
+each one with its day, order, total, page and fingerprint, the sum of the
+totals when they share a currency, then every receipt on a page of its
+own. It helps hand them on; it is not an archive of record.
+
 <br>
 
 ## Translated and described, on your Mac.
@@ -529,6 +535,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/OrderCard.swift` | The parts of an order read off a screenshot, for Order Details: number, date, total, name, address, email, phone, tracking, code |
 | `Bookkeeping.swift` | Save for Bookkeeping and Email to Bookkeeping…: a covered copy named for its day, order and total, and its line in Snapfly.csv |
 | `ShopHeader.swift` | Send with Shop Header: the shop's name and logo, and the band drawn above the covered screenshot |
+| `ReceiptsPack.swift` | The monthly pack: Snapfly.csv read back, the sum of the totals, and one PDF with the list and a page a receipt |
 | `SendLog.swift` | What was sent into which chat, when and with what covered, and the table it exports |
 | `CaptionBar.swift` | The line over the chat button to write a message sent with the photos |
 | `ChatLayouts.swift` | Where the chat button sits over each chat it knows, on a new chat and once started |
