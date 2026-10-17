@@ -398,7 +398,10 @@ as long as the History keeps photos.
 Order Details, in a photo's menu, reads the order a screenshot shows: its
 number, the date, the total (the amount by a word like Total or Gesamt,
 else the largest), the name, the address, the email, the phone, the
-tracking number, and what a QR code says. Each part has its own copy
+tracking number, and what a QR code says. A payment code, the GiroCode on
+European invoices or the Swiss QR bill, reads as the account in groups of
+four, who is paid, the amount and the reference, and its amount stands in
+for the total when the text shows none. Each part has its own copy
 button; Copy All copies them as lines, and Copy Row as one row with a tab
 between the parts, always in the same order, to paste into a spreadsheet.
 It is read on your Mac as the screenshot shows it, not covered.
@@ -556,7 +559,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `ScreenshotWatcher.swift` | Notices new screenshots |
 | `History.swift` | What left the line, kept for 7 or 30 days |
 | `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again; Sent lists what went where |
-| `Shared/OrderCard.swift` | The parts of an order read off a screenshot, for Order Details: number, date, total, name, address, email, phone, tracking, code |
+| `Shared/OrderCard.swift` | The parts of an order read off a screenshot, for Order Details: number, date, total, name, address, email, phone, tracking, code, with a GiroCode or Swiss QR bill read as a transfer |
 | `Bookkeeping.swift` | Save for Bookkeeping and Email to Bookkeeping…: a covered copy named for its day, order and total, and its line in Snapfly.csv |
 | `ShopHeader.swift` | Send with Shop Header: the shop's name and logo, and the band drawn above the covered screenshot |
 | `ReceiptsPack.swift` | The monthly pack: Snapfly.csv read back, the sum of the totals, and one PDF with the list and a page a receipt |
