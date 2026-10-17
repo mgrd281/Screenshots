@@ -134,6 +134,10 @@ final class OutsideTests: XCTestCase {
         let document = try XCTUnwrap(PDFDocument(url: copy))
         XCTAssertEqual(document.pageCount, 2)
         XCTAssertTrue((document.string ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        // What was covered adds up over the pages: the IBANs, and the box by hand.
+        let made = try XCTUnwrap(DocumentCover.covering(pdf, [.bank], hand: [2: [CGRect(x: 0.1, y: 0.1, width: 0.5, height: 0.2)]]))
+        XCTAssertEqual(made.report.hand, 1)
+        XCTAssertGreaterThanOrEqual(made.report.kinds[.bank] ?? 0, 1, made.report.summary)
     }
 
     func testHandBoxesOfPagesBelongToTheirFile() {
