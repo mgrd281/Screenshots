@@ -1,4 +1,4 @@
-// The website's pages, languages, the look switch (airmail, classic, bold),
+// The website's pages, languages, the look switch (classic, bold),
 // the theme switcher and Reduce Motion, checked in a real browser. These
 // tests read the site; they never change it.
 const { test, expect } = require("@playwright/test");
@@ -39,7 +39,7 @@ for (const [dir, lang, direction] of languages) for (const path of pages) {
   });
 }
 
-const lookOf = (page) => page.evaluate(() => document.documentElement.dataset.look || "airmail");
+const lookOf = (page) => page.evaluate(() => document.documentElement.dataset.look || "classic");
 const edgeOf = (page) => page.evaluate(() => getComputedStyle(document.body, "::after").content);
 
 for (const look of ["classic", "bold"]) for (const [dir, lang] of languages) for (const path of ["", "privacy.html"]) {
@@ -56,21 +56,24 @@ for (const look of ["classic", "bold"]) for (const [dir, lang] of languages) for
   });
 }
 
-test("the airmail look is the default", async ({ page }) => {
+test("the Mac desktop look is the default, and there is no airmail look", async ({ page }) => {
   await page.goto("");
-  expect(await lookOf(page)).toBe("airmail");
+  expect(await lookOf(page)).toBe("classic");
   await expect(page.locator(".look-switch")).toHaveAttribute("role", "radiogroup");
-  await expect(page.locator(".look-chip")).toHaveCount(3);
-  await expect(page.locator('.look-chip[aria-checked="true"]')).toHaveAttribute("data-look-pick", "airmail");
-  expect(await edgeOf(page), "the chevron edge is drawn").not.toBe("none");
+  await expect(page.locator(".look-chip")).toHaveCount(2);
+  await expect(page.locator('.look-chip[aria-checked="true"]')).toHaveAttribute("data-look-pick", "classic");
+  expect(await edgeOf(page), "no chevron edge").toBe("none");
+  await expect(page.locator(".airmail")).toBeHidden();
 });
 
-test("choosing the classic look is kept from the first paint, in every theme", async ({ page }) => {
+test("the classic look is kept from the first paint, in every theme", async ({ page }) => {
   await page.addInitScript(() => {
-    document.addEventListener("DOMContentLoaded", () => { window.__first = document.documentElement.dataset.look || "airmail"; });
+    document.addEventListener("DOMContentLoaded", () => { window.__first = document.documentElement.dataset.look || "classic"; });
   });
   const errors = watchErrors(page);
   await page.goto("de/", { waitUntil: "networkidle" });
+  await page.locator('[data-look-pick="bold"]').click();
+  await expect.poll(() => lookOf(page)).toBe("bold");
   await page.locator('[data-look-pick="classic"]').click();
   await expect.poll(() => lookOf(page)).toBe("classic");
   expect(await page.evaluate(() => localStorage.getItem("snapfly-look"))).toBe("classic");
@@ -82,16 +85,12 @@ test("choosing the classic look is kept from the first paint, in every theme", a
   await expect.poll(() => brandOf(page)).toBe("orange");
   expect(await lookOf(page)).toBe("classic");
   await expect(page.locator('meta[name="theme-color"]').first()).toHaveAttribute("content", "#FAFAF8");
-  // And back to airmail.
-  await page.locator('[data-look-pick="airmail"]').click();
-  await expect.poll(() => lookOf(page)).toBe("airmail");
-  expect(await edgeOf(page)).not.toBe("none");
   expect(errors).toEqual([]);
 });
 
 test("choosing the bold look is kept from the first paint, with its band running", async ({ page }) => {
   await page.addInitScript(() => {
-    document.addEventListener("DOMContentLoaded", () => { window.__first = document.documentElement.dataset.look || "airmail"; });
+    document.addEventListener("DOMContentLoaded", () => { window.__first = document.documentElement.dataset.look || "classic"; });
   });
   const errors = watchErrors(page);
   await page.goto("ar/", { waitUntil: "networkidle" });
@@ -120,11 +119,9 @@ test("the arrows move between the looks", async ({ page }) => {
   await page.goto("", { waitUntil: "networkidle" });
   await page.locator('.look-chip[aria-checked="true"]').focus();
   await page.keyboard.press("ArrowRight");
-  await expect.poll(() => lookOf(page)).toBe("classic");
-  await page.keyboard.press("ArrowRight");
   await expect.poll(() => lookOf(page)).toBe("bold");
   await page.keyboard.press("ArrowRight");
-  await expect.poll(() => lookOf(page)).toBe("airmail");
+  await expect.poll(() => lookOf(page)).toBe("classic");
   await page.keyboard.press("ArrowLeft");
   await expect.poll(() => lookOf(page)).toBe("bold");
 });
@@ -289,7 +286,7 @@ test("a mouse picks each look and brand chip 24 pt tall", async ({ page }, info)
     const hit = (y) => { const el = document.elementFromPoint(x, y); return !!el && chip.contains(el); };
     return { name: chip.getAttribute("aria-label"), above: hit(r.top - 0.5), below: hit(r.bottom + 0.5) };
   }));
-  expect(reach.length).toBe(6);
+  expect(reach.length).toBe(5);
   for (const chip of reach) expect.soft(chip.above && chip.below, chip.name).toBe(true);
 });
 

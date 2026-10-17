@@ -586,7 +586,7 @@
     bold: { sunset: ["#FF5E62", "#0F0C0D"], emerald: ["#5CC9B2", "#0B1213"], orange: ["#EC632C", "#121110"] },
   };
   const paintBars = () => {
-    const look = root.dataset.look in bars ? root.dataset.look : "airmail";
+    const look = root.dataset.look in bars ? root.dataset.look : "classic";
     const brand = root.dataset.brand in bars[look] ? root.dataset.brand : "sunset";
     document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
       meta.setAttribute("content", bars[look][brand][/dark/.test(meta.media) ? 1 : 0]);
@@ -619,7 +619,7 @@
 
   // One radio group of swatches, kept in step with <html data-NAME>; the
   // first value is the default and leaves the attribute off.
-  function setUpSwitch(group, name, values) {
+  function setUpSwitch(group, name, values, keepDefault = false) {
     const chips = [...group.querySelectorAll(`[data-${name}-pick]`)];
     const pick = (chip) => chip.dataset[`${name}Pick`];
     const known = (value) => (values.includes(value) ? value : values[0]);
@@ -633,7 +633,7 @@
       paintBars();
     };
     const apply = (value) => {
-      if (value === values[0]) delete root.dataset[name];
+      if (value === values[0] && !keepDefault) delete root.dataset[name];
       else root.dataset[name] = value;
       show(value);
     };
@@ -664,7 +664,7 @@
   const brandSwitch = document.querySelector(".brand-switch");
   if (brandSwitch) setUpSwitch(brandSwitch, "brand", ["sunset", "emerald", "orange"]);
   const lookSwitch = document.querySelector(".look-switch");
-  if (lookSwitch) setUpSwitch(lookSwitch, "look", ["airmail", "classic", "bold"]);
+  if (lookSwitch) setUpSwitch(lookSwitch, "look", ["classic", "bold"], true);
 
   // Safari on iPhone and iPad shows a pressed state only where a touch is
   // listened for; this listener does nothing else.

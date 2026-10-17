@@ -800,6 +800,11 @@ of its own.
 
 ## Website
 
+> **Airmail removed (October 2026).** The owner asked to drop the airmail
+> look. The Mac desktop is now the default, the look switch offers it and bold
+> colour, and `<html data-look>` is always set. The airmail passages below
+> describe the base styles in `site.css` that those two looks restyle.
+
 The site in `website/` (GitHub Pages) sells the app and hosts the privacy
 policy and support pages that App Store Connect links to. It extends this
 system to a web page. The brief and direction contract are in

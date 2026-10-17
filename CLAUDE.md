@@ -87,6 +87,10 @@ the website's footer. Both stay.
     Its Content Security Policy lets in nothing from another host, which also
     keeps Vercel's toolbar off the previews, and allows the inline scripts
     (`INLINE_JS` in `build.py`) by their hashes. The build stops if they drift.
+  - **The airmail look was removed at the owner's request (October 2026).**
+    The site now has two looks, the Mac desktop (the default) and bold
+    colour. Its envelope rules remain in `site.css` as the base the two
+    restyle; `DESIGN.md`'s airmail passages describe that base.
   - The page is an airmail envelope: aerogramme paper inside a chevron edge
     round the window, every screenshot a perforated stamp on the line, a
     postmark with the time on what is sent. Mac windows on it stay native.

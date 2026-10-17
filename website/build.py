@@ -33,7 +33,7 @@ REDIRECT_JS = ('try{if(!localStorage.getItem("snapfly-lang")){var l=(navigator.l
 # device, set before the page paints, and the mark that scripts run.
 BRAND_JS = ('try{var b=localStorage.getItem("snapfly-brand");if(b==="emerald"||b==="orange")'
             'document.documentElement.setAttribute("data-brand",b);'
-            'var k=localStorage.getItem("snapfly-look");if(k==="classic"||k==="bold")document.documentElement.setAttribute("data-look",k)}catch(e){}'
+            'var k=localStorage.getItem("snapfly-look");document.documentElement.setAttribute("data-look",k==="bold"?"bold":"classic")}catch(e){}'
             'document.documentElement.classList.add("js")')
 INLINE_JS = (BRAND_JS, REDIRECT_JS)
 STATIC = HERE / "static"
@@ -305,10 +305,10 @@ def menubar(lang, page):
     # swatches; site.js keeps the checked ones in step with <html data-look>
     # and <html data-brand>.
     looks = "".join(
-        f'<button type="button" class="look-chip" role="radio" aria-checked="{str(key == "airmail").lower()}"'
-        f' tabindex="{0 if key == "airmail" else -1}" data-look-pick="{key}" aria-label="{esc(t["look_" + key])}"'
+        f'<button type="button" class="look-chip" role="radio" aria-checked="{str(key == "classic").lower()}"'
+        f' tabindex="{0 if key == "classic" else -1}" data-look-pick="{key}" aria-label="{esc(t["look_" + key])}"'
         f' data-tip="{esc(t["look_" + key])}"><span class="look-pic look-pic-{key}"></span></button>'
-        for key in ("airmail", "classic", "bold"))
+        for key in ("classic", "bold"))
     brands = "".join(
         f'<button type="button" class="brand-chip" role="radio" aria-checked="{str(key == "sunset").lower()}"'
         f' tabindex="{0 if key == "sunset" else -1}" data-brand-pick="{key}" aria-label="{esc(t["brand_" + key])}"'
@@ -377,7 +377,7 @@ def head(lang, page, title, desc):
         redirect = f"<script>{REDIRECT_JS}</script>"
     p = prefix(lang)
     return f"""<!doctype html>
-<html lang="{lang}" dir="{t["dir"]}">
+<html lang="{lang}" dir="{t["dir"]}" data-look="classic">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
