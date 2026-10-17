@@ -128,6 +128,9 @@ by a visitor.
 - **Approval.** Claude Code shows the server as "Pending approval" until
   someone approves it in an interactive session; `claude mcp list` shows the
   state.
+- **Checked on October 17, 2026:** the server answered "Monthly quota
+  exceeded". The shared free quota is used up, so it returns documentation
+  only once the key above is set.
 
 ## Playwright and Playwright MCP
 
@@ -144,7 +147,8 @@ by a visitor.
   - **Checked on October 15, 2026,** by driving it the way Claude Code
     does (initialize, list tools, call them): it opened the German page,
     read its title, language and the three theme swatches, chose Emerald
-    Petrol and saw it stored.
+    Petrol and saw it stored. Again on October 17, 2026: it opened the
+    published Arabic page and read its title.
 - **Playwright Test,** in `site-tests/`, for the website: every page in
   three languages at desktop and phone sizes, the theme switcher, Reduce
   Motion. 34 tests, all passing on October 15, 2026. See
@@ -179,8 +183,8 @@ by a visitor.
     running the installer.
   - The hosted **Motion docs MCP server** (`https://mcp.motion.dev`), type
     `http`, no key. Its tool `search-motion-docs` takes a `searchTerm` and a
-    `platform` (`js`, `react` or `vue`). Checked on October 15, 2026: a
-    search for spring animations in `js` returned the docs.
+    `platform` (`js`, `react` or `vue`). Checked on October 15 and again
+    on October 17, 2026: a search for springs in `js` returned the docs.
 - **Not used:**
   - `npx motion-ai`. It runs a package from npm and writes into the user's
     editor settings.
@@ -251,7 +255,22 @@ by a visitor.
 - **GSAP, Rive, dotLottie.** Runtime libraries for the website, not tools
   for the agent. None has a job that CSS, SVG and the Web Animations API
   don't already do; each would add weight a visitor downloads. They are
-  documented as future options in `MOTION_SYSTEM.md`.
+  documented as future options in `MOTION_SYSTEM.md`. Asked for again on
+  October 17, 2026; there is still no job for them.
+- **shadcn/ui and daisyUI** (reviewed October 17, 2026). Component kits for
+  websites built with React and Tailwind CSS. shadcn/ui copies React
+  components into a project, and its MCP server (`npx shadcn mcp`) does the
+  same from a registry. daisyUI is a Tailwind plugin. The website is plain
+  HTML and CSS written by `build.py`, with no React, Tailwind or Node build
+  step, and the app is SwiftUI. Either kit would mean rebuilding the site,
+  and its components would replace the three looks the owner chose.
+- **Lucide and Phosphor** (reviewed October 17, 2026). Icon sets. The app
+  uses SF Symbols, and the website draws its own icons in `build.py` to
+  match them ("Iconography" in `BRAND_IDENTITY.md`). A second family would
+  break that match.
+- **Floating UI** (reviewed October 17, 2026). A script that places menus
+  and tooltips next to what opens them. The website's menus already open
+  in place with CSS alone, so it would be weight with no job.
 - **Vercel's React, deploy and optimisation skills.** As before, under "Web
   Interface Guidelines".
 
