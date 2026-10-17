@@ -392,6 +392,12 @@ keeps your books, the same name as its subject. Choose the folder and the
 address in Settings, under Line. Whatever you cover stays out of the name
 and the table too.
 
+For a customer, Send with Shop Header in a photo's menu sends it covered,
+under a band with your shop's name and logo, the order number and the day,
+so it is clearly from your shop and still a screenshot. Set the name and
+the logo under Line in Settings; the order shows unless order numbers are
+covered.
+
 <br>
 
 ## Translated and described, on your Mac.
@@ -522,6 +528,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again; Sent lists what went where |
 | `Shared/OrderCard.swift` | The parts of an order read off a screenshot, for Order Details: number, date, total, name, address, email, phone, tracking, code |
 | `Bookkeeping.swift` | Save for Bookkeeping and Email to Bookkeeping…: a covered copy named for its day, order and total, and its line in Snapfly.csv |
+| `ShopHeader.swift` | Send with Shop Header: the shop's name and logo, and the band drawn above the covered screenshot |
 | `SendLog.swift` | What was sent into which chat, when and with what covered, and the table it exports |
 | `CaptionBar.swift` | The line over the chat button to write a message sent with the photos |
 | `ChatLayouts.swift` | Where the chat button sits over each chat it knows, on a new chat and once started |

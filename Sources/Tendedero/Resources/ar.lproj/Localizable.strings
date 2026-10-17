@@ -506,3 +506,14 @@
 "Image" = "صورة";
 "Plain file names" = "أسماء ملفات بسيطة";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "تخرج الصور ملفاتٍ جديدة، بلا ملاحظات عن متى وأين وبماذا صُنعت. ومع الأسماء البسيطة تُسمّى أيضاً «صورة»، لا باسم وقت التقاطها.";
+"Send with Shop Header" = "إرسال مع شريط المتجر";
+"Add your shop's name or logo under Line in Settings." = "أضف اسم متجرك أو شعاره في الإعدادات، تحت «الحبل».";
+"Adding the shop header…" = "جارٍ إضافة شريط المتجر…";
+"Could not add the shop header." = "تعذّرت إضافة شريط المتجر.";
+"Choose your shop's logo." = "اختر شعار متجرك.";
+"Shop name" = "اسم المتجر";
+"Your shop's name" = "اسم متجرك";
+"Logo" = "الشعار";
+"A square picture works best." = "الصورة المربّعة هي الأنسب.";
+"Shop header" = "شريط المتجر";
+"Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "«إرسال مع شريط المتجر» في قائمة الصورة يضع فوق لقطة الشاشة المغطّاة شريطاً فيه اسم متجرك وشعاره ورقم الطلب واليوم.";

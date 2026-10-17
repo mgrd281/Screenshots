@@ -506,3 +506,14 @@
 "Image" = "Bild";
 "Plain file names" = "Schlichte Dateinamen";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Bilder gehen als frische Dateien hinaus, ohne Angaben dazu, wann, wo oder womit sie entstanden sind. Mit schlichten Dateinamen heißen sie außerdem „Bild“ statt nach dem Zeitpunkt der Aufnahme.";
+"Send with Shop Header" = "Mit Shop-Kopf senden";
+"Add your shop's name or logo under Line in Settings." = "Füge in den Einstellungen unter „Leine“ den Namen oder das Logo deines Shops hinzu.";
+"Adding the shop header…" = "Shop-Kopf wird hinzugefügt …";
+"Could not add the shop header." = "Der Shop-Kopf konnte nicht hinzugefügt werden.";
+"Choose your shop's logo." = "Wähle das Logo deines Shops.";
+"Shop name" = "Shopname";
+"Your shop's name" = "Name deines Shops";
+"Logo" = "Logo";
+"A square picture works best." = "Ein quadratisches Bild passt am besten.";
+"Shop header" = "Shop-Kopf";
+"Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "„Mit Shop-Kopf senden“ im Menü eines Fotos setzt einen Streifen mit dem Namen und Logo deines Shops, der Bestellung und dem Tag über das verdeckte Bildschirmfoto.";

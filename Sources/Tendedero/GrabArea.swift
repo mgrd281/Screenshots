@@ -111,6 +111,10 @@ struct GrabArea: NSViewRepresentable {
             }
             if let app = Paste.frontApp?.localizedName {
                 menu.addItem(ClosureMenuItem(String(format: L("Paste into %@"), app), symbol: "paperplane") { line.paste(id) })
+                if isImage {
+                    // For a customer: under a band with the shop's name, logo, order and day.
+                    menu.addItem(ClosureMenuItem(L("Send with Shop Header"), symbol: "storefront") { line.sendWithHeader(id) })
+                }
             }
             if isImage {
                 // The photos picked with it, or only this one, a page each.

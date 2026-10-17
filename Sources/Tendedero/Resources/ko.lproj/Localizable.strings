@@ -506,3 +506,14 @@
 "Image" = "이미지";
 "Plain file names" = "간단한 파일 이름";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "이미지는 언제, 어디서, 무엇으로 만들었는지에 대한 정보 없이 새 파일로 나갑니다. 간단한 파일 이름을 켜면 찍은 시간 대신 ‘이미지’라는 이름도 붙습니다.";
+"Send with Shop Header" = "상점 머리글과 함께 보내기";
+"Add your shop's name or logo under Line in Settings." = "설정의 ‘빨랫줄’에서 상점 이름이나 로고를 추가하세요.";
+"Adding the shop header…" = "상점 머리글 추가 중…";
+"Could not add the shop header." = "상점 머리글을 추가할 수 없어요.";
+"Choose your shop's logo." = "상점 로고를 선택하세요.";
+"Shop name" = "상점 이름";
+"Your shop's name" = "내 상점 이름";
+"Logo" = "로고";
+"A square picture works best." = "정사각형 이미지가 가장 좋아요.";
+"Shop header" = "상점 머리글";
+"Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "사진 메뉴의 ‘상점 머리글과 함께 보내기’는 가린 스크린샷 위에 상점 이름과 로고, 주문, 날짜가 담긴 띠를 붙여요.";
