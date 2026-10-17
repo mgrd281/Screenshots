@@ -191,8 +191,9 @@ left alone.
 Choose under Privacy in Settings what to cover, in three groups. People:
 names, addresses, emails, phone numbers, usernames and faces. Money,
 identity and health: bank cards and accounts, ID and tax numbers,
-passwords and codes, health details. Orders and documents: order and
-customer numbers, tracking numbers, amounts, dates and links. Check All,
+passwords and codes, QR codes and barcodes, health details. Orders and
+documents: order and customer numbers, tracking numbers, amounts, dates and
+links. Check All,
 Recommended and Uncheck All set the whole list at once; the recommended
 kinds are the ones private in nearly every screenshot, and the amount or
 the date a screenshot is often sent for wait to be chosen. Whatever leaves
@@ -202,6 +203,13 @@ each one that has something covered. Copy Text leaves them out too. Anything
 it misses, hide by hand with Hide Part in a photo's menu. Labels like Billing
 address, Recipient, Kundennummer or Diagnosis tell it where a whole block is
 private.
+
+QR codes and barcodes are covered whole, since nobody can read what they
+hold: a payment, a sign-in, a ticket or a parcel. The number printed under
+a barcode goes with it. Turned off, a code is still covered when what it
+holds is a kind you chose, like the IBAN in a payment code under bank
+accounts or a link under links. A kind added in an update starts on when it
+is recommended and you cover anything; turn it off and it stays off.
 
 Under Also hide, add rules of your own: a word, like your shop's name,
 covered wherever it appears; a label, like Customer number, whose value is
@@ -432,7 +440,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
-| `Shared/PrivateText.swift` | Finds private details in a screenshot, fifteen kinds and the owner's own rules, and covers them, on the Mac and the iPhone |
+| `Shared/PrivateText.swift` | Finds private details in a screenshot, sixteen kinds and the owner's own rules, and covers them, on the Mac and the iPhone |
 | `Shared/OwnRules.swift` | The owner's own rules: a word, a label or a pattern, kept with the settings |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |

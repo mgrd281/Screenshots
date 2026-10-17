@@ -1,4 +1,5 @@
 import CoreGraphics
+import CoreImage
 import CoreText
 import Foundation
 import XCTest
@@ -16,6 +17,8 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertTrue(PrivateDetail.recommended.isSuperset(of: [.names, .addresses, .emails, .phones, .bank, .health]))
         XCTAssertTrue(PrivateDetail.recommended.contains(.ids))
         XCTAssertTrue(PrivateDetail.recommended.contains(.codes))
+        XCTAssertTrue(PrivateDetail.recommended.contains(.barcodes))
+        XCTAssertEqual(PrivateDetail.barcodes.group, .sensitive)
         // What a screenshot is usually sent for stays visible until chosen.
         for kind in [PrivateDetail.amounts, .dates, .links, .orders, .faces] {
             XCTAssertFalse(PrivateDetail.recommended.contains(kind), "\(kind) should wait to be chosen")
@@ -80,6 +83,79 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertEqual(pieces(text, [.phones]), ["+49 30 1234 5678"])
     }
 
+    // MARK: QR codes and barcodes
+
+    func testWhatACodeHoldsIsReadByItsFormatAndItsText() {
+        let giro = "BCD\n002\n1\nSCT\nBFSWDE33BER\nLena Hoffmann\nDE89370400440532013000\nEUR12.30\n\n\nRechnung 1024"
+        XCTAssertTrue(Finder.kinds(ofCode: giro).isSuperset(of: [.bank, .names]))
+        XCTAssertTrue(Finder.kinds(ofCode: "otpauth://totp/Shop:lena?secret=JBSWY3DPEHPK3PXP&issuer=Shop").contains(.codes))
+        XCTAssertTrue(Finder.kinds(ofCode: "WIFI:T:WPA;S:Laden;P:geheim123;;").contains(.codes))
+        let card = "BEGIN:VCARD\nVERSION:3.0\nFN:Lena Hoffmann\nTEL:+49 30 1234 5678\nEND:VCARD"
+        XCTAssertTrue(Finder.kinds(ofCode: card).isSuperset(of: [.names, .phones]))
+        XCTAssertTrue(Finder.kinds(ofCode: "https://shop.example.com/t/1024").contains(.links))
+        XCTAssertTrue(Finder.kinds(ofCode: "M1HOFFMANN/LENA       E1A2B3C FRAJFKLH 0400").isSuperset(of: [.names, .ids]))
+        XCTAssertTrue(Finder.kinds(ofCode: "00340434161094015902").contains(.tracking))
+        XCTAssertEqual(Finder.kinds(ofCode: "Hello"), [])
+    }
+
+    func testEveryCodeIsCoveredWhenCodesAreChosenOtherwiseByWhatItHolds() {
+        let giro = "BCD\n002\n1\nSCT\nBFSWDE33BER\nLena Hoffmann\nDE89370400440532013000\nEUR12.30"
+        XCTAssertTrue(Finder.coversCode(nil, [.barcodes]), "a code that is not text is covered too")
+        XCTAssertTrue(Finder.coversCode("Hello", [.barcodes]))
+        XCTAssertFalse(Finder.coversCode(nil, [.bank]))
+        XCTAssertTrue(Finder.coversCode(giro, [.bank]))
+        XCTAssertFalse(Finder.coversCode("https://shop.example.com/t/1024", [.bank]))
+        XCTAssertTrue(Finder.coversCode("https://shop.example.com/t/1024", [.links]))
+        XCTAssertFalse(Finder.coversCode(giro, []))
+    }
+
+    func testTheNumberPrintedUnderABarcodeGoesWithIt() throws {
+        let pattern = try XCTUnwrap(Finder.printedPattern(ofCode: "00340434161094015902"))
+        let regex = try NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
+        func found(_ text: String) -> Bool {
+            regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)) != nil
+        }
+        XCTAssertTrue(found("Sendung 0034 0434 1610 9401 5902 ist unterwegs"))
+        XCTAssertTrue(found("00340434161094015902"))
+        XCTAssertFalse(found("X00340434161094015902"))
+        XCTAssertFalse(found("0034043416109401590"))
+        // Links and cards are found by their own kinds; short codes by nothing.
+        XCTAssertNil(Finder.printedPattern(ofCode: "https://shop.example.com"))
+        XCTAssertNil(Finder.printedPattern(ofCode: "12345"))
+        XCTAssertNil(Finder.printedPattern(ofCode: String(repeating: "7", count: 41)))
+    }
+
+    func testANewRecommendedKindStartsOnOnceForWhoeverCoversAnything() throws {
+        XCTAssertEqual(PrivateDetail.added(to: [.names], known: nil), [.barcodes])
+        XCTAssertEqual(PrivateDetail.added(to: [], known: nil), [])
+        XCTAssertEqual(PrivateDetail.added(to: [.names], known: PrivateDetail.allCases.map(\.rawValue)), [])
+        XCTAssertEqual(PrivateDetail.added(to: [.names, .barcodes], known: nil), [])
+
+        let suite = "PrivateDetailTests-\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        defaults.set(["names"], forKey: "hiddenDetails")
+        PrivateDetail.bringUpToDate(["hiddenDetails", "notSaved"], in: defaults)
+        XCTAssertEqual(defaults.stringArray(forKey: "hiddenDetails"), ["barcodes", "names"])
+        XCTAssertNil(defaults.stringArray(forKey: "notSaved"))
+        // Turned off afterwards, it stays off.
+        defaults.set(["names"], forKey: "hiddenDetails")
+        PrivateDetail.bringUpToDate(["hiddenDetails"], in: defaults)
+        XCTAssertEqual(defaults.stringArray(forKey: "hiddenDetails"), ["names"])
+    }
+
+    /// Read from a picture, as the app does: a QR code is covered when codes
+    /// are chosen, or when it holds a chosen kind, and left when it does not.
+    func testACodeIsFoundInAPicture() throws {
+        let image = try qrCode("https://shop.example.com/t/1024", at: CGPoint(x: 200, y: 200))
+        let middle = CGPoint(x: 350 / 800.0, y: 350 / 800.0)
+        let codes = Finder.areas(in: image, [.barcodes], rules: [])
+        XCTAssertEqual(codes.count, 1)
+        XCTAssertTrue(codes.contains { $0.contains(middle) }, "\(codes)")
+        XCTAssertTrue(Finder.areas(in: image, [.links], rules: []).contains { $0.contains(middle) })
+        XCTAssertFalse(Finder.areas(in: image, [.emails], rules: []).contains { $0.contains(middle) })
+    }
+
     // MARK: The owner's own rules
 
     func testAWordIsCoveredWholeWhereverItAppears() {
@@ -128,6 +204,26 @@ final class PrivateDetailTests: XCTestCase {
         return ranges.sorted { $0.location < $1.location }
             .filter { seen.insert("\($0.location):\($0.length)").inserted }
             .map { (text as NSString).substring(with: $0) }
+    }
+
+    /// A QR code of 300 points or so, sharp, on a white square of 800.
+    private func qrCode(_ message: String, at origin: CGPoint) throws -> CGImage {
+        let filter = try XCTUnwrap(CIFilter(name: "CIQRCodeGenerator"))
+        filter.setValue(Data(message.utf8), forKey: "inputMessage")
+        filter.setValue("M", forKey: "inputCorrectionLevel")
+        let code = try XCTUnwrap(filter.outputImage)
+        let scale = 300 / code.extent.width
+        let large = code.samplingNearest().transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+        let drawn = try XCTUnwrap(CIContext(options: [.useSoftwareRenderer: true]).createCGImage(large, from: large.extent))
+        let size = 800
+        let context = try XCTUnwrap(CGContext(data: nil, width: size, height: size, bitsPerComponent: 8,
+                                              bytesPerRow: 0, space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                              bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.setFillColor(CGColor(gray: 1, alpha: 1))
+        context.fill(CGRect(x: 0, y: 0, width: size, height: size))
+        context.interpolationQuality = .none
+        context.draw(drawn, in: CGRect(origin: origin, size: CGSize(width: drawn.width, height: drawn.height)))
+        return try XCTUnwrap(context.makeImage())
     }
 
     /// Lines of large black text on white, one under another.

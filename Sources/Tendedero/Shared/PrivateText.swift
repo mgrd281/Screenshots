@@ -9,7 +9,7 @@ import Vision
 /// under Privacy in Settings, on the Mac and on the iPhone.
 enum PrivateDetail: String, CaseIterable {
     case names, addresses, emails, phones, bank, health
-    case usernames, faces, ids, codes, orders, tracking, amounts, dates, links
+    case usernames, faces, ids, codes, barcodes, orders, tracking, amounts, dates, links
 
     var title: String {
         switch self {
@@ -23,6 +23,7 @@ enum PrivateDetail: String, CaseIterable {
         case .faces: L("Faces")
         case .ids: L("ID and tax numbers")
         case .codes: L("Passwords and codes")
+        case .barcodes: L("QR codes and barcodes")
         case .orders: L("Order and customer numbers")
         case .tracking: L("Tracking numbers")
         case .amounts: L("Amounts")
@@ -31,7 +32,7 @@ enum PrivateDetail: String, CaseIterable {
         }
     }
 
-    /// How Settings groups the kinds, so fifteen read as three short lists.
+    /// How Settings groups the kinds, so sixteen read as three short lists.
     enum Group: CaseIterable {
         case people, sensitive, business
 
@@ -49,22 +50,51 @@ enum PrivateDetail: String, CaseIterable {
     var group: Group {
         switch self {
         case .names, .addresses, .emails, .phones, .usernames, .faces: .people
-        case .bank, .ids, .codes, .health: .sensitive
+        case .bank, .ids, .codes, .barcodes, .health: .sensitive
         case .orders, .tracking, .amounts, .dates, .links: .business
         }
     }
 
     /// What is private in nearly every screenshot, on until turned off. The
     /// rest, like the amount and the date, is often what a screenshot is
-    /// sent for, so it waits to be chosen.
+    /// sent for, so it waits to be chosen. A code is private more often than
+    /// not: a payment, a sign-in, a ticket or a parcel, unreadable to the eye.
     var isRecommended: Bool {
         switch self {
-        case .names, .addresses, .emails, .phones, .bank, .health, .ids, .codes: true
+        case .names, .addresses, .emails, .phones, .bank, .health, .ids, .codes, .barcodes: true
         case .usernames, .faces, .orders, .tracking, .amounts, .dates, .links: false
         }
     }
 
     static var recommended: Set<PrivateDetail> { Set(allCases.filter(\.isRecommended)) }
+
+    // MARK: Kinds added later
+
+    /// The kinds there were when a choice was last brought up to date.
+    static let knownKey = "knownDetails"
+
+    /// The kinds there were before Snapfly noted which it knew.
+    private static let firstKnown = Set(allCases.filter { $0 != .barcodes }.map(\.rawValue))
+
+    /// The recommended kinds added since a choice was made, which start on
+    /// for whoever covers anything. A kind turned off after that stays off.
+    static func added(to chosen: Set<PrivateDetail>, known: [String]?) -> Set<PrivateDetail> {
+        guard !chosen.isEmpty else { return [] }
+        let before = known.map { Set($0) } ?? firstKnown
+        return Set(allCases.filter { $0.isRecommended && !before.contains($0.rawValue) && !chosen.contains($0) })
+    }
+
+    /// Brings the choices saved under these names up to date, then notes
+    /// every kind as known, so each new kind is added once.
+    static func bringUpToDate(_ keys: [String], in defaults: UserDefaults = .standard) {
+        let known = defaults.stringArray(forKey: knownKey)
+        for key in keys {
+            guard let raw = defaults.stringArray(forKey: key) else { continue }
+            let new = added(to: Set(raw.compactMap(PrivateDetail.init(rawValue:))), known: known)
+            if !new.isEmpty { defaults.set((raw + new.map(\.rawValue)).sorted(), forKey: key) }
+        }
+        defaults.set(allCases.map(\.rawValue), forKey: knownKey)
+    }
 }
 
 /// Finds private details in the text of a screenshot, three ways together:
@@ -169,12 +199,13 @@ enum Finder {
 
     /// Where the chosen details and the owner's own rules are, as they are
     /// covered: from 0 to 1 from the bottom left, with a margin around the
-    /// text, and the faces when those are chosen.
+    /// text, the faces when those are chosen, and the codes.
     static func areas(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all) -> [CGRect] {
         let rules = rules.filter { !$0.isBlank }
         guard !chosen.isEmpty || !rules.isEmpty else { return [] }
         let width = CGFloat(image.width), height = CGFloat(image.height)
-        var areas = boxes(in: image, chosen, rules: rules).map { box -> CGRect in
+        let codes = Self.codes(in: image, chosen)
+        var areas = boxes(in: image, chosen, rules: rules, printed: codes.compactMap(\.payload)).map { box -> CGRect in
             // Vision measures from the bottom left, as Core Graphics draws.
             let text = VNImageRectForNormalizedRect(box, image.width, image.height)
             let rect = text.insetBy(dx: -text.height * 0.25, dy: -text.height * 0.2)
@@ -182,7 +213,80 @@ enum Finder {
                           width: rect.width / width, height: rect.height / height)
         }
         if chosen.contains(.faces) { areas += faces(in: image) }
+        areas += codes.map(\.box)
         return areas
+    }
+
+    /// A QR code or a barcode, with what it says when that is text.
+    struct Code {
+        /// From 0 to 1 from the bottom left, with a quiet margin around it.
+        let box: CGRect
+        let payload: String?
+    }
+
+    /// The codes to cover: every one when codes are chosen, otherwise those
+    /// whose contents hold a chosen detail, like the IBAN in a GiroCode.
+    static func codes(in image: CGImage, _ chosen: Set<PrivateDetail>) -> [Code] {
+        guard !chosen.subtracting([.faces]).isEmpty else { return [] }
+        let request = VNDetectBarcodesRequest()
+        do {
+            try VNImageRequestHandler(cgImage: image, options: [:]).perform([request])
+        } catch {
+            // Where the newest reader of codes fails, the one before it is tried.
+            log.error("Could not look for codes: \(error.localizedDescription, privacy: .public)")
+            request.revision = VNDetectBarcodesRequestRevision3
+            guard (try? VNImageRequestHandler(cgImage: image, options: [:]).perform([request])) != nil else { return [] }
+        }
+        return (request.results ?? []).filter { coversCode($0.payloadStringValue, chosen) }.map { code in
+            let box = code.boundingBox
+            return Code(box: box.insetBy(dx: -box.width * 0.1, dy: -box.height * 0.1)
+                            .intersection(CGRect(x: 0, y: 0, width: 1, height: 1)),
+                        payload: code.payloadStringValue)
+        }
+    }
+
+    /// Whether a code is covered: every one when codes are chosen, otherwise
+    /// when its contents hold a chosen detail. Pure text, so it can be
+    /// checked without a picture.
+    static func coversCode(_ payload: String?, _ chosen: Set<PrivateDetail>) -> Bool {
+        if chosen.contains(.barcodes) { return true }
+        guard let payload, !payload.isEmpty else { return false }
+        return !kinds(ofCode: payload).isDisjoint(with: chosen)
+    }
+
+    /// The kinds of detail a code's contents hold: by the formats codes use,
+    /// like a transfer, a contact card or a network's password, and read like
+    /// the text on a screen.
+    static func kinds(ofCode payload: String) -> Set<PrivateDetail> {
+        var kinds = Set<PrivateDetail>()
+        let lower = payload.lowercased()
+        func starts(_ prefixes: String...) -> Bool { prefixes.contains { lower.hasPrefix($0) } }
+        // A transfer: the GiroCode of European banks, the Swiss QR bill.
+        if starts("bcd\n", "bcd\r\n", "spc\n", "spc\r\n", "bank:") { kinds.formUnion([.bank, .names]) }
+        // A sign-in, or the password of a network.
+        if starts("otpauth:", "otpauth-migration:", "wifi:") { kinds.insert(.codes) }
+        if starts("begin:vcard", "mecard:") { kinds.formUnion([.names, .addresses, .emails, .phones]) }
+        if starts("mailto:", "matmsg:") { kinds.insert(.emails) }
+        if starts("tel:", "sms:", "smsto:") { kinds.insert(.phones) }
+        // A boarding pass starts with the passenger's name.
+        if payload.range(of: #"^M[1-4][A-Z]+/[A-Z ]+"#, options: .regularExpression) != nil {
+            kinds.formUnion([.names, .ids])
+        }
+        for kind in PrivateDetail.allCases where !patternRanges(in: payload, [kind]).isEmpty {
+            kinds.insert(kind)
+        }
+        return kinds
+    }
+
+    /// A pattern that finds a covered code's contents where they are also
+    /// printed, like the number under a barcode, with or without the spaces
+    /// print puts between its groups. Only short, plain contents: a link or
+    /// a contact card is found by its own kinds.
+    static func printedPattern(ofCode payload: String) -> String? {
+        guard (6...40).contains(payload.count),
+              payload.allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber) }) else { return nil }
+        let characters = payload.map { NSRegularExpression.escapedPattern(for: String($0)) }
+        return #"(?<![A-Za-z0-9])"# + characters.joined(separator: " ?") + #"(?![A-Za-z0-9])"#
     }
 
     /// The faces in a photo, with room around each so the hair and the chin
@@ -222,11 +326,17 @@ enum Finder {
     }
 
     /// Where the chosen details are, in Vision's normalized coordinates.
-    static func boxes(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all) -> [CGRect] {
-        // Faces are not read as text: with nothing else chosen, no reading.
-        guard !chosen.subtracting([.faces]).isEmpty || rules.contains(where: { !$0.isBlank }) else { return [] }
+    /// - Parameter printed: what the covered codes say, covered too where it
+    ///   is printed beside them.
+    static func boxes(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all,
+                      printed: [String] = []) -> [CGRect] {
+        // Faces and codes are not read as text: with nothing else chosen, no reading.
+        let patterns = printed.compactMap(printedPattern(ofCode:))
+        guard !chosen.subtracting([.faces, .barcodes]).isEmpty || rules.contains(where: { !$0.isBlank })
+            || !patterns.isEmpty else { return [] }
         let lines = read(image)
-        return hits(in: lines, chosen, rules: rules).compactMap { hit -> CGRect? in
+        let printedHits = patterns.isEmpty ? [] : Text(lines).hits(forPatterns: patterns)
+        return (hits(in: lines, chosen, rules: rules) + printedHits).compactMap { hit -> CGRect? in
             let line = lines[hit.line]
             guard let range = hit.range else { return line.box }
             guard let part = Range(range, in: line.string) else { return nil }
@@ -428,6 +538,11 @@ enum Finder {
         func matches(_ pattern: String, _ options: NSRegularExpression.Options = []) -> [NSRange] {
             (try? NSRegularExpression(pattern: pattern, options: options))?
                 .matches(in: full, range: whole).map(\.range) ?? []
+        }
+
+        /// Every match of these patterns, in any case, line by line.
+        func hits(forPatterns patterns: [String]) -> [Hit] {
+            patterns.flatMap { matches($0, .caseInsensitive) }.flatMap { hits($0) }
         }
     }
 

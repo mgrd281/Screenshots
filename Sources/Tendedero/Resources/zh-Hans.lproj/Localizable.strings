@@ -400,6 +400,7 @@
 "Faces" = "人脸";
 "ID and tax numbers" = "证件号和税号";
 "Passwords and codes" = "密码和验证码";
+"QR codes and barcodes" = "二维码和条形码";
 "Order and customer numbers" = "订单号和客户号";
 "Tracking numbers" = "快递单号";
 "Amounts" = "金额";
