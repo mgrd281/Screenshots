@@ -1001,7 +1001,9 @@ system to a web page. The brief and direction contract are in
     after 0.45 s, or at once on keyboard focus. It is a radio group: Tab
     reaches the chosen swatch, the arrows choose the next one and wrap
     round, in the reading direction. On touch the swatches are 32 × 28
-    with a 44 pt tall target.
+    with a 44 pt tall target. With a mouse they keep their 30 × 22 cells,
+    and the target reaches a point past each edge: 24 pt tall, as WCAG
+    asks.
   - **The look switch** sits just before it, at the owner's request, so a
     visitor can go back to the site as it was before the envelope, or on
     to the bold colour look: a well of the same make with three 30 × 22

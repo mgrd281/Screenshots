@@ -21,6 +21,9 @@ phone sizes:
   bold look's band running; the arrows through all three;
 - with Reduce Motion, the first view is all there at once, and in the bold
   look its band stands still.
+- with a mouse, each look and brand chip takes a click 24 pt tall (the
+  target reaches past its cell);
+- after photos are sent into the chat, the page's ids are still unique.
 
 ## Running them
 

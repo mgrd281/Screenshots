@@ -277,3 +277,34 @@ test("the four steps hang on a line on a wide screen, and stack on a phone", asy
     expect(tilts.every((t) => t === "none")).toBe(true);
   }
 });
+
+// WCAG asks for a target 24 pt square; with a mouse the switches' cells reach
+// a point past their edges, so the pointer over that point still picks them.
+test("a mouse picks each look and brand chip 24 pt tall", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "a mouse is the desktop project's pointer");
+  await page.goto("", { waitUntil: "networkidle" });
+  const reach = await page.evaluate(() => [...document.querySelectorAll(".look-chip, .brand-chip")].map((chip) => {
+    const r = chip.getBoundingClientRect();
+    const x = r.left + r.width / 2;
+    const hit = (y) => { const el = document.elementFromPoint(x, y); return !!el && chip.contains(el); };
+    return { name: chip.getAttribute("aria-label"), above: hit(r.top - 0.5), below: hit(r.bottom + 0.5) };
+  }));
+  expect(reach.length).toBe(6);
+  for (const chip of reach) expect.soft(chip.above && chip.below, chip.name).toBe(true);
+});
+
+// Sending photos copies their pictures into the chat. A copy keeps the ids
+// of the picture, so the page must rename them: two of one id is invalid, and
+// a gradient would point at whichever copy comes first.
+test("the page keeps its ids unique after the photos are sent", async ({ page }, info) => {
+  await page.goto("", { waitUntil: "networkidle" });
+  const send = page.locator("[data-send-all]").first();
+  if (info.project.name !== "desktop") await send.scrollIntoViewIfNeeded();
+  await send.click();
+  await page.waitForTimeout(2500);
+  const repeated = await page.evaluate(() => {
+    const ids = [...document.querySelectorAll("[id]")].map((el) => el.id);
+    return ids.filter((id, i) => ids.indexOf(id) !== i);
+  });
+  expect(repeated).toEqual([]);
+});

@@ -8,6 +8,34 @@
   const rtl = document.documentElement.dir === "rtl";
   const wait = (ms) => new Promise((done) => setTimeout(done, ms));
 
+  // A copy of a picture drawn on the page, with the ids in it renamed. A
+  // gradient or clip path copied as it is leaves two of one id, and then the
+  // picture points at whichever copy comes first in the page.
+  let copies = 0;
+  function copyDrawn(node) {
+    const copy = node.cloneNode(true);
+    const named = [copy, ...copy.querySelectorAll("[id]")].filter((el) => el.hasAttribute("id"));
+    if (!named.length) return copy;
+    const tag = `-copy${++copies}`;
+    const renamed = new Map(named.map((el) => [el.id, el.id + tag]));
+    named.forEach((el) => { el.id = renamed.get(el.id); });
+    [copy, ...copy.querySelectorAll("*")].forEach((el) => {
+      for (const attr of [...el.attributes]) {
+        let value = attr.value;
+        if (value.includes("url(#")) {
+          value = value.replace(/url\(#([^)]+)\)/g, (match, id) => `url(#${renamed.get(id) || id})`);
+        } else if (attr.name.endsWith("href") && value.startsWith("#") && renamed.has(value.slice(1))) {
+          value = "#" + renamed.get(value.slice(1));
+        } else {
+          continue;
+        }
+        if (attr.namespaceURI) el.setAttributeNS(attr.namespaceURI, attr.name, value);
+        else el.setAttribute(attr.name, value);
+      }
+    });
+    return copy;
+  }
+
   // MARK: Language
 
   // The visitor's choice wins over the browser's language from now on.
@@ -194,7 +222,7 @@
       bubble.className = "msg out image";
       const frame = document.createElement("span");
       frame.className = "photo-img";
-      frame.appendChild(peg.querySelector(".photo-img svg").cloneNode(true));
+      frame.appendChild(copyDrawn(peg.querySelector(".photo-img svg")));
       bubble.appendChild(frame);
       bubble.style.visibility = "hidden";
       await readyChat();
@@ -223,7 +251,7 @@
       const cells = pegs.map((peg) => {
         const cell = document.createElement("span");
         cell.className = "photo-img";
-        cell.appendChild(peg.querySelector(".photo-img svg").cloneNode(true));
+        cell.appendChild(copyDrawn(peg.querySelector(".photo-img svg")));
         grid.appendChild(cell);
         return cell;
       });
@@ -345,7 +373,7 @@
         const thumbs = chatButton.querySelectorAll(".cb-thumb");
         thumbs.forEach((thumb) => thumb.replaceChildren());
         newest.forEach((peg, i) => {
-          const svg = peg.querySelector(".photo-img svg").cloneNode(true);
+          const svg = copyDrawn(peg.querySelector(".photo-img svg"));
           svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
           thumbs[newest.length === 1 ? 1 : i].appendChild(svg);
         });
@@ -1024,7 +1052,7 @@
         item.images.forEach((image, i) => {
           const col = i % cols;
           const row = Math.floor(i / cols);
-          const pic = image.cloneNode(true);
+          const pic = copyDrawn(image);
           const px = rtl ? x + width - (col + 1) * cell - col * 4 : x + col * (cell + 4);
           Object.entries({ x: px, y: y + row * (cellH + 4), width: cell, height: cellH, preserveAspectRatio: "xMidYMid slice" })
             .forEach(([key, value]) => pic.setAttribute(key, value));
@@ -1206,7 +1234,7 @@
       card.querySelector(".dcard-x").setAttribute("aria-label", `${words.discard}: ${shot.name}`);
       const frame = card.querySelector(".dcard-img");
       frame.style.aspectRatio = String(shot.ratio);
-      frame.appendChild(shot.image.cloneNode(true));
+      frame.appendChild(copyDrawn(shot.image));
       if (shot.video) {
         card.classList.add("video");
         card.querySelector(".dbadge span").textContent = time(Math.max(shot.video.seconds, 1));
@@ -1292,7 +1320,7 @@
 
     function crop(region) {
       const source = scenes[name];
-      const image = source.cloneNode(true);
+      const image = copyDrawn(source);
       image.removeAttribute("class");
       image.setAttribute("viewBox", [region.x, region.y, region.w, region.h].map((v) => v.toFixed(1)).join(" "));
       image.setAttribute("preserveAspectRatio", "xMidYMid slice");
@@ -1533,7 +1561,7 @@
       const thumbs = sendButton.querySelectorAll(".dsend-thumbs span");
       const last = all.slice(-2);
       thumbs.forEach((thumb) => thumb.replaceChildren());
-      last.forEach((card, i) => thumbs[last.length === 1 ? 1 : i].appendChild(card.shot.image.cloneNode(true)));
+      last.forEach((card, i) => thumbs[last.length === 1 ? 1 : i].appendChild(copyDrawn(card.shot.image)));
       thumbs[0].hidden = last.length < 2;
     }
 
@@ -1590,7 +1618,7 @@
         put.type = "button";
         put.className = "trash-item";
         put.setAttribute("aria-label", `${words.put_back}: ${item.name}`);
-        const thumb = item.image.cloneNode(true);
+        const thumb = copyDrawn(item.image);
         thumb.setAttribute("preserveAspectRatio", "xMidYMid slice");
         put.appendChild(thumb);
         const label = document.createElement("span");

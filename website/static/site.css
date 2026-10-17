@@ -606,6 +606,11 @@ kbd {
 @media (prefers-color-scheme: dark) {
   .brand-thumb { background: rgba(255, 255, 255, 0.2); box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.4), inset 0 0.5px 0 rgba(255, 255, 255, 0.18); }
 }
+/* With a mouse the cells stay 30 × 22, and the target reaches a point past
+   each edge: 24 pt tall, as WCAG asks. */
+@media (pointer: fine) {
+  .brand-chip::before, .look-chip::before { content: ""; position: absolute; inset: -1px 0; }
+}
 @media (pointer: coarse) {
   .brand-thumb, .brand-chip { width: 32px; height: 28px; }
   .brand-chip::before { content: ""; position: absolute; inset: -8px 0; }
