@@ -332,7 +332,7 @@ final class HideModel: ObservableObject {
         var from = string.startIndex
         while from < string.endIndex,
               let range = string.range(of: words, options: HideBySaying.insensitive, range: from..<string.endIndex) {
-            if let box = try? line.text.boundingBox(for: range)?.boundingBox { boxes.append(box) }
+            if let box = line.box(for: range) { boxes.append(box) }
             from = range.upperBound
         }
         return boxes.isEmpty ? [line.box] : boxes
