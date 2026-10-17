@@ -100,7 +100,7 @@
 "Not allowed yet" = "まだ許可されていません";
 "Version %@" = "バージョン %@";
 "Screenshots, one click from any chat." = "スクリーンショットを、どのチャットにもワンクリックで。";
-"Made by %@" = "制作：%@";
+"Made by" = "制作";
 "Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján による Tendedero をもとに、MIT ライセンスのもとで作られています。";
 /* HideEditor */
 "Drag over anything to hide it. Click a box to show it again." = "隠したい部分をドラッグします。ボックスをクリックすると元に戻ります。";

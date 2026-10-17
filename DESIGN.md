@@ -206,8 +206,9 @@ literal value in a view.
   so never hardcode the blue.
 
 ### Brand
-- The **amber, coral and violet gradient** belongs to the app icon and the
-  About pane only. It is not an interface color: no gradient buttons, no
+- The **amber, coral and violet gradient** (`Brand.gradient`) belongs to
+  the app icon and the About pane only, where it is the ring round the
+  maker's monogram. It is not an interface color: no gradient buttons, no
   gradient panels.
 
 ### Semantic
@@ -226,9 +227,8 @@ literal value in a view.
   be read, with a symbol beside the word, never color alone.
 - **Island black** is pure black, to blend into the notch and the menu bar
   above it.
-- **Sidebar tiles** (`.gray`, the accent, `.blue`, `.indigo`) are only the
-  tiles behind the Settings sidebar's symbols, System Settings' own palette.
-  Indigo appears nowhere else.
+- **Sidebar tiles** are ink (`.primary`) with the symbol in `.background`,
+  never a colour: the Settings sidebar is monochrome.
 
 ### Neutral
 - Text uses `.primary`, `.secondary` and `.tertiary`.
@@ -299,9 +299,10 @@ design with monospaced digits.
 - **Settings** is a sidebar window, at least 640 × 440, using grouped
   `Form`s. Group rows into sections with headers; no free-floating controls.
   - The sidebar names each pane after a 24 pt tile, rounded 6 (the keycap
-    radius), with the pane's symbol in white on it, as System Settings does:
-    grey for General and About, the accent for Line, blue for Privacy,
-    indigo for Permissions.
+    radius), as System Settings does, but all five tiles are ink
+    (`.primary`) with the symbol knocked out in the window's background
+    colour (`.background`): one colour, so the sidebar stays quiet and
+    reads the same in light and dark.
   - A button on a row sits at the trailing edge, in a `LabeledContent` whose
     label says what the button is for, and is a `SettingsButton`: regular
     `.bordered`, at least 128 pt wide, so the buttons down a pane line up as
@@ -525,6 +526,14 @@ apps.
   saved 0.8 s after the typing stops, and at once when one is added, removed
   or the pane leaves, since every change reads the photos again. Last the
   Preview. The iPhone's Settings use the same three groups.
+- **About pane.** The icon at 128 under its shadow, the name in 34 pt
+  rounded bold, the tagline in title3 `.secondary`, the version in callout
+  `.tertiary`. Then the maker card: a 40 pt circle ringed in the brand
+  gradient (2.5 pt) with the maker's initials in `.primary`, 15 pt rounded
+  semibold, beside "Made by" in caption `.secondary` over the name in
+  headline, all on a faint fill (12 radius). Under it, regular `.bordered`
+  buttons: Check for Updates… (direct edition only) and Help & Support….
+  The MIT credit is the last line, caption `.tertiary`, at the bottom edge.
 - **Permissions pane** (`Permissions.swift`), in Settings between Privacy and
   About, with `lock.shield` in the sidebar.
   - A summary row first: `checkmark.shield.fill` in allowed green once all

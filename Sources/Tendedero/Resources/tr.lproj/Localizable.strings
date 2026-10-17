@@ -100,7 +100,7 @@
 "Not allowed yet" = "Henüz izin verilmedi";
 "Version %@" = "Sürüm %@";
 "Screenshots, one click from any chat." = "Ekran görüntüleri, her sohbete bir tık uzaklıkta.";
-"Made by %@" = "Yapan: %@";
+"Made by" = "Yapan";
 "Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján'ın Tendedero'suna dayanır, MIT Lisansı ile.";
 /* HideEditor */
 "Drag over anything to hide it. Click a box to show it again." = "Gizlemek istediğin yerin üzerinde sürükle. Yeniden göstermek için bir kutuya tıkla.";
