@@ -3,7 +3,8 @@ import SwiftUI
 
 /// The history in a window: what left the line, newest first and grouped by
 /// day, with a search through the words in each photo. A click hangs one
-/// on the line again; Send Again sends it into the chat once more.
+/// on the line again; Send Again sends it into the chat once more. Sent
+/// lists what went into which chat, as a table to export.
 @MainActor
 final class HistoryWindow: NSObject, NSWindowDelegate {
     static let shared = HistoryWindow()
@@ -56,7 +57,14 @@ final class HistoryWindow: NSObject, NSWindowDelegate {
 /// thread as they are needed.
 @MainActor
 final class HistoryModel: ObservableObject {
+    /// Which list the window shows: the photos, or what was sent where.
+    enum Page: Hashable {
+        case photos, sent
+    }
+
+    @Published var page = Page.photos
     @Published var entries: [History.Entry] = []
+    @Published var sent: [SendLog.Sent] = []
     @Published var thumbs: [String: NSImage] = [:]
     @Published var search = ""
     /// Bumped when the words of a photo are known, so search sees them.
@@ -64,6 +72,7 @@ final class HistoryModel: ObservableObject {
 
     init() {
         History.onChange = { [weak self] in self?.reload() }
+        SendLog.onChange = { [weak self] in self?.sent = SendLog.entries }
         let previous = TextIndex.onRead
         TextIndex.onRead = { [weak self] in
             previous?()
@@ -73,6 +82,7 @@ final class HistoryModel: ObservableObject {
 
     func reload() {
         entries = History.entries
+        sent = SendLog.entries
         for entry in entries where thumbs[entry.path] == nil {
             let url = entry.url
             DispatchQueue.global(qos: .userInitiated).async {
@@ -93,6 +103,17 @@ final class HistoryModel: ObservableObject {
         return entries.filter { entry in
             let words = (TextIndex.rows(for: entry.url) ?? []).map(\.folded).joined(separator: " ")
                 + " " + TextIndex.fold(entry.url.lastPathComponent)
+            return terms.allSatisfy { words.contains($0) }
+        }
+    }
+
+    /// The sends with every word typed in one of their fields.
+    var shownSent: [SendLog.Sent] {
+        let terms = TextIndex.fold(search).split(separator: " ").map(String.init)
+        guard !terms.isEmpty else { return sent }
+        return sent.filter { sent in
+            let words = TextIndex.fold([sent.name, sent.to, sent.message ?? "",
+                                        CoverReport.titles(of: sent.covered).joined(separator: " ")].joined(separator: " "))
             return terms.allSatisfy { words.contains($0) }
         }
     }
@@ -122,23 +143,35 @@ private struct HistoryView: View {
 
     var body: some View {
         Group {
-            if model.entries.isEmpty {
-                empty
-            } else if model.shown.isEmpty {
-                ContentUnavailableView.search(text: model.search)
-            } else {
-                grid
+            switch model.page {
+            case .photos: photos
+            case .sent: sentList
             }
         }
         .frame(minWidth: 480, minHeight: 360)
         .searchable(text: $model.search, placement: .toolbar, prompt: Text(L("Search…")))
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Picker(L("History"), selection: $model.page) {
+                    Text(L("Photos")).tag(HistoryModel.Page.photos)
+                    Text(L("Sent")).tag(HistoryModel.Page.sent)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button { SendLog.export(model.shownSent, from: NSApp.keyWindow) } label: {
+                    Label(L("Export…"), systemImage: "square.and.arrow.up")
+                }
+                .help(L("Export…"))
+                .disabled(model.page != .sent || model.shownSent.isEmpty)
+            }
             ToolbarItem(placement: .primaryAction) {
                 Button(role: .destructive) { confirmClear = true } label: {
                     Label(L("Clear History…"), systemImage: "trash")
                 }
                 .help(L("Clear History…"))
-                .disabled(model.entries.isEmpty)
+                .disabled(model.entries.isEmpty && model.sent.isEmpty)
             }
         }
         .confirmationDialog(L("Clear the history?"), isPresented: $confirmClear) {
@@ -149,12 +182,60 @@ private struct HistoryView: View {
         }
     }
 
+    @ViewBuilder private var photos: some View {
+        if model.entries.isEmpty {
+            empty
+        } else if model.shown.isEmpty {
+            ContentUnavailableView.search(text: model.search)
+        } else {
+            grid
+        }
+    }
+
+    /// What went into which chat, newest first: when, the photo, the chat,
+    /// what was covered and the message.
+    @ViewBuilder private var sentList: some View {
+        if model.sent.isEmpty {
+            ContentUnavailableView {
+                Label(L("Nothing sent yet"), systemImage: "paperplane")
+            } description: {
+                Text(L("Photos sent into a chat with Snapfly are listed here: when, where to and what was covered."))
+            }
+        } else if model.shownSent.isEmpty {
+            ContentUnavailableView.search(text: model.search)
+        } else {
+            Table(model.shownSent) {
+                TableColumn(L("Date")) { sent in
+                    Text(sent.date, format: .dateTime.day().month().year().hour().minute())
+                        .monospacedDigit()
+                }
+                .width(min: 120, ideal: 150)
+                TableColumn(L("Photo"), value: \.name)
+                TableColumn(L("Sent to"), value: \.to)
+                    .width(min: 80, ideal: 120)
+                TableColumn(L("Covered")) { sent in
+                    Text(CoverReport.titles(of: sent.covered).joined(separator: ", "))
+                        .foregroundStyle(.secondary)
+                }
+                TableColumn(L("Message")) { sent in
+                    Text(sent.message ?? "")
+                }
+            }
+            .contextMenu(forSelectionType: SendLog.Sent.ID.self) { ids in
+                Button(L("Remove from History"), role: .destructive) {
+                    for sent in model.sent where ids.contains(sent.id) { SendLog.remove(sent) }
+                }
+            }
+        }
+    }
+
     private var empty: some View {
         ContentUnavailableView {
             Label(L("No history yet"), systemImage: "clock.arrow.circlepath")
         } description: {
             if let days = History.days {
-                Text(String(format: L("Photos that leave the line stay here for %d days."), days))
+                Text(days == History.forever ? L("Photos that leave the line stay here until you remove them.")
+                     : String(format: L("Photos that leave the line stay here for %d days."), days))
             } else {
                 Text(L("History is off. Turn it on in Settings, under Line."))
             }

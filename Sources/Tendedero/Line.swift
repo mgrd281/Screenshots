@@ -361,6 +361,9 @@ final class Line: ObservableObject {
         // Only when the paste will happen: a photo flying into a chat that
         // never gets it would say the opposite.
         let willPaste = Paste.willPaste
+        if willPaste, let destination = SendLog.destination {
+            SendLog.note(photos.map(\.url), to: destination, message: caption)
+        }
         let flight = willPaste ? onSend?(photos) ?? 0 : 0
         Paste.intoFrontApp(after: flight)
         if willPaste { takeDown(sent: photos, after: flight) }

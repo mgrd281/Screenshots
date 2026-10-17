@@ -347,6 +347,13 @@ final class ChatButton {
         return url
     }
 
+    /// The chat website the button sits over in the browser in front, like
+    /// "chatgpt.com"; nil over an app, or with no button showing.
+    var siteInFront: String? {
+        guard let key = current?.app, let id = Paste.frontApp?.bundleIdentifier, Self.browsers[id] != nil else { return nil }
+        return key.hasSuffix("#new") ? String(key.dropLast(4)) : key
+    }
+
     /// The page open in the browser in front, for the time stamp.
     static func pageInFront() -> URL? {
         guard let shared, let id = Paste.frontApp?.bundleIdentifier, browsers[id] != nil else { return nil }

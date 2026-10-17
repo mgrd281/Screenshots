@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Sent, in the History window: what went into which chat, when, with what
+  covered and the message, to search or export as a table. The History
+  keeps photos 90 days, a year or forever too.
 - The message bar keeps the last five messages: click one, or press ↑ and
   ↓, to send it again.
 - Send Again in the History: a photo sent before goes into the chat in

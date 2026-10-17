@@ -21,7 +21,19 @@ enum History {
         }
     }
 
-    static let dayChoices = [7, 30]
+    /// Kept until removed: a hundred years.
+    static let forever = 36_500
+
+    static let dayChoices = [7, 30, 90, 365, forever]
+
+    /// A choice as Settings names it: "30 days", "1 year" or "Forever".
+    static func title(days: Int) -> String {
+        switch days {
+        case forever: L("Forever")
+        case 365: L("1 year")
+        default: String(format: L("%d days"), days)
+        }
+    }
 
     static let folder = Inbox.folder.appendingPathComponent("History", isDirectory: true)
 
@@ -105,6 +117,7 @@ enum History {
             try? FileManager.default.trashItem(at: entry.url, resultingItemURL: nil)
         }
         entries = []
+        SendLog.clear()
     }
 
     /// What has had its days, or whose file is gone, leaves. Runs at launch
@@ -122,6 +135,7 @@ enum History {
             }
         }
         if stay != entries { entries = stay }
+        SendLog.purge(before: cutoff)
     }
 
     private static func isKept(_ url: URL) -> Bool {
