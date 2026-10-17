@@ -8,6 +8,8 @@ keeps a download of each version.
 
 - On the iPhone: rules of your own under Also hide, as on the Mac, and
   Check All, Recommended and Uncheck All in Settings.
+- Test on a Sample, under Privacy: a made-up order covered with what you
+  checked, to see what each kind hides.
 - Send with Shop Header, in a photo's menu: the covered screenshot goes
   under a band with your shop's name and logo, the order and the day. Set
   them under Line in Settings.
