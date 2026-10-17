@@ -110,6 +110,15 @@
 /* LineTag, GrabArea */
 "Copy all" = "全部复制";
 "Paste into %@" = "粘贴到“%@”";
+"Pick" = "选择";
+"Unpick" = "取消选择";
+"Pick All" = "全选";
+"Unpick All" = "全部取消选择";
+"Send to %@" = "发送到 %@";
+"Opening %@…" = "正在打开 %@…";
+"Could not open %@. The photos stay on the line." = "无法打开 %@。照片留在晾衣绳上。";
+"ChatGPT and Claude on photos" = "照片上的 ChatGPT 和 Claude";
+"Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there." = "这台 Mac 上装有它们的 App 时，它们的图标会显示在纸飞机旁边。点按一下，就会把这张照片或与它一起选择的照片发送到那里的聊天中。";
 "Paste into the app in front" = "粘贴到前台应用";
 "Combine into one image" = "合并为一张图片";
 "One under another" = "上下排列";

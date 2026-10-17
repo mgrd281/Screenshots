@@ -6,6 +6,16 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Pick photos with the circle on each, opposite the cross, to send just
+  those. Picked photos stay picked when the line goes up, so the send
+  button over a chat sends them alone. Pick All and Unpick All are in a
+  photo's menu.
+- ChatGPT and Claude beside the paper plane: a click sends the photo, or
+  the ones picked with it, straight into the app, on the chat it shows or a
+  new one. Their own icons show while the apps are on the Mac; a photo's
+  menu also opens the website.
+- The cross and the paper plane on a photo now answer where they are drawn
+  in right-to-left languages.
 - Draw on Photo, in a photo's menu: arrows, boxes, a highlighter, numbered
   steps and words, and a crop to the part that matters, drawn on what
   leaves the line. Each tool has its key, and ⌘Z undoes. The file itself

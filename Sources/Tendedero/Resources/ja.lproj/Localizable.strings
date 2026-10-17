@@ -110,6 +110,15 @@
 /* LineTag, GrabArea */
 "Copy all" = "すべてコピー";
 "Paste into %@" = "%@にペースト";
+"Pick" = "選択";
+"Unpick" = "選択を解除";
+"Pick All" = "すべて選択";
+"Unpick All" = "すべての選択を解除";
+"Send to %@" = "%@に送信";
+"Opening %@…" = "%@を開いています…";
+"Could not open %@. The photos stay on the line." = "%@を開けませんでした。写真はロープに残ります。";
+"ChatGPT and Claude on photos" = "写真にChatGPTとClaude";
+"Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there." = "このMacにアプリがあると、紙飛行機の横にそのアイコンが表示されます。クリックすると、その写真か一緒に選んだ写真を、そこのチャットに送信します。";
 "Paste into the app in front" = "前面のアプリにペースト";
 "Combine into one image" = "1枚の画像にまとめる";
 "One under another" = "縦に並べる";

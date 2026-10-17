@@ -112,6 +112,15 @@
 /* LineTag, GrabArea */
 "Copy all" = "सब कॉपी करें";
 "Paste into %@" = "%@ में पेस्ट करें";
+"Pick" = "चुनें";
+"Unpick" = "चयन हटाएँ";
+"Pick All" = "सभी चुनें";
+"Unpick All" = "सभी का चयन हटाएँ";
+"Send to %@" = "%@ को भेजें";
+"Opening %@…" = "%@ खुल रहा है…";
+"Could not open %@. The photos stay on the line." = "%@ नहीं खुल सका। फ़ोटो रस्सी पर रहती हैं।";
+"ChatGPT and Claude on photos" = "फ़ोटो पर ChatGPT और Claude";
+"Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there." = "जब इनके ऐप इस Mac पर हों, तो इनके आइकन काग़ज़ के हवाई जहाज़ के पास दिखते हैं। एक क्लिक फ़ोटो को, या उसके साथ चुनी गई फ़ोटो को, वहाँ की चैट में भेजता है।";
 "Paste into the app in front" = "सामने वाले ऐप में पेस्ट करें";
 "Combine into one image" = "एक तस्वीर में जोड़ें";
 "One under another" = "एक के नीचे एक";

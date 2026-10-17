@@ -170,6 +170,12 @@ final class Preferences: ObservableObject {
         set { change { Line.marksSentBefore = newValue; line.objectWillChange.send() } }
     }
 
+    /// So do ChatGPT's and Claude's icons beside the paper plane.
+    var showsAIChats: Bool {
+        get { AIChat.onPhotos }
+        set { change { AIChat.onPhotos = newValue; line.objectWillChange.send() } }
+    }
+
     var historyDays: Int? {
         get { History.days }
         set { change { History.days = newValue } }
@@ -854,6 +860,10 @@ private struct LinePane: View {
                     Text(L("A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history."))
                 }
                 .disabled(prefs.historyDays == nil)
+                Toggle(isOn: $prefs.showsAIChats) {
+                    Text(L("ChatGPT and Claude on photos"))
+                    Text(L("Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there."))
+                }
                 LabeledContent {
                     HStack {
                         Picker(L("Keep a history"), selection: $prefs.historyDays) {

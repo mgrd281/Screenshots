@@ -110,6 +110,15 @@
 /* LineTag, GrabArea */
 "Copy all" = "Copiar tudo";
 "Paste into %@" = "Colar em %@";
+"Pick" = "Selecionar";
+"Unpick" = "Desmarcar";
+"Pick All" = "Selecionar tudo";
+"Unpick All" = "Desmarcar tudo";
+"Send to %@" = "Enviar para %@";
+"Opening %@…" = "Abrindo %@…";
+"Could not open %@. The photos stay on the line." = "Não foi possível abrir %@. As fotos ficam no varal.";
+"ChatGPT and Claude on photos" = "ChatGPT e Claude nas fotos";
+"Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there." = "Os ícones deles aparecem ao lado do avião de papel quando os apps estão neste Mac. Um clique envia a foto, ou as selecionadas com ela, para um chat lá.";
 "Paste into the app in front" = "Colar no app ativo";
 "Combine into one image" = "Juntar em uma só imagem";
 "One under another" = "Uma embaixo da outra";

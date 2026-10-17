@@ -46,8 +46,10 @@ final class Line: ObservableObject {
     @Published private(set) var items: [Pegged] = []
     @Published private(set) var gust = 0
     @Published var copiedIDs: Set<UUID> = []
-    /// Photos picked with ⌘-click, to copy together. Cleared when the line
-    /// tucks away.
+    /// Photos picked with ⌘-click or the circle on each, to send or copy
+    /// together. They stay picked while the line tucks away, so the send
+    /// button over a chat sends just them, until they are sent or a click
+    /// copies one photo alone.
     @Published var pickedIDs: Set<UUID> = []
     @Published var draggingID: UUID?
     @Published var pressedID: UUID?
@@ -236,10 +238,23 @@ final class Line: ObservableObject {
 
     /// ⌘-click: picks the photo, or puts it back, and copies every photo
     /// picked, so they paste together into a chat or a message.
-    func pick(_ id: UUID) {
+    /// - Parameter quietly: from the circle on the photo, whose check says
+    ///   enough without "Copied" under each.
+    func pick(_ id: UUID, quietly: Bool = false) {
         if pickedIDs.contains(id) { pickedIDs.remove(id) } else { pickedIDs.insert(id) }
         let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
-        if !picked.isEmpty { copy(picked) }
+        if !picked.isEmpty { copy(picked, covering: CoveringProfile.detailsNow, says: !quietly) }
+    }
+
+    /// Every photo on the line picked, to put back the few that should not go.
+    func pickAll() {
+        let live = items.filter { !$0.falling }
+        pickedIDs = Set(live.map(\.id))
+        if !live.isEmpty { copy(live, covering: CoveringProfile.detailsNow, says: false) }
+    }
+
+    func unpickAll() {
+        pickedIDs = []
     }
 
     /// Every photo on the line, to paste them all at once.
@@ -363,6 +378,34 @@ final class Line: ObservableObject {
         } else if let item = items.first(where: { $0.id == id }) {
             paste([item])
         }
+    }
+
+    /// ChatGPT or Claude, from a photo: the photos picked when it is one of
+    /// them, or only this one, go into a chat there, covered as in any AI
+    /// chat. Its app comes to the front, or its website opens, on the chat
+    /// open there or a new one, and they are pasted in once it is ready.
+    /// Recordings stay behind: the chats don't take them.
+    func send(_ id: UUID, to chat: AIChat) {
+        let photos = pickedIDs.contains(id)
+            ? items.filter { pickedIDs.contains($0.id) && !$0.falling && AIChat.takes($0) }
+            : items.filter { $0.id == id && !$0.falling && AIChat.takes($0) }
+        // Every kind there with Cover Everything in AI Chats on.
+        let chosen = CoveringProfile.details(PrivateDetails.details, inAIChat: true,
+                                             coversAll: CoveringProfile.coversAllInAIChats)
+        guard !photos.isEmpty, !stillCovering(photos, chosen) else { return }
+        let go = { [weak self] in
+            chat.open { self?.deliver(photos, then: nil, replacing: [:], covering: chosen) }
+        }
+        // The card first, as for any AI chat, before the chat opens.
+        guard let reason = SendCheck.reason(SendCheck.when, app: chat.appID, host: chat.hosts.first, inBrowser: false,
+                                            chatApps: [], chatSites: []) else { return go() }
+        var covered = CoverReport()
+        for photo in photos {
+            if let report = PrivateDetails.report(for: photo.url, covering: chosen) { covered.add(report) }
+        }
+        SendCheck.shared.show(photos.map { PrivateDetails.shareable($0.url, covering: chosen) },
+                              to: chat.name, reason: reason, covered: covered, hides: !chosen.isEmpty,
+                              sentBefore: photos.compactMap { sentBefore[$0.id] }, above: nil, send: go)
     }
 
     /// The send shortcut: the photos picked, or else the newest one.
@@ -631,7 +674,9 @@ final class Line: ObservableObject {
         copy(photos, covering: CoveringProfile.detailsNow)
     }
 
-    private func copy(_ photos: [Pegged], covering chosen: Set<PrivateDetail>, replacing files: [UUID: URL] = [:]) {
+    /// - Parameter says: "Copied" under each photo, for a moment.
+    private func copy(_ photos: [Pegged], covering chosen: Set<PrivateDetail>, replacing files: [UUID: URL] = [:],
+                      says: Bool = true) {
         guard !stillCovering(photos, chosen) else { return }
         let entries = photos.map { item -> NSPasteboardItem in
             let entry = NSPasteboardItem()
@@ -655,7 +700,7 @@ final class Line: ObservableObject {
         let pb = NSPasteboard.general
         pb.clearContents()
         pb.writeObjects(entries)
-        showCopied(Set(photos.map(\.id)))
+        if says { showCopied(Set(photos.map(\.id))) }
     }
 
     /// A PDF still being covered cannot leave yet: a note says so, rather

@@ -110,6 +110,15 @@
 /* LineTag, GrabArea */
 "Copy all" = "모두 복사하기";
 "Paste into %@" = "%@에 붙여넣기";
+"Pick" = "선택";
+"Unpick" = "선택 해제";
+"Pick All" = "모두 선택";
+"Unpick All" = "모두 선택 해제";
+"Send to %@" = "%@(으)로 보내기";
+"Opening %@…" = "%@ 여는 중…";
+"Could not open %@. The photos stay on the line." = "%@을(를) 열 수 없습니다. 사진은 빨랫줄에 남습니다.";
+"ChatGPT and Claude on photos" = "사진에 ChatGPT와 Claude";
+"Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there." = "이 Mac에 앱이 있으면 종이비행기 옆에 아이콘이 나타납니다. 클릭하면 사진을, 또는 함께 선택한 사진들을 그곳의 채팅으로 보냅니다.";
 "Paste into the app in front" = "앞에 있는 앱에 붙여넣기";
 "Combine into one image" = "이미지 하나로 합치기";
 "One under another" = "위아래로";
