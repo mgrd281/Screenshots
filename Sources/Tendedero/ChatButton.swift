@@ -275,7 +275,8 @@ final class ChatButton {
     private func update() {
         // Being dragged: it goes where the pointer takes it.
         if panel.content.isDragging { return }
-        guard timer != nil, Self.isEnabled, hasSomethingToSend,
+        // Not during a call: the photo on it is for no shared screen.
+        guard timer != nil, Self.isEnabled, hasSomethingToSend, !Calls.shared.keepingAway,
               let app = Paste.frontApp, let id = app.bundleIdentifier,
               let window = Self.frontWindow(of: app.processIdentifier) else {
             hide()

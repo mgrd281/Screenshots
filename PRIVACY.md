@@ -30,6 +30,10 @@ does happens on your Mac.
   and reads nothing else. While the time stamp is on, that address is also
   written on the stamp of a new screenshot, which stays on your Mac. Settings › Permissions shows each of these, and you
   can turn any off at any time in System Settings.
+- **Calls.** While Not during a call is on, Snapfly asks the Mac whether the
+  microphone is in use, so the line keeps away during a meeting and nothing
+  of Snapfly shows in what you share. It hears nothing, and asks for no
+  microphone permission.
 
 The full policy, in English, German and Arabic, is at
 https://mgrd281.github.io/Screenshots/privacy.html.
@@ -50,4 +54,5 @@ PDFs, die du der App selbst gibst, und kopiert, sendet oder löscht sie nur, wen
 du es willst. Fotos verlassen die Leine ohne Aufnahmeort und Kameradaten.
 Bildschirmaufnahmen macht es nur, wenn du darum bittest, und vom Browser liest
 es nur die Adresse der offenen Seite, damit die Senden-Taste nur auf
-Chat-Websites erscheint.
+Chat-Websites erscheint. Ob das Mikrofon gerade in Gebrauch ist, fragt Snapfly
+nur, damit die Leine während eines Anrufs oben bleibt; es hört nichts.

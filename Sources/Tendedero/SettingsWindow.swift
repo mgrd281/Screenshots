@@ -134,6 +134,11 @@ final class Preferences: ObservableObject {
         set { change { AppDelegate.peeksAtNew = newValue } }
     }
 
+    var keepsAwayDuringCalls: Bool {
+        get { Calls.keepsAway }
+        set { change { Calls.keepsAway = newValue } }
+    }
+
     var overFullScreen: Bool {
         get { FullScreen.showLineOver }
         set {
@@ -592,6 +597,47 @@ final class Preferences: ObservableObject {
         SavedMessages.all = savedMessages
     }
 
+    // MARK: Questions for ChatGPT and Claude
+
+    /// Questions kept ready to go with a photo, edited in place and saved a
+    /// moment after the typing stops, like the saved messages.
+    @Published var aiQuestions = AIQuestions.all
+    @Published var questionsCustomised = AIQuestions.isCustomised()
+    private var questionsSave: Task<Void, Never>?
+
+    func addQuestion() {
+        aiQuestions.append(AIQuestion())
+        saveQuestions()
+    }
+
+    func removeQuestion(_ question: AIQuestion) {
+        aiQuestions.removeAll { $0.id == question.id }
+        saveQuestions()
+    }
+
+    func questionsChanged() {
+        questionsSave?.cancel()
+        questionsSave = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(800))
+            guard !Task.isCancelled else { return }
+            self?.saveQuestions()
+        }
+    }
+
+    func saveQuestions() {
+        questionsSave?.cancel()
+        AIQuestions.all = aiQuestions
+        questionsCustomised = true
+    }
+
+    /// The standard questions again, in place of the owner's.
+    func restoreQuestions() {
+        questionsSave?.cancel()
+        AIQuestions.restore()
+        aiQuestions = AIQuestions.all
+        questionsCustomised = false
+    }
+
     func saveRules() {
         rulesSave?.cancel()
         let before = OwnRules.fingerprint
@@ -888,6 +934,10 @@ private struct LinePane: View {
                 Toggle(L("When the pointer rests in the menu bar"), isOn: $prefs.opensFromMenuBar)
                 Toggle(L("When something new hangs"), isOn: $prefs.peeksAtNew)
                 Toggle(L("Over full screen apps"), isOn: $prefs.overFullScreen)
+                Toggle(isOn: $prefs.keepsAwayDuringCalls) {
+                    Text(L("Not during a call"))
+                    Text(L("While the microphone is in use, in Zoom, Teams, FaceTime or a call in the browser, the line stays up unless the shortcut or the menu brings it down, the send button over chats stays away, and nothing of Snapfly's shows in what you share."))
+                }
             }
             Section {
                 Picker(L("Size"), selection: $prefs.size) {
@@ -935,6 +985,7 @@ private struct LinePane: View {
             }
             ChatButtonSection(prefs: prefs)
             SavedMessagesSection(prefs: prefs)
+            AIQuestionsSection(prefs: prefs)
             BookkeepingSection(prefs: prefs)
             ShopHeaderSection(prefs: prefs)
             Section(L("Screenshot button")) {
@@ -1674,6 +1725,43 @@ private struct SavedMessagesSection: View {
         }
         .onChange(of: prefs.savedMessages) { _, _ in prefs.savedMessagesChanged() }
         .onDisappear { prefs.saveSavedMessages() }
+    }
+}
+
+/// The questions a photo can go into ChatGPT or Claude with: one row each,
+/// as the saved messages, with a way back to the standard ones.
+private struct AIQuestionsSection: View {
+    @ObservedObject var prefs: Preferences
+
+    var body: some View {
+        Section {
+            ForEach($prefs.aiQuestions) { $question in
+                HStack(spacing: 8) {
+                    TextField(L("Question"), text: $question.text, prompt: Text(L("Summarize this in a few lines.")))
+                        .labelsHidden()
+                        .textFieldStyle(.roundedBorder)
+                    Button { prefs.removeQuestion(question) } label: {
+                        Image(systemName: "minus.circle")
+                    }
+                    .buttonStyle(.borderless)
+                    .help(L("Remove"))
+                    .accessibilityLabel(L("Remove"))
+                }
+            }
+            HStack {
+                Button(L("Add Question")) { prefs.addQuestion() }
+                if prefs.questionsCustomised {
+                    Button(L("Standard Questions")) { prefs.restoreQuestions() }
+                }
+            }
+        } header: {
+            Text(L("Questions for ChatGPT and Claude"))
+        } footer: {
+            Text(L("Right-click ChatGPT or Claude on a photo, or choose Ask ChatGPT in its menu, and the photo goes into the chat with the question after it. Nothing is sent until you press Return there."))
+                .foregroundStyle(.secondary)
+        }
+        .onChange(of: prefs.aiQuestions) { _, _ in prefs.questionsChanged() }
+        .onDisappear { prefs.saveQuestions() }
     }
 }
 

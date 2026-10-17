@@ -6,6 +6,16 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Sent, and a way back: once sent photos leave the line, a note above the
+  Dock says where they went, and a click on it hangs them again.
+- Not during a call, under Line: while the microphone is in use, in Zoom,
+  Teams, FaceTime or a call in the browser, the line stays up unless you
+  bring it down, the send button over chats stays away, and nothing of
+  Snapfly shows in what you share.
+- Questions for ChatGPT and Claude, under Line: right-click ChatGPT or
+  Claude on a photo, or choose Ask ChatGPT in its menu, and the photo goes
+  with a question after it, like "Summarize this in a few lines". Write
+  your own in Settings.
 - Six looks for covers, under Privacy: ink, labelled (the ink says what it
   hides, like Name or Phone), blur, pixels, dots and erased. Each hides
   for good: the soft ones are drawn from the colors around what is covered,

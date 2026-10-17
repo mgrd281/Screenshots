@@ -72,6 +72,18 @@ struct GrabArea: NSViewRepresentable {
         // ChatGPT and Claude beside the paper plane, where the photo has room.
         view.leadingRoom = PhotoButtons.leadingRoom(badges: item.isDocument ? 0 : view.lockBadges, document: item.isDocument)
         view.chats = AIChat.takes(item) ? AIChat.onPhotosNow : []
+        // A right-click on one of them: the questions from Settings.
+        let questions = AIQuestions.offered()
+        view.hasQuestions = !questions.isEmpty
+        view.chatMenuProvider = { chat in
+            guard !questions.isEmpty else { return nil }
+            let menu = Self.questionMenu(questions, for: chat, line: line, id: id)
+            let what = NSMenuItem(title: String(format: L("Ask %@"), chat.name), action: nil, keyEquivalent: "")
+            what.isEnabled = false
+            menu.insertItem(.separator(), at: 0)
+            menu.insertItem(what, at: 0)
+            return menu
+        }
         // VoiceOver hears one button named after the file, and reaches what
         // the pointer finds on hover as actions.
         view.setAccessibilityElement(true)
@@ -163,6 +175,17 @@ struct GrabArea: NSViewRepresentable {
                     }
                     menu.addItem(send)
                 }
+                // With one of the questions from Settings after the photo.
+                if !questions.isEmpty {
+                    for chat in AIChat.allCases {
+                        let ask = NSMenuItem(title: String(format: L("Ask %@"), chat.name), action: nil, keyEquivalent: "")
+                        if #available(macOS 26, *) {
+                            ask.image = NSImage(systemSymbolName: "questionmark.bubble", accessibilityDescription: nil)
+                        }
+                        ask.submenu = Self.questionMenu(questions, for: chat, line: line, id: id)
+                        menu.addItem(ask)
+                    }
+                }
             }
             if isImage {
                 // The photos picked with it, or only this one, a page each.
@@ -251,6 +274,15 @@ struct GrabArea: NSViewRepresentable {
             return menu
         }
     }
+
+    /// The questions for a chat, each sending the photo with itself after.
+    private static func questionMenu(_ questions: [AIQuestion], for chat: AIChat, line: Line, id: UUID) -> NSMenu {
+        let menu = NSMenu()
+        for question in questions {
+            menu.addItem(ClosureMenuItem(question.text) { line.send(id, to: chat, asking: question.text) })
+        }
+        return menu
+    }
 }
 
 final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
@@ -284,6 +316,10 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     var onForceClick: () -> Void = {}
     var onPressChange: (Bool) -> Void = { _ in }
     var menuProvider: () -> NSMenu = { NSMenu() }
+    /// A right-click on ChatGPT or Claude: the questions to send the photo
+    /// with; nil without any, and the photo's own menu opens.
+    var chatMenuProvider: (AIChat) -> NSMenu? = { _ in nil }
+    var hasQuestions = false
     /// What the corner button and the paper plane do, said when the pointer
     /// rests on them.
     var cornerHelp = ""
@@ -407,7 +443,9 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         if crossRect.contains(point) { return cornerHelp }
         if pickRect.contains(point) { return picked ? L("Unpick") : L("Pick") }
         if sendRect.contains(point) { return sendHelp }
-        if let target = chat(at: point) { return String(format: L("Send to %@"), target.name) }
+        if let target = chat(at: point) {
+            return String(format: hasQuestions ? L("Send to %@. Right-click to ask a question.") : L("Send to %@"), target.name)
+        }
         if !lockHelp.isEmpty && lockRect.contains(point) { return lockHelp }
         return sendHelp
     }
@@ -531,9 +569,12 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     }
 
     override func rightMouseDown(with event: NSEvent) {
+        // On ChatGPT or Claude, the questions to ask with the photo.
+        let point = convert(event.locationInWindow, from: nil)
+        let menu = chat(at: point).flatMap(chatMenuProvider) ?? menuProvider()
         // The menu runs until it closes, and the line stays down meanwhile.
         GrabView.isShowingMenu = true
-        NSMenu.popUpContextMenu(menuProvider(), with: event, for: self)
+        NSMenu.popUpContextMenu(menu, with: event, for: self)
         GrabView.isShowingMenu = false
     }
 
