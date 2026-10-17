@@ -265,6 +265,17 @@ literal value in a view.
   back; these cannot. Places that overlap on one line are drawn as one, and
   lines of one height get labels, dots and tiles of one size. A face or a
   code takes pixels in the dots look.
+- **Every copy is checked** (`Finder.covered`): once covered, it is read
+  again as anyone could read it, and a detail still readable, or a piece of
+  three letters or more of what was hidden left beside its cover, is covered
+  too, in two more rounds at most. What is drawn on a cover is never read as
+  text. The strongest protection covers each line with a detail whole, with
+  0.45 of its height of room across and 0.35 up and down instead of 0.25
+  and 0.2. Apple Intelligence, where it is on, only adds covers: never on a
+  guess, only words that are in their line, never waited for on the main
+  thread, and not for Test on a Sample, which reads the same each time.
+  Copy Text leaves out what it found once it has answered, and with the
+  strongest protection, whole lines, as they are covered.
 - **Photo badge** is black 55% with a white glyph or text, over a picture: the
   lock, the paper plane of a photo sent before, the PDF capsule, and the size
   while an area is chosen. With Reduce Transparency on, it is the cover ink
@@ -714,7 +725,14 @@ apps.
   numbers and the bank statement; over a footer that every look hides for
   good, the soft ones drawn from the colors around, never from what is
   covered. A new look or the toggle draws the photos hanging again and puts
-  the test's result away. Then a section of its
+  the test's result away. Then "Protection": the toggle Strongest
+  protection (off at first), whose subtitle says every line with something
+  private is covered whole with more room, so not even its length shows;
+  and Find more with Apple Intelligence (on at first), whose subtitle says it
+  reads the words on the device and covers what the patterns miss, or, off
+  and dimmed where the device has no Apple Intelligence, that it needs it;
+  over a footer saying every copy is read again before it leaves, and
+  whatever private still shows is covered too. Then a section of its
   own with one toggle, Cover everything in AI chats (off at first), over a
   footer naming ChatGPT, Claude and Gemini and saying every kind above is
   covered there, checked or not. Then one with a menu picker, Check before
@@ -1092,7 +1110,8 @@ of its own.
 - Settings opens with Check All, Recommended and Uncheck All as small
   bordered buttons sharing a row, under "Hide private details", then the
   three groups, then "Cover look", the Mac's tiles three to a row with
-  Keep the last four digits under them, then "Also hide": a row per rule of the owner's own, its
+  Keep the last four digits under them, then "Protection" as on the Mac,
+  then "Also hide": a row per rule of the owner's own, its
   kind as a menu over a field with the kind's prompt, swiped away to remove,
   and Add Rule. A pattern that cannot be read says so under its field with
   `exclamationmark.triangle.fill` in orange. Rules are kept as they change,

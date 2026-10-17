@@ -638,3 +638,10 @@
 "Keep the last four digits" = "إبقاء آخر أربعة أرقام";
 "Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement." = "تبقى أرقام البطاقات والحسابات والهواتف معروفة من آخر أربعة أرقام فيها، كما في كشف الحساب البنكي.";
 "Every look hides for good: blur, pixels, dots and erased are drawn from the colors around what is covered, never from it, so it cannot be brought back." = "كل شكل يُخفي نهائيًا: الضبابي والبكسلة والنقاط والممسوح تُرسم من الألوان المحيطة بما يُخفى، لا منه أبدًا، فلا يمكن استرجاعه.";
+"Protection" = "الحماية";
+"Strongest protection" = "أقوى حماية";
+"Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was." = "كل سطر فيه شيء خاص يُخفى كله، مع مساحة أكبر حوله، فلا يظهر منه شيء، ولا حتى طوله.";
+"Find more with Apple Intelligence" = "اكتشاف المزيد بـ Apple Intelligence";
+"Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device." = "يقرأ الكلمات هنا على جهازك ويُخفي ما تفوته القواعد، مثل اسم داخل جملة. لا يخرج شيء من هذا الجهاز.";
+"Needs Apple Intelligence on this device." = "يحتاج إلى Apple Intelligence على هذا الجهاز.";
+"Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "كل نسخة تُقرأ مرة ثانية قبل أن تخرج، كما يمكن لأي أحد أن يقرأها، وكل شيء خاص ما زال ظاهراً يُخفى أيضاً.";

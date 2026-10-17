@@ -456,8 +456,7 @@ enum Cover {
     static func covered(of url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect]) -> CGImage? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = upright(source) else { return nil }
-        let hidden = hand.map { Finder.Area(rect: $0, kind: nil) }
-        return Finder.cover(image, areas: Finder.coveredAreas(in: image, chosen) + hidden)
+        return Finder.covered(image, chosen, hand: hand)?.image
     }
 
     /// A copy of the screenshot with the chosen details and the parts hidden
@@ -480,11 +479,12 @@ enum Cover {
                          drawing: Drawing = .empty) -> (url: URL, report: CoverReport)? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = upright(source) else { return nil }
-        let found = Finder.coveredAreas(in: image, chosen)
-        let places = found + hand.map { Finder.Area(rect: $0, kind: nil) }
-        guard !places.isEmpty || stamp != nil || clean || !drawing.isEmpty else { return nil }
+        // Covered, then read again as anyone could, and covered more if need be.
+        guard let made = Finder.covered(image, chosen, hand: hand) else { return nil }
+        let found = made.areas
+        guard !found.isEmpty || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty else { return nil }
 
-        guard var covered = Finder.cover(image, areas: places) else { return nil }
+        var covered = made.image
         if !drawing.isEmpty, let drawn = Drawing.render(covered, drawing) { covered = drawn }
         // The stamp's band goes above the picture, which grows by its height.
         if let stamp, let stamped = TimeStamp.render(covered, stamp) { covered = stamped }

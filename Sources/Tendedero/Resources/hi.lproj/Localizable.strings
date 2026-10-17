@@ -640,3 +640,10 @@
 "Keep the last four digits" = "आख़िरी चार अंक दिखाएँ";
 "Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement." = "कार्ड, खाता और फ़ोन नंबर अपने आख़िरी चार अंकों से पहचाने जा सकते हैं, जैसे बैंक स्टेटमेंट में।";
 "Every look hides for good: blur, pixels, dots and erased are drawn from the colors around what is covered, never from it, so it cannot be brought back." = "हर शैली हमेशा के लिए छिपाती है: धुंधला, पिक्सेल, बिंदु और मिटाया गया, ढके हिस्से के आसपास के रंगों से बनते हैं, उससे कभी नहीं, इसलिए उसे वापस नहीं लाया जा सकता।";
+"Protection" = "सुरक्षा";
+"Strongest protection" = "सबसे मज़बूत सुरक्षा";
+"Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was." = "जिस पंक्ति में कुछ भी निजी हो, वह पूरी ढक दी जाती है, आसपास ज़्यादा जगह के साथ, ताकि उसका कुछ भी न दिखे, उसकी लंबाई तक नहीं।";
+"Find more with Apple Intelligence" = "Apple Intelligence से और ढूँढें";
+"Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device." = "शब्दों को यहीं पढ़ता है और वह ढक देता है जो पैटर्न से छूट जाता है, जैसे किसी वाक्य में नाम। इस डिवाइस से कुछ भी बाहर नहीं जाता।";
+"Needs Apple Intelligence on this device." = "इस डिवाइस पर Apple Intelligence चाहिए।";
+"Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "हर प्रति बाहर जाने से पहले फिर से पढ़ी जाती है, जैसे कोई भी उसे पढ़ सकता है, और जो भी निजी अब भी दिखता है, वह भी ढक दिया जाता है।";

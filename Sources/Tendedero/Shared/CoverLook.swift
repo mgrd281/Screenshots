@@ -105,8 +105,10 @@ extension Finder {
         return NSRange(location: whole.location, length: end - whole.location)
     }
 
-    /// What decides how covers are drawn, for telling copies apart.
-    static var lookKey: String { "\(CoverStyle.current.rawValue),\(keepsLastDigits)" }
+    /// What decides how covers are found and drawn, for telling copies apart.
+    static var lookKey: String {
+        "\(CoverStyle.current.rawValue),\(keepsLastDigits),\(strongest),\(usesIntelligence)"
+    }
 
     /// The picture with the given places covered in the chosen look. Each
     /// place is from 0 to 1 from the bottom left; its kind, if any, names it

@@ -7,6 +7,8 @@ struct SettingsView: View {
     @State private var chosen = Choice.details
     @State private var look = CoverStyle.current
     @State private var keepsLastDigits = Finder.keepsLastDigits
+    @State private var strongest = Finder.strongest
+    @State private var usesIntelligence = Finder.usesIntelligence && Finder.intelligenceAvailable
     @State private var rules = OwnRules.all
 
     var body: some View {
@@ -48,6 +50,34 @@ struct SettingsView: View {
                 }
                 .onChange(of: look) { _, new in CoverStyle.current = new }
                 .onChange(of: keepsLastDigits) { _, new in Finder.keepsLastDigits = new }
+
+                Section {
+                    Toggle(isOn: $strongest) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(L("Strongest protection"))
+                            Text(L("Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was."))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    Toggle(isOn: $usesIntelligence) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(L("Find more with Apple Intelligence"))
+                            Text(Finder.intelligenceAvailable
+                                 ? L("Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device.")
+                                 : L("Needs Apple Intelligence on this device."))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .disabled(!Finder.intelligenceAvailable)
+                } header: {
+                    Text(L("Protection"))
+                } footer: {
+                    Text(L("Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too."))
+                }
+                .onChange(of: strongest) { _, new in Finder.strongest = new }
+                .onChange(of: usesIntelligence) { _, new in Finder.usesIntelligence = new }
 
                 Section {
                     ForEach($rules) { $rule in

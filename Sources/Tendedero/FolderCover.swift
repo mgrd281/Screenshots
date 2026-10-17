@@ -149,14 +149,13 @@ final class FolderCover {
         }
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = Cover.upright(source) else { return nil }
-        let areas = Finder.coveredAreas(in: image, chosen)
         let target = unique(name, ext: "png", in: folder)
-        guard let covered = Finder.cover(image, areas: areas),
+        guard let made = Finder.covered(image, chosen),
               let destination = CGImageDestinationCreateWithURL(target as CFURL, UTType.png.identifier as CFString, 1, nil)
         else { return nil }
-        CGImageDestinationAddImage(destination, covered, nil)
+        CGImageDestinationAddImage(destination, made.image, nil)
         guard CGImageDestinationFinalize(destination) else { return nil }
-        return (target, CoverReport(areas))
+        return (target, CoverReport(made.areas))
     }
 
     /// A name not taken in the folder: the file's, then with " 2", " 3"….

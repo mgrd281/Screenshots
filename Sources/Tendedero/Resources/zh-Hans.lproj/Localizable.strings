@@ -638,3 +638,10 @@
 "Keep the last four digits" = "保留后四位";
 "Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement." = "银行卡号、账号和电话号码会保留后四位，便于辨认，就像银行对账单上一样。";
 "Every look hides for good: blur, pixels, dots and erased are drawn from the colors around what is covered, never from it, so it cannot be brought back." = "每种样式都会彻底遮盖：模糊、马赛克、圆点和抹除都取自被遮盖处周围的颜色，从不取自它本身，因此无法还原。";
+"Protection" = "保护";
+"Strongest protection" = "最强保护";
+"Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was." = "含有隐私内容的每一行都会整行遮盖，并留出更多边距，什么都不会露出来，连长度也看不出。";
+"Find more with Apple Intelligence" = "用 Apple Intelligence 找出更多";
+"Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device." = "就在本机读取文字，并遮盖规则漏掉的内容，比如句子里的名字。任何内容都不会离开这台设备。";
+"Needs Apple Intelligence on this device." = "需要本机支持并开启 Apple Intelligence。";
+"Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "每份副本在发出前都会像任何人那样再读一遍，仍能看出的隐私内容也会被遮盖。";

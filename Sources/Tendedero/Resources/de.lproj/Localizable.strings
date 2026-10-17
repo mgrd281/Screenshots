@@ -638,3 +638,10 @@
 "Keep the last four digits" = "Die letzten vier Ziffern zeigen";
 "Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement." = "Karten-, Konto- und Telefonnummern bleiben an ihren letzten vier Ziffern erkennbar, wie auf einem Kontoauszug.";
 "Every look hides for good: blur, pixels, dots and erased are drawn from the colors around what is covered, never from it, so it cannot be brought back." = "Jeder Stil verdeckt für immer: Unscharf, Verpixelt, Punkte und Ausradiert entstehen aus den Farben um das Verdeckte herum, nie aus ihm selbst, und lassen sich deshalb nicht zurückholen.";
+"Protection" = "Schutz";
+"Strongest protection" = "Stärkster Schutz";
+"Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was." = "Jede Zeile mit etwas Privatem wird ganz verdeckt, mit mehr Rand, sodass nichts davon zu sehen ist, nicht einmal, wie lang es war.";
+"Find more with Apple Intelligence" = "Mehr finden mit Apple Intelligence";
+"Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device." = "Liest die Wörter direkt hier und verdeckt, was die Muster übersehen, etwa einen Namen in einem Satz. Nichts verlässt dieses Gerät.";
+"Needs Apple Intelligence on this device." = "Braucht Apple Intelligence auf diesem Gerät.";
+"Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "Jede Kopie wird vor dem Verlassen noch einmal gelesen, wie jeder sie lesen könnte, und was dann noch Privates zu sehen ist, wird ebenfalls verdeckt.";
