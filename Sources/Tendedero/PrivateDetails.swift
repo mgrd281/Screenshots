@@ -18,6 +18,7 @@ enum PrivateDetails {
     /// everything it knew.
     nonisolated static var details: Set<PrivateDetail> {
         get {
+            _ = upToDate
             if let raw = UserDefaults.standard.stringArray(forKey: "hiddenDetails") {
                 return Set(raw.compactMap(PrivateDetail.init(rawValue:)))
             }
@@ -25,6 +26,13 @@ enum PrivateDetails {
         }
         set { UserDefaults.standard.set(newValue.map(\.rawValue).sorted(), forKey: "hiddenDetails") }
     }
+
+    /// The saved choice, and the one the menu's switch keeps while it is
+    /// off, brought up to date once before either is read: a recommended
+    /// kind added since starts on.
+    private nonisolated static let upToDate: Void = {
+        PrivateDetail.bringUpToDate(["hiddenDetails", "hiddenDetailsBefore"])
+    }()
 
     nonisolated static var hidden: Bool { !details.isEmpty }
 

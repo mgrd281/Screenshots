@@ -8,6 +8,10 @@ keeps a download of each version.
 
 - Snapfly has version numbers of its own now, and this list says what each
   one brings. Settings › About shows yours.
+- QR codes and barcodes are covered, a new kind under Privacy, on the Mac
+  and the iPhone. Nobody can read what a code holds by looking, so it is
+  covered whole, with the number printed under a barcode. It starts on for
+  everyone who covers anything.
 
 ## 1.0.0
 

@@ -509,7 +509,7 @@ apps.
     "Hide in this copy" in the inspector: Check All, Recommended and Uncheck
     All, small, sharing the row in equal parts (stacked where they don't
     fit), a footer saying the copy has no place or camera details, then the
-    fifteen kinds as switches in the three groups Settings has, named as
+    sixteen kinds as switches in the three groups Settings has, named as
     Settings names them, starting with what Settings hides. The primary
     button reads Save Copy… and opens a save sheet in the folder of the
     original, under the name "… (covered)". A small spinner shows in the
@@ -519,7 +519,7 @@ apps.
   buttons, Check All, Recommended and Uncheck All, sharing the row in equal
   parts, under the header "Hide private details" and over the footer that
   says what is checked is covered.
-  Then the fifteen kinds in three sections named for their group: People;
+  Then the sixteen kinds in three sections named for their group: People;
   Money, identity and health; Orders and documents. Then "Also hide", the
   owner's own rules: one row per rule with a 160 pt menu picker for its kind
   (Word, After a label, Pattern), a rounded field with a prompt for that

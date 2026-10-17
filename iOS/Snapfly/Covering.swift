@@ -5,8 +5,13 @@ import UniformTypeIdentifiers
 /// What to cover: the recommended kinds, until Settings says otherwise. The
 /// same choice, under the same name, as on the Mac.
 enum Choice {
+    /// The saved choice, brought up to date once before it is first read: a
+    /// recommended kind added since starts on.
+    private static let upToDate: Void = PrivateDetail.bringUpToDate(["hiddenDetails"])
+
     static var details: Set<PrivateDetail> {
         get {
+            _ = upToDate
             guard let raw = UserDefaults.standard.stringArray(forKey: "hiddenDetails") else {
                 return PrivateDetail.recommended
             }
