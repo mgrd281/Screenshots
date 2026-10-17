@@ -895,15 +895,21 @@ system to a web page. The brief and direction contract are in
       screen starts it again.
     - On the paper beside it, a handstamp says "Screenshot taken" in the
       page's language (`.cap-stamp`, 26 px above it, turned 4°).
-  - **Hide Part** (`section_say`): the editor's window with a bank transfer
-    in it, the sparkles field, the three examples, the note, and Remove
-    All, Cancel and Done. Covers are cover ink at a 3 radius, one per line
-    of a detail, growing in from the reading start 45 ms apart; hovered,
-    they show an eye and an accent ring, and a click removes one. A drag
-    draws a dashed accent box. A few words in English, German and Arabic
-    stand in for Apple Intelligence; Done adds the lock badge. A handstamp
-    with the app's "Hide Part…" sits on the paper with it (`.say-stamp`,
-    28 px above, turned −5°).
+  - **Hide Part** (`section_say`): the editor's window as the app opens it,
+    under the centred copy and 880 px wide at most. On the leading side the
+    canvas (`--fill`, 24 px margin) with a bank transfer on it, under a
+    `0 6px 14px` shadow at 18%; on the trailing edge the inspector, 300 px,
+    the groups of a settings pane over a footer: "Say what to hide" with
+    the sparkles field, Hide and the three examples as its rows and the
+    note under the box; "By hand" with the hint as its subtitle and Remove
+    All; then Cancel and Done. On a phone (640 px and below) the inspector
+    moves under the canvas. Covers are cover ink at a 3 radius, one per
+    line of a detail, growing in from the reading start 45 ms apart;
+    hovered, they show an eye and an accent ring, and a click removes one.
+    A drag draws a dashed accent box. A few words in English, German and
+    Arabic stand in for Apple Intelligence; Done adds the lock badge. A
+    handstamp with the app's "Hide Part…" ends the copy (`.say-stamp`,
+    28 px below it, turned −5°).
   - **Private by design** (`section_private`): the Settings window on its
     Privacy pane, with a handstamp of `stamp_covered` ("Private details
     covered") struck over its trailing top corner (38 px above, 14 px

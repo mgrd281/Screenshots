@@ -308,3 +308,43 @@ test("the page keeps its ids unique after the photos are sent", async ({ page },
   });
   expect(repeated).toEqual([]);
 });
+
+// The Hide Part window is drawn as the app opens it: the picture on its
+// canvas beside the choices on the trailing edge, which move under it on a
+// phone. In Arabic the trailing edge is the left.
+for (const [dir, lang] of [["", "en"], ["ar/", "ar"]]) {
+  test(`${lang}: the Hide Part window keeps the picture beside its choices, or over them on a phone`, async ({ page }, info) => {
+    await page.goto(dir, { waitUntil: "networkidle" });
+    // Both measured in one frame: the window may still be arriving.
+    const { canvas, side } = await page.evaluate(() => {
+      const box = (selector) => {
+        const r = document.querySelector(selector).getBoundingClientRect();
+        return { x: r.x, y: r.y, width: r.width, height: r.height };
+      };
+      return { canvas: box(".hide-canvas"), side: box(".hide-side") };
+    });
+    if (info.project.name === "desktop") {
+      expect(Math.abs(canvas.y - side.y)).toBeLessThan(2);
+      if (lang === "ar") expect(side.x + side.width).toBeLessThanOrEqual(canvas.x + 1);
+      else expect(side.x).toBeGreaterThanOrEqual(canvas.x + canvas.width - 1);
+    } else {
+      expect(side.y).toBeGreaterThanOrEqual(canvas.y + canvas.height - 1);
+    }
+  });
+}
+
+// An example covers parts of the receipt and says how many; Done locks the
+// picture, and Cancel clears it again.
+test("an example covers parts of the receipt, and Done locks it", async ({ page }) => {
+  await page.goto("", { waitUntil: "networkidle" });
+  const win = page.locator("[data-hide]");
+  await win.scrollIntoViewIfNeeded();
+  await win.locator("[data-example]").first().click();
+  await expect(win.locator(".cover-box").first()).toBeVisible();
+  await expect(win.locator("[data-note-text]")).not.toHaveText("");
+  await expect(win.locator("[data-remove-all]")).toBeEnabled();
+  await win.locator("[data-done]").click();
+  await expect(win.locator(".photo-shot")).toHaveClass(/saved/);
+  await win.locator("[data-cancel]").click();
+  await expect(win.locator(".cover-box")).toHaveCount(0);
+});
