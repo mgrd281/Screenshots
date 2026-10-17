@@ -406,14 +406,16 @@ extension CoverStyle {
                                       space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
         else { return nil }
         context.scaleBy(x: scale, y: scale)
-        context.setFillColor(dark ? CGColor(red: 0.11, green: 0.11, blue: 0.118, alpha: 1) : CGColor(gray: 1, alpha: 1))
+        context.setFillColor(dark ? CGColor(srgbRed: 0.11, green: 0.11, blue: 0.118, alpha: 1)
+                                  : CGColor(srgbRed: 1, green: 1, blue: 1, alpha: 1))
         context.fill(CGRect(origin: .zero, size: size))
         // From the bottom left: a grey bubble with a name, a blue one with a number.
         let incoming = CGRect(x: 8, y: 45.5, width: 84, height: 28)
         let outgoing = CGRect(x: size.width - 8 - 96, y: 9, width: 96, height: 28)
-        let grey = dark ? CGColor(red: 0.227, green: 0.227, blue: 0.235, alpha: 1)
-            : CGColor(red: 0.914, green: 0.914, blue: 0.922, alpha: 1)
-        for (bubble, fill) in [(incoming, grey), (outgoing, CGColor(red: 0, green: 0.478, blue: 1, alpha: 1))] {
+        let grey = dark ? CGColor(srgbRed: 0.227, green: 0.227, blue: 0.235, alpha: 1)
+            : CGColor(srgbRed: 0.914, green: 0.914, blue: 0.922, alpha: 1)
+        let blue = CGColor(srgbRed: 0, green: 0.478, blue: 1, alpha: 1)
+        for (bubble, fill) in [(incoming, grey), (outgoing, blue)] {
             context.setFillColor(fill)
             context.addPath(CGPath(roundedRect: bubble, cornerWidth: 14, cornerHeight: 14, transform: nil))
             context.fillPath()

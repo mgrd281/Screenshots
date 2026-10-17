@@ -37,16 +37,18 @@ final class CoverLookTests: XCTestCase {
     func testTheSoftLooksTakeTheColorsAround() throws {
         // Blue all round, with dark "text" under the cover.
         let blue = try page(ground: (0.2, 0.4, 0.8), text: 1)
+        let ground = color(in: blue, at: CGPoint(x: 0.1, y: 0.1))
         let area = [Finder.Area(rect: place, kind: .names)]
         let erased = try XCTUnwrap(Finder.cover(blue, areas: area, style: .erase))
         let middle = color(in: erased, at: CGPoint(x: 0.45, y: 0.5))
-        XCTAssertEqual(Double(middle.red), 51, accuracy: 3)
-        XCTAssertEqual(Double(middle.green), 102, accuracy: 3)
-        XCTAssertEqual(Double(middle.blue), 204, accuracy: 3)
+        XCTAssertEqual(Int(middle.red), Int(ground.red), accuracy: 3)
+        XCTAssertEqual(Int(middle.green), Int(ground.green), accuracy: 3)
+        XCTAssertEqual(Int(middle.blue), Int(ground.blue), accuracy: 3)
         // Above the row of dots, the ground goes on.
         let dots = try XCTUnwrap(Finder.cover(blue, areas: area, style: .dots))
         let above = color(in: dots, at: CGPoint(x: 0.45, y: 0.585))
-        XCTAssertEqual(Double(above.blue), 204, accuracy: 4)
+        XCTAssertEqual(Int(above.blue), Int(ground.blue), accuracy: 4)
+        XCTAssertEqual(Int(above.red), Int(ground.red), accuracy: 4)
         for style in [CoverStyle.blur, .pixels] {
             let covered = try XCTUnwrap(Finder.cover(blue, areas: area, style: style))
             let corner = color(in: covered, at: CGPoint(x: 0.205, y: 0.41))
@@ -118,7 +120,7 @@ final class CoverLookTests: XCTestCase {
         let context = try XCTUnwrap(CGContext(data: nil, width: width, height: height, bitsPerComponent: 8,
                                               bytesPerRow: 0, space: CGColorSpace(name: CGColorSpace.sRGB)!,
                                               bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
-        context.setFillColor(CGColor(red: ground.0, green: ground.1, blue: ground.2, alpha: 1))
+        context.setFillColor(CGColor(srgbRed: ground.0, green: ground.1, blue: ground.2, alpha: 1))
         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
         context.setFillColor(CGColor(gray: 0.1, alpha: 1))
         // Inside the place, which runs from 80 to 280 across and 80 to 120 up.
