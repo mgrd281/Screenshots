@@ -25,6 +25,9 @@ enum Plan {
         case shopHeader
         /// Covered copies of what lands in a folder, saved in another.
         case folderCover
+        /// Arrows, boxes, highlights, numbered steps, words and a crop drawn
+        /// on a photo, on what leaves the line.
+        case markup
     }
 
     /// The day Pro begins. Until it is set, nothing is held back.

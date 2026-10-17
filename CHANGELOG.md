@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Draw on Photo, in a photo's menu: arrows, boxes, a highlighter, numbered
+  steps and words, and a crop to the part that matters, drawn on what
+  leaves the line. Each tool has its key, and ⌘Z undoes. The file itself
+  stays as it is.
 - Cover what lands in a folder, under Privacy: every picture or PDF that
   lands in a folder you choose gets a covered copy in another, in the
   background, with one note when a run is done.
