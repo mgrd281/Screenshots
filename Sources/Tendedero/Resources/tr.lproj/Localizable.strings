@@ -517,3 +517,14 @@
 "Image" = "Görsel";
 "Plain file names" = "Sade dosya adları";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Görseller ne zaman, nerede ya da neyle yapıldıklarına dair notlar olmadan yeni dosyalar olarak çıkar. Sade dosya adlarıyla ayrıca çekildikleri zamana göre değil, “Görsel” diye adlandırılır.";
+"Send with Shop Header" = "Mağaza başlığıyla gönder";
+"Add your shop's name or logo under Line in Settings." = "Ayarlar’da “İp” altında mağazanın adını ya da logosunu ekle.";
+"Adding the shop header…" = "Mağaza başlığı ekleniyor…";
+"Could not add the shop header." = "Mağaza başlığı eklenemedi.";
+"Choose your shop's logo." = "Mağazanın logosunu seç.";
+"Shop name" = "Mağaza adı";
+"Your shop's name" = "Mağazanın adı";
+"Logo" = "Logo";
+"A square picture works best." = "Kare bir görsel en iyisidir.";
+"Shop header" = "Mağaza başlığı";
+"Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "Bir fotoğrafın menüsündeki “Mağaza başlığıyla gönder”, kapatılmış ekran görüntüsünün üstüne mağazanın adı ve logosu, sipariş ve günle bir şerit koyar.";

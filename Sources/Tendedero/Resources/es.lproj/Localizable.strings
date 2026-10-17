@@ -517,3 +517,14 @@
 "Image" = "Imagen";
 "Plain file names" = "Nombres de archivo simples";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Las imágenes salen como archivos nuevos, sin notas de cuándo, dónde ni con qué se hicieron. Con nombres simples se llaman además «Imagen», no según cuándo se tomaron.";
+"Send with Shop Header" = "Enviar con cabecera de la tienda";
+"Add your shop's name or logo under Line in Settings." = "Añade el nombre o el logotipo de tu tienda en Ajustes, en Cuerda.";
+"Adding the shop header…" = "Añadiendo la cabecera de la tienda…";
+"Could not add the shop header." = "No se pudo añadir la cabecera de la tienda.";
+"Choose your shop's logo." = "Elige el logotipo de tu tienda.";
+"Shop name" = "Nombre de la tienda";
+"Your shop's name" = "El nombre de tu tienda";
+"Logo" = "Logotipo";
+"A square picture works best." = "Una imagen cuadrada es lo mejor.";
+"Shop header" = "Cabecera de la tienda";
+"Send with Shop Header, in a photo's menu, puts a band with your shop's name and logo, the order and the day above the covered screenshot." = "Enviar con cabecera de la tienda, en el menú de una foto, pone sobre la captura tapada una franja con el nombre y el logotipo de tu tienda, el pedido y el día.";

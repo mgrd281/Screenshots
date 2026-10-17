@@ -500,6 +500,22 @@ apps.
     9 pt grey caption, as large as fits; every page has "n / total" at the
     foot in 8 pt grey. In right-to-left languages the columns run from the
     right.
+  - **Send with Shop Header** (`storefront`) follows Paste into … for a
+    photo. It works under a working note above the Dock, then sends as
+    Paste does. With no shop name or logo yet, a note says where to add
+    them.
+  - **The shop's band** sits above the covered screenshot, as wide, white,
+    with a hairline of grey 86% between them. Its sizes grow with the
+    picture as the time stamp's do (a font of 1.25% of the width, 13 px at
+    least): the logo leads in the reading direction as a square the band's
+    height less its padding, filled and with corners of 22% of its side,
+    then the shop's name (semibold, grey 8%) over the order and the day
+    (regular, grey 36%), centred as a block and cut short with an ellipsis.
+  - **Settings › Line › Shop header**: the name in a field with a prompt;
+    the logo as a 24 pt square with 5 pt corners, a borderless
+    `minus.circle` to remove it and a Choose… `SettingsButton`; and a
+    preview of the band's leading end, at twice its size, with 6 pt corners
+    and a 0.5 pt edge of `.primary` at 12%.
   - SF Symbols on macOS 26 only, as Apple's own menus have.
 - **Settings sidebar.** General, Line, Privacy, Permissions, Support and
   About, each on its tile (see Layout).

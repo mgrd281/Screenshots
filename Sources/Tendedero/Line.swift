@@ -352,13 +352,16 @@ final class Line: ObservableObject {
     /// until the last one does.
     var onSend: (([Pegged]) -> TimeInterval)?
 
-    /// - Parameter caption: text to paste after the photos, like a
-    ///   description in a chat.
-    private func paste(_ photos: [Pegged], then caption: String? = nil) {
+    /// - Parameters:
+    ///   - caption: text to paste after the photos, like a description in a
+    ///     chat.
+    ///   - files: what goes for some of the photos instead of their copies,
+    ///     like one under the shop's header.
+    private func paste(_ photos: [Pegged], then caption: String? = nil, replacing files: [UUID: URL] = [:]) {
         // Into an AI chat with Cover Everything there on, every kind.
         let chosen = CoveringProfile.detailsNow
         guard !photos.isEmpty, !stillCovering(photos, chosen) else { return }
-        copy(photos, covering: chosen)
+        copy(photos, covering: chosen, replacing: files)
         pickedIDs = []
         // Only when the paste will happen: a photo flying into a chat that
         // never gets it would say the opposite.
@@ -373,6 +376,40 @@ final class Line: ObservableObject {
         guard let caption, willPaste else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + flight + 0.5) {
             MainActor.assumeIsolated { Self.pasteText(caption) }
+        }
+    }
+
+    /// Send with Shop Header, from a photo's menu: the photo as it leaves,
+    /// under a band with the shop's name and logo, the order and the day.
+    /// The order shows unless order numbers are covered.
+    func sendWithHeader(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
+        guard ShopHeader.isSet else {
+            Notice.show(L("Add your shop's name or logo under Line in Settings."))
+            return
+        }
+        let chosen = CoveringProfile.detailsNow
+        let covered = PrivateDetails.shareable(item.url, covering: chosen)
+        let original = item.url
+        let name = ShopHeader.name
+        let logo = ShopHeader.hasLogo ? ShopHeader.logoFile : nil
+        let rightToLeft = NSApp.userInterfaceLayoutDirection == .rightToLeft
+        let showsOrder = !chosen.contains(.orders)
+        // Read already for search, mostly; else read now.
+        let known = TextIndex.rows(for: original).map { Finder.orderNumber(in: $0.map(\.text)) }
+        let note = Notice.show(L("Adding the shop header…"), working: true)
+        Task { @MainActor [weak self] in
+            let made = await Task.detached(priority: .userInitiated) { () -> URL? in
+                let order = showsOrder ? known ?? OrderCard.read(original).first { $0.part == .order }?.value : nil
+                return ShopHeader.copy(of: covered, name: name, logo: logo, order: order, day: Date(),
+                                       rightToLeft: rightToLeft)
+            }.value
+            Notice.end(note)
+            guard let made else {
+                Notice.show(L("Could not add the shop header."))
+                return
+            }
+            self?.paste([item], replacing: [id: made])
         }
     }
 
@@ -540,12 +577,12 @@ final class Line: ObservableObject {
         copy(photos, covering: CoveringProfile.detailsNow)
     }
 
-    private func copy(_ photos: [Pegged], covering chosen: Set<PrivateDetail>) {
+    private func copy(_ photos: [Pegged], covering chosen: Set<PrivateDetail>, replacing files: [UUID: URL] = [:]) {
         guard !stillCovering(photos, chosen) else { return }
         let entries = photos.map { item -> NSPasteboardItem in
             let entry = NSPasteboardItem()
             // With Hide private details on, a copy with them covered.
-            let url = PrivateDetails.shareable(item.url, covering: chosen)
+            let url = files[item.id] ?? PrivateDetails.shareable(item.url, covering: chosen)
             // A recording or a PDF is copied as the file, which apps paste as
             // the video or the document.
             // A GIF keeps moving: it goes as itself, not as a still.
