@@ -109,6 +109,35 @@
 /* TextCard, GrabArea */
 "Translate Text" = "翻译文本";
 "Describe" = "生成描述";
+"Order Details" = "订单详情";
+"Save for Bookkeeping" = "存储以供记账";
+"Email to Bookkeeping…" = "用邮件发送给记账人…";
+"Bookkeeping" = "记账";
+"Folder" = "文件夹";
+"Not chosen yet" = "尚未选择";
+"Choose…" = "选取…";
+"Receipts saved for the books go here, each with a line in Snapfly.csv." = "为记账存储的收据会放在这里，每张在 Snapfly.csv 中占一行。";
+"Who keeps the books" = "记账人";
+"A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total." = "照片菜单可将其遮盖后存储到这里或放进新邮件，名称包含日期、订单和总计。";
+"Choose the folder for receipts." = "选取用于存放收据的文件夹。";
+"Choose" = "选取";
+"Saved for the books as %@." = "已存储以供记账：%@。";
+"Could not save it for the books." = "无法存储以供记账。";
+"No email app could be opened." = "无法打开任何邮件应用。";
+"File" = "文件";
+"Order" = "订单";
+"Total" = "总计";
+"Name" = "姓名";
+"Address" = "地址";
+"Email" = "电子邮件";
+"Phone" = "电话";
+"Tracking number" = "运单号";
+"Code" = "码";
+"Copy Row" = "拷贝为一行";
+"Copy All" = "全部拷贝";
+"No order details were found in this screenshot." = "此截屏中未找到订单详情。";
+"Read on this Mac as the screenshot shows them, not covered." = "已在此 Mac 上按截屏原样读取，未遮盖。";
+"Every part in one row, for a spreadsheet" = "所有项目放在一行，用于电子表格";
 "Translation" = "翻译";
 "Description" = "描述";
 "Reading the screenshot…" = "正在读取截图…";
@@ -333,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "添加消息…";
+"Saved messages" = "存储的消息";
+"Add Message" = "添加消息";
+"Here is the invoice for your order {order}." = "这是你的订单 {order} 的发票。";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "它们会显示在消息栏上方。{order}、{total}、{date}、{name} 和 {tracking} 会根据照片填写；你遮盖的类型则留空。";
 "Send with a Message…" = "连同消息发送…";
 
 /* Order on the line */

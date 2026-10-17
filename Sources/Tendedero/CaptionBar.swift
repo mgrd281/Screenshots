@@ -18,11 +18,14 @@ final class CaptionBar: NSObject, NSWindowDelegate {
 
     var isOpen: Bool { panel != nil }
 
-    /// - Parameter anchor: the chat button's capsule, in screen coordinates;
-    ///   the bar's trailing edge lines up with it, just above.
-    func show(above anchor: CGRect, count: Int, send: @escaping (String) -> Void) {
+    /// - Parameters:
+    ///   - anchor: the chat button's capsule, in screen coordinates; the
+    ///     bar's trailing edge lines up with it, just above.
+    ///   - photo: the newest photo to send, which fills a saved message's
+    ///     blanks.
+    func show(above anchor: CGRect, count: Int, photo: URL? = nil, send: @escaping (String) -> Void) {
         close()
-        let view = CaptionBarView(count: count, send: { [weak self] text in
+        let view = CaptionBarView(count: count, photo: photo, send: { [weak self] text in
             RecentCaptions.note(text)
             // The keyboard goes back to the chat before anything is pasted.
             self?.close()
@@ -109,13 +112,16 @@ enum RecentCaptions {
 }
 
 /// The field and the send button, in the chat button's own glyph and color,
-/// and over them, while the field is empty, the messages sent lately.
+/// and over them, while the field is empty, the saved messages and those
+/// sent lately.
 private struct CaptionBarView: View {
     let count: Int
+    let photo: URL?
     let send: (String) -> Void
     let close: () -> Void
 
     @State private var text = ""
+    @State private var saved = SavedMessages.all.filter { !$0.isBlank }
     @State private var recent = RecentCaptions.all
     /// Which recent message ↑ and ↓ have put in the field; nil for none.
     @State private var browsing: Int?
@@ -123,7 +129,7 @@ private struct CaptionBarView: View {
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 6) {
-            if text.isEmpty && !recent.isEmpty { recentList }
+            if text.isEmpty && !(saved.isEmpty && recent.isEmpty) { recentList }
             field
         }
         .padding(CaptionBar.margin)
@@ -131,12 +137,15 @@ private struct CaptionBarView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
     }
 
-    /// Each message sent lately, a click putting it in the field, and its
-    /// cross on hover taking it off the list.
+    /// The saved messages, then each message sent lately, a click putting
+    /// it in the field. A recent one's cross on hover takes it off the list.
     private var recentList: some View {
         VStack(alignment: .leading, spacing: 0) {
+            ForEach(saved) { message in
+                RecentRow(message: message.text, symbol: "bookmark") { use(message) }
+            }
             ForEach(recent, id: \.self) { message in
-                RecentRow(message: message) {
+                RecentRow(message: message, symbol: "clock.arrow.circlepath") {
                     text = message
                     focused = true
                 } remove: {
@@ -196,6 +205,22 @@ private struct CaptionBarView: View {
         send(text.trimmingCharacters(in: .whitespacesAndNewlines))
     }
 
+    /// A saved message, its blanks filled from the photo: the order's
+    /// number, total, date, name and tracking number, read on this Mac.
+    private func use(_ message: SavedMessage) {
+        focused = true
+        guard let photo, SavedMessages.hasBlanks(message.text) else {
+            text = message.text
+            return
+        }
+        // Over an AI chat with Cover Everything there on, every kind's blank stays empty.
+        let covering = CoveringProfile.detailsNow
+        Task {
+            let fields = await Task.detached(priority: .userInitiated) { OrderCard.read(photo) }.value
+            text = SavedMessages.fill(message.text, with: fields, covering: covering)
+        }
+    }
+
     private func browse(by step: Int) -> KeyPress.Result {
         guard !recent.isEmpty else { return .ignored }
         let next = (browsing ?? -1) + step
@@ -241,17 +266,18 @@ private struct CaptionBarView: View {
     }
 }
 
-/// A message sent lately: the clock, the message on one line, and on hover
-/// a cross to take it off the list.
+/// A message to pick: a saved one with its bookmark, or one sent lately
+/// with the clock and, on hover, a cross to take it off the list.
 private struct RecentRow: View {
     let message: String
+    let symbol: String
     let pick: () -> Void
-    let remove: () -> Void
+    var remove: (() -> Void)?
     @State private var hovering = false
 
     var body: some View {
         HStack(spacing: 8) {
-            Image(systemName: "clock.arrow.circlepath")
+            Image(systemName: symbol)
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(.secondary)
                 .accessibilityHidden(true)
@@ -260,15 +286,17 @@ private struct RecentRow: View {
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Button(action: remove) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 12))
-                    .foregroundStyle(.tertiary)
+            if let remove {
+                Button(action: remove) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.tertiary)
+                }
+                .buttonStyle(.plain)
+                .opacity(hovering ? 1 : 0)
+                .help(L("Remove"))
+                .accessibilityLabel(L("Remove"))
             }
-            .buttonStyle(.plain)
-            .opacity(hovering ? 1 : 0)
-            .help(L("Remove"))
-            .accessibilityLabel(L("Remove"))
         }
         .padding(.horizontal, 10)
         .frame(height: 28)

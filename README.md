@@ -139,7 +139,12 @@ each app, and for a new chat apart. Press and hold it, or right-click and
 choose Send with a Message…, to write a line like "Here is your invoice":
 Return sends the photos with the message after them, as one message. The
 last five messages wait above the empty field: click one, or press ↑ and ↓,
-to send it again; its cross takes it off the list. In Settings,
+to send it again; its cross takes it off the list. Above them wait your
+saved messages, written under Saved messages in Settings, under Line, like
+"Here is the invoice for your order {order}": {order}, {total}, {date},
+{name} and {tracking} fill in from the newest photo, read on your Mac. A
+blank of a kind you cover stays empty, shown as "…", so the message never
+says what the photo hides, and nothing goes until you press Return. In Settings,
 under Line, choose where it sits (above the chat's send button, a corner of
 the window, or the edge of the screen), how it looks, its icon and its color,
 with a preview, or turn it off.
@@ -224,9 +229,9 @@ saved from Finder.
 AI chats may keep what goes into them on their servers. Turn on Cover
 everything in AI chats under Privacy, and whatever you send, copy or drag
 out while ChatGPT, Claude, Gemini or another AI chat is in front, as an app
-or a website, has every kind covered, checked or not, and Copy Text leaves
-them all out. It only ever covers more than you chose, and the line still
-shows your choice. Over an AI chat, the send button shows a small lock by
+or a website, has every kind covered, checked or not; Copy Text,
+translations and the blanks of saved messages leave them all out too. It
+only ever covers more than you chose, and the line still shows your choice. Over an AI chat, the send button shows a small lock by
 the count meanwhile, and Sent in the History lists what was covered.
 
 Hide Part opens wide: the picture on the left, as large as fits, and on the
@@ -360,6 +365,27 @@ as long as the History keeps photos.
 
 <br>
 
+## Order details, ready to copy.
+
+Order Details, in a photo's menu, reads the order a screenshot shows: its
+number, the date, the total (the amount by a word like Total or Gesamt,
+else the largest), the name, the address, the email, the phone, the
+tracking number, and what a QR code says. Each part has its own copy
+button; Copy All copies them as lines, and Copy Row as one row with a tab
+between the parts, always in the same order, to paste into a spreadsheet.
+It is read on your Mac as the screenshot shows it, not covered.
+
+For the books, Save for Bookkeeping in the same menu puts the photo,
+covered as it leaves the line, in a folder you choose once, under a name
+that says what it is, like "2026-10-17 Order 1024 74,00 €", and adds a
+line to Snapfly.csv there: the day, the file, the order and the total.
+Email to Bookkeeping… puts the covered copy in a new email to whoever
+keeps your books, the same name as its subject. Choose the folder and the
+address in Settings, under Line. Whatever you cover stays out of the name
+and the table too.
+
+<br>
+
 ## Translated and described, on your Mac.
 
 Translate Text reads a screenshot and translates it into the language you
@@ -477,7 +503,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, and the Shortcuts actions |
 | `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
-| `TextCard.swift` | Translate Text and Describe, and the card that shows them |
+| `TextCard.swift` | Translate Text, Describe and Order Details, and the card that shows them |
 | `Appearance.swift` | Glass by role, Liquid Glass on macOS 26, and motion that honours Reduce Motion |
 | `Search.swift` | The words in every photo, and the search bar under the line |
 | `Edition.swift` | The Mac App Store edition: what the sandbox changes |
@@ -486,6 +512,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `ScreenshotWatcher.swift` | Notices new screenshots |
 | `History.swift` | What left the line, kept for 7 or 30 days |
 | `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again; Sent lists what went where |
+| `Shared/OrderCard.swift` | The parts of an order read off a screenshot, for Order Details: number, date, total, name, address, email, phone, tracking, code |
+| `Bookkeeping.swift` | Save for Bookkeeping and Email to Bookkeeping…: a covered copy named for its day, order and total, and its line in Snapfly.csv |
 | `SendLog.swift` | What was sent into which chat, when and with what covered, and the table it exports |
 | `CaptionBar.swift` | The line over the chat button to write a message sent with the photos |
 | `ChatLayouts.swift` | Where the chat button sits over each chat it knows, on a new chat and once started |

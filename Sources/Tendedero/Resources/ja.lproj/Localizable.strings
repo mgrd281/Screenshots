@@ -109,6 +109,35 @@
 /* TextCard, GrabArea */
 "Translate Text" = "テキストを翻訳";
 "Describe" = "説明を作成";
+"Order Details" = "注文の詳細";
+"Save for Bookkeeping" = "経理用に保存";
+"Email to Bookkeeping…" = "経理にメール…";
+"Bookkeeping" = "経理";
+"Folder" = "フォルダ";
+"Not chosen yet" = "未選択";
+"Choose…" = "選択…";
+"Receipts saved for the books go here, each with a line in Snapfly.csv." = "経理用に保存したレシートはここに入り、それぞれ Snapfly.csv に1行ずつ記録されます。";
+"Who keeps the books" = "経理担当者";
+"A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total." = "写真のメニューから、隠した状態でここに保存するか新しいメールに入れます。名前には日付、注文、合計が入ります。";
+"Choose the folder for receipts." = "レシート用のフォルダを選んでください。";
+"Choose" = "選択";
+"Saved for the books as %@." = "経理用に %@ として保存しました。";
+"Could not save it for the books." = "経理用に保存できませんでした。";
+"No email app could be opened." = "メールアプリを開けませんでした。";
+"File" = "ファイル";
+"Order" = "注文";
+"Total" = "合計";
+"Name" = "名前";
+"Address" = "住所";
+"Email" = "メール";
+"Phone" = "電話";
+"Tracking number" = "追跡番号";
+"Code" = "コード";
+"Copy Row" = "行としてコピー";
+"Copy All" = "すべてコピー";
+"No order details were found in this screenshot." = "このスクリーンショットに注文の詳細は見つかりませんでした。";
+"Read on this Mac as the screenshot shows them, not covered." = "このMacで、スクリーンショットのとおりに読み取りました（隠していません）。";
+"Every part in one row, for a spreadsheet" = "すべての項目を1行に（表計算用）";
 "Translation" = "翻訳";
 "Description" = "説明";
 "Reading the screenshot…" = "スクリーンショットを読み取り中…";
@@ -333,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "メッセージを追加…";
+"Saved messages" = "保存したメッセージ";
+"Add Message" = "メッセージを追加";
+"Here is the invoice for your order {order}." = "ご注文 {order} の請求書です。";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "メッセージバーの上に表示されます。{order}、{total}、{date}、{name}、{tracking} は写真から入力されます。隠している種類のものは空のままです。";
 "Send with a Message…" = "メッセージ付きで送信…";
 
 /* Order on the line */

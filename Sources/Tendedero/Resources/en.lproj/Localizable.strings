@@ -111,6 +111,35 @@
 /* TextCard, GrabArea */
 "Translate Text" = "Translate Text";
 "Describe" = "Describe";
+"Order Details" = "Order Details";
+"Save for Bookkeeping" = "Save for Bookkeeping";
+"Email to Bookkeeping…" = "Email to Bookkeeping…";
+"Bookkeeping" = "Bookkeeping";
+"Folder" = "Folder";
+"Not chosen yet" = "Not chosen yet";
+"Choose…" = "Choose…";
+"Receipts saved for the books go here, each with a line in Snapfly.csv." = "Receipts saved for the books go here, each with a line in Snapfly.csv.";
+"Who keeps the books" = "Who keeps the books";
+"A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total." = "A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total.";
+"Choose the folder for receipts." = "Choose the folder for receipts.";
+"Choose" = "Choose";
+"Saved for the books as %@." = "Saved for the books as %@.";
+"Could not save it for the books." = "Could not save it for the books.";
+"No email app could be opened." = "No email app could be opened.";
+"File" = "File";
+"Order" = "Order";
+"Total" = "Total";
+"Name" = "Name";
+"Address" = "Address";
+"Email" = "Email";
+"Phone" = "Phone";
+"Tracking number" = "Tracking number";
+"Code" = "Code";
+"Copy Row" = "Copy Row";
+"Copy All" = "Copy All";
+"No order details were found in this screenshot." = "No order details were found in this screenshot.";
+"Read on this Mac as the screenshot shows them, not covered." = "Read on this Mac as the screenshot shows them, not covered.";
+"Every part in one row, for a spreadsheet" = "Every part in one row, for a spreadsheet";
 "Translation" = "Translation";
 "Description" = "Description";
 "Reading the screenshot…" = "Reading the screenshot…";
@@ -335,6 +364,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Add a message…";
+"Saved messages" = "Saved messages";
+"Add Message" = "Add Message";
+"Here is the invoice for your order {order}." = "Here is the invoice for your order {order}.";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty.";
 "Send with a Message…" = "Send with a Message…";
 
 /* Order on the line */

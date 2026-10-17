@@ -111,6 +111,35 @@
 /* TextCard, GrabArea */
 "Translate Text" = "Mətni tərcümə et";
 "Describe" = "Təsvir yaz";
+"Order Details" = "Sifariş təfərrüatları";
+"Save for Bookkeeping" = "Mühasibat üçün saxla";
+"Email to Bookkeeping…" = "Mühasibata e-poçtla göndər…";
+"Bookkeeping" = "Mühasibat";
+"Folder" = "Qovluq";
+"Not chosen yet" = "Hələ seçilməyib";
+"Choose…" = "Seç…";
+"Receipts saved for the books go here, each with a line in Snapfly.csv." = "Mühasibat üçün saxlanan qəbzlər buraya düşür, hər biri Snapfly.csv-də bir sətirlə.";
+"Who keeps the books" = "Mühasibatı aparan";
+"A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total." = "Şəklin menyusu onu buraya saxlayır və ya yeni e-poçta qoyur, gizlədilmiş, günü, sifarişi və cəmi ilə adlandırılmış.";
+"Choose the folder for receipts." = "Qəbzlər üçün qovluğu seç.";
+"Choose" = "Seç";
+"Saved for the books as %@." = "Mühasibat üçün %@ kimi saxlanıldı.";
+"Could not save it for the books." = "Mühasibat üçün saxlanıla bilmədi.";
+"No email app could be opened." = "Heç bir e-poçt tətbiqi açıla bilmədi.";
+"File" = "Fayl";
+"Order" = "Sifariş";
+"Total" = "Cəmi";
+"Name" = "Ad";
+"Address" = "Ünvan";
+"Email" = "E-poçt";
+"Phone" = "Telefon";
+"Tracking number" = "İzləmə nömrəsi";
+"Code" = "Kod";
+"Copy Row" = "Sətir kimi kopyala";
+"Copy All" = "Hamısını kopyala";
+"No order details were found in this screenshot." = "Bu ekran görüntüsündə sifariş təfərrüatı tapılmadı.";
+"Read on this Mac as the screenshot shows them, not covered." = "Bu Mac-də ekran görüntüsündə olduğu kimi oxundu, gizlədilmədən.";
+"Every part in one row, for a spreadsheet" = "Bütün hissələr bir sətirdə, cədvəl üçün";
 "Translation" = "Tərcümə";
 "Description" = "Təsvir";
 "Reading the screenshot…" = "Ekran şəkli oxunur…";
@@ -335,6 +364,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Mesaj əlavə et…";
+"Saved messages" = "Saxlanmış mesajlar";
+"Add Message" = "Mesaj əlavə et";
+"Here is the invoice for your order {order}." = "Budur, {order} sifarişinin fakturası.";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "Mesaj zolağının üstündə gözləyirlər. {order}, {total}, {date}, {name} və {tracking} şəkildən doldurulur; gizlətdiyin növdən olan boş qalır.";
 "Send with a Message…" = "Mesajla göndər…";
 
 /* Order on the line */

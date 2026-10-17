@@ -9,6 +9,15 @@ keeps a download of each version.
 - Cover everything in AI chats, under Privacy: whatever goes into ChatGPT,
   Claude, Gemini or another AI chat has every kind covered, checked or not.
   The send button over the chat shows a lock by the count meanwhile.
+- Save for Bookkeeping and Email to Bookkeeping…, in a photo's menu: a
+  covered copy named for its day, order and total, with a line in
+  Snapfly.csv, or in a new email to whoever keeps the books.
+- Saved messages, under Line in Settings, wait above the message bar.
+  {order}, {total}, {date}, {name} and {tracking} fill in from the photo; a
+  blank of a covered kind stays empty.
+- Order Details, in a photo's menu: the order number, date, total, name,
+  address, email, phone and tracking number read off a screenshot, each
+  ready to copy, or all of them as a row for a spreadsheet.
 - Orders, in the History window: photos with an order, invoice or customer
   number together under that number.
 - Sent, in the History window: what went into which chat, when, with what

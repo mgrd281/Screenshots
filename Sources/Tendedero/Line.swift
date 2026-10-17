@@ -522,6 +522,11 @@ final class Line: ObservableObject {
         showCard(.description, for: id, target: Languages.own)
     }
 
+    /// Order Details: the order a screenshot shows, its parts ready to copy.
+    func orderDetails(_ id: UUID) {
+        showCard(.order, for: id, target: Languages.own)
+    }
+
     private func showCard(_ kind: TextCardModel.Kind, for id: UUID, target: Locale.Language) {
         guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
         let model = TextCardModel(kind, photo: id, url: item.url, line: self, target: target)

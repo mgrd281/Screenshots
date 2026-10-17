@@ -109,6 +109,35 @@
 /* TextCard, GrabArea */
 "Translate Text" = "ترجمة النص";
 "Describe" = "وصف ذكي";
+"Order Details" = "تفاصيل الطلب";
+"Save for Bookkeeping" = "حفظ للمحاسبة";
+"Email to Bookkeeping…" = "إرسال إلى المحاسبة بالبريد…";
+"Bookkeeping" = "المحاسبة";
+"Folder" = "المجلد";
+"Not chosen yet" = "لم يُختر بعد";
+"Choose…" = "اختيار…";
+"Receipts saved for the books go here, each with a line in Snapfly.csv." = "الإيصالات المحفوظة للمحاسبة تُحفظ هنا، ولكل منها سطر في Snapfly.csv.";
+"Who keeps the books" = "من يتولّى المحاسبة";
+"A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total." = "قائمة الصورة تحفظها هنا، أو تضعها في رسالة بريد جديدة، مغطّاة، باسم فيه يومها وطلبها ومجموعها.";
+"Choose the folder for receipts." = "اختر مجلد الإيصالات.";
+"Choose" = "اختيار";
+"Saved for the books as %@." = "حُفظت للمحاسبة باسم %@.";
+"Could not save it for the books." = "تعذّر حفظها للمحاسبة.";
+"No email app could be opened." = "تعذّر فتح تطبيق بريد.";
+"File" = "الملف";
+"Order" = "الطلب";
+"Total" = "المجموع";
+"Name" = "الاسم";
+"Address" = "العنوان";
+"Email" = "البريد الإلكتروني";
+"Phone" = "الهاتف";
+"Tracking number" = "رقم التتبع";
+"Code" = "الرمز";
+"Copy Row" = "نسخ كصف";
+"Copy All" = "نسخ الكل";
+"No order details were found in this screenshot." = "لم يُعثر على تفاصيل طلب في هذه اللقطة.";
+"Read on this Mac as the screenshot shows them, not covered." = "قُرئت على هذا الماك كما تظهر في اللقطة، دون تغطية.";
+"Every part in one row, for a spreadsheet" = "كل الأجزاء في صف واحد، لجدول بيانات";
 "Translation" = "الترجمة";
 "Description" = "الوصف";
 "Reading the screenshot…" = "جارٍ قراءة لقطة الشاشة…";
@@ -333,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "أضف رسالة…";
+"Saved messages" = "رسائل محفوظة";
+"Add Message" = "إضافة رسالة";
+"Here is the invoice for your order {order}." = "هذه فاتورة طلبك رقم {order}.";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "تنتظر فوق شريط الرسالة. تُملأ {order} و{total} و{date} و{name} و{tracking} من الصورة، ويبقى فارغاً ما كان من نوع تغطيه.";
 "Send with a Message…" = "إرسال مع رسالة…";
 
 /* Order on the line */

@@ -109,6 +109,35 @@
 /* TextCard, GrabArea */
 "Translate Text" = "Traduzir texto";
 "Describe" = "Descrever";
+"Order Details" = "Detalhes do pedido";
+"Save for Bookkeeping" = "Salvar para a contabilidade";
+"Email to Bookkeeping…" = "Enviar à contabilidade por e-mail…";
+"Bookkeeping" = "Contabilidade";
+"Folder" = "Pasta";
+"Not chosen yet" = "Ainda não escolhida";
+"Choose…" = "Escolher…";
+"Receipts saved for the books go here, each with a line in Snapfly.csv." = "Os recibos salvos para a contabilidade vão para cá, cada um com uma linha em Snapfly.csv.";
+"Who keeps the books" = "Quem cuida da contabilidade";
+"A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total." = "O menu de uma foto a salva aqui ou a coloca em um novo e-mail, coberta, com um nome que traz o dia, o pedido e o total.";
+"Choose the folder for receipts." = "Escolha a pasta para os recibos.";
+"Choose" = "Escolher";
+"Saved for the books as %@." = "Salvo para a contabilidade como %@.";
+"Could not save it for the books." = "Não foi possível salvar para a contabilidade.";
+"No email app could be opened." = "Nenhum app de e-mail pôde ser aberto.";
+"File" = "Arquivo";
+"Order" = "Pedido";
+"Total" = "Total";
+"Name" = "Nome";
+"Address" = "Endereço";
+"Email" = "E-mail";
+"Phone" = "Telefone";
+"Tracking number" = "Código de rastreio";
+"Code" = "Código";
+"Copy Row" = "Copiar como linha";
+"Copy All" = "Copiar tudo";
+"No order details were found in this screenshot." = "Nenhum detalhe de pedido foi encontrado nesta captura.";
+"Read on this Mac as the screenshot shows them, not covered." = "Lido neste Mac como aparece na captura, sem cobrir.";
+"Every part in one row, for a spreadsheet" = "Todos os dados em uma linha, para uma planilha";
 "Translation" = "Tradução";
 "Description" = "Descrição";
 "Reading the screenshot…" = "Lendo a captura…";
@@ -333,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Adicionar uma mensagem…";
+"Saved messages" = "Mensagens salvas";
+"Add Message" = "Adicionar mensagem";
+"Here is the invoice for your order {order}." = "Aqui está a fatura do seu pedido {order}.";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "Elas ficam acima da barra de mensagem. {order}, {total}, {date}, {name} e {tracking} são preenchidos com a foto; o de um tipo que você cobre fica vazio.";
 "Send with a Message…" = "Enviar com uma mensagem…";
 
 /* Order on the line */

@@ -469,8 +469,22 @@ apps.
   as what opens them. Hide Private Details opens Hide Part for one file, to
   save a copy beside it.
 - **Photo context menu.**
-  - Grouped by intent: copy and send; translate and describe; open and edit;
-    take down.
+  - Grouped by intent: copy and send; translate, describe and Order Details;
+    open and edit; take down.
+  - **Order Details** opens the text card with `list.bullet.rectangle` and
+    the order's parts as rows on the reading panel's fill: the part's name
+    in 12 pt `.secondary` in a 104 pt column, the value in 13 pt,
+    selectable, and a borderless `doc.on.doc` that turns into a checkmark
+    once copied, with a divider between rows. The note says it is read as
+    the screenshot shows it, not covered. Its footer has Copy Row and Copy
+    All (the primary); it sends nothing.
+  - **Save for Bookkeeping** (`folder.badge.plus`) and **Email to
+    Bookkeeping…** (`envelope`) follow it. The first asks for the folder
+    once with an open panel, then saves and says so in a note above the
+    Dock; the second opens the system's new email with the copy attached.
+  - **Settings › Line › Bookkeeping**: the folder's name in `.secondary`,
+    truncated in the middle, with a Choose… `SettingsButton`, and the
+    address in a field with a prompt.
   - SF Symbols on macOS 26 only, as Apple's own menus have.
 - **Settings sidebar.** General, Line, Privacy, Permissions, Support and
   About, each on its tile (see Layout).
@@ -632,14 +646,20 @@ apps.
     bar does: Return sends the photos and then the message, Escape or a
     click elsewhere closes it. VoiceOver reaches it as an action on the
     button.
-  - While the field is empty, the last five messages sent (`RecentCaptions`,
+  - While the field is empty, the saved messages (`bookmark`, no cross),
+    then the last five messages sent (`RecentCaptions`,
     newest first, kept on the Mac) stand 6 pt above the bar in a list of the
     same width and glass with 12 pt corners and 4 pt inset: rows 28 pt high,
     `clock.arrow.circlepath` at 11 pt `.secondary`, the message in 13 pt on
     one line, truncated, and on hover a fill of `.primary` at 8% (8 pt
     corners) and an `xmark.circle.fill` in `.tertiary` that removes it. A
-    click puts the message in the field; ↑ and ↓ step through them. The bar
-    keeps its place when the list goes.
+    click puts the message in the field, a saved one with its blanks filled
+    from the newest photo (a covered kind's blank reads "…"); ↑ and ↓ step
+    through the recent ones. The bar keeps its place when the list goes.
+  - **Settings › Line › Saved messages**: one row per message, a rounded
+    field with an example as its prompt and a borderless `minus.circle`;
+    Add Message under them; a footer naming the blanks. Saved 0.8 s after
+    the typing stops, like the owner's rules.
   - Hover scales it to 1.04 through `Motion.spring`, and it fades in over
     0.15 s.
   - **Settings › Line › Send button over chats** chooses:

@@ -111,6 +111,35 @@
 /* TextCard, GrabArea */
 "Translate Text" = "टेक्स्ट का अनुवाद करें";
 "Describe" = "वर्णन लिखें";
+"Order Details" = "ऑर्डर का विवरण";
+"Save for Bookkeeping" = "लेखा के लिए सहेजें";
+"Email to Bookkeeping…" = "लेखा को ईमेल करें…";
+"Bookkeeping" = "लेखा";
+"Folder" = "फ़ोल्डर";
+"Not chosen yet" = "अभी चुना नहीं गया";
+"Choose…" = "चुनें…";
+"Receipts saved for the books go here, each with a line in Snapfly.csv." = "लेखा के लिए सहेजी गई रसीदें यहाँ जाती हैं, हर एक की Snapfly.csv में एक पंक्ति के साथ।";
+"Who keeps the books" = "जो हिसाब रखते हैं";
+"A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total." = "फ़ोटो का मेनू उसे यहाँ सहेजता है, या ढककर नए ईमेल में डालता है, उसके दिन, ऑर्डर और कुल के नाम से।";
+"Choose the folder for receipts." = "रसीदों के लिए फ़ोल्डर चुनें।";
+"Choose" = "चुनें";
+"Saved for the books as %@." = "लेखा के लिए %@ के रूप में सहेजा गया।";
+"Could not save it for the books." = "लेखा के लिए सहेजा नहीं जा सका।";
+"No email app could be opened." = "कोई ईमेल ऐप नहीं खुल सका।";
+"File" = "फ़ाइल";
+"Order" = "ऑर्डर";
+"Total" = "कुल";
+"Name" = "नाम";
+"Address" = "पता";
+"Email" = "ईमेल";
+"Phone" = "फ़ोन";
+"Tracking number" = "ट्रैकिंग नंबर";
+"Code" = "कोड";
+"Copy Row" = "पंक्ति के रूप में कॉपी करें";
+"Copy All" = "सब कॉपी करें";
+"No order details were found in this screenshot." = "इस स्क्रीनशॉट में ऑर्डर का कोई विवरण नहीं मिला।";
+"Read on this Mac as the screenshot shows them, not covered." = "इस Mac पर वैसे ही पढ़ा गया जैसा स्क्रीनशॉट में है, बिना ढके।";
+"Every part in one row, for a spreadsheet" = "सभी हिस्से एक पंक्ति में, स्प्रेडशीट के लिए";
 "Translation" = "अनुवाद";
 "Description" = "वर्णन";
 "Reading the screenshot…" = "स्क्रीनशॉट पढ़ा जा रहा है…";
@@ -335,6 +364,10 @@
 
 /* Message with the photos */
 "Add a message…" = "संदेश जोड़ें…";
+"Saved messages" = "सहेजे गए संदेश";
+"Add Message" = "संदेश जोड़ें";
+"Here is the invoice for your order {order}." = "यह रहा आपके ऑर्डर {order} का बिल।";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "ये संदेश बार के ऊपर इंतज़ार करते हैं। {order}, {total}, {date}, {name} और {tracking} फ़ोटो से भर जाते हैं; जिस प्रकार को आप ढकते हैं, वह खाली रहता है।";
 "Send with a Message…" = "संदेश के साथ भेजें…";
 
 /* Order on the line */

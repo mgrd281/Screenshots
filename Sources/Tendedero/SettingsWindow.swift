@@ -356,6 +356,49 @@ final class Preferences: ObservableObject {
         }
     }
 
+    // MARK: Bookkeeping
+
+    /// The folder's name, once one is chosen.
+    @Published var bookkeepingFolder = Bookkeeping.folder?.lastPathComponent
+    @Published var bookkeepingAddress = Bookkeeping.address {
+        didSet { Bookkeeping.address = bookkeepingAddress }
+    }
+
+    func chooseBookkeepingFolder() {
+        if let url = Bookkeeping.chooseFolder() { bookkeepingFolder = url.lastPathComponent }
+    }
+
+    // MARK: Saved messages
+
+    /// Messages kept ready for the message bar, edited in place and saved
+    /// a moment after the typing stops.
+    @Published var savedMessages = SavedMessages.all
+    private var messagesSave: Task<Void, Never>?
+
+    func addSavedMessage() {
+        savedMessages.append(SavedMessage())
+        saveSavedMessages()
+    }
+
+    func removeSavedMessage(_ message: SavedMessage) {
+        savedMessages.removeAll { $0.id == message.id }
+        saveSavedMessages()
+    }
+
+    func savedMessagesChanged() {
+        messagesSave?.cancel()
+        messagesSave = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(800))
+            guard !Task.isCancelled else { return }
+            self?.saveSavedMessages()
+        }
+    }
+
+    func saveSavedMessages() {
+        messagesSave?.cancel()
+        SavedMessages.all = savedMessages
+    }
+
     func saveRules() {
         rulesSave?.cancel()
         let before = OwnRules.fingerprint
@@ -689,6 +732,8 @@ private struct LinePane: View {
                 }
             }
             ChatButtonSection(prefs: prefs)
+            SavedMessagesSection(prefs: prefs)
+            BookkeepingSection(prefs: prefs)
             Section(L("Screenshot button")) {
                 Toggle(isOn: $prefs.captureButton) {
                     Text(L("Show the screenshot button"))
@@ -1203,6 +1248,66 @@ private struct PrivacyPane: View {
         Button { prefs.hide(kinds) } label: {
             Text(title).frame(maxWidth: .infinity)
         }
+    }
+}
+
+/// Where receipts go for the books, and who keeps them.
+private struct BookkeepingSection: View {
+    @ObservedObject var prefs: Preferences
+
+    var body: some View {
+        Section {
+            LabeledContent {
+                HStack(spacing: 8) {
+                    Text(prefs.bookkeepingFolder ?? L("Not chosen yet"))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    SettingsButton(L("Choose…")) { prefs.chooseBookkeepingFolder() }
+                }
+            } label: {
+                Text(L("Folder"))
+                Text(L("Receipts saved for the books go here, each with a line in Snapfly.csv."))
+            }
+            TextField(L("Email"), text: $prefs.bookkeepingAddress, prompt: Text(L("Who keeps the books")))
+        } header: {
+            Text(L("Bookkeeping"))
+        } footer: {
+            Text(L("A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total."))
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
+/// Messages kept ready above the message bar, with blanks the photo fills.
+private struct SavedMessagesSection: View {
+    @ObservedObject var prefs: Preferences
+
+    var body: some View {
+        Section {
+            ForEach($prefs.savedMessages) { $message in
+                HStack(spacing: 8) {
+                    TextField(L("Message"), text: $message.text,
+                              prompt: Text(L("Here is the invoice for your order {order}.")))
+                        .labelsHidden()
+                        .textFieldStyle(.roundedBorder)
+                    Button { prefs.removeSavedMessage(message) } label: {
+                        Image(systemName: "minus.circle")
+                    }
+                    .buttonStyle(.borderless)
+                    .help(L("Remove"))
+                    .accessibilityLabel(L("Remove"))
+                }
+            }
+            Button(L("Add Message")) { prefs.addSavedMessage() }
+        } header: {
+            Text(L("Saved messages"))
+        } footer: {
+            Text(L("They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty."))
+                .foregroundStyle(.secondary)
+        }
+        .onChange(of: prefs.savedMessages) { _, _ in prefs.savedMessagesChanged() }
+        .onDisappear { prefs.saveSavedMessages() }
     }
 }
 

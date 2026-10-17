@@ -461,6 +461,23 @@ enum Finder {
         return Reading(lines: kept, heights: lines.map(\.box.height))
     }
 
+    /// Every detail the kinds find in a picture's lines, with its text and
+    /// the line it is on, top to bottom: what the order card lists. The
+    /// owner's own rules are left out.
+    static func details(in lines: [TextLine]) -> [(kind: PrivateDetail, text: String, line: Int)] {
+        var seen = Set<String>()
+        return hits(in: lines, Set(PrivateDetail.allCases), rules: [])
+            .sorted { ($0.line, $0.range?.location ?? 0) < ($1.line, $1.range?.location ?? 0) }
+            .compactMap { hit -> (kind: PrivateDetail, text: String, line: Int)? in
+                guard let kind = hit.kind else { return nil }
+                let line = lines[hit.line].string
+                let text = (hit.range.flatMap { Range($0, in: line) }.map { String(line[$0]) } ?? line)
+                    .trimmingCharacters(in: .whitespaces)
+                guard !text.isEmpty, seen.insert("\(kind.rawValue)|\(text)").inserted else { return nil }
+                return (kind: kind, text: text, line: hit.line)
+            }
+    }
+
     private static let word = try! NSRegularExpression(pattern: "\\S+")
 
     /// Everything to leave out, all three ways, and the owner's own rules.

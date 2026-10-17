@@ -109,6 +109,35 @@
 /* TextCard, GrabArea */
 "Translate Text" = "Text übersetzen";
 "Describe" = "Beschreiben";
+"Order Details" = "Bestelldetails";
+"Save for Bookkeeping" = "Für die Buchhaltung sichern";
+"Email to Bookkeeping…" = "An die Buchhaltung mailen …";
+"Bookkeeping" = "Buchhaltung";
+"Folder" = "Ordner";
+"Not chosen yet" = "Noch nicht gewählt";
+"Choose…" = "Wählen …";
+"Receipts saved for the books go here, each with a line in Snapfly.csv." = "Für die Buchhaltung gesicherte Belege landen hier, jeder mit einer Zeile in Snapfly.csv.";
+"Who keeps the books" = "Wer die Bücher führt";
+"A photo's menu saves it here, or puts it in a new email, covered, named with its day, order and total." = "Das Menü eines Fotos sichert es hier oder legt es in eine neue E-Mail, verdeckt, benannt nach Tag, Bestellung und Betrag.";
+"Choose the folder for receipts." = "Wähle den Ordner für Belege.";
+"Choose" = "Wählen";
+"Saved for the books as %@." = "Für die Buchhaltung gesichert als %@.";
+"Could not save it for the books." = "Konnte nicht für die Buchhaltung gesichert werden.";
+"No email app could be opened." = "Es konnte keine E-Mail-App geöffnet werden.";
+"File" = "Datei";
+"Order" = "Bestellung";
+"Total" = "Gesamt";
+"Name" = "Name";
+"Address" = "Adresse";
+"Email" = "E-Mail";
+"Phone" = "Telefon";
+"Tracking number" = "Sendungsnummer";
+"Code" = "Code";
+"Copy Row" = "Als Zeile kopieren";
+"Copy All" = "Alles kopieren";
+"No order details were found in this screenshot." = "In diesem Bildschirmfoto wurden keine Bestelldetails gefunden.";
+"Read on this Mac as the screenshot shows them, not covered." = "Auf diesem Mac gelesen, so wie das Bildschirmfoto sie zeigt, nicht verdeckt.";
+"Every part in one row, for a spreadsheet" = "Alle Angaben in einer Zeile, für eine Tabelle";
 "Translation" = "Übersetzung";
 "Description" = "Beschreibung";
 "Reading the screenshot…" = "Bildschirmfoto wird gelesen …";
@@ -333,6 +362,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Nachricht hinzufügen …";
+"Saved messages" = "Gespeicherte Nachrichten";
+"Add Message" = "Nachricht hinzufügen";
+"Here is the invoice for your order {order}." = "Hier ist die Rechnung zu deiner Bestellung {order}.";
+"They wait above the message bar. {order}, {total}, {date}, {name} and {tracking} fill in from the photo; one of a kind you cover stays empty." = "Sie warten über der Nachrichtenleiste. {order}, {total}, {date}, {name} und {tracking} füllen sich aus dem Foto; eins von einer Art, die du verdeckst, bleibt leer.";
 "Send with a Message…" = "Mit Nachricht senden …";
 
 /* Order on the line */
