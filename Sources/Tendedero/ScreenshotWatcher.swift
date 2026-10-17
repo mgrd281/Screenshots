@@ -11,6 +11,8 @@ final class ScreenshotWatcher {
     /// Screen recordings carry no tag, so they are only picked up in
     /// Tendedero's own folder, where nothing else is saved.
     private let acceptsRecordings: Bool
+    /// PDFs too, for a folder whose files get covered copies.
+    private let acceptsDocuments: Bool
     private var known: Set<String>?
     private var source: DispatchSourceFileSystemObject?
     private var pending: DispatchWorkItem?
@@ -31,14 +33,16 @@ final class ScreenshotWatcher {
 
     /// Watches the folder macOS saves screenshots to, or a given folder.
     /// `anyImage` takes every new image even on the Desktop, for a folder
-    /// the user chose to watch.
-    init(folder: URL? = nil, anyImage: Bool = false, onNew: @escaping (URL) -> Void, onChange: @escaping () -> Void) {
+    /// the user chose to watch; `documents` takes PDFs as well.
+    init(folder: URL? = nil, anyImage: Bool = false, documents: Bool = false,
+         onNew: @escaping (URL) -> Void, onChange: @escaping () -> Void) {
         self.onNew = onNew
         self.onChange = onChange
         self.folder = folder ?? Self.screenshotFolder()
         onlyTaggedScreenshots = !anyImage
             && self.folder.standardizedFileURL.path == Self.desktop.standardizedFileURL.path
         acceptsRecordings = self.folder.standardizedFileURL.path == Inbox.folder.standardizedFileURL.path
+        acceptsDocuments = documents
     }
 
     static func screenshotFolder() -> URL {
@@ -170,6 +174,7 @@ final class ScreenshotWatcher {
 
     private func isCandidate(_ url: URL) -> Bool {
         if isRecording(url) { return acceptsRecordings }
+        if isDocument(url) { return acceptsDocuments }
         guard Self.imageExtensions.contains(url.pathExtension.lowercased()) else { return false }
         // A stamped copy Snapfly saved next to a screenshot is not a new one.
         if TimeStamp.isStampedCopy(url) { return false }

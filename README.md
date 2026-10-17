@@ -145,7 +145,11 @@ saved messages, written under Saved messages in Settings, under Line, like
 "Here is the invoice for your order {order}": {order}, {total}, {date},
 {name} and {tracking} fill in from the newest photo, read on your Mac. A
 blank of a kind you cover stays empty, shown as "…", so the message never
-says what the photo hides, and nothing goes until you press Return. In Settings,
+says what the photo hides, and nothing goes until you press Return. To
+write in your language and send in your customer's, choose a language with
+the globe in the bar, on macOS 15 or later: Return first translates the
+message there, on your Mac, so you can read it, and the next Return sends
+it. The bar keeps the language for each chat. In Settings,
 under Line, choose where it sits (above the chat's send button, a corner of
 the window, or the edge of the screen), how it looks, its icon and its color,
 with a preview, or turn it off.
@@ -241,6 +245,14 @@ Finder's note of where it was downloaded from. A PNG stays a PNG, pixel for
 pixel; a photo goes as a JPEG; a GIF goes as itself, so it keeps moving.
 Turn on Plain file names under Privacy, and pictures are called Image too,
 rather than after when they were taken.
+
+To cover a whole folder, turn on Cover what lands in a folder under
+Privacy and choose two folders, like the one invoices are downloaded to
+and another for the copies. Every picture or PDF that lands in the first
+gets a copy with what you checked covered, saved under its name in the
+second, one after another in the background. A note says how many were
+saved, and names the files where nothing was found, so you can take a
+look. What was in the folder before stays as it is.
 
 AI chats may keep what goes into them on their servers. Turn on Cover
 everything in AI chats under Privacy, and whatever you send, copy or drag
@@ -518,6 +530,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
+| `FolderCover.swift` | Cover a folder: watches one folder and saves covered copies of what lands there in another |
 | `FloatingPhotos.swift` | Keep on Top: a photo floating over every app in a small window of its own |
 | `SelfTest.swift` | Test on a Sample: a made-up order with nearly every kind of detail, covered as Settings says |
 | `CoveringProfile.swift` | Cover everything in AI chats: which chats count, and what to cover for the app in front |

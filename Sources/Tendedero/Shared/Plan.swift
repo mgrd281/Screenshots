@@ -19,8 +19,12 @@ enum Plan {
         /// Messages kept ready to go with the photos, their blanks filled in.
         case savedMessages
         /// Receipts handed on for the books: a named covered copy and a line
-        /// for a table.
+        /// for a table, and the monthly pack.
         case bookkeeping
+        /// The covered screenshot under a band with the shop's name and logo.
+        case shopHeader
+        /// Covered copies of what lands in a folder, saved in another.
+        case folderCover
     }
 
     /// The day Pro begins. Until it is set, nothing is held back.

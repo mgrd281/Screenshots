@@ -1,5 +1,8 @@
 import AppKit
 import SwiftUI
+#if canImport(Translation)
+import Translation
+#endif
 
 /// A line to write a message in, just above the chat button: a press and
 /// hold on the button opens it, Return sends the photos with the message
@@ -25,7 +28,8 @@ final class CaptionBar: NSObject, NSWindowDelegate {
     ///     blanks.
     func show(above anchor: CGRect, count: Int, photo: URL? = nil, send: @escaping (String) -> Void) {
         close()
-        let view = CaptionBarView(count: count, photo: photo, send: { [weak self] text in
+        // The chat it goes to, which keeps the language chosen for it.
+        let view = CaptionBarView(count: count, photo: photo, destination: SendLog.destination, send: { [weak self] text in
             RecentCaptions.note(text)
             // The keyboard goes back to the chat before anything is pasted.
             self?.close()
@@ -117,6 +121,7 @@ enum RecentCaptions {
 private struct CaptionBarView: View {
     let count: Int
     let photo: URL?
+    let destination: String?
     let send: (String) -> Void
     let close: () -> Void
 
@@ -126,6 +131,13 @@ private struct CaptionBarView: View {
     /// Which recent message ↑ and ↓ have put in the field; nil for none.
     @State private var browsing: Int?
     @FocusState private var focused: Bool
+    /// The language the message goes in, as an identifier like "de"; nil
+    /// to send it as typed.
+    @State private var language: String?
+    /// What the last translation put in the field, which goes as it is.
+    @State private var translated: String?
+    @State private var translating = false
+    @StateObject private var translation = MessageTranslation()
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 6) {
@@ -171,6 +183,11 @@ private struct CaptionBarView: View {
                 // goes the other way, down to an empty field.
                 .onKeyPress(.upArrow) { browse(by: 1) }
                 .onKeyPress(.downArrow) { browse(by: -1) }
+            #if canImport(Translation)
+            if #available(macOS 15, *) {
+                languageMenu
+            }
+            #endif
             Text(count, format: .number)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
                 .monospacedDigit()
@@ -181,12 +198,20 @@ private struct CaptionBarView: View {
                 .help(String(format: L("%d photos"), count))
                 .accessibilityLabel(String(format: L("%d photos"), count))
             Button(action: submit) {
-                Image(systemName: ChatButton.symbol.rawValue)
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(ChatButton.tint.glyph)
-                    .frame(width: 30, height: 30)
-                    .background(ChatButton.tint.color, in: Circle())
-                    .contentShape(Circle())
+                Group {
+                    if translating {
+                        ProgressView()
+                            .controlSize(.small)
+                            .tint(ChatButton.tint.glyph)
+                    } else {
+                        Image(systemName: ChatButton.symbol.rawValue)
+                            .font(.system(size: 12, weight: .bold))
+                    }
+                }
+                .foregroundStyle(ChatButton.tint.glyph)
+                .frame(width: 30, height: 30)
+                .background(ChatButton.tint.color, in: Circle())
+                .contentShape(Circle())
             }
             .buttonStyle(.plain)
             .help(L("Send"))
@@ -196,14 +221,106 @@ private struct CaptionBarView: View {
         .padding(.trailing, 7)
         .frame(width: CaptionBar.width, height: 44)
         .background(bar)
+        #if canImport(Translation)
+        .background {
+            if #available(macOS 15, *) {
+                MessageTranslator(translation: translation) { result in
+                    translating = false
+                    guard let result else {
+                        Notice.show(L("Could not translate this text."))
+                        return
+                    }
+                    text = result
+                    translated = result
+                }
+            }
+        }
+        #endif
         .onAppear {
+            language = MessageLanguage.language(for: destination)
             DispatchQueue.main.async { focused = true }
         }
     }
 
     private func submit() {
-        send(text.trimmingCharacters(in: .whitespacesAndNewlines))
+        guard !translating else { return }
+        let message = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        // In the language chosen for this chat, translated first, on this
+        // Mac, and shown: the next Return sends it.
+        if message != translated?.trimmingCharacters(in: .whitespacesAndNewlines),
+           let target = language.map(Locale.Language.init(identifier:)),
+           let source = MessageLanguage.source(of: message, into: target) {
+            translate(message, from: source, to: target)
+            return
+        }
+        send(message)
     }
+
+    private func translate(_ message: String, from source: Locale.Language, to target: Locale.Language) {
+        #if canImport(Translation)
+        if #available(macOS 15, *) {
+            translating = true
+            Task {
+                switch await LanguageAvailability().status(from: source, to: target) {
+                case .installed:
+                    translation.job = MessageTranslation.Job(text: message, source: source, target: target)
+                case .supported:
+                    translating = false
+                    Notice.show(String(format: L("To translate on this Mac, add %@ and %@ under Translation Languages in System Settings."),
+                                       Languages.name(source), Languages.name(target)))
+                default:
+                    translating = false
+                    Notice.show(String(format: L("Translating from %@ into %@ is not available."),
+                                       Languages.name(source), Languages.name(target)))
+                }
+            }
+            return
+        }
+        #endif
+        send(message)
+    }
+
+    #if canImport(Translation)
+    /// The language the message goes in: as typed, or one of the Mac's
+    /// languages, the user's own first. Kept for the chat.
+    @available(macOS 15, *)
+    private var languageMenu: some View {
+        Menu {
+            Picker(L("Language of the message"), selection: $language) {
+                Text(L("As typed")).tag(String?.none)
+                Divider()
+                ForEach(Languages.mine + Languages.others, id: \.minimalIdentifier) { item in
+                    Text(Languages.name(item)).tag(Optional(item.minimalIdentifier))
+                }
+            }
+            .pickerStyle(.inline)
+            .labelsHidden()
+        } label: {
+            if let language {
+                Text(verbatim: MessageLanguage.code(Locale.Language(identifier: language)))
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.primary.opacity(0.08), in: Capsule())
+            } else {
+                Image(systemName: "globe")
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .help(language.map { String(format: L("Sent in %@"), Languages.name(Locale.Language(identifier: $0))) }
+              ?? L("Send in another language"))
+        .accessibilityLabel(L("Language of the message"))
+        .onChange(of: language) { _, chosen in
+            MessageLanguage.remember(chosen, for: destination)
+            translated = nil
+        }
+    }
+    #endif
 
     /// A saved message, its blanks filled from the photo: the order's
     /// number, total, date, name and tracking number, read on this Mac.
@@ -265,6 +382,84 @@ private struct CaptionBarView: View {
         }
     }
 }
+
+/// The language a message goes in, chosen in the message bar for each chat
+/// and kept for it: German for a shop's customers, as typed for a friend.
+/// The translating is Apple's, on this Mac.
+enum MessageLanguage {
+    static let key = "messageLanguages"
+
+    /// The language chosen for a chat, as an identifier like "de".
+    static func language(for destination: String?, in defaults: UserDefaults = .standard) -> String? {
+        guard let destination else { return nil }
+        return (defaults.dictionary(forKey: key) as? [String: String])?[destination]
+    }
+
+    static func remember(_ identifier: String?, for destination: String?, in defaults: UserDefaults = .standard) {
+        guard let destination else { return }
+        var all = defaults.dictionary(forKey: key) as? [String: String] ?? [:]
+        all[destination] = identifier
+        defaults.set(all, forKey: key)
+    }
+
+    /// The language a message is written in when it is not the one chosen,
+    /// so it is translated first; nil to send it as it is, like a message
+    /// without words or one already in that language.
+    static func source(of message: String, into target: Locale.Language) -> Locale.Language? {
+        guard Languages.hasWords(message), let source = Languages.detect(message),
+              !Languages.same(source, target) else { return nil }
+        return source
+    }
+
+    /// Two letters on the bar, like "DE".
+    static func code(_ language: Locale.Language) -> String {
+        (language.languageCode?.identifier ?? language.minimalIdentifier).uppercased()
+    }
+}
+
+/// The message waiting to be translated, for the view that holds Apple's
+/// translation.
+@MainActor
+final class MessageTranslation: ObservableObject {
+    struct Job: Equatable {
+        let id = UUID()
+        let text: String
+        let source: Locale.Language
+        let target: Locale.Language
+    }
+
+    @Published var job: Job?
+}
+
+#if canImport(Translation)
+/// Apple's translation runs from a view: this one waits, unseen, for the
+/// message and hands back its translation, nil when it failed.
+@available(macOS 15, *)
+private struct MessageTranslator: View {
+    @ObservedObject var translation: MessageTranslation
+    let done: (String?) -> Void
+    @State private var configuration: TranslationSession.Configuration?
+
+    var body: some View {
+        Color.clear
+            .onChange(of: translation.job?.id) { _, _ in
+                guard let job = translation.job else { return }
+                if configuration?.source == job.source && configuration?.target == job.target {
+                    configuration?.invalidate()
+                } else {
+                    configuration = TranslationSession.Configuration(source: job.source, target: job.target)
+                }
+            }
+            .translationTask(configuration) { session in
+                guard let job = translation.job else { return }
+                let text = try? await session.translate(job.text).targetText
+                guard translation.job?.id == job.id else { return }
+                translation.job = nil
+                done(text)
+            }
+    }
+}
+#endif
 
 /// A message to pick: a saved one with its bookmark, or one sent lately
 /// with the clock and, on hover, a cross to take it off the list.

@@ -363,6 +363,10 @@
 
 /* Message with the photos */
 "Add a message…" = "Mesaj ekle…";
+"As typed" = "Yazıldığı gibi";
+"Send in another language" = "Başka bir dilde gönder";
+"Sent in %@" = "%@ olarak gönderilir";
+"Language of the message" = "Mesajın dili";
 "Saved messages" = "Kayıtlı mesajlar";
 "Add Message" = "Mesaj ekle";
 "Here is the invoice for your order {order}." = "{order} numaralı siparişinin faturası burada.";
@@ -518,6 +522,17 @@
 "Image" = "Görsel";
 "Plain file names" = "Sade dosya adları";
 "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Görseller ne zaman, nerede ya da neyle yapıldıklarına dair notlar olmadan yeni dosyalar olarak çıkar. Sade dosya adlarıyla ayrıca çekildikleri zamana göre değil, “Görsel” diye adlandırılır.";
+"Cover what lands in a folder" = "Bir klasöre düşenleri kapat";
+"Save copies in" = "Kopyaları şuraya kaydet";
+"Cover a folder" = "Klasörü kapat";
+"Every picture or PDF that lands in the watched folder gets a copy with what is checked above covered, saved under its name in the other folder." = "İzlenen klasöre düşen her görsel ya da PDF için, yukarıda işaretlenenlerin kapatıldığı bir kopya kendi adıyla diğer klasöre kaydedilir.";
+"Choose the folder to watch." = "İzlenecek klasörü seç.";
+"Choose the folder for the covered copies." = "Kapatılmış kopyalar için klasörü seç.";
+"Choose two folders apart from each other." = "Birbirinden ayrı iki klasör seç.";
+"Covered copies saved: %ld" = "Kaydedilen kapatılmış kopyalar: %ld";
+"Nothing to cover in %@. Take a look." = "%@ içinde kapatılacak bir şey yok. Bir göz at.";
+"Could not cover %@." = "%@ kapatılamadı.";
+"Watched folder" = "İzlenen klasör";
 "Test on a Sample" = "Bir örnekte dene";
 "Testing…" = "Deneniyor…";
 "Test" = "Deneme";

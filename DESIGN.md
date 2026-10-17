@@ -584,12 +584,7 @@ apps.
   covered there, checked or not. Then one with Plain file names (off at
   first), over a footer saying pictures leave as fresh files without notes
   on when, where or with what they were made, and are named "Image" with it
-  on. Then "Test": Test on a Sample, a `SettingsButton` on the trailing
-  edge ("Testing…" and off while it runs), over a footer that it covers a
-  made-up order and speaks for that sample only; once run, the covered
-  sample above it (at most 280 pt high, 10 pt corners), what was covered
-  on it, and in `.secondary` what is checked and not on it. A new choice
-  of kinds puts the result away. Then "Also hide", the
+  on. Then "Also hide", the
   owner's own rules: one row per rule with a 160 pt menu picker for its kind
   (Word, After a label, Pattern), a rounded field with a prompt for that
   kind, and a borderless `minus.circle` to remove it; an Add Rule button
@@ -597,8 +592,21 @@ apps.
   pattern that cannot be read shows `exclamationmark.triangle.fill` in
   not-allowed orange beside the field and a callout line under it. Rules are
   saved 0.8 s after the typing stops, and at once when one is added, removed
-  or the pane leaves, since every change reads the photos again. Last the
-  Preview. The iPhone's Settings use the same three groups.
+  or the pane leaves, since every change reads the photos again. Then
+  "Cover a folder": a toggle, Cover what lands in a folder (off at first;
+  turned on, it asks for any folder not chosen yet and stays off without
+  both), and two rows, Watched folder and Save copies in, each with the
+  folder's name in `.secondary`, truncated in the middle, and a Choose…
+  `SettingsButton`. Two folders that are the same or one inside the other
+  are refused with a note. Its work is said in one note above the Dock two
+  seconds after the last file of a run: how many copies were saved, up to
+  three names where nothing was found, and what could not be read. Then
+  "Test": Test on a Sample, a `SettingsButton` on the trailing edge
+  ("Testing…" and off while it runs), over a footer that it covers a
+  made-up order and speaks for that sample only; once run, the covered
+  sample above it (at most 280 pt high, 10 pt corners), what was covered on
+  it, and in `.secondary` what is checked and not on it. A new choice of
+  kinds puts the result away. Last the Preview. The iPhone's Settings use the same three groups.
 - **About pane.** The icon at 128 under its shadow, the name in 34 pt
   rounded bold, the tagline in title3 `.secondary`, the version in callout
   `.tertiary`. Then one line, "Made by" in `.secondary` before the maker's
@@ -694,6 +702,13 @@ apps.
     bar does: Return sends the photos and then the message, Escape or a
     click elsewhere closes it. VoiceOver reaches it as an action on the
     button.
+  - On macOS 15 and later a language menu sits between the field and the
+    count: `globe` at 13 pt `.secondary`, or the chosen language's two
+    letters in an 11 pt semibold rounded chip like the count's. Its menu
+    holds As typed, then the Mac's languages, the user's own first. With
+    one chosen, Return first translates the message in place, on this Mac,
+    while the send circle shows a small spinner; the next Return sends what
+    the field shows. The choice is kept for each chat.
   - While the field is empty, the saved messages (`bookmark`, no cross),
     then the last five messages sent (`RecentCaptions`,
     newest first, kept on the Mac) stand 6 pt above the bar in a list of the
