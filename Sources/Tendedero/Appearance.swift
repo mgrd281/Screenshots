@@ -93,12 +93,16 @@ private struct GlassFrame: ViewModifier {
     }
 }
 
-/// The brand's colours, amber to coral to violet, as the app icon has them.
-/// They belong to the icon and the About pane only, never to a control.
-enum Brand {
-    static let amber = Color(red: 1.0, green: 0.769, blue: 0.361)
-    static let coral = Color(red: 1.0, green: 0.369, blue: 0.384)
-    static let violet = Color(red: 0.698, green: 0.204, blue: 0.839)
+/// The tile behind a symbol in Settings: ink, with the symbol knocked out
+/// of it; in the dark, paper with the symbol in ink. Fixed colours, not the
+/// semantic ones: in a sidebar those go vibrant and wash out to grey.
+enum InkTile {
+    static let fill = Color(nsColor: NSColor(name: nil) { appearance in
+        appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+            ? NSColor(white: 0.92, alpha: 1) : NSColor(white: 0.12, alpha: 1)
+    })
 
-    static let gradient = LinearGradient(colors: [amber, coral, violet], startPoint: .topLeading, endPoint: .bottomTrailing)
+    static let glyph = Color(nsColor: NSColor(name: nil) { appearance in
+        appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua ? NSColor(white: 0.1, alpha: 1) : .white
+    })
 }

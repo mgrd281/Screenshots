@@ -101,7 +101,6 @@
 "Version %@" = "版本 %@";
 "Screenshots, one click from any chat." = "截图，一键发到任何聊天。";
 "Made by" = "作者";
-"Based on Tendedero by Alejandro Buján, under the MIT License." = "基于 Alejandro Buján 的 Tendedero，遵循 MIT 许可证。";
 /* HideEditor */
 "Drag over anything to hide it. Click a box to show it again." = "拖过要遮盖的内容。点按方框可重新显示。";
 "Remove All" = "全部移除";
@@ -433,3 +432,13 @@
 "Screenshots folder" = "截图文件夹";
 "Say what to hide" = "说出要隐藏的内容";
 "By hand" = "手动";
+"Support" = "支持";
+"Help & Support" = "帮助与支持";
+"Guides and answers, and how to reach us." = "指南与解答，以及如何联系我们。";
+"Report a Problem" = "报告问题";
+"Opens an email with what we need to look into it." = "打开一封邮件，附上我们排查所需的信息。";
+"Write…" = "写信…";
+"Suggest a Feature" = "建议功能";
+"Tell us what would help you." = "告诉我们什么能帮到你。";
+"Diagnostic details" = "诊断信息";
+"Version, macOS and permissions. Nothing personal." = "版本、macOS 和权限。不含个人信息。";

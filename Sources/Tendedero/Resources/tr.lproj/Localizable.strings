@@ -101,7 +101,6 @@
 "Version %@" = "Sürüm %@";
 "Screenshots, one click from any chat." = "Ekran görüntüleri, her sohbete bir tık uzaklıkta.";
 "Made by" = "Yapan";
-"Based on Tendedero by Alejandro Buján, under the MIT License." = "Alejandro Buján'ın Tendedero'suna dayanır, MIT Lisansı ile.";
 /* HideEditor */
 "Drag over anything to hide it. Click a box to show it again." = "Gizlemek istediğin yerin üzerinde sürükle. Yeniden göstermek için bir kutuya tıkla.";
 "Remove All" = "Tümünü kaldır";
@@ -433,3 +432,13 @@
 "Screenshots folder" = "Ekran görüntüleri klasörü";
 "Say what to hide" = "Neyin gizleneceğini söyle";
 "By hand" = "Elle";
+"Support" = "Destek";
+"Help & Support" = "Yardım ve Destek";
+"Guides and answers, and how to reach us." = "Rehberler ve yanıtlar, bize nasıl ulaşacağın.";
+"Report a Problem" = "Sorun Bildir";
+"Opens an email with what we need to look into it." = "İncelememiz için gerekenlerle bir e-posta açar.";
+"Write…" = "Yaz…";
+"Suggest a Feature" = "Özellik Öner";
+"Tell us what would help you." = "Sana neyin yardımcı olacağını söyle.";
+"Diagnostic details" = "Tanı ayrıntıları";
+"Version, macOS and permissions. Nothing personal." = "Sürüm, macOS ve izinler. Kişisel bir şey yok.";

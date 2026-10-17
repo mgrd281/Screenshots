@@ -101,7 +101,6 @@
 "Version %@" = "Versión %@";
 "Screenshots, one click from any chat." = "Capturas, a un clic de cualquier chat.";
 "Made by" = "Hecho por";
-"Based on Tendedero by Alejandro Buján, under the MIT License." = "Basado en Tendedero de Alejandro Buján, con licencia MIT.";
 /* HideEditor */
 "Drag over anything to hide it. Click a box to show it again." = "Arrastra sobre lo que quieras ocultar. Haz clic en un recuadro para volver a mostrarlo.";
 "Remove All" = "Quitar todo";
@@ -433,3 +432,13 @@
 "Screenshots folder" = "Carpeta de capturas";
 "Say what to hide" = "Di qué ocultar";
 "By hand" = "A mano";
+"Support" = "Soporte";
+"Help & Support" = "Ayuda y soporte";
+"Guides and answers, and how to reach us." = "Guías y respuestas, y cómo contactarnos.";
+"Report a Problem" = "Informar de un problema";
+"Opens an email with what we need to look into it." = "Abre un correo con lo que necesitamos para revisarlo.";
+"Write…" = "Escribir…";
+"Suggest a Feature" = "Sugerir una función";
+"Tell us what would help you." = "Cuéntanos qué te ayudaría.";
+"Diagnostic details" = "Detalles de diagnóstico";
+"Version, macOS and permissions. Nothing personal." = "Versión, macOS y permisos. Nada personal.";

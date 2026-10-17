@@ -2,8 +2,10 @@
 
 Snapfly is a macOS menu bar app that hangs screenshots on a line, made by
 Mgrdegh Ghazarian. It started as a copy of Tendedero (MIT). The Swift target
-and folder are still called `Tendedero`. The credit in the About pane is
-required by the license and stays.
+and folder are still called `Tendedero`. The owner wants no mention of it
+in the app's interface; the MIT License is satisfied by the notice in
+`LICENSE`, which `scripts/build-app.sh` copies into the app bundle, and by
+the website's footer. Both stay.
 
 ## Talking with the owner
 
