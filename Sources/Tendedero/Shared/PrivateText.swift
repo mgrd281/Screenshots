@@ -106,7 +106,17 @@ enum Finder {
         let text: VNRecognizedText
         /// Normalized, from the bottom left, as Vision measures.
         let box: CGRect
+        /// The part of the picture the text was read in: all of it, or the
+        /// strip a line of small print was read again from, larger.
+        var frame = CGRect(x: 0, y: 0, width: 1, height: 1)
         var string: String { text.string }
+
+        /// Where part of the line is in the picture, normalized like `box`.
+        func box(for range: Range<String.Index>) -> CGRect? {
+            guard let part = try? text.boundingBox(for: range)?.boundingBox else { return nil }
+            return CGRect(x: frame.minX + part.minX * frame.width, y: frame.minY + part.minY * frame.height,
+                          width: part.width * frame.width, height: part.height * frame.height)
+        }
     }
 
     /// One thing to cover: part of a line, or all of it.
@@ -340,7 +350,7 @@ enum Finder {
             let line = lines[hit.line]
             guard let range = hit.range else { return line.box }
             guard let part = Range(range, in: line.string) else { return nil }
-            return try? line.text.boundingBox(for: part)?.boundingBox
+            return line.box(for: part)
         }
     }
 
@@ -405,7 +415,7 @@ enum Finder {
             let all = NSRange(location: 0, length: string.utf16.count)
             for word in Self.word.matches(in: string, range: all) {
                 guard let part = Range(word.range, in: string),
-                      let box = try? line.text.boundingBox(for: part)?.boundingBox,
+                      let box = line.box(for: part),
                       hand.contains(where: { $0.contains(CGPoint(x: box.midX, y: box.midY)) }) else { continue }
                 hidden[i].insert(integersIn: word.range.location..<(word.range.location + word.range.length))
             }
@@ -487,7 +497,68 @@ enum Finder {
         return found
     }
 
+    /// Letters under this many pixels high are often misread, like
+    /// "examole" for "example", so a line that size is read a second time,
+    /// larger, when it holds what could be a detail.
+    private static let smallPrint: CGFloat = 20
+    /// How many lines are read again at most, so a page of small print
+    /// keeps no copy waiting long.
+    private static let secondReadings = 12
+
     private static func read(_ image: CGImage) -> [TextLine] {
+        var lines = recognize(image)
+        var left = secondReadings
+        for i in lines.indices where left > 0 {
+            let line = lines[i]
+            guard line.box.height * CGFloat(image.height) < smallPrint, mayHoldDetail(line.string) else { continue }
+            left -= 1
+            if let again = readAgain(line, in: image) { lines[i] = again }
+        }
+        return lines
+    }
+
+    /// A digit, an @ or a label's colon: what most details hold.
+    private static func mayHoldDetail(_ text: String) -> Bool {
+        text.contains { $0.isNumber || $0 == "@" || $0 == ":" }
+    }
+
+    /// The line read again from its own strip of the picture, made large
+    /// enough for its letters to be about 36 pixels high. Nil when the strip
+    /// cannot be made larger, or nothing is read where the line was.
+    private static func readAgain(_ line: TextLine, in image: CGImage) -> TextLine? {
+        let width = CGFloat(image.width), height = CGFloat(image.height)
+        let scale = min(4, 36 / max(1, line.box.height * height))
+        let room = line.box.height * 0.6
+        let strip = line.box.insetBy(dx: -room * 2, dy: -room).intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
+        // Cut from the top left, as pictures are.
+        let pixels = CGRect(x: strip.minX * width, y: (1 - strip.maxY) * height,
+                            width: strip.width * width, height: strip.height * height).integral
+        guard scale > 1.2, let piece = image.cropping(to: pixels), let large = enlarged(piece, by: scale) else { return nil }
+        let frame = CGRect(x: pixels.minX / width, y: 1 - pixels.maxY / height,
+                           width: pixels.width / width, height: pixels.height / height)
+        // The line read where it was in the strip, not a neighbour caught at its edge.
+        let middle = (line.box.midY - frame.minY) / frame.height
+        guard let found = recognize(large).min(by: { abs($0.box.midY - middle) < abs($1.box.midY - middle) }),
+              abs(found.box.midY - middle) < 0.25 else { return nil }
+        return TextLine(text: found.text, box: line.box, frame: frame)
+    }
+
+    /// A picture drawn larger, on white, smoothly.
+    private static func enlarged(_ image: CGImage, by scale: CGFloat) -> CGImage? {
+        let width = Int((CGFloat(image.width) * scale).rounded()), height = Int((CGFloat(image.height) * scale).rounded())
+        guard width > 0, height > 0, let space = CGColorSpace(name: CGColorSpace.sRGB),
+              let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                                      space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+        else { return nil }
+        context.setFillColor(CGColor(gray: 1, alpha: 1))
+        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        context.interpolationQuality = .high
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        return context.makeImage()
+    }
+
+    /// Every line of text Vision reads in a picture.
+    private static func recognize(_ image: CGImage) -> [TextLine] {
         let request = VNRecognizeTextRequest()
         request.recognitionLevel = .accurate
         // Numbers and addresses are read as they are, not corrected into words.
