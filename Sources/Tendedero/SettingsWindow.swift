@@ -2319,8 +2319,9 @@ private struct ChatOrderRow: View {
 /// Icons in rows of the same length: as many rows as the width needs, the
 /// icons shared out evenly between them, each in the middle of an equal
 /// column across the row. Eighteen that fit sixteen to a row go nine and
-/// nine, never sixteen and two.
-struct IconGrid: Layout {
+/// nine, never sixteen and two. SwiftUI's `Layout`, named in full, since the
+/// line has a `Layout` of its own (LineView.swift).
+struct IconGrid: SwiftUI.Layout {
     /// An icon's side.
     var cell: CGFloat
     /// The least room between two icons side by side.
@@ -2355,8 +2356,8 @@ struct IconGrid: Layout {
         let perRow = columns(subviews.count, across: bounds.width)
         let column = bounds.width / CGFloat(perRow)
         for (index, subview) in subviews.enumerated() {
-            let row = index / perRow, place = index % perRow
-            subview.place(at: CGPoint(x: bounds.minX + column * (CGFloat(place) + 0.5),
+            let row = index / perRow, slot = index % perRow
+            subview.place(at: CGPoint(x: bounds.minX + column * (CGFloat(slot) + 0.5),
                                       y: bounds.minY + CGFloat(row) * (cell + rowSpacing) + cell / 2),
                           anchor: .center, proposal: ProposedViewSize(width: cell, height: cell))
         }
