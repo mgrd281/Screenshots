@@ -853,3 +853,9 @@
 "Copy SVG" = "SVG'yi kopyala";
 "Save SVG…" = "SVG'yi kaydet…";
 "Compare the photo with its SVG" = "Fotoğrafı SVG'siyle karşılaştır";
+
+/* SettingsWindow: AI Assistant */
+"Key saved" = "Anahtar kaydedildi";
+"No key yet" = "Henüz anahtar yok";
+"Saved in your keychain, ending in %@" = "Anahtar Zincirinize kaydedildi, sonu %@";
+"Use the usual model" = "Her zamanki modeli kullan";

@@ -853,3 +853,9 @@
 "Copy SVG" = "SVGをコピー";
 "Save SVG…" = "SVGを保存…";
 "Compare the photo with its SVG" = "写真とそのSVGを比較";
+
+/* SettingsWindow: AI Assistant */
+"Key saved" = "キー保存済み";
+"No key yet" = "キー未設定";
+"Saved in your keychain, ending in %@" = "キーチェーンに保存済み（末尾 %@）";
+"Use the usual model" = "いつものモデルを使う";

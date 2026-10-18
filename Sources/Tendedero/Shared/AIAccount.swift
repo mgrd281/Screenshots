@@ -21,6 +21,14 @@ enum AIProvider: String, CaseIterable, Identifiable {
         }
     }
 
+    /// The company that makes it, as it writes its name.
+    var maker: String {
+        switch self {
+        case .claude: "Anthropic"
+        case .openAI: "OpenAI"
+        }
+    }
+
     /// The model asked unless Settings names another.
     var defaultModel: String {
         switch self {

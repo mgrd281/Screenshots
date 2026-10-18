@@ -148,6 +148,8 @@ final class AIAssistantTests: XCTestCase {
     func testEveryProviderHasItsOwnPlaces() {
         XCTAssertEqual(AIProvider.claude.defaultModel, "claude-opus-5-5")
         XCTAssertEqual(AIProvider.allCases.map(\.name), ["Claude", "ChatGPT"])
+        // The tiles in Settings name the company under the assistant.
+        XCTAssertEqual(AIProvider.allCases.map(\.maker), ["Anthropic", "OpenAI"])
         for provider in AIProvider.allCases {
             XCTAssertEqual(provider.keyPage.scheme, "https")
             XCTAssertEqual(provider.endpoint.scheme, "https")

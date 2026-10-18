@@ -855,3 +855,9 @@
 "Copy SVG" = "SVG-ni kopyala";
 "Save SVG…" = "SVG-ni saxla…";
 "Compare the photo with its SVG" = "Fotonu SVG ilə müqayisə et";
+
+/* SettingsWindow: AI Assistant */
+"Key saved" = "Açar saxlanıb";
+"No key yet" = "Hələ açar yoxdur";
+"Saved in your keychain, ending in %@" = "Açar zəncirinizdə saxlanıb, sonu: %@";
+"Use the usual model" = "Adi modeli istifadə et";

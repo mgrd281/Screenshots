@@ -853,3 +853,9 @@
 "Copy SVG" = "拷贝 SVG";
 "Save SVG…" = "存储 SVG…";
 "Compare the photo with its SVG" = "对比照片与其 SVG";
+
+/* SettingsWindow: AI Assistant */
+"Key saved" = "已保存密钥";
+"No key yet" = "尚无密钥";
+"Saved in your keychain, ending in %@" = "已存入钥匙串，结尾为 %@";
+"Use the usual model" = "使用常用模型";
