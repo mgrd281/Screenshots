@@ -859,3 +859,12 @@
 "No key yet" = "Henüz anahtar yok";
 "Saved in your keychain, ending in %@" = "Anahtar Zincirinize kaydedildi, sonu %@";
 "Use the usual model" = "Her zamanki modeli kullan";
+
+/* GrabArea: the photo's menu */
+"Send to" = "Gönder";
+"More Chats" = "Diğer sohbetler";
+"Ask AI" = "Yapay zekâya sor";
+"Text and AI" = "Metin ve yapay zekâ";
+"Edit" = "Düzenle";
+"Save and Export" = "Kaydet ve dışa aktar";
+"All Photos" = "Tüm fotoğraflar";

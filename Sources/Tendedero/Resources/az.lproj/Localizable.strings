@@ -861,3 +861,12 @@
 "No key yet" = "Hələ açar yoxdur";
 "Saved in your keychain, ending in %@" = "Açar zəncirinizdə saxlanıb, sonu: %@";
 "Use the usual model" = "Adi modeli istifadə et";
+
+/* GrabArea: the photo's menu */
+"Send to" = "Göndər";
+"More Chats" = "Digər söhbətlər";
+"Ask AI" = "Süni intellektdən soruş";
+"Text and AI" = "Mətn və süni intellekt";
+"Edit" = "Redaktə et";
+"Save and Export" = "Saxla və ixrac et";
+"All Photos" = "Bütün şəkillər";

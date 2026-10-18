@@ -667,10 +667,37 @@ apps.
   as what opens them. Hide Private Details opens Hide Part for one file, to
   save a copy beside it.
 - **Photo context menu.**
-  - Grouped by intent: copy and send; translate, describe, Order Details and the assistant;
-    open and edit; take down.
-  - **Convert to SVG…** (`point.topleft.down.curvedto.point.bottomright.up`)
-    follows Draw on Photo, for photos only, and opens its window (below).
+  - Short, as a Mac app's own menus are: about fifteen rows, what is done
+    most at the top, the rest in submenus named for what they are for. A
+    group with nothing in it for this photo is left out, and no separator
+    stands at an end or next to another. From the top:
+    - What was covered and where one like it went lately, dimmed, after
+      `lock.fill` and `paperplane`.
+    - Copy, Copy Text (a photo) and Paste into the app in front, by name.
+    - **Send to** (`paperplane.circle`): the chats under photos as they stand
+      there, each with its icon at 16 pt on every macOS; then **More Chats**
+      (`ellipsis.bubble`) with the rest; then Send with Shop Header.
+    - **Ask AI** (`questionmark.bubble`), with questions set up: each AI chat
+      with its icon, opening its questions.
+    - **Text and AI** (`sparkles`, a photo): Translate Text (macOS 15), Describe
+      (`text.below.photo`), Order Details; then Write a Reply and Explain with
+      the assistant.
+    - **Edit** (`slider.horizontal.3`): Crop…, Keep Whole Photo when cropped,
+      Hide Part…, Draw on Photo…, then Markup; for a recording, Trim… and Make
+      GIF.
+    - **Save and Export** (`square.and.arrow.up`): Save Copy… when what goes out
+      differs from the file, Make PDF, Combine into one image with photos
+      picked, **Convert to SVG…** (`point.topleft.down.curvedto.point.bottomright.up`,
+      a photo, its window below); then Save for Bookkeeping and Email to
+      Bookkeeping…; then Save to Desktop.
+    - Open, Quick Look, Keep on Top (a photo), Show in Finder, Pin or Unpin.
+    - **All Photos** (`square.on.square`), with more than one on the line or
+      some picked: Copy all, Pick All, Unpick All, then Take down everything
+      to the left and to the right. Then Take down (or Discard) and Move to
+      Trash.
+    - Submenus' symbols, like every item's, show from macOS 26 on, as Apple's
+      own menus have them; a chat's icon shows on every macOS, as Open With's
+      apps do.
   - **Keep on Top** (`pip`) follows Quick Look for a photo: it floats over
     every app in a utility panel with a transparent title bar and its close
     button, the photo filling it, its longer side 360 pt at first and never

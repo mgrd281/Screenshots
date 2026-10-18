@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- A photo's menu is short again: Copy, Copy Text and Paste at the top, then
+  Send to (the chats under photos, with More Chats for the rest), Ask AI,
+  Text and AI, Edit and Save and Export as submenus, then Open, Quick Look,
+  Keep on Top, Show in Finder and Pin, and All Photos and Take down at the
+  end. About fifteen rows instead of fifty.
 - A cover no longer hides part of the line under or over it: with only the
   name covered on an order page, the street right under the name now reads
   in full.
