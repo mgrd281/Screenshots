@@ -89,7 +89,8 @@ leaves, and photos that leave the line once sent.
 - Pro, a subscription, comes later. It adds the features listed in
   `Shared/Plan.swift` for people who send orders and receipts every day: the
   order binder, the send log, the order card, covering profiles, saved
-  messages and the hand-off to bookkeeping. Each is built free first.
+  messages, the hand-off to bookkeeping and step-by-step guides. Each is
+  built free first.
 - Nothing is held back until the owner sets the day Pro begins
   (`Plan.proStarts`). Whoever used Snapfly before that day keeps every
   feature.

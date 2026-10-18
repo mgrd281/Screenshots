@@ -39,13 +39,20 @@ does happens on your Mac, unless you set up the AI assistant with your own key
   using when you send a screenshot. While you choose what a screenshot takes,
   smart selection uses it to ask the app under the pointer where a picture or
   a button sits there, to outline it: only where things are, and nothing of
-  it leaves your Mac. Screen Recording lets it take the
-  screenshots and recordings you ask for, with ⌃⌥S, the screenshot button or
-  Record Screen. So that the send button shows only on chat websites, it asks
+  it leaves your Mac. While you record a guide, it asks the app you click what
+  was clicked there, below. Screen Recording lets it take the
+  screenshots and recordings you ask for, with ⌃⌥S, the screenshot button,
+  Record Screen or Record a Guide. So that the send button shows only on chat websites, it asks
   the browser in front for the address of the open page, once you allow it,
   and reads nothing else. While the time stamp is on, that address is also
   written on the stamp of a new screenshot, which stays on your Mac. Settings › Permissions shows each of these, and you
   can turn any off at any time in System Settings.
+- **Guides.** While you record a guide, Snapfly takes a screenshot of the
+  screen at each click and asks the app you clicked, through Accessibility,
+  what was clicked: its kind and its name, never what you typed. Snapfly does
+  not record what you type. The guide and its screenshots stay on your Mac, in
+  Snapfly's own folder, the last 20 of them, until you delete them. What you
+  send or save from a guide has its private details covered.
 - **Calls.** While Not during a call is on, Snapfly asks the Mac whether the
   microphone is in use, so the line keeps away during a meeting and nothing
   of Snapfly shows in what you share. It hears nothing, and asks for no
@@ -76,5 +83,8 @@ PDFs, die du der App selbst gibst, und kopiert, sendet oder löscht sie nur, wen
 du es willst. Fotos verlassen die Leine ohne Aufnahmeort und Kameradaten.
 Bildschirmaufnahmen macht es nur, wenn du darum bittest, und vom Browser liest
 es nur die Adresse der offenen Seite, damit die Senden-Taste nur auf
-Chat-Websites erscheint. Ob das Mikrofon gerade in Gebrauch ist, fragt Snapfly
+Chat-Websites erscheint. Beim Aufnehmen einer Anleitung macht Snapfly bei jedem
+Klick ein Bildschirmfoto und fragt die angeklickte App, was dort angeklickt
+wurde, nie, was du tippst; die Anleitung bleibt auf deinem Mac. Ob das Mikrofon
+gerade in Gebrauch ist, fragt Snapfly
 nur, damit die Leine während eines Anrufs oben bleibt; es hört nichts.

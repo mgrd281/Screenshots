@@ -161,6 +161,7 @@ settle is the point.
 | Press | Shrinks to `scale.press` in `duration.press`; letting go eases back |
 | Hold (a photo) | Shrinks over `duration.hold`, then its menu opens |
 | Hold (the grip) | Its circle swells over `duration.hold`, then fills with the accent, a tap, and the line follows the pointer any way |
+| Step taken (a guide) | A 40 pt accent ring spreads from 0.45 to 1 and fades where the click landed, 0.45 s ease-out; with Reduce Motion it only fades, 0.3 s |
 | Copy | A small nudge, and "Copied" shows (`duration.short`) |
 | Send | The paper plane (below); the line closes the gap with `spring.reflow` |
 | Take down | Falls off the line (0.55 s in the app); leaves with a short fade on `ease.exit` on the site's desktop |

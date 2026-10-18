@@ -372,6 +372,8 @@ final class Recorder: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sen
 final class CaptureBadgeModel: ObservableObject {
     enum Kind {
         case countdown, recording
+        /// A guide being recorded: how many steps so far.
+        case steps
         /// Something that went wrong.
         case message(String)
         /// Something that went as it should, like a file saved.
@@ -383,13 +385,15 @@ final class CaptureBadgeModel: ObservableObject {
     let kind: Kind
     /// Left on the countdown, or recorded so far.
     @Published var seconds = 0
+    /// The steps of a guide so far.
+    @Published var steps = 0
 
     init(kind: Kind) { self.kind = kind }
 }
 
 /// A capsule above the Dock, over every app, that never takes the keyboard.
 /// It is Snapfly's own window, so it is never in what is taken.
-private final class CaptureBadge: NSPanel {
+final class CaptureBadge: NSPanel {
     static let margin: CGFloat = 16
 
     let model: CaptureBadgeModel
@@ -500,7 +504,8 @@ private final class CaptureBadgeView: NSView {
 }
 
 /// The countdown: a timer, the seconds left and a cross. The recording: a
-/// stop button and the time so far.
+/// stop button and the time so far. A guide: the stop button and its steps
+/// so far.
 private struct CaptureBadgeLabel: View {
     @ObservedObject var model: CaptureBadgeModel
 
@@ -539,6 +544,18 @@ private struct CaptureBadgeLabel: View {
                 Text(Self.time.string(from: TimeInterval(model.seconds)) ?? "")
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .monospacedDigit()
+                    .padding(.trailing, 8)
+            case .steps:
+                Image(systemName: "stop.fill")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 22, height: 22)
+                    .background(Color.red, in: Circle())
+                Text(model.steps == 0 ? L("Click through the steps") : String(format: L("Steps: %d"), model.steps))
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .monospacedDigit()
+                    .contentTransition(.numericText())
+                    .animation(.easeOut(duration: 0.15), value: model.steps)
                     .padding(.trailing, 8)
             case let .message(text):
                 Image(systemName: "exclamationmark.triangle.fill")
