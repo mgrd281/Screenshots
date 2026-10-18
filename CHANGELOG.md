@@ -6,6 +6,14 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Record a Guide, in the menu bar: click through what you want to show, and
+  each click becomes a step, with a screenshot of the moment, what was
+  clicked marked in red, and a sentence like "Click “Orders”." Click the
+  capsule above the Dock to finish. In the guide's window, give it a title,
+  write any step again, move or delete steps, then Hang on the Line sends it
+  as a PDF, or Save makes a PDF or one tall picture. Private details are
+  covered in every step, nothing typed is recorded, and the last 20 guides
+  are under Recent Guides.
 - Hold the arrows on the line's tag a moment, then drag: the line goes
   anywhere, left, right, up or down, and stays there. Near the middle of the
   screen, or the top, it snaps into place. A quick drag still moves it up or

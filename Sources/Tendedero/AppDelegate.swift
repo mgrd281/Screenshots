@@ -119,6 +119,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         History.purge()
         HistoryWindow.shared.onHang = { [weak self] url in self?.hangCapture(url) }
         HistoryWindow.shared.onSendAgain = { [weak self] url in self?.sendAgain(url) }
+        // A guide hangs as a PDF, picked and ready to send.
+        HowToEditor.shared.onHang = { [weak self] url in
+            guard let self else { return }
+            self.hangCapture(url)
+            if let id = self.line.items.last(where: { $0.url == url && !$0.falling })?.id { self.line.pick(id) }
+        }
         let chatButton = ChatButton(line: line)
         chatButton.openSettings = { [weak self] in self?.openSettings() }
         self.chatButton = chatButton
@@ -1329,6 +1335,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             Self.show(Shortcut.current(.record), on: recordItem)
             menu.addItem(recordItem)
+        }
+        // A step-by-step guide, from the clicks that follow.
+        if HowToRecorder.shared.isRecording {
+            menu.addItem(ClosureMenuItem(L("Finish Guide"), symbol: "stop.circle") { HowToRecorder.shared.finish() })
+            menu.addItem(ClosureMenuItem(L("Cancel Guide"), symbol: "xmark.circle") { HowToRecorder.shared.cancel() })
+        } else {
+            menu.addItem(ClosureMenuItem(L("Record a Guide"), symbol: "list.number") { HowToRecorder.shared.start() })
+            let guides = HowToStore.recent()
+            if !guides.isEmpty {
+                let recentItem = NSMenuItem(title: L("Recent Guides"), action: nil, keyEquivalent: "")
+                Self.symbol("clock", on: recentItem)
+                let list = NSMenu()
+                for guide in guides.prefix(10) {
+                    list.addItem(ClosureMenuItem(HowToRender.name(of: guide)) { HowToEditor.shared.open(guide) })
+                }
+                recentItem.submenu = list
+                menu.addItem(recentItem)
+            }
         }
         // Photos and PDFs from anywhere on the Mac, to send protected.
         menu.addItem(ClosureMenuItem(L("Add Files…"), symbol: "folder.badge.plus", key: "o") { [weak self] in

@@ -287,7 +287,7 @@ literal value in a view.
   while an area is chosen. With Reduce Transparency on, it is the cover ink
   instead (grey 12%, solid).
 - **Record red** (`Color.red`) is only for the stop button while the screen
-  is recorded, as macOS marks recording.
+  or a guide is recorded, as macOS marks recording.
 - **Allowed green** and **not allowed orange** (`.green`, `.orange`) are only
   for a permission's state, and the orange for a rule's pattern that cannot
   be read, with a symbol beside the word, never color alone.
@@ -338,7 +338,7 @@ design with monospaced digits.
 |---|---|---|---|
 | Field | 17 pt | Regular | Search bar input |
 | Title | 13 pt | Semibold | Card headers ("Translation", "Description") |
-| Welcome title | 15 pt | Semibold | The introduction's welcome card, its one step up |
+| Welcome title | 15 pt | Semibold | The introduction's welcome card, its one step up, and a guide's title |
 | Body | 13 pt, +2 pt leading | Regular | Translations, descriptions, settings rows |
 | Label | 12 pt | Medium | Language menu, result count, keycaps |
 | Caption | 11 pt | Regular, or Semibold when selected | Notes under results, style tiles, "Copied" |
@@ -993,6 +993,74 @@ apps.
     `height` giving the original size where it had to be shrunk to trace.
     A straight edge is a line, a corner is a corner, and a curve is a
     cubic fitted within a fifth to two fifths of a pixel.
+- **Record a Guide** (`HowToRecorder.swift`) turns clicks into a
+  step-by-step guide.
+  - Every left or right click in another app is a step; a second click at
+    once on the same spot (within 8 pt) makes it a double-click. Clicks on
+    Snapfly's own windows are not steps, and its windows stay out of the
+    screenshots. Nothing typed is recorded.
+  - The capsule above the Dock (`CaptureBadge`, `.steps`) has the record-red
+    stop button and "Click through the steps", then "Steps: 3", in 13 pt
+    semibold rounded with monospaced digits that roll (`.numericText`). A
+    click on it finishes. The menu bar has Finish Guide and Cancel Guide
+    meanwhile.
+  - Where each click lands, a 40 pt ring in the accent, 3 pt wide, spreads
+    from 0.45 to 1 and fades over 0.45 s, ease-out (`HowToFlash`). With
+    Reduce Motion it only fades, over 0.3 s.
+  - The sentence comes from Accessibility (`HowToElement`, the direct edition
+    only): the control, link, menu item, field, tab or Dock item under the
+    click, or holding what was clicked, and its title, description, label or
+    hint, never a field's value. A name stays out ("Click here.") when it
+    holds a private detail found by its shape, one of the owner's own rules,
+    a person's name as the Natural Language tagger reads it, or, for what a
+    page shows rather than a control, three digits or more. Names are cut at
+    a word past 48 characters.
+- **The guide's window** (`HowToEditor.swift`) opens 720 pt wide, at least
+  560 × 480, over the line, titled "Guide".
+  - At the top, the title in a plain field, 15 pt semibold, "Name this
+    guide", and the step count under it in 11 pt `.secondary`.
+  - The steps one under another, at most 760 pt wide and centred. Each is a
+    block on `.primary` at 4.5%, with 12 pt corners and 12 pt inside:
+    - a 24 pt number circle in `.primary`, its digits in the window's
+      background colour (11 pt bold rounded);
+    - the sentence in a plain field, 13 pt, one to four lines, on
+      `.primary` at 4.5% with 6 pt corners;
+    - the picture as it will leave, at most 340 pt high, with 8 pt corners
+      and a 0.5 pt edge of `.primary` at 12%;
+    - under it, the app's name in 11 pt `.secondary`, and borderless 24 pt
+      tools, each with its help tag and spoken label: Show Whole Screen or
+      Show Around the Click, Move Up, Move Down and Delete Step.
+  - While a step is covered, its picture is a placeholder 180 pt high with
+    a small spinner, and the footer says "Covering private details…". A
+    step whose screenshot can't be read says so, and waits for Delete Step.
+  - The footer, large: Delete Guide… (a borderless trash that asks first),
+    then Save, a menu of Save as PDF…, Save as Image… and Copy as Image, and
+    Hang on the Line (`.borderedProminent`, `arrow.up.to.line`). Return
+    does not hang it, because the fields take Return.
+- **What a guide leaves as** (`HowToRender.swift`) is drawn in fixed
+  colours, like the drawing inks, so it reads the same wherever it is
+  opened.
+  - A PDF of A4 pages (595 × 842 pt) with 48 pt margins across and 52 down,
+    or one tall picture 600 pt wide at twice the resolution, with 32 pt
+    margins.
+  - The title in 20 pt semibold in ink (grey 0.11), then "5 steps · 18
+    October 2026" in 11 pt grey 0.42, and 24 pt before the first step.
+  - A step: a 22 pt ink circle with its number in white (11 pt bold,
+    monospaced digits) on the reading side; the sentence in 13 pt ink, 32 pt
+    in from the circle's side; 10 pt under it, the picture across the full
+    width, rounded 8 with a 0.75 pt edge of grey 0.84; 28 pt to the next
+    step.
+  - A step never breaks across pages. Alone on a page and still too tall,
+    it is drawn smaller. With several pages, "2 / 3" stands at the foot in
+    11 pt grey.
+  - The picture is the step's covered screenshot, cut to 60% of the screen's
+    width at 16:10 around what was clicked (wider when that is), never past
+    the edges, or all of it with Show Whole Screen. What was clicked is
+    boxed in the red ink (`Drawing.Ink.red`, the medium line, corners of 1.5
+    lines), or a ring at the click, 2.4% of the screen's size across its
+    radius, filled with the red at 18%.
+  - In the PDF the pictures are JPEG at 0.88 quality and at most 1600 px;
+    the tall picture stays sharp.
 - **The introduction** (`Guide.swift`) points at the real thing on the
   screen, never at a picture of it. Two non-activating panels over the
   line and the menu bar and under menus (`GuidePanel`, `.statusBar` + 1

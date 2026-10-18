@@ -98,7 +98,8 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Add Files… in the menu bar | Pick photos or PDFs to hang. |
 | Click anything in the menu bar | Put it away. |
 | Glance at the Snapfly icon in the menu bar | How many photos hang, beside it, and a small dot on it while something new hangs that the line has not shown yet. Turn it off with Count on the menu bar icon, under Line. |
-| Click the Snapfly icon in the menu bar | The menu: how many photos hang and Paste into the app in front, the ways to take or add, the line, the Hide private details and Screenshot Button switches, Settings, the Introduction (Continue Introduction when it was ended before its end) and Help & Support. |
+| Record a Guide in the menu bar, then click through | Each click becomes a step of a guide, with a screenshot and a sentence. Click the capsule above the Dock to finish, and the guide opens to edit, send or save. |
+| Click the Snapfly icon in the menu bar | The menu: how many photos hang and Paste into the app in front, the ways to take or add, Record a Guide and Recent Guides, the line, the Hide private details and Screenshot Button switches, Settings, the Introduction (Continue Introduction when it was ended before its end) and Help & Support. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>F</kbd> | Search the words in your screenshots. Change it in Settings. |
@@ -413,6 +414,32 @@ word is a covered shape in the SVG; the file itself is never changed. A
 gradient becomes bands of flat color, and a photograph becomes a
 poster of it, so a photo's SVG is large; a picture of more than twelve
 million pixels is traced smaller and the SVG still opens at its own size.
+
+## Step by step, by itself.
+
+Record a Guide, in the menu bar, turns what you click into a step-by-step
+guide. Click through what you want to show, the way you always would: each
+click is a step, with a screenshot of that moment and a sentence saying what
+to do, like "Click “Orders”.", "Choose “Export…”." or "Click the “Search”
+field.", from what the app says is under the pointer. A ring spreads where
+each click lands, so you know it counted, and the capsule above the Dock
+counts the steps; click it to finish, or choose Cancel Guide in the menu bar.
+Nothing you type is recorded, and Snapfly's own windows stay out of the
+screenshots.
+
+The guide then opens in a window of its own. Give it a title, read the steps
+through and write any sentence again, move a step up or down, or delete it.
+Each step shows the part of the screen around its click, with what was
+clicked boxed in red; Show Whole Screen shows all of it. Every screenshot has
+its private details covered, as chosen under Privacy, before you see it, and
+a name that could be private, like a customer's name or an order number,
+stays out of the sentences.
+
+Hang on the Line makes it a PDF of numbered A4 pages and hangs it, ready to
+send. Save writes a PDF, or one tall picture that shows whole in a chat, or
+copies that picture. The last 20 guides stay on your Mac, under Recent
+Guides in the menu bar. The App Store edition can't ask other apps what was
+clicked, so its steps say "Click here." and mark the click with a ring.
 
 <br>
 
@@ -798,6 +825,10 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Drawing.swift` | Draw on Photo's arrows, boxes, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |
 | `DrawEditor.swift` | Draw on Photo: the window to draw on a photo, with its tools, inks, sizes and Undo |
 | `VectorEditor.swift` | Convert to SVG: the window with the kinds of picture and their settings, tracing in the background, and Copy SVG and Save SVG… |
+| `HowToModel.swift` | Step-by-step guides: a guide and its steps, what each step says, the part of the screen it shows, pages, and where guides are kept |
+| `HowToRecorder.swift` | Record a Guide: a step for each click, with its screenshot and what Accessibility says was clicked, and the ring at each click |
+| `HowToRender.swift` | A guide as it leaves: each step covered, cut and marked, as A4 PDF pages or one tall picture |
+| `HowToEditor.swift` | The guide's window: title, steps to write again, move or delete, and Hang on the Line, Save and Copy |
 | `VectorCanvas.swift` | Convert to SVG's canvas: the photo and its SVG one over the other under a divider, with pinch, scroll and keys to zoom |
 | `VectorRaster.swift` | Reads a photo upright as the tracer's pixels (shrunk past twelve million), and draws shapes back as a picture |
 | `QuickCrop.swift` | Crop…: the photo large over the dimmed screen, a drag over the part to keep, saved as the drawing's crop |
@@ -826,7 +857,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `FullPage.swift` | Captures a whole page by scrolling the window in front |
 | `PageStitch.swift` | Joins the views of a scrolled page into one picture |
 | `CaptureButton.swift` | The screenshot button: one click takes a screenshot, from the edge of the screen |
-| `Recording.swift` | Records the screen from Snapfly itself, with the countdown, recording and note capsule above the Dock, and makes GIFs of recordings |
+| `Recording.swift` | Records the screen from Snapfly itself, with the countdown, recording, guide and note capsule above the Dock, and makes GIFs of recordings |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |
