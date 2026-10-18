@@ -493,6 +493,8 @@ enum PhotoButtons {
     /// takes below the card, which GrabView and the hit rect reach into.
     static let chatSize: CGFloat = 20
     static let chatGap: CGFloat = 4
+    /// As many as a card's row holds, at the size photos hang in at first.
+    static let maxChats = 6
     static let stripGap: CGFloat = 6
     static var stripHeight: CGFloat { stripGap + chatSize + 4 }
 

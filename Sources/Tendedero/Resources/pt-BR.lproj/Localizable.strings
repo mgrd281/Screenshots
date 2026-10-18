@@ -703,7 +703,7 @@
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” passa a ser coberto em todas as fotos. Você pode mudar isso em %2$@.";
 "Always cover “%@”" = "Sempre cobrir “%@”";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "Coberto em todas as fotos a partir de agora, como regra sua em Privacidade.";
-"Drag the icons into the order you want them under each photo." = "Arraste os ícones na ordem em que você os quer sob cada foto.";
+"Drag the icons into the order you want them under each photo. Up to six show at a time." = "Arraste os ícones na ordem em que você os quer sob cada foto. No máximo seis aparecem de uma vez.";
 "Moved to the Trash. Click to put it back on the line." = "Movida para o Lixo. Clique para pendurá-la de novo no varal.";
 "%d moved to the Trash. Click to put them back on the line." = "%d movidas para o Lixo. Clique para pendurá-las de novo no varal.";
 "Taken down. Click to put it back on the line." = "Recolhida. Clique para pendurá-la de novo no varal.";

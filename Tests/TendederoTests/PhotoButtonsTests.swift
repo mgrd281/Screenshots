@@ -54,12 +54,12 @@ final class PhotoButtonsTests: XCTestCase {
         XCTAssertFalse(ChatTarget.gmail.owns(host: "google.com"))
         for chat in ChatTarget.allCases {
             XCTAssertTrue(chat.owns(host: chat.newChat.host), chat.name)
-            XCTAssertEqual(chat.isAI, ["ChatGPT", "Claude"].contains(chat.name), chat.name)
+            XCTAssertEqual(chat.isAI, ["ChatGPT", "Claude", "Perplexity", "Grok", "DeepSeek"].contains(chat.name), chat.name)
             if chat.isAI {
                 // A new chat opens where the website starts one, and what goes
                 // there is covered as in an AI chat.
                 XCTAssertTrue(ChatLayouts.isNewChat(chat.newChat), chat.name)
-                XCTAssertTrue(CoveringProfile.isAIChat(app: chat.appID, host: nil), chat.name)
+                if let app = chat.appID { XCTAssertTrue(CoveringProfile.isAIChat(app: app, host: nil), chat.name) }
                 XCTAssertTrue(CoveringProfile.isAIChat(app: nil, host: chat.hosts[0]), chat.name)
             } else {
                 XCTAssertFalse(CoveringProfile.isAIChat(app: chat.appID, host: chat.hosts[0]), chat.name)
@@ -69,8 +69,13 @@ final class PhotoButtonsTests: XCTestCase {
         XCTAssertTrue(ChatTarget.gmx.owns(host: "www.gmx.de"))
         XCTAssertTrue(ChatTarget.webDe.owns(host: "navigator.web.de"))
         XCTAssertFalse(ChatTarget.webDe.owns(host: "notweb.de"))
-        // A mailbox needs a message started first, so its photo is copied only.
-        XCTAssertEqual(ChatTarget.allCases.filter(\.copiesOnly), [.gmx, .webDe])
+        XCTAssertTrue(ChatTarget.outlook.owns(host: "outlook.live.com"))
+        XCTAssertTrue(ChatTarget.perplexity.owns(host: "www.perplexity.ai"))
+        XCTAssertTrue(ChatTarget.messenger.owns(host: "www.messenger.com"))
+        XCTAssertFalse(ChatTarget.facebook.owns(host: "notfacebook.com"))
+        // A mailbox, Facebook or an editor needs a message or chat open first,
+        // so its photo is copied only.
+        XCTAssertEqual(ChatTarget.allCases.filter(\.copiesOnly), [.outlook, .yahoo, .gmx, .webDe, .facebook, .vsCode])
         // WhatsApp's app goes by two IDs; Gmail, GMX and WEB.DE have none on the Mac.
         XCTAssertEqual(ChatTarget.whatsApp.appIDs.count, 2)
         XCTAssertNil(ChatTarget.gmail.appID)
@@ -84,7 +89,7 @@ final class PhotoButtonsTests: XCTestCase {
         for chat in ChatTarget.allCases {
             guard let file = chat.logoFile else {
                 // ChatGPT and Claude carry no logo of theirs.
-                XCTAssertTrue(chat.isAI, chat.name)
+                XCTAssertTrue(chat == .chatGPT || chat == .claude, chat.name)
                 continue
             }
             let png = root.appendingPathComponent("assets/chat-logos/\(file).png")
@@ -96,8 +101,15 @@ final class PhotoButtonsTests: XCTestCase {
         let suite = "PhotoButtonsTests.\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
-        for chat in ChatTarget.allCases { XCTAssertTrue(ChatTarget.shows(chat, in: defaults), "on at first: \(chat.name)") }
-        XCTAssertEqual(ChatTarget.allCases.count, 6)
+        // The six of before are on at first; the others wait to be chosen.
+        for chat in ChatTarget.allCases {
+            XCTAssertEqual(ChatTarget.shows(chat, in: defaults), chat.isStandard, chat.name)
+        }
+        XCTAssertEqual(ChatTarget.allCases.filter(\.isStandard).count, PhotoButtons.maxChats)
+        XCTAssertEqual(ChatTarget.shownCount(in: defaults), PhotoButtons.maxChats)
+        ChatTarget.setShows(true, .grok, in: defaults)
+        XCTAssertTrue(ChatTarget.shows(.grok, in: defaults))
+        ChatTarget.setShows(false, .grok, in: defaults)
         ChatTarget.setShows(false, .claude, in: defaults)
         XCTAssertFalse(ChatTarget.shows(.claude, in: defaults))
         XCTAssertTrue(ChatTarget.shows(.chatGPT, in: defaults), "the other stays")

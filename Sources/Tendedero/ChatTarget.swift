@@ -1,14 +1,26 @@
 import AppKit
 
 /// Where a photo goes straight from the line: ChatGPT, Claude, WhatsApp,
-/// Gmail, GMX and WEB.DE. Their website in the browser, or their app when it
-/// is on this Mac and Settings says so. WhatsApp, Gmail, GMX and WEB.DE show
-/// their logo, which the owner supplied (`assets/chat-logos`); ChatGPT and
-/// Claude show their app's own icon, as macOS draws it in the Dock, wherever
-/// the app is on this Mac, with no logo of theirs in Snapfly. Without either,
-/// a short mark in a neutral circle.
+/// Gmail, GMX and WEB.DE, and more to choose in Settings: Perplexity, Grok,
+/// DeepSeek, Messenger, Outlook, Yahoo Mail, Facebook and Visual Studio
+/// Code. Their website in the browser, or their app when it is on this Mac
+/// and Settings says so. All but ChatGPT and Claude show their logo, which
+/// the owner supplied (`assets/chat-logos`); ChatGPT and Claude show their
+/// app's own icon, as macOS draws it in the Dock, wherever the app is on
+/// this Mac, with no logo of theirs in Snapfly. Without either, a short mark
+/// in a neutral circle.
 enum ChatTarget: String, CaseIterable, Identifiable {
-    case chatGPT, claude, whatsApp, gmail, gmx, webDe
+    case chatGPT, claude, perplexity, grok, deepSeek, whatsApp, messenger, gmail, outlook, yahoo, gmx, webDe
+    case facebook, vsCode
+
+    /// The six that show under a photo until chosen otherwise; the others
+    /// wait to be turned on in Settings.
+    var isStandard: Bool {
+        switch self {
+        case .chatGPT, .claude, .whatsApp, .gmail, .gmx, .webDe: true
+        default: false
+        }
+    }
 
     var id: String { rawValue }
 
@@ -17,10 +29,18 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         switch self {
         case .chatGPT: "ChatGPT"
         case .claude: "Claude"
+        case .perplexity: "Perplexity"
+        case .grok: "Grok"
+        case .deepSeek: "DeepSeek"
         case .whatsApp: "WhatsApp"
+        case .messenger: "Messenger"
         case .gmail: "Gmail"
+        case .outlook: "Outlook"
+        case .yahoo: "Yahoo Mail"
         case .gmx: "GMX"
         case .webDe: "WEB.DE"
+        case .facebook: "Facebook"
+        case .vsCode: "Visual Studio Code"
         }
     }
 
@@ -28,18 +48,23 @@ enum ChatTarget: String, CaseIterable, Identifiable {
     /// asked a question with the photo.
     var isAI: Bool {
         switch self {
-        case .chatGPT, .claude: true
-        case .whatsApp, .gmail, .gmx, .webDe: false
+        case .chatGPT, .claude, .perplexity, .grok, .deepSeek: true
+        default: false
         }
     }
 
-    /// The bundle IDs its app goes by; Gmail, GMX and WEB.DE have none on the Mac.
+    /// The bundle IDs its app goes by; some have none on the Mac, and are
+    /// found by their name instead, if they are there.
     var appIDs: [String] {
         switch self {
         case .chatGPT: ["com.openai.chat"]
         case .claude: ["com.anthropic.claudefordesktop"]
+        case .perplexity: ["ai.perplexity.mac"]
         case .whatsApp: ["net.whatsapp.WhatsApp", "desktop.WhatsApp"]
-        case .gmail, .gmx, .webDe: []
+        case .messenger: ["com.facebook.archon", "com.facebook.archon.developerID"]
+        case .outlook: ["com.microsoft.Outlook"]
+        case .vsCode: ["com.microsoft.VSCode"]
+        case .grok, .deepSeek, .gmail, .yahoo, .gmx, .webDe, .facebook: []
         }
     }
 
@@ -50,10 +75,18 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         switch self {
         case .chatGPT: ["ChatGPT"]
         case .claude: ["Claude"]
+        case .perplexity: ["Perplexity"]
+        case .grok: ["Grok"]
+        case .deepSeek: ["DeepSeek"]
         case .whatsApp: ["WhatsApp"]
+        case .messenger: ["Messenger"]
         case .gmail: ["Gmail"]
+        case .outlook: ["Outlook", "Microsoft Outlook"]
+        case .yahoo: ["Yahoo Mail"]
         case .gmx: ["GMX"]
         case .webDe: ["WEB.DE", "WEB.DE Mail"]
+        case .facebook: ["Facebook"]
+        case .vsCode: ["Visual Studio Code"]
         }
     }
 
@@ -62,10 +95,18 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         switch self {
         case .chatGPT: ["chatgpt.com", "chat.openai.com"]
         case .claude: ["claude.ai"]
+        case .perplexity: ["perplexity.ai"]
+        case .grok: ["grok.com"]
+        case .deepSeek: ["chat.deepseek.com"]
         case .whatsApp: ["web.whatsapp.com"]
+        case .messenger: ["messenger.com"]
         case .gmail: ["mail.google.com"]
+        case .outlook: ["outlook.office.com", "outlook.live.com", "outlook.office365.com"]
+        case .yahoo: ["mail.yahoo.com"]
         case .gmx: ["gmx.net", "gmx.de"]
         case .webDe: ["web.de"]
+        case .facebook: ["facebook.com"]
+        case .vsCode: ["vscode.dev"]
         }
     }
 
@@ -74,27 +115,48 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         switch self {
         case .chatGPT: URL(string: "https://chatgpt.com/")!
         case .claude: URL(string: "https://claude.ai/new")!
+        case .perplexity: URL(string: "https://www.perplexity.ai/")!
+        case .grok: URL(string: "https://grok.com/")!
+        case .deepSeek: URL(string: "https://chat.deepseek.com/")!
         case .whatsApp: URL(string: "https://web.whatsapp.com/")!
+        case .messenger: URL(string: "https://www.messenger.com/")!
         case .gmail: URL(string: "https://mail.google.com/mail/?view=cm&fs=1")!
+        case .outlook: URL(string: "https://outlook.office.com/mail/deeplink/compose")!
+        case .yahoo: URL(string: "https://mail.yahoo.com/")!
         case .gmx: URL(string: "https://navigator.gmx.net/")!
         case .webDe: URL(string: "https://navigator.web.de/")!
+        case .facebook: URL(string: "https://www.facebook.com/messages/")!
+        case .vsCode: URL(string: "https://vscode.dev/")!
         }
     }
 
-    /// GMX and WEB.DE open the mailbox, which takes a message only after you
-    /// start one, so the photo is copied, covered, and left on the line for
-    /// you to paste.
-    var copiesOnly: Bool { self == .gmx || self == .webDe }
+    /// A mailbox, Facebook or an editor takes a photo only once you have a
+    /// message or a chat open, so the photo is copied, covered, and left on
+    /// the line for you to paste.
+    var copiesOnly: Bool {
+        switch self {
+        case .gmx, .webDe, .outlook, .yahoo, .facebook, .vsCode: true
+        default: false
+        }
+    }
 
     /// The file of its logo in `assets/chat-logos`, which the build copies
     /// into the app; ChatGPT and Claude have none.
     var logoFile: String? {
         switch self {
         case .chatGPT, .claude: nil
+        case .perplexity: "perplexity"
+        case .grok: "grok"
+        case .deepSeek: "deepseek"
         case .whatsApp: "whatsapp"
+        case .messenger: "messenger"
         case .gmail: "gmail"
+        case .outlook: "outlook"
+        case .yahoo: "yahoo"
         case .gmx: "gmx"
         case .webDe: "webde"
+        case .facebook: "facebook"
+        case .vsCode: "vscode"
         }
     }
 
@@ -134,10 +196,18 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         switch self {
         case .chatGPT: "GPT"
         case .claude: "Cl"
+        case .perplexity: "Px"
+        case .grok: "Gk"
+        case .deepSeek: "DS"
         case .whatsApp: "WA"
+        case .messenger: "Ms"
         case .gmail: "Gm"
+        case .outlook: "Ol"
+        case .yahoo: "Y!"
         case .gmx: "GMX"
         case .webDe: "WEB"
+        case .facebook: "Fb"
+        case .vsCode: "VS"
         }
     }
 
@@ -148,6 +218,8 @@ enum ChatTarget: String, CaseIterable, Identifiable {
     /// ChatGPT and Claude off until they choose again.
     static func shows(_ chat: ChatTarget, in defaults: UserDefaults = .standard) -> Bool {
         if defaults.object(forKey: chat.offKey) != nil { return !defaults.bool(forKey: chat.offKey) }
+        // The others wait to be chosen.
+        if !chat.isStandard { return false }
         return chat.isAI ? !defaults.bool(forKey: "aiChatsOnPhotosOff") : true
     }
 
@@ -162,7 +234,12 @@ enum ChatTarget: String, CaseIterable, Identifiable {
     /// is always there.
     @MainActor
     static var onPhotosNow: [ChatTarget] {
-        ordered().filter { shows($0) }
+        Array(ordered().filter { shows($0) }.prefix(PhotoButtons.maxChats))
+    }
+
+    /// How many are turned on; Settings lets no more than a row holds.
+    static func shownCount(in defaults: UserDefaults = .standard) -> Int {
+        allCases.filter { shows($0, in: defaults) }.count
     }
 
     // MARK: Their order

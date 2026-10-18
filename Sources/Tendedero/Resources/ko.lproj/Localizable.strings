@@ -703,7 +703,7 @@
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@”은(는) 이제 모든 사진에서 가려집니다. %2$@에서 바꿀 수 있습니다.";
 "Always cover “%@”" = "“%@” 항상 가리기";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "이제 모든 사진에서 가려지며, 개인정보 보호의 나만의 규칙에 들어갑니다.";
-"Drag the icons into the order you want them under each photo." = "아이콘을 드래그해 사진 아래에 놓일 순서를 정하세요.";
+"Drag the icons into the order you want them under each photo. Up to six show at a time." = "아이콘을 드래그해 사진 아래에 놓일 순서를 정하세요. 한 번에 최대 6개까지 표시됩니다.";
 "Moved to the Trash. Click to put it back on the line." = "휴지통으로 옮겼습니다. 클릭하면 빨랫줄에 다시 겁니다.";
 "%d moved to the Trash. Click to put them back on the line." = "%d장을 휴지통으로 옮겼습니다. 클릭하면 빨랫줄에 다시 겁니다.";
 "Taken down. Click to put it back on the line." = "걷어냈습니다. 클릭하면 빨랫줄에 다시 겁니다.";

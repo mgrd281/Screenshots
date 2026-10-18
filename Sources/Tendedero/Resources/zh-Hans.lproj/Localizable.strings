@@ -703,7 +703,7 @@
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "从现在起，每张照片中的“%1$@”都会被遮盖。可在“%2$@”中更改。";
 "Always cover “%@”" = "始终遮盖“%@”";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "从现在起每张照片都会遮盖，作为“隐私”中的自定义规则。";
-"Drag the icons into the order you want them under each photo." = "拖动图标，排成你希望它们在每张照片下的顺序。";
+"Drag the icons into the order you want them under each photo. Up to six show at a time." = "拖动图标，排成你希望它们在每张照片下的顺序。 同时最多显示六个。";
 "Moved to the Trash. Click to put it back on the line." = "已移到废纸篓。点按可放回晾衣绳。";
 "%d moved to the Trash. Click to put them back on the line." = "已将 %d 张移到废纸篓。点按可放回晾衣绳。";
 "Taken down. Click to put it back on the line." = "已取下。点按可放回晾衣绳。";
