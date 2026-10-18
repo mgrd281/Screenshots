@@ -1238,6 +1238,13 @@ final class Line: ObservableObject {
         }
     }
 
+    /// Convert to SVG…: the photo drawn again as shapes, from the copy that
+    /// leaves the line, so what is covered is covered in it. The file stays as it is.
+    func convertToSVG(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
+        VectorEditor.shared.convert(item.url)
+    }
+
     /// Crop…, from a photo's menu or an ⌥-click: drag over the part to keep,
     /// on the photo shown large. It is kept as the crop of the photo's
     /// drawing and cut from what leaves the line; the file stays as it is.

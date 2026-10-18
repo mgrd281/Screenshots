@@ -6,6 +6,14 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Convert to SVG…, in a photo's menu, draws the photo again as shapes that
+  stay sharp at any size. Your photo and its SVG sit one over the other
+  under a divider, and you pick the kind of picture (screenshot, logo or
+  icon, illustration, photo, black and white), then colors, smoothness and
+  how small a speck to leave out. Copy SVG pastes into Figma, Sketch or
+  Illustrator, and Save SVG… writes a file. Straight edges stay straight
+  and corners stay sharp. It is made from the copy with the private details
+  covered, on your Mac. Soft gradients become bands of flat color.
 - Turn on as many icons under photos as you like: six fit under a photo,
   and with more, the last place is ⋯, which lists the rest. In Settings ›
   Line › Icons under photos, a click on an icon turns it on or off.
