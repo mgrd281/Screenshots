@@ -284,7 +284,9 @@ with Claude, or ChatGPT, does the same with the AI assistant set up under
 General: it is off until you turn it on, since it sends the words of each
 screenshot to Anthropic or OpenAI. Strongest protection covers every line
 with something private whole, with more room around it, so not even how
-long it was shows.
+long it was shows. The room round a cover never reaches into a line above
+or below that is not covered: a name is hidden, and the street under it
+still reads in full.
 
 QR codes and barcodes are covered whole, since nobody can read what they
 hold: a payment, a sign-in, a ticket or a parcel. The number printed under

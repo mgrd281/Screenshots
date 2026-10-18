@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- A cover no longer hides part of the line under or over it: with only the
+  name covered on an order page, the street right under the name now reads
+  in full.
 - The icons in Settings › Line › Icons under photos stand in even rows
   across the whole width: nine and nine, not a full row with two under it.
 - Settings › General › AI Assistant looks new: Claude and ChatGPT are two
