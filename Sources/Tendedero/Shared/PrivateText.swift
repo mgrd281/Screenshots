@@ -129,7 +129,7 @@ enum Finder {
 
     /// One thing to cover: part of a line, or all of it, and the kind it
     /// is covered as; nil for a rule of the owner's own.
-    fileprivate struct Hit {
+    struct Hit {
         let line: Int
         let range: NSRange?
         let kind: PrivateDetail?
@@ -1059,37 +1059,44 @@ enum Finder {
     /// address under "Rechnungsadresse".
     private static func labelled(in lines: [TextLine], _ chosen: Set<PrivateDetail>,
                                  learned: inout Set<String>) -> [Hit] {
+        labelled(lines.map(\.string), boxes: lines.map(\.box), part: { lines[$0].box(for: $1) }, chosen,
+                 learned: &learned)
+    }
+
+    /// The same, from the lines' words and where they are; `part` says
+    /// where part of a line is.
+    static func labelled(_ strings: [String], boxes: [CGRect], part: (Int, Range<String.Index>) -> CGRect?,
+                         _ chosen: Set<PrivateDetail>, learned: inout Set<String>) -> [Hit] {
         var hits: [Hit] = []
-        let boxes = lines.map(\.box)
         // Whether a line sits on the row of another label, to its right, as
         // the next row of a list of labels and values does: a known label,
         // or any few words ending in a colon, like "Rechnung:".
         func besideALabel(_ index: Int) -> Bool {
-            lines.indices.contains { other in
-                let words = lines[other].string.trimmingCharacters(in: .whitespaces)
+            strings.indices.contains { other in
+                let words = strings[other].trimmingCharacters(in: .whitespaces)
                 let shaped = words.hasSuffix(":") && words.split(separator: " ").count <= 4
                 return other != index && (shaped || isLabel(words)) && line(beside: other, in: boxes) == index
             }
         }
-        for (i, line) in lines.enumerated() {
-            let text = line.string.trimmingCharacters(in: .whitespaces)
+        for (i, string) in strings.enumerated() {
+            let text = string.trimmingCharacters(in: .whitespaces)
             var label = normalized(text)
             if let colon = text.firstIndex(of: ":"), let block = labels[normalized(String(text[..<colon]))] {
                 let value = text[text.index(after: colon)...].trimmingCharacters(in: .whitespaces)
                 if !value.isEmpty {
                     let detail = kind(of: value, first: true, in: block)
-                    let part = line.string.range(of: value)
-                    if chosen.contains(detail), let part {
-                        hits.append(Hit(line: i, range: NSRange(part, in: line.string), kind: detail))
+                    let range = string.range(of: value)
+                    if chosen.contains(detail), let range {
+                        hits.append(Hit(line: i, range: NSRange(range, in: string), kind: detail))
                         if detail == .names { learn(value, into: &learned) }
                     }
                     // The rest of a block, like the address after a name,
                     // follows under the value, in its column.
-                    guard block.lines > 1, let part, var above = line.box(for: part) else { continue }
+                    guard block.lines > 1, let range, var above = part(i, range) else { continue }
                     var last = i
                     for _ in 1..<block.lines {
                         guard let next = Self.line(under: above, in: boxes, gap: 1.1, skipping: last),
-                              labels[normalized(lines[next].string)] == nil, !besideALabel(next) else { break }
+                              labels[normalized(strings[next])] == nil, !besideALabel(next) else { break }
                         if chosen.contains(block.rest) { hits.append(Hit(line: next, range: nil, kind: block.rest)) }
                         above = boxes[next]
                         last = next
@@ -1105,11 +1112,11 @@ enum Finder {
             // column; the rest of a block follows under that value, until the
             // row of another label.
             let beside = text.hasSuffix(":") ? Self.line(beside: i, in: boxes) : nil
-            if let value = beside, labels[normalized(lines[value].string)] == nil {
-                let detail = kind(of: lines[value].string, first: true, in: block)
+            if let value = beside, labels[normalized(strings[value])] == nil {
+                let detail = kind(of: strings[value], first: true, in: block)
                 if chosen.contains(detail) {
                     hits.append(Hit(line: value, range: nil, kind: detail))
-                    if detail == .names { learn(lines[value].string, into: &learned) }
+                    if detail == .names { learn(strings[value], into: &learned) }
                 }
                 last = value
                 first = 1
@@ -1117,13 +1124,13 @@ enum Finder {
             for n in first..<max(block.lines, first) {
                 // A label sits further from its first line than the lines
                 // from each other, as a card's heading does.
-                guard let next = Self.line(below: last, in: lines, gap: n == 0 ? 2.5 : 1.1),
-                      labels[normalized(lines[next].string)] == nil,
+                guard let next = Self.line(below: last, in: boxes, gap: n == 0 ? 2.5 : 1.1),
+                      labels[normalized(strings[next])] == nil,
                       first == 0 || !besideALabel(next) else { break }
-                let detail = kind(of: lines[next].string, first: n == 0, in: block)
+                let detail = kind(of: strings[next], first: n == 0, in: block)
                 if chosen.contains(detail) {
                     hits.append(Hit(line: next, range: nil, kind: detail))
-                    if detail == .names { learn(lines[next].string, into: &learned) }
+                    if detail == .names { learn(strings[next], into: &learned) }
                 }
                 last = next
             }

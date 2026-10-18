@@ -48,26 +48,6 @@ final class LabelTests: XCTestCase {
         XCTAssertNil(Finder.line(beside: 0, in: [vorname, dorozala]))
     }
 
-    /// Read from a picture, as the app does: a shop's order page with the
-    /// labels in one column and the values beside them. Names covers the
-    /// first and last name on their rows and the name the bill goes to;
-    /// Addresses covers the street, the postcode and the town, and the
-    /// address under the bill's name; the file name of the bill stays.
-    func testTheValuesBesideTheLabelsOfAnOrderAreCovered() throws {
-        let image = try formPage()
-        let lines = Finder.textLines(in: image).map { "\($0.string) \($0.box)" }
-        let names = Finder.coveredAreas(in: image, [.names], rules: [], intelligence: false).compactMap(\.text)
-        for name in ["Martin", "Dorozala", "Martin Dorozala"] {
-            XCTAssertTrue(names.contains { $0.contains(name) }, "\(name): \(names) in \(lines)")
-        }
-        XCTAssertFalse(names.contains { $0.contains("Oistinger") || $0.contains("Rechnung_F5") }, "\(names)")
-        let places = Finder.coveredAreas(in: image, [.addresses], rules: [], intelligence: false).compactMap(\.text)
-        for place in ["Oistinger Feld 41", "59510", "Lippetal"] {
-            XCTAssertTrue(places.contains { $0.contains(place) }, "\(place): \(places) in \(lines)")
-        }
-        XCTAssertFalse(places.contains { $0.contains("Martin") || $0.contains("Rechnung_F5") }, "\(places)")
-    }
-
     /// Measured as Vision reads a Retina screenshot of one: "Kunde" has
     /// nothing below its baseline and is read shorter than the name.
     func testTheNameUnderAShortHeadingIsItsFirstLine() {
@@ -85,6 +65,67 @@ final class LabelTests: XCTestCase {
         // Nor is a line in another column.
         let beside = CGRect(x: 0.10, y: 0.731, width: 0.08, height: 0.015)
         XCTAssertNil(Finder.line(below: 0, in: [kunde, beside], gap: 2.5))
+    }
+
+    /// A marketplace's order page, as Vision reads it: the labels in one
+    /// column, each value its own line beside its label, and the bill's name
+    /// beside its label with the address under it.
+    private let form: [(String, CGRect)] = [
+        ("Vorname:", CGRect(x: 0.66, y: 0.772, width: 0.04, height: 0.012)),
+        ("Martin", CGRect(x: 0.795, y: 0.772, width: 0.03, height: 0.012)),
+        ("Nachname:", CGRect(x: 0.66, y: 0.748, width: 0.045, height: 0.012)),
+        ("Dorozala", CGRect(x: 0.795, y: 0.748, width: 0.035, height: 0.012)),
+        ("Adresse:", CGRect(x: 0.66, y: 0.724, width: 0.04, height: 0.012)),
+        ("Oistinger Feld 41", CGRect(x: 0.795, y: 0.724, width: 0.07, height: 0.012)),
+        ("PLZ:", CGRect(x: 0.66, y: 0.700, width: 0.02, height: 0.012)),
+        ("59510", CGRect(x: 0.795, y: 0.700, width: 0.03, height: 0.012)),
+        ("Stadt:", CGRect(x: 0.66, y: 0.676, width: 0.025, height: 0.012)),
+        ("Lippetal", CGRect(x: 0.795, y: 0.676, width: 0.035, height: 0.012)),
+        ("Rechnungsadresse:", CGRect(x: 0.66, y: 0.610, width: 0.08, height: 0.012)),
+        ("Martin Dorozala", CGRect(x: 0.795, y: 0.610, width: 0.07, height: 0.012)),
+        ("Oistinger Feld 41", CGRect(x: 0.795, y: 0.588, width: 0.07, height: 0.012)),
+        ("59510 Lippetal", CGRect(x: 0.795, y: 0.566, width: 0.06, height: 0.012)),
+        ("Rechnung:", CGRect(x: 0.66, y: 0.522, width: 0.04, height: 0.012)),
+        ("Rechnung_F5.pdf", CGRect(x: 0.795, y: 0.522, width: 0.06, height: 0.012)),
+    ]
+
+    private func covered(_ lines: [(String, CGRect)], _ chosen: Set<PrivateDetail>,
+                         value: CGRect? = nil) -> (lines: Set<Int>, learned: Set<String>, hits: [Finder.Hit]) {
+        var learned = Set<String>()
+        let hits = Finder.labelled(lines.map { $0.0 }, boxes: lines.map { $0.1 }, part: { _, _ in value }, chosen,
+                                   learned: &learned)
+        return (Set(hits.map(\.line)), learned, hits)
+    }
+
+    func testTheValuesBesideTheLabelsOfAnOrderAreCovered() {
+        // Names: the first and last name on their rows, and the bill's name.
+        let names = covered(form, [.names])
+        XCTAssertEqual(names.lines, [1, 3, 11])
+        XCTAssertTrue(names.hits.allSatisfy { $0.range == nil && $0.kind == .names })
+        // Each name on its own is looked for in the full name elsewhere.
+        XCTAssertTrue(names.learned.isSuperset(of: ["martin", "dorozala"]), "\(names.learned)")
+        // Addresses: the street, postcode and town on their rows, and the
+        // address under the bill's name, up to the next label's row; the
+        // street's block stops at the row of PLZ, and the bill's file stays.
+        XCTAssertEqual(covered(form, [.addresses]).lines, [5, 7, 9, 12, 13])
+    }
+
+    /// Vision may read a label and its value as one line: the rest of the
+    /// block still follows under the value, in its column.
+    func testTheAddressFollowsUnderAValueReadWithItsLabel() {
+        let lines: [(String, CGRect)] = [
+            ("Rechnungsadresse: Martin Dorozala", CGRect(x: 0.66, y: 0.610, width: 0.205, height: 0.012)),
+            ("Oistinger Feld 41", CGRect(x: 0.795, y: 0.588, width: 0.07, height: 0.012)),
+            ("59510 Lippetal", CGRect(x: 0.795, y: 0.566, width: 0.06, height: 0.012)),
+            ("Rechnung:", CGRect(x: 0.66, y: 0.522, width: 0.04, height: 0.012)),
+            ("Rechnung_F5.pdf", CGRect(x: 0.795, y: 0.522, width: 0.06, height: 0.012)),
+        ]
+        let value = CGRect(x: 0.795, y: 0.610, width: 0.07, height: 0.012)
+        let names = covered(lines, [.names], value: value)
+        XCTAssertEqual(names.lines, [0])
+        let line = lines[0].0 as NSString
+        XCTAssertEqual(names.hits.first?.range ?? nil, line.range(of: "Martin Dorozala"))
+        XCTAssertEqual(covered(lines, [.addresses], value: value).lines, [1, 2])
     }
 
     /// Three small lines in a colour, read by Vision as one sign, like "三":
@@ -146,40 +187,6 @@ final class LabelTests: XCTestCase {
                 draw("⋯", at: CGPoint(x: 2540, y: CGFloat(height) - row.top), font: body,
                      color: CGColor(gray: 0.45, alpha: 1), in: context)
             }
-        }
-        return try XCTUnwrap(context.makeImage())
-    }
-
-    /// The shipping and billing details beside an order, at Retina size:
-    /// small grey labels with colons in one column, the values beside them.
-    private func formPage() throws -> CGImage {
-        let width = 2880, height = 1800
-        let context = try XCTUnwrap(CGContext(data: nil, width: width, height: height, bitsPerComponent: 8,
-                                              bytesPerRow: 0, space: CGColorSpace(name: CGColorSpace.sRGB)!,
-                                              bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
-        context.setFillColor(CGColor(gray: 1, alpha: 1))
-        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
-        let ink = CGColor(gray: 0.1, alpha: 1)
-        let grey = CGColor(gray: 0.45, alpha: 1)
-        let small = CTFontCreateWithName("Helvetica" as CFString, 22, nil)
-        let body = CTFontCreateWithName("Helvetica" as CFString, 26, nil)
-        // From the top of the screen: a label, if any, and its value.
-        let rows: [(label: String?, value: String, top: CGFloat)] = [
-            ("Vorname:", "Martin", 400),
-            ("Nachname:", "Dorozala", 444),
-            ("Adresse:", "Oistinger Feld 41", 488),
-            ("PLZ:", "59510", 532),
-            ("Stadt:", "Lippetal", 576),
-            ("Rechnungsadresse:", "Martin Dorozala", 700),
-            (nil, "Oistinger Feld 41", 740),
-            (nil, "59510 Lippetal", 780),
-            ("Rechnung:", "Rechnung_F5.pdf", 860),
-        ]
-        for row in rows {
-            if let label = row.label {
-                draw(label, at: CGPoint(x: 1900, y: CGFloat(height) - row.top), font: small, color: grey, in: context)
-            }
-            draw(row.value, at: CGPoint(x: 2300, y: CGFloat(height) - row.top), font: body, color: ink, in: context)
         }
         return try XCTUnwrap(context.makeImage())
     }
