@@ -6,6 +6,12 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Turn on as many icons under photos as you like: six fit under a photo,
+  and with more, the last place is ⋯, which lists the rest. In Settings ›
+  Line › Icons under photos, a click on an icon turns it on or off.
+- Each icon chooses on its own whether it opens in the browser or in its
+  app, and Websites open in picks the browser: the Mac's default, or
+  another one on it. Each row says where a click goes.
 - An AI assistant, Claude or ChatGPT, with your own API key, set up once in
   Settings › General › AI Assistant. Write a Reply, in a photo's menu,
   writes the answer to the customer in the screenshot, ready to send;

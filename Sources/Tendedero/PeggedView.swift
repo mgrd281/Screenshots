@@ -33,11 +33,11 @@ struct PeggedView: View {
     private var dimmed: Bool { line.found.map { $0[item.id] == nil } ?? false }
     /// Where this photo says what is typed in Search.
     private var places: [CGRect] { line.found?[item.id] ?? [] }
-    /// The chats whose icons stand under this photo.
-    private var chats: [ChatTarget] { ChatTarget.takes(item) ? ChatTarget.onPhotosNow : [] }
+    /// The chats whose icons stand under this photo, the rest behind a ⋯.
+    private var chats: ChatTarget.Row { ChatTarget.row(ChatTarget.takes(item) ? ChatTarget.onPhotosNow : []) }
     /// The room under the card that the row of icons takes, which the photo's
     /// view reaches into; none without icons.
-    private var stripHeight: CGFloat { chats.isEmpty ? 0 : PhotoButtons.stripHeight }
+    private var stripHeight: CGFloat { chats.count == 0 ? 0 : PhotoButtons.stripHeight }
     /// One like it was sent lately, and Settings marks it.
     private var sentBefore: Bool { Line.marksSentBefore && line.sentBefore[item.id] != nil }
     /// Where the photo, as it shows, is covered.
@@ -266,8 +266,11 @@ struct PeggedView: View {
     /// reaches below the card as far as they do.
     private var chatStrip: some View {
         HStack(spacing: PhotoButtons.chatGap) {
-            ForEach(chats) { chat in
+            ForEach(chats.shown) { chat in
                 ChatIcon(chat: chat, size: PhotoButtons.chatSize)
+            }
+            if !chats.more.isEmpty {
+                MoreChatsIcon(size: PhotoButtons.chatSize)
             }
         }
         .offset(y: PhotoButtons.stripGap + PhotoButtons.chatSize)
@@ -424,6 +427,22 @@ struct ChatIcon: View {
     }
 }
 
+/// The ⋯ in the last place of a photo's row when more chats are on than it
+/// holds; a click lists the rest. A glass circle, as a chat without a logo
+/// shows.
+struct MoreChatsIcon: View {
+    var size: CGFloat
+
+    var body: some View {
+        Image(systemName: "ellipsis")
+            .font(.system(size: size * 0.45, weight: .bold))
+            .foregroundStyle(.primary)
+            .frame(width: size, height: size)
+            .controlGlass(circle: true)
+            .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
+    }
+}
+
 /// A word found by Search, marked on the photo like a highlighter.
 private struct Highlight: View {
     /// From 0 to 1 from the bottom left.
@@ -493,7 +512,8 @@ enum PhotoButtons {
     /// takes below the card, which GrabView and the hit rect reach into.
     static let chatSize: CGFloat = 20
     static let chatGap: CGFloat = 4
-    /// As many as a card's row holds, at the size photos hang in at first.
+    /// As many as a card's row holds, at the size photos hang in at first;
+    /// with more on, the last place is a ⋯ that holds the rest.
     static let maxChats = 6
     static let stripGap: CGFloat = 6
     static var stripHeight: CGFloat { stripGap + chatSize + 4 }

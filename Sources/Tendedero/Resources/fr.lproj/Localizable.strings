@@ -678,18 +678,12 @@
 "something new" = "du nouveau";
 "Icons under photos" = "Icônes sous les photos";
 "%@ on photos" = "%@ sur les photos";
-"The browser" = "Le navigateur";
-"The app" = "L’app";
-"Open in" = "Ouvrir dans";
-"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "Le navigateur ouvre le site web. L’app ouvre leur propre app si elle est sur ce Mac, sinon le site web.";
-"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "Son icône apparaît sous la photo. Un clic envoie la photo, ou celles choisies avec elle, vers %@.";
 "Copied. Start a new message and paste." = "Copiée. Commencez un nouveau message et collez-la.";
 
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "« %1$@ » est désormais masqué sur chaque photo. Vous pouvez le modifier dans %2$@.";
 "Always cover “%@”" = "Toujours masquer « %@ »";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "Masqué désormais sur chaque photo, comme règle personnelle dans Confidentialité.";
-"Drag the icons into the order you want them under each photo. Up to six show at a time." = "Faites glisser les icônes dans l’ordre voulu sous chaque photo. Six au maximum s’affichent à la fois.";
 "Moved to the Trash. Click to put it back on the line." = "Placée dans la corbeille. Cliquez pour la raccrocher sur la corde.";
 "%d moved to the Trash. Click to put them back on the line." = "%d placées dans la corbeille. Cliquez pour les raccrocher sur la corde.";
 "Taken down. Click to put it back on the line." = "Décrochée. Cliquez pour la raccrocher sur la corde.";
@@ -800,3 +794,17 @@
 "Your %@ account has no credit left. Add some on their website." = "Ton compte %@ n’a plus de crédit. Ajoutes-en sur leur site.";
 "Explain with %@" = "Expliquer avec %@";
 "Explanation" = "Explication";
+"App" = "App";
+"Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac." = "À côté de chaque icône, Navigateur ouvre son site ici et App ouvre sa propre app, si elle est sur ce Mac.";
+"Browser" = "Navigateur";
+"Click an icon to show or hide it under photos, and drag the icons into the order you want. Six fit under a photo; with more on, the last place is ⋯, which lists the rest." = "Clique sur une icône pour l’afficher ou la masquer sous les photos, et fais glisser les icônes dans l’ordre voulu. Six tiennent sous une photo ; s’il y en a plus, la dernière place est ⋯, qui liste les autres.";
+"Default browser" = "Navigateur par défaut";
+"Default browser (%@)" = "Navigateur par défaut (%@)";
+"Its app is not on this Mac, so it opens in %@." = "Son app n’est pas sur ce Mac, il s’ouvre donc dans %@.";
+"More: %@" = "Plus : %@";
+"Open %@ in" = "Ouvrir %@ dans";
+"Opens in its app." = "S’ouvre dans son app.";
+"Opens on its website, in %@." = "Ouvre son site dans %@.";
+"The photo is copied, to paste into a message." = "La photo est copiée, à coller dans un message.";
+"Websites open in" = "Les sites s’ouvrent dans";
+"the browser" = "le navigateur";

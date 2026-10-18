@@ -678,18 +678,12 @@
 "something new" = "有新内容";
 "Icons under photos" = "照片下方的图标";
 "%@ on photos" = "照片上的 %@";
-"The browser" = "浏览器";
-"The app" = "App";
-"Open in" = "打开方式";
-"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "浏览器会打开网站。App 会在这台 Mac 上有它时打开它自己的 App，没有时打开网站。";
-"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "它的图标显示在照片下方。点按会把照片（或一起选中的照片）发送到 %@。";
 "Copied. Start a new message and paste." = "已拷贝。新建一封邮件后粘贴即可。";
 
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "从现在起，每张照片中的“%1$@”都会被遮盖。可在“%2$@”中更改。";
 "Always cover “%@”" = "始终遮盖“%@”";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "从现在起每张照片都会遮盖，作为“隐私”中的自定义规则。";
-"Drag the icons into the order you want them under each photo. Up to six show at a time." = "拖动图标，排成你希望它们在每张照片下的顺序。 同时最多显示六个。";
 "Moved to the Trash. Click to put it back on the line." = "已移到废纸篓。点按可放回晾衣绳。";
 "%d moved to the Trash. Click to put them back on the line." = "已将 %d 张移到废纸篓。点按可放回晾衣绳。";
 "Taken down. Click to put it back on the line." = "已取下。点按可放回晾衣绳。";
@@ -800,3 +794,17 @@
 "Your %@ account has no credit left. Add some on their website." = "你的 %@ 账户已没有余额。请在其网站上充值。";
 "Explain with %@" = "用 %@ 解释";
 "Explanation" = "解释";
+"App" = "App";
+"Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac." = "在每个图标旁，“浏览器”会在此打开其网站，“App”会打开其自己的 App（如果这台 Mac 上有）。";
+"Browser" = "浏览器";
+"Click an icon to show or hide it under photos, and drag the icons into the order you want. Six fit under a photo; with more on, the last place is ⋯, which lists the rest." = "点按图标可在照片下方显示或隐藏它，拖移图标可调整顺序。照片下方可放六个；开启更多时，最后一个位置会变成 ⋯，列出其余图标。";
+"Default browser" = "默认浏览器";
+"Default browser (%@)" = "默认浏览器（%@）";
+"Its app is not on this Mac, so it opens in %@." = "这台 Mac 上没有它的 App，因此会在 %@ 中打开。";
+"More: %@" = "更多：%@";
+"Open %@ in" = "%@ 打开方式";
+"Opens in its app." = "在其 App 中打开。";
+"Opens on its website, in %@." = "在 %@ 中打开其网站。";
+"The photo is copied, to paste into a message." = "照片会被拷贝，以便粘贴到信息中。";
+"Websites open in" = "网站打开方式";
+"the browser" = "浏览器";

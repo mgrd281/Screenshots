@@ -680,18 +680,12 @@
 "something new" = "कुछ नया";
 "Icons under photos" = "फ़ोटो के नीचे आइकन";
 "%@ on photos" = "फ़ोटो पर %@";
-"The browser" = "ब्राउज़र";
-"The app" = "ऐप";
-"Open in" = "इसमें खोलें";
-"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "ब्राउज़र वेबसाइट खोलता है। ऐप उनका अपना ऐप खोलता है, अगर वह इस Mac पर है, वरना वेबसाइट।";
-"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "इसका आइकन फ़ोटो के नीचे दिखता है। क्लिक करने पर फ़ोटो, या उसके साथ चुनी गई फ़ोटो, %@ को भेजी जाती हैं।";
 "Copied. Start a new message and paste." = "कॉपी हो गई। नया संदेश शुरू करें और चिपकाएँ।";
 
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” अब से हर फ़ोटो में ढका रहेगा। इसे %2$@ में बदल सकते हैं।";
 "Always cover “%@”" = "“%@” को हमेशा ढकें";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "अब से हर फ़ोटो में ढका रहेगा, गोपनीयता में आपके अपने नियम के रूप में।";
-"Drag the icons into the order you want them under each photo. Up to six show at a time." = "आइकन को उस क्रम में ड्रैग करें जिसमें आप उन्हें हर फ़ोटो के नीचे चाहते हैं। एक समय में अधिकतम छह दिखते हैं।";
 "Moved to the Trash. Click to put it back on the line." = "ट्रैश में ले जाया गया। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
 "%d moved to the Trash. Click to put them back on the line." = "%d फ़ोटो ट्रैश में ले जाई गईं। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
 "Taken down. Click to put it back on the line." = "उतार दी गई। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
@@ -802,3 +796,17 @@
 "Your %@ account has no credit left. Add some on their website." = "आपके %@ खाते में क्रेडिट नहीं बचा। उनकी वेबसाइट पर कुछ जोड़ें।";
 "Explain with %@" = "%@ से समझाएँ";
 "Explanation" = "व्याख्या";
+"App" = "ऐप";
+"Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac." = "हर आइकन के बगल में, ब्राउज़र उसकी वेबसाइट यहाँ खोलता है और ऐप उसका अपना ऐप, जब वह इस Mac पर हो।";
+"Browser" = "ब्राउज़र";
+"Click an icon to show or hide it under photos, and drag the icons into the order you want. Six fit under a photo; with more on, the last place is ⋯, which lists the rest." = "फ़ोटो के नीचे दिखाने या छिपाने के लिए आइकन पर क्लिक करें, और आइकनों को मनचाहे क्रम में खींचें। फ़ोटो के नीचे छह आते हैं; ज़्यादा चालू हों तो आख़िरी जगह ⋯ होती है, जिसमें बाकी हैं।";
+"Default browser" = "डिफ़ॉल्ट ब्राउज़र";
+"Default browser (%@)" = "डिफ़ॉल्ट ब्राउज़र (%@)";
+"Its app is not on this Mac, so it opens in %@." = "इसका ऐप इस Mac पर नहीं है, इसलिए यह %@ में खुलता है।";
+"More: %@" = "और: %@";
+"Open %@ in" = "%@ इसमें खोलें";
+"Opens in its app." = "अपने ऐप में खुलता है।";
+"Opens on its website, in %@." = "इसकी वेबसाइट %@ में खुलती है।";
+"The photo is copied, to paste into a message." = "फ़ोटो कॉपी हो जाता है, संदेश में चिपकाने के लिए।";
+"Websites open in" = "वेबसाइटें इसमें खुलती हैं";
+"the browser" = "ब्राउज़र";

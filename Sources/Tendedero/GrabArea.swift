@@ -75,9 +75,10 @@ struct GrabArea: NSViewRepresentable {
         view.lockBadges = (item.covered ? 1 : 0) + (sent == nil ? 0 : 1)
         let picked = line.pickedIDs.contains(id)
         view.picked = picked
-        let chats = ChatTarget.takes(item) ? ChatTarget.onPhotosNow : []
-        view.chats = chats
-        view.stripHeight = chats.isEmpty ? 0 : PhotoButtons.stripHeight
+        let chats = ChatTarget.row(ChatTarget.takes(item) ? ChatTarget.onPhotosNow : [])
+        view.chats = chats.shown
+        view.moreChats = chats.more
+        view.stripHeight = chats.count == 0 ? 0 : PhotoButtons.stripHeight
         let over = $overStrip
         view.onHoverChange = { inside in if over.wrappedValue != inside { over.wrappedValue = inside } }
         view.covered = item.covered
@@ -366,6 +367,10 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     var chats: [ChatTarget] = [] {
         didSet { if chats != oldValue { placeTips() } }
     }
+    /// The chats behind the ⋯ at the row's end, when more are on than it holds.
+    var moreChats: [ChatTarget] = [] {
+        didSet { if moreChats != oldValue { placeTips() } }
+    }
     var stripHeight: CGFloat = 0 {
         didSet { if stripHeight != oldValue { placeTips() } }
     }
@@ -432,14 +437,48 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         return placed(rect)
     }
 
-    /// The chats' icons in a row under the card.
+    /// The chats' icons in a row under the card, the ⋯ last.
     private var chatRects: [NSRect] {
-        PhotoButtons.chats(card: CGSize(width: bounds.width, height: cardHeight), count: chats.count)
+        PhotoButtons.chats(card: CGSize(width: bounds.width, height: cardHeight),
+                           count: chats.count + (moreChats.isEmpty ? 0 : 1))
             .map { placed($0.insetBy(dx: -2, dy: -2)) }
     }
 
     private func chat(at point: NSPoint) -> ChatTarget? {
         zip(chats, chatRects).first { $0.1.contains(point) }?.0
+    }
+
+    /// The ⋯ in the row's last place, when there is one.
+    private var moreRect: NSRect? {
+        moreChats.isEmpty ? nil : chatRects.last
+    }
+
+    private func isOnMore(_ point: NSPoint) -> Bool {
+        moreRect?.contains(point) ?? false
+    }
+
+    /// The chats behind the ⋯, each with its icon, to send the photo to.
+    private func moreMenu() -> NSMenu {
+        let menu = NSMenu()
+        for chat in moreChats {
+            let item = ClosureMenuItem(String(format: L("Send to %@"), chat.name)) { [weak self] in
+                self?.onSendToChat(chat)
+            }
+            if let icon = chat.icon?.copy() as? NSImage {
+                icon.size = NSSize(width: 16, height: 16)
+                item.image = icon
+            }
+            menu.addItem(item)
+        }
+        return menu
+    }
+
+    /// Opens the list of the rest under the ⋯, as a pop-up button does.
+    private func showMore() {
+        guard let rect = moreRect else { return }
+        GrabView.isShowingMenu = true
+        _ = moreMenu().popUp(positioning: nil, at: NSPoint(x: rect.minX, y: isFlipped ? rect.maxY : rect.minY), in: self)
+        GrabView.isShowingMenu = false
     }
 
     /// The lock of a covered photo, in the bottom corner where lines of
@@ -478,6 +517,9 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         if let target = chat(at: point) {
             return String(format: hasQuestions && target.isAI ? L("Send to %@. Right-click to ask a question.") : L("Send to %@"),
                           target.name)
+        }
+        if isOnMore(point) {
+            return String(format: L("More: %@"), ListFormatter.localizedString(byJoining: moreChats.map(\.name)))
         }
         if !lockHelp.isEmpty && lockRect.contains(point) { return lockHelp }
         return sendHelp
@@ -575,6 +617,11 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
             onSendToChat(target)
             return
         }
+        if isOnMore(point), !isPick(event) {
+            downPoint = nil
+            showMore()
+            return
+        }
         if event.clickCount == 2 && !isPick(event) {
             downPoint = nil
             onDoubleClick()
@@ -654,7 +701,8 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     override func rightMouseDown(with event: NSEvent) {
         // On ChatGPT or Claude, the questions to ask with the photo.
         let point = convert(event.locationInWindow, from: nil)
-        let menu = chat(at: point).flatMap(chatMenuProvider) ?? menuProvider()
+        // On the ⋯, the rest of the chats, as a click lists them.
+        let menu = isOnMore(point) ? moreMenu() : chat(at: point).flatMap(chatMenuProvider) ?? menuProvider()
         // The menu runs until it closes, and the line stays down meanwhile.
         GrabView.isShowingMenu = true
         NSMenu.popUpContextMenu(menu, with: event, for: self)

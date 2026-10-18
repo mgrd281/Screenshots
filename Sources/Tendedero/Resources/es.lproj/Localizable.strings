@@ -678,18 +678,12 @@
 "something new" = "algo nuevo";
 "Icons under photos" = "Iconos bajo las fotos";
 "%@ on photos" = "%@ en las fotos";
-"The browser" = "El navegador";
-"The app" = "La app";
-"Open in" = "Abrir en";
-"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "El navegador abre el sitio web. La app abre su propia app si está en este Mac, y si no, el sitio web.";
-"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "Su icono aparece bajo la foto. Un clic envía la foto, o las elegidas con ella, a %@.";
 "Copied. Start a new message and paste." = "Copiada. Empieza un mensaje nuevo y pégala.";
 
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "«%1$@» se cubre a partir de ahora en todas las fotos. Puedes cambiarlo en %2$@.";
 "Always cover “%@”" = "Cubrir siempre «%@»";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "Se cubre desde ahora en todas las fotos, como regla propia en Privacidad.";
-"Drag the icons into the order you want them under each photo. Up to six show at a time." = "Arrastra los iconos al orden en que los quieras bajo cada foto. Se muestran hasta seis a la vez.";
 "Moved to the Trash. Click to put it back on the line." = "Movida a la Papelera. Haz clic para volver a colgarla en el tendedero.";
 "%d moved to the Trash. Click to put them back on the line." = "%d movidas a la Papelera. Haz clic para volver a colgarlas en el tendedero.";
 "Taken down. Click to put it back on the line." = "Descolgada. Haz clic para volver a colgarla en el tendedero.";
@@ -800,3 +794,17 @@
 "Your %@ account has no credit left. Add some on their website." = "Tu cuenta de %@ no tiene saldo. Añade saldo en su sitio web.";
 "Explain with %@" = "Explicar con %@";
 "Explanation" = "Explicación";
+"App" = "App";
+"Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac." = "Junto a cada icono, Navegador abre su sitio web aquí y App abre su propia app, si está en este Mac.";
+"Browser" = "Navegador";
+"Click an icon to show or hide it under photos, and drag the icons into the order you want. Six fit under a photo; with more on, the last place is ⋯, which lists the rest." = "Haz clic en un icono para mostrarlo u ocultarlo bajo las fotos, y arrastra los iconos al orden que quieras. Bajo una foto caben seis; con más activados, el último lugar es ⋯, que muestra el resto.";
+"Default browser" = "Navegador predeterminado";
+"Default browser (%@)" = "Navegador predeterminado (%@)";
+"Its app is not on this Mac, so it opens in %@." = "Su app no está en este Mac, así que se abre en %@.";
+"More: %@" = "Más: %@";
+"Open %@ in" = "Abrir %@ en";
+"Opens in its app." = "Se abre en su app.";
+"Opens on its website, in %@." = "Abre su sitio web en %@.";
+"The photo is copied, to paste into a message." = "La foto se copia, para pegarla en un mensaje.";
+"Websites open in" = "Los sitios web se abren en";
+"the browser" = "el navegador";

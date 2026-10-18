@@ -678,18 +678,12 @@
 "something new" = "شيء جديد";
 "Icons under photos" = "الأيقونات تحت الصور";
 "%@ on photos" = "%@ على الصور";
-"The browser" = "المتصفح";
-"The app" = "التطبيق";
-"Open in" = "الفتح في";
-"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "المتصفح يفتح الموقع. التطبيق يفتح تطبيقهم نفسه إن كان على هذا الماك، وإلا يفتح الموقع.";
-"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "تظهر أيقونته تحت الصورة. النقر يرسل الصورة، أو الصور المختارة معها، إلى %@.";
 "Copied. Start a new message and paste." = "نُسخت. ابدأ رسالة جديدة والصقها.";
 
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "«%1$@» تُغطّى من الآن في كل صورة. يمكنك تغيير ذلك في %2$@.";
 "Always cover “%@”" = "تغطية «%@» دائمًا";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "يُغطّى من الآن في كل صورة، كقاعدة خاصة بك ضمن الخصوصية.";
-"Drag the icons into the order you want them under each photo. Up to six show at a time." = "اسحب الأيقونات لترتيبها كما تريدها تحت كل صورة. يظهر ستٌّ منها كحدّ أقصى في الوقت نفسه.";
 "Moved to the Trash. Click to put it back on the line." = "نُقلت إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
 "%d moved to the Trash. Click to put them back on the line." = "نُقلت %d إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
 "Taken down. Click to put it back on the line." = "أُنزلت. انقر لإعادتها إلى الحبل.";
@@ -800,3 +794,17 @@
 "Your %@ account has no credit left. Add some on their website." = "لم يبقَ رصيد في حساب %@. أضف رصيدًا من موقعهم.";
 "Explain with %@" = "اشرح مع %@";
 "Explanation" = "الشرح";
+"App" = "التطبيق";
+"Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac." = "بجانب كل أيقونة، «المتصفح» يفتح موقعها هنا، و«التطبيق» يفتح تطبيقها الخاص إن كان على هذا الـ Mac.";
+"Browser" = "المتصفح";
+"Click an icon to show or hide it under photos, and drag the icons into the order you want. Six fit under a photo; with more on, the last place is ⋯, which lists the rest." = "انقر أيقونة لإظهارها تحت الصور أو إخفائها، واسحب الأيقونات بالترتيب الذي تريده. يتّسع تحت الصورة ست أيقونات؛ وإن فعّلت أكثر، يصير آخر مكان ⋯ ويضم الباقي.";
+"Default browser" = "المتصفح الافتراضي";
+"Default browser (%@)" = "المتصفح الافتراضي (%@)";
+"Its app is not on this Mac, so it opens in %@." = "تطبيقها غير موجود على هذا الـ Mac، لذا تُفتح في %@.";
+"More: %@" = "المزيد: %@";
+"Open %@ in" = "فتح %@ في";
+"Opens in its app." = "تُفتح في تطبيقها.";
+"Opens on its website, in %@." = "تُفتح على موقعها في %@.";
+"The photo is copied, to paste into a message." = "تُنسخ الصورة لتلصقها في رسالة.";
+"Websites open in" = "تُفتح المواقع في";
+"the browser" = "المتصفح";

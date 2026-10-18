@@ -511,7 +511,7 @@ final class Line: ObservableObject {
             }
         }
         // The card first, as for any AI chat or place not known, before it opens.
-        let inBrowser = !(ChatTarget.opensInApp && chat.appURL != nil)
+        let inBrowser = !chat.opensApp
         guard let reason = SendCheck.reason(SendCheck.when, app: chat.installedAppID, host: chat.hosts.first,
                                             inBrowser: inBrowser, chatApps: Set(ChatButton.apps.map(\.bundleID)),
                                             chatSites: ChatButton.sites.map(\.host)) else { return go() }
