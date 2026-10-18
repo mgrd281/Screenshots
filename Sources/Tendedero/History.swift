@@ -35,7 +35,9 @@ enum History {
         }
     }
 
-    static let folder = Inbox.folder.appendingPathComponent("History", isDirectory: true)
+    /// Always Snapfly's own folder, out of sight, so photos kept for a while
+    /// never land in the Workspace.
+    static let folder = Inbox.legacyFolder.appendingPathComponent("History", isDirectory: true)
 
     struct Entry: Codable, Identifiable, Hashable {
         var path: String

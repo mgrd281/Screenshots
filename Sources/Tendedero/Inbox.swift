@@ -30,11 +30,14 @@ enum Inbox {
     private static let screenshotTargetKey = "target-screenshot" as CFString
     private static let recordingTargetKey = "target-screenrecording" as CFString
 
+    private static let appliedKey = "inboxAppliedPath"
     private static let enabledKey = "inboxEnabled"
     private static let offeredKey = "inboxOffered"
     private static let savedKey = "inboxSavedSettings"
 
-    static let folder: URL = {
+    /// Snapfly's own folder, out of sight: where screenshots go while there
+    /// is no Workspace, and where the history is kept either way.
+    static let legacyFolder: URL = {
         // In the App Store edition: where the Screenshot app can save and
         // the sandbox lets Snapfly read.
         if Edition.appStore {
@@ -43,6 +46,19 @@ enum Inbox {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         return base.appendingPathComponent("Snapfly/Screenshots", isDirectory: true)
     }()
+
+    /// Where new screenshots, recordings and Snapfly's own files go: the
+    /// Workspace's folder for them while it is on and has been checked,
+    /// else Snapfly's own folder. Read from any thread.
+    static var folder: URL { WorkspaceLocation.value?.landing ?? legacyFolder }
+
+    /// Whether Snapfly made the file: in its own folder, or in the Workspace.
+    static func owns(_ url: URL) -> Bool {
+        let path = url.standardizedFileURL.path
+        if path.hasPrefix(legacyFolder.standardizedFileURL.path + "/") { return true }
+        if let root = WorkspaceLocation.value?.root, path.hasPrefix(root.standardizedFileURL.path + "/") { return true }
+        return false
+    }
 
     /// The user's choice, kept across launches.
     static var isEnabled: Bool {
@@ -56,15 +72,23 @@ enum Inbox {
         set { UserDefaults.standard.set(newValue, forKey: offeredKey) }
     }
 
-    /// Whether macOS is currently sending screenshots to our folder.
+    /// Whether macOS is currently sending screenshots to our folder: the
+    /// one now, or the one it was last pointed at, which the Workspace may
+    /// have changed since.
     static var isApplied: Bool {
         guard let current = CFPreferencesCopyAppValue(locationKey, domain) as? String else { return false }
-        return URL(fileURLWithPath: (current as NSString).expandingTildeInPath).standardizedFileURL
-            == folder.standardizedFileURL
+        let now = URL(fileURLWithPath: (current as NSString).expandingTildeInPath).standardizedFileURL.path
+        if now == folder.standardizedFileURL.path { return true }
+        return UserDefaults.standard.string(forKey: appliedKey).map {
+            URL(fileURLWithPath: $0).standardizedFileURL.path == now
+        } ?? false
     }
 
     static func apply() {
-        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        // The Workspace makes its own folders, off the main thread.
+        if WorkspaceLocation.value == nil {
+            try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        }
         // The sandbox keeps the App Store edition out of the screenshot
         // settings; the owner points the Screenshot app here instead.
         if Edition.appStore { return }
@@ -97,6 +121,7 @@ enum Inbox {
         set(screenshotTargetKey, "file")
         set(recordingTargetKey, "file")
         set(thumbnailKey, false)
+        UserDefaults.standard.set(folder.standardizedFileURL.path, forKey: appliedKey)
     }
 
     static func restore() {
@@ -110,6 +135,7 @@ enum Inbox {
         set(recordingTargetKey, saved["targetRecording"])
         set(thumbnailKey, saved["thumbnail"])
         UserDefaults.standard.removeObject(forKey: savedKey)
+        UserDefaults.standard.removeObject(forKey: appliedKey)
     }
 
     /// Writes through cfprefsd, so the screenshot service sees it at once.

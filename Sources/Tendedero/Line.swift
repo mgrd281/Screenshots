@@ -7,7 +7,8 @@ import UniformTypeIdentifiers
 /// One screenshot hanging on the line.
 struct Pegged: Identifiable, Equatable {
     let id = UUID()
-    let url: URL
+    /// Changes only when the file is moved, see Line.relocate.
+    var url: URL
     var thumb: NSImage
     /// Every photo hangs a little crooked, like on a real line.
     let tilt = Double.random(in: -2.5...2.5)
@@ -1006,7 +1007,39 @@ final class Line: ObservableObject {
     /// Files anywhere else, like the Desktop, stay where they are.
     func isInInbox(_ id: UUID) -> Bool {
         guard let item = items.first(where: { $0.id == id }) else { return false }
-        return item.url.standardizedFileURL.path.hasPrefix(Inbox.folder.standardizedFileURL.path + "/")
+        return item.url.standardizedFileURL.path.hasPrefix(Inbox.legacyFolder.standardizedFileURL.path + "/")
+    }
+
+    /// A photo's file moved, like into a Workspace category: its card keeps
+    /// its place, and what was done to it, parts hidden by hand and
+    /// drawings, goes with it.
+    func relocate(from old: URL, to new: URL) {
+        let was = old.standardizedFileURL.path
+        guard let index = items.firstIndex(where: { $0.url.standardizedFileURL.path == was }) else { return }
+        let hand = PrivateDetails.hand(old)
+        let drawing = Drawings.saved(old)
+        items[index].url = new
+        if !hand.isEmpty {
+            PrivateDetails.setHand(hand, for: new)
+            PrivateDetails.setHand([], for: old)
+        }
+        if !drawing.isEmpty {
+            Drawings.set(drawing, for: new)
+            Drawings.set(.empty, for: old)
+        }
+        prints[old.path] = nil
+        save()
+        PrivateDetails.prepare(new)
+        TextIndex.read(new)
+    }
+
+    /// A whole folder moved or renamed: every photo of it follows.
+    func rebase(from oldRoot: URL, to newRoot: URL) {
+        let top = oldRoot.standardizedFileURL.path + "/"
+        for item in items where item.url.standardizedFileURL.path.hasPrefix(top) {
+            let below = String(item.url.standardizedFileURL.path.dropFirst(top.count))
+            relocate(from: item.url, to: newRoot.appendingPathComponent(below))
+        }
     }
 
     /// The corner cross and "Take down" both end up here. Returns where it

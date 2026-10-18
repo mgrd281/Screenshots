@@ -279,7 +279,7 @@ final class HowToEditorModel: ObservableObject {
                 made = HowToRender.pdf(guide, in: folder, to: url, rightToLeft: rightToLeft)
             case .image:
                 made = HowToRender.image(guide, in: folder, rightToLeft: rightToLeft)
-                    .map { Capture.write($0, to: url) } ?? false
+                    .map { Capture.write($0, to: url, replacing: true) } ?? false
             }
             DispatchQueue.main.async {
                 MainActor.assumeIsolated { [weak self] in

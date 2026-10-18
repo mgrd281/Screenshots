@@ -294,6 +294,25 @@ struct GrabArea: NSViewRepresentable {
                 menu.addItem(export)
             }
 
+            // Filing it in the Workspace: this one, or the photos picked with it.
+            let workspace = Workspace.shared
+            if workspace.isReady, WorkspaceFiles.isManaged(item.url) {
+                let files = picked ? line.items.filter { line.pickedIDs.contains($0.id) && !$0.falling }.map(\.url) : [item.url]
+                let here = workspace.config.category(containing: item.url, root: workspace.root)
+                Self.gap(menu)
+                if let move = Self.group(L("Move to Folder"), symbol: "folder.badge.gearshape", { sub in
+                    for category in workspace.config.visible {
+                        let entry = ClosureMenuItem(category.name) { workspace.move(files, to: category.id) }
+                        entry.state = files.count == 1 && category.id == here?.id ? .on : .off
+                        sub.addItem(entry)
+                    }
+                    Self.gap(sub)
+                    sub.addItem(ClosureMenuItem(L("Open Workspace"), symbol: "folder") { workspace.reveal() })
+                }) {
+                    menu.addItem(move)
+                }
+            }
+
             // Looking at it.
             Self.gap(menu)
             menu.addItem(ClosureMenuItem(L("Open"), symbol: "arrow.up.forward.app") { line.open(id) })

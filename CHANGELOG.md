@@ -6,6 +6,19 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Workspace, an option in Settings (off until you turn it on): a folder of
+  its own on your Desktop, named after the app, with a folder for each kind
+  of screenshot, Orders, Customers, Projects, Documents, Other and Unsorted.
+  New screenshots are saved there, safely: written whole or not at all, and
+  never over another file. Add, rename, hide, reorder or remove categories,
+  choose which one new screenshots go to, rename or move the folder (in
+  Settings or in the Finder: Snapfly finds it again), and delete it with a
+  question first; everything goes to the Trash. The folder carries Snapfly's
+  icon in the Finder. In History, a Workspace page shows them as a grid or a
+  list, by day, with search, and each has a menu to open, Quick Look, copy,
+  copy its path, show in the Finder, move to another folder, rename or move
+  to the Trash. Turning it off, or deleting Snapfly, never deletes a
+  screenshot. Not in the Mac App Store edition.
 - Record a Guide, in the menu bar: click through what you want to show, and
   each click becomes a step, with a screenshot of the moment, what was
   clicked marked in red, and a sentence like "Click “Orders”." Click the
