@@ -668,8 +668,8 @@
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "吊るしている写真の枚数がアイコンの横に出て、ロープがまだ見せていない新しいものがあるとアイコンに小さな点が付きます。";
 "something new" = "新着あり";
 "%@ on photos" = "写真上の%@";
-"Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "紙飛行機の横にアイコンが出ます。クリックすると、写真（または一緒に選んだ写真）を%@に送ります。";
 "The browser" = "ブラウザ";
 "The app" = "アプリ";
 "Open in" = "開く場所";
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "ブラウザではウェブサイトを開きます。アプリでは、この Mac にあればそのアプリを、なければウェブサイトを開きます。";
+"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "アイコンは写真の下に出ます。クリックすると、写真（または一緒に選んだ写真）を%@に送ります。";

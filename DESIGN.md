@@ -443,27 +443,29 @@ apps.
     the accent circle with a 9 pt bold white check, and a click puts it
     back. Its tip says Pick or Unpick.
   - Bottom trailing: send, a 22 pt accent circle with `paperplane.fill`.
-    Beside it, up to four destinations, each on its own switch (Settings ›
-    Line, ChatGPT on photos, Claude on photos, WhatsApp on photos and Gmail
-    on photos, under Mark photos sent before, all on at first): ChatGPT,
-    Claude, WhatsApp and Gmail, in that order. Each shows the app's own
-    icon as macOS draws it (`NSWorkspace.icon(forFile:)`), drawn at 122%
-    so its shape matches the circle, wherever the app is on the Mac: by its
-    bundle ID, else by name in the Applications folders, which also finds
-    an app made from the website, like a Chrome app. Snapfly carries no
-    logo of theirs, so without the app the circle is a 22 pt `controlGlass`
-    circle with a short mark ("GPT", "Cl", "WA", "Gm") in 8 pt bold rounded
+    Under the card, not on it, a row of up to four destinations, each on its
+    own switch (Settings › Line, ChatGPT on photos, Claude on photos,
+    WhatsApp on photos and Gmail on photos, under Mark photos sent before,
+    all on at first): ChatGPT, Claude, WhatsApp and Gmail, in that order,
+    20 pt each, 4 pt apart, centered under the card 6 pt below it, so the
+    card keeps only its own buttons. The row shows with the pointer over the
+    card or the row, fading in and settling 6 pt, and the photo's view
+    (`GrabView`) and its hit rect reach 30 pt below the card
+    (`PhotoButtons.stripHeight`) while it does; the space between the icons
+    takes no click. Each shows the app's own icon as macOS draws it
+    (`NSWorkspace.icon(forFile:)`), drawn at 122% so its shape matches the
+    circle, wherever the app is on the Mac: by its bundle ID, else by name
+    in the Applications folders, which also finds an app made from the
+    website, like a Chrome or Safari web app. Snapfly carries no logo of
+    theirs, so without the app the circle is a 20 pt `controlGlass` circle
+    with a short mark ("GPT", "Cl", "WA", "Gm") in 7.5 pt bold rounded
     `.primary`. Both sit under the small badge shadow. A click opens the
     website in the Mac's default browser, or the app where Open in (a
     segmented choice under the switches; The browser at first) says The app
     and it is on the Mac. Gmail starts a new message and moves from its
-    address field to its body with two Tab presses before pasting.
-    `PhotoButtons.layout` places them: all in a row along the bottom, 4 pt
-    apart, when the card is wide enough beside its lock badges or PDF
-    capsule; else all in a column above the paper plane, clear of the pick
-    circle; else as many as the roomier of the two holds, the first ones,
-    and none when neither holds one. The photo's menu always has Send to
-    each of them. Not on recordings, which the chats don't take.
+    address field to its body with two Tab presses before pasting. The
+    photo's menu always has Send to each of them. Not on recordings, which
+    the chats don't take.
     - A right-click on ChatGPT or Claude opens the questions from Settings › Line
       › Questions for ChatGPT and Claude: Ask ChatGPT as a disabled header
       over a separator, then one item per question. A click sends the photo

@@ -668,8 +668,8 @@
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "يظهر عدد الصور المعلّقة بجانب الأيقونة، ونقطة صغيرة عليها ما دام شيء جديد معلّقًا لم يعرضه الحبل بعد.";
 "something new" = "شيء جديد";
 "%@ on photos" = "%@ على الصور";
-"Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "تظهر أيقونته بجانب الطائرة الورقية. النقر يرسل الصورة، أو الصور المختارة معها، إلى %@.";
 "The browser" = "المتصفح";
 "The app" = "التطبيق";
 "Open in" = "الفتح في";
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "المتصفح يفتح الموقع. التطبيق يفتح تطبيقهم نفسه إن كان على هذا الماك، وإلا يفتح الموقع.";
+"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "تظهر أيقونته تحت الصورة. النقر يرسل الصورة، أو الصور المختارة معها، إلى %@.";

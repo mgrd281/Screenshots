@@ -668,8 +668,8 @@
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "Junto al icono se ve cuántas fotos cuelgan, y un pequeño punto encima mientras cuelga algo nuevo que el tendedero aún no ha mostrado.";
 "something new" = "algo nuevo";
 "%@ on photos" = "%@ en las fotos";
-"Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "Su icono aparece junto al avión de papel. Un clic envía la foto, o las elegidas con ella, a %@.";
 "The browser" = "El navegador";
 "The app" = "La app";
 "Open in" = "Abrir en";
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "El navegador abre el sitio web. La app abre su propia app si está en este Mac, y si no, el sitio web.";
+"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "Su icono aparece bajo la foto. Un clic envía la foto, o las elegidas con ella, a %@.";

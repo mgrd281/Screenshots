@@ -6,10 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
-- ChatGPT, Claude, WhatsApp and Gmail beside the paper plane, each with
-  the app's own icon wherever it is on your Mac, and its own switch under
-  Line. A click opens the website in your browser; Open in, under Line,
-  brings the app back. On a small photo as many show as fit.
+- ChatGPT, Claude, WhatsApp and Gmail in a row under a photo, so the photo
+  itself stays calm, each with the app's own icon wherever it is on your
+  Mac and its own switch under Line. A click opens the website in your
+  browser; Open in, under Line, brings the app back.
 - The menu bar icon says how many photos hang, and shows a small dot while
   something new hangs that the line has not shown yet. Count on the menu
   bar icon, under Line, turns it off.
