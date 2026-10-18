@@ -283,7 +283,7 @@ TEXT["de"] = dict(
     title_home="Snapfly: Bildschirmfotos, einen Klick von jedem Chat entfernt",
     desc_home="Snapfly hängt jedes Bildschirmfoto an eine Leine oben auf dem Bildschirm deines Mac – bereit zum Kopieren oder Senden in jeden Chat, private Angaben verdeckt. Kostenlos ab macOS 14.",
     title_privacy="Datenschutzerklärung · Snapfly",
-    desc_privacy="Snapfly erhebt keine Daten. Die App läuft vollständig auf deinem Mac, und das Internet fragt sie nur nach der Uhrzeit.",
+    desc_privacy="Snapfly erhebt keine Daten. Die App läuft vollständig auf deinem Mac, und von sich aus fragt sie das Internet nur nach der Uhrzeit.",
     title_support="Support · Snapfly",
     desc_support="Hilfe zu Snapfly, der Leine für Bildschirmfotos auf dem Mac, und wie du uns erreichst.",
     skip="Zum Inhalt springen",
@@ -457,19 +457,20 @@ TEXT["de"] = dict(
     footer_contact="Kontakt",
 
     updated_label="Stand",
-    updated="17. Oktober 2026",
+    updated="18. Oktober 2026",
 
     privacy_title="Datenschutzerklärung",
     privacy_short_h="Kurz gesagt",
-    privacy_short="Snapfly erhebt keine personenbezogenen Daten. Die App arbeitet vollständig auf deinem Mac; ihre einzige Verbindung fragt für den Zeitstempel eine Atomuhr nach der Uhrzeit. Diese Website setzt keine Cookies und nutzt keine Analyse.",
+    privacy_short="Snapfly erhebt keine personenbezogenen Daten. Die App arbeitet vollständig auf deinem Mac; von sich aus fragt sie nur für den Zeitstempel eine Atomuhr nach der Uhrzeit. Richtest du den KI-Assistenten mit deinem eigenen Schlüssel ein, geht ein verdecktes Bildschirmfoto nur dann an Claude oder ChatGPT, wenn du es willst. Diese Website setzt keine Cookies und nutzt keine Analyse.",
     privacy=[
         ("Verantwortlich",
          f"""<p>Snapfly wird von {MAKER} entwickelt. Bei Fragen zum Datenschutz schreib an <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>"""),
         ("Die App Snapfly",
          """<ul>
 <li><strong>Es werden keine Daten erhoben.</strong> Snapfly hat kein Konto, keine Analyse, keine Werbung und kein Tracking. Die App sendet weder deine Bildschirmfotos noch deren Text noch irgendetwas über dich an uns oder an Dritte.</li>
-<li><strong>Nichts verlässt deinen Mac.</strong> Texterkennung, das Verdecken privater Angaben, die Suche, das Übersetzen und Beschreiben laufen auf deinem Mac, mit Apples Frameworks.</li>
-<li><strong>Der Zeitstempel.</strong> Solange „Datum und Uhrzeit stempeln“ eingeschaltet ist, fragt Snapfly für jedes neue Bildschirmfoto die Atomuhr der PTB, der Physikalisch-Technischen Bundesanstalt (ptbtime1.ptb.de), nach der genauen Uhrzeit – so, wie sich eine Uhr stellt (NTP). Nur diese Frage geht hinaus, ohne Daten über dich oder deine Bildschirmfotos. Ist der Stempel aus, verbindet sich die App nie mit dem Internet.</li>
+<li><strong>Von sich aus verlässt nichts deinen Mac.</strong> Texterkennung, das Verdecken privater Angaben, die Suche, das Übersetzen und Beschreiben laufen auf deinem Mac, mit Apples Frameworks.</li>
+<li><strong>Der Zeitstempel.</strong> Solange „Datum und Uhrzeit stempeln“ eingeschaltet ist, fragt Snapfly für jedes neue Bildschirmfoto die Atomuhr der PTB, der Physikalisch-Technischen Bundesanstalt (ptbtime1.ptb.de), nach der genauen Uhrzeit – so, wie sich eine Uhr stellt (NTP). Nur diese Frage geht hinaus, ohne Daten über dich oder deine Bildschirmfotos. Ist der Stempel aus und kein KI-Assistent eingerichtet, verbindet sich die App nie mit dem Internet.</li>
+<li><strong>Der KI-Assistent, nur wenn du ihn einrichtest.</strong> Unter Einstellungen › Allgemein kannst du Snapfly deinen eigenen API-Schlüssel für Claude (Anthropic) oder ChatGPT (OpenAI) geben. Er bleibt im Schlüsselbund deines Macs. Nur wenn du für ein Bildschirmfoto „Antwort schreiben“, „Erklären“ oder „Bestelldetails“ wählst, schickt Snapfly dieses Bildschirmfoto, mit den privaten Angaben verdeckt wie für einen KI-Chat, und was du dazu schreibst, direkt von deinem Mac an Anthropic oder OpenAI. Schaltest du unter Datenschutz „Mehr finden mit Claude“ (oder ChatGPT) ein, gehen auch die Wörter jedes Bildschirmfotos dorthin, damit übersehene private Angaben verdeckt werden; das ist aus, bis du es einschaltest. Was der Anbieter damit macht, regeln seine Datenschutzrichtlinie und dein Konto dort, über das er jede Anfrage abrechnet. Nichts davon geht an uns.</li>
 <li><strong>Deine Dateien.</strong> Snapfly liest die Bildschirmfotos in den Ordnern, die du freigibst, in der Mac App Store-Ausgabe außerdem den Ordner „Snapfly“ in „Bilder“, und die Fotos und PDFs, die du der App selbst gibst. Die App kopiert, sendet, verschiebt oder löscht ein Bildschirmfoto nur, wenn du es willst, oder – wenn du die Einstellung eingeschaltet lässt – nachdem du es in einen Chat gesendet hast. Ein Foto oder PDF, das du ihr gibst, bleibt unverändert, wo es ist. Was die Leine verlässt, ist eine Kopie: ein Foto ohne Aufnahmeort und Kameradaten, ein PDF Seite für Seite neu gezeichnet, mit den gewählten Angaben abgedeckt.</li>
 <li><strong>Kopierte Bilder.</strong> Wenn du „Kopierte Bilder aufhängen“ einschaltest, sieht sich Snapfly Bilder an, die du kopierst, um sie an die Leine zu hängen. Was zusammen mit Text oder einer Datei kopiert wurde und was ein Passwortmanager als privat markiert, bleibt unberührt.</li>
 <li><strong>Die Berechtigung für Bedienungshilfen</strong> erlaubt der Senden-Taste, ein Bildschirmfoto in die App einzusetzen, die du gerade benutzt, indem sie dort ⌘V drückt. Beim Aufnehmen fragt die intelligente Auswahl damit die App unter dem Zeiger, wo dort ein Bild oder eine Taste liegt, um es zu umranden: nur die Lage, nichts davon verlässt deinen Mac. Snapfly nutzt sie für nichts anderes. Du kannst sie jederzeit unter Systemeinstellungen › Datenschutz &amp; Sicherheit › Bedienungshilfen ausschalten.</li>

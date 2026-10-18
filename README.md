@@ -66,6 +66,8 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
 | Right-click, then Translate Text | Read it in your language, to copy or send. |
 | Right-click, then Describe | A line about what it shows, to send along with it. |
+| Right-click, then Write a Reply | A reply to the customer in the screenshot, written by Claude or ChatGPT with your own key, ready to send. Type what to add, like "offer a replacement", and it writes it again. |
+| Right-click, then Explain with Claude | What the screenshot shows and what matters in it, in your language. Type a question about it, and it answers. ChatGPT, when it is the assistant chosen. |
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
 | Click ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE, in the row under a photo | Send it, or the photos picked with it, there: the website opens in your browser (a new message in Gmail), or, with it already open in the browser in front, they go there, and the photos are pasted in. GMX and WEB.DE open the mailbox: the covered photo is copied for you to paste into a new message, and stays on the line. WhatsApp, Gmail, GMX and WEB.DE show their logos; ChatGPT and Claude show their app's own icon from your Mac, else a short mark. Each icon has its own switch in Settings, under Line › Icons under photos; Open in chooses the app instead of the browser, when it is on your Mac. Drag the icons there into the order you want them under each photo. Twelve more wait there to be turned on: Perplexity, Grok, DeepSeek, Qwen, Messenger, Instagram, Outlook, Yahoo Mail, Facebook, Airbnb, Visual Studio Code and Antigravity. A row holds six at a time. Instagram, Outlook, Yahoo Mail, Facebook, Airbnb, Visual Studio Code and Antigravity open like GMX: the covered photo is copied for you to paste. |
@@ -276,9 +278,12 @@ anyone could read it, and whatever private still shows, or any piece of what
 was hidden left beside its cover, is covered too. Under Protection, Find more
 with Apple Intelligence (on where the Mac has it) lets the model on the Mac
 read the words as well and cover what the patterns miss, like a name in a
-sentence; it only ever adds covers, and nothing leaves the Mac. Strongest
-protection covers every line with something private whole, with more room
-around it, so not even how long it was shows.
+sentence; it only ever adds covers, and nothing leaves the Mac. Find more
+with Claude, or ChatGPT, does the same with the AI assistant set up under
+General: it is off until you turn it on, since it sends the words of each
+screenshot to Anthropic or OpenAI. Strongest protection covers every line
+with something private whole, with more room around it, so not even how
+long it was shows.
 
 QR codes and barcodes are covered whole, since nobody can read what they
 hold: a payment, a sign-in, a ticket or a parcel. The number printed under
@@ -538,7 +543,9 @@ four, who is paid, the amount and the reference, and its amount stands in
 for the total when the text shows none. Each part has its own copy
 button; Copy All copies them as lines, and Copy Row as one row with a tab
 between the parts, always in the same order, to paste into a spreadsheet.
-It is read on your Mac as the screenshot shows it, not covered.
+It is read on your Mac as the screenshot shows it, not covered. With the
+AI assistant set up, Claude or ChatGPT reads the covered copy too and adds
+what your Mac did not find, like what was bought, with the quantity.
 
 For the books, Save for Bookkeeping in the same menu puts the photo,
 covered as it leaves the line, in a folder you choose once, under a name
@@ -575,12 +582,40 @@ screenshot's title.
 
 <br>
 
+## Claude or ChatGPT, with your own key.
+
+Write a Reply, in a photo's menu, has Claude or ChatGPT write the answer to
+the customer in the screenshot: short, friendly, in the language they wrote
+in, with [ ] where you have to decide, like a date or a refund. Type what to
+add, like "offer a replacement", press Return, and it writes it again. Send
+pastes it into the chat in front. Explain with Claude says what the
+screenshot shows and what matters in it, in your language, and answers a
+question you type about it. Order Details asks it for the parts your Mac
+did not find.
+
+Set it up once in Settings, under General › AI Assistant: choose Claude or
+ChatGPT, click Get a Key… to make an API key on their website, paste it,
+and click Save. The key stays in your keychain; Settings shows only its last
+four characters. Model names the model asked, and is best left empty for
+the usual one.
+
+What it is sent is the screenshot covered as for an AI chat, never the
+original, and only when you choose one of these. It goes straight from
+your Mac to Anthropic or OpenAI, with your own key, and they bill each
+request to your account there: a Claude or ChatGPT subscription does not
+cover it. Words in the screenshot are only read, never followed.
+
+<br>
+
 ## Private by design.
 
 No account. No cloud. No analytics.
-Snapfly runs entirely on your Mac, and your screenshots never leave it. The
-only thing it ever asks the internet is the time, from the PTB's atomic clock,
-while the time stamp is on.
+Snapfly runs entirely on your Mac, and your screenshots never leave it
+unless you send them. On its own, the only thing it ever asks the internet is
+the time, from the PTB's atomic clock, while the time stamp is on. The AI
+assistant, once you give it your key, sends a covered screenshot to Claude or
+ChatGPT only when you choose Write a Reply, Explain or Order Details, and
+the words of each screenshot only with Find more turned on under Privacy.
 
 <br>
 
@@ -711,7 +746,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/PrivateText.swift` | Finds private details in a screenshot, eighteen kinds and the owner's own rules, on the Mac and the iPhone |
 | `Shared/CoverLook.swift` | How covers look (ink, labelled, blur, pixels, dots, erased), drawn from the colors around what is covered; keeping the last four digits; the samples Settings shows |
 | `Shared/CoverLookPicker.swift` | The tiles to choose the look by, in Settings on the Mac and on the iPhone |
-| `Shared/Protection.swift` | Strongest protection, and Apple Intelligence finding what the patterns miss, on the device, kept per screenshot |
+| `Shared/Protection.swift` | Strongest protection, and Apple Intelligence, on the device, or the AI assistant, when turned on, finding what the patterns miss, kept per screenshot |
+| `Shared/AIAccount.swift` | The AI assistant: Claude or ChatGPT, the key in the keychain, the model, the requests and their answers, what each task asks, and what each failure means |
 | `Shared/OwnRules.swift` | The owner's own rules: a word, a label or a pattern, kept with the settings |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
@@ -726,7 +762,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `QuickCrop.swift` | Crop…: the photo large over the dimmed screen, a drag over the part to keep, saved as the drawing's crop |
 | `SmartArea.swift` | Smart selection's reading of a picture: its parts by the empty space round them, the edges a drag keeps to, and empty space trimmed to an even margin |
 | `SmartSelection.swift` | Smart selection on the capture screens and in Crop: the picture read off the main thread, and what an app says is under the pointer through Accessibility |
-| `TextCard.swift` | Translate Text, Describe and Order Details, and the card that shows them |
+| `TextCard.swift` | Translate Text, Describe, Order Details, Write a Reply and Explain, and the card that shows them, with a field to ask the assistant |
 | `Appearance.swift` | Glass by role, Liquid Glass on macOS 26, and motion that honours Reduce Motion |
 | `Search.swift` | The words in every photo, and the search bar under the line |
 | `Edition.swift` | The Mac App Store edition: what the sandbox changes |
@@ -735,7 +771,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `ScreenshotWatcher.swift` | Notices new screenshots |
 | `History.swift` | What left the line, kept for 7 or 30 days |
 | `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again; Sent lists what went where |
-| `Shared/OrderCard.swift` | The parts of an order read off a screenshot, for Order Details: number, date, total, name, address, email, phone, tracking, code, with a GiroCode or Swiss QR bill read as a transfer |
+| `Shared/OrderCard.swift` | The parts of an order read off a screenshot, for Order Details: number, date, total, name, address, email, phone, tracking, code, product, with a GiroCode or Swiss QR bill read as a transfer |
 | `Bookkeeping.swift` | Save for Bookkeeping and Email to Bookkeeping…: a covered copy named for its day, order and total, and its line in Snapfly.csv |
 | `ShopHeader.swift` | Send with Shop Header: the shop's name and logo, and the band drawn above the covered screenshot |
 | `ReceiptsPack.swift` | The monthly pack: Snapfly.csv read back, the sum of the totals, and one PDF with the list and a page a receipt |

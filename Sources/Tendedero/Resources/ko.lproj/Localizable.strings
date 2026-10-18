@@ -774,7 +774,6 @@
 "Add something, like “offer a replacement”" = "덧붙일 내용, 예: “교환을 제안하기”";
 "Add your %@ key in Settings › General, under AI Assistant." = "설정 › 일반의 AI 도우미에 %@ 키를 추가하세요.";
 "Ask" = "질문하기";
-"Ask %@…" = "%@에 질문하기…";
 "Ask about this screenshot" = "이 스크린샷에 대해 질문하기";
 "Asking %@ for the rest…" = "나머지를 %@에 묻는 중…";
 "Asking %@…" = "%@에 묻는 중…";
@@ -796,6 +795,8 @@
 "The keychain did not keep the key." = "키체인에 키를 저장하지 못했어요.";
 "Write Again" = "다시 쓰기";
 "Write a Reply" = "답장 쓰기";
-"Write a Reply, Ask and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "답장 쓰기, 질문하기, 주문 세부 정보는 개인 정보를 가린 스크린샷을 내 키로 Anthropic이나 OpenAI에 직접 보내요. 직접 고를 때만 보내요. 각 요청은 그곳 계정에 청구되며, Claude나 ChatGPT 구독에는 포함되지 않아요.";
+"Write a Reply, Explain and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "답장 쓰기, 설명하기, 주문 세부 정보는 개인 정보를 가린 스크린샷을 내 키로 Anthropic이나 OpenAI에 직접 보내요. 직접 고를 때만 보내요. 각 요청은 그곳 계정에 청구되며, Claude나 ChatGPT 구독에는 포함되지 않아요.";
 "Written by %@ from the screenshot with its private details covered." = "개인 정보를 가린 스크린샷으로 %@이(가) 썼어요.";
 "Your %@ account has no credit left. Add some on their website." = "%@ 계정에 크레딧이 남아 있지 않아요. 해당 웹사이트에서 충전하세요.";
+"Explain with %@" = "%@으로 설명하기";
+"Explanation" = "설명";

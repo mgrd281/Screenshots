@@ -236,7 +236,7 @@ struct GrabArea: NSViewRepresentable {
                 // The AI assistant, with the owner's own key; without one,
                 // the card says where it goes.
                 menu.addItem(ClosureMenuItem(L("Write a Reply"), symbol: "arrowshape.turn.up.left") { line.writeReply(id) })
-                menu.addItem(ClosureMenuItem(String(format: L("Ask %@…"), AIAccount.provider.name),
+                menu.addItem(ClosureMenuItem(String(format: L("Explain with %@"), AIAccount.provider.name),
                                              symbol: "bubble.left.and.text.bubble.right") { line.askAssistant(id) })
                 // For the books: a covered copy with a name that says what it is.
                 let url = item.url

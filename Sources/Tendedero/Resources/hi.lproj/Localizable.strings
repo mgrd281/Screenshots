@@ -776,7 +776,6 @@
 "Add something, like “offer a replacement”" = "कुछ जोड़ें, जैसे “बदले में दूसरा भेजें”";
 "Add your %@ key in Settings › General, under AI Assistant." = "सेटिंग्स › सामान्य में, AI सहायक के नीचे अपनी %@ कुंजी जोड़ें।";
 "Ask" = "पूछें";
-"Ask %@…" = "%@ से पूछें…";
 "Ask about this screenshot" = "इस स्क्रीनशॉट के बारे में पूछें";
 "Asking %@ for the rest…" = "बाकी के लिए %@ से पूछा जा रहा है…";
 "Asking %@…" = "%@ से पूछा जा रहा है…";
@@ -798,6 +797,8 @@
 "The keychain did not keep the key." = "कीचेन ने कुंजी नहीं रखी।";
 "Write Again" = "फिर से लिखें";
 "Write a Reply" = "जवाब लिखें";
-"Write a Reply, Ask and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "जवाब लिखें, पूछें और ऑर्डर का विवरण स्क्रीनशॉट को, उसके निजी विवरण ढककर, आपकी अपनी कुंजी से सीधे Anthropic या OpenAI को भेजते हैं, सिर्फ़ तब जब आप इन्हें चुनें। हर अनुरोध का बिल वहाँ आपके खाते में जाता है; Claude या ChatGPT की सदस्यता इसमें शामिल नहीं है।";
+"Write a Reply, Explain and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "जवाब लिखें, समझाएँ और ऑर्डर का विवरण स्क्रीनशॉट को, उसके निजी विवरण ढककर, आपकी अपनी कुंजी से सीधे Anthropic या OpenAI को भेजते हैं, सिर्फ़ तब जब आप इन्हें चुनें। हर अनुरोध का बिल वहाँ आपके खाते में जाता है; Claude या ChatGPT की सदस्यता इसमें शामिल नहीं है।";
 "Written by %@ from the screenshot with its private details covered." = "निजी विवरण ढके स्क्रीनशॉट से %@ ने लिखा।";
 "Your %@ account has no credit left. Add some on their website." = "आपके %@ खाते में क्रेडिट नहीं बचा। उनकी वेबसाइट पर कुछ जोड़ें।";
+"Explain with %@" = "%@ से समझाएँ";
+"Explanation" = "व्याख्या";

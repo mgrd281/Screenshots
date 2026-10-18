@@ -774,7 +774,6 @@
 "Add something, like “offer a replacement”" = "追加の指示（例：「交換品を提案」）";
 "Add your %@ key in Settings › General, under AI Assistant." = "設定 › 一般の「AIアシスタント」に%@のキーを追加してください。";
 "Ask" = "質問";
-"Ask %@…" = "%@に質問…";
 "Ask about this screenshot" = "このスクリーンショットについて質問";
 "Asking %@ for the rest…" = "残りを%@に問い合わせ中…";
 "Asking %@…" = "%@に問い合わせ中…";
@@ -796,6 +795,8 @@
 "The keychain did not keep the key." = "キーチェーンにキーを保存できませんでした。";
 "Write Again" = "書き直す";
 "Write a Reply" = "返信を書く";
-"Write a Reply, Ask and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "「返信を書く」「質問」「注文の詳細」は、個人情報を隠したスクリーンショットを、あなた自身のキーでAnthropicまたはOpenAIに直接送ります。送るのは選んだときだけです。各リクエストはそちらのアカウントに請求され、ClaudeやChatGPTのサブスクリプションには含まれません。";
+"Write a Reply, Explain and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "「返信を書く」「説明」「注文の詳細」は、個人情報を隠したスクリーンショットを、あなた自身のキーでAnthropicまたはOpenAIに直接送ります。送るのは選んだときだけです。各リクエストはそちらのアカウントに請求され、ClaudeやChatGPTのサブスクリプションには含まれません。";
 "Written by %@ from the screenshot with its private details covered." = "個人情報を隠したスクリーンショットから%@が書きました。";
 "Your %@ account has no credit left. Add some on their website." = "%@アカウントのクレジットが残っていません。公式サイトで追加してください。";
+"Explain with %@" = "%@で説明";
+"Explanation" = "説明";

@@ -774,7 +774,6 @@
 "Add something, like “offer a replacement”" = "Ajoute quelque chose, comme « proposer un remplacement »";
 "Add your %@ key in Settings › General, under AI Assistant." = "Ajoute ta clé %@ dans Réglages › Général, sous Assistant IA.";
 "Ask" = "Demander";
-"Ask %@…" = "Demander à %@…";
 "Ask about this screenshot" = "Pose une question sur cette capture";
 "Asking %@ for the rest…" = "%@ est interrogé pour le reste…";
 "Asking %@…" = "Question posée à %@…";
@@ -796,6 +795,8 @@
 "The keychain did not keep the key." = "Le trousseau n’a pas gardé la clé.";
 "Write Again" = "Réécrire";
 "Write a Reply" = "Écrire une réponse";
-"Write a Reply, Ask and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Écrire une réponse, Demander et Détails de la commande envoient la capture, ses données privées masquées, directement à Anthropic ou OpenAI avec ta propre clé, seulement quand tu les choisis. Chaque requête est facturée sur ton compte chez eux ; un abonnement Claude ou ChatGPT ne la couvre pas.";
+"Write a Reply, Explain and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Écrire une réponse, Expliquer et Détails de la commande envoient la capture, ses données privées masquées, directement à Anthropic ou OpenAI avec ta propre clé, seulement quand tu les choisis. Chaque requête est facturée sur ton compte chez eux ; un abonnement Claude ou ChatGPT ne la couvre pas.";
 "Written by %@ from the screenshot with its private details covered." = "Écrit par %@ à partir de la capture, ses données privées masquées.";
 "Your %@ account has no credit left. Add some on their website." = "Ton compte %@ n’a plus de crédit. Ajoutes-en sur leur site.";
+"Explain with %@" = "Expliquer avec %@";
+"Explanation" = "Explication";

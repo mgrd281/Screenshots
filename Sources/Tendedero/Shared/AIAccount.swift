@@ -116,7 +116,9 @@ enum AIAccount {
         }
         var item = base
         item[kSecValueData as String] = Data(key.utf8)
+        #if !os(macOS)
         item[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+        #endif
         let kept = SecItemAdd(item as CFDictionary, nil) == errSecSuccess
         UserDefaults.standard.set(kept, forKey: noted)
         return kept

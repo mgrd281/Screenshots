@@ -774,7 +774,6 @@
 "Add something, like “offer a replacement”" = "Ergänze etwas, etwa „Ersatz anbieten“";
 "Add your %@ key in Settings › General, under AI Assistant." = "Füg deinen %@-Schlüssel unter Einstellungen › Allgemein bei KI-Assistent hinzu.";
 "Ask" = "Fragen";
-"Ask %@…" = "%@ fragen …";
 "Ask about this screenshot" = "Frag etwas zu diesem Bildschirmfoto";
 "Asking %@ for the rest…" = "%@ wird nach dem Rest gefragt …";
 "Asking %@…" = "%@ wird gefragt …";
@@ -796,6 +795,8 @@
 "The keychain did not keep the key." = "Der Schlüsselbund hat den Schlüssel nicht behalten.";
 "Write Again" = "Neu schreiben";
 "Write a Reply" = "Antwort schreiben";
-"Write a Reply, Ask and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Antwort schreiben, Fragen und Bestelldetails schicken das Bildschirmfoto mit verdeckten privaten Angaben direkt an Anthropic oder OpenAI, mit deinem eigenen Schlüssel und nur, wenn du sie wählst. Jede Anfrage wird dort deinem Konto berechnet; ein Abo von Claude oder ChatGPT deckt das nicht ab.";
+"Write a Reply, Explain and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Antwort schreiben, Erklären und Bestelldetails schicken das Bildschirmfoto mit verdeckten privaten Angaben direkt an Anthropic oder OpenAI, mit deinem eigenen Schlüssel und nur, wenn du sie wählst. Jede Anfrage wird dort deinem Konto berechnet; ein Abo von Claude oder ChatGPT deckt das nicht ab.";
 "Written by %@ from the screenshot with its private details covered." = "Von %@ geschrieben, aus dem Bildschirmfoto mit verdeckten privaten Angaben.";
 "Your %@ account has no credit left. Add some on their website." = "Dein %@-Konto hat kein Guthaben mehr. Lade auf deren Website welches auf.";
+"Explain with %@" = "Mit %@ erklären";
+"Explanation" = "Erklärung";

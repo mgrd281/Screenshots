@@ -15,9 +15,9 @@ import FoundationModels
 /// start from the text as it leaves the line, private details left out.
 /// The result shows in a card under the photo, to copy or send. Order
 /// Details lists the order's parts as the screenshot shows them, to copy.
-/// Write a Reply and Ask Claude, or ChatGPT, send the screenshot covered
-/// to the AI assistant set up in Settings, with the owner's own key; it
-/// also reads what Order Details on this Mac could not.
+/// Write a Reply and Explain with Claude, or ChatGPT, send the screenshot
+/// covered to the AI assistant set up in Settings, with the owner's own
+/// key; it also reads what Order Details on this Mac could not.
 @MainActor
 final class TextCard {
     static let shared = TextCard()
@@ -679,7 +679,7 @@ private struct TextCardView: View {
         case .description: L("Description")
         case .order: L("Order Details")
         case .reply: L("Reply")
-        case .ask: String(format: L("Ask %@"), AIAccount.provider.name)
+        case .ask: L("Explanation")
         }
     }
 
@@ -908,10 +908,16 @@ private struct TextCardView: View {
             .controlSize(.large)
             if model.kind != .ask {
                 Button {
-                    // Closed first, so the chat in front has the keyboard
-                    // back when the text is pasted.
-                    close()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { model.send() }
+                    if model.kind == .reply {
+                        // Closed first, so the chat in front has the
+                        // keyboard back from the question field when the
+                        // reply is pasted.
+                        close()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { model.send() }
+                    } else {
+                        model.send()
+                        close()
+                    }
                 } label: {
                     Label(model.kind == .description ? L("Send with Photo") : L("Send"), systemImage: "paperplane.fill")
                 }

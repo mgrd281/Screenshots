@@ -447,7 +447,13 @@ final class Preferences: ObservableObject {
 
     var aiProvider: AIProvider {
         get { AIAccount.provider }
-        set { change { AIAccount.provider = newValue } }
+        set {
+            change {
+                AIAccount.provider = newValue
+                // The other one reads along, or none, without a key.
+                if AIAccount.findsPrivate { line.readPrivateDetails() }
+            }
+        }
     }
 
     /// Whether the assistant has a key, for what it can be asked to do.
@@ -955,6 +961,7 @@ private struct GeneralPane: View {
                 Toggle(L("Sounds"), isOn: $prefs.sounds)
                 Toggle(L("Open at login"), isOn: $prefs.opensAtLogin)
             }
+            AIAssistantSection(prefs: prefs)
             Section(L("Also watch folders")) {
                 ForEach(prefs.folders, id: \.self) { folder in
                     HStack {
@@ -1103,7 +1110,6 @@ private struct LinePane: View {
             ChatButtonSection(prefs: prefs)
             SavedMessagesSection(prefs: prefs)
             AIQuestionsSection(prefs: prefs)
-            AIAssistantSection(prefs: prefs)
             BookkeepingSection(prefs: prefs)
             ShopHeaderSection(prefs: prefs)
             Section(L("Screenshot button")) {
@@ -1866,10 +1872,8 @@ private struct SavedMessagesSection: View {
     }
 }
 
-/// The questions a photo can go into ChatGPT or Claude with: one row each,
-/// as the saved messages, with a way back to the standard ones.
-/// Claude or ChatGPT, with the owner's own key, for Write a Reply, Ask and
-/// Order Details. The key goes to the keychain as it is saved, and the
+/// Claude or ChatGPT, with the owner's own key, for Write a Reply, Explain
+/// and Order Details. The key goes to the keychain as it is saved, and the
 /// field only says which one is kept, by its last four characters.
 private struct AIAssistantSection: View {
     @ObservedObject var prefs: Preferences
@@ -1908,7 +1912,7 @@ private struct AIAssistantSection: View {
         } header: {
             Text(L("AI Assistant"))
         } footer: {
-            Text(L("Write a Reply, Ask and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it."))
+            Text(L("Write a Reply, Explain and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it."))
                 .foregroundStyle(.secondary)
         }
         .onAppear(perform: load)
@@ -1940,6 +1944,8 @@ private struct AIAssistantSection: View {
     }
 }
 
+/// The questions a photo can go into ChatGPT or Claude with: one row each,
+/// as the saved messages, with a way back to the standard ones.
 private struct AIQuestionsSection: View {
     @ObservedObject var prefs: Preferences
 

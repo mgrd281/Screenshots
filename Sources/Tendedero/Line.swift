@@ -835,8 +835,8 @@ final class Line: ObservableObject {
         showCard(.reply, for: id, target: Languages.own)
     }
 
-    /// Ask Claude, or ChatGPT: what the covered screenshot shows, or an
-    /// answer about it.
+    /// Explain with Claude, or ChatGPT: what the covered screenshot shows,
+    /// or an answer about it.
     func askAssistant(_ id: UUID) {
         showCard(.ask, for: id, target: Languages.own)
     }

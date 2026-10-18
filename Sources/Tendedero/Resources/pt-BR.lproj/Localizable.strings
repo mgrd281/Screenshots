@@ -774,7 +774,6 @@
 "Add something, like “offer a replacement”" = "Acrescente algo, como “ofereça uma troca”";
 "Add your %@ key in Settings › General, under AI Assistant." = "Adicione sua chave do %@ em Ajustes › Geral, em Assistente de IA.";
 "Ask" = "Perguntar";
-"Ask %@…" = "Perguntar ao %@…";
 "Ask about this screenshot" = "Pergunte sobre esta captura";
 "Asking %@ for the rest…" = "Perguntando ao %@ o restante…";
 "Asking %@…" = "Perguntando ao %@…";
@@ -796,6 +795,8 @@
 "The keychain did not keep the key." = "O Porta-chaves não guardou a chave.";
 "Write Again" = "Escrever de novo";
 "Write a Reply" = "Escrever uma resposta";
-"Write a Reply, Ask and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Escrever uma resposta, Perguntar e Detalhes do pedido enviam a captura, com os dados privados cobertos, direto para a Anthropic ou a OpenAI com sua própria chave, só quando você os escolhe. Cada pedido é cobrado na sua conta lá; uma assinatura do Claude ou do ChatGPT não cobre isso.";
+"Write a Reply, Explain and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Escrever uma resposta, Explicar e Detalhes do pedido enviam a captura, com os dados privados cobertos, direto para a Anthropic ou a OpenAI com sua própria chave, só quando você os escolhe. Cada pedido é cobrado na sua conta lá; uma assinatura do Claude ou do ChatGPT não cobre isso.";
 "Written by %@ from the screenshot with its private details covered." = "Escrito pelo %@ a partir da captura com os dados privados cobertos.";
 "Your %@ account has no credit left. Add some on their website." = "Sua conta do %@ está sem crédito. Adicione crédito no site deles.";
+"Explain with %@" = "Explicar com o %@";
+"Explanation" = "Explicação";

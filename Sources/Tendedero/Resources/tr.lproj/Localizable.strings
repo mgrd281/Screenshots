@@ -774,7 +774,6 @@
 "Add something, like “offer a replacement”" = "Bir şey ekle, örneğin “yenisini öner”";
 "Add your %@ key in Settings › General, under AI Assistant." = "%@ anahtarını Ayarlar › Genel’de, Yapay Zekâ Asistanı altında ekle.";
 "Ask" = "Sor";
-"Ask %@…" = "Sor: %@…";
 "Ask about this screenshot" = "Bu ekran görüntüsü hakkında sor";
 "Asking %@ for the rest…" = "Geri kalanı %@’a soruluyor…";
 "Asking %@…" = "%@’a soruluyor…";
@@ -796,6 +795,8 @@
 "The keychain did not keep the key." = "Anahtar Zinciri anahtarı tutmadı.";
 "Write Again" = "Yeniden yaz";
 "Write a Reply" = "Yanıt yaz";
-"Write a Reply, Ask and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Yanıt yaz, Sor ve Sipariş ayrıntıları ekran görüntüsünü, özel bilgileri örtülmüş olarak, kendi anahtarınla doğrudan Anthropic’e ya da OpenAI’a gönderir; yalnızca sen seçtiğinde. Her istek oradaki hesabına faturalanır; Claude ya da ChatGPT aboneliği bunu kapsamaz.";
+"Write a Reply, Explain and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Yanıt yaz, Açıkla ve Sipariş ayrıntıları ekran görüntüsünü, özel bilgileri örtülmüş olarak, kendi anahtarınla doğrudan Anthropic’e ya da OpenAI’a gönderir; yalnızca sen seçtiğinde. Her istek oradaki hesabına faturalanır; Claude ya da ChatGPT aboneliği bunu kapsamaz.";
 "Written by %@ from the screenshot with its private details covered." = "Özel bilgileri örtülmüş ekran görüntüsünden %@ yazdı.";
 "Your %@ account has no credit left. Add some on their website." = "%@ hesabında kredi kalmadı. Onların sitesinden ekle.";
+"Explain with %@" = "%@ ile açıkla";
+"Explanation" = "Açıklama";

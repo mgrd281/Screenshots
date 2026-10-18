@@ -774,7 +774,6 @@
 "Add something, like “offer a replacement”" = "Añade algo, como «ofrece un reemplazo»";
 "Add your %@ key in Settings › General, under AI Assistant." = "Añade tu clave de %@ en Ajustes › General, en Asistente de IA.";
 "Ask" = "Preguntar";
-"Ask %@…" = "Preguntar a %@…";
 "Ask about this screenshot" = "Pregunta sobre esta captura";
 "Asking %@ for the rest…" = "Preguntando a %@ por el resto…";
 "Asking %@…" = "Preguntando a %@…";
@@ -796,6 +795,8 @@
 "The keychain did not keep the key." = "El llavero no guardó la clave.";
 "Write Again" = "Volver a escribir";
 "Write a Reply" = "Escribir una respuesta";
-"Write a Reply, Ask and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Escribir una respuesta, Preguntar y Detalles del pedido envían la captura, con sus datos privados tapados, directamente a Anthropic u OpenAI con tu propia clave, solo cuando los eliges. Cobran cada solicitud en tu cuenta allí; una suscripción a Claude o ChatGPT no lo cubre.";
+"Write a Reply, Explain and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Escribir una respuesta, Explicar y Detalles del pedido envían la captura, con sus datos privados tapados, directamente a Anthropic u OpenAI con tu propia clave, solo cuando los eliges. Cobran cada solicitud en tu cuenta allí; una suscripción a Claude o ChatGPT no lo cubre.";
 "Written by %@ from the screenshot with its private details covered." = "Escrito por %@ a partir de la captura con sus datos privados tapados.";
 "Your %@ account has no credit left. Add some on their website." = "Tu cuenta de %@ no tiene saldo. Añade saldo en su sitio web.";
+"Explain with %@" = "Explicar con %@";
+"Explanation" = "Explicación";

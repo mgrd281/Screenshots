@@ -774,7 +774,6 @@
 "Add something, like “offer a replacement”" = "Engade algo, como «ofrece unha substitución»";
 "Add your %@ key in Settings › General, under AI Assistant." = "Engade a túa clave de %@ en Axustes › Xeral, en Asistente de IA.";
 "Ask" = "Preguntar";
-"Ask %@…" = "Preguntar a %@…";
 "Ask about this screenshot" = "Pregunta sobre esta captura";
 "Asking %@ for the rest…" = "Preguntando a %@ polo resto…";
 "Asking %@…" = "Preguntando a %@…";
@@ -796,6 +795,8 @@
 "The keychain did not keep the key." = "O chaveiro non gardou a clave.";
 "Write Again" = "Volver escribir";
 "Write a Reply" = "Escribir unha resposta";
-"Write a Reply, Ask and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Escribir unha resposta, Preguntar e Detalles do pedido envían a captura, cos seus datos privados tapados, directamente a Anthropic ou OpenAI coa túa propia clave, só cando os escolles. Cobran cada solicitude na túa conta alí; unha subscrición a Claude ou ChatGPT non o cobre.";
+"Write a Reply, Explain and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Escribir unha resposta, Explicar e Detalles do pedido envían a captura, cos seus datos privados tapados, directamente a Anthropic ou OpenAI coa túa propia clave, só cando os escolles. Cobran cada solicitude na túa conta alí; unha subscrición a Claude ou ChatGPT non o cobre.";
 "Written by %@ from the screenshot with its private details covered." = "Escrito por %@ a partir da captura cos seus datos privados tapados.";
 "Your %@ account has no credit left. Add some on their website." = "A túa conta de %@ non ten saldo. Engade saldo no seu sitio web.";
+"Explain with %@" = "Explicar con %@";
+"Explanation" = "Explicación";
