@@ -493,6 +493,9 @@
 "Saved to %@. Click to show it in Finder." = "حُفظت في %@. انقر لإظهارها في Finder.";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "حُفظت باسم %1$@ في %2$@. انقر لإظهارها في Finder.";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "حُفظ مع الصورة. تُرسل كما رسمتها؛ أما الملف في %@ فيبقى كما هو.";
+"Crop…" = "قص…";
+"Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "اسحب فوق الجزء الذي يبقى. Return يحتفظ بالصورة كاملة، وEscape للإلغاء.";
+"Cropped. It goes out cropped; the file in %@ stays as it is." = "قُصّت. تُرسل مقصوصة؛ أما الملف في %@ فيبقى كما هو.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "حُفظ مع الصورة. تبقى هذه الأجزاء مخفية في كل ما يُرسل؛ أما الملف في %@ فيبقى كما هو.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "يحفظ الصورة كما تُرسل، بالرسم والقص، في ملف خاص بها.";
 "Keep as a file" = "الاحتفاظ بها كملف";

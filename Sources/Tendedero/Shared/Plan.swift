@@ -26,7 +26,7 @@ enum Plan {
         /// Covered copies of what lands in a folder, saved in another.
         case folderCover
         /// Arrows, boxes, highlights, numbered steps, words and a crop drawn
-        /// on a photo, on what leaves the line.
+        /// on a photo, on what leaves the line, and Crop on its own.
         case markup
     }
 

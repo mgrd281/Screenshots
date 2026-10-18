@@ -495,6 +495,9 @@
 "Saved to %@. Click to show it in Finder." = "Saved to %@. Click to show it in Finder.";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "Saved as %1$@ in %2$@. Click to show it in Finder.";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Saved with the photo. It goes out as drawn; the file in %@ stays as it is.";
+"Crop…" = "Crop…";
+"Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Drag over the part to keep. Return keeps the whole photo, Escape cancels.";
+"Cropped. It goes out cropped; the file in %@ stays as it is." = "Cropped. It goes out cropped; the file in %@ stays as it is.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Saves the photo as it goes out, drawn on and cropped, as a file of its own.";
 "Keep as a file" = "Keep as a file";

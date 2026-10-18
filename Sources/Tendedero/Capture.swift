@@ -649,10 +649,18 @@ private final class CaptureView: NSView {
         }
     }
 
-    /// The size in points, as macOS shows it, in a small capsule below the
-    /// area's trailing corner, kept on screen.
+    /// The size in points, as macOS shows it.
     private func drawSize(of area: CGRect) {
-        let text = "\(Int(area.width.rounded())) × \(Int(area.height.rounded()))" as NSString
+        SizeCapsule.draw("\(Int(area.width.rounded())) × \(Int(area.height.rounded()))", under: area, in: bounds,
+                         solid: solidBadges)
+    }
+}
+
+/// The size of an area being dragged over, in a small capsule below its
+/// trailing corner, kept on screen: the capture screens' and Crop's.
+enum SizeCapsule {
+    static func draw(_ text: String, under area: CGRect, in bounds: CGRect, solid: Bool) {
+        let text = text as NSString
         let attributes: [NSAttributedString.Key: Any] = [
             .font: NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .medium),
             .foregroundColor: NSColor.white,
@@ -662,15 +670,15 @@ private final class CaptureView: NSView {
                              width: size.width + 16, height: 20)
         if capsule.minY < bounds.minY + 4 { capsule.origin.y = area.minY + 6 }
         capsule.origin.x = max(bounds.minX + 4, min(capsule.origin.x, bounds.maxX - capsule.width - 4))
-        (solidBadges ? NSColor(white: 0.12, alpha: 1) : NSColor.black.withAlphaComponent(0.55)).setFill()
+        (solid ? NSColor(white: 0.12, alpha: 1) : NSColor.black.withAlphaComponent(0.55)).setFill()
         NSBezierPath(roundedRect: capsule, xRadius: 10, yRadius: 10).fill()
         text.draw(at: CGPoint(x: capsule.minX + 8, y: capsule.midY - size.height / 2), withAttributes: attributes)
     }
 }
 
 /// What to do, at the bottom of the screen with the pointer, until a drag
-/// begins.
-private struct CaptureHint: View {
+/// begins: on the capture screens and over a photo being cropped.
+struct CaptureHint: View {
     let text: String
 
     var body: some View {

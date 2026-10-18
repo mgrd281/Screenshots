@@ -60,6 +60,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Click | Copy the image. |
 | <kbd>⌘</kbd>-click several, or click the circle on each | Pick them, to send or copy just those together. They stay picked, even when the line goes up, until they are sent. Pick All in a photo's menu, then put back the few that should stay. |
 | Right-click, then Copy Text | Copy the words in it, to paste as text. |
+| Right-click, then Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. |
 | Right-click, then Hide Part | Drag a box over anything the covering missed. It stays hidden in whatever leaves the line. |
 | Right-click, then Draw on Photo | Point things out with an arrow, a box, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
 | Right-click, then Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
@@ -334,6 +335,13 @@ after another, and words on a label. Crop keeps only the part that matters.
 Each tool has its key: V selects, A draws arrows, R boxes, H highlights, N
 numbers, T puts words down and C crops. Click a drawing to change its
 colour or size, drag it or its handles, or press Delete; ⌘Z undoes.
+
+Only the crop, quicker: choose Crop… in a photo's menu, or ⌥-click the
+photo. It opens large over the dimmed screen; drag over the part to keep,
+and it is kept as you let go, with whatever you drew on it. Return keeps
+the whole photo, and Escape, a right-click or a click beside it cancels. A
+note says the file stays as it is, and Keep Whole Photo, in the menu of a
+cropped photo, takes the crop away.
 
 What you draw goes on the copy that leaves the line, over what is covered,
 and the line shows the photo that way. The file itself stays as it is, and
@@ -668,6 +676,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
 | `Drawing.swift` | Draw on Photo's arrows, boxes, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |
 | `DrawEditor.swift` | Draw on Photo: the window to draw on a photo, with its tools, inks, sizes and Undo |
+| `QuickCrop.swift` | Crop…: the photo large over the dimmed screen, a drag over the part to keep, saved as the drawing's crop |
 | `TextCard.swift` | Translate Text, Describe and Order Details, and the card that shows them |
 | `Appearance.swift` | Glass by role, Liquid Glass on macOS 26, and motion that honours Reduce Motion |
 | `Search.swift` | The words in every photo, and the search bar under the line |

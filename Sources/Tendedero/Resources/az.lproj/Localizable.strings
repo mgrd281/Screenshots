@@ -495,6 +495,9 @@
 "Saved to %@. Click to show it in Finder." = "Saxlanıldı: %@. Finder-də göstərmək üçün klik et.";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@ qovluğunda %1$@ kimi saxlanıldı. Finder-də göstərmək üçün klik et.";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Fotoyla birlikdə saxlanıldı. Çəkdiyin kimi göndərilir; %@ qovluğundakı fayl olduğu kimi qalır.";
+"Crop…" = "Kəs…";
+"Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Qalacaq hissənin üzərindən sürüşdür. Return bütün fotonu saxlayır, Escape ləğv edir.";
+"Cropped. It goes out cropped; the file in %@ stays as it is." = "Kəsildi. Kəsilmiş halda göndərilir; %@ qovluğundakı fayl olduğu kimi qalır.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Fotoyla birlikdə saxlanıldı. Bu hissələr göndərilən hər şeydə gizli qalır; %@ qovluğundakı fayl olduğu kimi qalır.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Fotonu göndərildiyi kimi, çəkilmiş və kəsilmiş halda ayrıca fayl kimi saxlayır.";
 "Keep as a file" = "Fayl kimi saxla";

@@ -493,6 +493,9 @@
 "Saved to %@. Click to show it in Finder." = "Kaydedildi: %@. Finder'da göstermek için tıkla.";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@ içine %1$@ olarak kaydedildi. Finder'da göstermek için tıkla.";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Fotoğrafla birlikte kaydedildi. Çizdiğin gibi gider; %@ içindeki dosya olduğu gibi kalır.";
+"Crop…" = "Kırp…";
+"Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Kalacak kısmın üzerinde sürükle. Return fotoğrafın tamamını tutar, Escape iptal eder.";
+"Cropped. It goes out cropped; the file in %@ stays as it is." = "Kırpıldı. Kırpılmış olarak gider; %@ içindeki dosya olduğu gibi kalır.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Fotoğrafla birlikte kaydedildi. Bu kısımlar gönderilen her şeyde gizli kalır; %@ içindeki dosya olduğu gibi kalır.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Fotoğrafı gittiği gibi, çizilmiş ve kırpılmış hâliyle ayrı bir dosya olarak kaydeder.";
 "Keep as a file" = "Dosya olarak sakla";

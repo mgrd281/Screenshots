@@ -59,6 +59,7 @@ struct GrabArea: NSViewRepresentable {
         // A pinned photo's corner holds its pin, which unpins.
         view.onDiscard = { pinned ? line.togglePin(id) : line.discard(id) }
         view.onForceClick = { line.quickLook(id) }
+        view.onCrop = isImage ? { line.crop(id) } : nil
         view.onPressChange = { pressed in line.pressedID = pressed ? id : nil }
         let inInbox = line.isInInbox(id)
         view.cornerHelp = pinned ? L("Unpin") : (inInbox ? L("Discard") : L("Take down"))
@@ -240,6 +241,12 @@ struct GrabArea: NSViewRepresentable {
             }
             if isImage {
                 menu.addItem(ClosureMenuItem(L("Markup"), symbol: "pencil.tip.crop.circle") { line.markup(id) })
+                menu.addItem(ClosureMenuItem(L("Crop…"), symbol: "crop") { line.crop(id) })
+                if line.isCropped(id) {
+                    menu.addItem(ClosureMenuItem(L("Keep Whole Photo"), symbol: "arrow.up.left.and.arrow.down.right") {
+                        line.keepWhole(id)
+                    })
+                }
                 menu.addItem(ClosureMenuItem(L("Hide Part…"), symbol: "rectangle.dashed") { line.hidePart(id) })
                 menu.addItem(ClosureMenuItem(L("Draw on Photo…"), symbol: "scribble.variable") { line.drawOn(id) })
             }
@@ -319,6 +326,9 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     var onTrash: () -> Void = {}
     var onDiscard: () -> Void = {}
     var onForceClick: () -> Void = {}
+    /// ⌥-click on a photo: Crop, to drag over the part to keep; nil where
+    /// there is nothing to crop, and the click copies.
+    var onCrop: (() -> Void)?
     var onPressChange: (Bool) -> Void = { _ in }
     var menuProvider: () -> NSMenu = { NSMenu() }
     /// A right-click on ChatGPT or Claude: the questions to send the photo
@@ -586,7 +596,11 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     override func mouseUp(with event: NSEvent) {
         endPress()
         if downPoint != nil && !startedDrag && !didLongPress {
-            if isPick(event) { onPick() } else if event.clickCount == 1 { onClick() }
+            if isPick(event) {
+                onPick()
+            } else if event.clickCount == 1 {
+                if event.modifierFlags.contains(.option), let onCrop { onCrop() } else { onClick() }
+            }
         }
         downPoint = nil
         didLongPress = false
