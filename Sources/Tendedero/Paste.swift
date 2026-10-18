@@ -44,6 +44,18 @@ enum Paste {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05 + delay) { pressCommandV() }
     }
 
+    /// Tab, to move on to the next field of a page, like the body of a new
+    /// message after its address and subject.
+    static func pressTab(times: Int) {
+        guard frontApp != nil, isAllowed else { return }
+        let source = CGEventSource(stateID: .combinedSessionState)
+        for _ in 0..<times {
+            for down in [true, false] {
+                CGEvent(keyboardEventSource: source, virtualKey: CGKeyCode(kVK_Tab), keyDown: down)?.post(tap: .cghidEventTap)
+            }
+        }
+    }
+
     /// ⌘V, once the keys of the send shortcut are let go, so the app in
     /// front never sees ⌃⌥ held with it. Waits a second at most.
     nonisolated private static func pressCommandV(tries: Int = 50) {

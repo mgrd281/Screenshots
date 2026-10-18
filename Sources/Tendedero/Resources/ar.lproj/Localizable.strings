@@ -669,7 +669,7 @@
 "something new" = "شيء جديد";
 "%@ on photos" = "%@ على الصور";
 "Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "تظهر أيقونته بجانب الطائرة الورقية. النقر يرسل الصورة، أو الصور المختارة معها، إلى %@.";
-"Open ChatGPT and Claude in" = "فتح ChatGPT وClaude في";
 "The browser" = "المتصفح";
 "The app" = "التطبيق";
-"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "المتصفح يفتح الدردشة على الموقع. التطبيق يفتحها في تطبيقهما إن كان على هذا الماك، وعلى الموقع إن لم يكن.";
+"Open in" = "الفتح في";
+"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "المتصفح يفتح الموقع. التطبيق يفتح تطبيقهم نفسه إن كان على هذا الماك، وإلا يفتح الموقع.";

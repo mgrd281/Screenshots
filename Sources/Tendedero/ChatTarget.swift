@@ -1,12 +1,12 @@
 import AppKit
 
-/// ChatGPT and Claude, to send photos straight into from the line: their
-/// website in the browser, or their app when it is on this Mac and Settings
-/// says so. Their icons on a photo are the app's own, as macOS shows it in
-/// the Dock, while chats open in the app; else a short mark in a neutral
-/// circle. Snapfly carries no logo of theirs.
-enum AIChat: String, CaseIterable, Identifiable {
-    case chatGPT, claude
+/// Where a photo goes straight from the line: ChatGPT, Claude, WhatsApp and
+/// Gmail. Their website in the browser, or their app when it is on this Mac
+/// and Settings says so. Their icons on a photo are the app's own, as macOS
+/// draws it in the Dock, wherever the app is on this Mac; else a short mark
+/// in a neutral circle. Snapfly carries no logo of theirs.
+enum ChatTarget: String, CaseIterable, Identifiable {
+    case chatGPT, claude, whatsApp, gmail
 
     var id: String { rawValue }
 
@@ -15,13 +15,39 @@ enum AIChat: String, CaseIterable, Identifiable {
         switch self {
         case .chatGPT: "ChatGPT"
         case .claude: "Claude"
+        case .whatsApp: "WhatsApp"
+        case .gmail: "Gmail"
         }
     }
 
-    var appID: String {
+    /// An AI chat: what goes in is covered as in any AI chat, and it can be
+    /// asked a question with the photo.
+    var isAI: Bool {
         switch self {
-        case .chatGPT: "com.openai.chat"
-        case .claude: "com.anthropic.claudefordesktop"
+        case .chatGPT, .claude: true
+        case .whatsApp, .gmail: false
+        }
+    }
+
+    /// The bundle IDs its app goes by; Gmail has none of its own.
+    var appIDs: [String] {
+        switch self {
+        case .chatGPT: ["com.openai.chat"]
+        case .claude: ["com.anthropic.claudefordesktop"]
+        case .whatsApp: ["net.whatsapp.WhatsApp", "desktop.WhatsApp"]
+        case .gmail: []
+        }
+    }
+
+    var appID: String? { appIDs.first }
+
+    /// The names an app made from its website goes by, like a Chrome app.
+    private var appNames: [String] {
+        switch self {
+        case .chatGPT: ["ChatGPT"]
+        case .claude: ["Claude"]
+        case .whatsApp: ["WhatsApp"]
+        case .gmail: ["Gmail"]
         }
     }
 
@@ -30,16 +56,24 @@ enum AIChat: String, CaseIterable, Identifiable {
         switch self {
         case .chatGPT: ["chatgpt.com", "chat.openai.com"]
         case .claude: ["claude.ai"]
+        case .whatsApp: ["web.whatsapp.com"]
+        case .gmail: ["mail.google.com"]
         }
     }
 
-    /// The page that starts a new chat.
+    /// The page that starts a new chat, or a new message in Gmail.
     var newChat: URL {
         switch self {
         case .chatGPT: URL(string: "https://chatgpt.com/")!
         case .claude: URL(string: "https://claude.ai/new")!
+        case .whatsApp: URL(string: "https://web.whatsapp.com/")!
+        case .gmail: URL(string: "https://mail.google.com/mail/?view=cm&fs=1")!
         }
     }
+
+    /// Gmail starts a message of its own each time, so a Gmail page already
+    /// in front is not the place.
+    var startsFresh: Bool { self == .gmail }
 
     /// Whether a website, with its subdomains, is this chat's.
     func owns(host: String?) -> Bool {
@@ -53,26 +87,28 @@ enum AIChat: String, CaseIterable, Identifiable {
         !item.isRecording
     }
 
-    /// Its icon, as a short mark in a neutral circle: the website's name, in
-    /// plain letters, since Snapfly carries no logo of theirs.
+    /// Its icon where its app is not on this Mac: a short mark in a neutral
+    /// circle, in plain letters, since Snapfly carries no logo of theirs.
     var mark: String {
         switch self {
         case .chatGPT: "GPT"
         case .claude: "Cl"
+        case .whatsApp: "WA"
+        case .gmail: "Gm"
         }
     }
 
     // MARK: On the photos
 
     /// Whether its icon shows on a photo, from Settings › Line. On unless
-    /// turned off. Whoever turned off the single switch of before keeps both
-    /// off until they choose again.
-    static func shows(_ chat: AIChat, in defaults: UserDefaults = .standard) -> Bool {
+    /// turned off. Whoever turned off the single switch of before keeps
+    /// ChatGPT and Claude off until they choose again.
+    static func shows(_ chat: ChatTarget, in defaults: UserDefaults = .standard) -> Bool {
         if defaults.object(forKey: chat.offKey) != nil { return !defaults.bool(forKey: chat.offKey) }
-        return !defaults.bool(forKey: "aiChatsOnPhotosOff")
+        return chat.isAI ? !defaults.bool(forKey: "aiChatsOnPhotosOff") : true
     }
 
-    static func setShows(_ on: Bool, _ chat: AIChat, in defaults: UserDefaults = .standard) {
+    static func setShows(_ on: Bool, _ chat: ChatTarget, in defaults: UserDefaults = .standard) {
         defaults.set(!on, forKey: chat.offKey)
     }
 
@@ -81,7 +117,7 @@ enum AIChat: String, CaseIterable, Identifiable {
     /// The ones whose icon shows on a photo under the pointer. They show
     /// whether or not the app is on this Mac: the website is always there.
     @MainActor
-    static var onPhotosNow: [AIChat] {
+    static var onPhotosNow: [ChatTarget] {
         allCases.filter { shows($0) }
     }
 
@@ -92,19 +128,45 @@ enum AIChat: String, CaseIterable, Identifiable {
         set { UserDefaults.standard.set(newValue, forKey: "aiChatsOpenInApp") }
     }
 
-    /// Where the app is installed, if it is.
+    /// Where its app is installed, if it is: by its bundle ID, else by name in
+    /// the folders apps live in, which finds an app made from the website,
+    /// like a Chrome app. Looked up again every few seconds at most, so a
+    /// photo under the pointer stays quick.
+    @MainActor
     var appURL: URL? {
-        NSWorkspace.shared.urlForApplication(withBundleIdentifier: appID)
+        if let known = Self.located[self], Date().timeIntervalSince(known.at) < 5 { return known.url }
+        let url = appIDs.lazy.compactMap { NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0) }.first
+            ?? Self.appFolders.lazy.flatMap { folder in
+                appNames.map { folder.appendingPathComponent($0 + ".app") }
+            }.first { FileManager.default.fileExists(atPath: $0.path) }
+        Self.located[self] = (Date(), url)
+        return url
     }
+
+    /// The bundle ID of the app that is on this Mac.
+    @MainActor
+    var installedAppID: String? {
+        appURL.flatMap { Bundle(url: $0)?.bundleIdentifier } ?? appID
+    }
+
+    @MainActor private static var located: [ChatTarget: (at: Date, url: URL?)] = [:]
+
+    private static let appFolders: [URL] = {
+        let home = FileManager.default.homeDirectoryForCurrentUser
+        return [URL(fileURLWithPath: "/Applications", isDirectory: true),
+                home.appendingPathComponent("Applications", isDirectory: true),
+                home.appendingPathComponent("Applications/Chrome Apps.localized", isDirectory: true),
+                home.appendingPathComponent("Applications/Edge Apps.localized", isDirectory: true)]
+    }()
 
     @MainActor private static var icons: [String: NSImage] = [:]
 
-    /// The app's own icon, as the Finder and the Dock show it, while chats
-    /// open in the app and it is on this Mac; nil otherwise, and the circle
-    /// shows the mark instead.
+    /// The app's own icon, as the Finder and the Dock show it, wherever its
+    /// app is on this Mac; nil without it, and the circle shows the mark
+    /// instead.
     @MainActor
     var icon: NSImage? {
-        guard Self.opensInApp, let path = appURL?.path else { return nil }
+        guard let path = appURL?.path else { return nil }
         if let icon = Self.icons[path] { return icon }
         let icon = NSWorkspace.shared.icon(forFile: path)
         Self.icons[path] = icon
@@ -126,9 +188,10 @@ enum AIChat: String, CaseIterable, Identifiable {
     func open(then ready: @escaping () -> Void) {
         let front = Paste.frontApp?.bundleIdentifier
         // Opening in the browser, the app in front is not the place.
-        if Self.opensInApp, front == appID { return ready() }
+        if !startsFresh, Self.opensInApp, let front, front == installedAppID { return ready() }
         // Asking a browser for its page takes a moment: only a browser.
-        if let front, ChatButton.browserIDs.contains(front), owns(host: ChatButton.pageInFront()?.host) {
+        if !startsFresh, let front, ChatButton.browserIDs.contains(front),
+           owns(host: ChatButton.pageInFront()?.host) {
             return ready()
         }
         let token = UUID()
@@ -157,7 +220,7 @@ enum AIChat: String, CaseIterable, Identifiable {
     /// first, since its chat then still has to load.
     @MainActor
     private func openApp(at app: URL, then finish: @escaping (Bool) -> Void) {
-        let bundle = appID
+        let bundle = installedAppID ?? ""
         let started = !NSRunningApplication.runningApplications(withBundleIdentifier: bundle).isEmpty
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.activates = true

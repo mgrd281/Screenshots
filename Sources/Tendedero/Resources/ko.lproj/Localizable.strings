@@ -669,7 +669,7 @@
 "something new" = "새 항목 있음";
 "%@ on photos" = "사진의 %@";
 "Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "종이비행기 옆에 아이콘이 나타납니다. 클릭하면 사진, 또는 함께 고른 사진을 %@(으)로 보냅니다.";
-"Open ChatGPT and Claude in" = "ChatGPT와 Claude 열기";
 "The browser" = "브라우저";
 "The app" = "앱";
-"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "브라우저는 웹사이트에서 채팅을 엽니다. 앱은 이 Mac에 있으면 해당 앱에서, 없으면 웹사이트에서 엽니다.";
+"Open in" = "열기 위치";
+"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "브라우저는 웹사이트를 엽니다. 앱은 이 Mac에 있으면 해당 앱을, 없으면 웹사이트를 엽니다.";

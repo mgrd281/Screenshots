@@ -214,19 +214,18 @@ struct PeggedView: View {
             )
     }
 
-    /// The paper plane, with the AI chats' icons beside it where the photo
-    /// has room for them, as `PhotoButtons` places them.
+    /// The paper plane, with the chats' icons beside it where the photo has
+    /// room for them, as `PhotoButtons` places them.
     private var sendButtons: some View {
-        let chats = AIChat.takes(item) ? AIChat.onPhotosNow : []
-        let arrangement = PhotoButtons.arrangement(card: Self.cardSize(for: item.thumb.size), chats: chats.count,
-                                                   leadingRoom: PhotoButtons.leadingRoom(badges: badges, document: item.isDocument))
-        let stack = arrangement == .column ? AnyLayout(VStackLayout(spacing: PhotoButtons.gap))
-                                           : AnyLayout(HStackLayout(spacing: PhotoButtons.gap))
+        let chats = ChatTarget.takes(item) ? ChatTarget.onPhotosNow : []
+        let fit = PhotoButtons.layout(card: Self.cardSize(for: item.thumb.size), chats: chats.count,
+                                      leadingRoom: PhotoButtons.leadingRoom(badges: badges, document: item.isDocument))
+        let stack = fit.arrangement == .column ? AnyLayout(VStackLayout(spacing: PhotoButtons.gap))
+                                               : AnyLayout(HStackLayout(spacing: PhotoButtons.gap))
         return stack {
-            if arrangement != .none {
-                ForEach(chats) { chat in
-                    chatIcon(chat)
-                }
+            // As many as the card holds, the first ones.
+            ForEach(Array(chats.prefix(fit.count))) { chat in
+                chatIcon(chat)
             }
             Image(systemName: "paperplane.fill")
                 .font(.system(size: 9, weight: .bold))
@@ -238,11 +237,11 @@ struct PeggedView: View {
         .padding(PhotoButtons.inset)
     }
 
-    /// The chat app's own icon while chats open in the app. An app icon keeps
-    /// a margin round its shape, so it is drawn a little larger to look as
-    /// large as the paper plane. Otherwise a glass circle with the chat's
-    /// short mark in plain letters.
-    private func chatIcon(_ chat: AIChat) -> some View {
+    /// The app's own icon, wherever it is on this Mac. An app icon keeps a
+    /// margin round its shape, so it is drawn a little larger to look as
+    /// large as the paper plane. Without the app, a glass circle with the
+    /// chat's short mark in plain letters.
+    private func chatIcon(_ chat: ChatTarget) -> some View {
         ZStack {
             if let icon = chat.icon {
                 Image(nsImage: icon)
@@ -435,13 +434,20 @@ enum PhotoButtons {
         return 5 + CGFloat(badges) * 18 + CGFloat(badges - 1) * 4 + gap
     }
 
-    /// How a card of this size holds the paper plane and that many chats.
-    static func arrangement(card: CGSize, chats: Int, leadingRoom: CGFloat) -> Arrangement {
-        guard chats > 0 else { return .none }
-        let length = inset + CGFloat(chats + 1) * size + CGFloat(chats) * gap
-        if card.width >= length + leadingRoom { return .row }
-        if card.height >= length + pickInset + pickSize + gap { return .column }
-        return .none
+    /// How a card of this size holds the paper plane and that many chats:
+    /// all of them in a row, when the card is wide enough beside its lock
+    /// badges or PDF capsule; else all in a column above the plane, clear of
+    /// the pick circle; else as many as the roomier of the two holds, the
+    /// first ones, and none when neither holds one.
+    static func layout(card: CGSize, chats: Int, leadingRoom: CGFloat) -> (arrangement: Arrangement, count: Int) {
+        guard chats > 0 else { return (.none, 0) }
+        let step = size + gap
+        let row = max(0, Int(((card.width - leadingRoom - inset - size) / step).rounded(.down)))
+        let column = max(0, Int(((card.height - pickInset - pickSize - gap - inset - size) / step).rounded(.down)))
+        if row >= chats { return (.row, chats) }
+        if column >= chats { return (.column, chats) }
+        if row == 0 && column == 0 { return (.none, 0) }
+        return row >= column ? (.row, row) : (.column, column)
     }
 
     /// The paper plane, in the bottom trailing corner.

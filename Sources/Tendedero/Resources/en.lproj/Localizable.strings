@@ -671,7 +671,7 @@
 "something new" = "something new";
 "%@ on photos" = "%@ on photos";
 "Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@.";
-"Open ChatGPT and Claude in" = "Open ChatGPT and Claude in";
 "The browser" = "The browser";
 "The app" = "The app";
-"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not.";
+"Open in" = "Open in";
+"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not.";
