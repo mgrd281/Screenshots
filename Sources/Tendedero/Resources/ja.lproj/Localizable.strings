@@ -689,7 +689,7 @@
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "「%1$@」はこれからすべての写真で隠されます。%2$@で変更できます。";
 "Always cover “%@”" = "「%@」を常に隠す";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "これからすべての写真で隠されます。プライバシーの自分のルールに入ります。";
-"Drag the icons into the order you want them under each photo." = "アイコンをドラッグして、写真の下に並ぶ順番を決めます。";
+"Drag the icons into the order you want them under each photo. Up to six show at a time." = "アイコンをドラッグして、写真の下に並ぶ順番を決めます。 同時に表示されるのは最大6個です。";
 "Moved to the Trash. Click to put it back on the line." = "ゴミ箱に入れました。クリックするとロープに戻します。";
 "%d moved to the Trash. Click to put them back on the line." = "%d枚をゴミ箱に入れました。クリックするとロープに戻します。";
 "Taken down. Click to put it back on the line." = "外しました。クリックするとロープに戻します。";

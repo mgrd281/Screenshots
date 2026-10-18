@@ -689,7 +689,7 @@
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” bundan sonra her fotoğrafta örtülür. Bunu %2$@ bölümünden değiştirebilirsin.";
 "Always cover “%@”" = "“%@” her zaman örtülsün";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "Bundan sonra her fotoğrafta örtülür; Gizlilik altında kendi kuralın olarak.";
-"Drag the icons into the order you want them under each photo." = "Simgeleri her fotoğrafın altında istediğin sıraya sürükle.";
+"Drag the icons into the order you want them under each photo. Up to six show at a time." = "Simgeleri her fotoğrafın altında istediğin sıraya sürükle. Aynı anda en fazla altısı görünür.";
 "Moved to the Trash. Click to put it back on the line." = "Çöp Kutusu’na taşındı. Yeniden ipe asmak için tıkla.";
 "%d moved to the Trash. Click to put them back on the line." = "%d tanesi Çöp Kutusu’na taşındı. Yeniden ipe asmak için tıkla.";
 "Taken down. Click to put it back on the line." = "İndirildi. Yeniden ipe asmak için tıkla.";

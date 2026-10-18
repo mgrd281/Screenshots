@@ -471,7 +471,16 @@ apps.
     settling 6 pt, and the photo's view (`GrabView`) and its hit rect reach
     30 pt below the card (`PhotoButtons.stripHeight`) while it does; the
     space between the icons takes no click.
-    - **What each shows.** WhatsApp, Gmail, GMX and WEB.DE show their logo,
+    - **More to choose.** Eight more sit after the six in Settings, off at
+      first: Perplexity, Grok and DeepSeek (AI chats, covered as in any AI
+      chat), Messenger, Outlook, Yahoo Mail, Facebook and Visual Studio
+      Code. A row holds six (`PhotoButtons.maxChats`): with six on, the
+      switches of the others are disabled until one is turned off, and the
+      row never shows more. The order row wraps onto more lines in the
+      pane. Outlook, Yahoo Mail, Facebook and Visual Studio Code copy the
+      covered photo for pasting, as GMX does; their marks are "Ol", "Y!",
+      "Fb", "VS", and "Px", "Gk", "DS", "Ms" for the rest.
+    - **What each shows.** All but ChatGPT and Claude show their logo,
       which the owner supplied, as a 192 px PNG from `assets/chat-logos`
       (`logo`, copied into the app by `scripts/build-app.sh`, the SVGs kept
       beside it), drawn as it is. ChatGPT and Claude carry no logo of theirs

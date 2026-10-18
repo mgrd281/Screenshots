@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Eight more icons under photos, off until you turn them on in Settings ›
+  Line › Icons under photos: Perplexity, Grok, DeepSeek, Messenger, Outlook,
+  Yahoo Mail, Facebook and Visual Studio Code. A row holds six at a time.
 - Hide Part covers the word you click, and Always cover, under it, covers
   that word in every photo from then on, as a rule of your own under
   Privacy.

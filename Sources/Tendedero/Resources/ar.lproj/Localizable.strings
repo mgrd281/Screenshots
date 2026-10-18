@@ -689,7 +689,7 @@
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "«%1$@» تُغطّى من الآن في كل صورة. يمكنك تغيير ذلك في %2$@.";
 "Always cover “%@”" = "تغطية «%@» دائمًا";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "يُغطّى من الآن في كل صورة، كقاعدة خاصة بك ضمن الخصوصية.";
-"Drag the icons into the order you want them under each photo." = "اسحب الأيقونات لترتيبها كما تريدها تحت كل صورة.";
+"Drag the icons into the order you want them under each photo. Up to six show at a time." = "اسحب الأيقونات لترتيبها كما تريدها تحت كل صورة. يظهر ستٌّ منها كحدّ أقصى في الوقت نفسه.";
 "Moved to the Trash. Click to put it back on the line." = "نُقلت إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
 "%d moved to the Trash. Click to put them back on the line." = "نُقلت %d إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
 "Taken down. Click to put it back on the line." = "أُنزلت. انقر لإعادتها إلى الحبل.";

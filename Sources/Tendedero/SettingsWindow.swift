@@ -1045,6 +1045,8 @@ private struct LinePane: View {
                         Text(String(format: L("%@ on photos"), chat.name))
                         Text(String(format: L("Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@."), chat.name))
                     }
+                    // A row holds six: another waits until one is turned off.
+                    .disabled(!ChatTarget.shows(chat) && ChatTarget.shownCount() >= PhotoButtons.maxChats)
                 }
                 LabeledContent {
                     Picker(L("Open in"), selection: $prefs.opensChatsInApp) {
@@ -1946,7 +1948,7 @@ private struct ChatOrderRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 12) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 28), spacing: 12)], alignment: .leading, spacing: 12) {
                 ForEach(prefs.chatOrder) { chat in
                     ChatIcon(chat: chat, size: 28)
                         .opacity(prefs.showsAIChat(chat).wrappedValue ? 1 : 0.35)
@@ -1963,7 +1965,7 @@ private struct ChatOrderRow: View {
                 }
             }
             .animation(.easeOut(duration: 0.15), value: prefs.chatOrder)
-            Text(L("Drag the icons into the order you want them under each photo."))
+            Text(L("Drag the icons into the order you want them under each photo. Up to six show at a time."))
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }
