@@ -1950,8 +1950,22 @@ private struct ChatOrderRow: View {
         VStack(alignment: .leading, spacing: 8) {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 28), spacing: 12)], alignment: .leading, spacing: 12) {
                 ForEach(prefs.chatOrder) { chat in
+                    let on = prefs.showsAIChat(chat).wrappedValue
+                    // Every logo in its own colours; the ones under photos carry a check.
                     ChatIcon(chat: chat, size: 28)
-                        .opacity(prefs.showsAIChat(chat).wrappedValue ? 1 : 0.35)
+                        .overlay(alignment: .bottomTrailing) {
+                            if on {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 7, weight: .heavy))
+                                    .foregroundStyle(.white)
+                                    .frame(width: 13, height: 13)
+                                    .background(Color.accentColor, in: Circle())
+                                    .overlay(Circle().stroke(Color(nsColor: .windowBackgroundColor), lineWidth: 1.5))
+                                    .offset(x: 4, y: 4)
+                                    .transition(.scale.combined(with: .opacity))
+                            }
+                        }
+                        .animation(.easeOut(duration: 0.15), value: on)
                         .help(chat.name)
                         .onDrag {
                             dragged = chat
@@ -1960,6 +1974,7 @@ private struct ChatOrderRow: View {
                         .onDrop(of: [.text], delegate: ChatDrop(chat: chat, prefs: prefs, dragged: $dragged))
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(chat.name)
+                        .accessibilityValue(on ? "" : L("Off"))
                         .accessibilityAction(named: L("Move Earlier")) { prefs.moveChat(chat, by: -1) }
                         .accessibilityAction(named: L("Move Later")) { prefs.moveChat(chat, by: 1) }
                 }
