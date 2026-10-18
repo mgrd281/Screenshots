@@ -102,15 +102,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         // The Workspace, when it is on: where screenshots are kept, and the
         // line following the files it moves.
-        let workspace = Workspace.shared
-        workspace.onChange = { [weak self] in
+        let desktopWorkspace = Workspace.shared
+        desktopWorkspace.onChange = { [weak self] in
             if Inbox.isEnabled || Edition.appStore { Inbox.apply() }
             self?.startWatcher()
         }
-        workspace.relocated = { [weak self] old, new in self?.line.relocate(from: old, to: new) }
-        workspace.rebased = { [weak self] old, new in self?.line.rebase(from: old, to: new) }
-        workspace.removed = { [weak self] in self?.line.prune() }
-        workspace.start()
+        desktopWorkspace.relocated = { [weak self] old, new in self?.line.relocate(from: old, to: new) }
+        desktopWorkspace.rebased = { [weak self] old, new in self?.line.rebase(from: old, to: new) }
+        desktopWorkspace.removed = { [weak self] in self?.line.prune() }
+        desktopWorkspace.start()
 
         if Inbox.isEnabled || Edition.appStore { Inbox.apply() }
         restoreSettingsOnTermination()

@@ -42,7 +42,7 @@ final class Workspace: ObservableObject {
     }
 
     /// Not offered in the App Store edition.
-    static var isAvailable: Bool { !Edition.appStore }
+    nonisolated static var isAvailable: Bool { !Edition.appStore }
 
     @Published private(set) var config: WorkspaceConfig
     @Published private(set) var isOn: Bool
