@@ -342,7 +342,8 @@ final class Guide {
         steps = Self.introductionSteps
         lesson = nil
         then = nil
-        guard let first = GuideFlow.resume(from: from, in: ids, shows: shows) else { return }
+        // Without a photo to go on with, it goes on at the screenshot.
+        let first = GuideFlow.resume(from: from, in: ids, shows: shows) ?? "screenshot"
         show(.step(first), focus: true)
     }
 
@@ -354,7 +355,8 @@ final class Guide {
         self.lesson = lesson
         then = nil
         guard let first = GuideFlow.step(after: nil, in: ids, shows: shows) else {
-            Notice.show(L("Take a screenshot first: this shows on a photo on the line."))
+            // Only a missing photo is for taking a screenshot.
+            if !has(.photo) { Notice.show(L("Take a screenshot first: this shows on a photo on the line.")) }
             return
         }
         show(.step(first), focus: true)
@@ -544,6 +546,8 @@ final class Guide {
         lesson = nil
         timer?.invalidate()
         timer = nil
+        paused = false
+        cardPanel?.ignoresMouseEvents = false
         holdLine(false)
         shade.shown = false
         let panels = [shadePanel, cardPanel].compactMap { $0 }
@@ -579,6 +583,8 @@ final class Guide {
             let panel = GuidePanel(interactive: true)
             panel.contentViewController = host
             panel.setContentSize(NSSize(width: GuideCard.windowWidth, height: 200))
+            // Invisible until it has its place and fades in.
+            panel.alphaValue = 0
             cardHost = host
             cardPanel = panel
         }
@@ -593,7 +599,12 @@ final class Guide {
             card.content = .welcome
         case .step(let id):
             guard let step = steps.first(where: { $0.id == id }) else { return }
-            let place = GuideFlow.place(of: id, in: ids, shows: shows)
+            // Before the first screenshot hangs, the steps that need a photo
+            // are still to come, so they count.
+            let comingSoon = !has(.photo) && ids.contains("screenshot")
+            let place = GuideFlow.place(of: id, in: ids) { other in
+                self.shows(other) || (comingSoon && self.steps.first(where: { $0.id == other })?.needs == .photo)
+            }
             let canGoBack = GuideFlow.step(before: id, in: ids, shows: shows) != nil
             card.content = .step(step, number: place?.number ?? 1, count: place?.count ?? 1,
                                  canGoBack: canGoBack, lesson: lesson != nil)
@@ -658,8 +669,14 @@ final class Guide {
             for panel in [shadePanel, cardPanel] {
                 panel?.animator().alphaValue = busy ? 0 : 1
             }
-            // Out of sight, the card takes no clicks either.
-            cardPanel?.ignoresMouseEvents = busy
+        }
+        // Only the card itself takes clicks: its clear margin, round the
+        // arrow and the shadow, lets them through to what it points at.
+        if let cardPanel {
+            let body = cardPanel.frame.insetBy(dx: GuideCard.margin - GuideCardShape.arrowLength,
+                                               dy: GuideCard.margin - GuideCardShape.arrowLength)
+            let ignore = paused || !body.contains(NSEvent.mouseLocation)
+            if cardPanel.ignoresMouseEvents != ignore { cardPanel.ignoresMouseEvents = ignore }
         }
         guard !paused else { return }
 
@@ -718,7 +735,9 @@ final class Guide {
     /// front: the introduction steps aside until it is gone.
     private func somethingElseTakesTheScreen() -> Bool {
         NSApp.windows.contains { window in
-            guard window.isVisible, !(window is GuidePanel), window.alphaValue > 0.01 else { return false }
+            // A flight over the screen lets every click through: not a window.
+            guard window.isVisible, !(window is GuidePanel), window.alphaValue > 0.01,
+                  !window.ignoresMouseEvents else { return false }
             if window.styleMask.contains(.titled) { return window.isKeyWindow }
             guard let screen = window.screen else { return false }
             return window.frame.width >= screen.frame.width - 1 && window.frame.height >= screen.frame.height - 1

@@ -169,6 +169,8 @@ final class Line: ObservableObject {
     func land(_ id: UUID) {
         guard let i = items.firstIndex(where: { $0.id == id }) else { return }
         items[i].flying = false
+        // A flying capture counts for the introduction once it hangs.
+        Guide.shared.happened(.photoHung)
     }
 
     /// Called just before a photo starts falling, so the fall can be drawn

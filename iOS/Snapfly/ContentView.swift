@@ -37,6 +37,7 @@ struct ContentView: View {
         }
         .onAppear {
             library.load()
+            guide.closeShot = { path.removeAll() }
             guide.openNewest = {
                 guard let newest = library.shots.first?.localIdentifier else { return false }
                 path.append(newest)

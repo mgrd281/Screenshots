@@ -84,6 +84,8 @@ final class PhoneGuide: ObservableObject {
     /// Opens the newest screenshot, for Next on the first step; set by the
     /// grid, which knows it.
     var openNewest: (() -> Bool)?
+    /// Goes back to the grid, for Back on the second step.
+    var closeShot: (() -> Void)?
 
     private init() {}
 
@@ -121,7 +123,8 @@ final class PhoneGuide: ObservableObject {
 
     func back() {
         guard case .step(.send) = stage else { return }
-        go(to: .pick)
+        // Leaving the screenshot moves the step back as the grid shows.
+        if let closeShot { closeShot() } else { go(to: .pick) }
     }
 
     /// The cross, or Skip for Now on the welcome card.

@@ -573,8 +573,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             itemsChanged()
             return
         }
-        Guide.shared.happened(.photoHung)
-        guard let from else { return }
+        guard let from else {
+            Guide.shared.happened(.photoHung)
+            return
+        }
         // Let the line lay out before measuring the landing spot.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self] in
             self?.fly(id, from: from)
@@ -663,8 +665,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             itemsChanged()
             return
         }
-        Guide.shared.happened(.photoHung)
-        guard let from else { return }
+        guard let from else {
+            Guide.shared.happened(.photoHung)
+            return
+        }
         // Let the line come down and lay out before measuring the landing spot.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self] in
             self?.fly(id, from: from)
