@@ -81,9 +81,10 @@ enum Layout {
     static let pinAbove: CGFloat = 9.5
     /// Distance from the top of a hanging view, the clip, to its card.
     static let cardBelowTop: CGFloat = 26 - 12
-    /// The tag's width, and how tall its five tools stand without a clip.
+    /// The tag's width, and how tall its tools stand without a clip: five
+    /// of 22, or six of 20.
     static let tagWidth: CGFloat = 26
-    static let compactToolsHeight: CGFloat = 5 * 22 + 2
+    static let compactToolsHeight: CGFloat = 6 * 20 + 2
 
     /// How far below the menu bar the line hangs, in points, from dragging
     /// the grip on its tag. 0 is right under the menu bar, where it always

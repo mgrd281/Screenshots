@@ -492,6 +492,9 @@
 "%@ (edited)" = "%@ (modifié)";
 "Saved to %@. Click to show it in Finder." = "Enregistré dans %@. Clique pour l’afficher dans le Finder.";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "Enregistré sous %1$@ dans %2$@. Clique pour l’afficher dans le Finder.";
+"Download" = "Télécharger";
+"Choose the folder for downloads." = "Choisis le dossier des téléchargements.";
+"Saved %1$d photos in %2$@. Click to show them in Finder." = "%1$d photos enregistrées dans %2$@. Clique pour les afficher dans le Finder.";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Enregistré avec la photo. Elle part telle que dessinée ; le fichier dans %@ reste tel quel.";
 "Crop…" = "Recadrer…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Fais glisser sur la partie à garder. Retour garde toute la photo, Échap annule.";

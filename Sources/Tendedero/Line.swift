@@ -362,6 +362,14 @@ final class Line: ObservableObject {
         return paste(picked.isEmpty ? items.filter { !$0.falling } : picked)
     }
 
+    /// Download, from the tag: the photos picked, or every photo, saved as
+    /// they leave the line into Downloads. They stay on the line.
+    func download() {
+        let live = items.filter { !$0.falling }
+        let picked = live.filter { pickedIDs.contains($0.id) }
+        Downloads.save((picked.isEmpty ? live : picked).map(\.url))
+    }
+
     /// The chat button's message: the photos picked, or every photo, then
     /// the message after them, so they go as one message.
     @discardableResult

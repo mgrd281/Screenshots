@@ -543,14 +543,18 @@ apps.
   a capture does.
 
 ### Tag
-- A 26 pt wide capsule of SF Symbol tools: grip, combine, search, send and
-  take down. While photos are picked, PDF takes search's place, so it never
-  holds more than five.
+- A 26 pt wide capsule of SF Symbol tools: grip, combine, search, send,
+  download (`arrow.down.to.line`, right above the trash) and take down.
+  While photos are picked, PDF takes search's place, so it never holds more
+  than six.
+- Each tool stands 24 pt tall with a clip and 22 pt without; when six share
+  the tag they stand 20 pt, so the tag keeps its height (`LineTag.rowHeight`).
 - It is clipped to the rope on the clothesline and sits inside the holder on
   the shelf and the island.
 - Tools show only when they can act.
 - Under the pointer, a tool's glyph sits on a 22 pt circle of
-  `.primary` at 10%, or white at 18% on the island, fading in over 0.12 s.
+  `.primary` at 10%, or white at 18% on the island, fading in over 0.12 s;
+  20 pt when the tools stand 20 pt.
 
 ### Navigation
 - **Menu bar icon.** Snapfly's own mark, drawn in code as a template
