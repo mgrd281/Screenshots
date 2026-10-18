@@ -493,6 +493,9 @@
 "Saved to %@. Click to show it in Finder." = "已存储到“%@”。点按可在访达中显示。";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "已作为“%1$@”存储到“%2$@”。点按可在访达中显示。";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "已随照片存储。发送时带有你绘制的内容；“%@”中的文件保持原样。";
+"Crop…" = "裁剪…";
+"Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "拖过要保留的部分。按 Return 键保留整张照片，按 Esc 取消。";
+"Cropped. It goes out cropped; the file in %@ stays as it is." = "已裁剪。发送时只带裁剪后的部分；“%@”中的文件保持原样。";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "已随照片存储。发送的内容中这些部分保持遮盖；“%@”中的文件保持原样。";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "按发送时的样子（含绘制和裁剪）将照片存储为单独的文件。";
 "Keep as a file" = "保留为文件";

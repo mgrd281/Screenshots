@@ -1093,6 +1093,38 @@ final class Line: ObservableObject {
         }
     }
 
+    /// Crop…, from a photo's menu or an ⌥-click: drag over the part to keep,
+    /// on the photo shown large. It is kept as the crop of the photo's
+    /// drawing and cut from what leaves the line; the file stays as it is.
+    func crop(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
+        let url = item.url
+        QuickCrop.shared.crop(url) { [weak self] cropped in
+            self?.cover(url)
+            guard cropped else { return }
+            let place = Folders.placeName(url.deletingLastPathComponent())
+            Notice.show(String(format: L("Cropped. It goes out cropped; the file in %@ stays as it is."), place),
+                        done: true, lasting: 6)
+        }
+    }
+
+    /// Whether a photo goes out cut to a part of it.
+    func isCropped(_ id: UUID) -> Bool {
+        guard let item = items.first(where: { $0.id == id }), item.isImage else { return false }
+        return Drawings.saved(item.url).crop != nil
+    }
+
+    /// Keep Whole Photo, from a cropped photo's menu: the crop goes, and
+    /// whatever is drawn on it stays.
+    func keepWhole(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
+        var drawing = Drawings.saved(item.url)
+        guard drawing.crop != nil else { return }
+        drawing.crop = nil
+        Drawings.set(drawing, for: item.url)
+        cover(item.url)
+    }
+
     /// Save Copy…, from a photo's menu or Draw on Photo: the photo as it
     /// leaves the line, drawn on, cropped, covered and stamped, saved as a
     /// file of its own where the owner picks, in the original's folder at

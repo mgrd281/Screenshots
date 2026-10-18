@@ -493,6 +493,9 @@
 "Saved to %@. Click to show it in Finder." = "%@에 저장했습니다. Finder에서 보려면 클릭하세요.";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@에 %1$@(으)로 저장했습니다. Finder에서 보려면 클릭하세요.";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "사진과 함께 저장했습니다. 그린 대로 보내지며, %@에 있는 파일은 그대로입니다.";
+"Crop…" = "자르기…";
+"Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "남길 부분 위로 드래그하세요. Return 키는 사진 전체를 남기고, Esc 키는 취소해요.";
+"Cropped. It goes out cropped; the file in %@ stays as it is." = "잘랐습니다. 자른 부분이 보내지며, %@에 있는 파일은 그대로입니다.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "사진과 함께 저장했습니다. 보내는 것에서는 그 부분이 계속 가려지며, %@에 있는 파일은 그대로입니다.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "사진을 보내지는 그대로, 그린 것과 자른 것을 담아 별도의 파일로 저장합니다.";
 "Keep as a file" = "파일로 보관";

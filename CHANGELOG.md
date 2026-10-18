@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Crop, quickly: choose Crop… in a photo's menu, or ⌥-click the photo, and
+  it opens large. Drag over the part to keep, and it is kept as you let go;
+  Return keeps the whole photo. It goes out cropped, and the file stays as
+  it is.
 - ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE in a row under a photo,
   so the photo itself stays calm, each with its own switch under Line.
   WhatsApp, Gmail, GMX and WEB.DE show their logos; ChatGPT and Claude show

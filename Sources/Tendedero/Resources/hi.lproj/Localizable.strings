@@ -495,6 +495,9 @@
 "Saved to %@. Click to show it in Finder." = "%@ में सहेजा गया। Finder में दिखाने के लिए क्लिक करें।";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@ में %1$@ नाम से सहेजा गया। Finder में दिखाने के लिए क्लिक करें।";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "फ़ोटो के साथ सहेजा गया। यह वैसे ही जाती है जैसे आपने बनाया; %@ में फ़ाइल जैसी है वैसी रहती है।";
+"Crop…" = "क्रॉप करें…";
+"Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "रखने वाले हिस्से पर ड्रैग करें। Return पूरी फ़ोटो रखता है, Escape रद्द करता है।";
+"Cropped. It goes out cropped; the file in %@ stays as it is." = "क्रॉप हो गई। यह क्रॉप होकर जाती है; %@ में फ़ाइल जैसी है वैसी रहती है।";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "फ़ोटो के साथ सहेजा गया। ये हिस्से भेजी जाने वाली हर चीज़ में छिपे रहते हैं; %@ में फ़ाइल जैसी है वैसी रहती है।";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "फ़ोटो को जैसी वह जाती है, बनाई और क्रॉप की हुई, अलग फ़ाइल के रूप में सहेजता है।";
 "Keep as a file" = "फ़ाइल के रूप में रखें";

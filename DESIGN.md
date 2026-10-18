@@ -988,8 +988,9 @@ apps.
     It fades in over 0.15 s. Escape, Don't Send or the cross leave the
     photos hanging; Send closes it, gives the keyboard back to the chat and
     pastes 0.15 s later.
-- **Capture overlay** (`Capture.swift`), the one surface that covers the
-  whole screen. It shows the screens still, captured a moment before.
+- **Capture overlay** (`Capture.swift`), one of the two surfaces that cover
+  the whole screen, with Crop below. It shows the screens still, captured a
+  moment before.
   - It takes the keyboard without activating the app, as the search bar does.
     Return takes the whole screen, and Escape or a right-click cancels.
   - **At rest**, the still screen is dimmed by black at 12%, and the window
@@ -1002,6 +1003,34 @@ apps.
     with the pointer, and hides once a drag begins. It says what the choice
     is for: a screenshot, a timed screenshot or a recording.
   - The cursor is the crosshair.
+- **Crop** (`QuickCrop.swift`), from a photo's menu (Crop…, `crop`, after
+  Markup) or an ⌥-click on it: the photo large over the screen with the
+  pointer, to drag over the part to keep, quicker than Draw on Photo's crop
+  and kept the same way, as the drawing's crop.
+  - A non-activating panel over everything, as the capture overlay is, that
+    takes the keyboard. It fades in and out over 0.15 s.
+  - The screen is dimmed by black at 45%. The photo sits centred in the
+    visible frame, 80 pt kept free at the bottom for the hint, as large as
+    fits in 80% of it and never larger than itself at the screen's scale
+    (`QuickCropLayout`), under the floating card's shadow (black 18%,
+    radius 14, y 6). It shows what is drawn on it, not the crop.
+  - A crop kept before shows as Draw on Photo shows one at rest: outside it
+    black at 60%, with a 1 pt edge of white at 90%.
+  - **While dragging**, outside the part on the photo is black at 45%, the
+    part has the capture overlay's 1 pt edge of white at 90%, and the
+    capture overlay's size capsule (`SizeCapsule`) gives the pixels kept. A
+    drag begun beside the photo keeps to its edges; under 4 pt across or
+    up it is not meant, and the next try waits.
+  - Letting go keeps the part at once. Return keeps the whole photo, and
+    Escape, a right-click or a click beside the photo cancels.
+  - The capture overlay's hint (`CaptureHint`) sits above the Dock and
+    hides once a drag begins.
+  - The cursor is the crosshair over the photo and while dragging, and the
+    arrow beside it.
+  - A crop kept says so in a done note (6 s): it goes out cropped, and the
+    file in its folder stays as it is. Keep Whole Photo
+    (`arrow.up.left.and.arrow.down.right`) follows Crop… in the menu of a
+    cropped photo.
 - **Screenshot button** (`CaptureButton.swift`), a 40 pt circle with a glyph
   (17 pt semibold), floating
   over every app at the trailing edge of the main screen, 60% up its
