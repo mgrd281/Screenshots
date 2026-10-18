@@ -11,6 +11,8 @@ keeps a download of each version.
   Text and AI, Edit and Save and Export as submenus, then Open, Quick Look,
   Keep on Top, Show in Finder and Pin, and All Photos and Take down at the
   end. About fifteen rows instead of fifty.
+- The icons in Settings › Line › Icons under photos stand in even rows
+  across the whole width: nine and nine, not a full row with two under it.
 - Settings › General › AI Assistant looks new: Claude and ChatGPT are two
   tiles with their app's icon, from your Mac, and each says whether a key
   is saved for it. Save sits beside the key, the line under it says where
