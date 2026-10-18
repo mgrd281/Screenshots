@@ -238,8 +238,10 @@ struct PeggedView: View {
         .padding(PhotoButtons.inset)
     }
 
-    /// The chat app's own icon. An app icon keeps a margin round its shape,
-    /// so it is drawn a little larger to look as large as the paper plane.
+    /// The chat app's own icon while chats open in the app. An app icon keeps
+    /// a margin round its shape, so it is drawn a little larger to look as
+    /// large as the paper plane. Otherwise a glass circle with the chat's
+    /// short mark in plain letters.
     private func chatIcon(_ chat: AIChat) -> some View {
         ZStack {
             if let icon = chat.icon {
@@ -247,6 +249,14 @@ struct PeggedView: View {
                     .resizable()
                     .interpolation(.high)
                     .frame(width: PhotoButtons.size * 1.22, height: PhotoButtons.size * 1.22)
+            } else {
+                Text(chat.mark)
+                    .font(.system(size: 8, weight: .bold, design: .rounded))
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+                    .foregroundStyle(.primary)
+                    .frame(width: PhotoButtons.size, height: PhotoButtons.size)
+                    .controlGlass(circle: true)
             }
         }
         .frame(width: PhotoButtons.size, height: PhotoButtons.size)

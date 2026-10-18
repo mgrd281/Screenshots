@@ -443,12 +443,17 @@ apps.
     the accent circle with a 9 pt bold white check, and a click puts it
     back. Its tip says Pick or Unpick.
   - Bottom trailing: send, a 22 pt accent circle with `paperplane.fill`.
-    Beside it, ChatGPT and Claude: each app's own icon, as macOS draws it
-    (`NSWorkspace.icon(forFile:)`), 22 pt with the icon drawn at 122% so
-    its shape matches the circle, under the small badge shadow. Snapfly
-    carries no logo of theirs, so an icon shows only while its app is on
-    the Mac, and only with ChatGPT and Claude on photos on (Settings ›
-    Line, under Mark photos sent before, on at first). `PhotoButtons` places them: in a row along the bottom, 4 pt
+    Beside it, ChatGPT and Claude, each on its own switch (Settings › Line,
+    ChatGPT on photos and Claude on photos, under Mark photos sent before,
+    on at first). Snapfly carries no logo of theirs, so the circle is a
+    22 pt `controlGlass` circle with the chat's short mark, "GPT" or "Cl",
+    in 8 pt bold rounded `.primary`, under the small badge shadow. Only
+    where Open ChatGPT and Claude in is set to The app (a segmented choice
+    under the two switches; The browser at first) and the app is on the
+    Mac, it is the app's own icon as macOS draws it
+    (`NSWorkspace.icon(forFile:)`), drawn at 122% so its shape matches the
+    circle. A click opens the chat on the website in the Mac's default
+    browser, or in the app. `PhotoButtons` places them: in a row along the bottom, 4 pt
     apart, when the card is wide enough beside its lock badges or PDF
     capsule; else in a column above the paper plane, clear of the pick
     circle; else not at all, and the photo's menu has Send to ChatGPT and

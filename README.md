@@ -67,7 +67,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
-| Click ChatGPT or Claude beside the paper plane | Send it, or the photos picked with it, into ChatGPT or Claude: the app comes to the front with its chat, or opens on a new one, and they are pasted in; with the website open in the browser in front, they go there. The icons are the apps' own and show while the apps are on your Mac; without them, Send to ChatGPT and Send to Claude in a photo's menu open the website instead. |
+| Click ChatGPT or Claude beside the paper plane | Send it, or the photos picked with it, into ChatGPT or Claude: the website opens on a new chat in your browser, or, with the chat already open in the browser in front, they go there, and the photos are pasted in. Each icon has its own switch in Settings, under Line, and Open ChatGPT and Claude in chooses the app instead of the browser, when it is on your Mac. |
 | Right-click ChatGPT or Claude beside the paper plane | Ask a question with it: the photo goes into the chat with the question after it, like "Summarize this in a few lines". Ask ChatGPT and Ask Claude in a photo's menu do the same. The questions are yours to write in Settings, under Line. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
@@ -457,7 +457,7 @@ over a chat, or with ChatGPT or Claude beside the paper plane. Those two
 send straight into the app, which comes to the front with the chat it
 shows, or opens on a new one; the photos are pasted in once it is ready,
 covered as in any AI chat, after the check before sending. Turn the icons
-off with ChatGPT and Claude on photos, under Line.
+off with ChatGPT on photos and Claude on photos, under Line, each on its own.
 
 Something to ask about it? Right-click ChatGPT or Claude on the photo, or
 choose Ask ChatGPT or Ask Claude in its menu, and the photo goes with a

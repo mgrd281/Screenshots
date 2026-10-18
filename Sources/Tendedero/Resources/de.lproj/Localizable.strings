@@ -117,8 +117,6 @@
 "Send to %@" = "An %@ senden";
 "Opening %@…" = "%@ wird geöffnet …";
 "Could not open %@. The photos stay on the line." = "%@ konnte nicht geöffnet werden. Die Fotos bleiben an der Leine.";
-"ChatGPT and Claude on photos" = "ChatGPT und Claude auf Fotos";
-"Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there." = "Ihre Symbole erscheinen neben dem Papierflieger, wenn ihre Apps auf diesem Mac sind. Ein Klick sendet das Foto, oder die mit ihm ausgewählten, in einen Chat dort.";
 "Paste into the app in front" = "In die App im Vordergrund einsetzen";
 "Combine into one image" = "Zu einem Bild zusammenfügen";
 "One under another" = "Untereinander";
@@ -669,3 +667,9 @@
 "Count on the menu bar icon" = "Anzahl am Menüleistensymbol";
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "Wie viele Fotos hängen, steht neben dem Symbol, und ein kleiner Punkt darauf zeigt, dass etwas Neues hängt, das die Leine noch nicht gezeigt hat.";
 "something new" = "etwas Neues";
+"%@ on photos" = "%@ auf Fotos";
+"Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "Sein Symbol erscheint neben dem Papierflieger. Ein Klick sendet das Foto, oder die damit ausgewählten, in %@.";
+"Open ChatGPT and Claude in" = "ChatGPT und Claude öffnen in";
+"The browser" = "Browser";
+"The app" = "App";
+"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "Der Browser öffnet den Chat auf der Website. Die App öffnet ihn in der eigenen App, wenn sie auf diesem Mac ist, sonst auf der Website.";

@@ -184,10 +184,26 @@ final class Preferences: ObservableObject {
         set { change { Line.marksSentBefore = newValue; line.objectWillChange.send() } }
     }
 
-    /// So do ChatGPT's and Claude's icons beside the paper plane.
-    var showsAIChats: Bool {
-        get { AIChat.onPhotos }
-        set { change { AIChat.onPhotos = newValue; line.objectWillChange.send() } }
+    /// So do ChatGPT's and Claude's icons beside the paper plane, each on its own.
+    func showsAIChat(_ chat: AIChat) -> Binding<Bool> {
+        Binding(
+            get: { AIChat.shows(chat) },
+            set: { [weak self] on in
+                // SwiftUI sets it from the main thread.
+                MainActor.assumeIsolated {
+                    guard let self else { return }
+                    self.change {
+                        AIChat.setShows(on, chat)
+                        self.line.objectWillChange.send()
+                    }
+                }
+            })
+    }
+
+    /// Where a click on one of them opens the chat: the app, or the browser.
+    var opensChatsInApp: Bool {
+        get { AIChat.opensInApp }
+        set { change { AIChat.opensInApp = newValue; line.objectWillChange.send() } }
     }
 
     var historyDays: Int? {
@@ -974,9 +990,23 @@ private struct LinePane: View {
                     Text(L("A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history."))
                 }
                 .disabled(prefs.historyDays == nil)
-                Toggle(isOn: $prefs.showsAIChats) {
-                    Text(L("ChatGPT and Claude on photos"))
-                    Text(L("Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there."))
+                ForEach(AIChat.allCases) { chat in
+                    Toggle(isOn: prefs.showsAIChat(chat)) {
+                        Text(String(format: L("%@ on photos"), chat.name))
+                        Text(String(format: L("Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@."), chat.name))
+                    }
+                }
+                LabeledContent {
+                    Picker(L("Open ChatGPT and Claude in"), selection: $prefs.opensChatsInApp) {
+                        Text(L("The browser")).tag(false)
+                        Text(L("The app")).tag(true)
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.segmented)
+                    .fixedSize()
+                } label: {
+                    Text(L("Open ChatGPT and Claude in"))
+                    Text(L("The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not."))
                 }
                 LabeledContent {
                     HStack {

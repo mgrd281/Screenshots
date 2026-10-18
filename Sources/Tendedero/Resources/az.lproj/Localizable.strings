@@ -119,8 +119,6 @@
 "Send to %@" = "Göndər: %@";
 "Opening %@…" = "%@ açılır…";
 "Could not open %@. The photos stay on the line." = "%@ açılmadı. Fotolar ipdə qalır.";
-"ChatGPT and Claude on photos" = "Fotolarda ChatGPT və Claude";
-"Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there." = "Tətbiqləri bu Mac-də olanda nişanları kağız təyyarənin yanında görünür. Bir klik fotonu və ya onunla seçilənləri oradakı söhbətə göndərir.";
 "Paste into the app in front" = "Öndəki tətbiqə yapışdır";
 "Combine into one image" = "Bir şəkildə birləşdir";
 "One under another" = "Alt-alta";
@@ -671,3 +669,9 @@
 "Count on the menu bar icon" = "Menyu sətri ikonunda say";
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "Neçə şəklin asıldığı ikonun yanında görünür, ip hələ göstərmədiyi yeni bir şey asılanda isə üstündə kiçik nöqtə olur.";
 "something new" = "yeni bir şey";
+"%@ on photos" = "Şəkillərdə %@";
+"Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "İkonu kağız təyyarənin yanında görünür. Klik şəkli və ya onunla seçilənləri %@ söhbətinə göndərir.";
+"Open ChatGPT and Claude in" = "ChatGPT və Claude bunda açılsın";
+"The browser" = "Brauzer";
+"The app" = "Tətbiq";
+"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "Brauzer söhbəti vebsaytda açır. Tətbiq onu öz tətbiqində açır, bu Mac-də varsa; yoxdursa vebsaytda.";

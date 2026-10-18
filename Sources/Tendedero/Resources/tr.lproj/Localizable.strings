@@ -117,8 +117,6 @@
 "Send to %@" = "Gönder: %@";
 "Opening %@…" = "%@ açılıyor…";
 "Could not open %@. The photos stay on the line." = "%@ açılamadı. Fotoğraflar ipte kalır.";
-"ChatGPT and Claude on photos" = "Fotoğraflarda ChatGPT ve Claude";
-"Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there." = "Uygulamaları bu Mac’teyken simgeleri kâğıt uçağın yanında görünür. Bir tık, fotoğrafı ya da onunla seçilenleri oradaki bir sohbete gönderir.";
 "Paste into the app in front" = "Öndeki uygulamaya yapıştır";
 "Combine into one image" = "Tek görselde birleştir";
 "One under another" = "Alt alta";
@@ -669,3 +667,9 @@
 "Count on the menu bar icon" = "Menü çubuğu simgesinde sayı";
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "Kaç fotoğraf asılı olduğu simgenin yanında görünür; ipin henüz göstermediği yeni bir şey asılıyken simgede küçük bir nokta olur.";
 "something new" = "yeni bir şey";
+"%@ on photos" = "Fotoğraflarda %@";
+"Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "Simgesi kâğıt uçağın yanında görünür. Tıklamak fotoğrafı, ya da onunla seçilenleri, %@ sohbetine gönderir.";
+"Open ChatGPT and Claude in" = "ChatGPT ve Claude şurada açılsın";
+"The browser" = "Tarayıcı";
+"The app" = "Uygulama";
+"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "Tarayıcı sohbeti web sitesinde açar. Uygulama, bu Mac'te varsa kendi uygulamasında, yoksa web sitesinde açar.";
