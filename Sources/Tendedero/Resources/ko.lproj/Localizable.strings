@@ -853,3 +853,9 @@
 "Copy SVG" = "SVG 복사";
 "Save SVG…" = "SVG 저장…";
 "Compare the photo with its SVG" = "사진과 SVG 비교";
+
+/* SettingsWindow: AI Assistant */
+"Key saved" = "키 저장됨";
+"No key yet" = "아직 키 없음";
+"Saved in your keychain, ending in %@" = "키체인에 저장됨, 끝자리 %@";
+"Use the usual model" = "기본 모델 사용";

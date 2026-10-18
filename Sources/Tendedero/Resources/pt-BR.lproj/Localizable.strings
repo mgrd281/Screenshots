@@ -853,3 +853,9 @@
 "Copy SVG" = "Copiar SVG";
 "Save SVG…" = "Salvar SVG…";
 "Compare the photo with its SVG" = "Comparar a foto com o SVG";
+
+/* SettingsWindow: AI Assistant */
+"Key saved" = "Chave salva";
+"No key yet" = "Ainda sem chave";
+"Saved in your keychain, ending in %@" = "Salva no seu Porta-chaves, termina em %@";
+"Use the usual model" = "Usar o modelo habitual";

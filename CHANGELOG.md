@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Settings › General › AI Assistant looks new: Claude and ChatGPT are two
+  tiles with their app's icon, from your Mac, and each says whether a key
+  is saved for it. Save sits beside the key, the line under it says where
+  the key is kept, and the model's field has a way back to the usual one.
 - Convert to SVG…, in a photo's menu, draws the photo again as shapes that
   stay sharp at any size. Your photo and its SVG sit one over the other
   under a divider, and you pick the kind of picture (screenshot, logo or

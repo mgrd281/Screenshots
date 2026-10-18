@@ -623,11 +623,13 @@ screenshot shows and what matters in it, in your language, and answers a
 question you type about it. Order Details asks it for the parts your Mac
 did not find.
 
-Set it up once in Settings, under General › AI Assistant: choose Claude or
-ChatGPT, click Get a Key… to make an API key on their website, paste it,
-and click Save. The key stays in your keychain; Settings shows only its last
-four characters. Model names the model asked, and is best left empty for
-the usual one.
+Set it up once in Settings, under General › AI Assistant: click the Claude
+or ChatGPT tile, which shows the app's own icon when the app is on your Mac
+and whether a key is saved for it, click Get a Key… to make an API key on
+their website, paste it, and click Save. The key stays in your keychain;
+Settings shows only its last four characters. Model names the model asked,
+and is best left empty for the usual one; the arrow beside it empties it
+again.
 
 What it is sent is the screenshot covered as for an AI chat, never the
 original, and only when you choose one of these. It goes straight from

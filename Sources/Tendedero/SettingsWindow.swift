@@ -1873,8 +1873,9 @@ private struct SavedMessagesSection: View {
 }
 
 /// Claude or ChatGPT, with the owner's own key, for Write a Reply, Explain
-/// and Order Details. The key goes to the keychain as it is saved, and the
-/// field only says which one is kept, by its last four characters.
+/// and Order Details: a tile for each, with its app's icon and whether a key
+/// is kept for it, then the key and the model of the one chosen. The key goes
+/// to the keychain as it is saved, and only its last four characters show.
 private struct AIAssistantSection: View {
     @ObservedObject var prefs: Preferences
     @State private var key = ""
@@ -1884,31 +1885,56 @@ private struct AIAssistantSection: View {
 
     var body: some View {
         Section {
-            Picker(L("Assistant"), selection: $prefs.aiProvider) {
+            HStack(spacing: 12) {
                 ForEach(AIProvider.allCases) { provider in
-                    Text(provider.name).tag(provider)
+                    AIProviderTile(provider: provider, chosen: provider == prefs.aiProvider,
+                                   hasKey: provider == prefs.aiProvider ? kept != nil : AIAccount.hasKey(provider)) {
+                        prefs.aiProvider = provider
+                    }
                 }
             }
-            .pickerStyle(.segmented)
-            SecureField(L("API key"), text: $key,
-                        prompt: Text(kept.map { String(format: L("Saved: %@"), $0) } ?? L("Paste your key here")))
-                .onSubmit(save)
+            .padding(.vertical, 4)
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel(L("Assistant"))
+            LabeledContent(L("API key")) {
+                HStack(spacing: 8) {
+                    SecureField(L("API key"), text: $key,
+                                prompt: Text(kept.map { String(format: L("Saved: %@"), $0) } ?? L("Paste your key here")))
+                        .labelsHidden()
+                        .textFieldStyle(.roundedBorder)
+                        .frame(minWidth: 180)
+                        .onSubmit(save)
+                    Button(L("Save"), action: save)
+                        .buttonStyle(.borderedProminent)
+                        .disabled(typed.isEmpty)
+                }
+            }
             HStack(spacing: 8) {
+                status
+                Spacer(minLength: 8)
                 if kept != nil {
                     SettingsButton(L("Remove Key")) { remove() }
                 }
-                if failed {
-                    Text(L("The keychain did not keep the key."))
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                }
-                Spacer()
                 SettingsButton(L("Get a Key…")) { NSWorkspace.shared.open(prefs.aiProvider.keyPage) }
-                Button(L("Save"), action: save)
-                    .disabled(key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
-            TextField(L("Model"), text: $model, prompt: Text(prefs.aiProvider.defaultModel))
-                .onChange(of: model) { _, value in AIAccount.setModel(value, for: prefs.aiProvider) }
+            LabeledContent(L("Model")) {
+                HStack(spacing: 6) {
+                    if !model.isEmpty {
+                        Button { model = "" } label: {
+                            Image(systemName: "arrow.counterclockwise")
+                        }
+                        .buttonStyle(.borderless)
+                        .help(L("Use the usual model"))
+                        .accessibilityLabel(L("Use the usual model"))
+                    }
+                    TextField(L("Model"), text: $model, prompt: Text(verbatim: prefs.aiProvider.defaultModel))
+                        .labelsHidden()
+                        .textFieldStyle(.roundedBorder)
+                        .font(.system(.body, design: .monospaced))
+                        .frame(minWidth: 180)
+                        .onChange(of: model) { _, value in AIAccount.setModel(value, for: prefs.aiProvider) }
+                }
+            }
         } header: {
             Text(L("AI Assistant"))
         } footer: {
@@ -1917,6 +1943,38 @@ private struct AIAssistantSection: View {
         }
         .onAppear(perform: load)
         .onChange(of: prefs.aiProvider) { _, _ in load() }
+    }
+
+    private var typed: String { key.trimmingCharacters(in: .whitespacesAndNewlines) }
+
+    /// Whether a key is kept, by its last four characters, or what went wrong keeping it.
+    @ViewBuilder private var status: some View {
+        if failed {
+            Label {
+                Text(L("The keychain did not keep the key."))
+            } icon: {
+                Image(systemName: "exclamationmark.triangle.fill")
+            }
+            .font(.callout)
+            .foregroundStyle(.red)
+        } else if let kept {
+            Label {
+                Text(String(format: L("Saved in your keychain, ending in %@"), kept))
+                    .foregroundStyle(.secondary)
+            } icon: {
+                Image(systemName: "checkmark.seal.fill")
+                    .foregroundStyle(.green)
+            }
+            .font(.callout)
+        } else {
+            Label {
+                Text(L("No key yet"))
+            } icon: {
+                Image(systemName: "key")
+            }
+            .font(.callout)
+            .foregroundStyle(.secondary)
+        }
     }
 
     /// What is kept for the assistant chosen.
@@ -1929,7 +1987,7 @@ private struct AIAssistantSection: View {
     }
 
     private func save() {
-        let typed = key.trimmingCharacters(in: .whitespacesAndNewlines)
+        let typed = self.typed
         guard !typed.isEmpty else { return }
         failed = !AIAccount.setKey(typed, for: prefs.aiProvider)
         key = ""
@@ -1941,6 +1999,60 @@ private struct AIAssistantSection: View {
         AIAccount.setKey("", for: prefs.aiProvider)
         kept = nil
         prefs.aiKeyChanged()
+    }
+}
+
+/// One assistant to choose, as the line styles and cover looks are chosen:
+/// its app's icon as the Dock shows it, where the app is on this Mac, else
+/// its short mark; its name and maker; and whether a key is kept for it.
+private struct AIProviderTile: View {
+    let provider: AIProvider
+    let chosen: Bool
+    let hasKey: Bool
+    let choose: () -> Void
+    @State private var hovering = false
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
+        let status = hasKey ? L("Key saved") : L("No key yet")
+        Button(action: choose) {
+            HStack(spacing: 10) {
+                ChatIcon(chat: provider == .claude ? .claude : .chatGPT, size: 34)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(verbatim: provider.name)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.primary)
+                    Text(verbatim: provider.maker)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    HStack(spacing: 4) {
+                        Image(systemName: hasKey ? "checkmark.circle.fill" : "key")
+                            .foregroundStyle(hasKey ? Color.green : Color.secondary)
+                        Text(status)
+                            .foregroundStyle(.secondary)
+                    }
+                    .font(.caption)
+                    .padding(.top, 2)
+                }
+                Spacer(minLength: 4)
+                Image(systemName: chosen ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 16))
+                    .foregroundStyle(chosen ? Color.accentColor : Color.secondary.opacity(0.5))
+                    .accessibilityHidden(true)
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(shape.fill(chosen ? Color.accentColor.opacity(0.08)
+                                          : Color.primary.opacity(hovering ? 0.06 : 0.03)))
+            .overlay(shape.strokeBorder(chosen ? Color.accentColor : Color.primary.opacity(0.12),
+                                        lineWidth: chosen ? 2 : 1))
+            .contentShape(shape)
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering = $0 }
+        .accessibilityLabel(Text(verbatim: "\(provider.name), \(provider.maker), \(status)"))
+        .accessibilityAddTraits(chosen ? .isSelected : [])
     }
 }
 

@@ -703,14 +703,34 @@ apps.
     alone. Without a key, or with one refused, the card says so with an
     Open Settings… link in place of Open System Settings….
   - **Settings › General › AI Assistant**, after Sounds and Open at login:
-    a segmented picker, Claude or ChatGPT; a secure field for the API key,
-    prompted "Paste your key here", or "Saved: …WXYZ" with the kept key's
-    last four characters, never the key; a row with Remove Key (once one is
-    kept) and, on the trailing edge, Get a Key… as a `SettingsButton` and
-    Save, off while the field is empty, Return saving too; a red caption if
-    the keychain refuses it; then Model, a field prompted with the usual
-    model's name. The footer says what is sent where, only when chosen,
-    and that the provider bills it, not a subscription.
+    - Two **assistant tiles** side by side in equal parts, Claude and
+      ChatGPT (`AIProviderTile`), chosen as a line style or cover look tile
+      is. Each is a 12 pt continuous rounded rectangle with 12 pt padding:
+      the app's icon at 34 pt as the Dock shows it where the app is on this
+      Mac, else its short mark in a glass circle (`ChatIcon`), never a logo of
+      theirs in Snapfly; the name in 13 pt semibold, the maker (Anthropic,
+      OpenAI) in caption `.secondary`, and under them, in caption, a green
+      `checkmark.circle.fill` with "Key saved" or a `key` with "No key yet".
+      On the trailing edge `checkmark.circle.fill` in the accent when
+      chosen, else `circle` in `.secondary` at 50%. Chosen: the accent at 8%
+      inside a 2 pt accent edge; else the primary at 3% (6% under the
+      pointer) inside a 1 pt edge of the primary at 12%. VoiceOver reads
+      name, maker and key, and says which is selected.
+    - API key: a rounded secure field, prompted "Paste your key here", or
+      "Saved: …WXYZ" with the kept key's last four characters, never the key,
+      and Save beside it as `.borderedProminent`, off while the field is
+      empty, Return saving too.
+    - A row under it: on the leading side, in callout, "Saved in your
+      keychain, ending in …WXYZ" after a green `checkmark.seal.fill`, "No key
+      yet" after a `key` in `.secondary`, or in red after
+      `exclamationmark.triangle.fill` when the keychain refuses it; on the
+      trailing edge Remove Key (once one is kept) and Get a Key… as
+      `SettingsButton`s.
+    - Model: a rounded field in the monospaced system font, prompted with
+      the usual model's name; once one is typed, a borderless
+      `arrow.counterclockwise` before it, "Use the usual model", empties it.
+    - The footer says what is sent where, only when chosen, and that the
+      provider bills it, not a subscription.
   - **Save for Bookkeeping** (`folder.badge.plus`) and **Email to
     Bookkeeping…** (`envelope`) follow it. The first asks for the folder
     once with an open panel, then saves and says so in a note above the

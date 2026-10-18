@@ -853,3 +853,9 @@
 "Copy SVG" = "نسخ SVG";
 "Save SVG…" = "حفظ SVG…";
 "Compare the photo with its SVG" = "مقارنة الصورة بملف SVG الخاص بها";
+
+/* SettingsWindow: AI Assistant */
+"Key saved" = "المفتاح محفوظ";
+"No key yet" = "لا يوجد مفتاح بعد";
+"Saved in your keychain, ending in %@" = "محفوظ في سلسلة المفاتيح، وينتهي بـ %@";
+"Use the usual model" = "استخدام النموذج المعتاد";

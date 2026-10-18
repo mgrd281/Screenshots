@@ -855,3 +855,9 @@
 "Copy SVG" = "SVG कॉपी करें";
 "Save SVG…" = "SVG सहेजें…";
 "Compare the photo with its SVG" = "फ़ोटो की उसके SVG से तुलना करें";
+
+/* SettingsWindow: AI Assistant */
+"Key saved" = "कुंजी सहेजी गई";
+"No key yet" = "अभी कोई कुंजी नहीं";
+"Saved in your keychain, ending in %@" = "आपके कीचेन में सहेजी गई, अंत में %@";
+"Use the usual model" = "सामान्य मॉडल इस्तेमाल करें";
