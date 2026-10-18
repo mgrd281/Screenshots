@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- A cover no longer hides part of the line under or over it: with only the
+  name covered on an order page, the street right under the name now reads
+  in full.
 - Settings › General › AI Assistant looks new: Claude and ChatGPT are two
   tiles with their app's icon, from your Mac, and each says whether a key
   is saved for it. Save sits beside the key, the line under it says where
