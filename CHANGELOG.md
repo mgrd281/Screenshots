@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- A welcome tour: five short cards on the line, taking just the part you
+  need, the icons under a photo, a photo's menu and what stays private,
+  with where each lives in Settings. It shows once, and Welcome Tour in the
+  menu bar shows it again.
 - Download, on the tag above the trash: the photos picked, or all of them,
   saved into Downloads as they leave the line, covered, drawn on and
   cropped. They stay on the line, and a note shows them in Finder.
