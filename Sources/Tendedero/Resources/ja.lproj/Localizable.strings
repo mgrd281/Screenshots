@@ -673,3 +673,4 @@
 "Open in" = "開く場所";
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "ブラウザではウェブサイトを開きます。アプリでは、この Mac にあればそのアプリを、なければウェブサイトを開きます。";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "アイコンは写真の下に出ます。クリックすると、写真（または一緒に選んだ写真）を%@に送ります。";
+"Copied. Start a new message and paste." = "コピーしました。新しいメッセージを作成して貼り付けてください。";

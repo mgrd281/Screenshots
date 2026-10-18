@@ -258,17 +258,17 @@ struct PeggedView: View {
         .accessibilityHidden(true)
     }
 
-    /// The app's own icon, wherever it is on this Mac. An app icon keeps a
-    /// margin round its shape, so it is drawn a little larger to look as
-    /// large as the paper plane. Without the app, a glass circle with the
-    /// chat's short mark in plain letters.
+    /// The logo, or the app's own icon wherever it is on this Mac. An app icon
+    /// keeps a margin round its shape, so it is drawn a little larger to look
+    /// as large as a logo. Without either, a glass circle with the chat's
+    /// short mark in plain letters.
     private func chatIcon(_ chat: ChatTarget) -> some View {
         ZStack {
             if let icon = chat.icon {
                 Image(nsImage: icon)
                     .resizable()
                     .interpolation(.high)
-                    .frame(width: PhotoButtons.chatSize * 1.22, height: PhotoButtons.chatSize * 1.22)
+                    .frame(width: PhotoButtons.chatSize * chat.iconScale, height: PhotoButtons.chatSize * chat.iconScale)
             } else {
                 Text(chat.mark)
                     .font(.system(size: 7.5, weight: .bold, design: .rounded))

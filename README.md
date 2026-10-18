@@ -67,7 +67,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
-| Click ChatGPT, Claude, WhatsApp or Gmail, in the row under a photo | Send it, or the photos picked with it, there: the website opens in your browser (a new message in Gmail), or, with it already open in the browser in front, they go there, and the photos are pasted in. Each icon is the app's own, wherever it is on your Mac (WhatsApp from the Mac App Store, Gmail as an app made from its website in Chrome or Safari; else a short mark), and has its own switch in Settings, under Line; Open in chooses the app instead of the browser, when it is on your Mac. |
+| Click ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE, in the row under a photo | Send it, or the photos picked with it, there: the website opens in your browser (a new message in Gmail), or, with it already open in the browser in front, they go there, and the photos are pasted in. GMX and WEB.DE open the mailbox: the covered photo is copied for you to paste into a new message, and stays on the line. WhatsApp, Gmail, GMX and WEB.DE show their logos; ChatGPT and Claude show their app's own icon from your Mac, else a short mark. Each icon has its own switch in Settings, under Line; Open in chooses the app instead of the browser, when it is on your Mac. |
 | Right-click ChatGPT or Claude under a photo | Ask a question with it: the photo goes into the chat with the question after it, like "Summarize this in a few lines". Ask ChatGPT and Ask Claude in a photo's menu do the same. The questions are yours to write in Settings, under Line. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
@@ -453,7 +453,7 @@ sent before, under Line.
 
 Ten of fifteen to send? Click the circle on each, in the corner opposite
 the cross, and only those go: with the send button on the tag, with the one
-over a chat, or with ChatGPT, Claude, WhatsApp or Gmail under it. Those
+over a chat, or with ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE under it. Those
 send straight there: your browser comes to the front on the
 chat it shows, or opens a new one (or their app does, if you chose it); the
 photos are pasted in once it is ready, covered as in any AI chat for the
@@ -639,7 +639,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
 | `LineTag.swift` | The tag at the end of the line: moving it, combining, sending and taking everything down |
 | `Paste.swift` | Pastes into the app in front, for the send button |
-| `ChatTarget.swift` | ChatGPT, Claude, WhatsApp and Gmail in a row under a photo: their real icons, and their app or website, opened and waited for |
+| `ChatTarget.swift` | ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE in a row under a photo: their logos or app icons, and their app or website, opened and waited for |
+| `assets/chat-logos/` | The logos of WhatsApp, Gmail, GMX and WEB.DE the row shows, as PNG with their SVG sources |
 | `Shared/AIQuestions.swift` | The questions a photo goes into ChatGPT or Claude with: the standard five, and the owner's own from Settings |
 | `Shared/CoverTally.swift` | The week's line in Settings › Privacy: how many details were covered in how many photos sent, counts only, day by day |
 | `Calls.swift` | Not during a call: whether the microphone is in use, and Snapfly's windows kept out of a shared screen while it is |
