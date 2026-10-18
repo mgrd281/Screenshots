@@ -69,13 +69,39 @@ final class PhotoButtonsTests: XCTestCase {
         }
     }
 
-    func testTheChoiceIsKept() {
-        let key = "aiChatsOnPhotosOff"
+    func testEachIconIsTurnedOffOnItsOwn() throws {
+        let suite = "PhotoButtonsTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        for chat in AIChat.allCases { XCTAssertTrue(AIChat.shows(chat, in: defaults), "on at first: \(chat.name)") }
+        AIChat.setShows(false, .claude, in: defaults)
+        XCTAssertFalse(AIChat.shows(.claude, in: defaults))
+        XCTAssertTrue(AIChat.shows(.chatGPT, in: defaults), "the other stays")
+        AIChat.setShows(true, .claude, in: defaults)
+        XCTAssertTrue(AIChat.shows(.claude, in: defaults))
+    }
+
+    func testTheSingleSwitchOfBeforeKeepsBothOffUntilChosenAgain() throws {
+        let suite = "PhotoButtonsTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        defaults.set(true, forKey: "aiChatsOnPhotosOff")
+        XCTAssertFalse(AIChat.shows(.chatGPT, in: defaults))
+        XCTAssertFalse(AIChat.shows(.claude, in: defaults))
+        AIChat.setShows(true, .chatGPT, in: defaults)
+        XCTAssertTrue(AIChat.shows(.chatGPT, in: defaults))
+        XCTAssertFalse(AIChat.shows(.claude, in: defaults))
+    }
+
+    func testChatsOpenInTheBrowserUntilTheAppIsChosen() {
+        let key = "aiChatsOpenInApp"
         let before = UserDefaults.standard.object(forKey: key)
         defer { UserDefaults.standard.set(before, forKey: key) }
         UserDefaults.standard.removeObject(forKey: key)
-        XCTAssertTrue(AIChat.onPhotos)
-        AIChat.onPhotos = false
-        XCTAssertFalse(AIChat.onPhotos)
+        XCTAssertFalse(AIChat.opensInApp)
+        AIChat.opensInApp = true
+        XCTAssertTrue(AIChat.opensInApp)
+        // The marks differ, and are plain letters.
+        XCTAssertEqual(Set(AIChat.allCases.map(\.mark)).count, AIChat.allCases.count)
     }
 }

@@ -117,8 +117,6 @@
 "Send to %@" = "%@に送信";
 "Opening %@…" = "%@を開いています…";
 "Could not open %@. The photos stay on the line." = "%@を開けませんでした。写真はロープに残ります。";
-"ChatGPT and Claude on photos" = "写真にChatGPTとClaude";
-"Their icons show beside the paper plane when their apps are on this Mac. A click sends the photo, or the ones picked with it, into a chat there." = "このMacにアプリがあると、紙飛行機の横にそのアイコンが表示されます。クリックすると、その写真か一緒に選んだ写真を、そこのチャットに送信します。";
 "Paste into the app in front" = "前面のアプリにペースト";
 "Combine into one image" = "1枚の画像にまとめる";
 "One under another" = "縦に並べる";
@@ -669,3 +667,9 @@
 "Count on the menu bar icon" = "メニューバーのアイコンに枚数を表示";
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "吊るしている写真の枚数がアイコンの横に出て、ロープがまだ見せていない新しいものがあるとアイコンに小さな点が付きます。";
 "something new" = "新着あり";
+"%@ on photos" = "写真上の%@";
+"Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "紙飛行機の横にアイコンが出ます。クリックすると、写真（または一緒に選んだ写真）を%@に送ります。";
+"Open ChatGPT and Claude in" = "ChatGPT と Claude を開く場所";
+"The browser" = "ブラウザ";
+"The app" = "アプリ";
+"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "ブラウザではウェブサイトでチャットを開きます。アプリでは、この Mac にあればそのアプリで、なければウェブサイトで開きます。";

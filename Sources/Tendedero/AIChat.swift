@@ -1,9 +1,10 @@
 import AppKit
 
 /// ChatGPT and Claude, to send photos straight into from the line: their
-/// app when it is on this Mac, else their website in the browser. Their
-/// icons on a photo are the apps' own, as macOS shows them in the Dock;
-/// Snapfly carries no logo of theirs.
+/// website in the browser, or their app when it is on this Mac and Settings
+/// says so. Their icons on a photo are the app's own, as macOS shows it in
+/// the Dock, while chats open in the app; else a short mark in a neutral
+/// circle. Snapfly carries no logo of theirs.
 enum AIChat: String, CaseIterable, Identifiable {
     case chatGPT, claude
 
@@ -52,19 +53,43 @@ enum AIChat: String, CaseIterable, Identifiable {
         !item.isRecording
     }
 
-    // MARK: On the photos
-
-    /// From Settings › Line. On unless turned off.
-    static var onPhotos: Bool {
-        get { !UserDefaults.standard.bool(forKey: "aiChatsOnPhotosOff") }
-        set { UserDefaults.standard.set(!newValue, forKey: "aiChatsOnPhotosOff") }
+    /// Its icon, as a short mark in a neutral circle: the website's name, in
+    /// plain letters, since Snapfly carries no logo of theirs.
+    var mark: String {
+        switch self {
+        case .chatGPT: "GPT"
+        case .claude: "Cl"
+        }
     }
 
-    /// The ones whose icon shows on a photo under the pointer: with their
-    /// app on this Mac, and the setting on.
+    // MARK: On the photos
+
+    /// Whether its icon shows on a photo, from Settings › Line. On unless
+    /// turned off. Whoever turned off the single switch of before keeps both
+    /// off until they choose again.
+    static func shows(_ chat: AIChat, in defaults: UserDefaults = .standard) -> Bool {
+        if defaults.object(forKey: chat.offKey) != nil { return !defaults.bool(forKey: chat.offKey) }
+        return !defaults.bool(forKey: "aiChatsOnPhotosOff")
+    }
+
+    static func setShows(_ on: Bool, _ chat: AIChat, in defaults: UserDefaults = .standard) {
+        defaults.set(!on, forKey: chat.offKey)
+    }
+
+    private var offKey: String { "aiChatOff.\(rawValue)" }
+
+    /// The ones whose icon shows on a photo under the pointer. They show
+    /// whether or not the app is on this Mac: the website is always there.
     @MainActor
     static var onPhotosNow: [AIChat] {
-        onPhotos ? installed : []
+        allCases.filter { shows($0) }
+    }
+
+    /// From Settings › Line: a click opens the chat in its app, when it is on
+    /// this Mac. Off, it opens on the website, in the browser. Off at first.
+    static var opensInApp: Bool {
+        get { UserDefaults.standard.bool(forKey: "aiChatsOpenInApp") }
+        set { UserDefaults.standard.set(newValue, forKey: "aiChatsOpenInApp") }
     }
 
     /// Where the app is installed, if it is.
@@ -72,24 +97,14 @@ enum AIChat: String, CaseIterable, Identifiable {
         NSWorkspace.shared.urlForApplication(withBundleIdentifier: appID)
     }
 
-    /// The chats whose app is on this Mac, looked up again every few
-    /// seconds at most, so a photo under the pointer stays quick.
-    @MainActor
-    static var installed: [AIChat] {
-        if let found, Date().timeIntervalSince(found.at) < 5 { return found.chats }
-        let chats = allCases.filter { $0.appURL != nil }
-        found = (Date(), chats)
-        return chats
-    }
-
-    @MainActor private static var found: (at: Date, chats: [AIChat])?
     @MainActor private static var icons: [String: NSImage] = [:]
 
-    /// The app's own icon, as the Finder and the Dock show it; nil without
-    /// the app.
+    /// The app's own icon, as the Finder and the Dock show it, while chats
+    /// open in the app and it is on this Mac; nil otherwise, and the circle
+    /// shows the mark instead.
     @MainActor
     var icon: NSImage? {
-        guard let path = appURL?.path else { return nil }
+        guard Self.opensInApp, let path = appURL?.path else { return nil }
         if let icon = Self.icons[path] { return icon }
         let icon = NSWorkspace.shared.icon(forFile: path)
         Self.icons[path] = icon
@@ -110,7 +125,8 @@ enum AIChat: String, CaseIterable, Identifiable {
     @MainActor
     func open(then ready: @escaping () -> Void) {
         let front = Paste.frontApp?.bundleIdentifier
-        if front == appID { return ready() }
+        // Opening in the browser, the app in front is not the place.
+        if Self.opensInApp, front == appID { return ready() }
         // Asking a browser for its page takes a moment: only a browser.
         if let front, ChatButton.browserIDs.contains(front), owns(host: ChatButton.pageInFront()?.host) {
             return ready()
@@ -129,7 +145,7 @@ enum AIChat: String, CaseIterable, Identifiable {
                 Notice.show(String(format: L("Could not open %@. The photos stay on the line."), title))
             }
         }
-        if let app = appURL {
+        if Self.opensInApp, let app = appURL {
             openApp(at: app, then: finish)
         } else {
             openWebsite(then: finish)
@@ -166,8 +182,20 @@ enum AIChat: String, CaseIterable, Identifiable {
     @MainActor
     private func openWebsite(then finish: @escaping (Bool) -> Void) {
         let chat = self
-        let browser = NSWorkspace.shared.urlForApplication(toOpen: newChat).flatMap { Bundle(url: $0)?.bundleIdentifier }
-        guard NSWorkspace.shared.open(newChat) else { return finish(false) }
+        // The browser the Mac opens websites with, not an app that claims
+        // this address: the chat's own app may.
+        let browserURL = NSWorkspace.shared.urlForApplication(toOpen: URL(string: "https://www.apple.com/")!)
+        let browser = browserURL.flatMap { Bundle(url: $0)?.bundleIdentifier }
+        if let browserURL {
+            let configuration = NSWorkspace.OpenConfiguration()
+            configuration.activates = true
+            NSWorkspace.shared.open([newChat], withApplicationAt: browserURL, configuration: configuration) { _, error in
+                guard error != nil else { return }
+                DispatchQueue.main.async { MainActor.assumeIsolated { finish(false) } }
+            }
+        } else if !NSWorkspace.shared.open(newChat) {
+            return finish(false)
+        }
         Self.wait(within: 20, every: 0.25, for: {
             guard let front = Paste.frontApp?.bundleIdentifier,
                   front == browser || ChatButton.browserIDs.contains(front) else { return false }
