@@ -93,6 +93,12 @@ components:
     rounded: "{rounded.floating}"
     padding: "{spacing.lg}"
     width: "380pt"
+  guide-card:
+    rounded: "{rounded.floating}"
+    padding: "{spacing.lg}"
+    width: "340pt"                 # in 28pt of clear room; an 18 × 8pt arrow with a rounded tip
+  guide-shade:
+    backgroundColor: "#000000"     # at 38%, 50% with Increase Contrast; a hole 6pt round what it shows, with a 1.5pt accent edge
   search-bar:
     rounded: "{rounded.card}"
     height: "50pt"
@@ -332,7 +338,7 @@ design with monospaced digits.
 |---|---|---|---|
 | Field | 17 pt | Regular | Search bar input |
 | Title | 13 pt | Semibold | Card headers ("Translation", "Description") |
-| Tour title | 15 pt | Semibold | A card of the welcome tour, its one step up |
+| Welcome title | 15 pt | Semibold | The introduction's welcome card, its one step up |
 | Body | 13 pt, +2 pt leading | Regular | Translations, descriptions, settings rows |
 | Label | 12 pt | Medium | Language menu, result count, keycaps |
 | Caption | 11 pt | Regular, or Semibold when selected | Notes under results, style tiles, "Copied" |
@@ -787,29 +793,85 @@ apps.
     arrow narrows towards its tail under a solid head. Drawing explains and
     never hides: blur and pixelate are not offered, and nothing drawn counts
     on the lock.
-- **Welcome tour** (`Tour.swift`), a 440 × 380 pt titled window with a
-  transparent title bar, moved by its background, shown once on a Mac a
-  moment after launch and before the question about screenshots, and from
-  Welcome Tour (`hand.wave`) in the menu bar, above Help & Support.
-  - Five cards, one at a time, each centred with 40 pt at its sides: the
-    symbol, 24 pt semibold in the accent, on a 56 pt circle of the accent
-    at 12%, as a card header draws it larger; the title in 15 pt semibold;
-    the words in 13 pt `.secondary` with 2 pt leading.
-  - Under them, 20 pt above the footer, a dot a card, 6 pt, 8 pt apart:
-    the accent for the card showing, `.primary` at 18% for the rest.
-    VoiceOver hears "Step 2 of 5".
-  - The footer, under a divider with 16 pt round it: Skip as a link on the
-    leading edge (not on the last card), then Back (`.bordered`, from the
-    second card) and Next with `arrow.forward`, or Done with `checkmark` on
-    the last, `.borderedProminent`, on the trailing edge. Return goes on,
-    Escape closes it from any card.
-  - The next card comes in 24 pt from the end the words read towards and
-    the one before leaves towards their start, fading, on a
-    `Motion.spring(response: 0.35, damping: 0.85)`; with Reduce Motion they
-    only fade.
-  - The screenshot card names the shortcut chosen, or Take Screenshot in
-    the menu bar without one, and the cards name places in Settings as
-    Settings names them, "Settings › Line › Icons under photos".
+- **The introduction** (`Guide.swift`) points at the real thing on the
+  screen, never at a picture of it. Two non-activating panels over the
+  line and the menu bar and under menus (`GuidePanel`, `.statusBar` + 1
+  and + 2), on the screen of what is pointed at, both kept out of a call's
+  shared screen:
+  - **The shade** (`GuideShade`, shared with the iPhone): the screen at
+    black 38% (50% with Increase Contrast), filled even-odd round a hole,
+    and every click goes through it, so nothing is held back. The hole is
+    what it points at with 6 pt of room, its corners those of the thing
+    plus the room, up to a capsule (`GuidePlacement.hole`): the menu bar
+    icon, a photo (16), its lock or pick circle (14), the photo with its
+    icons, the tag. A 1.5 pt accent edge rings the hole. Between steps the
+    hole glides on `Motion.spring(response: 0.45, damping: 0.86)`; the
+    shade fades in and out over 0.2 s. No shade while a screenshot is
+    taken, so the picture stays as it is, nor for a tip.
+  - **The card** (`GuideCardView`), 340 pt wide in 28 pt of clear room, a
+    floating card in `.regularMaterial` with its edge and shadow (black
+    22%, radius 18, y 8) and corners of 20, with an 18 × 8 pt arrow with a
+    rounded tip drawn into the same outline (`GuideCardShape`) on the edge
+    facing what it points at, at least 24 pt from a corner, placed on the
+    screen and not mirrored right to left. It goes below what it points
+    at when there is room, else above, else beside it, 14 pt away and
+    12 pt inside the screen's visible frame (`GuidePlacement.place`);
+    pointing at nothing, it sits across the middle just under where the
+    line hangs. It glides to a new place over 0.3 s on `ease.out` (at
+    once with Reduce Motion) and follows what it points at as the line
+    moves.
+    - A step: the symbol in the accent on a 28 pt circle of the accent at
+      12%, the title in 13 pt semibold, and the cross (a 20 pt circle of
+      `.primary` at 7%, a 9 pt bold `xmark` in `.secondary`, End
+      Introduction as its help, Escape); the words in 13 pt `.secondary`
+      with 2 pt leading; then how far along, a dot a step, 6 pt and 5 pt
+      apart, the one showing drawn 14 pt long in the accent, those done
+      at 35% and those to come at 15% of `.primary` (VoiceOver: "Step 2
+      of 6"), Back (← key) and Next on the trailing edge, large. Next is
+      the primary (`.borderedProminent`, Return) only on a step that waits
+      for nothing; a step that asks for the real thing keeps it plain,
+      since the real thing is the main act. The screenshot step adds Take
+      Screenshot as its primary, over the footer. Long words drop the dots
+      first (`ViewThatFits`).
+    - Done on the real thing, the symbol turns into a check
+      (`.symbolEffect(.replace)`), VoiceOver hears "Done.", and the next
+      step comes 0.7 s later.
+    - The welcome: the app icon at 44 pt beside "Welcome! Discover
+      Snapfly." in 15 pt semibold over "About a minute" in 11 pt
+      `.secondary`, a line on what it does, and Skip for Now (Escape) and
+      Start Introduction (`arrow.forward`, Return), side by side or one
+      over the other where they do not fit, over the shade without a hole.
+    - The last card points at the menu bar icon: "You're all set", where
+      to find it again, and Done.
+    - A tip is the same card without the shade, the dots or Back: its
+      symbol, title and line, No More Tips as a link and OK.
+  - **Steps** (`GuideStep.introduction`): the menu bar icon (its menu
+    opened), a screenshot (one hangs), the photo (copied, picked or sent),
+    its lock (the pointer rests on it 0.8 s), the photo with its icons
+    (the pointer rests on it), its menu (opened), the tag (Next). A step
+    whose part is not there is left out and not counted; a step whose
+    photo goes goes back to taking one. While Crop, a screenshot, a dialog
+    or a window of Snapfly's has the screen, or during a call, both panels
+    fade out and take no clicks, and come back after.
+  - **Where it stands** (`GuideProgress`), kept with the settings: the
+    steps seen, where it was ended, finished, and the version it was for.
+    It is offered once at launch, a moment after it and before the question
+    about screenshots; a newer version is offered once more. The menu bar
+    item reads Introduction, or Continue Introduction while it was ended
+    before its end (`hand.wave`, above Help & Support). Each step and card
+    is announced to VoiceOver, and opened on purpose the card takes the
+    keyboard without bringing Snapfly to the front: Return, Escape and the
+    arrows work at once.
+  - **Tips** (`GuideTip`) show once each, at most one each time the line is
+    brought down on purpose, never during the introduction or a call, and
+    not for what it already showed: the lock on a covered photo, and the
+    pick circle once two photos hang.
+  - **Help & Introduction**, the first section of Settings › Support:
+    Introduction with Start, Continue or Start Again and where it stands
+    ("Ended at step 3 of 7. It goes on from there."), Show Me How with a
+    menu of one thing at a time (`GuideLesson`: a screenshot, what gets
+    covered, sending into a chat, a photo's menu, the tag), and Tips while
+    you work as a switch. Starting one closes Settings first.
 - **No modal alerts** for things that can be said inline in the card.
 - **Privacy pane.** Grouped form. First a row of three small `.bordered`
   buttons, Check All, Recommended and Uncheck All, sharing the row in equal
@@ -1280,6 +1342,19 @@ of its own.
   and Save sit under it on the bar material, as bordered buttons.
 - The icon is the Mac icon's picture, full bleed and opaque, since iOS rounds
   it (`scripts/make-icon.py --ios`).
+- The introduction (`PhoneGuide.swift`) shows on its real screens: the
+  newest screenshot to tap, then Copy, Share and Save under it. The shade
+  is the Mac's (`GuideShade`), black 40%, round a hole 6 pt round the
+  thing with corners of 18 and a 2 pt accent edge, and every tap goes
+  through it. The card is in `.regularMaterial` with corners of 22, 20 pt
+  inside, as wide as the screen less 16 pt each side (420 at most): beside
+  the thing when it fits above or below it, else at the bottom, clear of
+  the home indicator. The title is the headline, the words subheadline
+  `.secondary`, the symbol on a 36 pt circle of the accent at 12%, the
+  cross 30 pt in a 44 pt target, the dots 7 pt (16 pt long for the step
+  showing) and the buttons large. The hole and the card move on a spring
+  (0.45, 0.86), a 0.15 s ease-out with Reduce Motion. Offered once when
+  the first screenshots show, again from Settings › Help & Introduction.
 - Settings opens with Check All, Recommended and Uncheck All as small
   bordered buttons sharing a row, under "Hide private details", then the
   three groups, then "Cover look", the Mac's tiles three to a row with

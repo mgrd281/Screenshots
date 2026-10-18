@@ -4,11 +4,14 @@ import SwiftUI
 /// The screenshots in Photos, newest first. A tap covers one.
 struct ContentView: View {
     @StateObject private var library = Library()
+    @ObservedObject private var guide = PhoneGuide.shared
     @State private var showsSettings = false
+    /// The screenshot open, if one is.
+    @State private var path: [String] = []
     @Environment(\.scenePhase) private var phase
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             Group {
                 if library.mayRead {
                     grid
@@ -32,9 +35,21 @@ struct ContentView: View {
             .sheet(isPresented: $showsSettings) { SettingsView() }
             .navigationDestination(for: String.self) { id in CoveredView(assetID: id) }
         }
-        .onAppear { library.load() }
+        .onAppear {
+            library.load()
+            guide.closeShot = { path.removeAll() }
+            guide.openNewest = {
+                guard let newest = library.shots.first?.localIdentifier else { return false }
+                path.append(newest)
+                return true
+            }
+        }
         .onChange(of: phase) { _, now in
             if now == .active { library.load() }
+        }
+        // The introduction, once, as the first screenshots show.
+        .onChange(of: library.shots.isEmpty) { _, empty in
+            if !empty { guide.offerIfDue() }
         }
     }
 
@@ -46,10 +61,13 @@ struct ContentView: View {
                         Thumbnail(asset: asset)
                     }
                     .accessibilityLabel(L("Cover Private Details"))
+                    .phoneGuideTarget(.firstShot, on: asset.localIdentifier == library.shots.first?.localIdentifier)
                 }
             }
             .padding(6)
         }
+        .phoneGuide(on: .library)
+        .onAppear { if !library.shots.isEmpty { guide.offerIfDue() } }
         .overlay {
             if library.shots.isEmpty {
                 ContentUnavailableView(L("No screenshots yet"), systemImage: "camera.viewfinder",

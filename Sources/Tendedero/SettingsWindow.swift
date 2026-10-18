@@ -738,6 +738,11 @@ final class SettingsWindow {
         NSApp.activate(ignoringOtherApps: true)
         window?.makeKeyAndOrderFront(nil)
     }
+
+    /// Out of the way of the introduction, which shows on the screen itself.
+    func close() {
+        window?.close()
+    }
 }
 
 private enum Pane: String, CaseIterable, Identifiable {

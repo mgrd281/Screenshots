@@ -94,7 +94,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Add Files… in the menu bar | Pick photos or PDFs to hang. |
 | Click anything in the menu bar | Put it away. |
 | Glance at the Snapfly icon in the menu bar | How many photos hang, beside it, and a small dot on it while something new hangs that the line has not shown yet. Turn it off with Count on the menu bar icon, under Line. |
-| Click the Snapfly icon in the menu bar | The menu: how many photos hang and Paste into the app in front, the ways to take or add, the line, the Hide private details and Screenshot Button switches, Settings, the Welcome Tour and Help & Support. |
+| Click the Snapfly icon in the menu bar | The menu: how many photos hang and Paste into the app in front, the ways to take or add, the line, the Hide private details and Screenshot Button switches, Settings, the Introduction (Continue Introduction when it was ended before its end) and Help & Support. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>F</kbd> | Search the words in your screenshots. Change it in Settings. |
@@ -627,10 +627,26 @@ Developer ID and notarized by Apple, so they open like any other app.
 Each version also keeps a release of its own on the [Releases](../../releases)
 page, and [CHANGELOG.md](CHANGELOG.md) says what each one brings.
 
-The first time it opens, a short tour of five cards shows the line, taking
-just the part you need, the icons under a photo, a photo's menu and what
-stays private, with where each lives in Settings. Return goes on, Escape
-skips it. Welcome Tour in the menu bar shows it again.
+The first time it opens, Snapfly offers an introduction on your own screen,
+about a minute long: Start Introduction, or Skip for Now. It points at the
+real thing, one step at a time, with the rest of the screen dimmed and a
+small card beside it: the icon in the menu bar, your first screenshot (⇧⌘4,
+Snapfly's own shortcut, or the card's Take Screenshot), the photo on the
+line, its lock, the icons under it, its menu, and the tag at the end of the
+line. Doing what a step asks moves on by itself, with a check; Next, Back
+and the cross are always there, and nothing on the screen is held back
+meanwhile. A step whose part is not there, like the lock on a photo with
+nothing covered, is left out, and the introduction steps aside while Crop,
+a screenshot or a dialog takes the screen, or during a call.
+
+Ended before its end, it goes on from there with Continue Introduction in
+the menu bar. Settings › Support › Help & Introduction starts it again,
+shows one thing at a time on the line (Show Me How), and turns tips off: a
+short hint, once, the first time something is in reach, like the lock on
+a covered photo or picking several photos.
+
+On the iPhone, the introduction shows on your screenshots: tap one, then
+its Copy, Share and Save. Settings › Help & Introduction starts it again.
 
 <br>
 
@@ -661,7 +677,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze, and the covered places shown from the lock |
 | `LineTag.swift` | The tag at the end of the line: moving it, combining, sending, downloading and taking everything down |
 | `Downloads.swift` | Download, from the tag: the photos saved into Downloads as they leave the line |
-| `Tour.swift` | The welcome tour: five cards on what Snapfly does and where to find it, once and from the menu bar |
+| `Guide.swift` | The introduction on the screen itself: the steps, the shade with its hole round what is pointed at, the card beside it, lessons one at a time, and tips |
+| `Shared/GuideFlow.swift`, `Shared/GuideShade.swift` | Where the introduction stands, kept with the settings, its steps in order, where its card goes, and its shade, for the Mac and the iPhone |
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `ChatTarget.swift` | ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE in a row under a photo: their logos or app icons, and their app or website, opened and waited for, in the order dragged in Settings |
 | `assets/chat-logos/` | The logos of WhatsApp, Gmail, GMX and WEB.DE the row shows, as PNG with their SVG sources |
@@ -687,7 +704,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
 | `Shared/CoverReport.swift` | What was covered in a picture, kind by kind, for the lock, the photo's menu, VoiceOver and the iPhone |
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
-| `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, and the Shortcuts actions |
+| `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
 | `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
 | `Drawing.swift` | Draw on Photo's arrows, boxes, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |

@@ -169,6 +169,8 @@ final class Line: ObservableObject {
     func land(_ id: UUID) {
         guard let i = items.firstIndex(where: { $0.id == id }) else { return }
         items[i].flying = false
+        // A flying capture counts for the introduction once it hangs.
+        Guide.shared.happened(.photoHung)
     }
 
     /// Called just before a photo starts falling, so the fall can be drawn
@@ -319,6 +321,7 @@ final class Line: ObservableObject {
         guard let item = items.first(where: { $0.id == id }) else { return }
         pickedIDs = []
         copy([item])
+        Guide.shared.happened(.photoUsed)
     }
 
     /// ⌘-click: picks the photo, or puts it back, and copies every photo
@@ -326,6 +329,7 @@ final class Line: ObservableObject {
     /// - Parameter quietly: from the circle on the photo, whose check says
     ///   enough without "Copied" under each.
     func pick(_ id: UUID, quietly: Bool = false) {
+        Guide.shared.happened(.photoUsed)
         if pickedIDs.contains(id) { pickedIDs.remove(id) } else { pickedIDs.insert(id) }
         let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
         if !picked.isEmpty { copy(picked, covering: CoveringProfile.detailsNow, says: !quietly) }
@@ -465,6 +469,7 @@ final class Line: ObservableObject {
     /// From a photo's menu: the photos picked when it is one of them, or
     /// only this one.
     func paste(_ id: UUID) {
+        Guide.shared.happened(.photoUsed)
         let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
         if pickedIDs.contains(id) {
             paste(picked)
@@ -482,6 +487,7 @@ final class Line: ObservableObject {
     /// - Parameter question: one of the questions from Settings, pasted into
     ///   the message box after the photos, to send with them.
     func send(_ id: UUID, to chat: ChatTarget, asking question: String? = nil) {
+        Guide.shared.happened(.photoUsed)
         let photos = pickedIDs.contains(id)
             ? items.filter { pickedIDs.contains($0.id) && !$0.falling && ChatTarget.takes($0) }
             : items.filter { $0.id == id && !$0.falling && ChatTarget.takes($0) }
@@ -650,6 +656,7 @@ final class Line: ObservableObject {
 
     /// Dragged into an app, a photo has been sent too.
     func sentByDrag(_ id: UUID) {
+        Guide.shared.happened(.photoUsed)
         guard Self.takesDownSent, let item = items.first(where: { $0.id == id && !$0.falling }),
               !item.pinned else { return }
         tally([item.url], covering: CoveringProfile.detailsNow)
