@@ -94,7 +94,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Add Files… in the menu bar | Pick photos or PDFs to hang. |
 | Click anything in the menu bar | Put it away. |
 | Glance at the Snapfly icon in the menu bar | How many photos hang, beside it, and a small dot on it while something new hangs that the line has not shown yet. Turn it off with Count on the menu bar icon, under Line. |
-| Click the Snapfly icon in the menu bar | The menu: how many photos hang and Paste into the app in front, the ways to take or add, the line, the Hide private details and Screenshot Button switches, Settings and Help & Support. |
+| Click the Snapfly icon in the menu bar | The menu: how many photos hang and Paste into the app in front, the ways to take or add, the line, the Hide private details and Screenshot Button switches, Settings, the Welcome Tour and Help & Support. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>F</kbd> | Search the words in your screenshots. Change it in Settings. |
@@ -621,6 +621,11 @@ Developer ID and notarized by Apple, so they open like any other app.
 Each version also keeps a release of its own on the [Releases](../../releases)
 page, and [CHANGELOG.md](CHANGELOG.md) says what each one brings.
 
+The first time it opens, a short tour of five cards shows the line, taking
+just the part you need, the icons under a photo, a photo's menu and what
+stays private, with where each lives in Settings. Return goes on, Escape
+skips it. Welcome Tour in the menu bar shows it again.
+
 <br>
 
 ## Build from source
@@ -650,6 +655,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
 | `LineTag.swift` | The tag at the end of the line: moving it, combining, sending, downloading and taking everything down |
 | `Downloads.swift` | Download, from the tag: the photos saved into Downloads as they leave the line |
+| `Tour.swift` | The welcome tour: five cards on what Snapfly does and where to find it, once and from the menu bar |
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `ChatTarget.swift` | ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE in a row under a photo: their logos or app icons, and their app or website, opened and waited for |
 | `assets/chat-logos/` | The logos of WhatsApp, Gmail, GMX and WEB.DE the row shows, as PNG with their SVG sources |

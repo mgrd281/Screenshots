@@ -189,8 +189,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
         }
 
-        if !Inbox.wasOffered {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in self?.offerInbox() }
+        // The tour once, then the question about screenshots once.
+        if !Tour.wasShown || !Inbox.wasOffered {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in self?.welcome() }
         }
 
         // Whoever used Snapfly before Pro begins keeps every feature.
@@ -328,6 +329,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         Inbox.isEnabled = on
         if on { Inbox.apply() } else { Inbox.restore() }
         startWatcher()
+    }
+
+    /// The welcome tour, once on this Mac, then the question about
+    /// screenshots, when it was never asked.
+    private func welcome() {
+        let ask = { [weak self] in
+            guard !Inbox.wasOffered else { return }
+            self?.offerInbox()
+        }
+        if Tour.wasShown { ask() } else { Tour.shared.show(then: ask) }
     }
 
     /// Asked once. Changing system settings is the user's call, never ours.
@@ -1259,6 +1270,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(ClosureMenuItem(L("Open screenshots folder"), symbol: "folder") { [weak self] in
             guard let self else { return }
             NSWorkspace.shared.open(self.watcher.folder)
+        })
+        menu.addItem(ClosureMenuItem(L("Welcome Tour"), symbol: "hand.wave") {
+            Tour.shared.show()
         })
         menu.addItem(ClosureMenuItem(L("Help & Support…"), symbol: "questionmark.circle") {
             NSWorkspace.shared.open(AppDelegate.supportURL)

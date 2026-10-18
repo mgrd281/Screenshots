@@ -332,6 +332,7 @@ design with monospaced digits.
 |---|---|---|---|
 | Field | 17 pt | Regular | Search bar input |
 | Title | 13 pt | Semibold | Card headers ("Translation", "Description") |
+| Tour title | 15 pt | Semibold | A card of the welcome tour, its one step up |
 | Body | 13 pt, +2 pt leading | Regular | Translations, descriptions, settings rows |
 | Label | 12 pt | Medium | Language menu, result count, keycaps |
 | Caption | 11 pt | Regular, or Semibold when selected | Notes under results, style tiles, "Copied" |
@@ -754,6 +755,29 @@ apps.
     arrow narrows towards its tail under a solid head. Drawing explains and
     never hides: blur and pixelate are not offered, and nothing drawn counts
     on the lock.
+- **Welcome tour** (`Tour.swift`), a 440 × 380 pt titled window with a
+  transparent title bar, moved by its background, shown once on a Mac a
+  moment after launch and before the question about screenshots, and from
+  Welcome Tour (`hand.wave`) in the menu bar, above Help & Support.
+  - Five cards, one at a time, each centred with 40 pt at its sides: the
+    symbol, 24 pt semibold in the accent, on a 56 pt circle of the accent
+    at 12%, as a card header draws it larger; the title in 15 pt semibold;
+    the words in 13 pt `.secondary` with 2 pt leading.
+  - Under them, 20 pt above the footer, a dot a card, 6 pt, 8 pt apart:
+    the accent for the card showing, `.primary` at 18% for the rest.
+    VoiceOver hears "Step 2 of 5".
+  - The footer, under a divider with 16 pt round it: Skip as a link on the
+    leading edge (not on the last card), then Back (`.bordered`, from the
+    second card) and Next with `arrow.forward`, or Done with `checkmark` on
+    the last, `.borderedProminent`, on the trailing edge. Return goes on,
+    Escape closes it from any card.
+  - The next card comes in 24 pt from the end the words read towards and
+    the one before leaves towards their start, fading, on a
+    `Motion.spring(response: 0.35, damping: 0.85)`; with Reduce Motion they
+    only fade.
+  - The screenshot card names the shortcut chosen, or Take Screenshot in
+    the menu bar without one, and the cards name places in Settings as
+    Settings names them, "Settings › Line › Icons under photos".
 - **No modal alerts** for things that can be said inline in the card.
 - **Privacy pane.** Grouped form. First a row of three small `.bordered`
   buttons, Check All, Recommended and Uncheck All, sharing the row in equal
