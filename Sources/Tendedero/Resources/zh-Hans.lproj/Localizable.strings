@@ -868,3 +868,9 @@
 "Edit" = "编辑";
 "Save and Export" = "存储与导出";
 "All Photos" = "所有照片";
+
+/* LineTag: holding the grip moves the line anywhere */
+"Drag to move the line up or down. Hold it first to move it anywhere." = "拖移可上下移动晾衣绳。先按住不放，就能把它移到任何位置。";
+"Move Left" = "向左移";
+"Move Right" = "向右移";
+"Back to the Middle" = "回到中间";

@@ -393,7 +393,7 @@ design with monospaced digits.
   It must handle these instead:
   - several displays: the line goes to the screen with the pointer;
   - full screen Spaces;
-  - a line moved down with its grip;
+  - a line moved down or across with its grip;
   - all three sizes;
   - all eight styles.
 
@@ -616,6 +616,30 @@ apps.
 - Under the pointer, a tool's glyph sits on a 22 pt circle of
   `.primary` at 10%, or white at 18% on the island, fading in over 0.12 s;
   20 pt when the tools stand 20 pt.
+- **Grip** (`arrow.up.and.down`, `TagView`). Dragged at once, it moves the
+  line up or down, as it always did.
+  - Held still (within 4 pt) for `duration.hold` (0.45 s,
+    `TagView.holdDuration`), the line comes loose. Meanwhile the circle shows
+    and swells to `scale.hold` (1.18, linear; it stays at 1 with Reduce
+    Motion).
+  - Loose, the circle fills with the accent and the glyph turns white, to
+    `arrow.up.and.down.and.arrow.left.and.right` (`.symbolEffect(.replace)`).
+    A Force Touch trackpad taps (`.levelChange`) and the pointer is the
+    closed hand.
+  - Then the line follows the pointer 1:1, any way. Within 12 pt of its
+    usual place across the screen, or of the top, it snaps there with a tap
+    (`.alignment`); the sideways snap rides `spring.snap` (0.25 / 0.85).
+  - Photos keep their middles 96 pt in from the screen's edges
+    (`Layout.photoInset`), so none fades, and the empty line's hint 160 pt
+    (`Layout.hintInset`). The tag stays 40 pt in.
+  - On a rope or a wire the tag stays clipped near the end and the photos
+    slide along, stopping 8 pt short of it. On the other styles the tag
+    comes along.
+  - The place is kept as a share of the screen's width (`Layout.across`),
+    so it holds on another screen. A line longer than the screen, scrolled
+    with Keep on line, stays in the middle.
+  - Its help tag says both ways. VoiceOver has Move Left and Move Right (a
+    photo's place, on `spring.spread`) and Back to the Middle.
 
 ### Navigation
 - **Menu bar icon.** Snapfly's own mark, drawn in code as a template

@@ -870,3 +870,9 @@
 "Edit" = "संपादित करें";
 "Save and Export" = "सहेजें और निर्यात करें";
 "All Photos" = "सभी फ़ोटो";
+
+/* LineTag: holding the grip moves the line anywhere */
+"Drag to move the line up or down. Hold it first to move it anywhere." = "रस्सी को ऊपर या नीचे ले जाने के लिए खींचें। कहीं भी ले जाने के लिए पहले दबाकर रखें।";
+"Move Left" = "बाएँ ले जाएँ";
+"Move Right" = "दाएँ ले जाएँ";
+"Back to the Middle" = "बीच में वापस लाएँ";

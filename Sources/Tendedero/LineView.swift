@@ -95,13 +95,81 @@ enum Layout {
         set { UserDefaults.standard.set(Double(max(0, newValue)), forKey: "lineDrop") }
     }
 
+    private static var savedAcross: CGFloat?
+
+    /// Where the line hangs across the screen, from holding the grip on its
+    /// tag and dragging: how far its photos sit from their usual place, as
+    /// a share of the screen's width, so it keeps its place on a screen of
+    /// another size. 0 is where it always hung.
+    static var across: CGFloat {
+        get {
+            if let savedAcross { return savedAcross }
+            let saved = CGFloat(UserDefaults.standard.double(forKey: "lineAcross"))
+            savedAcross = saved
+            return saved
+        }
+        set {
+            let value = min(0.5, max(-0.5, newValue))
+            savedAcross = value
+            UserDefaults.standard.set(Double(value), forKey: "lineAcross")
+        }
+    }
+
+    /// How near the screen's edges a moved line comes: a photo's middle no
+    /// nearer than where photos start to fade (see LineView.photo), and the
+    /// hint on an empty line no nearer than its own half width.
+    static let photoInset: CGFloat = 96
+    static let hintInset: CGFloat = 160
+
+    /// How far the photos hang from their usual place across the screen, in
+    /// points: `wanted`, or else `across` on a screen this wide, held back
+    /// so every photo and the tag stay on it. A line longer than the screen,
+    /// scrolled with Keep on line, hangs where it always did.
+    static func shift(count: Int, width: CGFloat, visible: Int, wanted: CGFloat? = nil) -> CGFloat {
+        let wanted = wanted ?? across * width
+        guard wanted != 0, width > 0, !scrolls(count: count, visible: visible) else { return 0 }
+        var lowest: CGFloat, highest: CGFloat
+        if count == 0 {
+            lowest = hintInset - width / 2
+            highest = width / 2 - hintInset
+            if style == .stack { highest = min(highest, width - 40 - stackTag(anchor: stackAnchor(width: width))) }
+        } else if style == .stack {
+            let anchor = stackAnchor(width: width)
+            // Room to spread the top cards out to the left.
+            lowest = 110 + CGFloat(min(count - 1, 3)) * spacing - anchor
+            highest = width - 40 - stackTag(anchor: anchor)
+        } else {
+            let first = centredX(index: 0, count: count, width: width, visible: visible, scroll: 0)
+            let last = centredX(index: count - 1, count: count, width: width, visible: visible, scroll: 0)
+            lowest = photoInset - first
+            highest = width - photoInset - last
+            if style.clipped {
+                // The tag stays clipped near the end of the rope, and the
+                // photos stop short of it.
+                highest = min(highest, width - 64 - tagWidth / 2 - 8 - cardWidth / 2 - last)
+            } else {
+                // The tag comes along after the last photo.
+                highest = min(highest, width - 40 - afterPhotos(last))
+            }
+        }
+        // Where it always hung stays allowed, even on a screen too small.
+        return min(max(wanted, min(0, lowest)), max(0, highest))
+    }
+
+    /// Whether the line is longer than the screen and scrolls, with Keep on
+    /// line set. A stack never does.
+    static func scrolls(count: Int, visible: Int) -> Bool {
+        style != .stack && Line.keepOnLine != nil && count > visible
+    }
+
     /// The rope hangs as a parabola from edge to edge of the screen.
     static func sag(width: CGFloat) -> CGFloat { min(30, width * 0.018) }
 
     /// Where the photos hang from. Only a rope sags; the island holds them
     /// right under the top of the screen, a shelf and a stack a little lower;
-    /// a wire runs straight; a fan arcs down from the middle.
-    static func ropeY(x: CGFloat, width: CGFloat) -> CGFloat {
+    /// a wire runs straight; a fan arcs down from its middle, `shift` from
+    /// the screen's.
+    static func ropeY(x: CGFloat, width: CGFloat, shift: CGFloat = 0) -> CGFloat {
         switch style {
         case .clothesline:
             guard width > 0 else { return ropeTop }
@@ -111,7 +179,7 @@ enum Layout {
         case .wire: return ropeTop + 2
         case .shelf, .stack, .floating: return ropeTop + 14
         case .filmstrip: return ropeTop + 18
-        case .fan: return ropeTop + 14 + fanDrop(x: x, width: width)
+        case .fan: return ropeTop + 14 + fanDrop(x: x - shift, width: width)
         }
     }
 
@@ -134,15 +202,22 @@ enum Layout {
         return min(14, max(-14, -4 * k))
     }
 
+    /// Where a photo hangs: in its usual place, as far across as the line
+    /// was moved (see `shift`).
+    static func x(index: Int, count: Int, width: CGFloat, visible: Int, scroll: CGFloat,
+                  spread: Bool = false) -> CGFloat {
+        let moved = shift(count: count, width: width, visible: visible)
+        if style == .stack { return stackX(index: index, count: count, width: width, spread: spread, shift: moved) }
+        return centredX(index: index, count: count, width: width, visible: visible, scroll: scroll) + moved
+    }
+
     /// Photos hang `spacing` apart, centred. When there are more than the
     /// `visible` that fit: with Keep on line set, they keep their spacing,
     /// the newest stays where the last one would hang on a full line, and
     /// `scroll` brings older ones in from the left. Otherwise (a line hung
     /// on a wider screen) they move closer together so none is past the edge.
-    static func x(index: Int, count: Int, width: CGFloat, visible: Int, scroll: CGFloat,
-                  spread: Bool = false) -> CGFloat {
-        if style == .stack { return stackX(index: index, count: count, width: width, spread: spread) }
-        if Line.keepOnLine != nil && count > visible {
+    private static func centredX(index: Int, count: Int, width: CGFloat, visible: Int, scroll: CGFloat) -> CGFloat {
+        if scrolls(count: count, visible: visible) {
             let newest = width / 2 + CGFloat(visible - 1) * spacing / 2
             return newest - CGFloat(count - 1 - index) * spacing + scroll
         }
@@ -158,10 +233,15 @@ enum Layout {
         width - cardWidth / 2 - tagWidth - 56
     }
 
+    /// The stack's tag, beside it.
+    private static func stackTag(anchor: CGFloat) -> CGFloat {
+        anchor + cardWidth / 2 + 22 + tagWidth / 2
+    }
+
     /// Closed, the photos lie on one another, the older ones peeking out to
     /// the left. Spread, they lay out leftwards from the newest.
-    private static func stackX(index: Int, count: Int, width: CGFloat, spread: Bool) -> CGFloat {
-        let anchor = stackAnchor(width: width)
+    private static func stackX(index: Int, count: Int, width: CGFloat, spread: Bool, shift: CGFloat) -> CGFloat {
+        let anchor = stackAnchor(width: width) + shift
         let depth = CGFloat(count - 1 - index)
         guard spread else { return anchor - min(depth, 3) * 8 }
         let room = max(0, anchor - 110)
@@ -177,34 +257,39 @@ enum Layout {
     /// How much a photo leans: crooked on a rope, fanned in a closed stack,
     /// square to the arc in a fan, upright everywhere else.
     static func tilt(of item: Pegged, index: Int, count: Int, spread: Bool,
-                     x: CGFloat = 0, width: CGFloat = 0) -> Double {
+                     x: CGFloat = 0, width: CGFloat = 0, shift: CGFloat = 0) -> Double {
         switch style {
         case .clothesline: return item.tilt
         case .stack:
             guard !spread else { return 0 }
             let fan: [Double] = [0, -5, -10, -14]
             return fan[min(count - 1 - index, 3)]
-        case .fan: return fanTilt(x: x, width: width)
+        case .fan: return fanTilt(x: x - shift, width: width)
         case .shelf, .island, .wire, .floating, .filmstrip: return 0
         }
     }
 
     // MARK: The tag and what holds the photos
 
-    /// Near the right end of a rope or a wire; right after the photos on a
-    /// shelf, an island, a filmstrip or with floating photos; beside a stack
-    /// and past the end of a fan.
+    /// Near the right end of a rope or a wire, wherever the photos are moved
+    /// along it; right after the photos on a shelf, an island, a filmstrip
+    /// or with floating photos; beside a stack and past the end of a fan.
     static func tagX(count: Int, width: CGFloat, visible: Int, scroll: CGFloat) -> CGFloat {
         switch style {
         case .clothesline, .wire:
             return width - 64
         case .stack:
-            return stackAnchor(width: width) + cardWidth / 2 + 22 + tagWidth / 2
+            return stackTag(anchor: stackAnchor(width: width) + shift(count: count, width: width, visible: visible))
         case .shelf, .island, .floating, .filmstrip, .fan:
-            guard count > 0 else { return width / 2 }
+            guard count > 0 else { return width / 2 + shift(count: 0, width: width, visible: visible) }
             let last = x(index: count - 1, count: count, width: width, visible: visible, scroll: scroll)
-            return min(last + cardWidth / 2 + 14 + tagWidth / 2, width - 40)
+            return min(afterPhotos(last), width - 40)
         }
+    }
+
+    /// The tag's middle right after the last photo.
+    private static func afterPhotos(_ last: CGFloat) -> CGFloat {
+        last + cardWidth / 2 + 14 + tagWidth / 2
     }
 
     /// The glass shelf, the island or the filmstrip behind the photos and
@@ -239,24 +324,29 @@ struct LineView: View {
             // Files being dragged here take a place of their own, where the
             // newest photo hangs, and the others make room for it.
             let count = line.items.count + (line.dropping ? 1 : 0)
+            // Held and dragged by its grip, the line hangs elsewhere across
+            // the screen.
+            let shift = Layout.shift(count: count, width: width, visible: line.visibleCount)
             let tucked: CGFloat = line.revealed || reduceMotion ? 0 : -(drop + Layout.panelHeight + 12)
             ZStack(alignment: .topLeading) {
                 holder(width: width, count: count)
 
                 if line.items.isEmpty && !line.dropping {
+                    let middle = width / 2 + shift
                     Hint()
-                        .position(x: width / 2, y: Layout.ropeY(x: width / 2, width: width) + 34)
+                        .position(x: middle, y: Layout.ropeY(x: middle, width: width, shift: shift) + 34)
                         .transition(.opacity)
                 }
 
                 ForEach(Array(line.items.enumerated()), id: \.element.id) { index, item in
-                    photo(item, index: index, count: count, width: width)
+                    photo(item, index: index, count: count, width: width, shift: shift)
                 }
 
                 if line.dropping {
                     let x = Layout.x(index: count - 1, count: count, width: width,
                                      visible: line.visibleCount, scroll: line.scroll, spread: line.spread)
-                    let top = Layout.ropeY(x: x, width: width) - Layout.pinAbove + PeggedView.cardOffsetBelowTop
+                    let top = Layout.ropeY(x: x, width: width, shift: shift) - Layout.pinAbove
+                        + PeggedView.cardOffsetBelowTop
                     DropSlot(over: line.dropOver)
                         .position(x: x, y: top + DropSlot.height / 2)
                         .transition(.opacity.combined(with: .scale(scale: 0.9)))
@@ -268,7 +358,7 @@ struct LineView: View {
 
                 if line.style == .stack, !line.spread, line.liveCount > 1 {
                     StackBadge(count: line.liveCount)
-                        .position(x: Layout.stackAnchor(width: width) + Layout.cardWidth / 2 - 6,
+                        .position(x: Layout.stackAnchor(width: width) + shift + Layout.cardWidth / 2 - 6,
                                   y: Layout.ropeY(x: 0, width: width) - Layout.pinAbove + PeggedView.cardOffsetBelowTop + 4)
                         .transition(.scale.combined(with: .opacity))
                 }
@@ -278,7 +368,8 @@ struct LineView: View {
                 let tagX = Layout.tagX(count: count, width: width, visible: line.visibleCount, scroll: line.scroll)
                 LineTag(line: line, style: line.style)
                     .frame(width: LineTag.width, height: LineTag.maxHeight, alignment: .top)
-                    .position(x: tagX, y: Layout.ropeY(x: tagX, width: width) - Layout.pinAbove + LineTag.maxHeight / 2)
+                    .position(x: tagX, y: Layout.ropeY(x: tagX, width: width, shift: shift) - Layout.pinAbove
+                        + LineTag.maxHeight / 2)
             }
             .animation(Motion.spring(response: 0.55, damping: 0.78, reduced: reduceMotion), value: line.items.map(\.id))
             .animation(.easeInOut(duration: 0.3), value: line.items.isEmpty)
@@ -335,17 +426,18 @@ struct LineView: View {
         }
     }
 
-    private func photo(_ item: Pegged, index: Int, count: Int, width: CGFloat) -> some View {
+    private func photo(_ item: Pegged, index: Int, count: Int, width: CGFloat, shift: CGFloat) -> some View {
         let spread = line.spread
         let x: CGFloat = Layout.x(index: index, count: count, width: width,
                                   visible: line.visibleCount, scroll: line.scroll, spread: spread)
-        let ropeY: CGFloat = Layout.ropeY(x: x, width: width)
+        let ropeY: CGFloat = Layout.ropeY(x: x, width: width, shift: shift)
         let height: CGFloat = Layout.panelHeight - ropeY
         let buried = Layout.buried(index: index, count: count, spread: spread)
         // Photos scrolled towards an edge fade out before they reach it.
         let fade: CGFloat = buried ? 0 : min(1, max(0, min(x, width - x) / 90))
         return PeggedView(item: item, line: line,
-                          tilt: Layout.tilt(of: item, index: index, count: count, spread: spread, x: x, width: width),
+                          tilt: Layout.tilt(of: item, index: index, count: count, spread: spread,
+                                            x: x, width: width, shift: shift),
                           swings: line.style.swings, clipped: line.style.clipped)
             .frame(width: Layout.cardWidth, height: height, alignment: .top)
             .opacity(fade)

@@ -2,12 +2,12 @@ import AppKit
 import SwiftUI
 
 /// A small tag clipped on near the right end of the line. Its grip moves the
-/// whole line up or down the screen, with photos picked it can join them
-/// into one image, its magnifying glass searches the words in them, its
-/// send button pastes the photos into the app in front,
-/// like a chat, its arrow saves them into Downloads as they leave the line,
-/// and its trash takes everything down at once, each photo the way of its
-/// own corner cross.
+/// whole line up or down the screen, or, held first, anywhere on it; with
+/// photos picked it can join them into one image, its magnifying glass
+/// searches the words in them, its send button pastes the photos into the
+/// app in front, like a chat, its arrow saves them into Downloads as they
+/// leave the line, and its trash takes everything down at once, each photo
+/// the way of its own corner cross.
 struct LineTag: View {
     @ObservedObject var line: Line
     /// On a rope or a wire it is clipped on; in a holder, beside a stack,
@@ -39,9 +39,12 @@ struct LineTag: View {
                 .opacity(compact ? 0 : 1)
                 .zIndex(1)
             VStack(spacing: 0) {
-                // Under the clip is grip too.
-                TagTool(symbol: "arrow.up.and.down", label: L("Move the line"), style: style, height: rowHeight,
-                     topPadding: compact ? 0 : 12, movesLine: true)
+                // Under the clip is grip too. Held, it comes loose and moves
+                // the line any way.
+                TagTool(symbol: line.grip == .loose ? "arrow.up.and.down.and.arrow.left.and.right"
+                                                    : "arrow.up.and.down",
+                        label: L("Move the line"), style: style, height: rowHeight,
+                        topPadding: compact ? 0 : 12, movesLine: true, grip: line.grip)
                 if line.pickedIDs.count > 1 {
                     TagTool(symbol: "rectangle.split.1x2", label: L("Combine into one image"), style: style,
                             height: rowHeight) {
@@ -136,27 +139,36 @@ private struct TagTool: View {
     var height: CGFloat = 24
     var topPadding: CGFloat = 0
     var movesLine = false
+    var grip = Line.Grip.still
     var action: () -> Void = {}
 
     @State private var hovering = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var onDark: Bool { style.dark }
+    private var loose: Bool { grip == .loose }
 
     var body: some View {
         Image(systemName: symbol)
             .font(.system(size: 10, weight: .bold))
-            .foregroundStyle(onDark ? Color.white.opacity(0.9) : Color.primary)
+            .foregroundStyle(loose ? Color.white : onDark ? Color.white.opacity(0.9) : Color.primary)
+            .contentTransition(.symbolEffect(.replace))
             .frame(width: LineTag.width, height: height)
             .background(
                 Circle()
-                    .fill(onDark ? Color.white.opacity(0.18) : Color.primary.opacity(0.1))
+                    .fill(loose ? Color.accentColor : onDark ? Color.white.opacity(0.18) : Color.primary.opacity(0.1))
                     .frame(width: min(22, height), height: min(22, height))
-                    .opacity(hovering ? 1 : 0)
+                    // Held, the circle swells while the line comes loose, as
+                    // a held photo shrinks while its menu builds up.
+                    .scaleEffect(grip == .held && !reduceMotion ? 1.18 : 1)
+                    .opacity(hovering || grip != .still ? 1 : 0)
             )
             .padding(.top, topPadding)
             .overlay(TagArea(label: label, movesLine: movesLine, onClick: action))
             .onHover { hovering = $0 }
             .animation(.easeOut(duration: 0.12), value: hovering)
+            .animation(grip == .held ? Animation.linear(duration: TagView.holdDuration) : .easeOut(duration: 0.15),
+                       value: grip)
     }
 }
 
@@ -183,6 +195,20 @@ struct TagArea: NSViewRepresentable {
         view.onClick = onClick
         view.setAccessibilityRole(movesLine ? NSAccessibility.Role.handle : .button)
         view.setAccessibilityLabel(label)
+        view.toolTip = movesLine ? L("Drag to move the line up or down. Hold it first to move it anywhere.") : nil
+        // Across the screen without dragging, one photo's place at a time.
+        // AppKit runs accessibility actions on the main thread.
+        view.setAccessibilityCustomActions(movesLine ? [
+            NSAccessibilityCustomAction(name: L("Move Left")) { [weak view] in
+                MainActor.assumeIsolated { view?.nudge(by: -1) ?? false }
+            },
+            NSAccessibilityCustomAction(name: L("Move Right")) { [weak view] in
+                MainActor.assumeIsolated { view?.nudge(by: 1) ?? false }
+            },
+            NSAccessibilityCustomAction(name: L("Back to the Middle")) { [weak view] in
+                MainActor.assumeIsolated { view?.nudge(by: 0) ?? false }
+            },
+        ] : [])
     }
 }
 
@@ -191,30 +217,151 @@ final class TagView: NSView {
     /// keeps the mouse, wherever the pointer goes.
     static var isMovingLine = false
 
+    /// As long as holding a photo takes before its menu opens.
+    static let holdDuration: TimeInterval = 0.45
+    /// How far the pointer may stray while the grip is held; further, and
+    /// it is a drag, which moves the line up or down only, as it always did.
+    private static let slop: CGFloat = 4
+    /// How near its usual place across the screen, or the top, a loose line
+    /// snaps into it.
+    private static let snap: CGFloat = 12
+    /// The closed hand shows while the line is loose.
+    private static var handShown = false
+
     var movesLine = false
     var onClick: () -> Void = {}
 
-    /// Where the pointer and the line were when the grip was pressed.
-    private var start: (pointer: CGFloat, drop: CGFloat)?
+    /// Where the pointer and the line were when the grip was pressed, and
+    /// which way the line goes as the pointer moves right.
+    private struct Start {
+        let pointer: CGPoint
+        let drop: CGFloat
+        let shift: CGFloat
+        let direction: CGFloat
+    }
+
+    private var start: Start?
+    private var holdTimer: Timer?
+    /// Moved before the hold was up: up or down only.
+    private var dragged = false
+    /// Snapped into its usual place across the screen, and to the top.
+    private var snapped = (middle: false, top: false)
+
+    private var panel: LinePanel? { window as? LinePanel }
 
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 
     override func mouseDown(with event: NSEvent) {
-        guard movesLine, let panel = window as? LinePanel else { return }
-        start = (NSEvent.mouseLocation.y, panel.drop)
+        guard movesLine, let panel, let line = panel.line else { return }
+        let shift = line.shift(width: panel.frame.width)
+        start = Start(pointer: NSEvent.mouseLocation, drop: panel.drop, shift: shift,
+                      direction: direction(in: panel, line: line))
+        dragged = false
+        snapped = (shift == 0, panel.drop == 0)
         TagView.isMovingLine = true
+        line.grip = .held
+        holdTimer?.invalidate()
+        holdTimer = Timer.scheduledTimer(withTimeInterval: Self.holdDuration, repeats: false) { [weak self] _ in
+            MainActor.assumeIsolated { self?.comeLoose() }
+        }
+    }
+
+    /// Held still long enough: the line comes loose, with a tap on a Force
+    /// Touch trackpad, and goes any way the pointer takes it.
+    private func comeLoose() {
+        holdTimer = nil
+        guard start != nil, !dragged, let line = panel?.line else { return }
+        line.grip = .loose
+        NSHapticFeedbackManager.defaultPerformer.perform(.levelChange, performanceTime: .now)
+        if !Self.handShown {
+            NSCursor.closedHand.push()
+            Self.handShown = true
+        }
     }
 
     override func mouseDragged(with event: NSEvent) {
-        guard let start, let panel = window as? LinePanel else { return }
+        guard let start, let panel, let line = panel.line else { return }
+        let pointer = NSEvent.mouseLocation
         // In screen coordinates: the strip changes size under the pointer as
         // the line moves, so its own coordinates would drift.
-        panel.moveLine(to: start.drop + start.pointer - NSEvent.mouseLocation.y)
+        let right = pointer.x - start.pointer.x, down = start.pointer.y - pointer.y
+        if line.grip == .loose {
+            moveFreely(by: CGPoint(x: right, y: down), from: start, in: panel, line: line)
+            return
+        }
+        if !dragged {
+            guard hypot(right, down) > Self.slop else { return }
+            dragged = true
+            holdTimer?.invalidate()
+            holdTimer = nil
+            line.grip = .still
+        }
+        panel.moveLine(to: start.drop + down)
+    }
+
+    /// The line follows the pointer any way, and snaps into its usual place
+    /// across the screen, and to the top, as it comes near, with a tap.
+    private func moveFreely(by moved: CGPoint, from start: Start, in panel: LinePanel, line: Line) {
+        var shift = start.shift + moved.x * start.direction
+        var drop = start.drop + moved.y
+        let middle = abs(shift) < Self.snap, top = drop < Self.snap
+        if middle { shift = 0 }
+        if top { drop = 0 }
+        if (middle && !snapped.middle) || (top && !snapped.top) {
+            NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
+        }
+        let jumps = middle != snapped.middle
+        snapped = (middle, top)
+        panel.moveLine(to: drop)
+        if jumps {
+            withAnimation(Motion.spring(response: 0.25, damping: 0.85, reduced: Motion.reduced)) {
+                line.slide(to: shift, width: panel.frame.width)
+            }
+        } else {
+            line.slide(to: shift, width: panel.frame.width)
+        }
     }
 
     override func mouseUp(with event: NSEvent) {
         if !movesLine, bounds.contains(convert(event.locationInWindow, from: nil)) { onClick() }
+        holdTimer?.invalidate()
+        holdTimer = nil
         start = nil
-        TagView.isMovingLine = false
+        guard movesLine else { return }
+        Self.letGo()
+        panel?.line?.grip = .still
+    }
+
+    /// The grip is let go, or went away under the pointer: the line stays
+    /// where it is.
+    static func letGo() {
+        isMovingLine = false
+        if handShown {
+            NSCursor.pop()
+            handShown = false
+        }
+    }
+
+    /// VoiceOver's way across: a photo's place left or right, or back to the
+    /// middle with 0.
+    func nudge(by places: CGFloat) -> Bool {
+        guard let panel, let line = panel.line else { return false }
+        let width = panel.frame.width
+        let step = Layout.spacing * direction(in: panel, line: line)
+        let shift = places == 0 ? 0 : line.shift(width: width) + places * step
+        withAnimation(Motion.spring(response: 0.42, damping: 0.8, reduced: Motion.reduced)) {
+            line.slide(to: shift, width: width)
+        }
+        return true
+    }
+
+    /// Which way the line's own measure runs on the screen: 1, or -1 where
+    /// SwiftUI draws it mirrored, right to left. Read off where the tag
+    /// really is.
+    private func direction(in panel: LinePanel, line: Line) -> CGFloat {
+        let width = panel.frame.width
+        guard !line.tagRect.isNull else { return 1 }
+        let x = Layout.tagX(count: line.items.count, width: width, visible: line.visibleCount, scroll: line.scroll)
+        return abs(line.tagRect.midX - x) <= abs(line.tagRect.midX - (width - x)) ? 1 : -1
     }
 }

@@ -868,3 +868,9 @@
 "Edit" = "編集";
 "Save and Export" = "保存と書き出し";
 "All Photos" = "すべての写真";
+
+/* LineTag: holding the grip moves the line anywhere */
+"Drag to move the line up or down. Hold it first to move it anywhere." = "ドラッグするとロープを上下に動かせます。先に長押しすると、どこへでも動かせます。";
+"Move Left" = "左へ移動";
+"Move Right" = "右へ移動";
+"Back to the Middle" = "中央に戻す";

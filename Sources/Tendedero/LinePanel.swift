@@ -21,6 +21,9 @@ final class LinePanel: NSPanel {
         contentView = content
     }
 
+    /// What hangs in it, for the grip on its tag to move it across.
+    weak var line: Line?
+
     /// Two-finger swipes and the scroll wheel, for moving along a long line.
     var onScroll: ((NSEvent) -> Void)?
 
@@ -61,8 +64,9 @@ final class LinePanel: NSPanel {
         max(0, visible.height - Layout.panelHeight)
     }
 
-    /// Dragging the grip on the line's tag moves it up or down. It hangs
-    /// there from then on, on any screen with room for it.
+    /// Dragging the grip on the line's tag moves it up or down; held first,
+    /// any way (see Line.slide). It hangs there from then on, on any screen
+    /// with room for it.
     func moveLine(to drop: CGFloat) {
         guard let screen else { return }
         Layout.drop = min(max(0, drop), Self.lowestDrop(in: screen.visibleFrame))
