@@ -461,8 +461,11 @@ apps.
     The photo's menu and VoiceOver's actions follow the same order.
     - **Their order** (`ChatOrderRow`): the section opens with the six as
       they stand under a photo, 28 pt (`ChatIcon`, the strip's drawing at
-      any size, its short mark at 37.5% of it), 12 pt apart, one turned off
-      at 35% and keeping its place, each with its name as help. Dragged,
+      any size, its short mark at 37.5% of it), 12 pt apart, every logo in its
+      own colours, the ones under photos with a 13 pt accent check (a 7 pt
+      heavy white `checkmark`, ringed in the window's background) at their
+      bottom trailing corner, 4 pt out, fading and scaling in over 0.15 s;
+      one turned off keeps its place and VoiceOver hears "Off"; each with its name as help. Dragged,
       one takes the place of the icon it passes, the rest closing up on an
       0.15 s ease-out, and every photo's row follows at once; VoiceOver has
       Move Earlier and Move Later. A callout `.secondary` line under the
