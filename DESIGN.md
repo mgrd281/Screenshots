@@ -460,7 +460,11 @@ apps.
     The photo's menu and VoiceOver's actions follow the same order.
     - **Their order** (`ChatOrderRow`): the section opens with the six as
       they stand under a photo, 28 pt (`ChatIcon`, the strip's drawing at
-      any size, its short mark at 37.5% of it), 12 pt apart, every logo in its
+      any size, its short mark at 37.5% of it), in rows of the same length
+      (`IconGrid`): as many rows, 14 pt apart, as the width needs with the
+      icons at least 12 pt apart, the icons shared out evenly between them
+      (eighteen that fit sixteen to a row go nine and nine, never sixteen
+      and two), each in the middle of an equal column across the row; every logo in its
       own colours, the ones under photos with a 13 pt accent check (a 7 pt
       heavy white `checkmark`, ringed in the window's background) at their
       bottom trailing corner, 4 pt out, fading and scaling in over 0.15 s;
