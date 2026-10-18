@@ -260,6 +260,9 @@ struct GrabArea: NSViewRepresentable {
                 }
                 menu.addItem(ClosureMenuItem(L("Hide Part…"), symbol: "rectangle.dashed") { line.hidePart(id) })
                 menu.addItem(ClosureMenuItem(L("Draw on Photo…"), symbol: "scribble.variable") { line.drawOn(id) })
+                menu.addItem(ClosureMenuItem(L("Convert to SVG…"), symbol: "point.topleft.down.curvedto.point.bottomright.up") {
+                    line.convertToSVG(id)
+                })
             }
             if isRecording {
                 menu.addItem(ClosureMenuItem(L("Trim…"), symbol: "scissors") { line.markup(id) })

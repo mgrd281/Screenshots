@@ -1,32 +1,42 @@
+import Foundation
 import CoreGraphics
 import ImageIO
 
 /// A picture to and from the tracer's own pixels.
 enum VectorRaster {
     /// Pictures with more pixels than this are made smaller before they are traced.
-    static let maximumPixels = 12_000_000
+    static let maximumPixels = VectorTracer.maximumPixels
 
-    /// The picture in a file as the tracer reads it: upright, and kept to
-    /// `limit` pixels, shrunk if it has more. nil when the file is no picture.
-    static func pixels(of url: URL, limit: Int = maximumPixels) -> VectorPixels? {
+    /// The picture's pixels across and down as it is shown, upright.
+    static func pixelSize(of url: URL) -> (width: Int, height: Int)? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
               let width = (properties[kCGImagePropertyPixelWidth] as? NSNumber)?.intValue,
               let height = (properties[kCGImagePropertyPixelHeight] as? NSNumber)?.intValue,
               width > 0, height > 0 else { return nil }
-        let image: CGImage?
-        if width * height > limit {
-            let scale = (Double(limit) / Double(width * height)).squareRoot()
-            let options: [CFString: Any] = [
-                kCGImageSourceCreateThumbnailFromImageAlways: true,
-                kCGImageSourceCreateThumbnailWithTransform: true,
-                kCGImageSourceThumbnailMaxPixelSize: Int((Double(max(width, height)) * scale).rounded(.down)),
-            ]
-            image = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
-        } else {
-            image = Cover.upright(source)
-        }
-        return image.flatMap(pixels(of:))
+        // A photo stored turned is shown upright, its sides swapped.
+        let orientation = (properties[kCGImagePropertyOrientation] as? NSNumber)?.intValue ?? 1
+        return (5...8).contains(orientation) ? (height, width) : (width, height)
+    }
+
+    /// The picture in a file as the tracer reads it: upright, and kept to
+    /// `limit` pixels, shrunk if it has more. nil when the file is no picture.
+    static func image(of url: URL, limit: Int = maximumPixels) -> CGImage? {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let size = pixelSize(of: url) else { return nil }
+        guard size.width * size.height > limit else { return Cover.upright(source) }
+        let scale = (Double(limit) / Double(size.width * size.height)).squareRoot()
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: Int((Double(max(size.width, size.height)) * scale).rounded(.down)),
+        ]
+        return CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
+    }
+
+    /// The same, as the tracer's pixels.
+    static func pixels(of url: URL, limit: Int = maximumPixels) -> VectorPixels? {
+        image(of: url, limit: limit).flatMap(pixels(of:))
     }
 
     /// The picture's colours as straight (not premultiplied) red, green, blue

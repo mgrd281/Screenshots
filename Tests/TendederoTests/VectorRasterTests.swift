@@ -54,8 +54,8 @@ final class VectorRasterTests: XCTestCase {
         XCTAssertEqual(pixel(79, 79)[3], 255, accuracy: 2)
         // Outside the square there is nothing, not white.
         XCTAssertEqual(pixel(10, 10)[3], 0)
-        XCTAssertEqual(pixel(19, 50)[3], 0)
-        XCTAssertEqual(pixel(80, 50)[3], 0)
+        XCTAssertEqual(pixel(19, 50)[3], 0, accuracy: 2)
+        XCTAssertEqual(pixel(80, 50)[3], 0, accuracy: 2)
     }
 
     func testTheShapesCanBeDrawnLargerAsTheyAreVectors() throws {

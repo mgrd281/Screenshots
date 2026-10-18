@@ -63,6 +63,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. Either way, a note offers to undo it for a few seconds. |
 | Right-click, then Hide Part | Click a word to hide it, or drag a box over anything the covering missed. It stays hidden in whatever leaves the line, and a note offers to undo it. Always cover, under the word just hidden, covers that word in every photo from then on, as a rule of your own under Privacy. |
 | Right-click, then Draw on Photo | Point things out with an arrow, a box, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
+| Right-click, then Convert to SVG | Draws the photo again as shapes that stay sharp at any size, to paste into a design app or save as an `.svg` file. It is made from the copy that leaves the line, so what is covered is covered in it; the file stays as it is. |
 | Right-click, then Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
 | Right-click, then Translate Text | Read it in your language, to copy or send. |
 | Right-click, then Describe | A line about what it shows, to send along with it. |
@@ -379,6 +380,35 @@ has it too. Markup and
 Trim write over the file itself, and the note after them names its folder,
 "Saved to Pictures › Snapfly"; a click on the note shows the file in
 Finder.
+
+<br>
+
+## Shapes, not pixels.
+
+Convert to SVG, in a photo's menu, draws the photo again as shapes: flat
+areas of color with lines and curves for their edges, which stay sharp when
+they are made as large as a wall. It opens the same wide window: your photo
+and its SVG one over the other on the left, under a divider to drag, and
+the choices on the right. Zoom in with a pinch, ⌘-scroll or the buttons under
+the picture, to see how close the edges are; a double-click looks closely at a
+spot.
+
+Pick the kind of picture, and the rest follows: Screenshot for interfaces and
+text, Logo or icon for a few colors and smooth shapes, Illustration for artwork
+with many flat colors, Photo for many soft colors, and Black and white for
+only the dark lines, with nothing behind them. Then Colors, Smoothness and
+Leave out specks go further, and the result shows how many colors, shapes
+and bytes it came to. Copy SVG puts it on the clipboard for Figma, Sketch or
+Illustrator; Save SVG… writes a file where you choose.
+
+A straight edge stays a straight line and a corner stays sharp, so a button
+comes out as four lines, and what is round becomes a few smooth curves. It is
+made on your Mac and nothing is sent anywhere. Like everything that leaves the
+line, it is made from the copy with the private details covered, so a covered
+word is a covered shape in the SVG; the file itself is never changed. A
+gradient becomes bands of flat color, and a photograph becomes a
+poster of it, so a photo's SVG is large; a picture of more than twelve
+million pixels is traced smaller and the SVG still opens at its own size.
 
 <br>
 
@@ -754,11 +784,15 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
 | `Shared/CoverReport.swift` | What was covered in a picture, kind by kind, for the lock, the photo's menu, VoiceOver and the iPhone |
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
+| `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
 | `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
 | `Drawing.swift` | Draw on Photo's arrows, boxes, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |
 | `DrawEditor.swift` | Draw on Photo: the window to draw on a photo, with its tools, inks, sizes and Undo |
+| `VectorEditor.swift` | Convert to SVG: the window with the kinds of picture and their settings, tracing in the background, and Copy SVG and Save SVG… |
+| `VectorCanvas.swift` | Convert to SVG's canvas: the photo and its SVG one over the other under a divider, with pinch, scroll and keys to zoom |
+| `VectorRaster.swift` | Reads a photo upright as the tracer's pixels (shrunk past twelve million), and draws shapes back as a picture |
 | `QuickCrop.swift` | Crop…: the photo large over the dimmed screen, a drag over the part to keep, saved as the drawing's crop |
 | `SmartArea.swift` | Smart selection's reading of a picture: its parts by the empty space round them, the edges a drag keeps to, and empty space trimmed to an even margin |
 | `SmartSelection.swift` | Smart selection on the capture screens and in Crop: the picture read off the main thread, and what an app says is under the pointer through Accessibility |

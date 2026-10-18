@@ -665,6 +665,8 @@ apps.
 - **Photo context menu.**
   - Grouped by intent: copy and send; translate, describe, Order Details and the assistant;
     open and edit; take down.
+  - **Convert to SVG…** (`point.topleft.down.curvedto.point.bottomright.up`)
+    follows Draw on Photo, for photos only, and opens its window (below).
   - **Keep on Top** (`pip`) follows Quick Look for a photo: it floats over
     every app in a utility panel with a transparent title bar and its close
     button, the photo filling it, its longer side 360 pt at first and never
@@ -854,6 +856,68 @@ apps.
     arrow narrows towards its tail under a solid head. Drawing explains and
     never hides: blur and pixelate are not offered, and nothing drawn counts
     on the lock.
+- **Convert to SVG** (`VectorEditor.swift`, `VectorCanvas.swift`) is Hide
+  Part's window, laid out the same (`HidePartLayout`, opening for the
+  picture's size with the 36 pt bar under the canvas counted), titled "name
+  as SVG", for drawing a photo again as shapes. It works on the copy that
+  leaves the line, so nothing covered shows in it.
+  - The **canvas** keeps `underPageBackgroundColor` and the picture under
+    the floating card's shadow (black 18%, radius 14, y 6). The picture and
+    its vector lie one over the other: the photo to the left of the
+    **divider**, the shapes to the right. The divider is a 2 pt white line
+    with a soft shadow (black 35%, blur 3) and a 30 pt white handle with
+    `arrow.left.and.right` in black, at the picture's middle, kept in view.
+    Over it, two **labels**, Original and SVG, in the dark badge (11 pt
+    semibold white on `PhotoBadge`'s fill: black 55%, solid with Reduce
+    Transparency), 10 pt in from the picture's top corners, left out where
+    their side is narrower than 90 and 70 pt. A drag anywhere moves the
+    divider when the picture fits; zoomed in, only the handle does, and a
+    drag elsewhere pans. Left and Right move it 5%, ⇧ 1%. A picture with
+    clear parts shows 8 pt chequers behind it (grey 90% and 78%).
+  - **Zoom** is a pinch, ⌘ or ⌥ with scroll, + and − or the buttons, as
+    large as 64 screen pixels to a pixel; 0 or Fit to Window shows it all, and
+    a double-click zooms ×4 at the pointer, or back. The shapes are drawn at
+    the zoom they are seen at, so they stay sharp; the photo's pixels are
+    not blurred (no interpolation above 100%). A picture is shown up to ×4
+    its size when it fits. The pointer is `resizeLeftRight` over the divider
+    and the open or closed hand when zoomed.
+  - The **bar** under the canvas is 36 pt: on the leading side a small
+    segmented Compare, SVG, Original, 210 pt wide; on the trailing side
+    `minus.magnifyingglass`, the zoom as a percent of the picture's pixels
+    in callout `.secondary` with monospaced digits, `plus.magnifyingglass`
+    and `arrow.up.left.and.down.right.magnifyingglass`, each with its help
+    tag and its spoken label.
+  - The **inspector** is a grouped `Form` over the footer. "Kind of
+    picture" is a menu: Screenshot, Logo or icon, Illustration, Photo and
+    Black and white; its footer says in a line what the choice is for and
+    reads "Your own settings." when a setting was moved off a choice (the
+    menu then lists Custom, and shows a choice again when the settings meet
+    it). "Detail" has Colors (a slider from 2 to 64 with its number),
+    Smoothness (Exact to Smooth), Leave out specks (0 to 20 px) and two
+    switches, Smooth gradients and Transparent background, each with its
+    help; its footer says a gradient becomes bands of flat color. "Result"
+    shows Colors, Shapes and Size as rows with monospaced digits, a small
+    spinner in the header while it traces, and notes in `.secondary` where
+    they apply: that the picture was large and traced smaller, that it was
+    made from the covered copy, that it could not be traced.
+  - Moving a setting traces again after 0.2 s, off the main thread, and
+    stops a trace that a newer one has replaced; the last result stays on
+    the canvas until the new one is ready.
+  - The **footer** has Close (Escape), Copy SVG and Save SVG… (the primary,
+    Return) on the trailing edge, the last two off until there is a result.
+    Copy SVG puts the markup on the pasteboard as text and as
+    `public.svg-image` and says so in a note; Save SVG… opens a save sheet
+    on the window in the photo's folder, named like the photo, and a note
+    says where it went.
+  - **VoiceOver**: the canvas is one slider named "Compare the photo with its
+    SVG", its value the divider's place in percent, adjusted in steps of 10.
+  - The SVG itself: one `<path>` for each color, `fill-rule="evenodd"` so a
+    hole is an outline inside an outline, the bottom color a `<rect>` where
+    the picture is wholly opaque, numbers to two places in relative
+    commands, coordinates in the picture's own pixels with `width` and
+    `height` giving the original size where it had to be shrunk to trace.
+    A straight edge is a line, a corner is a corner, and a curve is a
+    cubic fitted within a fifth to two fifths of a pixel.
 - **The introduction** (`Guide.swift`) points at the real thing on the
   screen, never at a picture of it. Two non-activating panels over the
   line and the menu bar and under menus (`GuidePanel`, `.statusBar` + 1
