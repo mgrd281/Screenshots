@@ -1267,7 +1267,8 @@ apps.
 - **Check before sending** (`SendCheck.swift`), a floating card in the text
   card's look (380 pt, 20 pt corners, `.regularMaterial`, 28 pt margin) that
   shows before photos are pasted into an AI chat, or an app or website not
-  in the chat lists, as Settings › Privacy chooses.
+  in the chat lists, as Settings › Privacy chooses. It is off until turned
+  on, so a click on a chat sends at once.
   - Header: `checkmark.shield` in the accent on its 12% circle, "Send to
     ChatGPT?" in 13 pt semibold on one line, truncated in the middle, and
     the close button.

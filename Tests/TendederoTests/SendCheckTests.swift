@@ -43,11 +43,11 @@ final class SendCheckTests: XCTestCase {
         let before = UserDefaults.standard.object(forKey: key)
         defer { UserDefaults.standard.set(before, forKey: key) }
         UserDefaults.standard.removeObject(forKey: key)
-        XCTAssertEqual(SendCheck.when, .aiAndUnknown)
-        SendCheck.when = .never
         XCTAssertEqual(SendCheck.when, .never)
-        UserDefaults.standard.set("gone", forKey: key)
+        SendCheck.when = .aiAndUnknown
         XCTAssertEqual(SendCheck.when, .aiAndUnknown)
+        UserDefaults.standard.set("gone", forKey: key)
+        XCTAssertEqual(SendCheck.when, .never)
     }
 
     @MainActor
