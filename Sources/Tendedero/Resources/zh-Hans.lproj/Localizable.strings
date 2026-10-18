@@ -492,6 +492,9 @@
 "%@ (edited)" = "%@（已编辑）";
 "Saved to %@. Click to show it in Finder." = "已存储到“%@”。点按可在访达中显示。";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "已作为“%1$@”存储到“%2$@”。点按可在访达中显示。";
+"Download" = "下载";
+"Choose the folder for downloads." = "选取用于存放下载的文件夹。";
+"Saved %1$d photos in %2$@. Click to show them in Finder." = "已将 %1$d 张照片存储到“%2$@”。点按可在访达中显示。";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "已随照片存储。发送时带有你绘制的内容；“%@”中的文件保持原样。";
 "Crop…" = "裁剪…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "拖过要保留的部分。按 Return 键保留整张照片，按 Esc 取消。";

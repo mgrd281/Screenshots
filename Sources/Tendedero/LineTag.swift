@@ -5,8 +5,9 @@ import SwiftUI
 /// whole line up or down the screen, with photos picked it can join them
 /// into one image, its magnifying glass searches the words in them, its
 /// send button pastes the photos into the app in front,
-/// like a chat, and its trash takes everything down at once, each photo the
-/// way of its own corner cross.
+/// like a chat, its arrow saves them into Downloads as they leave the line,
+/// and its trash takes everything down at once, each photo the way of its
+/// own corner cross.
 struct LineTag: View {
     @ObservedObject var line: Line
     /// On a rope or a wire it is clipped on; in a holder, beside a stack,
@@ -15,10 +16,22 @@ struct LineTag: View {
     var style: Layout.Style = .clothesline
 
     static let width: CGFloat = Layout.tagWidth
-    /// Room for the clip and the five tools. The tag hangs from the top.
+    /// Room for the clip and the tools. The tag hangs from the top.
     static let maxHeight: CGFloat = 152
 
+    /// How tall each tool stands: with a clip 24, without 22, and 20 when
+    /// six tools share the tag, so it keeps its height.
+    static func rowHeight(tools: Int, clipped: Bool) -> CGFloat {
+        tools > 5 ? 20 : (clipped ? 24 : 22)
+    }
+
     private var compact: Bool { !style.clipped }
+
+    /// Combine, with two photos picked or more, is the sixth tool.
+    private var rowHeight: CGFloat {
+        let tools = line.liveCount > 0 && line.pickedIDs.count > 1 ? 6 : 5
+        return Self.rowHeight(tools: tools, clipped: style.clipped)
+    }
 
     var body: some View {
         VStack(spacing: -12) {
@@ -27,37 +40,47 @@ struct LineTag: View {
                 .zIndex(1)
             VStack(spacing: 0) {
                 // Under the clip is grip too.
-                TagTool(symbol: "arrow.up.and.down", label: L("Move the line"), style: style,
+                TagTool(symbol: "arrow.up.and.down", label: L("Move the line"), style: style, height: rowHeight,
                      topPadding: compact ? 0 : 12, movesLine: true)
                 if line.pickedIDs.count > 1 {
-                    TagTool(symbol: "rectangle.split.1x2", label: L("Combine into one image"), style: style) {
+                    TagTool(symbol: "rectangle.split.1x2", label: L("Combine into one image"), style: style,
+                            height: rowHeight) {
                         line.combine()
                     }
                     .transition(.opacity)
                 }
                 // With photos picked, PDF takes search's place, so the tag
-                // never holds more than five tools.
+                // never holds more than six tools.
                 if !line.pickedIDs.isEmpty {
-                    TagTool(symbol: "doc.richtext", label: L("Make PDF"), style: style) {
+                    TagTool(symbol: "doc.richtext", label: L("Make PDF"), style: style, height: rowHeight) {
                         line.makePDF()
                     }
                     .transition(.opacity)
                 }
                 if line.liveCount > 0 {
                     if line.pickedIDs.isEmpty {
-                        TagTool(symbol: "magnifyingglass", label: L("Search screenshots"), style: style) {
+                        TagTool(symbol: "magnifyingglass", label: L("Search screenshots"), style: style,
+                                height: rowHeight) {
                             line.onSearch?()
                         }
                         .transition(.opacity)
                     }
                     // The photos picked with ⌘-click, or all of them.
-                    TagTool(symbol: "paperplane", label: L("Paste into the app in front"), style: style) {
+                    TagTool(symbol: "paperplane", label: L("Paste into the app in front"), style: style,
+                            height: rowHeight) {
                         _ = line.paste()
+                    }
+                    .transition(.opacity)
+                    // The same photos, saved as they leave the line, above
+                    // the trash.
+                    TagTool(symbol: "arrow.down.to.line", label: L("Download"), style: style, height: rowHeight) {
+                        line.download()
                     }
                     .transition(.opacity)
                     // Like the corner cross: a trash only when something goes
                     // to the Trash, rather than only off the line.
-                    TagTool(symbol: trashes ? "trash" : "eye.slash", label: L("Take everything down"), style: style) {
+                    TagTool(symbol: trashes ? "trash" : "eye.slash", label: L("Take everything down"), style: style,
+                            height: rowHeight) {
                         line.clear()
                     }
                     .transition(.opacity)
@@ -110,6 +133,7 @@ private struct TagTool: View {
     let symbol: String
     let label: String
     let style: Layout.Style
+    var height: CGFloat = 24
     var topPadding: CGFloat = 0
     var movesLine = false
     var action: () -> Void = {}
@@ -122,11 +146,11 @@ private struct TagTool: View {
         Image(systemName: symbol)
             .font(.system(size: 10, weight: .bold))
             .foregroundStyle(onDark ? Color.white.opacity(0.9) : Color.primary)
-            .frame(width: LineTag.width, height: style.clipped ? 24 : 22)
+            .frame(width: LineTag.width, height: height)
             .background(
                 Circle()
                     .fill(onDark ? Color.white.opacity(0.18) : Color.primary.opacity(0.1))
-                    .frame(width: 22, height: 22)
+                    .frame(width: min(22, height), height: min(22, height))
                     .opacity(hovering ? 1 : 0)
             )
             .padding(.top, topPadding)

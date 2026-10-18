@@ -494,6 +494,9 @@
 "%@ (edited)" = "%@ (düzəldilmiş)";
 "Saved to %@. Click to show it in Finder." = "Saxlanıldı: %@. Finder-də göstərmək üçün klik et.";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@ qovluğunda %1$@ kimi saxlanıldı. Finder-də göstərmək üçün klik et.";
+"Download" = "Endir";
+"Choose the folder for downloads." = "Endirmələr üçün qovluğu seç.";
+"Saved %1$d photos in %2$@. Click to show them in Finder." = "%2$@ qovluğunda %1$d foto saxlanıldı. Finder-də göstərmək üçün klik et.";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Fotoyla birlikdə saxlanıldı. Çəkdiyin kimi göndərilir; %@ qovluğundakı fayl olduğu kimi qalır.";
 "Crop…" = "Kəs…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Qalacaq hissənin üzərindən sürüşdür. Return bütün fotonu saxlayır, Escape ləğv edir.";

@@ -492,6 +492,9 @@
 "%@ (edited)" = "%@（編集済み）";
 "Saved to %@. Click to show it in Finder." = "%@に保存しました。クリックするとFinderに表示します。";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@に%1$@として保存しました。クリックするとFinderに表示します。";
+"Download" = "ダウンロード";
+"Choose the folder for downloads." = "ダウンロード用のフォルダを選んでください。";
+"Saved %1$d photos in %2$@. Click to show them in Finder." = "%2$@に写真を%1$d枚保存しました。クリックするとFinderに表示します。";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "写真と一緒に保存しました。描いたとおりに送られます。%@のファイルはそのままです。";
 "Crop…" = "切り取り…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "残す部分の上をドラッグします。Returnキーで写真全体を残し、escでキャンセルします。";

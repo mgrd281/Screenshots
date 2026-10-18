@@ -492,6 +492,9 @@
 "%@ (edited)" = "%@ (editado)";
 "Saved to %@. Click to show it in Finder." = "Guardado en %@. Haz clic para mostrarlo en Finder.";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "Guardado como %1$@ en %2$@. Haz clic para mostrarlo en Finder.";
+"Download" = "Descargar";
+"Choose the folder for downloads." = "Elige la carpeta para las descargas.";
+"Saved %1$d photos in %2$@. Click to show them in Finder." = "%1$d fotos guardadas en %2$@. Haz clic para mostrarlas en Finder.";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Guardado con la foto. Sale tal como la dibujaste; el archivo en %@ queda como está.";
 "Crop…" = "Recortar…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Arrastra sobre la parte que quieres conservar. Return conserva la foto entera y Escape cancela.";

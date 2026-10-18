@@ -494,6 +494,9 @@
 "%@ (edited)" = "%@ (संपादित)";
 "Saved to %@. Click to show it in Finder." = "%@ में सहेजा गया। Finder में दिखाने के लिए क्लिक करें।";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@ में %1$@ नाम से सहेजा गया। Finder में दिखाने के लिए क्लिक करें।";
+"Download" = "डाउनलोड करें";
+"Choose the folder for downloads." = "डाउनलोड के लिए फ़ोल्डर चुनें।";
+"Saved %1$d photos in %2$@. Click to show them in Finder." = "%2$@ में %1$d फ़ोटो सहेजी गईं। Finder में दिखाने के लिए क्लिक करें।";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "फ़ोटो के साथ सहेजा गया। यह वैसे ही जाती है जैसे आपने बनाया; %@ में फ़ाइल जैसी है वैसी रहती है।";
 "Crop…" = "क्रॉप करें…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "रखने वाले हिस्से पर ड्रैग करें। Return पूरी फ़ोटो रखता है, Escape रद्द करता है।";

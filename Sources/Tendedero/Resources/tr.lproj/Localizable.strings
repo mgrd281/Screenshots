@@ -492,6 +492,9 @@
 "%@ (edited)" = "%@ (düzenlenmiş)";
 "Saved to %@. Click to show it in Finder." = "Kaydedildi: %@. Finder'da göstermek için tıkla.";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "%2$@ içine %1$@ olarak kaydedildi. Finder'da göstermek için tıkla.";
+"Download" = "İndir";
+"Choose the folder for downloads." = "İndirmeler için klasörü seç.";
+"Saved %1$d photos in %2$@. Click to show them in Finder." = "%2$@ içine %1$d fotoğraf kaydedildi. Finder'da göstermek için tıkla.";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Fotoğrafla birlikte kaydedildi. Çizdiğin gibi gider; %@ içindeki dosya olduğu gibi kalır.";
 "Crop…" = "Kırp…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Kalacak kısmın üzerinde sürükle. Return fotoğrafın tamamını tutar, Escape iptal eder.";

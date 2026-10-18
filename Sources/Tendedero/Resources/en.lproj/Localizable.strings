@@ -494,6 +494,9 @@
 "%@ (edited)" = "%@ (edited)";
 "Saved to %@. Click to show it in Finder." = "Saved to %@. Click to show it in Finder.";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "Saved as %1$@ in %2$@. Click to show it in Finder.";
+"Download" = "Download";
+"Choose the folder for downloads." = "Choose the folder for downloads.";
+"Saved %1$d photos in %2$@. Click to show them in Finder." = "Saved %1$d photos in %2$@. Click to show them in Finder.";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Saved with the photo. It goes out as drawn; the file in %@ stays as it is.";
 "Crop…" = "Crop…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Drag over the part to keep. Return keeps the whole photo, Escape cancels.";

@@ -492,6 +492,9 @@
 "%@ (edited)" = "%@ (معدّل)";
 "Saved to %@. Click to show it in Finder." = "حُفظت في %@. انقر لإظهارها في Finder.";
 "Saved as %1$@ in %2$@. Click to show it in Finder." = "حُفظت باسم %1$@ في %2$@. انقر لإظهارها في Finder.";
+"Download" = "تنزيل";
+"Choose the folder for downloads." = "اختر مجلد التنزيلات.";
+"Saved %1$d photos in %2$@. Click to show them in Finder." = "حُفظت %1$d صور في %2$@. انقر لإظهارها في Finder.";
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "حُفظ مع الصورة. تُرسل كما رسمتها؛ أما الملف في %@ فيبقى كما هو.";
 "Crop…" = "قص…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "اسحب فوق الجزء الذي يبقى. Return يحتفظ بالصورة كاملة، وEscape للإلغاء.";

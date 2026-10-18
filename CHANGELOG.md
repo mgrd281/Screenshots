@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Download, on the tag above the trash: the photos picked, or all of them,
+  saved into Downloads as they leave the line, covered, drawn on and
+  cropped. They stay on the line, and a note shows them in Finder.
 - Names finds the customer under a card's heading, like Kunde on a shop's
   order page. Small lines in a colour, read at first as one sign of another
   script, are read again line by line, and a heading with a menu's dots

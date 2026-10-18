@@ -83,6 +83,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click a photo or PDF in Finder, then Services › Hide Private Details with Snapfly | Choose what to hide and save a covered copy beside the original. The original stays as it is. |
 | Right-click (or control-click), then Make PDF | Put the photo, or the ones picked with it, in one PDF, a page each and private details covered. It hangs ready to send, marked PDF. |
 | <kbd>⌘</kbd>-click one or more, then the PDF button on the tag | The same PDF, from the tag, where search sits while nothing is picked. |
+| Click the download arrow on the tag, above the trash | Save the photos picked, or all of them, into Downloads as they leave the line: covered, drawn on and cropped, each as a file of its own. They stay on the line, and the files they came from stay as they are. A note says where they went; click it to see them in Finder. The App Store edition asks once which folder they go to. |
 | Click the trash on the tag | Take everything down at once, but for the photos pinned. |
 | Right-click, then Pin | Keep it on the line: clearing it or filling it leaves it there. Click its pin to let it go again. |
 | Click the magnifying glass on the tag | Search the words in every photo. Matches stay bright, marked where they say it, and Return picks them, ready to send. |
@@ -646,7 +647,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs |
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
-| `LineTag.swift` | The tag at the end of the line: moving it, combining, sending and taking everything down |
+| `LineTag.swift` | The tag at the end of the line: moving it, combining, sending, downloading and taking everything down |
+| `Downloads.swift` | Download, from the tag: the photos saved into Downloads as they leave the line |
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `ChatTarget.swift` | ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE in a row under a photo: their logos or app icons, and their app or website, opened and waited for |
 | `assets/chat-logos/` | The logos of WhatsApp, Gmail, GMX and WEB.DE the row shows, as PNG with their SVG sources |
