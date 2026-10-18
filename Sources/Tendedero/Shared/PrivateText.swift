@@ -270,6 +270,9 @@ enum Finder {
         /// for any of it still showing; nil for a face, a code or a part
         /// hidden by hand.
         var text: String? = nil
+        /// How far up and down its margin may reach, from 0 to 1 from the
+        /// bottom: not into a line above or below that stays to be read.
+        var room: ClosedRange<CGFloat>? = nil
     }
 
     /// Where the chosen details and the owner's own rules are, as they are
@@ -290,7 +293,7 @@ enum Finder {
         let codes = Self.codes(in: image, chosen)
         var areas = boxes(in: image, chosen, rules: rules, printed: codes.compactMap(\.payload),
                           intelligence: intelligence).map { box in
-            Area(rect: withMargin(box.rect, in: image), kind: box.kind, text: box.text)
+            Area(rect: withMargin(box.rect, in: image, room: box.room), kind: box.kind, text: box.text)
         }
         if chosen.contains(.faces) { areas += faces(in: image).map { Area(rect: $0, kind: .faces) } }
         areas += codes.map { Area(rect: $0.box, kind: $0.kind) }
@@ -299,14 +302,40 @@ enum Finder {
 
     /// Text's box with room around it, as it is covered, from 0 to 1 from
     /// the bottom left; more room with the strongest protection, so no
-    /// letter's tail or accent shows.
-    private static func withMargin(_ box: CGRect, in image: CGImage) -> CGRect {
+    /// letter's tail or accent shows. Up and down it stops at `room`, so it
+    /// never hides part of a line that is meant to show, like the street
+    /// under a name.
+    private static func withMargin(_ box: CGRect, in image: CGImage, room: ClosedRange<CGFloat>? = nil) -> CGRect {
         let width = CGFloat(image.width), height = CGFloat(image.height)
         // Vision measures from the bottom left, as Core Graphics draws.
         let text = VNImageRectForNormalizedRect(box, image.width, image.height)
-        let room: (across: CGFloat, up: CGFloat) = strongest ? (0.45, 0.35) : (0.25, 0.2)
-        let rect = text.insetBy(dx: -text.height * room.across, dy: -text.height * room.up)
-        return CGRect(x: rect.minX / width, y: rect.minY / height, width: rect.width / width, height: rect.height / height)
+        let extra: (across: CGFloat, up: CGFloat) = strongest ? (0.45, 0.35) : (0.25, 0.2)
+        let rect = text.insetBy(dx: -text.height * extra.across, dy: -text.height * extra.up)
+        var bottom = rect.minY / height, top = rect.maxY / height
+        if let room {
+            bottom = max(bottom, min(room.lowerBound, box.minY))
+            top = min(top, max(room.upperBound, box.maxY))
+        }
+        return CGRect(x: rect.minX / width, y: bottom, width: rect.width / width, height: top - bottom)
+    }
+
+    /// How far up and down a cover over `box`, read in line `index`, may
+    /// reach, from 0 to 1 from the bottom: as far as the nearest line above
+    /// and below it, in its column, that is not covered too. A line that is
+    /// covered as well may be covered into.
+    static func room(around box: CGRect, line index: Int, in boxes: [CGRect], covered: Set<Int>) -> ClosedRange<CGFloat> {
+        var bottom: CGFloat = 0, top: CGFloat = 1
+        // The margin reaches a little to the sides too.
+        let side = box.height * 0.5
+        for (i, other) in boxes.enumerated() where i != index && !covered.contains(i) {
+            guard other.maxX > box.minX - side, other.minX < box.maxX + side else { continue }
+            if other.midY > box.maxY {
+                top = min(top, max(other.minY, box.maxY))
+            } else if other.midY < box.minY {
+                bottom = max(bottom, min(other.maxY, box.minY))
+            }
+        }
+        return bottom...top
     }
 
     // MARK: Covered, and checked
@@ -350,9 +379,12 @@ enum Finder {
             covers.contains { $0.contains(CGPoint(x: box.midX, y: box.midY)) }
         }
         var found: [Area] = []
-        for hit in keepingLastDigits(hits(in: lines, chosen, rules: rules), in: lines) {
+        let missed = keepingLastDigits(hits(in: lines, chosen, rules: rules), in: lines)
+        let boxes = lines.map(\.box), coveredLines = Set(missed.map(\.line))
+        for hit in missed {
             guard let place = Self.area(of: hit, in: lines), !underCover(place.rect) else { continue }
-            found.append(Area(rect: withMargin(place.rect, in: covered), kind: place.kind, text: place.text))
+            let reach = Self.room(around: place.rect, line: hit.line, in: boxes, covered: coveredLines)
+            found.append(Area(rect: withMargin(place.rect, in: covered, room: reach), kind: place.kind, text: place.text))
         }
         // A number keeping its last four digits shows them on purpose.
         let pieces = hidden.filter { area in
@@ -361,7 +393,7 @@ enum Finder {
         }
         guard !pieces.isEmpty else { return found }
         let size = CGSize(width: covered.width, height: covered.height)
-        for line in lines {
+        for (index, line) in lines.enumerated() {
             let string = line.string
             for word in Self.word.matches(in: string, range: NSRange(string.startIndex..., in: string)) {
                 guard let range = Range(word.range, in: string), let box = line.box(for: range),
@@ -370,7 +402,9 @@ enum Finder {
                 guard piece.count >= 3,
                       let source = pieces.first(where: { beside(box, $0.rect, in: size) && letters($0.text ?? "").contains(piece) })
                 else { continue }
-                found.append(Area(rect: withMargin(box, in: covered), kind: source.kind, text: String(string[range])))
+                let reach = Self.room(around: box, line: index, in: boxes, covered: coveredLines.union([index]))
+                found.append(Area(rect: withMargin(box, in: covered, room: reach), kind: source.kind,
+                                  text: String(string[range])))
             }
         }
         return found
@@ -510,7 +544,13 @@ enum Finder {
         let printedHits = patterns.isEmpty ? [] : Text(lines).hits(forPatterns: patterns)
         var found = hits(in: lines, chosen, rules: rules)
         if intelligence { found += intelligentHits(in: lines, chosen) }
-        return (keepingLastDigits(found, in: lines) + printedHits).compactMap { Self.area(of: $0, in: lines) }
+        let all = keepingLastDigits(found, in: lines) + printedHits
+        let covered = Set(all.map(\.line)), boxes = lines.map(\.box)
+        return all.compactMap { hit in
+            guard var area = Self.area(of: hit, in: lines) else { return nil }
+            area.room = Self.room(around: area.rect, line: hit.line, in: boxes, covered: covered)
+            return area
+        }
     }
 
     /// Where a detail found in a line is, and what it says: just its words,

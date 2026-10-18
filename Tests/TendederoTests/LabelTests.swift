@@ -9,6 +9,28 @@ import XCTest
 /// row, and the customer's name a little further down than the lines under
 /// it are from each other.
 final class LabelTests: XCTestCase {
+    func testACoverStopsAtTheLineUnderItThatStaysToBeRead() {
+        // A name under "Rechnungsadresse:", the street under it, the label on
+        // its row, a line above it, and another column to the right.
+        let name = CGRect(x: 0.5, y: 0.80, width: 0.1, height: 0.02)
+        let boxes = [name,
+                     CGRect(x: 0.5, y: 0.77, width: 0.12, height: 0.02),
+                     CGRect(x: 0.3, y: 0.80, width: 0.1, height: 0.02),
+                     CGRect(x: 0.8, y: 0.775, width: 0.1, height: 0.02),
+                     CGRect(x: 0.5, y: 0.83, width: 0.1, height: 0.02)]
+        // Only the name is covered: its cover reaches to the street and to the line above, no further.
+        let room = Finder.room(around: name, line: 0, in: boxes, covered: [0])
+        XCTAssertEqual(room.lowerBound, 0.79, accuracy: 0.0001)
+        XCTAssertEqual(room.upperBound, 0.83, accuracy: 0.0001)
+        // With the street covered too, the two covers may meet.
+        XCTAssertEqual(Finder.room(around: name, line: 0, in: boxes, covered: [0, 1]).lowerBound, 0)
+        // Nothing round it: it may reach as far as it likes.
+        XCTAssertEqual(Finder.room(around: name, line: 0, in: [name], covered: [0]), 0...1)
+        // A line pressed against it leaves it its own box, never less.
+        let touching = CGRect(x: 0.5, y: 0.785, width: 0.1, height: 0.02)
+        XCTAssertEqual(Finder.room(around: name, line: 0, in: [name, touching], covered: [0]).lowerBound, 0.8, accuracy: 0.0001)
+    }
+
     func testALabelIsKnownWithTheDotsOfAMenuOnItsRow() {
         for line in ["Kunde", "Kunde ⋯", "Kunde ...", "Kunde …", "Kunde •••", "Rechnungsadresse:", "KUNDE"] {
             XCTAssertTrue(Finder.isLabel(line), line)

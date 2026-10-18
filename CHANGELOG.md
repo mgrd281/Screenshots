@@ -11,6 +11,9 @@ keeps a download of each version.
   Text and AI, Edit and Save and Export as submenus, then Open, Quick Look,
   Keep on Top, Show in Finder and Pin, and All Photos and Take down at the
   end. About fifteen rows instead of fifty.
+- A cover no longer hides part of the line under or over it: with only the
+  name covered on an order page, the street right under the name now reads
+  in full.
 - The icons in Settings › Line › Icons under photos stand in even rows
   across the whole width: nine and nine, not a full row with two under it.
 - Settings › General › AI Assistant looks new: Claude and ChatGPT are two
