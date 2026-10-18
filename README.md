@@ -454,9 +454,10 @@ sent before, under Line.
 Ten of fifteen to send? Click the circle on each, in the corner opposite
 the cross, and only those go: with the send button on the tag, with the one
 over a chat, or with ChatGPT or Claude beside the paper plane. Those two
-send straight into the app, which comes to the front with the chat it
-shows, or opens on a new one; the photos are pasted in once it is ready,
-covered as in any AI chat, after the check before sending. Turn the icons
+send straight into the chat: your browser comes to the front on the chat
+it shows, or opens a new one (or their app does, if you chose it); the
+photos are pasted in once it is ready, covered as in any AI chat, after
+the check before sending. Turn the icons
 off with ChatGPT on photos and Claude on photos, under Line, each on its own.
 
 Something to ask about it? Right-click ChatGPT or Claude on the photo, or
