@@ -17,4 +17,19 @@ final class SettingsTests: XCTestCase {
         XCTAssertEqual(Folders.placeName(URL(fileURLWithPath: "/Volumes/Backup/Scans", isDirectory: true)),
                        "Volumes › Backup › Scans")
     }
+
+    func testTheIconsStandInRowsOfTheSameLength() {
+        // Eighteen that fit sixteen to a row go nine and nine, not sixteen and two.
+        XCTAssertEqual(IconGrid.perRow(count: 18, fitting: 16), 9)
+        // Seventeen go nine and eight.
+        XCTAssertEqual(IconGrid.perRow(count: 17, fitting: 16), 9)
+        // Where all fit, they stay in one row.
+        XCTAssertEqual(IconGrid.perRow(count: 18, fitting: 18), 18)
+        XCTAssertEqual(IconGrid.perRow(count: 18, fitting: 25), 18)
+        // Narrower, three even rows of six.
+        XCTAssertEqual(IconGrid.perRow(count: 18, fitting: 8), 6)
+        // Never none to a row.
+        XCTAssertEqual(IconGrid.perRow(count: 18, fitting: 0), 1)
+        XCTAssertEqual(IconGrid.perRow(count: 0, fitting: 10), 1)
+    }
 }

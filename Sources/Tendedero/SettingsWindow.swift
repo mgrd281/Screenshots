@@ -2271,7 +2271,7 @@ private struct ChatOrderRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 28), spacing: 12)], alignment: .leading, spacing: 12) {
+            IconGrid(cell: 28, spacing: 12, rowSpacing: 14) {
                 ForEach(prefs.chatOrder) { chat in
                     let shows = prefs.showsAIChat(chat)
                     let on = shows.wrappedValue
@@ -2313,6 +2313,54 @@ private struct ChatOrderRow: View {
                 .foregroundStyle(.secondary)
         }
         .padding(.vertical, 4)
+    }
+}
+
+/// Icons in rows of the same length: as many rows as the width needs, the
+/// icons shared out evenly between them, each in the middle of an equal
+/// column across the row. Eighteen that fit sixteen to a row go nine and
+/// nine, never sixteen and two. SwiftUI's `Layout`, named in full, since the
+/// line has a `Layout` of its own (LineView.swift).
+struct IconGrid: SwiftUI.Layout {
+    /// An icon's side.
+    var cell: CGFloat
+    /// The least room between two icons side by side.
+    var spacing: CGFloat
+    var rowSpacing: CGFloat
+
+    /// How many to a row, when `fitting` fit at most: the fewest rows, and
+    /// the rows as even as they can be.
+    static func perRow(count: Int, fitting: Int) -> Int {
+        guard count > 0 else { return 1 }
+        let fit = max(1, fitting)
+        let rows = (count + fit - 1) / fit
+        return (count + rows - 1) / rows
+    }
+
+    private func columns(_ count: Int, across width: CGFloat) -> Int {
+        Self.perRow(count: count, fitting: Int((width + spacing) / (cell + spacing)))
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let count = subviews.count
+        let whole = CGFloat(count) * (cell + spacing) - spacing
+        let width = proposal.width.flatMap { $0.isFinite ? $0 : nil } ?? max(whole, cell)
+        guard count > 0 else { return CGSize(width: width, height: 0) }
+        let perRow = columns(count, across: width)
+        let rows = (count + perRow - 1) / perRow
+        return CGSize(width: width, height: CGFloat(rows) * cell + CGFloat(rows - 1) * rowSpacing)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard !subviews.isEmpty else { return }
+        let perRow = columns(subviews.count, across: bounds.width)
+        let column = bounds.width / CGFloat(perRow)
+        for (index, subview) in subviews.enumerated() {
+            let row = index / perRow, slot = index % perRow
+            subview.place(at: CGPoint(x: bounds.minX + column * (CGFloat(slot) + 0.5),
+                                      y: bounds.minY + CGFloat(row) * (cell + rowSpacing) + cell / 2),
+                          anchor: .center, proposal: ProposedViewSize(width: cell, height: cell))
+        }
     }
 }
 
