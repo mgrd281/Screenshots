@@ -803,13 +803,18 @@ final class SettingsWindow {
 }
 
 private enum Pane: String, CaseIterable, Identifiable {
-    case general, line, privacy, permissions, support, about
+    case general, workspace, line, privacy, permissions, support, about
 
     var id: Self { self }
+
+    /// The panes shown: the Workspace is not in the App Store edition, whose
+    /// sandbox can't write to the Desktop.
+    static var visible: [Pane] { allCases.filter { $0 != .workspace || Workspace.isAvailable } }
 
     var title: String {
         switch self {
         case .general: L("General")
+        case .workspace: L("Workspace")
         case .line: L("Line")
         case .privacy: L("Privacy")
         case .permissions: L("Permissions")
@@ -823,6 +828,7 @@ private enum Pane: String, CaseIterable, Identifiable {
     var icon: Image {
         switch self {
         case .general: Image(systemName: "gearshape")
+        case .workspace: Image(systemName: "folder.fill")
         case .line: Image(nsImage: LineIcon.image(filled: false, description: title)).renderingMode(.template)
         case .privacy: Image(systemName: "hand.raised.fill")
         case .permissions: Image(systemName: "lock.shield.fill")
@@ -885,7 +891,7 @@ private struct SettingsView: View {
 
     var body: some View {
         NavigationSplitView {
-            List(Pane.allCases, selection: $pane) { pane in
+            List(Pane.visible, selection: $pane) { pane in
                 PaneLabel(pane: pane)
             }
             .navigationSplitViewColumnWidth(180)
@@ -893,6 +899,7 @@ private struct SettingsView: View {
         } detail: {
             switch pane ?? .general {
             case .general: GeneralPane(prefs: prefs)
+            case .workspace: WorkspacePane(workspace: .shared)
             case .line: LinePane(prefs: prefs)
             case .privacy: PrivacyPane(prefs: prefs, line: line)
             case .permissions: PermissionsPane()

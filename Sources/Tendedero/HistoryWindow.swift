@@ -59,7 +59,7 @@ final class HistoryWindow: NSObject, NSWindowDelegate {
 final class HistoryModel: ObservableObject {
     /// Which list the window shows: the photos, or what was sent where.
     enum Page: Hashable {
-        case photos, orders, sent
+        case photos, orders, sent, workspace
     }
 
     @Published var page = Page.photos
@@ -67,6 +67,7 @@ final class HistoryModel: ObservableObject {
     @Published var sent: [SendLog.Sent] = []
     @Published var thumbs: [String: NSImage] = [:]
     @Published var search = ""
+    let library = WorkspaceLibraryModel()
     /// Bumped when the words of a photo are known, so search sees them.
     @Published private var readCount = 0
 
@@ -157,6 +158,7 @@ final class HistoryModel: ObservableObject {
 
 private struct HistoryView: View {
     @ObservedObject var model: HistoryModel
+    @ObservedObject private var workspace = Workspace.shared
     let hang: (URL) -> Void
     let sendAgain: (URL) -> Void
     @State private var confirmClear = false
@@ -176,9 +178,13 @@ private struct HistoryView: View {
             case .photos: photos
             case .orders: orders
             case .sent: sentList
+            case .workspace: WorkspaceLibraryView(model: model.library, search: model.search, hang: hang)
             }
         }
         .frame(minWidth: 480, minHeight: 360)
+        .onChange(of: workspace.isOn) { _, on in
+            if !on, model.page == .workspace { model.page = .photos }
+        }
         .searchable(text: $model.search, placement: .toolbar, prompt: Text(L("Search…")))
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -186,6 +192,9 @@ private struct HistoryView: View {
                     Text(L("Photos")).tag(HistoryModel.Page.photos)
                     Text(L("Orders")).tag(HistoryModel.Page.orders)
                     Text(L("Sent")).tag(HistoryModel.Page.sent)
+                    if workspace.isOn {
+                        Text(L("Workspace")).tag(HistoryModel.Page.workspace)
+                    }
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()

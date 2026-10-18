@@ -100,6 +100,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         panel.placeOnScreen()
         updateCapacity()
 
+        // The Workspace, when it is on: where screenshots are kept, and the
+        // line following the files it moves.
+        let desktopWorkspace = Workspace.shared
+        desktopWorkspace.onChange = { [weak self] in
+            if Inbox.isEnabled || Edition.appStore { Inbox.apply() }
+            self?.startWatcher()
+        }
+        desktopWorkspace.relocated = { [weak self] old, new in self?.line.relocate(from: old, to: new) }
+        desktopWorkspace.rebased = { [weak self] old, new in self?.line.rebase(from: old, to: new) }
+        desktopWorkspace.removed = { [weak self] in self?.line.prune() }
+        desktopWorkspace.start()
+
         if Inbox.isEnabled || Edition.appStore { Inbox.apply() }
         restoreSettingsOnTermination()
         startWatcher()
@@ -1092,9 +1104,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             setUpScreenshots: { [weak self] in self?.guideScreenshots() },
             openScreenshotsFolder: { [weak self] in
                 guard let self else { return }
-                NSWorkspace.shared.open(self.watcher.folder)
+                if Workspace.shared.isOn { Workspace.shared.reveal() } else { NSWorkspace.shared.open(self.watcher.folder) }
             },
-            screenshotsFolder: { [weak self] in self?.watcher.folder },
+            screenshotsFolder: { [weak self] in Workspace.shared.isOn ? Workspace.shared.root : self?.watcher.folder },
             menuBarCountChanged: { [weak self] in self?.updateStatusIcon() })
         self.preferences = preferences
     }
@@ -1404,9 +1416,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(ClosureMenuItem(L("Settings…"), symbol: "gearshape", key: ",") { [weak self] in
             self?.openSettings()
         })
-        menu.addItem(ClosureMenuItem(L("Open screenshots folder"), symbol: "folder") { [weak self] in
+        let workspaceOn = Workspace.shared.isOn
+        menu.addItem(ClosureMenuItem(workspaceOn ? L("Open Workspace") : L("Open screenshots folder"), symbol: "folder") { [weak self] in
             guard let self else { return }
-            NSWorkspace.shared.open(self.watcher.folder)
+            if workspaceOn { Workspace.shared.reveal() } else { NSWorkspace.shared.open(self.watcher.folder) }
         })
         // Ended before its end, it says it goes on from there.
         let introduction = GuideProgress.load().canContinue ? L("Continue Introduction") : L("Introduction")

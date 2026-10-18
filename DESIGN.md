@@ -375,7 +375,7 @@ design with monospaced digits.
   - It opens at 760 × 560, can be resized from its edges and zoomed with
     the green button, and remembers its size and place.
   - The sidebar names each pane after a 24 pt tile, rounded 6 (the keycap
-    radius), as System Settings does, but all six tiles are ink
+    radius), as System Settings does, but every tile is ink
     (`InkTile.fill`, the cover ink) with the symbol knocked out in white
     (`InkTile.glyph`); in the dark, paper with the symbol in ink. One
     colour, so the sidebar stays quiet. They are fixed colours on purpose:
@@ -386,6 +386,16 @@ design with monospaced digits.
     one column. A longer label still gets its room. A row in a list is
     removed with a borderless `minus.circle` and its help tag, never a
     worded button.
+  - **Workspace** (`WorkspacePane`, `folder.fill`, between General and
+    Line; absent in the App Store edition) is a grouped `Form`: the switch
+    with its two footers (what off means, and the iCloud warning), a warning
+    row (`exclamationmark.triangle.fill` in orange, Open Settings… and Try
+    Again) only while something is wrong, Location (the folder's place, Show
+    in Finder, Change Location…, the folder's name, the screenshots' count
+    and size), Categories (where new ones go, a row for each: its name as a
+    plain field, its count in 11 pt `.secondary`, then borderless 20 pt
+    buttons for hide, up, down and remove, all labelled, and a field with
+    Add), and a last section with Delete…, a destructive button that asks.
   - General names the screenshots folder under "Screenshots folder", from
     the home folder down ("Pictures › Snapfly"), with Show in Finder beside
     it; watched folders are named the same way.
@@ -396,6 +406,12 @@ design with monospaced digits.
   - a line moved down or across with its grip;
   - all three sizes;
   - all eight styles.
+
+- **The workspace folder's icon** (`FolderIcon`) is the system folder with
+  the app's icon on its front, a share 0.5 of the folder wide (0.62 up to
+  32 pt, so it reads small), centred at 40% of the height, with a soft
+  shadow only above 32 pt. It is drawn at 16, 32, 128, 256 and 512 pt, at 1×
+  and 2×, and set with `NSWorkspace.setIcon`; it adds no colour of its own.
 
 ## Elevation & Depth
 
@@ -1253,6 +1269,18 @@ apps.
     (the first one read, top to bottom) under that number, as a `number`
     label in the day headers' style, selectable, over the same grid; the
     order with the newest photo comes first.
+  - **Workspace** shows only while the workspace is on, as a fourth
+    segment. Its bar holds a category menu ("All (12)", then each visible
+    category with its count), Open Workspace and a Grid | List segmented
+    control. Grid is the cards above (112 pt, thumbnails made as they come
+    into view and at most 400 kept), with the category beside the time and a
+    2.5 pt accent ring and a check on a selected one; a click selects,
+    ⌘-click adds, a double-click opens, and the menu is Hang on the line,
+    Open, Quick Look, Show in Finder, Copy, Copy File Path, Move to Folder,
+    Rename… and Move to Trash (red). List is a `Table` of Name, Category,
+    Date and Size with the same menu. Empty, it says "No screenshots yet"
+    with a Take Screenshot button. Each card is one VoiceOver element with
+    the same actions.
   - The toolbar holds a segmented Photos | Orders | Sent picker in the middle, then
     the search, Export… (`square.and.arrow.up`, Sent only) and Clear
     History…, which clears both. Empty, each page uses

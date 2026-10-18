@@ -423,20 +423,40 @@ final class Capture {
                         self.onCapture(destination)
                     } else {
                         log.error("Could not save a screenshot to \(destination.path, privacy: .public)")
+                        Notice.show(L("Could not save the screenshot. Check that the disk has room and the folder is still there."))
                     }
                 }
             }
         }
     }
 
-    nonisolated static func write(_ image: CGImage, to url: URL) -> Bool {
-        try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-        guard let destination = CGImageDestinationCreateWithURL(url as CFURL, "public.png" as CFString, 1, nil)
+    /// Writes a PNG whole or not at all: under a hidden name first, which the
+    /// folder watcher ignores, then moved into place. A file already there
+    /// is never replaced, unless `replacing` says it is meant to be. False
+    /// when it could not be written, with nothing left behind.
+    nonisolated static func write(_ image: CGImage, to url: URL, replacing: Bool = false) -> Bool {
+        let fm = FileManager.default
+        try? fm.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        let partial = url.deletingLastPathComponent().appendingPathComponent(".\(UUID().uuidString).partial")
+        guard let destination = CGImageDestinationCreateWithURL(partial as CFURL, "public.png" as CFString, 1, nil)
         else { return false }
         CGImageDestinationAddImage(destination, image, nil)
-        guard CGImageDestinationFinalize(destination) else { return false }
+        guard CGImageDestinationFinalize(destination) else {
+            try? fm.removeItem(at: partial)
+            return false
+        }
         // What is on screen can be private: only the user can read it.
-        try? FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
+        try? fm.setAttributes([.posixPermissions: 0o600], ofItemAtPath: partial.path)
+        do {
+            if replacing, fm.fileExists(atPath: url.path) {
+                _ = try fm.replaceItemAt(url, withItemAt: partial)
+            } else {
+                try fm.moveItem(at: partial, to: url)
+            }
+        } catch {
+            try? fm.removeItem(at: partial)
+            return false
+        }
         return true
     }
 

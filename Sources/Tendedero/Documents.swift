@@ -21,7 +21,7 @@ enum DocumentCover {
     /// A PDF that is not Snapfly's own. Make PDF's are covered as they are
     /// made, from what leaves the line.
     static func protects(_ url: URL) -> Bool {
-        isDocument(url) && !url.standardizedFileURL.path.hasPrefix(Inbox.folder.standardizedFileURL.path + "/")
+        isDocument(url) && !Inbox.owns(url)
     }
 
     /// Locked with a password, or not readable as a PDF at all.

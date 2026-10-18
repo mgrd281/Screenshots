@@ -87,9 +87,11 @@ final class Recording {
     /// launch.
     static func cleanUp() {
         let fm = FileManager.default
-        let files = (try? fm.contentsOfDirectory(at: Inbox.folder, includingPropertiesForKeys: nil)) ?? []
-        for file in files where file.lastPathComponent.hasPrefix(".recording-") {
-            try? fm.removeItem(at: file)
+        for folder in [Inbox.legacyFolder, Inbox.folder] {
+            let files = (try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? []
+            for file in files where file.lastPathComponent.hasPrefix(".recording-") {
+                try? fm.removeItem(at: file)
+            }
         }
     }
 

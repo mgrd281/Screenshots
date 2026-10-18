@@ -53,6 +53,14 @@ does happens on your Mac, unless you set up the AI assistant with your own key
   not record what you type. The guide and its screenshots stay on your Mac, in
   Snapfly's own folder, the last 20 of them, until you delete them. What you
   send or save from a guide has its private details covered.
+- **The workspace folder, only if you turn it on.** In Settings › Workspace you
+  may have Snapfly keep screenshots in a folder on your Desktop, with a folder
+  for each kind. It stays on your Mac and is yours: Snapfly reads and writes
+  only that folder, moves screenshots between its folders when you ask, and
+  moves them to the Trash only when you choose Move to Trash or Delete…, which
+  asks first. Turning it off or removing the app deletes nothing. If iCloud
+  Drive keeps your Desktop, Apple copies the folder to iCloud, private details
+  covered or not; that is Apple's service and your choice.
 - **Calls.** While Not during a call is on, Snapfly asks the Mac whether the
   microphone is in use, so the line keeps away during a meeting and nothing
   of Snapfly shows in what you share. It hears nothing, and asks for no

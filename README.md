@@ -443,6 +443,42 @@ clicked, so its steps say "Click here." and mark the click with a ring.
 
 <br>
 
+## A folder of its own.
+
+Snapfly can keep your screenshots in a workspace: a folder on your Desktop
+named after the app, with a folder inside it for each kind of screenshot.
+It is off until you turn it on, in Settings under Workspace. Then each new
+screenshot is saved into the category you chose for new ones, Orders,
+Customers, Projects, Documents, Other or Unsorted, and still hangs on the
+line the same moment. The Desktop is found the way macOS names it, so a
+Desktop in another language or in iCloud Drive works the same; with iCloud
+Drive, everything in the folder goes to iCloud, covered or not, and Settings
+says so beside the switch.
+
+Settings › Workspace lists the categories. Rename one, hide it, move it up
+or down, choose which one new screenshots go to, add your own, or remove
+one: its screenshots move to Unsorted and nothing is deleted. Rename the
+folder or choose Change Location…, or move it in the Finder: Snapfly finds
+it again, and what hangs on the line follows its files. The folder carries
+Snapfly's icon in the Finder, and looks like any folder if macOS refuses
+it. A screenshot is written whole or not at all and never over another file,
+and when the disk is full or the folder can't be reached, a note says why
+while the screenshot is kept in Snapfly's own folder, so none is lost.
+
+In History, the Workspace page shows them by day as a grid or a list. Pick a
+category, search by name or by the words in the photo, press Return or
+double-click to open one, and use the menu for Hang on the line, Quick Look,
+Copy, Copy File Path, Show in Finder, Move to Folder, Rename… and Move to
+Trash. The same Move to Folder is in the menu of a photo on the line.
+
+Delete… in Settings asks first, then moves the screenshots to the Trash, and
+leaves any file in the folder that isn't Snapfly's. Only a folder Snapfly
+marked as its workspace can be deleted that way, and nothing is ever deleted
+by turning the workspace off or removing the app. It isn't in the Mac App
+Store edition, whose sandbox can't write to the Desktop.
+
+<br>
+
 ## Photos and PDFs too.
 
 Anything you want to send can hang on the line, not only screenshots. Drag
@@ -783,7 +819,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 |:--|:--|
 | `AppDelegate.swift` | Menu bar, shortcut, revealing and tucking away the line |
 | `LineIcon.swift` | Snapfly's mark in the menu bar and Settings: a photo hanging on a line |
-| `SettingsWindow.swift` | The settings window: General, Line, Privacy, Permissions, Support and About |
+| `SettingsWindow.swift` | The settings window: General, Workspace, Line, Privacy, Permissions, Support and About |
 | `Support.swift` | Settings › Support: the help page, an email about a problem or an idea with the details filled in, and those details to copy |
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs, as far across the screen as it was moved |
@@ -859,6 +895,11 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `CaptureButton.swift` | The screenshot button: one click takes a screenshot, from the edge of the screen |
 | `Recording.swift` | Records the screen from Snapfly itself, with the countdown, recording, guide and note capsule above the Dock, and makes GIFs of recordings |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |
+| `Shared/WorkspaceModel.swift` | The workspace's rules, without a screen: categories and their names, paths, the checks that keep it away from other folders, the plan for deleting it, and what it holds |
+| `Workspace.swift` | The workspace at work: finding and keeping its folder, saving into it, categories, moving files, renaming and moving it, and deleting it to the Trash |
+| `WorkspaceSettings.swift` | Settings › Workspace |
+| `WorkspaceLibrary.swift` | History's Workspace page: the screenshots by category as a grid or a list, with search and a menu for each |
+| `FolderIcon.swift` | The workspace folder's icon in the Finder: the system folder with Snapfly's mark |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |
 | `Trim.swift` | Trims a screen recording and saves the result |
