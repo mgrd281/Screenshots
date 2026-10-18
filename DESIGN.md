@@ -444,9 +444,10 @@ apps.
     back. Its tip says Pick or Unpick.
   - Bottom trailing: send, a 22 pt accent circle with `paperplane.fill`.
     Under the card, not on it, a row of six destinations, each on its own
-    switch (Settings › Line, ChatGPT on photos, Claude on photos, WhatsApp
-    on photos, Gmail on photos, GMX on photos and WEB.DE on photos, under
-    Mark photos sent before, all on at first): ChatGPT, Claude, WhatsApp,
+    switch (Settings › Line, in a section of their own, Icons under photos:
+    ChatGPT on photos, Claude on photos, WhatsApp on photos, Gmail on
+    photos, GMX on photos and WEB.DE on photos, then Open in, all on at
+    first, before Send button over chats): ChatGPT, Claude, WhatsApp,
     Gmail, GMX and WEB.DE, in that order, 20 pt each, 4 pt apart, centered
     under the card 6 pt below it, so the card keeps only its own buttons.
     The row shows with the pointer over the card or the row, fading in and

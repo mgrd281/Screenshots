@@ -673,6 +673,7 @@
 "Count on the menu bar icon" = "메뉴 막대 아이콘에 개수 표시";
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "걸려 있는 사진 수가 아이콘 옆에 보이고, 빨랫줄이 아직 보여 주지 않은 새 사진이 걸리면 아이콘에 작은 점이 생깁니다.";
 "something new" = "새 항목 있음";
+"Icons under photos" = "사진 아래 아이콘";
 "%@ on photos" = "사진의 %@";
 "The browser" = "브라우저";
 "The app" = "앱";

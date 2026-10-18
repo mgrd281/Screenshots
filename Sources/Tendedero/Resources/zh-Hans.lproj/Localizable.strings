@@ -673,6 +673,7 @@
 "Count on the menu bar icon" = "在菜单栏图标上显示数量";
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "图标旁显示晾着几张照片；有晾衣绳还没展示过的新照片时，图标上会有一个小圆点。";
 "something new" = "有新内容";
+"Icons under photos" = "照片下方的图标";
 "%@ on photos" = "照片上的 %@";
 "The browser" = "浏览器";
 "The app" = "App";
