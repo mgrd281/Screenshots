@@ -709,7 +709,7 @@ enum Finder {
     private static let secondReadings = 12
 
     private static func read(_ image: CGImage) -> [TextLine] {
-        var lines = recognize(image)
+        var lines = readingBlocksAgain(recognize(image), in: image)
         var left = secondReadings
         for i in lines.indices where left > 0 {
             let line = lines[i]
@@ -746,6 +746,49 @@ enum Finder {
         return TextLine(text: found.text, box: line.box, frame: frame)
     }
 
+    /// The Latin-script languages a block is read again in.
+    private static let latin = ["de-DE", "en-US", "fr-FR", "es-ES", "pt-BR", "it-IT"]
+
+    /// Lines read as one sign: a block of small lines, often links in a
+    /// colour, that Vision took for a single character of another script,
+    /// like "三" for the three lines under "Kunde" on a shop's order page.
+    /// Each such block is read again on its own, in the Latin-script
+    /// languages, line by line. It stays as it was unless several lines are
+    /// read, so a large heading of a sign or two keeps its own script.
+    private static func readingBlocksAgain(_ lines: [TextLine], in image: CGImage) -> [TextLine] {
+        let heights = lines.map(\.box.height).sorted()
+        guard !heights.isEmpty else { return lines }
+        let usual = heights[heights.count / 2]
+        return lines.flatMap { line -> [TextLine] in
+            guard isBlockReadAsSign(line.string, height: line.box.height, usual: usual) else { return [line] }
+            let again = readBlock(line, room: usual, in: image)
+            return again.count >= 2 ? again : [line]
+        }
+    }
+
+    /// A sign or two in a box as tall as several of the picture's usual lines.
+    static func isBlockReadAsSign(_ text: String, height: CGFloat, usual: CGFloat) -> Bool {
+        text.filter { !$0.isWhitespace }.count <= 3 && height >= usual * 2.5
+    }
+
+    /// The block's part of the picture, with a line's room around it, read
+    /// in the Latin-script languages, each line where it is in the picture.
+    private static func readBlock(_ line: TextLine, room: CGFloat, in image: CGImage) -> [TextLine] {
+        let width = CGFloat(image.width), height = CGFloat(image.height)
+        let area = line.box.insetBy(dx: -room * 2, dy: -room).intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
+        // Cut from the top left, as pictures are.
+        let pixels = CGRect(x: area.minX * width, y: (1 - area.maxY) * height,
+                            width: area.width * width, height: area.height * height).integral
+        guard let piece = image.cropping(to: pixels) else { return [] }
+        let frame = CGRect(x: pixels.minX / width, y: 1 - pixels.maxY / height,
+                           width: pixels.width / width, height: pixels.height / height)
+        return recognize(piece, languages: latin).map { found -> TextLine in
+            let box = CGRect(x: frame.minX + found.box.minX * frame.width, y: frame.minY + found.box.minY * frame.height,
+                             width: found.box.width * frame.width, height: found.box.height * frame.height)
+            return TextLine(text: found.text, box: box, frame: frame)
+        }
+    }
+
     /// A picture drawn larger, on white, smoothly.
     private static func enlarged(_ image: CGImage, by scale: CGFloat) -> CGImage? {
         let width = Int((CGFloat(image.width) * scale).rounded()), height = Int((CGFloat(image.height) * scale).rounded())
@@ -760,13 +803,19 @@ enum Finder {
         return context.makeImage()
     }
 
-    /// Every line of text Vision reads in a picture.
-    private static func recognize(_ image: CGImage) -> [TextLine] {
+    /// Every line of text Vision reads in a picture, in the language it
+    /// finds, or in these languages only.
+    private static func recognize(_ image: CGImage, languages: [String]? = nil) -> [TextLine] {
         let request = VNRecognizeTextRequest()
         request.recognitionLevel = .accurate
         // Numbers and addresses are read as they are, not corrected into words.
         request.usesLanguageCorrection = false
-        request.automaticallyDetectsLanguage = true
+        if let languages {
+            request.automaticallyDetectsLanguage = false
+            request.recognitionLanguages = languages
+        } else {
+            request.automaticallyDetectsLanguage = true
+        }
         do {
             try VNImageRequestHandler(cgImage: image, options: [:]).perform([request])
         } catch {

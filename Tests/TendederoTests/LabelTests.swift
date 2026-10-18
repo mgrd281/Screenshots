@@ -37,9 +37,19 @@ final class LabelTests: XCTestCase {
         XCTAssertNil(Finder.line(below: 0, in: [kunde, beside], gap: 2.5))
     }
 
+    /// Three small lines in a colour, read by Vision as one sign, like "三":
+    /// read again, line by line. A sign on a line of its own, or words,
+    /// stay as they are.
+    func testABlockReadAsOneSignIsReadAgain() {
+        XCTAssertTrue(Finder.isBlockReadAsSign("三", height: 0.133, usual: 0.015))
+        XCTAssertFalse(Finder.isBlockReadAsSign("三", height: 0.016, usual: 0.015))
+        XCTAssertFalse(Finder.isBlockReadAsSign("Christopher Kelly", height: 0.05, usual: 0.015))
+    }
+
     /// Read from a picture, as the app does: the customer's name under
-    /// "Kunde" is covered with Names on, and so is the name the bill goes
-    /// to, though they differ. The rest stays.
+    /// "Kunde", in blue with two more lines under it, is covered with Names
+    /// on, and so is the name the bill goes to, though they differ. The
+    /// rest stays.
     func testBothNamesOnAnOrderPageAreCovered() throws {
         let image = try orderPage()
         let lines = Finder.textLines(in: image).map { "\($0.string) \($0.box)" }
