@@ -709,7 +709,7 @@ enum Finder {
     private static let secondReadings = 12
 
     private static func read(_ image: CGImage) -> [TextLine] {
-        var lines = recognize(image)
+        var lines = readingBlocksAgain(recognize(image), in: image)
         var left = secondReadings
         for i in lines.indices where left > 0 {
             let line = lines[i]
@@ -746,6 +746,49 @@ enum Finder {
         return TextLine(text: found.text, box: line.box, frame: frame)
     }
 
+    /// The Latin-script languages a block is read again in.
+    private static let latin = ["de-DE", "en-US", "fr-FR", "es-ES", "pt-BR", "it-IT"]
+
+    /// Lines read as one sign: a block of small lines, often links in a
+    /// colour, that Vision took for a single character of another script,
+    /// like "三" for the three lines under "Kunde" on a shop's order page.
+    /// Each such block is read again on its own, in the Latin-script
+    /// languages, line by line. It stays as it was unless several lines are
+    /// read, so a large heading of a sign or two keeps its own script.
+    private static func readingBlocksAgain(_ lines: [TextLine], in image: CGImage) -> [TextLine] {
+        let heights = lines.map(\.box.height).sorted()
+        guard !heights.isEmpty else { return lines }
+        let usual = heights[heights.count / 2]
+        return lines.flatMap { line -> [TextLine] in
+            guard isBlockReadAsSign(line.string, height: line.box.height, usual: usual) else { return [line] }
+            let again = readBlock(line, room: usual, in: image)
+            return again.count >= 2 ? again : [line]
+        }
+    }
+
+    /// A sign or two in a box as tall as several of the picture's usual lines.
+    static func isBlockReadAsSign(_ text: String, height: CGFloat, usual: CGFloat) -> Bool {
+        text.filter { !$0.isWhitespace }.count <= 3 && height >= usual * 2.5
+    }
+
+    /// The block's part of the picture, with a line's room around it, read
+    /// in the Latin-script languages, each line where it is in the picture.
+    private static func readBlock(_ line: TextLine, room: CGFloat, in image: CGImage) -> [TextLine] {
+        let width = CGFloat(image.width), height = CGFloat(image.height)
+        let area = line.box.insetBy(dx: -room * 2, dy: -room).intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
+        // Cut from the top left, as pictures are.
+        let pixels = CGRect(x: area.minX * width, y: (1 - area.maxY) * height,
+                            width: area.width * width, height: area.height * height).integral
+        guard let piece = image.cropping(to: pixels) else { return [] }
+        let frame = CGRect(x: pixels.minX / width, y: 1 - pixels.maxY / height,
+                           width: pixels.width / width, height: pixels.height / height)
+        return recognize(piece, languages: latin).map { found -> TextLine in
+            let box = CGRect(x: frame.minX + found.box.minX * frame.width, y: frame.minY + found.box.minY * frame.height,
+                             width: found.box.width * frame.width, height: found.box.height * frame.height)
+            return TextLine(text: found.text, box: box, frame: frame)
+        }
+    }
+
     /// A picture drawn larger, on white, smoothly.
     private static func enlarged(_ image: CGImage, by scale: CGFloat) -> CGImage? {
         let width = Int((CGFloat(image.width) * scale).rounded()), height = Int((CGFloat(image.height) * scale).rounded())
@@ -760,13 +803,19 @@ enum Finder {
         return context.makeImage()
     }
 
-    /// Every line of text Vision reads in a picture.
-    private static func recognize(_ image: CGImage) -> [TextLine] {
+    /// Every line of text Vision reads in a picture, in the language it
+    /// finds, or in these languages only.
+    private static func recognize(_ image: CGImage, languages: [String]? = nil) -> [TextLine] {
         let request = VNRecognizeTextRequest()
         request.recognitionLevel = .accurate
         // Numbers and addresses are read as they are, not corrected into words.
         request.usesLanguageCorrection = false
-        request.automaticallyDetectsLanguage = true
+        if let languages {
+            request.automaticallyDetectsLanguage = false
+            request.recognitionLanguages = languages
+        } else {
+            request.automaticallyDetectsLanguage = true
+        }
         do {
             try VNImageRequestHandler(cgImage: image, options: [:]).perform([request])
         } catch {
@@ -1016,9 +1065,9 @@ enum Finder {
             guard let block = labels[label] else { continue }
             var last = i
             for n in 0..<block.lines {
-                // A label sits a little further from its first line than the
-                // lines from each other.
-                guard let next = Self.line(below: last, in: lines, gap: n == 0 ? 2 : 1.1),
+                // A label sits further from its first line than the lines
+                // from each other, as a card's heading does.
+                guard let next = Self.line(below: last, in: lines, gap: n == 0 ? 2.5 : 1.1),
                       labels[normalized(lines[next].string)] == nil else { break }
                 let detail = kind(of: lines[next].string, first: n == 0, in: block)
                 if chosen.contains(detail) {
@@ -1046,21 +1095,35 @@ enum Finder {
     /// The line right under another, starting in the same column, or nil
     /// when the gap is one a new section would leave.
     private static func line(below index: Int, in lines: [TextLine], gap: CGFloat) -> Int? {
-        let above = lines[index].box
+        let boxes: [CGRect] = lines.map(\.box)
+        return line(below: index, in: boxes, gap: gap)
+    }
+
+    /// The same, from where the lines are. The gap counts in the taller of
+    /// the two lines: a word with nothing below its baseline, like "Kunde",
+    /// is read shorter than the name under it.
+    static func line(below index: Int, in boxes: [CGRect], gap: CGFloat) -> Int? {
+        let above = boxes[index]
         var best: Int?
-        for (i, line) in lines.enumerated() where i != index {
-            let box = line.box
+        for (i, box) in boxes.enumerated() where i != index {
             guard box.maxY <= above.minY + above.height * 0.3,
-                  above.minY - box.maxY < above.height * gap,
+                  above.minY - box.maxY < max(above.height, box.height) * gap,
                   abs(box.minX - above.minX) < 0.03 else { continue }
-            if let current = best, lines[current].box.maxY >= box.maxY { continue }
+            if let current = best, boxes[current].maxY >= box.maxY { continue }
             best = i
         }
         return best
     }
 
+    /// Whether a line is a label that announces what follows it.
+    static func isLabel(_ line: String) -> Bool {
+        labels[normalized(line)] != nil
+    }
+
+    /// A label as the list has it: lowercased, without the colon after it,
+    /// or the dots of a menu read on its row, as in "Kunde ⋯".
     private static func normalized(_ text: String) -> String {
-        text.trimmingCharacters(in: CharacterSet.whitespaces.union(CharacterSet(charactersIn: ":"))).lowercased()
+        text.trimmingCharacters(in: CharacterSet.whitespaces.union(CharacterSet(charactersIn: ":.…⋯•·"))).lowercased()
     }
 
     private static func fold(_ word: String) -> String {
