@@ -60,15 +60,15 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Click | Copy the image. |
 | <kbd>⌘</kbd>-click several, or click the circle on each | Pick them, to send or copy just those together. They stay picked, even when the line goes up, until they are sent. Pick All in a photo's menu, then put back the few that should stay. |
 | Right-click, then Copy Text | Copy the words in it, to paste as text. |
-| Right-click, then Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. |
-| Right-click, then Hide Part | Drag a box over anything the covering missed. It stays hidden in whatever leaves the line. |
+| Right-click, then Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. Either way, a note offers to undo it for a few seconds. |
+| Right-click, then Hide Part | Click a word to hide it, or drag a box over anything the covering missed. It stays hidden in whatever leaves the line, and a note offers to undo it. Always cover, under the word just hidden, covers that word in every photo from then on, as a rule of your own under Privacy. |
 | Right-click, then Draw on Photo | Point things out with an arrow, a box, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
 | Right-click, then Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
 | Right-click, then Translate Text | Read it in your language, to copy or send. |
 | Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
-| Click ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE, in the row under a photo | Send it, or the photos picked with it, there: the website opens in your browser (a new message in Gmail), or, with it already open in the browser in front, they go there, and the photos are pasted in. GMX and WEB.DE open the mailbox: the covered photo is copied for you to paste into a new message, and stays on the line. WhatsApp, Gmail, GMX and WEB.DE show their logos; ChatGPT and Claude show their app's own icon from your Mac, else a short mark. Each icon has its own switch in Settings, under Line › Icons under photos; Open in chooses the app instead of the browser, when it is on your Mac. |
+| Click ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE, in the row under a photo | Send it, or the photos picked with it, there: the website opens in your browser (a new message in Gmail), or, with it already open in the browser in front, they go there, and the photos are pasted in. GMX and WEB.DE open the mailbox: the covered photo is copied for you to paste into a new message, and stays on the line. WhatsApp, Gmail, GMX and WEB.DE show their logos; ChatGPT and Claude show their app's own icon from your Mac, else a short mark. Each icon has its own switch in Settings, under Line › Icons under photos; Open in chooses the app instead of the browser, when it is on your Mac. Drag the icons there into the order you want them under each photo. |
 | Right-click ChatGPT or Claude under a photo | Ask a question with it: the photo goes into the chat with the question after it, like "Summarize this in a few lines". Ask ChatGPT and Ask Claude in a photo's menu do the same. The questions are yours to write in Settings, under Line. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
@@ -76,7 +76,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Drag along the line | Move it among the others. Send all, Copy all and the send buttons keep that order. |
 | Drag into an app | Send a copy. It leaves the line, as anything sent does. |
 | Drag into a folder | Keep it there. It leaves the line. |
-| Drag to the Trash, or click the cross | Let it go. |
+| Drag to the Trash, or click the cross | Let it go. With the cross, Take down, Move to Trash or the trash on the tag, a note above the Dock offers it back for a few seconds: a click hangs it on the line again, out of the Trash too. |
 | Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
 | Click the send button over a chat | The same, without leaving the message box. Drag it to move it; it stays there for that app. |
 | <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
@@ -231,8 +231,10 @@ the line, copied, sent or dragged out, has them covered, and the line shows
 each photo that way too, so what you see is what goes, with a small lock on
 each one that has something covered. Rest the pointer on the lock, or open
 the photo's menu, and it says what was covered, like Names · QR codes and
-barcodes; VoiceOver says it too. Copy Text leaves them out too. Anything
-it misses, hide by hand with Hide Part in a photo's menu. Labels like Billing
+barcodes; VoiceOver says it too. On the lock, the photo also shows where:
+the rest of it dims, and each covered place is outlined. Copy Text leaves them out too. Anything
+it misses, hide by hand with Hide Part in a photo's menu: a click on a word
+hides it, and Always cover hides that word in every photo from then on. Labels like Billing
 address, Customer, Recipient, Kundennummer or Diagnosis tell it where a whole
 block is private, on their own line or as a card's heading, like Kunde on a
 shop's order page.
@@ -484,6 +486,10 @@ press Return in the chat.
 
 ## Gone, but not lost.
 
+Taken down by mistake? For a few seconds, a note above the Dock offers it
+back, as it does after a crop or a part hidden by hand: a click puts it
+back as it was.
+
 Everything that leaves the line, sent or taken down, waits in the History
 for 30 days: History… in the menu bar, or <kbd>⌘</kbd>&thinsp;<kbd>Y</kbd>
 while the menu is open. It is grouped by day, and the search finds the words
@@ -652,12 +658,12 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Support.swift` | Settings › Support: the help page, an email about a problem or an idea with the details filled in, and those details to copy |
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs |
-| `PeggedView.swift` | One photo: glass frame, clip, swing and breeze |
+| `PeggedView.swift` | One photo: glass frame, clip, swing and breeze, and the covered places shown from the lock |
 | `LineTag.swift` | The tag at the end of the line: moving it, combining, sending, downloading and taking everything down |
 | `Downloads.swift` | Download, from the tag: the photos saved into Downloads as they leave the line |
 | `Tour.swift` | The welcome tour: five cards on what Snapfly does and where to find it, once and from the menu bar |
 | `Paste.swift` | Pastes into the app in front, for the send button |
-| `ChatTarget.swift` | ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE in a row under a photo: their logos or app icons, and their app or website, opened and waited for |
+| `ChatTarget.swift` | ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE in a row under a photo: their logos or app icons, and their app or website, opened and waited for, in the order dragged in Settings |
 | `assets/chat-logos/` | The logos of WhatsApp, Gmail, GMX and WEB.DE the row shows, as PNG with their SVG sources |
 | `Shared/AIQuestions.swift` | The questions a photo goes into ChatGPT or Claude with: the standard five, and the owner's own from Settings |
 | `Shared/CoverTally.swift` | The week's line in Settings › Privacy: how many details were covered in how many photos sent, counts only, day by day |
@@ -682,7 +688,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/CoverReport.swift` | What was covered in a picture, kind by kind, for the lock, the photo's menu, VoiceOver and the iPhone |
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, and the Shortcuts actions |
-| `HideEditor.swift` | Hide Part: a window to drag boxes over anything else to hide |
+| `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
 | `Drawing.swift` | Draw on Photo's arrows, boxes, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |
 | `DrawEditor.swift` | Draw on Photo: the window to draw on a photo, with its tools, inks, sizes and Undo |

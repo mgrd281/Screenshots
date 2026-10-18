@@ -40,4 +40,26 @@ final class CoverReportTests: XCTestCase {
         XCTAssertEqual(report.hand, 2)
         XCTAssertEqual(report.total, 5)
     }
+
+    /// Where the lock shows the copy was covered: as in the picture, cut to
+    /// the part kept, and lower when a band of words sits above it.
+    func testThePlacesAreWhereTheCopyIsCovered() {
+        let name = CGRect(x: 0.2, y: 0.4, width: 0.2, height: 0.1)
+        XCTAssertEqual(CoverReport.places([name], crop: nil), [name])
+        // Cut to its right half: the name's left edge is the cut's.
+        let right = CGRect(x: 0.2, y: 0, width: 0.8, height: 1)
+        let cut = CoverReport.places([name], crop: right)
+        XCTAssertEqual(cut.count, 1)
+        XCTAssertEqual(cut[0].minX, 0, accuracy: 1e-9)
+        XCTAssertEqual(cut[0].width, 0.25, accuracy: 1e-9)
+        XCTAssertEqual(cut[0].minY, 0.4, accuracy: 1e-9)
+        // What the cut leaves out is left out.
+        XCTAssertEqual(CoverReport.places([name], crop: CGRect(x: 0.5, y: 0, width: 0.5, height: 1)), [])
+        // A band above the picture takes a fifth of the copy.
+        let banded = CoverReport.places([name], crop: nil, share: 0.8)
+        XCTAssertEqual(banded[0].minY, 0.32, accuracy: 1e-9)
+        XCTAssertEqual(banded[0].height, 0.08, accuracy: 1e-9)
+        XCTAssertEqual(banded[0].minX, 0.2, accuracy: 1e-9)
+        XCTAssertEqual(CoverReport([area(.names)], places: banded).places, banded)
+    }
 }

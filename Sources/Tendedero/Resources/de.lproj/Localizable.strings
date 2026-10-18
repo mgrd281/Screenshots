@@ -141,7 +141,7 @@
 "Screenshots, one click from any chat." = "Bildschirmfotos, einen Klick von jedem Chat entfernt.";
 "Made by" = "Gemacht von";
 /* HideEditor */
-"Drag over anything to hide it. Click a box to show it again." = "Zieh über alles, was verdeckt werden soll. Klick auf ein Feld, um es wieder zu zeigen.";
+"Click a word to hide it, or drag over anything. Click a box to show it again." = "Klick auf ein Wort, um es zu verdecken, oder zieh über alles. Klick auf ein Feld, um es wieder zu zeigen.";
 "Remove All" = "Alle entfernen";
 "Cancel" = "Abbrechen";
 "Done" = "Fertig";
@@ -498,7 +498,7 @@
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Mit dem Foto gespeichert. Es wird so gezeichnet gesendet; die Datei in %@ bleibt, wie sie ist.";
 "Crop…" = "Zuschneiden …";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Zieh über den Teil, der bleiben soll. Return behält das ganze Foto, Escape bricht ab.";
-"Cropped. It goes out cropped; the file in %@ stays as it is." = "Zugeschnitten. Es wird zugeschnitten gesendet; die Datei in %@ bleibt, wie sie ist.";
+"Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo." = "Zugeschnitten. Es wird zugeschnitten gesendet; die Datei in %@ bleibt, wie sie ist. Klick zum Widerrufen.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Mit dem Foto gespeichert. Diese Bereiche bleiben in allem, was gesendet wird, verdeckt; die Datei in %@ bleibt, wie sie ist.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Sichert das Foto so, wie es gesendet wird, gezeichnet und zugeschnitten, als eigene Datei.";
 "Keep as a file" = "Als Datei behalten";
@@ -698,3 +698,15 @@
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "Der Browser öffnet die Website. Die App öffnet ihre eigene App, wenn sie auf diesem Mac ist, sonst die Website.";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "Sein Symbol erscheint unter dem Foto. Ein Klick sendet das Foto, oder die damit ausgewählten, an %@.";
 "Copied. Start a new message and paste." = "Kopiert. Neue Nachricht beginnen und einfügen.";
+
+/* Click to cover, the order of the icons under photos, and notes that take a change back */
+"“%1$@” is covered from now on, in every photo. Change it in %2$@." = "„%1$@“ wird ab jetzt in jedem Foto verdeckt. Ändern kannst du das unter %2$@.";
+"Always cover “%@”" = "„%@“ immer verdecken";
+"Covered in every photo from now on, as a rule of your own under Privacy." = "Ab jetzt in jedem Foto verdeckt, als eigene Regel unter Datenschutz.";
+"Drag the icons into the order you want them under each photo." = "Zieh die Symbole in die Reihenfolge, in der du sie unter jedem Foto haben willst.";
+"Moved to the Trash. Click to put it back on the line." = "In den Papierkorb gelegt. Klick, um es wieder an die Leine zu hängen.";
+"%d moved to the Trash. Click to put them back on the line." = "%d in den Papierkorb gelegt. Klick, um sie wieder an die Leine zu hängen.";
+"Taken down. Click to put it back on the line." = "Abgenommen. Klick, um es wieder an die Leine zu hängen.";
+"%d taken down. Click to put them back on the line." = "%d abgenommen. Klick, um sie wieder an die Leine zu hängen.";
+"Saved with the photo; the file in %@ stays as it is. Click to undo." = "Mit dem Foto gespeichert; die Datei in %@ bleibt, wie sie ist. Klick zum Widerrufen.";
+"The whole photo goes out again. Click to undo." = "Das ganze Foto wird wieder gesendet. Klick zum Widerrufen.";

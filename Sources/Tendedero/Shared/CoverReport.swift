@@ -10,14 +10,35 @@ struct CoverReport: Equatable {
     private(set) var rules = 0
     /// Parts hidden by hand.
     private(set) var hand = 0
+    /// Where the copy is covered, from 0 to 1 from its bottom left, for the
+    /// lock to show; empty for a PDF.
+    private(set) var places: [CGRect] = []
 
     init() {}
 
-    init(_ areas: [Finder.Area], hand: Int = 0) {
+    init(_ areas: [Finder.Area], hand: Int = 0, places: [CGRect] = []) {
         for area in areas {
             if let kind = area.kind { kinds[kind, default: 0] += 1 } else { rules += 1 }
         }
         self.hand = hand
+        self.places = places
+    }
+
+    /// Places in the whole picture, from 0 to 1 from its bottom left, as
+    /// they are in the copy: cut to the part kept, and under a band above
+    /// the picture, which then takes `share` of the copy's height. What the
+    /// cut leaves out is left out.
+    static func places(_ rects: [CGRect], crop: CGRect?, share: CGFloat = 1) -> [CGRect] {
+        rects.compactMap { rect in
+            var place = rect
+            if let crop, crop.width > 0, crop.height > 0 {
+                place = CGRect(x: (place.minX - crop.minX) / crop.width, y: (place.minY - crop.minY) / crop.height,
+                               width: place.width / crop.width, height: place.height / crop.height)
+            }
+            place = place.intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
+            guard !place.isNull, place.width > 0, place.height > 0 else { return nil }
+            return CGRect(x: place.minX, y: place.minY * share, width: place.width, height: place.height * share)
+        }
     }
 
     var total: Int { kinds.values.reduce(0, +) + rules + hand }

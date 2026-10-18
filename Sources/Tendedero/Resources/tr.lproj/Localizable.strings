@@ -141,7 +141,7 @@
 "Screenshots, one click from any chat." = "Ekran görüntüleri, her sohbete bir tık uzaklıkta.";
 "Made by" = "Yapan";
 /* HideEditor */
-"Drag over anything to hide it. Click a box to show it again." = "Gizlemek istediğin yerin üzerinde sürükle. Yeniden göstermek için bir kutuya tıkla.";
+"Click a word to hide it, or drag over anything. Click a box to show it again." = "Gizlemek için bir kelimeye tıkla ya da herhangi bir yerin üzerinde sürükle. Yeniden göstermek için bir kutuya tıkla.";
 "Remove All" = "Tümünü kaldır";
 "Cancel" = "Vazgeç";
 "Done" = "Bitti";
@@ -498,7 +498,7 @@
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Fotoğrafla birlikte kaydedildi. Çizdiğin gibi gider; %@ içindeki dosya olduğu gibi kalır.";
 "Crop…" = "Kırp…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Kalacak kısmın üzerinde sürükle. Return fotoğrafın tamamını tutar, Escape iptal eder.";
-"Cropped. It goes out cropped; the file in %@ stays as it is." = "Kırpıldı. Kırpılmış olarak gider; %@ içindeki dosya olduğu gibi kalır.";
+"Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo." = "Kırpıldı. Kırpılmış olarak gider; %@ içindeki dosya olduğu gibi kalır. Geri almak için tıkla.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Fotoğrafla birlikte kaydedildi. Bu kısımlar gönderilen her şeyde gizli kalır; %@ içindeki dosya olduğu gibi kalır.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Fotoğrafı gittiği gibi, çizilmiş ve kırpılmış hâliyle ayrı bir dosya olarak kaydeder.";
 "Keep as a file" = "Dosya olarak sakla";
@@ -698,3 +698,15 @@
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "Tarayıcı web sitesini açar. Uygulama, bu Mac'te varsa kendi uygulamasını, yoksa web sitesini açar.";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "Simgesi fotoğrafın altında görünür. Tıklamak fotoğrafı, ya da onunla seçilenleri, %@ hedefine gönderir.";
 "Copied. Start a new message and paste." = "Kopyalandı. Yeni bir ileti başlat ve yapıştır.";
+
+/* Click to cover, the order of the icons under photos, and notes that take a change back */
+"“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” bundan sonra her fotoğrafta örtülür. Bunu %2$@ bölümünden değiştirebilirsin.";
+"Always cover “%@”" = "“%@” her zaman örtülsün";
+"Covered in every photo from now on, as a rule of your own under Privacy." = "Bundan sonra her fotoğrafta örtülür; Gizlilik altında kendi kuralın olarak.";
+"Drag the icons into the order you want them under each photo." = "Simgeleri her fotoğrafın altında istediğin sıraya sürükle.";
+"Moved to the Trash. Click to put it back on the line." = "Çöp Kutusu’na taşındı. Yeniden ipe asmak için tıkla.";
+"%d moved to the Trash. Click to put them back on the line." = "%d tanesi Çöp Kutusu’na taşındı. Yeniden ipe asmak için tıkla.";
+"Taken down. Click to put it back on the line." = "İndirildi. Yeniden ipe asmak için tıkla.";
+"%d taken down. Click to put them back on the line." = "%d tanesi indirildi. Yeniden ipe asmak için tıkla.";
+"Saved with the photo; the file in %@ stays as it is. Click to undo." = "Fotoğrafla birlikte kaydedildi; %@ içindeki dosya olduğu gibi kalır. Geri almak için tıkla.";
+"The whole photo goes out again. Click to undo." = "Fotoğrafın tamamı yeniden gider. Geri almak için tıkla.";

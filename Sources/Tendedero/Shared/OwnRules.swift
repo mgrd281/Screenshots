@@ -68,6 +68,24 @@ enum OwnRules {
         }
     }
 
+    /// Posted when a rule is added outside Settings, like a word to cover
+    /// always from Hide Part, so the photos are read again and Settings
+    /// shows it.
+    static let changed = Notification.Name("ownRulesChanged")
+
+    /// A word to cover always, unless a rule for it is there already, in
+    /// any case.
+    static func add(word: String, to defaults: UserDefaults = .standard) {
+        let text = word.trimmingCharacters(in: .whitespaces)
+        var rules = load(from: defaults)
+        guard !text.isEmpty, !rules.contains(where: {
+            $0.kind == .word && $0.text.trimmingCharacters(in: .whitespaces).caseInsensitiveCompare(text) == .orderedSame
+        }) else { return }
+        rules.append(OwnRule(text: text, kind: .word))
+        save(rules, to: defaults)
+        NotificationCenter.default.post(name: changed, object: nil)
+    }
+
     /// Changes whenever a rule that covers something changes, so the copies
     /// covered under the old rules are drawn again.
     static var fingerprint: String {

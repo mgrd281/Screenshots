@@ -141,7 +141,7 @@
 "Screenshots, one click from any chat." = "스크린샷을 어떤 채팅에도 클릭 한 번으로.";
 "Made by" = "만든 사람";
 /* HideEditor */
-"Drag over anything to hide it. Click a box to show it again." = "가릴 부분을 드래그하세요. 상자를 클릭하면 다시 보입니다.";
+"Click a word to hide it, or drag over anything. Click a box to show it again." = "단어를 클릭하면 가려지고, 다른 부분은 드래그하세요. 상자를 클릭하면 다시 보입니다.";
 "Remove All" = "모두 제거";
 "Cancel" = "취소";
 "Done" = "완료";
@@ -498,7 +498,7 @@
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "사진과 함께 저장했습니다. 그린 대로 보내지며, %@에 있는 파일은 그대로입니다.";
 "Crop…" = "자르기…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "남길 부분 위로 드래그하세요. Return 키는 사진 전체를 남기고, Esc 키는 취소해요.";
-"Cropped. It goes out cropped; the file in %@ stays as it is." = "잘랐습니다. 자른 부분이 보내지며, %@에 있는 파일은 그대로입니다.";
+"Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo." = "잘랐습니다. 자른 부분이 보내지며, %@에 있는 파일은 그대로입니다. 클릭하면 취소합니다.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "사진과 함께 저장했습니다. 보내는 것에서는 그 부분이 계속 가려지며, %@에 있는 파일은 그대로입니다.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "사진을 보내지는 그대로, 그린 것과 자른 것을 담아 별도의 파일로 저장합니다.";
 "Keep as a file" = "파일로 보관";
@@ -698,3 +698,15 @@
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "브라우저는 웹사이트를 엽니다. 앱은 이 Mac에 있으면 해당 앱을, 없으면 웹사이트를 엽니다.";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "아이콘이 사진 아래에 나타납니다. 클릭하면 사진, 또는 함께 고른 사진을 %@(으)로 보냅니다.";
 "Copied. Start a new message and paste." = "복사했습니다. 새 메시지를 시작해 붙여넣으세요.";
+
+/* Click to cover, the order of the icons under photos, and notes that take a change back */
+"“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@”은(는) 이제 모든 사진에서 가려집니다. %2$@에서 바꿀 수 있습니다.";
+"Always cover “%@”" = "“%@” 항상 가리기";
+"Covered in every photo from now on, as a rule of your own under Privacy." = "이제 모든 사진에서 가려지며, 개인정보 보호의 나만의 규칙에 들어갑니다.";
+"Drag the icons into the order you want them under each photo." = "아이콘을 드래그해 사진 아래에 놓일 순서를 정하세요.";
+"Moved to the Trash. Click to put it back on the line." = "휴지통으로 옮겼습니다. 클릭하면 빨랫줄에 다시 겁니다.";
+"%d moved to the Trash. Click to put them back on the line." = "%d장을 휴지통으로 옮겼습니다. 클릭하면 빨랫줄에 다시 겁니다.";
+"Taken down. Click to put it back on the line." = "걷어냈습니다. 클릭하면 빨랫줄에 다시 겁니다.";
+"%d taken down. Click to put them back on the line." = "%d장을 걷어냈습니다. 클릭하면 빨랫줄에 다시 겁니다.";
+"Saved with the photo; the file in %@ stays as it is. Click to undo." = "사진과 함께 저장했습니다. %@에 있는 파일은 그대로입니다. 클릭하면 취소합니다.";
+"The whole photo goes out again. Click to undo." = "사진 전체가 다시 보내집니다. 클릭하면 취소합니다.";

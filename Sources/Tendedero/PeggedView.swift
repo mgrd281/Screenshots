@@ -18,6 +18,8 @@ struct PeggedView: View {
     /// The pointer is over the photo or the row of icons under it, which
     /// GrabView sees, as that row lies outside the card.
     @State private var overStrip = false
+    /// The pointer rests on the lock: where it is covered lights up.
+    @State private var overLock = false
     private var hovering: Bool { cardHover || overStrip }
     /// Reduce Motion: no drop, swing or sway; photos fade in where they hang.
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -38,6 +40,8 @@ struct PeggedView: View {
     private var stripHeight: CGFloat { chats.isEmpty ? 0 : PhotoButtons.stripHeight }
     /// One like it was sent lately, and Settings marks it.
     private var sentBefore: Bool { Line.marksSentBefore && line.sentBefore[item.id] != nil }
+    /// Where the photo, as it shows, is covered.
+    private var coveredPlaces: [CGRect] { PrivateDetails.report(for: item.url)?.places ?? [] }
 
     var body: some View {
         VStack(spacing: -12) {
@@ -59,7 +63,10 @@ struct PeggedView: View {
         .onChange(of: item.flying) { was, now in if was && !now { land() } }
         .onChange(of: line.gust) { _, _ in breeze() }
         // A line tucked away under the pointer never sees it leave.
-        .onChange(of: line.revealed) { _, _ in overStrip = false }
+        .onChange(of: line.revealed) { _, _ in
+            overStrip = false
+            overLock = false
+        }
         .onChange(of: copied) { _, isCopied in if isCopied { nudge(3) } }
         .onChange(of: item.pinned) { _, _ in nudge(3) }
         // Search: what does not say it steps back.
@@ -107,6 +114,18 @@ struct PeggedView: View {
                     Highlight(place: place, photo: photoSize)
                 }
             }
+            .overlay {
+                // On the lock: the rest of the photo steps back, and what is
+                // covered is outlined, to see at a glance whether it is all.
+                if overLock, item.covered, !coveredPlaces.isEmpty {
+                    CoveredPlaces(places: coveredPlaces)
+                        .clipShape(RoundedRectangle(cornerRadius: Frame.radius - Frame.inset, style: .continuous))
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                        .transition(.opacity)
+                }
+            }
+            .animation(.easeOut(duration: 0.15), value: overLock)
             .overlay {
                 // A recording says so with a play button over its first frame.
                 if item.isRecording {
@@ -200,7 +219,7 @@ struct PeggedView: View {
             }
             // ChatGPT, Claude, WhatsApp and Gmail under the card.
             .overlay(alignment: .bottom) { chatStrip }
-            .overlay(GrabArea(item: item, line: line, overStrip: $overStrip)
+            .overlay(GrabArea(item: item, line: line, overStrip: $overStrip, overLock: $overLock)
                 .padding(.bottom, -stripHeight))
             .overlay(alignment: .bottom) {
                 if copied {
@@ -248,7 +267,7 @@ struct PeggedView: View {
     private var chatStrip: some View {
         HStack(spacing: PhotoButtons.chatGap) {
             ForEach(chats) { chat in
-                chatIcon(chat)
+                ChatIcon(chat: chat, size: PhotoButtons.chatSize)
             }
         }
         .offset(y: PhotoButtons.stripGap + PhotoButtons.chatSize)
@@ -256,31 +275,6 @@ struct PeggedView: View {
         .offset(y: hovering ? 0 : -6)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
-    }
-
-    /// The logo, or the app's own icon wherever it is on this Mac. An app icon
-    /// keeps a margin round its shape, so it is drawn a little larger to look
-    /// as large as a logo. Without either, a glass circle with the chat's
-    /// short mark in plain letters.
-    private func chatIcon(_ chat: ChatTarget) -> some View {
-        ZStack {
-            if let icon = chat.icon {
-                Image(nsImage: icon)
-                    .resizable()
-                    .interpolation(.high)
-                    .frame(width: PhotoButtons.chatSize * chat.iconScale, height: PhotoButtons.chatSize * chat.iconScale)
-            } else {
-                Text(chat.mark)
-                    .font(.system(size: 7.5, weight: .bold, design: .rounded))
-                    .minimumScaleFactor(0.7)
-                    .lineLimit(1)
-                    .foregroundStyle(.primary)
-                    .frame(width: PhotoButtons.chatSize, height: PhotoButtons.chatSize)
-                    .controlGlass(circle: true)
-            }
-        }
-        .frame(width: PhotoButtons.chatSize, height: PhotoButtons.chatSize)
-        .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
     }
 
     /// A white glyph on the photo badge, as the lock is drawn.
@@ -400,6 +394,36 @@ private struct PickCircle: View {
     }
 }
 
+/// A chat's logo, or the app's own icon wherever it is on this Mac, under a
+/// photo and in Settings. An app icon keeps a margin round its shape, so it
+/// is drawn a little larger to look as large as a logo. Without either, a
+/// glass circle with the chat's short mark in plain letters.
+struct ChatIcon: View {
+    let chat: ChatTarget
+    var size: CGFloat
+
+    var body: some View {
+        ZStack {
+            if let icon = chat.icon {
+                Image(nsImage: icon)
+                    .resizable()
+                    .interpolation(.high)
+                    .frame(width: size * chat.iconScale, height: size * chat.iconScale)
+            } else {
+                Text(chat.mark)
+                    .font(.system(size: size * 0.375, weight: .bold, design: .rounded))
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+                    .foregroundStyle(.primary)
+                    .frame(width: size, height: size)
+                    .controlGlass(circle: true)
+            }
+        }
+        .frame(width: size, height: size)
+        .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
+    }
+}
+
 /// A word found by Search, marked on the photo like a highlighter.
 private struct Highlight: View {
     /// From 0 to 1 from the bottom left.
@@ -418,6 +442,29 @@ private struct Highlight: View {
             .frame(width: width, height: height)
             .offset(x: x, y: y)
             .allowsHitTesting(false)
+    }
+}
+
+/// Where a photo is covered, shown while the pointer rests on its lock: the
+/// rest steps back under black at 40%, and each covered place keeps its
+/// look, outlined in the accent.
+private struct CoveredPlaces: View {
+    /// From 0 to 1 from the bottom left.
+    let places: [CGRect]
+
+    var body: some View {
+        Canvas { context, size in
+            var outlines = Path()
+            for place in places {
+                let rect = CGRect(x: place.minX * size.width, y: (1 - place.maxY) * size.height,
+                                  width: place.width * size.width, height: place.height * size.height)
+                outlines.addRoundedRect(in: rect.insetBy(dx: -1, dy: -1), cornerSize: CGSize(width: 2, height: 2))
+            }
+            var shade = Path(CGRect(origin: .zero, size: size))
+            shade.addPath(outlines)
+            context.fill(shade, with: .color(.black.opacity(0.4)), style: FillStyle(eoFill: true))
+            context.stroke(outlines, with: .color(.accentColor), lineWidth: 1.5)
+        }
     }
 }
 

@@ -107,6 +107,7 @@ final class Line: ObservableObject {
     /// Each photo's print, by its path, once its words are read.
     private var prints: [String: TextPrint] = [:]
     private var sendLogWatch: NSObjectProtocol?
+    private var rulesWatch: NSObjectProtocol?
 
     /// Mark photos sent before, from Settings. On unless turned off.
     nonisolated static var marksSentBefore: Bool {
@@ -131,6 +132,10 @@ final class Line: ObservableObject {
         }
         sendLogWatch = NotificationCenter.default.addObserver(forName: SendLog.changed, object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.refreshSent() }
+        }
+        // A word to cover always, added from Hide Part: every photo is read again.
+        rulesWatch = NotificationCenter.default.addObserver(forName: OwnRules.changed, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.readPrivateDetails() }
         }
         readPrivateDetails()
         scheduleGust()
@@ -213,13 +218,82 @@ final class Line: ObservableObject {
         takeDown(neighbours(of: id, toTheLeft: toTheLeft))
     }
 
-    /// One after another, and only the first makes a sound.
+    /// The corner cross, Discard or Take down: the photo goes the way of its
+    /// cross, and a note offers it back for a moment.
+    func takeDown(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }) else { return }
+        takeDown([item])
+    }
+
+    /// One after another, and only the first makes a sound. Once the last
+    /// has gone, a note offers them all back.
     private func takeDown(_ live: [Pegged]) {
+        guard !live.isEmpty else { return }
+        let gone = Gone()
         for (n, item) in live.enumerated() {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.06 * Double(n)) { [weak self] in
-                self?.discard(item.id, quietly: n > 0)
+                guard let self else { return }
+                if let way = self.discard(item.id, quietly: n > 0) { gone.ways.append(way) }
+                // Discarded with no history to keep it, it went to the Trash.
+                if n == live.count - 1 { self.offerBack(gone.ways, trashed: gone.ways.allSatisfy { $0.trashed != nil }) }
             }
         }
+    }
+
+    /// What one taking down took, gathered as each photo goes.
+    private final class Gone {
+        var ways: [WayBack] = []
+    }
+
+    /// A photo taken down, and where it went: its file where it was, in the
+    /// history, or in the Trash.
+    struct WayBack {
+        /// Where it hung from.
+        let url: URL
+        var entry: History.Entry?
+        var trashed: URL?
+    }
+
+    /// "Taken down. Click to put it back on the line.", for a moment.
+    private func offerBack(_ ways: [WayBack], trashed: Bool) {
+        guard !ways.isEmpty else { return }
+        Notice.show(Self.goneNote(count: ways.count, trashed: trashed), done: true, lasting: 5) { [weak self] in
+            self?.bringBack(ways)
+        }
+    }
+
+    nonisolated static func goneNote(count: Int, trashed: Bool) -> String {
+        switch (count, trashed) {
+        case (1, true): L("Moved to the Trash. Click to put it back on the line.")
+        case (_, true): String(format: L("%d moved to the Trash. Click to put them back on the line."), count)
+        case (1, false): L("Taken down. Click to put it back on the line.")
+        case (_, false): String(format: L("%d taken down. Click to put them back on the line."), count)
+        }
+    }
+
+    /// Back on the line from wherever each went: the history gives it back
+    /// to Snapfly's folder, the Trash to where it was, under a name of its
+    /// own if that one is taken meanwhile.
+    private func bringBack(_ ways: [WayBack]) {
+        var urls: [URL] = []
+        for way in ways {
+            if let entry = way.entry {
+                if let back = History.takeBack(entry) { urls.append(back) }
+            } else if let trashed = way.trashed, trashed != way.url,
+                      FileManager.default.fileExists(atPath: trashed.path) {
+                let target = FileManager.default.fileExists(atPath: way.url.path)
+                    ? uniqueURL(in: way.url.deletingLastPathComponent(), for: way.url.lastPathComponent) : way.url
+                do {
+                    try FileManager.default.moveItem(at: trashed, to: target)
+                    urls.append(target)
+                } catch {
+                    log.error("Could not take \(trashed.lastPathComponent, privacy: .public) out of the Trash: \(error.localizedDescription, privacy: .public)")
+                }
+            } else {
+                urls.append(way.url)
+            }
+        }
+        putBack(urls)
     }
 
     /// Photos whose file was deleted or moved away fall off by themselves.
@@ -840,17 +914,32 @@ final class Line: ObservableObject {
     /// is the source app's job, as Finder does.
     @discardableResult
     func trash(_ id: UUID, quietly: Bool = false) -> Bool {
-        guard let item = items.first(where: { $0.id == id }) else { return false }
+        trashed(id, quietly: quietly) != nil
+    }
+
+    /// Move to Trash, from a photo's menu: a note offers it back, out of
+    /// the Trash, for a moment.
+    func moveToTrash(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }),
+              let at = trashed(id, quietly: false) else { return }
+        offerBack([WayBack(url: item.url, trashed: at)], trashed: true)
+    }
+
+    /// Where the Trash put it, or where it was when the Trash does not say;
+    /// nil when it could not go.
+    private func trashed(_ id: UUID, quietly: Bool) -> URL? {
+        guard let item = items.first(where: { $0.id == id }) else { return nil }
         do {
-            try FileManager.default.trashItem(at: item.url, resultingItemURL: nil)
+            var resulting: NSURL?
+            try FileManager.default.trashItem(at: item.url, resultingItemURL: &resulting)
             log.notice("Trashed \(item.url.lastPathComponent, privacy: .public)")
             if soundOn && !quietly { Line.trashSound?.play() }
             drop(id, quietly: true)
-            return true
+            return (resulting as URL?) ?? item.url
         } catch {
             log.error("Could not trash \(item.url.path, privacy: .public): \(error.localizedDescription, privacy: .public)")
             if !quietly { Notice.show(L("Could not move it to the Trash.")) }
-            return false
+            return nil
         }
     }
 
@@ -866,15 +955,18 @@ final class Line: ObservableObject {
         return item.url.standardizedFileURL.path.hasPrefix(Inbox.folder.standardizedFileURL.path + "/")
     }
 
-    /// The corner cross and "Take down" both end up here.
-    func discard(_ id: UUID, quietly: Bool = false) {
+    /// The corner cross and "Take down" both end up here. Returns where it
+    /// went, to bring it back from.
+    @discardableResult
+    func discard(_ id: UUID, quietly: Bool = false) -> WayBack? {
         // Already on its way down, from a second click on the tag's trash.
-        guard let item = items.first(where: { $0.id == id && !$0.falling }) else { return }
+        guard let item = items.first(where: { $0.id == id && !$0.falling }) else { return nil }
         if isInInbox(id) {
-            retire(id, quietly: quietly)
+            return retire(id, quietly: quietly)
         } else {
             History.keep(item.url, owned: false)
             drop(id, quietly: quietly)
+            return WayBack(url: item.url)
         }
     }
 
@@ -882,12 +974,16 @@ final class Line: ObservableObject {
     /// Trash when there is no history. Moving to the Trash from a menu or by
     /// dragging there still deletes it.
     @discardableResult
-    private func retire(_ id: UUID, quietly: Bool) -> Bool {
-        guard let item = items.first(where: { $0.id == id }) else { return false }
-        guard History.keep(item.url, owned: true) else { return trash(id, quietly: quietly) }
+    private func retire(_ id: UUID, quietly: Bool) -> WayBack? {
+        guard let item = items.first(where: { $0.id == id }) else { return nil }
+        guard History.keep(item.url, owned: true) else {
+            return trashed(id, quietly: quietly).map { WayBack(url: item.url, trashed: $0) }
+        }
+        // Kept just now, so the newest in the history.
+        let entry = History.entries.first
         if soundOn && !quietly { Line.trashSound?.play() }
         drop(id, quietly: true)
-        return true
+        return WayBack(url: item.url, entry: entry)
     }
 
     /// The oldest photo falling off a full line. Like the cross, a file from
@@ -910,7 +1006,7 @@ final class Line: ObservableObject {
     }
 
     private func letGo(_ id: UUID) {
-        if isInInbox(id), retire(id, quietly: true) { return }
+        if isInInbox(id), retire(id, quietly: true) != nil { return }
         if let item = items.first(where: { $0.id == id }), !isInInbox(id) { History.keep(item.url, owned: false) }
         drop(id, quietly: true)
     }
@@ -1070,14 +1166,26 @@ final class Line: ObservableObject {
         guard let item = items.first(where: { $0.id == id }),
               item.isImage || DocumentCover.protects(item.url) else { return }
         let url = item.url
+        // What was hidden by hand before, for a photo's note to go back to.
+        let before: [CGRect]? = isDocument(url) ? nil : PrivateDetails.hand(url)
         HideEditor.shared.edit(url) { [weak self] in
             self?.cover(url)
             // Kept with the photo, not in its file: a note says so.
             let hidden = isDocument(url) ? !PrivateDetails.handPages(url).isEmpty : !PrivateDetails.hand(url).isEmpty
-            guard hidden else { return }
             let place = Folders.placeName(url.deletingLastPathComponent())
-            Notice.show(String(format: L("Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is."),
-                               place), done: true, lasting: 6)
+            guard let before else {
+                guard hidden else { return }
+                Notice.show(String(format: L("Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is."),
+                                   place), done: true, lasting: 6)
+                return
+            }
+            guard PrivateDetails.hand(url) != before else { return }
+            // A photo's note takes the change back with a click.
+            Notice.show(String(format: L("Saved with the photo; the file in %@ stays as it is. Click to undo."), place),
+                        done: true, lasting: 6) { [weak self] in
+                PrivateDetails.setHand(before, for: url)
+                self?.cover(url)
+            }
         }
     }
 
@@ -1107,13 +1215,24 @@ final class Line: ObservableObject {
     func crop(_ id: UUID) {
         guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
         let url = item.url
+        let before = Drawings.saved(url).crop
         QuickCrop.shared.crop(url) { [weak self] cropped in
             self?.cover(url)
-            guard cropped else { return }
             let place = Folders.placeName(url.deletingLastPathComponent())
-            Notice.show(String(format: L("Cropped. It goes out cropped; the file in %@ stays as it is."), place),
-                        done: true, lasting: 6)
+            let text = cropped
+                ? String(format: L("Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo."), place)
+                : L("The whole photo goes out again. Click to undo.")
+            Notice.show(text, done: true, lasting: 6) { [weak self] in self?.setCrop(before, for: url) }
         }
+    }
+
+    /// A crop put back, from a note's click, with whatever is drawn kept.
+    private func setCrop(_ crop: CGRect?, for url: URL) {
+        var drawing = Drawings.saved(url)
+        guard drawing.crop != crop else { return }
+        drawing.crop = crop
+        Drawings.set(drawing, for: url)
+        cover(url)
     }
 
     /// Whether a photo goes out cut to a part of it.
@@ -1126,11 +1245,12 @@ final class Line: ObservableObject {
     /// whatever is drawn on it stays.
     func keepWhole(_ id: UUID) {
         guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
-        var drawing = Drawings.saved(item.url)
-        guard drawing.crop != nil else { return }
-        drawing.crop = nil
-        Drawings.set(drawing, for: item.url)
-        cover(item.url)
+        let url = item.url
+        guard let before = Drawings.saved(url).crop else { return }
+        setCrop(nil, for: url)
+        Notice.show(L("The whole photo goes out again. Click to undo."), done: true, lasting: 6) { [weak self] in
+            self?.setCrop(before, for: url)
+        }
     }
 
     /// Save Copy…, from a photo's menu or Draw on Photo: the photo as it

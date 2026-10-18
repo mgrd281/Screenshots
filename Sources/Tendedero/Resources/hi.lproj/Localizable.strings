@@ -143,7 +143,7 @@
 "Screenshots, one click from any chat." = "स्क्रीनशॉट, किसी भी चैट से बस एक क्लिक दूर।";
 "Made by" = "निर्माता";
 /* HideEditor */
-"Drag over anything to hide it. Click a box to show it again." = "जो छिपाना है उस पर ड्रैग करें। फिर से दिखाने के लिए किसी बॉक्स पर क्लिक करें।";
+"Click a word to hide it, or drag over anything. Click a box to show it again." = "किसी शब्द को छिपाने के लिए उस पर क्लिक करें, या किसी भी चीज़ पर ड्रैग करें। फिर से दिखाने के लिए किसी बॉक्स पर क्लिक करें।";
 "Remove All" = "सभी हटाएँ";
 "Cancel" = "रद्द करें";
 "Done" = "हो गया";
@@ -500,7 +500,7 @@
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "फ़ोटो के साथ सहेजा गया। यह वैसे ही जाती है जैसे आपने बनाया; %@ में फ़ाइल जैसी है वैसी रहती है।";
 "Crop…" = "क्रॉप करें…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "रखने वाले हिस्से पर ड्रैग करें। Return पूरी फ़ोटो रखता है, Escape रद्द करता है।";
-"Cropped. It goes out cropped; the file in %@ stays as it is." = "क्रॉप हो गई। यह क्रॉप होकर जाती है; %@ में फ़ाइल जैसी है वैसी रहती है।";
+"Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo." = "क्रॉप हो गई। यह क्रॉप होकर जाती है; %@ में फ़ाइल जैसी है वैसी रहती है। पूर्ववत करने के लिए क्लिक करें।";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "फ़ोटो के साथ सहेजा गया। ये हिस्से भेजी जाने वाली हर चीज़ में छिपे रहते हैं; %@ में फ़ाइल जैसी है वैसी रहती है।";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "फ़ोटो को जैसी वह जाती है, बनाई और क्रॉप की हुई, अलग फ़ाइल के रूप में सहेजता है।";
 "Keep as a file" = "फ़ाइल के रूप में रखें";
@@ -700,3 +700,15 @@
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "ब्राउज़र वेबसाइट खोलता है। ऐप उनका अपना ऐप खोलता है, अगर वह इस Mac पर है, वरना वेबसाइट।";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "इसका आइकन फ़ोटो के नीचे दिखता है। क्लिक करने पर फ़ोटो, या उसके साथ चुनी गई फ़ोटो, %@ को भेजी जाती हैं।";
 "Copied. Start a new message and paste." = "कॉपी हो गई। नया संदेश शुरू करें और चिपकाएँ।";
+
+/* Click to cover, the order of the icons under photos, and notes that take a change back */
+"“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” अब से हर फ़ोटो में ढका रहेगा। इसे %2$@ में बदल सकते हैं।";
+"Always cover “%@”" = "“%@” को हमेशा ढकें";
+"Covered in every photo from now on, as a rule of your own under Privacy." = "अब से हर फ़ोटो में ढका रहेगा, गोपनीयता में आपके अपने नियम के रूप में।";
+"Drag the icons into the order you want them under each photo." = "आइकन को उस क्रम में ड्रैग करें जिसमें आप उन्हें हर फ़ोटो के नीचे चाहते हैं।";
+"Moved to the Trash. Click to put it back on the line." = "ट्रैश में ले जाया गया। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
+"%d moved to the Trash. Click to put them back on the line." = "%d फ़ोटो ट्रैश में ले जाई गईं। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
+"Taken down. Click to put it back on the line." = "उतार दी गई। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
+"%d taken down. Click to put them back on the line." = "%d फ़ोटो उतारी गईं। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
+"Saved with the photo; the file in %@ stays as it is. Click to undo." = "फ़ोटो के साथ सहेजा गया; %@ में फ़ाइल जैसी है वैसी रहती है। पूर्ववत करने के लिए क्लिक करें।";
+"The whole photo goes out again. Click to undo." = "पूरी फ़ोटो फिर से जाती है। पूर्ववत करने के लिए क्लिक करें।";

@@ -141,7 +141,7 @@
 "Screenshots, one click from any chat." = "Capturas, a un clic de calquera chat.";
 "Made by" = "Feito por";
 /* HideEditor */
-"Drag over anything to hide it. Click a box to show it again." = "Arrastra sobre o que queiras agochar. Fai clic nun recadro para amosalo de novo.";
+"Click a word to hide it, or drag over anything. Click a box to show it again." = "Preme nunha palabra para agochala, ou arrastra sobre o que queiras. Fai clic nun recadro para amosalo de novo.";
 "Remove All" = "Quitar todo";
 "Cancel" = "Cancelar";
 "Done" = "Feito";
@@ -498,7 +498,7 @@
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Gardado coa foto. Sae tal como a debuxaches; o ficheiro en %@ queda como está.";
 "Crop…" = "Recortar…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Arrastra sobre a parte que queres conservar. Return conserva a foto enteira e Escape cancela.";
-"Cropped. It goes out cropped; the file in %@ stays as it is." = "Recortada. Sae recortada; o ficheiro en %@ queda como está.";
+"Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo." = "Recortada. Sae recortada; o ficheiro en %@ queda como está. Preme para desfacer.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Gardado coa foto. Esas partes quedan agochadas no que se envía; o ficheiro en %@ queda como está.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Garda a foto tal como sae, debuxada e recortada, nun ficheiro propio.";
 "Keep as a file" = "Gardar como ficheiro";
@@ -698,3 +698,15 @@
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "O navegador abre o sitio web. A app abre a súa propia app se está neste Mac, e se non, o sitio web.";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "A súa icona aparece baixo a foto. Un clic envía a foto, ou as escollidas con ela, a %@.";
 "Copied. Start a new message and paste." = "Copiada. Comeza unha mensaxe nova e pégaa.";
+
+/* Click to cover, the order of the icons under photos, and notes that take a change back */
+"“%1$@” is covered from now on, in every photo. Change it in %2$@." = "«%1$@» cóbrese a partir de agora en todas as fotos. Podes cambialo en %2$@.";
+"Always cover “%@”" = "Cubrir sempre «%@»";
+"Covered in every photo from now on, as a rule of your own under Privacy." = "Cóbrese desde agora en todas as fotos, como regra propia en Privacidade.";
+"Drag the icons into the order you want them under each photo." = "Arrastra as iconas á orde na que as queiras baixo cada foto.";
+"Moved to the Trash. Click to put it back on the line." = "Movida á Papeleira. Preme para volver colgala na corda.";
+"%d moved to the Trash. Click to put them back on the line." = "%d movidas á Papeleira. Preme para volver colgalas na corda.";
+"Taken down. Click to put it back on the line." = "Descolgada. Preme para volver colgala na corda.";
+"%d taken down. Click to put them back on the line." = "%d descolgadas. Preme para volver colgalas na corda.";
+"Saved with the photo; the file in %@ stays as it is. Click to undo." = "Gardado coa foto; o ficheiro en %@ queda como está. Preme para desfacer.";
+"The whole photo goes out again. Click to undo." = "Volve saír a foto enteira. Preme para desfacer.";
