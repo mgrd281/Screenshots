@@ -333,11 +333,12 @@ only ever covers more than you chose, and the line still shows your choice.
 Over an AI chat, the send button shows a small lock by the count meanwhile,
 and Sent in the History lists what was covered.
 
-Before photos go into an AI chat, or an app or website Snapfly doesn't know
-as a chat, a card shows them as they will go, what is covered in them, and
-when photos like them were sent before. Return sends them, Escape keeps them
-on the line. Choose every time or never instead with Check before sending,
-under Privacy.
+A click on a chat's icon, or on the send button, sends at once. Turn on Check
+before sending, under Privacy, and before photos go into an AI chat, or an app
+or website Snapfly doesn't know as a chat, a card shows them as they will go,
+what is covered in them, and when photos like them were sent before. Return
+sends them, Escape keeps them on the line. Choose every time instead to see
+the card before every send.
 
 Hide Part opens wide: the picture on the left, as large as fits, and on the
 right everything to choose; drag a corner to make the window larger or

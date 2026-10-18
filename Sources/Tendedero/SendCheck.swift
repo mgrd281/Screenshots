@@ -30,9 +30,10 @@ final class SendCheck: NSObject, NSWindowDelegate {
         case aiChat, unknownPlace, everySend
     }
 
-    /// In AI chats and unknown apps unless changed.
+    /// Never unless changed: a click on a chat sends at once, and the card is
+    /// for whoever turns it on.
     nonisolated static var when: When {
-        get { UserDefaults.standard.string(forKey: "checkBeforeSending").flatMap(When.init(rawValue:)) ?? .aiAndUnknown }
+        get { UserDefaults.standard.string(forKey: "checkBeforeSending").flatMap(When.init(rawValue:)) ?? .never }
         set { UserDefaults.standard.set(newValue.rawValue, forKey: "checkBeforeSending") }
     }
 

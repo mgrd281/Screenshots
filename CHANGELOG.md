@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- A click on a chat's icon under a photo, or on the send button, sends at
+  once. The card of Check before sending, under Privacy, no longer shows
+  until you turn it on there.
 - A photo's menu is short again: Copy, Copy Text and Paste at the top, then
   Send to (the chats under photos, with More Chats for the rest), Ask AI,
   Text and AI, Edit and Save and Export as submenus, then Open, Quick Look,
