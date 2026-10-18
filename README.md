@@ -237,7 +237,10 @@ it misses, hide by hand with Hide Part in a photo's menu: a click on a word
 hides it, and Always cover hides that word in every photo from then on. Labels like Billing
 address, Customer, Recipient, Kundennummer or Diagnosis tell it where a whole
 block is private, on their own line or as a card's heading, like Kunde on a
-shop's order page.
+shop's order page. On a form or an invoice, with the labels in one column and
+the values beside them, like Vorname:, Nachname:, Adresse:, PLZ: and Stadt:
+on a marketplace's order, each value on the label's row is covered, and the
+first and last name found there are covered wherever they appear together.
 
 API keys and tokens are found by how services start them, like `sk-`,
 `ghp_` or `AKIA`, by what follows Bearer or a setting like `API_KEY=`, by a

@@ -18,6 +18,56 @@ final class LabelTests: XCTestCase {
         }
     }
 
+    func testTheLabelsOfAFormAreKnown() {
+        for line in ["Vorname:", "Nachname:", "PLZ:", "Stadt:", "Straße", "First name", "Last name", "Zip code",
+                     "Versendet mit:", "الاسم الأول"] {
+            XCTAssertTrue(Finder.isLabel(line), line)
+        }
+        for line in ["Martin", "Deutschland", "Privatadresse"] {
+            XCTAssertFalse(Finder.isLabel(line), line)
+        }
+    }
+
+    /// A shop's order page lists its labels in one column and the values
+    /// in the next, on the same rows.
+    func testTheValueBesideALabelIsOnItsRow() {
+        let vorname = CGRect(x: 0.76, y: 0.62, width: 0.03, height: 0.010)
+        let martin = CGRect(x: 0.86, y: 0.619, width: 0.025, height: 0.012)
+        let nachname = CGRect(x: 0.76, y: 0.60, width: 0.035, height: 0.010)
+        let dorozala = CGRect(x: 0.86, y: 0.599, width: 0.03, height: 0.012)
+        let boxes = [vorname, martin, nachname, dorozala]
+        XCTAssertEqual(Finder.line(beside: 0, in: boxes), 1)
+        XCTAssertEqual(Finder.line(beside: 2, in: boxes), 3)
+        // Nothing to the right of a value, and nothing beside to the left.
+        XCTAssertNil(Finder.line(beside: 1, in: boxes))
+        // Far across the page is another part of it, not the value.
+        let left = CGRect(x: 0.10, y: 0.62, width: 0.03, height: 0.010)
+        XCTAssertNil(Finder.line(beside: 0, in: [left, CGRect(x: 0.60, y: 0.62, width: 0.03, height: 0.010)]))
+        XCTAssertNil(Finder.line(beside: 0, in: [vorname, left]))
+        // Nor is a line on another row.
+        XCTAssertNil(Finder.line(beside: 0, in: [vorname, dorozala]))
+    }
+
+    /// Read from a picture, as the app does: a shop's order page with the
+    /// labels in one column and the values beside them. Names covers the
+    /// first and last name on their rows and the name the bill goes to;
+    /// Addresses covers the street, the postcode and the town, and the
+    /// address under the bill's name; the file name of the bill stays.
+    func testTheValuesBesideTheLabelsOfAnOrderAreCovered() throws {
+        let image = try formPage()
+        let lines = Finder.textLines(in: image).map { "\($0.string) \($0.box)" }
+        let names = Finder.coveredAreas(in: image, [.names], rules: [], intelligence: false).compactMap(\.text)
+        for name in ["Martin", "Dorozala", "Martin Dorozala"] {
+            XCTAssertTrue(names.contains { $0.contains(name) }, "\(name): \(names) in \(lines)")
+        }
+        XCTAssertFalse(names.contains { $0.contains("Oistinger") || $0.contains("Rechnung_F5") }, "\(names)")
+        let places = Finder.coveredAreas(in: image, [.addresses], rules: [], intelligence: false).compactMap(\.text)
+        for place in ["Oistinger Feld 41", "59510", "Lippetal"] {
+            XCTAssertTrue(places.contains { $0.contains(place) }, "\(place): \(places) in \(lines)")
+        }
+        XCTAssertFalse(places.contains { $0.contains("Martin") || $0.contains("Rechnung_F5") }, "\(places)")
+    }
+
     /// Measured as Vision reads a Retina screenshot of one: "Kunde" has
     /// nothing below its baseline and is read shorter than the name.
     func testTheNameUnderAShortHeadingIsItsFirstLine() {
@@ -96,6 +146,40 @@ final class LabelTests: XCTestCase {
                 draw("⋯", at: CGPoint(x: 2540, y: CGFloat(height) - row.top), font: body,
                      color: CGColor(gray: 0.45, alpha: 1), in: context)
             }
+        }
+        return try XCTUnwrap(context.makeImage())
+    }
+
+    /// The shipping and billing details beside an order, at Retina size:
+    /// small grey labels with colons in one column, the values beside them.
+    private func formPage() throws -> CGImage {
+        let width = 2880, height = 1800
+        let context = try XCTUnwrap(CGContext(data: nil, width: width, height: height, bitsPerComponent: 8,
+                                              bytesPerRow: 0, space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                              bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.setFillColor(CGColor(gray: 1, alpha: 1))
+        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        let ink = CGColor(gray: 0.1, alpha: 1)
+        let grey = CGColor(gray: 0.45, alpha: 1)
+        let small = CTFontCreateWithName("Helvetica" as CFString, 22, nil)
+        let body = CTFontCreateWithName("Helvetica" as CFString, 26, nil)
+        // From the top of the screen: a label, if any, and its value.
+        let rows: [(label: String?, value: String, top: CGFloat)] = [
+            ("Vorname:", "Martin", 400),
+            ("Nachname:", "Dorozala", 444),
+            ("Adresse:", "Oistinger Feld 41", 488),
+            ("PLZ:", "59510", 532),
+            ("Stadt:", "Lippetal", 576),
+            ("Rechnungsadresse:", "Martin Dorozala", 700),
+            (nil, "Oistinger Feld 41", 740),
+            (nil, "59510 Lippetal", 780),
+            ("Rechnung:", "Rechnung_F5.pdf", 860),
+        ]
+        for row in rows {
+            if let label = row.label {
+                draw(label, at: CGPoint(x: 1900, y: CGFloat(height) - row.top), font: small, color: grey, in: context)
+            }
+            draw(row.value, at: CGPoint(x: 2300, y: CGFloat(height) - row.top), font: body, color: ink, in: context)
         }
         return try XCTUnwrap(context.makeImage())
     }

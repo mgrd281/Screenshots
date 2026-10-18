@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Invoices and order pages with the labels in one column and the values
+  beside them, like Vorname:, Nachname:, Adresse:, PLZ: and Stadt:, have
+  those values covered, and the name the bill goes to with its address.
 - Twelve more icons under photos, off until you turn them on in Settings ›
   Line › Icons under photos: Perplexity, Grok, DeepSeek, Qwen, Messenger,
   Instagram, Outlook, Yahoo Mail, Facebook, Airbnb, Visual Studio Code and

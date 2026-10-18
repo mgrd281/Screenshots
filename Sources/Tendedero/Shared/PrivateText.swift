@@ -145,6 +145,7 @@ enum Finder {
 
     private static let person = Block(first: .names, rest: .addresses, lines: 6)
     private static let name = Block(first: .names, rest: .names, lines: 1)
+    private static let place = Block(first: .addresses, rest: .addresses, lines: 1)
     private static let health = Block(first: .health, rest: .health, lines: 4)
     private static let bank = Block(first: .bank, rest: .bank, lines: 1)
     private static let order = Block(first: .orders, rest: .orders, lines: 1)
@@ -166,8 +167,18 @@ enum Finder {
             labels[label] = person
         }
         for label in ["kunde", "kundin", "customer", "käufer", "buyer", "kontoinhaber", "account holder",
-                      "name", "patient", "patientin", "versicherter", "الاسم", "العميل", "المريض"] {
+                      "name", "patient", "patientin", "versicherter", "الاسم", "العميل", "المريض",
+                      "vorname", "nachname", "familienname", "vor- und nachname", "vollständiger name",
+                      "first name", "last name", "surname", "given name", "family name", "full name",
+                      "nom", "prénom", "nombre", "apellido", "apellidos", "nome", "sobrenome", "cognome",
+                      "الاسم الأول", "اسم العائلة", "الاسم الكامل"] {
             labels[label] = name
+        }
+        for label in ["straße", "strasse", "str", "straße und hausnummer", "hausnummer", "adresszusatz",
+                      "street", "street address", "address line 1", "address line 2", "plz", "postleitzahl",
+                      "zip", "zip code", "postal code", "postcode", "ort", "stadt", "wohnort", "city", "town",
+                      "plz / ort", "plz/ort", "الشارع", "المدينة", "الرمز البريدي"] {
+            labels[label] = place
         }
         for label in ["diagnose", "diagnosis", "befund", "medikament", "medikamente", "medikation",
                       "medication", "medications", "medicine", "arzneimittel", "rezept", "prescription",
@@ -195,7 +206,8 @@ enum Finder {
         }
         for label in ["sendungsnummer", "sendungs-nr", "sendungs-nr.", "sendungsverfolgung", "trackingnummer",
                       "tracking", "tracking number", "tracking no", "tracking no.", "tracking id", "paketnummer",
-                      "paket-nr", "shipment number", "shipment id", "رقم الشحنة", "رقم التتبع"] {
+                      "paket-nr", "shipment number", "shipment id", "versendet mit", "versand mit",
+                      "shipped with", "رقم الشحنة", "رقم التتبع"] {
             labels[label] = parcel
         }
         for label in ["ust-idnr", "ust-idnr.", "ust-id", "ust-id.", "umsatzsteuer-id",
@@ -1042,11 +1054,23 @@ enum Finder {
     }
 
     /// Details announced by a label: on the same line, as in "IBAN: DE89…",
-    /// or in the lines under it, as a name and an address under
-    /// "Rechnungsadresse".
+    /// beside it in the next column, as a shop's order page lists
+    /// "Vorname:" and "Nachname:", or in the lines under it, as a name and an
+    /// address under "Rechnungsadresse".
     private static func labelled(in lines: [TextLine], _ chosen: Set<PrivateDetail>,
                                  learned: inout Set<String>) -> [Hit] {
         var hits: [Hit] = []
+        let boxes = lines.map(\.box)
+        // Whether a line sits on the row of another label, to its right, as
+        // the next row of a list of labels and values does: a known label,
+        // or any few words ending in a colon, like "Rechnung:".
+        func besideALabel(_ index: Int) -> Bool {
+            lines.indices.contains { other in
+                let words = lines[other].string.trimmingCharacters(in: .whitespaces)
+                let shaped = words.hasSuffix(":") && words.split(separator: " ").count <= 4
+                return other != index && (shaped || isLabel(words)) && line(beside: other, in: boxes) == index
+            }
+        }
         for (i, line) in lines.enumerated() {
             let text = line.string.trimmingCharacters(in: .whitespaces)
             var label = normalized(text)
@@ -1054,9 +1078,21 @@ enum Finder {
                 let value = text[text.index(after: colon)...].trimmingCharacters(in: .whitespaces)
                 if !value.isEmpty {
                     let detail = kind(of: value, first: true, in: block)
-                    if chosen.contains(detail), let part = line.string.range(of: value) {
+                    let part = line.string.range(of: value)
+                    if chosen.contains(detail), let part {
                         hits.append(Hit(line: i, range: NSRange(part, in: line.string), kind: detail))
                         if detail == .names { learn(value, into: &learned) }
+                    }
+                    // The rest of a block, like the address after a name,
+                    // follows under the value, in its column.
+                    guard block.lines > 1, let part, var above = line.box(for: part) else { continue }
+                    var last = i
+                    for _ in 1..<block.lines {
+                        guard let next = Self.line(under: above, in: boxes, gap: 1.1, skipping: last),
+                              labels[normalized(lines[next].string)] == nil, !besideALabel(next) else { break }
+                        if chosen.contains(block.rest) { hits.append(Hit(line: next, range: nil, kind: block.rest)) }
+                        above = boxes[next]
+                        last = next
                     }
                     continue
                 }
@@ -1064,11 +1100,26 @@ enum Finder {
             }
             guard let block = labels[label] else { continue }
             var last = i
-            for n in 0..<block.lines {
+            var first = 0
+            // A label with a colon and its value beside it, in the next
+            // column; the rest of a block follows under that value, until the
+            // row of another label.
+            let beside = text.hasSuffix(":") ? Self.line(beside: i, in: boxes) : nil
+            if let value = beside, labels[normalized(lines[value].string)] == nil {
+                let detail = kind(of: lines[value].string, first: true, in: block)
+                if chosen.contains(detail) {
+                    hits.append(Hit(line: value, range: nil, kind: detail))
+                    if detail == .names { learn(lines[value].string, into: &learned) }
+                }
+                last = value
+                first = 1
+            }
+            for n in first..<max(block.lines, first) {
                 // A label sits further from its first line than the lines
                 // from each other, as a card's heading does.
                 guard let next = Self.line(below: last, in: lines, gap: n == 0 ? 2.5 : 1.1),
-                      labels[normalized(lines[next].string)] == nil else { break }
+                      labels[normalized(lines[next].string)] == nil,
+                      first == 0 || !besideALabel(next) else { break }
                 let detail = kind(of: lines[next].string, first: n == 0, in: block)
                 if chosen.contains(detail) {
                     hits.append(Hit(line: next, range: nil, kind: detail))
@@ -1088,8 +1139,18 @@ enum Finder {
         return nameWords(line) != nil ? .names : block.rest
     }
 
+    /// A name found is looked for elsewhere too; a first or last name on its
+    /// own, from beside "Vorname" or "Nachname", as one word of a name.
     private static func learn(_ name: String, into learned: inout Set<String>) {
-        if let words = nameWords(name) { learned.formUnion(words) }
+        if let words = nameWords(name) {
+            learned.formUnion(words)
+        } else {
+            let word = name.trimmingCharacters(in: .whitespaces)
+            if word.count >= 2, !word.contains(" "), word.first?.isUppercase == true,
+               word.allSatisfy({ $0.isLetter || "'’-".contains($0) }) {
+                learned.insert(fold(word))
+            }
+        }
     }
 
     /// The line right under another, starting in the same column, or nil
@@ -1103,13 +1164,33 @@ enum Finder {
     /// the two lines: a word with nothing below its baseline, like "Kunde",
     /// is read shorter than the name under it.
     static func line(below index: Int, in boxes: [CGRect], gap: CGFloat) -> Int? {
-        let above = boxes[index]
+        line(under: boxes[index], in: boxes, gap: gap, skipping: index)
+    }
+
+    /// The line right under a part of the picture, like a value read on the
+    /// same line as its label, starting in its column.
+    static func line(under above: CGRect, in boxes: [CGRect], gap: CGFloat, skipping index: Int) -> Int? {
         var best: Int?
         for (i, box) in boxes.enumerated() where i != index {
             guard box.maxY <= above.minY + above.height * 0.3,
                   above.minY - box.maxY < max(above.height, box.height) * gap,
                   abs(box.minX - above.minX) < 0.03 else { continue }
             if let current = best, boxes[current].maxY >= box.maxY { continue }
+            best = i
+        }
+        return best
+    }
+
+    /// The line beside another on its row, in the next column to its right,
+    /// as a value sits beside its label; the nearest, or nil without one.
+    static func line(beside index: Int, in boxes: [CGRect]) -> Int? {
+        let label = boxes[index]
+        var best: Int?
+        for (i, box) in boxes.enumerated() where i != index {
+            let overlap = min(label.maxY, box.maxY) - max(label.minY, box.minY)
+            guard overlap > min(label.height, box.height) * 0.5,
+                  box.minX >= label.maxX - 0.005, box.minX - label.maxX < 0.3 else { continue }
+            if let current = best, boxes[current].minX <= box.minX { continue }
             best = i
         }
         return best
