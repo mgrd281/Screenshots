@@ -8,7 +8,7 @@ import XCTest
 /// read it, the strongest protection covering whole lines, and Apple
 /// Intelligence taken at its word only where its words are on the page.
 final class ProtectionTests: XCTestCase {
-    private let keys = ["strongestCover", "intelligenceOff"]
+    private let keys = ["strongestCover", "intelligenceOff", "aiFindsPrivate"]
     private var before: [String: Any] = [:]
 
     override func setUp() {
@@ -89,7 +89,9 @@ final class ProtectionTests: XCTestCase {
         Finder.usesIntelligence = false
         XCTAssertTrue(Finder.strongest)
         XCTAssertFalse(Finder.usesIntelligence)
-        XCTAssertTrue(Finder.lookKey.hasSuffix(",true,false"), Finder.lookKey)
+        // The AI assistant reads along only with a key and when turned on.
+        XCTAssertFalse(Finder.asksAssistant)
+        XCTAssertTrue(Finder.lookKey.hasSuffix(",true,false,false"), Finder.lookKey)
     }
 
     // MARK: Helpers

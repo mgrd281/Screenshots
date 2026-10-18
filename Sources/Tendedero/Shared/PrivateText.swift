@@ -529,7 +529,7 @@ enum Finder {
     ///   only one given before counts.
     private static func intelligentHits(in lines: [TextLine], _ chosen: Set<PrivateDetail>,
                                         waits: Bool = true) -> [Hit] {
-        guard usesIntelligence, !chosen.isDisjoint(with: intelligentKinds.values), intelligenceAvailable,
+        guard !chosen.isDisjoint(with: intelligentKinds.values), asksAssistant || usesIntelligence && intelligenceAvailable,
               let pieces = intelligentPieces(for: lines.map(\.string), waits: waits) else { return [] }
         return pieces.compactMap { piece -> Hit? in
             guard chosen.contains(piece.kind), piece.line < lines.count else { return nil }

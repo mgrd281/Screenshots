@@ -112,6 +112,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             CaptureButton.shared.recordingChanged()
         }
         CaptureButton.shared.openSettings = { [weak self] in self?.openSettings() }
+        TextCard.shared.openSettings = { [weak self] in self?.openSettings() }
         CaptureButton.shared.update()
         Recording.cleanUp()
         History.purge()

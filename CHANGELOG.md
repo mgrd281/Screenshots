@@ -6,6 +6,15 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- An AI assistant, Claude or ChatGPT, with your own API key, set up once in
+  Settings › General › AI Assistant. Write a Reply, in a photo's menu,
+  writes the answer to the customer in the screenshot, ready to send;
+  Explain with Claude says what the screenshot shows and answers a question
+  about it; Order Details asks it for what your Mac did not find, like what
+  was bought. It is sent the screenshot covered, never the original, and
+  only when you choose one of these; they bill your account for each
+  request. Find more with Claude, under Privacy › Protection, lets it look
+  for private details the patterns miss; it is off until you turn it on.
 - Invoices and order pages with the labels in one column and the values
   beside them, like Vorname:, Nachname:, Adresse:, PLZ: and Stadt:, have
   those values covered, and the name the bill goes to with its address.

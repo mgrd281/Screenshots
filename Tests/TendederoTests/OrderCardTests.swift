@@ -39,7 +39,7 @@ final class OrderCardTests: XCTestCase {
 
     func testTheRowKeepsEveryColumnInItsPlace() {
         let fields = [OrderCard.Field(part: .order, value: "1024"), OrderCard.Field(part: .total, value: "74,00 €")]
-        XCTAssertEqual(OrderCard.row(fields), "1024\t\t74,00 €\t\t\t\t\t\t")
+        XCTAssertEqual(OrderCard.row(fields), "1024\t\t74,00 €\t\t\t\t\t\t\t")
         XCTAssertEqual(OrderCard.text(fields), "\(L("Order")): 1024\n\(L("Total")): 74,00 €")
     }
 

@@ -6,7 +6,9 @@ import Foundation
 /// detail find, so it holds the details as they are, not covered.
 enum OrderCard {
     enum Part: CaseIterable {
-        case order, date, total, name, address, email, phone, tracking, code
+        /// What was bought comes last, so a row's columns stay where they were;
+        /// only the AI assistant reads it.
+        case order, date, total, name, address, email, phone, tracking, code, product
 
         var label: String {
             switch self {
@@ -19,6 +21,7 @@ enum OrderCard {
             case .phone: L("Phone")
             case .tracking: L("Tracking number")
             case .code: L("Code")
+            case .product: L("Product")
             }
         }
     }

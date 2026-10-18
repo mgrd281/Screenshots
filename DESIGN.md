@@ -645,7 +645,7 @@ apps.
   as what opens them. Hide Private Details opens Hide Part for one file, to
   save a copy beside it.
 - **Photo context menu.**
-  - Grouped by intent: copy and send; translate, describe and Order Details;
+  - Grouped by intent: copy and send; translate, describe, Order Details and the assistant;
     open and edit; take down.
   - **Keep on Top** (`pip`) follows Quick Look for a photo: it floats over
     every app in a utility panel with a transparent title bar and its close
@@ -662,7 +662,35 @@ apps.
     selectable, and a borderless `doc.on.doc` that turns into a checkmark
     once copied, with a divider between rows. The note says it is read as
     the screenshot shows it, not covered. Its footer has Copy Row and Copy
-    All (the primary); it sends nothing.
+    All (the primary); it sends nothing. With the AI assistant set up, the
+    rows read on the Mac show at once under the note "Asking Claude for the
+    rest…", and the parts it adds, Product among them, join in their place;
+    the note then says which were read on the Mac and which in the covered
+    copy, and a failure is added to the note, the rows kept.
+  - **Write a Reply** (`arrowshape.turn.up.left`) and **Explain with
+    Claude** (`bubble.left.and.text.bubble.right`, the assistant's name as
+    chosen) follow Order Details. Both open the text card, titled Reply and
+    Explanation, under a working note with its spinner ("Claude is writing a
+    reply…", "Asking Claude…"); the answer sits on the reading panel's fill,
+    the note says it was written from the covered screenshot. Under it, the
+    **question field**: a rounded field the card's width, prompted with an
+    example ("Add something, like “offer a replacement”", or "Ask about
+    this screenshot"), and a borderless `arrow.up.circle.fill` at 18 pt with
+    the help Write Again or Ask, dimmed while it works; Return asks too.
+    Only this card takes the keyboard, and only while its field is clicked.
+    Reply's footer has Copy and Send (the primary), which closes the card,
+    then pastes the reply into the chat in front; Explanation has Copy
+    alone. Without a key, or with one refused, the card says so with an
+    Open Settings… link in place of Open System Settings….
+  - **Settings › General › AI Assistant**, after Sounds and Open at login:
+    a segmented picker, Claude or ChatGPT; a secure field for the API key,
+    prompted "Paste your key here", or "Saved: …WXYZ" with the kept key's
+    last four characters, never the key; a row with Remove Key (once one is
+    kept) and, on the trailing edge, Get a Key… as a `SettingsButton` and
+    Save, off while the field is empty, Return saving too; a red caption if
+    the keychain refuses it; then Model, a field prompted with the usual
+    model's name. The footer says what is sent where, only when chosen,
+    and that the provider bills it, not a subscription.
   - **Save for Bookkeeping** (`folder.badge.plus`) and **Email to
     Bookkeeping…** (`envelope`) follow it. The first asks for the folder
     once with an open panel, then saves and says so in a note above the
@@ -711,6 +739,8 @@ apps.
     circle of the accent at 12%;
   - one content block on a faint fill;
   - an optional note;
+  - for the AI assistant's cards, the question field (see Photo context
+    menu);
   - footer actions on the trailing edge.
 - **Search bar.** One field, a result count chip and close.
 - **Full windows** (Hide Part, Settings) for focused work. They are standard
@@ -906,6 +936,10 @@ apps.
   and Find more with Apple Intelligence (on at first), whose subtitle says it
   reads the words on the device and covers what the patterns miss, or, off
   and dimmed where the device has no Apple Intelligence, that it needs it;
+  then Find more with Claude, or ChatGPT (off at first), whose subtitle
+  says it sends each screenshot's words to the assistant set up under
+  General and that covering takes a few seconds longer, or, off and dimmed
+  without a key, that it needs one;
   over a footer saying every copy is read again before it leaves, and
   whatever private still shows is covered too. Then a section of its
   own with one toggle, Cover everything in AI chats (off at first), over a

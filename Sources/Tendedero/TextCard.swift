@@ -15,9 +15,15 @@ import FoundationModels
 /// start from the text as it leaves the line, private details left out.
 /// The result shows in a card under the photo, to copy or send. Order
 /// Details lists the order's parts as the screenshot shows them, to copy.
+/// Write a Reply and Explain with Claude, or ChatGPT, send the screenshot
+/// covered to the AI assistant set up in Settings, with the owner's own
+/// key; it also reads what Order Details on this Mac could not.
 @MainActor
 final class TextCard {
     static let shared = TextCard()
+
+    /// Opens Settings, where the assistant's key goes.
+    var openSettings: () -> Void = {}
 
     /// The card, and the clear margin around it its shadow falls in.
     static let width: CGFloat = 380
@@ -33,6 +39,8 @@ final class TextCard {
         let host = NSHostingController(rootView: TextCardView(model: model) { [weak self] in self?.close() })
         host.sizingOptions = []
         let panel = CardPanel()
+        // A question for the assistant is typed into the card.
+        panel.takesKeys = model.kind == .reply || model.kind == .ask
         panel.contentViewController = host
         self.host = host
         self.panel = panel
@@ -91,6 +99,10 @@ final class TextCard {
 /// Floats over everything like the line, without taking focus from the
 /// app in front, so Send pastes into the chat you were in.
 private final class CardPanel: NSPanel {
+    /// Only for a field to type in, and only while one is clicked: the app
+    /// in front stays in front.
+    var takesKeys = false
+
     init() {
         super.init(contentRect: NSRect(x: 0, y: 0, width: TextCard.width + TextCard.margin * 2, height: 160),
                    styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
@@ -104,7 +116,7 @@ private final class CardPanel: NSPanel {
         becomesKeyOnlyIfNeeded = true
     }
 
-    override var canBecomeKey: Bool { false }
+    override var canBecomeKey: Bool { takesKeys }
     override var canBecomeMain: Bool { false }
 }
 
@@ -258,7 +270,7 @@ extension OrderCard {
 @MainActor
 final class TextCardModel: ObservableObject {
     enum Kind {
-        case translation, description, order
+        case translation, description, order, reply, ask
     }
 
     enum State: Equatable {
@@ -269,14 +281,17 @@ final class TextCardModel: ObservableObject {
 
     /// Where in System Settings a failure is fixed.
     enum Fix {
-        case translationLanguages, appleIntelligence
+        case translationLanguages, appleIntelligence, assistant
 
-        var url: URL {
+        /// In System Settings; the assistant's key is in Snapfly's own.
+        var url: URL? {
             switch self {
             case .translationLanguages:
                 URL(string: "x-apple.systempreferences:com.apple.Localization-Settings.extension")!
             case .appleIntelligence:
                 URL(string: "x-apple.systempreferences:com.apple.Siri-Settings.extension")!
+            case .assistant:
+                nil
             }
         }
     }
@@ -303,11 +318,15 @@ final class TextCardModel: ObservableObject {
     @Published private(set) var pending: Pending?
     /// The result reads right to left, like Arabic.
     @Published private(set) var rightToLeft = false
+    /// What the owner asks the assistant, or adds to the reply it writes.
+    @Published var question = ""
 
     private let photo: UUID
     private let url: URL
     private weak var line: Line?
     private var reading: Finder.Reading?
+    /// The screenshot as the assistant is sent it: covered.
+    private var image: AIImage?
 
     var text: String? {
         if case .done(let text) = state { return text }
@@ -324,6 +343,10 @@ final class TextCardModel: ObservableObject {
 
     func start() {
         let url = url
+        if kind == .reply || kind == .ask {
+            Task { await assist() }
+            return
+        }
         if kind == .order {
             Task { [weak self] in
                 let fields = await Task.detached(priority: .userInitiated) { OrderCard.read(url) }.value
@@ -352,20 +375,116 @@ final class TextCardModel: ObservableObject {
         switch kind {
         case .translation: translate()
         case .description: Task { await describe() }
-        // Order Details reads the screenshot as it is, in start().
-        case .order: break
+        // Order Details reads the screenshot as it is, in start(); the
+        // assistant is sent a picture, not its text.
+        case .order, .reply, .ask: break
         }
     }
 
     // MARK: Order Details
 
     private func list(_ fields: [OrderCard.Field]) {
+        // With the assistant set up, it reads the rest, like what was bought.
+        if AIAccount.isSetUp {
+            Task { await complete(fields) }
+            return
+        }
         guard !fields.isEmpty else {
             fail(L("No order details were found in this screenshot."))
             return
         }
         self.fields = fields
         finish(OrderCard.text(fields), note: L("Read on this Mac as the screenshot shows them, not covered."))
+    }
+
+    /// The order as read on this Mac, shown at once, with what the
+    /// assistant reads in the covered copy added where this Mac found
+    /// nothing. Without an answer, what this Mac read stays.
+    private func complete(_ local: [OrderCard.Field]) async {
+        let name = AIAccount.provider.name
+        let here = L("Read on this Mac as the screenshot shows them, not covered.")
+        if local.isEmpty {
+            state = .working(String(format: L("Asking %@…"), name))
+        } else {
+            fields = local
+            finish(OrderCard.text(local), note: String(format: L("Asking %@ for the rest…"), name))
+        }
+        do {
+            guard let image = await coveredImage() else { throw AIError.other(L("Could not open the screenshot.")) }
+            let answer = try await AIRequest.ask(instructions: AITask.order, text: "Read this order.", image: image,
+                                                 schema: AITask.orderSchema)
+            var values = Dictionary(local.map { ($0.part, $0.value) }, uniquingKeysWith: { first, _ in first })
+            for (part, value) in AITask.orderParts(from: answer) where values[part] == nil { values[part] = value }
+            let all = OrderCard.Part.allCases.compactMap { part in values[part].map { OrderCard.Field(part: part, value: $0) } }
+            guard !all.isEmpty else {
+                fail(L("No order details were found in this screenshot."))
+                return
+            }
+            fields = all
+            finish(OrderCard.text(all), note: all == local ? here
+                   : String(format: L("Read on this Mac, not covered; %@ added what it read in the covered copy."), name))
+        } catch {
+            let failure = error as? AIError ?? .other(error.localizedDescription)
+            if local.isEmpty {
+                fail(failure.message, fix: failure.isSettings ? .assistant : nil)
+            } else {
+                finish(OrderCard.text(local), note: here + " " + failure.message, fix: failure.isSettings ? .assistant : nil)
+            }
+        }
+    }
+
+    // MARK: The assistant
+
+    /// The screenshot with its private details covered, as for an AI chat:
+    /// with Cover Everything in AI Chats on, every kind.
+    private func coveredImage() async -> AIImage? {
+        if let image { return image }
+        let chosen = CoveringProfile.details(PrivateDetails.details, inAIChat: true,
+                                             coversAll: CoveringProfile.coversAllInAIChats)
+        let covered = PrivateDetails.shareable(url, covering: chosen)
+        let made = await Task.detached(priority: .userInitiated) { AIImage.from(covered) }.value
+        image = made
+        return made
+    }
+
+    /// Write a Reply, or Ask: the covered screenshot and what the owner
+    /// typed, to the assistant, and its answer in the card.
+    private func assist() async {
+        let name = AIAccount.provider.name
+        guard AIAccount.isSetUp else {
+            fail(AIError.noKey.message, fix: .assistant)
+            return
+        }
+        state = .working(kind == .reply ? String(format: L("%@ is writing a reply…"), name)
+                                        : String(format: L("Asking %@…"), name))
+        note = nil
+        fix = nil
+        copied = false
+        let asked = question.trimmingCharacters(in: .whitespacesAndNewlines)
+        let instructions = kind == .reply ? AITask.reply : AITask.explain(in: Languages.englishName(Languages.own))
+        let text = kind == .reply
+            ? (asked.isEmpty ? "Write the reply." : "Write the reply. The seller adds: \(asked)")
+            : (asked.isEmpty ? "What does this screenshot show?" : asked)
+        do {
+            guard let image = await coveredImage() else { throw AIError.other(L("Could not open the screenshot.")) }
+            let answer = try await AIRequest.ask(instructions: instructions, text: text, image: image, effort: "medium")
+            finish(answer.trimmingCharacters(in: .whitespacesAndNewlines),
+                   note: String(format: L("Written by %@ from the screenshot with its private details covered."), name))
+        } catch {
+            let failure = error as? AIError ?? .other(error.localizedDescription)
+            fail(failure.message, fix: failure.isSettings ? .assistant : nil)
+        }
+    }
+
+    /// Asks again, with what the owner typed.
+    func askAgain() {
+        guard kind == .reply || kind == .ask, !isWorking else { return }
+        Task { await assist() }
+    }
+
+    var isWorking: Bool {
+        if case .working = state { return true }
+        return false
     }
 
     func copy(_ field: OrderCard.Field) {
@@ -522,7 +641,11 @@ final class TextCardModel: ObservableObject {
 
     func openFix() {
         guard let fix else { return }
-        NSWorkspace.shared.open(fix.url)
+        if let url = fix.url {
+            NSWorkspace.shared.open(url)
+        } else {
+            TextCard.shared.openSettings()
+        }
     }
 
     func copy() {
@@ -537,9 +660,9 @@ final class TextCardModel: ObservableObject {
     func send() {
         guard let text, let line else { return }
         switch kind {
-        case .translation: line.sendText(text)
+        case .translation, .reply: line.sendText(text)
         case .description: line.send(photo, caption: text)
-        case .order: break
+        case .order, .ask: break
         }
     }
 }
@@ -555,6 +678,8 @@ private struct TextCardView: View {
         case .translation: L("Translation")
         case .description: L("Description")
         case .order: L("Order Details")
+        case .reply: L("Reply")
+        case .ask: L("Explanation")
         }
     }
 
@@ -563,6 +688,8 @@ private struct TextCardView: View {
         case .translation: "translate"
         case .description: "sparkles"
         case .order: "list.bullet.rectangle"
+        case .reply: "arrowshape.turn.up.left"
+        case .ask: "bubble.left.and.text.bubble.right"
         }
     }
 
@@ -576,11 +703,12 @@ private struct TextCardView: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            if model.fix != nil {
-                Button(L("Open System Settings…")) { model.openFix() }
+            if let fix = model.fix {
+                Button(fix == .assistant ? L("Open Settings…") : L("Open System Settings…")) { model.openFix() }
                     .buttonStyle(.link)
                     .font(.caption)
             }
+            if model.kind == .reply || model.kind == .ask { questionField }
             if model.text != nil { footer }
         }
         .padding(16)
@@ -722,6 +850,24 @@ private struct TextCardView: View {
         .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
+    /// What to ask, or to add to the reply; Return asks again.
+    private var questionField: some View {
+        HStack(spacing: 8) {
+            TextField(model.kind == .reply ? L("Add something, like “offer a replacement”") : L("Ask about this screenshot"),
+                      text: $model.question)
+                .textFieldStyle(.roundedBorder)
+                .onSubmit { model.askAgain() }
+            Button { model.askAgain() } label: {
+                Image(systemName: "arrow.up.circle.fill")
+                    .font(.system(size: 18))
+            }
+            .buttonStyle(.borderless)
+            .disabled(model.isWorking)
+            .help(model.kind == .reply ? L("Write Again") : L("Ask"))
+            .accessibilityLabel(model.kind == .reply ? L("Write Again") : L("Ask"))
+        }
+    }
+
     @ViewBuilder private var footer: some View {
         if model.kind == .order { orderFooter } else { sendFooter }
     }
@@ -760,14 +906,24 @@ private struct TextCardView: View {
                 Label(model.copied ? L("Copied") : L("Copy"), systemImage: model.copied ? "checkmark" : "doc.on.doc")
             }
             .controlSize(.large)
-            Button {
-                model.send()
-                close()
-            } label: {
-                Label(model.kind == .translation ? L("Send") : L("Send with Photo"), systemImage: "paperplane.fill")
+            if model.kind != .ask {
+                Button {
+                    if model.kind == .reply {
+                        // Closed first, so the chat in front has the
+                        // keyboard back from the question field when the
+                        // reply is pasted.
+                        close()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { model.send() }
+                    } else {
+                        model.send()
+                        close()
+                    }
+                } label: {
+                    Label(model.kind == .description ? L("Send with Photo") : L("Send"), systemImage: "paperplane.fill")
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
         }
     }
 
