@@ -859,3 +859,12 @@
 "No key yet" = "Aún sin clave";
 "Saved in your keychain, ending in %@" = "Guardada en tu llavero, termina en %@";
 "Use the usual model" = "Usar el modelo habitual";
+
+/* GrabArea: the photo's menu */
+"Send to" = "Enviar a";
+"More Chats" = "Más chats";
+"Ask AI" = "Preguntar a la IA";
+"Text and AI" = "Texto e IA";
+"Edit" = "Editar";
+"Save and Export" = "Guardar y exportar";
+"All Photos" = "Todas las fotos";

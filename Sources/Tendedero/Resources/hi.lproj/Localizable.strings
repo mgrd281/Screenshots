@@ -861,3 +861,12 @@
 "No key yet" = "अभी कोई कुंजी नहीं";
 "Saved in your keychain, ending in %@" = "आपके कीचेन में सहेजी गई, अंत में %@";
 "Use the usual model" = "सामान्य मॉडल इस्तेमाल करें";
+
+/* GrabArea: the photo's menu */
+"Send to" = "भेजें";
+"More Chats" = "और चैट";
+"Ask AI" = "AI से पूछें";
+"Text and AI" = "टेक्स्ट और AI";
+"Edit" = "संपादित करें";
+"Save and Export" = "सहेजें और निर्यात करें";
+"All Photos" = "सभी फ़ोटो";

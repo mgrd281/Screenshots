@@ -859,3 +859,12 @@
 "No key yet" = "아직 키 없음";
 "Saved in your keychain, ending in %@" = "키체인에 저장됨, 끝자리 %@";
 "Use the usual model" = "기본 모델 사용";
+
+/* GrabArea: the photo's menu */
+"Send to" = "보내기";
+"More Chats" = "다른 채팅";
+"Ask AI" = "AI에게 묻기";
+"Text and AI" = "텍스트 및 AI";
+"Edit" = "편집";
+"Save and Export" = "저장 및 내보내기";
+"All Photos" = "모든 사진";

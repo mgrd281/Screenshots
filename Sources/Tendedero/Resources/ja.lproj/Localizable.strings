@@ -859,3 +859,12 @@
 "No key yet" = "キー未設定";
 "Saved in your keychain, ending in %@" = "キーチェーンに保存済み（末尾 %@）";
 "Use the usual model" = "いつものモデルを使う";
+
+/* GrabArea: the photo's menu */
+"Send to" = "送信先";
+"More Chats" = "その他のチャット";
+"Ask AI" = "AIに質問";
+"Text and AI" = "テキストとAI";
+"Edit" = "編集";
+"Save and Export" = "保存と書き出し";
+"All Photos" = "すべての写真";

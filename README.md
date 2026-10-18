@@ -58,21 +58,21 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | | |
 |:--|:--|
 | Click | Copy the image. |
-| <kbd>⌘</kbd>-click several, or click the circle on each | Pick them, to send or copy just those together. They stay picked, even when the line goes up, until they are sent. Pick All in a photo's menu, then put back the few that should stay. |
+| <kbd>⌘</kbd>-click several, or click the circle on each | Pick them, to send or copy just those together. They stay picked, even when the line goes up, until they are sent. All Photos › Pick All in a photo's menu, then put back the few that should stay. |
 | Right-click, then Copy Text | Copy the words in it, to paste as text. |
-| Right-click, then Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. Either way, a note offers to undo it for a few seconds. |
-| Right-click, then Hide Part | Click a word to hide it, or drag a box over anything the covering missed. It stays hidden in whatever leaves the line, and a note offers to undo it. Always cover, under the word just hidden, covers that word in every photo from then on, as a rule of your own under Privacy. |
-| Right-click, then Draw on Photo | Point things out with an arrow, a box, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
-| Right-click, then Convert to SVG | Draws the photo again as shapes that stay sharp at any size, to paste into a design app or save as an `.svg` file. It is made from the copy that leaves the line, so what is covered is covered in it; the file stays as it is. |
-| Right-click, then Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
-| Right-click, then Translate Text | Read it in your language, to copy or send. |
-| Right-click, then Describe | A line about what it shows, to send along with it. |
-| Right-click, then Write a Reply | A reply to the customer in the screenshot, written by Claude or ChatGPT with your own key, ready to send. Type what to add, like "offer a replacement", and it writes it again. |
-| Right-click, then Explain with Claude | What the screenshot shows and what matters in it, in your language. Type a question about it, and it answers. ChatGPT, when it is the assistant chosen. |
+| Right-click, then Edit › Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. Either way, a note offers to undo it for a few seconds. |
+| Right-click, then Edit › Hide Part | Click a word to hide it, or drag a box over anything the covering missed. It stays hidden in whatever leaves the line, and a note offers to undo it. Always cover, under the word just hidden, covers that word in every photo from then on, as a rule of your own under Privacy. |
+| Right-click, then Edit › Draw on Photo | Point things out with an arrow, a box, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
+| Right-click, then Save and Export › Convert to SVG | Draws the photo again as shapes that stay sharp at any size, to paste into a design app or save as an `.svg` file. It is made from the copy that leaves the line, so what is covered is covered in it; the file stays as it is. |
+| Right-click, then Save and Export › Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
+| Right-click, then Text and AI › Translate Text | Read it in your language, to copy or send. |
+| Right-click, then Text and AI › Describe | A line about what it shows, to send along with it. |
+| Right-click, then Text and AI › Write a Reply | A reply to the customer in the screenshot, written by Claude or ChatGPT with your own key, ready to send. Type what to add, like "offer a replacement", and it writes it again. |
+| Right-click, then Text and AI › Explain with Claude | What the screenshot shows and what matters in it, in your language. Type a question about it, and it answers. ChatGPT, when it is the assistant chosen. |
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
 | Click ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE, in the row under a photo | Send it, or the photos picked with it, there: the website opens in your browser (a new message in Gmail), or, with it already open in the browser in front, they go there, and the photos are pasted in. GMX and WEB.DE open the mailbox: the covered photo is copied for you to paste into a new message, and stays on the line. WhatsApp, Gmail, GMX and WEB.DE show their logos; ChatGPT and Claude show their app's own icon from your Mac, else a short mark. Each icon has its own row in Settings, under Line › Icons under photos: its switch, and Browser or App, to open its website or its own app, when that is on your Mac. Websites open in picks the browser, your Mac's default or another. Click the icons there to turn them on or off, and drag them into the order you want them under each photo. Twelve more wait there to be turned on: Perplexity, Grok, DeepSeek, Qwen, Messenger, Instagram, Outlook, Yahoo Mail, Facebook, Airbnb, Visual Studio Code and Antigravity. Turn on as many as you like: six fit under a photo, and with more, the last place is ⋯, which lists the rest. Instagram, Outlook, Yahoo Mail, Facebook, Airbnb, Visual Studio Code and Antigravity open like GMX: the covered photo is copied for you to paste. |
-| Right-click ChatGPT or Claude under a photo | Ask a question with it: the photo goes into the chat with the question after it, like "Summarize this in a few lines". Ask ChatGPT and Ask Claude in a photo's menu do the same. The questions are yours to write in Settings, under Line. |
+| Right-click ChatGPT or Claude under a photo | Ask a question with it: the photo goes into the chat with the question after it, like "Summarize this in a few lines". Ask AI in a photo's menu does the same, for each AI chat. The questions are yours to write in Settings, under Line. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
 | Right-click, then Keep on Top | Float it over every app in a small window of its own, to read from while you write in a chat. Drag it anywhere, resize it at its edges, and close it with its cross. Up to three float at once. |
@@ -84,7 +84,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Click the send button over a chat | The same, without leaving the message box. Drag it to move it; it stays there for that app. |
 | <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
 | Right-click a photo or PDF in Finder, then Services › Hide Private Details with Snapfly | Choose what to hide and save a covered copy beside the original. The original stays as it is. |
-| Right-click (or control-click), then Make PDF | Put the photo, or the ones picked with it, in one PDF, a page each and private details covered. It hangs ready to send, marked PDF. |
+| Right-click (or control-click), then Save and Export › Make PDF | Put the photo, or the ones picked with it, in one PDF, a page each and private details covered. It hangs ready to send, marked PDF. |
 | <kbd>⌘</kbd>-click one or more, then the PDF button on the tag | The same PDF, from the tag, where search sits while nothing is picked. |
 | Click the download arrow on the tag, above the trash | Save the photos picked, or all of them, into Downloads as they leave the line: covered, drawn on and cropped, each as a file of its own. They stay on the line, and the files they came from stay as they are. A note says where they went; click it to see them in Finder. The App Store edition asks once which folder they go to. |
 | Click the trash on the tag | Take everything down at once, but for the photos pinned. |
@@ -246,7 +246,7 @@ each one that has something covered. Rest the pointer on the lock, or open
 the photo's menu, and it says what was covered, like Names · QR codes and
 barcodes; VoiceOver says it too. On the lock, the photo also shows where:
 the rest of it dims, and each covered place is outlined. Copy Text leaves them out too. Anything
-it misses, hide by hand with Hide Part in a photo's menu: a click on a word
+it misses, hide by hand with Edit › Hide Part in a photo's menu: a click on a word
 hides it, and Always cover hides that word in every photo from then on. Labels like Billing
 address, Customer, Recipient, Kundennummer or Diagnosis tell it where a whole
 block is private, on their own line or as a card's heading, like Kunde on a
@@ -351,7 +351,7 @@ screenshot file itself is never changed.
 
 ## Pointed out, before it goes.
 
-Draw on Photo, in a photo's menu, opens the same wide window to point
+Edit › Draw on Photo, in a photo's menu, opens the same wide window to point
 things out: an arrow from where it starts to what it points at, a box round
 a button, a highlighter over a line of text, numbered steps clicked one
 after another, and words on a label. Crop keeps only the part that matters.
@@ -359,7 +359,7 @@ Each tool has its key: V selects, A draws arrows, R boxes, H highlights, N
 numbers, T puts words down and C crops. Click a drawing to change its
 colour or size, drag it or its handles, or press Delete; ⌘Z undoes.
 
-Only the crop, quicker: choose Crop… in a photo's menu, or ⌥-click the
+Only the crop, quicker: choose Edit › Crop… in a photo's menu, or ⌥-click the
 photo. It opens large over the dimmed screen; drag over the part to keep,
 and it is kept as you let go, with whatever you drew on it. Or click the
 part outlined under the pointer. Return keeps
@@ -376,7 +376,7 @@ covered.
 Every edit says where it went. Done says the drawing is kept with the
 photo, and Save Copy…, under Keep as a file in the window, keeps the photo
 as it goes out as a file of its own, wherever you choose; a photo's menu
-has it too. Markup and
+has it too, under Save and Export. Markup and
 Trim write over the file itself, and the note after them names its folder,
 "Saved to Pictures › Snapfly"; a click on the note shows the file in
 Finder.
@@ -385,7 +385,7 @@ Finder.
 
 ## Shapes, not pixels.
 
-Convert to SVG, in a photo's menu, draws the photo again as shapes: flat
+Save and Export › Convert to SVG, in a photo's menu, draws the photo again as shapes: flat
 areas of color with lines and curves for their edges, which stay sharp when
 they are made as large as a wall. It opens the same wide window: your photo
 and its SVG one over the other on the left, under a divider to drag, and
@@ -520,7 +520,8 @@ chat it shows, or opens a new one (or their app does, if you chose it); the
 photos are pasted in once it is ready, covered as in any AI chat for the
 first two, after the check before sending. Their icons stand in a row
 under the photo, so the photo keeps only the paper plane; the photo's menu
-has them all. Turn each icon off in Settings, under Line › Icons under
+has them all under Send to: the ones under photos first, the rest under
+More Chats. Turn each icon off in Settings, under Line › Icons under
 photos, each on its own.
 
 Something to ask about it? Right-click ChatGPT or Claude on the photo, or
@@ -564,7 +565,7 @@ as long as the History keeps photos.
 
 ## Order details, ready to copy.
 
-Order Details, in a photo's menu, reads the order a screenshot shows: its
+Text and AI › Order Details, in a photo's menu, reads the order a screenshot shows: its
 number, the date, the total (the amount by a word like Total or Gesamt,
 else the largest), the name, the address, the email, the phone, the
 tracking number, and what a QR code says. A payment code, the GiroCode on
@@ -586,7 +587,7 @@ keeps your books, the same name as its subject. Choose the folder and the
 address in Settings, under Line. Whatever you cover stays out of the name
 and the table too.
 
-For a customer, Send with Shop Header in a photo's menu sends it covered,
+For a customer, Send to › Send with Shop Header in a photo's menu sends it covered,
 under a band with your shop's name and logo, the order number and the day,
 so it is clearly from your shop and still a screenshot. Set the name and
 the logo under Line in Settings; the order shows unless order numbers are
@@ -614,7 +615,7 @@ screenshot's title.
 
 ## Claude or ChatGPT, with your own key.
 
-Write a Reply, in a photo's menu, has Claude or ChatGPT write the answer to
+Text and AI › Write a Reply, in a photo's menu, has Claude or ChatGPT write the answer to
 the customer in the screenshot: short, friendly, in the language they wrote
 in, with [ ] where you have to decide, like a date or a refund. Type what to
 add, like "offer a replacement", press Return, and it writes it again. Send

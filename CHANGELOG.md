@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- A photo's menu is short again: Copy, Copy Text and Paste at the top, then
+  Send to (the chats under photos, with More Chats for the rest), Ask AI,
+  Text and AI, Edit and Save and Export as submenus, then Open, Quick Look,
+  Keep on Top, Show in Finder and Pin, and All Photos and Take down at the
+  end. About fifteen rows instead of fifty.
 - Settings › General › AI Assistant looks new: Claude and ChatGPT are two
   tiles with their app's icon, from your Mac, and each says whether a key
   is saved for it. Save sits beside the key, the line under it says where

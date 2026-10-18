@@ -859,3 +859,12 @@
 "No key yet" = "尚无密钥";
 "Saved in your keychain, ending in %@" = "已存入钥匙串，结尾为 %@";
 "Use the usual model" = "使用常用模型";
+
+/* GrabArea: the photo's menu */
+"Send to" = "发送到";
+"More Chats" = "更多聊天";
+"Ask AI" = "询问 AI";
+"Text and AI" = "文本与 AI";
+"Edit" = "编辑";
+"Save and Export" = "存储与导出";
+"All Photos" = "所有照片";

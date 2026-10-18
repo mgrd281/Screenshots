@@ -861,3 +861,12 @@
 "No key yet" = "No key yet";
 "Saved in your keychain, ending in %@" = "Saved in your keychain, ending in %@";
 "Use the usual model" = "Use the usual model";
+
+/* GrabArea: the photo's menu */
+"Send to" = "Send to";
+"More Chats" = "More Chats";
+"Ask AI" = "Ask AI";
+"Text and AI" = "Text and AI";
+"Edit" = "Edit";
+"Save and Export" = "Save and Export";
+"All Photos" = "All Photos";

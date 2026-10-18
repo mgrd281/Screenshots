@@ -137,6 +137,8 @@ struct GrabArea: NSViewRepresentable {
         } : []
         view.setAccessibilityCustomActions((pinned ? [send, pin] : [send, pin, takeDown]) + chatActions + [pick, earlier, later])
         view.menuProvider = {
+            // Short, as a Mac app's own menus are: what is done most at the
+            // top, the rest gathered in a few submenus by what it is for.
             let menu = NSMenu()
             // Items say themselves whether they can be used.
             menu.autoenablesItems = false
@@ -154,70 +156,56 @@ struct GrabArea: NSViewRepresentable {
                 if #available(macOS 26, *) { when.image = NSImage(systemSymbolName: "paperplane", accessibilityDescription: nil) }
                 menu.addItem(when)
             }
-            if !menu.items.isEmpty { menu.addItem(.separator()) }
+
+            // Copy it, or put it where it goes.
+            Self.gap(menu)
             menu.addItem(ClosureMenuItem(L("Copy"), symbol: "doc.on.doc") { line.copy(id) })
             if isImage {
                 menu.addItem(ClosureMenuItem(L("Copy Text"), symbol: "text.viewfinder") { line.copyText(id) })
             }
-            if line.liveCount > 1 {
-                menu.addItem(ClosureMenuItem(L("Copy all"), symbol: "square.on.square") { line.copyAll() })
-                if line.pickedIDs.count < line.liveCount {
-                    menu.addItem(ClosureMenuItem(L("Pick All"), symbol: "checkmark.circle") { line.pickAll() })
+            let frontApp = Paste.frontApp?.localizedName
+            if let frontApp {
+                menu.addItem(ClosureMenuItem(String(format: L("Paste into %@"), frontApp), symbol: "paperplane") { line.paste(id) })
+            }
+
+            // Into a chat, a question for an AI, and what the words say.
+            Self.gap(menu)
+            if let send = Self.group(L("Send to"), symbol: "paperplane.circle", { sub in
+                guard ChatTarget.takes(item) else { return }
+                // The chats under photos first, as they stand there; the rest one level further.
+                let ordered = ChatTarget.ordered()
+                for chat in ordered where ChatTarget.shows(chat) {
+                    sub.addItem(Self.chatItem(chat, String(format: L("Send to %@"), chat.name)) { line.send(id, to: chat) })
                 }
-            }
-            if !line.pickedIDs.isEmpty {
-                menu.addItem(ClosureMenuItem(L("Unpick All"), symbol: "circle") { line.unpickAll() })
-            }
-            if let app = Paste.frontApp?.localizedName {
-                menu.addItem(ClosureMenuItem(String(format: L("Paste into %@"), app), symbol: "paperplane") { line.paste(id) })
-                if isImage {
+                if let more = Self.group(L("More Chats"), symbol: "ellipsis.bubble", { others in
+                    for chat in ordered where !ChatTarget.shows(chat) {
+                        others.addItem(Self.chatItem(chat, chat.name) { line.send(id, to: chat) })
+                    }
+                }) {
+                    Self.gap(sub)
+                    sub.addItem(more)
+                }
+                if frontApp != nil && isImage {
                     // For a customer: under a band with the shop's name, logo, order and day.
-                    menu.addItem(ClosureMenuItem(L("Send with Shop Header"), symbol: "storefront") { line.sendWithHeader(id) })
+                    Self.gap(sub)
+                    sub.addItem(ClosureMenuItem(L("Send with Shop Header"), symbol: "storefront") { line.sendWithHeader(id) })
                 }
+            }) {
+                menu.addItem(send)
             }
-            // Straight into ChatGPT or Claude: their app, or else their website.
-            if ChatTarget.takes(item) {
-                for chat in ChatTarget.ordered() {
-                    let send = ClosureMenuItem(String(format: L("Send to %@"), chat.name), symbol: "bubble.left") {
-                        line.send(id, to: chat)
-                    }
-                    if #available(macOS 26, *), let icon = chat.icon?.copy() as? NSImage {
-                        icon.size = NSSize(width: 16, height: 16)
-                        send.image = icon
-                    }
-                    menu.addItem(send)
-                }
-                // With one of the questions from Settings after the photo.
-                if !questions.isEmpty {
-                    for chat in ChatTarget.ordered() where chat.isAI {
-                        let ask = NSMenuItem(title: String(format: L("Ask %@"), chat.name), action: nil, keyEquivalent: "")
-                        if #available(macOS 26, *) {
-                            ask.image = NSImage(systemSymbolName: "questionmark.bubble", accessibilityDescription: nil)
-                        }
-                        ask.submenu = Self.questionMenu(questions, for: chat, line: line, id: id)
-                        menu.addItem(ask)
-                    }
-                }
+            // With one of the questions from Settings after the photo.
+            if ChatTarget.takes(item), !questions.isEmpty,
+               let ask = Self.group(L("Ask AI"), symbol: "questionmark.bubble", { sub in
+                   for chat in ChatTarget.ordered() where chat.isAI {
+                       let entry = Self.chatItem(chat, chat.name) {}
+                       entry.submenu = Self.questionMenu(questions, for: chat, line: line, id: id)
+                       sub.addItem(entry)
+                   }
+               }) {
+                menu.addItem(ask)
             }
-            if isImage {
-                // The photos picked with it, or only this one, a page each.
-                menu.addItem(ClosureMenuItem(L("Make PDF"), symbol: "doc.richtext") { line.makePDF(id) })
-            }
-            if line.photosToCombine.count > 1 {
-                let combine = NSMenuItem(title: L("Combine into one image"), action: nil, keyEquivalent: "")
-                if #available(macOS 26, *) { combine.image = NSImage(systemSymbolName: "rectangle.stack", accessibilityDescription: nil) }
-                let ways = NSMenu()
-                ways.addItem(ClosureMenuItem(L("One under another")) { line.combine(.stacked) })
-                ways.addItem(ClosureMenuItem(L("Side by side")) { line.combine(.sideBySide) })
-                combine.submenu = ways
-                menu.addItem(combine)
-            }
-            menu.addItem(ClosureMenuItem(pinned ? L("Unpin") : L("Pin"), symbol: pinned ? "pin.slash" : "pin") {
-                line.togglePin(id)
-            })
-            if isImage {
+            if isImage, let words = Self.group(L("Text and AI"), symbol: "sparkles", { sub in
                 // What the screenshot says, translated or summed up, on this Mac.
-                menu.addItem(.separator())
                 if #available(macOS 15, *) {
                     let translate = NSMenuItem(title: L("Translate Text"), action: nil, keyEquivalent: "")
                     if #available(macOS 26, *) { translate.image = NSImage(systemSymbolName: "translate", accessibilityDescription: nil) }
@@ -230,75 +218,163 @@ struct GrabArea: NSViewRepresentable {
                         languages.addItem(ClosureMenuItem(Languages.name(language)) { line.translate(id, to: language) })
                     }
                     translate.submenu = languages
-                    menu.addItem(translate)
+                    sub.addItem(translate)
                 }
-                menu.addItem(ClosureMenuItem(L("Describe"), symbol: "sparkles") { line.describe(id) })
-                menu.addItem(ClosureMenuItem(L("Order Details"), symbol: "list.bullet.rectangle") { line.orderDetails(id) })
+                sub.addItem(ClosureMenuItem(L("Describe"), symbol: "text.below.photo") { line.describe(id) })
+                sub.addItem(ClosureMenuItem(L("Order Details"), symbol: "list.bullet.rectangle") { line.orderDetails(id) })
                 // The AI assistant, with the owner's own key; without one,
                 // the card says where it goes.
-                menu.addItem(ClosureMenuItem(L("Write a Reply"), symbol: "arrowshape.turn.up.left") { line.writeReply(id) })
-                menu.addItem(ClosureMenuItem(String(format: L("Explain with %@"), AIAccount.provider.name),
-                                             symbol: "bubble.left.and.text.bubble.right") { line.askAssistant(id) })
-                // For the books: a covered copy with a name that says what it is.
-                let url = item.url
-                menu.addItem(ClosureMenuItem(L("Save for Bookkeeping"), symbol: "folder.badge.plus") { Bookkeeping.save(url) })
-                menu.addItem(ClosureMenuItem(L("Email to Bookkeeping…"), symbol: "envelope") { Bookkeeping.mail(url) })
+                Self.gap(sub)
+                sub.addItem(ClosureMenuItem(L("Write a Reply"), symbol: "arrowshape.turn.up.left") { line.writeReply(id) })
+                sub.addItem(ClosureMenuItem(String(format: L("Explain with %@"), AIAccount.provider.name),
+                                            symbol: "bubble.left.and.text.bubble.right") { line.askAssistant(id) })
+            }) {
+                menu.addItem(words)
             }
-            menu.addItem(.separator())
+
+            // Changing it, and keeping it in another form.
+            Self.gap(menu)
+            if let edit = Self.group(L("Edit"), symbol: "slider.horizontal.3", { sub in
+                if isImage {
+                    sub.addItem(ClosureMenuItem(L("Crop…"), symbol: "crop") { line.crop(id) })
+                    if line.isCropped(id) {
+                        sub.addItem(ClosureMenuItem(L("Keep Whole Photo"), symbol: "arrow.up.left.and.arrow.down.right") {
+                            line.keepWhole(id)
+                        })
+                    }
+                    sub.addItem(ClosureMenuItem(L("Hide Part…"), symbol: "rectangle.dashed") { line.hidePart(id) })
+                    sub.addItem(ClosureMenuItem(L("Draw on Photo…"), symbol: "scribble.variable") { line.drawOn(id) })
+                    Self.gap(sub)
+                    sub.addItem(ClosureMenuItem(L("Markup"), symbol: "pencil.tip.crop.circle") { line.markup(id) })
+                }
+                if isRecording {
+                    sub.addItem(ClosureMenuItem(L("Trim…"), symbol: "scissors") { line.markup(id) })
+                    sub.addItem(ClosureMenuItem(L("Make GIF"), symbol: "photo.stack") { line.makeGIF(id) })
+                }
+            }) {
+                menu.addItem(edit)
+            }
+            let inInbox = line.isInInbox(id)
+            if let export = Self.group(L("Save and Export"), symbol: "square.and.arrow.up", { sub in
+                // What goes out differs from the file: drawn on, cropped,
+                // covered or stamped. It can be kept as a file of its own.
+                if !isRecording && PrivateDetails.alters(item.url) {
+                    sub.addItem(ClosureMenuItem(L("Save Copy…"), symbol: "square.and.arrow.down") { line.saveCopy(id) })
+                }
+                if isImage {
+                    // The photos picked with it, or only this one, a page each.
+                    sub.addItem(ClosureMenuItem(L("Make PDF"), symbol: "doc.richtext") { line.makePDF(id) })
+                }
+                if line.photosToCombine.count > 1 {
+                    let combine = NSMenuItem(title: L("Combine into one image"), action: nil, keyEquivalent: "")
+                    if #available(macOS 26, *) { combine.image = NSImage(systemSymbolName: "rectangle.stack", accessibilityDescription: nil) }
+                    let ways = NSMenu()
+                    ways.addItem(ClosureMenuItem(L("One under another")) { line.combine(.stacked) })
+                    ways.addItem(ClosureMenuItem(L("Side by side")) { line.combine(.sideBySide) })
+                    combine.submenu = ways
+                    sub.addItem(combine)
+                }
+                if isImage {
+                    sub.addItem(ClosureMenuItem(L("Convert to SVG…"), symbol: "point.topleft.down.curvedto.point.bottomright.up") {
+                        line.convertToSVG(id)
+                    })
+                    // For the books: a covered copy with a name that says what it is.
+                    let url = item.url
+                    Self.gap(sub)
+                    sub.addItem(ClosureMenuItem(L("Save for Bookkeeping"), symbol: "folder.badge.plus") { Bookkeeping.save(url) })
+                    sub.addItem(ClosureMenuItem(L("Email to Bookkeeping…"), symbol: "envelope") { Bookkeeping.mail(url) })
+                }
+                // The App Store edition may not write to the Desktop; a drag
+                // into a folder keeps a photo there instead.
+                if inInbox && !Edition.appStore {
+                    Self.gap(sub)
+                    sub.addItem(ClosureMenuItem(L("Save to Desktop"), symbol: "menubar.dock.rectangle") { line.saveToDesktop(id) })
+                }
+            }) {
+                menu.addItem(export)
+            }
+
+            // Looking at it.
+            Self.gap(menu)
             menu.addItem(ClosureMenuItem(L("Open"), symbol: "arrow.up.forward.app") { line.open(id) })
             menu.addItem(ClosureMenuItem(L("Quick Look"), symbol: "eye") { line.quickLook(id) })
             if isImage {
                 menu.addItem(ClosureMenuItem(L("Keep on Top"), symbol: "pip") { line.keepOnTop(id) })
             }
-            if isImage {
-                menu.addItem(ClosureMenuItem(L("Markup"), symbol: "pencil.tip.crop.circle") { line.markup(id) })
-                menu.addItem(ClosureMenuItem(L("Crop…"), symbol: "crop") { line.crop(id) })
-                if line.isCropped(id) {
-                    menu.addItem(ClosureMenuItem(L("Keep Whole Photo"), symbol: "arrow.up.left.and.arrow.down.right") {
-                        line.keepWhole(id)
-                    })
-                }
-                menu.addItem(ClosureMenuItem(L("Hide Part…"), symbol: "rectangle.dashed") { line.hidePart(id) })
-                menu.addItem(ClosureMenuItem(L("Draw on Photo…"), symbol: "scribble.variable") { line.drawOn(id) })
-                menu.addItem(ClosureMenuItem(L("Convert to SVG…"), symbol: "point.topleft.down.curvedto.point.bottomright.up") {
-                    line.convertToSVG(id)
-                })
-            }
-            if isRecording {
-                menu.addItem(ClosureMenuItem(L("Trim…"), symbol: "scissors") { line.markup(id) })
-                menu.addItem(ClosureMenuItem(L("Make GIF"), symbol: "photo.stack") { line.makeGIF(id) })
-            }
             menu.addItem(ClosureMenuItem(L("Show in Finder"), symbol: "folder") { line.reveal(id) })
-            // What goes out differs from the file: drawn on, cropped,
-            // covered or stamped. It can be kept as a file of its own.
-            if !isRecording && PrivateDetails.alters(item.url) {
-                menu.addItem(ClosureMenuItem(L("Save Copy…"), symbol: "square.and.arrow.down") { line.saveCopy(id) })
+            menu.addItem(ClosureMenuItem(pinned ? L("Unpin") : L("Pin"), symbol: pinned ? "pin.slash" : "pin") {
+                line.togglePin(id)
+            })
+
+            // The others on the line, then letting this one go.
+            Self.gap(menu)
+            if let all = Self.group(L("All Photos"), symbol: "square.on.square", { sub in
+                if line.liveCount > 1 {
+                    sub.addItem(ClosureMenuItem(L("Copy all"), symbol: "doc.on.doc") { line.copyAll() })
+                    if line.pickedIDs.count < line.liveCount {
+                        sub.addItem(ClosureMenuItem(L("Pick All"), symbol: "checkmark.circle") { line.pickAll() })
+                    }
+                }
+                if !line.pickedIDs.isEmpty {
+                    sub.addItem(ClosureMenuItem(L("Unpick All"), symbol: "circle") { line.unpickAll() })
+                }
+                let left = !line.neighbours(of: id, toTheLeft: true).isEmpty
+                let right = !line.neighbours(of: id, toTheLeft: false).isEmpty
+                if left || right {
+                    Self.gap(sub)
+                    let toLeft = ClosureMenuItem(L("Take down everything to the left"), symbol: "arrow.left.to.line") {
+                        line.takeDown(id, toTheLeft: true)
+                    }
+                    toLeft.isEnabled = left
+                    sub.addItem(toLeft)
+                    let toRight = ClosureMenuItem(L("Take down everything to the right"), symbol: "arrow.right.to.line") {
+                        line.takeDown(id, toTheLeft: false)
+                    }
+                    toRight.isEnabled = right
+                    sub.addItem(toRight)
+                }
+            }) {
+                menu.addItem(all)
             }
-            let inInbox = line.isInInbox(id)
-            // The App Store edition may not write to the Desktop; a drag
-            // into a folder keeps a photo there instead.
-            if inInbox && !Edition.appStore {
-                menu.addItem(ClosureMenuItem(L("Save to Desktop"), symbol: "menubar.dock.rectangle") { line.saveToDesktop(id) })
-            }
-            menu.addItem(.separator())
             if inInbox {
                 menu.addItem(ClosureMenuItem(L("Discard"), symbol: "trash") { line.takeDown(id) })
             } else {
                 menu.addItem(ClosureMenuItem(L("Take down"), symbol: "eye.slash") { line.takeDown(id) })
                 menu.addItem(ClosureMenuItem(L("Move to Trash"), symbol: "trash") { line.moveToTrash(id) })
             }
-            let left = ClosureMenuItem(L("Take down everything to the left"), symbol: "arrow.left.to.line") {
-                line.takeDown(id, toTheLeft: true)
-            }
-            left.isEnabled = !line.neighbours(of: id, toTheLeft: true).isEmpty
-            menu.addItem(left)
-            let right = ClosureMenuItem(L("Take down everything to the right"), symbol: "arrow.right.to.line") {
-                line.takeDown(id, toTheLeft: false)
-            }
-            right.isEnabled = !line.neighbours(of: id, toTheLeft: false).isEmpty
-            menu.addItem(right)
             return menu
         }
+    }
+
+    /// A separator, unless the menu is empty or already ends in one.
+    private static func gap(_ menu: NSMenu) {
+        guard let last = menu.items.last, !last.isSeparatorItem else { return }
+        menu.addItem(.separator())
+    }
+
+    /// One item opening a submenu of the items `fill` puts in it, with
+    /// separators at its ends taken away; nil when it holds nothing.
+    private static func group(_ title: String, symbol: String, _ fill: (NSMenu) -> Void) -> NSMenuItem? {
+        let submenu = NSMenu(title: title)
+        submenu.autoenablesItems = false
+        fill(submenu)
+        while let last = submenu.items.last, last.isSeparatorItem { submenu.removeItem(last) }
+        guard !submenu.items.isEmpty else { return nil }
+        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        if #available(macOS 26, *) { item.image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil) }
+        item.submenu = submenu
+        return item
+    }
+
+    /// A chat as an item: its icon, as under the photo, on every macOS, since
+    /// it says more than its name.
+    private static func chatItem(_ chat: ChatTarget, _ title: String, action: @escaping () -> Void) -> ClosureMenuItem {
+        let item = ClosureMenuItem(title, symbol: "bubble.left", handler: action)
+        if let icon = chat.icon?.copy() as? NSImage {
+            icon.size = NSSize(width: 16, height: 16)
+            item.image = icon
+        }
+        return item
     }
 
     /// The questions for a chat, each sending the photo with itself after.
