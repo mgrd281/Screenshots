@@ -454,15 +454,16 @@ private struct CoveredPlaces: View {
 
     var body: some View {
         Canvas { context, size in
+            // Joined first, so places that overlap open one clear hole.
             var outlines = Path()
             for place in places {
                 let rect = CGRect(x: place.minX * size.width, y: (1 - place.maxY) * size.height,
                                   width: place.width * size.width, height: place.height * size.height)
-                outlines.addRoundedRect(in: rect.insetBy(dx: -1, dy: -1), cornerSize: CGSize(width: 2, height: 2))
+                outlines = outlines.union(Path(roundedRect: rect.insetBy(dx: -1, dy: -1),
+                                               cornerSize: CGSize(width: 2, height: 2)))
             }
-            var shade = Path(CGRect(origin: .zero, size: size))
-            shade.addPath(outlines)
-            context.fill(shade, with: .color(.black.opacity(0.4)), style: FillStyle(eoFill: true))
+            context.fill(Path(CGRect(origin: .zero, size: size)).subtracting(outlines),
+                         with: .color(.black.opacity(0.4)))
             context.stroke(outlines, with: .color(.accentColor), lineWidth: 1.5)
         }
     }

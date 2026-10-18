@@ -710,3 +710,4 @@
 "%d taken down. Click to put them back on the line." = "أُنزلت %d. انقر لإعادتها إلى الحبل.";
 "Saved with the photo; the file in %@ stays as it is. Click to undo." = "حُفظ مع الصورة؛ أما الملف في %@ فيبقى كما هو. انقر للتراجع.";
 "The whole photo goes out again. Click to undo." = "تُرسل الصورة كاملة من جديد. انقر للتراجع.";
+"Could not put it back on the line." = "تعذّرت إعادتها إلى الحبل.";

@@ -710,3 +710,4 @@
 "%d taken down. Click to put them back on the line." = "%d tanesi indirildi. Yeniden ipe asmak için tıkla.";
 "Saved with the photo; the file in %@ stays as it is. Click to undo." = "Fotoğrafla birlikte kaydedildi; %@ içindeki dosya olduğu gibi kalır. Geri almak için tıkla.";
 "The whole photo goes out again. Click to undo." = "Fotoğrafın tamamı yeniden gider. Geri almak için tıkla.";
+"Could not put it back on the line." = "Yeniden ipe asılamadı.";

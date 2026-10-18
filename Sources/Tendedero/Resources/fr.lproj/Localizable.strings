@@ -710,3 +710,4 @@
 "%d taken down. Click to put them back on the line." = "%d décrochées. Cliquez pour les raccrocher sur la corde.";
 "Saved with the photo; the file in %@ stays as it is. Click to undo." = "Enregistré avec la photo ; le fichier dans %@ reste tel quel. Cliquez pour annuler.";
 "The whole photo goes out again. Click to undo." = "La photo entière repart. Cliquez pour annuler.";
+"Could not put it back on the line." = "Impossible de la raccrocher sur la corde.";

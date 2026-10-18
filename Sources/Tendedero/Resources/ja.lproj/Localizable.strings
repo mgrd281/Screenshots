@@ -710,3 +710,4 @@
 "%d taken down. Click to put them back on the line." = "%d枚を外しました。クリックするとロープに戻します。";
 "Saved with the photo; the file in %@ stays as it is. Click to undo." = "写真と一緒に保存しました。%@のファイルはそのままです。クリックで取り消します。";
 "The whole photo goes out again. Click to undo." = "写真全体がまた送られます。クリックで取り消します。";
+"Could not put it back on the line." = "ロープに戻せませんでした。";

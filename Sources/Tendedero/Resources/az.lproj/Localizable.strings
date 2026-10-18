@@ -712,3 +712,4 @@
 "%d taken down. Click to put them back on the line." = "%d ipdən götürüldü. Yenidən ipə asmaq üçün klikləyin.";
 "Saved with the photo; the file in %@ stays as it is. Click to undo." = "Fotoyla birlikdə saxlanıldı; %@ qovluğundakı fayl olduğu kimi qalır. Geri qaytarmaq üçün klikləyin.";
 "The whole photo goes out again. Click to undo." = "Foto yenidən bütöv göndərilir. Geri qaytarmaq üçün klikləyin.";
+"Could not put it back on the line." = "Yenidən ipə asmaq alınmadı.";

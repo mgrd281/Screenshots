@@ -370,7 +370,6 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     var covered = false
     /// The pointer comes to rest on the lock, or leaves it.
     var onLockHover: (Bool) -> Void = { _ in }
-    private var overLock = false
     private var tips: [NSView.ToolTipTag] = []
 
     private var downPoint: NSPoint?
@@ -531,18 +530,14 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
 
     override func mouseExited(with event: NSEvent) {
         onHoverChange(false)
-        setOverLock(false)
+        onLockHover(false)
     }
 
-    /// Over the lock, the places covered light up on the photo.
+    /// Over the lock, the places covered light up on the photo. The photo
+    /// keeps whether it is, so a line tucked away under the pointer starts
+    /// afresh.
     private func followLock(_ event: NSEvent) {
-        setOverLock(covered && lockRect.contains(convert(event.locationInWindow, from: nil)))
-    }
-
-    private func setOverLock(_ inside: Bool) {
-        guard inside != overLock else { return }
-        overLock = inside
-        onLockHover(inside)
+        onLockHover(covered && lockRect.contains(convert(event.locationInWindow, from: nil)))
     }
 
     override func mouseDown(with event: NSEvent) {

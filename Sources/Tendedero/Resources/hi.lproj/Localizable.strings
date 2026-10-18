@@ -712,3 +712,4 @@
 "%d taken down. Click to put them back on the line." = "%d फ़ोटो उतारी गईं। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
 "Saved with the photo; the file in %@ stays as it is. Click to undo." = "फ़ोटो के साथ सहेजा गया; %@ में फ़ाइल जैसी है वैसी रहती है। पूर्ववत करने के लिए क्लिक करें।";
 "The whole photo goes out again. Click to undo." = "पूरी फ़ोटो फिर से जाती है। पूर्ववत करने के लिए क्लिक करें।";
+"Could not put it back on the line." = "इसे रस्सी पर वापस नहीं टाँगा जा सका।";

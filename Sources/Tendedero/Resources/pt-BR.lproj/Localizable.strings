@@ -710,3 +710,4 @@
 "%d taken down. Click to put them back on the line." = "%d recolhidas. Clique para pendurá-las de novo no varal.";
 "Saved with the photo; the file in %@ stays as it is. Click to undo." = "Salvo com a foto; o arquivo em %@ fica como está. Clique para desfazer.";
 "The whole photo goes out again. Click to undo." = "A foto inteira volta a sair. Clique para desfazer.";
+"Could not put it back on the line." = "Não foi possível pendurá-la de novo no varal.";

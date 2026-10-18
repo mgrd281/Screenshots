@@ -710,3 +710,4 @@
 "%d taken down. Click to put them back on the line." = "已取下 %d 张。点按可放回晾衣绳。";
 "Saved with the photo; the file in %@ stays as it is. Click to undo." = "已随照片存储；“%@”中的文件保持原样。点按可撤销。";
 "The whole photo goes out again. Click to undo." = "将再次发送整张照片。点按可撤销。";
+"Could not put it back on the line." = "无法放回晾衣绳。";

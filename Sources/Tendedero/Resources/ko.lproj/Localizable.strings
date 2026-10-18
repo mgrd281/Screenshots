@@ -710,3 +710,4 @@
 "%d taken down. Click to put them back on the line." = "%d장을 걷어냈습니다. 클릭하면 빨랫줄에 다시 겁니다.";
 "Saved with the photo; the file in %@ stays as it is. Click to undo." = "사진과 함께 저장했습니다. %@에 있는 파일은 그대로입니다. 클릭하면 취소합니다.";
 "The whole photo goes out again. Click to undo." = "사진 전체가 다시 보내집니다. 클릭하면 취소합니다.";
+"Could not put it back on the line." = "빨랫줄에 다시 걸 수 없습니다.";

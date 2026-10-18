@@ -710,3 +710,4 @@
 "%d taken down. Click to put them back on the line." = "%d abgenommen. Klick, um sie wieder an die Leine zu hängen.";
 "Saved with the photo; the file in %@ stays as it is. Click to undo." = "Mit dem Foto gespeichert; die Datei in %@ bleibt, wie sie ist. Klick zum Widerrufen.";
 "The whole photo goes out again. Click to undo." = "Das ganze Foto wird wieder gesendet. Klick zum Widerrufen.";
+"Could not put it back on the line." = "Konnte es nicht wieder an die Leine hängen.";

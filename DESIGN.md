@@ -512,7 +512,8 @@ apps.
     `CoverReport.places`, in the copy as it shows, cut and under its time
     stamp band): the rest of the picture steps back under black 40%, and
     each covered place keeps its look inside a 1.5 pt accent outline with a
-    2 pt corner, 1 pt outside it, clipped to the image corner. It fades in
+    2 pt corner, 1 pt outside it, clipped to the image corner; places that
+    overlap open one hole under one outline. It fades in
     and out over 0.15 s ease-out, takes no clicks, and VoiceOver skips it,
     as the tip already says what was covered. A PDF shows no places;
   - a PDF: a "PDF" capsule with its page count, in the lock's corner and
@@ -1159,6 +1160,8 @@ apps.
       Done on a photo say what happened and "Click to undo." for 6 s; the
       click puts back the crop or the hand boxes there were, and the line
       shows the photo as before. A PDF's note in Hide Part stays as it was.
+      A photo that can no longer come back, gone from the History or kept
+      by the Trash, ends with "Could not put it back on the line."
   - **Notes, not beeps.** A failure the user would otherwise have to guess
     at gets a note. A beep is kept only for a key that does nothing where
     the keyboard is taken (the capture screens, the shortcut recorder,

@@ -276,11 +276,16 @@ final class Line: ObservableObject {
     /// own if that one is taken meanwhile.
     private func bringBack(_ ways: [WayBack]) {
         var urls: [URL] = []
+        var lost = false
         for way in ways {
             if let entry = way.entry {
-                if let back = History.takeBack(entry) { urls.append(back) }
-            } else if let trashed = way.trashed, trashed != way.url,
-                      FileManager.default.fileExists(atPath: trashed.path) {
+                if let back = History.takeBack(entry) { urls.append(back) } else { lost = true }
+            } else if let trashed = way.trashed, trashed != way.url {
+                // The Trash emptied meanwhile.
+                guard FileManager.default.fileExists(atPath: trashed.path) else {
+                    lost = true
+                    continue
+                }
                 let target = FileManager.default.fileExists(atPath: way.url.path)
                     ? uniqueURL(in: way.url.deletingLastPathComponent(), for: way.url.lastPathComponent) : way.url
                 do {
@@ -288,12 +293,17 @@ final class Line: ObservableObject {
                     urls.append(target)
                 } catch {
                     log.error("Could not take \(trashed.lastPathComponent, privacy: .public) out of the Trash: \(error.localizedDescription, privacy: .public)")
+                    lost = true
                 }
-            } else {
+            } else if FileManager.default.fileExists(atPath: way.url.path) {
                 urls.append(way.url)
+            } else {
+                lost = true
             }
         }
         putBack(urls)
+        // Gone meanwhile, or the Trash kept it: the click says so.
+        if lost { Notice.show(L("Could not put it back on the line.")) }
     }
 
     /// Photos whose file was deleted or moved away fall off by themselves.

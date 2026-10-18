@@ -35,7 +35,9 @@ struct CoverReport: Equatable {
                 place = CGRect(x: (place.minX - crop.minX) / crop.width, y: (place.minY - crop.minY) / crop.height,
                                width: place.width / crop.width, height: place.height / crop.height)
             }
-            place = place.intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
+            // Only what reaches past an edge is cut, so a place inside stays exact.
+            let whole = CGRect(x: 0, y: 0, width: 1, height: 1)
+            if !whole.contains(place) { place = place.intersection(whole) }
             guard !place.isNull, place.width > 0, place.height > 0 else { return nil }
             return CGRect(x: place.minX, y: place.minY * share, width: place.width, height: place.height * share)
         }
