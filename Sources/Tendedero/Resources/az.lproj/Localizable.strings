@@ -870,3 +870,9 @@
 "Edit" = "Redaktə et";
 "Save and Export" = "Saxla və ixrac et";
 "All Photos" = "Bütün şəkillər";
+
+/* LineTag: holding the grip moves the line anywhere */
+"Drag to move the line up or down. Hold it first to move it anywhere." = "İpi yuxarı və ya aşağı tərpətmək üçün sürüşdürün. Hər yerə tərpətmək üçün əvvəlcə basılı saxlayın.";
+"Move Left" = "Sola tərpət";
+"Move Right" = "Sağa tərpət";
+"Back to the Middle" = "Ortaya qaytar";

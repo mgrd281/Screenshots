@@ -868,3 +868,9 @@
 "Edit" = "Editar";
 "Save and Export" = "Salvar e exportar";
 "All Photos" = "Todas as fotos";
+
+/* LineTag: holding the grip moves the line anywhere */
+"Drag to move the line up or down. Hold it first to move it anywhere." = "Arraste para subir ou descer o varal. Mantenha pressionado antes para movê-lo para qualquer lugar.";
+"Move Left" = "Mover para a esquerda";
+"Move Right" = "Mover para a direita";
+"Back to the Middle" = "Voltar ao centro";

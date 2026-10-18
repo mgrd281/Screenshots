@@ -870,3 +870,9 @@
 "Edit" = "Edit";
 "Save and Export" = "Save and Export";
 "All Photos" = "All Photos";
+
+/* LineTag: holding the grip moves the line anywhere */
+"Drag to move the line up or down. Hold it first to move it anywhere." = "Drag to move the line up or down. Hold it first to move it anywhere.";
+"Move Left" = "Move Left";
+"Move Right" = "Move Right";
+"Back to the Middle" = "Back to the Middle";

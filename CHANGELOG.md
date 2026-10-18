@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Hold the arrows on the line's tag a moment, then drag: the line goes
+  anywhere, left, right, up or down, and stays there. Near the middle of the
+  screen, or the top, it snaps into place. A quick drag still moves it up or
+  down only.
 - A click on a chat's icon under a photo, or on the send button, sends at
   once. The card of Check before sending, under Privacy, no longer shows
   until you turn it on there.

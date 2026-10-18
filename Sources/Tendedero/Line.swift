@@ -60,6 +60,14 @@ final class Line: ObservableObject {
     @Published var style = Layout.style
     /// A card stack spread out, while the pointer is at it.
     @Published var spread = false
+    /// Where the line hangs across the screen; see Layout.across.
+    @Published var across = Layout.across {
+        didSet { Layout.across = across }
+    }
+    /// The grip on the tag: pressed and held until the line comes loose,
+    /// then loose while it goes any way the pointer takes it.
+    enum Grip { case still, held, loose }
+    @Published var grip = Grip.still
     /// Files from another app are being dragged to the line: a place opens
     /// for them where the newest photo hangs, and it lights up while they
     /// are over the line.
@@ -99,6 +107,23 @@ final class Line: ObservableObject {
     }
 
     var liveCount: Int { items.filter { !$0.falling }.count }
+
+    /// How far the photos hang from their usual place across a screen this
+    /// wide, in points.
+    func shift(width: CGFloat) -> CGFloat {
+        Layout.shift(count: items.count, width: width, visible: visibleCount)
+    }
+
+    /// Moves the line across the screen, `shift` points from its usual
+    /// place, as far as its photos and tag stay on a screen this wide. It
+    /// hangs there from then on. A line longer than the screen keeps its
+    /// place, and the one chosen before.
+    func slide(to shift: CGFloat, width: CGFloat) {
+        guard width > 0, !Layout.scrolls(count: items.count, visible: visibleCount) else { return }
+        let held = Layout.shift(count: items.count, width: width, visible: visibleCount, wanted: shift)
+        let value = held / width
+        if abs(value - across) > 0.000_01 { across = value }
+    }
 
     /// For each photo that says what one sent lately said, the newest such
     /// send: a paper plane by its lock, a line in its menu, and a word in

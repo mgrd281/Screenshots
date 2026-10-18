@@ -868,3 +868,9 @@
 "Edit" = "Bearbeiten";
 "Save and Export" = "Sichern und exportieren";
 "All Photos" = "Alle Fotos";
+
+/* LineTag: holding the grip moves the line anywhere */
+"Drag to move the line up or down. Hold it first to move it anywhere." = "Zieh, um die Leine nach oben oder unten zu schieben. Halte sie erst gedrückt, um sie überallhin zu schieben.";
+"Move Left" = "Nach links";
+"Move Right" = "Nach rechts";
+"Back to the Middle" = "Zurück in die Mitte";

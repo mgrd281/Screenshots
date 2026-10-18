@@ -868,3 +868,9 @@
 "Edit" = "تحرير";
 "Save and Export" = "حفظ وتصدير";
 "All Photos" = "كل الصور";
+
+/* LineTag: holding the grip moves the line anywhere */
+"Drag to move the line up or down. Hold it first to move it anywhere." = "اسحب لتحريك الحبل إلى الأعلى أو الأسفل. اضغط عليه مطوّلًا أولًا لتحريكه إلى أي مكان.";
+"Move Left" = "تحريك إلى اليسار";
+"Move Right" = "تحريك إلى اليمين";
+"Back to the Middle" = "العودة إلى الوسط";

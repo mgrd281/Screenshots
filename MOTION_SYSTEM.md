@@ -83,6 +83,7 @@ ease-out.
 | `spring.reflow` | 0.55 / 0.78 | Photos close a gap or change order |
 | `spring.guide` | 0.45 / 0.86 | The introduction's hole glides from one thing to the next (the card follows over 0.3 s on `ease.out`) |
 | `spring.check` | 0.3 / 0.7 | A step of the introduction seen through: its symbol turns into a check |
+| `spring.snap` | 0.25 / 0.85 | The line, held by its grip, snaps into its usual place across the screen |
 
 The web has no springs in CSS. There, use `ease.out` at a duration close to
 the spring's response, and keyframes (like `hang-in`) where a visible
@@ -135,6 +136,7 @@ settle is the point.
 | `scale.press` | 0.95 | A pressed Dock icon; on the site's line a photo gives to 0.98, a corner button to 0.88, a pill button to 0.96, a theme swatch to 0.90 |
 | `scale.open` | 0.95 → 1 | A window opening |
 | `scale.settle` | 0.96–0.98 → 1 | A card or photo landing |
+| `scale.hold` | 1 → 1.18, linear over `duration.hold` | The grip's circle while it is held, until the line comes loose |
 | `scale.strike` | 1.18 → 1 (label 1.15 → 1) | A postmark or label struck onto the paper, with a slight overshoot (`cubic-bezier(0.2, 0.9, 0.3, 1.15)`) |
 
 ### Rotation
@@ -158,6 +160,7 @@ settle is the point.
 | Hover | Grows by a `scale.hover` token on its spring; the pointer's target gets no other effect |
 | Press | Shrinks to `scale.press` in `duration.press`; letting go eases back |
 | Hold (a photo) | Shrinks over `duration.hold`, then its menu opens |
+| Hold (the grip) | Its circle swells over `duration.hold`, then fills with the accent, a tap, and the line follows the pointer any way |
 | Copy | A small nudge, and "Copied" shows (`duration.short`) |
 | Send | The paper plane (below); the line closes the gap with `spring.reflow` |
 | Take down | Falls off the line (0.55 s in the app); leaves with a short fade on `ease.exit` on the site's desktop |

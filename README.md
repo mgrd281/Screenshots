@@ -91,6 +91,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Pin | Keep it on the line: clearing it or filling it leaves it there. Click its pin to let it go again. |
 | Click the magnifying glass on the tag | Search the words in every photo. Matches stay bright, marked where they say it, and Return picks them, ready to send. |
 | Drag the arrows on the tag | Move the line further down the screen, or back up. It stays there. |
+| Hold the arrows on the tag a moment, then drag | Move the line anywhere: left, right, up or down. The arrows turn into four, a Force Touch trackpad taps, and the line follows the pointer. Near the middle of the screen, or the top, it snaps into place. On a rope or a wire the photos slide along it and the tag stays at its end. It stays there, on any screen. VoiceOver has Move Left, Move Right and Back to the Middle. |
 | Rest the pointer in the menu bar | Bring the line down on that screen. |
 | Drag photos or PDFs to the top of the screen, or onto the menu bar icon | Hang them on the line, to send with their private details covered. The files stay where they are. |
 | Right-click photos or PDFs in Finder, then Services › Send Safely with Snapfly | The same, from Finder. Open With › Snapfly does it too. |
@@ -758,9 +759,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `SettingsWindow.swift` | The settings window: General, Line, Privacy, Permissions, Support and About |
 | `Support.swift` | Settings › Support: the help page, an email about a problem or an idea with the details filled in, and those details to copy |
 | `LinePanel.swift` | The transparent strip along the top of the screen |
-| `LineView.swift` | The line and where each photo hangs |
+| `LineView.swift` | The line and where each photo hangs, as far across the screen as it was moved |
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze, and the covered places shown from the lock |
-| `LineTag.swift` | The tag at the end of the line: moving it, combining, sending, downloading and taking everything down |
+| `LineTag.swift` | The tag at the end of the line: moving it (held first, any way), combining, sending, downloading and taking everything down |
 | `Downloads.swift` | Download, from the tag: the photos saved into Downloads as they leave the line |
 | `Guide.swift` | The introduction on the screen itself: the steps, the shade with its hole round what is pointed at, the card beside it, lessons one at a time, and tips |
 | `Shared/GuideFlow.swift`, `Shared/GuideShade.swift` | Where the introduction stands, kept with the settings, its steps in order, where its card goes, and its shade, for the Mac and the iPhone |

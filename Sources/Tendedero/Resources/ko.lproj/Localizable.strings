@@ -868,3 +868,9 @@
 "Edit" = "편집";
 "Save and Export" = "저장 및 내보내기";
 "All Photos" = "모든 사진";
+
+/* LineTag: holding the grip moves the line anywhere */
+"Drag to move the line up or down. Hold it first to move it anywhere." = "끌면 빨랫줄을 위아래로 옮겨요. 먼저 길게 누르면 어디로든 옮길 수 있어요.";
+"Move Left" = "왼쪽으로 이동";
+"Move Right" = "오른쪽으로 이동";
+"Back to the Middle" = "가운데로 되돌리기";

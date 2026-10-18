@@ -96,6 +96,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         dropView.onDrop = { [weak self] urls, point in self?.hangFiles(urls, from: point) ?? false }
         panel = LinePanel(content: dropView)
+        panel.line = line
         panel.placeOnScreen()
         updateCapacity()
 
@@ -733,7 +734,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let width = panel.frame.width
         let x = Layout.x(index: index, count: line.items.count, width: width,
                          visible: line.visibleCount, scroll: line.scroll, spread: line.spread)
-        let viewTop = panel.drop + Layout.ropeY(x: x, width: width) - Layout.pinAbove
+        let viewTop = panel.drop + Layout.ropeY(x: x, width: width, shift: line.shift(width: width)) - Layout.pinAbove
         let cardTop = viewTop + PeggedView.cardOffsetBelowTop
         let size = PeggedView.cardSize(for: line.items[index].thumb.size)
         return CGRect(x: panel.frame.minX + x - size.width / 2,
@@ -748,7 +749,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let x = Layout.x(index: index, count: line.items.count, width: width,
                          visible: line.visibleCount, scroll: line.scroll, spread: line.spread)
         return CGFloat(Layout.tilt(of: line.items[index], index: index, count: line.items.count, spread: line.spread,
-                                   x: x, width: width))
+                                   x: x, width: width, shift: line.shift(width: width)))
     }
 
     /// Decides whether the panel is ordered in at all: something to show,
@@ -817,7 +818,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             line.spread = false
             panel.ignoresMouseEvents = true
             // A grip that went away under the pointer never hears it let go.
-            TagView.isMovingLine = false
+            TagView.letGo()
+            line.grip = .still
             // What was picked stays picked, for the send button over a chat.
         }
     }
