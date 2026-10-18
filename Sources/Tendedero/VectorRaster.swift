@@ -25,7 +25,8 @@ enum VectorRaster {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let size = pixelSize(of: url) else { return nil }
         guard size.width * size.height > limit else { return Cover.upright(source) }
-        let scale = (Double(limit) / Double(size.width * size.height)).squareRoot()
+        // A little under, so rounding up of the short side cannot go over the limit.
+        let scale = (Double(limit) / Double(size.width * size.height)).squareRoot() * 0.999
         let options: [CFString: Any] = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceCreateThumbnailWithTransform: true,

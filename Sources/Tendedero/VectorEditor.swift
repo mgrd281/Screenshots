@@ -239,7 +239,11 @@ final class VectorEditorModel: ObservableObject {
                     guard let self, !token.isStopped else { return }
                     self.working = false
                     guard let image, let text else {
+                        // Nothing of the old settings is kept to be copied or saved.
                         self.failed = true
+                        self.result = nil
+                        self.svg = ""
+                        self.resultID += 1
                         return
                     }
                     self.result = image

@@ -70,6 +70,8 @@ final class VectorCanvasView: NSView {
 
     override init(frame: NSRect) {
         super.init(frame: frame)
+        // A zoomed picture is larger than the canvas and must not paint over the rest of the window.
+        clipsToBounds = true
         setAccessibilityElement(true)
         setAccessibilityRole(.slider)
         setAccessibilityLabel(L("Compare the photo with its SVG"))
@@ -334,6 +336,7 @@ final class VectorCanvasView: NSView {
             offset.y += point.y - lastPoint.y
             clampOffset()
             needsDisplay = true
+            window?.invalidateCursorRects(for: self)
         case .none:
             break
         }
@@ -354,6 +357,7 @@ final class VectorCanvasView: NSView {
             offset.y -= event.scrollingDeltaY
             clampOffset()
             needsDisplay = true
+            window?.invalidateCursorRects(for: self)
         } else {
             super.scrollWheel(with: event)
         }
