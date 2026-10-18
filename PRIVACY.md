@@ -23,7 +23,10 @@ does happens on your Mac.
   what it was taken, a PDF drawn again page by page with the details you chose
   covered.
 - **Permissions.** Accessibility access lets Snapfly paste into the app you are
-  using when you send a screenshot. Screen Recording lets it take the
+  using when you send a screenshot. While you choose what a screenshot takes,
+  smart selection uses it to ask the app under the pointer where a picture or
+  a button sits there, to outline it: only where things are, and nothing of
+  it leaves your Mac. Screen Recording lets it take the
   screenshots and recordings you ask for, with ⌃⌥S, the screenshot button or
   Record Screen. So that the send button shows only on chat websites, it asks
   the browser in front for the address of the open page, once you allow it,

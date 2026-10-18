@@ -757,3 +757,9 @@
 "Welcome! Discover Snapfly." = "أهلًا بك! اكتشف Snapfly.";
 "What Gets Covered" = "ما الذي يُغطّى";
 "You're all set" = "كل شيء جاهز";
+"Click what is outlined or drag over an area. Scroll for a bigger or smaller part. Return takes the whole screen, Escape cancels." = "انقر على ما هو محاط بإطار أو اسحب فوق منطقة. مرّر عجلة الفأرة لجزء أكبر أو أصغر. Return يلتقط الشاشة كلها، وEscape للإلغاء.";
+"Choose what to take: click what is outlined, drag over an area, or press Return for the whole screen. Scroll for a bigger or smaller part. It is taken when the countdown ends." = "اختر ما تريد التقاطه: انقر على ما هو محاط بإطار، أو اسحب فوق منطقة، أو اضغط Return للشاشة كلها. مرّر عجلة الفأرة لجزء أكبر أو أصغر. يُلتقط عند انتهاء العد التنازلي.";
+"Click what is outlined or drag over an area to record it. Scroll for a bigger or smaller part. Return records the whole screen, Escape cancels." = "انقر على ما هو محاط بإطار أو اسحب فوق منطقة لتسجيلها. مرّر عجلة الفأرة لجزء أكبر أو أصغر. Return يسجّل الشاشة كلها، وEscape للإلغاء.";
+"Click what is outlined or drag over the part to keep. Scroll for a bigger or smaller part. Return keeps the whole photo, Escape cancels." = "انقر على ما هو محاط بإطار أو اسحب فوق الجزء الذي يبقى. مرّر عجلة الفأرة لجزء أكبر أو أصغر. Return يحتفظ بالصورة كاملة، وEscape للإلغاء.";
+"Smart selection" = "التحديد الذكي";
+"Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "يحيط بإطار الصورة أو الجزء الذي تحت المؤشر، ويُبقي السحب على حوافه، ويقصّ الفراغ الزائد. اضغط ⌘ مع السحب لتسحب بحرية.";

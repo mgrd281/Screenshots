@@ -8,7 +8,10 @@ import SwiftUI
 ///
 /// The screens are captured first and shown still, slightly dimmed. Drag
 /// over an area, click a window, or press Return for the whole screen;
-/// Escape cancels. The screenshot is saved in Snapfly's folder, tagged as a
+/// Escape cancels. With smart selection on, the picture, the card or the
+/// paragraph under the pointer is outlined for a click to take, the scroll
+/// wheel chooses a bigger or smaller part, a drag keeps to the edges of
+/// what is on screen, and the empty space round it is cut to an even margin. The screenshot is saved in Snapfly's folder, tagged as a
 /// screenshot with the area it came from, and flies to the line like one
 /// taken with the Screenshot app.
 ///
@@ -45,7 +48,17 @@ final class Capture {
         }
 
         var hint: String {
-            switch self {
+            if SmartSelection.isOn {
+                switch self {
+                case .screenshot:
+                    return L("Click what is outlined or drag over an area. Scroll for a bigger or smaller part. Return takes the whole screen, Escape cancels.")
+                case .timer:
+                    return L("Choose what to take: click what is outlined, drag over an area, or press Return for the whole screen. Scroll for a bigger or smaller part. It is taken when the countdown ends.")
+                case .record:
+                    return L("Click what is outlined or drag over an area to record it. Scroll for a bigger or smaller part. Return records the whole screen, Escape cancels.")
+                }
+            }
+            return switch self {
             case .screenshot: L("Drag over an area or click a window. Return takes the whole screen, Escape cancels.")
             case .timer: L("Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends.")
             case .record: L("Drag over an area or click a window to record it. Return records the whole screen, Escape cancels.")
@@ -476,8 +489,11 @@ private final class CaptureOverlay: NSPanel {
     override var canBecomeKey: Bool { true }
 }
 
-/// Draws the still screen, the dimming, the area being dragged or the window
-/// under the pointer, and the size of what will be taken.
+/// Draws the still screen, the dimming, the area being dragged or what the
+/// pointer is over, and the size of what will be taken. With smart
+/// selection on, what the pointer is over is the smallest part found there,
+/// or a bigger one chosen with the scroll wheel or the arrow keys, up to its
+/// window and the whole screen.
 private final class CaptureView: NSView {
     private let screen: NSScreen
     private let still: CGImage
@@ -487,14 +503,32 @@ private final class CaptureView: NSView {
     /// Whether the size label is solid, with Reduce Transparency on.
     var solidBadges = false
 
+    /// What a click takes, from the smallest part out.
+    private enum Level: Equatable {
+        case part(CGRect)
+        case window(CGWindowID)
+        case screen
+    }
+
     private var dragStart: CGPoint?
+    /// The window, or the whole screen, a drag keeps to the edges in.
+    private var dragRoot: CGRect?
     private var area: CGRect?
     private var hovered: Capture.Target?
+    private var levels: [Level] = []
+    private var level = 0
+    private var scrolled: CGFloat = 0
     private var hint: NSView?
     private var finished = false
+    private var smart: SmartSelection?
+    /// What the app under the pointer said is there, in which window and
+    /// where it was asked.
+    private var told: (pointer: CGPoint, window: CGWindowID, frames: [CGRect])?
+    private var asking = false
 
     /// How far the pointer moves before a click becomes a drag.
     private static let dragThreshold: CGFloat = 4
+    private static let appQueue = DispatchQueue(label: "Snapfly.appElements", qos: .userInteractive)
 
     init(screen: NSScreen, still: CGImage, targets: [Capture.Target], title: String,
          done: @escaping (Capture.Choice) -> Void) {
@@ -503,6 +537,9 @@ private final class CaptureView: NSView {
         self.targets = targets
         self.done = done
         super.init(frame: CGRect(origin: .zero, size: screen.frame.size))
+        if SmartSelection.isOn {
+            smart = SmartSelection(image: still, frame: bounds) { [weak self] in self?.updateHover() }
+        }
         addTrackingArea(NSTrackingArea(rect: .zero,
                                        options: [.mouseMoved, .mouseEnteredAndExited, .cursorUpdate,
                                                  .activeAlways, .inVisibleRect],
@@ -542,6 +579,8 @@ private final class CaptureView: NSView {
 
     override func mouseExited(with event: NSEvent) {
         hovered = nil
+        levels = []
+        level = 0
         needsDisplay = true
     }
 
@@ -551,38 +590,52 @@ private final class CaptureView: NSView {
     }
 
     override func mouseDown(with event: NSEvent) {
-        dragStart = convert(event.locationInWindow, from: nil)
+        let point = convert(event.locationInWindow, from: nil)
+        dragRoot = root(for: hovered)
+        dragStart = toEdges(point, event)
     }
 
     override func mouseDragged(with event: NSEvent) {
         guard let start = dragStart else { return }
-        let point = convert(event.locationInWindow, from: nil)
+        let point = toEdges(convert(event.locationInWindow, from: nil), event)
         let rect = CGRect(x: min(start.x, point.x), y: min(start.y, point.y),
                           width: abs(point.x - start.x), height: abs(point.y - start.y)).intersection(bounds)
         guard area != nil || max(rect.width, rect.height) >= Self.dragThreshold else { return }
         area = rect
-        hovered = nil
         hint?.isHidden = true
         needsDisplay = true
     }
 
     override func mouseUp(with event: NSEvent) {
         defer { dragStart = nil }
-        if let area {
+        if var area {
             self.area = nil
             needsDisplay = true
             // Too small to be meant: wait for another try.
-            guard area.width >= Self.dragThreshold, area.height >= Self.dragThreshold else { return }
-            let onScreen = area.offsetBy(dx: screen.frame.minX, dy: screen.frame.minY)
-            finish(.area(onScreen, screen, still))
-        } else if let hovered {
-            finish(.window(hovered))
+            guard area.width >= Self.dragThreshold, area.height >= Self.dragThreshold else {
+                updateHover()
+                return
+            }
+            // The empty space round what was dragged over goes, to an even
+            // margin; ⌘ keeps it as dragged.
+            if let smart, !event.modifierFlags.contains(.command) { area = smart.trimmed(area) }
+            finish(.area(area.offsetBy(dx: screen.frame.minX, dy: screen.frame.minY), screen, still))
         } else {
-            finish(.screen(screen, still))
+            finish(choice)
         }
     }
 
     override func rightMouseDown(with event: NSEvent) { finish(.cancel) }
+
+    override func scrollWheel(with event: NSEvent) {
+        guard area == nil, levels.count > 1 else { return }
+        // Away from you, or fingers up, is bigger, whichever way the Mac scrolls.
+        scrolled += event.scrollingDeltaY * (event.isDirectionInvertedFromDevice ? -1 : 1)
+        let notch: CGFloat = event.hasPreciseScrollingDeltas ? 24 : 1
+        guard abs(scrolled) >= notch else { return }
+        step(scrolled > 0 ? 1 : -1)
+        scrolled = 0
+    }
 
     override func keyDown(with event: NSEvent) {
         switch Int(event.keyCode) {
@@ -598,9 +651,20 @@ private final class CaptureView: NSView {
                       let view = other.contentView as? CaptureView {
                 view.finish(.screen(view.screen, view.still))
             }
+        case 126 where levels.count > 1: // Up arrow: a bigger part
+            step(1)
+        case 125 where levels.count > 1: // Down arrow: a smaller one
+            step(-1)
         default:
             NSSound.beep()
         }
+    }
+
+    private func step(_ by: Int) {
+        let next = max(0, min(levels.count - 1, level + by))
+        guard next != level else { return }
+        level = next
+        needsDisplay = true
     }
 
     private func finish(_ choice: Capture.Choice) {
@@ -609,16 +673,98 @@ private final class CaptureView: NSView {
         done(choice)
     }
 
-    /// The frontmost window under the pointer, if it is on this screen.
+    /// What is outlined now.
+    private var current: Level? { levels.indices.contains(level) ? levels[level] : nil }
+
+    /// What a click takes: the part outlined, the window, or the screen.
+    private var choice: Capture.Choice {
+        switch current {
+        case let .part(rect)?:
+            return .area(rect.offsetBy(dx: screen.frame.minX, dy: screen.frame.minY), screen, still)
+        case .window?:
+            if let hovered { return .window(hovered) }
+            return .screen(screen, still)
+        case .screen?, nil:
+            return .screen(screen, still)
+        }
+    }
+
+    /// A window's frame on this screen, in the view, or the whole screen
+    /// without one.
+    private func root(for target: Capture.Target?) -> CGRect {
+        guard let target else { return bounds }
+        let rect = target.frame.offsetBy(dx: -screen.frame.minX, dy: -screen.frame.minY).intersection(bounds)
+        return rect.isNull ? bounds : rect
+    }
+
+    /// A point of a drag, kept to the nearest edge on screen; ⌘ lets it go
+    /// anywhere.
+    private func toEdges(_ point: CGPoint, _ event: NSEvent) -> CGPoint {
+        guard let smart, let dragRoot, !event.modifierFlags.contains(.command) else { return point }
+        let snapped = smart.snapped(point, within: dragRoot)
+        // The window's own edges too.
+        return CGPoint(x: SmartArea.snap(snapped.x, to: [dragRoot.minX, dragRoot.maxX]),
+                       y: SmartArea.snap(snapped.y, to: [dragRoot.minY, dragRoot.maxY]))
+    }
+
+    /// The frontmost window under the pointer, if it is on this screen, and
+    /// with smart selection, the parts found there.
     private func updateHover() {
-        guard area == nil else { return }
+        guard area == nil, dragStart == nil, !finished else { return }
         let pointer = NSEvent.mouseLocation
-        let next = NSMouseInRect(pointer, screen.frame, false)
-            ? targets.first { NSMouseInRect(pointer, $0.frame, false) }
-            : nil
-        guard next?.window.windowID != hovered?.window.windowID else { return }
+        let onScreen = NSMouseInRect(pointer, screen.frame, false)
+        let next = onScreen ? targets.first { NSMouseInRect(pointer, $0.frame, false) } : nil
         hovered = next
+        var found: [Level] = []
+        if let smart, onScreen {
+            let within = root(for: next)
+            let local = CGPoint(x: pointer.x - screen.frame.minX, y: pointer.y - screen.frame.minY)
+            var rects = smart.parts(at: local, within: within)
+            if let next {
+                // What the app said a moment ago holds while the pointer is
+                // still on it, so the outline doesn't flicker as it moves.
+                if let told, told.window == next.window.windowID {
+                    rects += told.frames.filter { $0.contains(pointer) }.compactMap { frame in
+                        let rect = frame.offsetBy(dx: -screen.frame.minX, dy: -screen.frame.minY).intersection(within)
+                        return rect.isNull ? nil : rect
+                    }
+                }
+                if told?.pointer != pointer { ask(next, at: pointer) }
+            }
+            // The window, or the screen, is a level of its own.
+            found = SmartArea.merged(rects)
+                .filter { $0.contains(local) && !SmartArea.alike($0, within) && !SmartArea.alike($0, bounds) }
+                .map { .part($0) }
+        }
+        if let next { found.append(.window(next.window.windowID)) }
+        if smart != nil, onScreen { found.append(.screen) }
+        guard found != levels else { return }
+        // The same smallest part keeps the size chosen; another starts small.
+        level = found.first == levels.first ? min(level, max(found.count - 1, 0)) : 0
+        levels = found
         needsDisplay = true
+    }
+
+    /// Asks the app under the pointer what is there, once at a time, off
+    /// the main thread; the answer outlines what the picture alone can't
+    /// tell apart, like a photo on a page of the same colour.
+    private func ask(_ target: Capture.Target, at pointer: CGPoint) {
+        guard !asking, AppElements.available, let pid = target.window.owningApplication?.processID,
+              let top = NSScreen.screens.first?.frame.maxY else { return }
+        asking = true
+        let window = target.frame
+        let id = target.window.windowID
+        Self.appQueue.async { [weak self] in
+            let frames = AppElements.frames(at: pointer, of: pid, in: window, top: top)
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated {
+                    guard let self else { return }
+                    self.asking = false
+                    self.told = (pointer, id, frames)
+                    self.updateHover()
+                }
+            }
+        }
     }
 
     override func draw(_ dirtyRect: NSRect) {
@@ -638,14 +784,28 @@ private final class CaptureView: NSView {
             edge.lineWidth = 1
             edge.stroke()
             drawSize(of: area)
-        } else {
-            NSColor.black.withAlphaComponent(0.12).setFill()
-            bounds.fill(using: .sourceOver)
+            return
+        }
+        NSColor.black.withAlphaComponent(0.12).setFill()
+        bounds.fill(using: .sourceOver)
+        switch current {
+        case let .part(rect)?:
+            // The part a click takes, outlined in the accent colour.
+            NSColor.controlAccentColor.withAlphaComponent(0.12).setFill()
+            rect.fill(using: .sourceOver)
+            NSColor.controlAccentColor.setStroke()
+            let edge = NSBezierPath(rect: rect.insetBy(dx: -1, dy: -1))
+            edge.lineWidth = 2
+            edge.stroke()
+            drawSize(of: rect)
+        case .window?:
             if let hovered {
                 let rect = hovered.frame.offsetBy(dx: -screen.frame.minX, dy: -screen.frame.minY)
                 NSColor.controlAccentColor.withAlphaComponent(0.22).setFill()
                 rect.fill(using: .sourceOver)
             }
+        case .screen?, nil:
+            break
         }
     }
 

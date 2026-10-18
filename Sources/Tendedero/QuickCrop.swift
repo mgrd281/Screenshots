@@ -5,7 +5,11 @@ import SwiftUI
 /// dimmed screen, to drag over the part to keep. Letting go keeps that part,
 /// as the crop of the photo's drawing, so what leaves the line is cut to it
 /// and the file stays as it is. Return keeps the whole photo again; Escape,
-/// a right-click or a click beside the photo cancels.
+/// a right-click or a click beside the photo cancels. With smart selection
+/// on, the part of the photo under the pointer is outlined for a click to
+/// keep, the scroll wheel chooses a bigger or smaller one, a drag keeps to
+/// the edges in the photo, and the empty space round it is cut away to an
+/// even margin.
 @MainActor
 final class QuickCrop {
     static let shared = QuickCrop()
@@ -135,8 +139,8 @@ private final class QuickCropPanel: NSPanel {
     override var canBecomeKey: Bool { true }
 }
 
-/// Draws the dimming, the photo, the part being dragged over or the one kept
-/// before, and the pixels that will go.
+/// Draws the dimming, the photo, the part being dragged over, outlined or
+/// kept before, and the pixels that will go.
 private final class QuickCropView: NSView {
     private let image: CGImage
     private let pixels: CGSize
@@ -152,6 +156,12 @@ private final class QuickCropView: NSView {
     private var area: CGRect?
     private var hint: NSView?
     private var finished = false
+    private var smart: SmartSelection?
+    /// The parts of the photo under the pointer, from the smallest out, and
+    /// the one outlined.
+    private var parts: [CGRect] = []
+    private var level = 0
+    private var scrolled: CGFloat = 0
 
     init(screen: NSScreen, image: CGImage, pixels: CGSize, kept: CGRect?, done: @escaping (QuickCrop.Ending) -> Void) {
         self.image = image
@@ -164,12 +174,17 @@ private final class QuickCropView: NSView {
         room.size.height -= QuickCropLayout.hintRoom
         photo = QuickCropLayout.frame(for: pixels, scale: screen.backingScaleFactor, in: room)
         super.init(frame: CGRect(origin: .zero, size: screen.frame.size))
+        if SmartSelection.isOn {
+            smart = SmartSelection(image: image, frame: photo.integral) { [weak self] in self?.updateParts() }
+        }
         addTrackingArea(NSTrackingArea(rect: .zero, options: [.mouseMoved, .cursorUpdate, .activeAlways, .inVisibleRect],
                                        owner: self))
         setAccessibilityElement(true)
         setAccessibilityRole(.group)
         setAccessibilityLabel(L("Crop"))
-        showHint(L("Drag over the part to keep. Return keeps the whole photo, Escape cancels."),
+        showHint(SmartSelection.isOn
+                    ? L("Click what is outlined or drag over the part to keep. Scroll for a bigger or smaller part. Return keeps the whole photo, Escape cancels.")
+                    : L("Drag over the part to keep. Return keeps the whole photo, Escape cancels."),
                  above: visible.minY)
     }
 
@@ -200,17 +215,22 @@ private final class QuickCropView: NSView {
     }
 
     override func cursorUpdate(with event: NSEvent) { updateCursor() }
-    override func mouseMoved(with event: NSEvent) { updateCursor() }
+
+    override func mouseMoved(with event: NSEvent) {
+        updateCursor()
+        updateParts()
+    }
 
     override func mouseDown(with event: NSEvent) {
-        dragStart = convert(event.locationInWindow, from: nil)
+        dragStart = toEdges(convert(event.locationInWindow, from: nil), event)
     }
 
     override func mouseDragged(with event: NSEvent) {
         guard let start = dragStart else { return }
-        let point = convert(event.locationInWindow, from: nil)
+        let point = toEdges(convert(event.locationInWindow, from: nil), event)
         guard dragging || max(abs(point.x - start.x), abs(point.y - start.y)) >= QuickCropLayout.threshold else { return }
         dragging = true
+        parts = []
         // A drag begun beside the photo keeps to its edge.
         let rect = CGRect(x: min(start.x, point.x), y: min(start.y, point.y),
                           width: abs(point.x - start.x), height: abs(point.y - start.y)).intersection(photo)
@@ -225,6 +245,11 @@ private final class QuickCropView: NSView {
         let point = convert(event.locationInWindow, from: nil)
         if dragging {
             dragging = false
+            // The empty space round what was dragged over goes, to an even
+            // margin; ⌘ keeps it as dragged.
+            if let smart, let dragged = area, !event.modifierFlags.contains(.command) {
+                area = smart.trimmed(dragged)
+            }
             if let area, let crop = QuickCropLayout.crop(area, in: photo) {
                 finish(.keep(crop))
             } else {
@@ -232,10 +257,52 @@ private final class QuickCropView: NSView {
                 area = nil
                 needsDisplay = true
                 updateCursor()
+                updateParts()
             }
         } else if !photo.contains(point) {
             finish(.cancel)
+        } else if parts.indices.contains(level), let crop = QuickCropLayout.crop(parts[level], in: photo) {
+            // A click keeps the part outlined.
+            finish(.keep(crop))
         }
+    }
+
+    override func scrollWheel(with event: NSEvent) {
+        guard !dragging, parts.count > 1 else { return }
+        // Away from you, or fingers up, is bigger, whichever way the Mac scrolls.
+        scrolled += event.scrollingDeltaY * (event.isDirectionInvertedFromDevice ? -1 : 1)
+        let notch: CGFloat = event.hasPreciseScrollingDeltas ? 24 : 1
+        guard abs(scrolled) >= notch else { return }
+        step(scrolled > 0 ? 1 : -1)
+        scrolled = 0
+    }
+
+    private func step(_ by: Int) {
+        let next = max(0, min(parts.count - 1, level + by))
+        guard next != level else { return }
+        level = next
+        needsDisplay = true
+    }
+
+    /// A point of a drag, kept to the nearest edge in the photo; ⌘ lets it go
+    /// anywhere.
+    private func toEdges(_ point: CGPoint, _ event: NSEvent) -> CGPoint {
+        guard let smart, !event.modifierFlags.contains(.command) else { return point }
+        return smart.snapped(point, within: smart.frame)
+    }
+
+    /// The parts of the photo under the pointer; the whole photo is Return's.
+    private func updateParts() {
+        guard let smart, !dragging, dragStart == nil, !finished else { return }
+        let point = convert(window?.mouseLocationOutsideOfEventStream ?? .zero, from: nil)
+        let found = photo.contains(point)
+            ? smart.parts(at: point, within: smart.frame).filter { !SmartArea.alike($0, smart.frame) }
+            : []
+        guard found != parts else { return }
+        // The same smallest part keeps the size chosen; another starts small.
+        level = found.first == parts.first ? min(level, max(found.count - 1, 0)) : 0
+        parts = found
+        needsDisplay = true
     }
 
     override func rightMouseDown(with event: NSEvent) { finish(.cancel) }
@@ -246,6 +313,10 @@ private final class QuickCropView: NSView {
             finish(.cancel)
         case 36, 76: // Return, Enter
             finish(.whole)
+        case 126 where parts.count > 1: // Up arrow: a bigger part
+            step(1)
+        case 125 where parts.count > 1: // Down arrow: a smaller one
+            step(-1)
         default:
             NSSound.beep()
         }
@@ -279,6 +350,15 @@ private final class QuickCropView: NSView {
             edge.lineWidth = 1
             edge.stroke()
             if let crop = QuickCropLayout.crop(area, in: photo) { drawSize(of: crop, under: area) }
+        } else if parts.indices.contains(level) {
+            // The part a click keeps, outlined in the accent colour.
+            let rect = parts[level]
+            dim(outside: rect, alpha: 0.3)
+            NSColor.controlAccentColor.setStroke()
+            let edge = NSBezierPath(rect: rect.insetBy(dx: -1, dy: -1))
+            edge.lineWidth = 2
+            edge.stroke()
+            if let crop = QuickCropLayout.crop(rect, in: photo) { drawSize(of: crop, under: rect) }
         } else if let kept {
             // The part kept before, as Draw on Photo shows it at rest.
             let rect = QuickCropLayout.area(of: kept, in: photo)

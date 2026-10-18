@@ -98,7 +98,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>F</kbd> | Search the words in your screenshots. Change it in Settings. |
-| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd> | Take a screenshot: drag over an area, click a window, or press Return for the whole screen. Change it in Settings. |
+| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd> | Take a screenshot: click what is outlined (scroll for a bigger or smaller part), drag over an area, click a window, or press Return for the whole screen. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd> | Record the screen, chosen the same way. Press it again to stop. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>P</kbd> | Capture the whole page in the window in front, from top to bottom. Change it in Settings. |
 
@@ -173,7 +173,17 @@ with a preview, or turn it off.
 
 Press <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd>, or choose Take Screenshot
 in the menu bar. The screen holds still. Drag over an area, click a window,
-or press Return for the whole screen; Escape cancels. The screenshot flies
+or press Return for the whole screen; Escape cancels.
+
+Smart selection finds what you mean. The picture, card, button or paragraph
+under the pointer is outlined, and a click takes just that: one logo out of
+a page of search results, without dragging. Scroll, or press ↑ and ↓, for a
+bigger or smaller part, up to the window and the whole screen. A drag keeps
+to the edges of what is on screen, and when you let go, the empty space
+round it is cut to an even margin. Hold ⌘ to drag freely. Crop… does the
+same on a photo. Turn it off in Settings, under General.
+
+The screenshot flies
 from where it was taken straight onto the line, with nothing to set up in the
 Screenshot app first. macOS asks for the Screen Recording permission the
 first time.
@@ -345,7 +355,8 @@ colour or size, drag it or its handles, or press Delete; ⌘Z undoes.
 
 Only the crop, quicker: choose Crop… in a photo's menu, or ⌥-click the
 photo. It opens large over the dimmed screen; drag over the part to keep,
-and it is kept as you let go, with whatever you drew on it. Return keeps
+and it is kept as you let go, with whatever you drew on it. Or click the
+part outlined under the pointer. Return keeps
 the whole photo, and Escape, a right-click or a click beside it cancels. A
 note says the file stays as it is, and Keep Whole Photo, in the menu of a
 cropped photo, takes the crop away.
@@ -713,6 +724,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Drawing.swift` | Draw on Photo's arrows, boxes, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |
 | `DrawEditor.swift` | Draw on Photo: the window to draw on a photo, with its tools, inks, sizes and Undo |
 | `QuickCrop.swift` | Crop…: the photo large over the dimmed screen, a drag over the part to keep, saved as the drawing's crop |
+| `SmartArea.swift` | Smart selection's reading of a picture: its parts by the empty space round them, the edges a drag keeps to, and empty space trimmed to an even margin |
+| `SmartSelection.swift` | Smart selection on the capture screens and in Crop: the picture read off the main thread, and what an app says is under the pointer through Accessibility |
 | `TextCard.swift` | Translate Text, Describe and Order Details, and the card that shows them |
 | `Appearance.swift` | Glass by role, Liquid Glass on macOS 26, and motion that honours Reduce Motion |
 | `Search.swift` | The words in every photo, and the search bar under the line |
