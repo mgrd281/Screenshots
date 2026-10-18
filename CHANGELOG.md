@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Smart selection: when you take a screenshot, the picture, card, button
+  or paragraph under the pointer is outlined, and a click takes just that.
+  Scroll for a bigger or smaller part. A drag keeps to the edges on screen,
+  and the empty space round it is cut to an even margin. Crop… does the
+  same on a photo. On at first, under Settings › General.
 - Twelve more icons under photos, off until you turn them on in Settings ›
   Line › Icons under photos: Perplexity, Grok, DeepSeek, Qwen, Messenger,
   Instagram, Outlook, Yahoo Mail, Facebook, Airbnb, Visual Studio Code and

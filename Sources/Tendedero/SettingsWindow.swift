@@ -235,6 +235,11 @@ final class Preferences: ObservableObject {
         set { change { History.days = newValue } }
     }
 
+    var smartSelection: Bool {
+        get { SmartSelection.isOn }
+        set { change { SmartSelection.isOn = newValue } }
+    }
+
     var captureButton: Bool {
         get { CaptureButton.isEnabled }
         set { change { CaptureButton.isEnabled = newValue } }
@@ -888,6 +893,10 @@ private struct GeneralPane: View {
                 Toggle(isOn: $prefs.hangsCopiedImages) {
                     Text(L("Hang copied images"))
                     Text(L("Images you copy hang on the line too"))
+                }
+                Toggle(isOn: $prefs.smartSelection) {
+                    Text(L("Smart selection"))
+                    Text(L("Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely."))
                 }
             }
             Section {

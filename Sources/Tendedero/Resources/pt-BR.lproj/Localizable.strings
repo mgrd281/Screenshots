@@ -757,3 +757,9 @@
 "Welcome! Discover Snapfly." = "Boas-vindas! Descubra o Snapfly.";
 "What Gets Covered" = "O que é coberto";
 "You're all set" = "Tudo pronto";
+"Click what is outlined or drag over an area. Scroll for a bigger or smaller part. Return takes the whole screen, Escape cancels." = "Clique no que está destacado ou arraste sobre uma área. Role para uma parte maior ou menor. Return captura a tela inteira e Esc cancela.";
+"Choose what to take: click what is outlined, drag over an area, or press Return for the whole screen. Scroll for a bigger or smaller part. It is taken when the countdown ends." = "Escolha o que capturar: clique no que está destacado, arraste sobre uma área ou pressione Return para a tela inteira. Role para uma parte maior ou menor. A captura é feita quando a contagem termina.";
+"Click what is outlined or drag over an area to record it. Scroll for a bigger or smaller part. Return records the whole screen, Escape cancels." = "Clique no que está destacado ou arraste sobre uma área para gravá-la. Role para uma parte maior ou menor. Return grava a tela inteira e Esc cancela.";
+"Click what is outlined or drag over the part to keep. Scroll for a bigger or smaller part. Return keeps the whole photo, Escape cancels." = "Clique no que está destacado ou arraste sobre a parte a manter. Role para uma parte maior ou menor. Return mantém a foto inteira e Esc cancela.";
+"Smart selection" = "Seleção inteligente";
+"Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "Destaca a imagem ou a parte sob o ponteiro, prende o arrasto às bordas dela e corta o espaço vazio. Mantenha ⌘ pressionada para arrastar livremente.";
