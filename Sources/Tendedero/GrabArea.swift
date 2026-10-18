@@ -122,13 +122,13 @@ struct GrabArea: NSViewRepresentable {
             MainActor.assumeIsolated { line.pick(id, quietly: true) }
             return true
         }
-        let chats = ChatTarget.takes(item) ? ChatTarget.allCases.map { chat in
+        let chatActions = ChatTarget.takes(item) ? ChatTarget.allCases.map { chat in
             NSAccessibilityCustomAction(name: String(format: L("Send to %@"), chat.name)) {
                 MainActor.assumeIsolated { line.send(id, to: chat) }
                 return true
             }
         } : []
-        view.setAccessibilityCustomActions((pinned ? [send, pin] : [send, pin, takeDown]) + chats + [pick, earlier, later])
+        view.setAccessibilityCustomActions((pinned ? [send, pin] : [send, pin, takeDown]) + chatActions + [pick, earlier, later])
         view.menuProvider = {
             let menu = NSMenu()
             // Items say themselves whether they can be used.
