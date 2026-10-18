@@ -678,18 +678,12 @@
 "something new" = "新着あり";
 "Icons under photos" = "写真の下のアイコン";
 "%@ on photos" = "写真上の%@";
-"The browser" = "ブラウザ";
-"The app" = "アプリ";
-"Open in" = "開く場所";
-"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "ブラウザではウェブサイトを開きます。アプリでは、この Mac にあればそのアプリを、なければウェブサイトを開きます。";
-"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "アイコンは写真の下に出ます。クリックすると、写真（または一緒に選んだ写真）を%@に送ります。";
 "Copied. Start a new message and paste." = "コピーしました。新しいメッセージを作成して貼り付けてください。";
 
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "「%1$@」はこれからすべての写真で隠されます。%2$@で変更できます。";
 "Always cover “%@”" = "「%@」を常に隠す";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "これからすべての写真で隠されます。プライバシーの自分のルールに入ります。";
-"Drag the icons into the order you want them under each photo. Up to six show at a time." = "アイコンをドラッグして、写真の下に並ぶ順番を決めます。 同時に表示されるのは最大6個です。";
 "Moved to the Trash. Click to put it back on the line." = "ゴミ箱に入れました。クリックするとロープに戻します。";
 "%d moved to the Trash. Click to put them back on the line." = "%d枚をゴミ箱に入れました。クリックするとロープに戻します。";
 "Taken down. Click to put it back on the line." = "外しました。クリックするとロープに戻します。";
@@ -800,3 +794,17 @@
 "Your %@ account has no credit left. Add some on their website." = "%@アカウントのクレジットが残っていません。公式サイトで追加してください。";
 "Explain with %@" = "%@で説明";
 "Explanation" = "説明";
+"App" = "アプリ";
+"Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac." = "各アイコンの横で、「ブラウザ」はここでWebサイトを、「アプリ」はこのMacにあれば専用アプリを開きます。";
+"Browser" = "ブラウザ";
+"Click an icon to show or hide it under photos, and drag the icons into the order you want. Six fit under a photo; with more on, the last place is ⋯, which lists the rest." = "アイコンをクリックすると写真の下に表示・非表示を切り替えられ、ドラッグで好きな順に並べ替えられます。写真の下には6個まで並び、それ以上オンにすると最後が⋯になり、残りを一覧します。";
+"Default browser" = "デフォルトのブラウザ";
+"Default browser (%@)" = "デフォルトのブラウザ（%@）";
+"Its app is not on this Mac, so it opens in %@." = "このMacにアプリがないため、%@で開きます。";
+"More: %@" = "その他：%@";
+"Open %@ in" = "%@を開く場所";
+"Opens in its app." = "専用アプリで開きます。";
+"Opens on its website, in %@." = "%@でWebサイトを開きます。";
+"The photo is copied, to paste into a message." = "写真はコピーされます。メッセージにペーストしてください。";
+"Websites open in" = "Webサイトを開く場所";
+"the browser" = "ブラウザ";

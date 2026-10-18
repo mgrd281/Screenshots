@@ -678,18 +678,12 @@
 "something new" = "etwas Neues";
 "Icons under photos" = "Symbole unter Fotos";
 "%@ on photos" = "%@ auf Fotos";
-"The browser" = "Browser";
-"The app" = "App";
-"Open in" = "Öffnen in";
-"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "Der Browser öffnet die Website. Die App öffnet ihre eigene App, wenn sie auf diesem Mac ist, sonst die Website.";
-"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "Sein Symbol erscheint unter dem Foto. Ein Klick sendet das Foto, oder die damit ausgewählten, an %@.";
 "Copied. Start a new message and paste." = "Kopiert. Neue Nachricht beginnen und einfügen.";
 
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "„%1$@“ wird ab jetzt in jedem Foto verdeckt. Ändern kannst du das unter %2$@.";
 "Always cover “%@”" = "„%@“ immer verdecken";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "Ab jetzt in jedem Foto verdeckt, als eigene Regel unter Datenschutz.";
-"Drag the icons into the order you want them under each photo. Up to six show at a time." = "Zieh die Symbole in die Reihenfolge, in der du sie unter jedem Foto haben willst. Es werden höchstens sechs gleichzeitig gezeigt.";
 "Moved to the Trash. Click to put it back on the line." = "In den Papierkorb gelegt. Klick, um es wieder an die Leine zu hängen.";
 "%d moved to the Trash. Click to put them back on the line." = "%d in den Papierkorb gelegt. Klick, um sie wieder an die Leine zu hängen.";
 "Taken down. Click to put it back on the line." = "Abgenommen. Klick, um es wieder an die Leine zu hängen.";
@@ -800,3 +794,17 @@
 "Your %@ account has no credit left. Add some on their website." = "Dein %@-Konto hat kein Guthaben mehr. Lade auf deren Website welches auf.";
 "Explain with %@" = "Mit %@ erklären";
 "Explanation" = "Erklärung";
+"App" = "App";
+"Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac." = "Neben jedem Symbol öffnet „Browser“ die Website hier und „App“ die eigene App, wenn sie auf diesem Mac ist.";
+"Browser" = "Browser";
+"Click an icon to show or hide it under photos, and drag the icons into the order you want. Six fit under a photo; with more on, the last place is ⋯, which lists the rest." = "Klick auf ein Symbol, um es unter Fotos zu zeigen oder auszublenden, und zieh die Symbole in die gewünschte Reihenfolge. Unter ein Foto passen sechs; sind mehr an, steht an letzter Stelle ⋯ mit dem Rest.";
+"Default browser" = "Standardbrowser";
+"Default browser (%@)" = "Standardbrowser (%@)";
+"Its app is not on this Mac, so it opens in %@." = "Die App ist nicht auf diesem Mac, also öffnet es in %@.";
+"More: %@" = "Mehr: %@";
+"Open %@ in" = "%@ öffnen in";
+"Opens in its app." = "Öffnet in der eigenen App.";
+"Opens on its website, in %@." = "Öffnet die Website in %@.";
+"The photo is copied, to paste into a message." = "Das Foto wird kopiert, zum Einsetzen in eine Nachricht.";
+"Websites open in" = "Websites öffnen in";
+"the browser" = "dem Browser";

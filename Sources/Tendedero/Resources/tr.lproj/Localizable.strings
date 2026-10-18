@@ -678,18 +678,12 @@
 "something new" = "yeni bir şey";
 "Icons under photos" = "Fotoğrafların altındaki simgeler";
 "%@ on photos" = "Fotoğraflarda %@";
-"The browser" = "Tarayıcı";
-"The app" = "Uygulama";
-"Open in" = "Şurada aç";
-"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "Tarayıcı web sitesini açar. Uygulama, bu Mac'te varsa kendi uygulamasını, yoksa web sitesini açar.";
-"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "Simgesi fotoğrafın altında görünür. Tıklamak fotoğrafı, ya da onunla seçilenleri, %@ hedefine gönderir.";
 "Copied. Start a new message and paste." = "Kopyalandı. Yeni bir ileti başlat ve yapıştır.";
 
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” bundan sonra her fotoğrafta örtülür. Bunu %2$@ bölümünden değiştirebilirsin.";
 "Always cover “%@”" = "“%@” her zaman örtülsün";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "Bundan sonra her fotoğrafta örtülür; Gizlilik altında kendi kuralın olarak.";
-"Drag the icons into the order you want them under each photo. Up to six show at a time." = "Simgeleri her fotoğrafın altında istediğin sıraya sürükle. Aynı anda en fazla altısı görünür.";
 "Moved to the Trash. Click to put it back on the line." = "Çöp Kutusu’na taşındı. Yeniden ipe asmak için tıkla.";
 "%d moved to the Trash. Click to put them back on the line." = "%d tanesi Çöp Kutusu’na taşındı. Yeniden ipe asmak için tıkla.";
 "Taken down. Click to put it back on the line." = "İndirildi. Yeniden ipe asmak için tıkla.";
@@ -800,3 +794,17 @@
 "Your %@ account has no credit left. Add some on their website." = "%@ hesabında kredi kalmadı. Onların sitesinden ekle.";
 "Explain with %@" = "%@ ile açıkla";
 "Explanation" = "Açıklama";
+"App" = "Uygulama";
+"Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac." = "Her simgenin yanında Tarayıcı web sitesini burada, Uygulama ise bu Mac’teyse kendi uygulamasını açar.";
+"Browser" = "Tarayıcı";
+"Click an icon to show or hide it under photos, and drag the icons into the order you want. Six fit under a photo; with more on, the last place is ⋯, which lists the rest." = "Fotoğrafların altında göstermek ya da gizlemek için bir simgeyi tıkla ve simgeleri istediğin sıraya sürükle. Bir fotoğrafın altına altı tane sığar; daha fazlası açıksa son yer ⋯ olur ve kalanları listeler.";
+"Default browser" = "Varsayılan tarayıcı";
+"Default browser (%@)" = "Varsayılan tarayıcı (%@)";
+"Its app is not on this Mac, so it opens in %@." = "Uygulaması bu Mac’te yok, bu yüzden %@ ile açılır.";
+"More: %@" = "Daha fazla: %@";
+"Open %@ in" = "%@ şurada açılsın";
+"Opens in its app." = "Kendi uygulamasında açılır.";
+"Opens on its website, in %@." = "Web sitesi %@ ile açılır.";
+"The photo is copied, to paste into a message." = "Fotoğraf kopyalanır, bir mesaja yapıştırmak için.";
+"Websites open in" = "Web siteleri şurada açılır";
+"the browser" = "tarayıcı";

@@ -680,18 +680,12 @@
 "something new" = "yeni bir şey";
 "Icons under photos" = "Fotoların altındakı ikonlar";
 "%@ on photos" = "Şəkillərdə %@";
-"The browser" = "Brauzer";
-"The app" = "Tətbiq";
-"Open in" = "Açılış yeri";
-"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "Brauzer vebsaytı açır. Tətbiq, bu Mac-də varsa öz tətbiqini, yoxdursa vebsaytı açır.";
-"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "İkonu şəklin altında görünür. Klik şəkli və ya onunla seçilənləri %@ üçün göndərir.";
 "Copied. Start a new message and paste." = "Kopyalandı. Yeni mesaj başlat və yapışdır.";
 
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” bundan sonra hər fotoda örtülür. Bunu %2$@ bölməsində dəyişə bilərsiniz.";
 "Always cover “%@”" = "“%@” həmişə örtülsün";
 "Covered in every photo from now on, as a rule of your own under Privacy." = "Bundan sonra hər fotoda örtülür, Məxfilik bölməsində öz qaydan kimi.";
-"Drag the icons into the order you want them under each photo. Up to six show at a time." = "Hər fotonun altında istədiyin sıra ilə görünmələri üçün ikonları sürüşdür. Eyni anda ən çox altısı görünür.";
 "Moved to the Trash. Click to put it back on the line." = "Zibil qutusuna atıldı. Yenidən ipə asmaq üçün klikləyin.";
 "%d moved to the Trash. Click to put them back on the line." = "%d zibil qutusuna atıldı. Yenidən ipə asmaq üçün klikləyin.";
 "Taken down. Click to put it back on the line." = "İpdən götürüldü. Yenidən ipə asmaq üçün klikləyin.";
@@ -802,3 +796,17 @@
 "Your %@ account has no credit left. Add some on their website." = "%@ hesabında kredit qalmayıb. Onların saytında əlavə et.";
 "Explain with %@" = "%@ ilə izah et";
 "Explanation" = "İzah";
+"App" = "Tətbiq";
+"Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac." = "Hər ikonun yanında Brauzer saytını burada, Tətbiq isə öz tətbiqini açır, bu Mac-da olanda.";
+"Browser" = "Brauzer";
+"Click an icon to show or hide it under photos, and drag the icons into the order you want. Six fit under a photo; with more on, the last place is ⋯, which lists the rest." = "Fotoların altında göstərmək və ya gizlətmək üçün ikona klikləyin, ikonları istədiyiniz sıraya sürüşdürün. Fotonun altına altısı sığır; daha çoxu açıq olanda sonuncu yer ⋯ olur və qalanını göstərir.";
+"Default browser" = "Defolt brauzer";
+"Default browser (%@)" = "Defolt brauzer (%@)";
+"Its app is not on this Mac, so it opens in %@." = "Tətbiqi bu Mac-da yoxdur, ona görə %@ ilə açılır.";
+"More: %@" = "Daha çox: %@";
+"Open %@ in" = "%@ açılış yeri";
+"Opens in its app." = "Öz tətbiqində açılır.";
+"Opens on its website, in %@." = "Saytı %@ ilə açılır.";
+"The photo is copied, to paste into a message." = "Foto kopyalanır ki, mesaja yapışdırasınız.";
+"Websites open in" = "Saytlar açılır";
+"the browser" = "brauzer";

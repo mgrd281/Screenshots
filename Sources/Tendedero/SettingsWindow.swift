@@ -224,10 +224,26 @@ final class Preferences: ObservableObject {
             })
     }
 
-    /// Where a click on one of them opens it: the app, or the browser.
-    var opensChatsInApp: Bool {
-        get { ChatTarget.opensInApp }
-        set { change { ChatTarget.opensInApp = newValue; line.objectWillChange.send() } }
+    /// Where a click on one of them opens it: its app, or its website.
+    func opensInApp(_ chat: ChatTarget) -> Binding<Bool> {
+        Binding(
+            get: { chat.opensInApp() },
+            set: { [weak self] app in
+                MainActor.assumeIsolated {
+                    self?.change { chat.setOpensInApp(app) }
+                }
+            })
+    }
+
+    /// The browser websites open in, by its bundle ID; empty for the Mac's
+    /// own choice, and for one no longer on this Mac.
+    var chatBrowser: String {
+        get {
+            guard let id = ChatTarget.browserID, NSWorkspace.shared.urlForApplication(withBundleIdentifier: id) != nil
+            else { return "" }
+            return id
+        }
+        set { change { ChatTarget.browserID = newValue.isEmpty ? nil : newValue } }
     }
 
     var historyDays: Int? {
@@ -1087,25 +1103,9 @@ private struct LinePane: View {
             Section(L("Icons under photos")) {
                 ChatOrderRow(prefs: prefs)
                 ForEach(prefs.chatOrder) { chat in
-                    Toggle(isOn: prefs.showsAIChat(chat)) {
-                        Text(String(format: L("%@ on photos"), chat.name))
-                        Text(String(format: L("Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@."), chat.name))
-                    }
-                    // A row holds six: another waits until one is turned off.
-                    .disabled(!ChatTarget.shows(chat) && ChatTarget.shownCount() >= PhotoButtons.maxChats)
+                    ChatRow(chat: chat, prefs: prefs)
                 }
-                LabeledContent {
-                    Picker(L("Open in"), selection: $prefs.opensChatsInApp) {
-                        Text(L("The browser")).tag(false)
-                        Text(L("The app")).tag(true)
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.segmented)
-                    .fixedSize()
-                } label: {
-                    Text(L("Open in"))
-                    Text(L("The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not."))
-                }
+                ChatBrowserRow(prefs: prefs)
             }
             ChatButtonSection(prefs: prefs)
             SavedMessagesSection(prefs: prefs)
@@ -2065,8 +2065,94 @@ private struct AboutPane: View {
     }
 }
 
+/// One chat under Icons under photos: its icon and name, where a click on it
+/// opens, its app or its website, and whether its icon stands under photos.
+private struct ChatRow: View {
+    let chat: ChatTarget
+    @ObservedObject var prefs: Preferences
+
+    var body: some View {
+        let app = chat.appURL
+        HStack(spacing: 10) {
+            ChatIcon(chat: chat, size: 24)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: chat.name)
+                Text(caption(app: app))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 8)
+            Picker(String(format: L("Open %@ in"), chat.name), selection: prefs.opensInApp(chat)) {
+                Text(L("Browser")).tag(false)
+                Text(L("App")).tag(true)
+            }
+            .labelsHidden()
+            .fixedSize()
+            .help(String(format: L("Open %@ in"), chat.name))
+            Toggle(String(format: L("%@ on photos"), chat.name), isOn: prefs.showsAIChat(chat))
+                .labelsHidden()
+                .toggleStyle(.switch)
+        }
+    }
+
+    /// Where a click takes the photo, said in full: the browser by name, the
+    /// app, or the browser for an app not on this Mac.
+    private func caption(app: URL?) -> String {
+        let browser = ChatTarget.browserName
+        let opens: String
+        if !chat.opensInApp() {
+            opens = String(format: L("Opens on its website, in %@."), browser)
+        } else if app != nil {
+            opens = L("Opens in its app.")
+        } else {
+            opens = String(format: L("Its app is not on this Mac, so it opens in %@."), browser)
+        }
+        return chat.copiesOnly ? opens + " " + L("The photo is copied, to paste into a message.") : opens
+    }
+}
+
+/// The browser websites open in: the Mac's own, or another on it, each by
+/// its icon and name.
+private struct ChatBrowserRow: View {
+    @ObservedObject var prefs: Preferences
+
+    var body: some View {
+        let browsers = ChatTarget.browsers
+        LabeledContent {
+            Picker(L("Websites open in"), selection: $prefs.chatBrowser) {
+                Text(ChatTarget.defaultBrowserURL.map { String(format: L("Default browser (%@)"), ChatTarget.appName($0)) }
+                     ?? L("Default browser"))
+                    .tag("")
+                if !browsers.isEmpty { Divider() }
+                ForEach(browsers) { browser in
+                    Label {
+                        Text(verbatim: browser.name)
+                    } icon: {
+                        Image(nsImage: Self.icon(browser.url))
+                    }
+                    .tag(browser.id)
+                }
+            }
+            .labelsHidden()
+            .fixedSize()
+        } label: {
+            Text(L("Websites open in"))
+            Text(L("Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac."))
+        }
+    }
+
+    /// A browser's icon at the size a menu item shows.
+    private static func icon(_ url: URL) -> NSImage {
+        let icon = (NSWorkspace.shared.icon(forFile: url.path).copy() as? NSImage) ?? NSImage()
+        icon.size = NSSize(width: 16, height: 16)
+        return icon
+    }
+}
+
 /// The icons under a photo as they stand there, larger, to drag into
-/// another order. One turned off is drawn faint, and keeps its place.
+/// another order, or to click on and off. One turned off keeps its place.
 private struct ChatOrderRow: View {
     @ObservedObject var prefs: Preferences
     @State private var dragged: ChatTarget?
@@ -2075,7 +2161,8 @@ private struct ChatOrderRow: View {
         VStack(alignment: .leading, spacing: 8) {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 28), spacing: 12)], alignment: .leading, spacing: 12) {
                 ForEach(prefs.chatOrder) { chat in
-                    let on = prefs.showsAIChat(chat).wrappedValue
+                    let shows = prefs.showsAIChat(chat)
+                    let on = shows.wrappedValue
                     // Every logo in its own colours; the ones under photos carry a check.
                     ChatIcon(chat: chat, size: 28)
                         .overlay(alignment: .bottomTrailing) {
@@ -2092,6 +2179,8 @@ private struct ChatOrderRow: View {
                         }
                         .animation(.easeOut(duration: 0.15), value: on)
                         .help(chat.name)
+                        // A click shows it under photos, or hides it.
+                        .onTapGesture { shows.wrappedValue = !on }
                         .onDrag {
                             dragged = chat
                             return NSItemProvider(object: chat.rawValue as NSString)
@@ -2100,12 +2189,14 @@ private struct ChatOrderRow: View {
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(chat.name)
                         .accessibilityValue(on ? "" : L("Off"))
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityAction { shows.wrappedValue = !on }
                         .accessibilityAction(named: L("Move Earlier")) { prefs.moveChat(chat, by: -1) }
                         .accessibilityAction(named: L("Move Later")) { prefs.moveChat(chat, by: 1) }
                 }
             }
             .animation(.easeOut(duration: 0.15), value: prefs.chatOrder)
-            Text(L("Drag the icons into the order you want them under each photo. Up to six show at a time."))
+            Text(L("Click an icon to show or hide it under photos, and drag the icons into the order you want. Six fit under a photo; with more on, the last place is ⋯, which lists the rest."))
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }

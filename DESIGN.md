@@ -451,10 +451,9 @@ apps.
     back. Its tip says Pick or Unpick.
   - Bottom trailing: send, a 22 pt accent circle with `paperplane.fill`.
     Under the card, not on it, a row of six destinations, each on its own
-    switch (Settings › Line, in a section of their own, Icons under photos:
-    ChatGPT on photos, Claude on photos, WhatsApp on photos, Gmail on
-    photos, GMX on photos and WEB.DE on photos, then Open in, all on at
-    first, before Send button over chats): ChatGPT, Claude, WhatsApp,
+    switch (Settings › Line, in a section of their own, Icons under photos,
+    one row per destination (below), then Websites open in, before Send
+    button over chats): ChatGPT, Claude, WhatsApp,
     Gmail, GMX and WEB.DE, in that order until dragged into another
     (`ChatTarget.ordered`, below), 20 pt each, 4 pt apart, centered
     under the card 6 pt below it, so the card keeps only its own buttons.
@@ -465,11 +464,25 @@ apps.
       own colours, the ones under photos with a 13 pt accent check (a 7 pt
       heavy white `checkmark`, ringed in the window's background) at their
       bottom trailing corner, 4 pt out, fading and scaling in over 0.15 s;
-      one turned off keeps its place and VoiceOver hears "Off"; each with its name as help. Dragged,
-      one takes the place of the icon it passes, the rest closing up on an
-      0.15 s ease-out, and every photo's row follows at once; VoiceOver has
-      Move Earlier and Move Later. A callout `.secondary` line under the
-      row says to drag them.
+      one turned off keeps its place and VoiceOver hears "Off"; each with its name as help. A click
+      turns it on or off, as its switch does (a button to VoiceOver).
+      Dragged, one takes the place of the icon it passes, the rest closing
+      up on an 0.15 s ease-out, and every photo's row follows at once;
+      VoiceOver has Move Earlier and Move Later. A callout `.secondary` line
+      under the row says to click and drag them, and how many fit.
+    - **One row per destination** (`ChatRow`), in the same order: its icon
+      at 24 pt; its name over a caption (`.caption`, `.secondary`) saying
+      where a click goes, "Opens on its website, in Safari.", "Opens in its
+      app." or "Its app is not on this Mac, so it opens in Safari.", with
+      "The photo is copied, to paste into a message." after it for those
+      that copy; then, on the trailing edge, a pop-up menu, Browser or App
+      (help "Open ChatGPT in"), and its switch, labels hidden, VoiceOver
+      hearing "ChatGPT on photos".
+    - **Websites open in** (`ChatBrowserRow`), after them: a pop-up menu,
+      "Default browser (Safari)", a divider, then each browser on the Mac
+      that can say which page it shows, by name with its 16 pt icon, in
+      alphabetical order; one no longer on the Mac reads as the default.
+      Its subtitle says what Browser and App mean beside each icon.
     The row shows with the pointer over the card or the row, fading in and
     settling 6 pt, and the photo's view (`GrabView`) and its hit rect reach
     30 pt below the card (`PhotoButtons.stripHeight`) while it does; the
@@ -477,10 +490,14 @@ apps.
     - **More to choose.** Twelve more sit among the six in Settings, off at
       first: Perplexity, Grok, DeepSeek and Qwen (AI chats, covered as in any
       AI chat), Messenger, Instagram, Outlook, Yahoo Mail, Facebook, Airbnb,
-      Visual Studio Code and Antigravity. A row holds six (`PhotoButtons.maxChats`): with six on, the
-      switches of the others are disabled until one is turned off, and the
-      row never shows more. The order row wraps onto more lines in the
-      pane. Instagram, Outlook, Yahoo Mail, Facebook, Airbnb, Visual Studio
+      Visual Studio Code and Antigravity. Any number can be on. A row holds
+      six (`PhotoButtons.maxChats`, `ChatTarget.row`): with more on, the
+      first five stand in it and the sixth place is **⋯** (`MoreChatsIcon`),
+      a 20 pt `controlGlass` circle with `ellipsis` at 45% of it, bold,
+      `.primary`, under the badge shadow, as a mark is drawn. A click or a
+      right-click on it pops up the rest under it, each "Send to …" with
+      its 16 pt icon, in their order; its tip reads "More: Perplexity, Grok
+      and Qwen". The order row wraps onto more lines in the pane. Instagram, Outlook, Yahoo Mail, Facebook, Airbnb, Visual Studio
       Code and Antigravity copy the covered photo for pasting, as GMX does;
       their marks are "Ig", "Ol", "Y!", "Fb", "Ab", "VS", "AG", and "Px",
       "Gk", "DS", "Qw", "Ms" for the rest.
@@ -495,9 +512,10 @@ apps.
       website. Without either, a 20 pt `controlGlass` circle with a short
       mark ("GPT", "Cl", "WA", "Gm", "GMX", "WEB") in 7.5 pt bold rounded
       `.primary`. All sit under the small badge shadow.
-    - **What a click does.** It opens the website in the Mac's default
-      browser, or the app where Open in (a segmented choice under the
-      switches; The browser at first) says The app and it is on the Mac. Gmail
+    - **What a click does.** It opens the website in the browser chosen
+      under Websites open in (the Mac's default at first), or the app where
+      its row says App and the app is on the Mac (Browser at first, or App
+      for all where the one choice of before said so). Gmail
       starts a new message and moves from its address field to its body with
       two Tab presses before pasting. GMX and WEB.DE open the mailbox, which
       takes a photo only once a message is started: the covered photo is

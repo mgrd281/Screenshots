@@ -122,6 +122,22 @@ final class PhotoButtonsTests: XCTestCase {
         XCTAssertTrue(ChatTarget.shows(.claude, in: defaults))
     }
 
+    /// Any number can be on: a row shows six, and with more, five and a ⋯
+    /// holding the rest, in their order.
+    func testMoreThanARowHoldsWaitBehindTheEllipsis() {
+        let six = Array(ChatTarget.allCases.prefix(6))
+        XCTAssertEqual(ChatTarget.row(six), ChatTarget.Row(shown: six, more: []))
+        XCTAssertEqual(ChatTarget.row(six).count, 6)
+        let eight = Array(ChatTarget.allCases.prefix(8))
+        let row = ChatTarget.row(eight)
+        XCTAssertEqual(row.shown, Array(eight.prefix(5)))
+        XCTAssertEqual(row.more, Array(eight.suffix(3)))
+        XCTAssertEqual(row.count, PhotoButtons.maxChats)
+        XCTAssertEqual(ChatTarget.row(ChatTarget.allCases).shown.count + ChatTarget.row(ChatTarget.allCases).more.count,
+                       ChatTarget.allCases.count)
+        XCTAssertEqual(ChatTarget.row([]).count, 0)
+    }
+
     func testTheSingleSwitchOfBeforeKeepsTheAIChatsOffUntilChosenAgain() throws {
         let suite = "PhotoButtonsTests.\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
@@ -137,14 +153,21 @@ final class PhotoButtonsTests: XCTestCase {
         XCTAssertFalse(ChatTarget.shows(.claude, in: defaults))
     }
 
-    func testChatsOpenInTheBrowserUntilTheAppIsChosen() {
-        let key = "aiChatsOpenInApp"
-        let before = UserDefaults.standard.object(forKey: key)
-        defer { UserDefaults.standard.set(before, forKey: key) }
-        UserDefaults.standard.removeObject(forKey: key)
-        XCTAssertFalse(ChatTarget.opensInApp)
-        ChatTarget.opensInApp = true
-        XCTAssertTrue(ChatTarget.opensInApp)
+    func testChatsOpenInTheBrowserUntilTheAppIsChosen() throws {
+        let suite = "PhotoButtonsTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        XCTAssertFalse(ChatTarget.chatGPT.opensInApp(in: defaults))
+        // Each is chosen on its own.
+        ChatTarget.chatGPT.setOpensInApp(true, in: defaults)
+        XCTAssertTrue(ChatTarget.chatGPT.opensInApp(in: defaults))
+        XCTAssertFalse(ChatTarget.claude.opensInApp(in: defaults))
+        // Whoever chose the app for all before keeps it, until choosing for one.
+        defaults.set(true, forKey: "aiChatsOpenInApp")
+        XCTAssertTrue(ChatTarget.whatsApp.opensInApp(in: defaults))
+        ChatTarget.whatsApp.setOpensInApp(false, in: defaults)
+        XCTAssertFalse(ChatTarget.whatsApp.opensInApp(in: defaults))
+        XCTAssertTrue(ChatTarget.claude.opensInApp(in: defaults))
         // The marks differ, and are plain letters.
         XCTAssertEqual(Set(ChatTarget.allCases.map(\.mark)).count, ChatTarget.allCases.count)
     }
