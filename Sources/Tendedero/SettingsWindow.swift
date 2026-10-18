@@ -184,7 +184,7 @@ final class Preferences: ObservableObject {
         set { change { Line.marksSentBefore = newValue; line.objectWillChange.send() } }
     }
 
-    /// So do the icons beside the paper plane: ChatGPT, Claude, WhatsApp and Gmail, each on its own.
+    /// So do the icons under the photo: ChatGPT, Claude, WhatsApp and Gmail, each on its own.
     func showsAIChat(_ chat: ChatTarget) -> Binding<Bool> {
         Binding(
             get: { ChatTarget.shows(chat) },
@@ -993,7 +993,7 @@ private struct LinePane: View {
                 ForEach(ChatTarget.allCases) { chat in
                     Toggle(isOn: prefs.showsAIChat(chat)) {
                         Text(String(format: L("%@ on photos"), chat.name))
-                        Text(String(format: L("Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@."), chat.name))
+                        Text(String(format: L("Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@."), chat.name))
                     }
                 }
                 LabeledContent {

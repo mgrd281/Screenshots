@@ -670,8 +670,8 @@
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet.";
 "something new" = "something new";
 "%@ on photos" = "%@ on photos";
-"Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@.";
 "The browser" = "The browser";
 "The app" = "The app";
 "Open in" = "Open in";
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not.";
+"Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@.";

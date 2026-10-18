@@ -1,67 +1,41 @@
 import XCTest
 @testable import Tendedero
 
-/// The buttons on a photo under the pointer: where the chats fit beside the
-/// paper plane, the pick circle opposite the cross, and the websites each
-/// answers on.
+/// The buttons on a photo under the pointer: the chats' icons in a row under
+/// the card, the paper plane and the pick circle on it, and the websites each
+/// chat answers on.
 final class PhotoButtonsTests: XCTestCase {
-    func testAWidePhotoHoldsTheChatsInARow() {
+    func testTheChatsStandInARowInTheMiddleUnderTheCard() {
         // A screenshot of a wide window at the medium size.
         let card = CGSize(width: 144, height: 93)
-        XCTAssertEqual(PhotoButtons.layout(card: card, chats: 2, leadingRoom: 0).arrangement, .row)
-        // The lock and the paper plane of a photo sent before still leave room.
-        let badges = PhotoButtons.leadingRoom(badges: 2, document: false)
-        XCTAssertEqual(PhotoButtons.layout(card: card, chats: 2, leadingRoom: badges).arrangement, .row)
-        XCTAssertEqual(PhotoButtons.plane(card: card), CGRect(x: 118, y: 67, width: 22, height: 22))
-        XCTAssertEqual(PhotoButtons.chats(card: card, count: 2, arrangement: .row),
-                       [CGRect(x: 66, y: 67, width: 22, height: 22), CGRect(x: 92, y: 67, width: 22, height: 22)])
+        let row = PhotoButtons.chats(card: card, count: 4)
+        XCTAssertEqual(row.count, 4)
+        XCTAssertEqual(row, [CGRect(x: 26, y: 99, width: 20, height: 20), CGRect(x: 50, y: 99, width: 20, height: 20),
+                             CGRect(x: 74, y: 99, width: 20, height: 20), CGRect(x: 98, y: 99, width: 20, height: 20)])
+        // Centered, and under the card, never on it.
+        XCTAssertEqual(row[0].minX, card.width - row[3].maxX)
+        XCTAssertTrue(row.allSatisfy { $0.minY > card.height })
+        // The room below the card holds the row and a gap each side of it.
+        XCTAssertEqual(PhotoButtons.stripHeight, 30)
+        XCTAssertLessThanOrEqual(row[0].maxY, card.height + PhotoButtons.stripHeight)
     }
 
-    func testANarrowPhotoStacksThemAboveThePlane() {
-        // A phone screenshot at the medium size.
+    func testANarrowPhotoStillHasItsRowCentered() {
+        // A phone screenshot: the row is wider than the card, evenly on both sides.
         let card = CGSize(width: 56, height: 112)
-        XCTAssertEqual(PhotoButtons.layout(card: card, chats: 2, leadingRoom: 0).arrangement, .column)
-        let frames = PhotoButtons.chats(card: card, count: 2, arrangement: .column)
-        XCTAssertEqual(frames, [CGRect(x: 30, y: 34, width: 22, height: 22), CGRect(x: 30, y: 60, width: 22, height: 22)])
-        // Clear of the pick circle above them.
-        XCTAssertLessThanOrEqual(PhotoButtons.pick(card: card).maxY + PhotoButtons.gap, frames[0].minY)
+        let row = PhotoButtons.chats(card: card, count: 4)
+        XCTAssertEqual(row[0].minX, card.width - row[3].maxX)
+        XCTAssertLessThan(row[0].minX, 0)
+        // One chat sits right in the middle.
+        XCTAssertEqual(PhotoButtons.chats(card: card, count: 1), [CGRect(x: 18, y: 118, width: 20, height: 20)])
     }
 
-    func testATinyPhotoHoldsWhatFitsAndLeavesTheRestToTheMenu() {
-        // A phone screenshot at the small size holds one above the plane.
-        let card = CGSize(width: 46, height: 91)
-        let two = PhotoButtons.layout(card: card, chats: 2, leadingRoom: 0)
-        XCTAssertEqual(two.arrangement, .column)
-        XCTAssertEqual(two.count, 1)
-        XCTAssertEqual(PhotoButtons.chats(card: card, count: two.count, arrangement: two.arrangement).count, 1)
-        XCTAssertEqual(PhotoButtons.layout(card: card, chats: 1, leadingRoom: 0).arrangement, .column)
-        // Too small for even one.
-        let none = PhotoButtons.layout(card: CGSize(width: 40, height: 50), chats: 3, leadingRoom: 0)
-        XCTAssertEqual(none.arrangement, .none)
-        XCTAssertEqual(none.count, 0)
+    func testWithoutChatsThereIsNoRow() {
+        XCTAssertTrue(PhotoButtons.chats(card: CGSize(width: 144, height: 93), count: 0).isEmpty)
     }
 
-    func testFourChatsAreCutShortRatherThanDroppedAll() {
-        // A medium screenshot with its lock holds three of four across.
-        let card = CGSize(width: 144, height: 93)
-        let lock = PhotoButtons.leadingRoom(badges: 1, document: false)
-        let fit = PhotoButtons.layout(card: card, chats: 4, leadingRoom: lock)
-        XCTAssertEqual(fit.arrangement, .row)
-        XCTAssertEqual(fit.count, 3)
-        // A wider card holds all four.
-        XCTAssertEqual(PhotoButtons.layout(card: CGSize(width: 200, height: 120), chats: 4, leadingRoom: lock).count, 4)
-    }
-
-    func testWithoutChatsOnlyThePlaneShows() {
-        let card = CGSize(width: 144, height: 93)
-        XCTAssertEqual(PhotoButtons.layout(card: card, chats: 0, leadingRoom: 0).arrangement, .none)
-        XCTAssertTrue(PhotoButtons.chats(card: card, count: 0, arrangement: .row).isEmpty)
-    }
-
-    func testAPDFsCapsuleKeepsTheRowAway() {
-        let room = PhotoButtons.leadingRoom(badges: 0, document: true)
-        XCTAssertEqual(PhotoButtons.layout(card: CGSize(width: 144, height: 112), chats: 2, leadingRoom: room).arrangement, .column)
-        XCTAssertEqual(PhotoButtons.leadingRoom(badges: 0, document: false), 0)
+    func testThePaperPlaneStaysInTheCornerOfTheCard() {
+        XCTAssertEqual(PhotoButtons.plane(card: CGSize(width: 144, height: 93)), CGRect(x: 118, y: 67, width: 22, height: 22))
     }
 
     func testThePickCircleSitsOppositeTheCross() {

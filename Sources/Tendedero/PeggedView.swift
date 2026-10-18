@@ -14,7 +14,11 @@ struct PeggedView: View {
 
     @State private var swing: Double = 0
     @State private var arrived = false
-    @State private var hovering = false
+    @State private var cardHover = false
+    /// The pointer is over the photo or the row of icons under it, which
+    /// GrabView sees, as that row lies outside the card.
+    @State private var overStrip = false
+    private var hovering: Bool { cardHover || overStrip }
     /// Reduce Motion: no drop, swing or sway; photos fade in where they hang.
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -27,10 +31,13 @@ struct PeggedView: View {
     private var dimmed: Bool { line.found.map { $0[item.id] == nil } ?? false }
     /// Where this photo says what is typed in Search.
     private var places: [CGRect] { line.found?[item.id] ?? [] }
+    /// The chats whose icons stand under this photo.
+    private var chats: [ChatTarget] { ChatTarget.takes(item) ? ChatTarget.onPhotosNow : [] }
+    /// The room under the card that the row of icons takes, which the photo's
+    /// view reaches into; none without icons.
+    private var stripHeight: CGFloat { chats.isEmpty ? 0 : PhotoButtons.stripHeight }
     /// One like it was sent lately, and Settings marks it.
     private var sentBefore: Bool { Line.marksSentBefore && line.sentBefore[item.id] != nil }
-    /// The badges in the bottom leading corner, which the send buttons keep clear of.
-    private var badges: Int { item.isDocument ? 0 : (item.covered ? 1 : 0) + (sentBefore ? 1 : 0) }
 
     var body: some View {
         VStack(spacing: -12) {
@@ -51,6 +58,8 @@ struct PeggedView: View {
         .onAppear(perform: arrive)
         .onChange(of: item.flying) { was, now in if was && !now { land() } }
         .onChange(of: line.gust) { _, _ in breeze() }
+        // A line tucked away under the pointer never sees it leave.
+        .onChange(of: line.revealed) { _, _ in overStrip = false }
         .onChange(of: copied) { _, isCopied in if isCopied { nudge(3) } }
         .onChange(of: item.pinned) { _, _ in nudge(3) }
         // Search: what does not say it steps back.
@@ -182,15 +191,17 @@ struct PeggedView: View {
             }
             .overlay(alignment: .bottomTrailing) {
                 // The paper plane sends this photo into the app in front, like
-                // a chat; ChatGPT and Claude beside it, into a chat of theirs.
-                // Drawn here and clicked through GrabView, like the cross.
+                // a chat. Drawn here and clicked through GrabView, like the cross.
                 sendButtons
                     .opacity(hovering && !dragging ? 1 : 0)
                     .scaleEffect(hovering ? 1 : 0.6)
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
             }
-            .overlay(GrabArea(item: item, line: line))
+            // ChatGPT, Claude, WhatsApp and Gmail under the card.
+            .overlay(alignment: .bottom) { chatStrip }
+            .overlay(GrabArea(item: item, line: line, overStrip: $overStrip)
+                .padding(.bottom, -stripHeight))
             .overlay(alignment: .bottom) {
                 if copied {
                     Label(L("Copied"), systemImage: "checkmark")
@@ -199,42 +210,52 @@ struct PeggedView: View {
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
                         .controlGlass(capsule: true)
-                        .offset(y: 16)
+                        // Below the row of icons, when there is one.
+                        .offset(y: 16 + stripHeight)
                         .transition(.opacity.combined(with: .offset(y: -4)))
                 }
             }
             .animation(.easeOut(duration: 0.18), value: hovering)
             .animation(.easeOut(duration: 0.2), value: copied)
-            .onHover { hovering = $0 }
+            .onHover { cardHover = $0 }
             .background(
                 GeometryReader { g in
+                    // Under the card too while its icons show, so a click on one
+                    // does not go through to the app behind.
+                    let frame = g.frame(in: .global)
+                    let reach = hovering ? stripHeight : 0
                     Color.clear.preference(key: HitRectsKey.self,
-                                           value: item.falling ? [:] : [item.id: g.frame(in: .global)])
+                                           value: item.falling ? [:] : [item.id: CGRect(x: frame.minX, y: frame.minY,
+                                                                                         width: frame.width, height: frame.height + reach)])
                 }
             )
     }
 
-    /// The paper plane, with the chats' icons beside it where the photo has
-    /// room for them, as `PhotoButtons` places them.
+    /// The paper plane, in the bottom trailing corner of the card.
     private var sendButtons: some View {
-        let chats = ChatTarget.takes(item) ? ChatTarget.onPhotosNow : []
-        let fit = PhotoButtons.layout(card: Self.cardSize(for: item.thumb.size), chats: chats.count,
-                                      leadingRoom: PhotoButtons.leadingRoom(badges: badges, document: item.isDocument))
-        let stack = fit.arrangement == .column ? AnyLayout(VStackLayout(spacing: PhotoButtons.gap))
-                                               : AnyLayout(HStackLayout(spacing: PhotoButtons.gap))
-        return stack {
-            // As many as the card holds, the first ones.
-            ForEach(Array(chats.prefix(fit.count))) { chat in
+        Image(systemName: "paperplane.fill")
+            .font(.system(size: 9, weight: .bold))
+            .foregroundStyle(.white)
+            .frame(width: PhotoButtons.size, height: PhotoButtons.size)
+            .background(Color.accentColor, in: Circle())
+            .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
+            .padding(PhotoButtons.inset)
+    }
+
+    /// The chats' icons in a row under the card, so the card itself keeps
+    /// only its own buttons. Drawn here and clicked through GrabView, which
+    /// reaches below the card as far as they do.
+    private var chatStrip: some View {
+        HStack(spacing: PhotoButtons.chatGap) {
+            ForEach(chats) { chat in
                 chatIcon(chat)
             }
-            Image(systemName: "paperplane.fill")
-                .font(.system(size: 9, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: PhotoButtons.size, height: PhotoButtons.size)
-                .background(Color.accentColor, in: Circle())
-                .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
         }
-        .padding(PhotoButtons.inset)
+        .offset(y: PhotoButtons.stripGap + PhotoButtons.chatSize)
+        .opacity(hovering && !dragging ? 1 : 0)
+        .offset(y: hovering ? 0 : -6)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
     /// The app's own icon, wherever it is on this Mac. An app icon keeps a
@@ -247,18 +268,18 @@ struct PeggedView: View {
                 Image(nsImage: icon)
                     .resizable()
                     .interpolation(.high)
-                    .frame(width: PhotoButtons.size * 1.22, height: PhotoButtons.size * 1.22)
+                    .frame(width: PhotoButtons.chatSize * 1.22, height: PhotoButtons.chatSize * 1.22)
             } else {
                 Text(chat.mark)
-                    .font(.system(size: 8, weight: .bold, design: .rounded))
+                    .font(.system(size: 7.5, weight: .bold, design: .rounded))
                     .minimumScaleFactor(0.7)
                     .lineLimit(1)
                     .foregroundStyle(.primary)
-                    .frame(width: PhotoButtons.size, height: PhotoButtons.size)
+                    .frame(width: PhotoButtons.chatSize, height: PhotoButtons.chatSize)
                     .controlGlass(circle: true)
             }
         }
-        .frame(width: PhotoButtons.size, height: PhotoButtons.size)
+        .frame(width: PhotoButtons.chatSize, height: PhotoButtons.chatSize)
         .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
     }
 
@@ -413,55 +434,33 @@ enum Frame {
 /// either: the photo's menu has them all the same. Counted from the card's
 /// top left, left to right; GrabView mirrors them for right to left.
 enum PhotoButtons {
-    /// A send button across, and the room between them and round them.
+    /// A send button across, and the room round it.
     static let size: CGFloat = 22
-    static let gap: CGFloat = 4
     static let inset: CGFloat = 4
     /// The pick circle, drawn as the corner cross is.
     static let pickSize: CGFloat = 20
     static let pickInset: CGFloat = 3
-
-    enum Arrangement: Equatable {
-        case row, column, none
-    }
-
-    /// The room the bottom leading corner takes, which a row keeps clear
-    /// of: the lock and the paper plane of a photo sent before, each 18 pt
-    /// and 4 apart, or a PDF's capsule.
-    static func leadingRoom(badges: Int, document: Bool) -> CGFloat {
-        if document { return 72 }
-        guard badges > 0 else { return 0 }
-        return 5 + CGFloat(badges) * 18 + CGFloat(badges - 1) * 4 + gap
-    }
-
-    /// How a card of this size holds the paper plane and that many chats:
-    /// all of them in a row, when the card is wide enough beside its lock
-    /// badges or PDF capsule; else all in a column above the plane, clear of
-    /// the pick circle; else as many as the roomier of the two holds, the
-    /// first ones, and none when neither holds one.
-    static func layout(card: CGSize, chats: Int, leadingRoom: CGFloat) -> (arrangement: Arrangement, count: Int) {
-        guard chats > 0 else { return (.none, 0) }
-        let step = size + gap
-        let row = max(0, Int(((card.width - leadingRoom - inset - size) / step).rounded(.down)))
-        let column = max(0, Int(((card.height - pickInset - pickSize - gap - inset - size) / step).rounded(.down)))
-        if row >= chats { return (.row, chats) }
-        if column >= chats { return (.column, chats) }
-        if row == 0 && column == 0 { return (.none, 0) }
-        return row >= column ? (.row, row) : (.column, column)
-    }
+    /// The chats' icons, in a row under the card: each, the room between
+    /// them, the room between the card and the row, and the room the row
+    /// takes below the card, which GrabView and the hit rect reach into.
+    static let chatSize: CGFloat = 20
+    static let chatGap: CGFloat = 4
+    static let stripGap: CGFloat = 6
+    static var stripHeight: CGFloat { stripGap + chatSize + 4 }
 
     /// The paper plane, in the bottom trailing corner.
     static func plane(card: CGSize) -> CGRect {
         CGRect(x: card.width - inset - size, y: card.height - inset - size, width: size, height: size)
     }
 
-    /// Each chat's icon, the first the farthest from the paper plane.
-    static func chats(card: CGSize, count: Int, arrangement: Arrangement) -> [CGRect] {
-        guard arrangement != .none, count > 0 else { return [] }
-        let corner = Self.plane(card: card)
+    /// Each chat's icon, side by side in the middle under the card, which
+    /// is counted from its top left; the first at the leading end.
+    static func chats(card: CGSize, count: Int) -> [CGRect] {
+        guard count > 0 else { return [] }
+        let row = CGFloat(count) * chatSize + CGFloat(count - 1) * chatGap
+        let start = (card.width - row) / 2
         return (0..<count).map { i in
-            let step = CGFloat(count - i) * (size + gap)
-            return arrangement == .row ? corner.offsetBy(dx: -step, dy: 0) : corner.offsetBy(dx: 0, dy: -step)
+            CGRect(x: start + CGFloat(i) * (chatSize + chatGap), y: card.height + stripGap, width: chatSize, height: chatSize)
         }
     }
 

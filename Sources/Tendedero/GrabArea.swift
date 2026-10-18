@@ -11,12 +11,15 @@ import SwiftUI
 /// - Nowhere that accepts it: the photo flies back to the line.
 ///
 /// Click copies, press and hold opens Markup, the corner cross discards, or
-/// unpins a pinned photo, and the paper plane in the opposite corner sends,
-/// with ChatGPT and Claude beside it. ⌘-click, or the circle opposite the
+/// unpins a pinned photo, and the paper plane in the opposite corner sends.
+/// ChatGPT, Claude, WhatsApp and Gmail stand in a row under the photo, which
+/// this view reaches down to. ⌘-click, or the circle opposite the
 /// cross, picks several, which go together.
 struct GrabArea: NSViewRepresentable {
     let item: Pegged
     let line: Line
+    /// The pointer is over the photo or the row of icons under it.
+    @Binding var overStrip: Bool
 
     func makeNSView(context: Context) -> GrabView {
         let view = GrabView()
@@ -69,9 +72,11 @@ struct GrabArea: NSViewRepresentable {
         view.lockBadges = (item.covered ? 1 : 0) + (sent == nil ? 0 : 1)
         let picked = line.pickedIDs.contains(id)
         view.picked = picked
-        // ChatGPT and Claude beside the paper plane, where the photo has room.
-        view.leadingRoom = PhotoButtons.leadingRoom(badges: item.isDocument ? 0 : view.lockBadges, document: item.isDocument)
-        view.chats = ChatTarget.takes(item) ? ChatTarget.onPhotosNow : []
+        let chats = ChatTarget.takes(item) ? ChatTarget.onPhotosNow : []
+        view.chats = chats
+        view.stripHeight = chats.isEmpty ? 0 : PhotoButtons.stripHeight
+        let over = $overStrip
+        view.onHoverChange = { inside in if over.wrappedValue != inside { over.wrappedValue = inside } }
         // A right-click on one of them: the questions from Settings.
         let questions = AIQuestions.offered()
         view.hasQuestions = !questions.isEmpty
@@ -299,7 +304,7 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     var onPick: () -> Void = {}
     /// The circle opposite the cross: picks the photo, or puts it back.
     var onPickCircle: () -> Void = {}
-    /// ChatGPT or Claude beside the paper plane.
+    /// A chat's icon under the photo.
     var onSendToChat: (ChatTarget) -> Void = { _ in }
     /// The paper plane: into the app in front.
     var onSend: () -> Void = {}
@@ -336,14 +341,16 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     }
     /// The photo is picked: its circle puts it back.
     var picked = false
-    /// The chats beside the paper plane, and the room the lock's corner
-    /// takes, which together say where they fit.
+    /// The chats under the photo, and the room below it that this view
+    /// reaches into for their icons: the card is the rest of its height.
     var chats: [ChatTarget] = [] {
         didSet { if chats != oldValue { placeTips() } }
     }
-    var leadingRoom: CGFloat = 0 {
-        didSet { if leadingRoom != oldValue { placeTips() } }
+    var stripHeight: CGFloat = 0 {
+        didSet { if stripHeight != oldValue { placeTips() } }
     }
+    /// The pointer is over this view, the photo or the row under it.
+    var onHoverChange: (Bool) -> Void = { _ in }
     private var tips: [NSView.ToolTipTag] = []
 
     private var downPoint: NSPoint?
@@ -380,8 +387,11 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     /// The paper plane drawn in the bottom trailing corner, the cross's opposite.
     static let sendHitSize: CGFloat = 30
 
+    /// The card's height: all of this view's but the room below it.
+    private var cardHeight: CGFloat { bounds.height - stripHeight }
+
     private var sendRect: NSRect {
-        placed(CGRect(x: bounds.width - Self.sendHitSize, y: bounds.height - Self.sendHitSize,
+        placed(CGRect(x: bounds.width - Self.sendHitSize, y: cardHeight - Self.sendHitSize,
                       width: Self.sendHitSize, height: Self.sendHitSize))
     }
 
@@ -398,11 +408,9 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         return placed(rect)
     }
 
-    /// ChatGPT's and Claude's icons beside the paper plane, where they fit.
+    /// The chats' icons in a row under the card.
     private var chatRects: [NSRect] {
-        let card = bounds.size
-        let fit = PhotoButtons.layout(card: card, chats: chats.count, leadingRoom: leadingRoom)
-        return PhotoButtons.chats(card: card, count: fit.count, arrangement: fit.arrangement)
+        PhotoButtons.chats(card: CGSize(width: bounds.width, height: cardHeight), count: chats.count)
             .map { placed($0.insetBy(dx: -2, dy: -2)) }
     }
 
@@ -418,7 +426,7 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         // Each badge after the first adds its 18 pt and the 4 between them.
         let width = Self.lockHitSize + CGFloat(max(0, lockBadges - 1)) * 22
         let x = userInterfaceLayoutDirection == .rightToLeft ? bounds.width - width : 0
-        return NSRect(x: x, y: isFlipped ? bounds.height - Self.lockHitSize : 0,
+        return NSRect(x: x, y: isFlipped ? cardHeight - Self.lockHitSize : stripHeight,
                       width: width, height: Self.lockHitSize)
     }
 
@@ -468,6 +476,32 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     private func isPick(_ event: NSEvent) -> Bool {
         !event.modifierFlags.intersection([.command, .shift]).isEmpty
     }
+
+    // MARK: Pointer
+
+    /// Only the card and the chats' icons take the pointer, not the room
+    /// between them below it.
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        guard stripHeight > 0 else { return super.hitTest(point) }
+        let local = convert(point, from: superview)
+        if NSRect(x: 0, y: stripHeight, width: bounds.width, height: cardHeight).contains(local) {
+            return super.hitTest(point)
+        }
+        return chatRects.contains { $0.contains(local) } ? self : nil
+    }
+
+    /// The whole view, the row under the card included, says when the pointer
+    /// is over it, so the icons stay while it goes down to one.
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        for area in trackingAreas { removeTrackingArea(area) }
+        addTrackingArea(NSTrackingArea(rect: .zero, options: [.mouseEnteredAndExited, .mouseMoved, .activeAlways, .inVisibleRect],
+                                       owner: self, userInfo: nil))
+    }
+
+    override func mouseEntered(with event: NSEvent) { onHoverChange(true) }
+    override func mouseMoved(with event: NSEvent) { onHoverChange(true) }
+    override func mouseExited(with event: NSEvent) { onHoverChange(false) }
 
     override func mouseDown(with event: NSEvent) {
         // Control-click is the Mac's right click: it opens the menu, rather
@@ -618,10 +652,12 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
 
     /// The drag preview keeps the photo's aspect ratio inside the card.
     private func imageFrame() -> NSRect {
-        guard let size = dragImage?.size, size.width > 0, size.height > 0 else { return bounds }
-        let scale = min(bounds.width / size.width, bounds.height / size.height)
+        guard let size = dragImage?.size, size.width > 0, size.height > 0 else {
+            return NSRect(x: 0, y: stripHeight, width: bounds.width, height: cardHeight)
+        }
+        let scale = min(bounds.width / size.width, cardHeight / size.height)
         let w = size.width * scale, h = size.height * scale
-        return NSRect(x: (bounds.width - w) / 2, y: (bounds.height - h) / 2, width: w, height: h)
+        return NSRect(x: (bounds.width - w) / 2, y: stripHeight + (cardHeight - h) / 2, width: w, height: h)
     }
 }
 
