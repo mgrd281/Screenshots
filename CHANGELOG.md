@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Invoices and order pages with the labels in one column and the values
+  beside them, like Vorname:, Nachname:, Adresse:, PLZ: and Stadt:, have
+  those values covered, and the name the bill goes to with its address.
 - Smart selection: when you take a screenshot, the picture, card, button
   or paragraph under the pointer is outlined, and a click takes just that.
   Scroll for a bigger or smaller part. A drag keeps to the edges on screen,
