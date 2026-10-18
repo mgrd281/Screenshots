@@ -759,3 +759,9 @@
 "Welcome! Discover Snapfly." = "Xoş gəldin! Snapfly-ı kəşf et.";
 "What Gets Covered" = "Nə örtülür";
 "You're all set" = "Hər şey hazırdır";
+"Click what is outlined or drag over an area. Scroll for a bigger or smaller part. Return takes the whole screen, Escape cancels." = "Çərçivəyə alınana klik et və ya bir sahənin üzərindən sürüşdür. Daha böyük və ya kiçik hissə üçün sürüşdürmə təkərini fırlat. Return bütün ekranı çəkir, Escape ləğv edir.";
+"Choose what to take: click what is outlined, drag over an area, or press Return for the whole screen. Scroll for a bigger or smaller part. It is taken when the countdown ends." = "Nə çəkiləcəyini seç: çərçivəyə alınana klik et, bir sahənin üzərindən sürüşdür və ya bütün ekran üçün Return bas. Daha böyük və ya kiçik hissə üçün sürüşdürmə təkərini fırlat. Geri sayım bitəndə çəkilir.";
+"Click what is outlined or drag over an area to record it. Scroll for a bigger or smaller part. Return records the whole screen, Escape cancels." = "Yazmaq üçün çərçivəyə alınana klik et və ya bir sahənin üzərindən sürüşdür. Daha böyük və ya kiçik hissə üçün sürüşdürmə təkərini fırlat. Return bütün ekranı yazır, Escape ləğv edir.";
+"Click what is outlined or drag over the part to keep. Scroll for a bigger or smaller part. Return keeps the whole photo, Escape cancels." = "Çərçivəyə alınana klik et və ya qalacaq hissənin üzərindən sürüşdür. Daha böyük və ya kiçik hissə üçün sürüşdürmə təkərini fırlat. Return bütün fotonu saxlayır, Escape ləğv edir.";
+"Smart selection" = "Ağıllı seçim";
+"Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "Göstəricinin altındakı şəkli və ya hissəni çərçivəyə alır, sürüşdürməni onun kənarlarına bağlayır və boş yeri kəsir. Sərbəst sürüşdürmək üçün ⌘ düyməsini saxla.";

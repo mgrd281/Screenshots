@@ -757,3 +757,9 @@
 "Welcome! Discover Snapfly." = "欢迎！来认识 Snapfly。";
 "What Gets Covered" = "会遮盖什么";
 "You're all set" = "一切就绪";
+"Click what is outlined or drag over an area. Scroll for a bigger or smaller part. Return takes the whole screen, Escape cancels." = "点按框出的内容，或拖移选择区域。滚动可选择更大或更小的部分。按 Return 键截取整个屏幕，按 Esc 取消。";
+"Choose what to take: click what is outlined, drag over an area, or press Return for the whole screen. Scroll for a bigger or smaller part. It is taken when the countdown ends." = "选择要截取的内容：点按框出的内容、拖移选择区域，或按 Return 键选择整个屏幕。滚动可选择更大或更小的部分。倒计时结束时截取。";
+"Click what is outlined or drag over an area to record it. Scroll for a bigger or smaller part. Return records the whole screen, Escape cancels." = "点按框出的内容或拖移选择区域进行录制。滚动可选择更大或更小的部分。按 Return 键录制整个屏幕，按 Esc 取消。";
+"Click what is outlined or drag over the part to keep. Scroll for a bigger or smaller part. Return keeps the whole photo, Escape cancels." = "点按框出的内容，或拖过要保留的部分。滚动可选择更大或更小的部分。按 Return 键保留整张照片，按 Esc 取消。";
+"Smart selection" = "智能选择";
+"Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "框出指针下方的图片或部分，拖移时贴合其边缘，并裁掉空白。按住 ⌘ 可自由拖移。";

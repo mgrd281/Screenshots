@@ -759,3 +759,9 @@
 "Welcome! Discover Snapfly." = "स्वागत है! Snapfly को जानें।";
 "What Gets Covered" = "क्या ढका जाता है";
 "You're all set" = "सब तैयार है";
+"Click what is outlined or drag over an area. Scroll for a bigger or smaller part. Return takes the whole screen, Escape cancels." = "घेरे गए हिस्से पर क्लिक करें या किसी हिस्से पर खींचें। बड़े या छोटे हिस्से के लिए स्क्रॉल करें। Return पूरी स्क्रीन लेता है, Escape रद्द करता है।";
+"Choose what to take: click what is outlined, drag over an area, or press Return for the whole screen. Scroll for a bigger or smaller part. It is taken when the countdown ends." = "चुनें कि क्या लेना है: घेरे गए हिस्से पर क्लिक करें, किसी हिस्से पर खींचें, या पूरी स्क्रीन के लिए Return दबाएँ। बड़े या छोटे हिस्से के लिए स्क्रॉल करें। उलटी गिनती ख़त्म होने पर लिया जाता है।";
+"Click what is outlined or drag over an area to record it. Scroll for a bigger or smaller part. Return records the whole screen, Escape cancels." = "रिकॉर्ड करने के लिए घेरे गए हिस्से पर क्लिक करें या किसी हिस्से पर खींचें। बड़े या छोटे हिस्से के लिए स्क्रॉल करें। Return पूरी स्क्रीन रिकॉर्ड करता है, Escape रद्द करता है।";
+"Click what is outlined or drag over the part to keep. Scroll for a bigger or smaller part. Return keeps the whole photo, Escape cancels." = "घेरे गए हिस्से पर क्लिक करें या रखने वाले हिस्से पर ड्रैग करें। बड़े या छोटे हिस्से के लिए स्क्रॉल करें। Return पूरी फ़ोटो रखता है, Escape रद्द करता है।";
+"Smart selection" = "स्मार्ट चयन";
+"Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "पॉइंटर के नीचे की तस्वीर या हिस्से को घेरता है, खींचने को उसके किनारों से जोड़ता है और ख़ाली जगह काटता है। खुलकर खींचने के लिए ⌘ दबाए रखें।";

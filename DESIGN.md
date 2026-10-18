@@ -1130,6 +1130,30 @@ apps.
     Return takes the whole screen, and Escape or a right-click cancels.
   - **At rest**, the still screen is dimmed by black at 12%, and the window
     under the pointer is tinted with the accent at 22%.
+  - **Smart selection** (`SmartSelection.swift`, `SmartArea.swift`), on
+    unless turned off under General › Screenshots, outlines the part under
+    the pointer instead: a photo, a card, a button, a paragraph.
+    - The part has a 2 pt stroke of the accent just outside it over a fill
+      of the accent at 12%, and the size capsule under its trailing corner.
+    - It is the smallest part found there, at least 16 pt each way. The
+      scroll wheel (away from you, or fingers up, for bigger, whichever way
+      the Mac scrolls; a notch, or 24 pt on a trackpad) and ↑ and ↓ step out
+      to bigger parts, then the window (the tint above), then the whole
+      screen (no tint). A click takes what is outlined.
+    - Parts come from the still picture itself, read at one cell a point:
+      runs of at least 6 pt of plain rows or columns of the empty space's
+      colour part one thing from the next, and each part is read again for
+      the parts in it. In the direct edition, with Accessibility allowed,
+      the app under the pointer adds what it says is there (a picture on a
+      page, a button, a list), so a photo on a background of its own colour
+      is outlined too. Of two parts within 4 pt of each other, the smaller
+      stays.
+    - A drag's corners keep to the edges of the parts and the window within
+      6 pt; ⌘ lets them go anywhere. Letting go cuts the plain rows and
+      columns round what was dragged over down to an 8 pt margin on each
+      side, or less where there was less; with ⌘ held, it stays as dragged.
+    - The hint says to click what is outlined and to scroll for a bigger or
+      smaller part.
   - **While dragging**, everything outside the area is dimmed by black at
     35%, and the area has a 1 pt edge of white at 90%.
   - **The size** of the area, in points, sits in a capsule under its trailing
@@ -1158,6 +1182,12 @@ apps.
     up it is not meant, and the next try waits.
   - Letting go keeps the part at once. Return keeps the whole photo, and
     Escape, a right-click or a click beside the photo cancels.
+  - **Smart selection**, as on the capture overlay: the part of the photo
+    under the pointer is outlined with the accent's 2 pt stroke, outside it
+    on the photo black at 30%, with the size capsule giving its pixels; a
+    click keeps it. The scroll wheel and ↑ and ↓ choose a bigger or smaller
+    part; the whole photo stays Return's. A drag keeps to the edges in the
+    photo within 6 pt and is trimmed to an 8 pt margin; ⌘ turns both off.
   - The capture overlay's hint (`CaptureHint`) sits above the Dock and
     hides once a drag begins.
   - The cursor is the crosshair over the photo and while dragging, and the

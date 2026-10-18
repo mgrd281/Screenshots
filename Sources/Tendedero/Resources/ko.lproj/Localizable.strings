@@ -757,3 +757,9 @@
 "Welcome! Discover Snapfly." = "환영합니다! Snapfly를 알아보세요.";
 "What Gets Covered" = "무엇이 가려지나요";
 "You're all set" = "모두 준비됐어요";
+"Click what is outlined or drag over an area. Scroll for a bigger or smaller part. Return takes the whole screen, Escape cancels." = "테두리가 표시된 부분을 클릭하거나 영역을 드래그하세요. 스크롤하면 더 큰 부분이나 작은 부분을 골라요. Return 키는 화면 전체를 찍고, Esc 키는 취소해요.";
+"Choose what to take: click what is outlined, drag over an area, or press Return for the whole screen. Scroll for a bigger or smaller part. It is taken when the countdown ends." = "찍을 대상을 고르세요: 테두리가 표시된 부분을 클릭하거나 영역을 드래그하거나, 화면 전체는 Return 키를 누르세요. 스크롤하면 더 큰 부분이나 작은 부분을 골라요. 카운트다운이 끝나면 찍혀요.";
+"Click what is outlined or drag over an area to record it. Scroll for a bigger or smaller part. Return records the whole screen, Escape cancels." = "기록하려면 테두리가 표시된 부분을 클릭하거나 영역을 드래그하세요. 스크롤하면 더 큰 부분이나 작은 부분을 골라요. Return 키는 화면 전체를 기록하고, Esc 키는 취소해요.";
+"Click what is outlined or drag over the part to keep. Scroll for a bigger or smaller part. Return keeps the whole photo, Escape cancels." = "테두리가 표시된 부분을 클릭하거나 남길 부분 위로 드래그하세요. 스크롤하면 더 큰 부분이나 작은 부분을 골라요. Return 키는 사진 전체를 남기고, Esc 키는 취소해요.";
+"Smart selection" = "스마트 선택";
+"Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "포인터 아래의 이미지나 부분에 테두리를 표시하고, 드래그를 그 가장자리에 맞추며, 빈 공간을 잘라내요. 자유롭게 드래그하려면 ⌘ 키를 누르고 있으세요.";

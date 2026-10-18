@@ -757,3 +757,9 @@
 "Welcome! Discover Snapfly." = "ようこそ！Snapflyを見てみましょう。";
 "What Gets Covered" = "何が隠されるか";
 "You're all set" = "準備ができました";
+"Click what is outlined or drag over an area. Scroll for a bigger or smaller part. Return takes the whole screen, Escape cancels." = "枠で囲まれたものをクリックするか、範囲をドラッグします。スクロールで大きい部分や小さい部分を選びます。Returnキーで画面全体、escでキャンセルします。";
+"Choose what to take: click what is outlined, drag over an area, or press Return for the whole screen. Scroll for a bigger or smaller part. It is taken when the countdown ends." = "撮るものを選びます：枠で囲まれたものをクリックするか、範囲をドラッグするか、Returnキーで画面全体を選びます。スクロールで大きい部分や小さい部分を選びます。カウントダウンが終わると撮影されます。";
+"Click what is outlined or drag over an area to record it. Scroll for a bigger or smaller part. Return records the whole screen, Escape cancels." = "収録するには枠で囲まれたものをクリックするか、範囲をドラッグします。スクロールで大きい部分や小さい部分を選びます。Returnキーで画面全体を収録、escでキャンセルします。";
+"Click what is outlined or drag over the part to keep. Scroll for a bigger or smaller part. Return keeps the whole photo, Escape cancels." = "枠で囲まれたものをクリックするか、残す部分の上をドラッグします。スクロールで大きい部分や小さい部分を選びます。Returnキーで写真全体を残し、escでキャンセルします。";
+"Smart selection" = "スマート選択";
+"Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "ポインタの下の画像や部分を枠で囲み、ドラッグをその縁に合わせ、余白を切り取ります。自由にドラッグするには⌘キーを押したままにします。";
