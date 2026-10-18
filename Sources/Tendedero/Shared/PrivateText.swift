@@ -1016,9 +1016,9 @@ enum Finder {
             guard let block = labels[label] else { continue }
             var last = i
             for n in 0..<block.lines {
-                // A label sits a little further from its first line than the
-                // lines from each other.
-                guard let next = Self.line(below: last, in: lines, gap: n == 0 ? 2 : 1.1),
+                // A label sits further from its first line than the lines
+                // from each other, as a card's heading does.
+                guard let next = Self.line(below: last, in: lines, gap: n == 0 ? 2.5 : 1.1),
                       labels[normalized(lines[next].string)] == nil else { break }
                 let detail = kind(of: lines[next].string, first: n == 0, in: block)
                 if chosen.contains(detail) {
@@ -1046,21 +1046,35 @@ enum Finder {
     /// The line right under another, starting in the same column, or nil
     /// when the gap is one a new section would leave.
     private static func line(below index: Int, in lines: [TextLine], gap: CGFloat) -> Int? {
-        let above = lines[index].box
+        let boxes: [CGRect] = lines.map(\.box)
+        return line(below: index, in: boxes, gap: gap)
+    }
+
+    /// The same, from where the lines are. The gap counts in the taller of
+    /// the two lines: a word with nothing below its baseline, like "Kunde",
+    /// is read shorter than the name under it.
+    static func line(below index: Int, in boxes: [CGRect], gap: CGFloat) -> Int? {
+        let above = boxes[index]
         var best: Int?
-        for (i, line) in lines.enumerated() where i != index {
-            let box = line.box
+        for (i, box) in boxes.enumerated() where i != index {
             guard box.maxY <= above.minY + above.height * 0.3,
-                  above.minY - box.maxY < above.height * gap,
+                  above.minY - box.maxY < max(above.height, box.height) * gap,
                   abs(box.minX - above.minX) < 0.03 else { continue }
-            if let current = best, lines[current].box.maxY >= box.maxY { continue }
+            if let current = best, boxes[current].maxY >= box.maxY { continue }
             best = i
         }
         return best
     }
 
+    /// Whether a line is a label that announces what follows it.
+    static func isLabel(_ line: String) -> Bool {
+        labels[normalized(line)] != nil
+    }
+
+    /// A label as the list has it: lowercased, without the colon after it,
+    /// or the dots of a menu read on its row, as in "Kunde ⋯".
     private static func normalized(_ text: String) -> String {
-        text.trimmingCharacters(in: CharacterSet.whitespaces.union(CharacterSet(charactersIn: ":"))).lowercased()
+        text.trimmingCharacters(in: CharacterSet.whitespaces.union(CharacterSet(charactersIn: ":.…⋯•·"))).lowercased()
     }
 
     private static func fold(_ word: String) -> String {

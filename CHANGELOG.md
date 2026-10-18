@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Names finds the customer under a card's heading, like Kunde on a shop's
+  order page, where it sits further below than the lines under it, and
+  with the menu's dots beside the heading.
 - Crop, quickly: choose Crop… in a photo's menu, or ⌥-click the photo, and
   it opens large. Drag over the part to keep, and it is kept as you let go;
   Return keeps the whole photo. It goes out cropped, and the file stays as

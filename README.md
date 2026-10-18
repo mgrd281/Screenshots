@@ -232,8 +232,9 @@ each one that has something covered. Rest the pointer on the lock, or open
 the photo's menu, and it says what was covered, like Names · QR codes and
 barcodes; VoiceOver says it too. Copy Text leaves them out too. Anything
 it misses, hide by hand with Hide Part in a photo's menu. Labels like Billing
-address, Recipient, Kundennummer or Diagnosis tell it where a whole block is
-private.
+address, Customer, Recipient, Kundennummer or Diagnosis tell it where a whole
+block is private, on their own line or as a card's heading, like Kunde on a
+shop's order page.
 
 API keys and tokens are found by how services start them, like `sk-`,
 `ghp_` or `AKIA`, by what follows Bearer or a setting like `API_KEY=`, by a
