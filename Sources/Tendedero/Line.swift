@@ -829,6 +829,18 @@ final class Line: ObservableObject {
         showCard(.order, for: id, target: Languages.own)
     }
 
+    /// Write a Reply: the reply a customer can be sent, written by the AI
+    /// assistant from the covered screenshot.
+    func writeReply(_ id: UUID) {
+        showCard(.reply, for: id, target: Languages.own)
+    }
+
+    /// Ask Claude, or ChatGPT: what the covered screenshot shows, or an
+    /// answer about it.
+    func askAssistant(_ id: UUID) {
+        showCard(.ask, for: id, target: Languages.own)
+    }
+
     private func showCard(_ kind: TextCardModel.Kind, for id: UUID, target: Locale.Language) {
         guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
         let model = TextCardModel(kind, photo: id, url: item.url, line: self, target: target)

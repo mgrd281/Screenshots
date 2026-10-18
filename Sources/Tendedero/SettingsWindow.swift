@@ -443,6 +443,36 @@ final class Preferences: ObservableObject {
 
     var intelligenceAvailable: Bool { Finder.intelligenceAvailable }
 
+    // MARK: The AI assistant
+
+    var aiProvider: AIProvider {
+        get { AIAccount.provider }
+        set { change { AIAccount.provider = newValue } }
+    }
+
+    /// Whether the assistant has a key, for what it can be asked to do.
+    var aiSetUp: Bool { AIAccount.isSetUp }
+
+    /// The assistant also reads each screenshot's words, for private
+    /// details the patterns miss; only with a key.
+    var assistantFindsPrivate: Bool {
+        get { AIAccount.findsPrivate && AIAccount.isSetUp }
+        set {
+            change {
+                AIAccount.findsPrivate = newValue
+                line.readPrivateDetails()
+            }
+        }
+    }
+
+    /// A key kept or forgotten: what depends on it is shown again, and read
+    /// again where the assistant reads along.
+    func aiKeyChanged() {
+        change {
+            if AIAccount.findsPrivate { line.readPrivateDetails() }
+        }
+    }
+
     /// Test on a Sample: the sample as the kinds checked now cover it, and
     /// what that covered, while it is shown.
     struct SelfTestOutcome {
@@ -1073,6 +1103,7 @@ private struct LinePane: View {
             ChatButtonSection(prefs: prefs)
             SavedMessagesSection(prefs: prefs)
             AIQuestionsSection(prefs: prefs)
+            AIAssistantSection(prefs: prefs)
             BookkeepingSection(prefs: prefs)
             ShopHeaderSection(prefs: prefs)
             Section(L("Screenshot button")) {
@@ -1586,6 +1617,13 @@ private struct PrivacyPane: View {
                          : L("Needs Apple Intelligence on this device."))
                 }
                 .disabled(!prefs.intelligenceAvailable)
+                Toggle(isOn: $prefs.assistantFindsPrivate) {
+                    Text(String(format: L("Find more with %@"), prefs.aiProvider.name))
+                    Text(prefs.aiSetUp
+                         ? L("Sends the words of each screenshot to the AI assistant set up under General, to cover what the patterns miss. Covering takes a few seconds longer.")
+                         : L("Needs an AI assistant key, under General."))
+                }
+                .disabled(!prefs.aiSetUp)
             } header: {
                 Text(L("Protection"))
             } footer: {
@@ -1830,6 +1868,78 @@ private struct SavedMessagesSection: View {
 
 /// The questions a photo can go into ChatGPT or Claude with: one row each,
 /// as the saved messages, with a way back to the standard ones.
+/// Claude or ChatGPT, with the owner's own key, for Write a Reply, Ask and
+/// Order Details. The key goes to the keychain as it is saved, and the
+/// field only says which one is kept, by its last four characters.
+private struct AIAssistantSection: View {
+    @ObservedObject var prefs: Preferences
+    @State private var key = ""
+    @State private var model = ""
+    @State private var kept: String?
+    @State private var failed = false
+
+    var body: some View {
+        Section {
+            Picker(L("Assistant"), selection: $prefs.aiProvider) {
+                ForEach(AIProvider.allCases) { provider in
+                    Text(provider.name).tag(provider)
+                }
+            }
+            .pickerStyle(.segmented)
+            SecureField(L("API key"), text: $key,
+                        prompt: Text(kept.map { String(format: L("Saved: %@"), $0) } ?? L("Paste your key here")))
+                .onSubmit(save)
+            HStack(spacing: 8) {
+                if kept != nil {
+                    SettingsButton(L("Remove Key")) { remove() }
+                }
+                if failed {
+                    Text(L("The keychain did not keep the key."))
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+                Spacer()
+                SettingsButton(L("Get a Key…")) { NSWorkspace.shared.open(prefs.aiProvider.keyPage) }
+                Button(L("Save"), action: save)
+                    .disabled(key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+            TextField(L("Model"), text: $model, prompt: Text(prefs.aiProvider.defaultModel))
+                .onChange(of: model) { _, value in AIAccount.setModel(value, for: prefs.aiProvider) }
+        } header: {
+            Text(L("AI Assistant"))
+        } footer: {
+            Text(L("Write a Reply, Ask and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it."))
+                .foregroundStyle(.secondary)
+        }
+        .onAppear(perform: load)
+        .onChange(of: prefs.aiProvider) { _, _ in load() }
+    }
+
+    /// What is kept for the assistant chosen.
+    private func load() {
+        let provider = prefs.aiProvider
+        key = ""
+        failed = false
+        kept = AIAccount.key(for: provider).map(AIAccount.hint(for:))
+        model = UserDefaults.standard.string(forKey: "aiModel.\(provider.rawValue)") ?? ""
+    }
+
+    private func save() {
+        let typed = key.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !typed.isEmpty else { return }
+        failed = !AIAccount.setKey(typed, for: prefs.aiProvider)
+        key = ""
+        kept = failed ? nil : AIAccount.hint(for: typed)
+        prefs.aiKeyChanged()
+    }
+
+    private func remove() {
+        AIAccount.setKey("", for: prefs.aiProvider)
+        kept = nil
+        prefs.aiKeyChanged()
+    }
+}
+
 private struct AIQuestionsSection: View {
     @ObservedObject var prefs: Preferences
 

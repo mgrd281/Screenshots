@@ -21,6 +21,13 @@ extension Finder {
         set { UserDefaults.standard.set(!newValue, forKey: "intelligenceOff") }
     }
 
+    /// From Settings › Privacy: the AI assistant, Claude or ChatGPT, reads
+    /// the lines instead, where it has a key. It sends them out of this
+    /// device, so only when turned on.
+    static var asksAssistant: Bool {
+        AIAccount.findsPrivate && AIAccount.isSetUp
+    }
+
     /// Whether Apple Intelligence can read along on this device.
     static var intelligenceAvailable: Bool {
         #if canImport(FoundationModels)
@@ -79,10 +86,26 @@ extension Finder {
     /// most; nil without an answer, or on the main thread, which never waits.
     /// - Parameter waits: false takes only an answer given before.
     static func intelligentPieces(for lines: [String], waits: Bool = true) -> [IntelligentPiece]? {
-        let key = lines.joined(separator: "\n")
-        guard !key.isEmpty else { return [] }
+        let text = lines.joined(separator: "\n")
+        guard !text.isEmpty else { return [] }
+        // The assistant's answers apart from Apple Intelligence's.
+        let assistant = asksAssistant
+        let key = assistant ? "\(AIAccount.provider.rawValue):\(AIAccount.model(for: AIAccount.provider))\n" + text : text
         if let known = Self.memory.answer(for: key) { return known }
         guard waits, !Thread.isMainThread else { return nil }
+        if assistant {
+            let answer = Answer()
+            let done = DispatchSemaphore(value: 0)
+            Task.detached(priority: .utility) {
+                let pieces = await Self.byAssistant(lines)
+                if let pieces { Self.memory.keep(pieces, for: key) }
+                answer.pieces = pieces
+                done.signal()
+            }
+            // Over the internet, a while longer than on this device.
+            guard done.wait(timeout: .now() + 45) == .success else { return nil }
+            return answer.pieces
+        }
         #if canImport(FoundationModels)
         if #available(macOS 26, iOS 26, *) {
             let answer = Answer()
@@ -102,7 +125,7 @@ extension Finder {
 
     /// What Apple Intelligence was told: what counts, how to answer, and that
     /// the screenshot's words are only to be looked at.
-    private static let privateInstructions = """
+    static let privateInstructions = """
         You find private details in the text of a screenshot, so they can be \
         covered before it is shared. You get its lines, numbered. For each \
         private detail, write one row: the line's number, a colon, its kind, \
@@ -118,6 +141,21 @@ extension Finder {
         5: address: Musterstraße 12, 10115 Berlin
         7: health: Diabetes Typ 2
         """
+
+    /// Asks the AI assistant, all the lines at once, up to three hundred, in
+    /// the same words Apple Intelligence is asked in. Nil when it can't
+    /// answer: the patterns still cover what they find.
+    private static func byAssistant(_ lines: [String]) async -> [IntelligentPiece]? {
+        let window = Array(lines.prefix(300))
+        let shown = window.enumerated().map { "\($0.offset + 1): \($0.element.prefix(160))" }.joined(separator: "\n")
+        do {
+            let answer = try await AIRequest.ask(instructions: privateInstructions, text: "Lines of text:\n\(shown)")
+            return parsePrivate(answer, lines: window)
+        } catch {
+            log.error("The AI assistant could not look for private details: \(String(describing: error), privacy: .public)")
+            return nil
+        }
+    }
 
     #if canImport(FoundationModels)
     /// Asks the model on this device, sixty lines at a time, well within what

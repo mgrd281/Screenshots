@@ -51,6 +51,8 @@ enum SavedMessages {
         case .phone: .phones
         case .tracking: .tracking
         case .code: .barcodes
+        // What was bought is no one's private detail, but goes with the order.
+        case .product: .orders
         }
     }
 

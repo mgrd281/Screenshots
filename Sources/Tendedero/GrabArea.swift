@@ -233,6 +233,11 @@ struct GrabArea: NSViewRepresentable {
                 }
                 menu.addItem(ClosureMenuItem(L("Describe"), symbol: "sparkles") { line.describe(id) })
                 menu.addItem(ClosureMenuItem(L("Order Details"), symbol: "list.bullet.rectangle") { line.orderDetails(id) })
+                // The AI assistant, with the owner's own key; without one,
+                // the card says where it goes.
+                menu.addItem(ClosureMenuItem(L("Write a Reply"), symbol: "arrowshape.turn.up.left") { line.writeReply(id) })
+                menu.addItem(ClosureMenuItem(String(format: L("Ask %@…"), AIAccount.provider.name),
+                                             symbol: "bubble.left.and.text.bubble.right") { line.askAssistant(id) })
                 // For the books: a covered copy with a name that says what it is.
                 let url = item.url
                 menu.addItem(ClosureMenuItem(L("Save for Bookkeeping"), symbol: "folder.badge.plus") { Bookkeeping.save(url) })
