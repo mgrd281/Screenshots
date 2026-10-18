@@ -381,27 +381,35 @@ final class Line: ObservableObject {
         }
     }
 
-    /// ChatGPT or Claude, from a photo: the photos picked when it is one of
-    /// them, or only this one, go into a chat there, covered as in any AI
-    /// chat. Its app comes to the front, or its website opens, on the chat
-    /// open there or a new one, and they are pasted in once it is ready.
-    /// Recordings stay behind: the chats don't take them.
+    /// ChatGPT, Claude, WhatsApp or Gmail, from a photo: the photos picked
+    /// when it is one of them, or only this one, go there. Its app comes to
+    /// the front, or its website opens, on the chat open there or a new one
+    /// (a new message in Gmail), and they are pasted in once it is ready. An
+    /// AI chat takes them covered as in any AI chat. Recordings stay behind:
+    /// the chats don't take them.
     /// - Parameter question: one of the questions from Settings, pasted into
     ///   the message box after the photos, to send with them.
-    func send(_ id: UUID, to chat: AIChat, asking question: String? = nil) {
+    func send(_ id: UUID, to chat: ChatTarget, asking question: String? = nil) {
         let photos = pickedIDs.contains(id)
-            ? items.filter { pickedIDs.contains($0.id) && !$0.falling && AIChat.takes($0) }
-            : items.filter { $0.id == id && !$0.falling && AIChat.takes($0) }
-        // Every kind there with Cover Everything in AI Chats on.
-        let chosen = CoveringProfile.details(PrivateDetails.details, inAIChat: true,
-                                             coversAll: CoveringProfile.coversAllInAIChats)
+            ? items.filter { pickedIDs.contains($0.id) && !$0.falling && ChatTarget.takes($0) }
+            : items.filter { $0.id == id && !$0.falling && ChatTarget.takes($0) }
+        // In an AI chat, every kind with Cover Everything in AI Chats on.
+        let chosen = chat.isAI
+            ? CoveringProfile.details(PrivateDetails.details, inAIChat: true, coversAll: CoveringProfile.coversAllInAIChats)
+            : PrivateDetails.details
         guard !photos.isEmpty, !stillCovering(photos, chosen) else { return }
         let go = { [weak self] in
-            chat.open { self?.deliver(photos, then: question, replacing: [:], covering: chosen) }
+            chat.open {
+                // A new message starts in the address field; the photo is for its body.
+                if chat.startsFresh { Paste.pressTab(times: 2) }
+                self?.deliver(photos, then: question, replacing: [:], covering: chosen)
+            }
         }
-        // The card first, as for any AI chat, before the chat opens.
-        guard let reason = SendCheck.reason(SendCheck.when, app: chat.appID, host: chat.hosts.first, inBrowser: false,
-                                            chatApps: [], chatSites: []) else { return go() }
+        // The card first, as for any AI chat or place not known, before it opens.
+        let inBrowser = !(ChatTarget.opensInApp && chat.appURL != nil)
+        guard let reason = SendCheck.reason(SendCheck.when, app: chat.installedAppID, host: chat.hosts.first,
+                                            inBrowser: inBrowser, chatApps: Set(ChatButton.apps.map(\.bundleID)),
+                                            chatSites: ChatButton.sites.map(\.host)) else { return go() }
         var covered = CoverReport()
         for photo in photos {
             if let report = PrivateDetails.report(for: photo.url, covering: chosen) { covered.add(report) }

@@ -71,12 +71,12 @@ struct GrabArea: NSViewRepresentable {
         view.picked = picked
         // ChatGPT and Claude beside the paper plane, where the photo has room.
         view.leadingRoom = PhotoButtons.leadingRoom(badges: item.isDocument ? 0 : view.lockBadges, document: item.isDocument)
-        view.chats = AIChat.takes(item) ? AIChat.onPhotosNow : []
+        view.chats = ChatTarget.takes(item) ? ChatTarget.onPhotosNow : []
         // A right-click on one of them: the questions from Settings.
         let questions = AIQuestions.offered()
         view.hasQuestions = !questions.isEmpty
         view.chatMenuProvider = { chat in
-            guard !questions.isEmpty else { return nil }
+            guard chat.isAI, !questions.isEmpty else { return nil }
             let menu = Self.questionMenu(questions, for: chat, line: line, id: id)
             let what = NSMenuItem(title: String(format: L("Ask %@"), chat.name), action: nil, keyEquivalent: "")
             what.isEnabled = false
@@ -117,7 +117,7 @@ struct GrabArea: NSViewRepresentable {
             MainActor.assumeIsolated { line.pick(id, quietly: true) }
             return true
         }
-        let chats = AIChat.takes(item) ? AIChat.allCases.map { chat in
+        let chats = ChatTarget.takes(item) ? ChatTarget.allCases.map { chat in
             NSAccessibilityCustomAction(name: String(format: L("Send to %@"), chat.name)) {
                 MainActor.assumeIsolated { line.send(id, to: chat) }
                 return true
@@ -164,8 +164,8 @@ struct GrabArea: NSViewRepresentable {
                 }
             }
             // Straight into ChatGPT or Claude: their app, or else their website.
-            if AIChat.takes(item) {
-                for chat in AIChat.allCases {
+            if ChatTarget.takes(item) {
+                for chat in ChatTarget.allCases {
                     let send = ClosureMenuItem(String(format: L("Send to %@"), chat.name), symbol: "bubble.left") {
                         line.send(id, to: chat)
                     }
@@ -177,7 +177,7 @@ struct GrabArea: NSViewRepresentable {
                 }
                 // With one of the questions from Settings after the photo.
                 if !questions.isEmpty {
-                    for chat in AIChat.allCases {
+                    for chat in ChatTarget.allCases where chat.isAI {
                         let ask = NSMenuItem(title: String(format: L("Ask %@"), chat.name), action: nil, keyEquivalent: "")
                         if #available(macOS 26, *) {
                             ask.image = NSImage(systemSymbolName: "questionmark.bubble", accessibilityDescription: nil)
@@ -276,7 +276,7 @@ struct GrabArea: NSViewRepresentable {
     }
 
     /// The questions for a chat, each sending the photo with itself after.
-    private static func questionMenu(_ questions: [AIQuestion], for chat: AIChat, line: Line, id: UUID) -> NSMenu {
+    private static func questionMenu(_ questions: [AIQuestion], for chat: ChatTarget, line: Line, id: UUID) -> NSMenu {
         let menu = NSMenu()
         for question in questions {
             menu.addItem(ClosureMenuItem(question.text) { line.send(id, to: chat, asking: question.text) })
@@ -300,7 +300,7 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     /// The circle opposite the cross: picks the photo, or puts it back.
     var onPickCircle: () -> Void = {}
     /// ChatGPT or Claude beside the paper plane.
-    var onSendToChat: (AIChat) -> Void = { _ in }
+    var onSendToChat: (ChatTarget) -> Void = { _ in }
     /// The paper plane: into the app in front.
     var onSend: () -> Void = {}
     /// Dropped into an app, which took a copy.
@@ -318,7 +318,7 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     var menuProvider: () -> NSMenu = { NSMenu() }
     /// A right-click on ChatGPT or Claude: the questions to send the photo
     /// with; nil without any, and the photo's own menu opens.
-    var chatMenuProvider: (AIChat) -> NSMenu? = { _ in nil }
+    var chatMenuProvider: (ChatTarget) -> NSMenu? = { _ in nil }
     var hasQuestions = false
     /// What the corner button and the paper plane do, said when the pointer
     /// rests on them.
@@ -336,9 +336,9 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     }
     /// The photo is picked: its circle puts it back.
     var picked = false
-    /// The AI chats beside the paper plane, and the room the lock's corner
+    /// The chats beside the paper plane, and the room the lock's corner
     /// takes, which together say where they fit.
-    var chats: [AIChat] = [] {
+    var chats: [ChatTarget] = [] {
         didSet { if chats != oldValue { placeTips() } }
     }
     var leadingRoom: CGFloat = 0 {
@@ -401,12 +401,12 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     /// ChatGPT's and Claude's icons beside the paper plane, where they fit.
     private var chatRects: [NSRect] {
         let card = bounds.size
-        let arrangement = PhotoButtons.arrangement(card: card, chats: chats.count, leadingRoom: leadingRoom)
-        return PhotoButtons.chats(card: card, count: chats.count, arrangement: arrangement)
+        let fit = PhotoButtons.layout(card: card, chats: chats.count, leadingRoom: leadingRoom)
+        return PhotoButtons.chats(card: card, count: fit.count, arrangement: fit.arrangement)
             .map { placed($0.insetBy(dx: -2, dy: -2)) }
     }
 
-    private func chat(at point: NSPoint) -> AIChat? {
+    private func chat(at point: NSPoint) -> ChatTarget? {
         zip(chats, chatRects).first { $0.1.contains(point) }?.0
     }
 
@@ -444,7 +444,8 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         if pickRect.contains(point) { return picked ? L("Unpick") : L("Pick") }
         if sendRect.contains(point) { return sendHelp }
         if let target = chat(at: point) {
-            return String(format: hasQuestions ? L("Send to %@. Right-click to ask a question.") : L("Send to %@"), target.name)
+            return String(format: hasQuestions && target.isAI ? L("Send to %@. Right-click to ask a question.") : L("Send to %@"),
+                          target.name)
         }
         if !lockHelp.isEmpty && lockRect.contains(point) { return lockHelp }
         return sendHelp

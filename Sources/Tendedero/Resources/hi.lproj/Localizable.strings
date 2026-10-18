@@ -671,7 +671,7 @@
 "something new" = "कुछ नया";
 "%@ on photos" = "फ़ोटो पर %@";
 "Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "इसका आइकन कागज़ के हवाई जहाज़ के पास दिखता है। क्लिक करने पर फ़ोटो, या उसके साथ चुनी गई फ़ोटो, %@ में भेजी जाती हैं।";
-"Open ChatGPT and Claude in" = "ChatGPT और Claude इसमें खोलें";
 "The browser" = "ब्राउज़र";
 "The app" = "ऐप";
-"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "ब्राउज़र चैट को वेबसाइट पर खोलता है। ऐप उसे अपने ऐप में खोलता है, अगर वह इस Mac पर है, वरना वेबसाइट पर।";
+"Open in" = "इसमें खोलें";
+"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "ब्राउज़र वेबसाइट खोलता है। ऐप उनका अपना ऐप खोलता है, अगर वह इस Mac पर है, वरना वेबसाइट।";

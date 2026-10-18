@@ -669,7 +669,7 @@
 "something new" = "有新内容";
 "%@ on photos" = "照片上的 %@";
 "Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "它的图标显示在纸飞机旁边。点按会把照片（或一起选中的照片）发送到 %@。";
-"Open ChatGPT and Claude in" = "用以下方式打开 ChatGPT 和 Claude";
 "The browser" = "浏览器";
 "The app" = "App";
-"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "浏览器会在网站上打开聊天。App 会在这台 Mac 上有它时用它自己的 App 打开，没有时用网站。";
+"Open in" = "打开方式";
+"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "浏览器会打开网站。App 会在这台 Mac 上有它时打开它自己的 App，没有时打开网站。";

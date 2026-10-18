@@ -669,7 +669,7 @@
 "something new" = "etwas Neues";
 "%@ on photos" = "%@ auf Fotos";
 "Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "Sein Symbol erscheint neben dem Papierflieger. Ein Klick sendet das Foto, oder die damit ausgewählten, in %@.";
-"Open ChatGPT and Claude in" = "ChatGPT und Claude öffnen in";
 "The browser" = "Browser";
 "The app" = "App";
-"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "Der Browser öffnet den Chat auf der Website. Die App öffnet ihn in der eigenen App, wenn sie auf diesem Mac ist, sonst auf der Website.";
+"Open in" = "Öffnen in";
+"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "Der Browser öffnet die Website. Die App öffnet ihre eigene App, wenn sie auf diesem Mac ist, sonst die Website.";

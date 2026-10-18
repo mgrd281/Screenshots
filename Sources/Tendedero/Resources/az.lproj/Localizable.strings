@@ -671,7 +671,7 @@
 "something new" = "yeni bir şey";
 "%@ on photos" = "Şəkillərdə %@";
 "Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "İkonu kağız təyyarənin yanında görünür. Klik şəkli və ya onunla seçilənləri %@ söhbətinə göndərir.";
-"Open ChatGPT and Claude in" = "ChatGPT və Claude bunda açılsın";
 "The browser" = "Brauzer";
 "The app" = "Tətbiq";
-"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "Brauzer söhbəti vebsaytda açır. Tətbiq onu öz tətbiqində açır, bu Mac-də varsa; yoxdursa vebsaytda.";
+"Open in" = "Açılış yeri";
+"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "Brauzer vebsaytı açır. Tətbiq, bu Mac-də varsa öz tətbiqini, yoxdursa vebsaytı açır.";

@@ -669,7 +669,7 @@
 "something new" = "新着あり";
 "%@ on photos" = "写真上の%@";
 "Its icon shows beside the paper plane. A click sends the photo, or the ones picked with it, into %@." = "紙飛行機の横にアイコンが出ます。クリックすると、写真（または一緒に選んだ写真）を%@に送ります。";
-"Open ChatGPT and Claude in" = "ChatGPT と Claude を開く場所";
 "The browser" = "ブラウザ";
 "The app" = "アプリ";
-"The browser opens the chat on the website. The app opens it in their own app when it is on this Mac, and on the website when it is not." = "ブラウザではウェブサイトでチャットを開きます。アプリでは、この Mac にあればそのアプリで、なければウェブサイトで開きます。";
+"Open in" = "開く場所";
+"The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "ブラウザではウェブサイトを開きます。アプリでは、この Mac にあればそのアプリを、なければウェブサイトを開きます。";
