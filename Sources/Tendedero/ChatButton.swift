@@ -178,7 +178,7 @@ final class ChatButton {
     /// Yahoo Mail, Telekom Mail, WEB.DE and GMX.
     static let standardSites = [
         "chatgpt.com", "claude.ai", "gemini.google.com", "web.whatsapp.com", "perplexity.ai",
-        "copilot.microsoft.com", "chat.deepseek.com", "grok.com", "chat.mistral.ai",
+        "copilot.microsoft.com", "chat.deepseek.com", "grok.com", "chat.mistral.ai", "chat.qwen.ai",
         "web.telegram.org", "messenger.com", "discord.com", "app.slack.com", "teams.microsoft.com",
         "mail.google.com", "outlook.live.com", "outlook.office.com", "outlook.office365.com",
         "mail.yahoo.com", "email.t-online.de", "web.de", "gmx.net", "gmx.de",

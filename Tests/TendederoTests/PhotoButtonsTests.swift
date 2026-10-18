@@ -54,7 +54,7 @@ final class PhotoButtonsTests: XCTestCase {
         XCTAssertFalse(ChatTarget.gmail.owns(host: "google.com"))
         for chat in ChatTarget.allCases {
             XCTAssertTrue(chat.owns(host: chat.newChat.host), chat.name)
-            XCTAssertEqual(chat.isAI, ["ChatGPT", "Claude", "Perplexity", "Grok", "DeepSeek"].contains(chat.name), chat.name)
+            XCTAssertEqual(chat.isAI, ["ChatGPT", "Claude", "Perplexity", "Grok", "DeepSeek", "Qwen"].contains(chat.name), chat.name)
             if chat.isAI {
                 // A new chat opens where the website starts one, and what goes
                 // there is covered as in an AI chat.
@@ -73,9 +73,14 @@ final class PhotoButtonsTests: XCTestCase {
         XCTAssertTrue(ChatTarget.perplexity.owns(host: "www.perplexity.ai"))
         XCTAssertTrue(ChatTarget.messenger.owns(host: "www.messenger.com"))
         XCTAssertFalse(ChatTarget.facebook.owns(host: "notfacebook.com"))
-        // A mailbox, Facebook or an editor needs a message or chat open first,
-        // so its photo is copied only.
-        XCTAssertEqual(ChatTarget.allCases.filter(\.copiesOnly), [.outlook, .yahoo, .gmx, .webDe, .facebook, .vsCode])
+        XCTAssertTrue(ChatTarget.qwen.owns(host: "chat.qwen.ai"))
+        XCTAssertTrue(ChatTarget.instagram.owns(host: "www.instagram.com"))
+        XCTAssertTrue(ChatTarget.airbnb.owns(host: "www.airbnb.de"))
+        XCTAssertFalse(ChatTarget.airbnb.owns(host: "notairbnb.com"))
+        // A mailbox, Facebook, Instagram, Airbnb or an editor needs a message
+        // or chat open first, so its photo is copied only.
+        XCTAssertEqual(ChatTarget.allCases.filter(\.copiesOnly),
+                       [.instagram, .outlook, .yahoo, .gmx, .webDe, .facebook, .airbnb, .vsCode, .antigravity])
         // WhatsApp's app goes by two IDs; Gmail, GMX and WEB.DE have none on the Mac.
         XCTAssertEqual(ChatTarget.whatsApp.appIDs.count, 2)
         XCTAssertNil(ChatTarget.gmail.appID)

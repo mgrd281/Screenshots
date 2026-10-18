@@ -22,7 +22,7 @@ enum CoveringProfile {
     /// The AI chat websites, each with its subdomains.
     nonisolated static let aiSites = [
         "chatgpt.com", "chat.openai.com", "claude.ai", "gemini.google.com", "perplexity.ai",
-        "copilot.microsoft.com", "chat.deepseek.com", "grok.com", "chat.mistral.ai",
+        "copilot.microsoft.com", "chat.deepseek.com", "grok.com", "chat.mistral.ai", "chat.qwen.ai",
     ]
 
     /// Whether an app, or a website open in a browser, is an AI chat.
