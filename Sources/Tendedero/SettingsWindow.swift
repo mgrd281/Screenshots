@@ -990,6 +990,26 @@ private struct LinePane: View {
                     Text(L("A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history."))
                 }
                 .disabled(prefs.historyDays == nil)
+                LabeledContent {
+                    HStack {
+                        Picker(L("Keep a history"), selection: $prefs.historyDays) {
+                            Text(L("Off")).tag(Int?.none)
+                            ForEach(History.dayChoices, id: \.self) { n in
+                                Text(History.title(days: n)).tag(Int?.some(n))
+                            }
+                        }
+                        .labelsHidden()
+                        .fixedSize()
+                        SettingsButton(L("History…")) { HistoryWindow.shared.show() }
+                            .disabled(prefs.historyDays == nil)
+                    }
+                } label: {
+                    Text(L("Keep a history"))
+                    Text(L("What leaves the line stays in the History, from the menu bar, to find and hang again."))
+                }
+            }
+            // The row of chats under each photo: which show, and where they open.
+            Section(L("Icons under photos")) {
                 ForEach(ChatTarget.allCases) { chat in
                     Toggle(isOn: prefs.showsAIChat(chat)) {
                         Text(String(format: L("%@ on photos"), chat.name))
@@ -1007,23 +1027,6 @@ private struct LinePane: View {
                 } label: {
                     Text(L("Open in"))
                     Text(L("The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not."))
-                }
-                LabeledContent {
-                    HStack {
-                        Picker(L("Keep a history"), selection: $prefs.historyDays) {
-                            Text(L("Off")).tag(Int?.none)
-                            ForEach(History.dayChoices, id: \.self) { n in
-                                Text(History.title(days: n)).tag(Int?.some(n))
-                            }
-                        }
-                        .labelsHidden()
-                        .fixedSize()
-                        SettingsButton(L("History…")) { HistoryWindow.shared.show() }
-                            .disabled(prefs.historyDays == nil)
-                    }
-                } label: {
-                    Text(L("Keep a history"))
-                    Text(L("What leaves the line stays in the History, from the menu bar, to find and hang again."))
                 }
             }
             ChatButtonSection(prefs: prefs)

@@ -18,7 +18,8 @@ keeps a download of each version.
   Return keeps the whole photo. It goes out cropped, and the file stays as
   it is.
 - ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE in a row under a photo,
-  so the photo itself stays calm, each with its own switch under Line.
+  so the photo itself stays calm, each with its own switch under Line ›
+  Icons under photos.
   WhatsApp, Gmail, GMX and WEB.DE show their logos; ChatGPT and Claude show
   the app's own icon from your Mac. A click opens the website in your
   browser; Open in, under Line, brings the app back. GMX and WEB.DE open the

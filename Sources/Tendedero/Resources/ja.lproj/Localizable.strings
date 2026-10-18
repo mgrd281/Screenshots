@@ -673,6 +673,7 @@
 "Count on the menu bar icon" = "メニューバーのアイコンに枚数を表示";
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "吊るしている写真の枚数がアイコンの横に出て、ロープがまだ見せていない新しいものがあるとアイコンに小さな点が付きます。";
 "something new" = "新着あり";
+"Icons under photos" = "写真の下のアイコン";
 "%@ on photos" = "写真上の%@";
 "The browser" = "ブラウザ";
 "The app" = "アプリ";

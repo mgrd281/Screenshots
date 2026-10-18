@@ -673,6 +673,7 @@
 "Count on the menu bar icon" = "Anzahl am Menüleistensymbol";
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "Wie viele Fotos hängen, steht neben dem Symbol, und ein kleiner Punkt darauf zeigt, dass etwas Neues hängt, das die Leine noch nicht gezeigt hat.";
 "something new" = "etwas Neues";
+"Icons under photos" = "Symbole unter Fotos";
 "%@ on photos" = "%@ auf Fotos";
 "The browser" = "Browser";
 "The app" = "App";

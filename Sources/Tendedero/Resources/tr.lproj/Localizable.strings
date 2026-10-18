@@ -673,6 +673,7 @@
 "Count on the menu bar icon" = "Menü çubuğu simgesinde sayı";
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "Kaç fotoğraf asılı olduğu simgenin yanında görünür; ipin henüz göstermediği yeni bir şey asılıyken simgede küçük bir nokta olur.";
 "something new" = "yeni bir şey";
+"Icons under photos" = "Fotoğrafların altındaki simgeler";
 "%@ on photos" = "Fotoğraflarda %@";
 "The browser" = "Tarayıcı";
 "The app" = "Uygulama";

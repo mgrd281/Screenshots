@@ -675,6 +675,7 @@
 "Count on the menu bar icon" = "मेन्यू बार आइकन पर गिनती";
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "कितनी फ़ोटो टँगी हैं, यह आइकन के पास दिखता है, और जब कोई नई चीज़ टँगी हो जिसे रस्सी ने अभी नहीं दिखाया, तब उस पर एक छोटा बिंदु।";
 "something new" = "कुछ नया";
+"Icons under photos" = "फ़ोटो के नीचे आइकन";
 "%@ on photos" = "फ़ोटो पर %@";
 "The browser" = "ब्राउज़र";
 "The app" = "ऐप";

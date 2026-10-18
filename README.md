@@ -68,7 +68,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Describe | A line about what it shows, to send along with it. |
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
-| Click ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE, in the row under a photo | Send it, or the photos picked with it, there: the website opens in your browser (a new message in Gmail), or, with it already open in the browser in front, they go there, and the photos are pasted in. GMX and WEB.DE open the mailbox: the covered photo is copied for you to paste into a new message, and stays on the line. WhatsApp, Gmail, GMX and WEB.DE show their logos; ChatGPT and Claude show their app's own icon from your Mac, else a short mark. Each icon has its own switch in Settings, under Line; Open in chooses the app instead of the browser, when it is on your Mac. |
+| Click ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE, in the row under a photo | Send it, or the photos picked with it, there: the website opens in your browser (a new message in Gmail), or, with it already open in the browser in front, they go there, and the photos are pasted in. GMX and WEB.DE open the mailbox: the covered photo is copied for you to paste into a new message, and stays on the line. WhatsApp, Gmail, GMX and WEB.DE show their logos; ChatGPT and Claude show their app's own icon from your Mac, else a short mark. Each icon has its own switch in Settings, under Line › Icons under photos; Open in chooses the app instead of the browser, when it is on your Mac. |
 | Right-click ChatGPT or Claude under a photo | Ask a question with it: the photo goes into the chat with the question after it, like "Summarize this in a few lines". Ask ChatGPT and Ask Claude in a photo's menu do the same. The questions are yours to write in Settings, under Line. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
@@ -469,7 +469,8 @@ chat it shows, or opens a new one (or their app does, if you chose it); the
 photos are pasted in once it is ready, covered as in any AI chat for the
 first two, after the check before sending. Their icons stand in a row
 under the photo, so the photo keeps only the paper plane; the photo's menu
-has them all. Turn each icon off under Line, each on its own.
+has them all. Turn each icon off in Settings, under Line › Icons under
+photos, each on its own.
 
 Something to ask about it? Right-click ChatGPT or Claude on the photo, or
 choose Ask ChatGPT or Ask Claude in its menu, and the photo goes with a

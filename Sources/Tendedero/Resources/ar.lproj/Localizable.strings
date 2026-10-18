@@ -673,6 +673,7 @@
 "Count on the menu bar icon" = "العدد على أيقونة شريط القوائم";
 "How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet." = "يظهر عدد الصور المعلّقة بجانب الأيقونة، ونقطة صغيرة عليها ما دام شيء جديد معلّقًا لم يعرضه الحبل بعد.";
 "something new" = "شيء جديد";
+"Icons under photos" = "الأيقونات تحت الصور";
 "%@ on photos" = "%@ على الصور";
 "The browser" = "المتصفح";
 "The app" = "التطبيق";
