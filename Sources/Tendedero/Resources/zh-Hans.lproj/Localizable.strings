@@ -673,3 +673,4 @@
 "Open in" = "打开方式";
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "浏览器会打开网站。App 会在这台 Mac 上有它时打开它自己的 App，没有时打开网站。";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "它的图标显示在照片下方。点按会把照片（或一起选中的照片）发送到 %@。";
+"Copied. Start a new message and paste." = "已拷贝。新建一封邮件后粘贴即可。";

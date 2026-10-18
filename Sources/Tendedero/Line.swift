@@ -381,7 +381,7 @@ final class Line: ObservableObject {
         }
     }
 
-    /// ChatGPT, Claude, WhatsApp or Gmail, from a photo: the photos picked
+    /// ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE, from a photo: the photos picked
     /// when it is one of them, or only this one, go there. Its app comes to
     /// the front, or its website opens, on the chat open there or a new one
     /// (a new message in Gmail), and they are pasted in once it is ready. An
@@ -400,6 +400,13 @@ final class Line: ObservableObject {
         guard !photos.isEmpty, !stillCovering(photos, chosen) else { return }
         let go = { [weak self] in
             chat.open {
+                // A mailbox takes a photo only once a message is started: copied
+                // for you to paste, and left on the line.
+                if chat.copiesOnly {
+                    self?.copy(photos, covering: chosen, says: false)
+                    Notice.show(L("Copied. Start a new message and paste."), done: true, lasting: 6)
+                    return
+                }
                 // A new message starts in the address field; the photo is for its body.
                 if chat.startsFresh { Paste.pressTab(times: 2) }
                 self?.deliver(photos, then: question, replacing: [:], covering: chosen)

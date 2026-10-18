@@ -1,12 +1,14 @@
 import AppKit
 
-/// Where a photo goes straight from the line: ChatGPT, Claude, WhatsApp and
-/// Gmail. Their website in the browser, or their app when it is on this Mac
-/// and Settings says so. Their icons on a photo are the app's own, as macOS
-/// draws it in the Dock, wherever the app is on this Mac; else a short mark
-/// in a neutral circle. Snapfly carries no logo of theirs.
+/// Where a photo goes straight from the line: ChatGPT, Claude, WhatsApp,
+/// Gmail, GMX and WEB.DE. Their website in the browser, or their app when it
+/// is on this Mac and Settings says so. WhatsApp, Gmail, GMX and WEB.DE show
+/// their logo, which the owner supplied (`assets/chat-logos`); ChatGPT and
+/// Claude show their app's own icon, as macOS draws it in the Dock, wherever
+/// the app is on this Mac, with no logo of theirs in Snapfly. Without either,
+/// a short mark in a neutral circle.
 enum ChatTarget: String, CaseIterable, Identifiable {
-    case chatGPT, claude, whatsApp, gmail
+    case chatGPT, claude, whatsApp, gmail, gmx, webDe
 
     var id: String { rawValue }
 
@@ -17,6 +19,8 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         case .claude: "Claude"
         case .whatsApp: "WhatsApp"
         case .gmail: "Gmail"
+        case .gmx: "GMX"
+        case .webDe: "WEB.DE"
         }
     }
 
@@ -25,17 +29,17 @@ enum ChatTarget: String, CaseIterable, Identifiable {
     var isAI: Bool {
         switch self {
         case .chatGPT, .claude: true
-        case .whatsApp, .gmail: false
+        case .whatsApp, .gmail, .gmx, .webDe: false
         }
     }
 
-    /// The bundle IDs its app goes by; Gmail has none of its own.
+    /// The bundle IDs its app goes by; Gmail, GMX and WEB.DE have none on the Mac.
     var appIDs: [String] {
         switch self {
         case .chatGPT: ["com.openai.chat"]
         case .claude: ["com.anthropic.claudefordesktop"]
         case .whatsApp: ["net.whatsapp.WhatsApp", "desktop.WhatsApp"]
-        case .gmail: []
+        case .gmail, .gmx, .webDe: []
         }
     }
 
@@ -48,6 +52,8 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         case .claude: ["Claude"]
         case .whatsApp: ["WhatsApp"]
         case .gmail: ["Gmail"]
+        case .gmx: ["GMX"]
+        case .webDe: ["WEB.DE", "WEB.DE Mail"]
         }
     }
 
@@ -58,6 +64,8 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         case .claude: ["claude.ai"]
         case .whatsApp: ["web.whatsapp.com"]
         case .gmail: ["mail.google.com"]
+        case .gmx: ["gmx.net", "gmx.de"]
+        case .webDe: ["web.de"]
         }
     }
 
@@ -68,7 +76,40 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         case .claude: URL(string: "https://claude.ai/new")!
         case .whatsApp: URL(string: "https://web.whatsapp.com/")!
         case .gmail: URL(string: "https://mail.google.com/mail/?view=cm&fs=1")!
+        case .gmx: URL(string: "https://navigator.gmx.net/")!
+        case .webDe: URL(string: "https://navigator.web.de/")!
         }
+    }
+
+    /// GMX and WEB.DE open the mailbox, which takes a message only after you
+    /// start one, so the photo is copied, covered, and left on the line for
+    /// you to paste.
+    var copiesOnly: Bool { self == .gmx || self == .webDe }
+
+    /// The file of its logo in `assets/chat-logos`, which the build copies
+    /// into the app; ChatGPT and Claude have none.
+    var logoFile: String? {
+        switch self {
+        case .chatGPT, .claude: nil
+        case .whatsApp: "whatsapp"
+        case .gmail: "gmail"
+        case .gmx: "gmx"
+        case .webDe: "webde"
+        }
+    }
+
+    @MainActor private static var logos: [ChatTarget: NSImage] = [:]
+
+    /// Its logo, from the app's resources; nil without one, like when
+    /// running outside the app.
+    @MainActor
+    var logo: NSImage? {
+        guard let file = logoFile else { return nil }
+        if let known = Self.logos[self] { return known }
+        guard let url = Bundle.main.url(forResource: file, withExtension: "png", subdirectory: "chat-logos"),
+              let image = NSImage(contentsOf: url) else { return nil }
+        Self.logos[self] = image
+        return image
     }
 
     /// Gmail starts a message of its own each time, so a Gmail page already
@@ -95,6 +136,8 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         case .claude: "Cl"
         case .whatsApp: "WA"
         case .gmail: "Gm"
+        case .gmx: "GMX"
+        case .webDe: "WEB"
         }
     }
 
@@ -161,11 +204,17 @@ enum ChatTarget: String, CaseIterable, Identifiable {
 
     @MainActor private static var icons: [String: NSImage] = [:]
 
-    /// The app's own icon, as the Finder and the Dock show it, wherever its
-    /// app is on this Mac; nil without it, and the circle shows the mark
-    /// instead.
+    /// A logo fills its circle as it is; an app icon keeps a margin round its
+    /// shape, so it is drawn a little larger.
+    @MainActor
+    var iconScale: CGFloat { logo == nil ? 1.22 : 1 }
+
+    /// Its logo, else the app's own icon, as the Finder and the Dock show
+    /// it, wherever its app is on this Mac; nil without either, and the circle
+    /// shows the mark instead.
     @MainActor
     var icon: NSImage? {
+        if let logo { return logo }
         guard let path = appURL?.path else { return nil }
         if let icon = Self.icons[path] { return icon }
         let icon = NSWorkspace.shared.icon(forFile: path)

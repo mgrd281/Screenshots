@@ -65,11 +65,31 @@ final class PhotoButtonsTests: XCTestCase {
                 XCTAssertFalse(CoveringProfile.isAIChat(app: chat.appID, host: chat.hosts[0]), chat.name)
             }
         }
-        // WhatsApp's app goes by two IDs; Gmail has none of its own.
+        XCTAssertTrue(ChatTarget.gmx.owns(host: "navigator.gmx.net"))
+        XCTAssertTrue(ChatTarget.gmx.owns(host: "www.gmx.de"))
+        XCTAssertTrue(ChatTarget.webDe.owns(host: "navigator.web.de"))
+        XCTAssertFalse(ChatTarget.webDe.owns(host: "notweb.de"))
+        // A mailbox needs a message started first, so its photo is copied only.
+        XCTAssertEqual(ChatTarget.allCases.filter(\.copiesOnly), [.gmx, .webDe])
+        // WhatsApp's app goes by two IDs; Gmail, GMX and WEB.DE have none on the Mac.
         XCTAssertEqual(ChatTarget.whatsApp.appIDs.count, 2)
         XCTAssertNil(ChatTarget.gmail.appID)
         XCTAssertTrue(ChatTarget.gmail.startsFresh)
         XCTAssertFalse(ChatTarget.claude.startsFresh)
+    }
+
+    func testEveryLogoIsInTheAssetsTheBuildCopies() throws {
+        // assets/chat-logos next to the sources, from this file's place.
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        for chat in ChatTarget.allCases {
+            guard let file = chat.logoFile else {
+                // ChatGPT and Claude carry no logo of theirs.
+                XCTAssertTrue(chat.isAI, chat.name)
+                continue
+            }
+            let png = root.appendingPathComponent("assets/chat-logos/\(file).png")
+            XCTAssertTrue(FileManager.default.fileExists(atPath: png.path), "\(chat.name): \(png.path)")
+        }
     }
 
     func testEachIconIsTurnedOffOnItsOwn() throws {
@@ -77,7 +97,7 @@ final class PhotoButtonsTests: XCTestCase {
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
         for chat in ChatTarget.allCases { XCTAssertTrue(ChatTarget.shows(chat, in: defaults), "on at first: \(chat.name)") }
-        XCTAssertEqual(ChatTarget.allCases.count, 4)
+        XCTAssertEqual(ChatTarget.allCases.count, 6)
         ChatTarget.setShows(false, .claude, in: defaults)
         XCTAssertFalse(ChatTarget.shows(.claude, in: defaults))
         XCTAssertTrue(ChatTarget.shows(.chatGPT, in: defaults), "the other stays")

@@ -76,6 +76,10 @@ for dir in Sources/Tendedero/Resources/*.lproj; do
   LANGUAGES="$LANGUAGES<string>$(basename "$dir" .lproj)</string>"
 done
 
+# The logos of WhatsApp, Gmail, GMX and WEB.DE, shown beside the paper plane.
+cp -R assets/chat-logos "$APP/Contents/Resources/chat-logos"
+rm -rf "$APP/Contents/Resources/chat-logos/source"
+
 # The licence of the code this began as travels with every copy, as it asks.
 cp LICENSE "$APP/Contents/Resources/LICENSE"
 

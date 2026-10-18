@@ -6,10 +6,12 @@ keeps a download of each version.
 
 ## 1.1.0
 
-- ChatGPT, Claude, WhatsApp and Gmail in a row under a photo, so the photo
-  itself stays calm, each with the app's own icon wherever it is on your
-  Mac and its own switch under Line. A click opens the website in your
-  browser; Open in, under Line, brings the app back.
+- ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE in a row under a photo,
+  so the photo itself stays calm, each with its own switch under Line.
+  WhatsApp, Gmail, GMX and WEB.DE show their logos; ChatGPT and Claude show
+  the app's own icon from your Mac. A click opens the website in your
+  browser; Open in, under Line, brings the app back. GMX and WEB.DE open the
+  mailbox and copy the covered photo for you to paste into a new message.
 - The menu bar icon says how many photos hang, and shows a small dot while
   something new hangs that the line has not shown yet. Count on the menu
   bar icon, under Line, turns it off.

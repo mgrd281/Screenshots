@@ -443,29 +443,36 @@ apps.
     the accent circle with a 9 pt bold white check, and a click puts it
     back. Its tip says Pick or Unpick.
   - Bottom trailing: send, a 22 pt accent circle with `paperplane.fill`.
-    Under the card, not on it, a row of up to four destinations, each on its
-    own switch (Settings › Line, ChatGPT on photos, Claude on photos,
-    WhatsApp on photos and Gmail on photos, under Mark photos sent before,
-    all on at first): ChatGPT, Claude, WhatsApp and Gmail, in that order,
-    20 pt each, 4 pt apart, centered under the card 6 pt below it, so the
-    card keeps only its own buttons. The row shows with the pointer over the
-    card or the row, fading in and settling 6 pt, and the photo's view
-    (`GrabView`) and its hit rect reach 30 pt below the card
-    (`PhotoButtons.stripHeight`) while it does; the space between the icons
-    takes no click. Each shows the app's own icon as macOS draws it
-    (`NSWorkspace.icon(forFile:)`), drawn at 122% so its shape matches the
-    circle, wherever the app is on the Mac: by its bundle ID, else by name
-    in the Applications folders, which also finds an app made from the
-    website, like a Chrome or Safari web app. Snapfly carries no logo of
-    theirs, so without the app the circle is a 20 pt `controlGlass` circle
-    with a short mark ("GPT", "Cl", "WA", "Gm") in 7.5 pt bold rounded
-    `.primary`. Both sit under the small badge shadow. A click opens the
-    website in the Mac's default browser, or the app where Open in (a
-    segmented choice under the switches; The browser at first) says The app
-    and it is on the Mac. Gmail starts a new message and moves from its
-    address field to its body with two Tab presses before pasting. The
-    photo's menu always has Send to each of them. Not on recordings, which
-    the chats don't take.
+    Under the card, not on it, a row of six destinations, each on its own
+    switch (Settings › Line, ChatGPT on photos, Claude on photos, WhatsApp
+    on photos, Gmail on photos, GMX on photos and WEB.DE on photos, under
+    Mark photos sent before, all on at first): ChatGPT, Claude, WhatsApp,
+    Gmail, GMX and WEB.DE, in that order, 20 pt each, 4 pt apart, centered
+    under the card 6 pt below it, so the card keeps only its own buttons.
+    The row shows with the pointer over the card or the row, fading in and
+    settling 6 pt, and the photo's view (`GrabView`) and its hit rect reach
+    30 pt below the card (`PhotoButtons.stripHeight`) while it does; the
+    space between the icons takes no click.
+    - **What each shows.** WhatsApp, Gmail, GMX and WEB.DE show their logo,
+      which the owner supplied, as a 192 px PNG from `assets/chat-logos`
+      (`logo`, copied into the app by `scripts/build-app.sh`, the SVGs kept
+      beside it), drawn as it is. ChatGPT and Claude carry no logo of theirs
+      in Snapfly: each shows the app's own icon as macOS draws it
+      (`NSWorkspace.icon(forFile:)`), drawn at 122% so its shape matches the
+      logos, wherever the app is on the Mac, by its bundle ID or else by name
+      in the Applications folders, which also finds an app made from the
+      website. Without either, a 20 pt `controlGlass` circle with a short
+      mark ("GPT", "Cl", "WA", "Gm", "GMX", "WEB") in 7.5 pt bold rounded
+      `.primary`. All sit under the small badge shadow.
+    - **What a click does.** It opens the website in the Mac's default
+      browser, or the app where Open in (a segmented choice under the
+      switches; The browser at first) says The app and it is on the Mac. Gmail
+      starts a new message and moves from its address field to its body with
+      two Tab presses before pasting. GMX and WEB.DE open the mailbox, which
+      takes a photo only once a message is started: the covered photo is
+      copied, a note says "Copied. Start a new message and paste." for 6 s,
+      and the photo stays on the line. The photo's menu always has Send to
+      each of them. Not on recordings, which the chats don't take.
     - A right-click on ChatGPT or Claude opens the questions from Settings › Line
       › Questions for ChatGPT and Claude: Ask ChatGPT as a disabled header
       over a separator, then one item per question. A click sends the photo
