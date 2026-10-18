@@ -24,7 +24,7 @@ final class QuickCrop {
     func crop(_ url: URL, done: @escaping (_ cropped: Bool) -> Void) {
         close()
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
-              let image = PrivateDetails.upright(source) else {
+              let image = Cover.upright(source) else {
             Notice.show(L("Could not open the screenshot."))
             return
         }
