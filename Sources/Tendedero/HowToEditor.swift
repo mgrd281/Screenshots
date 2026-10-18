@@ -133,7 +133,7 @@ final class HowToEditorModel: ObservableObject {
     /// Covers each step's screenshot, once, and draws its preview, off the
     /// main thread.
     func prepare() {
-        let steps = guide.steps, folder = folder
+        let steps = guide.steps, folder = self.folder
         let chosen = PrivateDetails.details
         DispatchQueue.global(qos: .userInitiated).async {
             for step in steps {
@@ -159,7 +159,7 @@ final class HowToEditorModel: ObservableObject {
     /// Draws a step's preview again, as it now shows.
     private func redraw(_ id: UUID) {
         guard let step = guide.steps.first(where: { $0.id == id }), covered.contains(id) else { return }
-        let folder = folder
+        let folder = self.folder
         DispatchQueue.global(qos: .userInitiated).async {
             let preview = HowToRender.picture(step, in: folder, maxPixels: 1400)
             DispatchQueue.main.async {
@@ -246,7 +246,7 @@ final class HowToEditorModel: ObservableObject {
     func copyImage() {
         guard ready, !busy else { return }
         busy = true
-        let guide = guide, folder = folder
+        let guide = self.guide, folder = self.folder
         let rightToLeft = NSApp.userInterfaceLayoutDirection == .rightToLeft
         DispatchQueue.global(qos: .userInitiated).async {
             let data = HowToRender.image(guide, in: folder, rightToLeft: rightToLeft).flatMap(HowToRender.png)
@@ -270,7 +270,7 @@ final class HowToEditorModel: ObservableObject {
         guard ready, !busy else { return }
         busy = true
         saveNow()
-        let guide = guide, folder = folder
+        let guide = self.guide, folder = self.folder
         let rightToLeft = NSApp.userInterfaceLayoutDirection == .rightToLeft
         DispatchQueue.global(qos: .userInitiated).async {
             let made: Bool

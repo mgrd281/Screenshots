@@ -208,8 +208,8 @@ enum HowToRender {
             .font: NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .bold),
             .foregroundColor: NSColor.white,
         ])
-        let size = digits.size()
-        digits.draw(at: CGPoint(x: badge.midX - size.width / 2, y: badge.midY - size.height / 2))
+        let digitsSize = digits.size()
+        digits.draw(at: CGPoint(x: badge.midX - digitsSize.width / 2, y: badge.midY - digitsSize.height / 2))
 
         let textLeft = rightToLeft ? left : left + Look.indent
         let lineUp = max(0, (Look.badge - 17) / 2)

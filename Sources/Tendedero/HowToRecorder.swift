@@ -97,7 +97,7 @@ final class HowToRecorder {
         finishing = false
         content = nil
         elements = [:]
-        let guide = guide
+        let guide = self.guide
         self.guide = HowToGuide()
         guard !guide.steps.isEmpty else {
             HowToStore.delete(guide.id)
@@ -176,7 +176,7 @@ final class HowToRecorder {
             // A double-click noticed before the name came back says so too.
             guide.steps[index].text = HowToWording.sentence(guide.steps[index].click, on: found?.element,
                                                             isPrivate: HowToElement.isPrivate)
-            guide.steps[index].app = found?.app
+            guide.steps[index].app = found.flatMap { NSRunningApplication(processIdentifier: $0.pid)?.localizedName }
             if let box = found?.frame {
                 guide.steps[index].target = CGRect(x: (box.minX - frame.minX) / frame.width,
                                                    y: (frame.maxY - box.maxY) / frame.height,
@@ -234,7 +234,8 @@ enum HowToElement {
         var element: HowToWording.Element
         /// In AppKit screen coordinates.
         var frame: CGRect?
-        var app: String?
+        /// The app it is in.
+        var pid: pid_t
     }
 
     @MainActor
@@ -285,9 +286,8 @@ enum HowToElement {
         let kind = HowToWording.kind(role: role, subrole: subrole)
         var pid: pid_t = 0
         AXUIElementGetPid(chosen, &pid)
-        let app = pid > 0 ? NSRunningApplication(processIdentifier: pid)?.localizedName : nil
         return Found(element: .init(role: role, subrole: subrole, name: name(of: chosen, kind: kind, clicked: hit)),
-                     frame: frame(of: chosen, top: top), app: app)
+                     frame: frame(of: chosen, top: top), pid: pid)
     }
 
     /// A control's title or description, a field's label or the hint shown
@@ -372,7 +372,9 @@ enum HowToFlash {
         panel.isReleasedWhenClosed = false
         panel.contentView = NSHostingView(rootView: FlashRing(reduced: Motion.reduced))
         panel.orderFrontRegardless()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { panel.orderOut(nil) }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            MainActor.assumeIsolated { panel.orderOut(nil) }
+        }
     }
 }
 
