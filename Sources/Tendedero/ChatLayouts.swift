@@ -79,7 +79,7 @@ enum ChatLayouts {
         case "perplexity.ai":
             return ChatLayout(across: .centered(width: 720, sidebar: 72),
                               up: new ? .middle(60) : .bottom(112))
-        case "copilot.microsoft.com", "chat.deepseek.com", "grok.com", "chat.mistral.ai":
+        case "copilot.microsoft.com", "chat.deepseek.com", "grok.com", "chat.mistral.ai", "chat.qwen.ai":
             return ChatLayout(across: .centered(width: 768, sidebar: 0),
                               up: new ? .middle(60) : .bottom(112))
         case "web.whatsapp.com":

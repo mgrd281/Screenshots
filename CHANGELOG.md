@@ -6,9 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
-- Eight more icons under photos, off until you turn them on in Settings ›
-  Line › Icons under photos: Perplexity, Grok, DeepSeek, Messenger, Outlook,
-  Yahoo Mail, Facebook and Visual Studio Code. A row holds six at a time.
+- Twelve more icons under photos, off until you turn them on in Settings ›
+  Line › Icons under photos: Perplexity, Grok, DeepSeek, Qwen, Messenger,
+  Instagram, Outlook, Yahoo Mail, Facebook, Airbnb, Visual Studio Code and
+  Antigravity. A row holds six at a time. WhatsApp has its new logo.
   In Settings every logo shows in its own colours, and the ones under
   photos carry a small check.
 - Hide Part covers the word you click, and Always cover, under it, covers
