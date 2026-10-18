@@ -81,6 +81,8 @@ ease-out.
 | `spring.spread` | 0.42 / 0.8 | The card stack fans out |
 | `spring.style` | 0.5 / 0.85 | The line changes style |
 | `spring.reflow` | 0.55 / 0.78 | Photos close a gap or change order |
+| `spring.guide` | 0.45 / 0.86 | The introduction's hole glides from one thing to the next (the card follows over 0.3 s on `ease.out`) |
+| `spring.check` | 0.3 / 0.7 | A step of the introduction seen through: its symbol turns into a check |
 
 The web has no springs in CSS. There, use `ease.out` at a duration close to
 the spring's response, and keyframes (like `hang-in`) where a visible
@@ -293,7 +295,9 @@ nothing that hides content until a scroll. Scroll-driven CSS
 Take off and hang (above) are the signature. To use them elsewhere:
 
 - **Onboarding (app):** the first screenshot after install hangs with
-  `spring.arrive`; the first send takes off. No extra tour animation.
+  `spring.arrive`; the first send takes off. The introduction adds only
+  `spring.guide` for its hole and `ease.out` for its card: it points, it
+  does not perform.
 - **Website:** every send in a demo takes off; every new photo hangs, and
   the four steps hang on their own line.
 - **Videos:** scenes join with a take-off. A card leaving one scene is the

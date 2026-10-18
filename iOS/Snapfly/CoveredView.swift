@@ -31,6 +31,12 @@ struct CoveredView: View {
         .safeAreaInset(edge: .bottom) {
             if let covered, let png { actions(covered, png) }
         }
+        .phoneGuide(on: .shot)
+        .onAppear {
+            PhoneGuide.shared.screen = .shot
+            PhoneGuide.shared.happened(.openedShot)
+        }
+        .onDisappear { PhoneGuide.shared.screen = .library }
         .task { await cover() }
     }
 
@@ -43,13 +49,16 @@ struct CoveredView: View {
                 Button {
                     Covering.copy(png)
                     note = L("Copied")
+                    PhoneGuide.shared.happened(.used)
                 } label: {
                     Label(L("Copy"), systemImage: "doc.on.doc")
                 }
                 ShareLink(item: Image(uiImage: image), preview: SharePreview("Snapfly", image: Image(uiImage: image))) {
                     Label(L("Share"), systemImage: "square.and.arrow.up")
                 }
+                .simultaneousGesture(TapGesture().onEnded { PhoneGuide.shared.happened(.used) })
                 Button {
+                    PhoneGuide.shared.happened(.used)
                     Task {
                         do {
                             try await Covering.save(png)
@@ -73,6 +82,7 @@ struct CoveredView: View {
         .padding()
         .frame(maxWidth: .infinity)
         .background(.bar)
+        .phoneGuideTarget(.actions)
         .animation(.easeOut(duration: 0.2), value: note)
     }
 

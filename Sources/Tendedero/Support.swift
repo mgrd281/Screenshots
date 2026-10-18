@@ -1,17 +1,48 @@
 import AppKit
 import SwiftUI
 
-/// Settings › Support: where to find help, a way to write about a problem
-/// or an idea with the details that help already in the email, and those
-/// details to copy.
+/// Settings › Support: the introduction, from the start or from where it
+/// was ended, one thing at a time, and tips; where to find help, a way to
+/// write about a problem or an idea with the details that help already in
+/// the email, and those details to copy.
 @MainActor
 struct SupportPane: View {
     @ObservedObject var prefs: Preferences
     /// The details were just copied; the button says so for a moment.
     @State private var copied = false
+    @State private var progress = GuideProgress.load()
+    @State private var tipsOn = Guide.tipsOn
 
     var body: some View {
         Form {
+            Section {
+                SupportRow(symbol: "hand.wave.fill", title: L("Introduction"), detail: introductionDetail) {
+                    SettingsButton(introductionButton) { startIntroduction() }
+                }
+                SupportRow(symbol: "hand.point.up.left.fill", title: L("Show Me How"),
+                           detail: L("One thing at a time, on the line itself.")) {
+                    Menu {
+                        ForEach(GuideLesson.allCases) { lesson in
+                            Button(lesson.title) { show(lesson) }
+                        }
+                    } label: {
+                        Text(L("Choose…"))
+                    }
+                    .frame(width: SettingsButton.width + 16)
+                }
+                SupportRow(symbol: "text.bubble.fill", title: L("Tips while you work"),
+                           detail: L("A short hint, once, the first time something is in reach.")) {
+                    Toggle(L("Tips while you work"), isOn: $tipsOn)
+                        .toggleStyle(.switch)
+                        .labelsHidden()
+                }
+            } header: {
+                Text(L("Help & Introduction"))
+            }
+            .onChange(of: tipsOn) { _, on in Guide.tipsOn = on }
+            .onReceive(NotificationCenter.default.publisher(for: Guide.changed)) { _ in
+                progress = GuideProgress.load()
+            }
             Section {
                 SupportRow(symbol: "questionmark.circle.fill", title: L("Help & Support"),
                            detail: L("Guides and answers, and how to reach us.")) {
@@ -35,6 +66,33 @@ struct SupportPane: View {
             }
         }
         .formStyle(.grouped)
+    }
+
+    /// Where the introduction stands: never started, ended at a step, or
+    /// seen to the end.
+    private var introductionDetail: String {
+        if progress.canContinue, let at = progress.stoppedAt {
+            let ids = GuideStep.introduction(capture: nil, appStore: Edition.appStore).map(\.id)
+            let number = (ids.firstIndex(of: at) ?? 0) + 1
+            return String(format: L("Ended at step %1$d of %2$d. It goes on from there."), number, ids.count)
+        }
+        if progress.finished { return L("Seen to the end. Start it again any time.") }
+        return L("Snapfly on your own screen, step by step. About a minute.")
+    }
+
+    private var introductionButton: String {
+        progress.canContinue ? L("Continue") : progress.finished ? L("Start Again") : L("Start")
+    }
+
+    /// The window steps aside first: the introduction shows on the screen.
+    private func startIntroduction() {
+        SettingsWindow.shared.close()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { Guide.shared.startIntroduction() }
+    }
+
+    private func show(_ lesson: GuideLesson) {
+        SettingsWindow.shared.close()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { Guide.shared.show(lesson) }
     }
 
     /// An email to the support address, the subject and the details filled

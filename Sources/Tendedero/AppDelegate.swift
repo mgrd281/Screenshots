@@ -63,6 +63,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var wanted = false
     /// Set when you open the line on purpose, so it stays up while empty.
     private var keepOpen = false
+    /// The introduction points at something on the line, which stays down.
+    private var guideHolds = false
+    private var keptOpenBeforeGuide = false
 
     // What brings the line down, from the menu bar's "Bring the line down".
     // Out of the box, the first two are on and the third off.
@@ -125,6 +128,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         setUpStatusItem()
         watchMenuBarClicks()
         setUpFiles()
+        setUpGuide()
 
         setUpPreferences()
 
@@ -189,8 +193,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
         }
 
-        // The tour once, then the question about screenshots once.
-        if !Tour.wasShown || !Inbox.wasOffered {
+        // The introduction once, then the question about screenshots once.
+        if Guide.shared.offersAtLaunch || !Inbox.wasOffered {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in self?.welcome() }
         }
 
@@ -331,14 +335,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         startWatcher()
     }
 
-    /// The welcome tour, once on this Mac, then the question about
+    /// The introduction, offered once on this Mac, then the question about
     /// screenshots, when it was never asked.
     private func welcome() {
         let ask = { [weak self] in
             guard !Inbox.wasOffered else { return }
             self?.offerInbox()
         }
-        if Tour.wasShown { ask() } else { Tour.shared.show(then: ask) }
+        if Guide.shared.offersAtLaunch { Guide.shared.offer(then: ask) } else { ask() }
     }
 
     /// Asked once. Changing system settings is the user's call, never ours.
@@ -569,6 +573,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             itemsChanged()
             return
         }
+        Guide.shared.happened(.photoHung)
         guard let from else { return }
         // Let the line lay out before measuring the landing spot.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self] in
@@ -658,6 +663,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             itemsChanged()
             return
         }
+        Guide.shared.happened(.photoHung)
         guard let from else { return }
         // Let the line come down and lay out before measuring the landing spot.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self] in
@@ -836,6 +842,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             updateCapacity()
             refresh()
             reveal(pinned: true)
+            if isRevealed { Guide.shared.lineCameDown() }
         }
     }
 
@@ -916,10 +923,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                     }
                     refresh()
                     reveal()
+                    if isRevealed { Guide.shared.lineCameDown() }
                 }
             } else {
                 hotZoneSince = nil
             }
+            // Held down for the introduction, it comes back once a click in
+            // the menu bar has put it away and the pointer has left there.
+            if guideHolds, isPresent, !inMenuBar, !Calls.shared.keepingAway { reveal(pinned: true) }
             return
         }
 
@@ -934,7 +945,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if inside && pinned { pinned = false }
 
         let busy = pinned || GrabView.isDragging || GrabView.isShowingMenu || TagView.isMovingLine
-            || line.pressedID != nil || now < peekUntil || line.isSearching || dropping
+            || line.pressedID != nil || now < peekUntil || line.isSearching || dropping || guideHolds
         if inside || busy {
             awaySince = nil
         } else {
@@ -1084,6 +1095,101 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard let preferences else { return }
         preferences.showsPermissions = true
         SettingsWindow.shared.show(preferences)
+    }
+
+    // MARK: The introduction
+
+    /// Where the introduction's steps point, what they need, and the line
+    /// held down while they point at it.
+    private func setUpGuide() {
+        let guide = Guide.shared
+        guide.frame = { [weak self] target in self?.guideFrame(of: target) }
+        guide.has = { [weak self] need in self?.guideHas(need) ?? false }
+        guide.holdLine = { [weak self] hold in self?.guideHoldsLine(hold) }
+        guide.screen = { [weak self] in self?.panel.screen ?? LinePanel.screenUnderPointer() }
+    }
+
+    /// The newest photo that has landed on the line.
+    private var guidePhoto: Pegged? {
+        line.items.last { !$0.falling && !$0.flying }
+    }
+
+    /// Where something is on the screen right now, nil while it does not
+    /// show: the line tucked away, or no photo on it.
+    private func guideFrame(of target: GuideTarget) -> CGRect? {
+        let rtl = NSApp.userInterfaceLayoutDirection == .rightToLeft
+        switch target {
+        case .none:
+            return nil
+        case .menuBarIcon:
+            guard let button = statusItem.button, let window = button.window, window.isVisible else { return nil }
+            let frame = window.convertToScreen(button.convert(button.bounds, to: nil))
+            return frame.isEmpty ? nil : frame
+        case .tag:
+            guard isPresent, isRevealed, !line.tagRect.isNull, !line.tagRect.isEmpty else { return nil }
+            return CGRect(x: panel.frame.minX + line.tagRect.minX, y: panel.frame.maxY - line.tagRect.maxY,
+                          width: line.tagRect.width, height: line.tagRect.height)
+        case .newestPhoto, .lock, .icons, .pickCircle:
+            guard isPresent, isRevealed, let item = guidePhoto, let card = cardFrame(for: item.id) else { return nil }
+            switch target {
+            case .lock:
+                // In the bottom corner where lines of text start.
+                guard item.covered else { return nil }
+                let size = GrabView.lockHitSize
+                return CGRect(x: rtl ? card.maxX - size : card.minX, y: card.minY, width: size, height: size)
+            case .icons:
+                // The photo with the row under it, which shows while the
+                // pointer is over either.
+                let reach = ChatTarget.takes(item) && !ChatTarget.onPhotosNow.isEmpty ? PhotoButtons.stripHeight : 0
+                return CGRect(x: card.minX, y: card.minY - reach, width: card.width, height: card.height + reach)
+            case .pickCircle:
+                let size = PhotoButtons.pickSize
+                let inset = PhotoButtons.pickInset
+                return CGRect(x: rtl ? card.minX + inset : card.maxX - inset - size,
+                              y: card.maxY - inset - size, width: size, height: size)
+            default:
+                return card
+            }
+        }
+    }
+
+    private func guideHas(_ need: GuideStep.Need) -> Bool {
+        switch need {
+        case .photo:
+            return guidePhoto != nil
+        case .coveredPhoto:
+            return guidePhoto?.covered == true
+        case .iconsUnderPhotos:
+            guard let item = guidePhoto else { return false }
+            return ChatTarget.takes(item) && !ChatTarget.onPhotosNow.isEmpty
+        case .twoPhotos:
+            return line.liveCount >= 2
+        }
+    }
+
+    /// Down while a step points at the line, as if opened on purpose; let go,
+    /// it goes back up once the pointer leaves it, as usual.
+    private func guideHoldsLine(_ hold: Bool) {
+        guard hold != guideHolds else { return }
+        guideHolds = hold
+        if hold {
+            keptOpenBeforeGuide = keepOpen
+            keepOpen = true
+            wanted = true
+            if !isRevealed {
+                panel.placeOnScreen()
+                updateCapacity()
+            }
+            refresh()
+            reveal(pinned: true)
+        } else {
+            keepOpen = keptOpenBeforeGuide
+            pinned = false
+            if line.liveCount == 0 && !keepOpen {
+                wanted = false
+                refresh()
+            }
+        }
     }
 
     // MARK: Menu bar
@@ -1271,8 +1377,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             guard let self else { return }
             NSWorkspace.shared.open(self.watcher.folder)
         })
-        menu.addItem(ClosureMenuItem(L("Welcome Tour"), symbol: "hand.wave") {
-            Tour.shared.show()
+        // Ended before its end, it says it goes on from there.
+        let introduction = GuideProgress.load().canContinue ? L("Continue Introduction") : L("Introduction")
+        menu.addItem(ClosureMenuItem(introduction, symbol: "hand.wave") {
+            // Once the menu has gone, so the first step finds the icon free.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { Guide.shared.startIntroduction() }
         })
         menu.addItem(ClosureMenuItem(L("Help & Support…"), symbol: "questionmark.circle") {
             NSWorkspace.shared.open(AppDelegate.supportURL)
@@ -1290,6 +1399,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(ClosureMenuItem(L("Quit Snapfly"), key: "q") {
             NSApp.terminate(nil)
         })
+    }
+
+    /// The introduction's first step asks for this menu.
+    func menuDidClose(_ menu: NSMenu) {
+        Guide.shared.happened(.menuBarMenu)
     }
 
     /// A shortcut's key on its menu item, when it is one key.

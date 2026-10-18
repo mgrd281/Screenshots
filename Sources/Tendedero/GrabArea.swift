@@ -488,6 +488,7 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         GrabView.isShowingMenu = true
         _ = menuProvider().popUp(positioning: nil, at: NSPoint(x: bounds.midX, y: bounds.midY), in: self)
         GrabView.isShowingMenu = false
+        Guide.shared.happened(.photoMenu)
         return true
     }
 
@@ -642,6 +643,7 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         GrabView.isShowingMenu = true
         _ = menuProvider().popUp(positioning: nil, at: convert(start, from: nil), in: self)
         GrabView.isShowingMenu = false
+        Guide.shared.happened(.photoMenu)
     }
 
     override func rightMouseDown(with event: NSEvent) {
@@ -652,6 +654,7 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         GrabView.isShowingMenu = true
         NSMenu.popUpContextMenu(menu, with: event, for: self)
         GrabView.isShowingMenu = false
+        Guide.shared.happened(.photoMenu)
     }
 
     // MARK: NSDraggingSource

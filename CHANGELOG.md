@@ -16,10 +16,13 @@ keeps a download of each version.
 - Undo, for a few seconds: a photo taken down or moved to the Trash, a
   crop, or a part hidden by hand, each with a note above the Dock that a
   click takes back.
-- A welcome tour: five short cards on the line, taking just the part you
-  need, the icons under a photo, a photo's menu and what stays private,
-  with where each lives in Settings. It shows once, and Welcome Tour in the
-  menu bar shows it again.
+- An introduction on your own screen, about a minute long: it points at
+  the real menu bar icon, your first screenshot, the photo on the line,
+  its lock, its icons, its menu and the tag, with the rest of the screen
+  dimmed and a small card beside it. Doing a step moves on by itself; it
+  can be ended and continued from the menu bar, and Settings › Support ›
+  Help & Introduction starts it again, shows one thing at a time, and turns
+  off the tips that show once at the right moment. The iPhone has one too.
 - Download, on the tag above the trash: the photos picked, or all of them,
   saved into Downloads as they leave the line, covered, drawn on and
   cropped. They stay on the line, and a note shows them in Finder.

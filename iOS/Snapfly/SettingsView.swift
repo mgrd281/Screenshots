@@ -102,6 +102,23 @@ struct SettingsView: View {
                 } footer: {
                     Text(L("Everything happens on this iPhone. Nothing is sent anywhere."))
                 }
+
+                Section {
+                    Button {
+                        dismiss()
+                        // Once the sheet has gone, on the screenshots themselves.
+                        Task { @MainActor in
+                            try? await Task.sleep(for: .seconds(0.4))
+                            PhoneGuide.shared.start()
+                        }
+                    } label: {
+                        Label(L("Start Introduction"), systemImage: "hand.wave")
+                    }
+                } header: {
+                    Text(L("Help & Introduction"))
+                } footer: {
+                    Text(L("Snapfly on your own screenshots, step by step."))
+                }
             }
             .navigationTitle(L("Settings"))
             .navigationBarTitleDisplayMode(.inline)
