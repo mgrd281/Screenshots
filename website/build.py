@@ -1139,7 +1139,7 @@ def section_say(lang):
                 <div class="hand-row">
                   <span class="hand-text">
                     <span class="hand-title">{esc(L(lang, "By hand"))}</span>
-                    <span class="hand-hint">{esc(L(lang, "Drag over anything to hide it. Click a box to show it again."))}</span>
+                    <span class="hand-hint">{esc(t["say_hand"])}</span>
                   </span>
                   <button type="button" class="mac-btn" data-remove-all disabled>{esc(L(lang, "Remove All"))}</button>
                 </div>

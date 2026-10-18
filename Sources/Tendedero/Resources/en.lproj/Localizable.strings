@@ -143,7 +143,7 @@
 "Screenshots, one click from any chat." = "Screenshots, one click from any chat.";
 "Made by" = "Made by";
 /* HideEditor */
-"Drag over anything to hide it. Click a box to show it again." = "Drag over anything to hide it. Click a box to show it again.";
+"Click a word to hide it, or drag over anything. Click a box to show it again." = "Click a word to hide it, or drag over anything. Click a box to show it again.";
 "Remove All" = "Remove All";
 "Cancel" = "Cancel";
 "Done" = "Done";
@@ -500,7 +500,7 @@
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Saved with the photo. It goes out as drawn; the file in %@ stays as it is.";
 "Crop…" = "Crop…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Drag over the part to keep. Return keeps the whole photo, Escape cancels.";
-"Cropped. It goes out cropped; the file in %@ stays as it is." = "Cropped. It goes out cropped; the file in %@ stays as it is.";
+"Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo." = "Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Saves the photo as it goes out, drawn on and cropped, as a file of its own.";
 "Keep as a file" = "Keep as a file";
@@ -700,3 +700,16 @@
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not.";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@.";
 "Copied. Start a new message and paste." = "Copied. Start a new message and paste.";
+
+/* Click to cover, the order of the icons under photos, and notes that take a change back */
+"“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” is covered from now on, in every photo. Change it in %2$@.";
+"Always cover “%@”" = "Always cover “%@”";
+"Covered in every photo from now on, as a rule of your own under Privacy." = "Covered in every photo from now on, as a rule of your own under Privacy.";
+"Drag the icons into the order you want them under each photo." = "Drag the icons into the order you want them under each photo.";
+"Moved to the Trash. Click to put it back on the line." = "Moved to the Trash. Click to put it back on the line.";
+"%d moved to the Trash. Click to put them back on the line." = "%d moved to the Trash. Click to put them back on the line.";
+"Taken down. Click to put it back on the line." = "Taken down. Click to put it back on the line.";
+"%d taken down. Click to put them back on the line." = "%d taken down. Click to put them back on the line.";
+"Saved with the photo; the file in %@ stays as it is. Click to undo." = "Saved with the photo; the file in %@ stays as it is. Click to undo.";
+"The whole photo goes out again. Click to undo." = "The whole photo goes out again. Click to undo.";
+"Could not put it back on the line." = "Could not put it back on the line.";

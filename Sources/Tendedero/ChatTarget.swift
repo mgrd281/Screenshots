@@ -157,11 +157,47 @@ enum ChatTarget: String, CaseIterable, Identifiable {
 
     private var offKey: String { "aiChatOff.\(rawValue)" }
 
-    /// The ones whose icon shows on a photo under the pointer. They show
-    /// whether or not the app is on this Mac: the website is always there.
+    /// The ones whose icon shows on a photo under the pointer, in their
+    /// order. They show whether or not the app is on this Mac: the website
+    /// is always there.
     @MainActor
     static var onPhotosNow: [ChatTarget] {
-        allCases.filter { shows($0) }
+        ordered().filter { shows($0) }
+    }
+
+    // MARK: Their order
+
+    private static let orderKey = "chatOrder"
+
+    /// In the order they were dragged into under Settings › Line › Icons
+    /// under photos; at first, and for any the order does not name, as
+    /// listed here.
+    static func ordered(in defaults: UserDefaults = .standard) -> [ChatTarget] {
+        order(from: defaults.stringArray(forKey: orderKey) ?? [])
+    }
+
+    /// The names kept read back: each known one once, then the rest.
+    static func order(from names: [String]) -> [ChatTarget] {
+        var order: [ChatTarget] = []
+        for name in names {
+            if let chat = ChatTarget(rawValue: name), !order.contains(chat) { order.append(chat) }
+        }
+        return order + allCases.filter { !order.contains($0) }
+    }
+
+    static func setOrder(_ order: [ChatTarget], in defaults: UserDefaults = .standard) {
+        defaults.set(order.map(\.rawValue), forKey: orderKey)
+    }
+
+    /// One moved to where another stands, the rest closing up behind it.
+    static func moving(_ chat: ChatTarget, to target: ChatTarget, in order: [ChatTarget]) -> [ChatTarget] {
+        guard chat != target, let from = order.firstIndex(of: chat), let to = order.firstIndex(of: target) else {
+            return order
+        }
+        var moved = order
+        moved.remove(at: from)
+        moved.insert(chat, at: to)
+        return moved
     }
 
     /// From Settings › Line: a click opens the chat in its app, when it is on

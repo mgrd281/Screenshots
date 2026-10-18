@@ -141,7 +141,7 @@
 "Screenshots, one click from any chat." = "スクリーンショットを、どのチャットにもワンクリックで。";
 "Made by" = "制作";
 /* HideEditor */
-"Drag over anything to hide it. Click a box to show it again." = "隠したい部分をドラッグします。ボックスをクリックすると元に戻ります。";
+"Click a word to hide it, or drag over anything. Click a box to show it again." = "単語をクリックすると隠れます。ほかの部分はドラッグします。ボックスをクリックすると元に戻ります。";
 "Remove All" = "すべて削除";
 "Cancel" = "キャンセル";
 "Done" = "完了";
@@ -498,7 +498,7 @@
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "写真と一緒に保存しました。描いたとおりに送られます。%@のファイルはそのままです。";
 "Crop…" = "切り取り…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "残す部分の上をドラッグします。Returnキーで写真全体を残し、escでキャンセルします。";
-"Cropped. It goes out cropped; the file in %@ stays as it is." = "切り取りました。切り取った部分が送られます。%@のファイルはそのままです。";
+"Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo." = "切り取りました。切り取った部分が送られます。%@のファイルはそのままです。クリックで取り消します。";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "写真と一緒に保存しました。送るものではその部分が隠れたままです。%@のファイルはそのままです。";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "写真を送られるとおり、描いた内容と切り取りを含めて、別のファイルとして保存します。";
 "Keep as a file" = "ファイルとして残す";
@@ -698,3 +698,16 @@
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "ブラウザではウェブサイトを開きます。アプリでは、この Mac にあればそのアプリを、なければウェブサイトを開きます。";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "アイコンは写真の下に出ます。クリックすると、写真（または一緒に選んだ写真）を%@に送ります。";
 "Copied. Start a new message and paste." = "コピーしました。新しいメッセージを作成して貼り付けてください。";
+
+/* Click to cover, the order of the icons under photos, and notes that take a change back */
+"“%1$@” is covered from now on, in every photo. Change it in %2$@." = "「%1$@」はこれからすべての写真で隠されます。%2$@で変更できます。";
+"Always cover “%@”" = "「%@」を常に隠す";
+"Covered in every photo from now on, as a rule of your own under Privacy." = "これからすべての写真で隠されます。プライバシーの自分のルールに入ります。";
+"Drag the icons into the order you want them under each photo." = "アイコンをドラッグして、写真の下に並ぶ順番を決めます。";
+"Moved to the Trash. Click to put it back on the line." = "ゴミ箱に入れました。クリックするとロープに戻します。";
+"%d moved to the Trash. Click to put them back on the line." = "%d枚をゴミ箱に入れました。クリックするとロープに戻します。";
+"Taken down. Click to put it back on the line." = "外しました。クリックするとロープに戻します。";
+"%d taken down. Click to put them back on the line." = "%d枚を外しました。クリックするとロープに戻します。";
+"Saved with the photo; the file in %@ stays as it is. Click to undo." = "写真と一緒に保存しました。%@のファイルはそのままです。クリックで取り消します。";
+"The whole photo goes out again. Click to undo." = "写真全体がまた送られます。クリックで取り消します。";
+"Could not put it back on the line." = "ロープに戻せませんでした。";

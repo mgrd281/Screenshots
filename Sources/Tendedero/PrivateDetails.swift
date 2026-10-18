@@ -485,9 +485,18 @@ enum Cover {
         guard !found.isEmpty || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty else { return nil }
 
         var covered = made.image
-        if !drawing.isEmpty, let drawn = Drawing.render(covered, drawing) { covered = drawn }
+        var crop: CGRect?
+        if !drawing.isEmpty, let drawn = Drawing.render(covered, drawing) {
+            // Cut only when the part kept is not the whole picture.
+            if drawn.width != covered.width || drawn.height != covered.height { crop = drawing.crop }
+            covered = drawn
+        }
+        let picture = CGFloat(covered.height)
         // The stamp's band goes above the picture, which grows by its height.
         if let stamp, let stamped = TimeStamp.render(covered, stamp) { covered = stamped }
+        // Where it is covered, as the copy shows it, for the lock.
+        let places = CoverReport.places(found.map(\.rect) + hand, crop: crop,
+                                        share: picture / CGFloat(max(1, covered.height)))
 
         // A folder of its own, so the copy keeps the screenshot's name.
         let type = clean ? UTType.jpeg : UTType.png
@@ -497,7 +506,7 @@ enum Cover {
         let options: [CFString: Any] = clean ? [kCGImageDestinationLossyCompressionQuality: 0.9] : [:]
         CGImageDestinationAddImage(destination, covered, options as CFDictionary)
         guard CGImageDestinationFinalize(destination) else { return nil }
-        return (target, CoverReport(found, hand: hand.count))
+        return (target, CoverReport(found, hand: hand.count, places: places))
     }
 
     /// Where a copy goes: a folder of its own, so it keeps the original's

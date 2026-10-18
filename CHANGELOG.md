@@ -6,6 +6,16 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Hide Part covers the word you click, and Always cover, under it, covers
+  that word in every photo from then on, as a rule of your own under
+  Privacy.
+- Rest the pointer on a photo's lock and it shows where it was covered:
+  the rest dims, and each covered place is outlined.
+- Drag the icons under photos into the order you want, under Line › Icons
+  under photos.
+- Undo, for a few seconds: a photo taken down or moved to the Trash, a
+  crop, or a part hidden by hand, each with a note above the Dock that a
+  click takes back.
 - A welcome tour: five short cards on the line, taking just the part you
   need, the icons under a photo, a photo's menu and what stays private,
   with where each lives in Settings. It shows once, and Welcome Tour in the

@@ -27,9 +27,14 @@ final class Preferences: ObservableObject {
 
     var actions = Actions()
     let line: Line
+    private var rulesWatch: NSObjectProtocol?
 
     init(line: Line) {
         self.line = line
+        // A word to cover always, added from Hide Part, shows in the rules.
+        rulesWatch = NotificationCenter.default.addObserver(forName: OwnRules.changed, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.rules = OwnRules.all }
+        }
     }
 
     /// Something changed outside the window, like a new shortcut.
@@ -185,6 +190,25 @@ final class Preferences: ObservableObject {
     }
 
     /// So do the icons under the photo: ChatGPT, Claude, WhatsApp and Gmail, each on its own.
+    /// The icons under a photo, in the order they stand there.
+    @Published private(set) var chatOrder = ChatTarget.ordered()
+
+    /// One dragged to where another stands; the row under every photo
+    /// follows at once.
+    func moveChat(_ chat: ChatTarget, to target: ChatTarget) {
+        let moved = ChatTarget.moving(chat, to: target, in: chatOrder)
+        guard moved != chatOrder else { return }
+        chatOrder = moved
+        ChatTarget.setOrder(moved)
+        line.objectWillChange.send()
+    }
+
+    /// One step earlier or later, for VoiceOver, which cannot drag.
+    func moveChat(_ chat: ChatTarget, by step: Int) {
+        guard let i = chatOrder.firstIndex(of: chat), chatOrder.indices.contains(i + step) else { return }
+        moveChat(chat, to: chatOrder[i + step])
+    }
+
     func showsAIChat(_ chat: ChatTarget) -> Binding<Bool> {
         Binding(
             get: { ChatTarget.shows(chat) },
@@ -1010,7 +1034,8 @@ private struct LinePane: View {
             }
             // The row of chats under each photo: which show, and where they open.
             Section(L("Icons under photos")) {
-                ForEach(ChatTarget.allCases) { chat in
+                ChatOrderRow(prefs: prefs)
+                ForEach(prefs.chatOrder) { chat in
                     Toggle(isOn: prefs.showsAIChat(chat)) {
                         Text(String(format: L("%@ on photos"), chat.name))
                         Text(String(format: L("Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@."), chat.name))
@@ -1905,5 +1930,62 @@ private struct AboutPane: View {
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+/// The icons under a photo as they stand there, larger, to drag into
+/// another order. One turned off is drawn faint, and keeps its place.
+private struct ChatOrderRow: View {
+    @ObservedObject var prefs: Preferences
+    @State private var dragged: ChatTarget?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 12) {
+                ForEach(prefs.chatOrder) { chat in
+                    ChatIcon(chat: chat, size: 28)
+                        .opacity(prefs.showsAIChat(chat).wrappedValue ? 1 : 0.35)
+                        .help(chat.name)
+                        .onDrag {
+                            dragged = chat
+                            return NSItemProvider(object: chat.rawValue as NSString)
+                        }
+                        .onDrop(of: [.text], delegate: ChatDrop(chat: chat, prefs: prefs, dragged: $dragged))
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(chat.name)
+                        .accessibilityAction(named: L("Move Earlier")) { prefs.moveChat(chat, by: -1) }
+                        .accessibilityAction(named: L("Move Later")) { prefs.moveChat(chat, by: 1) }
+                }
+            }
+            .animation(.easeOut(duration: 0.15), value: prefs.chatOrder)
+            Text(L("Drag the icons into the order you want them under each photo."))
+                .font(.callout)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+/// Where an icon dragged in the row is let go: it takes the place of the
+/// one under the pointer as it passes.
+private struct ChatDrop: DropDelegate {
+    let chat: ChatTarget
+    let prefs: Preferences
+    @Binding var dragged: ChatTarget?
+
+    func dropEntered(info: DropInfo) {
+        MainActor.assumeIsolated {
+            guard let dragged, dragged != chat else { return }
+            prefs.moveChat(dragged, to: chat)
+        }
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        MainActor.assumeIsolated { dragged = nil }
+        return true
     }
 }

@@ -141,7 +141,7 @@
 "Screenshots, one click from any chat." = "لقطات الشاشة، على بُعد نقرة من أي دردشة.";
 "Made by" = "من تطوير";
 /* HideEditor */
-"Drag over anything to hide it. Click a box to show it again." = "اسحب فوق أي شيء لإخفائه. انقر على مربع لإظهار ما تحته من جديد.";
+"Click a word to hide it, or drag over anything. Click a box to show it again." = "انقر على كلمة لإخفائها، أو اسحب فوق أي شيء. انقر على مربع لإظهار ما تحته من جديد.";
 "Remove All" = "إزالة الكل";
 "Cancel" = "إلغاء";
 "Done" = "تم";
@@ -498,7 +498,7 @@
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "حُفظ مع الصورة. تُرسل كما رسمتها؛ أما الملف في %@ فيبقى كما هو.";
 "Crop…" = "قص…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "اسحب فوق الجزء الذي يبقى. Return يحتفظ بالصورة كاملة، وEscape للإلغاء.";
-"Cropped. It goes out cropped; the file in %@ stays as it is." = "قُصّت. تُرسل مقصوصة؛ أما الملف في %@ فيبقى كما هو.";
+"Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo." = "قُصّت. تُرسل مقصوصة؛ أما الملف في %@ فيبقى كما هو. انقر للتراجع.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "حُفظ مع الصورة. تبقى هذه الأجزاء مخفية في كل ما يُرسل؛ أما الملف في %@ فيبقى كما هو.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "يحفظ الصورة كما تُرسل، بالرسم والقص، في ملف خاص بها.";
 "Keep as a file" = "الاحتفاظ بها كملف";
@@ -698,3 +698,16 @@
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "المتصفح يفتح الموقع. التطبيق يفتح تطبيقهم نفسه إن كان على هذا الماك، وإلا يفتح الموقع.";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "تظهر أيقونته تحت الصورة. النقر يرسل الصورة، أو الصور المختارة معها، إلى %@.";
 "Copied. Start a new message and paste." = "نُسخت. ابدأ رسالة جديدة والصقها.";
+
+/* Click to cover, the order of the icons under photos, and notes that take a change back */
+"“%1$@” is covered from now on, in every photo. Change it in %2$@." = "«%1$@» تُغطّى من الآن في كل صورة. يمكنك تغيير ذلك في %2$@.";
+"Always cover “%@”" = "تغطية «%@» دائمًا";
+"Covered in every photo from now on, as a rule of your own under Privacy." = "يُغطّى من الآن في كل صورة، كقاعدة خاصة بك ضمن الخصوصية.";
+"Drag the icons into the order you want them under each photo." = "اسحب الأيقونات لترتيبها كما تريدها تحت كل صورة.";
+"Moved to the Trash. Click to put it back on the line." = "نُقلت إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
+"%d moved to the Trash. Click to put them back on the line." = "نُقلت %d إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
+"Taken down. Click to put it back on the line." = "أُنزلت. انقر لإعادتها إلى الحبل.";
+"%d taken down. Click to put them back on the line." = "أُنزلت %d. انقر لإعادتها إلى الحبل.";
+"Saved with the photo; the file in %@ stays as it is. Click to undo." = "حُفظ مع الصورة؛ أما الملف في %@ فيبقى كما هو. انقر للتراجع.";
+"The whole photo goes out again. Click to undo." = "تُرسل الصورة كاملة من جديد. انقر للتراجع.";
+"Could not put it back on the line." = "تعذّرت إعادتها إلى الحبل.";

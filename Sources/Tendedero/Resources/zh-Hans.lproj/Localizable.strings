@@ -141,7 +141,7 @@
 "Screenshots, one click from any chat." = "截图，一键发到任何聊天。";
 "Made by" = "作者";
 /* HideEditor */
-"Drag over anything to hide it. Click a box to show it again." = "拖过要遮盖的内容。点按方框可重新显示。";
+"Click a word to hide it, or drag over anything. Click a box to show it again." = "点按一个词即可遮盖，或拖过任何内容。点按方框可重新显示。";
 "Remove All" = "全部移除";
 "Cancel" = "取消";
 "Done" = "完成";
@@ -498,7 +498,7 @@
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "已随照片存储。发送时带有你绘制的内容；“%@”中的文件保持原样。";
 "Crop…" = "裁剪…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "拖过要保留的部分。按 Return 键保留整张照片，按 Esc 取消。";
-"Cropped. It goes out cropped; the file in %@ stays as it is." = "已裁剪。发送时只带裁剪后的部分；“%@”中的文件保持原样。";
+"Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo." = "已裁剪。发送时只带裁剪后的部分；“%@”中的文件保持原样。点按可撤销。";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "已随照片存储。发送的内容中这些部分保持遮盖；“%@”中的文件保持原样。";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "按发送时的样子（含绘制和裁剪）将照片存储为单独的文件。";
 "Keep as a file" = "保留为文件";
@@ -698,3 +698,16 @@
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "浏览器会打开网站。App 会在这台 Mac 上有它时打开它自己的 App，没有时打开网站。";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "它的图标显示在照片下方。点按会把照片（或一起选中的照片）发送到 %@。";
 "Copied. Start a new message and paste." = "已拷贝。新建一封邮件后粘贴即可。";
+
+/* Click to cover, the order of the icons under photos, and notes that take a change back */
+"“%1$@” is covered from now on, in every photo. Change it in %2$@." = "从现在起，每张照片中的“%1$@”都会被遮盖。可在“%2$@”中更改。";
+"Always cover “%@”" = "始终遮盖“%@”";
+"Covered in every photo from now on, as a rule of your own under Privacy." = "从现在起每张照片都会遮盖，作为“隐私”中的自定义规则。";
+"Drag the icons into the order you want them under each photo." = "拖动图标，排成你希望它们在每张照片下的顺序。";
+"Moved to the Trash. Click to put it back on the line." = "已移到废纸篓。点按可放回晾衣绳。";
+"%d moved to the Trash. Click to put them back on the line." = "已将 %d 张移到废纸篓。点按可放回晾衣绳。";
+"Taken down. Click to put it back on the line." = "已取下。点按可放回晾衣绳。";
+"%d taken down. Click to put them back on the line." = "已取下 %d 张。点按可放回晾衣绳。";
+"Saved with the photo; the file in %@ stays as it is. Click to undo." = "已随照片存储；“%@”中的文件保持原样。点按可撤销。";
+"The whole photo goes out again. Click to undo." = "将再次发送整张照片。点按可撤销。";
+"Could not put it back on the line." = "无法放回晾衣绳。";

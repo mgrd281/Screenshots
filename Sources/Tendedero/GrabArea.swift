@@ -20,6 +20,8 @@ struct GrabArea: NSViewRepresentable {
     let line: Line
     /// The pointer is over the photo or the row of icons under it.
     @Binding var overStrip: Bool
+    /// The pointer rests on the lock of a covered photo.
+    @Binding var overLock: Bool
 
     func makeNSView(context: Context) -> GrabView {
         let view = GrabView()
@@ -57,7 +59,7 @@ struct GrabArea: NSViewRepresentable {
         }
         view.onTrash = { line.trash(id) }
         // A pinned photo's corner holds its pin, which unpins.
-        view.onDiscard = { pinned ? line.togglePin(id) : line.discard(id) }
+        view.onDiscard = { pinned ? line.togglePin(id) : line.takeDown(id) }
         view.onForceClick = { line.quickLook(id) }
         view.onCrop = isImage ? { line.crop(id) } : nil
         view.onPressChange = { pressed in line.pressedID = pressed ? id : nil }
@@ -78,6 +80,9 @@ struct GrabArea: NSViewRepresentable {
         view.stripHeight = chats.isEmpty ? 0 : PhotoButtons.stripHeight
         let over = $overStrip
         view.onHoverChange = { inside in if over.wrappedValue != inside { over.wrappedValue = inside } }
+        view.covered = item.covered
+        let lock = $overLock
+        view.onLockHover = { inside in if lock.wrappedValue != inside { lock.wrappedValue = inside } }
         // A right-click on one of them: the questions from Settings.
         let questions = AIQuestions.offered()
         view.hasQuestions = !questions.isEmpty
@@ -108,7 +113,7 @@ struct GrabArea: NSViewRepresentable {
             return true
         }
         let takeDown = NSAccessibilityCustomAction(name: inInbox ? L("Discard") : L("Take down")) {
-            MainActor.assumeIsolated { line.discard(id) }
+            MainActor.assumeIsolated { line.takeDown(id) }
             return true
         }
         let earlier = NSAccessibilityCustomAction(name: L("Move Earlier")) {
@@ -123,7 +128,7 @@ struct GrabArea: NSViewRepresentable {
             MainActor.assumeIsolated { line.pick(id, quietly: true) }
             return true
         }
-        let chatActions = ChatTarget.takes(item) ? ChatTarget.allCases.map { chat in
+        let chatActions = ChatTarget.takes(item) ? ChatTarget.ordered().map { chat in
             NSAccessibilityCustomAction(name: String(format: L("Send to %@"), chat.name)) {
                 MainActor.assumeIsolated { line.send(id, to: chat) }
                 return true
@@ -171,7 +176,7 @@ struct GrabArea: NSViewRepresentable {
             }
             // Straight into ChatGPT or Claude: their app, or else their website.
             if ChatTarget.takes(item) {
-                for chat in ChatTarget.allCases {
+                for chat in ChatTarget.ordered() {
                     let send = ClosureMenuItem(String(format: L("Send to %@"), chat.name), symbol: "bubble.left") {
                         line.send(id, to: chat)
                     }
@@ -183,7 +188,7 @@ struct GrabArea: NSViewRepresentable {
                 }
                 // With one of the questions from Settings after the photo.
                 if !questions.isEmpty {
-                    for chat in ChatTarget.allCases where chat.isAI {
+                    for chat in ChatTarget.ordered() where chat.isAI {
                         let ask = NSMenuItem(title: String(format: L("Ask %@"), chat.name), action: nil, keyEquivalent: "")
                         if #available(macOS 26, *) {
                             ask.image = NSImage(systemSymbolName: "questionmark.bubble", accessibilityDescription: nil)
@@ -268,10 +273,10 @@ struct GrabArea: NSViewRepresentable {
             }
             menu.addItem(.separator())
             if inInbox {
-                menu.addItem(ClosureMenuItem(L("Discard"), symbol: "trash") { line.discard(id) })
+                menu.addItem(ClosureMenuItem(L("Discard"), symbol: "trash") { line.takeDown(id) })
             } else {
-                menu.addItem(ClosureMenuItem(L("Take down"), symbol: "eye.slash") { line.discard(id) })
-                menu.addItem(ClosureMenuItem(L("Move to Trash"), symbol: "trash") { line.trash(id) })
+                menu.addItem(ClosureMenuItem(L("Take down"), symbol: "eye.slash") { line.takeDown(id) })
+                menu.addItem(ClosureMenuItem(L("Move to Trash"), symbol: "trash") { line.moveToTrash(id) })
             }
             let left = ClosureMenuItem(L("Take down everything to the left"), symbol: "arrow.left.to.line") {
                 line.takeDown(id, toTheLeft: true)
@@ -361,6 +366,10 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     }
     /// The pointer is over this view, the photo or the row under it.
     var onHoverChange: (Bool) -> Void = { _ in }
+    /// Something is covered, and the lock shows.
+    var covered = false
+    /// The pointer comes to rest on the lock, or leaves it.
+    var onLockHover: (Bool) -> Void = { _ in }
     private var tips: [NSView.ToolTipTag] = []
 
     private var downPoint: NSPoint?
@@ -509,9 +518,27 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
                                        owner: self, userInfo: nil))
     }
 
-    override func mouseEntered(with event: NSEvent) { onHoverChange(true) }
-    override func mouseMoved(with event: NSEvent) { onHoverChange(true) }
-    override func mouseExited(with event: NSEvent) { onHoverChange(false) }
+    override func mouseEntered(with event: NSEvent) {
+        onHoverChange(true)
+        followLock(event)
+    }
+
+    override func mouseMoved(with event: NSEvent) {
+        onHoverChange(true)
+        followLock(event)
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        onHoverChange(false)
+        onLockHover(false)
+    }
+
+    /// Over the lock, the places covered light up on the photo. The photo
+    /// keeps whether it is, so a line tucked away under the pointer starts
+    /// afresh.
+    private func followLock(_ event: NSEvent) {
+        onLockHover(covered && lockRect.contains(convert(event.locationInWindow, from: nil)))
+    }
 
     override func mouseDown(with event: NSEvent) {
         // Control-click is the Mac's right click: it opens the menu, rather

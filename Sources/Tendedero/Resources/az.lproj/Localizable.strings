@@ -143,7 +143,7 @@
 "Screenshots, one click from any chat." = "Ekran şəkilləri, istənilən söhbətə bir klik uzaqlıqda.";
 "Made by" = "Hazırlayan";
 /* HideEditor */
-"Drag over anything to hide it. Click a box to show it again." = "Gizlətmək üçün istənilən yerin üzərindən sürüşdür. Yenidən göstərmək üçün qutuya klik et.";
+"Click a word to hide it, or drag over anything. Click a box to show it again." = "Gizlətmək üçün sözə klik et və ya istənilən yerin üzərindən sürüşdür. Yenidən göstərmək üçün qutuya klik et.";
 "Remove All" = "Hamısını sil";
 "Cancel" = "Ləğv et";
 "Done" = "Hazırdır";
@@ -500,7 +500,7 @@
 "Saved with the photo. It goes out as drawn; the file in %@ stays as it is." = "Fotoyla birlikdə saxlanıldı. Çəkdiyin kimi göndərilir; %@ qovluğundakı fayl olduğu kimi qalır.";
 "Crop…" = "Kəs…";
 "Drag over the part to keep. Return keeps the whole photo, Escape cancels." = "Qalacaq hissənin üzərindən sürüşdür. Return bütün fotonu saxlayır, Escape ləğv edir.";
-"Cropped. It goes out cropped; the file in %@ stays as it is." = "Kəsildi. Kəsilmiş halda göndərilir; %@ qovluğundakı fayl olduğu kimi qalır.";
+"Cropped. It goes out cropped; the file in %@ stays as it is. Click to undo." = "Kəsildi. Kəsilmiş halda göndərilir; %@ qovluğundakı fayl olduğu kimi qalır. Geri qaytarmaq üçün klikləyin.";
 "Saved with the photo. Those parts stay hidden in what goes out; the file in %@ stays as it is." = "Fotoyla birlikdə saxlanıldı. Bu hissələr göndərilən hər şeydə gizli qalır; %@ qovluğundakı fayl olduğu kimi qalır.";
 "Saves the photo as it goes out, drawn on and cropped, as a file of its own." = "Fotonu göndərildiyi kimi, çəkilmiş və kəsilmiş halda ayrıca fayl kimi saxlayır.";
 "Keep as a file" = "Fayl kimi saxla";
@@ -700,3 +700,16 @@
 "The browser opens the website. The app opens their own app when it is on this Mac, and the website when it is not." = "Brauzer vebsaytı açır. Tətbiq, bu Mac-də varsa öz tətbiqini, yoxdursa vebsaytı açır.";
 "Its icon shows under the photo. A click sends the photo, or the ones picked with it, into %@." = "İkonu şəklin altında görünür. Klik şəkli və ya onunla seçilənləri %@ üçün göndərir.";
 "Copied. Start a new message and paste." = "Kopyalandı. Yeni mesaj başlat və yapışdır.";
+
+/* Click to cover, the order of the icons under photos, and notes that take a change back */
+"“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” bundan sonra hər fotoda örtülür. Bunu %2$@ bölməsində dəyişə bilərsiniz.";
+"Always cover “%@”" = "“%@” həmişə örtülsün";
+"Covered in every photo from now on, as a rule of your own under Privacy." = "Bundan sonra hər fotoda örtülür, Məxfilik bölməsində öz qaydan kimi.";
+"Drag the icons into the order you want them under each photo." = "Hər fotonun altında istədiyin sıra ilə görünmələri üçün ikonları sürüşdür.";
+"Moved to the Trash. Click to put it back on the line." = "Zibil qutusuna atıldı. Yenidən ipə asmaq üçün klikləyin.";
+"%d moved to the Trash. Click to put them back on the line." = "%d zibil qutusuna atıldı. Yenidən ipə asmaq üçün klikləyin.";
+"Taken down. Click to put it back on the line." = "İpdən götürüldü. Yenidən ipə asmaq üçün klikləyin.";
+"%d taken down. Click to put them back on the line." = "%d ipdən götürüldü. Yenidən ipə asmaq üçün klikləyin.";
+"Saved with the photo; the file in %@ stays as it is. Click to undo." = "Fotoyla birlikdə saxlanıldı; %@ qovluğundakı fayl olduğu kimi qalır. Geri qaytarmaq üçün klikləyin.";
+"The whole photo goes out again. Click to undo." = "Foto yenidən bütöv göndərilir. Geri qaytarmaq üçün klikləyin.";
+"Could not put it back on the line." = "Yenidən ipə asmaq alınmadı.";

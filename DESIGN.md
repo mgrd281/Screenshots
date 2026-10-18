@@ -449,8 +449,18 @@ apps.
     ChatGPT on photos, Claude on photos, WhatsApp on photos, Gmail on
     photos, GMX on photos and WEB.DE on photos, then Open in, all on at
     first, before Send button over chats): ChatGPT, Claude, WhatsApp,
-    Gmail, GMX and WEB.DE, in that order, 20 pt each, 4 pt apart, centered
+    Gmail, GMX and WEB.DE, in that order until dragged into another
+    (`ChatTarget.ordered`, below), 20 pt each, 4 pt apart, centered
     under the card 6 pt below it, so the card keeps only its own buttons.
+    The photo's menu and VoiceOver's actions follow the same order.
+    - **Their order** (`ChatOrderRow`): the section opens with the six as
+      they stand under a photo, 28 pt (`ChatIcon`, the strip's drawing at
+      any size, its short mark at 37.5% of it), 12 pt apart, one turned off
+      at 35% and keeping its place, each with its name as help. Dragged,
+      one takes the place of the icon it passes, the rest closing up on an
+      0.15 s ease-out, and every photo's row follows at once; VoiceOver has
+      Move Earlier and Move Later. A callout `.secondary` line under the
+      row says to drag them.
     The row shows with the pointer over the card or the row, fading in and
     settling 6 pt, and the photo's view (`GrabView`) and its hit rect reach
     30 pt below the card (`PhotoButtons.stripHeight`) while it does; the
@@ -497,7 +507,15 @@ apps.
     it shows a tip naming what was, kinds in Settings' order joined by " · ",
     then "Your own rules" and "Hidden by hand": "Covered: Names · Emails".
     The same line is the photo's accessibility value, and the first item of
-    its menu, disabled, with `lock.fill` from macOS 26, over a separator;
+    its menu, disabled, with `lock.fill` from macOS 26, over a separator.
+    Resting on the lock also shows where (`CoveredPlaces`, from
+    `CoverReport.places`, in the copy as it shows, cut and under its time
+    stamp band): the rest of the picture steps back under black 40%, and
+    each covered place keeps its look inside a 1.5 pt accent outline with a
+    2 pt corner, 1 pt outside it, clipped to the image corner; places that
+    overlap open one hole under one outline. It fades in
+    and out over 0.15 s ease-out, takes no clicks, and VoiceOver skips it,
+    as the tip already says what was covered. A PDF shows no places;
   - a PDF: a "PDF" capsule with its page count, in the lock's corner and
     style (9 pt bold white on black 55%, 18 pt high). A PDF brought in from
     elsewhere leads the capsule with a mini white spinner while its pages
@@ -698,8 +716,22 @@ apps.
       `.bordered` buttons, in a row where they fit, else stacked; the
       section's footer says what it did. While the field has the keyboard,
       Return runs it; empty, Return is Done. For a copy, "Hide in this
-      copy" follows (below). Last, "By hand": the drag hint as a row's
+      copy" follows (below). Last, "By hand": the hint as a row's
       subtitle, Remove All on its trailing edge.
+    - **Click to cover.** A click on the picture, not on a box, hides the
+      word read under the pointer, or the nearest on its row within its own
+      height (`HideModel.word(at:among:)`), as a hand box with the usual
+      room round it; a click on a box shows it again, and a drag still
+      draws a box. Under the word just hidden (over it, near the bottom),
+      one small `.borderedProminent` button, "Always cover “Kelly”" after
+      `plus.circle.fill`, at most 220 pt wide, the word truncated in the
+      middle, kept 90 pt from the picture's sides, adds the word as a rule
+      of the owner's own (`OwnRules.add`, once in any case, without the
+      punctuation round it); its help says where the rule lives, and a
+      footer then says it is covered from now on and where to
+      change it (in the footer of Say what to hide). Every photo is read
+      again, and Settings shows the rule. The button fades and goes with the
+      next click, drag, page or the word's box removed.
     - The **footer**, under a divider, holds Cancel and Done on the
       trailing edge.
   - Hide Private Details in a copy (from Finder) is the same window with
@@ -1117,6 +1149,19 @@ apps.
       the newest, takes them out of the History, and brings the line down
       as for files brought on purpose. The copies already in the chat stay
       there; only the line takes the photos back.
+    - **Undo, in the note** (`Line.goneNote`): the corner cross, Discard,
+      Take down (one, those to one side, or everything from the tag or the
+      menu bar) and Move to Trash end with a done note for 5 s, "Taken
+      down. Click to put it back on the line.", or "Moved to the Trash. …"
+      when that is where they went, with the count first for several. A
+      click hangs each again as the newest: out of the History to Snapfly's
+      folder, or out of the Trash to where it was, under a name of its own
+      if that one is taken by then. Crop, Keep Whole Photo and Hide Part's
+      Done on a photo say what happened and "Click to undo." for 6 s; the
+      click puts back the crop or the hand boxes there were, and the line
+      shows the photo as before. A PDF's note in Hide Part stays as it was.
+      A photo that can no longer come back, gone from the History or kept
+      by the Trash, ends with "Could not put it back on the line."
   - **Notes, not beeps.** A failure the user would otherwise have to guess
     at gets a note. A beep is kept only for a key that does nothing where
     the keyboard is taken (the capture screens, the shortcut recorder,

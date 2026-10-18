@@ -52,6 +52,11 @@ final class HideEditor: NSObject, NSWindowDelegate {
             readCovered(url, into: model)
             readLines(url, into: model)
         }
+        // A word covered always from now on is covered all over the picture.
+        model.rulesChanged = { [weak self, weak model] in
+            guard let self, let model else { return }
+            if document { self.read(model.image, into: model) } else { self.readCovered(url, into: model) }
+        }
         if copying {
             // Changing what is chosen covers the picture again at once.
             model.refresh = { [weak self, weak model] in
@@ -251,6 +256,18 @@ final class HideModel: ObservableObject {
     /// The copy is being written.
     @Published var saving = false
 
+    /// A word hidden with a click, offered to be covered always.
+    struct WordOffer: Equatable {
+        let word: String
+        /// Its box, from 0 to 1 from the bottom left.
+        let box: CGRect
+    }
+
+    /// The word last hidden with a click, until something else happens.
+    @Published var offer: WordOffer?
+    /// Covers the picture again once a word is covered always.
+    var rulesChanged: (() -> Void)?
+
     init(image: NSImage, hand: [CGRect], chosen: Set<PrivateDetail>, copying: Bool) {
         self.image = image
         self.hand = hand
@@ -274,6 +291,7 @@ final class HideModel: ObservableObject {
         self.page = page
         self.image = image
         hand = handByPage[page] ?? saved
+        offer = nil
         found = []
         waiting = false
         lines = nil
@@ -288,6 +306,7 @@ final class HideModel: ObservableObject {
         guard !request.isEmpty else { return }
         working = true
         note = nil
+        offer = nil
         guard let lines else {
             waiting = true
             return
@@ -322,6 +341,89 @@ final class HideModel: ObservableObject {
                 note = String(format: L("Parts hidden: %d. Click a box to show it again."), boxes.count)
             }
         }
+    }
+
+    /// A click on a word hides it, with a little room round it, and offers
+    /// to cover that word always. A click beside any word, or on one
+    /// already covered, hides nothing.
+    func coverWord(at point: CGPoint) {
+        offer = nil
+        guard let lines, !found.contains(where: { $0.contains(point) }),
+              !hand.contains(where: { $0.contains(point) }) else { return }
+        for line in lines {
+            let slack = line.box.height * 0.2
+            guard line.box.insetBy(dx: -line.box.height, dy: -slack).contains(point) else { continue }
+            let words = Self.words(in: line)
+            guard let i = Self.word(at: point, among: words.map(\.box)) else { continue }
+            let box = Self.padded(words[i].box)
+            hand.append(box)
+            offer = Self.ruleText(words[i].text).map { WordOffer(word: $0, box: box) }
+            note = nil
+            return
+        }
+    }
+
+    /// The word offered is covered in every photo from now on, as a rule of
+    /// the owner's own, which Settings › Privacy lists.
+    func alwaysCover() {
+        guard let offer else { return }
+        self.offer = nil
+        OwnRules.add(word: offer.word)
+        note = String(format: L("“%1$@” is covered from now on, in every photo. Change it in %2$@."), offer.word,
+                      [L("Settings"), L("Privacy")].joined(separator: " › "))
+        rulesChanged?()
+    }
+
+    /// A hand box taken away, the word offered with it too.
+    func remove(at index: Int) {
+        guard hand.indices.contains(index) else { return }
+        if hand[index] == offer?.box { offer = nil }
+        hand.remove(at: index)
+    }
+
+    /// Each word of a line, as the spaces part them, with where it is.
+    private static func words(in line: Finder.TextLine) -> [(text: String, box: CGRect)] {
+        let string = line.string
+        return wordRanges(in: string).compactMap { range in
+            line.box(for: range).map { (String(string[range]), $0) }
+        }
+    }
+
+    /// Where each word is in a line of text, as the spaces part them.
+    nonisolated static func wordRanges(in string: String) -> [Range<String.Index>] {
+        var ranges: [Range<String.Index>] = []
+        var start: String.Index?
+        for index in string.indices {
+            if string[index].isWhitespace {
+                if let begun = start { ranges.append(begun..<index) }
+                start = nil
+            } else if start == nil {
+                start = index
+            }
+        }
+        if let begun = start { ranges.append(begun..<string.endIndex) }
+        return ranges
+    }
+
+    /// The word under the point, or else the nearest on its row, no further
+    /// than its own height, from boxes 0 to 1 from the bottom left.
+    nonisolated static func word(at point: CGPoint, among boxes: [CGRect]) -> Int? {
+        let rows = boxes.indices.filter {
+            let slack = boxes[$0].height * 0.2
+            return point.y >= boxes[$0].minY - slack && point.y <= boxes[$0].maxY + slack
+        }
+        if let inside = rows.first(where: { boxes[$0].minX <= point.x && point.x <= boxes[$0].maxX }) { return inside }
+        func distance(_ i: Int) -> CGFloat { max(boxes[i].minX - point.x, point.x - boxes[i].maxX) }
+        guard let nearest = rows.min(by: { distance($0) < distance($1) }),
+              distance(nearest) <= boxes[nearest].height else { return nil }
+        return nearest
+    }
+
+    /// The word as a rule takes it: without the punctuation round it, like
+    /// "Kelly" from "Kelly,"; nil for a sign or a single letter.
+    nonisolated static func ruleText(_ word: String) -> String? {
+        let text = word.trimmingCharacters(in: .punctuationCharacters.union(.symbols).union(.whitespaces))
+        return text.count >= 2 ? text : nil
     }
 
     /// Where the words are in the line, each time they appear. Words the
@@ -445,8 +547,11 @@ private struct HideEditorView: View {
                     }
                     .onTapGesture {
                         hovered = nil
-                        model.hand.remove(at: i)
+                        model.remove(at: i)
                     }
+            }
+            if let offer = model.offer {
+                alwaysCover(offer, in: size)
             }
             if let drawing {
                 RoundedRectangle(cornerRadius: 3, style: .continuous)
@@ -461,6 +566,12 @@ private struct HideEditorView: View {
         .frame(width: size.width, height: size.height)
         .clipped()
         .contentShape(Rectangle())
+        // A click on a word hides it; the boxes take their own clicks first.
+        .onTapGesture(coordinateSpace: .local) { point in
+            guard size.width > 0, size.height > 0 else { return }
+            model.coverWord(at: CGPoint(x: point.x / size.width, y: 1 - point.y / size.height))
+        }
+        .animation(.easeOut(duration: 0.15), value: model.offer)
         // Alongside the boxes' clicks, so a drag can start on one too.
         .simultaneousGesture(
             DragGesture(minimumDistance: 3)
@@ -469,6 +580,7 @@ private struct HideEditorView: View {
                     let drawn = box(from: value.startLocation, to: value.location, in: size)
                     drawing = nil
                     guard drawn.width >= 4, drawn.height >= 4 else { return }
+                    model.offer = nil
                     model.hand.append(normalized(drawn, in: size))
                 }
         )
@@ -652,7 +764,7 @@ private struct HideEditorView: View {
                     .disabled(model.hand.isEmpty)
             } label: {
                 Text(L("By hand"))
-                Text(L("Drag over anything to hide it. Click a box to show it again."))
+                Text(L("Click a word to hide it, or drag over anything. Click a box to show it again."))
             }
         }
     }
@@ -677,6 +789,27 @@ private struct HideEditorView: View {
     }
 
     // MARK: Boxes
+
+    /// Under the word just hidden, or over it at the bottom of the picture:
+    /// a small button to cover that word always.
+    private func alwaysCover(_ offer: HideModel.WordOffer, in size: CGSize) -> some View {
+        let below = (1 - offer.box.minY) * size.height + 16
+        let y = below + 12 < size.height ? below : (1 - offer.box.maxY) * size.height - 16
+        let x = min(max(offer.box.midX * size.width, 90), max(90, size.width - 90))
+        return Button {
+            model.alwaysCover()
+        } label: {
+            Label(String(format: L("Always cover “%@”"), offer.word), systemImage: "plus.circle.fill")
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .frame(maxWidth: 220)
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.small)
+        .help(L("Covered in every photo from now on, as a rule of your own under Privacy."))
+        .position(x: x, y: y)
+        .transition(.opacity)
+    }
 
     private func handBox(hovering: Bool) -> some View {
         RoundedRectangle(cornerRadius: 3, style: .continuous)
