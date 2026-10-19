@@ -144,12 +144,11 @@ final class Capture {
         do {
             let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
             // Snapfly's own line and cards stay out of the picture.
-            let own = content.applications.filter { $0.processID == ProcessInfo.processInfo.processIdentifier }
             var stills: [(NSScreen, CGImage)] = []
             for screen in NSScreen.screens {
                 guard let id = screen.displayID,
                       let display = content.displays.first(where: { $0.displayID == id }) else { continue }
-                let filter = SCContentFilter(display: display, excludingApplications: own, exceptingWindows: [])
+                let filter = Capture.withoutOwnWindows(display, in: content)
                 let config = SCStreamConfiguration()
                 config.width = Int(screen.frame.width * screen.backingScaleFactor)
                 config.height = Int(screen.frame.height * screen.backingScaleFactor)
@@ -342,7 +341,6 @@ final class Capture {
     /// every Mac can encode and every chat can play.
     static func setup(_ region: Region, in content: SCShareableContent, forVideo: Bool)
         -> (filter: SCContentFilter, config: SCStreamConfiguration, frame: CGRect)? {
-        let own = content.applications.filter { $0.processID == ProcessInfo.processInfo.processIdentifier }
         let config = SCStreamConfiguration()
         config.showsCursor = forVideo
         config.captureResolution = .best
@@ -360,13 +358,13 @@ final class Capture {
             height = filter.contentRect.height * scale
         case let .screen(screen):
             guard let display = display(of: screen, in: content) else { return nil }
-            filter = SCContentFilter(display: display, excludingApplications: own, exceptingWindows: [])
+            filter = Capture.withoutOwnWindows(display, in: content)
             frame = screen.frame
             width = screen.frame.width * screen.backingScaleFactor
             height = screen.frame.height * screen.backingScaleFactor
         case let .area(rect, screen):
             guard let display = display(of: screen, in: content) else { return nil }
-            filter = SCContentFilter(display: display, excludingApplications: own, exceptingWindows: [])
+            filter = Capture.withoutOwnWindows(display, in: content)
             // The display counts from its own top left corner.
             config.sourceRect = CGRect(x: rect.minX - screen.frame.minX, y: screen.frame.maxY - rect.maxY,
                                        width: rect.width, height: rect.height)
@@ -389,6 +387,15 @@ final class Capture {
     nonisolated static func videoSize(_ width: CGFloat, _ height: CGFloat) -> (CGFloat, CGFloat) {
         let fit = min(1, 3840 / max(width, height, 1), (3840 * 2160 / max(width * height, 1)).squareRoot())
         return (max(2, (width * fit / 2).rounded() * 2), max(2, (height * fit / 2).rounded() * 2))
+    }
+
+    /// A screen without Snapfly's own windows, but with the picture over the
+    /// desktop icons, which is there to be seen.
+    static func withoutOwnWindows(_ display: SCDisplay, in content: SCShareableContent) -> SCContentFilter {
+        let own = content.applications.filter { $0.processID == ProcessInfo.processInfo.processIdentifier }
+        let shown = DesktopIcons.shared.windowIDs
+        let kept = content.windows.filter { shown.contains($0.windowID) }
+        return SCContentFilter(display: display, excludingApplications: own, exceptingWindows: kept)
     }
 
     private static func display(of screen: NSScreen, in content: SCShareableContent) -> SCDisplay? {

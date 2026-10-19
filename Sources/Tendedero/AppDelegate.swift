@@ -172,6 +172,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         line.onPutBack = { [weak self] in self?.putBack() }
         Calls.shared.onChange = { [weak self] in self?.callChanged() }
         Calls.shared.start()
+        DesktopIcons.shared.start()
         line.frameOfPhoto = { [weak self] id in self?.cardFrame(for: id) }
         line.onSearch = { [weak self] in self?.openSearch() }
 
@@ -1404,7 +1405,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(clearItem)
         menu.addItem(.separator())
 
-        // The two switches: what leaves covered, and the button at the edge.
+        // The switches: what leaves covered, the button at the edge, and the
+        // desktop's icons.
         let privacyItem = ClosureMenuItem(L("Hide private details"), symbol: "hand.raised") { [weak self] in
             self?.togglePrivateDetails()
         }
@@ -1416,6 +1418,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         buttonItem.state = CaptureButton.isEnabled ? .on : .off
         menu.addItem(buttonItem)
+        // The wallpaper over the desktop icons, for clean screenshots.
+        let iconsItem = ClosureMenuItem(L("Hide Desktop Icons"), symbol: "menubar.dock.rectangle") {
+            DesktopIcons.shared.toggle()
+        }
+        iconsItem.state = DesktopIcons.isHidden ? .on : .off
+        menu.addItem(iconsItem)
         menu.addItem(.separator())
 
         // Everything else lives in the settings window.

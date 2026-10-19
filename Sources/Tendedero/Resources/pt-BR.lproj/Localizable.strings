@@ -1065,3 +1065,16 @@
 "Stop covering?" = "Parar de cobrir?";
 "The copies saved so far stay in their folder." = "As cópias salvas até agora ficam na pasta.";
 "Keep Covering" = "Continuar cobrindo";
+
+/* Sound and desktop */
+"Hide Desktop Icons" = "Ocultar ícones da Mesa";
+"Screen recordings" = "Gravações de tela";
+"Sound" = "Som";
+"No Sound" = "Sem som";
+"Mac’s Sound" = "Som do Mac";
+"Microphone" = "Microfone";
+"Mac’s Sound and Microphone" = "Som do Mac e microfone";
+"The Mac’s sound is what you hear, without Snapfly’s own. The microphone is asked for the first time it records; both are mixed into one track." = "O som do Mac é o que você ouve, sem o do Snapfly. O microfone é pedido na primeira gravação; os dois são mixados em uma só faixa.";
+"The Mac’s sound is what you hear, without Snapfly’s own. Recording the microphone too needs macOS 15." = "O som do Mac é o que você ouve, sem o do Snapfly. Gravar também o microfone requer o macOS 15.";
+"Recording without the microphone: Snapfly isn’t allowed to use it. Allow it in System Settings › Privacy & Security › Microphone." = "Gravando sem o microfone: o Snapfly não tem permissão para usá-lo. Permita em Ajustes do Sistema › Privacidade e Segurança › Microfone.";
+"Saving the recording…" = "Salvando a gravação…";

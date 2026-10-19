@@ -405,6 +405,9 @@ design with monospaced digits.
     plain field, its count in 11 pt `.secondary`, then borderless 20 pt
     buttons for hide, up, down and remove, all labelled, and a field with
     Add), and a last section with Delete…, a destructive button that asks.
+  - General has a Screen recordings section with one Sound menu (No Sound,
+    Mac's Sound, Microphone, Mac's Sound and Microphone); the microphone
+    choices are greyed out before macOS 15, and the footer says why.
   - General names the screenshots folder under "Screenshots folder", from
     the home folder down ("Pictures › Snapfly"), with Show in Finder beside
     it; watched folders are named the same way.
@@ -717,7 +720,9 @@ apps.
     `camera.viewfinder`, `timer`, `scroll`, `record.circle` (`stop.circle`
     while recording), `folder.badge.plus`, `arrow.down.to.line` or
     `arrow.up.to.line`, `magnifyingglass`, `clock.arrow.circlepath`,
-    `eye.slash`, `hand.raised`, `camera.circle`, `gearshape`, `folder`,
+    `eye.slash`, `hand.raised`, `camera.circle`, `menubar.dock.rectangle`
+    (Hide Desktop Icons, a switch with a check like the two above it),
+    `gearshape`, `folder`,
     `questionmark.circle`, `arrow.down.circle`. None on Quit, as in Apple's
     menus.
 - **Finder's Services menu.** Send Safely with Snapfly and Hide Private

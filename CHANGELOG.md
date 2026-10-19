@@ -6,6 +6,12 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Sound in screen recordings, chosen in Settings › General: the Mac's sound,
+  the microphone (macOS 15 and later), or both mixed into one track. None
+  until chosen.
+- Hide Desktop Icons, in the menu bar: the wallpaper covers the icons on
+  every screen for clean screenshots and recordings, and they come back when
+  it is turned off.
 - Cover Files…, in the menu bar: PDFs and pictures by the hundred, even a
   thousand, dropped or chosen as files or whole folders. Choose what to
   cover, like names alone, and each gets a covered copy in a new folder,
