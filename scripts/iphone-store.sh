@@ -114,17 +114,12 @@ if /usr/libexec/PlistBuddy -c "Print :Entitlements:com.apple.developer.icloud-co
 </dict>
 </plist>
 PLIST
-  cat > "$TMP/Info.plist" <<PLIST
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>SnapflyCloudContainer</key><string>$CONTAINER</string>
-  <key>CKSharingSupported</key><true/>
-  <key>UIBackgroundModes</key><array><string>remote-notification</string></array>
-</dict>
-</plist>
-PLIST
+  # The app's own Info.plist (iOS/Info.plist, preparing photos in the
+  # background), with the container and iCloud's notices added.
+  cp iOS/Info.plist "$TMP/Info.plist"
+  /usr/libexec/PlistBuddy -c "Add :SnapflyCloudContainer string $CONTAINER" "$TMP/Info.plist"
+  /usr/libexec/PlistBuddy -c "Add :CKSharingSupported bool true" "$TMP/Info.plist"
+  /usr/libexec/PlistBuddy -c "Add :UIBackgroundModes: string remote-notification" "$TMP/Info.plist"
   CLOUD_SETTINGS=(CODE_SIGN_ENTITLEMENTS="$TMP/Snapfly.entitlements" INFOPLIST_FILE="$TMP/Info.plist")
   CLOUD_EXPORT="<key>iCloudContainerEnvironment</key><string>Production</string>"
   echo "The profile allows iCloud: this build can sync."

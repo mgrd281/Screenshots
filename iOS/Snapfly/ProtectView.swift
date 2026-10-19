@@ -65,11 +65,16 @@ struct ProtectView: View {
         .sheet(isPresented: $showsDetails) { DetailsSheet(session: session) }
         .phoneGuide(on: .shot)
         .onAppear {
+            // Preparing other photos waits, so this one opens fast.
+            PhotoIndexer.shared.hold()
             session.start()
             PhoneGuide.shared.screen = .shot
             PhoneGuide.shared.happened(.openedShot)
         }
-        .onDisappear { PhoneGuide.shared.screen = .library }
+        .onDisappear {
+            PhotoIndexer.shared.release()
+            PhoneGuide.shared.screen = .library
+        }
     }
 
     private var motion: Animation {

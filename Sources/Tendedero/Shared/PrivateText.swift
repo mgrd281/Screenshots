@@ -159,19 +159,94 @@ enum PrivateDetail: String, CaseIterable {
 /// then read again, as anyone could read it, and covered further if need be.
 enum Finder {
     struct TextLine {
-        let text: VNRecognizedText
+        let string: String
         /// Normalized, from the bottom left, as Vision measures.
         let box: CGRect
         /// The part of the picture the text was read in: all of it, or the
         /// strip a line of small print was read again from, larger.
         var frame = CGRect(x: 0, y: 0, width: 1, height: 1)
-        var string: String { text.string }
+        /// How the line knows where its parts are: from Vision's reading, or
+        /// from its words' places, kept from an earlier reading.
+        private let parts: Parts
+
+        private enum Parts {
+            case read(VNRecognizedText)
+            case kept([Word])
+        }
+
+        /// A word of a line and where it is in the picture, as the photos
+        /// prepared ahead of time keep it.
+        struct Word: Equatable {
+            /// Where in the line, in UTF-16 units.
+            let range: NSRange
+            /// Normalized, from the bottom left, in the whole picture.
+            let box: CGRect
+        }
+
+        init(text: VNRecognizedText, box: CGRect, frame: CGRect = CGRect(x: 0, y: 0, width: 1, height: 1)) {
+            string = text.string
+            self.box = box
+            self.frame = frame
+            parts = .read(text)
+        }
+
+        /// A line kept from an earlier reading, with its words' places.
+        init(string: String, box: CGRect, words: [Word]) {
+            self.string = string
+            self.box = box
+            parts = .kept(words)
+        }
+
+        /// The same reading, where it was found in the picture.
+        func placed(box: CGRect, frame: CGRect) -> TextLine {
+            switch parts {
+            case .read(let text): TextLine(text: text, box: box, frame: frame)
+            case .kept: self
+            }
+        }
 
         /// Where part of the line is in the picture, normalized like `box`.
+        /// A kept line has only its words' places: part of a word is told
+        /// by its share of the word's letters.
         func box(for range: Range<String.Index>) -> CGRect? {
-            guard let part = try? text.boundingBox(for: range)?.boundingBox else { return nil }
-            return CGRect(x: frame.minX + part.minX * frame.width, y: frame.minY + part.minY * frame.height,
-                          width: part.width * frame.width, height: part.height * frame.height)
+            switch parts {
+            case .read(let text):
+                guard let part = try? text.boundingBox(for: range)?.boundingBox else { return nil }
+                return CGRect(x: frame.minX + part.minX * frame.width, y: frame.minY + part.minY * frame.height,
+                              width: part.width * frame.width, height: part.height * frame.height)
+            case .kept(let words):
+                let wanted = NSRange(range, in: string)
+                var found: CGRect?
+                for word in words where word.range.length > 0 {
+                    let overlap = NSIntersectionRange(word.range, wanted)
+                    guard overlap.length > 0 else { continue }
+                    let length = CGFloat(word.range.length)
+                    let start = CGFloat(overlap.location - word.range.location) / length
+                    let end = CGFloat(overlap.location + overlap.length - word.range.location) / length
+                    let part = CGRect(x: word.box.minX + start * word.box.width, y: word.box.minY,
+                                      width: (end - start) * word.box.width, height: word.box.height)
+                    found = found?.union(part) ?? part
+                }
+                return found
+            }
+        }
+
+        /// Each word with where it is, as the spaces part them, to keep.
+        var words: [Word] {
+            if case .kept(let words) = parts { return words }
+            var found: [Word] = []
+            var start: String.Index?
+            for index in string.indices + [string.endIndex] {
+                if index == string.endIndex || string[index].isWhitespace {
+                    if let begun = start, let place = box(for: begun..<index) {
+                        found.append(Word(range: NSRange(begun..<index, in: string), box: place))
+                    }
+                    start = nil
+                } else if start == nil {
+                    start = index
+                }
+            }
+            return found
         }
     }
 
@@ -1045,6 +1120,19 @@ enum Finder {
         readings.forget()
     }
 
+    /// Every line in a picture, as `read` gives it, for a photo prepared
+    /// ahead of time; not kept with the pictures read lately.
+    static func lines(in image: CGImage) -> [TextLine] {
+        read(image, remember: false)
+    }
+
+    /// Lines read before, kept with a photo prepared ahead of time, so the
+    /// picture is not read again when it is covered.
+    static func remember(_ lines: [TextLine], for image: CGImage) {
+        guard let print = Readings.fingerprint(of: image) else { return }
+        readings.keep(lines, for: print)
+    }
+
     /// Every line in a picture, the small print read twice. Kept a while by
     /// a fingerprint of the picture's pixels, so the same picture is read
     /// once however often it is covered.
@@ -1096,7 +1184,7 @@ enum Finder {
         let middle = (line.box.midY - frame.minY) / frame.height
         guard let found = recognize(large).min(by: { abs($0.box.midY - middle) < abs($1.box.midY - middle) }),
               abs(found.box.midY - middle) < 0.25 else { return nil }
-        return TextLine(text: found.text, box: line.box, frame: frame)
+        return found.placed(box: line.box, frame: frame)
     }
 
     /// The Latin-script languages a block is read again in.
@@ -1138,7 +1226,7 @@ enum Finder {
         return recognize(piece, languages: latin).map { found -> TextLine in
             let box = CGRect(x: frame.minX + found.box.minX * frame.width, y: frame.minY + found.box.minY * frame.height,
                              width: found.box.width * frame.width, height: found.box.height * frame.height)
-            return TextLine(text: found.text, box: box, frame: frame)
+            return found.placed(box: box, frame: frame)
         }
     }
 

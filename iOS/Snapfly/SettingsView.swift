@@ -11,6 +11,7 @@ struct SettingsView: View {
     @State private var keepsLastDigits = Finder.keepsLastDigits
     @State private var strongest = Finder.strongest
     @State private var usesIntelligence = Finder.usesIntelligence && Finder.intelligenceAvailable
+    @ObservedObject private var indexer = PhotoIndexer.shared
 
     var body: some View {
         NavigationStack {
@@ -78,6 +79,12 @@ struct SettingsView: View {
                     .disabled(!Finder.intelligenceAvailable)
                     if let last = Timing.last {
                         LabeledContent(L("Last screenshot"), value: duration(last.milliseconds))
+                    }
+                    NavigationLink {
+                        PreparingView()
+                    } label: {
+                        LabeledContent(L("Faster picture processing"),
+                                       value: indexer.settings.isOn ? L("On") : L("Off"))
                     }
                 } header: {
                     Text(L("Reading and checking"))

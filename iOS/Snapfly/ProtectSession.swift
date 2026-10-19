@@ -107,6 +107,12 @@ final class ProtectSession: ObservableObject {
         }
         self.image = image
         original = UIImage(cgImage: image)
+        log.info("Picture shown after \(Timing.milliseconds(since: started), privacy: .public) ms")
+        // A photo prepared ahead of time is not read again.
+        if case .asset(let id) = source, await PhotoIndexer.reuse(for: id, image: image) {
+            log.info("Prepared reading reused")
+        }
+        plan.aspect = CGFloat(image.width) / CGFloat(max(1, image.height))
         let chosen = chosen, rules = rules
         // What the patterns, the labels and the names find, without waiting
         // for Apple Intelligence.

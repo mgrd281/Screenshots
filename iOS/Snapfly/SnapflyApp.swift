@@ -10,6 +10,9 @@ struct SnapflyApp: App {
     init() {
         // Whoever used Snapfly before Pro begins keeps every feature.
         Plan.recordFirstLaunch()
+        // Preparing photos ahead of time goes on in the background only if
+        // the owner turned it on; iOS needs to know what to call, at launch.
+        PhotoIndexer.registerBackground()
     }
 
     var body: some Scene {
