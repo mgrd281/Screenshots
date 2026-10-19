@@ -815,6 +815,13 @@ iCloud account, and the two work as one:
 - **Your devices.** Settings lists them, with when each was last there, and
   says how syncing stands: up to date, waiting for a connection, or what needs
   you. Sync Now tries again what could not go.
+- **Another Apple account? Pair with a code.** If the iPhone is signed in to
+  a different Apple account than the Mac, click Show Code… in Settings › Sync
+  on the Mac. Six digits show, a new one every 30 seconds. On the iPhone, tap
+  Connect to a Mac with a Code in Settings and type them; the Mac asks
+  whether to connect that iPhone, and only a yes lets it in. The Mac then
+  shares its sync with that account alone, through iCloud. Disconnect… on
+  either side ends it.
 
 It goes through your own iCloud, never a server of Snapfly's, and a change
 made offline waits until it can go. The plan, the rules and what is verified
@@ -1016,11 +1023,12 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/ShareLinks.swift` | Share links without a screen: what may go, the requests, reading the answers, and the links kept with their delete tokens |
 | `share/` | The share link service on Cloudflare: the Worker (`worker.js`) that takes uploads, shows each link's page and deletes files, its tests, and `wrangler.toml`; the Share Links workflow deploys it |
 | `Shared/SyncModel.swift`, `Shared/SyncLedger.swift`, `Shared/SyncPolicy.swift` | Syncing between the Mac and the iPhone, without a screen or a network: the records, the order of changes, merging, versions made at once on two devices, removals, the changes waiting to go, what may leave the device, the status, and the file it is kept in; see SYNC.md |
-| `Shared/CloudSync.swift` | Syncing's iCloud side, through Apple's sync engine and the owner's private database, only in a build that names the iCloud container; see SYNC.md |
+| `Shared/CloudSync.swift` | Syncing's iCloud side, through Apple's sync engine and the owner's private database (or a Mac's shared zones, after pairing with a code), only in a build that names the iCloud container; see SYNC.md |
+| `Shared/Pairing.swift`, `Shared/PairingCloud.swift` | Pairing with a code for another Apple account: the codes, a new one every 30 seconds, what is typed, the sealed messages and the pause after wrong codes, and the Mac's and the iPhone's sides in iCloud's public database |
 | `Shared/SyncCenter.swift`, `Shared/SyncText.swift` | Syncing as both apps see it: the choices, the state, the devices, what goes and what arrived, and their words |
 | `MacSync.swift`, `SyncPane.swift` | Syncing on the Mac: covered copies of what hangs on the line go, what the iPhone sends hangs there, and Settings › Sync |
 | `iOS/Snapfly/PhoneSync.swift` | Syncing on the iPhone: From your Mac, a picture fetched when opened, Send to Mac and the Sync section in Settings |
-| `cloudkit/schema.ckdb` | The record types in the iCloud container, put there by the CloudKit Schema workflow |
+| `cloudkit/schema.ckdb`, `cloudkit/share.ckdb` | The record types in the iCloud container, and the type shares are kept in, put there by the CloudKit Schema workflow |
 | `SYNC.md` | The audit and plan for Mac and iPhone as one: what there is, the design, the threat model, what goes wrong and what happens then, the owner's steps at Apple, and what is verified |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |

@@ -77,7 +77,7 @@ struct CoveredView: View {
             .buttonStyle(.bordered)
             .labelStyle(.titleAndIcon)
             // With syncing on, the covered copy hangs on the Mac's line.
-            if sync.settings.on {
+            if sync.canSend {
                 Button {
                     send(png)
                 } label: {

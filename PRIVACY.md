@@ -56,6 +56,14 @@ or turn on syncing with your iPhone (below).
   the developer or through a server of Snapfly's. Turn Sync off and nothing
   more goes; what is in iCloud stays until you remove Snapfly's data in your
   iCloud settings.
+- **Pairing with a code, for another Apple account.** When an iPhone on a
+  different Apple account types the code your Mac shows, and you say yes on
+  the Mac, your Mac shares its synced screenshots with that account alone,
+  through iCloud: that iPhone sees what your Mac syncs, and what it sends
+  hangs on your line. To meet, the two leave short notes in Snapfly's public
+  iCloud database for a minute or so: the devices' names and an iCloud
+  identifier that names no one, sealed with the code, and taken down again.
+  Disconnect… on the Mac takes that account off the share.
 - **Your files stay yours.** Snapfly reads screenshots in the folders you let it
   watch, and the photos and PDFs you bring to it yourself, and copies, sends or
   deletes them only when you ask it to. A photo or PDF you bring stays where it
@@ -123,7 +131,12 @@ beide über dein eigenes iCloud ab, in der privaten Datenbank deines
 Apple-Accounts: die Kopie, die die Leine verlässt, mit verdeckten privaten
 Angaben, eine kleine Vorschau und Angaben dazu, nie die verdeckten Wörter.
 Originale nur, wenn du „Auch Originale“ wählst, und nur die ab dann
-aufgenommenen. Nichts davon geht an den Entwickler.
+aufgenommenen. Nichts davon geht an den Entwickler. Gibt ein iPhone mit einem
+anderen Apple Account den Code ein, den dein Mac zeigt, und sagst du auf dem
+Mac Ja, teilt dein Mac seine synchronisierten Bildschirmfotos über iCloud nur
+mit diesem Account. Zum Verbinden liegen für etwa eine Minute kurze, mit dem
+Code versiegelte Notizen in Snapflys öffentlicher iCloud-Datenbank: die Namen
+der Geräte und eine iCloud-Kennung, die niemanden nennt.
 Snapfly liest nur Bildschirmfotos in den Ordnern, die du freigibst, und Fotos und
 PDFs, die du der App selbst gibst, und kopiert, sendet oder löscht sie nur, wenn
 du es willst. Fotos verlassen die Leine ohne Aufnahmeort und Kameradaten.

@@ -32,6 +32,7 @@ extension SyncProblem {
         case .iCloudFull: L("Your iCloud storage is full.")
         case .stuck: L("Some changes could not be sent. Try Sync Now.")
         case .needsUpdate, .newerFile: L("Another device has a newer Snapfly. Update Snapfly here.")
+        case .disconnected: L("No longer connected.")
         }
     }
 }

@@ -1,4 +1,5 @@
-# Puts the record types syncing needs (cloudkit/schema.ckdb) into the iCloud
+# Puts the record types syncing needs (cloudkit/schema.ckdb, and
+# cloudkit/share.ckdb when cktool takes it) into the iCloud
 # container's development environment, with the CloudKit management token the
 # owner pasted as the secret SNAPFLY_CLOUDKIT_TOKEN. The owner then deploys
 # them to production in the CloudKit Console (SYNC.md, section 5). Without
@@ -30,8 +31,18 @@ jobs:
           fi
           # The token goes as an argument; cktool keeps it in the keychain.
           xcrun cktool save-token --type management "$TOKEN"
+          # With the type shares are kept in, for pairing with a code, when
+          # cktool takes it; otherwise without it (cloudkit/share.ckdb).
+          FILE=cloudkit/schema.ckdb
+          cat cloudkit/schema.ckdb cloudkit/share.ckdb > "$RUNNER_TEMP/full.ckdb"
+          if xcrun cktool validate-schema --team-id "$TEAM" --container-id "$CONTAINER" \
+               --environment development --file "$RUNNER_TEMP/full.ckdb"; then
+            FILE="$RUNNER_TEMP/full.ckdb"
+          else
+            echo "::notice::cktool did not take the share type; it comes from a share made in development (SYNC.md, section 5)."
+          fi
           xcrun cktool validate-schema --team-id "$TEAM" --container-id "$CONTAINER" \
-            --environment development --file cloudkit/schema.ckdb
+            --environment development --file "$FILE"
           xcrun cktool import-schema --team-id "$TEAM" --container-id "$CONTAINER" \
-            --environment development --file cloudkit/schema.ckdb
+            --environment development --file "$FILE"
           echo "The schema is in development. Deploy it to production in the CloudKit Console."

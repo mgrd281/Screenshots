@@ -1,0 +1,21 @@
+// The type CloudKit keeps a share in, for pairing with a code (SYNC.md).
+// CloudKit makes it in development the first time a share is saved there,
+// which Snapfly's builds, made for production, never do. The CloudKit
+// Schema workflow adds this to schema.ckdb when cktool takes it; when it
+// does not, the type has to come from a share made in development
+// (SYNC.md, section 5).
+
+    RECORD TYPE "cloudkit.share" (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        "cloudkit.title" STRING,
+        "cloudkit.thumbnailImageData" BYTES,
+        "cloudkit.type" STRING,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE TO "_icloud",
+        GRANT READ TO "_world"
+    );

@@ -2,9 +2,12 @@
 // (Shared/SyncModel.swift, SYNC.md). Each record's contents travel as one
 // encrypted JSON payload with its version inside, so a record can gain
 // fields without changing this file; a version's preview and a whole
-// picture are assets. The CloudKit Schema workflow puts this into the
-// container's development environment; the CloudKit Console then deploys
-// it to production, which TestFlight and the App Store use.
+// picture are assets. Pairing is the one type in the public database: a
+// Mac and a device on another Apple account meet there for a minute, in
+// records sealed with the code the Mac shows (Shared/PairingCloud.swift).
+// The CloudKit Schema workflow puts this into the container's development
+// environment; the CloudKit Console then deploys it to production, which
+// TestFlight and the App Store use.
 
 DEFINE SCHEMA
 
@@ -72,4 +75,17 @@ DEFINE SCHEMA
         GRANT WRITE TO "_creator",
         GRANT CREATE TO "_icloud",
         GRANT READ TO "_world"
+    );
+
+    RECORD TYPE Pairing (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        payload         BYTES,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE TO "_icloud",
+        GRANT READ TO "_icloud"
     );

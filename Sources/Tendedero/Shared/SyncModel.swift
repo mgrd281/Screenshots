@@ -80,7 +80,8 @@ enum SyncPlatform: String, Codable, Sendable {
 
 /// One Mac or iPhone of the owner's that syncs. Only that device writes its
 /// record. It says who is there, not who may come in: being in this list
-/// grants nothing, the iCloud account does.
+/// grants nothing, the iCloud account does, or the Mac's share for a device
+/// paired with a code.
 struct SyncDevice: Codable, Equatable, Identifiable, Sendable {
     /// Made once on the device, kept with its settings.
     var id: String
@@ -96,6 +97,9 @@ struct SyncDevice: Codable, Equatable, Identifiable, Sendable {
     var appVersion: String
     /// The newest records it understands.
     var schema: Int
+    /// Its iCloud account, as CloudKit names it in Snapfly's container, so a
+    /// Mac can tell a device paired with a code from one on its own account.
+    var account: String? = nil
 
     /// Seen within this long counts as there now.
     static let presentFor: TimeInterval = 15 * 60

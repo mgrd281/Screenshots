@@ -120,6 +120,7 @@ PLIST
 <plist version="1.0">
 <dict>
   <key>SnapflyCloudContainer</key><string>$CONTAINER</string>
+  <key>CKSharingSupported</key><true/>
   <key>UIBackgroundModes</key><array><string>remote-notification</string></array>
 </dict>
 </plist>
