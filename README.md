@@ -876,21 +876,30 @@ watch the screen, so there is no line there. What it keeps is the covering:
   the names find is marked a moment later, then the copy is made, read again
   as anyone could read it, and covered further if need be, and where Apple
   Intelligence is on, what it finds joins after (Don't Wait leaves it out).
-  Protect Picture is a workspace: zoom with two fingers or a double tap,
-  and under the picture pick a tool. Select taps a place to select it, or a
-  word to hide it; a selected place moves, resizes by its corners and, a
-  box, turns by its handle, and holding one down offers Cover, Uncover or
-  Delete. The marker (thin, medium or thick), a box and the lasso hide more
-  by hand in solid ink, one finger drawing and two moving the picture; the
-  eraser takes covers away, and the picture shows there again, in the
-  editor only. Every change can be undone and done again; Clear Hidden by
-  Hand and Reset to Suggestions take back many at once. Hold the eye to see
-  the screenshot as it was. Under it, each place is counted once:
-  protected, to check, or not protected, and while a place to check is not
-  covered the picture is never called protected. Copy, Share and Save never
-  cut their words short, wait until the copy is made, checked and every
-  cover is known to have landed, and ask first while places are still to
-  check. Hold a screenshot in the grid for Cover and Copy, Cover and Share
+  Protect Picture is an editor where the picture is the screen: it is
+  fitted as large as the floating controls allow, and zoomed in (two
+  fingers or a double tap) it scrolls out from under them, so every corner
+  stays in reach. A small capsule under the title says how far the
+  protection is, then how many places are covered and how many are to
+  check, each counted once; while a place to check is not covered the
+  picture is never called protected. A tap on it opens Details, which goes
+  through the places Snapfly was not sure about one by one, from the top:
+  the place itself, what it hides, Keep Covered or Cover, Leave Visible,
+  Show on Picture, and how many are checked. Over the bottom float the
+  tools in one capsule: Select taps a place to select it, or a word to hide
+  it; a selected place moves, resizes by its corners and, a box, turns by
+  its handle, and holding one down offers Cover, Uncover or Delete. The
+  marker (thin, medium or thick, held for its widths), a box and the lasso
+  hide more by hand in solid ink, one finger drawing and two moving the
+  picture; the eraser takes covers away, and the picture shows there again,
+  in the editor only. Every change can be undone and done again; Clear
+  Hidden by Hand and Reset to Suggestions take back many at once. Under
+  them, Copy, Share and Save as icons (held, each says what it does; Save
+  goes to Photos, or held, to Files), and Send to Mac while a Mac is there.
+  Tapped before the copy is ready, a way waits and goes once it is; while
+  places are still to check it asks first. Hold the eye to see the
+  screenshot as it was. Full Screen, or a tap on nothing, leaves the
+  picture alone on black; a tap brings everything back. Hold a screenshot in the grid for Cover and Copy, Cover and Share
   or Cover and Save, without opening it. The screenshot itself stays as it was.
   Settings chooses what to cover, in the same six groups as on the Mac,
   with Check All, Recommended and Uncheck All, and Patient names and Other
@@ -1041,7 +1050,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
 | `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
-| `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture to zoom with its places marked, covered in steps and checked, the tools to select, draw, box, lasso and erase with their handles, the status, the count, Details, and the buttons that wait for the checked copy and ask while places are to check |
+| `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture filling the screen, to zoom with its places marked, covered in steps and checked; the floating tools to select, draw, box, lasso and erase with their handles; the status capsule; Details, which checks the unsure places one by one; Copy, Share, Save to Photos or Files and Send to Mac, which wait for the checked copy and ask while places are to check; and Full Screen |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's home screen: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
 | `iOS/Snapfly/PhotoIndexer.swift`, `IndexStore.swift`, `PreparingView.swift`, `iOS/Info.plist` | Faster picture processing: reading pictures ahead of time with consent, in the app and in the background, where it is kept on the iPhone, its page in Settings, and the background task's name |
 | `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |

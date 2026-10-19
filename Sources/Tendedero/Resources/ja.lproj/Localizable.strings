@@ -1352,3 +1352,15 @@
 "Find private details and protect them, simply." = "個人情報をかんたんに見つけて守ります。";
 "See All" = "すべて表示";
 "Your pictures. Your privacy." = "あなたの画像。あなたのプライバシー。";
+"Save to Photos" = "写真に保存";
+"Save to Files" = "ファイルに保存";
+"Saved to Files" = "ファイルに保存しました";
+"Full Screen" = "フルスクリーン";
+"Exit Full Screen" = "フルスクリーンを終了";
+"Leave Visible" = "表示したままにする";
+"Keep Covered" = "隠したままにする";
+"Show on Picture" = "画像で表示";
+"%d of %d checked" = "%2$d 件中 %1$d 件確認済み";
+"Everything is checked." = "すべて確認しました。";
+"Previous" = "前へ";
+"Goes as soon as the copy is ready." = "コピーの準備ができしだい実行します。";

@@ -1352,3 +1352,15 @@
 "Find private details and protect them, simply." = "轻松发现并保护隐私信息。";
 "See All" = "查看全部";
 "Your pictures. Your privacy." = "你的图片，你的隐私。";
+"Save to Photos" = "存储到“照片”";
+"Save to Files" = "存储到“文件”";
+"Saved to Files" = "已存储到“文件”";
+"Full Screen" = "全屏";
+"Exit Full Screen" = "退出全屏";
+"Leave Visible" = "保持可见";
+"Keep Covered" = "保持遮盖";
+"Show on Picture" = "在图片中显示";
+"%d of %d checked" = "已检查 %1$d / %2$d";
+"Everything is checked." = "全部已检查。";
+"Previous" = "上一个";
+"Goes as soon as the copy is ready." = "副本准备好后立即执行。";

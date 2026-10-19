@@ -173,6 +173,12 @@ final class ProtectSession: ObservableObject {
         changed()
     }
 
+    /// Agrees with places as they are, so they are checked; nothing on the
+    /// picture changes, so the copy stands.
+    func decide(_ ids: Set<Int>) {
+        plan.decide(ids)
+    }
+
     /// Hides what is under a shape drawn by hand; its id, if it was big enough.
     @discardableResult
     func draw(_ shape: HandShape) -> Int? {

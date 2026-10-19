@@ -1352,3 +1352,15 @@
 "Find private details and protect them, simply." = "Kişisel bilgileri kolayca bul ve koru.";
 "See All" = "Tümünü gör";
 "Your pictures. Your privacy." = "Resimlerin. Gizliliğin.";
+"Save to Photos" = "Fotoğraflar’a kaydet";
+"Save to Files" = "Dosyalar’a kaydet";
+"Saved to Files" = "Dosyalar’a kaydedildi";
+"Full Screen" = "Tam ekran";
+"Exit Full Screen" = "Tam ekrandan çık";
+"Leave Visible" = "Görünür bırak";
+"Keep Covered" = "Örtülü bırak";
+"Show on Picture" = "Resimde göster";
+"%d of %d checked" = "%2$d içinden %1$d kontrol edildi";
+"Everything is checked." = "Her şey kontrol edildi.";
+"Previous" = "Önceki";
+"Goes as soon as the copy is ready." = "Kopya hazır olur olmaz yapılır.";

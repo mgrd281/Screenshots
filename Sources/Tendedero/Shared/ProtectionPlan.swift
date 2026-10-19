@@ -231,6 +231,19 @@ struct ProtectionPlan: Equatable {
         }.map(\.id))
     }
 
+    /// Keeps places as they are and counts them as decided, as the owner
+    /// does who checks a place and agrees with Snapfly. One change to undo.
+    mutating func decide(_ ids: Set<Int>) {
+        let open = marks.filter { ids.contains($0.id) && !touched.contains($0.id) }
+        guard !open.isEmpty else { return }
+        var change = Change(touchedBefore: touched, touchedAfter: touched.union(open.map(\.id)))
+        for mark in open {
+            change.before[mark.id] = mark
+            change.after[mark.id] = mark
+        }
+        record(change)
+    }
+
     /// Everything hidden by hand taken away, as one change.
     mutating func clearHand() {
         remove(Set(marks.filter { $0.origin == .hand }.map(\.id)))
@@ -381,4 +394,13 @@ struct ProtectionPlan: Equatable {
 
     /// Whether the owner has decided on a mark, by changing it.
     func isDecided(_ id: Int) -> Bool { touched.contains(id) }
+
+    /// The places Snapfly was not sure about, decided or not, from the top
+    /// of the picture down, as they are checked one after another.
+    var doubtful: [Mark] {
+        marks.filter(\.check).sorted { ($0.rect.maxY, -$0.rect.minX) > ($1.rect.maxY, -$1.rect.minX) }
+    }
+
+    /// How many of the places Snapfly was not sure about are decided.
+    var checked: Int { doubtful.filter { touched.contains($0.id) }.count }
 }
