@@ -50,7 +50,8 @@ enum DocumentSense {
                                        "anamnese", "untersuchung", "krankenhaus", "dr. med", "icd", "rezept",
                                        "überweisung", "facharzt", "fachärztin", "krankenkasse", "physician",
                                        "hospital", "clinic", "mrt", "sonographie", "röntgen", "blutbild", "arztbrief",
-                                       "entlassung", "beurteilung", "المريض", "التشخيص", "пациент", "диагноз", "врач"]
+                                       "entlassung", "beurteilung", "arbeitsunfähig", "arbeitsunfähigkeit",
+                                       "kostenträger", "versicherten", "المريض", "التشخيص", "пациент", "диагноз", "врач"]
     private static let invoiceWords = ["rechnung", "invoice", "rechnungsnummer", "bestellung", "order", "ust", "mwst",
                                        "netto", "brutto", "summe", "total", "betrag", "kunde", "kundennummer",
                                        "lieferung", "artikel", "menge", "preis", "zahlbar", "fällig", "subtotal",
@@ -196,6 +197,9 @@ enum DocumentSense {
         let all = medicalWords + invoiceWords + bankingWords + cues.filter { !$0.labelOnly }.map(\.text)
         return Set(all.filter { !$0.contains(" ") && !$0.contains(".") && !$0.contains("/") })
     }()
+    /// Endings of German nouns that are no one's name: "-bescheinigung",
+    /// "-keit", "-schaft".
+    private static let nounEndings = ["ung", "ungen", "heit", "keit", "schaft", "tion", "ität"]
     private static let particles: Set<String> = ["van", "von", "de", "da", "del", "der", "den", "la", "le", "bin",
                                                  "ibn", "al", "el", "di", "du", "zu", "ten", "ter", "dos", "das"]
 
@@ -207,6 +211,9 @@ enum DocumentSense {
         guard let first = core.first, core.count >= 2, !notNames.contains(core.lowercased()),
               !documentWords.contains(core.lowercased()), !isOrganizationWord(core) else { return false }
         guard core.allSatisfy({ $0.isLetter || "'’.-".contains($0) }) else { return false }
+        // A long German noun of a kind no one is named, like "Erstbescheinigung".
+        let lower = core.lowercased()
+        if lower.count >= 9, nounEndings.contains(where: { lower.hasSuffix($0) }) { return false }
         if first.isUppercase { return true }
         // Scripts without capitals, like Arabic, only where something else
         // vouches for the name, like a title or a label.

@@ -6,6 +6,17 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Printed forms, like a German sick note, a prescription or a referral, are
+  read field by field: the value under or beside each label is covered as
+  what the label says it is, and only when that kind is chosen. Names alone
+  covers the insured person's name, even on two lines, and the doctor's,
+  and leaves the diagnosis, the dates and the insurance numbers readable;
+  Health alone covers the diagnosis and the days of illness and leaves the
+  names. Labels are never covered, a disease named after a person is no
+  name, and an insurance number is no phone number.
+- A PDF's covered copy is opened again before it is handed out, and is not
+  handed out if it still carries text, notes, form fields or the original's
+  author, title, subject or keywords.
 - On the iPhone, See All finds screenshots by the words they say (those
   read ahead of time), shows only those with private details, protected or
   not, and puts the newest or the oldest first. It is there whenever there

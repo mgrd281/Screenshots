@@ -287,6 +287,27 @@ vouch for it, is offered to check; in a doctor's letter, an invoice or a
 bank statement it is covered and marked to check instead, so a patient's
 name never stays readable as a mere suggestion.
 
+Printed forms are read field by field, as a person reads them: each label,
+and its value after it, beside it, or under it in its column, on one line or
+several, even where a row of labels and a row of values are read as one
+line each. A value is what its label says it is, not what it looks like. On
+a German sick note (Arbeitsunfähigkeitsbescheinigung), a prescription or a
+referral, the name under "Name, Vorname des Versicherten" is the patient's
+name, on one line or two, and the lines after it the address; the date under
+"geb. am" is a date; the numbers under Versicherten-Nr., Kostenträgerkennung,
+Betriebsstätten-Nr. and Arzt-Nr. are ID numbers; the insurer under
+"Krankenkasse bzw. Kostenträger" is an organization; and the dates after
+"Arbeitsunfähig seit", "voraussichtlich arbeitsunfähig bis" and
+"festgestellt am", and what stands under "AU-begründende Diagnose(n)", are
+health details. So each kind covers its own fields and no other's: Names
+alone leaves the diagnosis, the dates and the numbers readable, Health
+alone leaves the names, and a label itself is never covered. What a field
+holds also wins over what it looks like: a disease named after a person
+under Diagnose is no name, and an insurance number no phone number. A
+value that fits its label only in part, like a name read in small letters,
+is covered and marked to check; one that barely does, like a number too
+short for its field, is only offered.
+
 Names covers everyone's names. Two more choices sit under it, for when
 Names is off: Patient names, the patients' alone, and Other people, the
 doctors, customers, staff, payees, senders and recipients. Patient names
@@ -571,7 +592,10 @@ under Privacy are covered, and Hide Part works on them too, page by page in a
 PDF. A photo goes without where and with what it was taken: its location,
 camera and captions stay behind, and it goes as a JPEG. A PDF is read page by
 page on your Mac and drawn again into a new PDF, so what is covered is gone,
-not painted over, and no text, links or document details come along. Its card
+not painted over, and no text, links or document details come along. Each
+copy is opened again before it is handed out, and one that still carries
+text, notes, form fields, an author, a title, a subject or keywords is not
+handed out at all. Its card
 shows a spinner while its pages are covered, then a lock. The file itself is
 never changed. Save Word or Excel documents as a PDF first; a PDF locked with
 a password, or longer than 200 pages, stays out.
@@ -1038,6 +1062,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-one kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names or only Patient names and Other people; the lines read kept a while in memory, or given from a photo prepared ahead of time |
 | `Shared/HandShape.swift`, `Shared/ProtectionPlan.swift` | Hiding by hand: the marker's strokes, boxes that turn and outlines, on the original picture's places, and every place of a picture with the owner's changes, each undone and done again, and the count of what is protected, to check and left |
 | `Shared/PrivacyIndex.swift` | Pictures prepared ahead of time: what is kept of each, what is left to read, newest first, and when preparing waits |
+| `Shared/FormFields.swift` | Reads a printed form's fields: each label, like "Name, Vorname des Versicherten", Versicherten-Nr. or "Arbeitsunfähig seit", and its value beside it or under it in its column, told as what the label says it is (a name, an address, a date of birth, an insurance or ID number, a diagnosis, a day of illness), with whose it is and how sure |
 | `Shared/DocumentSense.swift` | Reads a document as a person would: a person's name from a company's, where a label's value stops being a name, whose a name is (patient, doctor, customer, staff), and whose names Settings covers |
 | `Shared/ProtectionPlan.swift` | A picture being protected, place by place: found, offered, turned on or off or covered by hand, with undo and redo |
 | `Shared/ExportCheck.swift` | The last check before a copy leaves: every cover landed where something showed |

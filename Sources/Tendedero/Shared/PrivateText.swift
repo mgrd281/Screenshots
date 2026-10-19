@@ -151,6 +151,22 @@ enum PrivateDetail: String, CaseIterable {
     }
 }
 
+extension FormFields.Entity {
+    /// The kind a form field's value is covered as; nil for a code the
+    /// form prints that is no one's.
+    var detail: PrivateDetail? {
+        switch self {
+        case .personName: .names
+        case .address: .addresses
+        case .dateOfBirth, .date: .dates
+        case .healthInsuranceNumber, .identificationNumber, .institutionNumber: .ids
+        case .institution: .organizations
+        case .medicalDiagnosis, .medicalDate: .health
+        case .formCode: nil
+        }
+    }
+}
+
 /// Finds private details in the text of a screenshot, three ways together:
 /// patterns that are private wherever they appear, like an email address;
 /// labels that announce one, like "Rechnungsadresse" above a name and an
@@ -824,7 +840,8 @@ enum Finder {
         var found = Timing.measure("find") { findings(in: lines, chosen, rules: rules, scope: scope) }
         if intelligence {
             let more = Timing.measure("intelligence") { intelligentHits(in: lines, chosen) }
-            found.hits += decided(more, in: lines.map(\.string), chosen, scope: scope)
+            found.hits += decided(isolated(more, by: form(of: lines), in: lines.map(\.string)), in: lines.map(\.string),
+                                  chosen, scope: scope)
         }
         let all = keepingLastDigits(found.hits, in: lines) + printedHits
         let covered = Set(all.map(\.line)), boxes = lines.map(\.box)
@@ -920,7 +937,8 @@ enum Finder {
         let (chosen, scope) = resolved(chosen)
         // What Apple Intelligence found when the photo was read, never waited for here.
         let found = hits(in: lines, chosen, rules: rules, scope: scope)
-            + decided(intelligentHits(in: lines, chosen, waits: false), in: lines.map(\.string), chosen, scope: scope)
+            + decided(isolated(intelligentHits(in: lines, chosen, waits: false), by: form(of: lines),
+                               in: lines.map(\.string)), in: lines.map(\.string), chosen, scope: scope)
         for hit in keepingLastDigits(found, in: lines) {
             let length = lines[hit.line].string.utf16.count
             // The strongest protection leaves out whole lines, as it covers them.
@@ -1003,16 +1021,54 @@ enum Finder {
         var learned = Set<String>()
         var found = patterns(in: text, chosen)
         found += labelled(strings, boxes: boxes, part: part, chosen, learned: &learned)
+        let form = FormFields.read(strings, boxes: boxes, part: part)
         var possible: [Hit] = []
+        for value in form.values {
+            // A name a form's label announces is looked for elsewhere too.
+            if value.entity == .personName { learn(String(strings[value.line][value.range]), into: &learned) }
+            guard let kind = value.entity.detail, chosen.contains(kind) else { continue }
+            let hit = Hit(line: value.line, range: NSRange(value.range, in: strings[value.line]), kind: kind,
+                          role: value.role.map { NameRole(role: $0, confidence: 0.9, reason: "form") },
+                          check: value.confidence == .medium)
+            if value.confidence == .low { possible.append(hit) } else { found.append(hit) }
+        }
         if chosen.contains(.names) {
             let people = names(in: text, learned: learned)
             found += people.hits
-            possible = people.possible
+            possible += people.possible
         }
         if chosen.contains(.organizations) { found += organizations(in: text) }
         if chosen.contains(.health) { found += medicines(in: strings) }
         found += own(in: text, rules)
-        return Findings(hits: merged(decided(found, in: strings, chosen, scope: scope)), possible: possible)
+        return Findings(hits: merged(decided(isolated(found, by: form, in: strings), in: strings, chosen, scope: scope)),
+                        possible: isolated(possible, by: form, in: strings))
+    }
+
+    /// A form's labels say what a place is, over what it looks like: a
+    /// label itself is never covered, and a field's value only as what its
+    /// label says it is, or as a date where it is one. So a disease named
+    /// after a person under "Diagnose" is no name, and the number under
+    /// "Versicherten-Nr." no phone number. An address or an insurer's name
+    /// may hold other details, like a phone number or a doctor's name, so
+    /// those stay as found. The owner's own rules always count.
+    private static func isolated(_ hits: [Hit], by form: FormFields.Reading, in strings: [String]) -> [Hit] {
+        guard !form.labels.isEmpty else { return hits }
+        return hits.filter { hit in
+            guard let kind = hit.kind else { return true }
+            let line = strings[hit.line]
+            let range = hit.range.flatMap { Range($0, in: line) }
+            if form.isLabel(range, in: hit.line, of: line) { return false }
+            guard let value = form.value(at: range, in: hit.line, of: line) else { return true }
+            switch value.entity {
+            case .address, .institution: return true
+            default: return value.entity.detail == kind || kind == .dates
+            }
+        }
+    }
+
+    /// What a page's form fields hold, from its lines as read.
+    private static func form(of lines: [TextLine]) -> FormFields.Reading {
+        FormFields.read(lines.map(\.string), boxes: lines.map(\.box), part: { lines[$0].box(for: $1) })
     }
 
     /// With Keep the last four digits on, a long number's last four stay

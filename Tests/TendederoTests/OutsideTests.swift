@@ -140,6 +140,26 @@ final class OutsideTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(made.report.kinds[.bank] ?? 0, 1, made.report.summary)
     }
 
+    /// The copy leaves the original's details behind: its author and
+    /// title, its notes, and its text.
+    func testTheCopyLeavesTheDocumentsDetailsBehind() throws {
+        let plain = folder.appendingPathComponent("Plain.pdf"), pdf = folder.appendingPathComponent("Note.pdf")
+        try makePDF(at: plain, info: [kCGPDFContextAuthor: "Erika Mustermann", kCGPDFContextTitle: "Erika Mustermann"])
+        let source = try XCTUnwrap(PDFDocument(url: plain))
+        let note = PDFAnnotation(bounds: CGRect(x: 10, y: 10, width: 80, height: 20), forType: .freeText,
+                                 withProperties: nil)
+        note.contents = "Erika Mustermann"
+        source.page(at: 0)?.addAnnotation(note)
+        XCTAssertTrue(source.write(to: pdf))
+        XCTAssertFalse(DocumentCover.isClean(pdf), "the original carries them")
+
+        let copy = try XCTUnwrap(DocumentCover.copy(of: pdf, [.names], hand: [:]))
+        XCTAssertTrue(DocumentCover.isClean(copy))
+        let document = try XCTUnwrap(PDFDocument(url: copy))
+        XCTAssertTrue(document.page(at: 0)?.annotations.isEmpty ?? false)
+        XCTAssertNil(document.documentAttributes?[PDFDocumentAttribute.authorAttribute])
+    }
+
     func testHandBoxesOfPagesBelongToTheirFile() {
         let url = URL(fileURLWithPath: "/tmp/Rechnung #4.pdf")
         let key = PrivateDetails.pageKey(url, 3)
@@ -239,9 +259,10 @@ final class OutsideTests: XCTestCase {
 
     // MARK: Helpers
 
-    private func makePDF(at url: URL, size: CGSize = CGSize(width: 300, height: 200), pages: Int = 1) throws {
+    private func makePDF(at url: URL, size: CGSize = CGSize(width: 300, height: 200), pages: Int = 1,
+                         info: [CFString: Any] = [:]) throws {
         var box = CGRect(origin: .zero, size: size)
-        let context = try XCTUnwrap(CGContext(url as CFURL, mediaBox: &box, nil))
+        let context = try XCTUnwrap(CGContext(url as CFURL, mediaBox: &box, info.isEmpty ? nil : info as CFDictionary))
         for _ in 0..<pages {
             context.beginPDFPage(nil)
             let text = NSAttributedString(string: "IBAN DE89 3704 0044 0532 0130 00",
