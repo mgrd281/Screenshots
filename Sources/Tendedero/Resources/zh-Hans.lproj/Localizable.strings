@@ -1113,3 +1113,16 @@
 "The largest models answer best; smaller ones answer faster and cost less." = "最大的模型回答最好；较小的模型回答更快、费用更低。";
 "What it does" = "它能做什么";
 "Writes the reply to send, from a conversation, an order or a review." = "根据对话、订单或评价，写出可直接发送的回复。";
+
+/* Share links */
+"Copy Link" = "拷贝链接";
+"Delete Link" = "删除链接";
+"Making the link…" = "正在创建链接…";
+"Link copied. It works for %d more days. Click to open it." = "链接已拷贝，还可使用 %d 天。点按即可打开。";
+"Link deleted. It no longer opens." = "链接已删除，无法再打开。";
+"Could not delete the link. Try again later." = "无法删除链接。请稍后再试。";
+"Could not make the link. Try again later." = "无法创建链接。请稍后再试。";
+"Could not reach the link service. Check the connection and try again." = "无法连接链接服务。请检查网络后重试。";
+"This file is too large for a link. Links take files up to 95 MB." = "此文件太大，无法生成链接。链接支持最大 95 MB 的文件。";
+"This kind of file cannot be shared as a link." = "此类文件无法通过链接共享。";
+"Too many links in a short time. Try again in a minute." = "短时间内创建的链接太多。请一分钟后再试。";

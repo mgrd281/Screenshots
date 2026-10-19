@@ -83,6 +83,11 @@ rm -rf "$APP/Contents/Resources/chat-logos/source"
 # The licence of the code this began as travels with every copy, as it asks.
 cp LICENSE "$APP/Contents/Resources/LICENSE"
 
+# Where share links are made, when the owner's Cloudflare account has them.
+SHARE_URL="${SNAPFLY_SHARE_URL:-$(scripts/share-url.sh)}"
+SHARE_ENTRY=""
+if [ -n "$SHARE_URL" ]; then SHARE_ENTRY="<key>SnapflyShareURL</key><string>${SHARE_URL}</string>"; fi
+
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -102,6 +107,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>CFBundleLocalizations</key><array>${LANGUAGES}</array>
   <key>LSMinimumSystemVersion</key><string>14.0</string>
   <key>LSUIElement</key><true/>
+  ${SHARE_ENTRY}
   <key>NSHighResolutionCapable</key><true/>
   <key>NSDesktopFolderUsageDescription</key>
   <string>Snapfly watches the folder where macOS saves your screenshots so it can hang them on the line.</string>

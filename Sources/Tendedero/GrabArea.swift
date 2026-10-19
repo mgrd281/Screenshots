@@ -167,6 +167,13 @@ struct GrabArea: NSViewRepresentable {
             if let frontApp {
                 menu.addItem(ClosureMenuItem(String(format: L("Paste into %@"), frontApp), symbol: "paperplane") { line.paste(id) })
             }
+            // A link to paste anywhere, for seven days.
+            if LinkSharing.isAvailable {
+                menu.addItem(ClosureMenuItem(L("Copy Link"), symbol: "link") { line.copyLink(id) })
+                if line.hasShareLink(id) {
+                    menu.addItem(ClosureMenuItem(L("Delete Link"), symbol: "minus.circle") { line.deleteShareLink(id) })
+                }
+            }
 
             // Into a chat, a question for an AI, and what the words say.
             Self.gap(menu)

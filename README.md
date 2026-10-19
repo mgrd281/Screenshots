@@ -60,6 +60,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Click | Copy the image. |
 | <kbd>⌘</kbd>-click several, or click the circle on each | Pick them, to send or copy just those together. They stay picked, even when the line goes up, until they are sent. All Photos › Pick All in a photo's menu, then put back the few that should stay. |
 | Right-click, then Copy Text | Copy the words in it, to paste as text. |
+| Right-click, then Copy Link | Upload it as it leaves the line, covered, and copy a link to paste anywhere: a message, an email, a ticket. The link works for seven days, then the file is deleted; the same photo keeps its link. Delete Link takes it down sooner. Recordings and PDFs too. |
 | Right-click, then Edit › Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. Either way, a note offers to undo it for a few seconds. |
 | Right-click, then Edit › Hide Part | Click a word to hide it, or drag a box over anything the covering missed. It stays hidden in whatever leaves the line, and a note offers to undo it. Always cover, under the word just hidden, covers that word in every photo from then on, as a rule of your own under Privacy. |
 | Right-click, then Edit › Draw on Photo | Point things out with an arrow, a box, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
@@ -638,6 +639,15 @@ has them all under Send to: the ones under photos first, the rest under
 More Chats. Turn each icon off in Settings, under Line › Icons under
 photos, each on its own.
 
+Too large for a chat, or for someone without one? Copy Link, in the photo's
+menu, uploads it as it leaves the line, its private details covered, and
+copies a link that works for seven days: the page shows the photo, plays
+the recording or opens the PDF, with Save beside it, in English, German or
+Arabic. Copy Link again on the same photo copies the same link; once it is
+covered differently, it gets a new one. Delete Link takes it down at once.
+Files up to 95 MB. Nothing about you goes with it, and the file is deleted
+after seven days.
+
 Something to ask about it? Right-click ChatGPT or Claude on the photo, or
 choose Ask ChatGPT or Ask Claude in its menu, and the photo goes with a
 question after it, like "Summarize this in a few lines" or "What should I
@@ -765,7 +775,7 @@ cover it. Words in the screenshot are only read, never followed.
 
 No account. No cloud. No analytics.
 Snapfly runs entirely on your Mac, and your screenshots never leave it
-unless you send them. On its own, the only thing it ever asks the internet is
+unless you send them, or make a link to one with Copy Link. On its own, the only thing it ever asks the internet is
 the time, from the PTB's atomic clock, while the time stamp is on. The AI
 assistant, once you give it your key, sends a covered screenshot to Claude or
 ChatGPT only when you choose Write a Reply, Explain or Order Details, and
@@ -962,6 +972,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `FolderIcon.swift` | The workspace folder's icon in the Finder: the system folder with Snapfly's mark |
 | `Shared/CoverBatch.swift`, `CoverFiles.swift` | Cover Files: which files a run takes and where each copy goes, and the window that covers them a few at a time |
 | `Updater.swift` | Check for Updates: the newest build fetched, its signature checked, then put in place after a question |
+| `LinkSharing.swift` | Copy Link and Delete Link: the copy that leaves the line uploaded, its link copied, and taken down again |
+| `Shared/ShareLinks.swift` | Share links without a screen: what may go, the requests, reading the answers, and the links kept with their delete tokens |
+| `share/` | The share link service on Cloudflare: the Worker (`worker.js`) that takes uploads, shows each link's page and deletes files, its tests, and `wrangler.toml`; the Share Links workflow deploys it |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |
 | `Trim.swift` | Trims a screen recording and saves the result |

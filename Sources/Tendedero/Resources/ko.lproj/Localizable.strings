@@ -1113,3 +1113,16 @@
 "The largest models answer best; smaller ones answer faster and cost less." = "가장 큰 모델이 가장 잘 답하고, 작은 모델은 더 빠르고 저렴하게 답해요.";
 "What it does" = "할 수 있는 일";
 "Writes the reply to send, from a conversation, an order or a review." = "대화, 주문, 리뷰를 보고 보낼 답장을 써요.";
+
+/* Share links */
+"Copy Link" = "링크 복사";
+"Delete Link" = "링크 삭제";
+"Making the link…" = "링크 만드는 중…";
+"Link copied. It works for %d more days. Click to open it." = "링크를 복사했어요. %d일 더 사용할 수 있어요. 클릭하면 열려요.";
+"Link deleted. It no longer opens." = "링크를 삭제했어요. 이제 열리지 않아요.";
+"Could not delete the link. Try again later." = "링크를 삭제할 수 없어요. 나중에 다시 시도하세요.";
+"Could not make the link. Try again later." = "링크를 만들 수 없어요. 나중에 다시 시도하세요.";
+"Could not reach the link service. Check the connection and try again." = "링크 서비스에 연결할 수 없어요. 연결을 확인하고 다시 시도하세요.";
+"This file is too large for a link. Links take files up to 95 MB." = "이 파일은 링크로 보내기에 너무 커요. 링크는 95MB까지의 파일을 받아요.";
+"This kind of file cannot be shared as a link." = "이 종류의 파일은 링크로 공유할 수 없어요.";
+"Too many links in a short time. Try again in a minute." = "짧은 시간에 링크가 너무 많아요. 1분 뒤에 다시 시도하세요.";

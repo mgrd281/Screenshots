@@ -1401,6 +1401,28 @@ final class Line: ObservableObject {
         saveCopy(of: item.url)
     }
 
+    /// Copy Link, from a photo's menu: the photo as it leaves the line, or
+    /// the recording or PDF, behind a link that works for seven days.
+    func copyLink(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }) else { return }
+        guard item.isRecording || !PrivateDetails.stillCovering(item.url, PrivateDetails.details) else {
+            Notice.show(L("Still covering the private details…"))
+            return
+        }
+        Guide.shared.happened(.photoUsed)
+        LinkSharing.copyLink(to: item.isRecording ? item.url : PrivateDetails.shareable(item.url), from: item.url)
+    }
+
+    func hasShareLink(_ id: UUID) -> Bool {
+        items.first(where: { $0.id == id }).map { LinkSharing.hasLink($0.url) } ?? false
+    }
+
+    /// Delete Link: what Copy Link made from this photo stops opening.
+    func deleteShareLink(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id }) else { return }
+        LinkSharing.deleteLinks(item.url)
+    }
+
     private func saveCopy(of url: URL) {
         guard !PrivateDetails.stillCovering(url, PrivateDetails.details) else {
             Notice.show(L("Still covering the private details…"))

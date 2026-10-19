@@ -1115,3 +1115,16 @@
 "The largest models answer best; smaller ones answer faster and cost less." = "The largest models answer best; smaller ones answer faster and cost less.";
 "What it does" = "What it does";
 "Writes the reply to send, from a conversation, an order or a review." = "Writes the reply to send, from a conversation, an order or a review.";
+
+/* Share links */
+"Copy Link" = "Copy Link";
+"Delete Link" = "Delete Link";
+"Making the link…" = "Making the link…";
+"Link copied. It works for %d more days. Click to open it." = "Link copied. It works for %d more days. Click to open it.";
+"Link deleted. It no longer opens." = "Link deleted. It no longer opens.";
+"Could not delete the link. Try again later." = "Could not delete the link. Try again later.";
+"Could not make the link. Try again later." = "Could not make the link. Try again later.";
+"Could not reach the link service. Check the connection and try again." = "Could not reach the link service. Check the connection and try again.";
+"This file is too large for a link. Links take files up to 95 MB." = "This file is too large for a link. Links take files up to 95 MB.";
+"This kind of file cannot be shared as a link." = "This kind of file cannot be shared as a link.";
+"Too many links in a short time. Try again in a minute." = "Too many links in a short time. Try again in a minute.";
