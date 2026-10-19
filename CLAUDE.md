@@ -168,6 +168,11 @@ the website's footer. Both stay.
     CloudKit Console. A new record type or field needs both again.
   - `SyncCenter` (Shared) is the apps' way in; `MacSync` and `PhoneSync`
     connect the line and the iPhone's screens.
+  - A Mac and an iPhone on different Apple accounts pair with a code
+    (`Shared/Pairing.swift`, `PairingCloud.swift`): six digits, new every 30
+    seconds, met in the public database (record type `Pairing`), then the
+    Mac shares its zones with that account alone. Sharing needs the
+    `cloudkit.share` type in production (`cloudkit/share.ckdb`, SYNC.md).
   - README, `PRIVACY.md`, the website and the app's texts describe syncing
     as it is; change them with it.
 - **Promo video.** `promo/` makes the vertical motion graphic in three

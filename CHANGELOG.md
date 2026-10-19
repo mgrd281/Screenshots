@@ -12,6 +12,11 @@ keeps a download of each version.
   screenshot on the iPhone, hangs it on the Mac's line. Originals stay on the
   device unless you choose Originals too. Settings lists your devices and says
   how syncing stands.
+- A Mac and an iPhone on different Apple accounts pair with a code: Show
+  Code… in Settings › Sync on the Mac shows six digits, a new one every 30
+  seconds; type them on the iPhone under Connect to a Mac with a Code, say
+  yes on the Mac, and the two sync through iCloud. Disconnect… on either side
+  ends it.
 - Prompts for AI chats: over ChatGPT, Claude and the other AI chats, numbers
   stand in a small glass bar just above the send button, which keeps its
   size and place. Point at one to see its name;

@@ -124,6 +124,9 @@ enum SyncProblem: String, Codable, Sendable {
     case needsUpdate
     /// This device's sync file is from a newer Snapfly.
     case newerFile
+    /// A Mac on another Apple account stopped sharing with this device, or
+    /// this device left it.
+    case disconnected
 }
 
 /// This device's syncing, as the owner sees it. Apart from it, each other

@@ -100,7 +100,12 @@ CLOUD="${SNAPFLY_CLOUD_CONTAINER:-}"
 PROFILE="${SNAPFLY_DIRECT_PROFILE:-}"
 if [ -z "${STORE:-}" ] && { [ -z "$IDENTITY" ] || [ -z "$PROFILE" ] || [ ! -f "$PROFILE" ]; }; then CLOUD=""; fi
 CLOUD_ENTRY=""
-if [ -n "$CLOUD" ]; then CLOUD_ENTRY="<key>SnapflyCloudContainer</key><string>${CLOUD}</string>"; fi
+# With iCloud the app can also share its zones with a device paired with a
+# code, on another Apple account (SYNC.md).
+if [ -n "$CLOUD" ]; then
+  CLOUD_ENTRY="<key>SnapflyCloudContainer</key><string>${CLOUD}</string>
+  <key>CKSharingSupported</key><true/>"
+fi
 
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>

@@ -24,11 +24,12 @@ enum CloudSetup {
 /// version's small preview rides on its record; its whole picture is a
 /// record of its own in a second zone, fetched only when it is opened.
 ///
-/// It waits for the iCloud container (SYNC.md, phase 2); nothing makes one
-/// until then.
+/// A device paired with a code from another Apple account syncs the same
+/// way with the zones the Mac shares with it, through its shared database:
+/// one of these for each such Mac, with a ledger of its own.
 actor CloudSync {
-    static let zone = CKRecordZone(zoneName: "Snapfly")
-    static let filesZone = CKRecordZone(zoneName: "SnapflyFiles")
+    static let zoneName = "Snapfly"
+    static let filesZoneName = "SnapflyFiles"
 
     /// What the app shows after each change: the ledger, how syncing
     /// stands, and what applying iCloud's changes asks of the device.
@@ -38,7 +39,11 @@ actor CloudSync {
         var effects: [SyncLedger.Effect]
     }
 
+    let space: SyncSpace
     private let container: CKContainer
+    private let database: CKDatabase
+    private let zone: CKRecordZone.ID
+    private let filesZone: CKRecordZone.ID
     private let folder: URL
     private let device: SyncDevice
     private let report: @Sendable (Snapshot) -> Void
@@ -58,13 +63,19 @@ actor CloudSync {
     private var ledgerFile: URL { folder.appendingPathComponent("Ledger.json") }
 
     /// - Parameters:
-    ///   - folder: Snapfly's sync folder in Application Support.
+    ///   - folder: this space's folder in Application Support.
     ///   - device: this device, as the others will see it.
+    ///   - space: the owner's own iCloud, or a Mac's shared with this device.
     ///   - report: called after every change, from this actor.
-    init?(settings: SyncSettings, folder: URL, device: SyncDevice,
+    init?(settings: SyncSettings, folder: URL, device: SyncDevice, space: SyncSpace = .own,
           report: @escaping @Sendable (Snapshot) -> Void) {
         guard let identifier = CloudSetup.container else { return nil }
         container = CKContainer(identifier: identifier)
+        self.space = space
+        database = space == .own ? container.privateCloudDatabase : container.sharedCloudDatabase
+        let owner = space.owner ?? CKCurrentUserDefaultName
+        zone = CKRecordZone.ID(zoneName: Self.zoneName, ownerName: owner)
+        filesZone = CKRecordZone.ID(zoneName: Self.filesZoneName, ownerName: owner)
         self.folder = folder
         self.device = device
         self.settings = settings
@@ -92,10 +103,19 @@ actor CloudSync {
         guard account == .available else { return publish() }
         guard await sameAccount() else { return publish() }
         if engine == nil {
-            engine = makeEngine()
-            engine?.state.add(pendingDatabaseChanges: [.saveZone(Self.zone), .saveZone(Self.filesZone)])
+            let made = makeEngine()
+            engine = made
+            if space == .own {
+                saveZones()
+            } else {
+                // A shared space's zones are the Mac's; only it makes them.
+                // Just joined, what it holds comes down at once.
+                Task { try? await made.fetchChanges() }
+            }
         }
-        ledger.register(device)
+        var me = device
+        me.account = ledger.account
+        ledger.register(me)
         ledger.purgeOld()
         ledger.queueUnsent()
         hand()
@@ -108,7 +128,7 @@ actor CloudSync {
     func update(_ new: SyncSettings) async {
         let turnedOn = new.on && !settings.on
         settings = new
-        new.save()
+        keepSettings()
         if turnedOn && problem == .otherAccount {
             problem = nil
             ledger.account = nil
@@ -147,7 +167,7 @@ actor CloudSync {
             return URL(fileURLWithPath: path)
         }
         guard let version = ledger.revisions[revision] else { throw CKError(.unknownItem) }
-        let record = try await container.privateCloudDatabase.record(for: Self.recordID(SyncKey(.file, revision)))
+        let record = try await database.record(for: recordID(SyncKey(.file, revision)))
         guard let asset = (record["file"] as? CKAsset)?.fileURL else { throw CKError(.unknownItem) }
         let name = URL(fileURLWithPath: version.fileName).lastPathComponent
         let out = folder.appendingPathComponent("Files", isDirectory: true)
@@ -163,6 +183,86 @@ actor CloudSync {
         save()
         publish()
         return out
+    }
+
+    // MARK: Another Apple account
+
+    /// Lets the account of a device paired with a code into this Mac's
+    /// zones: each is shared with that account alone, to read and write,
+    /// never with anyone who has the link. Returns the links it joins with.
+    func invite(_ user: String) async throws -> [URL] {
+        guard space == .own, engine != nil else { throw CKError(.notAuthenticated) }
+        var links: [URL] = []
+        for zoneID in [zone, filesZone] {
+            let share = try await zoneShare(zoneID) ?? CKShare(recordZoneID: zoneID)
+            share.publicPermission = .none
+            if !share.participants.contains(where: { $0.userIdentity.userRecordID?.recordName == user }) {
+                let participant = try await container.shareParticipant(forUserRecordID: CKRecord.ID(recordName: user))
+                participant.permission = .readWrite
+                share.addParticipant(participant)
+            }
+            let saved = try await saveShare(share)
+            guard let link = saved.url else { throw CKError(.internalError) }
+            links.append(link)
+        }
+        return links
+    }
+
+    /// Takes a device's account off this Mac's zones, and its devices off
+    /// the list. What it sent stays.
+    func removeAccess(_ user: String) async throws {
+        guard space == .own else { return }
+        for zoneID in [zone, filesZone] {
+            guard let share = try await zoneShare(zoneID) else { continue }
+            let theirs = share.participants.filter {
+                $0.role != .owner && $0.userIdentity.userRecordID?.recordName == user
+            }
+            for participant in theirs { share.removeParticipant(participant) }
+            if share.participants.allSatisfy({ $0.role == .owner }) {
+                // Nobody else left: the zone is not shared any more.
+                _ = try await database.modifyRecords(saving: [], deleting: [share.recordID],
+                                                     savePolicy: .ifServerRecordUnchanged, atomically: true)
+            } else {
+                _ = try await saveShare(share)
+            }
+        }
+        ledger.forgetDevices(of: user)
+        hand()
+        save()
+        publish()
+    }
+
+    /// Leaves the zones a Mac shared with this device; what came from them
+    /// is taken off with the space.
+    func leave() async {
+        guard space != .own else { return }
+        engine = nil
+        let shares = [zone, filesZone].map { CKRecord.ID(recordName: CKRecordNameZoneWideShare, zoneID: $0) }
+        do {
+            _ = try await database.modifyRecords(saving: [], deleting: shares,
+                                                 savePolicy: .ifServerRecordUnchanged, atomically: false)
+        } catch {
+            log.error("Leaving a shared Mac did not reach iCloud: \(error.localizedDescription, privacy: .public)")
+        }
+        disconnected()
+        publish()
+    }
+
+    private func zoneShare(_ zoneID: CKRecordZone.ID) async throws -> CKShare? {
+        do {
+            return try await database.record(for: CKRecord.ID(recordName: CKRecordNameZoneWideShare, zoneID: zoneID)) as? CKShare
+        } catch let error as CKError where error.code == .unknownItem {
+            return nil
+        }
+    }
+
+    private func saveShare(_ share: CKShare) async throws -> CKShare {
+        let (saved, _) = try await database.modifyRecords(saving: [share], deleting: [],
+                                                          savePolicy: .ifServerRecordUnchanged, atomically: true)
+        guard let result = saved[share.recordID], let record = try result.get() as? CKShare else {
+            throw CKError(.internalError)
+        }
+        return record
     }
 
     // MARK: Inside
@@ -196,21 +296,44 @@ actor CloudSync {
     private func otherAccount() {
         effects.append(.removeFiles(ledger.forgetAccount()))
         engine = nil
-        settings.on = false
-        settings.save()
-        problem = .otherAccount
+        if space == .own {
+            settings.on = false
+            keepSettings()
+            problem = .otherAccount
+        } else {
+            // What a Mac shared, it shared with the account that was here.
+            disconnected()
+        }
         save()
+    }
+
+    /// The owner's choices are kept for their own iCloud only; a shared
+    /// space follows them and syncs while it is connected.
+    private func keepSettings() {
+        if space == .own { settings.save() }
+    }
+
+    private func saveZones() {
+        engine?.state.add(pendingDatabaseChanges: [.saveZone(CKRecordZone(zoneID: zone)),
+                                                   .saveZone(CKRecordZone(zoneID: filesZone))])
+    }
+
+    /// The Mac stopped sharing, or this device left: nothing more goes, and
+    /// the space is taken off this device.
+    private func disconnected() {
+        ledger.journal = []
+        engine = nil
+        problem = .disconnected
     }
 
     private func makeEngine() -> CKSyncEngine {
         let state = ledger.engineState.flatMap { try? JSONDecoder().decode(CKSyncEngine.State.Serialization.self, from: $0) }
-        let configuration = CKSyncEngine.Configuration(database: container.privateCloudDatabase,
-                                                       stateSerialization: state, delegate: self)
+        let configuration = CKSyncEngine.Configuration(database: database, stateSerialization: state, delegate: self)
         return CKSyncEngine(configuration)
     }
 
-    static func recordID(_ key: SyncKey) -> CKRecord.ID {
-        CKRecord.ID(recordName: key.recordName, zoneID: key.kind == .file ? filesZone.zoneID : zone.zoneID)
+    private func recordID(_ key: SyncKey) -> CKRecord.ID {
+        CKRecord.ID(recordName: key.recordName, zoneID: key.kind == .file ? filesZone : zone)
     }
 
     /// Hands the engine the changes that may go now; the others wait in the
@@ -220,7 +343,7 @@ actor CloudSync {
         let ready = ledger.due().filter { SyncPolicy.allows($0, in: ledger, settings: settings) }
         if !ready.isEmpty {
             engine.state.add(pendingRecordZoneChanges: ready.map { operation -> CKSyncEngine.PendingRecordZoneChange in
-                let id = Self.recordID(operation.key)
+                let id = recordID(operation.key)
                 return operation.kind == .save ? .saveRecord(id) : .deleteRecord(id)
             })
         }
@@ -348,7 +471,8 @@ actor CloudSync {
                 if let server = error.serverRecord { received(server) }
                 ledger.markFailed(key, .conflict)
             case .zoneNotFound, .userDeletedZone:
-                engine?.state.add(pendingDatabaseChanges: [.saveZone(key.kind == .file ? Self.filesZone : Self.zone)])
+                guard space == .own else { return disconnected() }
+                saveZones()
                 ledger.systemFields[key.recordName] = nil
                 ledger.markFailed(key, .conflict)
             case .unknownItem:
@@ -407,13 +531,14 @@ actor CloudSync {
     }
 
     private func zoneDeleted(_ deletion: CKDatabase.DatabaseChange.Deletion) {
-        guard deletion.zoneID == Self.zone.zoneID else { return }
+        guard deletion.zoneID == zone else { return }
         ledger.onServer = []
         ledger.systemFields = [:]
+        guard space == .own else { return disconnected() }
         switch deletion.reason {
         case .encryptedDataReset:
             // iCloud's keys were reset: everything made here goes again.
-            engine?.state.add(pendingDatabaseChanges: [.saveZone(Self.zone), .saveZone(Self.filesZone)])
+            saveZones()
             ledger.queueUnsent()
             hand()
         default:
@@ -421,7 +546,7 @@ actor CloudSync {
             // stops here too, and nothing is sent back unasked.
             ledger.journal = []
             settings.on = false
-            settings.save()
+            keepSettings()
             problem = .removedFromICloud
         }
     }
@@ -502,11 +627,14 @@ extension CloudSync: CKSyncEngineDelegate {
         }
     }
 
-    /// Whole pictures are not fetched with the rest: each is fetched when opened.
+    /// Whole pictures are not fetched with the rest: each is fetched when
+    /// opened. A shared space fetches only its Mac's zone.
     func nextFetchChangesOptions(_ context: CKSyncEngine.FetchChangesContext,
                                  syncEngine: CKSyncEngine) async -> CKSyncEngine.FetchChangesOptions {
         var options = context.options
-        if case .all = options.scope { options.scope = .allExcluding([Self.filesZone.zoneID]) }
+        if case .all = options.scope {
+            options.scope = space == .own ? .allExcluding([filesZone]) : .zoneIDs([zone])
+        }
         return options
     }
 }

@@ -16,6 +16,14 @@ Send to Mac. Before it can work, the record types must be in iCloud's
 production environment (section 5, step 3). Nothing has been tried on a real
 device yet.
 
+**Pairing with a code (October 2026).** Built as a second way, for a Mac and
+an iPhone on different Apple accounts: the Mac shows six digits that change
+every 30 seconds, the iPhone types them, the person at the Mac says yes, and
+the Mac shares its two zones with that iPhone's account (section 2, "Pairing
+with a code"). It needs the same schema step, with one more type, and the
+type CloudKit keeps shares in (section 5, step 4). Not tried on a device
+either.
+
 ## 1. Audit (phase 0)
 
 ### What the repository holds
@@ -124,8 +132,11 @@ device yet.
 | `Shared/SyncModel.swift` | The records (device, project, screenshot, version), the clock that orders changes, fields that merge, the record names, the payload with its version, a waiting change, failures and retry delays |
 | `Shared/SyncLedger.swift` | What a device knows: every record, its own copies, the changes waiting, what iCloud has; the changes made here, merging what comes from iCloud, conflicts, removal, the file in Application Support and its migration |
 | `Shared/SyncPolicy.swift` | The owner's choices, what may leave the device, the status |
-| `Shared/CloudSync.swift` | The iCloud side: Apple's CKSyncEngine, the private database, previews, whole pictures on demand, errors and accounts |
+| `Shared/CloudSync.swift` | The iCloud side: Apple's CKSyncEngine, the private database (or a Mac's shared zones), previews, whole pictures on demand, errors and accounts, sharing the zones with a paired account |
+| `Shared/Pairing.swift` | Pairing with a code without iCloud: the space a ledger syncs in, the codes and when they count, what is typed, the record names, the sealed messages, the pause after wrong codes |
+| `Shared/PairingCloud.swift` | Pairing in iCloud's public database: the Mac's side (`PairingHost`) and the iPhone's (`PairingGuest`) |
 | `Tests/TendederoTests/SyncTests.swift` | Two ledgers standing for a Mac and an iPhone, and iCloud between them |
+| `Tests/TendederoTests/PairingTests.swift` | Codes, typing, record names, sealing, the pause, folders, disconnecting another account's devices |
 
 ### Records
 
@@ -209,7 +220,8 @@ setting changed meanwhile counts.
 
 ### Accounts and versions
 
-- Only devices on the same Apple account sync. The first account is
+- Devices on the same Apple account sync; a device on another account
+  joins only by pairing with a code. The first account is
   remembered; another one pauses syncing and asks, and what came from the old
   account leaves the device, while what was made on it stays.
 - Signing out of iCloud removes what came from iCloud; the device's own
@@ -220,6 +232,48 @@ setting changed meanwhile counts.
 - A record from a newer Snapfly is left alone and the status asks for an
   update. A ledger file from a newer Snapfly is left as it is; an unreadable
   one is set aside under another name, never overwritten.
+
+### Pairing with a code
+
+For a Mac and an iPhone on different Apple accounts, beside syncing within
+one account, which stays as it is.
+
+1. On the Mac, Settings › Sync › Show Code… (only while syncing is on). The
+   sheet shows six digits, drawn at random, a new one every 30 seconds; the
+   one before still counts for 15 seconds, for a code typed just as it
+   changed.
+2. For each code, the Mac puts a record in iCloud's **public** database,
+   named from a hash of the code and holding the Mac's name, sealed with a
+   key made from the code (HKDF-SHA256, AES-GCM). It takes the record down
+   when the code runs out or the sheet closes.
+3. On the iPhone, Settings › Connect to a Mac with a Code. The iPhone looks
+   for that record: none means a wrong or old code; after five wrong codes
+   in a row it waits a minute. It then leaves a request, sealed likewise,
+   with its iCloud account (the user record name CloudKit gives it in
+   Snapfly's container) and its name.
+4. The Mac asks the person at it: "Connect “iPhone”?". Only on yes does it
+   share its two zones (`Snapfly`, `SnapflyFiles`) with **that account
+   alone**, to read and write, as zone-wide shares with no public
+   permission, and answers with the two share links, sealed. No yes within
+   three minutes, no answer.
+5. The iPhone accepts both shares, takes its request down, and syncs with
+   the Mac's zones through its shared database: a second engine and ledger,
+   in a folder of its own (`Sync/Shared/<owner>`). Its own iCloud stays
+   apart and keeps its own switch.
+6. If both are on the same Apple account after all, the Mac says so and the
+   iPhone just turns on syncing.
+
+**Disconnecting.** On the Mac, Disconnect… beside a device of another
+account removes that account from both shares, and the share altogether when
+nobody else is left, and takes its devices off the list. What it sent stays
+on the Mac. On the iPhone, Disconnect… beside the Mac leaves both shares and
+removes the space and what came from it. When the Mac stops sharing, the
+iPhone notices the zone gone and does the same.
+
+**What the other account sees.** Everything in the Mac's two zones: what the
+Mac and the Mac owner's other devices sync, covered copies unless originals
+were chosen. That is why the Mac asks, names the device and says to say yes
+only for a device of one's own.
 
 ### Status
 
@@ -242,17 +296,28 @@ already in iCloud.
 - **On the device**: files in Snapfly's folder in Application Support (inside
   the sandbox for the App Store edition), protected by the system (FileVault,
   the iPhone's data protection).
-- **Who can read**: devices signed in to the owner's Apple account. The
-  device list grants nothing. "Disconnect" will mean that a device stops
-  syncing and removes what came from iCloud; it does not lock another device
-  out, and Snapfly will not say it does.
+- **Who can read**: devices signed in to the owner's Apple account, and
+  the accounts a Mac shared with after pairing with a code (below). The
+  device list grants nothing.
 - **Covered copies by default**: what is covered is burnt into the pixels;
   the covered words are never sent.
 - **Share links stay apart**: public, for seven days, made only when the
   owner asks. Sync never makes a link, and links never use sync.
-- **Different Apple accounts** (brief 3.2): not built. It would use CloudKit
-  sharing with an invitation the other person accepts, and is designed only
-  after syncing within one account is verified.
+- **Different Apple accounts, paired with a code**: CloudKit sharing of the
+  Mac's two zones with one account the person at the Mac said yes to, never
+  with anyone who has a link (no public permission), so a share link alone
+  opens nothing. Disconnect on the Mac removes that account from the shares:
+  this one does lock the other account out of the Mac's zones; what it
+  already fetched stays on that iPhone until it disconnects too.
+- **The code**: six digits, a million possibilities, new every 30 seconds.
+  The pairing records in the public database are sealed with a key made from
+  the code, which keeps them from casual reading but not from someone who
+  can read Snapfly's public database and tries all million codes: what they
+  would learn is a device's name, an opaque account identifier and share
+  links that let no one in. Reading that database takes Snapfly itself or
+  the developer's keys. Wrong codes on one iPhone pause it after five, and
+  the person at the Mac sees the device's name and must say yes, so a
+  guessed or overheard code still needs that yes.
 
 ## 4. When things go wrong
 
@@ -272,6 +337,10 @@ already in iCloud.
 | 12. Permission taken away | No iCloud: "unavailable", local work goes on | Unit test; device: 2d |
 | 13. An older app version | Newer records are left alone; an update is asked for | Unit test; device: 2d |
 | 14. The local store changes | Versioned file, migration step, newer left alone, unreadable set aside | Unit test |
+| 15. A wrong or old code | "Not right or has run out"; five in a row pause the iPhone for a minute | Unit test; device: 2d |
+| 16. Nobody answers on the Mac | The iPhone gives up after three minutes and takes its request down | Device: 2d |
+| 17. The Mac disconnects the iPhone | The share no longer has it; the iPhone notices the zone gone and removes the space | Device: 2d |
+| 18. The iPhone signs in to another account | A shared space was shared with the old account: it is removed | Device: 2d |
 
 ## 5. What the owner does at Apple
 
@@ -296,6 +365,14 @@ Profiles:
    Deploy. From then on, records can be saved by TestFlight and App Store
    builds.
 
+4. **For pairing with a code.** Step 3 also brings the public type
+   `Pairing`. Sharing needs one more type, `cloudkit.share`, which CloudKit
+   makes in development only when a share is saved there. The CloudKit
+   Schema workflow tries to add it (`cloudkit/share.ckdb`); if its log says
+   cktool did not take it, the type has to come from a share made once with
+   a development build, then Deploy Schema Changes again. Until then,
+   sharing fails on the Mac with "Could not share with that device".
+
 Nothing from steps 1 and 2 goes into GitHub; step 3's token does, as a secret.
 
 ## 6. What is verified
@@ -303,6 +380,11 @@ Nothing from steps 1 and 2 goes into GitHub; step 3's token does, as a secret.
 | Part | Implemented | Tested here (Linux) | CI (macOS) | Simulator | Real device |
 | --- | --- | --- | --- | --- | --- |
 | Records, merging, journal, policy, status, ledger file | Yes | Yes, 45 tests | Yes | No | No |
+| Pairing codes, typing, folders, disconnecting devices | Yes | Yes, 10 tests | Yes | No | No |
+| Record names and sealing (CryptoKit) | Yes | No (no CryptoKit on Linux) | 2 tests | No | No |
+| Sharing, joining, leaving (`CloudSync`, `PairingCloud`) | Yes | Syntax only | Compiles | No | No |
+| Pairing sheets on the Mac and the iPhone | Yes | Syntax only | Compiles | No | No |
+| `cloudkit.share` added by the schema workflow | Tried | No | Waits for the token | n/a | n/a |
 | `CloudSync` (CloudKit) | Yes | Syntax only | Compiles | No | No |
 | `SyncCenter`, Mac and iPhone screens | Yes | Syntax only | Compiles | No | No |
 | Entitlements and profiles in the three builds | Yes | Shell syntax only | Runs on the next builds | n/a | No |

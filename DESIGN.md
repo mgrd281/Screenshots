@@ -944,6 +944,27 @@ apps.
   28 pt column, the name, and when it was last there in caption
   `.secondary`. In a build that cannot sync, one line with `icloud.slash`
   in `.secondary` and nothing else.
+  - Your devices leaves out devices of another Apple account; they have
+    their own section, Another Apple account: a row each, as above, with
+    Disconnect… on the trailing edge (a confirmation dialog with a
+    destructive Disconnect), then Connect with a code with Show Code… as a
+    `SettingsButton`, dimmed while syncing is off (its subtitle then says
+    to turn syncing on first). A failure to disconnect shows as a row with
+    `exclamationmark.triangle.fill` in `.secondary`.
+  - **Pairing sheet** (`PairingSheet`), 440 pt wide, 24 pt padding, its
+    content centred in at least 190 pt over a row of buttons on the
+    trailing edge. Showing the code: the headline, one line of how in
+    `.secondary`, the six digits as "042 917" in 44 pt semibold rounded
+    with monospaced digits (selectable, read digit by digit by VoiceOver),
+    a 180 pt linear progress bar running down the 30 seconds, and "A new
+    code in 12 seconds" in caption `.secondary`; Cancel. When a device
+    typed it: its SF Symbol at 36 pt in `.secondary`, "Connect “iPhone”?"
+    as the headline, what it will see in `.secondary`; Don't Connect
+    (Escape) and Connect (Return, `.borderedProminent`). Then a spinner
+    with Connecting “iPhone”…, and an outcome: `checkmark.circle.fill` or
+    `exclamationmark.triangle.fill` at 36 pt in `.secondary`, a headline
+    and a line, with Done, or Cancel and Try Again. Nothing moves but the
+    bar, a second at a time, so Reduce Motion asks for nothing more.
 
 ### Dialogs, sheets and panels
 - **Floating card** (`TextCard`) for results that belong to a photo:
@@ -1843,6 +1864,18 @@ of its own.
     `exclamationmark.triangle.fill` when it needs the owner), Sync Now while
     on, and a row per device with its symbol, name and when it was last
     there.
+  - Under it, Another Apple account: a row per Mac joined with a code
+    (`laptopcomputer`, its name, its state in footnote `.secondary`, and a
+    borderless destructive Disconnect… asking first), then Connect to a Mac
+    with a Code with `number`, and a footer saying where the Mac shows it.
+  - **Connect to a Mac** (`PairingJoinView`), a sheet with an inline title:
+    one centred field for the six digits, large title rounded with
+    monospaced digits, the number pad, focused at once; it goes by itself
+    once six digits are in, or with Connect. Its footer says where the code
+    is, or why it did not work, in orange after
+    `exclamationmark.triangle.fill`. While it works, a row with a spinner
+    and what is happening ("Say yes on “Studio” to connect."); when done,
+    `checkmark.circle.fill` with what happened, and Done.
 
 ## Website
 

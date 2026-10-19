@@ -266,6 +266,7 @@ struct SyncLedger: Codable, Equatable, Sendable {
         if let previous = devices[deviceID] {
             let same = previous.name == device.name && previous.model == device.model
                 && previous.appVersion == device.appVersion && previous.schema == device.schema
+                && previous.account == device.account
             if same && now.timeIntervalSince(previous.lastSeen) < 60 * 60 {
                 device.lastSeen = previous.lastSeen
                 devices[deviceID] = device
@@ -275,6 +276,19 @@ struct SyncLedger: Codable, Equatable, Sendable {
         device.lastSeen = now
         devices[deviceID] = device
         enqueue(.save, SyncKey(.device, deviceID), now: now)
+    }
+
+    /// The devices of another Apple account, taken off the list when the
+    /// owner disconnects them: their records leave iCloud, and what they sent
+    /// stays. Returns their ids.
+    @discardableResult
+    mutating func forgetDevices(of account: String, now: Date = Date()) -> [String] {
+        let theirs = devices.values.filter { $0.account == account && $0.id != deviceID }.map(\.id).sorted()
+        for id in theirs {
+            devices[id] = nil
+            enqueue(.purge, SyncKey(.device, id), now: now)
+        }
+        return theirs
     }
 
     // MARK: Changes from iCloud
