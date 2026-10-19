@@ -1113,3 +1113,16 @@
 "The largest models answer best; smaller ones answer faster and cost less." = "大きいモデルほど良い答えを返し、小さいモデルは速く安く答えます。";
 "What it does" = "できること";
 "Writes the reply to send, from a conversation, an order or a review." = "会話、注文、レビューから、送信できる返信を書きます。";
+
+/* Share links */
+"Copy Link" = "リンクをコピー";
+"Delete Link" = "リンクを削除";
+"Making the link…" = "リンクを作成中…";
+"Link copied. It works for %d more days. Click to open it." = "リンクをコピーしました。あと%d日間有効です。クリックで開きます。";
+"Link deleted. It no longer opens." = "リンクを削除しました。もう開けません。";
+"Could not delete the link. Try again later." = "リンクを削除できませんでした。後でもう一度お試しください。";
+"Could not make the link. Try again later." = "リンクを作成できませんでした。後でもう一度お試しください。";
+"Could not reach the link service. Check the connection and try again." = "リンクサービスに接続できませんでした。接続を確認してもう一度お試しください。";
+"This file is too large for a link. Links take files up to 95 MB." = "このファイルはリンクには大きすぎます。リンクは95 MBまでのファイルに対応しています。";
+"This kind of file cannot be shared as a link." = "この種類のファイルはリンクで共有できません。";
+"Too many links in a short time. Try again in a minute." = "短時間にリンクが多すぎます。1分後にもう一度お試しください。";

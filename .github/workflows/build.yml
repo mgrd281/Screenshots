@@ -49,9 +49,12 @@ jobs:
         run: scripts/signing.sh developer-id
 
       # Each build has its own number, so a report names the very build.
+      # With the owner's Cloudflare account set up, Copy Link is in the app.
       - name: Build Snapfly.app
         env:
           BUILD_NUMBER: ${{ github.run_number }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: scripts/build-app.sh
 
       - name: Notarize

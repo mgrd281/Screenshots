@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Copy Link, in a photo's menu: the photo, covered as it leaves the line, a
+  recording or a PDF, behind a link to paste anywhere. The link works for
+  seven days, then the file is deleted; Delete Link takes it down sooner.
+  The page shows it with Save beside it, in English, German or Arabic.
 - The AI assistant has its own pane in Settings, and General is shorter.
   Saving a key checks it with Claude or ChatGPT at once and says whether it
   works; the clipboard button pastes and saves a copied key in one click.

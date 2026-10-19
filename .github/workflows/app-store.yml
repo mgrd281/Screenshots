@@ -30,6 +30,8 @@ jobs:
     env:
       SNAPFLY_SIGNING: ${{ secrets.SNAPFLY_SIGNING }}
       SNAPFLY_STORE: ${{ secrets.SNAPFLY_STORE }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@v4
 

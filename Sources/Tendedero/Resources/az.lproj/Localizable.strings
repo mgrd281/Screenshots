@@ -1115,3 +1115,16 @@
 "The largest models answer best; smaller ones answer faster and cost less." = "Ən böyük modellər ən yaxşı cavab verir; kiçikləri daha tez cavab verir və daha ucuzdur.";
 "What it does" = "Nə edir";
 "Writes the reply to send, from a conversation, an order or a review." = "Söhbətdən, sifarişdən və ya rəydən göndəriləcək cavabı yazır.";
+
+/* Share links */
+"Copy Link" = "Linki kopyala";
+"Delete Link" = "Linki sil";
+"Making the link…" = "Link yaradılır…";
+"Link copied. It works for %d more days. Click to open it." = "Link kopyalandı. Daha %d gün işləyir. Açmaq üçün klik et.";
+"Link deleted. It no longer opens." = "Link silindi. Artıq açılmır.";
+"Could not delete the link. Try again later." = "Linki silmək olmadı. Sonra yenidən cəhd et.";
+"Could not make the link. Try again later." = "Linki yaratmaq olmadı. Sonra yenidən cəhd et.";
+"Could not reach the link service. Check the connection and try again." = "Link xidmətinə qoşulmaq olmadı. Bağlantını yoxla və yenidən cəhd et.";
+"This file is too large for a link. Links take files up to 95 MB." = "Bu fayl link üçün çox böyükdür. Linklər 95 MB-a qədər faylları qəbul edir.";
+"This kind of file cannot be shared as a link." = "Bu növ fayl link kimi paylaşıla bilməz.";
+"Too many links in a short time. Try again in a minute." = "Qısa vaxtda çox link. Bir dəqiqədən sonra yenidən cəhd et.";

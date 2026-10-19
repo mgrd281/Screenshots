@@ -1,6 +1,6 @@
 # Snapfly Privacy Policy
 
-*Last updated: October 18, 2026*
+*Last updated: October 19, 2026*
 
 Snapfly hangs your screenshots on a line at the top of the screen. Everything it
 does happens on your Mac, unless you set up the AI assistant with your own key
@@ -8,7 +8,8 @@ does happens on your Mac, unless you set up the AI assistant with your own key
 
 - **No data is collected.** Snapfly has no account, no analytics, no tracking
   and no advertising. It does not send your screenshots, their text or anything
-  about you to the developer or to anyone else.
+  about you to the developer or to anyone else, except a file you choose to
+  share as a link (below).
 - **Nothing leaves your Mac on its own.** Reading the text in a screenshot,
   covering private details, translating and describing all run on your Mac,
   with Apple's frameworks.
@@ -33,6 +34,15 @@ does happens on your Mac, unless you set up the AI assistant with your own key
   turn it on. What they do with it is set by their own privacy policies and
   your account with them; they bill each request to that account. Nothing of
   it goes to the developer.
+- **Share links, only when you choose Copy Link.** Snapfly then uploads that
+  one photo, as it leaves the line with its private details covered, or that
+  recording or PDF, to Snapfly's link service on Cloudflare (Cloudflare R2, in
+  the developer's account), and copies its link. Anyone with the link can see
+  the file for seven days; then it is deleted for good, and Delete Link
+  deletes it sooner. No name, account or address is kept with it; the service
+  sees your internet address only to stop too many uploads at once, and does
+  not store it. The links you made, with the token that deletes each one, are
+  kept on your Mac.
 - **Your files stay yours.** Snapfly reads screenshots in the folders you let it
   watch, and the photos and PDFs you bring to it yourself, and copies, sends or
   deletes them only when you ask it to. A photo or PDF you bring stays where it

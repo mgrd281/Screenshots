@@ -1113,3 +1113,16 @@
 "The largest models answer best; smaller ones answer faster and cost less." = "أكبر النماذج تجيب أفضل؛ والأصغر تجيب أسرع وتكلّف أقل.";
 "What it does" = "ما يفعله";
 "Writes the reply to send, from a conversation, an order or a review." = "يكتب الرد الجاهز للإرسال، من محادثة أو طلب أو تقييم.";
+
+/* Share links */
+"Copy Link" = "نسخ الرابط";
+"Delete Link" = "حذف الرابط";
+"Making the link…" = "جارٍ إنشاء الرابط…";
+"Link copied. It works for %d more days. Click to open it." = "نُسخ الرابط. يعمل %d أيام أخرى. انقر لفتحه.";
+"Link deleted. It no longer opens." = "حُذف الرابط. لم يعد يفتح.";
+"Could not delete the link. Try again later." = "تعذّر حذف الرابط. حاول لاحقًا.";
+"Could not make the link. Try again later." = "تعذّر إنشاء الرابط. حاول لاحقًا.";
+"Could not reach the link service. Check the connection and try again." = "تعذّر الوصول إلى خدمة الروابط. تحقّق من الاتصال وحاول مجددًا.";
+"This file is too large for a link. Links take files up to 95 MB." = "هذا الملف أكبر من أن يُشارك برابط. الروابط تأخذ ملفات حتى 95 ميغابايت.";
+"This kind of file cannot be shared as a link." = "لا يمكن مشاركة هذا النوع من الملفات برابط.";
+"Too many links in a short time. Try again in a minute." = "روابط كثيرة في وقت قصير. حاول بعد دقيقة.";

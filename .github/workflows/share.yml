@@ -1,0 +1,74 @@
+# Puts Snapfly's share links on the owner's Cloudflare account: the R2
+# bucket that keeps the files, its rule that deletes each one after seven
+# days, and the Worker that takes uploads and shows the links. It runs when
+# share/ changes on main, and by hand. Without the secrets
+# CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID it only runs the tests.
+name: Share Links
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths:
+      - "share/**"
+      - ".github/workflows/share.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: share-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      BUCKET: snapfly-share
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Test the Worker
+        run: node --test share/worker.test.mjs
+
+      - name: Set up the bucket
+        if: github.ref == 'refs/heads/main' && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
+        run: |
+          set -euo pipefail
+          API="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID"
+          AUTH="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          if ! curl -fsS -H "$AUTH" "$API/r2/buckets/$BUCKET" > /dev/null 2>&1; then
+            curl -fsS -X POST -H "$AUTH" -H "Content-Type: application/json" \
+              --data "{\"name\":\"$BUCKET\"}" "$API/r2/buckets" > /dev/null
+            echo "Made the bucket $BUCKET."
+          fi
+          # Every file is deleted seven days after it was uploaded.
+          curl -fsS -X PUT -H "$AUTH" -H "Content-Type: application/json" \
+            --data '{"rules":[{"id":"delete-after-7-days","enabled":true,"conditions":{"prefix":"f/"},"deleteObjectsTransition":{"condition":{"type":"Age","maxAge":604800}}}]}' \
+            "$API/r2/buckets/$BUCKET/lifecycle" > /dev/null
+          # A new account has no workers.dev address yet; give it one.
+          if ! curl -fsS -H "$AUTH" "$API/workers/subdomain" \
+              | python3 -c 'import json,sys; sys.exit(0 if json.load(sys.stdin)["result"]["subdomain"] else 1)' 2>/dev/null; then
+            NAME="snapfly-$(echo "$CLOUDFLARE_ACCOUNT_ID" | cut -c1-8)"
+            curl -fsS -X PUT -H "$AUTH" -H "Content-Type: application/json" \
+              --data "{\"subdomain\":\"$NAME\"}" "$API/workers/subdomain" > /dev/null
+            echo "Gave the account the address $NAME.workers.dev."
+          fi
+
+      # Cloudflare's own command line, at a fixed version.
+      - name: Deploy the Worker
+        if: github.ref == 'refs/heads/main' && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
+        working-directory: share
+        run: npx --yes wrangler@4.36.0 deploy
+
+      - name: Say where it is
+        if: github.ref == 'refs/heads/main' && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
+        run: |
+          URL="$(scripts/share-url.sh)"
+          echo "Share links: ${URL:-not reachable yet}" >> "$GITHUB_STEP_SUMMARY"

@@ -138,6 +138,13 @@ the website's footer. Both stay.
     three languages, the theme switcher, Reduce Motion. Run `npm ci` and
     `npm test` there before pushing a change to the site. It is not part of
     the site and runs in no workflow; see `site-tests/README.md`.
+- **Share links.** `share/` is the Cloudflare Worker and R2 bucket behind
+  Copy Link (see `share/README.md`). The **Share Links** workflow deploys it
+  from `main` with the secrets `CLOUDFLARE_API_TOKEN` and
+  `CLOUDFLARE_ACCOUNT_ID`, which the owner pastes. Builds put its address in
+  Info.plist through `scripts/share-url.sh`; without it, Copy Link is left
+  out. Files are deleted after seven days. Run `node --test
+  share/worker.test.mjs` after changing the Worker.
 - **Promo video.** `promo/` makes the vertical motion graphic in three
   languages; see `promo/README.md`. It reuses the website's drawings and the
   app's strings, so update it when either changes in a way the video shows.

@@ -33,6 +33,8 @@ enum Plan {
         case guides
         /// A photo set on a colour, with room, rounded corners and a shadow.
         case backgrounds
+        /// A link to a covered photo, a recording or a PDF, for seven days.
+        case shareLinks
     }
 
     /// The day Pro begins. Until it is set, nothing is held back.

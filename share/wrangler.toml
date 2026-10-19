@@ -1,0 +1,23 @@
+# Snapfly's share links, on Cloudflare: this Worker and the R2 bucket
+# "snapfly-share", whose lifecycle rule deletes each file after seven days.
+# The Share Links workflow deploys it with the owner's Cloudflare token.
+name = "snapfly-share"
+main = "worker.js"
+compatibility_date = "2025-06-01"
+workers_dev = true
+
+[vars]
+SITE_URL = "https://mgrd281.github.io/Screenshots/"
+
+[[r2_buckets]]
+binding = "SHARES"
+bucket_name = "snapfly-share"
+
+# Uploads from one place: twenty a minute at most.
+[[ratelimits]]
+name = "UPLOADS"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 20
+  period = 60

@@ -774,7 +774,18 @@ apps.
     stands at an end or next to another. From the top:
     - What was covered and where one like it went lately, dimmed, after
       `lock.fill` and `paperplane`.
-    - Copy, Copy Text (a photo) and Paste into the app in front, by name.
+    - Copy, Copy Text (a photo) and Paste into the app in front, by name;
+      then Copy Link (`link`) where the build has share links, and Delete
+      Link (`minus.circle`) once one was made from the photo. Copy Link says
+      "Making the link…" in a working note, then "Link copied" with the days
+      it works, the note opening the link when clicked.
+    - **The share link page** (`share/worker.js`) is the photo, film or PDF
+      on a white card (#232326 in the dark, the site's window colour), radius
+      16 with 4 pt of it round the picture at 12, on #f5f5f7 (#161617), at
+      most 1100 px wide and 82% of the window high; under it, in 13 px
+      secondary, a capsule Save, the days left, "Shared with Snapfly" and
+      Report abuse. System fonts, light and dark from the system, nothing
+      from another host, and right to left in Arabic.
     - **Send to** (`paperplane.circle`): the chats under photos as they stand
       there, each with its icon at 16 pt on every macOS; then **More Chats**
       (`ellipsis.bubble`) with the rest; then Send with Shop Header.

@@ -1113,3 +1113,16 @@
 "The largest models answer best; smaller ones answer faster and cost less." = "Los modelos más grandes responden mejor; los más pequeños responden más rápido y cuestan menos.";
 "What it does" = "Qué hace";
 "Writes the reply to send, from a conversation, an order or a review." = "Escribe la respuesta para enviar, a partir de una conversación, un pedido o una reseña.";
+
+/* Share links */
+"Copy Link" = "Copiar enlace";
+"Delete Link" = "Eliminar enlace";
+"Making the link…" = "Creando el enlace…";
+"Link copied. It works for %d more days. Click to open it." = "Enlace copiado. Funciona %d días más. Haz clic para abrirlo.";
+"Link deleted. It no longer opens." = "Enlace eliminado. Ya no se abre.";
+"Could not delete the link. Try again later." = "No se pudo eliminar el enlace. Inténtalo más tarde.";
+"Could not make the link. Try again later." = "No se pudo crear el enlace. Inténtalo más tarde.";
+"Could not reach the link service. Check the connection and try again." = "No se pudo conectar con el servicio de enlaces. Revisa la conexión e inténtalo de nuevo.";
+"This file is too large for a link. Links take files up to 95 MB." = "Este archivo es demasiado grande para un enlace. Los enlaces admiten archivos de hasta 95 MB.";
+"This kind of file cannot be shared as a link." = "Este tipo de archivo no se puede compartir con un enlace.";
+"Too many links in a short time. Try again in a minute." = "Demasiados enlaces en poco tiempo. Inténtalo dentro de un minuto.";
