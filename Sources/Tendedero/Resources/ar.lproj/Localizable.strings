@@ -1396,3 +1396,10 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "تُغطّى كل صفحة كما في الإعدادات، أو كما تركتها بعد فتحها. لا يحمل ملف PDF إلا صور الصفحات المغطّاة، بلا نص يمكن نسخه.";
 "Page %d is not ready yet. Open it to check it." = "الصفحة %d ليست جاهزة بعد. افتحها لتتحقق منها.";
 "Page %d could not be covered, so no PDF was made." = "تعذّرت تغطية الصفحة %d، لذلك لم يُصنع ملف PDF.";
+
+/* The iPhone: the first launch, covering a sample card */
+"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "صورة شاشة للتجربة: يُغطّى فيها الاسم ورقم الهاتف والبريد الإلكتروني ورقم الآيبان واحدًا بعد الآخر.";
+"Plays the example again." = "يعرض المثال مرة أخرى.";
+"Name, phone number, email and IBAN covered." = "غُطّي الاسم ورقم الهاتف والبريد الإلكتروني ورقم الآيبان.";
+"Covered before you send" = "مغطّاة قبل أن ترسلها";
+"Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "تُقرأ صور الشاشة على هذا الآيفون، ولا يخرج منه شيء إلا إذا اخترت ذلك.";

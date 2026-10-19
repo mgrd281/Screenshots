@@ -1942,9 +1942,31 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     and transparent, on a spring (0.42, 0.82), 35 ms apart in reading order
     for the first twelve (`stagger.grid`); cards that come later, or come
     back, are simply there. With Reduce Motion they fade in over 0.15 s.
-  - **First launch**, before access: the whole picture over "Allow Snapfly
-    to see your screenshots" in title 2 bold and what Snapfly does, in
-    `.secondary`, centred, 32 pt in, then Allow Access.
+  - **First launch**, before access, shows the covering before it asks
+    for anything (`CoverDemo`): on the soft `phone-surface` ellipse of the
+    stacked photos, a made-up contact card (the card colour, corners of 20,
+    a hairline of `.primary` at 8%, a shadow of black 8%, radius 10, y 4,
+    16 pt in, at most 300 pt wide; no larger than at extra large text): a
+    32 pt circle with `person.fill`, the name in headline, two capsules of
+    `.primary` at 10%, then the phone number, email and IBAN in subheadline
+    with monospaced digits beside `phone.fill`, `envelope.fill` and
+    `creditcard.fill` in `.secondary`. As it shows, the reading line
+    (`sweep.scan`) crosses it once, then a cover of `.primary` at 85%
+    (the drawn pictures' covers, corners of a quarter of the height, 8 at
+    most, 3 pt beyond the words) grows over each detail from the reading
+    side, 180 ms apart (`stagger.demo`), each in 0.32 s on `ease.out`;
+    then, 16 pt under the card, a capsule of regular material says
+    "Name, phone number, email and IBAN covered." in footnote medium beside
+    `checkmark.shield.fill` in `phone-protect`, rising 8 pt into place on
+    `spring.reveal` as the shield bounces once and a success haptic plays.
+    A tap on the card plays it again. With Reduce Motion it is shown
+    covered, without the line. VoiceOver reads it as one sample
+    screenshot. Under it, "Covered before you send" in title 2 bold and
+    what Snapfly does in `.secondary`, centred, 32 pt in, then Allow
+    Access, then a footnote in `.secondary` that screenshots are read on
+    the iPhone and nothing leaves it unless the owner chooses. Its details
+    belong to no one (a placeholder name, `example.com` and the standard
+    example IBAN).
 - **Scan** (`ScanTab.swift`), a large title, 16 pt in:
   - A card of `phone-surface` with corners of 24 and a hairline of
     `.primary` at 6%, padded 20 by 24, its contents centred 18 pt apart: a

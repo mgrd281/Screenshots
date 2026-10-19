@@ -1396,3 +1396,10 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "各ページは設定どおりに、または開いたあとに残した状態で隠されます。PDFには隠したページの画像だけが入り、コピーできるテキストはありません。";
 "Page %d is not ready yet. Open it to check it." = "%d ページ目はまだ準備できていません。開いて確認してください。";
 "Page %d could not be covered, so no PDF was made." = "%d ページ目を隠せなかったため、PDFは作成されませんでした。";
+
+/* The iPhone: the first launch, covering a sample card */
+"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "サンプルのスクリーンショット：名前、電話番号、メール、IBANが順番に隠されます。";
+"Plays the example again." = "例をもう一度再生します。";
+"Name, phone number, email and IBAN covered." = "名前、電話番号、メール、IBANを隠しました。";
+"Covered before you send" = "送る前に隠す";
+"Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "スクリーンショットはこのiPhoneの中で読み取られ、あなたが選ばない限り何も外に出ません。";

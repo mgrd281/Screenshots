@@ -1396,3 +1396,10 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "각 페이지는 설정대로, 또는 열어 본 뒤 남겨 둔 대로 가려집니다. PDF에는 가린 페이지의 이미지만 들어 있고 복사할 텍스트는 없습니다.";
 "Page %d is not ready yet. Open it to check it." = "%d쪽이 아직 준비되지 않았습니다. 열어서 확인하세요.";
 "Page %d could not be covered, so no PDF was made." = "%d쪽을 가릴 수 없어 PDF를 만들지 않았습니다.";
+
+/* The iPhone: the first launch, covering a sample card */
+"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "예시 스크린샷: 이름, 전화번호, 이메일, IBAN이 차례로 가려집니다.";
+"Plays the example again." = "예시를 다시 재생합니다.";
+"Name, phone number, email and IBAN covered." = "이름, 전화번호, 이메일, IBAN을 가렸습니다.";
+"Covered before you send" = "보내기 전에 가려집니다";
+"Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "스크린샷은 이 iPhone에서 읽히며, 직접 선택하지 않는 한 아무것도 밖으로 나가지 않습니다.";

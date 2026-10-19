@@ -1398,3 +1398,10 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "Hər səhifə Ayarlarda seçildiyi kimi və ya açandan sonra saxladığın kimi örtülür. PDF-də yalnız örtülmüş səhifələrin şəkilləri var, kopyalanacaq mətn yoxdur.";
 "Page %d is not ready yet. Open it to check it." = "Səhifə %d hələ hazır deyil. Yoxlamaq üçün onu aç.";
 "Page %d could not be covered, so no PDF was made." = "Səhifə %d örtülə bilmədi, ona görə PDF yaradılmadı.";
+
+/* The iPhone: the first launch, covering a sample card */
+"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "Nümunə ekran şəkli: adı, telefon nömrəsi, e-poçtu və IBAN-ı bir-birinin ardınca örtülür.";
+"Plays the example again." = "Nümunəni yenidən göstərir.";
+"Name, phone number, email and IBAN covered." = "Ad, telefon nömrəsi, e-poçt və IBAN örtüldü.";
+"Covered before you send" = "Göndərməmişdən əvvəl örtülür";
+"Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Ekran şəkilləri bu iPhone-da oxunur və sən seçməsən heç nə ondan çıxmır.";

@@ -1396,3 +1396,10 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "每一页都会按设置遮盖，或保持你打开后留下的样子。PDF 只包含遮盖后页面的图片，没有可复制的文字。";
 "Page %d is not ready yet. Open it to check it." = "第 %d 页还没准备好。打开它进行检查。";
 "Page %d could not be covered, so no PDF was made." = "第 %d 页无法遮盖，因此没有生成 PDF。";
+
+/* The iPhone: the first launch, covering a sample card */
+"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "示例截屏：其中的姓名、电话号码、电子邮件和 IBAN 会依次被遮盖。";
+"Plays the example again." = "再次播放示例。";
+"Name, phone number, email and IBAN covered." = "已遮盖姓名、电话号码、电子邮件和 IBAN。";
+"Covered before you send" = "发送之前先遮盖";
+"Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "你的截屏只在这台 iPhone 上读取，除非你选择，否则什么都不会离开它。";

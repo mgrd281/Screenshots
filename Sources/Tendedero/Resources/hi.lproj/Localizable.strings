@@ -1398,3 +1398,10 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "हर पेज सेटिंग्स के अनुसार ढका जाता है, या वैसे जैसे आपने उसे खोलने के बाद छोड़ा था। PDF में सिर्फ़ ढके हुए पेजों की तस्वीरें होती हैं, कॉपी करने लायक कोई टेक्स्ट नहीं।";
 "Page %d is not ready yet. Open it to check it." = "पेज %d अभी तैयार नहीं है। जाँचने के लिए उसे खोलें।";
 "Page %d could not be covered, so no PDF was made." = "पेज %d ढका नहीं जा सका, इसलिए PDF नहीं बनाया गया।";
+
+/* The iPhone: the first launch, covering a sample card */
+"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "एक नमूना स्क्रीनशॉट: इसका नाम, फ़ोन नंबर, ईमेल और IBAN एक के बाद एक ढके जाते हैं।";
+"Plays the example again." = "उदाहरण फिर से दिखाता है।";
+"Name, phone number, email and IBAN covered." = "नाम, फ़ोन नंबर, ईमेल और IBAN ढके गए।";
+"Covered before you send" = "भेजने से पहले ढका हुआ";
+"Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "आपके स्क्रीनशॉट इसी iPhone पर पढ़े जाते हैं, और आपकी मर्ज़ी के बिना कुछ भी बाहर नहीं जाता।";
