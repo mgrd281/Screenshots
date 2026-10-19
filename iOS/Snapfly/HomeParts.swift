@@ -376,10 +376,13 @@ struct ScreenshotGrid: View {
     let place: ShotLink.Place
     let zoom: Namespace.ID
     let quick: @MainActor (PHAsset, QuickCover) -> Void
+    /// The cards have risen into place, once, the first time there are any.
+    @State private var risen = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 76, maximum: 160), spacing: 8)], spacing: 8) {
-            ForEach(shots, id: \.localIdentifier) { asset in
+            ForEach(Array(shots.enumerated()), id: \.element.localIdentifier) { index, asset in
                 let link = ShotLink(id: asset.localIdentifier, place: place)
                 NavigationLink(value: link) {
                     ScreenshotCard(asset: asset, protected: protected.contains(asset.localIdentifier), square: true)
@@ -388,8 +391,20 @@ struct ScreenshotGrid: View {
                 .buttonStyle(.plain)
                 .contextMenu { menu(asset) }
                 .phoneGuideTarget(.firstShot, on: asset.localIdentifier == shots.first?.localIdentifier)
+                .opacity(risen ? 1 : 0)
+                .offset(y: risen || reduceMotion ? 0 : 8)
+                .animation(rise(index), value: risen)
             }
         }
+        .onAppear { if !shots.isEmpty { risen = true } }
+        .onChange(of: shots.isEmpty) { if !shots.isEmpty { risen = true } }
+    }
+
+    /// The cards rise in reading order, a beat apart (`stagger.grid`), the
+    /// first row and a half; with Reduce Motion they only fade in.
+    private func rise(_ index: Int) -> Animation {
+        reduceMotion ? .easeOut(duration: 0.15)
+            : .spring(response: 0.42, dampingFraction: 0.82).delay(Double(min(index, 11)) * 0.035)
     }
 
     @ViewBuilder private func menu(_ asset: PHAsset) -> some View {

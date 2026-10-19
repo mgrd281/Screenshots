@@ -186,7 +186,10 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         self.markerWidth = markerWidth
         self.eraserReach = eraserReach
         overlay.aspect = imageSize.height > 0 ? imageSize.width / imageSize.height : 1
+        // The first covers found grow in over their places, line by line.
+        let arriving = !isCopy && !overlay.marks.contains(where: \.covered) && marks.contains(where: \.covered)
         overlay.marks = marks
+        if arriving { overlay.arrive() }
         overlay.checking = checking
         overlay.isCopy = isCopy
         overlay.selected = selected
@@ -464,6 +467,51 @@ private final class MarksView: UIView {
 
     var selectedMark: ProtectionPlan.Mark? { marks.first { $0.id == selected } }
 
+    // MARK: Covers growing in
+
+    /// When the first covers arrived, and each one's turn, top to bottom.
+    private var arrival: CFTimeInterval?
+    private var turns: [Int: Int] = [:]
+    private var ticker: CADisplayLink?
+    /// One cover after another (`stagger.cover`), each grown in this long.
+    private static let stagger = 0.045
+    private static let growth = 0.32
+
+    /// The covers grow in over their places in reading order, as if laid
+    /// on one by one; at once with Reduce Motion.
+    func arrive() {
+        guard !UIAccessibility.isReduceMotionEnabled else { return }
+        // From 0 to 1 from the bottom: the highest first, then along the line.
+        let ordered = marks.filter(\.covered).sorted {
+            abs($0.rect.maxY - $1.rect.maxY) > 0.01 ? $0.rect.maxY > $1.rect.maxY : $0.rect.minX < $1.rect.minX
+        }
+        turns = Dictionary(uniqueKeysWithValues: ordered.enumerated().map { ($0.element.id, min($0.offset, 24)) })
+        arrival = CACurrentMediaTime()
+        ticker?.invalidate()
+        let ticker = CADisplayLink(target: self, selector: #selector(tick))
+        ticker.add(to: .main, forMode: .common)
+        self.ticker = ticker
+    }
+
+    @objc private func tick() {
+        setNeedsDisplay()
+        guard let arrival else { return }
+        let last = Double(turns.values.max() ?? 0)
+        if CACurrentMediaTime() - arrival > last * Self.stagger + Self.growth {
+            self.arrival = nil
+            ticker?.invalidate()
+            ticker = nil
+        }
+    }
+
+    /// How much of a cover shows, from 0 to 1, eased out.
+    private func grown(_ mark: ProtectionPlan.Mark) -> CGFloat {
+        guard let arrival, let turn = turns[mark.id] else { return 1 }
+        let t = (CACurrentMediaTime() - arrival - Double(turn) * Self.stagger) / Self.growth
+        let clamped = min(max(t, 0), 1)
+        return CGFloat(1 - pow(1 - clamped, 3))
+    }
+
     /// A handle's reach for a finger, on the screen.
     private var touch: CGFloat { 22 / max(zoom, 1) }
 
@@ -496,8 +544,20 @@ private final class MarksView: UIView {
         let path = self.path(of: mark)
         if mark.covered {
             if !isCopy || mark.id == selected && pending != nil {
-                // The cover ink, as the copy will show it.
-                if let shape = mark.shape { ink(shape, preview: false, in: context) } else { fill(path) }
+                // The cover ink, as the copy will show it, growing in along
+                // the reading direction while it arrives.
+                let shown = grown(mark)
+                if shown > 0 {
+                    context.saveGState()
+                    if shown < 1 {
+                        let whole = path.bounds.insetBy(dx: -bounds.width * 0.02, dy: -bounds.width * 0.02)
+                        let width = whole.width * shown
+                        let leading = effectiveUserInterfaceLayoutDirection == .rightToLeft ? whole.maxX - width : whole.minX
+                        context.clip(to: CGRect(x: leading, y: whole.minY, width: width, height: whole.height))
+                    }
+                    if let shape = mark.shape { ink(shape, preview: false, in: context) } else { fill(path) }
+                    context.restoreGState()
+                }
             }
             if checking.contains(mark.id) { outline(path, color: tintColor, in: context) }
         } else {

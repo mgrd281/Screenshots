@@ -76,7 +76,7 @@ ease-out.
 | `spring.row` | 0.25 / 0.85 | A history row on hover |
 | `spring.control` | 0.3 / 0.8 | The capture button (1.08) and the chat button (1.04) on hover |
 | `spring.card` | 0.3 / 0.6 | A photo card on hover (1.035) and the pin badge |
-| `spring.reveal` | 0.42 / 0.82 | The line comes down |
+| `spring.reveal` | 0.42 / 0.82 | The line comes down; on the iPhone, grid cards rising and the status capsule changing step |
 | `spring.arrive` | 0.42 / 0.72 | A photo arrives and swings on its clip (16°) |
 | `spring.spread` | 0.42 / 0.8 | The card stack fans out |
 | `spring.style` | 0.5 / 0.85 | The line changes style |
@@ -93,7 +93,8 @@ settle is the point.
 
 | Token | Value | Where it ships |
 |---|---|---|
-| `stagger.cover` | 45 ms | Hide Part: covers grow in line by line |
+| `stagger.cover` | 45 ms | Hide Part, and the iPhone's Protect Picture: covers grow in line by line, each over 0.32 s on a cubic ease-out from the reading side |
+| `stagger.grid` | 35 ms, twelve at most | iPhone: screenshot cards rise 8 pt into the grid the first time it has any, on `spring.reveal` |
 | `stagger.list` | 90 ms, four at most | Site arrivals: the four steps |
 | `stagger.hang` | 110 ms | Site first view: photos drop onto the rope |
 | `stagger.deal` | 90 ms, after 250 ms | Site bold look: cards dealt onto the rope |
@@ -167,6 +168,8 @@ settle is the point.
 | Take down | Falls off the line (0.55 s in the app); leaves with a short fade on `ease.exit` on the site's desktop |
 | Done or undoable | A note rises above the Dock with Undo (site desktop demo) |
 | Failure | No shake or beep: a `Notice` says what happened and what to do |
+| Copy ready (iPhone) | The status capsule's shield bounces up once (`symbolEffect(.bounce)`) with a success haptic |
+| Scan tab shown (iPhone) | `sweep.scan`: a green reading line crosses the drawn page once, 0.9 s, fading in and out at the ends; none with Reduce Motion |
 
 ### Reduce Motion
 
@@ -178,6 +181,11 @@ settle is the point.
   story's moments as it ends. The desktop demo keeps fades alone. The
   `site-tests` suite checks this.
 - **Video:** has no reduced form; it is opt-in media the viewer starts.
+- **iPhone:** read `accessibilityReduceMotion` (UIKit:
+  `UIAccessibility.isReduceMotionEnabled`): covers and the scan line are
+  simply there or absent, grid cards and the status capsule fade over
+  0.15 s; the shield's bounce is the system's, which Reduce Motion tones
+  down itself.
 - **Rule:** a change that adds motion defines its reduced form in the same
   change.
 

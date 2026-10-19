@@ -149,8 +149,18 @@ private struct ScanCard: View {
 }
 
 /// A page with a covered line in the corners of a viewfinder, drawn with
-/// shapes, so it fits light and dark and shows no one's details.
+/// shapes, so it fits light and dark and shows no one's details. Each time
+/// the tab shows, a green line reads the page once, top to bottom.
 private struct Viewfinder: View {
+    @State private var visits = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// Where the reading line is, and how much it shows.
+    private struct Sweep {
+        var y: CGFloat = -44
+        var opacity = 0.0
+    }
+
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -167,9 +177,35 @@ private struct Viewfinder: View {
                     }
                     .padding(11)
                 }
+            if !reduceMotion { line }
             Corners()
                 .stroke(SnapflyTokens.protect, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
         }
+        .onAppear { visits += 1 }
+    }
+
+    /// The reading line: brightest in its middle, glowing softly, wider
+    /// than the page so it seems to come from the viewfinder.
+    private var line: some View {
+        Capsule()
+            .fill(LinearGradient(colors: [SnapflyTokens.protect.opacity(0), SnapflyTokens.protect, SnapflyTokens.protect.opacity(0)],
+                                 startPoint: .leading, endPoint: .trailing))
+            .frame(width: 96, height: 2.5)
+            .shadow(color: SnapflyTokens.protect.opacity(0.7), radius: 5)
+            .keyframeAnimator(initialValue: Sweep(), trigger: visits) { line, sweep in
+                line.offset(y: sweep.y).opacity(sweep.opacity)
+            } keyframes: { _ in
+                KeyframeTrack(\.y) {
+                    LinearKeyframe(-44, duration: 0.15)
+                    CubicKeyframe(44, duration: 0.9)
+                }
+                KeyframeTrack(\.opacity) {
+                    LinearKeyframe(0, duration: 0.15)
+                    LinearKeyframe(1, duration: 0.15)
+                    LinearKeyframe(1, duration: 0.55)
+                    LinearKeyframe(0, duration: 0.2)
+                }
+            }
     }
 
     /// The four corners of a viewfinder.
