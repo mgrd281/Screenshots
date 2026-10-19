@@ -703,17 +703,23 @@ apps.
   - First what hangs, as a disabled line ("3 photos on the line", "Nothing
     on the line"), and the main act: Paste into <the app in front>, with
     the send shortcut, enabled while something hangs.
+  - Then Settings… (⌘,) and Open screenshots folder (Open Workspace while
+    it is on), at the top, where they are found at once.
   - Then the ways onto the line: Take Screenshot, Take Screenshot with
     Timer, Capture Whole Page, Record Screen (Stop Recording while it runs),
-    Add Files… (⌘O).
+    Record a Guide and Recent Guides.
+  - Then files from anywhere: Add Files… (⌘O) and Cover Files….
   - Then the line: Show or Hide line, Search…, History…, Take everything
     down; the last three enabled only when they can act.
-  - Then two switches with a checkmark: Hide private details, which keeps
+  - Then three switches with a checkmark: Hide private details, which keeps
     the kinds chosen when turned off and brings them back when turned on
-    (the recommended ones when none were kept), and Screenshot Button.
-  - Then Settings… (⌘,), Open screenshots folder, Help & Support… (the
-    website's support page, in German or Arabic where the Mac speaks them)
-    and, outside the App Store, Check for Updates…. Quit last.
+    (the recommended ones when none were kept), Screenshot Button and Hide
+    Desktop Icons.
+  - Then the Introduction, Help & Support… (the website's support page, in
+    German or Arabic where the Mac speaks them) and Check for Updates…, just
+    above Quit, which comes last. The download edition checks and updates
+    itself after a question; the App Store edition opens TestFlight for a
+    test build, else the App Store's updates.
   - Permissions Needed… comes first of all, only once a permission was
     refused.
   - SF Symbols on macOS 26 only, as the photo context menu: `paperplane`,
@@ -1273,7 +1279,7 @@ apps.
   rounded bold, the tagline in title3 `.secondary`, the version in callout
   `.tertiary`. Then one line, "Made by" in `.secondary` before the maker's
   name in semibold, and "© year name" in callout `.tertiary` under it;
-  Check for Updates… (direct edition only) as a regular `.bordered` button.
+  Check for Updates… as a regular `.bordered` button, in both editions.
   No monogram, no card, nothing else: help lives in Support.
 - **Support pane** (`Support.swift`), between Permissions and About, with
   `lifepreserver.fill` in the sidebar. A grouped form of rows, each a 28 pt

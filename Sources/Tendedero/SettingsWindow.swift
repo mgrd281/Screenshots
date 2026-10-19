@@ -766,7 +766,7 @@ final class Preferences: ObservableObject {
     }
 
     func checkForUpdates() {
-        NSWorkspace.shared.open(AppDelegate.updatesURL)
+        Updater.check()
     }
 }
 
@@ -2193,10 +2193,8 @@ private struct AboutPane: View {
                 .font(.callout)
                 .foregroundStyle(.tertiary)
                 .padding(.top, 4)
-            if !Edition.appStore {
-                Button(L("Check for Updates…")) { prefs.checkForUpdates() }
-                    .padding(.top, 18)
-            }
+            Button(L("Check for Updates…")) { prefs.checkForUpdates() }
+                .padding(.top, 18)
             Spacer()
         }
         .multilineTextAlignment(.center)

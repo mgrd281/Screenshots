@@ -1085,3 +1085,14 @@
 "Share…" = "Paylaş…";
 "Copied, covered. Paste it wherever you like." = "Kapatılmış olarak kopyalandı. İstediğin yere yapıştır.";
 "Copied. Paste it with ⌘V." = "Kopyalandı. ⌘V ile yapıştır.";
+
+/* Updates */
+"Checking for updates…" = "Güncellemeler denetleniyor…";
+"Could not check for updates. Check the connection and try again." = "Güncellemeler denetlenemedi. Bağlantıyı kontrol edip tekrar dene.";
+"Could not install the update here. The download page opens instead." = "Güncelleme buraya yüklenemedi. Bunun yerine indirme sayfası açılıyor.";
+"Install and Reopen" = "Yükle ve yeniden aç";
+"Later" = "Daha sonra";
+"Snapfly %@ is ready" = "Snapfly %@ hazır";
+"Snapfly %@ is up to date." = "Snapfly %@ güncel.";
+"Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly kapanır, yeni sürümle değiştirilir ve yeniden açılır. Hattaki fotoğraflar kalır.";
+"The update could not be checked, so it was not installed." = "Güncelleme doğrulanamadığı için yüklenmedi.";

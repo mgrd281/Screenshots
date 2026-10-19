@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The menu bar menu is tidier: Settings and the screenshots folder at the
+  top, then taking, files, the line, the switches, and help. Check for
+  Updates… sits just above Quit: the download edition updates itself in one
+  click after a question; the App Store edition opens TestFlight or the App
+  Store.
 - Hide Private Details with Snapfly, from Finder, now sends the covered copy
   straight on: one click on Gmail, WhatsApp, ChatGPT, Claude or any chat on
   for photos, or Copy, or the Mac's Share menu, besides Save Copy…. What to

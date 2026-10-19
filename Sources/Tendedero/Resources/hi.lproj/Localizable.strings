@@ -1087,3 +1087,14 @@
 "Share…" = "शेयर करें…";
 "Copied, covered. Paste it wherever you like." = "ढककर कॉपी किया गया। जहाँ चाहें पेस्ट करें।";
 "Copied. Paste it with ⌘V." = "कॉपी किया गया। ⌘V से पेस्ट करें।";
+
+/* Updates */
+"Checking for updates…" = "अपडेट देखे जा रहे हैं…";
+"Could not check for updates. Check the connection and try again." = "अपडेट नहीं देखे जा सके। कनेक्शन जाँचें और फिर कोशिश करें।";
+"Could not install the update here. The download page opens instead." = "यहाँ अपडेट इंस्टॉल नहीं हो सका। इसके बजाय डाउनलोड पेज खुलेगा।";
+"Install and Reopen" = "इंस्टॉल करें और फिर खोलें";
+"Later" = "बाद में";
+"Snapfly %@ is ready" = "Snapfly %@ तैयार है";
+"Snapfly %@ is up to date." = "Snapfly %@ नवीनतम है।";
+"Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly बंद होगा, नए संस्करण से बदला जाएगा और फिर खुलेगा। लाइन पर लगी तस्वीरें बनी रहेंगी।";
+"The update could not be checked, so it was not installed." = "अपडेट की जाँच नहीं हो सकी, इसलिए इसे इंस्टॉल नहीं किया गया।";

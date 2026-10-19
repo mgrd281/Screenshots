@@ -1087,3 +1087,14 @@
 "Share…" = "Share…";
 "Copied, covered. Paste it wherever you like." = "Copied, covered. Paste it wherever you like.";
 "Copied. Paste it with ⌘V." = "Copied. Paste it with ⌘V.";
+
+/* Updates */
+"Checking for updates…" = "Checking for updates…";
+"Could not check for updates. Check the connection and try again." = "Could not check for updates. Check the connection and try again.";
+"Could not install the update here. The download page opens instead." = "Could not install the update here. The download page opens instead.";
+"Install and Reopen" = "Install and Reopen";
+"Later" = "Later";
+"Snapfly %@ is ready" = "Snapfly %@ is ready";
+"Snapfly %@ is up to date." = "Snapfly %@ is up to date.";
+"Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly closes, is replaced by the new version and opens again. Photos on the line stay.";
+"The update could not be checked, so it was not installed." = "The update could not be checked, so it was not installed.";

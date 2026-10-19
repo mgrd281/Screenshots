@@ -1320,6 +1320,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         menu.addItem(.separator())
 
+        // Settings at the top, where it is found at once, with the folder the
+        // screenshots are kept in.
+        menu.addItem(ClosureMenuItem(L("Settings…"), symbol: "gearshape", key: ",") { [weak self] in
+            self?.openSettings()
+        })
+        let workspaceOn = Workspace.shared.isOn
+        menu.addItem(ClosureMenuItem(workspaceOn ? L("Open Workspace") : L("Open screenshots folder"), symbol: "folder") { [weak self] in
+            guard let self else { return }
+            if workspaceOn { Workspace.shared.reveal() } else { NSWorkspace.shared.open(self.watcher.folder) }
+        })
+        menu.addItem(.separator())
+
         // The ways onto the line.
         if Recording.shared.isRecording {
             let stopItem = ClosureMenuItem(L("Stop Recording"), symbol: "stop.circle") { Recording.shared.stop() }
@@ -1371,6 +1383,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 menu.addItem(recentItem)
             }
         }
+        menu.addItem(.separator())
+
         // Photos and PDFs from anywhere on the Mac, to send protected.
         menu.addItem(ClosureMenuItem(L("Add Files…"), symbol: "folder.badge.plus", key: "o") { [weak self] in
             self?.chooseFiles()
@@ -1426,15 +1440,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(iconsItem)
         menu.addItem(.separator())
 
-        // Everything else lives in the settings window.
-        menu.addItem(ClosureMenuItem(L("Settings…"), symbol: "gearshape", key: ",") { [weak self] in
-            self?.openSettings()
-        })
-        let workspaceOn = Workspace.shared.isOn
-        menu.addItem(ClosureMenuItem(workspaceOn ? L("Open Workspace") : L("Open screenshots folder"), symbol: "folder") { [weak self] in
-            guard let self else { return }
-            if workspaceOn { Workspace.shared.reveal() } else { NSWorkspace.shared.open(self.watcher.folder) }
-        })
+        // Help, then the newest version, just above Quit.
         // Ended before its end, it says it goes on from there.
         let introduction = GuideProgress.load().canContinue ? L("Continue Introduction") : L("Introduction")
         menu.addItem(ClosureMenuItem(introduction, symbol: "hand.wave") {
@@ -1444,14 +1450,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(ClosureMenuItem(L("Help & Support…"), symbol: "questionmark.circle") {
             NSWorkspace.shared.open(AppDelegate.supportURL)
         })
-        // The app never connects to anything, so it cannot tell when a new
-        // version is out. The releases page can.
-        // From the App Store, updates come through it.
-        if !Edition.appStore {
-            menu.addItem(ClosureMenuItem(L("Check for Updates…"), symbol: "arrow.down.circle") {
-                NSWorkspace.shared.open(AppDelegate.updatesURL)
-            })
-        }
+        menu.addItem(ClosureMenuItem(L("Check for Updates…"), symbol: "arrow.down.circle") {
+            Updater.check()
+        })
 
         menu.addItem(.separator())
         menu.addItem(ClosureMenuItem(L("Quit Snapfly"), key: "q") {

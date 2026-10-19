@@ -1085,3 +1085,14 @@
 "Share…" = "共有…";
 "Copied, covered. Paste it wherever you like." = "隠してコピーしました。好きな場所にペーストできます。";
 "Copied. Paste it with ⌘V." = "コピーしました。⌘V でペーストしてください。";
+
+/* Updates */
+"Checking for updates…" = "アップデートを確認しています…";
+"Could not check for updates. Check the connection and try again." = "アップデートを確認できませんでした。接続を確認して、もう一度お試しください。";
+"Could not install the update here. The download page opens instead." = "ここではアップデートをインストールできませんでした。代わりにダウンロードページを開きます。";
+"Install and Reopen" = "インストールして再度開く";
+"Later" = "後で";
+"Snapfly %@ is ready" = "Snapfly %@ の準備ができました";
+"Snapfly %@ is up to date." = "Snapfly %@ は最新です。";
+"Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly を閉じ、新しいバージョンに置き換えてから、もう一度開きます。ラインの写真はそのまま残ります。";
+"The update could not be checked, so it was not installed." = "アップデートを確認できなかったため、インストールしませんでした。";

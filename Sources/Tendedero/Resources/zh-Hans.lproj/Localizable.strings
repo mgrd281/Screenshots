@@ -1085,3 +1085,14 @@
 "Share…" = "共享…";
 "Copied, covered. Paste it wherever you like." = "已遮盖并拷贝，可粘贴到任意位置。";
 "Copied. Paste it with ⌘V." = "已拷贝，请按 ⌘V 粘贴。";
+
+/* Updates */
+"Checking for updates…" = "正在检查更新…";
+"Could not check for updates. Check the connection and try again." = "无法检查更新。请检查网络连接后重试。";
+"Could not install the update here. The download page opens instead." = "无法在此安装更新，将改为打开下载页面。";
+"Install and Reopen" = "安装并重新打开";
+"Later" = "稍后";
+"Snapfly %@ is ready" = "Snapfly %@ 已就绪";
+"Snapfly %@ is up to date." = "Snapfly %@ 已是最新版本。";
+"Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly 将关闭，替换为新版本后重新打开。晾衣绳上的照片会保留。";
+"The update could not be checked, so it was not installed." = "无法验证此更新，因此未安装。";
