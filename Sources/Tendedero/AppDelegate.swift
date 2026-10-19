@@ -629,13 +629,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
 
-    /// Finder's "Hide Private Details with Snapfly": one photo or PDF at a
-    /// time, so the owner decides what its copy hides.
+    /// Finder's "Hide Private Details with Snapfly": one photo or PDF opens
+    /// to decide what its copy hides; several, or a folder, open Cover Files.
     private func hideDetails(_ urls: [URL]) {
+        // Several files, or a folder of them, go to Cover Files.
+        let folder = { (url: URL) in (try? url.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true }
+        if urls.count > 1 || urls.contains(where: folder) {
+            CoverFiles.shared.open(with: urls)
+            return
+        }
         let files = Outside.sort(urls)
-        if files.accepted.count > 1 {
-            Notice.show(L("Choose one photo or PDF at a time."))
-        } else if let url = files.accepted.first {
+        if let url = files.accepted.first {
             HideEditor.shared.hideInCopy(url)
         } else {
             showRefusals(files)
@@ -1370,6 +1374,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(ClosureMenuItem(L("Add Files…"), symbol: "folder.badge.plus", key: "o") { [weak self] in
             self?.chooseFiles()
         })
+        // Many PDFs and pictures covered at once, each saved as a copy.
+        menu.addItem(ClosureMenuItem(L("Cover Files…"), symbol: "doc.on.doc") { CoverFiles.shared.open() })
         menu.addItem(.separator())
 
         // The line itself.

@@ -505,7 +505,6 @@
 "%@ (covered)" = "%@ (مغطّى)";
 "Saved beside the original as %@." = "حُفظت بجانب الأصل باسم %@.";
 "Could not save the copy." = "تعذّر حفظ النسخة.";
-"Choose one photo or PDF at a time." = "اختر صورة واحدة أو ملف PDF واحدًا في كل مرة.";
 
 /* Privacy: more kinds of private detail, in groups, and the owner's own rules */
 "Usernames" = "أسماء المستخدمين";
@@ -1015,3 +1014,54 @@
 "Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "تُضاف إلى ما يُرسَل، حول ما غُطّي ورُسم. أما الصورة نفسها فتبقى كما هي.";
 "It goes out on its background; the file in %@ stays as it is. Click to undo." = "تخرج على خلفيتها، والملف في %@ يبقى كما هو. انقر للتراجع.";
 "It goes out without a background again. Click to undo." = "تخرج من جديد دون خلفية. انقر للتراجع.";
+
+/* Cover Files */
+"Cover Files" = "تغطية الملفات";
+"Cover Files…" = "تغطية الملفات…";
+"Drop files or folders here" = "أفلت الملفات أو المجلدات هنا";
+"PDFs and pictures, as many as you like. Each gets a covered copy in a new folder; the files themselves stay as they are." = "ملفات PDF وصور، بأي عدد تريد. يحصل كل ملف على نسخة مغطاة في مجلد جديد، وتبقى الملفات نفسها كما هي.";
+"Choose Files…" = "اختر الملفات…";
+"Choose PDFs and pictures, or whole folders of them." = "اختر ملفات PDF وصورًا، أو مجلدات كاملة منها.";
+"1 file" = "ملف واحد";
+"%d files" = "%d ملف";
+"%1$d PDFs · %2$d pictures" = "%1$d ملف PDF · %2$d صورة";
+"Add…" = "إضافة…";
+"Clear" = "مسح الكل";
+"Kind" = "النوع";
+"PDF" = "PDF";
+"Picture" = "صورة";
+"Waiting" = "في الانتظار";
+"Covering…" = "يجري التغطية…";
+"1 place covered" = "غُطّي مكان واحد";
+"%d places covered" = "غُطّي %d مكان";
+"Nothing to cover" = "لا شيء للتغطية";
+"Locked with a password" = "مقفل بكلمة سر";
+"Over %d pages" = "أكثر من %d صفحة";
+"Could not be read" = "تعذّرت قراءته";
+"Stopped" = "أُوقف";
+"Not covered" = "لم يُغطَّ";
+"Show Original in Finder" = "أظهر الأصل في Finder";
+"Show Copy in Finder" = "أظهر النسخة في Finder";
+"%d files are neither PDFs nor pictures and get no copy." = "%d ملف ليست PDF ولا صورًا، فلن تُنسخ.";
+"%1$d of %2$d" = "%1$d من %2$d";
+"about %@ left" = "يتبقى نحو %@";
+"Stop" = "إيقاف";
+"Look at those with nothing to cover before sending them." = "راجع الملفات التي لم يُغطَّ فيها شيء قبل إرسالها.";
+"What to cover" = "ما الذي يُغطّى";
+"Names Only" = "الأسماء فقط";
+"As in Settings" = "كما في الإعدادات";
+"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "تُطبَّق أيضًا قواعدك الخاصة من الإعدادات › الخصوصية. وتُقرأ كل نسخة مرة أخرى، ويُغطّى المزيد إن بقي شيء ظاهرًا.";
+"Read on this Mac. Nothing is sent anywhere." = "تُقرأ على هذا الماك. لا يُرسَل شيء إلى أي مكان.";
+"The words of each file also go to %@, as set in Settings › Privacy." = "تذهب كلمات كل ملف أيضًا إلى %@، كما هو مضبوط في الإعدادات › الخصوصية.";
+"Cover 1 File" = "غطِّ ملفًا واحدًا";
+"Cover %d Files" = "غطِّ %d ملف";
+"Choose at least one kind to cover." = "اختر نوعًا واحدًا على الأقل لتغطيته.";
+"You can keep working; the window can stay open in the background." = "يمكنك متابعة عملك، وتبقى النافذة مفتوحة في الخلفية.";
+"Start Over" = "ابدأ من جديد";
+"Save Here" = "احفظ هنا";
+"Choose where to save the covered copies. A new folder is made there for them." = "اختر مكان حفظ النسخ المغطاة. يُنشأ هناك مجلد جديد لها.";
+"Could not make a folder there. Choose another place." = "تعذّر إنشاء مجلد هناك. اختر مكانًا آخر.";
+"Up to %d files at a time." = "حتى %d ملف في المرة الواحدة.";
+"Stop covering?" = "هل تريد إيقاف التغطية؟";
+"The copies saved so far stay in their folder." = "تبقى النسخ المحفوظة حتى الآن في مجلدها.";
+"Keep Covering" = "تابع التغطية";

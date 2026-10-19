@@ -34,7 +34,9 @@ does happens on your Mac, unless you set up the AI assistant with your own key
   deletes them only when you ask it to. A photo or PDF you bring stays where it
   is, unchanged: what leaves the line is a copy, a photo without where and with
   what it was taken, a PDF drawn again page by page with the details you chose
-  covered.
+  covered. Cover Files does the same for many files at once, saving each copy
+  in a new folder you choose; it reads them on your Mac, unless Find more with
+  Claude or ChatGPT is on under Privacy, which sends the words of each.
 - **Permissions.** Accessibility access lets Snapfly paste into the app you are
   using when you send a screenshot. While you choose what a screenshot takes,
   smart selection uses it to ask the app under the pointer where a picture or

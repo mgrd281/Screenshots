@@ -6,6 +6,14 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Cover Files…, in the menu bar: PDFs and pictures by the hundred, even a
+  thousand, dropped or chosen as files or whole folders. Choose what to
+  cover, like names alone, and each gets a covered copy in a new folder,
+  with the folders they came in kept. A list shows how each went, and those
+  with nothing to cover, to look at before sending. A file that cannot be
+  covered gets no copy, and the files themselves never change. Several
+  files or a folder sent to Hide Private Details with Snapfly in Finder open
+  it too.
 - Background…, under Edit in a photo's menu: the photo set on a colour, with
   room round it, rounded corners and a soft shadow, for a post, a shop or a
   slide. Eight colours, the room and the corners on sliders, and a size:
