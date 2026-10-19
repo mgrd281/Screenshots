@@ -1390,3 +1390,9 @@
 
 /* The iPhone share extension */
 "Covered as chosen in Snapfly." = "已按你在 Snapfly 中的选择遮盖。";
+
+/* The iPhone: scanned pages as one covered PDF */
+"Share Covered PDF" = "分享遮盖后的 PDF";
+"Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "每一页都会按设置遮盖，或保持你打开后留下的样子。PDF 只包含遮盖后页面的图片，没有可复制的文字。";
+"Page %d is not ready yet. Open it to check it." = "第 %d 页还没准备好。打开它进行检查。";
+"Page %d could not be covered, so no PDF was made." = "第 %d 页无法遮盖，因此没有生成 PDF。";

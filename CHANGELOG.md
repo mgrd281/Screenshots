@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, scanned pages become one covered PDF with a tap: every
+  page covered as Settings says, or as you left it after opening it, a
+  picture of each page sized like A4 and no text to copy, ready to send or
+  save to Files. Pages show their number, keep their order, open again as
+  you left them and can be removed one by one.
 - The iPhone app moves with more care: when a picture opens, its covers
   grow over the private details one after another; when the copy is ready
   the green shield bounces once with a light tap; a green line reads the

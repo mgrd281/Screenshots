@@ -1390,3 +1390,9 @@
 
 /* The iPhone share extension */
 "Covered as chosen in Snapfly." = "Snapfly'da seçtiğin gibi kapatıldı.";
+
+/* The iPhone: scanned pages as one covered PDF */
+"Share Covered PDF" = "Örtülü PDF'yi paylaş";
+"Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "Her sayfa Ayarlar'daki gibi ya da açtıktan sonra bıraktığın gibi kapatılır. PDF yalnızca kapatılmış sayfaların resimlerini içerir, kopyalanacak metin yoktur.";
+"Page %d is not ready yet. Open it to check it." = "Sayfa %d henüz hazır değil. Kontrol etmek için aç.";
+"Page %d could not be covered, so no PDF was made." = "Sayfa %d kapatılamadı, bu yüzden PDF oluşturulmadı.";
