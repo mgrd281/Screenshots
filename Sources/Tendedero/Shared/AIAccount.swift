@@ -51,6 +51,34 @@ enum AIProvider: String, CaseIterable, Identifiable {
         case .openAI: URL(string: "https://api.openai.com/v1/responses")!
         }
     }
+
+    /// The models a key may use. Asking costs nothing, so it is also how a
+    /// key is checked.
+    var modelsEndpoint: URL {
+        switch self {
+        case .claude: URL(string: "https://api.anthropic.com/v1/models?limit=100")!
+        case .openAI: URL(string: "https://api.openai.com/v1/models")!
+        }
+    }
+
+    /// The models offered until the provider's own list has been read.
+    var suggestedModels: [AIModel] {
+        switch self {
+        case .claude:
+            [AIModel(id: "claude-opus-5-5", name: "Claude Opus 5.5"),
+             AIModel(id: "claude-sonnet-5-5", name: "Claude Sonnet 5.5"),
+             AIModel(id: "claude-haiku-5-5", name: "Claude Haiku 5.5")]
+        case .openAI:
+            [AIModel(id: defaultModel, name: defaultModel)]
+        }
+    }
+}
+
+/// A model the assistant can be asked with: its ID, and its name as the
+/// provider writes it.
+struct AIModel: Equatable, Identifiable, Sendable {
+    let id: String
+    let name: String
 }
 
 /// The AI assistant's account: which one, its key, kept in the keychain,
@@ -152,9 +180,9 @@ enum AIError: Error, Equatable {
     var message: String {
         switch self {
         case .noKey:
-            String(format: L("Add your %@ key in Settings › General, under AI Assistant."), AIAccount.provider.name)
+            String(format: L("Add your %@ key in Settings › AI Assistant."), AIAccount.provider.name)
         case .badKey:
-            String(format: L("%@ did not accept the key. Check it in Settings › General."), AIAccount.provider.name)
+            String(format: L("%@ did not accept the key. Check it in Settings › AI Assistant."), AIAccount.provider.name)
         case .noCredit:
             String(format: L("Your %@ account has no credit left. Add some on their website."), AIAccount.provider.name)
         case .busy:
@@ -162,7 +190,7 @@ enum AIError: Error, Equatable {
         case .refused:
             String(format: L("%@ would not answer about this screenshot."), AIAccount.provider.name)
         case .unknownModel(let model):
-            String(format: L("%@ does not know the model %@. Leave the model empty in Settings to use the usual one."),
+            String(format: L("%@ does not know the model %@. Choose another one in Settings › AI Assistant."),
                    AIAccount.provider.name, model)
         case .offline:
             L("Could not reach the internet. Check the connection and try again.")
@@ -334,17 +362,71 @@ enum AIRequest {
         let request = try urlRequest(provider, key: key,
                                      body: body(provider, model: model, instructions: instructions, text: text,
                                                 image: image, schema: schema, effort: effort))
-        let (data, response): (Data, URLResponse)
+        let (data, status) = try await send(request)
+        return try answer(provider, status: status, data: data, model: model)
+    }
+
+    /// What came back, or the internet missing or too slow, in the owner's words.
+    private static func send(_ request: URLRequest) async throws -> (Data, Int) {
         do {
-            (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await URLSession.shared.data(for: request)
+            return (data, (response as? HTTPURLResponse)?.statusCode ?? 0)
         } catch let failure as URLError where [.notConnectedToInternet, .networkConnectionLost, .cannotFindHost,
                                                  .dnsLookupFailed].contains(failure.code) {
             throw AIError.offline
         } catch let failure as URLError where failure.code == .timedOut {
             throw AIError.busy
         }
-        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
-        return try answer(provider, status: status, data: data, model: model)
+    }
+
+    // MARK: Checking a key
+
+    static func modelsRequest(_ provider: AIProvider, key: String) -> URLRequest {
+        var request = URLRequest(url: provider.modelsEndpoint, timeoutInterval: 20)
+        switch provider {
+        case .claude:
+            request.setValue(key, forHTTPHeaderField: "x-api-key")
+            request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        case .openAI:
+            request.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization")
+        }
+        return request
+    }
+
+    /// The models in a provider's list, newest first: Claude's all, with
+    /// the names Anthropic gives them; OpenAI's only those that chat, as
+    /// their IDs, leaving out voices, pictures and the like.
+    static func models(_ provider: AIProvider, status: Int, data: Data) throws -> [AIModel] {
+        let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
+        guard (200..<300).contains(status) else { throw error(status: status, json: json, model: "") }
+        let items = json["data"] as? [[String: Any]] ?? []
+        switch provider {
+        case .claude:
+            return items.compactMap { item in
+                guard let id = item["id"] as? String, !id.isEmpty else { return nil }
+                let name = (item["display_name"] as? String).flatMap { $0.isEmpty ? nil : $0 } ?? id
+                return AIModel(id: id, name: name)
+            }
+        case .openAI:
+            let left = ["audio", "realtime", "tts", "transcribe", "image", "search", "embedding", "instruct",
+                        "moderation", "whisper", "dall-e"]
+            let chats = items.compactMap { item -> (String, Double)? in
+                guard let id = item["id"] as? String else { return nil }
+                let named = id.lowercased()
+                let chatting = named.hasPrefix("gpt-") || named.hasPrefix("chatgpt")
+                    || (named.first == "o" && named.dropFirst().first?.isNumber == true)
+                guard chatting, !left.contains(where: { named.contains($0) }) else { return nil }
+                return (id, (item["created"] as? NSNumber)?.doubleValue ?? 0)
+            }
+            return chats.sorted { $0.1 != $1.1 ? $0.1 > $1.1 : $0.0 < $1.0 }.map { AIModel(id: $0.0, name: $0.0) }
+        }
+    }
+
+    /// The models a key may use; throws `AIError.badKey` for a key the
+    /// provider does not accept.
+    static func models(_ provider: AIProvider, key: String) async throws -> [AIModel] {
+        let (data, status) = try await send(modelsRequest(provider, key: key))
+        return try models(provider, status: status, data: data)
     }
 }
 

@@ -757,15 +757,12 @@
 "Smart selection" = "Sélection intelligente";
 "Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "Entoure l’image ou la partie sous le pointeur, cale le glissement sur ses bords et rogne l’espace vide. Maintiens ⌘ pour faire glisser librement.";
 "%@ could not answer: %@" = "%@ n’a pas pu répondre : %@";
-"%@ did not accept the key. Check it in Settings › General." = "%@ n’a pas accepté la clé. Vérifie-la dans Réglages › Général.";
-"%@ does not know the model %@. Leave the model empty in Settings to use the usual one." = "%@ ne connaît pas le modèle %@. Laisse le modèle vide dans les Réglages pour utiliser celui par défaut.";
 "%@ is busy right now. Try again in a moment." = "%@ est occupé pour le moment. Réessaie dans un instant.";
 "%@ is writing a reply…" = "%@ écrit une réponse…";
 "%@ would not answer about this screenshot." = "%@ n’a pas voulu répondre au sujet de cette capture.";
 "AI Assistant" = "Assistant IA";
 "API key" = "Clé d’API";
 "Add something, like “offer a replacement”" = "Ajoute quelque chose, comme « proposer un remplacement »";
-"Add your %@ key in Settings › General, under AI Assistant." = "Ajoute ta clé %@ dans Réglages › Général, sous Assistant IA.";
 "Ask" = "Demander";
 "Ask about this screenshot" = "Pose une question sur cette capture";
 "Asking %@ for the rest…" = "%@ est interrogé pour le reste…";
@@ -775,15 +772,12 @@
 "Find more with %@" = "En trouver plus avec %@";
 "Get a Key…" = "Obtenir une clé…";
 "Model" = "Modèle";
-"Needs an AI assistant key, under General." = "Nécessite une clé pour l’assistant IA, dans Général.";
 "Open Settings…" = "Ouvrir les Réglages…";
 "Paste your key here" = "Colle ta clé ici";
 "Product" = "Produit";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Lu sur ce Mac, non masqué ; %@ a ajouté ce qu’il a lu dans la copie masquée.";
 "Remove Key" = "Supprimer la clé";
 "Reply" = "Réponse";
-"Saved: %@" = "Enregistrée : %@";
-"Sends the words of each screenshot to the AI assistant set up under General, to cover what the patterns miss. Covering takes a few seconds longer." = "Envoie les mots de chaque capture à l’assistant IA configuré dans Général, pour masquer ce que les motifs manquent. Le masquage prend quelques secondes de plus.";
 "The answer was empty." = "La réponse était vide.";
 "The keychain did not keep the key." = "Le trousseau n’a pas gardé la clé.";
 "Write Again" = "Réécrire";
@@ -857,7 +851,6 @@
 "Key saved" = "Clé enregistrée";
 "No key yet" = "Pas encore de clé";
 "Saved in your keychain, ending in %@" = "Enregistrée dans votre trousseau, se termine par %@";
-"Use the usual model" = "Utiliser le modèle habituel";
 
 /* GrabArea: the photo's menu */
 "Send to" = "Envoyer à";
@@ -1096,3 +1089,27 @@
 "Snapfly %@ is up to date." = "Snapfly %@ est à jour.";
 "Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly se ferme, est remplacé par la nouvelle version et se rouvre. Les photos sur la ligne restent.";
 "The update could not be checked, so it was not installed." = "La mise à jour n’a pas pu être vérifiée ; elle n’a donc pas été installée.";
+
+/* Settings › AI Assistant */
+"%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ n’a pas accepté la clé. Vérifie-la dans Réglages › Assistant IA.";
+"%@ did not accept this key. Check it, or make a new one." = "%@ n’a pas accepté cette clé. Vérifie-la ou crées-en une nouvelle.";
+"%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ ne connaît pas le modèle %@. Choisis-en un autre dans Réglages › Assistant IA.";
+"Add your %@ key in Settings › AI Assistant." = "Ajoute ta clé %@ dans Réglages › Assistant IA.";
+"Change" = "Modifier";
+"Check Again" = "Vérifier à nouveau";
+"Checking the key…" = "Vérification de la clé…";
+"Connection" = "Connexion";
+"In a photo’s menu, under Text and AI." = "Dans le menu d’une photo, sous Texte et IA.";
+"Make one on the %@ website, copy it, then paste it here." = "Crées-en une sur le site de %@, copie-la, puis colle-la ici.";
+"Model ID" = "ID du modèle";
+"Needs an AI assistant key; add one under AI Assistant." = "Nécessite une clé pour l’assistant IA ; ajoute-la dans Assistant IA.";
+"No key yet?" = "Pas encore de clé ?";
+"Other…" = "Autre…";
+"Paste the key from the clipboard and save it" = "Coller la clé du presse-papiers et l’enregistrer";
+"Reads an order’s number, date, total, product and tracking." = "Lit le numéro, la date, le total, le produit et le suivi d’une commande.";
+"Ready. The key works." = "Prêt. La clé fonctionne.";
+"Says what a screenshot shows and what matters in it, or answers your question about it." = "Dit ce que montre une capture et ce qui compte, ou répond à ta question à son sujet.";
+"Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer." = "Envoie les mots de chaque capture à l’assistant IA, pour masquer ce que les motifs manquent. Le masquage prend quelques secondes de plus.";
+"The largest models answer best; smaller ones answer faster and cost less." = "Les plus grands modèles répondent le mieux ; les plus petits répondent plus vite et coûtent moins.";
+"What it does" = "Ce qu’il fait";
+"Writes the reply to send, from a conversation, an order or a review." = "Écrit la réponse à envoyer, à partir d’une conversation, d’une commande ou d’un avis.";

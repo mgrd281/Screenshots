@@ -759,6 +759,9 @@ final class Preferences: ObservableObject {
     /// Set to bring the window up on Permissions.
     @Published var showsPermissions = false
 
+    /// Set to bring the window up on AI Assistant, where its key goes.
+    @Published var showsAssistant = false
+
     // MARK: About
 
     var version: String {
@@ -770,7 +773,7 @@ final class Preferences: ObservableObject {
     }
 }
 
-/// The settings window, laid out like System Settings: a sidebar with six
+/// The settings window, laid out like System Settings: a sidebar with its
 /// panes. It can be made larger or smaller by its edges and filled with the
 /// green button, and opens at the size and place it was left.
 @MainActor
@@ -808,7 +811,7 @@ final class SettingsWindow {
 }
 
 private enum Pane: String, CaseIterable, Identifiable {
-    case general, workspace, line, privacy, permissions, support, about
+    case general, workspace, line, assistant, privacy, permissions, support, about
 
     var id: Self { self }
 
@@ -821,6 +824,7 @@ private enum Pane: String, CaseIterable, Identifiable {
         case .general: L("General")
         case .workspace: L("Workspace")
         case .line: L("Line")
+        case .assistant: L("AI Assistant")
         case .privacy: L("Privacy")
         case .permissions: L("Permissions")
         case .support: L("Support")
@@ -835,6 +839,7 @@ private enum Pane: String, CaseIterable, Identifiable {
         case .general: Image(systemName: "gearshape")
         case .workspace: Image(systemName: "folder.fill")
         case .line: Image(nsImage: LineIcon.image(filled: false, description: title)).renderingMode(.template)
+        case .assistant: Image(systemName: "sparkles")
         case .privacy: Image(systemName: "hand.raised.fill")
         case .permissions: Image(systemName: "lock.shield.fill")
         case .support: Image(systemName: "lifepreserver.fill")
@@ -906,6 +911,7 @@ private struct SettingsView: View {
             case .general: GeneralPane(prefs: prefs)
             case .workspace: WorkspacePane(workspace: .shared)
             case .line: LinePane(prefs: prefs)
+            case .assistant: AIAssistantPane(prefs: prefs)
             case .privacy: PrivacyPane(prefs: prefs, line: line)
             case .permissions: PermissionsPane()
             case .support: SupportPane(prefs: prefs)
@@ -913,14 +919,19 @@ private struct SettingsView: View {
             }
         }
         .frame(minWidth: 640, minHeight: 440)
-        .onAppear(perform: showPermissionsIfAsked)
-        .onChange(of: prefs.showsPermissions) { _, _ in showPermissionsIfAsked() }
+        .onAppear(perform: showPaneAsked)
+        .onChange(of: prefs.showsPermissions) { _, _ in showPaneAsked() }
+        .onChange(of: prefs.showsAssistant) { _, _ in showPaneAsked() }
     }
 
-    private func showPermissionsIfAsked() {
-        guard prefs.showsPermissions else { return }
-        pane = .permissions
-        prefs.showsPermissions = false
+    private func showPaneAsked() {
+        if prefs.showsPermissions {
+            pane = .permissions
+            prefs.showsPermissions = false
+        } else if prefs.showsAssistant {
+            pane = .assistant
+            prefs.showsAssistant = false
+        }
     }
 }
 
@@ -1004,7 +1015,6 @@ private struct GeneralPane: View {
                 Toggle(L("Sounds"), isOn: $prefs.sounds)
                 Toggle(L("Open at login"), isOn: $prefs.opensAtLogin)
             }
-            AIAssistantSection(prefs: prefs)
             Section(L("Also watch folders")) {
                 ForEach(prefs.folders, id: \.self) { folder in
                     HStack {
@@ -1653,8 +1663,8 @@ private struct PrivacyPane: View {
                 Toggle(isOn: $prefs.assistantFindsPrivate) {
                     Text(String(format: L("Find more with %@"), prefs.aiProvider.name))
                     Text(prefs.aiSetUp
-                         ? L("Sends the words of each screenshot to the AI assistant set up under General, to cover what the patterns miss. Covering takes a few seconds longer.")
-                         : L("Needs an AI assistant key, under General."))
+                         ? L("Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer.")
+                         : L("Needs an AI assistant key; add one under AI Assistant."))
                 }
                 .disabled(!prefs.aiSetUp)
             } header: {
@@ -1896,190 +1906,6 @@ private struct SavedMessagesSection: View {
         }
         .onChange(of: prefs.savedMessages) { _, _ in prefs.savedMessagesChanged() }
         .onDisappear { prefs.saveSavedMessages() }
-    }
-}
-
-/// Claude or ChatGPT, with the owner's own key, for Write a Reply, Explain
-/// and Order Details: a tile for each, with its app's icon and whether a key
-/// is kept for it, then the key and the model of the one chosen. The key goes
-/// to the keychain as it is saved, and only its last four characters show.
-private struct AIAssistantSection: View {
-    @ObservedObject var prefs: Preferences
-    @State private var key = ""
-    @State private var model = ""
-    @State private var kept: String?
-    @State private var failed = false
-
-    var body: some View {
-        Section {
-            HStack(spacing: 12) {
-                ForEach(AIProvider.allCases) { provider in
-                    AIProviderTile(provider: provider, chosen: provider == prefs.aiProvider,
-                                   hasKey: provider == prefs.aiProvider ? kept != nil : AIAccount.hasKey(provider)) {
-                        prefs.aiProvider = provider
-                    }
-                }
-            }
-            .padding(.vertical, 4)
-            .accessibilityElement(children: .contain)
-            .accessibilityLabel(L("Assistant"))
-            LabeledContent(L("API key")) {
-                HStack(spacing: 8) {
-                    SecureField(L("API key"), text: $key,
-                                prompt: Text(kept.map { String(format: L("Saved: %@"), $0) } ?? L("Paste your key here")))
-                        .labelsHidden()
-                        .textFieldStyle(.roundedBorder)
-                        .frame(minWidth: 180)
-                        .onSubmit(save)
-                    Button(L("Save"), action: save)
-                        .buttonStyle(.borderedProminent)
-                        .disabled(typed.isEmpty)
-                }
-            }
-            HStack(spacing: 8) {
-                status
-                Spacer(minLength: 8)
-                if kept != nil {
-                    SettingsButton(L("Remove Key")) { remove() }
-                }
-                SettingsButton(L("Get a Key…")) { NSWorkspace.shared.open(prefs.aiProvider.keyPage) }
-            }
-            LabeledContent(L("Model")) {
-                HStack(spacing: 6) {
-                    if !model.isEmpty {
-                        Button { model = "" } label: {
-                            Image(systemName: "arrow.counterclockwise")
-                        }
-                        .buttonStyle(.borderless)
-                        .help(L("Use the usual model"))
-                        .accessibilityLabel(L("Use the usual model"))
-                    }
-                    TextField(L("Model"), text: $model, prompt: Text(verbatim: prefs.aiProvider.defaultModel))
-                        .labelsHidden()
-                        .textFieldStyle(.roundedBorder)
-                        .font(.system(.body, design: .monospaced))
-                        .frame(minWidth: 180)
-                        .onChange(of: model) { _, value in AIAccount.setModel(value, for: prefs.aiProvider) }
-                }
-            }
-        } header: {
-            Text(L("AI Assistant"))
-        } footer: {
-            Text(L("Write a Reply, Explain and Order Details send the screenshot, its private details covered, straight to Anthropic or OpenAI with your own key, only when you choose them. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it."))
-                .foregroundStyle(.secondary)
-        }
-        .onAppear(perform: load)
-        .onChange(of: prefs.aiProvider) { _, _ in load() }
-    }
-
-    private var typed: String { key.trimmingCharacters(in: .whitespacesAndNewlines) }
-
-    /// Whether a key is kept, by its last four characters, or what went wrong keeping it.
-    @ViewBuilder private var status: some View {
-        if failed {
-            Label {
-                Text(L("The keychain did not keep the key."))
-            } icon: {
-                Image(systemName: "exclamationmark.triangle.fill")
-            }
-            .font(.callout)
-            .foregroundStyle(.red)
-        } else if let kept {
-            Label {
-                Text(String(format: L("Saved in your keychain, ending in %@"), kept))
-                    .foregroundStyle(.secondary)
-            } icon: {
-                Image(systemName: "checkmark.seal.fill")
-                    .foregroundStyle(.green)
-            }
-            .font(.callout)
-        } else {
-            Label {
-                Text(L("No key yet"))
-            } icon: {
-                Image(systemName: "key")
-            }
-            .font(.callout)
-            .foregroundStyle(.secondary)
-        }
-    }
-
-    /// What is kept for the assistant chosen.
-    private func load() {
-        let provider = prefs.aiProvider
-        key = ""
-        failed = false
-        kept = AIAccount.key(for: provider).map(AIAccount.hint(for:))
-        model = UserDefaults.standard.string(forKey: "aiModel.\(provider.rawValue)") ?? ""
-    }
-
-    private func save() {
-        let typed = self.typed
-        guard !typed.isEmpty else { return }
-        failed = !AIAccount.setKey(typed, for: prefs.aiProvider)
-        key = ""
-        kept = failed ? nil : AIAccount.hint(for: typed)
-        prefs.aiKeyChanged()
-    }
-
-    private func remove() {
-        AIAccount.setKey("", for: prefs.aiProvider)
-        kept = nil
-        prefs.aiKeyChanged()
-    }
-}
-
-/// One assistant to choose, as the line styles and cover looks are chosen:
-/// its app's icon as the Dock shows it, where the app is on this Mac, else
-/// its short mark; its name and maker; and whether a key is kept for it.
-private struct AIProviderTile: View {
-    let provider: AIProvider
-    let chosen: Bool
-    let hasKey: Bool
-    let choose: () -> Void
-    @State private var hovering = false
-
-    var body: some View {
-        let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
-        let status = hasKey ? L("Key saved") : L("No key yet")
-        Button(action: choose) {
-            HStack(spacing: 10) {
-                ChatIcon(chat: provider == .claude ? .claude : .chatGPT, size: 34)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(verbatim: provider.name)
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(.primary)
-                    Text(verbatim: provider.maker)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    HStack(spacing: 4) {
-                        Image(systemName: hasKey ? "checkmark.circle.fill" : "key")
-                            .foregroundStyle(hasKey ? Color.green : Color.secondary)
-                        Text(status)
-                            .foregroundStyle(.secondary)
-                    }
-                    .font(.caption)
-                    .padding(.top, 2)
-                }
-                Spacer(minLength: 4)
-                Image(systemName: chosen ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 16))
-                    .foregroundStyle(chosen ? Color.accentColor : Color.secondary.opacity(0.5))
-                    .accessibilityHidden(true)
-            }
-            .padding(12)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(shape.fill(chosen ? Color.accentColor.opacity(0.08)
-                                          : Color.primary.opacity(hovering ? 0.06 : 0.03)))
-            .overlay(shape.strokeBorder(chosen ? Color.accentColor : Color.primary.opacity(0.12),
-                                        lineWidth: chosen ? 2 : 1))
-            .contentShape(shape)
-        }
-        .buttonStyle(.plain)
-        .onHover { hovering = $0 }
-        .accessibilityLabel(Text(verbatim: "\(provider.name), \(provider.maker), \(status)"))
-        .accessibilityAddTraits(chosen ? .isSelected : [])
     }
 }
 

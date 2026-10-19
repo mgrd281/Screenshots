@@ -299,8 +299,8 @@ was hidden left beside its cover, is covered too. Under Protection, Find more
 with Apple Intelligence (on where the Mac has it) lets the model on the Mac
 read the words as well and cover what the patterns miss, like a name in a
 sentence; it only ever adds covers, and nothing leaves the Mac. Find more
-with Claude, or ChatGPT, does the same with the AI assistant set up under
-General: it is off until you turn it on, since it sends the words of each
+with Claude, or ChatGPT, does the same with the AI assistant set up in its
+own pane: it is off until you turn it on, since it sends the words of each
 screenshot to Anthropic or OpenAI. Strongest protection covers every line
 with something private whole, with more room around it, so not even how
 long it was shows. The room round a cover never reaches into a line above
@@ -738,13 +738,20 @@ screenshot shows and what matters in it, in your language, and answers a
 question you type about it. Order Details asks it for the parts your Mac
 did not find.
 
-Set it up once in Settings, under General › AI Assistant: click the Claude
-or ChatGPT tile, which shows the app's own icon when the app is on your Mac
-and whether a key is saved for it, click Get a Key… to make an API key on
-their website, paste it, and click Save. The key stays in your keychain;
-Settings shows only its last four characters. Model names the model asked,
-and is best left empty for the usual one; the arrow beside it empties it
-again.
+Set it up once in Settings › AI Assistant, a pane of its own: click the
+Claude or ChatGPT tile, which shows the app's own icon when the app is on
+your Mac and whether a key is saved for it, click Get a Key… to make an API
+key on their website and copy it, then click the clipboard button beside
+the key field, which pastes and saves it in one go (or paste it and click
+Save). Snapfly checks the key with them at once, by asking for the models
+it may use, which costs nothing: Ready. The key works, or that they did not
+accept it. The key stays in your keychain; Settings shows only its last four
+characters, with Change and Remove Key beside them, and Check Again checks it
+once more. Model is a menu of the models your key may use, by their names,
+newest first (Claude Opus 5.5, Sonnet 5.5 and Haiku 5.5 until the key is
+checked); Other… takes a model's ID by hand. What it does lists Write a
+Reply, Explain and Order Details, and holds the switch Find more with Claude
+(or ChatGPT). An AI card whose key is missing or refused opens this pane.
 
 What it is sent is the screenshot covered as for an AI chat, never the
 original, and only when you choose one of these. It goes straight from
@@ -866,7 +873,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 |:--|:--|
 | `AppDelegate.swift` | Menu bar, shortcut, revealing and tucking away the line |
 | `LineIcon.swift` | Snapfly's mark in the menu bar and Settings: a photo hanging on a line |
-| `SettingsWindow.swift` | The settings window: General, Workspace, Line, Privacy, Permissions, Support and About |
+| `SettingsWindow.swift` | The settings window: General, Workspace, Line, AI Assistant, Privacy, Permissions, Support and About |
+| `AIAssistantSettings.swift` | Settings › AI Assistant: the assistant tiles, the key checked with the provider, the model from its own list, and what it does |
 | `Support.swift` | Settings › Support: the help page, an email about a problem or an idea with the details filled in, and those details to copy |
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs, as far across the screen as it was moved |
@@ -897,7 +905,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/CoverLook.swift` | How covers look (ink, labelled, blur, pixels, dots, erased), drawn from the colors around what is covered; keeping the last four digits; the samples Settings shows |
 | `Shared/CoverLookPicker.swift` | The tiles to choose the look by, in Settings on the Mac and on the iPhone |
 | `Shared/Protection.swift` | Strongest protection, and Apple Intelligence, on the device, or the AI assistant, when turned on, finding what the patterns miss, kept per screenshot |
-| `Shared/AIAccount.swift` | The AI assistant: Claude or ChatGPT, the key in the keychain, the model, the requests and their answers, what each task asks, and what each failure means |
+| `Shared/AIAccount.swift` | The AI assistant: Claude or ChatGPT, the key in the keychain, the model, the requests and their answers, checking a key by its list of models, what each task asks, and what each failure means |
 | `Shared/OwnRules.swift` | The owner's own rules: a word, a label or a pattern, kept with the settings |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |

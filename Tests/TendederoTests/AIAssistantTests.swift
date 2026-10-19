@@ -177,4 +177,53 @@ final class AIAssistantTests: XCTestCase {
         XCTAssertEqual(properties[kCGImagePropertyPixelWidth] as? Int, 2000)
         XCTAssertEqual(CGImageSourceGetType(source) as String?, UTType.jpeg.identifier)
     }
+
+    func testAKeyIsCheckedByAskingForTheModels() {
+        let claude = AIRequest.modelsRequest(.claude, key: "sk-ant-test")
+        XCTAssertEqual(claude.url, URL(string: "https://api.anthropic.com/v1/models?limit=100"))
+        XCTAssertEqual(claude.httpMethod, "GET")
+        XCTAssertEqual(claude.value(forHTTPHeaderField: "x-api-key"), "sk-ant-test")
+        XCTAssertEqual(claude.value(forHTTPHeaderField: "anthropic-version"), "2023-06-01")
+        let openAI = AIRequest.modelsRequest(.openAI, key: "sk-test")
+        XCTAssertEqual(openAI.url, URL(string: "https://api.openai.com/v1/models"))
+        XCTAssertEqual(openAI.value(forHTTPHeaderField: "Authorization"), "Bearer sk-test")
+    }
+
+    func testClaudesModelsKeepTheirNamesAndOrder() throws {
+        let data = try json(["data": [
+            ["type": "model", "id": "claude-opus-5-5", "display_name": "Claude Opus 5.5"],
+            ["type": "model", "id": "claude-haiku-5-5", "display_name": ""],
+            ["type": "model", "display_name": "No ID"],
+        ]])
+        XCTAssertEqual(try AIRequest.models(.claude, status: 200, data: data),
+                       [AIModel(id: "claude-opus-5-5", name: "Claude Opus 5.5"),
+                        AIModel(id: "claude-haiku-5-5", name: "claude-haiku-5-5")])
+    }
+
+    func testOnlyChatGPTsChattingModelsAreOffered() throws {
+        let data = try json(["data": [
+            ["id": "gpt-5", "created": 100],
+            ["id": "gpt-6-sol", "created": 300],
+            ["id": "o4", "created": 200],
+            ["id": "gpt-4o-audio-preview", "created": 400],
+            ["id": "gpt-image-1", "created": 400],
+            ["id": "text-embedding-3-large", "created": 400],
+            ["id": "omni-moderation-latest", "created": 400],
+            ["id": "whisper-1", "created": 400],
+        ]])
+        XCTAssertEqual(try AIRequest.models(.openAI, status: 200, data: data).map(\.id), ["gpt-6-sol", "o4", "gpt-5"])
+    }
+
+    func testAKeyRefusedIsSaidSo() throws {
+        let data = try json(["error": ["type": "authentication_error", "message": "invalid x-api-key"]])
+        XCTAssertThrowsError(try AIRequest.models(.claude, status: 401, data: data)) { error in
+            XCTAssertEqual(error as? AIError, .badKey)
+        }
+    }
+
+    func testTheUsualModelIsAlwaysSuggested() {
+        for provider in AIProvider.allCases {
+            XCTAssertTrue(provider.suggestedModels.contains { $0.id == provider.defaultModel })
+        }
+    }
 }

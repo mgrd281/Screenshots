@@ -757,15 +757,12 @@
 "Smart selection" = "스마트 선택";
 "Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "포인터 아래의 이미지나 부분에 테두리를 표시하고, 드래그를 그 가장자리에 맞추며, 빈 공간을 잘라내요. 자유롭게 드래그하려면 ⌘ 키를 누르고 있으세요.";
 "%@ could not answer: %@" = "%@이(가) 답할 수 없었어요: %@";
-"%@ did not accept the key. Check it in Settings › General." = "%@이(가) 키를 받아들이지 않았어요. 설정 › 일반에서 확인하세요.";
-"%@ does not know the model %@. Leave the model empty in Settings to use the usual one." = "%@은(는) %@ 모델을 몰라요. 평소 모델을 쓰려면 설정에서 모델을 비워 두세요.";
 "%@ is busy right now. Try again in a moment." = "%@이(가) 지금 바빠요. 잠시 후 다시 시도하세요.";
 "%@ is writing a reply…" = "%@이(가) 답장을 쓰고 있어요…";
 "%@ would not answer about this screenshot." = "%@이(가) 이 스크린샷에 대해 답하지 않았어요.";
 "AI Assistant" = "AI 도우미";
 "API key" = "API 키";
 "Add something, like “offer a replacement”" = "덧붙일 내용, 예: “교환을 제안하기”";
-"Add your %@ key in Settings › General, under AI Assistant." = "설정 › 일반의 AI 도우미에 %@ 키를 추가하세요.";
 "Ask" = "질문하기";
 "Ask about this screenshot" = "이 스크린샷에 대해 질문하기";
 "Asking %@ for the rest…" = "나머지를 %@에 묻는 중…";
@@ -775,15 +772,12 @@
 "Find more with %@" = "%@으로 더 찾기";
 "Get a Key…" = "키 받기…";
 "Model" = "모델";
-"Needs an AI assistant key, under General." = "일반에서 AI 도우미 키가 필요해요.";
 "Open Settings…" = "설정 열기…";
 "Paste your key here" = "여기에 키를 붙여 넣으세요";
 "Product" = "상품";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "이 Mac에서 가리지 않고 읽었어요. %@이(가) 가린 사본에서 읽은 내용을 더했어요.";
 "Remove Key" = "키 제거";
 "Reply" = "답장";
-"Saved: %@" = "저장됨: %@";
-"Sends the words of each screenshot to the AI assistant set up under General, to cover what the patterns miss. Covering takes a few seconds longer." = "각 스크린샷의 글자를 일반에서 설정한 AI 도우미에 보내 패턴이 놓친 것까지 가려요. 가리는 데 몇 초 더 걸려요.";
 "The answer was empty." = "답이 비어 있었어요.";
 "The keychain did not keep the key." = "키체인에 키를 저장하지 못했어요.";
 "Write Again" = "다시 쓰기";
@@ -857,7 +851,6 @@
 "Key saved" = "키 저장됨";
 "No key yet" = "아직 키 없음";
 "Saved in your keychain, ending in %@" = "키체인에 저장됨, 끝자리 %@";
-"Use the usual model" = "기본 모델 사용";
 
 /* GrabArea: the photo's menu */
 "Send to" = "보내기";
@@ -1096,3 +1089,27 @@
 "Snapfly %@ is up to date." = "Snapfly %@은(는) 최신 버전입니다.";
 "Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly가 닫히고 새 버전으로 바뀐 뒤 다시 열립니다. 라인의 사진은 그대로 남습니다.";
 "The update could not be checked, so it was not installed." = "업데이트를 확인할 수 없어 설치하지 않았습니다.";
+
+/* Settings › AI Assistant */
+"%@ did not accept the key. Check it in Settings › AI Assistant." = "%@이(가) 키를 받지 않았어요. 설정 › AI 도우미에서 확인하세요.";
+"%@ did not accept this key. Check it, or make a new one." = "%@이(가) 이 키를 받지 않았어요. 확인하거나 새 키를 만드세요.";
+"%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@이(가) %@ 모델을 몰라요. 설정 › AI 도우미에서 다른 모델을 선택하세요.";
+"Add your %@ key in Settings › AI Assistant." = "설정 › AI 도우미에 %@ 키를 추가하세요.";
+"Change" = "변경";
+"Check Again" = "다시 확인";
+"Checking the key…" = "키 확인 중…";
+"Connection" = "연결";
+"In a photo’s menu, under Text and AI." = "사진 메뉴의 텍스트 및 AI에 있어요.";
+"Make one on the %@ website, copy it, then paste it here." = "%@ 웹사이트에서 키를 만들고 복사한 다음 여기에 붙여 넣으세요.";
+"Model ID" = "모델 ID";
+"Needs an AI assistant key; add one under AI Assistant." = "AI 도우미 키가 필요해요. AI 도우미에서 추가하세요.";
+"No key yet?" = "아직 키가 없나요?";
+"Other…" = "기타…";
+"Paste the key from the clipboard and save it" = "클립보드의 키를 붙여 넣고 저장";
+"Reads an order’s number, date, total, product and tracking." = "주문 번호, 날짜, 합계, 상품, 송장 번호를 읽어요.";
+"Ready. The key works." = "준비됐어요. 키가 작동해요.";
+"Says what a screenshot shows and what matters in it, or answers your question about it." = "스크린샷이 무엇을 보여 주고 무엇이 중요한지 알려 주거나, 그에 대한 질문에 답해요.";
+"Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer." = "각 스크린샷의 글자를 AI 도우미에게 보내, 패턴이 놓친 것도 가려요. 가리는 데 몇 초 더 걸려요.";
+"The largest models answer best; smaller ones answer faster and cost less." = "가장 큰 모델이 가장 잘 답하고, 작은 모델은 더 빠르고 저렴하게 답해요.";
+"What it does" = "할 수 있는 일";
+"Writes the reply to send, from a conversation, an order or a review." = "대화, 주문, 리뷰를 보고 보낼 답장을 써요.";

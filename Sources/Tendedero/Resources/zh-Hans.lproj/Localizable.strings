@@ -757,15 +757,12 @@
 "Smart selection" = "智能选择";
 "Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "框出指针下方的图片或部分，拖移时贴合其边缘，并裁掉空白。按住 ⌘ 可自由拖移。";
 "%@ could not answer: %@" = "%@ 无法回答：%@";
-"%@ did not accept the key. Check it in Settings › General." = "%@ 不接受这个密钥。请在“设置 › 通用”中检查。";
-"%@ does not know the model %@. Leave the model empty in Settings to use the usual one." = "%@ 不认识模型 %@。将设置中的模型留空即可使用默认模型。";
 "%@ is busy right now. Try again in a moment." = "%@ 现在很忙。请稍后再试。";
 "%@ is writing a reply…" = "%@ 正在写回复…";
 "%@ would not answer about this screenshot." = "%@ 不愿回答关于这张截图的问题。";
 "AI Assistant" = "AI 助手";
 "API key" = "API 密钥";
 "Add something, like “offer a replacement”" = "补充一句，例如“提供换货”";
-"Add your %@ key in Settings › General, under AI Assistant." = "请在“设置 › 通用”的“AI 助手”中添加你的 %@ 密钥。";
 "Ask" = "提问";
 "Ask about this screenshot" = "就这张截图提问";
 "Asking %@ for the rest…" = "正在向 %@ 询问其余内容…";
@@ -775,15 +772,12 @@
 "Find more with %@" = "用 %@ 查找更多";
 "Get a Key…" = "获取密钥…";
 "Model" = "模型";
-"Needs an AI assistant key, under General." = "需要在“通用”中设置 AI 助手密钥。";
 "Open Settings…" = "打开设置…";
 "Paste your key here" = "在此粘贴你的密钥";
 "Product" = "商品";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "在这台 Mac 上未遮盖读取；%@ 补充了它在遮盖副本中读到的内容。";
 "Remove Key" = "移除密钥";
 "Reply" = "回复";
-"Saved: %@" = "已保存：%@";
-"Sends the words of each screenshot to the AI assistant set up under General, to cover what the patterns miss. Covering takes a few seconds longer." = "将每张截图的文字发送给“通用”中设置的 AI 助手，以遮盖规则遗漏的内容。遮盖会多花几秒钟。";
 "The answer was empty." = "回答为空。";
 "The keychain did not keep the key." = "钥匙串未能保存密钥。";
 "Write Again" = "重新写";
@@ -857,7 +851,6 @@
 "Key saved" = "已保存密钥";
 "No key yet" = "尚无密钥";
 "Saved in your keychain, ending in %@" = "已存入钥匙串，结尾为 %@";
-"Use the usual model" = "使用常用模型";
 
 /* GrabArea: the photo's menu */
 "Send to" = "发送到";
@@ -1096,3 +1089,27 @@
 "Snapfly %@ is up to date." = "Snapfly %@ 已是最新版本。";
 "Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly 将关闭，替换为新版本后重新打开。晾衣绳上的照片会保留。";
 "The update could not be checked, so it was not installed." = "无法验证此更新，因此未安装。";
+
+/* Settings › AI Assistant */
+"%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ 未接受此密钥。请在“设置 › AI 助手”中检查。";
+"%@ did not accept this key. Check it, or make a new one." = "%@ 未接受此密钥。请检查它，或新建一个。";
+"%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ 不认识模型 %@。请在“设置 › AI 助手”中选择其他模型。";
+"Add your %@ key in Settings › AI Assistant." = "请在“设置 › AI 助手”中添加你的 %@ 密钥。";
+"Change" = "更改";
+"Check Again" = "重新检查";
+"Checking the key…" = "正在检查密钥…";
+"Connection" = "连接";
+"In a photo’s menu, under Text and AI." = "在照片菜单的“文本与 AI”中。";
+"Make one on the %@ website, copy it, then paste it here." = "在 %@ 网站上创建一个，复制后粘贴到这里。";
+"Model ID" = "模型 ID";
+"Needs an AI assistant key; add one under AI Assistant." = "需要 AI 助手密钥；请在“AI 助手”中添加。";
+"No key yet?" = "还没有密钥？";
+"Other…" = "其他…";
+"Paste the key from the clipboard and save it" = "从剪贴板粘贴密钥并保存";
+"Reads an order’s number, date, total, product and tracking." = "读取订单的编号、日期、总额、商品和物流单号。";
+"Ready. The key works." = "已就绪。密钥可用。";
+"Says what a screenshot shows and what matters in it, or answers your question about it." = "说明截图显示了什么、重点是什么，或回答你关于它的问题。";
+"Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer." = "把每张截图中的文字发送给 AI 助手，遮盖规则遗漏的内容。遮盖会多花几秒。";
+"The largest models answer best; smaller ones answer faster and cost less." = "最大的模型回答最好；较小的模型回答更快、费用更低。";
+"What it does" = "它能做什么";
+"Writes the reply to send, from a conversation, an order or a review." = "根据对话、订单或评价，写出可直接发送的回复。";
