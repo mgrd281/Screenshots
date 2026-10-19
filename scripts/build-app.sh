@@ -109,6 +109,8 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <string>Snapfly watches the folder you chose so it can hang new images on the line.</string>
   <key>NSDownloadsFolderUsageDescription</key>
   <string>Snapfly watches the folder you chose so it can hang new images on the line.</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Snapfly records your voice with a screen recording, only when you chose the microphone under Settings › General.</string>
   <key>NSAppleEventsUsageDescription</key>
   <string>Snapfly asks your browser which page is open, so its send button shows only on chat websites like ChatGPT.</string>
   <!-- Photos and PDFs from anywhere: Finder's "Send Safely with Snapfly" and
@@ -150,8 +152,9 @@ PLIST
 # requires. Without one, sign ad hoc so the app still runs locally.
 IDENTITY="${SIGN_IDENTITY:-$(security find-identity -v -p codesigning 2>/dev/null | awk -F'"' '/Developer ID Application/{print $2; exit}')}"
 if [ -n "$IDENTITY" ] && [ -z "${STORE:-}" ]; then
-  # The hardened runtime blocks Apple Events unless asked for: the send
-  # button over chats asks the browser which page is open.
+  # The hardened runtime blocks Apple Events and the microphone unless asked
+  # for: the send button over chats asks the browser which page is open, and
+  # a screen recording may record the voice.
   ENTITLEMENTS="$(mktemp)"
   cat > "$ENTITLEMENTS" <<ENT
 <?xml version="1.0" encoding="UTF-8"?>
@@ -159,6 +162,7 @@ if [ -n "$IDENTITY" ] && [ -z "${STORE:-}" ]; then
 <plist version="1.0">
 <dict>
   <key>com.apple.security.automation.apple-events</key><true/>
+  <key>com.apple.security.device.audio-input</key><true/>
 </dict>
 </plist>
 ENT

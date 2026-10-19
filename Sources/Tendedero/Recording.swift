@@ -10,8 +10,9 @@ import UniformTypeIdentifiers
 /// menu bar item and the shortcut stop it too. The recording hangs on the
 /// line like one made with the Screenshot app, and Trim trims it.
 ///
-/// Snapfly's own line and controls stay out of the recording. There is no
-/// sound, so no microphone permission is asked for.
+/// Snapfly's own line and controls stay out of the recording. Sound is
+/// what Settings › General chooses: none, the Mac's own, the microphone, or
+/// both mixed into one track. The microphone is asked for only when chosen.
 @MainActor
 final class Recording {
     static let shared = Recording()
@@ -45,7 +46,8 @@ final class Recording {
                 try FileManager.default.createDirectory(at: Inbox.folder, withIntermediateDirectories: true)
                 // Hidden while it is written, so the folder watcher leaves it alone.
                 let file = Inbox.folder.appendingPathComponent(".recording-\(UUID().uuidString).mov")
-                let recorder = try Recorder(filter: setup.filter, configuration: setup.config, url: file)
+                let sound = await RecordingSound.usable()
+                let recorder = try Recorder(filter: setup.filter, configuration: setup.config, url: file, sound: sound)
                 recorder.onFailure = {
                     DispatchQueue.main.async { MainActor.assumeIsolated { Recording.shared.stop() } }
                 }
@@ -70,7 +72,15 @@ final class Recording {
         hideControls()
         let frame = frame
         Task { @MainActor in
-            let saved = await recorder.finish()
+            var saved = await recorder.finish()
+            // The Mac's sound and the voice, as one track every player and
+            // chat plays. Should that fail, both tracks stay.
+            if saved, recorder.hasTwoSoundTracks {
+                let note = Notice.show(L("Saving the recording…"), working: true)
+                if !(await SoundMix.mixDown(file)) { log.error("Could not mix the recording's sound into one track") }
+                Notice.end(note)
+                saved = FileManager.default.fileExists(atPath: file.path)
+            }
             isRecording = false
             onChange()
             guard saved, let url = keep(file, from: frame) else {
@@ -89,7 +99,7 @@ final class Recording {
         let fm = FileManager.default
         for folder in [Inbox.legacyFolder, Inbox.folder] {
             let files = (try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? []
-            for file in files where file.lastPathComponent.hasPrefix(".recording-") {
+            for file in files where file.lastPathComponent.hasPrefix(".recording-") || file.lastPathComponent.hasPrefix(".mix-") {
                 try? fm.removeItem(at: file)
             }
         }
@@ -286,13 +296,21 @@ final class Recorder: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sen
     private var capture: SCStream?
     private let writer: AVAssetWriter
     private let input: AVAssetWriterInput
+    /// The Mac's own sound and the microphone, each a track of its own while
+    /// recording.
+    private var macSound: AVAssetWriterInput?
+    private var voice: AVAssetWriterInput?
+    private var heardMac = false
+    private var heardVoice = false
     private let queue = DispatchQueue(label: "de.ghazarian.Snapfly.recorder")
     private var sessionStarted = false
+    private var sessionStart = CMTime.invalid
     private var finished = false
     private var lastTime = CMTime.invalid
     private var lastHostTime = CMTime.invalid
 
-    init(filter: SCContentFilter, configuration: SCStreamConfiguration, url: URL) throws {
+    init(filter: SCContentFilter, configuration: SCStreamConfiguration, url: URL,
+         sound: RecordingSound = .none) throws {
         writer = try AVAssetWriter(outputURL: url, fileType: .mov)
         input = AVAssetWriterInput(mediaType: .video, outputSettings: [
             AVVideoCodecKey: AVVideoCodecType.h264,
@@ -303,10 +321,53 @@ final class Recorder: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sen
         super.init()
         guard writer.canAdd(input) else { throw RecorderError.cannotWrite }
         writer.add(input)
+        if sound.hasMac {
+            configuration.capturesAudio = true
+            // Snapfly's own sounds, like the shutter, stay out.
+            configuration.excludesCurrentProcessAudio = true
+            configuration.sampleRate = 48_000
+            configuration.channelCount = 2
+            let mac = Self.soundInput(channels: 2)
+            if writer.canAdd(mac) {
+                writer.add(mac)
+                macSound = mac
+            }
+        }
+        if sound.hasVoice, #available(macOS 15.0, *) {
+            configuration.captureMicrophone = true
+            let voice = Self.soundInput(channels: 1)
+            if writer.canAdd(voice) {
+                writer.add(voice)
+                self.voice = voice
+            }
+        }
         let stream = SCStream(filter: filter, configuration: configuration, delegate: self)
         try stream.addStreamOutput(self, type: .screen, sampleHandlerQueue: queue)
+        if macSound != nil { try stream.addStreamOutput(self, type: .audio, sampleHandlerQueue: queue) }
+        if voice != nil, #available(macOS 15.0, *) {
+            try stream.addStreamOutput(self, type: .microphone, sampleHandlerQueue: queue)
+        }
         capture = stream
     }
+
+    /// AAC at 48 kHz, as a movie's sound usually is.
+    private static func soundInput(channels: Int) -> AVAssetWriterInput {
+        var layout = AudioChannelLayout()
+        layout.mChannelLayoutTag = channels == 1 ? kAudioChannelLayoutTag_Mono : kAudioChannelLayoutTag_Stereo
+        let input = AVAssetWriterInput(mediaType: .audio, outputSettings: [
+            AVFormatIDKey: kAudioFormatMPEG4AAC,
+            AVSampleRateKey: 48_000,
+            AVNumberOfChannelsKey: channels,
+            AVEncoderBitRateKey: channels == 1 ? 96_000 : 160_000,
+            AVChannelLayoutKey: Data(bytes: &layout, count: MemoryLayout<AudioChannelLayout>.size),
+        ])
+        input.expectsMediaDataInRealTime = true
+        return input
+    }
+
+    /// Both the Mac's sound and the voice were heard, in two tracks to mix
+    /// into one once written. Read once `finish` is done.
+    var hasTwoSoundTracks: Bool { heardMac && heardVoice }
 
     func start() async throws {
         guard writer.startWriting() else { throw writer.error ?? RecorderError.cannotWrite }
@@ -333,6 +394,8 @@ final class Recorder: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sen
                 let still = CMTimeSubtract(CMClockGetTime(CMClockGetHostTimeClock()), self.lastHostTime)
                 self.writer.endSession(atSourceTime: CMTimeAdd(self.lastTime, CMTimeMaximum(still, .zero)))
                 self.input.markAsFinished()
+                self.macSound?.markAsFinished()
+                self.voice?.markAsFinished()
                 self.writer.finishWriting {
                     continuation.resume(returning: self.writer.status == .completed)
                 }
@@ -341,16 +404,32 @@ final class Recorder: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sen
     }
 
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) {
-        guard type == .screen, !finished, sampleBuffer.isValid, Self.isComplete(sampleBuffer),
-              writer.status == .writing else { return }
+        guard !finished, sampleBuffer.isValid, writer.status == .writing else { return }
+        if type == .audio {
+            if append(sampleBuffer, to: macSound) { heardMac = true }
+            return
+        }
+        if #available(macOS 15.0, *), type == .microphone {
+            if append(sampleBuffer, to: voice) { heardVoice = true }
+            return
+        }
+        guard type == .screen, Self.isComplete(sampleBuffer) else { return }
         let time = sampleBuffer.presentationTimeStamp
         if !sessionStarted {
             writer.startSession(atSourceTime: time)
             sessionStarted = true
+            sessionStart = time
         }
         guard input.isReadyForMoreMediaData, input.append(sampleBuffer) else { return }
         lastTime = time
         lastHostTime = CMClockGetTime(CMClockGetHostTimeClock())
+    }
+
+    /// Sound from the first picture on; what came before it is left out.
+    private func append(_ buffer: CMSampleBuffer, to input: AVAssetWriterInput?) -> Bool {
+        guard let input, sessionStarted, buffer.presentationTimeStamp >= sessionStart,
+              input.isReadyForMoreMediaData else { return false }
+        return input.append(buffer)
     }
 
     func stream(_ stream: SCStream, didStopWithError error: Error) {

@@ -1065,3 +1065,16 @@
 "Stop covering?" = "Arrêter le masquage ?";
 "The copies saved so far stay in their folder." = "Les copies déjà enregistrées restent dans leur dossier.";
 "Keep Covering" = "Continuer";
+
+/* Sound and desktop */
+"Hide Desktop Icons" = "Masquer les icônes du Bureau";
+"Screen recordings" = "Enregistrements de l’écran";
+"Sound" = "Son";
+"No Sound" = "Sans son";
+"Mac’s Sound" = "Son du Mac";
+"Microphone" = "Micro";
+"Mac’s Sound and Microphone" = "Son du Mac et micro";
+"The Mac’s sound is what you hear, without Snapfly’s own. The microphone is asked for the first time it records; both are mixed into one track." = "Le son du Mac est ce que vous entendez, sans celui de Snapfly. Le micro est demandé la première fois qu’il enregistre ; les deux sont mixés en une seule piste.";
+"The Mac’s sound is what you hear, without Snapfly’s own. Recording the microphone too needs macOS 15." = "Le son du Mac est ce que vous entendez, sans celui de Snapfly. Enregistrer aussi le micro nécessite macOS 15.";
+"Recording without the microphone: Snapfly isn’t allowed to use it. Allow it in System Settings › Privacy & Security › Microphone." = "Enregistrement sans micro : Snapfly n’est pas autorisé à l’utiliser. Autorisez-le dans Réglages Système › Confidentialité et sécurité › Micro.";
+"Saving the recording…" = "Enregistrement en cours de sauvegarde…";

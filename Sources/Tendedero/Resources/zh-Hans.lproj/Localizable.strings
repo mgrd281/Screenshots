@@ -1065,3 +1065,16 @@
 "Stop covering?" = "要停止遮盖吗？";
 "The copies saved so far stay in their folder." = "已存储的副本会保留在其文件夹中。";
 "Keep Covering" = "继续遮盖";
+
+/* Sound and desktop */
+"Hide Desktop Icons" = "隐藏桌面图标";
+"Screen recordings" = "屏幕录制";
+"Sound" = "声音";
+"No Sound" = "无声音";
+"Mac’s Sound" = "Mac 的声音";
+"Microphone" = "麦克风";
+"Mac’s Sound and Microphone" = "Mac 的声音和麦克风";
+"The Mac’s sound is what you hear, without Snapfly’s own. The microphone is asked for the first time it records; both are mixed into one track." = "Mac 的声音就是你听到的声音，不含 Snapfly 自身的声音。首次录制时会请求麦克风权限；两者会混合为一条音轨。";
+"The Mac’s sound is what you hear, without Snapfly’s own. Recording the microphone too needs macOS 15." = "Mac 的声音就是你听到的声音，不含 Snapfly 自身的声音。同时录制麦克风需要 macOS 15。";
+"Recording without the microphone: Snapfly isn’t allowed to use it. Allow it in System Settings › Privacy & Security › Microphone." = "正在不使用麦克风录制：Snapfly 无权使用麦克风。请在“系统设置 › 隐私与安全性 › 麦克风”中允许。";
+"Saving the recording…" = "正在存储录制…";

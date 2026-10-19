@@ -86,7 +86,8 @@ cp "$TMP/profile" "$APP/Contents/embedded.provisionprofile"
 # The sandbox, and only the doors Snapfly needs: folders the user picks,
 # Pictures, where the Screenshot app saves for it, asking browsers which
 # page is open, so the send button shows only on chat websites and the time
-# stamp can name the page, and asking the PTB's atomic clock for the time.
+# stamp can name the page, asking the PTB's atomic clock for the time, and
+# the microphone, for a recording with the voice when chosen.
 cat > "$TMP/entitlements.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -98,6 +99,7 @@ cat > "$TMP/entitlements.plist" <<PLIST
   <key>com.apple.security.assets.pictures.read-write</key><true/>
   <key>com.apple.security.automation.apple-events</key><true/>
   <key>com.apple.security.network.client</key><true/>
+  <key>com.apple.security.device.audio-input</key><true/>
   <key>com.apple.security.temporary-exception.apple-events</key>
   <array>
     <string>com.apple.Safari</string>

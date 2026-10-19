@@ -102,6 +102,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Glance at the Snapfly icon in the menu bar | How many photos hang, beside it, and a small dot on it while something new hangs that the line has not shown yet. Turn it off with Count on the menu bar icon, under Line. |
 | Record a Guide in the menu bar, then click through | Each click becomes a step of a guide, with a screenshot and a sentence. Click the capsule above the Dock to finish, and the guide opens to edit, send or save. |
 | Click the Snapfly icon in the menu bar | The menu: how many photos hang and Paste into the app in front, the ways to take or add, Record a Guide and Recent Guides, the line, the Hide private details and Screenshot Button switches, Settings, the Introduction (Continue Introduction when it was ended before its end) and Help & Support. |
+| Hide Desktop Icons in the menu bar | The wallpaper covers the desktop icons on every screen, for clean screenshots and recordings. Choose it again to bring them back. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>F</kbd> | Search the words in your screenshots. Change it in Settings. |
@@ -213,8 +214,21 @@ Screen, to record an area, a window or the whole screen. A capsule above the
 Dock shows the time; click it, press the shortcut again, or choose Stop
 Recording in the menu bar to stop. The recording hangs on the line, ready to
 trim or send. Make GIF in its menu turns it into a looping GIF that every chat
-plays, which hangs next to it and stays animated when sent. It has no sound, and Snapfly's own line and controls stay out
-of it.
+plays, which hangs next to it and stays animated when sent. Snapfly's own
+line and controls stay out of it.
+
+A recording has sound when you choose it, in Settings › General under Screen
+recordings: the Mac's sound, what you hear without Snapfly's own; the
+microphone, your voice, asked for the first time and on macOS 15 or later;
+or both, mixed into one track that every player and chat plays. It has none
+until chosen. If the microphone isn't allowed, the recording goes on without
+it and a note says where to allow it.
+
+Hide Desktop Icons, in the menu bar, lays the wallpaper over the icons on
+every screen, so screenshots and recordings show a clean desktop. Windows
+stay above it and clicks go through it; the icons and files stay where they
+are and come back when you turn it off. It stays on until you do, even when
+Snapfly opens again.
 
 <br>
 
@@ -865,6 +879,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `assets/chat-logos/` | The logos the row shows (every chat but ChatGPT and Claude), as PNG with their SVG sources |
 | `Shared/AIQuestions.swift` | The questions a photo goes into ChatGPT or Claude with: the standard five, and the owner's own from Settings |
 | `Shared/CoverTally.swift` | The week's line in Settings › Privacy: how many details were covered in how many photos sent, counts only, day by day |
+| `RecordingSound.swift` | What a screen recording hears, and the Mac's sound and the voice mixed into one track |
+| `DesktopIcons.swift` | Hide Desktop Icons: the wallpaper laid over the icons on every screen |
 | `Calls.swift` | Not during a call: whether the microphone is in use, and Snapfly's windows kept out of a shared screen while it is |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
 | `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |

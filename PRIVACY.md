@@ -65,8 +65,11 @@ does happens on your Mac, unless you set up the AI assistant with your own key
   covered or not; that is Apple's service and your choice.
 - **Calls.** While Not during a call is on, Snapfly asks the Mac whether the
   microphone is in use, so the line keeps away during a meeting and nothing
-  of Snapfly shows in what you share. It hears nothing, and asks for no
-  microphone permission.
+  of Snapfly shows in what you share. It hears nothing doing so.
+- **Sound in recordings, only if you choose it.** Under Settings › General you
+  may have screen recordings take the Mac's sound, your microphone, or both.
+  macOS asks you before the microphone is used the first time. The sound is in
+  the recording only, saved on your Mac like it, and goes nowhere else.
 
 The full policy, in English, German and Arabic, is at
 https://mgrd281.github.io/Screenshots/privacy.html.

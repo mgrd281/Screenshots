@@ -209,8 +209,7 @@ final class HowToRecorder {
                 }
                 guard let content, let id = screen.displayID,
                       let display = content.displays.first(where: { $0.displayID == id }) else { continue }
-                let own = content.applications.filter { $0.processID == ProcessInfo.processInfo.processIdentifier }
-                let filter = SCContentFilter(display: display, excludingApplications: own, exceptingWindows: [])
+                let filter = Capture.withoutOwnWindows(display, in: content)
                 let config = SCStreamConfiguration()
                 config.width = Int(screen.frame.width * screen.backingScaleFactor)
                 config.height = Int(screen.frame.height * screen.backingScaleFactor)

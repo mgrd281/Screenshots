@@ -64,6 +64,11 @@ final class Preferences: ObservableObject {
         set { change { line.soundOn = newValue } }
     }
 
+    var recordingSound: RecordingSound {
+        get { RecordingSound.current }
+        set { change { RecordingSound.current = newValue } }
+    }
+
     var opensAtLogin: Bool {
         get { SMAppService.mainApp.status == .enabled }
         set { change { if newValue != opensAtLogin { AppDelegate.toggleLaunchAtLogin() } } }
@@ -979,6 +984,21 @@ private struct GeneralPane: View {
                     Text(L("The time comes from the PTB’s atomic clock in Germany, over the internet. Only the question for the time goes out; without a connection, the Mac’s clock is used."))
                 }
                 .foregroundStyle(.secondary)
+            }
+            Section {
+                Picker(L("Sound"), selection: $prefs.recordingSound) {
+                    ForEach(RecordingSound.allCases, id: \.self) { sound in
+                        Text(sound.title).tag(sound)
+                            .disabled(sound.hasVoice && !RecordingSound.microphoneAvailable)
+                    }
+                }
+            } header: {
+                Text(L("Screen recordings"))
+            } footer: {
+                Text(RecordingSound.microphoneAvailable
+                     ? L("The Mac’s sound is what you hear, without Snapfly’s own. The microphone is asked for the first time it records; both are mixed into one track.")
+                     : L("The Mac’s sound is what you hear, without Snapfly’s own. Recording the microphone too needs macOS 15."))
+                    .foregroundStyle(.secondary)
             }
             Section {
                 Toggle(L("Sounds"), isOn: $prefs.sounds)
