@@ -305,18 +305,57 @@ struct ScreenshotCard: View {
     }()
 }
 
+/// A screenshot opened from a card, and where the card is, so it grows out
+/// of the card it was tapped on.
+struct ShotLink: Hashable {
+    enum Place: Hashable {
+        case home, recent, all
+    }
+
+    let id: String
+    let place: Place
+
+    var source: ProtectSession.Source { .asset(id) }
+}
+
+extension View {
+    /// A card a screenshot grows out of as it opens, from iOS 18 on.
+    @ViewBuilder func zoomSource(_ link: ShotLink, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 18, *) {
+            matchedTransitionSource(id: link, in: namespace)
+        } else {
+            self
+        }
+    }
+
+    /// The screenshot opened, grown out of its card, from iOS 18 on; with
+    /// Reduce Motion, iOS fades it in instead.
+    @ViewBuilder func zoomed(from link: ShotLink, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 18, *) {
+            navigationTransition(.zoom(sourceID: link, in: namespace))
+        } else {
+            self
+        }
+    }
+}
+
 /// Screenshots in a grid, three to a row on most iPhones: a tap opens one
-/// to protect, holding one covers it and copies, shares or saves it.
+/// to protect, growing out of its card; holding one covers it and copies,
+/// shares or saves it.
 struct ScreenshotGrid: View {
     let shots: [PHAsset]
     let protected: Set<String>
+    let place: ShotLink.Place
+    let zoom: Namespace.ID
     let quick: (PHAsset, QuickCover) -> Void
 
     var body: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 104, maximum: 200), spacing: 10)], spacing: 10) {
             ForEach(shots, id: \.localIdentifier) { asset in
-                NavigationLink(value: ProtectSession.Source.asset(asset.localIdentifier)) {
+                let link = ShotLink(id: asset.localIdentifier, place: place)
+                NavigationLink(value: link) {
                     ScreenshotCard(asset: asset, protected: protected.contains(asset.localIdentifier))
+                        .zoomSource(link, in: zoom)
                 }
                 .buttonStyle(.plain)
                 .contextMenu { menu(asset) }
@@ -336,11 +375,12 @@ struct ScreenshotGrid: View {
 struct AllScreenshotsView: View {
     let shots: [PHAsset]
     let protected: Set<String>
+    let zoom: Namespace.ID
     let quick: (PHAsset, QuickCover) -> Void
 
     var body: some View {
         ScrollView {
-            ScreenshotGrid(shots: shots, protected: protected, quick: quick)
+            ScreenshotGrid(shots: shots, protected: protected, place: .all, zoom: zoom, quick: quick)
                 .padding(16)
         }
         .navigationTitle(L("Screenshots"))

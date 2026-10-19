@@ -1891,8 +1891,10 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     2 medium on an ultra-thin capsule 6 pt in at the bottom; and, once
     protected here lately, `checkmark.shield.fill` in white on a 22 pt
     `phone-protect` circle at the top. Thumbnails are small, made by Photos'
-    caching manager and kept in memory while the app runs. See All shows
-    every screenshot in the same grid. Holding a card offers Cover and Copy
+    caching manager and kept in memory while the app runs. From iOS 18 on, a
+    screenshot opens by growing out of the card tapped (the system's zoom
+    transition, a fade with Reduce Motion), from the grid, the row or See
+    All alike. See All shows every screenshot in the same grid. Holding a card offers Cover and Copy
     (`doc.on.doc`), Cover and Share (`square.and.arrow.up`) and Cover and
     Save (`square.and.arrow.down`): covered and checked without opening,
     with a note in a floating pill over the bottom, 24 pt up, gone after

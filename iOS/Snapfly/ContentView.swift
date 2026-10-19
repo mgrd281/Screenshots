@@ -13,8 +13,10 @@ struct ContentView: View {
     @ObservedObject private var guide = PhoneGuide.shared
     @ObservedObject private var sync = SyncCenter.shared
     @State private var showsSettings = false
-    /// The picture open, if one is.
-    @State private var path: [ProtectSession.Source] = []
+    /// The pictures open: a screenshot from a card, or a photo chosen.
+    @State private var path = NavigationPath()
+    /// Where a screenshot grows out of as it opens.
+    @Namespace private var zoom
     @State private var picked: PhotosPickerItem?
     @State private var recent: [PHAsset] = []
     @State private var note: String?
@@ -42,6 +44,9 @@ struct ContentView: View {
             .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $showsSettings) { SettingsView() }
             .navigationDestination(for: ProtectSession.Source.self) { source in ProtectView(source: source) }
+            .navigationDestination(for: ShotLink.self) { link in
+                ProtectView(source: link.source).zoomed(from: link, in: zoom)
+            }
         }
         .overlay(alignment: .bottom) {
             if let note {
@@ -60,10 +65,10 @@ struct ContentView: View {
             library.load()
             PhoneSync.start()
             PhotoIndexer.shared.becameActive()
-            guide.closeShot = { path.removeAll() }
+            guide.closeShot = { path.removeLast(path.count) }
             guide.openNewest = {
                 guard let newest = library.shots.first?.localIdentifier else { return false }
-                path.append(.asset(newest))
+                path.append(ProtectSession.Source.asset(newest))
                 return true
             }
         }
@@ -220,9 +225,11 @@ struct ContentView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(recent, id: \.localIdentifier) { asset in
-                        NavigationLink(value: ProtectSession.Source.asset(asset.localIdentifier)) {
+                        let link = ShotLink(id: asset.localIdentifier, place: .recent)
+                        NavigationLink(value: link) {
                             ScreenshotCard(asset: asset, protected: true, showsDate: false)
                                 .frame(width: 96)
+                                .zoomSource(link, in: zoom)
                         }
                         .buttonStyle(.plain)
                     }
@@ -246,7 +253,7 @@ struct ContentView: View {
                     Spacer()
                     if library.shots.count > preview {
                         NavigationLink {
-                            AllScreenshotsView(shots: library.shots, protected: protected, quick: quick)
+                            AllScreenshotsView(shots: library.shots, protected: protected, zoom: zoom, quick: quick)
                         } label: {
                             HStack(spacing: 3) {
                                 Text(L("See All"))
@@ -257,7 +264,8 @@ struct ContentView: View {
                         }
                     }
                 }
-                ScreenshotGrid(shots: Array(library.shots.prefix(preview)), protected: protected, quick: quick)
+                ScreenshotGrid(shots: Array(library.shots.prefix(preview)), protected: protected, place: .home, zoom: zoom,
+                               quick: quick)
             }
         }
     }
@@ -289,7 +297,7 @@ struct ContentView: View {
             show(L("The picture could not be read."))
             return
         }
-        path.append(.picture(Imported.shared.keep(image)))
+        path.append(ProtectSession.Source.picture(Imported.shared.keep(image)))
     }
 
     /// Covers a screenshot as Settings says, checks it and copies, shares or

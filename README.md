@@ -868,7 +868,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   beside its words and the screenshots come first: what the Mac sent, the
   ones protected lately in a row, and the newest twelve in cards that show
   when each was taken and a green shield once it was protected, all of them
-  behind See All. How syncing stands sits beside Settings at the top.
+  behind See All. From iOS 18 on, a screenshot opens by growing out of its
+  card. How syncing stands sits beside Settings at the top.
   Tap a screenshot and it shows at once; what the patterns, the labels and
   the names find is marked a moment later, then the copy is made, read again
   as anyone could read it, and covered further if need be, and where Apple
