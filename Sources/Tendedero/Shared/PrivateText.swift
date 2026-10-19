@@ -365,6 +365,8 @@ enum Finder {
         /// Covered, though it is not clear it should be, like a name whose
         /// role is unclear when only some people's are covered.
         var check = false
+        /// Drawn by hand, covered in solid ink as drawn; nil, the box itself.
+        var shape: HandShape? = nil
     }
 
     /// Where the details are in a picture: the places covered, and the

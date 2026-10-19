@@ -44,6 +44,13 @@ extension Finder {
         return true
     }
 
+    /// Where a copy must have changed, for `coversHold`: the box of each
+    /// place, and for a shape drawn by hand, small boxes wholly inside it,
+    /// as the box round a stroke is mostly not inked.
+    static func checked(_ areas: [Area], aspect: CGFloat) -> [CGRect] {
+        areas.flatMap { area in area.shape.map { $0.insides(aspect: aspect) } ?? [area.rect] }
+    }
+
     /// A picture's pixels at this size, four bytes each, rows from the top.
     private static func pixels(of image: CGImage, width: Int, height: Int) -> [UInt8]? {
         var bytes = [UInt8](repeating: 0, count: width * height * 4)

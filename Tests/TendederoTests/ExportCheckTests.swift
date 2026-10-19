@@ -45,4 +45,15 @@ final class ExportCheckTests: XCTestCase {
                                         areas: [CGRect(x: 0.05, y: 0.1, width: 0.5, height: 0.2)]))
         XCTAssertTrue(Finder.coversHold(original: original, covered: original, areas: []))
     }
+
+    func testAStrokeByHandIsCheckedWhereItIsInked() throws {
+        let original = try page()
+        let stroke = HandShape.stroke([CGPoint(x: 0.08, y: 0.7), CGPoint(x: 0.55, y: 0.7)], width: 0.06)
+        let area = Finder.Area(rect: stroke.bounds(aspect: 2), kind: nil, shape: stroke)
+        let places = Finder.checked([area], aspect: 2)
+        XCTAssertFalse(places.isEmpty)
+        let covered = try XCTUnwrap(Finder.cover(original, areas: [area], style: .blur))
+        XCTAssertTrue(Finder.coversHold(original: original, covered: covered, areas: places), "inked in every look")
+        XCTAssertFalse(Finder.coversHold(original: original, covered: original, areas: places), "never drawn")
+    }
 }

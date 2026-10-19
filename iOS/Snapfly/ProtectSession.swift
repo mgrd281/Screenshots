@@ -196,7 +196,7 @@ final class ProtectSession: ObservableObject {
         let made = await Self.background { () -> (image: CGImage, added: [Finder.Area], holds: Bool)? in
             guard let done = Finder.finish(image, covering: areas, leaving: left, chosen, rules: rules, style: style)
             else { return nil }
-            let places = (areas + done.added).map(\.rect)
+            let places = Finder.checked(areas + done.added, aspect: CGFloat(image.width) / CGFloat(max(1, image.height)))
             if Finder.coversHold(original: image, covered: done.image, areas: places) {
                 return (done.image, done.added, true)
             }
