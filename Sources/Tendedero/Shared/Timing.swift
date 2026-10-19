@@ -35,7 +35,7 @@ enum Timing {
     static func measure<T>(_ name: StaticString, _ work: () throws -> T) rethrows -> T {
         let id = signposter.makeSignpostID()
         let state = signposter.beginInterval(name, id: id)
-        let started = DispatchTime.now()
+        let started = Date()
         defer {
             signposter.endInterval(name, state)
             note(Step(name: "\(name)", milliseconds: milliseconds(since: started)))
@@ -44,14 +44,14 @@ enum Timing {
     }
 
     /// Starts timing a picture on this thread, with no step left from before.
-    static func start() -> DispatchTime {
+    static func start() -> Date {
         _ = taken()
-        return .now()
+        return Date()
     }
 
     /// Writes the steps noted on this thread since `started` to the log, and
     /// keeps them as the last run.
-    static func report(since started: DispatchTime) {
+    static func report(since started: Date) {
         let steps = taken()
         let run = Run(milliseconds: milliseconds(since: started), steps: steps)
         lock.lock()
@@ -61,8 +61,8 @@ enum Timing {
         log.info("Covered in \(run.milliseconds, privacy: .public) ms: \(parts, privacy: .public)")
     }
 
-    static func milliseconds(since started: DispatchTime) -> Int {
-        Int((DispatchTime.now().uptimeNanoseconds - started.uptimeNanoseconds) / 1_000_000)
+    static func milliseconds(since started: Date) -> Int {
+        max(0, Int(Date().timeIntervalSince(started) * 1000))
     }
 
     private static let key = "SnapflyTimingSteps"

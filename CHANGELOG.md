@@ -6,6 +6,25 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Names covers people's names and nothing else: a company, a practice or a
+  bank, a title, a phone number, an address, an amount or a diagnosis beside
+  a name stays readable unless its own kind is chosen. Whose names, under
+  Names, covers everyone's or only some people's, like the patient's and not
+  the doctor's, read from the labels, titles and signatures round each name;
+  a name whose role is unclear is covered and marked to check.
+- Companies and organizations are a kind of their own, and Settings groups
+  the kinds in six: People, Companies and organizations, Money, Health,
+  Documents, Passwords and access.
+- Covering is faster: a screenshot is read once and kept in memory while it
+  is worked on, small print is read again side by side, and Apple
+  Intelligence is asked only for the kinds chosen.
+- On the iPhone, a screenshot shows at once, its private places are marked a
+  moment later, and the checked copy follows. Zoom in, tap a place to cover
+  or uncover it, draw over a part to cover it, undo and redo, and hold the
+  eye to compare. Copy, Share and Save wait until the copy is checked and
+  every cover is known to have landed. Protect a Photo opens any picture;
+  holding a screenshot offers Cover and Copy; the ones protected lately sit
+  in a row of their own.
 - Sync between the Mac and the iPhone, through your own iCloud: turn it on in
   Settings on both, and what hangs on the line shows on the iPhone with its
   private details covered, under From your Mac; Send to Mac, under a covered

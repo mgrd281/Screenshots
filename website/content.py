@@ -341,7 +341,7 @@ TEXT["de"] = dict(
 
     priv_h="Private Angaben bleiben privat.",
     stamp_covered="Private Angaben verdeckt",
-    priv_p="Bevor ein Bildschirmfoto an ChatGPT, eine andere KI oder einen Menschen geht, verdeckt Snapfly, was du wählst: Namen, Adressen, E-Mails, Telefonnummern, Bankkarten und Konten, Gesundheitsdaten. Was die Leine verlässt – kopiert, gesendet oder herausgezogen –, ist verdeckt. Snapfly liest den Text auf deinem Mac, und die Bilddatei selbst bleibt unverändert.",
+    priv_p="Bevor ein Bildschirmfoto an ChatGPT, eine andere KI oder einen Menschen geht, verdeckt Snapfly, was du wählst: Namen, Adressen, E-Mails, Telefonnummern, Bankkarten und Konten, Gesundheitsdaten. Namen heißt die Namen von Menschen: Firmen, Titel, Daten und Diagnosen daneben bleiben lesbar, und unter „Wessen Namen“ wählst du etwa nur die der Patienten, nicht die der Ärzte. Was die Leine verlässt – kopiert, gesendet oder herausgezogen –, ist verdeckt. Snapfly liest den Text auf deinem Mac, und die Bilddatei selbst bleibt unverändert.",
     example="Beispiel",
     inv=dict(title="Rechnung 2026-1042", date="14. Oktober 2026", bill="Rechnungsadresse",
              name="Lena Hoffmann", street="Lindenstraße 12", city="10969 Berlin",
@@ -483,6 +483,7 @@ TEXT["de"] = dict(
 <li><strong>Ton in Bildschirmaufnahmen, nur wenn du ihn wählst.</strong> Unter Einstellungen › Allgemein kannst du Aufnahmen den Ton des Macs, dein Mikrofon oder beides aufnehmen lassen. macOS fragt dich, bevor das Mikrofon zum ersten Mal benutzt wird. Der Ton steckt nur in der Aufnahme, bleibt wie sie auf deinem Mac und geht nirgendwohin.</li>
 <li><strong>Browser.</strong> Damit die Senden-Taste nur auf Chat-Websites erscheint, fragt Snapfly den Browser im Vordergrund nach der Adresse der geöffneten Seite, sobald du es erlaubst. Ist der Zeitstempel eingeschaltet, schreibt es diese Adresse auch auf den Stempel eines neuen Bildschirmfotos, der mit ihm auf deinem Mac bleibt. Sonst liest es nichts aus dem Browser.</li>
 <li>Einstellungen › Berechtigungen zeigt jede davon, ob sie erlaubt ist und wie du das änderst.</li>
+<li><strong>Gelesenes bleibt nur kurz im Arbeitsspeicher.</strong> Damit ein Bildschirmfoto nach einer geänderten Einstellung nicht noch einmal gelesen werden muss, behält Snapfly den gelesenen Text der letzten Bilder im Arbeitsspeicher, nie auf der Festplatte; die iPhone-App vergisst ihn, sobald sie in den Hintergrund geht. Welche Bildschirmfotos du zuletzt geschützt hast, merkt sich die iPhone-App nur über ihre Kennung in Fotos. Wie lange jeder Schritt des Abdeckens dauerte, steht nur als Zahl im Protokoll des Geräts, nie ein gelesenes Wort.</li>
 <li><strong>Deine Einstellungen</strong>, etwa der Stil der Leine und was verdeckt wird, werden nur auf deinem Mac gespeichert.</li>
 </ul>"""),
         ("Dienste von Apple",

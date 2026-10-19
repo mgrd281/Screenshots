@@ -29,11 +29,11 @@ struct CoverLatestScreenshot: AppIntent {
             throw Problem(text: L("The picture could not be read."))
         }
         let chosen = Choice.details
-        let covered = await Covering.cover(image, chosen)
-        guard let png = Covering.png(covered.image) else {
-            throw Problem(text: L("The picture could not be read."))
+        guard let covered = await Covering.cover(image, chosen), let png = Covering.png(covered.image) else {
+            throw Problem(text: L("The copy could not be made."))
         }
         Covering.copy(png)
+        Recent.note(asset.localIdentifier)
         return .result(value: IntentFile(data: png, filename: "Snapfly.png", type: .png),
                        dialog: IntentDialog(stringLiteral: L("Covered and copied, ready to paste.")))
     }
@@ -50,13 +50,11 @@ struct CoverPicture: AppIntent {
     var picture: IntentFile
 
     func perform() async throws -> some IntentResult & ReturnsValue<IntentFile> {
-        guard let source = CGImageSourceCreateWithData(picture.data as CFData, nil),
-              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
+        guard let image = Covering.upright(picture.data) else {
             throw Problem(text: L("The picture could not be read."))
         }
-        let covered = await Covering.cover(image, Choice.details)
-        guard let png = Covering.png(covered.image) else {
-            throw Problem(text: L("The picture could not be read."))
+        guard let covered = await Covering.cover(image, Choice.details), let png = Covering.png(covered.image) else {
+            throw Problem(text: L("The copy could not be made."))
         }
         return .result(value: IntentFile(data: png, filename: "Snapfly.png", type: .png))
     }

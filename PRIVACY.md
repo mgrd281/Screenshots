@@ -101,6 +101,13 @@ or turn on syncing with your iPhone (below).
 - **Calls.** While Not during a call is on, Snapfly asks the Mac whether the
   microphone is in use, so the line keeps away during a meeting and nothing
   of Snapfly shows in what you share. It hears nothing doing so.
+- **What is read stays in memory, briefly.** To cover a screenshot again
+  without reading it again, Snapfly keeps the text it read in the last few
+  pictures in memory, never on disk, and forgets it when the iPhone app goes
+  to the background. The iPhone app notes which screenshots you protected
+  lately by their place in Photos alone, to show them again; nothing of what
+  they show. How long each step of covering took is written to the device's
+  log as numbers only, never a word of what was read.
 - **Sound in recordings, only if you choose it.** Under Settings › General you
   may have screen recordings take the Mac's sound, your microphone, or both.
   macOS asks you before the microphone is used the first time. The sound is in
@@ -147,3 +154,10 @@ Klick ein Bildschirmfoto und fragt die angeklickte App, was dort angeklickt
 wurde, nie, was du tippst; die Anleitung bleibt auf deinem Mac. Ob das Mikrofon
 gerade in Gebrauch ist, fragt Snapfly
 nur, damit die Leine während eines Anrufs oben bleibt; es hört nichts.
+Den gelesenen Text der letzten Bilder behält Snapfly kurz im Arbeitsspeicher,
+nie auf der Festplatte, damit ein Bild nach einer geänderten Einstellung nicht
+noch einmal gelesen werden muss; die iPhone-App vergisst ihn, sobald sie in den
+Hintergrund geht. Welche Bildschirmfotos du zuletzt geschützt hast, merkt sich
+die iPhone-App nur über ihre Kennung in Fotos, nichts von ihrem Inhalt. Wie
+lange jeder Schritt des Abdeckens dauerte, steht nur als Zahl im Protokoll des
+Geräts, nie ein gelesenes Wort.
