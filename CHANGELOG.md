@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone's home screen, the screenshots are small square cards, four
+  to a row, with when each was taken in a small label and a ⋯ button that
+  covers it and copies, shares or saves it.
 - Printed forms, like a German sick note, a prescription or a referral, are
   read field by field: the value under or beside each label is covered as
   what the label says it is, and only when that kind is chosen. Names alone
