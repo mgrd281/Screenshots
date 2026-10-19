@@ -103,10 +103,12 @@ struct ProtectView: View {
                 switch result {
                 case .success:
                     done(L("Saved to Files"))
-                case .failure:
+                case .failure(let error):
+                    // Cancelled, nothing went wrong.
+                    if (error as? CocoaError)?.code == .userCancelled { return }
                     failed(L("The picture could not be saved."), retry: .files)
                 }
-            } onCancellation: {}
+            }
     }
 
     private func dialogs(_ content: some View) -> some View {
