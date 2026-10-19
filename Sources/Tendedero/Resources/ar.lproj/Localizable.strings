@@ -994,3 +994,24 @@
 "Copy File Path" = "انسخ مسار الملف";
 "Rename" = "أعد التسمية";
 "Rename…" = "أعد التسمية…";
+
+/* Background */
+"Background" = "الخلفية";
+"Background…" = "الخلفية…";
+"Remove Background" = "أزل الخلفية";
+"Corners" = "الزوايا";
+"Padding" = "المسافة حولها";
+"Shadow" = "الظل";
+"Fit to Photo" = "على قدر الصورة";
+"Square" = "مربع";
+"Wide (16:9)" = "عريض (16:9)";
+"Portrait (4:5)" = "طولي (4:5)";
+"Story (9:16)" = "قصة (9:16)";
+"Sunset" = "غروب";
+"Emerald" = "زمردي";
+"Ocean" = "محيط";
+"Lilac" = "ليلكي";
+"Mist" = "ضباب";
+"Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "تُضاف إلى ما يُرسَل، حول ما غُطّي ورُسم. أما الصورة نفسها فتبقى كما هي.";
+"It goes out on its background; the file in %@ stays as it is. Click to undo." = "تخرج على خلفيتها، والملف في %@ يبقى كما هو. انقر للتراجع.";
+"It goes out without a background again. Click to undo." = "تخرج من جديد دون خلفية. انقر للتراجع.";

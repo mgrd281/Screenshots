@@ -996,3 +996,24 @@
 "Copy File Path" = "Faylın yolunu kopyala";
 "Rename" = "Adını dəyiş";
 "Rename…" = "Adını dəyiş…";
+
+/* Background */
+"Background" = "Fon";
+"Background…" = "Fon…";
+"Remove Background" = "Fonu sil";
+"Corners" = "Künclər";
+"Padding" = "Kənar boşluğu";
+"Shadow" = "Kölgə";
+"Fit to Photo" = "Şəkilə uyğun";
+"Square" = "Kvadrat";
+"Wide (16:9)" = "Geniş (16:9)";
+"Portrait (4:5)" = "Şaquli (4:5)";
+"Story (9:16)" = "Hekayə (9:16)";
+"Sunset" = "Gün batımı";
+"Emerald" = "Zümrüd";
+"Ocean" = "Okean";
+"Lilac" = "Yasəmən";
+"Mist" = "Duman";
+"Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "Göndəriləndə, örtülən və çəkilənin ətrafına qoyulur. Şəklin özü olduğu kimi qalır.";
+"It goes out on its background; the file in %@ stays as it is. Click to undo." = "Fonu ilə göndərilir; %@ içindəki fayl olduğu kimi qalır. Geri qaytarmaq üçün klik et.";
+"It goes out without a background again. Click to undo." = "Yenidən fonsuz göndərilir. Geri qaytarmaq üçün klik et.";

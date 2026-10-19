@@ -26,6 +26,15 @@ colors:
   draw-blue: "#007AFF"         # white words on it
   draw-black: "#1C1C1E"        # also the dark words on the light inks
   draw-white: "#FFFFFF"        # a step's rim on the other inks
+  # Background's colours (Backdrop.Fill), from the top left to the bottom right.
+  backdrop-sunset: "#FFC45C → #FF5E62 → #B234D6"   # the icon's gradient
+  backdrop-emerald: "#34D399 → #0E7490"
+  backdrop-orange: "#FFB340 → #FF5E3A"
+  backdrop-ocean: "#5AC8FA → #007AFF"
+  backdrop-lilac: "#D8B4FE → #6366F1"
+  backdrop-graphite: "#48484A → #1C1C1E"
+  backdrop-mist: "#F5F5F7 → #DCDCE1"
+  backdrop-white: "#FFFFFF"
   # Website only (website/static/site.css). Light value first, dark after the slash.
   web-button: "#0071E3"        # the accent as a button fill: white text on it is 4.7:1
   web-link: "#0066CC"          # links; #3D9BFF in dark
@@ -407,6 +416,16 @@ design with monospaced digits.
   - all three sizes;
   - all eight styles.
 
+- **Background…** (`BackdropEditor`) is laid out like Draw on Photo: the
+  picture on the left as it will go out (drawn at 1400 px at most, again at
+  each change), the 340 pt inspector on the right. Its Background section is
+  a grid of four 26 pt gradient circles a row, 12 pt apart, with a
+  hairline of `.primary` at 15% and a 2 pt accent ring round the chosen one;
+  then Padding and Corners sliders, a Shadow switch and a Size menu. Remove
+  Background (only when it has one), Cancel and Done sit in the footer.
+  In the picture, the room is 2–20% of the photo's unit (the square root of
+  its area; 8% to begin), the corners up to 4.5% of it, and the shadow black
+  at 32%, blurred 3.5% and dropped 1.2%.
 - **The workspace folder's icon** (`FolderIcon`) is the system folder with
   the app's icon on its front, a share 0.5 of the folder wide (0.62 up to
   32 pt, so it reads small), centred at 40% of the height, with a soft

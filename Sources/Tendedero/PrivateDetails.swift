@@ -495,8 +495,13 @@ enum Cover {
         // The stamp's band goes above the picture, which grows by its height.
         if let stamp, let stamped = TimeStamp.render(covered, stamp) { covered = stamped }
         // Where it is covered, as the copy shows it, for the lock.
-        let places = CoverReport.places(found.map(\.rect) + hand, crop: crop,
+        var places = CoverReport.places(found.map(\.rect) + hand, crop: crop,
                                         share: picture / CGFloat(max(1, covered.height)))
+        // Set on its colour last, round everything else.
+        if let backdrop = drawing.backdrop, let framed = Backdrop.render(covered, backdrop) {
+            covered = framed.image
+            places = places.map { Backdrop.place($0, in: framed.layout) }
+        }
 
         // A folder of its own, so the copy keeps the screenshot's name.
         let type = clean ? UTType.jpeg : UTType.png

@@ -996,3 +996,24 @@
 "Copy File Path" = "फ़ाइल का पथ कॉपी करें";
 "Rename" = "नाम बदलें";
 "Rename…" = "नाम बदलें…";
+
+/* Background */
+"Background" = "पृष्ठभूमि";
+"Background…" = "पृष्ठभूमि…";
+"Remove Background" = "पृष्ठभूमि हटाएँ";
+"Corners" = "कोने";
+"Padding" = "किनारे की जगह";
+"Shadow" = "छाया";
+"Fit to Photo" = "फ़ोटो के अनुसार";
+"Square" = "वर्गाकार";
+"Wide (16:9)" = "चौड़ा (16:9)";
+"Portrait (4:5)" = "लंबवत (4:5)";
+"Story (9:16)" = "स्टोरी (9:16)";
+"Sunset" = "सूर्यास्त";
+"Emerald" = "पन्ना";
+"Ocean" = "सागर";
+"Lilac" = "बकाइन";
+"Mist" = "धुंध";
+"Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "यह भेजी जाने वाली चीज़ पर लगता है, ढके और बनाए गए हिस्सों के चारों ओर। फ़ोटो ख़ुद जैसी है वैसी रहती है।";
+"It goes out on its background; the file in %@ stays as it is. Click to undo." = "यह अपनी पृष्ठभूमि के साथ जाता है; %@ में फ़ाइल जैसी है वैसी रहती है। पूर्ववत करने के लिए क्लिक करें।";
+"It goes out without a background again. Click to undo." = "यह फिर बिना पृष्ठभूमि के जाता है। पूर्ववत करने के लिए क्लिक करें।";

@@ -994,3 +994,24 @@
 "Copy File Path" = "Copier le chemin du fichier";
 "Rename" = "Renommer";
 "Rename…" = "Renommer…";
+
+/* Background */
+"Background" = "Arrière-plan";
+"Background…" = "Arrière-plan…";
+"Remove Background" = "Retirer l’arrière-plan";
+"Corners" = "Coins";
+"Padding" = "Marge";
+"Shadow" = "Ombre";
+"Fit to Photo" = "Adapter à la photo";
+"Square" = "Carré";
+"Wide (16:9)" = "Large (16:9)";
+"Portrait (4:5)" = "Portrait (4:5)";
+"Story (9:16)" = "Story (9:16)";
+"Sunset" = "Coucher de soleil";
+"Emerald" = "Émeraude";
+"Ocean" = "Océan";
+"Lilac" = "Lilas";
+"Mist" = "Brume";
+"Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "Appliqué à ce qui est envoyé, autour de ce qui est masqué et dessiné. La photo elle-même reste telle quelle.";
+"It goes out on its background; the file in %@ stays as it is. Click to undo." = "Il part avec son arrière-plan ; le fichier dans %@ reste tel quel. Cliquez pour annuler.";
+"It goes out without a background again. Click to undo." = "Il repart sans arrière-plan. Cliquez pour annuler.";

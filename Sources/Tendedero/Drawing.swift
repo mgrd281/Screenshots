@@ -11,10 +11,12 @@ struct Drawing: Codable, Equatable, Sendable {
     var marks: [Mark] = []
     /// The part to keep, from 0 to 1 from the bottom left; nil keeps it all.
     var crop: CGRect?
+    /// The colour it is set on, with room round it; nil for none.
+    var backdrop: Backdrop?
 
     static let empty = Drawing()
 
-    var isEmpty: Bool { marks.isEmpty && crop == nil }
+    var isEmpty: Bool { marks.isEmpty && crop == nil && backdrop == nil }
 
     struct Mark: Codable, Equatable, Identifiable, Sendable {
         enum Kind: String, Codable, CaseIterable, Sendable {
@@ -129,7 +131,8 @@ struct Drawing: Codable, Equatable, Sendable {
             "\($0.kind.rawValue),\($0.from.x),\($0.from.y),\($0.to.x),\($0.to.y),\($0.ink.rawValue),\($0.size.rawValue),\($0.text)"
         }
         let kept = crop.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" } ?? ""
-        return drawn.joined(separator: ";") + "/" + kept
+        let set = backdrop.map { "/" + $0.key } ?? ""
+        return drawn.joined(separator: ";") + "/" + kept + set
     }
 
     /// The number a step shows: its place among the steps, from 1.

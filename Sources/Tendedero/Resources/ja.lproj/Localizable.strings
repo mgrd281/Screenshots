@@ -994,3 +994,24 @@
 "Copy File Path" = "ファイルのパスをコピー";
 "Rename" = "名前を変更";
 "Rename…" = "名前を変更…";
+
+/* Background */
+"Background" = "背景";
+"Background…" = "背景…";
+"Remove Background" = "背景を削除";
+"Corners" = "角";
+"Padding" = "余白";
+"Shadow" = "影";
+"Fit to Photo" = "写真に合わせる";
+"Square" = "正方形";
+"Wide (16:9)" = "ワイド（16:9）";
+"Portrait (4:5)" = "縦（4:5）";
+"Story (9:16)" = "ストーリー（9:16）";
+"Sunset" = "サンセット";
+"Emerald" = "エメラルド";
+"Ocean" = "オーシャン";
+"Lilac" = "ライラック";
+"Mist" = "ミスト";
+"Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "送信するものに、隠した部分や描いたものの周りに付けます。写真そのものは変わりません。";
+"It goes out on its background; the file in %@ stays as it is. Click to undo." = "背景付きで送られます。%@ のファイルはそのままです。クリックで取り消し。";
+"It goes out without a background again. Click to undo." = "また背景なしで送られます。クリックで取り消し。";

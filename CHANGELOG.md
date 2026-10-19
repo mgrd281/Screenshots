@@ -6,6 +6,12 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Background…, under Edit in a photo's menu: the photo set on a colour, with
+  room round it, rounded corners and a soft shadow, for a post, a shop or a
+  slide. Eight colours, the room and the corners on sliders, and a size:
+  round the photo, square, 16:9, 4:5 or 9:16. It goes out that way, round
+  what is covered and drawn; the file stays as it is. Remove Background
+  takes it off again.
 - Workspace, an option in Settings (off until you turn it on): a folder of
   its own on your Desktop, named after the app, with a folder for each kind
   of screenshot, Orders, Customers, Projects, Documents, Other and Unsorted.

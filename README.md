@@ -63,6 +63,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Edit › Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. Either way, a note offers to undo it for a few seconds. |
 | Right-click, then Edit › Hide Part | Click a word to hide it, or drag a box over anything the covering missed. It stays hidden in whatever leaves the line, and a note offers to undo it. Always cover, under the word just hidden, covers that word in every photo from then on, as a rule of your own under Privacy. |
 | Right-click, then Edit › Draw on Photo | Point things out with an arrow, a box, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
+| Right-click, then Edit › Background… | Set it on a colour, with room round it, rounded corners and a soft shadow, square or the shape a post or a story wants, so it looks finished in a post, a shop or a slide. It goes out that way; the file stays as it is. Remove Background takes it off again. |
 | Right-click, then Save and Export › Convert to SVG | Draws the photo again as shapes that stay sharp at any size, to paste into a design app or save as an `.svg` file. It is made from the copy that leaves the line, so what is covered is covered in it; the file stays as it is. |
 | Right-click, then Save and Export › Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
 | Right-click, then Text and AI › Translate Text | Read it in your language, to copy or send. |
@@ -363,6 +364,14 @@ after another, and words on a label. Crop keeps only the part that matters.
 Each tool has its key: V selects, A draws arrows, R boxes, H highlights, N
 numbers, T puts words down and C crops. Click a drawing to change its
 colour or size, drag it or its handles, or press Delete; ⌘Z undoes.
+
+Edit › Background… sets the photo on a colour, ready for a post, a shop or a
+slide: one of eight, from the warm colours of Snapfly's icon to calm grey
+and white, with the room round it and how round its corners are on sliders,
+a soft shadow, and the shape of the whole picture: round the photo, square,
+16:9, 4:5 or 9:16, with the photo in the middle. The window shows it as it
+will go out, covered and drawn on, and the next photo starts from the last
+background chosen. Remove Background, in the same menu, takes it off.
 
 Only the crop, quicker: choose Edit › Crop… in a photo's menu, or ⌥-click the
 photo. It opens large over the dimmed screen; drag over the part to keep,
@@ -859,6 +868,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
 | `Drawing.swift` | Draw on Photo's arrows, boxes, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |
+| `Shared/Backdrop.swift`, `BackdropRender.swift` | Background: its colours, room, corners, shadow and shape, where the photo sits, and the picture drawn round it |
+| `BackdropEditor.swift` | Background…: the window to choose it, with the photo shown as it will go out |
 | `DrawEditor.swift` | Draw on Photo: the window to draw on a photo, with its tools, inks, sizes and Undo |
 | `VectorEditor.swift` | Convert to SVG: the window with the kinds of picture and their settings, tracing in the background, and Copy SVG and Save SVG… |
 | `HowToModel.swift` | Step-by-step guides: a guide and its steps, what each step says, the part of the screen it shows, pages, and where guides are kept |

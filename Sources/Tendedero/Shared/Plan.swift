@@ -31,6 +31,8 @@ enum Plan {
         /// Step-by-step guides recorded from clicks, sent as a PDF or a
         /// picture.
         case guides
+        /// A photo set on a colour, with room, rounded corners and a shadow.
+        case backgrounds
     }
 
     /// The day Pro begins. Until it is set, nothing is held back.
