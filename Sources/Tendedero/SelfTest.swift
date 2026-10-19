@@ -88,7 +88,11 @@ enum SelfTest {
     /// The kinds checked that nothing on the sample was covered as, in
     /// Settings' order.
     static func missing(_ chosen: Set<PrivateDetail>, in report: CoverReport) -> [PrivateDetail] {
-        PrivateDetail.allCases.filter { chosen.contains($0) && report.kinds[$0, default: 0] == 0 }
+        // Patients' and other people's names are covered as names.
+        PrivateDetail.allCases.filter { kind in
+            let counted = PrivateDetail.people.contains(kind) ? PrivateDetail.names : kind
+            return chosen.contains(kind) && report.kinds[counted, default: 0] == 0
+        }
     }
 
     /// What the test says under the sample: what was covered on it, then

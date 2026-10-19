@@ -209,10 +209,10 @@ final class PrivateDetailTests: XCTestCase {
     }
 
     func testANewRecommendedKindStartsOnOnceForWhoeverCoversAnything() throws {
-        XCTAssertEqual(PrivateDetail.added(to: [.names], known: nil), [.barcodes, .keys])
+        XCTAssertEqual(PrivateDetail.added(to: [.names], known: nil), [.barcodes, .keys, .patientNames])
         XCTAssertEqual(PrivateDetail.added(to: [], known: nil), [])
         XCTAssertEqual(PrivateDetail.added(to: [.names], known: PrivateDetail.allCases.map(\.rawValue)), [])
-        XCTAssertEqual(PrivateDetail.added(to: [.names, .barcodes, .keys], known: nil), [])
+        XCTAssertEqual(PrivateDetail.added(to: [.names, .barcodes, .keys, .patientNames], known: nil), [])
         // Keys came after the sixteen; IP addresses came too, but wait to be chosen.
         let sixteen = PrivateDetail.allCases.filter { $0 != .keys && $0 != .ipAddresses }.map(\.rawValue)
         XCTAssertEqual(PrivateDetail.added(to: [.names], known: sixteen), [.keys])
@@ -222,7 +222,7 @@ final class PrivateDetailTests: XCTestCase {
         defer { defaults.removePersistentDomain(forName: suite) }
         defaults.set(["names"], forKey: "hiddenDetails")
         PrivateDetail.bringUpToDate(["hiddenDetails", "notSaved"], in: defaults)
-        XCTAssertEqual(defaults.stringArray(forKey: "hiddenDetails"), ["barcodes", "keys", "names"])
+        XCTAssertEqual(defaults.stringArray(forKey: "hiddenDetails"), ["barcodes", "keys", "names", "patientNames"])
         XCTAssertNil(defaults.stringArray(forKey: "notSaved"))
         // Turned off afterwards, it stays off.
         defaults.set(["names"], forKey: "hiddenDetails")

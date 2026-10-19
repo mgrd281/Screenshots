@@ -73,7 +73,7 @@ struct MarkCanvas: UIViewRepresentable {
     }
 }
 
-final class CanvasView: UIScrollView, UIScrollViewDelegate {
+final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     var actions = CanvasActions()
     private let content = UIView()
     private let picture = UIImageView()
@@ -128,7 +128,7 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate {
         hold.minimumPressDuration = 0.45
         edit.maximumNumberOfTouches = 1
         edit.delegate = self
-        for gesture in [tap, doubleTap, hold, edit] { content.addGestureRecognizer(gesture) }
+        for gesture in [tap, doubleTap, hold, edit] as [UIGestureRecognizer] { content.addGestureRecognizer(gesture) }
         isAccessibilityElement = true
         accessibilityLabel = L("Covered screenshot")
         accessibilityHint = L("Details lists every place, to cover or uncover each one.")
@@ -428,7 +428,7 @@ private final class MarksView: UIView {
     private func ink(_ shape: HandShape, preview: Bool, in context: CGContext) {
         context.saveGState()
         let color = UIColor(white: 0.12, alpha: preview ? 0.75 : 1)
-        let points = shape.corners(aspect: aspect).map(view)
+        let points = shape.corners(aspect: aspect).map { view($0) }
         guard let first = points.first else { return context.restoreGState() }
         if case .stroke(_, let width) = shape {
             color.setStroke()
@@ -453,7 +453,7 @@ private final class MarksView: UIView {
     private func path(of mark: ProtectionPlan.Mark) -> UIBezierPath {
         if let shape = mark.shape {
             if case .stroke = shape { return UIBezierPath(rect: view(mark.rect)) }
-            return polygon(shape.corners(aspect: aspect).map(view))
+            return polygon(shape.corners(aspect: aspect).map { view($0) })
         }
         let place = view(mark.rect)
         return UIBezierPath(roundedRect: place, cornerRadius: min(place.height / 4, place.width / 2, 8))
@@ -508,7 +508,7 @@ private final class MarksView: UIView {
 
     /// The corners that resize it: of the box as turned, else of the box round it.
     private func corners(of mark: ProtectionPlan.Mark) -> [CGPoint] {
-        if case .box = mark.shape, let shape = mark.shape { return shape.corners(aspect: aspect).map(view) }
+        if case .box = mark.shape, let shape = mark.shape { return shape.corners(aspect: aspect).map { view($0) } }
         let place = view(mark.rect)
         // From the bottom left round, as a box's corners go.
         return [CGPoint(x: place.minX, y: place.maxY), CGPoint(x: place.maxX, y: place.maxY),
@@ -518,20 +518,20 @@ private final class MarksView: UIView {
     /// The handle that turns a box: above the middle of its top edge.
     private func turnHandle(of mark: ProtectionPlan.Mark) -> CGPoint? {
         guard case .box = mark.shape else { return nil }
-        let corners = corners(of: mark)
-        let middle = CGPoint(x: corners.map(\.x).reduce(0, +) / 4, y: corners.map(\.y).reduce(0, +) / 4)
-        let top = CGPoint(x: (corners[2].x + corners[3].x) / 2, y: (corners[2].y + corners[3].y) / 2)
+        let edge = corners(of: mark)
+        let middle = CGPoint(x: edge.map(\.x).reduce(0, +) / 4, y: edge.map(\.y).reduce(0, +) / 4)
+        let top = CGPoint(x: (edge[2].x + edge[3].x) / 2, y: (edge[2].y + edge[3].y) / 2)
         let length = max(hypot(top.x - middle.x, top.y - middle.y), 0.001)
         let away = 28 / max(zoom, 1)
         return CGPoint(x: top.x + (top.x - middle.x) / length * away, y: top.y + (top.y - middle.y) / length * away)
     }
 
     private func handles(round mark: ProtectionPlan.Mark, in context: CGContext) {
-        let corners = corners(of: mark)
-        outline(polygon(corners), color: tintColor, in: context)
+        let edge = corners(of: mark)
+        outline(polygon(edge), color: tintColor, in: context)
         let size = 12 / max(zoom, 1)
         if let turn = turnHandle(of: mark) {
-            let top = CGPoint(x: (corners[2].x + corners[3].x) / 2, y: (corners[2].y + corners[3].y) / 2)
+            let top = CGPoint(x: (edge[2].x + edge[3].x) / 2, y: (edge[2].y + edge[3].y) / 2)
             let stem = UIBezierPath()
             stem.move(to: top)
             stem.addLine(to: turn)
@@ -540,7 +540,7 @@ private final class MarksView: UIView {
             stem.stroke()
             knob(at: turn, size: size)
         }
-        for corner in corners { knob(at: corner, size: size) }
+        for corner in edge { knob(at: corner, size: size) }
     }
 
     private func knob(at point: CGPoint, size: CGFloat) {

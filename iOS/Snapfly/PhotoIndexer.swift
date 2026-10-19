@@ -213,8 +213,10 @@ final class PhotoIndexer: NSObject, ObservableObject {
     func refresh() async {
         access = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         let settings = settings
-        let candidates = settings.isOn
-            ? await Task.detached(priority: .utility) { Self.candidates(settings, now: Date()) }.value : []
+        var candidates: [IndexPlan.Candidate] = []
+        if settings.isOn {
+            candidates = await Task.detached(priority: .utility) { Self.candidates(settings, now: Date()) }.value
+        }
         show(candidates, await IndexStore.shared.list())
     }
 

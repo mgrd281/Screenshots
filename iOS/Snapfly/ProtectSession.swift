@@ -1,4 +1,3 @@
-import CoreTransferable
 import Photos
 import SwiftUI
 import UIKit
@@ -316,10 +315,6 @@ final class ProtectSession: ObservableObject {
         PhoneGuide.shared.happened(.used)
     }
 
-    /// The copy, to share as a PNG file of its own, with nothing of the
-    /// original's notes in it.
-    var shared: CoveredPicture? { png.map(CoveredPicture.init(png:)) }
-
     // MARK: Helpers
 
     private static func load(_ source: Source) async -> CGImage? {
@@ -338,15 +333,6 @@ final class ProtectSession: ObservableObject {
         await withCheckedContinuation { done in
             DispatchQueue.global(qos: .userInitiated).async { done.resume(returning: work()) }
         }
-    }
-}
-
-/// A covered copy, shared as a PNG file.
-struct CoveredPicture: Transferable {
-    let png: Data
-
-    static var transferRepresentation: some TransferRepresentation {
-        DataRepresentation(exportedContentType: .png) { $0.png }
     }
 }
 
