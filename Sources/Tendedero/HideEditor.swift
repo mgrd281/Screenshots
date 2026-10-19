@@ -65,7 +65,10 @@ final class HideEditor: NSObject, NSWindowDelegate {
             }
         }
 
-        let view = HideEditorView(model: model) { [weak self] save in
+        let view = HideEditorView(model: model, send: { [weak self, weak model] way in
+            guard let model else { return }
+            self?.send(way, of: url, model: model)
+        }) { [weak self] save in
             guard save else {
                 self?.window?.close()
                 return
@@ -144,6 +147,71 @@ final class HideEditor: NSObject, NSWindowDelegate {
                         Notice.show(L("Could not save the copy."))
                     }
                 }
+            }
+        }
+    }
+
+    /// The copy straight to a chat, the clipboard or the Share menu,
+    /// written first, in the background, as Save Copy… writes it. An AI
+    /// chat covers everything when Settings says so for AI chats.
+    private func send(_ way: CopySend, of url: URL, model: HideModel) {
+        guard let window, !model.saving else { return }
+        model.keepPage()
+        var chosen = model.chosen
+        if case .chat(let chat) = way, chat.isAI {
+            chosen = CoveringProfile.details(chosen, inAIChat: true, coversAll: CoveringProfile.coversAllInAIChats)
+        }
+        let hand = model.hand
+        let pages = model.handByPage
+        guard let target = Self.sendFile(for: url) else {
+            Notice.show(L("Could not save the copy."))
+            return
+        }
+        model.saving = true
+        DispatchQueue.global(qos: .userInitiated).async {
+            let written = SaveCopy.write(url, chosen, hand: hand, pages: pages, to: target)
+            DispatchQueue.main.async { [weak self, weak model] in
+                MainActor.assumeIsolated {
+                    model?.saving = false
+                    guard written else {
+                        Notice.show(L("Could not save the copy."))
+                        return
+                    }
+                    self?.deliver(target, way, covering: chosen, from: window)
+                }
+            }
+        }
+    }
+
+    private func deliver(_ file: URL, _ way: CopySend, covering chosen: Set<PrivateDetail>, from window: NSWindow) {
+        switch way {
+        case .copy:
+            Self.clip(file)
+            Notice.show(L("Copied, covered. Paste it wherever you like."), done: true)
+        case .share:
+            guard let view = window.contentView else { return }
+            let picker = NSSharingServicePicker(items: [file])
+            let y = view.isFlipped ? view.bounds.maxY - 32 : 32
+            picker.show(relativeTo: CGRect(x: view.bounds.maxX - 36, y: y, width: 1, height: 1), of: view,
+                        preferredEdge: .minY)
+        case .chat(let chat):
+            // Out of the way, so the chat comes to the front.
+            window.close()
+            chat.open {
+                Self.clip(file)
+                // A mailbox takes it once a message is open: copied for that.
+                if chat.copiesOnly {
+                    Notice.show(L("Copied. Start a new message and paste."), done: true, lasting: 6)
+                    return
+                }
+                // A new message starts in the address field; the copy is for its body.
+                if chat.startsFresh { Paste.pressTab(times: 2) }
+                guard Paste.askToBeAllowed() else {
+                    Notice.show(L("Copied. Paste it with ⌘V."), done: true, lasting: 6)
+                    return
+                }
+                Paste.intoFrontApp(after: chat.startsFresh ? 0.15 : 0)
+                SendLog.note([file], to: chat.name, message: nil, covering: chosen)
             }
         }
     }
@@ -485,6 +553,8 @@ enum HidePartLayout {
 /// buttons.
 private struct HideEditorView: View {
     @ObservedObject var model: HideModel
+    /// A copy straight to where it goes, for a copy from Finder.
+    let send: (CopySend) -> Void
     let finish: (Bool) -> Void
 
     /// The box being drawn, in the view.
@@ -717,11 +787,9 @@ private struct HideEditorView: View {
     /// Settings has, in the same words.
     @ViewBuilder private var copyChoice: some View {
         Section {
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 8) { choices }
-                VStack(spacing: 8) { choices }
-            }
-            .controlSize(.small)
+            // One row, small, so the kinds below come into view sooner.
+            HStack(spacing: 6) { choices }
+                .controlSize(.small)
         } header: {
             Text(L("Hide in this copy"))
         } footer: {
@@ -752,7 +820,10 @@ private struct HideEditorView: View {
 
     private func choice(_ title: String, _ kinds: Set<PrivateDetail>) -> some View {
         Button { model.chosen = kinds } label: {
-            Text(title).frame(maxWidth: .infinity)
+            Text(title)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+                .frame(maxWidth: .infinity)
         }
     }
 
@@ -769,9 +840,20 @@ private struct HideEditorView: View {
         }
     }
 
-    /// Cancel and Done, or Save Copy… for a copy, with a spinner while the
-    /// copy is written.
+    /// For a copy, the chats to send it to; then Cancel and Done, or Save
+    /// Copy…, with a spinner while the copy is written.
     private var footer: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            if model.copying {
+                SendBar(busy: model.saving, send: send)
+                Divider()
+            }
+            buttons
+        }
+        .padding(16)
+    }
+
+    private var buttons: some View {
         HStack(spacing: 10) {
             if model.saving {
                 ProgressView().controlSize(.small)
@@ -785,7 +867,6 @@ private struct HideEditorView: View {
                 .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut.defaultAction)
                 .disabled(model.saving)
         }
-        .padding(16)
     }
 
     // MARK: Boxes

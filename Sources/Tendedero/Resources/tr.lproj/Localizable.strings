@@ -1078,3 +1078,10 @@
 "The Mac’s sound is what you hear, without Snapfly’s own. Recording the microphone too needs macOS 15." = "Mac’in sesi duyduğun sestir, Snapfly’ın kendi sesleri hariç. Mikrofonu da kaydetmek için macOS 15 gerekir.";
 "Recording without the microphone: Snapfly isn’t allowed to use it. Allow it in System Settings › Privacy & Security › Microphone." = "Mikrofonsuz kaydediliyor: Snapfly’ın onu kullanma izni yok. Sistem Ayarları › Gizlilik ve Güvenlik › Mikrofon’dan izin ver.";
 "Saving the recording…" = "Kayıt kaydediliyor…";
+
+/* Send from Hide Private Details */
+"Send covered" = "Kapatılmış gönder";
+"More" = "Daha fazla";
+"Share…" = "Paylaş…";
+"Copied, covered. Paste it wherever you like." = "Kapatılmış olarak kopyalandı. İstediğin yere yapıştır.";
+"Copied. Paste it with ⌘V." = "Kopyalandı. ⌘V ile yapıştır.";

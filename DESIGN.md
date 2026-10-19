@@ -730,6 +730,14 @@ apps.
   (`ServicesMenu.strings`). Open With lists Snapfly as an alternative, never
   as what opens them. Hide Private Details opens Hide Part for one file, to
   save a copy beside it, and Cover Files for several or a folder.
+  - For one file, the inspector's footer opens with **Send covered**: an
+    11 pt semibold `.secondary` label over the chats on for photos (the
+    usual six when none are), each a 30 pt `ChatIcon` that grows to 1.1 under
+    the pointer (still with Reduce Motion), the rest under ⋯
+    (`MoreChatsIcon`), then borderless `doc.on.doc` (Copy) and
+    `square.and.arrow.up` (Share…, the Mac's own menu). A hairline divides it
+    from Cancel and Save Copy…. Check All, Recommended and Uncheck All sit in
+    one row of small buttons, shrinking their words to 75% before wrapping.
 - **Cover Files** (`CoverFiles.swift`), a standard titled window (880 × 600,
   at least 760 × 480, its frame remembered), from Cover Files… (`doc.on.doc`)
   in the menu bar under Add Files….

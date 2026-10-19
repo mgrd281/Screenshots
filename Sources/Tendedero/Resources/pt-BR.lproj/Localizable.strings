@@ -1078,3 +1078,10 @@
 "The Mac’s sound is what you hear, without Snapfly’s own. Recording the microphone too needs macOS 15." = "O som do Mac é o que você ouve, sem o do Snapfly. Gravar também o microfone requer o macOS 15.";
 "Recording without the microphone: Snapfly isn’t allowed to use it. Allow it in System Settings › Privacy & Security › Microphone." = "Gravando sem o microfone: o Snapfly não tem permissão para usá-lo. Permita em Ajustes do Sistema › Privacidade e Segurança › Microfone.";
 "Saving the recording…" = "Salvando a gravação…";
+
+/* Send from Hide Private Details */
+"Send covered" = "Enviar coberto";
+"More" = "Mais";
+"Share…" = "Compartilhar…";
+"Copied, covered. Paste it wherever you like." = "Copiado e coberto. Cole onde quiser.";
+"Copied. Paste it with ⌘V." = "Copiado. Cole com ⌘V.";

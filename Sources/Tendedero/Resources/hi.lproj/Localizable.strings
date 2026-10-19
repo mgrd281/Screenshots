@@ -1080,3 +1080,10 @@
 "The Mac’s sound is what you hear, without Snapfly’s own. Recording the microphone too needs macOS 15." = "Mac की आवाज़ वही है जो आप सुनते हैं, Snapfly की अपनी आवाज़ों के बिना। माइक्रोफ़ोन भी रिकॉर्ड करने के लिए macOS 15 चाहिए।";
 "Recording without the microphone: Snapfly isn’t allowed to use it. Allow it in System Settings › Privacy & Security › Microphone." = "माइक्रोफ़ोन के बिना रिकॉर्डिंग: Snapfly को इसका उपयोग करने की अनुमति नहीं है। सिस्टम सेटिंग्स › गोपनीयता और सुरक्षा › माइक्रोफ़ोन में अनुमति दें।";
 "Saving the recording…" = "रिकॉर्डिंग सहेजी जा रही है…";
+
+/* Send from Hide Private Details */
+"Send covered" = "ढककर भेजें";
+"More" = "और";
+"Share…" = "शेयर करें…";
+"Copied, covered. Paste it wherever you like." = "ढककर कॉपी किया गया। जहाँ चाहें पेस्ट करें।";
+"Copied. Paste it with ⌘V." = "कॉपी किया गया। ⌘V से पेस्ट करें।";
