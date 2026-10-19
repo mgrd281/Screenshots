@@ -53,7 +53,7 @@ extension PrivateDetail {
     /// The word a labelled cover shows: short, so it fits a line of text.
     var label: String {
         switch self {
-        case .names: L("Name")
+        case .names, .patientNames, .otherPeople: L("Name")
         case .addresses: L("Address")
         case .emails: L("Email")
         case .phones: L("Phone")
@@ -108,7 +108,7 @@ extension Finder {
 
     /// What decides how covers are found and drawn, for telling copies apart.
     static var lookKey: String {
-        "\(CoverStyle.current.rawValue),\(keepsLastDigits),\(strongest),\(usesIntelligence),\(asksAssistant),\(NameScope.current.key)"
+        "\(CoverStyle.current.rawValue),\(keepsLastDigits),\(strongest),\(usesIntelligence),\(asksAssistant)"
     }
 
     /// The picture with the given places covered in the chosen look. Each

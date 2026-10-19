@@ -175,22 +175,45 @@ final class DocumentSenseTests: XCTestCase {
         XCTAssertEqual(NameScope.everyone.decide(.unknown), .cover)
     }
 
-    func testChoosingAndLeavingPeople() {
-        let patients = NameScope.everyone.toggling(.patient)
-        XCTAssertEqual(patients.roles, [.patient], "from everyone's, only the one chosen")
-        XCTAssertEqual(patients.toggling(.customer).roles, [.patient, .customer])
-        XCTAssertEqual(patients.toggling(.patient), .everyone, "none left means everyone's")
-        XCTAssertEqual(NameScope.everyone.key, "all")
-        XCTAssertEqual(NameScope(roles: [.customer, .patient]).key, "patient+customer")
+    func testPatientsAndOtherPeopleAreChosenApartFromNames() {
+        XCTAssertEqual(Finder.resolved([.names, .patientNames]).scope, .everyone, "Names is everyone's")
+        XCTAssertEqual(Finder.resolved([.names, .patientNames, .otherPeople]).chosen, [.names])
+        let patients = Finder.resolved([.patientNames, .phones])
+        XCTAssertEqual(patients.chosen, [.names, .phones])
+        XCTAssertEqual(patients.scope.roles, [.patient])
+        let others = Finder.resolved([.otherPeople])
+        XCTAssertEqual(others.scope.roles, Set(PersonRole.others))
+        XCTAssertEqual(Finder.resolved([.patientNames, .otherPeople]).scope.roles, Set(PersonRole.allCases))
+        XCTAssertEqual(Finder.resolved([.phones]).chosen, [.phones], "no names without a kind of them")
+        XCTAssertEqual(Finder.resolved([]).chosen, [], "nothing chosen covers nothing")
     }
 
-    func testTheScopeIsKept() throws {
+    func testWhoseNamesChosenBeforeAreKept() throws {
         let defaults = try XCTUnwrap(UserDefaults(suiteName: "DocumentSenseTests"))
         defaults.removePersistentDomain(forName: "DocumentSenseTests")
-        XCTAssertEqual(NameScope.load(from: defaults), .everyone)
-        NameScope(roles: [.patient, .customer]).save(to: defaults)
-        XCTAssertEqual(NameScope.load(from: defaults).roles, [.patient, .customer])
-        NameScope.everyone.save(to: defaults)
-        XCTAssertEqual(NameScope.load(from: defaults), .everyone)
+        let before = PrivateDetail.allCases.map(\.rawValue).filter { !["patientNames", "otherPeople"].contains($0) }
+        func chosen(_ key: String) -> Set<String> { Set(defaults.stringArray(forKey: key) ?? []) }
+
+        // The patient's name only: Patient names, and not Names.
+        defaults.set(before, forKey: PrivateDetail.knownKey)
+        defaults.set(["names", "phones"], forKey: "hiddenDetails")
+        defaults.set(["patient"], forKey: PrivateDetail.rolesKey)
+        PrivateDetail.bringUpToDate(["hiddenDetails"], in: defaults)
+        XCTAssertEqual(chosen("hiddenDetails"), ["patientNames", "phones"])
+        XCTAssertNil(defaults.stringArray(forKey: PrivateDetail.rolesKey), "moved once")
+
+        // The doctors' only: Other people, and the patient's stay as chosen.
+        defaults.set(before, forKey: PrivateDetail.knownKey)
+        defaults.set(["names"], forKey: "hiddenDetails")
+        defaults.set(["doctor"], forKey: PrivateDetail.rolesKey)
+        PrivateDetail.bringUpToDate(["hiddenDetails"], in: defaults)
+        XCTAssertEqual(chosen("hiddenDetails"), ["otherPeople"])
+
+        // Everyone's: Names stays, and patients' names start on as a new kind.
+        defaults.set(before, forKey: PrivateDetail.knownKey)
+        defaults.set(["names", "emails"], forKey: "hiddenDetails")
+        PrivateDetail.bringUpToDate(["hiddenDetails"], in: defaults)
+        XCTAssertEqual(chosen("hiddenDetails"), ["names", "emails", "patientNames"])
+        defaults.removePersistentDomain(forName: "DocumentSenseTests")
     }
 }

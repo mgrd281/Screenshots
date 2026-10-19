@@ -4,17 +4,16 @@ import Foundation
 /// label like "Patient:", a title like "Dr. med.", the closing above a
 /// signature, the date of birth after it.
 enum PersonRole: String, CaseIterable, Codable, Sendable {
-    case patient, doctor, customer, employee, other
+    case patient, doctor, customer, employee, beneficiary, sender, recipient, other
 
-    var title: String {
-        switch self {
-        case .patient: L("Patients")
-        case .doctor: L("Doctors and medical staff")
-        case .customer: L("Customers and account holders")
-        case .employee: L("Employees and contacts")
-        case .other: L("Everyone else")
-        }
-    }
+    /// The people besides patients, covered with Other people.
+    static let others: [PersonRole] = [.doctor, .customer, .employee, .beneficiary, .sender, .recipient, .other]
+}
+
+/// More of a role, where the words say it: the doctor treating, referring
+/// or signing, the account's holder, the business's owner.
+enum RoleDetail: String, Sendable {
+    case treating, referring, signing, accountHolder, owner
 }
 
 /// A name's role, how sure the reading is, and what it was read from, for
@@ -25,6 +24,7 @@ struct NameRole: Equatable, Sendable {
     var confidence: Double
     /// What gave it away, in a word or two, like "label" or "title".
     var reason: String
+    var detail: RoleDetail? = nil
 
     /// Sure enough to cover or leave a name by its role alone.
     var isSure: Bool { confidence >= 0.6 }
@@ -193,8 +193,8 @@ enum DocumentSense {
     /// "Rechnung" or "Arzt": those that tell its kind, and those that say
     /// whose a name is.
     private static let documentWords: Set<String> = {
-        let all = medicalWords + invoiceWords + bankingWords + patientCues + doctorCues + customerCues + employeeCues
-        return Set(all.filter { !$0.contains(" ") && !$0.contains(".") })
+        let all = medicalWords + invoiceWords + bankingWords + cues.filter { !$0.labelOnly }.map(\.text)
+        return Set(all.filter { !$0.contains(" ") && !$0.contains(".") && !$0.contains("/") })
     }()
     private static let particles: Set<String> = ["van", "von", "de", "da", "del", "der", "den", "la", "le", "bin",
                                                  "ibn", "al", "el", "di", "du", "zu", "ten", "ter", "dos", "das"]
@@ -323,73 +323,105 @@ enum DocumentSense {
 
     // MARK: Whose name
 
-    private static let patientCues = ["name des patienten", "name der patientin", "patientenname", "patient name",
-                                      "patient's name", "name of patient", "patientin", "patienten", "patient",
-                                      "pat.", "versicherte", "versicherter", "versicherten", "patiente", "paciente",
-                                      "المريضة", "المريض", "пациентка", "пациент"]
-    private static let doctorCues = ["behandelnder arzt", "behandelnde ärztin", "überweisender arzt",
-                                     "überweisende ärztin", "überweisung von", "überwiesen von", "zuweiser",
-                                     "einweiser", "hausarzt", "hausärztin", "befundender arzt", "befundet von",
-                                     "diktiert von", "dictated by", "verantwortlicher arzt", "referring physician",
-                                     "treating physician", "attending physician", "physician", "facharzt",
-                                     "fachärztin", "oberarzt", "oberärztin", "chefarzt", "chefärztin", "assistenzarzt",
-                                     "assistenzärztin", "stationsarzt", "arzt", "ärztin", "doctor", "الطبيب", "врач"]
-    private static let customerCues = ["kontoinhaberin", "kontoinhaber", "karteninhaber", "account holder",
-                                       "cardholder", "card holder", "kundenname", "customer name", "kundin", "kunde",
-                                       "customer", "käuferin", "käufer", "buyer", "rechnungsempfänger",
-                                       "rechnungsadresse", "lieferadresse", "lieferanschrift", "bill to", "billed to",
-                                       "ship to", "sold to", "invoice to", "client", "cliente", "العميل",
-                                       "صاحب الحساب", "клиент", "покупатель"]
-    private static let employeeCues = ["sachbearbeiterin", "sachbearbeiter", "bearbeiterin", "bearbeiter",
-                                       "ansprechpartnerin", "ansprechpartner", "kundenberaterin", "kundenberater",
-                                       "beraterin", "berater", "verkäuferin", "verkäufer", "kassiererin", "kassierer",
-                                       "mitarbeiterin", "mitarbeiter", "bedient von", "served by", "employee",
-                                       "agent", "advisor", "clerk", "cashier", "contact person", "geschäftsführerin",
-                                       "geschäftsführer", "geschäftsführung", "inhaberin", "inhaber", "ceo",
-                                       "director", "الموظف", "сотрудник", "менеджер"]
-    private static let birthCues = ["geb.", "geb ", "geboren", "geburtsdatum", "dob", "d.o.b.", "date of birth",
-                                    "born", "née", "تاريخ الميلاد", "дата рождения"]
+    /// A word or words that say whose the name after them is.
+    private struct Cue {
+        let text: String
+        let role: PersonRole
+        var detail: RoleDetail? = nil
+        /// Short, common words, like "An" or "von", count only as a label with
+        /// its colon, "An:", never in a sentence.
+        var labelOnly = false
+    }
+
+    private static let cues: [Cue] = {
+        var cues: [Cue] = []
+        func add(_ role: PersonRole, detail: RoleDetail? = nil, labelOnly: Bool = false, _ texts: [String]) {
+            cues += texts.map { Cue(text: $0, role: role, detail: detail, labelOnly: labelOnly) }
+        }
+        add(.patient, ["name des patienten", "name der patientin", "name des versicherten", "patientenname",
+                       "patientennamen", "patient name", "patient's name", "name of patient", "patientendaten",
+                       "patientin", "patienten", "patient/in", "patient", "pat.", "versicherte", "versicherter",
+                       "versicherten", "patiente", "paciente", "المريضة", "المريض", "пациентка", "пациент"])
+        add(.doctor, detail: .treating, ["behandelnder arzt", "behandelnde ärztin", "behandelnde ärzte", "treating physician",
+                                 "attending physician", "verantwortlicher arzt", "hausarzt", "hausärztin"])
+        add(.doctor, detail: .referring, ["überweisender arzt", "überweisende ärztin", "überweisung von", "überwiesen von",
+                                  "zuweisender arzt", "zuweiser", "einweiser", "überweiser", "referring physician"])
+        add(.doctor, detail: .signing, ["befundender arzt", "befundet von", "befund erstellt von", "erstellt von",
+                                "diktiert von", "dictated by", "ärztliche unterschrift", "unterschrift des arztes"])
+        add(.doctor, ["physician", "facharzt", "fachärztin", "oberarzt", "oberärztin", "chefarzt", "chefärztin",
+                      "assistenzarzt", "assistenzärztin", "stationsarzt", "arzt", "ärztin", "doctor", "الطبيب", "врач"])
+        add(.customer, detail: .accountHolder, ["kontoinhaberin", "kontoinhaber", "karteninhaberin", "karteninhaber",
+                                        "account holder", "cardholder", "card holder", "صاحب الحساب"])
+        add(.customer, ["kundenname", "customer name", "kundin", "kunde", "customer", "käuferin", "käufer", "buyer",
+                        "rechnungsempfänger", "rechnungsadresse", "lieferadresse", "lieferanschrift", "bill to",
+                        "billed to", "ship to", "sold to", "invoice to", "client", "cliente", "العميل", "клиент",
+                        "покупатель"])
+        add(.employee, detail: .owner, ["geschäftsführerin", "geschäftsführer", "geschäftsführung", "inhaberin", "inhaber",
+                                "ceo", "director", "owner"])
+        add(.employee, ["sachbearbeiterin", "sachbearbeiter", "bearbeiterin", "bearbeiter", "ansprechpartnerin",
+                        "ansprechpartner", "kundenberaterin", "kundenberater", "beraterin", "berater",
+                        "verkäuferin", "verkäufer", "kassiererin", "kassierer", "mitarbeiterin", "mitarbeiter",
+                        "bedient von", "served by", "employee", "agent", "advisor", "clerk", "cashier",
+                        "contact person", "الموظف", "сотрудник", "менеджер"])
+        add(.beneficiary, ["zahlungsempfängerin", "zahlungsempfänger", "begünstigte", "begünstigter",
+                           "empfängername", "beneficiary", "payee", "المستفيد", "получатель"])
+        add(.sender, ["absenderin", "absender", "auftraggeberin", "auftraggeber", "sender", "المرسل"])
+        add(.sender, labelOnly: true, ["von", "from"])
+        add(.recipient, ["empfängerin", "empfänger", "adressat", "recipient", "المستلم"])
+        add(.recipient, labelOnly: true, ["an", "to"])
+        return cues
+    }()
+    private static let birthCues = ["geb.", "geb ", "geboren", "geburtsdatum", "geb.-dat", "geb.dat", "dob",
+                                    "d.o.b.", "date of birth", "born", "née", "تاريخ الميلاد", "дата рождения"]
     private static let closings = ["mit freundlichen grüßen", "mit freundlichen kollegialen grüßen",
                                    "mit kollegialen grüßen", "freundliche grüße", "viele grüße", "beste grüße",
                                    "sincerely", "kind regards", "best regards", "yours faithfully", "unterschrift",
-                                   "gez.", "i.a.", "i.v.", "مع التحية", "с уважением"]
+                                   "ärztliche unterschrift", "gez.", "i.a.", "i.v.", "مع التحية", "с уважением"]
 
-    /// The cue nearest the end of a piece of text, the role it gives, and
-    /// what follows it there.
-    private static func cue(in text: String) -> (role: PersonRole, rest: String)? {
+    /// The cue nearest the end of a piece of text, and what follows it there.
+    private static func cue(in text: String) -> (cue: Cue, rest: String)? {
         let lower = text.lowercased()
-        var best: (role: PersonRole, at: String.Index)?
-        for (cues, role) in [(patientCues, PersonRole.patient), (doctorCues, .doctor), (customerCues, .customer),
-                             (employeeCues, .employee)] {
-            for cue in cues {
-                var searched = lower.startIndex..<lower.endIndex
-                // The last one that is a whole word, not the start of a longer one.
-                while let found = lower.range(of: cue, options: .backwards, range: searched) {
-                    if isWordStart(found.lowerBound, in: lower), isWordEnd(found.upperBound, in: lower) {
-                        if best == nil || found.upperBound > best!.at { best = (role, found.upperBound) }
-                        break
+        var best: (cue: Cue, at: String.Index, start: String.Index)?
+        for cue in cues {
+            var searched = lower.startIndex..<lower.endIndex
+            // The last one that is a whole word, not the start of a longer one.
+            while let found = lower.range(of: cue.text, options: .backwards, range: searched) {
+                if isWordStart(found.lowerBound, in: lower), isWordEnd(found.upperBound, in: lower) {
+                    let rest = lower[found.upperBound...].drop { $0 == " " }
+                    // A short word is a label only with its colon.
+                    let fits = !cue.labelOnly || rest.first == ":"
+                    // The longest cue that ends last wins: "behandelnder Arzt" over "Arzt".
+                    if fits, best == nil || found.upperBound > best!.at
+                        || found.upperBound == best!.at && found.lowerBound < best!.start {
+                        best = (cue, found.upperBound, found.lowerBound)
                     }
-                    searched = lower.startIndex..<found.lowerBound
+                    if fits { break }
                 }
+                searched = lower.startIndex..<found.lowerBound
             }
         }
         guard let best else { return nil }
-        return (best.role, String(lower[best.at...]))
+        return (best.cue, String(lower[best.at...]))
     }
 
     /// The role a label gives the name it announces, like "Patient:" or
     /// "Behandelnder Arzt", or nil for one that says nothing of it, like "Name".
     static func role(ofLabel label: String) -> PersonRole? {
-        cue(in: label)?.role
+        cue(in: label + ":")?.cue.role
+    }
+
+    /// The role and its detail a label gives, as `role(ofLabel:)`.
+    static func nameRole(ofLabel label: String) -> NameRole? {
+        cue(in: label + ":").map { NameRole(role: $0.cue.role, confidence: 0.9, reason: "label", detail: $0.cue.detail) }
     }
 
     /// A cue just before a name, with no more than a word or a title between,
     /// as in "Patientin Frau Lena Weber", not one further back in a sentence.
-    private static func cue(justBefore text: String) -> PersonRole? {
+    private static func cue(justBefore text: String) -> Cue? {
         guard let found = cue(in: text) else { return nil }
         let between = words(of: found.rest.trimmingCharacters(in: CharacterSet(charactersIn: ":-–()")))
             .filter { !titles.contains($0) && !titleParts.contains($0) && $0 != ":" }
-        return between.count <= 1 ? found.role : nil
+        return between.count <= 1 ? found.cue : nil
     }
 
     /// Whose name is in line `index`, at `name` in it or the whole line: from
@@ -402,10 +434,12 @@ enum DocumentSense {
         let before = name.map { String(line[..<$0.lowerBound]) } ?? ""
         let after = name.map { String(line[$0.upperBound...]) } ?? ""
         let medical = kind == .medical
+        let label = cue(justBefore: before)
 
-        // A label just before the name on its line: "Patient: Dr. Max Meier".
-        if let role = cue(justBefore: before) {
-            return NameRole(role: role, confidence: 0.9, reason: "label")
+        // A label just before the name on its line, "Patient: Dr. Max Meier",
+        // says more than the name's title; a sender's or a recipient's says less.
+        if let label, label.role != .sender, label.role != .recipient {
+            return NameRole(role: label.role, confidence: 0.9, reason: "label", detail: label.detail)
         }
         // A title that belongs to the name itself.
         if let title = title?.lowercased() {
@@ -416,6 +450,13 @@ enum DocumentSense {
                 return NameRole(role: .doctor, confidence: medical ? 0.75 : 0.5, reason: "title")
             }
         }
+        if let label {
+            return NameRole(role: label.role, confidence: 0.85, reason: "label", detail: label.detail)
+        }
+        // The subject of a medical letter: "Betreff: Mustermann, Max".
+        if medical, ["betreff", "betr.", "re:", "subject"].contains(where: { before.lowercased().contains($0) }) {
+            return NameRole(role: .patient, confidence: 0.8, reason: "subject")
+        }
         // "Max Mustermann, geb. 01.01.1960", or a doctor's title after the name.
         let rest = after.lowercased()
         if rest.contains(", md") || rest.contains(" md ") || rest.hasSuffix(" md") || rest.contains("facharzt")
@@ -423,7 +464,10 @@ enum DocumentSense {
             return NameRole(role: .doctor, confidence: 0.8, reason: "after")
         }
         if birthCues.contains(where: { rest.contains($0) }) || rest.contains("*") {
-            return NameRole(role: subject(in: kind), confidence: medical ? 0.75 : 0.6, reason: "birth")
+            return NameRole(role: subject(in: kind), confidence: medical ? 0.8 : 0.6, reason: "birth")
+        }
+        if medical, startsWithDate(rest) {
+            return NameRole(role: .patient, confidence: 0.6, reason: "birth")
         }
         // The lines just above: a label alone on its line, or a closing.
         for distance in 1...4 where index - distance >= 0 {
@@ -431,21 +475,32 @@ enum DocumentSense {
             let lower = above.lowercased()
             if closings.contains(where: { lower.hasPrefix($0) }) {
                 let role: PersonRole = medical ? .doctor : kind == .invoice ? .employee : .other
-                return NameRole(role: role, confidence: medical ? 0.75 : 0.6, reason: "signature")
+                return NameRole(role: role, confidence: medical ? 0.75 : 0.6, reason: "signature",
+                                detail: medical ? .signing : nil)
             }
-            if distance <= 2, isLabelLine(above), let role = cue(in: above)?.role {
-                return NameRole(role: role, confidence: distance == 1 ? 0.85 : 0.7, reason: "label above")
+            // A letter's address under "Herrn" or "Frau": in a doctor's
+            // letter, most often the patient's, but not for sure.
+            if distance == 1, let heading = isTitleLine(above) {
+                if heading.doctor { return NameRole(role: .doctor, confidence: 0.85, reason: "title above") }
+                if medical { return NameRole(role: .patient, confidence: 0.55, reason: "address") }
+            }
+            // Only a label that ends its line: "Facharzt für Innere Medizin"
+            // under a doctor's name announces no one.
+            if distance <= 2, isLabelLine(above), let found = cue(in: above + ":"),
+               found.rest.allSatisfy({ $0 == ":" || $0 == " " }) {
+                return NameRole(role: found.cue.role, confidence: distance == 1 ? 0.85 : 0.7, reason: "label above",
+                                detail: found.cue.detail)
             }
         }
-        // A doctor's title on the line under a signature.
+        // A doctor's title on the line under a signature, or a date of birth.
         if index + 1 < lines.count {
             let below = lines[index + 1].lowercased()
             if ["facharzt", "fachärztin", "chefarzt", "chefärztin", "oberarzt", "oberärztin", "arzt für",
                 "ärztin für"].contains(where: { below.hasPrefix($0) }) {
-                return NameRole(role: .doctor, confidence: 0.8, reason: "under")
+                return NameRole(role: .doctor, confidence: 0.8, reason: "under", detail: .signing)
             }
-            if birthCues.contains(where: { below.hasPrefix($0) }) {
-                return NameRole(role: subject(in: kind), confidence: medical ? 0.7 : 0.55, reason: "birth")
+            if birthCues.contains(where: { below.hasPrefix($0) }) || below.hasPrefix("*") {
+                return NameRole(role: subject(in: kind), confidence: medical ? 0.75 : 0.55, reason: "birth")
             }
         }
         return .unknown
@@ -458,6 +513,92 @@ enum DocumentSense {
         case .invoice, .banking: .customer
         case .general: .other
         }
+    }
+
+    /// Whether text starts with a date, as a date of birth after a name does.
+    private static func startsWithDate(_ text: String) -> Bool {
+        text.trimmingCharacters(in: CharacterSet(charactersIn: " ,;(*"))
+            .range(of: #"^\d{1,2}[./]\d{1,2}[./]\d{2,4}"#, options: .regularExpression) != nil
+    }
+
+    // MARK: Names found by what stands round them
+
+    /// Names right after a word that says whose they are, anywhere in a
+    /// line: "Wir berichten über Ihren Patienten Max Mustermann", "Pat.
+    /// Mustermann, Max", "Betreff: Mustermann, Max" in a medical letter. Two
+    /// words at least, or a surname with a comma and a given name, so a
+    /// noun after "Patient" is never taken for one.
+    static func cuedNames(in line: String, kind: DocumentKind) -> [Range<String.Index>] {
+        let all = tokens(in: line, within: line.startIndex..<line.endIndex)
+        var found: [Range<String.Index>] = []
+        var texts = cues.filter { !$0.labelOnly && $0.role != .doctor }.map(\.text)
+        if kind == .medical { texts += ["betreff", "betr."] }
+        for (i, token) in all.enumerated() {
+            let word = line[token].lowercased().trimmingCharacters(in: CharacterSet(charactersIn: ":"))
+            let upTo = line[..<token.upperBound].lowercased()
+            // A cue of one word, or the last word of a longer one.
+            guard texts.contains(where: { $0 == word || $0.hasSuffix(" " + word) && upTo.hasSuffix($0) }) else { continue }
+            var j = i + 1
+            while j < all.count, titles.contains(line[all[j]].lowercased()) || titleParts.contains(line[all[j]].lowercased()) {
+                j += 1
+            }
+            guard j < all.count, let range = nameRun(in: line, tokens: all, from: j, minWords: 1) else { continue }
+            let words = line[range].split(separator: " ")
+            let commaForm = line[range].contains(",")
+            guard words.count >= 2 || commaForm, !found.contains(where: { $0.overlaps(range) }),
+                  !isOrganization(String(line[range])) else { continue }
+            found.append(range)
+        }
+        return found
+    }
+
+    /// Names just before a date of birth: "Max Mustermann, geb. 01.02.1960",
+    /// "Mustermann, Max *01.02.1960", and in a medical document a name before
+    /// a date alone, as a table's row has it. Two name words at least.
+    static func bornNames(in line: String, kind: DocumentKind) -> [Range<String.Index>] {
+        let all = tokens(in: line, within: line.startIndex..<line.endIndex)
+        var found: [Range<String.Index>] = []
+        for (k, token) in all.enumerated() where k >= 2 {
+            let word = line[token].lowercased()
+            let isDate = word.range(of: #"^\*?\(?\d{1,2}[./]\d{1,2}[./]\d{2,4}\)?[,;]?$"#, options: .regularExpression) != nil
+            let cue = word.hasPrefix("*") || word.hasPrefix("(geb") || birthCues.contains { $0.trimmingCharacters(in: .whitespaces) == word }
+                || word.hasPrefix("geb.") || word == "geboren"
+            guard cue || isDate && kind == .medical else { continue }
+            // Back from the cue over the name's words.
+            var start = k
+            while start > 0, start > k - 5 {
+                let previous = String(line[all[start - 1]])
+                let bare = previous.hasSuffix(",") ? String(previous.dropLast()) : previous
+                guard !bare.hasSuffix(":"), isNameWord(bare, caseless: false) || particles.contains(bare) else { break }
+                start -= 1
+            }
+            guard k - start >= 2, let range = nameRun(in: line, tokens: all, from: start, minWords: 2),
+                  !found.contains(where: { $0.overlaps(range) }), !isOrganization(String(line[range])) else { continue }
+            found.append(range)
+        }
+        return found
+    }
+
+    /// Whether a line holds nothing but a title, as the line over a name in
+    /// a letter's address does: "Herrn", "Frau", "Herrn Dr. med.".
+    static func isTitleLine(_ line: String) -> (title: String, doctor: Bool)? {
+        let words = line.split(separator: " ").map { String($0).lowercased() }
+        guard !words.isEmpty, words.count <= 4, titles.contains(words[0]),
+              words.allSatisfy({ titles.contains($0) || titleParts.contains($0) }) else { return nil }
+        return (line.trimmingCharacters(in: .whitespaces), words.contains { medicalTitles.contains($0) })
+    }
+
+    /// The name at the start of a line, of one to five words, as in the
+    /// line under a title or a table's header.
+    static func nameAtStart(of line: String) -> Range<String.Index>? {
+        let all = tokens(in: line, within: line.startIndex..<line.endIndex)
+        var j = 0
+        while j < all.count, titles.contains(line[all[j]].lowercased()) || titleParts.contains(line[all[j]].lowercased()) {
+            j += 1
+        }
+        guard let range = nameRun(in: line, tokens: all, from: j, minWords: 1),
+              !isOrganization(String(line[range])) else { return nil }
+        return range
     }
 
     /// A short line that only announces what follows, like "Patient:".
@@ -523,15 +664,15 @@ enum DocumentSense {
     }
 }
 
-/// Whose names are covered when Names is on: everyone's, as before, or
-/// only some people's, like the patient's and not the doctor's. A name whose
-/// role is not clear is covered anyway and marked for the owner to check.
+/// Whose names are covered: everyone's, with Names, or only some people's,
+/// with Patient names or Other people alone (`Finder.resolved`). A name
+/// whose role is not clear is covered anyway and marked for the owner to
+/// check.
 struct NameScope: Equatable, Sendable {
     /// Nil: everyone.
     var roles: Set<PersonRole>?
 
     static let everyone = NameScope(roles: nil)
-    static let key = "nameRoles"
 
     enum Decision: Equatable { case cover, coverAndCheck, leave }
 
@@ -539,42 +680,5 @@ struct NameScope: Equatable, Sendable {
         guard let roles else { return .cover }
         guard role.isSure else { return .coverAndCheck }
         return roles.contains(role.role) ? .cover : .leave
-    }
-
-    /// The scope with one role chosen or no longer chosen. Choosing one
-    /// from everyone's means only that one's; leaving none means everyone's.
-    func toggling(_ role: PersonRole) -> NameScope {
-        var chosen = roles ?? []
-        if chosen.contains(role) { chosen.remove(role) } else { chosen.insert(role) }
-        return NameScope(roles: chosen.isEmpty ? nil : chosen)
-    }
-
-    /// "Everyone's", or the people chosen, as Settings shows it.
-    var summary: String {
-        guard let roles else { return L("Everyone's") }
-        return PersonRole.allCases.filter(roles.contains).map(\.title).joined(separator: ", ")
-    }
-
-    /// The scope in a word, for telling covered copies apart.
-    var key: String {
-        roles.map { PersonRole.allCases.filter($0.contains).map(\.rawValue).joined(separator: "+") } ?? "all"
-    }
-
-    static func load(from defaults: UserDefaults = .standard) -> NameScope {
-        guard let raw = defaults.stringArray(forKey: key) else { return .everyone }
-        return NameScope(roles: Set(raw.compactMap(PersonRole.init(rawValue:))))
-    }
-
-    func save(to defaults: UserDefaults = .standard) {
-        if let roles {
-            defaults.set(roles.map(\.rawValue).sorted(), forKey: Self.key)
-        } else {
-            defaults.removeObject(forKey: Self.key)
-        }
-    }
-
-    static var current: NameScope {
-        get { load() }
-        set { newValue.save() }
     }
 }

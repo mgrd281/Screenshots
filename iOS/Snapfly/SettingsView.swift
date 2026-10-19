@@ -1,13 +1,12 @@
 import SwiftUI
 
-/// What to cover, kind by kind in groups, and whose names; how covers look;
+/// What to cover, kind by kind in groups, whose names among them; how covers look;
 /// how a screenshot is read; the devices it syncs with; and, further in,
 /// rules of the owner's own and how to cover a screenshot with a double tap
 /// on the back of the iPhone.
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var chosen = Choice.details
-    @State private var scope = NameScope.current
     @State private var look = CoverStyle.current
     @State private var keepsLastDigits = Finder.keepsLastDigits
     @State private var strongest = Finder.strongest
@@ -28,17 +27,24 @@ struct SettingsView: View {
                     Text(L("Hide private details"))
                 }
                 ForEach(PrivateDetail.Group.allCases, id: \.self) { group in
-                    Section(group.title) {
+                    Section {
                         ForEach(group.kinds, id: \.self) { detail in
-                            Toggle(detail.title, isOn: binding(for: detail))
-                            if detail == .names {
-                                NavigationLink {
-                                    WhoseNamesView(scope: $scope)
-                                } label: {
-                                    LabeledContent(L("Whose names"), value: scope.summary)
+                            // Names covers everyone's, patients' and other people's too.
+                            let included = PrivateDetail.people.contains(detail) && chosen.contains(.names)
+                            Toggle(isOn: included ? .constant(true) : binding(for: detail)) {
+                                if let subtitle = detail.subtitle {
+                                    described(detail.title, subtitle)
+                                } else {
+                                    Text(detail.title)
                                 }
-                                .disabled(!chosen.contains(.names))
                             }
+                            .disabled(included)
+                        }
+                    } header: {
+                        Text(group.title)
+                    } footer: {
+                        if group == .people {
+                            Text(L("Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check."))
                         }
                     }
                 }
@@ -159,35 +165,6 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)
-    }
-}
-
-/// Whose names Names covers: everyone's, or only some people's, read from
-/// what stands round each name, like "Patient:" or "Dr. med.".
-private struct WhoseNamesView: View {
-    @Binding var scope: NameScope
-
-    var body: some View {
-        Form {
-            Section {
-                Toggle(L("Everyone's"), isOn: Binding(get: { scope.roles == nil }, set: { if $0 { set(.everyone) } }))
-            }
-            Section {
-                ForEach(PersonRole.allCases, id: \.self) { role in
-                    Toggle(role.title, isOn: Binding(get: { scope.roles?.contains(role) == true },
-                                                     set: { _ in set(scope.toggling(role)) }))
-                }
-            } footer: {
-                Text(L("A name whose role is not clear is covered anyway, and marked for you to check."))
-            }
-        }
-        .navigationTitle(L("Whose names"))
-        .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private func set(_ new: NameScope) {
-        scope = new
-        NameScope.current = new
     }
 }
 

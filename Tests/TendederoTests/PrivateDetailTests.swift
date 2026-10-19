@@ -25,6 +25,11 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertEqual(PrivateDetail.ipAddresses.group, .access)
         XCTAssertEqual(PrivateDetail.health.group, .health)
         XCTAssertEqual(PrivateDetail.organizations.group, .organizations)
+        // Patients' names are health data: on, even for whoever leaves other names.
+        XCTAssertTrue(PrivateDetail.recommended.contains(.patientNames))
+        XCTAssertFalse(PrivateDetail.recommended.contains(.otherPeople), "Names covers them")
+        XCTAssertEqual(PrivateDetail.patientNames.group, .people)
+        XCTAssertEqual(PrivateDetail.otherPeople.group, .people)
         // What a screenshot is usually sent for stays visible until chosen,
         // and so does the shop or the practice it comes from.
         for kind in [PrivateDetail.amounts, .dates, .links, .orders, .faces, .ipAddresses, .organizations] {
@@ -181,6 +186,10 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertEqual(Finder.kind(ofCode: nil, [.barcodes, .links]), .barcodes)
         XCTAssertEqual(Finder.kind(ofCode: "https://shop.example.com/t/1024", [.links, .emails]), .links)
         XCTAssertNil(Finder.kind(ofCode: "Hello", [.links]))
+        // A name or a company in a code never covers it alone: the account beside it does.
+        XCTAssertNil(Finder.kind(ofCode: giro, [.names, .patientNames, .otherPeople, .organizations]))
+        XCTAssertEqual(Finder.kind(ofCode: giro, [.names, .bank]), .bank)
+        XCTAssertFalse(Finder.coversCode(giro, [.names]))
     }
 
     func testTheNumberPrintedUnderABarcodeGoesWithIt() throws {

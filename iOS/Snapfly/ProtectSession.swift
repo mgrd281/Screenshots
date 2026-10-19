@@ -49,7 +49,6 @@ final class ProtectSession: ObservableObject {
     private let chosen = Choice.details
     private let rules = OwnRules.all
     private let style = CoverStyle.current
-    private let scope = NameScope.current
     /// Each copy asked for; one made for older places is dropped.
     private var generation = 0
     private var running: Task<Void, Never>?
@@ -108,11 +107,11 @@ final class ProtectSession: ObservableObject {
         }
         self.image = image
         original = UIImage(cgImage: image)
-        let chosen = chosen, rules = rules, scope = scope
+        let chosen = chosen, rules = rules
         // What the patterns, the labels and the names find, without waiting
         // for Apple Intelligence.
         let first = await Self.background {
-            Finder.analysis(in: image, chosen, rules: rules, intelligence: false, scope: scope)
+            Finder.analysis(in: image, chosen, rules: rules, intelligence: false)
         }
         guard !Task.isCancelled else { return }
         plan.add(found: first.areas, possible: first.possible)
@@ -125,7 +124,7 @@ final class ProtectSession: ObservableObject {
             return
         }
         let more = await Self.background {
-            Finder.analysis(in: image, chosen, rules: rules, intelligence: true, scope: scope)
+            Finder.analysis(in: image, chosen, rules: rules, intelligence: true)
         }
         // Not waited for after all: what it found is left out.
         guard !Task.isCancelled, intelligencePending else { return }
@@ -193,10 +192,10 @@ final class ProtectSession: ObservableObject {
         let mine = generation
         making = true
         let areas = plan.covered, left = plan.left
-        let chosen = chosen, rules = rules, style = style, scope = scope
+        let chosen = chosen, rules = rules, style = style
         let made = await Self.background { () -> (image: CGImage, added: [Finder.Area], holds: Bool)? in
-            guard let done = Finder.finish(image, covering: areas, leaving: left, chosen, rules: rules, style: style,
-                                           scope: scope) else { return nil }
+            guard let done = Finder.finish(image, covering: areas, leaving: left, chosen, rules: rules, style: style)
+            else { return nil }
             let places = (areas + done.added).map(\.rect)
             if Finder.coversHold(original: image, covered: done.image, areas: places) {
                 return (done.image, done.added, true)
