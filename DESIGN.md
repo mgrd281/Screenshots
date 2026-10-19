@@ -1913,8 +1913,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     card (`ScreenshotCard`) shows the top of the screenshot, square in the
     grid with corners of 12, at 3:4 with corners of 14 in the row of
     protected ones, a hairline of `.primary` at 8% and a shadow of black 6%,
-    radius 6, y 2; when it was taken, whole ("20:03" today, else "19.10.,
-    20:03", as the language writes them; VoiceOver says "Today, 20:03") in
+    radius 6, y 2; when it was taken, whole ("20:03" today, the date alone
+    before, "19.10.", with the year, "19.10.25", from an earlier year, as
+    the language writes them; VoiceOver says "Yesterday, 20:03") in
     caption 2 medium with monospaced digits, no larger than at the default
     text size and shrinking to 70% rather than cut, on an ultra-thin capsule
     4 pt in at the bottom of a grid card (6 pt in the row); no button of its

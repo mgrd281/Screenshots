@@ -911,7 +911,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   beside its words and the screenshots come first: what the Mac sent and
   the newest twelve in small square
   cards, four to a row, that show when each was taken in a small label
-  (the time alone for today's), and a green shield once it was protected;
+  (the time for today's, the date alone for older ones), and a green
+  shield once it was protected;
   holding one offers Cover and Copy, Share or Save; all of them
   behind See All, which finds them by the words they say (those read ahead
   of time, below), shows only those with private details, protected or not,

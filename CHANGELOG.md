@@ -21,7 +21,8 @@ keeps a download of each version.
   lately, and More holds Settings and the introduction.
 - On the iPhone's home screen, the newest twelve screenshots are small square
   cards, four to a row, with when each was taken, whole, in a small label
-  (the time alone for today's), and Protect a Photo is a smaller button.
+  (the time for today's, the date alone for older ones), and Protect a
+  Photo is a smaller button.
 - Printed forms, like a German sick note, a prescription or a referral, are
   read field by field: the value under or beside each label is covered as
   what the label says it is, and only when that kind is chosen. Names alone

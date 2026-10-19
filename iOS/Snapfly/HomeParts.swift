@@ -267,7 +267,7 @@ struct ScreenshotCard: View {
             .overlay(alignment: .bottomLeading) {
                 if showsDate, let date = asset.creationDate {
                     // Small, as the card is, and whole: the time alone today, else the
-                    // day and the time; it grows no larger than at the default text size.
+                    // day alone; it grows no larger than at the default text size.
                     Text(Self.short(date))
                         .font(.caption2.weight(.medium))
                         .monospacedDigit()
@@ -306,9 +306,13 @@ struct ScreenshotCard: View {
         return parts.joined(separator: ", ")
     }
 
-    /// "20:03" today, else "19.10., 20:03", as the language writes them.
+    /// "20:03" today, "19.10." before, "19.10.25" in an earlier year, as the
+    /// language writes them.
     static func short(_ date: Date) -> String {
-        Calendar.current.isDateInToday(date) ? time.string(from: date) : dayAndTime.string(from: date)
+        let calendar = Calendar.current
+        if calendar.isDateInToday(date) { return time.string(from: date) }
+        return calendar.isDate(date, equalTo: .now, toGranularity: .year)
+            ? day.string(from: date) : dayAndYear.string(from: date)
     }
 
     private static let time: DateFormatter = {
@@ -317,9 +321,15 @@ struct ScreenshotCard: View {
         return formatter
     }()
 
-    private static let dayAndTime: DateFormatter = {
+    private static let day: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("dMM jjmm")
+        formatter.setLocalizedDateFormatFromTemplate("dMM")
+        return formatter
+    }()
+
+    private static let dayAndYear: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("dMMyy")
         return formatter
     }()
 
