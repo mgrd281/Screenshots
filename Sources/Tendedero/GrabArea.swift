@@ -84,12 +84,13 @@ struct GrabArea: NSViewRepresentable {
         view.covered = item.covered
         let lock = $overLock
         view.onLockHover = { inside in if lock.wrappedValue != inside { lock.wrappedValue = inside } }
-        // A right-click on one of them: the questions from Settings.
+        // A right-click on one of them: the questions and prompts from Settings.
         let questions = AIQuestions.offered()
-        view.hasQuestions = !questions.isEmpty
+        let prompts = AIPrompts.offered()
+        view.hasQuestions = !questions.isEmpty || !prompts.isEmpty
         view.chatMenuProvider = { chat in
-            guard chat.isAI, !questions.isEmpty else { return nil }
-            let menu = Self.questionMenu(questions, for: chat, line: line, id: id)
+            guard chat.isAI, !questions.isEmpty || !prompts.isEmpty else { return nil }
+            let menu = Self.questionMenu(questions, prompts, for: chat, line: line, id: id)
             let what = NSMenuItem(title: String(format: L("Ask %@"), chat.name), action: nil, keyEquivalent: "")
             what.isEnabled = false
             menu.insertItem(.separator(), at: 0)
@@ -201,11 +202,11 @@ struct GrabArea: NSViewRepresentable {
                 menu.addItem(send)
             }
             // With one of the questions from Settings after the photo.
-            if ChatTarget.takes(item), !questions.isEmpty,
+            if ChatTarget.takes(item), !questions.isEmpty || !prompts.isEmpty,
                let ask = Self.group(L("Ask AI"), symbol: "questionmark.bubble", { sub in
                    for chat in ChatTarget.ordered() where chat.isAI {
                        let entry = Self.chatItem(chat, chat.name) {}
-                       entry.submenu = Self.questionMenu(questions, for: chat, line: line, id: id)
+                       entry.submenu = Self.questionMenu(questions, prompts, for: chat, line: line, id: id)
                        sub.addItem(entry)
                    }
                }) {
@@ -409,11 +410,25 @@ struct GrabArea: NSViewRepresentable {
         return item
     }
 
-    /// The questions for a chat, each sending the photo with itself after.
-    private static func questionMenu(_ questions: [AIQuestion], for chat: ChatTarget, line: Line, id: UUID) -> NSMenu {
+    /// The questions for a chat, each sending the photo with itself after,
+    /// then the prompts by their numbers, as beside the send button.
+    private static func questionMenu(_ questions: [AIQuestion], _ prompts: [AIPrompt], for chat: ChatTarget,
+                                     line: Line, id: UUID) -> NSMenu {
         let menu = NSMenu()
         for question in questions {
             menu.addItem(ClosureMenuItem(question.text) { line.send(id, to: chat, asking: question.text) })
+        }
+        if !prompts.isEmpty {
+            if !questions.isEmpty { menu.addItem(.separator()) }
+            let header = NSMenuItem(title: L("Prompts"), action: nil, keyEquivalent: "")
+            header.isEnabled = false
+            menu.addItem(header)
+            for (index, prompt) in prompts.enumerated() {
+                // Its number, as beside the send button over the chat.
+                menu.addItem(ClosureMenuItem(prompt.name(number: index + 1), symbol: "\(index + 1).circle") {
+                    line.send(id, to: chat, asking: prompt.text)
+                })
+            }
         }
         return menu
     }

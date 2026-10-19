@@ -74,7 +74,8 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Press and hold | Open its menu, as a right-click does: Make PDF, Markup and the rest. |
 | Click the paper plane on a photo | Send it straight into the app in front, like a chat. Sent, it leaves the line. |
 | Click ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE, in the row under a photo | Send it, or the photos picked with it, there: the website opens in your browser (a new message in Gmail), or, with it already open in the browser in front, they go there, and the photos are pasted in. GMX and WEB.DE open the mailbox: the covered photo is copied for you to paste into a new message, and stays on the line. WhatsApp, Gmail, GMX and WEB.DE show their logos; ChatGPT and Claude show their app's own icon from your Mac, else a short mark. Each icon has its own row in Settings, under Line › Icons under photos: its switch, and Browser or App, to open its website or its own app, when that is on your Mac. Websites open in picks the browser, your Mac's default or another. Click the icons there to turn them on or off, and drag them into the order you want them under each photo. Twelve more wait there to be turned on: Perplexity, Grok, DeepSeek, Qwen, Messenger, Instagram, Outlook, Yahoo Mail, Facebook, Airbnb, Visual Studio Code and Antigravity. Turn on as many as you like: six fit under a photo, and with more, the last place is ⋯, which lists the rest. Instagram, Outlook, Yahoo Mail, Facebook, Airbnb, Visual Studio Code and Antigravity open like GMX: the covered photo is copied for you to paste. |
-| Right-click ChatGPT or Claude under a photo | Ask a question with it: the photo goes into the chat with the question after it, like "Summarize this in a few lines". Ask AI in a photo's menu does the same, for each AI chat. The questions are yours to write in Settings, under Line. |
+| Right-click ChatGPT or Claude under a photo | Ask a question with it: the photo goes into the chat with the question after it, like "Summarize this in a few lines". Ask AI in a photo's menu does the same, for each AI chat. The questions are yours to write in Settings, under Line. Your prompts are there too, by their numbers. |
+| Click a number beside the send button over an AI chat | The photos go in with that prompt after them, as one message waiting for Return. Point at a number to see its name. Only over ChatGPT, Claude and the other AI chats. |
 | Double click | Open it in Preview. |
 | Force click | Take a quick look. |
 | Right-click, then Keep on Top | Float it over every app in a small window of its own, to read from while you write in a chat. Drag it anywhere, resize it at its edges, and close it with its cross. Up to three float at once. |
@@ -648,6 +649,18 @@ covered differently, it gets a new one. Delete Link takes it down at once.
 Files up to 95 MB. Nothing about you goes with it, and the file is deleted
 after seven days.
 
+Longer instructions you give an AI again and again, like how to write a
+reply, are prompts. Over ChatGPT, Claude or any other AI chat, the send
+button has their numbers in front of it, 1, 2 and so on: point at one to
+see its name, click it, and the photos go into the message box with that
+prompt after them, waiting for Return. Over other chats the numbers stay
+away, and a click on the button itself sends the photos alone, as ever.
+Two come with Snapfly: Natural writing, which asks for a text that reads
+as a skilled person would write it, accurate and in your own voice, and
+Reply to a customer. Write up to nine of your own in Settings, under Line
+› Prompts for AI chats, each with a title and as long as it needs; they
+are in a photo's menu under Ask AI too.
+
 Something to ask about it? Right-click ChatGPT or Claude on the photo, or
 choose Ask ChatGPT or Ask Claude in its menu, and the photo goes with a
 question after it, like "Summarize this in a few lines" or "What should I
@@ -973,6 +986,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/CoverBatch.swift`, `CoverFiles.swift` | Cover Files: which files a run takes and where each copy goes, and the window that covers them a few at a time |
 | `Updater.swift` | Check for Updates: the newest build fetched, its signature checked, then put in place after a question |
 | `LinkSharing.swift` | Copy Link and Delete Link: the copy that leaves the line uploaded, its link copied, and taken down again |
+| `Shared/AIPrompts.swift` | Prompts for AI chats: the standard two, the owner's own, numbered, nine at most |
 | `Shared/ShareLinks.swift` | Share links without a screen: what may go, the requests, reading the answers, and the links kept with their delete tokens |
 | `share/` | The share link service on Cloudflare: the Worker (`worker.js`) that takes uploads, shows each link's page and deletes files, its tests, and `wrangler.toml`; the Share Links workflow deploys it |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |

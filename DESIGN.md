@@ -789,8 +789,11 @@ apps.
     - **Send to** (`paperplane.circle`): the chats under photos as they stand
       there, each with its icon at 16 pt on every macOS; then **More Chats**
       (`ellipsis.bubble`) with the rest; then Send with Shop Header.
-    - **Ask AI** (`questionmark.bubble`), with questions set up: each AI chat
-      with its icon, opening its questions.
+    - **Ask AI** (`questionmark.bubble`), with questions or prompts set up:
+      each AI chat with its icon, opening its questions, then Prompts as a
+      disabled header and each prompt by name after its `1.circle`,
+      `2.circle` …; the right-click on ChatGPT or Claude under a photo has
+      the same.
     - **Text and AI** (`sparkles`, a photo): Translate Text (macOS 15), Describe
       (`text.below.photo`), Order Details; then Write a Reply and Explain with
       the assistant.
@@ -1405,6 +1408,20 @@ apps.
     `lock.fill` in `.secondary` leads the count, 3 pt before it, fading in
     over 0.2 s, in both looks. The tip adds "Everything is covered in AI
     chats" on a second line, and VoiceOver hears it as the button's value.
+  - **Prompt numbers.** Over an AI chat (ChatGPT, Claude, Perplexity and
+    the other AI chat sites and apps) the prompts from Settings lead the
+    capsule, in both looks: a 24 pt circle each on `.primary` at 7%, the
+    number in 12 pt semibold rounded with monospaced digits, 4 pt apart,
+    then a 1 × 18 pt hairline of `.primary` at 12% before the photos.
+    Under the pointer a number opens into a capsule with the prompt's name
+    (12 pt medium, one line, 160 pt at most, 9 pt padding) on `.primary` at
+    14%, through `Motion.spring(0.3, 0.85)`; the capsule grows toward the
+    leading side, its trailing corner staying put. A click on a number
+    pastes the photos and then that prompt as one message, waiting for
+    Return, and the glyph turns into the checkmark as for a send. Over
+    other chats there are none. The right-click menu adds Send with
+    “name”, after `1.circle`, `2.circle` …; VoiceOver has the same as
+    actions.
   - A 16 pt transparent margin keeps its shadow; only the capsule takes the
     pointer.
   - Over chats it knows (`ChatLayouts.swift`), it sits at the measured spot
@@ -1453,6 +1470,19 @@ apps.
     which puts the five back; a footer saying where they are offered. Saved
     like the messages. The standard five are localized, so a chat answers
     in the user's language.
+  - **Settings › Line › Prompts for AI chats**: a switch, Numbers beside
+    the send button (on), then one row per prompt: its number in
+    `.secondary` and its title, the first line of its text under them (Not
+    written yet while empty), Edit… and a borderless `minus.circle` at the
+    trailing edge. Add Prompt (up to nine) and, once changed, Standard
+    Prompts under them; a footer saying where they are offered. Edit…
+    opens a 560 pt sheet: Prompt 2 as its headline, a rounded Title field,
+    a text editor at least 300 pt high on the text background with 6 pt
+    corners and a hairline of `.primary` at 15%, a callout line in
+    `.secondary`, and Cancel (Escape) and Done (`.borderedProminent`) on the
+    trailing edge; Return makes a new line. Two prompts come with it,
+    Natural writing and Reply to a customer, localized, the first in ten
+    paragraphs.
   - Hover scales it to 1.04 through `Motion.spring`, and it fades in over
     0.15 s.
   - **Settings › Line › Send button over chats** chooses:

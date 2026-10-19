@@ -222,6 +222,7 @@ final class ChatButton {
         panel = ChatButtonPanel(model: model)
         Self.shared = self
         panel.content.onClick = { [weak self] in self?.send() }
+        panel.content.onPrompt = { [weak self] index in self?.send(prompt: index) }
         panel.content.onLongPress = { [weak self] in self?.askForCaption() }
         panel.content.onDragEnd = { [weak self] in self?.remember() }
         panel.content.menu = makeMenu()
@@ -307,6 +308,8 @@ final class ChatButton {
             return hide()
         }
         showsCoveringAll(aiChat && CoveringProfile.coversAllInAIChats)
+        showsPrompts(aiChat && AIPrompts.showsBesideButton()
+            ? AIPrompts.offered().enumerated().map { $1.name(number: $0 + 1) } : [])
         if fresh { fieldFrame = Self.messageBox(of: app.processIdentifier, in: window) }
         current = (key, window)
         place(over: window, app: key, layout: layout)
@@ -377,6 +380,16 @@ final class ChatButton {
         guard model.coversAll != all else { return }
         model.coversAll = all
         panel.content.coversAll = all
+    }
+
+    /// Over an AI chat, the prompts' numbers before the photos, each
+    /// sending them with its prompt after; elsewhere none.
+    private func showsPrompts(_ names: [String]) {
+        guard model.prompts != names else { return }
+        model.prompts = names
+        model.hoveredPrompt = nil
+        panel.content.promptNames = names
+        panel.content.menu = makeMenu()
     }
 
     // MARK: Where it sits
@@ -462,6 +475,11 @@ final class ChatButton {
     private func makeMenu() -> NSMenu {
         let menu = NSMenu()
         menu.addItem(ClosureMenuItem(L("Send with a Message…")) { [weak self] in self?.askForCaption() })
+        for (index, name) in model.prompts.enumerated() {
+            menu.addItem(ClosureMenuItem(String(format: L("Send with “%@”"), name), symbol: "\(index + 1).circle") {
+                [weak self] in self?.send(prompt: index)
+            })
+        }
         menu.addItem(.separator())
         menu.addItem(ClosureMenuItem(L("Put it back")) { [weak self] in
             guard let self, let app = self.current?.app else { return }
@@ -486,7 +504,19 @@ final class ChatButton {
         let count = toSend.count
         // Waiting on Check Before Sending, it hasn't gone yet.
         guard count > 0, line.paste() else { return }
-        // When sent photos stay on the line, a check says it went.
+        showSent()
+    }
+
+    /// One of the numbers over an AI chat: the photos, then that prompt
+    /// in the message box, as one message waiting for Return.
+    private func send(prompt index: Int) {
+        let prompts = AIPrompts.offered()
+        guard prompts.indices.contains(index), !toSend.isEmpty, line.paste(caption: prompts[index].text) else { return }
+        showSent()
+    }
+
+    /// When sent photos stay on the line, a check says it went.
+    private func showSent() {
         model.sent = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in
             self?.model.sent = false
@@ -502,10 +532,7 @@ final class ChatButton {
         CaptionBar.shared.show(above: panel.frame.insetBy(dx: margin, dy: margin), count: count,
                                photo: toSend.last(where: \.isImage)?.url) { [weak self] text in
             guard self?.line.paste(caption: text) == true else { return }
-            self?.model.sent = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in
-                self?.model.sent = false
-            }
+            self?.showSent()
         }
     }
 
@@ -571,6 +598,12 @@ final class ChatButtonModel: ObservableObject {
     @Published var look = ChatButton.look
     @Published var symbol = ChatButton.symbol
     @Published var tint = ChatButton.tint
+    /// Over an AI chat: the prompts' names, numbered from 1 before the photos.
+    @Published var prompts: [String] = []
+    /// The number under the pointer, which opens to show its name.
+    @Published var hoveredPrompt: Int?
+    /// Where each number sits in the label, top left first, for the clicks.
+    var promptFrames: [Int: CGRect] = [:]
 }
 
 /// Where the send button over a chat sits.
@@ -698,6 +731,8 @@ private final class ChatButtonPanel: NSPanel {
 /// panel never becomes key, so only a view of its own takes the first click.
 private final class ChatButtonView: NSView {
     var onClick: () -> Void = {}
+    /// One of the prompts' numbers, from 0.
+    var onPrompt: (Int) -> Void = { _ in }
     var onLongPress: () -> Void = {}
     var onDragEnd: () -> Void = {}
     var onResize: (CGSize) -> Void = { _ in }
@@ -716,11 +751,13 @@ private final class ChatButtonView: NSView {
     private var held = false
 
     private let host: NSHostingView<ChatButtonLabel>
+    private let model: ChatButtonModel
     private let margin: CGFloat
     private var downAt: CGPoint?
     private var startOrigin: CGPoint?
 
     init(model: ChatButtonModel, margin: CGFloat) {
+        self.model = model
         self.margin = margin
         host = NSHostingView(rootView: ChatButtonLabel(model: model))
         host.sizingOptions = [.intrinsicContentSize]
@@ -736,13 +773,32 @@ private final class ChatButtonView: NSView {
         setAccessibilityElement(true)
         setAccessibilityRole(.button)
         setAccessibilityLabel(L("Paste into the app in front"))
-        setAccessibilityCustomActions([
-            NSAccessibilityCustomAction(name: L("Send with a Message…")) { [weak self] in
+        promptNames = []
+        toolTip = L("Paste into the app in front")
+    }
+
+    /// The prompts over an AI chat, each an action for VoiceOver too.
+    var promptNames: [String] = [] {
+        didSet {
+            let message = NSAccessibilityCustomAction(name: L("Send with a Message…")) { [weak self] in
                 self?.onLongPress()
                 return true
-            },
-        ])
-        toolTip = L("Paste into the app in front")
+            }
+            let prompts = promptNames.enumerated().map { index, name in
+                NSAccessibilityCustomAction(name: String(format: L("Send with “%@”"), name)) { [weak self] in
+                    self?.onPrompt(index)
+                    return true
+                }
+            }
+            setAccessibilityCustomActions([message] + prompts)
+        }
+    }
+
+    /// The number under a click, if it was on one.
+    private func prompt(at event: NSEvent) -> Int? {
+        let point = host.convert(event.locationInWindow, from: nil)
+        let fromTop = CGPoint(x: point.x, y: host.isFlipped ? point.y : host.bounds.height - point.y)
+        return model.promptFrames.first { $0.value.contains(fromTop) }?.key
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -806,7 +862,7 @@ private final class ChatButtonView: NSView {
         } else if isDragging {
             onDragEnd()
         } else if downAt != nil {
-            onClick()
+            if let index = prompt(at: event) { onPrompt(index) } else { onClick() }
         }
     }
 
@@ -833,13 +889,46 @@ struct ChatButtonLabel: View {
         .scaleEffect(hovering && !reduceMotion ? 1.04 : 1)
         .onHover { hovering = $0 }
         .animation(Motion.spring(response: 0.3, damping: 0.8, reduced: reduceMotion), value: hovering)
+        .animation(Motion.spring(response: 0.3, damping: 0.85, reduced: reduceMotion), value: model.hoveredPrompt)
+        .animation(.easeOut(duration: 0.2), value: model.prompts)
+        .coordinateSpace(.named(Self.space))
+        .onPreferenceChange(PromptFrames.self) { frames in model.promptFrames = frames }
         .animation(.easeOut(duration: 0.15), value: model.sent)
         .animation(.easeOut(duration: 0.2), value: model.coversAll)
         .accessibilityHidden(true)
     }
 
+    private static let space = "chatButton"
+
+    /// Over an AI chat, the prompts' numbers, then a hairline before the photos.
+    @ViewBuilder private var prompts: some View {
+        if !model.prompts.isEmpty {
+            HStack(spacing: 4) {
+                ForEach(Array(model.prompts.enumerated()), id: \.offset) { index, name in
+                    PromptNumber(number: index + 1, name: name, open: model.hoveredPrompt == index)
+                        .background(GeometryReader { geometry in
+                            Color.clear.preference(key: PromptFrames.self,
+                                                   value: [index: geometry.frame(in: .named(Self.space))])
+                        })
+                        .onHover { inside in
+                            if inside {
+                                model.hoveredPrompt = index
+                            } else if model.hoveredPrompt == index {
+                                model.hoveredPrompt = nil
+                            }
+                        }
+                }
+            }
+            .transition(.opacity)
+            Rectangle()
+                .fill(Color.primary.opacity(0.12))
+                .frame(width: 1, height: 18)
+        }
+    }
+
     private var full: some View {
         HStack(spacing: 8) {
+            prompts
             ZStack {
                 if model.thumbs.isEmpty {
                     Image(systemName: "photo")
@@ -874,6 +963,7 @@ struct ChatButtonLabel: View {
 
     private var compact: some View {
         HStack(spacing: 6) {
+            prompts
             count
             glyph(size: 30)
         }
@@ -905,5 +995,42 @@ struct ChatButtonLabel: View {
             .frame(width: size, height: size)
             .background(model.tint.color, in: Circle())
             .contentTransition(.symbolEffect(.replace))
+    }
+}
+
+/// One prompt's number beside the send button: a small round chip that
+/// opens into a capsule with the prompt's name while the pointer is on it.
+private struct PromptNumber: View {
+    let number: Int
+    let name: String
+    let open: Bool
+
+    var body: some View {
+        HStack(spacing: 5) {
+            Text(verbatim: "\(number)")
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .monospacedDigit()
+            if open {
+                Text(name)
+                    .font(.system(size: 12, weight: .medium))
+                    .lineLimit(1)
+                    .frame(maxWidth: 160, alignment: .leading)
+                    .transition(.opacity)
+            }
+        }
+        .foregroundStyle(.primary)
+        .padding(.horizontal, open ? 9 : 0)
+        .frame(minWidth: 24, minHeight: 24)
+        .background(Color.primary.opacity(open ? 0.14 : 0.07), in: Capsule())
+        .contentShape(Capsule())
+    }
+}
+
+/// Where each prompt's number sits, for the clicks the panel takes itself.
+private struct PromptFrames: PreferenceKey {
+    static let defaultValue: [Int: CGRect] = [:]
+
+    static func reduce(value: inout [Int: CGRect], nextValue: () -> [Int: CGRect]) {
+        value.merge(nextValue()) { $1 }
     }
 }
