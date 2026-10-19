@@ -650,8 +650,9 @@ Files up to 95 MB. Nothing about you goes with it, and the file is deleted
 after seven days.
 
 Longer instructions you give an AI again and again, like how to write a
-reply, are prompts. Over ChatGPT, Claude or any other AI chat, the send
-button has their numbers in front of it, 1, 2 and so on: point at one to
+reply, are prompts. Over ChatGPT, Claude or any other AI chat, their
+numbers stand in a small glass bar just above the send button, 1, 2 and
+so on, leaving the button as it was: point at one to
 see its name, click it, and the photos go into the message box with that
 prompt after them, waiting for Return. Over other chats the numbers stay
 away, and a click on the button itself sends the photos alone, as ever.

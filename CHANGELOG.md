@@ -6,8 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
-- Prompts for AI chats: over ChatGPT, Claude and the other AI chats, the
-  send button has numbers in front of it. Point at one to see its name;
+- Prompts for AI chats: over ChatGPT, Claude and the other AI chats, numbers
+  stand in a small glass bar just above the send button, which keeps its
+  size and place. Point at one to see its name;
   click it and the photos go in with that prompt after them. Two come with
   it, Natural writing and Reply to a customer; write up to nine of your own
   in Settings › Line. They are under Ask AI in a photo's menu too.
