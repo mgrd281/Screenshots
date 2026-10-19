@@ -1345,3 +1345,8 @@
 "What may be prepared" = "準備してよいもの";
 "Width" = "太さ";
 "Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check." = "「名前」がオフのときは、選んだ人だけを隠します。「Patient:」や「Dr. med.」など、各名前の周りの言葉で判断します。役割がはっきりしない名前も隠し、確認できるよう印を付けます。";
+"Cover and Save" = "隠して保存";
+"Cover and Share" = "隠して共有";
+"Find private details and protect them, simply." = "個人情報をかんたんに見つけて守ります。";
+"See All" = "すべて表示";
+"Your pictures. Your privacy." = "あなたの画像。あなたのプライバシー。";

@@ -6,6 +6,12 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The iPhone opens on a new home screen: Snapfly's picture of stacked photos
+  with a green photo badge, a compact green Protect a Photo button, and the
+  newest screenshots in cards that show when each was taken and whether it
+  was protected, all of them behind See All. Holding one covers it and
+  copies, shares or saves it. The picture turns small once there are
+  screenshots, so they come first. The iPhone's colour is now green.
 - A patient's name is covered wherever a report names it: under "Herrn" in
   the address, in the subject, after "Ihren Patienten" in a sentence,
   before a date of birth, under a table's header, with an initial or a

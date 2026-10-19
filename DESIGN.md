@@ -46,6 +46,12 @@ colors:
   window-red: "#FF5F57"        # traffic lights on drawn windows
   window-yellow: "#FEBC2E"
   window-green: "#28C840"
+  # The iPhone app only (iOS/Snapfly/HomeParts.swift, AccentColor in its assets).
+  phone-accent: "#07875C"      # the iPhone's accent, links and tools; #1FA774 in dark
+  phone-protect: "#07875C"     # the green button in light and dark: white on it 4.5:1
+  phone-protect-pressed: "#056B49"  # pressed, and the badge's lower end
+  phone-protect-light: "#12A572"    # the badge's upper end
+  phone-surface: "#EAF7F0"     # the soft green behind the stacked photos; #102A20 in dark
 typography:
   field:
     fontFamily: "SF Pro, system-ui"
@@ -1825,23 +1831,75 @@ else is shared.
 ## iPhone
 
 The iPhone app (`iOS/`) is a plain SwiftUI app that follows iOS, as the Mac
-app follows macOS: system fonts, colours, materials and controls, the
-system's accent, Dynamic Type and Dark Mode as they come. It adds no tokens
-of its own.
+app follows macOS: system fonts, colours, materials and controls, Dynamic
+Type and Dark Mode as they come. At the owner's request it has a green of
+its own (October 2026): its accent is `phone-accent` (the asset catalogue's
+AccentColor, `#07875C`, `#1FA774` in dark), and its one primary action is the
+green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
 
-- Screenshots sit in a grid in the shape of a phone's screen, 10 pt corners.
-- **Home.** Under the large title, a row: Protect a Photo, a bordered
-  button with `photo.badge.plus` that opens the system's photo picker, and
-  on the trailing edge, while syncing is on, a chip with how it stands:
-  footnote in `.secondary` (orange with `exclamationmark.triangle.fill`
-  when it needs the owner, else `checkmark.icloud`), on a capsule of
-  `.primary` at 6%, padded 10 by 6, opening Settings. Then From your Mac,
-  then "Protected lately", a headline over a row that scrolls sideways of
-  the screenshots protected lately, 104 pt wide at 3:4 with 10 pt corners
-  and 6 pt gaps, as From your Mac's, then "Screenshots" over the grid.
-  Holding a screenshot offers Cover and Copy (`doc.on.doc`): it is covered,
-  checked and copied without opening, with a note in a floating pill over
-  the bottom, 24 pt up, gone after 2.5 s.
+- Screenshots sit in cards at 3:4, corners 14, as the home screen shows them.
+- **Home.** No navigation bar: a header in the page, 16 pt in, "Snapfly"
+  in title 2 bold, then on the trailing edge, while syncing is on, a chip
+  with how it stands (footnote in `.secondary`, orange with
+  `exclamationmark.triangle.fill` when it needs the owner, else
+  `checkmark.icloud`, on a capsule of `.primary` at 6%, padded 10 by 6,
+  opening Settings) and Settings, `gearshape` on a 40 pt circle of the card
+  colour with a hairline (`.primary` at 8%) and a soft shadow (black 6%,
+  radius 6, y 2), in a 44 pt target. The bar material sits under the status
+  bar only. Sections are 24 pt apart.
+  - **The stacked photos** (`PhotoHero`), drawn with shapes, never a
+    picture: on a soft ellipse of `phone-surface` (300 by 190, blurred 18),
+    three cards. Behind, a page (124 by 165, corners 16, the card colour
+    with a hairline and a shadow of black 8%, radius 10, y 4) turned -11°
+    and 80 pt to the leading side, its lines capsules of `.primary` at 10%,
+    one covered in `.primary` at 85%; and a chat turned 10° and 80 pt to the
+    trailing side, its bubbles grey or `phone-protect` at 22%, a name in one
+    covered. In front, a landscape (136 by 182, corners 14) on a 5 pt card
+    border with corners 19 and a shadow of black 14%, radius 18, y 10: sky,
+    sun, two hills and water, dimmed at night. Over its lower edge the
+    badge: `photo.on.rectangle.angled` 25 pt semibold in white on a 64 pt
+    circle from `phone-protect-light` to `phone-protect-pressed`, ringed 4
+    pt in the background colour, with a green shadow (30%, radius 10, y 5).
+    The whole is 320 by 250 and hidden from VoiceOver. It settles once a
+    launch: the cards come in from the middle and turn to their places on a
+    spring (0.6, 0.82, 0.05 to 0.1 s apart), the badge grows in after
+    0.25 s (spring 0.5, 0.7); with Reduce Motion it is simply there.
+  - **Full or small.** With no screenshots yet, the picture is whole, over
+    "Your pictures. Your privacy." in title 2 bold and "Find private details
+    and protect them, simply." in `.secondary`, centred, then the button,
+    then No screenshots yet. Once there are screenshots, the picture is
+    0.46 as large, beside the same words (headline and subheadline) and the
+    button, leading, so the screenshots come first; at accessibility text
+    sizes, the small picture sits above them.
+  - **Protect a Photo**, the green pill (`ProtectButtonStyle`):
+    `shield.lefthalf.filled` and the words in body medium, white on
+    `phone-protect`, padded 20 by 11, at least 44 pt tall; pressed, it is
+    `phone-protect-pressed` and 97% as large (not smaller with Reduce
+    Motion), with a light impact. It opens the system's photo picker.
+    Allow Access on the first launch, and Settings when access was refused,
+    are the same pill.
+  - Then From your Mac, then "Protected lately" in title 3 semibold over a
+    row that scrolls sideways to the screen's edges of screenshot cards 96
+    pt wide, 10 pt apart.
+  - **Screenshots**, title 3 semibold, with See All and a chevron in the
+    accent on the trailing edge when there are more than twelve, over the
+    newest twelve in a grid (`ScreenshotGrid`): cards at least 104 pt and at
+    most 200 pt wide, 10 pt apart, three to a row on most iPhones. A card
+    (`ScreenshotCard`) shows the top of the screenshot at 3:4 with corners of
+    14, a hairline of `.primary` at 8% and a shadow of black 6%, radius 6, y
+    2; when it was taken ("Today, 20:03", as the language says it) in caption
+    2 medium on an ultra-thin capsule 6 pt in at the bottom; and, once
+    protected here lately, `checkmark.shield.fill` in white on a 22 pt
+    `phone-protect` circle at the top. Thumbnails are small, made by Photos'
+    caching manager and kept in memory while the app runs. See All shows
+    every screenshot in the same grid. Holding a card offers Cover and Copy
+    (`doc.on.doc`), Cover and Share (`square.and.arrow.up`) and Cover and
+    Save (`square.and.arrow.down`): covered and checked without opening,
+    with a note in a floating pill over the bottom, 24 pt up, gone after
+    2.5 s; sharing opens the share sheet with the covered PNG.
+  - **First launch**, before access: the whole picture over "Allow Snapfly
+    to see your screenshots" in title 2 bold and what Snapfly does, in
+    `.secondary`, centred, 32 pt in, then Allow Access.
 - **Protect Picture.** A tap on a screenshot opens it at once: a small
   picture first while the whole one loads, fitted with 16 pt margins across
   and 8 pt above and below, 12 pt corners, to zoom up to 6× with two
