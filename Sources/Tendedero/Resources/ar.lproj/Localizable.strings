@@ -1352,3 +1352,15 @@
 "Find private details and protect them, simply." = "اكتشف المعلومات الخاصة واحمِها بسهولة.";
 "See All" = "عرض الكل";
 "Your pictures. Your privacy." = "صورك. خصوصيتك.";
+"Save to Photos" = "احفظ في الصور";
+"Save to Files" = "احفظ في الملفات";
+"Saved to Files" = "حُفظت في الملفات";
+"Full Screen" = "ملء الشاشة";
+"Exit Full Screen" = "الخروج من ملء الشاشة";
+"Leave Visible" = "اتركه ظاهرًا";
+"Keep Covered" = "أبقِه مغطّى";
+"Show on Picture" = "أظهره في الصورة";
+"%d of %d checked" = "تم التحقق من %1$d من %2$d";
+"Everything is checked." = "تم التحقق من كل شيء.";
+"Previous" = "السابق";
+"Goes as soon as the copy is ready." = "يُنفَّذ حين تجهز النسخة.";

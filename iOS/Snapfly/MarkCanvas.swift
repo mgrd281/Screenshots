@@ -43,11 +43,22 @@ struct CanvasActions {
     var move: (Int, CGPoint) -> Void = { _, _ in }
     var resize: (Int, CGRect) -> Void = { _, _ in }
     var turn: (Int, CGFloat) -> Void = { _, _ in }
+    /// A tap beside the picture, not on it.
+    var outside: () -> Void = {}
+}
+
+/// A place to show close up, each time its count changes.
+struct Reveal: Equatable {
+    /// From 0 to 1 from the bottom left of the original picture.
+    let rect: CGRect
+    let count: Int
 }
 
 /// The picture being protected, to zoom with two fingers or a double tap,
 /// with its places marked: ink over a covered place, a dashed outline round
-/// one to check or left, and handles round the one selected.
+/// one to check or left, and handles round the one selected. It fills the
+/// screen; the picture is fitted into the room the floating controls leave,
+/// and once zoomed it scrolls out from under them on every side.
 struct MarkCanvas: UIViewRepresentable {
     let image: UIImage
     let marks: [ProtectionPlan.Mark]
@@ -60,6 +71,11 @@ struct MarkCanvas: UIViewRepresentable {
     let selected: Int?
     let markerWidth: CGFloat
     let eraserReach: CGFloat
+    /// What the floating controls cover on each side, safe areas included.
+    var chrome = UIEdgeInsets.zero
+    /// Whether a change of the room is shown growing or shrinking.
+    var animated = true
+    var reveal: Reveal?
     let actions: CanvasActions
 
     func makeUIView(context: Context) -> CanvasView {
@@ -70,6 +86,18 @@ struct MarkCanvas: UIViewRepresentable {
         view.actions = actions
         view.show(image, marks: marks, checking: checking, isCopy: isCopy, tool: tool, selected: selected,
                   markerWidth: markerWidth, eraserReach: eraserReach)
+        view.place(chrome: chrome, animated: animated)
+        if let reveal, reveal != context.coordinator.revealed {
+            context.coordinator.revealed = reveal
+            view.reveal(reveal.rect)
+        }
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    final class Coordinator {
+        /// The place last shown close up, so it is shown once.
+        var revealed: Reveal?
     }
 }
 
@@ -79,9 +107,11 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     private let picture = UIImageView()
     private let overlay = MarksView()
     private var imageSize = CGSize.zero
-    /// The size the picture was last fitted to, so it is fitted again only
+    /// The room the picture was last fitted to, so it is fitted again only
     /// when the room changes.
     private var fitted = CGSize.zero
+    /// What the floating controls cover on each side.
+    private var chrome = UIEdgeInsets.zero
     private var tool = EditTool.select
     private var markerWidth: CGFloat = HandShape.widths[1]
     private var eraserReach: CGFloat = 0.03
@@ -101,6 +131,7 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     private lazy var doubleTap = UITapGestureRecognizer(target: self, action: #selector(doubleTapped(_:)))
     private lazy var hold = UILongPressGestureRecognizer(target: self, action: #selector(held(_:)))
     private lazy var edit = UIPanGestureRecognizer(target: self, action: #selector(dragged(_:)))
+    private lazy var besideTap = UITapGestureRecognizer(target: self, action: #selector(tappedBeside(_:)))
 
     init() {
         super.init(frame: .zero)
@@ -129,6 +160,9 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         edit.maximumNumberOfTouches = 1
         edit.delegate = self
         for gesture in [tap, doubleTap, hold, edit] as [UIGestureRecognizer] { content.addGestureRecognizer(gesture) }
+        // Beside the picture only: a tap on it is the picture's.
+        besideTap.require(toFail: tap)
+        addGestureRecognizer(besideTap)
         isAccessibilityElement = true
         accessibilityLabel = L("Covered screenshot")
         accessibilityHint = L("Details lists every place, to cover or uncover each one.")
@@ -163,20 +197,44 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         hold.isEnabled = tool == .select
     }
 
+    /// The room the floating controls leave. A new room fits the picture
+    /// to it, growing or shrinking, unless it is zoomed in, when it only
+    /// scrolls to the new edges and is fitted once it is all in sight again.
+    func place(chrome: UIEdgeInsets, animated: Bool) {
+        guard chrome != self.chrome else { return }
+        self.chrome = chrome
+        guard animated, fitted != .zero, window != nil else { return setNeedsLayout() }
+        UIView.animate(withDuration: 0.32, delay: 0, options: [.curveEaseInOut, .beginFromCurrentState]) {
+            self.setNeedsLayout()
+            self.layoutIfNeeded()
+        }
+    }
+
     override func layoutSubviews() {
         super.layoutSubviews()
         guard imageSize.width > 0, imageSize.height > 0, bounds.width > 0, bounds.height > 0 else { return }
-        if bounds.size != fitted {
-            fitted = bounds.size
-            zoomScale = 1
-            let scale = min(bounds.width / imageSize.width, bounds.height / imageSize.height)
-            let size = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
-            content.bounds = CGRect(origin: .zero, size: size)
-            picture.frame = content.bounds
-            overlay.frame = content.bounds
-            contentSize = size
+        let room = bounds.inset(by: chrome).size
+        if room != fitted, fitted == .zero || zoomScale <= minimumZoomScale + 0.01 {
+            fit(in: room)
+        } else {
+            center()
         }
+    }
+
+    /// The whole picture, as large as the room allows, in its middle.
+    private func fit(in room: CGSize) {
+        guard room.width > 0, room.height > 0 else { return }
+        fitted = room
+        zoomScale = 1
+        let scale = min(room.width / imageSize.width, room.height / imageSize.height)
+        let size = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
+        content.bounds = CGRect(origin: .zero, size: size)
+        content.center = CGPoint(x: size.width / 2, y: size.height / 2)
+        picture.frame = content.bounds
+        overlay.frame = content.bounds
+        contentSize = size
         center()
+        contentOffset = CGPoint(x: -contentInset.left, y: -contentInset.top)
     }
 
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
@@ -190,10 +248,33 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         overlay.setNeedsDisplay()
     }
 
-    /// The picture in the middle while it is smaller than the room.
+    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+        // Back to all of it after the room changed: fitted to the room now.
+        if scale <= minimumZoomScale + 0.01, bounds.inset(by: chrome).size != fitted { setNeedsLayout() }
+    }
+
+    /// The picture in the middle of the room while it is smaller than it;
+    /// larger, it scrolls out from under the floating controls.
     private func center() {
-        content.center = CGPoint(x: max(contentSize.width, bounds.width) / 2,
-                                 y: max(contentSize.height, bounds.height) / 2)
+        let room = bounds.inset(by: chrome)
+        let x = max(0, (room.width - contentSize.width) / 2), y = max(0, (room.height - contentSize.height) / 2)
+        let insets = UIEdgeInsets(top: chrome.top + y, left: chrome.left + x, bottom: chrome.bottom + y,
+                                  right: chrome.right + x)
+        if contentInset != insets { contentInset = insets }
+    }
+
+    /// A place close up, with room round it, in the middle of the screen.
+    func reveal(_ rect: CGRect) {
+        let size = content.bounds.size
+        guard size.width > 0, size.height > 0 else { return }
+        let place = CGRect(x: rect.minX * size.width, y: (1 - rect.maxY) * size.height,
+                           width: rect.width * size.width, height: rect.height * size.height)
+        let room = bounds.inset(by: chrome)
+        let scale = min(3, maximumZoomScale, room.width / max(place.width * 1.4, 1), room.height / max(place.height * 4, 1))
+        let shown = max(scale, minimumZoomScale)
+        let seen = CGSize(width: bounds.width / shown, height: bounds.height / shown)
+        zoom(to: CGRect(x: place.midX - seen.width / 2, y: place.midY - seen.height / 2, width: seen.width,
+                        height: seen.height), animated: true)
     }
 
     // MARK: Places
@@ -228,6 +309,11 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         case .marker: actions.draw(.stroke([point], width: markerWidth))
         case .box, .lasso: break
         }
+    }
+
+    @objc private func tappedBeside(_ gesture: UITapGestureRecognizer) {
+        guard !content.frame.contains(gesture.location(in: self)) else { return }
+        actions.outside()
     }
 
     @objc private func doubleTapped(_ gesture: UITapGestureRecognizer) {

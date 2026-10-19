@@ -6,6 +6,14 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, Protect Picture puts the picture first: it fills the screen,
+  as large as it fits, with the tools, and Copy, Share and Save, as small
+  floating icons over it, and how it stands in one small capsule. Details
+  goes through the places Snapfly was not sure about one by one, with each
+  place shown, Keep Covered, Cover or Leave Visible, and how many are
+  checked. Save also saves to Files. Copy, Share or Save tapped while the
+  copy is still made goes once it is ready. Full Screen, or a tap beside
+  the picture, leaves only the picture; a tap brings the rest back.
 - Draw on Photo draws circles: drag round a line, a price or a button and a
   red ring goes round it, as a pen draws one. The O key picks it, and the
   last tool you drew with is ready the next time.

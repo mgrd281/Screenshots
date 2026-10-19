@@ -46,6 +46,37 @@ final class ProtectionPlanTests: XCTestCase {
         XCTAssertFalse(plan.canRedo)
     }
 
+    func testAgreeingWithAPlaceDecidesItWithoutChangingIt() throws {
+        var plan = ProtectionPlan()
+        plan.add(found: [area(0.1, 0.8, check: true), area(0.1, 0.6)], possible: [area(0.1, 0.4)])
+        XCTAssertEqual(plan.toCheck, 2)
+        XCTAssertEqual(plan.doubtful.count, 2)
+        XCTAssertEqual(plan.checked, 0)
+        // Checked from the top of the picture down.
+        XCTAssertEqual(plan.doubtful.map(\.rect.minY), [0.8, 0.4])
+        let unsure = try XCTUnwrap(plan.doubtful.first)
+        let covered = plan.covered
+        plan.decide([unsure.id])
+        XCTAssertEqual(plan.covered, covered, "agreeing changes nothing on the picture")
+        XCTAssertEqual(plan.toCheck, 1)
+        XCTAssertEqual(plan.checked, 1)
+        XCTAssertEqual(plan.tally.covered, 2, "a place agreed with counts as covered")
+        // An offered place agreed with stays uncovered, decided.
+        let offered = try XCTUnwrap(plan.marks.first { $0.origin == .possible })
+        plan.decide([offered.id])
+        XCTAssertEqual(plan.toCheck, 0)
+        XCTAssertEqual(plan.tally.left, 1)
+        XCTAssertEqual(plan.tally.exposed, 0)
+        // Deciding again is no change; each decision is undone on its own.
+        plan.decide([offered.id])
+        plan.undo()
+        XCTAssertEqual(plan.toCheck, 1)
+        XCTAssertEqual(plan.tally.exposed, 1, "an offered place undecided again is not protected")
+        plan.undo()
+        XCTAssertEqual(plan.toCheck, 2)
+        XCTAssertFalse(plan.canUndo)
+    }
+
     func testCoveringByHand() {
         var plan = ProtectionPlan()
         plan.cover(CGRect(x: 0.6, y: 0.4, width: -0.2, height: 0.1))

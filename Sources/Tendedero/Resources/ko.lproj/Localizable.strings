@@ -1352,3 +1352,15 @@
 "Find private details and protect them, simply." = "개인 정보를 쉽게 찾아 보호하세요.";
 "See All" = "모두 보기";
 "Your pictures. Your privacy." = "당신의 사진. 당신의 프라이버시.";
+"Save to Photos" = "사진에 저장";
+"Save to Files" = "파일에 저장";
+"Saved to Files" = "파일에 저장됨";
+"Full Screen" = "전체 화면";
+"Exit Full Screen" = "전체 화면 끝내기";
+"Leave Visible" = "보이게 두기";
+"Keep Covered" = "계속 가리기";
+"Show on Picture" = "사진에서 보기";
+"%d of %d checked" = "%2$d개 중 %1$d개 확인함";
+"Everything is checked." = "모두 확인했어요.";
+"Previous" = "이전";
+"Goes as soon as the copy is ready." = "사본이 준비되면 바로 실행돼요.";

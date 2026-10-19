@@ -158,6 +158,12 @@ components:
   draw-tool:
     rounded: "{rounded.keycap}"
     size: "30pt × 28pt"            # a tool in Draw on Photo's row of eight; chosen: the accent at 16% behind the accent glyph
+  phone-dock-icon:
+    size: "44pt"                   # a tool or a way out on the iPhone editor's floating capsules; glyph 18pt semibold; chosen: white on a 38pt phone-protect circle
+  phone-glass:
+    shadow: "black 12%, radius 10, y 4"   # floating controls before iOS 26: regular material, a 0.5pt hairline of .primary at 8%; Liquid Glass from iOS 26
+  phone-status-capsule:
+    height: "36pt"                 # at least; footnote, 14pt in, 6pt under the navigation bar
   draw-swatch:
     size: "18pt"                   # an ink, with a 1pt hairline of .primary at 18%; chosen: a 2pt accent ring 3pt out
   draw-handle:
@@ -1908,38 +1914,87 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - **First launch**, before access: the whole picture over "Allow Snapfly
     to see your screenshots" in title 2 bold and what Snapfly does, in
     `.secondary`, centred, 32 pt in, then Allow Access.
-- **Protect Picture.** A tap on a screenshot opens it at once: a small
-  picture first while the whole one loads, fitted with 16 pt margins across
-  and 8 pt above and below, 12 pt corners, to zoom up to 6× with two
-  fingers, or 2.5× at a point with a double tap and back (`MarkCanvas`, a
-  `UIScrollView`). The title is "Protect Picture", inline, with only a
-  menu (`ellipsis.circle`) on the trailing edge: Details, Clear Hidden by
-  Hand and Reset to Suggestions, each one change to undo. Its places show
-  over it: the cover ink (grey 12%, corners of a quarter of the height, 8
-  at most) over a covered place until the copy is made, then the copy
-  itself; a dashed outline, 2 pt in dashes of 5 and 3 at any zoom, in the
-  accent round a place to check, and in `.secondaryLabel` round a place
-  left uncovered. A shape drawn by hand is solid ink as drawn (the
-  marker's stroke with round ends, a box, an outline filled inside), at
-  75% while it is drawn, the lasso's edge dashed in the accent; the
-  eraser's path shows as `systemBackground` at 55%, as wide as it reaches.
-  Bottom-trailing over the picture, 16 pt in, the eye (`ToolButton`, 44 pt,
-  regular material with the floating shadow, black 18%, radius 6, y 3, the
-  accent with a white glyph while on), held down to show the screenshot as
-  it was.
-  - **The tools** sit in a row on the bar material above the summary,
-    4 pt down and 8 pt in: Select (`hand.point.up.left`), Marker
-    (`pencil.tip`), Box (`rectangle`), Lasso (`lasso`) and Eraser
-    (`eraser`), each a 40 pt circle, the accent with a white glyph for the
-    tool in hand, in a 44 pt high target sharing the row; a 28 pt divider;
-    Undo and Redo, `.secondary` at 50% while there is nothing to undo or
-    redo. Choosing the tool in hand again opens its options in a sheet 300
-    pt high (or medium): the marker's width, Thin, Medium or Thick (2%,
-    3.5% or 6% of the picture's width), or the eraser's size, Small, Medium
-    or Large (1.5%, 3% or 6%), as a segmented picker, then Clear Hidden by
-    Hand and Reset to Suggestions over "Each can be undone." A selection
-    haptic marks each change of tool; a light impact marks a shape drawn,
-    a word hidden or a cover erased; a medium one a place held down.
+- **Protect Picture** is an immersive editor: the picture is the screen,
+  and everything else floats over it (`ProtectView`, `EditorParts.swift`).
+  - **The canvas** (`MarkCanvas`, a `UIScrollView`) fills the screen under
+    the bars, on `secondarySystemBackground`, black in Full Screen. The
+    picture is fitted whole into the room the floating controls leave (8 pt
+    from them and from the safe areas), never cropped or stretched, with
+    12 pt corners; zoomed (up to 6× with two fingers, or 2.5× at a point
+    with a double tap and back), it scrolls out from under the controls on
+    every side, so nothing on it is ever out of reach. When the room
+    changes, as Full Screen comes or goes, the picture grows or shrinks to
+    it in 0.32 s (at once with Reduce Motion); while zoomed in it keeps its
+    zoom and is fitted again once it is all in sight. A small picture shows
+    first while the whole one loads.
+  - **The navigation bar** is the system's, inline: Back, "Protect
+    Picture", and a menu (`ellipsis.circle`): Details, Full Screen, then
+    Clear Hidden by Hand and Reset to Suggestions, each one change to undo.
+  - **Floating glass** (`editorGlass`): Liquid Glass from iOS 26, else
+    regular material with a hairline of `.primary` at 8% and a shadow of
+    black 12%, radius 10, y 4. Every floating control uses it.
+  - **The status capsule** (`PrivacyStatus`), centred 6 pt under the bar,
+    footnote, at least 36 pt high, 14 pt in: while the picture is protected,
+    a small spinner and the step (Opening…, Finding private details…,
+    Checking the copy…, Apple Intelligence is reading… with Don't Wait in
+    semibold); after a failure, `exclamationmark.triangle.fill` in orange,
+    what went wrong and Try Again; then `checkmark.shield.fill` in
+    `phone-protect` and how many places are covered, and while any are to
+    check, a dot, `circle.dashed` in the accent (`exclamationmark.triangle.fill`
+    in orange while one is uncovered) and how many are To check, then a
+    small `chevron.down`. Counts change as numbers roll. A place only
+    offered is never counted as covered. A tap opens Details; VoiceOver
+    reads the whole state. Under it, for 2.5 s after a drawing tool is
+    chosen, how to use it in a capsule of the same glass.
+  - **The tools** (`EditingDock`), a capsule of glass over the bottom:
+    Select (`hand.point.up.left`), Marker (`pencil.tip`), Box
+    (`rectangle`), Lasso (`lasso`) and Eraser (`eraser`), a 1 pt divider
+    24 pt high, Undo and Redo (`.tertiary` while there is nothing to undo
+    or redo). Each is a 44 pt target with its glyph 18 pt semibold
+    (`DockIcon`); the tool in hand is white on a 38 pt `phone-protect`
+    circle. Held, the marker offers its widths (Thin, Medium, Thick: 2%,
+    3.5% or 6% of the picture's width) and the eraser its sizes (Small,
+    Medium, Large: 1.5%, 3% or 6%), the others their name; the tool in hand
+    chosen again opens its options in a sheet 300 pt high (or medium), with
+    Clear Hidden by Hand and Reset to Suggestions over "Each can be
+    undone." A selection haptic marks each change of tool; a light impact
+    marks a shape drawn, a word hidden or a cover erased; a medium one a
+    place held down.
+  - **The ways out** (`ExportDock`), 8 pt under the tools, a capsule of the
+    same icons: Copy (`doc.on.doc`), Share (`square.and.arrow.up`), Save
+    (`arrow.down.to.line`) and, only while a Mac is there to send to, Send
+    to Mac (`laptopcomputer.and.arrow.down`); held, each says what it does,
+    and Save offers Save to Photos and Save to Files (the system's file
+    exporter). A tap saves to Photos. A way tapped before the copy is ready
+    waits with a small spinner in its place and goes once it is; tapped
+    again it no longer waits. Beside the capsule, two round 44 pt buttons
+    of glass (`ToolButton`): the eye on the leading side, held down to show
+    the screenshot as it was (white on `phone-protect` while held), and
+    Full Screen (`arrow.up.left.and.arrow.down.right`) on the trailing.
+  - **Notes** float 10 pt over the tools in a capsule of glass, footnote
+    semibold: `checkmark.circle.fill` in `phone-protect` and what was done
+    (Copied, Saved to Photos, Saved to Files, On its way to your Mac), gone
+    after 2 s with a success haptic; or `exclamationmark.triangle.fill` in
+    orange, what went wrong and Try Again, gone after 5 s with an error
+    haptic. The picture and every change stay as they were.
+  - **Full Screen** leaves only the picture on black, without the bars,
+    the status bar or the home indicator, with Select in hand: still to
+    zoom and move. One round button of glass
+    (`arrow.down.right.and.arrow.up.left`) stays in the bottom trailing
+    corner, and a tap anywhere on or beside the picture brings everything
+    back. With Select in hand, a tap on nothing (no place, no word) and
+    nothing selected, or beside the picture, goes to Full Screen.
+  - Controls come and go on a spring (0.35, 0.86), the tools rising from
+    the bottom; with Reduce Motion, a 0.15 s ease-out fade.
+  - **Its places** show over the picture: the cover ink (grey 12%, corners
+    of a quarter of the height, 8 at most) over a covered place until the
+    copy is made, then the copy itself; a dashed outline, 2 pt in dashes of
+    5 and 3 at any zoom, in the accent round a place to check, and in
+    `.secondaryLabel` round a place left uncovered. A shape drawn by hand
+    is solid ink as drawn (the marker's stroke with round ends, a box, an
+    outline filled inside), at 75% while it is drawn, the lasso's edge
+    dashed in the accent; the eraser's path shows as `systemBackground` at
+    55%, as wide as it reaches.
   - **Select.** A tap on a place selects it, again lets go; a tap on a word
     no place covers hides it by hand and selects it; elsewhere lets go.
     The place selected shows a dashed accent outline (turned with a box)
@@ -1949,53 +2004,45 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     and a finger takes one within 22 pt. Dragging the place moves it, a
     corner resizes it from the one across (a turned box grows about its
     middle), the turn handle turns it; one finger elsewhere moves the
-    picture. Over the tools floats a pill (`floatingPill`): Cover or
-    Uncover, the width (`lineweight`) for a stroke, Delete (`trash`) for
-    what is by hand, and Done in semibold. Holding a place down selects it
-    and asks, in a confirmation dialog titled with its kind: Cover or
-    Uncover, Delete for what is by hand, Cancel.
+    picture. Over the tools floats a capsule of glass, subheadline, at
+    least 40 pt high: Cover or Uncover, the width (`lineweight`) for a
+    stroke, Delete (`trash`) for what is by hand, and Done in semibold.
+    Holding a place down selects it and asks, in a confirmation dialog
+    titled with its kind: Cover or Uncover, Delete for what is by hand,
+    Cancel.
   - **Drawing.** With the marker, a box, the lasso or the eraser, one
     finger draws and two move and zoom the picture; a tap with the marker
     leaves a dot, with the eraser rubs out what is under it. A drawing too
     small to see is dropped; the start of a two-finger zoom is no stroke.
-    The status pill says how to use the tool in hand.
   - Places are kept from 0 to 1 from the bottom left of the original
-    picture, so zooming never moves them; widths and turns are measured on
-    the picture, so a stroke stays round and a turned box square.
-- **Status.** At the top, 8 pt down, a floating pill (`floatingPill`):
-  footnote on a capsule of regular material, padded 12 by 8, with the
-  floating shadow, 16 pt in from each side: a small spinner and the step
-  (Opening…, Finding private details…, Checking the copy…, Apple
-  Intelligence is reading… with Don't Wait in semibold), or after a
-  failure `exclamationmark.triangle.fill` in orange, what went wrong and
-  Try Again. Gone once the copy is ready; while adding, it says how to
-  draw. It comes and goes on a spring (0.35, 0.86), a 0.15 s ease-out with
-  Reduce Motion.
-- **The bar.** On the bar material, under the tools and a divider, 16 pt
-  in, 12 pt between its rows: how the picture stands, in subheadline
-  semibold, with Details on the trailing edge: Finding private details… in
-  `.secondary`; Nothing private found; "Not fully protected: %d places to
-  check are not covered" after `exclamationmark.triangle.fill` in orange
-  while a place to check is uncovered; "Covered. Check the marked places
-  before sharing."; or Everything found is covered with `checkmark.shield`.
-  Under it three chips (`KindChip`), 6 pt apart, side by side or one under
-  another where they do not fit: Protected, To check (in the accent on the
-  accent at 12% while any, opening Details) and Not protected, each place
-  counted once, a place only offered never as protected. Then Copy, Share
-  and Save, large bordered buttons with title and icon, side by side in
-  equal widths 8 pt apart while their words fit on one line, else one under
-  another full width, never cut short; Send to Mac under them with syncing
-  on. All of them wait dimmed until the copy is made, checked and every
-  cover known to have landed (`Finder.coversHold`), and while places are
-  still to check, each asks first in a confirmation dialog ("%d places
-  still to check"): Check Now opens Details, Continue Anyway goes on,
-  Cancel. Share opens the system's share sheet with a PNG file of the copy
-  alone, named by when the picture was taken, deleted once the sheet
-  closes.
-- **Details** is a sheet at medium or large height: To check first, with a
-  footer that Snapfly is not sure about these, then Covered and Not
-  covered, each place a toggle with its kind, or Hidden by hand or Your own
-  rules, over the words it hides in footnote `.secondary`, top to bottom.
+    picture, so zooming, the room changing or the screen turning never
+    moves them; widths and turns are measured on the picture, so a stroke
+    stays round and a turned box square.
+  - Copy, Share and Save go only once the copy is made, checked and every
+    cover known to have landed (`Finder.coversHold`), and while places are
+    still to check, each asks first in a confirmation dialog ("%d places
+    still to check"): Check Now opens Details, Continue Anyway goes on,
+    Cancel. Share opens the system's share sheet with a PNG file of the copy
+    alone, named by when the picture was taken, deleted once the sheet
+    closes; Save to Files offers the same PNG under the same name.
+- **Details** (`ReviewSheet`) is a sheet at medium or large height, the
+  picture still usable behind it at medium. First, while there are places
+  Snapfly was not sure about, "To check" with "%d of %d checked" and a
+  progress bar in `phone-protect`, over one place at a time, from the top
+  of the picture down, starting at the first still to check: its kind in
+  the headline with Covered (`phone-protect`) or Not covered (orange) on
+  the trailing edge, the place itself cut from the screenshot (84 pt high
+  at most, corners of 8, a hairline), the words it hides in footnote
+  `.secondary`, then Leave Visible (bordered) and Keep Covered, or Cover
+  (prominent, `phone-protect`), large and of equal width, each deciding
+  and going on to the next place still to check; then Previous
+  (`chevron.left`), Show on Picture, which closes the sheet and shows the
+  place selected and zoomed in, and Next (`chevron.right`). Keeping a
+  cover decides it without changing the picture (`ProtectionPlan.decide`),
+  one change to undo. Once all are decided, "Everything is checked." with
+  `checkmark.seal.fill`. Then Covered and Not covered, each place a toggle
+  in `phone-protect` with its kind, or Hidden by hand or Your own rules,
+  over the words it hides, top to bottom.
 - The icon is the Mac icon's picture, full bleed and opaque, since iOS rounds
   it (`scripts/make-icon.py --ios`).
 - The introduction (`PhoneGuide.swift`) shows on its real screens: the
