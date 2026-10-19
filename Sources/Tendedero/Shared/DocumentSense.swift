@@ -541,6 +541,25 @@ struct NameScope: Equatable, Sendable {
         return roles.contains(role.role) ? .cover : .leave
     }
 
+    /// The scope with one role chosen or no longer chosen. Choosing one
+    /// from everyone's means only that one's; leaving none means everyone's.
+    func toggling(_ role: PersonRole) -> NameScope {
+        var chosen = roles ?? []
+        if chosen.contains(role) { chosen.remove(role) } else { chosen.insert(role) }
+        return NameScope(roles: chosen.isEmpty ? nil : chosen)
+    }
+
+    /// "Everyone's", or the people chosen, as Settings shows it.
+    var summary: String {
+        guard let roles else { return L("Everyone's") }
+        return PersonRole.allCases.filter(roles.contains).map(\.title).joined(separator: ", ")
+    }
+
+    /// The scope in a word, for telling covered copies apart.
+    var key: String {
+        roles.map { PersonRole.allCases.filter($0.contains).map(\.rawValue).joined(separator: "+") } ?? "all"
+    }
+
     static func load(from defaults: UserDefaults = .standard) -> NameScope {
         guard let raw = defaults.stringArray(forKey: key) else { return .everyone }
         return NameScope(roles: Set(raw.compactMap(PersonRole.init(rawValue:))))

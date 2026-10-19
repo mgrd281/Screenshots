@@ -432,24 +432,36 @@ enum Finder {
         defer { Timing.report(since: started) }
         let rules = rules.filter { !$0.isBlank }
         let found = analysis(in: image, chosen, rules: rules, intelligence: intelligence, scope: scope)
-        var areas = found.areas
         let hidden = hand.map { Area(rect: $0, kind: nil) }
-        guard !areas.isEmpty || !hidden.isEmpty else { return Protected(image: image, areas: [], possible: found.possible) }
-        guard var covered = Timing.measure("cover", { cover(image, areas: areas + hidden, style: style) }) else { return nil }
+        guard !found.areas.isEmpty || !hidden.isEmpty else { return Protected(image: image, areas: [], possible: found.possible) }
+        guard let done = finish(image, covering: found.areas + hidden, chosen, rules: rules, style: style, scope: scope)
+        else { return nil }
+        let areas = found.areas + done.added
+        let possible = found.possible.filter { place in !areas.contains { $0.rect.intersects(place.rect) } }
+        return Protected(image: done.image, areas: areas, possible: possible)
+    }
+
+    /// The picture with these places covered, then read again as anyone
+    /// could read it: whatever private still shows is covered too, in two
+    /// more rounds at most, except where the owner chose to leave it
+    /// (`left`). The places the check added come back with the picture.
+    static func finish(_ image: CGImage, covering areas: [Area], leaving left: [CGRect] = [],
+                       _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all, style: CoverStyle = .current,
+                       scope: NameScope = .current) -> (image: CGImage, added: [Area])? {
+        let rules = rules.filter { !$0.isBlank }
+        guard var covered = Timing.measure("cover", { cover(image, areas: areas, style: style) }) else { return nil }
         // Only what is read can be read again.
-        guard !chosen.subtracting([.faces, .barcodes]).isEmpty || !rules.isEmpty else {
-            return Protected(image: covered, areas: areas, possible: found.possible)
-        }
+        guard !chosen.subtracting([.faces, .barcodes]).isEmpty || !rules.isEmpty else { return (covered, []) }
+        var added: [Area] = []
         for _ in 0..<2 {
             let more = Timing.measure("check") {
-                stillReadable(in: covered, hidden: areas + hidden, chosen, rules: rules, scope: scope)
-            }
-            guard !more.isEmpty, let again = cover(image, areas: areas + more + hidden, style: style) else { break }
-            areas += more
+                stillReadable(in: covered, hidden: areas + added, chosen, rules: rules, scope: scope)
+            }.filter { place in !left.contains { $0.contains(CGPoint(x: place.rect.midX, y: place.rect.midY)) } }
+            guard !more.isEmpty, let again = cover(image, areas: areas + added + more, style: style) else { break }
+            added += more
             covered = again
         }
-        let possible = found.possible.filter { place in !areas.contains { $0.rect.intersects(place.rect) } }
-        return Protected(image: covered, areas: areas, possible: possible)
+        return (covered, added)
     }
 
     /// What still shows in a covered copy, read as anyone could read it: a

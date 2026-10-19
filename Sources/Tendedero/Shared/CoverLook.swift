@@ -108,7 +108,7 @@ extension Finder {
 
     /// What decides how covers are found and drawn, for telling copies apart.
     static var lookKey: String {
-        "\(CoverStyle.current.rawValue),\(keepsLastDigits),\(strongest),\(usesIntelligence),\(asksAssistant)"
+        "\(CoverStyle.current.rawValue),\(keepsLastDigits),\(strongest),\(usesIntelligence),\(asksAssistant),\(NameScope.current.key)"
     }
 
     /// The picture with the given places covered in the chosen look. Each

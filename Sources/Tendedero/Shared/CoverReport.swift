@@ -13,12 +13,16 @@ struct CoverReport: Equatable {
     /// Where the copy is covered, from 0 to 1 from its bottom left, for the
     /// lock to show; empty for a PDF.
     private(set) var places: [CGRect] = []
+    /// Places covered though it is not clear they should be, for the owner
+    /// to check, like a name whose role is unclear.
+    private(set) var toCheck = 0
 
     init() {}
 
     init(_ areas: [Finder.Area], hand: Int = 0, places: [CGRect] = []) {
         for area in areas {
             if let kind = area.kind { kinds[kind, default: 0] += 1 } else { rules += 1 }
+            if area.check { toCheck += 1 }
         }
         self.hand = hand
         self.places = places
@@ -51,6 +55,7 @@ struct CoverReport: Equatable {
         kinds.merge(other.kinds, uniquingKeysWith: +)
         rules += other.rules
         hand += other.hand
+        toCheck += other.toCheck
     }
 
     /// What was covered, in the order Settings lists it, like "Names ·

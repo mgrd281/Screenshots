@@ -175,6 +175,15 @@ final class DocumentSenseTests: XCTestCase {
         XCTAssertEqual(NameScope.everyone.decide(.unknown), .cover)
     }
 
+    func testChoosingAndLeavingPeople() {
+        let patients = NameScope.everyone.toggling(.patient)
+        XCTAssertEqual(patients.roles, [.patient], "from everyone's, only the one chosen")
+        XCTAssertEqual(patients.toggling(.customer).roles, [.patient, .customer])
+        XCTAssertEqual(patients.toggling(.patient), .everyone, "none left means everyone's")
+        XCTAssertEqual(NameScope.everyone.key, "all")
+        XCTAssertEqual(NameScope(roles: [.customer, .patient]).key, "patient+customer")
+    }
+
     func testTheScopeIsKept() throws {
         let defaults = try XCTUnwrap(UserDefaults(suiteName: "DocumentSenseTests"))
         defaults.removePersistentDomain(forName: "DocumentSenseTests")
