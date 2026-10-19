@@ -507,7 +507,6 @@
 "%@ (covered)" = "%@ (örtülü)";
 "Saved beside the original as %@." = "Orijinalın yanında %@ adı ilə saxlanıldı.";
 "Could not save the copy." = "Nüsxə saxlanıla bilmədi.";
-"Choose one photo or PDF at a time." = "Hər dəfə bir şəkil və ya PDF seçin.";
 
 /* Privacy: more kinds of private detail, in groups, and the owner's own rules */
 "Usernames" = "İstifadəçi adları";
@@ -1017,3 +1016,54 @@
 "Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "Göndəriləndə, örtülən və çəkilənin ətrafına qoyulur. Şəklin özü olduğu kimi qalır.";
 "It goes out on its background; the file in %@ stays as it is. Click to undo." = "Fonu ilə göndərilir; %@ içindəki fayl olduğu kimi qalır. Geri qaytarmaq üçün klik et.";
 "It goes out without a background again. Click to undo." = "Yenidən fonsuz göndərilir. Geri qaytarmaq üçün klik et.";
+
+/* Cover Files */
+"Cover Files" = "Faylları ört";
+"Cover Files…" = "Faylları ört…";
+"Drop files or folders here" = "Faylları və ya qovluqları bura at";
+"PDFs and pictures, as many as you like. Each gets a covered copy in a new folder; the files themselves stay as they are." = "PDF-lər və şəkillər, istədiyin qədər. Hər birinin yeni qovluqda örtülü nüsxəsi olur; faylların özü olduğu kimi qalır.";
+"Choose Files…" = "Faylları seç…";
+"Choose PDFs and pictures, or whole folders of them." = "PDF-ləri və şəkilləri, ya da onların bütöv qovluqlarını seç.";
+"1 file" = "1 fayl";
+"%d files" = "%d fayl";
+"%1$d PDFs · %2$d pictures" = "%1$d PDF · %2$d şəkil";
+"Add…" = "Əlavə et…";
+"Clear" = "Təmizlə";
+"Kind" = "Növ";
+"PDF" = "PDF";
+"Picture" = "Şəkil";
+"Waiting" = "Gözləyir";
+"Covering…" = "Örtülür…";
+"1 place covered" = "1 yer örtüldü";
+"%d places covered" = "%d yer örtüldü";
+"Nothing to cover" = "Örtüləcək heç nə yoxdur";
+"Locked with a password" = "Parol ilə kilidlənib";
+"Over %d pages" = "%d səhifədən çox";
+"Could not be read" = "Oxunmadı";
+"Stopped" = "Dayandırıldı";
+"Not covered" = "Örtülmədi";
+"Show Original in Finder" = "Orijinalı Finder-də göstər";
+"Show Copy in Finder" = "Nüsxəni Finder-də göstər";
+"%d files are neither PDFs nor pictures and get no copy." = "%d fayl nə PDF, nə də şəkildir və nüsxəsi olmayacaq.";
+"%1$d of %2$d" = "%1$d / %2$d";
+"about %@ left" = "təxminən %@ qalıb";
+"Stop" = "Dayandır";
+"Look at those with nothing to cover before sending them." = "Göndərməzdən əvvəl örtüləcək heç nə tapılmayanlara bax.";
+"What to cover" = "Nə örtülsün";
+"Names Only" = "Yalnız adlar";
+"As in Settings" = "Ayarlardakı kimi";
+"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Ayarlar › Məxfilik bölməsindəki öz qaydaların da tətbiq olunur. Hər nüsxə yenidən oxunur və nəsə görünürsə, daha çox örtülür.";
+"Read on this Mac. Nothing is sent anywhere." = "Bu Mac-də oxunur. Heç nə heç yerə göndərilmir.";
+"The words of each file also go to %@, as set in Settings › Privacy." = "Hər faylın sözləri də Ayarlar › Məxfilik bölməsində seçildiyi kimi %@ xidmətinə gedir.";
+"Cover 1 File" = "1 faylı ört";
+"Cover %d Files" = "%d faylı ört";
+"Choose at least one kind to cover." = "Örtmək üçün ən azı bir növ seç.";
+"You can keep working; the window can stay open in the background." = "İşləməyə davam edə bilərsən; pəncərə arxa planda açıq qala bilər.";
+"Start Over" = "Yenidən başla";
+"Save Here" = "Burada saxla";
+"Choose where to save the covered copies. A new folder is made there for them." = "Örtülü nüsxələrin harada saxlanacağını seç. Orada onlar üçün yeni qovluq yaradılır.";
+"Could not make a folder there. Choose another place." = "Orada qovluq yaratmaq alınmadı. Başqa yer seç.";
+"Up to %d files at a time." = "Bir dəfəyə %d fayla qədər.";
+"Stop covering?" = "Örtmə dayandırılsın?";
+"The copies saved so far stay in their folder." = "İndiyə qədər saxlanan nüsxələr öz qovluğunda qalır.";
+"Keep Covering" = "Örtməyə davam et";

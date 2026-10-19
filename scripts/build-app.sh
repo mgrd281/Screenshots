@@ -129,7 +129,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
       <key>NSMessage</key><string>hideDetails</string>
       <key>NSPortName</key><string>Snapfly</string>
       <key>NSRequiredContext</key><dict/>
-      <key>NSSendFileTypes</key><array><string>public.image</string><string>com.adobe.pdf</string></array>
+      <key>NSSendFileTypes</key><array><string>public.image</string><string>com.adobe.pdf</string><string>public.folder</string></array>
     </dict>
   </array>
   <key>CFBundleDocumentTypes</key>

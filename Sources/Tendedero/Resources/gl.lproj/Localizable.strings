@@ -505,7 +505,6 @@
 "%@ (covered)" = "%@ (cuberto)";
 "Saved beside the original as %@." = "Gardada xunto ao orixinal como %@.";
 "Could not save the copy." = "Non se puido gardar a copia.";
-"Choose one photo or PDF at a time." = "Escolle unha foto ou un PDF de cada vez.";
 
 /* Privacy: more kinds of private detail, in groups, and the owner's own rules */
 "Usernames" = "Nomes de usuario";
@@ -1015,3 +1014,54 @@
 "Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "Ponse no que se envía, arredor do tapado e do debuxado. A foto en si queda como está.";
 "It goes out on its background; the file in %@ stays as it is. Click to undo." = "Sae co seu fondo; o ficheiro en %@ queda como está. Fai clic para desfacer.";
 "It goes out without a background again. Click to undo." = "Volve saír sen fondo. Fai clic para desfacer.";
+
+/* Cover Files */
+"Cover Files" = "Tapar ficheiros";
+"Cover Files…" = "Tapar ficheiros…";
+"Drop files or folders here" = "Solta ficheiros ou cartafoles aquí";
+"PDFs and pictures, as many as you like. Each gets a covered copy in a new folder; the files themselves stay as they are." = "PDF e imaxes, tantos como queiras. Cada un recibe unha copia tapada nun cartafol novo; os ficheiros en si quedan como están.";
+"Choose Files…" = "Escoller ficheiros…";
+"Choose PDFs and pictures, or whole folders of them." = "Escolle PDF e imaxes, ou cartafoles enteiros deles.";
+"1 file" = "1 ficheiro";
+"%d files" = "%d ficheiros";
+"%1$d PDFs · %2$d pictures" = "%1$d PDF · %2$d imaxes";
+"Add…" = "Engadir…";
+"Clear" = "Baleirar";
+"Kind" = "Tipo";
+"PDF" = "PDF";
+"Picture" = "Imaxe";
+"Waiting" = "En espera";
+"Covering…" = "Tapando…";
+"1 place covered" = "1 lugar tapado";
+"%d places covered" = "%d lugares tapados";
+"Nothing to cover" = "Nada que tapar";
+"Locked with a password" = "Protexido con contrasinal";
+"Over %d pages" = "Máis de %d páxinas";
+"Could not be read" = "Non se puido ler";
+"Stopped" = "Detido";
+"Not covered" = "Sen tapar";
+"Show Original in Finder" = "Amosar o orixinal no Finder";
+"Show Copy in Finder" = "Amosar a copia no Finder";
+"%d files are neither PDFs nor pictures and get no copy." = "%d ficheiros non son PDF nin imaxes e non reciben copia.";
+"%1$d of %2$d" = "%1$d de %2$d";
+"about %@ left" = "quedan uns %@";
+"Stop" = "Deter";
+"Look at those with nothing to cover before sending them." = "Revisa os que non tiñan nada que tapar antes de envialos.";
+"What to cover" = "Que tapar";
+"Names Only" = "Só nomes";
+"As in Settings" = "Como en Axustes";
+"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Tamén se aplican as túas propias regras de Axustes › Privacidade. Cada copia vólvese ler e tápase máis se algo segue a verse.";
+"Read on this Mac. Nothing is sent anywhere." = "Lese neste Mac. Non se envía nada a ningures.";
+"The words of each file also go to %@, as set in Settings › Privacy." = "As palabras de cada ficheiro tamén van a %@, como se indica en Axustes › Privacidade.";
+"Cover 1 File" = "Tapar 1 ficheiro";
+"Cover %d Files" = "Tapar %d ficheiros";
+"Choose at least one kind to cover." = "Escolle polo menos un tipo para tapar.";
+"You can keep working; the window can stay open in the background." = "Podes seguir traballando; a xanela pode quedar aberta en segundo plano.";
+"Start Over" = "Comezar de novo";
+"Save Here" = "Gardar aquí";
+"Choose where to save the covered copies. A new folder is made there for them." = "Escolle onde gardar as copias tapadas. Alí créase un cartafol novo para elas.";
+"Could not make a folder there. Choose another place." = "Non se puido crear un cartafol alí. Escolle outro lugar.";
+"Up to %d files at a time." = "Ata %d ficheiros á vez.";
+"Stop covering?" = "Deter o tapado?";
+"The copies saved so far stay in their folder." = "As copias gardadas ata agora quedan no seu cartafol.";
+"Keep Covering" = "Seguir tapando";

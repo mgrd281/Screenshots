@@ -505,7 +505,6 @@
 "%@ (covered)" = "%@（カバー済み）";
 "Saved beside the original as %@." = "元のファイルの隣に %@ として保存しました。";
 "Could not save the copy." = "コピーを保存できませんでした。";
-"Choose one photo or PDF at a time." = "一度に選べるのは写真かPDFを1つだけです。";
 
 /* Privacy: more kinds of private detail, in groups, and the owner's own rules */
 "Usernames" = "ユーザー名";
@@ -1015,3 +1014,54 @@
 "Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "送信するものに、隠した部分や描いたものの周りに付けます。写真そのものは変わりません。";
 "It goes out on its background; the file in %@ stays as it is. Click to undo." = "背景付きで送られます。%@ のファイルはそのままです。クリックで取り消し。";
 "It goes out without a background again. Click to undo." = "また背景なしで送られます。クリックで取り消し。";
+
+/* Cover Files */
+"Cover Files" = "ファイルを隠す";
+"Cover Files…" = "ファイルを隠す…";
+"Drop files or folders here" = "ここにファイルやフォルダをドロップ";
+"PDFs and pictures, as many as you like. Each gets a covered copy in a new folder; the files themselves stay as they are." = "PDF と画像を好きなだけ。それぞれ隠したコピーが新しいフォルダに保存され、元のファイルはそのままです。";
+"Choose Files…" = "ファイルを選択…";
+"Choose PDFs and pictures, or whole folders of them." = "PDF や画像、またはそれらのフォルダごと選んでください。";
+"1 file" = "1 ファイル";
+"%d files" = "%d ファイル";
+"%1$d PDFs · %2$d pictures" = "PDF %1$d 件 · 画像 %2$d 件";
+"Add…" = "追加…";
+"Clear" = "消去";
+"Kind" = "種類";
+"PDF" = "PDF";
+"Picture" = "画像";
+"Waiting" = "待機中";
+"Covering…" = "隠しています…";
+"1 place covered" = "1 か所を隠しました";
+"%d places covered" = "%d か所を隠しました";
+"Nothing to cover" = "隠すものなし";
+"Locked with a password" = "パスワードで保護";
+"Over %d pages" = "%d ページ超";
+"Could not be read" = "読み込めませんでした";
+"Stopped" = "停止しました";
+"Not covered" = "隠せなかった";
+"Show Original in Finder" = "オリジナルを Finder で表示";
+"Show Copy in Finder" = "コピーを Finder で表示";
+"%d files are neither PDFs nor pictures and get no copy." = "%d 件のファイルは PDF でも画像でもないため、コピーされません。";
+"%1$d of %2$d" = "%1$d / %2$d";
+"about %@ left" = "残り約 %@";
+"Stop" = "停止";
+"Look at those with nothing to cover before sending them." = "隠すものがなかったファイルは、送る前に確認してください。";
+"What to cover" = "隠すもの";
+"Names Only" = "名前のみ";
+"As in Settings" = "設定と同じ";
+"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "設定 › プライバシー の独自ルールも適用されます。各コピーはもう一度読み取られ、まだ見えるものがあればさらに隠されます。";
+"Read on this Mac. Nothing is sent anywhere." = "この Mac で読み取ります。どこにも送信されません。";
+"The words of each file also go to %@, as set in Settings › Privacy." = "設定 › プライバシー の設定どおり、各ファイルの文字は %@ にも送られます。";
+"Cover 1 File" = "1 ファイルを隠す";
+"Cover %d Files" = "%d ファイルを隠す";
+"Choose at least one kind to cover." = "隠す種類を 1 つ以上選んでください。";
+"You can keep working; the window can stay open in the background." = "作業を続けられます。ウインドウは背後で開いたままで大丈夫です。";
+"Start Over" = "やり直す";
+"Save Here" = "ここに保存";
+"Choose where to save the covered copies. A new folder is made there for them." = "隠したコピーの保存先を選んでください。そこに新しいフォルダが作られます。";
+"Could not make a folder there. Choose another place." = "そこにフォルダを作れませんでした。別の場所を選んでください。";
+"Up to %d files at a time." = "一度に %d ファイルまで。";
+"Stop covering?" = "隠す作業を停止しますか？";
+"The copies saved so far stay in their folder." = "ここまでに保存したコピーはフォルダに残ります。";
+"Keep Covering" = "続ける";

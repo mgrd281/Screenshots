@@ -143,19 +143,28 @@ final class FolderCover {
     nonisolated static func coverCopy(of url: URL, _ chosen: Set<PrivateDetail>,
                                       into folder: URL) -> (url: URL, report: CoverReport)? {
         let name = url.deletingPathExtension().lastPathComponent
+        let target = unique(name, ext: isDocument(url) ? "pdf" : "png", in: folder)
+        return coverCopy(of: url, chosen, to: target).map { (target, $0) }
+    }
+
+    /// The covered copy written to `target`, a PDF as a PDF and a picture as
+    /// a PNG, and what was covered in it. Nil, with nothing left behind,
+    /// when the file cannot be read.
+    nonisolated static func coverCopy(of url: URL, _ chosen: Set<PrivateDetail>, to target: URL) -> CoverReport? {
         if isDocument(url) {
-            let target = unique(name, ext: "pdf", in: folder)
-            return DocumentCover.write(url, chosen, hand: [:], to: target).map { (target, $0) }
+            return DocumentCover.write(url, chosen, hand: [:], to: target)
         }
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = Cover.upright(source) else { return nil }
-        let target = unique(name, ext: "png", in: folder)
         guard let made = Finder.covered(image, chosen),
               let destination = CGImageDestinationCreateWithURL(target as CFURL, UTType.png.identifier as CFString, 1, nil)
         else { return nil }
         CGImageDestinationAddImage(destination, made.image, nil)
-        guard CGImageDestinationFinalize(destination) else { return nil }
-        return (target, CoverReport(made.areas))
+        guard CGImageDestinationFinalize(destination) else {
+            try? FileManager.default.removeItem(at: target)
+            return nil
+        }
+        return CoverReport(made.areas)
     }
 
     /// A name not taken in the folder: the file's, then with " 2", " 3"….

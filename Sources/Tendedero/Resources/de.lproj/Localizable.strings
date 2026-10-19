@@ -505,7 +505,6 @@
 "%@ (covered)" = "%@ (abgedeckt)";
 "Saved beside the original as %@." = "Neben dem Original als %@ gesichert.";
 "Could not save the copy." = "Die Kopie konnte nicht gesichert werden.";
-"Choose one photo or PDF at a time." = "Wähle jeweils ein Foto oder eine PDF.";
 
 /* Privacy: more kinds of private detail, in groups, and the owner's own rules */
 "Usernames" = "Benutzernamen";
@@ -1015,3 +1014,54 @@
 "Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "Auf das gesetzt, was gesendet wird, um das Verdeckte und Gezeichnete herum. Das Foto selbst bleibt, wie es ist.";
 "It goes out on its background; the file in %@ stays as it is. Click to undo." = "Es geht mit seinem Hintergrund raus; die Datei in %@ bleibt, wie sie ist. Klicke zum Widerrufen.";
 "It goes out without a background again. Click to undo." = "Es geht wieder ohne Hintergrund raus. Klicke zum Widerrufen.";
+
+/* Cover Files */
+"Cover Files" = "Dateien verdecken";
+"Cover Files…" = "Dateien verdecken …";
+"Drop files or folders here" = "Dateien oder Ordner hier ablegen";
+"PDFs and pictures, as many as you like. Each gets a covered copy in a new folder; the files themselves stay as they are." = "PDFs und Bilder, so viele du willst. Jede Datei bekommt eine verdeckte Kopie in einem neuen Ordner; die Dateien selbst bleiben, wie sie sind.";
+"Choose Files…" = "Dateien auswählen …";
+"Choose PDFs and pictures, or whole folders of them." = "Wähle PDFs und Bilder oder ganze Ordner davon.";
+"1 file" = "1 Datei";
+"%d files" = "%d Dateien";
+"%1$d PDFs · %2$d pictures" = "%1$d PDFs · %2$d Bilder";
+"Add…" = "Hinzufügen …";
+"Clear" = "Leeren";
+"Kind" = "Art";
+"PDF" = "PDF";
+"Picture" = "Bild";
+"Waiting" = "Wartet";
+"Covering…" = "Wird verdeckt …";
+"1 place covered" = "1 Stelle verdeckt";
+"%d places covered" = "%d Stellen verdeckt";
+"Nothing to cover" = "Nichts zu verdecken";
+"Locked with a password" = "Mit Passwort geschützt";
+"Over %d pages" = "Über %d Seiten";
+"Could not be read" = "Konnte nicht gelesen werden";
+"Stopped" = "Angehalten";
+"Not covered" = "Nicht verdeckt";
+"Show Original in Finder" = "Original im Finder zeigen";
+"Show Copy in Finder" = "Kopie im Finder zeigen";
+"%d files are neither PDFs nor pictures and get no copy." = "%d Dateien sind weder PDFs noch Bilder und bekommen keine Kopie.";
+"%1$d of %2$d" = "%1$d von %2$d";
+"about %@ left" = "noch etwa %@";
+"Stop" = "Anhalten";
+"Look at those with nothing to cover before sending them." = "Sieh dir die ohne Verdecktes an, bevor du sie sendest.";
+"What to cover" = "Was verdeckt wird";
+"Names Only" = "Nur Namen";
+"As in Settings" = "Wie in Einstellungen";
+"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Deine eigenen Regeln aus Einstellungen › Datenschutz gelten auch. Jede Kopie wird noch einmal gelesen und weiter verdeckt, falls noch etwas zu sehen ist.";
+"Read on this Mac. Nothing is sent anywhere." = "Auf diesem Mac gelesen. Nichts wird irgendwohin gesendet.";
+"The words of each file also go to %@, as set in Settings › Privacy." = "Die Wörter jeder Datei gehen auch an %@, wie unter Einstellungen › Datenschutz eingestellt.";
+"Cover 1 File" = "1 Datei verdecken";
+"Cover %d Files" = "%d Dateien verdecken";
+"Choose at least one kind to cover." = "Wähle mindestens eine Art zum Verdecken.";
+"You can keep working; the window can stay open in the background." = "Du kannst weiterarbeiten; das Fenster kann im Hintergrund offen bleiben.";
+"Start Over" = "Neu beginnen";
+"Save Here" = "Hier sichern";
+"Choose where to save the covered copies. A new folder is made there for them." = "Wähle, wo die verdeckten Kopien gesichert werden. Dort wird ein neuer Ordner für sie angelegt.";
+"Could not make a folder there. Choose another place." = "Dort konnte kein Ordner angelegt werden. Wähle einen anderen Ort.";
+"Up to %d files at a time." = "Bis zu %d Dateien auf einmal.";
+"Stop covering?" = "Verdecken anhalten?";
+"The copies saved so far stay in their folder." = "Die bisher gesicherten Kopien bleiben in ihrem Ordner.";
+"Keep Covering" = "Weiter verdecken";

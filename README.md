@@ -84,7 +84,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
 | Click the send button over a chat | The same, without leaving the message box. Drag it to move it; it stays there for that app. |
 | <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
-| Right-click a photo or PDF in Finder, then Services › Hide Private Details with Snapfly | Choose what to hide and save a covered copy beside the original. The original stays as it is. |
+| Right-click a photo or PDF in Finder, then Services › Hide Private Details with Snapfly | Choose what to hide and save a covered copy beside the original. The original stays as it is. Several files, or a folder, open Cover Files. |
 | Right-click (or control-click), then Save and Export › Make PDF | Put the photo, or the ones picked with it, in one PDF, a page each and private details covered. It hangs ready to send, marked PDF. |
 | <kbd>⌘</kbd>-click one or more, then the PDF button on the tag | The same PDF, from the tag, where search sits while nothing is picked. |
 | Click the download arrow on the tag, above the trash | Save the photos picked, or all of them, into Downloads as they leave the line: covered, drawn on and cropped, each as a file of its own. They stay on the line, and the files they came from stay as they are. A note says where they went; click it to see them in Finder. The App Store edition asks once which folder they go to. |
@@ -97,6 +97,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Drag photos or PDFs to the top of the screen, or onto the menu bar icon | Hang them on the line, to send with their private details covered. The files stay where they are. |
 | Right-click photos or PDFs in Finder, then Services › Send Safely with Snapfly | The same, from Finder. Open With › Snapfly does it too. |
 | Add Files… in the menu bar | Pick photos or PDFs to hang. |
+| Cover Files… in the menu bar, or several files or a folder sent to Hide Private Details with Snapfly in Finder | Cover private details in many PDFs and pictures at once, even a thousand. Choose what to cover, like names alone; each gets a covered copy in a new folder, and the files themselves stay as they are. |
 | Click anything in the menu bar | Put it away. |
 | Glance at the Snapfly icon in the menu bar | How many photos hang, beside it, and a small dot on it while something new hangs that the line has not shown yet. Turn it off with Count on the menu bar icon, under Line. |
 | Record a Guide in the menu bar, then click through | Each click becomes a step of a guide, with a screenshot and a sentence. Click the capsule above the Dock to finish, and the guide opens to edit, send or save. |
@@ -485,6 +486,28 @@ leaves any file in the folder that isn't Snapfly's. Only a folder Snapfly
 marked as its workspace can be deleted that way, and nothing is ever deleted
 by turning the workspace off or removing the app. It isn't in the Mac App
 Store edition, whose sandbox can't write to the Desktop.
+
+<br>
+
+## A thousand files, covered.
+
+Cover Files…, in the menu bar, covers private details in many PDFs and
+pictures at once. Drop files or whole folders on its window, or choose them,
+as many as a thousand and more; folders are opened all the way down, and
+files of other kinds are counted but get no copy. On the right, choose what
+to cover: Names Only, As in Settings, All, or each kind on its own, from the
+same list as Settings › Privacy. Your own rules there apply too.
+
+Cover Files then asks where to save, and makes a new folder there, named
+with the day and time, with the folders the files came in kept inside it.
+Each PDF is read page by page on your Mac and drawn again with what you
+chose covered, and each picture is saved as a covered PNG, a few at a time,
+with how far it has got and about how long is left. Stop ends it after the
+files being read. The list then shows how each went: covered, with how many
+places; nothing to cover, to look at before sending; or not covered, locked
+with a password, over 200 pages or unreadable, which get no copy at all.
+The files themselves are never changed. Selecting several files or a folder
+in Finder and choosing Hide Private Details with Snapfly opens it too.
 
 <br>
 
@@ -911,6 +934,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `WorkspaceSettings.swift` | Settings › Workspace |
 | `WorkspaceLibrary.swift` | History's Workspace page: the screenshots by category as a grid or a list, with search and a menu for each |
 | `FolderIcon.swift` | The workspace folder's icon in the Finder: the system folder with Snapfly's mark |
+| `Shared/CoverBatch.swift`, `CoverFiles.swift` | Cover Files: which files a run takes and where each copy goes, and the window that covers them a few at a time |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |
 | `Trim.swift` | Trims a screen recording and saves the result |

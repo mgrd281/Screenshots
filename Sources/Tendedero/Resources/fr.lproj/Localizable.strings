@@ -505,7 +505,6 @@
 "%@ (covered)" = "%@ (masqué)";
 "Saved beside the original as %@." = "Enregistrée à côté de l'original sous le nom %@.";
 "Could not save the copy." = "Impossible d'enregistrer la copie.";
-"Choose one photo or PDF at a time." = "Choisissez une photo ou un PDF à la fois.";
 
 /* Privacy: more kinds of private detail, in groups, and the owner's own rules */
 "Usernames" = "Noms d’utilisateur";
@@ -1015,3 +1014,54 @@
 "Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "Appliqué à ce qui est envoyé, autour de ce qui est masqué et dessiné. La photo elle-même reste telle quelle.";
 "It goes out on its background; the file in %@ stays as it is. Click to undo." = "Il part avec son arrière-plan ; le fichier dans %@ reste tel quel. Cliquez pour annuler.";
 "It goes out without a background again. Click to undo." = "Il repart sans arrière-plan. Cliquez pour annuler.";
+
+/* Cover Files */
+"Cover Files" = "Masquer dans des fichiers";
+"Cover Files…" = "Masquer dans des fichiers…";
+"Drop files or folders here" = "Déposez des fichiers ou des dossiers ici";
+"PDFs and pictures, as many as you like. Each gets a covered copy in a new folder; the files themselves stay as they are." = "Des PDF et des images, autant que vous voulez. Chacun reçoit une copie masquée dans un nouveau dossier ; les fichiers eux-mêmes restent tels quels.";
+"Choose Files…" = "Choisir des fichiers…";
+"Choose PDFs and pictures, or whole folders of them." = "Choisissez des PDF et des images, ou des dossiers entiers.";
+"1 file" = "1 fichier";
+"%d files" = "%d fichiers";
+"%1$d PDFs · %2$d pictures" = "%1$d PDF · %2$d images";
+"Add…" = "Ajouter…";
+"Clear" = "Effacer";
+"Kind" = "Type";
+"PDF" = "PDF";
+"Picture" = "Image";
+"Waiting" = "En attente";
+"Covering…" = "Masquage…";
+"1 place covered" = "1 endroit masqué";
+"%d places covered" = "%d endroits masqués";
+"Nothing to cover" = "Rien à masquer";
+"Locked with a password" = "Protégé par un mot de passe";
+"Over %d pages" = "Plus de %d pages";
+"Could not be read" = "Illisible";
+"Stopped" = "Arrêté";
+"Not covered" = "Non masqué";
+"Show Original in Finder" = "Afficher l’original dans le Finder";
+"Show Copy in Finder" = "Afficher la copie dans le Finder";
+"%d files are neither PDFs nor pictures and get no copy." = "%d fichiers ne sont ni des PDF ni des images et n’auront pas de copie.";
+"%1$d of %2$d" = "%1$d sur %2$d";
+"about %@ left" = "environ %@ restantes";
+"Stop" = "Arrêter";
+"Look at those with nothing to cover before sending them." = "Vérifiez ceux sans rien à masquer avant de les envoyer.";
+"What to cover" = "Quoi masquer";
+"Names Only" = "Noms seulement";
+"As in Settings" = "Comme dans Réglages";
+"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Vos propres règles de Réglages › Confidentialité s’appliquent aussi. Chaque copie est relue et masquée davantage si quelque chose reste visible.";
+"Read on this Mac. Nothing is sent anywhere." = "Lu sur ce Mac. Rien n’est envoyé nulle part.";
+"The words of each file also go to %@, as set in Settings › Privacy." = "Les mots de chaque fichier sont aussi envoyés à %@, comme réglé dans Réglages › Confidentialité.";
+"Cover 1 File" = "Masquer 1 fichier";
+"Cover %d Files" = "Masquer %d fichiers";
+"Choose at least one kind to cover." = "Choisissez au moins un type à masquer.";
+"You can keep working; the window can stay open in the background." = "Vous pouvez continuer à travailler ; la fenêtre peut rester ouverte en arrière-plan.";
+"Start Over" = "Recommencer";
+"Save Here" = "Enregistrer ici";
+"Choose where to save the covered copies. A new folder is made there for them." = "Choisissez où enregistrer les copies masquées. Un nouveau dossier y est créé pour elles.";
+"Could not make a folder there. Choose another place." = "Impossible de créer un dossier à cet endroit. Choisissez-en un autre.";
+"Up to %d files at a time." = "Jusqu’à %d fichiers à la fois.";
+"Stop covering?" = "Arrêter le masquage ?";
+"The copies saved so far stay in their folder." = "Les copies déjà enregistrées restent dans leur dossier.";
+"Keep Covering" = "Continuer";

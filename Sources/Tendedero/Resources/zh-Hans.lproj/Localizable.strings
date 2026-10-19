@@ -505,7 +505,6 @@
 "%@ (covered)" = "%@（已遮盖）";
 "Saved beside the original as %@." = "已存为原件旁边的 %@。";
 "Could not save the copy." = "无法存储副本。";
-"Choose one photo or PDF at a time." = "每次请只选择一张照片或一个 PDF。";
 
 /* Privacy: more kinds of private detail, in groups, and the owner's own rules */
 "Usernames" = "用户名";
@@ -1015,3 +1014,54 @@
 "Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "加在发送的内容上，围绕已遮盖和绘制的部分。照片本身保持不变。";
 "It goes out on its background; the file in %@ stays as it is. Click to undo." = "将带背景发送；%@ 中的文件保持不变。点按可撤销。";
 "It goes out without a background again. Click to undo." = "将重新不带背景发送。点按可撤销。";
+
+/* Cover Files */
+"Cover Files" = "遮盖文件";
+"Cover Files…" = "遮盖文件…";
+"Drop files or folders here" = "将文件或文件夹拖到这里";
+"PDFs and pictures, as many as you like. Each gets a covered copy in a new folder; the files themselves stay as they are." = "PDF 和图片，数量不限。每个文件都会在新文件夹中得到一份遮盖后的副本；原文件保持不变。";
+"Choose Files…" = "选择文件…";
+"Choose PDFs and pictures, or whole folders of them." = "选择 PDF 和图片，或包含它们的整个文件夹。";
+"1 file" = "1 个文件";
+"%d files" = "%d 个文件";
+"%1$d PDFs · %2$d pictures" = "%1$d 个 PDF · %2$d 张图片";
+"Add…" = "添加…";
+"Clear" = "清除";
+"Kind" = "类型";
+"PDF" = "PDF";
+"Picture" = "图片";
+"Waiting" = "等待中";
+"Covering…" = "正在遮盖…";
+"1 place covered" = "已遮盖 1 处";
+"%d places covered" = "已遮盖 %d 处";
+"Nothing to cover" = "无需遮盖";
+"Locked with a password" = "受密码保护";
+"Over %d pages" = "超过 %d 页";
+"Could not be read" = "无法读取";
+"Stopped" = "已停止";
+"Not covered" = "未遮盖";
+"Show Original in Finder" = "在访达中显示原件";
+"Show Copy in Finder" = "在访达中显示副本";
+"%d files are neither PDFs nor pictures and get no copy." = "%d 个文件既不是 PDF 也不是图片，不会生成副本。";
+"%1$d of %2$d" = "%1$d / %2$d";
+"about %@ left" = "大约还剩 %@";
+"Stop" = "停止";
+"Look at those with nothing to cover before sending them." = "发送前请查看那些无需遮盖的文件。";
+"What to cover" = "遮盖内容";
+"Names Only" = "仅姓名";
+"As in Settings" = "与设置相同";
+"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "“设置 › 隐私”中你自己的规则同样适用。每份副本都会再次读取，如仍有内容可见则会进一步遮盖。";
+"Read on this Mac. Nothing is sent anywhere." = "在这台 Mac 上读取，不会发送到任何地方。";
+"The words of each file also go to %@, as set in Settings › Privacy." = "按照“设置 › 隐私”中的设定，每个文件的文字也会发送给 %@。";
+"Cover 1 File" = "遮盖 1 个文件";
+"Cover %d Files" = "遮盖 %d 个文件";
+"Choose at least one kind to cover." = "请至少选择一种要遮盖的内容。";
+"You can keep working; the window can stay open in the background." = "你可以继续工作，窗口可以在后台保持打开。";
+"Start Over" = "重新开始";
+"Save Here" = "存储到这里";
+"Choose where to save the covered copies. A new folder is made there for them." = "选择存储遮盖副本的位置，将在那里为它们新建一个文件夹。";
+"Could not make a folder there. Choose another place." = "无法在那里新建文件夹，请选择其他位置。";
+"Up to %d files at a time." = "一次最多 %d 个文件。";
+"Stop covering?" = "要停止遮盖吗？";
+"The copies saved so far stay in their folder." = "已存储的副本会保留在其文件夹中。";
+"Keep Covering" = "继续遮盖";

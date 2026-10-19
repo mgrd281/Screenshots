@@ -507,7 +507,6 @@
 "%@ (covered)" = "%@ (ढका हुआ)";
 "Saved beside the original as %@." = "मूल फ़ाइल के साथ %@ नाम से सहेजा गया।";
 "Could not save the copy." = "प्रति सहेजी नहीं जा सकी।";
-"Choose one photo or PDF at a time." = "एक बार में एक फ़ोटो या PDF चुनें।";
 
 /* Privacy: more kinds of private detail, in groups, and the owner's own rules */
 "Usernames" = "उपयोगकर्ता नाम";
@@ -1017,3 +1016,54 @@
 "Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "यह भेजी जाने वाली चीज़ पर लगता है, ढके और बनाए गए हिस्सों के चारों ओर। फ़ोटो ख़ुद जैसी है वैसी रहती है।";
 "It goes out on its background; the file in %@ stays as it is. Click to undo." = "यह अपनी पृष्ठभूमि के साथ जाता है; %@ में फ़ाइल जैसी है वैसी रहती है। पूर्ववत करने के लिए क्लिक करें।";
 "It goes out without a background again. Click to undo." = "यह फिर बिना पृष्ठभूमि के जाता है। पूर्ववत करने के लिए क्लिक करें।";
+
+/* Cover Files */
+"Cover Files" = "फ़ाइलें ढकें";
+"Cover Files…" = "फ़ाइलें ढकें…";
+"Drop files or folders here" = "फ़ाइलें या फ़ोल्डर यहाँ छोड़ें";
+"PDFs and pictures, as many as you like. Each gets a covered copy in a new folder; the files themselves stay as they are." = "PDF और तस्वीरें, जितनी चाहें। हर एक की ढकी हुई कॉपी एक नए फ़ोल्डर में बनती है; फ़ाइलें ख़ुद जैसी हैं वैसी रहती हैं।";
+"Choose Files…" = "फ़ाइलें चुनें…";
+"Choose PDFs and pictures, or whole folders of them." = "PDF और तस्वीरें चुनें, या उनके पूरे फ़ोल्डर।";
+"1 file" = "1 फ़ाइल";
+"%d files" = "%d फ़ाइलें";
+"%1$d PDFs · %2$d pictures" = "%1$d PDF · %2$d तस्वीरें";
+"Add…" = "जोड़ें…";
+"Clear" = "साफ़ करें";
+"Kind" = "प्रकार";
+"PDF" = "PDF";
+"Picture" = "तस्वीर";
+"Waiting" = "प्रतीक्षा में";
+"Covering…" = "ढका जा रहा है…";
+"1 place covered" = "1 जगह ढकी गई";
+"%d places covered" = "%d जगहें ढकी गईं";
+"Nothing to cover" = "ढकने को कुछ नहीं";
+"Locked with a password" = "पासवर्ड से बंद";
+"Over %d pages" = "%d से ज़्यादा पेज";
+"Could not be read" = "पढ़ा नहीं जा सका";
+"Stopped" = "रोका गया";
+"Not covered" = "नहीं ढका गया";
+"Show Original in Finder" = "मूल को Finder में दिखाएँ";
+"Show Copy in Finder" = "कॉपी को Finder में दिखाएँ";
+"%d files are neither PDFs nor pictures and get no copy." = "%d फ़ाइलें न PDF हैं न तस्वीरें, उनकी कॉपी नहीं बनेगी।";
+"%1$d of %2$d" = "%2$d में से %1$d";
+"about %@ left" = "लगभग %@ बाक़ी";
+"Stop" = "रोकें";
+"Look at those with nothing to cover before sending them." = "जिनमें ढकने को कुछ नहीं मिला, उन्हें भेजने से पहले देख लें।";
+"What to cover" = "क्या ढकना है";
+"Names Only" = "केवल नाम";
+"As in Settings" = "सेटिंग्स के अनुसार";
+"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "सेटिंग्स › गोपनीयता के आपके अपने नियम भी लागू होते हैं। हर कॉपी फिर से पढ़ी जाती है, और कुछ दिखे तो और ढका जाता है।";
+"Read on this Mac. Nothing is sent anywhere." = "इसी Mac पर पढ़ा जाता है। कुछ भी कहीं नहीं भेजा जाता।";
+"The words of each file also go to %@, as set in Settings › Privacy." = "हर फ़ाइल के शब्द %@ को भी जाते हैं, जैसा सेटिंग्स › गोपनीयता में तय है।";
+"Cover 1 File" = "1 फ़ाइल ढकें";
+"Cover %d Files" = "%d फ़ाइलें ढकें";
+"Choose at least one kind to cover." = "ढकने के लिए कम से कम एक प्रकार चुनें।";
+"You can keep working; the window can stay open in the background." = "आप काम जारी रख सकते हैं; विंडो पीछे खुली रह सकती है।";
+"Start Over" = "फिर से शुरू करें";
+"Save Here" = "यहाँ सहेजें";
+"Choose where to save the covered copies. A new folder is made there for them." = "चुनें कि ढकी हुई कॉपियाँ कहाँ सहेजनी हैं। वहाँ उनके लिए एक नया फ़ोल्डर बनता है।";
+"Could not make a folder there. Choose another place." = "वहाँ फ़ोल्डर नहीं बन सका। कोई दूसरी जगह चुनें।";
+"Up to %d files at a time." = "एक बार में %d फ़ाइलों तक।";
+"Stop covering?" = "ढकना रोकें?";
+"The copies saved so far stay in their folder." = "अब तक सहेजी गई कॉपियाँ अपने फ़ोल्डर में रहती हैं।";
+"Keep Covering" = "ढकना जारी रखें";

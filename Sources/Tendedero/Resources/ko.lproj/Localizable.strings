@@ -505,7 +505,6 @@
 "%@ (covered)" = "%@ (가림)";
 "Saved beside the original as %@." = "원본 옆에 %@(으)로 저장했습니다.";
 "Could not save the copy." = "사본을 저장할 수 없습니다.";
-"Choose one photo or PDF at a time." = "사진이나 PDF를 한 번에 하나만 선택하세요.";
 
 /* Privacy: more kinds of private detail, in groups, and the owner's own rules */
 "Usernames" = "사용자 이름";
@@ -1015,3 +1014,54 @@
 "Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "보내는 사진에, 가린 부분과 그린 것 둘레에 입혀집니다. 사진 자체는 그대로입니다.";
 "It goes out on its background; the file in %@ stays as it is. Click to undo." = "배경과 함께 보내집니다. %@의 파일은 그대로입니다. 클릭하면 되돌립니다.";
 "It goes out without a background again. Click to undo." = "다시 배경 없이 보내집니다. 클릭하면 되돌립니다.";
+
+/* Cover Files */
+"Cover Files" = "파일 가리기";
+"Cover Files…" = "파일 가리기…";
+"Drop files or folders here" = "파일이나 폴더를 여기에 놓으세요";
+"PDFs and pictures, as many as you like. Each gets a covered copy in a new folder; the files themselves stay as they are." = "PDF와 사진을 원하는 만큼. 각각 가린 사본이 새 폴더에 저장되고, 원본 파일은 그대로입니다.";
+"Choose Files…" = "파일 선택…";
+"Choose PDFs and pictures, or whole folders of them." = "PDF와 사진, 또는 그 폴더 전체를 선택하세요.";
+"1 file" = "파일 1개";
+"%d files" = "파일 %d개";
+"%1$d PDFs · %2$d pictures" = "PDF %1$d개 · 사진 %2$d개";
+"Add…" = "추가…";
+"Clear" = "지우기";
+"Kind" = "종류";
+"PDF" = "PDF";
+"Picture" = "사진";
+"Waiting" = "대기 중";
+"Covering…" = "가리는 중…";
+"1 place covered" = "1곳 가림";
+"%d places covered" = "%d곳 가림";
+"Nothing to cover" = "가릴 것 없음";
+"Locked with a password" = "암호로 잠김";
+"Over %d pages" = "%d페이지 초과";
+"Could not be read" = "읽을 수 없음";
+"Stopped" = "중지됨";
+"Not covered" = "가리지 못함";
+"Show Original in Finder" = "원본을 Finder에서 보기";
+"Show Copy in Finder" = "사본을 Finder에서 보기";
+"%d files are neither PDFs nor pictures and get no copy." = "파일 %d개는 PDF도 사진도 아니어서 사본이 만들어지지 않습니다.";
+"%1$d of %2$d" = "%1$d / %2$d";
+"about %@ left" = "약 %@ 남음";
+"Stop" = "중지";
+"Look at those with nothing to cover before sending them." = "가릴 것이 없던 파일은 보내기 전에 확인하세요.";
+"What to cover" = "가릴 항목";
+"Names Only" = "이름만";
+"As in Settings" = "설정과 동일";
+"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "설정 › 개인정보 보호의 사용자 규칙도 적용됩니다. 모든 사본은 다시 읽혀 아직 보이는 것이 있으면 더 가려집니다.";
+"Read on this Mac. Nothing is sent anywhere." = "이 Mac에서 읽습니다. 아무것도 전송되지 않습니다.";
+"The words of each file also go to %@, as set in Settings › Privacy." = "설정 › 개인정보 보호에 따라 각 파일의 단어가 %@에도 전송됩니다.";
+"Cover 1 File" = "파일 1개 가리기";
+"Cover %d Files" = "파일 %d개 가리기";
+"Choose at least one kind to cover." = "가릴 종류를 하나 이상 선택하세요.";
+"You can keep working; the window can stay open in the background." = "계속 작업해도 됩니다. 창은 뒤에서 열려 있어도 됩니다.";
+"Start Over" = "처음부터";
+"Save Here" = "여기에 저장";
+"Choose where to save the covered copies. A new folder is made there for them." = "가린 사본을 저장할 위치를 선택하세요. 그곳에 새 폴더가 만들어집니다.";
+"Could not make a folder there. Choose another place." = "그곳에 폴더를 만들 수 없습니다. 다른 위치를 선택하세요.";
+"Up to %d files at a time." = "한 번에 파일 %d개까지.";
+"Stop covering?" = "가리기를 중지할까요?";
+"The copies saved so far stay in their folder." = "지금까지 저장된 사본은 폴더에 남습니다.";
+"Keep Covering" = "계속 가리기";

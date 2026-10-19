@@ -724,7 +724,30 @@ apps.
   Details with Snapfly, for photos and PDFs, translated like the app
   (`ServicesMenu.strings`). Open With lists Snapfly as an alternative, never
   as what opens them. Hide Private Details opens Hide Part for one file, to
-  save a copy beside it.
+  save a copy beside it, and Cover Files for several or a folder.
+- **Cover Files** (`CoverFiles.swift`), a standard titled window (880 × 600,
+  at least 760 × 480, its frame remembered), from Cover Files… (`doc.on.doc`)
+  in the menu bar under Add Files….
+  - Empty, a drop zone: a 2 pt dashed rounded rectangle (radius 14, dashes
+    7 and 5, `.secondary` at 35%, the accent while files are over it), 20 pt
+    in, with `doc.on.doc` at 44 pt light, a `.title2` semibold title, a
+    `.secondary` line and Choose Files….
+  - With files, a header (the count in `.headline`, PDFs and pictures under
+    it in 11 pt `.secondary`; Add…, Remove and Clear, or after a run a menu
+    to show All, Covered, Nothing to cover or Not covered), then a `Table`
+    of a state symbol, Name (the path inside what was brought, truncated in
+    the middle), Kind and Result, then a footer: the progress bar with
+    "312 of 1,000 · about 4 min left" and Stop while running, and after it
+    the tally in symbols.
+  - State symbols: `circle` in `.tertiary` waiting, a mini progress view
+    working, `checkmark.shield.fill` green covered,
+    `exclamationmark.circle.fill` orange nothing to cover,
+    `xmark.octagon.fill` red not covered, `minus.circle` stopped.
+  - On the right a 300 pt grouped `Form`: What to cover, with four small
+    bordered buttons two by two (Names Only, As in Settings, All, None), the
+    kinds in Settings › Privacy's three groups as switches, a note on own
+    rules and where the files are read; at the bottom the prominent Cover
+    1,000 Files, or Show in Finder and Start Over after a run.
 - **Photo context menu.**
   - Short, as a Mac app's own menus are: about fifteen rows, what is done
     most at the top, the rest in submenus named for what they are for. A
