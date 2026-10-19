@@ -145,6 +145,22 @@ the website's footer. Both stay.
   Info.plist through `scripts/share-url.sh`; without it, Copy Link is left
   out. Files are deleted after seven days. Run `node --test
   share/worker.test.mjs` after changing the Worker.
+- **Sync.** Mac and iPhone as one, through the owner's own iCloud (CloudKit,
+  CKSyncEngine). `SYNC.md` holds the audit, the design, the threat model,
+  the owner's Apple steps and what is verified; keep it current.
+  - The rules live in `Shared/SyncModel.swift`, `SyncLedger.swift` and
+    `SyncPolicy.swift`, tested by `SyncTests` on Linux too. What may leave a
+    device is decided in `SyncPolicy` alone, and asked again just before it
+    goes.
+  - `Shared/CloudSync.swift` touches iCloud only when Info.plist names a
+    container (`SnapflyCloudContainer`). A build adds that key together with
+    the iCloud entitlement, never one without the other: opening a container
+    the app is not entitled to stops it.
+  - Off until the owner turns it on; covered copies only unless they choose
+    originals. Never claim end-to-end encryption.
+  - README, `PRIVACY.md`, the website and the iPhone's permission texts say
+    nothing leaves the device. They change in the pull request that lets
+    anyone turn syncing on.
 - **Promo video.** `promo/` makes the vertical motion graphic in three
   languages; see `promo/README.md`. It reuses the website's drawings and the
   app's strings, so update it when either changes in a way the video shows.

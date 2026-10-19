@@ -166,10 +166,17 @@ case "profile" where arguments.count == 5 || arguments.count == 6:
     let (status, json) = await call("GET", "/v1/profiles",
                                     query: ["filter[name]": name, "filter[profileType]": type, "limit": "200"])
     expect(status, json, "Looking up the profile")
-    if let found = items(json).first(where: { attributes($0)["name"] as? String == name
-                                                && attributes($0)["profileState"] as? String == "ACTIVE" }) {
+    let named = items(json).filter { attributes($0)["name"] as? String == name }
+    if let found = named.first(where: { attributes($0)["profileState"] as? String == "ACTIVE" }) {
         write(base64: attributes(found)["profileContent"] as? String, to: out)
     } else {
+        // One Apple made invalid, as it does when the app gains a capability
+        // like iCloud, goes first, so the new one can take its name.
+        for stale in named {
+            guard let id = stale["id"] as? String else { continue }
+            let (status, json) = await call("DELETE", "/v1/profiles/\(id)")
+            expect(status, json, "Removing the invalid profile", [204])
+        }
         let body: JSON = ["data": [
             "type": "profiles",
             "attributes": ["name": name, "profileType": type],
