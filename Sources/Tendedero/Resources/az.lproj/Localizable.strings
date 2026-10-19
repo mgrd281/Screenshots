@@ -66,6 +66,7 @@
 "Draw on Photo…" = "Foto üzərində çək…";
 "Select" = "Seç";
 "Box" = "Çərçivə";
+"Circle" = "Dairə";
 "Highlight" = "Vurğula";
 "Numbered Steps" = "Nömrəli addımlar";
 "Text" = "Mətn";
@@ -90,6 +91,7 @@
 "Click a drawing to choose it, then drag it or its handles." = "Seçmək üçün rəsmə klik et, sonra onu və ya tutacaqlarını sürüşdür.";
 "Drag from where the arrow starts to what it points at." = "Oxun başladığı yerdən göstərdiyi şeyə qədər sürüşdür.";
 "Drag to draw a box around something." = "Nəyinsə ətrafına çərçivə çəkmək üçün sürüşdür.";
+"Drag to draw a circle around something." = "Nəyinsə ətrafına dairə çəkmək üçün sürüşdür.";
 "Drag over words to highlight them." = "Vurğulamaq üçün sözlərin üzərindən sürüşdür.";
 "Click each place in turn. The numbers follow the order." = "Hər yerə növbə ilə klik et. Nömrələr bu sıranı izləyir.";
 "Click where the words go, then type them." = "Sözlərin gedəcəyi yerə klik et, sonra onları yaz.";

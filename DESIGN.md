@@ -157,7 +157,7 @@ components:
     minWindow: "760pt × 480pt"
   draw-tool:
     rounded: "{rounded.keycap}"
-    size: "34pt × 28pt"            # a tool in Draw on Photo's row; chosen: the accent at 16% behind the accent glyph
+    size: "30pt × 28pt"            # a tool in Draw on Photo's row of eight; chosen: the accent at 16% behind the accent glyph
   draw-swatch:
     size: "18pt"                   # an ink, with a 1pt hairline of .primary at 18%; chosen: a 2pt accent ring 3pt out
   draw-handle:
@@ -1032,8 +1032,8 @@ apps.
     original, under the name "… (covered)". A small spinner shows in the
     footer while the copy is written, and the window closes only once it is.
 - **Draw on Photo** (`DrawEditor.swift`) is Hide Part's window, laid out
-  the same (`HidePartLayout`), for arrows, boxes, highlights, numbered steps
-  and words drawn on a photo, and the part of it to keep.
+  the same (`HidePartLayout`), for arrows, boxes, circles, highlights,
+  numbered steps and words drawn on a photo, and the part of it to keep.
   - The **canvas** shows the picture with what Hide private details covers
     and the parts hidden by hand, in the cover look chosen under Privacy
     (ink until they are read), then the marks drawn by the same code as
@@ -1043,18 +1043,20 @@ apps.
     were.
     - A chosen mark has a dashed accent outline (1 pt, 4 and 3) 4 pt out,
       and a 9 pt white handle with an accent edge at an arrow's ends or a
-      box's corners. The canvas keeps 12 pt round the picture so handles at
+      box's or a circle's corners. The canvas keeps 12 pt round the picture so handles at
       its edges show whole.
     - Outside a crop is dimmed, black 60%, with a white hairline round
       it. While cropping it is 45%, with thirds in white at 35% and 18 pt
       white corners, 3 pt and rounded, to drag.
     - The pointer is the arrow for Select, the I-beam for Text, and the
       crosshair for the rest.
-  - The **inspector**: first "Tool", a row of seven 34 × 28 pt tools,
-    `cursorarrow`, `arrow.up.right`, `rectangle`, `highlighter`, `1.circle`,
-    `textformat` and `crop`, each with its help tag and its key (V, A, R, H,
-    N, T, C), the chosen one in the accent on the accent at 16%, rounded 6;
-    the section's footer says how to use the tool. Then Color, six 18 pt
+  - The **inspector**: first "Tool", a row of eight 30 × 28 pt tools,
+    `cursorarrow`, `arrow.up.right`, `rectangle`, `circle`, `highlighter`,
+    `1.circle`, `textformat` and `crop`, each with its help tag and its key
+    (V, A, R, O, H, N, T, C), the chosen one in the accent on the accent at
+    16%, rounded 6; the section's footer says how to use the tool. The last
+    tool that draws is chosen again the next time; Select and Crop are not
+    kept. Then Color, six 18 pt
     swatches, and Size, a segmented Thin, Medium, Thick; they change the
     chosen mark and the next one, and the highlighter keeps an ink of its
     own. A chosen mark gets a section with its name and Delete (⌫), and for
@@ -1072,9 +1074,13 @@ apps.
   - Marks are flat: no shadow, no glow. A step is a circle of the ink with
     a white rim (a black one on white) and its number in SF Pro Rounded
     bold; words sit on a label of the ink, a white one with a hairline. An
-    arrow narrows towards its tail under a solid head. Drawing explains and
-    never hides: blur and pixelate are not offered, and nothing drawn counts
-    on the lock.
+    arrow narrows towards its tail under a solid head. A circle is an oval
+    in the box dragged, drawn as a pen draws one: clockwise from the top
+    left, once round and about a third of a radian past where it began,
+    from 0.9 of the pen's width inside the oval to 0.9 outside it, so the
+    ends pass each other, and thinning to 35% where the pen lands and
+    lifts. Drawing explains and never hides: blur and pixelate are not
+    offered, and nothing drawn counts on the lock.
 - **Convert to SVG** (`VectorEditor.swift`, `VectorCanvas.swift`) is Hide
   Part's window, laid out the same (`HidePartLayout`, opening for the
   picture's size with the 36 pt bar under the canvas counted), titled "name

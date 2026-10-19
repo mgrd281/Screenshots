@@ -64,6 +64,7 @@
 "Draw on Photo…" = "写真に描く…";
 "Select" = "選択";
 "Box" = "枠";
+"Circle" = "円";
 "Highlight" = "ハイライト";
 "Numbered Steps" = "番号付きの手順";
 "Text" = "テキスト";
@@ -88,6 +89,7 @@
 "Click a drawing to choose it, then drag it or its handles." = "描いたものをクリックして選び、それかハンドルをドラッグします。";
 "Drag from where the arrow starts to what it points at." = "矢印の始まりから指す先までドラッグします。";
 "Drag to draw a box around something." = "ドラッグして何かを枠で囲みます。";
+"Drag to draw a circle around something." = "ドラッグして何かを円で囲みます。";
 "Drag over words to highlight them." = "言葉の上をドラッグしてハイライトします。";
 "Click each place in turn. The numbers follow the order." = "各場所を順番にクリックします。番号はその順になります。";
 "Click where the words go, then type them." = "言葉を置く場所をクリックしてから入力します。";

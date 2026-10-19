@@ -64,6 +64,7 @@
 "Draw on Photo…" = "Auf Foto zeichnen …";
 "Select" = "Auswählen";
 "Box" = "Rahmen";
+"Circle" = "Kreis";
 "Highlight" = "Textmarker";
 "Numbered Steps" = "Nummerierte Schritte";
 "Text" = "Text";
@@ -88,6 +89,7 @@
 "Click a drawing to choose it, then drag it or its handles." = "Klick auf eine Zeichnung, um sie auszuwählen, und zieh dann sie oder ihre Griffe.";
 "Drag from where the arrow starts to what it points at." = "Zieh von dort, wo der Pfeil beginnt, bis dahin, worauf er zeigt.";
 "Drag to draw a box around something." = "Zieh, um einen Rahmen um etwas zu zeichnen.";
+"Drag to draw a circle around something." = "Zieh, um einen Kreis um etwas zu zeichnen.";
 "Drag over words to highlight them." = "Zieh über Wörter, um sie zu markieren.";
 "Click each place in turn. The numbers follow the order." = "Klick nacheinander auf jede Stelle. Die Zahlen folgen der Reihenfolge.";
 "Click where the words go, then type them." = "Klick dahin, wo die Wörter hinsollen, und tippe sie dann.";
