@@ -47,6 +47,7 @@ struct PhotosTab: View {
         }
         .onAppear {
             library.load()
+            Choice.share()
             PhoneSync.start()
             PhotoIndexer.shared.becameActive()
             guide.closeShot = { path.removeLast(path.count) }
@@ -62,6 +63,8 @@ struct PhotosTab: View {
                 library.load()
                 PhotoIndexer.shared.becameActive()
             }
+            // The share extension covers as Settings says, the look and rules too.
+            if now != .active { Choice.share() }
             // Nothing read stays in memory while Snapfly is away.
             if now == .background {
                 Finder.forgetReadings()

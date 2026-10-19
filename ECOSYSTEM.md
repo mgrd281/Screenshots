@@ -41,7 +41,8 @@ and its threat model; this file does not repeat them.
 | iPhone editor, review one by one, Full Screen | Built; not yet tried on a device | `ProtectView`, `EditorParts`, `MarkCanvas` |
 | iPhone library: search by words, show by kind, order | Built in this change; search covers screenshots read ahead of time | `LibraryQuery.swift`, `AllScreenshotsView` |
 | Shortcuts, Back Tap | Built | `Intents.swift` |
-| Share Extension, widget, Control Center control | Missing | needs the owner in the developer portal (§4) |
+| Share Extension | Built: covers as chosen in the app (kinds, look, own rules, through a shared keychain group), checks, copies, shares or saves; its identifier and profile are made by the upload itself; not yet tried on a device | `iOS/Share`, `CoveredCopy.swift`, `SharedChoice.swift` |
+| Widget, Control Center control | Missing | an App Group in the developer portal for the widget's data |
 | Handoff, iPhone Quick Look, drag and drop on iPhone | Missing | code only |
 | Sync: CloudKit private database, CKSyncEngine | Built; compiles, never run between real devices | `CloudSync.swift`, `SyncCenter.swift` |
 | Sync model: ids, revisions, content hash, tombstones, durable queue, backoff, duplicates | Built, tested on Linux | `SyncModel.swift`, `SyncLedger.swift`, `SyncPolicy.swift` |

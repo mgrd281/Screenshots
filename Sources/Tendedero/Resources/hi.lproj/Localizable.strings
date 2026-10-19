@@ -1389,3 +1389,6 @@
 "Nothing protected yet" = "अभी तक कुछ सुरक्षित नहीं";
 "The screenshots you protect show up here." = "जिन स्क्रीनशॉट को आप सुरक्षित करते हैं, वे यहाँ दिखते हैं।";
 "The last twelve, kept on this iPhone by their place in Photos alone." = "आख़िरी बारह, इस iPhone पर सिर्फ़ Photos में उनकी जगह से याद रखे गए।";
+
+/* The iPhone share extension */
+"Covered as chosen in Snapfly." = "Snapfly में चुने अनुसार ढका गया।";

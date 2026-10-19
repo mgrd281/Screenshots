@@ -1387,3 +1387,6 @@
 "Nothing protected yet" = "まだ何も保護していません";
 "The screenshots you protect show up here." = "保護したスクリーンショットがここに表示されます。";
 "The last twelve, kept on this iPhone by their place in Photos alone." = "最新の12枚。このiPhoneには写真内の場所だけが記録されます。";
+
+/* The iPhone share extension */
+"Covered as chosen in Snapfly." = "Snapflyで選んだとおりに隠しました。";
