@@ -6,6 +6,12 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The AI assistant has its own pane in Settings, and General is shorter.
+  Saving a key checks it with Claude or ChatGPT at once and says whether it
+  works; the clipboard button pastes and saves a copied key in one click.
+  The model is a menu of the models your key may use, by name, with Other…
+  for one typed by hand. The pane lists what the assistant does and holds
+  its Find more switch, and an AI card whose key is missing opens it.
 - The menu bar menu is tidier: Settings and the screenshots folder at the
   top, then taking, files, the line, the switches, and help. Check for
   Updates… sits just above Quit: the download edition updates itself in one

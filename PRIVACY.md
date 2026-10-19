@@ -19,9 +19,12 @@ does happens on your Mac, unless you set up the AI assistant with your own key
   screenshots. With the stamp off and no AI assistant set up, Snapfly never
   connects to the internet, except when you choose Check for Updates…, which
   downloads the newest version from GitHub and sends nothing about you.
-- **The AI assistant, only if you set it up.** In Settings › General you may
-  give Snapfly your own API key for Claude (Anthropic) or ChatGPT (OpenAI). The
-  key stays in your Mac's keychain. Then, only when you choose Write a Reply,
+- **The AI assistant, only if you set it up.** In Settings › AI Assistant you
+  may give Snapfly your own API key for Claude (Anthropic) or ChatGPT (OpenAI).
+  The key stays in your Mac's keychain. When you save it, open that pane or
+  choose Check Again, Snapfly asks Anthropic or OpenAI, with the key, for the
+  list of models it may use, to see that the key works; nothing else goes
+  with it. Then, only when you choose Write a Reply,
   Explain or Order Details for a screenshot, Snapfly sends that screenshot,
   with its private details covered as for an AI chat, and what you typed,
   straight from your Mac to Anthropic or OpenAI. With Find more with Claude

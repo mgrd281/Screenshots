@@ -298,7 +298,7 @@ literal value in a view.
 - **Record red** (`Color.red`) is only for the stop button while the screen
   or a guide is recorded, as macOS marks recording.
 - **Allowed green** and **not allowed orange** (`.green`, `.orange`) are only
-  for a permission's state, and the orange for a rule's pattern that cannot
+  for a permission's state, and whether the AI assistant's key works, and the orange for a rule's pattern that cannot
   be read, with a symbol beside the word, never color alone.
 - **Island black** is pure black, to blend into the notch and the menu bar
   above it.
@@ -834,35 +834,50 @@ apps.
     then pastes the reply into the chat in front; Explanation has Copy
     alone. Without a key, or with one refused, the card says so with an
     Open Settings… link in place of Open System Settings….
-  - **Settings › General › AI Assistant**, after Sounds and Open at login:
-    - Two **assistant tiles** side by side in equal parts, Claude and
-      ChatGPT (`AIProviderTile`), chosen as a line style or cover look tile
-      is. Each is a 12 pt continuous rounded rectangle with 12 pt padding:
-      the app's icon at 34 pt as the Dock shows it where the app is on this
-      Mac, else its short mark in a glass circle (`ChatIcon`), never a logo of
-      theirs in Snapfly; the name in 13 pt semibold, the maker (Anthropic,
-      OpenAI) in caption `.secondary`, and under them, in caption, a green
-      `checkmark.circle.fill` with "Key saved" or a `key` with "No key yet".
-      On the trailing edge `checkmark.circle.fill` in the accent when
+  - **Settings › AI Assistant** (`AIAssistantPane`, `sparkles`, a pane of
+    its own after Line), a grouped `Form` in four sections:
+    - **Assistant**: two **assistant tiles** side by side in equal parts,
+      Claude and ChatGPT (`AIProviderTile`), chosen as a line style or cover
+      look tile is. Each is a 12 pt continuous rounded rectangle with 12 pt
+      padding: the app's icon at 34 pt as the Dock shows it where the app is
+      on this Mac, else its short mark in a glass circle (`ChatIcon`), never
+      a logo of theirs in Snapfly; the name in 13 pt semibold, the maker
+      (Anthropic, OpenAI) in 11 pt `.secondary`, and under them, in 11 pt, a
+      green `checkmark.circle.fill` with "Key saved" or a `key` with "No key
+      yet". On the trailing edge `checkmark.circle.fill` in the accent when
       chosen, else `circle` in `.secondary` at 50%. Chosen: the accent at 8%
       inside a 2 pt accent edge; else the primary at 3% (6% under the
       pointer) inside a 1 pt edge of the primary at 12%. VoiceOver reads
       name, maker and key, and says which is selected.
-    - API key: a rounded secure field, prompted "Paste your key here", or
-      "Saved: …WXYZ" with the kept key's last four characters, never the key,
-      and Save beside it as `.borderedProminent`, off while the field is
-      empty, Return saving too.
-    - A row under it: on the leading side, in callout, "Saved in your
-      keychain, ending in …WXYZ" after a green `checkmark.seal.fill`, "No key
-      yet" after a `key` in `.secondary`, or in red after
-      `exclamationmark.triangle.fill` when the keychain refuses it; on the
-      trailing edge Remove Key (once one is kept) and Get a Key… as
-      `SettingsButton`s.
-    - Model: a rounded field in the monospaced system font, prompted with
-      the usual model's name; once one is typed, a borderless
-      `arrow.counterclockwise` before it, "Use the usual model", empties it.
-    - The footer says what is sent where, only when chosen, and that the
-      provider bills it, not a subscription.
+    - **Connection**: once a key is kept, a status row: a small spinner with
+      "Checking the key…", a green `checkmark.circle.fill` with "Ready. The
+      key works.", an orange `exclamationmark.triangle.fill` with the
+      provider refusing it, or `exclamationmark.circle` in `.secondary` with
+      what went wrong (offline, busy); Check Again on the trailing edge.
+      Without a key, or with one refused, a row "No key yet?" saying where
+      to make one, with Get a Key… as a `SettingsButton`. Then the key: kept,
+      "Saved in your keychain, ending in …WXYZ", never the key, with Change
+      and Remove Key (destructive) on the trailing edge; else a rounded
+      secure field, prompted "Paste your key here", then a borderless
+      `doc.on.clipboard` that pastes the copied key and saves it in one click
+      (labelled), Cancel while changing one, and Save as
+      `.borderedProminent`, off while the field is empty, Return saving too.
+      A key is checked as it is saved, and when the pane opens unchecked, by
+      asking the provider for its models (`AIConnection`), which costs
+      nothing; the result is kept while Snapfly runs.
+    - **Model**: a menu, the provider's own models once the key works
+      (Claude's by the names Anthropic gives them, ChatGPT's that chat, by
+      ID, newest first), else the usual three (Opus, Sonnet, Haiku 5.5); the
+      usual model is always in it and is kept as none named. Other… shows a
+      field in the monospaced system font for an ID typed by hand.
+    - **What it does**: Write a Reply, Explain with Claude and Order
+      Details, each with the symbol its menu item has, in `.secondary`, and
+      a line of 11 pt `.secondary` saying what it does; read as one by
+      VoiceOver. Then the switch Find more with Claude (also under Privacy).
+      The footer says where they are (a photo's menu, under Text and AI),
+      what is sent where, only when chosen, and that the provider bills it,
+      not a subscription.
+    - An AI card's Open Settings… opens this pane.
   - **Save for Bookkeeping** (`folder.badge.plus`) and **Email to
     Bookkeeping…** (`envelope`) follow it. The first asks for the folder
     once with an open panel, then saves and says so in a note above the

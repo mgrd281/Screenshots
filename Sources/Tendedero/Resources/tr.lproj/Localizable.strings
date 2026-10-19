@@ -757,15 +757,12 @@
 "Smart selection" = "Akıllı seçim";
 "Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "İmlecin altındaki resmi ya da kısmı çerçeveler, sürüklemeyi kenarlarına oturtur ve boş alanı kırpar. Serbestçe sürüklemek için ⌘ tuşunu basılı tut.";
 "%@ could not answer: %@" = "%@ yanıt veremedi: %@";
-"%@ did not accept the key. Check it in Settings › General." = "%@ anahtarı kabul etmedi. Ayarlar › Genel’de kontrol et.";
-"%@ does not know the model %@. Leave the model empty in Settings to use the usual one." = "%@, %@ modelini tanımıyor. Olağan modeli kullanmak için Ayarlar’da modeli boş bırak.";
 "%@ is busy right now. Try again in a moment." = "%@ şu an meşgul. Birazdan yeniden dene.";
 "%@ is writing a reply…" = "%@ bir yanıt yazıyor…";
 "%@ would not answer about this screenshot." = "%@ bu ekran görüntüsü hakkında yanıt vermedi.";
 "AI Assistant" = "Yapay Zekâ Asistanı";
 "API key" = "API anahtarı";
 "Add something, like “offer a replacement”" = "Bir şey ekle, örneğin “yenisini öner”";
-"Add your %@ key in Settings › General, under AI Assistant." = "%@ anahtarını Ayarlar › Genel’de, Yapay Zekâ Asistanı altında ekle.";
 "Ask" = "Sor";
 "Ask about this screenshot" = "Bu ekran görüntüsü hakkında sor";
 "Asking %@ for the rest…" = "Geri kalanı %@’a soruluyor…";
@@ -775,15 +772,12 @@
 "Find more with %@" = "%@ ile daha fazlasını bul";
 "Get a Key…" = "Anahtar al…";
 "Model" = "Model";
-"Needs an AI assistant key, under General." = "Genel’de bir yapay zekâ asistanı anahtarı gerekir.";
 "Open Settings…" = "Ayarları aç…";
 "Paste your key here" = "Anahtarını buraya yapıştır";
 "Product" = "Ürün";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Bu Mac’te örtülmeden okundu; %@ örtülü kopyada okuduklarını ekledi.";
 "Remove Key" = "Anahtarı kaldır";
 "Reply" = "Yanıt";
-"Saved: %@" = "Kaydedildi: %@";
-"Sends the words of each screenshot to the AI assistant set up under General, to cover what the patterns miss. Covering takes a few seconds longer." = "Her ekran görüntüsünün sözcüklerini Genel’de kurulan yapay zekâ asistanına gönderir, böylece kalıpların kaçırdıkları da örtülür. Örtmek birkaç saniye uzun sürer.";
 "The answer was empty." = "Yanıt boştu.";
 "The keychain did not keep the key." = "Anahtar Zinciri anahtarı tutmadı.";
 "Write Again" = "Yeniden yaz";
@@ -857,7 +851,6 @@
 "Key saved" = "Anahtar kaydedildi";
 "No key yet" = "Henüz anahtar yok";
 "Saved in your keychain, ending in %@" = "Anahtar Zincirinize kaydedildi, sonu %@";
-"Use the usual model" = "Her zamanki modeli kullan";
 
 /* GrabArea: the photo's menu */
 "Send to" = "Gönder";
@@ -1096,3 +1089,27 @@
 "Snapfly %@ is up to date." = "Snapfly %@ güncel.";
 "Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly kapanır, yeni sürümle değiştirilir ve yeniden açılır. Hattaki fotoğraflar kalır.";
 "The update could not be checked, so it was not installed." = "Güncelleme doğrulanamadığı için yüklenmedi.";
+
+/* Settings › AI Assistant */
+"%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ anahtarı kabul etmedi. Ayarlar › Yapay Zekâ Asistanı’nda kontrol et.";
+"%@ did not accept this key. Check it, or make a new one." = "%@ bu anahtarı kabul etmedi. Kontrol et ya da yenisini oluştur.";
+"%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@, %@ modelini tanımıyor. Ayarlar › Yapay Zekâ Asistanı’nda başka birini seç.";
+"Add your %@ key in Settings › AI Assistant." = "%@ anahtarını Ayarlar › Yapay Zekâ Asistanı’nda ekle.";
+"Change" = "Değiştir";
+"Check Again" = "Yeniden Kontrol Et";
+"Checking the key…" = "Anahtar kontrol ediliyor…";
+"Connection" = "Bağlantı";
+"In a photo’s menu, under Text and AI." = "Bir fotoğrafın menüsünde, Metin ve yapay zekâ altında.";
+"Make one on the %@ website, copy it, then paste it here." = "%@ web sitesinde bir tane oluştur, kopyala, sonra buraya yapıştır.";
+"Model ID" = "Model kimliği";
+"Needs an AI assistant key; add one under AI Assistant." = "Bir yapay zekâ asistanı anahtarı gerekir; Yapay Zekâ Asistanı’nda ekle.";
+"No key yet?" = "Henüz anahtar yok mu?";
+"Other…" = "Diğer…";
+"Paste the key from the clipboard and save it" = "Anahtarı panodan yapıştır ve kaydet";
+"Reads an order’s number, date, total, product and tracking." = "Bir siparişin numarasını, tarihini, toplamını, ürününü ve takip numarasını okur.";
+"Ready. The key works." = "Hazır. Anahtar çalışıyor.";
+"Says what a screenshot shows and what matters in it, or answers your question about it." = "Bir ekran görüntüsünün ne gösterdiğini ve neyin önemli olduğunu söyler ya da onunla ilgili sorunu yanıtlar.";
+"Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer." = "Her ekran görüntüsünün sözcüklerini yapay zekâ asistanına gönderir, böylece kalıpların kaçırdığını da örter. Örtmek birkaç saniye uzun sürer.";
+"The largest models answer best; smaller ones answer faster and cost less." = "En büyük modeller en iyi yanıtı verir; küçükler daha hızlı yanıtlar ve daha ucuzdur.";
+"What it does" = "Ne yapar";
+"Writes the reply to send, from a conversation, an order or a review." = "Bir sohbetten, siparişten ya da yorumdan gönderilecek yanıtı yazar.";

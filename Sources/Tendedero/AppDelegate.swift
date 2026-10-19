@@ -125,7 +125,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             CaptureButton.shared.recordingChanged()
         }
         CaptureButton.shared.openSettings = { [weak self] in self?.openSettings() }
-        TextCard.shared.openSettings = { [weak self] in self?.openSettings() }
+        TextCard.shared.openSettings = { [weak self] in self?.openAssistantSettings() }
         CaptureButton.shared.update()
         Recording.cleanUp()
         History.purge()
@@ -1118,6 +1118,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func openSettings() {
         guard let preferences else { return }
+        SettingsWindow.shared.show(preferences)
+    }
+
+    private func openAssistantSettings() {
+        guard let preferences else { return }
+        preferences.showsAssistant = true
         SettingsWindow.shared.show(preferences)
     }
 

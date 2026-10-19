@@ -757,15 +757,12 @@
 "Smart selection" = "スマート選択";
 "Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "ポインタの下の画像や部分を枠で囲み、ドラッグをその縁に合わせ、余白を切り取ります。自由にドラッグするには⌘キーを押したままにします。";
 "%@ could not answer: %@" = "%@が回答できませんでした：%@";
-"%@ did not accept the key. Check it in Settings › General." = "%@がキーを受け付けませんでした。設定 › 一般で確認してください。";
-"%@ does not know the model %@. Leave the model empty in Settings to use the usual one." = "%@はモデル%@を認識していません。通常のモデルを使うには、設定でモデルを空欄にしてください。";
 "%@ is busy right now. Try again in a moment." = "%@は現在混み合っています。少し待ってからもう一度お試しください。";
 "%@ is writing a reply…" = "%@が返信を書いています…";
 "%@ would not answer about this screenshot." = "%@はこのスクリーンショットについて回答しませんでした。";
 "AI Assistant" = "AIアシスタント";
 "API key" = "APIキー";
 "Add something, like “offer a replacement”" = "追加の指示（例：「交換品を提案」）";
-"Add your %@ key in Settings › General, under AI Assistant." = "設定 › 一般の「AIアシスタント」に%@のキーを追加してください。";
 "Ask" = "質問";
 "Ask about this screenshot" = "このスクリーンショットについて質問";
 "Asking %@ for the rest…" = "残りを%@に問い合わせ中…";
@@ -775,15 +772,12 @@
 "Find more with %@" = "%@でさらに見つける";
 "Get a Key…" = "キーを取得…";
 "Model" = "モデル";
-"Needs an AI assistant key, under General." = "「一般」でAIアシスタントのキーが必要です。";
 "Open Settings…" = "設定を開く…";
 "Paste your key here" = "ここにキーをペースト";
 "Product" = "商品";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "このMacで隠さずに読み取りました。%@が隠したコピーから読み取った内容を追加しました。";
 "Remove Key" = "キーを削除";
 "Reply" = "返信";
-"Saved: %@" = "保存済み：%@";
-"Sends the words of each screenshot to the AI assistant set up under General, to cover what the patterns miss. Covering takes a few seconds longer." = "各スクリーンショットの文字を「一般」で設定したAIアシスタントに送り、パターンが見逃したものも隠します。隠す処理に数秒長くかかります。";
 "The answer was empty." = "回答が空でした。";
 "The keychain did not keep the key." = "キーチェーンにキーを保存できませんでした。";
 "Write Again" = "書き直す";
@@ -857,7 +851,6 @@
 "Key saved" = "キー保存済み";
 "No key yet" = "キー未設定";
 "Saved in your keychain, ending in %@" = "キーチェーンに保存済み（末尾 %@）";
-"Use the usual model" = "いつものモデルを使う";
 
 /* GrabArea: the photo's menu */
 "Send to" = "送信先";
@@ -1096,3 +1089,27 @@
 "Snapfly %@ is up to date." = "Snapfly %@ は最新です。";
 "Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly を閉じ、新しいバージョンに置き換えてから、もう一度開きます。ラインの写真はそのまま残ります。";
 "The update could not be checked, so it was not installed." = "アップデートを確認できなかったため、インストールしませんでした。";
+
+/* Settings › AI Assistant */
+"%@ did not accept the key. Check it in Settings › AI Assistant." = "%@がキーを受け付けませんでした。設定 › AIアシスタントで確認してください。";
+"%@ did not accept this key. Check it, or make a new one." = "%@がこのキーを受け付けませんでした。確認するか、新しいキーを作成してください。";
+"%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@はモデル%@を知りません。設定 › AIアシスタントで別のモデルを選んでください。";
+"Add your %@ key in Settings › AI Assistant." = "設定 › AIアシスタントに%@のキーを追加してください。";
+"Change" = "変更";
+"Check Again" = "もう一度確認";
+"Checking the key…" = "キーを確認中…";
+"Connection" = "接続";
+"In a photo’s menu, under Text and AI." = "写真のメニューの「テキストとAI」にあります。";
+"Make one on the %@ website, copy it, then paste it here." = "%@のWebサイトでキーを作成し、コピーしてここにペーストしてください。";
+"Model ID" = "モデルID";
+"Needs an AI assistant key; add one under AI Assistant." = "AIアシスタントのキーが必要です。「AIアシスタント」で追加してください。";
+"No key yet?" = "まだキーがありませんか?";
+"Other…" = "その他…";
+"Paste the key from the clipboard and save it" = "クリップボードのキーをペーストして保存";
+"Reads an order’s number, date, total, product and tracking." = "注文の番号、日付、合計、商品、追跡番号を読み取ります。";
+"Ready. The key works." = "準備完了。キーは有効です。";
+"Says what a screenshot shows and what matters in it, or answers your question about it." = "スクリーンショットに何が写っていて何が大切かを伝えるか、それについての質問に答えます。";
+"Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer." = "各スクリーンショットの文字をAIアシスタントに送り、パターンが見逃したものも隠します。隠すのに数秒長くかかります。";
+"The largest models answer best; smaller ones answer faster and cost less." = "大きいモデルほど良い答えを返し、小さいモデルは速く安く答えます。";
+"What it does" = "できること";
+"Writes the reply to send, from a conversation, an order or a review." = "会話、注文、レビューから、送信できる返信を書きます。";

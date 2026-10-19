@@ -759,15 +759,12 @@
 "Smart selection" = "Ağıllı seçim";
 "Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "Göstəricinin altındakı şəkli və ya hissəni çərçivəyə alır, sürüşdürməni onun kənarlarına bağlayır və boş yeri kəsir. Sərbəst sürüşdürmək üçün ⌘ düyməsini saxla.";
 "%@ could not answer: %@" = "%@ cavab verə bilmədi: %@";
-"%@ did not accept the key. Check it in Settings › General." = "%@ açarı qəbul etmədi. Onu Ayarlar › Ümumi bölməsində yoxla.";
-"%@ does not know the model %@. Leave the model empty in Settings to use the usual one." = "%@ %@ modelini tanımır. Adi modeli işlətmək üçün Ayarlarda modeli boş saxla.";
 "%@ is busy right now. Try again in a moment." = "%@ hazırda məşğuldur. Bir azdan yenə cəhd et.";
 "%@ is writing a reply…" = "%@ cavab yazır…";
 "%@ would not answer about this screenshot." = "%@ bu ekran şəkli barədə cavab vermədi.";
 "AI Assistant" = "Süni intellekt köməkçisi";
 "API key" = "API açarı";
 "Add something, like “offer a replacement”" = "Nəsə əlavə et, məsələn, “əvəzini təklif et”";
-"Add your %@ key in Settings › General, under AI Assistant." = "%@ açarını Ayarlar › Ümumi bölməsində, Süni intellekt köməkçisi altında əlavə et.";
 "Ask" = "Soruş";
 "Ask about this screenshot" = "Bu ekran şəkli barədə soruş";
 "Asking %@ for the rest…" = "%@ qalanı barədə soruşulur…";
@@ -777,15 +774,12 @@
 "Find more with %@" = "%@ ilə daha çox tap";
 "Get a Key…" = "Açar al…";
 "Model" = "Model";
-"Needs an AI assistant key, under General." = "Ümumi bölməsində süni intellekt köməkçisi üçün açar lazımdır.";
 "Open Settings…" = "Ayarları aç…";
 "Paste your key here" = "Açarını bura yapışdır";
 "Product" = "Məhsul";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Bu Mac-da örtülmədən oxundu; %@ örtülmüş nüsxədə oxuduğunu əlavə etdi.";
 "Remove Key" = "Açarı sil";
 "Reply" = "Cavab";
-"Saved: %@" = "Saxlanıb: %@";
-"Sends the words of each screenshot to the AI assistant set up under General, to cover what the patterns miss. Covering takes a few seconds longer." = "Hər ekran şəklinin sözlərini Ümumi bölməsində qurulmuş süni intellekt köməkçisinə göndərir ki, şablonların buraxdığını örtsün. Örtmək bir neçə saniyə uzun çəkir.";
 "The answer was empty." = "Cavab boş idi.";
 "The keychain did not keep the key." = "Açar zənciri açarı saxlamadı.";
 "Write Again" = "Yenidən yaz";
@@ -859,7 +853,6 @@
 "Key saved" = "Açar saxlanıb";
 "No key yet" = "Hələ açar yoxdur";
 "Saved in your keychain, ending in %@" = "Açar zəncirinizdə saxlanıb, sonu: %@";
-"Use the usual model" = "Adi modeli istifadə et";
 
 /* GrabArea: the photo's menu */
 "Send to" = "Göndər";
@@ -1098,3 +1091,27 @@
 "Snapfly %@ is up to date." = "Snapfly %@ ən son versiyadır.";
 "Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly bağlanır, yeni versiya ilə əvəzlənir və yenidən açılır. Xəttdəki şəkillər qalır.";
 "The update could not be checked, so it was not installed." = "Yeniləməni yoxlamaq alınmadı, ona görə quraşdırılmadı.";
+
+/* Settings › AI Assistant */
+"%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ açarı qəbul etmədi. Onu Ayarlar › Süni intellekt köməkçisi bölməsində yoxla.";
+"%@ did not accept this key. Check it, or make a new one." = "%@ bu açarı qəbul etmədi. Onu yoxla və ya yenisini yarat.";
+"%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ %@ modelini tanımır. Ayarlar › Süni intellekt köməkçisi bölməsində başqasını seç.";
+"Add your %@ key in Settings › AI Assistant." = "%@ açarını Ayarlar › Süni intellekt köməkçisi bölməsində əlavə et.";
+"Change" = "Dəyiş";
+"Check Again" = "Yenidən yoxla";
+"Checking the key…" = "Açar yoxlanılır…";
+"Connection" = "Bağlantı";
+"In a photo’s menu, under Text and AI." = "Fotonun menyusunda, Mətn və süni intellekt altında.";
+"Make one on the %@ website, copy it, then paste it here." = "%@ saytında birini yarat, kopyala, sonra bura yapışdır.";
+"Model ID" = "Model ID-si";
+"Needs an AI assistant key; add one under AI Assistant." = "Süni intellekt köməkçisi üçün açar lazımdır; onu Süni intellekt köməkçisi bölməsində əlavə et.";
+"No key yet?" = "Hələ açar yoxdur?";
+"Other…" = "Başqa…";
+"Paste the key from the clipboard and save it" = "Açarı mübadilə buferindən yapışdır və saxla";
+"Reads an order’s number, date, total, product and tracking." = "Sifarişin nömrəsini, tarixini, cəmini, məhsulunu və izləmə nömrəsini oxuyur.";
+"Ready. The key works." = "Hazırdır. Açar işləyir.";
+"Says what a screenshot shows and what matters in it, or answers your question about it." = "Ekran şəklinin nə göstərdiyini və orada nəyin vacib olduğunu deyir, ya da onunla bağlı sualını cavablandırır.";
+"Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer." = "Hər ekran şəklinin sözlərini süni intellekt köməkçisinə göndərir ki, şablonların buraxdığını örtsün. Örtmək bir neçə saniyə uzun çəkir.";
+"The largest models answer best; smaller ones answer faster and cost less." = "Ən böyük modellər ən yaxşı cavab verir; kiçikləri daha tez cavab verir və daha ucuzdur.";
+"What it does" = "Nə edir";
+"Writes the reply to send, from a conversation, an order or a review." = "Söhbətdən, sifarişdən və ya rəydən göndəriləcək cavabı yazır.";

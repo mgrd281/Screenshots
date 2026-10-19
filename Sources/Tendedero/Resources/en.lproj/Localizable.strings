@@ -759,15 +759,12 @@
 "Smart selection" = "Smart selection";
 "Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely.";
 "%@ could not answer: %@" = "%@ could not answer: %@";
-"%@ did not accept the key. Check it in Settings › General." = "%@ did not accept the key. Check it in Settings › General.";
-"%@ does not know the model %@. Leave the model empty in Settings to use the usual one." = "%@ does not know the model %@. Leave the model empty in Settings to use the usual one.";
 "%@ is busy right now. Try again in a moment." = "%@ is busy right now. Try again in a moment.";
 "%@ is writing a reply…" = "%@ is writing a reply…";
 "%@ would not answer about this screenshot." = "%@ would not answer about this screenshot.";
 "AI Assistant" = "AI Assistant";
 "API key" = "API key";
 "Add something, like “offer a replacement”" = "Add something, like “offer a replacement”";
-"Add your %@ key in Settings › General, under AI Assistant." = "Add your %@ key in Settings › General, under AI Assistant.";
 "Ask" = "Ask";
 "Ask about this screenshot" = "Ask about this screenshot";
 "Asking %@ for the rest…" = "Asking %@ for the rest…";
@@ -777,15 +774,12 @@
 "Find more with %@" = "Find more with %@";
 "Get a Key…" = "Get a Key…";
 "Model" = "Model";
-"Needs an AI assistant key, under General." = "Needs an AI assistant key, under General.";
 "Open Settings…" = "Open Settings…";
 "Paste your key here" = "Paste your key here";
 "Product" = "Product";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Read on this Mac, not covered; %@ added what it read in the covered copy.";
 "Remove Key" = "Remove Key";
 "Reply" = "Reply";
-"Saved: %@" = "Saved: %@";
-"Sends the words of each screenshot to the AI assistant set up under General, to cover what the patterns miss. Covering takes a few seconds longer." = "Sends the words of each screenshot to the AI assistant set up under General, to cover what the patterns miss. Covering takes a few seconds longer.";
 "The answer was empty." = "The answer was empty.";
 "The keychain did not keep the key." = "The keychain did not keep the key.";
 "Write Again" = "Write Again";
@@ -859,7 +853,6 @@
 "Key saved" = "Key saved";
 "No key yet" = "No key yet";
 "Saved in your keychain, ending in %@" = "Saved in your keychain, ending in %@";
-"Use the usual model" = "Use the usual model";
 
 /* GrabArea: the photo's menu */
 "Send to" = "Send to";
@@ -1098,3 +1091,27 @@
 "Snapfly %@ is up to date." = "Snapfly %@ is up to date.";
 "Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "Snapfly closes, is replaced by the new version and opens again. Photos on the line stay.";
 "The update could not be checked, so it was not installed." = "The update could not be checked, so it was not installed.";
+
+/* Settings › AI Assistant */
+"%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ did not accept the key. Check it in Settings › AI Assistant.";
+"%@ did not accept this key. Check it, or make a new one." = "%@ did not accept this key. Check it, or make a new one.";
+"%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ does not know the model %@. Choose another one in Settings › AI Assistant.";
+"Add your %@ key in Settings › AI Assistant." = "Add your %@ key in Settings › AI Assistant.";
+"Change" = "Change";
+"Check Again" = "Check Again";
+"Checking the key…" = "Checking the key…";
+"Connection" = "Connection";
+"In a photo’s menu, under Text and AI." = "In a photo’s menu, under Text and AI.";
+"Make one on the %@ website, copy it, then paste it here." = "Make one on the %@ website, copy it, then paste it here.";
+"Model ID" = "Model ID";
+"Needs an AI assistant key; add one under AI Assistant." = "Needs an AI assistant key; add one under AI Assistant.";
+"No key yet?" = "No key yet?";
+"Other…" = "Other…";
+"Paste the key from the clipboard and save it" = "Paste the key from the clipboard and save it";
+"Reads an order’s number, date, total, product and tracking." = "Reads an order’s number, date, total, product and tracking.";
+"Ready. The key works." = "Ready. The key works.";
+"Says what a screenshot shows and what matters in it, or answers your question about it." = "Says what a screenshot shows and what matters in it, or answers your question about it.";
+"Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer." = "Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer.";
+"The largest models answer best; smaller ones answer faster and cost less." = "The largest models answer best; smaller ones answer faster and cost less.";
+"What it does" = "What it does";
+"Writes the reply to send, from a conversation, an order or a review." = "Writes the reply to send, from a conversation, an order or a review.";

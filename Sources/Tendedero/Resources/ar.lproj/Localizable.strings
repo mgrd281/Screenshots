@@ -757,15 +757,12 @@
 "Smart selection" = "التحديد الذكي";
 "Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely." = "يحيط بإطار الصورة أو الجزء الذي تحت المؤشر، ويُبقي السحب على حوافه، ويقصّ الفراغ الزائد. اضغط ⌘ مع السحب لتسحب بحرية.";
 "%@ could not answer: %@" = "تعذّر على %@ الإجابة: %@";
-"%@ did not accept the key. Check it in Settings › General." = "لم يقبل %@ المفتاح. تحقّق منه في الإعدادات › عام.";
-"%@ does not know the model %@. Leave the model empty in Settings to use the usual one." = "لا يعرف %@ النموذج %@. اترك خانة النموذج فارغة في الإعدادات لاستعمال المعتاد.";
 "%@ is busy right now. Try again in a moment." = "%@ مشغول الآن. حاول مرة أخرى بعد لحظة.";
 "%@ is writing a reply…" = "%@ يكتب ردًا…";
 "%@ would not answer about this screenshot." = "رفض %@ الإجابة عن لقطة الشاشة هذه.";
 "AI Assistant" = "المساعد الذكي";
 "API key" = "مفتاح API";
 "Add something, like “offer a replacement”" = "أضف شيئًا، مثل «اعرض بديلًا»";
-"Add your %@ key in Settings › General, under AI Assistant." = "أضف مفتاح %@ في الإعدادات › عام، تحت المساعد الذكي.";
 "Ask" = "اسأل";
 "Ask about this screenshot" = "اسأل عن لقطة الشاشة هذه";
 "Asking %@ for the rest…" = "جارٍ سؤال %@ عن الباقي…";
@@ -775,15 +772,12 @@
 "Find more with %@" = "اكتشف المزيد مع %@";
 "Get a Key…" = "احصل على مفتاح…";
 "Model" = "النموذج";
-"Needs an AI assistant key, under General." = "يحتاج إلى مفتاح للمساعد الذكي، في قسم عام.";
 "Open Settings…" = "فتح الإعدادات…";
 "Paste your key here" = "الصق مفتاحك هنا";
 "Product" = "المنتج";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "قُرئ على هذا الـ Mac دون تغطية؛ وأضاف %@ ما قرأه في النسخة المغطّاة.";
 "Remove Key" = "إزالة المفتاح";
 "Reply" = "الرد";
-"Saved: %@" = "محفوظ: %@";
-"Sends the words of each screenshot to the AI assistant set up under General, to cover what the patterns miss. Covering takes a few seconds longer." = "يرسل كلمات كل لقطة شاشة إلى المساعد الذكي المُعدّ في قسم عام، ليغطّي ما فات القواعد. تستغرق التغطية بضع ثوانٍ أطول.";
 "The answer was empty." = "كان الجواب فارغًا.";
 "The keychain did not keep the key." = "لم تحتفظ سلسلة المفاتيح بالمفتاح.";
 "Write Again" = "اكتب من جديد";
@@ -857,7 +851,6 @@
 "Key saved" = "المفتاح محفوظ";
 "No key yet" = "لا يوجد مفتاح بعد";
 "Saved in your keychain, ending in %@" = "محفوظ في سلسلة المفاتيح، وينتهي بـ %@";
-"Use the usual model" = "استخدام النموذج المعتاد";
 
 /* GrabArea: the photo's menu */
 "Send to" = "إرسال إلى";
@@ -1096,3 +1089,27 @@
 "Snapfly %@ is up to date." = "Snapfly %@ هو أحدث إصدار.";
 "Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "سيُغلق Snapfly ويُستبدل بالإصدار الجديد ثم يُفتح من جديد. الصور على الخط تبقى.";
 "The update could not be checked, so it was not installed." = "تعذّر التحقق من التحديث، لذلك لم يُثبَّت.";
+
+/* Settings › AI Assistant */
+"%@ did not accept the key. Check it in Settings › AI Assistant." = "لم يقبل %@ المفتاح. تحقّق منه في الإعدادات › المساعد الذكي.";
+"%@ did not accept this key. Check it, or make a new one." = "لم يقبل %@ هذا المفتاح. تحقّق منه، أو أنشئ مفتاحًا جديدًا.";
+"%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "لا يعرف %@ النموذج %@. اختر نموذجًا آخر في الإعدادات › المساعد الذكي.";
+"Add your %@ key in Settings › AI Assistant." = "أضف مفتاح %@ في الإعدادات › المساعد الذكي.";
+"Change" = "تغيير";
+"Check Again" = "تحقّق مجددًا";
+"Checking the key…" = "جارٍ التحقق من المفتاح…";
+"Connection" = "الاتصال";
+"In a photo’s menu, under Text and AI." = "في قائمة الصورة، تحت النص والذكاء الاصطناعي.";
+"Make one on the %@ website, copy it, then paste it here." = "أنشئ مفتاحًا على موقع %@، وانسخه، ثم ألصقه هنا.";
+"Model ID" = "معرّف النموذج";
+"Needs an AI assistant key; add one under AI Assistant." = "يحتاج إلى مفتاح للمساعد الذكي؛ أضِفه في قسم المساعد الذكي.";
+"No key yet?" = "لا مفتاح بعد؟";
+"Other…" = "غير ذلك…";
+"Paste the key from the clipboard and save it" = "ألصق المفتاح من الحافظة واحفظه";
+"Reads an order’s number, date, total, product and tracking." = "يقرأ رقم الطلب وتاريخه ومجموعه والمنتج ورقم الشحنة.";
+"Ready. The key works." = "جاهز. المفتاح يعمل.";
+"Says what a screenshot shows and what matters in it, or answers your question about it." = "يقول ما تُظهره لقطة الشاشة وما المهم فيها، أو يجيب عن سؤالك عنها.";
+"Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer." = "يرسل كلمات كل لقطة شاشة إلى المساعد الذكي، ليغطّي ما فات القواعد. تستغرق التغطية بضع ثوانٍ أطول.";
+"The largest models answer best; smaller ones answer faster and cost less." = "أكبر النماذج تجيب أفضل؛ والأصغر تجيب أسرع وتكلّف أقل.";
+"What it does" = "ما يفعله";
+"Writes the reply to send, from a conversation, an order or a review." = "يكتب الرد الجاهز للإرسال، من محادثة أو طلب أو تقييم.";
