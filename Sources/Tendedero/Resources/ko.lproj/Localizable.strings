@@ -1078,3 +1078,10 @@
 "The Mac’s sound is what you hear, without Snapfly’s own. Recording the microphone too needs macOS 15." = "Mac 사운드는 들리는 소리이며 Snapfly 자체 소리는 빠집니다. 마이크도 기록하려면 macOS 15가 필요합니다.";
 "Recording without the microphone: Snapfly isn’t allowed to use it. Allow it in System Settings › Privacy & Security › Microphone." = "마이크 없이 기록합니다. Snapfly에 마이크 사용이 허용되지 않았습니다. 시스템 설정 › 개인정보 보호 및 보안 › 마이크에서 허용하세요.";
 "Saving the recording…" = "기록 저장 중…";
+
+/* Send from Hide Private Details */
+"Send covered" = "가려서 보내기";
+"More" = "더 보기";
+"Share…" = "공유…";
+"Copied, covered. Paste it wherever you like." = "가린 상태로 복사했습니다. 원하는 곳에 붙여 넣으세요.";
+"Copied. Paste it with ⌘V." = "복사했습니다. ⌘V로 붙여 넣으세요.";

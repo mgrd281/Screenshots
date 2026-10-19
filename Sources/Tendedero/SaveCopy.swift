@@ -20,7 +20,7 @@ enum SaveCopy {
         return String(format: L("%@ (covered)"), stem) + "." + fileExtension(for: url)
     }
 
-    private static func fileExtension(for url: URL) -> String {
+    static func fileExtension(for url: URL) -> String {
         if isPDF(url) { return "pdf" }
         return url.pathExtension.lowercased() == "png" ? "png" : "jpg"
     }

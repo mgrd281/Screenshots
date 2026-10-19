@@ -84,7 +84,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
 | Click the send button over a chat | The same, without leaving the message box. Drag it to move it; it stays there for that app. |
 | <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
-| Right-click a photo or PDF in Finder, then Services › Hide Private Details with Snapfly | Choose what to hide and save a covered copy beside the original. The original stays as it is. Several files, or a folder, open Cover Files. |
+| Right-click a photo or PDF in Finder, then Services › Hide Private Details with Snapfly | Choose what to hide, then send the covered copy straight to Gmail, WhatsApp, ChatGPT, Claude or any chat on for photos, copy it, share it with the Mac's Share menu, or save it beside the original. The original stays as it is. Several files, or a folder, open Cover Files. |
 | Right-click (or control-click), then Save and Export › Make PDF | Put the photo, or the ones picked with it, in one PDF, a page each and private details covered. It hangs ready to send, marked PDF. |
 | <kbd>⌘</kbd>-click one or more, then the PDF button on the tag | The same PDF, from the tag, where search sits while nothing is picked. |
 | Click the download arrow on the tag, above the trash | Save the photos picked, or all of them, into Downloads as they leave the line: covered, drawn on and cropped, each as a file of its own. They stay on the line, and the files they came from stay as they are. A note says where they went; click it to see them in Finder. The App Store edition asks once which folder they go to. |
@@ -890,6 +890,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `CoveringProfile.swift` | Cover everything in AI chats: which chats count, and what to cover for the app in front |
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
+| `HideSend.swift` | Send covered, in Hide Private Details: the copy straight to a chat, the clipboard or the Share menu |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
 | `Shared/PrivateText.swift` | Finds private details in a screenshot, eighteen kinds and the owner's own rules, on the Mac and the iPhone |
 | `Shared/CoverLook.swift` | How covers look (ink, labelled, blur, pixels, dots, erased), drawn from the colors around what is covered; keeping the last four digits; the samples Settings shows |

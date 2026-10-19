@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Hide Private Details with Snapfly, from Finder, now sends the covered copy
+  straight on: one click on Gmail, WhatsApp, ChatGPT, Claude or any chat on
+  for photos, or Copy, or the Mac's Share menu, besides Save Copy…. What to
+  hide is chosen in one tidy row of buttons.
 - Sound in screen recordings, chosen in Settings › General: the Mac's sound,
   the microphone (macOS 15 and later), or both mixed into one track. None
   until chosen.
