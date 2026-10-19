@@ -18,13 +18,15 @@ struct PhotosTab: View {
     /// Where a screenshot grows out of as it opens.
     @Namespace private var zoom
     @State private var picked: PhotosPickerItem?
+    /// Whether the page has scrolled under the status bar.
+    @State private var scrolled = false
     /// Each press of the green button, for its haptic.
     @State private var presses = 0
     @Environment(\.scenePhase) private var phase
     @Environment(\.dynamicTypeSize) private var typeSize
 
     /// How many screenshots the home screen shows before See All.
-    private let preview = 8
+    private let preview = 12
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -97,9 +99,15 @@ struct PhotosTab: View {
             .padding(.bottom, 24)
         }
         .scrollIndicators(.hidden)
+        .onScrolledDown($scrolled)
         .background(Color(.systemBackground))
-        // The status bar stays readable over what scrolls under it.
-        .safeAreaInset(edge: .top, spacing: 0) { Color.clear.frame(height: 0).background(.bar) }
+        // The page's own colour under the status bar; the bar's material only
+        // once something scrolls under it, so it stays readable.
+        .safeAreaInset(edge: .top, spacing: 0) {
+            Color.clear.frame(height: 0)
+                .background(scrolled ? AnyShapeStyle(.bar) : AnyShapeStyle(Color(.systemBackground)))
+                .animation(.easeOut(duration: 0.15), value: scrolled)
+        }
         .phoneGuide(on: .library)
         .onAppear {
             if !library.shots.isEmpty { guide.offerIfDue() }
@@ -124,7 +132,7 @@ struct PhotosTab: View {
         VStack(spacing: 20) {
             PhotoHero()
             words(center: true)
-            protectButton
+            protectButton(compact: false)
             VStack(spacing: 4) {
                 Text(L("No screenshots yet"))
                     .font(.subheadline.weight(.semibold))
@@ -145,7 +153,7 @@ struct PhotosTab: View {
             VStack(spacing: 16) {
                 PhotoHero(scale: 0.5)
                 words(center: true)
-                protectButton
+                protectButton(compact: true)
             }
             .frame(maxWidth: .infinity)
         } else {
@@ -154,7 +162,7 @@ struct PhotosTab: View {
                     .padding(.leading, -12)
                 VStack(alignment: .leading, spacing: 12) {
                     words(center: false)
-                    protectButton
+                    protectButton(compact: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -175,11 +183,11 @@ struct PhotosTab: View {
     }
 
     /// Protect a Photo: the system's photo picker, any picture from Photos.
-    private var protectButton: some View {
+    private func protectButton(compact: Bool) -> some View {
         PhotosPicker(selection: $picked, matching: .images) {
             Label(L("Protect a Photo"), systemImage: "shield.lefthalf.filled")
         }
-        .buttonStyle(ProtectButtonStyle())
+        .buttonStyle(ProtectButtonStyle(compact: compact))
         .simultaneousGesture(TapGesture().onEnded { presses += 1 })
         .sensoryFeedback(.impact(weight: .light), trigger: presses)
     }

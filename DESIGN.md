@@ -1867,7 +1867,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   in `.secondary`, orange with `exclamationmark.triangle.fill` when it
   needs the owner, else `checkmark.icloud`, on a capsule of `.primary` at
   6%, padded 10 by 6, opening More). Settings is the More tab, so the
-  header has no gear. The bar material sits under the status bar only.
+  header has no gear. Under the status bar is the page's own colour; from
+  iOS 18 on, once the page scrolls, the bar material fades in there (0.15 s)
+  so the status bar stays readable.
   Sections are 24 pt apart.
   - **The stacked photos** (`PhotoHero`), drawn with shapes, never a
     picture: on a soft ellipse of `phone-surface` (300 by 190, blurred 18),
@@ -1893,6 +1895,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     0.46 as large, beside the same words (headline and subheadline) and the
     button, leading, so the screenshots come first; at accessibility text
     sizes, the small picture sits above them.
+  - Beside the small picture the pill is compact: subheadline semibold,
+    padded 14 by 8, at least 36 pt tall, growing no larger than at extra
+    large text.
   - **Protect a Photo**, the green pill (`ProtectButtonStyle`):
     `shield.lefthalf.filled` and the words in body medium, white on
     `phone-protect`, padded 20 by 11, at least 44 pt tall; pressed, it is
@@ -1903,18 +1908,17 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - Then From your Mac. What was protected lately is the Protected tab.
   - **Screenshots**, title 3 semibold, with See All and a chevron in the
     accent on the trailing edge whenever there are screenshots, over the
-    newest eight in a grid (`ScreenshotGrid`): square cards at least 76 pt
+    newest twelve in a grid (`ScreenshotGrid`): square cards at least 76 pt
     and at most 160 pt wide, 8 pt apart, four to a row on most iPhones. A
     card (`ScreenshotCard`) shows the top of the screenshot, square in the
     grid with corners of 12, at 3:4 with corners of 14 in the row of
     protected ones, a hairline of `.primary` at 8% and a shadow of black 6%,
-    radius 6, y 2; when it was taken ("Today, 20:03", as the language says
-    it) in caption 2 medium, no larger than at the default text size and
-    shrinking to 75% before it would cut, on an ultra-thin capsule 4 pt in at
-    the bottom of a grid card (6 pt in the row); in the grid, a 20 pt
-    ultra-thin circle with `ellipsis` in caption 2 bold at the bottom's
-    trailing corner, 4 pt in, opening the same menu as holding the card
-    (Cover and Copy, Share, Save; VoiceOver: More); and, once protected here
+    radius 6, y 2; when it was taken, whole ("20:03" today, else "19.10.,
+    20:03", as the language writes them; VoiceOver says "Today, 20:03") in
+    caption 2 medium with monospaced digits, no larger than at the default
+    text size and shrinking to 70% rather than cut, on an ultra-thin capsule
+    4 pt in at the bottom of a grid card (6 pt in the row); no button of its
+    own, holding the card offers its menu; and, once protected here
     lately, `checkmark.shield.fill` in white on a 22 pt `phone-protect`
     circle at the top. Thumbnails are small, made by Photos'
     caching manager and kept in memory while the app runs. From iOS 18 on, a
