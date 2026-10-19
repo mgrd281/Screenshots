@@ -1258,7 +1258,6 @@
 "Opening…" = "正在打开…";
 "Passwords and access" = "密码和访问";
 "Protect a Photo" = "保护照片";
-"Protected lately" = "最近保护";
 "Reading and checking" = "读取与检查";
 "Show the screenshot as it was" = "显示原始截图";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly 对这些不确定：请逐一检查，并打开或关闭。";
@@ -1372,3 +1371,19 @@
 "Newest First" = "最新优先";
 "Oldest First" = "最早优先";
 "Filter" = "过滤";
+
+/* Tabs, scanning and the Protected tab on the iPhone */
+"Scan" = "扫描";
+"Scan a document" = "扫描文稿";
+"Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it." = "信件、表格和收据，直接用相机扫描。任何内容离开这台 iPhone 之前，隐私信息都会先在这台 iPhone 上遮盖。";
+"Scan Document" = "扫描文稿";
+"This iPhone cannot scan documents." = "这台 iPhone 无法扫描文稿。";
+"Scanned pages" = "已扫描的页面";
+"Page %d" = "第 %d 页";
+"Pages stay on this iPhone only while Snapfly is open." = "页面只在 Snapfly 打开期间留在这台 iPhone 上。";
+"Hold your iPhone over the page; it is found and taken by itself." = "将 iPhone 对准页面，它会自动识别并拍下。";
+"Names, numbers and other private details are covered as Settings says." = "姓名、号码和其他隐私信息会按设置遮盖。";
+"Check the places, then copy, share or save the covered page." = "检查各处后，拷贝、共享或存储已遮盖的页面。";
+"Nothing protected yet" = "还没有受保护的内容";
+"The screenshots you protect show up here." = "你保护过的截屏会显示在这里。";
+"The last twelve, kept on this iPhone by their place in Photos alone." = "最近十二张，这台 iPhone 只记住它们在“照片”中的位置。";

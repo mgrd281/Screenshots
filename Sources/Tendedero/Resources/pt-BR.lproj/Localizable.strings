@@ -1258,7 +1258,6 @@
 "Opening…" = "Abrindo…";
 "Passwords and access" = "Senhas e acesso";
 "Protect a Photo" = "Proteger uma foto";
-"Protected lately" = "Protegidas recentemente";
 "Reading and checking" = "Leitura e verificação";
 "Show the screenshot as it was" = "Mostrar a captura como era";
 "Snapfly is not sure about these: check each, and turn it on or off." = "O Snapfly não tem certeza sobre estes: confira cada um e ative ou desative.";
@@ -1372,3 +1371,19 @@
 "Newest First" = "Mais recentes primeiro";
 "Oldest First" = "Mais antigas primeiro";
 "Filter" = "Filtrar";
+
+/* Tabs, scanning and the Protected tab on the iPhone */
+"Scan" = "Escanear";
+"Scan a document" = "Escanear um documento";
+"Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it." = "Cartas, formulários e recibos, direto da câmera. Os dados privados são cobertos neste iPhone antes que qualquer coisa saia dele.";
+"Scan Document" = "Escanear documento";
+"This iPhone cannot scan documents." = "Este iPhone não consegue escanear documentos.";
+"Scanned pages" = "Páginas escaneadas";
+"Page %d" = "Página %d";
+"Pages stay on this iPhone only while Snapfly is open." = "As páginas ficam neste iPhone só enquanto o Snapfly está aberto.";
+"Hold your iPhone over the page; it is found and taken by itself." = "Segure o iPhone sobre a página; ela é encontrada e capturada sozinha.";
+"Names, numbers and other private details are covered as Settings says." = "Nomes, números e outros dados privados são cobertos conforme os Ajustes.";
+"Check the places, then copy, share or save the covered page." = "Confira os lugares e depois copie, compartilhe ou salve a página coberta.";
+"Nothing protected yet" = "Nada protegido ainda";
+"The screenshots you protect show up here." = "As capturas que você protege aparecem aqui.";
+"The last twelve, kept on this iPhone by their place in Photos alone." = "As últimas doze, guardadas neste iPhone só pelo lugar delas em Fotos.";

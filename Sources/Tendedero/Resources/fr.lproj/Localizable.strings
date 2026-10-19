@@ -1258,7 +1258,6 @@
 "Opening…" = "Ouverture…";
 "Passwords and access" = "Mots de passe et accès";
 "Protect a Photo" = "Protéger une photo";
-"Protected lately" = "Protégées récemment";
 "Reading and checking" = "Lecture et vérification";
 "Show the screenshot as it was" = "Afficher la capture d’origine";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly n’est pas sûr de ceux-ci : vérifie chacun et active-le ou désactive-le.";
@@ -1372,3 +1371,19 @@
 "Newest First" = "Plus récentes d’abord";
 "Oldest First" = "Plus anciennes d’abord";
 "Filter" = "Filtrer";
+
+/* Tabs, scanning and the Protected tab on the iPhone */
+"Scan" = "Scanner";
+"Scan a document" = "Scanner un document";
+"Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it." = "Lettres, formulaires et reçus, directement depuis l’appareil photo. Les informations privées sont masquées sur cet iPhone avant que quoi que ce soit n’en sorte.";
+"Scan Document" = "Scanner un document";
+"This iPhone cannot scan documents." = "Cet iPhone ne peut pas scanner de documents.";
+"Scanned pages" = "Pages scannées";
+"Page %d" = "Page %d";
+"Pages stay on this iPhone only while Snapfly is open." = "Les pages restent sur cet iPhone seulement tant que Snapfly est ouvert.";
+"Hold your iPhone over the page; it is found and taken by itself." = "Tiens ton iPhone au-dessus de la page ; elle est repérée et prise toute seule.";
+"Names, numbers and other private details are covered as Settings says." = "Les noms, numéros et autres informations privées sont masqués selon tes réglages.";
+"Check the places, then copy, share or save the covered page." = "Vérifie les zones, puis copie, partage ou enregistre la page masquée.";
+"Nothing protected yet" = "Rien de protégé pour l’instant";
+"The screenshots you protect show up here." = "Les captures que tu protèges apparaissent ici.";
+"The last twelve, kept on this iPhone by their place in Photos alone." = "Les douze dernières, gardées sur cet iPhone uniquement par leur place dans Photos.";

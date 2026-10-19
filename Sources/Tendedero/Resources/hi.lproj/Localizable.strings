@@ -1260,7 +1260,6 @@
 "Opening…" = "खुल रहा है…";
 "Passwords and access" = "पासवर्ड और पहुँच";
 "Protect a Photo" = "फ़ोटो सुरक्षित करें";
-"Protected lately" = "हाल में सुरक्षित";
 "Reading and checking" = "पढ़ना और जाँचना";
 "Show the screenshot as it was" = "स्क्रीनशॉट वैसा ही दिखाएँ जैसा था";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly इनके बारे में पक्का नहीं है: हर एक को जाँचें और चालू या बंद करें।";
@@ -1374,3 +1373,19 @@
 "Newest First" = "नए पहले";
 "Oldest First" = "पुराने पहले";
 "Filter" = "फ़िल्टर";
+
+/* Tabs, scanning and the Protected tab on the iPhone */
+"Scan" = "स्कैन";
+"Scan a document" = "दस्तावेज़ स्कैन करें";
+"Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it." = "पत्र, फ़ॉर्म और रसीदें, सीधे कैमरे से। कुछ भी बाहर जाने से पहले निजी जानकारी इसी iPhone पर ढक दी जाती है।";
+"Scan Document" = "दस्तावेज़ स्कैन करें";
+"This iPhone cannot scan documents." = "यह iPhone दस्तावेज़ स्कैन नहीं कर सकता।";
+"Scanned pages" = "स्कैन किए गए पेज";
+"Page %d" = "पेज %d";
+"Pages stay on this iPhone only while Snapfly is open." = "पेज इस iPhone पर सिर्फ़ तब तक रहते हैं जब तक Snapfly खुला है।";
+"Hold your iPhone over the page; it is found and taken by itself." = "iPhone को पेज के ऊपर रखें; वह अपने आप पहचाना और लिया जाता है।";
+"Names, numbers and other private details are covered as Settings says." = "नाम, नंबर और दूसरी निजी जानकारी सेटिंग्स के अनुसार ढकी जाती है।";
+"Check the places, then copy, share or save the covered page." = "जगहें जाँचें, फिर ढके हुए पेज को कॉपी करें, शेयर करें या सेव करें।";
+"Nothing protected yet" = "अभी तक कुछ सुरक्षित नहीं";
+"The screenshots you protect show up here." = "जिन स्क्रीनशॉट को आप सुरक्षित करते हैं, वे यहाँ दिखते हैं।";
+"The last twelve, kept on this iPhone by their place in Photos alone." = "आख़िरी बारह, इस iPhone पर सिर्फ़ Photos में उनकी जगह से याद रखे गए।";

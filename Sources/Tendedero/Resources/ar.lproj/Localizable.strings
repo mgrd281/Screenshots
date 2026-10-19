@@ -1258,7 +1258,6 @@
 "Opening…" = "جارٍ الفتح…";
 "Passwords and access" = "كلمات المرور والدخول";
 "Protect a Photo" = "احمِ صورة";
-"Protected lately" = "المحمية مؤخرًا";
 "Reading and checking" = "القراءة والفحص";
 "Show the screenshot as it was" = "اعرض لقطة الشاشة كما كانت";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly غير متأكد من هذه: تحقّق من كلٍّ منها، وغطِّه أو اكشفه.";
@@ -1372,3 +1371,19 @@
 "Newest First" = "الأحدث أولًا";
 "Oldest First" = "الأقدم أولًا";
 "Filter" = "تصفية";
+
+/* Tabs, scanning and the Protected tab on the iPhone */
+"Scan" = "مسح";
+"Scan a document" = "امسح مستندًا";
+"Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it." = "رسائل ونماذج وإيصالات، مباشرة من الكاميرا. تُغطّى البيانات الخاصة على هذا الآيفون قبل أن يخرج منه أي شيء.";
+"Scan Document" = "امسح مستندًا";
+"This iPhone cannot scan documents." = "لا يستطيع هذا الآيفون مسح المستندات.";
+"Scanned pages" = "الصفحات الممسوحة";
+"Page %d" = "الصفحة %d";
+"Pages stay on this iPhone only while Snapfly is open." = "تبقى الصفحات على هذا الآيفون فقط ما دام «سنابفلاي» مفتوحًا.";
+"Hold your iPhone over the page; it is found and taken by itself." = "أمسك الآيفون فوق الصفحة، فيجدها ويلتقطها وحده.";
+"Names, numbers and other private details are covered as Settings says." = "تُغطّى الأسماء والأرقام والبيانات الخاصة الأخرى كما في الإعدادات.";
+"Check the places, then copy, share or save the covered page." = "راجع الأماكن، ثم انسخ الصفحة المغطّاة أو شاركها أو احفظها.";
+"Nothing protected yet" = "لا شيء محمي بعد";
+"The screenshots you protect show up here." = "تظهر هنا لقطات الشاشة التي تحميها.";
+"The last twelve, kept on this iPhone by their place in Photos alone." = "آخر اثنتي عشرة، محفوظة على هذا الآيفون بمكانها في الصور فقط.";

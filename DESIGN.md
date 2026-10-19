@@ -1849,16 +1849,26 @@ its own (October 2026): its accent is `phone-accent` (the asset catalogue's
 AccentColor, `#07875C`, `#1FA774` in dark), and its one primary action is the
 green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
 
-- Screenshots sit in cards at 3:4, corners 14, as the home screen shows them.
-- **Home.** No navigation bar: a header in the page, 16 pt in, "Snapfly"
-  in title 2 bold, then on the trailing edge, while syncing is on, a chip
-  with how it stands (footnote in `.secondary`, orange with
-  `exclamationmark.triangle.fill` when it needs the owner, else
-  `checkmark.icloud`, on a capsule of `.primary` at 6%, padded 10 by 6,
-  opening Settings) and Settings, `gearshape` on a 40 pt circle of the card
-  colour with a hairline (`.primary` at 8%) and a soft shadow (black 6%,
-  radius 6, y 2), in a 44 pt target. The bar material sits under the status
-  bar only. Sections are 24 pt apart.
+- Screenshots sit in small square cards, corners 12, in the grids, and at
+  3:4, corners 14, where a card stands alone.
+- **The tab bar** (`AppTabs.swift`) is the system's `TabView`, never a bar
+  of our own, so it is Liquid Glass from iOS 26 on, where it also shrinks
+  to the tab shown while a page scrolls down (`tabBarMinimizeBehavior`),
+  and the system's bar before. Four tabs, each with its own navigation:
+  Photos (`photo.on.rectangle.angled`), Scan (`doc.viewfinder`), Protected
+  (`checkmark.shield`) and More (`ellipsis.circle`), tinted with the
+  accent; a selection haptic marks each change. The tab bar steps aside
+  while a picture is open (Protect Picture is immersive). One share sheet
+  serves every tab; a quick cover's note floats 24 pt over the bottom of
+  the tab it was started in.
+- **Photos** (`PhotosTab`). No navigation bar: a header in the page, 16 pt
+  in, "Snapfly" in large title bold, at least 44 pt high, then on the
+  trailing edge, while syncing is on, a chip with how it stands (footnote
+  in `.secondary`, orange with `exclamationmark.triangle.fill` when it
+  needs the owner, else `checkmark.icloud`, on a capsule of `.primary` at
+  6%, padded 10 by 6, opening More). Settings is the More tab, so the
+  header has no gear. The bar material sits under the status bar only.
+  Sections are 24 pt apart.
   - **The stacked photos** (`PhotoHero`), drawn with shapes, never a
     picture: on a soft ellipse of `phone-surface` (300 by 190, blurred 18),
     three cards. Behind, a page (124 by 165, corners 16, the card colour
@@ -1890,9 +1900,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     Motion), with a light impact. It opens the system's photo picker.
     Allow Access on the first launch, and Settings when access was refused,
     are the same pill.
-  - Then From your Mac, then "Protected lately" in title 3 semibold over a
-    row that scrolls sideways to the screen's edges of screenshot cards 96
-    pt wide, 10 pt apart.
+  - Then From your Mac. What was protected lately is the Protected tab.
   - **Screenshots**, title 3 semibold, with See All and a chevron in the
     accent on the trailing edge whenever there are screenshots, over the
     newest eight in a grid (`ScreenshotGrid`): square cards at least 76 pt
@@ -1928,6 +1936,29 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - **First launch**, before access: the whole picture over "Allow Snapfly
     to see your screenshots" in title 2 bold and what Snapfly does, in
     `.secondary`, centred, 32 pt in, then Allow Access.
+- **Scan** (`ScanTab.swift`), a large title, 16 pt in:
+  - A card of `phone-surface` with corners of 24 and a hairline of
+    `.primary` at 6%, padded 20 by 24, its contents centred 18 pt apart: a
+    viewfinder 132 pt square, drawn with shapes (a page 74 by 96 of the card
+    colour with corners of 10, a shadow of black 10%, radius 8, y 4, its
+    lines capsules 5 pt high of `.primary` at 10%, one covered at 85%,
+    inside four corner arms in `phone-protect`, 4 pt, round caps, a fifth of
+    the width long), hidden from VoiceOver; "Scan a document" in title 2
+    bold over what it does in subheadline `.secondary`; and Scan Document
+    (`camera.viewfinder`), the green pill, with a light impact. Where the
+    iPhone cannot scan, the pill is dimmed over a footnote saying so.
+  - Scanning is the system's document camera (`VNDocumentCameraViewController`),
+    full screen. One page opens at once in Protect Picture; several wait
+    under "Scanned pages" (title 3 semibold, Clear on the trailing edge) as
+    the grid's square cards, newest first, over a footnote that they stay
+    only while the app is open.
+  - Then three steps, each an SF Symbol in `phone-protect`, body semibold,
+    24 pt wide, before subheadline `.secondary` words, 14 pt apart.
+- **Protected** (`ProtectedTab`), a large title: the last twelve screenshots
+  protected, in the Photos tab's grid with the shield on each, over a
+  footnote of how they are kept; with none, the system's empty state with
+  `checkmark.shield`.
+- **More** is Settings as a tab: a large title "More", no Done.
 - **Protect Picture** is an immersive editor: the picture is the screen,
   and everything else floats over it (`ProtectView`, `EditorParts.swift`).
   - **The canvas** (`MarkCanvas`, a `UIScrollView`) fills the screen under
