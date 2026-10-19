@@ -26,6 +26,8 @@ final class PhotoIndexer: NSObject, ObservableObject {
     @Published private(set) var access = PHPhotoLibrary.authorizationStatus(for: .readWrite)
 
     private var work: Task<Void, Never>?
+    /// Each run started, so one stopped never clears the one after it.
+    private var runs = 0
     /// Photos being covered now; preparing waits for them.
     private var held = 0
     private var shortOfMemory = false
@@ -38,6 +40,18 @@ final class PhotoIndexer: NSObject, ObservableObject {
                                                queue: .main) { _ in
             MainActor.assumeIsolated { PhotoIndexer.shared.memoryIsShort() }
         }
+        // Cooler, or out of Low Power Mode: what waited goes on, while Snapfly is open.
+        for name in [ProcessInfo.thermalStateDidChangeNotification, Notification.Name.NSProcessInfoPowerStateDidChange] {
+            NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { _ in
+                MainActor.assumeIsolated { PhotoIndexer.shared.deviceChanged() }
+            }
+        }
+    }
+
+    private func deviceChanged() {
+        guard settings.isOn, waiting != nil, pauseNow == nil,
+              UIApplication.shared.applicationState == .active else { return }
+        start()
     }
 
     var isLimited: Bool { access == .limited }
@@ -137,7 +151,9 @@ final class PhotoIndexer: NSObject, ObservableObject {
     func start() -> Task<Void, Never>? {
         if let work { return work }
         guard settings.isOn, access == .authorized || access == .limited else { return nil }
-        let task = Task { await run() }
+        runs += 1
+        let mine = runs
+        let task = Task { await run(mine) }
         work = task
         return task
     }
@@ -172,11 +188,13 @@ final class PhotoIndexer: NSObject, ObservableObject {
 
     /// Reads what is left, newest first, one photo at a time, until done,
     /// stopped, or the device needs it to wait.
-    private func run() async {
+    private func run(_ mine: Int) async {
         isRunning = true
         defer {
-            isRunning = false
-            work = nil
+            if runs == mine {
+                isRunning = false
+                work = nil
+            }
         }
         let store = IndexStore.shared
         let settings = settings
@@ -194,7 +212,9 @@ final class PhotoIndexer: NSObject, ObservableObject {
             guard UIApplication.shared.isProtectedDataAvailable else { break }
             waiting = nil
             let photo = await Task.detached(priority: .utility) { await Self.read(candidate) }.value
-            guard !Task.isCancelled, let photo else { break }
+            if Task.isCancelled { break }
+            // Gone from Photos since: the next one.
+            guard let photo else { continue }
             try? await store.keep(photo)
             list = await store.list()
             show(candidates, list)

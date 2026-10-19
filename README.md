@@ -283,15 +283,25 @@ the name ends: "Patient: Mustermann, Max, geb. 01.02.1960" covers
 bank is never covered as a name, a title like Dr. med. or Frau stays
 readable, and so do a phone number, an address, an amount or a diagnosis,
 each a kind of its own. A line that only looks like a name, with nothing to
-vouch for it, is not covered but offered to check. Under Names, Whose names
-chooses everyone's, as at first, or only some people's: patients, doctors
-and medical staff, customers and account holders, employees and contacts,
-or everyone else. Whose a name is comes from what stands round it: a label
-like Patient: or Behandelnder Arzt:, a title, the closing above a
-signature, a date of birth beside it, and the kind of document. A name
-whose role is not clear is covered anyway and marked to check. A payment
-code that only names a company, like a shop's GiroCode, is not covered by
-Names; one that names a person is.
+vouch for it, is offered to check; in a doctor's letter, an invoice or a
+bank statement it is covered and marked to check instead, so a patient's
+name never stays readable as a mere suggestion.
+
+Names covers everyone's names. Two more choices sit under it, for when
+Names is off: Patient names, the patients' alone, and Other people, the
+doctors, customers, staff, payees, senders and recipients. Patient names
+starts on, as a patient's name is health data. Whose a name is comes from
+what stands round it: a label like Patient:, Pat., Name des Versicherten
+or Behandelnder Arzt:, a title, the address under "Herrn" in a doctor's
+letter, the letter's subject, words like "Ihren Patienten" before it in a
+sentence, a date of birth after it, a table's header above it, and the
+closing above a signature, which makes the one who signs a doctor. Once a
+name is known as the patient's, every place it appears is, in either
+order, with an initial, or with a letter misread. A name whose role is not
+clear is covered anyway and marked to check. None of these ever covers a
+phone number, an address or a QR code: a code is covered by codes, or by
+another kind it holds, like the account in a payment's code, never by a
+name or a company in it.
 
 API keys and tokens are found by how services start them, like `sk-`,
 `ghp_` or `AKIA`, by what follows Bearer or a setting like `API_KEY=`, by a
@@ -858,20 +868,42 @@ watch the screen, so there is no line there. What it keeps is the covering:
   the names find is marked a moment later, then the copy is made, read again
   as anyone could read it, and covered further if need be, and where Apple
   Intelligence is on, what it finds joins after (Don't Wait leaves it out).
-  Zoom with two fingers, tap a place to cover or uncover it, Add Area to
-  cover more by drawing over it, Undo and Redo, and hold the eye to see the
-  screenshot as it was. Under it, how many places are covered, kind by kind,
-  what is to be checked, and Details, every place to turn on or off. Copy,
-  Share and Save wait until the copy is made, checked and every cover is
-  known to have landed. Hold a screenshot in the grid for Cover and Copy,
-  without opening it. The screenshot itself stays as it was.
+  Protect Picture is a workspace: zoom with two fingers or a double tap,
+  and under the picture pick a tool. Select taps a place to select it, or a
+  word to hide it; a selected place moves, resizes by its corners and, a
+  box, turns by its handle, and holding one down offers Cover, Uncover or
+  Delete. The marker (thin, medium or thick), a box and the lasso hide more
+  by hand in solid ink, one finger drawing and two moving the picture; the
+  eraser takes covers away, and the picture shows there again, in the
+  editor only. Every change can be undone and done again; Clear Hidden by
+  Hand and Reset to Suggestions take back many at once. Hold the eye to see
+  the screenshot as it was. Under it, each place is counted once:
+  protected, to check, or not protected, and while a place to check is not
+  covered the picture is never called protected. Copy, Share and Save never
+  cut their words short, wait until the copy is made, checked and every
+  cover is known to have landed, and ask first while places are still to
+  check. Hold a screenshot in the grid for Cover and Copy, without opening
+  it. The screenshot itself stays as it was.
   Settings chooses what to cover, in the same six groups as on the Mac,
-  with Check All, Recommended and Uncheck All, and Whose names under Names.
-  Cover look picks how covers look, from the same six as on the Mac, with
-  Keep the last four digits and Strongest protection. Reading and checking
-  holds Apple Intelligence and how long the last screenshot took. Under
-  Advanced, add rules of your own, as on the Mac, and see how to set up
-  the double tap on the back.
+  with Check All, Recommended and Uncheck All, and Patient names and Other
+  people beside Names. Cover look picks how covers look, from the same six
+  as on the Mac, with Keep the last four digits and Strongest protection.
+  Reading and checking holds Apple Intelligence, how long the last
+  screenshot took, the middle and the 95th percentile of the last fifty,
+  and Faster picture processing (below). Under Advanced, add rules of your
+  own, as on the Mac, and see how to set up the double tap on the back.
+- **Faster picture processing** is off until you turn it on, after a page
+  that says what it does. It reads your pictures from the last 60 days on
+  the iPhone ahead of time, newest first: the screenshots only, every photo
+  Snapfly may see, or only photos you pick. The words read and where they
+  are stay on the iPhone, locked while it is, never in backups; a photo
+  opened later is covered from them without being read again. It works
+  while Snapfly is open, and in the background while the iPhone charges,
+  when iOS allows; it never downloads a photo from iCloud, and waits in Low
+  Power Mode, when the iPhone is warm or short of memory, and while you
+  protect a picture. Its page shows how far it is with real numbers, the
+  photos only in iCloud, the last update and the room it takes, with
+  Pause, Prepare Now, Delete Local Index and Turn Off, which deletes it.
 - **Cover the Latest Screenshot** is a Shortcuts action that needs no opening
   of the app. Chosen for Back Tap (Settings › Accessibility › Touch › Back Tap
   › Double Tap), a double tap on the back of the iPhone covers the newest
@@ -982,7 +1014,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
 | `HideSend.swift` | Send covered, in Hide Private Details: the copy straight to a chat, the clipboard or the Share menu |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
-| `Shared/PrivateText.swift` | Finds private details in a screenshot, nineteen kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose; the lines read kept a while in memory |
+| `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-one kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names or only Patient names and Other people; the lines read kept a while in memory, or given from a photo prepared ahead of time |
+| `Shared/HandShape.swift`, `Shared/ProtectionPlan.swift` | Hiding by hand: the marker's strokes, boxes that turn and outlines, on the original picture's places, and every place of a picture with the owner's changes, each undone and done again, and the count of what is protected, to check and left |
+| `Shared/PrivacyIndex.swift` | Pictures prepared ahead of time: what is kept of each, what is left to read, newest first, and when preparing waits |
 | `Shared/DocumentSense.swift` | Reads a document as a person would: a person's name from a company's, where a label's value stops being a name, whose a name is (patient, doctor, customer, staff), and whose names Settings covers |
 | `Shared/ProtectionPlan.swift` | A picture being protected, place by place: found, offered, turned on or off or covered by hand, with undo and redo |
 | `Shared/ExportCheck.swift` | The last check before a copy leaves: every cover landed where something showed |
@@ -999,7 +1033,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
 | `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
-| `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture to zoom with its places marked, covered in steps and checked, the status, the chips, Details and the buttons that wait for the checked copy |
+| `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture to zoom with its places marked, covered in steps and checked, the tools to select, draw, box, lasso and erase with their handles, the status, the count, Details, and the buttons that wait for the checked copy and ask while places are to check |
+| `iOS/Snapfly/PhotoIndexer.swift`, `IndexStore.swift`, `PreparingView.swift`, `iOS/Info.plist` | Faster picture processing: reading pictures ahead of time with consent, in the app and in the background, where it is kept on the iPhone, its page in Settings, and the background task's name |
 | `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
 | `Drawing.swift` | Draw on Photo's arrows, boxes, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |

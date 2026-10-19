@@ -6,12 +6,30 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- A patient's name is covered wherever a report names it: under "Herrn" in
+  the address, in the subject, after "Ihren Patienten" in a sentence,
+  before a date of birth, under a table's header, with an initial or a
+  letter misread. In a doctor's letter, an invoice or a bank statement, a
+  line shaped like a name is covered and marked to check, never left as a
+  suggestion only.
+- Patient names and Other people sit beside Names: Names covers everyone,
+  and with it off, only the people chosen are covered. Patient names starts
+  on. Whoever chose some people's names before keeps that choice. None of
+  them covers a phone number, an address or a QR code.
+- On the iPhone, Protect Picture is a workspace: select, the marker, a box
+  that turns, the lasso and the eraser under the picture, a tap on a word
+  to hide it, handles to move and resize, a double tap to zoom, and Undo
+  and Redo for every change. Each place is counted once, protected, to
+  check or not protected; Copy, Share and Save ask first while places are
+  still to check, and never cut their words short.
+- Faster picture processing, off until you turn it on: the iPhone reads
+  your pictures from the last 60 days ahead of time, on the iPhone only,
+  so they open covered without being read again. Screenshots only, all
+  allowed photos, or photos you pick; Pause, Prepare Now and Delete Local
+  Index in Settings, with real numbers.
 - Names covers people's names and nothing else: a company, a practice or a
   bank, a title, a phone number, an address, an amount or a diagnosis beside
-  a name stays readable unless its own kind is chosen. Whose names, under
-  Names, covers everyone's or only some people's, like the patient's and not
-  the doctor's, read from the labels, titles and signatures round each name;
-  a name whose role is unclear is covered and marked to check.
+  a name stays readable unless its own kind is chosen.
 - Companies and organizations are a kind of their own, and Settings groups
   the kinds in six: People, Companies and organizations, Money, Health,
   Documents, Passwords and access.
