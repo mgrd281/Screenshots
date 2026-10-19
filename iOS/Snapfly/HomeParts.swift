@@ -371,19 +371,87 @@ struct ScreenshotGrid: View {
     }
 }
 
-/// Every screenshot, behind See All.
+/// Every screenshot, behind See All: searched by the words they say, as
+/// read ahead of time on this iPhone, shown by what they hold or whether
+/// they were protected, newest or oldest first.
 struct AllScreenshotsView: View {
     let shots: [PHAsset]
     let protected: Set<String>
     let zoom: Namespace.ID
     let quick: (PHAsset, QuickCover) -> Void
+    @State private var query = LibraryQuery()
+    /// What each screenshot read ahead of time says and holds, in memory
+    /// only while this shows.
+    @State private var read: [String: (text: String, kinds: [String])] = [:]
+    @State private var loaded = false
 
     var body: some View {
+        let shown = matching
         ScrollView {
-            ScreenshotGrid(shots: shots, protected: protected, place: .all, zoom: zoom, quick: quick)
-                .padding(16)
+            if shown.isEmpty, query.narrows {
+                ContentUnavailableView.search(text: query.search)
+                    .padding(.top, 40)
+            } else {
+                ScreenshotGrid(shots: shown, protected: protected, place: .all, zoom: zoom, quick: quick)
+                    .padding(16)
+            }
+            if loaded, read.isEmpty, !query.words.isEmpty {
+                Label(L("Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings."),
+                      systemImage: "text.magnifyingglass")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
+            }
         }
+        .searchable(text: $query.search, placement: .navigationBarDrawer(displayMode: .always),
+                    prompt: L("Search words in screenshots"))
         .navigationTitle(L("Screenshots"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) { options }
+        }
+        .task { await load() }
+    }
+
+    /// What shows, and in which order.
+    private var options: some View {
+        Menu {
+            Picker(L("Show"), selection: $query.filter) {
+                Text(L("All Screenshots")).tag(LibraryQuery.Filter.all)
+                Text(L("With Private Details")).tag(LibraryQuery.Filter.privateDetails)
+                Text(L("Protected")).tag(LibraryQuery.Filter.protected)
+                Text(L("Not protected")).tag(LibraryQuery.Filter.unprotected)
+            }
+            Picker(L("Sort"), selection: $query.order) {
+                Text(L("Newest First")).tag(LibraryQuery.Order.newest)
+                Text(L("Oldest First")).tag(LibraryQuery.Order.oldest)
+            }
+        } label: {
+            Image(systemName: query.filter == .all ? "line.3.horizontal.decrease.circle"
+                  : "line.3.horizontal.decrease.circle.fill")
+        }
+        .accessibilityLabel(L("Filter"))
+    }
+
+    private var matching: [PHAsset] {
+        let byID = Dictionary(shots.map { ($0.localIdentifier, $0) }, uniquingKeysWith: { first, _ in first })
+        let items = shots.map { asset in
+            LibraryQuery.Item(id: asset.localIdentifier, created: asset.creationDate,
+                              text: read[asset.localIdentifier]?.text, kinds: read[asset.localIdentifier]?.kinds ?? [],
+                              protected: protected.contains(asset.localIdentifier))
+        }
+        return query.apply(items).compactMap { byID[$0.id] }
+    }
+
+    /// The words and kinds of the screenshots read ahead of time.
+    private func load() async {
+        var found: [String: (text: String, kinds: [String])] = [:]
+        for asset in shots {
+            guard let photo = await IndexStore.shared.photo(asset.localIdentifier) else { continue }
+            found[asset.localIdentifier] = (photo.lines.map(\.text).joined(separator: " "), photo.kinds)
+        }
+        read = found
+        loaded = true
     }
 }

@@ -251,17 +251,16 @@ struct ContentView: View {
                         .font(.title3.weight(.semibold))
                         .accessibilityAddTraits(.isHeader)
                     Spacer()
-                    if library.shots.count > preview {
-                        NavigationLink {
-                            AllScreenshotsView(shots: library.shots, protected: protected, zoom: zoom, quick: quick)
-                        } label: {
-                            HStack(spacing: 3) {
-                                Text(L("See All"))
-                                Image(systemName: "chevron.forward")
-                                    .font(.footnote.weight(.semibold))
-                            }
-                            .font(.subheadline.weight(.medium))
+                    // Always there: it also finds screenshots by their words.
+                    NavigationLink {
+                        AllScreenshotsView(shots: library.shots, protected: protected, zoom: zoom, quick: quick)
+                    } label: {
+                        HStack(spacing: 3) {
+                            Text(L("See All"))
+                            Image(systemName: "chevron.forward")
+                                .font(.footnote.weight(.semibold))
                         }
+                        .font(.subheadline.weight(.medium))
                     }
                 }
                 ScreenshotGrid(shots: Array(library.shots.prefix(preview)), protected: protected, place: .home, zoom: zoom,

@@ -1364,3 +1364,11 @@
 "Everything is checked." = "Tout est vérifié.";
 "Previous" = "Précédent";
 "Goes as soon as the copy is ready." = "Se fera dès que la copie sera prête.";
+"Search words in screenshots" = "Chercher des mots dans les captures";
+"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "Les mots se trouvent dans les captures lues à l’avance. Active « Traitement d’image plus rapide » dans les Réglages.";
+"All Screenshots" = "Toutes les captures";
+"With Private Details" = "Avec des données privées";
+"Sort" = "Trier";
+"Newest First" = "Plus récentes d’abord";
+"Oldest First" = "Plus anciennes d’abord";
+"Filter" = "Filtrer";

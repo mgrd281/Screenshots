@@ -1364,3 +1364,11 @@
 "Everything is checked." = "全部已检查。";
 "Previous" = "上一个";
 "Goes as soon as the copy is ready." = "副本准备好后立即执行。";
+"Search words in screenshots" = "在截屏中搜索文字";
+"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "文字会在预先读取的截屏中找到。请在设置中打开“更快的图片处理”。";
+"All Screenshots" = "所有截屏";
+"With Private Details" = "含私人信息";
+"Sort" = "排序";
+"Newest First" = "最新优先";
+"Oldest First" = "最早优先";
+"Filter" = "过滤";

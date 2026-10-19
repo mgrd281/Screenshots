@@ -1364,3 +1364,11 @@
 "Everything is checked." = "すべて確認しました。";
 "Previous" = "前へ";
 "Goes as soon as the copy is ready." = "コピーの準備ができしだい実行します。";
+"Search words in screenshots" = "スクリーンショット内の言葉を検索";
+"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "言葉は事前に読み取ったスクリーンショットから見つかります。設定で「画像処理の高速化」をオンにしてください。";
+"All Screenshots" = "すべてのスクリーンショット";
+"With Private Details" = "個人情報を含む";
+"Sort" = "並べ替え";
+"Newest First" = "新しい順";
+"Oldest First" = "古い順";
+"Filter" = "フィルタ";
