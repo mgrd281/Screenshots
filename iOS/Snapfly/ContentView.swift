@@ -27,7 +27,7 @@ struct ContentView: View {
     @Environment(\.dynamicTypeSize) private var typeSize
 
     /// How many screenshots the home screen shows before See All.
-    private let preview = 12
+    private let preview = 8
 
     var body: some View {
         NavigationStack(path: $path) {

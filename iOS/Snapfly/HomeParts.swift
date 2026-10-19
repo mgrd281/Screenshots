@@ -241,17 +241,21 @@ enum QuickCover {
     case copy, share, save
 }
 
-/// One screenshot as a card: its top, at 3 by 4, when it was taken, and a
-/// green shield once it was protected here lately.
+/// One screenshot as a card: its top, at 3 by 4, or square where cards sit
+/// four to a row, when it was taken, and a green shield once it was
+/// protected here lately.
 struct ScreenshotCard: View {
     let asset: PHAsset
     var protected = false
     var showsDate = true
+    var square = false
+    /// Room kept free at the bottom's trailing corner, for the card's menu.
+    var menuRoom: CGFloat = 0
     @State private var image: UIImage? = nil
 
     var body: some View {
         Color(.secondarySystemBackground)
-            .aspectRatio(3 / 4, contentMode: .fit)
+            .aspectRatio(square ? 1 : 3 / 4, contentMode: .fit)
             .overlay(alignment: .top) {
                 if let image {
                     Image(uiImage: image)
@@ -261,13 +265,17 @@ struct ScreenshotCard: View {
             }
             .overlay(alignment: .bottomLeading) {
                 if showsDate, let date = asset.creationDate {
+                    // Small, as the card is: it grows no larger than at the default text size.
                     Text(Self.taken.string(from: date))
                         .font(.caption2.weight(.medium))
+                        .dynamicTypeSize(...DynamicTypeSize.large)
                         .lineLimit(1)
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 3)
+                        .minimumScaleFactor(0.75)
+                        .padding(.horizontal, square ? 5 : 7)
+                        .padding(.vertical, square ? 2 : 3)
                         .background(.ultraThinMaterial, in: Capsule())
-                        .padding(6)
+                        .padding(square ? 4 : 6)
+                        .padding(.trailing, menuRoom)
                 }
             }
             .overlay(alignment: .topTrailing) {
@@ -280,8 +288,9 @@ struct ScreenshotCard: View {
                         .padding(6)
                 }
             }
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Color.primary.opacity(0.08)))
+            .clipShape(RoundedRectangle(cornerRadius: square ? 12 : 14, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: square ? 12 : 14, style: .continuous)
+                .strokeBorder(Color.primary.opacity(0.08)))
             .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
             .task(id: asset.localIdentifier) { image = await Library.thumbnail(of: asset, width: 360) }
             .accessibilityElement(children: .ignore)
@@ -339,9 +348,9 @@ extension View {
     }
 }
 
-/// Screenshots in a grid, three to a row on most iPhones: a tap opens one
-/// to protect, growing out of its card; holding one covers it and copies,
-/// shares or saves it.
+/// Screenshots in a grid of small square cards, four to a row on most
+/// iPhones: a tap opens one to protect, growing out of its card; its menu,
+/// or holding it, covers it and copies, shares or saves it.
 struct ScreenshotGrid: View {
     let shots: [PHAsset]
     let protected: Set<String>
@@ -350,15 +359,28 @@ struct ScreenshotGrid: View {
     let quick: (PHAsset, QuickCover) -> Void
 
     var body: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 104, maximum: 200), spacing: 10)], spacing: 10) {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 76, maximum: 160), spacing: 8)], spacing: 8) {
             ForEach(shots, id: \.localIdentifier) { asset in
                 let link = ShotLink(id: asset.localIdentifier, place: place)
                 NavigationLink(value: link) {
-                    ScreenshotCard(asset: asset, protected: protected.contains(asset.localIdentifier))
+                    ScreenshotCard(asset: asset, protected: protected.contains(asset.localIdentifier), square: true,
+                                   menuRoom: 22)
                         .zoomSource(link, in: zoom)
                 }
                 .buttonStyle(.plain)
                 .contextMenu { menu(asset) }
+                .overlay(alignment: .bottomTrailing) {
+                    Menu { menu(asset) } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(.primary)
+                            .frame(width: 20, height: 20)
+                            .background(.ultraThinMaterial, in: Circle())
+                            .padding(4)
+                            .contentShape(Rectangle())
+                    }
+                    .accessibilityLabel(L("More"))
+                }
                 .phoneGuideTarget(.firstShot, on: asset.localIdentifier == shots.first?.localIdentifier)
             }
         }

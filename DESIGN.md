@@ -1895,14 +1895,20 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     pt wide, 10 pt apart.
   - **Screenshots**, title 3 semibold, with See All and a chevron in the
     accent on the trailing edge whenever there are screenshots, over the
-    newest twelve in a grid (`ScreenshotGrid`): cards at least 104 pt and at
-    most 200 pt wide, 10 pt apart, three to a row on most iPhones. A card
-    (`ScreenshotCard`) shows the top of the screenshot at 3:4 with corners of
-    14, a hairline of `.primary` at 8% and a shadow of black 6%, radius 6, y
-    2; when it was taken ("Today, 20:03", as the language says it) in caption
-    2 medium on an ultra-thin capsule 6 pt in at the bottom; and, once
-    protected here lately, `checkmark.shield.fill` in white on a 22 pt
-    `phone-protect` circle at the top. Thumbnails are small, made by Photos'
+    newest eight in a grid (`ScreenshotGrid`): square cards at least 76 pt
+    and at most 160 pt wide, 8 pt apart, four to a row on most iPhones. A
+    card (`ScreenshotCard`) shows the top of the screenshot, square in the
+    grid with corners of 12, at 3:4 with corners of 14 in the row of
+    protected ones, a hairline of `.primary` at 8% and a shadow of black 6%,
+    radius 6, y 2; when it was taken ("Today, 20:03", as the language says
+    it) in caption 2 medium, no larger than at the default text size and
+    shrinking to 75% before it would cut, on an ultra-thin capsule 4 pt in at
+    the bottom of a grid card (6 pt in the row); in the grid, a 20 pt
+    ultra-thin circle with `ellipsis` in caption 2 bold at the bottom's
+    trailing corner, 4 pt in, opening the same menu as holding the card
+    (Cover and Copy, Share, Save; VoiceOver: More); and, once protected here
+    lately, `checkmark.shield.fill` in white on a 22 pt `phone-protect`
+    circle at the top. Thumbnails are small, made by Photos'
     caching manager and kept in memory while the app runs. From iOS 18 on, a
     screenshot opens by growing out of the card tapped (the system's zoom
     transition, a fade with Reduce Motion), from the grid, the row or See
