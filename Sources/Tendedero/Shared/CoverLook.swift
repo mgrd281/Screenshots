@@ -71,6 +71,7 @@ extension PrivateDetail {
         case .amounts: L("Amount")
         case .dates: L("Date")
         case .links: L("Link")
+        case .organizations: L("Company")
         }
     }
 }
