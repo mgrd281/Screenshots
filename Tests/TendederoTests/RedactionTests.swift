@@ -218,7 +218,138 @@ final class RedactionTests: XCTestCase {
         XCTAssertEqual(found.hits.count, 1, "\(found.covered)")
     }
 
+    // MARK: Forms: each field covered as what its label says, and only that
+
+    /// The made-up certificate of incapacity for work, laid out as read.
+    private let sickNote = FormFieldsTests.sickNote
+
+    func testNamesAloneCoverTheNamesOnTheFormAndNothingElse() {
+        let found = protect(form: sickNote, [.names])
+        XCTAssertEqual(Set(found.covered), ["Mustermann", "Erika", "Paul Beispiel"], "\(found.covered)")
+        XCTAssertTrue(found.hits.allSatisfy { $0.kind == .names })
+        XCTAssertTrue(found.checked.isEmpty, "every name here is sure: \(found.checked)")
+    }
+
+    func testPatientNamesAloneCoverTheInsuredPersonNotTheDoctor() {
+        XCTAssertEqual(Set(protect(form: sickNote, [.patientNames]).covered), ["Mustermann", "Erika"])
+        XCTAssertEqual(Set(protect(form: sickNote, [.otherPeople]).covered), ["Paul Beispiel"])
+    }
+
+    func testHealthAloneCoversTheIllnessAndItsDaysNotTheDateTheNoteWasWritten() {
+        let found = protect(form: sickNote, [.health])
+        XCTAssertEqual(Set(found.covered), ["02.10.26", "09.10.26", "05.10.26", "J06.9 G",
+                                            "Akute Infektion der oberen Atemwege"], "\(found.covered)")
+        let written = sickNote.firstIndex { $0.text == "05.10.26" && $0.row == 10 }!
+        XCTAssertFalse(found.hits.contains { $0.line == written }, "the note's own date is no health detail")
+        XCTAssertTrue(found.hits.allSatisfy { $0.kind == .health })
+    }
+
+    func testIDsAloneCoverTheNumbersNotTheStatusCode() {
+        let found = protect(form: sickNote, [.ids])
+        XCTAssertEqual(Set(found.covered), ["101234567", "X987654321", "998877665", "112233445"], "\(found.covered)")
+    }
+
+    func testAddressesAloneCoverTheAddressesNotTheNames() {
+        let found = protect(form: sickNote, [.addresses])
+        XCTAssertTrue(found.covered.contains("Beispielweg 7"), "\(found.covered)")
+        XCTAssertTrue(found.covered.contains("54321 Musterstadt"), "\(found.covered)")
+        for kept in ["Mustermann", "Erika", "Paul", "1985", "BKK", "J06"] {
+            XCTAssertFalse(found.covered.contains { $0.contains(kept) }, "\(kept) stays: \(found.covered)")
+        }
+    }
+
+    func testDatesAloneCoverTheDatesOnly() {
+        let found = protect(form: sickNote, [.dates])
+        for date in ["12.03.1985", "02.10.26", "09.10.26", "05.10.26"] {
+            XCTAssertTrue(found.covered.contains(date), "\(date) in \(found.covered)")
+        }
+        XCTAssertTrue(found.covered.allSatisfy { $0.range(of: #"^\d{1,2}\.\d{1,2}\.\d{2,4}$"#, options: .regularExpression) != nil },
+                      "\(found.covered)")
+    }
+
+    func testAFieldsNumberIsNeverTakenForAnotherKind() {
+        let found = protect(form: sickNote, [.phones, .tracking, .orders, .bank, .codes])
+        for number in ["101234567", "X987654321", "998877665", "112233445", "5000001"] {
+            XCTAssertFalse(found.covered.contains { $0.contains(number) }, "\(number): \(found.covered)")
+        }
+    }
+
+    func testEveryKindTogetherCoversEveryValueAndNoLabel() {
+        let found = protect(form: sickNote, Set(PrivateDetail.allCases))
+        for value in ["Muster BKK", "Mustermann", "Erika", "12.03.1985", "Beispielweg 7", "54321 Musterstadt",
+                      "101234567", "X987654321", "998877665", "112233445", "J06.9 G"] {
+            XCTAssertTrue(found.covered.contains { $0.contains(value) }, "\(value) in \(found.covered)")
+        }
+        for label in ["Name, Vorname", "Versicherten-Nr", "Kostenträger", "geb. am", "Arzt-Nr", "Diagnose",
+                      "Arbeitsunfähig seit", "festgestellt am", "Status", "Datum"] {
+            XCTAssertFalse(found.covered.contains { $0.contains(label) }, "\(label) is printed by the form: \(found.covered)")
+        }
+    }
+
+    /// How well the sick note is covered, kind by kind: every value its
+    /// labels announce and nothing else, measured as precision and recall.
+    func testPrecisionAndRecallOnTheSickNote() {
+        let truth: [PrivateDetail: Set<String>] = [
+            .names: ["Mustermann", "Erika", "Paul Beispiel"],
+            .health: ["02.10.26", "09.10.26", "05.10.26", "J06.9 G", "Akute Infektion der oberen Atemwege"],
+            .ids: ["101234567", "X987654321", "998877665", "112233445"],
+        ]
+        for (kind, expected) in truth {
+            let covered = Set(protect(form: sickNote, [kind]).covered)
+            let right = covered.intersection(expected).count
+            let precision = covered.isEmpty ? 1 : Double(right) / Double(covered.count)
+            let recall = Double(right) / Double(expected.count)
+            XCTAssertEqual(precision, 1, "\(kind): false positives \(covered.subtracting(expected))")
+            XCTAssertEqual(recall, 1, "\(kind): missed \(expected.subtracting(covered))")
+        }
+    }
+
+    /// A referral with a name on one line, the insured person and the
+    /// doctor, and a diagnosis named after a person.
+    private let referral: [FormFieldsTests.Piece] = [
+        ("Überweisungsschein", 0.05, 0),
+        ("Name, Vorname des Versicherten", 0.05, 1),
+        ("Beispiel-Muster, Hans Peter", 0.05, 2),
+        ("Lindenallee 12", 0.05, 3),
+        ("10115 Berlin", 0.05, 4),
+        ("Diagnose: Morbus Bechterew", 0.05, 6),
+        ("Behandelnder Arzt: Dr. med. Clara Probe", 0.05, 7),
+    ]
+
+    func testTheInsuredPersonAndTheDoctorAreToldApart() {
+        XCTAssertEqual(protect(form: referral, [.patientNames]).covered, ["Beispiel-Muster, Hans Peter"])
+        XCTAssertEqual(protect(form: referral, [.otherPeople]).covered, ["Clara Probe"])
+        let names = protect(form: referral, [.names])
+        XCTAssertFalse(names.covered.contains { $0.contains("Bechterew") }, "a disease is no name: \(names.covered)")
+        XCTAssertEqual(protect(form: referral, [.health]).covered, ["Morbus Bechterew"])
+    }
+
+    func testANameReadPoorlyIsCoveredAndMarkedForChecking() {
+        let found = protect(form: [("Name des Versicherten", 0.05, 0), ("mustermann erika", 0.05, 1)], [.names])
+        XCTAssertEqual(found.covered, ["mustermann erika"])
+        XCTAssertEqual(found.checked, ["mustermann erika"])
+    }
+
+    func testANameOnTheFormIsCoveredWhereverItComesAgain() {
+        let pieces = sickNote + [("Frau Mustermann ist arbeitsunfähig.", 0.05, 24)]
+        let found = protect(form: pieces, [.patientNames])
+        XCTAssertTrue(found.hits.contains { $0.line == pieces.count - 1 }, "\(found.covered)")
+    }
+
     // MARK: Helpers
+
+    /// What the engine covers on a made-up page laid out in rows and
+    /// columns, as `protect` does for one line per row.
+    private func protect(form pieces: [FormFieldsTests.Piece], _ chosen: Set<PrivateDetail>)
+        -> (covered: [String], checked: [String], possible: [String], hits: [Finder.Hit]) {
+        let made = FormFieldsTests.layout(pieces)
+        let found = Finder.findings(made.strings, boxes: made.boxes, part: made.part, chosen)
+        func text(_ hit: Finder.Hit) -> String {
+            let line = made.strings[hit.line]
+            return hit.range.flatMap { Range($0, in: line) }.map { String(line[$0]) } ?? line
+        }
+        return (found.hits.map(text), found.hits.filter(\.check).map(text), found.possible.map(text), found.hits)
+    }
 
     /// What the engine covers, what it marks for checking and what it only
     /// offers, as text, with the lines laid out down a page.

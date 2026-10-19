@@ -37,6 +37,16 @@ final class DocumentSenseTests: XCTestCase {
         XCTAssertEqual(DocumentSense.kind(of: ["Hi Lena", "See you tomorrow"]), .general)
     }
 
+    func testAFormsNounsAreNoNames() {
+        for text in ["Erstbescheinigung Folgebescheinigung", "Arbeitsunfähigkeit Bescheinigung", "Krankenversicherung Nord",
+                     "Wiedereingliederung Empfehlung"] {
+            XCTAssertNil(DocumentSense.nameWords(text), text)
+        }
+        // Short names with those endings stay names.
+        XCTAssertEqual(DocumentSense.nameWords("Lena Jung"), ["lena", "jung"])
+        XCTAssertEqual(DocumentSense.nameWords("Max Hornung"), ["max", "hornung"])
+    }
+
     func testCompaniesAreNotPeople() {
         for text in ["Radiologie Zentrum Nord GmbH", "Klinikum Dortmund", "Muster GmbH", "Sparkasse KölnBonn",
                      "Gemeinschaftspraxis Am Markt", "Universitätsklinikum Hamburg-Eppendorf", "Acme Inc.",

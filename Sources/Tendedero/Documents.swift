@@ -113,11 +113,33 @@ enum DocumentCover {
             drawn += 1
         }
         context.closePDF()
-        guard drawn == document.pageCount else {
+        // Checked as it leaves: a copy that carries anything but its pages' pictures is not handed out.
+        guard drawn == document.pageCount, isClean(target) else {
             try? FileManager.default.removeItem(at: target)
             return nil
         }
         return report
+    }
+
+    /// Whether a PDF carries nothing but its pages' pictures: no text to
+    /// copy, no notes, links or form fields, and no author, title, subject
+    /// or keywords.
+    static func isClean(_ url: URL) -> Bool {
+        guard let document = PDFDocument(url: url) else { return false }
+        let attributes = document.documentAttributes ?? [:]
+        for key in [PDFDocumentAttribute.authorAttribute, .titleAttribute, .subjectAttribute, .keywordsAttribute] {
+            for value in [attributes[key], attributes[key.rawValue]].compactMap({ $0 }) {
+                if let text = value as? String, text.trimmingCharacters(in: .whitespaces).isEmpty { continue }
+                if let list = value as? [Any], list.isEmpty { continue }
+                return false
+            }
+        }
+        for index in 0..<document.pageCount {
+            guard let page = document.page(at: index) else { return false }
+            if !(page.string ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return false }
+            if !page.annotations.isEmpty { return false }
+        }
+        return true
     }
 
     /// The page as JPEG, which a PDF keeps as it is: a page of a few hundred
