@@ -1364,3 +1364,11 @@
 "Everything is checked." = "Her şey kontrol edildi.";
 "Previous" = "Önceki";
 "Goes as soon as the copy is ready." = "Kopya hazır olur olmaz yapılır.";
+"Search words in screenshots" = "Ekran görüntülerinde kelime ara";
+"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "Kelimeler önceden okunmuş ekran görüntülerinde bulunur. Ayarlar’da “Daha hızlı görüntü işleme”yi aç.";
+"All Screenshots" = "Tüm ekran görüntüleri";
+"With Private Details" = "Özel bilgi içerenler";
+"Sort" = "Sırala";
+"Newest First" = "Önce en yeni";
+"Oldest First" = "Önce en eski";
+"Filter" = "Süz";

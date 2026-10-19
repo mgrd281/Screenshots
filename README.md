@@ -854,7 +854,9 @@ iCloud account, and the two work as one:
 
 It goes through your own iCloud, never a server of Snapfly's, and a change
 made offline waits until it can go. The plan, the rules and what is verified
-are in [SYNC.md](SYNC.md).
+are in [SYNC.md](SYNC.md). Where Snapfly stands as one Mac and iPhone
+product, what is verified and what comes next is in
+[ECOSYSTEM.md](ECOSYSTEM.md).
 
 <br>
 
@@ -870,7 +872,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   beside its words and the screenshots come first: what the Mac sent, the
   ones protected lately in a row, and the newest twelve in cards that show
   when each was taken and a green shield once it was protected, all of them
-  behind See All. From iOS 18 on, a screenshot opens by growing out of its
+  behind See All, which finds them by the words they say (those read ahead
+  of time, below), shows only those with private details, protected or not,
+  and puts the newest or the oldest first. From iOS 18 on, a screenshot opens by growing out of its
   card. How syncing stands sits beside Settings at the top.
   Tap a screenshot and it shows at once; what the patterns, the labels and
   the names find is marked a moment later, then the copy is made, read again
@@ -1105,6 +1109,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/AIPrompts.swift` | Prompts for AI chats: the standard two, the owner's own, numbered, nine at most |
 | `Shared/ShareLinks.swift` | Share links without a screen: what may go, the requests, reading the answers, and the links kept with their delete tokens |
 | `share/` | The share link service on Cloudflare: the Worker (`worker.js`) that takes uploads, shows each link's page and deletes files, its tests, and `wrangler.toml`; the Share Links workflow deploys it |
+| `Shared/LibraryQuery.swift` | Finding screenshots in the iPhone's library by the words they say, what they hold and when they were taken |
 | `Shared/SyncModel.swift`, `Shared/SyncLedger.swift`, `Shared/SyncPolicy.swift` | Syncing between the Mac and the iPhone, without a screen or a network: the records, the order of changes, merging, versions made at once on two devices, removals, the changes waiting to go, what may leave the device, the status, and the file it is kept in; see SYNC.md |
 | `Shared/CloudSync.swift` | Syncing's iCloud side, through Apple's sync engine and the owner's private database (or a Mac's shared zones, after pairing with a code), only in a build that names the iCloud container; see SYNC.md |
 | `Shared/Pairing.swift`, `Shared/PairingCloud.swift` | Pairing with a code for another Apple account: the codes, a new one every 30 seconds, what is typed, the sealed messages and the pause after wrong codes, and the Mac's and the iPhone's sides in iCloud's public database |

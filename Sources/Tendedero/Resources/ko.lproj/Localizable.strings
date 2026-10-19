@@ -1364,3 +1364,11 @@
 "Everything is checked." = "모두 확인했어요.";
 "Previous" = "이전";
 "Goes as soon as the copy is ready." = "사본이 준비되면 바로 실행돼요.";
+"Search words in screenshots" = "스크린샷에서 단어 검색";
+"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "단어는 미리 읽은 스크린샷에서 찾아요. 설정에서 ‘더 빠른 사진 처리’를 켜세요.";
+"All Screenshots" = "모든 스크린샷";
+"With Private Details" = "개인 정보 포함";
+"Sort" = "정렬";
+"Newest First" = "최신 순";
+"Oldest First" = "오래된 순";
+"Filter" = "필터";

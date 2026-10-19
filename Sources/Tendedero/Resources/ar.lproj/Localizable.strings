@@ -1364,3 +1364,11 @@
 "Everything is checked." = "تم التحقق من كل شيء.";
 "Previous" = "السابق";
 "Goes as soon as the copy is ready." = "يُنفَّذ حين تجهز النسخة.";
+"Search words in screenshots" = "ابحث عن كلمات في اللقطات";
+"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "تُوجد الكلمات في اللقطات المقروءة مسبقًا. شغّل «معالجة أسرع للصور» في الإعدادات.";
+"All Screenshots" = "كل اللقطات";
+"With Private Details" = "فيها تفاصيل خاصة";
+"Sort" = "الترتيب";
+"Newest First" = "الأحدث أولًا";
+"Oldest First" = "الأقدم أولًا";
+"Filter" = "تصفية";

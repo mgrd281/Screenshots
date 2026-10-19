@@ -1366,3 +1366,11 @@
 "Everything is checked." = "सब कुछ जाँच लिया गया।";
 "Previous" = "पिछला";
 "Goes as soon as the copy is ready." = "कॉपी तैयार होते ही हो जाएगा।";
+"Search words in screenshots" = "स्क्रीनशॉट में शब्द खोजें";
+"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "शब्द पहले से पढ़े गए स्क्रीनशॉट में मिलते हैं। सेटिंग्स में “तेज़ चित्र प्रोसेसिंग” चालू करें।";
+"All Screenshots" = "सभी स्क्रीनशॉट";
+"With Private Details" = "निजी जानकारी वाले";
+"Sort" = "क्रम";
+"Newest First" = "नए पहले";
+"Oldest First" = "पुराने पहले";
+"Filter" = "फ़िल्टर";

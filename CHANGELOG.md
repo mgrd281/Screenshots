@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, See All finds screenshots by the words they say (those
+  read ahead of time), shows only those with private details, protected or
+  not, and puts the newest or the oldest first. It is there whenever there
+  are screenshots.
 - On the iPhone, Protect Picture puts the picture first: it fills the screen,
   as large as it fits, with the tools, and Copy, Share and Save, as small
   floating icons over it, and how it stands in one small capsule. Details

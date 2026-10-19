@@ -1894,7 +1894,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     row that scrolls sideways to the screen's edges of screenshot cards 96
     pt wide, 10 pt apart.
   - **Screenshots**, title 3 semibold, with See All and a chevron in the
-    accent on the trailing edge when there are more than twelve, over the
+    accent on the trailing edge whenever there are screenshots, over the
     newest twelve in a grid (`ScreenshotGrid`): cards at least 104 pt and at
     most 200 pt wide, 10 pt apart, three to a row on most iPhones. A card
     (`ScreenshotCard`) shows the top of the screenshot at 3:4 with corners of
@@ -1906,7 +1906,15 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     caching manager and kept in memory while the app runs. From iOS 18 on, a
     screenshot opens by growing out of the card tapped (the system's zoom
     transition, a fade with Reduce Motion), from the grid, the row or See
-    All alike. See All shows every screenshot in the same grid. Holding a card offers Cover and Copy
+    All alike. See All shows every screenshot in the same grid, under the
+    system's search field, always showing ("Search words in screenshots"),
+    which finds the screenshots read ahead of time that say every word
+    typed, case and accents aside; nothing found shows the system's search
+    empty state, and while nothing is read ahead of time a footnote in
+    `.secondary` with `text.magnifyingglass` says where to turn that on. A
+    menu on the trailing edge (`line.3.horizontal.decrease.circle`, filled
+    while it narrows) shows All Screenshots, With Private Details, Protected
+    or Not protected, Newest First or Oldest First (`LibraryQuery`). Holding a card offers Cover and Copy
     (`doc.on.doc`), Cover and Share (`square.and.arrow.up`) and Cover and
     Save (`square.and.arrow.down`): covered and checked without opening,
     with a note in a floating pill over the bottom, 24 pt up, gone after
