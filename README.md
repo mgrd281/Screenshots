@@ -787,13 +787,38 @@ cover it. Words in the screenshot are only read, never followed.
 
 ## Private by design.
 
-No account. No cloud. No analytics.
+No account. No server of its own. No analytics.
 Snapfly runs entirely on your Mac, and your screenshots never leave it
-unless you send them, or make a link to one with Copy Link. On its own, the only thing it ever asks the internet is
+unless you send them, make a link to one with Copy Link, or turn on Sync,
+which keeps your iPhone in step through your own iCloud, covered copies only
+unless you choose originals too. On its own, the only thing it ever asks the internet is
 the time, from the PTB's atomic clock, while the time stamp is on. The AI
 assistant, once you give it your key, sends a covered screenshot to Claude or
 ChatGPT only when you choose Write a Reply, Explain or Order Details, and
 the words of each screenshot only with Find more turned on under Privacy.
+
+<br>
+
+## Mac and iPhone, in step.
+
+Turn on Sync in Settings on the Mac and on the iPhone, signed in to the same
+iCloud account, and the two work as one:
+
+- **From the Mac.** What hangs on the line goes to the iPhone as it would
+  leave the line, with its private details covered, and shows there under
+  From your Mac, ready to copy, share or save to Photos. The whole picture is
+  fetched when you open it.
+- **From the iPhone.** Send to Mac, under a covered screenshot, hangs it on
+  the Mac's line.
+- **Originals stay put.** Only covered copies go, unless you choose Originals
+  too, and then only those taken from then on.
+- **Your devices.** Settings lists them, with when each was last there, and
+  says how syncing stands: up to date, waiting for a connection, or what needs
+  you. Sync Now tries again what could not go.
+
+It goes through your own iCloud, never a server of Snapfly's, and a change
+made offline waits until it can go. The plan, the rules and what is verified
+are in [SYNC.md](SYNC.md).
 
 <br>
 
@@ -823,7 +848,7 @@ watch the screen, so there is no line there. What it keeps is the covering:
 
 Both apps share the code in `Sources/Tendedero/Shared` (finding and covering
 private details, the atomic time, the translations), so an improvement there
-reaches both. Everything happens on the device.
+reaches both. Everything happens on the device, unless you turn on Sync.
 
 The iPhone App Store workflow builds it, signs it and sends it to TestFlight
 whenever it changes on `main`. Its certificate is made once, on a Mac, with
@@ -990,8 +1015,12 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/AIPrompts.swift` | Prompts for AI chats: the standard two, the owner's own, numbered, nine at most |
 | `Shared/ShareLinks.swift` | Share links without a screen: what may go, the requests, reading the answers, and the links kept with their delete tokens |
 | `share/` | The share link service on Cloudflare: the Worker (`worker.js`) that takes uploads, shows each link's page and deletes files, its tests, and `wrangler.toml`; the Share Links workflow deploys it |
-| `Shared/SyncModel.swift`, `Shared/SyncLedger.swift`, `Shared/SyncPolicy.swift` | Syncing between the Mac and the iPhone, without a screen or a network: the records, the order of changes, merging, versions made at once on two devices, removals, the changes waiting to go, what may leave the device, the status, and the file it is kept in. Not connected to either app yet; see SYNC.md |
-| `Shared/CloudSync.swift` | Syncing's iCloud side, through Apple's sync engine and the owner's private database. Switched off until a build names an iCloud container; see SYNC.md |
+| `Shared/SyncModel.swift`, `Shared/SyncLedger.swift`, `Shared/SyncPolicy.swift` | Syncing between the Mac and the iPhone, without a screen or a network: the records, the order of changes, merging, versions made at once on two devices, removals, the changes waiting to go, what may leave the device, the status, and the file it is kept in; see SYNC.md |
+| `Shared/CloudSync.swift` | Syncing's iCloud side, through Apple's sync engine and the owner's private database, only in a build that names the iCloud container; see SYNC.md |
+| `Shared/SyncCenter.swift`, `Shared/SyncText.swift` | Syncing as both apps see it: the choices, the state, the devices, what goes and what arrived, and their words |
+| `MacSync.swift`, `SyncPane.swift` | Syncing on the Mac: covered copies of what hangs on the line go, what the iPhone sends hangs there, and Settings › Sync |
+| `iOS/Snapfly/PhoneSync.swift` | Syncing on the iPhone: From your Mac, a picture fetched when opened, Send to Mac and the Sync section in Settings |
+| `cloudkit/schema.ckdb` | The record types in the iCloud container, put there by the CloudKit Schema workflow |
 | `SYNC.md` | The audit and plan for Mac and iPhone as one: what there is, the design, the threat model, what goes wrong and what happens then, the owner's steps at Apple, and what is verified |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |

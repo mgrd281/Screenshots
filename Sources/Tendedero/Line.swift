@@ -150,7 +150,11 @@ final class Line: ObservableObject {
         Outside.reopen()
         restore()
         trashWaiting()
-        PrivateDetails.onRead = { [weak self] url, shown in self?.show(shown, for: url) }
+        PrivateDetails.onRead = { [weak self] url, shown in
+            self?.show(shown, for: url)
+            // What hangs on the line goes to the iPhone covered, when syncing is on.
+            if self?.items.contains(where: { $0.url == url && !$0.falling }) == true { MacSync.read(url) }
+        }
         PrivateDetails.onStart = { [weak self] url in self?.preparing(url) }
         TextIndex.onRead = { [weak self] in
             self?.refreshSearch()
@@ -187,6 +191,7 @@ final class Line: ObservableObject {
         save()
         PrivateDetails.prepare(url)
         TextIndex.read(url)
+        MacSync.hung(url)
         if !quietly { play("Tink", volume: 0.35) }
         return item.id
     }

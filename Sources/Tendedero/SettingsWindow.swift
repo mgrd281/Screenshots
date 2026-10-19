@@ -853,7 +853,7 @@ final class SettingsWindow {
 }
 
 private enum Pane: String, CaseIterable, Identifiable {
-    case general, workspace, line, assistant, privacy, permissions, support, about
+    case general, workspace, line, assistant, privacy, sync, permissions, support, about
 
     var id: Self { self }
 
@@ -868,6 +868,7 @@ private enum Pane: String, CaseIterable, Identifiable {
         case .line: L("Line")
         case .assistant: L("AI Assistant")
         case .privacy: L("Privacy")
+        case .sync: L("Sync")
         case .permissions: L("Permissions")
         case .support: L("Support")
         case .about: L("About")
@@ -883,6 +884,7 @@ private enum Pane: String, CaseIterable, Identifiable {
         case .line: Image(nsImage: LineIcon.image(filled: false, description: title)).renderingMode(.template)
         case .assistant: Image(systemName: "sparkles")
         case .privacy: Image(systemName: "hand.raised.fill")
+        case .sync: Image(systemName: "arrow.triangle.2.circlepath")
         case .permissions: Image(systemName: "lock.shield.fill")
         case .support: Image(systemName: "lifepreserver.fill")
         case .about: Image(systemName: "info.circle.fill")
@@ -955,6 +957,7 @@ private struct SettingsView: View {
             case .line: LinePane(prefs: prefs)
             case .assistant: AIAssistantPane(prefs: prefs)
             case .privacy: PrivacyPane(prefs: prefs, line: line)
+            case .sync: SyncPane(sync: .shared)
             case .permissions: PermissionsPane()
             case .support: SupportPane(prefs: prefs)
             case .about: AboutPane(prefs: prefs)

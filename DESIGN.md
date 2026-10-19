@@ -931,8 +931,19 @@ apps.
     preview of the band's leading end, at twice its size, with 6 pt corners
     and a 0.5 pt edge of `.primary` at 12%.
   - SF Symbols on macOS 26 only, as Apple's own menus have.
-- **Settings sidebar.** General, Line, Privacy, Permissions, Support and
-  About, each on its tile (see Layout).
+- **Settings sidebar.** General, Line, Privacy, Sync, Permissions, Support
+  and About, each on its tile (see Layout).
+- **Sync pane** (`SyncPane.swift`), between Privacy and Permissions, with
+  `arrow.triangle.2.circlepath` in the sidebar. A grouped form: the two
+  toggles (Sync with your iPhone, Originals too, the second dimmed while the
+  first is off) with the footer that it goes through the owner's own iCloud;
+  This Mac with the state as its second line, `exclamationmark.triangle.fill`
+  before it when it needs the owner, and Sync Now as a `SettingsButton`;
+  then Your devices, a row each: the device's SF Symbol (`laptopcomputer`,
+  `desktopcomputer`, `iphone`, `ipad`) at title size in `.secondary` in a
+  28 pt column, the name, and when it was last there in caption
+  `.secondary`. In a build that cannot sync, one line with `icloud.slash`
+  in `.secondary` and nothing else.
 
 ### Dialogs, sheets and panels
 - **Floating card** (`TextCard`) for results that belong to a photo:
@@ -1816,6 +1827,22 @@ of its own.
   and Add Rule. A pattern that cannot be read says so under its field with
   `exclamationmark.triangle.fill` in orange. Rules are kept as they change,
   and the Mac's and the iPhone's are the same kind of rule.
+
+- Syncing with the Mac (`PhoneSync.swift`), once Sync is on:
+  - From your Mac sits above the grid: the headline, then a row that
+    scrolls sideways of the pictures' previews, 104 pt wide at 3:4, with the
+    grid's 10 pt corners and 6 pt gaps; `laptopcomputer` in `.secondary`
+    while a preview has not come. A tap opens the picture in a sheet, fetched
+    whole with a progress view, then Copy, Share and Save under it as for a
+    covered screenshot.
+  - Send to Mac, a bordered button with `laptopcomputer.and.arrow.down`,
+    under Copy, Share and Save; once pressed it waits dimmed and the note
+    says it is on its way.
+  - Settings has a Sync section before Help & Introduction: the toggle with
+    its footnote, This iPhone with the state (orange with
+    `exclamationmark.triangle.fill` when it needs the owner), Sync Now while
+    on, and a row per device with its symbol, name and when it was last
+    there.
 
 ## Website
 

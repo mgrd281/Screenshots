@@ -1,0 +1,37 @@
+# Puts the record types syncing needs (cloudkit/schema.ckdb) into the iCloud
+# container's development environment, with the CloudKit management token the
+# owner pasted as the secret SNAPFLY_CLOUDKIT_TOKEN. The owner then deploys
+# them to production in the CloudKit Console (SYNC.md, section 5). Without
+# the secret it does nothing.
+name: CloudKit Schema
+
+on:
+  push:
+    branches: [main]
+    paths: [cloudkit/**]
+  workflow_dispatch:
+
+jobs:
+  schema:
+    runs-on: macos-latest
+    env:
+      TEAM: 3227J7CBXY
+      CONTAINER: iCloud.de.ghazarian.Snapfly
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Put the schema into development
+        env:
+          TOKEN: ${{ secrets.SNAPFLY_CLOUDKIT_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::notice::No SNAPFLY_CLOUDKIT_TOKEN secret yet, so the schema waits. See SYNC.md, section 5."
+            exit 0
+          fi
+          # The token goes as an argument; cktool keeps it in the keychain.
+          xcrun cktool save-token --type management "$TOKEN"
+          xcrun cktool validate-schema --team-id "$TEAM" --container-id "$CONTAINER" \
+            --environment development --file cloudkit/schema.ckdb
+          xcrun cktool import-schema --team-id "$TEAM" --container-id "$CONTAINER" \
+            --environment development --file cloudkit/schema.ckdb
+          echo "The schema is in development. Deploy it to production in the CloudKit Console."

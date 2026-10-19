@@ -77,6 +77,26 @@ BUNDLE="$(swift scripts/asc.swift bundle-id "$BUNDLE_ID" Snapfly)"
 CERT_ID="$(part "$SNAPFLY_STORE" app-store-id)"
 swift scripts/asc.swift profile "$BUNDLE" "$CERT_ID" "Snapfly Mac App Store $CERT_ID" "$TMP/profile" >/dev/null
 
+# Syncing with the iPhone, once the app's identifier has the iCloud container
+# (SYNC.md): the profile then allows it, and the build names the container.
+CONTAINER="iCloud.de.ghazarian.Snapfly"
+security cms -D -i "$TMP/profile" > "$TMP/profile.plist"
+CLOUD_ENTITLEMENTS=""
+if /usr/libexec/PlistBuddy -c "Print :Entitlements:com.apple.developer.icloud-container-identifiers" \
+     "$TMP/profile.plist" 2>/dev/null | grep -qF "$CONTAINER"; then
+  export SNAPFLY_CLOUD_CONTAINER="$CONTAINER"
+  CLOUD_ENTITLEMENTS="<key>com.apple.developer.icloud-container-identifiers</key><array><string>$CONTAINER</string></array>
+  <key>com.apple.developer.icloud-services</key><array><string>CloudKit</string></array>
+  <key>com.apple.developer.icloud-container-environment</key><string>Production</string>"
+  if /usr/libexec/PlistBuddy -c "Print :Entitlements:com.apple.developer.aps-environment" "$TMP/profile.plist" >/dev/null 2>&1; then
+    CLOUD_ENTITLEMENTS="$CLOUD_ENTITLEMENTS
+  <key>com.apple.developer.aps-environment</key><string>production</string>"
+  fi
+  echo "The profile allows iCloud: this build can sync."
+else
+  echo "::warning::The app's identifier has no iCloud container yet (SYNC.md, section 5), so this build leaves syncing out."
+fi
+
 # Each upload needs a higher build number than the one before.
 BUILD="$(( ${GITHUB_RUN_NUMBER:-1} + 100 ))"
 STORE=1 BUILD_NUMBER="$BUILD" scripts/build-app.sh
@@ -114,6 +134,7 @@ cat > "$TMP/entitlements.plist" <<PLIST
   </array>
   <key>com.apple.application-identifier</key><string>$TEAM.$BUNDLE_ID</string>
   <key>com.apple.developer.team-identifier</key><string>$TEAM</string>
+  $CLOUD_ENTITLEMENTS
 </dict>
 </plist>
 PLIST

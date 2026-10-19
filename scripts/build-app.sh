@@ -88,6 +88,20 @@ SHARE_URL="${SNAPFLY_SHARE_URL:-$(scripts/share-url.sh)}"
 SHARE_ENTRY=""
 if [ -n "$SHARE_URL" ]; then SHARE_ENTRY="<key>SnapflyShareURL</key><string>${SHARE_URL}</string>"; fi
 
+# The Developer ID that signs this build, if there is one (or SIGN_IDENTITY).
+IDENTITY="${SIGN_IDENTITY:-$(security find-identity -v -p codesigning 2>/dev/null | awk -F'"' '/Developer ID Application/{print $2; exit}')}"
+
+# Syncing with the iPhone through the owner's iCloud: only in a build allowed
+# to use the iCloud container, the App Store edition (scripts/app-store.sh)
+# or a Developer ID build with its profile (scripts/signing.sh cloud-profile).
+# Info.plist names the container only then, as the app opens iCloud only
+# when it is named, and opening it unentitled would stop the app.
+CLOUD="${SNAPFLY_CLOUD_CONTAINER:-}"
+PROFILE="${SNAPFLY_DIRECT_PROFILE:-}"
+if [ -z "${STORE:-}" ] && { [ -z "$IDENTITY" ] || [ -z "$PROFILE" ] || [ ! -f "$PROFILE" ]; }; then CLOUD=""; fi
+CLOUD_ENTRY=""
+if [ -n "$CLOUD" ]; then CLOUD_ENTRY="<key>SnapflyCloudContainer</key><string>${CLOUD}</string>"; fi
+
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -108,6 +122,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>LSMinimumSystemVersion</key><string>14.0</string>
   <key>LSUIElement</key><true/>
   ${SHARE_ENTRY}
+  ${CLOUD_ENTRY}
   <key>NSHighResolutionCapable</key><true/>
   <key>NSDesktopFolderUsageDescription</key>
   <string>Snapfly watches the folder where macOS saves your screenshots so it can hang them on the line.</string>
@@ -156,8 +171,26 @@ PLIST
 # Sign with a Developer ID when one is in the keychain (or SIGN_IDENTITY is
 # set), with the hardened runtime and a secure timestamp that notarization
 # requires. Without one, sign ad hoc so the app still runs locally.
-IDENTITY="${SIGN_IDENTITY:-$(security find-identity -v -p codesigning 2>/dev/null | awk -F'"' '/Developer ID Application/{print $2; exit}')}"
 if [ -n "$IDENTITY" ] && [ -z "${STORE:-}" ]; then
+  # iCloud, for syncing, comes with the profile that allows it, and push
+  # when the profile has it too, so the iPhone's changes arrive at once.
+  CLOUD_ENTITLEMENTS=""
+  if [ -n "$CLOUD" ]; then
+    cp "$PROFILE" "$APP/Contents/embedded.provisionprofile"
+    PROFILE_PLIST="$(mktemp)"
+    security cms -D -i "$PROFILE" > "$PROFILE_PLIST"
+    TEAM="$(/usr/libexec/PlistBuddy -c "Print :TeamIdentifier:0" "$PROFILE_PLIST")"
+    CLOUD_ENTITLEMENTS="<key>com.apple.application-identifier</key><string>${TEAM}.de.ghazarian.Snapfly</string>
+  <key>com.apple.developer.team-identifier</key><string>${TEAM}</string>
+  <key>com.apple.developer.icloud-container-identifiers</key><array><string>${CLOUD}</string></array>
+  <key>com.apple.developer.icloud-services</key><array><string>CloudKit</string></array>
+  <key>com.apple.developer.icloud-container-environment</key><string>Production</string>"
+    if /usr/libexec/PlistBuddy -c "Print :Entitlements:com.apple.developer.aps-environment" "$PROFILE_PLIST" >/dev/null 2>&1; then
+      CLOUD_ENTITLEMENTS="$CLOUD_ENTITLEMENTS
+  <key>com.apple.developer.aps-environment</key><string>production</string>"
+    fi
+    rm -f "$PROFILE_PLIST"
+  fi
   # The hardened runtime blocks Apple Events and the microphone unless asked
   # for: the send button over chats asks the browser which page is open, and
   # a screen recording may record the voice.
@@ -169,12 +202,13 @@ if [ -n "$IDENTITY" ] && [ -z "${STORE:-}" ]; then
 <dict>
   <key>com.apple.security.automation.apple-events</key><true/>
   <key>com.apple.security.device.audio-input</key><true/>
+  ${CLOUD_ENTITLEMENTS}
 </dict>
 </plist>
 ENT
   codesign --force --options runtime --timestamp --entitlements "$ENTITLEMENTS" --sign "$IDENTITY" "$APP"
   rm -f "$ENTITLEMENTS"
-  echo "Signed with $IDENTITY"
+  echo "Signed with $IDENTITY${CLOUD:+, with iCloud for syncing}"
 else
   codesign --force --deep --sign - "$APP" >/dev/null
   echo "Signed ad hoc (no Developer ID found)"

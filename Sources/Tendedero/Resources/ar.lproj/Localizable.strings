@@ -448,7 +448,7 @@
 "No screenshots yet" = "لا توجد لقطات شاشة بعد";
 "Take a screenshot, then come back here." = "التقط لقطة شاشة، ثم عُد إلى هنا.";
 "Allow Snapfly to see your screenshots" = "اسمح لـ Snapfly برؤية لقطات شاشتك";
-"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "يغطي Snapfly الأسماء والعناوين وغيرها من المعلومات الخاصة في لقطات شاشتك، على هذا الآيفون نفسه. لا يُرسل شيء إلى أي مكان.";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "يغطي Snapfly الأسماء والعناوين وغيرها من المعلومات الخاصة في لقطات شاشتك، على هذا الآيفون نفسه.";
 "Allow Access" = "السماح بالوصول";
 "Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "لا يُسمح لـ Snapfly برؤية لقطات شاشتك. اسمح له من الإعدادات › الخصوصية والأمن › الصور.";
 "Covering private details…" = "تُغطّى المعلومات الخاصة…";
@@ -1155,3 +1155,38 @@
 "Send with “%@”" = "إرسال مع «%@»";
 "It goes into the AI chat after the photos. Nothing is sent until you press Return there." = "تدخل محادثة الذكاء الاصطناعي بعد الصور. لا يُرسل شيء حتى تضغط مفتاح الإدخال هناك.";
 "Each prompt goes into the AI chat after the photos: from its number beside the send button, from Ask AI in a photo's menu, or from a right-click on ChatGPT or Claude under a photo. Nothing is sent until you press Return there. Up to nine." = "كل رسالة تدخل محادثة الذكاء الاصطناعي بعد الصور: من رقمها بجانب زر الإرسال، أو من «اسأل الذكاء الاصطناعي» في قائمة الصورة، أو بالنقر بالزر الأيمن على ChatGPT أو Claude تحت الصورة. لا يُرسل شيء حتى تضغط مفتاح الإدخال هناك. حتى تسع رسائل.";
+
+/* Sync with the iPhone and the Mac */
+"Another device has a newer Snapfly. Update Snapfly here." = "لدى جهاز آخر نسخة أحدث من Snapfly. حدّث Snapfly هنا.";
+"Another iCloud account is signed in. Turn syncing on again to sync with it." = "تم تسجيل الدخول بحساب iCloud آخر. شغّل المزامنة من جديد لتتزامن معه.";
+"Could not send it. Try again." = "تعذّر الإرسال. حاول مرة أخرى.";
+"Fetching from iCloud…" = "جارٍ الجلب من iCloud…";
+"From your Mac" = "من الماك";
+"Here now" = "موجود الآن";
+"It goes through your own iCloud, to your devices signed in to it. Nothing goes through a server of Snapfly's." = "تمرّ عبر iCloud الخاص بك، إلى أجهزتك المسجّلة فيه. لا يمرّ شيء عبر خادم تابع لـ Snapfly.";
+"Last here %@" = "آخر ظهور %@";
+"No other device yet. Turn syncing on in Snapfly on your iPhone, signed in to the same iCloud account." = "لا يوجد جهاز آخر بعد. شغّل المزامنة في Snapfly على الآيفون، وهو مسجّل في حساب iCloud نفسه.";
+"On its way to your Mac" = "في طريقه إلى الماك";
+"Originals too" = "الأصول أيضًا";
+"Screenshots also go as they were taken, with nothing covered. Only those taken from now on." = "تذهب لقطات الشاشة أيضًا كما التُقطت، دون تغطية أي شيء. فقط ما يُلتقط من الآن فصاعدًا.";
+"Send to Mac" = "أرسل إلى الماك";
+"Sign in to iCloud to sync." = "سجّل الدخول إلى iCloud للمزامنة.";
+"Snapfly's data was removed from iCloud. Turn syncing on again to start anew." = "أُزيلت بيانات Snapfly من iCloud. شغّل المزامنة من جديد لتبدأ من البداية.";
+"Some changes could not be sent. Try Sync Now." = "تعذّر إرسال بعض التغييرات. جرّب زر المزامنة الآن.";
+"Sync" = "المزامنة";
+"Sync Now" = "زامن الآن";
+"Sync with your Mac" = "المزامنة مع الماك";
+"Sync with your iPhone" = "المزامنة مع الآيفون";
+"Syncing, %d waiting" = "جارٍ المزامنة، %d في الانتظار";
+"Syncing…" = "جارٍ المزامنة…";
+"The picture could not be fetched. Check the connection and try again." = "تعذّر جلب الصورة. تحقّق من الاتصال وحاول مرة أخرى.";
+"This Mac" = "هذا الماك";
+"This build of Snapfly cannot sync." = "لا تستطيع هذه النسخة من Snapfly المزامنة.";
+"This iPhone" = "هذا الآيفون";
+"Up to date" = "محدّث";
+"Waiting for a connection, %d waiting" = "بانتظار الاتصال، %d في الانتظار";
+"What hangs on the line goes to Snapfly on your iPhone with its private details covered, and what you send from the iPhone hangs on the line." = "ما يُعلَّق على الحبل يذهب إلى Snapfly على الآيفون مع تغطية التفاصيل الخاصة، وما ترسله من الآيفون يُعلَّق على الحبل.";
+"What the Mac's line holds shows here with its private details covered, and Send to Mac hangs a covered screenshot on the Mac's line." = "ما على حبل الماك يظهر هنا مع تغطية التفاصيل الخاصة، وزر أرسل إلى الماك يعلّق لقطة شاشة مغطاة على حبل الماك.";
+"Your devices" = "أجهزتك";
+"Your iCloud storage is full." = "مساحة iCloud ممتلئة.";
+"iCloud is restricted on this device." = "iCloud مقيّد على هذا الجهاز.";

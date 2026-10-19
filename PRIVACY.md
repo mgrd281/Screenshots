@@ -4,7 +4,7 @@
 
 Snapfly hangs your screenshots on a line at the top of the screen. Everything it
 does happens on your Mac, unless you set up the AI assistant with your own key
-(below).
+or turn on syncing with your iPhone (below).
 
 - **No data is collected.** Snapfly has no account, no analytics, no tracking
   and no advertising. It does not send your screenshots, their text or anything
@@ -43,6 +43,19 @@ does happens on your Mac, unless you set up the AI assistant with your own key
   sees your internet address only to stop too many uploads at once, and does
   not store it. The links you made, with the token that deletes each one, are
   kept on your Mac.
+- **Syncing with your iPhone, only if you turn it on.** With Sync on in
+  Settings on the Mac and on the iPhone, Snapfly keeps them in step through
+  your own iCloud, in the private database of your Apple account, which only
+  your devices signed in to it can read. What goes is the copy that leaves the
+  line, with its private details covered, a small preview of it, and facts
+  about it: its name, when it was taken, what kinds of details were covered,
+  never the covered words. Originals go only if you choose Originals too, and
+  only those taken from then on. The contents of each record are encrypted
+  with your iCloud keys; the pictures are encrypted by Apple in iCloud, and end
+  to end only if you turned on Advanced Data Protection. Nothing of it goes to
+  the developer or through a server of Snapfly's. Turn Sync off and nothing
+  more goes; what is in iCloud stays until you remove Snapfly's data in your
+  iCloud settings.
 - **Your files stay yours.** Snapfly reads screenshots in the folders you let it
   watch, and the photos and PDFs you bring to it yourself, and copies, sends or
   deletes them only when you ask it to. A photo or PDF you bring stays where it
@@ -105,6 +118,12 @@ Antwort schreiben, Erklären oder Bestelldetails wählst, und die Wörter jedes
 Bildschirmfotos nur, wenn du „Mehr finden mit Claude“ unter Datenschutz
 einschaltest. Der Schlüssel bleibt im Schlüsselbund deines Macs. Texterkennung,
 Abdecken privater Angaben, Übersetzen und Beschreiben laufen auf deinem Mac.
+Schaltest du Synchronisieren auf dem Mac und dem iPhone ein, gleicht Snapfly
+beide über dein eigenes iCloud ab, in der privaten Datenbank deines
+Apple-Accounts: die Kopie, die die Leine verlässt, mit verdeckten privaten
+Angaben, eine kleine Vorschau und Angaben dazu, nie die verdeckten Wörter.
+Originale nur, wenn du „Auch Originale“ wählst, und nur die ab dann
+aufgenommenen. Nichts davon geht an den Entwickler.
 Snapfly liest nur Bildschirmfotos in den Ordnern, die du freigibst, und Fotos und
 PDFs, die du der App selbst gibst, und kopiert, sendet oder löscht sie nur, wenn
 du es willst. Fotos verlassen die Leine ohne Aufnahmeort und Kameradaten.

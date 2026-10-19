@@ -448,7 +448,7 @@
 "No screenshots yet" = "Henüz ekran görüntüsü yok";
 "Take a screenshot, then come back here." = "Bir ekran görüntüsü al, sonra buraya dön.";
 "Allow Snapfly to see your screenshots" = "Snapfly’ın ekran görüntülerini görmesine izin ver";
-"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly ekran görüntülerindeki adları, adresleri ve diğer özel bilgileri doğrudan bu iPhone’da gizler. Hiçbir şey bir yere gönderilmez.";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly ekran görüntülerindeki adları, adresleri ve diğer özel bilgileri doğrudan bu iPhone’da gizler.";
 "Allow Access" = "Erişime izin ver";
 "Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly ekran görüntülerini göremiyor. Ayarlar › Gizlilik ve Güvenlik › Fotoğraflar’da izin ver.";
 "Covering private details…" = "Özel bilgiler gizleniyor…";
@@ -1155,3 +1155,38 @@
 "Send with “%@”" = "“%@” ile gönder";
 "It goes into the AI chat after the photos. Nothing is sent until you press Return there." = "Fotoğraflardan sonra yapay zekâ sohbetine girer. Orada Return tuşuna basana kadar hiçbir şey gönderilmez.";
 "Each prompt goes into the AI chat after the photos: from its number beside the send button, from Ask AI in a photo's menu, or from a right-click on ChatGPT or Claude under a photo. Nothing is sent until you press Return there. Up to nine." = "Her istem fotoğraflardan sonra yapay zekâ sohbetine girer: gönder düğmesinin yanındaki numarasıyla, bir fotoğrafın menüsündeki Yapay zekâya sor ile ya da bir fotoğrafın altındaki ChatGPT veya Claude’a sağ tıklayarak. Orada Return tuşuna basana kadar hiçbir şey gönderilmez. En fazla dokuz.";
+
+/* Sync with the iPhone and the Mac */
+"Another device has a newer Snapfly. Update Snapfly here." = "Başka bir aygıtta daha yeni bir Snapfly var. Snapfly’ı burada güncelleyin.";
+"Another iCloud account is signed in. Turn syncing on again to sync with it." = "Başka bir iCloud hesabında oturum açık. Onunla eşzamanlamak için eşzamanlamayı yeniden açın.";
+"Could not send it. Try again." = "Gönderilemedi. Yeniden deneyin.";
+"Fetching from iCloud…" = "iCloud’dan alınıyor…";
+"From your Mac" = "Mac’inizden";
+"Here now" = "Şu an burada";
+"It goes through your own iCloud, to your devices signed in to it. Nothing goes through a server of Snapfly's." = "Kendi iCloud’unuz üzerinden, oturum açtığınız aygıtlarınıza gider. Hiçbir şey Snapfly’ın bir sunucusundan geçmez.";
+"Last here %@" = "En son %@";
+"No other device yet. Turn syncing on in Snapfly on your iPhone, signed in to the same iCloud account." = "Henüz başka aygıt yok. Aynı iCloud hesabında oturum açmış iPhone’unuzdaki Snapfly’da eşzamanlamayı açın.";
+"On its way to your Mac" = "Mac’inize gidiyor";
+"Originals too" = "Orijinaller de";
+"Screenshots also go as they were taken, with nothing covered. Only those taken from now on." = "Ekran görüntüleri çekildiği gibi, hiçbir şey kapatılmadan da gider. Yalnızca bundan sonra çekilenler.";
+"Send to Mac" = "Mac’e Gönder";
+"Sign in to iCloud to sync." = "Eşzamanlamak için iCloud’a giriş yapın.";
+"Snapfly's data was removed from iCloud. Turn syncing on again to start anew." = "Snapfly’ın verileri iCloud’dan kaldırıldı. Baştan başlamak için eşzamanlamayı yeniden açın.";
+"Some changes could not be sent. Try Sync Now." = "Bazı değişiklikler gönderilemedi. Şimdi Eşzamanla’yı deneyin.";
+"Sync" = "Eşzamanlama";
+"Sync Now" = "Şimdi Eşzamanla";
+"Sync with your Mac" = "Mac’inizle eşzamanla";
+"Sync with your iPhone" = "iPhone’unuzla eşzamanla";
+"Syncing, %d waiting" = "Eşzamanlanıyor, %d bekliyor";
+"Syncing…" = "Eşzamanlanıyor…";
+"The picture could not be fetched. Check the connection and try again." = "Resim alınamadı. Bağlantıyı denetleyip yeniden deneyin.";
+"This Mac" = "Bu Mac";
+"This build of Snapfly cannot sync." = "Snapfly’ın bu sürümü eşzamanlayamaz.";
+"This iPhone" = "Bu iPhone";
+"Up to date" = "Güncel";
+"Waiting for a connection, %d waiting" = "Bağlantı bekleniyor, %d bekliyor";
+"What hangs on the line goes to Snapfly on your iPhone with its private details covered, and what you send from the iPhone hangs on the line." = "İpe asılanlar, özel bilgileri kapatılmış olarak iPhone’unuzdaki Snapfly’a gider; iPhone’dan gönderdikleriniz de ipe asılır.";
+"What the Mac's line holds shows here with its private details covered, and Send to Mac hangs a covered screenshot on the Mac's line." = "Mac’in ipindekiler özel bilgileri kapatılmış olarak burada görünür; Mac’e Gönder de kapatılmış bir ekran görüntüsünü Mac’in ipine asar.";
+"Your devices" = "Aygıtlarınız";
+"Your iCloud storage is full." = "iCloud depolama alanınız dolu.";
+"iCloud is restricted on this device." = "Bu aygıtta iCloud kısıtlı.";

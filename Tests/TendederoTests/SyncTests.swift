@@ -403,6 +403,15 @@ final class SyncTests: XCTestCase {
         XCTAssertFalse(a.journal.isEmpty, "the original's records wait, held back")
     }
 
+    func testACoveredPictureSentOnPurposeGoesFromTheStart() {
+        var b = phone(), a = mac()
+        let id = b.add(name: "Snapfly.png", file: "/p", hash: "sent", bytes: 10, content: .protected, change: .covered,
+                       redaction: SyncRedaction(kinds: ["email"], areas: 1, look: "ink"), created: start).screenshot
+        deliver(from: &b, to: &a)
+        XCTAssertEqual(a.current(of: id)?.change, .covered)
+        XCTAssertEqual(a.current(of: id)?.redaction?.kinds, ["email"])
+    }
+
     func testAProjectThatDoesNotSyncKeepsItsScreenshots() {
         var a = mac()
         a.setProject("private", name: "Private", order: 0, syncs: false)

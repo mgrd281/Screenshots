@@ -48,6 +48,15 @@ jobs:
           SNAPFLY_SIGNING: ${{ secrets.SNAPFLY_SIGNING }}
         run: scripts/signing.sh developer-id
 
+      # The profile that lets this build use the owner's iCloud, to sync
+      # with the iPhone. If it cannot be had, the build leaves syncing out.
+      - name: Get the iCloud profile
+        if: env.CAN_SIGN == 'true'
+        continue-on-error: true
+        env:
+          SNAPFLY_SIGNING: ${{ secrets.SNAPFLY_SIGNING }}
+        run: scripts/signing.sh cloud-profile
+
       # Each build has its own number, so a report names the very build.
       # With the owner's Cloudflare account set up, Copy Link is in the app.
       - name: Build Snapfly.app

@@ -122,6 +122,7 @@ struct SyncLedger: Codable, Equatable, Sendable {
     /// brought in twice stays one screenshot.
     @discardableResult
     mutating func add(name: String, file: String, hash: String, bytes: Int, content: SyncRevision.Content,
+                      change: SyncRevision.Change = .captured, redaction: SyncRedaction? = nil,
                       created: Date, project: String = SyncProject.unsortedID,
                       now: Date = Date()) -> (screenshot: String, isNew: Bool) {
         if let known = revisions.values.first(where: { $0.contentHash == hash }),
@@ -135,7 +136,7 @@ struct SyncLedger: Codable, Equatable, Sendable {
                                          project: SyncField(value: project, stamp: stamp),
                                          removal: SyncField(value: .none, stamp: stamp))
         let revision = SyncRevision(id: UUID().uuidString, screenshot: id, parent: nil, device: deviceID,
-                                    stamp: stamp, change: .captured, content: content, redaction: nil,
+                                    stamp: stamp, change: change, content: content, redaction: redaction,
                                     fileName: name, contentHash: hash, byteCount: bytes)
         revisions[revision.id] = revision
         local[revision.id] = SyncLocal(file: file)

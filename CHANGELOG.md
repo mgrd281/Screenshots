@@ -6,6 +6,12 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Sync between the Mac and the iPhone, through your own iCloud: turn it on in
+  Settings on both, and what hangs on the line shows on the iPhone with its
+  private details covered, under From your Mac; Send to Mac, under a covered
+  screenshot on the iPhone, hangs it on the Mac's line. Originals stay on the
+  device unless you choose Originals too. Settings lists your devices and says
+  how syncing stands.
 - Prompts for AI chats: over ChatGPT, Claude and the other AI chats, numbers
   stand in a small glass bar just above the send button, which keeps its
   size and place. Point at one to see its name;
