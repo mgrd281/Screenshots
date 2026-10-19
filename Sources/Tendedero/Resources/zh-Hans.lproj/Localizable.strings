@@ -1387,3 +1387,6 @@
 "Nothing protected yet" = "还没有受保护的内容";
 "The screenshots you protect show up here." = "你保护过的截屏会显示在这里。";
 "The last twelve, kept on this iPhone by their place in Photos alone." = "最近十二张，这台 iPhone 只记住它们在“照片”中的位置。";
+
+/* The iPhone share extension */
+"Covered as chosen in Snapfly." = "已按你在 Snapfly 中的选择遮盖。";

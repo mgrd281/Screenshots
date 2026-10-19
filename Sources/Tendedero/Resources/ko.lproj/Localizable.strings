@@ -1387,3 +1387,6 @@
 "Nothing protected yet" = "아직 보호한 항목이 없습니다";
 "The screenshots you protect show up here." = "보호한 스크린샷이 여기에 표시됩니다.";
 "The last twelve, kept on this iPhone by their place in Photos alone." = "최근 12개. 이 iPhone에는 사진 속 위치만 기억됩니다.";
+
+/* The iPhone share extension */
+"Covered as chosen in Snapfly." = "Snapfly에서 선택한 대로 가렸습니다.";

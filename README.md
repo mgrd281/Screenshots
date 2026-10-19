@@ -898,6 +898,12 @@ watch the screen, so there is no line there. What it keeps is the covering:
   shows the last twelve screenshots protected, in the same grid. More holds
   Settings and Help & Introduction. While a picture is open the tab bar
   steps aside.
+- **From any app's share sheet.** Share a picture from Photos, Messages,
+  Safari or anywhere else and choose Snapfly: it is covered right there, as
+  chosen in Snapfly (the kinds, the look and the own rules, which the app
+  keeps for its extension in the iPhone's keychain), read again and checked,
+  then copied, shared on or saved, without opening the app. Nothing of the
+  picture is kept once the sheet closes.
 - **The Photos tab** opens on Snapfly's picture of stacked photos, a page, a chat
   and a landscape with a green photo badge, drawn on the iPhone and showing
   no one's details, over Protect a Photo, a green button that opens any
@@ -1091,6 +1097,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
 | `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture filling the screen, to zoom with its places marked, covered in steps and checked; the floating tools to select, draw, box, lasso and erase with their handles; the status capsule; Details, which checks the unsure places one by one; Copy, Share, Save to Photos or Files and Send to Mac, which wait for the checked copy and ask while places are to check; and Full Screen |
+| `iOS/Share/ShareViewController.swift`, `iOS/Share-Info.plist`, `iOS/*.entitlements` | The iPhone's share extension: a picture shared from any app, covered, checked, then copied, shared or saved |
+| `Shared/CoveredCopy.swift` | A picture's covered copy as it leaves the iPhone app or its share extension: covered, read again, checked in its pixels, or nothing |
+| `Shared/SharedChoice.swift` | The kinds, look and own rules the iPhone app keeps in the keychain group it shares with its extension |
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open, each opened to cover |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |

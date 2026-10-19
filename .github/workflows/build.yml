@@ -133,3 +133,5 @@ jobs:
             -destination "generic/platform=iOS" -archivePath build/iphone/Snapfly.xcarchive \
             MARKETING_VERSION="$(tr -d '[:space:]' < VERSION)" CODE_SIGNING_ALLOWED=NO -quiet archive
           test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/PrivacyInfo.xcprivacy
+          # The share extension rides inside the app, with its own privacy manifest.
+          test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/PlugIns/SnapflyShare.appex/PrivacyInfo.xcprivacy

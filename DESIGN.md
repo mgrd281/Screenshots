@@ -1959,6 +1959,20 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   footnote of how they are kept; with none, the system's empty state with
   `checkmark.shield`.
 - **More** is Settings as a tab: a large title "More", no Done.
+- **The share extension** (`iOS/Share`), in any app's share sheet: the
+  system's sheet with an inline "Snapfly", Cancel and Done (semibold), on
+  `systemGroupedBackground`, 16 pt in. The covered picture fitted whole,
+  corners 12, a hairline of `.primary` at 8% and a shadow of black 8%,
+  radius 10, y 4; a large spinner while it is covered. Under it the status
+  capsule of the editor (regular material, footnote medium, at least 36 pt
+  high): a small spinner and Covering private details…, then
+  `checkmark.shield.fill` in `phone-protect` with how many places are
+  covered, or `exclamationmark.triangle.fill` in orange with what went
+  wrong. Then Copy, Share and Save as three equal bordered buttons, 64 pt
+  high, corners 14, tinted `phone-protect`, the glyph 20 pt semibold over
+  footnote medium words, dimmed until the copy is ready; then "Covered as
+  chosen in Snapfly." in footnote `.secondary`. Notes float in a capsule of
+  regular material 96 pt over the bottom, with a success haptic.
 - **Protect Picture** is an immersive editor: the picture is the screen,
   and everything else floats over it (`ProtectView`, `EditorParts.swift`).
   - **The canvas** (`MarkCanvas`, a `UIScrollView`) fills the screen under

@@ -143,9 +143,11 @@ case "create-certificate" where arguments.count == 4:
     write(base64: attributes(item)["certificateContent"] as? String, to: arguments[3])
     print(item["id"] as? String ?? "")
 
-case "bundle-id" where arguments.count == 3:
-    // Registered once, as a Mac app; prints its resource id.
+case "bundle-id" where arguments.count == 3 || arguments.count == 4:
+    // Registered once, as a Mac app unless another platform is named, like
+    // IOS for the iPhone's share extension; prints its resource id.
     let identifier = arguments[1]
+    let platform = arguments.count == 4 ? arguments[3] : "MAC_OS"
     let (status, json) = await call("GET", "/v1/bundleIds", query: ["filter[identifier]": identifier, "limit": "200"])
     expect(status, json, "Looking up the bundle ID")
     if let found = items(json).first(where: { attributes($0)["identifier"] as? String == identifier }),
@@ -153,7 +155,7 @@ case "bundle-id" where arguments.count == 3:
         print(id)
     } else {
         let body: JSON = ["data": ["type": "bundleIds",
-                                   "attributes": ["identifier": identifier, "name": arguments[2], "platform": "MAC_OS"]]]
+                                   "attributes": ["identifier": identifier, "name": arguments[2], "platform": platform]]]
         let (status, json) = await call("POST", "/v1/bundleIds", body: body)
         expect(status, json, "Registering the bundle ID")
         print((json["data"] as? JSON)?["id"] as? String ?? "")

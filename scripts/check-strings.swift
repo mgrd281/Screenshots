@@ -7,8 +7,9 @@ import Foundation
 
 let sources = URL(fileURLWithPath: "Sources/Tendedero")
 let resources = sources.appendingPathComponent("Resources")
-// The iPhone app shares the translations.
+// The iPhone app and its share extension share the translations.
 let iPhone = URL(fileURLWithPath: "iOS/Snapfly")
+let shareExtension = URL(fileURLWithPath: "iOS/Share")
 let fm = FileManager.default
 
 // Every L("...") call. A call that is not a plain string literal cannot be
@@ -18,7 +19,7 @@ var problems: [String] = []
 var warnings: [String] = []
 let literal = try NSRegularExpression(pattern: #"\bL\(\s*"((?:[^"\\]|\\.)*)"\s*\)"#)
 let anyCall = try NSRegularExpression(pattern: #"\bL\("#)
-for folder in [sources, iPhone] {
+for folder in [sources, iPhone, shareExtension] {
     for case let file as URL in fm.enumerator(at: folder, includingPropertiesForKeys: nil)!
     where file.pathExtension == "swift" && file.lastPathComponent != "Localization.swift" {
         let text = try String(contentsOf: file, encoding: .utf8)

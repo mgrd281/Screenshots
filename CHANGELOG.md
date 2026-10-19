@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, Snapfly is in the share sheet of every app: share a
+  picture, choose Snapfly, and it is covered as chosen in the app, checked,
+  then copied, shared on or saved, without opening Snapfly.
 - The iPhone app has four tabs at the bottom, in Liquid Glass from iOS 26 on:
   Photos, Scan, Protected and More. Scan uses the camera to scan a letter, a
   form or a receipt, straightened and cropped, and covers its private

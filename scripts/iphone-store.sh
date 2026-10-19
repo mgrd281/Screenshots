@@ -12,6 +12,8 @@ SSL=/usr/bin/openssl   # LibreSSL: its .p12 files are the kind Keychain imports.
 TMP="${RUNNER_TEMP:-/tmp}/snapfly-iphone"
 KEYCHAIN="$TMP/iphone.keychain-db"
 BUNDLE_ID="de.ghazarian.Snapfly"
+# The share extension inside it, signed with a profile of its own.
+SHARE_ID="$BUNDLE_ID.Share"
 OUT="build/iphone"
 # Where Xcode looks for profiles: the first before Xcode 16, the second since.
 PROFILES=("$HOME/Library/MobileDevice/Provisioning Profiles"
@@ -24,9 +26,10 @@ part() {
 
 if [ "${1:-}" = "cleanup" ]; then
   security delete-keychain "$KEYCHAIN" 2>/dev/null || true
-  if [ -f "$TMP/uuid" ]; then
-    for folder in "${PROFILES[@]}"; do rm -f "$folder/$(cat "$TMP/uuid").mobileprovision"; done
-  fi
+  for kept in "$TMP/uuid" "$TMP/share-uuid"; do
+    [ -f "$kept" ] || continue
+    for folder in "${PROFILES[@]}"; do rm -f "$folder/$(cat "$kept").mobileprovision"; done
+  done
   rm -rf "$TMP"
   exit 0
 fi
@@ -90,37 +93,45 @@ for folder in "${PROFILES[@]}"; do
   cp "$TMP/profile.mobileprovision" "$folder/$(cat "$TMP/uuid").mobileprovision"
 done
 
+# The share extension's identifier and profile, made once through the same
+# App Store Connect key; nothing for the owner to do.
+SHARE_BUNDLE="$(swift scripts/asc.swift bundle-id "$SHARE_ID" "Snapfly Share" IOS)"
+SHARE_PROFILE_NAME="Snapfly iPhone Share App Store $CERT_ID"
+swift scripts/asc.swift profile "$SHARE_BUNDLE" "$CERT_ID" "$SHARE_PROFILE_NAME" "$TMP/share.mobileprovision" IOS_APP_STORE >/dev/null
+security cms -D -i "$TMP/share.mobileprovision" > "$TMP/share.plist"
+/usr/libexec/PlistBuddy -c "Print :UUID" "$TMP/share.plist" > "$TMP/share-uuid"
+for folder in "${PROFILES[@]}"; do
+  cp "$TMP/share.mobileprovision" "$folder/$(cat "$TMP/share-uuid").mobileprovision"
+done
+
 # Syncing with the Mac, once the app's identifier has the iCloud container
-# (SYNC.md): the profile then allows it, so the build gets the entitlements,
-# a line in Info.plist naming the container, and fetching in the background
-# when iCloud says something changed.
+# (SYNC.md): the profile then allows it, so the app (not its extension) gets
+# the entitlements, a line in Info.plist naming the container, and fetching
+# in the background when iCloud says something changed. The app's own files
+# are changed in this checkout only, so the extension keeps its own.
 CONTAINER="iCloud.de.ghazarian.Snapfly"
-CLOUD_SETTINGS=()
 CLOUD_EXPORT=""
 if /usr/libexec/PlistBuddy -c "Print :Entitlements:com.apple.developer.icloud-container-identifiers" \
      "$TMP/profile.plist" 2>/dev/null | grep -qF "$CONTAINER"; then
   PUSH=""
   if /usr/libexec/PlistBuddy -c "Print :Entitlements:aps-environment" "$TMP/profile.plist" >/dev/null 2>&1; then
-    PUSH="<key>aps-environment</key><string>production</string>"
+    PUSH="production"
   fi
-  cat > "$TMP/Snapfly.entitlements" <<PLIST
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>com.apple.developer.icloud-container-identifiers</key><array><string>$CONTAINER</string></array>
-  <key>com.apple.developer.icloud-services</key><array><string>CloudKit</string></array>
-  $PUSH
-</dict>
-</plist>
-PLIST
+  # The app's entitlements (iOS/Snapfly.entitlements, the keychain group it
+  # shares with its extension), with iCloud added.
+  ENTITLEMENTS=iOS/Snapfly.entitlements
+  /usr/libexec/PlistBuddy -c "Add :com.apple.developer.icloud-container-identifiers array" "$ENTITLEMENTS"
+  /usr/libexec/PlistBuddy -c "Add :com.apple.developer.icloud-container-identifiers:0 string $CONTAINER" "$ENTITLEMENTS"
+  /usr/libexec/PlistBuddy -c "Add :com.apple.developer.icloud-services array" "$ENTITLEMENTS"
+  /usr/libexec/PlistBuddy -c "Add :com.apple.developer.icloud-services:0 string CloudKit" "$ENTITLEMENTS"
+  if [ -n "$PUSH" ]; then
+    /usr/libexec/PlistBuddy -c "Add :aps-environment string production" "$ENTITLEMENTS"
+  fi
   # The app's own Info.plist (iOS/Info.plist, preparing photos in the
   # background), with the container and iCloud's notices added.
-  cp iOS/Info.plist "$TMP/Info.plist"
-  /usr/libexec/PlistBuddy -c "Add :SnapflyCloudContainer string $CONTAINER" "$TMP/Info.plist"
-  /usr/libexec/PlistBuddy -c "Add :CKSharingSupported bool true" "$TMP/Info.plist"
-  /usr/libexec/PlistBuddy -c "Add :UIBackgroundModes: string remote-notification" "$TMP/Info.plist"
-  CLOUD_SETTINGS=(CODE_SIGN_ENTITLEMENTS="$TMP/Snapfly.entitlements" INFOPLIST_FILE="$TMP/Info.plist")
+  /usr/libexec/PlistBuddy -c "Add :SnapflyCloudContainer string $CONTAINER" iOS/Info.plist
+  /usr/libexec/PlistBuddy -c "Add :CKSharingSupported bool true" iOS/Info.plist
+  /usr/libexec/PlistBuddy -c "Add :UIBackgroundModes: string remote-notification" iOS/Info.plist
   CLOUD_EXPORT="<key>iCloudContainerEnvironment</key><string>Production</string>"
   echo "The profile allows iCloud: this build can sync."
 else
@@ -133,8 +144,8 @@ BUILD="$(( ${GITHUB_RUN_NUMBER:-1} + 100 ))"
 xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -configuration Release \
   -destination "generic/platform=iOS" -archivePath "$OUT/Snapfly.xcarchive" \
   CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_IDENTITY="$SIGNER" \
-  PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN" \
-  ${CLOUD_SETTINGS[@]+"${CLOUD_SETTINGS[@]}"} \
+  SNAPFLY_APP_PROFILE="$PROFILE_NAME" SNAPFLY_SHARE_PROFILE="$SHARE_PROFILE_NAME" \
+  OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN" \
   MARKETING_VERSION="$(tr -d '[:space:]' < VERSION)" CURRENT_PROJECT_VERSION="$BUILD" -quiet archive
 
 cat > "$TMP/export.plist" <<PLIST
@@ -150,6 +161,7 @@ cat > "$TMP/export.plist" <<PLIST
   <key>provisioningProfiles</key>
   <dict>
     <key>$BUNDLE_ID</key><string>$PROFILE_NAME</string>
+    <key>$SHARE_ID</key><string>$SHARE_PROFILE_NAME</string>
   </dict>
   <key>manageAppVersionAndBuildNumber</key><false/>
   $CLOUD_EXPORT
