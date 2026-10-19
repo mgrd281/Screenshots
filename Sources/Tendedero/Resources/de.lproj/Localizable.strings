@@ -1390,3 +1390,9 @@
 
 /* The iPhone share extension */
 "Covered as chosen in Snapfly." = "Abgedeckt, wie in Snapfly gewählt.";
+
+/* The iPhone: scanned pages as one covered PDF */
+"Share Covered PDF" = "Abgedecktes PDF teilen";
+"Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "Jede Seite wird abgedeckt, wie in den Einstellungen gewählt, oder so, wie du sie nach dem Öffnen gelassen hast. Das PDF enthält nur Bilder der abgedeckten Seiten, keinen Text zum Kopieren.";
+"Page %d is not ready yet. Open it to check it." = "Seite %d ist noch nicht fertig. Öffne sie, um sie zu prüfen.";
+"Page %d could not be covered, so no PDF was made." = "Seite %d konnte nicht abgedeckt werden, darum wurde kein PDF erstellt.";

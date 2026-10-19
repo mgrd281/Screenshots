@@ -47,7 +47,7 @@ struct ProtectView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init(source: ProtectSession.Source) {
-        _session = StateObject(wrappedValue: ProtectSession(source: source))
+        _session = StateObject(wrappedValue: ProtectSession.made(for: source))
     }
 
     var body: some View {

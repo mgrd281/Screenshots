@@ -1390,3 +1390,9 @@
 
 /* The iPhone share extension */
 "Covered as chosen in Snapfly." = "Snapfly에서 선택한 대로 가렸습니다.";
+
+/* The iPhone: scanned pages as one covered PDF */
+"Share Covered PDF" = "가린 PDF 공유";
+"Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "각 페이지는 설정대로, 또는 열어 본 뒤 남겨 둔 대로 가려집니다. PDF에는 가린 페이지의 이미지만 들어 있고 복사할 텍스트는 없습니다.";
+"Page %d is not ready yet. Open it to check it." = "%d쪽이 아직 준비되지 않았습니다. 열어서 확인하세요.";
+"Page %d could not be covered, so no PDF was made." = "%d쪽을 가릴 수 없어 PDF를 만들지 않았습니다.";

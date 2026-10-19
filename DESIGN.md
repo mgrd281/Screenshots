@@ -1963,8 +1963,22 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - Scanning is the system's document camera (`VNDocumentCameraViewController`),
     full screen. One page opens at once in Protect Picture; several wait
     under "Scanned pages" (title 3 semibold, Clear on the trailing edge) as
-    the grid's square cards, newest first, over a footnote that they stay
-    only while the app is open.
+    the grid's square cards in the order scanned, a document's order. Each
+    card carries its number in caption 2 medium on an ultra-thin capsule
+    4 pt in at the bottom leading corner, and, once it was opened and its
+    copy is checked, the protected shield (white on a 22 pt
+    `phone-protect` circle, top trailing), which scales in. Holding a card
+    offers Remove (`trash`, destructive). A page opened opens again as it
+    was left (`ScannedPages` keeps its `ProtectSession`).
+  - Under the cards, centred, Share Covered PDF (`doc.richtext`), the
+    green pill. While it works it says which page it covers ("Page 2 of
+    5", digits rolling) beside a white spinner, and Clear and Remove wait.
+    Then the share sheet opens with the PDF (`ScanPDF`, named "Snapfly"
+    and the date) and a success haptic; a page that cannot be covered, or
+    one opened whose copy is not checked yet, stops it with a note saying
+    which, and no PDF is made. Two footnotes in `.secondary`, 4 pt apart:
+    how each page is covered and that the PDF holds only pictures, then
+    that pages stay only while the app is open.
   - Then three steps, each an SF Symbol in `phone-protect`, body semibold,
     24 pt wide, before subheadline `.secondary` words, 14 pt apart.
 - **Protected** (`ProtectedTab`), a large title: the last twelve screenshots

@@ -18,6 +18,8 @@ final class ProtectSession: ObservableObject {
         case asset(String)
         /// A picture chosen from Photos, kept while the app runs.
         case picture(UUID)
+        /// A page scanned with the camera, kept while the app runs.
+        case scanned(UUID)
     }
 
     /// How far the protection is.
@@ -59,6 +61,13 @@ final class ProtectSession: ObservableObject {
 
     init(source: Source) {
         self.source = source
+    }
+
+    /// The protection for a source: a scanned page's is kept with the page,
+    /// so it opens again as it was left and its PDF takes it as it is.
+    static func made(for source: Source) -> ProtectSession {
+        if case .scanned(let id) = source { return ScannedPages.shared.session(id) }
+        return ProtectSession(source: source)
     }
 
     var stage: Stage {
@@ -330,6 +339,8 @@ final class ProtectSession: ObservableObject {
             return await Library.image(of: asset)
         case .picture(let id):
             return Imported.shared.image(id)
+        case .scanned(let id):
+            return ScannedPages.shared.image(id)
         }
     }
 

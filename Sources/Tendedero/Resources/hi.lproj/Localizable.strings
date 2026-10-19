@@ -1392,3 +1392,9 @@
 
 /* The iPhone share extension */
 "Covered as chosen in Snapfly." = "Snapfly में चुने अनुसार ढका गया।";
+
+/* The iPhone: scanned pages as one covered PDF */
+"Share Covered PDF" = "ढका हुआ PDF साझा करें";
+"Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "हर पेज सेटिंग्स के अनुसार ढका जाता है, या वैसे जैसे आपने उसे खोलने के बाद छोड़ा था। PDF में सिर्फ़ ढके हुए पेजों की तस्वीरें होती हैं, कॉपी करने लायक कोई टेक्स्ट नहीं।";
+"Page %d is not ready yet. Open it to check it." = "पेज %d अभी तैयार नहीं है। जाँचने के लिए उसे खोलें।";
+"Page %d could not be covered, so no PDF was made." = "पेज %d ढका नहीं जा सका, इसलिए PDF नहीं बनाया गया।";
