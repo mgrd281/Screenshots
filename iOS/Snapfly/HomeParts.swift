@@ -215,17 +215,20 @@ private struct PhotoBadge: View {
 /// The one green action: a compact pill, white words, pressed a shade
 /// darker and a little smaller; 44 pt tall at least.
 struct ProtectButtonStyle: ButtonStyle {
+    /// Smaller, beside the small picture once there are screenshots.
+    var compact = false
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.body.weight(.medium))
+            .font(compact ? .subheadline.weight(.semibold) : .body.weight(.medium))
+            .dynamicTypeSize(compact ? ...DynamicTypeSize.xLarge : ...DynamicTypeSize.accessibility5)
             .foregroundStyle(.white)
             .multilineTextAlignment(.center)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 11)
-            .frame(minHeight: 44)
+            .padding(.horizontal, compact ? 14 : 20)
+            .padding(.vertical, compact ? 8 : 11)
+            .frame(minHeight: compact ? 36 : 44)
             .background(configuration.isPressed ? SnapflyTokens.protectPressed : SnapflyTokens.protect, in: Capsule())
             .scaleEffect(configuration.isPressed && !reduceMotion ? 0.97 : 1)
             .opacity(isEnabled ? 1 : 0.5)
@@ -249,8 +252,6 @@ struct ScreenshotCard: View {
     var protected = false
     var showsDate = true
     var square = false
-    /// Room kept free at the bottom's trailing corner, for the card's menu.
-    var menuRoom: CGFloat = 0
     @State private var image: UIImage? = nil
 
     var body: some View {
@@ -265,17 +266,18 @@ struct ScreenshotCard: View {
             }
             .overlay(alignment: .bottomLeading) {
                 if showsDate, let date = asset.creationDate {
-                    // Small, as the card is: it grows no larger than at the default text size.
-                    Text(Self.taken.string(from: date))
+                    // Small, as the card is, and whole: the time alone today, else the
+                    // day and the time; it grows no larger than at the default text size.
+                    Text(Self.short(date))
                         .font(.caption2.weight(.medium))
+                        .monospacedDigit()
                         .dynamicTypeSize(...DynamicTypeSize.large)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.75)
+                        .minimumScaleFactor(0.7)
                         .padding(.horizontal, square ? 5 : 7)
                         .padding(.vertical, square ? 2 : 3)
                         .background(.ultraThinMaterial, in: Capsule())
                         .padding(square ? 4 : 6)
-                        .padding(.trailing, menuRoom)
                 }
             }
             .overlay(alignment: .topTrailing) {
@@ -304,7 +306,24 @@ struct ScreenshotCard: View {
         return parts.joined(separator: ", ")
     }
 
-    /// "Today, 20:03", as the language says it.
+    /// "20:03" today, else "19.10., 20:03", as the language writes them.
+    static func short(_ date: Date) -> String {
+        Calendar.current.isDateInToday(date) ? time.string(from: date) : dayAndTime.string(from: date)
+    }
+
+    private static let time: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter
+    }()
+
+    private static let dayAndTime: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("dMM jjmm")
+        return formatter
+    }()
+
+    /// "Today, 20:03", as the language says it, for VoiceOver.
     private static let taken: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
@@ -349,8 +368,8 @@ extension View {
 }
 
 /// Screenshots in a grid of small square cards, four to a row on most
-/// iPhones: a tap opens one to protect, growing out of its card; its menu,
-/// or holding it, covers it and copies, shares or saves it.
+/// iPhones: a tap opens one to protect, growing out of its card; holding
+/// it covers it and copies, shares or saves it.
 struct ScreenshotGrid: View {
     let shots: [PHAsset]
     let protected: Set<String>
@@ -363,24 +382,11 @@ struct ScreenshotGrid: View {
             ForEach(shots, id: \.localIdentifier) { asset in
                 let link = ShotLink(id: asset.localIdentifier, place: place)
                 NavigationLink(value: link) {
-                    ScreenshotCard(asset: asset, protected: protected.contains(asset.localIdentifier), square: true,
-                                   menuRoom: 22)
+                    ScreenshotCard(asset: asset, protected: protected.contains(asset.localIdentifier), square: true)
                         .zoomSource(link, in: zoom)
                 }
                 .buttonStyle(.plain)
                 .contextMenu { menu(asset) }
-                .overlay(alignment: .bottomTrailing) {
-                    Menu { menu(asset) } label: {
-                        Image(systemName: "ellipsis")
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(.primary)
-                            .frame(width: 20, height: 20)
-                            .background(.ultraThinMaterial, in: Circle())
-                            .padding(4)
-                            .contentShape(Rectangle())
-                    }
-                    .accessibilityLabel(L("More"))
-                }
                 .phoneGuideTarget(.firstShot, on: asset.localIdentifier == shots.first?.localIdentifier)
             }
         }

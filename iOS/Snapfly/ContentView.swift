@@ -24,7 +24,7 @@ struct PhotosTab: View {
     @Environment(\.dynamicTypeSize) private var typeSize
 
     /// How many screenshots the home screen shows before See All.
-    private let preview = 8
+    private let preview = 12
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -121,7 +121,7 @@ struct PhotosTab: View {
         VStack(spacing: 20) {
             PhotoHero()
             words(center: true)
-            protectButton
+            protectButton(compact: false)
             VStack(spacing: 4) {
                 Text(L("No screenshots yet"))
                     .font(.subheadline.weight(.semibold))
@@ -142,7 +142,7 @@ struct PhotosTab: View {
             VStack(spacing: 16) {
                 PhotoHero(scale: 0.5)
                 words(center: true)
-                protectButton
+                protectButton(compact: true)
             }
             .frame(maxWidth: .infinity)
         } else {
@@ -151,7 +151,7 @@ struct PhotosTab: View {
                     .padding(.leading, -12)
                 VStack(alignment: .leading, spacing: 12) {
                     words(center: false)
-                    protectButton
+                    protectButton(compact: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -172,11 +172,11 @@ struct PhotosTab: View {
     }
 
     /// Protect a Photo: the system's photo picker, any picture from Photos.
-    private var protectButton: some View {
+    private func protectButton(compact: Bool) -> some View {
         PhotosPicker(selection: $picked, matching: .images) {
             Label(L("Protect a Photo"), systemImage: "shield.lefthalf.filled")
         }
-        .buttonStyle(ProtectButtonStyle())
+        .buttonStyle(ProtectButtonStyle(compact: compact))
         .simultaneousGesture(TapGesture().onEnded { presses += 1 })
         .sensoryFeedback(.impact(weight: .light), trigger: presses)
     }

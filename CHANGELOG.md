@@ -11,9 +11,9 @@ keeps a download of each version.
   form or a receipt, straightened and cropped, and covers its private
   details like a screenshot's. Protected shows the screenshots protected
   lately, and More holds Settings and the introduction.
-- On the iPhone's home screen, the screenshots are small square cards, four
-  to a row, with when each was taken in a small label and a ⋯ button that
-  covers it and copies, shares or saves it.
+- On the iPhone's home screen, the newest twelve screenshots are small square
+  cards, four to a row, with when each was taken, whole, in a small label
+  (the time alone for today's), and Protect a Photo is a smaller button.
 - Printed forms, like a German sick note, a prescription or a referral, are
   read field by field: the value under or beside each label is covered as
   what the label says it is, and only when that kind is chosen. Names alone

@@ -903,10 +903,10 @@ watch the screen, so there is no line there. What it keeps is the covering:
   no one's details, over Protect a Photo, a green button that opens any
   picture from Photos. Once there are screenshots, the picture turns small
   beside its words and the screenshots come first: what the Mac sent and
-  the newest eight in small square
-  cards, four to a row, that show when each was taken in a small label, a
-  green shield once it was protected, and a ⋯ button with Cover and Copy,
-  Share or Save, all of them
+  the newest twelve in small square
+  cards, four to a row, that show when each was taken in a small label
+  (the time alone for today's), and a green shield once it was protected;
+  holding one offers Cover and Copy, Share or Save; all of them
   behind See All, which finds them by the words they say (those read ahead
   of time, below), shows only those with private details, protected or not,
   and puts the newest or the oldest first. From iOS 18 on, a screenshot opens by growing out of its
