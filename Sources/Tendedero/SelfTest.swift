@@ -11,6 +11,7 @@ enum SelfTest {
     /// known: it is a picture of a document, not words of Snapfly's.
     static let lines = [
         "Order #1024",
+        "Shop: Muster Versand GmbH",
         "Date: 17.10.2026",
         "Customer: Lena Hoffmann",
         "lena.hoffmann@example.com",

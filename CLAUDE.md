@@ -207,6 +207,11 @@ the website's footer. Both stay.
   `swift test` before building, so add a test with each new piece of such
   logic. A failure that would leave the user guessing gets a `Notice`, not a
   beep.
+- **Covering.** Finding, telling what a find is, and covering only what the
+  owner chose are kept apart (`Finder.findings`, then `decided`). Names
+  means people's names: `DocumentSense` tells a person from a company and
+  whose a name is. `RedactionTests` hold the cases; add one with each fix,
+  and never fit the engine to one screenshot.
 - Swift 5 language mode, macOS 14 deployment target, universal binary.
   Gate newer APIs with `if #available` and `#if canImport(...)`. Examples:
   - Translation needs macOS 15;

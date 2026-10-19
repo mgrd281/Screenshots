@@ -91,7 +91,8 @@ final class ProtectionTests: XCTestCase {
         XCTAssertFalse(Finder.usesIntelligence)
         // The AI assistant reads along only with a key and when turned on.
         XCTAssertFalse(Finder.asksAssistant)
-        XCTAssertTrue(Finder.lookKey.hasSuffix(",true,false,false"), Finder.lookKey)
+        // Whose names are covered tells copies apart too: everyone's at first.
+        XCTAssertTrue(Finder.lookKey.hasSuffix(",true,false,false,all"), Finder.lookKey)
     }
 
     // MARK: Helpers

@@ -1,15 +1,17 @@
 import SwiftUI
 
-/// What to cover and how covers look, rules of the owner's own, and how to
-/// cover a screenshot with a double tap on the back of the iPhone.
+/// What to cover, kind by kind in groups, and whose names; how covers look;
+/// how a screenshot is read; the devices it syncs with; and, further in,
+/// rules of the owner's own and how to cover a screenshot with a double tap
+/// on the back of the iPhone.
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var chosen = Choice.details
+    @State private var scope = NameScope.current
     @State private var look = CoverStyle.current
     @State private var keepsLastDigits = Finder.keepsLastDigits
     @State private var strongest = Finder.strongest
     @State private var usesIntelligence = Finder.usesIntelligence && Finder.intelligenceAvailable
-    @State private var rules = OwnRules.all
 
     var body: some View {
         NavigationStack {
@@ -29,6 +31,14 @@ struct SettingsView: View {
                     Section(group.title) {
                         ForEach(group.kinds, id: \.self) { detail in
                             Toggle(detail.title, isOn: binding(for: detail))
+                            if detail == .names {
+                                NavigationLink {
+                                    WhoseNamesView(scope: $scope)
+                                } label: {
+                                    LabeledContent(L("Whose names"), value: scope.summary)
+                                }
+                                .disabled(!chosen.contains(.names))
+                            }
                         }
                     }
                 }
@@ -36,12 +46,12 @@ struct SettingsView: View {
                 Section {
                     CoverLookPicker(selection: $look)
                     Toggle(isOn: $keepsLastDigits) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(L("Keep the last four digits"))
-                            Text(L("Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement."))
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
+                        described(L("Keep the last four digits"),
+                                  L("Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement."))
+                    }
+                    Toggle(isOn: $strongest) {
+                        described(L("Strongest protection"),
+                                  L("Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was."))
                     }
                 } header: {
                     Text(L("Cover look"))
@@ -50,60 +60,42 @@ struct SettingsView: View {
                 }
                 .onChange(of: look) { _, new in CoverStyle.current = new }
                 .onChange(of: keepsLastDigits) { _, new in Finder.keepsLastDigits = new }
+                .onChange(of: strongest) { _, new in Finder.strongest = new }
 
                 Section {
-                    Toggle(isOn: $strongest) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(L("Strongest protection"))
-                            Text(L("Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was."))
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
                     Toggle(isOn: $usesIntelligence) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(L("Find more with Apple Intelligence"))
-                            Text(Finder.intelligenceAvailable
-                                 ? L("Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device.")
-                                 : L("Needs Apple Intelligence on this device."))
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
+                        described(L("Find more with Apple Intelligence"),
+                                  Finder.intelligenceAvailable
+                                      ? L("Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device.")
+                                      : L("Needs Apple Intelligence on this device."))
                     }
                     .disabled(!Finder.intelligenceAvailable)
+                    if let last = Timing.last {
+                        LabeledContent(L("Last screenshot"), value: duration(last.milliseconds))
+                    }
                 } header: {
-                    Text(L("Protection"))
+                    Text(L("Reading and checking"))
                 } footer: {
-                    Text(L("Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too."))
+                    Text(L("What the patterns find shows at once; Apple Intelligence adds to it. Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too."))
                 }
-                .onChange(of: strongest) { _, new in Finder.strongest = new }
                 .onChange(of: usesIntelligence) { _, new in Finder.usesIntelligence = new }
 
-                Section {
-                    ForEach($rules) { $rule in
-                        RuleRow(rule: $rule)
-                    }
-                    .onDelete { rules.remove(atOffsets: $0) }
-                    Button(L("Add Rule")) { rules.append(OwnRule()) }
-                } header: {
-                    Text(L("Also hide"))
-                } footer: {
-                    Text(L("Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below."))
-                }
-                .onChange(of: rules) { _, new in OwnRules.all = new }
-
-                Section {
-                    step(1, L("Take a screenshot as usual."))
-                    step(2, L("Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat."))
-                    step(3, String(format: L("To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@."),
-                                   L("Cover the Latest Screenshot")))
-                } header: {
-                    Text(L("Double tap the back of your iPhone"))
-                } footer: {
-                    Text(L("Everything happens on this iPhone. Nothing is sent anywhere."))
-                }
-
                 SyncSection(sync: .shared)
+
+                Section {
+                    NavigationLink {
+                        AdvancedSettings()
+                    } label: {
+                        Label(L("Also hide"), systemImage: "text.badge.plus")
+                    }
+                    NavigationLink {
+                        BackTapSettings()
+                    } label: {
+                        Label(L("Double tap the back of your iPhone"), systemImage: "hand.tap")
+                    }
+                } header: {
+                    Text(L("Advanced"))
+                }
 
                 Section {
                     Button {
@@ -132,6 +124,21 @@ struct SettingsView: View {
         }
     }
 
+    private func described(_ title: String, _ detail: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+            Text(detail)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    /// Milliseconds as the language says a duration, like "0.8 s".
+    private func duration(_ milliseconds: Int) -> String {
+        Measurement(value: Double(milliseconds) / 1000, unit: UnitDuration.seconds)
+            .formatted(.measurement(width: .abbreviated, numberFormatStyle: .number.precision(.fractionLength(1))))
+    }
+
     private func binding(for detail: PrivateDetail) -> Binding<Bool> {
         Binding {
             chosen.contains(detail)
@@ -152,6 +159,75 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)
+    }
+}
+
+/// Whose names Names covers: everyone's, or only some people's, read from
+/// what stands round each name, like "Patient:" or "Dr. med.".
+private struct WhoseNamesView: View {
+    @Binding var scope: NameScope
+
+    var body: some View {
+        Form {
+            Section {
+                Toggle(L("Everyone's"), isOn: Binding(get: { scope.roles == nil }, set: { if $0 { set(.everyone) } }))
+            }
+            Section {
+                ForEach(PersonRole.allCases, id: \.self) { role in
+                    Toggle(role.title, isOn: Binding(get: { scope.roles?.contains(role) == true },
+                                                     set: { _ in set(scope.toggling(role)) }))
+                }
+            } footer: {
+                Text(L("A name whose role is not clear is covered anyway, and marked for you to check."))
+            }
+        }
+        .navigationTitle(L("Whose names"))
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func set(_ new: NameScope) {
+        scope = new
+        NameScope.current = new
+    }
+}
+
+/// Rules of the owner's own: words, patterns and labels.
+private struct AdvancedSettings: View {
+    @State private var rules = OwnRules.all
+
+    var body: some View {
+        Form {
+            Section {
+                ForEach($rules) { $rule in
+                    RuleRow(rule: $rule)
+                }
+                .onDelete { rules.remove(atOffsets: $0) }
+                Button(L("Add Rule")) { rules.append(OwnRule()) }
+            } footer: {
+                Text(L("Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below."))
+            }
+        }
+        .onChange(of: rules) { _, new in OwnRules.all = new }
+        .navigationTitle(L("Also hide"))
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+/// How to cover the newest screenshot with a double tap on the back.
+private struct BackTapSettings: View {
+    var body: some View {
+        Form {
+            Section {
+                step(1, L("Take a screenshot as usual."))
+                step(2, L("Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat."))
+                step(3, String(format: L("To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@."),
+                               L("Cover the Latest Screenshot")))
+            } footer: {
+                Text(L("Everything happens on this iPhone. Nothing is sent anywhere."))
+            }
+        }
+        .navigationTitle(L("Double tap the back of your iPhone"))
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private func step(_ number: Int, _ text: String) -> some View {

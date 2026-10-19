@@ -764,7 +764,7 @@ apps.
     `xmark.octagon.fill` red not covered, `minus.circle` stopped.
   - On the right a 300 pt grouped `Form`: What to cover, with four small
     bordered buttons two by two (Names Only, As in Settings, All, None), the
-    kinds in Settings › Privacy's three groups as switches, a note on own
+    kinds in Settings › Privacy's six groups as switches, a note on own
     rules and where the files are read; at the bottom the prominent Cover
     1,000 Files, or Show in Finder and Start Over after a run.
 - **Photo context menu.**
@@ -1020,7 +1020,7 @@ apps.
     "Hide in this copy" in the inspector: Check All, Recommended and Uncheck
     All, small, sharing the row in equal parts (stacked where they don't
     fit), a footer saying the copy has no place or camera details, then the
-    eighteen kinds as switches in the three groups Settings has, named as
+    nineteen kinds as switches in the six groups Settings has, named as
     Settings names them, starting with what Settings hides. The primary
     button reads Save Copy… and opens a save sheet in the folder of the
     original, under the name "… (covered)". A small spinner shows in the
@@ -1283,8 +1283,15 @@ apps.
   buttons, Check All, Recommended and Uncheck All, sharing the row in equal
   parts, under the header "Hide private details" and over the footer that
   says what is checked is covered.
-  Then the eighteen kinds in three sections named for their group: People;
-  Money, identity and health; Orders and documents. Then "Cover look": the
+  Then the nineteen kinds in six sections named for their group: People;
+  Companies and organizations; Money; Health; Documents; Passwords and
+  access. Under Names, a row "Whose names" (`LabeledContent`, its subtitle
+  saying an unclear name is covered and marked to check) with a menu button
+  on the trailing edge naming the choice ("Everyone's", or the roles chosen,
+  joined by commas): Everyone's, a divider, then the five roles, each with a
+  check while chosen; choosing one from Everyone's chooses it alone, and
+  leaving none means Everyone's again. It is dimmed while Names is off, and
+  a change draws the photos hanging again. Then "Cover look": the
   six looks as tiles three to a row (`CoverLookPicker`), each a little chat,
   a grey bubble with a name and a blue one with a number, covered by the
   same code as a copy, light or dark as the system is, with its name under
@@ -1335,7 +1342,7 @@ apps.
   made-up order and speaks for that sample only; once run, the covered
   sample above it (at most 280 pt high, 10 pt corners), what was covered on
   it, and in `.secondary` what is checked and not on it. A new choice of
-  kinds puts the result away. Last the Preview. The iPhone's Settings use the same three groups.
+  kinds puts the result away. Last the Preview. The iPhone's Settings use the same six groups.
 - **About pane.** The icon at 128 under its shadow, the name in 34 pt
   rounded bold, the tagline in title3 `.secondary`, the version in callout
   `.tertiary`. Then one line, "Made by" in `.secondary` before the maker's
@@ -1822,8 +1829,57 @@ system's accent, Dynamic Type and Dark Mode as they come. It adds no tokens
 of its own.
 
 - Screenshots sit in a grid in the shape of a phone's screen, 10 pt corners.
-- A covered screenshot shows at full width with 12 pt corners; Copy, Share
-  and Save sit under it on the bar material, as bordered buttons.
+- **Home.** Under the large title, a row: Protect a Photo, a bordered
+  button with `photo.badge.plus` that opens the system's photo picker, and
+  on the trailing edge, while syncing is on, a chip with how it stands:
+  footnote in `.secondary` (orange with `exclamationmark.triangle.fill`
+  when it needs the owner, else `checkmark.icloud`), on a capsule of
+  `.primary` at 6%, padded 10 by 6, opening Settings. Then From your Mac,
+  then "Protected lately", a headline over a row that scrolls sideways of
+  the screenshots protected lately, 104 pt wide at 3:4 with 10 pt corners
+  and 6 pt gaps, as From your Mac's, then "Screenshots" over the grid.
+  Holding a screenshot offers Cover and Copy (`doc.on.doc`): it is covered,
+  checked and copied without opening, with a note in a floating pill over
+  the bottom, 24 pt up, gone after 2.5 s.
+- **Protect.** A tap on a screenshot opens it at once, fitted with 16 pt
+  margins across and 8 pt above and below, 12 pt corners, to zoom up to 6×
+  with two fingers (`MarkCanvas`, a `UIScrollView`). Its places show over
+  it: the cover ink (grey 12%, corners of a quarter of the height, 8 at
+  most) over a covered place until the copy is made, then the copy itself;
+  a dashed outline, 2 pt in dashes of 5 and 3, in the accent round a place
+  to check, and in `.secondaryLabel` round a place left uncovered; the part
+  being drawn dashed in the accent. A tap on a place turns it on or off,
+  with a selection haptic. Bottom-leading over the picture, 16 pt in, two
+  44 pt round tools 12 pt apart (`ToolButton`): regular material with the
+  floating shadow (black 18%, radius 6, y 3), the accent with a white glyph
+  while on. Add Area (`plus.viewfinder`) draws with one finger while two
+  move the picture; the eye, held down, shows the screenshot as it was.
+  Undo and Redo sit in the navigation bar.
+- **Status.** At the top, 8 pt down, a floating pill (`floatingPill`):
+  footnote on a capsule of regular material, padded 12 by 8, with the
+  floating shadow, 16 pt in from each side: a small spinner and the step
+  (Opening…, Finding private details…, Checking the copy…, Apple
+  Intelligence is reading… with Don't Wait in semibold), or after a
+  failure `exclamationmark.triangle.fill` in orange, what went wrong and
+  Try Again. Gone once the copy is ready; while adding, it says how to
+  draw. It comes and goes on a spring (0.35, 0.86), a 0.15 s ease-out with
+  Reduce Motion.
+- **The bar.** On the bar material, 16 pt in, 12 pt between its rows: a
+  headline in subheadline semibold ("%d places covered", Nothing private
+  found, or, before the first pass, Finding private details… in
+  `.secondary`) with Details on the trailing edge; a row that scrolls
+  sideways of chips (`KindChip`), 6 pt apart: a kind and its count in
+  semibold monospaced digits, footnote, on a capsule of `.primary` at 6%,
+  padded 10 by 6; the chip of what is to check first, in the accent on the
+  accent at 12%, opening Details. Then Copy, Share and Save, large bordered
+  buttons of equal width 8 pt apart, title and icon, one line scaled to 80%
+  at most; Send to Mac under them with syncing on. All of them wait dimmed
+  until the copy is made, checked and every cover known to have landed
+  (`Finder.coversHold`). Share gives a PNG file of the copy alone.
+- **Details** is a sheet at medium or large height: To check first, with a
+  footer that Snapfly is not sure about these, then Covered and Not
+  covered, each place a toggle with its kind, or Hidden by hand or Your own
+  rules, over the words it hides in footnote `.secondary`, top to bottom.
 - The icon is the Mac icon's picture, full bleed and opaque, since iOS rounds
   it (`scripts/make-icon.py --ios`).
 - The introduction (`PhoneGuide.swift`) shows on its real screens: the
@@ -1841,9 +1897,16 @@ of its own.
   the first screenshots show, again from Settings › Help & Introduction.
 - Settings opens with Check All, Recommended and Uncheck All as small
   bordered buttons sharing a row, under "Hide private details", then the
-  three groups, then "Cover look", the Mac's tiles three to a row with
-  Keep the last four digits under them, then "Protection" as on the Mac,
-  then "Also hide": a row per rule of the owner's own, its
+  six groups, with a row "Whose names" under Names that shows the choice
+  and opens a page: Everyone's, then the five roles, as toggles, over a
+  footer that an unclear name is covered and marked to check. Then "Cover
+  look", the Mac's tiles three to a row with Keep the last four digits and
+  Strongest protection under them; then "Reading and checking": Find more
+  with Apple Intelligence and, once a screenshot was covered, how long the
+  last one took; then Sync; then "Advanced", two rows that open pages:
+  Also hide (`text.badge.plus`) and Double tap the back of your iPhone
+  (`hand.tap`); then Help & Introduction. Also hide is a row per rule of
+  the owner's own, its
   kind as a menu over a field with the kind's prompt, swiped away to remove,
   and Add Rule. A pattern that cannot be read says so under its field with
   `exclamationmark.triangle.fill` in orange. Rules are kept as they change,

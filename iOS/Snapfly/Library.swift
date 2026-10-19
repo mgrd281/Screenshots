@@ -36,7 +36,7 @@ final class Library: ObservableObject {
         PHAsset.fetchAssets(withLocalIdentifiers: [id], options: nil).firstObject
     }
 
-    /// One screenshot at full size, as it was taken.
+    /// One screenshot at full size, as it was taken, the right way up.
     nonisolated static func image(of asset: PHAsset) async -> CGImage? {
         await withCheckedContinuation { continuation in
             let options = PHImageRequestOptions()
@@ -44,11 +44,18 @@ final class Library: ObservableObject {
             options.isNetworkAccessAllowed = true
             options.version = .current
             PHImageManager.default().requestImageDataAndOrientation(for: asset, options: options) { data, _, _, _ in
-                let image = data.flatMap { CGImageSourceCreateWithData($0 as CFData, nil) }
-                    .flatMap { CGImageSourceCreateImageAtIndex($0, 0, nil) }
-                continuation.resume(returning: image)
+                continuation.resume(returning: data.flatMap { Covering.upright($0) })
             }
         }
+    }
+
+    /// The screenshots with these identifiers, in that order, those still in Photos.
+    nonisolated static func assets(_ ids: [String]) -> [PHAsset] {
+        guard !ids.isEmpty else { return [] }
+        let result = PHAsset.fetchAssets(withLocalIdentifiers: ids, options: nil)
+        var found: [String: PHAsset] = [:]
+        result.enumerateObjects { asset, _, _ in found[asset.localIdentifier] = asset }
+        return ids.compactMap { found[$0] }
     }
 
     /// A small picture of one screenshot, for the grid.

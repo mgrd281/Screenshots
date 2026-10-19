@@ -438,6 +438,20 @@ final class Preferences: ObservableObject {
         }
     }
 
+    /// Whose names are covered: everyone's, or only some people's, like
+    /// the patient's and not the doctor's. The photos hanging are drawn again.
+    var nameScope: NameScope {
+        get { NameScope.current }
+        set {
+            guard newValue != NameScope.current else { return }
+            change {
+                NameScope.current = newValue
+                line.readPrivateDetails()
+                selfTest = nil
+            }
+        }
+    }
+
     /// Whole lines covered, with more room: the photos hanging are drawn
     /// again.
     var strongest: Bool {
@@ -1679,6 +1693,10 @@ private struct PrivacyPane: View {
                 Section(group.title) {
                     ForEach(group.kinds, id: \.self) { detail in
                         Toggle(detail.title, isOn: prefs.hides(detail))
+                        if detail == .names {
+                            whoseNames
+                                .disabled(!prefs.hides(.names).wrappedValue)
+                        }
                     }
                 }
             }
@@ -1823,6 +1841,27 @@ private struct PrivacyPane: View {
     private func choiceButton(_ title: String, _ kinds: Set<PrivateDetail>) -> some View {
         Button { prefs.hide(kinds) } label: {
             Text(title).frame(maxWidth: .infinity)
+        }
+    }
+
+    /// Whose names Names covers: everyone's, or only some people's, read
+    /// from what stands round each name, like "Patient:" or "Dr. med.".
+    private var whoseNames: some View {
+        LabeledContent {
+            Menu(prefs.nameScope.summary) {
+                Toggle(L("Everyone's"), isOn: Binding(get: { prefs.nameScope.roles == nil },
+                                                      set: { if $0 { prefs.nameScope = .everyone } }))
+                Divider()
+                ForEach(PersonRole.allCases, id: \.self) { role in
+                    Toggle(role.title, isOn: Binding(get: { prefs.nameScope.roles?.contains(role) == true },
+                                                     set: { _ in prefs.nameScope = prefs.nameScope.toggling(role) }))
+                }
+            }
+            .menuStyle(.button)
+            .fixedSize()
+        } label: {
+            Text(L("Whose names"))
+            Text(L("A name whose role is not clear is covered anyway, and marked for you to check."))
         }
     }
 }

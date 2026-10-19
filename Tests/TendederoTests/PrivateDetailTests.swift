@@ -20,11 +20,14 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertTrue(PrivateDetail.recommended.contains(.codes))
         XCTAssertTrue(PrivateDetail.recommended.contains(.barcodes))
         XCTAssertTrue(PrivateDetail.recommended.contains(.keys))
-        XCTAssertEqual(PrivateDetail.barcodes.group, .sensitive)
-        XCTAssertEqual(PrivateDetail.keys.group, .sensitive)
-        XCTAssertEqual(PrivateDetail.ipAddresses.group, .people)
-        // What a screenshot is usually sent for stays visible until chosen.
-        for kind in [PrivateDetail.amounts, .dates, .links, .orders, .faces, .ipAddresses] {
+        XCTAssertEqual(PrivateDetail.barcodes.group, .documents)
+        XCTAssertEqual(PrivateDetail.keys.group, .access)
+        XCTAssertEqual(PrivateDetail.ipAddresses.group, .access)
+        XCTAssertEqual(PrivateDetail.health.group, .health)
+        XCTAssertEqual(PrivateDetail.organizations.group, .organizations)
+        // What a screenshot is usually sent for stays visible until chosen,
+        // and so does the shop or the practice it comes from.
+        for kind in [PrivateDetail.amounts, .dates, .links, .orders, .faces, .ipAddresses, .organizations] {
             XCTAssertFalse(PrivateDetail.recommended.contains(kind), "\(kind) should wait to be chosen")
         }
         // The stored names of the first six stay what they were.
@@ -145,6 +148,15 @@ final class PrivateDetailTests: XCTestCase {
     func testWhatACodeHoldsIsReadByItsFormatAndItsText() {
         let giro = "BCD\n002\n1\nSCT\nBFSWDE33BER\nLena Hoffmann\nDE89370400440532013000\nEUR12.30\n\n\nRechnung 1024"
         XCTAssertTrue(Finder.kinds(ofCode: giro).isSuperset(of: [.bank, .names]))
+        // A shop's own code names only the shop: it is no person's name.
+        let shop = "BCD\r\n002\r\n1\r\nSCT\r\n\r\nMuster Versand GmbH\r\nDE89370400440532013000\r\nEUR49.90"
+        XCTAssertTrue(Finder.kinds(ofCode: shop).isSuperset(of: [.bank, .organizations]))
+        XCTAssertFalse(Finder.kinds(ofCode: shop).contains(.names))
+        XCTAssertNil(Finder.kind(ofCode: shop, [.names]), "covering names leaves the shop's code")
+        let bill = ["SPC", "0200", "1", "CH4431999123000889012", "S", "Robert Schneider AG", "Rue du Lac", "1268",
+                    "2501", "Biel", "CH", "", "", "", "", "", "", "", "1949.75", "CHF", "S", "Pia-Maria Rutschmann-Schnyder",
+                    "Grosse Marktgasse", "28", "9400", "Rorschach", "CH"].joined(separator: "\n")
+        XCTAssertTrue(Finder.kinds(ofCode: bill).isSuperset(of: [.bank, .names, .organizations]), "the payer is a person")
         XCTAssertTrue(Finder.kinds(ofCode: "otpauth://totp/Shop:lena?secret=JBSWY3DPEHPK3PXP&issuer=Shop").contains(.codes))
         XCTAssertTrue(Finder.kinds(ofCode: "WIFI:T:WPA;S:Laden;P:geheim123;;").contains(.codes))
         let card = "BEGIN:VCARD\nVERSION:3.0\nFN:Lena Hoffmann\nTEL:+49 30 1234 5678\nEND:VCARD"

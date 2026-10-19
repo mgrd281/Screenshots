@@ -251,13 +251,14 @@ At the top of Privacy in Settings, one quiet line says how much was
 covered lately: "In the last 7 days, Snapfly covered 143 details in 38
 photos you sent." Only those counts are kept, for two weeks.
 
-Choose under Privacy in Settings what to cover, in three groups. People:
-names, addresses, emails, phone numbers, usernames, faces and IP addresses.
-Money, identity and health: bank cards and accounts (crypto wallets too), ID
-and tax numbers, passwords and codes (Wi-Fi passwords and licence keys too),
-API keys and tokens, QR codes and barcodes, health details. Orders and
-documents: order and customer numbers, tracking numbers, amounts, dates and
-links. Check All,
+Choose under Privacy in Settings what to cover, in six groups. People:
+names, addresses, emails, phone numbers, usernames and faces. Companies and
+organizations: a shop, a practice, a bank or an insurer by its name. Money:
+bank cards and accounts (crypto wallets too) and amounts. Health: health
+details. Documents: ID and tax numbers, QR codes and barcodes, order and
+customer numbers, tracking numbers, dates and links. Passwords and access:
+passwords and codes (Wi-Fi passwords and licence keys too), API keys and
+tokens, and IP addresses. Check All,
 Recommended and Uncheck All set the whole list at once; the recommended
 kinds are the ones private in nearly every screenshot, and the amount or
 the date a screenshot is often sent for wait to be chosen. Whatever leaves
@@ -275,6 +276,22 @@ shop's order page. On a form or an invoice, with the labels in one column and
 the values beside them, like Vorname:, Nachname:, Adresse:, PLZ: and Stadt:
 on a marketplace's order, each value on the label's row is covered, and the
 first and last name found there are covered wherever they appear together.
+
+Names means people's names, and nothing else. A label's value is cut where
+the name ends: "Patient: Mustermann, Max, geb. 01.02.1960" covers
+"Mustermann, Max" and leaves the date to Dates. A company, a practice or a
+bank is never covered as a name, a title like Dr. med. or Frau stays
+readable, and so do a phone number, an address, an amount or a diagnosis,
+each a kind of its own. A line that only looks like a name, with nothing to
+vouch for it, is not covered but offered to check. Under Names, Whose names
+chooses everyone's, as at first, or only some people's: patients, doctors
+and medical staff, customers and account holders, employees and contacts,
+or everyone else. Whose a name is comes from what stands round it: a label
+like Patient: or Behandelnder Arzt:, a title, the closing above a
+signature, a date of birth beside it, and the kind of document. A name
+whose role is not clear is covered anyway and marked to check. A payment
+code that only names a company, like a shop's GiroCode, is not covered by
+Names; one that names a person is.
 
 API keys and tokens are found by how services start them, like `sk-`,
 `ghp_` or `AKIA`, by what follows Bearer or a setting like `API_KEY=`, by a
@@ -834,19 +851,27 @@ are in [SYNC.md](SYNC.md).
 `iOS/` holds Snapfly for the iPhone. iOS lets no app float over the others or
 watch the screen, so there is no line there. What it keeps is the covering:
 
-- **The app** shows your screenshots from Photos, newest first. Tap one and it
-  comes back with names, addresses, emails, phone numbers, bank and health
-  details covered, saying what was covered, ready to copy, share or save as a
-  new picture in Photos.
-  The screenshot itself stays as it was. Settings chooses what to cover, in
-  the same three groups as on the Mac, with Check All, Recommended and
-  Uncheck All, and the recommended kinds are on until you change them. Cover
-  look picks how covers look, from the same six as on the Mac, and Keep the
-  last four digits is there too, and so is Protection: every copy is read
-  again and covered further if need be, Apple Intelligence can find more on
-  an iPhone that has it, and Strongest protection covers whole lines. Under
-  Also hide, add rules of your own, as on the Mac: a word, a label whose
-  value is covered, or a pattern.
+- **The app** shows your screenshots from Photos, newest first, the ones
+  protected lately in a row above them, and what the Mac sent, with how
+  syncing stands beside Protect a Photo, which opens any picture from Photos.
+  Tap a screenshot and it shows at once; what the patterns, the labels and
+  the names find is marked a moment later, then the copy is made, read again
+  as anyone could read it, and covered further if need be, and where Apple
+  Intelligence is on, what it finds joins after (Don't Wait leaves it out).
+  Zoom with two fingers, tap a place to cover or uncover it, Add Area to
+  cover more by drawing over it, Undo and Redo, and hold the eye to see the
+  screenshot as it was. Under it, how many places are covered, kind by kind,
+  what is to be checked, and Details, every place to turn on or off. Copy,
+  Share and Save wait until the copy is made, checked and every cover is
+  known to have landed. Hold a screenshot in the grid for Cover and Copy,
+  without opening it. The screenshot itself stays as it was.
+  Settings chooses what to cover, in the same six groups as on the Mac,
+  with Check All, Recommended and Uncheck All, and Whose names under Names.
+  Cover look picks how covers look, from the same six as on the Mac, with
+  Keep the last four digits and Strongest protection. Reading and checking
+  holds Apple Intelligence and how long the last screenshot took. Under
+  Advanced, add rules of your own, as on the Mac, and see how to set up
+  the double tap on the back.
 - **Cover the Latest Screenshot** is a Shortcuts action that needs no opening
   of the app. Chosen for Back Tap (Settings › Accessibility › Touch › Back Tap
   › Double Tap), a double tap on the back of the iPhone covers the newest
@@ -957,7 +982,11 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
 | `HideSend.swift` | Send covered, in Hide Private Details: the copy straight to a chat, the clipboard or the Share menu |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
-| `Shared/PrivateText.swift` | Finds private details in a screenshot, eighteen kinds and the owner's own rules, on the Mac and the iPhone |
+| `Shared/PrivateText.swift` | Finds private details in a screenshot, nineteen kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose; the lines read kept a while in memory |
+| `Shared/DocumentSense.swift` | Reads a document as a person would: a person's name from a company's, where a label's value stops being a name, whose a name is (patient, doctor, customer, staff), and whose names Settings covers |
+| `Shared/ProtectionPlan.swift` | A picture being protected, place by place: found, offered, turned on or off or covered by hand, with undo and redo |
+| `Shared/ExportCheck.swift` | The last check before a copy leaves: every cover landed where something showed |
+| `Shared/Timing.swift` | How long each step of covering takes, for Instruments and the log, numbers only |
 | `Shared/CoverLook.swift` | How covers look (ink, labelled, blur, pixels, dots, erased), drawn from the colors around what is covered; keeping the last four digits; the samples Settings shows |
 | `Shared/CoverLookPicker.swift` | The tiles to choose the look by, in Settings on the Mac and on the iPhone |
 | `Shared/Protection.swift` | Strongest protection, and Apple Intelligence, on the device, or the AI assistant, when turned on, finding what the patterns miss, kept per screenshot |
@@ -970,6 +999,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
 | `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
+| `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture to zoom with its places marked, covered in steps and checked, the status, the chips, Details and the buttons that wait for the checked copy |
 | `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
 | `Drawing.swift` | Draw on Photo's arrows, boxes, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |
