@@ -201,7 +201,7 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Snapfly saves the covered copy of a screenshot to Photos when you ask it to.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Snapfly shows your screenshots and covers the private details in them, on this iPhone. Nothing is sent anywhere.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Snapfly shows your screenshots and covers the private details in them, on this iPhone.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
@@ -232,7 +232,7 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Snapfly saves the covered copy of a screenshot to Photos when you ask it to.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Snapfly shows your screenshots and covers the private details in them, on this iPhone. Nothing is sent anywhere.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Snapfly shows your screenshots and covers the private details in them, on this iPhone.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;

@@ -450,7 +450,7 @@
 "No screenshots yet" = "अभी कोई स्क्रीनशॉट नहीं";
 "Take a screenshot, then come back here." = "स्क्रीनशॉट लें, फिर यहाँ वापस आएँ।";
 "Allow Snapfly to see your screenshots" = "Snapfly को अपने स्क्रीनशॉट देखने दें";
-"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly आपके स्क्रीनशॉट में नाम, पते और दूसरी निजी जानकारी इसी iPhone पर छिपाता है। कुछ भी कहीं नहीं भेजा जाता।";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly आपके स्क्रीनशॉट में नाम, पते और दूसरी निजी जानकारी इसी iPhone पर छिपाता है।";
 "Allow Access" = "अनुमति दें";
 "Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly आपके स्क्रीनशॉट नहीं देख सकता। सेटिंग्ज़ › गोपनीयता और सुरक्षा › फ़ोटो में अनुमति दें।";
 "Covering private details…" = "निजी जानकारी छिपाई जा रही है…";
@@ -1157,3 +1157,38 @@
 "Send with “%@”" = "“%@” के साथ भेजें";
 "It goes into the AI chat after the photos. Nothing is sent until you press Return there." = "यह फ़ोटो के बाद AI चैट में जाता है। जब तक आप वहाँ Return नहीं दबाते, कुछ नहीं भेजा जाता।";
 "Each prompt goes into the AI chat after the photos: from its number beside the send button, from Ask AI in a photo's menu, or from a right-click on ChatGPT or Claude under a photo. Nothing is sent until you press Return there. Up to nine." = "हर प्रॉम्प्ट फ़ोटो के बाद AI चैट में जाता है: भेजें बटन के पास उसके नंबर से, फ़ोटो के मेनू में AI से पूछें से, या फ़ोटो के नीचे ChatGPT या Claude पर राइट-क्लिक से। जब तक आप वहाँ Return नहीं दबाते, कुछ नहीं भेजा जाता। नौ तक।";
+
+/* Sync with the iPhone and the Mac */
+"Another device has a newer Snapfly. Update Snapfly here." = "दूसरे डिवाइस पर Snapfly का नया संस्करण है। यहाँ Snapfly अपडेट करें।";
+"Another iCloud account is signed in. Turn syncing on again to sync with it." = "दूसरा iCloud खाता साइन इन है। उसके साथ सिंक करने के लिए सिंक फिर से चालू करें।";
+"Could not send it. Try again." = "भेजा नहीं जा सका। फिर कोशिश करें।";
+"Fetching from iCloud…" = "iCloud से लाया जा रहा है…";
+"From your Mac" = "आपके Mac से";
+"Here now" = "अभी मौजूद";
+"It goes through your own iCloud, to your devices signed in to it. Nothing goes through a server of Snapfly's." = "यह आपके अपने iCloud से होकर, उसमें साइन इन आपके डिवाइसों तक जाता है। कुछ भी Snapfly के किसी सर्वर से होकर नहीं जाता।";
+"Last here %@" = "आख़िरी बार %@";
+"No other device yet. Turn syncing on in Snapfly on your iPhone, signed in to the same iCloud account." = "अभी कोई दूसरा डिवाइस नहीं है। उसी iCloud खाते में साइन इन अपने iPhone पर Snapfly में सिंक चालू करें।";
+"On its way to your Mac" = "आपके Mac की ओर जा रहा है";
+"Originals too" = "मूल भी";
+"Screenshots also go as they were taken, with nothing covered. Only those taken from now on." = "स्क्रीनशॉट वैसे भी जाते हैं जैसे लिए गए थे, बिना कुछ ढके। केवल अब से लिए गए।";
+"Send to Mac" = "Mac पर भेजें";
+"Sign in to iCloud to sync." = "सिंक करने के लिए iCloud में साइन इन करें।";
+"Snapfly's data was removed from iCloud. Turn syncing on again to start anew." = "Snapfly का डेटा iCloud से हटा दिया गया। फिर से शुरू करने के लिए सिंक दोबारा चालू करें।";
+"Some changes could not be sent. Try Sync Now." = "कुछ बदलाव भेजे नहीं जा सके। अभी सिंक करें आज़माएँ।";
+"Sync" = "सिंक";
+"Sync Now" = "अभी सिंक करें";
+"Sync with your Mac" = "अपने Mac के साथ सिंक करें";
+"Sync with your iPhone" = "अपने iPhone के साथ सिंक करें";
+"Syncing, %d waiting" = "सिंक हो रहा है, %d प्रतीक्षा में";
+"Syncing…" = "सिंक हो रहा है…";
+"The picture could not be fetched. Check the connection and try again." = "तस्वीर लाई नहीं जा सकी। कनेक्शन जाँचें और फिर कोशिश करें।";
+"This Mac" = "यह Mac";
+"This build of Snapfly cannot sync." = "Snapfly का यह संस्करण सिंक नहीं कर सकता।";
+"This iPhone" = "यह iPhone";
+"Up to date" = "अद्यतन";
+"Waiting for a connection, %d waiting" = "कनेक्शन की प्रतीक्षा, %d प्रतीक्षा में";
+"What hangs on the line goes to Snapfly on your iPhone with its private details covered, and what you send from the iPhone hangs on the line." = "रस्सी पर जो टँगा है, वह निजी जानकारी ढककर आपके iPhone के Snapfly में जाता है, और iPhone से जो आप भेजते हैं, वह रस्सी पर टँगता है।";
+"What the Mac's line holds shows here with its private details covered, and Send to Mac hangs a covered screenshot on the Mac's line." = "Mac की रस्सी पर जो है, वह निजी जानकारी ढककर यहाँ दिखता है, और Mac पर भेजें एक ढका हुआ स्क्रीनशॉट Mac की रस्सी पर टाँगता है।";
+"Your devices" = "आपके डिवाइस";
+"Your iCloud storage is full." = "आपका iCloud स्टोरेज भर गया है।";
+"iCloud is restricted on this device." = "इस डिवाइस पर iCloud प्रतिबंधित है।";

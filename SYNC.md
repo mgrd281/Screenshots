@@ -6,12 +6,15 @@ the Mac, and nothing private leaves either device unless the owner chose it.
 This file holds the audit the work started with, the design, what is built,
 what is verified and what the owner has to do at Apple first.
 
-**Where it stands (October 2026).** Phase 1 is built: the records, the
-rules for merging them, the queue of changes and what may leave the device,
-all in `Sources/Tendedero/Shared` and covered by `SyncTests`. The iCloud side
-(`CloudSync.swift`) is written but switched off: no build has an iCloud
-container yet, so neither app syncs anything, shows anything about syncing or
-sends anything anywhere. Nothing has run on a real device.
+**Where it stands (October 2026).** Phases 1 and 2 are built. The owner
+made the iCloud container and gave the app's identifier iCloud and push
+(section 5, steps 1 and 2). Builds now name the container where Apple's
+profile allows it, and both apps have Sync in Settings, off until turned on:
+the Mac sends covered copies of what hangs on the line and hangs what the
+iPhone sends, and the iPhone shows what came under From your Mac and has
+Send to Mac. Before it can work, the record types must be in iCloud's
+production environment (section 5, step 3). Nothing has been tried on a real
+device yet.
 
 ## 1. Audit (phase 0)
 
@@ -92,19 +95,25 @@ sends anything anywhere. Nothing has run on a real device.
 
 ### Recommended order
 
-1. Phase 1, the shared foundation. **Done** (this file, section 2).
-2. Phase 2a, the owner's Apple steps (section 5).
-3. Phase 2b, behind a switch: the entitlements and Info.plist key in the
-   three builds, the Developer ID profile for the direct edition, the
-   CloudKit schema and its deployment.
-4. Phase 2c, the MVP: Sync in Settings on both (off, covered copies only,
-   originals too, per project), the device list, the status; the Mac
-   registers its Workspace categories and sends covered copies of new
-   screenshots; the iPhone shows what arrived and sends what it covers.
-   README, `PRIVACY.md`, the website and the permission texts change here.
-5. Phase 2d: the 14 failure cases (section 4) on the owner's Mac and iPhone.
-6. Then phases 3 to 6 of the brief: the iPhone's design, the privacy editor
-   on the iPhone, Share Extension, Handoff and deep links, hardening.
+1. Phase 1, the shared foundation. **Done.**
+2. Phase 2a, the owner's Apple steps. **Done** (section 5, steps 1 and 2).
+3. Phase 2b, the builds. **Done**: each edition gets the iCloud entitlements
+   and the Info.plist line only when Apple's profile allows them; the direct
+   edition fetches its Developer ID profile (`scripts/signing.sh
+   cloud-profile`). The schema is `cloudkit/schema.ckdb`, put into
+   development by the CloudKit Schema workflow. **Waiting** for the owner's
+   token and the deployment to production (section 5, step 3).
+4. Phase 2c, the MVP. **Done** in code: Sync in Settings on both (on or off,
+   originals too), the devices, the status, Sync Now; the Mac sends covered
+   copies of what hangs on the line and hangs what the iPhone sends; the
+   iPhone lists what the Mac sent, fetches a picture when it is opened, and
+   has Send to Mac. README, `PRIVACY.md`, the website (German) and the
+   iPhone's texts say so. Not yet: per-project choices (projects travel, but
+   there is no switch for them), choosing between two versions made at once
+   (they are kept, the newer shows), a list on the Mac of what came before
+   syncing was turned on.
+5. Phase 2d: the 14 cases (section 4) on the owner's Mac and iPhone.
+6. Then phases 3 to 6 of the brief.
 
 ## 2. Design
 
@@ -277,17 +286,25 @@ Profiles:
    `iCloud.de.ghazarian.Snapfly`, Continue. Tick Push Notifications. Save, and
    confirm that the profiles become invalid: the workflows make new ones by
    themselves (`scripts/asc.swift` replaces an invalid profile).
-3. **Later, in phase 2b**: a CloudKit management token for the schema, made
-   in the CloudKit Console and pasted as a repository secret, then Deploy
-   Schema Changes in the console. The exact steps come with phase 2b.
+3. **The schema, once.** In the CloudKit Console
+   (https://icloud.developer.apple.com), open the account menu at the top
+   right, then Settings and Tokens, and make a management token. Paste it in
+   GitHub as the repository secret `SNAPFLY_CLOUDKIT_TOKEN`, then run the
+   CloudKit Schema workflow (Actions, CloudKit Schema, Run workflow). When it
+   is green, open CloudKit Database in the console, choose the container
+   `iCloud.de.ghazarian.Snapfly`, and press Deploy Schema Changes, then
+   Deploy. From then on, records can be saved by TestFlight and App Store
+   builds.
 
-Nothing from steps 1 and 2 goes into GitHub.
+Nothing from steps 1 and 2 goes into GitHub; step 3's token does, as a secret.
 
 ## 6. What is verified
 
 | Part | Implemented | Tested here (Linux) | CI (macOS) | Simulator | Real device |
 | --- | --- | --- | --- | --- | --- |
-| Records, merging, journal, policy, status, ledger file | Yes | Yes, 44 tests | With this pull request | No | No |
-| `CloudSync` (CloudKit) | Yes, switched off | Syntax only | Compiles with this pull request | No | No |
-| Replacing an invalid profile (`asc.swift`) | Yes | Syntax only | Runs only once a profile turns invalid | n/a | n/a |
-| Sync in either app, device list, settings, status | No | No | No | No | No |
+| Records, merging, journal, policy, status, ledger file | Yes | Yes, 45 tests | Yes | No | No |
+| `CloudSync` (CloudKit) | Yes | Syntax only | Compiles | No | No |
+| `SyncCenter`, Mac and iPhone screens | Yes | Syntax only | Compiles | No | No |
+| Entitlements and profiles in the three builds | Yes | Shell syntax only | Runs on the next builds | n/a | No |
+| Schema import (`cloudkit.yml`) | Yes | No | Waits for the token | n/a | n/a |
+| A Mac screenshot reaching the iPhone, and back | Yes | No | No | No | No |

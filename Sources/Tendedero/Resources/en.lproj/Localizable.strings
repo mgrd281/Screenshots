@@ -450,7 +450,7 @@
 "No screenshots yet" = "No screenshots yet";
 "Take a screenshot, then come back here." = "Take a screenshot, then come back here.";
 "Allow Snapfly to see your screenshots" = "Allow Snapfly to see your screenshots";
-"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere.";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone.";
 "Allow Access" = "Allow Access";
 "Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos.";
 "Covering private details…" = "Covering private details…";
@@ -1157,3 +1157,38 @@
 "Send with “%@”" = "Send with “%@”";
 "It goes into the AI chat after the photos. Nothing is sent until you press Return there." = "It goes into the AI chat after the photos. Nothing is sent until you press Return there.";
 "Each prompt goes into the AI chat after the photos: from its number beside the send button, from Ask AI in a photo's menu, or from a right-click on ChatGPT or Claude under a photo. Nothing is sent until you press Return there. Up to nine." = "Each prompt goes into the AI chat after the photos: from its number beside the send button, from Ask AI in a photo's menu, or from a right-click on ChatGPT or Claude under a photo. Nothing is sent until you press Return there. Up to nine.";
+
+/* Sync with the iPhone and the Mac */
+"Another device has a newer Snapfly. Update Snapfly here." = "Another device has a newer Snapfly. Update Snapfly here.";
+"Another iCloud account is signed in. Turn syncing on again to sync with it." = "Another iCloud account is signed in. Turn syncing on again to sync with it.";
+"Could not send it. Try again." = "Could not send it. Try again.";
+"Fetching from iCloud…" = "Fetching from iCloud…";
+"From your Mac" = "From your Mac";
+"Here now" = "Here now";
+"It goes through your own iCloud, to your devices signed in to it. Nothing goes through a server of Snapfly's." = "It goes through your own iCloud, to your devices signed in to it. Nothing goes through a server of Snapfly's.";
+"Last here %@" = "Last here %@";
+"No other device yet. Turn syncing on in Snapfly on your iPhone, signed in to the same iCloud account." = "No other device yet. Turn syncing on in Snapfly on your iPhone, signed in to the same iCloud account.";
+"On its way to your Mac" = "On its way to your Mac";
+"Originals too" = "Originals too";
+"Screenshots also go as they were taken, with nothing covered. Only those taken from now on." = "Screenshots also go as they were taken, with nothing covered. Only those taken from now on.";
+"Send to Mac" = "Send to Mac";
+"Sign in to iCloud to sync." = "Sign in to iCloud to sync.";
+"Snapfly's data was removed from iCloud. Turn syncing on again to start anew." = "Snapfly's data was removed from iCloud. Turn syncing on again to start anew.";
+"Some changes could not be sent. Try Sync Now." = "Some changes could not be sent. Try Sync Now.";
+"Sync" = "Sync";
+"Sync Now" = "Sync Now";
+"Sync with your Mac" = "Sync with your Mac";
+"Sync with your iPhone" = "Sync with your iPhone";
+"Syncing, %d waiting" = "Syncing, %d waiting";
+"Syncing…" = "Syncing…";
+"The picture could not be fetched. Check the connection and try again." = "The picture could not be fetched. Check the connection and try again.";
+"This Mac" = "This Mac";
+"This build of Snapfly cannot sync." = "This build of Snapfly cannot sync.";
+"This iPhone" = "This iPhone";
+"Up to date" = "Up to date";
+"Waiting for a connection, %d waiting" = "Waiting for a connection, %d waiting";
+"What hangs on the line goes to Snapfly on your iPhone with its private details covered, and what you send from the iPhone hangs on the line." = "What hangs on the line goes to Snapfly on your iPhone with its private details covered, and what you send from the iPhone hangs on the line.";
+"What the Mac's line holds shows here with its private details covered, and Send to Mac hangs a covered screenshot on the Mac's line." = "What the Mac's line holds shows here with its private details covered, and Send to Mac hangs a covered screenshot on the Mac's line.";
+"Your devices" = "Your devices";
+"Your iCloud storage is full." = "Your iCloud storage is full.";
+"iCloud is restricted on this device." = "iCloud is restricted on this device.";

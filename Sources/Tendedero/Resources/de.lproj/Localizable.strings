@@ -448,7 +448,7 @@
 "No screenshots yet" = "Noch keine Bildschirmfotos";
 "Take a screenshot, then come back here." = "Mach ein Bildschirmfoto und komm dann hierher zurück.";
 "Allow Snapfly to see your screenshots" = "Erlaube Snapfly, deine Bildschirmfotos zu sehen";
-"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly verdeckt Namen, Adressen und andere private Angaben in deinen Bildschirmfotos, direkt auf diesem iPhone. Nichts wird irgendwohin gesendet.";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly verdeckt Namen, Adressen und andere private Angaben in deinen Bildschirmfotos, direkt auf diesem iPhone.";
 "Allow Access" = "Zugriff erlauben";
 "Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly darf deine Bildschirmfotos nicht sehen. Erlaube es unter Einstellungen › Datenschutz & Sicherheit › Fotos.";
 "Covering private details…" = "Private Angaben werden verdeckt …";
@@ -1155,3 +1155,38 @@
 "Send with “%@”" = "Mit „%@“ senden";
 "It goes into the AI chat after the photos. Nothing is sent until you press Return there." = "Er kommt nach den Fotos in den KI-Chat. Gesendet wird erst, wenn du dort die Eingabetaste drückst.";
 "Each prompt goes into the AI chat after the photos: from its number beside the send button, from Ask AI in a photo's menu, or from a right-click on ChatGPT or Claude under a photo. Nothing is sent until you press Return there. Up to nine." = "Jeder Prompt kommt nach den Fotos in den KI-Chat: über seine Nummer neben dem Senden-Knopf, über „KI fragen“ im Menü eines Fotos oder per Rechtsklick auf ChatGPT oder Claude unter einem Foto. Gesendet wird erst, wenn du dort die Eingabetaste drückst. Bis zu neun.";
+
+/* Sync with the iPhone and the Mac */
+"Another device has a newer Snapfly. Update Snapfly here." = "Ein anderes Gerät hat ein neueres Snapfly. Aktualisiere Snapfly hier.";
+"Another iCloud account is signed in. Turn syncing on again to sync with it." = "Ein anderer iCloud-Account ist angemeldet. Schalte das Synchronisieren wieder ein, um mit ihm zu synchronisieren.";
+"Could not send it. Try again." = "Konnte nicht gesendet werden. Versuch es noch einmal.";
+"Fetching from iCloud…" = "Wird aus iCloud geholt …";
+"From your Mac" = "Von deinem Mac";
+"Here now" = "Gerade da";
+"It goes through your own iCloud, to your devices signed in to it. Nothing goes through a server of Snapfly's." = "Es geht über dein eigenes iCloud zu deinen Geräten, die dort angemeldet sind. Nichts geht über einen Server von Snapfly.";
+"Last here %@" = "Zuletzt da %@";
+"No other device yet. Turn syncing on in Snapfly on your iPhone, signed in to the same iCloud account." = "Noch kein anderes Gerät. Schalte das Synchronisieren in Snapfly auf deinem iPhone ein, angemeldet mit demselben iCloud-Account.";
+"On its way to your Mac" = "Unterwegs zu deinem Mac";
+"Originals too" = "Auch Originale";
+"Screenshots also go as they were taken, with nothing covered. Only those taken from now on." = "Bildschirmfotos gehen auch so, wie sie aufgenommen wurden, ohne etwas zu verdecken. Nur die ab jetzt aufgenommenen.";
+"Send to Mac" = "An Mac senden";
+"Sign in to iCloud to sync." = "Melde dich bei iCloud an, um zu synchronisieren.";
+"Snapfly's data was removed from iCloud. Turn syncing on again to start anew." = "Die Daten von Snapfly wurden aus iCloud entfernt. Schalte das Synchronisieren wieder ein, um neu zu beginnen.";
+"Some changes could not be sent. Try Sync Now." = "Einige Änderungen konnten nicht gesendet werden. Versuch es mit „Jetzt synchronisieren“.";
+"Sync" = "Synchronisieren";
+"Sync Now" = "Jetzt synchronisieren";
+"Sync with your Mac" = "Mit deinem Mac synchronisieren";
+"Sync with your iPhone" = "Mit deinem iPhone synchronisieren";
+"Syncing, %d waiting" = "Wird synchronisiert, %d warten";
+"Syncing…" = "Wird synchronisiert …";
+"The picture could not be fetched. Check the connection and try again." = "Das Bild konnte nicht geholt werden. Prüf die Verbindung und versuch es noch einmal.";
+"This Mac" = "Dieser Mac";
+"This build of Snapfly cannot sync." = "Diese Ausgabe von Snapfly kann nicht synchronisieren.";
+"This iPhone" = "Dieses iPhone";
+"Up to date" = "Auf dem neuesten Stand";
+"Waiting for a connection, %d waiting" = "Wartet auf eine Verbindung, %d warten";
+"What hangs on the line goes to Snapfly on your iPhone with its private details covered, and what you send from the iPhone hangs on the line." = "Was auf der Leine hängt, geht mit verdeckten privaten Angaben an Snapfly auf deinem iPhone, und was du vom iPhone sendest, hängt auf der Leine.";
+"What the Mac's line holds shows here with its private details covered, and Send to Mac hangs a covered screenshot on the Mac's line." = "Was auf der Leine des Macs hängt, erscheint hier mit verdeckten privaten Angaben, und „An Mac senden“ hängt ein verdecktes Bildschirmfoto auf die Leine des Macs.";
+"Your devices" = "Deine Geräte";
+"Your iCloud storage is full." = "Dein iCloud-Speicher ist voll.";
+"iCloud is restricted on this device." = "iCloud ist auf diesem Gerät eingeschränkt.";

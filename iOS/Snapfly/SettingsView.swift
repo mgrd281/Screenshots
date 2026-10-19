@@ -103,6 +103,8 @@ struct SettingsView: View {
                     Text(L("Everything happens on this iPhone. Nothing is sent anywhere."))
                 }
 
+                SyncSection(sync: .shared)
+
                 Section {
                     Button {
                         dismiss()

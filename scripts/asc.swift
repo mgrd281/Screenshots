@@ -13,7 +13,8 @@
 //   swift scripts/asc.swift create-certificate <type> <csr file> <out.cer>
 //   swift scripts/asc.swift bundle-id <identifier> <name>
 //   swift scripts/asc.swift profile <bundle ID resource id> <certificate id> <name> <out.provisionprofile> [type]
-//     (type: MAC_APP_STORE, the default, or IOS_APP_STORE)
+//     (type: MAC_APP_STORE, the default, IOS_APP_STORE, or MAC_APP_DIRECT for
+//     the Developer ID edition, scripts/signing.sh)
 //   swift scripts/asc.swift app <bundle identifier>
 import CryptoKit
 import Foundation

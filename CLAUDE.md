@@ -158,9 +158,18 @@ the website's footer. Both stay.
     the app is not entitled to stops it.
   - Off until the owner turns it on; covered copies only unless they choose
     originals. Never claim end-to-end encryption.
-  - README, `PRIVACY.md`, the website and the iPhone's permission texts say
-    nothing leaves the device. They change in the pull request that lets
-    anyone turn syncing on.
+  - The builds add the iCloud entitlements and the Info.plist line only when
+    Apple's profile allows them (`scripts/signing.sh cloud-profile` for the
+    direct edition, `app-store.sh`, `iphone-store.sh`); otherwise syncing is
+    left out and the build goes on.
+  - `cloudkit/schema.ckdb` holds the record types. The **CloudKit Schema**
+    workflow puts it into development with the secret
+    `SNAPFLY_CLOUDKIT_TOKEN`; the owner deploys it to production in the
+    CloudKit Console. A new record type or field needs both again.
+  - `SyncCenter` (Shared) is the apps' way in; `MacSync` and `PhoneSync`
+    connect the line and the iPhone's screens.
+  - README, `PRIVACY.md`, the website and the app's texts describe syncing
+    as it is; change them with it.
 - **Promo video.** `promo/` makes the vertical motion graphic in three
   languages; see `promo/README.md`. It reuses the website's drawings and the
   app's strings, so update it when either changes in a way the video shows.

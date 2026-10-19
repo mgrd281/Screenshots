@@ -10,6 +10,9 @@ struct CoveredView: View {
     @State private var report = CoverReport()
     @State private var working = true
     @State private var note: String?
+    @ObservedObject private var sync = SyncCenter.shared
+    /// Sent to the Mac already, so it goes once.
+    @State private var sent = false
 
     var body: some View {
         ScrollView {
@@ -73,6 +76,16 @@ struct CoveredView: View {
             }
             .buttonStyle(.bordered)
             .labelStyle(.titleAndIcon)
+            // With syncing on, the covered copy hangs on the Mac's line.
+            if sync.settings.on {
+                Button {
+                    send(png)
+                } label: {
+                    Label(L("Send to Mac"), systemImage: "laptopcomputer.and.arrow.down")
+                }
+                .buttonStyle(.bordered)
+                .disabled(sent)
+            }
             if let note {
                 Text(note)
                     .font(.footnote.weight(.semibold))
@@ -84,6 +97,25 @@ struct CoveredView: View {
         .background(.bar)
         .phoneGuideTarget(.actions)
         .animation(.easeOut(duration: 0.2), value: note)
+    }
+
+    private func send(_ png: Data) {
+        sent = true
+        let redaction = SyncRedaction(kinds: report.keys, areas: report.total, look: CoverStyle.current.rawValue)
+        // Named by when it was taken, as the Mac names screenshots.
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd HH.mm.ss"
+        let taken = Library.asset(assetID)?.creationDate ?? Date()
+        let name = "Snapfly \(formatter.string(from: taken)).png"
+        Task {
+            if await sync.send(covered: png, name: name, redaction: redaction) {
+                note = L("On its way to your Mac")
+            } else {
+                sent = false
+                note = L("Could not send it. Try again.")
+            }
+        }
     }
 
     private func cover() async {

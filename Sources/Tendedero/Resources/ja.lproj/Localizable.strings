@@ -448,7 +448,7 @@
 "No screenshots yet" = "スクリーンショットはまだありません";
 "Take a screenshot, then come back here." = "スクリーンショットを撮ってから、ここに戻ってください。";
 "Allow Snapfly to see your screenshots" = "Snapflyにスクリーンショットへのアクセスを許可";
-"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapflyは、スクリーンショット内の名前、住所などの個人情報をこのiPhone上で隠します。どこにも送信されません。";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapflyは、スクリーンショット内の名前、住所などの個人情報をこのiPhone上で隠します。";
 "Allow Access" = "アクセスを許可";
 "Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapflyはスクリーンショットを見ることができません。設定 › プライバシーとセキュリティ › 写真で許可してください。";
 "Covering private details…" = "個人情報を隠しています…";
@@ -1155,3 +1155,38 @@
 "Send with “%@”" = "「%@」を付けて送信";
 "It goes into the AI chat after the photos. Nothing is sent until you press Return there." = "写真のあとにAIチャットに入ります。そこでReturnキーを押すまで何も送信されません。";
 "Each prompt goes into the AI chat after the photos: from its number beside the send button, from Ask AI in a photo's menu, or from a right-click on ChatGPT or Claude under a photo. Nothing is sent until you press Return there. Up to nine." = "各プロンプトは写真のあとにAIチャットに入ります。送信ボタンの横の番号から、写真のメニューの「AIに質問」から、または写真の下のChatGPTやClaudeを右クリックして使えます。そこでReturnキーを押すまで何も送信されません。最大9件。";
+
+/* Sync with the iPhone and the Mac */
+"Another device has a newer Snapfly. Update Snapfly here." = "別のデバイスに新しいSnapflyがあります。こちらのSnapflyをアップデートしてください。";
+"Another iCloud account is signed in. Turn syncing on again to sync with it." = "別のiCloudアカウントでサインインしています。そのアカウントと同期するには、同期をもう一度オンにしてください。";
+"Could not send it. Try again." = "送信できませんでした。もう一度お試しください。";
+"Fetching from iCloud…" = "iCloudから取得中…";
+"From your Mac" = "Macから";
+"Here now" = "現在オンライン";
+"It goes through your own iCloud, to your devices signed in to it. Nothing goes through a server of Snapfly's." = "あなた自身のiCloudを通って、そこにサインインしているあなたのデバイスに届きます。Snapflyのサーバーを経由するものはありません。";
+"Last here %@" = "最終確認 %@";
+"No other device yet. Turn syncing on in Snapfly on your iPhone, signed in to the same iCloud account." = "ほかのデバイスはまだありません。同じiCloudアカウントでサインインしたiPhoneのSnapflyで、同期をオンにしてください。";
+"On its way to your Mac" = "Macに送信中";
+"Originals too" = "オリジナルも";
+"Screenshots also go as they were taken, with nothing covered. Only those taken from now on." = "スクリーンショットを撮ったままの状態でも送ります。何も隠しません。今後撮るものだけです。";
+"Send to Mac" = "Macに送る";
+"Sign in to iCloud to sync." = "同期するにはiCloudにサインインしてください。";
+"Snapfly's data was removed from iCloud. Turn syncing on again to start anew." = "SnapflyのデータがiCloudから削除されました。最初からやり直すには、同期をもう一度オンにしてください。";
+"Some changes could not be sent. Try Sync Now." = "一部の変更を送信できませんでした。「今すぐ同期」をお試しください。";
+"Sync" = "同期";
+"Sync Now" = "今すぐ同期";
+"Sync with your Mac" = "Macと同期";
+"Sync with your iPhone" = "iPhoneと同期";
+"Syncing, %d waiting" = "同期中、%d件待機中";
+"Syncing…" = "同期中…";
+"The picture could not be fetched. Check the connection and try again." = "画像を取得できませんでした。接続を確認して、もう一度お試しください。";
+"This Mac" = "このMac";
+"This build of Snapfly cannot sync." = "このビルドのSnapflyは同期できません。";
+"This iPhone" = "このiPhone";
+"Up to date" = "最新の状態";
+"Waiting for a connection, %d waiting" = "接続待ち、%d件待機中";
+"What hangs on the line goes to Snapfly on your iPhone with its private details covered, and what you send from the iPhone hangs on the line." = "ロープに吊るしたものは個人情報を隠した状態でiPhoneのSnapflyに届き、iPhoneから送ったものはロープに吊るされます。";
+"What the Mac's line holds shows here with its private details covered, and Send to Mac hangs a covered screenshot on the Mac's line." = "Macのロープにあるものは個人情報を隠した状態でここに表示され、「Macに送る」は隠したスクリーンショットをMacのロープに吊るします。";
+"Your devices" = "あなたのデバイス";
+"Your iCloud storage is full." = "iCloudストレージがいっぱいです。";
+"iCloud is restricted on this device." = "このデバイスではiCloudが制限されています。";

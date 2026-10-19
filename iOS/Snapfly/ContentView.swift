@@ -5,6 +5,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var library = Library()
     @ObservedObject private var guide = PhoneGuide.shared
+    @ObservedObject private var sync = SyncCenter.shared
     @State private var showsSettings = false
     /// The screenshot open, if one is.
     @State private var path: [String] = []
@@ -37,6 +38,7 @@ struct ContentView: View {
         }
         .onAppear {
             library.load()
+            PhoneSync.start()
             guide.closeShot = { path.removeAll() }
             guide.openNewest = {
                 guard let newest = library.shots.first?.localIdentifier else { return false }
@@ -55,6 +57,8 @@ struct ContentView: View {
 
     private var grid: some View {
         ScrollView {
+            // What the Mac sent, when syncing is on.
+            FromMacRow(sync: sync)
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 6)], spacing: 6) {
                 ForEach(library.shots, id: \.localIdentifier) { asset in
                     NavigationLink(value: asset.localIdentifier) {
@@ -84,7 +88,7 @@ struct ContentView: View {
             Text(L("Allow Snapfly to see your screenshots"))
                 .font(.title2.weight(.semibold))
                 .multilineTextAlignment(.center)
-            Text(L("Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere."))
+            Text(L("Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone."))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
             Button(L("Allow Access")) { library.ask() }

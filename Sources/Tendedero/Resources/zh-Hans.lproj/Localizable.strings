@@ -448,7 +448,7 @@
 "No screenshots yet" = "还没有截图";
 "Take a screenshot, then come back here." = "先截个图，再回到这里。";
 "Allow Snapfly to see your screenshots" = "允许 Snapfly 查看你的截图";
-"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly 直接在这台 iPhone 上隐藏截图中的姓名、地址等私人信息。不会发送到任何地方。";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly 直接在这台 iPhone 上隐藏截图中的姓名、地址等私人信息。";
 "Allow Access" = "允许访问";
 "Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly 无法查看你的截图。请在“设置”›“隐私与安全性”›“照片”中允许。";
 "Covering private details…" = "正在隐藏私人信息…";
@@ -1155,3 +1155,38 @@
 "Send with “%@”" = "连同“%@”发送";
 "It goes into the AI chat after the photos. Nothing is sent until you press Return there." = "它会在照片之后进入 AI 聊天。在那里按下 Return 键之前，不会发送任何内容。";
 "Each prompt goes into the AI chat after the photos: from its number beside the send button, from Ask AI in a photo's menu, or from a right-click on ChatGPT or Claude under a photo. Nothing is sent until you press Return there. Up to nine." = "每条提示词都会在照片之后进入 AI 聊天：通过发送按钮旁的编号、照片菜单中的“询问 AI”，或在照片下方右键点按 ChatGPT 或 Claude。在那里按下 Return 键之前，不会发送任何内容。最多九条。";
+
+/* Sync with the iPhone and the Mac */
+"Another device has a newer Snapfly. Update Snapfly here." = "另一台设备上的 Snapfly 更新。请在此更新 Snapfly。";
+"Another iCloud account is signed in. Turn syncing on again to sync with it." = "已登录另一个 iCloud 账户。重新打开同步即可与其同步。";
+"Could not send it. Try again." = "无法发送。请再试一次。";
+"Fetching from iCloud…" = "正在从 iCloud 获取…";
+"From your Mac" = "来自你的 Mac";
+"Here now" = "当前在线";
+"It goes through your own iCloud, to your devices signed in to it. Nothing goes through a server of Snapfly's." = "通过你自己的 iCloud 传到登录了它的你的设备。不经过 Snapfly 的任何服务器。";
+"Last here %@" = "上次在线 %@";
+"No other device yet. Turn syncing on in Snapfly on your iPhone, signed in to the same iCloud account." = "还没有其他设备。请在登录同一 iCloud 账户的 iPhone 上的 Snapfly 中打开同步。";
+"On its way to your Mac" = "正在发送到你的 Mac";
+"Originals too" = "也包括原图";
+"Screenshots also go as they were taken, with nothing covered. Only those taken from now on." = "截图也会按原样发送，不遮盖任何内容。仅限从现在起拍摄的截图。";
+"Send to Mac" = "发送到 Mac";
+"Sign in to iCloud to sync." = "请登录 iCloud 以进行同步。";
+"Snapfly's data was removed from iCloud. Turn syncing on again to start anew." = "Snapfly 的数据已从 iCloud 中移除。重新打开同步即可从头开始。";
+"Some changes could not be sent. Try Sync Now." = "部分更改无法发送。请试试“立即同步”。";
+"Sync" = "同步";
+"Sync Now" = "立即同步";
+"Sync with your Mac" = "与你的 Mac 同步";
+"Sync with your iPhone" = "与你的 iPhone 同步";
+"Syncing, %d waiting" = "正在同步，%d 项等待中";
+"Syncing…" = "正在同步…";
+"The picture could not be fetched. Check the connection and try again." = "无法获取图片。请检查网络连接后再试。";
+"This Mac" = "这台 Mac";
+"This build of Snapfly cannot sync." = "此版本的 Snapfly 无法同步。";
+"This iPhone" = "这部 iPhone";
+"Up to date" = "已是最新";
+"Waiting for a connection, %d waiting" = "正在等待网络连接，%d 项等待中";
+"What hangs on the line goes to Snapfly on your iPhone with its private details covered, and what you send from the iPhone hangs on the line." = "挂在绳上的内容会遮盖隐私信息后发送到你 iPhone 上的 Snapfly，从 iPhone 发送的内容会挂上绳。";
+"What the Mac's line holds shows here with its private details covered, and Send to Mac hangs a covered screenshot on the Mac's line." = "Mac 绳上的内容会遮盖隐私信息后显示在这里，“发送到 Mac”会把遮盖后的截图挂上 Mac 的绳。";
+"Your devices" = "你的设备";
+"Your iCloud storage is full." = "你的 iCloud 储存空间已满。";
+"iCloud is restricted on this device." = "此设备上的 iCloud 受到限制。";

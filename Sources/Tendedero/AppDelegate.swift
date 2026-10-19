@@ -128,6 +128,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         TextCard.shared.openSettings = { [weak self] in self?.openAssistantSettings() }
         CaptureButton.shared.update()
         Recording.cleanUp()
+        // Syncing with the iPhone, in a build that can, once it is turned on.
+        MacSync.start(line: line)
         History.purge()
         HistoryWindow.shared.onHang = { [weak self] url in self?.hangCapture(url) }
         HistoryWindow.shared.onSendAgain = { [weak self] url in self?.sendAgain(url) }

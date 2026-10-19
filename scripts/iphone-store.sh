@@ -90,6 +90,47 @@ for folder in "${PROFILES[@]}"; do
   cp "$TMP/profile.mobileprovision" "$folder/$(cat "$TMP/uuid").mobileprovision"
 done
 
+# Syncing with the Mac, once the app's identifier has the iCloud container
+# (SYNC.md): the profile then allows it, so the build gets the entitlements,
+# a line in Info.plist naming the container, and fetching in the background
+# when iCloud says something changed.
+CONTAINER="iCloud.de.ghazarian.Snapfly"
+CLOUD_SETTINGS=()
+CLOUD_EXPORT=""
+if /usr/libexec/PlistBuddy -c "Print :Entitlements:com.apple.developer.icloud-container-identifiers" \
+     "$TMP/profile.plist" 2>/dev/null | grep -qF "$CONTAINER"; then
+  PUSH=""
+  if /usr/libexec/PlistBuddy -c "Print :Entitlements:aps-environment" "$TMP/profile.plist" >/dev/null 2>&1; then
+    PUSH="<key>aps-environment</key><string>production</string>"
+  fi
+  cat > "$TMP/Snapfly.entitlements" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>com.apple.developer.icloud-container-identifiers</key><array><string>$CONTAINER</string></array>
+  <key>com.apple.developer.icloud-services</key><array><string>CloudKit</string></array>
+  $PUSH
+</dict>
+</plist>
+PLIST
+  cat > "$TMP/Info.plist" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>SnapflyCloudContainer</key><string>$CONTAINER</string>
+  <key>UIBackgroundModes</key><array><string>remote-notification</string></array>
+</dict>
+</plist>
+PLIST
+  CLOUD_SETTINGS=(CODE_SIGN_ENTITLEMENTS="$TMP/Snapfly.entitlements" INFOPLIST_FILE="$TMP/Info.plist")
+  CLOUD_EXPORT="<key>iCloudContainerEnvironment</key><string>Production</string>"
+  echo "The profile allows iCloud: this build can sync."
+else
+  echo "::warning::The app's identifier has no iCloud container yet (SYNC.md, section 5), so this build leaves syncing out."
+fi
+
 # Each upload needs a higher build number than the one before. The version
 # is the Mac's, from the VERSION file.
 BUILD="$(( ${GITHUB_RUN_NUMBER:-1} + 100 ))"
@@ -97,6 +138,7 @@ xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -configuration Release
   -destination "generic/platform=iOS" -archivePath "$OUT/Snapfly.xcarchive" \
   CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_IDENTITY="$SIGNER" \
   PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN" \
+  ${CLOUD_SETTINGS[@]+"${CLOUD_SETTINGS[@]}"} \
   MARKETING_VERSION="$(tr -d '[:space:]' < VERSION)" CURRENT_PROJECT_VERSION="$BUILD" -quiet archive
 
 cat > "$TMP/export.plist" <<PLIST
@@ -114,6 +156,7 @@ cat > "$TMP/export.plist" <<PLIST
     <key>$BUNDLE_ID</key><string>$PROFILE_NAME</string>
   </dict>
   <key>manageAppVersionAndBuildNumber</key><false/>
+  $CLOUD_EXPORT
   <key>uploadSymbols</key><true/>
 </dict>
 </plist>

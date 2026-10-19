@@ -6,6 +6,12 @@
 #
 #   scripts/signing.sh developer-id   Puts the Developer ID in a temporary
 #                                     keychain and sets SIGN_IDENTITY.
+#   scripts/signing.sh cloud-profile  Fetches the Developer ID profile that
+#                                     lets the build use the owner's iCloud,
+#                                     for syncing with the iPhone, and sets
+#                                     SNAPFLY_DIRECT_PROFILE and
+#                                     SNAPFLY_CLOUD_CONTAINER. Without it the
+#                                     build leaves syncing out.
 #   scripts/signing.sh notarize APP   Sends APP to Apple and staples the ticket.
 #   scripts/signing.sh cleanup        Removes the keychain and the files.
 set -euo pipefail
@@ -66,6 +72,38 @@ case "${1:-}" in
     echo "Signing as $($SSL x509 -in "$TMP/cert.pem" -noout -subject)"
     ;;
 
+  cloud-profile)
+    CONTAINER="iCloud.de.ghazarian.Snapfly"
+    export ASC_KEY_ID ASC_ISSUER_ID ASC_KEY
+    ASC_KEY_ID="$(part key-id)"
+    ASC_ISSUER_ID="$(part issuer)"
+    ASC_KEY="$(part api-key)"
+    # The Developer ID certificate as App Store Connect knows it: the one
+    # whose content is this secret's.
+    part developer-id-certificate | $SSL x509 -outform der -out "$TMP/direct.der"
+    swift scripts/asc.swift certificates "$TMP/certificates" > "$TMP/certificates.txt"
+    cert_id=""
+    while read -r id _; do
+      if cmp -s "$TMP/certificates/$id.cer" "$TMP/direct.der"; then cert_id="$id"; break; fi
+    done < "$TMP/certificates.txt"
+    if [ -z "$cert_id" ]; then
+      echo "::warning::App Store Connect does not list this Developer ID certificate, so this build leaves syncing out."
+      exit 0
+    fi
+    bundle="$(swift scripts/asc.swift bundle-id de.ghazarian.Snapfly Snapfly)"
+    swift scripts/asc.swift profile "$bundle" "$cert_id" "Snapfly Developer ID $cert_id" \
+      "$TMP/direct.provisionprofile" MAC_APP_DIRECT >/dev/null
+    security cms -D -i "$TMP/direct.provisionprofile" > "$TMP/direct.plist"
+    if /usr/libexec/PlistBuddy -c "Print :Entitlements:com.apple.developer.icloud-container-identifiers" \
+         "$TMP/direct.plist" 2>/dev/null | grep -qF "$CONTAINER"; then
+      setenv SNAPFLY_DIRECT_PROFILE "$TMP/direct.provisionprofile"
+      setenv SNAPFLY_CLOUD_CONTAINER "$CONTAINER"
+      echo "The Developer ID profile allows iCloud: this build can sync."
+    else
+      echo "::warning::The app's identifier has no iCloud container yet (SYNC.md, section 5), so this build leaves syncing out."
+    fi
+    ;;
+
   notarize)
     app="$2"
     ditto -c -k --keepParent "$app" "$TMP/notarize.zip"
@@ -89,7 +127,7 @@ case "${1:-}" in
     ;;
 
   *)
-    echo "Usage: scripts/signing.sh developer-id|notarize APP|cleanup" >&2
+    echo "Usage: scripts/signing.sh developer-id|cloud-profile|notarize APP|cleanup" >&2
     exit 1
     ;;
 esac

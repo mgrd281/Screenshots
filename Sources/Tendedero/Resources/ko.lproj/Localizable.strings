@@ -448,7 +448,7 @@
 "No screenshots yet" = "아직 스크린샷이 없습니다";
 "Take a screenshot, then come back here." = "스크린샷을 찍은 다음 여기로 돌아오세요.";
 "Allow Snapfly to see your screenshots" = "Snapfly가 스크린샷을 볼 수 있도록 허용";
-"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone. Nothing is sent anywhere." = "Snapfly는 스크린샷 속 이름, 주소 등 개인 정보를 이 iPhone에서 바로 가립니다. 아무것도 다른 곳으로 보내지 않습니다.";
+"Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly는 스크린샷 속 이름, 주소 등 개인 정보를 이 iPhone에서 바로 가립니다.";
 "Allow Access" = "접근 허용";
 "Snapfly may not see your screenshots. Allow it in Settings › Privacy & Security › Photos." = "Snapfly가 스크린샷을 볼 수 없습니다. 설정 › 개인정보 보호 및 보안 › 사진에서 허용하세요.";
 "Covering private details…" = "개인 정보를 가리는 중…";
@@ -1155,3 +1155,38 @@
 "Send with “%@”" = "“%@”와 함께 보내기";
 "It goes into the AI chat after the photos. Nothing is sent until you press Return there." = "사진 뒤에 AI 채팅에 들어가요. 거기서 Return 키를 누르기 전에는 아무것도 보내지 않아요.";
 "Each prompt goes into the AI chat after the photos: from its number beside the send button, from Ask AI in a photo's menu, or from a right-click on ChatGPT or Claude under a photo. Nothing is sent until you press Return there. Up to nine." = "각 프롬프트는 사진 뒤에 AI 채팅에 들어가요. 보내기 버튼 옆 번호, 사진 메뉴의 AI에게 묻기, 또는 사진 아래 ChatGPT나 Claude를 오른쪽 클릭해서 쓸 수 있어요. 거기서 Return 키를 누르기 전에는 아무것도 보내지 않아요. 최대 9개.";
+
+/* Sync with the iPhone and the Mac */
+"Another device has a newer Snapfly. Update Snapfly here." = "다른 기기에 더 새로운 Snapfly가 있어요. 여기서 Snapfly를 업데이트하세요.";
+"Another iCloud account is signed in. Turn syncing on again to sync with it." = "다른 iCloud 계정으로 로그인되어 있어요. 이 계정과 동기화하려면 동기화를 다시 켜세요.";
+"Could not send it. Try again." = "보내지 못했어요. 다시 시도하세요.";
+"Fetching from iCloud…" = "iCloud에서 가져오는 중…";
+"From your Mac" = "Mac에서";
+"Here now" = "지금 있음";
+"It goes through your own iCloud, to your devices signed in to it. Nothing goes through a server of Snapfly's." = "내 iCloud를 거쳐 같은 계정에 로그인한 내 기기로 가요. Snapfly의 서버를 거치는 것은 없어요.";
+"Last here %@" = "마지막 접속 %@";
+"No other device yet. Turn syncing on in Snapfly on your iPhone, signed in to the same iCloud account." = "아직 다른 기기가 없어요. 같은 iCloud 계정으로 로그인한 iPhone의 Snapfly에서 동기화를 켜세요.";
+"On its way to your Mac" = "Mac으로 가는 중";
+"Originals too" = "원본도";
+"Screenshots also go as they were taken, with nothing covered. Only those taken from now on." = "스크린샷이 아무것도 가리지 않은 찍은 그대로도 가요. 지금부터 찍는 것만이에요.";
+"Send to Mac" = "Mac으로 보내기";
+"Sign in to iCloud to sync." = "동기화하려면 iCloud에 로그인하세요.";
+"Snapfly's data was removed from iCloud. Turn syncing on again to start anew." = "Snapfly의 데이터가 iCloud에서 삭제되었어요. 처음부터 다시 하려면 동기화를 다시 켜세요.";
+"Some changes could not be sent. Try Sync Now." = "일부 변경 사항을 보내지 못했어요. 지금 동기화를 눌러 보세요.";
+"Sync" = "동기화";
+"Sync Now" = "지금 동기화";
+"Sync with your Mac" = "Mac과 동기화";
+"Sync with your iPhone" = "iPhone과 동기화";
+"Syncing, %d waiting" = "동기화 중, %d개 대기 중";
+"Syncing…" = "동기화 중…";
+"The picture could not be fetched. Check the connection and try again." = "사진을 가져오지 못했어요. 연결을 확인하고 다시 시도하세요.";
+"This Mac" = "이 Mac";
+"This build of Snapfly cannot sync." = "이 빌드의 Snapfly는 동기화할 수 없어요.";
+"This iPhone" = "이 iPhone";
+"Up to date" = "최신 상태";
+"Waiting for a connection, %d waiting" = "연결 대기 중, %d개 대기 중";
+"What hangs on the line goes to Snapfly on your iPhone with its private details covered, and what you send from the iPhone hangs on the line." = "빨랫줄에 걸린 것은 개인 정보를 가린 채 iPhone의 Snapfly로 가고, iPhone에서 보낸 것은 빨랫줄에 걸려요.";
+"What the Mac's line holds shows here with its private details covered, and Send to Mac hangs a covered screenshot on the Mac's line." = "Mac 빨랫줄에 걸린 것이 개인 정보를 가린 채 여기에 보이고, Mac으로 보내기는 가린 스크린샷을 Mac 빨랫줄에 걸어요.";
+"Your devices" = "내 기기";
+"Your iCloud storage is full." = "iCloud 저장 공간이 가득 찼어요.";
+"iCloud is restricted on this device." = "이 기기에서 iCloud가 제한되어 있어요.";
