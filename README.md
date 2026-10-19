@@ -861,9 +861,15 @@ are in [SYNC.md](SYNC.md).
 `iOS/` holds Snapfly for the iPhone. iOS lets no app float over the others or
 watch the screen, so there is no line there. What it keeps is the covering:
 
-- **The app** shows your screenshots from Photos, newest first, the ones
-  protected lately in a row above them, and what the Mac sent, with how
-  syncing stands beside Protect a Photo, which opens any picture from Photos.
+- **The app** opens on Snapfly's picture of stacked photos, a page, a chat
+  and a landscape with a green photo badge, drawn on the iPhone and showing
+  no one's details, over Protect a Photo, a green button that opens any
+  picture from Photos. Once there are screenshots, the picture turns small
+  beside its words and the screenshots come first: what the Mac sent, the
+  ones protected lately in a row, and the newest twelve in cards that show
+  when each was taken and a green shield once it was protected, all of them
+  behind See All. From iOS 18 on, a screenshot opens by growing out of its
+  card. How syncing stands sits beside Settings at the top.
   Tap a screenshot and it shows at once; what the patterns, the labels and
   the names find is marked a moment later, then the copy is made, read again
   as anyone could read it, and covered further if need be, and where Apple
@@ -882,8 +888,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   covered the picture is never called protected. Copy, Share and Save never
   cut their words short, wait until the copy is made, checked and every
   cover is known to have landed, and ask first while places are still to
-  check. Hold a screenshot in the grid for Cover and Copy, without opening
-  it. The screenshot itself stays as it was.
+  check. Hold a screenshot in the grid for Cover and Copy, Cover and Share
+  or Cover and Save, without opening it. The screenshot itself stays as it was.
   Settings chooses what to cover, in the same six groups as on the Mac,
   with Check All, Recommended and Uncheck All, and Patient names and Other
   people beside Names. Cover look picks how covers look, from the same six
@@ -1034,6 +1040,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
 | `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture to zoom with its places marked, covered in steps and checked, the tools to select, draw, box, lasso and erase with their handles, the status, the count, Details, and the buttons that wait for the checked copy and ask while places are to check |
+| `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's home screen: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
 | `iOS/Snapfly/PhotoIndexer.swift`, `IndexStore.swift`, `PreparingView.swift`, `iOS/Info.plist` | Faster picture processing: reading pictures ahead of time with consent, in the app and in the background, where it is kept on the iPhone, its page in Settings, and the background task's name |
 | `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |

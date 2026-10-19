@@ -1345,3 +1345,8 @@
 "What may be prepared" = "준비해도 되는 항목";
 "Width" = "굵기";
 "Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check." = "\"이름\"이 꺼져 있으면 선택한 사람만 가립니다. \"Patient:\"나 \"Dr. med.\" 같은 각 이름 주변의 단어로 판단합니다. 역할이 분명하지 않은 이름도 가리고 확인할 수 있게 표시합니다.";
+"Cover and Save" = "가리고 저장";
+"Cover and Share" = "가리고 공유";
+"Find private details and protect them, simply." = "개인 정보를 쉽게 찾아 보호하세요.";
+"See All" = "모두 보기";
+"Your pictures. Your privacy." = "당신의 사진. 당신의 프라이버시.";

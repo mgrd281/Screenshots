@@ -58,19 +58,41 @@ final class Library: ObservableObject {
         return ids.compactMap { found[$0] }
     }
 
-    /// A small picture of one screenshot, for the grid.
+    /// A small picture of one screenshot, for the grid: never the whole
+    /// picture decoded, and a changed screenshot made again.
     nonisolated static func thumbnail(of asset: PHAsset, width: CGFloat) async -> UIImage? {
-        await withCheckedContinuation { continuation in
+        let stamp = asset.modificationDate?.timeIntervalSince1970 ?? 0
+        let key = "\(asset.localIdentifier)|\(Int(width))|\(stamp)" as NSString
+        if let kept = Thumbnails.kept.object(forKey: key) { return kept }
+        let image: UIImage? = await withCheckedContinuation { continuation in
             let options = PHImageRequestOptions()
             // One answer, not a blurry one first and a sharp one after.
             options.deliveryMode = .highQualityFormat
             options.resizeMode = .fast
             options.isNetworkAccessAllowed = true
             let size = CGSize(width: width, height: width * 2.2)
-            PHImageManager.default().requestImage(for: asset, targetSize: size, contentMode: .aspectFill,
-                                                  options: options) { image, _ in
+            Thumbnails.images.requestImage(for: asset, targetSize: size, contentMode: .aspectFill,
+                                           options: options) { image, _ in
                 continuation.resume(returning: image)
             }
         }
+        if let image {
+            let pixels = image.size.width * image.scale * image.size.height * image.scale
+            Thumbnails.kept.setObject(image, forKey: key, cost: Int(pixels) * 4)
+        }
+        return image
     }
+}
+
+/// The small pictures made lately, kept while the app runs, so going back
+/// to the grid or scrolling up shows them at once.
+private enum Thumbnails {
+    static let kept: NSCache<NSString, UIImage> = {
+        let cache = NSCache<NSString, UIImage>()
+        // About fifty screenshots' worth, less when iOS needs the memory.
+        cache.totalCostLimit = 64 * 1024 * 1024
+        return cache
+    }()
+
+    static let images = PHCachingImageManager()
 }

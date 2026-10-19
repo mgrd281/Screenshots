@@ -2,20 +2,32 @@ import Photos
 import PhotosUI
 import SwiftUI
 
-/// The start: a photo to protect from Photos, what the Mac sent, the
-/// screenshots protected lately, and every screenshot, newest first. A tap
-/// opens one to protect; holding one down covers and copies it at once.
+/// The start: Snapfly's picture of stacked photos with Protect a Photo, what
+/// the Mac sent, the screenshots protected lately, and the newest
+/// screenshots, all of them behind See All. The picture is full while there
+/// is nothing yet, and small beside its words once there are screenshots. A
+/// tap opens a screenshot to protect; holding one down covers it and copies,
+/// shares or saves it at once.
 struct ContentView: View {
     @StateObject private var library = Library()
     @ObservedObject private var guide = PhoneGuide.shared
     @ObservedObject private var sync = SyncCenter.shared
     @State private var showsSettings = false
-    /// The picture open, if one is.
-    @State private var path: [ProtectSession.Source] = []
+    /// The pictures open: a screenshot from a card, or a photo chosen.
+    @State private var path = NavigationPath()
+    /// Where a screenshot grows out of as it opens.
+    @Namespace private var zoom
     @State private var picked: PhotosPickerItem?
     @State private var recent: [PHAsset] = []
     @State private var note: String?
+    @State private var sharing: SharedFile?
+    /// Each press of the green button, for its haptic.
+    @State private var presses = 0
     @Environment(\.scenePhase) private var phase
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    /// How many screenshots the home screen shows before See All.
+    private let preview = 12
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -29,18 +41,12 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("Snapfly")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showsSettings = true
-                    } label: {
-                        Image(systemName: "gearshape")
-                    }
-                    .accessibilityLabel(L("Settings"))
-                }
-            }
+            .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $showsSettings) { SettingsView() }
             .navigationDestination(for: ProtectSession.Source.self) { source in ProtectView(source: source) }
+            .navigationDestination(for: ShotLink.self) { link in
+                ProtectView(source: link.source).zoomed(from: link, in: zoom)
+            }
         }
         .overlay(alignment: .bottom) {
             if let note {
@@ -51,14 +57,18 @@ struct ContentView: View {
             }
         }
         .animation(.easeOut(duration: 0.2), value: note)
+        .sheet(item: $sharing) { file in
+            ShareSheet(url: file.url) { _ in try? FileManager.default.removeItem(at: file.url) }
+                .ignoresSafeArea()
+        }
         .onAppear {
             library.load()
             PhoneSync.start()
             PhotoIndexer.shared.becameActive()
-            guide.closeShot = { path.removeAll() }
+            guide.closeShot = { path.removeLast(path.count) }
             guide.openNewest = {
                 guard let newest = library.shots.first?.localIdentifier else { return false }
-                path.append(.asset(newest))
+                path.append(ProtectSession.Source.asset(newest))
                 return true
             }
         }
@@ -86,82 +96,176 @@ struct ContentView: View {
         }
     }
 
+    // MARK: Home
+
     private var home: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(spacing: 8) {
-                    PhotosPicker(selection: $picked, matching: .images) {
-                        Label(L("Protect a Photo"), systemImage: "photo.badge.plus")
-                    }
-                    .buttonStyle(.bordered)
-                    Spacer(minLength: 0)
-                    syncChip
-                }
-                .padding(.horizontal, 6)
+            VStack(alignment: .leading, spacing: 24) {
+                header
+                if library.shots.isEmpty { fullHero } else { compactHero }
                 // What the Mac sent, when syncing is on.
                 FromMacRow(sync: sync)
+                    .padding(.horizontal, -6)
                 if !recent.isEmpty {
-                    row(L("Protected lately"), recent)
+                    protectedLately
                 }
-                if !library.shots.isEmpty {
-                    Text(L("Screenshots"))
-                        .font(.headline)
-                        .padding(.horizontal, 6)
-                }
-                grid
+                screenshots
             }
-            .padding(.vertical, 6)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 24)
         }
+        .scrollIndicators(.hidden)
+        .background(Color(.systemBackground))
+        // The status bar stays readable over what scrolls under it.
+        .safeAreaInset(edge: .top, spacing: 0) { Color.clear.frame(height: 0).background(.bar) }
         .phoneGuide(on: .library)
         .onAppear {
             recent = Library.assets(Recent.ids)
             if !library.shots.isEmpty { guide.offerIfDue() }
         }
-        .overlay {
-            if library.shots.isEmpty {
-                ContentUnavailableView(L("No screenshots yet"), systemImage: "camera.viewfinder",
-                                       description: Text(L("Take a screenshot, then come back here.")))
+    }
+
+    /// Snapfly's name, how syncing stands, and Settings.
+    private var header: some View {
+        HStack(spacing: 10) {
+            Text("Snapfly")
+                .font(.title2.weight(.bold))
+                .accessibilityAddTraits(.isHeader)
+            Spacer(minLength: 8)
+            syncChip
+            Button {
+                showsSettings = true
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(.primary)
+                    .frame(width: 40, height: 40)
+                    .background(SnapflyTokens.card, in: Circle())
+                    .overlay(Circle().strokeBorder(Color.primary.opacity(0.08)))
+                    .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Circle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L("Settings"))
+        }
+        .padding(.top, 4)
+    }
+
+    /// The whole picture, while there are no screenshots yet.
+    private var fullHero: some View {
+        VStack(spacing: 20) {
+            PhotoHero()
+            words(center: true)
+            protectButton
+            VStack(spacing: 4) {
+                Text(L("No screenshots yet"))
+                    .font(.subheadline.weight(.semibold))
+                Text(L("Take a screenshot, then come back here."))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            .multilineTextAlignment(.center)
+            .padding(.top, 8)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    /// The picture made small, beside its words, so the screenshots come
+    /// first; one under the other with the largest text sizes.
+    @ViewBuilder private var compactHero: some View {
+        if typeSize.isAccessibilitySize {
+            VStack(spacing: 16) {
+                PhotoHero(scale: 0.5)
+                words(center: true)
+                protectButton
+            }
+            .frame(maxWidth: .infinity)
+        } else {
+            HStack(spacing: 4) {
+                PhotoHero(scale: 0.46)
+                    .padding(.leading, -12)
+                VStack(alignment: .leading, spacing: 12) {
+                    words(center: false)
+                    protectButton
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
 
-    private var grid: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 6)], spacing: 6) {
-            ForEach(library.shots, id: \.localIdentifier) { asset in
-                NavigationLink(value: ProtectSession.Source.asset(asset.localIdentifier)) {
-                    Thumbnail(asset: asset)
-                }
-                .accessibilityLabel(L("Cover Private Details"))
-                .contextMenu {
-                    Button {
-                        quickProtect(asset)
-                    } label: {
-                        Label(L("Cover and Copy"), systemImage: "doc.on.doc")
-                    }
-                }
-                .phoneGuideTarget(.firstShot, on: asset.localIdentifier == library.shots.first?.localIdentifier)
-            }
+    private func words(center: Bool) -> some View {
+        VStack(alignment: center ? .center : .leading, spacing: 6) {
+            Text(L("Your pictures. Your privacy."))
+                .font(center ? Font.title2.weight(.bold) : Font.headline)
+                .fixedSize(horizontal: false, vertical: true)
+            Text(L("Find private details and protect them, simply."))
+                .font(center ? Font.body : Font.subheadline)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.horizontal, 6)
+        .multilineTextAlignment(center ? .center : .leading)
     }
 
-    /// A row that scrolls sideways, as From your Mac is.
-    private func row(_ title: String, _ assets: [PHAsset]) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.headline)
-                .padding(.horizontal, 6)
+    /// Protect a Photo: the system's photo picker, any picture from Photos.
+    private var protectButton: some View {
+        PhotosPicker(selection: $picked, matching: .images) {
+            Label(L("Protect a Photo"), systemImage: "shield.lefthalf.filled")
+        }
+        .buttonStyle(ProtectButtonStyle())
+        .simultaneousGesture(TapGesture().onEnded { presses += 1 })
+        .sensoryFeedback(.impact(weight: .light), trigger: presses)
+    }
+
+    /// A row that scrolls sideways of the screenshots protected lately.
+    private var protectedLately: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(L("Protected lately"))
+                .font(.title3.weight(.semibold))
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
-                    ForEach(assets, id: \.localIdentifier) { asset in
-                        NavigationLink(value: ProtectSession.Source.asset(asset.localIdentifier)) {
-                            Thumbnail(asset: asset, aspect: 3 / 4)
-                                .frame(width: 104)
+                HStack(spacing: 10) {
+                    ForEach(recent, id: \.localIdentifier) { asset in
+                        let link = ShotLink(id: asset.localIdentifier, place: .recent)
+                        NavigationLink(value: link) {
+                            ScreenshotCard(asset: asset, protected: true, showsDate: false)
+                                .frame(width: 96)
+                                .zoomSource(link, in: zoom)
                         }
-                        .accessibilityLabel(L("Cover Private Details"))
+                        .buttonStyle(.plain)
                     }
                 }
-                .padding(.horizontal, 6)
+                .padding(.vertical, 6)
+            }
+            .padding(.horizontal, -16)
+            .contentMargins(.horizontal, 16, for: .scrollContent)
+        }
+    }
+
+    /// The newest screenshots, and all of them behind See All.
+    @ViewBuilder private var screenshots: some View {
+        if !library.shots.isEmpty {
+            let protected = Set(Recent.ids)
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(L("Screenshots"))
+                        .font(.title3.weight(.semibold))
+                        .accessibilityAddTraits(.isHeader)
+                    Spacer()
+                    if library.shots.count > preview {
+                        NavigationLink {
+                            AllScreenshotsView(shots: library.shots, protected: protected, zoom: zoom, quick: quick)
+                        } label: {
+                            HStack(spacing: 3) {
+                                Text(L("See All"))
+                                Image(systemName: "chevron.forward")
+                                    .font(.footnote.weight(.semibold))
+                            }
+                            .font(.subheadline.weight(.medium))
+                        }
+                    }
+                }
+                ScreenshotGrid(shots: Array(library.shots.prefix(preview)), protected: protected, place: .home, zoom: zoom,
+                               quick: quick)
             }
         }
     }
@@ -184,6 +288,8 @@ struct ContentView: View {
         }
     }
 
+    // MARK: Actions
+
     /// A photo chosen in Photos, read the right way up and opened to protect.
     private func open(_ item: PhotosPickerItem) async {
         defer { picked = nil }
@@ -191,12 +297,12 @@ struct ContentView: View {
             show(L("The picture could not be read."))
             return
         }
-        path.append(.picture(Imported.shared.keep(image)))
+        path.append(ProtectSession.Source.picture(Imported.shared.keep(image)))
     }
 
-    /// Covers a screenshot as Settings says, checks it and copies it, without
-    /// opening it.
-    private func quickProtect(_ asset: PHAsset) {
+    /// Covers a screenshot as Settings says, checks it and copies, shares or
+    /// saves it, without opening it.
+    private func quick(_ asset: PHAsset, _ way: QuickCover) {
         show(L("Covering private details…"), for: 60)
         Task {
             guard let image = await Library.image(of: asset) else {
@@ -207,12 +313,33 @@ struct ContentView: View {
                 show(L("The copy could not be made."))
                 return
             }
-            Covering.copy(png)
+            switch way {
+            case .copy:
+                Covering.copy(png)
+                show(L("Covered and copied, ready to paste."))
+            case .save:
+                do {
+                    try await Covering.save(png)
+                    show(L("Saved to Photos"))
+                } catch {
+                    show(L("The picture could not be saved."))
+                    return
+                }
+            case .share:
+                let url = FileManager.default.temporaryDirectory.appendingPathComponent("Snapfly.png")
+                do {
+                    try png.write(to: url, options: [.atomic, .completeFileProtection])
+                } catch {
+                    show(L("The copy could not be made."))
+                    return
+                }
+                note = nil
+                sharing = SharedFile(url: url)
+            }
             Recent.note(asset.localIdentifier)
             recent = Library.assets(Recent.ids)
             PhoneGuide.shared.happened(.used)
             UINotificationFeedbackGenerator().notificationOccurred(.success)
-            show(L("Covered and copied, ready to paste."))
         }
     }
 
@@ -225,22 +352,33 @@ struct ContentView: View {
         }
     }
 
+    // MARK: Before access
+
+    /// The first launch: the whole picture, what Snapfly does, and access.
     private var welcome: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "eye.slash")
-                .font(.system(size: 44, weight: .semibold))
-                .foregroundStyle(.tint)
-            Text(L("Allow Snapfly to see your screenshots"))
-                .font(.title2.weight(.semibold))
+        ScrollView {
+            VStack(spacing: 20) {
+                PhotoHero()
+                    .padding(.top, 24)
+                VStack(spacing: 8) {
+                    Text(L("Allow Snapfly to see your screenshots"))
+                        .font(.title2.weight(.bold))
+                    Text(L("Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone."))
+                        .foregroundStyle(.secondary)
+                }
                 .multilineTextAlignment(.center)
-            Text(L("Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone."))
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-            Button(L("Allow Access")) { library.ask() }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                .fixedSize(horizontal: false, vertical: true)
+                Button(L("Allow Access")) {
+                    presses += 1
+                    library.ask()
+                }
+                .buttonStyle(ProtectButtonStyle())
+                .sensoryFeedback(.impact(weight: .light), trigger: presses)
+            }
+            .padding(.horizontal, 32)
+            .padding(.bottom, 24)
+            .frame(maxWidth: .infinity)
         }
-        .padding(32)
     }
 
     private var denied: some View {
@@ -252,29 +390,7 @@ struct ContentView: View {
             Button(L("Settings")) {
                 if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(ProtectButtonStyle())
         }
-    }
-}
-
-/// One screenshot, in the shape of a phone's screen, or of From your Mac's
-/// previews in a row.
-private struct Thumbnail: View {
-    let asset: PHAsset
-    var aspect: CGFloat = 9 / 19.5
-    @State private var image: UIImage?
-
-    var body: some View {
-        Color(.secondarySystemBackground)
-            .aspectRatio(aspect, contentMode: .fit)
-            .overlay {
-                if let image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .task { image = await Library.thumbnail(of: asset, width: 320) }
     }
 }
