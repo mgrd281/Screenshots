@@ -1867,7 +1867,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   in `.secondary`, orange with `exclamationmark.triangle.fill` when it
   needs the owner, else `checkmark.icloud`, on a capsule of `.primary` at
   6%, padded 10 by 6, opening More). Settings is the More tab, so the
-  header has no gear. The bar material sits under the status bar only.
+  header has no gear. Under the status bar is the page's own colour; from
+  iOS 18 on, once the page scrolls, the bar material fades in there (0.15 s)
+  so the status bar stays readable.
   Sections are 24 pt apart.
   - **The stacked photos** (`PhotoHero`), drawn with shapes, never a
     picture: on a soft ellipse of `phone-surface` (300 by 190, blurred 18),

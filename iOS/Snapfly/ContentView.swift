@@ -18,6 +18,8 @@ struct PhotosTab: View {
     /// Where a screenshot grows out of as it opens.
     @Namespace private var zoom
     @State private var picked: PhotosPickerItem?
+    /// Whether the page has scrolled under the status bar.
+    @State private var scrolled = false
     /// Each press of the green button, for its haptic.
     @State private var presses = 0
     @Environment(\.scenePhase) private var phase
@@ -94,9 +96,15 @@ struct PhotosTab: View {
             .padding(.bottom, 24)
         }
         .scrollIndicators(.hidden)
+        .onScrolledDown($scrolled)
         .background(Color(.systemBackground))
-        // The status bar stays readable over what scrolls under it.
-        .safeAreaInset(edge: .top, spacing: 0) { Color.clear.frame(height: 0).background(.bar) }
+        // The page's own colour under the status bar; the bar's material only
+        // once something scrolls under it, so it stays readable.
+        .safeAreaInset(edge: .top, spacing: 0) {
+            Color.clear.frame(height: 0)
+                .background(scrolled ? AnyShapeStyle(.bar) : AnyShapeStyle(Color(.systemBackground)))
+                .animation(.easeOut(duration: 0.15), value: scrolled)
+        }
         .phoneGuide(on: .library)
         .onAppear {
             if !library.shots.isEmpty { guide.offerIfDue() }

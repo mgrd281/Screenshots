@@ -57,6 +57,20 @@ extension View {
         }
     }
 
+    /// Whether a scroll view has moved its content up, from iOS 18 on;
+    /// before, it stays false.
+    @ViewBuilder func onScrolledDown(_ scrolled: Binding<Bool>) -> some View {
+        if #available(iOS 18, *) {
+            onScrollGeometryChange(for: Bool.self) { geometry in
+                geometry.contentOffset.y + geometry.contentInsets.top > 4
+            } action: { _, now in
+                scrolled.wrappedValue = now
+            }
+        } else {
+            self
+        }
+    }
+
     /// The note a quick cover leaves, floating over the bottom of the tab.
     func quickNotes() -> some View {
         modifier(QuickNotes())
