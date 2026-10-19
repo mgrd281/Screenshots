@@ -1396,3 +1396,10 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "Her sayfa Ayarlar'daki gibi ya da açtıktan sonra bıraktığın gibi kapatılır. PDF yalnızca kapatılmış sayfaların resimlerini içerir, kopyalanacak metin yoktur.";
 "Page %d is not ready yet. Open it to check it." = "Sayfa %d henüz hazır değil. Kontrol etmek için aç.";
 "Page %d could not be covered, so no PDF was made." = "Sayfa %d kapatılamadı, bu yüzden PDF oluşturulmadı.";
+
+/* The iPhone: the first launch, covering a sample card */
+"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "Örnek bir ekran görüntüsü: adı, telefon numarası, e-postası ve IBAN'ı sırayla kapatılır.";
+"Plays the example again." = "Örneği yeniden oynatır.";
+"Name, phone number, email and IBAN covered." = "Ad, telefon numarası, e-posta ve IBAN kapatıldı.";
+"Covered before you send" = "Göndermeden önce kapatılır";
+"Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Ekran görüntülerin bu iPhone'da okunur ve sen seçmedikçe hiçbir şey dışarı çıkmaz.";

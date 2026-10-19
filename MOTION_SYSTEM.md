@@ -94,6 +94,7 @@ settle is the point.
 | Token | Value | Where it ships |
 |---|---|---|
 | `stagger.cover` | 45 ms | Hide Part, and the iPhone's Protect Picture: covers grow in line by line, each over 0.32 s on a cubic ease-out from the reading side |
+| `stagger.demo` | 180 ms | iPhone first launch: the sample card's four details covered one after another, slow enough to follow |
 | `stagger.grid` | 35 ms, twelve at most | iPhone: screenshot cards rise 8 pt into the grid the first time it has any, on `spring.reveal` |
 | `stagger.list` | 90 ms, four at most | Site arrivals: the four steps |
 | `stagger.hang` | 110 ms | Site first view: photos drop onto the rope |

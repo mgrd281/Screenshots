@@ -252,15 +252,17 @@ struct PhotosTab: View {
 
     // MARK: Before access
 
-    /// The first launch: the whole picture, what Snapfly does, and access.
+    /// The first launch: Snapfly covering a sample card before the owner's
+    /// eyes, what it does, and access, asked for once that is seen.
     private var welcome: some View {
         ScrollView {
             VStack(spacing: 20) {
-                PhotoHero()
+                CoverDemo()
                     .padding(.top, 24)
                 VStack(spacing: 8) {
-                    Text(L("Allow Snapfly to see your screenshots"))
+                    Text(L("Covered before you send"))
                         .font(.title2.weight(.bold))
+                        .accessibilityAddTraits(.isHeader)
                     Text(L("Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone."))
                         .foregroundStyle(.secondary)
                 }
@@ -272,6 +274,11 @@ struct PhotosTab: View {
                 }
                 .buttonStyle(ProtectButtonStyle())
                 .sensoryFeedback(.impact(weight: .light), trigger: presses)
+                Text(L("Your screenshots are read on this iPhone, and nothing leaves it unless you choose."))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, 32)
             .padding(.bottom, 24)

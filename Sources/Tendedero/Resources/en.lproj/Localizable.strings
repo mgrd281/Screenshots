@@ -1398,3 +1398,10 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy.";
 "Page %d is not ready yet. Open it to check it." = "Page %d is not ready yet. Open it to check it.";
 "Page %d could not be covered, so no PDF was made." = "Page %d could not be covered, so no PDF was made.";
+
+/* The iPhone: the first launch, covering a sample card */
+"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "A sample screenshot: its name, phone number, email and IBAN are covered one after another.";
+"Plays the example again." = "Plays the example again.";
+"Name, phone number, email and IBAN covered." = "Name, phone number, email and IBAN covered.";
+"Covered before you send" = "Covered before you send";
+"Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Your screenshots are read on this iPhone, and nothing leaves it unless you choose.";

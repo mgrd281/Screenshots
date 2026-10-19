@@ -1396,3 +1396,10 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "Chaque page est masquée selon tes réglages, ou comme tu l’as laissée après l’avoir ouverte. Le PDF ne contient que des images des pages masquées, aucun texte à copier.";
 "Page %d is not ready yet. Open it to check it." = "La page %d n’est pas encore prête. Ouvre-la pour la vérifier.";
 "Page %d could not be covered, so no PDF was made." = "La page %d n’a pas pu être masquée, donc aucun PDF n’a été créé.";
+
+/* The iPhone: the first launch, covering a sample card */
+"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "Une capture d’exemple : son nom, son numéro de téléphone, son e-mail et son IBAN sont masqués l’un après l’autre.";
+"Plays the example again." = "Rejoue l’exemple.";
+"Name, phone number, email and IBAN covered." = "Nom, numéro de téléphone, e-mail et IBAN masqués.";
+"Covered before you send" = "Masqué avant l’envoi";
+"Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Tes captures sont lues sur cet iPhone, et rien n’en sort sans ton choix.";

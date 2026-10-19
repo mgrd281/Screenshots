@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The iPhone app's first launch shows what Snapfly does before it asks for
+  anything: a sample card is read by a green line and its name, phone
+  number, email and IBAN are covered one after another, then it asks to
+  see your screenshots, which are read on the iPhone and never leave it
+  unless you choose.
 - On the iPhone, scanned pages become one covered PDF with a tap: every
   page covered as Settings says, or as you left it after opening it, a
   picture of each page sized like A4 and no text to copy, ready to send or
