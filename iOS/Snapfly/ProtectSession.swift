@@ -32,6 +32,8 @@ final class ProtectSession: ObservableObject {
     }
 
     let source: Source
+    /// A small picture shown while the whole one loads.
+    @Published private(set) var preview: UIImage?
     @Published private(set) var original: UIImage?
     /// The covered copy, as it leaves; nil while it is made again.
     @Published private(set) var copy: UIImage?
@@ -46,6 +48,8 @@ final class ProtectSession: ObservableObject {
     @Published private(set) var failure: String?
 
     private var image: CGImage?
+    /// Every word read and where it is, so a tap hides one; in memory only.
+    private var words: [(text: String, box: CGRect)] = []
     private let chosen = Choice.details
     private let rules = OwnRules.all
     private let style = CoverStyle.current
@@ -101,12 +105,24 @@ final class ProtectSession: ObservableObject {
 
     private func run() async {
         let started = Timing.start()
+        // A small picture first, so the screen is never empty for long.
+        let quick = Task {
+            if case .asset(let id) = source, let asset = Library.asset(id) {
+                let small = await Library.thumbnail(of: asset, width: 900)
+                if original == nil, let small {
+                    preview = small
+                    Timing.record(.shown, Timing.milliseconds(since: started))
+                }
+            }
+        }
         guard let image = await Self.load(source) else {
             failure = L("The picture could not be read.")
             return
         }
         self.image = image
         original = UIImage(cgImage: image)
+        if preview == nil { Timing.record(.shown, Timing.milliseconds(since: started)) }
+        quick.cancel()
         log.info("Picture shown after \(Timing.milliseconds(since: started), privacy: .public) ms")
         // A photo prepared ahead of time is not read again.
         if case .asset(let id) = source, await PhotoIndexer.reuse(for: id, image: image) {
@@ -122,9 +138,12 @@ final class ProtectSession: ObservableObject {
         guard !Task.isCancelled else { return }
         plan.add(found: first.areas, possible: first.possible)
         found = true
+        // Read already: the words are there at once.
+        words = await Self.background { Finder.words(in: image) }
         log.info("First places shown after \(Timing.milliseconds(since: started), privacy: .public) ms")
         intelligencePending = asksIntelligence
         await make()
+        if png != nil { Timing.record(.ready, Timing.milliseconds(since: started)) }
         guard intelligencePending, failure == nil else {
             Timing.report(since: started)
             return
@@ -155,10 +174,73 @@ final class ProtectSession: ObservableObject {
         changed()
     }
 
-    func cover(_ rect: CGRect) {
-        let count = plan.marks.count
-        plan.cover(rect)
-        if plan.marks.count != count { changed() }
+    /// Hides what is under a shape drawn by hand; its id, if it was big enough.
+    @discardableResult
+    func draw(_ shape: HandShape) -> Int? {
+        let id = plan.draw(shape)
+        if id != nil { changed() }
+        return id
+    }
+
+    /// The word under a finger, hidden by hand with the words it hides, so
+    /// the copy is checked for them; its id. Nil where no word is.
+    func hideWord(at point: CGPoint) -> Int? {
+        guard let word = words.filter({ $0.box.insetBy(dx: -0.004, dy: -0.004).contains(point) })
+            .min(by: { $0.box.width < $1.box.width }) else { return nil }
+        // A little room round the letters, as found places have.
+        let box = word.box.insetBy(dx: -word.box.height * 0.15, dy: -word.box.height * 0.2)
+        let id = plan.cover(box, text: word.text)
+        if id != nil { changed() }
+        return id
+    }
+
+    func move(_ ids: Set<Int>, by offset: CGPoint) {
+        let before = plan
+        plan.move(ids, by: offset)
+        if plan != before { changed() }
+    }
+
+    func resize(_ id: Int, to rect: CGRect) {
+        let before = plan
+        plan.resize(id, to: rect)
+        if plan != before { changed() }
+    }
+
+    func turn(_ id: Int, by angle: CGFloat) {
+        let before = plan
+        plan.turn(id, by: angle)
+        if plan != before { changed() }
+    }
+
+    func widen(_ ids: Set<Int>, to width: CGFloat) {
+        let before = plan
+        plan.widen(ids, to: width)
+        if plan != before { changed() }
+    }
+
+    /// Takes away what is by hand, and uncovers what was found, in one change.
+    func remove(_ ids: Set<Int>) {
+        guard !ids.isEmpty else { return }
+        let before = plan
+        plan.remove(ids)
+        if plan != before { changed() }
+    }
+
+    /// What an eraser drawn through these points touches, taken away.
+    func erase(along points: [CGPoint], reach: CGFloat) {
+        remove(plan.erased(along: points, reach: reach))
+    }
+
+    func clearHand() {
+        let before = plan
+        plan.clearHand()
+        if plan != before { changed() }
+    }
+
+    func resetToFound() {
+        let before = plan
+        plan.resetToFound()
+        if plan != before { changed() }
     }
 
     func undo() {

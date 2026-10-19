@@ -61,6 +61,36 @@ enum Timing {
         log.info("Covered in \(run.milliseconds, privacy: .public) ms: \(parts, privacy: .public)")
     }
 
+    // MARK: Over many pictures
+
+    /// What is measured over the pictures protected lately: until the
+    /// picture shows, and until its copy is ready to leave.
+    enum Measure: String, CaseIterable {
+        case shown, ready
+    }
+
+    /// How many pictures each measure keeps; numbers only.
+    static let remembered = 50
+
+    static func record(_ measure: Measure, _ milliseconds: Int, in defaults: UserDefaults = .standard) {
+        let key = "SnapflyTimes." + measure.rawValue
+        let times = (defaults.array(forKey: key) as? [Int] ?? []) + [milliseconds]
+        defaults.set(Array(times.suffix(remembered)), forKey: key)
+    }
+
+    static func recent(_ measure: Measure, in defaults: UserDefaults = .standard) -> [Int] {
+        defaults.array(forKey: "SnapflyTimes." + measure.rawValue) as? [Int] ?? []
+    }
+
+    /// The value under which this share of them lie, by nearest rank: 0.5
+    /// gives the middle one (P50), 0.95 the one only the slowest pass (P95).
+    static func percentile(_ values: [Int], _ share: Double) -> Int? {
+        guard !values.isEmpty else { return nil }
+        let sorted = values.sorted()
+        let rank = Int((share * Double(sorted.count)).rounded(.up))
+        return sorted[min(max(rank, 1), sorted.count) - 1]
+    }
+
     static func milliseconds(since started: Date) -> Int {
         max(0, Int(Date().timeIntervalSince(started) * 1000))
     }

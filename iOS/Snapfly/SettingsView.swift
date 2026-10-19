@@ -80,6 +80,15 @@ struct SettingsView: View {
                     if let last = Timing.last {
                         LabeledContent(L("Last screenshot"), value: duration(last.milliseconds))
                     }
+                    // Over the pictures protected lately: the middle one, and the slowest but a few.
+                    ForEach(Timing.Measure.allCases, id: \.self) { measure in
+                        let times = Timing.recent(measure)
+                        if let middle = Timing.percentile(times, 0.5), let slow = Timing.percentile(times, 0.95) {
+                            LabeledContent(measure == .shown ? L("Picture shown") : L("Ready to share"),
+                                           value: String(format: L("Median %@ · 95%% under %@"),
+                                                         duration(middle), duration(slow)))
+                        }
+                    }
                     NavigationLink {
                         PreparingView()
                     } label: {

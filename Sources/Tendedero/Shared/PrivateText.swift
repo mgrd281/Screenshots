@@ -1126,6 +1126,16 @@ enum Finder {
         read(image, remember: false)
     }
 
+    /// Every word in a picture and where it is, from the reading kept of it,
+    /// so a word can be hidden with a tap. In memory only, while it is open.
+    static func words(in image: CGImage) -> [(text: String, box: CGRect)] {
+        read(image).flatMap { line in
+            line.words.compactMap { word in
+                Range(word.range, in: line.string).map { (String(line.string[$0]), word.box) }
+            }
+        }
+    }
+
     /// Lines read before, kept with a photo prepared ahead of time, so the
     /// picture is not read again when it is covered.
     static func remember(_ lines: [TextLine], for image: CGImage) {
