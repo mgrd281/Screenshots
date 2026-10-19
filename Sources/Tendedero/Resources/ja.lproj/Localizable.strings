@@ -1258,7 +1258,6 @@
 "Opening…" = "開いています…";
 "Passwords and access" = "パスワードとアクセス";
 "Protect a Photo" = "写真を保護";
-"Protected lately" = "最近保護したもの";
 "Reading and checking" = "読み取りと確認";
 "Show the screenshot as it was" = "元のスクリーンショットを表示";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapflyが判断しきれないものです。一つずつ確認して、オンかオフにしてください。";
@@ -1372,3 +1371,19 @@
 "Newest First" = "新しい順";
 "Oldest First" = "古い順";
 "Filter" = "フィルタ";
+
+/* Tabs, scanning and the Protected tab on the iPhone */
+"Scan" = "スキャン";
+"Scan a document" = "書類をスキャン";
+"Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it." = "手紙、書類、レシートをカメラから直接。何かがこのiPhoneを出る前に、個人情報はこのiPhone上で隠されます。";
+"Scan Document" = "書類をスキャン";
+"This iPhone cannot scan documents." = "このiPhoneでは書類をスキャンできません。";
+"Scanned pages" = "スキャンしたページ";
+"Page %d" = "%dページ";
+"Pages stay on this iPhone only while Snapfly is open." = "ページはSnapflyを開いている間だけこのiPhoneに残ります。";
+"Hold your iPhone over the page; it is found and taken by itself." = "iPhoneをページの上にかざすと、自動で見つけて撮影します。";
+"Names, numbers and other private details are covered as Settings says." = "名前、番号などの個人情報は設定どおりに隠されます。";
+"Check the places, then copy, share or save the covered page." = "箇所を確認してから、隠したページをコピー、共有、または保存します。";
+"Nothing protected yet" = "まだ何も保護していません";
+"The screenshots you protect show up here." = "保護したスクリーンショットがここに表示されます。";
+"The last twelve, kept on this iPhone by their place in Photos alone." = "最新の12枚。このiPhoneには写真内の場所だけが記録されます。";

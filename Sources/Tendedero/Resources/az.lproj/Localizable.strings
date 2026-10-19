@@ -1260,7 +1260,6 @@
 "Opening…" = "Açılır…";
 "Passwords and access" = "Parollar və giriş";
 "Protect a Photo" = "Şəkli qoru";
-"Protected lately" = "Son qorunanlar";
 "Reading and checking" = "Oxuma və yoxlama";
 "Show the screenshot as it was" = "Ekran şəklini olduğu kimi göstər";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly bunlardan əmin deyil: hər birini yoxla, aç ya da söndür.";
@@ -1374,3 +1373,19 @@
 "Newest First" = "Əvvəlcə ən yeni";
 "Oldest First" = "Əvvəlcə ən köhnə";
 "Filter" = "Süzgəc";
+
+/* Tabs, scanning and the Protected tab on the iPhone */
+"Scan" = "Skan";
+"Scan a document" = "Sənədi skan et";
+"Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it." = "Məktublar, formalar və qəbzlər, birbaşa kameradan. Şəxsi məlumatlar heç nə bu iPhone-dan çıxmazdan əvvəl burada örtülür.";
+"Scan Document" = "Sənədi skan et";
+"This iPhone cannot scan documents." = "Bu iPhone sənəd skan edə bilmir.";
+"Scanned pages" = "Skan edilmiş səhifələr";
+"Page %d" = "Səhifə %d";
+"Pages stay on this iPhone only while Snapfly is open." = "Səhifələr yalnız Snapfly açıq olduqca bu iPhone-da qalır.";
+"Hold your iPhone over the page; it is found and taken by itself." = "iPhone-u səhifənin üzərində tut; o, özü tapılıb çəkiləcək.";
+"Names, numbers and other private details are covered as Settings says." = "Adlar, nömrələr və digər şəxsi məlumatlar Ayarlarda seçildiyi kimi örtülür.";
+"Check the places, then copy, share or save the covered page." = "Yerləri yoxla, sonra örtülmüş səhifəni kopyala, paylaş və ya saxla.";
+"Nothing protected yet" = "Hələ heç nə qorunmayıb";
+"The screenshots you protect show up here." = "Qoruduğun ekran şəkilləri burada görünür.";
+"The last twelve, kept on this iPhone by their place in Photos alone." = "Son on iki, bu iPhone-da yalnız Fotolardakı yerləri ilə yadda saxlanır.";

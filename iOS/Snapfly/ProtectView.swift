@@ -51,7 +51,9 @@ struct ProtectView: View {
     }
 
     var body: some View {
+        // The picture is the screen: the tab bar steps aside while it is open.
         lifecycle(dialogs(sheets(screen)))
+            .toolbar(.hidden, for: .tabBar)
     }
 
     /// The picture, the floating controls over it, and the bars.

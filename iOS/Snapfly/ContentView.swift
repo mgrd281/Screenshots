@@ -2,25 +2,22 @@ import Photos
 import PhotosUI
 import SwiftUI
 
-/// The start: Snapfly's picture of stacked photos with Protect a Photo, what
-/// the Mac sent, the screenshots protected lately, and the newest
-/// screenshots, all of them behind See All. The picture is full while there
-/// is nothing yet, and small beside its words once there are screenshots. A
-/// tap opens a screenshot to protect; holding one down covers it and copies,
-/// shares or saves it at once.
-struct ContentView: View {
-    @StateObject private var library = Library()
+/// The Photos tab: Snapfly's picture of stacked photos with Protect a
+/// Photo, what the Mac sent, and the newest screenshots, all of them behind
+/// See All. The picture is full while there is nothing yet, and small beside
+/// its words once there are screenshots. A tap opens a screenshot to
+/// protect; its menu, or holding it down, covers it and copies, shares or
+/// saves it at once.
+struct PhotosTab: View {
+    @ObservedObject var library: Library
     @ObservedObject private var guide = PhoneGuide.shared
     @ObservedObject private var sync = SyncCenter.shared
-    @State private var showsSettings = false
+    @ObservedObject private var coverer = QuickCoverer.shared
     /// The pictures open: a screenshot from a card, or a photo chosen.
     @State private var path = NavigationPath()
     /// Where a screenshot grows out of as it opens.
     @Namespace private var zoom
     @State private var picked: PhotosPickerItem?
-    @State private var recent: [PHAsset] = []
-    @State private var note: String?
-    @State private var sharing: SharedFile?
     /// Each press of the green button, for its haptic.
     @State private var presses = 0
     @Environment(\.scenePhase) private var phase
@@ -42,24 +39,11 @@ struct ContentView: View {
             }
             .navigationTitle("Snapfly")
             .toolbar(.hidden, for: .navigationBar)
-            .sheet(isPresented: $showsSettings) { SettingsView() }
+            .quickNotes()
             .navigationDestination(for: ProtectSession.Source.self) { source in ProtectView(source: source) }
             .navigationDestination(for: ShotLink.self) { link in
                 ProtectView(source: link.source).zoomed(from: link, in: zoom)
             }
-        }
-        .overlay(alignment: .bottom) {
-            if let note {
-                Text(note)
-                    .floatingPill()
-                    .padding(.bottom, 24)
-                    .transition(.opacity)
-            }
-        }
-        .animation(.easeOut(duration: 0.2), value: note)
-        .sheet(item: $sharing) { file in
-            ShareSheet(url: file.url) { _ in try? FileManager.default.removeItem(at: file.url) }
-                .ignoresSafeArea()
         }
         .onAppear {
             library.load()
@@ -68,6 +52,7 @@ struct ContentView: View {
             guide.closeShot = { path.removeLast(path.count) }
             guide.openNewest = {
                 guard let newest = library.shots.first?.localIdentifier else { return false }
+                AppTabs.shared.selection = .photos
                 path.append(ProtectSession.Source.asset(newest))
                 return true
             }
@@ -82,9 +67,6 @@ struct ContentView: View {
                 Finder.forgetReadings()
                 PhotoIndexer.shared.wentAway()
             }
-        }
-        .onChange(of: path) { _, now in
-            if now.isEmpty { recent = Library.assets(Recent.ids) }
         }
         .onChange(of: picked) { _, item in
             guard let item else { return }
@@ -106,9 +88,6 @@ struct ContentView: View {
                 // What the Mac sent, when syncing is on.
                 FromMacRow(sync: sync)
                     .padding(.horizontal, -6)
-                if !recent.isEmpty {
-                    protectedLately
-                }
                 screenshots
             }
             .padding(.horizontal, 16)
@@ -120,35 +99,20 @@ struct ContentView: View {
         .safeAreaInset(edge: .top, spacing: 0) { Color.clear.frame(height: 0).background(.bar) }
         .phoneGuide(on: .library)
         .onAppear {
-            recent = Library.assets(Recent.ids)
             if !library.shots.isEmpty { guide.offerIfDue() }
         }
     }
 
-    /// Snapfly's name, how syncing stands, and Settings.
+    /// Snapfly's name, large, and how syncing stands. Settings is the More tab.
     private var header: some View {
-        HStack(spacing: 10) {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
             Text("Snapfly")
-                .font(.title2.weight(.bold))
+                .font(.largeTitle.weight(.bold))
                 .accessibilityAddTraits(.isHeader)
             Spacer(minLength: 8)
             syncChip
-            Button {
-                showsSettings = true
-            } label: {
-                Image(systemName: "gearshape")
-                    .font(.body.weight(.medium))
-                    .foregroundStyle(.primary)
-                    .frame(width: 40, height: 40)
-                    .background(SnapflyTokens.card, in: Circle())
-                    .overlay(Circle().strokeBorder(Color.primary.opacity(0.08)))
-                    .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
-                    .frame(width: 44, height: 44)
-                    .contentShape(Circle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(L("Settings"))
         }
+        .frame(minHeight: 44)
         .padding(.top, 4)
     }
 
@@ -217,30 +181,6 @@ struct ContentView: View {
         .sensoryFeedback(.impact(weight: .light), trigger: presses)
     }
 
-    /// A row that scrolls sideways of the screenshots protected lately.
-    private var protectedLately: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(L("Protected lately"))
-                .font(.title3.weight(.semibold))
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    ForEach(recent, id: \.localIdentifier) { asset in
-                        let link = ShotLink(id: asset.localIdentifier, place: .recent)
-                        NavigationLink(value: link) {
-                            ScreenshotCard(asset: asset, protected: true, showsDate: false)
-                                .frame(width: 96)
-                                .zoomSource(link, in: zoom)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-                .padding(.vertical, 6)
-            }
-            .padding(.horizontal, -16)
-            .contentMargins(.horizontal, 16, for: .scrollContent)
-        }
-    }
-
     /// The newest screenshots, and all of them behind See All.
     @ViewBuilder private var screenshots: some View {
         if !library.shots.isEmpty {
@@ -253,7 +193,7 @@ struct ContentView: View {
                     Spacer()
                     // Always there: it also finds screenshots by their words.
                     NavigationLink {
-                        AllScreenshotsView(shots: library.shots, protected: protected, zoom: zoom, quick: quick)
+                        AllScreenshotsView(shots: library.shots, protected: protected, zoom: zoom, quick: coverer.cover)
                     } label: {
                         HStack(spacing: 3) {
                             Text(L("See All"))
@@ -264,16 +204,16 @@ struct ContentView: View {
                     }
                 }
                 ScreenshotGrid(shots: Array(library.shots.prefix(preview)), protected: protected, place: .home, zoom: zoom,
-                               quick: quick)
+                               quick: coverer.cover)
             }
         }
     }
 
-    /// How syncing with the Mac stands, when it is on; a tap opens Settings.
+    /// How syncing with the Mac stands, when it is on; a tap opens the More tab.
     @ViewBuilder private var syncChip: some View {
         if sync.settings.on {
             Button {
-                showsSettings = true
+                AppTabs.shared.selection = .more
             } label: {
                 Label(sync.state.text, systemImage: sync.state.needsAttention ? "exclamationmark.triangle.fill" : "checkmark.icloud")
                     .font(.footnote)
@@ -293,62 +233,10 @@ struct ContentView: View {
     private func open(_ item: PhotosPickerItem) async {
         defer { picked = nil }
         guard let data = try? await item.loadTransferable(type: Data.self), let image = Covering.upright(data) else {
-            show(L("The picture could not be read."))
+            coverer.show(L("The picture could not be read."))
             return
         }
         path.append(ProtectSession.Source.picture(Imported.shared.keep(image)))
-    }
-
-    /// Covers a screenshot as Settings says, checks it and copies, shares or
-    /// saves it, without opening it.
-    private func quick(_ asset: PHAsset, _ way: QuickCover) {
-        show(L("Covering private details…"), for: 60)
-        Task {
-            guard let image = await Library.image(of: asset) else {
-                show(L("The picture could not be read."))
-                return
-            }
-            guard let covered = await Covering.cover(image, Choice.details), let png = Covering.png(covered.image) else {
-                show(L("The copy could not be made."))
-                return
-            }
-            switch way {
-            case .copy:
-                Covering.copy(png)
-                show(L("Covered and copied, ready to paste."))
-            case .save:
-                do {
-                    try await Covering.save(png)
-                    show(L("Saved to Photos"))
-                } catch {
-                    show(L("The picture could not be saved."))
-                    return
-                }
-            case .share:
-                let url = FileManager.default.temporaryDirectory.appendingPathComponent("Snapfly.png")
-                do {
-                    try png.write(to: url, options: [.atomic, .completeFileProtection])
-                } catch {
-                    show(L("The copy could not be made."))
-                    return
-                }
-                note = nil
-                sharing = SharedFile(url: url)
-            }
-            Recent.note(asset.localIdentifier)
-            recent = Library.assets(Recent.ids)
-            PhoneGuide.shared.happened(.used)
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
-        }
-    }
-
-    /// A short note over the bottom of the screen, gone after a while.
-    private func show(_ text: String, for seconds: Double = 2.5) {
-        note = text
-        Task {
-            try? await Task.sleep(for: .seconds(seconds))
-            if note == text { note = nil }
-        }
     }
 
     // MARK: Before access

@@ -1258,7 +1258,6 @@
 "Opening…" = "Wird geöffnet …";
 "Passwords and access" = "Passwörter und Zugänge";
 "Protect a Photo" = "Foto schützen";
-"Protected lately" = "Zuletzt geschützt";
 "Reading and checking" = "Lesen und Prüfen";
 "Show the screenshot as it was" = "Bildschirmfoto wie vorher zeigen";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Bei diesen ist sich Snapfly nicht sicher: Prüf jede Stelle und schalte sie ein oder aus.";
@@ -1372,3 +1371,19 @@
 "Newest First" = "Neueste zuerst";
 "Oldest First" = "Älteste zuerst";
 "Filter" = "Filtern";
+
+/* Tabs, scanning and the Protected tab on the iPhone */
+"Scan" = "Scannen";
+"Scan a document" = "Dokument scannen";
+"Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it." = "Briefe, Formulare und Belege, direkt von der Kamera. Private Angaben werden auf diesem iPhone abgedeckt, bevor irgendetwas es verlässt.";
+"Scan Document" = "Dokument scannen";
+"This iPhone cannot scan documents." = "Dieses iPhone kann keine Dokumente scannen.";
+"Scanned pages" = "Gescannte Seiten";
+"Page %d" = "Seite %d";
+"Pages stay on this iPhone only while Snapfly is open." = "Seiten bleiben nur auf diesem iPhone, solange Snapfly geöffnet ist.";
+"Hold your iPhone over the page; it is found and taken by itself." = "Halte dein iPhone über die Seite – sie wird von selbst erkannt und aufgenommen.";
+"Names, numbers and other private details are covered as Settings says." = "Namen, Nummern und andere private Angaben werden abgedeckt, wie in den Einstellungen gewählt.";
+"Check the places, then copy, share or save the covered page." = "Prüfe die Stellen, dann kopiere, teile oder sichere die abgedeckte Seite.";
+"Nothing protected yet" = "Noch nichts geschützt";
+"The screenshots you protect show up here." = "Die Bildschirmfotos, die du schützt, erscheinen hier.";
+"The last twelve, kept on this iPhone by their place in Photos alone." = "Die letzten zwölf, auf diesem iPhone nur über ihren Platz in Fotos gemerkt.";

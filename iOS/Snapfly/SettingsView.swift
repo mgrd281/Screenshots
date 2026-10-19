@@ -5,6 +5,8 @@ import SwiftUI
 /// rules of the owner's own and how to cover a screenshot with a double tap
 /// on the back of the iPhone.
 struct SettingsView: View {
+    /// As the More tab, with a large title and no Done; else a sheet.
+    var inTab = false
     @Environment(\.dismiss) private var dismiss
     @State private var chosen = Choice.details
     @State private var look = CoverStyle.current
@@ -121,8 +123,8 @@ struct SettingsView: View {
 
                 Section {
                     Button {
-                        dismiss()
-                        // Once the sheet has gone, on the screenshots themselves.
+                        if inTab { AppTabs.shared.selection = .photos } else { dismiss() }
+                        // Once the sheet or the tab has gone, on the screenshots themselves.
                         Task { @MainActor in
                             try? await Task.sleep(for: .seconds(0.4))
                             PhoneGuide.shared.start()
@@ -136,11 +138,13 @@ struct SettingsView: View {
                     Text(L("Snapfly on your own screenshots, step by step."))
                 }
             }
-            .navigationTitle(L("Settings"))
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(inTab ? L("More") : L("Settings"))
+            .navigationBarTitleDisplayMode(inTab ? .large : .inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(L("Done")) { dismiss() }
+                if !inTab {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(L("Done")) { dismiss() }
+                    }
                 }
             }
         }

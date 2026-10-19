@@ -356,7 +356,7 @@ struct ScreenshotGrid: View {
     let protected: Set<String>
     let place: ShotLink.Place
     let zoom: Namespace.ID
-    let quick: (PHAsset, QuickCover) -> Void
+    let quick: @MainActor (PHAsset, QuickCover) -> Void
 
     var body: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 76, maximum: 160), spacing: 8)], spacing: 8) {
@@ -400,7 +400,7 @@ struct AllScreenshotsView: View {
     let shots: [PHAsset]
     let protected: Set<String>
     let zoom: Namespace.ID
-    let quick: (PHAsset, QuickCover) -> Void
+    let quick: @MainActor (PHAsset, QuickCover) -> Void
     @State private var query = LibraryQuery()
     /// What each screenshot read ahead of time says and holds, in memory
     /// only while this shows.

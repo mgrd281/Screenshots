@@ -1260,7 +1260,6 @@
 "Opening…" = "Opening…";
 "Passwords and access" = "Passwords and access";
 "Protect a Photo" = "Protect a Photo";
-"Protected lately" = "Protected lately";
 "Reading and checking" = "Reading and checking";
 "Show the screenshot as it was" = "Show the screenshot as it was";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly is not sure about these: check each, and turn it on or off.";
@@ -1374,3 +1373,19 @@
 "Newest First" = "Newest First";
 "Oldest First" = "Oldest First";
 "Filter" = "Filter";
+
+/* Tabs, scanning and the Protected tab on the iPhone */
+"Scan" = "Scan";
+"Scan a document" = "Scan a document";
+"Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it." = "Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it.";
+"Scan Document" = "Scan Document";
+"This iPhone cannot scan documents." = "This iPhone cannot scan documents.";
+"Scanned pages" = "Scanned pages";
+"Page %d" = "Page %d";
+"Pages stay on this iPhone only while Snapfly is open." = "Pages stay on this iPhone only while Snapfly is open.";
+"Hold your iPhone over the page; it is found and taken by itself." = "Hold your iPhone over the page; it is found and taken by itself.";
+"Names, numbers and other private details are covered as Settings says." = "Names, numbers and other private details are covered as Settings says.";
+"Check the places, then copy, share or save the covered page." = "Check the places, then copy, share or save the covered page.";
+"Nothing protected yet" = "Nothing protected yet";
+"The screenshots you protect show up here." = "The screenshots you protect show up here.";
+"The last twelve, kept on this iPhone by their place in Photos alone." = "The last twelve, kept on this iPhone by their place in Photos alone.";

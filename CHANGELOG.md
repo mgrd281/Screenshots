@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The iPhone app has four tabs at the bottom, in Liquid Glass from iOS 26 on:
+  Photos, Scan, Protected and More. Scan uses the camera to scan a letter, a
+  form or a receipt, straightened and cropped, and covers its private
+  details like a screenshot's. Protected shows the screenshots protected
+  lately, and More holds Settings and the introduction.
 - On the iPhone's home screen, the screenshots are small square cards, four
   to a row, with when each was taken in a small label and a ⋯ button that
   covers it and copies, shares or saves it.

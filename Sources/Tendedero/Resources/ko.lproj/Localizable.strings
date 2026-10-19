@@ -1258,7 +1258,6 @@
 "Opening…" = "여는 중…";
 "Passwords and access" = "암호와 접근";
 "Protect a Photo" = "사진 보호하기";
-"Protected lately" = "최근 보호함";
 "Reading and checking" = "읽기와 확인";
 "Show the screenshot as it was" = "원래 스크린샷 보기";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly가 확신하지 못한 항목이에요. 하나씩 확인하고 켜거나 끄세요.";
@@ -1372,3 +1371,19 @@
 "Newest First" = "최신 순";
 "Oldest First" = "오래된 순";
 "Filter" = "필터";
+
+/* Tabs, scanning and the Protected tab on the iPhone */
+"Scan" = "스캔";
+"Scan a document" = "문서 스캔";
+"Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it." = "편지, 양식, 영수증을 카메라에서 바로. 무엇이든 이 iPhone을 떠나기 전에 개인 정보가 이 iPhone에서 가려집니다.";
+"Scan Document" = "문서 스캔";
+"This iPhone cannot scan documents." = "이 iPhone은 문서를 스캔할 수 없습니다.";
+"Scanned pages" = "스캔한 페이지";
+"Page %d" = "%d페이지";
+"Pages stay on this iPhone only while Snapfly is open." = "페이지는 Snapfly가 열려 있는 동안에만 이 iPhone에 남습니다.";
+"Hold your iPhone over the page; it is found and taken by itself." = "iPhone을 페이지 위에 대세요. 알아서 찾아 촬영합니다.";
+"Names, numbers and other private details are covered as Settings says." = "이름, 번호 등 개인 정보는 설정대로 가려집니다.";
+"Check the places, then copy, share or save the covered page." = "위치를 확인한 다음, 가린 페이지를 복사하거나 공유하거나 저장하세요.";
+"Nothing protected yet" = "아직 보호한 항목이 없습니다";
+"The screenshots you protect show up here." = "보호한 스크린샷이 여기에 표시됩니다.";
+"The last twelve, kept on this iPhone by their place in Photos alone." = "최근 12개. 이 iPhone에는 사진 속 위치만 기억됩니다.";

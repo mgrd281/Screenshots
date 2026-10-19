@@ -889,19 +889,28 @@ product, what is verified and what comes next is in
 `iOS/` holds Snapfly for the iPhone. iOS lets no app float over the others or
 watch the screen, so there is no line there. What it keeps is the covering:
 
-- **The app** opens on Snapfly's picture of stacked photos, a page, a chat
+- **Four tabs** in the system's tab bar, in Liquid Glass from iOS 26 on,
+  where it shrinks to the tab shown as a page scrolls down: Photos, Scan,
+  Protected and More. Scan opens the system's document camera: a letter, a
+  form or a receipt is found, straightened and cropped by itself, and a
+  single page opens at once to be covered like a screenshot; several wait
+  as small cards, kept in memory only while the app is open. Protected
+  shows the last twelve screenshots protected, in the same grid. More holds
+  Settings and Help & Introduction. While a picture is open the tab bar
+  steps aside.
+- **The Photos tab** opens on Snapfly's picture of stacked photos, a page, a chat
   and a landscape with a green photo badge, drawn on the iPhone and showing
   no one's details, over Protect a Photo, a green button that opens any
   picture from Photos. Once there are screenshots, the picture turns small
-  beside its words and the screenshots come first: what the Mac sent, the
-  ones protected lately in a row, and the newest eight in small square
+  beside its words and the screenshots come first: what the Mac sent and
+  the newest eight in small square
   cards, four to a row, that show when each was taken in a small label, a
   green shield once it was protected, and a ⋯ button with Cover and Copy,
   Share or Save, all of them
   behind See All, which finds them by the words they say (those read ahead
   of time, below), shows only those with private details, protected or not,
   and puts the newest or the oldest first. From iOS 18 on, a screenshot opens by growing out of its
-  card. How syncing stands sits beside Settings at the top.
+  card. How syncing stands sits beside the name at the top, and opens More.
   Tap a screenshot and it shows at once; what the patterns, the labels and
   the names find is marked a moment later, then the copy is made, read again
   as anyone could read it, and covered further if need be, and where Apple
@@ -1082,7 +1091,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
 | `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture filling the screen, to zoom with its places marked, covered in steps and checked; the floating tools to select, draw, box, lasso and erase with their handles; the status capsule; Details, which checks the unsure places one by one; Copy, Share, Save to Photos or Files and Send to Mac, which wait for the checked copy and ask while places are to check; and Full Screen |
-| `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's home screen: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
+| `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
+| `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open, each opened to cover |
+| `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
 | `iOS/Snapfly/PhotoIndexer.swift`, `IndexStore.swift`, `PreparingView.swift`, `iOS/Info.plist` | Faster picture processing: reading pictures ahead of time with consent, in the app and in the background, where it is kept on the iPhone, its page in Settings, and the background task's name |
 | `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
