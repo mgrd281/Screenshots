@@ -749,6 +749,48 @@ final class Preferences: ObservableObject {
         questionsCustomised = false
     }
 
+    /// Prompts for AI chats, chosen by their numbers, each written out in a
+    /// sheet and saved when it is done.
+    @Published var aiPrompts = AIPrompts.all
+    @Published var promptsCustomised = AIPrompts.isCustomised()
+
+    var promptsBesideButton: Bool {
+        get { AIPrompts.showsBesideButton() }
+        set { change { AIPrompts.setShowsBesideButton(newValue) } }
+    }
+
+    /// A new prompt at the end, to write; none past nine.
+    func addPrompt() -> AIPrompt? {
+        guard aiPrompts.count < AIPrompts.limit else { return nil }
+        let prompt = AIPrompt()
+        aiPrompts.append(prompt)
+        savePrompts()
+        return prompt
+    }
+
+    func updatePrompt(_ prompt: AIPrompt) {
+        guard let index = aiPrompts.firstIndex(where: { $0.id == prompt.id }) else { return }
+        aiPrompts[index] = prompt
+        savePrompts()
+    }
+
+    func removePrompt(_ prompt: AIPrompt) {
+        aiPrompts.removeAll { $0.id == prompt.id }
+        savePrompts()
+    }
+
+    private func savePrompts() {
+        AIPrompts.all = aiPrompts
+        promptsCustomised = true
+    }
+
+    /// The standard prompts again, in place of the owner's.
+    func restorePrompts() {
+        AIPrompts.restore()
+        aiPrompts = AIPrompts.all
+        promptsCustomised = false
+    }
+
     func saveRules() {
         rulesSave?.cancel()
         let before = OwnRules.fingerprint
@@ -1147,6 +1189,7 @@ private struct LinePane: View {
             ChatButtonSection(prefs: prefs)
             SavedMessagesSection(prefs: prefs)
             AIQuestionsSection(prefs: prefs)
+            AIPromptsSection(prefs: prefs)
             BookkeepingSection(prefs: prefs)
             ShopHeaderSection(prefs: prefs)
             Section(L("Screenshot button")) {
@@ -1943,6 +1986,107 @@ private struct AIQuestionsSection: View {
         }
         .onChange(of: prefs.aiQuestions) { _, _ in prefs.questionsChanged() }
         .onDisappear { prefs.saveQuestions() }
+    }
+}
+
+/// Prompts for AI chats: whether their numbers show beside the send button,
+/// then each by its number and title, with the start of what it says, to
+/// write in a sheet with room for long instructions.
+private struct AIPromptsSection: View {
+    @ObservedObject var prefs: Preferences
+    @State private var editing: AIPrompt?
+
+    var body: some View {
+        Section {
+            Toggle(isOn: $prefs.promptsBesideButton) {
+                Text(L("Numbers beside the send button"))
+                Text(L("Over ChatGPT, Claude and other AI chats only. A number sends the photos with that prompt after them."))
+            }
+            ForEach(Array(prefs.aiPrompts.enumerated()), id: \.element.id) { index, prompt in
+                LabeledContent {
+                    HStack(spacing: 8) {
+                        Button(L("Edit…")) { editing = prompt }
+                        Button { prefs.removePrompt(prompt) } label: {
+                            Image(systemName: "minus.circle")
+                        }
+                        .buttonStyle(.borderless)
+                        .help(L("Remove"))
+                        .accessibilityLabel(L("Remove"))
+                    }
+                } label: {
+                    Text(verbatim: "\(index + 1)").monospacedDigit().foregroundColor(.secondary)
+                        + Text(verbatim: "  ") + Text(prompt.name(number: index + 1))
+                    Text(prompt.isBlank ? L("Not written yet") : Self.start(of: prompt.text))
+                        .lineLimit(1)
+                }
+            }
+            HStack {
+                Button(L("Add Prompt")) { editing = prefs.addPrompt() }
+                    .disabled(prefs.aiPrompts.count >= AIPrompts.limit)
+                if prefs.promptsCustomised {
+                    Button(L("Standard Prompts")) { prefs.restorePrompts() }
+                }
+            }
+        } header: {
+            Text(L("Prompts for AI chats"))
+        } footer: {
+            Text(L("Each prompt goes into the AI chat after the photos: from its number beside the send button, from Ask AI in a photo's menu, or from a right-click on ChatGPT or Claude under a photo. Nothing is sent until you press Return there. Up to nine."))
+                .foregroundStyle(.secondary)
+        }
+        .sheet(item: $editing) { prompt in
+            AIPromptEditor(prompt: prompt,
+                           number: (prefs.aiPrompts.firstIndex { $0.id == prompt.id } ?? 0) + 1) { edited in
+                prefs.updatePrompt(edited)
+                editing = nil
+            } cancel: {
+                editing = nil
+            }
+        }
+    }
+
+    /// The first line, to know a prompt by.
+    private static func start(of text: String) -> String {
+        text.split(whereSeparator: \.isNewline).first.map(String.init) ?? text
+    }
+}
+
+/// One prompt written out: its title, then its instructions in a field
+/// with room for long ones. Return makes a new line; Done keeps it.
+private struct AIPromptEditor: View {
+    @State var prompt: AIPrompt
+    let number: Int
+    let done: (AIPrompt) -> Void
+    let cancel: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(String(format: L("Prompt %d"), number))
+                .font(.headline)
+            TextField(L("Title"), text: $prompt.title, prompt: Text(L("Natural writing")))
+                .textFieldStyle(.roundedBorder)
+            TextEditor(text: $prompt.text)
+                .font(.body)
+                .scrollContentBackground(.hidden)
+                .padding(6)
+                .background(Color(nsColor: .textBackgroundColor),
+                            in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .strokeBorder(Color.primary.opacity(0.15)))
+                .frame(minHeight: 300)
+                .accessibilityLabel(L("Prompt"))
+            Text(L("It goes into the AI chat after the photos. Nothing is sent until you press Return there."))
+                .font(.callout)
+                .foregroundStyle(.secondary)
+            HStack {
+                Spacer()
+                Button(L("Cancel"), action: cancel)
+                    .keyboardShortcut(.cancelAction)
+                Button(L("Done")) { done(prompt) }
+                    .buttonStyle(.borderedProminent)
+            }
+        }
+        .padding(20)
+        .frame(width: 560)
     }
 }
 

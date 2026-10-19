@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Prompts for AI chats: over ChatGPT, Claude and the other AI chats, the
+  send button has numbers in front of it. Point at one to see its name;
+  click it and the photos go in with that prompt after them. Two come with
+  it, Natural writing and Reply to a customer; write up to nine of your own
+  in Settings › Line. They are under Ask AI in a photo's menu too.
 - Copy Link, in a photo's menu: the photo, covered as it leaves the line, a
   recording or a PDF, behind a link to paste anywhere. The link works for
   seven days, then the file is deleted; Delete Link takes it down sooner.
