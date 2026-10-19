@@ -990,6 +990,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/AIPrompts.swift` | Prompts for AI chats: the standard two, the owner's own, numbered, nine at most |
 | `Shared/ShareLinks.swift` | Share links without a screen: what may go, the requests, reading the answers, and the links kept with their delete tokens |
 | `share/` | The share link service on Cloudflare: the Worker (`worker.js`) that takes uploads, shows each link's page and deletes files, its tests, and `wrangler.toml`; the Share Links workflow deploys it |
+| `Shared/SyncModel.swift`, `Shared/SyncLedger.swift`, `Shared/SyncPolicy.swift` | Syncing between the Mac and the iPhone, without a screen or a network: the records, the order of changes, merging, versions made at once on two devices, removals, the changes waiting to go, what may leave the device, the status, and the file it is kept in. Not connected to either app yet; see SYNC.md |
+| `Shared/CloudSync.swift` | Syncing's iCloud side, through Apple's sync engine and the owner's private database. Switched off until a build names an iCloud container; see SYNC.md |
+| `SYNC.md` | The audit and plan for Mac and iPhone as one: what there is, the design, the threat model, what goes wrong and what happens then, the owner's steps at Apple, and what is verified |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |
 | `Trim.swift` | Trims a screen recording and saves the result |
