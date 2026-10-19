@@ -54,6 +54,7 @@ struct ContentView: View {
         .onAppear {
             library.load()
             PhoneSync.start()
+            PhotoIndexer.shared.becameActive()
             guide.closeShot = { path.removeAll() }
             guide.openNewest = {
                 guard let newest = library.shots.first?.localIdentifier else { return false }
@@ -62,9 +63,15 @@ struct ContentView: View {
             }
         }
         .onChange(of: phase) { _, now in
-            if now == .active { library.load() }
+            if now == .active {
+                library.load()
+                PhotoIndexer.shared.becameActive()
+            }
             // Nothing read stays in memory while Snapfly is away.
-            if now == .background { Finder.forgetReadings() }
+            if now == .background {
+                Finder.forgetReadings()
+                PhotoIndexer.shared.wentAway()
+            }
         }
         .onChange(of: path) { _, now in
             if now.isEmpty { recent = Library.assets(Recent.ids) }

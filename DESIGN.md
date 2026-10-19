@@ -1020,7 +1020,7 @@ apps.
     "Hide in this copy" in the inspector: Check All, Recommended and Uncheck
     All, small, sharing the row in equal parts (stacked where they don't
     fit), a footer saying the copy has no place or camera details, then the
-    nineteen kinds as switches in the six groups Settings has, named as
+    twenty-one kinds as switches in the six groups Settings has, named as
     Settings names them, starting with what Settings hides. The primary
     button reads Save Copy… and opens a save sheet in the folder of the
     original, under the name "… (covered)". A small spinner shows in the
@@ -1283,15 +1283,16 @@ apps.
   buttons, Check All, Recommended and Uncheck All, sharing the row in equal
   parts, under the header "Hide private details" and over the footer that
   says what is checked is covered.
-  Then the nineteen kinds in six sections named for their group: People;
+  Then the twenty-one kinds in six sections named for their group: People;
   Companies and organizations; Money; Health; Documents; Passwords and
-  access. Under Names, a row "Whose names" (`LabeledContent`, its subtitle
-  saying an unclear name is covered and marked to check) with a menu button
-  on the trailing edge naming the choice ("Everyone's", or the roles chosen,
-  joined by commas): Everyone's, a divider, then the five roles, each with a
-  check while chosen; choosing one from Everyone's chooses it alone, and
-  leaving none means Everyone's again. It is dimmed while Names is off, and
-  a change draws the photos hanging again. Then "Cover look": the
+  access. People opens with Names (its subtitle "Everyone's"), Patient
+  names ("In medical letters, reports and forms") and Other people (the
+  doctors, customers, staff, payees, senders and recipients), each a
+  switch with its subtitle. While Names is on, the other two show on and
+  dimmed, as Names takes them in. The section's footer says that without
+  Names only the people chosen are covered, told by the words round each
+  name, and that an unclear name is covered and marked to check. A change
+  draws the photos hanging again. Then "Cover look": the
   six looks as tiles three to a row (`CoverLookPicker`), each a little chat,
   a grey bubble with a name and a blue one with a number, covered by the
   same code as a copy, light or dark as the system is, with its name under
@@ -1841,20 +1842,60 @@ of its own.
   Holding a screenshot offers Cover and Copy (`doc.on.doc`): it is covered,
   checked and copied without opening, with a note in a floating pill over
   the bottom, 24 pt up, gone after 2.5 s.
-- **Protect.** A tap on a screenshot opens it at once, fitted with 16 pt
-  margins across and 8 pt above and below, 12 pt corners, to zoom up to 6×
-  with two fingers (`MarkCanvas`, a `UIScrollView`). Its places show over
-  it: the cover ink (grey 12%, corners of a quarter of the height, 8 at
-  most) over a covered place until the copy is made, then the copy itself;
-  a dashed outline, 2 pt in dashes of 5 and 3, in the accent round a place
-  to check, and in `.secondaryLabel` round a place left uncovered; the part
-  being drawn dashed in the accent. A tap on a place turns it on or off,
-  with a selection haptic. Bottom-leading over the picture, 16 pt in, two
-  44 pt round tools 12 pt apart (`ToolButton`): regular material with the
-  floating shadow (black 18%, radius 6, y 3), the accent with a white glyph
-  while on. Add Area (`plus.viewfinder`) draws with one finger while two
-  move the picture; the eye, held down, shows the screenshot as it was.
-  Undo and Redo sit in the navigation bar.
+- **Protect Picture.** A tap on a screenshot opens it at once: a small
+  picture first while the whole one loads, fitted with 16 pt margins across
+  and 8 pt above and below, 12 pt corners, to zoom up to 6× with two
+  fingers, or 2.5× at a point with a double tap and back (`MarkCanvas`, a
+  `UIScrollView`). The title is "Protect Picture", inline, with only a
+  menu (`ellipsis.circle`) on the trailing edge: Details, Clear Hidden by
+  Hand and Reset to Suggestions, each one change to undo. Its places show
+  over it: the cover ink (grey 12%, corners of a quarter of the height, 8
+  at most) over a covered place until the copy is made, then the copy
+  itself; a dashed outline, 2 pt in dashes of 5 and 3 at any zoom, in the
+  accent round a place to check, and in `.secondaryLabel` round a place
+  left uncovered. A shape drawn by hand is solid ink as drawn (the
+  marker's stroke with round ends, a box, an outline filled inside), at
+  75% while it is drawn, the lasso's edge dashed in the accent; the
+  eraser's path shows as `systemBackground` at 55%, as wide as it reaches.
+  Bottom-trailing over the picture, 16 pt in, the eye (`ToolButton`, 44 pt,
+  regular material with the floating shadow, black 18%, radius 6, y 3, the
+  accent with a white glyph while on), held down to show the screenshot as
+  it was.
+  - **The tools** sit in a row on the bar material above the summary,
+    4 pt down and 8 pt in: Select (`hand.point.up.left`), Marker
+    (`pencil.tip`), Box (`rectangle`), Lasso (`lasso`) and Eraser
+    (`eraser`), each a 40 pt circle, the accent with a white glyph for the
+    tool in hand, in a 44 pt high target sharing the row; a 28 pt divider;
+    Undo and Redo, `.secondary` at 50% while there is nothing to undo or
+    redo. Choosing the tool in hand again opens its options in a sheet 300
+    pt high (or medium): the marker's width, Thin, Medium or Thick (2%,
+    3.5% or 6% of the picture's width), or the eraser's size, Small, Medium
+    or Large (1.5%, 3% or 6%), as a segmented picker, then Clear Hidden by
+    Hand and Reset to Suggestions over "Each can be undone." A selection
+    haptic marks each change of tool; a light impact marks a shape drawn,
+    a word hidden or a cover erased; a medium one a place held down.
+  - **Select.** A tap on a place selects it, again lets go; a tap on a word
+    no place covers hides it by hand and selects it; elsewhere lets go.
+    The place selected shows a dashed accent outline (turned with a box)
+    and a handle at each corner, a white 12 pt circle with a 2 pt accent
+    edge; a box also has a turn handle 28 pt beyond the middle of its top
+    edge on a 1.5 pt stem. Handles keep their size on screen at any zoom,
+    and a finger takes one within 22 pt. Dragging the place moves it, a
+    corner resizes it from the one across (a turned box grows about its
+    middle), the turn handle turns it; one finger elsewhere moves the
+    picture. Over the tools floats a pill (`floatingPill`): Cover or
+    Uncover, the width (`lineweight`) for a stroke, Delete (`trash`) for
+    what is by hand, and Done in semibold. Holding a place down selects it
+    and asks, in a confirmation dialog titled with its kind: Cover or
+    Uncover, Delete for what is by hand, Cancel.
+  - **Drawing.** With the marker, a box, the lasso or the eraser, one
+    finger draws and two move and zoom the picture; a tap with the marker
+    leaves a dot, with the eraser rubs out what is under it. A drawing too
+    small to see is dropped; the start of a two-finger zoom is no stroke.
+    The status pill says how to use the tool in hand.
+  - Places are kept from 0 to 1 from the bottom left of the original
+    picture, so zooming never moves them; widths and turns are measured on
+    the picture, so a stroke stays round and a turned box square.
 - **Status.** At the top, 8 pt down, a floating pill (`floatingPill`):
   footnote on a capsule of regular material, padded 12 by 8, with the
   floating shadow, 16 pt in from each side: a small spinner and the step
@@ -1864,18 +1905,27 @@ of its own.
   Try Again. Gone once the copy is ready; while adding, it says how to
   draw. It comes and goes on a spring (0.35, 0.86), a 0.15 s ease-out with
   Reduce Motion.
-- **The bar.** On the bar material, 16 pt in, 12 pt between its rows: a
-  headline in subheadline semibold ("%d places covered", Nothing private
-  found, or, before the first pass, Finding private details… in
-  `.secondary`) with Details on the trailing edge; a row that scrolls
-  sideways of chips (`KindChip`), 6 pt apart: a kind and its count in
-  semibold monospaced digits, footnote, on a capsule of `.primary` at 6%,
-  padded 10 by 6; the chip of what is to check first, in the accent on the
-  accent at 12%, opening Details. Then Copy, Share and Save, large bordered
-  buttons of equal width 8 pt apart, title and icon, one line scaled to 80%
-  at most; Send to Mac under them with syncing on. All of them wait dimmed
-  until the copy is made, checked and every cover known to have landed
-  (`Finder.coversHold`). Share gives a PNG file of the copy alone.
+- **The bar.** On the bar material, under the tools and a divider, 16 pt
+  in, 12 pt between its rows: how the picture stands, in subheadline
+  semibold, with Details on the trailing edge: Finding private details… in
+  `.secondary`; Nothing private found; "Not fully protected: %d places to
+  check are not covered" after `exclamationmark.triangle.fill` in orange
+  while a place to check is uncovered; "Covered. Check the marked places
+  before sharing."; or Everything found is covered with `checkmark.shield`.
+  Under it three chips (`KindChip`), 6 pt apart, side by side or one under
+  another where they do not fit: Protected, To check (in the accent on the
+  accent at 12% while any, opening Details) and Not protected, each place
+  counted once, a place only offered never as protected. Then Copy, Share
+  and Save, large bordered buttons with title and icon, side by side in
+  equal widths 8 pt apart while their words fit on one line, else one under
+  another full width, never cut short; Send to Mac under them with syncing
+  on. All of them wait dimmed until the copy is made, checked and every
+  cover known to have landed (`Finder.coversHold`), and while places are
+  still to check, each asks first in a confirmation dialog ("%d places
+  still to check"): Check Now opens Details, Continue Anyway goes on,
+  Cancel. Share opens the system's share sheet with a PNG file of the copy
+  alone, named by when the picture was taken, deleted once the sheet
+  closes.
 - **Details** is a sheet at medium or large height: To check first, with a
   footer that Snapfly is not sure about these, then Covered and Not
   covered, each place a toggle with its kind, or Hidden by hand or Your own
@@ -1897,13 +1947,15 @@ of its own.
   the first screenshots show, again from Settings › Help & Introduction.
 - Settings opens with Check All, Recommended and Uncheck All as small
   bordered buttons sharing a row, under "Hide private details", then the
-  six groups, with a row "Whose names" under Names that shows the choice
-  and opens a page: Everyone's, then the five roles, as toggles, over a
-  footer that an unclear name is covered and marked to check. Then "Cover
+  six groups. People opens with Names, Patient names and Other people,
+  each with its subtitle in footnote `.secondary`, the two dimmed and on
+  while Names is on, over the Mac's footer. Then "Cover
   look", the Mac's tiles three to a row with Keep the last four digits and
   Strongest protection under them; then "Reading and checking": Find more
   with Apple Intelligence and, once a screenshot was covered, how long the
-  last one took; then Sync; then "Advanced", two rows that open pages:
+  last one took, then Picture shown and Ready to share, each "Median %@ ·
+  95% under %@" over the last fifty, then a row Faster picture processing,
+  On or Off, opening its page (below); then Sync; then "Advanced", two rows that open pages:
   Also hide (`text.badge.plus`) and Double tap the back of your iPhone
   (`hand.tap`); then Help & Introduction. Also hide is a row per rule of
   the owner's own, its
@@ -1911,6 +1963,29 @@ of its own.
   and Add Rule. A pattern that cannot be read says so under its field with
   `exclamationmark.triangle.fill` in orange. Rules are kept as they change,
   and the Mac's and the iPhone's are the same kind of rule.
+
+- **Faster picture processing** (`PreparingView.swift`), in Settings ›
+  Reading and checking:
+  - Off, its page says what it does and that nothing leaves the iPhone,
+    with Turn On…, which opens the consent sheet: an inline title "Enable
+    faster picture processing", Not Now and Turn On in the bar; under them
+    `bolt.badge.clock` at 36 pt semibold in the accent over the sentence of
+    what it does, then four lines, each an SF Symbol in `.secondary` before
+    subheadline words (`iphone`, `lock`, `battery.100.bolt`, `icloud.slash`);
+    then "What may be prepared", an inline picker: Screenshots only, All
+    allowed photos, Only selected photos, over a footer that allowing
+    Photos is not a yes to this.
+  - On, the page shows Status (Preparing…, Up to date, Paused, or what it
+    waits for), a progress bar of the real share done while there are
+    photos, Prepared ("%d of %d"), Still to prepare, Only in iCloud with its
+    subtitle when any, Could not be read when any, Last update (relative)
+    and Room on this iPhone, over a footer of when it works and waits. Then
+    Pause or Resume, Prepare Now, and Delete Local Index and Turn Off in
+    red, the first asking in a confirmation dialog, over a footer that
+    turning it off deletes everything prepared. Then "What is prepared":
+    the photos as a picker, the period ("Last 60 days", or "The photos you
+    chose"), Choose Photos… with Only selected photos, and Change Allowed
+    Photos… under limited access, with a footer saying so.
 
 - Syncing with the Mac (`PhoneSync.swift`), once Sync is on:
   - From your Mac sits above the grid: the headline, then a row that

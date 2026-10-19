@@ -438,20 +438,6 @@ final class Preferences: ObservableObject {
         }
     }
 
-    /// Whose names are covered: everyone's, or only some people's, like
-    /// the patient's and not the doctor's. The photos hanging are drawn again.
-    var nameScope: NameScope {
-        get { NameScope.current }
-        set {
-            guard newValue != NameScope.current else { return }
-            change {
-                NameScope.current = newValue
-                line.readPrivateDetails()
-                selfTest = nil
-            }
-        }
-    }
-
     /// Whole lines covered, with more room: the photos hanging are drawn
     /// again.
     var strongest: Bool {
@@ -1690,13 +1676,22 @@ private struct PrivacyPane: View {
                     .foregroundStyle(.secondary)
             }
             ForEach(PrivateDetail.Group.allCases, id: \.self) { group in
-                Section(group.title) {
+                Section {
                     ForEach(group.kinds, id: \.self) { detail in
-                        Toggle(detail.title, isOn: prefs.hides(detail))
-                        if detail == .names {
-                            whoseNames
-                                .disabled(!prefs.hides(.names).wrappedValue)
+                        // Names covers everyone's, patients' and other people's too.
+                        let included = PrivateDetail.people.contains(detail) && prefs.hides(.names).wrappedValue
+                        Toggle(isOn: included ? .constant(true) : prefs.hides(detail)) {
+                            Text(detail.title)
+                            if let subtitle = detail.subtitle { Text(subtitle) }
                         }
+                        .disabled(included)
+                    }
+                } header: {
+                    Text(group.title)
+                } footer: {
+                    if group == .people {
+                        Text(L("Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check."))
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
@@ -1844,26 +1839,6 @@ private struct PrivacyPane: View {
         }
     }
 
-    /// Whose names Names covers: everyone's, or only some people's, read
-    /// from what stands round each name, like "Patient:" or "Dr. med.".
-    private var whoseNames: some View {
-        LabeledContent {
-            Menu(prefs.nameScope.summary) {
-                Toggle(L("Everyone's"), isOn: Binding(get: { prefs.nameScope.roles == nil },
-                                                      set: { if $0 { prefs.nameScope = .everyone } }))
-                Divider()
-                ForEach(PersonRole.allCases, id: \.self) { role in
-                    Toggle(role.title, isOn: Binding(get: { prefs.nameScope.roles?.contains(role) == true },
-                                                     set: { _ in prefs.nameScope = prefs.nameScope.toggling(role) }))
-                }
-            }
-            .menuStyle(.button)
-            .fixedSize()
-        } label: {
-            Text(L("Whose names"))
-            Text(L("A name whose role is not clear is covered anyway, and marked for you to check."))
-        }
-    }
 }
 
 /// Where receipts go for the books, and who keeps them.

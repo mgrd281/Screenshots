@@ -113,7 +113,7 @@ struct DetailsSheet: View {
 
     var body: some View {
         let marks = session.plan.marks.sorted { $0.rect.maxY > $1.rect.maxY }
-        let check = marks.filter { $0.check && !session.plan.isDecided($0.id) && ($0.covered || $0.origin == .possible) }
+        let check = marks.filter(session.plan.needsCheck)
         let rest = marks.filter { mark in !check.contains { $0.id == mark.id } }
         NavigationStack {
             List {

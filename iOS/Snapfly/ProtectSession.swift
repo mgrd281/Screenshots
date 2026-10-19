@@ -1,4 +1,3 @@
-import CoreTransferable
 import Photos
 import SwiftUI
 import UIKit
@@ -32,6 +31,8 @@ final class ProtectSession: ObservableObject {
     }
 
     let source: Source
+    /// A small picture shown while the whole one loads.
+    @Published private(set) var preview: UIImage?
     @Published private(set) var original: UIImage?
     /// The covered copy, as it leaves; nil while it is made again.
     @Published private(set) var copy: UIImage?
@@ -46,10 +47,11 @@ final class ProtectSession: ObservableObject {
     @Published private(set) var failure: String?
 
     private var image: CGImage?
+    /// Every word read and where it is, so a tap hides one; in memory only.
+    private var words: [(text: String, box: CGRect)] = []
     private let chosen = Choice.details
     private let rules = OwnRules.all
     private let style = CoverStyle.current
-    private let scope = NameScope.current
     /// Each copy asked for; one made for older places is dropped.
     private var generation = 0
     private var running: Task<Void, Never>?
@@ -102,30 +104,51 @@ final class ProtectSession: ObservableObject {
 
     private func run() async {
         let started = Timing.start()
+        // A small picture first, so the screen is never empty for long.
+        let quick = Task {
+            if case .asset(let id) = source, let asset = Library.asset(id) {
+                let small = await Library.thumbnail(of: asset, width: 900)
+                if original == nil, let small {
+                    preview = small
+                    Timing.record(.shown, Timing.milliseconds(since: started))
+                }
+            }
+        }
         guard let image = await Self.load(source) else {
             failure = L("The picture could not be read.")
             return
         }
         self.image = image
         original = UIImage(cgImage: image)
-        let chosen = chosen, rules = rules, scope = scope
+        if preview == nil { Timing.record(.shown, Timing.milliseconds(since: started)) }
+        quick.cancel()
+        log.info("Picture shown after \(Timing.milliseconds(since: started), privacy: .public) ms")
+        // A photo prepared ahead of time is not read again.
+        if case .asset(let id) = source, await PhotoIndexer.reuse(for: id, image: image) {
+            log.info("Prepared reading reused")
+        }
+        plan.aspect = CGFloat(image.width) / CGFloat(max(1, image.height))
+        let chosen = chosen, rules = rules
         // What the patterns, the labels and the names find, without waiting
         // for Apple Intelligence.
         let first = await Self.background {
-            Finder.analysis(in: image, chosen, rules: rules, intelligence: false, scope: scope)
+            Finder.analysis(in: image, chosen, rules: rules, intelligence: false)
         }
         guard !Task.isCancelled else { return }
         plan.add(found: first.areas, possible: first.possible)
         found = true
+        // Read already: the words are there at once.
+        words = await Self.background { Finder.words(in: image) }
         log.info("First places shown after \(Timing.milliseconds(since: started), privacy: .public) ms")
         intelligencePending = asksIntelligence
         await make()
+        if png != nil { Timing.record(.ready, Timing.milliseconds(since: started)) }
         guard intelligencePending, failure == nil else {
             Timing.report(since: started)
             return
         }
         let more = await Self.background {
-            Finder.analysis(in: image, chosen, rules: rules, intelligence: true, scope: scope)
+            Finder.analysis(in: image, chosen, rules: rules, intelligence: true)
         }
         // Not waited for after all: what it found is left out.
         guard !Task.isCancelled, intelligencePending else { return }
@@ -150,10 +173,73 @@ final class ProtectSession: ObservableObject {
         changed()
     }
 
-    func cover(_ rect: CGRect) {
-        let count = plan.marks.count
-        plan.cover(rect)
-        if plan.marks.count != count { changed() }
+    /// Hides what is under a shape drawn by hand; its id, if it was big enough.
+    @discardableResult
+    func draw(_ shape: HandShape) -> Int? {
+        let id = plan.draw(shape)
+        if id != nil { changed() }
+        return id
+    }
+
+    /// The word under a finger, hidden by hand with the words it hides, so
+    /// the copy is checked for them; its id. Nil where no word is.
+    func hideWord(at point: CGPoint) -> Int? {
+        guard let word = words.filter({ $0.box.insetBy(dx: -0.004, dy: -0.004).contains(point) })
+            .min(by: { $0.box.width < $1.box.width }) else { return nil }
+        // A little room round the letters, as found places have.
+        let box = word.box.insetBy(dx: -word.box.height * 0.15, dy: -word.box.height * 0.2)
+        let id = plan.cover(box, text: word.text)
+        if id != nil { changed() }
+        return id
+    }
+
+    func move(_ ids: Set<Int>, by offset: CGPoint) {
+        let before = plan
+        plan.move(ids, by: offset)
+        if plan != before { changed() }
+    }
+
+    func resize(_ id: Int, to rect: CGRect) {
+        let before = plan
+        plan.resize(id, to: rect)
+        if plan != before { changed() }
+    }
+
+    func turn(_ id: Int, by angle: CGFloat) {
+        let before = plan
+        plan.turn(id, by: angle)
+        if plan != before { changed() }
+    }
+
+    func widen(_ ids: Set<Int>, to width: CGFloat) {
+        let before = plan
+        plan.widen(ids, to: width)
+        if plan != before { changed() }
+    }
+
+    /// Takes away what is by hand, and uncovers what was found, in one change.
+    func remove(_ ids: Set<Int>) {
+        guard !ids.isEmpty else { return }
+        let before = plan
+        plan.remove(ids)
+        if plan != before { changed() }
+    }
+
+    /// What an eraser drawn through these points touches, taken away.
+    func erase(along points: [CGPoint], reach: CGFloat) {
+        remove(plan.erased(along: points, reach: reach))
+    }
+
+    func clearHand() {
+        let before = plan
+        plan.clearHand()
+        if plan != before { changed() }
+    }
+
+    func resetToFound() {
+        let before = plan
+        plan.resetToFound()
+        if plan != before { changed() }
     }
 
     func undo() {
@@ -193,11 +279,11 @@ final class ProtectSession: ObservableObject {
         let mine = generation
         making = true
         let areas = plan.covered, left = plan.left
-        let chosen = chosen, rules = rules, style = style, scope = scope
+        let chosen = chosen, rules = rules, style = style
         let made = await Self.background { () -> (image: CGImage, added: [Finder.Area], holds: Bool)? in
-            guard let done = Finder.finish(image, covering: areas, leaving: left, chosen, rules: rules, style: style,
-                                           scope: scope) else { return nil }
-            let places = (areas + done.added).map(\.rect)
+            guard let done = Finder.finish(image, covering: areas, leaving: left, chosen, rules: rules, style: style)
+            else { return nil }
+            let places = Finder.checked(areas + done.added, aspect: CGFloat(image.width) / CGFloat(max(1, image.height)))
             if Finder.coversHold(original: image, covered: done.image, areas: places) {
                 return (done.image, done.added, true)
             }
@@ -229,10 +315,6 @@ final class ProtectSession: ObservableObject {
         PhoneGuide.shared.happened(.used)
     }
 
-    /// The copy, to share as a PNG file of its own, with nothing of the
-    /// original's notes in it.
-    var shared: CoveredPicture? { png.map(CoveredPicture.init(png:)) }
-
     // MARK: Helpers
 
     private static func load(_ source: Source) async -> CGImage? {
@@ -251,15 +333,6 @@ final class ProtectSession: ObservableObject {
         await withCheckedContinuation { done in
             DispatchQueue.global(qos: .userInitiated).async { done.resume(returning: work()) }
         }
-    }
-}
-
-/// A covered copy, shared as a PNG file.
-struct CoveredPicture: Transferable {
-    let png: Data
-
-    static var transferRepresentation: some TransferRepresentation {
-        DataRepresentation(exportedContentType: .png) { $0.png }
     }
 }
 

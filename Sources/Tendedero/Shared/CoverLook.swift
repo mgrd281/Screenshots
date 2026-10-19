@@ -53,7 +53,7 @@ extension PrivateDetail {
     /// The word a labelled cover shows: short, so it fits a line of text.
     var label: String {
         switch self {
-        case .names: L("Name")
+        case .names, .patientNames, .otherPeople: L("Name")
         case .addresses: L("Address")
         case .emails: L("Email")
         case .phones: L("Phone")
@@ -108,7 +108,7 @@ extension Finder {
 
     /// What decides how covers are found and drawn, for telling copies apart.
     static var lookKey: String {
-        "\(CoverStyle.current.rawValue),\(keepsLastDigits),\(strongest),\(usesIntelligence),\(asksAssistant),\(NameScope.current.key)"
+        "\(CoverStyle.current.rawValue),\(keepsLastDigits),\(strongest),\(usesIntelligence),\(asksAssistant)"
     }
 
     /// The picture with the given places covered in the chosen look. Each
@@ -124,8 +124,9 @@ extension Finder {
         else { return nil }
         let bounds = CGRect(x: 0, y: 0, width: width, height: height)
         context.draw(image, in: bounds)
-        // In whole pixels, so none is left half covered.
-        let places = merged(areas.map { area in
+        // In whole pixels, so none is left half covered. Shapes drawn by
+        // hand are inked as drawn, last, over the rest.
+        let places = merged(areas.filter { $0.shape == nil }.map { area in
             Place(rect: CGRect(x: area.rect.minX * CGFloat(width), y: area.rect.minY * CGFloat(height),
                                width: area.rect.width * CGFloat(width), height: area.rect.height * CGFloat(height))
                     .integral.intersection(bounds),
@@ -173,7 +174,39 @@ extension Finder {
                 drawInk(rect, in: context)
             }
         }
+        for shape in areas.compactMap(\.shape) {
+            drawShape(shape, in: context, size: bounds.size)
+        }
         return context.makeImage()
+    }
+
+    /// A shape drawn by hand, in solid ink, never see-through: a stroke of
+    /// the marker with round ends, a turned box, or an outline filled
+    /// inside, a part crossed twice too.
+    private static func drawShape(_ shape: HandShape, in context: CGContext, size: CGSize) {
+        let aspect = size.height > 0 ? size.width / size.height : 1
+        let points = shape.corners(aspect: aspect).map { CGPoint(x: $0.x * size.width, y: $0.y * size.height) }
+        guard let first = points.first else { return }
+        context.saveGState()
+        context.setFillColor(CGColor(gray: 0.12, alpha: 1))
+        context.setStrokeColor(CGColor(gray: 0.12, alpha: 1))
+        if case .stroke(_, let width) = shape {
+            let line = width * size.width
+            if points.count == 1 {
+                context.fillEllipse(in: CGRect(x: first.x - line / 2, y: first.y - line / 2, width: line, height: line))
+            } else {
+                context.setLineWidth(line)
+                context.setLineCap(.round)
+                context.setLineJoin(.round)
+                context.addLines(between: points)
+                context.strokePath()
+            }
+        } else {
+            context.addLines(between: points)
+            context.closePath()
+            context.fillPath(using: .winding)
+        }
+        context.restoreGState()
     }
 
     // MARK: Places

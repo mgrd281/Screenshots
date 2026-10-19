@@ -91,8 +91,23 @@ final class ProtectionTests: XCTestCase {
         XCTAssertFalse(Finder.usesIntelligence)
         // The AI assistant reads along only with a key and when turned on.
         XCTAssertFalse(Finder.asksAssistant)
-        // Whose names are covered tells copies apart too: everyone's at first.
-        XCTAssertTrue(Finder.lookKey.hasSuffix(",true,false,false,all"), Finder.lookKey)
+        // Each tells covered copies apart.
+        XCTAssertTrue(Finder.lookKey.hasSuffix(",true,false,false"), Finder.lookKey)
+    }
+
+    func testTheTimesKeptGiveTheMiddleAndTheSlowest() throws {
+        XCTAssertNil(Timing.percentile([], 0.5))
+        let times = Array(1...20).map { $0 * 100 }
+        XCTAssertEqual(Timing.percentile(times, 0.5), 1000)
+        XCTAssertEqual(Timing.percentile(times, 0.95), 1900)
+        XCTAssertEqual(Timing.percentile([700], 0.95), 700)
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "TimingTests"))
+        defaults.removePersistentDomain(forName: "TimingTests")
+        for time in 1...60 { Timing.record(.ready, time, in: defaults) }
+        XCTAssertEqual(Timing.recent(.ready, in: defaults).count, Timing.remembered, "the newest only")
+        XCTAssertEqual(Timing.recent(.ready, in: defaults).first, 11)
+        XCTAssertTrue(Timing.recent(.shown, in: defaults).isEmpty)
+        defaults.removePersistentDomain(forName: "TimingTests")
     }
 
     // MARK: Helpers

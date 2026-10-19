@@ -104,10 +104,20 @@ or turn on syncing with your iPhone (below).
 - **What is read stays in memory, briefly.** To cover a screenshot again
   without reading it again, Snapfly keeps the text it read in the last few
   pictures in memory, never on disk, and forgets it when the iPhone app goes
-  to the background. The iPhone app notes which screenshots you protected
+  to the background, unless you turn on Faster picture processing (below). The iPhone app notes which screenshots you protected
   lately by their place in Photos alone, to show them again; nothing of what
   they show. How long each step of covering took is written to the device's
   log as numbers only, never a word of what was read.
+- **Faster picture processing on the iPhone, only if you turn it on.** It is
+  off until you turn it on in Settings, after a page that says what it does;
+  allowing Snapfly to see your photos is not a yes to it. Then the iPhone
+  reads your pictures from the last 60 days ahead of time: the screenshots
+  only, every photo Snapfly may see, or only the photos you pick. The words
+  read, where they are, and which kinds of details they hold are kept on the
+  iPhone alone, in Snapfly's own folder, locked while the iPhone is and left
+  out of backups. Nothing of it is sent anywhere, and photos only in iCloud
+  are not downloaded for it. Pause stops it, Delete Local Index deletes
+  everything prepared, and turning it off deletes it too.
 - **Sound in recordings, only if you choose it.** Under Settings › General you
   may have screen recordings take the Mac's sound, your microphone, or both.
   macOS asks you before the microphone is used the first time. The sound is in
