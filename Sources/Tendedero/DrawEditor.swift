@@ -1,11 +1,11 @@
 import AppKit
 import SwiftUI
 
-/// Draw on Photo: the photo large, to draw arrows, boxes, highlights,
-/// numbered steps and words on it and to choose the part to keep, in a
-/// window laid out like Hide Part's. What Hide private details covers shows
-/// too, so what you see is what goes. The drawing is kept with the photo, and
-/// the file itself is never changed.
+/// Draw on Photo: the photo large, to draw arrows, boxes, circles,
+/// highlights, numbered steps and words on it and to choose the part to
+/// keep, in a window laid out like Hide Part's. What Hide private details
+/// covers shows too, so what you see is what goes. The drawing is kept with
+/// the photo, and the file itself is never changed.
 @MainActor
 final class DrawEditor: NSObject, NSWindowDelegate {
     static let shared = DrawEditor()
@@ -105,7 +105,7 @@ final class DrawEditor: NSObject, NSWindowDelegate {
 
 /// What can be done on the picture, one at a time, each with its key.
 enum DrawTool: String, CaseIterable, Identifiable {
-    case select, arrow, box, highlight, step, text, crop
+    case select, arrow, box, circle, highlight, step, text, crop
 
     var id: String { rawValue }
 
@@ -114,6 +114,7 @@ enum DrawTool: String, CaseIterable, Identifiable {
         switch self {
         case .arrow: .arrow
         case .box: .box
+        case .circle: .circle
         case .highlight: .highlight
         case .step: .step
         case .text: .text
@@ -126,6 +127,7 @@ enum DrawTool: String, CaseIterable, Identifiable {
         case .select: "cursorarrow"
         case .arrow: "arrow.up.right"
         case .box: "rectangle"
+        case .circle: "circle"
         case .highlight: "highlighter"
         case .step: "1.circle"
         case .text: "textformat"
@@ -138,6 +140,7 @@ enum DrawTool: String, CaseIterable, Identifiable {
         case .select: L("Select")
         case .arrow: L("Arrow")
         case .box: L("Box")
+        case .circle: L("Circle")
         case .highlight: L("Highlight")
         case .step: L("Numbered Steps")
         case .text: L("Text")
@@ -151,6 +154,7 @@ enum DrawTool: String, CaseIterable, Identifiable {
         case .select: "v"
         case .arrow: "a"
         case .box: "r"
+        case .circle: "o"
         case .highlight: "h"
         case .step: "n"
         case .text: "t"
@@ -164,6 +168,7 @@ enum DrawTool: String, CaseIterable, Identifiable {
         case .select: L("Click a drawing to choose it, then drag it or its handles.")
         case .arrow: L("Drag from where the arrow starts to what it points at.")
         case .box: L("Drag to draw a box around something.")
+        case .circle: L("Drag to draw a circle around something.")
         case .highlight: L("Drag over words to highlight them.")
         case .step: L("Click each place in turn. The numbers follow the order.")
         case .text: L("Click where the words go, then type them.")
@@ -186,10 +191,12 @@ final class DrawModel: ObservableObject {
     @Published var covered: NSImage?
 
     @Published var drawing: Drawing
-    @Published var tool: DrawTool = .arrow {
+    @Published var tool: DrawTool {
         didSet {
             // The crop's corners take the place of a mark's handles.
             if tool == .crop { choose(nil) }
+            // A tool that draws is kept for the next time, as the ink is.
+            if tool.kind != nil { UserDefaults.standard.set(tool.rawValue, forKey: Self.toolKey) }
         }
     }
     @Published private(set) var selected: UUID?
@@ -205,6 +212,7 @@ final class DrawModel: ObservableObject {
     /// The drawing as it was when a change began, kept for Undo once it ends.
     private var before: Drawing?
 
+    private static let toolKey = "drawTool"
     private static let inkKey = "drawInk"
     private static let highlightInkKey = "drawHighlightInk"
     private static let sizeKey = "drawSize"
@@ -215,6 +223,8 @@ final class DrawModel: ObservableObject {
         self.drawing = drawing
         self.hand = hand
         let defaults = UserDefaults.standard
+        tool = defaults.string(forKey: Self.toolKey).flatMap(DrawTool.init(rawValue:)).flatMap { $0.kind == nil ? nil : $0 }
+            ?? .arrow
         ink = defaults.string(forKey: Self.inkKey).flatMap(Drawing.Ink.init(rawValue:)) ?? .red
         highlightInk = defaults.string(forKey: Self.highlightInkKey).flatMap(Drawing.Ink.init(rawValue:)) ?? .yellow
         size = defaults.string(forKey: Self.sizeKey).flatMap(Drawing.Size.init(rawValue:)) ?? .medium
@@ -408,7 +418,7 @@ private struct DrawEditorView: View {
     private enum Action {
         /// Pressed and not moved yet: a click unless it moves, on a mark or not.
         case pressing(UUID?)
-        /// A new arrow, box or highlight.
+        /// A new arrow, box, circle or highlight.
         case drawing(UUID)
         case moving(Drawing.Mark, from: CGPoint)
         case reshaping(Drawing.Mark, handle: Int)
@@ -523,7 +533,7 @@ private struct DrawEditorView: View {
             guard hypot(value.translation.width, value.translation.height) >= 3 else { return }
             let start = normalized(value.startLocation, in: size)
             switch model.tool {
-            case .arrow, .box, .highlight:
+            case .arrow, .box, .circle, .highlight:
                 guard var mark = model.newMark(at: start) else { return }
                 mark.to = point
                 model.choose(nil)
@@ -699,7 +709,7 @@ private struct DrawEditorView: View {
             Image(systemName: tool.symbol)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(chosen ? Color.accentColor : Color.primary)
-                .frame(width: 34, height: 28)
+                .frame(width: 30, height: 28)
                 .background(RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .fill(chosen ? Color.accentColor.opacity(0.16) : Color.clear))
                 .contentShape(Rectangle())
@@ -780,6 +790,7 @@ private struct DrawEditorView: View {
         switch mark.kind {
         case .arrow: L("Arrow")
         case .box: L("Box")
+        case .circle: L("Circle")
         case .highlight: L("Highlight")
         case .step: String(format: L("Step %d"), model.drawing.number(of: mark) ?? 1)
         case .text: L("Text")

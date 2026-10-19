@@ -25,8 +25,9 @@ enum Plan {
         case shopHeader
         /// Covered copies of what lands in a folder, saved in another.
         case folderCover
-        /// Arrows, boxes, highlights, numbered steps, words and a crop drawn
-        /// on a photo, on what leaves the line, and Crop on its own.
+        /// Arrows, boxes, circles, highlights, numbered steps, words and a
+        /// crop drawn on a photo, on what leaves the line, and Crop on its
+        /// own.
         case markup
         /// Step-by-step guides recorded from clicks, sent as a PDF or a
         /// picture.

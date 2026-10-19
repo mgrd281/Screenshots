@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Draw on Photo draws circles: drag round a line, a price or a button and a
+  red ring goes round it, as a pen draws one. The O key picks it, and the
+  last tool you drew with is ready the next time.
 - The iPhone opens on a new home screen: Snapfly's picture of stacked photos
   with a green photo badge, a compact green Protect a Photo button, and the
   newest screenshots in cards that show when each was taken and whether it

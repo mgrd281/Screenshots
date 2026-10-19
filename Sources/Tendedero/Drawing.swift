@@ -1,11 +1,12 @@
 import AppKit
 import CoreText
 
-/// Draw on Photo: arrows, boxes, highlights, numbered steps and words drawn
-/// over a photo, and the part of it to keep. They are kept with the photo,
-/// like the parts hidden by hand, and drawn on the copy that leaves the line;
-/// the file itself stays as it is. A drawing explains a picture and never
-/// hides anything in it, so nothing drawn counts as covered.
+/// Draw on Photo: arrows, boxes, circles, highlights, numbered steps and
+/// words drawn over a photo, and the part of it to keep. They are kept with
+/// the photo, like the parts hidden by hand, and drawn on the copy that
+/// leaves the line; the file itself stays as it is. A drawing explains a
+/// picture and never hides anything in it, so nothing drawn counts as
+/// covered.
 struct Drawing: Codable, Equatable, Sendable {
     /// In the order they were drawn.
     var marks: [Mark] = []
@@ -20,23 +21,24 @@ struct Drawing: Codable, Equatable, Sendable {
 
     struct Mark: Codable, Equatable, Identifiable, Sendable {
         enum Kind: String, Codable, CaseIterable, Sendable {
-            case arrow, box, highlight, step, text
+            case arrow, box, circle, highlight, step, text
         }
 
         var id = UUID()
         var kind: Kind
         /// From 0 to 1 from the bottom left: where an arrow starts, the
-        /// corner a box was drawn from, or the middle of a step or of words.
+        /// corner a box or a circle was drawn from, or the middle of a step
+        /// or of words.
         var from: CGPoint
-        /// Where an arrow points and a box's other corner; the same as
-        /// `from` for a step or words.
+        /// Where an arrow points and a box's or a circle's other corner;
+        /// the same as `from` for a step or words.
         var to: CGPoint
         var ink: Ink
         var size: Size
         /// The words, for words.
         var text = ""
 
-        /// A box's or a highlight's area, from 0 to 1.
+        /// A box's, a circle's or a highlight's area, from 0 to 1.
         var rect: CGRect {
             CGRect(x: min(from.x, to.x), y: min(from.y, to.y), width: abs(to.x - from.x), height: abs(to.y - from.y))
         }
@@ -199,6 +201,7 @@ struct Drawing: Codable, Equatable, Sendable {
             switch mark.kind {
             case .arrow: drawArrow(mark, in: context, size: size, unit: unit)
             case .box: drawBox(mark, in: context, size: size, unit: unit)
+            case .circle: drawCircle(mark, in: context, size: size, unit: unit)
             case .step: drawStep(mark, number: numbers[mark.id] ?? 1, in: context, size: size, unit: unit)
             case .text: drawWords(mark, in: context, size: size, unit: unit, placeholder: placeholder)
             case .highlight: break
@@ -269,6 +272,57 @@ struct Drawing: Codable, Equatable, Sendable {
         context.setLineJoin(.round)
         context.addPath(CGPath(roundedRect: box, cornerWidth: radius, cornerHeight: radius, transform: nil))
         context.strokePath()
+    }
+
+    /// A ring round something, drawn as a pen draws one: from the top left
+    /// once round and a little past where it began, a pen's width further
+    /// out by then, thinner where the pen lands and lifts.
+    private static func drawCircle(_ mark: Mark, in context: CGContext, size: CGSize, unit: CGFloat) {
+        let box = rect(mark.rect, in: size)
+        guard box.width > 0 || box.height > 0 else { return }
+        let ring = circleStroke(in: box, width: lineWidth(mark, unit: unit))
+        context.setFillColor(mark.ink.color)
+        let outline = CGMutablePath()
+        outline.addLines(between: ring.left + Array(ring.right.reversed()))
+        outline.closeSubpath()
+        context.addPath(outline)
+        context.fillPath(using: .winding)
+        // Round where the pen landed and where it lifted.
+        for end in [ring.middle.first, ring.middle.last].compactMap({ $0 }) {
+            context.fillEllipse(in: CGRect(x: end.point.x - end.width / 2, y: end.point.y - end.width / 2,
+                                           width: end.width, height: end.width))
+        }
+    }
+
+    /// The circle's line, as the points down the middle of the pen's path
+    /// with the pen's width at each, and the two edges of the line.
+    static func circleStroke(in box: CGRect, width: CGFloat)
+        -> (middle: [(point: CGPoint, width: CGFloat)], left: [CGPoint], right: [CGPoint]) {
+        let count = 96
+        let start = CGFloat.pi * 0.72, sweep = CGFloat.pi * 2 + 0.36
+        let a = box.width / 2, b = box.height / 2
+        var middle: [(point: CGPoint, width: CGFloat)] = []
+        for i in 0...count {
+            let t = CGFloat(i) / CGFloat(count)
+            // Round the way a clock's hands go, from a little inside the oval
+            // to a little outside it, so the ends pass each other.
+            let angle = start - sweep * t
+            let nx = b * cos(angle), ny = a * sin(angle)
+            let out = width * (-0.9 + 1.8 * t) / max(hypot(nx, ny), 0.0001)
+            let point = CGPoint(x: box.midX + a * cos(angle) + nx * out, y: box.midY + b * sin(angle) + ny * out)
+            let fromEnd = min(t, 1 - t)
+            middle.append((point: point, width: width * min(1, 0.35 + 0.65 * fromEnd / 0.14)))
+        }
+        var left: [CGPoint] = [], right: [CGPoint] = []
+        for i in 0...count {
+            let before = middle[max(0, i - 1)].point, after = middle[min(count, i + 1)].point
+            let length = max(hypot(after.x - before.x, after.y - before.y), 0.0001)
+            let half = middle[i].width / 2
+            let nx = -(after.y - before.y) / length * half, ny = (after.x - before.x) / length * half
+            left.append(CGPoint(x: middle[i].point.x + nx, y: middle[i].point.y + ny))
+            right.append(CGPoint(x: middle[i].point.x - nx, y: middle[i].point.y - ny))
+        }
+        return (middle: middle, left: left, right: right)
     }
 
     /// A highlighter's stroke: the ink multiplied in, so the words under it
@@ -383,7 +437,7 @@ struct Drawing: Codable, Equatable, Sendable {
             let room = lineWidth(mark, unit: unit) * 2.5
             return CGRect(x: min(a.x, b.x), y: min(a.y, b.y), width: abs(b.x - a.x), height: abs(b.y - a.y))
                 .insetBy(dx: -room, dy: -room)
-        case .box, .highlight:
+        case .box, .circle, .highlight:
             return rect(mark.rect, in: size)
         case .step:
             return stepCircle(mark, size: size, unit: unit)
@@ -394,7 +448,7 @@ struct Drawing: Codable, Equatable, Sendable {
     }
 
     /// Whether a point, in the same space, falls on a mark: on an arrow's
-    /// line or a box's edge, or anywhere on the rest.
+    /// line or a box's or a circle's edge, or anywhere on the rest.
     static func hits(_ mark: Mark, at p: CGPoint, size: CGSize, unit: CGFloat, slack: CGFloat,
                      placeholder: String? = nil) -> Bool {
         let width = lineWidth(mark, unit: unit)
@@ -406,6 +460,16 @@ struct Drawing: Codable, Equatable, Sendable {
             let outer = box.insetBy(dx: -(width / 2 + slack), dy: -(width / 2 + slack))
             let inner = box.insetBy(dx: width / 2 + slack, dy: width / 2 + slack)
             return outer.contains(p) && (inner.isNull || !inner.contains(p))
+        case .circle:
+            let box = rect(mark.rect, in: size)
+            let a = box.width / 2, b = box.height / 2
+            guard a > 1, b > 1 else { return box.insetBy(dx: -(width + slack), dy: -(width + slack)).contains(p) }
+            let dx = p.x - box.midX, dy = p.y - box.midY
+            let across = hypot(dx, dy), scale = hypot(dx / a, dy / b)
+            // How far from the oval, along the line from its middle; the
+            // pen's path strays about its width either side of it.
+            let off = scale > 0 ? across * abs(1 - 1 / scale) : min(a, b)
+            return off <= width * 1.5 + slack
         case .highlight, .text:
             return frame(of: mark, size: size, unit: unit, placeholder: placeholder).insetBy(dx: -slack, dy: -slack).contains(p)
         case .step:
@@ -440,11 +504,12 @@ struct Drawing: Codable, Equatable, Sendable {
     }
 
     /// The handles a chosen mark is reshaped by, from 0 to 1: an arrow's
-    /// two ends, a box's four corners; none for a step or words.
+    /// two ends, a box's or a circle's four corners; none for a step or
+    /// words.
     static func handles(of mark: Mark) -> [CGPoint] {
         switch mark.kind {
         case .arrow: return [mark.from, mark.to]
-        case .box, .highlight: return corners(of: mark.rect)
+        case .box, .circle, .highlight: return corners(of: mark.rect)
         case .step, .text: return []
         }
     }
@@ -461,7 +526,7 @@ struct Drawing: Codable, Equatable, Sendable {
         switch mark.kind {
         case .arrow:
             if handle == 0 { reshaped.from = kept } else { reshaped.to = kept }
-        case .box, .highlight:
+        case .box, .circle, .highlight:
             reshaped.from = Self.corners(of: mark.rect)[(handle + 2) % 4]
             reshaped.to = kept
         case .step, .text:

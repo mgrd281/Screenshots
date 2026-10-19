@@ -66,6 +66,7 @@
 "Draw on Photo…" = "Draw on Photo…";
 "Select" = "Select";
 "Box" = "Box";
+"Circle" = "Circle";
 "Highlight" = "Highlight";
 "Numbered Steps" = "Numbered Steps";
 "Text" = "Text";
@@ -90,6 +91,7 @@
 "Click a drawing to choose it, then drag it or its handles." = "Click a drawing to choose it, then drag it or its handles.";
 "Drag from where the arrow starts to what it points at." = "Drag from where the arrow starts to what it points at.";
 "Drag to draw a box around something." = "Drag to draw a box around something.";
+"Drag to draw a circle around something." = "Drag to draw a circle around something.";
 "Drag over words to highlight them." = "Drag over words to highlight them.";
 "Click each place in turn. The numbers follow the order." = "Click each place in turn. The numbers follow the order.";
 "Click where the words go, then type them." = "Click where the words go, then type them.";

@@ -1,3 +1,4 @@
+import AppKit
 import CoreGraphics
 import Foundation
 import ImageIO
@@ -55,6 +56,23 @@ final class DrawingTests: XCTestCase {
         XCTAssertLessThan(middle.b, 80)
         // Away from it the picture is as it was.
         XCTAssertEqual(pixel(pixels, drawn, x: 400, row: 100).g, 255)
+    }
+
+    func testACircleIsDrawnRoundWhatItPointsAt() throws {
+        let picture = try image(width: 800, height: 600)
+        let drawing = Drawing(marks: [mark(.circle, CGPoint(x: 0.1, y: 0.1), CGPoint(x: 0.9, y: 0.9), size: .thick)])
+        let drawn = try XCTUnwrap(Drawing.render(picture, drawing))
+        let pixels = try rgba(drawn)
+        // On its line, at the bottom and on the right, in its ink.
+        for (x, row) in [(400, 540), (718, 300)] {
+            let line = pixel(pixels, drawn, x: x, row: row)
+            XCTAssertEqual(line.r, 255)
+            XCTAssertLessThan(line.g, 80)
+            XCTAssertLessThan(line.b, 80)
+        }
+        // What it is drawn round, and what lies outside it, are as they were.
+        XCTAssertEqual(pixel(pixels, drawn, x: 400, row: 300).g, 255)
+        XCTAssertEqual(pixel(pixels, drawn, x: 20, row: 20).g, 255)
     }
 
     func testAHighlightLeavesTheWordsUnderItAsDarkAsTheyWere() throws {
@@ -143,6 +161,48 @@ final class DrawingTests: XCTestCase {
         let drawing = Drawing(marks: [box, arrow])
         XCTAssertEqual(drawing.mark(at: CGPoint(x: 200, y: 200), size: size, unit: 1000, slack: 4)?.id, arrow.id)
         XCTAssertNil(drawing.mark(at: CGPoint(x: 950, y: 100), size: size, unit: 1000, slack: 4))
+    }
+
+    func testACircleIsFoundOnItsLineAndReshapedByItsCorners() throws {
+        let size = CGSize(width: 1000, height: 1000)
+        let circle = mark(.circle, CGPoint(x: 0.2, y: 0.2), CGPoint(x: 0.8, y: 0.8))
+        XCTAssertTrue(Drawing.hits(circle, at: CGPoint(x: 201, y: 500), size: size, unit: 1000, slack: 4))
+        XCTAssertTrue(Drawing.hits(circle, at: CGPoint(x: 500, y: 797), size: size, unit: 1000, slack: 4))
+        // Inside it stays free to draw on, and so do the box's corners outside it.
+        XCTAssertFalse(Drawing.hits(circle, at: CGPoint(x: 500, y: 500), size: size, unit: 1000, slack: 4))
+        XCTAssertFalse(Drawing.hits(circle, at: CGPoint(x: 210, y: 210), size: size, unit: 1000, slack: 4))
+        XCTAssertEqual(Drawing.handles(of: circle).count, 4)
+        let reshaped = Drawing.reshaped(circle, handle: 2, to: CGPoint(x: 0.9, y: 0.6))
+        XCTAssertEqual(reshaped.rect.minX, 0.2, accuracy: 0.0001)
+        XCTAssertEqual(reshaped.rect.width, 0.7, accuracy: 0.0001)
+        XCTAssertEqual(reshaped.rect.height, 0.4, accuracy: 0.0001)
+        // Kept with the photo under its own name.
+        let kept = try JSONDecoder().decode(Drawing.self, from: JSONEncoder().encode(Drawing(marks: [circle])))
+        XCTAssertEqual(kept.marks.first?.kind, .circle)
+    }
+
+    func testEveryToolHasAKeyOfItsOwn() {
+        let keys = DrawTool.allCases.map(\.key)
+        XCTAssertEqual(Set(keys).count, keys.count)
+        XCTAssertEqual(DrawTool.circle.kind, .circle)
+    }
+
+    @MainActor
+    func testTheLastToolThatDrawsIsKeptForTheNextTime() {
+        let key = "drawTool"
+        let before = UserDefaults.standard.object(forKey: key)
+        defer { UserDefaults.standard.set(before, forKey: key) }
+        UserDefaults.standard.removeObject(forKey: key)
+        let window = { DrawModel(image: NSImage(size: NSSize(width: 40, height: 30)), pixels: CGSize(width: 40, height: 30),
+                                 drawing: .empty, hand: []) }
+        XCTAssertEqual(window().tool, .arrow)
+        let model = window()
+        model.tool = .circle
+        XCTAssertEqual(window().tool, .circle)
+        // Cropping or choosing is not kept: the next time starts drawing.
+        model.tool = .crop
+        model.tool = .select
+        XCTAssertEqual(window().tool, .circle)
     }
 
     func testSizesFollowThePicture() {

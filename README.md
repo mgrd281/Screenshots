@@ -63,7 +63,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Copy Link | Upload it as it leaves the line, covered, and copy a link to paste anywhere: a message, an email, a ticket. The link works for seven days, then the file is deleted; the same photo keeps its link. Delete Link takes it down sooner. Recordings and PDFs too. |
 | Right-click, then Edit › Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. Either way, a note offers to undo it for a few seconds. |
 | Right-click, then Edit › Hide Part | Click a word to hide it, or drag a box over anything the covering missed. It stays hidden in whatever leaves the line, and a note offers to undo it. Always cover, under the word just hidden, covers that word in every photo from then on, as a rule of your own under Privacy. |
-| Right-click, then Edit › Draw on Photo | Point things out with an arrow, a box, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
+| Right-click, then Edit › Draw on Photo | Point things out with an arrow, a box, a red circle, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
 | Right-click, then Edit › Background… | Set it on a colour, with room round it, rounded corners and a soft shadow, square or the shape a post or a story wants, so it looks finished in a post, a shop or a slide. It goes out that way; the file stays as it is. Remove Background takes it off again. |
 | Right-click, then Save and Export › Convert to SVG | Draws the photo again as shapes that stay sharp at any size, to paste into a design app or save as an `.svg` file. It is made from the copy that leaves the line, so what is covered is covered in it; the file stays as it is. |
 | Right-click, then Save and Export › Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
@@ -404,11 +404,13 @@ screenshot file itself is never changed.
 
 Edit › Draw on Photo, in a photo's menu, opens the same wide window to point
 things out: an arrow from where it starts to what it points at, a box round
-a button, a highlighter over a line of text, numbered steps clicked one
-after another, and words on a label. Crop keeps only the part that matters.
-Each tool has its key: V selects, A draws arrows, R boxes, H highlights, N
-numbers, T puts words down and C crops. Click a drawing to change its
-colour or size, drag it or its handles, or press Delete; ⌘Z undoes.
+a button, a circle round a line, drawn in red as a pen draws one, a
+highlighter over a line of text, numbered steps clicked one after another,
+and words on a label. Crop keeps only the part that matters. Each tool has
+its key: V selects, A draws arrows, R boxes, O circles, H highlights, N
+numbers, T puts words down and C crops, and the last tool you drew with is
+ready the next time. Click a drawing to change its colour or size, drag it
+or its handles, or press Delete; ⌘Z undoes.
 
 Edit › Background… sets the photo on a colour, ready for a post, a shop or a
 slide: one of eight, from the warm colours of Snapfly's icon to calm grey
@@ -1044,7 +1046,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/PhotoIndexer.swift`, `IndexStore.swift`, `PreparingView.swift`, `iOS/Info.plist` | Faster picture processing: reading pictures ahead of time with consent, in the app and in the background, where it is kept on the iPhone, its page in Settings, and the background task's name |
 | `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
-| `Drawing.swift` | Draw on Photo's arrows, boxes, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |
+| `Drawing.swift` | Draw on Photo's arrows, boxes, circles, highlights, steps, words and crop: kept with each photo and drawn on the copy that leaves |
 | `Shared/Backdrop.swift`, `BackdropRender.swift` | Background: its colours, room, corners, shadow and shape, where the photo sits, and the picture drawn round it |
 | `BackdropEditor.swift` | Background…: the window to choose it, with the photo shown as it will go out |
 | `DrawEditor.swift` | Draw on Photo: the window to draw on a photo, with its tools, inks, sizes and Undo |

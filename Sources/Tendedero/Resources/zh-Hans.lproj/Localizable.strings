@@ -64,6 +64,7 @@
 "Draw on Photo…" = "在照片上绘制…";
 "Select" = "选择";
 "Box" = "方框";
+"Circle" = "圆圈";
 "Highlight" = "高亮";
 "Numbered Steps" = "编号步骤";
 "Text" = "文字";
@@ -88,6 +89,7 @@
 "Click a drawing to choose it, then drag it or its handles." = "点按绘制内容以选择它，然后拖移它或它的控制点。";
 "Drag from where the arrow starts to what it points at." = "从箭头开始的地方拖到它指向的地方。";
 "Drag to draw a box around something." = "拖移以在某物周围画一个方框。";
+"Drag to draw a circle around something." = "拖移以在某物周围画一个圆圈。";
 "Drag over words to highlight them." = "在文字上拖过以高亮显示。";
 "Click each place in turn. The numbers follow the order." = "依次点按每个位置。编号按点按顺序排列。";
 "Click where the words go, then type them." = "点按文字要放的位置，然后输入。";

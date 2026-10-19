@@ -66,6 +66,7 @@
 "Draw on Photo…" = "फ़ोटो पर बनाएँ…";
 "Select" = "चुनें";
 "Box" = "बॉक्स";
+"Circle" = "घेरा";
 "Highlight" = "हाइलाइट";
 "Numbered Steps" = "क्रमांकित चरण";
 "Text" = "टेक्स्ट";
@@ -90,6 +91,7 @@
 "Click a drawing to choose it, then drag it or its handles." = "किसी ड्रॉइंग को चुनने के लिए उस पर क्लिक करें, फिर उसे या उसके हैंडल ड्रैग करें।";
 "Drag from where the arrow starts to what it points at." = "जहाँ से तीर शुरू होता है वहाँ से उस चीज़ तक ड्रैग करें जिसकी ओर वह इशारा करता है।";
 "Drag to draw a box around something." = "किसी चीज़ के चारों ओर बॉक्स बनाने के लिए ड्रैग करें।";
+"Drag to draw a circle around something." = "किसी चीज़ के चारों ओर घेरा बनाने के लिए ड्रैग करें।";
 "Drag over words to highlight them." = "शब्दों को हाइलाइट करने के लिए उन पर ड्रैग करें।";
 "Click each place in turn. The numbers follow the order." = "हर जगह पर बारी-बारी से क्लिक करें। नंबर इसी क्रम में आते हैं।";
 "Click where the words go, then type them." = "जहाँ शब्द जाने हैं वहाँ क्लिक करें, फिर उन्हें लिखें।";

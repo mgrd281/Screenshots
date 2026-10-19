@@ -64,6 +64,7 @@
 "Draw on Photo…" = "Fotoğrafa çiz…";
 "Select" = "Seç";
 "Box" = "Kutu";
+"Circle" = "Daire";
 "Highlight" = "Vurgula";
 "Numbered Steps" = "Numaralı adımlar";
 "Text" = "Metin";
@@ -88,6 +89,7 @@
 "Click a drawing to choose it, then drag it or its handles." = "Seçmek için bir çizime tıkla, sonra onu ya da tutamaçlarını sürükle.";
 "Drag from where the arrow starts to what it points at." = "Okun başladığı yerden gösterdiği şeye doğru sürükle.";
 "Drag to draw a box around something." = "Bir şeyin çevresine kutu çizmek için sürükle.";
+"Drag to draw a circle around something." = "Bir şeyin çevresine daire çizmek için sürükle.";
 "Drag over words to highlight them." = "Vurgulamak için sözcüklerin üzerinde sürükle.";
 "Click each place in turn. The numbers follow the order." = "Her yere sırayla tıkla. Numaralar bu sırayı izler.";
 "Click where the words go, then type them." = "Sözcüklerin gideceği yere tıkla, sonra onları yaz.";
