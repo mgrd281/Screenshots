@@ -602,8 +602,12 @@ final class ChatButtonModel: ObservableObject {
     @Published var prompts: [String] = []
     /// The number under the pointer, which opens to show its name.
     @Published var hoveredPrompt: Int?
-    /// Where each number sits in the label, top left first, for the clicks.
+    /// Where each number and the capsule sit in the label, from its top
+    /// left, for the clicks the panel takes itself.
     var promptFrames: [Int: CGRect] = [:]
+    var capsuleFrame: CGRect = .zero
+    /// The label's whole size as SwiftUI lays it out, which the panel follows.
+    let sizeChanged = PassthroughSubject<CGSize, Never>()
 }
 
 /// Where the send button over a chat sits.
@@ -755,6 +759,7 @@ private final class ChatButtonView: NSView {
     private let margin: CGFloat
     private var downAt: CGPoint?
     private var startOrigin: CGPoint?
+    private var sizeWatch: AnyCancellable?
 
     init(model: ChatButtonModel, margin: CGFloat) {
         self.model = model
@@ -775,6 +780,12 @@ private final class ChatButtonView: NSView {
         setAccessibilityLabel(L("Paste into the app in front"))
         promptNames = []
         toolTip = L("Paste into the app in front")
+        // The panel grows and shrinks with the label: the numbers above the
+        // capsule, and a number opening into its name.
+        sizeWatch = model.sizeChanged.removeDuplicates().receive(on: RunLoop.main).sink { [weak self] size in
+            guard let self, size.width > 0 else { return }
+            self.onResize(CGSize(width: size.width + 2 * self.margin, height: size.height + 2 * self.margin))
+        }
     }
 
     /// The prompts over an AI chat, each an action for VoiceOver too.
@@ -794,11 +805,16 @@ private final class ChatButtonView: NSView {
         }
     }
 
+    /// A point in the window, as the label measures it: from its top left.
+    private func inLabel(_ windowPoint: NSPoint) -> CGPoint {
+        let point = host.convert(windowPoint, from: nil)
+        return CGPoint(x: point.x, y: host.isFlipped ? point.y : host.bounds.height - point.y)
+    }
+
     /// The number under a click, if it was on one.
     private func prompt(at event: NSEvent) -> Int? {
-        let point = host.convert(event.locationInWindow, from: nil)
-        let fromTop = CGPoint(x: point.x, y: host.isFlipped ? point.y : host.bounds.height - point.y)
-        return model.promptFrames.first { $0.value.contains(fromTop) }?.key
+        let point = inLabel(event.locationInWindow)
+        return model.promptFrames.first { $0.value.contains(point) }?.key
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -810,10 +826,16 @@ private final class ChatButtonView: NSView {
         if size.width > 2 * margin { onResize(size) }
     }
 
-    /// Only the capsule takes the pointer; the shadow's margin lets it through.
+    /// Only the capsule and the numbers take the pointer; the shadow's
+    /// margin and the room beside the numbers let it through to the chat.
     override func hitTest(_ point: NSPoint) -> NSView? {
         let local = convert(point, from: superview)
-        return host.frame.contains(local) ? self : nil
+        guard host.frame.contains(local) else { return nil }
+        // Before the label has measured itself, the capsule fills it.
+        if model.capsuleFrame.isEmpty { return self }
+        let inside = inLabel(convert(local, to: nil))
+        let parts = [model.capsuleFrame] + Array(model.promptFrames.values)
+        return parts.contains { $0.insetBy(dx: -2, dy: -2).contains(inside) } ? self : nil
     }
 
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
@@ -862,7 +884,11 @@ private final class ChatButtonView: NSView {
         } else if isDragging {
             onDragEnd()
         } else if downAt != nil {
-            if let index = prompt(at: event) { onPrompt(index) } else { onClick() }
+            if let index = prompt(at: event) {
+                onPrompt(index)
+            } else if model.capsuleFrame.isEmpty || model.capsuleFrame.contains(inLabel(event.locationInWindow)) {
+                onClick()
+            }
         }
     }
 
@@ -879,7 +905,31 @@ struct ChatButtonLabel: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var hovering = false
 
+    /// Over an AI chat the numbers stand in their own glass above the
+    /// capsule, at its trailing edge, so the capsule keeps its size and its
+    /// place over the chat.
     var body: some View {
+        VStack(alignment: .trailing, spacing: 6) {
+            if !model.prompts.isEmpty {
+                prompts
+                    .transition(.opacity)
+            }
+            capsule
+        }
+        .animation(Motion.spring(response: 0.3, damping: 0.85, reduced: reduceMotion), value: model.hoveredPrompt)
+        .animation(.easeOut(duration: 0.2), value: model.prompts)
+        .fixedSize()
+        .background(GeometryReader { geometry in
+            Color.clear.preference(key: LabelSize.self, value: geometry.size)
+        })
+        .coordinateSpace(.named(Self.space))
+        .onPreferenceChange(PromptFrames.self) { frames in model.promptFrames = frames }
+        .onPreferenceChange(CapsuleFrame.self) { frame in model.capsuleFrame = frame }
+        .onPreferenceChange(LabelSize.self) { size in model.sizeChanged.send(size) }
+        .accessibilityHidden(true)
+    }
+
+    private var capsule: some View {
         Group {
             switch model.look {
             case .full: full
@@ -889,46 +939,39 @@ struct ChatButtonLabel: View {
         .scaleEffect(hovering && !reduceMotion ? 1.04 : 1)
         .onHover { hovering = $0 }
         .animation(Motion.spring(response: 0.3, damping: 0.8, reduced: reduceMotion), value: hovering)
-        .animation(Motion.spring(response: 0.3, damping: 0.85, reduced: reduceMotion), value: model.hoveredPrompt)
-        .animation(.easeOut(duration: 0.2), value: model.prompts)
-        .coordinateSpace(.named(Self.space))
-        .onPreferenceChange(PromptFrames.self) { frames in model.promptFrames = frames }
         .animation(.easeOut(duration: 0.15), value: model.sent)
         .animation(.easeOut(duration: 0.2), value: model.coversAll)
-        .accessibilityHidden(true)
+        .background(GeometryReader { geometry in
+            Color.clear.preference(key: CapsuleFrame.self, value: geometry.frame(in: .named(Self.space)))
+        })
     }
 
     private static let space = "chatButton"
 
-    /// Over an AI chat, the prompts' numbers, then a hairline before the photos.
-    @ViewBuilder private var prompts: some View {
-        if !model.prompts.isEmpty {
-            HStack(spacing: 4) {
-                ForEach(Array(model.prompts.enumerated()), id: \.offset) { index, name in
-                    PromptNumber(number: index + 1, name: name, open: model.hoveredPrompt == index)
-                        .background(GeometryReader { geometry in
-                            Color.clear.preference(key: PromptFrames.self,
-                                                   value: [index: geometry.frame(in: .named(Self.space))])
-                        })
-                        .onHover { inside in
-                            if inside {
-                                model.hoveredPrompt = index
-                            } else if model.hoveredPrompt == index {
-                                model.hoveredPrompt = nil
-                            }
+    /// Over an AI chat, the prompts' numbers in a glass capsule of their own.
+    private var prompts: some View {
+        HStack(spacing: 4) {
+            ForEach(Array(model.prompts.enumerated()), id: \.offset) { index, name in
+                PromptNumber(number: index + 1, name: name, open: model.hoveredPrompt == index)
+                    .background(GeometryReader { geometry in
+                        Color.clear.preference(key: PromptFrames.self,
+                                               value: [index: geometry.frame(in: .named(Self.space))])
+                    })
+                    .onHover { inside in
+                        if inside {
+                            model.hoveredPrompt = index
+                        } else if model.hoveredPrompt == index {
+                            model.hoveredPrompt = nil
                         }
-                }
+                    }
             }
-            .transition(.opacity)
-            Rectangle()
-                .fill(Color.primary.opacity(0.12))
-                .frame(width: 1, height: 18)
         }
+        .padding(4)
+        .controlGlass(capsule: true)
     }
 
     private var full: some View {
         HStack(spacing: 8) {
-            prompts
             ZStack {
                 if model.thumbs.isEmpty {
                     Image(systemName: "photo")
@@ -963,7 +1006,6 @@ struct ChatButtonLabel: View {
 
     private var compact: some View {
         HStack(spacing: 6) {
-            prompts
             count
             glyph(size: 30)
         }
@@ -1032,5 +1074,25 @@ private struct PromptFrames: PreferenceKey {
 
     static func reduce(value: inout [Int: CGRect], nextValue: () -> [Int: CGRect]) {
         value.merge(nextValue()) { $1 }
+    }
+}
+
+/// Where the capsule sits in the label, for the clicks.
+private struct CapsuleFrame: PreferenceKey {
+    static let defaultValue: CGRect = .zero
+
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        let next = nextValue()
+        if !next.isEmpty { value = next }
+    }
+}
+
+/// The label's whole size, for the panel around it.
+private struct LabelSize: PreferenceKey {
+    static let defaultValue: CGSize = .zero
+
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
+        let next = nextValue()
+        if next != .zero { value = next }
     }
 }

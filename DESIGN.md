@@ -1409,14 +1409,18 @@ apps.
     over 0.2 s, in both looks. The tip adds "Everything is covered in AI
     chats" on a second line, and VoiceOver hears it as the button's value.
   - **Prompt numbers.** Over an AI chat (ChatGPT, Claude, Perplexity and
-    the other AI chat sites and apps) the prompts from Settings lead the
-    capsule, in both looks: a 24 pt circle each on `.primary` at 7%, the
-    number in 12 pt semibold rounded with monospaced digits, 4 pt apart,
-    then a 1 × 18 pt hairline of `.primary` at 12% before the photos.
-    Under the pointer a number opens into a capsule with the prompt's name
-    (12 pt medium, one line, 160 pt at most, 9 pt padding) on `.primary` at
-    14%, through `Motion.spring(0.3, 0.85)`; the capsule grows toward the
-    leading side, its trailing corner staying put. A click on a number
+    the other AI chat sites and apps) the prompts from Settings stand in a
+    `controlGlass` capsule of their own, 6 pt above the send capsule and
+    flush with its trailing edge, in both looks, so the send capsule keeps
+    its size and its place over the chat's own controls: a 24 pt circle
+    each on `.primary` at 7%, the number in 12 pt semibold rounded with
+    monospaced digits, 4 pt apart, with a 4 pt inset. Under the pointer a
+    number opens into a capsule with the prompt's name (12 pt medium, one
+    line, 160 pt at most, 9 pt padding) on `.primary` at 14%, through
+    `Motion.spring(0.3, 0.85)`, growing toward the leading side. The panel
+    follows the label's size as SwiftUI lays it out, its bottom trailing
+    corner staying put; only the two capsules take the pointer, the room
+    beside the numbers lets clicks through to the chat. A click on a number
     pastes the photos and then that prompt as one message, waiting for
     Return, and the glyph turns into the checkmark as for a send. Over
     other chats there are none. The right-click menu adds Send with
