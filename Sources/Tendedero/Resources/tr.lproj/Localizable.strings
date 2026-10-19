@@ -994,3 +994,24 @@
 "Copy File Path" = "Dosya yolunu kopyala";
 "Rename" = "Yeniden adlandır";
 "Rename…" = "Yeniden adlandır…";
+
+/* Background */
+"Background" = "Arka plan";
+"Background…" = "Arka plan…";
+"Remove Background" = "Arka planı kaldır";
+"Corners" = "Köşeler";
+"Padding" = "Kenar boşluğu";
+"Shadow" = "Gölge";
+"Fit to Photo" = "Fotoğrafa uydur";
+"Square" = "Kare";
+"Wide (16:9)" = "Geniş (16:9)";
+"Portrait (4:5)" = "Dikey (4:5)";
+"Story (9:16)" = "Hikâye (9:16)";
+"Sunset" = "Gün batımı";
+"Emerald" = "Zümrüt";
+"Ocean" = "Okyanus";
+"Lilac" = "Leylak";
+"Mist" = "Sis";
+"Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "Gönderilene, kapatılanın ve çizilenin çevresine eklenir. Fotoğrafın kendisi olduğu gibi kalır.";
+"It goes out on its background; the file in %@ stays as it is. Click to undo." = "Arka planıyla gider; %@ içindeki dosya olduğu gibi kalır. Geri almak için tıkla.";
+"It goes out without a background again. Click to undo." = "Yeniden arka plansız gider. Geri almak için tıkla.";

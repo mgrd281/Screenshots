@@ -1296,6 +1296,51 @@ final class Line: ObservableObject {
         }
     }
 
+    /// Background…: the photo set on a colour, with room round it, rounded
+    /// corners and a shadow, on what leaves the line. The file stays as it is.
+    func background(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
+        let url = item.url
+        let before = Drawings.saved(url).backdrop
+        BackdropEditor.shared.edit(url) { [weak self] backdrop in
+            guard let self, backdrop != before else { return }
+            self.setBackdrop(backdrop, for: url)
+            self.sayBackdrop(backdrop, of: url, before: before)
+        }
+    }
+
+    /// Remove Background, from a photo's menu: it goes out as it was.
+    func removeBackground(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
+        let url = item.url
+        guard let before = Drawings.saved(url).backdrop else { return }
+        setBackdrop(nil, for: url)
+        sayBackdrop(nil, of: url, before: before)
+    }
+
+    /// Whether a photo goes out on a background.
+    func hasBackground(_ id: UUID) -> Bool {
+        guard let item = items.first(where: { $0.id == id }), item.isImage else { return false }
+        return Drawings.saved(item.url).backdrop != nil
+    }
+
+    private func setBackdrop(_ backdrop: Backdrop?, for url: URL) {
+        var drawing = Drawings.saved(url)
+        guard drawing.backdrop != backdrop else { return }
+        drawing.backdrop = backdrop
+        Drawings.set(drawing, for: url)
+        cover(url)
+    }
+
+    /// A note saying what changed, whose click puts it back.
+    private func sayBackdrop(_ backdrop: Backdrop?, of url: URL, before: Backdrop?) {
+        let place = Folders.placeName(url.deletingLastPathComponent())
+        let text = backdrop == nil
+            ? L("It goes out without a background again. Click to undo.")
+            : String(format: L("It goes out on its background; the file in %@ stays as it is. Click to undo."), place)
+        Notice.show(text, done: true, lasting: 6) { [weak self] in self?.setBackdrop(before, for: url) }
+    }
+
     /// Convert to SVG…: the photo drawn again as shapes, from the copy that
     /// leaves the line, so what is covered is covered in it. The file stays as it is.
     func convertToSVG(_ id: UUID) {

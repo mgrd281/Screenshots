@@ -244,6 +244,12 @@ struct GrabArea: NSViewRepresentable {
                     }
                     sub.addItem(ClosureMenuItem(L("Hide Part…"), symbol: "rectangle.dashed") { line.hidePart(id) })
                     sub.addItem(ClosureMenuItem(L("Draw on Photo…"), symbol: "scribble.variable") { line.drawOn(id) })
+                    sub.addItem(ClosureMenuItem(L("Background…"), symbol: "photo.artframe") { line.background(id) })
+                    if line.hasBackground(id) {
+                        sub.addItem(ClosureMenuItem(L("Remove Background"), symbol: "rectangle.slash") {
+                            line.removeBackground(id)
+                        })
+                    }
                     Self.gap(sub)
                     sub.addItem(ClosureMenuItem(L("Markup"), symbol: "pencil.tip.crop.circle") { line.markup(id) })
                 }

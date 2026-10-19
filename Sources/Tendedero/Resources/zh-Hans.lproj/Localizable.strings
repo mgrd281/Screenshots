@@ -994,3 +994,24 @@
 "Copy File Path" = "拷贝文件路径";
 "Rename" = "重命名";
 "Rename…" = "重命名…";
+
+/* Background */
+"Background" = "背景";
+"Background…" = "背景…";
+"Remove Background" = "移除背景";
+"Corners" = "圆角";
+"Padding" = "边距";
+"Shadow" = "阴影";
+"Fit to Photo" = "适应照片";
+"Square" = "正方形";
+"Wide (16:9)" = "宽屏（16:9）";
+"Portrait (4:5)" = "竖版（4:5）";
+"Story (9:16)" = "快拍（9:16）";
+"Sunset" = "日落";
+"Emerald" = "翡翠";
+"Ocean" = "海洋";
+"Lilac" = "丁香紫";
+"Mist" = "薄雾";
+"Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "加在发送的内容上，围绕已遮盖和绘制的部分。照片本身保持不变。";
+"It goes out on its background; the file in %@ stays as it is. Click to undo." = "将带背景发送；%@ 中的文件保持不变。点按可撤销。";
+"It goes out without a background again. Click to undo." = "将重新不带背景发送。点按可撤销。";

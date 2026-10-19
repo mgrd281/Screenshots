@@ -994,3 +994,24 @@
 "Copy File Path" = "파일 경로 복사";
 "Rename" = "이름 변경";
 "Rename…" = "이름 변경…";
+
+/* Background */
+"Background" = "배경";
+"Background…" = "배경…";
+"Remove Background" = "배경 제거";
+"Corners" = "모서리";
+"Padding" = "여백";
+"Shadow" = "그림자";
+"Fit to Photo" = "사진에 맞춤";
+"Square" = "정사각형";
+"Wide (16:9)" = "와이드(16:9)";
+"Portrait (4:5)" = "세로(4:5)";
+"Story (9:16)" = "스토리(9:16)";
+"Sunset" = "노을";
+"Emerald" = "에메랄드";
+"Ocean" = "바다";
+"Lilac" = "라일락";
+"Mist" = "안개";
+"Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "보내는 사진에, 가린 부분과 그린 것 둘레에 입혀집니다. 사진 자체는 그대로입니다.";
+"It goes out on its background; the file in %@ stays as it is. Click to undo." = "배경과 함께 보내집니다. %@의 파일은 그대로입니다. 클릭하면 되돌립니다.";
+"It goes out without a background again. Click to undo." = "다시 배경 없이 보내집니다. 클릭하면 되돌립니다.";

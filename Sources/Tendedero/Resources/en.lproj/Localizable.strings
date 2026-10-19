@@ -996,3 +996,24 @@
 "Copy File Path" = "Copy File Path";
 "Rename" = "Rename";
 "Rename…" = "Rename…";
+
+/* Background */
+"Background" = "Background";
+"Background…" = "Background…";
+"Remove Background" = "Remove Background";
+"Corners" = "Corners";
+"Padding" = "Padding";
+"Shadow" = "Shadow";
+"Fit to Photo" = "Fit to Photo";
+"Square" = "Square";
+"Wide (16:9)" = "Wide (16:9)";
+"Portrait (4:5)" = "Portrait (4:5)";
+"Story (9:16)" = "Story (9:16)";
+"Sunset" = "Sunset";
+"Emerald" = "Emerald";
+"Ocean" = "Ocean";
+"Lilac" = "Lilac";
+"Mist" = "Mist";
+"Set on what is sent, round what is covered and drawn. The photo itself stays as it is." = "Set on what is sent, round what is covered and drawn. The photo itself stays as it is.";
+"It goes out on its background; the file in %@ stays as it is. Click to undo." = "It goes out on its background; the file in %@ stays as it is. Click to undo.";
+"It goes out without a background again. Click to undo." = "It goes out without a background again. Click to undo.";
