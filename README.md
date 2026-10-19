@@ -101,7 +101,8 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Click anything in the menu bar | Put it away. |
 | Glance at the Snapfly icon in the menu bar | How many photos hang, beside it, and a small dot on it while something new hangs that the line has not shown yet. Turn it off with Count on the menu bar icon, under Line. |
 | Record a Guide in the menu bar, then click through | Each click becomes a step of a guide, with a screenshot and a sentence. Click the capsule above the Dock to finish, and the guide opens to edit, send or save. |
-| Click the Snapfly icon in the menu bar | The menu: how many photos hang and Paste into the app in front, the ways to take or add, Record a Guide and Recent Guides, the line, the Hide private details and Screenshot Button switches, Settings, the Introduction (Continue Introduction when it was ended before its end) and Help & Support. |
+| Click the Snapfly icon in the menu bar | The menu: how many photos hang and Paste into the app in front, then Settings and the screenshots folder, the ways to take, Add Files and Cover Files, the line, the Hide private details, Screenshot Button and Hide Desktop Icons switches, then the Introduction (Continue Introduction when it was ended before its end), Help & Support and Check for Updates, just above Quit. |
+| Check for Updates… in the menu bar | The download edition fetches the newest version, checks it is signed by Snapfly's developer, and after a question replaces itself and opens again. The App Store edition opens TestFlight or the App Store. |
 | Hide Desktop Icons in the menu bar | The wallpaper covers the desktop icons on every screen, for clean screenshots and recordings. Choose it again to bring them back. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>T</kbd> | Show or hide the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
@@ -952,6 +953,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `WorkspaceLibrary.swift` | History's Workspace page: the screenshots by category as a grid or a list, with search and a menu for each |
 | `FolderIcon.swift` | The workspace folder's icon in the Finder: the system folder with Snapfly's mark |
 | `Shared/CoverBatch.swift`, `CoverFiles.swift` | Cover Files: which files a run takes and where each copy goes, and the window that covers them a few at a time |
+| `Updater.swift` | Check for Updates: the newest build fetched, its signature checked, then put in place after a question |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |
 | `Trim.swift` | Trims a screen recording and saves the result |

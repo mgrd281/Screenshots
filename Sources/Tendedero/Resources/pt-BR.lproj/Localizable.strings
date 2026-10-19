@@ -1085,3 +1085,14 @@
 "Share…" = "Compartilhar…";
 "Copied, covered. Paste it wherever you like." = "Copiado e coberto. Cole onde quiser.";
 "Copied. Paste it with ⌘V." = "Copiado. Cole com ⌘V.";
+
+/* Updates */
+"Checking for updates…" = "Buscando atualizações…";
+"Could not check for updates. Check the connection and try again." = "Não foi possível buscar atualizações. Verifique a conexão e tente de novo.";
+"Could not install the update here. The download page opens instead." = "Não foi possível instalar a atualização aqui. A página de download é aberta.";
+"Install and Reopen" = "Instalar e reabrir";
+"Later" = "Mais tarde";
+"Snapfly %@ is ready" = "Snapfly %@ está pronto";
+"Snapfly %@ is up to date." = "O Snapfly %@ está atualizado.";
+"Snapfly closes, is replaced by the new version and opens again. Photos on the line stay." = "O Snapfly fecha, é substituído pela nova versão e abre de novo. As fotos na linha ficam.";
+"The update could not be checked, so it was not installed." = "Não foi possível verificar a atualização, então ela não foi instalada.";
