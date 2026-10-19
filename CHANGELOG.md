@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The iPhone app moves with more care: when a picture opens, its covers
+  grow over the private details one after another; when the copy is ready
+  the green shield bounces once with a light tap; a green line reads the
+  page on the Scan tab; and the screenshot cards rise softly into place.
+  With Reduce Motion, all of it is quiet.
 - On the iPhone, Snapfly is in the share sheet of every app: share a
   picture, choose Snapfly, and it is covered as chosen in the app, checked,
   then copied, shared on or saved, without opening Snapfly.

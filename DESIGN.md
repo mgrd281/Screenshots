@@ -1937,6 +1937,10 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     Save (`square.and.arrow.down`): covered and checked without opening,
     with a note in a floating pill over the bottom, 24 pt up, gone after
     2.5 s; sharing opens the share sheet with the covered PNG.
+  - The first time a grid has cards, they rise into place: from 8 pt down
+    and transparent, on a spring (0.42, 0.82), 35 ms apart in reading order
+    for the first twelve (`stagger.grid`); cards that come later, or come
+    back, are simply there. With Reduce Motion they fade in over 0.15 s.
   - **First launch**, before access: the whole picture over "Allow Snapfly
     to see your screenshots" in title 2 bold and what Snapfly does, in
     `.secondary`, centred, 32 pt in, then Allow Access.
@@ -1947,7 +1951,12 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     colour with corners of 10, a shadow of black 10%, radius 8, y 4, its
     lines capsules 5 pt high of `.primary` at 10%, one covered at 85%,
     inside four corner arms in `phone-protect`, 4 pt, round caps, a fifth of
-    the width long), hidden from VoiceOver; "Scan a document" in title 2
+    the width long), hidden from VoiceOver. Each time the tab shows, a
+    reading line crosses the page once, top to bottom, in 0.9 s
+    (`sweep.scan`): a capsule 96 by 2.5 pt of `phone-protect`, clear at
+    both ends, with a glow of the same green at 70%, radius 5, fading in
+    and out at the ends; never in a loop, and not at all with Reduce Motion.
+    Then "Scan a document" in title 2
     bold over what it does in subheadline `.secondary`; and Scan Document
     (`camera.viewfinder`), the green pill, with a light impact. Where the
     iPhone cannot scan, the pill is dimmed over a footnote saying so.
@@ -2005,7 +2014,10 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     `phone-protect` and how many places are covered, and while any are to
     check, a dot, `circle.dashed` in the accent (`exclamationmark.triangle.fill`
     in orange while one is uncovered) and how many are To check, then a
-    small `chevron.down`. Counts change as numbers roll. A place only
+    small `chevron.down`. Counts change as numbers roll. Each step gives way
+    to the next in place on a spring (0.42, 0.82), the capsule fitting its
+    words (a 0.15 s ease-out with Reduce Motion); when the copy is ready,
+    the shield bounces up once and a success haptic says so. A place only
     offered is never counted as covered. A tap opens Details; VoiceOver
     reads the whole state. Under it, for 2.5 s after a drawing tool is
     chosen, how to use it in a capsule of the same glass.
@@ -2057,7 +2069,11 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     is solid ink as drawn (the marker's stroke with round ends, a box, an
     outline filled inside), at 75% while it is drawn, the lasso's edge
     dashed in the accent; the eraser's path shows as `systemBackground` at
-    55%, as wide as it reaches.
+    55%, as wide as it reaches. When a picture's covers first arrive, they
+    grow over their places one after another, top to bottom and along the
+    line (`stagger.cover`, 45 ms, the first 25), each spreading from the
+    reading side in 0.32 s on a cubic ease-out, mirrored right to left; with
+    Reduce Motion they are simply there.
   - **Select.** A tap on a place selects it, again lets go; a tap on a word
     no place covers hides it by hand and selects it; elsewhere lets go.
     The place selected shows a dashed accent outline (turned with a box)

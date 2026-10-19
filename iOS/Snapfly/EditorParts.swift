@@ -236,6 +236,9 @@ struct PrivacyStatus: View {
     let open: @MainActor () -> Void
     let dontWait: @MainActor () -> Void
     let retry: @MainActor () -> Void
+    /// Turns each time the copy is ready, so the shield bounces once.
+    @State private var landed = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Group {
@@ -271,6 +274,9 @@ struct PrivacyStatus: View {
         .font(.footnote)
         .editorGlass(in: Capsule())
         .padding(.horizontal, 16)
+        // Each step gives way to the next in place, the capsule fitting its words.
+        .animation(reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.42, dampingFraction: 0.82), value: stage)
+        .sensoryFeedback(trigger: stage) { _, now in now == .ready ? .success : nil }
     }
 
     private var counts: some View {
@@ -282,6 +288,8 @@ struct PrivacyStatus: View {
             } else {
                 Image(systemName: "checkmark.shield.fill")
                     .foregroundStyle(SnapflyTokens.protect)
+                    .symbolEffect(.bounce.up, options: .nonRepeating, value: landed)
+                    .onAppear { landed.toggle() }
                 Text(tally.covered, format: .number)
                     .fontWeight(.semibold)
                     .contentTransition(.numericText())
