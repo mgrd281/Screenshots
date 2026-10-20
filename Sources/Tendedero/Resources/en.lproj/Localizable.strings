@@ -1446,6 +1446,23 @@
 "Sort" = "Sort";
 "Newest First" = "Newest First";
 "Oldest First" = "Oldest First";
+"Per Row" = "Per Row";
+"%d per Row" = "%d per Row";
+"Select All" = "Select All";
+"Deselect All" = "Deselect All";
+"%d Selected" = "%d Selected";
+"Select screenshots" = "Select screenshots";
+"Save Covered Copies (%d)" = "Save Covered Copies (%d)";
+"Share Covered Copies" = "Share Covered Copies";
+"Covering %d of %d …" = "Covering %d of %d …";
+"1 covered copy saved to Photos." = "1 covered copy saved to Photos.";
+"%d covered copies saved to Photos." = "%d covered copies saved to Photos.";
+"1 could not be covered and stays selected." = "1 could not be covered and stays selected.";
+"%d could not be covered and stay selected." = "%d could not be covered and stay selected.";
+"The rest stay selected." = "The rest stay selected.";
+"Covered as Settings says, each saved to Photos as a new picture. The screenshots stay as they are." = "Covered as Settings says, each saved to Photos as a new picture. The screenshots stay as they are.";
+"Tap screenshots, or draw a finger sideways across them." = "Tap screenshots, or draw a finger sideways across them.";
+"Tap screenshots to choose them." = "Tap screenshots to choose them.";
 "Filter" = "Filter";
 
 /* Tabs, scanning and the Protected tab on the iPhone */

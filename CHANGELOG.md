@@ -6,6 +6,23 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, choose several screenshots as in Photos: Select, then a
+  tap on each, or a finger drawn sideways across them. One tap on Save
+  Covered Copies covers each as Settings says, checks it and saves it to
+  Photos as a new picture; Share sends them all at once. One that can't be
+  covered is never saved and stays chosen, with the reason. Leave Snapfly
+  meanwhile and it waits, then goes on once you're back.
+- On the iPhone, a picture covered without being opened (from a
+  screenshot's menu, several at once, by Back Tap or a shortcut, from the
+  share sheet, or a scanned page) is no longer copied, shared or saved
+  when Snapfly could not read it, as iOS may keep it from reading in the
+  background; Snapfly says so instead. Faster picture processing never
+  keeps such a picture as one without words, and reads again every photo
+  it prepared before.
+- On the iPhone, screenshots stand three to a row, larger, and the Photos
+  tab shows three rows of the newest. Pinch with two fingers, as in Photos,
+  for four to a row and back: the grid follows the fingers and settles
+  softly. See All's menu offers the same.
 - The iPhone's first run speaks louder: each headline large and heavy,
   with the word that carries it in green over a soft green band, like
   "bleibt" in "Privat bleibt privat.", and the line under it larger.

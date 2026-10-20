@@ -141,9 +141,11 @@ final class PhotoIndexer: NSObject, ObservableObject {
         held += 1
     }
 
+    /// Done covering: preparing goes on, while Snapfly is open; else when
+    /// it is open again.
     func release() {
         held = max(0, held - 1)
-        if held == 0, settings.isOn { start() }
+        if held == 0, settings.isOn, UIApplication.shared.applicationState == .active { start() }
     }
 
     /// Starts unless it runs already, or has nothing to do.
@@ -213,7 +215,7 @@ final class PhotoIndexer: NSObject, ObservableObject {
             waiting = nil
             let photo = await Task.detached(priority: .utility) { await Self.read(candidate) }.value
             if Task.isCancelled { break }
-            // Gone from Photos since: the next one.
+            // Gone from Photos since, or not readable for now: the next one.
             guard let photo else { continue }
             try? await store.keep(photo)
             list = await store.list()
@@ -283,7 +285,10 @@ final class PhotoIndexer: NSObject, ObservableObject {
                                 width: asset.pixelWidth, height: asset.pixelHeight, status: inCloud ? .inCloud : .failed,
                                 read: Date())
         }
-        let lines = autoreleasepool { Finder.lines(in: image) }
+        // A photo Vision could not read for now is not kept, never as one
+        // without words, which would be covered as if nothing were in it;
+        // it is read again the next time.
+        guard let lines = autoreleasepool(invoking: { Finder.lines(in: image) }) else { return nil }
         return IndexedPhoto(id: candidate.id, stamp: candidate.stamp, created: candidate.created,
                             width: asset.pixelWidth, height: asset.pixelHeight, lines: lines, read: Date())
     }

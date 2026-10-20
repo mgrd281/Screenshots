@@ -1444,6 +1444,23 @@
 "Sort" = "정렬";
 "Newest First" = "최신 순";
 "Oldest First" = "오래된 순";
+"Per Row" = "한 줄에";
+"%d per Row" = "한 줄에 %d개";
+"Select All" = "모두 선택";
+"Deselect All" = "모두 선택 해제";
+"%d Selected" = "%d개 선택됨";
+"Select screenshots" = "스크린샷 선택";
+"Save Covered Copies (%d)" = "가린 사본 저장 (%d)";
+"Share Covered Copies" = "가린 사본 공유";
+"Covering %d of %d …" = "%d/%d 가리는 중…";
+"1 covered copy saved to Photos." = "가린 사본 1개를 사진에 저장했습니다.";
+"%d covered copies saved to Photos." = "가린 사본 %d개를 사진에 저장했습니다.";
+"1 could not be covered and stays selected." = "1개는 가릴 수 없어 선택된 채로 남습니다.";
+"%d could not be covered and stay selected." = "%d개는 가릴 수 없어 선택된 채로 남습니다.";
+"The rest stay selected." = "나머지는 선택된 채로 남습니다.";
+"Covered as Settings says, each saved to Photos as a new picture. The screenshots stay as they are." = "설정대로 가리고, 각각 새 사진으로 사진 앱에 저장합니다. 스크린샷은 그대로 남습니다.";
+"Tap screenshots, or draw a finger sideways across them." = "스크린샷을 탭하거나 손가락을 옆으로 그어 선택하세요.";
+"Tap screenshots to choose them." = "선택하려면 스크린샷을 탭하세요.";
 "Filter" = "필터";
 
 /* Tabs, scanning and the Protected tab on the iPhone */
