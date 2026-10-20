@@ -1495,3 +1495,13 @@
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Abgedeckt, bevor du sendest";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Deine Bildschirmfotos werden auf diesem iPhone gelesen, und nichts verlässt es, wenn du es nicht willst.";
+
+/* The iPhone: taking screenshots off the Protected tab, or deleting them from Photos */
+"Remove from Protected" = "Aus „Geschützt“ entfernen";
+"Delete from Photos" = "Aus Fotos löschen";
+"Remove (%d)" = "Entfernen (%d)";
+"Removed from this list, they stay in Photos." = "Aus dieser Liste entfernt, bleiben sie in Fotos.";
+"Removed from Protected" = "Aus „Geschützt“ entfernt";
+"%d removed from Protected" = "%d aus „Geschützt“ entfernt";
+"Deleted. Photos can still bring them back for 30 days." = "Gelöscht. Fotos kann sie noch 30 Tage lang wiederherstellen.";
+"The screenshots could not be deleted." = "Die Bildschirmfotos konnten nicht gelöscht werden.";

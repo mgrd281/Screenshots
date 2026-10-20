@@ -264,6 +264,12 @@ enum QuickCover {
     case copy, share, save
 }
 
+/// Where the Protected tab's screenshots go when they are taken off: off
+/// its list alone, staying in Photos, or out of Photos, as iOS asks first.
+enum Removing {
+    case fromList, fromPhotos
+}
+
 /// One screenshot as a card: its top, at 3 by 4, or square where cards sit
 /// four to a row, when it was taken, and a green shield once it was
 /// protected here lately.
@@ -425,6 +431,8 @@ struct ScreenshotGrid: View {
     var selection: Binding<GridSelection?> = .constant(nil)
     /// Whether a finger is being drawn across, so the page holds still.
     var sweeping: Binding<Bool> = .constant(false)
+    /// Takes cards off, from their menu: on the Protected tab alone.
+    var remove: (@MainActor ([PHAsset], Removing) -> Void)?
     /// The cards have risen into place, once, the first time there are any.
     @State private var risen = false
     /// The grid's width, to find the card under a finger.
@@ -451,6 +459,8 @@ struct ScreenshotGrid: View {
                     .opacity(risen ? 1 : 0)
                     .offset(y: risen || reduceMotion ? 0 : 8)
                     .animation(rise(index), value: risen)
+                    // A card taken off shrinks away as the others close up; one put back grows in.
+                    .transition(reduceMotion ? .opacity : .scale(scale: 0.6).combined(with: .opacity))
             }
         }
         .onGeometryChange(for: CGFloat.self, of: { $0.size.width }) { width = $0 }
@@ -549,6 +559,16 @@ struct ScreenshotGrid: View {
         Button { quick(asset, .copy) } label: { Label(L("Cover and Copy"), systemImage: "doc.on.doc") }
         Button { quick(asset, .share) } label: { Label(L("Cover and Share"), systemImage: "square.and.arrow.up") }
         Button { quick(asset, .save) } label: { Label(L("Cover and Save"), systemImage: "square.and.arrow.down") }
+        if let remove {
+            Section {
+                Button { remove([asset], .fromList) } label: {
+                    Label(L("Remove from Protected"), systemImage: "minus.circle")
+                }
+                Button(role: .destructive) { remove([asset], .fromPhotos) } label: {
+                    Label(L("Delete from Photos"), systemImage: "trash")
+                }
+            }
+        }
     }
 }
 

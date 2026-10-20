@@ -1495,3 +1495,13 @@
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "보내기 전에 가려집니다";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "스크린샷은 이 iPhone에서 읽히며, 직접 선택하지 않는 한 아무것도 밖으로 나가지 않습니다.";
+
+/* The iPhone: taking screenshots off the Protected tab, or deleting them from Photos */
+"Remove from Protected" = "'보호됨'에서 제거";
+"Delete from Photos" = "사진에서 삭제";
+"Remove (%d)" = "제거(%d)";
+"Removed from this list, they stay in Photos." = "이 목록에서 제거해도 사진에는 남아 있습니다.";
+"Removed from Protected" = "'보호됨'에서 제거됨";
+"%d removed from Protected" = "%d개를 '보호됨'에서 제거함";
+"Deleted. Photos can still bring them back for 30 days." = "삭제했습니다. 30일 동안은 사진 앱에서 복구할 수 있습니다.";
+"The screenshots could not be deleted." = "스크린샷을 삭제할 수 없습니다.";

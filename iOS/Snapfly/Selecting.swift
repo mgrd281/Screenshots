@@ -275,6 +275,50 @@ struct SelectionBar: View {
     }
 }
 
+/// Over the bottom while the Protected tab's screenshots are being chosen:
+/// Remove, which asks, as Photos does in an album, whether to take them off
+/// this list, where they stay in Photos, or delete them from Photos.
+struct RemoveBar: View {
+    let count: Int
+    let remove: (Removing) -> Void
+    @State private var asking = false
+
+    var body: some View {
+        VStack(spacing: 10) {
+            Button(role: .destructive) {
+                asking = true
+            } label: {
+                Label(count == 0 ? L("Select screenshots") : String(format: L("Remove (%d)"), count),
+                      systemImage: "trash")
+                    .font(.body.weight(.medium))
+                    .monospacedDigit()
+                    .contentTransition(.numericText())
+                    .frame(maxWidth: .infinity, minHeight: 30)
+            }
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.capsule)
+            .disabled(count == 0)
+            .animation(.snappy, value: count)
+            .confirmationDialog(String(format: L("Remove (%d)"), count), isPresented: $asking, titleVisibility: .hidden) {
+                Button(L("Remove from Protected")) { remove(.fromList) }
+                Button(L("Delete from Photos"), role: .destructive) { remove(.fromPhotos) }
+                Button(L("Cancel"), role: .cancel) {}
+            }
+            Text(count > 0 ? L("Removed from this list, they stay in Photos.") : hint)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+        .padding(.bottom, 8)
+        .frame(maxWidth: .infinity)
+        .background(.bar)
+        .overlay(alignment: .top) { Divider() }
+    }
+}
+
 /// How to choose, as this iPhone allows.
 private var hint: String {
     if #available(iOS 18, *) { return L("Tap screenshots, or draw a finger sideways across them.") }

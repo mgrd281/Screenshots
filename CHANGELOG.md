@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, the Protected tab clears up easily. Hold a screenshot and
+  tap Remove from Protected: it leaves the list at once, with Undo for a
+  few seconds, and stays in Photos. Or tap Delete from Photos, which iOS
+  asks about first. Select, then a tap on each or a finger drawn across,
+  takes several off at once.
 - On the iPhone, ChatGPT, Claude and the other AI chats open straight away
   with the protected copy ready to paste: hold the message field and tap
   Paste. Where the app is not on the iPhone, the share sheet shows as

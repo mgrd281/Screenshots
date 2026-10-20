@@ -1495,3 +1495,13 @@
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "مغطّاة قبل أن ترسلها";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "تُقرأ صور الشاشة على هذا الآيفون، ولا يخرج منه شيء إلا إذا اخترت ذلك.";
+
+/* The iPhone: taking screenshots off the Protected tab, or deleting them from Photos */
+"Remove from Protected" = "إزالة من «محمي»";
+"Delete from Photos" = "حذف من الصور";
+"Remove (%d)" = "إزالة (%d)";
+"Removed from this list, they stay in Photos." = "تُزال من هذه القائمة، وتبقى في الصور.";
+"Removed from Protected" = "أُزيلت من «محمي»";
+"%d removed from Protected" = "أُزيلت %d من «محمي»";
+"Deleted. Photos can still bring them back for 30 days." = "حُذفت. يستطيع تطبيق الصور استعادتها خلال 30 يومًا.";
+"The screenshots could not be deleted." = "تعذّر حذف لقطات الشاشة.";

@@ -1495,3 +1495,13 @@
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Göndermeden önce kapatılır";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Ekran görüntülerin bu iPhone'da okunur ve sen seçmedikçe hiçbir şey dışarı çıkmaz.";
+
+/* The iPhone: taking screenshots off the Protected tab, or deleting them from Photos */
+"Remove from Protected" = "“Korunuyor” listesinden kaldır";
+"Delete from Photos" = "Fotoğraflar’dan sil";
+"Remove (%d)" = "Kaldır (%d)";
+"Removed from this list, they stay in Photos." = "Bu listeden kaldırılsalar da Fotoğraflar’da kalırlar.";
+"Removed from Protected" = "“Korunuyor” listesinden kaldırıldı";
+"%d removed from Protected" = "%d tanesi “Korunuyor” listesinden kaldırıldı";
+"Deleted. Photos can still bring them back for 30 days." = "Silindi. Fotoğraflar bunları 30 gün boyunca geri getirebilir.";
+"The screenshots could not be deleted." = "Ekran görüntüleri silinemedi.";

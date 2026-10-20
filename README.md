@@ -952,8 +952,13 @@ watch the screen, so there is no line there. What it keeps is the covering:
   it) and makes one PDF of them, a picture of each page and no text, sized
   like A4, for the share sheet, where it can be sent or saved to Files; if
   a page cannot be covered, no PDF is made. Protected
-  shows the last twelve screenshots protected, in the same grid. More holds
-  Settings and Help & Introduction. While a picture is open the tab bar
+  shows the last twelve screenshots protected, in the same grid. Holding
+  one offers Remove from Protected, which takes it off the list at once,
+  with Undo for five seconds while it stays in Photos, and Delete from
+  Photos, which iOS asks about first (Photos keeps it 30 days to bring
+  back). Select chooses several, by a tap on each or a finger drawn
+  across, and Remove asks which of the two, as Photos does in an album.
+  More holds Settings and Help & Introduction. While a picture is open the tab bar
   steps aside.
 - **The first run** shows what Snapfly does in under fifteen seconds, on
   three made-up documents of one made-up person, each a standing A4 page
@@ -1245,11 +1250,12 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/ScanPDF.swift` | Scanned pages, covered, as one PDF: a picture of each page on A4's width, as JPEG, no text, and nothing of who made it but the app |
 | `Shared/CoveredCopy.swift` | A picture's covered copy as it leaves the iPhone app or its share extension: covered, read again, checked in its pixels, or nothing, as when Vision could not read the picture (iOS may keep it from reading in the background) |
 | `Shared/SharedChoice.swift` | The kinds, look and own rules the iPhone app keeps in the keychain group it shares with its extension |
-| `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
+| `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab with Remove, Undo and Delete from Photos, and covering a screenshot from its menu in any tab |
+| `Shared/ProtectedList.swift` | The iPhone's list of the screenshots protected lately: noted newest first, twelve at most, some taken off and put back in their places with Undo (tested on Linux) |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them sent to an app with one tap or made into one covered PDF |
 | `iOS/Snapfly/SendToApps.swift`, `Assets.xcassets/Chat*.imageset` | Send to on the iPhone: the apps chosen (`SendApps`), their icons, the row of them after a scan, the column beside the picture in Protect Picture (`AppRail`) with Photos, Files and the share sheet, and choosing and ordering them; the hand-over (`Handoff`): one picture straight to WhatsApp, one to an AI chat by opening its app with it copied, anything else through the share sheet, never a website |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, three or four to a row with a pinch, See All, and the iPhone's green |
-| `Shared/GridSelection.swift`, `iOS/Snapfly/Selecting.swift` | Choosing several screenshots at once: tapped, or a finger drawn across them, and the card under the finger (tested on Linux); then their covered copies made one after another (`BatchCover`), saved to Photos or shared, with the choice's bar |
+| `Shared/GridSelection.swift`, `iOS/Snapfly/Selecting.swift` | Choosing several screenshots at once: tapped, or a finger drawn across them, and the card under the finger (tested on Linux); then their covered copies made one after another (`BatchCover`), saved to Photos or shared, with the choice's bar; on the Protected tab, the bar that removes them (`RemoveBar`) |
 | `Shared/GridZoom.swift` | How many screenshots stand in a row on the iPhone, three or four, and how the grid follows a pinch; tested on Linux |
 | `iOS/Snapfly/FirstRunExperience.swift` | The first run: the sample invoice, doctor's letter and bank statement, each standing as an A4 page; the invoice read and covered, its categories as chips, the letter scanned (tipped, found, taken, straightened, covered, the patient but not the doctor), the protected letter ready to share with the other two behind it, Try It Now and Skip Demo; when it shows (`FirstRunCoordinator`) |
 | `iOS/Snapfly/ExplainSheet.swift` | Explain, from Protect Picture: the protected copy sent to the owner's own Claude or ChatGPT, the answer streamed, ready questions and the owner's own (`DocumentTalk`) |
