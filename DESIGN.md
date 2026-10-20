@@ -167,6 +167,8 @@ components:
     height: "36pt"                 # at least; footnote, 14pt in, 6pt under the navigation bar
   phone-first-run-chip:
     height: "40pt"                 # a category on the first run: a capsule, subheadline semibold, 14pt in, 44pt to the finger; on, phone-protect with white and eye.slash.fill; off, secondarySystemBackground with a hairline of .primary at 10% and eye
+  phone-sample-page:
+    ratio: "210 × 297"             # the first run's invoice, standing as a sheet of A4: 170–300pt wide, as tall as the room allows; corners of 8
   phone-scan-frame:
     rounded: "28pt"                # the camera round the first run's page: phone-ink, 8pt larger than the page, with green viewfinder corners (4pt, arms of 26, 16pt in)
   phone-share-tile:
@@ -1969,17 +1971,28 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     place at least 108 pt high for the chips or the share row; then the
     actions, 360 pt wide at most, in a place at least 104 pt high, at the
     bottom.
-  - **The page** (`SampleInvoice`), 340 pt wide at most (the screen less
-    56): white in light and dark alike, corners of 20, a hairline of
-    `.primary` at 8%, padded 20, left to right in every language, no
-    larger than at extra large text, and the floating shadow (black 12%,
-    radius 16, y 6). "Invoice" in title 3 bold beside "Sample" in caption 2
-    semibold capitals, tracked 0.6, `.secondary` on a capsule of `.primary`
-    at 6%; a divider 14 pt above and below; the name, the email and the
-    IBAN in a grid, each label in footnote `.secondary` beside its value in
-    subheadline with monospaced digits; another divider; then "Amount" in
-    subheadline semibold and "149,90 €" in title 3 bold with monospaced
-    digits on the trailing edge. Its details belong to no one.
+  - **The page** (`SampleInvoice`, `phone-sample-page`) stands as a sheet
+    of A4, as a printed invoice does (`FirstRun.pageRatio`): as tall as the
+    room between the words and the chips allows, 300 pt wide at most and
+    170 at least, never wider than the screen less 56. White in light and
+    dark alike, corners of 8, a hairline of `.primary` at 8%, margins of
+    7.5% of its width at the sides and 5% of its height above and below,
+    left to right in every language, no larger than at extra large text,
+    and the floating shadow (black 12%, radius 16, y 6). Each part takes
+    its share of the height, so every detail sits where the reading line
+    finds it (`FirstRun.Field.depth`): the letterhead, 12% (a 22 pt mark
+    with corners of 5 in `.primary` at 12%, two lines, and "Sample" in
+    caption 2 semibold capitals, tracked 0.6, `.secondary` on a capsule of
+    `.primary` at 6%); "Invoice" in title 3 bold over its number and date
+    as lines, 14%; a divider; the name, the email and the IBAN, a row of 8%
+    each, the label in caption `.secondary` beside the value in footnote
+    with monospaced digits (down to half its size where the page is
+    narrow); a divider; the letter as four lines, 21%; a divider; "Amount"
+    in subheadline semibold and "149,90 €" in title 3 bold with monospaced
+    digits on the trailing edge, 10%; and the small print as three lines,
+    9%. The lines are capsules of `.primary` at 9%, 4 pt thick (6 for the
+    sender, 3 for the small print), standing for words that belong to no
+    one, as the details do.
   - **A detail found**: green corner brackets (`phone-protect`, 2 pt, round
     caps, arms of 10 at most) over an 8% green fill, 5 pt beyond the
     words, snapping in from 112% (`motion.find`). **Covered**: the ink

@@ -91,7 +91,10 @@ struct SnapflyFirstRunExperience: View {
 
     var body: some View {
         GeometryReader { space in
-            let width = min(space.size.width - 56, 340)
+            // The page stands, as tall as the room between the words and
+            // what is under it allows.
+            let room = (space.size.height - 372) / FirstRun.pageRatio
+            let width = max(170, min(space.size.width - 56, 300, room))
             ScrollView {
                 VStack(spacing: 0) {
                     words
@@ -176,10 +179,9 @@ struct SnapflyFirstRunExperience: View {
 
     private func paper(width: CGFloat) -> some View {
         let edges = state.scan == .edges || state.scan == .straight
-        return SampleInvoice(state: state, calm: calm,
+        return SampleInvoice(width: width, state: state, calm: calm,
                              interactive: state.scene >= .control && state.scene < .complete,
                              toggle: toggle)
-            .frame(width: width)
             .measuredHeight($paperHeight)
             .modifier(Straightened(progress: calm || state.scan >= .straight || state.scan == .none ? 1 : 0,
                                    size: CGSize(width: width, height: paperHeight)))
@@ -341,55 +343,135 @@ struct SnapflyFirstRunExperience: View {
 /// and left to right in every language, with its details found and covered
 /// as the story says. A tap on a detail turns its category on or off.
 private struct SampleInvoice: View {
+    let width: CGFloat
     let state: FirstRun.State
     let calm: Bool
     let interactive: Bool
     let toggle: (FirstRun.Category) -> Void
 
+    /// Standing, as a sheet of A4.
+    private var height: CGFloat { width * FirstRun.pageRatio }
+    /// The width inside the page's margins.
+    private var inner: CGFloat { width * 0.85 }
+
     var body: some View {
+        // Each part takes its share of the page's height, so every detail
+        // sits where the reading line finds it (`FirstRun.Field.depth`).
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .center, spacing: 8) {
-                Text(L("Invoice"))
-                    .font(.title3.weight(.bold))
-                Spacer(minLength: 8)
-                Text(L("Sample"))
-                    .font(.caption2.weight(.semibold))
-                    .textCase(.uppercase)
-                    .tracking(0.6)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(Color.primary.opacity(0.06), in: Capsule())
-            }
-            Divider().padding(.vertical, 14)
-            Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 12) {
-                ForEach(FirstRun.privateFields) { field in
-                    GridRow {
-                        Text(field.label)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                        value(field)
-                    }
-                }
-            }
-            Divider().padding(.vertical, 14)
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(FirstRun.field(.amount).label)
-                    .font(.subheadline.weight(.semibold))
-                Spacer(minLength: 8)
-                Text(verbatim: FirstRun.field(.amount).value)
-                    .font(.title3.weight(.bold).monospacedDigit())
-            }
+            letterhead
+                .band(height * 0.12, .topLeading)
+            heading
+                .band(height * 0.14, .topLeading)
+            Divider()
+            details(row: height * 0.08)
+            Divider()
+            letter
+                .band(height * 0.21, .leading)
+            Divider()
+            total
+                .band(height * 0.1, .leading)
+            footer
+                .band(height * 0.09, .bottomLeading)
         }
-        .padding(20)
-        .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(Color.primary.opacity(0.08)))
+        .padding(.horizontal, width * 0.075)
+        .padding(.vertical, height * 0.05)
+        .frame(width: width, height: height, alignment: .top)
+        .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(Color.primary.opacity(0.08)))
         .environment(\.colorScheme, .light)
         .environment(\.layoutDirection, .leftToRight)
         .dynamicTypeSize(...DynamicTypeSize.xLarge)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(L("Sample invoice"))
         .accessibilityValue(summary)
+    }
+
+    /// The sender's mark and lines, belonging to no one, and "Sample".
+    private var letterhead: some View {
+        HStack(alignment: .top, spacing: 8) {
+            RoundedRectangle(cornerRadius: 5, style: .continuous)
+                .fill(Color.primary.opacity(0.12))
+                .frame(width: 22, height: 22)
+            VStack(alignment: .leading, spacing: 5) {
+                line(0.32, 6)
+                line(0.22, 4)
+            }
+            .padding(.top, 3)
+            Spacer(minLength: 8)
+            Text(L("Sample"))
+                .font(.caption2.weight(.semibold))
+                .textCase(.uppercase)
+                .tracking(0.6)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(Color.primary.opacity(0.06), in: Capsule())
+        }
+    }
+
+    /// "Invoice", over its number and date as lines.
+    private var heading: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text(L("Invoice"))
+                .font(.title3.weight(.bold))
+            HStack(spacing: 8) {
+                line(0.22, 4)
+                line(0.16, 4)
+            }
+        }
+    }
+
+    /// The name, the email and the IBAN, a row each.
+    private func details(row: CGFloat) -> some View {
+        Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 0) {
+            ForEach(FirstRun.privateFields) { field in
+                GridRow {
+                    Text(field.label)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .frame(height: row)
+                    value(field)
+                        .frame(height: row)
+                }
+            }
+        }
+    }
+
+    /// The letter's words, as lines.
+    private var letter: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            line(0.94, 4)
+            line(0.88, 4)
+            line(0.97, 4)
+            line(0.6, 4)
+        }
+    }
+
+    private var total: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(FirstRun.field(.amount).label)
+                .font(.subheadline.weight(.semibold))
+            Spacer(minLength: 8)
+            Text(verbatim: FirstRun.field(.amount).value)
+                .font(.title3.weight(.bold).monospacedDigit())
+        }
+    }
+
+    /// The small print at the foot of the page, as lines.
+    private var footer: some View {
+        HStack(spacing: 10) {
+            line(0.2, 3)
+            line(0.26, 3)
+            line(0.16, 3)
+        }
+    }
+
+    /// A line of words on the page that belong to no one.
+    private func line(_ share: CGFloat, _ thickness: CGFloat) -> some View {
+        Capsule()
+            .fill(Color.primary.opacity(0.09))
+            .frame(width: inner * share, height: thickness)
     }
 
     /// A private detail: green corners round it once found, then the ink
@@ -399,9 +481,9 @@ private struct SampleInvoice: View {
         let covered = state.isCovered(field)
         let found = state.isFound(field)
         return Text(verbatim: field.value)
-            .font(.subheadline.monospacedDigit())
+            .font(.footnote.monospacedDigit())
             .lineLimit(1)
-            .minimumScaleFactor(0.7)
+            .minimumScaleFactor(0.5)
             .overlay {
                 ZStack {
                     Brackets()
@@ -431,6 +513,15 @@ private struct SampleInvoice: View {
             field.label + ": " + (state.isCovered(field) ? L("Covered") : field.value)
         }
         .joined(separator: ", ")
+    }
+}
+
+private extension View {
+    /// A part of the sample page: the whole width inside its margins, and
+    /// its share of the page's height.
+    func band(_ height: CGFloat, _ alignment: Alignment) -> some View {
+        frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
+            .frame(height: height)
     }
 }
 

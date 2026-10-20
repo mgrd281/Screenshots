@@ -65,7 +65,7 @@ shows, and CI's still frames use it too. The phases are those of
 |---|---|---|---|
 | 0 | reveal | initial | The invoice, readable, from the first frame; Skip Demo under it |
 | 0.25 | reveal | detecting | The reading line crosses the page (0.9 s) |
-| 0.66, 0.77, 0.88 | reveal | detecting | Name, email, IBAN found as the line reaches each |
+| 0.57, 0.64, 0.71 | reveal | detecting | Name, email, IBAN found as the line reaches each |
 | 1.15 | reveal | highlighted | All three marked |
 | 1.3, 1.47, 1.64 | reveal | redacting | Each covered from the reading side |
 | 1.85 | reveal | protected | The shield lands; success haptic |
@@ -99,7 +99,7 @@ shows, and CI's still frames use it too. The phases are those of
 | `FirstRun` | `Sources/Tendedero/Shared/FirstRun.swift` | The story: categories, the sample, the script, the state machine, the scanner's perspective (homography), pure and tested on Linux |
 | `FirstRunCoordinator` | `iOS/Snapfly/FirstRunExperience.swift` | Whether it shows (once per version, `firstRunSeen`), replay from Settings, Try It Now and Skip |
 | `SnapflyFirstRunExperience` | same | The screen, and the driver that plays the script on the story clock |
-| `SampleInvoice` | same | The invoice, its details found and covered (the privacy reveal) |
+| `SampleInvoice` | same | The invoice, standing as an A4 page as tall as the screen allows, its details found and covered (the privacy reveal) |
 | `PrivacyChips` | same | The interactive categories |
 | `ScanCamera`, `Straightened`, `EdgeLock` | same | The scan demonstration: the frame, the perspective correction, the edges locking on |
 | `ShareDestinations` | same | The protected copy's destinations, as a picture of the share sheet |

@@ -61,11 +61,15 @@ enum FirstRun {
     /// category covers each is what the engine finds on the invoice
     /// (`FirstRunTests`), so the first run shows nothing it would not do.
     static let fields: [Field] = [
-        Field(id: .name, value: "Erika Mustermann", category: .names, depth: 0.46),
-        Field(id: .email, value: "erika@example.com", category: .emails, depth: 0.58),
-        Field(id: .iban, value: "DE89 3704 0044 0532 0130 00", category: .bank, depth: 0.7),
-        Field(id: .amount, value: "149,90 €", category: nil, depth: 0.88),
+        Field(id: .name, value: "Erika Mustermann", category: .names, depth: 0.35),
+        Field(id: .email, value: "erika@example.com", category: .emails, depth: 0.43),
+        Field(id: .iban, value: "DE89 3704 0044 0532 0130 00", category: .bank, depth: 0.51),
+        Field(id: .amount, value: "149,90 €", category: nil, depth: 0.81),
     ]
+
+    /// The sample page's height for its width: a sheet of A4, standing, as
+    /// a printed invoice is.
+    static let pageRatio = 297.0 / 210.0
 
     static func field(_ id: Field.ID) -> Field {
         fields.first { $0.id == id }!
