@@ -53,11 +53,6 @@ struct PhotosTab: View {
                 ProtectView(source: link.source).zoomed(from: link, in: zoom)
             }
         }
-        // Covered copies of several screenshots, shared at once.
-        .sheet(item: $batch.sharing) { files in
-            ShareFilesSheet(files: files)
-                .ignoresSafeArea()
-        }
         .onAppear {
             library.load()
             Choice.share()

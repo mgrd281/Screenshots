@@ -6,23 +6,48 @@ import UIKit
 /// and saves each covered copy to Photos as a new picture beside it, or
 /// shares them all; the screenshots themselves stay as they were. A copy is
 /// kept only once it is covered, read again and checked (`CoveredCopy`); one
-/// that cannot be is never saved, and stays chosen to try again.
+/// that cannot be is never saved, and stays chosen to try again. Covering
+/// waits while Snapfly is away: iOS may keep Vision from reading in the
+/// background, so a copy made while Snapfly went away, even for a moment,
+/// is made again from a fresh reading once it is back.
 @MainActor
 final class BatchCover: ObservableObject {
     static let shared = BatchCover()
 
     /// How far a run is: covered so far, of how many; nil while none runs.
     @Published private(set) var progress: (done: Int, total: Int)?
-    /// What went wrong in the last run, shown in the bar while the
-    /// screenshots it leaves stay chosen.
-    @Published var outcome: String?
+    /// How the last run ended when it left screenshots chosen, shown in the
+    /// bar over them.
+    @Published var outcome: Outcome?
     @Published var sharing: SharedFiles?
     private var stopping = false
-    private var backgroundTask = UIBackgroundTaskIdentifier.invalid
+    /// Each time Snapfly stopped being in front, as for a call or another app.
+    private var interruptions = 0
 
     enum Way { case photos, share }
 
+    /// What became of a run that left screenshots chosen.
+    struct Outcome: Equatable {
+        let text: String
+        /// Something went wrong, rather than the owner stopping it.
+        let isProblem: Bool
+    }
+
+    /// One screenshot's covered copy, or why there is none.
+    private enum Copy {
+        case made(Data)
+        case failed
+        case stopped
+    }
+
     var running: Bool { progress != nil }
+
+    private init() {
+        NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil,
+                                               queue: .main) { _ in
+            MainActor.assumeIsolated { BatchCover.shared.interruptions += 1 }
+        }
+    }
 
     /// Stops after the screenshot being covered; those done stay done.
     func stop() {
@@ -31,25 +56,17 @@ final class BatchCover: ObservableObject {
 
     /// Covers the screenshots in the order given and saves or shares them;
     /// gives back those that could not be, or were not reached, to stay
-    /// chosen.
+    /// chosen: all of them while another run is under way.
     func run(_ assets: [PHAsset], way: Way) async -> Set<String> {
-        guard !running, !assets.isEmpty else { return [] }
+        guard !running else { return Set(assets.map(\.localIdentifier)) }
+        guard !assets.isEmpty else { return [] }
         stopping = false
         outcome = nil
         progress = (0, assets.count)
-        // Leaving the app for a moment doesn't stop it halfway; if iOS ends
-        // the time it gives, the run stops after the one it is covering.
-        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "Cover screenshots") { [weak self] in
-            MainActor.assumeIsolated {
-                self?.stopping = true
-                self?.endBackground()
-            }
-        }
         // Preparing other photos waits, so these go faster.
         PhotoIndexer.shared.hold()
         defer {
             progress = nil
-            endBackground()
             PhotoIndexer.shared.release()
         }
         let chosen = Choice.details
@@ -64,10 +81,15 @@ final class BatchCover: ObservableObject {
                 continue
             }
             progress = (index, assets.count)
-            guard let image = await Library.image(of: asset),
-                  let made = await Covering.cover(image, chosen),
-                  let png = await Self.png(made.image) else {
+            let png: Data
+            switch await copy(of: asset, chosen) {
+            case .made(let made):
+                png = made
+            case .failed:
                 failed.insert(asset.localIdentifier)
+                continue
+            case .stopped:
+                left.insert(asset.localIdentifier)
                 continue
             }
             switch way {
@@ -101,37 +123,54 @@ final class BatchCover: ObservableObject {
         return failed.union(left)
     }
 
-    private func endBackground() {
-        guard backgroundTask != .invalid else { return }
-        UIApplication.shared.endBackgroundTask(backgroundTask)
-        backgroundTask = .invalid
+    /// A screenshot's covered copy, made while Snapfly is in front. One made
+    /// while it went away is made again once it is back, and what was read
+    /// meanwhile is forgotten, so nothing read then is trusted.
+    private func copy(of asset: PHAsset, _ chosen: Set<PrivateDetail>) async -> Copy {
+        while true {
+            while UIApplication.shared.applicationState != .active, !stopping {
+                try? await Task.sleep(for: .milliseconds(250))
+            }
+            if stopping { return .stopped }
+            let before = interruptions
+            let png = await Self.covered(asset, chosen)
+            if interruptions == before, UIApplication.shared.applicationState == .active {
+                return png.map(Copy.made) ?? .failed
+            }
+            Finder.forgetReadings()
+        }
+    }
+
+    /// A screenshot covered as chosen, as PNG made off the main thread; nil
+    /// when it could not be read, covered or checked.
+    private static func covered(_ asset: PHAsset, _ chosen: Set<PrivateDetail>) async -> Data? {
+        guard let image = await Library.image(of: asset), let made = await Covering.cover(image, chosen) else { return nil }
+        return await Task.detached(priority: .userInitiated) { Covering.png(made.image) }.value
     }
 
     /// What became of the run: all well, in a note over the screen as the
-    /// choosing ends; else in the bar, over those that stay chosen.
+    /// choosing ends; else in the bar, over those that stay chosen, with a
+    /// warning when something went wrong.
     private func report(way: Way, saved: Int, failed: Int, left: Int, refused: Bool) {
         let done = way == .photos && saved > 0 ? (saved == 1 ? L("1 covered copy saved to Photos.")
                                                   : String(format: L("%d covered copies saved to Photos."), saved)) : nil
-        var problems: [String] = []
-        if refused { problems.append(L("The picture could not be saved.")) }
-        if failed > 0 {
-            problems.append(failed == 1 ? L("1 could not be covered and stays selected.")
-                            : String(format: L("%d could not be covered and stay selected."), failed))
-        }
-        if left > 0, !refused { problems.append(L("The rest stay selected.")) }
         let feedback = UINotificationFeedbackGenerator()
-        if problems.isEmpty {
+        guard failed > 0 || left > 0 else {
             if let done { QuickCoverer.shared.show(done, for: 3) }
             if way == .photos { feedback.notificationOccurred(.success) }
-        } else {
-            outcome = ([done].compactMap { $0 } + problems).joined(separator: " ")
-            feedback.notificationOccurred(.warning)
+            return
         }
-    }
-
-    /// The covered copy as PNG, made off the main thread.
-    private static func png(_ image: CGImage) async -> Data? {
-        await Task.detached(priority: .userInitiated) { Covering.png(image) }.value
+        var parts = [done].compactMap { $0 }
+        if refused { parts.append(L("The picture could not be saved.")) }
+        if failed > 0 {
+            parts.append(failed == 1 ? L("1 could not be covered and stays selected.")
+                         : String(format: L("%d could not be covered and stay selected."), failed))
+        }
+        // Stopped by the owner: what was not reached waits, chosen still.
+        if left > 0, !refused { parts.append(L("The rest stay selected.")) }
+        let problem = refused || failed > 0
+        outcome = Outcome(text: parts.joined(separator: " "), isProblem: problem)
+        if problem { feedback.notificationOccurred(.warning) }
     }
 }
 
@@ -202,10 +241,17 @@ struct SelectionBar: View {
                     .disabled(count == 0)
                     .animation(.snappy, value: count)
                 }
-                if let outcome = batch.outcome {
-                    Label(outcome, systemImage: "exclamationmark.triangle.fill")
+                if let outcome = batch.outcome, outcome.isProblem {
+                    Label(outcome.text, systemImage: "exclamationmark.triangle.fill")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.orange)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                } else if let outcome = batch.outcome {
+                    // Stopped: said plainly, as nothing went wrong.
+                    Text(outcome.text)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 } else {
@@ -313,7 +359,11 @@ private struct SweepGesture: UIGestureRecognizerRepresentable {
     func handleUIGestureRecognizerAction(_ recognizer: UIPanGestureRecognizer, context: Context) {
         let point = context.converter.localLocation
         switch recognizer.state {
-        case .began: began(point)
+        case .began:
+            // It begins once the finger has moved a little: from the card it came down on.
+            let moved = recognizer.translation(in: recognizer.view)
+            began(CGPoint(x: point.x - moved.x, y: point.y - moved.y))
+            changed(point)
         case .changed: changed(point)
         case .ended, .cancelled, .failed: ended()
         default: break

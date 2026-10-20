@@ -67,6 +67,15 @@ final class GridSelectionTests: XCTestCase {
         XCTAssertTrue(selection.isEmpty)
     }
 
+    func testAllOrNoneLeavesThoseNotShown() {
+        // One chosen before a search hid it.
+        var selection = GridSelection(["hidden", "shot1"])
+        selection.toggleAll(ids)
+        XCTAssertEqual(selection.count, 13)
+        selection.toggleAll(ids)
+        XCTAssertEqual(selection.chosen, ["hidden"])
+    }
+
     func testOnlyThoseToDoAgainStay() {
         var selection = GridSelection(Set(ids[0...3]))
         selection.keep(["shot2", "shot7"])

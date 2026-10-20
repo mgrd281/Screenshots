@@ -31,9 +31,10 @@ struct GridSelection: Equatable {
         if chosen.contains(id) { chosen.remove(id) } else { chosen.insert(id) }
     }
 
-    /// Every one shown, or, when all of them already are, none.
+    /// Every one shown, or, when all of them already are, none of them;
+    /// those chosen that are not shown, as a search hides them, stay chosen.
     mutating func toggleAll(_ ids: [String]) {
-        chosen = ids.allSatisfy(chosen.contains) ? [] : Set(ids)
+        if ids.allSatisfy(chosen.contains) { chosen.subtract(ids) } else { chosen.formUnion(ids) }
     }
 
     /// Only those still to be done again, after the others went.

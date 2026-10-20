@@ -258,7 +258,19 @@ struct ScreenshotCard: View {
     var protected = false
     var showsDate = true
     var square = false
-    @State private var image: UIImage? = nil
+    @State private var image: UIImage?
+
+    init(asset: PHAsset, protected: Bool = false, showsDate: Bool = true, square: Bool = false) {
+        self.asset = asset
+        self.protected = protected
+        self.showsDate = showsDate
+        self.square = square
+        // Made lately, as when choosing starts or the grid changes: at once.
+        _image = State(initialValue: Library.keptThumbnail(of: asset, width: Self.width))
+    }
+
+    /// The width the small pictures are made at, the same for every card.
+    private static let width: CGFloat = 360
 
     var body: some View {
         Color(.secondarySystemBackground)
@@ -300,7 +312,7 @@ struct ScreenshotCard: View {
             .overlay(RoundedRectangle(cornerRadius: square ? 12 : 14, style: .continuous)
                 .strokeBorder(Color.primary.opacity(0.08)))
             .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
-            .task(id: asset.localIdentifier) { image = await Library.thumbnail(of: asset, width: 360) }
+            .task(id: asset.localIdentifier) { image = await Library.thumbnail(of: asset, width: Self.width) }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(label)
     }
@@ -405,12 +417,17 @@ struct ScreenshotGrid: View {
     @State private var width: CGFloat = 0
     /// How many to a row, the same in every grid.
     @AppStorage(GridZoom.key) private var columns = GridZoom.standard
-    /// How large the grid shows while it is pinched, and around which point.
-    @State private var pinch: CGFloat = 1
+    /// How large the grid shows while it is pinched, back to its size on a
+    /// spring once the fingers let go, or the pinch is called off.
+    @GestureState(resetTransaction: Transaction(animation: .spring(response: 0.42, dampingFraction: 0.86)))
+    private var pinch: CGFloat = 1
+    /// Around which point, where the fingers came down.
     @State private var anchor = UnitPoint.center
     /// Each change of the grid, for its haptic.
     @State private var changes = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Off while the chosen ones are being covered.
+    @Environment(\.isEnabled) private var isEnabled
 
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: GridZoom.clamped(columns)),
@@ -423,13 +440,17 @@ struct ScreenshotGrid: View {
             }
         }
         .onGeometryChange(for: CGFloat.self, of: { $0.size.width }) { width = $0 }
-        .modifier(SweepToChoose(active: selection.wrappedValue != nil, began: beginSweep, changed: sweep, ended: endSweep))
+        .modifier(SweepToChoose(active: selection.wrappedValue != nil && isEnabled, began: beginSweep, changed: sweep,
+                                ended: endSweep))
         .sensoryFeedback(.selection, trigger: selection.wrappedValue?.count)
         .scaleEffect(pinch, anchor: anchor)
         .simultaneousGesture(magnify)
         .sensoryFeedback(.selection, trigger: changes)
         .onAppear { if !shots.isEmpty { risen = true } }
         .onChange(of: shots.isEmpty) { if !shots.isEmpty { risen = true } }
+        // A finger can't be drawn across what is gone: the page never stays held.
+        .onChange(of: selection.wrappedValue == nil) { _, none in if none { endSweep() } }
+        .onDisappear { endSweep() }
     }
 
     /// Two fingers pinch the grid: it follows them, up to the size of the
@@ -438,20 +459,20 @@ struct ScreenshotGrid: View {
     /// With Reduce Motion the grid doesn't follow, and changes at once.
     private var magnify: some Gesture {
         MagnifyGesture(minimumScaleDelta: 0.02)
-            .onChanged { value in
+            .updating($pinch) { value, pinch, _ in
                 guard !reduceMotion else { return }
-                anchor = value.startAnchor
                 pinch = GridZoom.scale(pinch: value.magnification, columns: columns)
+            }
+            .onChanged { value in
+                if anchor != value.startAnchor { anchor = value.startAnchor }
             }
             .onEnded { value in
                 let next = GridZoom.after(pinch: value.magnification, from: columns)
+                guard next != GridZoom.clamped(columns) else { return }
                 withAnimation(reduceMotion ? nil : .spring(response: 0.42, dampingFraction: 0.86)) {
-                    pinch = 1
-                    if next != GridZoom.clamped(columns) {
-                        columns = next
-                        changes += 1
-                    }
+                    columns = next
                 }
+                changes += 1
             }
     }
 
@@ -494,8 +515,8 @@ struct ScreenshotGrid: View {
     }
 
     private func endSweep() {
-        selection.wrappedValue?.end()
-        sweeping.wrappedValue = false
+        if selection.wrappedValue?.isSweeping == true { selection.wrappedValue?.end() }
+        if sweeping.wrappedValue { sweeping.wrappedValue = false }
     }
 
     private func card(at point: CGPoint) -> Int? {
@@ -584,12 +605,14 @@ struct AllScreenshotsView: View {
                 ToolbarItem(placement: .topBarTrailing) { options }
             }
         }
+        // While choosing, the tab bar steps aside for the choice's own bar.
         .safeAreaInset(edge: .bottom, spacing: 0) {
             if let selection {
                 SelectionBar(count: selection.count, save: { coverChosen(.photos) }, share: { coverChosen(.share) })
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .toolbar(selection == nil ? .automatic : .hidden, for: .tabBar)
         .animation(.snappy, value: selection == nil)
         .quickNotes()
         .task { await load() }
@@ -610,11 +633,14 @@ struct AllScreenshotsView: View {
         return selection.isEmpty ? L("Select screenshots") : String(format: L("%d Selected"), selection.count)
     }
 
-    /// The screenshots chosen, covered as Settings says, one after another,
-    /// in the order shown; those that could not be stay chosen.
+    /// The screenshots chosen, covered as Settings says, one after another:
+    /// those shown in their order, then any a search has hidden since, as
+    /// the count says; those that could not be stay chosen.
     private func coverChosen(_ way: BatchCover.Way) {
         guard let chosen = selection?.chosen, !chosen.isEmpty else { return }
-        let assets = matching.filter { chosen.contains($0.localIdentifier) }
+        let shown = matching.filter { chosen.contains($0.localIdentifier) }
+        let first = Set(shown.map(\.localIdentifier))
+        let assets = shown + shots.filter { chosen.contains($0.localIdentifier) && !first.contains($0.localIdentifier) }
         Task {
             let failed = await batch.run(assets, way: way)
             withAnimation(.snappy) {

@@ -1967,10 +1967,13 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     of 9 …" in subheadline semibold over a green progress bar, with Stop;
     the grid, Select All and Cancel wait. The screenshots go one at a time,
     each covered, read again and checked before it is kept; one that can't
-    be is never saved. All well, the choosing ends and a note says how many
-    were saved, with a success haptic; else those not done stay chosen and
-    the bar says why in footnote semibold orange with
-    `exclamationmark.triangle.fill`, with a warning haptic. Share makes the
+    be is never saved. While Snapfly is away it waits, and the one it was
+    covering is read again once it is back. All well, the choosing ends and
+    a note says how many were saved, with a success haptic; else those not
+    done stay chosen and the bar says why in footnote semibold orange with
+    `exclamationmark.triangle.fill`, with a warning haptic. Stopped, the
+    bar says how many were saved and that the rest stay chosen, in footnote
+    `.secondary`, without a haptic, as nothing went wrong. Share makes the
     same copies and opens the share sheet with all of them.
   - A
     card (`ScreenshotCard`) shows the top of the screenshot, square in the
