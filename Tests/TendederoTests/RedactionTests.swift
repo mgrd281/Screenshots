@@ -5,12 +5,12 @@ import XCTest
 
 /// What is covered of a whole document, kind by kind, without a picture:
 /// finding, telling what each find is, and covering only what the owner
-/// chose are kept apart. With Names on, a person's name is covered and
-/// nothing else: not a company, a phone number, an address, a date, an
-/// amount or a diagnosis. With Patient names alone, the doctors' names
-/// stay, and every place the patient is named is covered. The documents are
-/// made up for the tests; none is a real one, and none is the screenshot a
-/// fault was first seen in.
+/// chose are kept apart. With everyone's names on (Names, Patient names and
+/// Other people), a person's name is covered and nothing else: not a
+/// company, a phone number, an address, a date, an amount or a diagnosis.
+/// With Patient names alone, the doctors' names stay, and every place the
+/// patient is named is covered. The documents are made up for the tests;
+/// none is a real one, and none is the screenshot a fault was first seen in.
 final class RedactionTests: XCTestCase {
     /// A radiology report: the practice's header, the patient, the
     /// referring doctor, the findings and the doctor who signs.
@@ -42,19 +42,19 @@ final class RedactionTests: XCTestCase {
         "Sparkasse KölnBonn",
     ]
 
-    func testNamesAloneCoverThePeopleAndNothingElse() {
-        let found = protect(report, [.names])
+    func testEveryonesNamesCoverThePeopleAndNothingElse() {
+        let found = protect(report, PrivateDetail.allNames)
         for name in ["Anna Schmidt", "Mustermann, Max", "Klaus Weber", "Max Mustermann"] {
             XCTAssertTrue(found.covered.contains(name), "\(name) in \(found.covered)")
         }
         for kept in ["GmbH", "Radiologie", "Hauptstraße", "Hamburg", "040", "1960", "Fraktur", "Befund", "Dr.", "geb."] {
             XCTAssertFalse(found.covered.contains { $0.contains(kept) }, "\(kept) stays: \(found.covered)")
         }
-        XCTAssertTrue(found.hits.allSatisfy { $0.kind == .names }, "only names, with Names alone")
+        XCTAssertTrue(found.hits.allSatisfy { $0.kind == .names }, "only names")
     }
 
-    func testNamesAloneLeaveTheShopTheAddressAndTheMoney() {
-        let found = protect(invoice, [.names])
+    func testEveryonesNamesLeaveTheShopTheAddressAndTheMoney() {
+        let found = protect(invoice, PrivateDetail.allNames)
         XCTAssertTrue(found.covered.contains("Lena Weber"), "\(found.covered)")
         for kept in ["Muster Versand", "Musterweg", "Berlin", "1234567", "49,90", "DE89", "Sparkasse", "2024"] {
             XCTAssertFalse(found.covered.contains { $0.contains(kept) }, "\(kept) stays: \(found.covered)")
@@ -62,7 +62,7 @@ final class RedactionTests: XCTestCase {
     }
 
     func testCompaniesAreCoveredOnlyAsCompanies() {
-        let names = protect(invoice, [.names])
+        let names = protect(invoice, PrivateDetail.allNames)
         XCTAssertFalse(names.possible.contains { $0.contains("GmbH") || $0.contains("Sparkasse") },
                        "a company is never offered as a name: \(names.possible)")
         let companies = protect(invoice, [.organizations])
@@ -94,21 +94,25 @@ final class RedactionTests: XCTestCase {
         let found = protect(lines, [.patientNames])
         XCTAssertTrue(found.covered.contains("Lena Weber"), "privacy first: \(found.covered)")
         XCTAssertTrue(found.checked.contains("Lena Weber"), "and shown to be checked: \(found.checked)")
-        // With everyone's names covered, there is nothing to check.
-        XCTAssertTrue(protect(lines, [.names]).checked.isEmpty)
+        // With everyone's names covered, there is nothing to check; with
+        // Names, such a name is covered as one whose role is not clear.
+        XCTAssertTrue(protect(lines, PrivateDetail.allNames).checked.isEmpty)
+        let names = protect(lines, [.names])
+        XCTAssertTrue(names.covered.contains("Lena Weber"), "\(names.covered)")
+        XCTAssertTrue(names.checked.isEmpty, "\(names.checked)")
     }
 
     func testTheDiagnosisIsHealthNotAName() {
         let found = protect(["Patientin: Weber, Lena", "Diagnose: Morbus Crohn"], [.health])
         XCTAssertTrue(found.covered.contains("Morbus Crohn"), "\(found.covered)")
         XCTAssertFalse(found.covered.contains { $0.contains("Lena") }, "\(found.covered)")
-        let names = protect(["Patientin: Weber, Lena", "Diagnose: Morbus Crohn"], [.names])
+        let names = protect(["Patientin: Weber, Lena", "Diagnose: Morbus Crohn"], PrivateDetail.allNames)
         XCTAssertEqual(names.covered.filter { $0.contains("Crohn") }, [], "a disease named after a person is no name")
     }
 
     func testAnEnglishLettersHeadingsAreNoNames() {
         let lines = ["Internal Medicine Practice", "Dr. Anna Schmidt", "Doctor's Letter", "Patient: Erika Mustermann"]
-        let found = protect(lines, [.names])
+        let found = protect(lines, PrivateDetail.allNames)
         XCTAssertTrue(found.covered.contains("Erika Mustermann"), "\(found.covered)")
         XCTAssertTrue(found.covered.contains { $0.contains("Anna Schmidt") }, "\(found.covered)")
         XCTAssertFalse(found.covered.contains { $0.contains("Practice") || $0.contains("Letter") },
@@ -117,7 +121,7 @@ final class RedactionTests: XCTestCase {
 
     func testANameIsCoveredWithoutItsTitleOrWhatFollowsIt() {
         let found = protect(["Arztbrief", "Behandelnder Arzt: Dr. med. Klaus Weber",
-                             "Kunde: Frau Lena Weber (Kundennr. 4711)"], [.names])
+                             "Kunde: Frau Lena Weber (Kundennr. 4711)"], PrivateDetail.allNames)
         XCTAssertTrue(found.covered.contains("Klaus Weber"), "\(found.covered)")
         XCTAssertTrue(found.covered.contains("Lena Weber"), "\(found.covered)")
         XCTAssertFalse(found.covered.contains { $0.contains("Dr.") || $0.contains("Frau") || $0.contains("4711") },
@@ -125,7 +129,7 @@ final class RedactionTests: XCTestCase {
     }
 
     func testEveryKindChosenIsCoveredAsItself() {
-        let found = protect(invoice, [.names, .addresses, .phones, .amounts, .bank, .organizations, .orders])
+        let found = protect(invoice, PrivateDetail.allNames.union([.addresses, .phones, .amounts, .bank, .organizations, .orders]))
         let kinds = Set(found.hits.compactMap(\.kind))
         XCTAssertTrue(kinds.isSuperset(of: [.names, .bank, .organizations, .amounts]), "\(kinds)")
         XCTAssertTrue(found.covered.contains { $0.contains("DE89") })
@@ -171,7 +175,7 @@ final class RedactionTests: XCTestCase {
     }
 
     func testThePatientIsCoveredWhereverTheyAreNamedWithAllNames() {
-        let found = protect(letter, [.names])
+        let found = protect(letter, PrivateDetail.allNames)
         for line in [0, 3, 7, 8, 9, 12] {
             XCTAssertTrue(found.hits.contains { $0.line == line }, "line \(line): \(letter[line]) in \(found.covered)")
         }
@@ -222,8 +226,24 @@ final class RedactionTests: XCTestCase {
         XCTAssertTrue(found.hits.allSatisfy { $0.kind == .names })
     }
 
+    /// The fault the owner saw, made up: Names on alone, and their own name
+    /// saved. A letter about them covers their name, and leaves the doctor
+    /// and the colleague it greets; the greeting's "Herr" is never covered.
+    func testNamesAloneWithTheOwnNameLeaveTheDoctorsAndTheGreeting() {
+        let lines = ["Dr. med. Paul Beispiel", "Sehr geehrter Herr Kollege Beispiel,",
+                     "vielen Dank für die freundliche Überweisung Ihres Patienten:",
+                     "Herr Zorvak Musteryan, geb. am 05.03.1990", "Befund: Flach linkskonvexe Skoliose."]
+        let found = protect(lines, [.names], rules: [OwnRule(text: "Zorvak Musteryan", kind: .name)])
+        XCTAssertTrue(found.covered.contains("Zorvak Musteryan"), "\(found.covered)")
+        XCTAssertFalse(found.covered.contains { $0.contains("Beispiel") || $0.contains("Herr") }, "\(found.covered)")
+        let everyone = protect(lines, PrivateDetail.allNames)
+        XCTAssertTrue(Set(everyone.covered).isSuperset(of: ["Paul Beispiel", "Beispiel", "Zorvak Musteryan"]),
+                      "\(everyone.covered)")
+        XCTAssertFalse(everyone.covered.contains { $0.contains("Herr") }, "\(everyone.covered)")
+    }
+
     func testAPlaceFoundTwiceIsCountedOnce() {
-        let found = protect(["Patient: Herr Max Mustermann"], [.names])
+        let found = protect(["Patient: Herr Max Mustermann"], PrivateDetail.allNames)
         XCTAssertEqual(found.hits.count, 1, "\(found.covered)")
     }
 
@@ -232,8 +252,8 @@ final class RedactionTests: XCTestCase {
     /// The made-up certificate of incapacity for work, laid out as read.
     private let sickNote = FormFieldsTests.sickNote
 
-    func testNamesAloneCoverTheNamesOnTheFormAndNothingElse() {
-        let found = protect(form: sickNote, [.names])
+    func testEveryonesNamesCoverTheNamesOnTheFormAndNothingElse() {
+        let found = protect(form: sickNote, PrivateDetail.allNames)
         XCTAssertEqual(Set(found.covered), ["Mustermann", "Erika", "Paul Beispiel"], "\(found.covered)")
         XCTAssertTrue(found.hits.allSatisfy { $0.kind == .names })
         XCTAssertTrue(found.checked.isEmpty, "every name here is sure: \(found.checked)")
@@ -304,7 +324,8 @@ final class RedactionTests: XCTestCase {
             .ids: ["101234567", "X987654321", "998877665", "112233445"],
         ]
         for (kind, expected) in truth {
-            let covered = Set(protect(form: sickNote, [kind]).covered)
+            // Names are everyone's here: Names and its two parts.
+            let covered = Set(protect(form: sickNote, kind == .names ? PrivateDetail.allNames : [kind]).covered)
             let right = covered.intersection(expected).count
             let precision = covered.isEmpty ? 1 : Double(right) / Double(covered.count)
             let recall = Double(right) / Double(expected.count)
@@ -328,13 +349,14 @@ final class RedactionTests: XCTestCase {
     func testTheInsuredPersonAndTheDoctorAreToldApart() {
         XCTAssertEqual(protect(form: referral, [.patientNames]).covered, ["Beispiel-Muster, Hans Peter"])
         XCTAssertEqual(protect(form: referral, [.otherPeople]).covered, ["Clara Probe"])
-        let names = protect(form: referral, [.names])
+        let names = protect(form: referral, PrivateDetail.allNames)
         XCTAssertFalse(names.covered.contains { $0.contains("Bechterew") }, "a disease is no name: \(names.covered)")
         XCTAssertEqual(protect(form: referral, [.health]).covered, ["Morbus Bechterew"])
     }
 
     func testANameReadPoorlyIsCoveredAndMarkedForChecking() {
-        let found = protect(form: [("Name des Versicherten", 0.05, 0), ("mustermann erika", 0.05, 1)], [.names])
+        let found = protect(form: [("Name des Versicherten", 0.05, 0), ("mustermann erika", 0.05, 1)],
+                            PrivateDetail.allNames)
         XCTAssertEqual(found.covered, ["mustermann erika"])
         XCTAssertEqual(found.checked, ["mustermann erika"])
     }
@@ -398,7 +420,7 @@ final class RedactionTests: XCTestCase {
     }
 
     func testThePatientAndTheDoctorsOfALetterAreToldApart() {
-        let found = protect(form: radiologyLetter, [.names])
+        let found = protect(form: radiologyLetter, PrivateDetail.allNames)
         func roles(of name: String) -> Set<PersonRole?> {
             Set(zip(found.covered, found.hits).filter { $0.0.contains(name) }.map { $0.1.role?.role })
         }
@@ -445,7 +467,7 @@ final class RedactionTests: XCTestCase {
 
     /// What the engine covers, what it marks for checking and what it only
     /// offers, as text, with the lines laid out down a page.
-    private func protect(_ lines: [String], _ chosen: Set<PrivateDetail>)
+    private func protect(_ lines: [String], _ chosen: Set<PrivateDetail>, rules: [OwnRule] = [])
         -> (covered: [String], checked: [String], possible: [String], hits: [Finder.Hit]) {
         let boxes = lines.indices.map { i in
             CGRect(x: 0.1, y: 0.9 - CGFloat(i) * 0.03, width: CGFloat(lines[i].count) * 0.01, height: 0.02)
@@ -457,7 +479,7 @@ final class RedactionTests: XCTestCase {
             return CGRect(x: boxes[index].minX + CGFloat(start) * 0.01, y: boxes[index].minY,
                           width: CGFloat(count) * 0.01, height: boxes[index].height)
         }
-        let found = Finder.findings(lines, boxes: boxes, part: part, chosen)
+        let found = Finder.findings(lines, boxes: boxes, part: part, chosen, rules: rules)
         func text(_ hit: Finder.Hit) -> String {
             let line = lines[hit.line]
             return hit.range.flatMap { Range($0, in: line) }.map { String(line[$0]) } ?? line

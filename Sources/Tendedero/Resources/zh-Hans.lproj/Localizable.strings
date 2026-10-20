@@ -1321,7 +1321,7 @@
 "Details" = "详细信息";
 "Details lists every place, to cover or uncover each one." = "“详细信息”列出每一处，可逐一遮盖或显示。";
 "Don't Wait" = "不等待";
-"Everyone's" = "所有人";
+"Without a clear role, as in chats and lists" = "角色不明确的，如聊天和列表中的";
 "Finding private details…" = "正在查找私人信息…";
 "Last screenshot" = "上一张截图";
 "Money" = "财务";
@@ -1421,7 +1421,7 @@
 "What is read is kept locked on this iPhone, never in backups, and deleted when you turn this off." = "读取的内容会加锁保存在此 iPhone 上，不会进入备份，关闭此功能时会被删除。";
 "What may be prepared" = "可以准备的内容";
 "Width" = "粗细";
-"Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check." = "关闭“姓名”时，只遮盖所选人员的姓名，根据每个姓名周围的词语判断，例如“Patient:”或“Dr. med.”。角色不明确的姓名也会被遮盖，并标记出来供你检查。";
+"Each covers its own people, told by the words round each name, like \"Patient:\" or \"Dr. med.\". All three together cover everyone's names. Your own name, under Your Details, is always covered." = "每个开关只遮盖自己那类人员，根据每个姓名周围的词语判断，例如“Patient:”或“Dr. med.”。三个一起开启时遮盖所有人的姓名。“你的信息”里你自己的姓名始终会被遮盖。";
 "Cover and Save" = "遮盖并存储";
 "Cover and Share" = "遮盖并分享";
 "Find private details and protect them, simply." = "轻松发现并保护隐私信息。";
@@ -1509,6 +1509,9 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "添加信息";
 "Your Details" = "你的信息";
+"Your Name" = "你的姓名";
+"%@ · always covered" = "%@ · 始终遮盖";
+"Add it, and it is covered however it is written" = "添加后，无论怎样书写都会被遮盖";
 "Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "无论写在哪里、怎样写，也无论上面勾选了什么，都会被遮盖。它们只保存在这台 Mac 的钥匙串中，绝不会被发送。";
 "First and last name" = "名字和姓氏";
 "Street and house number" = "街道和门牌号";

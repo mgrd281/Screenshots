@@ -1321,7 +1321,7 @@
 "Details" = "詳細";
 "Details lists every place, to cover or uncover each one." = "「詳細」に各か所が並び、一つずつ隠したり表示したりできます。";
 "Don't Wait" = "待たない";
-"Everyone's" = "全員";
+"Without a clear role, as in chats and lists" = "役割がはっきりしない名前（チャットや一覧など）";
 "Finding private details…" = "個人情報を探しています…";
 "Last screenshot" = "最後のスクリーンショット";
 "Money" = "お金";
@@ -1421,7 +1421,7 @@
 "What is read is kept locked on this iPhone, never in backups, and deleted when you turn this off." = "読み取った内容はこの iPhone にロックして保存され、バックアップには含まれず、オフにすると削除されます。";
 "What may be prepared" = "準備してよいもの";
 "Width" = "太さ";
-"Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check." = "「名前」がオフのときは、選んだ人だけを隠します。「Patient:」や「Dr. med.」など、各名前の周りの言葉で判断します。役割がはっきりしない名前も隠し、確認できるよう印を付けます。";
+"Each covers its own people, told by the words round each name, like \"Patient:\" or \"Dr. med.\". All three together cover everyone's names. Your own name, under Your Details, is always covered." = "それぞれ自分の対象の人だけを隠します。「Patient:」や「Dr. med.」など、各名前の周りの言葉で判断します。3つすべてで全員の名前を隠します。「あなたの情報」にあるあなた自身の名前は、常に隠されます。";
 "Cover and Save" = "隠して保存";
 "Cover and Share" = "隠して共有";
 "Find private details and protect them, simply." = "個人情報をかんたんに見つけて守ります。";
@@ -1509,6 +1509,9 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "情報を追加";
 "Your Details" = "あなたの情報";
+"Your Name" = "あなたの名前";
+"%@ · always covered" = "%@ · 常に隠されます";
+"Add it, and it is covered however it is written" = "追加すると、どう書かれていても隠されます";
 "Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "どこにどう書かれていても、上で何を選んでいても隠されます。このMacのキーチェーンにだけ保存され、送信されることはありません。";
 "First and last name" = "姓名";
 "Street and house number" = "番地・通り";

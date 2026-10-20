@@ -192,10 +192,19 @@ enum OwnRules {
     static func adoptName(in defaults: UserDefaults = .standard) -> Bool {
         let done = "ownNameAdopted"
         guard !defaults.bool(forKey: done) else { return false }
-        defaults.set(true, forKey: done)
-        guard let adopted = adopting(load(from: defaults), details: OwnDetailStore.details) else { return false }
-        OwnDetailStore.details = adopted.details
+        guard let adopted = adopting(load(from: defaults), details: OwnDetailStore.details) else {
+            defaults.set(true, forKey: done)
+            return false
+        }
+        // The word stays until the keychain holds the name, so it is never
+        // lost; without the keychain, as before the iPhone is first
+        // unlocked, it moves another time.
+        guard OwnDetailStore.keep(adopted.details, strictly: true) else { return false }
         save(adopted.rules, to: defaults)
+        defaults.set(true, forKey: done)
+        // What shows the rules, like Settings on the Mac, reads them again;
+        // a moment later, as this may run while the choice is first read.
+        DispatchQueue.main.async { NotificationCenter.default.post(name: changed, object: nil) }
         return true
     }
 
@@ -220,10 +229,16 @@ enum OwnDetailStore {
 
     static var details: [OwnRule] {
         get { kept.value { read() } }
-        set {
-            let details = newValue.filter(\.kind.isDetail)
-            kept.change(to: details, current: read) { write($0) }
-        }
+        set { keep(newValue) }
+    }
+
+    /// Keeps the details, as setting them does; false when the keychain
+    /// did not take them, as before the iPhone is first unlocked. They are
+    /// then in memory until Snapfly quits, so they cover what they may, or,
+    /// kept strictly, not at all.
+    @discardableResult
+    static func keep(_ details: [OwnRule], strictly: Bool = false) -> Bool {
+        kept.change(to: details.filter(\.kind.isDetail), current: read, strictly: strictly) { write($0) }
     }
 
     /// What was read, and a lock round it.
@@ -231,22 +246,29 @@ enum OwnDetailStore {
         private let lock = NSLock()
         private var details: [OwnRule]?
 
-        func value(_ read: () -> [OwnRule]) -> [OwnRule] {
+        /// None while the keychain cannot be read, as before the iPhone is
+        /// first unlocked; read again next time, never taken for none kept.
+        func value(_ read: () -> [OwnRule]?) -> [OwnRule] {
             lock.lock()
             defer { lock.unlock() }
             if let details { return details }
-            let read = read()
+            guard let read = read() else { return [] }
             details = read
             return read
         }
 
-        /// Written only when it changed, so typing a rule leaves the keychain alone.
-        func change(to new: [OwnRule], current read: () -> [OwnRule], write: ([OwnRule]) -> Void) {
+        /// Written only when it changed, so typing a rule leaves the keychain
+        /// alone; kept in memory once written, or, not strictly, either way.
+        /// False when the keychain did not take them.
+        func change(to new: [OwnRule], current read: () -> [OwnRule]?, strictly: Bool,
+                    write: ([OwnRule]) -> Bool) -> Bool {
             lock.lock()
             defer { lock.unlock() }
-            guard new != (details ?? read()) else { return }
-            write(new)
-            details = new
+            // What could not be read counts as changed.
+            guard new != (details ?? read()) else { return true }
+            let written = write(new)
+            if written || !strictly { details = new }
+            return written
         }
     }
 
@@ -256,30 +278,34 @@ enum OwnDetailStore {
          kSecAttrAccount as String: account]
     }
 
-    private static func read() -> [OwnRule] {
+    /// The details kept, none when there are none; nil when the keychain
+    /// could not be read.
+    private static func read() -> [OwnRule]? {
         var asked = query
         asked[kSecReturnData as String] = true
         asked[kSecMatchLimit as String] = kSecMatchLimitOne
         var found: CFTypeRef?
-        guard SecItemCopyMatching(asked as CFDictionary, &found) == errSecSuccess, let data = found as? Data else {
-            return []
-        }
+        let status = SecItemCopyMatching(asked as CFDictionary, &found)
+        if status == errSecItemNotFound { return [] }
+        guard status == errSecSuccess, let data = found as? Data else { return nil }
         return OwnRules.decoded(data).filter(\.kind.isDetail)
     }
 
-    private static func write(_ details: [OwnRule]) {
-        SecItemDelete(query as CFDictionary)
-        guard !details.isEmpty, let data = try? JSONEncoder().encode(details) else { return }
+    private static func write(_ details: [OwnRule]) -> Bool {
+        let removed = SecItemDelete(query as CFDictionary)
+        guard !details.isEmpty, let data = try? JSONEncoder().encode(details) else {
+            return removed == errSecSuccess || removed == errSecItemNotFound
+        }
         var item = query
         item[kSecValueData as String] = data
         #if !os(macOS)
         item[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         #endif
-        SecItemAdd(item as CFDictionary, nil)
+        return SecItemAdd(item as CFDictionary, nil) == errSecSuccess
     }
     #else
     // Without a keychain, as in the tests on Linux, the details stay in memory.
-    private static func read() -> [OwnRule] { [] }
-    private static func write(_ details: [OwnRule]) {}
+    private static func read() -> [OwnRule]? { [] }
+    private static func write(_ details: [OwnRule]) -> Bool { true }
     #endif
 }

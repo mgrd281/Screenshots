@@ -18,19 +18,21 @@ enum FirstRun {
         case invoice, letter, statement
     }
 
-    /// The categories the first run offers, each a kind of Settings: the
+    /// The categories the first run offers, each kinds of Settings: the
     /// invoice's (which the statement shares) and the doctor's letter's.
     enum Category: String, CaseIterable, Hashable, Sendable {
         case names, emails, bank, patients, birthDates, health
 
-        var detail: PrivateDetail {
+        /// What it covers, as Settings' kinds: names are everyone's, Names
+        /// and its two parts together.
+        var details: Set<PrivateDetail> {
             switch self {
-            case .names: .names
-            case .emails: .emails
-            case .bank: .bank
-            case .patients: .patientNames
-            case .birthDates: .birthDates
-            case .health: .health
+            case .names: PrivateDetail.allNames
+            case .emails: [.emails]
+            case .bank: [.bank]
+            case .patients: [.patientNames]
+            case .birthDates: [.birthDates]
+            case .health: [.health]
             }
         }
 

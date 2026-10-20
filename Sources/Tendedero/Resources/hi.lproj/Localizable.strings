@@ -1323,7 +1323,7 @@
 "Details" = "विवरण";
 "Details lists every place, to cover or uncover each one." = "विवरण में हर जगह दिखती है, ताकि आप हर एक को छिपा या दिखा सकें।";
 "Don't Wait" = "इंतज़ार न करें";
-"Everyone's" = "सभी के";
+"Without a clear role, as in chats and lists" = "जिनकी भूमिका साफ़ नहीं, जैसे चैट और सूचियों में";
 "Finding private details…" = "निजी जानकारी खोजी जा रही है…";
 "Last screenshot" = "पिछला स्क्रीनशॉट";
 "Money" = "पैसा";
@@ -1423,7 +1423,7 @@
 "What is read is kept locked on this iPhone, never in backups, and deleted when you turn this off." = "जो पढ़ा जाता है वह इसी iPhone पर लॉक रहता है, कभी बैकअप में नहीं जाता, और इसे बंद करने पर मिट जाता है।";
 "What may be prepared" = "क्या तैयार किया जा सकता है";
 "Width" = "चौड़ाई";
-"Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check." = "नाम चालू न होने पर सिर्फ़ चुने हुए लोगों के नाम ढके जाते हैं, जिन्हें हर नाम के आसपास के शब्दों से पहचाना जाता है, जैसे \"Patient:\" या \"Dr. med.\"। जिस नाम की भूमिका साफ़ नहीं, उसे फिर भी ढका जाता है और आपके जाँचने के लिए चिह्नित किया जाता है।";
+"Each covers its own people, told by the words round each name, like \"Patient:\" or \"Dr. med.\". All three together cover everyone's names. Your own name, under Your Details, is always covered." = "हर एक अपने लोगों के नाम ढकता है, जिन्हें हर नाम के आसपास के शब्दों से पहचाना जाता है, जैसे \"Patient:\" या \"Dr. med.\"। तीनों मिलकर सभी के नाम ढकते हैं। आपकी जानकारी में आपका अपना नाम हमेशा ढका जाता है।";
 "Cover and Save" = "ढकें और सहेजें";
 "Cover and Share" = "ढकें और साझा करें";
 "Find private details and protect them, simply." = "निजी जानकारी आसानी से पहचानें और सुरक्षित करें।";
@@ -1511,6 +1511,9 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "जानकारी जोड़ें";
 "Your Details" = "आपकी जानकारी";
+"Your Name" = "आपका नाम";
+"%@ · always covered" = "%@ · हमेशा ढका जाता है";
+"Add it, and it is covered however it is written" = "इसे जोड़ें, फिर यह जैसे भी लिखा हो, ढका जाएगा";
 "Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "ये जहाँ और जैसे भी लिखी हों, ढकी जाती हैं, ऊपर चाहे जो चुना हो। ये केवल इसी Mac पर, उसके कीचेन में रहती हैं और कभी भेजी नहीं जातीं।";
 "First and last name" = "पहला नाम और उपनाम";
 "Street and house number" = "सड़क और मकान नंबर";

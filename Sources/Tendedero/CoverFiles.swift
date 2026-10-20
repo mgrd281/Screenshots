@@ -104,12 +104,23 @@ final class CoverFilesModel: ObservableObject {
     private var activity: NSObjectProtocol?
     private var opened: URL?
 
-    /// What Cover Files covered last time; names alone the first time.
+    /// What Cover Files covered last time; everyone's names the first time.
     private static let kindsKey = "coverFilesKinds"
+    /// Whether what it covered last time was brought up to Names and its
+    /// two parts each covering their own people.
+    private static let partedKey = "coverFilesNamesParted"
 
     init() {
-        let saved = UserDefaults.standard.stringArray(forKey: Self.kindsKey)?.compactMap(PrivateDetail.init(rawValue:))
-        chosen = saved.map(Set.init) ?? [.names]
+        let defaults = UserDefaults.standard
+        var saved = defaults.stringArray(forKey: Self.kindsKey).map { Set($0.compactMap(PrivateDetail.init(rawValue:))) }
+        // Names covered everyone's names when this was kept, as Cover Files started with.
+        if !defaults.bool(forKey: Self.partedKey), let kinds = saved, PrivateDetail.partingAll(kinds) != kinds {
+            let parted = PrivateDetail.partingAll(kinds)
+            defaults.set(parted.map(\.rawValue).sorted(), forKey: Self.kindsKey)
+            saved = parted
+        }
+        defaults.set(true, forKey: Self.partedKey)
+        chosen = saved ?? PrivateDetail.allNames
     }
 
     // MARK: The files
@@ -658,7 +669,7 @@ private struct CoverFilesInspector: View {
             Form {
                 Section {
                     HStack(spacing: 6) {
-                        quick(L("Names Only")) { model.chosen = [.names] }
+                        quick(L("Names Only")) { model.chosen = PrivateDetail.allNames }
                         quick(L("As in Settings")) { model.chosen = PrivateDetails.details }
                     }
                     HStack(spacing: 6) {
@@ -671,11 +682,14 @@ private struct CoverFilesInspector: View {
                 ForEach(PrivateDetail.Group.allCases, id: \.self) { group in
                     Section {
                         ForEach(group.kinds, id: \.self) { kind in
-                            Toggle(kind.title, isOn: Binding(
+                            Toggle(isOn: Binding(
                                 get: { model.chosen.contains(kind) },
                                 set: { on in
                                     if on { model.chosen.insert(kind) } else { model.chosen.remove(kind) }
-                                }))
+                                })) {
+                                Text(kind.title)
+                                if let subtitle = kind.subtitle { Text(subtitle) }
+                            }
                         }
                     } header: {
                         Text(group.title)

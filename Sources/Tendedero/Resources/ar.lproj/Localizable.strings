@@ -1321,7 +1321,7 @@
 "Details" = "التفاصيل";
 "Details lists every place, to cover or uncover each one." = "في «التفاصيل» كل منطقة، لتغطيتها أو كشفها واحدة واحدة.";
 "Don't Wait" = "لا تنتظر";
-"Everyone's" = "أسماء الجميع";
+"Without a clear role, as in chats and lists" = "بلا دور واضح، كما في المحادثات والقوائم";
 "Finding private details…" = "جارٍ البحث عن المعلومات الخاصة…";
 "Last screenshot" = "آخر لقطة شاشة";
 "Money" = "المال";
@@ -1421,7 +1421,7 @@
 "What is read is kept locked on this iPhone, never in backups, and deleted when you turn this off." = "ما تتم قراءته يُحفظ مقفلًا على هذا الـ iPhone، ولا يدخل في النسخ الاحتياطية، ويُحذف عند إيقاف هذه الميزة.";
 "What may be prepared" = "ما يُسمح بتجهيزه";
 "Width" = "العرض";
-"Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check." = "بدون «الأسماء» تُغطّى أسماء الأشخاص المختارين فقط، ويُعرفون من الكلمات حول كل اسم مثل «Patient:» أو «Dr. med.». والاسم الذي لا يتضح دوره يُغطّى على أي حال ويُعلَّم لتتحقق منه.";
+"Each covers its own people, told by the words round each name, like \"Patient:\" or \"Dr. med.\". All three together cover everyone's names. Your own name, under Your Details, is always covered." = "كل واحد منها يغطّي أشخاصه، ويُعرفون من الكلمات حول كل اسم مثل «Patient:» أو «Dr. med.». والثلاثة معًا تغطّي أسماء الجميع. واسمك أنت، في «معلوماتك»، يُغطّى دائمًا.";
 "Cover and Save" = "تغطية وحفظ";
 "Cover and Share" = "تغطية ومشاركة";
 "Find private details and protect them, simply." = "اكتشف المعلومات الخاصة واحمِها بسهولة.";
@@ -1509,6 +1509,9 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "إضافة معلومة";
 "Your Details" = "معلوماتك";
+"Your Name" = "اسمك";
+"%@ · always covered" = "%@ · مُغطّى دائمًا";
+"Add it, and it is covered however it is written" = "أضفه ليُغطّى أينما كُتب وكيفما كُتب";
 "Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "تُغطّى أينما وكيفما كُتبت، مهما كان المحدَّد في الأعلى. تبقى على هذا الـMac وحده، في سلسلة مفاتيحه، ولا تُرسل أبدًا.";
 "First and last name" = "الاسم الأول واسم العائلة";
 "Street and house number" = "الشارع ورقم المنزل";

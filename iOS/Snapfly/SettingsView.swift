@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// What to cover, kind by kind in groups, whose names among them; how covers look;
+/// What to cover, kind by kind in groups, whose names among them, the owner's own first; how covers look;
 /// how a screenshot is read; the AI assistant; the apps to send to; the devices it syncs with; and, further in,
 /// rules of the owner's own and how to cover a screenshot with a double tap
 /// on the back of the iPhone.
@@ -9,6 +9,10 @@ struct SettingsView: View {
     var inTab = false
     @Environment(\.dismiss) private var dismiss
     @State private var chosen = Choice.details
+    /// The owner's own name, first under People, and the name being added
+    /// or changed, in its sheet.
+    @State private var ownName = OwnRules.all.first { $0.kind == .name }
+    @State private var editingName: OwnRule?
     @State private var look = CoverStyle.current
     @State private var keepsLastDigits = Finder.keepsLastDigits
     @State private var strongest = Finder.strongest
@@ -34,6 +38,14 @@ struct SettingsView: View {
                 }
                 ForEach(PrivateDetail.Group.allCases, id: \.self) { group in
                     Section {
+                        if group == .people {
+                            Button {
+                                editingName = ownName ?? OwnRule(kind: .name)
+                            } label: {
+                                OwnNameRow(name: ownName)
+                            }
+                            .buttonStyle(.plain)
+                        }
                         ForEach(group.kinds, id: \.self) { detail in
                             Toggle(isOn: binding(for: detail)) {
                                 if let subtitle = detail.subtitle {
@@ -47,7 +59,7 @@ struct SettingsView: View {
                         Text(group.title)
                     } footer: {
                         if group == .people {
-                            Text(L("Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check."))
+                            Text(L("Each covers its own people, told by the words round each name, like \"Patient:\" or \"Dr. med.\". All three together cover everyone's names. Your own name, under Your Details, is always covered."))
                         }
                     }
                 }
@@ -179,6 +191,15 @@ struct SettingsView: View {
             }
             .navigationTitle(inTab ? L("More") : L("Settings"))
             .navigationBarTitleDisplayMode(inTab ? .large : .inline)
+            // Back from Also hide, where the name may have changed.
+            .onAppear { ownName = OwnRules.all.first { $0.kind == .name } }
+            .sheet(item: $editingName) { name in
+                OwnDetailEditor(detail: name, isNew: ownName == nil) { kept in
+                    keepName(kept)
+                } remove: {
+                    keepName(nil)
+                }
+            }
             .toolbar {
                 if !inTab {
                     ToolbarItem(placement: .confirmationAction) {
@@ -202,6 +223,19 @@ struct SettingsView: View {
     private func duration(_ milliseconds: Int) -> String {
         Measurement(value: Double(milliseconds) / 1000, unit: UnitDuration.seconds)
             .formatted(.measurement(width: .abbreviated, numberFormatStyle: .number.precision(.fractionLength(1))))
+    }
+
+    /// The owner's name kept with their details, in the place of the one
+    /// before, or removed from them.
+    private func keepName(_ name: OwnRule?) {
+        var all = OwnRules.all
+        if let i = all.firstIndex(where: { $0.kind == .name }) {
+            if let name { all[i] = name } else { all.remove(at: i) }
+        } else if let name {
+            all.append(name)
+        }
+        OwnRules.all = all
+        ownName = name
     }
 
     private func binding(for detail: PrivateDetail) -> Binding<Bool> {

@@ -10,14 +10,23 @@ struct SharedChoice: Codable, Equatable {
     var kinds: [String]
     var style: String
     var rules: [OwnRule]
+    /// Kept since Names, Patient names and Other people each cover their
+    /// own people; nil in a choice kept before.
+    var parted: Bool?
 
     init(details: Set<PrivateDetail>, look: CoverStyle, rules: [OwnRule]) {
         kinds = details.map(\.rawValue).sorted()
         style = look.rawValue
         self.rules = rules
+        parted = true
     }
 
-    var details: Set<PrivateDetail> { Set(kinds.compactMap(PrivateDetail.init(rawValue:))) }
+    /// The kinds, a choice kept before brought up to date as the app does
+    /// it, for a picture shared before the app was opened again.
+    var details: Set<PrivateDetail> {
+        let details = Set(kinds.compactMap(PrivateDetail.init(rawValue:)))
+        return parted == true ? details : PrivateDetail.parting(details)
+    }
     /// Ink for a look this version does not know.
     var look: CoverStyle { CoverStyle(rawValue: style) ?? .ink }
 

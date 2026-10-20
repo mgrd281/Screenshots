@@ -7,8 +7,13 @@ import UniformTypeIdentifiers
 /// same choice, under the same name, as on the Mac.
 enum Choice {
     /// The saved choice, brought up to date once before it is first read: a
-    /// recommended kind added since starts on.
-    private static let upToDate: Void = PrivateDetail.bringUpToDate(["hiddenDetails"])
+    /// recommended kind added since starts on. The owner's name, saved as a
+    /// word before there were details, becomes the name detail then too, so
+    /// it is covered however it is written, whichever names are chosen.
+    private static let upToDate: Void = {
+        PrivateDetail.bringUpToDate(["hiddenDetails"])
+        OwnRules.adoptName()
+    }()
 
     static var details: Set<PrivateDetail> {
         get {

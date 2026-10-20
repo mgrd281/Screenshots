@@ -29,9 +29,12 @@ enum PrivateDetails {
 
     /// The saved choice, and the one the menu's switch keeps while it is
     /// off, brought up to date once before either is read: a recommended
-    /// kind added since starts on.
+    /// kind added since starts on. The owner's name, saved as a word before
+    /// there were details, becomes the name detail then too, so it is
+    /// covered however it is written, whichever names are chosen.
     private nonisolated static let upToDate: Void = {
         PrivateDetail.bringUpToDate(["hiddenDetails", "hiddenDetailsBefore"])
+        OwnRules.adoptName()
     }()
 
     nonisolated static var hidden: Bool { !details.isEmpty }

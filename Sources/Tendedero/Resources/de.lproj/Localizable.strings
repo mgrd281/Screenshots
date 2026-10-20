@@ -1321,7 +1321,7 @@
 "Details" = "Details";
 "Details lists every place, to cover or uncover each one." = "Unter „Details“ steht jede Stelle, um sie einzeln zu verdecken oder zu zeigen.";
 "Don't Wait" = "Nicht warten";
-"Everyone's" = "Von allen";
+"Without a clear role, as in chats and lists" = "Ohne erkennbare Rolle, etwa in Chats und Listen";
 "Finding private details…" = "Private Angaben werden gesucht …";
 "Last screenshot" = "Letztes Bildschirmfoto";
 "Money" = "Finanzen";
@@ -1421,7 +1421,7 @@
 "What is read is kept locked on this iPhone, never in backups, and deleted when you turn this off." = "Was gelesen wird, bleibt geschützt auf diesem iPhone, nie in Backups, und wird gelöscht, wenn du das ausschaltest.";
 "What may be prepared" = "Was vorbereitet werden darf";
 "Width" = "Breite";
-"Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check." = "Ohne „Namen“ werden nur die gewählten Personen verdeckt, erkannt an den Wörtern um jeden Namen, etwa „Patient:“ oder „Dr. med.“. Ein Name, dessen Rolle unklar ist, wird trotzdem verdeckt und zur Prüfung markiert.";
+"Each covers its own people, told by the words round each name, like \"Patient:\" or \"Dr. med.\". All three together cover everyone's names. Your own name, under Your Details, is always covered." = "Jeder Schalter verdeckt seine eigenen Personen, erkannt an den Wörtern um jeden Namen, etwa „Patient:“ oder „Dr. med.“. Alle drei zusammen verdecken die Namen aller. Dein eigener Name unter „Deine Angaben“ wird immer verdeckt.";
 "Cover and Save" = "Verdecken und sichern";
 "Cover and Share" = "Verdecken und teilen";
 "Find private details and protect them, simply." = "Private Informationen einfach erkennen und schützen.";
@@ -1509,6 +1509,9 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "Angabe hinzufügen";
 "Your Details" = "Deine Angaben";
+"Your Name" = "Dein Name";
+"%@ · always covered" = "%@ · immer verdeckt";
+"Add it, and it is covered however it is written" = "Füge ihn hinzu, dann wird er verdeckt, wie auch immer er geschrieben ist";
 "Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "Verdeckt, wo und wie auch immer sie geschrieben stehen, egal, was oben angehakt ist. Sie bleiben allein auf diesem Mac, in seinem Schlüsselbund, und werden nie gesendet.";
 "First and last name" = "Vor- und Nachname";
 "Street and house number" = "Straße und Hausnummer";

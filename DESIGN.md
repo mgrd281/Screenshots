@@ -189,7 +189,7 @@ components:
   phone-rail-icon:
     size: "40pt"                   # a way out beside the page in Protect Picture: an app's phone-share-tile icon at 40pt (continuous corners of 9.2, the same hairline), or Photos, Files or the share sheet as a glyph 17pt medium in .primary on a tile of secondarySystemGroupedBackground of the same size; 44pt to the finger, 8pt apart, one above another, 12pt in from the screen's trailing edge, no frame, name or divider; pressed, 90% on a spring (0.25, 0.7)
   phone-detail-tile:
-    size: "30pt"                   # one of the owner's details in Also hide: its symbol (person.fill, house.fill, creditcard.fill, building.columns.fill), 14pt semibold white, on phone-protect with continuous corners of 7, 12pt before the detail's name and its value in subheadline .secondary
+    size: "30pt"                   # one of the owner's details in Also hide, and the owner's name first under People in Settings: its symbol (person.fill, house.fill, creditcard.fill, building.columns.fill), 14pt semibold white, on phone-protect with continuous corners of 7, 12pt before the detail's name and its value in subheadline .secondary (footnote under People)
   phone-question-chip:
     height: "36pt"                 # a ready question in Explain: a capsule of secondarySystemBackground, subheadline, 14pt in, 44pt to the finger, 8pt apart in a row that scrolls sideways
   phone-ask-bubble:
@@ -1335,15 +1335,17 @@ apps.
   says what is checked is covered.
   Then the twenty-two kinds in six sections named for their group: People;
   Companies and organizations; Money; Health; Documents; Passwords and
-  access. People opens with Names (its subtitle "Everyone's"), Patient
-  names ("In medical letters, reports and forms") and Other people (the
-  doctors, customers, staff, payees, senders and recipients), each a
-  switch with its subtitle, each its own: turning one never turns another.
-  Names covers everyone's names whatever the other two say; with it off,
-  each of the two covers its own people. Cover Files and Hide
-  Part list the kinds the same way. The section's footer says that without
-  Names only the people chosen are covered, told by the words round each
-  name, and that an unclear name is covered and marked to check. A change
+  access. People opens with Names (its subtitle "Without a clear role, as
+  in chats and lists"), Patient names ("In medical letters, reports and
+  forms") and Other people (the doctors, customers, staff, payees, senders
+  and recipients), each a switch with its subtitle, each its own: turning
+  one never turns another, and each covers its own people. All three, on
+  at first, cover everyone's names. Cover Files and Hide Part list the
+  kinds the same way, each switch with its subtitle; Cover Files' Names
+  Only is all three. The section's
+  footer says each covers its own people, told by the words round each
+  name, that the three together cover everyone's names, and that your own
+  name, under Your Details, is always covered. A change
   draws the photos hanging again. Then "Cover look": the
   six looks as tiles three to a row (`CoverLookPicker`), each a little chat,
   a grey bubble with a name and a blue one with a number, covered by the
@@ -2601,9 +2603,15 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   the first screenshots show, again from Settings › Help & Introduction.
 - Settings opens with Check All, Recommended and Uncheck All as small
   bordered buttons sharing a row, under "Hide private details", then the
-  six groups. People opens with Names, Patient names and Other people,
-  each with its subtitle in footnote `.secondary`, each a switch of its
-  own, as on the Mac, over the Mac's footer. Then "Cover
+  six groups. People opens with Your Name (`OwnNameRow`): the name
+  detail's `phone-detail-tile`, "Your Name" in body over "<the name> ·
+  always covered" in footnote `.secondary`, two lines at most, and
+  `checkmark.shield.fill` in semibold phone-protect at the trailing edge;
+  without a saved name, "Add it, and it is covered however it is written"
+  and `plus.circle.fill`. A tap opens the name's sheet (`OwnDetailEditor`,
+  below). Then Names, Patient names and Other people, each with its
+  subtitle in footnote `.secondary`, each a switch of its own, as on the
+  Mac, over the Mac's footer. Then "Cover
   look", the Mac's tiles three to a row with Keep the last four digits and
   Strongest protection under them; then "Reading and checking": Find more
   with Apple Intelligence and, once a screenshot was covered, how long the

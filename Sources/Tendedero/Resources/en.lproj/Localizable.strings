@@ -1323,7 +1323,7 @@
 "Details" = "Details";
 "Details lists every place, to cover or uncover each one." = "Details lists every place, to cover or uncover each one.";
 "Don't Wait" = "Don't Wait";
-"Everyone's" = "Everyone's";
+"Without a clear role, as in chats and lists" = "Without a clear role, as in chats and lists";
 "Finding private details…" = "Finding private details…";
 "Last screenshot" = "Last screenshot";
 "Money" = "Money";
@@ -1423,7 +1423,7 @@
 "What is read is kept locked on this iPhone, never in backups, and deleted when you turn this off." = "What is read is kept locked on this iPhone, never in backups, and deleted when you turn this off.";
 "What may be prepared" = "What may be prepared";
 "Width" = "Width";
-"Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check." = "Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check.";
+"Each covers its own people, told by the words round each name, like \"Patient:\" or \"Dr. med.\". All three together cover everyone's names. Your own name, under Your Details, is always covered." = "Each covers its own people, told by the words round each name, like \"Patient:\" or \"Dr. med.\". All three together cover everyone's names. Your own name, under Your Details, is always covered.";
 "Cover and Save" = "Cover and Save";
 "Cover and Share" = "Cover and Share";
 "Find private details and protect them, simply." = "Find private details and protect them, simply.";
@@ -1511,6 +1511,9 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "Add Detail";
 "Your Details" = "Your Details";
+"Your Name" = "Your Name";
+"%@ · always covered" = "%@ · always covered";
+"Add it, and it is covered however it is written" = "Add it, and it is covered however it is written";
 "Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent.";
 "First and last name" = "First and last name";
 "Street and house number" = "Street and house number";
