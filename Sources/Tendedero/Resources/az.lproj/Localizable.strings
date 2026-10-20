@@ -406,11 +406,11 @@
 "Try It Now" = "İndi sına";
 "Skip Demo" = "Nümayişi keç";
 "Watch the Demo" = "Nümayişə bax";
-"Private stays private." = "Şəxsi olan şəxsi qalır.";
-"You decide what stays visible." = "Nəyin görünəcəyinə sən qərar verirsən.";
-"Scan. Detect. Protect." = "Skan et. Tap. Qoru.";
-"Protected. Ready to share." = "Qorunur. Paylaşmağa hazırdır.";
-"Share your documents. Not your private data." = "Sənədlərini paylaş. Şəxsi məlumatlarını yox.";
+"Private *stays* private." = "Şəxsi olan şəxsi *qalır*.";
+"You *decide* what stays visible." = "Nəyin görünəcəyinə sən *qərar verirsən*.";
+"Scan. Detect. *Protect*." = "Skan et. Tap. *Qoru*.";
+"*Protected*. Ready to share." = "*Qorunur*. Paylaşmağa hazırdır.";
+"Share your documents. *Not your private data*." = "Sənədlərini paylaş. *Şəxsi məlumatlarını yox*.";
 "Only the protected copy leaves your iPhone." = "iPhone-undan yalnız qorunan nüsxə çıxır.";
 "Names, emails and bank details are found and covered." = "Adlar, e-poçtlar və bank məlumatları tapılır və gizlədilir.";
 "Tap a category to show or cover it." = "Göstərmək və ya gizlətmək üçün kateqoriyaya toxun.";

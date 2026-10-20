@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The iPhone's first run speaks louder: each headline large and heavy,
+  with the word that carries it in green over a soft green band, like
+  "bleibt" in "Privat bleibt privat.", and the line under it larger.
 - On the iPhone, Explain (the sparkles in Protect Picture) sends the
   protected copy to your own Claude or ChatGPT and says, as it writes, what
   the document is, what matters in it and what to do, in your language;

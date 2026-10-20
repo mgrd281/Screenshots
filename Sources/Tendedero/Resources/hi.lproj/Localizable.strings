@@ -406,11 +406,11 @@
 "Try It Now" = "अभी आज़माएँ";
 "Skip Demo" = "डेमो छोड़ें";
 "Watch the Demo" = "डेमो देखें";
-"Private stays private." = "निजी, निजी ही रहता है।";
-"You decide what stays visible." = "क्या दिखेगा, यह आप तय करते हैं।";
-"Scan. Detect. Protect." = "स्कैन करें। पहचानें। सुरक्षित करें।";
-"Protected. Ready to share." = "सुरक्षित। साझा करने के लिए तैयार।";
-"Share your documents. Not your private data." = "अपने दस्तावेज़ साझा करें, अपनी निजी जानकारी नहीं।";
+"Private *stays* private." = "निजी, निजी *ही रहता है*।";
+"You *decide* what stays visible." = "क्या दिखेगा, यह आप *तय करते हैं*।";
+"Scan. Detect. *Protect*." = "स्कैन करें। पहचानें। *सुरक्षित करें*।";
+"*Protected*. Ready to share." = "*सुरक्षित*। साझा करने के लिए तैयार।";
+"Share your documents. *Not your private data*." = "अपने दस्तावेज़ साझा करें, *अपनी निजी जानकारी नहीं*।";
 "Only the protected copy leaves your iPhone." = "आपके iPhone से केवल सुरक्षित कॉपी ही बाहर जाती है।";
 "Names, emails and bank details are found and covered." = "नाम, ईमेल और बैंक विवरण ढूँढकर ढक दिए जाते हैं।";
 "Tap a category to show or cover it." = "किसी श्रेणी को दिखाने या ढकने के लिए उस पर टैप करें।";
