@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// What to cover, kind by kind in groups, whose names among them; how covers look;
-/// how a screenshot is read; the AI assistant; the devices it syncs with; and, further in,
+/// how a screenshot is read; the AI assistant; the apps to send to; the devices it syncs with; and, further in,
 /// rules of the owner's own and how to cover a screenshot with a double tap
 /// on the back of the iPhone.
 struct SettingsView: View {
@@ -16,6 +16,7 @@ struct SettingsView: View {
     /// The assistant set up, by its name, read again as Settings shows.
     @State private var assistant: String?
     @ObservedObject private var indexer = PhotoIndexer.shared
+    @ObservedObject private var sendApps = SendApps.shared
 
     var body: some View {
         NavigationStack {
@@ -120,6 +121,20 @@ struct SettingsView: View {
                     Text(L("Your own Claude or ChatGPT explains documents in Protect Picture."))
                 }
                 .onAppear { assistant = AIAccount.isSetUp ? AIAccount.provider.name : nil }
+
+                Section {
+                    NavigationLink {
+                        ChooseApps()
+                    } label: {
+                        LabeledContent {
+                            Text(sendApps.chosen.count, format: .number)
+                        } label: {
+                            Label(L("Send to Apps"), systemImage: "paperplane")
+                        }
+                    }
+                } footer: {
+                    Text(L("The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac."))
+                }
 
                 SyncSection(sync: .shared)
 

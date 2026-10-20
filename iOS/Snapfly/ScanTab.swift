@@ -3,8 +3,8 @@ import VisionKit
 
 /// The Scan tab: a letter, a form or a receipt scanned with the system's
 /// document camera, straightened and cropped by it, then opened to cover its
-/// private details like any screenshot, or covered all together into one
-/// PDF. Scanned pages stay in memory while the app runs, and are never
+/// private details like any screenshot, or covered all together and sent to
+/// an app with one tap, or made into one PDF. Scanned pages stay in memory while the app runs, and are never
 /// saved unless the owner saves a covered copy.
 struct ScanTab: View {
     @ObservedObject private var store = ScannedPages.shared
@@ -83,8 +83,17 @@ struct ScanTab: View {
                     }
                 }
             }
+            VStack(alignment: .leading, spacing: 10) {
+                Text(L("Send to"))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                AppTiles(busy: store.sendingTo) { store.send(to: $0) }
+                    .padding(.horizontal, -16)
+            }
+            .padding(.top, 4)
             Button { store.sharePDF() } label: {
-                if let making = store.making {
+                // Pages covered for an app show on its icon instead.
+                if let making = store.making, store.sendingTo == nil {
                     HStack(spacing: 8) {
                         ProgressView().tint(.white)
                         Text(String(format: L("Page %d of %d"), making, store.pages.count))
@@ -102,6 +111,7 @@ struct ScanTab: View {
             .animation(.easeOut(duration: 0.15), value: store.making)
             VStack(alignment: .leading, spacing: 4) {
                 Text(L("Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy."))
+                Text(L("A tap on an app copies the covered pages and opens it, to paste them there."))
                 Text(L("Pages stay on this iPhone only while Snapfly is open."))
             }
             .font(.footnote)
@@ -162,8 +172,11 @@ final class ScannedPages: ObservableObject {
     }
 
     @Published private(set) var pages: [Page] = []
-    /// The page being put into the PDF, counted from 1; nil while none is.
+    /// The page being covered for the PDF or an app, counted from 1; nil
+    /// while none is.
     @Published private(set) var making: Int?
+    /// The app the pages are going to, while they are covered.
+    @Published private(set) var sendingTo: ChatTarget?
     @Published private var sessions: [UUID: ProtectSession] = [:]
 
     /// Adds pages after those scanned before, and gives them back.
@@ -208,22 +221,9 @@ final class ScannedPages: ObservableObject {
         let pages = pages
         Task {
             defer { making = nil }
-            var covered: [CGImage] = []
-            for (index, page) in pages.enumerated() {
-                making = index + 1
-                if let session = sessions[page.id] {
-                    guard session.isReady, let copy = session.copy?.cgImage else {
-                        return QuickCoverer.shared.show(String(format: L("Page %d is not ready yet. Open it to check it."), index + 1), for: 4)
-                    }
-                    covered.append(copy)
-                } else {
-                    guard let made = await Covering.cover(page.image, Choice.details) else {
-                        return QuickCoverer.shared.show(String(format: L("Page %d could not be covered, so no PDF was made."), index + 1), for: 4)
-                    }
-                    covered.append(made.image)
-                }
+            guard let finished = await covered(pages, failing: L("Page %d could not be covered, so no PDF was made.")) else {
+                return
             }
-            let finished = covered
             let pdf = await Task.detached(priority: .userInitiated) { ScanPDF.make(finished) }.value
             let name = "Snapfly " + Date.now.formatted(.iso8601.year().month().day()) + ".pdf"
             let url = FileManager.default.temporaryDirectory.appendingPathComponent(name)
@@ -236,6 +236,58 @@ final class ScannedPages: ObservableObject {
             QuickCoverer.shared.sharing = SharedFile(url: url)
             UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
+    }
+
+    /// Covers every page as for the PDF, puts them on the clipboard and
+    /// opens the app, or its website, to paste them there. If a page cannot
+    /// be covered, nothing is copied at all.
+    func send(to chat: ChatTarget) {
+        guard making == nil, !pages.isEmpty else { return }
+        let pages = pages
+        sendingTo = chat
+        Task {
+            defer {
+                making = nil
+                sendingTo = nil
+            }
+            guard let finished = await covered(pages, failing: L("Page %d could not be covered, so nothing was sent.")) else {
+                return
+            }
+            let pngs = await Task.detached(priority: .userInitiated) { finished.compactMap(Covering.png) }.value
+            guard pngs.count == finished.count else {
+                return QuickCoverer.shared.show(L("The copy could not be made."))
+            }
+            if await SendApps.shared.send(pngs, to: chat) {
+                QuickCoverer.shared.show(String(format: L("Copied for %@. Hold in the message box and tap Paste."), chat.name), for: 6)
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+            } else {
+                QuickCoverer.shared.show(String(format: L("%@ could not be opened."), chat.name), for: 4)
+            }
+        }
+    }
+
+    /// Every page covered, in their order: one opened before as it was left
+    /// there, once its copy is checked, any other as Settings says. Nil, with
+    /// a note saying which page, when one is not ready or cannot be covered.
+    private func covered(_ pages: [Page], failing: String) async -> [CGImage]? {
+        var done: [CGImage] = []
+        for (index, page) in pages.enumerated() {
+            making = index + 1
+            if let session = sessions[page.id] {
+                guard session.isReady, let copy = session.copy?.cgImage else {
+                    QuickCoverer.shared.show(String(format: L("Page %d is not ready yet. Open it to check it."), index + 1), for: 4)
+                    return nil
+                }
+                done.append(copy)
+            } else {
+                guard let made = await Covering.cover(page.image, Choice.details) else {
+                    QuickCoverer.shared.show(String(format: failing, index + 1), for: 4)
+                    return nil
+                }
+                done.append(made.image)
+            }
+        }
+        return done
     }
 }
 

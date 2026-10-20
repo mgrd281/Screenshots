@@ -6,6 +6,12 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, scanned pages go to an app with one tap: under them, the
+  same apps as under a photo on the Mac, by their icons, ChatGPT, Claude,
+  WhatsApp, Gmail, GMX and WEB.DE at first, with ten more to choose and
+  drag into order. A tap covers every page, copies them and opens the app,
+  or its website, to paste them there. Protect Picture has the same apps,
+  round, over its buttons, and More › Send to Apps chooses them.
 - On the iPhone, Explain (the sparkles in Protect Picture) sends the
   protected copy to your own Claude or ChatGPT and says, as it writes, what
   the document is, what matters in it and what to do, in your language;
