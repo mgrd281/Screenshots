@@ -404,6 +404,19 @@
 "Take screenshots with Snapfly" = "Snapfly ilə ekran şəkilləri";
 "Press %@ or click the screenshot button at the edge of the screen, then drag over an area, click a window, or press Return for the whole screen. It hangs on the line at once, with nothing to set up." = "%@ bas və ya ekranın kənarındakı ekran şəkli düyməsinə klik et, sonra bir sahənin üzərindən sürüşdür, pəncərəyə klik et və ya bütün ekran üçün Return bas. Dərhal ipdən asılır, heç nə qurmadan.";
 "Try It Now" = "İndi sına";
+"Skip Demo" = "Nümayişi keç";
+"Watch the Demo" = "Nümayişə bax";
+"Private stays private." = "Şəxsi olan şəxsi qalır.";
+"You decide what stays visible." = "Nəyin görünəcəyinə sən qərar verirsən.";
+"Scan. Detect. Protect." = "Skan et. Tap. Qoru.";
+"Protected. Ready to share." = "Qorunur. Paylaşmağa hazırdır.";
+"Share your documents. Not your private data." = "Sənədlərini paylaş. Şəxsi məlumatlarını yox.";
+"Protect invoices, screenshots and documents before you share them." = "Fakturaları, ekran şəkillərini və sənədləri paylaşmazdan əvvəl qoru.";
+"Only the protected copy leaves your iPhone." = "iPhone-undan yalnız qorunan nüsxə çıxır.";
+"Bank details" = "Bank məlumatları";
+"Invoice" = "Faktura";
+"Sample" = "Nümunə";
+"Sample invoice" = "Nümunə faktura";
 "Use the Screenshot App…" = "Ekran şəkli tətbiqindən istifadə et…";
 "Press %@ or click the screenshot button. Nothing to set up." = "%@ bas və ya ekran şəkli düyməsinə klik et. Qurmağa heç nə yoxdur.";
 "Also from the Screenshot app" = "Ekran şəkli tətbiqindən də";
@@ -1405,7 +1418,5 @@
 "Page %d could not be covered, so no PDF was made." = "Səhifə %d örtülə bilmədi, ona görə PDF yaradılmadı.";
 
 /* The iPhone: the first launch, covering a sample card */
-"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "Nümunə ekran şəkli: adı, telefon nömrəsi, e-poçtu və IBAN-ı bir-birinin ardınca örtülür.";
-"Plays the example again." = "Nümunəni yenidən göstərir.";
 "Covered before you send" = "Göndərməmişdən əvvəl örtülür";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Ekran şəkilləri bu iPhone-da oxunur və sən seçməsən heç nə ondan çıxmır.";

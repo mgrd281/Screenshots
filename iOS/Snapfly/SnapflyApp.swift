@@ -8,6 +8,8 @@ import SwiftUI
 @main
 struct SnapflyApp: App {
     init() {
+        // How soon the first run shows is measured from here.
+        _ = FirstRunCoordinator.launched
         // Whoever used Snapfly before Pro begins keeps every feature.
         Plan.recordFirstLaunch()
         // Preparing photos ahead of time goes on in the background only if

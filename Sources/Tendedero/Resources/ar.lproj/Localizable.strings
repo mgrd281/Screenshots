@@ -402,6 +402,19 @@
 "Take screenshots with Snapfly" = "التقط صور الشاشة مع Snapfly";
 "Press %@ or click the screenshot button at the edge of the screen, then drag over an area, click a window, or press Return for the whole screen. It hangs on the line at once, with nothing to set up." = "اضغط %@ أو انقر زر التصوير على حافة الشاشة، ثم اسحب فوق منطقة، أو انقر على نافذة، أو اضغط Return للشاشة كلها. تعلق الصورة على الحبل فورًا، بلا أي إعداد.";
 "Try It Now" = "جرّبه الآن";
+"Skip Demo" = "تخطي العرض";
+"Watch the Demo" = "مشاهدة العرض";
+"Private stays private." = "الخاص يبقى خاصًا.";
+"You decide what stays visible." = "أنت تقرر ما يبقى ظاهرًا.";
+"Scan. Detect. Protect." = "امسح. اكتشف. احمِ.";
+"Protected. Ready to share." = "محمي. جاهز للمشاركة.";
+"Share your documents. Not your private data." = "شارك مستنداتك، لا بياناتك الخاصة.";
+"Protect invoices, screenshots and documents before you share them." = "احمِ الفواتير وصور الشاشة والمستندات قبل مشاركتها.";
+"Only the protected copy leaves your iPhone." = "لا يخرج من الآيفون إلا النسخة المحمية.";
+"Bank details" = "البيانات المصرفية";
+"Invoice" = "فاتورة";
+"Sample" = "مثال";
+"Sample invoice" = "فاتورة نموذجية";
 "Use the Screenshot App…" = "استخدام «لقطة شاشة»…";
 "Press %@ or click the screenshot button. Nothing to set up." = "اضغط %@ أو انقر زر التصوير. لا شيء لإعداده.";
 "Also from the Screenshot app" = "ومن تطبيق «لقطة شاشة» أيضًا";
@@ -1403,7 +1416,5 @@
 "Page %d could not be covered, so no PDF was made." = "تعذّرت تغطية الصفحة %d، لذلك لم يُصنع ملف PDF.";
 
 /* The iPhone: the first launch, covering a sample card */
-"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "صورة شاشة للتجربة: يُغطّى فيها الاسم ورقم الهاتف والبريد الإلكتروني ورقم الآيبان واحدًا بعد الآخر.";
-"Plays the example again." = "يعرض المثال مرة أخرى.";
 "Covered before you send" = "مغطّاة قبل أن ترسلها";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "تُقرأ صور الشاشة على هذا الآيفون، ولا يخرج منه شيء إلا إذا اخترت ذلك.";

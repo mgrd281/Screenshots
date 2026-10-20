@@ -132,6 +132,16 @@ struct SettingsView: View {
                     } label: {
                         Label(L("Start Introduction"), systemImage: "hand.wave")
                     }
+                    Button {
+                        if !inTab { dismiss() }
+                        // Over everything, once a sheet has gone.
+                        Task { @MainActor in
+                            if !inTab { try? await Task.sleep(for: .seconds(0.4)) }
+                            FirstRunCoordinator.shared.replay()
+                        }
+                    } label: {
+                        Label(L("Watch the Demo"), systemImage: "play.circle")
+                    }
                 } header: {
                     Text(L("Help & Introduction"))
                 } footer: {
