@@ -37,6 +37,7 @@ page adopts one.
 | `brand-context/`, `brand-identity/`, `brand-guidelines/`, `brand-audit/`, `brand-voice/` | https://github.com/arnabbagxd/Brand-building-skills | commit 4a0a8b5 | MIT (`LICENSE` in each) |
 | `canvas-design/` | https://github.com/anthropics/skills, `skills/canvas-design` | commit dbd4588 | Apache 2.0 (`canvas-design/LICENSE.txt`) |
 | shadcn MCP server (`.mcp.json`, `.claude/mcp/shadcn-mcp.sh`) | https://github.com/shadcn-ui/ui, npm `shadcn` | 4.21.1, pinned | MIT |
+| Understand Anything (`.ua/`, the map it made) | https://github.com/Egonex-AI/Understand-Anything | 2.9.0, tag commit f08763d | MIT |
 | `website/vendor/` (GSAP, Rive, dotLottie, Floating UI, daisyUI, Lucide, Phosphor) | npm, see `website/vendor/README.md` | pinned there | see `website/vendor/README.md` |
 | `swiftui-animation/` | https://github.com/dpearson2699/swift-ios-skills, `skills/swiftui-animation` | commit 8d90fd1 | PolyForm Perimeter 1.0.0 (`swiftui-animation/LICENSE`, with its required notice) |
 | `text-to-lottie/` | https://github.com/diffusionstudio/lottie, `skills/text-to-lottie` | commit 3c72912 | MIT (`text-to-lottie/LICENSE`) |
@@ -411,6 +412,43 @@ agent skills now and the app libraries only when a motion needs them.
   through SwiftUI's `sensoryFeedback`.
 - **Not used:** `npx skills add`, the installer both sources suggest. It
   runs a package from npm, and copying the folders needs none.
+
+## Understand Anything (October 20, 2026)
+
+A map of Snapfly's code for the agent: files, types and functions, how they
+depend on each other, which tests check them, the app's layers and a guided
+tour. The owner asked for it.
+
+- **What is in the repository.** Only the map, in `.ua/`:
+  `knowledge-graph.json`, `meta.json`, `fingerprints.json` (so an update
+  reads only the files that changed), `config.json` and `.understandignore`
+  (what the map leaves out: agent tools, pictures, the other languages'
+  strings, generated folders). Its working files are in `.gitignore`.
+- **How it was made.** Version 2.9.0 was cloned and read, its tests run (924
+  passed), and its own scripts and steps made the map: 319 files, 2029
+  nodes, 4267 edges, layers and tour in Arabic, no validation issues. The
+  descriptions were written in this session; no code went to another
+  service.
+- **Swift fixes.** The tool does not know Swift tests, and `@testable
+  import` made every test seem to import every file. After its merge step,
+  the module-wide imports were dropped and the links from code to its tests
+  added back from the tests' names.
+- **Not registered as a plugin yet.** Its commands (`/understand`,
+  `/understand-chat`, `-explain`, `-diff`, `-onboard`, `-dashboard`) need the
+  plugin in `.claude/settings.json` (`extraKnownMarketplaces` for the
+  repository at tag `v2.9.0`, and `enabledPlugins`
+  `understand-anything@understand-anything`). The owner agreed; the
+  session's safety check refused the agent's change to its own settings,
+  so the owner or a session they allow makes it.
+- **Hooks.** The plugin brings two: after a commit, and at the start of a
+  session. Both do nothing unless `.ua/config.json` has `"autoUpdate":
+  true`. It is `false`, so the map changes only when asked.
+- **Dashboard.** `/understand-dashboard` serves it on 127.0.0.1 with a
+  one-time token. It loads its fonts from Google, its only request to
+  another host. Its "semantic" search is the same fuzzy match by words in
+  this version.
+- **Updating the map.** After code changes, run `/understand` again; it
+  reads only the changed files, by the fingerprints.
 
 ## Evaluated, not installed
 
