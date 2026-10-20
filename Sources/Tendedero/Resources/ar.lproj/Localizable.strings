@@ -118,6 +118,11 @@
 "Pick All" = "اختيار الكل";
 "Unpick All" = "إلغاء اختيار الكل";
 "Send to %@" = "إرسال إلى %@";
+"Send to Apps" = "الإرسال إلى التطبيقات";
+"Copied for %@. Hold in the message box and tap Paste." = "نُسخت من أجل %@. اضغط مطوّلاً في خانة الرسالة ثم اختر «لصق».";
+"%@ could not be opened." = "تعذّر فتح %@.";
+"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "لمسة على تطبيق تنسخ الصورة المغطّاة وتفتح التطبيق. اضغط مطوّلاً في خانة الرسالة ثم اختر «لصق». إن لم يكن التطبيق على هذا الآيفون، يُفتح موقعه.";
+"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "التطبيقات بعد المسح وفي «حماية الصورة»، لإرسال النسخة المغطّاة بلمسة واحدة. التطبيقات نفسها كما على الـ Mac.";
 "Opening %@…" = "جارٍ فتح %@…";
 "Could not open %@. The photos stay on the line." = "تعذّر فتح %@. تبقى الصور على الحبل.";
 "Paste into the app in front" = "لصق في التطبيق الأمامي";
@@ -404,11 +409,11 @@
 "Try It Now" = "جرّبه الآن";
 "Skip Demo" = "تخطي العرض";
 "Watch the Demo" = "مشاهدة العرض";
-"Private stays private." = "الخاص يبقى خاصًا.";
-"You decide what stays visible." = "أنت تقرر ما يبقى ظاهرًا.";
-"Scan. Detect. Protect." = "امسح. اكتشف. احمِ.";
-"Protected. Ready to share." = "محمي. جاهز للمشاركة.";
-"Share your documents. Not your private data." = "شارك مستنداتك، لا بياناتك الخاصة.";
+"Private *stays* private." = "الخاص *يبقى* خاصًا.";
+"You *decide* what stays visible." = "أنت *تقرر* ما يبقى ظاهرًا.";
+"Scan. Detect. *Protect*." = "امسح. اكتشف. *احمِ*.";
+"*Protected*. Ready to share." = "*محمي*. جاهز للمشاركة.";
+"Share your documents. *Not your private data*." = "شارك مستنداتك، *لا بياناتك الخاصة*.";
 "Only the protected copy leaves your iPhone." = "لا يخرج من الآيفون إلا النسخة المحمية.";
 "Names, emails and bank details are found and covered." = "تُكتشف الأسماء والبريد الإلكتروني والبيانات المصرفية وتُغطّى.";
 "Tap a category to show or cover it." = "اضغط على فئة لتُظهرها أو تُغطّيها.";
@@ -1482,6 +1487,8 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "تُغطّى كل صفحة كما في الإعدادات، أو كما تركتها بعد فتحها. لا يحمل ملف PDF إلا صور الصفحات المغطّاة، بلا نص يمكن نسخه.";
 "Page %d is not ready yet. Open it to check it." = "الصفحة %d ليست جاهزة بعد. افتحها لتتحقق منها.";
 "Page %d could not be covered, so no PDF was made." = "تعذّرت تغطية الصفحة %d، لذلك لم يُصنع ملف PDF.";
+"Page %d could not be covered, so nothing was sent." = "تعذّرت تغطية الصفحة %d، لذلك لم يُرسَل شيء.";
+"A tap on an app copies the covered pages and opens it, to paste them there." = "لمسة على تطبيق تنسخ الصفحات المغطّاة وتفتحه، لتلصقها هناك.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "مغطّاة قبل أن ترسلها";

@@ -118,6 +118,11 @@
 "Pick All" = "全选";
 "Unpick All" = "全部取消选择";
 "Send to %@" = "发送到 %@";
+"Send to Apps" = "发送到 App";
+"Copied for %@. Hold in the message box and tap Paste." = "已为 %@ 拷贝。按住消息框，然后轻点“粘贴”。";
+"%@ could not be opened." = "无法打开 %@。";
+"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "轻点一个 App，会拷贝遮盖后的图片并打开该 App。按住消息框，然后轻点“粘贴”。没有该 App 时会打开其网站。";
+"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "扫描后和“保护图片”中显示的 App，一次轻点即可发送遮盖后的副本。与 Mac 上的 App 相同。";
 "Opening %@…" = "正在打开 %@…";
 "Could not open %@. The photos stay on the line." = "无法打开 %@。照片留在晾衣绳上。";
 "Paste into the app in front" = "粘贴到前台应用";
@@ -404,11 +409,11 @@
 "Try It Now" = "立即试试";
 "Skip Demo" = "跳过演示";
 "Watch the Demo" = "观看演示";
-"Private stays private." = "隐私，始终是隐私。";
-"You decide what stays visible." = "显示什么，由你决定。";
-"Scan. Detect. Protect." = "扫描。识别。保护。";
-"Protected. Ready to share." = "已保护，可以分享了。";
-"Share your documents. Not your private data." = "分享文件，不分享隐私。";
+"Private *stays* private." = "隐私，*始终是隐私*。";
+"You *decide* what stays visible." = "显示什么，由你*决定*。";
+"Scan. Detect. *Protect*." = "扫描。识别。*保护*。";
+"*Protected*. Ready to share." = "*已保护*，可以分享了。";
+"Share your documents. *Not your private data*." = "分享文件，*不分享隐私*。";
 "Only the protected copy leaves your iPhone." = "离开你 iPhone 的只有受保护的副本。";
 "Names, emails and bank details are found and covered." = "找出姓名、电子邮件和银行信息，并将其遮盖。";
 "Tap a category to show or cover it." = "轻点类别即可显示或遮盖。";
@@ -1482,6 +1487,8 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "每一页都会按设置遮盖，或保持你打开后留下的样子。PDF 只包含遮盖后页面的图片，没有可复制的文字。";
 "Page %d is not ready yet. Open it to check it." = "第 %d 页还没准备好。打开它进行检查。";
 "Page %d could not be covered, so no PDF was made." = "第 %d 页无法遮盖，因此没有生成 PDF。";
+"Page %d could not be covered, so nothing was sent." = "第 %d 页无法遮盖，因此没有发送任何内容。";
+"A tap on an app copies the covered pages and opens it, to paste them there." = "轻点一个 App，会拷贝遮盖后的页面并打开它，以便粘贴到那里。";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "发送之前先遮盖";

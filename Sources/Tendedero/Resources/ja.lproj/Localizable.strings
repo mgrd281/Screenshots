@@ -118,6 +118,11 @@
 "Pick All" = "すべて選択";
 "Unpick All" = "すべての選択を解除";
 "Send to %@" = "%@に送信";
+"Send to Apps" = "アプリに送信";
+"Copied for %@. Hold in the message box and tap Paste." = "%@用にコピーしました。メッセージ欄を長押しして「ペースト」をタップします。";
+"%@ could not be opened." = "%@を開けませんでした。";
+"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "アプリをタップすると、隠した画像がコピーされてそのアプリが開きます。メッセージ欄を長押しして「ペースト」をタップします。アプリがない場合はWebサイトが開きます。";
+"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "スキャンの後と「画像を保護」に表示されるアプリ。隠したコピーをワンタップで送れます。Macと同じアプリです。";
 "Opening %@…" = "%@を開いています…";
 "Could not open %@. The photos stay on the line." = "%@を開けませんでした。写真はロープに残ります。";
 "Paste into the app in front" = "前面のアプリにペースト";
@@ -404,11 +409,11 @@
 "Try It Now" = "今すぐ試す";
 "Skip Demo" = "デモをスキップ";
 "Watch the Demo" = "デモを見る";
-"Private stays private." = "プライベートは、プライベートのまま。";
-"You decide what stays visible." = "見せるものは、あなたが決める。";
-"Scan. Detect. Protect." = "スキャン。検出。保護。";
-"Protected. Ready to share." = "保護完了。共有の準備ができました。";
-"Share your documents. Not your private data." = "書類は共有しても、個人情報は共有しない。";
+"Private *stays* private." = "プライベートは、*プライベートのまま*。";
+"You *decide* what stays visible." = "見せるものは、あなたが*決める*。";
+"Scan. Detect. *Protect*." = "スキャン。検出。*保護*。";
+"*Protected*. Ready to share." = "*保護完了*。共有の準備ができました。";
+"Share your documents. *Not your private data*." = "書類は共有しても、*個人情報は共有しない*。";
 "Only the protected copy leaves your iPhone." = "iPhoneから出ていくのは、保護されたコピーだけです。";
 "Names, emails and bank details are found and covered." = "名前、メールアドレス、口座情報を見つけて隠します。";
 "Tap a category to show or cover it." = "カテゴリをタップすると、表示したり隠したりできます。";
@@ -1482,6 +1487,8 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "各ページは設定どおりに、または開いたあとに残した状態で隠されます。PDFには隠したページの画像だけが入り、コピーできるテキストはありません。";
 "Page %d is not ready yet. Open it to check it." = "%d ページ目はまだ準備できていません。開いて確認してください。";
 "Page %d could not be covered, so no PDF was made." = "%d ページ目を隠せなかったため、PDFは作成されませんでした。";
+"Page %d could not be covered, so nothing was sent." = "%d ページ目を隠せなかったため、何も送信されませんでした。";
+"A tap on an app copies the covered pages and opens it, to paste them there." = "アプリをタップすると、隠したページがコピーされてアプリが開き、そこにペーストできます。";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "送る前に隠す";

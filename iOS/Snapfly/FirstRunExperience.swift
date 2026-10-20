@@ -94,7 +94,7 @@ struct SnapflyFirstRunExperience: View {
 
     /// The height everything but the page takes: the bars, the words, the
     /// stage's margins, what is under it and the actions.
-    private static let reserved: CGFloat = 424
+    private static let reserved: CGFloat = 440
     /// The page's size in the camera, so there is room for the shutter.
     private static let inCamera: CGFloat = 0.8
     private static let stageShape = RoundedRectangle(cornerRadius: 32, style: .continuous)
@@ -114,7 +114,7 @@ struct SnapflyFirstRunExperience: View {
                     words
                         .padding(.horizontal, 24)
                         .padding(.top, 16)
-                        .frame(maxWidth: .infinity, minHeight: 124, alignment: .top)
+                        .frame(maxWidth: .infinity, minHeight: 140, alignment: .top)
                     Spacer(minLength: 8)
                     stage(width: width)
                         .padding(.vertical, 18)
@@ -153,14 +153,15 @@ struct SnapflyFirstRunExperience: View {
     // MARK: The words
 
     /// What each scene says, short: the reveal, the owner's control, the
-    /// scanner, sharing, and at the end what Snapfly is for.
+    /// scanner, sharing, and at the end what Snapfly is for. The words
+    /// between asterisks are stressed (`StressedText`).
     static func headline(of scene: FirstRun.Scene) -> String {
         switch scene {
-        case .reveal: L("Private stays private.")
-        case .control: L("You decide what stays visible.")
-        case .scan: L("Scan. Detect. Protect.")
-        case .share: L("Protected. Ready to share.")
-        case .complete: L("Share your documents. Not your private data.")
+        case .reveal: L("Private *stays* private.")
+        case .control: L("You *decide* what stays visible.")
+        case .scan: L("Scan. Detect. *Protect*.")
+        case .share: L("*Protected*. Ready to share.")
+        case .complete: L("Share your documents. *Not your private data*.")
         }
     }
 
@@ -177,12 +178,18 @@ struct SnapflyFirstRunExperience: View {
 
     private var words: some View {
         ZStack(alignment: .top) {
-            VStack(spacing: 6) {
-                Text(Self.headline(of: state.scene))
-                    .font(.title2.weight(.bold))
+            VStack(spacing: 10) {
+                // Large and heavy, set close, a long one smaller rather than
+                // on a third line.
+                StressedText(Self.headline(of: state.scene))
+                    .font(.largeTitle.weight(.heavy))
+                    .kerning(-0.6)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.6)
+                    .dynamicTypeSize(...DynamicTypeSize.xxLarge)
                     .accessibilityAddTraits(.isHeader)
                 Text(Self.subline(of: state.scene))
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundStyle(.secondary)
             }
             .multilineTextAlignment(.center)
@@ -391,7 +398,7 @@ struct SnapflyFirstRunExperience: View {
         case .scan(.edges):
             locks += 1
         case .scene(.complete):
-            AccessibilityNotification.Announcement(Self.headline(of: .complete)).post()
+            AccessibilityNotification.Announcement(StressedText.plain(Self.headline(of: .complete))).post()
         default:
             break
         }
@@ -1216,6 +1223,67 @@ private struct Blurred: ViewModifier {
 
     func body(content: Content) -> some View {
         content.blur(radius: radius)
+    }
+}
+
+/// Words with some stressed, marked between asterisks in each language, as
+/// "Privat *bleibt* privat.": the stressed ones in the brand's green over a
+/// soft band of it, low on the letters as a highlighter leaves it (the band
+/// from iOS 18 on).
+struct StressedText: View {
+    let marked: String
+
+    init(_ marked: String) {
+        self.marked = marked
+    }
+
+    /// The words as they are read, without the marks.
+    static func plain(_ marked: String) -> String {
+        marked.replacingOccurrences(of: "*", with: "")
+    }
+
+    var body: some View {
+        if #available(iOS 18, *) {
+            text(banded: true).textRenderer(Highlighter())
+        } else {
+            text(banded: false)
+        }
+    }
+
+    /// Between the marks, every other part is stressed.
+    private func text(banded: Bool) -> Text {
+        let parts = marked.components(separatedBy: "*")
+        return parts.indices.reduce(Text(verbatim: "")) { text, index in
+            var part = Text(verbatim: parts[index])
+            if index % 2 == 1 {
+                part = part.foregroundStyle(SnapflyTokens.protect)
+                if #available(iOS 18, *), banded { part = part.customAttribute(Stressed()) }
+            }
+            return Text("\(text)\(part)")
+        }
+    }
+}
+
+@available(iOS 18, *)
+private struct Stressed: TextAttribute {}
+
+/// Draws a soft band of the green under each stressed run, over the lower
+/// half of the small letters to a little below the line, then the words
+/// over it.
+@available(iOS 18, *)
+private struct Highlighter: TextRenderer {
+    func draw(layout: Text.Layout, in context: inout GraphicsContext) {
+        for line in layout {
+            for run in line where run[Stressed.self] != nil {
+                let bounds = run.typographicBounds
+                let baseline = bounds.rect.maxY - bounds.descent
+                let band = CGRect(x: bounds.rect.minX - 3, y: baseline - bounds.ascent * 0.3,
+                                  width: bounds.rect.width + 6, height: bounds.ascent * 0.3 + bounds.descent * 0.35)
+                context.fill(Path(roundedRect: band, cornerRadius: 4, style: .continuous),
+                             with: .color(SnapflyTokens.protect.opacity(0.14)))
+            }
+            context.draw(line)
+        }
     }
 }
 

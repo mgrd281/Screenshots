@@ -118,6 +118,11 @@
 "Pick All" = "Alle auswählen";
 "Unpick All" = "Alle abwählen";
 "Send to %@" = "An %@ senden";
+"Send to Apps" = "An Apps senden";
+"Copied for %@. Hold in the message box and tap Paste." = "Für %@ kopiert. Halte das Nachrichtenfeld gedrückt und tippe auf „Einsetzen“.";
+"%@ could not be opened." = "%@ konnte nicht geöffnet werden.";
+"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "Ein Tippen auf eine App kopiert das verdeckte Bild und öffnet die App. Halte dort das Nachrichtenfeld gedrückt und tippe auf „Einsetzen“. Ohne die App öffnet sich ihre Website.";
+"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "Die Apps nach einem Scan und in „Bild schützen“, um die verdeckte Kopie mit einem Tippen zu senden. Dieselben Apps wie auf dem Mac.";
 "Opening %@…" = "%@ wird geöffnet …";
 "Could not open %@. The photos stay on the line." = "%@ konnte nicht geöffnet werden. Die Fotos bleiben an der Leine.";
 "Paste into the app in front" = "In die App im Vordergrund einsetzen";
@@ -404,11 +409,11 @@
 "Try It Now" = "Jetzt ausprobieren";
 "Skip Demo" = "Demo überspringen";
 "Watch the Demo" = "Demo ansehen";
-"Private stays private." = "Privat bleibt privat.";
-"You decide what stays visible." = "Du entscheidest, was sichtbar bleibt.";
-"Scan. Detect. Protect." = "Scannen. Erkennen. Schützen.";
-"Protected. Ready to share." = "Geschützt. Bereit zum Teilen.";
-"Share your documents. Not your private data." = "Teile deine Dokumente. Nicht deine privaten Daten.";
+"Private *stays* private." = "Privat *bleibt* privat.";
+"You *decide* what stays visible." = "Du *entscheidest*, was sichtbar bleibt.";
+"Scan. Detect. *Protect*." = "Scannen. Erkennen. *Schützen*.";
+"*Protected*. Ready to share." = "*Geschützt*. Bereit zum Teilen.";
+"Share your documents. *Not your private data*." = "Teile deine Dokumente. *Nicht deine privaten Daten*.";
 "Only the protected copy leaves your iPhone." = "Nur die geschützte Kopie verlässt dein iPhone.";
 "Names, emails and bank details are found and covered." = "Namen, E-Mails und Bankdaten werden erkannt und verdeckt.";
 "Tap a category to show or cover it." = "Tippe auf eine Kategorie, um sie zu zeigen oder zu verdecken.";
@@ -1482,6 +1487,8 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "Jede Seite wird abgedeckt, wie in den Einstellungen gewählt, oder so, wie du sie nach dem Öffnen gelassen hast. Das PDF enthält nur Bilder der abgedeckten Seiten, keinen Text zum Kopieren.";
 "Page %d is not ready yet. Open it to check it." = "Seite %d ist noch nicht fertig. Öffne sie, um sie zu prüfen.";
 "Page %d could not be covered, so no PDF was made." = "Seite %d konnte nicht abgedeckt werden, darum wurde kein PDF erstellt.";
+"Page %d could not be covered, so nothing was sent." = "Seite %d konnte nicht abgedeckt werden, darum wurde nichts gesendet.";
+"A tap on an app copies the covered pages and opens it, to paste them there." = "Ein Tippen auf eine App kopiert die abgedeckten Seiten und öffnet sie, damit du sie dort einsetzen kannst.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Abgedeckt, bevor du sendest";

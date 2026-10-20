@@ -113,7 +113,10 @@ or turn on syncing with your iPhone (below).
   they show. A page scanned with the iPhone's camera stays in memory while
   the app is open and is never saved unless you save its covered copy, or
   the covered PDF of the pages, which holds pictures of the covered pages
-  and no text; the camera is used only while you scan. The share extension, which covers a
+  and no text; the camera is used only while you scan. A tap on an app
+  under the pages or in Protect Picture puts the covered copy on the
+  clipboard and opens that app, or its website; Snapfly sends nothing
+  itself, and it reaches the app only when you paste it there. The share extension, which covers a
   picture shared to Snapfly from another app, works the same way, on the
   iPhone, and keeps nothing of the picture; what you chose to cover, the
   look and your own rules are kept for it in the iPhone's keychain, never a
@@ -186,7 +189,10 @@ mit der Kamera des iPhones gescannte Seite bleibt nur im Arbeitsspeicher,
 solange die App offen ist, und wird nie gesichert, außer du sicherst ihre
 abgedeckte Kopie oder das abgedeckte PDF der Seiten, das nur Bilder der
 abgedeckten Seiten enthält, keinen Text; die Kamera läuft nur, während du
-scannst. Die
+scannst. Tippst du unter den Seiten oder in „Bild schützen“ auf eine App,
+legt Snapfly die abgedeckte Kopie in die Zwischenablage und öffnet die App
+oder ihre Website; Snapfly selbst sendet nichts, sie kommt erst dort an,
+wenn du sie einsetzt. Die
 Teilen-Erweiterung, die ein aus einer anderen App geteiltes Bild abdeckt,
 arbeitet genauso auf dem iPhone und behält nichts vom Bild; was du abdecken
 lässt, der Look und deine eigenen Regeln liegen für sie im Schlüsselbund des

@@ -146,8 +146,10 @@ let eraserSizes: [CGFloat] = [0.015, 0.03, 0.06]
 let eraserNames = [L("Small"), L("Medium"), L("Large")]
 
 /// The ways a covered copy leaves.
-enum Leaving: Identifiable {
+enum Leaving: Hashable, Identifiable {
     case copy, share, photos, files, mac
+    /// Copied, and the app opened to paste it into (`SendToApps.swift`).
+    case app(ChatTarget)
     var id: Self { self }
 
     var title: String {
@@ -157,6 +159,7 @@ enum Leaving: Identifiable {
         case .photos: L("Save to Photos")
         case .files: L("Save to Files")
         case .mac: L("Send to Mac")
+        case .app(let chat): String(format: L("Send to %@"), chat.name)
         }
     }
 
@@ -167,6 +170,7 @@ enum Leaving: Identifiable {
         case .photos: "photo.on.rectangle"
         case .files: "folder"
         case .mac: "laptopcomputer.and.arrow.down"
+        case .app: "paperplane"
         }
     }
 }

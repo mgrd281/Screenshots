@@ -182,8 +182,12 @@ components:
     count: "3, or 4 pinched closer"   # screenshots side by side in the iPhone's grids, flexible columns 8pt apart; the Photos tab shows three rows of the newest
   phone-chosen-mark:
     size: "24pt"                   # a chosen screenshot's mark, bottom trailing, 6pt in: a white checkmark, caption bold, on phone-protect, ringed in white 1.5pt, with a shadow of black 20%, radius 2, y 1; it scales in from 50%
+  phone-stress-band:
+    height: "30% of the ascent + 35% of the descent"   # behind a first-run headline's stressed words, from iOS 18 on: phone-protect at 14%, corners of 4, 3pt past the words each side, over the lower half of the small letters to a little under the line, as a highlighter leaves it
   phone-share-tile:
-    size: "52pt"                   # a destination on the first run's share row: the app's own icon from its SVG (asset catalogue, vector kept), clipped to continuous corners of 12 with a hairline of .primary at 8%, the name in caption under it
+    size: "52pt"                   # an app to send to: on the first run's share row and under scanned pages; its icon from the asset catalogue (Logo* from SVG, vector kept; Chat* the owner's logos as app icons, 192px), clipped to continuous corners of 12 with a hairline of .primary at 8%, the name in caption .secondary under it, 64pt wide, 12pt apart in a row that scrolls sideways; More, last, is .tertiarySystemFill with ellipsis
+  phone-app-circle:
+    size: "34pt"                   # an app to send to in Protect Picture: its phone-share-tile icon clipped round, with the same hairline, in 44pt to the finger, side by side in one capsule of glass 5pt in; ⋯, last, is .tertiarySystemFill
   phone-question-chip:
     height: "36pt"                 # a ready question in Explain: a capsule of secondarySystemBackground, subheadline, 14pt in, 44pt to the finger, 8pt apart in a row that scrolls sideways
   phone-ask-bubble:
@@ -2019,9 +2023,14 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     - the story's bars (`phone-story-bars`), 8 pt down, 24 pt in, 400 pt
       wide at most;
     - 16 pt under them the words, centred, 400 pt wide at most, 24 pt in,
-      in a place kept at least 124 pt high so nothing below it jumps: the
-      headline in title 2 bold over its scene's line in subheadline
-      `.secondary`, 6 pt apart (what is found, how to turn a category, that
+      in a place kept at least 140 pt high so nothing below it jumps: the
+      headline in large title heavy, set 0.6 pt closer, on two lines at
+      most (a long one shrinks, to 60% at least, rather than taking a
+      third), Dynamic Type up to XX Large, its stressed words in
+      `phone-protect` over `phone-stress-band` ("Privat **bleibt** privat."
+      at the owner's request, October 2026; each language marks its own
+      words between asterisks), over its scene's line in body
+      `.secondary`, 10 pt apart (what is found, how to turn a category, that
       the scanner covers the patient and leaves the doctor, that only the
       protected copy leaves, what Snapfly is for);
     - the stage (`phone-first-run-stage`), between flexible space of at
@@ -2246,15 +2255,25 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     `phone-protect` circle, top trailing), which scales in. Holding a card
     offers Remove (`trash`, destructive). A page opened opens again as it
     was left (`ScannedPages` keeps its `ProtectSession`).
-  - Under the cards, centred, Share Covered PDF (`doc.richtext`), the
+  - Under the cards, **Send to** (subheadline semibold, `.secondary`, the
+    row 10 pt under it): the apps chosen (`SendToApps.swift`) as
+    `phone-share-tile`s in a row that scrolls sideways from the screen's
+    edge, as the share sheet shows apps, then More, which opens the choice
+    of apps in a sheet (medium or large, Done). A tap covers every page as
+    for the PDF, puts them on the clipboard and opens the app, or its
+    website without it, to paste them there; while the pages are covered,
+    the app's icon dims under a white spinner and the others wait. Then a
+    note (the quick cover's) says it was copied for the app and how to
+    paste, with a success haptic; one that cannot open says so.
+  - Under them, centred, Share Covered PDF (`doc.richtext`), the
     green pill. While it works it says which page it covers ("Page 2 of
     5", digits rolling) beside a white spinner, and Clear and Remove wait.
     Then the share sheet opens with the PDF (`ScanPDF`, named "Snapfly"
     and the date) and a success haptic; a page that cannot be covered, or
     one opened whose copy is not checked yet, stops it with a note saying
-    which, and no PDF is made. Two footnotes in `.secondary`, 4 pt apart:
-    how each page is covered and that the PDF holds only pictures, then
-    that pages stay only while the app is open.
+    which, and no PDF is made. Three footnotes in `.secondary`, 4 pt apart:
+    how each page is covered and that the PDF holds only pictures, what a
+    tap on an app does, then that pages stay only while the app is open.
   - Then three steps, each an SF Symbol in `phone-protect`, body semibold,
     24 pt wide, before subheadline `.secondary` words, 14 pt apart.
 - **Protected** (`ProtectedTab`), a large title: the last twelve screenshots
@@ -2327,7 +2346,15 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     undone." A selection haptic marks each change of tool; a light impact
     marks a shape drawn, a word hidden or a cover erased; a medium one a
     place held down.
-  - **The ways out** (`ExportDock`), 8 pt under the tools, a capsule of the
+  - **The apps** (`AppCircles`), 8 pt under the tools: the apps chosen as
+    `phone-app-circle`s in one capsule of glass, centred, scrolling
+    sideways only when they don't fit, and ⋯ last to choose them; with none
+    chosen it is not there. A tap goes as the ways out below do (it waits
+    for the copy with a spinner on the icon, and asks first while places
+    are still to check), then copies the protected copy and opens the app,
+    with the note "Copied for WhatsApp. Hold in the message box and tap
+    Paste."
+  - **The ways out** (`ExportDock`), 8 pt under the apps, a capsule of the
     same icons: Copy (`doc.on.doc`), Share (`square.and.arrow.up`), Save
     (`arrow.down.to.line`) and, only while a Mac is there to send to, Send
     to Mac (`laptopcomputer.and.arrow.down`); held, each says what it does,
@@ -2493,6 +2520,14 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - **What it does**: Explain with `sparkles` and a line in footnote
     `.secondary`, then the switch Find more with Claude, off without a key;
     the footer says what is sent where, only when tapped, and who bills it.
+- **Send to Apps** (`ChooseApps`), in Settings after AI Assistant: a row
+  with `paperplane` and how many apps are on, over a footer saying where
+  they show. Its page, an inline title, lists every app the iPhone has
+  (the Mac's, but Visual Studio Code and Antigravity) in their order, each
+  its icon at 29 pt (`phone-share-tile`'s corners scaled), its name and a
+  switch, always in edit mode so a handle drags it into place; the footer
+  says what a tap does and that the website opens without the app. The
+  same page opens in a sheet from More and ⋯.
 - The icon is the Mac icon's picture, full bleed and opaque, since iOS rounds
   it (`scripts/make-icon.py --ios`).
 - The introduction (`PhoneGuide.swift`) shows on its real screens: the

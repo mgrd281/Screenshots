@@ -120,6 +120,11 @@
 "Pick All" = "सभी चुनें";
 "Unpick All" = "सभी का चयन हटाएँ";
 "Send to %@" = "%@ को भेजें";
+"Send to Apps" = "ऐप्स को भेजें";
+"Copied for %@. Hold in the message box and tap Paste." = "%@ के लिए कॉपी हो गया। संदेश बॉक्स को दबाकर रखें और पेस्ट करें पर टैप करें।";
+"%@ could not be opened." = "%@ नहीं खुल सका।";
+"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "किसी ऐप पर टैप करने से ढका गया चित्र कॉपी होता है और ऐप खुलता है। उसके संदेश बॉक्स को दबाकर रखें और पेस्ट करें पर टैप करें। ऐप न हो तो उसकी वेबसाइट खुलती है।";
+"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "स्कैन के बाद और ‘चित्र सुरक्षित करें’ में दिखने वाले ऐप्स, ताकि ढकी गई कॉपी एक टैप में भेजी जा सके। वही ऐप्स जो Mac पर हैं।";
 "Opening %@…" = "%@ खुल रहा है…";
 "Could not open %@. The photos stay on the line." = "%@ नहीं खुल सका। फ़ोटो रस्सी पर रहती हैं।";
 "Paste into the app in front" = "सामने वाले ऐप में पेस्ट करें";
@@ -406,11 +411,11 @@
 "Try It Now" = "अभी आज़माएँ";
 "Skip Demo" = "डेमो छोड़ें";
 "Watch the Demo" = "डेमो देखें";
-"Private stays private." = "निजी, निजी ही रहता है।";
-"You decide what stays visible." = "क्या दिखेगा, यह आप तय करते हैं।";
-"Scan. Detect. Protect." = "स्कैन करें। पहचानें। सुरक्षित करें।";
-"Protected. Ready to share." = "सुरक्षित। साझा करने के लिए तैयार।";
-"Share your documents. Not your private data." = "अपने दस्तावेज़ साझा करें, अपनी निजी जानकारी नहीं।";
+"Private *stays* private." = "निजी, निजी *ही रहता है*।";
+"You *decide* what stays visible." = "क्या दिखेगा, यह आप *तय करते हैं*।";
+"Scan. Detect. *Protect*." = "स्कैन करें। पहचानें। *सुरक्षित करें*।";
+"*Protected*. Ready to share." = "*सुरक्षित*। साझा करने के लिए तैयार।";
+"Share your documents. *Not your private data*." = "अपने दस्तावेज़ साझा करें, *अपनी निजी जानकारी नहीं*।";
 "Only the protected copy leaves your iPhone." = "आपके iPhone से केवल सुरक्षित कॉपी ही बाहर जाती है।";
 "Names, emails and bank details are found and covered." = "नाम, ईमेल और बैंक विवरण ढूँढकर ढक दिए जाते हैं।";
 "Tap a category to show or cover it." = "किसी श्रेणी को दिखाने या ढकने के लिए उस पर टैप करें।";
@@ -1484,6 +1489,8 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "हर पेज सेटिंग्स के अनुसार ढका जाता है, या वैसे जैसे आपने उसे खोलने के बाद छोड़ा था। PDF में सिर्फ़ ढके हुए पेजों की तस्वीरें होती हैं, कॉपी करने लायक कोई टेक्स्ट नहीं।";
 "Page %d is not ready yet. Open it to check it." = "पेज %d अभी तैयार नहीं है। जाँचने के लिए उसे खोलें।";
 "Page %d could not be covered, so no PDF was made." = "पेज %d ढका नहीं जा सका, इसलिए PDF नहीं बनाया गया।";
+"Page %d could not be covered, so nothing was sent." = "पेज %d ढका नहीं जा सका, इसलिए कुछ नहीं भेजा गया।";
+"A tap on an app copies the covered pages and opens it, to paste them there." = "किसी ऐप पर टैप करने से ढके गए पेज कॉपी होते हैं और ऐप खुलता है, ताकि आप उन्हें वहाँ पेस्ट कर सकें।";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "भेजने से पहले ढका हुआ";
