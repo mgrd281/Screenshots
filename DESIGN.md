@@ -2171,7 +2171,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   the home indicator. The title is the headline, the words subheadline
   `.secondary`, the symbol on a 36 pt circle of the accent at 12%, the
   cross 30 pt in a 44 pt target, the dots 7 pt (16 pt long for the step
-  showing) and the buttons large. The hole and the card move on a spring
+  showing) and the buttons the system's regular size in capsules, in
+  subheadline semibold, each on one line (shrinking to 80% rather than
+  wrapping), 8 pt apart on the trailing side, the main one filled. The hole and the card move on a spring
   (0.45, 0.86), a 0.15 s ease-out with Reduce Motion. Offered once when
   the first screenshots show, again from Settings › Help & Introduction.
 - Settings opens with Check All, Recommended and Uncheck All as small
