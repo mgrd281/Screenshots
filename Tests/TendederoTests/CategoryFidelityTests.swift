@@ -142,34 +142,22 @@ final class CategoryFidelityTests: XCTestCase {
         XCTAssertTrue(both.isSubset(of: names), "\(both.subtracting(names))")
     }
 
-    /// Every switch turns: Names is its two parts together, so turning one
-    /// part off while Names is on keeps the other, both parts on is Names,
-    /// and Names off turns both off. Each choice covers what its switches say.
-    func testNamesAndItsTwoPartsTurnOnAndOffEachByItself() {
-        func turned(_ detail: PrivateDetail, _ on: Bool, _ chosen: Set<PrivateDetail>) -> Set<PrivateDetail> {
-            PrivateDetail.turning(detail, on: on, in: chosen)
+    /// Names, Patient names and Other people are three switches, each
+    /// turned on and off by itself: none turns another. Together they cover
+    /// what each of them covers alone; Names covers everyone's.
+    func testNamesAndItsTwoPartsAreEachTheirOwnSwitch() {
+        let kinds: [PrivateDetail] = [.names, .patientNames, .otherPeople]
+        func covered(_ chosen: Set<PrivateDetail>) -> Set<String> { Set(protect(Self.letter, chosen).texts) }
+        let alone = Dictionary(uniqueKeysWithValues: kinds.map { ($0, covered([$0])) })
+        for mask in 1..<(1 << kinds.count) {
+            let chosen = Set(kinds.indices.filter { mask & (1 << $0) != 0 }.map { kinds[$0] })
+            let each = chosen.reduce(into: Set<String>()) { $0.formUnion(alone[$1] ?? []) }
+            XCTAssertEqual(covered(chosen), each, "\(chosen.map(\.rawValue).sorted())")
         }
-        func shown(_ chosen: Set<PrivateDetail>) -> [Bool] {
-            [.names, .patientNames, .otherPeople].map { PrivateDetail.shows($0, in: chosen) }
-        }
-        XCTAssertEqual(shown([.names]), [true, true, true])
-        XCTAssertEqual(turned(.patientNames, false, [.names, .addresses]), [.otherPeople, .addresses])
-        XCTAssertEqual(turned(.otherPeople, false, [.names]), [.patientNames])
-        XCTAssertEqual(turned(.otherPeople, false, [.names, .patientNames]), [.patientNames], "as Recommended leaves it")
-        XCTAssertEqual(turned(.otherPeople, true, [.patientNames]), [.names])
-        XCTAssertEqual(turned(.patientNames, true, []), [.patientNames])
-        XCTAssertEqual(turned(.patientNames, false, [.patientNames]), [])
-        XCTAssertEqual(turned(.names, false, [.names, .patientNames, .ids]), [.ids])
-        XCTAssertEqual(turned(.names, true, [.otherPeople]), [.names])
-        XCTAssertEqual(turned(.ids, true, [.names]), [.names, .ids])
-        XCTAssertEqual(shown([.otherPeople]), [false, false, true])
-        // What each covers on the letter is what its switches say.
-        let patients = protect(Self.letter, turned(.otherPeople, false, [.names]))
-        XCTAssertTrue(patients.texts.contains("Erika Musterfrau"), "\(patients.texts)")
-        XCTAssertFalse(patients.texts.contains { $0.contains("Beispiel") }, "\(patients.texts)")
-        let others = protect(Self.letter, turned(.patientNames, false, [.names]))
-        XCTAssertTrue(others.texts.contains("Jonas Beispiel"), "\(others.texts)")
-        XCTAssertFalse(others.texts.contains { $0.contains("Musterfrau") }, "\(others.texts)")
+        // Names alone covers the patient and the doctor; each part, its own.
+        XCTAssertTrue(alone[.names]?.isSuperset(of: ["Erika Musterfrau", "Jonas Beispiel"]) == true, "\(alone)")
+        XCTAssertFalse(alone[.patientNames]?.contains { $0.contains("Beispiel") } ?? true)
+        XCTAssertFalse(alone[.otherPeople]?.contains { $0.contains("Musterfrau") } ?? true)
     }
 
     // MARK: The owner's own name

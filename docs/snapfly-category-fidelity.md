@@ -206,8 +206,14 @@ Every place found is a `Finder.Hit` with one `kind: PrivateDetail?`.
   Weitere Personen turn on and off by themselves. `PrivateDetail.turning`
   keeps Namen as the two together: one turned off while Namen is on keeps
   the other, both on is Namen, Namen off turns both off. Every list of kinds
-  (Settings on the Mac and the iPhone, Cover Files, Hide Part) uses it;
-  `testNamesAndItsTwoPartsTurnOnAndOffEachByItself` checks it.
+  (Settings on the Mac and the iPhone, Cover Files, Hide Part) used it.
+- **And then (the same evening):** the owner saw Namen turn the other two
+  on and asked for each to be its own switch. `PrivateDetail.shows` and
+  `turning` are gone: each switch stores only itself, in every list of
+  kinds. What is covered is what `resolved(_:)` gives, as in the table
+  above; Namen on covers everyone's names, whatever the other two say.
+  `testNamesAndItsTwoPartsAreEachTheirOwnSwitch` checks every combination
+  of the three on the letter.
 
 ## 4. The fix
 

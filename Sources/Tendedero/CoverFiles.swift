@@ -672,8 +672,10 @@ private struct CoverFilesInspector: View {
                     Section {
                         ForEach(group.kinds, id: \.self) { kind in
                             Toggle(kind.title, isOn: Binding(
-                                get: { PrivateDetail.shows(kind, in: model.chosen) },
-                                set: { on in model.chosen = PrivateDetail.turning(kind, on: on, in: model.chosen) }))
+                                get: { model.chosen.contains(kind) },
+                                set: { on in
+                                    if on { model.chosen.insert(kind) } else { model.chosen.remove(kind) }
+                                }))
                         }
                     } header: {
                         Text(group.title)
