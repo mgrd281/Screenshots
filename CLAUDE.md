@@ -294,6 +294,15 @@ the website's footer. Both stay.
     guide motion work. On the website that means CSS and the Web Animations
     API, not the Motion library or React; values come from
     `MOTION_SYSTEM.md`.
+  - **`swiftui-animation`** guides SwiftUI motion in both apps. It is
+    written for iOS 26 and Swift 6, so gate newer APIs, and take values from
+    `MOTION_SYSTEM.md`.
+  - **`text-to-lottie`** writes Lottie files and checks them in its player,
+    which is set up outside the repository.
+    - Lottie, Pow and Rive join the iPhone app only when a motion needs them
+      (the owner's choice, October 2026). See "Libraries and tools" in
+      `MOTION_SYSTEM.md`.
+    - Flutter and Capacitor tools don't apply.
   - **`remotion-best-practices`** (with create, markup, studio and render
     inside it) is for videos only, in their own workspace, never in the
     website. Nothing is rendered or published without the owner.
