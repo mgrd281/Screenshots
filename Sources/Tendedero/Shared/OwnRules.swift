@@ -246,11 +246,13 @@ enum OwnDetailStore {
         private let lock = NSLock()
         private var details: [OwnRule]?
 
-        func value(_ read: () -> [OwnRule]) -> [OwnRule] {
+        /// None while the keychain cannot be read, as before the iPhone is
+        /// first unlocked; read again next time, never taken for none kept.
+        func value(_ read: () -> [OwnRule]?) -> [OwnRule] {
             lock.lock()
             defer { lock.unlock() }
             if let details { return details }
-            let read = read()
+            guard let read = read() else { return [] }
             details = read
             return read
         }
@@ -258,10 +260,11 @@ enum OwnDetailStore {
         /// Written only when it changed, so typing a rule leaves the keychain
         /// alone; kept in memory once written, or, not strictly, either way.
         /// False when the keychain did not take them.
-        func change(to new: [OwnRule], current read: () -> [OwnRule], strictly: Bool,
+        func change(to new: [OwnRule], current read: () -> [OwnRule]?, strictly: Bool,
                     write: ([OwnRule]) -> Bool) -> Bool {
             lock.lock()
             defer { lock.unlock() }
+            // What could not be read counts as changed.
             guard new != (details ?? read()) else { return true }
             let written = write(new)
             if written || !strictly { details = new }
@@ -275,14 +278,16 @@ enum OwnDetailStore {
          kSecAttrAccount as String: account]
     }
 
-    private static func read() -> [OwnRule] {
+    /// The details kept, none when there are none; nil when the keychain
+    /// could not be read.
+    private static func read() -> [OwnRule]? {
         var asked = query
         asked[kSecReturnData as String] = true
         asked[kSecMatchLimit as String] = kSecMatchLimitOne
         var found: CFTypeRef?
-        guard SecItemCopyMatching(asked as CFDictionary, &found) == errSecSuccess, let data = found as? Data else {
-            return []
-        }
+        let status = SecItemCopyMatching(asked as CFDictionary, &found)
+        if status == errSecItemNotFound { return [] }
+        guard status == errSecSuccess, let data = found as? Data else { return nil }
         return OwnRules.decoded(data).filter(\.kind.isDetail)
     }
 
@@ -300,7 +305,7 @@ enum OwnDetailStore {
     }
     #else
     // Without a keychain, as in the tests on Linux, the details stay in memory.
-    private static func read() -> [OwnRule] { [] }
+    private static func read() -> [OwnRule]? { [] }
     private static func write(_ details: [OwnRule]) -> Bool { true }
     #endif
 }
