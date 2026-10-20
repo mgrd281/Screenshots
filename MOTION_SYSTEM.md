@@ -89,12 +89,28 @@ The web has no springs in CSS. There, use `ease.out` at a duration close to
 the spring's response, and keyframes (like `hang-in`) where a visible
 settle is the point.
 
+### Named motion on the iPhone
+
+`SnapflyMotion` in `iOS/Snapfly/Motion.swift`: each is a SwiftUI animation
+with its calm answer (0.15 s on an ease-out, or 0.2 s for a page) for Reduce
+Motion and Low Power Mode. The first run uses them all.
+
+| Token | Value | Use |
+|---|---|---|
+| `motion.feedback` | 0.12 s ease-out | A touch answered: a pressed chip gives to 96% |
+| `motion.toggle` | spring 0.25 / 0.85 | A switch or a chip turned |
+| `motion.find` | spring 0.3 / 0.7 | A detail found: its corner brackets snap in from 112% |
+| `motion.redact` | 0.34 s on `ease.out` | A cover laid or taken away, from the reading side |
+| `motion.document` | spring 0.55 / 0.86 | A page moving between places: into the camera, straightened, made small |
+| `motion.success` | spring 0.42 / 0.7 | Protected: the shield lands, with one bounce |
+| `motion.lock` | spring 0.45 / 0.8 | The scanner's outline closing onto the page's corners |
+
 ### Stagger
 
 | Token | Value | Where it ships |
 |---|---|---|
 | `stagger.cover` | 45 ms | Hide Part, and the iPhone's Protect Picture: covers grow in line by line, each over 0.32 s on a cubic ease-out from the reading side |
-| `stagger.demo` | 170 ms | iPhone first launch: the sample screenshot's four details covered one after another, slow enough to follow; found before that as the reading line reaches each |
+| `stagger.demo` | 170 ms | iPhone first run: the sample invoice's name, email and IBAN covered one after another, slow enough to follow; found before that as the reading line reaches each |
 | `stagger.grid` | 35 ms, twelve at most | iPhone: screenshot cards rise 8 pt into the grid the first time it has any, on `spring.reveal` |
 | `stagger.list` | 90 ms, four at most | Site arrivals: the four steps |
 | `stagger.hang` | 110 ms | Site first view: photos drop onto the rope |
@@ -120,7 +136,7 @@ settle is the point.
 | `rise.text` | 18 px | Body text arriving |
 | `rise.words` | 22–26 px | Headlines rising into focus |
 | `rise.card` | 28 px | A card in a list arriving |
-| `land.card` | 36 pt, tipped back 16° about its lower edge | iPhone first launch: the sample screenshot landing, on a spring (0.6, 0.82) |
+| `straighten.page` | the page's corners from tipped (top 12–90%, 7–2% down; bottom 0–100%, 100–97% down) to a rectangle | iPhone first run: the scanner straightening the page, by a projection, on `motion.document` |
 | `rise.window` | 32–44 px | A window opening |
 | `drop.photo` | 56 px | A photo dropping onto its clip |
 | `drop.card` | 40 px | A step card dropping onto its clip as it arrives |

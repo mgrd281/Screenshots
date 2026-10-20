@@ -196,6 +196,11 @@ the website's footer. Both stay.
     shared scheme `Snapfly`. `check-strings.swift` reads `iOS/Snapfly` too.
   - `iOS/Snapfly/PrivacyInfo.xcprivacy` declares the APIs Apple asks a reason
     for (UserDefaults so far). Add to it when the app uses another.
+  - The first run's story is `Shared/FirstRun.swift`, tested on Linux; see
+    `FIRST_RUN.md`. The **First Run Captures** workflow plays it on the
+    simulator when it changes, and puts still frames, a recording and how
+    soon it showed on the `first-run-captures` pre-release: the way to see
+    iPhone UI without an iPhone.
   - The **iPhone App Store** workflow (`scripts/iphone-store.sh`) archives,
     signs and uploads it to TestFlight at every push to `main` that touches
     it, and by hand. It needs `SNAPFLY_SIGNING` and `SNAPFLY_IPHONE`, the

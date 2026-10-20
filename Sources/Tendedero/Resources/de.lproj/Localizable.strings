@@ -402,6 +402,19 @@
 "Take screenshots with Snapfly" = "Bildschirmfotos mit Snapfly";
 "Press %@ or click the screenshot button at the edge of the screen, then drag over an area, click a window, or press Return for the whole screen. It hangs on the line at once, with nothing to set up." = "Drück %@ oder klick auf die Bildschirmfoto-Taste am Bildschirmrand, dann zieh über einen Bereich, klick auf ein Fenster oder drück Return für den ganzen Bildschirm. Es hängt sofort an der Leine – ohne etwas einzurichten.";
 "Try It Now" = "Jetzt ausprobieren";
+"Skip Demo" = "Demo überspringen";
+"Watch the Demo" = "Demo ansehen";
+"Private stays private." = "Privat bleibt privat.";
+"You decide what stays visible." = "Du entscheidest, was sichtbar bleibt.";
+"Scan. Detect. Protect." = "Scannen. Erkennen. Schützen.";
+"Protected. Ready to share." = "Geschützt. Bereit zum Teilen.";
+"Share your documents. Not your private data." = "Teile deine Dokumente. Nicht deine privaten Daten.";
+"Protect invoices, screenshots and documents before you share them." = "Rechnungen, Screenshots und Dokumente vor dem Teilen schützen.";
+"Only the protected copy leaves your iPhone." = "Nur die geschützte Kopie verlässt dein iPhone.";
+"Bank details" = "Bankdaten";
+"Invoice" = "Rechnung";
+"Sample" = "Beispiel";
+"Sample invoice" = "Beispielrechnung";
 "Use the Screenshot App…" = "„Bildschirmfoto“ verwenden …";
 "Press %@ or click the screenshot button. Nothing to set up." = "Drück %@ oder klick auf die Bildschirmfoto-Taste. Nichts einzurichten.";
 "Also from the Screenshot app" = "Auch aus „Bildschirmfoto“";
@@ -1403,7 +1416,5 @@
 "Page %d could not be covered, so no PDF was made." = "Seite %d konnte nicht abgedeckt werden, darum wurde kein PDF erstellt.";
 
 /* The iPhone: the first launch, covering a sample card */
-"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "Ein Beispiel-Bildschirmfoto: Name, Telefonnummer, E-Mail und IBAN werden nacheinander abgedeckt.";
-"Plays the example again." = "Zeigt das Beispiel noch einmal.";
 "Covered before you send" = "Abgedeckt, bevor du sendest";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Deine Bildschirmfotos werden auf diesem iPhone gelesen, und nichts verlässt es, wenn du es nicht willst.";

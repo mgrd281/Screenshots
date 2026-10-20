@@ -8,6 +8,7 @@ import VisionKit
 /// saved unless the owner saves a covered copy.
 struct ScanTab: View {
     @ObservedObject private var store = ScannedPages.shared
+    @ObservedObject private var tabs = AppTabs.shared
     @State private var scanning = false
     @State private var path = NavigationPath()
     /// Each press of the scan button, for its haptic.
@@ -32,6 +33,11 @@ struct ScanTab: View {
             .navigationTitle(L("Scan"))
             .quickNotes()
             .navigationDestination(for: ProtectSession.Source.self) { source in ProtectView(source: source) }
+        }
+        // The first run's Try It Now opens the camera here.
+        .onAppear(perform: scanIfAsked)
+        .onChange(of: tabs.scanRequested) { _, asked in
+            if asked { scanIfAsked() }
         }
         .fullScreenCover(isPresented: $scanning) {
             DocumentScanner { images in
@@ -131,6 +137,15 @@ struct ScanTab: View {
     private func open(_ page: ScannedPages.Page) {
         _ = store.session(page.id)
         path.append(ProtectSession.Source.scanned(page.id))
+    }
+
+    /// Opens the camera once, as the first run asked.
+    private func scanIfAsked() {
+        guard tabs.scanRequested else { return }
+        tabs.scanRequested = false
+        guard VNDocumentCameraViewController.isSupported else { return }
+        presses += 1
+        scanning = true
     }
 }
 

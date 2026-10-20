@@ -252,15 +252,51 @@ struct PhotosTab: View {
 
     // MARK: Before access
 
-    /// The first launch: Snapfly covering a sample screenshot first, then
-    /// what it does and access, with nothing else on the screen.
+    /// Before access: Snapfly's picture of stacked photos, what it does,
+    /// and Allow Access over the promise. The first run has shown it at
+    /// work already; the tabs stay, so a document can be scanned first.
     private var welcome: some View {
-        WelcomeScreen {
-            presses += 1
-            library.ask()
+        ScrollView {
+            VStack(spacing: 20) {
+                PhotoHero()
+                VStack(spacing: 8) {
+                    Text(L("Covered before you send"))
+                        .font(.title2.weight(.bold))
+                        .accessibilityAddTraits(.isHeader)
+                    Text(L("Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone."))
+                        .foregroundStyle(.secondary)
+                }
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                VStack(spacing: 14) {
+                    Button {
+                        presses += 1
+                        library.ask()
+                    } label: {
+                        Text(L("Allow Access"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 3)
+                    }
+                    .buttonStyle(ProtectButtonStyle())
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Image(systemName: "lock.fill")
+                            .font(.caption2)
+                            .accessibilityHidden(true)
+                        Text(L("Your screenshots are read on this iPhone, and nothing leaves it unless you choose."))
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: 340)
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 32)
+            .frame(maxWidth: .infinity)
         }
+        .scrollBounceBehavior(.basedOnSize)
         .sensoryFeedback(.impact(weight: .light), trigger: presses)
-        .toolbar(.hidden, for: .tabBar)
     }
 
     private var denied: some View {

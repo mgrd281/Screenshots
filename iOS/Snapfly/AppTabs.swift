@@ -11,17 +11,33 @@ enum AppTab: Hashable {
 final class AppTabs: ObservableObject {
     static let shared = AppTabs()
     @Published var selection = AppTab.photos
+    /// The first run's Try It Now: the Scan tab opens the camera as it shows.
+    @Published var scanRequested = false
 }
 
 /// Snapfly on the iPhone: the screenshots in Photos, a document scanned with
 /// the camera, the screenshots protected lately, and More with Settings and
 /// help, each a tab of the system's tab bar, in Liquid Glass from iOS 26 on.
+/// The first run shows over all of it, from the first frame.
 struct ContentView: View {
     @StateObject private var library = Library()
     @ObservedObject private var tabs = AppTabs.shared
     @ObservedObject private var coverer = QuickCoverer.shared
+    @ObservedObject private var firstRun = FirstRunCoordinator.shared
 
     var body: some View {
+        ZStack {
+            tabView
+                .accessibilityHidden(firstRun.showing)
+            if firstRun.showing {
+                SnapflyFirstRunExperience()
+                    .transition(.opacity)
+                    .zIndex(1)
+            }
+        }
+    }
+
+    private var tabView: some View {
         TabView(selection: $tabs.selection) {
             PhotosTab(library: library)
                 .tabItem { Label(L("Photos"), systemImage: "photo.on.rectangle.angled") }

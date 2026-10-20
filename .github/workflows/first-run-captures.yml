@@ -1,0 +1,56 @@
+# Shows the iPhone's first run without an iPhone: builds the app for the
+# simulator, plays the first run from a fresh install, and keeps still
+# frames, a recording and how soon it showed, beside main's build as it was
+# before. They go to the "first-run-captures" pre-release on the Releases
+# page, for review. Runs when the first run changes, and by hand.
+name: First Run Captures
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths:
+      - "iOS/Snapfly/FirstRunExperience.swift"
+      - "iOS/Snapfly/Motion.swift"
+      - "Sources/Tendedero/Shared/FirstRun.swift"
+      - "scripts/first-run-captures.sh"
+      - ".github/workflows/first-run-captures.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: first-run-captures-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Capture the first run on the simulator
+        run: scripts/first-run-captures.sh
+
+      - name: Keep the captures with the run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-run-captures
+          path: captures/
+          if-no-files-found: ignore
+
+      - name: Publish the captures for review
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=first-run-captures
+          notes="The iPhone's first run on the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: still frames, a recording, and main's build before it. For review; not a download of Snapfly."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --notes "$notes" --prerelease
+          else
+            gh release create "$tag" --prerelease --title "First run captures" --notes "$notes" --target "$GITHUB_SHA"
+          fi
+          gh release upload "$tag" captures/* --clobber

@@ -402,6 +402,19 @@
 "Take screenshots with Snapfly" = "Snapflyでスクリーンショット";
 "Press %@ or click the screenshot button at the edge of the screen, then drag over an area, click a window, or press Return for the whole screen. It hangs on the line at once, with nothing to set up." = "%@を押すか、画面の端にあるスクリーンショットボタンをクリックし、範囲をドラッグするか、ウインドウをクリックするか、Returnキーで画面全体を選びます。すぐにロープに吊るされ、設定は何もいりません。";
 "Try It Now" = "今すぐ試す";
+"Skip Demo" = "デモをスキップ";
+"Watch the Demo" = "デモを見る";
+"Private stays private." = "プライベートは、プライベートのまま。";
+"You decide what stays visible." = "見せるものは、あなたが決める。";
+"Scan. Detect. Protect." = "スキャン。検出。保護。";
+"Protected. Ready to share." = "保護完了。共有の準備ができました。";
+"Share your documents. Not your private data." = "書類は共有しても、個人情報は共有しない。";
+"Protect invoices, screenshots and documents before you share them." = "請求書、スクリーンショット、書類を共有する前に保護しましょう。";
+"Only the protected copy leaves your iPhone." = "iPhoneから出ていくのは、保護されたコピーだけです。";
+"Bank details" = "口座情報";
+"Invoice" = "請求書";
+"Sample" = "サンプル";
+"Sample invoice" = "サンプルの請求書";
 "Use the Screenshot App…" = "スクリーンショットAppを使う…";
 "Press %@ or click the screenshot button. Nothing to set up." = "%@を押すか、スクリーンショットボタンをクリック。設定は不要です。";
 "Also from the Screenshot app" = "スクリーンショットAppからも";
@@ -1403,7 +1416,5 @@
 "Page %d could not be covered, so no PDF was made." = "%d ページ目を隠せなかったため、PDFは作成されませんでした。";
 
 /* The iPhone: the first launch, covering a sample card */
-"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "サンプルのスクリーンショット：名前、電話番号、メール、IBANが順番に隠されます。";
-"Plays the example again." = "例をもう一度再生します。";
 "Covered before you send" = "送る前に隠す";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "スクリーンショットはこのiPhoneの中で読み取られ、あなたが選ばない限り何も外に出ません。";

@@ -404,6 +404,19 @@
 "Take screenshots with Snapfly" = "Snapfly से स्क्रीनशॉट लें";
 "Press %@ or click the screenshot button at the edge of the screen, then drag over an area, click a window, or press Return for the whole screen. It hangs on the line at once, with nothing to set up." = "%@ दबाएँ या स्क्रीन के किनारे पर स्क्रीनशॉट बटन पर क्लिक करें, फिर किसी हिस्से पर खींचें, किसी विंडो पर क्लिक करें, या पूरी स्क्रीन के लिए Return दबाएँ। यह तुरंत रस्सी पर टँग जाता है, कुछ सेट किए बिना।";
 "Try It Now" = "अभी आज़माएँ";
+"Skip Demo" = "डेमो छोड़ें";
+"Watch the Demo" = "डेमो देखें";
+"Private stays private." = "निजी, निजी ही रहता है।";
+"You decide what stays visible." = "क्या दिखेगा, यह आप तय करते हैं।";
+"Scan. Detect. Protect." = "स्कैन करें। पहचानें। सुरक्षित करें।";
+"Protected. Ready to share." = "सुरक्षित। साझा करने के लिए तैयार।";
+"Share your documents. Not your private data." = "अपने दस्तावेज़ साझा करें, अपनी निजी जानकारी नहीं।";
+"Protect invoices, screenshots and documents before you share them." = "चालान, स्क्रीनशॉट और दस्तावेज़ साझा करने से पहले सुरक्षित करें।";
+"Only the protected copy leaves your iPhone." = "आपके iPhone से केवल सुरक्षित कॉपी ही बाहर जाती है।";
+"Bank details" = "बैंक विवरण";
+"Invoice" = "चालान";
+"Sample" = "नमूना";
+"Sample invoice" = "नमूना चालान";
 "Use the Screenshot App…" = "स्क्रीनशॉट ऐप इस्तेमाल करें…";
 "Press %@ or click the screenshot button. Nothing to set up." = "%@ दबाएँ या स्क्रीनशॉट बटन पर क्लिक करें। कुछ सेट नहीं करना।";
 "Also from the Screenshot app" = "स्क्रीनशॉट ऐप से भी";
@@ -1405,7 +1418,5 @@
 "Page %d could not be covered, so no PDF was made." = "पेज %d ढका नहीं जा सका, इसलिए PDF नहीं बनाया गया।";
 
 /* The iPhone: the first launch, covering a sample card */
-"A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "एक नमूना स्क्रीनशॉट: इसका नाम, फ़ोन नंबर, ईमेल और IBAN एक के बाद एक ढके जाते हैं।";
-"Plays the example again." = "उदाहरण फिर से दिखाता है।";
 "Covered before you send" = "भेजने से पहले ढका हुआ";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "आपके स्क्रीनशॉट इसी iPhone पर पढ़े जाते हैं, और आपकी मर्ज़ी के बिना कुछ भी बाहर नहीं जाता।";
