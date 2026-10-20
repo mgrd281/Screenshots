@@ -229,6 +229,7 @@ struct SnapflyFirstRunExperience: View {
                    sheet: Sheet(width: width, state: state.protected(document), calm: true, interactive: false) { _ in })
             .rotationEffect(.degrees(turn))
             .offset(x: width * shift, y: 4)
+            .compositingGroup()
             .shadow(color: .black.opacity(0.1), radius: 10, y: 4)
             .accessibilityHidden(true)
             .transition(.opacity.combined(with: .offset(x: calm ? 0 : -width * shift)))
@@ -275,6 +276,8 @@ struct SnapflyFirstRunExperience: View {
         }
         .overlay { if !calm { ReadingLight(trigger: state.sweeps) } }
         .overlay(alignment: .topTrailing) { shield }
+        // One shadow for the whole page, not one under every word on it.
+        .compositingGroup()
         .shadow(color: .black.opacity(state.scene == .scan ? 0.3 : 0.12), radius: state.scene == .scan ? 8 : 16, y: 6)
     }
 
