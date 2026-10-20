@@ -21,6 +21,9 @@ keeps a download of each version.
   with a space after its country is found, with the bank's BIC beside it.
   In a doctor's letter the patient's name, address, date of birth and case
   numbers are known as the patient's, and the doctors' names as theirs.
+- In English letters, a practice's name like "Internal Medicine Practice"
+  and a heading like "Doctor's Letter" are no longer taken for people's
+  names.
 - On the iPhone, Details lists every place by whose it is, the patient,
   the doctors and other people, then by what it is, like Money or Health.
   Each group shows how much of it is covered and has one switch to cover
@@ -35,9 +38,11 @@ keeps a download of each version.
   it is and a short line under each headline saying what happens: a light
   reads it, and its name, email and IBAN are lit, then covered, while the
   amount stays readable; Names, Emails and Bank details are yours to turn
-  on and off with a tap; the stage turns into a camera, the page's edges
-  are found, the shutter takes it, and it is straightened and covered as
-  you chose; and the protected copy is ready to share. Try It Now opens
+  on and off with a tap; the stage turns into a camera and a doctor's
+  letter, with a signature and the practice's stamp, is found, taken,
+  straightened and covered: the patient's name, date of birth and
+  diagnosis, never the doctor's name; and the protected letter is ready to
+  share, with the invoice and a bank statement, protected too, behind it. Try It Now opens
   the scanner, Skip Demo leaves at any time, and More › Help &
   Introduction › Watch the Demo shows it again. It moves calmly with
   Reduce Motion or Low Power Mode, and is described for VoiceOver. Access

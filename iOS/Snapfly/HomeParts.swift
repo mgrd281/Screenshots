@@ -23,6 +23,9 @@ enum SnapflyTokens {
     /// The cover ink, as a covered copy shows it: the editor's, and the first
     /// launch's sample screenshot's.
     static let ink = Color(white: 0.12)
+    /// A ballpoint's blue, for the signature and the stamp on the first
+    /// run's doctor's letter; it is printed on white in light and dark alike.
+    static let penInk = Color(red: 43 / 255, green: 69 / 255, blue: 160 / 255)
 }
 
 // MARK: The picture of stacked photos

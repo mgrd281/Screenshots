@@ -3,9 +3,10 @@ import Foundation
 import XCTest
 @testable import Tendedero
 
-/// The iPhone's first run, without a screen: the sample invoice is covered
-/// as the engine covers it, the story keeps its times, and the categories
-/// chosen alone say what is covered, however often they change.
+/// The iPhone's first run, without a screen: the sample invoice, the doctor's
+/// letter and the bank statement are covered as the engine covers them, the
+/// story keeps its times, and the categories chosen alone say what is
+/// covered, however often they change.
 final class FirstRunTests: XCTestCase {
     // MARK: The sample and the engine
 
@@ -27,15 +28,18 @@ final class FirstRunTests: XCTestCase {
             guard hit.line > 0 else { continue }
             let line = made.strings[hit.line]
             let text = hit.range.flatMap { Range($0, in: line) }.map { String(line[$0]) } ?? line
-            byField[FirstRun.fields[hit.line - 1].id, default: []].append(text)
+            byField[FirstRun.fields(of: .invoice)[hit.line - 1].id, default: []].append(text)
         }
         return byField
     }
 
+    /// The invoice's categories, which the statement shares.
+    private let invoiceCategories = FirstRun.Category.allCases.filter { $0.document == .invoice }
+
     func testEachCategoryCoversItsOwnDetailAndNothingElse() {
-        for category in FirstRun.Category.allCases {
+        for category in invoiceCategories {
             let found = covered([category.detail])
-            let expected = FirstRun.fields.filter { $0.category == category }
+            let expected = FirstRun.fields(of: .invoice).filter { $0.category == category }
             XCTAssertEqual(Set(found.keys), Set(expected.map(\.id)), "\(category): \(found)")
             for field in expected {
                 XCTAssertTrue(found[field.id]?.contains { $0.contains(field.value) || field.value.contains($0) } == true,
@@ -52,10 +56,93 @@ final class FirstRunTests: XCTestCase {
 
     func testTheSampleIsReadTheSameWithEnglishLabels() {
         let labels: [FirstRun.Field.ID: String] = [.name: "Name:", .email: "Email:", .iban: "IBAN:", .amount: "Amount:"]
-        for category in FirstRun.Category.allCases {
+        for category in invoiceCategories {
             let found = covered([category.detail], labels: labels, title: "Invoice")
-            XCTAssertEqual(Set(found.keys), Set(FirstRun.fields.filter { $0.category == category }.map(\.id)),
+            XCTAssertEqual(Set(found.keys), Set(FirstRun.fields(of: .invoice).filter { $0.category == category }.map(\.id)),
                            "\(category): \(found)")
+        }
+    }
+
+    /// Every word the doctor's letter prints, in German: the letterhead, the
+    /// colleague it is for, the patient, the letter, the stamp and the
+    /// signature.
+    private let letterDE = [
+        "Dr. med. Anna Schmidt", "Fachärztin für Innere Medizin",
+        "Praxis Dr. Schmidt · Hauptstraße 12 · 20095 Hamburg",
+        "Dr. med. Klaus Weber", "Hausarztpraxis", "Lindenweg 3", "22301 Hamburg",
+        "Hamburg, 14.10.2026", "Arztbrief",
+        "Patient: Erika Mustermann", "Geburtsdatum: 12.08.1964", "Diagnose: Arterielle Hypertonie (I10.90)",
+        "Sehr geehrter Herr Kollege,",
+        "wir berichten über die heutige Vorstellung unserer gemeinsamen Patientin.",
+        "Der Blutdruck ist gut eingestellt; wir empfehlen eine Kontrolle in sechs Monaten.",
+        "Mit freundlichen Grüßen",
+        "Dr. med. Anna Schmidt", "Fachärztin für Innere Medizin", "Hauptstraße 12 · 20095 Hamburg",
+        "Dr. med. Anna Schmidt", "Fachärztin für Innere Medizin",
+        "Praxis Dr. Schmidt · Tel. 040 1234567 · www.example.com",
+    ]
+
+    /// The same letter in English.
+    private let letterEN = [
+        "Dr. med. Anna Schmidt", "Specialist in internal medicine",
+        "Praxis Dr. Schmidt · Hauptstraße 12 · 20095 Hamburg",
+        "Dr. med. Klaus Weber", "Family practice", "Lindenweg 3", "22301 Hamburg",
+        "Hamburg, 14.10.2026", "Doctor's letter",
+        "Patient: Erika Mustermann", "Date of birth: 12.08.1964", "Diagnosis: Hypertension (I10.90)",
+        "Dear colleague,",
+        "We report on our patient's visit today. Her blood pressure is well controlled;",
+        "we advise a check-up in six months.",
+        "Kind regards",
+        "Dr. med. Anna Schmidt", "Specialist in internal medicine", "Hauptstraße 12 · 20095 Hamburg",
+        "Dr. med. Anna Schmidt", "Specialist in internal medicine",
+        "Praxis Dr. Schmidt · Tel. 040 1234567 · www.example.com",
+    ]
+
+    /// Every word the bank statement prints, in German and in English.
+    private let statementDE = [
+        "Musterbank", "www.example.com", "Kontoauszug 10/2026", "01.10.2026 – 31.10.2026",
+        "Kontoinhaber: Erika Mustermann", "IBAN: DE89 3704 0044 0532 0130 00", "Datum Beschreibung Betrag",
+        "01.10. Gehalt +2.450,00 €", "02.10. Miete −890,00 €", "05.10. Lebensmittel −64,37 €",
+        "08.10. Strom −58,00 €", "14.10. Musterstudio RE-2026-0417 −149,90 €", "15.10. Mobilfunk −19,99 €",
+        "20.10. Apotheke −12,50 €", "Neuer Kontostand 1.255,24 €", "Musterbank · www.example.com",
+    ]
+    private let statementEN = [
+        "Example Bank", "www.example.com", "Account statement 10/2026", "01.10.2026 – 31.10.2026",
+        "Account holder: Erika Mustermann", "IBAN: DE89 3704 0044 0532 0130 00", "Date Description Amount",
+        "01.10. Salary +2.450,00 €", "02.10. Rent −890,00 €", "05.10. Groceries −64,37 €",
+        "08.10. Electricity −58,00 €", "14.10. Example Studio RE-2026-0417 −149,90 €",
+        "15.10. Mobile phone −19,99 €", "20.10. Pharmacy −12,50 €",
+        "New balance 1.255,24 €", "Example Bank · www.example.com",
+    ]
+
+    /// What the engine covers on a page for some kinds, as the words covered.
+    private func coveredWords(_ lines: [String], _ chosen: Set<PrivateDetail>) -> [String] {
+        let made = page(lines)
+        return Finder.findings(made.strings, boxes: made.boxes, part: made.part, chosen).hits.map { hit in
+            let line = made.strings[hit.line]
+            return hit.range.flatMap { Range($0, in: line) }.map { String(line[$0]) } ?? line
+        }
+    }
+
+    func testTheLetterCoversThePatientAndLeavesTheDoctors() {
+        for (letter, diagnosis) in [(letterDE, "Arterielle Hypertonie (I10.90)"), (letterEN, "Hypertension (I10.90)")] {
+            let expected: [FirstRun.Category: String] = [
+                .patients: FirstRun.field(.patient).value, .birthDates: FirstRun.field(.birthDate).value, .health: diagnosis,
+            ]
+            for (category, value) in expected {
+                let found = coveredWords(letter, [category.detail])
+                XCTAssertFalse(found.isEmpty, "\(category) finds \(value)")
+                XCTAssertTrue(found.allSatisfy { $0 == value }, "\(category) covers only \(value): \(found)")
+            }
+            let all = coveredWords(letter, Set(expected.keys.map(\.detail)))
+            XCTAssertFalse(all.contains { $0.contains("Schmidt") || $0.contains("Weber") }, "the doctors stay: \(all)")
+        }
+    }
+
+    func testTheStatementCoversItsHolderAndAccountAsTheInvoiceDoes() {
+        for statement in [statementDE, statementEN] {
+            XCTAssertEqual(coveredWords(statement, [.names]), [FirstRun.field(.holder).value])
+            XCTAssertEqual(coveredWords(statement, [.bank]), [FirstRun.field(.account).value])
+            XCTAssertEqual(coveredWords(statement, [.emails]), [], "it has no email")
         }
     }
 
@@ -70,7 +157,7 @@ final class FirstRunTests: XCTestCase {
         let protected = FirstRun.state(at: 2)
         XCTAssertEqual(protected.phase, .protected)
         XCTAssertTrue(protected.showsShield)
-        for field in FirstRun.fields {
+        for field in FirstRun.fields(of: .invoice) {
             XCTAssertEqual(protected.isCovered(field), field.category != nil, field.value)
         }
     }
@@ -78,10 +165,10 @@ final class FirstRunTests: XCTestCase {
     func testTheDetailsAreFoundAsTheLineReachesThemThenCoveredInTurn() {
         let found = FirstRun.state(at: 1.2)
         XCTAssertEqual(found.phase, .highlighted)
-        XCTAssertTrue(FirstRun.privateFields.allSatisfy { found.isFound($0) && !found.isCovered($0) })
+        XCTAssertTrue(FirstRun.privateFields(of: .invoice).allSatisfy { found.isFound($0) && !found.isCovered($0) })
         let half = FirstRun.state(at: 1.31 + FirstRun.stagger)
         XCTAssertEqual(half.phase, .redacting)
-        XCTAssertEqual(FirstRun.privateFields.map(half.isCovered), [true, true, false])
+        XCTAssertEqual(FirstRun.privateFields(of: .invoice).map(half.isCovered), [true, true, false])
     }
 
     func testTheScriptKeepsItsOrderAndEndsWithinFifteenSeconds() {
@@ -135,29 +222,47 @@ final class FirstRunTests: XCTestCase {
         for beat in FirstRun.script where beat.at > 2.5 {
             FirstRun.apply(beat.event, to: &state)
         }
-        XCTAssertEqual(state.chosen, [.names, .bank], "the story turned nothing for the owner")
-        XCTAssertFalse(state.isCovered(FirstRun.field(.email)), "the scan covers what is chosen")
-        XCTAssertTrue(state.isCovered(FirstRun.field(.name)))
-        XCTAssertTrue(state.isCovered(FirstRun.field(.iban)))
+        XCTAssertEqual(state.chosen, Set(FirstRun.Category.allCases).subtracting([.emails]),
+                       "the story turned nothing for the owner")
+        // At the end the invoice lies protected beside the letter, as chosen.
+        let invoice = state.protected(.invoice)
+        XCTAssertFalse(invoice.isCovered(FirstRun.field(.email)))
+        XCTAssertTrue(invoice.isCovered(FirstRun.field(.name)))
+        XCTAssertTrue(invoice.isCovered(FirstRun.field(.iban)))
+        XCTAssertTrue(FirstRun.privateFields(of: .letter).allSatisfy(state.isCovered), "the letter is covered")
     }
 
-    func testTheScannedPageIsReadThenFoundThenCoveredAsChosen() {
+    func testTheScannedLetterIsReadThenFoundThenCoveredAsChosen() {
         var state = FirstRun.state(at: FirstRun.scanStart)
         XCTAssertEqual(state.scan, .placed)
+        XCTAssertEqual(state.document, .letter)
         XCTAssertTrue(FirstRun.fields.allSatisfy { !state.isCovered($0) }, "the page as printed")
-        FirstRun.toggle(.names, in: &state)
+        FirstRun.toggle(.birthDates, in: &state)
         for beat in FirstRun.script where beat.at > FirstRun.scanStart && beat.at <= 9.25 {
             FirstRun.apply(beat.event, to: &state)
         }
         XCTAssertEqual(state.scan, .reading)
-        XCTAssertFalse(state.isFound(FirstRun.field(.name)), "only what is chosen is marked")
-        XCTAssertTrue(state.isFound(FirstRun.field(.iban)))
+        XCTAssertFalse(state.isFound(FirstRun.field(.birthDate)), "only what is chosen is marked")
+        XCTAssertTrue(state.isFound(FirstRun.field(.patient)))
+        XCTAssertTrue(state.isFound(FirstRun.field(.diagnosis)))
         for beat in FirstRun.script where beat.at > 9.25 && beat.at < FirstRun.shareStart {
             FirstRun.apply(beat.event, to: &state)
         }
         XCTAssertEqual(state.scan, .done)
-        XCTAssertFalse(state.isCovered(FirstRun.field(.name)))
-        XCTAssertTrue(state.isCovered(FirstRun.field(.iban)))
+        XCTAssertFalse(state.isCovered(FirstRun.field(.birthDate)))
+        XCTAssertTrue(state.isCovered(FirstRun.field(.patient)))
+        XCTAssertTrue(state.isCovered(FirstRun.field(.diagnosis)))
+        XCTAssertFalse(state.isCovered(FirstRun.field(.doctor)), "the doctor's name stays")
+        XCTAssertTrue(state.showsShield)
+    }
+
+    func testWithNothingOfTheLetterChosenItsShieldStaysAway() {
+        var state = FirstRun.state(at: 10)
+        for category in FirstRun.Category.allCases where category.document == .letter {
+            FirstRun.toggle(category, in: &state)
+        }
+        XCTAssertTrue(FirstRun.fields(of: .letter).allSatisfy { !state.isCovered($0) })
+        XCTAssertFalse(state.showsShield, "nothing on the page in front is covered")
     }
 
     func testWhileTheStoryWaitsItSaysPausedAndTheEndStays() {
