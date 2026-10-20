@@ -94,6 +94,9 @@ struct SnapflyFirstRunExperience: View {
     /// The height everything but the page takes: the bars, the words, the
     /// stage's margins, what is under it and the actions.
     private static let reserved: CGFloat = 424
+    /// The page's size in the camera, so there is room for the shutter.
+    private static let inCamera: CGFloat = 0.8
+    private static let stageShape = RoundedRectangle(cornerRadius: 32, style: .continuous)
 
     var body: some View {
         GeometryReader { space in
@@ -115,9 +118,14 @@ struct SnapflyFirstRunExperience: View {
                     stage(width: width)
                         .padding(.vertical, 18)
                         .frame(maxWidth: .infinity)
-                        .background(SnapflyTokens.surface, in: RoundedRectangle(cornerRadius: 32, style: .continuous))
-                        .overlay(RoundedRectangle(cornerRadius: 32, style: .continuous)
-                            .strokeBorder(Color.primary.opacity(0.06)))
+                        .background { ground(width: width) }
+                        .overlay {
+                            if !calm {
+                                CaptureFlash(trigger: state.scan >= .straight)
+                                    .clipShape(Self.stageShape)
+                            }
+                        }
+                        .overlay(Self.stageShape.strokeBorder(Color.primary.opacity(0.06)))
                         .padding(.horizontal, 16)
                     Spacer(minLength: 8)
                     lower
@@ -201,17 +209,24 @@ struct SnapflyFirstRunExperience: View {
     /// The invoice, alone at first, then before the camera, then small and
     /// ready to share.
     private func stage(width: CGFloat) -> some View {
-        let scanning = state.scene == .scan
-        let small = state.scene >= .share
+        paper(width: width)
+            .scaleEffect(state.scene >= .share ? 0.74 : state.scene == .scan ? Self.inCamera : 1)
+            .frame(maxWidth: .infinity)
+    }
+
+    /// What the page stands on: the brand's soft green, and while it is
+    /// scanned the camera's view, filling the stage.
+    private func ground(width: CGFloat) -> some View {
+        // The room under the page in the camera, where the shutter sits.
+        let room = width * FirstRun.pageRatio * (1 - Self.inCamera) / 2 + 18
         return ZStack {
-            if scanning {
-                ScanCamera(size: CGSize(width: width, height: paperHeight))
-                    .transition(.opacity.combined(with: .scale(scale: calm ? 1 : 0.96)))
+            Self.stageShape.fill(SnapflyTokens.surface)
+            if state.scene == .scan {
+                ScanCamera(room: room, taken: state.scan >= .straight, calm: calm)
+                    .clipShape(Self.stageShape)
+                    .transition(.opacity)
             }
-            paper(width: width)
-                .scaleEffect(small ? 0.74 : scanning ? 0.86 : 1)
         }
-        .frame(maxWidth: .infinity)
     }
 
     private func paper(width: CGFloat) -> some View {
@@ -232,7 +247,7 @@ struct SnapflyFirstRunExperience: View {
                         .accessibilityHidden(true)
                 }
             }
-            .overlay { if !calm { ReadingLine(trigger: state.sweeps) } }
+            .overlay { if !calm { ReadingLight(trigger: state.sweeps) } }
             .overlay(alignment: .topTrailing) { shield }
             .shadow(color: .black.opacity(state.scene == .scan ? 0.3 : 0.12), radius: state.scene == .scan ? 8 : 16, y: 6)
     }
@@ -383,9 +398,12 @@ struct SnapflyFirstRunExperience: View {
 
 // MARK: The invoice
 
-/// The made-up invoice, printed like a page: white in light and dark alike
-/// and left to right in every language, with its details found and covered
-/// as the story says. A tap on a detail turns its category on or off.
+/// The made-up invoice, printed as a real one is: a studio's letterhead,
+/// whom it is for, its number and date, what was done and what it costs,
+/// the account it is paid from and its small print. White in light and dark
+/// alike, left to right in every language, and set in print sizes that grow
+/// with the page; its details are found and covered as the story says. A
+/// tap on a detail turns its category on or off.
 private struct SampleInvoice: View {
     let width: CGFloat
     let state: FirstRun.State
@@ -395,154 +413,245 @@ private struct SampleInvoice: View {
 
     /// Standing, as a sheet of A4.
     private var height: CGFloat { width * FirstRun.pageRatio }
-    /// The width inside the page's margins.
-    private var inner: CGFloat { width * 0.85 }
+    /// Print sizes are given for a page 300 pt wide.
+    private var scale: CGFloat { width / 300 }
 
     var body: some View {
         // Each part takes its share of the page's height, so every detail
-        // sits where the reading line finds it (`FirstRun.Field.depth`).
+        // sits where the reading light finds it (`FirstRun.Field.depth`).
         VStack(alignment: .leading, spacing: 0) {
             letterhead
-                .band(height * 0.12, .topLeading)
-            heading
-                .band(height * 0.14, .topLeading)
-            Divider()
-            details(row: height * 0.08)
-            Divider()
-            letter
-                .band(height * 0.21, .leading)
-            Divider()
+                .band(height * 0.075, .leading)
+                .overlay(alignment: .bottom) { hairline }
+            gap(0.025)
+            parties
+                .frame(height: height * 0.11, alignment: .top)
+            gap(0.025)
+            Text(L("Invoice"))
+                .font(printed(18, .bold))
+                .band(height * 0.06, .leading)
+            gap(0.025)
+            items
+            gap(0.005)
+            sum(L("Subtotal"), "125,97 €")
+                .band(height * 0.03, .trailing)
+            sum(L("VAT") + " 19 %", "23,93 €")
+                .band(height * 0.03, .trailing)
+            gap(0.015)
             total
-                .band(height * 0.1, .leading)
+                .band(height * 0.05, .leading)
+                .overlay(alignment: .top) { rule(strong: true) }
+            gap(0.06)
+            Text(L("Payment by direct debit"))
+                .font(printed(6.5))
+                .foregroundStyle(.secondary)
+                .band(height * 0.03, .bottomLeading)
+            payment
+                .band(height * 0.04, .leading)
+            gap(0.05)
+            Text(L("Thank you for your order."))
+                .font(printed(7.5))
+                .band(height * 0.04, .leading)
+            gap(0.075)
             footer
-                .band(height * 0.09, .bottomLeading)
+                .band(height * 0.045, .leading)
+                .overlay(alignment: .top) { hairline }
         }
+        .lineLimit(1)
+        .minimumScaleFactor(0.6)
         .padding(.horizontal, width * 0.075)
-        .padding(.vertical, height * 0.05)
+        .padding(.top, height * 0.05)
         .frame(width: width, height: height, alignment: .top)
         .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(Color.primary.opacity(0.08)))
         .environment(\.colorScheme, .light)
         .environment(\.layoutDirection, .leftToRight)
-        .dynamicTypeSize(...DynamicTypeSize.xLarge)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(L("Sample invoice"))
         .accessibilityValue(summary)
     }
 
-    /// The sender's mark and lines, belonging to no one, and "Sample".
+    /// The studio's mark and name, its website, and "Sample".
     private var letterhead: some View {
-        HStack(alignment: .top, spacing: 8) {
-            RoundedRectangle(cornerRadius: 5, style: .continuous)
-                .fill(Color.primary.opacity(0.12))
-                .frame(width: 22, height: 22)
-            VStack(alignment: .leading, spacing: 5) {
-                line(0.32, 6)
-                line(0.22, 4)
+        HStack(spacing: 7 * scale) {
+            Text(verbatim: String(L("Example Studio").prefix(1)))
+                .font(printed(13, .bold))
+                .foregroundStyle(.white)
+                .frame(width: 24 * scale, height: 24 * scale)
+                .background(SnapflyTokens.ink, in: RoundedRectangle(cornerRadius: 6 * scale, style: .continuous))
+            VStack(alignment: .leading, spacing: 1.5 * scale) {
+                Text(L("Example Studio"))
+                    .font(printed(10.5, .semibold))
+                Text(verbatim: "www.example.com")
+                    .font(printed(6.5))
+                    .foregroundStyle(.secondary)
             }
-            .padding(.top, 3)
             Spacer(minLength: 8)
             Text(L("Sample"))
-                .font(.caption2.weight(.semibold))
+                .font(printed(6, .semibold))
                 .textCase(.uppercase)
                 .tracking(0.6)
                 .foregroundStyle(.secondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
+                .padding(.horizontal, 6 * scale)
+                .padding(.vertical, 2.5 * scale)
                 .background(Color.primary.opacity(0.06), in: Capsule())
         }
     }
 
-    /// "Invoice", over its number and date as lines.
-    private var heading: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            Text(L("Invoice"))
-                .font(.title3.weight(.bold))
-            HStack(spacing: 8) {
-                line(0.22, 4)
-                line(0.16, 4)
+    /// Whom it is for, the name over the email; its number and date beside.
+    private var parties: some View {
+        HStack(alignment: .top, spacing: 8) {
+            VStack(alignment: .leading, spacing: 0) {
+                heading(L("Bill to"))
+                    .band(height * 0.03, .leading)
+                value(FirstRun.field(.name), printed(10, .semibold))
+                    .band(height * 0.04, .leading)
+                value(FirstRun.field(.email), printed(9))
+                    .band(height * 0.04, .leading)
             }
-        }
-    }
-
-    /// The name, the email and the IBAN, a row each.
-    private func details(row: CGFloat) -> some View {
-        Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 0) {
-            ForEach(FirstRun.privateFields) { field in
+            Grid(alignment: .leading, horizontalSpacing: 6 * scale, verticalSpacing: 0) {
                 GridRow {
-                    Text(field.label)
-                        .font(.caption)
+                    Text(L("Invoice no."))
                         .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .frame(height: row)
-                    value(field)
-                        .frame(height: row)
+                        .frame(height: height * 0.03)
+                    Text(verbatim: "RE-2026-0417")
+                        .frame(height: height * 0.03)
+                }
+                GridRow {
+                    Text(L("Date"))
+                        .foregroundStyle(.secondary)
+                        .frame(height: height * 0.04)
+                    Text(verbatim: "14.10.2026")
+                        .frame(height: height * 0.04)
                 }
             }
+            .font(printed(7).monospacedDigit())
+            .fixedSize(horizontal: true, vertical: false)
         }
     }
 
-    /// The letter's words, as lines.
-    private var letter: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            line(0.94, 4)
-            line(0.88, 4)
-            line(0.97, 4)
-            line(0.6, 4)
+    /// What was done: a heading row and two items, under rules.
+    private var items: some View {
+        VStack(spacing: 0) {
+            item(L("Description"), L("Qty"), L("Amount"), heading: true)
+                .band(height * 0.03, .leading)
+                .overlay(alignment: .bottom) { hairline }
+            item(L("Logo design"), "1", "99,00 €")
+                .band(height * 0.04, .leading)
+            item(L("Business cards, 250"), "1", "26,97 €")
+                .band(height * 0.04, .leading)
+                .overlay(alignment: .bottom) { hairline }
         }
+    }
+
+    private func item(_ what: String, _ count: String, _ price: String, heading: Bool = false) -> some View {
+        HStack(spacing: 6 * scale) {
+            Text(what)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Text(count)
+                .frame(width: 30 * scale, alignment: .trailing)
+            Text(price)
+                .frame(width: 56 * scale, alignment: .trailing)
+        }
+        .font(heading ? printed(6, .semibold) : printed(7.5).monospacedDigit())
+        .textCase(heading ? Text.Case.uppercase : nil)
+        .tracking(heading ? 0.4 : 0)
+        .foregroundStyle(heading ? Color.secondary : Color.primary)
+    }
+
+    /// A line of the sums, on the trailing side under the amounts.
+    private func sum(_ label: String, _ amount: String) -> some View {
+        HStack(spacing: 6 * scale) {
+            Text(label)
+                .foregroundStyle(.secondary)
+            Text(verbatim: amount)
+                .frame(width: 56 * scale, alignment: .trailing)
+        }
+        .font(printed(7).monospacedDigit())
     }
 
     private var total: some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Text(FirstRun.field(.amount).label)
-                .font(.subheadline.weight(.semibold))
+            Text(L("Total"))
+                .font(printed(9, .semibold))
             Spacer(minLength: 8)
             Text(verbatim: FirstRun.field(.amount).value)
-                .font(.title3.weight(.bold).monospacedDigit())
+                .font(printed(12.5, .bold).monospacedDigit())
         }
     }
 
-    /// The small print at the foot of the page, as lines.
+    /// The account the amount is paid from.
+    private var payment: some View {
+        HStack(spacing: 8 * scale) {
+            Text(FirstRun.field(.iban).label)
+                .font(printed(7, .semibold))
+                .foregroundStyle(.secondary)
+            value(FirstRun.field(.iban), printed(8.5).monospacedDigit())
+        }
+    }
+
+    /// The small print at the foot of the page.
     private var footer: some View {
-        HStack(spacing: 10) {
-            line(0.2, 3)
-            line(0.26, 3)
-            line(0.16, 3)
+        HStack(spacing: 8) {
+            Text(L("Example Studio") + " · www.example.com")
+            Spacer(minLength: 8)
+            Text(verbatim: "1/1")
         }
+        .font(printed(5.5))
+        .foregroundStyle(.secondary)
     }
 
-    /// A line of words on the page that belong to no one.
-    private func line(_ share: CGFloat, _ thickness: CGFloat) -> some View {
-        Capsule()
-            .fill(Color.primary.opacity(0.09))
-            .frame(width: inner * share, height: thickness)
+    /// A heading on the page, in small capitals.
+    private func heading(_ text: String) -> some View {
+        Text(text)
+            .font(printed(6, .semibold))
+            .textCase(.uppercase)
+            .tracking(0.5)
+            .foregroundStyle(.secondary)
     }
 
-    /// A private detail: green corners round it once found, then the ink
-    /// growing over it from the reading side, solid all the way; with
-    /// Reduce Motion the ink is simply there.
-    private func value(_ field: FirstRun.Field) -> some View {
+    /// A printed rule: a hairline, or the line over the total.
+    private func rule(strong: Bool) -> some View {
+        Rectangle()
+            .fill(Color.primary.opacity(strong ? 0.8 : 0.12))
+            .frame(height: strong ? 1 : 0.5)
+    }
+
+    private var hairline: some View { rule(strong: false) }
+
+    private func gap(_ share: CGFloat) -> some View {
+        Color.clear.frame(height: height * share)
+    }
+
+    /// The system's text at a print size, grown with the page.
+    private func printed(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
+        .system(size: size * scale, weight: weight)
+    }
+
+    /// A private detail: lit in the brand's green once found, as selected
+    /// text is, then the ink growing over it from the reading side, solid
+    /// all the way; with Reduce Motion the ink is simply there.
+    private func value(_ field: FirstRun.Field, _ font: Font) -> some View {
         let covered = state.isCovered(field)
         let found = state.isFound(field)
+        let mark = RoundedRectangle(cornerRadius: 3 * scale, style: .continuous)
         return Text(verbatim: field.value)
-            .font(.footnote.monospacedDigit())
-            .lineLimit(1)
-            .minimumScaleFactor(0.5)
+            .font(font)
             .overlay {
                 ZStack {
-                    Brackets()
-                        .stroke(SnapflyTokens.protect, style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
-                        .background(SnapflyTokens.protect.opacity(0.08), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
-                        .padding(-5)
-                        .scaleEffect(found || calm ? 1 : 1.12)
+                    mark.fill(SnapflyTokens.protect.opacity(0.14))
+                        .overlay(mark.strokeBorder(SnapflyTokens.protect, lineWidth: 1.25))
+                        .padding(.horizontal, -3 * scale)
+                        .padding(.vertical, -1.5 * scale)
+                        .scaleEffect(found || calm ? 1 : 0.92)
                         .opacity(found ? 1 : 0)
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .fill(SnapflyTokens.ink)
+                    mark.fill(SnapflyTokens.ink)
                         .mask(alignment: .leading) {
                             Rectangle().frame(width: covered || calm ? nil : 0)
                         }
                         .opacity(calm && !covered ? 0 : 1)
-                        .padding(-3)
+                        .padding(.horizontal, -2 * scale)
+                        .padding(.vertical, -1 * scale)
                 }
             }
             .contentShape(Rectangle().inset(by: -8))
@@ -621,20 +730,52 @@ private struct PrivacyChips: View {
 
 // MARK: The scanner
 
-/// The camera's view as the scanner shows it: a dark frame round the page,
-/// with the scan viewfinder's green corners.
+/// The camera's view as the scanner shows it, filling the stage: the dark
+/// of the camera, and its shutter, pressed as the page is taken.
 private struct ScanCamera: View {
-    let size: CGSize
+    /// The room under the page, where the shutter sits.
+    let room: CGFloat
+    let taken: Bool
+    let calm: Bool
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 28, style: .continuous)
-            .fill(SnapflyTokens.ink)
-            .frame(width: size.width + 8, height: max(size.height, 1) + 8)
-            .overlay {
-                Brackets(arm: 26)
-                    .stroke(SnapflyTokens.protect, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
-                    .padding(16)
+        let shutter = min(34, room - 14)
+        ZStack(alignment: .bottom) {
+            SnapflyTokens.ink
+            ZStack {
+                Circle()
+                    .strokeBorder(Color.white.opacity(0.9), lineWidth: 2.5)
+                Circle()
+                    .fill(Color.white)
+                    .padding(5)
+                    .keyframeAnimator(initialValue: 1.0, trigger: calm ? false : taken) { button, scale in
+                        button.scaleEffect(scale)
+                    } keyframes: { _ in
+                        CubicKeyframe(0.82, duration: 0.08)
+                        SpringKeyframe(1, duration: 0.3, spring: .snappy)
+                    }
             }
+            .frame(width: shutter, height: shutter)
+            .padding(.bottom, (room - shutter) / 2)
+        }
+        .accessibilityHidden(true)
+    }
+}
+
+/// The camera's flash as the page is taken: white over the stage for a
+/// moment, once.
+private struct CaptureFlash: View {
+    let trigger: Bool
+
+    var body: some View {
+        Color.white
+            .keyframeAnimator(initialValue: 0.0, trigger: trigger) { flash, opacity in
+                flash.opacity(opacity)
+            } keyframes: { _ in
+                LinearKeyframe(0.4, duration: 0.05)
+                LinearKeyframe(0, duration: 0.3)
+            }
+            .allowsHitTesting(false)
             .accessibilityHidden(true)
     }
 }
@@ -669,21 +810,23 @@ private struct Straightened: ViewModifier, Animatable {
     }
 }
 
-/// The page's edges as the scanner finds them: a green outline with a dot
-/// at each corner, closing in on the corners as it locks on, and following
-/// them as the page is straightened.
+/// The page's edges as the scanner finds them: the page lit in the brand's
+/// green with a handle at each corner, closing in on the corners as it
+/// locks on, and following them as the page is straightened.
 private struct EdgeLock: View {
     var straightened: Double
     var lock: Double
 
     var body: some View {
         ZStack {
-            EdgeShape(straightened: straightened, lock: lock, dots: false)
-                .fill(SnapflyTokens.protect.opacity(0.12))
-            EdgeShape(straightened: straightened, lock: lock, dots: false)
+            EdgeShape(straightened: straightened, lock: lock, handles: false)
+                .fill(SnapflyTokens.protect.opacity(0.16))
+            EdgeShape(straightened: straightened, lock: lock, handles: false)
                 .stroke(SnapflyTokens.protect, style: StrokeStyle(lineWidth: 2, lineJoin: .round))
-            EdgeShape(straightened: straightened, lock: lock, dots: true)
-                .fill(SnapflyTokens.protect)
+            EdgeShape(straightened: straightened, lock: lock, handles: true)
+                .fill(Color.white)
+            EdgeShape(straightened: straightened, lock: lock, handles: true)
+                .stroke(SnapflyTokens.protect, lineWidth: 2)
         }
     }
 }
@@ -691,7 +834,7 @@ private struct EdgeLock: View {
 private struct EdgeShape: Shape {
     var straightened: Double
     var lock: Double
-    let dots: Bool
+    let handles: Bool
 
     var animatableData: AnimatablePair<Double, Double> {
         get { AnimatablePair(straightened, lock) }
@@ -710,9 +853,9 @@ private struct EdgeShape: Shape {
             return CGPoint(x: point.x + (point.x - center.x) * spread, y: point.y + (point.y - center.y) * spread)
         }
         var path = Path()
-        if dots {
+        if handles {
             for corner in corners {
-                path.addEllipse(in: CGRect(x: corner.x - 4, y: corner.y - 4, width: 8, height: 8))
+                path.addEllipse(in: CGRect(x: corner.x - 5, y: corner.y - 5, width: 10, height: 10))
             }
         } else {
             path.addLines(corners)
@@ -797,32 +940,12 @@ private struct Blurred: ViewModifier {
     }
 }
 
-// MARK: Shared shapes
+// MARK: Reading
 
-/// The four corners of a find, as the scan viewfinder draws them.
-private struct Brackets: Shape {
-    /// How long each corner's arms are; at most 10, or less on a small find.
-    var arm: CGFloat?
-
-    func path(in rect: CGRect) -> Path {
-        let arm = arm ?? min(rect.height * 0.4, 10)
-        let corners: [(CGPoint, CGFloat, CGFloat)] = [
-            (CGPoint(x: rect.minX, y: rect.minY), 1, 1), (CGPoint(x: rect.maxX, y: rect.minY), -1, 1),
-            (CGPoint(x: rect.minX, y: rect.maxY), 1, -1), (CGPoint(x: rect.maxX, y: rect.maxY), -1, -1),
-        ]
-        var path = Path()
-        for (corner, dx, dy) in corners {
-            path.move(to: CGPoint(x: corner.x, y: corner.y + dy * arm))
-            path.addLine(to: corner)
-            path.addLine(to: CGPoint(x: corner.x + dx * arm, y: corner.y))
-        }
-        return path
-    }
-}
-
-/// A green line that reads its view once, top to bottom, each time its
-/// trigger changes (`sweep.scan`), brightest in its middle.
-private struct ReadingLine: View {
+/// The scanner's light reading its view once, top to bottom, each time its
+/// trigger changes (`sweep.light`): a soft band of the brand's green with a
+/// sharp edge where it reads, moving at an even pace.
+private struct ReadingLight: View {
     let trigger: Int
 
     private struct Sweep {
@@ -832,25 +955,30 @@ private struct ReadingLine: View {
 
     var body: some View {
         GeometryReader { place in
-            Capsule()
-                .fill(LinearGradient(colors: [SnapflyTokens.protect.opacity(0), SnapflyTokens.protect, SnapflyTokens.protect.opacity(0)],
-                                     startPoint: .leading, endPoint: .trailing))
-                .frame(height: 2.5)
-                .shadow(color: SnapflyTokens.protect.opacity(0.7), radius: 5)
-                .keyframeAnimator(initialValue: Sweep(), trigger: trigger) { line, sweep in
-                    line.offset(y: sweep.progress * place.size.height).opacity(sweep.opacity)
-                } keyframes: { _ in
-                    KeyframeTrack(\.progress) {
-                        LinearKeyframe(0.02, duration: 0.01)
-                        CubicKeyframe(0.98, duration: 0.9)
-                    }
-                    KeyframeTrack(\.opacity) {
-                        LinearKeyframe(1, duration: 0.15)
-                        LinearKeyframe(1, duration: 0.55)
-                        LinearKeyframe(0, duration: 0.2)
-                    }
+            let band = place.size.height * 0.14
+            VStack(spacing: 0) {
+                LinearGradient(colors: [SnapflyTokens.protect.opacity(0), SnapflyTokens.protect.opacity(0.18)],
+                               startPoint: .top, endPoint: .bottom)
+                    .frame(height: band)
+                Rectangle()
+                    .fill(SnapflyTokens.protect)
+                    .frame(height: 1.5)
+            }
+            .keyframeAnimator(initialValue: Sweep(), trigger: trigger) { light, sweep in
+                light.offset(y: sweep.progress * place.size.height - band).opacity(sweep.opacity)
+            } keyframes: { _ in
+                KeyframeTrack(\.progress) {
+                    LinearKeyframe(0.02, duration: 0.01)
+                    LinearKeyframe(0.98, duration: 0.9)
                 }
+                KeyframeTrack(\.opacity) {
+                    LinearKeyframe(1, duration: 0.15)
+                    LinearKeyframe(1, duration: 0.55)
+                    LinearKeyframe(0, duration: 0.2)
+                }
+            }
         }
+        .clipped()
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }

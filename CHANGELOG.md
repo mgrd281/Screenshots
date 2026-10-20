@@ -29,12 +29,15 @@ keeps a download of each version.
   tap, there or on the picture.
 - On the iPhone, the introduction's buttons are smaller, each on one line.
 - The iPhone app opens with a first run of under fifteen seconds, on a
-  made-up invoice standing as a printed A4 page on a soft green stage,
-  with bars that show how far it is and a short line under each headline
-  saying what happens: its name, email and IBAN are found and covered while
-  the amount stays readable; Names, Emails and Bank details are yours to
-  turn on and off with a tap; a page is scanned, straightened and covered
-  as you chose; and the protected copy is ready to share. Try It Now opens
+  made-up invoice that looks like a real one (a studio's letterhead, whom
+  it is for, items, VAT, total and the account it is paid from), standing
+  as a printed A4 page on a soft green stage, with bars that show how far
+  it is and a short line under each headline saying what happens: a light
+  reads it, and its name, email and IBAN are lit, then covered, while the
+  amount stays readable; Names, Emails and Bank details are yours to turn
+  on and off with a tap; the stage turns into a camera, the page's edges
+  are found, the shutter takes it, and it is straightened and covered as
+  you chose; and the protected copy is ready to share. Try It Now opens
   the scanner, Skip Demo leaves at any time, and More › Help &
   Introduction › Watch the Demo shows it again. It moves calmly with
   Reduce Motion or Low Power Mode, and is described for VoiceOver. Access

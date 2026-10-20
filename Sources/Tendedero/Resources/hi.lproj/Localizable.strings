@@ -419,6 +419,16 @@
 "Bank details" = "बैंक विवरण";
 "Invoice" = "चालान";
 "Sample" = "नमूना";
+"Example Studio" = "उदाहरण स्टूडियो";
+"Bill to" = "बिल प्राप्तकर्ता";
+"Invoice no." = "चालान सं.";
+"Qty" = "मात्रा";
+"Logo design" = "लोगो डिज़ाइन";
+"Business cards, 250" = "बिज़नेस कार्ड, 250";
+"Subtotal" = "उप-योग";
+"VAT" = "वैट";
+"Payment by direct debit" = "डायरेक्ट डेबिट से भुगतान";
+"Thank you for your order." = "आपके ऑर्डर के लिए धन्यवाद।";
 "Sample invoice" = "नमूना चालान";
 "Use the Screenshot App…" = "स्क्रीनशॉट ऐप इस्तेमाल करें…";
 "Press %@ or click the screenshot button. Nothing to set up." = "%@ दबाएँ या स्क्रीनशॉट बटन पर क्लिक करें। कुछ सेट नहीं करना।";

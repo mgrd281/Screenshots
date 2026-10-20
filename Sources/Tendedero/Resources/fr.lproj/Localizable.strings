@@ -417,6 +417,16 @@
 "Bank details" = "Coordonnées bancaires";
 "Invoice" = "Facture";
 "Sample" = "Exemple";
+"Example Studio" = "Studio Exemple";
+"Bill to" = "Facturé à";
+"Invoice no." = "Facture n°";
+"Qty" = "Qté";
+"Logo design" = "Création de logo";
+"Business cards, 250" = "Cartes de visite, 250";
+"Subtotal" = "Sous-total";
+"VAT" = "TVA";
+"Payment by direct debit" = "Paiement par prélèvement";
+"Thank you for your order." = "Merci pour la commande.";
 "Sample invoice" = "Facture d’exemple";
 "Use the Screenshot App…" = "Utiliser Capture d’écran…";
 "Press %@ or click the screenshot button. Nothing to set up." = "Appuie sur %@ ou clique sur le bouton de capture. Rien à régler.";

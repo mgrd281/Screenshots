@@ -417,6 +417,16 @@
 "Bank details" = "계좌 정보";
 "Invoice" = "청구서";
 "Sample" = "샘플";
+"Example Studio" = "예시 스튜디오";
+"Bill to" = "청구 대상";
+"Invoice no." = "청구서 번호";
+"Qty" = "수량";
+"Logo design" = "로고 디자인";
+"Business cards, 250" = "명함 250매";
+"Subtotal" = "소계";
+"VAT" = "부가세";
+"Payment by direct debit" = "자동이체 결제";
+"Thank you for your order." = "주문해 주셔서 감사합니다.";
 "Sample invoice" = "샘플 청구서";
 "Use the Screenshot App…" = "스크린샷 앱 사용…";
 "Press %@ or click the screenshot button. Nothing to set up." = "%@ 키를 누르거나 스크린샷 버튼을 클릭하세요. 설정할 것이 없어요.";

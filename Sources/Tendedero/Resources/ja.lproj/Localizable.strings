@@ -417,6 +417,16 @@
 "Bank details" = "口座情報";
 "Invoice" = "請求書";
 "Sample" = "サンプル";
+"Example Studio" = "サンプルスタジオ";
+"Bill to" = "請求先";
+"Invoice no." = "請求書番号";
+"Qty" = "数量";
+"Logo design" = "ロゴデザイン";
+"Business cards, 250" = "名刺 250枚";
+"Subtotal" = "小計";
+"VAT" = "消費税";
+"Payment by direct debit" = "口座振替でのお支払い";
+"Thank you for your order." = "ご注文ありがとうございます。";
 "Sample invoice" = "サンプルの請求書";
 "Use the Screenshot App…" = "スクリーンショットAppを使う…";
 "Press %@ or click the screenshot button. Nothing to set up." = "%@を押すか、スクリーンショットボタンをクリック。設定は不要です。";
