@@ -15,10 +15,10 @@ keeps a download of each version.
   with the protected copy ready to paste: hold the message field and tap
   Paste. Where the app is not on the iPhone, the share sheet shows as
   before. Save to Photos opens Photos once the copy is saved.
-- Patient names and Other people turn on and off by themselves, on the Mac
-  and the iPhone. With Names on, turn Other people off to cover only the
-  patients' names, or Patient names off to cover only everyone else's.
-  Both on is Names again, and Names off turns both off.
+- Names, Patient names and Other people are three switches of their own,
+  on the Mac and the iPhone: turning one on or off leaves the other two as
+  they are. Names covers everyone's names; with it off, Patient names covers
+  the patients' and Other people everyone else's.
 - Only the kinds you checked under Privacy are covered, on the Mac and the
   iPhone. Apple Intelligence, or Claude or ChatGPT, no longer covers a
   street, a date, a reference or a medical term it calls a name: what it

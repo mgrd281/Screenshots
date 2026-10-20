@@ -387,16 +387,15 @@ final class Preferences: ObservableObject {
     // MARK: Privacy
 
     func hides(_ detail: PrivateDetail) -> Binding<Bool> {
-        // Names covers everyone's, patients' and other people's too, and
-        // each of the two turns on and off by itself.
+        // Each kind is its own switch, Names and its two parts too.
         Binding(
-            get: { PrivateDetail.shows(detail, in: PrivateDetails.details) },
+            get: { PrivateDetails.details.contains(detail) },
             set: { [weak self] on in
                 // SwiftUI sets it from the main thread.
                 MainActor.assumeIsolated {
-                    guard let self, on != PrivateDetail.shows(detail, in: PrivateDetails.details) else { return }
+                    guard let self, on != PrivateDetails.details.contains(detail) else { return }
                     self.change {
-                        PrivateDetails.details = PrivateDetail.turning(detail, on: on, in: PrivateDetails.details)
+                        PrivateDetails.toggle(detail)
                         self.line.readPrivateDetails()
                         self.selfTest = nil
                     }

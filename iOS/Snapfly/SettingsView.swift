@@ -205,12 +205,11 @@ struct SettingsView: View {
     }
 
     private func binding(for detail: PrivateDetail) -> Binding<Bool> {
-        // Names covers everyone's, patients' and other people's too, and
-        // each of the two turns on and off by itself.
+        // Each kind is its own switch, Names and its two parts too.
         Binding {
-            PrivateDetail.shows(detail, in: chosen)
+            chosen.contains(detail)
         } set: { on in
-            chosen = PrivateDetail.turning(detail, on: on, in: chosen)
+            if on { chosen.insert(detail) } else { chosen.remove(detail) }
             Choice.details = chosen
         }
     }
