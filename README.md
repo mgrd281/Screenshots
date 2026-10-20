@@ -967,7 +967,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   hands them to the app the ways iOS gives: one page straight to WhatsApp,
   as a file only WhatsApp opens (the way WhatsApp documents); one page to
   ChatGPT, Claude or another AI chat by opening its app with the page
-  copied, to paste in its message field; and anything else, or an app not
+  copied, Claude at a new chat, the picture waiting above the keyboard
+  there for one tap (iOS lets no app put a picture into another's chat
+  itself); and anything else, or an app not
   on the iPhone, through the system's share sheet, where you tap the app;
   nothing ever opens in a browser. Share Covered
   PDF covers every page (as Settings says, or as it was left after opening
@@ -1087,8 +1089,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   sheet; they scroll when there are more than fit, and held, any of them
   offers the choice of apps. A tap hands over the protected copy, never the
   screenshot: straight to WhatsApp, which then asks whom to send it to;
-  to ChatGPT, Claude or another AI chat by opening its app with the copy
-  on the clipboard for ten minutes, to paste (a note says so); into Photos,
+  to ChatGPT, Claude or another AI chat by opening its app, Claude at a
+  new chat, with the copy on the clipboard for ten minutes, offered above
+  the keyboard there to paste with a tap (a note says so); into Photos,
   which then opens to show it; to Files; and to every other app, or an AI
   chat not on the iPhone, through the share sheet, where you tap it;
   nothing opens in a browser. The menu holds Explain,

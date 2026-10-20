@@ -260,7 +260,7 @@ final class ScannedPages: ObservableObject {
             }
             let name = "Snapfly " + Date.now.formatted(.iso8601.year().month().day())
             let shown = Handoff.shared.send(pngs, to: chat, named: name, opened: {
-                QuickCoverer.shared.show(String(format: L("Copied for %@: hold its message field and tap Paste."), chat.name),
+                QuickCoverer.shared.show(String(format: L("Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste."), chat.name),
                                          for: 6)
             }) { went in
                 if went { UINotificationFeedbackGenerator().notificationOccurred(.success) }

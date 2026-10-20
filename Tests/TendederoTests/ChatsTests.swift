@@ -49,11 +49,13 @@ final class ChatsTests: XCTestCase {
     /// which the iPhone opens only as the app's: never a browser.
     func testAnAIChatOpensItsAppByItsOwnLinks() {
         for chat in ChatTarget.allCases where chat.isAI {
-            let links = chat.phoneAppLinks
-            XCTAssertEqual(links.last, chat.newChat, chat.name)
-            XCTAssertTrue(links.dropLast().allSatisfy { $0.scheme != "https" && $0.scheme != "http" }, chat.name)
+            // A website only ever as the app's own link: its new-chat page, and no other.
+            let web = chat.phoneAppLinks.filter { $0.scheme == "https" || $0.scheme == "http" }
+            XCTAssertEqual(web, [chat.newChat], chat.name)
+            XCTAssertGreaterThanOrEqual(chat.phoneAppLinks.count, 1, chat.name)
         }
-        XCTAssertEqual(ChatTarget.chatGPT.phoneAppLinks.first?.scheme, "chatgpt")
-        XCTAssertEqual(ChatTarget.claude.phoneAppLinks.first?.scheme, "claude")
+        XCTAssertEqual(ChatTarget.chatGPT.phoneAppLinks.map(\.absoluteString), ["chatgpt://", "https://chatgpt.com/"])
+        XCTAssertEqual(ChatTarget.claude.phoneAppLinks.map(\.absoluteString), ["https://claude.ai/new", "claude://"],
+                       "Claude's app opens a new chat for its new-chat page")
     }
 }

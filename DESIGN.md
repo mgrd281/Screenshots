@@ -2280,7 +2280,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     of apps in a sheet (medium or large, Done). A tap covers every page as
     for the PDF and hands them over as Protect Picture's apps do
     (`Handoff`): one page straight to WhatsApp, one to an AI chat by opening
-    its app with it copied (a note for six seconds says to paste it), else
+    its app with it copied, Claude at a new chat (a note for six seconds
+    says to tap the picture above the keyboard there, or paste it), else
     the share sheet, where the app is tapped, never a website; while the pages are covered, the
     app's icon dims under a white spinner and the others wait. Once they
     have gone, a success haptic.
