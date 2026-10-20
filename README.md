@@ -382,11 +382,11 @@ is recommended and you cover anything; turn it off and it stays off.
 
 To see what each kind hides, Test on a Sample under Privacy covers a
 made-up order confirmation with what you checked: an order number, a
-name, an address, an email, a phone number, an IBAN, a tax number, a
-tracking number, a PIN, an API key, an IP address, a username, a total, a
-date, a link, a medicine and a QR code. It says what was covered there, and what you checked that
-the sample does not show. It speaks for that sample only; a real
-screenshot can read differently.
+name, a date of birth, an address, an email, a phone number, an IBAN, a
+tax number, a tracking number, a PIN, an API key, an IP address, a
+username, a total, a date, a link, a medicine and a QR code. It says what
+was covered there, and what you checked that the sample does not show. It
+speaks for that sample only; a real screenshot can read differently.
 
 Under Also hide, add rules of your own: a word, like your shop's name,
 covered wherever it appears; a label, like Customer number, whose value is
