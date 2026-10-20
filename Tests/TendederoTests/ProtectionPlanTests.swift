@@ -232,4 +232,78 @@ final class ProtectionPlanTests: XCTestCase {
         XCTAssertEqual(plan.marks[0].rect.maxX, 1, accuracy: 0.0001)
         XCTAssertEqual(plan.marks[0].rect.minY, 0, accuracy: 0.0001)
     }
+
+    // MARK: Who and what
+
+    private func area(_ x: CGFloat, _ y: CGFloat, _ kind: PrivateDetail?, role: PersonRole?,
+                      check: Bool = false) -> Finder.Area {
+        var made = area(x, y, kind, check: check)
+        made.role = role
+        return made
+    }
+
+    func testWhatSettingsLeavesVisibleIsListedButNotCoveredOrCounted() throws {
+        var plan = ProtectionPlan()
+        plan.add(found: [area(0.1, 0.8, .names, role: .patient)], spared: [area(0.5, 0.6, .names, role: .doctor)])
+        let doctor = try XCTUnwrap(plan.marks.first { $0.origin == .spared })
+        XCTAssertFalse(doctor.covered)
+        XCTAssertEqual(doctor.role, .doctor)
+        XCTAssertEqual(plan.tally, ProtectionPlan.Tally(covered: 1, toCheck: 0, left: 0, exposed: 0))
+        XCTAssertEqual(plan.left, [doctor.rect], "the check of the copy leaves it too")
+        let middle = CGPoint(x: doctor.rect.midX, y: doctor.rect.midY)
+        XCTAssertNil(plan.mark(at: middle), "not on the picture until covered")
+        plan.toggle(doctor.id)
+        XCTAssertEqual(plan.mark(at: middle)?.id, doctor.id)
+        XCTAssertEqual(plan.tally.covered, 2)
+        XCTAssertEqual(plan.report.kinds[.names], 2)
+        // Back to what Snapfly found: visible again.
+        plan.resetToFound()
+        XCTAssertEqual(plan.covered.count, 1)
+    }
+
+    func testAPlaceLeftVisibleThatIsFoundLaterIsCovered() throws {
+        var plan = ProtectionPlan()
+        plan.add(found: [], spared: [area(0.1, 0.8, .ids, role: .patient), area(0.1, 0.6, .ids, role: nil)])
+        let touched = try XCTUnwrap(plan.marks.last)
+        plan.toggle(touched.id)
+        plan.toggle(touched.id)
+        plan.add(found: [area(0.1, 0.8, .ids), area(0.1, 0.6, .ids)])
+        XCTAssertEqual(plan.marks.count, 2)
+        XCTAssertEqual(plan.marks.first?.origin, .found)
+        XCTAssertEqual(plan.marks.first?.covered, true)
+        XCTAssertEqual(plan.marks.first?.role, .patient, "its person is kept")
+        XCTAssertEqual(plan.marks.last?.covered, false, "the owner's choice stays")
+    }
+
+    func testATopicIsCoveredOrLeftAtOnceAsOneChange() {
+        var plan = ProtectionPlan()
+        plan.add(found: [area(0.1, 0.8, .names, role: .doctor, check: true)],
+                 spared: [area(0.1, 0.6, .names, role: .doctor), area(0.1, 0.4, .names, role: .doctor)])
+        let ids = Set(plan.marks.map(\.id))
+        plan.set(ids, covered: true)
+        XCTAssertEqual(plan.covered.count, 3)
+        XCTAssertEqual(plan.toCheck, 0, "covering them all decides each")
+        plan.set(ids, covered: false)
+        XCTAssertTrue(plan.covered.isEmpty)
+        plan.undo()
+        XCTAssertEqual(plan.covered.count, 3)
+        plan.undo()
+        XCTAssertEqual(plan.covered.count, 1)
+        XCTAssertEqual(plan.toCheck, 1)
+    }
+
+    func testPlacesAreListedByWhoseTheyAreThenByWhatTheyAre() {
+        var plan = ProtectionPlan()
+        plan.add(found: [area(0.1, 0.3, .bank, role: nil), area(0.1, 0.5, .addresses, role: .patient),
+                         area(0.1, 0.9, .names, role: .patient), area(0.1, 0.7, .names, role: .customer),
+                         area(0.1, 0.6, .health, role: nil), area(0.1, 0.2, nil, role: nil),
+                         area(0.1, 0.1, .names, role: nil)],
+                 spared: [area(0.6, 0.9, .names, role: .doctor)])
+        plan.cover(CGRect(x: 0.5, y: 0.05, width: 0.2, height: 0.05))
+        let topics = plan.topics
+        XCTAssertEqual(topics.map(\.topic), [.patient, .doctors, .otherPeople, .group(.people), .group(.money),
+                                             .group(.health), .hand, .rules])
+        // Each from the top of the picture down.
+        XCTAssertEqual(topics[0].marks.map(\.kind), [.names, .addresses])
+    }
 }

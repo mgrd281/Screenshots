@@ -47,6 +47,7 @@
 "Hide private details" = "Ocultar datos privados";
 "Names" = "Nomes";
 "Addresses" = "Enderezos";
+"Dates of birth" = "Datas de nacemento";
 "Emails" = "Correos";
 "Phone numbers" = "Teléfonos";
 "Bank cards and accounts" = "Tarxetas e contas bancarias";
@@ -170,6 +171,7 @@
 "Total" = "Total";
 "Name" = "Nome";
 "Address" = "Enderezo";
+"Birth date" = "Data de nacemento";
 "Email" = "Correo electrónico";
 "Phone" = "Teléfono";
 "Tracking number" = "Número de seguimento";
@@ -1304,6 +1306,8 @@
 "Only in iCloud" = "Só en iCloud";
 "Only selected photos" = "Só as fotos escollidas";
 "Other people" = "Outras persoas";
+"Patient" = "Paciente";
+"Doctors" = "Médicos";
 "Patient names" = "Nomes de pacientes";
 "Pause" = "Pausar";
 "Paused" = "En pausa";
@@ -1360,6 +1364,7 @@
 "Keep Covered" = "Manter cuberto";
 "Show on Picture" = "Amosar na imaxe";
 "%d of %d checked" = "%d de %d revisados";
+"%d of %d covered" = "%d de %d cubertos";
 "Everything is checked." = "Todo está revisado.";
 "Previous" = "Anterior";
 "Goes as soon as the copy is ready." = "Farase en canto a copia estea lista.";

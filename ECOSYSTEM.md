@@ -32,7 +32,7 @@ and its threat model; this file does not repeat them.
 
 | Area | State | Where |
 | --- | --- | --- |
-| Finding private details: 21 kinds, own rules, person or company | Built, tested | `PrivateText.swift`, `DocumentSense.swift`, `OwnRules.swift` |
+| Finding private details: 22 kinds, own rules, person or company | Built, tested | `PrivateText.swift`, `DocumentSense.swift`, `OwnRules.swift` |
 | Printed forms read field by field (label, then the value beside or under it in its column), each value covered only as its kind | Built, tested with made-up forms, on Linux and in Build Snapfly; not yet tried on a real scan; PDFs on the Mac only | `FormFields.swift` |
 | Sure, to check, offered (confidence) | Built, tested | `Finder.Area.check`, `possible`; `ProtectionPlan` |
 | Cover looks: ink, label, blur, pixels, dots, erase | Built, tested | `CoverLook.swift` |

@@ -9,7 +9,7 @@ import Vision
 /// The kinds of private detail that can be covered, each chosen on its own
 /// under Privacy in Settings, on the Mac and on the iPhone.
 enum PrivateDetail: String, CaseIterable {
-    case names, patientNames, otherPeople, addresses, emails, phones, bank, health
+    case names, patientNames, otherPeople, addresses, birthDates, emails, phones, bank, health
     case usernames, faces, ipAddresses, ids, codes, keys, barcodes, orders, tracking, amounts, dates, links
     case organizations
 
@@ -19,6 +19,7 @@ enum PrivateDetail: String, CaseIterable {
         case .patientNames: L("Patient names")
         case .otherPeople: L("Other people")
         case .addresses: L("Addresses")
+        case .birthDates: L("Dates of birth")
         case .emails: L("Emails")
         case .phones: L("Phone numbers")
         case .bank: L("Bank cards and accounts")
@@ -49,7 +50,7 @@ enum PrivateDetail: String, CaseIterable {
         }
     }
 
-    /// How Settings groups the kinds, so twenty-one read as short lists, the
+    /// How Settings groups the kinds, so twenty-two read as short lists, the
     /// same on the Mac and the iPhone.
     enum Group: CaseIterable {
         case people, organizations, money, health, documents, access
@@ -70,7 +71,7 @@ enum PrivateDetail: String, CaseIterable {
 
     var group: Group {
         switch self {
-        case .names, .patientNames, .otherPeople, .addresses, .emails, .phones, .usernames, .faces: .people
+        case .names, .patientNames, .otherPeople, .addresses, .birthDates, .emails, .phones, .usernames, .faces: .people
         case .organizations: .organizations
         case .bank, .amounts: .money
         case .health: .health
@@ -85,10 +86,12 @@ enum PrivateDetail: String, CaseIterable {
     /// not: a payment, a sign-in, a ticket or a parcel, unreadable to the eye.
     /// A key opens an account to whoever reads it. An IP address is often
     /// what a screenshot of a network is sent for. A patient's name is
-    /// health data, kept covered even for whoever leaves other names.
+    /// health data, kept covered even for whoever leaves other names, and a
+    /// date of birth tells who someone is, as the name beside it does.
     var isRecommended: Bool {
         switch self {
-        case .names, .patientNames, .addresses, .emails, .phones, .bank, .health, .ids, .codes, .keys, .barcodes: true
+        case .names, .patientNames, .addresses, .birthDates, .emails, .phones, .bank, .health, .ids, .codes, .keys,
+             .barcodes: true
         case .otherPeople, .usernames, .faces, .ipAddresses, .orders, .tracking, .amounts, .dates, .links,
              .organizations: false
         }
@@ -158,7 +161,8 @@ extension FormFields.Entity {
         switch self {
         case .personName: .names
         case .address: .addresses
-        case .dateOfBirth, .date: .dates
+        case .dateOfBirth: .birthDates
+        case .date: .dates
         case .healthInsuranceNumber, .identificationNumber, .institutionNumber: .ids
         case .institution: .organizations
         case .medicalDiagnosis, .medicalDate: .health
@@ -278,6 +282,15 @@ enum Finder {
         var title: String? = nil
         /// Covered, though it is not clear it should be: shown for the owner to check.
         var check = false
+        /// The name a detail belongs to, like the address under it in a
+        /// letter: its line and where it is there; nil for most details.
+        var owner: NameLink? = nil
+    }
+
+    /// Where a name is: its line, and its place in the line, or all of it.
+    struct NameLink: Equatable {
+        let line: Int
+        let range: NSRange?
     }
 
     /// What was found in a picture's lines: what is covered, and what may
@@ -458,14 +471,26 @@ enum Finder {
         var check = false
         /// Drawn by hand, covered in solid ink as drawn; nil, the box itself.
         var shape: HandShape? = nil
+        /// Whose it is, where that is known: a patient's name, the address
+        /// under it, a doctor's name.
+        var role: PersonRole? = nil
     }
 
-    /// Where the details are in a picture: the places covered, and the
-    /// places that may be private, left for the owner to check.
+    /// Where the details are in a picture: the places covered, the places
+    /// that may be private, left for the owner to check, and, when asked
+    /// for, the places of the sensitive kinds that are left visible as
+    /// Settings says, like a doctor's name where only patients' are
+    /// covered, for the owner to cover one by one.
     struct Analysis {
         var areas: [Area] = []
         var possible: [Area] = []
+        var spared: [Area] = []
     }
+
+    /// The kinds a picture's places are found for, beyond those chosen, so
+    /// they can be shown and covered with a tap: who someone is, where they
+    /// live, how to reach them, their money and their health.
+    static let sparedKinds: Set<PrivateDetail> = [.names, .addresses, .birthDates, .emails, .phones, .bank, .health, .ids]
 
     /// Where the chosen details and the owner's own rules are, as they are
     /// covered: from 0 to 1 from the bottom left, with a margin around the
@@ -485,23 +510,30 @@ enum Finder {
 
     /// The places to cover, as `coveredAreas`, and the places that may be
     /// private but are left for the owner to check, each with its margin.
+    /// - Parameter spare: whether to find the places left visible too
+    ///   (`Analysis.spared`), as the iPhone's editor lists them.
     static func analysis(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all,
-                         intelligence: Bool = true) -> Analysis {
+                         intelligence: Bool = true, spare: Bool = false) -> Analysis {
         let rules = rules.filter { !$0.isBlank }
         let (chosen, scope) = resolved(chosen)
-        guard !chosen.isEmpty || !rules.isEmpty else { return Analysis() }
+        guard !chosen.isEmpty || !rules.isEmpty || spare else { return Analysis() }
         let codes = Timing.measure("codes") { Self.codes(in: image, chosen) }
         let found = places(in: image, chosen, rules: rules, printed: codes.compactMap(\.payload),
-                           intelligence: intelligence, scope: scope)
+                           intelligence: intelligence, scope: scope, spare: spare)
         var areas = found.areas.map { box in
-            Area(rect: withMargin(box.rect, in: image, room: box.room), kind: box.kind, text: box.text, check: box.check)
+            Area(rect: withMargin(box.rect, in: image, room: box.room), kind: box.kind, text: box.text, check: box.check,
+                 role: box.role)
         }
         if chosen.contains(.faces) { areas += Timing.measure("faces") { faces(in: image) }.map { Area(rect: $0, kind: .faces) } }
         areas += codes.map { Area(rect: $0.box, kind: $0.kind) }
         let possible = found.possible.map { box in
-            Area(rect: withMargin(box.rect, in: image, room: box.room), kind: box.kind, text: box.text, check: true)
+            Area(rect: withMargin(box.rect, in: image, room: box.room), kind: box.kind, text: box.text, check: true,
+                 role: box.role)
         }
-        return Analysis(areas: areas, possible: possible)
+        let spared = found.spared.map { box in
+            Area(rect: withMargin(box.rect, in: image, room: box.room), kind: box.kind, text: box.text, role: box.role)
+        }
+        return Analysis(areas: areas, possible: possible, spared: spared)
     }
 
     /// What the kinds chosen come to. Names covers everyone's names;
@@ -830,11 +862,11 @@ enum Finder {
     /// The places, without their margins, and those that may be private,
     /// for what is chosen as `resolved` gives it.
     private static func places(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule], printed: [String],
-                               intelligence: Bool, scope: NameScope) -> Analysis {
+                               intelligence: Bool, scope: NameScope, spare: Bool = false) -> Analysis {
         // Faces and codes are not read as text: with nothing else chosen, no reading.
         let patterns = printed.compactMap(printedPattern(ofCode:))
         guard !chosen.subtracting([.faces, .barcodes]).isEmpty || rules.contains(where: { !$0.isBlank })
-            || !patterns.isEmpty else { return Analysis() }
+            || !patterns.isEmpty || spare else { return Analysis() }
         let lines = Timing.measure("read") { read(image) }
         let printedHits = patterns.isEmpty ? [] : Text(lines).hits(forPatterns: patterns)
         var found = Timing.measure("find") { findings(in: lines, chosen, rules: rules, scope: scope) }
@@ -853,7 +885,19 @@ enum Finder {
         }
         // What may be private, where nothing covers it already.
         let possible = found.possible.filter { !covered.contains($0.line) }.compactMap(place)
-        return Analysis(areas: all.compactMap(place), possible: possible)
+        // The sensitive kinds left visible, found as if everything were
+        // chosen; none where they are all covered already.
+        var spared: [Hit] = []
+        if spare, !(chosen.isSuperset(of: sparedKinds) && scope == .everyone) {
+            let wide = Timing.measure("spare") {
+                findings(in: lines, chosen.union(sparedKinds), rules: [], scope: .everyone).hits
+            }
+            let taken = all + found.possible
+            spared = wide.filter { hit in
+                hit.kind != nil && !taken.contains { $0.line == hit.line && overlap($0.range, hit.range) }
+            }
+        }
+        return Analysis(areas: all.compactMap(place), possible: possible, spared: spared.compactMap(place))
     }
 
     /// Where a detail found in a line is, and what it says: just its words,
@@ -861,9 +905,11 @@ enum Finder {
     /// shows, not even how long it is.
     private static func area(of hit: Hit, in lines: [TextLine]) -> Area? {
         let line = lines[hit.line]
-        guard let range = hit.range, !strongest else { return Area(rect: line.box, kind: hit.kind, text: line.string) }
+        guard let range = hit.range, !strongest else {
+            return Area(rect: line.box, kind: hit.kind, text: line.string, role: hit.role?.sureRole)
+        }
         guard let part = Range(range, in: line.string), let box = line.box(for: part) else { return nil }
-        return Area(rect: box, kind: hit.kind, text: String(line.string[part]))
+        return Area(rect: box, kind: hit.kind, text: String(line.string[part]), role: hit.role?.sureRole)
     }
 
     /// What Apple Intelligence names in the lines, of the kinds chosen, where
@@ -1037,12 +1083,153 @@ enum Finder {
             found += people.hits
             possible += people.possible
         }
+        let document = DocumentSense.kind(of: strings)
+        // The people named, whether their names are covered or not: what
+        // goes with a name, like the address under it, is theirs.
+        var people = found.filter { $0.kind == .names }
+        if !chosen.contains(.names), !chosen.isDisjoint(with: [.addresses, .birthDates]) {
+            people += names(in: text, learned: learned).hits
+            people += form.values.filter { $0.entity == .personName }.map { value in
+                Hit(line: value.line, range: NSRange(value.range, in: strings[value.line]), kind: .names,
+                    role: value.role.map { NameRole(role: $0, confidence: 0.9, reason: "form") })
+            }
+        }
+        // A letter's address: under a person's name, or after it on its line.
+        if chosen.contains(.addresses) { found += addresses(after: people, in: text) }
+        // In a medical letter, a reference number is the patient's case.
+        if chosen.contains(.ids), document == .medical {
+            found += references(in: text).map { hit in
+                var hit = hit
+                hit.role = NameRole(role: .patient, confidence: 0.7, reason: "reference")
+                return hit
+            }
+        }
         if chosen.contains(.organizations) { found += organizations(in: text) }
         if chosen.contains(.health) { found += medicines(in: strings) }
         found += own(in: text, rules)
-        return Findings(hits: merged(decided(isolated(found, by: form, in: strings), in: strings, chosen, scope: scope)),
-                        possible: isolated(possible, by: form, in: strings))
+        // A date of birth is that, not a date as well; a medical letter's
+        // reference is the patient's, not an order's.
+        let born = found.filter { $0.kind == .birthDates }
+        let cases = found.filter { $0.kind == .ids && $0.role?.reason == "reference" }
+        found.removeAll { hit in
+            hit.kind == .dates && born.contains { $0.line == hit.line && overlap($0.range, hit.range) }
+                || hit.kind == .orders && cases.contains { $0.line == hit.line && overlap($0.range, hit.range) }
+        }
+        let kept = merged(decided(isolated(found, by: form, in: strings), in: strings, chosen, scope: scope))
+        // Each person's role, read as when everyone's names are covered.
+        let whose = decided(people, in: strings, [.names], scope: .everyone)
+        return Findings(hits: owned(kept, by: whose, kind: document), possible: isolated(possible, by: form, in: strings))
     }
+
+    /// Whose the details are that go with a person: the address under a
+    /// name is that person's, and a date of birth that of the name on its
+    /// line, or of a medical letter's patient.
+    private static func owned(_ hits: [Hit], by people: [Hit], kind: DocumentKind) -> [Hit] {
+        hits.map { hit in
+            guard hit.role == nil else { return hit }
+            var hit = hit
+            if let owner = hit.owner {
+                hit.role = people.first { $0.line == owner.line && overlap($0.range, owner.range) }?.role
+            } else if hit.kind == .birthDates {
+                hit.role = people.first { $0.line == hit.line }?.role
+                    ?? (kind == .medical ? NameRole(role: .patient, confidence: 0.6, reason: "birth") : nil)
+            }
+            return hit
+        }
+    }
+
+    /// A letter's address: the lines under a person's name, in its column,
+    /// that read as a street, a postcode with its town, or the country
+    /// after them; and the street and town after a name on its line, as a
+    /// letter's subject writes them: "Mustermann, Erika, Lindenberg 12,
+    /// 23456 Musterstadt". The data detector misses many a street without
+    /// a word like "Straße" in it.
+    private static func addresses(after names: [Hit], in text: Text) -> [Hit] {
+        var hits: [Hit] = []
+        var seen = Set<Int>()
+        for name in names where seen.insert(name.line).inserted {
+            let string = text.strings[name.line]
+            let owner = NameLink(line: name.line, range: name.range)
+            if let range = name.range.flatMap({ Range($0, in: string) }),
+               let start = string[range.upperBound...].firstIndex(where: { $0.isLetter || $0.isNumber }),
+               let found = string.range(of: addressStart, options: .regularExpression, range: start..<string.endIndex),
+               found.lowerBound == start, isAddress(String(string[found])) {
+                hits.append(Hit(line: name.line, range: NSRange(found, in: string), kind: .addresses, owner: owner))
+            }
+            var last = name.line
+            var town = false
+            for _ in 0..<3 {
+                guard let next = line(below: last, in: text.boxes, gap: 1.6) else { break }
+                let candidate = text.strings[next].trimmingCharacters(in: .whitespaces)
+                let isTown = isTownLine(candidate)
+                guard isStreetLine(candidate) || isTown || town && isCountryLine(candidate) else { break }
+                hits.append(Hit(line: next, range: nil, kind: .addresses, owner: owner))
+                town = town || isTown || candidate.range(of: #",\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s"#,
+                                                          options: .regularExpression) != nil
+                last = next
+            }
+        }
+        return hits
+    }
+
+    /// The start of an address after a name: a street with its number and,
+    /// maybe, its postcode and town, or a postcode and town alone.
+    private static let addressStart = #"^(?:\p{Lu}[\p{L}'’.\-]*(?:\s[\p{L}'’.\-]+){0,4}\s\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?(?:\s?,\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:\s(?:am|an der|im|in der|bei|ob der|vor der)\s\p{Lu}[\p{L}'’.\-]+)?)?|(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+)"#
+
+    /// Words that start a line of a number that is no street: a telephone,
+    /// a page, a room, a vertebra.
+    private static let notStreets: Set<String> = [
+        "telefon", "tel", "fax", "telefax", "mobil", "mobile", "handy", "phone", "zimmer", "raum", "room", "seite",
+        "page", "station", "lwk", "bwk", "hwk", "swk", "segment", "kapitel", "artikel", "haus", "etage", "stock",
+        "bett", "gruppe", "klasse", "version", "jahr", "woche", "tag", "termin", "konto", "kunde", "order",
+        "bestellung", "rechnung", "nr", "no", "iban", "bic", "ust", "steuer", "geb", "dr", "prof", "zeichen", "ref",
+        "befund", "datum", "date", "uhr", "pos", "position", "menge", "anzahl",
+    ]
+
+    /// Whether a line is a street and its house number, maybe with its
+    /// postcode and town after a comma: "Lindenberg 12", "Am Markt 3a",
+    /// "Hauptstr. 5-7, 12345 Musterstadt", or "221B Baker Street".
+    static func isStreetLine(_ line: String) -> Bool {
+        let words = line.split(separator: " ")
+        guard (2...7).contains(words.count),
+              let first = words.first.map({ String($0).lowercased().trimmingCharacters(in: .punctuationCharacters) }),
+              !notStreets.contains(first) else { return false }
+        return line.range(of: #"^\p{Lu}[\p{L}'’.\-]*(?:\s[\p{L}'’.\-]+){0,4}\s\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?(?:\s?,\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:\s[\p{L}'’.\-()]+){0,3})?$"#,
+                          options: .regularExpression) != nil
+            || line.range(of: #"^\d{1,5}[a-zA-Z]?\s\p{Lu}[\p{L}'’.\-]+(?:\s[\p{L}'’.\-]+){0,4}$"#,
+                          options: .regularExpression) != nil
+    }
+
+    /// Whether a line is a postcode with its town: "23456 Musterstadt",
+    /// "D-23456 Musterstadt", "1010 Wien", "Springfield, IL 62704".
+    static func isTownLine(_ line: String) -> Bool {
+        line.range(of: #"^(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s+\p{Lu}[\p{L}'’.\-]+(?:\s[\p{L}'’.\-()/]+){0,3}$"#,
+                   options: .regularExpression) != nil
+            || line.range(of: #"^\p{Lu}[\p{L}'’.\- ]+,?\s(?:[A-Z]{2}\s\d{5}(?:-\d{4})?|[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2})$"#,
+                          options: .regularExpression) != nil
+    }
+
+    /// Whether a line is a country alone, as under a town: a word or two.
+    private static func isCountryLine(_ line: String) -> Bool {
+        let words = line.split(separator: " ")
+        return (1...2).contains(words.count) && line.count <= 24 && line.first?.isUppercase == true
+            && line.allSatisfy { $0.isLetter || $0 == " " || $0 == "-" }
+    }
+
+    /// Whether what follows a name is an address, not a date or a word.
+    private static func isAddress(_ text: String) -> Bool {
+        isStreetLine(text) || isTownLine(text)
+            || text.range(of: #",\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}"#, options: .regularExpression) != nil
+    }
+
+    /// Reference numbers by their label, as a practice's letter writes them:
+    /// "Unser Zeichen: 1364691", "Referenznummer: POW370055", "Pat.-Nr. 88213".
+    private static func references(in text: Text) -> [Hit] {
+        guard let regex = try? NSRegularExpression(pattern: referencePattern, options: .caseInsensitive) else { return [] }
+        return regex.matches(in: text.full, range: text.whole).flatMap { text.hits($0.range(at: 1), .ids) }
+    }
+
+    private static let referencePattern = #"\b(?:unser(?:e)?\s+zeichen|ihr(?:e)?\s+zeichen|referenz(?:-?nummer|-?nr\.?)?|ref\.?-?nr\.?|patienten(?:-?nummer|-?nr\.?|-?id)|pat\.?-?(?:nr|id)\.?|fall(?:-?nummer|-?nr\.?)|aufnahme(?:-?nummer|-?nr\.?)|untersuchungs(?:-?nummer|-?nr\.?)|befund(?:-?nummer|-?nr\.?)|auftrags(?:-?nummer|-?nr\.?)|accession(?:\s?(?:no\.?|number))?)\s*[:#.]?\s*((?=[A-Z0-9/.\-]*\d)[A-Z0-9][A-Z0-9/.\-]{2,}[A-Z0-9])"#
 
     /// A form's labels say what a place is, over what it looks like: a
     /// label itself is never covered, and a field's value only as what its
@@ -1078,7 +1265,7 @@ enum Finder {
         return hits.map { hit in
             guard let kind = hit.kind, lastDigitKinds.contains(kind) else { return hit }
             return Hit(line: hit.line, range: keepingLastDigits(hit.range, in: lines[hit.line].string), kind: kind,
-                       role: hit.role, title: hit.title, check: hit.check)
+                       role: hit.role, title: hit.title, check: hit.check, owner: hit.owner)
         }
     }
 
@@ -1092,7 +1279,8 @@ enum Finder {
                 var merged = kept[i]
                 merged = Hit(line: hit.line, range: union(merged.range, hit.range), kind: hit.kind,
                              role: merged.role?.isSure == true ? merged.role : hit.role ?? merged.role,
-                             title: merged.title ?? hit.title, check: merged.check && hit.check)
+                             title: merged.title ?? hit.title, check: merged.check && hit.check,
+                             owner: merged.owner ?? hit.owner)
                 kept[i] = merged
             } else {
                 kept.append(hit)
@@ -1432,8 +1620,16 @@ enum Finder {
             found += matches(emailPattern, .caseInsensitive)
         }
         if chosen.contains(.bank) {
-            // IBANs, in groups of four with or without spaces between them.
-            found += matches(#"\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){2,7}(?: ?[A-Z0-9]{1,4})?\b"#)
+            // IBANs, in groups of four with or without spaces between them;
+            // read with a space after the country, as small print often is,
+            // only at that country's length.
+            let ibans = matches(#"\b[A-Z]{2} ?\d{2}(?: ?[A-Z0-9]{4}){2,7}(?: ?[A-Z0-9]{1,4})?\b"#)
+                .filter { isIBANShaped(text.substring(with: $0)) }
+            found += ibans
+            // A bank's BIC, beside an IBAN or the word itself: "DAAEDEDDXXX".
+            if !ibans.isEmpty || full.range(of: #"\b(?:BIC|SWIFT)\b"#, options: [.regularExpression, .caseInsensitive]) != nil {
+                found += matches(#"\b[A-Z]{4}(?:"# + bicCountries + #")[A-Z0-9]{2}(?:[A-Z0-9]{3})?\b"#)
+            }
             // Card numbers: 13 to 19 digits, grouped or not, that pass the Luhn check.
             found += matches(#"\b\d(?:[ -]?\d){12,18}\b"#).filter { passesLuhn(text.substring(with: $0)) }
             // Crypto wallets: an Ethereum address, and Bitcoin's two kinds.
@@ -1442,6 +1638,9 @@ enum Finder {
             found += matches(#"\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\b"#).filter { hasBothCases(text.substring(with: $0)) }
         }
         if chosen.contains(.addresses) {
+            // A street and its number, a comma, and a postcode with its town,
+            // on one line, as a letter's subject writes an address.
+            found += matches(#"\b\p{Lu}[\p{L}'’.\-]+(?:[ \-][\p{L}'’.\-]+){0,3}\s\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?\s?,\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:\s(?:am|an der|im|in der|bei|ob der|vor der)\s\p{Lu}[\p{L}'’.\-]+)?"#)
             // Coordinates, as maps give them: "52.520008, 13.404954",
             // 52.52° N, 13.40° E or 52°31'12.0"N 13°24'17.8"E. A plain pair
             // needs five decimals, so two numbers in a table are left. The
@@ -1466,7 +1665,7 @@ enum Finder {
             // "#1024", and the number after "Order No.", "Rechnung" or
             // "Kundennummer", which must hold a digit.
             found += matches(#"(?<![\w#])#\s?(\d{3,}[\w-]*)"#, [], group: 1)
-            found += matches(#"\b(?:Bestellung|Bestell-?Nr|Auftrag|Auftrags-?Nr|Order|Rechnung|Rechnungs-?Nr|Invoice|Kundennummer|Kunden-?Nr|Customer|Beleg|Vorgang|Transaktion|Transaction|Vertrag|Vertrags-?Nr|Contract|Policy|Mitglied|Mitglieds-?Nr|Member|Buchung|Buchungs-?Nr|Booking|Reservierung|Reservation|Ticket|Referenz|Reference|Aktenzeichen)\.?[ \t]*(?:Nr\.?|No\.?|Number|ID|#)?[ \t]*[:#]?[ \t]*((?=[A-Z0-9/-]*\d)[A-Z0-9][A-Z0-9/-]{2,})\b"#,
+            found += matches(#"\b(?:Bestellung|Bestell-?Nr|Auftrag|Auftrags-?Nr|Order|Rechnung|Rechnungs-?Nr|Invoice|Kundennummer|Kunden-?Nr|Customer|Beleg|Vorgang|Transaktion|Transaction|Vertrag|Vertrags-?Nr|Contract|Policy|Mitglied|Mitglieds-?Nr|Member|Buchung|Buchungs-?Nr|Booking|Reservierung|Reservation|Ticket|Referenz|Reference|Aktenzeichen|Unser Zeichen|Ihr Zeichen)\.?[ \t]*(?:-?nummer|-?Nr\.?|No\.?|Number|ID|#)?[ \t]*[:#]?[ \t]*((?=[A-Z0-9/-]*\d)[A-Z0-9][A-Z0-9/-]{2,})\b"#,
                              .caseInsensitive, group: 1)
         }
         if chosen.contains(.tracking) {
@@ -1521,6 +1720,11 @@ enum Finder {
             found += matches(#"(?:€|EUR|US\$|\$|USD|£|GBP|CHF|SFr\.?)[ \x{00A0}]?(?:"# + number + #")"#)
             found += matches(#"\b(?:"# + number + #")[ \x{00A0}]?(?:€|EUR|US\$|\$|USD|£|GBP|CHF|SFr\.?|,-|,–)"#)
         }
+        if chosen.contains(.birthDates) {
+            // The date after a word for birth: "geb. 12.03.1985",
+            // "Geburtsdatum: 12.03.1985", "* 12.03.1985", "DOB 1985-03-12".
+            found += matches(birthPattern, .caseInsensitive, group: 1)
+        }
         if chosen.contains(.dates) {
             found += detected(.date).map(\.range)
             found += matches(#"\b\d{1,2}[./]\d{1,2}[./]\d{2,4}\b|\b\d{4}-\d{2}-\d{2}\b"#)
@@ -1545,6 +1749,29 @@ enum Finder {
         let full = lines.joined(separator: "\n")
         let first = patternRanges(in: full, [.orders]).min { $0.location < $1.location }
         return first.map { (full as NSString).substring(with: $0) }
+    }
+
+    /// A date of birth after its word: the date is group 1.
+    private static let birthPattern = #"(?:\bgeb(?:oren)?\.?(?:\s?am)?|\bgeburtsdatum|\bgeb\.?-?\s?dat(?:um|\.)?|\bdate of birth|\bd\.?o\.?b\.?|\bborn(?:\s+on)?|\bnée? le|\bnacid[oa] el|تاريخ الميلاد|дата рождения|(?<![\w*])\*)\s*:?\s*(\d{1,2}\s?[./-]\s?\d{1,2}\s?[./-]\s?(?:\d{4}|\d{2})\b|\d{4}-\d{2}-\d{2}\b|\d{1,2}\.?\s(?:Jan|Feb|Mär|Mar|Apr|Mai|May|Jun|Jul|Aug|Sep|Okt|Oct|Nov|Dez|Dec)[a-zäöüé]*\.?\s\d{4}\b)"#
+
+    /// The countries a BIC names, in its fifth and sixth letters.
+    private static let bicCountries = "DE|AT|CH|LI|LU|NL|BE|FR|IT|ES|PT|GB|IE|PL|CZ|SK|HU|SI|HR|DK|SE|NO|FI|EE|LV|LT|GR|CY|MT|BG|RO|TR|US|CA|AE|SA|QA|KW|BH|OM|JO|LB|EG|MA|TN|IL|UA|RS|BA|AL|MK|IS|AU|NZ|SG|HK|JP|CN|IN|KR|BR|MX|ZA"
+
+    /// Each country's IBAN length, for an IBAN read with a space after its country.
+    private static let ibanLengths: [String: Int] = [
+        "DE": 22, "AT": 20, "CH": 21, "LI": 21, "LU": 20, "NL": 18, "BE": 16, "FR": 27, "IT": 27, "ES": 24, "PT": 25,
+        "GB": 22, "IE": 22, "PL": 28, "CZ": 24, "SK": 24, "HU": 28, "SI": 19, "HR": 21, "DK": 18, "SE": 24, "NO": 15,
+        "FI": 18, "EE": 20, "LV": 21, "LT": 20, "GR": 27, "CY": 28, "MT": 31, "BG": 22, "RO": 24, "TR": 26, "AE": 23,
+        "SA": 24, "QA": 29, "KW": 30, "BH": 22, "JO": 30, "LB": 28, "EG": 29, "MA": 28, "TN": 24, "IL": 23, "UA": 29,
+        "RS": 22, "BA": 20, "AL": 28, "MK": 19, "IS": 26,
+    ]
+
+    /// Whether a run shaped like an IBAN is one: as read when written
+    /// together, and with a space after its country only at its length.
+    static func isIBANShaped(_ run: String) -> Bool {
+        guard run.dropFirst(2).first == " " else { return true }
+        let compact = run.replacingOccurrences(of: " ", with: "")
+        return ibanLengths[String(compact.prefix(2))] == compact.count
     }
 
     /// A postcode with its town, or a town or country on its own.

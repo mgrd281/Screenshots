@@ -6,6 +6,20 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Letters are read more like a person reads them. The address under a
+  name is that person's, even a street without a word like "Straße"; dates
+  of birth are a kind of their own, on by default, found by the word before
+  them, like "geb." or "Geburtsdatum"; reference numbers like "Unser
+  Zeichen" or "Referenznummer" are covered as ID numbers; and an IBAN read
+  with a space after its country is found, with the bank's BIC beside it.
+  In a doctor's letter the patient's name, address, date of birth and case
+  numbers are known as the patient's, and the doctors' names as theirs.
+- On the iPhone, Details lists every place by whose it is, the patient,
+  the doctors and other people, then by what it is, like Money or Health.
+  Each group shows how much of it is covered and has one switch to cover
+  or uncover all of it; what Settings leaves visible, like the doctors'
+  names when only patients' are covered, is listed too and covered with a
+  tap, there or on the picture.
 - On the iPhone, the introduction's buttons are smaller, each on one line.
 - The iPhone app's first launch shows what Snapfly does before it says or
   asks anything: a sample screenshot lands, a green line reads it, its

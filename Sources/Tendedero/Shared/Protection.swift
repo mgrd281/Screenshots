@@ -50,6 +50,7 @@ extension Finder {
     static let intelligentKinds: [String: PrivateDetail] = [
         "name": .names, "names": .names, "person": .names,
         "address": .addresses, "addresses": .addresses,
+        "birthdate": .birthDates, "birthday": .birthDates, "birth": .birthDates,
         "email": .emails, "e-mail": .emails,
         "phone": .phones, "telephone": .phones,
         "bank": .bank, "account": .bank, "card": .bank, "iban": .bank,
@@ -136,6 +137,7 @@ extension Finder {
     private static let askable: [(word: String, kind: PrivateDetail, example: String?)] = [
         ("name", .names, "2: name: Ahmed Ali"),
         ("address", .addresses, "5: address: Musterstraße 12, 10115 Berlin"),
+        ("birthdate", .birthDates, nil),
         ("email", .emails, "3: email: lena.weber@example.com"),
         ("phone", .phones, "4: phone: +49 170 1234567"),
         ("bank", .bank, "6: bank: DE89 3704 0044 0532 0130 00"),

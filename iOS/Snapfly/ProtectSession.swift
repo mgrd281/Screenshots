@@ -139,12 +139,13 @@ final class ProtectSession: ObservableObject {
         plan.aspect = CGFloat(image.width) / CGFloat(max(1, image.height))
         let chosen = chosen, rules = rules
         // What the patterns, the labels and the names find, without waiting
-        // for Apple Intelligence.
+        // for Apple Intelligence, and what Settings leaves visible, listed
+        // in Details to cover with a tap.
         let first = await Self.background {
-            Finder.analysis(in: image, chosen, rules: rules, intelligence: false)
+            Finder.analysis(in: image, chosen, rules: rules, intelligence: false, spare: true)
         }
         guard !Task.isCancelled else { return }
-        plan.add(found: first.areas, possible: first.possible)
+        plan.add(found: first.areas, possible: first.possible, spared: first.spared)
         found = true
         // Read already: the words are there at once.
         words = await Self.background { Finder.words(in: image) }
@@ -188,6 +189,14 @@ final class ProtectSession: ObservableObject {
         plan.decide(ids)
     }
 
+    /// Covers places, or leaves them visible, all at once, as a topic's
+    /// switch in Details does.
+    func set(_ ids: Set<Int>, covered: Bool) {
+        let before = plan
+        plan.set(ids, covered: covered)
+        if plan != before { changed() }
+    }
+
     /// Hides what is under a shape drawn by hand; its id, if it was big enough.
     @discardableResult
     func draw(_ shape: HandShape) -> Int? {
@@ -197,10 +206,20 @@ final class ProtectSession: ObservableObject {
     }
 
     /// The word under a finger, hidden by hand with the words it hides, so
-    /// the copy is checked for them; its id. Nil where no word is.
+    /// the copy is checked for them; its id. Nil where no word is. A detail
+    /// found there that Settings leaves visible, like a doctor's name or an
+    /// IBAN, is covered whole instead; a line about someone's health only
+    /// where the word is.
     func hideWord(at point: CGPoint) -> Int? {
         guard let word = words.filter({ $0.box.insetBy(dx: -0.004, dy: -0.004).contains(point) })
             .min(by: { $0.box.width < $1.box.width }) else { return nil }
+        let middle = CGPoint(x: word.box.midX, y: word.box.midY)
+        if let detail = plan.marks.first(where: { mark in
+            mark.origin == .spared && !mark.covered && mark.kind != .health && mark.rect.contains(middle)
+        }) {
+            toggle(detail.id)
+            return detail.id
+        }
         // A little room round the letters, as found places have.
         let box = word.box.insetBy(dx: -word.box.height * 0.15, dy: -word.box.height * 0.2)
         let id = plan.cover(box, text: word.text)

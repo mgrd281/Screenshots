@@ -14,6 +14,7 @@ enum SelfTest {
         "Shop: Muster Versand GmbH",
         "Date: 17.10.2026",
         "Customer: Lena Hoffmann",
+        "Date of birth: 12.03.1985",
         "lena.hoffmann@example.com",
         "+49 151 23456789",
         "IBAN: DE89 3704 0044 0532 0130 00",

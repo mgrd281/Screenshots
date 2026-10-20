@@ -47,6 +47,7 @@
 "Hide private details" = "個人情報を隠す";
 "Names" = "名前";
 "Addresses" = "住所";
+"Dates of birth" = "生年月日";
 "Emails" = "メールアドレス";
 "Phone numbers" = "電話番号";
 "Bank cards and accounts" = "カードと銀行口座";
@@ -170,6 +171,7 @@
 "Total" = "合計";
 "Name" = "名前";
 "Address" = "住所";
+"Birth date" = "生年月日";
 "Email" = "メール";
 "Phone" = "電話";
 "Tracking number" = "追跡番号";
@@ -1304,6 +1306,8 @@
 "Only in iCloud" = "iCloud のみ";
 "Only selected photos" = "選択した写真のみ";
 "Other people" = "その他の人";
+"Patient" = "患者";
+"Doctors" = "医師";
 "Patient names" = "患者名";
 "Pause" = "一時停止";
 "Paused" = "一時停止中";
@@ -1360,6 +1364,7 @@
 "Keep Covered" = "隠したままにする";
 "Show on Picture" = "画像で表示";
 "%d of %d checked" = "%2$d 件中 %1$d 件確認済み";
+"%d of %d covered" = "%2$d 件中 %1$d 件を隠しました";
 "Everything is checked." = "すべて確認しました。";
 "Previous" = "前へ";
 "Goes as soon as the copy is ready." = "コピーの準備ができしだい実行します。";

@@ -49,6 +49,7 @@
 "Hide private details" = "Hide private details";
 "Names" = "Names";
 "Addresses" = "Addresses";
+"Dates of birth" = "Dates of birth";
 "Emails" = "Emails";
 "Phone numbers" = "Phone numbers";
 "Bank cards and accounts" = "Bank cards and accounts";
@@ -172,6 +173,7 @@
 "Total" = "Total";
 "Name" = "Name";
 "Address" = "Address";
+"Birth date" = "Birth date";
 "Email" = "Email";
 "Phone" = "Phone";
 "Tracking number" = "Tracking number";
@@ -1306,6 +1308,8 @@
 "Only in iCloud" = "Only in iCloud";
 "Only selected photos" = "Only selected photos";
 "Other people" = "Other people";
+"Patient" = "Patient";
+"Doctors" = "Doctors";
 "Patient names" = "Patient names";
 "Pause" = "Pause";
 "Paused" = "Paused";
@@ -1362,6 +1366,7 @@
 "Keep Covered" = "Keep Covered";
 "Show on Picture" = "Show on Picture";
 "%d of %d checked" = "%d of %d checked";
+"%d of %d covered" = "%d of %d covered";
 "Everything is checked." = "Everything is checked.";
 "Previous" = "Previous";
 "Goes as soon as the copy is ready." = "Goes as soon as the copy is ready.";

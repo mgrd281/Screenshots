@@ -288,7 +288,8 @@ struct ProtectView: View {
     private var top: some View {
         VStack(spacing: 6) {
             PrivacyStatus(stage: session.stage, tally: session.plan.tally,
-                          nothingFound: session.found && session.plan.marks.isEmpty,
+                          nothingFound: session.found
+                              && session.plan.marks.allSatisfy { $0.origin == .spared && !$0.covered },
                           open: { reviewing = true }, dontWait: session.dontWait, retry: session.retry)
                 .padding(.top, 6)
                 .measuredHeight($statusHeight)

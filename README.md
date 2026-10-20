@@ -252,7 +252,8 @@ covered lately: "In the last 7 days, Snapfly covered 143 details in 38
 photos you sent." Only those counts are kept, for two weeks.
 
 Choose under Privacy in Settings what to cover, in six groups. People:
-names, addresses, emails, phone numbers, usernames and faces. Companies and
+names, addresses, dates of birth, emails, phone numbers, usernames and
+faces. Companies and
 organizations: a shop, a practice, a bank or an insurer by its name. Money:
 bank cards and accounts (crypto wallets too) and amounts. Health: health
 details. Documents: ID and tax numbers, QR codes and barcodes, order and
@@ -279,7 +280,7 @@ first and last name found there are covered wherever they appear together.
 
 Names means people's names, and nothing else. A label's value is cut where
 the name ends: "Patient: Mustermann, Max, geb. 01.02.1960" covers
-"Mustermann, Max" and leaves the date to Dates. A company, a practice or a
+"Mustermann, Max" and leaves the date to Dates of birth. A company, a practice or a
 bank is never covered as a name, a title like Dr. med. or Frau stays
 readable, and so do a phone number, an address, an amount or a diagnosis,
 each a kind of its own. A line that only looks like a name, with nothing to
@@ -294,7 +295,7 @@ line each. A value is what its label says it is, not what it looks like. On
 a German sick note (Arbeitsunfähigkeitsbescheinigung), a prescription or a
 referral, the name under "Name, Vorname des Versicherten" is the patient's
 name, on one line or two, and the lines after it the address; the date under
-"geb. am" is a date; the numbers under Versicherten-Nr., Kostenträgerkennung,
+"geb. am" is a date of birth; the numbers under Versicherten-Nr., Kostenträgerkennung,
 Betriebsstätten-Nr. and Arzt-Nr. are ID numbers; the insurer under
 "Krankenkasse bzw. Kostenträger" is an organization; and the dates after
 "Arbeitsunfähig seit", "voraussichtlich arbeitsunfähig bis" and
@@ -323,6 +324,21 @@ clear is covered anyway and marked to check. None of these ever covers a
 phone number, an address or a QR code: a code is covered by codes, or by
 another kind it holds, like the account in a payment's code, never by a
 name or a company in it.
+
+Letters are read as a person reads them too. The address under a person's
+name is that person's: the street and house number, even one without a word
+like Straße, as in "Lindenberg 12", the postcode with its town and the
+country under them, in the name's column; and the street and town after a
+name on its line, as a letter's subject writes "Mustermann, Erika,
+Lindenberg 12, 23456 Musterstadt". A date of birth is found by the word
+before it, like geb., geboren am, Geburtsdatum, DOB or a star, and is a
+kind of its own, so a letter's other dates stay readable. A reference
+number after its label, like Unser Zeichen, Referenznummer or Patienten-Nr.,
+is an ID number, and in a doctor's letter the patient's. An IBAN read with
+a space after its country, as small print often is, is found at that
+country's length, and a bank's BIC beside an IBAN or the word BIC. So in a
+radiology letter the patient's name, address, date of birth and case
+numbers are known as the patient's, and the doctors' names as the doctors'.
 
 API keys and tokens are found by how services start them, like `sk-`,
 `ghp_` or `AKIA`, by what follows Bearer or a setting like `API_KEY=`, by a
@@ -366,11 +382,11 @@ is recommended and you cover anything; turn it off and it stays off.
 
 To see what each kind hides, Test on a Sample under Privacy covers a
 made-up order confirmation with what you checked: an order number, a
-name, an address, an email, a phone number, an IBAN, a tax number, a
-tracking number, a PIN, an API key, an IP address, a username, a total, a
-date, a link, a medicine and a QR code. It says what was covered there, and what you checked that
-the sample does not show. It speaks for that sample only; a real
-screenshot can read differently.
+name, a date of birth, an address, an email, a phone number, an IBAN, a
+tax number, a tracking number, a PIN, an API key, an IP address, a
+username, a total, a date, a link, a medicine and a QR code. It says what
+was covered there, and what you checked that the sample does not show. It
+speaks for that sample only; a real screenshot can read differently.
 
 Under Also hide, add rules of your own: a word, like your shop's name,
 covered wherever it appears; a label, like Customer number, whose value is
@@ -943,7 +959,16 @@ watch the screen, so there is no line there. What it keeps is the covering:
   picture is never called protected. A tap on it opens Details, which goes
   through the places Snapfly was not sure about one by one, from the top:
   the place itself, what it hides, Keep Covered or Cover, Leave Visible,
-  Show on Picture, and how many are checked. Over the bottom float the
+  Show on Picture, and how many are checked. Then it lists every place by
+  whose it is, the patient's (the name, the address under it, the date of
+  birth and the case's numbers), the doctors' and other people's, then the
+  rest by what it is, like Money or Health. Each has a sign that fills
+  green as it is covered, how many of it are, and a switch that covers or
+  uncovers all of it at once, over its places, each with its own switch,
+  and swiped, Show on Picture. What Settings leaves visible is listed too,
+  like the doctors' names where only patients' are covered, and is covered
+  with a tap, there or on the picture, where it is not marked until then.
+  Over the bottom float the
   tools in one capsule: Select taps a place to select it, or a word to hide
   it; a selected place moves, resizes by its corners and, a box, turns by
   its handle, and holding one down offers Cover, Uncover or Delete. The
@@ -1089,12 +1114,12 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
 | `HideSend.swift` | Send covered, in Hide Private Details: the copy straight to a chat, the clipboard or the Share menu |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
-| `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-one kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names or only Patient names and Other people; the lines read kept a while in memory, or given from a photo prepared ahead of time |
+| `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-two kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names or only Patient names and Other people; a letter's address under a name, a date of birth and a reference number known as that person's; and, for the iPhone's Details, what Settings leaves visible; the lines read kept a while in memory, or given from a photo prepared ahead of time |
 | `Shared/HandShape.swift`, `Shared/ProtectionPlan.swift` | Hiding by hand: the marker's strokes, boxes that turn and outlines, on the original picture's places, and every place of a picture with the owner's changes, each undone and done again, and the count of what is protected, to check and left |
 | `Shared/PrivacyIndex.swift` | Pictures prepared ahead of time: what is kept of each, what is left to read, newest first, and when preparing waits |
 | `Shared/FormFields.swift` | Reads a printed form's fields: each label, like "Name, Vorname des Versicherten", Versicherten-Nr. or "Arbeitsunfähig seit", and its value beside it or under it in its column, told as what the label says it is (a name, an address, a date of birth, an insurance or ID number, a diagnosis, a day of illness), with whose it is and how sure |
 | `Shared/DocumentSense.swift` | Reads a document as a person would: a person's name from a company's, where a label's value stops being a name, whose a name is (patient, doctor, customer, staff), and whose names Settings covers |
-| `Shared/ProtectionPlan.swift` | A picture being protected, place by place: found, offered, turned on or off or covered by hand, with undo and redo |
+| `Shared/ProtectionPlan.swift` | A picture being protected, place by place: found, offered, left visible as Settings says, turned on or off one by one or a topic at once, or covered by hand, with undo and redo; and the places by whose they are and what they are, for Details |
 | `Shared/ExportCheck.swift` | The last check before a copy leaves: every cover landed where something showed |
 | `Shared/Timing.swift` | How long each step of covering takes, for Instruments and the log, numbers only |
 | `Shared/CoverLook.swift` | How covers look (ink, labelled, blur, pixels, dots, erased), drawn from the colors around what is covered; keeping the last four digits; the samples Settings shows |
@@ -1109,7 +1134,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
 | `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
-| `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture filling the screen, to zoom with its places marked, covered in steps and checked; the floating tools to select, draw, box, lasso and erase with their handles; the status capsule; Details, which checks the unsure places one by one; Copy, Share, Save to Photos or Files and Send to Mac, which wait for the checked copy and ask while places are to check; and Full Screen |
+| `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture filling the screen, to zoom with its places marked, covered in steps and checked; the floating tools to select, draw, box, lasso and erase with their handles; the status capsule; Details, which checks the unsure places one by one and lists every place by whose it is and what it is, each topic covered with one switch; Copy, Share, Save to Photos or Files and Send to Mac, which wait for the checked copy and ask while places are to check; and Full Screen |
 | `iOS/Share/ShareViewController.swift`, `iOS/Share-Info.plist`, `iOS/*.entitlements` | The iPhone's share extension: a picture shared from any app, covered, checked, then copied, shared or saved |
 | `Shared/ScanPDF.swift` | Scanned pages, covered, as one PDF: a picture of each page on A4's width, as JPEG, no text, and nothing of who made it but the app |
 | `Shared/CoveredCopy.swift` | A picture's covered copy as it leaves the iPhone app or its share extension: covered, read again, checked in its pixels, or nothing |

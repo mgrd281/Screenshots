@@ -55,6 +55,7 @@ extension PrivateDetail {
         switch self {
         case .names, .patientNames, .otherPeople: L("Name")
         case .addresses: L("Address")
+        case .birthDates: L("Birth date")
         case .emails: L("Email")
         case .phones: L("Phone")
         case .bank: L("Bank")

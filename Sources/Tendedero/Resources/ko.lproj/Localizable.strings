@@ -47,6 +47,7 @@
 "Hide private details" = "개인 정보 가리기";
 "Names" = "이름";
 "Addresses" = "주소";
+"Dates of birth" = "생년월일";
 "Emails" = "이메일";
 "Phone numbers" = "전화번호";
 "Bank cards and accounts" = "카드와 은행 계좌";
@@ -170,6 +171,7 @@
 "Total" = "합계";
 "Name" = "이름";
 "Address" = "주소";
+"Birth date" = "생년월일";
 "Email" = "이메일";
 "Phone" = "전화";
 "Tracking number" = "운송장 번호";
@@ -1304,6 +1306,8 @@
 "Only in iCloud" = "iCloud에만 있음";
 "Only selected photos" = "선택한 사진만";
 "Other people" = "다른 사람";
+"Patient" = "환자";
+"Doctors" = "의사";
 "Patient names" = "환자 이름";
 "Pause" = "일시 정지";
 "Paused" = "일시 정지됨";
@@ -1360,6 +1364,7 @@
 "Keep Covered" = "계속 가리기";
 "Show on Picture" = "사진에서 보기";
 "%d of %d checked" = "%2$d개 중 %1$d개 확인함";
+"%d of %d covered" = "%2$d개 중 %1$d개 가림";
 "Everything is checked." = "모두 확인했어요.";
 "Previous" = "이전";
 "Goes as soon as the copy is ready." = "사본이 준비되면 바로 실행돼요.";

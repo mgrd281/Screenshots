@@ -49,6 +49,7 @@
 "Hide private details" = "Şəxsi məlumatları gizlət";
 "Names" = "Adlar";
 "Addresses" = "Ünvanlar";
+"Dates of birth" = "Doğum tarixləri";
 "Emails" = "E-poçtlar";
 "Phone numbers" = "Telefon nömrələri";
 "Bank cards and accounts" = "Bank kartları və hesabları";
@@ -172,6 +173,7 @@
 "Total" = "Cəmi";
 "Name" = "Ad";
 "Address" = "Ünvan";
+"Birth date" = "Doğum tarixi";
 "Email" = "E-poçt";
 "Phone" = "Telefon";
 "Tracking number" = "İzləmə nömrəsi";
@@ -1306,6 +1308,8 @@
 "Only in iCloud" = "Yalnız iCloud-da";
 "Only selected photos" = "Yalnız seçilmiş fotolar";
 "Other people" = "Digər şəxslər";
+"Patient" = "Pasiyent";
+"Doctors" = "Həkimlər";
 "Patient names" = "Pasiyent adları";
 "Pause" = "Fasilə ver";
 "Paused" = "Dayandırılıb";
@@ -1362,6 +1366,7 @@
 "Keep Covered" = "Örtülü saxla";
 "Show on Picture" = "Şəkildə göstər";
 "%d of %d checked" = "%2$d-dən %1$d yoxlanıldı";
+"%d of %d covered" = "%2$d-dən %1$d gizlədildi";
 "Everything is checked." = "Hər şey yoxlanıldı.";
 "Previous" = "Əvvəlki";
 "Goes as soon as the copy is ready." = "Nüsxə hazır olan kimi yerinə yetirilir.";
