@@ -165,6 +165,12 @@ components:
     shadow: "black 12%, radius 10, y 4"   # floating controls before iOS 26: regular material, a 0.5pt hairline of .primary at 8%; Liquid Glass from iOS 26
   phone-status-capsule:
     height: "36pt"                 # at least; footnote, 14pt in, 6pt under the navigation bar
+  phone-first-run-chip:
+    height: "40pt"                 # a category on the first run: a capsule, subheadline semibold, 14pt in, 44pt to the finger; on, phone-protect with white and eye.slash.fill; off, secondarySystemBackground with a hairline of .primary at 10% and eye
+  phone-scan-frame:
+    rounded: "28pt"                # the camera round the first run's page: phone-ink, 8pt larger than the page, with green viewfinder corners (4pt, arms of 26, 16pt in)
+  phone-share-tile:
+    size: "52pt"                   # a destination on the first run's share row: secondarySystemBackground, corners of 14, the glyph 20pt semibold, the name in caption under it
   phone-topic-sign:
     size: "36pt"                   # a topic in Details: a 2.5pt ring of phone-protect, round ends, over .primary at 8%, from the top round as much as is covered; inside, 5pt in, a circle with the glyph 14pt semibold: phone-protect with white once all is covered, phone-protect at 12% with a green glyph while some is, .primary at 6% with a .secondary glyph while none is
   draw-swatch:
@@ -1945,44 +1951,97 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     and transparent, on a spring (0.42, 0.82), 35 ms apart in reading order
     for the first twelve (`stagger.grid`); cards that come later, or come
     back, are simply there. With Reduce Motion they fade in over 0.15 s.
-  - **First launch**, before access (`WelcomeScreen`, `CoverDemo.swift`),
-    shows Snapfly at work before a word is said, with the tab bar hidden.
-    A made-up screenshot (`CoverDemo`), drawn light in light and dark: a
-    white card at most 320 pt wide with corners of 28, a hairline of
-    `.primary` at 8% and the floating shadow (black 14%, radius 18, y 8),
-    on the soft `phone-surface` ellipse (360 by 280, blurred 30). Inside, a
-    status bar ("9:41", `cellularbars`, `wifi`, `battery.100`, 11–12 pt
-    semibold), a 60 pt circle of `systemGray3` with `person.fill`, the name
-    in title 3 semibold, then the phone number, email and IBAN in
-    subheadline with monospaced digits, each beside its glyph on a 28 pt
-    tile of `.primary` at 6% (corners of 8), between hairline dividers.
-    No larger than at extra large text. Its details belong to no one (a
-    placeholder name, `example.com` and the standard example IBAN).
-    - The card lands (`land.card`): from 36 pt down, tipped back 16° about
-      its lower edge, on a spring (0.6, 0.82). The reading line
-      (`sweep.scan`) crosses it once, and each detail is found as the line
-      reaches it: green corner brackets (`phone-protect`, 2 pt, round caps,
-      arms of 10 at most) over a 8% green fill, 5 pt beyond the words,
-      snapping in from 112% on a spring (0.3, 0.7). Then the ink
-      (`phone-ink`, corners of 6, 3 pt beyond the words) grows over each
-      in turn from the reading side, 170 ms apart (`stagger.demo`), each in
-      0.34 s on `ease.out`, solid all the way, as its brackets fade.
-    - Last, the protected shield lands on the card's corner: a 36 pt
-      `phone-protect` circle with `checkmark.shield.fill` in white and a
-      3 pt white ring, from 30% on a spring (0.42, 0.7) with one bounce and
-      a success haptic, as the soft green grows a little brighter.
-    - Only then, 0.55 s later, "Covered before you send" in title bold and
-      what Snapfly does in `.secondary` rise in under the card, 40 pt below
-      it, then Allow Access, 32 pt lower, as a wide green pill (340 pt at
-      most, 50 pt high) over `lock.fill` and the promise that screenshots
-      are read on the iPhone and nothing leaves it unless the owner
-      chooses, in footnote `.secondary`; each rises 16 pt on a spring
-      (0.55, 0.86), 200 ms apart, and the card glides up to make room, the
-      whole centred on the screen. About 3.5 s in all.
-    - A tap anywhere skips to the end; a tap on the card afterwards plays
-      the covering again. With Reduce Motion or VoiceOver everything is
-      there at once, without the line. VoiceOver reads the card as one
-      sample screenshot.
+  - **Before access**, the Photos tab shows Snapfly's picture of stacked
+    photos (`PhotoHero`), "Covered before you send" in title 2 bold over
+    what Snapfly does in `.secondary`, then Allow Access as a wide green
+    pill (340 pt at most) over `lock.fill` and the promise that screenshots
+    are read on the iPhone and nothing leaves it unless the owner chooses,
+    in footnote `.secondary`, 20 pt apart, centred, 24 pt in. The tab bar
+    stays, so a document can be scanned first.
+- **The first run** (`FirstRunExperience.swift`, the story in
+  `Shared/FirstRun.swift`, `FIRST_RUN.md`) shows over everything from the
+  first frame, on `systemBackground` with the safe areas kept, until it is
+  skipped or ended. One page moves through it all.
+  - **Layout**, top to bottom in a scroll view at least the screen's
+    height: the headline, title 2 bold, centred, 400 pt wide at most, 24 pt
+    in and 24 pt down, in a place kept at least 112 pt high so nothing
+    below it jumps; then the page, centred between flexible space; then a
+    place at least 108 pt high for the chips or the share row; then the
+    actions, 360 pt wide at most, in a place at least 104 pt high, at the
+    bottom.
+  - **The page** (`SampleInvoice`), 340 pt wide at most (the screen less
+    56): white in light and dark alike, corners of 20, a hairline of
+    `.primary` at 8%, padded 20, left to right in every language, no
+    larger than at extra large text, and the floating shadow (black 12%,
+    radius 16, y 6). "Invoice" in title 3 bold beside "Sample" in caption 2
+    semibold capitals, tracked 0.6, `.secondary` on a capsule of `.primary`
+    at 6%; a divider 14 pt above and below; the name, the email and the
+    IBAN in a grid, each label in footnote `.secondary` beside its value in
+    subheadline with monospaced digits; another divider; then "Amount" in
+    subheadline semibold and "149,90 €" in title 3 bold with monospaced
+    digits on the trailing edge. Its details belong to no one.
+  - **A detail found**: green corner brackets (`phone-protect`, 2 pt, round
+    caps, arms of 10 at most) over an 8% green fill, 5 pt beyond the
+    words, snapping in from 112% (`motion.find`). **Covered**: the ink
+    (`phone-ink`, corners of 6, 3 pt beyond the words) grows over it from
+    the reading side (`motion.redact`), solid all the way; uncovered, it
+    goes back the same way. The protected shield on the page's corner is a
+    36 pt `phone-protect` circle with `checkmark.shield.fill` in white and
+    a 3 pt `systemBackground` ring, from 30% (`motion.success`) with one
+    bounce; it shows only while something is chosen.
+  - **The story**, in seconds: the page at once; at 0.25 the reading line
+    (`sweep.scan`) crosses it and each detail is found as it passes; from
+    1.3 the name, email and IBAN are covered 170 ms apart
+    (`stagger.demo`), the amount never; at 1.85 the shield and a success
+    haptic: "Private stays private." At 2.2 the chips rise in under the
+    page: "You decide what stays visible."; at 3.4 the name comes off and
+    at 4.8 goes on again, as a tap would do it, unless the owner tapped
+    first. At 6.2, "Scan. Detect. Protect.": the page, as printed again,
+    drops to 86% into the camera's frame and lies tipped away; at 6.8 its
+    edges are found, with a light haptic; at 7.6 it is straightened; at
+    8.2 it is read and what is chosen is found; from 9.35 it is covered as
+    chosen, the shield at 9.9. At 10.4, "Protected. Ready to share.": the
+    page goes to 74% and the share row rises in. At 13.6, "Share your
+    documents. Not your private data." over "Protect invoices, screenshots
+    and documents before you share them." in subheadline `.secondary`, and
+    Try It Now. Each headline gives way to the next in place, rising 8 pt.
+  - **The chips** (`phone-first-run-chip`): Names, Emails and Bank details,
+    8 pt apart in a row (without their eyes, then stacked, where the row
+    does not fit). On, `phone-protect` with white words and
+    `eye.slash.fill`; off, `secondarySystemBackground` with a hairline of
+    `.primary` at 10% and `eye`; subheadline semibold, 14 pt in, 40 pt
+    high, 44 pt to the finger; the eye changes by replacing itself, and a
+    press gives to 96% (`scale.press`). A selection haptic marks each, and
+    VoiceOver hears the category and Covered or Not covered. A tap on a
+    detail of the page does the same as its chip.
+  - **The camera** (`phone-scan-frame`): `phone-ink` with corners of 28, 8 pt
+    larger than the page, with the scan viewfinder's green corners (4 pt,
+    round caps, arms of 26, 16 pt in). The page in it lies tipped away and
+    is straightened by a projection, its corners moving from where the
+    camera sees them to a rectangle (`straighten.page`); the edges found
+    are a green outline, 2 pt over a 12% fill, with an 8 pt dot at each
+    corner, closing onto the corners from 12% beyond them as they lock on
+    (`motion.lock`) and following them as the page straightens.
+  - **The share row** (`phone-share-tile`): ChatGPT (`sparkles`), WhatsApp
+    (`message.fill`) and Email (`envelope.fill`) as 52 pt tiles of
+    `secondarySystemBackground` with corners of 14, the glyph 20 pt
+    semibold in `.primary`, the name in caption `.secondary` under it, 20 pt
+    apart; under them, "Only the protected copy leaves your iPhone." in
+    footnote `.secondary`. A picture of the share sheet, not a link: no
+    logos, and VoiceOver hears only the sentence.
+  - **Actions**: Skip Demo in subheadline medium `.secondary`, 44 pt high,
+    from the first frame; at the end Try It Now rises in over it as the
+    wide green pill and Skip Demo becomes Not Now. Try It Now opens the real
+    scanner on the Scan tab (the Photos tab where the iPhone cannot scan).
+  - The story's clock stands still while the owner tries the chips (for
+    2.5 s after the last tap) and while the app is away. Things enter by
+    fading and rising (`rise.small`, 8–14 pt) and leave by fading. With
+    Reduce Motion or Low Power Mode nothing moves: no reading line, no
+    tilt, no growing ink; covers and scenes cross-fade in 0.15–0.2 s. With
+    VoiceOver it starts at its end, and the page is one element: "Sample
+    invoice", with each detail Covered or its value.
+  - It shows once (`firstRunSeen`), never again after an ordinary update,
+    and from More › Help & Introduction › Watch the Demo (`play.circle`).
 - **Scan** (`ScanTab.swift`), a large title, 16 pt in:
   - A card of `phone-surface` with corners of 24 and a hairline of
     `.primary` at 6%, padded 20 by 24, its contents centred 18 pt apart: a

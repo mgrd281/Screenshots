@@ -919,13 +919,24 @@ watch the screen, so there is no line there. What it keeps is the covering:
   shows the last twelve screenshots protected, in the same grid. More holds
   Settings and Help & Introduction. While a picture is open the tab bar
   steps aside.
-- **The first launch** shows what Snapfly does before it says or asks
-  anything: a made-up screenshot lands, a green line reads it, its name,
-  phone number, email and IBAN are found and covered one after another,
-  and a shield settles on its corner. Only then do the words and Allow
-  Access rise in, with a word that screenshots are read on the iPhone and
-  nothing leaves it unless you choose. A tap skips ahead, and a tap on the
-  card plays it again.
+- **The first run** shows what Snapfly does in under fifteen seconds, on
+  one made-up invoice that moves through it all, before anything is asked
+  (`FIRST_RUN.md`). From the first frame the invoice is there; a green line
+  reads it, and its name, email and IBAN are found and covered while its
+  amount stays readable: "Private stays private." Then Names, Emails and
+  Bank details appear as chips, and a tap on one, or on a detail, covers or
+  shows it at once; the story waits while you try. The page then lies
+  before a camera, tipped away: its edges are found, it is straightened,
+  read, and covered as you chose. Last, it becomes a small protected copy
+  beside where it could go, "Only the protected copy leaves your iPhone",
+  and "Share your documents. Not your private data." Try It Now opens the
+  real scanner; Skip Demo leaves at any time. Which detail each category
+  covers is what the engine itself finds on that invoice. With Reduce
+  Motion or Low Power Mode it cross-fades instead of moving; with VoiceOver
+  it starts at its end, the invoice described as it is. It shows once,
+  never again after an ordinary update, and from More › Help &
+  Introduction › Watch the Demo whenever you like. Until Photos may be
+  read, the Photos tab asks with a calm card, and the other tabs are there.
 - **From any app's share sheet.** Share a picture from Photos, Messages,
   Safari or anywhere else and choose Snapfly: it is covered right there, as
   chosen in Snapfly (the kinds, the look and the own rules, which the app
@@ -1142,7 +1153,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them as one covered PDF |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
-| `iOS/Snapfly/CoverDemo.swift` | The first launch (`WelcomeScreen`): the sample screenshot read, found and covered detail by detail, then the words and Allow Access |
+| `iOS/Snapfly/FirstRunExperience.swift` | The first run: the sample invoice read and covered, its categories as chips, the scan of a page tipped, found, straightened and covered, the protected copy ready to share, Try It Now and Skip Demo; when it shows (`FirstRunCoordinator`) |
+| `iOS/Snapfly/Motion.swift` | The iPhone's named motion (`SnapflyMotion`), each with its calm answer for Reduce Motion and Low Power Mode |
+| `Shared/FirstRun.swift` | The first run's story as a pure state machine: its script, what each moment shows, the categories as the one source of truth, and the scanner's perspective; tested on Linux too |
 | `iOS/Snapfly/PhotoIndexer.swift`, `IndexStore.swift`, `PreparingView.swift`, `iOS/Info.plist` | Faster picture processing: reading pictures ahead of time with consent, in the app and in the background, where it is kept on the iPhone, its page in Settings, and the background task's name |
 | `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |
@@ -1204,6 +1217,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `MacSync.swift`, `SyncPane.swift` | Syncing on the Mac: covered copies of what hangs on the line go, what the iPhone sends hangs there, and Settings › Sync |
 | `iOS/Snapfly/PhoneSync.swift` | Syncing on the iPhone: From your Mac, a picture fetched when opened, Send to Mac and the Sync section in Settings |
 | `cloudkit/schema.ckdb`, `cloudkit/share.ckdb` | The record types in the iCloud container, and the type shares are kept in, put there by the CloudKit Schema workflow |
+| `FIRST_RUN.md` | The iPhone's first run: the audit of the launch before it, the journey, the storyboard second by second, the engine behind the sample, accessibility, tests, measurements and what is not yet known |
+| `scripts/first-run-captures.sh` | Plays the first run on the simulator for the First Run Captures workflow: still frames, a recording, how soon it showed, and main's build beside it |
 | `SYNC.md` | The audit and plan for Mac and iPhone as one: what there is, the design, the threat model, what goes wrong and what happens then, the owner's steps at Apple, and what is verified |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |

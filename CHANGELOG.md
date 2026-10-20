@@ -21,12 +21,15 @@ keeps a download of each version.
   names when only patients' are covered, is listed too and covered with a
   tap, there or on the picture.
 - On the iPhone, the introduction's buttons are smaller, each on one line.
-- The iPhone app's first launch shows what Snapfly does before it says or
-  asks anything: a sample screenshot lands, a green line reads it, its
-  name, phone number, email and IBAN are found and covered one after
-  another and a shield settles on it; only then does it ask to see your
-  screenshots, which are read on the iPhone and never leave it unless you
-  choose.
+- The iPhone app opens with a first run of under fifteen seconds, on a
+  made-up invoice: its name, email and IBAN are found and covered while
+  the amount stays readable; Names, Emails and Bank details are yours to
+  turn on and off with a tap; a page is scanned, straightened and covered
+  as you chose; and the protected copy is ready to share. Try It Now opens
+  the scanner, Skip Demo leaves at any time, and More › Help &
+  Introduction › Watch the Demo shows it again. It moves calmly with
+  Reduce Motion or Low Power Mode, and is described for VoiceOver. Access
+  to your screenshots is asked for afterwards, on the Photos tab.
 - On the iPhone, scanned pages become one covered PDF with a tap: every
   page covered as Settings says, or as you left it after opening it, a
   picture of each page sized like A4 and no text to copy, ready to send or
