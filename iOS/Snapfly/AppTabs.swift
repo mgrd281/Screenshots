@@ -23,6 +23,7 @@ struct ContentView: View {
     @StateObject private var library = Library()
     @ObservedObject private var tabs = AppTabs.shared
     @ObservedObject private var coverer = QuickCoverer.shared
+    @ObservedObject private var batch = BatchCover.shared
     @ObservedObject private var firstRun = FirstRunCoordinator.shared
     /// The tabs are made once the first run that opens Snapfly is over, so
     /// reading Photos and starting sync never hold up its first seconds.
@@ -65,6 +66,11 @@ struct ContentView: View {
         // One share sheet for the whole app, whichever tab asked for it.
         .sheet(item: $coverer.sharing) { file in
             ShareSheet(url: file.url) { _ in try? FileManager.default.removeItem(at: file.url) }
+                .ignoresSafeArea()
+        }
+        // And one for the covered copies of several screenshots, shared at once.
+        .sheet(item: $batch.sharing) { files in
+            ShareFilesSheet(files: files)
                 .ignoresSafeArea()
         }
     }
@@ -167,6 +173,12 @@ final class QuickCoverer: ObservableObject {
             PhoneGuide.shared.happened(.used)
             UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
+    }
+
+    /// Another screenshot covered elsewhere, like several at once, so the
+    /// lists of them update.
+    func didCover() {
+        covered += 1
     }
 
     /// A short note over the bottom of the screen, gone after a while.

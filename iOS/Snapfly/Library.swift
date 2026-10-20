@@ -61,8 +61,7 @@ final class Library: ObservableObject {
     /// A small picture of one screenshot, for the grid: never the whole
     /// picture decoded, and a changed screenshot made again.
     nonisolated static func thumbnail(of asset: PHAsset, width: CGFloat) async -> UIImage? {
-        let stamp = asset.modificationDate?.timeIntervalSince1970 ?? 0
-        let key = "\(asset.localIdentifier)|\(Int(width))|\(stamp)" as NSString
+        let key = Thumbnails.key(asset, width: width)
         if let kept = Thumbnails.kept.object(forKey: key) { return kept }
         let image: UIImage? = await withCheckedContinuation { continuation in
             let options = PHImageRequestOptions()
@@ -82,6 +81,12 @@ final class Library: ObservableObject {
         }
         return image
     }
+
+    /// The small picture made of a screenshot lately, if it is still kept,
+    /// so a card made again shows it at once rather than blank for a moment.
+    nonisolated static func keptThumbnail(of asset: PHAsset, width: CGFloat) -> UIImage? {
+        Thumbnails.kept.object(forKey: Thumbnails.key(asset, width: width))
+    }
 }
 
 /// The small pictures made lately, kept while the app runs, so going back
@@ -95,4 +100,11 @@ private enum Thumbnails {
     }()
 
     static let images = PHCachingImageManager()
+
+    /// A screenshot's small picture at this width, as it is now: one changed
+    /// since is made again.
+    static func key(_ asset: PHAsset, width: CGFloat) -> NSString {
+        let stamp = asset.modificationDate?.timeIntervalSince1970 ?? 0
+        return "\(asset.localIdentifier)|\(Int(width))|\(stamp)" as NSString
+    }
 }

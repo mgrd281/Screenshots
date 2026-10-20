@@ -258,7 +258,19 @@ struct ScreenshotCard: View {
     var protected = false
     var showsDate = true
     var square = false
-    @State private var image: UIImage? = nil
+    @State private var image: UIImage?
+
+    init(asset: PHAsset, protected: Bool = false, showsDate: Bool = true, square: Bool = false) {
+        self.asset = asset
+        self.protected = protected
+        self.showsDate = showsDate
+        self.square = square
+        // Made lately, as when choosing starts or the grid changes: at once.
+        _image = State(initialValue: Library.keptThumbnail(of: asset, width: Self.width))
+    }
+
+    /// The width the small pictures are made at, the same for every card.
+    private static let width: CGFloat = 360
 
     var body: some View {
         Color(.secondarySystemBackground)
@@ -300,7 +312,7 @@ struct ScreenshotCard: View {
             .overlay(RoundedRectangle(cornerRadius: square ? 12 : 14, style: .continuous)
                 .strokeBorder(Color.primary.opacity(0.08)))
             .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
-            .task(id: asset.localIdentifier) { image = await Library.thumbnail(of: asset, width: 360) }
+            .task(id: asset.localIdentifier) { image = await Library.thumbnail(of: asset, width: Self.width) }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(label)
     }
@@ -383,37 +395,133 @@ extension View {
     }
 }
 
-/// Screenshots in a grid of small square cards, four to a row on most
-/// iPhones: a tap opens one to protect, growing out of its card; holding
-/// it covers it and copies, shares or saves it.
+/// Screenshots in a grid of square cards, three to a row, or four pinched
+/// closer, as in Photos (`GridZoom`): a tap opens one to protect, growing
+/// out of its card; holding it covers it and copies, shares or saves it.
+/// While several are being chosen (`GridSelection`), a tap turns a card on
+/// or off, and from iOS 18 on a finger drawn sideways across the cards
+/// takes in a run of them.
 struct ScreenshotGrid: View {
     let shots: [PHAsset]
     let protected: Set<String>
     let place: ShotLink.Place
     let zoom: Namespace.ID
     let quick: @MainActor (PHAsset, QuickCover) -> Void
+    /// What is chosen while several are being chosen; nil otherwise.
+    var selection: Binding<GridSelection?> = .constant(nil)
+    /// Whether a finger is being drawn across, so the page holds still.
+    var sweeping: Binding<Bool> = .constant(false)
     /// The cards have risen into place, once, the first time there are any.
     @State private var risen = false
+    /// The grid's width, to find the card under a finger.
+    @State private var width: CGFloat = 0
+    /// How many to a row, the same in every grid.
+    @AppStorage(GridZoom.key) private var columns = GridZoom.standard
+    /// How large the grid shows while it is pinched, back to its size on a
+    /// spring once the fingers let go, or the pinch is called off.
+    @GestureState(resetTransaction: Transaction(animation: .spring(response: 0.42, dampingFraction: 0.86)))
+    private var pinch: CGFloat = 1
+    /// Around which point, where the fingers came down.
+    @State private var anchor = UnitPoint.center
+    /// Each change of the grid, for its haptic.
+    @State private var changes = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Off while the chosen ones are being covered.
+    @Environment(\.isEnabled) private var isEnabled
 
     var body: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 76, maximum: 160), spacing: 8)], spacing: 8) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: GridZoom.clamped(columns)),
+                  spacing: 8) {
             ForEach(Array(shots.enumerated()), id: \.element.localIdentifier) { index, asset in
-                let link = ShotLink(id: asset.localIdentifier, place: place)
-                NavigationLink(value: link) {
-                    ScreenshotCard(asset: asset, protected: protected.contains(asset.localIdentifier), square: true)
-                        .zoomSource(link, in: zoom)
-                }
-                .buttonStyle(.plain)
-                .contextMenu { menu(asset) }
-                .phoneGuideTarget(.firstShot, on: asset.localIdentifier == shots.first?.localIdentifier)
-                .opacity(risen ? 1 : 0)
-                .offset(y: risen || reduceMotion ? 0 : 8)
-                .animation(rise(index), value: risen)
+                card(asset)
+                    .opacity(risen ? 1 : 0)
+                    .offset(y: risen || reduceMotion ? 0 : 8)
+                    .animation(rise(index), value: risen)
             }
         }
+        .onGeometryChange(for: CGFloat.self, of: { $0.size.width }) { width = $0 }
+        .modifier(SweepToChoose(active: selection.wrappedValue != nil && isEnabled, began: beginSweep, changed: sweep,
+                                ended: endSweep))
+        .sensoryFeedback(.selection, trigger: selection.wrappedValue?.count)
+        .scaleEffect(pinch, anchor: anchor)
+        .simultaneousGesture(magnify)
+        .sensoryFeedback(.selection, trigger: changes)
         .onAppear { if !shots.isEmpty { risen = true } }
         .onChange(of: shots.isEmpty) { if !shots.isEmpty { risen = true } }
+        // A finger can't be drawn across what is gone: the page never stays held.
+        .onChange(of: selection.wrappedValue == nil) { _, none in if none { endSweep() } }
+        .onDisappear { endSweep() }
+    }
+
+    /// Two fingers pinch the grid: it follows them, up to the size of the
+    /// next grid's cards, and once let go past a little way, the cards settle
+    /// into the next grid on a spring (`zoom.grid`); else they settle back.
+    /// With Reduce Motion the grid doesn't follow, and changes at once.
+    private var magnify: some Gesture {
+        MagnifyGesture(minimumScaleDelta: 0.02)
+            .updating($pinch) { value, pinch, _ in
+                guard !reduceMotion else { return }
+                pinch = GridZoom.scale(pinch: value.magnification, columns: columns)
+            }
+            .onChanged { value in
+                if anchor != value.startAnchor { anchor = value.startAnchor }
+            }
+            .onEnded { value in
+                let next = GridZoom.after(pinch: value.magnification, from: columns)
+                guard next != GridZoom.clamped(columns) else { return }
+                withAnimation(reduceMotion ? nil : .spring(response: 0.42, dampingFraction: 0.86)) {
+                    columns = next
+                }
+                changes += 1
+            }
+    }
+
+    /// A card: a way into Protect Picture, or, while several are being
+    /// chosen, a card to turn on or off.
+    @ViewBuilder private func card(_ asset: PHAsset) -> some View {
+        let id = asset.localIdentifier
+        if let chosen = selection.wrappedValue {
+            Button {
+                selection.wrappedValue?.toggle(id)
+            } label: {
+                ScreenshotCard(asset: asset, protected: protected.contains(id), square: true)
+                    .modifier(ChosenMark(chosen: chosen.contains(id)))
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(chosen.contains(id) ? .isSelected : [])
+        } else {
+            let link = ShotLink(id: id, place: place)
+            NavigationLink(value: link) {
+                ScreenshotCard(asset: asset, protected: protected.contains(id), square: true)
+                    .zoomSource(link, in: zoom)
+            }
+            .buttonStyle(.plain)
+            .contextMenu { menu(asset) }
+            .phoneGuideTarget(.firstShot, on: id == shots.first?.localIdentifier)
+        }
+    }
+
+    // MARK: A finger drawn across
+
+    private func beginSweep(at point: CGPoint) {
+        guard let index = card(at: point) else { return }
+        sweeping.wrappedValue = true
+        selection.wrappedValue?.begin(at: index, in: shots.map(\.localIdentifier))
+    }
+
+    private func sweep(to point: CGPoint) {
+        guard let index = card(at: point) else { return }
+        selection.wrappedValue?.move(to: index, in: shots.map(\.localIdentifier))
+    }
+
+    private func endSweep() {
+        if selection.wrappedValue?.isSweeping == true { selection.wrappedValue?.end() }
+        if sweeping.wrappedValue { sweeping.wrappedValue = false }
+    }
+
+    private func card(at point: CGPoint) -> Int? {
+        GridSelection.index(atX: point.x, y: point.y, width: width, columns: GridZoom.clamped(columns),
+                            spacing: 8, count: shots.count)
     }
 
     /// The cards rise in reading order, a beat apart (`stagger.grid`), the
@@ -439,6 +547,11 @@ struct AllScreenshotsView: View {
     let zoom: Namespace.ID
     let quick: @MainActor (PHAsset, QuickCover) -> Void
     @State private var query = LibraryQuery()
+    @AppStorage(GridZoom.key) private var columns = GridZoom.standard
+    /// The screenshots chosen, while several are being chosen.
+    @State private var selection: GridSelection?
+    @State private var sweeping = false
+    @ObservedObject private var batch = BatchCover.shared
     /// What each screenshot read ahead of time says and holds, in memory
     /// only while this shows.
     @State private var read: [String: (text: String, kinds: [String])] = [:]
@@ -451,8 +564,10 @@ struct AllScreenshotsView: View {
                 ContentUnavailableView.search(text: query.search)
                     .padding(.top, 40)
             } else {
-                ScreenshotGrid(shots: shown, protected: protected, place: .all, zoom: zoom, quick: quick)
+                ScreenshotGrid(shots: shown, protected: protected, place: .all, zoom: zoom, quick: quick,
+                               selection: $selection, sweeping: $sweeping)
                     .padding(16)
+                    .disabled(batch.running)
             }
             if loaded, read.isEmpty, !query.words.isEmpty {
                 Label(L("Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings."),
@@ -463,14 +578,75 @@ struct AllScreenshotsView: View {
                     .padding(.bottom, 24)
             }
         }
+        .scrollDisabled(sweeping)
         .searchable(text: $query.search, placement: .navigationBarDrawer(displayMode: .always),
                     prompt: L("Search words in screenshots"))
-        .navigationTitle(L("Screenshots"))
+        .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(selection != nil)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) { options }
+            if selection != nil {
+                ToolbarItem(placement: .topBarLeading) { allOrNone(shown.map(\.localIdentifier)) }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(L("Cancel")) {
+                        withAnimation(.snappy) { selection = nil }
+                    }
+                    .fontWeight(.semibold)
+                    .disabled(batch.running)
+                }
+            }
+            if selection == nil {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(L("Select")) {
+                        withAnimation(.snappy) { selection = GridSelection() }
+                    }
+                    .disabled(shown.isEmpty)
+                }
+                ToolbarItem(placement: .topBarTrailing) { options }
+            }
         }
+        // While choosing, the tab bar steps aside for the choice's own bar.
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if let selection {
+                SelectionBar(count: selection.count, save: { coverChosen(.photos) }, share: { coverChosen(.share) })
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .toolbar(selection == nil ? .automatic : .hidden, for: .tabBar)
+        .animation(.snappy, value: selection == nil)
+        .quickNotes()
         .task { await load() }
+    }
+
+    /// Select All, or Deselect All once all those shown are.
+    private func allOrNone(_ ids: [String]) -> some View {
+        let all = selection.map { chosen in ids.allSatisfy(chosen.contains) } ?? false
+        return Button(all ? L("Deselect All") : L("Select All")) {
+            selection?.toggleAll(ids)
+        }
+        .disabled(batch.running || ids.isEmpty)
+    }
+
+    /// How many are chosen, while choosing.
+    private var title: String {
+        guard let selection else { return L("Screenshots") }
+        return selection.isEmpty ? L("Select screenshots") : String(format: L("%d Selected"), selection.count)
+    }
+
+    /// The screenshots chosen, covered as Settings says, one after another:
+    /// those shown in their order, then any a search has hidden since, as
+    /// the count says; those that could not be stay chosen.
+    private func coverChosen(_ way: BatchCover.Way) {
+        guard let chosen = selection?.chosen, !chosen.isEmpty else { return }
+        let shown = matching.filter { chosen.contains($0.localIdentifier) }
+        let first = Set(shown.map(\.localIdentifier))
+        let assets = shown + shots.filter { chosen.contains($0.localIdentifier) && !first.contains($0.localIdentifier) }
+        Task {
+            let failed = await batch.run(assets, way: way)
+            withAnimation(.snappy) {
+                if failed.isEmpty { selection = nil } else { selection?.keep(failed) }
+            }
+        }
     }
 
     /// What shows, and in which order.
@@ -485,6 +661,13 @@ struct AllScreenshotsView: View {
             Picker(L("Sort"), selection: $query.order) {
                 Text(L("Newest First")).tag(LibraryQuery.Order.newest)
                 Text(L("Oldest First")).tag(LibraryQuery.Order.oldest)
+            }
+            // As a pinch does, for whoever doesn't pinch.
+            Picker(L("Per Row"), selection: Binding(get: { GridZoom.clamped(columns) },
+                                                    set: { new in withAnimation(.snappy) { columns = new } })) {
+                ForEach(Array(GridZoom.range), id: \.self) { count in
+                    Text(String(format: L("%d per Row"), count)).tag(count)
+                }
             }
         } label: {
             Image(systemName: query.filter == .all ? "line.3.horizontal.decrease.circle"

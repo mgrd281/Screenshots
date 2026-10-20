@@ -178,6 +178,10 @@ components:
     rounded: "32pt"                # the camera on the first run: phone-ink filling the stage, the page at 80% in it, the shutter under it
   phone-shutter:
     size: "34pt"                   # the camera's shutter on the first run: a white ring of 2.5pt at 90% round a white button 5pt in, centred in the room under the page, smaller where the room is (14pt less than it)
+  phone-grid-columns:
+    count: "3, or 4 pinched closer"   # screenshots side by side in the iPhone's grids, flexible columns 8pt apart; the Photos tab shows three rows of the newest
+  phone-chosen-mark:
+    size: "24pt"                   # a chosen screenshot's mark, bottom trailing, 6pt in: a white checkmark, caption bold, on phone-protect, ringed in white 1.5pt, with a shadow of black 20%, radius 2, y 1; it scales in from 50%
   phone-share-tile:
     size: "52pt"                   # an app to send to: on the first run's share row and under scanned pages; its icon from the asset catalogue (Logo* from SVG, vector kept; Chat* the owner's logos as app icons, 192px), clipped to continuous corners of 12 with a hairline of .primary at 8%, the name in caption .secondary under it, 64pt wide, 12pt apart in a row that scrolls sideways; More, last, is .tertiarySystemFill with ellipsis
   phone-app-circle:
@@ -1932,8 +1936,44 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - Then From your Mac. What was protected lately is the Protected tab.
   - **Screenshots**, title 3 semibold, with See All and a chevron in the
     accent on the trailing edge whenever there are screenshots, over the
-    newest twelve in a grid (`ScreenshotGrid`): square cards at least 76 pt
-    and at most 160 pt wide, 8 pt apart, four to a row on most iPhones. A
+    newest three rows in a grid (`ScreenshotGrid`): square cards 8 pt apart,
+    three to a row, or four once pinched closer, as in Photos
+    (`phone-grid-columns`, kept for every grid of screenshots: the Photos
+    tab, See All and Protected). Two fingers pinch the grid; it follows
+    them around the point they started, up to the size of the next grid's
+    cards (where it can't change that way it gives 4% and no more), and once
+    let go past a tenth, the cards settle into the next grid on `zoom.grid`
+    with a selection haptic; else they settle back. With Reduce Motion it
+    doesn't follow and changes at once. See All's menu offers 3 per Row and
+    4 per Row for whoever doesn't pinch.
+  - **Choosing several** (`GridSelection`, `Selecting.swift`), as in
+    Photos: Select beside See All (on the Photos tab) or in See All's bar
+    turns the grid to choosing, with Select All or Deselect All and Cancel
+    in its place, the title "%d Selected" in See All, the tab bar stepping
+    aside and the choice's own bar over the bottom. A tap turns a card on or
+    off; from iOS 18 on a finger drawn sideways across the cards takes in
+    every card from the first to the one under it in reading order, all on
+    or all off as the first was turned, while the page holds still (one
+    drawn up or down still scrolls). A chosen card dims under white at 18%,
+    draws in to 94% on a spring (0.28, 0.72) and carries
+    `phone-chosen-mark`; a selection haptic marks each change.
+  - **The choice's bar**, on the bar material with a hairline above, 16 pt
+    in: Share (`square.and.arrow.up`, 44 pt) beside Save Covered Copies
+    (%d), the green pill, filling the rest, over a footnote of what it does
+    (covered as Settings says, each a new picture in Photos, the
+    screenshots as they were) or how to choose. While it works, "Covering 3
+    of 9 …" in subheadline semibold over a green progress bar, with Stop;
+    the grid, Select All and Cancel wait. The screenshots go one at a time,
+    each covered, read again and checked before it is kept; one that can't
+    be is never saved. While Snapfly is away it waits, and the one it was
+    covering is read again once it is back. All well, the choosing ends and
+    a note says how many were saved, with a success haptic; else those not
+    done stay chosen and the bar says why in footnote semibold orange with
+    `exclamationmark.triangle.fill`, with a warning haptic. Stopped, the
+    bar says how many were saved and that the rest stay chosen, in footnote
+    `.secondary`, without a haptic, as nothing went wrong. Share makes the
+    same copies and opens the share sheet with all of them.
+  - A
     card (`ScreenshotCard`) shows the top of the screenshot, square in the
     grid with corners of 12, at 3:4 with corners of 14 in the row of
     protected ones, a hairline of `.primary` at 8% and a shadow of black 6%,

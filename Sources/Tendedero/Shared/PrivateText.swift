@@ -745,7 +745,10 @@ enum Finder {
             // Where the newest reader of codes fails, the one before it is tried.
             log.error("Could not look for codes: \(error.localizedDescription, privacy: .public)")
             request.revision = VNDetectBarcodesRequestRevision3
-            guard (try? VNImageRequestHandler(cgImage: image, options: [:]).perform([request])) != nil else { return [] }
+            guard (try? VNImageRequestHandler(cgImage: image, options: [:]).perform([request])) != nil else {
+                failed()
+                return []
+            }
         }
         return (request.results ?? []).compactMap { code in
             guard let kind = Self.kind(ofCode: code.payloadStringValue, chosen) else { return nil }
@@ -840,6 +843,7 @@ enum Finder {
             try VNImageRequestHandler(cgImage: image, options: [:]).perform([request])
         } catch {
             log.error("Could not look for faces: \(error.localizedDescription, privacy: .public)")
+            failed()
             return []
         }
         return (request.results ?? []).map { face in
@@ -1364,10 +1368,26 @@ enum Finder {
         readings.forget()
     }
 
+    /// How many times, since the app started, Vision could not read a whole
+    /// picture, or look in it for faces or codes, as iOS may keep it from
+    /// doing in the background. What was found then is not all there is: a
+    /// covered copy made while it happened is not trusted (`CoveredCopy`).
+    static var failures: Int {
+        failureCount.withLock { $0 }
+    }
+
+    private static let failureCount = OSAllocatedUnfairLock(initialState: 0)
+
+    private static func failed() {
+        failureCount.withLock { $0 += 1 }
+    }
+
     /// Every line in a picture, as `read` gives it, for a photo prepared
-    /// ahead of time; not kept with the pictures read lately.
-    static func lines(in image: CGImage) -> [TextLine] {
-        read(image, remember: false)
+    /// ahead of time; not kept with the pictures read lately. Nil when
+    /// Vision could not read it, so it is never kept as a picture without
+    /// words.
+    static func lines(in image: CGImage) -> [TextLine]? {
+        linesRead(in: image, remember: false)
     }
 
     /// Every word in a picture and where it is, from the reading kept of it,
@@ -1387,14 +1407,26 @@ enum Finder {
         readings.keep(lines, for: print)
     }
 
-    /// Every line in a picture, the small print read twice. Kept a while by
-    /// a fingerprint of the picture's pixels, so the same picture is read
-    /// once however often it is covered.
+    /// Every line in a picture, as `linesRead` gives it; none when Vision
+    /// could not read it.
     /// - Parameter remember: false for a covered copy, read once to check it.
     private static func read(_ image: CGImage, remember: Bool = true) -> [TextLine] {
+        linesRead(in: image, remember: remember) ?? []
+    }
+
+    /// Every line in a picture, the small print read twice. Kept a while by
+    /// a fingerprint of the picture's pixels, so the same picture is read
+    /// once however often it is covered. Nil when Vision could not read it:
+    /// that is counted (`failures`), and nothing of it is kept, so the
+    /// picture is read afresh the next time.
+    private static func linesRead(in image: CGImage, remember: Bool) -> [TextLine]? {
         let print = remember ? Readings.fingerprint(of: image) : nil
         if let print, let known = readings.lines(for: print) { return known }
-        var lines = readingBlocksAgain(recognize(image), in: image)
+        guard let found = recognize(image) else {
+            failed()
+            return nil
+        }
+        var lines = readingBlocksAgain(found, in: image)
         let first = lines
         let small = Array(first.indices.filter { i in
             first[i].box.height * CGFloat(image.height) < smallPrint && mayHoldDetail(first[i].string)
@@ -1436,7 +1468,7 @@ enum Finder {
                            width: pixels.width / width, height: pixels.height / height)
         // The line read where it was in the strip, not a neighbour caught at its edge.
         let middle = (line.box.midY - frame.minY) / frame.height
-        guard let found = recognize(large).min(by: { abs($0.box.midY - middle) < abs($1.box.midY - middle) }),
+        guard let found = recognize(large)?.min(by: { abs($0.box.midY - middle) < abs($1.box.midY - middle) }),
               abs(found.box.midY - middle) < 0.25 else { return nil }
         return found.placed(box: line.box, frame: frame)
     }
@@ -1477,7 +1509,7 @@ enum Finder {
         guard let piece = image.cropping(to: pixels) else { return [] }
         let frame = CGRect(x: pixels.minX / width, y: 1 - pixels.maxY / height,
                            width: pixels.width / width, height: pixels.height / height)
-        return recognize(piece, languages: latin).map { found -> TextLine in
+        return (recognize(piece, languages: latin) ?? []).map { found -> TextLine in
             let box = CGRect(x: frame.minX + found.box.minX * frame.width, y: frame.minY + found.box.minY * frame.height,
                              width: found.box.width * frame.width, height: found.box.height * frame.height)
             return found.placed(box: box, frame: frame)
@@ -1499,8 +1531,8 @@ enum Finder {
     }
 
     /// Every line of text Vision reads in a picture, in the language it
-    /// finds, or in these languages only.
-    private static func recognize(_ image: CGImage, languages: [String]? = nil) -> [TextLine] {
+    /// finds, or in these languages only; nil when Vision could not read it.
+    private static func recognize(_ image: CGImage, languages: [String]? = nil) -> [TextLine]? {
         let request = VNRecognizeTextRequest()
         request.recognitionLevel = .accurate
         // Numbers and addresses are read as they are, not corrected into words.
@@ -1515,7 +1547,7 @@ enum Finder {
             try VNImageRequestHandler(cgImage: image, options: [:]).perform([request])
         } catch {
             log.error("Could not read a screenshot: \(error.localizedDescription, privacy: .public)")
-            return []
+            return nil
         }
         return (request.results ?? []).compactMap { observation in
             observation.topCandidates(1).first.map { TextLine(text: $0, box: observation.boundingBox) }

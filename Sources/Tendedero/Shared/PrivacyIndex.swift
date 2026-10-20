@@ -8,8 +8,9 @@ import Foundation
 /// checked without a picture; the iPhone keeps it (`IndexStore`).
 struct IndexedPhoto: Codable, Equatable {
     /// Raised when Snapfly reads pictures differently, so every photo
-    /// prepared before is read again.
-    static let version = 1
+    /// prepared before is read again. 2: a reading Vision could not do was
+    /// kept before as a photo without words, and is read again.
+    static let version = 2
 
     enum Status: String, Codable {
         /// Read, its lines kept.

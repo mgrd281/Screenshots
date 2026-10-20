@@ -979,11 +979,22 @@ watch the screen, so there is no line there. What it keeps is the covering:
   no one's details, over Protect a Photo, a green button that opens any
   picture from Photos. Once there are screenshots, the picture turns small
   beside its words and the screenshots come first: what the Mac sent and
-  the newest twelve in small square
-  cards, four to a row, that show when each was taken in a small label
+  the newest three rows in square
+  cards, three to a row, or four pinched closer with two fingers as in
+  Photos (the grid follows the fingers and settles into the other size;
+  See All's menu does the same), that show when each was taken in a small label
   (the time for today's, the date alone for older ones), and a green
   shield once it was protected;
-  holding one offers Cover and Copy, Share or Save; all of them
+  holding one offers Cover and Copy, Share or Save. Select, beside See
+  All and in it, chooses several as Photos does: a tap each, or from iOS 18
+  on a finger drawn sideways across them, with Select All; then Save
+  Covered Copies (one tap) covers each as Settings says, checks it and
+  saves it to Photos as a new picture, one after another with how far it
+  is and Stop, while Share sends the same copies at once. A copy that
+  can't be covered is never saved; it stays chosen, with the reason, to
+  try again. Covering waits while Snapfly is in the background, where iOS
+  may keep it from reading, and goes on once you're back, reading again
+  the one it was at. All of them are
   behind See All, which finds them by the words they say (those read ahead
   of time, below), shows only those with private details, protected or not,
   and puts the newest or the oldest first. From iOS 18 on, a screenshot opens by growing out of its
@@ -1056,7 +1067,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   the iPhone ahead of time, newest first: the screenshots only, every photo
   Snapfly may see, or only photos you pick. The words read and where they
   are stay on the iPhone, locked while it is, never in backups; a photo
-  opened later is covered from them without being read again. It works
+  opened later is covered from them without being read again. One Vision
+  could not read is never kept as a photo without words; it is read again
+  later. It works
   while Snapfly is open, and in the background while the iPhone charges,
   when iOS allows; it never downloads a photo from iCloud, and waits in Low
   Power Mode, when the iPhone is warm or short of memory, and while you
@@ -1175,7 +1188,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
 | `HideSend.swift` | Send covered, in Hide Private Details: the copy straight to a chat, the clipboard or the Share menu |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
-| `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-two kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names or only Patient names and Other people; a letter's address under a name, a date of birth and a reference number known as that person's; and, for the iPhone's Details, what Settings leaves visible; the lines read kept a while in memory, or given from a photo prepared ahead of time |
+| `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-two kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names or only Patient names and Other people; a letter's address under a name, a date of birth and a reference number known as that person's; and, for the iPhone's Details, what Settings leaves visible; the lines read kept a while in memory, or given from a photo prepared ahead of time; a reading Vision could not do is counted, never kept |
 | `Shared/HandShape.swift`, `Shared/ProtectionPlan.swift` | Hiding by hand: the marker's strokes, boxes that turn and outlines, on the original picture's places, and every place of a picture with the owner's changes, each undone and done again, and the count of what is protected, to check and left |
 | `Shared/PrivacyIndex.swift` | Pictures prepared ahead of time: what is kept of each, what is left to read, newest first, and when preparing waits |
 | `Shared/FormFields.swift` | Reads a printed form's fields: each label, like "Name, Vorname des Versicherten", Versicherten-Nr. or "Arbeitsunfähig seit", and its value beside it or under it in its column, told as what the label says it is (a name, an address, a date of birth, an insurance or ID number, a diagnosis, a day of illness), with whose it is and how sure |
@@ -1199,12 +1212,14 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture filling the screen, to zoom with its places marked, covered in steps and checked; the floating tools to select, draw, box, lasso and erase with their handles; the status capsule; Details, which checks the unsure places one by one and lists every place by whose it is and what it is, each topic covered with one switch; Copy, Share, Save to Photos or Files and Send to Mac, which wait for the checked copy and ask while places are to check; and Full Screen |
 | `iOS/Share/ShareViewController.swift`, `iOS/Share-Info.plist`, `iOS/*.entitlements` | The iPhone's share extension: a picture shared from any app, covered, checked, then copied, shared or saved |
 | `Shared/ScanPDF.swift` | Scanned pages, covered, as one PDF: a picture of each page on A4's width, as JPEG, no text, and nothing of who made it but the app |
-| `Shared/CoveredCopy.swift` | A picture's covered copy as it leaves the iPhone app or its share extension: covered, read again, checked in its pixels, or nothing |
+| `Shared/CoveredCopy.swift` | A picture's covered copy as it leaves the iPhone app or its share extension: covered, read again, checked in its pixels, or nothing, as when Vision could not read the picture (iOS may keep it from reading in the background) |
 | `Shared/SharedChoice.swift` | The kinds, look and own rules the iPhone app keeps in the keychain group it shares with its extension |
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them sent to an app with one tap or made into one covered PDF |
 | `iOS/Snapfly/SendToApps.swift`, `Assets.xcassets/Chat*.imageset` | Send to on the iPhone: the apps chosen (`SendApps`), their icons, the row of them after a scan, the round ones in Protect Picture, and choosing and ordering them; a tap copies the covered copy and opens the app or its website |
-| `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
+| `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, three or four to a row with a pinch, See All, and the iPhone's green |
+| `Shared/GridSelection.swift`, `iOS/Snapfly/Selecting.swift` | Choosing several screenshots at once: tapped, or a finger drawn across them, and the card under the finger (tested on Linux); then their covered copies made one after another (`BatchCover`), saved to Photos or shared, with the choice's bar |
+| `Shared/GridZoom.swift` | How many screenshots stand in a row on the iPhone, three or four, and how the grid follows a pinch; tested on Linux |
 | `iOS/Snapfly/FirstRunExperience.swift` | The first run: the sample invoice, doctor's letter and bank statement, each standing as an A4 page; the invoice read and covered, its categories as chips, the letter scanned (tipped, found, taken, straightened, covered, the patient but not the doctor), the protected letter ready to share with the other two behind it, Try It Now and Skip Demo; when it shows (`FirstRunCoordinator`) |
 | `iOS/Snapfly/ExplainSheet.swift` | Explain, from Protect Picture: the protected copy sent to the owner's own Claude or ChatGPT, the answer streamed, ready questions and the owner's own (`DocumentTalk`) |
 | `iOS/Snapfly/AssistantSettings.swift` | More › AI Assistant on the iPhone: the assistant, the key in the keychain with the system's Paste, checked at once, the model, and Find more |

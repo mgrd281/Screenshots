@@ -9,15 +9,20 @@ enum CoveredCopy {
     /// The picture with the chosen details covered and checked, and what
     /// was covered. Worked out on a queue of its own, where Apple
     /// Intelligence may be waited for without holding up anything else.
-    /// Nil when the copy could not be made, or its covers did not all land,
-    /// so a picture never leaves uncovered.
+    /// Nil when the copy could not be made, Vision could not read the
+    /// picture or the copy, or its covers did not all land, so a picture
+    /// never leaves uncovered.
     static func make(_ image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all,
                      style: CoverStyle = .current, intelligence: Bool = true) async -> (image: CGImage, report: CoverReport)? {
         await withCheckedContinuation { done in
             DispatchQueue.global(qos: .userInitiated).async {
+                let failures = Finder.failures
                 guard let made = Finder.protect(image, chosen, rules: rules, intelligence: intelligence, style: style) else {
                     return done.resume(returning: nil)
                 }
+                // Nothing found where nothing could be read is no proof that
+                // nothing is there.
+                guard Finder.failures == failures else { return done.resume(returning: nil) }
                 let places = made.areas.map(\.rect)
                 if Finder.coversHold(original: image, covered: made.image, areas: places) {
                     return done.resume(returning: (made.image, CoverReport(made.areas)))

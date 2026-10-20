@@ -49,6 +49,18 @@ final class ProtectionTests: XCTestCase {
         XCTAssertFalse(read.contains("23456789"), read)
     }
 
+    /// A copy leaves only from a picture Vision could read: an ordinary one
+    /// is read without a failure, and its copy is made, covered and checked.
+    /// One read while Vision failed, as iOS may make it in the background,
+    /// would give none (`CoveredCopy`).
+    func testACoveredCopyIsMadeFromAPictureReadWithoutAFailure() async throws {
+        let image = try drawn(["Mail lena.hoffmann@example.com"])
+        let failures = Finder.failures
+        let made = await CoveredCopy.make(image, [.emails], rules: [], style: .ink, intelligence: false)
+        XCTAssertGreaterThanOrEqual(made?.report.kinds[.emails] ?? 0, 1)
+        XCTAssertEqual(Finder.failures, failures)
+    }
+
     func testTheStrongestProtectionCoversWholeLinesWithMoreRoom() throws {
         let image = try drawn(["Mail lena.hoffmann@example.com"])
         Finder.strongest = false
