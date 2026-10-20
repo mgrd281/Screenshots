@@ -919,7 +919,15 @@ watch the screen, so there is no line there. What it keeps is the covering:
   form or a receipt is found, straightened and cropped by itself, and a
   single page opens at once to be covered like a screenshot; several wait
   as small numbered cards, in the order scanned, kept in memory only while
-  the app is open. A page opened opens again as it was left. Share Covered
+  the app is open. A page opened opens again as it was left. Under them,
+  Send to shows the same apps as under a photo on the Mac, by their icons
+  as in the share sheet: ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE at
+  first, and with More, at the end, any of Perplexity, Grok, DeepSeek, Qwen,
+  Messenger, Instagram, Outlook, Yahoo Mail, Facebook and Airbnb, in the
+  order you drag them into (Visual Studio Code and Antigravity have no app
+  on the iPhone). One tap covers every page, puts them on the clipboard
+  and opens the app, or its website without it, to paste them there: iOS
+  lets no app put a picture into another app's chat itself. Share Covered
   PDF covers every page (as Settings says, or as it was left after opening
   it) and makes one PDF of them, a picture of each page and no text, sized
   like A4, for the share sheet, where it can be sent or saved to Files; if
@@ -1012,7 +1020,10 @@ watch the screen, so there is no line there. What it keeps is the covering:
   in the editor only. Every change can be undone and done again; Clear
   Hidden by Hand and Reset to Suggestions take back many at once. Under
   them, Copy, Share and Save as icons (held, each says what it does; Save
-  goes to Photos, or held, to Files), and Send to Mac while a Mac is there.
+  goes to Photos, or held, to Files), and Send to Mac while a Mac is there;
+  above them, the apps chosen to send to, as round icons in a capsule like
+  those under a photo on the Mac, and ⋯ to choose them: a tap copies the
+  protected copy and opens the app, to paste it there.
   Tapped before the copy is ready, a way waits and goes once it is; while
   places are still to check it asks first. Hold the eye to see the
   screenshot as it was. Full Screen, or a tap on nothing, leaves the
@@ -1037,7 +1048,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   ChatGPT and keeps your own key in this iPhone's keychain, pasted with the
   system's Paste and checked with them at once; then the model, from your
   key's own list, and Find more with Claude (or ChatGPT), as on the Mac.
-  Under Advanced, add rules of your own, as on the Mac, and see how to set
+  Send to Apps turns each app on or off and drags them into order, kept on
+  this iPhone. Under Advanced, add rules of your own, as on the Mac, and see how to set
   up the double tap on the back.
 - **Faster picture processing** is off until you turn it on, after a page
   that says what it does. It reads your pictures from the last 60 days on
@@ -1058,7 +1070,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
 - **Cover Private Details** covers any picture a shortcut hands it.
 
 Both apps share the code in `Sources/Tendedero/Shared` (finding and covering
-private details, the atomic time, the translations), so an improvement there
+private details, the atomic time, the translations, the apps a picture goes
+to), so an improvement there
 reaches both. Everything happens on the device, unless you turn on Sync.
 
 The iPhone App Store workflow builds it, signs it and sends it to TestFlight
@@ -1145,6 +1158,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/GuideFlow.swift`, `Shared/GuideShade.swift` | Where the introduction stands, kept with the settings, its steps in order, where its card goes, and its shade, for the Mac and the iPhone |
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `ChatTarget.swift` | ChatGPT, Claude, WhatsApp, Gmail, GMX, WEB.DE and twelve more in a row under a photo, the rest behind ⋯: their logos or app icons, and their app or website in the browser chosen, as each is set, opened and waited for, in the order dragged in Settings |
+| `Shared/Chats.swift` | The apps a covered picture goes to, for both apps: their names, websites, which are on at first and their order from Settings, and on the iPhone, which have an app there and where a tap opens it |
 | `assets/chat-logos/` | The logos the row shows (every chat but ChatGPT and Claude), as PNG with their SVG sources; the iPhone first run's share row draws ChatGPT, WhatsApp and WEB.DE from SVG copies in its asset catalogue |
 | `Shared/AIQuestions.swift` | The questions a photo goes into ChatGPT or Claude with: the standard five, and the owner's own from Settings |
 | `Shared/CoverTally.swift` | The week's line in Settings › Privacy: how many details were covered in how many photos sent, counts only, day by day |
@@ -1188,7 +1202,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/CoveredCopy.swift` | A picture's covered copy as it leaves the iPhone app or its share extension: covered, read again, checked in its pixels, or nothing |
 | `Shared/SharedChoice.swift` | The kinds, look and own rules the iPhone app keeps in the keychain group it shares with its extension |
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
-| `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them as one covered PDF |
+| `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them sent to an app with one tap or made into one covered PDF |
+| `iOS/Snapfly/SendToApps.swift`, `Assets.xcassets/Chat*.imageset` | Send to on the iPhone: the apps chosen (`SendApps`), their icons, the row of them after a scan, the round ones in Protect Picture, and choosing and ordering them; a tap copies the covered copy and opens the app or its website |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
 | `iOS/Snapfly/FirstRunExperience.swift` | The first run: the sample invoice, doctor's letter and bank statement, each standing as an A4 page; the invoice read and covered, its categories as chips, the letter scanned (tipped, found, taken, straightened, covered, the patient but not the doctor), the protected letter ready to share with the other two behind it, Try It Now and Skip Demo; when it shows (`FirstRunCoordinator`) |
 | `iOS/Snapfly/ExplainSheet.swift` | Explain, from Protect Picture: the protected copy sent to the owner's own Claude or ChatGPT, the answer streamed, ready questions and the owner's own (`DocumentTalk`) |

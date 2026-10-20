@@ -23,3 +23,18 @@ WhatsApp's and WEB.DE's from `source/` (WhatsApp's with its rounded corners
 and the `<use>` it was drawn with left out, as the app clips the icon
 itself), and ChatGPT's the OpenAI mark from Simple Icons (CC0), white on
 black as the ChatGPT app's icon is. OpenAI owns that mark too.
+
+The iPhone shows every app but Visual Studio Code and Antigravity under
+scanned pages and in Protect Picture (`iOS/Snapfly/SendToApps.swift`), as
+app icons, since it cannot read other apps' icons. Besides the three SVGs
+above, `Assets.xcassets/Chat*.imageset` holds:
+
+- The PNGs here made into app icons of 192 × 192 px.
+  - Those already square to their edges are kept as they are: Facebook,
+    Grok, Instagram (grown 4% so its own rounded corners fall outside the
+    icon's), Perplexity and Yahoo.
+  - The marks are put on white at 60–74% of the icon: Airbnb, DeepSeek,
+    Gmail, GMX, Messenger, Outlook and Qwen.
+- Claude's mark from Simple Icons (CC0, `claude`, its colour `#D97757`), on
+  white at 62% (`ChatClaude`, SVG, vector kept). Anthropic owns that mark.
+

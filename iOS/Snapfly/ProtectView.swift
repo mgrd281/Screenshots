@@ -7,7 +7,8 @@ import UniformTypeIdentifiers
 /// or a double tap zoom. Over the picture float a small capsule with how it
 /// stands, the tools (Select to tap a place or a word and move, resize or
 /// turn it; the marker, a box and the lasso to hide more by hand; the
-/// eraser to take covers away; Undo and Redo), and Copy, Share and Save.
+/// eraser to take covers away; Undo and Redo), the apps chosen to send to,
+/// and Copy, Share and Save.
 /// Full Screen leaves the picture alone. Holding the eye shows the picture
 /// as it was. Explain sends the checked copy to the owner's own AI
 /// assistant, to say what the document means. Copy, Share and Save wait
@@ -370,6 +371,7 @@ struct ProtectView: View {
                         },
                         options: { showsOptions = true })
                 .disabled(session.original == nil)
+            AppCircles(pending: pending, leave: leave)
             HStack(spacing: 8) {
                 eye
                 ExportDock(pending: pending, canSend: sync.canSend, sent: sent, leave: leave)
@@ -510,6 +512,7 @@ struct ProtectView: View {
         case .photos: save()
         case .files: saveFile()
         case .mac: send()
+        case .app(let chat): send(to: chat)
         }
     }
 
@@ -573,6 +576,18 @@ struct ProtectView: View {
             } else {
                 sent = false
                 failed(L("Could not send it. Try again."), retry: .mac)
+            }
+        }
+    }
+
+    /// The copy on the clipboard and the app open, to paste it there.
+    private func send(to chat: ChatTarget) {
+        guard session.isReady, let png = session.png else { return }
+        Task {
+            if await SendApps.shared.send([png], to: chat) {
+                done(String(format: L("Copied for %@. Hold in the message box and tap Paste."), chat.name))
+            } else {
+                failed(String(format: L("%@ could not be opened."), chat.name), retry: .app(chat))
             }
         }
     }

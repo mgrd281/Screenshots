@@ -118,6 +118,11 @@
 "Pick All" = "Seleccionar todo";
 "Unpick All" = "Deseleccionar todo";
 "Send to %@" = "Enviar a %@";
+"Send to Apps" = "Enviar a apps";
+"Copied for %@. Hold in the message box and tap Paste." = "Copiado para %@. Mantén pulsado el cuadro de mensaje y toca Pegar.";
+"%@ could not be opened." = "No se pudo abrir %@.";
+"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "Al tocar una app se copia la imagen cubierta y se abre la app. Mantén pulsado su cuadro de mensaje y toca Pegar. Sin la app, se abre su web.";
+"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "Las apps tras un escaneo y en Proteger imagen, para enviar la copia cubierta con un toque. Las mismas apps que en el Mac.";
 "Opening %@…" = "Abriendo %@…";
 "Could not open %@. The photos stay on the line." = "No se pudo abrir %@. Las fotos se quedan en la cuerda.";
 "Paste into the app in front" = "Pegar en la app activa";
@@ -1465,6 +1470,8 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "Cada página se cubre según tus ajustes, o como la dejaste tras abrirla. El PDF solo contiene imágenes de las páginas cubiertas, sin texto que copiar.";
 "Page %d is not ready yet. Open it to check it." = "La página %d aún no está lista. Ábrela para revisarla.";
 "Page %d could not be covered, so no PDF was made." = "No se pudo cubrir la página %d, así que no se creó el PDF.";
+"Page %d could not be covered, so nothing was sent." = "No se pudo cubrir la página %d, así que no se envió nada.";
+"A tap on an app copies the covered pages and opens it, to paste them there." = "Al tocar una app se copian las páginas cubiertas y se abre, para pegarlas allí.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Cubierto antes de enviarlo";

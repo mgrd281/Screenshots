@@ -118,6 +118,11 @@
 "Pick All" = "Tout sélectionner";
 "Unpick All" = "Tout désélectionner";
 "Send to %@" = "Envoyer à %@";
+"Send to Apps" = "Envoyer aux apps";
+"Copied for %@. Hold in the message box and tap Paste." = "Copié pour %@. Garde le doigt sur le champ de message et touche Coller.";
+"%@ could not be opened." = "Impossible d’ouvrir %@.";
+"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "Toucher une app copie l’image masquée et ouvre l’app. Garde le doigt sur son champ de message et touche Coller. Sans l’app, son site s’ouvre.";
+"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "Les apps après un scan et dans Protéger l’image, pour envoyer la copie masquée d’un toucher. Les mêmes apps que sur le Mac.";
 "Opening %@…" = "Ouverture de %@…";
 "Could not open %@. The photos stay on the line." = "Impossible d’ouvrir %@. Les photos restent sur la corde.";
 "Paste into the app in front" = "Coller dans l’app active";
@@ -1465,6 +1470,8 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "Chaque page est masquée selon tes réglages, ou comme tu l’as laissée après l’avoir ouverte. Le PDF ne contient que des images des pages masquées, aucun texte à copier.";
 "Page %d is not ready yet. Open it to check it." = "La page %d n’est pas encore prête. Ouvre-la pour la vérifier.";
 "Page %d could not be covered, so no PDF was made." = "La page %d n’a pas pu être masquée, donc aucun PDF n’a été créé.";
+"Page %d could not be covered, so nothing was sent." = "La page %d n’a pas pu être masquée, donc rien n’a été envoyé.";
+"A tap on an app copies the covered pages and opens it, to paste them there." = "Toucher une app copie les pages masquées et l’ouvre, pour les y coller.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Masqué avant l’envoi";
