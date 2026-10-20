@@ -38,8 +38,22 @@ final class ChatsTests: XCTestCase {
         XCTAssertEqual(ChatTarget.whatsApp.phoneHandoff(pictures: 1), .direct)
         // Several pages: the share sheet, which takes them all.
         XCTAssertEqual(ChatTarget.whatsApp.phoneHandoff(pictures: 3), .shareSheet)
+        XCTAssertEqual(ChatTarget.chatGPT.phoneHandoff(pictures: 3), .shareSheet)
         for chat in ChatTarget.allCases where chat.onPhone && chat != .whatsApp {
-            XCTAssertEqual(chat.phoneHandoff(pictures: 1), .shareSheet, chat.name)
+            // An AI chat opens at once, with the picture to paste.
+            XCTAssertEqual(chat.phoneHandoff(pictures: 1), chat.isAI ? .openApp : .shareSheet, chat.name)
         }
+    }
+
+    /// An AI chat opens by its own address, then by its website's link,
+    /// which the iPhone opens only as the app's: never a browser.
+    func testAnAIChatOpensItsAppByItsOwnLinks() {
+        for chat in ChatTarget.allCases where chat.isAI {
+            let links = chat.phoneAppLinks
+            XCTAssertEqual(links.last, chat.newChat, chat.name)
+            XCTAssertTrue(links.dropLast().allSatisfy { $0.scheme != "https" && $0.scheme != "http" }, chat.name)
+        }
+        XCTAssertEqual(ChatTarget.chatGPT.phoneAppLinks.first?.scheme, "chatgpt")
+        XCTAssertEqual(ChatTarget.claude.phoneAppLinks.first?.scheme, "claude")
     }
 }

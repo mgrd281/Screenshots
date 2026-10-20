@@ -121,7 +121,8 @@
 "Send to Apps" = "앱으로 보내기";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "앱을 탭하면 모든 페이지를 가린 뒤 그 앱에 넘깁니다. 필요하면 공유 시트를 거칩니다.";
 "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "스캔 후와 '사진 보호'에서 사진 옆에 있는 앱으로, 가린 사본을 넘길 수 있습니다. Mac과 같은 앱입니다.";
-"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "탭하면 보호된 사본을 앱에 넘깁니다. WhatsApp은 바로 열리고, 다른 앱은 공유 시트에서 앱을 탭하면 됩니다. 브라우저에서는 아무것도 열리지 않습니다.";
+"A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "탭하면 보호된 사본을 앱에 넘깁니다. WhatsApp은 사본과 함께 열리고, ChatGPT, Claude 등 AI 채팅은 사본을 복사한 채로 열려 붙여넣을 수 있습니다. 나머지는 공유 시트에서 앱을 탭합니다. 브라우저에서는 아무것도 열리지 않습니다.";
+"Copied for %@: hold its message field and tap Paste." = "%@용으로 복사됨: 메시지 입력란을 길게 누른 다음 붙여넣기를 탭하세요.";
 "Opening %@…" = "%@ 여는 중…";
 "Could not open %@. The photos stay on the line." = "%@을(를) 열 수 없습니다. 사진은 빨랫줄에 남습니다.";
 "Paste into the app in front" = "앞에 있는 앱에 붙여넣기";

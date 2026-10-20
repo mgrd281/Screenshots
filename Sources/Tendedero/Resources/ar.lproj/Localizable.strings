@@ -121,7 +121,8 @@
 "Send to Apps" = "الإرسال إلى التطبيقات";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "النقر على تطبيق يغطي كل الصفحات ويسلّمها له، عبر قائمة المشاركة عند الحاجة.";
 "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "التطبيقات بعد المسح وبجانب الصورة في «حماية الصورة»، لتسليمها النسخة المغطاة. التطبيقات نفسها كما على الماك.";
-"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "النقر يسلّم النسخة المحمية إلى التطبيق: واتساب يفتح فوراً، والبقية من قائمة المشاركة حيث تنقر على التطبيق. لا شيء يفتح في المتصفح.";
+"A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "لمسة تسلّم النسخة المحمية للتطبيق. واتساب يفتح بها مباشرة؛ وChatGPT وClaude وسائر تطبيقات الذكاء الاصطناعي تفتح وهي منسوخة لتلصقها؛ والباقي من ورقة المشاركة، حيث تلمس التطبيق. لا يُفتح شيء في المتصفح.";
+"Copied for %@: hold its message field and tap Paste." = "نُسخت لـ%@: اضغط مطوّلاً في خانة الرسالة ثم اختر «لصق».";
 "Opening %@…" = "جارٍ فتح %@…";
 "Could not open %@. The photos stay on the line." = "تعذّر فتح %@. تبقى الصور على الحبل.";
 "Paste into the app in front" = "لصق في التطبيق الأمامي";

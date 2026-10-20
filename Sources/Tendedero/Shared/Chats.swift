@@ -218,15 +218,37 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         /// Handed to the app itself, the one way it documents: WhatsApp
         /// opens one picture sent as a file only it takes (`.wai`).
         case direct
+        /// The app opened at once, the picture on the clipboard to paste
+        /// there: an AI chat, whose app takes no file from another app but
+        /// opens by its own links (`phoneAppLinks`).
+        case openApp
         /// The system's share sheet, where the app takes pictures and the
         /// owner taps it.
         case shareSheet
     }
 
-    /// How these pictures reach it: WhatsApp takes one straight away; more
-    /// than one, and every other app, through the share sheet.
+    /// How these pictures reach it: WhatsApp takes one straight away; an AI
+    /// chat opens with one to paste; more than one, and every other app,
+    /// through the share sheet, which also takes over where an app can't be
+    /// opened.
     func phoneHandoff(pictures: Int) -> PhoneHandoff {
-        self == .whatsApp && pictures == 1 ? .direct : .shareSheet
+        guard pictures == 1 else { return .shareSheet }
+        if self == .whatsApp { return .direct }
+        return isAI ? .openApp : .shareSheet
+    }
+
+    /// The links that open its app on the iPhone, tried in turn: the
+    /// address the app answers to, then its website's link, which is only
+    /// ever opened as the app's (universal links only), never in a browser.
+    var phoneAppLinks: [URL] {
+        let schemes: [String] = switch self {
+        case .chatGPT: ["chatgpt://"]
+        case .claude: ["claude://"]
+        case .perplexity: ["perplexity-app://"]
+        case .grok: ["grok://"]
+        default: []
+        }
+        return schemes.compactMap(URL.init(string:)) + [newChat]
     }
 
     /// Those that can be chosen on the iPhone, in their order.

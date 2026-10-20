@@ -121,7 +121,8 @@
 "Send to Apps" = "Uygulamalara gönder";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "Bir uygulamaya dokunmak her sayfayı örter ve ona verir, gerektiğinde paylaşım sayfası üzerinden.";
 "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "Taramadan sonra ve Resmi koru'da resmin yanında duran uygulamalar, onlara örtülü kopyayı vermek için. Mac'tekiyle aynı uygulamalar.";
-"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "Bir dokunuş korunan kopyayı uygulamaya verir: WhatsApp hemen açılır, diğerleri paylaşım sayfasından, orada uygulamaya dokunursun. Hiçbir şey tarayıcıda açılmaz.";
+"A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "Dokunmak korunan kopyayı uygulamaya verir. WhatsApp onunla açılır; ChatGPT, Claude ve diğer yapay zeka sohbetleri onu kopyalanmış olarak açılır, yapıştırman için; diğerleri paylaşma sayfasından, orada uygulamaya dokunursun. Tarayıcıda hiçbir şey açılmaz.";
+"Copied for %@: hold its message field and tap Paste." = "%@ için kopyalandı: mesaj alanını basılı tut ve Yapıştır’a dokun.";
 "Opening %@…" = "%@ açılıyor…";
 "Could not open %@. The photos stay on the line." = "%@ açılamadı. Fotoğraflar ipte kalır.";
 "Paste into the app in front" = "Öndeki uygulamaya yapıştır";

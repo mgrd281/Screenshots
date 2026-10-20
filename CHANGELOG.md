@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, ChatGPT, Claude and the other AI chats open straight away
+  with the protected copy ready to paste: hold the message field and tap
+  Paste. Where the app is not on the iPhone, the share sheet shows as
+  before. Save to Photos opens Photos once the copy is saved.
 - Patient names and Other people turn on and off by themselves, on the Mac
   and the iPhone. With Names on, turn Other people off to cover only the
   patients' names, or Patient names off to cover only everyone else's.

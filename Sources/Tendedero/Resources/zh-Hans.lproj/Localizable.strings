@@ -121,7 +121,8 @@
 "Send to Apps" = "发送到 App";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "轻点某个应用会遮盖每一页并交给它，需要时通过共享面板。";
 "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "扫描后以及“保护图片”中图片旁边的应用，用来把遮盖后的副本交给它们。与 Mac 上的应用相同。";
-"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "轻点即可把受保护的副本交给应用：WhatsApp 会立即打开，其他应用则从共享面板中轻点该应用。不会在浏览器中打开任何内容。";
+"A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "轻点即可把受保护的副本交给 App。WhatsApp 会直接带着它打开；ChatGPT、Claude 及其他 AI 聊天会在已复制的状态下打开，供你粘贴；其余的从共享表单中打开，在那里轻点 App。不会在浏览器中打开任何内容。";
+"Copied for %@: hold its message field and tap Paste." = "已为 %@ 拷贝：按住消息输入框，然后轻点“粘贴”。";
 "Opening %@…" = "正在打开 %@…";
 "Could not open %@. The photos stay on the line." = "无法打开 %@。照片留在晾衣绳上。";
 "Paste into the app in front" = "粘贴到前台应用";

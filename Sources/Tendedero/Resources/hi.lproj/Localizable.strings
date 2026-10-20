@@ -123,7 +123,8 @@
 "Send to Apps" = "ऐप्स को भेजें";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "किसी ऐप पर टैप करने से हर पेज ढक जाता है और उसे सौंप दिया जाता है, ज़रूरत हो तो शेयर शीट से।";
 "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "स्कैन के बाद और «चित्र सुरक्षित करें» में तस्वीर के बगल में दिखने वाले ऐप, उन्हें ढकी हुई कॉपी सौंपने के लिए। वही ऐप जो Mac पर हैं।";
-"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "एक टैप सुरक्षित कॉपी ऐप को सौंप देता है: WhatsApp तुरंत खुलता है, बाकी शेयर शीट से, जहाँ आप ऐप पर टैप करते हैं। कुछ भी ब्राउज़र में नहीं खुलता।";
+"A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "टैप करने से सुरक्षित प्रति ऐप को मिलती है। WhatsApp उसके साथ खुलता है; ChatGPT, Claude और दूसरी AI चैट उसे कॉपी करके खुलती हैं, ताकि आप पेस्ट करें; बाकी शेयर शीट से, जहाँ आप ऐप पर टैप करें। ब्राउज़र में कुछ नहीं खुलता।";
+"Copied for %@: hold its message field and tap Paste." = "%@ के लिए कॉपी किया: संदेश बॉक्स को दबाकर रखें और पेस्ट करें पर टैप करें।";
 "Opening %@…" = "%@ खुल रहा है…";
 "Could not open %@. The photos stay on the line." = "%@ नहीं खुल सका। फ़ोटो रस्सी पर रहती हैं।";
 "Paste into the app in front" = "सामने वाले ऐप में पेस्ट करें";

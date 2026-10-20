@@ -239,8 +239,9 @@ final class ScannedPages: ObservableObject {
     }
 
     /// Covers every page as for the PDF and hands them to the app: one page
-    /// straight to WhatsApp, else through the share sheet, where the app is
-    /// tapped (`Handoff`). If a page cannot be covered, nothing goes at all.
+    /// straight to WhatsApp, or to an AI chat opened with it copied, else
+    /// through the share sheet, where the app is tapped (`Handoff`). If a
+    /// page cannot be covered, nothing goes at all.
     func send(to chat: ChatTarget) {
         guard making == nil, !pages.isEmpty else { return }
         let pages = pages
@@ -258,7 +259,10 @@ final class ScannedPages: ObservableObject {
                 return QuickCoverer.shared.show(L("The copy could not be made."))
             }
             let name = "Snapfly " + Date.now.formatted(.iso8601.year().month().day())
-            let shown = Handoff.shared.send(pngs, to: chat, named: name) { went in
+            let shown = Handoff.shared.send(pngs, to: chat, named: name, opened: {
+                QuickCoverer.shared.show(String(format: L("Copied for %@: hold its message field and tap Paste."), chat.name),
+                                         for: 6)
+            }) { went in
                 if went { UINotificationFeedbackGenerator().notificationOccurred(.success) }
             }
             if !shown { QuickCoverer.shared.show(L("The copy could not be made.")) }
