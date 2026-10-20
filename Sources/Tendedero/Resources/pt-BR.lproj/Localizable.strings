@@ -121,7 +121,8 @@
 "Send to Apps" = "Enviar para apps";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "Um toque em um app cobre cada página e as entrega a ele, pela planilha de compartilhamento quando preciso.";
 "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "Os apps depois de uma digitalização e ao lado da imagem em Proteger imagem, para entregar a eles a cópia coberta. Os mesmos apps do Mac.";
-"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "Um toque entrega a cópia protegida ao app: o WhatsApp abre na hora; os outros, pela planilha de compartilhamento, onde você toca no app. Nada abre no navegador.";
+"A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "Um toque entrega a cópia protegida ao app. O WhatsApp abre com ela; ChatGPT, Claude e os outros chats de IA abrem com ela copiada, para colar; o resto pela planilha de compartilhamento, onde você toca no app. Nada abre no navegador.";
+"Copied for %@: hold its message field and tap Paste." = "Copiada para %@: toque e segure o campo de mensagem e toque em Colar.";
 "Opening %@…" = "Abrindo %@…";
 "Could not open %@. The photos stay on the line." = "Não foi possível abrir %@. As fotos ficam no varal.";
 "Paste into the app in front" = "Colar no app ativo";

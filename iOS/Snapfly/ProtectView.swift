@@ -570,12 +570,14 @@ struct ProtectView: View {
         if !shown { failed(L("The copy could not be made."), retry: .share) }
     }
 
+    /// Into Photos, as a new picture, then Photos opens to show it.
     private func save() {
         guard session.isReady, let png = session.png else { return }
         Task {
             do {
                 try await Covering.save(png)
                 done(L("Saved to Photos"))
+                if let photos = URL(string: "photos-redirect://") { _ = await UIApplication.shared.open(photos) }
             } catch {
                 failed(L("The picture could not be saved."), retry: .photos)
             }
@@ -604,11 +606,14 @@ struct ProtectView: View {
         }
     }
 
-    /// The copy handed to the app: straight to WhatsApp, else through the
-    /// share sheet, where the app is tapped (`Handoff`).
+    /// The copy handed to the app: straight to WhatsApp, an AI chat opened
+    /// with it copied, to paste, else through the share sheet, where the app
+    /// is tapped (`Handoff`).
     private func send(to chat: ChatTarget) {
         guard session.isReady, let png = session.png else { return }
-        let shown = Handoff.shared.send([png], to: chat, named: baseName) { went in
+        let shown = Handoff.shared.send([png], to: chat, named: baseName, opened: {
+            note = EditorNote(text: String(format: L("Copied for %@: hold its message field and tap Paste."), chat.name))
+        }) { went in
             if went { session.left() }
         }
         if !shown { failed(L("The copy could not be made."), retry: .app(chat)) }

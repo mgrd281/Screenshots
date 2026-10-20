@@ -37,10 +37,12 @@ final class SendApps: ObservableObject {
 
 /// Hands covered pictures to another app the ways iOS gives an app, never
 /// through a website: one picture straight to WhatsApp, as a file only it
-/// opens (`ChatTarget.PhoneHandoff`); anything else through the system's
-/// share sheet, where every app that takes pictures shows and the owner
-/// taps it. Only the protected copy is ever handed over: the files are
-/// written for it alone and deleted once it is done.
+/// opens (`ChatTarget.PhoneHandoff`); one to an AI chat by opening its app
+/// with the picture on the clipboard, to paste there; anything else, or an
+/// app that does not open, through the system's share sheet, where every
+/// app that takes pictures shows and the owner taps it. Only the protected
+/// copy is ever handed over: the files are written for it alone and deleted
+/// once it is done, and the clipboard keeps it ten minutes at most.
 @MainActor
 final class Handoff: NSObject, UIDocumentInteractionControllerDelegate {
     static let shared = Handoff()
@@ -51,17 +53,47 @@ final class Handoff: NSObject, UIDocumentInteractionControllerDelegate {
     private var handedOver = false
 
     /// Hands the pictures to an app, or, with none named, to whatever the
-    /// owner picks in the share sheet; `done` says whether they went. False
-    /// when nothing could be shown.
+    /// owner picks in the share sheet; `opened` runs when an AI chat's app
+    /// opened with the picture to paste, and `done` says whether they went.
+    /// False when nothing could be shown.
     @discardableResult
-    func send(_ pngs: [Data], to chat: ChatTarget?, named name: String,
+    func send(_ pngs: [Data], to chat: ChatTarget?, named name: String, opened: @escaping () -> Void = {},
               done: @escaping (Bool) -> Void = { _ in }) -> Bool {
         guard !pngs.isEmpty, let host = Self.presenter() else { return false }
-        if let chat, chat.phoneHandoff(pictures: pngs.count) == .direct, openInWhatsApp(pngs[0], named: name, from: host, done: done) {
+        switch chat?.phoneHandoff(pictures: pngs.count) {
+        case .direct?:
+            if openInWhatsApp(pngs[0], named: name, from: host, done: done) { return true }
+        case .openApp?:
+            guard let chat else { break }
+            Task {
+                if await openApp(chat, with: pngs[0]) {
+                    opened()
+                    done(true)
+                } else if let host = Self.presenter(), share(pngs, named: name, from: host, done: done) {
+                    // Not on this iPhone: the share sheet, which offers what there is.
+                } else {
+                    done(false)
+                }
+            }
             return true
+        case .shareSheet?, nil:
+            break
         }
         // WhatsApp missing, or any other app: the share sheet, which offers what there is.
         return share(pngs, named: name, from: host, done: done)
+    }
+
+    /// The picture on the clipboard, for ten minutes, and the app opened by
+    /// its own links, a website's only as the app's, never in a browser.
+    /// False where none of them opens it.
+    private func openApp(_ chat: ChatTarget, with png: Data) async -> Bool {
+        UIPasteboard.general.setItems([[UTType.png.identifier: png]],
+                                      options: [.expirationDate: Date.now.addingTimeInterval(600)])
+        for link in chat.phoneAppLinks {
+            let options: [UIApplication.OpenExternalURLOptionsKey: Any] = link.scheme == "https" ? [.universalLinksOnly: true] : [:]
+            if await UIApplication.shared.open(link, options: options) { return true }
+        }
+        return false
     }
 
     /// The share sheet with the pictures as files.
@@ -390,7 +422,7 @@ struct ChooseApps: View {
                 }
                 .onMove { apps.move(from: $0, to: $1) }
             } footer: {
-                Text(L("A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser."))
+                Text(L("A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser."))
             }
         }
         .environment(\.editMode, .constant(.active))

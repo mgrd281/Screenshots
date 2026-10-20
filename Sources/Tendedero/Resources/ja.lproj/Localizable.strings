@@ -121,7 +121,8 @@
 "Send to Apps" = "アプリに送信";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "アプリをタップすると全ページを隠してそのアプリに渡します。必要なときは共有シートを使います。";
 "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "スキャン後と「画像を保護」で画像の横に並ぶアプリ。隠したコピーを渡せます。Macと同じアプリです。";
-"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "タップすると保護されたコピーをアプリに渡します。WhatsAppはすぐに開き、ほかのアプリは共有シートから、アプリをタップして渡します。ブラウザでは何も開きません。";
+"A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "タップすると保護したコピーをアプリに渡します。WhatsAppはそのまま開き、ChatGPT、ClaudeなどのAIチャットはコピーした状態で開くのでペーストします。その他は共有シートから、アプリをタップします。ブラウザでは何も開きません。";
+"Copied for %@: hold its message field and tap Paste." = "%@用にコピーしました：メッセージ欄を長押しして「ペースト」をタップします。";
 "Opening %@…" = "%@を開いています…";
 "Could not open %@. The photos stay on the line." = "%@を開けませんでした。写真はロープに残ります。";
 "Paste into the app in front" = "前面のアプリにペースト";

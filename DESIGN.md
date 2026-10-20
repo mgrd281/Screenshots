@@ -2267,8 +2267,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     edge, as the share sheet shows apps, then More, which opens the choice
     of apps in a sheet (medium or large, Done). A tap covers every page as
     for the PDF and hands them over as Protect Picture's apps do
-    (`Handoff`): one page straight to WhatsApp, else the share sheet, where
-    the app is tapped, never a website; while the pages are covered, the
+    (`Handoff`): one page straight to WhatsApp, one to an AI chat by opening
+    its app with it copied (a note for six seconds says to paste it), else
+    the share sheet, where the app is tapped, never a website; while the pages are covered, the
     app's icon dims under a white spinner and the others wait. Once they
     have gone, a success haptic.
   - Under them, centred, Share Covered PDF (`doc.richtext`), the
@@ -2357,10 +2358,14 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     the page. When they don't fit they scroll, without indicators. A tap
     gives a light haptic and hands over the protected copy (`Handoff`): one
     picture straight to WhatsApp as a `.wai` file of the type only WhatsApp
-    opens, as WhatsApp documents; Photos saves it, Files opens the system's
-    exporter; every other app, and the share sheet itself, goes through
-    `UIActivityViewController`, where the owner taps the app. Nothing opens
-    a website. A way tapped before the copy is ready waits with a small
+    opens, as WhatsApp documents; an AI chat (ChatGPT, Claude, Perplexity,
+    Grok, DeepSeek, Qwen) opens by its own address or its website's link as
+    a universal link only, the copy on the clipboard for ten minutes, and the
+    note says "Copied for %@: hold its message field and tap Paste."; Photos
+    saves it and then opens (`photos-redirect://`); Files opens the system's
+    exporter; every other app, an AI chat that does not open, and the share
+    sheet itself go through `UIActivityViewController`, where the owner taps
+    the app. Nothing opens a website. A way tapped before the copy is ready waits with a small
     white spinner over its icon and goes once it is (tapped again, it no
     longer waits); while places are still to check it asks first. Held,
     any of them offers Send to Apps, the choice and order of apps.

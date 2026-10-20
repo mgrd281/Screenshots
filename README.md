@@ -943,9 +943,11 @@ watch the screen, so there is no line there. What it keeps is the covering:
   drag them into (Airbnb, Visual Studio Code and Antigravity take no
   picture from another app on the iPhone). One tap covers every page and
   hands them to the app the ways iOS gives: one page straight to WhatsApp,
-  as a file only WhatsApp opens (the way WhatsApp documents), and anything
-  else through the system's share sheet, where you tap the app; nothing
-  ever opens in a browser. Share Covered
+  as a file only WhatsApp opens (the way WhatsApp documents); one page to
+  ChatGPT, Claude or another AI chat by opening its app with the page
+  copied, to paste in its message field; and anything else, or an app not
+  on the iPhone, through the system's share sheet, where you tap the app;
+  nothing ever opens in a browser. Share Covered
   PDF covers every page (as Settings says, or as it was left after opening
   it) and makes one PDF of them, a picture of each page and no text, sized
   like A4, for the share sheet, where it can be sent or saved to Files; if
@@ -1057,9 +1059,12 @@ watch the screen, so there is no line there. What it keeps is the covering:
   own icons, with no names or frames, then Photos, Files and the share
   sheet; they scroll when there are more than fit, and held, any of them
   offers the choice of apps. A tap hands over the protected copy, never the
-  screenshot: straight to WhatsApp, which then asks whom to send it to,
-  into Photos, to Files, and to every other app through the share sheet,
-  where you tap it; nothing opens in a browser. The menu holds Explain,
+  screenshot: straight to WhatsApp, which then asks whom to send it to;
+  to ChatGPT, Claude or another AI chat by opening its app with the copy
+  on the clipboard for ten minutes, to paste (a note says so); into Photos,
+  which then opens to show it; to Files; and to every other app, or an AI
+  chat not on the iPhone, through the share sheet, where you tap it;
+  nothing opens in a browser. The menu holds Explain,
   Details, Copy, Send to Mac while a Mac is there, Full Screen, the choice
   of apps, Clear Hidden by Hand and Reset to Suggestions.
   Tapped before the copy is ready, a way waits and goes once it is; while
@@ -1242,7 +1247,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/SharedChoice.swift` | The kinds, look and own rules the iPhone app keeps in the keychain group it shares with its extension |
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them sent to an app with one tap or made into one covered PDF |
-| `iOS/Snapfly/SendToApps.swift`, `Assets.xcassets/Chat*.imageset` | Send to on the iPhone: the apps chosen (`SendApps`), their icons, the row of them after a scan, the column beside the picture in Protect Picture (`AppRail`) with Photos, Files and the share sheet, and choosing and ordering them; the hand-over (`Handoff`): one picture straight to WhatsApp, anything else through the share sheet, never a website |
+| `iOS/Snapfly/SendToApps.swift`, `Assets.xcassets/Chat*.imageset` | Send to on the iPhone: the apps chosen (`SendApps`), their icons, the row of them after a scan, the column beside the picture in Protect Picture (`AppRail`) with Photos, Files and the share sheet, and choosing and ordering them; the hand-over (`Handoff`): one picture straight to WhatsApp, one to an AI chat by opening its app with it copied, anything else through the share sheet, never a website |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, three or four to a row with a pinch, See All, and the iPhone's green |
 | `Shared/GridSelection.swift`, `iOS/Snapfly/Selecting.swift` | Choosing several screenshots at once: tapped, or a finger drawn across them, and the card under the finger (tested on Linux); then their covered copies made one after another (`BatchCover`), saved to Photos or shared, with the choice's bar |
 | `Shared/GridZoom.swift` | How many screenshots stand in a row on the iPhone, three or four, and how the grid follows a pinch; tested on Linux |
