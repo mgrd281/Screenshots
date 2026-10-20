@@ -1439,6 +1439,8 @@
 "Sort" = "Ordenar";
 "Newest First" = "Máis recentes primeiro";
 "Oldest First" = "Máis antigas primeiro";
+"Per Row" = "Por fila";
+"%d per Row" = "%d por fila";
 "Filter" = "Filtrar";
 
 /* Tabs, scanning and the Protected tab on the iPhone */

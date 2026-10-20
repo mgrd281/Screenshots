@@ -383,9 +383,9 @@ extension View {
     }
 }
 
-/// Screenshots in a grid of small square cards, four to a row on most
-/// iPhones: a tap opens one to protect, growing out of its card; holding
-/// it covers it and copies, shares or saves it.
+/// Screenshots in a grid of square cards, three to a row, or four pinched
+/// closer, as in Photos (`GridZoom`): a tap opens one to protect, growing
+/// out of its card; holding it covers it and copies, shares or saves it.
 struct ScreenshotGrid: View {
     let shots: [PHAsset]
     let protected: Set<String>
@@ -394,10 +394,18 @@ struct ScreenshotGrid: View {
     let quick: @MainActor (PHAsset, QuickCover) -> Void
     /// The cards have risen into place, once, the first time there are any.
     @State private var risen = false
+    /// How many to a row, the same in every grid.
+    @AppStorage(GridZoom.key) private var columns = GridZoom.standard
+    /// How large the grid shows while it is pinched, and around which point.
+    @State private var pinch: CGFloat = 1
+    @State private var anchor = UnitPoint.center
+    /// Each change of the grid, for its haptic.
+    @State private var changes = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 76, maximum: 160), spacing: 8)], spacing: 8) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: GridZoom.clamped(columns)),
+                  spacing: 8) {
             ForEach(Array(shots.enumerated()), id: \.element.localIdentifier) { index, asset in
                 let link = ShotLink(id: asset.localIdentifier, place: place)
                 NavigationLink(value: link) {
@@ -412,8 +420,34 @@ struct ScreenshotGrid: View {
                 .animation(rise(index), value: risen)
             }
         }
+        .scaleEffect(pinch, anchor: anchor)
+        .simultaneousGesture(magnify)
+        .sensoryFeedback(.selection, trigger: changes)
         .onAppear { if !shots.isEmpty { risen = true } }
         .onChange(of: shots.isEmpty) { if !shots.isEmpty { risen = true } }
+    }
+
+    /// Two fingers pinch the grid: it follows them, up to the size of the
+    /// next grid's cards, and once let go past a little way, the cards settle
+    /// into the next grid on a spring (`zoom.grid`); else they settle back.
+    /// With Reduce Motion the grid doesn't follow, and changes at once.
+    private var magnify: some Gesture {
+        MagnifyGesture(minimumScaleDelta: 0.02)
+            .onChanged { value in
+                guard !reduceMotion else { return }
+                anchor = value.startAnchor
+                pinch = GridZoom.scale(pinch: value.magnification, columns: columns)
+            }
+            .onEnded { value in
+                let next = GridZoom.after(pinch: value.magnification, from: columns)
+                withAnimation(reduceMotion ? nil : .spring(response: 0.42, dampingFraction: 0.86)) {
+                    pinch = 1
+                    if next != GridZoom.clamped(columns) {
+                        columns = next
+                        changes += 1
+                    }
+                }
+            }
     }
 
     /// The cards rise in reading order, a beat apart (`stagger.grid`), the
@@ -439,6 +473,7 @@ struct AllScreenshotsView: View {
     let zoom: Namespace.ID
     let quick: @MainActor (PHAsset, QuickCover) -> Void
     @State private var query = LibraryQuery()
+    @AppStorage(GridZoom.key) private var columns = GridZoom.standard
     /// What each screenshot read ahead of time says and holds, in memory
     /// only while this shows.
     @State private var read: [String: (text: String, kinds: [String])] = [:]
@@ -485,6 +520,13 @@ struct AllScreenshotsView: View {
             Picker(L("Sort"), selection: $query.order) {
                 Text(L("Newest First")).tag(LibraryQuery.Order.newest)
                 Text(L("Oldest First")).tag(LibraryQuery.Order.oldest)
+            }
+            // As a pinch does, for whoever doesn't pinch.
+            Picker(L("Per Row"), selection: Binding(get: { GridZoom.clamped(columns) },
+                                                    set: { new in withAnimation(.snappy) { columns = new } })) {
+                ForEach(Array(GridZoom.range), id: \.self) { count in
+                    Text(String(format: L("%d per Row"), count)).tag(count)
+                }
             }
         } label: {
             Image(systemName: query.filter == .all ? "line.3.horizontal.decrease.circle"

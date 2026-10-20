@@ -1439,6 +1439,8 @@
 "Sort" = "並べ替え";
 "Newest First" = "新しい順";
 "Oldest First" = "古い順";
+"Per Row" = "1行あたり";
+"%d per Row" = "1行に%d枚";
 "Filter" = "フィルタ";
 
 /* Tabs, scanning and the Protected tab on the iPhone */

@@ -971,8 +971,10 @@ watch the screen, so there is no line there. What it keeps is the covering:
   no one's details, over Protect a Photo, a green button that opens any
   picture from Photos. Once there are screenshots, the picture turns small
   beside its words and the screenshots come first: what the Mac sent and
-  the newest twelve in small square
-  cards, four to a row, that show when each was taken in a small label
+  the newest three rows in square
+  cards, three to a row, or four pinched closer with two fingers as in
+  Photos (the grid follows the fingers and settles into the other size;
+  See All's menu does the same), that show when each was taken in a small label
   (the time for today's, the date alone for older ones), and a green
   shield once it was protected;
   holding one offers Cover and Copy, Share or Save; all of them
@@ -1189,7 +1191,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/SharedChoice.swift` | The kinds, look and own rules the iPhone app keeps in the keychain group it shares with its extension |
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them as one covered PDF |
-| `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
+| `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, three or four to a row with a pinch, See All, and the iPhone's green |
+| `Shared/GridZoom.swift` | How many screenshots stand in a row on the iPhone, three or four, and how the grid follows a pinch; tested on Linux |
 | `iOS/Snapfly/FirstRunExperience.swift` | The first run: the sample invoice, doctor's letter and bank statement, each standing as an A4 page; the invoice read and covered, its categories as chips, the letter scanned (tipped, found, taken, straightened, covered, the patient but not the doctor), the protected letter ready to share with the other two behind it, Try It Now and Skip Demo; when it shows (`FirstRunCoordinator`) |
 | `iOS/Snapfly/ExplainSheet.swift` | Explain, from Protect Picture: the protected copy sent to the owner's own Claude or ChatGPT, the answer streamed, ready questions and the owner's own (`DocumentTalk`) |
 | `iOS/Snapfly/AssistantSettings.swift` | More › AI Assistant on the iPhone: the assistant, the key in the keychain with the system's Paste, checked at once, the model, and Find more |

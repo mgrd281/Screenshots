@@ -1441,6 +1441,8 @@
 "Sort" = "क्रम";
 "Newest First" = "नए पहले";
 "Oldest First" = "पुराने पहले";
+"Per Row" = "हर पंक्ति में";
+"%d per Row" = "हर पंक्ति में %d";
 "Filter" = "फ़िल्टर";
 
 /* Tabs, scanning and the Protected tab on the iPhone */

@@ -1439,6 +1439,8 @@
 "Sort" = "정렬";
 "Newest First" = "최신 순";
 "Oldest First" = "오래된 순";
+"Per Row" = "한 줄에";
+"%d per Row" = "한 줄에 %d개";
 "Filter" = "필터";
 
 /* Tabs, scanning and the Protected tab on the iPhone */

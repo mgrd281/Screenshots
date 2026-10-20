@@ -178,6 +178,8 @@ components:
     rounded: "32pt"                # the camera on the first run: phone-ink filling the stage, the page at 80% in it, the shutter under it
   phone-shutter:
     size: "34pt"                   # the camera's shutter on the first run: a white ring of 2.5pt at 90% round a white button 5pt in, centred in the room under the page, smaller where the room is (14pt less than it)
+  phone-grid-columns:
+    count: "3, or 4 pinched closer"   # screenshots side by side in the iPhone's grids, flexible columns 8pt apart; the Photos tab shows three rows of the newest
   phone-share-tile:
     size: "52pt"                   # a destination on the first run's share row: the app's own icon from its SVG (asset catalogue, vector kept), clipped to continuous corners of 12 with a hairline of .primary at 8%, the name in caption under it
   phone-question-chip:
@@ -1930,8 +1932,16 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - Then From your Mac. What was protected lately is the Protected tab.
   - **Screenshots**, title 3 semibold, with See All and a chevron in the
     accent on the trailing edge whenever there are screenshots, over the
-    newest twelve in a grid (`ScreenshotGrid`): square cards at least 76 pt
-    and at most 160 pt wide, 8 pt apart, four to a row on most iPhones. A
+    newest three rows in a grid (`ScreenshotGrid`): square cards 8 pt apart,
+    three to a row, or four once pinched closer, as in Photos
+    (`phone-grid-columns`, kept for every grid of screenshots: the Photos
+    tab, See All and Protected). Two fingers pinch the grid; it follows
+    them around the point they started, up to the size of the next grid's
+    cards (where it can't change that way it gives 4% and no more), and once
+    let go past a tenth, the cards settle into the next grid on `zoom.grid`
+    with a selection haptic; else they settle back. With Reduce Motion it
+    doesn't follow and changes at once. See All's menu offers 3 per Row and
+    4 per Row for whoever doesn't pinch. A
     card (`ScreenshotCard`) shows the top of the screenshot, square in the
     grid with corners of 12, at 3:4 with corners of 14 in the row of
     protected ones, a hairline of `.primary` at 8% and a shadow of black 6%,

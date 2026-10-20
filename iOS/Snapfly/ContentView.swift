@@ -25,8 +25,9 @@ struct PhotosTab: View {
     @Environment(\.scenePhase) private var phase
     @Environment(\.dynamicTypeSize) private var typeSize
 
-    /// How many screenshots the home screen shows before See All.
-    private let preview = 12
+    /// How many to a row, as pinched; the home screen shows three rows of
+    /// the newest before See All.
+    @AppStorage(GridZoom.key) private var columns = GridZoom.standard
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -214,7 +215,7 @@ struct PhotosTab: View {
                         .font(.subheadline.weight(.medium))
                     }
                 }
-                ScreenshotGrid(shots: Array(library.shots.prefix(preview)), protected: protected, place: .home, zoom: zoom,
+                ScreenshotGrid(shots: Array(library.shots.prefix(GridZoom.preview(columns: columns))), protected: protected, place: .home, zoom: zoom,
                                quick: coverer.cover)
             }
         }

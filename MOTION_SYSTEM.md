@@ -104,6 +104,7 @@ Motion and Low Power Mode. The first run uses them all.
 | `motion.document` | spring 0.55 / 0.86 | A page moving between places: into the camera, straightened, made small |
 | `motion.success` | spring 0.42 / 0.7 | Protected: the shield lands, with one bounce |
 | `motion.lock` | spring 0.45 / 0.8 | The scanner's outline closing onto the page's corners |
+| `zoom.grid` | spring 0.42 / 0.86 | iPhone screenshot grids: pinched past a tenth, the cards settle into three or four to a row, from the size the fingers left them at; at once with Reduce Motion |
 
 ### Stagger
 

@@ -1439,6 +1439,8 @@
 "Sort" = "Sırala";
 "Newest First" = "Önce en yeni";
 "Oldest First" = "Önce en eski";
+"Per Row" = "Satır başına";
+"%d per Row" = "Satır başına %d";
 "Filter" = "Süz";
 
 /* Tabs, scanning and the Protected tab on the iPhone */

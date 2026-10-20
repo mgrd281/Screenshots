@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, screenshots stand three to a row, larger, and the Photos
+  tab shows three rows of the newest. Pinch with two fingers, as in Photos,
+  for four to a row and back: the grid follows the fingers and settles
+  softly. See All's menu offers the same.
 - On the iPhone, Explain (the sparkles in Protect Picture) sends the
   protected copy to your own Claude or ChatGPT and says, as it writes, what
   the document is, what matters in it and what to do, in your language;

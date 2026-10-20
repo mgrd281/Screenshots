@@ -1439,6 +1439,8 @@
 "Sort" = "排序";
 "Newest First" = "最新优先";
 "Oldest First" = "最早优先";
+"Per Row" = "每行";
+"%d per Row" = "每行 %d 张";
 "Filter" = "过滤";
 
 /* Tabs, scanning and the Protected tab on the iPhone */
