@@ -118,21 +118,30 @@ editor "$device" en light en-light
 small=$(xcrun simctl list devices available --json | python3 -c '
 import json, sys
 order = ("SE", "mini", "16e", "17e")
-found = {}
+best = None
 for runtime, devices in json.load(sys.stdin)["devices"].items():
     if "iOS-" not in runtime:
+        continue
+    version = tuple(int(part) for part in runtime.split("iOS-")[-1].split("-") if part.isdigit())
+    if version < (17,):
         continue
     for device in devices:
         for rank, word in enumerate(order):
             if device["name"].startswith("iPhone") and word in device["name"]:
-                found.setdefault(rank, device["udid"])
-print(found[min(found)] if found else "")
+                score = (-rank, version)
+                if best is None or score > best[0]:
+                    best = (score, device["udid"])
+print(best[1] if best else "")
 ')
+# A picture more, never a reason to stop.
 if [ -n "$small" ] && [ "$small" != "$device" ]; then
-  xcrun simctl boot "$small" || true
-  xcrun simctl bootstatus "$small" -b
-  xcrun simctl install "$small" "$after"
-  editor "$small" de light de-light-small
+  (
+    xcrun simctl boot "$small" || true
+    xcrun simctl bootstatus "$small" -b
+    xcrun simctl status_bar "$small" override --time 9:41 --batteryState charged --batteryLevel 100 || true
+    xcrun simctl install "$small" "$after"
+    editor "$small" de light de-light-small
+  ) || echo "The smallest iPhone could not be captured." >&2
   xcrun simctl shutdown "$small" || true
 fi
 

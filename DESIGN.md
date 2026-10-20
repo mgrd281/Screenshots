@@ -2335,7 +2335,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     ("3 sensible Angaben erkannt", semibold), and while any are to check, a
     dot and "1 zu prüfen" in the accent (orange while one is uncovered).
     With nothing found but what Settings leaves visible, `checkmark.shield`
-    and Nothing private found. One line, shrinking to 80% before it wraps.
+    and Nothing private found. One line, shrinking to 85% at most; where
+    "1 zu prüfen" still doesn't fit, its sign and number alone.
     Each step gives way to the next in place on a spring (0.42, 0.82), the
     capsule fitting its words (a 0.15 s ease-out with Reduce Motion); when
     the copy is ready, the shield bounces up once and a success haptic says
@@ -2345,7 +2346,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     was (white on `phone-protect` while held). Under them, for 2.5 s after a
     drawing tool is chosen, how to use it in a capsule of the same glass.
   - **The apps** (`AppRail`), one above another on the trailing side,
-    centred between the status and the tools: the apps chosen in Settings
+    centred between the status and the tools, where hints, notes and the
+    place selected never move them: the apps chosen in Settings
     as `phone-rail-icon`s, then Photos (`photo.on.rectangle.angled`), Files
     (`folder`) and the share sheet (`square.and.arrow.up`) as tiles of the
     same size. No frame, names, dividers or container: they float beside

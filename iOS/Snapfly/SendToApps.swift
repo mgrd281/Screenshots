@@ -19,8 +19,8 @@ final class SendApps: ObservableObject {
         reload()
     }
 
-    /// The iPhone's apps in a new order; the two editors keep their place
-    /// after them.
+    /// The iPhone's apps in a new order; those it doesn't offer keep their
+    /// place after them.
     func move(from offsets: IndexSet, to offset: Int) {
         var order = all
         order.move(fromOffsets: offsets, toOffset: offset)
@@ -71,13 +71,13 @@ final class Handoff: NSObject, UIDocumentInteractionControllerDelegate {
         let sheet = UIActivityViewController(activityItems: files, applicationActivities: nil)
         // Nothing a protected picture has any use for.
         sheet.excludedActivityTypes = [.assignToContact, .addToReadingList]
-        sheet.completionWithItemsHandler = { _, completed, _, _ in
+        sheet.completionWithItemsHandler = { activity, completed, _, _ in
+            // An app's own sheet cancelled leaves the share sheet up, for another.
+            guard completed || activity == nil else { return }
             Self.remove(files)
             done(completed)
         }
-        sheet.popoverPresentationController?.sourceView = host.view
-        sheet.popoverPresentationController?.sourceRect = CGRect(x: host.view.bounds.midX, y: host.view.bounds.midY,
-                                                                 width: 0, height: 0)
+        // On the iPhone the share sheet rises from the bottom, anchored to nothing.
         host.present(sheet, animated: true)
         return true
     }
@@ -96,10 +96,16 @@ final class Handoff: NSObject, UIDocumentInteractionControllerDelegate {
             Self.remove([file])
             return false
         }
+        // Kept until the next hand-over, so it lives as long as WhatsApp needs it.
         interaction = menu
         finished = done
         handedOver = false
         return true
+    }
+
+    func documentInteractionController(_ controller: UIDocumentInteractionController,
+                                       willBeginSendingToApplication application: String?) {
+        handedOver = true
     }
 
     func documentInteractionController(_ controller: UIDocumentInteractionController,
@@ -110,7 +116,6 @@ final class Handoff: NSObject, UIDocumentInteractionControllerDelegate {
     func documentInteractionControllerDidDismissOpenInMenu(_ controller: UIDocumentInteractionController) {
         finished?(handedOver)
         finished = nil
-        interaction = nil
         // Once WhatsApp has taken its copy of the file.
         if let file = controller.url {
             Task {

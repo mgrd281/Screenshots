@@ -71,19 +71,22 @@ struct ProtectView: View {
             ZStack {
                 picture(chrome: chrome(geometry.safeAreaInsets))
                     .ignoresSafeArea()
+                // Between the status and the tools, where hints and notes never move it.
+                HStack(spacing: 0) {
+                    Spacer(minLength: 0)
+                    if !focus {
+                        AppRail(pending: pending, leave: leave)
+                            .phoneGuideTarget(.actions)
+                            .padding(.trailing, Self.railEdge)
+                            .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .trailing)))
+                    }
+                }
+                .padding(.top, statusHeight + 8)
+                .padding(.bottom, docksHeight + 12)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 VStack(spacing: 0) {
                     if !focus { top.transition(.opacity) }
-                    HStack(spacing: 0) {
-                        Spacer(minLength: 0)
-                        if !focus {
-                            AppRail(pending: pending, leave: leave)
-                                .phoneGuideTarget(.actions)
-                                .padding(.trailing, Self.railEdge)
-                                .padding(.vertical, 8)
-                                .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .trailing)))
-                        }
-                    }
-                    .frame(maxHeight: .infinity)
+                    Spacer(minLength: 0)
                     bottom
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

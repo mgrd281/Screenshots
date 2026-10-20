@@ -256,14 +256,23 @@ struct PrivacyStatus: View {
                     .contentTransition(.numericText())
                 if tally.toCheck > 0 {
                     Text(verbatim: "·").foregroundStyle(.secondary)
-                    Text(String(format: L("%d to check"), tally.toCheck))
-                        .foregroundStyle(tally.exposed > 0 ? Color.orange : Color.accentColor)
-                        .contentTransition(.numericText())
+                    // Where the words don't fit, the sign that some are to check, and how many.
+                    ViewThatFits(in: .horizontal) {
+                        Text(String(format: L("%d to check"), tally.toCheck))
+                        Label {
+                            Text(tally.toCheck, format: .number)
+                        } icon: {
+                            Image(systemName: tally.exposed > 0 ? "exclamationmark.triangle.fill" : "circle.dashed")
+                        }
+                        .labelStyle(.titleAndIcon)
+                    }
+                    .foregroundStyle(tally.exposed > 0 ? Color.orange : Color.accentColor)
+                    .contentTransition(.numericText())
                 }
             }
         }
         .lineLimit(1)
-        .minimumScaleFactor(0.8)
+        .minimumScaleFactor(0.85)
         .monospacedDigit()
         .padding(.horizontal, 14)
         .frame(minHeight: 34)
