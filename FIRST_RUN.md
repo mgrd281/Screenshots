@@ -122,7 +122,7 @@ shows, and CI's still frames use it too. The phases are those of
 | `SampleStatement` | same | The bank statement (letterhead, month, holder and IBAN, seven bookings, new balance), protected at the end |
 | `PrivacyChips` | same | The interactive categories |
 | `ScanCamera`, `CaptureFlash`, `Straightened`, `EdgeLock`, `ReadingLight` | same | The scan demonstration: the camera filling the stage with its shutter, the flash as the page is taken, the perspective correction, the edges locking on, and the light that reads the page |
-| `ShareDestinations` | same | The protected copy's destinations, as a picture of the share sheet |
+| `ShareDestinations` | same | The protected copy's destinations, as a picture of the share sheet: ChatGPT, WhatsApp and WEB.DE by their apps' icons, drawn from SVG (`Assets.xcassets/Logo*`) |
 | `SnapflyMotion`, `PressStyle` | `iOS/Snapfly/Motion.swift` | The named motion tokens and their calm answers |
 
 Nothing is duplicated: the old `CoverDemo.swift` is gone, and the scanner,

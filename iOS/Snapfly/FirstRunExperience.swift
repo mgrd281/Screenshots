@@ -1144,26 +1144,29 @@ private struct EdgeShape: Shape {
 // MARK: Sharing
 
 /// Where the protected copy can go, as the share sheet offers it: a chat
-/// with an AI, a messenger, email. A picture of the idea, not a link to any
-/// of them: the real share sheet comes with a real copy.
+/// with an AI, a messenger, a mailbox, each by its own app's icon, drawn
+/// from its SVG in the asset catalogue. A picture of the idea, not a link to
+/// any of them: the real share sheet comes with a real copy. The logos
+/// belong to their owners and only say where a copy can go.
 private struct ShareDestinations: View {
     var body: some View {
         HStack(spacing: 20) {
-            destination("sparkles", "ChatGPT")
-            destination("message.fill", "WhatsApp")
-            destination("envelope.fill", L("Email"))
+            destination("LogoChatGPT", "ChatGPT")
+            destination("LogoWhatsApp", "WhatsApp")
+            destination("LogoWebDE", "WEB.DE")
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(L("Only the protected copy leaves your iPhone."))
     }
 
-    private func destination(_ symbol: String, _ name: String) -> some View {
-        VStack(spacing: 6) {
-            Image(systemName: symbol)
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(.primary)
+    private func destination(_ logo: String, _ name: String) -> some View {
+        let icon = RoundedRectangle(cornerRadius: 12, style: .continuous)
+        return VStack(spacing: 6) {
+            Image(logo)
+                .resizable()
                 .frame(width: 52, height: 52)
-                .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .clipShape(icon)
+                .overlay(icon.strokeBorder(Color.primary.opacity(0.08), lineWidth: 0.5))
             Text(verbatim: name)
                 .font(.caption)
                 .foregroundStyle(.secondary)

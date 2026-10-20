@@ -949,7 +949,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   diagnosis are covered as you choose with Patient, Date of birth and
   Diagnosis, and the doctors' names stay. Last, the letter becomes a
   small protected copy, the invoice and the bank statement, protected too,
-  fanned out behind it, beside where it could go: "Only the protected copy
+  fanned out behind it, beside where it could go (ChatGPT, WhatsApp and
+  WEB.DE by their apps' real icons, drawn from SVG): "Only the protected copy
   leaves your iPhone", and "Share your documents. Not your private data."
   Try It Now opens the real scanner; Skip Demo leaves at any time. Which
   detail each category covers is what the engine itself finds on each
@@ -1144,7 +1145,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/GuideFlow.swift`, `Shared/GuideShade.swift` | Where the introduction stands, kept with the settings, its steps in order, where its card goes, and its shade, for the Mac and the iPhone |
 | `Paste.swift` | Pastes into the app in front, for the send button |
 | `ChatTarget.swift` | ChatGPT, Claude, WhatsApp, Gmail, GMX, WEB.DE and twelve more in a row under a photo, the rest behind ⋯: their logos or app icons, and their app or website in the browser chosen, as each is set, opened and waited for, in the order dragged in Settings |
-| `assets/chat-logos/` | The logos the row shows (every chat but ChatGPT and Claude), as PNG with their SVG sources |
+| `assets/chat-logos/` | The logos the row shows (every chat but ChatGPT and Claude), as PNG with their SVG sources; the iPhone first run's share row draws ChatGPT, WhatsApp and WEB.DE from SVG copies in its asset catalogue |
 | `Shared/AIQuestions.swift` | The questions a photo goes into ChatGPT or Claude with: the standard five, and the owner's own from Settings |
 | `Shared/CoverTally.swift` | The week's line in Settings › Privacy: how many details were covered in how many photos sent, counts only, day by day |
 | `RecordingSound.swift` | What a screen recording hears, and the Mac's sound and the voice mixed into one track |
