@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// What to cover, kind by kind in groups, whose names among them; how covers look;
-/// how a screenshot is read; the devices it syncs with; and, further in,
+/// how a screenshot is read; the AI assistant; the devices it syncs with; and, further in,
 /// rules of the owner's own and how to cover a screenshot with a double tap
 /// on the back of the iPhone.
 struct SettingsView: View {
@@ -13,6 +13,8 @@ struct SettingsView: View {
     @State private var keepsLastDigits = Finder.keepsLastDigits
     @State private var strongest = Finder.strongest
     @State private var usesIntelligence = Finder.usesIntelligence && Finder.intelligenceAvailable
+    /// The assistant set up, by its name, read again as Settings shows.
+    @State private var assistant: String?
     @ObservedObject private var indexer = PhotoIndexer.shared
 
     var body: some View {
@@ -103,6 +105,21 @@ struct SettingsView: View {
                     Text(L("What the patterns find shows at once; Apple Intelligence adds to it. Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too."))
                 }
                 .onChange(of: usesIntelligence) { _, new in Finder.usesIntelligence = new }
+
+                Section {
+                    NavigationLink {
+                        AssistantSettings()
+                    } label: {
+                        LabeledContent {
+                            Text(assistant ?? L("Off"))
+                        } label: {
+                            Label(L("AI Assistant"), systemImage: "sparkles")
+                        }
+                    }
+                } footer: {
+                    Text(L("Your own Claude or ChatGPT explains documents in Protect Picture."))
+                }
+                .onAppear { assistant = AIAccount.isSetUp ? AIAccount.provider.name : nil }
 
                 SyncSection(sync: .shared)
 

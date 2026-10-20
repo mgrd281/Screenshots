@@ -171,6 +171,10 @@ components:
     rounded: "28pt"                # the camera round the first run's page: phone-ink, 8pt larger than the page, with green viewfinder corners (4pt, arms of 26, 16pt in)
   phone-share-tile:
     size: "52pt"                   # a destination on the first run's share row: secondarySystemBackground, corners of 14, the glyph 20pt semibold, the name in caption under it
+  phone-question-chip:
+    height: "36pt"                 # a ready question in Explain: a capsule of secondarySystemBackground, subheadline, 14pt in, 44pt to the finger, 8pt apart in a row that scrolls sideways
+  phone-ask-bubble:
+    rounded: "18pt"                # the owner's question in Explain: the accent at 12%, 14pt by 10pt in, on the trailing side, 40pt clear of the leading edge
   phone-topic-sign:
     size: "36pt"                   # a topic in Details: a 2.5pt ring of phone-protect, round ends, over .primary at 8%, from the top round as much as is covered; inside, 5pt in, a circle with the glyph 14pt semibold: phone-protect with white once all is covered, phone-protect at 12% with a green glyph while some is, .primary at 6% with a .secondary glyph while none is
   draw-swatch:
@@ -2112,8 +2116,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     zoom and is fitted again once it is all in sight. A small picture shows
     first while the whole one loads.
   - **The navigation bar** is the system's, inline: Back, "Protect
-    Picture", and a menu (`ellipsis.circle`): Details, Full Screen, then
-    Clear Hidden by Hand and Reset to Suggestions, each one change to undo.
+    Picture", Explain (`sparkles`, below), and a menu (`ellipsis.circle`):
+    Details, Full Screen, then Clear Hidden by Hand and Reset to
+    Suggestions, each one change to undo.
   - **Floating glass** (`editorGlass`): Liquid Glass from iOS 26, else
     regular material with a hairline of `.primary` at 8% and a shadow of
     black 12%, radius 10, y 4. Every floating control uses it.
@@ -2258,6 +2263,62 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   spring (0.42, 0.82), a 0.15 s ease-out with Reduce Motion. What Settings
   leaves visible, like the doctors' names where only patients' are covered,
   is listed with its switch off, and is never counted as left.
+- **Explain** (`ExplainSheet.swift`) is a sheet at medium or large height,
+  large at first, with an inline "Explain" and Done.
+  - **Without a key**: `sparkles` at 36 pt semibold in the accent, "Understand
+    documents faster" in title 3 bold, what it does and that only the
+    protected copy goes, only when asked, in subheadline `.secondary`, all
+    centred, 420 pt wide at most; then Set Up AI Assistant, the green pill,
+    opening the AI Assistant page inside the sheet. Back from it with a key,
+    Explain starts.
+  - **Until the copy is made and checked**, a spinner over "Waiting for the
+    protected copy…" in subheadline `.secondary`; after a failure, what went
+    wrong.
+  - **The conversation**, 16 pt in, 18 pt between turns: first the
+    protected copy as it was sent, 44 by 56 pt, corners of 6, a hairline of
+    `.primary` at 8%, beside "Sent to Claude" in subheadline semibold after
+    `checkmark.shield.fill` in `phone-protect`, over "Only the protected
+    copy, with your own key." in footnote `.secondary`, read as one. Then
+    each turn: the owner's question (`phone-ask-bubble`), then the answer in
+    body as it is written, piece by piece, with no motion of its own: lines
+    that name a part, like "Important:", in the headline with 4 pt above;
+    points hanging after a `.secondary` bullet, 8 pt from it; the rest as
+    written; 6 pt between lines, selectable. Before its first words, a small
+    spinner and "Asking Claude…". Done, Copy (`doc.on.doc`, then Copied
+    with `checkmark` and a success haptic), borderless in subheadline, 44 pt
+    high. What went wrong shows after `exclamationmark.triangle.fill` in
+    orange, with Try Again, and AI Assistant when a key or a model is to
+    blame, both bordered. A question asked scrolls to the top (0.25 s ease
+    out, at once with Reduce Motion).
+  - **Asking**, on the bar's material at the bottom, over the keyboard
+    when it shows: once the first answer is in and while nothing is being
+    written, the ready questions (`phone-question-chip`): What do I have to
+    do?, Is there a deadline?, Explain it more simply., Write a short reply.
+    Under them the field, "Ask about this document…", 16 pt in, in a capsule
+    of `secondarySystemBackground` at least 44 pt high, with
+    `arrow.up.circle.fill` at 30 pt in the accent in a 44 pt target at its
+    end (Ask), dimmed while it cannot; Send on the keyboard asks too. Then
+    "Answers can be wrong. Check what matters." in caption 2 `.secondary`.
+- **AI Assistant** (`AssistantSettings.swift`), in Settings after Reading
+  and checking: a row with `sparkles`, the assistant set up or Off, over a
+  footer saying what it is for. Its page, an inline title, is the Mac's
+  pane as a list:
+  - **Assistant**: Claude and ChatGPT as rows, the name over the maker and
+    "Key saved" or "No key yet" in footnote `.secondary`, a semibold
+    `checkmark` in the accent on the one chosen.
+  - **Connection**: the key's state as on the Mac with Check Again
+    (borderless) on the trailing edge; Get a Key… (`arrow.up.forward.square`)
+    while there is none or it is refused, over a footer saying where to make
+    one. The key kept, "Saved in your keychain, ending in …WXYZ" in footnote,
+    then Change, then Remove Key in red; else a secure field "Paste your key
+    here", then the system's Paste (a capsule, asking nothing), Cancel while
+    changing one, and Save, bordered prominent, off while the field is empty.
+  - **Model**: a picker, the key's own list once checked, else the usual
+    ones, over "The largest models answer best; smaller ones answer faster
+    and cost less."
+  - **What it does**: Explain with `sparkles` and a line in footnote
+    `.secondary`, then the switch Find more with Claude, off without a key;
+    the footer says what is sent where, only when tapped, and who bills it.
 - The icon is the Mac icon's picture, full bleed and opaque, since iOS rounds
   it (`scripts/make-icon.py --ios`).
 - The introduction (`PhoneGuide.swift`) shows on its real screens: the
@@ -2285,7 +2346,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   with Apple Intelligence and, once a screenshot was covered, how long the
   last one took, then Picture shown and Ready to share, each "Median %@ ·
   95% under %@" over the last fifty, then a row Faster picture processing,
-  On or Off, opening its page (below); then Sync; then "Advanced", two rows that open pages:
+  On or Off, opening its page (below); then AI Assistant (above); then
+  Sync; then "Advanced", two rows that open pages:
   Also hide (`text.badge.plus`) and Double tap the back of your iPhone
   (`hand.tap`); then Help & Introduction. Also hide is a row per rule of
   the owner's own, its
