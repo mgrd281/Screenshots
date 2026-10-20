@@ -1,6 +1,6 @@
 # Snapfly Privacy Policy
 
-*Last updated: October 19, 2026*
+*Last updated: October 20, 2026*
 
 Snapfly hangs your screenshots on a line at the top of the screen. Everything it
 does happens on your Mac, unless you set up the AI assistant with your own key
@@ -31,9 +31,13 @@ or turn on syncing with your iPhone (below).
   straight from your Mac to Anthropic or OpenAI. With Find more with Claude
   (or ChatGPT) turned on under Privacy, it also sends the words of each
   screenshot, to find private details the patterns miss; it is off unless you
-  turn it on. What they do with it is set by their own privacy policies and
-  your account with them; they bill each request to that account. Nothing of
-  it goes to the developer.
+  turn it on. On the iPhone the same holds, set up in More › AI Assistant,
+  with the key in the iPhone's keychain: only when you tap Explain in
+  Protect Picture, Snapfly sends the protected copy of that picture, never
+  the original, and the questions you ask about it, straight from the iPhone.
+  Requests to OpenAI ask it not to store them for later retrieval. What they
+  do with it is set by their own privacy policies and your account with them;
+  they bill each request to that account. Nothing of it goes to the developer.
 - **Share links, only when you choose Copy Link.** Snapfly then uploads that
   one photo, as it leaves the line with its private details covered, or that
   recording or PDF, to Snapfly's link service on Cloudflare (Cloudflare R2, in
@@ -148,7 +152,9 @@ Richtest du den KI-Assistenten mit deinem eigenen Schlüssel für Claude
 verdeckten privaten Angaben nur dann direkt an Anthropic oder OpenAI, wenn du
 Antwort schreiben, Erklären oder Bestelldetails wählst, und die Wörter jedes
 Bildschirmfotos nur, wenn du „Mehr finden mit Claude“ unter Datenschutz
-einschaltest. Der Schlüssel bleibt im Schlüsselbund deines Macs. Texterkennung,
+einschaltest. Auf dem iPhone schickt „Erklären“ in „Bild schützen“ nur die
+geschützte Kopie, nie das Original, und deine Fragen dazu, und nur, wenn du
+darauf tippst. Der Schlüssel bleibt im Schlüsselbund deines Macs oder iPhones. Texterkennung,
 Abdecken privater Angaben, Übersetzen und Beschreiben laufen auf deinem Mac.
 Schaltest du Synchronisieren auf dem Mac und dem iPhone ein, gleicht Snapfly
 beide über dein eigenes iCloud ab, in der privaten Datenbank deines

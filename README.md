@@ -846,6 +846,14 @@ checked); Other… takes a model's ID by hand. What it does lists Write a
 Reply, Explain and Order Details, and holds the switch Find more with Claude
 (or ChatGPT). An AI card whose key is missing or refused opens this pane.
 
+On the iPhone, the same key and model, set in More › AI Assistant, serve
+Explain in Protect Picture: the protected copy, never the original, sent
+when you tap it, and the answer shown as it is written, so the first words
+come at once. Questions after it reuse the picture Claude keeps for a few
+minutes, so they are answered sooner and cost less; ChatGPT does the same
+by itself, and each request asks OpenAI not to store it for later
+retrieval.
+
 What it is sent is the screenshot covered as for an AI chat, never the
 original, and only when you choose one of these. It goes straight from
 your Mac to Anthropic or OpenAI, with your own key, and they bill each
@@ -993,16 +1001,29 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Tapped before the copy is ready, a way waits and goes once it is; while
   places are still to check it asks first. Hold the eye to see the
   screenshot as it was. Full Screen, or a tap on nothing, leaves the
-  picture alone on black; a tap brings everything back. Hold a screenshot in the grid for Cover and Copy, Cover and Share
-  or Cover and Save, without opening it. The screenshot itself stays as it was.
+  picture alone on black; a tap brings everything back. The sparkles
+  beside the menu are Explain: with your own Claude or ChatGPT key set up
+  (below), it sends the checked protected copy, smaller, and shows word by
+  word, as it is written, what the document is and who it is from, what
+  matters in it (amounts, dates, deadlines, what is asked) and what to do,
+  in your language. Ready questions follow (What do I have to do?, Is there
+  a deadline?, Explain it more simply., Write a short reply.), with a field
+  for your own, each answered the same way and with the conversation so
+  far; Copy takes an answer. Without a key it offers to set one up. Hold a
+  screenshot in the grid for Cover and Copy, Cover and Share or Cover and
+  Save, without opening it. The screenshot itself stays as it was.
   Settings chooses what to cover, in the same six groups as on the Mac,
   with Check All, Recommended and Uncheck All, and Patient names and Other
   people beside Names. Cover look picks how covers look, from the same six
   as on the Mac, with Keep the last four digits and Strongest protection.
   Reading and checking holds Apple Intelligence, how long the last
   screenshot took, the middle and the 95th percentile of the last fifty,
-  and Faster picture processing (below). Under Advanced, add rules of your
-  own, as on the Mac, and see how to set up the double tap on the back.
+  and Faster picture processing (below). AI Assistant chooses Claude or
+  ChatGPT and keeps your own key in this iPhone's keychain, pasted with the
+  system's Paste and checked with them at once; then the model, from your
+  key's own list, and Find more with Claude (or ChatGPT), as on the Mac.
+  Under Advanced, add rules of your own, as on the Mac, and see how to set
+  up the double tap on the back.
 - **Faster picture processing** is off until you turn it on, after a page
   that says what it does. It reads your pictures from the last 60 days on
   the iPhone ahead of time, newest first: the screenshots only, every photo
@@ -1136,7 +1157,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/CoverLook.swift` | How covers look (ink, labelled, blur, pixels, dots, erased), drawn from the colors around what is covered; keeping the last four digits; the samples Settings shows |
 | `Shared/CoverLookPicker.swift` | The tiles to choose the look by, in Settings on the Mac and on the iPhone |
 | `Shared/Protection.swift` | Strongest protection, and Apple Intelligence, on the device, or the AI assistant, when turned on, finding what the patterns miss, kept per screenshot |
-| `Shared/AIAccount.swift` | The AI assistant: Claude or ChatGPT, the key in the keychain, the model, the requests and their answers, checking a key by its list of models, what each task asks, and what each failure means |
+| `Shared/AIAccount.swift` | The AI assistant: Claude or ChatGPT, the key in the keychain, the model, the requests and their answers, a conversation's turns, answers streamed as they are written, checking a key by its list of models, what each task asks, and what each failure means |
+| `Shared/AIConnection.swift` | Whether the key kept for each assistant works, as last checked, and the models it may use, for the Mac's and the iPhone's settings |
 | `Shared/OwnRules.swift` | The owner's own rules: a word, a label or a pattern, kept with the settings |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
@@ -1154,6 +1176,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them as one covered PDF |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
 | `iOS/Snapfly/FirstRunExperience.swift` | The first run: the sample invoice, standing as an A4 page, read and covered, its categories as chips, the scan of a page tipped, found, straightened and covered, the protected copy ready to share, Try It Now and Skip Demo; when it shows (`FirstRunCoordinator`) |
+| `iOS/Snapfly/ExplainSheet.swift` | Explain, from Protect Picture: the protected copy sent to the owner's own Claude or ChatGPT, the answer streamed, ready questions and the owner's own (`DocumentTalk`) |
+| `iOS/Snapfly/AssistantSettings.swift` | More › AI Assistant on the iPhone: the assistant, the key in the keychain with the system's Paste, checked at once, the model, and Find more |
 | `iOS/Snapfly/Motion.swift` | The iPhone's named motion (`SnapflyMotion`), each with its calm answer for Reduce Motion and Low Power Mode |
 | `Shared/FirstRun.swift` | The first run's story as a pure state machine: its script, what each moment shows, the categories as the one source of truth, and the scanner's perspective; tested on Linux too |
 | `iOS/Snapfly/PhotoIndexer.swift`, `IndexStore.swift`, `PreparingView.swift`, `iOS/Info.plist` | Faster picture processing: reading pictures ahead of time with consent, in the app and in the background, where it is kept on the iPhone, its page in Settings, and the background task's name |
