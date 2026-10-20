@@ -303,7 +303,8 @@ private struct PhoneCardHeight: PreferenceKey {
 }
 
 /// The card, in the system's material: a symbol and a title, a line or
-/// two, how far along it is, and Back and Next as large buttons.
+/// two, how far along it is, and Back and Next as small buttons on the
+/// trailing side, each on one line.
 private struct PhoneGuideCard: View {
     @ObservedObject var guide: PhoneGuide
     let stage: PhoneGuide.Stage
@@ -333,13 +334,14 @@ private struct PhoneGuideCard: View {
             Text(L("We'll show you the most important features, right in the app and step by step."))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
+                Spacer(minLength: 0)
                 Button(L("Skip for Now")) { guide.end() }
                     .buttonStyle(.bordered)
                 Button(L("Start Introduction")) { guide.start() }
                     .buttonStyle(.borderedProminent)
             }
-            .controlSize(.large)
+            .modifier(SmallButtons())
         }
     }
 
@@ -380,7 +382,7 @@ private struct PhoneGuideCard: View {
                 Button(L("Next")) { guide.next() }
                     .buttonStyle(.bordered)
             }
-            .controlSize(.large)
+            .modifier(SmallButtons())
         }
     }
 
@@ -399,8 +401,21 @@ private struct PhoneGuideCard: View {
                 Spacer()
                 Button(L("Done")) { guide.end() }
                     .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
+                    .modifier(SmallButtons())
             }
+        }
+    }
+
+    /// The card's buttons: the system's regular size, in subheadline, each
+    /// on one line, shrinking a little rather than wrapping.
+    private struct SmallButtons: ViewModifier {
+        func body(content: Content) -> some View {
+            content
+                .controlSize(.regular)
+                .font(.subheadline.weight(.semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .buttonBorderShape(.capsule)
         }
     }
 
