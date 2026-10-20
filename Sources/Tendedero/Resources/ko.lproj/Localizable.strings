@@ -118,6 +118,11 @@
 "Pick All" = "모두 선택";
 "Unpick All" = "모두 선택 해제";
 "Send to %@" = "%@(으)로 보내기";
+"Send to Apps" = "앱으로 보내기";
+"Copied for %@. Hold in the message box and tap Paste." = "%@용으로 복사했습니다. 메시지 입력란을 길게 누른 다음 붙여넣기를 탭하세요.";
+"%@ could not be opened." = "%@을(를) 열 수 없습니다.";
+"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "앱을 탭하면 가린 사진이 복사되고 앱이 열립니다. 메시지 입력란을 길게 누른 다음 붙여넣기를 탭하세요. 앱이 없으면 웹사이트가 열립니다.";
+"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "스캔 후와 사진 보호에 나타나는 앱으로, 가린 사본을 한 번의 탭으로 보냅니다. Mac과 같은 앱입니다.";
 "Opening %@…" = "%@ 여는 중…";
 "Could not open %@. The photos stay on the line." = "%@을(를) 열 수 없습니다. 사진은 빨랫줄에 남습니다.";
 "Paste into the app in front" = "앞에 있는 앱에 붙여넣기";
@@ -1465,6 +1470,8 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "각 페이지는 설정대로, 또는 열어 본 뒤 남겨 둔 대로 가려집니다. PDF에는 가린 페이지의 이미지만 들어 있고 복사할 텍스트는 없습니다.";
 "Page %d is not ready yet. Open it to check it." = "%d쪽이 아직 준비되지 않았습니다. 열어서 확인하세요.";
 "Page %d could not be covered, so no PDF was made." = "%d쪽을 가릴 수 없어 PDF를 만들지 않았습니다.";
+"Page %d could not be covered, so nothing was sent." = "%d쪽을 가릴 수 없어 아무것도 보내지 않았습니다.";
+"A tap on an app copies the covered pages and opens it, to paste them there." = "앱을 탭하면 가린 페이지가 복사되고 앱이 열려 거기에 붙여넣을 수 있습니다.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "보내기 전에 가려집니다";

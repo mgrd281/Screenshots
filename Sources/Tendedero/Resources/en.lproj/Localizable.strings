@@ -120,6 +120,11 @@
 "Pick All" = "Pick All";
 "Unpick All" = "Unpick All";
 "Send to %@" = "Send to %@";
+"Send to Apps" = "Send to Apps";
+"Copied for %@. Hold in the message box and tap Paste." = "Copied for %@. Hold in the message box and tap Paste.";
+"%@ could not be opened." = "%@ could not be opened.";
+"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens.";
+"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac.";
 "Opening %@…" = "Opening %@…";
 "Could not open %@. The photos stay on the line." = "Could not open %@. The photos stay on the line.";
 "Paste into the app in front" = "Paste into the app in front";
@@ -1467,6 +1472,8 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy.";
 "Page %d is not ready yet. Open it to check it." = "Page %d is not ready yet. Open it to check it.";
 "Page %d could not be covered, so no PDF was made." = "Page %d could not be covered, so no PDF was made.";
+"Page %d could not be covered, so nothing was sent." = "Page %d could not be covered, so nothing was sent.";
+"A tap on an app copies the covered pages and opens it, to paste them there." = "A tap on an app copies the covered pages and opens it, to paste them there.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Covered before you send";

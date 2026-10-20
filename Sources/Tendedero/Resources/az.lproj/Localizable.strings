@@ -120,6 +120,11 @@
 "Pick All" = "Hamısını seç";
 "Unpick All" = "Seçimləri ləğv et";
 "Send to %@" = "Göndər: %@";
+"Send to Apps" = "Tətbiqlərə göndər";
+"Copied for %@. Hold in the message box and tap Paste." = "%@ üçün kopyalandı. Mesaj sahəsini basılı saxla və «Yapışdır»a toxun.";
+"%@ could not be opened." = "%@ açılmadı.";
+"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "Tətbiqə toxunuş örtülmüş şəkli kopyalayır və tətbiqi açır. Mesaj sahəsini basılı saxla və «Yapışdır»a toxun. Tətbiq yoxdursa, onun saytı açılır.";
+"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "Skandan sonra və «Şəkli qoru»da olan tətbiqlər, örtülmüş nüsxəni bir toxunuşla göndərmək üçün. Mac-dəki tətbiqlərin eynisi.";
 "Opening %@…" = "%@ açılır…";
 "Could not open %@. The photos stay on the line." = "%@ açılmadı. Fotolar ipdə qalır.";
 "Paste into the app in front" = "Öndəki tətbiqə yapışdır";
@@ -1467,6 +1472,8 @@
 "Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy." = "Hər səhifə Ayarlarda seçildiyi kimi və ya açandan sonra saxladığın kimi örtülür. PDF-də yalnız örtülmüş səhifələrin şəkilləri var, kopyalanacaq mətn yoxdur.";
 "Page %d is not ready yet. Open it to check it." = "Səhifə %d hələ hazır deyil. Yoxlamaq üçün onu aç.";
 "Page %d could not be covered, so no PDF was made." = "Səhifə %d örtülə bilmədi, ona görə PDF yaradılmadı.";
+"Page %d could not be covered, so nothing was sent." = "Səhifə %d örtülə bilmədi, ona görə heç nə göndərilmədi.";
+"A tap on an app copies the covered pages and opens it, to paste them there." = "Tətbiqə toxunuş örtülmüş səhifələri kopyalayır və onu açır ki, onları orada yapışdırasan.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Göndərməmişdən əvvəl örtülür";
