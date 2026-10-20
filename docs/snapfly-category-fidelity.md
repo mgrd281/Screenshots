@@ -223,8 +223,8 @@ Every place found is a `Finder.Hit` with one `kind: PrivateDetail?`.
 | Namen | Patientennamen | Weitere Personen | Names covered |
 |---|---|---|---|
 | on | on | on | everyone's |
-| on | off | off | those whose role is not clear |
-| on | on | off | the patients', and those whose role is not clear |
+| on | off | off | those whose role is not clear, or only someone else's |
+| on | on | off | the patients', and those whose role is not clear, or only someone else's |
 | on | off | on | everyone whose role is known but the patients, and those whose role is not clear |
 | off | on | off | the patients'; an unclear one covered and marked |
 | off | off | on | doctors, customers, staff, payees, senders, recipients; an unclear one covered and marked |
@@ -232,22 +232,30 @@ Every place found is a `Finder.Hit` with one `kind: PrivateDetail?`.
 | off | off | off | none |
 
   The owner's own name, saved under Deine Angaben, is covered in every
-  row. Weitere Personen is recommended now, so a new choice covers
+  row; saved as a word, it is covered however it is written in every row
+  with a name switch on. "Someone else's" is the role `.other`, sure, as
+  the one who signs a letter that is no doctor's.
+  Weitere Personen is recommended now, so a new choice covers
   everyone's names. A choice made before (`PrivateDetail.parting`, once):
   Namen with Patientennamen, as recommended then, takes Weitere Personen,
   and covers what it did; Namen alone stays, as it was chosen with both
   off. Cover Files' first choice, Namen alone, is all three
-  (`PrivateDetail.allNames`). A name saved as a word becomes the name
-  detail as the app starts (`OwnRules.adoptName`), so it is covered however
-  it is written whatever names are chosen.
+  (`PrivateDetail.allNames`), and what it kept with Namen takes all three
+  once (`PrivateDetail.partingAll`). The share extension brings a choice
+  the app kept before up to date the same way (`SharedChoice.parted`),
+  for a picture shared before the app is opened. A name saved as a word
+  becomes the name detail as the app starts (`OwnRules.adoptName`), so it
+  is covered however it is written whatever names are chosen; the word
+  stays until the keychain holds the name, and Settings on the Mac reads
+  the rules again after (`OwnRules.changed`).
 - **Two more faults in that letter:** "Herr" was learned with the
   patient's name ("Herr Max Mustermann, geb. …") and covered on its own in
   the greeting, "Sehr geehrter Herr Kollege …"; and a doctor in the
   letterhead's column written without "Dr. med." was unclear, covered and
   marked to check. A title never joins a name found before a date of birth,
-  never comes again as a name (`DocumentSense.isTitle`), and a name in a
-  column between doctors, or after or before two of them, is a doctor
-  (`Finder.doctorsColumn`).
+  never comes again as a name (`DocumentSense.isTitle`), and in a medical
+  document a name in a column right between two doctors' names is a doctor
+  (`Finder.doctorsColumn`); one after them, as a patient's may be, is not.
 
 ## 4. The fix
 
@@ -359,7 +367,7 @@ The cover's margin (`withMargin`) is unchanged.
 
 ## 5. Tests
 
-`Tests/TendederoTests/CategoryFidelityTests.swift` holds 25 tests, on the
+`Tests/TendederoTests/CategoryFidelityTests.swift` holds 26 tests, on the
 made-up letter, a made-up referral, a short note and a made-up model
 answer.
 
@@ -377,9 +385,10 @@ answer.
 | Namen alone with the own name, on the referral | `testNamesAloneWithTheOwnNameCoverTheOwnNameAndNoOneElse` |
 | The referral's patient and doctors | `testTheReferralsPatientAndDoctorsAreEachTheirOwn` |
 | No title covered as a name | `testATitleIsNeverCoveredAsAName` |
-| A doctor in the letterhead's column | `testANameInAColumnOfDoctorsIsADoctor` |
-| Own name saved, in seven forms, under Namen and Patientennamen | `testTheOwnNameIsASureNameHoweverItIsWritten` |
-| Own name never covers without a name kind, never narrows | `testTheOwnNameOnlyHelpsAndNeverCoversWithoutANameKind` |
+| A doctor in the letterhead's column, and not a patient after it or a lawyer | `testANameInAColumnOfDoctorsIsADoctor` |
+| The one who signs a letter that is no doctor's | `testNamesCoverTheOneWhoSignsALetter` |
+| Own name saved, in seven forms, under each of the three and all of them | `testTheOwnNameIsASureNameHoweverItIsWritten` |
+| Own name never covers without a name kind, always with one, never narrows | `testTheOwnNameNeverCoversWithoutANameKindAndAlwaysWithOne` |
 | A short word of it in small letters stays a word | `testAShortWordOfTheOwnNameInSmallLettersIsJustAWord` |
 | Own name not saved | `testWithoutASavedNameTheNameIsStillCovered` |
 | Which rules count as an own name | `testOnlyANamesWordRuleIsTheOwnersName` |

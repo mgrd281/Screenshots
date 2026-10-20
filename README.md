@@ -312,10 +312,12 @@ short for its field, is only offered.
 Three switches choose whose names are covered, each its own: Patient
 names, the patients'; Other people, the doctors, customers, staff, payees,
 senders and recipients; and Names, every name whose role nothing round it
-tells, as in a chat or a list. Turning one on or off leaves the others as
-they are, and each covers its own people and no one else's: with Names on
-alone, a doctor's letter about you leaves the doctors, and your own name,
-saved under Your Details, is covered all the same. All three start on,
+tells, as in a chat or a list, and whoever is only someone else, like the
+one who signs a letter that is no doctor's. Turning one on or off leaves
+the others as they are, and each covers its own people and no one else's:
+with Names on alone, a doctor's letter about you leaves the doctors, and
+your own name is covered all the same: saved under Your Details, always;
+saved as a word, however it is written, with any of the three on. All three start on,
 and together they cover everyone's names. A choice made while Names still
 covered everyone's covers what it did: Names with Patient names takes
 Other people too, and Names alone stays as it was chosen. Whose a name is comes from
@@ -323,9 +325,10 @@ what stands round it: a label like Patient:, Pat., Name des Versicherten
 or Behandelnder Arzt:, a title, the address under "Herrn" in a doctor's
 letter, the letter's subject, words like "Ihren Patienten" before it in a
 sentence, a date of birth after it, a table's header above it, the
-closing above a signature, which makes the one who signs a doctor, and a
-column of doctors' names, as a practice's letterhead lists them, which
-makes a name in it a doctor's though it has no "Dr. med.". Once a
+closing above a signature, which makes the one who signs a doctor, and,
+in a doctor's letter, a column of doctors' names, as a practice's
+letterhead lists them, which makes a name between two of them a doctor's
+though it has no "Dr. med.". Once a
 name is known as the patient's, every place it appears is, in either
 order, with an initial, or with a letter misread. A title, like Herr or
 Dr. med., is never covered with a name, nor on its own where it comes

@@ -784,8 +784,9 @@ enum DocumentSense {
 /// Whose names are covered (`Finder.resolved`): everyone's, with Names,
 /// Patient names and Other people all on; else each one's own people, the
 /// patients', everyone else's whose role the words round the name tell,
-/// and, with Names, the names whose role is not clear. Without Names, such
-/// a name is covered anyway and marked for the owner to check.
+/// and, with Names, the names whose role is not clear, or is only someone
+/// else's, as a letter's signature. Without Names, a name whose role is
+/// not clear is covered anyway and marked for the owner to check.
 struct NameScope: Equatable, Sendable {
     /// Nil: everyone.
     var roles: Set<PersonRole>?
@@ -798,7 +799,8 @@ struct NameScope: Equatable, Sendable {
 
     func decide(_ role: NameRole) -> Decision {
         guard let roles else { return .cover }
-        guard role.isSure else { return unclear ? .cover : .coverAndCheck }
+        if unclear, !role.isSure || role.role == .other { return .cover }
+        guard role.isSure else { return .coverAndCheck }
         return roles.contains(role.role) ? .cover : .leave
     }
 }

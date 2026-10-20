@@ -113,10 +113,9 @@ final class CoverFilesModel: ObservableObject {
     init() {
         let defaults = UserDefaults.standard
         var saved = defaults.stringArray(forKey: Self.kindsKey).map { Set($0.compactMap(PrivateDetail.init(rawValue:))) }
-        // Names alone, as Cover Files started with, covered everyone's names then.
-        if !defaults.bool(forKey: Self.partedKey), let names = saved, names.contains(.names),
-           names.isDisjoint(with: PrivateDetail.people) {
-            let parted = names.union(PrivateDetail.allNames)
+        // Names covered everyone's names when this was kept, as Cover Files started with.
+        if !defaults.bool(forKey: Self.partedKey), let kinds = saved, PrivateDetail.partingAll(kinds) != kinds {
+            let parted = PrivateDetail.partingAll(kinds)
             defaults.set(parted.map(\.rawValue).sorted(), forKey: Self.kindsKey)
             saved = parted
         }
@@ -683,11 +682,14 @@ private struct CoverFilesInspector: View {
                 ForEach(PrivateDetail.Group.allCases, id: \.self) { group in
                     Section {
                         ForEach(group.kinds, id: \.self) { kind in
-                            Toggle(kind.title, isOn: Binding(
+                            Toggle(isOn: Binding(
                                 get: { model.chosen.contains(kind) },
                                 set: { on in
                                     if on { model.chosen.insert(kind) } else { model.chosen.remove(kind) }
-                                }))
+                                })) {
+                                Text(kind.title)
+                                if let subtitle = kind.subtitle { Text(subtitle) }
+                            }
                         }
                     } header: {
                         Text(group.title)

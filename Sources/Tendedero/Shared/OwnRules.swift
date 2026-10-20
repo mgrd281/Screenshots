@@ -192,14 +192,19 @@ enum OwnRules {
     static func adoptName(in defaults: UserDefaults = .standard) -> Bool {
         let done = "ownNameAdopted"
         guard !defaults.bool(forKey: done) else { return false }
-        defaults.set(true, forKey: done)
-        guard let adopted = adopting(load(from: defaults), details: OwnDetailStore.details) else { return false }
-        // The word stays until the keychain holds the name, so it is never lost.
-        guard OwnDetailStore.keep(adopted.details) else {
-            defaults.set(false, forKey: done)
+        guard let adopted = adopting(load(from: defaults), details: OwnDetailStore.details) else {
+            defaults.set(true, forKey: done)
             return false
         }
+        // The word stays until the keychain holds the name, so it is never
+        // lost; without the keychain, as before the iPhone is first
+        // unlocked, it moves another time.
+        guard OwnDetailStore.keep(adopted.details, strictly: true) else { return false }
         save(adopted.rules, to: defaults)
+        defaults.set(true, forKey: done)
+        // What shows the rules, like Settings on the Mac, reads them again;
+        // a moment later, as this may run while the choice is first read.
+        DispatchQueue.main.async { NotificationCenter.default.post(name: changed, object: nil) }
         return true
     }
 
@@ -228,11 +233,12 @@ enum OwnDetailStore {
     }
 
     /// Keeps the details, as setting them does; false when the keychain
-    /// did not take them, as before the iPhone is first unlocked, and they
-    /// are only in memory until Snapfly quits.
+    /// did not take them, as before the iPhone is first unlocked. They are
+    /// then in memory until Snapfly quits, so they cover what they may, or,
+    /// kept strictly, not at all.
     @discardableResult
-    static func keep(_ details: [OwnRule]) -> Bool {
-        kept.change(to: details.filter(\.kind.isDetail), current: read) { write($0) }
+    static func keep(_ details: [OwnRule], strictly: Bool = false) -> Bool {
+        kept.change(to: details.filter(\.kind.isDetail), current: read, strictly: strictly) { write($0) }
     }
 
     /// What was read, and a lock round it.
@@ -250,14 +256,16 @@ enum OwnDetailStore {
         }
 
         /// Written only when it changed, so typing a rule leaves the keychain
-        /// alone; kept in memory either way, so they cover what they may.
+        /// alone; kept in memory once written, or, not strictly, either way.
         /// False when the keychain did not take them.
-        func change(to new: [OwnRule], current read: () -> [OwnRule], write: ([OwnRule]) -> Bool) -> Bool {
+        func change(to new: [OwnRule], current read: () -> [OwnRule], strictly: Bool,
+                    write: ([OwnRule]) -> Bool) -> Bool {
             lock.lock()
             defer { lock.unlock() }
             guard new != (details ?? read()) else { return true }
-            details = new
-            return write(new)
+            let written = write(new)
+            if written || !strictly { details = new }
+            return written
         }
     }
 

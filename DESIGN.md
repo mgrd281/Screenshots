@@ -1341,7 +1341,8 @@ apps.
   and recipients), each a switch with its subtitle, each its own: turning
   one never turns another, and each covers its own people. All three, on
   at first, cover everyone's names. Cover Files and Hide Part list the
-  kinds the same way; Cover Files' Names Only is all three. The section's
+  kinds the same way, each switch with its subtitle; Cover Files' Names
+  Only is all three. The section's
   footer says each covers its own people, told by the words round each
   name, that the three together cover everyone's names, and that your own
   name, under Your Details, is always covered. A change

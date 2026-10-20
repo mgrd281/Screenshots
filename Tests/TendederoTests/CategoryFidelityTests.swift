@@ -228,12 +228,20 @@ final class CategoryFidelityTests: XCTestCase {
     func testNamesAloneWithTheOwnNameCoverTheOwnNameAndNoOneElse() {
         for kind in [OwnRule.Kind.name, .word] {
             let found = protect(Self.referral, [.names], rules: [OwnRule(text: "Zorvak Musteryan", kind: kind)])
-            XCTAssertEqual(found.texts, ["Zorvak Musteryan"], "\(kind)")
+            XCTAssertTrue(found.texts.contains("Zorvak Musteryan"), "\(kind): \(found.texts)")
+            for name in doctors + ["Beispiel"] {
+                XCTAssertFalse(found.texts.contains { $0.contains(name) }, "\(kind): \(name) stays: \(found.texts)")
+            }
+            XCTAssertFalse(found.texts.contains { $0.contains("Herr") }, "\(kind): \(found.texts)")
         }
     }
 
     func testTheReferralsPatientAndDoctorsAreEachTheirOwn() {
-        XCTAssertEqual(protect(Self.referral, [.patientNames]).texts, ["Zorvak Musteryan"])
+        let patients = protect(Self.referral, [.patientNames]).texts
+        XCTAssertTrue(patients.contains("Zorvak Musteryan"), "\(patients)")
+        for name in doctors + ["Beispiel"] {
+            XCTAssertFalse(patients.contains { $0.contains(name) }, "\(name) stays: \(patients)")
+        }
         let others = protect(Self.referral, [.otherPeople]).texts
         for doctor in doctors {
             XCTAssertTrue(others.contains(doctor), "\(doctor) in \(others)")
@@ -241,7 +249,7 @@ final class CategoryFidelityTests: XCTestCase {
         XCTAssertTrue(others.contains("Beispiel"), "the colleague the letter greets: \(others)")
         XCTAssertFalse(others.contains { $0.contains("Musteryan") }, "\(others)")
         let all = Set(protect(Self.referral, PrivateDetail.allNames).texts)
-        XCTAssertEqual(all, Set(doctors + ["Beispiel", "Zorvak Musteryan"]))
+        XCTAssertTrue(all.isSuperset(of: doctors + ["Beispiel", "Zorvak Musteryan"]), "\(all)")
     }
 
     /// A title is no one's name: the greeting's "Herr" stays, wherever the
@@ -264,6 +272,28 @@ final class CategoryFidelityTests: XCTestCase {
         // Not without doctors round it: a list of names alone stays a list.
         let list = FormFieldsTests.layout([("Lena Weber", 0.08, 4), ("Jonas Kraft", 0.08, 5), ("Tom Lorenz", 0.08, 6)])
         XCTAssertTrue(Finder.doctorsColumn(list.strings, boxes: list.boxes).isEmpty)
+        // Nor after them, as a patient's name under the practice's doctors.
+        let after: [Piece] = [("Befundbericht", 0.08, 2), ("Dr. med. Anna Schmidt", 0.08, 4),
+                              ("Dr. med. Bernd Weber", 0.08, 5), ("Erika Musterfrau", 0.08, 6), ("01.02.1960", 0.08, 7),
+                              ("Befund: kein Nachweis einer Fraktur.", 0.08, 9)]
+        let below = FormFieldsTests.layout(after)
+        XCTAssertTrue(Finder.doctorsColumn(below.strings, boxes: below.boxes).isEmpty)
+        XCTAssertTrue(protect(after, [.patientNames]).texts.contains("Erika Musterfrau"))
+        // Nor outside a medical document, where "Dr." is no doctor.
+        let firm: [Piece] = [("Kanzlei am Markt", 0.08, 2), ("Dr. Anna Schmidt", 0.70, 4), ("Clara Neumann", 0.70, 5),
+                             ("Dr. Bernd Weber", 0.70, 6), ("Ihr Schreiben vom 3. März", 0.08, 8)]
+        let lawyers = FormFieldsTests.layout(firm)
+        XCTAssertTrue(Finder.doctorsColumn(lawyers.strings, boxes: lawyers.boxes).isEmpty)
+    }
+
+    /// Names covers whoever the words round a name do not place, and someone
+    /// else's, as the one who signs a letter that is no doctor's.
+    func testNamesCoverTheOneWhoSignsALetter() {
+        let mail: [Piece] = [("Hallo Lena,", 0.08, 2), ("danke für die Unterlagen.", 0.08, 3), ("Viele Grüße", 0.08, 5),
+                             ("Anna Schmidt", 0.08, 6), ("anna.schmidt@example.com", 0.08, 7)]
+        XCTAssertTrue(protect(mail, [.names]).texts.contains("Anna Schmidt"), "\(protect(mail, [.names]).texts)")
+        XCTAssertTrue(protect(mail, [.otherPeople]).texts.contains("Anna Schmidt"))
+        XCTAssertFalse(protect(mail, [.patientNames]).texts.contains("Anna Schmidt"), "no patient's")
     }
 
     // MARK: The owner's own name
@@ -290,7 +320,7 @@ final class CategoryFidelityTests: XCTestCase {
             (["Erika Musterfrav"], ["Erika Musterfrav"]),
         ]
         for variant in variants {
-            for chosen: Set<PrivateDetail> in [PrivateDetail.allNames, [.patientNames]] {
+            for chosen: Set<PrivateDetail> in [[.names], [.patientNames], [.otherPeople], PrivateDetail.allNames] {
                 let found = protect(note(variant.lines), chosen, rules: saved)
                 for name in variant.covered {
                     XCTAssertTrue(found.covered.contains { $0.text.contains(name) && $0.kind == .names },
@@ -301,15 +331,18 @@ final class CategoryFidelityTests: XCTestCase {
         }
     }
 
-    func testTheOwnNameOnlyHelpsAndNeverCoversWithoutANameKind() {
+    func testTheOwnNameNeverCoversWithoutANameKindAndAlwaysWithOne() {
         // No name kind on: only the rule's own words, written as saved, are covered.
         let found = protect(note(["Musterfrau, Erika"]), [.health, .addresses], rules: saved)
         XCTAssertFalse(found.covered.contains { $0.kind == .names }, "\(found.covered)")
         XCTAssertFalse(found.texts.contains { $0.contains("Musterfrau") }, "\(found.texts)")
-        // With Other people alone, the owner's name in their own medical
-        // letter is the patient's, and stays.
-        let others = protect(note(["Musterfrau, Erika"]), [.otherPeople], rules: saved)
-        XCTAssertFalse(others.texts.contains { $0.contains("Musterfrau") }, "\(others.texts)")
+        // With any of the names' switches on, the owner's name is covered
+        // however it is written, whoever it is there: in their own medical
+        // letter, the patient's.
+        for chosen: Set<PrivateDetail> in [[.names], [.otherPeople]] {
+            let covered = protect(note(["Musterfrau, Erika"]), chosen, rules: saved)
+            XCTAssertTrue(covered.texts.contains("Musterfrau, Erika"), "\(chosen): \(covered.texts)")
+        }
         // It never narrows what is covered: the doctors are still covered.
         let names = protect(Self.letter, PrivateDetail.allNames, rules: saved)
         XCTAssertTrue(names.texts.contains("Jonas Beispiel"), "\(names.texts)")

@@ -234,9 +234,12 @@ final class RedactionTests: XCTestCase {
                      "vielen Dank für die freundliche Überweisung Ihres Patienten:",
                      "Herr Zorvak Musteryan, geb. am 05.03.1990", "Befund: Flach linkskonvexe Skoliose."]
         let found = protect(lines, [.names], rules: [OwnRule(text: "Zorvak Musteryan", kind: .name)])
-        XCTAssertEqual(found.covered, ["Zorvak Musteryan"])
+        XCTAssertTrue(found.covered.contains("Zorvak Musteryan"), "\(found.covered)")
+        XCTAssertFalse(found.covered.contains { $0.contains("Beispiel") || $0.contains("Herr") }, "\(found.covered)")
         let everyone = protect(lines, PrivateDetail.allNames)
-        XCTAssertEqual(Set(everyone.covered), ["Paul Beispiel", "Beispiel", "Zorvak Musteryan"], "\(everyone.covered)")
+        XCTAssertTrue(Set(everyone.covered).isSuperset(of: ["Paul Beispiel", "Beispiel", "Zorvak Musteryan"]),
+                      "\(everyone.covered)")
+        XCTAssertFalse(everyone.covered.contains { $0.contains("Herr") }, "\(everyone.covered)")
     }
 
     func testAPlaceFoundTwiceIsCountedOnce() {

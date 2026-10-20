@@ -159,6 +159,13 @@ enum PrivateDetail: String, CaseIterable {
         chosen.isSuperset(of: [.names, .patientNames]) ? chosen.union([.otherPeople]) : chosen
     }
 
+    /// The same for a list of kinds kept without its switches shown apart,
+    /// as Cover Files kept what it covered last: with Names, which was
+    /// everyone's names, both parts too.
+    static func partingAll(_ chosen: Set<PrivateDetail>) -> Set<PrivateDetail> {
+        chosen.contains(.names) ? chosen.union(allNames) : chosen
+    }
+
     /// Where whose names were kept, before patients and other people were
     /// kinds of their own.
     static let rolesKey = "nameRoles"
@@ -2509,6 +2516,8 @@ enum Finder {
         let document = DocumentSense.kind(of: strings)
         var kept: [Hit] = []
         var named: [Hit] = []
+        // The places of the owner's own name, by their place in `named`.
+        var mine = Set<Int>()
         for var hit in hits {
             guard let kind = hit.kind else { kept.append(hit); continue }
             guard chosen.contains(kind) else { continue }
@@ -2529,7 +2538,8 @@ enum Finder {
             }
             // The owner's own name is a name for sure, never to check for
             // that; where nothing says whose it is, it is whose the
-            // document is, as the patient's in a medical letter.
+            // document is, as the patient's in a medical letter. Whoever it
+            // is there, it is covered with any of the names' switches on.
             let words = (range.map { String(line[$0]) } ?? line).split(whereSeparator: { !$0.isLetter })
                 .map { fold(String($0)) }.filter { $0.count >= 2 }
             if !own.isEmpty, !words.isEmpty, words.allSatisfy({ isKnown($0, in: own, own: own) }) {
@@ -2537,6 +2547,7 @@ enum Finder {
                 if hit.role?.isSure != true {
                     hit.role = NameRole(role: DocumentSense.subject(in: document), confidence: 0.7, reason: "own name")
                 }
+                mine.insert(named.count)
             }
             named.append(hit)
         }
@@ -2556,9 +2567,14 @@ enum Finder {
         func role(of word: String) -> NameRole? {
             sure[word] ?? (word.count >= 6 ? sure.first { differsByOne($0.key, word) }?.value : nil)
         }
-        for var hit in named {
+        for (index, found) in named.enumerated() {
+            var hit = found
             if hit.role?.isSure != true, let known = words(of: hit).lazy.compactMap(role(of:)).first {
                 hit.role = known
+            }
+            if mine.contains(index) {
+                kept.append(hit)
+                continue
             }
             switch scope.decide(hit.role ?? .unknown) {
             case .cover:
@@ -2575,12 +2591,14 @@ enum Finder {
 
     /// The lines of a column of doctors, as a practice's letterhead lists
     /// them, that name someone with nothing round the name to say whose it
-    /// is, like a doctor written without "Dr. med.": a line shaped like a
-    /// name, between two doctors' names in its column, or after two, or
-    /// before two. Each is read as a doctor's.
+    /// is, like a doctor written without "Dr. med.": in a medical document,
+    /// a line shaped like a name right between two doctors' names in its
+    /// column. Each is read as a doctor's. A name after the doctors, as a
+    /// patient's may be, is not.
     static func doctorsColumn(_ strings: [String], boxes: [CGRect]) -> Set<Int> {
+        guard boxes.count == strings.count, DocumentSense.kind(of: strings) == .medical else { return [] }
         let doctors = Set(strings.indices.filter { DocumentSense.namesADoctor(strings[$0]) })
-        guard doctors.count >= 2, boxes.count == strings.count else { return [] }
+        guard doctors.count >= 2 else { return [] }
         // Each line's neighbours in its column, the nearest above and below.
         var below = [Int?](repeating: nil, count: strings.count)
         var above = [Int?](repeating: nil, count: strings.count)
@@ -2590,12 +2608,10 @@ enum Finder {
             if let over = above[under], boxes[over].minY <= boxes[i].minY { continue }
             above[under] = i
         }
-        func doctor(_ line: Int?) -> Bool { line.map(doctors.contains) ?? false }
         return Set(strings.indices.filter { i in
-            guard !doctors.contains(i), DocumentSense.nameWords(strings[i]) != nil else { return false }
-            let up = above[i], down = below[i]
-            return doctor(up) && doctor(down) || doctor(up) && doctor(up.flatMap { above[$0] })
-                || doctor(down) && doctor(down.flatMap { below[$0] })
+            guard !doctors.contains(i), let up = above[i], let down = below[i],
+                  doctors.contains(up), doctors.contains(down) else { return false }
+            return DocumentSense.nameWords(strings[i]) != nil
         })
     }
 

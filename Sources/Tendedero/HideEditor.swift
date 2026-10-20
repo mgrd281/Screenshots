@@ -799,12 +799,15 @@ private struct HideEditorView: View {
         ForEach(PrivateDetail.Group.allCases, id: \.self) { group in
             Section(group.title) {
                 ForEach(group.kinds, id: \.self) { detail in
-                    Toggle(detail.title, isOn: Binding(
+                    Toggle(isOn: Binding(
                         get: { model.chosen.contains(detail) },
                         set: { on in
                             if on { model.chosen.insert(detail) } else { model.chosen.remove(detail) }
                         }
-                    ))
+                    )) {
+                        Text(detail.title)
+                        if let subtitle = detail.subtitle { Text(subtitle) }
+                    }
                 }
             }
         }
