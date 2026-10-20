@@ -274,7 +274,7 @@ enum Finder {
     /// is covered as; nil for a rule of the owner's own.
     struct Hit {
         let line: Int
-        let range: NSRange?
+        var range: NSRange?
         var kind: PrivateDetail?
         /// Whose name it is, when it is a name and that is known.
         var role: NameRole? = nil
@@ -518,7 +518,8 @@ enum Finder {
         let (chosen, scope) = resolved(chosen)
         guard !chosen.isEmpty || !rules.isEmpty || spare else { return Analysis() }
         let codes = Timing.measure("codes") { Self.codes(in: image, chosen) }
-        let found = places(in: image, chosen, rules: rules, printed: codes.compactMap(\.payload),
+        let found = places(in: image, chosen, rules: rules,
+                           printed: codes.compactMap { code in code.payload.map { ($0, code.kind) } },
                            intelligence: intelligence, scope: scope, spare: spare)
         var areas = found.areas.map { box in
             Area(rect: withMargin(box.rect, in: image, room: box.room), kind: box.kind, text: box.text, check: box.check,
@@ -533,7 +534,18 @@ enum Finder {
         let spared = found.spared.map { box in
             Area(rect: withMargin(box.rect, in: image, room: box.room), kind: box.kind, text: box.text, role: box.role)
         }
-        return Analysis(areas: areas, possible: possible, spared: spared)
+        // The last word is Settings', whatever found a place.
+        return Analysis(areas: areas.filter { allowed($0.kind, chosen) },
+                        possible: possible.filter { allowed($0.kind, chosen) }, spared: spared)
+    }
+
+    /// Whether a place may be covered, or offered to be: its kind is on, or
+    /// it is one of the owner's own rules. Applied after every way of
+    /// finding, Apple Intelligence's too, so nothing else decides what is
+    /// covered. `chosen` is as `resolved` gives it: Patient names and Other
+    /// people come to Names, their people told apart by `decided`.
+    static func allowed(_ kind: PrivateDetail?, _ chosen: Set<PrivateDetail>) -> Bool {
+        kind.map(chosen.contains) ?? true
     }
 
     /// What the kinds chosen come to. Names covers everyone's names;
@@ -667,6 +679,7 @@ enum Finder {
         }
         var found: [Area] = []
         let missed = keepingLastDigits(hits(in: lines, chosen, rules: rules, scope: scope), in: lines)
+            .filter { allowed($0.kind, chosen) }
         let boxes = lines.map(\.box), coveredLines = Set(missed.map(\.line))
         for hit in missed {
             guard let place = Self.area(of: hit, in: lines), !underCover(place.rect) else { continue }
@@ -860,24 +873,32 @@ enum Finder {
     static func boxes(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all,
                       printed: [String] = [], intelligence: Bool = true) -> [Area] {
         let (chosen, scope) = resolved(chosen)
-        return places(in: image, chosen, rules: rules, printed: printed, intelligence: intelligence, scope: scope).areas
+        return places(in: image, chosen, rules: rules, printed: printed.map { ($0, .barcodes) },
+                      intelligence: intelligence, scope: scope).areas
     }
 
     /// The places, without their margins, and those that may be private,
     /// for what is chosen as `resolved` gives it.
-    private static func places(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule], printed: [String],
+    /// - Parameter printed: what each covered code says, with the kind the
+    ///   code is covered as, which its printed contents are covered as too.
+    private static func places(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule],
+                               printed: [(payload: String, kind: PrivateDetail)],
                                intelligence: Bool, scope: NameScope, spare: Bool = false) -> Analysis {
         // Faces and codes are not read as text: with nothing else chosen, no reading.
-        let patterns = printed.compactMap(printedPattern(ofCode:))
+        let patterns = printed.compactMap { code in printedPattern(ofCode: code.payload).map { ($0, code.kind) } }
         guard !chosen.subtracting([.faces, .barcodes]).isEmpty || rules.contains(where: { !$0.isBlank })
             || !patterns.isEmpty || spare else { return Analysis() }
         let lines = Timing.measure("read") { read(image) }
         let printedHits = patterns.isEmpty ? [] : Text(lines).hits(forPatterns: patterns)
         var found = Timing.measure("find") { findings(in: lines, chosen, rules: rules, scope: scope) }
         if intelligence {
+            let strings = lines.map(\.string)
             let more = Timing.measure("intelligence") { intelligentHits(in: lines, chosen) }
-            found.hits += decided(isolated(more, by: form(of: lines), in: lines.map(\.string)), in: lines.map(\.string),
-                                  chosen, scope: scope)
+            found.hits += decided(isolated(more.hits, by: form(of: lines), in: strings), in: strings, chosen,
+                                  scope: scope, own: ownWords(in: rules))
+            // What it named that only may be what it says is offered, not covered.
+            let taken = Set(found.hits.map(\.line))
+            found.possible += isolated(more.possible, by: form(of: lines), in: strings).filter { !taken.contains($0.line) }
         }
         let all = keepingLastDigits(found.hits, in: lines) + printedHits
         let covered = Set(all.map(\.line)), boxes = lines.map(\.box)
@@ -917,21 +938,172 @@ enum Finder {
     }
 
     /// What Apple Intelligence names in the lines, of the kinds chosen, where
-    /// it is on: never on a guess, only words that are in their line.
+    /// it is on, as `vetted` keeps it: never on a guess, only words that are
+    /// in their line and are what it says they are.
     /// - Parameter waits: whether to wait for an answer not yet given; else
     ///   only one given before counts.
     private static func intelligentHits(in lines: [TextLine], _ chosen: Set<PrivateDetail>,
-                                        waits: Bool = true) -> [Hit] {
+                                        waits: Bool = true) -> Findings {
         guard !chosen.isDisjoint(with: intelligentKinds.values), asksAssistant || usesIntelligence && intelligenceAvailable,
-              let pieces = intelligentPieces(for: lines.map(\.string), kinds: chosen, waits: waits) else { return [] }
-        return pieces.compactMap { piece -> Hit? in
+              let pieces = intelligentPieces(for: lines.map(\.string), kinds: chosen, waits: waits) else { return Findings() }
+        return vetted(pieces, in: lines.map(\.string), chosen)
+    }
+
+    /// Apple Intelligence's answer, or the assistant's, read again by the
+    /// rules, so a model never decides alone what is covered: each piece is
+    /// kept only as a kind that is on, and only where its words fit that
+    /// kind (`fit`), widened to the whole of it (`wholeEntity`). A street,
+    /// a date or a segment of the spine it calls a name is no name. What
+    /// only may fit is offered, for the owner to check. Pure text, so it
+    /// can be checked without a picture or a model.
+    static func vetted(_ pieces: [IntelligentPiece], in strings: [String], _ chosen: Set<PrivateDetail>) -> Findings {
+        let medical = DocumentSense.kind(of: strings) == .medical
+        var found = Findings()
+        for piece in pieces where piece.line < strings.count {
             // A company it took for a person is a company, covered only as one.
             let kind = piece.kind == .names && DocumentSense.isOrganization(piece.words) ? .organizations : piece.kind
-            guard chosen.contains(kind), piece.line < lines.count else { return nil }
-            let line = lines[piece.line].string
-            guard let found = line.range(of: piece.words, options: sameWords) else { return nil }
-            return Hit(line: piece.line, range: NSRange(found, in: line), kind: kind)
+            let line = strings[piece.line]
+            guard chosen.contains(kind), let words = line.range(of: piece.words, options: sameWords) else { continue }
+            let range = wholeEntity(words, kind: kind, in: line, widely: true)
+            let hit = Hit(line: piece.line, range: NSRange(range, in: line), kind: kind)
+            let above = piece.line > 0 ? strings[piece.line - 1] : ""
+            switch fit(kind, range, in: line, after: above, medical: medical) {
+            case .sure: found.hits.append(hit)
+            case .unsure:
+                var offered = hit
+                offered.check = true
+                found.possible.append(offered)
+            case .no: continue
+            }
         }
+        return found
+    }
+
+    /// How well words fit the kind they are said to be.
+    enum Fit: Equatable { case sure, unsure, no }
+
+    /// Whether the words at `range` in a line are what their kind says, by
+    /// their shape and what stands round them: a name has a name's words and
+    /// no digits, and is no street, town or medical term; a date of birth
+    /// is a date; a phone number, a number. Deterministic, so what a model
+    /// says is checked the same way every time.
+    /// - Parameter above: the line before, where a term this line ends may
+    ///   start, as "Morbus" before "Scheuermann".
+    static func fit(_ kind: PrivateDetail, _ range: Range<String.Index>, in line: String, after above: String = "",
+                    medical: Bool) -> Fit {
+        let text = String(line[range]).trimmingCharacters(in: .whitespaces)
+        guard !text.isEmpty else { return .no }
+        let digits = text.filter(\.isNumber).count
+        let isDate = text.range(of: #"\d{1,2}\s?[./-]\s?\d{1,2}\s?[./-]\s?\d{2,4}|\d{4}-\d{2}-\d{2}"#,
+                                options: .regularExpression) != nil
+        // A segment of the spine or a disease is no one's name or number,
+        // the line before included: "… eines Morbus" / "Scheuermann in …".
+        let lastAbove = above.split(whereSeparator: { $0.isWhitespace }).last.map(String.init) ?? ""
+        let joined = lastAbove + " " + line
+        let shift = joined.index(joined.startIndex, offsetBy: lastAbove.count + 1)
+        let inJoined = joined.index(shift, offsetBy: line.distance(from: line.startIndex, to: range.lowerBound))
+            ..< joined.index(shift, offsetBy: line.distance(from: line.startIndex, to: range.upperBound))
+        let inMedical = DocumentSense.medicalRanges(in: joined, medical: medical).contains { $0.overlaps(inJoined) }
+        if inMedical, kind != .health { return .no }
+        switch kind {
+        case .names, .patientNames, .otherPeople:
+            return nameFit(range, in: line)
+        case .addresses:
+            let whole = line.trimmingCharacters(in: .whitespaces)
+            if isStreetLine(whole) || isTownLine(whole) { return .sure }
+            return digits > 0 && text.contains(where: \.isLetter) && !isDate ? .sure : .no
+        case .birthDates, .dates:
+            return isDate || text.range(of: #"\d{1,2}\.?\s\p{L}{3,}\.?\s\d{4}"#, options: .regularExpression) != nil
+                ? .sure : .no
+        case .emails:
+            return text.range(of: emailPattern, options: [.regularExpression, .caseInsensitive]) != nil ? .sure : .no
+        case .phones:
+            return digits >= 6 && text.allSatisfy({ $0.isNumber || " +()/.-–".contains($0) }) && !isDate ? .sure : .no
+        case .bank:
+            let compact = text.replacingOccurrences(of: " ", with: "")
+            let iban = compact.range(of: #"^[A-Z]{2}\d{2}[A-Z0-9]{8,30}$"#, options: .regularExpression) != nil
+            let bic = compact.range(of: #"^[A-Z]{6}[A-Z0-9]{2}(?:[A-Z0-9]{3})?$"#, options: .regularExpression) != nil
+            return iban || bic || digits >= 8 && !isDate ? .sure : .no
+        case .ids, .codes, .orders, .tracking:
+            let shaped = text.count >= 4 && !text.contains(" ") || text.filter({ $0 != " " }).count >= 6
+            return digits > 0 && shaped && !isDate ? .sure : .no
+        case .keys:
+            return text.count >= 16 && !text.contains(" ") ? .sure : .no
+        case .usernames:
+            return (2...40).contains(text.count) && !text.contains(" ") ? .sure : .no
+        case .health:
+            return digits == text.filter({ !$0.isWhitespace && !$0.isPunctuation }).count || isDate ? .no : .sure
+        case .ipAddresses, .amounts, .links:
+            return digits > 0 || kind == .links && text.contains(".") ? .sure : .no
+        case .organizations:
+            return DocumentSense.isOrganization(text) ? .sure : .unsure
+        case .faces, .barcodes:
+            return .no
+        }
+    }
+
+    /// How well a piece fits a person's name: its words are a name's, with
+    /// no digits and no company; not a letter's street or town; not the
+    /// place before a letter's date, "Hamburg, den 12.03.2026"; not a place
+    /// after "in", "aus" or "nach". One word alone, or words in capitals,
+    /// may be a heading as well as a name: offered, not covered.
+    private static func nameFit(_ range: Range<String.Index>, in line: String) -> Fit {
+        let text = String(line[range])
+        let words = text.split(whereSeparator: { $0.isWhitespace }).map(String.init)
+        guard (1...5).contains(words.count), !text.contains(where: \.isNumber), !DocumentSense.isOrganization(text),
+              words.allSatisfy({ word in
+                  let bare = word.trimmingCharacters(in: CharacterSet(charactersIn: ",.;:"))
+                  return DocumentSense.isNameWord(bare) || DocumentSense.isParticle(bare)
+              }) else { return .no }
+        let whole = line.trimmingCharacters(in: .whitespaces)
+        if isStreetLine(whole) || isTownLine(whole) { return .no }
+        // "Hamburg, den 12.03.2026": the place a letter is dated in.
+        if line.range(of: #"^\s*\p{Lu}[\p{L}\- ]*,\s*(?:den\s+)?\d{1,2}\."#, options: .regularExpression)
+            .map({ $0.overlaps(range) }) == true { return .no }
+        // "in Hamburg", "aus Berlin": a place, not a person.
+        let before = line[..<range.lowerBound].split(whereSeparator: { $0.isWhitespace }).last.map { $0.lowercased() }
+        if let before, ["in", "aus", "nach"].contains(before) { return .no }
+        let capitals = text.contains(where: \.isLetter) && text == text.uppercased()
+        return words.count >= 2 && !capitals ? .sure : .unsure
+    }
+
+    /// The whole of an entity part of which was found: whole words and
+    /// numbers, never part of one; for an address, the street with its
+    /// number and the postcode with its town on that line. `widely`, for
+    /// what a model named: a name's whole run of names, and a number's or an
+    /// email's whole match of its kind's pattern.
+    static func wholeEntity(_ range: Range<String.Index>, kind: PrivateDetail?, in line: String,
+                            widely: Bool = false) -> Range<String.Index> {
+        var lower = range.lowerBound, upper = range.upperBound
+        func joins(_ c: Character) -> Bool { c.isLetter || c.isNumber }
+        while lower > line.startIndex, joins(line[line.index(before: lower)]), lower < upper, joins(line[lower]) {
+            lower = line.index(before: lower)
+        }
+        while upper < line.endIndex, upper > lower, joins(line[line.index(before: upper)]), joins(line[upper]) {
+            upper = line.index(after: upper)
+        }
+        var whole = lower..<upper
+        func widen(by pattern: String, _ options: NSRegularExpression.Options = []) {
+            guard let regex = try? NSRegularExpression(pattern: pattern, options: options) else { return }
+            for match in regex.matches(in: line, range: NSRange(line.startIndex..., in: line)) {
+                guard let found = Range(match.range, in: line), found.overlaps(whole) else { continue }
+                whole = min(found.lowerBound, whole.lowerBound)..<max(found.upperBound, whole.upperBound)
+            }
+        }
+        if kind == .addresses {
+            widen(by: #"\p{Lu}[\p{L}'’.\-]*(?:\s[\p{L}'’.\-]+){0,4}\s\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?\b"#)
+            widen(by: #"(?:[A-Z]{1,2}\s?-\s?)?\b\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:\s(?:am|an der|im|in der|bei|ob der|vor der)\s\p{Lu}[\p{L}'’.\-]+)?"#)
+        }
+        guard widely, let kind else { return whole }
+        if kind == .names {
+            whole = DocumentSense.nameSpan(around: whole, in: line)
+        } else if [.bank, .ids, .orders, .tracking, .phones, .emails, .codes, .keys].contains(kind) {
+            for pattern in patternRanges(in: line, [kind]) {
+                guard let found = Range(pattern, in: line), found.overlaps(whole) else { continue }
+                whole = min(found.lowerBound, whole.lowerBound)..<max(found.upperBound, whole.upperBound)
+            }
+        }
+        return whole
     }
 
     /// What a screenshot says, a line per row, with the chosen details and
@@ -987,9 +1159,10 @@ enum Finder {
         let (chosen, scope) = resolved(chosen)
         // What Apple Intelligence found when the photo was read, never waited for here.
         let found = hits(in: lines, chosen, rules: rules, scope: scope)
-            + decided(isolated(intelligentHits(in: lines, chosen, waits: false), by: form(of: lines),
-                               in: lines.map(\.string)), in: lines.map(\.string), chosen, scope: scope)
-        for hit in keepingLastDigits(found, in: lines) {
+            + decided(isolated(intelligentHits(in: lines, chosen, waits: false).hits, by: form(of: lines),
+                               in: lines.map(\.string)), in: lines.map(\.string), chosen, scope: scope,
+                      own: ownWords(in: rules))
+        for hit in keepingLastDigits(found, in: lines) where allowed(hit.kind, chosen) {
             let length = lines[hit.line].string.utf16.count
             // The strongest protection leaves out whole lines, as it covers them.
             let range = (strongest ? nil : hit.range) ?? NSRange(location: 0, length: length)
@@ -1068,6 +1241,7 @@ enum Finder {
         let rules = rules.filter { !$0.isBlank }
         guard !strings.isEmpty, !chosen.isEmpty || !rules.isEmpty else { return Findings() }
         let text = Text(strings, boxes: boxes)
+        let mine = ownWords(in: rules)
         var learned = Set<String>()
         var found = patterns(in: text, chosen)
         found += labelled(strings, boxes: boxes, part: part, chosen, learned: &learned)
@@ -1083,7 +1257,7 @@ enum Finder {
             if value.confidence == .low { possible.append(hit) } else { found.append(hit) }
         }
         if chosen.contains(.names) {
-            let people = names(in: text, learned: learned)
+            let people = names(in: text, learned: learned, own: mine)
             found += people.hits
             possible += people.possible
         }
@@ -1092,7 +1266,7 @@ enum Finder {
         // goes with a name, like the address under it, is theirs.
         var people = found.filter { $0.kind == .names }
         if !chosen.contains(.names), !chosen.isDisjoint(with: [.addresses, .birthDates]) {
-            people += names(in: text, learned: learned).hits
+            people += names(in: text, learned: learned, own: mine).hits
             people += form.values.filter { $0.entity == .personName }.map { value in
                 Hit(line: value.line, range: NSRange(value.range, in: strings[value.line]), kind: .names,
                     role: value.role.map { NameRole(role: $0, confidence: 0.9, reason: "form") })
@@ -1119,9 +1293,17 @@ enum Finder {
             hit.kind == .dates && born.contains { $0.line == hit.line && overlap($0.range, hit.range) }
                 || hit.kind == .orders && cases.contains { $0.line == hit.line && overlap($0.range, hit.range) }
         }
-        let kept = merged(decided(isolated(found, by: form, in: strings), in: strings, chosen, scope: scope))
+        // Each place whole: never part of a word or a number, nor a street without its number.
+        found = found.map { hit in
+            let line = strings[hit.line]
+            guard hit.kind != nil, let range = hit.range.flatMap({ Range($0, in: line) }) else { return hit }
+            var whole = hit
+            whole.range = NSRange(wholeEntity(range, kind: hit.kind, in: line), in: line)
+            return whole
+        }
+        let kept = merged(decided(isolated(found, by: form, in: strings), in: strings, chosen, scope: scope, own: mine))
         // Each person's role, read as when everyone's names are covered.
-        let whose = decided(people, in: strings, [.names], scope: .everyone)
+        let whose = decided(people, in: strings, [.names], scope: .everyone, own: mine)
         return Findings(hits: owned(kept, by: whose, kind: document), possible: isolated(possible, by: form, in: strings))
     }
 
@@ -1163,7 +1345,9 @@ enum Finder {
             var last = name.line
             var town = false
             for _ in 0..<3 {
-                guard let next = line(below: last, in: text.boxes, gap: 1.6) else { break }
+                // A letter leaves more room between the name and its street
+                // than between the address's own lines.
+                guard let next = line(below: last, in: text.boxes, gap: last == name.line ? 3 : 1.6) else { break }
                 let candidate = text.strings[next].trimmingCharacters(in: .whitespaces)
                 let isTown = isTownLine(candidate)
                 guard isStreetLine(candidate) || isTown || town && isCountryLine(candidate) else { break }
@@ -1301,6 +1485,24 @@ enum Finder {
     private static func union(_ a: NSRange?, _ b: NSRange?) -> NSRange? {
         guard let a, let b else { return nil }
         return NSUnionRange(a, b)
+    }
+
+    /// The owner's own name, where one of their word rules holds a person's
+    /// name: two to five words of a name, no digits, no company, in any
+    /// case, as "Nachname, Vorname" too. Each name as its words, folded.
+    /// It helps tell that name wherever it is written, and only that: it
+    /// covers nothing by itself, and stays on this device.
+    static func ownNames(in rules: [OwnRule]) -> [[String]] {
+        rules.filter { $0.kind == .word && !$0.isBlank }.compactMap { rule in
+            let text = rule.text.trimmingCharacters(in: .whitespaces)
+            guard !DocumentSense.isOrganization(text) else { return nil }
+            return DocumentSense.nameWords(text.capitalized)
+        }
+    }
+
+    /// The words of the owner's own names, folded.
+    static func ownWords(in rules: [OwnRule]) -> Set<String> {
+        Set(ownNames(in: rules).joined())
     }
 
     /// The owner's own rules: words and patterns wherever they appear, and
@@ -1599,9 +1801,10 @@ enum Finder {
         }
 
         /// Every match of these patterns, in any case, line by line: what a
-        /// covered code says, where it is printed.
-        func hits(forPatterns patterns: [String]) -> [Hit] {
-            patterns.flatMap { matches($0, .caseInsensitive) }.flatMap { hits($0, .barcodes) }
+        /// covered code says, where it is printed, as the kind the code is
+        /// covered as.
+        func hits(forPatterns patterns: [(pattern: String, kind: PrivateDetail)]) -> [Hit] {
+            patterns.flatMap { found in matches(found.pattern, .caseInsensitive).flatMap { hits($0, found.kind) } }
         }
     }
 
@@ -2012,8 +2215,11 @@ enum Finder {
     /// owner to check; elsewhere it is only offered, as German capitalizes
     /// every noun. The words of the names found are covered wherever they
     /// come again, read as loosely as text recognition reads them.
-    private static func names(in text: Text, learned: Set<String>) -> Findings {
-        var known = learned
+    /// - Parameter own: the words of the owner's own name (`ownWords`): a
+    ///   line or a word of it is a name for sure, read as loosely as a
+    ///   misread letter in a word of five letters or more.
+    private static func names(in text: Text, learned: Set<String>, own: Set<String> = []) -> Findings {
+        var known = learned.union(own)
         var hits: [Hit] = []
         let kind = DocumentSense.kind(of: text.strings)
         func add(_ i: Int, _ range: Range<String.Index>, title: String? = nil) {
@@ -2049,8 +2255,9 @@ enum Finder {
             guard tag == .personalName, span.contains(" "), !span.contains("\n") else { return true }
             for hit in text.hits(NSRange(range, in: text.full), .names) { tagged.insert(hit.line) }
             let words = span.split(separator: " ").map(String.init)
+            // Words in capitals are a heading as often as a name: the tagger alone does not tell.
             if (2...4).contains(words.count), words.allSatisfy({ DocumentSense.isNameWord($0, caseless: false) }),
-               !DocumentSense.isOrganization(span) {
+               !DocumentSense.isOrganization(span), span != span.uppercased() {
                 spans.append(NSRange(range, in: text.full))
             }
             return true
@@ -2063,13 +2270,29 @@ enum Finder {
         let candidates = text.strings.indices.compactMap { i in
             DocumentSense.nameWords(text.strings[i]).map { (i, $0) }
         }
+        // A letter vouches for a name by where it puts it: over its street
+        // or its postcode and town, or beside or over a date of birth.
+        func placed(_ i: Int) -> Bool {
+            if let below = Self.line(below: i, in: text.boxes, gap: 3) {
+                let next = text.strings[below].trimmingCharacters(in: .whitespaces)
+                if isStreetLine(next) || isTownLine(next) || DocumentSense.startsWithBirth(next) { return true }
+            }
+            return Self.line(beside: i, in: text.boxes).map { DocumentSense.startsWithBirth(text.strings[$0]) } ?? false
+        }
+        // A line in capitals, as a letterhead writes its headings, needs
+        // more than the tagger's word to be a name.
+        func capitals(_ i: Int) -> Bool {
+            let line = text.strings[i]
+            return line.contains(where: \.isLetter) && line == line.uppercased()
+        }
         var found = Set<Int>()
         // Twice, so a name vouched for further down covers its earlier
         // mentions too.
         for _ in 0..<2 {
             for (i, words) in candidates where !found.contains(i) {
                 let inEmail = words.contains { word in word.count >= 4 && emails.contains { $0.contains(word) } }
-                if tagged.contains(i) || inEmail || words.allSatisfy({ isKnown($0, in: known) }) {
+                if tagged.contains(i) && !capitals(i) || inEmail || placed(i)
+                    || words.allSatisfy({ isKnown($0, in: known, own: own) }) {
                     found.insert(i)
                     known.formUnion(words)
                 }
@@ -2092,15 +2315,21 @@ enum Finder {
             }
         }
         // A line shaped like a name that nothing vouches for: in a document
-        // about a person's health, money or order, covered and checked.
+        // about a person's health, money or order, covered and checked;
+        // elsewhere, or written in capitals, as a letterhead writes its
+        // headings, only offered.
         let unvouched = candidates.filter { !found.contains($0.0) }.map(\.0)
         let sensitive = kind != .general
+        let headings = unvouched.filter(capitals)
         if sensitive {
-            hits += unvouched.map { Hit(line: $0, range: nil, kind: .names, check: true) }
-            found.formUnion(unvouched)
+            let covered = unvouched.filter { !capitals($0) }
+            hits += covered.map { Hit(line: $0, range: nil, kind: .names, check: true) }
+            found.formUnion(covered)
         }
-        hits += repeats(of: known, in: text, skipping: found)
-        let possible = sensitive ? [] : unvouched.map { Hit(line: $0, range: nil, kind: .names, check: true) }
+        hits += repeats(of: known, in: text, skipping: found, own: own)
+        hits += mentions(of: own, in: text, skipping: found)
+        let offered = sensitive ? headings : unvouched
+        let possible = offered.map { Hit(line: $0, range: nil, kind: .names, check: true) }
         return Findings(hits: hits, possible: possible)
     }
 
@@ -2123,9 +2352,13 @@ enum Finder {
     }
 
     /// Whether a word is one of the names found, or that word as text
-    /// recognition may misread it: a letter off in a long word.
-    private static func isKnown(_ word: String, in known: Set<String>) -> Bool {
+    /// recognition may misread it: a letter off in a long word, or in a
+    /// word of five letters or more of the owner's own name.
+    private static func isKnown(_ word: String, in known: Set<String>, own: Set<String> = []) -> Bool {
         if known.contains(word) { return true }
+        if word.count >= 5, own.contains(where: { $0.count >= 5 && abs($0.count - word.count) <= 1 && differsByOne($0, word) }) {
+            return true
+        }
         guard word.count >= 6 else { return false }
         return known.contains { $0.count >= 6 && abs($0.count - word.count) <= 1 && differsByOne($0, word) }
     }
@@ -2155,7 +2388,8 @@ enum Finder {
     /// The words of the names found, met again on other lines, each where it
     /// is: "Mustermann" in "Herr Mustermann klagt über …", once "Mustermann,
     /// Max" was found beside "Patient:".
-    private static func repeats(of known: Set<String>, in text: Text, skipping whole: Set<Int>) -> [Hit] {
+    private static func repeats(of known: Set<String>, in text: Text, skipping whole: Set<Int>,
+                                own: Set<String> = []) -> [Hit] {
         let words = known.filter { $0.count >= 3 }
         guard !words.isEmpty else { return [] }
         var hits: [Hit] = []
@@ -2163,7 +2397,7 @@ enum Finder {
             for match in Self.word.matches(in: string, range: NSRange(string.startIndex..., in: string)) {
                 guard let range = Range(match.range, in: string) else { continue }
                 let raw = String(string[range]).trimmingCharacters(in: CharacterSet.punctuationCharacters)
-                guard raw.count >= 3, raw.first?.isUppercase == true, isKnown(fold(raw), in: words),
+                guard raw.count >= 3, raw.first?.isUppercase == true, isKnown(fold(raw), in: words, own: own),
                       DocumentSense.isNameWord(raw, caseless: false),
                       var inner = string.range(of: raw, range: range) else { continue }
                 // An initial before it goes with it: "M. Mustermann".
@@ -2173,6 +2407,43 @@ enum Finder {
                 }
                 hits.append(Hit(line: i, range: NSRange(inner, in: string), kind: .names))
             }
+        }
+        return hits
+    }
+
+    /// The owner's own name wherever it is written, in any case, in any
+    /// order, with commas between, each run of its words as one place:
+    /// "erika musterfrau", "MUSTERFRAU, Erika", "Musterfrau" alone.
+    private static func mentions(of own: Set<String>, in text: Text, skipping whole: Set<Int>) -> [Hit] {
+        guard !own.isEmpty else { return [] }
+        var hits: [Hit] = []
+        for (i, string) in text.strings.enumerated() where !whole.contains(i) {
+            var run: Range<String.Index>?
+            func close() {
+                // A short word of it alone in small letters is a word, like "max" in "max. 5".
+                if let found = run, found.isEmpty == false,
+                   string[found].contains(" ") || string[found].count >= 4 || string[found].first?.isUppercase == true {
+                    hits.append(Hit(line: i, range: NSRange(found, in: string), kind: .names))
+                }
+                run = nil
+            }
+            for match in Self.word.matches(in: string, range: NSRange(string.startIndex..., in: string)) {
+                guard let range = Range(match.range, in: string) else { continue }
+                let raw = String(string[range]).trimmingCharacters(in: CharacterSet.punctuationCharacters)
+                guard raw.count >= 2, raw.allSatisfy({ $0.isLetter || "'’-".contains($0) }),
+                      isKnown(fold(raw), in: own, own: own), let inner = string.range(of: raw, range: range) else {
+                    close()
+                    continue
+                }
+                // The run goes on over a space or a comma, as "Musterfrau, Erika".
+                if let begun = run, string[begun.upperBound..<inner.lowerBound].allSatisfy({ $0 == " " || $0 == "," }) {
+                    run = begun.lowerBound..<inner.upperBound
+                } else {
+                    close()
+                    run = inner
+                }
+            }
+            close()
         }
         return hits
     }
@@ -2204,19 +2475,37 @@ enum Finder {
     /// name only when it is the name of someone whose names are covered. A
     /// name whose role is not clear is kept, and marked for the owner to
     /// check. The owner's own rules always count.
+    /// - Parameter own: the words of the owner's own name (`ownWords`).
     private static func decided(_ hits: [Hit], in strings: [String], _ chosen: Set<PrivateDetail>,
-                                scope: NameScope) -> [Hit] {
+                                scope: NameScope, own: Set<String> = []) -> [Hit] {
         let document = DocumentSense.kind(of: strings)
         var kept: [Hit] = []
         var named: [Hit] = []
         for var hit in hits {
             guard let kind = hit.kind else { kept.append(hit); continue }
             guard chosen.contains(kind) else { continue }
+            let line = strings[hit.line]
+            let range = hit.range.flatMap { Range($0, in: line) }
+            // A segment of the spine or a disease named after someone is no
+            // one's name and no one's number.
+            if !notMedical.contains(kind), let range,
+               DocumentSense.medicalRanges(in: line, medical: document == .medical).contains(where: { $0.overlaps(range) }) {
+                continue
+            }
             guard kind == .names else { kept.append(hit); continue }
             if hit.role == nil {
-                let line = strings[hit.line]
-                hit.role = DocumentSense.role(ofNameIn: hit.line, at: hit.range.flatMap { Range($0, in: line) },
-                                              title: hit.title, lines: strings, kind: document)
+                hit.role = DocumentSense.role(ofNameIn: hit.line, at: range, title: hit.title, lines: strings, kind: document)
+            }
+            // The owner's own name is a name for sure, never to check for
+            // that; where nothing says whose it is, it is whose the
+            // document is, as the patient's in a medical letter.
+            let words = (range.map { String(line[$0]) } ?? line).split(whereSeparator: { !$0.isLetter })
+                .map { fold(String($0)) }.filter { $0.count >= 2 }
+            if !own.isEmpty, !words.isEmpty, words.allSatisfy({ isKnown($0, in: own, own: own) }) {
+                hit.check = false
+                if hit.role?.isSure != true {
+                    hit.role = NameRole(role: DocumentSense.subject(in: document), confidence: 0.7, reason: "own name")
+                }
             }
             named.append(hit)
         }
@@ -2252,6 +2541,11 @@ enum Finder {
         }
         return kept
     }
+
+    /// The kinds a medical term may be: a finding is health, never a name
+    /// or a number.
+    private static let notMedical: Set<PrivateDetail> = [.health, .dates, .organizations, .addresses, .amounts,
+                                                         .links, .emails, .faces, .barcodes]
 
     /// Lines with a dose or a pharmacy number, where medicines are named.
     private static func medicines(in lines: [String]) -> [Hit] {

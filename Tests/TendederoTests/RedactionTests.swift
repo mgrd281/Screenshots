@@ -412,6 +412,22 @@ final class RedactionTests: XCTestCase {
                        "\(patient)")
     }
 
+    /// What a model names is covered only where it fits: the name it found
+    /// part of, whole; never a street or a segment of the spine it calls a
+    /// name (see `CategoryFidelityTests` for every kind).
+    func testAModelsAnswerIsCoveredOnlyWhereItFits() {
+        let lines = ["Patient: Mustermann, Max", "Hauptstraße 12, 20095 Hamburg", "Befund: Protrusion LWK 4/5"]
+        let pieces = [Finder.IntelligentPiece(line: 0, kind: .names, words: "Max"),
+                      Finder.IntelligentPiece(line: 1, kind: .names, words: "Hauptstraße"),
+                      Finder.IntelligentPiece(line: 2, kind: .names, words: "LWK 4/5")]
+        let found = Finder.vetted(pieces, in: lines, [.names])
+        let covered = found.hits.map { hit in
+            hit.range.flatMap { Range($0, in: lines[hit.line]) }.map { String(lines[hit.line][$0]) } ?? lines[hit.line]
+        }
+        XCTAssertEqual(covered, ["Mustermann, Max"])
+        XCTAssertTrue(found.possible.isEmpty, "\(found.possible)")
+    }
+
     // MARK: Helpers
 
     /// What the engine covers on a made-up page laid out in rows and

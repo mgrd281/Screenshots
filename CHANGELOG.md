@@ -6,6 +6,15 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Only the kinds you checked under Privacy are covered, on the Mac and the
+  iPhone. Apple Intelligence, or Claude or ChatGPT, no longer covers a
+  street, a date, a reference or a medical term it calls a name: what it
+  names is read again by Snapfly's own rules, and what may fit is offered
+  for you to check. A street is covered with its house number. A heading in
+  capitals, like "WEITERER STANDORT", is no longer taken for a name, and a
+  name over a letter's address or beside a date of birth is sure, not "to
+  check". Your own name, saved as a word under Also hide, is known however
+  it is written.
 - On the iPhone, Protect Picture is calmer and the page leads: it stands
   on a bright ground with a soft shadow, as large as the room allows. Under
   the title a small capsule says how many private details were found, like

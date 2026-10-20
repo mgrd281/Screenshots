@@ -158,6 +158,40 @@ enum DocumentSense {
         return found
     }
 
+    // MARK: Medical terms
+
+    /// What a findings' text names that is no one's name and no one's
+    /// number: the spine's segments, "LWK 5/SWK 1"; a disease named after
+    /// a person, "Morbus Scheuermann"; and, in a medical document, the short
+    /// segments and roots, "L5/S1", "S1-Wurzel", and diagnosis codes, "M51.2".
+    static func medicalRanges(in line: String, medical: Bool) -> [Range<String.Index>] {
+        (medical ? medicalTerms + medicalCodes : medicalTerms).flatMap { regex in
+            regex.matches(in: line, range: NSRange(line.startIndex..., in: line)).compactMap { Range($0.range, in: line) }
+        }
+    }
+
+    /// Terms that are medical wherever they stand.
+    private static let medicalTerms: [NSRegularExpression] = [
+        // The spine's segments by their German names, alone or as a pair.
+        #"\b(?:HWK|BWK|LWK|SWK|HWS|BWS|LWS)\s?\d{0,2}(?:\s?[/-]\s?(?:HWK|BWK|LWK|SWK|C|Th|T|L|S)?\s?\d{1,2})?\b"#,
+        // A disease named after a person.
+        #"\b(?:Morbus|Mb\.)\s+\p{Lu}[\p{L}\-]+(?:\s+\p{Lu}[\p{L}\-]+)?"#,
+        #"\b\p{Lu}[\p{L}]+-(?:Syndrom|Krankheit|Erkrankung|Zeichen|Test|Reflex|Fraktur|Zyste)\b"#,
+        #"\b\p{Lu}[\p{L}]+sche[nrsm]?\s+(?:Knötchen|Krankheit|Erkrankung|Syndrom|Zeichen|Operation|Fraktur|Zyste|Ödem)\b"#,
+        #"\b\p{Lu}[\p{L}]+['’]s\s+(?:disease|syndrome|sign|palsy|fracture)\b"#,
+    ].compactMap { try? NSRegularExpression(pattern: $0) }
+
+    /// Short codes that are medical in a medical document only.
+    private static let medicalCodes: [NSRegularExpression] = [
+        // "L5/S1", "C5-C6", "Th12": a segment, alone or as a pair.
+        #"\b(?:C|Th|T|L|S)\s?\d{1,2}\s?[/-]\s?(?:C|Th|T|L|S)\s?\d{1,2}\b"#,
+        #"\bTh\s?\d{1,2}\b"#,
+        // A nerve root, "S1-Wurzel".
+        #"\b(?:C|Th|T|L|S)\d{1,2}-Wurzel\b"#,
+        // A diagnosis's ICD-10 code, "M51.2", "S82.1 G".
+        #"\b[A-TV-Z]\d{2}\.\d{1,2}(?:\s?[GVZA]\b)?"#,
+    ].compactMap { try? NSRegularExpression(pattern: $0) }
+
     // MARK: Names
 
     /// Titles a name follows, small letters: "Herr", "Dr. med.", "Mrs.".
@@ -192,7 +226,11 @@ enum DocumentSense {
                                                 "du", "dein", "deine", "mein", "meine", "die", "dem", "ein", "eine",
                                                 "einen", "einem", "einer", "bitte", "hallo", "guten", "vielen",
                                                 "dank", "danke", "neue", "neuer", "neues", "alle", "heute", "nr", "nr.",
-                                                "the", "dear", "hello", "thanks", "your", "our", "please"]
+                                                "the", "dear", "hello", "thanks", "your", "our", "please",
+                                                // Small words between names, written in capitals in a
+                                                // heading, like "IN HAMBURG": no one is named so.
+                                                "in", "im", "am", "auf", "aus", "für", "nach", "vom", "zum", "zur",
+                                                "of", "and", "for", "at", "with"]
     /// Words a document is written in, never part of a person's name, like
     /// "Rechnung" or "Arzt": those that tell its kind, and those that say
     /// whose a name is.
@@ -201,8 +239,9 @@ enum DocumentSense {
         return Set(all.filter { !$0.contains(" ") && !$0.contains(".") && !$0.contains("/") })
     }()
     /// Endings of German nouns that are no one's name: "-bescheinigung",
-    /// "-keit", "-schaft".
-    private static let nounEndings = ["ung", "ungen", "heit", "keit", "schaft", "tion", "ität"]
+    /// "-keit", "-schaft", and a finding's, "-extrusion", "-algie".
+    private static let nounEndings = ["ung", "ungen", "heit", "keit", "schaft", "tion", "ität", "sion", "itis", "algie",
+                                      "ektomie", "graphie", "skopie", "pathie", "therapie"]
     private static let particles: Set<String> = ["van", "von", "de", "da", "del", "der", "den", "la", "le", "bin",
                                                  "ibn", "al", "el", "di", "du", "zu", "ten", "ter", "dos", "das"]
 
@@ -224,6 +263,48 @@ enum DocumentSense {
         // Scripts without capitals, like Arabic, only where something else
         // vouches for the name, like a title or a label.
         return caseless && !first.isLowercase && first.isLetter
+    }
+
+    /// Whether a word is a small part of a name, like "van" or "al".
+    static func isParticle(_ word: String) -> Bool {
+        particles.contains(word)
+    }
+
+    /// A name's whole run around part of it, as the words beside it go on:
+    /// "Erika" in "Frau Erika Musterfrau kam" gives "Erika Musterfrau", and
+    /// "Musterfrau" in "Musterfrau, Erika" the two. It stops at a title, a
+    /// word that is no name, a digit, or after five words.
+    static func nameSpan(around part: Range<String.Index>, in line: String) -> Range<String.Index> {
+        let all = tokens(in: line, within: line.startIndex..<line.endIndex)
+        guard let first = all.firstIndex(where: { $0.overlaps(part) }),
+              let last = all.lastIndex(where: { $0.overlaps(part) }) else { return part }
+        func isName(_ i: Int) -> Bool {
+            let word = String(line[all[i]])
+            let bare = word.hasSuffix(",") ? String(word.dropLast()) : word
+            // A label, like "Patient:", is not part of the name it announces.
+            if all[i].upperBound < line.endIndex, line[all[i].upperBound] == ":" { return false }
+            return !titles.contains(bare.lowercased()) && !titleParts.contains(bare.lowercased())
+                && isNameWord(bare, caseless: false)
+        }
+        // Only a name's own words carry it on.
+        guard (first...last).allSatisfy(isName) else { return part }
+        // Only "Surname, Given name" holds a comma, after its first word.
+        func comma(_ i: Int) -> Bool { line[all[i]].hasSuffix(",") }
+        func commaIn(_ from: Int, _ to: Int) -> Bool { from <= to && (from...to).contains(where: comma) }
+        var start = first, end = last
+        while start > 0, end - start < 4, isName(start - 1) {
+            if comma(start - 1) {
+                // A surname before its given name, the first of the name.
+                if !commaIn(start, end - 1) { start -= 1 }
+                break
+            }
+            start -= 1
+        }
+        while end + 1 < all.count, end - start < 4, isName(end + 1), !comma(end) || !commaIn(start, end - 1) && end == start {
+            end += 1
+        }
+        let upper = comma(end) ? line.index(before: all[end].upperBound) : all[end].upperBound
+        return min(all[start].lowerBound, part.lowerBound)..<max(upper, part.upperBound)
     }
 
     /// The words of a line that reads like a person's name: two to five
@@ -520,12 +601,19 @@ enum DocumentSense {
     }
 
     /// Whose a document mostly is: the patient's in a medical one.
-    private static func subject(in kind: DocumentKind) -> PersonRole {
+    static func subject(in kind: DocumentKind) -> PersonRole {
         switch kind {
         case .medical: .patient
         case .invoice, .banking: .customer
         case .general: .other
         }
+    }
+
+    /// Whether a line starts with a date of birth, as the line beside or
+    /// under a name does: "geb. 01.02.1960", "* 01.02.1960".
+    static func startsWithBirth(_ line: String) -> Bool {
+        let lower = line.trimmingCharacters(in: .whitespaces).lowercased()
+        return lower.hasPrefix("*") || birthCues.contains { lower.hasPrefix($0) }
     }
 
     /// Whether text starts with a date, as a date of birth after a name does.
