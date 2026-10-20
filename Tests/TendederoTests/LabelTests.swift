@@ -160,13 +160,13 @@ final class LabelTests: XCTestCase {
     }
 
     /// Read from a picture, as the app does: the customer's name under
-    /// "Kunde", in blue with two more lines under it, is covered with Names
-    /// on, and so is the name the bill goes to, though they differ. The
-    /// rest stays.
+    /// "Kunde", in blue with two more lines under it, is covered with
+    /// everyone's names on, and so is the name the bill goes to, though they
+    /// differ. The rest stays.
     func testBothNamesOnAnOrderPageAreCovered() throws {
         let image = try orderPage()
         let lines = Finder.textLines(in: image).map { "\($0.string) \($0.box)" }
-        let covered = Finder.coveredAreas(in: image, [.names], rules: [], intelligence: false)
+        let covered = Finder.coveredAreas(in: image, PrivateDetail.allNames, rules: [], intelligence: false)
         let texts = covered.compactMap(\.text)
         XCTAssertTrue(texts.contains { $0.contains("Christopher Kelly") }, "\(texts) in \(lines)")
         XCTAssertTrue(texts.contains { $0.contains("Chris Kelly") && !$0.contains("Christopher") }, "\(texts) in \(lines)")

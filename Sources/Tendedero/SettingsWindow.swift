@@ -1703,7 +1703,7 @@ private struct PrivacyPane: View {
                     Text(group.title)
                 } footer: {
                     if group == .people {
-                        Text(L("Without Names, only the people chosen are covered, told by the words round each name, like \"Patient:\" or \"Dr. med.\". A name whose role is not clear is covered anyway, and marked for you to check."))
+                        Text(L("Each covers its own people, told by the words round each name, like \"Patient:\" or \"Dr. med.\". All three together cover everyone's names. Your own name, under Your Details, is always covered."))
                             .foregroundStyle(.secondary)
                     }
                 }

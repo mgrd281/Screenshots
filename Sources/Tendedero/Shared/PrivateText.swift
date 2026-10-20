@@ -43,7 +43,7 @@ enum PrivateDetail: String, CaseIterable {
     /// What a kind takes in, where its title alone does not say.
     var subtitle: String? {
         switch self {
-        case .names: L("Everyone's")
+        case .names: L("Without a clear role, as in chats and lists")
         case .patientNames: L("In medical letters, reports and forms")
         case .otherPeople: L("Doctors, customers, staff, payees, senders and recipients")
         default: nil
@@ -85,21 +85,26 @@ enum PrivateDetail: String, CaseIterable {
     /// sent for, so it waits to be chosen. A code is private more often than
     /// not: a payment, a sign-in, a ticket or a parcel, unreadable to the eye.
     /// A key opens an account to whoever reads it. An IP address is often
-    /// what a screenshot of a network is sent for. A patient's name is
-    /// health data, kept covered even for whoever leaves other names, and a
-    /// date of birth tells who someone is, as the name beside it does.
+    /// what a screenshot of a network is sent for. Everyone's name is
+    /// covered, with Names and its two parts on; a patient's name is health
+    /// data, and a date of birth tells who someone is, as the name beside it
+    /// does.
     var isRecommended: Bool {
         switch self {
-        case .names, .patientNames, .addresses, .birthDates, .emails, .phones, .bank, .health, .ids, .codes, .keys,
-             .barcodes: true
-        case .otherPeople, .usernames, .faces, .ipAddresses, .orders, .tracking, .amounts, .dates, .links,
-             .organizations: false
+        case .names, .patientNames, .otherPeople, .addresses, .birthDates, .emails, .phones, .bank, .health, .ids,
+             .codes, .keys, .barcodes: true
+        case .usernames, .faces, .ipAddresses, .orders, .tracking, .amounts, .dates, .links, .organizations: false
         }
     }
 
-    /// Kinds that choose whose names are covered, without Names: the
-    /// patients', and everyone else's. Their places are covered as names.
+    /// Kinds that choose some people's names by their role: the patients',
+    /// and everyone else's whose role the words round the name tell. Their
+    /// places are covered as names.
     static let people: Set<PrivateDetail> = [.patientNames, .otherPeople]
+
+    /// Names, Patient names and Other people: everyone's names, as covering
+    /// "the names" means wherever no one chose whose.
+    static let allNames: Set<PrivateDetail> = [.names, .patientNames, .otherPeople]
 
     static var recommended: Set<PrivateDetail> { Set(allCases.filter(\.isRecommended)) }
 
@@ -126,25 +131,40 @@ enum PrivateDetail: String, CaseIterable {
     static func bringUpToDate(_ keys: [String], in defaults: UserDefaults = .standard) {
         let known = defaults.stringArray(forKey: knownKey)
         let roles = defaults.stringArray(forKey: rolesKey).map { Set($0.compactMap(PersonRole.init(rawValue:))) }
+        let parted = defaults.bool(forKey: partedKey)
         for key in keys {
             guard let raw = defaults.stringArray(forKey: key) else { continue }
             var chosen = Set(raw.compactMap(PrivateDetail.init(rawValue:)))
             let moved = roles.map { movingRoles($0, in: &chosen) } ?? false
             var new = added(to: chosen, known: known)
             // Whoever chose some people's names alone keeps that choice.
-            if moved { new.remove(.patientNames) }
+            if moved { new.subtract(people) }
+            if !parted { new.formUnion(parting(chosen).subtracting(chosen)) }
             if moved || !new.isEmpty { defaults.set(chosen.union(new).map(\.rawValue).sorted(), forKey: key) }
         }
         defaults.removeObject(forKey: rolesKey)
         defaults.set(allCases.map(\.rawValue), forKey: knownKey)
+        defaults.set(true, forKey: partedKey)
+    }
+
+    /// Whether the choices were brought up to Names, Patient names and
+    /// Other people each covering their own people.
+    static let partedKey = "namesParted"
+
+    /// A choice made while Names covered everyone's names, whatever its two
+    /// parts said, as it covers the same names now that each covers its own:
+    /// Names with Patient names, as recommended then, takes Other people
+    /// too. Names alone stays as it is: it was chosen with both parts off.
+    static func parting(_ chosen: Set<PrivateDetail>) -> Set<PrivateDetail> {
+        chosen.isSuperset(of: [.names, .patientNames]) ? chosen.union([.otherPeople]) : chosen
     }
 
     /// Where whose names were kept, before patients and other people were
     /// kinds of their own.
     static let rolesKey = "nameRoles"
 
-    /// Names covered for some people only, as kinds: Names alone now means
-    /// everyone's. True when the choice changed.
+    /// Names covered for some people only, as kinds: the parts for those
+    /// people, without Names. True when the choice changed.
     static func movingRoles(_ roles: Set<PersonRole>, in chosen: inout Set<PrivateDetail>) -> Bool {
         guard !roles.isEmpty, chosen.contains(.names) else { return false }
         chosen.remove(.names)
@@ -542,24 +562,25 @@ enum Finder {
     /// Whether a place may be covered, or offered to be: its kind is on, or
     /// it is one of the owner's own rules. Applied after every way of
     /// finding, Apple Intelligence's too, so nothing else decides what is
-    /// covered. `chosen` is as `resolved` gives it: Patient names and Other
-    /// people come to Names, their people told apart by `decided`.
+    /// covered. `chosen` is as `resolved` gives it: Names, Patient names and
+    /// Other people come to names, their people told apart by `decided`.
     static func allowed(_ kind: PrivateDetail?, _ chosen: Set<PrivateDetail>) -> Bool {
         kind.map(chosen.contains) ?? true
     }
 
-    /// What the kinds chosen come to. Names covers everyone's names;
-    /// without it, Patient names and Other people find names all the same
-    /// and keep those of the people chosen. Every entry point resolves once;
-    /// what it calls takes the result as it is.
+    /// What the kinds chosen come to. Names, Patient names and Other people
+    /// each cover their own people, as their switches say: the names whose
+    /// role is not clear, the patients', and everyone else's whose role the
+    /// words round the name tell. All three cover everyone's names. Every
+    /// entry point resolves once; what it calls takes the result as it is.
     static func resolved(_ chosen: Set<PrivateDetail>) -> (chosen: Set<PrivateDetail>, scope: NameScope) {
         let kinds = chosen.subtracting(PrivateDetail.people)
-        if chosen.contains(.names) { return (kinds, .everyone) }
+        guard !chosen.isDisjoint(with: PrivateDetail.allNames),
+              !chosen.isSuperset(of: PrivateDetail.allNames) else { return (kinds, .everyone) }
         var roles: Set<PersonRole> = []
         if chosen.contains(.patientNames) { roles.insert(.patient) }
         if chosen.contains(.otherPeople) { roles.formUnion(PersonRole.others) }
-        guard !roles.isEmpty else { return (kinds, .everyone) }
-        return (kinds.union([.names]), NameScope(roles: roles))
+        return (kinds.union([.names]), NameScope(roles: roles, unclear: chosen.contains(.names)))
     }
 
     /// Text's box with room around it, as it is covered, from 0 to 1 from
@@ -895,7 +916,8 @@ enum Finder {
             let strings = lines.map(\.string)
             let more = Timing.measure("intelligence") { intelligentHits(in: lines, chosen) }
             found.hits += decided(isolated(more.hits, by: form(of: lines), in: strings), in: strings, chosen,
-                                  scope: scope, own: ownWords(in: rules))
+                                  scope: scope, own: ownWords(in: rules),
+                                  doctors: doctorsColumn(strings, boxes: lines.map(\.box)))
             // What it named that only may be what it says is offered, not covered.
             let taken = Set(found.hits.map(\.line))
             found.possible += isolated(more.possible, by: form(of: lines), in: strings).filter { !taken.contains($0.line) }
@@ -1161,7 +1183,7 @@ enum Finder {
         let found = hits(in: lines, chosen, rules: rules, scope: scope)
             + decided(isolated(intelligentHits(in: lines, chosen, waits: false).hits, by: form(of: lines),
                                in: lines.map(\.string)), in: lines.map(\.string), chosen, scope: scope,
-                      own: ownWords(in: rules))
+                      own: ownWords(in: rules), doctors: doctorsColumn(lines.map(\.string), boxes: lines.map(\.box)))
         for hit in keepingLastDigits(found, in: lines) where allowed(hit.kind, chosen) {
             let length = lines[hit.line].string.utf16.count
             // The strongest protection leaves out whole lines, as it covers them.
@@ -1301,9 +1323,11 @@ enum Finder {
             whole.range = NSRange(wholeEntity(range, kind: hit.kind, in: line), in: line)
             return whole
         }
-        let kept = merged(decided(isolated(found, by: form, in: strings), in: strings, chosen, scope: scope, own: mine))
+        let column = doctorsColumn(strings, boxes: boxes)
+        let kept = merged(decided(isolated(found, by: form, in: strings), in: strings, chosen, scope: scope, own: mine,
+                                  doctors: column))
         // Each person's role, read as when everyone's names are covered.
-        let whose = decided(people, in: strings, [.names], scope: .everyone, own: mine)
+        let whose = decided(people, in: strings, [.names], scope: .everyone, own: mine, doctors: column)
         return Findings(hits: owned(kept, by: whose, kind: document), possible: isolated(possible, by: form, in: strings))
     }
 
@@ -2398,8 +2422,9 @@ enum Finder {
             for match in Self.word.matches(in: string, range: NSRange(string.startIndex..., in: string)) {
                 guard let range = Range(match.range, in: string) else { continue }
                 let raw = String(string[range]).trimmingCharacters(in: CharacterSet.punctuationCharacters)
-                guard raw.count >= 3, raw.first?.isUppercase == true, isKnown(fold(raw), in: words, own: own),
-                      DocumentSense.isNameWord(raw, caseless: false),
+                // A title is no one's name, wherever it comes again: "Herr" in "Sehr geehrter Herr Kollege".
+                guard raw.count >= 3, raw.first?.isUppercase == true, !DocumentSense.isTitle(raw),
+                      isKnown(fold(raw), in: words, own: own), DocumentSense.isNameWord(raw, caseless: false),
                       var inner = string.range(of: raw, range: range) else { continue }
                 // An initial before it goes with it: "M. Mustermann".
                 if let initial = string.range(of: #"\p{Lu}\.\s?$"#, options: .regularExpression,
@@ -2477,8 +2502,10 @@ enum Finder {
     /// name whose role is not clear is kept, and marked for the owner to
     /// check. The owner's own rules always count.
     /// - Parameter own: the words of the owner's own name (`ownWords`).
+    /// - Parameter doctors: the lines a letterhead lists among its doctors
+    ///   (`doctorsColumn`), where a name with nothing round it is a doctor's.
     private static func decided(_ hits: [Hit], in strings: [String], _ chosen: Set<PrivateDetail>,
-                                scope: NameScope, own: Set<String> = []) -> [Hit] {
+                                scope: NameScope, own: Set<String> = [], doctors: Set<Int> = []) -> [Hit] {
         let document = DocumentSense.kind(of: strings)
         var kept: [Hit] = []
         var named: [Hit] = []
@@ -2496,6 +2523,9 @@ enum Finder {
             guard kind == .names else { kept.append(hit); continue }
             if hit.role == nil {
                 hit.role = DocumentSense.role(ofNameIn: hit.line, at: range, title: hit.title, lines: strings, kind: document)
+            }
+            if hit.role?.isSure != true, doctors.contains(hit.line) {
+                hit.role = NameRole(role: .doctor, confidence: 0.7, reason: "column")
             }
             // The owner's own name is a name for sure, never to check for
             // that; where nothing says whose it is, it is whose the
@@ -2541,6 +2571,32 @@ enum Finder {
             }
         }
         return kept
+    }
+
+    /// The lines of a column of doctors, as a practice's letterhead lists
+    /// them, that name someone with nothing round the name to say whose it
+    /// is, like a doctor written without "Dr. med.": a line shaped like a
+    /// name, between two doctors' names in its column, or after two, or
+    /// before two. Each is read as a doctor's.
+    static func doctorsColumn(_ strings: [String], boxes: [CGRect]) -> Set<Int> {
+        let doctors = Set(strings.indices.filter { DocumentSense.namesADoctor(strings[$0]) })
+        guard doctors.count >= 2, boxes.count == strings.count else { return [] }
+        // Each line's neighbours in its column, the nearest above and below.
+        var below = [Int?](repeating: nil, count: strings.count)
+        var above = [Int?](repeating: nil, count: strings.count)
+        for i in strings.indices {
+            guard let under = line(below: i, in: boxes, gap: 1.6) else { continue }
+            below[i] = under
+            if let over = above[under], boxes[over].minY <= boxes[i].minY { continue }
+            above[under] = i
+        }
+        func doctor(_ line: Int?) -> Bool { line.map(doctors.contains) ?? false }
+        return Set(strings.indices.filter { i in
+            guard !doctors.contains(i), DocumentSense.nameWords(strings[i]) != nil else { return false }
+            let up = above[i], down = below[i]
+            return doctor(up) && doctor(down) || doctor(up) && doctor(up.flatMap { above[$0] })
+                || doctor(down) && doctor(down.flatMap { below[$0] })
+        })
     }
 
     /// The kinds a medical term may be: a finding is health, never a name

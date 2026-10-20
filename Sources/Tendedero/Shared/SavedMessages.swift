@@ -63,11 +63,15 @@ enum SavedMessages {
 
     /// The message with its blanks filled from the photo's order. A blank of
     /// a kind that is covered stays empty, so the message never says what
-    /// the photo hides, and so does one the photo does not show.
+    /// the photo hides, and so does one the photo does not show. A name
+    /// stays empty with any of Names, Patient names and Other people on, as
+    /// any of them may cover it.
     static func fill(_ text: String, with fields: [OrderCard.Field], covering: Set<PrivateDetail>) -> String {
         var text = text
         for blank in blanks where text.contains(blank.token) {
-            let value = covering.contains(kind(of: blank.part)) ? nil : fields.first { $0.part == blank.part }?.value
+            let detail = Self.kind(of: blank.part)
+            let covered = detail == .names ? !covering.isDisjoint(with: PrivateDetail.allNames) : covering.contains(detail)
+            let value = covered ? nil : fields.first { $0.part == blank.part }?.value
             text = text.replacingOccurrences(of: blank.token, with: value ?? gap)
         }
         return text

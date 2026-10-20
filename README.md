@@ -309,21 +309,29 @@ value that fits its label only in part, like a name read in small letters,
 is covered and marked to check; one that barely does, like a number too
 short for its field, is only offered.
 
-Names covers everyone's names. Two more choices sit under it: Patient
-names, the patients' alone, and Other people, the doctors, customers,
-staff, payees, senders and recipients. The three are switches of their
-own: turning one on or off leaves the others as they are. With Names on,
-everyone's names are covered whatever the other two say; with it off,
-Patient names covers only the patients' and Other people only everyone
-else's. Patient names starts on, as a patient's name is health data. Whose a name is comes from
+Three switches choose whose names are covered, each its own: Patient
+names, the patients'; Other people, the doctors, customers, staff, payees,
+senders and recipients; and Names, every name whose role nothing round it
+tells, as in a chat or a list. Turning one on or off leaves the others as
+they are, and each covers its own people and no one else's: with Names on
+alone, a doctor's letter about you leaves the doctors, and your own name,
+saved under Your Details, is covered all the same. All three start on,
+and together they cover everyone's names. A choice made while Names still
+covered everyone's covers what it did: Names with Patient names takes
+Other people too, and Names alone stays as it was chosen. Whose a name is comes from
 what stands round it: a label like Patient:, Pat., Name des Versicherten
 or Behandelnder Arzt:, a title, the address under "Herrn" in a doctor's
 letter, the letter's subject, words like "Ihren Patienten" before it in a
-sentence, a date of birth after it, a table's header above it, and the
-closing above a signature, which makes the one who signs a doctor. Once a
+sentence, a date of birth after it, a table's header above it, the
+closing above a signature, which makes the one who signs a doctor, and a
+column of doctors' names, as a practice's letterhead lists them, which
+makes a name in it a doctor's though it has no "Dr. med.". Once a
 name is known as the patient's, every place it appears is, in either
-order, with an initial, or with a letter misread. A name whose role is not
-clear is covered anyway and marked to check. None of these ever covers a
+order, with an initial, or with a letter misread. A title, like Herr or
+Dr. med., is never covered with a name, nor on its own where it comes
+again, as in "Sehr geehrter Herr Kollege". A name whose role is not
+clear is covered with Names, and with only Patient names or Other people
+on, covered anyway and marked to check. None of these ever covers a
 phone number, an address or a QR code: a code is covered by codes, or by
 another kind it holds, like the account in a payment's code, never by a
 name or a company in it.
@@ -424,11 +432,12 @@ or the line below; or, for whoever knows them, a pattern. Your details and
 rules apply to everything that leaves the line, and to the copies saved
 from Finder. A word that is a person's name also helps Snapfly tell that
 name wherever it is written as a name for sure: covered as Names, Patient
-names or Other people say.
+names or Other people say. Such a word becomes your name under Your
+Details by itself as Snapfly starts, so it is covered however it is written.
 
-Only the kinds you checked are covered, whatever found them. Names covers
-everyone's; with Names off, Patient names and Other people each cover their
-own. A place is covered whole, a street with its house number. A medical
+Only the kinds you checked are covered, whatever found them. Names, Patient
+names and Other people each cover their own people, and the three together
+everyone's. A place is covered whole, a street with its house number. A medical
 term, like a segment of the spine ("LWK 5/SWK 1") or a disease named after
 someone ("Morbus Scheuermann"), is never taken for a name or a number.
 
@@ -616,8 +625,9 @@ Cover Files…, in the menu bar, covers private details in many PDFs and
 pictures at once. Drop files or whole folders on its window, or choose them,
 as many as a thousand and more; folders are opened all the way down, and
 files of other kinds are counted but get no copy. On the right, choose what
-to cover: Names Only, As in Settings, All, or each kind on its own, from the
-same list as Settings › Privacy. Your own rules there apply too.
+to cover: Names Only, everyone's names, as it starts; As in Settings, All,
+or each kind on its own, from the same list as Settings › Privacy. Your own
+rules there apply too.
 
 Cover Files then asks where to save, and makes a new folder there, named
 with the day and time, with the folders the files came in kept inside it.
@@ -1111,8 +1121,10 @@ watch the screen, so there is no line there. What it keeps is the covering:
   screenshot in the grid for Cover and Copy, Cover and Share or Cover and
   Save, without opening it. The screenshot itself stays as it was.
   Settings chooses what to cover, in the same six groups as on the Mac,
-  with Check All, Recommended and Uncheck All, and Patient names and Other
-  people under Names, each of the three a switch of its own. Cover look picks how covers look, from the same six
+  with Check All, Recommended and Uncheck All. People opens with Your
+  Name: your name, saved under Your Details, with "always covered" and a
+  shield, or a row to add it; then Names, Patient names and Other people,
+  each a switch of its own that covers its own people. Cover look picks how covers look, from the same six
   as on the Mac, with Keep the last four digits and Strongest protection.
   Reading and checking holds Apple Intelligence, how long the last
   screenshot took, the middle and the 95th percentile of the last fifty,
@@ -1249,7 +1261,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
 | `HideSend.swift` | Send covered, in Hide Private Details: the copy straight to a chat, the clipboard or the Share menu |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
-| `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-two kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names or only Patient names and Other people; a letter's address under a name, a date of birth and a reference number known as that person's; and, for the iPhone's Details, what Settings leaves visible; the lines read kept a while in memory, or given from a photo prepared ahead of time; a reading Vision could not do is counted, never kept |
+| `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-two kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names, Patient names and Other people each their own people, a name in a column of doctors a doctor's; a letter's address under a name, a date of birth and a reference number known as that person's; and, for the iPhone's Details, what Settings leaves visible; the lines read kept a while in memory, or given from a photo prepared ahead of time; a reading Vision could not do is counted, never kept |
 | `Shared/HandShape.swift`, `Shared/ProtectionPlan.swift` | Hiding by hand: the marker's strokes, boxes that turn and outlines, on the original picture's places, and every place of a picture with the owner's changes, each undone and done again, and the count of what is protected, to check and left |
 | `Shared/PrivacyIndex.swift` | Pictures prepared ahead of time: what is kept of each, what is left to read, newest first, and when preparing waits |
 | `Shared/FormFields.swift` | Reads a printed form's fields: each label, like "Name, Vorname des Versicherten", Versicherten-Nr. or "Arbeitsunfähig seit", and its value beside it or under it in its column, told as what the label says it is (a name, an address, a date of birth, an insurance or ID number, a diagnosis, a day of illness), with whose it is and how sure |

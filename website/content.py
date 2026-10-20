@@ -341,7 +341,7 @@ TEXT["de"] = dict(
 
     priv_h="Private Angaben bleiben privat.",
     stamp_covered="Private Angaben verdeckt",
-    priv_p="Bevor ein Bildschirmfoto an ChatGPT, eine andere KI oder einen Menschen geht, verdeckt Snapfly, was du wählst: Namen, Adressen, E-Mails, Telefonnummern, Bankkarten und Konten, Gesundheitsdaten. Namen heißt die Namen von Menschen: Firmen, Titel, Daten und Diagnosen daneben bleiben lesbar, und unter „Wessen Namen“ wählst du etwa nur die der Patienten, nicht die der Ärzte. Was die Leine verlässt – kopiert, gesendet oder herausgezogen –, ist verdeckt. Snapfly liest den Text auf deinem Mac, und die Bilddatei selbst bleibt unverändert.",
+    priv_p="Bevor ein Bildschirmfoto an ChatGPT, eine andere KI oder einen Menschen geht, verdeckt Snapfly, was du wählst: Namen, Adressen, E-Mails, Telefonnummern, Bankkarten und Konten, Gesundheitsdaten. Namen heißt die Namen von Menschen: Firmen, Titel, Daten und Diagnosen daneben bleiben lesbar. Patientennamen, Weitere Personen wie Ärzte und Namen ohne erkennbare Rolle sind je ein eigener Schalter: So verdeckst du etwa nur die Namen der Patienten, nicht die der Ärzte. Dein eigener Name, eingetragen unter „Außerdem verbergen“, ist immer verdeckt. Was die Leine verlässt – kopiert, gesendet oder herausgezogen –, ist verdeckt. Snapfly liest den Text auf deinem Mac, und die Bilddatei selbst bleibt unverändert.",
     example="Beispiel",
     inv=dict(title="Rechnung 2026-1042", date="14. Oktober 2026", bill="Rechnungsadresse",
              name="Lena Hoffmann", street="Lindenstraße 12", city="10969 Berlin",

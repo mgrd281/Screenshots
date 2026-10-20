@@ -17,6 +17,11 @@ final class SavedMessagesTests: XCTestCase {
     func testABlankOfACoveredKindStaysEmpty() {
         let text = "Hallo {name}, Bestellung {order}."
         XCTAssertEqual(SavedMessages.fill(text, with: fields, covering: [.names]), "Hallo …, Bestellung 1024.")
+        // A name stays empty with any of the names' switches on: any of them may cover it.
+        for kind in PrivateDetail.allNames {
+            XCTAssertEqual(SavedMessages.fill(text, with: fields, covering: [kind]), "Hallo …, Bestellung 1024.", "\(kind)")
+        }
+        XCTAssertEqual(SavedMessages.fill(text, with: fields, covering: [.orders]), "Hallo Lena Hoffmann, Bestellung ….")
     }
 
     func testABlankThePhotoDoesNotShowStaysEmpty() {

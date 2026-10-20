@@ -27,9 +27,19 @@ keeps a download of each version.
   new chat. Where the app is not on the iPhone, the share sheet shows as
   before. Save to Photos opens Photos once the copy is saved.
 - Names, Patient names and Other people are three switches of their own,
-  on the Mac and the iPhone: turning one on or off leaves the other two as
-  they are. Names covers everyone's names; with it off, Patient names covers
-  the patients' and Other people everyone else's.
+  on the Mac and the iPhone, and each covers only its own people: Patient
+  names the patients'; Other people the doctors, customers, staff and
+  everyone else the words round a name tell; Names every name whose role
+  nothing tells, as in a chat or a list. With Names on alone, a doctor's
+  letter about you covers your saved name and leaves the doctors'. All
+  three, on at first, cover everyone's names, and a choice of Names with
+  Patient names covers as before, with Other people turned on. "Herr" is
+  no longer covered on its own, as in "Sehr geehrter Herr Kollege", and a
+  doctor a practice lists in its letterhead without "Dr. med." is known as
+  a doctor, not marked to check.
+- On the iPhone, People in Settings opens with Your Name: your name with
+  "always covered", or a row to add it. A name saved as a word moves under
+  Your Details as Snapfly starts.
 - Only the kinds you checked under Privacy are covered, on the Mac and the
   iPhone. Apple Intelligence, or Claude or ChatGPT, no longer covers a
   street, a date, a reference or a medical term it calls a name: what it

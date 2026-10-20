@@ -183,14 +183,24 @@ final class DocumentSenseTests: XCTestCase {
         XCTAssertEqual(patients.decide(.unknown), .coverAndCheck)
         XCTAssertEqual(NameScope.everyone.decide(NameRole(role: .doctor, confidence: 0.9, reason: "title")), .cover)
         XCTAssertEqual(NameScope.everyone.decide(.unknown), .cover)
+        // With Names, a name whose role is not clear is covered as one; whoever the words tell, as chosen.
+        let names = NameScope(roles: [], unclear: true)
+        XCTAssertEqual(names.decide(.unknown), .cover)
+        XCTAssertEqual(names.decide(NameRole(role: .patient, confidence: 0.9, reason: "label")), .leave)
+        XCTAssertEqual(names.decide(NameRole(role: .doctor, confidence: 0.9, reason: "title")), .leave)
     }
 
-    func testPatientsAndOtherPeopleAreChosenApartFromNames() {
-        XCTAssertEqual(Finder.resolved([.names, .patientNames]).scope, .everyone, "Names is everyone's")
-        XCTAssertEqual(Finder.resolved([.names, .patientNames, .otherPeople]).chosen, [.names])
+    func testNamesPatientNamesAndOtherPeopleEachChooseTheirOwnPeople() {
+        XCTAssertEqual(Finder.resolved(PrivateDetail.allNames).scope, .everyone, "all three are everyone's")
+        XCTAssertEqual(Finder.resolved(PrivateDetail.allNames).chosen, [.names])
+        let names = Finder.resolved([.names, .emails])
+        XCTAssertEqual(names.chosen, [.names, .emails])
+        XCTAssertEqual(names.scope, NameScope(roles: [], unclear: true), "Names alone: no one the words tell")
+        let named = Finder.resolved([.names, .patientNames])
+        XCTAssertEqual(named.scope, NameScope(roles: [.patient], unclear: true))
         let patients = Finder.resolved([.patientNames, .phones])
         XCTAssertEqual(patients.chosen, [.names, .phones])
-        XCTAssertEqual(patients.scope.roles, [.patient])
+        XCTAssertEqual(patients.scope, NameScope(roles: [.patient]))
         let others = Finder.resolved([.otherPeople])
         XCTAssertEqual(others.scope.roles, Set(PersonRole.others))
         XCTAssertEqual(Finder.resolved([.patientNames, .otherPeople]).scope.roles, Set(PersonRole.allCases))
@@ -219,11 +229,33 @@ final class DocumentSenseTests: XCTestCase {
         PrivateDetail.bringUpToDate(["hiddenDetails"], in: defaults)
         XCTAssertEqual(chosen("hiddenDetails"), ["otherPeople"])
 
-        // Everyone's: Names stays, and patients' names start on as a new kind.
+        // Everyone's: Names stays, and its two parts start on as new kinds.
         defaults.set(before, forKey: PrivateDetail.knownKey)
         defaults.set(["names", "emails"], forKey: "hiddenDetails")
         PrivateDetail.bringUpToDate(["hiddenDetails"], in: defaults)
-        XCTAssertEqual(chosen("hiddenDetails"), ["names", "emails", "patientNames"])
+        XCTAssertEqual(chosen("hiddenDetails"), ["names", "emails", "patientNames", "otherPeople"])
         defaults.removePersistentDomain(forName: "DocumentSenseTests")
+    }
+
+    /// Names covered everyone's names, whatever its two parts said, until
+    /// each covered its own people. Whoever had Names with Patient names,
+    /// as recommended, keeps everyone's covered, Other people with them;
+    /// Names alone, chosen with both parts off, stays as it was. Once.
+    func testChoicesMadeWhileNamesWasEveryonesKeepCoveringTheSame() throws {
+        let suite = "DocumentSenseTests-parted-\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        func chosen(_ key: String) -> Set<String> { Set(defaults.stringArray(forKey: key) ?? []) }
+        defaults.set(PrivateDetail.allCases.map(\.rawValue), forKey: PrivateDetail.knownKey)
+        defaults.set(["names", "patientNames", "emails"], forKey: "hiddenDetails")
+        defaults.set(["names", "health"], forKey: "hiddenDetailsBefore")
+        PrivateDetail.bringUpToDate(["hiddenDetails", "hiddenDetailsBefore"], in: defaults)
+        XCTAssertEqual(chosen("hiddenDetails"), ["names", "patientNames", "otherPeople", "emails"])
+        XCTAssertEqual(chosen("hiddenDetailsBefore"), ["names", "health"], "Names alone stays")
+        // Once: Other people turned off afterwards stays off.
+        defaults.set(["names", "patientNames", "emails"], forKey: "hiddenDetails")
+        PrivateDetail.bringUpToDate(["hiddenDetails"], in: defaults)
+        XCTAssertEqual(chosen("hiddenDetails"), ["names", "patientNames", "emails"])
+        XCTAssertEqual(PrivateDetail.parting([.patientNames]), [.patientNames], "no Names, nothing to keep")
     }
 }

@@ -38,7 +38,7 @@ final class FirstRunTests: XCTestCase {
 
     func testEachCategoryCoversItsOwnDetailAndNothingElse() {
         for category in invoiceCategories {
-            let found = covered([category.detail])
+            let found = covered(category.details)
             let expected = FirstRun.fields(of: .invoice).filter { $0.category == category }
             XCTAssertEqual(Set(found.keys), Set(expected.map(\.id)), "\(category): \(found)")
             for field in expected {
@@ -49,7 +49,7 @@ final class FirstRunTests: XCTestCase {
     }
 
     func testTheAmountStaysReadableAndIsAnAmountToTheEngine() {
-        let chosen = Set(FirstRun.Category.allCases.map(\.detail))
+        let chosen = FirstRun.Category.allCases.reduce(into: Set<PrivateDetail>()) { $0.formUnion($1.details) }
         XCTAssertNil(covered(chosen)[.amount], "the amount stays readable")
         XCTAssertEqual(covered([.amounts])[.amount], ["149,90 €"])
     }
@@ -57,7 +57,7 @@ final class FirstRunTests: XCTestCase {
     func testTheSampleIsReadTheSameWithEnglishLabels() {
         let labels: [FirstRun.Field.ID: String] = [.name: "Name:", .email: "Email:", .iban: "IBAN:", .amount: "Amount:"]
         for category in invoiceCategories {
-            let found = covered([category.detail], labels: labels, title: "Invoice")
+            let found = covered(category.details, labels: labels, title: "Invoice")
             XCTAssertEqual(Set(found.keys), Set(FirstRun.fields(of: .invoice).filter { $0.category == category }.map(\.id)),
                            "\(category): \(found)")
         }
@@ -129,18 +129,18 @@ final class FirstRunTests: XCTestCase {
                 .patients: FirstRun.field(.patient).value, .birthDates: FirstRun.field(.birthDate).value, .health: diagnosis,
             ]
             for (category, value) in expected {
-                let found = coveredWords(letter, [category.detail])
+                let found = coveredWords(letter, category.details)
                 XCTAssertFalse(found.isEmpty, "\(category) finds \(value)")
                 XCTAssertTrue(found.allSatisfy { $0 == value }, "\(category) covers only \(value): \(found)")
             }
-            let all = coveredWords(letter, Set(expected.keys.map(\.detail)))
+            let all = coveredWords(letter, expected.keys.reduce(into: Set<PrivateDetail>()) { $0.formUnion($1.details) })
             XCTAssertFalse(all.contains { $0.contains("Schmidt") || $0.contains("Weber") }, "the doctors stay: \(all)")
         }
     }
 
     func testTheStatementCoversItsHolderAndAccountAsTheInvoiceDoes() {
         for statement in [statementDE, statementEN] {
-            XCTAssertEqual(coveredWords(statement, [.names]), [FirstRun.field(.holder).value])
+            XCTAssertEqual(coveredWords(statement, FirstRun.Category.names.details), [FirstRun.field(.holder).value])
             XCTAssertEqual(coveredWords(statement, [.bank]), [FirstRun.field(.account).value])
             XCTAssertEqual(coveredWords(statement, [.emails]), [], "it has no email")
         }

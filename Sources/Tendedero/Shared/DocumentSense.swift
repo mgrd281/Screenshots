@@ -270,6 +270,21 @@ enum DocumentSense {
         particles.contains(word)
     }
 
+    /// Whether a word is a title or part of one, which a name follows and
+    /// is never part of: "Herr", "Frau", "Dr.", "med.".
+    static func isTitle(_ word: String) -> Bool {
+        let lower = word.lowercased()
+        return titles.contains(lower) || titleParts.contains(lower)
+    }
+
+    /// Whether a line names a doctor by a doctor's title before the name,
+    /// as a practice's letterhead lists them: "Dr. med. Anna Schmidt".
+    static func namesADoctor(_ line: String) -> Bool {
+        titledNames(in: line).contains { found in
+            found.title.lowercased().split(separator: " ").contains { medicalTitles.contains(String($0)) }
+        }
+    }
+
     /// A name's whole run around part of it, as the words beside it go on:
     /// "Erika" in "Frau Erika Musterfrau kam" gives "Erika Musterfrau", and
     /// "Musterfrau" in "Musterfrau, Erika" the two. It stops at a title, a
@@ -665,12 +680,13 @@ enum DocumentSense {
             let cue = word.hasPrefix("*") || word.hasPrefix("(geb") || birthCues.contains { $0.trimmingCharacters(in: .whitespaces) == word }
                 || word.hasPrefix("geb.") || word == "geboren"
             guard cue || isDate && kind == .medical else { continue }
-            // Back from the cue over the name's words.
+            // Back from the cue over the name's words, up to a title before it.
             var start = k
             while start > 0, start > k - 5 {
                 let previous = String(line[all[start - 1]])
                 let bare = previous.hasSuffix(",") ? String(previous.dropLast()) : previous
-                guard !bare.hasSuffix(":"), isNameWord(bare, caseless: false) || particles.contains(bare) else { break }
+                guard !bare.hasSuffix(":"), !isTitle(bare),
+                      isNameWord(bare, caseless: false) || particles.contains(bare) else { break }
                 start -= 1
             }
             guard k - start >= 2, let range = nameRun(in: line, tokens: all, from: start, minWords: 2),
@@ -765,13 +781,16 @@ enum DocumentSense {
     }
 }
 
-/// Whose names are covered: everyone's, with Names, or only some people's,
-/// with Patient names or Other people alone (`Finder.resolved`). A name
-/// whose role is not clear is covered anyway and marked for the owner to
-/// check.
+/// Whose names are covered (`Finder.resolved`): everyone's, with Names,
+/// Patient names and Other people all on; else each one's own people, the
+/// patients', everyone else's whose role the words round the name tell,
+/// and, with Names, the names whose role is not clear. Without Names, such
+/// a name is covered anyway and marked for the owner to check.
 struct NameScope: Equatable, Sendable {
     /// Nil: everyone.
     var roles: Set<PersonRole>?
+    /// Whether Names is on, so a name whose role is not clear is covered as one.
+    var unclear = false
 
     static let everyone = NameScope(roles: nil)
 
@@ -779,7 +798,7 @@ struct NameScope: Equatable, Sendable {
 
     func decide(_ role: NameRole) -> Decision {
         guard let roles else { return .cover }
-        guard role.isSure else { return .coverAndCheck }
+        guard role.isSure else { return unclear ? .cover : .coverAndCheck }
         return roles.contains(role.role) ? .cover : .leave
     }
 }

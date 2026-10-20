@@ -32,7 +32,8 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertEqual(PrivateDetail.birthDates.group, .people)
         XCTAssertEqual(FormFields.Entity.dateOfBirth.detail, .birthDates)
         XCTAssertEqual(FormFields.Entity.date.detail, .dates)
-        XCTAssertFalse(PrivateDetail.recommended.contains(.otherPeople), "Names covers them")
+        // Everyone's names: Names and its two parts, each covering its own people.
+        XCTAssertTrue(PrivateDetail.recommended.isSuperset(of: PrivateDetail.allNames))
         XCTAssertEqual(PrivateDetail.patientNames.group, .people)
         XCTAssertEqual(PrivateDetail.otherPeople.group, .people)
         // What a screenshot is usually sent for stays visible until chosen,
@@ -250,10 +251,12 @@ final class PrivateDetailTests: XCTestCase {
     }
 
     func testANewRecommendedKindStartsOnOnceForWhoeverCoversAnything() throws {
-        XCTAssertEqual(PrivateDetail.added(to: [.names], known: nil), [.barcodes, .keys, .patientNames, .birthDates])
+        XCTAssertEqual(PrivateDetail.added(to: [.names], known: nil),
+                       [.barcodes, .keys, .patientNames, .otherPeople, .birthDates])
         XCTAssertEqual(PrivateDetail.added(to: [], known: nil), [])
         XCTAssertEqual(PrivateDetail.added(to: [.names], known: PrivateDetail.allCases.map(\.rawValue)), [])
-        XCTAssertEqual(PrivateDetail.added(to: [.names, .barcodes, .keys, .patientNames, .birthDates], known: nil), [])
+        XCTAssertEqual(PrivateDetail.added(to: [.names, .barcodes, .keys, .patientNames, .otherPeople, .birthDates],
+                                           known: nil), [])
         // Keys came after the sixteen; IP addresses came too, but wait to be chosen.
         let sixteen = PrivateDetail.allCases.filter { $0 != .keys && $0 != .ipAddresses }.map(\.rawValue)
         XCTAssertEqual(PrivateDetail.added(to: [.names], known: sixteen), [.keys])
@@ -264,7 +267,7 @@ final class PrivateDetailTests: XCTestCase {
         defaults.set(["names"], forKey: "hiddenDetails")
         PrivateDetail.bringUpToDate(["hiddenDetails", "notSaved"], in: defaults)
         XCTAssertEqual(defaults.stringArray(forKey: "hiddenDetails"),
-                       ["barcodes", "birthDates", "keys", "names", "patientNames"])
+                       ["barcodes", "birthDates", "keys", "names", "otherPeople", "patientNames"])
         XCTAssertNil(defaults.stringArray(forKey: "notSaved"))
         // Turned off afterwards, it stays off.
         defaults.set(["names"], forKey: "hiddenDetails")
