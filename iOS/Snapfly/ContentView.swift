@@ -252,38 +252,15 @@ struct PhotosTab: View {
 
     // MARK: Before access
 
-    /// The first launch: Snapfly covering a sample card before the owner's
-    /// eyes, what it does, and access, asked for once that is seen.
+    /// The first launch: Snapfly covering a sample screenshot first, then
+    /// what it does and access, with nothing else on the screen.
     private var welcome: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                CoverDemo()
-                    .padding(.top, 24)
-                VStack(spacing: 8) {
-                    Text(L("Covered before you send"))
-                        .font(.title2.weight(.bold))
-                        .accessibilityAddTraits(.isHeader)
-                    Text(L("Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone."))
-                        .foregroundStyle(.secondary)
-                }
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                Button(L("Allow Access")) {
-                    presses += 1
-                    library.ask()
-                }
-                .buttonStyle(ProtectButtonStyle())
-                .sensoryFeedback(.impact(weight: .light), trigger: presses)
-                Text(L("Your screenshots are read on this iPhone, and nothing leaves it unless you choose."))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .padding(.horizontal, 32)
-            .padding(.bottom, 24)
-            .frame(maxWidth: .infinity)
+        WelcomeScreen {
+            presses += 1
+            library.ask()
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: presses)
+        .toolbar(.hidden, for: .tabBar)
     }
 
     private var denied: some View {

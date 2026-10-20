@@ -1400,6 +1400,5 @@
 /* The iPhone: the first launch, covering a sample card */
 "A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "예시 스크린샷: 이름, 전화번호, 이메일, IBAN이 차례로 가려집니다.";
 "Plays the example again." = "예시를 다시 재생합니다.";
-"Name, phone number, email and IBAN covered." = "이름, 전화번호, 이메일, IBAN을 가렸습니다.";
 "Covered before you send" = "보내기 전에 가려집니다";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "스크린샷은 이 iPhone에서 읽히며, 직접 선택하지 않는 한 아무것도 밖으로 나가지 않습니다.";

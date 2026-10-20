@@ -1400,6 +1400,5 @@
 /* The iPhone: the first launch, covering a sample card */
 "A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "Une capture d’exemple : son nom, son numéro de téléphone, son e-mail et son IBAN sont masqués l’un après l’autre.";
 "Plays the example again." = "Rejoue l’exemple.";
-"Name, phone number, email and IBAN covered." = "Nom, numéro de téléphone, e-mail et IBAN masqués.";
 "Covered before you send" = "Masqué avant l’envoi";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Tes captures sont lues sur cet iPhone, et rien n’en sort sans ton choix.";

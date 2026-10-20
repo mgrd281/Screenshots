@@ -1400,6 +1400,5 @@
 /* The iPhone: the first launch, covering a sample card */
 "A sample screenshot: its name, phone number, email and IBAN are covered one after another." = "Örnek bir ekran görüntüsü: adı, telefon numarası, e-postası ve IBAN'ı sırayla kapatılır.";
 "Plays the example again." = "Örneği yeniden oynatır.";
-"Name, phone number, email and IBAN covered." = "Ad, telefon numarası, e-posta ve IBAN kapatıldı.";
 "Covered before you send" = "Göndermeden önce kapatılır";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Ekran görüntülerin bu iPhone'da okunur ve sen seçmedikçe hiçbir şey dışarı çıkmaz.";

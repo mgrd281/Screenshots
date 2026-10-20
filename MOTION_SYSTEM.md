@@ -94,7 +94,7 @@ settle is the point.
 | Token | Value | Where it ships |
 |---|---|---|
 | `stagger.cover` | 45 ms | Hide Part, and the iPhone's Protect Picture: covers grow in line by line, each over 0.32 s on a cubic ease-out from the reading side |
-| `stagger.demo` | 180 ms | iPhone first launch: the sample card's four details covered one after another, slow enough to follow |
+| `stagger.demo` | 170 ms | iPhone first launch: the sample screenshot's four details covered one after another, slow enough to follow; found before that as the reading line reaches each |
 | `stagger.grid` | 35 ms, twelve at most | iPhone: screenshot cards rise 8 pt into the grid the first time it has any, on `spring.reveal` |
 | `stagger.list` | 90 ms, four at most | Site arrivals: the four steps |
 | `stagger.hang` | 110 ms | Site first view: photos drop onto the rope |
@@ -120,6 +120,7 @@ settle is the point.
 | `rise.text` | 18 px | Body text arriving |
 | `rise.words` | 22–26 px | Headlines rising into focus |
 | `rise.card` | 28 px | A card in a list arriving |
+| `land.card` | 36 pt, tipped back 16° about its lower edge | iPhone first launch: the sample screenshot landing, on a spring (0.6, 0.82) |
 | `rise.window` | 32–44 px | A window opening |
 | `drop.photo` | 56 px | A photo dropping onto its clip |
 | `drop.card` | 40 px | A step card dropping onto its clip as it arrives |
