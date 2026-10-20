@@ -309,10 +309,13 @@ value that fits its label only in part, like a name read in small letters,
 is covered and marked to check; one that barely does, like a number too
 short for its field, is only offered.
 
-Names covers everyone's names. Two more choices sit under it, for when
-Names is off: Patient names, the patients' alone, and Other people, the
-doctors, customers, staff, payees, senders and recipients. Patient names
-starts on, as a patient's name is health data. Whose a name is comes from
+Names covers everyone's names. Two more choices sit under it: Patient
+names, the patients' alone, and Other people, the doctors, customers,
+staff, payees, senders and recipients. Names is the two together, and each
+turns on and off by itself: turn Other people off and Names goes off, so
+only the patients' names are covered; turn both on and Names is on again;
+turn Names off and both go off. Patient names starts on, as a patient's
+name is health data. Whose a name is comes from
 what stands round it: a label like Patient:, Pat., Name des Versicherten
 or Behandelnder Arzt:, a title, the address under "Herrn" in a doctor's
 letter, the letter's subject, words like "Ihren Patienten" before it in a
@@ -1074,7 +1077,7 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Save, without opening it. The screenshot itself stays as it was.
   Settings chooses what to cover, in the same six groups as on the Mac,
   with Check All, Recommended and Uncheck All, and Patient names and Other
-  people beside Names. Cover look picks how covers look, from the same six
+  people under Names, each turning on and off by itself. Cover look picks how covers look, from the same six
   as on the Mac, with Keep the last four digits and Strongest protection.
   Reading and checking holds Apple Intelligence, how long the last
   screenshot took, the middle and the 95th percentile of the last fifty,

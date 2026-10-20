@@ -800,10 +800,8 @@ private struct HideEditorView: View {
             Section(group.title) {
                 ForEach(group.kinds, id: \.self) { detail in
                     Toggle(detail.title, isOn: Binding(
-                        get: { model.chosen.contains(detail) },
-                        set: { on in
-                            if on { model.chosen.insert(detail) } else { model.chosen.remove(detail) }
-                        }
+                        get: { PrivateDetail.shows(detail, in: model.chosen) },
+                        set: { on in model.chosen = PrivateDetail.turning(detail, on: on, in: model.chosen) }
                     ))
                 }
             }

@@ -387,14 +387,16 @@ final class Preferences: ObservableObject {
     // MARK: Privacy
 
     func hides(_ detail: PrivateDetail) -> Binding<Bool> {
+        // Names covers everyone's, patients' and other people's too, and
+        // each of the two turns on and off by itself.
         Binding(
-            get: { PrivateDetails.details.contains(detail) },
+            get: { PrivateDetail.shows(detail, in: PrivateDetails.details) },
             set: { [weak self] on in
                 // SwiftUI sets it from the main thread.
                 MainActor.assumeIsolated {
-                    guard let self, on != PrivateDetails.details.contains(detail) else { return }
+                    guard let self, on != PrivateDetail.shows(detail, in: PrivateDetails.details) else { return }
                     self.change {
-                        PrivateDetails.toggle(detail)
+                        PrivateDetails.details = PrivateDetail.turning(detail, on: on, in: PrivateDetails.details)
                         self.line.readPrivateDetails()
                         self.selfTest = nil
                     }
@@ -1678,13 +1680,10 @@ private struct PrivacyPane: View {
             ForEach(PrivateDetail.Group.allCases, id: \.self) { group in
                 Section {
                     ForEach(group.kinds, id: \.self) { detail in
-                        // Names covers everyone's, patients' and other people's too.
-                        let included = PrivateDetail.people.contains(detail) && prefs.hides(.names).wrappedValue
-                        Toggle(isOn: included ? .constant(true) : prefs.hides(detail)) {
+                        Toggle(isOn: prefs.hides(detail)) {
                             Text(detail.title)
                             if let subtitle = detail.subtitle { Text(subtitle) }
                         }
-                        .disabled(included)
                     }
                 } header: {
                     Text(group.title)

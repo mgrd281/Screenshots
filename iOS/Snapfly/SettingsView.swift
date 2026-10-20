@@ -35,16 +35,13 @@ struct SettingsView: View {
                 ForEach(PrivateDetail.Group.allCases, id: \.self) { group in
                     Section {
                         ForEach(group.kinds, id: \.self) { detail in
-                            // Names covers everyone's, patients' and other people's too.
-                            let included = PrivateDetail.people.contains(detail) && chosen.contains(.names)
-                            Toggle(isOn: included ? .constant(true) : binding(for: detail)) {
+                            Toggle(isOn: binding(for: detail)) {
                                 if let subtitle = detail.subtitle {
                                     described(detail.title, subtitle)
                                 } else {
                                     Text(detail.title)
                                 }
                             }
-                            .disabled(included)
                         }
                     } header: {
                         Text(group.title)
@@ -208,10 +205,12 @@ struct SettingsView: View {
     }
 
     private func binding(for detail: PrivateDetail) -> Binding<Bool> {
+        // Names covers everyone's, patients' and other people's too, and
+        // each of the two turns on and off by itself.
         Binding {
-            chosen.contains(detail)
+            PrivateDetail.shows(detail, in: chosen)
         } set: { on in
-            if on { chosen.insert(detail) } else { chosen.remove(detail) }
+            chosen = PrivateDetail.turning(detail, on: on, in: chosen)
             Choice.details = chosen
         }
     }

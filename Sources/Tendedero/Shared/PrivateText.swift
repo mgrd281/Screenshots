@@ -103,6 +103,35 @@ enum PrivateDetail: String, CaseIterable {
 
     static var recommended: Set<PrivateDetail> { Set(allCases.filter(\.isRecommended)) }
 
+    // MARK: Names and its two parts
+
+    /// Whether a kind shows as on in a choice: Names is everyone's, so with
+    /// it on, Patient names and Other people show on too.
+    static func shows(_ detail: PrivateDetail, in chosen: Set<PrivateDetail>) -> Bool {
+        chosen.contains(detail) || people.contains(detail) && chosen.contains(.names)
+    }
+
+    /// The choice with a kind turned on or off, every switch free to turn,
+    /// the same in every list of kinds. Names is its two parts together:
+    /// turning one part off while Names is on keeps the other, turning both
+    /// on is Names, and Names off turns both off.
+    static func turning(_ detail: PrivateDetail, on: Bool, in chosen: Set<PrivateDetail>) -> Set<PrivateDetail> {
+        var chosen = chosen
+        switch detail {
+        case .names:
+            chosen.subtract(people)
+            if on { chosen.insert(.names) } else { chosen.remove(.names) }
+        case .patientNames, .otherPeople:
+            var parts = people.filter { shows($0, in: chosen) }
+            if on { parts.insert(detail) } else { parts.remove(detail) }
+            chosen.subtract(people.union([.names]))
+            if parts == people { chosen.insert(.names) } else { chosen.formUnion(parts) }
+        default:
+            if on { chosen.insert(detail) } else { chosen.remove(detail) }
+        }
+        return chosen
+    }
+
     // MARK: Kinds added later
 
     /// The kinds there were when a choice was last brought up to date.
