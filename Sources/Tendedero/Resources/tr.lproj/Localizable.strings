@@ -411,6 +411,9 @@
 "Share your documents. Not your private data." = "Belgelerini paylaş. Özel verilerini değil.";
 "Protect invoices, screenshots and documents before you share them." = "Faturaları, ekran görüntülerini ve belgeleri paylaşmadan önce koru.";
 "Only the protected copy leaves your iPhone." = "iPhone'undan yalnızca korunan kopya çıkar.";
+"Names, emails and bank details are found and covered." = "İsimler, e-postalar ve banka bilgileri bulunur ve gizlenir.";
+"Tap a category to show or cover it." = "Göstermek ya da gizlemek için bir kategoriye dokun.";
+"Scan a page: it is straightened, read and covered." = "Bir sayfayı tara: düzeltilir, okunur ve gizlenir.";
 "Bank details" = "Banka bilgileri";
 "Invoice" = "Fatura";
 "Sample" = "Örnek";

@@ -167,6 +167,10 @@ components:
     height: "36pt"                 # at least; footnote, 14pt in, 6pt under the navigation bar
   phone-first-run-chip:
     height: "40pt"                 # a category on the first run: a capsule, subheadline semibold, 14pt in, 44pt to the finger; on, phone-protect with white and eye.slash.fill; off, secondarySystemBackground with a hairline of .primary at 10% and eye
+  phone-first-run-stage:
+    rounded: "32pt"                # the first run's page stands on phone-surface, a hairline of .primary at 6%, 16pt in from the screen's sides, the page 18pt from its top and bottom
+  phone-story-bars:
+    height: "4pt"                  # the first run's progress: four system linear bars in phone-protect, 4pt apart, 400pt wide at most
   phone-sample-page:
     ratio: "210 × 297"             # the first run's invoice, standing as a sheet of A4: 170–300pt wide, as tall as the room allows; corners of 8
   phone-scan-frame:
@@ -1969,16 +1973,31 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   first frame, on `systemBackground` with the safe areas kept, until it is
   skipped or ended. One page moves through it all.
   - **Layout**, top to bottom in a scroll view at least the screen's
-    height: the headline, title 2 bold, centred, 400 pt wide at most, 24 pt
-    in and 24 pt down, in a place kept at least 112 pt high so nothing
-    below it jumps; then the page, centred between flexible space; then a
-    place at least 108 pt high for the chips or the share row; then the
-    actions, 360 pt wide at most, in a place at least 104 pt high, at the
-    bottom.
+    height:
+    - the story's bars (`phone-story-bars`), 8 pt down, 24 pt in, 400 pt
+      wide at most;
+    - 16 pt under them the words, centred, 400 pt wide at most, 24 pt in,
+      in a place kept at least 124 pt high so nothing below it jumps: the
+      headline in title 2 bold over its scene's line in subheadline
+      `.secondary`, 6 pt apart (what is found, how to turn a category, what
+      the scanner does, that only the protected copy leaves, what Snapfly
+      is for);
+    - the stage (`phone-first-run-stage`), between flexible space of at
+      least 8 pt: `phone-surface` with corners of 32 and a hairline of
+      `.primary` at 6%, 16 pt in from the screen's sides, holding the page
+      18 pt from its top and bottom, so the white page stands on the
+      brand's soft green (deep green in dark), as the stacked photos of
+      the Photos tab do;
+    - a place at least 108 pt high for the chips or the share row;
+    - the actions, 360 pt wide at most, in a place at least 104 pt high,
+      at the bottom.
+    - The tabs behind it are made only once a first run that opens Snapfly
+      is over, so reading Photos and starting sync never hold up its first
+      seconds.
   - **The page** (`SampleInvoice`, `phone-sample-page`) stands as a sheet
     of A4, as a printed invoice does (`FirstRun.pageRatio`): as tall as the
     room between the words and the chips allows, 300 pt wide at most and
-    170 at least, never wider than the screen less 56. White in light and
+    170 at least, never wider than the screen less 72. White in light and
     dark alike, corners of 8, a hairline of `.primary` at 8%, margins of
     7.5% of its width at the sides and 5% of its height above and below,
     left to right in every language, no larger than at extra large text,
@@ -2004,7 +2023,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     the reading side (`motion.redact`), solid all the way; uncovered, it
     goes back the same way. The protected shield on the page's corner is a
     36 pt `phone-protect` circle with `checkmark.shield.fill` in white and
-    a 3 pt `systemBackground` ring, from 30% (`motion.success`) with one
+    a 3 pt `phone-surface` ring, so it seems cut into the page, from 30% (`motion.success`) with one
     bounce; it shows only while something is chosen.
   - **The story**, in seconds: the page at once; at 0.25 the reading line
     (`sweep.scan`) crosses it and each detail is found as it passes; from
@@ -2021,7 +2040,15 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     page goes to 74% and the share row rises in. At 13.6, "Share your
     documents. Not your private data." over "Protect invoices, screenshots
     and documents before you share them." in subheadline `.secondary`, and
-    Try It Now. Each headline gives way to the next in place, rising 8 pt.
+    Try It Now. Each scene's words give way to the next in place: the old
+    ones leave first in 0.12 s, then the new ones rise 8 pt and come into
+    focus from a 6 pt blur in 0.32 s (an ease-out), so the two are never
+    read over each other; with Reduce Motion they cross-fade.
+  - **The bars** (`phone-story-bars`): four of the system's linear progress
+    bars in `phone-protect`, 4 pt apart, one for each scene before the end
+    (`FirstRun.progress`). Each fills as its scene plays and stands still
+    while the story waits for the owner or the app is away; they fade out
+    at the end, and are hidden from VoiceOver, which starts at the end.
   - **The chips** (`phone-first-run-chip`): Names, Emails and Bank details,
     8 pt apart in a row (without their eyes, then stacked, where the row
     does not fit). On, `phone-protect` with white words and
@@ -2043,9 +2070,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     (`message.fill`) and Email (`envelope.fill`) as 52 pt tiles of
     `secondarySystemBackground` with corners of 14, the glyph 20 pt
     semibold in `.primary`, the name in caption `.secondary` under it, 20 pt
-    apart; under them, "Only the protected copy leaves your iPhone." in
-    footnote `.secondary`. A picture of the share sheet, not a link: no
-    logos, and VoiceOver hears only the sentence.
+    apart; "Only the protected copy leaves your iPhone." is the scene's line
+    under its headline. A picture of the share sheet, not a link: no
+    logos, and VoiceOver hears only that sentence.
   - **Actions**: Skip Demo in subheadline medium `.secondary`, 44 pt high,
     from the first frame; at the end Try It Now rises in over it as the
     wide green pill and Skip Demo becomes Not Now. Try It Now opens the real

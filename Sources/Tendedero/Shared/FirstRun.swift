@@ -289,6 +289,15 @@ enum FirstRun {
         state.phase = on ? .redacting : .revealing
     }
 
+    /// How far each scene before the end has played at a moment, from 0 to
+    /// 1, for the bars over the story: the reveal, the control, the scan and
+    /// sharing.
+    static func progress(at time: Double) -> [Double] {
+        let starts = [0, controlStart, scanStart, shareStart]
+        let ends = [controlStart, scanStart, shareStart, completeStart]
+        return zip(starts, ends).map { start, end in min(max((time - start) / (end - start), 0), 1) }
+    }
+
     /// The story at a moment, as if left alone.
     static func state(at time: Double) -> State {
         var state = State()

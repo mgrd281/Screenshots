@@ -200,4 +200,19 @@ final class FirstRunTests: XCTestCase {
             XCTAssertEqual(value, identity, accuracy: 1e-9)
         }
     }
+
+    func testTheBarsFillSceneByScene() {
+        XCTAssertEqual(FirstRun.progress(at: 0), [0, 0, 0, 0])
+        XCTAssertEqual(FirstRun.progress(at: FirstRun.controlStart / 2)[0], 0.5, accuracy: 0.0001)
+        XCTAssertEqual(FirstRun.progress(at: FirstRun.controlStart), [1, 0, 0, 0])
+        let scanning = FirstRun.progress(at: (FirstRun.scanStart + FirstRun.shareStart) / 2)
+        XCTAssertEqual(scanning[0], 1)
+        XCTAssertEqual(scanning[1], 1)
+        XCTAssertEqual(scanning[2], 0.5, accuracy: 0.0001)
+        XCTAssertEqual(scanning[3], 0)
+        // At its end every bar is full, and stays so.
+        XCTAssertEqual(FirstRun.progress(at: FirstRun.completeStart), [1, 1, 1, 1])
+        XCTAssertEqual(FirstRun.progress(at: 60), [1, 1, 1, 1])
+        XCTAssertEqual(FirstRun.progress(at: -1), [0, 0, 0, 0])
+    }
 }

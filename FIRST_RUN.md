@@ -91,6 +91,14 @@ shows, and CI's still frames use it too. The phases are those of
   them again. Rapid taps end where the last one leaves them; every cover
   animates from where it is, so nothing overlaps or races.
 - **Skip Demo** ends it at once.
+- **The bars** over the story fill scene by scene and stand still with
+  it, so it reads as short and as waiting for the owner.
+- **Each scene has a line** under its headline: what is found, how to turn
+  a category (the chips say nothing of being tappable on their own), what
+  the scanner does, that only the protected copy leaves, and at the end
+  what Snapfly is for.
+- **The tabs behind it** are made once it is over, so reading Photos and
+  starting sync never take from its first seconds.
 
 ## 4. Components
 

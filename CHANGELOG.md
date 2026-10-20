@@ -29,7 +29,9 @@ keeps a download of each version.
   tap, there or on the picture.
 - On the iPhone, the introduction's buttons are smaller, each on one line.
 - The iPhone app opens with a first run of under fifteen seconds, on a
-  made-up invoice standing as a printed A4 page: its name, email and IBAN are found and covered while
+  made-up invoice standing as a printed A4 page on a soft green stage,
+  with bars that show how far it is and a short line under each headline
+  saying what happens: its name, email and IBAN are found and covered while
   the amount stays readable; Names, Emails and Bank details are yours to
   turn on and off with a tap; a page is scanned, straightened and covered
   as you chose; and the protected copy is ready to share. Try It Now opens

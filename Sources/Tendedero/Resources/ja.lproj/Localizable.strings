@@ -411,6 +411,9 @@
 "Share your documents. Not your private data." = "書類は共有しても、個人情報は共有しない。";
 "Protect invoices, screenshots and documents before you share them." = "請求書、スクリーンショット、書類を共有する前に保護しましょう。";
 "Only the protected copy leaves your iPhone." = "iPhoneから出ていくのは、保護されたコピーだけです。";
+"Names, emails and bank details are found and covered." = "名前、メールアドレス、口座情報を見つけて隠します。";
+"Tap a category to show or cover it." = "カテゴリをタップすると、表示したり隠したりできます。";
+"Scan a page: it is straightened, read and covered." = "ページをスキャンすると、まっすぐに整えて読み取り、隠します。";
 "Bank details" = "口座情報";
 "Invoice" = "請求書";
 "Sample" = "サンプル";

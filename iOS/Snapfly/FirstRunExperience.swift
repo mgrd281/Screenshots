@@ -76,6 +76,8 @@ struct SnapflyFirstRunExperience: View {
     /// The owner's last touch, so the story waits while they try.
     @State private var touched: Date?
     @State private var shownAt: Date?
+    /// The story's clock as the bars over it read it.
+    @State private var clock = StoryClock()
     /// The page's height, for the scanner's perspective.
     @State private var paperHeight: CGFloat = 0
     /// Haptics: protected, the page's edges found, a category turned.
@@ -89,21 +91,35 @@ struct SnapflyFirstRunExperience: View {
     /// Cross-fades instead of movement.
     private var calm: Bool { reduceMotion || ProcessInfo.processInfo.isLowPowerModeEnabled }
 
+    /// The height everything but the page takes: the bars, the words, the
+    /// stage's margins, what is under it and the actions.
+    private static let reserved: CGFloat = 424
+
     var body: some View {
         GeometryReader { space in
             // The page stands, as tall as the room between the words and
             // what is under it allows.
-            let room = (space.size.height - 372) / FirstRun.pageRatio
-            let width = max(170, min(space.size.width - 56, 300, room))
+            let room = (space.size.height - Self.reserved) / FirstRun.pageRatio
+            let width = max(170, min(space.size.width - 72, 300, room))
             ScrollView {
                 VStack(spacing: 0) {
+                    StoryProgress(clock: clock)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 8)
+                        .opacity(state.scene == .complete || voiceOver ? 0 : 1)
                     words
                         .padding(.horizontal, 24)
-                        .padding(.top, 24)
-                        .frame(maxWidth: .infinity, minHeight: 112, alignment: .top)
-                    Spacer(minLength: 12)
+                        .padding(.top, 16)
+                        .frame(maxWidth: .infinity, minHeight: 124, alignment: .top)
+                    Spacer(minLength: 8)
                     stage(width: width)
-                    Spacer(minLength: 12)
+                        .padding(.vertical, 18)
+                        .frame(maxWidth: .infinity)
+                        .background(SnapflyTokens.surface, in: RoundedRectangle(cornerRadius: 32, style: .continuous))
+                        .overlay(RoundedRectangle(cornerRadius: 32, style: .continuous)
+                            .strokeBorder(Color.primary.opacity(0.06)))
+                        .padding(.horizontal, 16)
+                    Spacer(minLength: 8)
                     lower
                         .padding(.horizontal, 16)
                         .frame(maxWidth: .infinity, minHeight: 108)
@@ -139,24 +155,45 @@ struct SnapflyFirstRunExperience: View {
         }
     }
 
+    /// What each scene shows, in a line under its headline.
+    static func subline(of scene: FirstRun.Scene) -> String {
+        switch scene {
+        case .reveal: L("Names, emails and bank details are found and covered.")
+        case .control: L("Tap a category to show or cover it.")
+        case .scan: L("Scan a page: it is straightened, read and covered.")
+        case .share: L("Only the protected copy leaves your iPhone.")
+        case .complete: L("Protect invoices, screenshots and documents before you share them.")
+        }
+    }
+
     private var words: some View {
         ZStack(alignment: .top) {
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 Text(Self.headline(of: state.scene))
                     .font(.title2.weight(.bold))
                     .accessibilityAddTraits(.isHeader)
-                if state.scene == .complete {
-                    Text(L("Protect invoices, screenshots and documents before you share them."))
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
+                Text(Self.subline(of: state.scene))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
             }
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: 400)
             .id(state.scene)
-            .transition(.opacity.combined(with: .offset(y: calm ? 0 : 8)))
+            .transition(wordsChange)
         }
+    }
+
+    /// One scene's words give way to the next in place: the old ones leave
+    /// first, quickly, so the two are never read over each other, and the
+    /// new ones come into focus as they rise.
+    private var wordsChange: AnyTransition {
+        guard !calm else { return .opacity }
+        return .asymmetric(
+            insertion: .opacity.combined(with: .offset(y: 8))
+                .combined(with: .modifier(active: Blurred(radius: 6), identity: Blurred(radius: 0)))
+                .animation(.easeOut(duration: 0.32).delay(0.12)),
+            removal: .opacity.animation(.easeOut(duration: 0.12)))
     }
 
     // MARK: The page
@@ -207,7 +244,7 @@ struct SnapflyFirstRunExperience: View {
             .foregroundStyle(.white)
             .frame(width: 36, height: 36)
             .background(SnapflyTokens.protect, in: Circle())
-            .overlay(Circle().strokeBorder(Color(.systemBackground), lineWidth: 3))
+            .overlay(Circle().strokeBorder(SnapflyTokens.surface, lineWidth: 3))
             .symbolEffect(.bounce, options: .nonRepeating, value: state.showsShield)
             .scaleEffect(state.showsShield || calm ? 1 : 0.3)
             .opacity(state.showsShield ? 1 : 0)
@@ -265,24 +302,31 @@ struct SnapflyFirstRunExperience: View {
         log.info("First run shown \(Int(shown.timeIntervalSince(FirstRunCoordinator.launched) * 1000), privacy: .public) ms after launch")
         if let moment = FirstRunCoordinator.frozenMoment {
             state = FirstRun.state(at: moment)
+            clock = StoryClock(elapsed: moment)
             return
         }
         if voiceOver {
             state = FirstRun.state(at: FirstRun.completeStart)
+            clock = StoryClock(elapsed: FirstRun.completeStart)
             return
         }
         var story = 0.0
         var last = Date()
+        clock = StoryClock(elapsed: 0, since: last, running: true)
         for beat in FirstRun.script {
             while story < beat.at {
                 try? await Task.sleep(for: .seconds(min(beat.at - story, 0.05)))
                 if Task.isCancelled { return }
                 let now = Date()
-                if !held(at: now) { story += now.timeIntervalSince(last) }
+                let waiting = held(at: now)
+                if !waiting { story += now.timeIntervalSince(last) }
                 last = now
+                // The bars stop and go on with the story.
+                if clock.running == waiting { clock = StoryClock(elapsed: story, since: now, running: !waiting) }
             }
             perform(beat.event)
         }
+        clock = StoryClock(elapsed: story)
     }
 
     private func held(at now: Date) -> Bool {
@@ -685,17 +729,10 @@ private struct EdgeShape: Shape {
 /// of them: the real share sheet comes with a real copy.
 private struct ShareDestinations: View {
     var body: some View {
-        VStack(spacing: 10) {
-            HStack(spacing: 20) {
-                destination("sparkles", "ChatGPT")
-                destination("message.fill", "WhatsApp")
-                destination("envelope.fill", L("Email"))
-            }
-            Text(L("Only the protected copy leaves your iPhone."))
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
+        HStack(spacing: 20) {
+            destination("sparkles", "ChatGPT")
+            destination("message.fill", "WhatsApp")
+            destination("envelope.fill", L("Email"))
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(L("Only the protected copy leaves your iPhone."))
@@ -713,6 +750,50 @@ private struct ShareDestinations: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
         }
+    }
+}
+
+// MARK: The story's progress
+
+/// The story's clock as the bars read it: where it stood when it last went
+/// on or stopped, and whether it is going.
+struct StoryClock: Equatable {
+    var elapsed = 0.0
+    var since = Date()
+    var running = false
+
+    func time(at date: Date) -> Double {
+        running ? elapsed + date.timeIntervalSince(since) : elapsed
+    }
+}
+
+/// How far the story is: a bar for each scene before the end, filling as it
+/// plays and standing still while it waits for the owner.
+private struct StoryProgress: View {
+    let clock: StoryClock
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30, paused: !clock.running)) { context in
+            let filled = FirstRun.progress(at: clock.time(at: context.date))
+            HStack(spacing: 4) {
+                ForEach(filled.indices, id: \.self) { index in
+                    ProgressView(value: filled[index])
+                        .progressViewStyle(.linear)
+                }
+            }
+        }
+        .tint(SnapflyTokens.protect)
+        .frame(maxWidth: 400)
+        .accessibilityHidden(true)
+    }
+}
+
+/// A view out of focus, for words coming into it.
+private struct Blurred: ViewModifier {
+    let radius: CGFloat
+
+    func body(content: Content) -> some View {
+        content.blur(radius: radius)
     }
 }
 
