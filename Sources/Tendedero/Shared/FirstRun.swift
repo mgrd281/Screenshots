@@ -42,7 +42,7 @@ enum FirstRun {
         let value: String
         let category: Category?
         /// How far down the page it is, from 0 at the top to 1 at the
-        /// bottom, so the reading line finds it as it passes.
+        /// bottom, so the reading light finds it as it passes.
         let depth: Double
 
         /// Its label as the invoice prints it.
@@ -60,11 +60,14 @@ enum FirstRun {
     /// the standard example IBAN and an amount. They belong to no one. Which
     /// category covers each is what the engine finds on the invoice
     /// (`FirstRunTests`), so the first run shows nothing it would not do.
+    /// Their depths are where the invoice prints them: the name and email
+    /// under Bill To, the total under the items, and the IBAN the amount is
+    /// paid from under it.
     static let fields: [Field] = [
-        Field(id: .name, value: "Erika Mustermann", category: .names, depth: 0.35),
-        Field(id: .email, value: "erika@example.com", category: .emails, depth: 0.43),
-        Field(id: .iban, value: "DE89 3704 0044 0532 0130 00", category: .bank, depth: 0.51),
-        Field(id: .amount, value: "149,90 €", category: nil, depth: 0.81),
+        Field(id: .name, value: "Erika Mustermann", category: .names, depth: 0.2),
+        Field(id: .email, value: "erika@example.com", category: .emails, depth: 0.24),
+        Field(id: .iban, value: "DE89 3704 0044 0532 0130 00", category: .bank, depth: 0.72),
+        Field(id: .amount, value: "149,90 €", category: nil, depth: 0.585),
     ]
 
     /// The sample page's height for its width: a sheet of A4, standing, as
@@ -92,7 +95,7 @@ enum FirstRun {
     enum Phase: String, Sendable {
         /// Readable, before anything is found.
         case initial
-        /// Read: the line passes, or the camera looks for the page.
+        /// Read: the light passes, or the camera looks for the page.
         case detecting
         /// Found, and marked, not yet covered.
         case highlighted
@@ -141,7 +144,7 @@ enum FirstRun {
         var scan = ScanStep.none
         /// The protected shield, once the covers are on.
         var shield = false
-        /// Each pass of the reading line, so it sweeps again.
+        /// Each pass of the reading light, so it sweeps again.
         var sweeps = 0
         /// The owner changed a category: the story changes none for them.
         var tookOver = false
@@ -197,7 +200,7 @@ enum FirstRun {
     static let scanStart = 6.2
     static let shareStart = 10.4
     static let completeStart = 13.6
-    /// How long the reading line takes over the page (`sweep.scan`).
+    /// How long the reading light takes over the page (`sweep.light`).
     static let sweep = 0.9
     /// One cover after another (`stagger.demo`).
     static let stagger = 0.17

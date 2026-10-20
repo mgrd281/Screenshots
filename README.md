@@ -929,15 +929,19 @@ watch the screen, so there is no line there. What it keeps is the covering:
   steps aside.
 - **The first run** shows what Snapfly does in under fifteen seconds, on
   one made-up invoice, a standing A4 page, that moves through it all, before anything is asked
-  (`FIRST_RUN.md`). It stands on a soft green stage, with bars over it
-  that show how far the story is and a line under each headline saying
-  what happens. From the first frame the invoice is there; a green line
-  reads it, and its name, email and IBAN are found and covered while its
-  amount stays readable: "Private stays private." Then Names, Emails and
-  Bank details appear as chips, and a tap on one, or on a detail, covers or
-  shows it at once; the story waits while you try. The page then lies
-  before a camera, tipped away: its edges are found, it is straightened,
-  read, and covered as you chose. Last, it becomes a small protected copy
+  (`FIRST_RUN.md`). The invoice looks like a real one: a studio's
+  letterhead, whom it is for, its number and date, two items, VAT, the
+  total, the account it is paid from by direct debit, and its small print,
+  all made up and marked "Sample". It stands on a soft green stage, with
+  bars over it that show how far the story is and a line under each
+  headline saying what happens. From the first frame the invoice is there;
+  a green light reads it, and its name, email and IBAN are lit, then
+  covered, while its amount stays readable: "Private stays private." Then
+  Names, Emails and Bank details appear as chips, and a tap on one, or on
+  a detail, covers or shows it at once; the story waits while you try. The
+  stage then turns into a camera with the page lying in it, tipped away:
+  its edges are found, the shutter takes it with a flash, and it is
+  straightened, read, and covered as you chose. Last, it becomes a small protected copy
   beside where it could go, "Only the protected copy leaves your iPhone",
   and "Share your documents. Not your private data." Try It Now opens the
   real scanner; Skip Demo leaves at any time. Which detail each category

@@ -64,8 +64,8 @@ shows, and CI's still frames use it too. The phases are those of
 | Time (s) | Scene | Phase | What happens |
 |---|---|---|---|
 | 0 | reveal | initial | The invoice, readable, from the first frame; Skip Demo under it |
-| 0.25 | reveal | detecting | The reading line crosses the page (0.9 s) |
-| 0.57, 0.64, 0.71 | reveal | detecting | Name, email, IBAN found as the line reaches each |
+| 0.25 | reveal | detecting | The reading light crosses the page (0.9 s) |
+| 0.43, 0.47, 0.9 | reveal | detecting | Name, email, IBAN found as the light reaches each |
 | 1.15 | reveal | highlighted | All three marked |
 | 1.3, 1.47, 1.64 | reveal | redacting | Each covered from the reading side |
 | 1.85 | reveal | protected | The shield lands; success haptic |
@@ -74,10 +74,10 @@ shows, and CI's still frames use it too. The phases are those of
 | 3.75 | control | protected | |
 | 4.8 | control | redacting | The name goes on again |
 | 5.15 | control | protected | |
-| 6.2 | scan | initial | The page, printed again, drops into the camera's frame, tipped away |
-| 6.8 | scan | detecting | Its edges found, the outline locking on; light haptic |
-| 7.6 | scan | detecting | Straightened |
-| 8.2 | scan | detecting | Read: the line crosses it; what is chosen is found |
+| 6.2 | scan | initial | The stage becomes the camera; the page, printed again, lies in it at 80%, tipped away, the shutter under it |
+| 6.8 | scan | detecting | Its edges found, lit and locking on; light haptic |
+| 7.6 | scan | detecting | Taken (the shutter pressed, one flash) and straightened |
+| 8.2 | scan | detecting | Read: the light crosses it; what is chosen is found |
 | 9.2 | scan | highlighted | |
 | 9.35, 9.52, 9.69 | scan | redacting | Covered as chosen |
 | 9.9 | scan | protected | The shield again (no haptic, so it never buzzes twice alike) |
@@ -107,20 +107,30 @@ shows, and CI's still frames use it too. The phases are those of
 | `FirstRun` | `Sources/Tendedero/Shared/FirstRun.swift` | The story: categories, the sample, the script, the state machine, the scanner's perspective (homography), pure and tested on Linux |
 | `FirstRunCoordinator` | `iOS/Snapfly/FirstRunExperience.swift` | Whether it shows (once per version, `firstRunSeen`), replay from Settings, Try It Now and Skip |
 | `SnapflyFirstRunExperience` | same | The screen, and the driver that plays the script on the story clock |
-| `SampleInvoice` | same | The invoice, standing as an A4 page as tall as the screen allows, its details found and covered (the privacy reveal) |
+| `SampleInvoice` | same | The invoice, printed as a real one (letterhead, Bill To, number and date, items, sums, direct debit, small print) and standing as an A4 page as tall as the screen allows, its details found and covered (the privacy reveal) |
 | `PrivacyChips` | same | The interactive categories |
-| `ScanCamera`, `Straightened`, `EdgeLock` | same | The scan demonstration: the frame, the perspective correction, the edges locking on |
+| `ScanCamera`, `CaptureFlash`, `Straightened`, `EdgeLock`, `ReadingLight` | same | The scan demonstration: the camera filling the stage with its shutter, the flash as the page is taken, the perspective correction, the edges locking on, and the light that reads the page |
 | `ShareDestinations` | same | The protected copy's destinations, as a picture of the share sheet |
 | `SnapflyMotion`, `PressStyle` | `iOS/Snapfly/Motion.swift` | The named motion tokens and their calm answers |
 
-Nothing is duplicated: the old `CoverDemo.swift` is gone, its brackets and
-reading line live on in the first run, and the scanner, the editor and the
-share sheet are the app's own.
+Nothing is duplicated: the old `CoverDemo.swift` is gone, and the scanner,
+the editor and the share sheet are the app's own.
+
+**October 2026, the owner's request:** the invoice looked drawn (grey
+lines for words) and the scan old (green corner brackets). Now the page is
+a real invoice in every word, its finds are lit as selected text is, and
+the scan is a camera: the stage turns dark, the edges are lit with
+handles at the corners, the shutter takes the page with one flash, and a
+light, not a line, reads it.
 
 ## 5. The engine and the sample
 
 - The sample is made up: a placeholder name, an address at `example.com`,
-  the standard example IBAN and an amount.
+  the standard example IBAN and an amount. The rest of the page (a studio
+  called Example Studio at www.example.com, its invoice number, the
+  items and sums, the small print) belongs to no one either, and holds
+  nothing private, so the three categories are all there is to cover. It
+  has no postal address and no customer number for that reason.
 - Which category covers which detail is a fixture, held to the engine by
   `FirstRunTests`. On the invoice as text, in German and in English:
   - Names covers only the name;
@@ -138,12 +148,12 @@ share sheet are the app's own.
   element ("Sample invoice", each detail Covered or its value). The chips
   say Covered or Not covered, and each change is announced. The share row
   is one sentence.
-- **Reduce Motion and Low Power Mode:** no reading line, no tilt and no
-  growing ink. Covers and scenes cross-fade in 0.15–0.2 s; haptics stay
+- **Reduce Motion and Low Power Mode:** no reading light, no tilt, no
+  flash and no growing ink. Covers and scenes cross-fade in 0.15–0.2 s; haptics stay
   where they mean something.
-- **Dynamic Type:** the words follow it; the page stops at extra large, as
-  printed pages do. Past what fits, the screen scrolls; the chips drop
-  their eyes, then stack.
+- **Dynamic Type:** the words follow it; the page is printed at its own
+  sizes, grown with the page, as paper is. Past what fits, the screen
+  scrolls; the chips drop their eyes, then stack.
 - **Layout:** safe areas are kept, so nothing sits under the home indicator
   or the Dynamic Island. Every control is at least 44 pt to the finger.
   The page stays left to right in right-to-left languages, as a printed

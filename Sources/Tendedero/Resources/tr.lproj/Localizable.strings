@@ -417,6 +417,16 @@
 "Bank details" = "Banka bilgileri";
 "Invoice" = "Fatura";
 "Sample" = "Örnek";
+"Example Studio" = "Örnek Stüdyo";
+"Bill to" = "Fatura edilen";
+"Invoice no." = "Fatura no.";
+"Qty" = "Adet";
+"Logo design" = "Logo tasarımı";
+"Business cards, 250" = "Kartvizit, 250 adet";
+"Subtotal" = "Ara toplam";
+"VAT" = "KDV";
+"Payment by direct debit" = "Otomatik ödeme talimatıyla";
+"Thank you for your order." = "Siparişiniz için teşekkür ederiz.";
 "Sample invoice" = "Örnek fatura";
 "Use the Screenshot App…" = "Ekran Görüntüsü’nü kullan…";
 "Press %@ or click the screenshot button. Nothing to set up." = "%@ tuşlarına bas ya da ekran görüntüsü düğmesini tıkla. Ayarlanacak bir şey yok.";

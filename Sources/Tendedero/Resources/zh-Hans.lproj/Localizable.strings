@@ -417,6 +417,16 @@
 "Bank details" = "银行信息";
 "Invoice" = "发票";
 "Sample" = "示例";
+"Example Studio" = "示例工作室";
+"Bill to" = "付款方";
+"Invoice no." = "发票号";
+"Qty" = "数量";
+"Logo design" = "标志设计";
+"Business cards, 250" = "名片 250 张";
+"Subtotal" = "小计";
+"VAT" = "增值税";
+"Payment by direct debit" = "银行自动扣款";
+"Thank you for your order." = "感谢您的订购。";
 "Sample invoice" = "示例发票";
 "Use the Screenshot App…" = "使用“截屏”App…";
 "Press %@ or click the screenshot button. Nothing to set up." = "按下 %@ 或点按截屏按钮。无需设置。";

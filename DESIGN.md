@@ -172,9 +172,11 @@ components:
   phone-story-bars:
     height: "4pt"                  # the first run's progress: four system linear bars in phone-protect, 4pt apart, 400pt wide at most
   phone-sample-page:
-    ratio: "210 × 297"             # the first run's invoice, standing as a sheet of A4: 170–300pt wide, as tall as the room allows; corners of 8
+    ratio: "210 × 297"             # the first run's invoice, standing as a sheet of A4: 170–300pt wide, as tall as the room allows; corners of 8; printed in sizes given for 300pt and grown with the page
   phone-scan-frame:
-    rounded: "28pt"                # the camera round the first run's page: phone-ink, 8pt larger than the page, with green viewfinder corners (4pt, arms of 26, 16pt in)
+    rounded: "32pt"                # the camera on the first run: phone-ink filling the stage, the page at 80% in it, the shutter under it
+  phone-shutter:
+    size: "34pt"                   # the camera's shutter on the first run: a white ring of 2.5pt at 90% round a white button 5pt in, centred in the room under the page, smaller where the room is (14pt less than it)
   phone-share-tile:
     size: "52pt"                   # a destination on the first run's share row: secondarySystemBackground, corners of 14, the glyph 20pt semibold, the name in caption under it
   phone-question-chip:
@@ -1999,42 +2001,67 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     room between the words and the chips allows, 300 pt wide at most and
     170 at least, never wider than the screen less 72. White in light and
     dark alike, corners of 8, a hairline of `.primary` at 8%, margins of
-    7.5% of its width at the sides and 5% of its height above and below,
-    left to right in every language, no larger than at extra large text,
-    and the floating shadow (black 12%, radius 16, y 6). Each part takes
-    its share of the height, so every detail sits where the reading line
-    finds it (`FirstRun.Field.depth`): the letterhead, 12% (a 22 pt mark
-    with corners of 5 in `.primary` at 12%, two lines, and "Sample" in
-    caption 2 semibold capitals, tracked 0.6, `.secondary` on a capsule of
-    `.primary` at 6%); "Invoice" in title 3 bold over its number and date
-    as lines, 14%; a divider; the name, the email and the IBAN, a row of 8%
-    each, the label in caption `.secondary` beside the value in footnote
-    with monospaced digits (down to half its size where the page is
-    narrow); a divider; the letter as four lines, 21%; a divider; "Amount"
-    in subheadline semibold and "149,90 €" in title 3 bold with monospaced
-    digits on the trailing edge, 10%; and the small print as three lines,
-    9%. The lines are capsules of `.primary` at 9%, 4 pt thick (6 for the
-    sender, 3 for the small print), standing for words that belong to no
-    one, as the details do.
-  - **A detail found**: green corner brackets (`phone-protect`, 2 pt, round
-    caps, arms of 10 at most) over an 8% green fill, 5 pt beyond the
-    words, snapping in from 112% (`motion.find`). **Covered**: the ink
-    (`phone-ink`, corners of 6, 3 pt beyond the words) grows over it from
-    the reading side (`motion.redact`), solid all the way; uncovered, it
-    goes back the same way. The protected shield on the page's corner is a
+    7.5% of its width at the sides and 5% of its height above, left to
+    right in every language, and the floating shadow (black 12%, radius 16,
+    y 6). It is a real invoice, with words, not lines standing for them,
+    all made up: a studio's letterhead, whom it is for, its number and
+    date, two items, the sums, the account it is paid from and its small
+    print. Its type is the system's at print sizes given for a page 300 pt
+    wide and grown with the page, so Dynamic Type leaves it as printed (the
+    words around it follow Dynamic Type); a line too long for its place
+    shrinks to 60%. Each part takes its share of the height, so every
+    detail sits where the reading light finds it
+    (`FirstRun.Field.depth`), from the top:
+    - the letterhead, 7.5%, over a hairline (`.primary` at 12%, 0.5 pt):
+      the studio's initial, 13 bold white on a 24 pt `phone-ink` square
+      with corners of 6, its name ("Example Studio", 10.5 semibold) over
+      www.example.com (6.5, `.secondary`), and "Sample" (6 semibold
+      capitals, tracked 0.6, `.secondary` on a capsule of `.primary` at
+      6%), so nobody takes it for a real one;
+    - 2.5% space, then Bill To, 11%: its heading (6 semibold capitals,
+      tracked 0.5, `.secondary`, 3%), the name (10 semibold, 4%) and the
+      email (9, 4%); beside it the invoice's number and date (7, the
+      labels `.secondary`), in rows of 3% and 4%;
+    - 2.5% space, "Invoice" in 18 bold, 6%;
+    - 2.5% space, the items: a heading row (6 semibold capitals,
+      `.secondary`, 3%) over a hairline, Logo design and Business cards,
+      250, a row of 4% each (7.5 with monospaced digits; the count 30 pt
+      and the price 56 pt wide on the trailing side), over a hairline;
+    - 0.5% space, Subtotal and VAT 19 % (7, the labels `.secondary`), 3%
+      each, on the trailing side under the prices;
+    - 1.5% space, Total (9 semibold) and "149,90 €" (12.5 bold, monospaced
+      digits) on the trailing edge, 5%, under a 1 pt rule of `.primary` at
+      80%;
+    - 6% space, "Payment by direct debit" (6.5, `.secondary`, 3%) over
+      IBAN (7 semibold, `.secondary`) and the IBAN (8.5, monospaced digits),
+      4%;
+    - 5% space, "Thank you for your order." (7.5), 4%;
+    - 7.5% space, and the small print over a hairline (5.5, `.secondary`,
+      4.5%): the studio and its website, and 1/1.
+    - The sums add up: 99,00 € and 26,97 € make 125,97 €, and with 19%
+      VAT on it, 23,93 €, 149,90 €.
+  - **A detail found** is lit as selected text is: a rounded rectangle
+    (corners of 3, grown with the page) of `phone-protect` at 14% with a
+    1.25 pt `phone-protect` edge, 3 pt beyond the words at the sides and
+    1.5 above and below, growing in from 92% (`motion.find`). **Covered**:
+    the ink (`phone-ink`, the same corners, 2 pt beyond the words at the
+    sides and 1 above and below) grows over it from the reading side
+    (`motion.redact`), solid all the way; uncovered, it goes back the same
+    way. The protected shield on the page's corner is a
     36 pt `phone-protect` circle with `checkmark.shield.fill` in white and
     a 3 pt `phone-surface` ring, so it seems cut into the page, from 30% (`motion.success`) with one
     bounce; it shows only while something is chosen.
-  - **The story**, in seconds: the page at once; at 0.25 the reading line
-    (`sweep.scan`) crosses it and each detail is found as it passes; from
+  - **The story**, in seconds: the page at once; at 0.25 the reading light
+    (`sweep.light`) crosses it and each detail is found as it passes; from
     1.3 the name, email and IBAN are covered 170 ms apart
     (`stagger.demo`), the amount never; at 1.85 the shield and a success
     haptic: "Private stays private." At 2.2 the chips rise in under the
     page: "You decide what stays visible."; at 3.4 the name comes off and
     at 4.8 goes on again, as a tap would do it, unless the owner tapped
     first. At 6.2, "Scan. Detect. Protect.": the page, as printed again,
-    drops to 86% into the camera's frame and lies tipped away; at 6.8 its
-    edges are found, with a light haptic; at 7.6 it is straightened; at
+    drops to 80% into the camera and lies tipped away; at 6.8 its edges
+    are found, with a light haptic; at 7.6 it is taken (`take.page`) and
+    straightened; at
     8.2 it is read and what is chosen is found; from 9.35 it is covered as
     chosen, the shield at 9.9. At 10.4, "Protected. Ready to share.": the
     page goes to 74% and the share row rises in. At 13.6, "Share your
@@ -2058,14 +2085,23 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     press gives to 96% (`scale.press`). A selection haptic marks each, and
     VoiceOver hears the category and Covered or Not covered. A tap on a
     detail of the page does the same as its chip.
-  - **The camera** (`phone-scan-frame`): `phone-ink` with corners of 28, 8 pt
-    larger than the page, with the scan viewfinder's green corners (4 pt,
-    round caps, arms of 26, 16 pt in). The page in it lies tipped away and
-    is straightened by a projection, its corners moving from where the
-    camera sees them to a rectangle (`straighten.page`); the edges found
-    are a green outline, 2 pt over a 12% fill, with an 8 pt dot at each
-    corner, closing onto the corners from 12% beyond them as they lock on
-    (`motion.lock`) and following them as the page straightens.
+  - **The camera** (`phone-scan-frame`): while the page is scanned, the
+    stage itself becomes the camera's view, `phone-ink` filling it with its
+    corners of 32, fading in over the green; no viewfinder corners. The
+    page stands in it at 80%, and in the room under it the shutter
+    (`phone-shutter`). The page lies tipped away and is straightened by a
+    projection, its corners moving from where the camera sees them to a
+    rectangle (`straighten.page`). The edges found light the page:
+    `phone-protect` at 16%, a 2 pt `phone-protect` edge with round joins,
+    and at each corner a 10 pt white handle with a 2 pt `phone-protect`
+    ring, closing onto the corners from 12% beyond them as they lock on
+    (`motion.lock`) and following them as the page straightens. As it is
+    straightened the page is taken (`take.page`): the shutter's button
+    gives and springs back, and a white flash crosses the stage once.
+  - **The reading light** (`sweep.light`): a band 14% of the page tall,
+    from clear to `phone-protect` at 18%, its lower edge a 1.5 pt line of
+    `phone-protect`, crossing the page top to bottom at an even pace in
+    0.9 s, fading in and out at the ends, kept to the page.
   - **The share row** (`phone-share-tile`): ChatGPT (`sparkles`), WhatsApp
     (`message.fill`) and Email (`envelope.fill`) as 52 pt tiles of
     `secondarySystemBackground` with corners of 14, the glyph 20 pt
@@ -2080,8 +2116,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - The story's clock stands still while the owner tries the chips (for
     2.5 s after the last tap) and while the app is away. Things enter by
     fading and rising (`rise.small`, 8–14 pt) and leave by fading. With
-    Reduce Motion or Low Power Mode nothing moves: no reading line, no
-    tilt, no growing ink; covers and scenes cross-fade in 0.15–0.2 s. With
+    Reduce Motion or Low Power Mode nothing moves: no reading light, no
+    tilt, no flash, no growing ink; covers and scenes cross-fade in 0.15–0.2 s. With
     VoiceOver it starts at its end, and the page is one element: "Sample
     invoice", with each detail Covered or its value.
   - It shows once (`firstRunSeen`), never again after an ordinary update,

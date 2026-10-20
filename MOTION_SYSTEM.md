@@ -99,7 +99,7 @@ Motion and Low Power Mode. The first run uses them all.
 |---|---|---|
 | `motion.feedback` | 0.12 s ease-out | A touch answered: a pressed chip gives to 96% |
 | `motion.toggle` | spring 0.25 / 0.85 | A switch or a chip turned |
-| `motion.find` | spring 0.3 / 0.7 | A detail found: its corner brackets snap in from 112% |
+| `motion.find` | spring 0.3 / 0.7 | A detail found: lit in green as selected text is, growing in from 92% |
 | `motion.redact` | 0.34 s on `ease.out` | A cover laid or taken away, from the reading side |
 | `motion.document` | spring 0.55 / 0.86 | A page moving between places: into the camera, straightened, made small |
 | `motion.success` | spring 0.42 / 0.7 | Protected: the shield lands, with one bounce |
@@ -110,7 +110,7 @@ Motion and Low Power Mode. The first run uses them all.
 | Token | Value | Where it ships |
 |---|---|---|
 | `stagger.cover` | 45 ms | Hide Part, and the iPhone's Protect Picture: covers grow in line by line, each over 0.32 s on a cubic ease-out from the reading side |
-| `stagger.demo` | 170 ms | iPhone first run: the sample invoice's name, email and IBAN covered one after another, slow enough to follow; found before that as the reading line reaches each |
+| `stagger.demo` | 170 ms | iPhone first run: the sample invoice's name, email and IBAN covered one after another, slow enough to follow; found before that as the reading light reaches each |
 | `stagger.grid` | 35 ms, twelve at most | iPhone: screenshot cards rise 8 pt into the grid the first time it has any, on `spring.reveal` |
 | `stagger.list` | 90 ms, four at most | Site arrivals: the four steps |
 | `stagger.hang` | 110 ms | Site first view: photos drop onto the rope |
@@ -138,6 +138,8 @@ Motion and Low Power Mode. The first run uses them all.
 | `rise.card` | 28 px | A card in a list arriving |
 | `straighten.page` | the page's corners from tipped (top 12–90%, 7–2% down; bottom 0–100%, 100–97% down) to a rectangle | iPhone first run: the scanner straightening the page, by a projection, on `motion.document` |
 | `words.change` | out 0.12 s; in 0.32 s ease-out after 0.12 s, rising 8 pt from a 6 pt blur | iPhone first run: one scene's headline and line giving way to the next, never read over each other; a cross-fade with Reduce Motion |
+| `sweep.light` | a band 14% of the page tall with a 1.5 pt edge, from 2% to 98% of the page at an even pace in 0.9 s, in over 0.15 s and out over the last 0.2 s | iPhone first run: the reading light crossing the page, finding each detail as it reaches it; none with Reduce Motion |
+| `take.page` | the shutter's button to 82% in 0.08 s, back on a snappy spring in 0.3 s; a white flash over the stage, to 40% in 0.05 s and gone in 0.3 s | iPhone first run: the scanner taking the page as it is straightened; none with Reduce Motion |
 | `rise.window` | 32–44 px | A window opening |
 | `drop.photo` | 56 px | A photo dropping onto its clip |
 | `drop.card` | 40 px | A step card dropping onto its clip as it arrives |

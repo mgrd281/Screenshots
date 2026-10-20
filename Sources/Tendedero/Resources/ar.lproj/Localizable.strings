@@ -417,6 +417,16 @@
 "Bank details" = "البيانات المصرفية";
 "Invoice" = "فاتورة";
 "Sample" = "مثال";
+"Example Studio" = "استوديو المثال";
+"Bill to" = "فاتورة إلى";
+"Invoice no." = "رقم الفاتورة";
+"Qty" = "الكمية";
+"Logo design" = "تصميم شعار";
+"Business cards, 250" = "بطاقات عمل، 250";
+"Subtotal" = "المجموع الفرعي";
+"VAT" = "الضريبة";
+"Payment by direct debit" = "الدفع بالخصم المباشر";
+"Thank you for your order." = "شكرًا على طلبك.";
 "Sample invoice" = "فاتورة نموذجية";
 "Use the Screenshot App…" = "استخدام «لقطة شاشة»…";
 "Press %@ or click the screenshot button. Nothing to set up." = "اضغط %@ أو انقر زر التصوير. لا شيء لإعداده.";
