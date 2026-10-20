@@ -394,8 +394,12 @@ struct PNGFile: FileDocument {
 /// Every place on the picture. First, those Snapfly was not sure about, one
 /// at a time from the top down, with how many are checked: the place as it
 /// is on the picture, what it hides, and Cover or Leave Visible, Show on
-/// Picture, Previous and Next. Then every other place, to turn on or off
-/// one by one. What a place hides shows only here, on this iPhone.
+/// Picture, Previous and Next. Then every place by whose it is, the
+/// patient's, the doctors', other people's, and then by what it is, each
+/// topic with a switch that covers or uncovers all of it at once, over its
+/// places to turn on or off one by one; what Settings leaves visible is
+/// listed too, to cover with a tap. What a place hides shows only here, on
+/// this iPhone.
 struct ReviewSheet: View {
     @ObservedObject var session: ProtectSession
     /// Closes the sheet and shows the place on the picture, selected.
@@ -406,9 +410,6 @@ struct ReviewSheet: View {
     var body: some View {
         let plan = session.plan
         let doubtful = plan.doubtful
-        let marks = plan.marks.sorted { $0.rect.maxY > $1.rect.maxY }
-        // The places not waiting to be checked, decided ones too.
-        let rest = marks.filter { !plan.needsCheck($0) }
         NavigationStack {
             List {
                 if !doubtful.isEmpty {
@@ -420,16 +421,12 @@ struct ReviewSheet: View {
                         Text(L("Snapfly is not sure about these: check each, and turn it on or off."))
                     }
                 }
-                let covered = rest.filter(\.covered), left = rest.filter { !$0.covered }
-                if !covered.isEmpty {
-                    Section(L("Covered")) { rows(covered) }
-                }
-                if !left.isEmpty {
-                    Section(L("Not covered")) { rows(left) }
+                ForEach(plan.topics) { listing in
+                    topic(listing)
                 }
             }
             .overlay {
-                if marks.isEmpty {
+                if plan.marks.isEmpty {
                     ContentUnavailableView(L("Nothing private found"), systemImage: "checkmark.shield")
                 }
             }
@@ -548,20 +545,118 @@ struct ReviewSheet: View {
         UISelectionFeedbackGenerator().selectionChanged()
     }
 
-    private func rows(_ marks: [ProtectionPlan.Mark]) -> some View {
-        ForEach(marks) { mark in
-            Toggle(isOn: Binding(get: { mark.covered }, set: { _ in session.toggle(mark.id) })) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title(of: mark))
-                    if let text = mark.text?.trimmingCharacters(in: .whitespaces), !text.isEmpty {
-                        Text(text)
+    // MARK: Who and what
+
+    /// A topic: its sign, its name and how much of it is covered, with a
+    /// switch for all of it, then its places, each with its own.
+    private func topic(_ listing: ProtectionPlan.Listing) -> some View {
+        let covered = listing.marks.filter(\.covered).count
+        let all = covered == listing.marks.count
+        return Section {
+            Toggle(isOn: Binding(get: { all }, set: { session.set(Set(listing.marks.map(\.id)), covered: $0) })) {
+                HStack(spacing: 12) {
+                    TopicSign(symbol: Self.symbol(of: listing.topic), covered: covered, of: listing.marks.count)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(Self.name(of: listing.topic))
+                            .font(.headline)
+                        Text(String(format: L("%d of %d covered"), covered, listing.marks.count))
                             .font(.footnote)
                             .foregroundStyle(.secondary)
-                            .lineLimit(1)
+                            .monospacedDigit()
+                            .contentTransition(.numericText())
                     }
                 }
             }
             .tint(SnapflyTokens.protect)
+            .sensoryFeedback(.impact(weight: .light), trigger: all)
+            ForEach(listing.marks) { mark in
+                row(mark)
+            }
+        }
+    }
+
+    /// A place: what it hides, or what it is, and what kind it is, with a
+    /// dashed circle while it waits to be checked; swiped, Show on Picture.
+    private func row(_ mark: ProtectionPlan.Mark) -> some View {
+        let words = mark.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let kind = label(of: mark)
+        return Toggle(isOn: Binding(get: { mark.covered }, set: { _ in session.toggle(mark.id) })) {
+            HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(words.isEmpty ? kind : words)
+                        .font(.subheadline)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    if !words.isEmpty {
+                        Text(kind)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                if session.plan.needsCheck(mark) {
+                    Image(systemName: "circle.dashed")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(Color.accentColor)
+                        .accessibilityLabel(L("To check"))
+                }
+            }
+            // In line with the topic's name, past its sign.
+            .padding(.leading, TopicSign.size + 12)
+        }
+        .tint(SnapflyTokens.protect)
+        .swipeActions(edge: .leading) {
+            Button {
+                show(mark)
+            } label: {
+                Label(L("Show on Picture"), systemImage: "viewfinder")
+            }
+            .tint(SnapflyTokens.protect)
+        }
+        .contextMenu {
+            Button {
+                show(mark)
+            } label: {
+                Label(L("Show on Picture"), systemImage: "viewfinder")
+            }
+        }
+    }
+
+    /// What kind of place it is, in a word or two: the label a labelled
+    /// cover shows, or the tool that hid it.
+    private func label(of mark: ProtectionPlan.Mark) -> String {
+        if let kind = mark.kind { return kind.label }
+        switch mark.shape {
+        case .stroke: return L("Marker")
+        case .outline: return L("Lasso")
+        case .box: return L("Box")
+        case nil: return mark.origin == .hand ? L("Hidden by hand") : L("Your own rules")
+        }
+    }
+
+    static func name(of topic: ProtectionPlan.Topic) -> String {
+        switch topic {
+        case .patient: L("Patient")
+        case .doctors: L("Doctors")
+        case .otherPeople: L("Other people")
+        case .group(let group): group.title
+        case .hand: L("Hidden by hand")
+        case .rules: L("Your own rules")
+        }
+    }
+
+    static func symbol(of topic: ProtectionPlan.Topic) -> String {
+        switch topic {
+        case .patient: "person.text.rectangle"
+        case .doctors: "stethoscope"
+        case .otherPeople: "person.2"
+        case .group(.people): "person.crop.circle"
+        case .group(.organizations): "building.2"
+        case .group(.money): "creditcard"
+        case .group(.health): "cross.case"
+        case .group(.documents): "doc.text"
+        case .group(.access): "key"
+        case .hand: "hand.draw"
+        case .rules: "text.badge.checkmark"
         }
     }
 
@@ -580,5 +675,47 @@ struct ReviewSheet: View {
     private func title(of mark: ProtectionPlan.Mark) -> String {
         if let kind = mark.kind { return kind.title }
         return mark.origin == .hand ? L("Hidden by hand") : L("Your own rules")
+    }
+}
+
+/// A topic's sign in Details: its symbol in a circle, with a ring of how
+/// much of it is covered in green, the circle filled once all of it is, and
+/// faint while none is.
+struct TopicSign: View {
+    let symbol: String
+    let covered: Int
+    let total: Int
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    static let size: CGFloat = 36
+
+    init(symbol: String, covered: Int, of total: Int) {
+        self.symbol = symbol
+        self.covered = covered
+        self.total = total
+    }
+
+    var body: some View {
+        let share = total > 0 ? CGFloat(covered) / CGFloat(total) : 0
+        let all = total > 0 && covered == total
+        ZStack {
+            Circle()
+                .stroke(Color.primary.opacity(0.08), lineWidth: 2.5)
+            Circle()
+                .trim(from: 0, to: share)
+                .stroke(SnapflyTokens.protect, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .flipsForRightToLeftLayoutDirection(true)
+            Circle()
+                .fill(all ? SnapflyTokens.protect : covered > 0 ? SnapflyTokens.protect.opacity(0.12) : Color.primary.opacity(0.06))
+                .padding(5)
+            Image(systemName: symbol)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(all ? Color.white : covered > 0 ? SnapflyTokens.protect : Color.secondary)
+        }
+        .frame(width: Self.size, height: Self.size)
+        .animation(reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.42, dampingFraction: 0.82),
+                   value: covered)
+        .accessibilityHidden(true)
     }
 }

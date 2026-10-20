@@ -20,6 +20,10 @@ struct ProtectionPlan: Equatable {
             /// Hidden by the owner's hand: a word tapped, a box, a stroke of
             /// the marker or an outline.
             case hand
+            /// Found, but of a kind or a person Settings leaves visible, like
+            /// a doctor's name where only patients' are covered: listed, and
+            /// covered only when the owner says so; never to check.
+            case spared
         }
 
         let id: Int
@@ -34,6 +38,9 @@ struct ProtectionPlan: Equatable {
         let text: String?
         /// Drawn by hand, in solid ink; nil, the box itself.
         var shape: HandShape? = nil
+        /// Whose it is, where Snapfly is sure: a patient's name, the address
+        /// under it, a doctor's name.
+        var role: PersonRole? = nil
     }
 
     /// How a picture's places stand, each counted once: covered for sure,
@@ -73,25 +80,32 @@ struct ProtectionPlan: Equatable {
 
     // MARK: What Snapfly finds
 
-    /// Adds what Snapfly found, covered, and what it only offers. A place
-    /// already marked stays as it is, unless it was only offered and the
-    /// owner has not touched it: found now, it is covered.
-    mutating func add(found areas: [Finder.Area], possible: [Finder.Area] = []) {
+    /// Adds what Snapfly found, covered, what it only offers, and what it
+    /// found of the kinds and people Settings leaves visible. A place
+    /// already marked stays as it is, unless it was only offered or left
+    /// visible and the owner has not touched it: found now, it is covered.
+    mutating func add(found areas: [Finder.Area], possible: [Finder.Area] = [], spared: [Finder.Area] = []) {
         for area in areas {
             if let index = marks.firstIndex(where: { Self.same($0.rect, area.rect) }) {
-                if marks[index].origin == .possible, !touched.contains(marks[index].id) {
+                if marks[index].origin == .possible || marks[index].origin == .spared,
+                   !touched.contains(marks[index].id) {
                     marks[index].origin = .found
                     marks[index].covered = true
                     marks[index].check = area.check
+                    marks[index].role = marks[index].role ?? area.role
                 }
                 continue
             }
             append(Mark(id: nextID, rect: area.rect, kind: area.kind, origin: .found, check: area.check, covered: true,
-                        text: area.text))
+                        text: area.text, role: area.role))
         }
         for area in possible where !marks.contains(where: { Self.same($0.rect, area.rect) }) {
             append(Mark(id: nextID, rect: area.rect, kind: area.kind, origin: .possible, check: true, covered: false,
-                        text: area.text))
+                        text: area.text, role: area.role))
+        }
+        for area in spared where !marks.contains(where: { Self.same($0.rect, area.rect) }) {
+            append(Mark(id: nextID, rect: area.rect, kind: area.kind, origin: .spared, check: false, covered: false,
+                        text: area.text, role: area.role))
         }
     }
 
@@ -115,6 +129,12 @@ struct ProtectionPlan: Equatable {
     /// Covers a place left uncovered, or uncovers a covered one.
     mutating func toggle(_ id: Int) {
         change([id]) { $0.covered.toggle() }
+    }
+
+    /// Covers places, or leaves them visible, all at once, as a topic's
+    /// switch does: one change to undo, which decides each of them.
+    mutating func set(_ ids: Set<Int>, covered: Bool) {
+        change(ids) { $0.covered = covered }
     }
 
     /// Covers a part of the picture by hand, from 0 to 1 from the bottom
@@ -352,8 +372,10 @@ struct ProtectionPlan: Equatable {
 
     /// The mark a finger means at a point: one drawn by hand where its
     /// shape is, else the smallest under it, as marks lie over each other.
+    /// What Settings leaves visible is not on the picture until covered.
     func mark(at point: CGPoint) -> Mark? {
         marks.filter { mark in
+            if mark.origin == .spared, !mark.covered { return false }
             if let shape = mark.shape { return shape.contains(point, aspect: aspect, room: 0.01) }
             return mark.rect.insetBy(dx: -0.01, dy: -0.005).contains(point)
         }
@@ -385,7 +407,8 @@ struct ProtectionPlan: Equatable {
                 if !mark.covered { tally.exposed += 1 }
             } else if mark.covered {
                 tally.covered += 1
-            } else {
+            } else if mark.origin != .spared {
+                // What Settings leaves visible was never covered to leave.
                 tally.left += 1
             }
         }
@@ -403,4 +426,47 @@ struct ProtectionPlan: Equatable {
 
     /// How many of the places Snapfly was not sure about are decided.
     var checked: Int { doubtful.filter { touched.contains($0.id) }.count }
+
+    // MARK: Who and what
+
+    /// What a place is about, as the editor lists them: whose it is, where
+    /// Snapfly is sure, a patient's, the doctors' or other people's; else
+    /// what it is, as Settings groups the kinds; then what is hidden by
+    /// hand, and what the owner's own rules found.
+    enum Topic: Hashable {
+        case patient, doctors, otherPeople
+        case group(PrivateDetail.Group)
+        case hand, rules
+
+        /// The order they are listed in.
+        static let all: [Topic] = [.patient, .doctors, .otherPeople] + PrivateDetail.Group.allCases.map(Topic.group)
+            + [.hand, .rules]
+    }
+
+    /// One topic and its places, as the editor lists them.
+    struct Listing: Identifiable, Equatable {
+        let topic: Topic
+        let marks: [Mark]
+        var id: Topic { topic }
+    }
+
+    static func topic(of mark: Mark) -> Topic {
+        if mark.origin == .hand { return .hand }
+        switch mark.role {
+        case .patient: return .patient
+        case .doctor: return .doctors
+        case .some: return .otherPeople
+        case nil: return mark.kind.map { .group($0.group) } ?? .rules
+        }
+    }
+
+    /// The places by topic, in the order of `Topic.all`, each read from
+    /// the top of the picture down; topics without places are left out.
+    var topics: [Listing] {
+        let read = marks.sorted {
+            abs($0.rect.maxY - $1.rect.maxY) > 0.005 ? $0.rect.maxY > $1.rect.maxY : $0.rect.minX < $1.rect.minX
+        }
+        let sorted = Dictionary(grouping: read, by: Self.topic(of:))
+        return Topic.all.compactMap { topic in sorted[topic].map { Listing(topic: topic, marks: $0) } }
+    }
 }

@@ -47,6 +47,7 @@
 "Hide private details" = "Private Angaben verbergen";
 "Names" = "Namen";
 "Addresses" = "Adressen";
+"Dates of birth" = "Geburtsdaten";
 "Emails" = "E-Mails";
 "Phone numbers" = "Telefonnummern";
 "Bank cards and accounts" = "Bankkarten und Konten";
@@ -170,6 +171,7 @@
 "Total" = "Gesamt";
 "Name" = "Name";
 "Address" = "Adresse";
+"Birth date" = "Geburtsdatum";
 "Email" = "E-Mail";
 "Phone" = "Telefon";
 "Tracking number" = "Sendungsnummer";
@@ -1304,6 +1306,8 @@
 "Only in iCloud" = "Nur in iCloud";
 "Only selected photos" = "Nur ausgewählte Fotos";
 "Other people" = "Weitere Personen";
+"Patient" = "Patient";
+"Doctors" = "Ärzte";
 "Patient names" = "Patientennamen";
 "Pause" = "Pausieren";
 "Paused" = "Pausiert";
@@ -1360,6 +1364,7 @@
 "Keep Covered" = "Verdeckt lassen";
 "Show on Picture" = "Im Bild zeigen";
 "%d of %d checked" = "%d von %d geprüft";
+"%d of %d covered" = "%d von %d verdeckt";
 "Everything is checked." = "Alles ist geprüft.";
 "Previous" = "Zurück";
 "Goes as soon as the copy is ready." = "Startet, sobald die Kopie fertig ist.";

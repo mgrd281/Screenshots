@@ -336,6 +336,73 @@ final class RedactionTests: XCTestCase {
         XCTAssertTrue(found.hits.contains { $0.line == pieces.count - 1 }, "\(found.covered)")
     }
 
+    // MARK: A letter
+
+    /// A made-up radiology letter: the practice's header in the right
+    /// column, the patient's name and address in the window, the subject
+    /// with the date of birth, three doctors, and the bank's details.
+    private let radiologyLetter: [FormFieldsTests.Piece] = [
+        ("RADIOLOGIE NORDHAFEN", 0.72, 1), ("HAFENPLATZ · KAISERKAI", 0.72, 2),
+        ("RADIOLOGIE NORDHAFEN Hafenplatz 2, Kaiserkai 9, 20457 Hamburg", 0.06, 4), ("MRT-DIAGNOSTIK", 0.72, 4),
+        ("Erika Mustermann", 0.06, 5), ("CT-DIAGNOSTIK", 0.72, 5),
+        ("Lindenberg 12", 0.06, 6),
+        ("23456 Musterstadt", 0.06, 7), ("Hafenplatz 2", 0.72, 7),
+        ("20457 Hamburg", 0.72, 8),
+        ("Hamburg, den 05.06.2026", 0.52, 9), ("Telefon 040 1234567-0", 0.72, 9),
+        ("Unser Zeichen: 7654321", 0.06, 10), ("info@radiologie-nordhafen.de", 0.72, 10),
+        ("Mustermann, Erika", 0.08, 11), ("geb. 12.03.1985", 0.58, 11),
+        ("Lindenberg 12,23456 Musterstadt", 0.08, 12),
+        ("MRT der Lendenwirbelsäule nativ vom 05.06.2026.", 0.06, 14),
+        ("Bilderportal: bilder.radiologie-nordhafen.de Referenznummer: XYZ123456", 0.06, 15),
+        ("Ärzte für Radiologie", 0.72, 15),
+        ("Klinik und Fragestellung:", 0.06, 16), ("Dr. med. Jonas Feldmann", 0.72, 16),
+        ("Lumboischialgie links", 0.06, 17), ("Dr. med. Clara Wendt", 0.72, 17),
+        ("Befund:", 0.06, 18), ("Dr. med. Paul Hagedorn MBA", 0.72, 18),
+        ("Zum Vergleich liegt keine Untersuchung vor.", 0.06, 19),
+        ("Im Segment LWK 5/SWK 1 zeigt sich ein Signalverlust der Bandscheibe.", 0.06, 20),
+        ("Beurteilung:", 0.06, 22), ("Dt. Apotheker- u. Ärztebank", 0.72, 22),
+        ("1. Mediale Bandscheibenextrusion LWK 5/SWK 1.", 0.06, 23), ("DE89 3704 0044 0532 0130 00", 0.72, 23),
+        ("2. Bandscheibendegeneration LWK 5/SWK 1.", 0.06, 24), ("DAAEDEDDXXX", 0.72, 24),
+        ("Mit freundlichen Grüßen", 0.06, 26),
+        ("Dr. med. Jonas Feldmann", 0.06, 28), ("Dr. med. Clara Wendt", 0.33, 28), ("Dr. med. Paul Hagedorn", 0.55, 28),
+    ]
+
+    func testTheAddressUnderThePatientsNameIsTheirs() {
+        let found = protect(form: radiologyLetter, [.addresses])
+        let patients = zip(found.covered, found.hits).filter { $0.1.role?.role == .patient }.map(\.0)
+        XCTAssertEqual(Set(patients), ["Lindenberg 12", "23456 Musterstadt", "Lindenberg 12,23456 Musterstadt"])
+        XCTAssertFalse(found.covered.contains { $0.contains("Dr.") }, "\(found.covered)")
+    }
+
+    func testALettersDateOfBirthReferencesAndBankDetails() {
+        let found = protect(form: radiologyLetter, [.birthDates, .ids, .bank])
+        XCTAssertEqual(Set(found.covered),
+                       ["12.03.1985", "7654321", "XYZ123456", "DE89 3704 0044 0532 0130 00", "DAAEDEDDXXX"])
+        for (text, hit) in zip(found.covered, found.hits) where hit.kind != .bank {
+            XCTAssertEqual(hit.role?.role, .patient, text)
+        }
+        // A date of birth is no other date, and the letter's reference no order.
+        let more = protect(form: radiologyLetter, [.dates, .birthDates, .orders, .ids])
+        for (text, hit) in zip(more.covered, more.hits) where ["12.03.1985", "7654321", "XYZ123456"].contains(text) {
+            XCTAssertTrue(hit.kind == .birthDates || hit.kind == .ids, "\(text) is \(String(describing: hit.kind))")
+        }
+    }
+
+    func testThePatientAndTheDoctorsOfALetterAreToldApart() {
+        let found = protect(form: radiologyLetter, [.names])
+        func roles(of name: String) -> Set<PersonRole?> {
+            Set(zip(found.covered, found.hits).filter { $0.0.contains(name) }.map { $0.1.role?.role })
+        }
+        XCTAssertEqual(roles(of: "Mustermann"), [.patient], "\(found.covered)")
+        for doctor in ["Feldmann", "Wendt", "Hagedorn"] {
+            XCTAssertEqual(roles(of: doctor), [.doctor], "\(doctor) in \(found.covered)")
+        }
+        let patient = protect(form: radiologyLetter, [.patientNames]).covered
+        XCTAssertTrue(patient.contains { $0.contains("Mustermann") }, "\(patient)")
+        XCTAssertFalse(patient.contains { $0.contains("Feldmann") || $0.contains("Wendt") || $0.contains("Hagedorn") },
+                       "\(patient)")
+    }
+
     // MARK: Helpers
 
     /// What the engine covers on a made-up page laid out in rows and

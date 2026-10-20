@@ -47,6 +47,7 @@
 "Hide private details" = "隐藏隐私信息";
 "Names" = "姓名";
 "Addresses" = "地址";
+"Dates of birth" = "出生日期";
 "Emails" = "电子邮件";
 "Phone numbers" = "电话号码";
 "Bank cards and accounts" = "银行卡和账户";
@@ -170,6 +171,7 @@
 "Total" = "总计";
 "Name" = "姓名";
 "Address" = "地址";
+"Birth date" = "出生日期";
 "Email" = "电子邮件";
 "Phone" = "电话";
 "Tracking number" = "运单号";
@@ -1304,6 +1306,8 @@
 "Only in iCloud" = "仅在 iCloud 中";
 "Only selected photos" = "仅所选照片";
 "Other people" = "其他人";
+"Patient" = "患者";
+"Doctors" = "医生";
 "Patient names" = "患者姓名";
 "Pause" = "暂停";
 "Paused" = "已暂停";
@@ -1360,6 +1364,7 @@
 "Keep Covered" = "保持遮盖";
 "Show on Picture" = "在图片中显示";
 "%d of %d checked" = "已检查 %1$d / %2$d";
+"%d of %d covered" = "已遮盖 %1$d / %2$d";
 "Everything is checked." = "全部已检查。";
 "Previous" = "上一个";
 "Goes as soon as the copy is ready." = "副本准备好后立即执行。";

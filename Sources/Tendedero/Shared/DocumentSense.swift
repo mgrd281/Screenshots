@@ -29,6 +29,9 @@ struct NameRole: Equatable, Sendable {
     /// Sure enough to cover or leave a name by its role alone.
     var isSure: Bool { confidence >= 0.6 }
 
+    /// The role, where it is sure enough to say whose something is.
+    var sureRole: PersonRole? { isSure ? role : nil }
+
     static let unknown = NameRole(role: .other, confidence: 0.3, reason: "none")
 }
 

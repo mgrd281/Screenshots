@@ -49,6 +49,7 @@
 "Hide private details" = "निजी जानकारी छिपाएँ";
 "Names" = "नाम";
 "Addresses" = "पते";
+"Dates of birth" = "जन्म तिथियाँ";
 "Emails" = "ईमेल";
 "Phone numbers" = "फ़ोन नंबर";
 "Bank cards and accounts" = "बैंक कार्ड और खाते";
@@ -172,6 +173,7 @@
 "Total" = "कुल";
 "Name" = "नाम";
 "Address" = "पता";
+"Birth date" = "जन्म तिथि";
 "Email" = "ईमेल";
 "Phone" = "फ़ोन";
 "Tracking number" = "ट्रैकिंग नंबर";
@@ -1306,6 +1308,8 @@
 "Only in iCloud" = "सिर्फ़ iCloud में";
 "Only selected photos" = "सिर्फ़ चुनी हुई फ़ोटो";
 "Other people" = "अन्य लोग";
+"Patient" = "मरीज़";
+"Doctors" = "डॉक्टर";
 "Patient names" = "मरीज़ों के नाम";
 "Pause" = "रोकें";
 "Paused" = "रुका हुआ";
@@ -1362,6 +1366,7 @@
 "Keep Covered" = "ढका रहने दें";
 "Show on Picture" = "चित्र में दिखाएँ";
 "%d of %d checked" = "%2$d में से %1$d जाँचे गए";
+"%d of %d covered" = "%2$d में से %1$d ढके गए";
 "Everything is checked." = "सब कुछ जाँच लिया गया।";
 "Previous" = "पिछला";
 "Goes as soon as the copy is ready." = "कॉपी तैयार होते ही हो जाएगा।";

@@ -517,7 +517,8 @@ private final class MarksView: UIView {
 
     override func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
-        for mark in marks {
+        // What Settings leaves visible shows once covered, or selected.
+        for mark in marks where mark.covered || mark.origin != .spared || mark.id == selected {
             let shown = mark.id == selected ? adjusted(mark) : mark
             draw(shown, in: context)
         }

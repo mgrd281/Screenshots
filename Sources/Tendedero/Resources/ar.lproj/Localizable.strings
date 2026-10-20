@@ -47,6 +47,7 @@
 "Hide private details" = "إخفاء المعلومات الخاصة";
 "Names" = "الأسماء";
 "Addresses" = "العناوين";
+"Dates of birth" = "تواريخ الميلاد";
 "Emails" = "البريد الإلكتروني";
 "Phone numbers" = "أرقام الهواتف";
 "Bank cards and accounts" = "البطاقات والحسابات البنكية";
@@ -170,6 +171,7 @@
 "Total" = "المجموع";
 "Name" = "الاسم";
 "Address" = "العنوان";
+"Birth date" = "تاريخ الميلاد";
 "Email" = "البريد الإلكتروني";
 "Phone" = "الهاتف";
 "Tracking number" = "رقم التتبع";
@@ -1304,6 +1306,8 @@
 "Only in iCloud" = "في iCloud فقط";
 "Only selected photos" = "الصور المختارة فقط";
 "Other people" = "أشخاص آخرون";
+"Patient" = "المريض";
+"Doctors" = "الأطباء";
 "Patient names" = "أسماء المرضى";
 "Pause" = "إيقاف مؤقت";
 "Paused" = "متوقف مؤقتًا";
@@ -1360,6 +1364,7 @@
 "Keep Covered" = "أبقِه مغطّى";
 "Show on Picture" = "أظهره في الصورة";
 "%d of %d checked" = "تم التحقق من %1$d من %2$d";
+"%d of %d covered" = "تمت تغطية %1$d من %2$d";
 "Everything is checked." = "تم التحقق من كل شيء.";
 "Previous" = "السابق";
 "Goes as soon as the copy is ready." = "يُنفَّذ حين تجهز النسخة.";

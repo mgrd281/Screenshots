@@ -27,6 +27,11 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertEqual(PrivateDetail.organizations.group, .organizations)
         // Patients' names are health data: on, even for whoever leaves other names.
         XCTAssertTrue(PrivateDetail.recommended.contains(.patientNames))
+        // A date of birth tells who someone is, as a name does.
+        XCTAssertTrue(PrivateDetail.recommended.contains(.birthDates))
+        XCTAssertEqual(PrivateDetail.birthDates.group, .people)
+        XCTAssertEqual(FormFields.Entity.dateOfBirth.detail, .birthDates)
+        XCTAssertEqual(FormFields.Entity.date.detail, .dates)
         XCTAssertFalse(PrivateDetail.recommended.contains(.otherPeople), "Names covers them")
         XCTAssertEqual(PrivateDetail.patientNames.group, .people)
         XCTAssertEqual(PrivateDetail.otherPeople.group, .people)
@@ -120,6 +125,42 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertEqual(pieces(text, [.amounts]), ["74,00 €", "$1,250.00", "EUR 12.50"])
     }
 
+    func testDatesOfBirthByTheWordBeforeThem() {
+        let text = """
+            geb. 12.03.1985
+            Geburtsdatum: 03.07.1990
+            Mustermann, Erika * 01.02.1960
+            DOB 1985-03-12
+            geboren am 3. März 1975
+            Termin am 05.06.2026
+            Gebiet 12.03.2026
+            """
+        XCTAssertEqual(pieces(text, [.birthDates]), ["12.03.1985", "03.07.1990", "01.02.1960", "1985-03-12", "3. März 1975"])
+    }
+
+    func testAnIBANReadWithASpaceAfterItsCountryAndTheBanksCode() {
+        let text = "DE 89 3704 0044 0532 0130 00\nDAAEDEDDXXX\nRADIOLOGIE\nMR 12 2024 0101"
+        XCTAssertEqual(pieces(text, [.bank]), ["DE 89 3704 0044 0532 0130 00", "DAAEDEDDXXX"])
+        // A BIC counts only beside an IBAN or its own word.
+        XCTAssertEqual(pieces("COBADEFFXXX", [.bank]), [])
+        XCTAssertEqual(pieces("BIC: COBADEFFXXX", [.bank]), ["COBADEFFXXX"])
+        XCTAssertTrue(Finder.isIBANShaped("DE89370400440532013000"))
+        XCTAssertFalse(Finder.isIBANShaped("MR 12 2024 0101"))
+    }
+
+    func testAStreetAndTownOnOneLine() {
+        let text = "Mustermann, Erika, Lindenberg 12,23456 Musterstadt\nLWK 5/SWK 1, 12 mm\nHamburg, den 05.06.2026"
+        XCTAssertEqual(pieces(text, [.addresses]), ["Lindenberg 12,23456 Musterstadt"])
+        XCTAssertTrue(Finder.isStreetLine("Am Markt 3a"))
+        XCTAssertTrue(Finder.isStreetLine("Hauptstr. 5-7, 12345 Musterstadt"))
+        XCTAssertTrue(Finder.isStreetLine("221B Baker Street"))
+        XCTAssertFalse(Finder.isStreetLine("Telefon 040 1234567"))
+        XCTAssertFalse(Finder.isStreetLine("LWK 5/SWK 1"))
+        XCTAssertTrue(Finder.isTownLine("23456 Musterstadt"))
+        XCTAssertTrue(Finder.isTownLine("D-23456 Musterstadt"))
+        XCTAssertFalse(Finder.isTownLine("2 Tabletten täglich"))
+    }
+
     func testDates() {
         let text = "Datum: 17.10.2026\n2026-10-17\n23. Oktober 2026\nArtikel 3"
         let found = pieces(text, [.dates])
@@ -209,10 +250,10 @@ final class PrivateDetailTests: XCTestCase {
     }
 
     func testANewRecommendedKindStartsOnOnceForWhoeverCoversAnything() throws {
-        XCTAssertEqual(PrivateDetail.added(to: [.names], known: nil), [.barcodes, .keys, .patientNames])
+        XCTAssertEqual(PrivateDetail.added(to: [.names], known: nil), [.barcodes, .keys, .patientNames, .birthDates])
         XCTAssertEqual(PrivateDetail.added(to: [], known: nil), [])
         XCTAssertEqual(PrivateDetail.added(to: [.names], known: PrivateDetail.allCases.map(\.rawValue)), [])
-        XCTAssertEqual(PrivateDetail.added(to: [.names, .barcodes, .keys, .patientNames], known: nil), [])
+        XCTAssertEqual(PrivateDetail.added(to: [.names, .barcodes, .keys, .patientNames, .birthDates], known: nil), [])
         // Keys came after the sixteen; IP addresses came too, but wait to be chosen.
         let sixteen = PrivateDetail.allCases.filter { $0 != .keys && $0 != .ipAddresses }.map(\.rawValue)
         XCTAssertEqual(PrivateDetail.added(to: [.names], known: sixteen), [.keys])
@@ -222,7 +263,8 @@ final class PrivateDetailTests: XCTestCase {
         defer { defaults.removePersistentDomain(forName: suite) }
         defaults.set(["names"], forKey: "hiddenDetails")
         PrivateDetail.bringUpToDate(["hiddenDetails", "notSaved"], in: defaults)
-        XCTAssertEqual(defaults.stringArray(forKey: "hiddenDetails"), ["barcodes", "keys", "names", "patientNames"])
+        XCTAssertEqual(defaults.stringArray(forKey: "hiddenDetails"),
+                       ["barcodes", "birthDates", "keys", "names", "patientNames"])
         XCTAssertNil(defaults.stringArray(forKey: "notSaved"))
         // Turned off afterwards, it stays off.
         defaults.set(["names"], forKey: "hiddenDetails")

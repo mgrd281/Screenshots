@@ -165,6 +165,8 @@ components:
     shadow: "black 12%, radius 10, y 4"   # floating controls before iOS 26: regular material, a 0.5pt hairline of .primary at 8%; Liquid Glass from iOS 26
   phone-status-capsule:
     height: "36pt"                 # at least; footnote, 14pt in, 6pt under the navigation bar
+  phone-topic-sign:
+    size: "36pt"                   # a topic in Details: a 2.5pt ring of phone-protect, round ends, over .primary at 8%, from the top round as much as is covered; inside, 5pt in, a circle with the glyph 14pt semibold: phone-protect with white once all is covered, phone-protect at 12% with a green glyph while some is, .primary at 6% with a .secondary glyph while none is
   draw-swatch:
     size: "18pt"                   # an ink, with a 1pt hairline of .primary at 18%; chosen: a 2pt accent ring 3pt out
   draw-handle:
@@ -1033,7 +1035,7 @@ apps.
     "Hide in this copy" in the inspector: Check All, Recommended and Uncheck
     All, small, sharing the row in equal parts (stacked where they don't
     fit), a footer saying the copy has no place or camera details, then the
-    twenty-one kinds as switches in the six groups Settings has, named as
+    twenty-two kinds as switches in the six groups Settings has, named as
     Settings names them, starting with what Settings hides. The primary
     button reads Save Copy… and opens a save sheet in the folder of the
     original, under the name "… (covered)". A small spinner shows in the
@@ -1302,7 +1304,7 @@ apps.
   buttons, Check All, Recommended and Uncheck All, sharing the row in equal
   parts, under the header "Hide private details" and over the footer that
   says what is checked is covered.
-  Then the twenty-one kinds in six sections named for their group: People;
+  Then the twenty-two kinds in six sections named for their group: People;
   Companies and organizations; Money; Health; Documents; Passwords and
   access. People opens with Names (its subtitle "Everyone's"), Patient
   names ("In medical letters, reports and forms") and Other people (the
@@ -2069,9 +2071,10 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     to the next in place on a spring (0.42, 0.82), the capsule fitting its
     words (a 0.15 s ease-out with Reduce Motion); when the copy is ready,
     the shield bounces up once and a success haptic says so. A place only
-    offered is never counted as covered. A tap opens Details; VoiceOver
-    reads the whole state. Under it, for 2.5 s after a drawing tool is
-    chosen, how to use it in a capsule of the same glass.
+    offered is never counted as covered. With nothing found but what
+    Settings leaves visible, it says Nothing private found. A tap opens
+    Details; VoiceOver reads the whole state. Under it, for 2.5 s after a
+    drawing tool is chosen, how to use it in a capsule of the same glass.
   - **The tools** (`EditingDock`), a capsule of glass over the bottom:
     Select (`hand.point.up.left`), Marker (`pencil.tip`), Box
     (`rectangle`), Lasso (`lasso`) and Eraser (`eraser`), a 1 pt divider
@@ -2116,7 +2119,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     of a quarter of the height, 8 at most) over a covered place until the
     copy is made, then the copy itself; a dashed outline, 2 pt in dashes of
     5 and 3 at any zoom, in the accent round a place to check, and in
-    `.secondaryLabel` round a place left uncovered. A shape drawn by hand
+    `.secondaryLabel` round a place left uncovered. What Settings leaves
+    visible is neither drawn nor taken by a finger until it is covered, or
+    selected from Details. A shape drawn by hand
     is solid ink as drawn (the marker's stroke with round ends, a box, an
     outline filled inside), at 75% while it is drawn, the lasso's edge
     dashed in the accent; the eraser's path shows as `systemBackground` at
@@ -2126,7 +2131,10 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     reading side in 0.32 s on a cubic ease-out, mirrored right to left; with
     Reduce Motion they are simply there.
   - **Select.** A tap on a place selects it, again lets go; a tap on a word
-    no place covers hides it by hand and selects it; elsewhere lets go.
+    no place covers hides it by hand and selects it, or, on a detail
+    Settings leaves visible, covers the whole of it, like a doctor's name or
+    an IBAN (a line about someone's health only where the word is);
+    elsewhere lets go.
     The place selected shows a dashed accent outline (turned with a box)
     and a handle at each corner, a white 12 pt circle with a 2 pt accent
     edge; a box also has a turn handle 28 pt beyond the middle of its top
@@ -2170,9 +2178,27 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   place selected and zoomed in, and Next (`chevron.right`). Keeping a
   cover decides it without changing the picture (`ProtectionPlan.decide`),
   one change to undo. Once all are decided, "Everything is checked." with
-  `checkmark.seal.fill`. Then Covered and Not covered, each place a toggle
-  in `phone-protect` with its kind, or Hidden by hand or Your own rules,
-  over the words it hides, top to bottom.
+  `checkmark.seal.fill`. Then every place by topic (`ProtectionPlan.topics`):
+  whose it is, where Snapfly is sure, Patient, Doctors and Other people;
+  then what it is, in Settings' six groups; then Hidden by hand and Your own
+  rules. A topic without places is left out. Each topic is a section of the
+  list. First its row: the topic's sign (`phone-topic-sign`, with
+  `person.text.rectangle`, `stethoscope`, `person.2`, then
+  `person.crop.circle`, `building.2`, `creditcard`, `cross.case`,
+  `doc.text`, `key`, `hand.draw` and `text.badge.checkmark`), 12 pt from its
+  name in the headline over "%d of %d covered" in footnote `.secondary`,
+  the numbers rolling, and a switch in `phone-protect`, on while all of it
+  is covered, that covers or uncovers all of it as one change to undo, with
+  a light impact. Then its places from the top of the picture down, in line
+  with the topic's name: each a switch in `phone-protect`, the words it
+  hides in subheadline on one line (cut in the middle) over its short label
+  (Name, Address, Birth date, ID, Bank…) or the tool that hid it in
+  footnote `.secondary`, and `circle.dashed` in the accent while it waits to
+  be checked. Swiped from the leading edge, or held, a place offers Show on
+  Picture (`viewfinder`). The sign's ring grows and its circle fills on a
+  spring (0.42, 0.82), a 0.15 s ease-out with Reduce Motion. What Settings
+  leaves visible, like the doctors' names where only patients' are covered,
+  is listed with its switch off, and is never counted as left.
 - The icon is the Mac icon's picture, full bleed and opaque, since iOS rounds
   it (`scripts/make-icon.py --ios`).
 - The introduction (`PhoneGuide.swift`) shows on its real screens: the
