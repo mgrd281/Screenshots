@@ -1443,6 +1443,21 @@
 "Oldest First" = "Əvvəlcə ən köhnə";
 "Per Row" = "Hər sətirdə";
 "%d per Row" = "Hər sətirdə %d";
+"Select All" = "Hamısını seç";
+"Deselect All" = "Seçimi ləğv et";
+"%d Selected" = "Seçilib: %d";
+"Select screenshots" = "Ekran şəkillərini seç";
+"Save Covered Copies (%d)" = "Örtülmüş nüsxələri saxla (%d)";
+"Share Covered Copies" = "Örtülmüş nüsxələri paylaş";
+"Covering %d of %d …" = "Örtülür: %d / %d …";
+"1 covered copy saved to Photos." = "1 örtülmüş nüsxə Şəkillərə yadda saxlanıldı.";
+"%d covered copies saved to Photos." = "%d örtülmüş nüsxə Şəkillərə yadda saxlanıldı.";
+"1 could not be covered and stays selected." = "1 şəkil örtülə bilmədi və seçili qalır.";
+"%d could not be covered and stay selected." = "%d şəkil örtülə bilmədi və seçili qalır.";
+"The rest stay selected." = "Qalanlar seçili qalır.";
+"Covered as Settings says, each saved to Photos as a new picture. The screenshots stay as they are." = "Ayarlarda seçildiyi kimi örtülür, hər biri Şəkillərə yeni şəkil kimi yadda saxlanılır. Ekran şəkilləri olduğu kimi qalır.";
+"Tap screenshots, or draw a finger sideways across them." = "Ekran şəkillərinə toxun və ya barmağını onların üzərində yana sürüşdür.";
+"Tap screenshots to choose them." = "Seçmək üçün ekran şəkillərinə toxun.";
 "Filter" = "Süzgəc";
 
 /* Tabs, scanning and the Protected tab on the iPhone */

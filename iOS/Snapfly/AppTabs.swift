@@ -169,6 +169,12 @@ final class QuickCoverer: ObservableObject {
         }
     }
 
+    /// Another screenshot covered elsewhere, like several at once, so the
+    /// lists of them update.
+    func didCover() {
+        covered += 1
+    }
+
     /// A short note over the bottom of the screen, gone after a while.
     func show(_ text: String, for seconds: Double = 2.5) {
         note = text

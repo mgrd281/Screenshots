@@ -386,14 +386,23 @@ extension View {
 /// Screenshots in a grid of square cards, three to a row, or four pinched
 /// closer, as in Photos (`GridZoom`): a tap opens one to protect, growing
 /// out of its card; holding it covers it and copies, shares or saves it.
+/// While several are being chosen (`GridSelection`), a tap turns a card on
+/// or off, and from iOS 18 on a finger drawn sideways across the cards
+/// takes in a run of them.
 struct ScreenshotGrid: View {
     let shots: [PHAsset]
     let protected: Set<String>
     let place: ShotLink.Place
     let zoom: Namespace.ID
     let quick: @MainActor (PHAsset, QuickCover) -> Void
+    /// What is chosen while several are being chosen; nil otherwise.
+    var selection: Binding<GridSelection?> = .constant(nil)
+    /// Whether a finger is being drawn across, so the page holds still.
+    var sweeping: Binding<Bool> = .constant(false)
     /// The cards have risen into place, once, the first time there are any.
     @State private var risen = false
+    /// The grid's width, to find the card under a finger.
+    @State private var width: CGFloat = 0
     /// How many to a row, the same in every grid.
     @AppStorage(GridZoom.key) private var columns = GridZoom.standard
     /// How large the grid shows while it is pinched, and around which point.
@@ -407,19 +416,15 @@ struct ScreenshotGrid: View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: GridZoom.clamped(columns)),
                   spacing: 8) {
             ForEach(Array(shots.enumerated()), id: \.element.localIdentifier) { index, asset in
-                let link = ShotLink(id: asset.localIdentifier, place: place)
-                NavigationLink(value: link) {
-                    ScreenshotCard(asset: asset, protected: protected.contains(asset.localIdentifier), square: true)
-                        .zoomSource(link, in: zoom)
-                }
-                .buttonStyle(.plain)
-                .contextMenu { menu(asset) }
-                .phoneGuideTarget(.firstShot, on: asset.localIdentifier == shots.first?.localIdentifier)
-                .opacity(risen ? 1 : 0)
-                .offset(y: risen || reduceMotion ? 0 : 8)
-                .animation(rise(index), value: risen)
+                card(asset)
+                    .opacity(risen ? 1 : 0)
+                    .offset(y: risen || reduceMotion ? 0 : 8)
+                    .animation(rise(index), value: risen)
             }
         }
+        .onGeometryChange(for: CGFloat.self, of: { $0.size.width }) { width = $0 }
+        .modifier(SweepToChoose(active: selection.wrappedValue != nil, began: beginSweep, changed: sweep, ended: endSweep))
+        .sensoryFeedback(.selection, trigger: selection.wrappedValue?.count)
         .scaleEffect(pinch, anchor: anchor)
         .simultaneousGesture(magnify)
         .sensoryFeedback(.selection, trigger: changes)
@@ -450,6 +455,54 @@ struct ScreenshotGrid: View {
             }
     }
 
+    /// A card: a way into Protect Picture, or, while several are being
+    /// chosen, a card to turn on or off.
+    @ViewBuilder private func card(_ asset: PHAsset) -> some View {
+        let id = asset.localIdentifier
+        if let chosen = selection.wrappedValue {
+            Button {
+                selection.wrappedValue?.toggle(id)
+            } label: {
+                ScreenshotCard(asset: asset, protected: protected.contains(id), square: true)
+                    .modifier(ChosenMark(chosen: chosen.contains(id)))
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(chosen.contains(id) ? .isSelected : [])
+        } else {
+            let link = ShotLink(id: id, place: place)
+            NavigationLink(value: link) {
+                ScreenshotCard(asset: asset, protected: protected.contains(id), square: true)
+                    .zoomSource(link, in: zoom)
+            }
+            .buttonStyle(.plain)
+            .contextMenu { menu(asset) }
+            .phoneGuideTarget(.firstShot, on: id == shots.first?.localIdentifier)
+        }
+    }
+
+    // MARK: A finger drawn across
+
+    private func beginSweep(at point: CGPoint) {
+        guard let index = card(at: point) else { return }
+        sweeping.wrappedValue = true
+        selection.wrappedValue?.begin(at: index, in: shots.map(\.localIdentifier))
+    }
+
+    private func sweep(to point: CGPoint) {
+        guard let index = card(at: point) else { return }
+        selection.wrappedValue?.move(to: index, in: shots.map(\.localIdentifier))
+    }
+
+    private func endSweep() {
+        selection.wrappedValue?.end()
+        sweeping.wrappedValue = false
+    }
+
+    private func card(at point: CGPoint) -> Int? {
+        GridSelection.index(atX: point.x, y: point.y, width: width, columns: GridZoom.clamped(columns),
+                            spacing: 8, count: shots.count)
+    }
+
     /// The cards rise in reading order, a beat apart (`stagger.grid`), the
     /// first row and a half; with Reduce Motion they only fade in.
     private func rise(_ index: Int) -> Animation {
@@ -474,6 +527,10 @@ struct AllScreenshotsView: View {
     let quick: @MainActor (PHAsset, QuickCover) -> Void
     @State private var query = LibraryQuery()
     @AppStorage(GridZoom.key) private var columns = GridZoom.standard
+    /// The screenshots chosen, while several are being chosen.
+    @State private var selection: GridSelection?
+    @State private var sweeping = false
+    @ObservedObject private var batch = BatchCover.shared
     /// What each screenshot read ahead of time says and holds, in memory
     /// only while this shows.
     @State private var read: [String: (text: String, kinds: [String])] = [:]
@@ -486,8 +543,10 @@ struct AllScreenshotsView: View {
                 ContentUnavailableView.search(text: query.search)
                     .padding(.top, 40)
             } else {
-                ScreenshotGrid(shots: shown, protected: protected, place: .all, zoom: zoom, quick: quick)
+                ScreenshotGrid(shots: shown, protected: protected, place: .all, zoom: zoom, quick: quick,
+                               selection: $selection, sweeping: $sweeping)
                     .padding(16)
+                    .disabled(batch.running)
             }
             if loaded, read.isEmpty, !query.words.isEmpty {
                 Label(L("Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings."),
@@ -498,14 +557,70 @@ struct AllScreenshotsView: View {
                     .padding(.bottom, 24)
             }
         }
+        .scrollDisabled(sweeping)
         .searchable(text: $query.search, placement: .navigationBarDrawer(displayMode: .always),
                     prompt: L("Search words in screenshots"))
-        .navigationTitle(L("Screenshots"))
+        .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(selection != nil)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) { options }
+            if selection != nil {
+                ToolbarItem(placement: .topBarLeading) { allOrNone(shown.map(\.localIdentifier)) }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(L("Cancel")) {
+                        withAnimation(.snappy) { selection = nil }
+                    }
+                    .fontWeight(.semibold)
+                    .disabled(batch.running)
+                }
+            }
+            if selection == nil {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(L("Select")) {
+                        withAnimation(.snappy) { selection = GridSelection() }
+                    }
+                    .disabled(shown.isEmpty)
+                }
+                ToolbarItem(placement: .topBarTrailing) { options }
+            }
         }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if let selection {
+                SelectionBar(count: selection.count, save: { coverChosen(.photos) }, share: { coverChosen(.share) })
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.snappy, value: selection == nil)
+        .quickNotes()
         .task { await load() }
+    }
+
+    /// Select All, or Deselect All once all those shown are.
+    private func allOrNone(_ ids: [String]) -> some View {
+        let all = selection.map { chosen in ids.allSatisfy(chosen.contains) } ?? false
+        return Button(all ? L("Deselect All") : L("Select All")) {
+            selection?.toggleAll(ids)
+        }
+        .disabled(batch.running || ids.isEmpty)
+    }
+
+    /// How many are chosen, while choosing.
+    private var title: String {
+        guard let selection else { return L("Screenshots") }
+        return selection.isEmpty ? L("Select screenshots") : String(format: L("%d Selected"), selection.count)
+    }
+
+    /// The screenshots chosen, covered as Settings says, one after another,
+    /// in the order shown; those that could not be stay chosen.
+    private func coverChosen(_ way: BatchCover.Way) {
+        guard let chosen = selection?.chosen, !chosen.isEmpty else { return }
+        let assets = matching.filter { chosen.contains($0.localIdentifier) }
+        Task {
+            let failed = await batch.run(assets, way: way)
+            withAnimation(.snappy) {
+                if failed.isEmpty { selection = nil } else { selection?.keep(failed) }
+            }
+        }
     }
 
     /// What shows, and in which order.

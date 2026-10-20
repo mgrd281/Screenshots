@@ -1441,6 +1441,21 @@
 "Oldest First" = "Mais antigas primeiro";
 "Per Row" = "Por linha";
 "%d per Row" = "%d por linha";
+"Select All" = "Selecionar Tudo";
+"Deselect All" = "Desmarcar Tudo";
+"%d Selected" = "Selecionadas: %d";
+"Select screenshots" = "Selecione capturas";
+"Save Covered Copies (%d)" = "Salvar cópias cobertas (%d)";
+"Share Covered Copies" = "Compartilhar cópias cobertas";
+"Covering %d of %d …" = "Cobrindo %d de %d…";
+"1 covered copy saved to Photos." = "1 cópia coberta salva em Fotos.";
+"%d covered copies saved to Photos." = "%d cópias cobertas salvas em Fotos.";
+"1 could not be covered and stays selected." = "1 não pôde ser coberta e continua selecionada.";
+"%d could not be covered and stay selected." = "%d não puderam ser cobertas e continuam selecionadas.";
+"The rest stay selected." = "As demais continuam selecionadas.";
+"Covered as Settings says, each saved to Photos as a new picture. The screenshots stay as they are." = "Cobertas conforme os Ajustes, cada uma salva em Fotos como uma nova imagem. As capturas continuam como estão.";
+"Tap screenshots, or draw a finger sideways across them." = "Toque em capturas ou deslize um dedo de lado sobre elas.";
+"Tap screenshots to choose them." = "Toque em capturas para escolhê-las.";
 "Filter" = "Filtrar";
 
 /* Tabs, scanning and the Protected tab on the iPhone */

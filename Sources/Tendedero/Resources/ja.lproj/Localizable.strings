@@ -1441,6 +1441,21 @@
 "Oldest First" = "古い順";
 "Per Row" = "1行あたり";
 "%d per Row" = "1行に%d枚";
+"Select All" = "すべてを選択";
+"Deselect All" = "すべての選択を解除";
+"%d Selected" = "%d枚を選択中";
+"Select screenshots" = "スクリーンショットを選択";
+"Save Covered Copies (%d)" = "隠したコピーを保存（%d）";
+"Share Covered Copies" = "隠したコピーを共有";
+"Covering %d of %d …" = "%d/%d枚を隠しています…";
+"1 covered copy saved to Photos." = "隠したコピー1枚を写真に保存しました。";
+"%d covered copies saved to Photos." = "隠したコピー%d枚を写真に保存しました。";
+"1 could not be covered and stays selected." = "1枚は隠せなかったため、選択したままです。";
+"%d could not be covered and stay selected." = "%d枚は隠せなかったため、選択したままです。";
+"The rest stay selected." = "残りは選択したままです。";
+"Covered as Settings says, each saved to Photos as a new picture. The screenshots stay as they are." = "設定どおりに隠し、それぞれ新しい画像として写真に保存します。スクリーンショットはそのままです。";
+"Tap screenshots, or draw a finger sideways across them." = "スクリーンショットをタップするか、指を横になぞって選びます。";
+"Tap screenshots to choose them." = "スクリーンショットをタップして選びます。";
 "Filter" = "フィルタ";
 
 /* Tabs, scanning and the Protected tab on the iPhone */

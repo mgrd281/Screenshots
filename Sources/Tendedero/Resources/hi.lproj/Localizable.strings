@@ -1443,6 +1443,21 @@
 "Oldest First" = "पुराने पहले";
 "Per Row" = "हर पंक्ति में";
 "%d per Row" = "हर पंक्ति में %d";
+"Select All" = "सभी चुनें";
+"Deselect All" = "सभी का चयन हटाएँ";
+"%d Selected" = "चुनी गईं: %d";
+"Select screenshots" = "स्क्रीनशॉट चुनें";
+"Save Covered Copies (%d)" = "ढकी गई कॉपियाँ सहेजें (%d)";
+"Share Covered Copies" = "ढकी गई कॉपियाँ साझा करें";
+"Covering %d of %d …" = "%d / %d ढका जा रहा है…";
+"1 covered copy saved to Photos." = "1 ढकी गई कॉपी फ़ोटो में सहेजी गई।";
+"%d covered copies saved to Photos." = "%d ढकी गई कॉपियाँ फ़ोटो में सहेजी गईं।";
+"1 could not be covered and stays selected." = "1 को ढका नहीं जा सका, वह चुनी हुई रहती है।";
+"%d could not be covered and stay selected." = "%d को ढका नहीं जा सका, वे चुनी हुई रहती हैं।";
+"The rest stay selected." = "बाकी चुनी हुई रहती हैं।";
+"Covered as Settings says, each saved to Photos as a new picture. The screenshots stay as they are." = "सेटिंग्स के अनुसार ढका जाता है, हर एक फ़ोटो में नए चित्र की तरह सहेजा जाता है। स्क्रीनशॉट जैसे हैं वैसे रहते हैं।";
+"Tap screenshots, or draw a finger sideways across them." = "स्क्रीनशॉट पर टैप करें, या उन पर उंगली को बगल की ओर खींचें।";
+"Tap screenshots to choose them." = "चुनने के लिए स्क्रीनशॉट पर टैप करें।";
 "Filter" = "फ़िल्टर";
 
 /* Tabs, scanning and the Protected tab on the iPhone */

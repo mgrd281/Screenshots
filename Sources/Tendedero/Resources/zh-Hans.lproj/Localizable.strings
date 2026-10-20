@@ -1441,6 +1441,21 @@
 "Oldest First" = "最早优先";
 "Per Row" = "每行";
 "%d per Row" = "每行 %d 张";
+"Select All" = "全选";
+"Deselect All" = "取消全选";
+"%d Selected" = "已选择 %d 张";
+"Select screenshots" = "选择截屏";
+"Save Covered Copies (%d)" = "存储遮盖后的副本（%d）";
+"Share Covered Copies" = "共享遮盖后的副本";
+"Covering %d of %d …" = "正在遮盖第 %d 张，共 %d 张…";
+"1 covered copy saved to Photos." = "已将 1 个遮盖后的副本存储到“照片”。";
+"%d covered copies saved to Photos." = "已将 %d 个遮盖后的副本存储到“照片”。";
+"1 could not be covered and stays selected." = "1 张无法遮盖，仍保持选中。";
+"%d could not be covered and stay selected." = "%d 张无法遮盖，仍保持选中。";
+"The rest stay selected." = "其余的仍保持选中。";
+"Covered as Settings says, each saved to Photos as a new picture. The screenshots stay as they are." = "按设置遮盖，每张都作为新图片存储到“照片”。截屏本身保持不变。";
+"Tap screenshots, or draw a finger sideways across them." = "轻点截屏，或用手指横向划过它们。";
+"Tap screenshots to choose them." = "轻点截屏来选择。";
 "Filter" = "过滤";
 
 /* Tabs, scanning and the Protected tab on the iPhone */

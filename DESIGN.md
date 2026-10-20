@@ -180,6 +180,8 @@ components:
     size: "34pt"                   # the camera's shutter on the first run: a white ring of 2.5pt at 90% round a white button 5pt in, centred in the room under the page, smaller where the room is (14pt less than it)
   phone-grid-columns:
     count: "3, or 4 pinched closer"   # screenshots side by side in the iPhone's grids, flexible columns 8pt apart; the Photos tab shows three rows of the newest
+  phone-chosen-mark:
+    size: "24pt"                   # a chosen screenshot's mark, bottom trailing, 6pt in: a white checkmark, caption bold, on phone-protect, ringed in white 1.5pt, with a shadow of black 20%, radius 2, y 1; it scales in from 50%
   phone-share-tile:
     size: "52pt"                   # a destination on the first run's share row: the app's own icon from its SVG (asset catalogue, vector kept), clipped to continuous corners of 12 with a hairline of .primary at 8%, the name in caption under it
   phone-question-chip:
@@ -1941,7 +1943,32 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     let go past a tenth, the cards settle into the next grid on `zoom.grid`
     with a selection haptic; else they settle back. With Reduce Motion it
     doesn't follow and changes at once. See All's menu offers 3 per Row and
-    4 per Row for whoever doesn't pinch. A
+    4 per Row for whoever doesn't pinch.
+  - **Choosing several** (`GridSelection`, `Selecting.swift`), as in
+    Photos: Select beside See All (on the Photos tab) or in See All's bar
+    turns the grid to choosing, with Select All or Deselect All and Cancel
+    in its place, the title "%d Selected" in See All, the tab bar stepping
+    aside and the choice's own bar over the bottom. A tap turns a card on or
+    off; from iOS 18 on a finger drawn sideways across the cards takes in
+    every card from the first to the one under it in reading order, all on
+    or all off as the first was turned, while the page holds still (one
+    drawn up or down still scrolls). A chosen card dims under white at 18%,
+    draws in to 94% on a spring (0.28, 0.72) and carries
+    `phone-chosen-mark`; a selection haptic marks each change.
+  - **The choice's bar**, on the bar material with a hairline above, 16 pt
+    in: Share (`square.and.arrow.up`, 44 pt) beside Save Covered Copies
+    (%d), the green pill, filling the rest, over a footnote of what it does
+    (covered as Settings says, each a new picture in Photos, the
+    screenshots as they were) or how to choose. While it works, "Covering 3
+    of 9 …" in subheadline semibold over a green progress bar, with Stop;
+    the grid, Select All and Cancel wait. The screenshots go one at a time,
+    each covered, read again and checked before it is kept; one that can't
+    be is never saved. All well, the choosing ends and a note says how many
+    were saved, with a success haptic; else those not done stay chosen and
+    the bar says why in footnote semibold orange with
+    `exclamationmark.triangle.fill`, with a warning haptic. Share makes the
+    same copies and opens the share sheet with all of them.
+  - A
     card (`ScreenshotCard`) shows the top of the screenshot, square in the
     grid with corners of 12, at 3:4 with corners of 14 in the row of
     protected ones, a hairline of `.primary` at 8% and a shadow of black 6%,

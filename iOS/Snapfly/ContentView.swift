@@ -28,6 +28,11 @@ struct PhotosTab: View {
     /// How many to a row, as pinched; the home screen shows three rows of
     /// the newest before See All.
     @AppStorage(GridZoom.key) private var columns = GridZoom.standard
+    /// The screenshots chosen, while several are being chosen.
+    @State private var selection: GridSelection?
+    /// A finger is drawn across the cards, so the page holds still.
+    @State private var sweeping = false
+    @ObservedObject private var batch = BatchCover.shared
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -47,6 +52,11 @@ struct PhotosTab: View {
             .navigationDestination(for: ShotLink.self) { link in
                 ProtectView(source: link.source).zoomed(from: link, in: zoom)
             }
+        }
+        // Covered copies of several screenshots, shared at once.
+        .sheet(item: $batch.sharing) { files in
+            ShareFilesSheet(files: files)
+                .ignoresSafeArea()
         }
         .onAppear {
             library.load()
@@ -100,6 +110,7 @@ struct PhotosTab: View {
             .padding(.bottom, 24)
         }
         .scrollIndicators(.hidden)
+        .scrollDisabled(sweeping)
         .onScrolledDown($scrolled)
         .background(Color(.systemBackground))
         // The page's own colour under the status bar; the bar's material only
@@ -110,8 +121,30 @@ struct PhotosTab: View {
                 .animation(.easeOut(duration: 0.15), value: scrolled)
         }
         .phoneGuide(on: .library)
+        // While choosing, the tab bar steps aside for the choice's own bar.
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if let selection {
+                SelectionBar(count: selection.count, save: { coverChosen(.photos) }, share: { coverChosen(.share) })
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .toolbar(selection == nil ? .automatic : .hidden, for: .tabBar)
+        .animation(.snappy, value: selection == nil)
         .onAppear {
             if !library.shots.isEmpty { guide.offerIfDue() }
+        }
+    }
+
+    /// The screenshots chosen, covered as Settings says, one after another,
+    /// in the grid's order; those that could not be stay chosen.
+    private func coverChosen(_ way: BatchCover.Way) {
+        guard let chosen = selection?.chosen, !chosen.isEmpty else { return }
+        let assets = library.shots.filter { chosen.contains($0.localIdentifier) }
+        Task {
+            let failed = await batch.run(assets, way: way)
+            withAnimation(.snappy) {
+                if failed.isEmpty { selection = nil } else { selection?.keep(failed) }
+            }
         }
     }
 
@@ -203,20 +236,40 @@ struct PhotosTab: View {
                         .font(.title3.weight(.semibold))
                         .accessibilityAddTraits(.isHeader)
                     Spacer()
-                    // Always there: it also finds screenshots by their words.
-                    NavigationLink {
-                        AllScreenshotsView(shots: library.shots, protected: protected, zoom: zoom, quick: coverer.cover)
-                    } label: {
-                        HStack(spacing: 3) {
-                            Text(L("See All"))
-                            Image(systemName: "chevron.forward")
-                                .font(.footnote.weight(.semibold))
+                    if let selection {
+                        let shown = Array(library.shots.prefix(GridZoom.preview(columns: columns))).map(\.localIdentifier)
+                        Button(shown.allSatisfy(selection.contains) ? L("Deselect All") : L("Select All")) {
+                            self.selection?.toggleAll(shown)
                         }
                         .font(.subheadline.weight(.medium))
+                        .disabled(batch.running)
+                        Button(L("Cancel")) {
+                            withAnimation(.snappy) { self.selection = nil }
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .disabled(batch.running)
+                    } else {
+                        // Several at once: chosen, then covered with one tap.
+                        Button(L("Select")) {
+                            withAnimation(.snappy) { selection = GridSelection() }
+                        }
+                        .font(.subheadline.weight(.medium))
+                        // Always there: it also finds screenshots by their words.
+                        NavigationLink {
+                            AllScreenshotsView(shots: library.shots, protected: protected, zoom: zoom, quick: coverer.cover)
+                        } label: {
+                            HStack(spacing: 3) {
+                                Text(L("See All"))
+                                Image(systemName: "chevron.forward")
+                                    .font(.footnote.weight(.semibold))
+                            }
+                            .font(.subheadline.weight(.medium))
+                        }
                     }
                 }
                 ScreenshotGrid(shots: Array(library.shots.prefix(GridZoom.preview(columns: columns))), protected: protected, place: .home, zoom: zoom,
-                               quick: coverer.cover)
+                               quick: coverer.cover, selection: $selection, sweeping: $sweeping)
+                    .disabled(batch.running)
             }
         }
     }

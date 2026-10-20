@@ -977,7 +977,14 @@ watch the screen, so there is no line there. What it keeps is the covering:
   See All's menu does the same), that show when each was taken in a small label
   (the time for today's, the date alone for older ones), and a green
   shield once it was protected;
-  holding one offers Cover and Copy, Share or Save; all of them
+  holding one offers Cover and Copy, Share or Save. Select, beside See
+  All and in it, chooses several as Photos does: a tap each, or from iOS 18
+  on a finger drawn sideways across them, with Select All; then Save
+  Covered Copies (one tap) covers each as Settings says, checks it and
+  saves it to Photos as a new picture, one after another with how far it
+  is and Stop, while Share sends the same copies at once. A copy that
+  can't be covered is never saved; it stays chosen, with the reason, to
+  try again. All of them are
   behind See All, which finds them by the words they say (those read ahead
   of time, below), shows only those with private details, protected or not,
   and puts the newest or the oldest first. From iOS 18 on, a screenshot opens by growing out of its
@@ -1192,6 +1199,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them as one covered PDF |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, three or four to a row with a pinch, See All, and the iPhone's green |
+| `Shared/GridSelection.swift`, `iOS/Snapfly/Selecting.swift` | Choosing several screenshots at once: tapped, or a finger drawn across them, and the card under the finger (tested on Linux); then their covered copies made one after another (`BatchCover`), saved to Photos or shared, with the choice's bar |
 | `Shared/GridZoom.swift` | How many screenshots stand in a row on the iPhone, three or four, and how the grid follows a pinch; tested on Linux |
 | `iOS/Snapfly/FirstRunExperience.swift` | The first run: the sample invoice, doctor's letter and bank statement, each standing as an A4 page; the invoice read and covered, its categories as chips, the letter scanned (tipped, found, taken, straightened, covered, the patient but not the doctor), the protected letter ready to share with the other two behind it, Try It Now and Skip Demo; when it shows (`FirstRunCoordinator`) |
 | `iOS/Snapfly/ExplainSheet.swift` | Explain, from Protect Picture: the protected copy sent to the owner's own Claude or ChatGPT, the answer streamed, ready questions and the owner's own (`DocumentTalk`) |

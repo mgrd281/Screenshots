@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, choose several screenshots as in Photos: Select, then a
+  tap on each, or a finger drawn sideways across them. One tap on Save
+  Covered Copies covers each as Settings says, checks it and saves it to
+  Photos as a new picture; Share sends them all at once. One that can't be
+  covered is never saved and stays chosen, with the reason.
 - On the iPhone, screenshots stand three to a row, larger, and the Photos
   tab shows three rows of the newest. Pinch with two fingers, as in Photos,
   for four to a row and back: the grid follows the fingers and settles
