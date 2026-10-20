@@ -36,12 +36,6 @@ enum PrivateDetails {
 
     nonisolated static var hidden: Bool { !details.isEmpty }
 
-    static func toggle(_ detail: PrivateDetail) {
-        var chosen = details
-        if chosen.contains(detail) { chosen.remove(detail) } else { chosen.insert(detail) }
-        details = chosen
-    }
-
     // MARK: Hidden by hand
 
     private static let handKey = "handCovers"

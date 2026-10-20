@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Patient names and Other people turn on and off by themselves, on the Mac
+  and the iPhone. With Names on, turn Other people off to cover only the
+  patients' names, or Patient names off to cover only everyone else's.
+  Both on is Names again, and Names off turns both off.
 - Only the kinds you checked under Privacy are covered, on the Mac and the
   iPhone. Apple Intelligence, or Claude or ChatGPT, no longer covers a
   street, a date, a reference or a medical term it calls a name: what it

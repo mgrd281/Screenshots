@@ -142,6 +142,36 @@ final class CategoryFidelityTests: XCTestCase {
         XCTAssertTrue(both.isSubset(of: names), "\(both.subtracting(names))")
     }
 
+    /// Every switch turns: Names is its two parts together, so turning one
+    /// part off while Names is on keeps the other, both parts on is Names,
+    /// and Names off turns both off. Each choice covers what its switches say.
+    func testNamesAndItsTwoPartsTurnOnAndOffEachByItself() {
+        func turned(_ detail: PrivateDetail, _ on: Bool, _ chosen: Set<PrivateDetail>) -> Set<PrivateDetail> {
+            PrivateDetail.turning(detail, on: on, in: chosen)
+        }
+        func shown(_ chosen: Set<PrivateDetail>) -> [Bool] {
+            [.names, .patientNames, .otherPeople].map { PrivateDetail.shows($0, in: chosen) }
+        }
+        XCTAssertEqual(shown([.names]), [true, true, true])
+        XCTAssertEqual(turned(.patientNames, false, [.names, .addresses]), [.otherPeople, .addresses])
+        XCTAssertEqual(turned(.otherPeople, false, [.names]), [.patientNames])
+        XCTAssertEqual(turned(.otherPeople, false, [.names, .patientNames]), [.patientNames], "as Recommended leaves it")
+        XCTAssertEqual(turned(.otherPeople, true, [.patientNames]), [.names])
+        XCTAssertEqual(turned(.patientNames, true, []), [.patientNames])
+        XCTAssertEqual(turned(.patientNames, false, [.patientNames]), [])
+        XCTAssertEqual(turned(.names, false, [.names, .patientNames, .ids]), [.ids])
+        XCTAssertEqual(turned(.names, true, [.otherPeople]), [.names])
+        XCTAssertEqual(turned(.ids, true, [.names]), [.names, .ids])
+        XCTAssertEqual(shown([.otherPeople]), [false, false, true])
+        // What each covers on the letter is what its switches say.
+        let patients = protect(Self.letter, turned(.otherPeople, false, [.names]))
+        XCTAssertTrue(patients.texts.contains("Erika Musterfrau"), "\(patients.texts)")
+        XCTAssertFalse(patients.texts.contains { $0.contains("Beispiel") }, "\(patients.texts)")
+        let others = protect(Self.letter, turned(.patientNames, false, [.names]))
+        XCTAssertTrue(others.texts.contains("Jonas Beispiel"), "\(others.texts)")
+        XCTAssertFalse(others.texts.contains { $0.contains("Musterfrau") }, "\(others.texts)")
+    }
+
     // MARK: The owner's own name
 
     /// A short note where nothing but the owner's saved name vouches for

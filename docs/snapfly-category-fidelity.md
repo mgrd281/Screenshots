@@ -199,10 +199,15 @@ Every place found is a `Finder.Hit` with one `kind: PrivateDetail?`.
 - What is unclear is the way there: a customer has to know to turn Namen off
   first. The text under the group says it ("Ohne „Namen“ …"), but only at
   the end of the group.
-- **The smallest fix,** not made, as the settings screen changes only with
-  the owner's approval: one line under Namen, "Aus, um nur bestimmte
-  Personen zu wählen", in the 13 languages. Nothing else on the screen
-  changes.
+- **The smallest fix,** not made at first, as the settings screen changes
+  only with the owner's approval: one line under Namen, "Aus, um nur
+  bestimmte Personen zu wählen", in the 13 languages.
+- **What the owner chose instead (October 20, 2026):** Patientennamen and
+  Weitere Personen turn on and off by themselves. `PrivateDetail.turning`
+  keeps Namen as the two together: one turned off while Namen is on keeps
+  the other, both on is Namen, Namen off turns both off. Every list of kinds
+  (Settings on the Mac and the iPhone, Cover Files, Hide Part) uses it;
+  `testNamesAndItsTwoPartsTurnOnAndOffEachByItself` checks it.
 
 ## 4. The fix
 

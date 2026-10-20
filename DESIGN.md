@@ -1336,8 +1336,11 @@ apps.
   access. People opens with Names (its subtitle "Everyone's"), Patient
   names ("In medical letters, reports and forms") and Other people (the
   doctors, customers, staff, payees, senders and recipients), each a
-  switch with its subtitle. While Names is on, the other two show on and
-  dimmed, as Names takes them in. The section's footer says that without
+  switch with its subtitle. Names is the other two together: while it is
+  on they show on, and every switch turns. Turning one of the two off turns
+  Names off and keeps the other; turning both on turns Names on; turning
+  Names off turns both off (`PrivateDetail.turning`). Cover Files and Hide
+  Part list the kinds the same way. The section's footer says that without
   Names only the people chosen are covered, told by the words round each
   name, and that an unclear name is covered and marked to check. A change
   draws the photos hanging again. Then "Cover look": the
@@ -2560,8 +2563,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
 - Settings opens with Check All, Recommended and Uncheck All as small
   bordered buttons sharing a row, under "Hide private details", then the
   six groups. People opens with Names, Patient names and Other people,
-  each with its subtitle in footnote `.secondary`, the two dimmed and on
-  while Names is on, over the Mac's footer. Then "Cover
+  each with its subtitle in footnote `.secondary`, the two on while Names
+  is on and each free to turn, as on the Mac, over the Mac's footer. Then "Cover
   look", the Mac's tiles three to a row with Keep the last four digits and
   Strongest protection under them; then "Reading and checking": Find more
   with Apple Intelligence and, once a screenshot was covered, how long the
