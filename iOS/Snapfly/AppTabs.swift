@@ -24,16 +24,24 @@ struct ContentView: View {
     @ObservedObject private var tabs = AppTabs.shared
     @ObservedObject private var coverer = QuickCoverer.shared
     @ObservedObject private var firstRun = FirstRunCoordinator.shared
+    /// The tabs are made once the first run that opens Snapfly is over, so
+    /// reading Photos and starting sync never hold up its first seconds.
+    @State private var appReady = !FirstRunCoordinator.shared.showing
 
     var body: some View {
         ZStack {
-            tabView
-                .accessibilityHidden(firstRun.showing)
+            if appReady {
+                tabView
+                    .accessibilityHidden(firstRun.showing)
+            }
             if firstRun.showing {
                 SnapflyFirstRunExperience()
                     .transition(.opacity)
                     .zIndex(1)
             }
+        }
+        .onChange(of: firstRun.showing) { _, showing in
+            if !showing { appReady = true }
         }
     }
 

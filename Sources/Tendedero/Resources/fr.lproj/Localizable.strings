@@ -411,6 +411,9 @@
 "Share your documents. Not your private data." = "Partage tes documents. Pas tes données privées.";
 "Protect invoices, screenshots and documents before you share them." = "Protège factures, captures et documents avant de les partager.";
 "Only the protected copy leaves your iPhone." = "Seule la copie protégée quitte ton iPhone.";
+"Names, emails and bank details are found and covered." = "Les noms, e-mails et coordonnées bancaires sont repérés et masqués.";
+"Tap a category to show or cover it." = "Touche une catégorie pour l’afficher ou la masquer.";
+"Scan a page: it is straightened, read and covered." = "Numérise une page : elle est redressée, lue et masquée.";
 "Bank details" = "Coordonnées bancaires";
 "Invoice" = "Facture";
 "Sample" = "Exemple";

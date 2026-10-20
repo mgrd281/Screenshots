@@ -413,6 +413,9 @@
 "Share your documents. Not your private data." = "अपने दस्तावेज़ साझा करें, अपनी निजी जानकारी नहीं।";
 "Protect invoices, screenshots and documents before you share them." = "चालान, स्क्रीनशॉट और दस्तावेज़ साझा करने से पहले सुरक्षित करें।";
 "Only the protected copy leaves your iPhone." = "आपके iPhone से केवल सुरक्षित कॉपी ही बाहर जाती है।";
+"Names, emails and bank details are found and covered." = "नाम, ईमेल और बैंक विवरण ढूँढकर ढक दिए जाते हैं।";
+"Tap a category to show or cover it." = "किसी श्रेणी को दिखाने या ढकने के लिए उस पर टैप करें।";
+"Scan a page: it is straightened, read and covered." = "एक पेज स्कैन करें: उसे सीधा किया जाता है, पढ़ा जाता है और ढका जाता है।";
 "Bank details" = "बैंक विवरण";
 "Invoice" = "चालान";
 "Sample" = "नमूना";

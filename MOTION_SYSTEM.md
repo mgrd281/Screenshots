@@ -137,6 +137,7 @@ Motion and Low Power Mode. The first run uses them all.
 | `rise.words` | 22–26 px | Headlines rising into focus |
 | `rise.card` | 28 px | A card in a list arriving |
 | `straighten.page` | the page's corners from tipped (top 12–90%, 7–2% down; bottom 0–100%, 100–97% down) to a rectangle | iPhone first run: the scanner straightening the page, by a projection, on `motion.document` |
+| `words.change` | out 0.12 s; in 0.32 s ease-out after 0.12 s, rising 8 pt from a 6 pt blur | iPhone first run: one scene's headline and line giving way to the next, never read over each other; a cross-fade with Reduce Motion |
 | `rise.window` | 32–44 px | A window opening |
 | `drop.photo` | 56 px | A photo dropping onto its clip |
 | `drop.card` | 40 px | A step card dropping onto its clip as it arrives |

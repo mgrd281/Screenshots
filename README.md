@@ -929,7 +929,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   steps aside.
 - **The first run** shows what Snapfly does in under fifteen seconds, on
   one made-up invoice, a standing A4 page, that moves through it all, before anything is asked
-  (`FIRST_RUN.md`). From the first frame the invoice is there; a green line
+  (`FIRST_RUN.md`). It stands on a soft green stage, with bars over it
+  that show how far the story is and a line under each headline saying
+  what happens. From the first frame the invoice is there; a green line
   reads it, and its name, email and IBAN are found and covered while its
   amount stays readable: "Private stays private." Then Names, Emails and
   Bank details appear as chips, and a tap on one, or on a detail, covers or
