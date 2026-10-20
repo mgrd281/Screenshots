@@ -1227,9 +1227,8 @@ private struct Blurred: ViewModifier {
 }
 
 /// Words with some stressed, marked between asterisks in each language, as
-/// "Privat *bleibt* privat.": the stressed ones in the brand's green over a
-/// soft band of it, low on the letters as a highlighter leaves it (the band
-/// from iOS 18 on).
+/// "Privat *bleibt* privat.": the stressed ones in the brand's green, with
+/// nothing behind them (the owner's request).
 struct StressedText: View {
     let marked: String
 
@@ -1242,47 +1241,13 @@ struct StressedText: View {
         marked.replacingOccurrences(of: "*", with: "")
     }
 
-    var body: some View {
-        if #available(iOS 18, *) {
-            text(banded: true).textRenderer(Highlighter())
-        } else {
-            text(banded: false)
-        }
-    }
-
     /// Between the marks, every other part is stressed.
-    private func text(banded: Bool) -> Text {
+    var body: Text {
         let parts = marked.components(separatedBy: "*")
         return parts.indices.reduce(Text(verbatim: "")) { text, index in
             var part = Text(verbatim: parts[index])
-            if index % 2 == 1 {
-                part = part.foregroundStyle(SnapflyTokens.protect)
-                if #available(iOS 18, *), banded { part = part.customAttribute(Stressed()) }
-            }
+            if index % 2 == 1 { part = part.foregroundStyle(SnapflyTokens.protect) }
             return Text("\(text)\(part)")
-        }
-    }
-}
-
-@available(iOS 18, *)
-private struct Stressed: TextAttribute {}
-
-/// Draws a soft band of the green under each stressed run, over the lower
-/// half of the small letters to a little below the line, then the words
-/// over it.
-@available(iOS 18, *)
-private struct Highlighter: TextRenderer {
-    func draw(layout: Text.Layout, in context: inout GraphicsContext) {
-        for line in layout {
-            for run in line where run[Stressed.self] != nil {
-                let bounds = run.typographicBounds
-                let baseline = bounds.rect.maxY - bounds.descent
-                let band = CGRect(x: bounds.rect.minX - 3, y: baseline - bounds.ascent * 0.3,
-                                  width: bounds.rect.width + 6, height: bounds.ascent * 0.3 + bounds.descent * 0.35)
-                context.fill(Path(roundedRect: band, cornerRadius: 4, style: .continuous),
-                             with: .color(SnapflyTokens.protect.opacity(0.14)))
-            }
-            context.draw(line)
         }
     }
 }
