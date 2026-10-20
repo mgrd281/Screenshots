@@ -179,7 +179,7 @@ components:
   phone-shutter:
     size: "34pt"                   # the camera's shutter on the first run: a white ring of 2.5pt at 90% round a white button 5pt in, centred in the room under the page, smaller where the room is (14pt less than it)
   phone-share-tile:
-    size: "52pt"                   # a destination on the first run's share row: secondarySystemBackground, corners of 14, the glyph 20pt semibold, the name in caption under it
+    size: "52pt"                   # a destination on the first run's share row: the app's own icon from its SVG (asset catalogue, vector kept), clipped to continuous corners of 12 with a hairline of .primary at 8%, the name in caption under it
   phone-question-chip:
     height: "36pt"                 # a ready question in Explain: a capsule of secondarySystemBackground, subheadline, 14pt in, 44pt to the finger, 8pt apart in a row that scrolls sideways
   phone-ask-bubble:
@@ -2158,13 +2158,17 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     from clear to `phone-protect` at 18%, its lower edge a 1.5 pt line of
     `phone-protect`, crossing the page top to bottom at an even pace in
     0.9 s, fading in and out at the ends, kept to the page.
-  - **The share row** (`phone-share-tile`): ChatGPT (`sparkles`), WhatsApp
-    (`message.fill`) and Email (`envelope.fill`) as 52 pt tiles of
-    `secondarySystemBackground` with corners of 14, the glyph 20 pt
-    semibold in `.primary`, the name in caption `.secondary` under it, 20 pt
+  - **The share row** (`phone-share-tile`): ChatGPT, WhatsApp and WEB.DE
+    by their apps' own icons, as the share sheet shows them (the owner's
+    request, October 2026): each drawn from its SVG in the asset catalogue
+    (`LogoChatGPT`, `LogoWhatsApp`, `LogoWebDE`, vector kept, so sharp at
+    any size), 52 pt, clipped to continuous corners of 12 with a hairline
+    of `.primary` at 8%, the name in caption `.secondary` under it, 20 pt
     apart; "Only the protected copy leaves your iPhone." is the scene's line
-    under its headline. A picture of the share sheet, not a link: no
-    logos, and VoiceOver hears only that sentence.
+    under its headline. A picture of the share sheet, not a link, and
+    VoiceOver hears only that sentence. The logos belong to their owners
+    and only say where a copy can go, as the logos under a photo on the Mac
+    do (`assets/chat-logos/`).
   - **Actions**: Skip Demo in subheadline medium `.secondary`, 44 pt high,
     from the first frame; at the end Try It Now rises in over it as the
     wide green pill and Skip Demo becomes Not Now. Try It Now opens the real

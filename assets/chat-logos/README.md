@@ -15,3 +15,11 @@ under it. `scripts/build-app.sh` copies the PNGs into the app as `chat-logos/`.
 The logos belong to their owners (Google, WhatsApp, United Internet, Microsoft, Yahoo, Meta, xAI, DeepSeek, Perplexity, Airbnb, Alibaba). They
 only say where a photo goes. ChatGPT and Claude have no logo here on
 purpose: their icons come from the apps on the Mac.
+
+The iPhone's first run shows ChatGPT, WhatsApp and WEB.DE in its picture of
+the share sheet as their apps' icons, as SVG in its asset catalogue
+(`iOS/Snapfly/Assets.xcassets/Logo*.imageset`), kept as vectors:
+WhatsApp's and WEB.DE's from `source/` (WhatsApp's with its rounded corners
+and the `<use>` it was drawn with left out, as the app clips the icon
+itself), and ChatGPT's the OpenAI mark from Simple Icons (CC0), white on
+black as the ChatGPT app's icon is. OpenAI owns that mark too.

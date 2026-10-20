@@ -42,7 +42,8 @@ keeps a download of each version.
   letter, with a signature and the practice's stamp, is found, taken,
   straightened and covered: the patient's name, date of birth and
   diagnosis, never the doctor's name; and the protected letter is ready to
-  share, with the invoice and a bank statement, protected too, behind it. Try It Now opens
+  share, with the invoice and a bank statement, protected too, behind it,
+  beside ChatGPT, WhatsApp and WEB.DE by their apps' real icons. Try It Now opens
   the scanner, Skip Demo leaves at any time, and More › Help &
   Introduction › Watch the Demo shows it again. It moves calmly with
   Reduce Motion or Low Power Mode, and is described for VoiceOver. Access
