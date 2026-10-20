@@ -124,7 +124,7 @@
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "Tətbiqə toxunuş bütün səhifələri örtür və onlara verir, lazım olduqda paylaşma pəncərəsi ilə.";
 "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "Skandan sonra və «Şəkli qoru»da şəklin yanında olan tətbiqlər, örtülmüş nüsxəni onlara vermək üçün. Mac-dakı ilə eyni tətbiqlər.";
 "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "Toxunuş qorunan nüsxəni tətbiqə verir. WhatsApp onunla açılır; ChatGPT, Claude və digər AI söhbətləri onu kopyalanmış halda açılır ki, yapışdırasan; qalanları paylaşma pəncərəsindən, orada tətbiqə toxunursan. Heç nə brauzerdə açılmır.";
-"Copied for %@: hold its message field and tap Paste." = "%@ üçün kopyalandı: mesaj sahəsini basılı saxla və «Yapışdır»a toxun.";
+"Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste." = "%@ üçün kopyalandı: oradakı klaviaturanın üstündəki şəklə toxun və ya mesaj sahəsini basılı saxla və «Yapışdır»a toxun.";
 "Opening %@…" = "%@ açılır…";
 "Could not open %@. The photos stay on the line." = "%@ açılmadı. Fotolar ipdə qalır.";
 "Paste into the app in front" = "Öndəki tətbiqə yapışdır";

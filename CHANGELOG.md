@@ -22,8 +22,9 @@ keeps a download of each version.
   asks about first. Select, then a tap on each or a finger drawn across,
   takes several off at once.
 - On the iPhone, ChatGPT, Claude and the other AI chats open straight away
-  with the protected copy ready to paste: hold the message field and tap
-  Paste. Where the app is not on the iPhone, the share sheet shows as
+  with the protected copy ready to paste: tap the picture above the
+  keyboard there, or hold the message field and tap Paste. Claude opens a
+  new chat. Where the app is not on the iPhone, the share sheet shows as
   before. Save to Photos opens Photos once the copy is saved.
 - Names, Patient names and Other people are three switches of their own,
   on the Mac and the iPhone: turning one on or off leaves the other two as

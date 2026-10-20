@@ -240,6 +240,9 @@ enum ChatTarget: String, CaseIterable, Identifiable {
     /// The links that open its app on the iPhone, tried in turn: the
     /// address the app answers to, then its website's link, which is only
     /// ever opened as the app's (universal links only), never in a browser.
+    /// Claude's new-chat page comes first: its app takes that link (claude.ai
+    /// names "/new" among its app's links) and opens a new chat, where its
+    /// own address opens it as it was left.
     var phoneAppLinks: [URL] {
         let schemes: [String] = switch self {
         case .chatGPT: ["chatgpt://"]
@@ -248,7 +251,8 @@ enum ChatTarget: String, CaseIterable, Identifiable {
         case .grok: ["grok://"]
         default: []
         }
-        return schemes.compactMap(URL.init(string:)) + [newChat]
+        let app = schemes.compactMap(URL.init(string:))
+        return self == .claude ? [newChat] + app : app + [newChat]
     }
 
     /// Those that can be chosen on the iPhone, in their order.

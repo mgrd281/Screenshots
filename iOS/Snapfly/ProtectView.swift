@@ -612,7 +612,7 @@ struct ProtectView: View {
     private func send(to chat: ChatTarget) {
         guard session.isReady, let png = session.png else { return }
         let shown = Handoff.shared.send([png], to: chat, named: baseName, opened: {
-            note = EditorNote(text: String(format: L("Copied for %@: hold its message field and tap Paste."), chat.name))
+            note = EditorNote(text: String(format: L("Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste."), chat.name))
         }) { went in
             if went { session.left() }
         }

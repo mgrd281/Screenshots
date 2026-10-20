@@ -124,7 +124,7 @@
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "A tap on an app covers every page and hands them to it, through the share sheet where needed.";
 "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac.";
 "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser.";
-"Copied for %@: hold its message field and tap Paste." = "Copied for %@: hold its message field and tap Paste.";
+"Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste." = "Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste.";
 "Opening %@…" = "Opening %@…";
 "Could not open %@. The photos stay on the line." = "Could not open %@. The photos stay on the line.";
 "Paste into the app in front" = "Paste into the app in front";
