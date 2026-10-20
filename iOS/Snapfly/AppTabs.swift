@@ -181,6 +181,12 @@ final class QuickCoverer: ObservableObject {
         covered += 1
     }
 
+    /// Screenshots taken off the list of those protected lately, or put
+    /// back, so the lists of them update too.
+    func protectedChanged() {
+        covered += 1
+    }
+
     /// A short note over the bottom of the screen, gone after a while.
     func show(_ text: String, for seconds: Double = 2.5) {
         note = text
@@ -193,12 +199,21 @@ final class QuickCoverer: ObservableObject {
 
 /// The Protected tab: the screenshots protected here lately, newest first,
 /// in the same grid as the Photos tab, each opened again or covered from
-/// its menu.
+/// its menu. Holding one, or choosing several with Select, takes them off
+/// the list, where they stay in Photos and Undo puts them back, or deletes
+/// them from Photos, as iOS asks first.
 struct ProtectedTab: View {
     @ObservedObject var library: Library
     @ObservedObject private var coverer = QuickCoverer.shared
     @State private var shots: [PHAsset] = []
     @Namespace private var zoom
+    /// The screenshots chosen, while several are being chosen.
+    @State private var selection: GridSelection?
+    /// A finger is drawn across the cards, so the page holds still.
+    @State private var sweeping = false
+    /// What was taken off the list last, while Undo can put it back.
+    @State private var removed: ProtectedList.Removal?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         NavigationStack {
@@ -213,7 +228,8 @@ struct ProtectedTab: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 12) {
                             ScreenshotGrid(shots: shots, protected: Set(shots.map(\.localIdentifier)), place: .recent,
-                                           zoom: zoom, quick: coverer.cover)
+                                           zoom: zoom, quick: coverer.cover, selection: $selection,
+                                           sweeping: $sweeping, remove: remove)
                             Text(L("The last twelve, kept on this iPhone by their place in Photos alone."))
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
@@ -221,9 +237,43 @@ struct ProtectedTab: View {
                         .padding(.horizontal, 16)
                         .padding(.bottom, 24)
                     }
+                    .scrollDisabled(sweeping)
                 }
             }
             .navigationTitle(L("Protected"))
+            .toolbar { toolbar }
+            // While choosing, the tab bar steps aside for the choice's own bar.
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if let selection {
+                    RemoveBar(count: selection.count) { way in
+                        remove(shots.filter { selection.contains($0.localIdentifier) }, way)
+                    }
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .toolbar(selection == nil ? .automatic : .hidden, for: .tabBar)
+            .animation(.snappy, value: selection == nil)
+            .overlay(alignment: .bottom) {
+                if let removed {
+                    HStack(spacing: 12) {
+                        Text(removed.count == 1 ? L("Removed from Protected")
+                             : String(format: L("%d removed from Protected"), removed.count))
+                        Button(L("Undo")) { undo(removed) }
+                            .fontWeight(.semibold)
+                            .contentShape(Rectangle().inset(by: -10))
+                    }
+                    .floatingPill()
+                    .padding(.bottom, 24)
+                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(reduceMotion ? .easeOut(duration: 0.15) : .snappy, value: removed)
+            // Undo waits a few seconds, then the list is as it is.
+            .task(id: removed) {
+                guard removed != nil else { return }
+                try? await Task.sleep(for: .seconds(5))
+                if !Task.isCancelled { removed = nil }
+            }
             .quickNotes()
             .navigationDestination(for: ShotLink.self) { link in
                 ProtectView(source: link.source).zoomed(from: link, in: zoom)
@@ -232,9 +282,95 @@ struct ProtectedTab: View {
         }
         .onChange(of: coverer.covered) { reload() }
         .onChange(of: library.mayRead) { reload() }
+        // Nothing left to choose: the choosing ends, and the tab bar comes back.
+        .onChange(of: shots.isEmpty) { _, empty in
+            if empty { selection = nil }
+        }
+    }
+
+    @ToolbarContentBuilder private var toolbar: some ToolbarContent {
+        if selection != nil {
+            ToolbarItem(placement: .topBarLeading) {
+                let ids = shots.map(\.localIdentifier)
+                let all = selection.map { chosen in ids.allSatisfy(chosen.contains) } ?? false
+                Button(all ? L("Deselect All") : L("Select All")) {
+                    selection?.toggleAll(ids)
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(L("Cancel")) {
+                    withAnimation(.snappy) { selection = nil }
+                }
+                .fontWeight(.semibold)
+            }
+        }
+        if selection == nil, !shots.isEmpty {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(L("Select")) {
+                    withAnimation(.snappy) { selection = GridSelection() }
+                }
+            }
+        }
     }
 
     private func reload() {
         shots = library.mayRead ? Library.assets(Recent.ids) : []
+    }
+
+    /// Takes screenshots off the list at once, with Undo; or deletes them
+    /// from Photos once iOS has asked, and takes them off the list then.
+    private func remove(_ assets: [PHAsset], _ way: Removing) {
+        let gone = Set(assets.map(\.localIdentifier))
+        guard !gone.isEmpty else { return }
+        switch way {
+        case .fromList:
+            let removal = Recent.remove(gone)
+            coverer.note = nil
+            withAnimation(leaving) {
+                shots.removeAll { gone.contains($0.localIdentifier) }
+                selection = nil
+                removed = removal
+            }
+            coverer.protectedChanged()
+        case .fromPhotos:
+            let ids = Array(gone)
+            Task {
+                do {
+                    try await PHPhotoLibrary.shared().performChanges {
+                        PHAssetChangeRequest.deleteAssets(PHAsset.fetchAssets(withLocalIdentifiers: ids, options: nil))
+                    }
+                } catch {
+                    // Don't Allow, in iOS's own question, leaves everything as it was.
+                    if (error as NSError).code != PHPhotosError.Code.userCancelled.rawValue {
+                        coverer.show(L("The screenshots could not be deleted."))
+                    }
+                    return
+                }
+                _ = Recent.remove(gone)
+                withAnimation(leaving) {
+                    shots.removeAll { gone.contains($0.localIdentifier) }
+                    selection = nil
+                    removed = nil
+                }
+                library.load()
+                coverer.protectedChanged()
+                coverer.show(L("Deleted. Photos can still bring them back for 30 days."), for: 3)
+            }
+        }
+    }
+
+    /// Those taken off, back in their places.
+    private func undo(_ removal: ProtectedList.Removal) {
+        Recent.restore(removal)
+        withAnimation(leaving) {
+            removed = nil
+            reload()
+        }
+        coverer.protectedChanged()
+    }
+
+    /// How cards leave and come back: on a spring, or a fade with Reduce Motion.
+    private var leaving: Animation {
+        reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.36, dampingFraction: 0.86)
     }
 }

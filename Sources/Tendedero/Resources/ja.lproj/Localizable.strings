@@ -1495,3 +1495,13 @@
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "送る前に隠す";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "スクリーンショットはこのiPhoneの中で読み取られ、あなたが選ばない限り何も外に出ません。";
+
+/* The iPhone: taking screenshots off the Protected tab, or deleting them from Photos */
+"Remove from Protected" = "「保護済み」から取り除く";
+"Delete from Photos" = "写真から削除";
+"Remove (%d)" = "取り除く（%d）";
+"Removed from this list, they stay in Photos." = "このリストから取り除いても、写真には残ります。";
+"Removed from Protected" = "「保護済み」から取り除きました";
+"%d removed from Protected" = "%d 件を「保護済み」から取り除きました";
+"Deleted. Photos can still bring them back for 30 days." = "削除しました。30日間は写真アプリで復元できます。";
+"The screenshots could not be deleted." = "スクリーンショットを削除できませんでした。";

@@ -396,10 +396,24 @@ final class Imported {
 enum Recent {
     private static let key = "recentlyProtected"
 
-    static var ids: [String] { UserDefaults.standard.stringArray(forKey: key) ?? [] }
+    private(set) static var ids: [String] {
+        get { UserDefaults.standard.stringArray(forKey: key) ?? [] }
+        set { UserDefaults.standard.set(newValue, forKey: key) }
+    }
 
     static func note(_ id: String) {
-        let kept = [id] + ids.filter { $0 != id }
-        UserDefaults.standard.set(Array(kept.prefix(12)), forKey: key)
+        ids = ProtectedList.noting(id, in: ids)
+    }
+
+    /// Takes these off the list; the screenshots stay in Photos. Gives back
+    /// what was taken off, to put it back with Undo.
+    static func remove(_ gone: Set<String>) -> ProtectedList.Removal {
+        let (kept, removal) = ProtectedList.removing(gone, from: ids)
+        ids = kept
+        return removal
+    }
+
+    static func restore(_ removal: ProtectedList.Removal) {
+        ids = ProtectedList.restoring(removal, into: ids)
     }
 }

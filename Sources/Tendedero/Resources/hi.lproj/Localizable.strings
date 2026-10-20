@@ -1497,3 +1497,13 @@
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "भेजने से पहले ढका हुआ";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "आपके स्क्रीनशॉट इसी iPhone पर पढ़े जाते हैं, और आपकी मर्ज़ी के बिना कुछ भी बाहर नहीं जाता।";
+
+/* The iPhone: taking screenshots off the Protected tab, or deleting them from Photos */
+"Remove from Protected" = "\"सुरक्षित\" सूची से हटाएँ";
+"Delete from Photos" = "फ़ोटो से डिलीट करें";
+"Remove (%d)" = "हटाएँ (%d)";
+"Removed from this list, they stay in Photos." = "इस सूची से हटाने पर भी वे फ़ोटो में रहते हैं।";
+"Removed from Protected" = "\"सुरक्षित\" सूची से हटाया गया";
+"%d removed from Protected" = "%d \"सुरक्षित\" सूची से हटाए गए";
+"Deleted. Photos can still bring them back for 30 days." = "डिलीट हो गए। फ़ोटो उन्हें अब भी 30 दिनों तक वापस ला सकता है।";
+"The screenshots could not be deleted." = "स्क्रीनशॉट डिलीट नहीं हो सके।";

@@ -1495,3 +1495,13 @@
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "发送之前先遮盖";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "你的截屏只在这台 iPhone 上读取，除非你选择，否则什么都不会离开它。";
+
+/* The iPhone: taking screenshots off the Protected tab, or deleting them from Photos */
+"Remove from Protected" = "从“已保护”中移除";
+"Delete from Photos" = "从“照片”中删除";
+"Remove (%d)" = "移除（%d）";
+"Removed from this list, they stay in Photos." = "从此列表移除后，它们仍保留在“照片”中。";
+"Removed from Protected" = "已从“已保护”中移除";
+"%d removed from Protected" = "已从“已保护”中移除 %d 张";
+"Deleted. Photos can still bring them back for 30 days." = "已删除。30 天内仍可在“照片”中恢复。";
+"The screenshots could not be deleted." = "无法删除截屏。";

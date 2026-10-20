@@ -2287,6 +2287,27 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   protected, in the Photos tab's grid with the shield on each, over a
   footnote of how they are kept; with none, the system's empty state with
   `checkmark.shield`.
+  - **Taking them off** (`ProtectedList`), as Photos does in an album.
+    Holding a card adds a section under the three Cover items: Remove from
+    Protected (`minus.circle`) and Delete from Photos (`trash`,
+    destructive). Select, on the trailing edge of the bar, turns the grid
+    to choosing as on the Photos tab (Select All or Deselect All, Cancel in
+    semibold, the tab bar stepping aside, a tap or a finger drawn across),
+    and its own bar (`RemoveBar`, the choice's bar's material, hairline and
+    insets) holds one bordered capsule, Remove (%d) with `trash`, in the
+    destructive red, the count rolling, filling the width at least 44 pt
+    tall, over the footnote of how to choose, or that what is removed stays
+    in Photos. It asks in the system's confirmation dialog, with no title:
+    Remove from Protected, Delete from Photos (destructive) and Cancel.
+  - Removed, the cards shrink to 60% and fade as the others close up, on a
+    spring (0.36, 0.86), a fade of 0.15 s with Reduce Motion, and the
+    choosing ends. A floating pill, 24 pt up, says "Removed from Protected"
+    ("3 removed from Protected") beside Undo in semibold, its touch 10 pt
+    larger round it; it rises in on `.snappy` and goes after 5 s. Undo puts
+    them back in the places they had, growing in. Delete from Photos waits
+    for iOS's own question; Don't Allow leaves everything as it was, and
+    once deleted, the cards leave the same way and a note says Photos can
+    bring them back for 30 days.
 - **More** is Settings as a tab: a large title "More", no Done.
 - **The share extension** (`iOS/Share`), in any app's share sheet: the
   system's sheet with an inline "Snapfly", Cancel and Done (semibold), on
