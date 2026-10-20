@@ -142,6 +142,9 @@ enum AIAccount {
         var found: CFTypeRef?
         guard SecItemCopyMatching(query as CFDictionary, &found) == errSecSuccess, let data = found as? Data,
               let key = String(data: data, encoding: .utf8), !key.isEmpty else { return nil }
+        // A key the keychain kept through a reinstall is noted again.
+        let noted = "aiKeySet.\(provider.rawValue)"
+        if !UserDefaults.standard.bool(forKey: noted) { UserDefaults.standard.set(true, forKey: noted) }
         return key
     }
 
@@ -519,7 +522,7 @@ enum AIRequest {
                         let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
                         throw AIRequest.error(status: status, json: json, model: model)
                     }
-                    var wrote = false
+                    var wrote = false, finished = false
                     reading: for try await line in bytes.lines {
                         switch AIRequest.streamed(provider, line: line, model: model) {
                         case .text(let words):
@@ -527,10 +530,14 @@ enum AIRequest {
                             continuation.yield(words)
                         case .refused: throw AIError.refused
                         case .failed(let failure): throw failure
-                        case .finished: break reading
+                        case .finished:
+                            finished = true
+                            break reading
                         case nil: continue
                         }
                     }
+                    // Cut off before its end, an answer is not taken as whole.
+                    guard finished else { throw AIError.busy }
                     guard wrote else { throw AIError.other(L("The answer was empty.")) }
                     continuation.finish()
                 } catch {

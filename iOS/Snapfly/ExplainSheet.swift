@@ -85,7 +85,12 @@ final class DocumentTalk: ObservableObject {
                 exchanges[index].answer += piece
             }
             guard !Task.isCancelled, exchanges.indices.contains(index) else { return }
-            exchanges[index].answer = exchanges[index].answer.trimmingCharacters(in: .whitespacesAndNewlines)
+            let answer = exchanges[index].answer.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !answer.isEmpty else {
+                fail(index, .other(L("The answer was empty.")))
+                return
+            }
+            exchanges[index].answer = answer
             exchanges[index].done = true
         } catch {
             guard !Task.isCancelled else { return }
