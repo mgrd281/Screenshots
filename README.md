@@ -928,7 +928,7 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Settings and Help & Introduction. While a picture is open the tab bar
   steps aside.
 - **The first run** shows what Snapfly does in under fifteen seconds, on
-  one made-up invoice that moves through it all, before anything is asked
+  one made-up invoice, a standing A4 page, that moves through it all, before anything is asked
   (`FIRST_RUN.md`). From the first frame the invoice is there; a green line
   reads it, and its name, email and IBAN are found and covered while its
   amount stays readable: "Private stays private." Then Names, Emails and
@@ -1175,7 +1175,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them as one covered PDF |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
-| `iOS/Snapfly/FirstRunExperience.swift` | The first run: the sample invoice read and covered, its categories as chips, the scan of a page tipped, found, straightened and covered, the protected copy ready to share, Try It Now and Skip Demo; when it shows (`FirstRunCoordinator`) |
+| `iOS/Snapfly/FirstRunExperience.swift` | The first run: the sample invoice, standing as an A4 page, read and covered, its categories as chips, the scan of a page tipped, found, straightened and covered, the protected copy ready to share, Try It Now and Skip Demo; when it shows (`FirstRunCoordinator`) |
 | `iOS/Snapfly/ExplainSheet.swift` | Explain, from Protect Picture: the protected copy sent to the owner's own Claude or ChatGPT, the answer streamed, ready questions and the owner's own (`DocumentTalk`) |
 | `iOS/Snapfly/AssistantSettings.swift` | More › AI Assistant on the iPhone: the assistant, the key in the keychain with the system's Paste, checked at once, the model, and Find more |
 | `iOS/Snapfly/Motion.swift` | The iPhone's named motion (`SnapflyMotion`), each with its calm answer for Reduce Motion and Low Power Mode |
