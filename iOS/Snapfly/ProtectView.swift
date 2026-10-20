@@ -631,7 +631,7 @@ struct ProtectView: View {
 
     private func title(of mark: ProtectionPlan.Mark) -> String {
         if let kind = mark.kind { return kind.title }
-        return mark.origin == .hand ? L("Hidden by hand") : L("Your own rules")
+        return mark.origin == .hand ? L("Hidden by hand") : L("Your details and rules")
     }
 }
 

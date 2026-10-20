@@ -512,7 +512,7 @@
 "The picture could not be read." = "تعذّرت قراءة الصورة.";
 "Nothing private found" = "لم يُعثر على شيء خاص";
 "Covered: %@" = "المغطّى: %@";
-"Your own rules" = "قواعدك الخاصة";
+"Your details and rules" = "معلوماتك وقواعدك";
 "Hidden by hand" = "ما أُخفي يدويًا";
 "Saved to Photos" = "حُفظت في الصور";
 "The picture could not be saved." = "تعذّر حفظ الصورة.";
@@ -1505,3 +1505,32 @@
 "%d removed from Protected" = "أُزيلت %d من «محمي»";
 "Deleted. Photos can still bring them back for 30 days." = "حُذفت. يستطيع تطبيق الصور استعادتها خلال 30 يومًا.";
 "The screenshots could not be deleted." = "تعذّر حذف لقطات الشاشة.";
+
+/* Also hide: the owner's own details, covered wherever they show */
+"Add Detail" = "إضافة معلومة";
+"Your Details" = "معلوماتك";
+"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "تُغطّى أينما وكيفما كُتبت، مهما كان المحدَّد في الأعلى. تبقى على هذا الـMac وحده، في سلسلة مفاتيحه، ولا تُرسل أبدًا.";
+"First and last name" = "الاسم الأول واسم العائلة";
+"Street and house number" = "الشارع ورقم المنزل";
+"Postcode" = "الرمز البريدي";
+"Town" = "المدينة";
+"Card number" = "رقم البطاقة";
+"Name for it (optional)" = "اسم مختصر (اختياري)";
+"IBAN" = "IBAN";
+"Bank Card" = "بطاقة بنكية";
+"Bank Account" = "حساب بنكي";
+"Covered wherever and however they are written, whatever is chosen under Hide private details. They stay on this iPhone alone, in no backup, and are never sent." = "تُغطّى أينما وكيفما كُتبت، مهما اخترت في «إخفاء المعلومات الخاصة». تبقى على هذا الـiPhone وحده، لا في أي نسخة احتياطية، ولا تُرسل أبدًا.";
+"Your Rules" = "قواعدك";
+"A card number has 19 digits at most." = "رقم البطاقة لا يزيد على 19 رقمًا.";
+"This card number does not add up. Check it again." = "رقم البطاقة هذا غير صحيح. تحقّق منه مرة أخرى.";
+"An IBAN begins with its country’s two letters and two digits, like DE89." = "يبدأ IBAN بحرفَي بلده ثم رقمين، مثل DE89.";
+"This IBAN is too long." = "هذا الـIBAN أطول من اللازم.";
+"This IBAN does not add up. Check it again." = "هذا الـIBAN غير صحيح. تحقّق منه مرة أخرى.";
+"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "يُغطّى كيفما كُتب: باسم العائلة أولًا، أو بأحرف كبيرة، أو بالحرف الأول، أو بجزء منه وحده.";
+"Covered however it is written, like %@." = "يُغطّى كيفما كُتب، مثل %@.";
+"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "يُغطّى الشارع مع رقم المنزل، والرمز البريدي مع المدينة حيث يأتيان معًا. أما المدينة أو الرمز البريدي وحده فهو للجميع، فيبقى ظاهرًا.";
+"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "يُغطّى كاملًا كيفما قُسّمت أرقامه، وحيث تظهر آخر أربعة أرقام فقط، مثل «•••• 4242».";
+"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "يُغطّى بالمسافات ومن دونها، وحيث تظهر آخر أرقامه فقط، وكذلك رقم الحساب وحده لحساب ألماني أو نمساوي.";
+"ending in %@" = "ينتهي بـ %@";
+"Delete Detail" = "حذف المعلومة";
+"Show Number" = "إظهار الرقم";

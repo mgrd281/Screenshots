@@ -6,6 +6,16 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Your own details under Also hide, on the Mac and the iPhone: your name,
+  your address, your bank cards and your bank accounts. Each is covered
+  wherever and however it is written, whatever is checked: a name surname
+  first, in capitals or with an initial; a street with its house number and
+  the postcode with the town; a card's whole number and "•••• 4242" where
+  only its last digits show; an IBAN with or without spaces, and a German
+  account's number. A card's number is grouped and its network named as you
+  type it, an IBAN checked. They stay in the keychain of that device alone,
+  never in a backup, and are hidden from the words sent to the AI assistant.
+  A name saved as a word moves there by itself.
 - On the iPhone, the Protected tab clears up easily. Hold a screenshot and
   tap Remove from Protected: it leaves the list at once, with Undo for a
   few seconds, and stays in Photos. Or tap Delete from Photos, which iOS

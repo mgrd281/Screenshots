@@ -512,7 +512,7 @@
 "The picture could not be read." = "Resim okunamadı.";
 "Nothing private found" = "Özel bir şey bulunamadı";
 "Covered: %@" = "Gizlenenler: %@";
-"Your own rules" = "Kendi kuralların";
+"Your details and rules" = "Bilgilerin ve kuralların";
 "Hidden by hand" = "Elle gizlenen";
 "Saved to Photos" = "Fotoğraflar’a kaydedildi";
 "The picture could not be saved." = "Resim kaydedilemedi.";
@@ -1505,3 +1505,32 @@
 "%d removed from Protected" = "%d tanesi “Korunuyor” listesinden kaldırıldı";
 "Deleted. Photos can still bring them back for 30 days." = "Silindi. Fotoğraflar bunları 30 gün boyunca geri getirebilir.";
 "The screenshots could not be deleted." = "Ekran görüntüleri silinemedi.";
+
+/* Also hide: the owner's own details, covered wherever they show */
+"Add Detail" = "Bilgi ekle";
+"Your Details" = "Bilgilerin";
+"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "Nerede ve nasıl yazılırsa yazılsın, yukarıda ne seçili olursa olsun kapatılır. Yalnızca bu Mac'te, anahtar zincirinde kalır ve asla gönderilmez.";
+"First and last name" = "Ad ve soyad";
+"Street and house number" = "Sokak ve bina numarası";
+"Postcode" = "Posta kodu";
+"Town" = "Şehir";
+"Card number" = "Kart numarası";
+"Name for it (optional)" = "Bir ad (isteğe bağlı)";
+"IBAN" = "IBAN";
+"Bank Card" = "Banka kartı";
+"Bank Account" = "Banka hesabı";
+"Covered wherever and however they are written, whatever is chosen under Hide private details. They stay on this iPhone alone, in no backup, and are never sent." = "Nerede ve nasıl yazılırsa yazılsın, Özel bilgileri gizle'de ne seçili olursa olsun kapatılır. Yalnızca bu iPhone'da kalır, hiçbir yedeğe girmez ve asla gönderilmez.";
+"Your Rules" = "Kuralların";
+"A card number has 19 digits at most." = "Kart numarası en fazla 19 hanelidir.";
+"This card number does not add up. Check it again." = "Bu kart numarası tutmuyor. Tekrar kontrol et.";
+"An IBAN begins with its country’s two letters and two digits, like DE89." = "IBAN, ülkesinin iki harfi ve iki rakamla başlar; örneğin DE89.";
+"This IBAN is too long." = "Bu IBAN çok uzun.";
+"This IBAN does not add up. Check it again." = "Bu IBAN tutmuyor. Tekrar kontrol et.";
+"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "Nasıl yazılırsa yazılsın kapatılır: önce soyadı, büyük harflerle, baş harfle ya da bir kısmı tek başına.";
+"Covered however it is written, like %@." = "Nasıl yazılırsa yazılsın kapatılır; örneğin %@.";
+"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "Sokak bina numarasıyla, posta kodu da şehirle birlikte durduğunda kapatılır. Tek başına bir şehir ya da posta kodu herkesindir, o yüzden kalır.";
+"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "Nasıl gruplanırsa gruplansın tamamen kapatılır; yalnızca son dört hanesinin göründüğü yerlerde de, örneğin “•••• 4242”.";
+"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "Boşluklu ve boşluksuz, yalnızca son hanelerinin göründüğü yerlerde de kapatılır; Alman ya da Avusturya hesaplarında hesap numarası tek başına da.";
+"ending in %@" = "%@ ile biten";
+"Delete Detail" = "Bilgiyi sil";
+"Show Number" = "Numarayı göster";

@@ -512,7 +512,7 @@
 "The picture could not be read." = "No se pudo leer la imagen.";
 "Nothing private found" = "No se encontró nada privado";
 "Covered: %@" = "Cubierto: %@";
-"Your own rules" = "Tus propias reglas";
+"Your details and rules" = "Tus datos y reglas";
 "Hidden by hand" = "Ocultado a mano";
 "Saved to Photos" = "Guardada en Fotos";
 "The picture could not be saved." = "No se pudo guardar la imagen.";
@@ -1505,3 +1505,32 @@
 "%d removed from Protected" = "Se quitaron %d de «Protegido»";
 "Deleted. Photos can still bring them back for 30 days." = "Eliminadas. Fotos aún puede recuperarlas durante 30 días.";
 "The screenshots could not be deleted." = "No se pudieron eliminar las capturas.";
+
+/* Also hide: the owner's own details, covered wherever they show */
+"Add Detail" = "Añadir dato";
+"Your Details" = "Tus datos";
+"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "Se cubren donde y como estén escritos, marques lo que marques arriba. Se quedan solo en este Mac, en su llavero, y nunca se envían.";
+"First and last name" = "Nombre y apellidos";
+"Street and house number" = "Calle y número";
+"Postcode" = "Código postal";
+"Town" = "Localidad";
+"Card number" = "Número de tarjeta";
+"Name for it (optional)" = "Un nombre (opcional)";
+"IBAN" = "IBAN";
+"Bank Card" = "Tarjeta bancaria";
+"Bank Account" = "Cuenta bancaria";
+"Covered wherever and however they are written, whatever is chosen under Hide private details. They stay on this iPhone alone, in no backup, and are never sent." = "Se cubren donde y como estén escritos, elijas lo que elijas en Ocultar datos privados. Se quedan solo en este iPhone, en ninguna copia de seguridad, y nunca se envían.";
+"Your Rules" = "Tus reglas";
+"A card number has 19 digits at most." = "Un número de tarjeta tiene como máximo 19 dígitos.";
+"This card number does not add up. Check it again." = "Este número de tarjeta no cuadra. Revísalo otra vez.";
+"An IBAN begins with its country’s two letters and two digits, like DE89." = "Un IBAN empieza por las dos letras de su país y dos dígitos, como DE89.";
+"This IBAN is too long." = "Este IBAN es demasiado largo.";
+"This IBAN does not add up. Check it again." = "Este IBAN no cuadra. Revísalo otra vez.";
+"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "Se cubre como esté escrito: apellido primero, en mayúsculas, con una inicial o una parte sola.";
+"Covered however it is written, like %@." = "Se cubre como esté escrito, como %@.";
+"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "Se cubren la calle con su número y el código postal con la localidad cuando van juntos. Una localidad o un código postal solos son de todos, así que se quedan.";
+"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "Se cubre entero, como esté agrupado, y donde solo se ven sus cuatro últimos dígitos, como «•••• 4242».";
+"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "Se cubre con y sin espacios, donde solo se ven sus últimos dígitos, y el número de una cuenta alemana o austriaca por sí solo.";
+"ending in %@" = "termina en %@";
+"Delete Detail" = "Eliminar dato";
+"Show Number" = "Mostrar número";

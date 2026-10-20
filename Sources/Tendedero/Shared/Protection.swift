@@ -187,7 +187,10 @@ extension Finder {
     /// answer: the patterns still cover what they find.
     private static func byAssistant(_ lines: [String], instructions: String) async -> [IntelligentPiece]? {
         let window = Array(lines.prefix(300))
-        let shown = window.enumerated().map { "\($0.offset + 1): \($0.element.prefix(160))" }.joined(separator: "\n")
+        // The owner's own details never leave this device: they are covered anyway.
+        let mine = OwnRules.all.filter(\.kind.isDetail)
+        let shown = window.enumerated().map { "\($0.offset + 1): \(OwnDetails.masking($0.element, mine).prefix(160))" }
+            .joined(separator: "\n")
         do {
             let answer = try await AIRequest.ask(instructions: instructions, text: "Lines of text:\n\(shown)")
             return parsePrivate(answer, lines: window)

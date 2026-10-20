@@ -48,7 +48,7 @@ final class SendLogTests: XCTestCase {
                                   Finder.Area(rect: box, kind: nil)], hand: 1)
         XCTAssertEqual(report.keys, ["names", "barcodes", "rules", "hand"])
         XCTAssertEqual(CoverReport.titles(of: report.keys),
-                       [PrivateDetail.names.title, PrivateDetail.barcodes.title, L("Your own rules"), L("Hidden by hand")])
+                       [PrivateDetail.names.title, PrivateDetail.barcodes.title, L("Your details and rules"), L("Hidden by hand")])
         XCTAssertEqual(CoverReport.titles(of: ["gone"]), [])
     }
 

@@ -514,7 +514,7 @@
 "The picture could not be read." = "तस्वीर पढ़ी नहीं जा सकी।";
 "Nothing private found" = "कुछ निजी नहीं मिला";
 "Covered: %@" = "ढका गया: %@";
-"Your own rules" = "आपके अपने नियम";
+"Your details and rules" = "आपकी जानकारी और नियम";
 "Hidden by hand" = "हाथ से छिपाया गया";
 "Saved to Photos" = "फ़ोटो में सहेजी गई";
 "The picture could not be saved." = "तस्वीर सहेजी नहीं जा सकी।";
@@ -1507,3 +1507,32 @@
 "%d removed from Protected" = "%d \"सुरक्षित\" सूची से हटाए गए";
 "Deleted. Photos can still bring them back for 30 days." = "डिलीट हो गए। फ़ोटो उन्हें अब भी 30 दिनों तक वापस ला सकता है।";
 "The screenshots could not be deleted." = "स्क्रीनशॉट डिलीट नहीं हो सके।";
+
+/* Also hide: the owner's own details, covered wherever they show */
+"Add Detail" = "जानकारी जोड़ें";
+"Your Details" = "आपकी जानकारी";
+"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "ये जहाँ और जैसे भी लिखी हों, ढकी जाती हैं, ऊपर चाहे जो चुना हो। ये केवल इसी Mac पर, उसके कीचेन में रहती हैं और कभी भेजी नहीं जातीं।";
+"First and last name" = "पहला नाम और उपनाम";
+"Street and house number" = "सड़क और मकान नंबर";
+"Postcode" = "पिन कोड";
+"Town" = "शहर";
+"Card number" = "कार्ड नंबर";
+"Name for it (optional)" = "इसका नाम (वैकल्पिक)";
+"IBAN" = "IBAN";
+"Bank Card" = "बैंक कार्ड";
+"Bank Account" = "बैंक खाता";
+"Covered wherever and however they are written, whatever is chosen under Hide private details. They stay on this iPhone alone, in no backup, and are never sent." = "ये जहाँ और जैसे भी लिखी हों, ढकी जाती हैं, ‘निजी जानकारी छिपाएँ’ में चाहे जो चुना हो। ये केवल इसी iPhone पर रहती हैं, किसी बैकअप में नहीं, और कभी भेजी नहीं जातीं।";
+"Your Rules" = "आपके नियम";
+"A card number has 19 digits at most." = "कार्ड नंबर में अधिकतम 19 अंक होते हैं।";
+"This card number does not add up. Check it again." = "यह कार्ड नंबर सही नहीं बैठता। इसे फिर से जाँचें।";
+"An IBAN begins with its country’s two letters and two digits, like DE89." = "IBAN अपने देश के दो अक्षरों और दो अंकों से शुरू होता है, जैसे DE89।";
+"This IBAN is too long." = "यह IBAN बहुत लंबा है।";
+"This IBAN does not add up. Check it again." = "यह IBAN सही नहीं बैठता। इसे फिर से जाँचें।";
+"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "यह जैसे भी लिखा हो, ढका जाता है: पहले उपनाम, बड़े अक्षरों में, आद्याक्षर के साथ या इसका कोई हिस्सा अकेले।";
+"Covered however it is written, like %@." = "यह जैसे भी लिखा हो, ढका जाता है, जैसे %@।";
+"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "सड़क अपने मकान नंबर के साथ, और पिन कोड शहर के साथ जहाँ ये साथ हों, ढके जाते हैं। अकेला शहर या पिन कोड सबका होता है, इसलिए वह दिखता रहता है।";
+"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "यह पूरा ढका जाता है, चाहे जैसे समूहों में लिखा हो, और वहाँ भी जहाँ केवल इसके आख़िरी चार अंक दिखते हैं, जैसे “•••• 4242”।";
+"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "यह रिक्त स्थानों के साथ और बिना, वहाँ भी जहाँ केवल इसके आख़िरी अंक दिखते हैं, ढका जाता है, और किसी जर्मन या ऑस्ट्रियाई खाते का नंबर अकेले भी।";
+"ending in %@" = "%@ पर ख़त्म";
+"Delete Detail" = "जानकारी हटाएँ";
+"Show Number" = "नंबर दिखाएँ";

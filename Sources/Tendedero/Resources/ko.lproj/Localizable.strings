@@ -512,7 +512,7 @@
 "The picture could not be read." = "이미지를 읽을 수 없습니다.";
 "Nothing private found" = "개인 정보를 찾지 못했습니다";
 "Covered: %@" = "가린 항목: %@";
-"Your own rules" = "나만의 규칙";
+"Your details and rules" = "내 정보와 규칙";
 "Hidden by hand" = "직접 가린 부분";
 "Saved to Photos" = "사진에 저장됨";
 "The picture could not be saved." = "이미지를 저장할 수 없습니다.";
@@ -1505,3 +1505,32 @@
 "%d removed from Protected" = "%d개를 '보호됨'에서 제거함";
 "Deleted. Photos can still bring them back for 30 days." = "삭제했습니다. 30일 동안은 사진 앱에서 복구할 수 있습니다.";
 "The screenshots could not be deleted." = "스크린샷을 삭제할 수 없습니다.";
+
+/* Also hide: the owner's own details, covered wherever they show */
+"Add Detail" = "정보 추가";
+"Your Details" = "내 정보";
+"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "어디에 어떻게 쓰여 있든, 위에서 무엇을 선택했든 가려집니다. 이 Mac의 키체인에만 보관되며 절대 전송되지 않습니다.";
+"First and last name" = "이름과 성";
+"Street and house number" = "도로명과 건물 번호";
+"Postcode" = "우편번호";
+"Town" = "도시";
+"Card number" = "카드 번호";
+"Name for it (optional)" = "이름(선택 사항)";
+"IBAN" = "IBAN";
+"Bank Card" = "은행 카드";
+"Bank Account" = "은행 계좌";
+"Covered wherever and however they are written, whatever is chosen under Hide private details. They stay on this iPhone alone, in no backup, and are never sent." = "어디에 어떻게 쓰여 있든, '개인 정보 가리기'에서 무엇을 선택했든 가려집니다. 이 iPhone에만 보관되고, 백업에 포함되지 않으며, 절대 전송되지 않습니다.";
+"Your Rules" = "내 규칙";
+"A card number has 19 digits at most." = "카드 번호는 최대 19자리입니다.";
+"This card number does not add up. Check it again." = "이 카드 번호가 맞지 않습니다. 다시 확인하세요.";
+"An IBAN begins with its country’s two letters and two digits, like DE89." = "IBAN은 국가를 나타내는 두 글자와 두 자리 숫자로 시작합니다. 예: DE89.";
+"This IBAN is too long." = "이 IBAN은 너무 깁니다.";
+"This IBAN does not add up. Check it again." = "이 IBAN이 맞지 않습니다. 다시 확인하세요.";
+"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "어떻게 쓰여 있든 가려집니다. 성을 먼저 써도, 대문자로 써도, 이니셜로 써도, 일부만 있어도.";
+"Covered however it is written, like %@." = "어떻게 쓰여 있든 가려집니다. 예: %@.";
+"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "도로명과 건물 번호, 그리고 우편번호와 도시가 함께 있는 곳이 가려집니다. 도시나 우편번호만 있으면 누구에게나 해당하므로 그대로 둡니다.";
+"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "어떻게 묶여 있든 번호 전체가 가려지고, 마지막 네 자리만 보이는 곳(예: “•••• 4242”)도 가려집니다.";
+"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "띄어쓰기가 있든 없든, 마지막 숫자만 보이는 곳에서도 가려지며, 독일이나 오스트리아 계좌는 계좌 번호만 있어도 가려집니다.";
+"ending in %@" = "끝자리 %@";
+"Delete Detail" = "정보 삭제";
+"Show Number" = "번호 보기";

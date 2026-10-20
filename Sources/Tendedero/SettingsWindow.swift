@@ -596,6 +596,21 @@ final class Preferences: ObservableObject {
         saveRules()
     }
 
+    /// One of the owner's details, new or changed, kept at once.
+    func keepDetail(_ detail: OwnRule) {
+        if let i = rules.firstIndex(where: { $0.id == detail.id }) {
+            rules[i] = detail
+        } else {
+            rules.append(detail)
+        }
+        saveRules()
+    }
+
+    /// A name saved as a word before there were details becomes the name detail.
+    func adoptName() {
+        if OwnRules.adoptName() { rules = OwnRules.all }
+    }
+
     func rulesChanged() {
         rulesSave?.cancel()
         rulesSave = Task { [weak self] in
@@ -1752,9 +1767,12 @@ private struct PrivacyPane: View {
                 Text(L("Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken."))
                     .foregroundStyle(.secondary)
             }
+            OwnDetailsSection(prefs: prefs)
             Section {
                 ForEach($prefs.rules) { $rule in
-                    OwnRuleRow(rule: $rule) { prefs.removeRule(rule) }
+                    if !rule.kind.isDetail {
+                        OwnRuleRow(rule: $rule) { prefs.removeRule(rule) }
+                    }
                 }
                 Button(L("Add Rule")) { prefs.addRule() }
             } header: {
@@ -2105,6 +2123,152 @@ private struct AIPromptEditor: View {
     }
 }
 
+/// The owner's own details, over their rules: each with its symbol, its
+/// name and the detail with most of a number hidden, Edit… and a way to
+/// take it away; Add Detail, a menu of the kinds. They are kept in this
+/// Mac's keychain.
+private struct OwnDetailsSection: View {
+    @ObservedObject var prefs: Preferences
+    @State private var editing: OwnRule?
+
+    var body: some View {
+        Section {
+            ForEach(prefs.rules.filter(\.kind.isDetail)) { detail in
+                LabeledContent {
+                    HStack(spacing: 8) {
+                        Button(L("Edit…")) { editing = detail }
+                        Button { prefs.removeRule(detail) } label: {
+                            Image(systemName: "minus.circle")
+                        }
+                        .buttonStyle(.borderless)
+                        .help(L("Remove"))
+                        .accessibilityLabel(L("Remove"))
+                    }
+                } label: {
+                    Label {
+                        Text(OwnDetails.title(of: detail))
+                        Text(OwnDetails.summary(of: detail))
+                            .monospacedDigit()
+                            .lineLimit(1)
+                    } icon: {
+                        Image(systemName: detail.kind.symbol)
+                            .foregroundStyle(.secondary)
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(Text(verbatim: OwnDetails.spoken(detail)))
+                }
+            }
+            Menu(L("Add Detail")) {
+                ForEach(OwnRule.Kind.details, id: \.self) { kind in
+                    Button {
+                        editing = OwnRule(kind: kind)
+                    } label: {
+                        Label(kind.title, systemImage: kind.symbol)
+                    }
+                }
+            }
+            .fixedSize()
+        } header: {
+            Text(L("Your Details"))
+        } footer: {
+            Text(L("Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent."))
+                .foregroundStyle(.secondary)
+        }
+        .onAppear { prefs.adoptName() }
+        .sheet(item: $editing) { detail in
+            OwnDetailSheet(detail: detail) { kept in
+                prefs.keepDetail(kept)
+                editing = nil
+            } cancel: {
+                editing = nil
+            }
+        }
+    }
+}
+
+/// One of the owner's details, added or changed in a sheet: its fields,
+/// a card's or an account's number grouped as it is typed, what is wrong
+/// with it or how it is covered, and Done once there is something to keep.
+private struct OwnDetailSheet: View {
+    @State var detail: OwnRule
+    let done: (OwnRule) -> Void
+    let cancel: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label(detail.kind.title, systemImage: detail.kind.symbol)
+                .font(.headline)
+            fields
+                .textFieldStyle(.roundedBorder)
+            let note = OwnDetails.note(for: detail)
+            Label {
+                Text(note.text)
+            } icon: {
+                if note.isProblem {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                }
+            }
+            .font(.callout)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+            HStack {
+                Spacer()
+                Button(L("Cancel"), action: cancel)
+                    .keyboardShortcut(.cancelAction)
+                Button(L("Done")) { done(OwnDetails.cleaned(detail)) }
+                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(!OwnDetails.canKeep(detail))
+            }
+        }
+        .padding(20)
+        .frame(width: 460)
+    }
+
+    @ViewBuilder private var fields: some View {
+        switch detail.kind {
+        case .name:
+            TextField(L("Name"), text: $detail.text, prompt: Text(L("First and last name")))
+                .labelsHidden()
+        case .address:
+            TextField(L("Address"), text: $detail.text, prompt: Text(L("Street and house number")))
+                .labelsHidden()
+            HStack(spacing: 8) {
+                TextField(L("Postcode"), text: $detail.postcode, prompt: Text(L("Postcode")))
+                    .labelsHidden()
+                    .frame(width: 110)
+                TextField(L("Town"), text: $detail.city, prompt: Text(L("Town")))
+                    .labelsHidden()
+            }
+        case .card:
+            HStack(spacing: 8) {
+                TextField(L("Card number"), text: Binding(get: { OwnDetails.grouped(card: detail.text) },
+                                                          set: { detail.text = String(OwnDetails.digits($0).prefix(19)) }),
+                          prompt: Text(L("Card number")))
+                    .labelsHidden()
+                    .font(.body.monospacedDigit())
+                if let brand = OwnDetails.brand(of: OwnDetails.digits(detail.text)) {
+                    Text(verbatim: brand.name)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            TextField(L("Name for it (optional)"), text: $detail.caption, prompt: Text(L("Name for it (optional)")))
+                .labelsHidden()
+        case .account:
+            TextField(L("IBAN"), text: Binding(get: { OwnDetails.grouped(iban: detail.text) },
+                                               set: { detail.text = String(OwnDetails.compact(iban: $0).prefix(34)) }),
+                      prompt: Text(L("IBAN")))
+                .labelsHidden()
+                .font(.body.monospaced())
+            TextField(L("Name for it (optional)"), text: $detail.caption, prompt: Text(L("Name for it (optional)")))
+                .labelsHidden()
+        case .word, .label, .pattern:
+            EmptyView()
+        }
+    }
+}
+
 /// One rule of the owner's own: what kind it is, the text, and a way to
 /// take it away. A pattern that cannot be read says so under the field.
 private struct OwnRuleRow: View {
@@ -2115,7 +2279,7 @@ private struct OwnRuleRow: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
                 Picker(rule.kind.title, selection: $rule.kind) {
-                    ForEach(OwnRule.Kind.allCases, id: \.self) { kind in
+                    ForEach(OwnRule.Kind.rules, id: \.self) { kind in
                         Text(kind.title).tag(kind)
                     }
                 }

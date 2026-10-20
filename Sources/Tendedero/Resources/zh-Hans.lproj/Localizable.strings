@@ -512,7 +512,7 @@
 "The picture could not be read." = "无法读取图片。";
 "Nothing private found" = "未发现私人信息";
 "Covered: %@" = "已遮盖：%@";
-"Your own rules" = "你的自定义规则";
+"Your details and rules" = "你的信息和规则";
 "Hidden by hand" = "手动遮盖";
 "Saved to Photos" = "已存储到“照片”";
 "The picture could not be saved." = "无法存储图片。";
@@ -1505,3 +1505,32 @@
 "%d removed from Protected" = "已从“已保护”中移除 %d 张";
 "Deleted. Photos can still bring them back for 30 days." = "已删除。30 天内仍可在“照片”中恢复。";
 "The screenshots could not be deleted." = "无法删除截屏。";
+
+/* Also hide: the owner's own details, covered wherever they show */
+"Add Detail" = "添加信息";
+"Your Details" = "你的信息";
+"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "无论写在哪里、怎样写，也无论上面勾选了什么，都会被遮盖。它们只保存在这台 Mac 的钥匙串中，绝不会被发送。";
+"First and last name" = "名字和姓氏";
+"Street and house number" = "街道和门牌号";
+"Postcode" = "邮政编码";
+"Town" = "城市";
+"Card number" = "卡号";
+"Name for it (optional)" = "名称（可选）";
+"IBAN" = "IBAN";
+"Bank Card" = "银行卡";
+"Bank Account" = "银行账户";
+"Covered wherever and however they are written, whatever is chosen under Hide private details. They stay on this iPhone alone, in no backup, and are never sent." = "无论写在哪里、怎样写，也无论在“隐藏隐私信息”中选择了什么，都会被遮盖。它们只保存在这台 iPhone 上，不会进入任何备份，也绝不会被发送。";
+"Your Rules" = "你的规则";
+"A card number has 19 digits at most." = "卡号最多 19 位。";
+"This card number does not add up. Check it again." = "这个卡号校验不通过，请再检查一遍。";
+"An IBAN begins with its country’s two letters and two digits, like DE89." = "IBAN 以国家的两个字母和两位数字开头，例如 DE89。";
+"This IBAN is too long." = "这个 IBAN 太长了。";
+"This IBAN does not add up. Check it again." = "这个 IBAN 校验不通过，请再检查一遍。";
+"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "无论怎样书写都会被遮盖：姓氏在前、全部大写、只写首字母，或只出现其中一部分。";
+"Covered however it is written, like %@." = "无论怎样书写都会被遮盖，例如 %@。";
+"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "会遮盖街道及其门牌号，以及同时出现的邮政编码和城市。单独的城市或邮政编码人人都有，因此保留。";
+"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "无论怎样分组都会整体遮盖；只显示后四位的地方（如“•••• 4242”）也会遮盖。";
+"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "无论有无空格都会遮盖，只显示末几位的地方也会遮盖；德国或奥地利账户的账号单独出现时同样遮盖。";
+"ending in %@" = "尾号 %@";
+"Delete Detail" = "删除信息";
+"Show Number" = "显示号码";

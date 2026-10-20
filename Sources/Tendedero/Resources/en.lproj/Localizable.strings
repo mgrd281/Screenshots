@@ -514,7 +514,7 @@
 "The picture could not be read." = "The picture could not be read.";
 "Nothing private found" = "Nothing private found";
 "Covered: %@" = "Covered: %@";
-"Your own rules" = "Your own rules";
+"Your details and rules" = "Your details and rules";
 "Hidden by hand" = "Hidden by hand";
 "Saved to Photos" = "Saved to Photos";
 "The picture could not be saved." = "The picture could not be saved.";
@@ -1507,3 +1507,32 @@
 "%d removed from Protected" = "%d removed from Protected";
 "Deleted. Photos can still bring them back for 30 days." = "Deleted. Photos can still bring them back for 30 days.";
 "The screenshots could not be deleted." = "The screenshots could not be deleted.";
+
+/* Also hide: the owner's own details, covered wherever they show */
+"Add Detail" = "Add Detail";
+"Your Details" = "Your Details";
+"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent.";
+"First and last name" = "First and last name";
+"Street and house number" = "Street and house number";
+"Postcode" = "Postcode";
+"Town" = "Town";
+"Card number" = "Card number";
+"Name for it (optional)" = "Name for it (optional)";
+"IBAN" = "IBAN";
+"Bank Card" = "Bank Card";
+"Bank Account" = "Bank Account";
+"Covered wherever and however they are written, whatever is chosen under Hide private details. They stay on this iPhone alone, in no backup, and are never sent." = "Covered wherever and however they are written, whatever is chosen under Hide private details. They stay on this iPhone alone, in no backup, and are never sent.";
+"Your Rules" = "Your Rules";
+"A card number has 19 digits at most." = "A card number has 19 digits at most.";
+"This card number does not add up. Check it again." = "This card number does not add up. Check it again.";
+"An IBAN begins with its country’s two letters and two digits, like DE89." = "An IBAN begins with its country’s two letters and two digits, like DE89.";
+"This IBAN is too long." = "This IBAN is too long.";
+"This IBAN does not add up. Check it again." = "This IBAN does not add up. Check it again.";
+"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "Covered however it is written: surname first, in capitals, with an initial, or a part of it alone.";
+"Covered however it is written, like %@." = "Covered however it is written, like %@.";
+"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays.";
+"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”.";
+"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own.";
+"ending in %@" = "ending in %@";
+"Delete Detail" = "Delete Detail";
+"Show Number" = "Show Number";

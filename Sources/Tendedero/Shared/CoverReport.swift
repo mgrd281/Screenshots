@@ -59,10 +59,10 @@ struct CoverReport: Equatable {
     }
 
     /// What was covered, in the order Settings lists it, like "Names ·
-    /// QR codes and barcodes · Your own rules". Empty when nothing was.
+    /// QR codes and barcodes · Your details and rules". Empty when nothing was.
     var summary: String {
         var parts = PrivateDetail.allCases.filter { kinds[$0, default: 0] > 0 }.map(\.title)
-        if rules > 0 { parts.append(L("Your own rules")) }
+        if rules > 0 { parts.append(L("Your details and rules")) }
         if hand > 0 { parts.append(L("Hidden by hand")) }
         return parts.joined(separator: " · ")
     }
@@ -86,7 +86,7 @@ struct CoverReport: Equatable {
     static func titles(of keys: [String]) -> [String] {
         keys.compactMap { key in
             switch key {
-            case "rules": L("Your own rules")
+            case "rules": L("Your details and rules")
             case "hand": L("Hidden by hand")
             default: PrivateDetail(rawValue: key)?.title
             }

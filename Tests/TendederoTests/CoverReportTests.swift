@@ -20,7 +20,7 @@ final class CoverReportTests: XCTestCase {
         XCTAssertEqual(report.hand, 1)
         XCTAssertEqual(report.total, 5)
         XCTAssertFalse(report.isEmpty)
-        let parts = [PrivateDetail.names.title, PrivateDetail.barcodes.title, L("Your own rules"), L("Hidden by hand")]
+        let parts = [PrivateDetail.names.title, PrivateDetail.barcodes.title, L("Your details and rules"), L("Hidden by hand")]
         XCTAssertEqual(report.summary, parts.joined(separator: " · "))
         XCTAssertEqual(report.sentence, String(format: L("Covered: %@"), report.summary))
     }

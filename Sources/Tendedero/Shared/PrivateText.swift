@@ -1487,15 +1487,16 @@ enum Finder {
         return NSUnionRange(a, b)
     }
 
-    /// The owner's own name, where one of their word rules holds a person's
-    /// name: two to five words of a name, no digits, no company, in any
-    /// case, as "Nachname, Vorname" too. Each name as its words, folded.
-    /// It helps tell that name wherever it is written, and only that: it
-    /// covers nothing by itself, and stays on this device.
+    /// The owner's own name: their name among their details, or one of
+    /// their word rules that holds a person's name: two to five words of a
+    /// name, no digits, no company, in any case, as "Nachname, Vorname" too.
+    /// Each name as its words, folded. It helps tell that name as a person's
+    /// wherever it is written, and stays on this device; the name detail is
+    /// covered by itself too (`OwnDetails`).
     static func ownNames(in rules: [OwnRule]) -> [[String]] {
-        rules.filter { $0.kind == .word && !$0.isBlank }.compactMap { rule in
+        rules.filter { ($0.kind == .word || $0.kind == .name) && !$0.isBlank }.compactMap { rule in
             let text = rule.text.trimmingCharacters(in: .whitespaces)
-            guard !DocumentSense.isOrganization(text) else { return nil }
+            guard rule.kind == .name || !DocumentSense.isOrganization(text) else { return nil }
             return DocumentSense.nameWords(text.capitalized)
         }
     }
@@ -1526,10 +1527,10 @@ enum Finder {
         return hits
     }
 
-    /// The owner's words and patterns in plain text: a word whole, wherever
-    /// it appears, in any case; a pattern as it matches. A pattern that
-    /// cannot be read covers nothing. Pure text, so it can be checked
-    /// without a picture.
+    /// The owner's words, patterns and details in plain text: a word whole,
+    /// wherever it appears, in any case; a pattern as it matches; a detail
+    /// however it is written (`OwnDetails`). A pattern that cannot be read
+    /// covers nothing. Pure text, so it can be checked without a picture.
     static func ruleRanges(in full: String, _ rules: [OwnRule]) -> [NSRange] {
         let whole = NSRange(full.startIndex..., in: full)
         var found: [NSRange] = []
@@ -1543,13 +1544,13 @@ enum Finder {
                     + (edge(text.last) ? #"(?!\w)"# : "")
             case .pattern:
                 pattern = text
-            case .label:
+            case .label, .name, .address, .card, .account:
                 continue
             }
             guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { continue }
             found += regex.matches(in: full, range: whole).map(\.range).filter { $0.length > 0 }
         }
-        return found
+        return found + OwnDetails.ranges(in: full, rules)
     }
 
     /// Letters under this many pixels high are often misread, like
