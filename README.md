@@ -364,7 +364,11 @@ anyone could read it, and whatever private still shows, or any piece of what
 was hidden left beside its cover, is covered too. Under Protection, Find more
 with Apple Intelligence (on where the Mac has it) lets the model on the Mac
 read the words as well and cover what the patterns miss, like a name in a
-sentence; it only ever adds covers, and nothing leaves the Mac. Find more
+sentence; it only ever adds covers, and nothing leaves the Mac. What it
+names is read again by Snapfly's own rules before anything is covered: only
+a kind you checked, and only words that fit it, so a street, a date or a
+medical term it calls a name stays as it is, and what may fit is offered for
+you to check. Find more
 with Claude, or ChatGPT, does the same with the AI assistant set up in its
 own pane: it is off until you turn it on, since it sends the words of each
 screenshot to Anthropic or OpenAI. Strongest protection covers every line
@@ -392,7 +396,16 @@ Under Also hide, add rules of your own: a word, like your shop's name,
 covered wherever it appears; a label, like Customer number, whose value is
 covered, on its line or the line below; or, for whoever knows them, a
 pattern. They apply to everything that leaves the line, and to the copies
-saved from Finder.
+saved from Finder. A word that is a person's name, like your own, also
+helps Snapfly tell that name wherever it is written, surname first, in
+capitals, over two lines or with a letter misread, as a name for sure:
+covered as Names, Patient names or Other people say.
+
+Only the kinds you checked are covered, whatever found them. Names covers
+everyone's; with Names off, Patient names and Other people each cover their
+own. A place is covered whole, a street with its house number. A medical
+term, like a segment of the spine ("LWK 5/SWK 1") or a disease named after
+someone ("Morbus Scheuermann"), is never taken for a name or a number.
 
 Whatever picture leaves the line is a fresh file: what it shows, without
 the notes a file carries on when, where and with what it was made, or the
