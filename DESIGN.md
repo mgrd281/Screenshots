@@ -52,6 +52,8 @@ colors:
   phone-protect-pressed: "#056B49"  # pressed, and the badge's lower end
   phone-protect-light: "#12A572"    # the badge's upper end
   phone-surface: "#EAF7F0"     # the soft green behind the stacked photos; #102A20 in dark
+  phone-protect-tint: "#07875C"   # the green as a glyph or words on glass or a page: the tool in hand, the status shield; #12A572 in dark
+  phone-editor-ground: "#F8F9FA"  # under the page in Protect Picture, near-white so the page stands on it; black in dark
   phone-ink: "#1F1F1F"         # the cover ink, as a covered copy shows it (white 12%), light and dark
   phone-pen-ink: "#2B45A0"     # a ballpoint's blue: the signature and the stamp on the first run's doctor's letter, on its white paper only
 typography:
@@ -161,11 +163,11 @@ components:
     rounded: "{rounded.keycap}"
     size: "30pt × 28pt"            # a tool in Draw on Photo's row of eight; chosen: the accent at 16% behind the accent glyph
   phone-dock-icon:
-    size: "44pt"                   # a tool or a way out on the iPhone editor's floating capsules; glyph 18pt semibold; chosen: white on a 38pt phone-protect circle
+    size: "44pt"                   # a tool on the iPhone editor's bar; glyph 18pt semibold; the tool in hand: phone-protect-tint on a 36pt circle of phone-protect at 14%, which glides to the next tool chosen
   phone-glass:
     shadow: "black 12%, radius 10, y 4"   # floating controls before iOS 26: regular material, a 0.5pt hairline of .primary at 8%; Liquid Glass from iOS 26
   phone-status-capsule:
-    height: "36pt"                 # at least; footnote, 14pt in, 6pt under the navigation bar
+    height: "34pt"                 # at least; footnote, 14pt in, 6pt under the navigation bar, centred clear of the eye and the apps' column
   phone-first-run-chip:
     height: "40pt"                 # a category on the first run: a capsule, subheadline semibold, 14pt in, 44pt to the finger; on, phone-protect with white and eye.slash.fill; off, secondarySystemBackground with a hairline of .primary at 10% and eye
   phone-first-run-stage:
@@ -184,8 +186,8 @@ components:
     size: "24pt"                   # a chosen screenshot's mark, bottom trailing, 6pt in: a white checkmark, caption bold, on phone-protect, ringed in white 1.5pt, with a shadow of black 20%, radius 2, y 1; it scales in from 50%
   phone-share-tile:
     size: "52pt"                   # an app to send to: on the first run's share row and under scanned pages; its icon from the asset catalogue (Logo* from SVG, vector kept; Chat* the owner's logos as app icons, 192px), clipped to continuous corners of 12 with a hairline of .primary at 8%, the name in caption .secondary under it, 64pt wide, 12pt apart in a row that scrolls sideways; More, last, is .tertiarySystemFill with ellipsis
-  phone-app-circle:
-    size: "34pt"                   # an app to send to in Protect Picture: its phone-share-tile icon clipped round, with the same hairline, in 44pt to the finger, side by side in one capsule of glass 5pt in; ⋯, last, is .tertiarySystemFill
+  phone-rail-icon:
+    size: "40pt"                   # a way out beside the page in Protect Picture: an app's phone-share-tile icon at 40pt (continuous corners of 9.2, the same hairline), or Photos, Files or the share sheet as a glyph 17pt medium in .primary on a tile of secondarySystemGroupedBackground of the same size; 44pt to the finger, 8pt apart, one above another, 12pt in from the screen's trailing edge, no frame, name or divider; pressed, 90% on a spring (0.25, 0.7)
   phone-question-chip:
     height: "36pt"                 # a ready question in Explain: a capsule of secondarySystemBackground, subheadline, 14pt in, 44pt to the finger, 8pt apart in a row that scrolls sideways
   phone-ask-bubble:
@@ -2261,11 +2263,11 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     `phone-share-tile`s in a row that scrolls sideways from the screen's
     edge, as the share sheet shows apps, then More, which opens the choice
     of apps in a sheet (medium or large, Done). A tap covers every page as
-    for the PDF, puts them on the clipboard and opens the app, or its
-    website without it, to paste them there; while the pages are covered,
-    the app's icon dims under a white spinner and the others wait. Then a
-    note (the quick cover's) says it was copied for the app and how to
-    paste, with a success haptic; one that cannot open says so.
+    for the PDF and hands them over as Protect Picture's apps do
+    (`Handoff`): one page straight to WhatsApp, else the share sheet, where
+    the app is tapped, never a website; while the pages are covered, the
+    app's icon dims under a white spinner and the others wait. Once they
+    have gone, a success haptic.
   - Under them, centred, Share Covered PDF (`doc.richtext`), the
     green pill. While it works it says which page it covers ("Page 2 of
     5", digits rolling) beside a white spinner, and Clear and Remove wait.
@@ -2296,76 +2298,85 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   footnote medium words, dimmed until the copy is ready; then "Covered as
   chosen in Snapfly." in footnote `.secondary`. Notes float in a capsule of
   regular material 96 pt over the bottom, with a success haptic.
-- **Protect Picture** is an immersive editor: the picture is the screen,
-  and everything else floats over it (`ProtectView`, `EditorParts.swift`).
+- **Protect Picture** is a calm editor: the page in the middle of a bright
+  screen, the apps to send to one above another beside it and one bar of
+  tools under it (`ProtectView`, `EditorParts.swift`; the owner's Smart
+  Canvas brief, October 2026). The document leads; nothing else is large.
   - **The canvas** (`MarkCanvas`, a `UIScrollView`) fills the screen under
-    the bars, on `secondarySystemBackground`, black in Full Screen. The
-    picture is fitted whole into the room the floating controls leave (8 pt
-    from them and from the safe areas), never cropped or stretched, with
-    12 pt corners; zoomed (up to 6× with two fingers, or 2.5× at a point
-    with a double tap and back), it scrolls out from under the controls on
-    every side, so nothing on it is ever out of reach. When the room
-    changes, as Full Screen comes or goes, the picture grows or shrinks to
-    it in 0.32 s (at once with Reduce Motion); while zoomed in it keeps its
-    zoom and is fitted again once it is all in sight. A small picture shows
-    first while the whole one loads.
+    the bars, on `phone-editor-ground`, black in Full Screen. The picture
+    is fitted whole into the room the controls leave (12 pt under the
+    status and over the tools, 16 pt from the leading edge, and clear of the
+    apps' column, 12 pt from it), never cropped or stretched, with 12 pt
+    corners and a soft shadow (black 8%, radius 12, y 4); right to left the
+    room mirrors with the column. Zoomed (up to 6× with two fingers, or
+    2.5× at a point with a double tap and back), it scrolls out from under
+    the controls on every side, so nothing on it is ever out of reach. When
+    the room changes, as Full Screen comes or goes, the picture grows or
+    shrinks to it in 0.32 s (at once with Reduce Motion); while zoomed in
+    it keeps its zoom and is fitted again once it is all in sight. A small
+    picture shows first while the whole one loads.
   - **The navigation bar** is the system's, inline: Back, "Protect
-    Picture", Explain (`sparkles`, below), and a menu (`ellipsis.circle`):
-    Details, Full Screen, then Clear Hidden by Hand and Reset to
-    Suggestions, each one change to undo.
+    Picture", and one menu (`ellipsis.circle`): Explain (`sparkles`, below),
+    Details, then Copy, Send to Mac while a Mac is there and Full Screen,
+    then Send to Apps (the choice of apps), then Clear Hidden by Hand and
+    Reset to Suggestions, each one change to undo.
   - **Floating glass** (`editorGlass`): Liquid Glass from iOS 26, else
     regular material with a hairline of `.primary` at 8% and a shadow of
-    black 12%, radius 10, y 4. Every floating control uses it.
-  - **The status capsule** (`PrivacyStatus`), centred 6 pt under the bar,
-    footnote, at least 36 pt high, 14 pt in: while the picture is protected,
-    a small spinner and the step (Opening…, Finding private details…,
-    Checking the copy…, Apple Intelligence is reading… with Don't Wait in
-    semibold); after a failure, `exclamationmark.triangle.fill` in orange,
-    what went wrong and Try Again; then `checkmark.shield.fill` in
-    `phone-protect` and how many places are covered, and while any are to
-    check, a dot, `circle.dashed` in the accent (`exclamationmark.triangle.fill`
-    in orange while one is uncovered) and how many are To check, then a
-    small `chevron.down`. Counts change as numbers roll. Each step gives way
-    to the next in place on a spring (0.42, 0.82), the capsule fitting its
-    words (a 0.15 s ease-out with Reduce Motion); when the copy is ready,
-    the shield bounces up once and a success haptic says so. A place only
-    offered is never counted as covered. With nothing found but what
-    Settings leaves visible, it says Nothing private found. A tap opens
-    Details; VoiceOver reads the whole state. Under it, for 2.5 s after a
+    black 12%, radius 10, y 4. The status capsule, the bar of tools, notes
+    and hints use it, nothing else.
+  - **The status capsule** (`PrivacyStatus`, `phone-status-capsule`),
+    centred 6 pt under the bar, says only what the engine has done: while
+    the picture is read, a small spinner and the step (Opening…, Finding
+    private details…, Checking the copy…, Apple Intelligence is reading…
+    with Don't Wait in semibold); after a failure,
+    `exclamationmark.triangle.fill` in orange, what went wrong and Try
+    Again; then `checkmark.shield.fill` in `phone-protect-tint` and how many
+    private details were found, sure or offered, never those hidden by hand
+    ("3 sensible Angaben erkannt", semibold), and while any are to check, a
+    dot and "1 zu prüfen" in the accent (orange while one is uncovered).
+    With nothing found but what Settings leaves visible, `checkmark.shield`
+    and Nothing private found. One line, shrinking to 85% at most; where
+    "1 zu prüfen" still doesn't fit, its sign and number alone.
+    Each step gives way to the next in place on a spring (0.42, 0.82), the
+    capsule fitting its words (a 0.15 s ease-out with Reduce Motion); when
+    the copy is ready, the shield bounces up once and a success haptic says
+    so. A tap opens Details; VoiceOver reads the whole state. The eye
+    (`ToolButton`, 44 pt of glass) stands on the trailing side of the same
+    row, in line with the apps: held down, it shows the screenshot as it
+    was (white on `phone-protect` while held). Under them, for 2.5 s after a
     drawing tool is chosen, how to use it in a capsule of the same glass.
-  - **The tools** (`EditingDock`), a capsule of glass over the bottom:
-    Select (`hand.point.up.left`), Marker (`pencil.tip`), Box
-    (`rectangle`), Lasso (`lasso`) and Eraser (`eraser`), a 1 pt divider
-    24 pt high, Undo and Redo (`.tertiary` while there is nothing to undo
-    or redo). Each is a 44 pt target with its glyph 18 pt semibold
-    (`DockIcon`); the tool in hand is white on a 38 pt `phone-protect`
-    circle. Held, the marker offers its widths (Thin, Medium, Thick: 2%,
-    3.5% or 6% of the picture's width) and the eraser its sizes (Small,
+  - **The apps** (`AppRail`), one above another on the trailing side,
+    centred between the status and the tools, where hints, notes and the
+    place selected never move them: the apps chosen in Settings
+    as `phone-rail-icon`s, then Photos (`photo.on.rectangle.angled`), Files
+    (`folder`) and the share sheet (`square.and.arrow.up`) as tiles of the
+    same size. No frame, names, dividers or container: they float beside
+    the page. When they don't fit they scroll, without indicators. A tap
+    gives a light haptic and hands over the protected copy (`Handoff`): one
+    picture straight to WhatsApp as a `.wai` file of the type only WhatsApp
+    opens, as WhatsApp documents; Photos saves it, Files opens the system's
+    exporter; every other app, and the share sheet itself, goes through
+    `UIActivityViewController`, where the owner taps the app. Nothing opens
+    a website. A way tapped before the copy is ready waits with a small
+    white spinner over its icon and goes once it is (tapped again, it no
+    longer waits); while places are still to check it asks first. Held,
+    any of them offers Send to Apps, the choice and order of apps.
+  - **The tools** (`EditingDock`), one capsule of glass over the bottom,
+    kept in place while drawing: Select (`hand.point.up.left`), Marker
+    (`pencil.tip`), Box (`rectangle`), Lasso (`lasso`) and Eraser
+    (`eraser`), a 1 pt divider 24 pt high, Undo and Redo (`.tertiary` while
+    there is nothing to undo or redo). Each is a 44 pt target with its glyph
+    18 pt semibold (`DockIcon`, `phone-dock-icon`); the tool in hand is
+    `phone-protect-tint` on a 36 pt circle of `phone-protect` at 14%, which
+    glides to the next tool chosen on a spring (0.3, 0.86), at once with
+    Reduce Motion. Held, the marker offers its widths (Thin, Medium, Thick:
+    2%, 3.5% or 6% of the picture's width) and the eraser its sizes (Small,
     Medium, Large: 1.5%, 3% or 6%), the others their name; the tool in hand
     chosen again opens its options in a sheet 300 pt high (or medium), with
     Clear Hidden by Hand and Reset to Suggestions over "Each can be
     undone." A selection haptic marks each change of tool; a light impact
     marks a shape drawn, a word hidden or a cover erased; a medium one a
     place held down.
-  - **The apps** (`AppCircles`), 8 pt under the tools: the apps chosen as
-    `phone-app-circle`s in one capsule of glass, centred, scrolling
-    sideways only when they don't fit, and ⋯ last to choose them; with none
-    chosen it is not there. A tap goes as the ways out below do (it waits
-    for the copy with a spinner on the icon, and asks first while places
-    are still to check), then copies the protected copy and opens the app,
-    with the note "Copied for WhatsApp. Hold in the message box and tap
-    Paste."
-  - **The ways out** (`ExportDock`), 8 pt under the apps, a capsule of the
-    same icons: Copy (`doc.on.doc`), Share (`square.and.arrow.up`), Save
-    (`arrow.down.to.line`) and, only while a Mac is there to send to, Send
-    to Mac (`laptopcomputer.and.arrow.down`); held, each says what it does,
-    and Save offers Save to Photos and Save to Files (the system's file
-    exporter). A tap saves to Photos. A way tapped before the copy is ready
-    waits with a small spinner in its place and goes once it is; tapped
-    again it no longer waits. Beside the capsule, two round 44 pt buttons
-    of glass (`ToolButton`): the eye on the leading side, held down to show
-    the screenshot as it was (white on `phone-protect` while held), and
-    Full Screen (`arrow.up.left.and.arrow.down.right`) on the trailing.
   - **Notes** float 10 pt over the tools in a capsule of glass, footnote
     semibold: `checkmark.circle.fill` in `phone-protect` and what was done
     (Copied, Saved to Photos, Saved to Files, On its way to your Mac), gone

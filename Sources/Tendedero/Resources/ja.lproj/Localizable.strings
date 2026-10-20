@@ -119,10 +119,9 @@
 "Unpick All" = "すべての選択を解除";
 "Send to %@" = "%@に送信";
 "Send to Apps" = "アプリに送信";
-"Copied for %@. Hold in the message box and tap Paste." = "%@用にコピーしました。メッセージ欄を長押しして「ペースト」をタップします。";
-"%@ could not be opened." = "%@を開けませんでした。";
-"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "アプリをタップすると、隠した画像がコピーされてそのアプリが開きます。メッセージ欄を長押しして「ペースト」をタップします。アプリがない場合はWebサイトが開きます。";
-"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "スキャンの後と「画像を保護」に表示されるアプリ。隠したコピーをワンタップで送れます。Macと同じアプリです。";
+"A tap on an app covers every page and hands them to it, through the share sheet where needed." = "アプリをタップすると全ページを隠してそのアプリに渡します。必要なときは共有シートを使います。";
+"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "スキャン後と「画像を保護」で画像の横に並ぶアプリ。隠したコピーを渡せます。Macと同じアプリです。";
+"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "タップすると保護されたコピーをアプリに渡します。WhatsAppはすぐに開き、ほかのアプリは共有シートから、アプリをタップして渡します。ブラウザでは何も開きません。";
 "Opening %@…" = "%@を開いています…";
 "Could not open %@. The photos stay on the line." = "%@を開けませんでした。写真はロープに残ります。";
 "Paste into the app in front" = "前面のアプリにペースト";
@@ -1388,6 +1387,9 @@
 "Preparing waits until you go on. Your photos stay as they are." = "再開するまで準備は止まります。写真はそのままです。";
 "Preparing…" = "準備中…";
 "Protect Picture" = "画像を保護";
+"1 private detail found" = "個人情報が1件見つかりました";
+"%d private details found" = "個人情報が%d件見つかりました";
+"%d to check" = "%d件要確認";
 "Protected" = "保護済み";
 "Read on this iPhone only. Nothing is sent anywhere." = "この iPhone の中だけで読み取ります。どこにも送信しません。";
 "Ready to share" = "共有の準備完了";
@@ -1488,7 +1490,6 @@
 "Page %d is not ready yet. Open it to check it." = "%d ページ目はまだ準備できていません。開いて確認してください。";
 "Page %d could not be covered, so no PDF was made." = "%d ページ目を隠せなかったため、PDFは作成されませんでした。";
 "Page %d could not be covered, so nothing was sent." = "%d ページ目を隠せなかったため、何も送信されませんでした。";
-"A tap on an app copies the covered pages and opens it, to paste them there." = "アプリをタップすると、隠したページがコピーされてアプリが開き、そこにペーストできます。";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "送る前に隠す";

@@ -119,10 +119,9 @@
 "Unpick All" = "إلغاء اختيار الكل";
 "Send to %@" = "إرسال إلى %@";
 "Send to Apps" = "الإرسال إلى التطبيقات";
-"Copied for %@. Hold in the message box and tap Paste." = "نُسخت من أجل %@. اضغط مطوّلاً في خانة الرسالة ثم اختر «لصق».";
-"%@ could not be opened." = "تعذّر فتح %@.";
-"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "لمسة على تطبيق تنسخ الصورة المغطّاة وتفتح التطبيق. اضغط مطوّلاً في خانة الرسالة ثم اختر «لصق». إن لم يكن التطبيق على هذا الآيفون، يُفتح موقعه.";
-"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "التطبيقات بعد المسح وفي «حماية الصورة»، لإرسال النسخة المغطّاة بلمسة واحدة. التطبيقات نفسها كما على الـ Mac.";
+"A tap on an app covers every page and hands them to it, through the share sheet where needed." = "النقر على تطبيق يغطي كل الصفحات ويسلّمها له، عبر قائمة المشاركة عند الحاجة.";
+"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "التطبيقات بعد المسح وبجانب الصورة في «حماية الصورة»، لتسليمها النسخة المغطاة. التطبيقات نفسها كما على الماك.";
+"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "النقر يسلّم النسخة المحمية إلى التطبيق: واتساب يفتح فوراً، والبقية من قائمة المشاركة حيث تنقر على التطبيق. لا شيء يفتح في المتصفح.";
 "Opening %@…" = "جارٍ فتح %@…";
 "Could not open %@. The photos stay on the line." = "تعذّر فتح %@. تبقى الصور على الحبل.";
 "Paste into the app in front" = "لصق في التطبيق الأمامي";
@@ -1388,6 +1387,9 @@
 "Preparing waits until you go on. Your photos stay as they are." = "يتوقف التجهيز حتى تتابع. تبقى صورك كما هي.";
 "Preparing…" = "جارٍ التجهيز…";
 "Protect Picture" = "حماية الصورة";
+"1 private detail found" = "تم العثور على معلومة خاصة واحدة";
+"%d private details found" = "تم العثور على %d من المعلومات الخاصة";
+"%d to check" = "%d للمراجعة";
 "Protected" = "محمي";
 "Read on this iPhone only. Nothing is sent anywhere." = "تُقرأ على هذا الـ iPhone فقط. لا يُرسل شيء إلى أي مكان.";
 "Ready to share" = "جاهزة للمشاركة";
@@ -1488,7 +1490,6 @@
 "Page %d is not ready yet. Open it to check it." = "الصفحة %d ليست جاهزة بعد. افتحها لتتحقق منها.";
 "Page %d could not be covered, so no PDF was made." = "تعذّرت تغطية الصفحة %d، لذلك لم يُصنع ملف PDF.";
 "Page %d could not be covered, so nothing was sent." = "تعذّرت تغطية الصفحة %d، لذلك لم يُرسَل شيء.";
-"A tap on an app copies the covered pages and opens it, to paste them there." = "لمسة على تطبيق تنسخ الصفحات المغطّاة وتفتحه، لتلصقها هناك.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "مغطّاة قبل أن ترسلها";

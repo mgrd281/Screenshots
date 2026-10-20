@@ -1,8 +1,9 @@
 # Shows the iPhone's first run without an iPhone: builds the app for the
 # simulator, plays the first run from a fresh install, and keeps still
 # frames, a recording and how soon it showed, beside main's build as it was
-# before. They go to the "first-run-captures" pre-release on the Releases
-# page, for review. Runs when the first run changes, and by hand.
+# before; then Protect Picture on the made-up invoice. They go to the
+# "first-run-captures" pre-release on the Releases page, for review. Runs
+# when the first run or Protect Picture changes, and by hand.
 name: First Run Captures
 
 on:
@@ -13,6 +14,9 @@ on:
       - "iOS/Snapfly/Motion.swift"
       - "Sources/Tendedero/Shared/FirstRun.swift"
       - "scripts/first-run-captures.sh"
+      - "iOS/Snapfly/ProtectView.swift"
+      - "iOS/Snapfly/EditorParts.swift"
+      - "iOS/Snapfly/SendToApps.swift"
       - ".github/workflows/first-run-captures.yml"
   workflow_dispatch:
 
@@ -47,7 +51,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag=first-run-captures
-          notes="The iPhone's first run on the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: still frames, a recording, and main's build before it. For review; not a download of Snapfly."
+          notes="The iPhone's first run on the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: still frames, a recording, and main's build before it; then Protect Picture on the made-up invoice (editor-*). For review; not a download of Snapfly."
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release edit "$tag" --notes "$notes" --prerelease
           else

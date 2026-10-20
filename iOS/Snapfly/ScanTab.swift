@@ -111,7 +111,7 @@ struct ScanTab: View {
             .animation(.easeOut(duration: 0.15), value: store.making)
             VStack(alignment: .leading, spacing: 4) {
                 Text(L("Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy."))
-                Text(L("A tap on an app copies the covered pages and opens it, to paste them there."))
+                Text(L("A tap on an app covers every page and hands them to it, through the share sheet where needed."))
                 Text(L("Pages stay on this iPhone only while Snapfly is open."))
             }
             .font(.footnote)
@@ -238,9 +238,9 @@ final class ScannedPages: ObservableObject {
         }
     }
 
-    /// Covers every page as for the PDF, puts them on the clipboard and
-    /// opens the app, or its website, to paste them there. If a page cannot
-    /// be covered, nothing is copied at all.
+    /// Covers every page as for the PDF and hands them to the app: one page
+    /// straight to WhatsApp, else through the share sheet, where the app is
+    /// tapped (`Handoff`). If a page cannot be covered, nothing goes at all.
     func send(to chat: ChatTarget) {
         guard making == nil, !pages.isEmpty else { return }
         let pages = pages
@@ -257,12 +257,11 @@ final class ScannedPages: ObservableObject {
             guard pngs.count == finished.count else {
                 return QuickCoverer.shared.show(L("The copy could not be made."))
             }
-            if await SendApps.shared.send(pngs, to: chat) {
-                QuickCoverer.shared.show(String(format: L("Copied for %@. Hold in the message box and tap Paste."), chat.name), for: 6)
-                UINotificationFeedbackGenerator().notificationOccurred(.success)
-            } else {
-                QuickCoverer.shared.show(String(format: L("%@ could not be opened."), chat.name), for: 4)
+            let name = "Snapfly " + Date.now.formatted(.iso8601.year().month().day())
+            let shown = Handoff.shared.send(pngs, to: chat, named: name) { went in
+                if went { UINotificationFeedbackGenerator().notificationOccurred(.success) }
             }
+            if !shown { QuickCoverer.shared.show(L("The copy could not be made.")) }
         }
     }
 

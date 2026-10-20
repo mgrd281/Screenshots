@@ -58,7 +58,8 @@ struct Reveal: Equatable {
 /// with its places marked: ink over a covered place, a dashed outline round
 /// one to check or left, and handles round the one selected. It fills the
 /// screen; the picture is fitted into the room the floating controls leave,
-/// and once zoomed it scrolls out from under them on every side.
+/// with a soft shadow under it, and once zoomed it scrolls out from under
+/// them on every side.
 struct MarkCanvas: UIViewRepresentable {
     let image: UIImage
     let marks: [ProtectionPlan.Mark]
@@ -150,6 +151,11 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         picture.layer.cornerRadius = 12
         picture.layer.cornerCurve = .continuous
         picture.clipsToBounds = true
+        // The page stands on the ground with a soft shadow under it.
+        content.layer.shadowColor = UIColor.black.cgColor
+        content.layer.shadowOpacity = 0.08
+        content.layer.shadowRadius = 12
+        content.layer.shadowOffset = CGSize(width: 0, height: 4)
         overlay.isOpaque = false
         overlay.backgroundColor = .clear
         overlay.isUserInteractionEnabled = false
@@ -235,6 +241,7 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         content.center = CGPoint(x: size.width / 2, y: size.height / 2)
         picture.frame = content.bounds
         overlay.frame = content.bounds
+        content.layer.shadowPath = UIBezierPath(roundedRect: content.bounds, cornerRadius: 12).cgPath
         contentSize = size
         center()
         contentOffset = CGPoint(x: -contentInset.left, y: -contentInset.top)

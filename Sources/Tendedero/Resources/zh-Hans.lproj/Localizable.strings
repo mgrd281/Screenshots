@@ -119,10 +119,9 @@
 "Unpick All" = "全部取消选择";
 "Send to %@" = "发送到 %@";
 "Send to Apps" = "发送到 App";
-"Copied for %@. Hold in the message box and tap Paste." = "已为 %@ 拷贝。按住消息框，然后轻点“粘贴”。";
-"%@ could not be opened." = "无法打开 %@。";
-"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "轻点一个 App，会拷贝遮盖后的图片并打开该 App。按住消息框，然后轻点“粘贴”。没有该 App 时会打开其网站。";
-"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "扫描后和“保护图片”中显示的 App，一次轻点即可发送遮盖后的副本。与 Mac 上的 App 相同。";
+"A tap on an app covers every page and hands them to it, through the share sheet where needed." = "轻点某个应用会遮盖每一页并交给它，需要时通过共享面板。";
+"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "扫描后以及“保护图片”中图片旁边的应用，用来把遮盖后的副本交给它们。与 Mac 上的应用相同。";
+"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "轻点即可把受保护的副本交给应用：WhatsApp 会立即打开，其他应用则从共享面板中轻点该应用。不会在浏览器中打开任何内容。";
 "Opening %@…" = "正在打开 %@…";
 "Could not open %@. The photos stay on the line." = "无法打开 %@。照片留在晾衣绳上。";
 "Paste into the app in front" = "粘贴到前台应用";
@@ -1388,6 +1387,9 @@
 "Preparing waits until you go on. Your photos stay as they are." = "在你继续之前，准备会暂停。你的照片保持不变。";
 "Preparing…" = "正在准备…";
 "Protect Picture" = "保护图片";
+"1 private detail found" = "找到 1 项隐私信息";
+"%d private details found" = "找到 %d 项隐私信息";
+"%d to check" = "%d 项待检查";
 "Protected" = "已保护";
 "Read on this iPhone only. Nothing is sent anywhere." = "仅在此 iPhone 上读取，不会发送到任何地方。";
 "Ready to share" = "可分享";
@@ -1488,7 +1490,6 @@
 "Page %d is not ready yet. Open it to check it." = "第 %d 页还没准备好。打开它进行检查。";
 "Page %d could not be covered, so no PDF was made." = "第 %d 页无法遮盖，因此没有生成 PDF。";
 "Page %d could not be covered, so nothing was sent." = "第 %d 页无法遮盖，因此没有发送任何内容。";
-"A tap on an app copies the covered pages and opens it, to paste them there." = "轻点一个 App，会拷贝遮盖后的页面并打开它，以便粘贴到那里。";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "发送之前先遮盖";

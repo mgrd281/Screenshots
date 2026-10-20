@@ -2,18 +2,19 @@ import SwiftUI
 import UIKit
 import UniformTypeIdentifiers
 
-/// A picture being protected, filling the screen: shown at once, its private
-/// places marked as they are found, then covered and checked. Two fingers
-/// or a double tap zoom. Over the picture float a small capsule with how it
-/// stands, the tools (Select to tap a place or a word and move, resize or
-/// turn it; the marker, a box and the lasso to hide more by hand; the
-/// eraser to take covers away; Undo and Redo), the apps chosen to send to,
-/// and Copy, Share and Save.
-/// Full Screen leaves the picture alone. Holding the eye shows the picture
-/// as it was. Explain sends the checked copy to the owner's own AI
-/// assistant, to say what the document means. Copy, Share and Save wait
-/// until the copy is made and checked, and ask first while places are still
-/// to check. The picture itself stays as it was.
+/// A picture being protected, the page in the middle of a bright screen:
+/// shown at once, its private places marked as they are found, then
+/// covered and checked. Two fingers or a double tap zoom. Under the title a
+/// small capsule says how it stands; beside the picture, one above another,
+/// the apps to send to, then Photos, Files and the share sheet; along the
+/// bottom, one bar of tools (Select to tap a place or a word and move,
+/// resize or turn it; the marker, a box and the lasso to hide more by hand;
+/// the eraser to take covers away; Undo and Redo). The menu holds Explain,
+/// which sends the checked copy to the owner's own AI assistant, Details,
+/// Copy, Send to Mac and Full Screen, which leaves the picture alone.
+/// Holding the eye shows the picture as it was. Every way out waits until
+/// the copy is made and checked, and asks first while places are still to
+/// check; only that copy ever leaves. The picture itself stays as it was.
 struct ProtectView: View {
     @StateObject private var session: ProtectSession
     @ObservedObject private var sync = SyncCenter.shared
@@ -26,6 +27,8 @@ struct ProtectView: View {
     @State private var explaining = false
     @State private var explainHeight = PresentationDetent.large
     @State private var showsOptions = false
+    /// The choice of apps beside the picture, from the menu.
+    @State private var choosingApps = false
     /// Only the picture, until a tap brings the controls back.
     @State private var focus = false
     /// The mark held down, whose menu shows.
@@ -34,7 +37,6 @@ struct ProtectView: View {
     @State private var waiting: Leaving?
     /// A way out tapped before the copy was ready, which goes once it is.
     @State private var pending: Leaving?
-    @State private var sharing: SharedFile?
     @State private var exporting: PNGFile?
     /// The name the file is offered under, set as it is saved.
     @State private var exportName = ""
@@ -49,6 +51,8 @@ struct ProtectView: View {
     @State private var statusHeight: CGFloat = 0
     @State private var docksHeight: CGFloat = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Right to left, the apps stand on the left, and the room for them too.
+    @Environment(\.layoutDirection) private var direction
 
     init(source: ProtectSession.Source) {
         _session = StateObject(wrappedValue: ProtectSession.made(for: source))
@@ -60,12 +64,26 @@ struct ProtectView: View {
             .toolbar(.hidden, for: .tabBar)
     }
 
-    /// The picture, the floating controls over it, and the bars.
+    /// The picture, how it stands over it, the apps beside it and the tools
+    /// under it.
     private var screen: some View {
         GeometryReader { geometry in
             ZStack {
                 picture(chrome: chrome(geometry.safeAreaInsets))
                     .ignoresSafeArea()
+                // Between the status and the tools, where hints and notes never move it.
+                HStack(spacing: 0) {
+                    Spacer(minLength: 0)
+                    if !focus {
+                        AppRail(pending: pending, leave: leave)
+                            .phoneGuideTarget(.actions)
+                            .padding(.trailing, Self.railEdge)
+                            .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .trailing)))
+                    }
+                }
+                .padding(.top, statusHeight + 8)
+                .padding(.bottom, docksHeight + 12)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 VStack(spacing: 0) {
                     if !focus { top.transition(.opacity) }
                     Spacer(minLength: 0)
@@ -74,7 +92,7 @@ struct ProtectView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .background((focus ? Color.black : Color(.secondarySystemBackground)).ignoresSafeArea())
+        .background((focus ? Color.black : SnapflyTokens.editorGround).ignoresSafeArea())
         .animation(motion, value: focus)
         .animation(motion, value: session.stage)
         .animation(motion, value: selected)
@@ -83,15 +101,6 @@ struct ProtectView: View {
         .navigationTitle(L("Protect Picture"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    explaining = true
-                } label: {
-                    Image(systemName: "sparkles")
-                }
-                .accessibilityLabel(L("Explain"))
-                .disabled(session.original == nil)
-            }
             ToolbarItem(placement: .topBarTrailing) { more }
         }
         .toolbar(focus ? .hidden : .visible, for: .navigationBar)
@@ -106,16 +115,10 @@ struct ProtectView: View {
                 ExplainSheet(session: session)
                     .presentationDetents([.medium, .large], selection: $explainHeight)
             }
+            .sheet(isPresented: $choosingApps) { ChooseAppsSheet() }
             .sheet(isPresented: $showsOptions) {
                 ToolOptions(tool: tool, markerWidth: $markerWidth, eraserReach: $eraserReach, session: session)
                     .presentationDetents([.height(300), .medium])
-            }
-            .sheet(item: $sharing) { file in
-                ShareSheet(url: file.url) { done in
-                    try? FileManager.default.removeItem(at: file.url)
-                    if done { session.left() }
-                }
-                .ignoresSafeArea()
             }
             .fileExporter(isPresented: Binding(get: { exporting != nil }, set: { if !$0 { exporting = nil } }),
                           document: exporting, contentType: .png, defaultFilename: exportName) { result in
@@ -199,16 +202,25 @@ struct ProtectView: View {
         reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.35, dampingFraction: 0.86)
     }
 
+    /// How far the apps stand in from the screen's trailing edge, and the
+    /// room between them and the picture.
+    private static let railEdge: CGFloat = 12
+    private static let railGap: CGFloat = 12
+
     /// What the floating controls cover on each side, so the picture is
-    /// fitted between them; only the safe areas in Full Screen.
+    /// fitted between them, left of the apps; only the safe areas in Full
+    /// Screen.
     private func chrome(_ safe: EdgeInsets) -> UIEdgeInsets {
         let side: CGFloat = 8
         if focus {
             return UIEdgeInsets(top: safe.top + side, left: safe.leading + side, bottom: safe.bottom + side,
                                 right: safe.trailing + side)
         }
-        return UIEdgeInsets(top: safe.top + statusHeight + side, left: safe.leading + side,
-                            bottom: safe.bottom + docksHeight + side, right: safe.trailing + side)
+        let leading = safe.leading + 16
+        let trailing = safe.trailing + Self.railEdge + AppRail.width + Self.railGap
+        let rightToLeft = direction == .rightToLeft
+        return UIEdgeInsets(top: safe.top + statusHeight + 12, left: rightToLeft ? trailing : leading,
+                            bottom: safe.bottom + docksHeight + 12, right: rightToLeft ? leading : trailing)
     }
 
     // MARK: The picture
@@ -300,16 +312,22 @@ struct ProtectView: View {
 
     // MARK: Over the picture
 
-    /// Under the title: how the picture stands, and how to use the tool
-    /// just chosen.
+    /// Under the title: how the picture stands, the eye in line with the
+    /// apps, and how to use the tool just chosen.
     private var top: some View {
         VStack(spacing: 6) {
-            PrivacyStatus(stage: session.stage, tally: session.plan.tally,
-                          nothingFound: session.found
-                              && session.plan.marks.allSatisfy { $0.origin == .spared && !$0.covered },
-                          open: { reviewing = true }, dontWait: session.dontWait, retry: session.retry)
-                .padding(.top, 6)
-                .measuredHeight($statusHeight)
+            ZStack {
+                PrivacyStatus(stage: session.stage, tally: session.plan.tally, found: found,
+                              nothingFound: session.found
+                                  && session.plan.marks.allSatisfy { $0.origin == .spared && !$0.covered },
+                              open: { reviewing = true }, dontWait: session.dontWait, retry: session.retry)
+                    .padding(.horizontal, Self.railEdge + AppRail.width + 8)
+                eye
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .padding(.trailing, Self.railEdge)
+            }
+            .padding(.top, 6)
+            .measuredHeight($statusHeight)
             if let hint {
                 Text(hint)
                     .font(.footnote)
@@ -324,7 +342,7 @@ struct ProtectView: View {
     }
 
     /// Over the bottom: what was done or went wrong, the place selected,
-    /// then the tools and the ways out; in Full Screen, only the way back.
+    /// then the tools; in Full Screen, only the way back.
     private var bottom: some View {
         VStack(spacing: 10) {
             if let note {
@@ -357,35 +375,25 @@ struct ProtectView: View {
         .padding(.bottom, 4)
     }
 
+    /// The one bar of tools, kept in place while drawing.
     private var docks: some View {
-        VStack(spacing: 8) {
-            EditingDock(tool: $tool, markerWidth: $markerWidth, eraserReach: $eraserReach,
-                        canUndo: session.plan.canUndo, canRedo: session.plan.canRedo,
-                        undo: {
-                            session.undo()
-                            selected = nil
-                        },
-                        redo: {
-                            session.redo()
-                            selected = nil
-                        },
-                        options: { showsOptions = true })
-                .disabled(session.original == nil)
-            AppCircles(pending: pending, leave: leave)
-            HStack(spacing: 8) {
-                eye
-                ExportDock(pending: pending, canSend: sync.canSend, sent: sent, leave: leave)
-                    .phoneGuideTarget(.actions)
-                Button {
-                    tool = .select
-                    focus = true
-                } label: {
-                    ToolButton(symbol: "arrow.up.left.and.arrow.down.right")
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(L("Full Screen"))
-            }
-        }
+        EditingDock(tool: $tool, markerWidth: $markerWidth, eraserReach: $eraserReach,
+                    canUndo: session.plan.canUndo, canRedo: session.plan.canRedo,
+                    undo: {
+                        session.undo()
+                        selected = nil
+                    },
+                    redo: {
+                        session.redo()
+                        selected = nil
+                    },
+                    options: { showsOptions = true })
+            .disabled(session.original == nil)
+    }
+
+    /// The private details found, sure or offered, for the status.
+    private var found: Int {
+        session.plan.marks.filter { $0.origin == .found || $0.origin == .possible }.count
     }
 
     /// The eye, held down to see the picture as it was.
@@ -401,21 +409,40 @@ struct ProtectView: View {
             .accessibilityAction { showsOriginal.toggle() }
     }
 
-    /// Details, Full Screen, and taking back what was changed, each as one
-    /// change to undo.
+    /// Explain, Details, Copy, Send to Mac while a Mac is there, Full
+    /// Screen, the choice of apps, and taking back what was changed, each as
+    /// one change to undo.
     private var more: some View {
         Menu {
+            Button {
+                explaining = true
+            } label: {
+                Label(L("Explain"), systemImage: "sparkles")
+            }
+            .disabled(session.original == nil)
             Button {
                 reviewing = true
             } label: {
                 Label(L("Details"), systemImage: "list.bullet")
             }
             .disabled(session.plan.marks.isEmpty)
+            Divider()
+            Button { leave(.copy) } label: { Label(Leaving.copy.title, systemImage: Leaving.copy.symbol) }
+            if sync.canSend {
+                Button { leave(.mac) } label: { Label(Leaving.mac.title, systemImage: Leaving.mac.symbol) }
+                    .disabled(sent)
+            }
             Button {
                 tool = .select
                 focus = true
             } label: {
                 Label(L("Full Screen"), systemImage: "arrow.up.left.and.arrow.down.right")
+            }
+            Divider()
+            Button {
+                choosingApps = true
+            } label: {
+                Label(L("Send to Apps"), systemImage: "slider.horizontal.3")
             }
             Divider()
             Button {
@@ -533,17 +560,14 @@ struct ProtectView: View {
         done(L("Copied"))
     }
 
-    /// The copy alone, as a PNG file of its own, with nothing of the
-    /// original's notes in it.
+    /// The share sheet, with the copy alone as a PNG file of its own, with
+    /// nothing of the original's notes in it.
     private func share() {
         guard session.isReady, let png = session.png else { return }
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent(baseName + ".png")
-        do {
-            try png.write(to: url, options: [.atomic, .completeFileProtection])
-            sharing = SharedFile(url: url)
-        } catch {
-            failed(L("The copy could not be made."), retry: .share)
+        let shown = Handoff.shared.send([png], to: nil, named: baseName) { went in
+            if went { session.left() }
         }
+        if !shown { failed(L("The copy could not be made."), retry: .share) }
     }
 
     private func save() {
@@ -580,16 +604,14 @@ struct ProtectView: View {
         }
     }
 
-    /// The copy on the clipboard and the app open, to paste it there.
+    /// The copy handed to the app: straight to WhatsApp, else through the
+    /// share sheet, where the app is tapped (`Handoff`).
     private func send(to chat: ChatTarget) {
         guard session.isReady, let png = session.png else { return }
-        Task {
-            if await SendApps.shared.send([png], to: chat) {
-                done(String(format: L("Copied for %@. Hold in the message box and tap Paste."), chat.name))
-            } else {
-                failed(String(format: L("%@ could not be opened."), chat.name), retry: .app(chat))
-            }
+        let shown = Handoff.shared.send([png], to: chat, named: baseName) { went in
+            if went { session.left() }
         }
+        if !shown { failed(L("The copy could not be made."), retry: .app(chat)) }
     }
 
     /// Named by when it was taken, as the Mac names screenshots.

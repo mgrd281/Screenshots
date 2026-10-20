@@ -21,7 +21,8 @@ final class FirstRunCoordinator: ObservableObject {
     @Published private(set) var showing: Bool
 
     private init() {
-        showing = UserDefaults.standard.integer(forKey: Self.key) < Self.version || Self.frozenMoment != nil
+        showing = (UserDefaults.standard.integer(forKey: Self.key) < Self.version || Self.frozenMoment != nil)
+            && !EditorSample.requested
     }
 
     /// From Settings: shown again, from its start.
@@ -54,6 +55,28 @@ final class FirstRunCoordinator: ObservableObject {
     }()
     #else
     static let frozenMoment: Double? = nil
+    #endif
+}
+
+/// For screenshots made in CI: Protect Picture open on the first run's
+/// made-up invoice, with nothing covered yet, as `-SnapflyEditorSample`
+/// asks; the first run stays away. Nothing of it is in a release build.
+enum EditorSample {
+    #if DEBUG
+    static let requested = ProcessInfo.processInfo.arguments.contains("-SnapflyEditorSample")
+
+    /// The invoice as a picture, as a screenshot of it would be.
+    @MainActor static func picture() -> CGImage? {
+        let sheet = Sheet(width: 390, state: FirstRun.State(), calm: true, interactive: false, toggle: { _ in })
+        let renderer = ImageRenderer(content: SamplePage(document: .invoice, sheet: sheet)
+            .padding(20)
+            .background(Color.white))
+        renderer.scale = 3
+        return renderer.cgImage
+    }
+    #else
+    static let requested = false
+    @MainActor static func picture() -> CGImage? { nil }
     #endif
 }
 

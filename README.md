@@ -923,11 +923,13 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Send to shows the same apps as under a photo on the Mac, by their icons
   as in the share sheet: ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE at
   first, and with More, at the end, any of Perplexity, Grok, DeepSeek, Qwen,
-  Messenger, Instagram, Outlook, Yahoo Mail, Facebook and Airbnb, in the
-  order you drag them into (Visual Studio Code and Antigravity have no app
-  on the iPhone). One tap covers every page, puts them on the clipboard
-  and opens the app, or its website without it, to paste them there: iOS
-  lets no app put a picture into another app's chat itself. Share Covered
+  Messenger, Instagram, Outlook, Yahoo Mail and Facebook, in the order you
+  drag them into (Airbnb, Visual Studio Code and Antigravity take no
+  picture from another app on the iPhone). One tap covers every page and
+  hands them to the app the ways iOS gives: one page straight to WhatsApp,
+  as a file only WhatsApp opens (the way WhatsApp documents), and anything
+  else through the system's share sheet, where you tap the app; nothing
+  ever opens in a browser. Share Covered
   PDF covers every page (as Settings says, or as it was left after opening
   it) and makes one PDF of them, a picture of each page and no text, sized
   like A4, for the share sheet, where it can be sent or saved to Files; if
@@ -1003,13 +1005,17 @@ watch the screen, so there is no line there. What it keeps is the covering:
   the names find is marked a moment later, then the copy is made, read again
   as anyone could read it, and covered further if need be, and where Apple
   Intelligence is on, what it finds joins after (Don't Wait leaves it out).
-  Protect Picture is an editor where the picture is the screen: it is
-  fitted as large as the floating controls allow, and zoomed in (two
+  Protect Picture puts the page in the middle of a bright screen, with a
+  soft shadow under it, as large as the room allows: the title and a menu
+  at the top, the apps to send to one above another on its right (on its
+  left in Arabic), and one bar of tools along the bottom. Zoomed in (two
   fingers or a double tap) it scrolls out from under them, so every corner
-  stays in reach. A small capsule under the title says how far the
-  protection is, then how many places are covered and how many are to
-  check, each counted once; while a place to check is not covered the
-  picture is never called protected. A tap on it opens Details, which goes
+  stays in reach. A small capsule under the title says what the engine is
+  doing, never ahead of it, then how many private details it found, like
+  "3 sensible Angaben erkannt", and how many are still to check; while a
+  place to check is not covered the picture is never called protected.
+  The eye beside it, held, shows the screenshot as it was. A tap on the
+  capsule opens Details, which goes
   through the places Snapfly was not sure about one by one, from the top:
   the place itself, what it hides, Keep Covered or Cover, Leave Visible,
   Show on Picture, and how many are checked. Then it lists every place by
@@ -1021,25 +1027,29 @@ watch the screen, so there is no line there. What it keeps is the covering:
   and swiped, Show on Picture. What Settings leaves visible is listed too,
   like the doctors' names where only patients' are covered, and is covered
   with a tap, there or on the picture, where it is not marked until then.
-  Over the bottom float the
-  tools in one capsule: Select taps a place to select it, or a word to hide
+  Along the bottom float the
+  tools in one capsule, the tool in hand on a soft green circle that glides
+  to the next: Select taps a place to select it, or a word to hide
   it; a selected place moves, resizes by its corners and, a box, turns by
   its handle, and holding one down offers Cover, Uncover or Delete. The
   marker (thin, medium or thick, held for its widths), a box and the lasso
   hide more by hand in solid ink, one finger drawing and two moving the
   picture; the eraser takes covers away, and the picture shows there again,
   in the editor only. Every change can be undone and done again; Clear
-  Hidden by Hand and Reset to Suggestions take back many at once. Under
-  them, Copy, Share and Save as icons (held, each says what it does; Save
-  goes to Photos, or held, to Files), and Send to Mac while a Mac is there;
-  above them, the apps chosen to send to, as round icons in a capsule like
-  those under a photo on the Mac, and ⋯ to choose them: a tap copies the
-  protected copy and opens the app, to paste it there.
+  Hidden by Hand and Reset to Suggestions take back many at once. Beside
+  the page, the apps chosen to send to stand one above another as their
+  own icons, with no names or frames, then Photos, Files and the share
+  sheet; they scroll when there are more than fit, and held, any of them
+  offers the choice of apps. A tap hands over the protected copy, never the
+  screenshot: straight to WhatsApp, which then asks whom to send it to,
+  into Photos, to Files, and to every other app through the share sheet,
+  where you tap it; nothing opens in a browser. The menu holds Explain,
+  Details, Copy, Send to Mac while a Mac is there, Full Screen, the choice
+  of apps, Clear Hidden by Hand and Reset to Suggestions.
   Tapped before the copy is ready, a way waits and goes once it is; while
-  places are still to check it asks first. Hold the eye to see the
-  screenshot as it was. Full Screen, or a tap on nothing, leaves the
-  picture alone on black; a tap brings everything back. The sparkles
-  beside the menu are Explain: with your own Claude or ChatGPT key set up
+  places are still to check it asks first. Full Screen, or a tap on
+  nothing, leaves the picture alone on black; a tap brings everything
+  back. Explain, in the menu: with your own Claude or ChatGPT key set up
   (below), it sends the checked protected copy, smaller, and shows word by
   word, as it is written, what the document is and who it is from, what
   matters in it (amounts, dates, deadlines, what is asked) and what to do,
@@ -1135,7 +1145,7 @@ short hint, once, the first time something is in reach, like the lock on
 a covered photo or picking several photos.
 
 On the iPhone, the introduction shows on your screenshots: tap one, then
-its Copy, Share and Save. Settings › Help & Introduction starts it again.
+the apps beside it. Settings › Help & Introduction starts it again.
 
 <br>
 
@@ -1209,14 +1219,14 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
 | `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
-| `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the picture filling the screen, to zoom with its places marked, covered in steps and checked; the floating tools to select, draw, box, lasso and erase with their handles; the status capsule; Details, which checks the unsure places one by one and lists every place by whose it is and what it is, each topic covered with one switch; Copy, Share, Save to Photos or Files and Send to Mac, which wait for the checked copy and ask while places are to check; and Full Screen |
+| `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the page on a bright ground, to zoom with its places marked, covered in steps and checked; the one bar of tools to select, draw, box, lasso and erase with their handles; the status capsule with how many details were found; Details, which checks the unsure places one by one and lists every place by whose it is and what it is, each topic covered with one switch; the ways out, which wait for the checked copy and ask while places are to check; the menu with Explain, Copy, Send to Mac and Full Screen |
 | `iOS/Share/ShareViewController.swift`, `iOS/Share-Info.plist`, `iOS/*.entitlements` | The iPhone's share extension: a picture shared from any app, covered, checked, then copied, shared or saved |
 | `Shared/ScanPDF.swift` | Scanned pages, covered, as one PDF: a picture of each page on A4's width, as JPEG, no text, and nothing of who made it but the app |
 | `Shared/CoveredCopy.swift` | A picture's covered copy as it leaves the iPhone app or its share extension: covered, read again, checked in its pixels, or nothing, as when Vision could not read the picture (iOS may keep it from reading in the background) |
 | `Shared/SharedChoice.swift` | The kinds, look and own rules the iPhone app keeps in the keychain group it shares with its extension |
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them sent to an app with one tap or made into one covered PDF |
-| `iOS/Snapfly/SendToApps.swift`, `Assets.xcassets/Chat*.imageset` | Send to on the iPhone: the apps chosen (`SendApps`), their icons, the row of them after a scan, the round ones in Protect Picture, and choosing and ordering them; a tap copies the covered copy and opens the app or its website |
+| `iOS/Snapfly/SendToApps.swift`, `Assets.xcassets/Chat*.imageset` | Send to on the iPhone: the apps chosen (`SendApps`), their icons, the row of them after a scan, the column beside the picture in Protect Picture (`AppRail`) with Photos, Files and the share sheet, and choosing and ordering them; the hand-over (`Handoff`): one picture straight to WhatsApp, anything else through the share sheet, never a website |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, three or four to a row with a pinch, See All, and the iPhone's green |
 | `Shared/GridSelection.swift`, `iOS/Snapfly/Selecting.swift` | Choosing several screenshots at once: tapped, or a finger drawn across them, and the card under the finger (tested on Linux); then their covered copies made one after another (`BatchCover`), saved to Photos or shared, with the choice's bar |
 | `Shared/GridZoom.swift` | How many screenshots stand in a row on the iPhone, three or four, and how the grid follows a pinch; tested on Linux |
@@ -1287,7 +1297,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/PhoneSync.swift` | Syncing on the iPhone: From your Mac, a picture fetched when opened, Send to Mac and the Sync section in Settings |
 | `cloudkit/schema.ckdb`, `cloudkit/share.ckdb` | The record types in the iCloud container, and the type shares are kept in, put there by the CloudKit Schema workflow |
 | `FIRST_RUN.md` | The iPhone's first run: the audit of the launch before it, the journey, the storyboard second by second, the engine behind the sample, accessibility, tests, measurements and what is not yet known |
-| `scripts/first-run-captures.sh` | Plays the first run on the simulator for the First Run Captures workflow: still frames, a recording, how soon it showed, and main's build beside it |
+| `scripts/first-run-captures.sh` | Plays the first run on the simulator for the First Run Captures workflow: still frames, a recording, how soon it showed, and main's build beside it; then Protect Picture on the made-up invoice (`-SnapflyEditorSample`, debug builds only), on this iPhone and the smallest there is |
 | `SYNC.md` | The audit and plan for Mac and iPhone as one: what there is, the design, the threat model, what goes wrong and what happens then, the owner's steps at Apple, and what is verified |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |

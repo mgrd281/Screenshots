@@ -3,7 +3,7 @@ import XCTest
 
 /// The apps a covered picture goes to, as the Mac and the iPhone share them:
 /// which the iPhone offers, which it shows at first, the order and choice
-/// made in Settings, and where a tap on the iPhone goes.
+/// made in Settings, and how a picture reaches each app on the iPhone.
 final class ChatsTests: XCTestCase {
     /// Settings as on a new iPhone.
     private func fresh() -> UserDefaults {
@@ -13,9 +13,9 @@ final class ChatsTests: XCTestCase {
         return defaults
     }
 
-    func testTheIPhoneOffersEveryAppButTheEditors() {
-        XCTAssertEqual(ChatTarget.allCases.filter { !$0.onPhone }, [.vsCode, .antigravity])
-        XCTAssertEqual(ChatTarget.phoneChoices(in: fresh()).count, ChatTarget.allCases.count - 2)
+    func testTheIPhoneOffersEveryAppThatTakesAPicture() {
+        XCTAssertEqual(ChatTarget.allCases.filter { !$0.onPhone }, [.airbnb, .vsCode, .antigravity])
+        XCTAssertEqual(ChatTarget.phoneChoices(in: fresh()).count, ChatTarget.allCases.count - 3)
     }
 
     func testAtFirstTheIPhoneShowsTheSameSixAsTheMac() {
@@ -34,17 +34,12 @@ final class ChatsTests: XCTestCase {
         XCTAssertEqual(ChatTarget.phoneChoices(in: defaults).first, .whatsApp)
     }
 
-    func testATapTriesTheAppThenItsWebsite() {
-        XCTAssertEqual(ChatTarget.whatsApp.phoneLinks.map(\.absoluteString), ["whatsapp://app", "https://web.whatsapp.com/"])
-        XCTAssertEqual(ChatTarget.gmail.phoneLinks.first?.scheme, "googlegmail")
-        // An AI chat's website opens its app when the app claims it.
-        XCTAssertEqual(ChatTarget.claude.phoneLinks, [URL(string: "https://claude.ai/new")!])
-        for chat in ChatTarget.allCases where chat.onPhone {
-            // The website is always there, last.
-            XCTAssertEqual(chat.phoneLinks.last, chat.newChat, chat.name)
-            XCTAssertTrue(chat.owns(host: chat.phoneLinks.last?.host), chat.name)
-            // Before it, only an app's own address.
-            XCTAssertTrue(chat.phoneLinks.dropLast().allSatisfy { !["http", "https"].contains($0.scheme) }, chat.name)
+    func testWhatsAppTakesOnePictureItselfAndTheRestGoThroughTheShareSheet() {
+        XCTAssertEqual(ChatTarget.whatsApp.phoneHandoff(pictures: 1), .direct)
+        // Several pages: the share sheet, which takes them all.
+        XCTAssertEqual(ChatTarget.whatsApp.phoneHandoff(pictures: 3), .shareSheet)
+        for chat in ChatTarget.allCases where chat.onPhone && chat != .whatsApp {
+            XCTAssertEqual(chat.phoneHandoff(pictures: 1), .shareSheet, chat.name)
         }
     }
 }

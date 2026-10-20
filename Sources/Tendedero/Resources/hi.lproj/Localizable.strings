@@ -121,10 +121,9 @@
 "Unpick All" = "सभी का चयन हटाएँ";
 "Send to %@" = "%@ को भेजें";
 "Send to Apps" = "ऐप्स को भेजें";
-"Copied for %@. Hold in the message box and tap Paste." = "%@ के लिए कॉपी हो गया। संदेश बॉक्स को दबाकर रखें और पेस्ट करें पर टैप करें।";
-"%@ could not be opened." = "%@ नहीं खुल सका।";
-"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "किसी ऐप पर टैप करने से ढका गया चित्र कॉपी होता है और ऐप खुलता है। उसके संदेश बॉक्स को दबाकर रखें और पेस्ट करें पर टैप करें। ऐप न हो तो उसकी वेबसाइट खुलती है।";
-"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "स्कैन के बाद और ‘चित्र सुरक्षित करें’ में दिखने वाले ऐप्स, ताकि ढकी गई कॉपी एक टैप में भेजी जा सके। वही ऐप्स जो Mac पर हैं।";
+"A tap on an app covers every page and hands them to it, through the share sheet where needed." = "किसी ऐप पर टैप करने से हर पेज ढक जाता है और उसे सौंप दिया जाता है, ज़रूरत हो तो शेयर शीट से।";
+"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "स्कैन के बाद और «चित्र सुरक्षित करें» में तस्वीर के बगल में दिखने वाले ऐप, उन्हें ढकी हुई कॉपी सौंपने के लिए। वही ऐप जो Mac पर हैं।";
+"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "एक टैप सुरक्षित कॉपी ऐप को सौंप देता है: WhatsApp तुरंत खुलता है, बाकी शेयर शीट से, जहाँ आप ऐप पर टैप करते हैं। कुछ भी ब्राउज़र में नहीं खुलता।";
 "Opening %@…" = "%@ खुल रहा है…";
 "Could not open %@. The photos stay on the line." = "%@ नहीं खुल सका। फ़ोटो रस्सी पर रहती हैं।";
 "Paste into the app in front" = "सामने वाले ऐप में पेस्ट करें";
@@ -1390,6 +1389,9 @@
 "Preparing waits until you go on. Your photos stay as they are." = "आपके जारी रखने तक तैयारी रुकी रहती है। आपकी फ़ोटो जैसी हैं वैसी रहती हैं।";
 "Preparing…" = "तैयार हो रहा है…";
 "Protect Picture" = "चित्र सुरक्षित करें";
+"1 private detail found" = "1 निजी जानकारी मिली";
+"%d private details found" = "%d निजी जानकारियाँ मिलीं";
+"%d to check" = "%d जाँचने हैं";
 "Protected" = "सुरक्षित";
 "Read on this iPhone only. Nothing is sent anywhere." = "सिर्फ़ इसी iPhone पर पढ़ा जाता है। कुछ भी कहीं नहीं भेजा जाता।";
 "Ready to share" = "साझा करने के लिए तैयार";
@@ -1490,7 +1492,6 @@
 "Page %d is not ready yet. Open it to check it." = "पेज %d अभी तैयार नहीं है। जाँचने के लिए उसे खोलें।";
 "Page %d could not be covered, so no PDF was made." = "पेज %d ढका नहीं जा सका, इसलिए PDF नहीं बनाया गया।";
 "Page %d could not be covered, so nothing was sent." = "पेज %d ढका नहीं जा सका, इसलिए कुछ नहीं भेजा गया।";
-"A tap on an app copies the covered pages and opens it, to paste them there." = "किसी ऐप पर टैप करने से ढके गए पेज कॉपी होते हैं और ऐप खुलता है, ताकि आप उन्हें वहाँ पेस्ट कर सकें।";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "भेजने से पहले ढका हुआ";

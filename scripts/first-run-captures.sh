@@ -3,8 +3,10 @@
 # at set moments of the story (German, in light and dark, and a few in Arabic
 # and English), a recording of the whole story from a fresh launch, and how
 # soon it showed, from the app's log. With the main branch's build beside it,
-# as it was before. Simulator numbers say how it behaves, not how fast a
-# phone is. Writes everything to captures/.
+# as it was before. Then Protect Picture on the first run's made-up invoice,
+# covered by the real engine, on this iPhone and the smallest the runner
+# has. Simulator numbers say how it behaves, not how fast a phone is. Writes
+# everything to captures/.
 set -euo pipefail
 
 out=captures
@@ -97,6 +99,51 @@ done
 for moment in 2.0 9.0 14.0; do still de dark "$moment"; done
 for moment in 2.5 14.0; do still ar light "$moment"; done
 still en light 14.0
+
+# Protect Picture, once the engine has covered the invoice.
+editor() {
+  local on=$1 language=$2 appearance=$3 name=$4
+  xcrun simctl ui "$on" appearance "$appearance"
+  xcrun simctl terminate "$on" "$bundle" >/dev/null 2>&1 || true
+  xcrun simctl launch "$on" "$bundle" -AppleLanguages "($language)" -AppleLocale "$language" -SnapflyEditorSample >/dev/null
+  sleep 14
+  xcrun simctl io "$on" screenshot "$out/editor-$name.png" >/dev/null
+}
+editor "$device" de light de-light
+editor "$device" de dark de-dark
+editor "$device" ar light ar-light
+editor "$device" en light en-light
+
+# And on the smallest iPhone there is, where the apps beside the page are tightest.
+small=$(xcrun simctl list devices available --json | python3 -c '
+import json, sys
+order = ("SE", "mini", "16e", "17e")
+best = None
+for runtime, devices in json.load(sys.stdin)["devices"].items():
+    if "iOS-" not in runtime:
+        continue
+    version = tuple(int(part) for part in runtime.split("iOS-")[-1].split("-") if part.isdigit())
+    if version < (17,):
+        continue
+    for device in devices:
+        for rank, word in enumerate(order):
+            if device["name"].startswith("iPhone") and word in device["name"]:
+                score = (-rank, version)
+                if best is None or score > best[0]:
+                    best = (score, device["udid"])
+print(best[1] if best else "")
+')
+# A picture more, never a reason to stop.
+if [ -n "$small" ] && [ "$small" != "$device" ]; then
+  (
+    xcrun simctl boot "$small" || true
+    xcrun simctl bootstatus "$small" -b
+    xcrun simctl status_bar "$small" override --time 9:41 --batteryState charged --batteryLevel 100 || true
+    xcrun simctl install "$small" "$after"
+    editor "$small" de light de-light-small
+  ) || echo "The smallest iPhone could not be captured." >&2
+  xcrun simctl shutdown "$small" || true
+fi
 
 # Before: the main branch, where this branch left it.
 base=$(git merge-base HEAD origin/main)

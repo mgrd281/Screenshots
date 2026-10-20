@@ -37,37 +37,28 @@ private struct MeasuredHeight: PreferenceKey {
 
 // MARK: Icons on the docks
 
-/// An icon on a floating dock: a 44 pt target, the glyph 18 pt semibold, on
-/// a green circle in white while it is the tool in hand.
+/// An icon on the tool bar: a 44 pt target, the glyph 18 pt semibold, in
+/// the green while it is the tool in hand.
 struct DockIcon: View {
     let symbol: String
     var chosen = false
-    /// A way out waiting for the copy: a small spinner in its place.
-    var waiting = false
     @Environment(\.isEnabled) private var enabled
 
     var body: some View {
-        ZStack {
-            if chosen {
-                Circle().fill(SnapflyTokens.protect).frame(width: 38, height: 38)
-            }
-            if waiting {
-                ProgressView().controlSize(.small)
-            } else {
-                Image(systemName: symbol)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(chosen ? AnyShapeStyle(Color.white)
-                                     : enabled ? AnyShapeStyle(.primary) : AnyShapeStyle(.tertiary))
-            }
-        }
-        .frame(width: 44, height: 44)
-        .contentShape(Rectangle())
+        Image(systemName: symbol)
+            .font(.system(size: 18, weight: .semibold))
+            .foregroundStyle(chosen ? AnyShapeStyle(SnapflyTokens.protectTint)
+                             : enabled ? AnyShapeStyle(.primary) : AnyShapeStyle(.tertiary))
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
     }
 }
 
-/// The tools in a floating capsule: Select, Marker, Box, Lasso and Eraser,
-/// then Undo and Redo. The marker's widths and the eraser's sizes are a
-/// long press away, and the tool in hand chosen again opens its options.
+/// The tools in one floating capsule: Select, Marker, Box, Lasso and
+/// Eraser, then Undo and Redo. The tool in hand sits on a soft green circle,
+/// which glides to the next one chosen. The marker's widths and the
+/// eraser's sizes are a long press away, and the tool in hand chosen again
+/// opens its options.
 struct EditingDock: View {
     @Binding var tool: EditTool
     @Binding var markerWidth: CGFloat
@@ -77,14 +68,28 @@ struct EditingDock: View {
     let undo: () -> Void
     let redo: () -> Void
     let options: () -> Void
+    @Namespace private var hand
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(EditTool.allCases) { item in
                 Button {
-                    if tool == item, item != .select { options() } else { tool = item }
+                    if tool == item, item != .select {
+                        options()
+                    } else {
+                        withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.86)) { tool = item }
+                    }
                 } label: {
                     DockIcon(symbol: item.symbol, chosen: tool == item)
+                        .background {
+                            if tool == item {
+                                Circle()
+                                    .fill(SnapflyTokens.protect.opacity(0.14))
+                                    .frame(width: 36, height: 36)
+                                    .matchedGeometryEffect(id: "hand", in: hand)
+                            }
+                        }
                 }
                 .buttonStyle(.plain)
                 .contextMenu { sizes(for: item) }
@@ -148,7 +153,7 @@ let eraserNames = [L("Small"), L("Medium"), L("Large")]
 /// The ways a covered copy leaves.
 enum Leaving: Hashable, Identifiable {
     case copy, share, photos, files, mac
-    /// Copied, and the app opened to paste it into (`SendToApps.swift`).
+    /// Handed to the app, straight or through the share sheet (`Handoff`).
     case app(ChatTarget)
     var id: Self { self }
 
@@ -175,67 +180,20 @@ enum Leaving: Hashable, Identifiable {
     }
 }
 
-/// Copy, Share and Save in a floating capsule, and Send to Mac while a
-/// Mac is there to send to. Save puts the copy in Photos; held, it offers
-/// Files too. Held, each says what it does. A way tapped before the copy is
-/// ready waits, with a spinner, and goes once it is.
-struct ExportDock: View {
-    let pending: Leaving?
-    let canSend: Bool
-    let sent: Bool
-    let leave: (Leaving) -> Void
-
-    var body: some View {
-        HStack(spacing: 0) {
-            way(.copy, symbol: "doc.on.doc")
-            way(.share, symbol: "square.and.arrow.up")
-            Menu {
-                Button { leave(.photos) } label: { Label(Leaving.photos.title, systemImage: Leaving.photos.symbol) }
-                Button { leave(.files) } label: { Label(Leaving.files.title, systemImage: Leaving.files.symbol) }
-            } label: {
-                DockIcon(symbol: "arrow.down.to.line", waiting: pending == .photos || pending == .files)
-            } primaryAction: {
-                leave(.photos)
-            }
-            .menuStyle(.button)
-            .buttonStyle(.plain)
-            .tint(Color.primary)
-            .accessibilityLabel(L("Save to Photos"))
-            .accessibilityHint(pending == .photos ? L("Goes as soon as the copy is ready.") : "")
-            .accessibilityAction(named: L("Save to Files")) { leave(.files) }
-            if canSend {
-                way(.mac, symbol: "laptopcomputer.and.arrow.down")
-                    .disabled(sent)
-            }
-        }
-        .padding(.horizontal, 4)
-        .padding(.vertical, 2)
-        .editorGlass(in: Capsule())
-    }
-
-    private func way(_ way: Leaving, symbol: String) -> some View {
-        Button { leave(way) } label: {
-            DockIcon(symbol: symbol, waiting: pending == way)
-        }
-        .buttonStyle(.plain)
-        .contextMenu {
-            Button { leave(way) } label: { Label(way.title, systemImage: way.symbol) }
-        }
-        .accessibilityLabel(way.title)
-        .accessibilityHint(pending == way ? L("Goes as soon as the copy is ready.") : "")
-    }
-}
-
 // MARK: How the picture stands
 
-/// How the picture stands, in a small floating capsule under the title:
-/// while it is protected, a spinner and the step, with Don't Wait while
-/// Apple Intelligence reads; after a failure, what went wrong and Try
-/// Again; then the places covered and those to check, a place only offered
-/// never counted as covered. A tap opens the places, to check them.
+/// How the picture stands, in a small floating capsule under the title,
+/// as the engine has it, never ahead of it: while it is read, a spinner and
+/// the step, with Don't Wait while Apple Intelligence reads; after a
+/// failure, what went wrong and Try Again; then how many private details
+/// were found, with the small green shield, and how many of them are still
+/// to check; or that nothing private was found. A tap opens Details, to see
+/// and change every place.
 struct PrivacyStatus: View {
     let stage: ProtectSession.Stage
     let tally: ProtectionPlan.Tally
+    /// The private details found, sure or offered, not those hidden by hand.
+    let found: Int
     let nothingFound: Bool
     let open: @MainActor () -> Void
     let dontWait: @MainActor () -> Void
@@ -254,7 +212,7 @@ struct PrivacyStatus: View {
                     Button(L("Try Again"), action: retry).fontWeight(.semibold)
                 }
                 .padding(.horizontal, 14)
-                .frame(minHeight: 36)
+                .frame(minHeight: 34)
             case .ready:
                 Button(action: open) { counts }
                     .buttonStyle(.plain)
@@ -271,13 +229,12 @@ struct PrivacyStatus: View {
                     }
                 }
                 .padding(.horizontal, 14)
-                .frame(minHeight: 36)
+                .frame(minHeight: 34)
                 .accessibilityElement(children: .combine)
             }
         }
         .font(.footnote)
         .editorGlass(in: Capsule())
-        .padding(.horizontal, 16)
         // Each step gives way to the next in place, the capsule fitting its words.
         .animation(reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.42, dampingFraction: 0.82), value: stage)
         .sensoryFeedback(trigger: stage) { _, now in now == .ready ? .success : nil }
@@ -285,45 +242,54 @@ struct PrivacyStatus: View {
 
     private var counts: some View {
         HStack(spacing: 6) {
-            if nothingFound {
+            if nothingFound || found == 0 {
                 Image(systemName: "checkmark.shield")
-                    .foregroundStyle(SnapflyTokens.protect)
+                    .foregroundStyle(SnapflyTokens.protectTint)
                 Text(L("Nothing private found"))
             } else {
                 Image(systemName: "checkmark.shield.fill")
-                    .foregroundStyle(SnapflyTokens.protect)
+                    .foregroundStyle(SnapflyTokens.protectTint)
                     .symbolEffect(.bounce.up, options: .nonRepeating, value: landed)
                     .onAppear { landed.toggle() }
-                Text(tally.covered, format: .number)
+                Text(foundText)
                     .fontWeight(.semibold)
                     .contentTransition(.numericText())
                 if tally.toCheck > 0 {
                     Text(verbatim: "·").foregroundStyle(.secondary)
-                    Image(systemName: tally.exposed > 0 ? "exclamationmark.triangle.fill" : "circle.dashed")
-                        .foregroundStyle(tally.exposed > 0 ? Color.orange : Color.accentColor)
-                    Text(tally.toCheck, format: .number)
-                        .fontWeight(.semibold)
-                        .contentTransition(.numericText())
-                    Text(L("To check"))
+                    // Where the words don't fit, the sign that some are to check, and how many.
+                    ViewThatFits(in: .horizontal) {
+                        Text(String(format: L("%d to check"), tally.toCheck))
+                        Label {
+                            Text(tally.toCheck, format: .number)
+                        } icon: {
+                            Image(systemName: tally.exposed > 0 ? "exclamationmark.triangle.fill" : "circle.dashed")
+                        }
+                        .labelStyle(.titleAndIcon)
+                    }
+                    .foregroundStyle(tally.exposed > 0 ? Color.orange : Color.accentColor)
+                    .contentTransition(.numericText())
                 }
-                Image(systemName: "chevron.down")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(.secondary)
             }
         }
+        .lineLimit(1)
+        .minimumScaleFactor(0.85)
         .monospacedDigit()
         .padding(.horizontal, 14)
-        .frame(minHeight: 36)
+        .frame(minHeight: 34)
         .contentShape(Capsule())
+    }
+
+    private var foundText: String {
+        found == 1 ? L("1 private detail found") : String(format: L("%d private details found"), found)
     }
 
     /// The whole of it in words, for VoiceOver.
     private var summary: String {
-        if nothingFound { return L("Nothing private found") }
+        if nothingFound || found == 0 { return L("Nothing private found") }
         let state = tally.exposed > 0
             ? String(format: L("Not fully protected: %d places to check are not covered"), tally.exposed)
             : tally.toCheck > 0 ? L("Covered. Check the marked places before sharing.") : L("Everything found is covered")
-        return "\(state). \(L("Protected")) \(tally.covered), \(L("To check")) \(tally.toCheck), "
+        return "\(foundText). \(state). \(L("Protected")) \(tally.covered), \(L("To check")) \(tally.toCheck), "
             + "\(L("Not protected")) \(tally.left)"
     }
 
