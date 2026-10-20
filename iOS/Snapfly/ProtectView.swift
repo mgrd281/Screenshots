@@ -9,9 +9,10 @@ import UniformTypeIdentifiers
 /// turn it; the marker, a box and the lasso to hide more by hand; the
 /// eraser to take covers away; Undo and Redo), and Copy, Share and Save.
 /// Full Screen leaves the picture alone. Holding the eye shows the picture
-/// as it was. Copy, Share and Save wait until the copy is made and checked,
-/// and ask first while places are still to check. The picture itself stays
-/// as it was.
+/// as it was. Explain sends the checked copy to the owner's own AI
+/// assistant, to say what the document means. Copy, Share and Save wait
+/// until the copy is made and checked, and ask first while places are still
+/// to check. The picture itself stays as it was.
 struct ProtectView: View {
     @StateObject private var session: ProtectSession
     @ObservedObject private var sync = SyncCenter.shared
@@ -21,6 +22,8 @@ struct ProtectView: View {
     @State private var eraserReach: CGFloat = 0.03
     @State private var showsOriginal = false
     @State private var reviewing = false
+    @State private var explaining = false
+    @State private var explainHeight = PresentationDetent.large
     @State private var showsOptions = false
     /// Only the picture, until a tap brings the controls back.
     @State private var focus = false
@@ -79,6 +82,15 @@ struct ProtectView: View {
         .navigationTitle(L("Protect Picture"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    explaining = true
+                } label: {
+                    Image(systemName: "sparkles")
+                }
+                .accessibilityLabel(L("Explain"))
+                .disabled(session.original == nil)
+            }
             ToolbarItem(placement: .topBarTrailing) { more }
         }
         .toolbar(focus ? .hidden : .visible, for: .navigationBar)
@@ -89,6 +101,10 @@ struct ProtectView: View {
     private func sheets(_ content: some View) -> some View {
         content
             .sheet(isPresented: $reviewing) { ReviewSheet(session: session, show: show) }
+            .sheet(isPresented: $explaining) {
+                ExplainSheet(session: session)
+                    .presentationDetents([.medium, .large], selection: $explainHeight)
+            }
             .sheet(isPresented: $showsOptions) {
                 ToolOptions(tool: tool, markerWidth: $markerWidth, eraserReach: $eraserReach, session: session)
                     .presentationDetents([.height(300), .medium])
