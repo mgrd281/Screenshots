@@ -252,8 +252,9 @@ the website's footer. Both stay.
   setting, icon, copy or motion.
 - **When a change adds a color, radius, size or component,** add it to
   `DESIGN.md` in the same pull request.
-- Agent skills sit in `.claude/skills/`, and four MCP servers (Context7,
-  Playwright, Motion, shadcn) are set up for the project in `.mcp.json`. See
+- Agent skills sit in `.claude/skills/`, and six MCP servers (Context7,
+  Playwright, Motion, shadcn, LottieFiles Creator, Creatomate) are set up
+  for the project in `.mcp.json`. See
   `.claude/skills/VENDORED.md` for what was installed, what was left out,
   and why. None of them is part of the app or the website; they only guide
   the coding agent.
@@ -296,6 +297,20 @@ the website's footer. Both stay.
   - **`remotion-best-practices`** (with create, markup, studio and render
     inside it) is for videos only, in their own workspace, never in the
     website. Nothing is rendered or published without the owner.
+  - **Video tools** (the owner's list, October 2026):
+    - `video-shotcraft` makes product videos in Remotion from shot recipe
+      cards;
+    - the `hyperframes` skills (start at `hyperframes`) make HTML and GSAP
+      videos with `npx hyperframes@0.8.181`, its usage counters off in
+      `.claude/settings.json`;
+    - `figma-use-motion` and `figma-implement-motion` animate Figma designs
+      and turn their motion into code;
+    - the LottieFiles Creator server works only beside Creator open on the
+      owner's Mac, and Creatomate only with the owner's paid account.
+    - Videos are made outside `website/` (`MOTION_SYSTEM.md`, "Creative
+      production"), and nothing is rendered for release or published
+      without the owner. `.claude/skills/VENDORED.md` says what was left
+      out (DaVinci Resolve, Blender, Runway, Claude Motion) and why.
   - **`brand-context`, `brand-identity`, `brand-guidelines`, `brand-audit`,
     `brand-voice`** document and check the existing brand. They read
     `.agents/brand-context.md`, a summary that points to the brand

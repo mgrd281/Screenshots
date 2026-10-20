@@ -28,7 +28,12 @@ page adopts one.
 | `ui-animation/` | https://github.com/mblode/agent-skills, `skills/ui-animation` | commit 872bc83 | MIT (`ui-animation/LICENSE.md`) |
 | `motion/` | https://github.com/motiondivision/ai-kit, `plugins/motion/skills/motion` (what `npx motion-ai` installs) | commit b7e2c68 | MIT (the `motion-ai` package's license; the folder has no license file) |
 | Motion docs MCP server (`.mcp.json`) | hosted at `https://mcp.motion.dev` | hosted | free; no account |
-| `remotion-best-practices/` | https://github.com/remotion-dev/skills, `skills/remotion-best-practices` | 4.0.535, commit 7ba4dcf | none stated (no license file or field) |
+| `remotion-best-practices/` | https://github.com/remotion-dev/skills, `skills/remotion-best-practices` | commit 039e8a2 (refreshed October 20, 2026) | none stated (no license file or field) |
+| `video-shotcraft/` | https://github.com/Vincentwei1021/video-shotcraft | commit 43bd349 | Apache 2.0 (`video-shotcraft/LICENSE`) |
+| `hyperframes/`, `hyperframes-core/`, `hyperframes-animation/`, `hyperframes-cli/`, `hyperframes-creative/`, `hyperframes-keyframes/`, `hyperframes-registry/`, `hyperframes-audio/`, `motion-graphics/`, `product-launch-video/`, `general-video/`, `media-use/` | https://github.com/heygen-com/hyperframes, `skills/` | commit b7fa007; CLI 0.8.181 | Apache 2.0 (`hyperframes/LICENSE`) |
+| `figma-use/`, `figma-use-motion/`, `figma-implement-motion/` | https://github.com/figma/mcp-server-guide, `skills/` | commit 7047cb4 | none stated in the repository |
+| LottieFiles Creator MCP server (`.mcp.json`, `.claude/mcp/lottie-creator-mcp.sh`) | npm `@lottiefiles/creator-mcp` | 0.2.2, pinned | MIT |
+| Creatomate MCP server (`.mcp.json`) | hosted at `https://api.creatomate.com/mcp` | hosted | paid service; the owner's account |
 | `brand-context/`, `brand-identity/`, `brand-guidelines/`, `brand-audit/`, `brand-voice/` | https://github.com/arnabbagxd/Brand-building-skills | commit 4a0a8b5 | MIT (`LICENSE` in each) |
 | `canvas-design/` | https://github.com/anthropics/skills, `skills/canvas-design` | commit dbd4588 | Apache 2.0 (`canvas-design/LICENSE.txt`) |
 | shadcn MCP server (`.mcp.json`, `.claude/mcp/shadcn-mcp.sh`) | https://github.com/shadcn-ui/ui, npm `shadcn` | 4.21.1, pinned | MIT |
@@ -215,6 +220,82 @@ page adopts one.
 - **License:** the skills repository states none. Remotion, the library,
   has its own license (free for individuals and small teams); check
   https://remotion.dev/license before using it.
+
+## Motion and video tools (October 20, 2026)
+
+The owner asked for the motion graphics tools on a list of twelve, as
+necessary for the work. Each was looked up at its source first; what could
+be installed for the agent in this repository was read, copied or pinned,
+and tried here.
+
+- **Remotion skills**, refreshed to the source's newest commit (it adds
+  Arabic text, colour correction and timeline structure).
+- **Video Shotcraft** (`video-shotcraft/`): a skill for product videos in
+  Remotion, with 124 shot recipe cards, their demo code and a template.
+  - **Copied:** `SKILL.md`, `references/`, `template/` (its Remotion
+    project), `demos/` without `_legacy/`, `assets/lib`, `brand` and
+    `scripts`, and `gallery/api/library.json`, the index its cards are
+    checked against.
+  - **Left out:** the audio library (37 MB: 149 sound effects and five
+    pieces of music from Mixkit; its own record says six of them could not
+    be traced, so they are not safe to publish), the gallery website,
+    `workbench/`, `shot-polish/`, `videos/`, the authors' tests, and two
+    tools for other services, `publish/` (posts to social networks) and
+    `jianying-export/` (a Chinese editor's drafts). Its audio record stays
+    as `assets/ATTRIBUTION-audio.md`. Snapfly's videos use the sound the
+    owner approved, as before.
+  - **Checked:** its template installed with install scripts off and
+    rendered a frame here with Remotion 4.0.484, using the headless shell
+    under `/opt/pw-browsers` (`--browser-executable`).
+- **HyperFrames** (HeyGen): HTML and GSAP compositions rendered to video by
+  its command-line tool, the way `promo/` already works.
+  - **Copied:** twelve of its skills: the entry point, the core, animation,
+    the command line, creative direction, keyframes, the registry, audio
+    mixing, motion graphics, product launch videos, general video and
+    media.
+  - **Left out:** captions, talking-head recuts, music videos, pull request
+    videos, faceless explainers, slideshows, the Remotion port and the
+    studio, which cover work Snapfly doesn't do. The entry skill still
+    names them; asked for one, it is not here.
+  - **Not installed:** its command-line tool itself. It runs with `npx
+    hyperframes@0.8.181`, pinned, when a video is made, as the skills say.
+    Checked here: it made a portrait project and rendered ten seconds of
+    1080 × 1920 video.
+  - **Usage counters off.** The tool and its media skill send anonymous
+    counts to PostHog unless told not to; `.claude/settings.json` sets
+    `HYPERFRAMES_NO_TELEMETRY`, `DO_NOT_TRACK` and `HYPERFRAMES_SKIP_SKILLS`
+    (which stops it checking its skills against GitHub at every start).
+  - **Accounts.** Music, voices and pictures from HeyGen, Google or
+    others need the owner's accounts and keys; sound effects come from
+    Openverse without one. None is set up, and keys are never written here.
+- **Figma motion:** `figma-use`, `figma-use-motion` and
+  `figma-implement-motion`, the official Figma skills for animating designs
+  and turning their motion into code. They need the Figma connector, which
+  this account has.
+- **LottieFiles Creator MCP server**, pinned at 0.2.2, install scripts off.
+  It drives the Creator editor open in a browser on the same computer,
+  through a connection on `127.0.0.1:3847`. Checked: it starts and offers
+  108 tools. It does nothing until Creator is open, so it is for the
+  owner's Mac, not for a cloud session.
+- **Creatomate MCP server**, hosted. It asks for a sign-in in the browser
+  (it answered 401 here without one) and spends the account's render
+  credits. Paid; until the owner has an account it does nothing.
+
+Not installed, and why:
+
+- **Remotion and Revideo as libraries.** They belong in a video's own
+  folder with its own `package.json`, when a video is made (`MOTION_SYSTEM.md`,
+  "Creative production"), never in the website. Revideo is the same idea as
+  Remotion at an early version, so it would be a second tool for one job.
+- **DaVinci Resolve MCP** and **MCP for Blender.** Each controls an app on
+  the owner's Mac (DaVinci Resolve Studio, Blender) through a local server
+  started there. Nothing can be installed for them in this repository or a
+  cloud session; on the Mac they are set up with the apps.
+- **Runway.** Its MCP server is a connector of the Claude apps: the owner
+  signs in to Runway in the app's connector settings, and each second of
+  video spends Runway credits.
+- **Claude Motion.** A feature of the Claude apps on Team and Enterprise
+  plans, not something a repository installs.
 
 ## Brand-building skills
 
