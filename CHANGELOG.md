@@ -17,7 +17,8 @@ keeps a download of each version.
   share sheet, or a scanned page) is no longer copied, shared or saved
   when Snapfly could not read it, as iOS may keep it from reading in the
   background; Snapfly says so instead. Faster picture processing never
-  keeps such a picture as one without words.
+  keeps such a picture as one without words, and reads again every photo
+  it prepared before.
 - On the iPhone, screenshots stand three to a row, larger, and the Photos
   tab shows three rows of the newest. Pinch with two fingers, as in Photos,
   for four to a row and back: the grid follows the fingers and settles

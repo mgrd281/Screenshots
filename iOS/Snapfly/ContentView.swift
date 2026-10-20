@@ -86,6 +86,8 @@ struct PhotosTab: View {
         // The introduction, once, as the first screenshots show.
         .onChange(of: library.shots.isEmpty) { _, empty in
             if !empty { guide.offerIfDue() }
+            // Nothing left to choose: the choosing ends, and the tab bar comes back.
+            if empty, !batch.running { selection = nil }
         }
     }
 

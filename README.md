@@ -1067,9 +1067,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   the iPhone ahead of time, newest first: the screenshots only, every photo
   Snapfly may see, or only photos you pick. The words read and where they
   are stay on the iPhone, locked while it is, never in backups; a photo
-  opened later is covered from them without being read again. One that
-  could not be read is counted as failed, never kept as a photo without
-  words. It works
+  opened later is covered from them without being read again. One Vision
+  could not read is never kept as a photo without words; it is read again
+  later. It works
   while Snapfly is open, and in the background while the iPhone charges,
   when iOS allows; it never downloads a photo from iCloud, and waits in Low
   Power Mode, when the iPhone is warm or short of memory, and while you

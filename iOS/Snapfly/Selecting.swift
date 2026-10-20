@@ -128,10 +128,10 @@ final class BatchCover: ObservableObject {
     /// meanwhile is forgotten, so nothing read then is trusted.
     private func copy(of asset: PHAsset, _ chosen: Set<PrivateDetail>) async -> Copy {
         while true {
-            while UIApplication.shared.applicationState != .active, !stopping {
+            while UIApplication.shared.applicationState != .active, !stopping, !Task.isCancelled {
                 try? await Task.sleep(for: .milliseconds(250))
             }
-            if stopping { return .stopped }
+            if stopping || Task.isCancelled { return .stopped }
             let before = interruptions
             let png = await Self.covered(asset, chosen)
             if interruptions == before, UIApplication.shared.applicationState == .active {
