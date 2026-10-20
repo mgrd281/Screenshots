@@ -119,10 +119,9 @@
 "Unpick All" = "Tout désélectionner";
 "Send to %@" = "Envoyer à %@";
 "Send to Apps" = "Envoyer aux apps";
-"Copied for %@. Hold in the message box and tap Paste." = "Copié pour %@. Garde le doigt sur le champ de message et touche Coller.";
-"%@ could not be opened." = "Impossible d’ouvrir %@.";
-"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "Toucher une app copie l’image masquée et ouvre l’app. Garde le doigt sur son champ de message et touche Coller. Sans l’app, son site s’ouvre.";
-"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "Les apps après un scan et dans Protéger l’image, pour envoyer la copie masquée d’un toucher. Les mêmes apps que sur le Mac.";
+"A tap on an app covers every page and hands them to it, through the share sheet where needed." = "Un toucher sur une app masque chaque page et la lui remet, par la feuille de partage si besoin.";
+"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "Les apps après un scan et à côté de l’image dans « Protéger l’image », pour leur remettre la copie masquée. Les mêmes apps que sur le Mac.";
+"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "Un toucher remet la copie protégée à l’app : WhatsApp s’ouvre aussitôt, les autres depuis la feuille de partage, où vous touchez l’app. Rien ne s’ouvre dans le navigateur.";
 "Opening %@…" = "Ouverture de %@…";
 "Could not open %@. The photos stay on the line." = "Impossible d’ouvrir %@. Les photos restent sur la corde.";
 "Paste into the app in front" = "Coller dans l’app active";
@@ -1388,6 +1387,9 @@
 "Preparing waits until you go on. Your photos stay as they are." = "La préparation attend que tu reprennes. Tes photos restent telles quelles.";
 "Preparing…" = "Préparation…";
 "Protect Picture" = "Protéger l’image";
+"1 private detail found" = "1 donnée privée trouvée";
+"%d private details found" = "%d données privées trouvées";
+"%d to check" = "%d à vérifier";
 "Protected" = "Protégé";
 "Read on this iPhone only. Nothing is sent anywhere." = "Lu uniquement sur cet iPhone. Rien n’est envoyé nulle part.";
 "Ready to share" = "Prête à partager";
@@ -1488,7 +1490,6 @@
 "Page %d is not ready yet. Open it to check it." = "La page %d n’est pas encore prête. Ouvre-la pour la vérifier.";
 "Page %d could not be covered, so no PDF was made." = "La page %d n’a pas pu être masquée, donc aucun PDF n’a été créé.";
 "Page %d could not be covered, so nothing was sent." = "La page %d n’a pas pu être masquée, donc rien n’a été envoyé.";
-"A tap on an app copies the covered pages and opens it, to paste them there." = "Toucher une app copie les pages masquées et l’ouvre, pour les y coller.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Masqué avant l’envoi";

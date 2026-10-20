@@ -133,7 +133,7 @@ struct SettingsView: View {
                         }
                     }
                 } footer: {
-                    Text(L("The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac."))
+                    Text(L("The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac."))
                 }
 
                 SyncSection(sync: .shared)

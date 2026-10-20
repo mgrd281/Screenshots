@@ -58,6 +58,10 @@ struct PhotosTab: View {
             Choice.share()
             PhoneSync.start()
             PhotoIndexer.shared.becameActive()
+            // For screenshots made in CI: the editor on a made-up invoice.
+            if EditorSample.requested, path.isEmpty, let sample = EditorSample.picture() {
+                path.append(ProtectSession.Source.picture(Imported.shared.keep(sample)))
+            }
             guide.closeShot = { path.removeLast(path.count) }
             guide.openNewest = {
                 guard let newest = library.shots.first?.localIdentifier else { return false }

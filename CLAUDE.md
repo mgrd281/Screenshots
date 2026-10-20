@@ -200,7 +200,9 @@ the website's footer. Both stay.
     `FIRST_RUN.md`. The **First Run Captures** workflow plays it on the
     simulator when it changes, and puts still frames, a recording and how
     soon it showed on the `first-run-captures` pre-release: the way to see
-    iPhone UI without an iPhone.
+    iPhone UI without an iPhone. It also shows Protect Picture on the
+    made-up invoice (`editor-*`, from `-SnapflyEditorSample` in debug
+    builds) when the editor changes.
   - The **iPhone App Store** workflow (`scripts/iphone-store.sh`) archives,
     signs and uploads it to TestFlight at every push to `main` that touches
     it, and by hand. It needs `SNAPFLY_SIGNING` and `SNAPFLY_IPHONE`, the

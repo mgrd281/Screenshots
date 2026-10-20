@@ -2,11 +2,9 @@ import SwiftUI
 import UIKit
 import UniformTypeIdentifiers
 
-/// Sending a covered copy to an app with one tap, as from under a photo on
-/// the Mac: the same apps, chosen and ordered in Settings. A tap puts the
-/// covered copy on the clipboard and opens the app, or its website without
-/// it, to paste it there; an iPhone app can't put a picture into another
-/// app's chat itself.
+/// The apps a covered copy goes to, as from under a photo on the Mac: the
+/// same apps, chosen and ordered in Settings. How it reaches each is
+/// `Handoff`'s.
 @MainActor
 final class SendApps: ObservableObject {
     static let shared = SendApps()
@@ -35,15 +33,120 @@ final class SendApps: ObservableObject {
         all = ChatTarget.phoneChoices()
     }
 
-    /// Puts the covered pictures on the clipboard, then opens the app, else
-    /// its website; false when nothing could be opened.
-    func send(_ pngs: [Data], to chat: ChatTarget) async -> Bool {
-        guard !pngs.isEmpty else { return false }
-        UIPasteboard.general.setItems(pngs.map { [UTType.png.identifier: $0] as [String: Any] })
-        for link in chat.phoneLinks {
-            if await UIApplication.shared.open(link) { return true }
+}
+
+/// Hands covered pictures to another app the ways iOS gives an app, never
+/// through a website: one picture straight to WhatsApp, as a file only it
+/// opens (`ChatTarget.PhoneHandoff`); anything else through the system's
+/// share sheet, where every app that takes pictures shows and the owner
+/// taps it. Only the protected copy is ever handed over: the files are
+/// written for it alone and deleted once it is done.
+@MainActor
+final class Handoff: NSObject, UIDocumentInteractionControllerDelegate {
+    static let shared = Handoff()
+
+    /// WhatsApp's menu while it shows, with its file and what to call.
+    private var interaction: UIDocumentInteractionController?
+    private var finished: ((Bool) -> Void)?
+    private var handedOver = false
+
+    /// Hands the pictures to an app, or, with none named, to whatever the
+    /// owner picks in the share sheet; `done` says whether they went. False
+    /// when nothing could be shown.
+    @discardableResult
+    func send(_ pngs: [Data], to chat: ChatTarget?, named name: String,
+              done: @escaping (Bool) -> Void = { _ in }) -> Bool {
+        guard !pngs.isEmpty, let host = Self.presenter() else { return false }
+        if let chat, chat.phoneHandoff(pictures: pngs.count) == .direct, openInWhatsApp(pngs[0], named: name, from: host, done: done) {
+            return true
         }
-        return false
+        // WhatsApp missing, or any other app: the share sheet, which offers what there is.
+        return share(pngs, named: name, from: host, done: done)
+    }
+
+    /// The share sheet with the pictures as files.
+    private func share(_ pngs: [Data], named name: String, from host: UIViewController,
+                       done: @escaping (Bool) -> Void) -> Bool {
+        guard let files = try? Self.write(pngs, named: name, as: "png") else { return false }
+        let sheet = UIActivityViewController(activityItems: files, applicationActivities: nil)
+        // Nothing a protected picture has any use for.
+        sheet.excludedActivityTypes = [.assignToContact, .addToReadingList]
+        sheet.completionWithItemsHandler = { _, completed, _, _ in
+            Self.remove(files)
+            done(completed)
+        }
+        sheet.popoverPresentationController?.sourceView = host.view
+        sheet.popoverPresentationController?.sourceRect = CGRect(x: host.view.bounds.midX, y: host.view.bounds.midY,
+                                                                 width: 0, height: 0)
+        host.present(sheet, animated: true)
+        return true
+    }
+
+    /// WhatsApp's own way in: the picture as a `.wai` file of the type only
+    /// WhatsApp opens, so its menu offers WhatsApp, which then asks whom to
+    /// send it to. False where WhatsApp isn't there to take it.
+    private func openInWhatsApp(_ png: Data, named name: String, from host: UIViewController,
+                                done: @escaping (Bool) -> Void) -> Bool {
+        guard let file = try? Self.write([png], named: name, as: "wai").first else { return false }
+        let menu = UIDocumentInteractionController(url: file)
+        menu.uti = "net.whatsapp.image"
+        menu.delegate = self
+        let point = CGRect(x: host.view.bounds.midX, y: host.view.bounds.midY, width: 0, height: 0)
+        guard menu.presentOpenInMenu(from: point, in: host.view, animated: true) else {
+            Self.remove([file])
+            return false
+        }
+        interaction = menu
+        finished = done
+        handedOver = false
+        return true
+    }
+
+    func documentInteractionController(_ controller: UIDocumentInteractionController,
+                                       didEndSendingToApplication application: String?) {
+        handedOver = true
+    }
+
+    func documentInteractionControllerDidDismissOpenInMenu(_ controller: UIDocumentInteractionController) {
+        finished?(handedOver)
+        finished = nil
+        interaction = nil
+        // Once WhatsApp has taken its copy of the file.
+        if let file = controller.url {
+            Task {
+                try? await Task.sleep(for: .seconds(30))
+                Self.remove([file])
+            }
+        }
+    }
+
+    /// The pictures as files of their own, in a folder of their own, named
+    /// as the copy is; protected while the iPhone is locked.
+    nonisolated private static func write(_ pngs: [Data], named name: String, as kind: String) throws -> [URL] {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("Handoff/\(UUID().uuidString)",
+                                                                                  isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        return try pngs.enumerated().map { index, png in
+            let file = folder.appendingPathComponent(pngs.count == 1 ? name : "\(name) \(index + 1)")
+                .appendingPathExtension(kind)
+            try png.write(to: file, options: [.atomic, .completeFileProtection])
+            return file
+        }
+    }
+
+    nonisolated private static func remove(_ files: [URL]) {
+        for folder in Set(files.map { $0.deletingLastPathComponent() }) {
+            try? FileManager.default.removeItem(at: folder)
+        }
+    }
+
+    /// What shows on top, to show the share sheet or the menu over it.
+    private static func presenter() -> UIViewController? {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        let scene = scenes.first { $0.activationState == .foregroundActive } ?? scenes.first
+        var top = scene?.keyWindow?.rootViewController
+        while let next = top?.presentedViewController, !next.isBeingDismissed { top = next }
+        return top
     }
 }
 
@@ -166,61 +269,101 @@ struct AppTiles: View {
     }
 }
 
-/// The apps chosen, as round icons in a floating capsule over the picture,
-/// like those under a photo on the Mac; ⋯ chooses them. One tapped before
-/// the copy is ready waits, with a spinner, and goes once it is.
-struct AppCircles: View {
+/// The ways a protected copy leaves, one above another beside the picture:
+/// the apps chosen, as their own icons with nothing round them or under
+/// them, then Photos, Files and the share sheet as plain tiles of the same
+/// size; they scroll when they don't fit. A tap hands over the copy, with a
+/// light haptic; one tapped before the copy is ready waits, with a spinner,
+/// and goes once it is. Held, each offers the choice of apps.
+struct AppRail: View {
     @ObservedObject private var apps = SendApps.shared
     let pending: Leaving?
     let leave: (Leaving) -> Void
     @State private var choosing = false
+    @State private var taps = 0
+
+    /// The width it takes beside the picture.
+    static let width: CGFloat = 44
 
     var body: some View {
-        // With none chosen, the row stays away; Settings chooses them.
-        if !apps.chosen.isEmpty {
-            ViewThatFits(in: .horizontal) {
-                row.padding(.horizontal, 8).fixedSize()
-                ScrollView(.horizontal) { row.padding(.horizontal, 8) }
-                    .scrollIndicators(.hidden)
-            }
-            .padding(.vertical, 5)
-            .editorGlass(in: Capsule())
-            .padding(.horizontal, 16)
-            .sheet(isPresented: $choosing) { ChooseAppsSheet() }
+        ViewThatFits(in: .vertical) {
+            column
+            ScrollView(.vertical) { column }
+                .scrollIndicators(.hidden)
         }
+        .frame(width: Self.width)
+        .sensoryFeedback(.impact(weight: .light), trigger: taps)
+        .sheet(isPresented: $choosing) { ChooseAppsSheet() }
     }
 
-    private var row: some View {
-        // Each 44 pt to the finger, so the circles stand 10 pt apart.
-        HStack(spacing: 0) {
+    private var column: some View {
+        VStack(spacing: 8) {
             ForEach(apps.chosen) { chat in
-                Button { leave(.app(chat)) } label: {
-                    AppIcon(chat: chat, size: 34, round: true)
-                        .overlay {
-                            if pending == .app(chat) {
-                                Circle().fill(.black.opacity(0.35))
-                                ProgressView().controlSize(.small).tint(.white)
-                            }
-                        }
-                        .frame(width: 44, height: 44)
-                        .contentShape(Circle())
+                way(.app(chat), label: String(format: L("Send to %@"), chat.name)) {
+                    AppIcon(chat: chat, size: RailTile.size)
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel(String(format: L("Send to %@"), chat.name))
-                .accessibilityHint(pending == .app(chat) ? L("Goes as soon as the copy is ready.") : "")
             }
-            Button { choosing = true } label: {
-                Image(systemName: "ellipsis")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 34, height: 34)
-                    .background(Color(.tertiarySystemFill), in: Circle())
-                    .frame(width: 44, height: 44)
-                    .contentShape(Circle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(L("Send to Apps"))
+            way(.photos, label: Leaving.photos.title) { RailTile(symbol: "photo.on.rectangle.angled") }
+            way(.files, label: Leaving.files.title) { RailTile(symbol: "folder") }
+            way(.share, label: Leaving.share.title) { RailTile(symbol: "square.and.arrow.up") }
         }
+        .padding(.vertical, 4)
+    }
+
+    private func way(_ way: Leaving, label: String, @ViewBuilder icon: () -> some View) -> some View {
+        Button {
+            taps += 1
+            leave(way)
+        } label: {
+            icon()
+                .overlay {
+                    if pending == way {
+                        RoundedRectangle(cornerRadius: RailTile.corner, style: .continuous).fill(.black.opacity(0.35))
+                        ProgressView().controlSize(.small).tint(.white)
+                    }
+                }
+                .frame(width: Self.width, height: Self.width)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(RailPress())
+        .contextMenu {
+            Button { choosing = true } label: { Label(L("Send to Apps"), systemImage: "slider.horizontal.3") }
+        }
+        .accessibilityLabel(label)
+        .accessibilityHint(pending == way ? L("Goes as soon as the copy is ready.") : "")
+    }
+}
+
+/// Photos, Files or the share sheet on the rail: a glyph on a plain tile
+/// the size of an app's icon, with the same corners and hairline.
+struct RailTile: View {
+    let symbol: String
+
+    static let size: CGFloat = 40
+    static var corner: CGFloat { size * 12 / 52 }
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: Self.corner, style: .continuous)
+        Image(systemName: symbol)
+            .font(.system(size: 17, weight: .medium))
+            .foregroundStyle(.primary)
+            .frame(width: Self.size, height: Self.size)
+            .background(Color(.secondarySystemGroupedBackground), in: shape)
+            .overlay(shape.stroke(Color.primary.opacity(0.08), lineWidth: 0.5))
+            .accessibilityHidden(true)
+    }
+}
+
+/// A rail icon pressed: a little smaller, back on a quick spring; with
+/// Reduce Motion, a little dimmer instead.
+private struct RailPress: ButtonStyle {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed && !reduceMotion ? 0.9 : 1)
+            .opacity(configuration.isPressed && reduceMotion ? 0.6 : 1)
+            .animation(reduceMotion ? nil : .spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -242,7 +385,7 @@ struct ChooseApps: View {
                 }
                 .onMove { apps.move(from: $0, to: $1) }
             } footer: {
-                Text(L("A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens."))
+                Text(L("A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser."))
             }
         }
         .environment(\.editMode, .constant(.active))
@@ -251,8 +394,9 @@ struct ChooseApps: View {
     }
 }
 
-/// The choice of apps in a sheet of its own, from the row's More.
-private struct ChooseAppsSheet: View {
+/// The choice of apps in a sheet of its own, from the row's More or the
+/// editor's menu.
+struct ChooseAppsSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {

@@ -121,10 +121,9 @@
 "Unpick All" = "Unpick All";
 "Send to %@" = "Send to %@";
 "Send to Apps" = "Send to Apps";
-"Copied for %@. Hold in the message box and tap Paste." = "Copied for %@. Hold in the message box and tap Paste.";
-"%@ could not be opened." = "%@ could not be opened.";
-"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens.";
-"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac.";
+"A tap on an app covers every page and hands them to it, through the share sheet where needed." = "A tap on an app covers every page and hands them to it, through the share sheet where needed.";
+"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac.";
+"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser.";
 "Opening %@…" = "Opening %@…";
 "Could not open %@. The photos stay on the line." = "Could not open %@. The photos stay on the line.";
 "Paste into the app in front" = "Paste into the app in front";
@@ -1390,6 +1389,9 @@
 "Preparing waits until you go on. Your photos stay as they are." = "Preparing waits until you go on. Your photos stay as they are.";
 "Preparing…" = "Preparing…";
 "Protect Picture" = "Protect Picture";
+"1 private detail found" = "1 private detail found";
+"%d private details found" = "%d private details found";
+"%d to check" = "%d to check";
 "Protected" = "Protected";
 "Read on this iPhone only. Nothing is sent anywhere." = "Read on this iPhone only. Nothing is sent anywhere.";
 "Ready to share" = "Ready to share";
@@ -1490,7 +1492,6 @@
 "Page %d is not ready yet. Open it to check it." = "Page %d is not ready yet. Open it to check it.";
 "Page %d could not be covered, so no PDF was made." = "Page %d could not be covered, so no PDF was made.";
 "Page %d could not be covered, so nothing was sent." = "Page %d could not be covered, so nothing was sent.";
-"A tap on an app copies the covered pages and opens it, to paste them there." = "A tap on an app copies the covered pages and opens it, to paste them there.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Covered before you send";

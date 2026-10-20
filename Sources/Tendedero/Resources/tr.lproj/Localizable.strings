@@ -119,10 +119,9 @@
 "Unpick All" = "Seçimleri kaldır";
 "Send to %@" = "Gönder: %@";
 "Send to Apps" = "Uygulamalara gönder";
-"Copied for %@. Hold in the message box and tap Paste." = "%@ için kopyalandı. Mesaj kutusuna basılı tut ve Yapıştır'a dokun.";
-"%@ could not be opened." = "%@ açılamadı.";
-"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "Bir uygulamaya dokunmak kapatılmış resmi kopyalar ve uygulamayı açar. Mesaj kutusuna basılı tut ve Yapıştır'a dokun. Uygulama yoksa web sitesi açılır.";
-"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "Taramadan sonra ve Resmi koru'da görünen uygulamalar; kapatılmış kopyayı tek dokunuşla göndermek için. Mac'tekiyle aynı uygulamalar.";
+"A tap on an app covers every page and hands them to it, through the share sheet where needed." = "Bir uygulamaya dokunmak her sayfayı örter ve ona verir, gerektiğinde paylaşım sayfası üzerinden.";
+"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "Taramadan sonra ve Resmi koru'da resmin yanında duran uygulamalar, onlara örtülü kopyayı vermek için. Mac'tekiyle aynı uygulamalar.";
+"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "Bir dokunuş korunan kopyayı uygulamaya verir: WhatsApp hemen açılır, diğerleri paylaşım sayfasından, orada uygulamaya dokunursun. Hiçbir şey tarayıcıda açılmaz.";
 "Opening %@…" = "%@ açılıyor…";
 "Could not open %@. The photos stay on the line." = "%@ açılamadı. Fotoğraflar ipte kalır.";
 "Paste into the app in front" = "Öndeki uygulamaya yapıştır";
@@ -1388,6 +1387,9 @@
 "Preparing waits until you go on. Your photos stay as they are." = "Sen devam edene kadar hazırlık bekler. Fotoğrafların olduğu gibi kalır.";
 "Preparing…" = "Hazırlanıyor…";
 "Protect Picture" = "Resmi koru";
+"1 private detail found" = "1 özel bilgi bulundu";
+"%d private details found" = "%d özel bilgi bulundu";
+"%d to check" = "%d kontrol edilecek";
 "Protected" = "Korunuyor";
 "Read on this iPhone only. Nothing is sent anywhere." = "Yalnızca bu iPhone'da okunur. Hiçbir şey hiçbir yere gönderilmez.";
 "Ready to share" = "Paylaşmaya hazır";
@@ -1488,7 +1490,6 @@
 "Page %d is not ready yet. Open it to check it." = "Sayfa %d henüz hazır değil. Kontrol etmek için aç.";
 "Page %d could not be covered, so no PDF was made." = "Sayfa %d kapatılamadı, bu yüzden PDF oluşturulmadı.";
 "Page %d could not be covered, so nothing was sent." = "Sayfa %d kapatılamadı, bu yüzden hiçbir şey gönderilmedi.";
-"A tap on an app copies the covered pages and opens it, to paste them there." = "Bir uygulamaya dokunmak kapatılmış sayfaları kopyalar ve uygulamayı açar; onları oraya yapıştırabilirsin.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Göndermeden önce kapatılır";

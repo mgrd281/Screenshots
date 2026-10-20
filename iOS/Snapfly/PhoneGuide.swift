@@ -9,7 +9,7 @@ enum PhoneGuideScreen: Equatable {
 enum PhoneGuideTarget: Hashable {
     /// The newest screenshot in the grid.
     case firstShot
-    /// Copy, Share and Save under a covered screenshot.
+    /// The ways out beside a covered screenshot: the apps, Photos, Files.
     case actions
 }
 

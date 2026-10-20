@@ -119,10 +119,9 @@
 "Unpick All" = "모두 선택 해제";
 "Send to %@" = "%@(으)로 보내기";
 "Send to Apps" = "앱으로 보내기";
-"Copied for %@. Hold in the message box and tap Paste." = "%@용으로 복사했습니다. 메시지 입력란을 길게 누른 다음 붙여넣기를 탭하세요.";
-"%@ could not be opened." = "%@을(를) 열 수 없습니다.";
-"A tap on an app copies the covered picture and opens the app. Hold in its message box and tap Paste. Without the app, its website opens." = "앱을 탭하면 가린 사진이 복사되고 앱이 열립니다. 메시지 입력란을 길게 누른 다음 붙여넣기를 탭하세요. 앱이 없으면 웹사이트가 열립니다.";
-"The apps after a scan and in Protect Picture, to send the covered copy with one tap. The same apps as on the Mac." = "스캔 후와 사진 보호에 나타나는 앱으로, 가린 사본을 한 번의 탭으로 보냅니다. Mac과 같은 앱입니다.";
+"A tap on an app covers every page and hands them to it, through the share sheet where needed." = "앱을 탭하면 모든 페이지를 가린 뒤 그 앱에 넘깁니다. 필요하면 공유 시트를 거칩니다.";
+"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "스캔 후와 '사진 보호'에서 사진 옆에 있는 앱으로, 가린 사본을 넘길 수 있습니다. Mac과 같은 앱입니다.";
+"A tap hands the protected copy to the app: WhatsApp opens at once, the others from the share sheet, where you tap the app. Nothing opens in a browser." = "탭하면 보호된 사본을 앱에 넘깁니다. WhatsApp은 바로 열리고, 다른 앱은 공유 시트에서 앱을 탭하면 됩니다. 브라우저에서는 아무것도 열리지 않습니다.";
 "Opening %@…" = "%@ 여는 중…";
 "Could not open %@. The photos stay on the line." = "%@을(를) 열 수 없습니다. 사진은 빨랫줄에 남습니다.";
 "Paste into the app in front" = "앞에 있는 앱에 붙여넣기";
@@ -1388,6 +1387,9 @@
 "Preparing waits until you go on. Your photos stay as they are." = "계속할 때까지 준비가 멈춥니다. 사진은 그대로 남습니다.";
 "Preparing…" = "준비 중…";
 "Protect Picture" = "사진 보호";
+"1 private detail found" = "개인 정보 1개를 찾았습니다";
+"%d private details found" = "개인 정보 %d개를 찾았습니다";
+"%d to check" = "%d개 확인 필요";
 "Protected" = "보호됨";
 "Read on this iPhone only. Nothing is sent anywhere." = "이 iPhone 안에서만 읽습니다. 아무 데도 보내지 않습니다.";
 "Ready to share" = "공유 준비 완료";
@@ -1488,7 +1490,6 @@
 "Page %d is not ready yet. Open it to check it." = "%d쪽이 아직 준비되지 않았습니다. 열어서 확인하세요.";
 "Page %d could not be covered, so no PDF was made." = "%d쪽을 가릴 수 없어 PDF를 만들지 않았습니다.";
 "Page %d could not be covered, so nothing was sent." = "%d쪽을 가릴 수 없어 아무것도 보내지 않았습니다.";
-"A tap on an app copies the covered pages and opens it, to paste them there." = "앱을 탭하면 가린 페이지가 복사되고 앱이 열려 거기에 붙여넣을 수 있습니다.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "보내기 전에 가려집니다";

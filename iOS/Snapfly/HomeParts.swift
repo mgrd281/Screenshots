@@ -12,6 +12,20 @@ enum SnapflyTokens {
     static let protectPressed = Color(red: 5 / 255, green: 107 / 255, blue: 73 / 255)
     /// The badge's lighter top.
     static let protectLight = Color(red: 18 / 255, green: 165 / 255, blue: 114 / 255)
+    /// The green as a glyph or words on glass or the page: the protect
+    /// green, lighter at night so it reads on dark.
+    static let protectTint = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 18 / 255, green: 165 / 255, blue: 114 / 255, alpha: 1)
+            : UIColor(red: 7 / 255, green: 135 / 255, blue: 92 / 255, alpha: 1)
+    })
+    /// Under the picture in Protect Picture: a bright, near-white ground, so
+    /// the page stands on it; black at night.
+    static let editorGround = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor.black
+            : UIColor(red: 248 / 255, green: 249 / 255, blue: 250 / 255, alpha: 1)
+    })
     /// The soft green round the stacked photos; a deep green at night.
     static let surface = Color(UIColor { traits in
         traits.userInterfaceStyle == .dark

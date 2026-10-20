@@ -5,8 +5,8 @@ import Foundation
 /// Perplexity, Grok, DeepSeek, Qwen, Messenger, Instagram, Outlook, Yahoo
 /// Mail, Facebook, Airbnb, Visual Studio Code and Antigravity. The Mac shows
 /// them under each photo on the line (`ChatTarget.swift` there); the iPhone
-/// under scanned pages and in Protect Picture, all but the two editors,
-/// which have no app there.
+/// under scanned pages and beside the picture in Protect Picture, all but
+/// those whose iPhone app takes no picture from another app.
 enum ChatTarget: String, CaseIterable, Identifiable {
     case chatGPT, claude, perplexity, grok, deepSeek, qwen, whatsApp, messenger, instagram, gmail, outlook, yahoo
     case gmx, webDe, facebook, airbnb, vsCode, antigravity
@@ -205,28 +205,28 @@ enum ChatTarget: String, CaseIterable, Identifiable {
 
     // MARK: On the iPhone
 
-    /// Whether it has a place on the iPhone: Visual Studio Code and
-    /// Antigravity are editors for a computer, with no app there.
+    /// Whether it has a place on the iPhone: not Visual Studio Code and
+    /// Antigravity, editors for a computer with no app there, nor Airbnb,
+    /// whose app takes no picture from another.
     var onPhone: Bool {
-        self != .vsCode && self != .antigravity
+        self != .vsCode && self != .antigravity && self != .airbnb
     }
 
-    /// Where a tap on the iPhone goes, each tried in turn until one opens:
-    /// its app by the address it answers to, where it has one, then its
-    /// website, which opens its app instead when the app claims it.
-    var phoneLinks: [URL] {
-        let app: String? = switch self {
-        case .whatsApp: "whatsapp://app"
-        case .messenger: "fb-messenger://"
-        case .instagram: "instagram://app"
-        case .gmail: "googlegmail:///co"
-        case .outlook: "ms-outlook://compose"
-        case .yahoo: "ymail://mail/compose"
-        case .facebook: "fb://"
-        case .airbnb: "airbnb://"
-        default: nil
-        }
-        return (app.flatMap(URL.init(string:)).map { [$0] } ?? []) + [newChat]
+    /// How a covered picture reaches its app on the iPhone, never through a
+    /// website.
+    enum PhoneHandoff: Equatable {
+        /// Handed to the app itself, the one way it documents: WhatsApp
+        /// opens one picture sent as a file only it takes (`.wai`).
+        case direct
+        /// The system's share sheet, where the app takes pictures and the
+        /// owner taps it.
+        case shareSheet
+    }
+
+    /// How these pictures reach it: WhatsApp takes one straight away; more
+    /// than one, and every other app, through the share sheet.
+    func phoneHandoff(pictures: Int) -> PhoneHandoff {
+        self == .whatsApp && pictures == 1 ? .direct : .shareSheet
     }
 
     /// Those that can be chosen on the iPhone, in their order.

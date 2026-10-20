@@ -6,6 +6,18 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, Protect Picture is calmer and the page leads: it stands
+  on a bright ground with a soft shadow, as large as the room allows. Under
+  the title a small capsule says how many private details were found, like
+  "3 sensible Angaben erkannt", and how many are still to check. The apps
+  to send to stand one above another beside the page, as their own icons
+  with nothing round them, with Photos, Files and the share sheet under
+  them; the tools are one bar along the bottom, the tool in hand on a soft
+  green circle. Explain, Copy, Send to Mac and Full Screen are in the menu.
+- On the iPhone, a tap on an app hands it the protected copy the ways iOS
+  allows, never a website: one picture straight to WhatsApp, and every
+  other app through the share sheet, where you tap it. Airbnb, whose app
+  takes no pictures from others, is no longer offered there.
 - On the iPhone, choose several screenshots as in Photos: Select, then a
   tap on each, or a finger drawn sideways across them. One tap on Save
   Covered Copies covers each as Settings says, checks it and saves it to
