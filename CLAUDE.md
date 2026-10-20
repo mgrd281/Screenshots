@@ -341,3 +341,9 @@ the website's footer. Both stay.
   `DispatchQueue.main.async { MainActor.assumeIsolated { … } }`.
 - Update `README.md` when behaviour changes. That covers the gesture table,
   the feature sections and the file table.
+- `.ua/` is Understand Anything's map of the code (files, types, what
+  depends on what, tests, layers, a tour), written in Arabic for the owner.
+  Read `.ua/knowledge-graph.json` to find your way around. After a change
+  to the code, update it with `/understand` (it reads only the changed
+  files) when the plugin is on. See "Understand Anything" in
+  `.claude/skills/VENDORED.md`.

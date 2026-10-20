@@ -18,3 +18,8 @@ promo/out/
 site-tests/node_modules/
 site-tests/test-results/
 site-tests/playwright-report/
+
+# Understand Anything keeps its map of the code in .ua/; only its working files stay out.
+.ua/intermediate/
+.ua/tmp/
+.ua/diff-overlay.json

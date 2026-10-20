@@ -1,0 +1,90 @@
+# .understandignore — patterns for files/dirs to exclude from analysis
+# Syntax: same as .gitignore (globs, # comments, ! negation, trailing / for dirs)
+# Lines below are suggestions — uncomment to activate.
+# Use ! prefix to force-include something excluded by defaults.
+#
+# Built-in defaults (always excluded unless negated):
+#   node_modules/, .git/, dist/, build/, obj/, *.lock, *.min.js, etc.
+#
+
+# --- From .gitignore (uncomment to exclude) ---
+
+# .build/
+# .DS_Store
+# *.xcodeproj
+# !iOS/Snapfly.xcodeproj/
+# .swiftpm/
+# website/_site/
+# promo/promo-*.html
+# promo/ad-*.html
+# promo/out/
+# .playwright-mcp/
+# site-tests/node_modules/
+# site-tests/test-results/
+# site-tests/playwright-report/
+
+# --- Detected directories (uncomment to exclude) ---
+
+# Tests/
+# docs/
+# scripts/
+
+# --- Test file patterns (uncomment to exclude) ---
+
+# JS / TS
+# *.test.*
+# *.spec.*
+# *.snap
+# C# / .NET
+# **/*Tests.cs
+# **/*Test.cs
+# **/*Fixture.cs
+# **/*.Tests.csproj
+# Java / Kotlin
+# **/src/test/**
+# **/*Test.java
+# **/*IT.java
+# **/*Spec.kt
+# Go
+# **/*_test.go
+# C++
+# **/*_test.cc
+# **/*_test.cpp
+# **/*_test.cxx
+# **/*Test.cc
+# **/*Test.cpp
+# **/*_unittest.cc
+# **/*_unittest.cpp
+# **/*_browsertest.cc
+# **/*_benchmark.cc
+# **/*Benchmark.cpp
+
+# --- Snapfly: active exclusions ---
+# Tools for the coding agent, not part of the app or the website.
+.claude/
+.agents/
+.mcp.json
+# Pictures, icons and translated READMEs.
+assets/
+docs/images/
+docs/i18n/
+iOS/Snapfly/Assets.xcassets/
+Sources/Tendedero/Resources/*.png
+Sources/Tendedero/Resources/*.icns
+# Unused website libraries, kept for later (website/vendor/README.md).
+website/vendor/
+# The app's words in other languages: English stands for all of them.
+Sources/Tendedero/Resources/*.lproj/
+!Sources/Tendedero/Resources/en.lproj/
+# Generated or local.
+.build/
+.swiftpm/
+website/_site/
+promo/out/
+promo/promo-*.html
+promo/ad-*.html
+site-tests/node_modules/
+site-tests/test-results/
+site-tests/playwright-report/
+.playwright-mcp/
+.ua/
