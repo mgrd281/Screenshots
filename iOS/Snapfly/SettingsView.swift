@@ -228,23 +228,76 @@ struct SettingsView: View {
     }
 }
 
-/// Rules of the owner's own: words, patterns and labels.
+/// What else to cover: the owner's own details first, their name, address,
+/// bank cards and accounts, kept on this iPhone alone and covered wherever
+/// and however they show; then rules of their own: words, labels and
+/// patterns. A detail opens in a sheet; one is added from a menu of kinds.
 private struct AdvancedSettings: View {
-    @State private var rules = OwnRules.all
+    @State private var details = OwnRules.all.filter(\.kind.isDetail)
+    @State private var rules = OwnRules.load()
+    /// The detail being added or changed, in its sheet.
+    @State private var editing: OwnRule?
 
     var body: some View {
         Form {
+            Section {
+                ForEach(details) { detail in
+                    Button {
+                        editing = detail
+                    } label: {
+                        OwnDetailRow(detail: detail)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .onDelete { details.remove(atOffsets: $0) }
+                Menu {
+                    ForEach(OwnRule.Kind.details, id: \.self) { kind in
+                        Button {
+                            editing = OwnRule(kind: kind)
+                        } label: {
+                            Label(kind.title, systemImage: kind.symbol)
+                        }
+                    }
+                } label: {
+                    Label(L("Add Detail"), systemImage: "plus.circle.fill")
+                }
+            } header: {
+                Text(L("Your Details"))
+            } footer: {
+                Text(L("Covered wherever and however they are written, whatever is chosen under Hide private details. They stay on this iPhone alone, in no backup, and are never sent."))
+            }
             Section {
                 ForEach($rules) { $rule in
                     RuleRow(rule: $rule)
                 }
                 .onDelete { rules.remove(atOffsets: $0) }
                 Button(L("Add Rule")) { rules.append(OwnRule()) }
+            } header: {
+                Text(L("Your Rules"))
             } footer: {
                 Text(L("Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below."))
             }
         }
-        .onChange(of: rules) { _, new in OwnRules.all = new }
+        .onAppear {
+            // A name saved as a word before there were details becomes the name detail.
+            if OwnRules.adoptName() {
+                details = OwnRules.all.filter(\.kind.isDetail)
+                rules = OwnRules.load()
+            }
+        }
+        .onChange(of: rules) { _, new in OwnRules.all = new + details }
+        .onChange(of: details) { _, new in OwnRules.all = rules + new }
+        .sheet(item: $editing) { detail in
+            OwnDetailEditor(detail: detail, isNew: !details.contains { $0.id == detail.id }) { kept in
+                if let i = details.firstIndex(where: { $0.id == kept.id }) {
+                    details[i] = kept
+                } else {
+                    details.append(kept)
+                }
+            } remove: {
+                details.removeAll { $0.id == detail.id }
+            }
+        }
         .navigationTitle(L("Also hide"))
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -284,7 +337,7 @@ private struct RuleRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Picker(rule.kind.title, selection: $rule.kind) {
-                ForEach(OwnRule.Kind.allCases, id: \.self) { kind in
+                ForEach(OwnRule.Kind.rules, id: \.self) { kind in
                     Text(kind.title).tag(kind)
                 }
             }

@@ -512,7 +512,7 @@
 "The picture could not be read." = "画像を読み込めませんでした。";
 "Nothing private found" = "個人情報は見つかりませんでした";
 "Covered: %@" = "隠したもの：%@";
-"Your own rules" = "自分のルール";
+"Your details and rules" = "あなたの情報とルール";
 "Hidden by hand" = "手動で隠した部分";
 "Saved to Photos" = "写真に保存しました";
 "The picture could not be saved." = "画像を保存できませんでした。";
@@ -1505,3 +1505,32 @@
 "%d removed from Protected" = "%d 件を「保護済み」から取り除きました";
 "Deleted. Photos can still bring them back for 30 days." = "削除しました。30日間は写真アプリで復元できます。";
 "The screenshots could not be deleted." = "スクリーンショットを削除できませんでした。";
+
+/* Also hide: the owner's own details, covered wherever they show */
+"Add Detail" = "情報を追加";
+"Your Details" = "あなたの情報";
+"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "どこにどう書かれていても、上で何を選んでいても隠されます。このMacのキーチェーンにだけ保存され、送信されることはありません。";
+"First and last name" = "姓名";
+"Street and house number" = "番地・通り";
+"Postcode" = "郵便番号";
+"Town" = "市区町村";
+"Card number" = "カード番号";
+"Name for it (optional)" = "名前（任意）";
+"IBAN" = "IBAN";
+"Bank Card" = "カード";
+"Bank Account" = "銀行口座";
+"Covered wherever and however they are written, whatever is chosen under Hide private details. They stay on this iPhone alone, in no backup, and are never sent." = "どこにどう書かれていても、「個人情報を隠す」で何を選んでいても隠されます。このiPhoneにだけ保存され、バックアップにも含まれず、送信されることはありません。";
+"Your Rules" = "あなたのルール";
+"A card number has 19 digits at most." = "カード番号は最大19桁です。";
+"This card number does not add up. Check it again." = "このカード番号は正しくありません。もう一度確認してください。";
+"An IBAN begins with its country’s two letters and two digits, like DE89." = "IBANは国を表す2文字と2桁の数字で始まります（例: DE89）。";
+"This IBAN is too long." = "このIBANは長すぎます。";
+"This IBAN does not add up. Check it again." = "このIBANは正しくありません。もう一度確認してください。";
+"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "どのように書かれていても隠されます。姓が先でも、大文字でも、イニシャルでも、一部だけでも。";
+"Covered however it is written, like %@." = "どのように書かれていても隠されます（例: %@）。";
+"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "通りと番地、そして郵便番号と市区町村が並んでいる箇所が隠されます。市区町村や郵便番号だけでは誰にでも当てはまるため、そのまま残ります。";
+"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "区切り方にかかわらず番号全体が隠されます。下4桁だけが表示されている箇所（例:「•••• 4242」）も隠されます。";
+"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "スペースの有無にかかわらず、末尾の数字だけが表示されている箇所も隠されます。ドイツやオーストリアの口座では、口座番号だけでも隠されます。";
+"ending in %@" = "末尾 %@";
+"Delete Detail" = "情報を削除";
+"Show Number" = "番号を表示";

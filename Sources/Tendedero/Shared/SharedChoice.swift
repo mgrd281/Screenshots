@@ -2,10 +2,10 @@ import Foundation
 import Security
 
 /// What the iPhone's share extension covers: the kinds, the look and the
-/// owner's own rules chosen in the app, kept in a keychain item of the group
-/// the app and its extension share, as the extension cannot read the app's
-/// settings. Only the choice is kept, never a picture or a word read. The
-/// Mac does not use it.
+/// owner's own rules and details chosen in the app, kept in a keychain item
+/// of the group the app and its extension share, as the extension cannot
+/// read the app's settings, on this iPhone alone, in no backup. Only the
+/// choice is kept, never a picture or a word read. The Mac does not use it.
 struct SharedChoice: Codable, Equatable {
     var kinds: [String]
     var style: String
@@ -29,11 +29,12 @@ struct SharedChoice: Codable, Equatable {
          kSecAttrAccount as String: account]
     }
 
-    /// Kept for the extension, readable once the iPhone was first unlocked.
+    /// Kept for the extension, readable once the iPhone was first unlocked,
+    /// and never moved to another device: it holds the owner's details.
     static func keep(_ choice: SharedChoice) {
         guard let data = try? JSONEncoder().encode(choice) else { return }
         let values: [String: Any] = [kSecValueData as String: data,
-                                     kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock]
+                                     kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly]
         if SecItemUpdate(query as CFDictionary, values as CFDictionary) == errSecItemNotFound {
             SecItemAdd(query.merging(values) { $1 } as CFDictionary, nil)
         }

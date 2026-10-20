@@ -599,7 +599,7 @@ struct ReviewSheet: View {
         case .stroke: return L("Marker")
         case .outline: return L("Lasso")
         case .box: return L("Box")
-        case nil: return mark.origin == .hand ? L("Hidden by hand") : L("Your own rules")
+        case nil: return mark.origin == .hand ? L("Hidden by hand") : L("Your details and rules")
         }
     }
 
@@ -610,7 +610,7 @@ struct ReviewSheet: View {
         case .otherPeople: L("Other people")
         case .group(let group): group.title
         case .hand: L("Hidden by hand")
-        case .rules: L("Your own rules")
+        case .rules: L("Your details and rules")
         }
     }
 
@@ -644,7 +644,7 @@ struct ReviewSheet: View {
 
     private func title(of mark: ProtectionPlan.Mark) -> String {
         if let kind = mark.kind { return kind.title }
-        return mark.origin == .hand ? L("Hidden by hand") : L("Your own rules")
+        return mark.origin == .hand ? L("Hidden by hand") : L("Your details and rules")
     }
 }
 

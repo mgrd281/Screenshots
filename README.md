@@ -395,14 +395,36 @@ username, a total, a date, a link, a medicine and a QR code. It says what
 was covered there, and what you checked that the sample does not show. It
 speaks for that sample only; a real screenshot can read differently.
 
-Under Also hide, add rules of your own: a word, like your shop's name,
-covered wherever it appears; a label, like Customer number, whose value is
-covered, on its line or the line below; or, for whoever knows them, a
-pattern. They apply to everything that leaves the line, and to the copies
-saved from Finder. A word that is a person's name, like your own, also
-helps Snapfly tell that name wherever it is written, surname first, in
-capitals, over two lines or with a letter misread, as a name for sure:
-covered as Names, Patient names or Other people say.
+Under Also hide, add your own details first: your name, your address,
+your bank cards and your bank accounts, each in a sheet of its own (Name;
+Street and house number, Postcode and Town; Card number; IBAN, each with a
+name for it if you like). They are covered wherever and however they are
+written, whatever kinds are checked:
+
+| Detail | Covered |
+|---|---|
+| Name | as typed, surname first ("Musterfrau, Erika"), in capitals, with an initial ("E. Musterfrau"), the surname alone, and the first name alone from four letters, a letter misread in a long one too |
+| Address | the street with its house number, "Straße" or "Str.", with or without a hyphen, and the postcode with the town; never a town or a postcode alone, nor another house ("14a", "140") |
+| Bank card | the whole number, however it is grouped, and where only its last four digits show: "•••• 4242", "XXXX-XXXX-XXXX-4242", "Visa 4242", "endet auf 4242" |
+| Bank account | the IBAN with and without spaces, an O read for a 0, with its middle hidden ("DE89 •••• 3000"), and a German or Austrian account's number on its own |
+
+A card's number is grouped as you type it, its network named beside it
+(Visa, Mastercard, American Express and others), and one that does not add
+up is marked; an IBAN is checked as it is typed and kept only once it adds
+up. Settings shows a card or an account by its last four digits; a kept
+one's number shows again only after Show. They stay in the keychain of the
+Mac or iPhone they are added on, on the iPhone in no backup and not in
+iCloud, and are never sent: with Find more with Claude (or ChatGPT) on,
+they are hidden in the words before those go. A name saved as a word before
+there were details moves to the name detail by itself.
+
+Then rules of your own: a word, like your shop's name, covered wherever it
+appears; a label, like Customer number, whose value is covered, on its line
+or the line below; or, for whoever knows them, a pattern. Your details and
+rules apply to everything that leaves the line, and to the copies saved
+from Finder. A word that is a person's name also helps Snapfly tell that
+name wherever it is written as a name for sure: covered as Names, Patient
+names or Other people say.
 
 Only the kinds you checked are covered, whatever found them. Names covers
 everyone's; with Names off, Patient names and Other people each cover their
@@ -1237,7 +1259,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/Protection.swift` | Strongest protection, and Apple Intelligence, on the device, or the AI assistant, when turned on, finding what the patterns miss, kept per screenshot |
 | `Shared/AIAccount.swift` | The AI assistant: Claude or ChatGPT, the key in the keychain, the model, the requests and their answers, a conversation's turns, answers streamed as they are written, checking a key by its list of models, what each task asks, and what each failure means |
 | `Shared/AIConnection.swift` | Whether the key kept for each assistant works, as last checked, and the models it may use, for the Mac's and the iPhone's settings |
-| `Shared/OwnRules.swift` | The owner's own rules: a word, a label or a pattern, kept with the settings |
+| `Shared/OwnRules.swift` | The owner's own rules, a word, a label or a pattern, kept with the settings; and their own details, a name, an address, a bank card or account, kept in the device's keychain alone (`OwnDetailStore`) |
+| `Shared/OwnDetails.swift` | The owner's details found however they are written (a name in every form, a street with its number and a postcode with its town, a card's number whole or by its last four digits, an IBAN with or without spaces and a German or Austrian account's number), hidden before words go to the AI assistant, and checked, grouped and shown as they are typed (tested on Linux) |
+| `iOS/Snapfly/OwnDetailsSettings.swift` | Also hide's rows of the owner's details on the iPhone, and the sheet each is added or changed in |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
@@ -1249,7 +1273,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Share/ShareViewController.swift`, `iOS/Share-Info.plist`, `iOS/*.entitlements` | The iPhone's share extension: a picture shared from any app, covered, checked, then copied, shared or saved |
 | `Shared/ScanPDF.swift` | Scanned pages, covered, as one PDF: a picture of each page on A4's width, as JPEG, no text, and nothing of who made it but the app |
 | `Shared/CoveredCopy.swift` | A picture's covered copy as it leaves the iPhone app or its share extension: covered, read again, checked in its pixels, or nothing, as when Vision could not read the picture (iOS may keep it from reading in the background) |
-| `Shared/SharedChoice.swift` | The kinds, look and own rules the iPhone app keeps in the keychain group it shares with its extension |
+| `Shared/SharedChoice.swift` | The kinds, look and own rules and details the iPhone app keeps in the keychain group it shares with its extension, on that iPhone alone |
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab with Remove, Undo and Delete from Photos, and covering a screenshot from its menu in any tab |
 | `Shared/ProtectedList.swift` | The iPhone's list of the screenshots protected lately: noted newest first, twelve at most, some taken off and put back in their places with Undo (tested on Linux) |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them sent to an app with one tap or made into one covered PDF |

@@ -188,6 +188,8 @@ components:
     size: "52pt"                   # an app to send to: on the first run's share row and under scanned pages; its icon from the asset catalogue (Logo* from SVG, vector kept; Chat* the owner's logos as app icons, 192px), clipped to continuous corners of 12 with a hairline of .primary at 8%, the name in caption .secondary under it, 64pt wide, 12pt apart in a row that scrolls sideways; More, last, is .tertiarySystemFill with ellipsis
   phone-rail-icon:
     size: "40pt"                   # a way out beside the page in Protect Picture: an app's phone-share-tile icon at 40pt (continuous corners of 9.2, the same hairline), or Photos, Files or the share sheet as a glyph 17pt medium in .primary on a tile of secondarySystemGroupedBackground of the same size; 44pt to the finger, 8pt apart, one above another, 12pt in from the screen's trailing edge, no frame, name or divider; pressed, 90% on a spring (0.25, 0.7)
+  phone-detail-tile:
+    size: "30pt"                   # one of the owner's details in Also hide: its symbol (person.fill, house.fill, creditcard.fill, building.columns.fill), 14pt semibold white, on phone-protect with continuous corners of 7, 12pt before the detail's name and its value in subheadline .secondary
   phone-question-chip:
     height: "36pt"                 # a ready question in Explain: a capsule of secondarySystemBackground, subheadline, 14pt in, 44pt to the finger, 8pt apart in a row that scrolls sideways
   phone-ask-bubble:
@@ -626,7 +628,7 @@ apps.
     alone, or Unpick All in its menu;
   - covered: lock badge, shown only when something was covered. Resting on
     it shows a tip naming what was, kinds in Settings' order joined by " · ",
-    then "Your own rules" and "Hidden by hand": "Covered: Names · Emails".
+    then "Your details and rules" and "Hidden by hand": "Covered: Names · Emails".
     The same line is the photo's accessibility value, and the first item of
     its menu, disabled, with `lock.fill` from macOS 26, over a separator.
     Resting on the lock also shows where (`CoveredPlaces`, from
@@ -1371,7 +1373,18 @@ apps.
   keeps the photos. Then one with Plain file names (off at
   first), over a footer saying pictures leave as fresh files without notes
   on when, where or with what they were made, and are named "Image" with it
-  on. Then "Also hide", the
+  on. Then "Your Details", the owner's own details: a row each with its
+  symbol in `.secondary`, its name over its value (a card or an account by
+  its last four digits, monospaced), Edit… and a borderless `minus.circle`
+  to remove it; Add Detail, a menu of Name, Address, Bank Card and Bank
+  Account; a footer saying they are covered wherever and however they are
+  written and stay in this Mac's keychain. A detail opens in a 460 pt sheet
+  (`OwnDetailSheet`): its kind as a headline with its symbol, rounded
+  fields (a card's number grouped as typed with its network's name beside
+  it, an IBAN in groups of four), a callout of how it is covered or, with
+  `exclamationmark.triangle.fill` in orange, what is wrong, then Cancel and
+  Done, prominent, dimmed until there is enough to cover something. Then
+  "Also hide", the
   owner's own rules: one row per rule with a 160 pt menu picker for its kind
   (Word, After a label, Pattern), a rounded field with a prompt for that
   kind, and a borderless `minus.circle` to remove it; an Add Rule button
@@ -2598,12 +2611,38 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   On or Off, opening its page (below); then AI Assistant (above); then
   Sync; then "Advanced", two rows that open pages:
   Also hide (`text.badge.plus`) and Double tap the back of your iPhone
-  (`hand.tap`); then Help & Introduction. Also hide is a row per rule of
-  the owner's own, its
-  kind as a menu over a field with the kind's prompt, swiped away to remove,
-  and Add Rule. A pattern that cannot be read says so under its field with
-  `exclamationmark.triangle.fill` in orange. Rules are kept as they change,
-  and the Mac's and the iPhone's are the same kind of rule.
+  (`hand.tap`); then Help & Introduction. Also hide opens with "Your
+  Details": a row per detail of the owner's (`OwnDetailRow`), its
+  `phone-detail-tile`, its name in body ("Name", "Address", the card's
+  network or the name given it, like "Visa" or "Girokonto") over its value
+  in subheadline `.secondary` with monospaced digits, a card or an account
+  by its last four digits ("•••• 4242", "DE89 •••• 3000"), swiped away to
+  remove; VoiceOver says "Visa, ending in 4242". Add Detail
+  (`plus.circle.fill`) is a menu of Name, Address, Bank Card and Bank
+  Account, each with its symbol. The footer says they are covered wherever
+  and however they are written, whatever is chosen, and stay on this
+  iPhone, in no backup, never sent.
+  - A tap on a detail, or a kind from the menu, opens its sheet
+    (`OwnDetailEditor`): an inline title of its kind, Cancel, Done in
+    semibold (dimmed until there is enough to cover something), and no
+    swipe down while something was typed. Name has one field; Address
+    Street and house number, Postcode and Town; Bank Card the number,
+    grouped as typed in monospaced digits with the network's name in
+    subheadline semibold `.secondary` fading in beside it, and a name for
+    it; Bank Account the IBAN in groups of four, in capitals, and a name
+    for it. A kept card's or account's number shows hidden, with an eye
+    (44 pt) for Show Number. The footer says how it is covered (a name's
+    other forms as examples, "Musterfrau, Erika · E. Musterfrau ·
+    MUSTERFRAU"), or what is wrong in orange with
+    `exclamationmark.triangle.fill`; an IBAN is kept only once it adds up.
+    A kept one ends with Delete Detail, destructive, asking first.
+  - Then "Your Rules": a row per rule of the owner's own, its kind as a
+    menu over a field with the kind's prompt, swiped away to remove, and
+    Add Rule. A pattern that cannot be read says so under its field with
+    `exclamationmark.triangle.fill` in orange. Rules and details are kept as
+    they change, and the Mac's and the iPhone's are the same kind of rule.
+    A name saved as a word before there were details moves to the name
+    detail the first time Also hide opens.
 
 - **Faster picture processing** (`PreparingView.swift`), in Settings ›
   Reading and checking:
