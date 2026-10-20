@@ -24,6 +24,17 @@
       "args": [
         ".claude/mcp/shadcn-mcp.sh"
       ]
+    },
+    "lottie-creator": {
+      "type": "stdio",
+      "command": "sh",
+      "args": [
+        ".claude/mcp/lottie-creator-mcp.sh"
+      ]
+    },
+    "creatomate": {
+      "type": "http",
+      "url": "https://api.creatomate.com/mcp"
     }
   }
 }

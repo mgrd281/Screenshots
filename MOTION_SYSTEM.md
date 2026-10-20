@@ -397,7 +397,8 @@ For every future implementation:
 | GSAP | Installed in `website/vendor/gsap`, used by no page | For a long, scrubbed, many-track timeline. Same rules as Motion; only one of the two, ever. |
 | Rive | Installed in `website/vendor/rive`, used by no page | Adds a WebAssembly runtime for state-machine illustrations. Only for an interactive illustration SVG and CSS cannot do. |
 | dotLottie | Installed in `website/vendor/dotlottie`, used by no page | There are no Lottie assets; inline SVG and CSS cover icons and success marks. Only if a designer delivers Lottie files worth the player. |
-| Remotion | For videos only, in its own workspace | Never in the website. See below. |
+| Remotion | For videos only, in its own workspace | Never in the website. See below. The agent has its skills (`remotion-best-practices`, `video-shotcraft`). |
+| HyperFrames | For videos only, in its own workspace | HTML and GSAP compositions rendered to MP4 by its CLI (`npx hyperframes@0.8.181`), close to how `promo/` already works. Never in the website. The agent has its skills (`hyperframes*`, `motion-graphics`, `product-launch-video`). |
 
 ## Creative production
 
@@ -410,6 +411,7 @@ weigh on the website.
 | Website checks | `site-tests/` | Playwright tests; not shipped, not in a workflow. |
 | Promo video (today) | `promo/` | An HTML timeline (`seek(t)`) rendered frame by frame with Playwright and ffmpeg. 9:16 now; 16:9 and 1:1 by adding sizes to its layout. Output in `promo/out/`, ignored by git. |
 | Remotion videos (when needed) | A new top-level `video/` folder, not created yet | Its own `package.json` and lockfile; compositions for 1920 × 1080, 1080 × 1920 and 1080 × 1080; reuses the website's drawings and the app's strings; renders locally to `video/out/`, ignored by git. Outside `website/`, so the website and its workflows never see it. Check Remotion's license (free for individuals and small teams) before use. |
+| HyperFrames videos (when needed) | A new top-level `video-hf/` folder, not created yet | Made with `npx hyperframes@0.8.181 init`; its own `package.json`; HTML, CSS and GSAP from the brand's tokens; renders to its `renders/`, ignored by git. Its usage counters stay off (`.claude/settings.json`). |
 | Static compositions | Scratch folder | The `canvas-design` skill, on the brand above. Committed only if the owner wants them, under `assets/`. |
 
 Rules for all of it:
