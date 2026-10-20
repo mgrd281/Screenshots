@@ -24,8 +24,8 @@ keeps a download of each version.
   for four to a row and back: the grid follows the fingers and settles
   softly. See All's menu offers the same.
 - The iPhone's first run speaks louder: each headline large and heavy,
-  with the word that carries it in green over a soft green band, like
-  "bleibt" in "Privat bleibt privat.", and the line under it larger.
+  with the word that carries it in green, like "bleibt" in "Privat bleibt
+  privat.", and the line under it larger.
 - On the iPhone, scanned pages go to an app with one tap: under them, the
   same apps as under a photo on the Mac, by their icons, ChatGPT, Claude,
   WhatsApp, Gmail, GMX and WEB.DE at first, with ten more to choose and

@@ -103,8 +103,8 @@ shows, and CI's still frames use it too. The phases are those of
   it, so it reads as short and as waiting for the owner.
 - **Each headline stresses a word** (the owner's request, October 2026):
   large and heavy, with the word that carries it, like "bleibt" in
-  "Privat bleibt privat.", in the brand's green over a soft green band,
-  as a highlighter leaves it. Each language marks its own words between
+  "Privat bleibt privat.", in the brand's green, with nothing behind it
+  (no band, at the owner's request). Each language marks its own words between
   asterisks in its translation; VoiceOver reads the headline without them.
 - **Each scene has a line** under its headline: what is found, how to turn
   a category (the chips say nothing of being tappable on their own), that
