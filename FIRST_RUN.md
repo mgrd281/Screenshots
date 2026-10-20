@@ -42,16 +42,24 @@ What already met the brief, and stays as it is:
 open → the invoice, readable (0 s)
      → read, found, covered; the amount stays (by 2 s)     "Private stays private."
      → the owner turns Names, Emails, Bank details          "You decide what stays visible."
-     → the page before the camera: found, straightened,
-       read, covered as chosen                              "Scan. Detect. Protect."
-     → a small protected copy and where it could go         "Protected. Ready to share."
+     → a doctor's letter before the camera: found, taken,
+       straightened, read; the patient covered, the
+       doctor left                                          "Scan. Detect. Protect."
+     → the letter small and protected, the invoice and a
+       bank statement behind it, and where it could go      "Protected. Ready to share."
      → what Snapfly is for, and Try It Now                  "Share your documents. Not your private data."
 Try It Now → the real scanner (Scan tab) → Protect Picture → Share
 Skip Demo (any time) / Not Now (at the end) → the app
 ```
 
-Visible, then detected, then protected, then ready to share: one page
-moves through all of it, so it never reads as a slideshow. The Photos
+Visible, then detected, then protected, then ready to share. Three
+made-up pages of one made-up person (Erika Mustermann) move through it:
+her invoice, her doctor's letter and her bank statement, which pays the
+invoice. The invoice shows what is found and that the owner chooses; the
+letter, what the scanner does and that it tells the patient from her
+doctor; and all three at the end, that Snapfly is for every kind of
+document. The pages change only where a new page belongs, so it never
+reads as a slideshow. The Photos
 prompt waits for the Photos tab, where a calm card asks for it.
 
 ## 3. Storyboard
@@ -74,14 +82,14 @@ shows, and CI's still frames use it too. The phases are those of
 | 3.75 | control | protected | |
 | 4.8 | control | redacting | The name goes on again |
 | 5.15 | control | protected | |
-| 6.2 | scan | initial | The stage becomes the camera; the page, printed again, lies in it at 80%, tipped away, the shutter under it |
+| 6.2 | scan | initial | The stage becomes the camera; the doctor's letter takes the invoice's place in it at 80%, tipped away, the shutter under it; the chips become Patient, Date of birth, Diagnosis |
 | 6.8 | scan | detecting | Its edges found, lit and locking on; light haptic |
 | 7.6 | scan | detecting | Taken (the shutter pressed, one flash) and straightened |
-| 8.2 | scan | detecting | Read: the light crosses it; what is chosen is found |
+| 8.2 | scan | detecting | Read: the light crosses it; the patient's name, date of birth and diagnosis are found as it reaches them (8.55, 8.58, 8.61), the doctors' names never |
 | 9.2 | scan | highlighted | |
 | 9.35, 9.52, 9.69 | scan | redacting | Covered as chosen |
 | 9.9 | scan | protected | The shield again (no haptic, so it never buzzes twice alike) |
-| 10.4 | share | protected | The page goes small; the share row and "Only the protected copy leaves your iPhone." |
+| 10.4 | share | protected | The letter goes small, the bank statement and the invoice, protected as chosen, slide out from behind it; the share row and "Only the protected copy leaves your iPhone." |
 | 13.6 | complete | complete | The message, and Try It Now over Not Now |
 
 - **Paused.** The clock stands still for 2.5 s after the owner's last tap
@@ -94,9 +102,10 @@ shows, and CI's still frames use it too. The phases are those of
 - **The bars** over the story fill scene by scene and stand still with
   it, so it reads as short and as waiting for the owner.
 - **Each scene has a line** under its headline: what is found, how to turn
-  a category (the chips say nothing of being tappable on their own), what
-  the scanner does, that only the protected copy leaves, and at the end
-  what Snapfly is for.
+  a category (the chips say nothing of being tappable on their own), that
+  the scanner covers the patient and leaves the doctor, that only the
+  protected copy leaves, and at the end what Snapfly is for: invoices,
+  doctor's letters and bank statements.
 - **The tabs behind it** are made once it is over, so reading Photos and
   starting sync never take from its first seconds.
 
@@ -107,7 +116,10 @@ shows, and CI's still frames use it too. The phases are those of
 | `FirstRun` | `Sources/Tendedero/Shared/FirstRun.swift` | The story: categories, the sample, the script, the state machine, the scanner's perspective (homography), pure and tested on Linux |
 | `FirstRunCoordinator` | `iOS/Snapfly/FirstRunExperience.swift` | Whether it shows (once per version, `firstRunSeen`), replay from Settings, Try It Now and Skip |
 | `SnapflyFirstRunExperience` | same | The screen, and the driver that plays the script on the story clock |
-| `SampleInvoice` | same | The invoice, printed as a real one (letterhead, Bill To, number and date, items, sums, direct debit, small print) and standing as an A4 page as tall as the screen allows, its details found and covered (the privacy reveal) |
+| `SamplePage`, `Sheet` | same | A page standing as A4 as tall as the screen allows, white, left to right, one element for VoiceOver; what every page prints with: print sizes grown with the page, the letterhead, rules, labelled details, and a detail found and covered |
+| `SampleInvoice` | same | The invoice, printed as a real one (letterhead, Bill To, number and date, items, sums, direct debit, small print), its details found and covered (the privacy reveal) |
+| `SampleLetter`, `Signature` | same | The doctor's letter, printed as a real German Arztbrief (letterhead, sender line, the colleague it goes to, place and date, patient, date of birth, diagnosis, the letter, a signature in ballpoint blue beside the practice's stamp, small print), scanned |
+| `SampleStatement` | same | The bank statement (letterhead, month, holder and IBAN, seven bookings, new balance), protected at the end |
 | `PrivacyChips` | same | The interactive categories |
 | `ScanCamera`, `CaptureFlash`, `Straightened`, `EdgeLock`, `ReadingLight` | same | The scan demonstration: the camera filling the stage with its shutter, the flash as the page is taken, the perspective correction, the edges locking on, and the light that reads the page |
 | `ShareDestinations` | same | The protected copy's destinations, as a picture of the share sheet |
@@ -116,27 +128,40 @@ shows, and CI's still frames use it too. The phases are those of
 Nothing is duplicated: the old `CoverDemo.swift` is gone, and the scanner,
 the editor and the share sheet are the app's own.
 
-**October 2026, the owner's request:** the invoice looked drawn (grey
+**October 2026, the owner's requests:** the invoice looked drawn (grey
 lines for words) and the scan old (green corner brackets). Now the page is
 a real invoice in every word, its finds are lit as selected text is, and
 the scan is a camera: the stage turns dark, the edges are lit with
 handles at the corners, the shutter takes the page with one flash, and a
-light, not a line, reads it.
+light, not a line, reads it. Then: not only an invoice, but a doctor's
+letter too, and a third document, all looking entirely real. The scanner
+now takes a doctor's letter, and a bank statement joins them at the end.
 
 ## 5. The engine and the sample
 
-- The sample is made up: a placeholder name, an address at `example.com`,
-  the standard example IBAN and an amount. The rest of the page (a studio
-  called Example Studio at www.example.com, its invoice number, the
-  items and sums, the small print) belongs to no one either, and holds
-  nothing private, so the three categories are all there is to cover. It
-  has no postal address and no customer number for that reason.
+- The samples are made up: a placeholder name, an address at
+  `example.com`, the standard example IBAN, a date of birth, a common
+  diagnosis and amounts. The rest of each page belongs to no one either: a
+  studio called Example Studio, a practice of Dr. med. Anna Schmidt
+  writing to Dr. med. Klaus Weber, and Example Bank, all at
+  www.example.com or a made-up Hamburg address. The invoice has no postal
+  address and no customer number, so its three categories are all there
+  is to cover on it.
 - Which category covers which detail is a fixture, held to the engine by
-  `FirstRunTests`. On the invoice as text, in German and in English:
-  - Names covers only the name;
-  - Emails covers only the email;
-  - Bank details covers only the IBAN;
-  - the amount is an amount to the engine, and none of the three covers it.
+  `FirstRunTests`. Every word each page prints goes to the engine, in
+  German and in English:
+  - on the invoice, Names covers only the name, Emails only the email,
+    Bank details only the IBAN, and the amount is an amount to the engine
+    that none of the three covers;
+  - on the doctor's letter, Patient names covers only the patient's name,
+    Dates of birth only her date of birth and Health details only the
+    diagnosis; the doctors' names, the practice and the letter stay;
+  - on the bank statement, Names covers only the holder's name and Bank
+    details only the IBAN; the bookings and the balance stay.
+- The English letter showed the engine taking "Internal Medicine
+  Practice" and "Doctor's Letter" for names. "Practice" is now a word of
+  an organization, as "Praxis" was, and a word's possessive is no more a
+  name than the word (`RedactionTests`).
 - So the first run shows nothing the engine would not do.
 - It is a demonstration, never proof that a real page was read. The page
   says "Sample", nothing on it is read by Vision, and the real scanner
@@ -144,8 +169,9 @@ light, not a line, reads it.
 
 ## 6. Accessibility
 
-- **VoiceOver:** no story playing. It starts at its end, the invoice one
-  element ("Sample invoice", each detail Covered or its value). The chips
+- **VoiceOver:** no story playing. It starts at its end, the doctor's
+  letter one element ("Sample doctor's letter", each detail Covered or its
+  value), the pages behind it hidden. The chips
   say Covered or Not covered, and each change is announced. The share row
   is one sentence.
 - **Reduce Motion and Low Power Mode:** no reading light, no tilt, no
@@ -156,15 +182,16 @@ light, not a line, reads it.
   scrolls; the chips drop their eyes, then stack.
 - **Layout:** safe areas are kept, so nothing sits under the home indicator
   or the Dynamic Island. Every control is at least 44 pt to the finger.
-  The page stays left to right in right-to-left languages, as a printed
-  invoice does; everything else follows the language.
+  The pages stay left to right in right-to-left languages, as printed
+  pages do; everything else follows the language.
 - **Landscape:** none on the iPhone; the app is portrait-only.
 
 ## 7. Tests
 
 - `Tests/TendederoTests/FirstRunTests.swift` (in `swift test` in CI, and
   on Linux) checks:
-  - the sample against the engine;
+  - the invoice, the doctor's letter and the bank statement against the
+    engine, in German and English;
   - that it opens readable and is protected within 2 s;
   - that details are found as the line reaches them, then covered in turn;
   - that the script keeps its order, ends within 15 s and goes through its
@@ -172,7 +199,10 @@ light, not a line, reads it.
   - turning a category off and on;
   - rapid taps;
   - that the story leaves the owner's choice alone;
-  - that the scan finds and covers only what is chosen;
+  - that the scanned letter is found and covered only as chosen, its
+    doctor never, and that its shield stays away with nothing of it
+    chosen;
+  - that at the end the invoice lies beside it protected as chosen;
   - the paused and complete states;
   - that with nothing chosen there is no shield;
   - that the perspective's corners map exactly.

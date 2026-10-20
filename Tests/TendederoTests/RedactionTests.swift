@@ -106,6 +106,15 @@ final class RedactionTests: XCTestCase {
         XCTAssertEqual(names.covered.filter { $0.contains("Crohn") }, [], "a disease named after a person is no name")
     }
 
+    func testAnEnglishLettersHeadingsAreNoNames() {
+        let lines = ["Internal Medicine Practice", "Dr. Anna Schmidt", "Doctor's Letter", "Patient: Erika Mustermann"]
+        let found = protect(lines, [.names])
+        XCTAssertTrue(found.covered.contains("Erika Mustermann"), "\(found.covered)")
+        XCTAssertTrue(found.covered.contains { $0.contains("Anna Schmidt") }, "\(found.covered)")
+        XCTAssertFalse(found.covered.contains { $0.contains("Practice") || $0.contains("Letter") },
+                       "a practice and a letter are no one: \(found.covered)")
+    }
+
     func testANameIsCoveredWithoutItsTitleOrWhatFollowsIt() {
         let found = protect(["Arztbrief", "Behandelnder Arzt: Dr. med. Klaus Weber",
                              "Kunde: Frau Lena Weber (Kundennr. 4711)"], [.names])

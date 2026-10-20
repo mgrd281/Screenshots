@@ -61,13 +61,14 @@ final class FirstRunCoordinator: ObservableObject {
 
 /// The first run (`FirstRun`): in under fifteen seconds a made-up invoice
 /// is read, its name, email and IBAN covered while its amount stays, the
-/// categories are the owner's to turn on and off, a page is scanned,
-/// straightened and covered, and the protected copy is ready to share; then
-/// Try It Now opens the real scanner. One page moves through it all.
-/// Skip Demo leaves at any time. A tap on a category, or on a detail, turns
-/// it, and the story waits while the owner tries. With Reduce Motion or Low
-/// Power Mode things cross-fade instead of moving; with VoiceOver it starts
-/// at its end, the invoice described as it is.
+/// categories are the owner's to turn on and off, a doctor's letter is
+/// scanned, straightened and covered (the patient, not the doctor), and the
+/// protected letter is ready to share, the invoice and a bank statement
+/// fanned out behind it; then Try It Now opens the real scanner. Skip Demo
+/// leaves at any time. A tap on a category, or on a detail, turns it, and
+/// the story waits while the owner tries. With Reduce Motion or Low Power
+/// Mode things cross-fade instead of moving; with VoiceOver it starts at its
+/// end, the letter described as it is.
 struct SnapflyFirstRunExperience: View {
     @ObservedObject private var coordinator = FirstRunCoordinator.shared
     @State private var state = FirstRun.State()
@@ -168,9 +169,9 @@ struct SnapflyFirstRunExperience: View {
         switch scene {
         case .reveal: L("Names, emails and bank details are found and covered.")
         case .control: L("Tap a category to show or cover it.")
-        case .scan: L("Scan a page: it is straightened, read and covered.")
+        case .scan: L("Scan a doctor's letter: the patient is covered, the doctor stays.")
         case .share: L("Only the protected copy leaves your iPhone.")
-        case .complete: L("Protect invoices, screenshots and documents before you share them.")
+        case .complete: L("Protect invoices, doctor's letters and bank statements before you share them.")
         }
     }
 
@@ -206,12 +207,32 @@ struct SnapflyFirstRunExperience: View {
 
     // MARK: The page
 
-    /// The invoice, alone at first, then before the camera, then small and
-    /// ready to share.
+    /// The invoice alone at first, then the doctor's letter before the
+    /// camera, then the letter small and ready to share, with the invoice
+    /// and the bank statement, protected too, fanned out behind it.
     private func stage(width: CGFloat) -> some View {
-        paper(width: width)
-            .scaleEffect(state.scene >= .share ? 0.74 : state.scene == .scan ? Self.inCamera : 1)
-            .frame(maxWidth: .infinity)
+        ZStack {
+            if state.scene >= .share {
+                behind(.statement, width: width, turn: -7, shift: -0.15)
+                behind(.invoice, width: width, turn: 6, shift: 0.15)
+            }
+            paper(width: width)
+        }
+        .scaleEffect(state.scene >= .share ? 0.74 : state.scene == .scan ? Self.inCamera : 1)
+        .frame(maxWidth: .infinity)
+    }
+
+    /// A page protected beside the letter at the end, turned a little and
+    /// sliding out from behind it.
+    private func behind(_ document: FirstRun.Document, width: CGFloat, turn: Double, shift: CGFloat) -> some View {
+        SamplePage(document: document,
+                   sheet: Sheet(width: width, state: state.protected(document), calm: true, interactive: false) { _ in })
+            .rotationEffect(.degrees(turn))
+            .offset(x: width * shift, y: 4)
+            .compositingGroup()
+            .shadow(color: .black.opacity(0.1), radius: 10, y: 4)
+            .accessibilityHidden(true)
+            .transition(.opacity.combined(with: .offset(x: calm ? 0 : -width * shift)))
     }
 
     /// What the page stands on: the brand's soft green, and while it is
@@ -231,25 +252,33 @@ struct SnapflyFirstRunExperience: View {
 
     private func paper(width: CGFloat) -> some View {
         let edges = state.scan == .edges || state.scan == .straight
-        return SampleInvoice(width: width, state: state, calm: calm,
-                             interactive: state.scene >= .control && state.scene < .complete,
-                             toggle: toggle)
-            .measuredHeight($paperHeight)
-            .modifier(Straightened(progress: calm || state.scan >= .straight || state.scan == .none ? 1 : 0,
-                                   size: CGSize(width: width, height: paperHeight)))
-            .overlay {
-                // The page's edges as the scanner finds them, locking on.
-                if !calm {
-                    EdgeLock(straightened: state.scan >= .straight || state.scan == .none ? 1 : 0,
-                             lock: state.scan >= .edges ? 1 : 0)
-                        .opacity(edges ? 1 : 0)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
-                }
+        return ZStack {
+            // The letter is put before the camera in the invoice's place.
+            SamplePage(document: state.document,
+                       sheet: Sheet(width: width, state: state, calm: calm,
+                                    interactive: state.scene >= .control && state.scene < .complete,
+                                    toggle: toggle))
+                .id(state.document)
+                .transition(.opacity)
+        }
+        .measuredHeight($paperHeight)
+        .modifier(Straightened(progress: calm || state.scan >= .straight || state.scan == .none ? 1 : 0,
+                               size: CGSize(width: width, height: paperHeight)))
+        .overlay {
+            // The page's edges as the scanner finds them, locking on.
+            if !calm {
+                EdgeLock(straightened: state.scan >= .straight || state.scan == .none ? 1 : 0,
+                         lock: state.scan >= .edges ? 1 : 0)
+                    .opacity(edges ? 1 : 0)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
             }
-            .overlay { if !calm { ReadingLight(trigger: state.sweeps) } }
-            .overlay(alignment: .topTrailing) { shield }
-            .shadow(color: .black.opacity(state.scene == .scan ? 0.3 : 0.12), radius: state.scene == .scan ? 8 : 16, y: 6)
+        }
+        .overlay { if !calm { ReadingLight(trigger: state.sweeps) } }
+        .overlay(alignment: .topTrailing) { shield }
+        // One shadow for the whole page, not one under every word on it.
+        .compositingGroup()
+        .shadow(color: .black.opacity(state.scene == .scan ? 0.3 : 0.12), radius: state.scene == .scan ? 8 : 16, y: 6)
     }
 
     /// The protected shield on the page's corner, white on the green.
@@ -274,7 +303,10 @@ struct SnapflyFirstRunExperience: View {
     private var lower: some View {
         ZStack {
             if state.scene == .control || state.scene == .scan {
-                PrivacyChips(chosen: state.chosen, toggle: toggle)
+                // The page's own categories: the invoice's, then the letter's.
+                PrivacyChips(categories: FirstRun.Category.allCases.filter { $0.document == state.document },
+                             chosen: state.chosen, toggle: toggle)
+                    .id(state.document)
                     .transition(.opacity.combined(with: .offset(y: calm ? 0 : 10)))
             } else if state.scene >= .share {
                 ShareDestinations()
@@ -396,15 +428,12 @@ struct SnapflyFirstRunExperience: View {
     }
 }
 
-// MARK: The invoice
+// MARK: The pages
 
-/// The made-up invoice, printed as a real one is: a studio's letterhead,
-/// whom it is for, its number and date, what was done and what it costs,
-/// the account it is paid from and its small print. White in light and dark
-/// alike, left to right in every language, and set in print sizes that grow
-/// with the page; its details are found and covered as the story says. A
-/// tap on a detail turns its category on or off.
-private struct SampleInvoice: View {
+/// What every sample page is printed with: its size, the moment of the story
+/// it shows, and how a detail on it answers a tap. Print sizes are given for
+/// a page 300 pt wide and grow with the page.
+private struct Sheet {
     let width: CGFloat
     let state: FirstRun.State
     let calm: Bool
@@ -412,226 +441,102 @@ private struct SampleInvoice: View {
     let toggle: (FirstRun.Category) -> Void
 
     /// Standing, as a sheet of A4.
-    private var height: CGFloat { width * FirstRun.pageRatio }
-    /// Print sizes are given for a page 300 pt wide.
-    private var scale: CGFloat { width / 300 }
+    var height: CGFloat { width * FirstRun.pageRatio }
+    var scale: CGFloat { width / 300 }
 
-    var body: some View {
-        // Each part takes its share of the page's height, so every detail
-        // sits where the reading light finds it (`FirstRun.Field.depth`).
-        VStack(alignment: .leading, spacing: 0) {
-            letterhead
-                .band(height * 0.075, .leading)
-                .overlay(alignment: .bottom) { hairline }
-            gap(0.025)
-            parties
-                .frame(height: height * 0.11, alignment: .top)
-            gap(0.025)
-            Text(L("Invoice"))
-                .font(printed(18, .bold))
-                .band(height * 0.06, .leading)
-            gap(0.025)
-            items
-            gap(0.005)
-            sum(L("Subtotal"), "125,97 €")
-                .band(height * 0.03, .trailing)
-            sum(L("VAT") + " 19 %", "23,93 €")
-                .band(height * 0.03, .trailing)
-            gap(0.015)
-            total
-                .band(height * 0.05, .leading)
-                .overlay(alignment: .top) { rule(strong: true) }
-            gap(0.06)
-            Text(L("Payment by direct debit"))
-                .font(printed(6.5))
-                .foregroundStyle(.secondary)
-                .band(height * 0.03, .bottomLeading)
-            payment
-                .band(height * 0.04, .leading)
-            gap(0.05)
-            Text(L("Thank you for your order."))
-                .font(printed(7.5))
-                .band(height * 0.04, .leading)
-            gap(0.075)
-            footer
-                .band(height * 0.045, .leading)
-                .overlay(alignment: .top) { hairline }
-        }
-        .lineLimit(1)
-        .minimumScaleFactor(0.6)
-        .padding(.horizontal, width * 0.075)
-        .padding(.top, height * 0.05)
-        .frame(width: width, height: height, alignment: .top)
-        .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(Color.primary.opacity(0.08)))
-        .environment(\.colorScheme, .light)
-        .environment(\.layoutDirection, .leftToRight)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(L("Sample invoice"))
-        .accessibilityValue(summary)
+    /// The system's text at a print size, grown with the page.
+    func font(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
+        .system(size: size * scale, weight: weight)
     }
 
-    /// The studio's mark and name, its website, and "Sample".
-    private var letterhead: some View {
-        HStack(spacing: 7 * scale) {
-            Text(verbatim: String(L("Example Studio").prefix(1)))
-                .font(printed(13, .bold))
-                .foregroundStyle(.white)
-                .frame(width: 24 * scale, height: 24 * scale)
-                .background(SnapflyTokens.ink, in: RoundedRectangle(cornerRadius: 6 * scale, style: .continuous))
-            VStack(alignment: .leading, spacing: 1.5 * scale) {
-                Text(L("Example Studio"))
-                    .font(printed(10.5, .semibold))
-                Text(verbatim: "www.example.com")
-                    .font(printed(6.5))
-                    .foregroundStyle(.secondary)
-            }
-            Spacer(minLength: 8)
-            Text(L("Sample"))
-                .font(printed(6, .semibold))
-                .textCase(.uppercase)
-                .tracking(0.6)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 6 * scale)
-                .padding(.vertical, 2.5 * scale)
-                .background(Color.primary.opacity(0.06), in: Capsule())
-        }
+    func gap(_ share: CGFloat) -> some View {
+        Color.clear.frame(height: height * share)
     }
 
-    /// Whom it is for, the name over the email; its number and date beside.
-    private var parties: some View {
-        HStack(alignment: .top, spacing: 8) {
-            VStack(alignment: .leading, spacing: 0) {
-                heading(L("Bill to"))
-                    .band(height * 0.03, .leading)
-                value(FirstRun.field(.name), printed(10, .semibold))
-                    .band(height * 0.04, .leading)
-                value(FirstRun.field(.email), printed(9))
-                    .band(height * 0.04, .leading)
-            }
-            Grid(alignment: .leading, horizontalSpacing: 6 * scale, verticalSpacing: 0) {
-                GridRow {
-                    Text(L("Invoice no."))
-                        .foregroundStyle(.secondary)
-                        .frame(height: height * 0.03)
-                    Text(verbatim: "RE-2026-0417")
-                        .frame(height: height * 0.03)
-                }
-                GridRow {
-                    Text(L("Date"))
-                        .foregroundStyle(.secondary)
-                        .frame(height: height * 0.04)
-                    Text(verbatim: "14.10.2026")
-                        .frame(height: height * 0.04)
-                }
-            }
-            .font(printed(7).monospacedDigit())
-            .fixedSize(horizontal: true, vertical: false)
-        }
-    }
-
-    /// What was done: a heading row and two items, under rules.
-    private var items: some View {
-        VStack(spacing: 0) {
-            item(L("Description"), L("Qty"), L("Amount"), heading: true)
-                .band(height * 0.03, .leading)
-                .overlay(alignment: .bottom) { hairline }
-            item(L("Logo design"), "1", "99,00 €")
-                .band(height * 0.04, .leading)
-            item(L("Business cards, 250"), "1", "26,97 €")
-                .band(height * 0.04, .leading)
-                .overlay(alignment: .bottom) { hairline }
-        }
-    }
-
-    private func item(_ what: String, _ count: String, _ price: String, heading: Bool = false) -> some View {
-        HStack(spacing: 6 * scale) {
-            Text(what)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Text(count)
-                .frame(width: 30 * scale, alignment: .trailing)
-            Text(price)
-                .frame(width: 56 * scale, alignment: .trailing)
-        }
-        .font(heading ? printed(6, .semibold) : printed(7.5).monospacedDigit())
-        .textCase(heading ? Text.Case.uppercase : nil)
-        .tracking(heading ? 0.4 : 0)
-        .foregroundStyle(heading ? Color.secondary : Color.primary)
-    }
-
-    /// A line of the sums, on the trailing side under the amounts.
-    private func sum(_ label: String, _ amount: String) -> some View {
-        HStack(spacing: 6 * scale) {
-            Text(label)
-                .foregroundStyle(.secondary)
-            Text(verbatim: amount)
-                .frame(width: 56 * scale, alignment: .trailing)
-        }
-        .font(printed(7).monospacedDigit())
-    }
-
-    private var total: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Text(L("Total"))
-                .font(printed(9, .semibold))
-            Spacer(minLength: 8)
-            Text(verbatim: FirstRun.field(.amount).value)
-                .font(printed(12.5, .bold).monospacedDigit())
-        }
-    }
-
-    /// The account the amount is paid from.
-    private var payment: some View {
-        HStack(spacing: 8 * scale) {
-            Text(FirstRun.field(.iban).label)
-                .font(printed(7, .semibold))
-                .foregroundStyle(.secondary)
-            value(FirstRun.field(.iban), printed(8.5).monospacedDigit())
-        }
-    }
-
-    /// The small print at the foot of the page.
-    private var footer: some View {
-        HStack(spacing: 8) {
-            Text(L("Example Studio") + " · www.example.com")
-            Spacer(minLength: 8)
-            Text(verbatim: "1/1")
-        }
-        .font(printed(5.5))
-        .foregroundStyle(.secondary)
-    }
-
-    /// A heading on the page, in small capitals.
-    private func heading(_ text: String) -> some View {
-        Text(text)
-            .font(printed(6, .semibold))
-            .textCase(.uppercase)
-            .tracking(0.5)
-            .foregroundStyle(.secondary)
-    }
-
-    /// A printed rule: a hairline, or the line over the total.
-    private func rule(strong: Bool) -> some View {
+    /// A printed rule: a hairline, or the line over a total.
+    func rule(strong: Bool = false) -> some View {
         Rectangle()
             .fill(Color.primary.opacity(strong ? 0.8 : 0.12))
             .frame(height: strong ? 1 : 0.5)
     }
 
-    private var hairline: some View { rule(strong: false) }
-
-    private func gap(_ share: CGFloat) -> some View {
-        Color.clear.frame(height: height * share)
+    /// A heading on the page, in small capitals.
+    func heading(_ text: String) -> some View {
+        Text(text)
+            .font(font(6, .semibold))
+            .textCase(.uppercase)
+            .tracking(0.5)
+            .foregroundStyle(.secondary)
     }
 
-    /// The system's text at a print size, grown with the page.
-    private func printed(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
-        .system(size: size * scale, weight: weight)
+    /// The sender's mark: a symbol, white on ink, in a circle or a square.
+    func mark(_ symbol: String, round: Bool = false) -> some View {
+        Image(systemName: symbol)
+            .font(font(11, .semibold))
+            .foregroundStyle(.white)
+            .frame(width: 24 * scale, height: 24 * scale)
+            .background(SnapflyTokens.ink, in: RoundedRectangle(cornerRadius: round ? 12 * scale : 6 * scale, style: .continuous))
+    }
+
+    /// "Sample", on every page, so nobody takes it for a real one.
+    var sample: some View {
+        Text(L("Sample"))
+            .font(font(6, .semibold))
+            .textCase(.uppercase)
+            .tracking(0.6)
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 6 * scale)
+            .padding(.vertical, 2.5 * scale)
+            .background(Color.primary.opacity(0.06), in: Capsule())
+    }
+
+    /// The top of a page: the sender's mark, name and line, and "Sample".
+    func letterhead(_ mark: some View, _ name: String, _ line: String) -> some View {
+        HStack(spacing: 7 * scale) {
+            mark
+            VStack(alignment: .leading, spacing: 1.5 * scale) {
+                Text(name)
+                    .font(font(10.5, .semibold))
+                Text(line)
+                    .font(font(6.5))
+                    .foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 8)
+            sample
+        }
+        .band(height * 0.075, .leading)
+        .overlay(alignment: .bottom) { rule() }
+    }
+
+    /// A labelled detail: its label in a column of its own beside its value.
+    func labelled(_ id: FirstRun.Field.ID, _ font: Font) -> some View {
+        let field = FirstRun.field(id)
+        return HStack(spacing: 0) {
+            Text(field.label)
+                .font(self.font(7))
+                .foregroundStyle(.secondary)
+                .frame(width: 64 * scale, alignment: .leading)
+            value(field, font)
+        }
+    }
+
+    /// The small print at the foot of a page, over a hairline.
+    func footer(_ line: String) -> some View {
+        HStack(spacing: 8) {
+            Text(line)
+            Spacer(minLength: 8)
+            Text(verbatim: "1/1")
+        }
+        .font(font(5.5))
+        .foregroundStyle(.secondary)
+        .band(height * 0.045, .leading)
+        .overlay(alignment: .top) { rule() }
     }
 
     /// A private detail: lit in the brand's green once found, as selected
     /// text is, then the ink growing over it from the reading side, solid
     /// all the way; with Reduce Motion the ink is simply there.
-    private func value(_ field: FirstRun.Field, _ font: Font) -> some View {
+    func value(_ field: FirstRun.Field, _ font: Font) -> some View {
         let covered = state.isCovered(field)
         let found = state.isFound(field)
         let mark = RoundedRectangle(cornerRadius: 3 * scale, style: .continuous)
@@ -659,13 +564,382 @@ private struct SampleInvoice: View {
                 if interactive, let category = field.category { toggle(category) }
             }
     }
+}
 
-    /// Each detail as it stands, for VoiceOver.
+/// A sample page: white in light and dark alike, left to right in every
+/// language, and one element for VoiceOver, each detail Covered or its value.
+private struct SamplePage: View {
+    let document: FirstRun.Document
+    let sheet: Sheet
+
+    var body: some View {
+        Group {
+            switch document {
+            case .invoice: SampleInvoice(sheet: sheet)
+            case .letter: SampleLetter(sheet: sheet)
+            case .statement: SampleStatement(sheet: sheet)
+            }
+        }
+        .lineLimit(1)
+        .minimumScaleFactor(0.6)
+        .padding(.horizontal, sheet.width * 0.075)
+        .padding(.top, sheet.height * 0.05)
+        .frame(width: sheet.width, height: sheet.height, alignment: .top)
+        .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(Color.primary.opacity(0.08)))
+        .environment(\.colorScheme, .light)
+        .environment(\.layoutDirection, .leftToRight)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(summary)
+    }
+
+    private var title: String {
+        switch document {
+        case .invoice: L("Sample invoice")
+        case .letter: L("Sample doctor's letter")
+        case .statement: L("Sample bank statement")
+        }
+    }
+
+    /// Each detail as it stands.
     private var summary: String {
-        FirstRun.fields.map { field in
-            field.label + ": " + (state.isCovered(field) ? L("Covered") : field.value)
+        FirstRun.fields(of: document).map { field in
+            field.label + ": " + (sheet.state.isCovered(field) ? L("Covered") : field.value)
         }
         .joined(separator: ", ")
+    }
+}
+
+/// The made-up invoice, printed as a real one is: a studio's letterhead,
+/// whom it is for, its number and date, what was done and what it costs,
+/// the account it is paid from and its small print. Each part takes its
+/// share of the page's height, so every detail sits where the reading light
+/// finds it (`FirstRun.Field.depth`).
+private struct SampleInvoice: View {
+    let sheet: Sheet
+
+    var body: some View {
+        let height = sheet.height
+        VStack(alignment: .leading, spacing: 0) {
+            sheet.letterhead(sheet.mark("paintbrush.pointed.fill"), L("Example Studio"), "www.example.com")
+            sheet.gap(0.025)
+            parties
+                .frame(height: height * 0.11, alignment: .top)
+            sheet.gap(0.025)
+            Text(L("Invoice"))
+                .font(sheet.font(18, .bold))
+                .band(height * 0.06, .leading)
+            sheet.gap(0.025)
+            items
+            sheet.gap(0.005)
+            sum(L("Subtotal"), "125,97 €")
+                .band(height * 0.03, .trailing)
+            sum(L("VAT") + " 19 %", "23,93 €")
+                .band(height * 0.03, .trailing)
+            sheet.gap(0.015)
+            total
+                .band(height * 0.05, .leading)
+                .overlay(alignment: .top) { sheet.rule(strong: true) }
+            sheet.gap(0.06)
+            Text(L("Payment by direct debit"))
+                .font(sheet.font(6.5))
+                .foregroundStyle(.secondary)
+                .band(height * 0.03, .bottomLeading)
+            HStack(spacing: 8 * sheet.scale) {
+                Text(FirstRun.field(.iban).label)
+                    .font(sheet.font(7, .semibold))
+                    .foregroundStyle(.secondary)
+                sheet.value(FirstRun.field(.iban), sheet.font(8.5).monospacedDigit())
+            }
+            .band(height * 0.04, .leading)
+            sheet.gap(0.05)
+            Text(L("Thank you for your order."))
+                .font(sheet.font(7.5))
+                .band(height * 0.04, .leading)
+            sheet.gap(0.075)
+            sheet.footer(L("Example Studio") + " · www.example.com")
+        }
+    }
+
+    /// Whom it is for, the name over the email; its number and date beside.
+    private var parties: some View {
+        let height = sheet.height
+        return HStack(alignment: .top, spacing: 8) {
+            VStack(alignment: .leading, spacing: 0) {
+                sheet.heading(L("Bill to"))
+                    .band(height * 0.03, .leading)
+                sheet.value(FirstRun.field(.name), sheet.font(10, .semibold))
+                    .band(height * 0.04, .leading)
+                sheet.value(FirstRun.field(.email), sheet.font(9))
+                    .band(height * 0.04, .leading)
+            }
+            Grid(alignment: .leading, horizontalSpacing: 6 * sheet.scale, verticalSpacing: 0) {
+                GridRow {
+                    Text(L("Invoice no."))
+                        .foregroundStyle(.secondary)
+                        .frame(height: height * 0.03)
+                    Text(verbatim: "RE-2026-0417")
+                        .frame(height: height * 0.03)
+                }
+                GridRow {
+                    Text(L("Date"))
+                        .foregroundStyle(.secondary)
+                        .frame(height: height * 0.04)
+                    Text(verbatim: "14.10.2026")
+                        .frame(height: height * 0.04)
+                }
+            }
+            .font(sheet.font(7).monospacedDigit())
+            .fixedSize(horizontal: true, vertical: false)
+        }
+    }
+
+    /// What was done: a heading row and two items, under rules.
+    private var items: some View {
+        VStack(spacing: 0) {
+            item(L("Description"), L("Qty"), L("Amount"), heading: true)
+                .band(sheet.height * 0.03, .leading)
+                .overlay(alignment: .bottom) { sheet.rule() }
+            item(L("Logo design"), "1", "99,00 €")
+                .band(sheet.height * 0.04, .leading)
+            item(L("Business cards, 250"), "1", "26,97 €")
+                .band(sheet.height * 0.04, .leading)
+                .overlay(alignment: .bottom) { sheet.rule() }
+        }
+    }
+
+    private func item(_ what: String, _ count: String, _ price: String, heading: Bool = false) -> some View {
+        HStack(spacing: 6 * sheet.scale) {
+            Text(what)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Text(count)
+                .frame(width: 30 * sheet.scale, alignment: .trailing)
+            Text(price)
+                .frame(width: 56 * sheet.scale, alignment: .trailing)
+        }
+        .font(heading ? sheet.font(6, .semibold) : sheet.font(7.5).monospacedDigit())
+        .textCase(heading ? Text.Case.uppercase : nil)
+        .tracking(heading ? 0.4 : 0)
+        .foregroundStyle(heading ? Color.secondary : Color.primary)
+    }
+
+    /// A line of the sums, on the trailing side under the amounts.
+    private func sum(_ label: String, _ amount: String) -> some View {
+        HStack(spacing: 6 * sheet.scale) {
+            Text(label)
+                .foregroundStyle(.secondary)
+            Text(verbatim: amount)
+                .frame(width: 56 * sheet.scale, alignment: .trailing)
+        }
+        .font(sheet.font(7).monospacedDigit())
+    }
+
+    private var total: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(L("Total"))
+                .font(sheet.font(9, .semibold))
+            Spacer(minLength: 8)
+            Text(verbatim: FirstRun.field(.amount).value)
+                .font(sheet.font(12.5, .bold).monospacedDigit())
+        }
+    }
+}
+
+/// The made-up doctor's letter, printed as a real one is: the practice's
+/// letterhead and sender line, the colleague it goes to, the place and date,
+/// the patient, her date of birth and the diagnosis, a short letter, the
+/// doctor's signature beside the practice's stamp, and its small print.
+private struct SampleLetter: View {
+    let sheet: Sheet
+
+    var body: some View {
+        let height = sheet.height
+        VStack(alignment: .leading, spacing: 0) {
+            sheet.letterhead(sheet.mark("stethoscope", round: true), FirstRun.field(.doctor).value,
+                             L("Specialist in internal medicine"))
+            sheet.gap(0.015)
+            Text(verbatim: "Praxis Dr. Schmidt · Hauptstraße 12 · 20095 Hamburg")
+                .font(sheet.font(5.5))
+                .foregroundStyle(.secondary)
+                .band(height * 0.025, .leading)
+            ForEach(["Dr. med. Klaus Weber", L("Family practice"), "Lindenweg 3", "22301 Hamburg"], id: \.self) { line in
+                Text(line)
+                    .font(sheet.font(7))
+                    .band(height * 0.025, .leading)
+            }
+            Text(verbatim: "Hamburg, 14.10.2026")
+                .font(sheet.font(7).monospacedDigit())
+                .band(height * 0.03, .trailing)
+            sheet.gap(0.01)
+            Text(L("Doctor's letter"))
+                .font(sheet.font(16, .bold))
+                .band(height * 0.055, .leading)
+            sheet.gap(0.01)
+            sheet.labelled(.patient, sheet.font(9.5, .semibold))
+                .band(height * 0.035, .leading)
+            sheet.labelled(.birthDate, sheet.font(8.5).monospacedDigit())
+                .band(height * 0.035, .leading)
+            sheet.labelled(.diagnosis, sheet.font(8.5))
+                .band(height * 0.035, .leading)
+            sheet.gap(0.03)
+            Text(L("Dear colleague,"))
+                .font(sheet.font(7.5))
+                .band(height * 0.035, .leading)
+            Text(L("We report on our patient's visit today. Her blood pressure is well controlled; we advise a check-up in six months."))
+                .font(sheet.font(7.5))
+                .lineSpacing(2 * sheet.scale)
+                .lineLimit(5)
+                .fixedSize(horizontal: false, vertical: true)
+                .band(height * 0.13, .topLeading)
+            sheet.gap(0.02)
+            Text(L("Kind regards"))
+                .font(sheet.font(7.5))
+                .band(height * 0.035, .leading)
+            signed
+                .band(height * 0.09, .leading)
+            Text(verbatim: FirstRun.field(.doctor).value)
+                .font(sheet.font(7.5))
+                .band(height * 0.03, .leading)
+            Text(L("Specialist in internal medicine"))
+                .font(sheet.font(6.5))
+                .foregroundStyle(.secondary)
+                .band(height * 0.025, .leading)
+            sheet.gap(0.035)
+            sheet.footer("Praxis Dr. Schmidt · Tel. 040 1234567 · www.example.com")
+        }
+    }
+
+    /// The doctor's signature in a ballpoint's blue, and the practice's
+    /// stamp beside it, pressed a little crooked.
+    private var signed: some View {
+        HStack(spacing: 0) {
+            Signature()
+                .stroke(SnapflyTokens.penInk, style: StrokeStyle(lineWidth: 1.1 * sheet.scale, lineCap: .round, lineJoin: .round))
+                .frame(width: sheet.width * 0.32, height: sheet.height * 0.07)
+            Spacer(minLength: 0)
+            VStack(spacing: 1 * sheet.scale) {
+                Text(verbatim: FirstRun.field(.doctor).value)
+                    .font(sheet.font(6.5, .bold))
+                Text(L("Specialist in internal medicine"))
+                    .font(sheet.font(5))
+                Text(verbatim: "Hauptstraße 12 · 20095 Hamburg")
+                    .font(sheet.font(5))
+            }
+            .foregroundStyle(SnapflyTokens.penInk)
+            .padding(.horizontal, 6 * sheet.scale)
+            .padding(.vertical, 4 * sheet.scale)
+            .overlay(RoundedRectangle(cornerRadius: 3 * sheet.scale, style: .continuous)
+                .strokeBorder(SnapflyTokens.penInk, lineWidth: sheet.scale))
+            .opacity(0.75)
+            .rotationEffect(.degrees(-6))
+            .padding(.trailing, 10 * sheet.scale)
+        }
+    }
+}
+
+/// A signature, written quickly: a tall initial, the name running small,
+/// and a stroke under it.
+private struct Signature: Shape {
+    func path(in rect: CGRect) -> Path {
+        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: rect.minX + x * rect.width, y: rect.minY + y * rect.height)
+        }
+        var path = Path()
+        path.move(to: p(0.02, 0.78))
+        path.addCurve(to: p(0.13, 0.04), control1: p(0.07, 0.6), control2: p(0.09, 0.05))
+        path.addCurve(to: p(0.2, 0.82), control1: p(0.17, 0.03), control2: p(0.16, 0.6))
+        path.addCurve(to: p(0.08, 0.5), control1: p(0.23, 0.95), control2: p(0.02, 0.62))
+        path.addCurve(to: p(0.3, 0.44), control1: p(0.15, 0.4), control2: p(0.24, 0.47))
+        path.addCurve(to: p(0.38, 0.62), control1: p(0.36, 0.4), control2: p(0.33, 0.66))
+        path.addCurve(to: p(0.46, 0.3), control1: p(0.44, 0.58), control2: p(0.42, 0.26))
+        path.addCurve(to: p(0.52, 0.66), control1: p(0.5, 0.34), control2: p(0.47, 0.7))
+        path.addCurve(to: p(0.6, 0.42), control1: p(0.57, 0.62), control2: p(0.56, 0.4))
+        path.addCurve(to: p(0.66, 0.64), control1: p(0.64, 0.44), control2: p(0.62, 0.66))
+        path.addCurve(to: p(0.74, 0.36), control1: p(0.7, 0.62), control2: p(0.71, 0.34))
+        path.addCurve(to: p(0.8, 0.62), control1: p(0.77, 0.38), control2: p(0.76, 0.64))
+        path.addCurve(to: p(0.9, 0.48), control1: p(0.84, 0.6), control2: p(0.87, 0.5))
+        path.move(to: p(0.12, 0.93))
+        path.addCurve(to: p(0.98, 0.8), control1: p(0.4, 0.86), control2: p(0.7, 0.98))
+        return path
+    }
+}
+
+/// The made-up bank statement, printed as a real one is: the bank's
+/// letterhead, the month, whose account it is and its IBAN, the month's
+/// bookings and the new balance.
+private struct SampleStatement: View {
+    let sheet: Sheet
+
+    var body: some View {
+        let height = sheet.height
+        VStack(alignment: .leading, spacing: 0) {
+            sheet.letterhead(sheet.mark("building.columns.fill"), L("Example Bank"), "www.example.com")
+            sheet.gap(0.025)
+            Text(L("Account statement") + " 10/2026")
+                .font(sheet.font(14, .bold))
+                .band(height * 0.05, .leading)
+            Text(verbatim: "01.10.2026 – 31.10.2026")
+                .font(sheet.font(6.5).monospacedDigit())
+                .foregroundStyle(.secondary)
+                .band(height * 0.025, .leading)
+            sheet.gap(0.02)
+            sheet.labelled(.holder, sheet.font(9, .semibold))
+                .band(height * 0.035, .leading)
+            sheet.labelled(.account, sheet.font(8.5).monospacedDigit())
+                .band(height * 0.035, .leading)
+            sheet.gap(0.035)
+            booking(L("Date"), L("Description"), L("Amount"), heading: true)
+                .band(height * 0.03, .leading)
+                .overlay(alignment: .bottom) { sheet.rule() }
+            VStack(spacing: 0) {
+                ForEach(Self.bookings, id: \.self) { entry in
+                    booking(entry[0], entry[1], entry[2])
+                        .band(height * 0.04, .leading)
+                }
+            }
+            .overlay(alignment: .bottom) { sheet.rule() }
+            sheet.gap(0.02)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(FirstRun.field(.balance).label)
+                    .font(sheet.font(9, .semibold))
+                Spacer(minLength: 8)
+                Text(verbatim: FirstRun.field(.balance).value)
+                    .font(sheet.font(12.5, .bold).monospacedDigit())
+            }
+            .band(height * 0.05, .leading)
+            .overlay(alignment: .top) { sheet.rule(strong: true) }
+            sheet.gap(0.175)
+            sheet.footer(L("Example Bank") + " · www.example.com")
+        }
+    }
+
+    /// The month's bookings: the salary in, then rent, food, power, the
+    /// studio's invoice, the phone and the pharmacy. They add up to the new
+    /// balance.
+    private static let bookings = [
+        ["01.10.", L("Salary"), "+2.450,00 €"],
+        ["02.10.", L("Rent"), "−890,00 €"],
+        ["05.10.", L("Groceries"), "−64,37 €"],
+        ["08.10.", L("Electricity"), "−58,00 €"],
+        ["14.10.", L("Example Studio") + " RE-2026-0417", "−149,90 €"],
+        ["15.10.", L("Mobile phone"), "−19,99 €"],
+        ["20.10.", L("Pharmacy"), "−12,50 €"],
+    ]
+
+    private func booking(_ day: String, _ what: String, _ amount: String, heading: Bool = false) -> some View {
+        HStack(spacing: 6 * sheet.scale) {
+            Text(day)
+                .frame(width: 34 * sheet.scale, alignment: .leading)
+            Text(what)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Text(amount)
+                .frame(width: 56 * sheet.scale, alignment: .trailing)
+        }
+        .font(heading ? sheet.font(6, .semibold) : sheet.font(7.5).monospacedDigit())
+        .textCase(heading ? Text.Case.uppercase : nil)
+        .tracking(heading ? 0.4 : 0)
+        .foregroundStyle(heading ? Color.secondary : Color.primary)
     }
 }
 
@@ -680,9 +954,11 @@ private extension View {
 
 // MARK: The categories
 
-/// The categories to cover on the sample, as chips: Names, Emails and Bank
-/// details. On, the chip is green and its eye shut.
+/// The categories to cover on the page in front, as chips: Names, Emails and
+/// Bank details on the invoice; Patient, Date of birth and Diagnosis on the
+/// doctor's letter. On, the chip is green and its eye shut.
 private struct PrivacyChips: View {
+    let categories: [FirstRun.Category]
     let chosen: Set<FirstRun.Category>
     let toggle: (FirstRun.Category) -> Void
 
@@ -695,7 +971,7 @@ private struct PrivacyChips: View {
     }
 
     private func chips(symbols: Bool) -> some View {
-        ForEach(FirstRun.Category.allCases, id: \.self) { category in
+        ForEach(categories, id: \.self) { category in
             chip(category, on: chosen.contains(category), symbol: symbols)
         }
     }

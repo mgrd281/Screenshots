@@ -84,7 +84,7 @@ enum DocumentSense {
                                                   "Oy", "A/S", "AB", "LLP", "ООО", "ОАО", "ЗАО", "ПАО", "АО"]
     /// Words that name an organization wherever they stand, small letters.
     private static let organizationWords: Set<String> = [
-        "praxis", "gemeinschaftspraxis", "arztpraxis", "klinik", "klinikum", "uniklinik", "universitätsklinikum",
+        "praxis", "gemeinschaftspraxis", "arztpraxis", "practice", "klinik", "klinikum", "uniklinik", "universitätsklinikum",
         "krankenhaus", "hospital", "spital", "clinic", "mvz", "zentrum", "center", "centre", "labor", "laboratorium",
         "laboratory", "lab", "apotheke", "pharmacy", "bank", "sparkasse", "volksbank", "raiffeisenbank",
         "versicherung", "krankenkasse", "insurance", "aok", "bkk", "ikk", "dak", "barmer", "universität",
@@ -211,8 +211,11 @@ enum DocumentSense {
     /// without capitals, like Arabic.
     static func isNameWord(_ word: String, caseless: Bool = true) -> Bool {
         let core = word.hasSuffix(",") ? String(word.dropLast()) : word
+        // A word's possessive is no more a name than the word: "Doctor's".
+        let bare = ["'s", "’s"].first { core.lowercased().hasSuffix($0) }.map { String(core.lowercased().dropLast($0.count)) }
         guard let first = core.first, core.count >= 2, !notNames.contains(core.lowercased()),
-              !documentWords.contains(core.lowercased()), !isOrganizationWord(core) else { return false }
+              !documentWords.contains(core.lowercased()), !isOrganizationWord(core),
+              bare.map({ !notNames.contains($0) && !documentWords.contains($0) }) ?? true else { return false }
         guard core.allSatisfy({ $0.isLetter || "'’.-".contains($0) }) else { return false }
         // A long German noun of a kind no one is named, like "Erstbescheinigung".
         let lower = core.lowercased()

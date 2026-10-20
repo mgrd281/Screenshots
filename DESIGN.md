@@ -53,6 +53,7 @@ colors:
   phone-protect-light: "#12A572"    # the badge's upper end
   phone-surface: "#EAF7F0"     # the soft green behind the stacked photos; #102A20 in dark
   phone-ink: "#1F1F1F"         # the cover ink, as a covered copy shows it (white 12%), light and dark
+  phone-pen-ink: "#2B45A0"     # a ballpoint's blue: the signature and the stamp on the first run's doctor's letter, on its white paper only
 typography:
   field:
     fontFamily: "SF Pro, system-ui"
@@ -1973,7 +1974,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
 - **The first run** (`FirstRunExperience.swift`, the story in
   `Shared/FirstRun.swift`, `FIRST_RUN.md`) shows over everything from the
   first frame, on `systemBackground` with the safe areas kept, until it is
-  skipped or ended. One page moves through it all.
+  skipped or ended. Three made-up pages of one made-up person move through
+  it: an invoice read first, a doctor's letter scanned, and a bank
+  statement beside them at the end.
   - **Layout**, top to bottom in a scroll view at least the screen's
     height:
     - the story's bars (`phone-story-bars`), 8 pt down, 24 pt in, 400 pt
@@ -1981,9 +1984,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     - 16 pt under them the words, centred, 400 pt wide at most, 24 pt in,
       in a place kept at least 124 pt high so nothing below it jumps: the
       headline in title 2 bold over its scene's line in subheadline
-      `.secondary`, 6 pt apart (what is found, how to turn a category, what
-      the scanner does, that only the protected copy leaves, what Snapfly
-      is for);
+      `.secondary`, 6 pt apart (what is found, how to turn a category, that
+      the scanner covers the patient and leaves the doctor, that only the
+      protected copy leaves, what Snapfly is for);
     - the stage (`phone-first-run-stage`), between flexible space of at
       least 8 pt: `phone-surface` with corners of 32 and a hairline of
       `.primary` at 6%, 16 pt in from the screen's sides, holding the page
@@ -1996,28 +1999,31 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     - The tabs behind it are made only once a first run that opens Snapfly
       is over, so reading Photos and starting sync never hold up its first
       seconds.
-  - **The page** (`SampleInvoice`, `phone-sample-page`) stands as a sheet
-    of A4, as a printed invoice does (`FirstRun.pageRatio`): as tall as the
-    room between the words and the chips allows, 300 pt wide at most and
-    170 at least, never wider than the screen less 72. White in light and
-    dark alike, corners of 8, a hairline of `.primary` at 8%, margins of
-    7.5% of its width at the sides and 5% of its height above, left to
-    right in every language, and the floating shadow (black 12%, radius 16,
-    y 6). It is a real invoice, with words, not lines standing for them,
-    all made up: a studio's letterhead, whom it is for, its number and
-    date, two items, the sums, the account it is paid from and its small
-    print. Its type is the system's at print sizes given for a page 300 pt
-    wide and grown with the page, so Dynamic Type leaves it as printed (the
-    words around it follow Dynamic Type); a line too long for its place
-    shrinks to 60%. Each part takes its share of the height, so every
-    detail sits where the reading light finds it
-    (`FirstRun.Field.depth`), from the top:
-    - the letterhead, 7.5%, over a hairline (`.primary` at 12%, 0.5 pt):
-      the studio's initial, 13 bold white on a 24 pt `phone-ink` square
-      with corners of 6, its name ("Example Studio", 10.5 semibold) over
-      www.example.com (6.5, `.secondary`), and "Sample" (6 semibold
-      capitals, tracked 0.6, `.secondary` on a capsule of `.primary` at
-      6%), so nobody takes it for a real one;
+  - **The pages** (`SamplePage`, `phone-sample-page`) stand as sheets of
+    A4, as printed pages do (`FirstRun.pageRatio`): as tall as the room
+    between the words and the chips allows, 300 pt wide at most and 170 at
+    least, never wider than the screen less 72. White in light and dark
+    alike, corners of 8, a hairline of `.primary` at 8%, margins of 7.5% of
+    its width at the sides and 5% of its height above, left to right in
+    every language, and the floating shadow (black 12%, radius 16, y 6).
+    Each is a real document, with words, not lines standing for them, all
+    made up, and each says "Sample". Their type is the system's at print
+    sizes given for a page 300 pt wide and grown with the page, so Dynamic
+    Type leaves them as printed (the words around them follow Dynamic
+    Type); a line too long for its place shrinks to 60%. Each part takes
+    its share of the height, so every detail sits where the reading light
+    finds it (`FirstRun.Field.depth`). Every page starts with a letterhead,
+    7.5%, over a hairline (`.primary` at 12%, 0.5 pt): the sender's mark, a
+    symbol 11 semibold in white on a 24 pt `phone-ink` square with corners
+    of 6 (a circle for the doctor), its name (10.5 semibold) over a line
+    (6.5, `.secondary`), and "Sample" (6 semibold capitals, tracked 0.6,
+    `.secondary` on a capsule of `.primary` at 6%), so nobody takes it for
+    a real one. A detail with a label sets its label in 7 `.secondary` in a
+    column 64 pt wide. Every page ends with its small print over a hairline
+    (5.5, `.secondary`, 4.5%, at 90.5%), and 1/1.
+  - **The invoice** (`SampleInvoice`), from the top:
+    - the letterhead: Example Studio (`paintbrush.pointed.fill`) and
+      www.example.com;
     - 2.5% space, then Bill To, 11%: its heading (6 semibold capitals,
       tracked 0.5, `.secondary`, 3%), the name (10 semibold, 4%) and the
       email (9, 4%); beside it the invoice's number and date (7, the
@@ -2036,10 +2042,51 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
       IBAN (7 semibold, `.secondary`) and the IBAN (8.5, monospaced digits),
       4%;
     - 5% space, "Thank you for your order." (7.5), 4%;
-    - 7.5% space, and the small print over a hairline (5.5, `.secondary`,
-      4.5%): the studio and its website, and 1/1.
+    - 7.5% space, and the small print: the studio and its website.
     - The sums add up: 99,00 € and 26,97 € make 125,97 €, and with 19%
       VAT on it, 23,93 €, 149,90 €.
+  - **The doctor's letter** (`SampleLetter`), a German Arztbrief, from the
+    top:
+    - the letterhead: Dr. med. Anna Schmidt (`stethoscope`, in a circle)
+      and her specialty;
+    - 1.5% space, the sender's line (5.5, `.secondary`, 2.5%): the
+      practice and its address;
+    - the colleague it goes to, four lines of 7 (2.5% each): Dr. med.
+      Klaus Weber, Family practice, street and town;
+    - the place and date on the trailing side (7, 3%);
+    - 1% space, "Doctor's letter" in 16 bold (5.5%);
+    - 1% space, Patient (the name in 9.5 semibold), Date of birth (8.5,
+      monospaced digits) and Diagnosis (8.5), labelled, 3.5% each;
+    - 3% space, "Dear colleague," (7.5, 3.5%) over the letter (7.5, lines
+      2 pt apart, up to five, 13%);
+    - 2% space, "Kind regards" (7.5, 3.5%), then the signature beside the
+      stamp (9%): the signature drawn as one quick stroke (`Signature`), a
+      tall initial, the name running small and a stroke under it, 32% of
+      the page wide and 7% high, 1.1 pt (grown with the page) in
+      `phone-pen-ink` with round caps; the practice's stamp on the
+      trailing side, 10 pt in, its name (6.5 bold), specialty and address
+      (5) in `phone-pen-ink` inside a 1 pt `phone-pen-ink` outline with
+      corners of 3, at 75%, turned −6°, as stamps are pressed;
+    - the doctor's name (7.5, 3%) and her specialty (6.5, `.secondary`,
+      2.5%);
+    - 3.5% space, and the small print: the practice, its phone and
+      website.
+  - **The bank statement** (`SampleStatement`), from the top:
+    - the letterhead: Example Bank (`building.columns.fill`) and
+      www.example.com;
+    - 2.5% space, "Account statement 10/2026" in 14 bold (5%) over the
+      month (6.5, `.secondary`, 2.5%);
+    - 2% space, the account holder (the name in 9 semibold) and IBAN (8.5,
+      monospaced digits), labelled, 3.5% each;
+    - 3.5% space, the bookings: a heading row (6 semibold capitals,
+      `.secondary`, 3%) over a hairline, then seven rows of 4% (7.5,
+      monospaced digits; the day 34 pt and the amount 56 pt wide): salary,
+      rent, groceries, electricity, the studio's invoice by its number,
+      the phone and the pharmacy, over a hairline;
+    - 2% space, New balance (9 semibold) and "1.255,24 €" (12.5 bold) on
+      the trailing edge, 5%, under a 1 pt rule of `.primary` at 80%; the
+      bookings add up to it;
+    - 17.5% space, and the small print: the bank and its website.
   - **A detail found** is lit as selected text is: a rounded rectangle
     (corners of 3, grown with the page) of `phone-protect` at 14% with a
     1.25 pt `phone-protect` edge, 3 pt beyond the words at the sides and
@@ -2050,7 +2097,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     way. The protected shield on the page's corner is a
     36 pt `phone-protect` circle with `checkmark.shield.fill` in white and
     a 3 pt `phone-surface` ring, so it seems cut into the page, from 30% (`motion.success`) with one
-    bounce; it shows only while something is chosen.
+    bounce; it shows only while something on the page in front is
+    chosen.
   - **The story**, in seconds: the page at once; at 0.25 the reading light
     (`sweep.light`) crosses it and each detail is found as it passes; from
     1.3 the name, email and IBAN are covered 170 ms apart
@@ -2058,16 +2106,22 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     haptic: "Private stays private." At 2.2 the chips rise in under the
     page: "You decide what stays visible."; at 3.4 the name comes off and
     at 4.8 goes on again, as a tap would do it, unless the owner tapped
-    first. At 6.2, "Scan. Detect. Protect.": the page, as printed again,
-    drops to 80% into the camera and lies tipped away; at 6.8 its edges
+    first. At 6.2, "Scan. Detect. Protect." over "Scan a doctor's letter:
+    the patient is covered, the doctor stays.": the doctor's letter
+    cross-fades into the invoice's place, at 80% in the camera, lying
+    tipped away, and the chips become the letter's; at 6.8 its edges
     are found, with a light haptic; at 7.6 it is taken (`take.page`) and
     straightened; at
-    8.2 it is read and what is chosen is found; from 9.35 it is covered as
-    chosen, the shield at 9.9. At 10.4, "Protected. Ready to share.": the
-    page goes to 74% and the share row rises in. At 13.6, "Share your
-    documents. Not your private data." over "Protect invoices, screenshots
-    and documents before you share them." in subheadline `.secondary`, and
-    Try It Now. Each scene's words give way to the next in place: the old
+    8.2 it is read and the patient's name, her date of birth and the
+    diagnosis are found, the doctors' names never; from 9.35 they are
+    covered as chosen, the shield at 9.9. At 10.4, "Protected. Ready to
+    share.": the letter goes to 74%, the bank statement and the invoice,
+    protected as chosen, slide out from behind it to either side (15% of
+    the page's width, turned −7° and 6°, black 10% shadows of radius 10, y
+    4; on `motion.document`, a cross-fade with Reduce Motion), and the
+    share row rises in. At 13.6, "Share your documents. Not your private
+    data." over "Protect invoices, doctor's letters and bank statements
+    before you share them." in subheadline `.secondary`, and Try It Now. Each scene's words give way to the next in place: the old
     ones leave first in 0.12 s, then the new ones rise 8 pt and come into
     focus from a 6 pt blur in 0.32 s (an ease-out), so the two are never
     read over each other; with Reduce Motion they cross-fade.
@@ -2076,8 +2130,10 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     (`FirstRun.progress`). Each fills as its scene plays and stands still
     while the story waits for the owner or the app is away; they fade out
     at the end, and are hidden from VoiceOver, which starts at the end.
-  - **The chips** (`phone-first-run-chip`): Names, Emails and Bank details,
-    8 pt apart in a row (without their eyes, then stacked, where the row
+  - **The chips** (`phone-first-run-chip`): the page in front's own
+    categories, Names, Emails and Bank details on the invoice and Patient,
+    Date of birth and Diagnosis on the doctor's letter, cross-fading as the
+    letter comes; 8 pt apart in a row (without their eyes, then stacked, where the row
     does not fit). On, `phone-protect` with white words and
     `eye.slash.fill`; off, `secondarySystemBackground` with a hairline of
     `.primary` at 10% and `eye`; subheadline semibold, 14 pt in, 40 pt
@@ -2118,8 +2174,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     fading and rising (`rise.small`, 8–14 pt) and leave by fading. With
     Reduce Motion or Low Power Mode nothing moves: no reading light, no
     tilt, no flash, no growing ink; covers and scenes cross-fade in 0.15–0.2 s. With
-    VoiceOver it starts at its end, and the page is one element: "Sample
-    invoice", with each detail Covered or its value.
+    VoiceOver it starts at its end, and the letter is one element: "Sample
+    doctor's letter", with each detail Covered or its value; the pages
+    behind it are hidden from VoiceOver.
   - It shows once (`firstRunSeen`), never again after an ordinary update,
     and from More › Help & Introduction › Watch the Demo (`play.circle`).
 - **Scan** (`ScanTab.swift`), a large title, 16 pt in:

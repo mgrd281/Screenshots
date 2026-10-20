@@ -2,23 +2,35 @@ import CoreGraphics
 import Foundation
 
 /// The iPhone's first run: a made-up invoice whose private details are found
-/// and covered in front of the owner, then theirs to change, then scanned
-/// and made ready to share, as one story of under fifteen seconds. Pure, so
-/// the story is checked without a screen: the script says what happens
-/// when, the state says what each moment shows, and the categories chosen
-/// are the one source of truth for what is covered.
+/// and covered in front of the owner, then theirs to change, then a doctor's
+/// letter scanned and covered, and both made ready to share beside a bank
+/// statement, as one story of under fifteen seconds. Pure, so the story is
+/// checked without a screen: the script says what happens when, the state
+/// says what each moment shows, and the categories chosen are the one source
+/// of truth for what is covered.
 enum FirstRun {
-    // MARK: The sample
+    // MARK: The samples
 
-    /// The categories the first run offers, each a kind of Settings.
+    /// The made-up documents the first run shows: the invoice read and
+    /// covered first, the doctor's letter scanned, and a bank statement,
+    /// protected beside them at the end. All of one made-up person.
+    enum Document: CaseIterable, Sendable {
+        case invoice, letter, statement
+    }
+
+    /// The categories the first run offers, each a kind of Settings: the
+    /// invoice's (which the statement shares) and the doctor's letter's.
     enum Category: String, CaseIterable, Hashable, Sendable {
-        case names, emails, bank
+        case names, emails, bank, patients, birthDates, health
 
         var detail: PrivateDetail {
             switch self {
             case .names: .names
             case .emails: .emails
             case .bank: .bank
+            case .patients: .patientNames
+            case .birthDates: .birthDates
+            case .health: .health
             }
         }
 
@@ -27,15 +39,29 @@ enum FirstRun {
             case .names: L("Names")
             case .emails: L("Emails")
             case .bank: L("Bank details")
+            case .patients: L("Patient")
+            case .birthDates: L("Date of birth")
+            case .health: L("Diagnosis")
+            }
+        }
+
+        /// The page whose chips offer it.
+        var document: Document {
+            switch self {
+            case .names, .emails, .bank: .invoice
+            case .patients, .birthDates, .health: .letter
             }
         }
     }
 
-    /// A line of the sample invoice: its value, made up, and the category
-    /// Snapfly covers it as; none where nothing is private, like the amount.
+    /// A line of a sample page: its value, made up, and the category
+    /// Snapfly covers it as; none where nothing is private, like the amount
+    /// or the doctor's name.
     struct Field: Identifiable, Equatable, Sendable {
         enum ID: String, CaseIterable, Sendable {
             case name, email, iban, amount
+            case patient, birthDate, diagnosis, doctor
+            case holder, account, balance
         }
 
         let id: ID
@@ -45,41 +71,73 @@ enum FirstRun {
         /// bottom, so the reading light finds it as it passes.
         let depth: Double
 
-        /// Its label as the invoice prints it.
+        /// Its label as the page prints it.
         var label: String {
             switch id {
             case .name: L("Name")
             case .email: L("Email")
-            case .iban: "IBAN"
+            case .iban, .account: "IBAN"
             case .amount: L("Amount")
+            case .patient: L("Patient")
+            case .birthDate: L("Date of birth")
+            case .diagnosis: L("Diagnosis")
+            case .doctor: L("Doctor")
+            case .holder: L("Account holder")
+            case .balance: L("New balance")
+            }
+        }
+
+        var document: Document {
+            switch id {
+            case .name, .email, .iban, .amount: .invoice
+            case .patient, .birthDate, .diagnosis, .doctor: .letter
+            case .holder, .account, .balance: .statement
             }
         }
     }
 
-    /// The sample's details: a placeholder name, an address at example.com,
-    /// the standard example IBAN and an amount. They belong to no one. Which
-    /// category covers each is what the engine finds on the invoice
-    /// (`FirstRunTests`), so the first run shows nothing it would not do.
-    /// Their depths are where the invoice prints them: the name and email
-    /// under Bill To, the total under the items, and the IBAN the amount is
-    /// paid from under it.
+    /// The samples' details: a placeholder name, an address at example.com,
+    /// the standard example IBAN, a date of birth and a diagnosis, and the
+    /// amounts. They belong to no one. Which category covers each is what
+    /// the engine finds on each page (`FirstRunTests`), so the first run
+    /// shows nothing it would not do: on the letter, the patient is covered
+    /// and the doctor stays. Their depths are where the pages print them.
     static let fields: [Field] = [
+        // The invoice: the name and email under Bill To, the total under the
+        // items, and the IBAN the amount is paid from under it.
         Field(id: .name, value: "Erika Mustermann", category: .names, depth: 0.2),
         Field(id: .email, value: "erika@example.com", category: .emails, depth: 0.24),
         Field(id: .iban, value: "DE89 3704 0044 0532 0130 00", category: .bank, depth: 0.72),
         Field(id: .amount, value: "149,90 €", category: nil, depth: 0.585),
+        // The doctor's letter: the patient, her date of birth and the
+        // diagnosis under the title, and the doctor who signs.
+        Field(id: .patient, value: "Erika Mustermann", category: .patients, depth: 0.3875),
+        Field(id: .birthDate, value: "12.08.1964", category: .birthDates, depth: 0.4225),
+        Field(id: .diagnosis, value: L("Hypertension") + " (I10.90)", category: .health, depth: 0.4575),
+        Field(id: .doctor, value: "Dr. med. Anna Schmidt", category: nil, depth: 0.83),
+        // The bank statement: whose account it is and its IBAN, and what is
+        // left at the end of the month.
+        Field(id: .holder, value: "Erika Mustermann", category: .names, depth: 0.2625),
+        Field(id: .account, value: "DE89 3704 0044 0532 0130 00", category: .bank, depth: 0.2975),
+        Field(id: .balance, value: "1.255,24 €", category: nil, depth: 0.705),
     ]
 
     /// The sample page's height for its width: a sheet of A4, standing, as
-    /// a printed invoice is.
+    /// a printed page is.
     static let pageRatio = 297.0 / 210.0
 
     static func field(_ id: Field.ID) -> Field {
         fields.first { $0.id == id }!
     }
 
-    /// The fields a category covers, in reading order.
-    static var privateFields: [Field] { fields.filter { $0.category != nil } }
+    static func fields(of document: Document) -> [Field] {
+        fields.filter { $0.document == document }
+    }
+
+    /// The fields a category covers on a page, in reading order.
+    static func privateFields(of document: Document) -> [Field] {
+        fields(of: document).filter { $0.category != nil }
+    }
 
     // MARK: The story
 
@@ -160,8 +218,22 @@ enum FirstRun {
             return found.contains(field.id) && chosen.contains(category) && !laid.contains(field.id)
         }
 
-        /// The shield shows only while something is chosen to cover.
-        var showsShield: Bool { shield && !chosen.isEmpty }
+        /// The page in front: the invoice, then from the scan on the
+        /// doctor's letter.
+        var document: Document { scene >= .scan ? .letter : .invoice }
+
+        /// The shield shows only while something on the page in front is
+        /// chosen to cover.
+        var showsShield: Bool { shield && chosen.contains { $0.document == document } }
+
+        /// A page shown protected beside the one in front at the end: each of
+        /// its details covered as the categories chosen say.
+        func protected(_ page: Document) -> State {
+            var shown = self
+            shown.found = []
+            shown.laid = Set(FirstRun.privateFields(of: page).map(\.id))
+            return shown
+        }
 
         /// The phase to report: the story's own, or paused while it waits.
         func reported(held: Bool) -> Phase {
@@ -213,24 +285,24 @@ enum FirstRun {
     /// owner can change the categories from the control scene on.
     static let script: [Beat] = {
         var beats = [Beat(0.25, .phase(.detecting)), Beat(0.25, .sweep)]
-        beats += privateFields.map { Beat(0.25 + sweep * $0.depth, .find($0.id)) }
+        beats += privateFields(of: .invoice).map { Beat(0.25 + sweep * $0.depth, .find($0.id)) }
         beats.append(Beat(1.15, .phase(.highlighted)))
         beats.append(Beat(1.3, .phase(.redacting)))
-        beats += privateFields.enumerated().map { Beat(1.3 + stagger * Double($0.offset), .lay($0.element.id)) }
+        beats += privateFields(of: .invoice).enumerated().map { Beat(1.3 + stagger * Double($0.offset), .lay($0.element.id)) }
         beats += [Beat(1.85, .shield(true)), Beat(1.85, .phase(.protected))]
         // The owner's control: the names come off and go on again, shown
         // as a tap would do it, unless the owner tries it first.
         beats.append(Beat(controlStart, .scene(.control)))
         beats += [Beat(3.4, .auto(.names, false)), Beat(3.4 + settle, .settle),
                   Beat(4.8, .auto(.names, true)), Beat(4.8 + settle, .settle)]
-        // The scanner: the page placed, its edges found, straightened, read
-        // and covered as chosen.
+        // The scanner: the doctor's letter placed, its edges found,
+        // straightened, read and covered as chosen.
         beats.append(Beat(scanStart, .scene(.scan)))
         beats += [Beat(6.8, .scan(.edges)), Beat(7.6, .scan(.straight)), Beat(8.2, .scan(.reading)), Beat(8.2, .sweep)]
-        beats += privateFields.map { Beat(8.2 + sweep * $0.depth, .find($0.id)) }
+        beats += privateFields(of: .letter).map { Beat(8.2 + sweep * $0.depth, .find($0.id)) }
         beats.append(Beat(9.2, .phase(.highlighted)))
         beats.append(Beat(9.35, .phase(.redacting)))
-        beats += privateFields.enumerated().map { Beat(9.35 + stagger * Double($0.offset), .lay($0.element.id)) }
+        beats += privateFields(of: .letter).enumerated().map { Beat(9.35 + stagger * Double($0.offset), .lay($0.element.id)) }
         beats += [Beat(9.9, .scan(.done)), Beat(9.9, .shield(true)), Beat(9.9, .phase(.protected))]
         beats.append(Beat(shareStart, .scene(.share)))
         beats.append(Beat(completeStart, .scene(.complete)))
@@ -244,7 +316,7 @@ enum FirstRun {
             state.scene = scene
             switch scene {
             case .scan:
-                // The page as the camera sees it: printed, nothing found yet.
+                // The letter as the camera sees it: printed, nothing found yet.
                 state.found = []
                 state.laid = []
                 state.shield = false
@@ -358,6 +430,6 @@ enum FirstRun {
     static func lines(title: String = "Rechnung", labels: [Field.ID: String] = [
         .name: "Name:", .email: "E-Mail:", .iban: "IBAN:", .amount: "Betrag:",
     ]) -> [String] {
-        [title] + fields.map { "\(labels[$0.id] ?? "") \($0.value)" }
+        [title] + fields(of: .invoice).map { "\(labels[$0.id] ?? "") \($0.value)" }
     }
 }

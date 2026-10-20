@@ -928,26 +928,34 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Settings and Help & Introduction. While a picture is open the tab bar
   steps aside.
 - **The first run** shows what Snapfly does in under fifteen seconds, on
-  one made-up invoice, a standing A4 page, that moves through it all, before anything is asked
-  (`FIRST_RUN.md`). The invoice looks like a real one: a studio's
-  letterhead, whom it is for, its number and date, two items, VAT, the
-  total, the account it is paid from by direct debit, and its small print,
-  all made up and marked "Sample". It stands on a soft green stage, with
+  three made-up documents of one made-up person, each a standing A4 page
+  that looks like a real one, before anything is asked (`FIRST_RUN.md`):
+  an invoice (a studio's letterhead, whom it is for, its number and date,
+  two items, VAT, the total, the account it is paid from by direct debit,
+  and its small print), a doctor's letter (the practice's letterhead, the
+  colleague it goes to, the patient, her date of birth and diagnosis, a
+  short letter, a signature in ballpoint blue and the practice's stamp)
+  and a bank statement (the month's bookings and the new balance), all
+  made up and marked "Sample". It stands on a soft green stage, with
   bars over it that show how far the story is and a line under each
   headline saying what happens. From the first frame the invoice is there;
   a green light reads it, and its name, email and IBAN are lit, then
   covered, while its amount stays readable: "Private stays private." Then
   Names, Emails and Bank details appear as chips, and a tap on one, or on
   a detail, covers or shows it at once; the story waits while you try. The
-  stage then turns into a camera with the page lying in it, tipped away:
-  its edges are found, the shutter takes it with a flash, and it is
-  straightened, read, and covered as you chose. Last, it becomes a small protected copy
-  beside where it could go, "Only the protected copy leaves your iPhone",
-  and "Share your documents. Not your private data." Try It Now opens the
-  real scanner; Skip Demo leaves at any time. Which detail each category
-  covers is what the engine itself finds on that invoice. With Reduce
-  Motion or Low Power Mode it cross-fades instead of moving; with VoiceOver
-  it starts at its end, the invoice described as it is. It shows once,
+  stage then turns into a camera with the doctor's letter lying in it,
+  tipped away: its edges are found, the shutter takes it with a flash, and
+  it is straightened and read; the patient's name, date of birth and
+  diagnosis are covered as you choose with Patient, Date of birth and
+  Diagnosis, and the doctors' names stay. Last, the letter becomes a
+  small protected copy, the invoice and the bank statement, protected too,
+  fanned out behind it, beside where it could go: "Only the protected copy
+  leaves your iPhone", and "Share your documents. Not your private data."
+  Try It Now opens the real scanner; Skip Demo leaves at any time. Which
+  detail each category covers is what the engine itself finds on each
+  page. With Reduce Motion or Low Power Mode it cross-fades instead of
+  moving; with VoiceOver it starts at its end, the letter described as it
+  is. It shows once,
   never again after an ordinary update, and from More › Help &
   Introduction › Watch the Demo whenever you like. Until Photos may be
   read, the Photos tab asks with a calm card, and the other tabs are there.
@@ -1181,7 +1189,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them as one covered PDF |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
-| `iOS/Snapfly/FirstRunExperience.swift` | The first run: the sample invoice, standing as an A4 page, read and covered, its categories as chips, the scan of a page tipped, found, straightened and covered, the protected copy ready to share, Try It Now and Skip Demo; when it shows (`FirstRunCoordinator`) |
+| `iOS/Snapfly/FirstRunExperience.swift` | The first run: the sample invoice, doctor's letter and bank statement, each standing as an A4 page; the invoice read and covered, its categories as chips, the letter scanned (tipped, found, taken, straightened, covered, the patient but not the doctor), the protected letter ready to share with the other two behind it, Try It Now and Skip Demo; when it shows (`FirstRunCoordinator`) |
 | `iOS/Snapfly/ExplainSheet.swift` | Explain, from Protect Picture: the protected copy sent to the owner's own Claude or ChatGPT, the answer streamed, ready questions and the owner's own (`DocumentTalk`) |
 | `iOS/Snapfly/AssistantSettings.swift` | More › AI Assistant on the iPhone: the assistant, the key in the keychain with the system's Paste, checked at once, the model, and Find more |
 | `iOS/Snapfly/Motion.swift` | The iPhone's named motion (`SnapflyMotion`), each with its calm answer for Reduce Motion and Low Power Mode |
