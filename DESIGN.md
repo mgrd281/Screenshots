@@ -52,6 +52,7 @@ colors:
   phone-protect-pressed: "#056B49"  # pressed, and the badge's lower end
   phone-protect-light: "#12A572"    # the badge's upper end
   phone-surface: "#EAF7F0"     # the soft green behind the stacked photos; #102A20 in dark
+  phone-ink: "#1F1F1F"         # the cover ink, as a covered copy shows it (white 12%), light and dark
 typography:
   field:
     fontFamily: "SF Pro, system-ui"
@@ -1942,31 +1943,44 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     and transparent, on a spring (0.42, 0.82), 35 ms apart in reading order
     for the first twelve (`stagger.grid`); cards that come later, or come
     back, are simply there. With Reduce Motion they fade in over 0.15 s.
-  - **First launch**, before access, shows the covering before it asks
-    for anything (`CoverDemo`): on the soft `phone-surface` ellipse of the
-    stacked photos, a made-up contact card (the card colour, corners of 20,
-    a hairline of `.primary` at 8%, a shadow of black 8%, radius 10, y 4,
-    16 pt in, at most 300 pt wide; no larger than at extra large text): a
-    32 pt circle with `person.fill`, the name in headline, two capsules of
-    `.primary` at 10%, then the phone number, email and IBAN in subheadline
-    with monospaced digits beside `phone.fill`, `envelope.fill` and
-    `creditcard.fill` in `.secondary`. As it shows, the reading line
-    (`sweep.scan`) crosses it once, then a cover of `.primary` at 85%
-    (the drawn pictures' covers, corners of a quarter of the height, 8 at
-    most, 3 pt beyond the words) grows over each detail from the reading
-    side, 180 ms apart (`stagger.demo`), each in 0.32 s on `ease.out`;
-    then, 16 pt under the card, a capsule of regular material says
-    "Name, phone number, email and IBAN covered." in footnote medium beside
-    `checkmark.shield.fill` in `phone-protect`, rising 8 pt into place on
-    `spring.reveal` as the shield bounces once and a success haptic plays.
-    A tap on the card plays it again. With Reduce Motion it is shown
-    covered, without the line. VoiceOver reads it as one sample
-    screenshot. Under it, "Covered before you send" in title 2 bold and
-    what Snapfly does in `.secondary`, centred, 32 pt in, then Allow
-    Access, then a footnote in `.secondary` that screenshots are read on
-    the iPhone and nothing leaves it unless the owner chooses. Its details
-    belong to no one (a placeholder name, `example.com` and the standard
-    example IBAN).
+  - **First launch**, before access (`WelcomeScreen`, `CoverDemo.swift`),
+    shows Snapfly at work before a word is said, with the tab bar hidden.
+    A made-up screenshot (`CoverDemo`), drawn light in light and dark: a
+    white card at most 320 pt wide with corners of 28, a hairline of
+    `.primary` at 8% and the floating shadow (black 14%, radius 18, y 8),
+    on the soft `phone-surface` ellipse (360 by 280, blurred 30). Inside, a
+    status bar ("9:41", `cellularbars`, `wifi`, `battery.100`, 11–12 pt
+    semibold), a 60 pt circle of `systemGray3` with `person.fill`, the name
+    in title 3 semibold, then the phone number, email and IBAN in
+    subheadline with monospaced digits, each beside its glyph on a 28 pt
+    tile of `.primary` at 6% (corners of 8), between hairline dividers.
+    No larger than at extra large text. Its details belong to no one (a
+    placeholder name, `example.com` and the standard example IBAN).
+    - The card lands (`land.card`): from 36 pt down, tipped back 16° about
+      its lower edge, on a spring (0.6, 0.82). The reading line
+      (`sweep.scan`) crosses it once, and each detail is found as the line
+      reaches it: green corner brackets (`phone-protect`, 2 pt, round caps,
+      arms of 10 at most) over a 8% green fill, 5 pt beyond the words,
+      snapping in from 112% on a spring (0.3, 0.7). Then the ink
+      (`phone-ink`, corners of 6, 3 pt beyond the words) grows over each
+      in turn from the reading side, 170 ms apart (`stagger.demo`), each in
+      0.34 s on `ease.out`, solid all the way, as its brackets fade.
+    - Last, the protected shield lands on the card's corner: a 36 pt
+      `phone-protect` circle with `checkmark.shield.fill` in white and a
+      3 pt white ring, from 30% on a spring (0.42, 0.7) with one bounce and
+      a success haptic, as the soft green grows a little brighter.
+    - Only then, 0.55 s later, "Covered before you send" in title bold and
+      what Snapfly does in `.secondary` rise in under the card, 40 pt below
+      it, then Allow Access, 32 pt lower, as a wide green pill (340 pt at
+      most, 50 pt high) over `lock.fill` and the promise that screenshots
+      are read on the iPhone and nothing leaves it unless the owner
+      chooses, in footnote `.secondary`; each rises 16 pt on a spring
+      (0.55, 0.86), 200 ms apart, and the card glides up to make room, the
+      whole centred on the screen. About 3.5 s in all.
+    - A tap anywhere skips to the end; a tap on the card afterwards plays
+      the covering again. With Reduce Motion or VoiceOver everything is
+      there at once, without the line. VoiceOver reads the card as one
+      sample screenshot.
 - **Scan** (`ScanTab.swift`), a large title, 16 pt in:
   - A card of `phone-surface` with corners of 24 and a hairline of
     `.primary` at 6%, padded 20 by 24, its contents centred 18 pt apart: a

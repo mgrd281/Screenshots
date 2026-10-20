@@ -903,11 +903,13 @@ watch the screen, so there is no line there. What it keeps is the covering:
   shows the last twelve screenshots protected, in the same grid. More holds
   Settings and Help & Introduction. While a picture is open the tab bar
   steps aside.
-- **The first launch** shows what Snapfly does before it asks for anything:
-  a made-up contact card is read by a green line and its name, phone
-  number, email and IBAN are covered one after another (a tap plays it
-  again), then Allow Access, with a word that screenshots are read on the
-  iPhone and nothing leaves it unless you choose.
+- **The first launch** shows what Snapfly does before it says or asks
+  anything: a made-up screenshot lands, a green line reads it, its name,
+  phone number, email and IBAN are found and covered one after another,
+  and a shield settles on its corner. Only then do the words and Allow
+  Access rise in, with a word that screenshots are read on the iPhone and
+  nothing leaves it unless you choose. A tap skips ahead, and a tap on the
+  card plays it again.
 - **From any app's share sheet.** Share a picture from Photos, Messages,
   Safari or anywhere else and choose Snapfly: it is covered right there, as
   chosen in Snapfly (the kinds, the look and the own rules, which the app
@@ -1115,7 +1117,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab, and covering a screenshot from its menu in any tab |
 | `iOS/Snapfly/ScanTab.swift` | The Scan tab: the system's document camera, the pages scanned while the app is open (`ScannedPages`), each opened to cover and kept as left, and all of them as one covered PDF |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, See All, and the iPhone's green |
-| `iOS/Snapfly/CoverDemo.swift` | The first launch's sample card, read by a green line and covered detail by detail |
+| `iOS/Snapfly/CoverDemo.swift` | The first launch (`WelcomeScreen`): the sample screenshot read, found and covered detail by detail, then the words and Allow Access |
 | `iOS/Snapfly/PhotoIndexer.swift`, `IndexStore.swift`, `PreparingView.swift`, `iOS/Info.plist` | Faster picture processing: reading pictures ahead of time with consent, in the app and in the background, where it is kept on the iPhone, its page in Settings, and the background task's name |
 | `HideEditor.swift` | Hide Part: a window to click words or drag boxes over anything else to hide, and to cover a word always |
 | `HideBySaying.swift` | Hide Part told in words: picks the lines or words to hide with Apple Intelligence, or finds the words typed |

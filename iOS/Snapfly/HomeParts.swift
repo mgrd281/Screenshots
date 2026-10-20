@@ -20,6 +20,9 @@ enum SnapflyTokens {
     })
     /// Cards and the paper of the photos.
     static let card = Color(.secondarySystemGroupedBackground)
+    /// The cover ink, as a covered copy shows it: the editor's, and the first
+    /// launch's sample screenshot's.
+    static let ink = Color(white: 0.12)
 }
 
 // MARK: The picture of stacked photos
