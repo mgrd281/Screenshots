@@ -409,11 +409,11 @@
 "Try It Now" = "Şimdi dene";
 "Skip Demo" = "Demoyu atla";
 "Watch the Demo" = "Demoyu izle";
-"Private stays private." = "Özel olan özel kalır.";
-"You decide what stays visible." = "Neyin görünür kalacağına sen karar verirsin.";
-"Scan. Detect. Protect." = "Tara. Algıla. Koru.";
-"Protected. Ready to share." = "Korundu. Paylaşmaya hazır.";
-"Share your documents. Not your private data." = "Belgelerini paylaş. Özel verilerini değil.";
+"Private *stays* private." = "Özel olan özel *kalır*.";
+"You *decide* what stays visible." = "Neyin görünür kalacağına sen *karar verirsin*.";
+"Scan. Detect. *Protect*." = "Tara. Algıla. *Koru*.";
+"*Protected*. Ready to share." = "*Korundu*. Paylaşmaya hazır.";
+"Share your documents. *Not your private data*." = "Belgelerini paylaş. *Özel verilerini değil*.";
 "Only the protected copy leaves your iPhone." = "iPhone'undan yalnızca korunan kopya çıkar.";
 "Names, emails and bank details are found and covered." = "İsimler, e-postalar ve banka bilgileri bulunur ve gizlenir.";
 "Tap a category to show or cover it." = "Göstermek ya da gizlemek için bir kategoriye dokun.";

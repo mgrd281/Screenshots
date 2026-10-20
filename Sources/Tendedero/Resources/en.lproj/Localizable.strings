@@ -411,11 +411,11 @@
 "Try It Now" = "Try It Now";
 "Skip Demo" = "Skip Demo";
 "Watch the Demo" = "Watch the Demo";
-"Private stays private." = "Private stays private.";
-"You decide what stays visible." = "You decide what stays visible.";
-"Scan. Detect. Protect." = "Scan. Detect. Protect.";
-"Protected. Ready to share." = "Protected. Ready to share.";
-"Share your documents. Not your private data." = "Share your documents. Not your private data.";
+"Private *stays* private." = "Private *stays* private.";
+"You *decide* what stays visible." = "You *decide* what stays visible.";
+"Scan. Detect. *Protect*." = "Scan. Detect. *Protect*.";
+"*Protected*. Ready to share." = "*Protected*. Ready to share.";
+"Share your documents. *Not your private data*." = "Share your documents. *Not your private data*.";
 "Only the protected copy leaves your iPhone." = "Only the protected copy leaves your iPhone.";
 "Names, emails and bank details are found and covered." = "Names, emails and bank details are found and covered.";
 "Tap a category to show or cover it." = "Tap a category to show or cover it.";

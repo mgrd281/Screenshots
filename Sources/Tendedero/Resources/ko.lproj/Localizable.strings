@@ -409,11 +409,11 @@
 "Try It Now" = "지금 해보기";
 "Skip Demo" = "데모 건너뛰기";
 "Watch the Demo" = "데모 보기";
-"Private stays private." = "사적인 것은 사적인 그대로.";
-"You decide what stays visible." = "무엇을 보여줄지는 직접 정합니다.";
-"Scan. Detect. Protect." = "스캔. 감지. 보호.";
-"Protected. Ready to share." = "보호 완료. 공유할 준비가 되었습니다.";
-"Share your documents. Not your private data." = "문서는 공유하고, 개인 정보는 지키세요.";
+"Private *stays* private." = "사적인 것은 *사적인 그대로*.";
+"You *decide* what stays visible." = "무엇을 보여줄지는 *직접 정합니다*.";
+"Scan. Detect. *Protect*." = "스캔. 감지. *보호*.";
+"*Protected*. Ready to share." = "*보호 완료*. 공유할 준비가 되었습니다.";
+"Share your documents. *Not your private data*." = "문서는 공유하고, *개인 정보는 지키세요*.";
 "Only the protected copy leaves your iPhone." = "iPhone 밖으로 나가는 것은 보호된 사본뿐입니다.";
 "Names, emails and bank details are found and covered." = "이름, 이메일, 계좌 정보를 찾아 가립니다.";
 "Tap a category to show or cover it." = "카테고리를 탭해 보이거나 가리세요.";

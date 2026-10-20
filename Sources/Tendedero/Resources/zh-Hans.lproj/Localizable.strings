@@ -409,11 +409,11 @@
 "Try It Now" = "立即试试";
 "Skip Demo" = "跳过演示";
 "Watch the Demo" = "观看演示";
-"Private stays private." = "隐私，始终是隐私。";
-"You decide what stays visible." = "显示什么，由你决定。";
-"Scan. Detect. Protect." = "扫描。识别。保护。";
-"Protected. Ready to share." = "已保护，可以分享了。";
-"Share your documents. Not your private data." = "分享文件，不分享隐私。";
+"Private *stays* private." = "隐私，*始终是隐私*。";
+"You *decide* what stays visible." = "显示什么，由你*决定*。";
+"Scan. Detect. *Protect*." = "扫描。识别。*保护*。";
+"*Protected*. Ready to share." = "*已保护*，可以分享了。";
+"Share your documents. *Not your private data*." = "分享文件，*不分享隐私*。";
 "Only the protected copy leaves your iPhone." = "离开你 iPhone 的只有受保护的副本。";
 "Names, emails and bank details are found and covered." = "找出姓名、电子邮件和银行信息，并将其遮盖。";
 "Tap a category to show or cover it." = "轻点类别即可显示或遮盖。";

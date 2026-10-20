@@ -178,6 +178,8 @@ components:
     rounded: "32pt"                # the camera on the first run: phone-ink filling the stage, the page at 80% in it, the shutter under it
   phone-shutter:
     size: "34pt"                   # the camera's shutter on the first run: a white ring of 2.5pt at 90% round a white button 5pt in, centred in the room under the page, smaller where the room is (14pt less than it)
+  phone-stress-band:
+    height: "30% of the ascent + 35% of the descent"   # behind a first-run headline's stressed words, from iOS 18 on: phone-protect at 14%, corners of 4, 3pt past the words each side, over the lower half of the small letters to a little under the line, as a highlighter leaves it
   phone-share-tile:
     size: "52pt"                   # an app to send to: on the first run's share row and under scanned pages; its icon from the asset catalogue (Logo* from SVG, vector kept; Chat* the owner's logos as app icons, 192px), clipped to continuous corners of 12 with a hairline of .primary at 8%, the name in caption .secondary under it, 64pt wide, 12pt apart in a row that scrolls sideways; More, last, is .tertiarySystemFill with ellipsis
   phone-app-circle:
@@ -1984,9 +1986,14 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     - the story's bars (`phone-story-bars`), 8 pt down, 24 pt in, 400 pt
       wide at most;
     - 16 pt under them the words, centred, 400 pt wide at most, 24 pt in,
-      in a place kept at least 124 pt high so nothing below it jumps: the
-      headline in title 2 bold over its scene's line in subheadline
-      `.secondary`, 6 pt apart (what is found, how to turn a category, that
+      in a place kept at least 140 pt high so nothing below it jumps: the
+      headline in large title heavy, set 0.6 pt closer, on two lines at
+      most (a long one shrinks, to 60% at least, rather than taking a
+      third), Dynamic Type up to XX Large, its stressed words in
+      `phone-protect` over `phone-stress-band` ("Privat **bleibt** privat."
+      at the owner's request, October 2026; each language marks its own
+      words between asterisks), over its scene's line in body
+      `.secondary`, 10 pt apart (what is found, how to turn a category, that
       the scanner covers the patient and leaves the doctor, that only the
       protected copy leaves, what Snapfly is for);
     - the stage (`phone-first-run-stage`), between flexible space of at
