@@ -38,6 +38,8 @@ page adopts one.
 | `canvas-design/` | https://github.com/anthropics/skills, `skills/canvas-design` | commit dbd4588 | Apache 2.0 (`canvas-design/LICENSE.txt`) |
 | shadcn MCP server (`.mcp.json`, `.claude/mcp/shadcn-mcp.sh`) | https://github.com/shadcn-ui/ui, npm `shadcn` | 4.21.1, pinned | MIT |
 | `website/vendor/` (GSAP, Rive, dotLottie, Floating UI, daisyUI, Lucide, Phosphor) | npm, see `website/vendor/README.md` | pinned there | see `website/vendor/README.md` |
+| `swiftui-animation/` | https://github.com/dpearson2699/swift-ios-skills, `skills/swiftui-animation` | commit 8d90fd1 | PolyForm Perimeter 1.0.0 (`swiftui-animation/LICENSE`, with its required notice) |
+| `text-to-lottie/` | https://github.com/diffusionstudio/lottie, `skills/text-to-lottie` | commit 3c72912 | MIT (`text-to-lottie/LICENSE`) |
 
 ## Impeccable
 
@@ -348,6 +350,67 @@ Not installed, and why:
     project; don't run what it suggests here.
 - **Not installed:** any of them through a CDN, `npx shadcn init`, or
   Tailwind.
+
+## SwiftUI Animation and Text to Lottie (October 20, 2026)
+
+The owner sent a list of motion tools for the apps and chose to have the two
+agent skills now and the app libraries only when a motion needs them.
+
+- **SwiftUI Animation** (`swiftui-animation/`): guidance for motion in
+  SwiftUI, covering springs, `PhaseAnimator`, `KeyframeAnimator`,
+  transitions, matched geometry, symbol effects, Reduce Motion and the
+  bridge to Core Animation.
+  - **Installed:** `SKILL.md` and `references/`, copied unchanged, with the
+    repository's `LICENSE`. That file holds the terms and the line beginning
+    `Required Notice:`, which the license asks to travel with every copy.
+  - **Left out:** `evals/`, the authors' tests for the skill, and the rest of
+    the repository's eighty-odd skills.
+  - **Safety:** plain guidance, with no scripts and no dependencies. Its
+    links go to Apple's documentation, through `sosumi.ai`.
+  - **License:** PolyForm Perimeter allows any use except offering a product
+    that competes with the skills themselves. Guiding the agent on Snapfly
+    is such a use.
+  - **Where it gives way:** it is written for iOS 26 and Swift 6.3, but
+    Snapfly builds in Swift 5 mode for iOS 17 and macOS 14. Its newer
+    APIs, such as `@Animatable` and `symbolVariableValueMode`, need
+    `if #available`. Durations, curves and springs come from
+    `MOTION_SYSTEM.md`, and the apps go through `Motion.spring`.
+- **Text to Lottie** (`text-to-lottie/`): writes and fixes Lottie
+  animations as JSON, then checks them frame by frame in its own player
+  (Skia's Skottie in a small Vite app).
+  - **Installed:** `SKILL.md` and `references/`, copied unchanged, with the
+    repository's `LICENSE`.
+  - **Left out:** `evals/`. Its SKILL.md names them only for testing the
+    skill itself.
+  - **Not installed here: the player.** It is a separate web project with
+    400 npm packages. It is set up only when a Lottie file is made, in a
+    scratch folder outside the repository, never in `website/` or the apps.
+    - Use `git clone https://github.com/diffusionstudio/lottie`, then
+      `npm install --ignore-scripts`, then `node scripts/copy-canvaskit.mjs`.
+    - The last step is its one install script, read: it copies
+      `canvaskit.wasm` into the player's `public/` folder.
+    - The skill's own `npx degit` line does the same, but it runs a package
+      from npm.
+  - **Checked here:** the player, set up that way, served its scenes. In
+    Chromium (the headless shell under `/opt/pw-browsers`), it drew a test
+    scene, a card dropping onto the line and swinging, at frames 0 and 40.
+  - **What it makes:** a `lottie.json`. It reaches the iPhone app only
+    together with the Lottie library, below.
+- **The app libraries wait until a motion needs them** (the owner's choice).
+  - The three are Lottie for iOS (`airbnb/lottie-spm`, Apache 2.0, 4.6.1
+    today), Pow (`EmergeTools/Pow`, MIT, 1.0.6 today) and Rive for iOS
+    (`rive-app/rive-ios`, MIT, 6.28.1 today).
+  - Each would be a Swift package in `iOS/Snapfly.xcodeproj`, pinned, with
+    its `Package.resolved` committed. None is there now.
+  - When one is added, check what it does to the app's size and to
+    `PrivacyInfo.xcprivacy`. See "Libraries and tools" in
+    `MOTION_SYSTEM.md`.
+- **Don't apply:** the Flutter tools (`flutter_animate`, `animations`,
+  `lottie` for Flutter, Very Good Ventures' animations skill) and Capacitor
+  Haptics. Snapfly's apps are native Swift, and the iPhone gives haptics
+  through SwiftUI's `sensoryFeedback`.
+- **Not used:** `npx skills add`, the installer both sources suggest. It
+  runs a package from npm, and copying the folders needs none.
 
 ## Evaluated, not installed
 

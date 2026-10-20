@@ -403,6 +403,11 @@ For every future implementation:
 | dotLottie | Installed in `website/vendor/dotlottie`, used by no page | There are no Lottie assets; inline SVG and CSS cover icons and success marks. Only if a designer delivers Lottie files worth the player. |
 | Remotion | For videos only, in its own workspace | Never in the website. See below. The agent has its skills (`remotion-best-practices`, `video-shotcraft`). |
 | HyperFrames | For videos only, in its own workspace | HTML and GSAP compositions rendered to MP4 by its CLI (`npx hyperframes@0.8.181`), close to how `promo/` already works. Never in the website. The agent has its skills (`hyperframes*`, `motion-graphics`, `product-launch-video`). |
+| SwiftUI's own animation (springs, `PhaseAnimator`, `KeyframeAnimator`, transitions, symbol effects) | **Used** in the apps | Everything the Mac and iPhone apps animate today, through `Motion.spring` and the named motion above. The agent has the `swiftui-animation` skill for it. |
+| Lottie for iOS (`airbnb/lottie-spm`) | Future option for the iPhone app, not a dependency | Plays a Lottie file. Added, as a pinned Swift package, only when a motion needs a drawing SwiftUI can't make, and together with that file. The agent writes and checks such files with the `text-to-lottie` skill. |
+| Pow (`EmergeTools/Pow`) | Future option for the iPhone app, not a dependency | Ready effects for SwiftUI transitions and changes. Added only when a motion needs one of them and the named motion above can't do it. |
+| Rive for iOS (`rive-app/rive-ios`) | Future option for the iPhone app, not a dependency | Interactive state-machine drawings, with a runtime of its own. Added only for a drawing that reacts to touch in a way SwiftUI can't do. |
+| Flutter and Capacitor tools | Don't apply | The apps are native Swift. Haptics come from SwiftUI's `sensoryFeedback`. |
 
 ## Creative production
 
@@ -416,6 +421,7 @@ weigh on the website.
 | Promo video (today) | `promo/` | An HTML timeline (`seek(t)`) rendered frame by frame with Playwright and ffmpeg. 9:16 now; 16:9 and 1:1 by adding sizes to its layout. Output in `promo/out/`, ignored by git. |
 | Remotion videos (when needed) | A new top-level `video/` folder, not created yet | Its own `package.json` and lockfile; compositions for 1920 × 1080, 1080 × 1920 and 1080 × 1080; reuses the website's drawings and the app's strings; renders locally to `video/out/`, ignored by git. Outside `website/`, so the website and its workflows never see it. Check Remotion's license (free for individuals and small teams) before use. |
 | HyperFrames videos (when needed) | A new top-level `video-hf/` folder, not created yet | Made with `npx hyperframes@0.8.181 init`; its own `package.json`; HTML, CSS and GSAP from the brand's tokens; renders to its `renders/`, ignored by git. Its usage counters stay off (`.claude/settings.json`). |
+| Lottie animations (when needed) | Scratch folder, with the `text-to-lottie` player | The player is set up outside the repository (`.claude/skills/VENDORED.md` says how), and each frame is checked there. A finished `lottie.json` enters the iPhone app only together with the Lottie library, never on its own. |
 | Static compositions | Scratch folder | The `canvas-design` skill, on the brand above. Committed only if the owner wants them, under `assets/`. |
 
 Rules for all of it:
