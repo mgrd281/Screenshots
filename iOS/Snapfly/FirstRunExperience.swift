@@ -310,7 +310,7 @@ struct SnapflyFirstRunExperience: View {
         case .lay, .auto: SnapflyMotion.redact(calm)
         case .shield: SnapflyMotion.success(calm)
         // The page as printed comes back as the camera sees it, without a bounce.
-        case .scene(.scan): calm ? SnapflyMotion.calm : .easeOut(duration: 0.35)
+        case .scene(.scan): calm ? SnapflyMotion.calm : Animation.easeOut(duration: 0.35)
         case .scene: SnapflyMotion.document(calm)
         case .scan(.edges): SnapflyMotion.lock(calm)
         case .scan: SnapflyMotion.document(calm)
