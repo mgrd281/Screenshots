@@ -1577,10 +1577,6 @@
 "95%% under %@" = "95%% 低于 %@";
 "Median %@" = "中位数 %@";
 "Access" = "访问";
-"Active" = "已启用";
-"All Off" = "全部关闭";
-"All On" = "全部打开";
-"All three together cover everyone’s names." = "三项一起会遮盖所有人的姓名。";
 "Always On" = "始终开启";
 "Apple Intelligence off" = "Apple Intelligence 已关闭";
 "Apple Intelligence on" = "Apple Intelligence 已打开";
@@ -1608,9 +1604,40 @@
 "What Is Covered" = "遮盖内容";
 "Whole lines, with more room around them." = "整行遮盖，四周留出更多空间。";
 "Your Choice" = "自定义";
-"Your Own Details" = "你自己的信息";
 "Your Protection" = "你的保护";
-"Your name, address, cards and rules, covered in every picture" = "你的姓名、地址、卡片和规则，在每张图片中都会遮盖";
+
+/* What Is Covered */
+"/ %d covered" = "/ %d 项已遮盖";
+"All active" = "全部开启";
+"Always covered" = "始终遮盖";
+"Blood pressure raised" = "血压偏高";
+"Chat" = "聊天";
+"Contact" = "联系方式";
+"Date:" = "日期：";
+"Diagnosis:" = "诊断：";
+"Doctor’s Bill" = "医疗账单";
+"Example %@, %d of %d details covered" = "示例%@，已遮盖 %d/%d 项信息";
+"Follow me at" = "关注我：";
+"Here’s my number:" = "这是我的号码：";
+"Login" = "登录名";
+"Meet at" = "见面地点：";
+"More Options" = "更多选项";
+"Names without a clear role, as in chats. All three together cover everyone’s names." = "没有明确身份的名字，例如聊天中的。三项一起开启即可遮盖所有人的名字。";
+"Note" = "便签";
+"Notes" = "备忘录";
+"Practice Dr." = "诊所 Dr.";
+"Recommended Selection" = "推荐选择";
+"Server IP" = "服务器 IP";
+"Tax ID" = "税号";
+"Tel." = "电话";
+"Turn All Off" = "全部关闭";
+"Turn All On" = "全部开启";
+"Wi-Fi code" = "Wi-Fi 密码";
+"Your parcel:" = "你的包裹：";
+"born" = "出生";
+"is covered" = "会遮盖";
+"is not covered" = "不遮盖";
+"online" = "在线";
 
 /* Studio */
 "A ring where each click landed." = "在每次点按的位置显示一个圆环。";

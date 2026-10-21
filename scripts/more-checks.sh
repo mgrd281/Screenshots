@@ -7,7 +7,13 @@
 # tests walk through it, and the same walks with Reduce Motion. Writes the
 # frames and videos to captures/more and the test results to
 # build/more.xcresult. A failed test fails the run, once the frames are made.
+#
+# MORE_FULL=1 runs all of it, about an hour. Without it, only What Is
+# Covered: its UI tests, its frames (light, dark, the largest text size,
+# Arabic and the smallest iPhone) and one walk, in about a quarter of that.
 set -euo pipefail
+
+full=${MORE_FULL:-0}
 
 out=captures/more
 derived=build/more
@@ -45,8 +51,17 @@ app="$derived/Build/Products/Debug-iphonesimulator/Snapfly.app"
 xcrun simctl ui "$device" appearance light
 tests=0
 rm -rf build/more.xcresult
+if [ "$full" = 1 ]; then
+  only=(-only-testing:SnapflyUITests/MoreUITests)
+else
+  only=()
+  for test in testASwitchInASheetTurnsItsKindAndEverythingFollows testTheMenuSetsWhatTheButtonsOfBeforeSet \
+      testAGroupsButtonTurnsOnlyThatGroup testTheRightDocumentShows; do
+    only+=(-only-testing:"SnapflyUITests/MoreUITests/$test")
+  done
+fi
 xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -destination "id=$device" -derivedDataPath "$derived" \
-  -only-testing:SnapflyUITests/MoreUITests -resultBundlePath build/more.xcresult CODE_SIGNING_ALLOWED=NO \
+  "${only[@]}" -resultBundlePath build/more.xcresult CODE_SIGNING_ALLOWED=NO \
   test-without-building || tests=$?
 
 xcrun simctl install "$device" "$app"
@@ -72,19 +87,26 @@ xcrun simctl launch "$device" "$bundle" -SnapflyMore root >/dev/null
 sleep 10
 xcrun simctl terminate "$device" "$bundle" >/dev/null 2>&1 || true
 
-# Each state, and the end of the long ones.
+# Each state, and the end of the long ones; What Is Covered's alone when
+# the run is short.
 frames() {
   local on=$1 prefix=$2 appearance=$3 language=$4 size=${5:-}
-  for state in root off own covered people style strong detection; do
+  local states=(covered covered-own covered-none covered-chat covered-note people access) ends=(covered)
+  if [ "$full" = 1 ]; then
+    states=(root off own covered covered-own covered-none covered-chat covered-note people access style strong detection)
+    ends=(root covered style detection)
+  fi
+  for state in "${states[@]}"; do
     shot "$on" "$prefix-$state" "$state" "$appearance" "$language" "$size"
   done
-  for state in root covered style detection; do
+  for state in "${ends[@]}"; do
     shot "$on" "$prefix-$state-end" "$state" "$appearance" "$language" "$size" -SnapflyMoreEnd
   done
 }
 frames "$device" de-light light de
 frames "$device" de-dark dark de
 frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL
+if [ "$full" = 1 ]; then
 frames "$device" de-dark-accessibility-xxxl dark de UICTContentSizeCategoryAccessibilityXXXL
 for look in label blur pixels dots erase; do
   shot "$device" "de-light-style-$look" style light de "" -SnapflyMoreLook "$look"
@@ -92,8 +114,10 @@ for look in label blur pixels dots erase; do
 done
 shot "$device" "de-light-digits" digits light de
 shot "$device" "ar-light-root" root light ar
-shot "$device" "ar-light-covered" covered light ar
 shot "$device" "en-light-root" root light en
+fi
+shot "$device" "ar-light-covered" covered light ar
+shot "$device" "ar-light-people" people light ar
 shot "$device" "en-light-covered" covered light en
 
 # Videos of the walks: the motion as it plays, then with Reduce Motion.
@@ -112,16 +136,22 @@ record() {
   kill -INT "$recorder" 2>/dev/null || true
   wait "$recorder" 2>/dev/null || true
 }
+if [ "$full" != 1 ]; then
+  record sheets-presets testRecordSheetsAndPresets || echo "The video could not be recorded." >&2
+else
 (
   record first-open testRecordFirstOpen
   record tile-to-page testRecordTileToPage
-  record pills-presets-tabs testRecordPillsPresetsAndTabs
+  record sheets-presets testRecordSheetsAndPresets
+  record hero-to-document testRecordHeroToDocument
   record style testRecordStyle
   record reduce-motion-first-open testRecordFirstOpen still
   record reduce-motion-tile-to-page testRecordTileToPage still
-  record reduce-motion-pills-presets-tabs testRecordPillsPresetsAndTabs still
+  record reduce-motion-sheets-presets testRecordSheetsAndPresets still
+  record reduce-motion-hero-to-document testRecordHeroToDocument still
   record reduce-motion-style testRecordStyle still
 ) || echo "The videos could not all be recorded." >&2
+fi
 
 # And on the smallest iPhone there is.
 small=$(xcrun simctl list devices available --json | python3 -c '
@@ -153,8 +183,10 @@ if [ -n "$small" ] && [ "$small" != "$device" ]; then
     xcrun simctl launch "$small" "$bundle" -SnapflyMore root >/dev/null
     sleep 10
     frames "$small" de-small light de
-    frames "$small" de-small-dark dark de
-    frames "$small" de-small-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL
+    if [ "$full" = 1 ]; then
+      frames "$small" de-small-dark dark de
+      frames "$small" de-small-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL
+    fi
   ) || echo "The smallest iPhone could not be captured." >&2
   xcrun simctl shutdown "$small" || true
 fi

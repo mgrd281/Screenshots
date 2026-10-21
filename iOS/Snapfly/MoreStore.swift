@@ -129,8 +129,10 @@ enum MoreSample {
         return arguments[index + 1]
     }
 
-    /// What was asked for: root, off, all, own, covered, people, style,
-    /// strong, digits or detection.
+    /// What was asked for: root, off, all, own, covered (with Recommended),
+    /// covered-own, covered-none, covered-chat, covered-note, a group's sheet
+    /// open on What Is Covered (people, money, health, documents, access),
+    /// style, strong, digits or detection.
     static let state = value(after: "-SnapflyMore")
 
     static var requested: Bool { state != nil }
@@ -145,9 +147,9 @@ enum MoreSample {
 
     static var chosen: Set<PrivateDetail> {
         switch state ?? "" {
-        case "off": []
+        case "off", "covered-none": []
         case "all": Set(PrivateDetail.allCases)
-        case "own": PrivateDetail.recommended.subtracting([.otherPeople, .codes]).union([.amounts])
+        case "own", "covered-own": PrivateDetail.recommended.subtracting([.otherPeople, .codes]).union([.amounts])
         default: PrivateDetail.recommended
         }
     }
@@ -158,15 +160,34 @@ enum MoreSample {
     /// The page the sample opens, if any.
     static var page: MorePage? {
         switch state ?? "" {
-        case "covered", "people": .covered
+        case "covered", "covered-own", "covered-none", "covered-chat", "covered-note", "people", "money", "health",
+             "documents", "access": .covered
         case "style", "strong", "digits": .style
         case "detection": .detection
         default: nil
         }
     }
 
-    /// The group What Is Covered shows alone, if any.
-    static var group: CoverGroup? { state == "people" ? .people : nil }
+    /// The group whose sheet What Is Covered opens with, if any.
+    static var group: CoverGroup? {
+        switch state ?? "" {
+        case "people": .people
+        case "money": .money
+        case "health": .health
+        case "documents": .documents
+        case "access": .access
+        default: nil
+        }
+    }
+
+    /// The document What Is Covered opens on, if not the bill.
+    static var studioSample: CoverStudioSample? {
+        switch state ?? "" {
+        case "covered-chat": .chat
+        case "covered-note": .note
+        default: nil
+        }
+    }
 
     /// Always Hide's made-up name, card and rules.
     static var own: [OwnRule] { [AlwaysHideSample.name, AlwaysHideSample.card] + AlwaysHideSample.rules }

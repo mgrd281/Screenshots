@@ -1577,10 +1577,6 @@
 "95%% under %@" = "95%% が %@ 未満";
 "Median %@" = "中央値 %@";
 "Access" = "アクセス";
-"Active" = "有効";
-"All Off" = "すべてオフ";
-"All On" = "すべてオン";
-"All three together cover everyone’s names." = "3つすべてで、全員の名前を隠します。";
 "Always On" = "常にオン";
 "Apple Intelligence off" = "Apple Intelligence オフ";
 "Apple Intelligence on" = "Apple Intelligence オン";
@@ -1608,9 +1604,40 @@
 "What Is Covered" = "隠す内容";
 "Whole lines, with more room around them." = "行全体を、周りに余白を広く取って隠します。";
 "Your Choice" = "カスタム";
-"Your Own Details" = "あなた自身の情報";
 "Your Protection" = "あなたの保護";
-"Your name, address, cards and rules, covered in every picture" = "名前、住所、カード、ルールを、すべての画像で隠します";
+
+/* What Is Covered */
+"/ %d covered" = "/ %d 件を隠す";
+"All active" = "すべてオン";
+"Always covered" = "常に隠す";
+"Blood pressure raised" = "血圧高め";
+"Chat" = "チャット";
+"Contact" = "連絡先";
+"Date:" = "日付:";
+"Diagnosis:" = "診断:";
+"Doctor’s Bill" = "医療費の請求書";
+"Example %@, %d of %d details covered" = "見本 %@、%d/%d 件を隠しています";
+"Follow me at" = "フォローしてね";
+"Here’s my number:" = "私の番号:";
+"Login" = "ログイン";
+"Meet at" = "待ち合わせ:";
+"More Options" = "その他のオプション";
+"Names without a clear role, as in chats. All three together cover everyone’s names." = "役割がはっきりしない名前（チャットなど）。3つそろうと全員の名前を隠します。";
+"Note" = "メモ";
+"Notes" = "メモ";
+"Practice Dr." = "クリニック Dr.";
+"Recommended Selection" = "おすすめの選択";
+"Server IP" = "サーバIP";
+"Tax ID" = "税番号";
+"Tel." = "電話";
+"Turn All Off" = "すべてオフ";
+"Turn All On" = "すべてオン";
+"Wi-Fi code" = "Wi-Fiコード";
+"Your parcel:" = "お荷物:";
+"born" = "生年月日";
+"is covered" = "隠します";
+"is not covered" = "隠しません";
+"online" = "オンライン";
 
 /* Studio */
 "A ring where each click landed." = "クリックした場所ごとに輪を表示します。";

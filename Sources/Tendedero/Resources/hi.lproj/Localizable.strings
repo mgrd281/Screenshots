@@ -1579,10 +1579,6 @@
 "95%% under %@" = "95%% %@ से कम";
 "Median %@" = "माध्यिका %@";
 "Access" = "पहुँच";
-"Active" = "सक्रिय";
-"All Off" = "सभी बंद";
-"All On" = "सभी चालू";
-"All three together cover everyone’s names." = "तीनों मिलकर सभी के नाम ढकते हैं।";
 "Always On" = "हमेशा चालू";
 "Apple Intelligence off" = "Apple Intelligence बंद";
 "Apple Intelligence on" = "Apple Intelligence चालू";
@@ -1610,9 +1606,40 @@
 "What Is Covered" = "क्या ढका जाता है";
 "Whole lines, with more room around them." = "पूरी पंक्तियाँ, आसपास ज़्यादा जगह के साथ।";
 "Your Choice" = "आपका चुनाव";
-"Your Own Details" = "आपकी अपनी जानकारी";
 "Your Protection" = "आपकी सुरक्षा";
-"Your name, address, cards and rules, covered in every picture" = "आपका नाम, पता, कार्ड और नियम, हर चित्र में ढके हुए";
+
+/* What Is Covered */
+"/ %d covered" = "/ %d छिपे";
+"All active" = "सभी चालू";
+"Always covered" = "हमेशा छिपा";
+"Blood pressure raised" = "बढ़ा हुआ रक्तचाप";
+"Chat" = "चैट";
+"Contact" = "संपर्क";
+"Date:" = "तारीख़:";
+"Diagnosis:" = "निदान:";
+"Doctor’s Bill" = "डॉक्टर का बिल";
+"Example %@, %d of %d details covered" = "उदाहरण %@, %d में से %d विवरण छिपे";
+"Follow me at" = "मुझे फ़ॉलो करें:";
+"Here’s my number:" = "यह मेरा नंबर है:";
+"Login" = "लॉगिन";
+"Meet at" = "मिलते हैं";
+"More Options" = "और विकल्प";
+"Names without a clear role, as in chats. All three together cover everyone’s names." = "बिना साफ़ भूमिका वाले नाम, जैसे चैट में। तीनों मिलकर सबके नाम छिपाते हैं।";
+"Note" = "नोट";
+"Notes" = "नोट्स";
+"Practice Dr." = "क्लिनिक डॉ.";
+"Recommended Selection" = "सुझाया गया चयन";
+"Server IP" = "सर्वर IP";
+"Tax ID" = "टैक्स ID";
+"Tel." = "फ़ोन";
+"Turn All Off" = "सभी बंद करें";
+"Turn All On" = "सभी चालू करें";
+"Wi-Fi code" = "Wi-Fi कोड";
+"Your parcel:" = "आपका पार्सल:";
+"born" = "जन्म";
+"is covered" = "छिपाया जाता है";
+"is not covered" = "छिपाया नहीं जाता";
+"online" = "ऑनलाइन";
 
 /* Studio */
 "A ring where each click landed." = "हर क्लिक की जगह एक घेरा।";

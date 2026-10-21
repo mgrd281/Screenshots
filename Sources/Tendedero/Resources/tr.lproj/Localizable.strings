@@ -1577,10 +1577,6 @@
 "95%% under %@" = "%%95'i %@ altında";
 "Median %@" = "Ortanca %@";
 "Access" = "Erişim";
-"Active" = "Etkin";
-"All Off" = "Tümünü kapat";
-"All On" = "Tümünü aç";
-"All three together cover everyone’s names." = "Üçü birlikte herkesin adını gizler.";
 "Always On" = "Her zaman açık";
 "Apple Intelligence off" = "Apple Intelligence kapalı";
 "Apple Intelligence on" = "Apple Intelligence açık";
@@ -1608,9 +1604,40 @@
 "What Is Covered" = "Neler gizlenir";
 "Whole lines, with more room around them." = "Satırların tamamı, çevresinde daha fazla boşlukla.";
 "Your Choice" = "Kendi seçimin";
-"Your Own Details" = "Kendi bilgilerin";
 "Your Protection" = "Koruman";
-"Your name, address, cards and rules, covered in every picture" = "Adın, adresin, kartların ve kuralların, her resimde gizlenir";
+
+/* What Is Covered */
+"/ %d covered" = "/ %d gizli";
+"All active" = "Tümü etkin";
+"Always covered" = "Her zaman gizli";
+"Blood pressure raised" = "Yüksek tansiyon";
+"Chat" = "Sohbet";
+"Contact" = "İletişim";
+"Date:" = "Tarih:";
+"Diagnosis:" = "Teşhis:";
+"Doctor’s Bill" = "Doktor faturası";
+"Example %@, %d of %d details covered" = "Örnek %@, %d / %d bilgi gizli";
+"Follow me at" = "Beni takip et:";
+"Here’s my number:" = "Numaram:";
+"Login" = "Giriş";
+"Meet at" = "Buluşma yeri:";
+"More Options" = "Diğer Seçenekler";
+"Names without a clear role, as in chats. All three together cover everyone’s names." = "Rolü belli olmayan adlar, sohbetlerdeki gibi. Üçü birlikte herkesin adını gizler.";
+"Note" = "Not";
+"Notes" = "Notlar";
+"Practice Dr." = "Muayenehane Dr.";
+"Recommended Selection" = "Önerilen Seçim";
+"Server IP" = "Sunucu IP";
+"Tax ID" = "Vergi No";
+"Tel." = "Tel.";
+"Turn All Off" = "Tümünü Kapat";
+"Turn All On" = "Tümünü Aç";
+"Wi-Fi code" = "Wi-Fi kodu";
+"Your parcel:" = "Kargon:";
+"born" = "doğum";
+"is covered" = "gizlenir";
+"is not covered" = "gizlenmez";
+"online" = "çevrimiçi";
 
 /* Studio */
 "A ring where each click landed." = "Her tıklamanın olduğu yerde bir halka.";

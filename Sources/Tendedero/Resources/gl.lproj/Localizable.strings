@@ -1577,10 +1577,6 @@
 "95%% under %@" = "95 %% por baixo de %@";
 "Median %@" = "Mediana %@";
 "Access" = "Accesos";
-"Active" = "Activo";
-"All Off" = "Desactivar todas";
-"All On" = "Activar todas";
-"All three together cover everyone’s names." = "As tres xuntas ocultan os nomes de todos.";
 "Always On" = "Sempre activo";
 "Apple Intelligence off" = "Apple Intelligence desactivado";
 "Apple Intelligence on" = "Apple Intelligence activado";
@@ -1608,9 +1604,40 @@
 "What Is Covered" = "Que se oculta";
 "Whole lines, with more room around them." = "Liñas enteiras, con máis marxe arredor.";
 "Your Choice" = "A túa escolla";
-"Your Own Details" = "Os teus propios datos";
 "Your Protection" = "A túa protección";
-"Your name, address, cards and rules, covered in every picture" = "O teu nome, enderezo, tarxetas e regras, ocultos en cada imaxe";
+
+/* What Is Covered */
+"/ %d covered" = "/ %d ocultos";
+"All active" = "Todos activos";
+"Always covered" = "Sempre oculto";
+"Blood pressure raised" = "Tensión alta";
+"Chat" = "Chat";
+"Contact" = "Contacto";
+"Date:" = "Data:";
+"Diagnosis:" = "Diagnóstico:";
+"Doctor’s Bill" = "Factura médica";
+"Example %@, %d of %d details covered" = "Exemplo %@, %d de %d datos ocultos";
+"Follow me at" = "Sígueme en";
+"Here’s my number:" = "Este é o meu número:";
+"Login" = "Inicio de sesión";
+"Meet at" = "Vémonos en";
+"More Options" = "Máis opcións";
+"Names without a clear role, as in chats. All three together cover everyone’s names." = "Nomes sen un papel claro, como nos chats. Os tres xuntos ocultan os nomes de todos.";
+"Note" = "Nota";
+"Notes" = "Notas";
+"Practice Dr." = "Consulta Dr.";
+"Recommended Selection" = "Selección recomendada";
+"Server IP" = "IP do servidor";
+"Tax ID" = "NIF";
+"Tel." = "Tel.";
+"Turn All Off" = "Desactivar todo";
+"Turn All On" = "Activar todo";
+"Wi-Fi code" = "Código wifi";
+"Your parcel:" = "O teu paquete:";
+"born" = "nac.";
+"is covered" = "ocúltase";
+"is not covered" = "non se oculta";
+"online" = "en liña";
 
 /* Studio */
 "A ring where each click landed." = "Un anel onde caeu cada clic.";

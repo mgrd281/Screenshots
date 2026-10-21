@@ -1577,10 +1577,6 @@
 "95%% under %@" = "95%% abaixo de %@";
 "Median %@" = "Mediana %@";
 "Access" = "Acesso";
-"Active" = "Ativo";
-"All Off" = "Desativar todas";
-"All On" = "Ativar todas";
-"All three together cover everyone’s names." = "As três juntas ocultam os nomes de todos.";
 "Always On" = "Sempre ativo";
 "Apple Intelligence off" = "Apple Intelligence desativado";
 "Apple Intelligence on" = "Apple Intelligence ativado";
@@ -1608,9 +1604,40 @@
 "What Is Covered" = "O que é ocultado";
 "Whole lines, with more room around them." = "Linhas inteiras, com mais margem ao redor.";
 "Your Choice" = "Sua escolha";
-"Your Own Details" = "Seus próprios dados";
 "Your Protection" = "Sua proteção";
-"Your name, address, cards and rules, covered in every picture" = "Seu nome, endereço, cartões e regras, ocultos em cada imagem";
+
+/* What Is Covered */
+"/ %d covered" = "/ %d ocultos";
+"All active" = "Todos ativos";
+"Always covered" = "Sempre oculto";
+"Blood pressure raised" = "Pressão alta";
+"Chat" = "Conversa";
+"Contact" = "Contato";
+"Date:" = "Data:";
+"Diagnosis:" = "Diagnóstico:";
+"Doctor’s Bill" = "Conta médica";
+"Example %@, %d of %d details covered" = "Exemplo %@, %d de %d dados ocultos";
+"Follow me at" = "Me segue em";
+"Here’s my number:" = "Meu número:";
+"Login" = "Login";
+"Meet at" = "Vamos nos ver no";
+"More Options" = "Mais opções";
+"Names without a clear role, as in chats. All three together cover everyone’s names." = "Nomes sem um papel claro, como em conversas. Os três juntos ocultam os nomes de todos.";
+"Note" = "Nota";
+"Notes" = "Notas";
+"Practice Dr." = "Consultório Dr.";
+"Recommended Selection" = "Seleção recomendada";
+"Server IP" = "IP do servidor";
+"Tax ID" = "CPF";
+"Tel." = "Tel.";
+"Turn All Off" = "Desativar todos";
+"Turn All On" = "Ativar todos";
+"Wi-Fi code" = "Código do Wi-Fi";
+"Your parcel:" = "Seu pacote:";
+"born" = "nasc.";
+"is covered" = "é ocultado";
+"is not covered" = "não é ocultado";
+"online" = "online";
 
 /* Studio */
 "A ring where each click landed." = "Um anel onde cada clique caiu.";

@@ -1579,10 +1579,6 @@
 "95%% under %@" = "95%% %@-dən az";
 "Median %@" = "Median %@";
 "Access" = "Giriş";
-"Active" = "Aktiv";
-"All Off" = "Hamısını söndür";
-"All On" = "Hamısını aç";
-"All three together cover everyone’s names." = "Üçü birlikdə hamının adlarını gizlədir.";
 "Always On" = "Həmişə açıq";
 "Apple Intelligence off" = "Apple Intelligence söndürülüb";
 "Apple Intelligence on" = "Apple Intelligence açıq";
@@ -1610,9 +1606,40 @@
 "What Is Covered" = "Nə gizlədilir";
 "Whole lines, with more room around them." = "Bütün sətirlər, ətrafında daha çox boşluqla.";
 "Your Choice" = "Öz seçimin";
-"Your Own Details" = "Öz məlumatların";
 "Your Protection" = "Qoruman";
-"Your name, address, cards and rules, covered in every picture" = "Adın, ünvanın, kartların və qaydaların, hər şəkildə gizlədilir";
+
+/* What Is Covered */
+"/ %d covered" = "/ %d gizlənib";
+"All active" = "Hamısı aktivdir";
+"Always covered" = "Həmişə gizlədilir";
+"Blood pressure raised" = "Yüksək qan təzyiqi";
+"Chat" = "Söhbət";
+"Contact" = "Əlaqə";
+"Date:" = "Tarix:";
+"Diagnosis:" = "Diaqnoz:";
+"Doctor’s Bill" = "Həkim hesabı";
+"Example %@, %d of %d details covered" = "Nümunə %@, %d / %d məlumat gizlənib";
+"Follow me at" = "Məni izlə:";
+"Here’s my number:" = "Nömrəm budur:";
+"Login" = "Giriş";
+"Meet at" = "Görüş yeri:";
+"More Options" = "Digər seçimlər";
+"Names without a clear role, as in chats. All three together cover everyone’s names." = "Aydın rolu olmayan adlar, söhbətlərdəki kimi. Üçü birlikdə hamının adını gizlədir.";
+"Note" = "Qeyd";
+"Notes" = "Qeydlər";
+"Practice Dr." = "Klinika Dr.";
+"Recommended Selection" = "Tövsiyə olunan seçim";
+"Server IP" = "Server IP";
+"Tax ID" = "Vergi ID";
+"Tel." = "Tel.";
+"Turn All Off" = "Hamısını söndür";
+"Turn All On" = "Hamısını yandır";
+"Wi-Fi code" = "Wi-Fi kodu";
+"Your parcel:" = "Bağlamanız:";
+"born" = "doğum";
+"is covered" = "gizlədilir";
+"is not covered" = "gizlədilmir";
+"online" = "onlayn";
 
 /* Studio */
 "A ring where each click landed." = "Hər kliklə toxunulan yerdə halqa.";

@@ -3,10 +3,11 @@ import XCTest
 /// More driven on the simulator as the owner would use it, in German, on
 /// made-up choices held in memory alone (`-SnapflyMore`), so nothing is
 /// kept: the hero and the tiles count what is on, and say Protection Off
-/// with nothing; a pill turns its kind, the counts and the badge follow;
-/// the presets set what the buttons of before set; a group's tab shows that
-/// group alone; the look and its switches; and the tab bar stays whole on
-/// More, hidden under its pages. The `testRecord…` walks are slow on
+/// with nothing; a switch in a group's sheet turns its kind, and the
+/// document, the counts, the tiles, the hero and the badge follow; the menu
+/// sets what the buttons of before set; a group's button turns that group
+/// alone; the right document shows; the look and its switches; and the tab
+/// bar stays whole on More, hidden under its pages. The `testRecord…` walks are slow on
 /// purpose, for the videos `scripts/more-checks.sh` records, and run only
 /// there (`SNAPFLY_RECORD`).
 final class MoreUITests: XCTestCase {
@@ -66,6 +67,15 @@ final class MoreUITests: XCTestCase {
         }
     }
 
+    /// Drags a group's sheet up until the element can be tapped: the sheet
+    /// grows to its full height first, then its rows scroll.
+    private func revealInSheet(_ target: XCUIElement, in app: XCUIApplication) {
+        for _ in 0..<5 where !(target.exists && target.isHittable) {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.88))
+                .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
+        }
+    }
+
     // MARK: Checks
 
     func testTheHeroAndTheTilesCountWhatIsOn() {
@@ -93,64 +103,105 @@ final class MoreUITests: XCTestCase {
         XCTAssertTrue(element(app, "more-hero-count").label.hasPrefix("0 von 22"))
     }
 
-    func testAPillTurnsItsKindAndTheCountsFollow() {
+    /// Opens a group's sheet from its tile.
+    private func openSheet(_ group: String, in app: XCUIApplication) {
+        let tile = app.buttons["more-group-\(group)"]
+        reveal(tile, in: app)
+        tile.tap()
+        XCTAssertTrue(element(app, "more-sheet-close").waitForExistence(timeout: 5))
+    }
+
+    /// Chooses a line of the "…" menu by its words.
+    private func choose(_ words: String, in app: XCUIApplication) {
+        element(app, "more-covered-menu").tap()
+        let line = app.buttons[words].firstMatch
+        XCTAssertTrue(line.waitForExistence(timeout: 3), words)
+        line.tap()
+    }
+
+    func testASwitchInASheetTurnsItsKindAndEverythingFollows() {
         let app = launch("covered")
         let count = element(app, "more-covered-count")
         XCTAssertTrue(count.waitForExistence(timeout: 15))
         XCTAssertEqual(count.label, "13 von 22")
         let badge = element(app, "more-covered-badge")
         XCTAssertEqual(badge.label, "Empfohlen")
-        let amounts = app.buttons["more-pill-amounts"]
-        reveal(amounts, in: app)
-        XCTAssertFalse(amounts.isSelected)
-        amounts.tap()
+        XCTAssertTrue(app.buttons["more-group-money"].label.contains("1 von 2 aktiv"), app.buttons["more-group-money"].label)
+        openSheet("money", in: app)
+        let amounts = app.switches["more-kind-amounts"]
+        XCTAssertTrue(amounts.waitForExistence(timeout: 3))
+        XCTAssertEqual(amounts.value as? String, "wird nicht verdeckt")
+        flip(amounts)
+        XCTAssertTrue(wait(for: amounts, value: "wird verdeckt"))
+        XCTAssertTrue(wait(for: element(app, "more-sheet-count"), label: "2 von 2 aktiv"))
+        XCTAssertTrue(wait(for: element(app, "more-sample-document"), containing: "Arztrechnung, 10 von 13"))
+        // The stage's count and badge show again once the sheet is closed.
+        element(app, "more-sheet-close").tap()
         XCTAssertTrue(wait(for: count, label: "14 von 22"))
-        XCTAssertTrue(selected(amounts))
         XCTAssertTrue(wait(for: badge, label: "Eigene Auswahl"))
-        XCTAssertFalse(app.buttons["more-preset-recommended"].isSelected, "no preset while the choice is one's own")
-        amounts.tap()
-        XCTAssertTrue(wait(for: count, label: "13 von 22"))
-        XCTAssertTrue(wait(for: badge, label: "Empfohlen"))
-        XCTAssertTrue(selected(app.buttons["more-preset-recommended"]))
+        XCTAssertTrue(wait(for: app.buttons["more-group-money"], containing: "2 von 2 aktiv"))
+        // More's hero and tile say the same.
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        let hero = element(app, "more-hero-count")
+        XCTAssertTrue(hero.waitForExistence(timeout: 5))
+        XCTAssertTrue(hero.label.hasPrefix("14 von 22"), hero.label)
+        XCTAssertTrue(app.buttons["more-tile-covered"].label.contains("14 von 22 aktiv"), app.buttons["more-tile-covered"].label)
     }
 
-    func testThePresetsSetWhatTheButtonsOfBeforeSet() {
+    func testTheMenuSetsWhatTheButtonsOfBeforeSet() {
         let app = launch("covered")
         let count = element(app, "more-covered-count")
         XCTAssertTrue(count.waitForExistence(timeout: 15))
         let badge = element(app, "more-covered-badge")
-        app.buttons["more-preset-all"].tap()
+        choose("Alle einschalten", in: app)
         XCTAssertTrue(wait(for: count, label: "22 von 22"))
         XCTAssertTrue(wait(for: badge, label: "Alle"))
-        XCTAssertTrue(selected(app.buttons["more-pill-amounts"]))
-        XCTAssertTrue(selected(app.buttons["more-pill-names"]))
-        app.buttons["more-preset-none"].tap()
+        XCTAssertTrue(app.buttons["more-group-people"].label.contains("10 von 10 aktiv"))
+        choose("Alle ausschalten", in: app)
         XCTAssertTrue(wait(for: count, label: "0 von 22"))
         XCTAssertTrue(wait(for: badge, label: "Keine"))
-        XCTAssertTrue(selected(app.buttons["more-pill-names"], false))
-        app.buttons["more-preset-recommended"].tap()
+        XCTAssertTrue(app.buttons["more-group-people"].label.contains("0 von 10 aktiv"))
+        choose("Empfohlene Auswahl", in: app)
         XCTAssertTrue(wait(for: count, label: "13 von 22"))
-        XCTAssertTrue(selected(app.buttons["more-pill-names"]))
-        XCTAssertTrue(selected(app.buttons["more-pill-amounts"], false))
+        XCTAssertTrue(wait(for: badge, label: "Empfohlen"))
+        XCTAssertTrue(app.buttons["more-group-people"].label.contains("7 von 10 aktiv"))
+        XCTAssertTrue(app.buttons["more-group-money"].label.contains("1 von 2 aktiv"))
     }
 
-    func testAGroupsTabShowsItAloneAndItsButtonTurnsItWhole() {
+    func testAGroupsButtonTurnsOnlyThatGroup() {
         let app = launch("covered")
         let count = element(app, "more-covered-count")
         XCTAssertTrue(count.waitForExistence(timeout: 15))
-        let money = app.buttons["tab-money"]
-        XCTAssertTrue(money.label.contains("Geld"), money.label)
-        money.tap()
-        XCTAssertTrue(selected(money))
-        XCTAssertTrue(app.buttons["more-pill-amounts"].waitForExistence(timeout: 3))
-        XCTAssertTrue(gone(app.buttons["more-pill-names"]), "the other groups go")
-        app.buttons["more-group-all-money"].tap()
-        XCTAssertTrue(wait(for: count, label: "14 von 22"))
-        XCTAssertTrue(wait(for: money, value: "2 von 2 aktiv"), "\(String(describing: money.value))")
-        app.buttons["more-group-all-money"].tap()
+        openSheet("money", in: app)
+        let inSheet = element(app, "more-sheet-count")
+        element(app, "more-sheet-all").tap()
+        XCTAssertTrue(wait(for: inSheet, label: "2 von 2 aktiv"))
+        element(app, "more-sheet-all").tap()
+        XCTAssertTrue(wait(for: inSheet, label: "0 von 2 aktiv"))
+        element(app, "more-sheet-close").tap()
         XCTAssertTrue(wait(for: count, label: "12 von 22"))
-        app.buttons["tab-all"].tap()
-        XCTAssertTrue(app.buttons["more-pill-names"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["more-group-people"].label.contains("7 von 10 aktiv"))
+    }
+
+    func testTheRightDocumentShows() {
+        let app = launch("covered")
+        let document = element(app, "more-sample-document")
+        XCTAssertTrue(document.waitForExistence(timeout: 15))
+        XCTAssertTrue(document.label.contains("Arztrechnung"), document.label)
+        // Zugänge opens on the note.
+        openSheet("access", in: app)
+        XCTAssertTrue(wait(for: document, containing: "Notiz"))
+        element(app, "more-sheet-close").tap()
+        // A kind the bill doesn't show turns to a document that does.
+        openSheet("people", in: app)
+        XCTAssertTrue(wait(for: document, containing: "Arztrechnung"))
+        let faces = app.switches["more-kind-faces"]
+        revealInSheet(faces, in: app)
+        flip(faces)
+        XCTAssertTrue(wait(for: faces, value: "wird verdeckt"))
+        // The sheet may have grown over the stage; the chat stays once it closes.
+        element(app, "more-sheet-close").tap()
+        XCTAssertTrue(wait(for: document, containing: "Chat"))
     }
 
     func testTheLookAndItsSwitchesAreChosen() {
@@ -225,27 +276,53 @@ final class MoreUITests: XCTestCase {
         }
     }
 
-    func testRecordPillsPresetsAndTabs() throws {
+    func testRecordSheetsAndPresets() throws {
         try recording()
         let app = launch("covered")
         XCTAssertTrue(element(app, "more-covered-count").waitForExistence(timeout: 15))
         pause(1.5)
-        for pill in ["more-pill-usernames", "more-pill-faces", "more-pill-organizations"] {
-            app.buttons[pill].tap()
-            pause(0.9)
+        let document = element(app, "more-sample-document")
+        document.swipeLeft()
+        pause(1.2)
+        document.swipeLeft()
+        pause(1.2)
+        document.swipeRight()
+        document.swipeRight()
+        pause(1.2)
+        openSheet("people", in: app)
+        pause(1.4)
+        for kind in ["more-kind-patientNames", "more-kind-faces", "more-kind-usernames", "more-kind-organizations"] {
+            let toggle = app.switches[kind]
+            revealInSheet(toggle, in: app)
+            flip(toggle)
+            pause(1.4)
         }
-        for preset in ["more-preset-all", "more-preset-none", "more-preset-recommended"] {
-            app.buttons[preset].tap()
-            pause(1.3)
+        element(app, "more-sheet-close").tap()
+        pause(1.2)
+        for words in ["Alle einschalten", "Alle ausschalten", "Empfohlene Auswahl"] {
+            choose(words, in: app)
+            pause(1.5)
         }
-        for tab in ["tab-money", "tab-documents", "tab-access", "tab-all"] {
-            app.buttons[tab].tap()
-            pause(1.2)
-        }
-        app.buttons["more-group-all-people"].tap()
+        openSheet("access", in: app)
+        pause(1.4)
+        element(app, "more-sheet-all").tap()
+        pause(1.5)
+        element(app, "more-sheet-all").tap()
         pause(1.3)
-        app.buttons["more-group-all-people"].tap()
-        pause(1.3)
+        element(app, "more-sheet-close").tap()
+        pause(1)
+    }
+
+    func testRecordHeroToDocument() throws {
+        try recording()
+        let app = launch("root")
+        let document = app.buttons["more-hero-document"]
+        XCTAssertTrue(document.waitForExistence(timeout: 15))
+        pause(2)
+        document.tap()
+        pause(2)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        pause(1.5)
     }
 
     func testRecordStyle() throws {

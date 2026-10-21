@@ -93,16 +93,6 @@ enum SnapflyTokens {
     static let moreHeroEdge = color(0x0E3B2E, dark: 0x1D5644)
     /// The hero with nothing covered: a neutral dark grey, day and night.
     static let moreHeroOff = Color(red: 42 / 255, green: 46 / 255, blue: 52 / 255)
-    /// A kind turned on: solid green with white words, 5:1; at night the
-    /// light green with near-black words, 10:1.
-    static let morePillOn = color(0x0B7F58, dark: 0x5BD6A6)
-    static let morePillOnText = color(0xFFFFFF, dark: 0x0B0D10)
-    /// A kind turned off: the card, inside a grey edge.
-    static let morePillEdge = color(0xD5D9DF, dark: 0x343941)
-    /// The preset control's track, and the thumb raised on it for the
-    /// preset chosen: white by day, a lighter grey at night.
-    static let moreTrack = color(0xE4E6EA, dark: 0x1E2126)
-    static let moreThumb = color(0xFFFFFF, dark: 0x3A3F47)
     /// The quiet tiles of More's Features: grey, the symbol dark grey, 7:1.
     static let moreNeutralTile = color(0xEEF0F2, dark: 0x262A30)
     static let moreNeutralGlyph = color(0x4A5059, dark: 0xB4BBC4)
@@ -116,6 +106,27 @@ enum SnapflyTokens {
     /// `hideRowRadius`, pills are capsules.
     static let moreHeroRadius: CGFloat = 28
     static let moreButtonRadius: CGFloat = 18
+
+    // MARK: What Is Covered
+
+    /// What Is Covered's stage takes the hero's greens (`moreHero`,
+    /// `moreHeroEdge`, `moreHeroOff`), with corners of 32.
+    static let moreStageRadius: CGFloat = 32
+    /// "/ 22 verdeckt" beside the count on the stage: a light mint, 8:1 on
+    /// the green.
+    static let moreStageMint = color(0x9FD3BD, dark: 0x9FD3BD)
+    /// A group's ring on its tile: the track, and how much of it is on.
+    static let moreRingTrack = color(0xE4E6E9, dark: 0x2A2E34)
+    static let moreRingProgress = color(0x0B7F58, dark: 0x3FC48F)
+    /// The rows of a group's sheet, a little off the sheet's white.
+    static let moreSheetRow = color(0xF4F5F7, dark: 0x22252B)
+    /// The ring round the values of the group open, on the sample's paper.
+    static let moreFocusRing = Color(red: 63 / 255, green: 196 / 255, blue: 143 / 255)
+    /// The sample chat's bubbles on the paper: theirs grey, yours a pale green.
+    static let moreBubbleIn = Color(red: 233 / 255, green: 233 / 255, blue: 235 / 255)
+    static let moreBubbleOut = Color(red: 217 / 255, green: 243 / 255, blue: 227 / 255)
+    /// A link on the paper.
+    static let morePaperLink = Color(red: 0, green: 98 / 255, blue: 204 / 255)
 
     /// A colour as its hex, and another at night.
     private static func color(_ hex: UInt32, dark: UInt32) -> Color {

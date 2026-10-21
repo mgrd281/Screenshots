@@ -1577,10 +1577,6 @@
 "95%% under %@" = "‏95%% أقل من %@";
 "Median %@" = "الوسيط %@";
 "Access" = "الدخول";
-"Active" = "مفعّل";
-"All Off" = "إيقاف الكل";
-"All On" = "تفعيل الكل";
-"All three together cover everyone’s names." = "الثلاثة معًا تخفي أسماء الجميع.";
 "Always On" = "مفعّل دائمًا";
 "Apple Intelligence off" = "Apple Intelligence متوقف";
 "Apple Intelligence on" = "Apple Intelligence مفعّل";
@@ -1608,9 +1604,40 @@
 "What Is Covered" = "ما يُخفى";
 "Whole lines, with more room around them." = "أسطر كاملة، مع هامش أوسع حولها.";
 "Your Choice" = "اختيارك";
-"Your Own Details" = "معلوماتك الخاصة";
 "Your Protection" = "حمايتك";
-"Your name, address, cards and rules, covered in every picture" = "اسمك وعنوانك وبطاقاتك وقواعدك، مخفية في كل صورة";
+
+/* What Is Covered */
+"/ %d covered" = "/ %d مُغطّاة";
+"All active" = "الكل مفعّل";
+"Always covered" = "مُغطّاة دائمًا";
+"Blood pressure raised" = "ارتفاع ضغط الدم";
+"Chat" = "محادثة";
+"Contact" = "التواصل";
+"Date:" = "التاريخ:";
+"Diagnosis:" = "التشخيص:";
+"Doctor’s Bill" = "فاتورة طبيب";
+"Example %@, %d of %d details covered" = "مثال %@، %d من %d بيانات مُغطّاة";
+"Follow me at" = "تابعني على";
+"Here’s my number:" = "هذا رقمي:";
+"Login" = "تسجيل الدخول";
+"Meet at" = "نلتقي عند";
+"More Options" = "خيارات أخرى";
+"Names without a clear role, as in chats. All three together cover everyone’s names." = "أسماء بلا دور واضح، كما في المحادثات. الثلاثة معًا تغطي أسماء الجميع.";
+"Note" = "ملاحظة";
+"Notes" = "ملاحظات";
+"Practice Dr." = "عيادة د.";
+"Recommended Selection" = "الاختيار الموصى به";
+"Server IP" = "عنوان IP للخادم";
+"Tax ID" = "الرقم الضريبي";
+"Tel." = "هاتف";
+"Turn All Off" = "إيقاف الكل";
+"Turn All On" = "تشغيل الكل";
+"Wi-Fi code" = "رمز الواي فاي";
+"Your parcel:" = "طردك:";
+"born" = "مواليد";
+"is covered" = "تُغطّى";
+"is not covered" = "لا تُغطّى";
+"online" = "متصل";
 
 /* Studio */
 "A ring where each click landed." = "حلقة حيث وقعت كل نقرة.";
