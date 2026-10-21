@@ -291,7 +291,8 @@ struct ScanPageStrip: View {
 
     private func thumb(_ page: ScannedPages.Page, index: Int) -> some View {
         let shape = RoundedRectangle(cornerRadius: SnapflyTokens.scanThumbRadius, style: .continuous)
-        return Button { open(page.id) } label: {
+        // In three parts, so the compiler checks each in good time.
+        let base = Button { open(page.id) } label: {
             card(page, chosen: page.id == current)
         }
         .buttonStyle(.plain)
@@ -315,16 +316,18 @@ struct ScanPageStrip: View {
             Button { crop(page.id) } label: { Label(L("Crop"), systemImage: "crop") }
             Button(role: .destructive) { delete(page.id) } label: { Label(L("Delete Page"), systemImage: "trash") }
         }
-        .accessibilityLabel(label(page, index: index))
-        .accessibilityAddTraits(page.id == current ? .isSelected : [])
-        .accessibilityIdentifier("scan-thumb-\(index + 1)")
-        .accessibilityAction(named: L("Move Earlier")) {
-            if index > 0 { store.move(page.id, to: index - 1) }
-        }
-        .accessibilityAction(named: L("Move Later")) {
-            if index < store.pages.count - 1 { store.move(page.id, to: index + 1) }
-        }
-        .accessibilityAction(named: L("Delete Page")) { delete(page.id) }
+        let named = base
+            .accessibilityLabel(label(page, index: index))
+            .accessibilityAddTraits(page.id == current ? .isSelected : [])
+            .accessibilityIdentifier("scan-thumb-\(index + 1)")
+        return named
+            .accessibilityAction(named: L("Move Earlier")) {
+                if index > 0 { store.move(page.id, to: index - 1) }
+            }
+            .accessibilityAction(named: L("Move Later")) {
+                if index < store.pages.count - 1 { store.move(page.id, to: index + 1) }
+            }
+            .accessibilityAction(named: L("Delete Page")) { delete(page.id) }
     }
 
     /// A page small, as the strip shows it.
