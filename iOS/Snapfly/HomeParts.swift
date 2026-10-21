@@ -78,14 +78,7 @@ enum SnapflyTokens {
 
     /// Each kind of the owner's details by a colour of its own, the same in
     /// light and dark, its symbol white on it: 5.4:1, 4.8:1, 3.6:1, 5.3:1.
-    static func detail(_ kind: OwnRule.Kind) -> Color {
-        switch kind {
-        case .address: Color(red: 31 / 255, green: 111 / 255, blue: 224 / 255)
-        case .card: Color(red: 217 / 255, green: 102 / 255, blue: 11 / 255)
-        case .account: Color(red: 124 / 255, green: 77 / 255, blue: 219 / 255)
-        case .name, .word, .label, .pattern: hideButton
-        }
-    }
+    static func detail(_ kind: OwnRule.Kind) -> Color { DetailTint.of(kind) }
 
     /// A colour as its hex, and another at night.
     private static func color(_ hex: UInt32, dark: UInt32) -> Color {

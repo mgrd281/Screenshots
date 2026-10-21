@@ -578,7 +578,6 @@
 "Check All" = "すべて選択";
 "Recommended" = "おすすめ";
 "Uncheck All" = "すべて解除";
-"Also hide" = "さらに隠す";
 "Add Rule" = "ルールを追加";
 "Word" = "単語";
 "After a label" = "ラベルの後";
@@ -586,7 +585,6 @@
 "A word, like your shop’s name" = "単語、たとえば店名";
 "A label, like Customer number" = "ラベル、たとえば顧客番号";
 "A pattern, like SKU-[0-9]+" = "パターン、たとえば SKU-[0-9]+";
-"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "単語はどこに現れても隠されます。ラベルの後では、その続きが隠されます。行の残り、または下の行です。";
 "This pattern cannot be read." = "このパターンは読み取れません。";
 
 /* The menu bar menu: what hangs, and help */
@@ -1512,7 +1510,6 @@
 "Your Name" = "あなたの名前";
 "%@ · always covered" = "%@ · 常に隠されます";
 "Add it, and it is covered however it is written" = "追加すると、どう書かれていても隠されます";
-"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "どこにどう書かれていても、上で何を選んでいても隠されます。このMacのキーチェーンにだけ保存され、送信されることはありません。";
 "First and last name" = "姓名";
 "Street and house number" = "番地・通り";
 "Postcode" = "郵便番号";
@@ -1528,11 +1525,6 @@
 "An IBAN begins with its country’s two letters and two digits, like DE89." = "IBANは国を表す2文字と2桁の数字で始まります（例: DE89）。";
 "This IBAN is too long." = "このIBANは長すぎます。";
 "This IBAN does not add up. Check it again." = "このIBANは正しくありません。もう一度確認してください。";
-"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "どのように書かれていても隠されます。姓が先でも、大文字でも、イニシャルでも、一部だけでも。";
-"Covered however it is written, like %@." = "どのように書かれていても隠されます（例: %@）。";
-"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "通りと番地、そして郵便番号と市区町村が並んでいる箇所が隠されます。市区町村や郵便番号だけでは誰にでも当てはまるため、そのまま残ります。";
-"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "区切り方にかかわらず番号全体が隠されます。下4桁だけが表示されている箇所（例:「•••• 4242」）も隠されます。";
-"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "スペースの有無にかかわらず、末尾の数字だけが表示されている箇所も隠されます。ドイツやオーストリアの口座では、口座番号だけでも隠されます。";
 "ending in %@" = "末尾 %@";
 "Delete Detail" = "情報を削除";
 "Show Number" = "番号を表示";
@@ -1594,3 +1586,5 @@
 "%@ · Invoice 117" = "%@ · 請求書 117";
 "Invoice 117" = "請求書 117";
 "covered" = "隠されています";
+"Only on this Mac" = "このMacだけに保存";
+"Covered in every picture, whatever is checked under Privacy. They stay on this Mac alone, in its keychain, and are never sent." = "プライバシーで何をチェックしていても、すべての画像で隠されます。このMacのキーチェーンだけに保存され、送信されることはありません。";

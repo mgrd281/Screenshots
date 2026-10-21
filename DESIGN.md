@@ -1004,9 +1004,44 @@ apps.
     preview of the band's leading end, at twice its size, with 6 pt corners
     and a 0.5 pt edge of `.primary` at 12%.
   - SF Symbols on macOS 26 only, as Apple's own menus have.
-- **Settings sidebar.** General, Line, Privacy, Sync, Permissions, Support
-  and About, each on its tile (see Layout).
-- **Sync pane** (`SyncPane.swift`), between Privacy and Permissions, with
+- **Settings sidebar.** General, Line, Privacy, Always Hide, Sync,
+  Permissions, Support and About, each on its tile (see Layout).
+- **Always Hide pane** (`AlwaysHidePane.swift`), after Privacy, with
+  `text.badge.plus` in the sidebar, the iPhone's Always Hide in the Mac's
+  own grouped form, in system colours:
+  - First what it does, and the promises that hold in code
+    (`OwnDetailStore`), in callout `.secondary`: Only on this Mac
+    (`laptopcomputer`) and Never sent (`lock.fill`).
+  - Your Details: a row each with its kind's symbol, white, on a 24 pt tile
+    of its colour (`phone-detail-*`, rounded 6), its value (a card or an
+    IBAN by its last four digits, monospaced digits), its kind in callout
+    `.secondary`, and for a name "Also finds" with two chips and "+N"
+    (caption on `.quaternary` capsules); then Edit… and a borderless
+    `minus.circle`. With no details, Start with your name and Add Name,
+    prominent. Add Detail, a menu of the four kinds. The footer says they
+    are covered in every picture, whatever is checked under Privacy, and
+    stay in this Mac's keychain, never sent.
+  - Your Rules, headed with "N active": a row each with its symbol in
+    `.secondary` on a 24 pt `.quaternary` tile, its word or label
+    (`.secondary` while off), what it covers in callout, a label's chip
+    with its value covered, a small switch read "Rule “…” active", Edit…
+    and `minus.circle`. Add Rule, a menu of Word, After Label and Pattern.
+    The footer is the iPhone's: it applies to every picture, also written
+    differently, and wants a look before sharing.
+  - The sheets, 480 pt wide, 20 pt in: New Detail with the four kinds as a
+    segmented control while it is new, First Name and Last Name side by
+    side and every form of the name as chips in a group box as it is typed,
+    a hint or, with `exclamationmark.triangle.fill` in orange, what is
+    wrong, then Cancel and Add (Save for one kept), prominent, dimmed until
+    it can be kept. New Rule with Word, After Label and Pattern as a
+    segmented control, its field, focused, Automatic, Rest of the Line and
+    Next Line as radio buttons in a row with what the chosen one covers,
+    the Example in a group box covered as it is typed, then Cancel and Save
+    Rule.
+  - A rule turned on or off is saved 0.8 s after the last turn; anything
+    added, changed or removed at once, since every change reads the photos
+    again.
+- **Sync pane** (`SyncPane.swift`), between Always Hide and Permissions, with
   `arrow.triangle.2.circlepath` in the sidebar. A grouped form: the two
   toggles (Sync with your iPhone, Originals too, the second dimmed while the
   first is off) with the footer that it goes through the owner's own iCloud;
@@ -1404,26 +1439,8 @@ apps.
   keeps the photos. Then one with Plain file names (off at
   first), over a footer saying pictures leave as fresh files without notes
   on when, where or with what they were made, and are named "Image" with it
-  on. Then "Your Details", the owner's own details: a row each with its
-  symbol in `.secondary`, its name over its value (a card or an account by
-  its last four digits, monospaced), Edit… and a borderless `minus.circle`
-  to remove it; Add Detail, a menu of Name, Address, Bank Card and Bank
-  Account; a footer saying they are covered wherever and however they are
-  written and stay in this Mac's keychain. A detail opens in a 460 pt sheet
-  (`OwnDetailSheet`): its kind as a headline with its symbol, rounded
-  fields (a card's number grouped as typed with its network's name beside
-  it, an IBAN in groups of four), a callout of how it is covered or, with
-  `exclamationmark.triangle.fill` in orange, what is wrong, then Cancel and
-  Done, prominent, dimmed until there is enough to cover something. Then
-  "Also hide", the
-  owner's own rules: one row per rule with a 160 pt menu picker for its kind
-  (Word, After a label, Pattern), a rounded field with a prompt for that
-  kind, and a borderless `minus.circle` to remove it; an Add Rule button
-  under them; a footer that says how a word and a label are covered. A
-  pattern that cannot be read shows `exclamationmark.triangle.fill` in
-  not-allowed orange beside the field and a callout line under it. Rules are
-  saved 0.8 s after the typing stops, and at once when one is added, removed
-  or the pane leaves, since every change reads the photos again. Then
+  on. The owner's own details and rules have their own pane, Always Hide
+  (below). Then
   "Cover a folder": a toggle, Cover what lands in a folder (off at first;
   turned on, it asks for any folder not chosen yet and stays off without
   both), and two rows, Watched folder and Save copies in, each with the

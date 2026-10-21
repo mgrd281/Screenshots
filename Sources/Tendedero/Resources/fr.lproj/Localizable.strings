@@ -578,7 +578,6 @@
 "Check All" = "Tout cocher";
 "Recommended" = "Recommandés";
 "Uncheck All" = "Tout décocher";
-"Also hide" = "Masquer aussi";
 "Add Rule" = "Ajouter une règle";
 "Word" = "Mot";
 "After a label" = "Après un libellé";
@@ -586,7 +585,6 @@
 "A word, like your shop’s name" = "Un mot, comme le nom de votre boutique";
 "A label, like Customer number" = "Un libellé, comme Numéro client";
 "A pattern, like SKU-[0-9]+" = "Un motif, comme SKU-[0-9]+";
-"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "Les mots sont masqués partout où ils apparaissent. Après un libellé, ce qui suit est masqué : le reste de la ligne, ou la ligne en dessous.";
 "This pattern cannot be read." = "Ce motif ne peut pas être lu.";
 
 /* The menu bar menu: what hangs, and help */
@@ -1512,7 +1510,6 @@
 "Your Name" = "Ton nom";
 "%@ · always covered" = "%@ · toujours couvert";
 "Add it, and it is covered however it is written" = "Ajoute-le, il sera couvert quelle que soit son écriture";
-"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "Masquées où et comme qu’elles soient écrites, quoi que tu coches plus haut. Elles restent sur ce Mac seulement, dans son trousseau, et ne sont jamais envoyées.";
 "First and last name" = "Prénom et nom";
 "Street and house number" = "Rue et numéro";
 "Postcode" = "Code postal";
@@ -1528,11 +1525,6 @@
 "An IBAN begins with its country’s two letters and two digits, like DE89." = "Un IBAN commence par les deux lettres de son pays et deux chiffres, comme DE89.";
 "This IBAN is too long." = "Cet IBAN est trop long.";
 "This IBAN does not add up. Check it again." = "Cet IBAN ne tombe pas juste. Vérifie-le encore.";
-"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "Masqué quelle que soit son écriture : nom en premier, en majuscules, avec une initiale, ou une partie seule.";
-"Covered however it is written, like %@." = "Masqué quelle que soit son écriture, comme %@.";
-"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "Sont masqués la rue avec son numéro, et le code postal avec la ville quand ils vont ensemble. Une ville ou un code postal seul appartient à tout le monde, donc il reste.";
-"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "Masqué en entier, quel que soit son groupement, et là où seuls ses quatre derniers chiffres apparaissent, comme « •••• 4242 ».";
-"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "Masqué avec et sans espaces, là où seuls ses derniers chiffres apparaissent, et le numéro d’un compte allemand ou autrichien seul.";
 "ending in %@" = "se terminant par %@";
 "Delete Detail" = "Supprimer la donnée";
 "Show Number" = "Afficher le numéro";
@@ -1594,3 +1586,5 @@
 "%@ · Invoice 117" = "%@ · Facture 117";
 "Invoice 117" = "Facture 117";
 "covered" = "masqué";
+"Only on this Mac" = "Uniquement sur ce Mac";
+"Covered in every picture, whatever is checked under Privacy. They stay on this Mac alone, in its keychain, and are never sent." = "Masquées dans chaque image, quoi qu’il soit coché sous Confidentialité. Elles restent sur ce Mac seul, dans son trousseau, et ne sont jamais envoyées.";

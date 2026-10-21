@@ -580,7 +580,6 @@
 "Check All" = "Hamısını seç";
 "Recommended" = "Tövsiyə olunan";
 "Uncheck All" = "Hamısını ləğv et";
-"Also hide" = "Bunları da gizlət";
 "Add Rule" = "Qayda əlavə et";
 "Word" = "Söz";
 "After a label" = "Etiketdən sonra";
@@ -588,7 +587,6 @@
 "A word, like your shop’s name" = "Bir söz, məsələn mağazanın adı";
 "A label, like Customer number" = "Etiket, məsələn Müştəri nömrəsi";
 "A pattern, like SKU-[0-9]+" = "Şablon, məsələn SKU-[0-9]+";
-"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "Sözlər harada görünsə örtülür. Etiketdən sonra gələn örtülür: sətrin qalanı və ya altındakı sətir.";
 "This pattern cannot be read." = "Bu şablon oxuna bilmir.";
 
 /* The menu bar menu: what hangs, and help */
@@ -1514,7 +1512,6 @@
 "Your Name" = "Adın";
 "%@ · always covered" = "%@ · həmişə örtülür";
 "Add it, and it is covered however it is written" = "Əlavə et, necə yazılsa da örtülsün";
-"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "Harada və necə yazılmasından, yuxarıda nə seçilməsindən asılı olmayaraq örtülür. Yalnız bu Mac-da, onun açar zəncirində qalır və heç vaxt göndərilmir.";
 "First and last name" = "Ad və soyad";
 "Street and house number" = "Küçə və ev nömrəsi";
 "Postcode" = "Poçt indeksi";
@@ -1530,11 +1527,6 @@
 "An IBAN begins with its country’s two letters and two digits, like DE89." = "IBAN ölkəsinin iki hərfi və iki rəqəmlə başlayır, məsələn, DE89.";
 "This IBAN is too long." = "Bu IBAN çox uzundur.";
 "This IBAN does not add up. Check it again." = "Bu IBAN düzgün deyil. Yenidən yoxla.";
-"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "Necə yazılmasından asılı olmayaraq örtülür: əvvəlcə soyad, böyük hərflərlə, baş hərflə və ya bir hissəsi tək.";
-"Covered however it is written, like %@." = "Necə yazılmasından asılı olmayaraq örtülür, məsələn, %@.";
-"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "Küçə ev nömrəsi ilə, poçt indeksi isə şəhərlə yanaşı durduqda örtülür. Tək şəhər və ya tək indeks hamınındır, ona görə görünür qalır.";
-"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "Necə qruplaşdırılmasından asılı olmayaraq tam örtülür, həmçinin yalnız son dörd rəqəmi görünən yerlərdə, məsələn, «•••• 4242».";
-"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "Boşluqlu və boşluqsuz, yalnız son rəqəmləri görünən yerlərdə, Almaniya və ya Avstriya hesabının nömrəsi isə tək halda da örtülür.";
 "ending in %@" = "%@ ilə bitir";
 "Delete Detail" = "Məlumatı sil";
 "Show Number" = "Nömrəni göstər";
@@ -1596,3 +1588,5 @@
 "%@ · Invoice 117" = "%@ · Faktura 117";
 "Invoice 117" = "Faktura 117";
 "covered" = "gizlədilib";
+"Only on this Mac" = "Yalnız bu Mac-də";
+"Covered in every picture, whatever is checked under Privacy. They stay on this Mac alone, in its keychain, and are never sent." = "Məxfilikdə nə işarələnməsindən asılı olmayaraq, hər şəkildə örtülür. Yalnız bu Mac-də, onun açar zəncirində qalır və heç vaxt göndərilmir.";

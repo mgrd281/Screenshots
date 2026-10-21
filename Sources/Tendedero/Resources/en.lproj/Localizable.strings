@@ -580,7 +580,6 @@
 "Check All" = "Check All";
 "Recommended" = "Recommended";
 "Uncheck All" = "Uncheck All";
-"Also hide" = "Also hide";
 "Add Rule" = "Add Rule";
 "Word" = "Word";
 "After a label" = "After a label";
@@ -588,7 +587,6 @@
 "A word, like your shop’s name" = "A word, like your shop’s name";
 "A label, like Customer number" = "A label, like Customer number";
 "A pattern, like SKU-[0-9]+" = "A pattern, like SKU-[0-9]+";
-"Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below." = "Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below.";
 "This pattern cannot be read." = "This pattern cannot be read.";
 
 /* The menu bar menu: what hangs, and help */
@@ -1514,7 +1512,6 @@
 "Your Name" = "Your Name";
 "%@ · always covered" = "%@ · always covered";
 "Add it, and it is covered however it is written" = "Add it, and it is covered however it is written";
-"Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent." = "Covered wherever and however they are written, whatever is checked above. They stay on this Mac alone, in its keychain, and are never sent.";
 "First and last name" = "First and last name";
 "Street and house number" = "Street and house number";
 "Postcode" = "Postcode";
@@ -1530,11 +1527,6 @@
 "An IBAN begins with its country’s two letters and two digits, like DE89." = "An IBAN begins with its country’s two letters and two digits, like DE89.";
 "This IBAN is too long." = "This IBAN is too long.";
 "This IBAN does not add up. Check it again." = "This IBAN does not add up. Check it again.";
-"Covered however it is written: surname first, in capitals, with an initial, or a part of it alone." = "Covered however it is written: surname first, in capitals, with an initial, or a part of it alone.";
-"Covered however it is written, like %@." = "Covered however it is written, like %@.";
-"Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays." = "Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays.";
-"Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”." = "Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”.";
-"Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own." = "Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own.";
 "ending in %@" = "ending in %@";
 "Delete Detail" = "Delete Detail";
 "Show Number" = "Show Number";
@@ -1596,3 +1588,5 @@
 "%@ · Invoice 117" = "%@ · Invoice 117";
 "Invoice 117" = "Invoice 117";
 "covered" = "covered";
+"Only on this Mac" = "Only on this Mac";
+"Covered in every picture, whatever is checked under Privacy. They stay on this Mac alone, in its keychain, and are never sent." = "Covered in every picture, whatever is checked under Privacy. They stay on this Mac alone, in its keychain, and are never sent.";

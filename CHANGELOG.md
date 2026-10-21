@@ -17,6 +17,13 @@ keeps a download of each version.
   covers what follows it, or the line below when nothing does, as before,
   or always the rest of its line or always the next line. Edit reorders
   and deletes, and a swipe deletes too.
+- On the Mac, your details and rules have a pane of their own in
+  Settings, Always Hide, as on the iPhone: each detail with its kind's
+  colour, a name with the ways it is also found, a card or an IBAN by its
+  last four digits; each rule with what it covers and a switch, and how
+  many are on. A name is typed as first and last name, with every form it
+  is found in shown as you type; a rule's sheet covers an example as you
+  type and lets a label keep to the rest of its line or the next line.
 - Your details and rules are covered for sure, never marked to check. A
   name, a card's number or an IBAN broken over two lines is covered, and
   so is one with a letter misread; what your rules cover is hidden from the

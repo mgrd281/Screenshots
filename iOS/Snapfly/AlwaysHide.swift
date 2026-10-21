@@ -425,15 +425,7 @@ struct HideRuleRow: View {
     }
 
     /// What a rule covers, after its kind: "Word · anywhere in the picture".
-    static func subtitle(of rule: OwnRule) -> String {
-        switch (rule.kind, rule.reach) {
-        case (.label, .automatic): L("Label · automatic")
-        case (.label, .restOfLine): L("Label · rest of the line")
-        case (.label, .nextLine): L("Label · next line")
-        case (.pattern, _): L("Pattern · anywhere in the picture")
-        default: L("Word · anywhere in the picture")
-        }
-    }
+    static func subtitle(of rule: OwnRule) -> String { RuleWords.subtitle(of: rule) }
 }
 
 /// A label with a covered value after it, as a rule's row shows it.

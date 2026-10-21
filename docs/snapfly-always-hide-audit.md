@@ -222,7 +222,16 @@ option and the default for every rule kept before.
   makes them.
 - **A card's or an account's own name** ("Girokonto") is kept and shown in
   its row, but the new sheet has no field for it.
-- **The Mac's sheet** still says a detail is "covered however it is
-  written" (`OwnDetails.note(for:)`, shown on the Mac alone). The iPhone's
-  sheets and footer no longer promise that. Outside this screen; for the
-  owner to decide.
+
+## 6. The Mac, after
+
+At the owner's request, the Mac followed in a pull request of its own:
+
+- Always Hide is a pane of its own in Settings
+  (`Sources/Tendedero/AlwaysHidePane.swift`), taken out of Privacy.
+- It shows the same rows, chips, switches and "N active" as the iPhone, and
+  sheets with First Name and Last Name, the name's forms as they are typed, a
+  label's reach and the live example.
+- The footer and the sheet no longer promise "wherever and however".
+  `OwnDetails.note(for:)`, which said it, is gone.
+- What both apps draw alike is in `Sources/Tendedero/Shared/HideParts.swift`.
