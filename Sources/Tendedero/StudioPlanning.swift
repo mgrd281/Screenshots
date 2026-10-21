@@ -276,14 +276,14 @@ struct StudioCamera: Sendable {
                 current = nil
             }
             if i > 0 {
-                vs += (zoomSpring * zoomSpring * (log(targetScale) - logScale) - 2 * zoomSpring * vs) * dt
+                vs += (zoomSpring * zoomSpring * (log2(targetScale) - logScale) - 2 * zoomSpring * vs) * dt
                 logScale += vs * dt
                 vx += (panSpring * panSpring * (Double(target.x) - cx) - 2 * panSpring * vx) * dt
                 vy += (panSpring * panSpring * (Double(target.y) - cy) - 2 * panSpring * vy) * dt
                 cx += vx * dt
                 cy += vy * dt
             }
-            frames.append(Frame(x: cx, y: cy, scale: max(1, exp(logScale))))
+            frames.append(Frame(x: cx, y: cy, scale: max(1, exp2(logScale))))
         }
         self.init(frames: frames)
     }
@@ -453,16 +453,36 @@ enum StudioTimeline {
 enum StudioWave {
     static func peaks(_ samples: [Float], count: Int) -> [Float] {
         guard count > 0, !samples.isEmpty else { return [] }
-        var peaks = [Float](repeating: 0, count: count)
-        let per = Double(samples.count) / Double(count)
-        for i in 0..<count {
-            let from = Int(Double(i) * per), to = max(from + 1, min(samples.count, Int(Double(i + 1) * per)))
-            guard from < samples.count else { break }
-            var loudest: Float = 0
-            for j in from..<to { loudest = max(loudest, abs(samples[j])) }
-            peaks[i] = loudest
+        var folding = Folding(count: count, expected: samples.count)
+        folding.add(samples)
+        return folding.peaks
+    }
+
+    /// The same, folded as the sound is read, for a recording of about
+    /// `expected` samples, so a long one is never held whole.
+    struct Folding {
+        private var loudest: [Float]
+        private let expected: Int
+        private var seen = 0
+
+        init(count: Int, expected: Int) {
+            loudest = [Float](repeating: 0, count: max(0, count))
+            self.expected = max(1, expected)
         }
-        let top = peaks.max() ?? 0
-        return top > 0 ? peaks.map { $0 / top } : peaks
+
+        mutating func add<Samples: Sequence>(_ samples: Samples) where Samples.Element == Float {
+            guard !loudest.isEmpty else { return }
+            for sample in samples {
+                let part = min(loudest.count - 1, seen * loudest.count / expected)
+                loudest[part] = max(loudest[part], abs(sample))
+                seen += 1
+            }
+        }
+
+        var peaks: [Float] {
+            guard seen > 0 else { return [] }
+            let top = loudest.max() ?? 0
+            return top > 0 ? loudest.map { $0 / top } : loudest
+        }
     }
 }

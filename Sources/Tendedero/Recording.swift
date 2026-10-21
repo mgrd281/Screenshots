@@ -442,7 +442,10 @@ final class Recorder: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sen
             writer.startSession(atSourceTime: time)
             sessionStarted = true
             sessionStart = time
-            firstPicture = StudioCapture.now
+            // The picture's own time, on the clock the events are timed by;
+            // when it came, should that clock ever differ.
+            let now = StudioCapture.now
+            firstPicture = abs(time.seconds - now) < 1 ? time.seconds : now
         }
         guard input.isReadyForMoreMediaData, input.append(sampleBuffer) else { return }
         lastTime = time

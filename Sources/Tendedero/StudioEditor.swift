@@ -20,8 +20,16 @@ final class StudioEditor: NSObject, NSWindowDelegate {
     private var model: StudioModel?
     private var export: StudioExport.Stop?
 
-    /// Opens a recording in Studio, as it was left the last time.
+    /// A recording to open once the video being saved is done.
+    private var waiting: URL?
+
+    /// Opens a recording in Studio, as it was when a video was last saved
+    /// from it. While a video is being saved, it opens once that is done.
     func open(_ url: URL) {
+        guard export == nil else {
+            waiting = url
+            return
+        }
         Task { @MainActor in
             let asset = AVURLAsset(url: url)
             guard let duration = try? await asset.load(.duration).seconds, duration > 0,
@@ -96,16 +104,25 @@ final class StudioEditor: NSObject, NSWindowDelegate {
                 try await StudioExport.run(source, look: look, to: target, stop: stop) { progress in
                     DispatchQueue.main.async { MainActor.assumeIsolated { StudioEditor.shared.progressed(progress) } }
                 }
-                export = nil
-                window?.close()
                 onSaved(target)
+                // The window it was saved from, unless it was closed meanwhile.
+                if export === stop {
+                    export = nil
+                    window?.close()
+                }
             } catch {
-                export = nil
-                model.exporting = nil
+                if export === stop {
+                    export = nil
+                    model.exporting = nil
+                }
                 if !stop.isSet {
                     log.error("Could not save a Studio video: \(error.localizedDescription, privacy: .public)")
                     Notice.show(L("Could not save the video."))
                 }
+            }
+            if export == nil, let next = waiting {
+                waiting = nil
+                open(next)
             }
         }
     }
@@ -161,7 +178,12 @@ final class StudioModel: ObservableObject {
     let player: AVPlayer
 
     @Published var project: StudioProject {
-        didSet { if project != oldValue { look = Self.look(project, events: events, duration: duration, pixels: pixels) } }
+        didSet {
+            guard project != oldValue else { return }
+            // The camera is worked out again only when the zooms change.
+            let camera = project.zooms == oldValue.zooms ? look.camera : nil
+            look = StudioLook(project: project, events: events, duration: duration, pixels: pixels, camera: camera)
+        }
     }
 
     /// The project as it is drawn, made again as it changes.
@@ -204,19 +226,15 @@ final class StudioModel: ObservableObject {
         self.pixels = pixels
         self.events = events
         self.project = project
-        look = Self.look(project, events: events, duration: duration, pixels: pixels)
+        look = StudioLook(project: project, events: events, duration: duration, pixels: pixels)
         player = AVPlayer(playerItem: AVPlayerItem(url: url))
         player.actionAtItemEnd = .pause
         let defaults = UserDefaults.standard
         let kept = defaults.string(forKey: Self.toolKey).flatMap(DrawTool.init(rawValue:))
-        tool = kept.flatMap { Self.tools.contains($0) && $0.kind != nil ? $0 : nil } ?? .arrow
+        tool = kept.flatMap { StudioModel.tools.contains($0) && $0.kind != nil ? $0 : nil } ?? .arrow
         // The same ink and size as Draw on Photo, kept between the two.
         ink = defaults.string(forKey: "drawInk").flatMap(Drawing.Ink.init(rawValue:)) ?? .red
         size = defaults.string(forKey: "drawSize").flatMap(Drawing.Size.init(rawValue:)) ?? .medium
-    }
-
-    private static func look(_ project: StudioProject, events: StudioEvents?, duration: Double, pixels: CGSize) -> StudioLook {
-        StudioLook(project: project, events: events, duration: duration, pixels: pixels)
     }
 
     /// Reads the pictures and the sound for the timeline, and follows the
@@ -269,9 +287,11 @@ final class StudioModel: ObservableObject {
         playing = false
     }
 
+    /// At the end it stands on the last frame, where what shows to the end
+    /// still shows.
     private func reachedEnd() {
         playing = false
-        time = duration
+        time = max(0, duration - 1.0 / 60)
     }
 
     /// Moves the video to a time; `exact` once a drag ends, roughly while
@@ -420,7 +440,10 @@ final class StudioModel: ObservableObject {
         choose(.zoom(zoom.id))
     }
 
-    var canAddZoom: Bool { !project.zooms.contains { $0.contains(time) } && time < duration - StudioZoom.shortest / 2 }
+    var canAddZoom: Bool {
+        let t = now
+        return !project.zooms.contains { $0.contains(t) } && t < duration - StudioZoom.shortest / 2
+    }
 
     /// Changes a zoom, which is the owner's from then on.
     func update(zoom id: UUID, _ make: (inout StudioZoom) -> Void) {

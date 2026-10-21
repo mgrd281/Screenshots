@@ -13,8 +13,10 @@ struct StudioLook: Sendable {
     /// The recording's own pixels, which the marks' sizes are measured in.
     let pixels: CGSize
 
-    init(project: StudioProject, events: StudioEvents?, duration: Double, pixels: CGSize) {
-        camera = StudioCamera(zooms: project.zooms, events: events, duration: duration)
+    /// - Parameter camera: the camera worked out before for the same zooms,
+    ///   so a change to the marks alone doesn't work it out again.
+    init(project: StudioProject, events: StudioEvents?, duration: Double, pixels: CGSize, camera: StudioCamera? = nil) {
+        self.camera = camera ?? StudioCamera(zooms: project.zooms, events: events, duration: duration)
         marks = project.marks.sorted { $0.start < $1.start }
         numbers = project.numbers
         clicks = project.showsClicks ? (events?.clicks ?? []).filter { StudioEvents.isInside($0.x, $0.y) } : []
@@ -70,7 +72,7 @@ enum StudioDraw {
                 let box = Drawing.rect(mark.rect, in: size)
                 grow(context, about: CGPoint(x: box.midX, y: box.midY), by: 0.92 + 0.08 * drawn)
             }
-            Drawing.draw([mark], in: context, size: size, unit: unit, highlights: false, numbered: look.numbers)
+            Drawing.draw([mark], in: context, size: size, unit: unit, numbered: look.numbers)
             context.restoreGState()
         }
     }
@@ -164,6 +166,8 @@ enum StudioExport {
         var current: CVPixelBuffer?
         var next: CMSampleBuffer?
         var done = false
+        /// The last share of the work told, in hundredths.
+        var told = -1
 
         init(next: CMSampleBuffer?) {
             self.next = next
@@ -183,8 +187,9 @@ enum StudioExport {
         }
         let natural = try await track.load(.naturalSize)
         let sounds = try await asset.loadTracks(withMediaType: .audio)
-        var hints: [CMFormatDescription?] = []
-        for sound in sounds { hints.append(try await sound.load(.formatDescriptions).first) }
+        var found: [CMFormatDescription?] = []
+        for sound in sounds { found.append(try await sound.load(.formatDescriptions).first) }
+        let hints = found
         let temp = target.deletingLastPathComponent()
             .appendingPathComponent(".studio-\(UUID().uuidString)").appendingPathExtension("mov")
         do {
@@ -308,7 +313,12 @@ enum StudioExport {
                 let time = CMTimeAdd(start, CMTime(value: CMTimeValue(state.index), timescale: rate))
                 guard adaptor.append(output, withPresentationTime: time) else { return finish(true) }
                 state.index += 1
-                progress(min(1, t / duration))
+                // A hundred steps at most, so the window keeps up.
+                let share = Int(min(1, t / duration) * 100)
+                if share != state.told {
+                    state.told = share
+                    progress(Double(share) / 100)
+                }
             }
         }
 
@@ -320,8 +330,9 @@ enum StudioExport {
                 while copy.to.isReadyForMoreMediaData {
                     guard !soundDone.isSet else { return }
                     if !stop.isSet, let sample = copy.from.copyNextSampleBuffer() {
-                        if !copy.to.append(sample) { failed.set() }
-                        continue
+                        if copy.to.append(sample) { continue }
+                        // The writer has failed: it asks for nothing more.
+                        failed.set()
                     }
                     soundDone.set()
                     copy.to.markAsFinished()
@@ -331,7 +342,14 @@ enum StudioExport {
             }
         }
 
-        group.wait()
+        // Should the writer or the reader fail while an input waits, it is
+        // never asked for more: the wait ends then too.
+        while group.wait(timeout: .now() + .milliseconds(250)) == .timedOut {
+            if writer.status == .failed || reader.status == .failed {
+                failed.set()
+                break
+            }
+        }
         if stop.isSet {
             reader.cancelReading()
             writer.cancelWriting()
@@ -342,6 +360,7 @@ enum StudioExport {
             writer.cancelWriting()
             throw writer.error ?? reader.error ?? Failure.cannotWrite
         }
+        writer.endSession(atSourceTime: CMTimeAdd(start, CMTime(seconds: duration, preferredTimescale: 600)))
         let finished = DispatchSemaphore(value: 0)
         writer.finishWriting { finished.signal() }
         finished.wait()
@@ -376,15 +395,18 @@ enum StudioMedia {
     /// sound.
     static func wave(of url: URL, count: Int) async -> [Float] {
         let asset = AVURLAsset(url: url)
-        guard let tracks = try? await asset.loadTracks(withMediaType: .audio), !tracks.isEmpty else { return [] }
+        guard let tracks = try? await asset.loadTracks(withMediaType: .audio), !tracks.isEmpty,
+              let duration = try? await asset.load(.duration).seconds, duration > 0 else { return [] }
         return await withCheckedContinuation { (done: CheckedContinuation<[Float], Never>) in
             DispatchQueue.global(qos: .utility).async {
-                done.resume(returning: read(asset: asset, tracks: tracks, count: count))
+                done.resume(returning: read(asset: asset, tracks: tracks, count: count, duration: duration))
             }
         }
     }
 
-    private static func read(asset: AVAsset, tracks: [AVAssetTrack], count: Int) -> [Float] {
+    private static let soundRate = 8000.0
+
+    private static func read(asset: AVAsset, tracks: [AVAssetTrack], count: Int, duration: Double) -> [Float] {
         guard let reader = try? AVAssetReader(asset: asset) else { return [] }
         let output = AVAssetReaderAudioMixOutput(audioTracks: tracks, audioSettings: [
             AVFormatIDKey: kAudioFormatLinearPCM,
@@ -392,13 +414,13 @@ enum StudioMedia {
             AVLinearPCMIsFloatKey: true,
             AVLinearPCMIsBigEndianKey: false,
             AVLinearPCMIsNonInterleaved: false,
-            AVSampleRateKey: 8000,
+            AVSampleRateKey: soundRate,
             AVNumberOfChannelsKey: 1,
         ])
         guard reader.canAdd(output) else { return [] }
         reader.add(output)
         guard reader.startReading() else { return [] }
-        var samples: [Float] = []
+        var folding = StudioWave.Folding(count: count, expected: Int(duration * soundRate))
         while let buffer = output.copyNextSampleBuffer() {
             guard let block = CMSampleBufferGetDataBuffer(buffer) else { continue }
             let length = CMBlockBufferGetDataLength(block)
@@ -409,8 +431,8 @@ enum StudioMedia {
             let status = chunk.withUnsafeMutableBytes { buffer in
                 CMBlockBufferCopyDataBytes(block, atOffset: 0, dataLength: bytes, destination: buffer.baseAddress!)
             }
-            if status == kCMBlockBufferNoErr { samples += chunk }
+            if status == kCMBlockBufferNoErr { folding.add(chunk) }
         }
-        return StudioWave.peaks(samples, count: count)
+        return folding.peaks
     }
 }

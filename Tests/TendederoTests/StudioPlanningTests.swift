@@ -267,4 +267,13 @@ final class StudioPlanningTests: XCTestCase {
         XCTAssertTrue(StudioWave.peaks([], count: 4).isEmpty)
         XCTAssertEqual(StudioWave.peaks([0, 0], count: 2), [0, 0])
     }
+
+    func testLoudnessIsFoldedAsItIsRead() {
+        var folding = StudioWave.Folding(count: 2, expected: 4)
+        folding.add([0.1, -0.4])
+        folding.add([0.2, 0.1])
+        // More than expected goes into the last part.
+        folding.add([-0.8])
+        XCTAssertEqual(folding.peaks, [0.5, 1])
+    }
 }

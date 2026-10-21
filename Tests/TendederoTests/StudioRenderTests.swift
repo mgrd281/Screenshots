@@ -2,6 +2,7 @@
 import AppKit
 import AVFoundation
 import CoreText
+import SwiftUI
 import XCTest
 @testable import Tendedero
 

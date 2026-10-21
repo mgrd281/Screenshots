@@ -602,6 +602,10 @@ private struct StudioSurface: NSViewRepresentable {
         view.model = model
         view.refresh()
     }
+
+    static func dismantleNSView(_ view: StudioSurfaceView, coordinator: ()) {
+        view.stop()
+    }
 }
 
 final class StudioSurfaceView: NSView {
@@ -638,6 +642,7 @@ final class StudioSurfaceView: NSView {
         marks.contentsScale = window.backingScaleFactor
         let link = displayLink(target: self, selector: #selector(tick))
         link.add(to: .main, forMode: .common)
+        link.isPaused = !(model?.playing ?? false)
         self.link = link
     }
 
@@ -647,7 +652,8 @@ final class StudioSurfaceView: NSView {
     }
 
     @objc private func tick() {
-        guard let model, model.playing else { return }
+        guard let model, window != nil else { return stop() }
+        guard model.playing else { return }
         place(at: model.now)
     }
 
@@ -655,7 +661,16 @@ final class StudioSurfaceView: NSView {
     func refresh() {
         guard let model else { return }
         if video.player !== model.player { video.player = model.player }
+        // Frame by frame only while it plays.
+        link?.isPaused = !model.playing
         place(at: model.now)
+    }
+
+    /// Lets the video and the frame-by-frame updates go, as the window closes.
+    func stop() {
+        link?.invalidate()
+        link = nil
+        video.player = nil
     }
 
     private func place(at t: Double) {
@@ -682,7 +697,7 @@ final class StudioSurfaceView: NSView {
         var area: CGRect?
         if whole, let zoom = model.selectedZoom { area = model.area(of: zoom) }
         marks.state = StudioOverlayLayer.State(look: model.look, time: t, rect: rect, chosen: chosen, area: area,
-                                               accent: NSColor.controlAccentColor.cgColor)
+                                               accent: NSColor.controlAccentColor.cgColor, still: Motion.reduced)
         CATransaction.commit()
         marks.setNeedsDisplay()
     }
@@ -700,6 +715,9 @@ private final class StudioOverlayLayer: CALayer {
         /// The part a chosen zoom looks at, on the whole recording.
         var area: CGRect?
         var accent: CGColor
+        /// Reduce Motion: marks only fade in the window. The saved video
+        /// draws them in, for whoever watches it.
+        var still: Bool
     }
 
     var state: State?
@@ -721,7 +739,7 @@ private final class StudioOverlayLayer: CALayer {
         let size = bounds.size
         guard size.width > 0, size.height > 0 else { return }
         // The layer counts from its bottom left, as the video is drawn.
-        StudioDraw.overlay(state.look, at: state.time, rect: state.rect, in: context, size: size)
+        StudioDraw.overlay(state.look, at: state.time, rect: state.rect, in: context, size: size, still: state.still)
         if let area = state.area { drawArea(Drawing.rect(area, in: size), in: context, size: size, accent: state.accent) }
         if let chosen = state.chosen {
             drawSelection(chosen, in: context, size: size, unit: state.look.unit(for: size), accent: state.accent)
