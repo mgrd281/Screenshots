@@ -134,7 +134,7 @@ struct CoverPreview: View {
     let strongest: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 12) {
             Text(L("Invoice to"))
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(SnapflyTokens.morePaperLabel)

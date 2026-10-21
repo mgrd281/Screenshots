@@ -14,7 +14,7 @@ struct DetectionView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 28) {
+            VStack(alignment: .leading, spacing: 32) {
                 reading
                 performance
             }
@@ -124,7 +124,7 @@ struct DetectionView: View {
     }
 
     private func stat(_ title: String, _ times: (middle: Int, slow: Int)) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(SnapflyTokens.hideText)

@@ -231,7 +231,7 @@ components:
   phone-more-tile:
     height: "112pt"                # at least: a tile under More › Protection, two to a row 12pt apart (one at the accessibility sizes), 16pt in, on phone-hide-card with rounded.phone-hide-row: its symbol tile, the avatar or the little document on top, then its name in subheadline semibold over what it holds now in footnote phone-hide-secondary
   phone-more-pill:
-    height: "38pt"                 # at least: a kind in What Is Covered, a capsule 14pt in at the sides, subheadline medium; on, phone-more-pill-on with a checkmark (caption bold) 6pt before the words in phone-more-pill-on-text; off, phone-hide-card inside a 1pt phone-more-pill-edge; 8pt apart in rows that wrap (PillFlow), its touch 3pt larger round it
+    height: "38pt"                 # at least: a kind in What Is Covered, a capsule 12 by 8pt in, subheadline medium; on, phone-more-pill-on with a checkmark (caption bold) 4pt before the words in phone-more-pill-on-text; off, phone-hide-card inside a 1pt phone-more-pill-edge; 8pt apart in rows that wrap (PillFlow), its touch 3pt larger round it
   phone-more-chip:
     height: "44pt"                 # at least: one of the hero's three chips, white at 12% with rounded.phone-more-button, 12 by 8pt in, its name in caption white 72% over its value in subheadline semibold white; side by side, sharing the width, or one above another when they do not fit
   phone-hide-row:
@@ -2399,7 +2399,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   each part, on `phone-hide-ground` with its bar of the same ground, so no
   words show through it. A large title "More", no Done; the pages it opens
   have an inline title on the same ground, and no tab bar under them.
-  16pt in at the sides, its parts 28pt apart. Its tokens are `phone-hide-*`
+  16pt in at the sides, its parts 32pt apart. Its tokens are `phone-hide-*`
   and `phone-more-*`, one accent only: every symbol on a mint
   `phone-symbol-tile`, but the grey ones in Features.
   - **The hero** ("Your Protection"), `rounded.phone-more-hero`, 20pt in,
@@ -2439,9 +2439,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     on `phone-hide-accent-soft`; Your Choice when it is none), under it
     when it does not fit; "Categories covered in every picture"; then
     Recommended, All and None, a segmented control of our own, so it can
-    show none chosen: a capsule of `phone-more-track`, 3pt in, the chosen
+    show none chosen: a capsule of `phone-more-track`, 4pt in, the chosen
     one raised on a `phone-more-thumb` capsule with a shadow of black 8%,
-    radius 2, y 1, at least 38pt high, sliding to the next. They write
+    radius 2, y 1, at least 36pt high, sliding to the next. They write
     exactly what Check All, Recommended and Uncheck All wrote. Then the
     groups as tabs that scroll sideways, "All", "People 7/10", "Money 1/2"
     and so on: capsules 38pt high of `phone-hide-card`, the chosen one

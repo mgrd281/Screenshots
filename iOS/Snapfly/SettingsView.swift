@@ -28,7 +28,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack(path: $path) {
             ScrollView {
-                VStack(spacing: 28) {
+                VStack(spacing: 32) {
                     hero.modifier(MoreAppear(shown: shown, index: 0))
                     protection.modifier(MoreAppear(shown: shown, index: 1))
                     features.modifier(MoreAppear(shown: shown, index: 2))
@@ -113,7 +113,7 @@ struct SettingsView: View {
     private var hero: some View {
         let summary = store.summary
         let off = summary.isOff
-        return VStack(alignment: .leading, spacing: 18) {
+        return VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 8) {
                 Label {
                     Text(off ? L("Protection Off") : L("Protection On"))
@@ -132,7 +132,7 @@ struct SettingsView: View {
 
             HStack(alignment: .center, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
                         RollingNumber(value: summary.count)
                             .font(.system(size: heroNumber, weight: .bold))
                         Text(verbatim: "/ " + CoverSummary.total.formatted())
@@ -299,7 +299,7 @@ struct SettingsView: View {
         tile(L("Detection"), page: .detection, id: "tile-detection") {
             SymbolTile(symbol: "text.viewfinder")
         } detail: {
-            HStack(spacing: 6) {
+            HStack(spacing: 8) {
                 StatusDot(on: store.intelligenceOn)
                 Text(store.intelligenceOn ? L("Apple Intelligence on") : L("Apple Intelligence off"))
             }
@@ -312,10 +312,10 @@ struct SettingsView: View {
         Button {
             open(page, from: id)
         } label: {
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 12) {
                 symbol()
                 Spacer(minLength: 0)
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(SnapflyTokens.hideText)

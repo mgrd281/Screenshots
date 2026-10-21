@@ -61,11 +61,11 @@ struct CoveredKindsView: View {
     // MARK: Parts
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             // The badge beside the count, or under it at the largest sizes.
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .center, spacing: 10) { count }
-                VStack(alignment: .leading, spacing: 6) { count }
+                HStack(alignment: .center, spacing: 8) { count }
+                VStack(alignment: .leading, spacing: 8) { count }
             }
             Text(L("Categories covered in every picture"))
                 .font(.subheadline)
@@ -150,7 +150,7 @@ struct CoveredKindsView: View {
     private func card(_ group: CoverGroup) -> some View {
         let count = summary.count(in: group)
         let whole = summary.isWhole(group)
-        return VStack(alignment: .leading, spacing: 14) {
+        return VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .center, spacing: 8) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(group.title)
@@ -274,8 +274,8 @@ struct PresetControl: View {
                         .foregroundStyle(SnapflyTokens.hideText)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
-                        .padding(.horizontal, 6)
-                        .frame(maxWidth: .infinity, minHeight: 38)
+                        .padding(.horizontal, 8)
+                        .frame(maxWidth: .infinity, minHeight: 36)
                         .background {
                             if on {
                                 Capsule()
@@ -291,7 +291,7 @@ struct PresetControl: View {
                 .accessibilityIdentifier("more-preset-\(preset.rawValue)")
             }
         }
-        .padding(3)
+        .padding(4)
         .background(SnapflyTokens.moreTrack, in: Capsule())
         .animation(MoreMotion.change(still), value: selection)
         .accessibilityElement(children: .contain)
@@ -312,7 +312,7 @@ struct KindPill: View {
 
     var body: some View {
         Button(action: toggle) {
-            HStack(spacing: 6) {
+            HStack(spacing: 4) {
                 if on || still {
                     Image(systemName: "checkmark")
                         .font(.caption.weight(.bold))
@@ -325,8 +325,8 @@ struct KindPill: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .foregroundStyle(on ? SnapflyTokens.morePillOnText : SnapflyTokens.hideText)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 9)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
             .frame(minHeight: 38)
             .background(on ? SnapflyTokens.morePillOn : SnapflyTokens.hideCard, in: Capsule())
             .overlay(Capsule().strokeBorder(on ? Color.clear : SnapflyTokens.morePillEdge, lineWidth: 1))
