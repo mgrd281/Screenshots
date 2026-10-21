@@ -67,6 +67,15 @@ final class MoreUITests: XCTestCase {
         }
     }
 
+    /// Drags a group's sheet up until the element can be tapped: the sheet
+    /// grows to its full height first, then its rows scroll.
+    private func revealInSheet(_ target: XCUIElement, in app: XCUIApplication) {
+        for _ in 0..<5 where !(target.exists && target.isHittable) {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.88))
+                .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
+        }
+    }
+
     // MARK: Checks
 
     func testTheHeroAndTheTilesCountWhatIsOn() {
@@ -124,11 +133,12 @@ final class MoreUITests: XCTestCase {
         XCTAssertEqual(amounts.value as? String, "wird nicht verdeckt")
         flip(amounts)
         XCTAssertTrue(wait(for: amounts, value: "wird verdeckt"))
-        XCTAssertTrue(wait(for: count, label: "14 von 22"))
-        XCTAssertTrue(wait(for: badge, label: "Eigene Auswahl"))
         XCTAssertTrue(wait(for: element(app, "more-sheet-count"), label: "2 von 2 aktiv"))
         XCTAssertTrue(wait(for: element(app, "more-sample-document"), containing: "Arztrechnung, 10 von 13"))
+        // The stage's count and badge show again once the sheet is closed.
         element(app, "more-sheet-close").tap()
+        XCTAssertTrue(wait(for: count, label: "14 von 22"))
+        XCTAssertTrue(wait(for: badge, label: "Eigene Auswahl"))
         XCTAssertTrue(wait(for: app.buttons["more-group-money"], containing: "2 von 2 aktiv"))
         // More's hero and tile say the same.
         app.navigationBars.buttons.element(boundBy: 0).tap()
@@ -163,10 +173,12 @@ final class MoreUITests: XCTestCase {
         let count = element(app, "more-covered-count")
         XCTAssertTrue(count.waitForExistence(timeout: 15))
         openSheet("money", in: app)
+        let inSheet = element(app, "more-sheet-count")
         element(app, "more-sheet-all").tap()
-        XCTAssertTrue(wait(for: count, label: "14 von 22"))
-        XCTAssertTrue(app.buttons["more-group-people"].label.contains("7 von 10 aktiv"))
+        XCTAssertTrue(wait(for: inSheet, label: "2 von 2 aktiv"))
         element(app, "more-sheet-all").tap()
+        XCTAssertTrue(wait(for: inSheet, label: "0 von 2 aktiv"))
+        element(app, "more-sheet-close").tap()
         XCTAssertTrue(wait(for: count, label: "12 von 22"))
         XCTAssertTrue(app.buttons["more-group-people"].label.contains("7 von 10 aktiv"))
     }
@@ -184,9 +196,11 @@ final class MoreUITests: XCTestCase {
         openSheet("people", in: app)
         XCTAssertTrue(wait(for: document, containing: "Arztrechnung"))
         let faces = app.switches["more-kind-faces"]
-        reveal(faces, in: app)
+        revealInSheet(faces, in: app)
         flip(faces)
         XCTAssertTrue(wait(for: faces, value: "wird verdeckt"))
+        // The sheet may have grown over the stage; the chat stays once it closes.
+        element(app, "more-sheet-close").tap()
         XCTAssertTrue(wait(for: document, containing: "Chat"))
     }
 
@@ -279,7 +293,7 @@ final class MoreUITests: XCTestCase {
         pause(1.4)
         for kind in ["more-kind-patientNames", "more-kind-faces", "more-kind-usernames", "more-kind-organizations"] {
             let toggle = app.switches[kind]
-            reveal(toggle, in: app)
+            revealInSheet(toggle, in: app)
             flip(toggle)
             pause(1.4)
         }

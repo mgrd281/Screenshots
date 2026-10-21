@@ -26,17 +26,16 @@ struct CoveredKindsView: View {
     init(store: MoreStore, openOwnDetails: @escaping () -> Void) {
         _store = ObservedObject(wrappedValue: store)
         self.openOwnDetails = openOwnDetails
-        var sample = CoverStudioSample.bill
-        var sheet: CoverGroup?
         #if DEBUG
-        if let group = MoreSample.group {
-            sheet = group
-            sample = CoverStudioSample.showing(group)
-        }
-        sample = MoreSample.studioSample ?? sample
+        // The made-up states the simulator's frames open on.
+        let group = MoreSample.group
+        let opened = group.map { CoverStudioSample.showing($0) }
+        _sample = State(initialValue: MoreSample.studioSample ?? opened ?? .bill)
+        _sheet = State(initialValue: group)
+        #else
+        _sample = State(initialValue: .bill)
+        _sheet = State(initialValue: nil)
         #endif
-        _sample = State(initialValue: sample)
-        _sheet = State(initialValue: sheet)
     }
 
     private var summary: CoverSummary { store.summary }
@@ -56,6 +55,7 @@ struct CoveredKindsView: View {
                     .padding(.top, 8)
                     .padding(.bottom, 32)
                 }
+                .defaultScrollAnchor(MoreSample.endAnchor)
                 .onChange(of: sheet) { _, open in
                     guard open != nil else { return }
                     withAnimation(still ? MoreMotion.fade : .smooth(duration: 0.35)) {
@@ -252,7 +252,8 @@ private struct CoverStage: View {
 
     private static let padding: CGFloat = 18
     private static let compactPadding: CGFloat = 12
-    private static let dots: CGFloat = 22
+    /// The dots' row with the room above it.
+    private static let dots: CGFloat = 32
     /// The paper as tall as it shows, its tilt and shadow included.
     private static let paperRoom = CoverSampleDocument.size.height + 12
 
@@ -640,16 +641,23 @@ private struct KindRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            SymbolTile(symbol: kind.symbol, base: 32,
-                       ground: on ? SnapflyTokens.hideAccentSoft : SnapflyTokens.moreNeutralTile,
-                       glyph: on ? SnapflyTokens.moreGlyph : SnapflyTokens.moreNeutralGlyph)
-                .animation(MoreMotion.change(still), value: on)
-            Text(kind.title)
-                .font(.body)
-                .foregroundStyle(SnapflyTokens.hideText)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityHidden(true)
-            Spacer(minLength: 8)
+            // The rest of the row turns it too; the switch keeps its own tap.
+            HStack(spacing: 12) {
+                SymbolTile(symbol: kind.symbol, base: 32,
+                           ground: on ? SnapflyTokens.hideAccentSoft : SnapflyTokens.moreNeutralTile,
+                           glyph: on ? SnapflyTokens.moreGlyph : SnapflyTokens.moreNeutralGlyph)
+                    .animation(MoreMotion.change(still), value: on)
+                Text(kind.title)
+                    .font(.body)
+                    .foregroundStyle(SnapflyTokens.hideText)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityHidden(true)
+                Spacer(minLength: 8)
+            }
+            .padding(.vertical, 8)
+            .frame(minHeight: 52)
+            .contentShape(Rectangle())
+            .onTapGesture(perform: toggle)
             Toggle(isOn: Binding(get: { on }, set: { _ in toggle() })) {
                 Text(kind.title)
             }
@@ -660,9 +668,5 @@ private struct KindRow: View {
             .accessibilityIdentifier("more-kind-\(kind.rawValue)")
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 8)
-        .frame(minHeight: 52)
-        .contentShape(Rectangle())
-        .onTapGesture(perform: toggle)
     }
 }
