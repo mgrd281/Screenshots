@@ -81,6 +81,7 @@ enum History {
                 try fm.createDirectory(at: folder, withIntermediateDirectories: true)
                 kept = unique(url.lastPathComponent, in: folder)
                 try fm.moveItem(at: url, to: kept)
+                StudioStore.move(from: url, to: kept)
             } catch {
                 log.error("Could not keep \(url.lastPathComponent, privacy: .public) in the history: \(error.localizedDescription, privacy: .public)")
                 return false
@@ -100,6 +101,7 @@ enum History {
         let back = unique(entry.url.lastPathComponent, in: Inbox.folder)
         do {
             try FileManager.default.moveItem(at: entry.url, to: back)
+            StudioStore.move(from: entry.url, to: back)
             return back
         } catch {
             return entry.url

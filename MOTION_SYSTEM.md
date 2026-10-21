@@ -89,6 +89,23 @@ The web has no springs in CSS. There, use `ease.out` at a duration close to
 the spring's response, and keyframes (like `hang-in`) where a visible
 settle is the point.
 
+### Studio's video (Mac)
+
+What Studio puts into a saved screen recording (`StudioPlanning.swift`).
+It is the video's own motion, so it plays the same for every viewer.
+
+| Token | Value | Where it ships |
+|---|---|---|
+| `studio.zoom` | critically damped spring, response 0.9 s, on the zoom's log | The camera coming closer and going back out |
+| `studio.pan` | critically damped spring, response 0.75 s | The camera following the pointer, which it reads 0.2 s ahead, once it leaves the middle half of the view |
+| `studio.lead` | 0.8 s before, 1.6 s after | A zoom made from clicks starts before the first and lingers after the last |
+| `studio.draw` | 0.35 s ease-out (cubic) | A mark drawing in: an arrow from its tail, a step or words from 0.6, a box or a circle from 0.92 |
+| `studio.leave` | 0.25 s | A mark fading before it goes |
+| `studio.ring` | 0.45 s ease-out, 0.45 → 1 | A click's ring spreading and fading, as a guide's does |
+
+The video is sixty frames a second, so the camera moves smoothly over a
+screen that only sent a picture when something changed.
+
 ### Named motion on the iPhone
 
 `SnapflyMotion` in `iOS/Snapfly/Motion.swift`: each is a SwiftUI animation

@@ -163,6 +163,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self?.line.reloadThumbnail(for: url)
             Notice.saved(url)
         }
+        StudioEditor.shared.onSaved = { [weak self] url in self?.hangCapture(url) }
         panel.onScroll = { [weak self] event in
             // Sideways on a trackpad, or the wheel of a mouse.
             let delta = abs(event.scrollingDeltaX) >= abs(event.scrollingDeltaY)

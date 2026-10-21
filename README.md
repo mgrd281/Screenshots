@@ -64,6 +64,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Edit › Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. Either way, a note offers to undo it for a few seconds. |
 | Right-click, then Edit › Hide Part | Click a word to hide it, or drag a box over anything the covering missed. It stays hidden in whatever leaves the line, and a note offers to undo it. Always cover, under the word just hidden, covers that word in every photo from then on, as a rule of your own under Privacy. |
 | Right-click, then Edit › Draw on Photo | Point things out with an arrow, a box, a red circle, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
+| Right-click a recording, then Edit › Edit in Studio… | Zoomed in where you clicked and typed, a ring at each click, and arrows, boxes, circles, numbered steps and words for as long as you want each. Save Video hangs the new video beside the recording. |
 | Right-click, then Edit › Background… | Set it on a colour, with room round it, rounded corners and a soft shadow, square or the shape a post or a story wants, so it looks finished in a post, a shop or a slide. It goes out that way; the file stays as it is. Remove Background takes it off again. |
 | Right-click, then Save and Export › Convert to SVG | Draws the photo again as shapes that stay sharp at any size, to paste into a design app or save as an `.svg` file. It is made from the copy that leaves the line, so what is covered is covered in it; the file stays as it is. |
 | Right-click, then Save and Export › Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
@@ -216,7 +217,7 @@ Press <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd>, or choose Record
 Screen, to record an area, a window or the whole screen. A capsule above the
 Dock shows the time; click it, press the shortcut again, or choose Stop
 Recording in the menu bar to stop. The recording hangs on the line, ready to
-trim or send. Make GIF in its menu turns it into a looping GIF that every chat
+trim or send, and opens in Studio (below). Make GIF in its menu turns it into a looping GIF that every chat
 plays, which hangs next to it and stays animated when sent. Snapfly's own
 line and controls stay out of it.
 
@@ -226,6 +227,39 @@ microphone, your voice, asked for the first time and on macOS 15 or later;
 or both, mixed into one track that every player and chat plays. It has none
 until chosen. If the microphone isn't allowed, the recording goes on without
 it and a note says where to allow it.
+
+### Studio: zoomed in, pointed out.
+
+Once a recording hangs, it opens in Studio, or later with Edit › Edit in
+Studio… in its menu. It plays as it will be saved: the camera comes closer
+where you clicked and typed, follows the pointer there as a camera operator
+would, moving only when it nears the edge, and goes back out after. Nothing
+to set up: the zooms are made from what you did while recording. A ring
+spreads at each click, so viewers see where it went.
+
+Under the picture is the timeline: pictures along the recording with its
+sound, the zooms, and what you drew. Drag a zoom to move it, or its ends to
+make it longer or shorter; choose one to set how close it comes, and whether
+it follows the pointer or looks at one place, which you drag on the picture.
+Add Zoom puts one where the video is. How close, in the inspector, changes
+every zoom made for you at once, and turning Zoom in on clicks and typing off
+takes them away and keeps yours.
+
+Pause where something should be pointed out and draw on the picture, with
+the same arrow, box, circle, numbered steps and words as Draw on Photo, in
+its colours and sizes. Each shows for three seconds from there, drawing in
+as it comes; drag it on the timeline to change when and for how long. Steps
+are numbered in the order they show. Marks stay on what they point at as the
+camera moves. Space plays and pauses, ← and → move a second, ⌘Z undoes.
+
+Save Video writes a new video beside the recording, at its size and sixty
+frames a second, with its sound, and hangs it on the line; the recording
+itself is never changed. What you changed stays with the recording for the
+next time, and Trim keeps it in step; Cancel leaves it as it was. Turn off opening Studio after each recording
+in Settings › General, under Screen recordings. Where the pointer went and
+when keys were pressed stay on your Mac, never which keys; typing is only
+noticed where Snapfly may use Accessibility. A recording made before Studio
+has no clicks to follow, so its zooms are added by hand.
 
 Hide Desktop Icons, in the menu bar, lays the wallpaper over the icons on
 every screen, so screenshots and recordings show a clean desktop. Windows
@@ -1442,6 +1476,10 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |
 | `Trim.swift` | Trims a screen recording and saves the result |
+| `StudioPlanning.swift` | Studio without a screen: what was done while recording, where to zoom, the camera's path, how marks and clicks come and go, and the timeline's rules |
+| `StudioStore.swift` | Studio's work on each recording and what was done while recording, kept on the Mac; notes the pointer, clicks and key times while recording |
+| `StudioRender.swift` | Draws a recording through Studio's camera with its marks and clicks, writes the video, and reads the timeline's pictures and sound |
+| `StudioEditor.swift`, `StudioEditorView.swift` | Studio's window: the video as it will be saved, the timeline, the inspector, Undo and Save Video |
 | `Tests/TendederoTests` | Tests for the logic that needs no screen, run by CI with `swift test` |
 | `FullScreen.swift` | Knows when to stay hidden (the App Store edition goes by the windows on screen) |
 | `Line.swift` | What is hanging, and what you can do with it |

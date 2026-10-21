@@ -6,6 +6,15 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Studio, for screen recordings on the Mac. A recording opens in it once it
+  hangs, already zoomed in where you clicked and typed, following the
+  pointer there, with a ring at each click. Draw arrows, boxes, circles,
+  numbered steps and words over it, each for as long as you want, and move
+  or stretch zooms and marks on the timeline, under pictures of the
+  recording and its sound. Save Video makes a smooth new video at sixty
+  frames a second beside the recording, with its sound. Edit › Edit in
+  Studio… opens it later; Settings › General can stop it opening after each
+  recording.
 - On the iPhone, More is a short overview now, with a page for each part.
   A card says how many of the twenty-two kinds are covered in every
   picture, with a little document covered in your look, and turns grey,

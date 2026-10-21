@@ -1638,3 +1638,35 @@
 "is covered" = "gizlenir";
 "is not covered" = "gizlenmez";
 "online" = "çevrimiçi";
+
+/* Studio */
+"A ring where each click landed." = "Her tıklamanın olduğu yerde bir halka.";
+"Add Zoom" = "Yakınlaştırma Ekle";
+"Could not open the recording." = "Kayıt açılamadı.";
+"Could not save the video." = "Video kaydedilemedi.";
+"Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Taşımak için zaman çizelgesinde bir yakınlaştırmayı sürükle, uzatmak ya da kısaltmak için uçlarını sürükle.";
+"Drag the frame on the picture to choose what it looks at." = "Nereye bakacağını seçmek için resimdeki çerçeveyi sürükle.";
+"Draw" = "Çiz";
+"Edit in Studio…" = "Studio’da Düzenle…";
+"From where the video is, for three seconds." = "Videonun olduğu yerden, üç saniye boyunca.";
+"How close" = "Ne kadar yakın";
+"It shows for three seconds from where the video is. Drag it on the timeline to change when." = "Videonun olduğu yerden üç saniye görünür. Zamanını değiştirmek için zaman çizelgesinde sürükle.";
+"Looks at" = "Bakar";
+"Made from your clicks and typing" = "Tıklamalarından ve yazdıklarından yapıldı";
+"One Place" = "Tek Yer";
+"Open Studio after recording" = "Kayıttan sonra Studio’yu aç";
+"Play" = "Oynat";
+"Recording" = "Kayıt";
+"Save Video" = "Videoyu Kaydet";
+"Saving the video…" = "Video kaydediliyor…";
+"Show clicks" = "Tıklamaları göster";
+"Studio" = "Studio";
+"Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never." = "Studio tıklayıp yazdığın yere yakınlaşır, oklar ve numaralar ekler. İmlecin nereye gittiği ve tuşlara ne zaman basıldığı bu Mac’te kalır; hangi tuşlar olduğu asla.";
+"The Pointer" = "İmleç";
+"This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand." = "Bu kayıt Studio’dan önce yapıldı, bu yüzden yakınlaşılacak tıklaması yok. Yakınlaştırmaları elle ekle.";
+"Time" = "Zaman";
+"Timeline Zoom" = "Zaman Çizelgesi Yakınlaştırma";
+"Words on the video" = "Videodaki sözcükler";
+"Zoom" = "Yakınlaştırma";
+"Zoom in on clicks and typing" = "Tıklamalarda ve yazarken yakınlaştır";
+"Zooms: %d" = "Yakınlaştırmalar: %d";

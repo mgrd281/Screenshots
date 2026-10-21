@@ -1638,3 +1638,35 @@
 "is covered" = "ocúltase";
 "is not covered" = "non se oculta";
 "online" = "en liña";
+
+/* Studio */
+"A ring where each click landed." = "Un anel onde caeu cada clic.";
+"Add Zoom" = "Engadir zoom";
+"Could not open the recording." = "Non se puido abrir a gravación.";
+"Could not save the video." = "Non se puido gardar o vídeo.";
+"Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Arrastra un zoom na liña de tempo para movelo, ou os seus extremos para alongalo ou acurtalo.";
+"Drag the frame on the picture to choose what it looks at." = "Arrastra o marco sobre a imaxe para escoller a onde mira.";
+"Draw" = "Debuxar";
+"Edit in Studio…" = "Editar en Studio…";
+"From where the video is, for three seconds." = "Desde onde está o vídeo, durante tres segundos.";
+"How close" = "Canto achegar";
+"It shows for three seconds from where the video is. Drag it on the timeline to change when." = "Aparece durante tres segundos desde onde está o vídeo. Arrástrao na liña de tempo para cambiar cando.";
+"Looks at" = "Mira a";
+"Made from your clicks and typing" = "Feito cos teus clics e o que escribiches";
+"One Place" = "Un lugar";
+"Open Studio after recording" = "Abrir Studio despois de gravar";
+"Play" = "Reproducir";
+"Recording" = "Gravación";
+"Save Video" = "Gardar vídeo";
+"Saving the video…" = "Gardando o vídeo…";
+"Show clicks" = "Amosar clics";
+"Studio" = "Studio";
+"Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never." = "Studio achégase onde fas clic e escribes, e engade frechas e números. Por onde foi o punteiro e cando se premeron teclas queda neste Mac; que teclas, nunca.";
+"The Pointer" = "O punteiro";
+"This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand." = "Esta gravación fíxose antes de Studio, así que non ten clics aos que achegarse. Engade zooms a man.";
+"Time" = "Tempo";
+"Timeline Zoom" = "Zoom da liña de tempo";
+"Words on the video" = "Palabras no vídeo";
+"Zoom" = "Zoom";
+"Zoom in on clicks and typing" = "Achegar ao facer clic e escribir";
+"Zooms: %d" = "Zooms: %d";

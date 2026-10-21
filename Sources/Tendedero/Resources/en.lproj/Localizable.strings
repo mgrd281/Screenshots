@@ -1640,3 +1640,35 @@
 "is covered" = "is covered";
 "is not covered" = "is not covered";
 "online" = "online";
+
+/* Studio */
+"A ring where each click landed." = "A ring where each click landed.";
+"Add Zoom" = "Add Zoom";
+"Could not open the recording." = "Could not open the recording.";
+"Could not save the video." = "Could not save the video.";
+"Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter.";
+"Drag the frame on the picture to choose what it looks at." = "Drag the frame on the picture to choose what it looks at.";
+"Draw" = "Draw";
+"Edit in Studio…" = "Edit in Studio…";
+"From where the video is, for three seconds." = "From where the video is, for three seconds.";
+"How close" = "How close";
+"It shows for three seconds from where the video is. Drag it on the timeline to change when." = "It shows for three seconds from where the video is. Drag it on the timeline to change when.";
+"Looks at" = "Looks at";
+"Made from your clicks and typing" = "Made from your clicks and typing";
+"One Place" = "One Place";
+"Open Studio after recording" = "Open Studio after recording";
+"Play" = "Play";
+"Recording" = "Recording";
+"Save Video" = "Save Video";
+"Saving the video…" = "Saving the video…";
+"Show clicks" = "Show clicks";
+"Studio" = "Studio";
+"Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never." = "Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never.";
+"The Pointer" = "The Pointer";
+"This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand." = "This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand.";
+"Time" = "Time";
+"Timeline Zoom" = "Timeline Zoom";
+"Words on the video" = "Words on the video";
+"Zoom" = "Zoom";
+"Zoom in on clicks and typing" = "Zoom in on clicks and typing";
+"Zooms: %d" = "Zooms: %d";

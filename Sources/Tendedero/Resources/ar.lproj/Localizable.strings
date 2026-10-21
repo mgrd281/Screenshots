@@ -1638,3 +1638,35 @@
 "is covered" = "تُغطّى";
 "is not covered" = "لا تُغطّى";
 "online" = "متصل";
+
+/* Studio */
+"A ring where each click landed." = "حلقة حيث وقعت كل نقرة.";
+"Add Zoom" = "إضافة تكبير";
+"Could not open the recording." = "تعذّر فتح التسجيل.";
+"Could not save the video." = "تعذّر حفظ الفيديو.";
+"Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "اسحب التكبير على الشريط الزمني لنقله، أو اسحب طرفيه لإطالته أو تقصيره.";
+"Drag the frame on the picture to choose what it looks at." = "اسحب الإطار على الصورة لتختار ما ينظر إليه.";
+"Draw" = "الرسم";
+"Edit in Studio…" = "التحرير في الاستوديو…";
+"From where the video is, for three seconds." = "من موضع الفيديو، لثلاث ثوانٍ.";
+"How close" = "مدى القرب";
+"It shows for three seconds from where the video is. Drag it on the timeline to change when." = "يظهر لثلاث ثوانٍ من موضع الفيديو. اسحبه على الشريط الزمني لتغيير وقته.";
+"Looks at" = "ينظر إلى";
+"Made from your clicks and typing" = "مصنوع من نقراتك وكتابتك";
+"One Place" = "مكان واحد";
+"Open Studio after recording" = "فتح الاستوديو بعد التسجيل";
+"Play" = "تشغيل";
+"Recording" = "التسجيل";
+"Save Video" = "حفظ الفيديو";
+"Saving the video…" = "جارٍ حفظ الفيديو…";
+"Show clicks" = "إظهار النقرات";
+"Studio" = "الاستوديو";
+"Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never." = "يكبّر الاستوديو حيث تنقر وتكتب، ويضيف أسهمًا وأرقامًا. أين ذهب المؤشر ومتى ضُغطت المفاتيح يبقى على هذا الماك؛ أما أيّ المفاتيح، فلا يُحفظ أبدًا.";
+"The Pointer" = "المؤشر";
+"This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand." = "صُنع هذا التسجيل قبل الاستوديو، فليس فيه نقرات للتكبير عليها. أضف التكبير يدويًا.";
+"Time" = "الوقت";
+"Timeline Zoom" = "تكبير الشريط الزمني";
+"Words on the video" = "كلمات على الفيديو";
+"Zoom" = "التكبير";
+"Zoom in on clicks and typing" = "التكبير عند النقر والكتابة";
+"Zooms: %d" = "التكبيرات: %d";

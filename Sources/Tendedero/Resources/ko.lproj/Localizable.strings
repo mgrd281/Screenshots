@@ -1638,3 +1638,35 @@
 "is covered" = "가려짐";
 "is not covered" = "가려지지 않음";
 "online" = "온라인";
+
+/* Studio */
+"A ring where each click landed." = "클릭한 곳마다 고리를 표시합니다.";
+"Add Zoom" = "확대 추가";
+"Could not open the recording." = "녹화를 열 수 없습니다.";
+"Could not save the video." = "비디오를 저장할 수 없습니다.";
+"Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "타임라인에서 확대를 드래그해 옮기거나, 양 끝을 드래그해 길이를 바꾸세요.";
+"Drag the frame on the picture to choose what it looks at." = "그림 위의 틀을 드래그해 보이는 곳을 고르세요.";
+"Draw" = "그리기";
+"Edit in Studio…" = "스튜디오에서 편집…";
+"From where the video is, for three seconds." = "비디오 현재 위치부터 3초 동안.";
+"How close" = "확대 정도";
+"It shows for three seconds from where the video is. Drag it on the timeline to change when." = "비디오 현재 위치부터 3초 동안 보입니다. 타임라인에서 드래그해 시점을 바꾸세요.";
+"Looks at" = "보는 곳";
+"Made from your clicks and typing" = "클릭과 입력으로 만들어짐";
+"One Place" = "한 곳";
+"Open Studio after recording" = "녹화 후 스튜디오 열기";
+"Play" = "재생";
+"Recording" = "녹화";
+"Save Video" = "비디오 저장";
+"Saving the video…" = "비디오 저장 중…";
+"Show clicks" = "클릭 표시";
+"Studio" = "스튜디오";
+"Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never." = "스튜디오는 클릭하고 입력하는 곳을 확대하고, 화살표와 번호를 더합니다. 포인터가 간 곳과 키를 누른 때는 이 Mac에만 남고, 어떤 키인지는 절대 남지 않습니다.";
+"The Pointer" = "포인터";
+"This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand." = "이 녹화는 스튜디오 이전에 만들어져 확대할 클릭이 없습니다. 확대를 직접 추가하세요.";
+"Time" = "시간";
+"Timeline Zoom" = "타임라인 확대";
+"Words on the video" = "비디오 위의 글";
+"Zoom" = "확대";
+"Zoom in on clicks and typing" = "클릭과 입력 시 확대";
+"Zooms: %d" = "확대: %d";

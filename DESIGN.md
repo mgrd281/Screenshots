@@ -203,6 +203,14 @@ components:
   draw-tool:
     rounded: "{rounded.keycap}"
     size: "30pt × 28pt"            # a tool in Draw on Photo's row of eight; chosen: the accent at 16% behind the accent glyph
+  studio-timeline:
+    height: "184pt"                # Studio's timeline: a 20pt ruler, 40pt pictures with the sound, a 26pt zoom track and three 18pt rows of marks, 6pt apart, 10pt above and below; a 28pt column of row symbols on the leading edge
+  studio-block:
+    rounded: "6pt"                 # a zoom on the timeline: the accent at 28% with an accent hairline; chosen, the accent, white label and grips. A mark: its ink at 32% (90% chosen, 5pt corners, a 2pt accent edge)
+  studio-playhead:
+    color: "#FF3B30"               # Color.red: a 1.5pt line under a 9 × 12pt head, rounded 2
+  studio-click-ring:
+    size: "unit × 0.034"           # a click in Studio's video: white at 95% over a dark edge at 28%, white at 18% inside, spreading from 0.45 to 1 and fading over 0.45s
   phone-dock-icon:
     size: "44pt"                   # a tool on the iPhone editor's bar; glyph 18pt semibold; the tool in hand: phone-protect-tint on a 36pt circle of phone-protect at 14%, which glides to the next tool chosen
   phone-glass:
@@ -1213,6 +1221,55 @@ apps.
     ends pass each other, and thinning to 35% where the pen lands and
     lifts. Drawing explains and never hides: blur and pixelate are not
     offered, and nothing drawn counts on the lock.
+- **Studio** (`StudioEditor.swift`, `StudioEditorView.swift`) makes a screen
+  recording ready to explain. It is Hide Part's window grown a timeline:
+  titled with the recording's name, subtitled "Studio", at least 960 × 640,
+  opening as large as the recording needs within 85% of the screen
+  (`StudioLayout`), over the line.
+  - The **canvas** on `underPageBackgroundColor` holds the video as it will
+    be saved, through the camera, under the floating card's shadow (black
+    18%, radius 14, y 6), 24 pt in. It follows the video frame by frame
+    while playing (`StudioSurfaceView`, outside SwiftUI). The marks and the
+    click rings are drawn over it by the code that draws the video
+    (`StudioDraw`), so what you see is what is saved. Drawing works as in
+    Draw on Photo, with the same pointer, outline and handles, on the
+    recording as the camera shows it then. With a zoom chosen and the video
+    still, the whole recording shows, dimmed outside the part the zoom
+    looks at (black 45%), with a white edge (1.5 pt) and 18 pt white
+    corners (3 pt, rounded) to drag; the pointer is the open hand.
+  - Under it, a 44 pt row: Play and Pause (Space), 15 pt semibold in a
+    30 × 28 pt target; the time, "0:12 / 1:30", 12 pt medium `.secondary`
+    with monospaced digits; and on the trailing edge the timeline's zoom, a
+    small slider between `minus.magnifyingglass` and `plus.magnifyingglass`.
+    ← and → move a second.
+  - The **timeline** (`studio-timeline`) on `windowBackgroundColor`: a ruler
+    with labels in 10 pt `.secondary` and an accent dot at each click; the
+    recording's pictures, rounded 6, with its sound's loudness as white bars
+    over a dark fade at their foot; the zooms; the marks, in up to three
+    rows where they overlap. Blocks (`studio-block`) move by their middle
+    and stretch by their ends (8 pt each); a zoom made from clicks shows
+    `sparkle.magnifyingglass`, one changed by hand `plus.magnifyingglass`,
+    with its closeness ("2.0×"). A click on the ruler or pictures moves the
+    video and keeps what is chosen; on an empty track it chooses nothing.
+    The playhead (`studio-playhead`) runs through all of it.
+  - The **inspector** (340 pt, a grouped form over a footer): Zoom, with
+    Zoom in on clicks and typing, How close (a small slider and "2.0×"),
+    and the number of zooms with Add Zoom (Z); a chosen zoom's How close,
+    Looks at (The Pointer, One Place, segmented) and Delete; Draw, the six
+    tools of Draw on Photo that a video takes (Select, Arrow, Box, Circle,
+    Numbered Steps, Text, with their keys), then Color and Size as there; a
+    chosen mark's name, when it shows, its words for words, and Delete;
+    Show clicks. The footer has Undo and Redo, then Cancel and Save Video;
+    while saving, a small bar and Stop.
+  - **In the video**: the camera eases in and out of each zoom on a spring
+    with no overshoot and follows the pointer only once it nears the edge
+    (`StudioCamera`). Marks are drawn in over 0.35 s on an ease-out, an
+    arrow from its tail to its tip, a step or words growing from 0.6, a box
+    or a circle from 0.92, and fade over 0.25 s before they go; their size
+    stays the same as the camera comes closer, and their place stays on
+    what they point at. A click ring (`studio-click-ring`) is white with a
+    dark edge, so it shows on light and dark pages. The video is the
+    recording's size, sixty frames a second.
 - **Convert to SVG** (`VectorEditor.swift`, `VectorCanvas.swift`) is Hide
   Part's window, laid out the same (`HidePartLayout`, opening for the
   picture's size with the 36 pt bar under the canvas counted), titled "name

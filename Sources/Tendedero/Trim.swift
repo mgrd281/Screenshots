@@ -88,6 +88,8 @@ final class Trim: NSObject, NSWindowDelegate {
             if export.status == .completed,
                (try? FileManager.default.replaceItemAt(target, withItemAt: temp)) != nil {
                 log.notice("Trimmed \(target.lastPathComponent, privacy: .public)")
+                // Studio's zooms, marks and clicks move with the new start.
+                StudioStore.trimmed(target, from: start.seconds, keeping: CMTimeSubtract(end, start).seconds)
                 onSaved(target)
             } else {
                 log.error("Could not trim \(target.lastPathComponent, privacy: .public): \(export.error?.localizedDescription ?? "", privacy: .public)")

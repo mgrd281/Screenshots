@@ -262,6 +262,7 @@ struct GrabArea: NSViewRepresentable {
                     sub.addItem(ClosureMenuItem(L("Markup"), symbol: "pencil.tip.crop.circle") { line.markup(id) })
                 }
                 if isRecording {
+                    sub.addItem(ClosureMenuItem(L("Edit in Studio…"), symbol: "wand.and.stars") { line.studio(id) })
                     sub.addItem(ClosureMenuItem(L("Trim…"), symbol: "scissors") { line.markup(id) })
                     sub.addItem(ClosureMenuItem(L("Make GIF"), symbol: "photo.stack") { line.makeGIF(id) })
                 }

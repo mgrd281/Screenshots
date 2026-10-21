@@ -1640,3 +1640,35 @@
 "is covered" = "छिपाया जाता है";
 "is not covered" = "छिपाया नहीं जाता";
 "online" = "ऑनलाइन";
+
+/* Studio */
+"A ring where each click landed." = "हर क्लिक की जगह एक घेरा।";
+"Add Zoom" = "ज़ूम जोड़ें";
+"Could not open the recording." = "रिकॉर्डिंग नहीं खुल सकी।";
+"Could not save the video." = "वीडियो सहेजा नहीं जा सका।";
+"Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "ज़ूम को खिसकाने के लिए टाइमलाइन पर खींचें, या उसे लंबा या छोटा करने के लिए उसके सिरे खींचें।";
+"Drag the frame on the picture to choose what it looks at." = "यह चुनने के लिए कि वह कहाँ देखे, तस्वीर पर फ़्रेम खींचें।";
+"Draw" = "बनाएँ";
+"Edit in Studio…" = "स्टूडियो में संपादित करें…";
+"From where the video is, for three seconds." = "वीडियो जहाँ है वहाँ से, तीन सेकंड के लिए।";
+"How close" = "कितना पास";
+"It shows for three seconds from where the video is. Drag it on the timeline to change when." = "यह वीडियो जहाँ है वहाँ से तीन सेकंड तक दिखता है। समय बदलने के लिए इसे टाइमलाइन पर खींचें।";
+"Looks at" = "देखता है";
+"Made from your clicks and typing" = "आपके क्लिक और टाइपिंग से बना";
+"One Place" = "एक जगह";
+"Open Studio after recording" = "रिकॉर्डिंग के बाद स्टूडियो खोलें";
+"Play" = "चलाएँ";
+"Recording" = "रिकॉर्डिंग";
+"Save Video" = "वीडियो सहेजें";
+"Saving the video…" = "वीडियो सहेजा जा रहा है…";
+"Show clicks" = "क्लिक दिखाएँ";
+"Studio" = "स्टूडियो";
+"Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never." = "स्टूडियो वहाँ ज़ूम करता है जहाँ आप क्लिक और टाइप करते हैं, और तीर व संख्याएँ जोड़ता है। पॉइंटर कहाँ गया और कुंजियाँ कब दबीं, यह इसी Mac पर रहता है; कौन-सी कुंजियाँ, यह कभी नहीं।";
+"The Pointer" = "पॉइंटर";
+"This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand." = "यह रिकॉर्डिंग स्टूडियो से पहले बनी थी, इसलिए इसमें ज़ूम करने के लिए क्लिक नहीं हैं। ज़ूम हाथ से जोड़ें।";
+"Time" = "समय";
+"Timeline Zoom" = "टाइमलाइन ज़ूम";
+"Words on the video" = "वीडियो पर शब्द";
+"Zoom" = "ज़ूम";
+"Zoom in on clicks and typing" = "क्लिक और टाइपिंग पर ज़ूम करें";
+"Zooms: %d" = "ज़ूम: %d";

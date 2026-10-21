@@ -1,0 +1,65 @@
+# Studio without a Mac at hand: runs Studio's tests on GitHub's Macs, then
+# keeps a made-up screen recording as Studio saves it (zoomed in on its
+# clicks and typing, with a step, an arrow and words drawn on), frames of
+# it, and pictures of Studio's window, light and dark. They go to the
+# "studio-captures" pre-release on the Releases page, for review. Runs when
+# Studio changes, and by hand.
+name: Studio Checks
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths:
+      - "Sources/Tendedero/Studio*.swift"
+      - "Sources/Tendedero/Drawing.swift"
+      - "Sources/Tendedero/Recording.swift"
+      - "Tests/TendederoTests/Studio*.swift"
+      - ".github/workflows/studio-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: studio-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Studio's tests and keep the pictures
+        env:
+          STUDIO_CAPTURES: ${{ github.workspace }}/captures/studio
+        run: swift test --filter "Studio"
+
+      - name: Keep the pictures and the videos with the run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: studio-checks
+          path: captures/studio/
+          if-no-files-found: ignore
+
+      - name: Publish the pictures and the videos for review
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          files=(captures/studio/*.png captures/studio/*.mov captures/studio/*.txt)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "Nothing to publish."
+            exit 0
+          fi
+          tag=studio-captures
+          notes="Studio on GitHub's Macs, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: a made-up screen recording as Studio saves it, frames of it, and Studio's window, light and dark. For review; not a download of Snapfly."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --notes "$notes" --prerelease
+          else
+            gh release create "$tag" --prerelease --title "Studio captures" --notes "$notes" --target "$GITHUB_SHA"
+          fi
+          gh release upload "$tag" "${files[@]}" --clobber

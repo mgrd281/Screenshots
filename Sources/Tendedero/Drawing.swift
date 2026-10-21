@@ -185,13 +185,15 @@ struct Drawing: Codable, Equatable, Sendable {
     ///   - placeholder: shown dimmed for words not typed yet, as the window
     ///     shows them; the copy leaves them out.
     ///   - highlights: false where they are drawn apart, as the window does.
+    ///   - numbered: the steps' numbers where they are not the order drawn,
+    ///     as in Studio, where steps are numbered in the order they show.
     static func draw(_ marks: [Mark], in context: CGContext, size: CGSize, unit: CGFloat, placeholder: String? = nil,
-                     highlights: Bool = true) {
+                     highlights: Bool = true, numbered: [UUID: Int]? = nil) {
         var step = 0
         var numbers: [UUID: Int] = [:]
         for mark in marks where mark.kind == .step {
             step += 1
-            numbers[mark.id] = step
+            numbers[mark.id] = numbered?[mark.id] ?? step
         }
         for mark in marks where highlights && mark.kind == .highlight {
             drawHighlight(mark, in: context, size: size, unit: unit)

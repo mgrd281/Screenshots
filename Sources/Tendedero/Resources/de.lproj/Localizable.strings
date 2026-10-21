@@ -1638,3 +1638,35 @@
 "is covered" = "wird verdeckt";
 "is not covered" = "wird nicht verdeckt";
 "online" = "online";
+
+/* Studio */
+"A ring where each click landed." = "Ein Ring, wo jeder Klick war.";
+"Add Zoom" = "Zoom hinzufügen";
+"Could not open the recording." = "Die Aufnahme konnte nicht geöffnet werden.";
+"Could not save the video." = "Das Video konnte nicht gesichert werden.";
+"Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Zieh einen Zoom auf der Zeitleiste, um ihn zu verschieben, oder seine Enden, um ihn länger oder kürzer zu machen.";
+"Drag the frame on the picture to choose what it looks at." = "Zieh den Rahmen auf dem Bild, um zu wählen, wohin er schaut.";
+"Draw" = "Zeichnen";
+"Edit in Studio…" = "Im Studio bearbeiten …";
+"From where the video is, for three seconds." = "Ab der Stelle des Videos, für drei Sekunden.";
+"How close" = "Wie nah";
+"It shows for three seconds from where the video is. Drag it on the timeline to change when." = "Es erscheint ab der Stelle des Videos für drei Sekunden. Zieh es auf der Zeitleiste, um das zu ändern.";
+"Looks at" = "Schaut auf";
+"Made from your clicks and typing" = "Aus deinen Klicks und Eingaben gemacht";
+"One Place" = "Eine Stelle";
+"Open Studio after recording" = "Studio nach der Aufnahme öffnen";
+"Play" = "Abspielen";
+"Recording" = "Aufnahme";
+"Save Video" = "Video sichern";
+"Saving the video…" = "Video wird gesichert …";
+"Show clicks" = "Klicks zeigen";
+"Studio" = "Studio";
+"Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never." = "Studio zoomt dorthin, wo du klickst und tippst, und fügt Pfeile und Zahlen hinzu. Wohin der Zeiger ging und wann Tasten gedrückt wurden, bleibt auf diesem Mac; welche Tasten, nie.";
+"The Pointer" = "Den Zeiger";
+"This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand." = "Diese Aufnahme entstand vor Studio und hat keine Klicks zum Hineinzoomen. Füge Zooms von Hand hinzu.";
+"Time" = "Zeit";
+"Timeline Zoom" = "Zeitleiste zoomen";
+"Words on the video" = "Wörter im Video";
+"Zoom" = "Zoom";
+"Zoom in on clicks and typing" = "Bei Klicks und Eingaben hineinzoomen";
+"Zooms: %d" = "Zooms: %d";
