@@ -32,6 +32,14 @@ final class AlwaysHideUITests: XCTestCase {
         return XCTWaiter.wait(for: [focused], timeout: timeout) == .completed
     }
 
+    /// Scrolls until the element can be tapped, as a finger would: rows
+    /// lower down, or under a sheet's button over the keyboard.
+    private func reveal(_ element: XCUIElement, in container: XCUIElement) {
+        for _ in 0..<5 where !(element.exists && element.isHittable) {
+            container.swipeUp(velocity: .slow)
+        }
+    }
+
     func testWithNothingYetItOffersTheNameAndTwoKindsOfRule() {
         let app = launch("empty")
         XCTAssertTrue(app.buttons["always-hide-add-name"].waitForExistence(timeout: 15))
@@ -90,7 +98,9 @@ final class AlwaysHideUITests: XCTestCase {
         label.tap()
         label.typeText("Kundennummer")
         XCTAssertTrue(app.buttons["always-hide-reach-automatic"].isSelected, "Automatic first, as before")
-        app.buttons["always-hide-reach-nextLine"].tap()
+        let nextLine = app.buttons["always-hide-reach-nextLine"]
+        reveal(nextLine, in: app.scrollViews.firstMatch)
+        nextLine.tap()
         app.buttons["always-hide-save-rule"].tap()
         XCTAssertTrue(wait(for: rules, count: 2))
         XCTAssertTrue(rules.element(boundBy: 1).label.contains("Kundennummer"), rules.element(boundBy: 1).label)
@@ -100,17 +110,20 @@ final class AlwaysHideUITests: XCTestCase {
 
     func testARuleIsTurnedOffAndOnAgain() {
         let app = launch("filled")
-        let count = app.staticTexts["always-hide-active-count"]
-        XCTAssertTrue(count.waitForExistence(timeout: 15))
-        XCTAssertEqual(count.label, "2 aktiv")
+        XCTAssertTrue(app.buttons.matching(identifier: "always-hide-detail").firstMatch.waitForExistence(timeout: 15))
+        // The rules stand below the details: scrolled to, as a finger would.
         let rule = app.switches.matching(identifier: "always-hide-rule-switch").firstMatch
-        XCTAssertTrue(rule.exists)
+        reveal(rule, in: app.collectionViews.firstMatch)
+        XCTAssertTrue(rule.isHittable)
+        let count = app.staticTexts["always-hide-active-count"]
+        XCTAssertTrue(count.exists)
+        XCTAssertEqual(count.label, "2 aktiv")
         XCTAssertEqual(rule.value as? String, "1")
         XCTAssertTrue(rule.label.contains("Musterfirma"), "the switch says whose it is: \(rule.label)")
-        rule.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)).tap()
+        rule.tap()
         XCTAssertTrue(wait(for: count, label: "1 aktiv"))
         XCTAssertEqual(rule.value as? String, "0")
-        rule.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)).tap()
+        rule.tap()
         XCTAssertTrue(wait(for: count, label: "2 aktiv"))
     }
 
