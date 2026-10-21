@@ -1,38 +1,52 @@
 import SwiftUI
 
+// Always Hide's sheets: as tall as what they hold, nothing in them
+// scrolling, sitting whole above the keyboard; a title on the leading side
+// and a close button on the trailing. Only at the accessibility text sizes,
+// when they would not fit, do they fill the screen and scroll.
+
 // MARK: A detail
 
-/// A detail's sheet, as it is asked for: a new one, with the four kinds to
-/// choose from or the one given, or one kept, to change.
+/// A detail's sheet, as it is asked for: a new one, from the list of kinds
+/// or straight to a kind's fields, or one kept.
 struct DetailRequest: Identifiable {
     let id = UUID()
     var draft: OwnRule
     var isNew: Bool
-    /// The kinds offered as tiles, the draft's chosen.
+    /// Opened from the list of kinds, so its fields can go back to it.
     var choosing: Bool
+    /// Showing the list of kinds first.
+    var picking: Bool
 
-    static func new(_ kind: OwnRule.Kind, choosing: Bool = true) -> DetailRequest {
-        DetailRequest(draft: OwnRule(kind: kind), isNew: true, choosing: choosing)
+    /// A new detail: the list of kinds, or the kind's fields at once.
+    static func new(_ kind: OwnRule.Kind, choosing: Bool) -> DetailRequest {
+        DetailRequest(draft: OwnRule(kind: kind), isNew: true, choosing: choosing, picking: choosing)
     }
 
     static func edit(_ detail: OwnRule) -> DetailRequest {
-        DetailRequest(draft: detail, isNew: false, choosing: false)
+        DetailRequest(draft: detail, isNew: false, choosing: false, picking: false)
+    }
+
+    /// A kind's fields as if chosen from the list, typed already, for the
+    /// screenshots made in CI.
+    static func chosen(_ draft: OwnRule) -> DetailRequest {
+        DetailRequest(draft: draft, isNew: true, choosing: true, picking: false)
     }
 }
 
-/// One of the owner's details, added or changed: the four kinds as tiles,
-/// the chosen one with a green edge and a check; its fields, the first
-/// focused, Return going on to the next and then adding it; for a name, the
-/// ways it is also found, live as it is typed, the very list the covering
-/// looks for (`OwnDetails.nameVariants`); what keeps it private over the
-/// button, which waits until what was typed can be right: an IBAN or a
-/// card's number that adds up, a name. A kept card's or account's number
-/// shows hidden until Show is tapped, and a kept detail can be deleted.
+/// One of the owner's details, added or changed. First, for a new one, the
+/// four kinds as a plain list; a kind chosen moves on in the same sheet to
+/// its fields in one grouped card, the first focused, Return going on to
+/// the next and adding after the last; a line on what keeps it private and
+/// that other spellings are found too; and Add, which waits for what can
+/// be kept.
 struct DetailSheet: View {
     let request: DetailRequest
     let save: (OwnRule) -> Void
-    let remove: () -> Void
 
+    @State private var picking: Bool
+    /// Which way the sheet moved last, for the push's direction.
+    @State private var forward = true
     @State private var kind: OwnRule.Kind
     @State private var given: String
     @State private var surname: String
@@ -42,24 +56,21 @@ struct DetailSheet: View {
     @State private var card: String
     @State private var iban: String
     @State private var revealed = false
-    @State private var deleting = false
     @FocusState private var focus: Field?
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.dynamicTypeSize) private var typeSize
-    @Environment(\.displayScale) private var displayScale
 
     enum Field: String, Hashable {
         case given, surname, street, postcode, city, card, iban
     }
 
-    init(request: DetailRequest, save: @escaping (OwnRule) -> Void, remove: @escaping () -> Void) {
+    init(request: DetailRequest, save: @escaping (OwnRule) -> Void) {
         self.request = request
         self.save = save
-        self.remove = remove
         let draft = request.draft
         let name: (given: [String], surname: [String]) = draft.kind == .name
             ? OwnDetails.nameParts(draft.text) : (given: [], surname: [])
+        _picking = State(initialValue: request.picking)
         _kind = State(initialValue: draft.kind.isDetail ? draft.kind : .name)
         _given = State(initialValue: name.given.joined(separator: " "))
         _surname = State(initialValue: name.surname.joined(separator: " "))
@@ -91,7 +102,7 @@ struct DetailSheet: View {
         return OwnDetails.cleaned(made)
     }
 
-    private var canKeep: Bool { OwnDetails.canKeep(draft) }
+    private var canKeep: Bool { draft.canSave }
 
     private var changed: Bool {
         request.isNew ? !draft.isBlank : draft != OwnDetails.cleaned(request.draft)
@@ -108,196 +119,169 @@ struct DetailSheet: View {
         }
     }
 
-    var body: some View {
-        NavigationStack {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
-                        if request.choosing { kinds }
-                        VStack(alignment: .leading, spacing: 8) {
-                            fieldsCard
-                            note
-                        }
-                        if kind == .name { variants }
-                        if !request.isNew { deleteButton }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .padding(.bottom, 24)
-                    .animation(SnapflyMotion.change(reduceMotion), value: kind)
-                }
-                .scrollDismissesKeyboard(.interactively)
-                .onChange(of: focus) { _, field in
-                    guard let field else { return }
-                    // Once the keyboard is up, the field just above it where it would
-                    // be hidden; a field already in sight stays where it is.
-                    Task { @MainActor in
-                        try? await Task.sleep(for: .seconds(0.3))
-                        withAnimation(SnapflyMotion.change(reduceMotion)) { proxy.scrollTo(field, anchor: .bottom) }
-                    }
-                }
-            }
-            .background(SnapflyTokens.hideGround)
-            .safeAreaInset(edge: .bottom, spacing: 0) { bottomBar }
-            .navigationTitle(request.isNew ? L("New Detail") : kind.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L("Cancel")) { dismiss() }
-                }
-            }
-            .onAppear {
-                // A kept number stays hidden until it is shown.
-                if request.isNew || kind == .name || kind == .address { focusFirst() }
-            }
-        }
-        .presentationDragIndicator(.visible)
-        // What was typed is not lost to a swipe down.
-        .interactiveDismissDisabled(changed)
+    private var push: AnyTransition {
+        reduceMotion ? .opacity : .push(from: forward ? .trailing : .leading)
     }
 
-    // MARK: Parts
+    var body: some View {
+        FittedSheet {
+            Group {
+                if picking {
+                    kinds
+                        .transition(push)
+                } else {
+                    entry
+                        .transition(push)
+                }
+            }
+        }
+        .interactiveDismissDisabled(changed)
+        .onAppear { if !picking { focusFirst() } }
+    }
+
+    // MARK: Step one, the kinds
 
     private var kinds: some View {
-        let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: typeSize.isAccessibilitySize ? 1 : 2)
-        return LazyVGrid(columns: columns, spacing: 12) {
-            ForEach(OwnRule.Kind.details, id: \.self) { tile in
-                KindTile(kind: tile, chosen: tile == kind) { choose(tile) }
+        VStack(alignment: .leading, spacing: 8) {
+            SheetHeader(title: L("Add Detail")) { dismiss() }
+            VStack(spacing: 0) {
+                ForEach(OwnRule.Kind.details, id: \.self) { kind in
+                    KindRow(kind: kind) { choose(kind) }
+                }
             }
         }
+        .padding(.horizontal, 24)
+        .padding(.top, 24)
+        .padding(.bottom, 16)
     }
 
-    private var fieldsCard: some View {
-        VStack(spacing: 0) {
-            switch kind {
-            case .name:
-                field(L("First Name"), text: $given, as: .given, content: .givenName)
-                separator
-                field(L("Last Name"), text: $surname, as: .surname, content: .familyName)
-            case .address:
-                field(L("Street and house number"), text: $street, as: .street, content: .fullStreetAddress)
-                separator
-                field(L("Postcode"), text: $postcode, as: .postcode, content: .postalCode, keyboard: .numbersAndPunctuation,
-                      capitals: .characters)
-                separator
-                field(L("Town"), text: $city, as: .city, content: .addressCity)
-            case .card:
-                number(L("Card number"), grouped: OwnDetails.grouped(card: card), as: .card) { typed in
-                    card = String(OwnDetails.digits(typed).prefix(19))
+    // MARK: Step two, a kind's fields
+
+    private var entry: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SheetHeader(title: kind.title, back: request.choosing ? goBack : nil) { dismiss() }
+            VStack(spacing: 0) {
+                switch kind {
+                case .name:
+                    field(L("First Name"), text: $given, as: .given, content: .givenName)
+                    FieldLine()
+                    field(L("Last Name"), text: $surname, as: .surname, content: .familyName)
+                case .address:
+                    field(L("Street and No."), text: $street, as: .street, content: .fullStreetAddress)
+                    FieldLine()
+                    field(L("Postcode"), text: $postcode, as: .postcode, content: .postalCode,
+                          keyboard: .numbersAndPunctuation, capitals: .characters)
+                    FieldLine()
+                    field(L("Town"), text: $city, as: .city, content: .addressCity)
+                case .card:
+                    number(L("Card number"), grouped: OwnDetails.grouped(card: card), as: .card) {
+                        card = String(OwnDetails.digits($0).prefix(19))
+                    }
+                case .account:
+                    number(L("IBAN"), grouped: OwnDetails.grouped(iban: iban), as: .iban) {
+                        iban = String(OwnDetails.compact(iban: $0).prefix(34))
+                    }
+                case .word, .label, .pattern:
+                    EmptyView()
                 }
-            case .account:
-                number(L("IBAN"), grouped: OwnDetails.grouped(iban: iban), as: .iban) { typed in
-                    iban = String(OwnDetails.compact(iban: typed).prefix(34))
-                }
-            case .word, .label, .pattern:
-                EmptyView()
             }
+            .background(SnapflyTokens.hideField,
+                        in: RoundedRectangle(cornerRadius: SnapflyTokens.hideCardRadius, style: .continuous))
+            note
+            Button(action: submit) {
+                Text(request.isNew ? L("Add") : L("Save"))
+            }
+            .buttonStyle(HidePrimaryButtonStyle())
+            .disabled(!canKeep)
+            .accessibilityIdentifier("always-hide-save-detail")
         }
-        .hideCard()
-    }
-
-    private var separator: some View {
-        Rectangle()
-            .fill(SnapflyTokens.hideSeparator)
-            .frame(height: 1 / displayScale)
-            .padding(.leading, 16)
+        .padding(.horizontal, 24)
+        .padding(.top, 24)
+        .padding(.bottom, 16)
     }
 
     private func field(_ title: String, text: Binding<String>, as field: Field, content: UITextContentType,
                        keyboard: UIKeyboardType = .default, capitals: TextInputAutocapitalization = .words) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(SnapflyTokens.hideSecondary)
-                .accessibilityHidden(true)
-            TextField(title, text: text, prompt: Text(verbatim: ""))
-                .font(.body)
-                .foregroundStyle(SnapflyTokens.hideText)
-                .textContentType(content)
-                .keyboardType(keyboard)
-                .textInputAutocapitalization(capitals)
-                .autocorrectionDisabled()
-                .focused($focus, equals: field)
-                .submitLabel(field == fields.last ? .done : .next)
-                .onSubmit { advance(from: field) }
-                .accessibilityIdentifier("always-hide-field-" + field.rawValue)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .frame(maxWidth: .infinity, minHeight: SnapflyTokens.touch, alignment: .leading)
-        .id(field)
+        TextField(title, text: text, prompt: Text(title))
+            .font(.body)
+            .foregroundStyle(SnapflyTokens.hideText)
+            .textContentType(content)
+            .keyboardType(keyboard)
+            .textInputAutocapitalization(capitals)
+            .autocorrectionDisabled()
+            .focused($focus, equals: field)
+            .submitLabel(field == fields.last ? .done : .next)
+            .onSubmit { advance(from: field) }
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+            .accessibilityIdentifier("always-hide-field-" + field.rawValue)
     }
 
     /// A card's or an account's number: grouped as typed, the card's network
-    /// beside it; kept already, hidden until Show is tapped.
+    /// beside it; kept already, hidden until the eye is tapped.
     @ViewBuilder
     private func number(_ title: String, grouped: String, as field: Field, typed: @escaping (String) -> Void) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(SnapflyTokens.hideSecondary)
-                .accessibilityHidden(true)
+        HStack(spacing: 8) {
             if request.isNew || revealed {
-                HStack(spacing: 8) {
-                    TextField(title, text: Binding(get: { grouped }, set: typed), prompt: Text(verbatim: ""))
-                        .font(.body.monospacedDigit())
-                        .foregroundStyle(SnapflyTokens.hideText)
-                        .keyboardType(field == .card ? .numbersAndPunctuation : .asciiCapable)
-                        .textContentType(field == .card ? .creditCardNumber : nil)
-                        .textInputAutocapitalization(.characters)
-                        .autocorrectionDisabled()
-                        .focused($focus, equals: field)
-                        .submitLabel(.done)
-                        .onSubmit { advance(from: field) }
-                        .accessibilityIdentifier("always-hide-field-" + field.rawValue)
-                    if field == .card, let brand = OwnDetails.brand(of: card) {
-                        Text(verbatim: brand.name)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(SnapflyTokens.hideSecondary)
-                            .transition(.opacity)
-                    }
+                TextField(title, text: Binding(get: { grouped }, set: typed), prompt: Text(title))
+                    .font(.body.monospacedDigit())
+                    .foregroundStyle(SnapflyTokens.hideText)
+                    .keyboardType(field == .card ? .numbersAndPunctuation : .asciiCapable)
+                    .textContentType(field == .card ? .creditCardNumber : nil)
+                    .textInputAutocapitalization(.characters)
+                    .autocorrectionDisabled()
+                    .focused($focus, equals: field)
+                    .submitLabel(.done)
+                    .onSubmit { advance(from: field) }
+                    .accessibilityIdentifier("always-hide-field-" + field.rawValue)
+                if field == .card, let brand = OwnDetails.brand(of: card) {
+                    Text(verbatim: brand.name)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(SnapflyTokens.hideSecondary)
                 }
-                .animation(SnapflyMotion.change(reduceMotion), value: OwnDetails.brand(of: card))
             } else {
-                HStack(spacing: 8) {
-                    Text(verbatim: OwnDetails.masked(request.draft))
-                        .font(.body.monospacedDigit())
-                        .foregroundStyle(SnapflyTokens.hideText)
-                    Spacer(minLength: 8)
-                    Button {
-                        revealed = true
-                        Task { @MainActor in
-                            try? await Task.sleep(for: .seconds(0.1))
-                            focus = field
-                        }
-                    } label: {
-                        Image(systemName: "eye")
-                            .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch)
+                Text(verbatim: OwnDetails.masked(request.draft))
+                    .font(.body.monospacedDigit())
+                    .foregroundStyle(SnapflyTokens.hideText)
+                Spacer(minLength: 8)
+                Button {
+                    revealed = true
+                    Task { @MainActor in
+                        try? await Task.sleep(for: .seconds(0.1))
+                        focus = field
                     }
-                    .buttonStyle(.borderless)
-                    .tint(SnapflyTokens.hideAccent)
-                    .accessibilityLabel(L("Show Number"))
+                } label: {
+                    Image(systemName: "eye")
+                        .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch)
                 }
+                .buttonStyle(.borderless)
+                .tint(SnapflyTokens.hideAccent)
+                .accessibilityLabel(L("Show Number"))
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .frame(maxWidth: .infinity, minHeight: SnapflyTokens.touch, alignment: .leading)
-        .id(field)
+        .padding(.leading, 16)
+        .padding(.trailing, request.isNew || revealed ? 16 : 0)
+        .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
     }
 
-    /// What is wrong with what was typed; else how it is also found.
+    /// What is wrong with what was typed; else what keeps it private and
+    /// that other spellings are found too.
     @ViewBuilder
     private var note: some View {
         if let problem {
             Label(problem, systemImage: "exclamationmark.triangle.fill")
                 .font(.footnote)
                 .foregroundStyle(SnapflyTokens.hideWarning)
-        } else if let hint {
-            Text(hint)
-                .font(.footnote)
-                .foregroundStyle(SnapflyTokens.hideSecondary)
-                .padding(.horizontal, 16)
+                .fixedSize(horizontal: false, vertical: true)
+        } else {
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Image(systemName: "lock")
+                    .accessibilityHidden(true)
+                Text(AlwaysHidePromise.hint)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .font(.footnote)
+            .foregroundStyle(SnapflyTokens.hideSecondary)
         }
     }
 
@@ -309,100 +293,27 @@ struct DetailSheet: View {
         }
     }
 
-    private var hint: String? {
-        switch kind {
-        case .address: L("Also found with “Str.” for “Straße”, in capitals, and as postcode with town.")
-        case .card: L("Also found in any grouping, and where only the last four digits show.")
-        case .account: L("Also found with and without spaces, and where only the last digits show.")
-        default: nil
-        }
-    }
-
-    /// The ways the name is also found, as they are typed.
-    private var variants: some View {
-        let shown = OwnDetails.nameVariants(draft.text)
-        return VStack(alignment: .leading, spacing: 12) {
-            Text(L("Also recognized"))
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(SnapflyTokens.hideSecondary)
-                .accessibilityAddTraits(.isHeader)
-            if shown.isEmpty {
-                Text(L("Type your name to see how it is also found."))
-                    .font(.footnote)
-                    .foregroundStyle(SnapflyTokens.hideSecondary)
-            } else {
-                ChipFlow(spacing: 8) {
-                    ForEach(shown, id: \.self) { variant in
-                        HideChip(text: variant)
-                    }
-                }
-                .animation(SnapflyMotion.change(reduceMotion), value: shown)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .hideCard()
-        .accessibilityElement(children: .combine)
-        .accessibilityIdentifier("always-hide-variants")
-    }
-
-    private var deleteButton: some View {
-        Button(role: .destructive) {
-            deleting = true
-        } label: {
-            Text(L("Delete Detail"))
-                .font(.body.weight(.semibold))
-                .frame(maxWidth: .infinity, minHeight: SnapflyTokens.touch)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(RowPressStyle())
-        .hideCard()
-        .confirmationDialog(L("Delete Detail"), isPresented: $deleting, titleVisibility: .hidden) {
-            Button(L("Delete Detail"), role: .destructive) {
-                remove()
-                dismiss()
-            }
-            Button(L("Cancel"), role: .cancel) {}
-        }
-    }
-
-    /// What keeps it private, as much of it as holds, over the button.
-    private var bottomBar: some View {
-        VStack(spacing: 12) {
-            if let sentence = AlwaysHidePromise.sentence {
-                Label {
-                    Text(sentence)
-                } icon: {
-                    Image(systemName: "lock.fill")
-                }
-                .font(.footnote)
-                .foregroundStyle(SnapflyTokens.hideSecondary)
-                .frame(maxWidth: .infinity)
-            }
-            Button(action: submit) {
-                Text(request.isNew ? L("Add") : L("Save"))
-            }
-            .buttonStyle(HidePrimaryButtonStyle())
-            .disabled(!canKeep)
-            .accessibilityIdentifier("always-hide-save-detail")
-        }
-        .padding(.horizontal, 16)
-        .padding(.top, 12)
-        .padding(.bottom, 8)
-        .background(SnapflyTokens.hideGround)
-    }
-
     // MARK: Doing
 
-    private func choose(_ tile: OwnRule.Kind) {
-        guard tile != kind else { return }
-        withAnimation(SnapflyMotion.change(reduceMotion)) { kind = tile }
+    private func choose(_ chosen: OwnRule.Kind) {
+        forward = true
+        withAnimation(SnapflyMotion.change(reduceMotion)) {
+            kind = chosen
+            picking = false
+        }
         focusFirst()
     }
 
+    private func goBack() {
+        focus = nil
+        forward = false
+        withAnimation(SnapflyMotion.change(reduceMotion)) { picking = true }
+    }
+
+    /// Once the sheet has moved, the first field, and the keyboard with it.
     private func focusFirst() {
         Task { @MainActor in
-            try? await Task.sleep(for: .seconds(0.4))
+            try? await Task.sleep(for: .seconds(0.35))
             focus = fields.first
         }
     }
@@ -423,45 +334,57 @@ struct DetailSheet: View {
     }
 }
 
-/// One of the four kinds of detail as a tile: its symbol on its colour and
-/// its name; chosen, a green edge and a check.
-private struct KindTile: View {
+/// One of the four kinds in the list: its outline symbol in green, its
+/// name, what it asks for, and a chevron.
+private struct KindRow: View {
     let kind: OwnRule.Kind
-    let chosen: Bool
     let action: () -> Void
 
+    private var symbol: String {
+        switch kind {
+        case .address: "house"
+        case .card: "creditcard"
+        case .account: "building.columns"
+        default: "person"
+        }
+    }
+
+    private var detail: String {
+        switch kind {
+        case .address: L("Street, postcode and town")
+        case .card: L("Card number")
+        case .account: L("IBAN")
+        default: L("First and last name")
+        }
+    }
+
     var body: some View {
-        let shape = RoundedRectangle(cornerRadius: SnapflyTokens.hideCardRadius, style: .continuous)
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 8) {
-                OwnDetailTile(kind: kind)
-                Text(kind.title)
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(SnapflyTokens.hideText)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .padding(16)
-            .frame(maxWidth: .infinity, minHeight: SnapflyTokens.touch, alignment: .leading)
-            .background(SnapflyTokens.hideCard, in: shape)
-            .overlay {
-                shape.strokeBorder(chosen ? SnapflyTokens.hideAccent : SnapflyTokens.hideSeparator,
-                                   lineWidth: chosen ? SnapflyTokens.hideChosenEdge : SnapflyTokens.hideHairline)
-            }
-            .overlay(alignment: .topTrailing) {
-                if chosen {
-                    Image(systemName: "checkmark.circle.fill")
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, SnapflyTokens.hideAccent)
-                        .font(.title3)
-                        .padding(8)
-                        .transition(.opacity)
+            HStack(spacing: 16) {
+                Image(systemName: symbol)
+                    .font(.title3)
+                    .foregroundStyle(SnapflyTokens.hideAccent)
+                    .frame(width: OwnDetailTile.base)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(kind.title)
+                        .font(.body)
+                        .foregroundStyle(SnapflyTokens.hideText)
+                    Text(detail)
+                        .font(.footnote)
+                        .foregroundStyle(SnapflyTokens.hideSecondary)
                 }
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.forward")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+                    .accessibilityHidden(true)
             }
-            .contentShape(shape)
+            .frame(minHeight: SnapflyTokens.hideRowHeight)
+            .contentShape(Rectangle())
         }
         .buttonStyle(RowPressStyle())
-        .accessibilityLabel(kind.title)
-        .accessibilityAddTraits(chosen ? [.isButton, .isSelected] : .isButton)
+        .accessibilityElement(children: .combine)
         .accessibilityIdentifier("always-hide-kind-" + kind.rawValue)
     }
 }
@@ -485,29 +408,24 @@ struct RuleRequest: Identifiable {
 
 /// One of the owner's rules, added or changed: a word or a label, chosen
 /// above; its one field, focused; for a label, what is covered after it,
-/// Automatic first, as every label rule did before there was a choice; and
-/// a made-up page that shows, live, what the rule covers, covered by the
-/// engine itself (`RuleSample`). A pattern kept before can be changed here,
-/// though new ones are made on the Mac.
+/// Automatic first, as every label rule did before there was a choice; a
+/// line of a made-up page, covered by the engine itself (`RuleSample`) as
+/// it is typed; and Save Rule, which an empty rule never reaches. A pattern
+/// kept before can be changed here, though new ones are made on the Mac.
 struct RuleSheet: View {
     let request: RuleRequest
     let save: (OwnRule) -> Void
-    let remove: () -> Void
 
     @State private var kind: OwnRule.Kind
     /// What was typed for each kind, so going to the other keeps it.
     @State private var texts: [OwnRule.Kind: String]
     @State private var reach: OwnRule.Reach
-    @State private var deleting = false
     @FocusState private var focused: Bool
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.displayScale) private var displayScale
 
-    init(request: RuleRequest, save: @escaping (OwnRule) -> Void, remove: @escaping () -> Void) {
+    init(request: RuleRequest, save: @escaping (OwnRule) -> Void) {
         self.request = request
         self.save = save
-        self.remove = remove
         let kind = OwnRule.Kind.rules.contains(request.draft.kind) ? request.draft.kind : .word
         _kind = State(initialValue: kind)
         _texts = State(initialValue: [kind: request.draft.text])
@@ -532,71 +450,74 @@ struct RuleSheet: View {
         return made
     }
 
-    private var canSave: Bool { !draft.isBlank && draft.isReadable }
+    private var canSave: Bool { draft.canSave }
 
     private var changed: Bool {
         request.isNew ? !draft.isBlank : draft != request.draft
     }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    Picker(L("Kind of Rule"), selection: $kind) {
-                        ForEach(kinds, id: \.self) { kind in
-                            Text(Self.segment(kind)).tag(kind)
+        FittedSheet {
+            VStack(alignment: .leading, spacing: 16) {
+                SheetHeader(title: request.isNew ? L("New Rule") : L("Edit Rule")) { dismiss() }
+                Picker(L("Kind of Rule"), selection: $kind) {
+                    ForEach(kinds, id: \.self) { kind in
+                        Text(Self.segment(kind)).tag(kind)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .accessibilityIdentifier("always-hide-rule-kind")
+                TextField(Self.segment(kind), text: text, prompt: Text(placeholder))
+                    .font(.body)
+                    .foregroundStyle(SnapflyTokens.hideText)
+                    .textInputAutocapitalization(kind == .pattern ? .never : .sentences)
+                    .autocorrectionDisabled()
+                    .focused($focused)
+                    .submitLabel(.done)
+                    .onSubmit { if canSave { submit() } }
+                    .padding(.horizontal, 16)
+                    .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+                    .background(SnapflyTokens.hideField,
+                                in: RoundedRectangle(cornerRadius: SnapflyTokens.hideCardRadius, style: .continuous))
+                    .accessibilityIdentifier("always-hide-rule-text")
+                if kind == .label {
+                    Picker(L("What is covered?"), selection: $reach) {
+                        ForEach(OwnRule.Reach.allCases, id: \.self) { option in
+                            Text(RuleWords.title(option)).tag(option)
                         }
                     }
                     .pickerStyle(.segmented)
-                    .accessibilityIdentifier("always-hide-rule-kind")
-                    VStack(alignment: .leading, spacing: 8) {
-                        fieldCard
-                        hint
-                    }
-                    if kind == .label { reaches }
-                    preview
-                    if !request.isNew { deleteButton }
+                    .accessibilityIdentifier("always-hide-reach")
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
-                .padding(.bottom, 24)
-                .animation(SnapflyMotion.change(reduceMotion), value: kind)
-                .animation(SnapflyMotion.change(reduceMotion), value: reach)
+                if !draft.isReadable {
+                    Label(L("This pattern cannot be read."), systemImage: "exclamationmark.triangle.fill")
+                        .font(.footnote)
+                        .foregroundStyle(SnapflyTokens.hideWarning)
+                }
+                preview
+                Button(action: submit) {
+                    Text(L("Save Rule"))
+                }
+                .buttonStyle(HidePrimaryButtonStyle())
+                .disabled(!canSave)
+                .accessibilityIdentifier("always-hide-save-rule")
             }
-            .scrollDismissesKeyboard(.interactively)
-            .background(SnapflyTokens.hideGround)
-            .safeAreaInset(edge: .bottom, spacing: 0) { saveBar }
-            .navigationTitle(request.isNew ? L("New Rule") : L("Edit Rule"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L("Cancel")) { dismiss() }
-                }
-            }
-            .onAppear {
-                Task { @MainActor in
-                    try? await Task.sleep(for: .seconds(0.4))
-                    focused = true
-                }
+            .padding(.horizontal, 24)
+            .padding(.top, 24)
+            .padding(.bottom, 16)
+        }
+        .interactiveDismissDisabled(changed)
+        .onAppear {
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(0.35))
+                focused = true
             }
         }
-        .presentationDragIndicator(.visible)
-        .interactiveDismissDisabled(changed)
     }
-
-    // MARK: Parts
 
     static func segment(_ kind: OwnRule.Kind) -> String {
         switch kind {
         case .label: L("After Label")
-        case .pattern: L("Pattern")
-        default: L("Word")
-        }
-    }
-
-    private var fieldTitle: String {
-        switch kind {
-        case .label: L("Label")
         case .pattern: L("Pattern")
         default: L("Word")
         }
@@ -610,139 +531,47 @@ struct RuleSheet: View {
         }
     }
 
-    private var fieldCard: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(fieldTitle)
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(SnapflyTokens.hideSecondary)
-                .accessibilityHidden(true)
-            TextField(fieldTitle, text: text, prompt: Text(placeholder))
-                .font(.body)
+    /// One line of a made-up page, as the rule covers it: a word in a
+    /// sentence, a label with what follows it covered, or, for the line
+    /// below, the label and the covered line after it.
+    private var preview: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(L("Example"))
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(SnapflyTokens.hideAccent)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(SnapflyTokens.hideAccentSoft, in: Capsule())
+            previewLine
+                .font(.subheadline)
                 .foregroundStyle(SnapflyTokens.hideText)
-                .textInputAutocapitalization(kind == .pattern ? .never : .sentences)
-                .autocorrectionDisabled()
-                .focused($focused)
-                .submitLabel(.done)
-                .onSubmit { if canSave { submit() } }
-                .accessibilityIdentifier("always-hide-rule-text")
+                .lineLimit(1)
+            Spacer(minLength: 0)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .frame(maxWidth: .infinity, minHeight: SnapflyTokens.touch, alignment: .leading)
-        .hideCard()
-    }
-
-    @ViewBuilder
-    private var hint: some View {
-        if !draft.isReadable {
-            Label(L("This pattern cannot be read."), systemImage: "exclamationmark.triangle.fill")
-                .font(.footnote)
-                .foregroundStyle(SnapflyTokens.hideWarning)
-        } else {
-            Text(kind == .label ? L("Found where a line begins with it, in capitals or small letters.")
-                 : L("Covered everywhere, whether written in capitals or small letters."))
-                .font(.footnote)
-                .foregroundStyle(SnapflyTokens.hideSecondary)
-                .padding(.horizontal, 16)
-        }
-    }
-
-    /// What a label covers: automatically, the rest of its line, or the line below.
-    private var reaches: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(L("What is covered?"))
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(SnapflyTokens.hideSecondary)
-                .accessibilityAddTraits(.isHeader)
-                .padding(.horizontal, 16)
-            VStack(spacing: 0) {
-                ForEach(OwnRule.Reach.allCases, id: \.self) { option in
-                    ReachRow(reach: option, chosen: option == reach) { reach = option }
-                    if option != OwnRule.Reach.allCases.last {
-                        Rectangle()
-                            .fill(SnapflyTokens.hideSeparator)
-                            .frame(height: 1 / displayScale)
-                            .padding(.leading, 16)
-                    }
-                }
-            }
-            .hideCard()
-        }
-    }
-
-    /// The made-up page, as the rule covers it.
-    private var preview: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Text(L("Preview"))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(SnapflyTokens.hideSecondary)
-                    .accessibilityAddTraits(.isHeader)
-                Spacer(minLength: 8)
-                Text(L("Example"))
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(SnapflyTokens.hideAccent)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(SnapflyTokens.hideAccentSoft, in: Capsule())
-            }
-            if let sample = RuleSample.of(draft) {
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(Array(sample.lines.enumerated()), id: \.offset) { _, line in
-                        CoveredLineText(line: line)
-                            .font(.callout)
-                            .foregroundStyle(SnapflyTokens.hideText)
-                            .accessibilityLabel(Text(verbatim: line.spoken))
-                    }
-                }
-                if kind == .label, reach == .automatic {
-                    Text(L("With nothing after it, the line below is covered."))
-                        .font(.footnote)
-                        .foregroundStyle(SnapflyTokens.hideSecondary)
-                }
-            } else {
-                Text(kind == .pattern ? L("There is no preview for a pattern.") : L("Type something to see what is covered."))
-                    .font(.footnote)
-                    .foregroundStyle(SnapflyTokens.hideSecondary)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .hideCard()
+        .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+        .background(SnapflyTokens.hideField,
+                    in: RoundedRectangle(cornerRadius: SnapflyTokens.hideCardRadius, style: .continuous))
+        .accessibilityElement(children: .combine)
         .accessibilityIdentifier("always-hide-preview")
     }
 
-    private var deleteButton: some View {
-        Button(role: .destructive) {
-            deleting = true
-        } label: {
-            Text(L("Delete Rule"))
-                .font(.body.weight(.semibold))
-                .frame(maxWidth: .infinity, minHeight: SnapflyTokens.touch)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(RowPressStyle())
-        .hideCard()
-        .confirmationDialog(L("Delete Rule"), isPresented: $deleting, titleVisibility: .hidden) {
-            Button(L("Delete Rule"), role: .destructive) {
-                remove()
-                dismiss()
+    @ViewBuilder
+    private var previewLine: some View {
+        if let sample = RuleSample.of(draft),
+           let index = sample.lines.firstIndex(where: { $0.whole || !$0.covered.isEmpty }) {
+            let line = sample.lines[index]
+            if line.whole, index > 0 {
+                CoveredLineText(segments: [(sample.lines[index - 1].text + "  ↵  ", false), (line.text, true)])
+                    .accessibilityLabel(Text(verbatim: sample.lines[index - 1].text + ", " + line.spoken))
+            } else {
+                CoveredLineText(line: line)
+                    .accessibilityLabel(Text(verbatim: line.spoken))
             }
-            Button(L("Cancel"), role: .cancel) {}
+        } else {
+            Text(kind == .pattern ? L("There is no preview for a pattern.") : L("Type something to see what is covered."))
+                .foregroundStyle(SnapflyTokens.hideSecondary)
         }
-    }
-
-    private var saveBar: some View {
-        Button(action: submit) {
-            Text(L("Save Rule"))
-        }
-        .buttonStyle(HidePrimaryButtonStyle())
-        .disabled(!canSave)
-        .accessibilityIdentifier("always-hide-save-rule")
-        .padding(.horizontal, 16)
-        .padding(.top, 12)
-        .padding(.bottom, 8)
-        .background(SnapflyTokens.hideGround)
     }
 
     private func submit() {
@@ -752,50 +581,99 @@ struct RuleSheet: View {
     }
 }
 
-/// One of a label's reaches, to choose: its name, what it covers, and a
-/// check when chosen.
-private struct ReachRow: View {
-    let reach: OwnRule.Reach
-    let chosen: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(SnapflyTokens.hideText)
-                    Text(detail)
-                        .font(.footnote)
-                        .foregroundStyle(SnapflyTokens.hideSecondary)
-                }
-                Spacer(minLength: 8)
-                Image(systemName: "checkmark")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(SnapflyTokens.hideAccent)
-                    .opacity(chosen ? 1 : 0)
-                    .accessibilityHidden(true)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .frame(maxWidth: .infinity, minHeight: SnapflyTokens.touch, alignment: .leading)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(RowPressStyle())
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(chosen ? [.isButton, .isSelected] : .isButton)
-        .accessibilityIdentifier("always-hide-reach-" + reach.rawValue)
-    }
-
-    private var title: String { RuleWords.title(reach) }
-
-    private var detail: String { RuleWords.detail(reach) }
-}
-
 // MARK: Pieces
 
-/// A rule's symbol, green on soft green: "Aa" for a word, a tag for a label.
+/// A sheet as tall as what it holds, nothing in it scrolling, so it never
+/// resizes as the owner types and sits whole above the keyboard. At the
+/// accessibility text sizes it may be taller than the screen: then it fills
+/// it and scrolls.
+struct FittedSheet<Content: View>: View {
+    @ViewBuilder let content: Content
+    @State private var height: CGFloat = 320
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    var body: some View {
+        Group {
+            if typeSize.isAccessibilitySize {
+                ScrollView {
+                    content
+                }
+                .scrollDismissesKeyboard(.interactively)
+                .presentationDetents([.large])
+            } else {
+                content
+                    .fixedSize(horizontal: false, vertical: true)
+                    .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { measured in
+                        if measured > 0 { height = measured }
+                    }
+                    .frame(maxHeight: .infinity, alignment: .top)
+                    .presentationDetents([.height(height)])
+            }
+        }
+        .presentationDragIndicator(.visible)
+        .presentationCornerRadius(SnapflyTokens.hideSheetRadius)
+        .presentationBackground(SnapflyTokens.hideCard)
+    }
+}
+
+/// A sheet's title on the leading side, maybe with a way back before it,
+/// and its close button on the trailing side: an xmark in a grey circle,
+/// with a finger's room round it.
+private struct SheetHeader: View {
+    let title: String
+    var back: (() -> Void)? = nil
+    let close: () -> Void
+
+    var body: some View {
+        HStack(spacing: 8) {
+            if let back {
+                Button(action: back) {
+                    Image(systemName: "chevron.backward")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(SnapflyTokens.hideText)
+                        .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch, alignment: .leading)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(L("Back"))
+                .accessibilityIdentifier("always-hide-back")
+            }
+            Text(title)
+                .font(.title2.weight(.bold))
+                .foregroundStyle(SnapflyTokens.hideText)
+                .lineLimit(2)
+                .accessibilityAddTraits(.isHeader)
+            Spacer(minLength: 8)
+            Button(action: close) {
+                Image(systemName: "xmark")
+                    .font(.footnote.weight(.bold))
+                    .foregroundStyle(SnapflyTokens.hideSecondary)
+                    .frame(width: 30, height: 30)
+                    .background(SnapflyTokens.hideButtonOff, in: Circle())
+                    .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch, alignment: .trailing)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L("Close"))
+            .accessibilityIdentifier("always-hide-close")
+        }
+        .frame(minHeight: SnapflyTokens.touch)
+    }
+}
+
+/// The line between two fields of a card, inset to the words.
+private struct FieldLine: View {
+    @Environment(\.displayScale) private var displayScale
+
+    var body: some View {
+        Rectangle()
+            .fill(SnapflyTokens.hideFieldLine)
+            .frame(height: 1 / displayScale)
+            .padding(.leading, 16)
+    }
+}
+
+/// A rule's symbol, dark on a quiet grey: "Aa" for a word, a tag for a label.
 struct HideRuleTile: View {
     let kind: OwnRule.Kind
     @ScaledMetric(relativeTo: .body) private var size = OwnDetailTile.base
@@ -803,27 +681,13 @@ struct HideRuleTile: View {
     var body: some View {
         Image(systemName: Self.symbol(kind))
             .font(.callout.weight(.semibold))
-            .foregroundStyle(SnapflyTokens.hideAccent)
+            .foregroundStyle(SnapflyTokens.hideText)
             .frame(width: size, height: size)
-            .background(SnapflyTokens.hideAccentSoft, in: RoundedRectangle(cornerRadius: size / 4, style: .continuous))
+            .background(SnapflyTokens.hideRuleTile, in: RoundedRectangle(cornerRadius: size / 4, style: .continuous))
             .accessibilityHidden(true)
     }
 
     static func symbol(_ kind: OwnRule.Kind) -> String { RuleWords.symbol(kind) }
-}
-
-/// One way a name is found, or how many more there are, in green on soft green.
-struct HideChip: View {
-    let text: String
-
-    var body: some View {
-        Text(verbatim: text)
-            .font(.footnote.weight(.semibold))
-            .foregroundStyle(SnapflyTokens.hideAccent)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(SnapflyTokens.hideAccentSoft, in: Capsule())
-    }
 }
 
 /// A row that dims a little under the finger, at once.
@@ -836,7 +700,8 @@ struct RowPressStyle: ButtonStyle {
 }
 
 /// Always Hide's one main action: white on its green, as wide as there is
-/// room, a little smaller under the finger, not with Reduce Motion.
+/// room, a little smaller under the finger, not with Reduce Motion. While
+/// it waits, dark grey words on grey, still easy to read.
 struct HidePrimaryButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -844,64 +709,71 @@ struct HidePrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.body.weight(.semibold))
-            .foregroundStyle(.white)
+            .foregroundStyle(isEnabled ? Color.white : SnapflyTokens.hideButtonOffText)
             .multilineTextAlignment(.center)
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .frame(maxWidth: .infinity, minHeight: SnapflyTokens.touch)
-            .background(SnapflyTokens.hideButton, in: Capsule())
-            .opacity(isEnabled ? (configuration.isPressed ? 0.85 : 1) : 0.4)
+            .background(isEnabled ? SnapflyTokens.hideButton : SnapflyTokens.hideButtonOff, in: Capsule())
+            .opacity(configuration.isPressed ? 0.85 : 1)
             .scaleEffect(configuration.isPressed && !reduceMotion ? 0.98 : 1)
             .animation(SnapflyMotion.feedback, value: configuration.isPressed)
             .contentShape(Capsule())
     }
 }
 
-extension View {
-    /// On a white card with the small cards' corners, as Always Hide's
-    /// sheets hold their parts.
-    func hideCard() -> some View {
-        background(SnapflyTokens.hideCard,
-                   in: RoundedRectangle(cornerRadius: SnapflyTokens.hideCardRadius, style: .continuous))
+#if DEBUG
+#Preview("Add detail") {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        DetailSheet(request: .new(.name, choosing: true)) { _ in }
     }
 }
 
-#if DEBUG
-#Preview("New detail") {
-    DetailSheet(request: .new(.name), save: { _ in }, remove: {})
+#Preview("Name, typed, dark") {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        DetailSheet(request: .chosen(AlwaysHideSample.name)) { _ in }
+    }
+    .preferredColorScheme(.dark)
 }
 
-#Preview("New detail, typed, dark") {
-    DetailSheet(request: DetailRequest(draft: AlwaysHideSample.name, isNew: true, choosing: true), save: { _ in }, remove: {})
-        .preferredColorScheme(.dark)
-}
-
-#Preview("New detail, XXXL") {
-    DetailSheet(request: DetailRequest(draft: AlwaysHideSample.name, isNew: true, choosing: true), save: { _ in }, remove: {})
-        .dynamicTypeSize(.xxxLarge)
+#Preview("Address, XXXL") {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        DetailSheet(request: .chosen(AlwaysHideSample.address)) { _ in }
+    }
+    .dynamicTypeSize(.xxxLarge)
 }
 
 #Preview("Card, kept") {
-    DetailSheet(request: .edit(AlwaysHideSample.card), save: { _ in }, remove: {})
+    Color.clear.sheet(isPresented: .constant(true)) {
+        DetailSheet(request: .edit(AlwaysHideSample.card)) { _ in }
+    }
 }
 
-#Preview("IBAN, typed, dark, XXXL") {
-    DetailSheet(request: DetailRequest(draft: AlwaysHideSample.account, isNew: true, choosing: true), save: { _ in }, remove: {})
-        .preferredColorScheme(.dark)
-        .dynamicTypeSize(.xxxLarge)
+#Preview("IBAN, dark, accessibility size") {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        DetailSheet(request: .chosen(AlwaysHideSample.account)) { _ in }
+    }
+    .preferredColorScheme(.dark)
+    .dynamicTypeSize(.accessibility3)
 }
 
 #Preview("New rule") {
-    RuleSheet(request: RuleRequest(draft: OwnRule(text: "Musterfirma", kind: .word), isNew: true), save: { _ in }, remove: {})
+    Color.clear.sheet(isPresented: .constant(true)) {
+        RuleSheet(request: RuleRequest(draft: OwnRule(text: "Musterfirma", kind: .word), isNew: true)) { _ in }
+    }
 }
 
 #Preview("Label rule, dark") {
-    RuleSheet(request: RuleRequest(draft: OwnRule(text: "Kundennummer", kind: .label), isNew: true), save: { _ in }, remove: {})
-        .preferredColorScheme(.dark)
+    Color.clear.sheet(isPresented: .constant(true)) {
+        RuleSheet(request: RuleRequest(draft: OwnRule(text: "Kundennummer", kind: .label), isNew: true)) { _ in }
+    }
+    .preferredColorScheme(.dark)
 }
 
 #Preview("Label rule, next line, XXXL") {
-    RuleSheet(request: .edit(OwnRule(text: "Aktenzeichen", kind: .label, reach: .nextLine)), save: { _ in }, remove: {})
-        .dynamicTypeSize(.xxxLarge)
+    Color.clear.sheet(isPresented: .constant(true)) {
+        RuleSheet(request: .edit(OwnRule(text: "Aktenzeichen", kind: .label, reach: .nextLine))) { _ in }
+    }
+    .dynamicTypeSize(.xxxLarge)
 }
 #endif

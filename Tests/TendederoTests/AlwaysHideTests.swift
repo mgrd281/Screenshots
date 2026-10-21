@@ -88,7 +88,7 @@ final class AlwaysHideTests: XCTestCase {
 
     // MARK: The ways of a name
 
-    func testTheSheetShowsTheWaysTheCoveringLooksFor() {
+    func testTheWaysOfANameAreTheFormsTheCoveringLooksFor() {
         let variants = OwnDetails.nameVariants(max.text)
         XCTAssertEqual(variants, ["Max Mustermann", "MUSTERMANN, Max", "Mustermann, Max", "M. Mustermann",
                                   "Mustermann, M.", "Mustermann"])
@@ -103,7 +103,7 @@ final class AlwaysHideTests: XCTestCase {
         XCTAssertEqual(OwnDetails.nameVariants(""), [])
     }
 
-    func testEveryWayTheSheetShowsIsFound() {
+    func testEveryWayOfANameIsFound() {
         for detail in [max, OwnRule(text: OwnDetails.nameText(given: "Anna Maria", surname: "von Musterfrau"), kind: .name)] {
             for variant in OwnDetails.nameVariants(detail.text) {
                 // An initial's dot after the name is no part of it.
@@ -309,9 +309,53 @@ final class AlwaysHideTests: XCTestCase {
     }
 
     func testARowShowsANumberByItsLastFourDigits() {
-        XCTAssertEqual(OwnDetails.masked(visa), "•••• •••• •••• 4242")
-        XCTAssertEqual(OwnDetails.masked(account), "DE•• •••• •••• 3000")
+        XCTAssertEqual(OwnDetails.masked(visa), "•••• 4242")
+        XCTAssertEqual(OwnDetails.masked(account), "•••• 3000")
         XCTAssertEqual(OwnDetails.masked(max), "Max Mustermann")
-        XCTAssertFalse(OwnDetails.masked(account).contains("89"), "not even the check digits")
+        XCTAssertEqual(OwnDetails.masked(home), "Musterstraße 12, Musterstadt", "on one line")
+        XCTAssertFalse(OwnDetails.masked(account).contains("DE89"), "not even the country and check digits")
+    }
+
+    // MARK: Empty rules
+
+    /// Settings once added a row before anything was typed in it, and kept
+    /// it: such rows came back as rules without a word.
+    func testEmptyRulesKeptBeforeAreTakenOutAndTheOthersStay() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "AlwaysHideTests.empty"))
+        defaults.removePersistentDomain(forName: "AlwaysHideTests.empty")
+        let old = #"[{"id":"6F1E8E0A-4D3B-4B0E-9C7B-1C2D3E4F5A61","text":"","kind":"word"},"#
+            + #"{"id":"6F1E8E0A-4D3B-4B0E-9C7B-1C2D3E4F5A62","text":"   ","kind":"label"},"#
+            + #"{"id":"6F1E8E0A-4D3B-4B0E-9C7B-1C2D3E4F5A63","text":"Musterfirma","kind":"word"},"#
+            + #"{"id":"6F1E8E0A-4D3B-4B0E-9C7B-1C2D3E4F5A64","text":"Kundennummer","kind":"label","isEnabled":false}]"#
+        defaults.set(Data(old.utf8), forKey: OwnRules.key)
+        let rules = OwnRules.load(from: defaults)
+        XCTAssertEqual(rules.map(\.text), ["Musterfirma", "Kundennummer"])
+        XCTAssertEqual(rules.map(\.isEnabled), [true, false], "the others as they were")
+        // And for good: what is kept has them no more.
+        let kept = OwnRules.decoded(try XCTUnwrap(defaults.data(forKey: OwnRules.key)))
+        XCTAssertEqual(kept.map(\.text), ["Musterfirma", "Kundennummer"])
+    }
+
+    func testAnEmptyRuleIsNeverSaved() throws {
+        XCTAssertFalse(OwnRule(kind: .word).canSave)
+        XCTAssertFalse(OwnRule(text: "   ", kind: .label).canSave)
+        XCTAssertFalse(OwnRule(text: "[", kind: .pattern).canSave, "a pattern that cannot be read")
+        XCTAssertTrue(OwnRule(text: "Musterfirma", kind: .word).canSave)
+        XCTAssertTrue(OwnRule(text: "Kundennummer", kind: .label).canSave)
+        XCTAssertFalse(OwnRule(kind: .name).canSave)
+        XCTAssertTrue(max.canSave)
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "AlwaysHideTests.save"))
+        defaults.removePersistentDomain(forName: "AlwaysHideTests.save")
+        OwnRules.save([OwnRule(kind: .word), OwnRule(text: "Musterfirma", kind: .word)], to: defaults)
+        XCTAssertEqual(OwnRules.decoded(try XCTUnwrap(defaults.data(forKey: OwnRules.key))).map(\.text), ["Musterfirma"])
+    }
+
+    func testTheActiveCountIsTheRulesSwitchedOn() {
+        var off = OwnRule(text: "Aktenzeichen", kind: .label)
+        off.isEnabled = false
+        let rules = [OwnRule(text: "Musterfirma", kind: .word), OwnRule(text: "Kundennummer", kind: .label), off]
+        XCTAssertEqual(OwnRules.activeCount(rules), rules.filter(\.isEnabled).count)
+        XCTAssertEqual(OwnRules.activeCount(rules), 2)
+        XCTAssertEqual(OwnRules.activeCount(rules + [max, visa]), 2, "details have no switch and are no rules")
     }
 }

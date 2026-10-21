@@ -726,10 +726,15 @@ enum OwnDetails {
         case .name:
             return displayName(detail.text)
         case .card:
-            return "•••• •••• •••• " + String(digits(detail.text).suffix(4))
+            return "•••• " + String(digits(detail.text).suffix(4))
         case .account:
-            let iban = compact(iban: detail.text)
-            return String(iban.prefix(2)) + "•• •••• •••• " + String(iban.suffix(4))
+            return "•••• " + String(compact(iban: detail.text).suffix(4))
+        case .address:
+            // On one line: the street with its number, and the town.
+            let street = detail.text.trimmingCharacters(in: .whitespaces)
+            let town = detail.city.trimmingCharacters(in: .whitespaces)
+            let place = town.isEmpty ? detail.postcode.trimmingCharacters(in: .whitespaces) : town
+            return [street, place].filter { !$0.isEmpty }.joined(separator: ", ")
         default:
             return summary(of: detail)
         }

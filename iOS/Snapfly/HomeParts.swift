@@ -62,17 +62,26 @@ enum SnapflyTokens {
     static let hideAccentSoft = color(0xE7F4EE, dark: 0x102A20)
     /// Its main button, the same green in light and dark: white on it 5.4:1.
     static let hideButton = Color(red: 7 / 255, green: 122 / 255, blue: 86 / 255)
-    /// A rule's switch, on.
-    static let hideSwitch = color(0x0A8A62, dark: 0x1FA774)
+    /// The main button while it waits: a grey with dark grey words, 6.5:1;
+    /// at night 6.8:1. Never pale words on a pale green.
+    static let hideButtonOff = color(0xE4E6EA, dark: 0x2C3036)
+    static let hideButtonOffText = color(0x4A5059, dark: 0xB4BBC4)
+    /// A rule's symbol, on a quiet grey.
+    static let hideRuleTile = color(0xEEF0F2, dark: 0x2C3036)
+    /// The fields in a sheet, grey on the sheet's white, and the lines
+    /// between them.
+    static let hideField = color(0xF2F3F5, dark: 0x2A2E34)
+    static let hideFieldLine = color(0xE1E4E8, dark: 0x3A3F46)
     /// What is wrong with what was typed, in words: 4.6:1 on its ground; at
     /// night 9.7:1.
     static let hideWarning = color(0xB35200, dark: 0xFFA54D)
-    /// The rows' and sections' corners, and the small cards' and tiles'.
+    /// The rows' and sections' corners, the small cards' and fields', and
+    /// the sheets'.
     static let hideRowRadius: CGFloat = 22
     static let hideCardRadius: CGFloat = 18
-    /// The chosen kind's edge, and the others'.
-    static let hideChosenEdge: CGFloat = 2
-    static let hideHairline: CGFloat = 1
+    static let hideSheetRadius: CGFloat = 32
+    /// A row of a detail or a rule, at the body's text size.
+    static let hideRowHeight: CGFloat = 64
     /// The smallest a finger's target is.
     static let touch: CGFloat = 44
 

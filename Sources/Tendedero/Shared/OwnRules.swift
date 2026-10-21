@@ -119,6 +119,13 @@ struct OwnRule: Codable, Hashable, Identifiable {
         guard kind == .pattern, !isBlank else { return true }
         return (try? NSRegularExpression(pattern: text, options: [.caseInsensitive])) != nil
     }
+
+    /// Whether it may be kept as typed: a rule with its word, label or
+    /// pattern, readable; a detail that can cover something. An empty one
+    /// never is.
+    var canSave: Bool {
+        kind.isDetail ? OwnDetails.canKeep(self) : !isBlank && isReadable
+    }
 }
 
 extension OwnRule {
@@ -153,15 +160,26 @@ enum OwnRules {
     }
 
     /// The rules kept with the settings, never a detail. One a later
-    /// version made, of a kind this one does not know, is left out.
+    /// version made, of a kind this one does not know, is left out, and so
+    /// is an empty one: the rows Settings once added before anything was
+    /// typed in them. Such rows are taken out of the settings for good.
     static func load(from defaults: UserDefaults = .standard) -> [OwnRule] {
         guard let data = defaults.data(forKey: key) else { return [] }
-        return decoded(data).filter { !$0.kind.isDetail }
+        let read = decoded(data).filter { !$0.kind.isDetail }
+        let kept = read.filter { !$0.isBlank }
+        if kept.count != read.count { save(kept, to: defaults) }
+        return kept
+    }
+
+    /// How many rules cover something now, as their switches show.
+    static func activeCount(_ rules: [OwnRule]) -> Int {
+        rules.filter { !$0.kind.isDetail && $0.isActive }.count
     }
 
     static func save(_ rules: [OwnRule], to defaults: UserDefaults = .standard) {
-        // The details never go where a backup or another app could read them.
-        if let data = try? JSONEncoder().encode(rules.filter { !$0.kind.isDetail }) {
+        // The details never go where a backup or another app could read them,
+        // and an empty rule is never kept.
+        if let data = try? JSONEncoder().encode(rules.filter { !$0.kind.isDetail && !$0.isBlank }) {
             defaults.set(data, forKey: key)
         } else {
             defaults.removeObject(forKey: key)
@@ -280,8 +298,9 @@ enum OwnDetailStore {
     /// go to the AI assistant have them hidden first (`Finder.masking`).
     static let neverSent = true
 
+    /// The details kept, never an empty one.
     static var details: [OwnRule] {
-        get { kept.value { read() } }
+        get { kept.value { read() }.filter { !$0.isBlank } }
         set { keep(newValue) }
     }
 
@@ -291,7 +310,7 @@ enum OwnDetailStore {
     /// kept strictly, not at all.
     @discardableResult
     static func keep(_ details: [OwnRule], strictly: Bool = false) -> Bool {
-        kept.change(to: details.filter(\.kind.isDetail), current: read, strictly: strictly) { write($0) }
+        kept.change(to: details.filter { $0.kind.isDetail && !$0.isBlank }, current: read, strictly: strictly) { write($0) }
     }
 
     /// What was read, and a lock round it.

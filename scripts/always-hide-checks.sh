@@ -13,7 +13,7 @@ derived=build/always-hide
 bundle=de.ghazarian.Snapfly
 mkdir -p "$out"
 
-# The newest iPhone the runner has, a Pro where there is one.
+# The newest iPhone the runner has, the largest: a Pro Max where there is one.
 device=$(xcrun simctl list devices available --json | python3 -c '
 import json, sys
 best = None
@@ -25,7 +25,7 @@ for runtime, devices in json.load(sys.stdin)["devices"].items():
         name = device["name"]
         if not name.startswith("iPhone"):
             continue
-        score = (version, "Pro" in name and "Max" not in name, name)
+        score = (version, "Pro Max" in name, "Plus" in name or "Air" in name, name)
         if best is None or score > best[0]:
             best = (score, device["udid"], name)
 print(best[1])
@@ -74,13 +74,15 @@ xcrun simctl launch "$device" "$bundle" -SnapflyAlwaysHide filled >/dev/null
 sleep 10
 xcrun simctl terminate "$device" "$bundle" >/dev/null 2>&1 || true
 
-states=(filled empty editing name address card account editCard word label labelNext)
+states=(filled empty editing picker name address card account editCard word label labelNext)
 for state in "${states[@]}"; do shot "$device" "de-light-$state" "$state" light de; done
 for state in "${states[@]}"; do shot "$device" "de-dark-$state" "$state" dark de; done
 for state in "${states[@]}"; do shot "$device" "de-xxxl-$state" "$state" light de UICTContentSizeCategoryXXXL; done
-shot "$device" "de-accessibility-xxxl-filled" filled light de UICTContentSizeCategoryAccessibilityXXXL
-shot "$device" "de-accessibility-xxxl-name" name light de UICTContentSizeCategoryAccessibilityXXXL
+for state in "${states[@]}"; do
+  shot "$device" "de-accessibility-xxxl-$state" "$state" light de UICTContentSizeCategoryAccessibilityXXXL
+done
 shot "$device" "ar-light-filled" filled light ar
+shot "$device" "ar-light-picker" picker light ar
 shot "$device" "ar-light-name" name light ar
 shot "$device" "en-light-filled" filled light en
 
@@ -115,7 +117,7 @@ if [ -n "$small" ] && [ "$small" != "$device" ]; then
     xcrun simctl launch "$small" "$bundle" -SnapflyAlwaysHide filled >/dev/null
     sleep 10
     for state in "${states[@]}"; do shot "$small" "de-small-$state" "$state" light de; done
-    shot "$small" "de-small-dark-filled" filled dark de
+    for state in "${states[@]}"; do shot "$small" "de-small-dark-$state" "$state" dark de; done
     shot "$small" "de-small-xxxl-filled" filled light de UICTContentSizeCategoryXXXL
     shot "$small" "de-small-xxxl-name" name light de UICTContentSizeCategoryXXXL
   ) || echo "The smallest iPhone could not be captured." >&2

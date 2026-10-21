@@ -199,8 +199,6 @@ struct SettingsView: View {
             .sheet(item: $nameRequest) { request in
                 DetailSheet(request: request) { kept in
                     keepName(kept)
-                } remove: {
-                    keepName(nil)
                 }
             }
             .navigationDestination(isPresented: $showsAlwaysHide) {
@@ -232,12 +230,12 @@ struct SettingsView: View {
     }
 
     /// The owner's name kept with their details, in the place of the one
-    /// before, or removed from them.
-    private func keepName(_ name: OwnRule?) {
+    /// before. It is removed in Always Hide, with a swipe.
+    private func keepName(_ name: OwnRule) {
         var all = OwnRules.all
         if let i = all.firstIndex(where: { $0.kind == .name }) {
-            if let name { all[i] = name } else { all.remove(at: i) }
-        } else if let name {
+            all[i] = name
+        } else {
             all.append(name)
         }
         OwnRules.all = all

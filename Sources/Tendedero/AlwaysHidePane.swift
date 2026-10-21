@@ -2,9 +2,9 @@ import SwiftUI
 
 /// Always Hide on the Mac, its own pane in Settings, as on the iPhone: what
 /// Snapfly covers in every picture besides the kinds checked under Privacy.
-/// The owner's details, each with its kind's colour, a number by its last
-/// four digits and a name with the ways it is also found; their rules, each
-/// with what it covers and its switch; and a sheet to add or change either.
+/// The owner's details, each with its kind's colour and a number by its
+/// last four digits; their rules, each with what it covers and its switch;
+/// and a sheet to add or change either.
 struct AlwaysHidePane: View {
     @ObservedObject var prefs: Preferences
     @State private var detailRequest: DetailDraft?
@@ -72,7 +72,7 @@ struct AlwaysHidePane: View {
                     Text(L("Your Rules"))
                     Spacer()
                     if !rules.isEmpty {
-                        Text(String(format: L("%d active"), rules.filter(\.isActive).count))
+                        Text(String(format: L("%d active"), OwnRules.activeCount(rules)))
                             .foregroundStyle(.secondary)
                             .monospacedDigit()
                     }
@@ -183,31 +183,13 @@ private struct RuleTile: View {
     }
 }
 
-/// One way a name is found, or how many more there are.
-private struct Chip: View {
-    let text: String
-
-    var body: some View {
-        Text(verbatim: text)
-            .font(.caption.weight(.medium))
-            .foregroundStyle(.secondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 2)
-            .background(.quaternary, in: Capsule())
-    }
-}
-
-/// One of the owner's details: its kind's symbol on its colour, its value,
-/// a number by its last four digits, its kind, and for a name two of the
-/// ways it is also found and how many more; Edit… and a way to take it away.
+/// One of the owner's details: its kind's symbol on its colour, its value
+/// on one line, a number by its last four digits, and its kind; Edit… and a
+/// way to take it away. The ways a name is also found stay with the matcher.
 private struct DetailRow: View {
     let detail: OwnRule
     let edit: () -> Void
     let remove: () -> Void
-
-    private var others: [String] {
-        detail.kind == .name ? Array(OwnDetails.nameVariants(detail.text).dropFirst()) : []
-    }
 
     private var kindLine: String {
         let caption = detail.caption.trimmingCharacters(in: .whitespaces)
@@ -216,32 +198,20 @@ private struct DetailRow: View {
     }
 
     private var spoken: String {
-        let said = detail.kind == .name ? "\(kindLine), \(OwnDetails.masked(detail))" : OwnDetails.spoken(detail)
-        guard !others.isEmpty else { return said }
-        return said + ". " + L("Also finds") + " " + others.joined(separator: ", ")
+        detail.kind == .name ? "\(kindLine), \(OwnDetails.masked(detail))" : OwnDetails.spoken(detail)
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(spacing: 12) {
             DetailTile(kind: detail.kind)
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(verbatim: OwnDetails.masked(detail))
                     .monospacedDigit()
-                    .lineLimit(2)
+                    .lineLimit(1)
                 Text(kindLine)
                     .font(.callout)
                     .foregroundStyle(.secondary)
-                if !others.isEmpty {
-                    ChipFlow(spacing: 4) {
-                        Text(L("Also finds"))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        ForEach(others.prefix(2), id: \.self) { Chip(text: $0) }
-                        if others.count > 2 {
-                            Chip(text: String(format: L("+%d"), others.count - 2))
-                        }
-                    }
-                }
+                    .lineLimit(1)
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(verbatim: spoken))
@@ -258,8 +228,8 @@ private struct DetailRow: View {
     }
 }
 
-/// One of the owner's rules: its symbol, its word or label, what it covers,
-/// a label's sample, and its switch; Edit… and a way to take it away.
+/// One of the owner's rules: its symbol, its word or label, its kind and
+/// what it covers, and its switch; Edit… and a way to take it away.
 private struct RuleRow: View {
     let rule: OwnRule
     let edit: () -> Void
@@ -269,7 +239,7 @@ private struct RuleRow: View {
     private var shown: String { rule.text.trimmingCharacters(in: .whitespaces) }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(spacing: 12) {
             RuleTile(kind: rule.kind)
             VStack(alignment: .leading, spacing: 4) {
                 Text(verbatim: shown)
@@ -282,16 +252,6 @@ private struct RuleRow: View {
                     Label(L("This pattern cannot be read."), systemImage: "exclamationmark.triangle.fill")
                         .font(.callout)
                         .foregroundStyle(.orange)
-                } else if rule.kind == .label {
-                    let label = shown.trimmingCharacters(in: CharacterSet(charactersIn: " :"))
-                    CoveredLineText(segments: [(String(format: L("%@:"), label) + " ", false), ("00000", true)])
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(.quaternary, in: Capsule())
-                        .accessibilityHidden(true)
                 }
             }
             .accessibilityElement(children: .combine)
@@ -317,9 +277,8 @@ private struct RuleRow: View {
 // MARK: Sheets
 
 /// One of the owner's details, added or changed: its kind, chosen while it
-/// is new; its fields, the first focused; for a name, its first and last
-/// name and every way it is also found, as the matcher looks for it, as it
-/// is typed; what is wrong with what was typed; and Add once it can be kept.
+/// is new; its fields, the first focused, a name by its first and last
+/// name; what is wrong with what was typed; and Add once it can be kept.
 private struct DetailSheet: View {
     let request: DetailDraft
     let done: (OwnRule) -> Void
@@ -405,7 +364,6 @@ private struct DetailSheet: View {
                     .textFieldStyle(.roundedBorder)
                 note
             }
-            if kind == .name { variants }
             HStack {
                 Spacer()
                 Button(L("Cancel"), action: cancel)
@@ -413,7 +371,7 @@ private struct DetailSheet: View {
                 Button(request.isNew ? L("Add") : L("Save")) { done(draft) }
                     .buttonStyle(.borderedProminent)
                     .keyboardShortcut(.defaultAction)
-                    .disabled(!OwnDetails.canKeep(draft))
+                    .disabled(!draft.canSave)
             }
         }
         .padding(20)
@@ -496,30 +454,6 @@ private struct DetailSheet: View {
         default: nil
         }
     }
-
-    /// The ways the name is also found, from the list the matcher uses.
-    private var variants: some View {
-        let shown = OwnDetails.nameVariants(draft.text)
-        return GroupBox {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(L("Also recognized"))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                if shown.isEmpty {
-                    Text(L("Type your name to see how it is also found."))
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                } else {
-                    ChipFlow(spacing: 4) {
-                        ForEach(shown, id: \.self) { Chip(text: $0) }
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(4)
-        }
-        .accessibilityElement(children: .combine)
-    }
 }
 
 /// One of the owner's rules, added or changed: a word, a label or a
@@ -561,7 +495,7 @@ private struct RuleSheet: View {
         return made
     }
 
-    private var canSave: Bool { !draft.isBlank && draft.isReadable }
+    private var canSave: Bool { draft.canSave }
 
     static func segment(_ kind: OwnRule.Kind) -> String {
         switch kind {

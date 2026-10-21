@@ -1,7 +1,7 @@
 import SwiftUI
 
 // What Always Hide shows on the Mac and on the iPhone alike: the colour of
-// each kind of the owner's details, chips that wrap, and words with some of
+// each kind of the owner's details, a rule's words, and words with some of
 // them covered.
 
 /// Each kind of the owner's details by a colour of its own, the same in
@@ -22,9 +22,9 @@ enum RuleWords {
     /// After its kind: "Word · anywhere in the picture".
     static func subtitle(of rule: OwnRule) -> String {
         switch (rule.kind, rule.reach) {
-        case (.label, .automatic): L("Label · automatic")
-        case (.label, .restOfLine): L("Label · rest of the line")
-        case (.label, .nextLine): L("Label · next line")
+        case (.label, .automatic): L("Label · Automatic")
+        case (.label, .restOfLine): L("Label · Same Line")
+        case (.label, .nextLine): L("Label · Next Line")
         case (.pattern, _): L("Pattern · anywhere in the picture")
         default: L("Word · anywhere in the picture")
         }
@@ -34,7 +34,7 @@ enum RuleWords {
     static func title(_ reach: OwnRule.Reach) -> String {
         switch reach {
         case .automatic: L("Automatic")
-        case .restOfLine: L("Rest of the Line")
+        case .restOfLine: L("Same Line")
         case .nextLine: L("Next Line")
         }
     }
@@ -103,45 +103,4 @@ struct CoveredLineText: View {
 
     /// The bar over covered words: the words' colour, nearly solid.
     static let cover = Color.primary.opacity(0.85)
-}
-
-/// Chips one after another, on as many lines as they need. SwiftUI's
-/// Layout by its full name, since the Mac has a Layout of its own.
-struct ChipFlow: SwiftUI.Layout {
-    var spacing: CGFloat = 8
-
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let places = arrange(subviews, in: proposal.width ?? .infinity)
-        let width = places.map { $0.origin.x + $0.size.width }.max() ?? 0
-        let height = places.map { $0.origin.y + $0.size.height }.max() ?? 0
-        return CGSize(width: width, height: height)
-    }
-
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let places = arrange(subviews, in: bounds.width)
-        for (subview, place) in zip(subviews, places) {
-            subview.place(at: CGPoint(x: bounds.minX + place.origin.x, y: bounds.minY + place.origin.y),
-                          proposal: ProposedViewSize(place.size))
-        }
-    }
-
-    /// Where each chip goes, from the leading edge, in one pass both for
-    /// measuring and for placing, so the lines come out the same. Half a
-    /// point to spare, as a width measured comes back rounded.
-    private func arrange(_ subviews: Subviews, in limit: CGFloat) -> [CGRect] {
-        var places: [CGRect] = []
-        var x: CGFloat = 0, y: CGFloat = 0, row: CGFloat = 0
-        for subview in subviews {
-            let size = subview.sizeThatFits(ProposedViewSize(width: limit, height: nil))
-            if x > 0, x + size.width > limit + 0.5 {
-                y += row + spacing
-                x = 0
-                row = 0
-            }
-            places.append(CGRect(origin: CGPoint(x: x, y: y), size: size))
-            x += size.width + spacing
-            row = max(row, size.height)
-        }
-        return places
-    }
 }
