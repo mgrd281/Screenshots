@@ -19,9 +19,14 @@ struct AlwaysHideView: View {
 
     private var change: Animation { SnapflyMotion.change(reduceMotion) }
 
-    /// The owner's own, or for previews a made-up set held in memory.
-    init(store: @autoclosure @escaping () -> AlwaysHideStore = AlwaysHideStore()) {
-        _store = StateObject(wrappedValue: store())
+    /// The owner's own.
+    init() {
+        _store = StateObject(wrappedValue: AlwaysHideStore())
+    }
+
+    /// For previews, a made-up set held in memory.
+    init(store: AlwaysHideStore) {
+        _store = StateObject(wrappedValue: store)
     }
 
     var body: some View {
