@@ -1,4 +1,4 @@
-#if canImport(Vision) && canImport(CoreImage) && canImport(PDFKit)
+#if DEBUG && canImport(Vision) && canImport(CoreImage) && canImport(PDFKit)
 import CoreGraphics
 import Foundation
 import ImageIO
@@ -15,14 +15,33 @@ import XCTest
 /// leaves: covers in the PDF's pixels and not in its text, nothing said of
 /// who made it but Snapfly, PNGs without notes, and a page as the camera
 /// gives it going through as before. With SCAN_CAPTURES set to a folder,
-/// it keeps the pictures before and after, with their numbers.
+/// it keeps the pictures before and after, with their numbers. Each photo
+/// is taken, and each page made ready, once for all the tests that look at
+/// it.
 final class ScanFixtureTests: XCTestCase {
     private static let page = ScanSample.page()
+    private static var photos: [String: ScanSample.Photo] = [:]
+    private static var made: [String: ScanCleaner.Prepared] = [:]
 
     private var page: CGImage { get throws { try XCTUnwrap(Self.page) } }
 
     private func photo(_ flaw: ScanSample.Flaw = .none, turns: Int = 0) throws -> ScanSample.Photo {
-        try XCTUnwrap(ScanSample.photographed(try page, flaw: flaw, quarterTurns: turns))
+        let key = "\(flaw.rawValue)-\(turns)"
+        if let photo = Self.photos[key] { return photo }
+        let photo = try XCTUnwrap(ScanSample.photographed(try page, flaw: flaw, quarterTurns: turns))
+        Self.photos[key] = photo
+        return photo
+    }
+
+    /// The photo's page made flat, upright, cleaned in `mode` and checked.
+    private func cleaned(_ flaw: ScanSample.Flaw = .none, turns: Int = 0, mode: ScanColor = .color) async throws
+        -> ScanCleaner.Prepared {
+        let key = "\(flaw.rawValue)-\(turns)-\(mode.rawValue)"
+        if let prepared = Self.made[key] { return prepared }
+        let photo = try photo(flaw, turns: turns)
+        let prepared = try await XCTUnwrapAsync(await ScanCleaner.prepare(photo.image, quad: photo.quad, mode: mode))
+        Self.made[key] = prepared
+        return prepared
     }
 
     func testThePageIsFoundWhereItLies() throws {
@@ -43,15 +62,14 @@ final class ScanFixtureTests: XCTestCase {
     }
 
     func testAPhotoTakenSidewaysIsTurnedUpright() async throws {
-        let photo = try photo(turns: 1)
-        let prepared = try await XCTUnwrapAsync(await ScanCleaner.prepare(photo.image, quad: photo.quad, mode: .color))
+        let prepared = try await cleaned(turns: 1)
         XCTAssertEqual(prepared.turns, 3, "a quarter turn back")
         XCTAssertLessThan(prepared.straightened.width, prepared.straightened.height, "upright")
     }
 
     func testCleaningKeepsEveryNumberAndTheTextReadsTheSame() async throws {
         let photo = try photo()
-        let prepared = try await XCTUnwrapAsync(await ScanCleaner.prepare(photo.image, quad: photo.quad, mode: .color))
+        let prepared = try await cleaned()
         XCTAssertEqual(prepared.checked.textKept, true)
         XCTAssertEqual(prepared.checked.issues, [], "nothing wrong with a sharp photo")
         let read = prepared.checked.reading.map(\.string).joined(separator: " ")
@@ -65,26 +83,24 @@ final class ScanFixtureTests: XCTestCase {
     func testTheSameDetailsAreFoundOnTheCleanedPageAsOnThePrintedOne() async throws {
         let chosen = PrivateDetail.recommended
         let printed = Finder.analysis(in: try page, chosen, rules: [], intelligence: false).areas
-        let photo = try photo()
-        let prepared = try await XCTUnwrapAsync(await ScanCleaner.prepare(photo.image, quad: photo.quad, mode: .color))
-        let cleaned = Finder.analysis(in: prepared.cleaned, chosen, rules: [], intelligence: false).areas
+        let prepared = try await cleaned()
+        let found = Finder.analysis(in: prepared.cleaned, chosen, rules: [], intelligence: false).areas
         func counts(_ areas: [Finder.Area]) -> [String: Int] {
             Dictionary(grouping: areas, by: { $0.kind?.rawValue ?? "rule" }).mapValues(\.count)
         }
         XCTAssertFalse(printed.isEmpty, "the invoice has private details")
         for (kind, count) in counts(printed) {
-            XCTAssertGreaterThanOrEqual(counts(cleaned)[kind] ?? 0, count, "\(kind): printed \(counts(printed)), cleaned \(counts(cleaned))")
+            XCTAssertGreaterThanOrEqual(counts(found)[kind] ?? 0, count, "\(kind): printed \(counts(printed)), cleaned \(counts(found))")
         }
         Self.write("detection.txt", "Printed page: \(counts(printed).sorted { $0.key < $1.key })\n"
-            + "Cleaned photo: \(counts(cleaned).sorted { $0.key < $1.key })\n")
+            + "Cleaned photo: \(counts(found).sorted { $0.key < $1.key })\n")
     }
 
     func testEachLookKeepsWhatItShould() async throws {
-        let photo = try photo()
-        let gray = try await XCTUnwrapAsync(await ScanCleaner.prepare(photo.image, quad: photo.quad, mode: .gray))
+        let gray = try await cleaned(mode: .gray)
         XCTAssertEqual(gray.cleaned.colorSpace?.model, .monochrome)
         XCTAssertEqual(gray.checked.textKept, true)
-        let black = try await XCTUnwrapAsync(await ScanCleaner.prepare(photo.image, quad: photo.quad, mode: .blackAndWhite))
+        let black = try await cleaned(mode: .blackAndWhite)
         let bitmap = try XCTUnwrap(ScanCleaner.bitmap(black.cleaned))
         XCTAssertEqual(Set(bitmap.brightness), [0, 255])
         Self.keep(gray.cleaned, "after-gray")
@@ -95,11 +111,11 @@ final class ScanFixtureTests: XCTestCase {
 
     func testABlurredBottomAndAReflectionAreSaidForWhereTheyAre() async throws {
         let blurred = try photo(.blurredBottom)
-        let soft = try await XCTUnwrapAsync(await ScanCleaner.prepare(blurred.image, quad: blurred.quad, mode: .color))
+        let soft = try await cleaned(.blurredBottom)
         let blur = try XCTUnwrap(soft.checked.issues.first { $0.kind == .blurred }, "\(soft.checked.issues)")
         XCTAssertEqual(blur.part, .bottom)
         let shiny = try photo(.glare)
-        let lit = try await XCTUnwrapAsync(await ScanCleaner.prepare(shiny.image, quad: shiny.quad, mode: .color))
+        let lit = try await cleaned(.glare)
         let glare = try XCTUnwrap(lit.checked.issues.first { $0.kind == .glare }, "\(lit.checked.issues)")
         XCTAssertEqual(glare.part, .top)
         Self.keep(blurred.image, "photo-blurred-bottom", longest: 1600)
@@ -109,8 +125,7 @@ final class ScanFixtureTests: XCTestCase {
     }
 
     func testThePDFHasItsCoversInItsPixelsAndNotInItsText() async throws {
-        let photo = try photo()
-        let prepared = try await XCTUnwrapAsync(await ScanCleaner.prepare(photo.image, quad: photo.quad, mode: .color))
+        let prepared = try await cleaned()
         let covered = try await XCTUnwrapAsync(await CoveredCopy.make(prepared.cleaned, PrivateDetail.recommended, rules: [],
                                                                      style: .ink, intelligence: false))
         let places = covered.report.places
@@ -154,10 +169,9 @@ final class ScanFixtureTests: XCTestCase {
     }
 
     func testBlackAndWhiteMakesTheSmallestPDF() async throws {
-        let photo = try photo()
         var sizes: [ScanColor: Int] = [:]
         for mode in ScanColor.allCases {
-            let prepared = try await XCTUnwrapAsync(await ScanCleaner.prepare(photo.image, quad: photo.quad, mode: mode))
+            let prepared = try await cleaned(mode: mode)
             let page = try XCTUnwrap(ScanCleaner.pdfPage(prepared.cleaned, mode: mode, words: []))
             let data = try XCTUnwrap(ScanPDF.make([page]))
             XCTAssertNotNil(Self.rendered(data), "\(mode) reads")

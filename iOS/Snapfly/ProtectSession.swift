@@ -341,6 +341,15 @@ final class ProtectSession: ObservableObject {
         return png != nil
     }
 
+    /// A scanned page in other colours: the same places on it, the copy
+    /// made and checked again.
+    func replace(_ picture: CGImage) {
+        guard image != nil, picture.width > 0 else { return }
+        image = picture
+        original = UIImage(cgImage: picture)
+        changed()
+    }
+
     // MARK: Leaving
 
     /// Notes the screenshot as protected lately, once its copy has left.
@@ -359,7 +368,8 @@ final class ProtectSession: ObservableObject {
         case .picture(let id):
             return Imported.shared.image(id)
         case .scanned(let id):
-            return ScannedPages.shared.image(id)
+            // Cleaned first, then covered.
+            return await ScannedPages.shared.ready(id)
         }
     }
 

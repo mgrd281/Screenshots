@@ -1,24 +1,32 @@
+import PhotosUI
 import SwiftUI
 import VisionKit
 
-/// The Scan tab: a letter, a form or a receipt scanned with the system's
-/// document camera, straightened and cropped by it, then opened to cover its
-/// private details like any screenshot, or covered all together and sent to
-/// an app with one tap, or made into one PDF. Scanned pages stay in memory while the app runs, and are never
-/// saved unless the owner saves a covered copy.
+/// The Scan tab: letters, forms and receipts from the system's document
+/// camera, or photos of them chosen from Photos. Each page is made flat,
+/// upright and level, cleaned as a good scanner leaves a page and checked
+/// (`ScannedPages`), then opened to cover its private details like any
+/// screenshot, in the editor with its pages (`ScanEditor`). The pages wait
+/// under "Scanned pages" in the document's order, for Save and Share (one
+/// A4 PDF or a PNG each, covered or only cleaned) or an app. Pages stay in
+/// memory while the app runs, and are never saved unless the owner saves them.
 struct ScanTab: View {
     @ObservedObject private var store = ScannedPages.shared
     @ObservedObject private var tabs = AppTabs.shared
     @State private var scanning = false
     @State private var path = NavigationPath()
+    @State private var picked: [PhotosPickerItem] = []
+    @State private var saving = false
     /// Each press of the scan button, for its haptic.
     @State private var presses = 0
+
+    private let supported = VNDocumentCameraViewController.isSupported
 
     var body: some View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
-                    ScanCard(supported: VNDocumentCameraViewController.isSupported) {
+                    ScanCard(supported: supported, picked: $picked) {
                         presses += 1
                         scanning = true
                     }
@@ -32,27 +40,66 @@ struct ScanTab: View {
             .scrollIndicators(.hidden)
             .navigationTitle(L("Scan"))
             .quickNotes()
-            .navigationDestination(for: ProtectSession.Source.self) { source in ProtectView(source: source) }
+            .overlay(alignment: .bottom) { improving }
+            .navigationDestination(for: ProtectSession.Source.self) { source in
+                if case .scanned(let id) = source {
+                    ScanEditor(page: id)
+                } else {
+                    ProtectView(source: source)
+                }
+            }
         }
         // The first run's Try It Now opens the camera here.
         .onAppear(perform: scanIfAsked)
+        .onAppear(perform: showDemo)
         .onChange(of: tabs.scanRequested) { _, asked in
             if asked { scanIfAsked() }
+        }
+        .onChange(of: picked) { _, items in
+            Task { await add(items) }
         }
         .fullScreenCover(isPresented: $scanning) {
             DocumentScanner { images in
                 scanning = false
-                guard !images.isEmpty else { return }
-                let new = store.add(images)
-                // One page goes straight to covering; several wait here to be chosen.
-                if new.count == 1 { open(new[0]) }
+                // The editor opens on the first page at once, while it is made ready.
+                if let first = store.add(camera: images).first { open(first.id) }
             }
             .ignoresSafeArea()
         }
+        .fullScreenCover(item: wantedCorners) { wanted in
+            if let page = store.page(wanted.id) {
+                ScanCornerEditor(image: page.source, quad: page.quad ?? .inset(0.06)) { quad in
+                    if let quad { store.setCorners(wanted.id, quad) } else { store.remove(wanted.id) }
+                }
+            }
+        }
+        .sheet(isPresented: $saving) { ScanSaveSheet() }
     }
 
-    /// The pages scanned while the app runs, in the order they were
-    /// scanned, and the PDF they make together.
+    /// A photo whose page Vision was not sure of, while its corners are set.
+    private var wantedCorners: Binding<ScanPageRef?> {
+        Binding(get: { store.cornersWanted.map(ScanPageRef.init) }, set: { if $0 == nil { store.cornersWanted = nil } })
+    }
+
+    /// While pages are made ready and the tab shows: which, over its bottom.
+    @ViewBuilder private var improving: some View {
+        if let index = store.improving, path.isEmpty {
+            HStack(spacing: 8) {
+                ProgressView().controlSize(.small)
+                Text(String(format: L("Page %d of %d is being improved"), index, store.pages.count))
+                    .monospacedDigit()
+                    .contentTransition(.numericText())
+            }
+            .floatingPill()
+            .padding(.bottom, 24)
+            .transition(.opacity)
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier("scan-improving")
+        }
+    }
+
+    /// The pages scanned while the app runs, in the document's order, the
+    /// apps to hand them to, and Save and Share.
     private var scanned: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
@@ -68,11 +115,12 @@ struct ScanTab: View {
             }
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 76, maximum: 160), spacing: 8)], spacing: 8) {
                 ForEach(Array(store.pages.enumerated()), id: \.element.id) { index, page in
-                    Button { open(page) } label: {
-                        PageCard(image: page.image, number: index + 1, session: store.opened(page.id))
+                    Button { open(page.id) } label: {
+                        PageCard(page: page, number: index + 1, session: store.opened(page.id))
                     }
                     .buttonStyle(.plain)
                     .accessibilityHint(L("Cover Private Details"))
+                    .accessibilityIdentifier("scan-page-\(index + 1)")
                     .contextMenu {
                         Button(role: .destructive) {
                             withAnimation(.easeOut(duration: 0.2)) { store.remove(page.id) }
@@ -91,26 +139,16 @@ struct ScanTab: View {
                     .padding(.horizontal, -16)
             }
             .padding(.top, 4)
-            Button { store.sharePDF() } label: {
-                // Pages covered for an app show on its icon instead.
-                if let making = store.making, store.sendingTo == nil {
-                    HStack(spacing: 8) {
-                        ProgressView().tint(.white)
-                        Text(String(format: L("Page %d of %d"), making, store.pages.count))
-                            .monospacedDigit()
-                            .contentTransition(.numericText())
-                    }
-                } else {
-                    Label(L("Share Covered PDF"), systemImage: "doc.richtext")
-                }
+            Button { saving = true } label: {
+                Label(L("Save and Share"), systemImage: "square.and.arrow.up")
             }
             .buttonStyle(ProtectButtonStyle())
+            .accessibilityIdentifier("scan-save-share")
             .disabled(store.making != nil)
             .frame(maxWidth: .infinity)
             .padding(.top, 4)
-            .animation(.easeOut(duration: 0.15), value: store.making)
             VStack(alignment: .leading, spacing: 4) {
-                Text(L("Each page is covered as Settings says, or as you left it after opening it. The PDF holds only pictures of the covered pages, no text to copy."))
+                Text(L("Each page is covered as Settings says, or as you left it after opening it."))
                 Text(L("A tap on an app covers every page and hands them to it, through the share sheet where needed."))
                 Text(L("Pages stay on this iPhone only while Snapfly is open."))
             }
@@ -120,184 +158,76 @@ struct ScanTab: View {
         }
     }
 
-    /// How a scan goes, in three short steps.
+    /// How a scan goes, in four short steps, what is new among them.
     private var steps: some View {
         VStack(alignment: .leading, spacing: 14) {
-            step("doc.viewfinder", L("Hold your iPhone over the page; it is found and taken by itself."))
-            step("eye.slash", L("Names, numbers and other private details are covered as Settings says."))
-            step("square.and.arrow.up", L("Check the places, then copy, share or save the covered page."))
+            step("doc.viewfinder", Text(L("Hold your iPhone over the page. It is found and taken by itself.")))
+            step("sun.max", Text(L("New:")).fontWeight(.semibold).foregroundStyle(.primary) + Text(verbatim: " ")
+                + Text(L("The page is straightened and brightened, like a clean PDF. No text is changed.")))
+            step("eye.slash", Text(L("Names, numbers and other private details are covered as Settings says.")))
+            step("square.and.arrow.up", Text(L("Check the places, then copy, share or save the page as a PDF or a picture.")))
         }
         .padding(.horizontal, 4)
     }
 
-    private func step(_ symbol: String, _ text: String) -> some View {
+    private func step(_ symbol: String, _ text: Text) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
             Image(systemName: symbol)
                 .font(.body.weight(.semibold))
                 .foregroundStyle(SnapflyTokens.protect)
                 .frame(width: 24)
                 .accessibilityHidden(true)
-            Text(text)
+            text
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .accessibilityElement(children: .combine)
     }
 
-    private func open(_ page: ScannedPages.Page) {
-        _ = store.session(page.id)
-        path.append(ProtectSession.Source.scanned(page.id))
+    private func open(_ id: UUID) {
+        _ = store.session(id)
+        path.append(ProtectSession.Source.scanned(id))
+    }
+
+    /// Photos chosen, read, and added as pages; the editor opens on the first.
+    private func add(_ items: [PhotosPickerItem]) async {
+        guard !items.isEmpty else { return }
+        picked = []
+        let photos = await ScanPhoto.read(items)
+        guard !photos.isEmpty else { return QuickCoverer.shared.show(L("The picture could not be read.")) }
+        if let first = store.add(photos: photos).first { open(first.id) }
     }
 
     /// Opens the camera once, as the first run asked.
     private func scanIfAsked() {
         guard tabs.scanRequested else { return }
         tabs.scanRequested = false
-        guard VNDocumentCameraViewController.isSupported else { return }
+        guard supported else { return }
         presses += 1
         scanning = true
     }
-}
 
-/// The pages scanned while the app runs, in the order they were scanned,
-/// and the protection of each page opened, so it opens again as it was
-/// left and the PDF takes it as it is. Never written anywhere.
-@MainActor
-final class ScannedPages: ObservableObject {
-    static let shared = ScannedPages()
-
-    struct Page: Identifiable {
-        let id = UUID()
-        let image: CGImage
-    }
-
-    @Published private(set) var pages: [Page] = []
-    /// The page being covered for the PDF or an app, counted from 1; nil
-    /// while none is.
-    @Published private(set) var making: Int?
-    /// The app the pages are going to, while they are covered.
-    @Published private(set) var sendingTo: ChatTarget?
-    @Published private var sessions: [UUID: ProtectSession] = [:]
-
-    /// Adds pages after those scanned before, and gives them back.
-    func add(_ images: [CGImage]) -> [Page] {
-        let new = images.map { Page(image: $0) }
-        pages += new
-        return new
-    }
-
-    func remove(_ id: UUID) {
-        pages.removeAll { $0.id == id }
-        sessions[id] = nil
-    }
-
-    func clear() {
-        pages = []
-        sessions = [:]
-    }
-
-    func image(_ id: UUID) -> CGImage? {
-        pages.first { $0.id == id }?.image
-    }
-
-    /// A page's protection, made the first time it is opened, before the
-    /// screen that shows it.
-    func session(_ id: UUID) -> ProtectSession {
-        if let session = sessions[id] { return session }
-        let session = ProtectSession(source: .scanned(id))
-        sessions[id] = session
-        return session
-    }
-
-    /// The protection of a page opened before; nil for one never opened.
-    func opened(_ id: UUID) -> ProtectSession? { sessions[id] }
-
-    /// Covers every page, makes them one PDF and opens the share sheet,
-    /// where it can be sent or saved to Files. A page opened before goes as
-    /// it was left there, once its copy is checked; any other is covered as
-    /// Settings says. If a page cannot be covered, no PDF is made at all.
-    func sharePDF() {
-        guard making == nil, !pages.isEmpty else { return }
-        let pages = pages
+    /// For pictures made in CI: made-up photos of a made-up invoice, as
+    /// `-SnapflyScan` asks (`ScanDemo`).
+    private func showDemo() {
+        guard ScanDemo.requested, store.pages.isEmpty else { return }
         Task {
-            defer { making = nil }
-            guard let finished = await covered(pages, failing: L("Page %d could not be covered, so no PDF was made.")) else {
-                return
-            }
-            let pdf = await Task.detached(priority: .userInitiated) { ScanPDF.make(finished) }.value
-            let name = "Snapfly " + Date.now.formatted(.iso8601.year().month().day()) + ".pdf"
-            let url = FileManager.default.temporaryDirectory.appendingPathComponent(name)
-            do {
-                guard let pdf else { throw CocoaError(.fileWriteUnknown) }
-                try pdf.write(to: url, options: [.atomic, .completeFileProtection])
-            } catch {
-                return QuickCoverer.shared.show(L("The copy could not be made."))
-            }
-            QuickCoverer.shared.sharing = SharedFile(url: url)
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            if let mode = ScanDemo.mode { store.setMode(mode) }
+            let photos = await Task.detached(priority: .userInitiated) { ScanDemo.photos() }.value
+            let added = store.add(photos: photos, unsure: ScanDemo.unsure)
+            guard ScanDemo.opensEditor, let page = added.dropFirst(ScanDemo.page).first ?? added.first else { return }
+            open(page.id)
         }
-    }
-
-    /// Covers every page as for the PDF and hands them to the app: one page
-    /// straight to WhatsApp, or to an AI chat opened with it copied, else
-    /// through the share sheet, where the app is tapped (`Handoff`). If a
-    /// page cannot be covered, nothing goes at all.
-    func send(to chat: ChatTarget) {
-        guard making == nil, !pages.isEmpty else { return }
-        let pages = pages
-        sendingTo = chat
-        Task {
-            defer {
-                making = nil
-                sendingTo = nil
-            }
-            guard let finished = await covered(pages, failing: L("Page %d could not be covered, so nothing was sent.")) else {
-                return
-            }
-            let pngs = await Task.detached(priority: .userInitiated) { finished.compactMap(Covering.png) }.value
-            guard pngs.count == finished.count else {
-                return QuickCoverer.shared.show(L("The copy could not be made."))
-            }
-            let name = "Snapfly " + Date.now.formatted(.iso8601.year().month().day())
-            let shown = Handoff.shared.send(pngs, to: chat, named: name, opened: {
-                QuickCoverer.shared.show(String(format: L("Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste."), chat.name),
-                                         for: 6)
-            }) { went in
-                if went { UINotificationFeedbackGenerator().notificationOccurred(.success) }
-            }
-            if !shown { QuickCoverer.shared.show(L("The copy could not be made.")) }
-        }
-    }
-
-    /// Every page covered, in their order: one opened before as it was left
-    /// there, once its copy is checked, any other as Settings says. Nil, with
-    /// a note saying which page, when one is not ready or cannot be covered.
-    private func covered(_ pages: [Page], failing: String) async -> [CGImage]? {
-        var done: [CGImage] = []
-        for (index, page) in pages.enumerated() {
-            making = index + 1
-            if let session = sessions[page.id] {
-                guard session.isReady, let copy = session.copy?.cgImage else {
-                    QuickCoverer.shared.show(String(format: L("Page %d is not ready yet. Open it to check it."), index + 1), for: 4)
-                    return nil
-                }
-                done.append(copy)
-            } else {
-                guard let made = await Covering.cover(page.image, Choice.details) else {
-                    QuickCoverer.shared.show(String(format: failing, index + 1), for: 4)
-                    return nil
-                }
-                done.append(made.image)
-            }
-        }
-        return done
     }
 }
 
 /// The scan tab's first card: a page in a viewfinder on the soft green,
-/// what scanning does, and the green button that opens the camera.
+/// what scanning does, the green button that opens the camera, and the way
+/// to scan photos chosen from Photos instead.
 private struct ScanCard: View {
     let supported: Bool
+    @Binding var picked: [PhotosPickerItem]
     let scan: () -> Void
 
     var body: some View {
@@ -308,17 +238,29 @@ private struct ScanCard: View {
             VStack(spacing: 6) {
                 Text(L("Scan a document"))
                     .font(.title2.weight(.bold))
-                Text(L("Letters, forms and receipts, straight from the camera. Private details are covered on this iPhone before anything leaves it."))
+                Text(L("Letters, forms and receipts, straight from the camera. Straightened, brightened and with private details covered, all on this iPhone."))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .multilineTextAlignment(.center)
-            Button(action: scan) {
-                Label(L("Scan Document"), systemImage: "camera.viewfinder")
+            VStack(spacing: 4) {
+                Button(action: scan) {
+                    Label(L("Scan Document"), systemImage: "camera.viewfinder")
+                }
+                .buttonStyle(ProtectButtonStyle())
+                .disabled(!supported)
+                .accessibilityIdentifier("scan-camera")
+                PhotosPicker(selection: $picked, maxSelectionCount: 20, selectionBehavior: .ordered, matching: .images) {
+                    Text(L("Choose from Photos"))
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(SnapflyTokens.protectTint)
+                        .frame(minHeight: SnapflyTokens.touch)
+                        .padding(.horizontal, 12)
+                        .contentShape(Rectangle())
+                }
+                .accessibilityIdentifier("scan-photos")
             }
-            .buttonStyle(ProtectButtonStyle())
-            .disabled(!supported)
             if !supported {
                 Text(L("This iPhone cannot scan documents."))
                     .font(.footnote)
@@ -415,20 +357,28 @@ private struct Viewfinder: View {
 }
 
 /// A scanned page as a small square card, its top showing, with its
-/// number in the document and, once opened and its copy checked, the
-/// shield the protected screenshots carry.
+/// number in the document; while it is made ready, a spinner; once opened
+/// and its copy checked, the shield the protected screenshots carry, or
+/// where something on it is wrong, an orange mark.
 private struct PageCard: View {
-    let image: CGImage
+    let page: ScannedPages.Page
     let number: Int
     let session: ProtectSession?
+
+    private var working: Bool { page.state == .waiting || page.state == .improving || page.state == .needsCorners }
 
     var body: some View {
         Color(.secondarySystemBackground)
             .aspectRatio(1, contentMode: .fit)
             .overlay(alignment: .top) {
-                Image(decorative: image, scale: 1)
-                    .resizable()
-                    .scaledToFill()
+                if let thumbnail = page.thumbnail {
+                    Image(uiImage: thumbnail)
+                        .resizable()
+                        .scaledToFill()
+                }
+            }
+            .overlay {
+                if working { ProgressView() }
             }
             .overlay(alignment: .bottomLeading) {
                 Text(number, format: .number)
@@ -441,14 +391,29 @@ private struct PageCard: View {
                     .padding(4)
             }
             .overlay(alignment: .topTrailing) {
-                if let session { Checked(session: session) }
+                if let session {
+                    Checked(session: session)
+                } else if !page.issues.isEmpty {
+                    Image(systemName: "exclamationmark")
+                        .font(.caption.weight(.heavy))
+                        .foregroundStyle(.white)
+                        .frame(width: 22, height: 22)
+                        .background(Color.orange, in: Circle())
+                        .padding(6)
+                }
             }
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Color.primary.opacity(0.08)))
             .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(String(format: L("Page %d"), number))
-            .accessibilityValue(session?.isReady == true ? L("Protected") : "")
+            .accessibilityValue(value)
+    }
+
+    private var value: String {
+        if working { return L("being brightened") }
+        if session?.isReady == true { return L("Protected") }
+        return page.issues.isEmpty ? "" : L("hard to read")
     }
 
     /// The shield, while the page's copy is made and checked as it was left.
@@ -471,7 +436,7 @@ private struct PageCard: View {
 
 /// The system's document camera; `done` gets the pages, upright and
 /// cropped, or none when it was cancelled or failed.
-private struct DocumentScanner: UIViewControllerRepresentable {
+struct DocumentScanner: UIViewControllerRepresentable {
     let done: ([CGImage]) -> Void
 
     func makeUIViewController(context: Context) -> VNDocumentCameraViewController {

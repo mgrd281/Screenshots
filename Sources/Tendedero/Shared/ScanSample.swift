@@ -1,4 +1,4 @@
-#if canImport(CoreText) && canImport(CoreImage)
+#if DEBUG && canImport(CoreText) && canImport(CoreImage)
 import CoreGraphics
 import CoreImage
 import CoreText
@@ -9,7 +9,8 @@ import Foundation
 /// a table, lit unevenly by a lamp with a warm cast and a soft shadow, with
 /// a camera's grain; where asked, blurred at the bottom or with a
 /// reflection, or turned. Its company, people, IBAN and numbers are all
-/// made up; the IBAN is the one banks use as an example.
+/// made up; the IBAN is the one banks use as an example. In debug builds
+/// only, for the tests and the pictures made in CI.
 enum ScanSample {
     /// A4 at 200 dots an inch.
     static let width = 1654
