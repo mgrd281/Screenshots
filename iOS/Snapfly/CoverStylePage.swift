@@ -216,7 +216,8 @@ private struct PreviewLine: View {
         if strongest {
             return (-8, start + covered + kept + 16, height + 10)
         }
-        let digits = keepsLastDigits ? 0 : kept
-        return (start - 4, covered + digits + 8, height + 4)
+        // Its room past the words ends where the digits it leaves begin.
+        let trailing: CGFloat = keepsLastDigits && kept > 0 ? 4 : kept + 8
+        return (start - 4, covered + trailing, height + 4)
     }
 }

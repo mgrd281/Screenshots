@@ -48,6 +48,17 @@ final class MoreUITests: XCTestCase {
         return XCTWaiter.wait(for: [away], timeout: timeout) == .completed
     }
 
+    /// Turns a switch with its words beside it, by the switch itself: a tap
+    /// on the words does not.
+    private func flip(_ toggle: XCUIElement) {
+        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
+    }
+
+    private func wait(for element: XCUIElement, containing words: String, timeout: TimeInterval = 5) -> Bool {
+        let settled = expectation(for: NSPredicate(format: "label CONTAINS %@", words), evaluatedWith: element)
+        return XCTWaiter.wait(for: [settled], timeout: timeout) == .completed
+    }
+
     /// Scrolls until the element can be tapped, as a finger would.
     private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
         for _ in 0..<6 where !(element.exists && element.isHittable) {
@@ -151,13 +162,13 @@ final class MoreUITests: XCTestCase {
         pixels.tap()
         XCTAssertTrue(selected(pixels))
         XCTAssertFalse(ink.isSelected)
-        let strongest = app.switches["more-toggle-strongest"]
+        let strongest = app.switches.matching(identifier: "more-toggle-strongest").firstMatch
         reveal(strongest, in: app)
         XCTAssertEqual(strongest.value as? String, "0")
-        strongest.tap()
-        XCTAssertEqual(strongest.value as? String, "1")
-        let digits = app.switches["more-toggle-digits"]
-        XCTAssertTrue(digits.label.contains("ganze Zeilen"), "it says the last four go too: \(digits.label)")
+        flip(strongest)
+        XCTAssertTrue(wait(for: strongest, value: "1"))
+        let digits = app.switches.matching(identifier: "more-toggle-digits").firstMatch
+        XCTAssertTrue(wait(for: digits, containing: "ganze Zeilen"), "it says the last four go too: \(digits.label)")
     }
 
     func testTheTabBarStaysWholeOnMoreAndStepsAsideOnItsPages() {
@@ -247,16 +258,16 @@ final class MoreUITests: XCTestCase {
             app.buttons[style].tap()
             pause(1.1)
         }
-        let digits = app.switches["more-toggle-digits"]
-        let strongest = app.switches["more-toggle-strongest"]
+        let digits = app.switches.matching(identifier: "more-toggle-digits").firstMatch
+        let strongest = app.switches.matching(identifier: "more-toggle-strongest").firstMatch
         reveal(strongest, in: app)
-        digits.tap()
+        flip(digits)
         pause(1.4)
-        strongest.tap()
+        flip(strongest)
         pause(1.6)
-        strongest.tap()
+        flip(strongest)
         pause(1.4)
-        digits.tap()
+        flip(digits)
         pause(1.2)
     }
 }

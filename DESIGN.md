@@ -233,7 +233,7 @@ components:
   phone-more-pill:
     height: "38pt"                 # at least: a kind in What Is Covered, a capsule 12 by 8pt in, subheadline medium; on, phone-more-pill-on with a checkmark (caption bold) 4pt before the words in phone-more-pill-on-text; off, phone-hide-card inside a 1pt phone-more-pill-edge; 8pt apart in rows that wrap (PillFlow), its touch 3pt larger round it
   phone-more-chip:
-    height: "44pt"                 # at least: one of the hero's three chips, white at 12% with rounded.phone-more-button, 12 by 8pt in, its name in caption white 72% over its value in subheadline semibold white; side by side, sharing the width, or one above another when they do not fit
+    height: "44pt"                 # at least: one of the hero's three chips, white at 12% with rounded.phone-more-button, 12 by 8pt in, its name in caption white 72% over its value in subheadline semibold white; side by side, sharing the width, or one above another at text sizes above xLarge
   phone-hide-row:
     height: "64pt"                 # at least, at the body's text size: a detail or a rule in Always Hide's inset grouped list on phone-hide-card (rounded.phone-hide-row on the section's first and last), 16pt in at the sides, its words on one line; an add row 52pt; hairlines of phone-hide-separator inset to the words
   phone-hide-field:

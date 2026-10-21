@@ -130,7 +130,7 @@ enum MoreSample {
     }
 
     /// What was asked for: root, off, all, own, covered, people, style,
-    /// strong, digits, detection or mac.
+    /// strong, digits or detection.
     static let state = value(after: "-SnapflyMore")
 
     static var requested: Bool { state != nil }
@@ -161,7 +161,6 @@ enum MoreSample {
         case "covered", "people": .covered
         case "style", "strong", "digits": .style
         case "detection": .detection
-        case "mac": .macAndCloud
         default: nil
         }
     }

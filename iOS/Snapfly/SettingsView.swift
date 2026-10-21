@@ -157,9 +157,12 @@ struct SettingsView: View {
                 }
             }
 
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 8) { chips }
+            // Side by side, or one above another at the larger sizes; built
+            // once, so each chip is the one place its page grows out of.
+            if typeSize > .xLarge {
                 VStack(spacing: 8) { chips }
+            } else {
+                HStack(spacing: 8) { chips }
             }
         }
         .padding(20)
