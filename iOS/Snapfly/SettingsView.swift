@@ -152,9 +152,18 @@ struct SettingsView: View {
                 .accessibilityIdentifier("more-hero-count")
                 Spacer(minLength: 0)
                 if !typeSize.isAccessibilitySize {
-                    PaperThumbnail(style: store.look, drawn: shown)
-                        .rotationEffect(.degrees(6))
-                        .padding(.trailing, 4)
+                    // What Is Covered grows out of the little document.
+                    Button {
+                        open(.covered, from: "sample-document")
+                    } label: {
+                        PaperThumbnail(style: store.look, drawn: shown)
+                    }
+                    .buttonStyle(TilePressStyle())
+                    .moreZoomSource("sample-document", in: zoom, radius: 8)
+                    .rotationEffect(.degrees(6))
+                    .padding(.trailing, 4)
+                    .accessibilityLabel(L("What Is Covered"))
+                    .accessibilityIdentifier("more-hero-document")
                 }
             }
 

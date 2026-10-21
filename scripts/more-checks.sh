@@ -75,7 +75,8 @@ xcrun simctl terminate "$device" "$bundle" >/dev/null 2>&1 || true
 # Each state, and the end of the long ones.
 frames() {
   local on=$1 prefix=$2 appearance=$3 language=$4 size=${5:-}
-  for state in root off own covered people style strong detection; do
+  for state in root off own covered covered-own covered-none covered-chat covered-note people access style strong \
+      detection; do
     shot "$on" "$prefix-$state" "$state" "$appearance" "$language" "$size"
   done
   for state in root covered style detection; do
@@ -93,6 +94,7 @@ done
 shot "$device" "de-light-digits" digits light de
 shot "$device" "ar-light-root" root light ar
 shot "$device" "ar-light-covered" covered light ar
+shot "$device" "ar-light-people" people light ar
 shot "$device" "en-light-root" root light en
 shot "$device" "en-light-covered" covered light en
 
@@ -115,11 +117,13 @@ record() {
 (
   record first-open testRecordFirstOpen
   record tile-to-page testRecordTileToPage
-  record pills-presets-tabs testRecordPillsPresetsAndTabs
+  record sheets-presets testRecordSheetsAndPresets
+  record hero-to-document testRecordHeroToDocument
   record style testRecordStyle
   record reduce-motion-first-open testRecordFirstOpen still
   record reduce-motion-tile-to-page testRecordTileToPage still
-  record reduce-motion-pills-presets-tabs testRecordPillsPresetsAndTabs still
+  record reduce-motion-sheets-presets testRecordSheetsAndPresets still
+  record reduce-motion-hero-to-document testRecordHeroToDocument still
   record reduce-motion-style testRecordStyle still
 ) || echo "The videos could not all be recorded." >&2
 

@@ -1139,13 +1139,21 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Choice or None), a little document covered in the look chosen, and three
   chips to the look, your details and your rules. With nothing chosen it
   turns grey and says Protection Off. Under it, Protection: four tiles, each
-  with what it holds now, opening its page. What Is Covered sets
-  Recommended, All or None at once (the same as Check All, Recommended and
-  Uncheck All before), shows the five groups as tabs (People and
-  Companies, Money, Health, Documents, Access) and each kind as a pill to
-  turn on or off, with All On or All Off for a group; Names, Patient names
-  and Other people each cover their own people, as the note under People
-  says, and a card leads to your own details in Always Hide. Cover Style
+  with what it holds now, opening its page. What Is Covered is a live
+  preview: a dark green stage holds a made-up document (a doctor's bill, a
+  chat or a note, swiped or picked with the dots), and every kind turned on
+  covers its values there at once, in the look chosen, with how many of the
+  twenty-two are on and the preset they make. Under it, six tiles: the five
+  groups (People and Companies, Money, Health, Documents, Access), each with
+  a ring of how much is on, and your own details in Always Hide. A group's
+  tile opens a sheet with its kinds as switches and All On or All Off; the
+  stage stays above it, smaller, turns to the document that shows the most
+  of that group and rings that group's values, and a switch turned for a
+  kind the document lacks turns to one that has it. Names, Patient names and
+  Other people each cover their own people, as the note under Names says.
+  The menu at the top sets Recommended Selection, Turn All On or Turn All
+  Off at once (the same as Check All, Recommended and Uncheck All before),
+  the covers running down the document in reading order. Cover Style
   shows a made-up bill covered in the look chosen, as the two switches
   have it, with the six looks to choose from, Keep the last four digits and
   Strongest protection. Detection holds Apple Intelligence, which runs only
@@ -1331,12 +1339,15 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/OwnDetailsSettings.swift` | The mint tile every symbol under More and in Always Hide stands on |
 | `iOS/Snapfly/SettingsView.swift` | More on the iPhone: the hero card, the four Protection tiles, Features and Help, the pages they open, growing out of their tile from iOS 18 on; and Double Tap the Back |
 | `iOS/Snapfly/MoreStore.swift` | What More shows and changes, kept under the keys it always was, and the made-up choices the simulator's frames and UI tests open (`-SnapflyMore`, debug builds only) |
-| `iOS/Snapfly/MoreParts.swift` | More's motion and its pieces: the cards, the press, the meter, the pills' rows, and the covers drawn small on paper as a copy draws them |
-| `iOS/Snapfly/CoveredKindsView.swift` | What Is Covered: the count and its preset, Recommended, All and None, the groups as tabs, each kind a pill |
+| `iOS/Snapfly/MoreParts.swift` | More's motion and its pieces: the cards, the press, the meter, and the covers drawn small on paper as a copy draws them |
+| `iOS/Snapfly/CoveredKindsView.swift` | What Is Covered: the stage with the made-up documents, the count and the preset, the six tiles with their rings, a group's sheet of switches, and the menu with Recommended, All and None |
+| `iOS/Snapfly/CoverSampleDocument.swift` | The made-up documents on What Is Covered's stage, each value covered as its kind is turned on, in the look chosen, and ringed while its switch is shown |
+| `Shared/CoverStudio.swift` | What Is Covered's three made-up documents and the kind of each value, the groups' parts and symbols, how a group's tile reads and the order the covers run in (tested on Linux) |
 | `iOS/Snapfly/CoverStylePage.swift` | Cover Style: the made-up bill covered as chosen, the six looks and the two switches |
 | `iOS/Snapfly/DetectionView.swift` | Detection: Apple Intelligence, the check before sharing, Faster picture processing, and how long covering took |
-| `iOS/SnapflyUITests` | Always Hide and More driven on the simulator in German: a name added, both kinds of rule, a rule off and on, a swipe to delete, the screen with nothing yet; More's counts, pills, presets, tabs, looks and tab bar, and the walks its videos are made of |
+| `iOS/SnapflyUITests` | Always Hide and More driven on the simulator in German: a name added, both kinds of rule, a rule off and on, a swipe to delete, the screen with nothing yet; More's counts, switches, presets, sheets, looks and tab bar, and the walks its videos are made of |
 | `scripts/more-checks.sh` | Runs More's UI tests for the More Checks workflow, keeps frames of the tab and each page (light, dark, the largest text sizes, Arabic and English, the newest and the smallest iPhone) and records its motion with and without Reduce Motion, for the `more-captures` pre-release |
+| `docs/snapfly-covered-studio-audit.md` | What Is Covered's audit before the live preview: where the choice is kept, the twenty-two kinds and their groups, the presets' values and who reads them |
 | `docs/snapfly-more-audit.md` | More's audit before Version 2: every setting, where it is kept, its default and who reads it, where each went, the floating button, and the cover looks checked in code |
 | `scripts/always-hide-checks.sh` | Runs those UI tests for the Always Hide Checks workflow and keeps frames of the screen and each sheet, light and dark, at the largest text sizes and in Arabic and English, on the newest iPhone and the smallest, for the `always-hide-captures` pre-release |
 | `docs/snapfly-always-hide-audit.md` | Always Hide's audit: what there was, where details and rules are kept, how covering uses them, how a label's reach was decided, what is promised and what holds in code, and what changed |

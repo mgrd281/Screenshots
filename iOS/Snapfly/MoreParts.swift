@@ -29,18 +29,6 @@ enum MoreMotion {
         still ? fade : .snappy
     }
 
-    /// A kind's pill turned: its colour in 0.18 s, after its place in a
-    /// cascade.
-    static func pill(delay: Double, still: Bool) -> Animation {
-        still ? fade : .easeOut(duration: 0.18).delay(delay)
-    }
-
-    /// One pill after another down a preset or a group, 15 ms apart, all
-    /// of it within 0.3 s.
-    static func cascade(_ changed: [PrivateDetail]) -> [PrivateDetail: Double] {
-        Dictionary(uniqueKeysWithValues: changed.enumerated().map { ($0.element, min(Double($0.offset) * 0.015, 0.12)) })
-    }
-
     /// Covers growing over a whole line, with no overshoot.
     static func grow(_ still: Bool) -> Animation {
         still ? fade : .spring(duration: 0.35, bounce: 0)
@@ -186,63 +174,6 @@ struct StatusDot: View {
             .fill(on ? SnapflyTokens.moreGlyph : SnapflyTokens.hideSecondary.opacity(0.6))
             .frame(width: 8, height: 8)
             .accessibilityHidden(true)
-    }
-}
-
-// MARK: Pills in rows
-
-/// Pills in rows, as many to a row as fit, each as wide as its words; one
-/// wider than the row wraps its words. Right to left, the rows start on the
-/// right.
-struct PillFlow: SwiftUI.Layout {
-    var spacing: CGFloat = 8
-    var lineSpacing: CGFloat = 8
-
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let width = proposal.width ?? .infinity
-        let rows = arrange(subviews, in: width)
-        let used = rows.map(\.width).max() ?? 0
-        return CGSize(width: proposal.width ?? used, height: rows.last.map { $0.y + $0.height } ?? 0)
-    }
-
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let rightToLeft = subviews.layoutDirection == .rightToLeft
-        for row in arrange(subviews, in: bounds.width) {
-            for item in row.items {
-                let x = rightToLeft ? bounds.maxX - item.x - item.size.width : bounds.minX + item.x
-                subviews[item.index].place(at: CGPoint(x: x, y: bounds.minY + row.y + (row.height - item.size.height) / 2),
-                                           proposal: ProposedViewSize(item.size))
-            }
-        }
-    }
-
-    private struct Row {
-        var items: [(index: Int, x: CGFloat, size: CGSize)] = []
-        var y: CGFloat = 0
-        var width: CGFloat = 0
-        var height: CGFloat = 0
-    }
-
-    private func arrange(_ subviews: Subviews, in width: CGFloat) -> [Row] {
-        var rows = [Row()]
-        var x: CGFloat = 0
-        for (index, subview) in subviews.enumerated() {
-            var size = subview.sizeThatFits(.unspecified)
-            if size.width > width {
-                size = subview.sizeThatFits(ProposedViewSize(width: width, height: nil))
-                size.width = min(size.width, width)
-            }
-            if x > 0, x + size.width > width {
-                let last = rows[rows.count - 1]
-                rows.append(Row(y: last.y + last.height + lineSpacing))
-                x = 0
-            }
-            rows[rows.count - 1].items.append((index, x, size))
-            rows[rows.count - 1].width = x + size.width
-            rows[rows.count - 1].height = max(rows[rows.count - 1].height, size.height)
-            x += size.width + spacing
-        }
-        return rows
     }
 }
 

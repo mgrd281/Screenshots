@@ -68,11 +68,14 @@ colors:
   phone-more-hero: "#0E3B2E"        # More's hero card, white words on it 12:1; #0F3A2D in dark
   phone-more-hero-edge: "#0E3B2E"   # the hero's 1pt edge, unseen by day; #1D5644 in dark
   phone-more-hero-off: "#2A2E34"    # the hero with nothing covered, day and night
-  phone-more-pill-on: "#0B7F58"     # a kind turned on: white words on it 5:1; #5BD6A6 in dark with phone-more-pill-on-text
-  phone-more-pill-on-text: "#FFFFFF" # its words and check; #0B0D10 in dark (10:1)
-  phone-more-pill-edge: "#D5D9DF"   # a kind turned off: phone-hide-card inside this edge; #343941 in dark
-  phone-more-track: "#E4E6EA"       # the presets' segmented track; #1E2126 in dark
-  phone-more-thumb: "#FFFFFF"       # the thumb raised on it for the preset chosen; #3A3F47 in dark
+  phone-more-stage-mint: "#9FD3BD" # "/ 22 verdeckt" beside the count on What Is Covered's stage, 8:1 on phone-more-hero
+  phone-more-ring-track: "#E4E6E9"  # a group's ring on its tile, the track; #2A2E34 in dark
+  phone-more-ring-progress: "#0B7F58" # how much of the group is on; #3FC48F in dark
+  phone-more-sheet-row: "#F4F5F7"   # the rows' cards in a group's sheet; #22252B in dark
+  phone-more-focus-ring: "#3FC48F"  # the 2pt ring round the open group's values on the sample paper
+  phone-more-bubble-in: "#E9E9EB"   # the sample chat's bubbles from the other person, on the paper
+  phone-more-bubble-out: "#D9F3E3"  # yours, a pale green
+  phone-paper-link: "#0062CC"       # a link on the sample paper
   phone-more-neutral-tile: "#EEF0F2" # the quiet tiles in More's Features; #262A30 in dark
   phone-more-neutral-glyph: "#4A5059" # their symbols, 7:1; #B4BBC4 in dark
   phone-paper: "#FFFFFF"            # a document drawn small under More (the hero's, the tile's, the looks' and the bill in Cover Style): white paper in light and dark alike
@@ -230,8 +233,14 @@ components:
     size: "36pt"                   # at the body's text size, growing with it to 52pt at most (SymbolTile): every symbol under More and in Always Hide, a detail's (person.fill, house.fill, creditcard.fill, building.columns.fill), a rule's (textformat for a word, tag for a label, chevron.left.forwardslash.chevron.right for a pattern) and each tile's, callout semibold phone-more-glyph on phone-hide-accent-soft, continuous corners of 28% of its side, 12pt before the words; 32pt in More's Features, phone-more-neutral-glyph on phone-more-neutral-tile. Editing at the accessibility sizes, Always Hide's rows leave it out, so the words keep their room
   phone-more-tile:
     height: "112pt"                # at least: a tile under More › Protection, two to a row 12pt apart (one at the accessibility sizes), 16pt in, on phone-hide-card with rounded.phone-hide-row: its symbol tile, the avatar or the little document on top, then its name in subheadline semibold over what it holds now in footnote phone-hide-secondary
-  phone-more-pill:
-    height: "38pt"                 # at least: a kind in What Is Covered, a capsule 12 by 8pt in, subheadline medium; on, phone-more-pill-on with a checkmark (caption bold) 4pt before the words in phone-more-pill-on-text; off, phone-hide-card inside a 1pt phone-more-pill-edge; 8pt apart in rows that wrap (PillFlow), its touch 3pt larger round it
+  phone-more-stage:
+    rounded: "32pt"                # What Is Covered's stage: phone-more-hero (phone-more-hero-off with nothing on), 1pt phone-more-hero-edge, 18pt in (12 while a sheet is open)
+  phone-sample-paper:
+    size: "300pt × 270pt"          # a sample document on the stage: phone-paper, corners 14, 16pt in, turned -1.5°, a shadow of black 35%, radius 20, y 18; fixed type of 11, 12 and 13pt, scaled as a whole, never under 0.75 while a sheet is open
+  phone-group-ring:
+    size: "26pt"                   # a group's tile: a 3pt ring of phone-more-ring-track, the share on in phone-more-ring-progress with round caps from the top, the count in 10pt bold rounded
+  phone-kind-row:
+    height: "52pt"                 # at least: a kind in a group's sheet, 14pt in, a 32pt symbol tile (phone-hide-accent-soft with phone-more-glyph when on, phone-more-neutral-tile with phone-more-neutral-glyph when off), its name in body, a native switch; the whole row turns it; on phone-more-sheet-row, corners 18, hairlines from the words
   phone-more-chip:
     height: "44pt"                 # at least: one of the hero's three chips, white at 12% with rounded.phone-more-button, 12 by 8pt in, its name in caption white 72% over its value in subheadline semibold white; side by side, sharing the width, or one above another at text sizes above xLarge
   phone-hide-row:
@@ -2436,24 +2445,63 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     symbol in title 3 semibold `phone-more-glyph` over the words in
     subheadline semibold; then "Version 1.1.0 (214)" in footnote
     `phone-hide-secondary`, centred.
-  - **What Is Covered** (`CoveredKindsView.swift`): "13 of 22" in large
-    title bold, rolling, with the preset as a badge (`phone-hide-accent`
-    on `phone-hide-accent-soft`; Your Choice when it is none), under it
-    when it does not fit; "Categories covered in every picture"; then
-    Recommended, All and None, a segmented control of our own, so it can
-    show none chosen: a capsule of `phone-more-track`, 4pt in, the chosen
-    one raised on a `phone-more-thumb` capsule with a shadow of black 8%,
-    radius 2, y 1, at least 36pt high, sliding to the next. They write
-    exactly what Check All, Recommended and Uncheck All wrote. Then the
-    groups as tabs that scroll sideways, "All", "People 7/10", "Money 1/2"
-    and so on: capsules 38pt high of `phone-hide-card`, the chosen one
-    `phone-hide-text` with `phone-hide-card` words, sliding to the next
-    and scrolled into view; a tab shows its group alone. Then a card per
-    group: its name in headline, "x of y active", All On or All Off in
-    subheadline semibold `phone-hide-accent`, and its kinds as
-    `phone-more-pill`s. Under People and Companies, what Names, Patient
-    names and Other people each cover, in footnote. Last, Your Own
-    Details, a card that opens Always Hide.
+  - **What Is Covered** (`CoveredKindsView.swift`,
+    `CoverSampleDocument.swift`) is a live preview. Every kind chosen is
+    covered in a made-up document as it changes, in the look chosen. The
+    page:
+    - The **bar**: the inline title and a trailing "…" (a native `Menu`).
+      It holds Recommended Selection, Turn All On and Turn All Off, the one
+      the choice is checked. They write what Check All, Recommended and
+      Uncheck All wrote.
+    - The **stage** (`phone-more-stage`):
+      - at the top, `eye`, the document's name ("Arztrechnung", "Chat",
+        "Notiz") in subheadline semibold white, and an "Example" badge;
+      - the document (`phone-sample-paper`), paged sideways between the
+        three;
+      - dots under it, the one shown an 18pt capsule;
+      - at the foot, the count in title bold white, rolling, with "/ 22
+        covered" in `phone-more-stage-mint`, and the preset's badge
+        (Recommended, All, Your Choice or None).
+      - The badges and the dots are Liquid Glass from iOS 26, a thin
+        material before, and a solid green with Reduce Transparency.
+    - **The documents**:
+      - a doctor's bill with thirteen values;
+      - a chat with six: a face, a name and four bubbles of
+        `phone-more-bubble-in` and `phone-more-bubble-out`;
+      - a note with five.
+      - Every kind is in at least one (`CoverStudioSample`). The words
+        round a value stay; the value is covered by `CoverSwatch` in the
+        look chosen, dark on the white paper in light and dark alike.
+    - **Six tiles** (`phone-more-tile`), two to a row (one at the
+      accessibility sizes):
+      - People, Money, Health, Documents and Access, each with its symbol
+        (`person.2`, `creditcard`, `heart`, `doc.text`, `key`), a
+        `phone-group-ring` and "7 of 10", "All active" or "Off";
+      - Own Details, with the initials' avatar, `lock` and "Always
+        covered", opening Always Hide.
+    - **A group's sheet**:
+      - detents of 55% and large, the page usable behind it, corners 32
+        and a visible grabber;
+      - a header of its name in title 3 bold and a close button (`xmark`
+        in a 30pt `phone-more-neutral-tile` circle, 44pt to the finger);
+      - "x of y active" with Turn All On or Turn All Off, for this group
+        only;
+      - its kinds as `phone-kind-row`s. People and Companies is in three
+        parts, Names, Contact and More, with a note under Names saying
+        what they cover.
+    - **While a sheet is open**:
+      - the page scrolls to the top;
+      - the stage's top and foot fade and fold away;
+      - the paper shrinks to fit above the sheet, no smaller than 0.75,
+        losing the dots where it must;
+      - the open group's values are ringed in `phone-more-focus-ring` and
+        everything else on the paper dims to 35%;
+      - the stage turns to the document with most of the group (Access
+        opens the note);
+      - a kind the document shown doesn't have turns the page to one that
+        does before its cover sweeps.
+    - More's hero's little document opens the page, which grows out of it
+      from iOS 18 on (`sample-document`).
   - **Cover Style** (`CoverStylePage.swift`): a made-up bill on
     `phone-paper` with `rounded.phone-hide-row` and a hairline, 20pt in,
     "Invoice to" in caption semibold capitals, then a name, an IBAN and a
@@ -2482,17 +2530,21 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     (scaled from the leading edge), 0.35 s, 80ms apart; a new look
     cross-fades in 0.25 s, the ring and the tabs' capsule slide
     (`matchedGeometryEffect`); counts roll (`numericText`) and the meter
-    grows on `.snappy`; a pill's colour turns in 0.18 s, its check grows
-    in, and the rows close up on `.snappy`, with a selection haptic; a
-    preset or All On runs down the pills it changes, 15ms apart and within
-    0.3 s, with one light impact; covers grow over the whole line with no
+    grows on `.snappy`; on What Is Covered a kind turned on sweeps its
+    cover over the value from the leading edge in 0.35 s on an ease-out and
+    back in 0.25 s, with a selection haptic; a preset or Turn All On runs
+    down the document in reading order, 25ms apart and starting within
+    0.4 s, with one light impact; turning the page first takes 0.3 s; the
+    stage folds and unfolds round a sheet on `.smooth` (0.35 s); a group's
+    ring follows on `.snappy`; covers grow over the whole line with no
     overshoot (a spring of 0.35 s, no bounce) and the last four digits
     slide in from the trailing side; tiles, chips and buttons give to 97%
     on a quick spring. A tile's page grows out of it from iOS 18 on
     (`matchedTransitionSource`, `.zoom`), the system's push before. No
     haptic on a page opening. With Reduce Motion nothing moves or scales:
-    0.15 s cross-fades, the check's room kept so no pill changes width,
-    the system's push, and the numbers still change.
+    0.15 s cross-fades, covers fade in, no stagger, the documents
+    cross-fade instead of sliding, the system's push, and the numbers
+    still change.
 - **The share extension** (`iOS/Share`), in any app's share sheet: the
   system's sheet with an inline "Snapfly", Cancel and Done (semibold), on
   `systemGroupedBackground`, 16 pt in. The covered picture fitted whole,

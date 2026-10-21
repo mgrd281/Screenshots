@@ -11,9 +11,12 @@ keeps a download of each version.
   picture, with a little document covered in your look, and turns grey,
   Protection Off, when none is. Four tiles open What Is Covered, Always
   Hide, Cover Style and Detection, each showing what it holds. What Is
-  Covered sets Recommended, All or None at once and shows each kind as a
-  pill, in five groups you can look at one by one, with All On and All Off
-  for a group. Cover Style shows a bill covered in the look you choose, as
+  Covered shows what it does: a made-up doctor's bill, chat and note in
+  which every kind you choose is covered as you choose it, in your look.
+  Six tiles open each group's switches in a short sheet over the document,
+  which turns to where the kind shows and sweeps its cover over it, and the
+  "…" menu sets the recommended choice, everything or nothing at once.
+  Cover Style shows a bill covered in the look you choose, as
   the two switches have it. Detection holds Apple Intelligence, the check
   every copy gets before it leaves, and how fast covering is on your
   iPhone. AI Assistant, Send to Apps, the double tap on the back, and Mac
