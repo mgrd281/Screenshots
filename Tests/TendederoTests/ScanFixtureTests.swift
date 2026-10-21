@@ -84,7 +84,8 @@ final class ScanFixtureTests: XCTestCase {
             let x: CGFloat = (corner.x - middle.x) * width, y: CGFloat = (corner.y - middle.y) * height
             let turnedX: CGFloat = x * turnCos - y * turnSin
             let turnedY: CGFloat = x * turnSin + y * turnCos
-            return CGPoint(x: middle.x + turnedX / width, y: middle.y + turnedY / height)
+            let movedX: CGFloat = middle.x + turnedX / width, movedY: CGFloat = middle.y + turnedY / height
+            return CGPoint(x: movedX, y: movedY)
         }
         let lean = Double(angle)
         let kept = try XCTUnwrap(ScanCleaner.flattened(photo.image, quad: leaning, way: (0, 0)))
@@ -122,12 +123,13 @@ final class ScanFixtureTests: XCTestCase {
         func counts(_ areas: [Finder.Area]) -> [String: Int] {
             Dictionary(grouping: areas, by: { $0.kind?.rawValue ?? "rule" }).mapValues(\.count)
         }
+        let printedCounts = counts(printed), foundCounts = counts(found)
         XCTAssertFalse(printed.isEmpty, "the invoice has private details")
-        for (kind, count) in counts(printed) {
-            XCTAssertGreaterThanOrEqual(counts(found)[kind] ?? 0, count, "\(kind): printed \(counts(printed)), cleaned \(counts(found))")
+        for (kind, count) in printedCounts {
+            XCTAssertGreaterThanOrEqual(foundCounts[kind] ?? 0, count, "\(kind): printed \(printedCounts), cleaned \(foundCounts)")
         }
-        Self.write("detection.txt", "Printed page: \(counts(printed).sorted { $0.key < $1.key })\n"
-            + "Cleaned photo: \(counts(found).sorted { $0.key < $1.key })\n")
+        let printedList = printedCounts.sorted { $0.key < $1.key }, foundList = foundCounts.sorted { $0.key < $1.key }
+        Self.write("detection.txt", "Printed page: \(printedList)\nCleaned photo: \(foundList)\n")
     }
 
     func testEachLookKeepsWhatItShould() async throws {
@@ -277,7 +279,8 @@ final class ScanFixtureTests: XCTestCase {
         }
         XCTAssertLessThan(sizes[.blackAndWhite] ?? .max, sizes[.gray] ?? 0)
         XCTAssertLessThan(sizes[.gray] ?? .max, sizes[.color] ?? 0)
-        Self.write("pdf-sizes.txt", sizes.map { "\($0.key.rawValue): \($0.value / 1024) KB" }.sorted().joined(separator: "\n"))
+        let lines: [String] = sizes.map { size -> String in "\(size.key.rawValue): \(size.value / 1024) KB" }
+        Self.write("pdf-sizes.txt", lines.sorted().joined(separator: "\n"))
     }
 
     func testPNGsSayNothingAboutThemselves() throws {
@@ -365,11 +368,15 @@ final class ScanFixtureTests: XCTestCase {
         guard let folder = captures else { return }
         let url = folder.appendingPathComponent("scan-numbers.txt")
         let issues = prepared.checked.issues.map { "\($0.kind.rawValue) (\($0.part))" }.joined(separator: ", ")
-        let line = "\(name): \(prepared.straightened.width)×\(prepared.straightened.height) px, "
-            + "\(Int(ScanGeometry.dpi(width: prepared.straightened.width, height: prepared.straightened.height))) dpi on A4, "
-            + "turns \(prepared.turns), skew \(String(format: "%.2f", prepared.skew * 180 / .pi))°, "
-            + "text kept: \(prepared.checked.textKept.map { $0 ? "yes" : "no" } ?? "no text"), "
-            + "lines read after: \(prepared.checked.reading.count), issues: \(issues.isEmpty ? "none" : issues)\n"
+        let width = prepared.straightened.width, height = prepared.straightened.height
+        let dpi = Int(ScanGeometry.dpi(width: width, height: height))
+        let degrees: Double = prepared.skew * 180 / Double.pi
+        let skew = String(format: "%.2f", degrees)
+        let kept: String = prepared.checked.textKept.map { kept -> String in kept ? "yes" : "no" } ?? "no text"
+        let found: String = issues.isEmpty ? "none" : issues
+        let parts = ["\(name): \(width)×\(height) px", "\(dpi) dpi on A4", "turns \(prepared.turns)", "skew \(skew)°",
+                     "text kept: \(kept)", "lines read after: \(prepared.checked.reading.count)", "issues: \(found)"]
+        let line = parts.joined(separator: ", ") + "\n"
         let old = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
         try? Data((old + line).utf8).write(to: url)
     }
