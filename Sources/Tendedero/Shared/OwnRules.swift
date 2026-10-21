@@ -5,12 +5,13 @@ import Security
 
 /// A rule of the owner's own, beside the kinds of private detail: a word to
 /// cover wherever it appears, like a shop's name; a label whose value is
-/// covered, like "Kundennummer"; or, for whoever knows them, a pattern. Or
-/// one of the owner's own details, covered wherever and however it is
-/// written, whatever kinds are chosen: their name, their address, a bank
-/// card or a bank account (`OwnDetails`). The rules are kept with the app's
-/// settings, the details in the keychain, on this device alone; both are
-/// read on the Mac and the iPhone.
+/// covered, like "Kundennummer"; or, for whoever knows them, a pattern. A
+/// rule can be turned off and on again. Or one of the owner's own details,
+/// looked for in the ways it is written and covered whatever kinds are
+/// chosen: their name, their address, a bank card or a bank account
+/// (`OwnDetails`). The rules are kept with the app's settings, the details
+/// in the keychain, on this device alone; both are read on the Mac and the
+/// iPhone.
 struct OwnRule: Codable, Hashable, Identifiable {
     enum Kind: String, Codable, CaseIterable {
         /// The text itself, wherever it appears, whole words only.
@@ -74,6 +75,17 @@ struct OwnRule: Codable, Hashable, Identifiable {
         }
     }
 
+    /// What a label covers of what follows it.
+    enum Reach: String, Codable, CaseIterable {
+        /// The rest of its line, or the line below where nothing follows it
+        /// on its line, as every label rule did before there was a choice.
+        case automatic
+        /// The rest of its line alone.
+        case restOfLine
+        /// The line below alone.
+        case nextLine
+    }
+
     var id = UUID()
     var text = ""
     var kind = Kind.word
@@ -82,6 +94,11 @@ struct OwnRule: Codable, Hashable, Identifiable {
     var city = ""
     /// The owner's own name for a card or an account, like "Girokonto".
     var caption = ""
+    /// A label's reach; the other kinds have none.
+    var reach = Reach.automatic
+    /// Off, a rule covers nothing until it is turned on again. The owner's
+    /// details have no switch: they are always on.
+    var isEnabled = true
 
     /// Empty rules wait to be typed; they cover nothing.
     var isBlank: Bool {
@@ -93,6 +110,10 @@ struct OwnRule: Codable, Hashable, Identifiable {
         }
     }
 
+    /// Whether it covers something now: typed, and turned on, as a detail
+    /// always is.
+    var isActive: Bool { !isBlank && (kind.isDetail || isEnabled) }
+
     /// A pattern that cannot be read covers nothing, and the settings say so.
     var isReadable: Bool {
         guard kind == .pattern, !isBlank else { return true }
@@ -101,7 +122,9 @@ struct OwnRule: Codable, Hashable, Identifiable {
 }
 
 extension OwnRule {
-    /// A rule kept before the details came reads as it was.
+    /// A rule kept before the details came, or before rules could be turned
+    /// off, reads as it was: on, and a label with the reach it always had.
+    /// A reach a later version made, that this one does not know, is that.
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         id = try values.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
@@ -110,6 +133,8 @@ extension OwnRule {
         postcode = try values.decodeIfPresent(String.self, forKey: .postcode) ?? ""
         city = try values.decodeIfPresent(String.self, forKey: .city) ?? ""
         caption = try values.decodeIfPresent(String.self, forKey: .caption) ?? ""
+        reach = try values.decodeIfPresent(String.self, forKey: .reach).flatMap(Reach.init(rawValue:)) ?? .automatic
+        isEnabled = try values.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? true
     }
 }
 
@@ -162,24 +187,35 @@ enum OwnRules {
     static let changed = Notification.Name("ownRulesChanged")
 
     /// A word to cover always, unless a rule for it is there already, in
-    /// any case.
+    /// any case; one turned off is turned on again.
     static func add(word: String, to defaults: UserDefaults = .standard) {
         let text = word.trimmingCharacters(in: .whitespaces)
+        guard !text.isEmpty else { return }
         var rules = load(from: defaults)
-        guard !text.isEmpty, !rules.contains(where: {
+        if let i = rules.firstIndex(where: {
             $0.kind == .word && $0.text.trimmingCharacters(in: .whitespaces).caseInsensitiveCompare(text) == .orderedSame
-        }) else { return }
-        rules.append(OwnRule(text: text, kind: .word))
+        }) {
+            guard !rules[i].isEnabled else { return }
+            rules[i].isEnabled = true
+        } else {
+            rules.append(OwnRule(text: text, kind: .word))
+        }
         save(rules, to: defaults)
         NotificationCenter.default.post(name: changed, object: nil)
     }
 
     /// Changes whenever a rule or a detail that covers something changes,
-    /// so the copies covered under the old ones are drawn again. The
-    /// details only by a check sum of them, so none is written into a key.
-    static var fingerprint: String {
-        let kept = all.filter { !$0.isBlank }
-        let rules = kept.filter { !$0.kind.isDetail }.map { "\($0.kind.rawValue):\($0.text)" }
+    /// or a rule is turned off or on, so the copies covered under the old
+    /// ones are drawn again. The details only by a check sum of them, so
+    /// none is written into a key.
+    static var fingerprint: String { fingerprint(of: all) }
+
+    static func fingerprint(of all: [OwnRule]) -> String {
+        let kept = all.filter(\.isActive)
+        let rules = kept.filter { !$0.kind.isDetail }.map { rule in
+            rule.kind == .label && rule.reach != .automatic
+                ? "label.\(rule.reach.rawValue):\(rule.text)" : "\(rule.kind.rawValue):\(rule.text)"
+        }
         let details = kept.filter(\.kind.isDetail)
         return (rules + (details.isEmpty ? [] : ["details:" + OwnDetails.checksum(details)])).joined(separator: "|")
     }
@@ -219,13 +255,30 @@ enum OwnRules {
     }
 }
 
-/// The owner's details, kept in the keychain: on this device alone, in no
-/// backup and not in iCloud, readable once it was first unlocked. Read
-/// once, then from memory, from any thread.
+/// The owner's details, kept in the keychain for this device alone: never in
+/// iCloud, and in a backup only in a form that opens on this same device,
+/// readable once it was first unlocked. Read once, then from memory, from
+/// any thread.
 enum OwnDetailStore {
     private static let service = "Snapfly details"
     private static let account = "details"
     private static let kept = Kept()
+
+    // What keeps the details private, as this store keeps them, for the
+    // screens that say so (Always Hide on the iPhone). Each is true only
+    // while the code below makes it so.
+
+    /// For this device alone: the keychain's ThisDeviceOnly class, never
+    /// synchronizable, so never in iCloud Keychain or on another device.
+    static let staysOnThisDevice = true
+    /// Out of every backup: not so. A ThisDeviceOnly item is copied into a
+    /// backup, sealed so that it opens on this same device alone; only the
+    /// WhenPasscodeSet class stays out, and it cannot be read while the
+    /// iPhone is locked, nor kept on one without a passcode.
+    static let staysOutOfBackups = false
+    /// Never sent: no request carries them, and the words of a picture that
+    /// go to the AI assistant have them hidden first (`Finder.masking`).
+    static let neverSent = true
 
     static var details: [OwnRule] {
         get { kept.value { read() } }

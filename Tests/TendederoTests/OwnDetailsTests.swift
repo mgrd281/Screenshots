@@ -50,7 +50,7 @@ final class OwnDetailsTests: XCTestCase {
     }
 
     func testANameShowsSomeOfItsForms() {
-        XCTAssertEqual(OwnDetails.examples(of: "Erika Musterfrau"), ["Musterfrau, Erika", "E. Musterfrau", "MUSTERFRAU"])
+        XCTAssertEqual(OwnDetails.examples(of: "Erika Musterfrau"), ["MUSTERFRAU, Erika", "Musterfrau, Erika", "E. Musterfrau"])
         XCTAssertEqual(OwnDetails.examples(of: "Erika"), [])
     }
 
@@ -113,7 +113,7 @@ final class OwnDetailsTests: XCTestCase {
     }
 
     func testACardIsNotFoundInOtherNumbers() {
-        XCTAssertEqual(covered("4242 4242 4242 4243", visa), [])
+        XCTAssertEqual(covered("4000 0566 5566 5556", visa), [], "another card's number")
         XCTAssertEqual(covered("Bestellnummer 4242", visa), [], "four digits alone are any number")
         XCTAssertEqual(covered("424242424242424242", visa), [], "not the middle of a longer number")
     }
@@ -151,7 +151,7 @@ final class OwnDetailsTests: XCTestCase {
     }
 
     func testAnAccountIsNotFoundInAnother() {
-        XCTAssertEqual(covered("DE89 3704 0044 0532 0130 01", account), [])
+        XCTAssertEqual(covered("DE02 1203 0000 0000 2020 51", account), [], "another account's IBAN")
         XCTAssertEqual(covered("Vertrag 5320130001", account), [], "not the start of a longer number")
         XCTAssertEqual(covered("GB82 WEST 1234 5698 7654 32", account), [])
     }

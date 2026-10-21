@@ -2,17 +2,19 @@ import SwiftUI
 
 /// What to cover, kind by kind in groups, whose names among them, the owner's own first; how covers look;
 /// how a screenshot is read; the AI assistant; the apps to send to; the devices it syncs with; and, further in,
-/// rules of the owner's own and how to cover a screenshot with a double tap
-/// on the back of the iPhone.
+/// what to hide always, the owner's details and rules (`AlwaysHideView`), and how to cover a screenshot with a
+/// double tap on the back of the iPhone.
 struct SettingsView: View {
     /// As the More tab, with a large title and no Done; else a sheet.
     var inTab = false
     @Environment(\.dismiss) private var dismiss
     @State private var chosen = Choice.details
-    /// The owner's own name, first under People, and the name being added
-    /// or changed, in its sheet.
+    /// The owner's own name, first under People, and its sheet, to add it
+    /// or change it.
     @State private var ownName = OwnRules.all.first { $0.kind == .name }
-    @State private var editingName: OwnRule?
+    @State private var nameRequest: DetailRequest?
+    /// Always Hide open, as screenshots made in CI and the UI tests ask.
+    @State private var showsAlwaysHide = AlwaysHideSample.requested
     @State private var look = CoverStyle.current
     @State private var keepsLastDigits = Finder.keepsLastDigits
     @State private var strongest = Finder.strongest
@@ -40,7 +42,7 @@ struct SettingsView: View {
                     Section {
                         if group == .people {
                             Button {
-                                editingName = ownName ?? OwnRule(kind: .name)
+                                nameRequest = ownName.map { DetailRequest.edit($0) } ?? .new(.name, choosing: false)
                             } label: {
                                 OwnNameRow(name: ownName)
                             }
@@ -149,10 +151,11 @@ struct SettingsView: View {
 
                 Section {
                     NavigationLink {
-                        AdvancedSettings()
+                        AlwaysHideView()
                     } label: {
-                        Label(L("Also hide"), systemImage: "text.badge.plus")
+                        Label(L("Always Hide"), systemImage: "text.badge.plus")
                     }
+                    .accessibilityIdentifier("settings-always-hide")
                     NavigationLink {
                         BackTapSettings()
                     } label: {
@@ -191,14 +194,17 @@ struct SettingsView: View {
             }
             .navigationTitle(inTab ? L("More") : L("Settings"))
             .navigationBarTitleDisplayMode(inTab ? .large : .inline)
-            // Back from Also hide, where the name may have changed.
+            // Back from Always Hide, where the name may have changed.
             .onAppear { ownName = OwnRules.all.first { $0.kind == .name } }
-            .sheet(item: $editingName) { name in
-                OwnDetailEditor(detail: name, isNew: ownName == nil) { kept in
+            .sheet(item: $nameRequest) { request in
+                DetailSheet(request: request) { kept in
                     keepName(kept)
                 } remove: {
                     keepName(nil)
                 }
+            }
+            .navigationDestination(isPresented: $showsAlwaysHide) {
+                AlwaysHideView()
             }
             .toolbar {
                 if !inTab {
@@ -262,81 +268,6 @@ struct SettingsView: View {
     }
 }
 
-/// What else to cover: the owner's own details first, their name, address,
-/// bank cards and accounts, kept on this iPhone alone and covered wherever
-/// and however they show; then rules of their own: words, labels and
-/// patterns. A detail opens in a sheet; one is added from a menu of kinds.
-private struct AdvancedSettings: View {
-    @State private var details = OwnRules.all.filter(\.kind.isDetail)
-    @State private var rules = OwnRules.load()
-    /// The detail being added or changed, in its sheet.
-    @State private var editing: OwnRule?
-
-    var body: some View {
-        Form {
-            Section {
-                ForEach(details) { detail in
-                    Button {
-                        editing = detail
-                    } label: {
-                        OwnDetailRow(detail: detail)
-                    }
-                    .buttonStyle(.plain)
-                }
-                .onDelete { details.remove(atOffsets: $0) }
-                Menu {
-                    ForEach(OwnRule.Kind.details, id: \.self) { kind in
-                        Button {
-                            editing = OwnRule(kind: kind)
-                        } label: {
-                            Label(kind.title, systemImage: kind.symbol)
-                        }
-                    }
-                } label: {
-                    Label(L("Add Detail"), systemImage: "plus.circle.fill")
-                }
-            } header: {
-                Text(L("Your Details"))
-            } footer: {
-                Text(L("Covered wherever and however they are written, whatever is chosen under Hide private details. They stay on this iPhone alone, in no backup, and are never sent."))
-            }
-            Section {
-                ForEach($rules) { $rule in
-                    RuleRow(rule: $rule)
-                }
-                .onDelete { rules.remove(atOffsets: $0) }
-                Button(L("Add Rule")) { rules.append(OwnRule()) }
-            } header: {
-                Text(L("Your Rules"))
-            } footer: {
-                Text(L("Words are covered wherever they appear. After a label, what follows it is covered: the rest of the line, or the line below."))
-            }
-        }
-        .onAppear {
-            // A name saved as a word before there were details becomes the name detail.
-            if OwnRules.adoptName() {
-                details = OwnRules.all.filter(\.kind.isDetail)
-                rules = OwnRules.load()
-            }
-        }
-        .onChange(of: rules) { _, new in OwnRules.all = new + details }
-        .onChange(of: details) { _, new in OwnRules.all = rules + new }
-        .sheet(item: $editing) { detail in
-            OwnDetailEditor(detail: detail, isNew: !details.contains { $0.id == detail.id }) { kept in
-                if let i = details.firstIndex(where: { $0.id == kept.id }) {
-                    details[i] = kept
-                } else {
-                    details.append(kept)
-                }
-            } remove: {
-                details.removeAll { $0.id == detail.id }
-            }
-        }
-        .navigationTitle(L("Also hide"))
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
 /// How to cover the newest screenshot with a double tap on the back.
 private struct BackTapSettings: View {
     var body: some View {
@@ -360,31 +291,6 @@ private struct BackTapSettings: View {
                 .font(.subheadline.weight(.semibold).monospacedDigit())
                 .foregroundStyle(.tint)
             Text(text)
-        }
-    }
-}
-
-/// One rule of the owner's own: its kind, and the text. Swipe to remove it.
-private struct RuleRow: View {
-    @Binding var rule: OwnRule
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Picker(rule.kind.title, selection: $rule.kind) {
-                ForEach(OwnRule.Kind.rules, id: \.self) { kind in
-                    Text(kind.title).tag(kind)
-                }
-            }
-            .pickerStyle(.menu)
-            .labelsHidden()
-            TextField(rule.kind.title, text: $rule.text, prompt: Text(rule.kind.prompt))
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-            if !rule.isReadable {
-                Label(L("This pattern cannot be read."), systemImage: "exclamationmark.triangle.fill")
-                    .font(.footnote)
-                    .foregroundStyle(.orange)
-            }
         }
     }
 }

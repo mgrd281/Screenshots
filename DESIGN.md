@@ -56,6 +56,21 @@ colors:
   phone-editor-ground: "#F8F9FA"  # under the page in Protect Picture, near-white so the page stands on it; black in dark
   phone-ink: "#1F1F1F"         # the cover ink, as a covered copy shows it (white 12%), light and dark
   phone-pen-ink: "#2B45A0"     # a ballpoint's blue: the signature and the stamp on the first run's doctor's letter, on its white paper only
+  # Always Hide on the iPhone (iOS/Snapfly/AlwaysHide.swift), its own palette at the owner's request (October 2026). Light value first, dark after.
+  phone-hide-ground: "#F2F3F5"      # the screen's and its sheets' ground; #0E1012 in dark
+  phone-hide-card: "#FFFFFF"        # its rows and cards; #1C1F23 in dark
+  phone-hide-separator: "#ECEEF1"   # between its rows, inset to the words; #2C3036 in dark
+  phone-hide-text: "#111318"        # its words; #F2F4F6 in dark
+  phone-hide-secondary: "#5F6670"   # its quieter words: 5.8:1 on its cards, 5.2:1 on its ground; #A3ABB5 in dark (7.2:1, 8.2:1)
+  phone-hide-accent: "#077A56"      # its green words, edges and pluses: 5.4:1 on its cards; #1FA774 in dark
+  phone-hide-accent-soft: "#E7F4EE" # behind its chips, its rules' symbols and the privacy strip: the green on it 4.7:1; #102A20 in dark
+  phone-hide-button: "#077A56"      # its main button, the same in light and dark: white on it 5.4:1
+  phone-hide-switch: "#0A8A62"      # a rule's switch, on; #1FA774 in dark
+  phone-hide-warning: "#B35200"     # what is wrong with what was typed: 4.6:1 on its ground; #FFA54D in dark
+  phone-detail-name: "#077A56"      # each kind of detail's tile, the same in light and dark, its symbol white on it: a name (5.4:1)
+  phone-detail-address: "#1F6FE0"   # an address (4.8:1)
+  phone-detail-card: "#D9660B"      # a bank card (3.6:1, over a symbol's 3:1)
+  phone-detail-account: "#7C4DDB"   # a bank account (5.3:1)
 typography:
   field:
     fontFamily: "SF Pro, system-ui"
@@ -92,6 +107,8 @@ rounded:
   floating: "20pt"
   shelf: "24pt"
   island: "30pt"
+  phone-hide-card: "18pt"        # Always Hide's small cards: a sheet's parts, the kinds, the privacy strip
+  phone-hide-row: "22pt"         # Always Hide's sections of rows
   full: "999pt"
 spacing:
   hairline: "2pt"
@@ -189,7 +206,19 @@ components:
   phone-rail-icon:
     size: "40pt"                   # a way out beside the page in Protect Picture: an app's phone-share-tile icon at 40pt (continuous corners of 9.2, the same hairline), or Photos, Files or the share sheet as a glyph 17pt medium in .primary on a tile of secondarySystemGroupedBackground of the same size; 44pt to the finger, 8pt apart, one above another, 12pt in from the screen's trailing edge, no frame, name or divider; pressed, 90% on a spring (0.25, 0.7)
   phone-detail-tile:
-    size: "30pt"                   # one of the owner's details in Also hide, and the owner's name first under People in Settings: its symbol (person.fill, house.fill, creditcard.fill, building.columns.fill), 14pt semibold white, on phone-protect with continuous corners of 7, 12pt before the detail's name and its value in subheadline .secondary (footnote under People)
+    size: "32pt"                   # at the body's text size, growing with it: one of the owner's details in Always Hide, a kind to choose in its sheet, and the owner's name first under People in Settings: its symbol (person.fill, house.fill, creditcard.fill, building.columns.fill), callout semibold white, on its kind's colour (phone-detail-*) with continuous corners of a quarter of its side, 12pt before the words
+  phone-rule-tile:
+    size: "32pt"                   # one of the owner's rules in Always Hide: its symbol (textformat, "Aa", for a word; tag.fill for a label; chevron.left.forwardslash.chevron.right for a pattern), callout semibold in phone-hide-accent on phone-hide-accent-soft, corners of a quarter of its side
+  phone-hide-row:
+    rounded: "{rounded.phone-hide-row}"   # a row of Always Hide's inset grouped list on phone-hide-card, the section's first and last rounding their outer corners; at least 44pt tall, 4pt over and under its words; hairlines of phone-hide-separator inset to the words
+  phone-hide-card:
+    rounded: "{rounded.phone-hide-card}"  # a part of an Always Hide sheet on phone-hide-card, 16pt in (fields 16 by 12pt); the privacy strip the same on phone-hide-accent-soft
+  phone-hide-chip:
+    padding: "8pt × 4pt"           # a way a name is found, or "+N": footnote semibold phone-hide-accent on phone-hide-accent-soft, a capsule, 8pt apart, wrapping onto as many lines as they need (ChipFlow)
+  phone-hide-kind-tile:
+    rounded: "{rounded.phone-hide-card}"  # a kind to choose in New Detail: its phone-detail-tile over its name in body semibold, 16pt in, two to a row 12pt apart, one at accessibility sizes; a 1pt edge of phone-hide-separator; chosen, a 2pt edge of phone-hide-accent and checkmark.circle.fill, white on the accent, 8pt in from the top trailing corner
+  phone-hide-button:
+    height: "44pt"                 # at least: Always Hide's one main action, in its empty state and its sheets: body semibold white on phone-hide-button, 20 by 16pt in, a capsule as wide as the room; 40% while it waits; pressed, 85% and 98% as large (not smaller with Reduce Motion)
   phone-question-chip:
     height: "36pt"                 # a ready question in Explain: a capsule of secondarySystemBackground, subheadline, 14pt in, 44pt to the finger, 8pt apart in a row that scrolls sideways
   phone-ask-bubble:
@@ -2608,7 +2637,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   always covered" in footnote `.secondary`, two lines at most, and
   `checkmark.shield.fill` in semibold phone-protect at the trailing edge;
   without a saved name, "Add it, and it is covered however it is written"
-  and `plus.circle.fill`. A tap opens the name's sheet (`OwnDetailEditor`,
+  and `plus.circle.fill`. A tap opens the name's sheet (`DetailSheet`,
   below). Then Names, Patient names and Other people, each with its
   subtitle in footnote `.secondary`, each a switch of its own, as on the
   Mac, over the Mac's footer. Then "Cover
@@ -2619,39 +2648,87 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   95% under %@" over the last fifty, then a row Faster picture processing,
   On or Off, opening its page (below); then AI Assistant (above); then
   Sync; then "Advanced", two rows that open pages:
-  Also hide (`text.badge.plus`) and Double tap the back of your iPhone
-  (`hand.tap`); then Help & Introduction. Also hide opens with "Your
-  Details": a row per detail of the owner's (`OwnDetailRow`), its
-  `phone-detail-tile`, its name in body ("Name", "Address", the card's
-  network or the name given it, like "Visa" or "Girokonto") over its value
-  in subheadline `.secondary` with monospaced digits, a card or an account
-  by its last four digits ("•••• 4242", "DE89 •••• 3000"), swiped away to
-  remove; VoiceOver says "Visa, ending in 4242". Add Detail
-  (`plus.circle.fill`) is a menu of Name, Address, Bank Card and Bank
-  Account, each with its symbol. The footer says they are covered wherever
-  and however they are written, whatever is chosen, and stay on this
-  iPhone, in no backup, never sent.
-  - A tap on a detail, or a kind from the menu, opens its sheet
-    (`OwnDetailEditor`): an inline title of its kind, Cancel, Done in
-    semibold (dimmed until there is enough to cover something), and no
-    swipe down while something was typed. Name has one field; Address
-    Street and house number, Postcode and Town; Bank Card the number,
-    grouped as typed in monospaced digits with the network's name in
-    subheadline semibold `.secondary` fading in beside it, and a name for
-    it; Bank Account the IBAN in groups of four, in capitals, and a name
-    for it. A kept card's or account's number shows hidden, with an eye
-    (44 pt) for Show Number. The footer says how it is covered (a name's
-    other forms as examples, "Musterfrau, Erika · E. Musterfrau ·
-    MUSTERFRAU"), or what is wrong in orange with
-    `exclamationmark.triangle.fill`; an IBAN is kept only once it adds up.
-    A kept one ends with Delete Detail, destructive, asking first.
-  - Then "Your Rules": a row per rule of the owner's own, its kind as a
-    menu over a field with the kind's prompt, swiped away to remove, and
-    Add Rule. A pattern that cannot be read says so under its field with
-    `exclamationmark.triangle.fill` in orange. Rules and details are kept as
-    they change, and the Mac's and the iPhone's are the same kind of rule.
-    A name saved as a word before there were details moves to the name
-    detail the first time Also hide opens.
+  Always Hide (`text.badge.plus`) and Double tap the back of your iPhone
+  (`hand.tap`); then Help & Introduction.
+
+- **Always Hide** (`AlwaysHide.swift`, `AlwaysHideSheets.swift`), from More,
+  on `phone-hide-ground`, with its own tokens (`phone-hide-*`, at the
+  owner's request, October 2026):
+  - A large title, "Always Hide", and under it what it does in subheadline
+    `phone-hide-secondary`; then the privacy strip on
+    `phone-hide-accent-soft` with `phone-hide-card` corners: each promise
+    that holds in code (`AlwaysHidePromise`, from `OwnDetailStore`), its
+    symbol and words in footnote semibold `phone-hide-accent`, side by side,
+    or one under another where they don't fit. Only on this iPhone
+    (`iphone`) and Never sent (`lock.fill`) hold; No backup (`icloud.slash`)
+    shows only if the keychain ever keeps the details out of backups.
+  - Edit in the bar while there is something to edit. The tab bar is
+    hidden, so its minimised More button never sits over a row.
+  - Your Details, an inset grouped section of `phone-hide-row`s, 24pt from
+    the next, headed in subheadline semibold `phone-hide-secondary`. A row
+    per detail:
+    - its `phone-detail-tile`;
+    - its value in body semibold: a name as it reads, a card
+      "•••• •••• •••• 4242", an IBAN "DE•• •••• •••• 3000", monospaced
+      digits;
+    - its kind in footnote, with the card's network or its own name;
+    - for a name, "Also finds" with two `phone-hide-chip`s and "+N";
+    - `chevron.forward`.
+    Then Add Detail, a plus in the accent. VoiceOver reads a row as one:
+    "Visa, ending in 4242".
+  - Your Rules, headed with "N active". A row per rule:
+    - its `phone-rule-tile`;
+    - its word or label in body semibold, `phone-hide-secondary` while off;
+    - what it covers in footnote ("Word · anywhere in the picture", "Label ·
+      rest of the line");
+    - for a label, a chip of it with its value covered;
+    - its switch in `phone-hide-switch`, read "Rule “Customer number”
+      active".
+    Then Add Rule. The footer says it applies to every picture, also
+    written differently, and that the result still wants a look before
+    sharing; never that it covers "wherever and however".
+  - With nothing yet:
+    - a card with `person.fill` in the accent on a soft circle twice the
+      tile, "Start with your name" in title 3 bold, a line of what it does,
+      and Add Name, the `phone-hide-button`;
+    - then "Or start with a rule", with Word and After Label, each opening
+      the rule's sheet.
+  - A row comes and goes on `motion.change` while the rest slide to make
+    room. Edit reorders and deletes, and a swipe deletes.
+  - **New Detail** (`DetailSheet`), a sheet with its grabber, Cancel and an
+    inline title:
+    - the four kinds as `phone-hide-kind-tile`s, Name chosen;
+    - the fields on a `phone-hide-card`, each with its name in footnote
+      semibold over it and a hairline of `phone-hide-separator` between
+      them: First Name and Last Name; Street and house number, Postcode and
+      Town; Card number, grouped as typed, with its network beside it; IBAN
+      in groups of four;
+    - under them how else it is found, or what is wrong in
+      `phone-hide-warning` after `exclamationmark.triangle.fill`;
+    - for a name, Also recognized: every way the covering looks for it, as
+      chips that change as it is typed.
+    Under the content, on the ground, `lock.fill` with "Stays on this iPhone
+    alone and is never sent" in footnote, over Add, the
+    `phone-hide-button`. Add waits until what was typed can be right: a
+    name, a card's number that adds up, an IBAN that adds up.
+  - In it, the first field is focused, and Return goes on to the next,
+    then adds. The focused field scrolls into view over the keyboard, and
+    there is no swipe down while something was typed.
+  - A kept detail opens titled by its kind. A card's or account's number
+    is hidden there, with `eye` (44pt) to show it; then Save, and Delete
+    Detail, asking first. Your Name under People opens the same sheet.
+  - **New Rule** (`RuleSheet`):
+    - Word and After Label, a segmented control, with Pattern too for a
+      pattern kept before;
+    - the one field, focused, with its hint;
+    - for a label, "What is covered?": Automatic, first, as label rules
+      always decided; Rest of the Line; Next Line; each with a line of what
+      it covers and a check when chosen;
+    - then the Preview card with an Example badge: a made-up invoice's
+      lines (`RuleSample`) as the engine itself covers them, the covered
+      words under a bar of `.primary` at 85%.
+    Save Rule, the `phone-hide-button`. A kept rule's sheet adds Delete
+    Rule.
 
 - **Faster picture processing** (`PreparingView.swift`), in Settings ›
   Reading and checking:

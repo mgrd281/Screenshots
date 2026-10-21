@@ -1,55 +1,74 @@
 import Foundation
 
-/// The owner's own details (`OwnRule.Kind.details`): found in a line of
-/// text however they are written there, shown with most of them hidden, and
-/// checked while they are typed. A name in every form; an address's street
-/// with its house number, and its postcode with its town; a card's number,
-/// whole or by its last four digits after a mask; an account's IBAN, with
-/// or without spaces, and a German or Austrian account's number. Pure text,
-/// so it is checked without a picture, on Linux too.
+/// The owner's own details (`OwnRule.Kind.details`): found in text in the
+/// ways they are written there, shown with most of them hidden, and checked
+/// while they are typed. A name in the forms `nameVariants` lists; an
+/// address's street with its house number, and its postcode with its town;
+/// a card's number, whole or by its last four digits after a mask; an
+/// account's IBAN, with or without spaces, and a German or Austrian
+/// account's number. A name or a number broken over two lines is found too,
+/// and one misread letter or digit in a long one. Pure text, so it is
+/// checked without a picture, on Linux too.
 enum OwnDetails {
     // MARK: Finding them
 
     /// Where the owner's details stand in text of many lines, as ranges of
-    /// the whole. Each is looked for within a line.
-    static func ranges(in full: String, _ rules: [OwnRule]) -> [NSRange] {
-        let details = rules.filter { $0.kind.isDetail && !$0.isBlank }
+    /// the whole: a name or a number also where it runs on into the next
+    /// line, an address line by line, as it is printed. Masking, for the
+    /// words that go to the AI assistant, also takes a word of the name in
+    /// small letters, and the first given name alone.
+    static func ranges(in full: String, _ rules: [OwnRule], masking: Bool = false) -> [NSRange] {
+        let details = rules.filter { $0.kind.isDetail && $0.isActive }
         guard !details.isEmpty else { return [] }
         var found: [NSRange] = []
-        var offset = 0
-        for line in full.components(separatedBy: "\n") {
-            for detail in details {
-                for range in ranges(in: line, of: detail) {
-                    let place = NSRange(range, in: line)
-                    found.append(NSRange(location: place.location + offset, length: place.length))
-                }
-            }
-            offset += line.utf16.count + 1
+        for detail in details where detail.kind != .address {
+            found += ranges(in: full, of: detail, masking: masking).map { NSRange($0, in: full) }
         }
-        return found
+        let addresses = details.filter { $0.kind == .address }
+        if !addresses.isEmpty {
+            var offset = 0
+            for line in full.components(separatedBy: "\n") {
+                for detail in addresses {
+                    for range in address(detail, in: line) {
+                        let place = NSRange(range, in: line)
+                        found.append(NSRange(location: place.location + offset, length: place.length))
+                    }
+                }
+                offset += line.utf16.count + 1
+            }
+        }
+        var seen = Set<NSRange>()
+        return found.filter { seen.insert($0).inserted }
     }
 
     /// A line with the owner's details in it hidden, as it is sent to the
-    /// AI assistant: they are covered anyway, so they never leave.
+    /// AI assistant: they are covered anyway, so they never leave. Places
+    /// that overlap are hidden as one.
     static func masking(_ line: String, _ rules: [OwnRule]) -> String {
-        let places = rules.filter { $0.kind.isDetail && !$0.isBlank }.flatMap { ranges(in: line, of: $0) }
-            .sorted { $0.lowerBound > $1.lowerBound }
+        let places = rules.filter { $0.kind.isDetail && $0.isActive }.flatMap { ranges(in: line, of: $0, masking: true) }
+            .sorted { $0.lowerBound < $1.lowerBound }
+        var merged: [Range<String.Index>] = []
+        for place in places {
+            if let last = merged.last, place.lowerBound <= last.upperBound {
+                merged[merged.count - 1] = last.lowerBound..<max(last.upperBound, place.upperBound)
+            } else {
+                merged.append(place)
+            }
+        }
         var masked = line
-        var below = masked.endIndex
-        for place in places where place.upperBound <= below {
+        for place in merged.reversed() {
             masked.replaceSubrange(place, with: "•••")
-            below = place.lowerBound
         }
         return masked
     }
 
-    /// Where one of the owner's details stands in one line, each place once.
-    static func ranges(in line: String, of detail: OwnRule) -> [Range<String.Index>] {
+    /// Where one of the owner's details stands in a text, each place once.
+    static func ranges(in text: String, of detail: OwnRule, masking: Bool = false) -> [Range<String.Index>] {
         let found: [Range<String.Index>] = switch detail.kind {
-        case .name: name(detail.text, in: line)
-        case .address: address(detail, in: line)
-        case .card: card(digits(detail.text), in: line)
-        case .account: account(compact(iban: detail.text), in: line)
+        case .name: name(detail.text, in: text, masking: masking)
+        case .address: address(detail, in: text)
+        case .card: card(digits(detail.text), in: text)
+        case .account: account(compact(iban: detail.text), in: text)
         case .word, .label, .pattern: []
         }
         var seen = Set<Range<String.Index>>()
@@ -58,50 +77,91 @@ enum OwnDetails {
 
     // MARK: Names
 
-    /// The ways a name is written, each as its words folded: as typed,
-    /// surname first, with the first given name alone, with its initial,
-    /// and the surname or the first given name on its own. "Musterfrau,
-    /// Erika", typed with a comma, is surname first.
-    static func nameForms(_ text: String) -> [[String]] {
+    /// A name's given names and its surname, as typed. Snapfly's two fields
+    /// keep it as "Surname, Given names" (`nameText`), so the comma says
+    /// where the surname ends; typed on one line, as before there were two,
+    /// the surname is the last word with the particles before it, as "van
+    /// Berg". One word alone is a surname.
+    static func nameParts(_ text: String) -> (given: [String], surname: [String]) {
         let typed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        let surnameFirst = typed.contains(",")
-        let words = words(of: typed.replacingOccurrences(of: ",", with: " "))
-        guard !words.isEmpty else { return [] }
-        guard words.count > 1 else { return [words] }
-        // The surname is the last word with the particles before it, as "van Berg".
-        var split = words.count - 1
-        if surnameFirst {
-            split = typed.split(separator: ",", maxSplits: 1).first.map { Self.words(of: String($0)).count } ?? 1
-        } else {
-            while split > 1, particles.contains(words[split - 1]) { split -= 1 }
+        if let comma = typed.firstIndex(of: ",") {
+            return (plainWords(typed[typed.index(after: comma)...]), plainWords(typed[..<comma]))
         }
-        let surname = surnameFirst ? Array(words[..<split]) : Array(words[split...])
-        let given = surnameFirst ? Array(words[split...]) : Array(words[..<split])
-        guard let first = given.first, let core = surname.last else { return [words] }
-        let initial = String(first.prefix(1))
-        var forms: [[String]] = [given + surname, surname + given]
-        forms += [[first] + surname, surname + [first], [initial] + surname, surname + [initial], [core]]
-        // A short given name alone is too often a word, like "Max" in "Max. 5".
-        if first.count >= 4 { forms.append([first]) }
-        // Each once, the longest first.
+        let words = plainWords(typed[...])
+        guard words.count > 1 else { return ([], words) }
+        var split = words.count - 1
+        while split > 1, particles.contains(fold(words[split - 1])) { split -= 1 }
+        return (Array(words[..<split]), Array(words[split...]))
+    }
+
+    /// The name as kept, from its two fields: "Mustermann, Max", or the one
+    /// that was filled in, a given name alone after its comma.
+    static func nameText(given: String, surname: String) -> String {
+        let given = plainWords(given[...]).joined(separator: " ")
+        let surname = plainWords(surname[...]).joined(separator: " ")
+        if given.isEmpty { return surname }
+        return surname.isEmpty ? ", " + given : surname + ", " + given
+    }
+
+    /// The name as a person reads it: "Max Mustermann".
+    static func displayName(_ text: String) -> String {
+        let (given, surname) = nameParts(text)
+        return (given + surname).joined(separator: " ")
+    }
+
+    /// The ways the owner's name is looked for, as they are written, the
+    /// name itself first: surname first, in capitals too, with the first
+    /// given name alone, with its initial before or after the surname, the
+    /// surname alone, and the first given name alone from four letters. The
+    /// sheet shows these, and the covering looks for these and no others
+    /// (`nameForms`), in any case and with any spacing or punctuation
+    /// between their words.
+    static func nameVariants(_ text: String) -> [String] {
+        let (given, surname) = nameParts(text)
+        let first = given.joined(separator: " "), last = surname.joined(separator: " ")
+        var shown: [String] = []
+        if given.isEmpty || surname.isEmpty {
+            let alone = first.isEmpty ? last : first
+            if !alone.isEmpty { shown = [alone, alone.uppercased()] }
+        } else if let given1 = given.first, let core = surname.last {
+            let initial = String(given1.prefix(1)) + "."
+            shown = ["\(first) \(last)", "\(last.uppercased()), \(first)", "\(last), \(first)"]
+            if given.count > 1 { shown += ["\(given1) \(last)", "\(last), \(given1)"] }
+            shown += ["\(initial) \(last)", "\(last), \(initial)", core]
+            // A short given name alone is too often a word, like "Max" in "Max. 5".
+            if fold(given1).count >= 4 { shown.append(given1) }
+        }
+        var seen = Set<String>()
+        return shown.filter { seen.insert($0).inserted }
+    }
+
+    /// The forms of a name the covering looks for, each as its words
+    /// folded, the longest first: the `nameVariants`, and nothing else.
+    static func nameForms(_ text: String) -> [[String]] {
         var seen = Set<[String]>()
-        forms = forms.filter { !$0.isEmpty && seen.insert($0).inserted }
-        return forms.sorted { $0.count > $1.count }
+        return nameVariants(text).map { words(of: $0.replacingOccurrences(of: ",", with: " ")) }
+            .filter { !$0.isEmpty && seen.insert($0).inserted }
+            .sorted { $0.count > $1.count }
     }
 
     /// Words that join a surname, as "von" in "von Weizsäcker".
     private static let particles: Set<String> = ["von", "van", "de", "der", "den", "del", "della", "di", "da", "du",
                                                  "le", "la", "al", "el", "bin", "ibn", "ter", "ten", "zu", "zum", "zur"]
 
-    private static func name(_ text: String, in line: String) -> [Range<String.Index>] {
-        let forms = nameForms(text)
+    private static func name(_ text: String, in line: String, masking: Bool) -> [Range<String.Index>] {
+        var forms = nameForms(text)
+        // What goes to the AI assistant hides the first given name alone too.
+        if masking, let first = nameParts(text).given.first.map(fold), first.count >= 3, !forms.contains([first]) {
+            forms.append([first])
+        }
         guard !forms.isEmpty else { return [] }
         let tokens = tokens(in: line)
         var found: [Range<String.Index>] = []
         var i = 0
         while i < tokens.count {
             var matched = 0
-            for form in forms where i + form.count <= tokens.count && fits(form, tokens[i..<i + form.count], in: line) {
+            for form in forms where i + form.count <= tokens.count
+                && fits(form, tokens[i..<i + form.count], in: line, masking: masking) {
                 matched = form.count
                 break
             }
@@ -115,28 +175,32 @@ enum OwnDetails {
         return found
     }
 
-    /// Whether these words of a line are this form of the name: each word
-    /// the same, read as loosely as a misread letter in a word of five
-    /// letters or more beside the rest of the name, or of seven alone, with
-    /// no more than a comma, a dot and a space between them. A word alone
-    /// counts when it begins with a capital, so "koch" in a sentence is a
-    /// word; an initial, only beside the surname.
-    private static func fits(_ form: [String], _ tokens: ArraySlice<Token>, in line: String) -> Bool {
-        let loosely = form.count == 1 ? 7 : 5
-        for (word, token) in zip(form, tokens) {
-            guard word == token.folded
-                || min(word.count, token.folded.count) >= loosely && Finder.differsByOne(word, token.folded) else { return false }
+    /// Whether these words of a text are this form of the name: each word
+    /// the same, but for one at most, read as loosely as a misread letter,
+    /// in a word of five letters or more beside the rest of the name, or of
+    /// seven alone; with no more than a comma, a dot, a semicolon, a slash
+    /// and a space between them, or the end of a line. A word alone counts
+    /// when it begins with a capital, so "koch" in a sentence is a word; an
+    /// initial, only beside the surname. Masking takes a word alone in any
+    /// case, and misread from five letters.
+    private static func fits(_ form: [String], _ tokens: ArraySlice<Token>, in line: String, masking: Bool) -> Bool {
+        let loosely = form.count == 1 && !masking ? 7 : 5
+        var misread = false
+        for (word, token) in zip(form, tokens) where word != token.folded {
+            guard !misread, min(word.count, token.folded.count) >= loosely,
+                  Finder.differsByOne(word, token.folded) else { return false }
+            misread = true
         }
         if form.count == 1 {
-            guard let token = tokens.first, form[0].count >= 3,
-                  line[token.range].first?.isUppercase == true else { return false }
-            return true
+            guard let token = tokens.first, form[0].count >= 3 else { return false }
+            return masking || line[token.range].first?.isUppercase == true
         }
         var previous: Token?
         for token in tokens {
             if let previous {
                 let gap = line[previous.range.upperBound..<token.range.lowerBound]
-                guard gap.count <= 3, gap.allSatisfy({ $0 == " " || $0 == "," || $0 == "." }) else { return false }
+                guard gap.count <= 3, gap.filter(\.isNewline).count <= 1,
+                      gap.allSatisfy({ $0.isNewline || " ,.;/·\t".contains($0) }) else { return false }
             }
             previous = token
         }
@@ -163,6 +227,14 @@ enum OwnDetails {
     /// A name's words as typed, folded, without what stands round them.
     private static func words(of text: String) -> [String] {
         text.split(whereSeparator: \.isWhitespace).map { fold(String($0)) }.filter { !$0.isEmpty }
+    }
+
+    /// A name's words as typed, as they are shown: without spaces, commas or
+    /// dots round them.
+    private static func plainWords(_ text: Substring) -> [String] {
+        text.split(whereSeparator: { $0.isWhitespace || $0 == "," })
+            .map { $0.trimmingCharacters(in: CharacterSet(charactersIn: ".;")) }
+            .filter { !$0.isEmpty }
     }
 
     /// A word as it is compared: in small letters, without accents,
@@ -193,6 +265,9 @@ enum OwnDetails {
         return (typed, "")
     }
 
+    /// The street with its house number, and the postcode with the town,
+    /// each where they stand together; a letter misread in a street's or a
+    /// town's name of five letters or more, never in a number.
     private static func address(_ detail: OwnRule, in line: String) -> [Range<String.Index>] {
         let (name, number) = street(detail.text)
         // Most lines hold neither the house number nor the postcode: those are passed by at once.
@@ -204,15 +279,20 @@ enum OwnDetails {
         let folded = Folded(line)
         var found: [Range<String.Index>] = []
         let street = Folded(name).chars, house = Folded(number).chars
+        let misread = street.count >= 5
         if !house.isEmpty, street.count >= 3 {
-            found += folded.places(of: street + house, in: line)
-            found += folded.places(of: house + street, in: line)
+            found += folded.places(of: street + house, in: line, loose: misread ? 0..<street.count : nil)
+            found += folded.places(of: house + street, in: line,
+                                   loose: misread ? house.count..<house.count + street.count : nil)
         } else if house.isEmpty, street.count >= 4 {
             found += folded.places(of: street, in: line)
         }
         // The postcode with its town, as on a letter's last address line, never one without the other.
         let postcode = Folded(detail.postcode).chars, city = Folded(detail.city).chars
-        if !postcode.isEmpty, !city.isEmpty { found += folded.places(of: postcode + city, in: line) }
+        if !postcode.isEmpty, !city.isEmpty {
+            found += folded.places(of: postcode + city, in: line,
+                                   loose: city.count >= 5 ? postcode.count..<postcode.count + city.count : nil)
+        }
         return found
     }
 
@@ -261,27 +341,48 @@ enum OwnDetails {
 
         /// Every place these characters stand, whole: not after a letter or
         /// a digit, nor before one, as "Weg 5" in "Kastanienweg 5" or "14"
-        /// in "14a".
-        func places(of needle: [Character], in line: String) -> [Range<String.Index>] {
-            guard !needle.isEmpty, needle.count <= chars.count else { return [] }
+        /// in "14a". Within `loose`, one of them may be misread: another,
+        /// left out, or one too many.
+        func places(of needle: [Character], in line: String, loose: Range<Int>? = nil) -> [Range<String.Index>] {
+            guard !needle.isEmpty, needle.count - (loose == nil ? 0 : 1) <= chars.count else { return [] }
             var found: [Range<String.Index>] = []
             var i = 0
-            while i + needle.count <= chars.count {
-                guard Array(chars[i..<i + needle.count]) == needle else {
+            while i < chars.count {
+                guard let length = length(of: needle, at: i, loose: loose), length > 0 else {
                     i += 1
                     continue
                 }
-                let start = starts[i], end = ends[i + needle.count - 1]
+                let start = starts[i], end = ends[i + length - 1]
                 let before = start > line.startIndex ? line[line.index(before: start)] : nil
                 let after = end < line.endIndex ? line[end] : nil
                 if before.map({ $0.isLetter || $0.isNumber }) != true, after.map({ $0.isLetter || $0.isNumber }) != true {
                     found.append(start..<end)
-                    i += needle.count
+                    i += length
                 } else {
                     i += 1
                 }
             }
             return found
+        }
+
+        /// How many characters from `i` on are these, exactly or with one
+        /// misread within `loose`; nil when they are not.
+        private func length(of needle: [Character], at i: Int, loose: Range<Int>?) -> Int? {
+            var n = 0, c = i
+            while n < needle.count, c < chars.count, chars[c] == needle[n] {
+                n += 1
+                c += 1
+            }
+            if n == needle.count { return c - i }
+            guard let loose, loose.contains(n) else { return nil }
+            // The rest exactly, after one changed, left out or one too many.
+            for (skipped, extra) in [(1, 1), (1, 0), (0, 1)] {
+                let from = n + skipped, at = c + extra, count = needle.count - from
+                guard at + count <= chars.count, at + count > i,
+                      chars[at..<at + count].elementsEqual(needle[from...]) else { continue }
+                return at + count - i
+            }
+            return nil
         }
     }
 
@@ -294,7 +395,8 @@ enum OwnDetails {
 
     private static func card(_ number: String, in line: String) -> [Range<String.Index>] {
         guard number.count >= 8 else { return [] }
-        var found = runs(of: number, in: line)
+        // A digit misread in a number that adds up is that number still: no other card's is one digit from it.
+        var found = runs(of: number, in: line, misread: number.count >= 12 && passesLuhn(number))
         let last = String(number.suffix(4))
         guard number.count >= 12, digits(line).contains(last) else { return found }
         // With all but its last four digits hidden: "•••• 4242", "**** **** **** 4242", "XXXX-XXXX-XXXX-4242".
@@ -457,7 +559,8 @@ enum OwnDetails {
 
     private static func account(_ iban: String, in line: String) -> [Range<String.Index>] {
         guard iban.count >= 12 else { return [] }
-        var found = runs(of: iban, in: line, letters: true)
+        // A character misread in an IBAN that adds up is that IBAN still: no other one is a character from it.
+        var found = runs(of: iban, in: line, letters: true, misread: ibanIsValid(iban))
         if let number = accountNumber(of: iban) { found += runs(of: number, in: line) }
         guard digits(line).contains(String(iban.suffix(4))) else { return found }
         // With its middle hidden: "DE89 •••• •••• 3000", "DE89 3704 **** **30 00", "IBAN: …3000".
@@ -472,23 +575,29 @@ enum OwnDetails {
     // MARK: Numbers in a line
 
     /// Every place these digits, or for an IBAN these letters and digits,
-    /// stand in a line, in groups or not: with spaces, dashes or dots
-    /// between the groups, read as loosely as text recognition reads an O
-    /// for a 0; whole, never the middle of a longer number.
-    private static func runs(of value: String, in line: String, letters: Bool = false) -> [Range<String.Index>] {
+    /// stand in a text, in groups or not: with spaces, dashes or dots
+    /// between the groups, or the end of a line, read as loosely as text
+    /// recognition reads an O for a 0, and, for a number that adds up, with
+    /// one other character misread; whole, never the middle of a longer
+    /// number.
+    private static func runs(of value: String, in line: String, letters: Bool = false,
+                             misread: Bool = false) -> [Range<String.Index>] {
         let wanted = Array(value)
         var found: [Range<String.Index>] = []
         for run in runs(in: line, letters: letters) where run.chars.count >= wanted.count {
             var i = 0
             while i + wanted.count <= run.chars.count {
                 let end = i + wanted.count
-                if run.starts[i], end == run.chars.count || run.starts[end],
-                   zip(wanted, run.chars[i..<end]).enumerated().allSatisfy({ same($1.0, $1.1, letters: letters && $0 >= 2) }) {
-                    found.append(run.places[i].lowerBound..<run.places[end - 1].upperBound)
-                    i = end
-                } else {
-                    i += 1
+                if run.starts[i], end == run.chars.count || run.starts[end] {
+                    let wrong = zip(wanted, run.chars[i..<end]).enumerated()
+                        .filter { !same($1.0, $1.1, letters: letters && $0 >= 2) }.count
+                    if wrong == 0 || misread && wrong == 1 {
+                        found.append(run.places[i].lowerBound..<run.places[end - 1].upperBound)
+                        i = end
+                        continue
+                    }
                 }
+                i += 1
             }
         }
         return found
@@ -520,7 +629,7 @@ enum OwnDetails {
                 run.chars.append(Character(c.uppercased()))
                 run.places.append(i..<next)
                 gap = 0
-            } else if !run.chars.isEmpty, gap < 2, " \u{00A0}\u{2009}\u{202F}-.".contains(c) {
+            } else if !run.chars.isEmpty, gap < 2, c.isNewline || " \u{00A0}\u{2009}\u{202F}-.".contains(c) {
                 gap += 1
             } else {
                 close()
@@ -565,15 +674,18 @@ enum OwnDetails {
         return kept
     }
 
-    /// Whether a detail holds enough to cover something: a name, a street
-    /// or a postcode with its town, a card's number of eight to nineteen
-    /// digits, an IBAN that adds up.
+    /// Whether a detail holds enough to cover something, and nothing that
+    /// cannot be right: a name, a street or a postcode with its town, a
+    /// card's number of twelve to nineteen digits that adds up, an IBAN that
+    /// adds up.
     static func canKeep(_ detail: OwnRule) -> Bool {
         let kept = cleaned(detail)
         switch kept.kind {
-        case .name: return !kept.text.isEmpty
+        case .name:
+            let parts = nameParts(kept.text)
+            return !parts.given.isEmpty || !parts.surname.isEmpty
         case .address: return !kept.text.isEmpty || !kept.postcode.isEmpty && !kept.city.isEmpty
-        case .card: return (8...19).contains(kept.text.count)
+        case .card: return (12...19).contains(kept.text.count) && passesLuhn(kept.text)
         case .account: return ibanIsValid(kept.text)
         case .word, .label, .pattern: return false
         }
@@ -628,6 +740,23 @@ enum OwnDetails {
         }
     }
 
+    /// A detail's value as the iPhone's rows show it: a name as it reads, a
+    /// number with all but its last four digits hidden, its country kept
+    /// for an IBAN: "•••• •••• •••• 4242", "DE•• •••• •••• 3000".
+    static func masked(_ detail: OwnRule) -> String {
+        switch detail.kind {
+        case .name:
+            return displayName(detail.text)
+        case .card:
+            return "•••• •••• •••• " + String(digits(detail.text).suffix(4))
+        case .account:
+            let iban = compact(iban: detail.text)
+            return String(iban.prefix(2)) + "•• •••• •••• " + String(iban.suffix(4))
+        default:
+            return summary(of: detail)
+        }
+    }
+
     /// A detail as VoiceOver says it, a number by its last four digits:
     /// "Visa, ending in 4242".
     static func spoken(_ detail: OwnRule) -> String {
@@ -640,14 +769,13 @@ enum OwnDetails {
         return "\(title(of: detail)), " + String(format: L("ending in %@"), last)
     }
 
-    /// Some of the other ways a name is found, as written: "Musterfrau,
-    /// Erika", "E. Musterfrau", "MUSTERFRAU".
+    /// Some of the other ways a name is found, as written: "MUSTERFRAU,
+    /// Erika", "Musterfrau, Erika", "E. Musterfrau". None for a name of one
+    /// part.
     static func examples(of name: String) -> [String] {
-        let typed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !typed.contains(",") else { return [] }
-        let words = typed.split(whereSeparator: \.isWhitespace).map(String.init)
-        guard words.count >= 2, let first = words.first, let last = words.last else { return [] }
-        return ["\(last), \(words.dropLast().joined(separator: " "))", "\(first.prefix(1)). \(last)", last.uppercased()]
+        let parts = nameParts(name)
+        guard !parts.given.isEmpty, !parts.surname.isEmpty else { return [] }
+        return Array(nameVariants(name).dropFirst().prefix(3))
     }
 
     /// A check sum of the details, so a change to them reads the pictures
