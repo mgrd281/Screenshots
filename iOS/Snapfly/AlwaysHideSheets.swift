@@ -129,10 +129,11 @@ struct DetailSheet: View {
                 .scrollDismissesKeyboard(.interactively)
                 .onChange(of: focus) { _, field in
                     guard let field else { return }
-                    // Once the keyboard is up, the field in the middle of what is left.
+                    // Once the keyboard is up, the field just above it where it would
+                    // be hidden; a field already in sight stays where it is.
                     Task { @MainActor in
                         try? await Task.sleep(for: .seconds(0.3))
-                        withAnimation(SnapflyMotion.change(reduceMotion)) { proxy.scrollTo(field, anchor: .center) }
+                        withAnimation(SnapflyMotion.change(reduceMotion)) { proxy.scrollTo(field, anchor: .bottom) }
                     }
                 }
             }

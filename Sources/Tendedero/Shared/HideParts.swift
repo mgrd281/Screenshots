@@ -111,34 +111,37 @@ struct ChipFlow: SwiftUI.Layout {
     var spacing: CGFloat = 8
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let limit = proposal.width ?? .infinity
-        var x: CGFloat = 0, y: CGFloat = 0, row: CGFloat = 0, widest: CGFloat = 0
+        let places = arrange(subviews, in: proposal.width ?? .infinity)
+        let width = places.map { $0.origin.x + $0.size.width }.max() ?? 0
+        let height = places.map { $0.origin.y + $0.size.height }.max() ?? 0
+        return CGSize(width: width, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let places = arrange(subviews, in: bounds.width)
+        for (subview, place) in zip(subviews, places) {
+            subview.place(at: CGPoint(x: bounds.minX + place.origin.x, y: bounds.minY + place.origin.y),
+                          proposal: ProposedViewSize(place.size))
+        }
+    }
+
+    /// Where each chip goes, from the leading edge, in one pass both for
+    /// measuring and for placing, so the lines come out the same. Half a
+    /// point to spare, as a width measured comes back rounded.
+    private func arrange(_ subviews: Subviews, in limit: CGFloat) -> [CGRect] {
+        var places: [CGRect] = []
+        var x: CGFloat = 0, y: CGFloat = 0, row: CGFloat = 0
         for subview in subviews {
             let size = subview.sizeThatFits(ProposedViewSize(width: limit, height: nil))
-            if x > 0, x + size.width > limit {
+            if x > 0, x + size.width > limit + 0.5 {
                 y += row + spacing
                 x = 0
                 row = 0
             }
-            widest = max(widest, x + size.width)
+            places.append(CGRect(origin: CGPoint(x: x, y: y), size: size))
             x += size.width + spacing
             row = max(row, size.height)
         }
-        return CGSize(width: min(widest, limit), height: y + row)
-    }
-
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        var x = bounds.minX, y = bounds.minY, row: CGFloat = 0
-        for subview in subviews {
-            let size = subview.sizeThatFits(ProposedViewSize(width: bounds.width, height: nil))
-            if x > bounds.minX, x + size.width > bounds.maxX {
-                y += row + spacing
-                x = bounds.minX
-                row = 0
-            }
-            subview.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
-            x += size.width + spacing
-            row = max(row, size.height)
-        }
+        return places
     }
 }

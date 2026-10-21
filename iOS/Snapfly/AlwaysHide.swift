@@ -93,6 +93,8 @@ struct AlwaysHideView: View {
                     .font(.subheadline)
                     .foregroundStyle(SnapflyTokens.hideSecondary)
                     .fixedSize(horizontal: false, vertical: true)
+                    // A row clips at its edge, and a letter like S reaches past it.
+                    .padding(.leading, 4)
                 PrivacyStrip()
             }
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 8, trailing: 0))
