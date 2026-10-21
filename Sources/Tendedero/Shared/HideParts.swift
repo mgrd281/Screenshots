@@ -105,8 +105,9 @@ struct CoveredLineText: View {
     static let cover = Color.primary.opacity(0.85)
 }
 
-/// Chips one after another, on as many lines as they need.
-struct ChipFlow: Layout {
+/// Chips one after another, on as many lines as they need. SwiftUI's
+/// Layout by its full name, since the Mac has a Layout of its own.
+struct ChipFlow: SwiftUI.Layout {
     var spacing: CGFloat = 8
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
