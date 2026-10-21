@@ -2710,7 +2710,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     from the content), with the grabber, `rounded.phone-hide-sheet` and
     `phone-hide-card` behind them; nothing in them scrolls and they never
     change size as the owner types, sitting whole above the keyboard. Only
-    at the accessibility sizes do they fill the screen and scroll. Each
+    at the accessibility sizes do they fill the screen and scroll, their
+    one action pinned above the keyboard; the tiles then stop growing at
+    52pt, so a row's words keep their room. Each
     opens with its title in title 2 bold on the leading side, 24pt in, and
     `phone-hide-close` on the trailing.
   - **Add Detail** (`DetailSheet`): the four kinds as a plain list, each
