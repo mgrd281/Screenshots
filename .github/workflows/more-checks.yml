@@ -4,7 +4,8 @@
 # videos of the motion, with and without Reduce Motion. The frames and the
 # videos go to the "more-captures" pre-release on the Releases page, for
 # review; the test results stay with the run. Runs when More or what it
-# shows changes, and by hand.
+# shows changes, for What Is Covered alone (about a quarter of an hour), and
+# by hand, for all of it (about an hour).
 name: More Checks
 
 on:
@@ -28,6 +29,11 @@ on:
       - "scripts/more-checks.sh"
       - ".github/workflows/more-checks.yml"
   workflow_dispatch:
+    inputs:
+      full:
+        description: "Every page and video (about an hour), not only What Is Covered"
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -44,6 +50,8 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run the UI tests, capture the frames and record the motion
+        env:
+          MORE_FULL: ${{ inputs.full && '1' || '0' }}
         run: scripts/more-checks.sh
 
       - name: Keep the frames, the videos and the test results with the run
