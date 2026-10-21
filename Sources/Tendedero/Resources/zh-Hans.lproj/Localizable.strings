@@ -1611,3 +1611,35 @@
 "Your Own Details" = "你自己的信息";
 "Your Protection" = "你的保护";
 "Your name, address, cards and rules, covered in every picture" = "你的姓名、地址、卡片和规则，在每张图片中都会遮盖";
+
+/* Studio */
+"A ring where each click landed." = "在每次点按的位置显示一个圆环。";
+"Add Zoom" = "添加缩放";
+"Could not open the recording." = "无法打开录制内容。";
+"Could not save the video." = "无法存储视频。";
+"Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "在时间线上拖移缩放可移动它，拖移两端可调整长短。";
+"Drag the frame on the picture to choose what it looks at." = "拖移画面上的框，选择镜头看向哪里。";
+"Draw" = "绘制";
+"Edit in Studio…" = "在 Studio 中编辑…";
+"From where the video is, for three seconds." = "从视频当前位置开始，持续三秒。";
+"How close" = "放大程度";
+"It shows for three seconds from where the video is. Drag it on the timeline to change when." = "从视频当前位置开始显示三秒。在时间线上拖移可更改时间。";
+"Looks at" = "看向";
+"Made from your clicks and typing" = "根据你的点按和输入生成";
+"One Place" = "一个位置";
+"Open Studio after recording" = "录制后打开 Studio";
+"Play" = "播放";
+"Recording" = "录制内容";
+"Save Video" = "存储视频";
+"Saving the video…" = "正在存储视频…";
+"Show clicks" = "显示点按";
+"Studio" = "Studio";
+"Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never." = "Studio 会放大你点按和输入的位置，并添加箭头和数字。指针去过哪里、何时按下按键只保留在这台 Mac 上；按的是哪些键，从不记录。";
+"The Pointer" = "指针";
+"This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand." = "此录制内容早于 Studio，没有可放大的点按。请手动添加缩放。";
+"Time" = "时间";
+"Timeline Zoom" = "时间线缩放";
+"Words on the video" = "视频上的文字";
+"Zoom" = "缩放";
+"Zoom in on clicks and typing" = "点按和输入时放大";
+"Zooms: %d" = "缩放：%d";

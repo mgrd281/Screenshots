@@ -1611,3 +1611,35 @@
 "Your Own Details" = "あなた自身の情報";
 "Your Protection" = "あなたの保護";
 "Your name, address, cards and rules, covered in every picture" = "名前、住所、カード、ルールを、すべての画像で隠します";
+
+/* Studio */
+"A ring where each click landed." = "クリックした場所ごとに輪を表示します。";
+"Add Zoom" = "ズームを追加";
+"Could not open the recording." = "収録を開けませんでした。";
+"Could not save the video." = "ビデオを保存できませんでした。";
+"Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "タイムラインでズームをドラッグすると移動し、端をドラッグすると長さを変えられます。";
+"Drag the frame on the picture to choose what it looks at." = "画像上の枠をドラッグして、映す場所を選びます。";
+"Draw" = "描く";
+"Edit in Studio…" = "スタジオで編集…";
+"From where the video is, for three seconds." = "ビデオの現在位置から3秒間。";
+"How close" = "ズームの強さ";
+"It shows for three seconds from where the video is. Drag it on the timeline to change when." = "ビデオの現在位置から3秒間表示されます。タイムラインでドラッグするとタイミングを変えられます。";
+"Looks at" = "映す対象";
+"Made from your clicks and typing" = "クリックと入力から作成";
+"One Place" = "1か所";
+"Open Studio after recording" = "収録後にスタジオを開く";
+"Play" = "再生";
+"Recording" = "収録";
+"Save Video" = "ビデオを保存";
+"Saving the video…" = "ビデオを保存中…";
+"Show clicks" = "クリックを表示";
+"Studio" = "スタジオ";
+"Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never." = "スタジオはクリックや入力をした場所にズームし、矢印や番号を加えます。ポインタの動きとキーを押したタイミングはこのMacに残ります。どのキーかは決して記録しません。";
+"The Pointer" = "ポインタ";
+"This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand." = "この収録はスタジオより前に作られたため、ズームするクリックがありません。ズームを手動で追加してください。";
+"Time" = "時間";
+"Timeline Zoom" = "タイムラインのズーム";
+"Words on the video" = "ビデオ上の言葉";
+"Zoom" = "ズーム";
+"Zoom in on clicks and typing" = "クリックと入力でズーム";
+"Zooms: %d" = "ズーム: %d";

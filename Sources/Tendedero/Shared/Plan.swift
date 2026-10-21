@@ -36,6 +36,9 @@ enum Plan {
         case backgrounds
         /// A link to a covered photo, a recording or a PDF, for seven days.
         case shareLinks
+        /// Studio: recordings zoomed in on clicks and typing, with marks
+        /// drawn over them for a while each, saved as a new video.
+        case studio
     }
 
     /// The day Pro begins. Until it is set, nothing is held back.

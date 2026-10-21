@@ -148,6 +148,12 @@ or turn on syncing with your iPhone (below).
   may have screen recordings take the Mac's sound, your microphone, or both.
   macOS asks you before the microphone is used the first time. The sound is in
   the recording only, saved on your Mac like it, and goes nowhere else.
+- **Studio notes how you moved, not what you typed.** While the screen is
+  recorded, Snapfly notes where the pointer went, where it clicked and when a
+  key went down, so Studio can zoom in there. Which key is never noted. It is
+  kept on your Mac with the recording's Studio work, and goes once the
+  recording has left the line and the history. Nothing of it is sent
+  anywhere.
 
 The full policy, in English, German and Arabic, is at
 https://mgrd281.github.io/Screenshots/privacy.html.
