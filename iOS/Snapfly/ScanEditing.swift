@@ -323,14 +323,15 @@ struct ScanPageStrip: View {
             .contentShape(Rectangle())
     }
 
-    /// A page with something wrong: a small orange circle with an
-    /// exclamation mark, at its top trailing corner.
+    /// A page with something wrong: a small orange circle with a dark
+    /// exclamation mark, ringed in white, at its top trailing corner.
     private var warningBadge: some View {
         Image(systemName: "exclamationmark")
             .font(.system(size: 9, weight: .heavy))
-            .foregroundStyle(.white)
+            .foregroundStyle(.black.opacity(0.85))
             .frame(width: 15, height: 15)
             .background(Color.orange, in: Circle())
+            .overlay(Circle().strokeBorder(.white, lineWidth: 1.5))
             .offset(x: 5, y: -5)
     }
 

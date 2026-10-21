@@ -92,6 +92,11 @@ colors:
   phone-detail-address: "#1F6FE0"   # an address (4.8:1)
   phone-detail-card: "#D9660B"      # a bank card (3.6:1, over a symbol's 3:1)
   phone-detail-account: "#7C4DDB"   # a bank account (5.3:1)
+  phone-scan-good: "#E7F4EE"        # a scanned page's card under it once it is clean and checked; #11392C in dark
+  phone-scan-good-text: "#075E43"   # its words and seal: 6.9:1 on phone-scan-good; #5BD6A6 in dark (7:1)
+  phone-scan-warn: "#FFF4E0"        # a scanned page's card when something on it is wrong, and Save and Share's warning; #3A2A10 in dark
+  phone-scan-warn-edge: "#F3D7A6"   # their 1pt edge, and the card's button; #6E4F1F in dark
+  phone-scan-warn-text: "#6E4206"   # their words: 7.9:1 on phone-scan-warn, 6.2:1 on its button; #F5C77E in dark (8.8:1, 4.8:1)
 typography:
   field:
     fontFamily: "SF Pro, system-ui"
@@ -133,6 +138,9 @@ rounded:
   phone-more-hero: "28pt"        # More's hero card
   phone-more-button: "18pt"      # More's buttons: the hero's chips and Help's two
   phone-hide-sheet: "32pt"       # Always Hide's sheets
+  phone-scan-card: "16pt"        # a scanned page's card
+  phone-scan-strip: "18pt"       # the strip of a document's pages
+  phone-scan-thumb: "8pt"        # a page small in the strip
   full: "999pt"
 spacing:
   hairline: "2pt"
@@ -265,6 +273,20 @@ components:
     rounded: "18pt"                # the owner's question in Explain: the accent at 12%, 14pt by 10pt in, on the trailing side, 40pt clear of the leading edge
   phone-topic-sign:
     size: "36pt"                   # a topic in Details: a 2.5pt ring of phone-protect, round ends, over .primary at 8%, from the top round as much as is covered; inside, 5pt in, a circle with the glyph 14pt semibold: phone-protect with white once all is covered, phone-protect at 12% with a green glyph while some is, .primary at 6% with a .secondary glyph while none is
+  phone-scan-card:
+    height: "44pt"                 # at least: under a scanned page, 16pt in from the screen's sides and 520pt wide at most, footnote medium 14pt in and 10pt down, rounded.phone-scan-card; green (phone-scan-good, its words and checkmark.seal.fill in phone-scan-good-text) once the copy is checked, a tap opening Details; amber (phone-scan-warn with a 1pt phone-scan-warn-edge, exclamationmark.triangle.fill and the words in phone-scan-warn-text) at once where something is wrong, its button (Take Again, or Compare where cleaning read less) footnote semibold on a phone-scan-warn-edge capsule, 44pt to the finger
+  phone-scan-strip:
+    height: "52pt"                 # the document's pages under the card, in glass with rounded.phone-scan-strip, as wide as its pages and scrolling sideways once they no longer fit: each page 34 × 46 with rounded.phone-scan-thumb in a 44 × 52 cell, 6pt apart; the page open ringed 2pt in phone-protect-tint, the others a 0.5pt hairline of .primary at 10%; a page being made, a small spinner over it; the plus (phone-dock-icon) at the end
+  phone-scan-badge:
+    size: "15pt"                   # a page with something wrong, at its top trailing corner in the strip (22pt on the Scan tab's cards): orange with a black exclamationmark at 85% (9pt heavy; caption heavy at 22pt), ringed 1.5pt in white
+  phone-scan-tools:
+    height: "44pt"                 # the page's own tools in a glass capsule over the editing bar, phone-dock-icon each: Compare (rectangle.split.2x1, chosen in phone-protect-tint), Crop, Turn (rotate.right), the colours (circle.lefthalf.filled, a menu), a 1pt divider 24pt high, Delete Page (trash)
+  phone-scan-divider:
+    width: "2pt"                   # Before and After: a white line across the page with a shadow of black 35%, radius 4, y 1, and a 32pt white handle with two dark grey arrows pointing apart, the same size on the screen whatever the zoom; Before and After over the page's top corners in caption semibold capsules of glass, 26pt high
+  phone-scan-issue:
+    stroke: "2pt, dashed 5 and 3"  # where something is wrong on a scanned page: systemOrange round it, 4pt out, corners of 6, filled with the same orange at 12%; on the screen only, never in a copy
+  phone-scan-loupe:
+    size: "120pt"                  # the corner editor's loupe: the picture 2.5× under the corner dragged, a phone-protect cross 22pt wide and 1.5pt thick, a 3pt white ring and a shadow of black 40%, radius 8, y 3, in the top corner away from the finger; the handles 22pt white circles ringed 3pt in phone-protect, 44pt to the finger; outside the page, black at 50%, its edges 2pt white
   draw-swatch:
     size: "18pt"                   # an ink, with a 1pt hairline of .primary at 18%; chosen: a 2pt accent ring 3pt out
   draw-handle:
@@ -2398,20 +2420,31 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     (`sweep.scan`): a capsule 96 by 2.5 pt of `phone-protect`, clear at
     both ends, with a glow of the same green at 70%, radius 5, fading in
     and out at the ends; never in a loop, and not at all with Reduce Motion.
-    Then "Scan a document" in title 2
-    bold over what it does in subheadline `.secondary`; and Scan Document
-    (`camera.viewfinder`), the green pill, with a light impact. Where the
-    iPhone cannot scan, the pill is dimmed over a footnote saying so.
+    Then "Scan a document" in title 2 bold over what it does in
+    subheadline `.secondary`; then Scan Document (`camera.viewfinder`), the
+    green pill, with a light impact, and under it Choose from Photos,
+    subheadline semibold in `phone-protect-tint`, as words 44 pt high: the
+    system's photo picker, twenty photos at most, in the order chosen. Where
+    the iPhone cannot scan, the pill is dimmed over a footnote saying so.
   - Scanning is the system's document camera (`VNDocumentCameraViewController`),
-    full screen. One page opens at once in Protect Picture; several wait
-    under "Scanned pages" (title 3 semibold, Clear on the trailing edge) as
-    the grid's square cards in the order scanned, a document's order. Each
-    card carries its number in caption 2 medium on an ultra-thin capsule
-    4 pt in at the bottom leading corner, and, once it was opened and its
-    copy is checked, the protected shield (white on a 22 pt
-    `phone-protect` circle, top trailing), which scales in. Holding a card
-    offers Remove (`trash`, destructive). A page opened opens again as it
-    was left (`ScannedPages` keeps its `ProtectSession`).
+    full screen; in a photo the page is found by Vision, and where Vision is
+    less than 65% sure, the corner editor (below) opens first. Each page is
+    made flat, upright, level, cleaned and checked off the main thread
+    (`ScannedPages`, `ScanCleaner`), one after another, with a light impact
+    as pages come and a warning haptic for a page to take again. The first
+    page opens at once in Protect Picture as Review (below) while it is
+    made ready; the pages wait under "Scanned pages" (title 3 semibold, Clear
+    on the trailing edge) as the grid's square cards in the order scanned, a
+    document's order: the cleaned page small, its top showing, a spinner
+    over it while it is made ready; its number in caption 2 medium on an
+    ultra-thin capsule 4 pt in at the bottom leading corner; once it was
+    opened and its copy is checked, the protected shield (white on a 22 pt
+    `phone-protect` circle, top trailing), which scales in, or where
+    something on it is wrong, `phone-scan-badge` there. Holding a card offers
+    Remove (`trash`, destructive). A page opened opens again as it was left
+    (`ScannedPages` keeps its `ProtectSession`). While pages are made ready
+    and the tab shows, a floating pill over its bottom says which ("Page 2
+    of 5 is being improved", digits rolling) beside a small spinner.
   - Under the cards, **Send to** (subheadline semibold, `.secondary`, the
     row 10 pt under it): the apps chosen (`SendToApps.swift`) as
     `phone-share-tile`s in a row that scrolls sideways from the screen's
@@ -2424,17 +2457,17 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     the share sheet, where the app is tapped, never a website; while the pages are covered, the
     app's icon dims under a white spinner and the others wait. Once they
     have gone, a success haptic.
-  - Under them, centred, Share Covered PDF (`doc.richtext`), the
-    green pill. While it works it says which page it covers ("Page 2 of
-    5", digits rolling) beside a white spinner, and Clear and Remove wait.
-    Then the share sheet opens with the PDF (`ScanPDF`, named "Snapfly"
-    and the date) and a success haptic; a page that cannot be covered, or
-    one opened whose copy is not checked yet, stops it with a note saying
-    which, and no PDF is made. Three footnotes in `.secondary`, 4 pt apart:
-    how each page is covered and that the PDF holds only pictures, what a
+  - Under them, centred, Save and Share (`square.and.arrow.up`), the green
+    pill, opens Save and Share (below) for the whole document. Three
+    footnotes in `.secondary`, 4 pt apart: how each page is covered, what a
     tap on an app does, then that pages stay only while the app is open.
-  - Then three steps, each an SF Symbol in `phone-protect`, body semibold,
-    24 pt wide, before subheadline `.secondary` words, 14 pt apart.
+  - Then four steps, each an SF Symbol in `phone-protect`, body semibold,
+    24 pt wide, before subheadline `.secondary` words, 14 pt apart: holding
+    the iPhone over the page (`doc.viewfinder`); "New:" in semibold
+    `.primary` before how the page is straightened and brightened like a
+    clean PDF with no text changed (`sun.max`); how private details are
+    covered (`eye.slash`); and checking the places, then copying, sharing or
+    saving the page as a PDF or a picture (`square.and.arrow.up`).
 - **Protected** (`ProtectedTab`), a large title: the last twelve screenshots
   protected, in the Photos tab's grid with the shield on each, over a
   footnote of how they are kept; with none, the system's empty state with
@@ -2762,6 +2795,68 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     Cancel. Share opens the system's share sheet with a PNG file of the copy
     alone, named by when the picture was taken, deleted once the sheet
     closes; Save to Files offers the same PNG under the same name.
+  - **A scanned page** (`ScanEditing.swift`) is reviewed here, titled
+    "Review", with Next (semibold) after the menu, which opens Save and
+    Share. While it is made ready, the status capsule says so
+    ("Straightening and brightening…"), or that it could not be read, with
+    Take Again. Once cleaned, it wipes in over the page as it came, once,
+    from the leading edge (`scan.wipe`), and then its covers sweep in as on
+    any picture. Under the page, its card (`phone-scan-card`): green once
+    the copy is checked ("Straightened and brightened, text unchanged. 3
+    private details covered.", and "Check 1 place." while one is); amber at
+    once where something is wrong, said once to VoiceOver, with Take Again
+    (by the camera for a camera's page, else from Photos) or Compare where
+    cleaning read less, its place outlined on the page (`phone-scan-issue`).
+    Under the card, the document's pages (`phone-scan-strip`, each read as
+    "Page 2 of 2, hard to read" and selected where it is open): a tap opens
+    one, dragged onto another it takes that one's place, held it offers
+    Turn, Crop and Delete Page, and VoiceOver moves it earlier or later; the
+    plus adds pages from the camera or from Photos, after the others, and
+    opens the first. Then the page's tools (`phone-scan-tools`): Compare
+    puts Before, the page straightened but not yet cleaned and without its
+    covers, on the leading side of the divider (`phone-scan-divider`) over
+    After, the cleaned page as it leaves, covers and all; one finger moves
+    the divider, or a tap puts it there, and two move the page; VoiceOver
+    reads one adjustable element, "Comparison of Before and After, 50%", in
+    steps of ten; choosing a tool ends it. The colours (Color with "Logos
+    stay in color", Grayscale, Black and white with "Smallest file, pale
+    stamps can go") change every page of the document, their covers kept.
+    Turning a page or cropping it finds its covers again; where something
+    was covered on it by hand, a dialog asks first ("Covers drawn by hand
+    go"). Delete asks too ("Delete page 2?"), and then the page in its place
+    opens, or the one before it; with none left, the Scan tab shows. The
+    tools to cover, the apps, the eye and the menu stay as on any picture.
+  - **The corner editor** (`ScanCornerEditor`), full screen on black with a
+    dark bar: the picture whole, the page's edges in white over the rest
+    dimmed, and its four corners as handles; while one is dragged, a loupe
+    (`phone-scan-loupe`) and a selection haptic. Cancel, Done (semibold,
+    dimmed while the corners make no page) and Whole Picture under a footnote
+    saying what to do; VoiceOver names each corner and moves it a little up,
+    down, left or right.
+- **Save and Share** (`ScanSaveSheet`) is a sheet as tall as what it holds
+  (the whole screen at the accessibility text sizes, where it scrolls), on
+  `systemGroupedBackground`, with Done: **Format** as two tiles side by side
+  on `secondarySystemGroupedBackground` with corners of 14 (PDF "A4, 2
+  pages", Picture "PNG, 2 files"), the one chosen ringed 2 pt in
+  `phone-protect-tint`, the other a 1 pt hairline; **Covers** as two rows in
+  one card: With Covers ("Private details stay covered", with Recommended
+  in caption semibold `phone-hide-accent` on a `phone-hide-accent-soft`
+  capsule), where every save starts, and Without Covers ("Only scanned
+  clean, for a tax adviser, say"), under which, while it is chosen, a card
+  of `phone-scan-warn` with its edge says "This file holds every private
+  detail. Share it only with people you trust.", read by VoiceOver with the
+  row itself; for a PDF, Searchable Text, a switch in `phone-protect` over
+  "Without the covered details" or "Holds all the text"; then the check line
+  in footnote `.secondary` ("Only straightened and brightened. No text, no
+  number changed." with `checkmark.seal` where every page read the same;
+  "Check the marked places." with an orange triangle where one read less),
+  and the places still to check. On the bar's material at the bottom, Copy,
+  Save and Share, 44 pt, Share in `phone-protect` with white words: a PDF is
+  saved to Files and pictures to Photos. While they work, which page is
+  covered; where pages are still made ready or one could not be read, the
+  bar says so instead and waits. Then a note and a success haptic; without
+  covers the words say so ("Copied, without covers") beside a plain
+  checkmark, never the protected shield.
 - **Details** (`ReviewSheet`) is a sheet at medium or large height, the
   picture still usable behind it at medium. First, while there are places
   Snapfly was not sure about, "To check" with "%d of %d checked" and a

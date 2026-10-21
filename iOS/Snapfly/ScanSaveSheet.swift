@@ -46,10 +46,20 @@ struct ScanSaveSheet: View {
     @State private var exporting: PDFFile?
     @State private var sharing: SharedFiles?
     @State private var note: (text: String, failed: Bool)?
+    /// What the sheet holds, and its buttons, so it is as tall as they are.
+    @State private var contentHeight: CGFloat = 520
+    @State private var waysHeight: CGFloat = 110
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     private var count: Int { store.pages.count }
+
+    /// As tall as what it holds, its title bar too; at the accessibility
+    /// text sizes, the whole screen, where it scrolls.
+    private var detent: PresentationDetent {
+        typeSize.isAccessibilitySize ? .large : .height(contentHeight + waysHeight + 60)
+    }
 
     var body: some View {
         NavigationStack {
@@ -61,9 +71,11 @@ struct ScanSaveSheet: View {
                     checked
                 }
                 .padding(16)
+                .measuredHeight($contentHeight)
             }
+            .scrollBounceBehavior(.basedOnSize)
             .background(Color(.systemGroupedBackground))
-            .safeAreaInset(edge: .bottom, spacing: 0) { ways }
+            .safeAreaInset(edge: .bottom, spacing: 0) { ways.measuredHeight($waysHeight) }
             .navigationTitle(L("Save and Share"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -74,7 +86,8 @@ struct ScanSaveSheet: View {
             .animation(reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.35, dampingFraction: 0.86), value: covered)
             .animation(reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.35, dampingFraction: 0.86), value: format)
         }
-        .presentationDetents([.large])
+        .presentationDetents([detent])
+        .presentationDragIndicator(.visible)
         .fileExporter(isPresented: Binding(get: { exporting != nil }, set: { if !$0 { exporting = nil } }),
                       document: exporting, contentType: .pdf, defaultFilename: ScannedPages.fileName) { result in
             switch result {
@@ -135,6 +148,11 @@ struct ScanSaveSheet: View {
 
     // MARK: Covers
 
+    /// Said under Without Covers while it is chosen.
+    private static var warning: String {
+        L("This file holds every private detail. Share it only with people you trust.")
+    }
+
     private var covers: some View {
         VStack(alignment: .leading, spacing: 10) {
             heading(L("Covers"))
@@ -146,7 +164,7 @@ struct ScanSaveSheet: View {
             .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             if !covered {
                 Label {
-                    Text(L("This file holds every private detail. Share it only with people you trust."))
+                    Text(Self.warning)
                         .fixedSize(horizontal: false, vertical: true)
                 } icon: {
                     Image(systemName: "exclamationmark.triangle.fill")
@@ -158,6 +176,8 @@ struct ScanSaveSheet: View {
                 .background(SnapflyTokens.scanWarn, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(SnapflyTokens.scanWarnEdge))
                 .transition(.opacity.combined(with: .move(edge: .top)))
+                // Read with Without Covers itself, so it is never missed.
+                .accessibilityHidden(true)
                 .accessibilityIdentifier("scan-uncovered-warning")
             }
         }
@@ -201,6 +221,7 @@ struct ScanSaveSheet: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(chosen ? [.isButton, .isSelected] : .isButton)
+        .accessibilityValue(!withCovers && chosen ? Self.warning : "")
         .accessibilityIdentifier(withCovers ? "scan-with-covers" : "scan-without-covers")
     }
 

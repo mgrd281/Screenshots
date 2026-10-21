@@ -19,11 +19,11 @@ import VisionKit
 /// check; only that copy ever leaves. The picture itself stays as it was.
 ///
 /// A scanned page is reviewed here too. Once cleaned, it wipes in over the
-/// page as it came, then its covers sweep in; a card under the title says
+/// page as it came, then its covers sweep in; a card under the page says
 /// what was done and covered, or what is wrong and where, outlined in
-/// orange on the page. Over the tools, the document's pages in a strip, and
-/// the page's own tools: Compare Before and After, Crop, Turn, the colours
-/// and Delete. Next opens Save and Share for the whole document.
+/// orange on the page. Under it, the document's pages in a strip, and the
+/// page's own tools: Compare Before and After, Crop, Turn, the colours and
+/// Delete. Next opens Save and Share for the whole document.
 struct ProtectView: View {
     @StateObject private var session: ProtectSession
     @ObservedObject private var sync = SyncCenter.shared
@@ -343,13 +343,12 @@ struct ProtectView: View {
     // MARK: The picture
 
     @ViewBuilder private func picture(chrome: UIEdgeInsets) -> some View {
-        // While a scanned page is compared, or its cleaning wipes in, the
-        // page with its covers laid over it, so they stay on either side.
-        let live = split != nil || sweeping
-        if let shown = showsOriginal || live ? session.original : session.copy ?? session.original ?? session.preview {
+        // While a scanned page's cleaning wipes in, the page alone: its
+        // covers sweep in after it.
+        if let shown = showsOriginal || sweeping ? session.original : session.copy ?? session.original ?? session.preview {
             MarkCanvas(image: shown, marks: showsOriginal || sweeping ? [] : session.plan.marks,
                        checking: Set(session.plan.marks.filter(session.plan.needsCheck).map(\.id)),
-                       isCopy: !showsOriginal && !live && session.copy != nil, tool: tool, selected: selected,
+                       isCopy: !showsOriginal && !sweeping && session.copy != nil, tool: tool, selected: selected,
                        markerWidth: markerWidth, eraserReach: eraserReach, chrome: chrome,
                        animated: !still, reveal: reveal, before: scanPage?.before,
                        split: showsOriginal ? nil : split, wipes: wipes, holdsBefore: scanPage?.shown == false,
@@ -436,35 +435,16 @@ struct ProtectView: View {
     // MARK: Over the picture
 
     /// Under the title: how the picture stands, the eye in line with the
-    /// apps, and how to use the tool just chosen. For a scanned page, once
-    /// its copy is checked, what was done to it and covered; what is wrong
-    /// with it under that; and Before and After over the page while they
-    /// are compared.
+    /// apps, Before and After over the page while they are compared, and
+    /// how to use the tool just chosen.
     private var top: some View {
         VStack(spacing: 6) {
-            VStack(spacing: 8) {
-                if let page = scanPage, page.state == .ready, page.issues.isEmpty, session.isReady {
-                    HStack(spacing: 8) {
-                        card(page)
-                            .frame(maxWidth: .infinity)
-                        eye
-                    }
-                    .padding(.leading, 16)
+            ZStack {
+                capsule
+                    .padding(.horizontal, Self.railEdge + AppRail.width + 8)
+                eye
+                    .frame(maxWidth: .infinity, alignment: .trailing)
                     .padding(.trailing, Self.railEdge)
-                } else {
-                    ZStack {
-                        capsule
-                            .padding(.horizontal, Self.railEdge + AppRail.width + 8)
-                        eye
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                            .padding(.trailing, Self.railEdge)
-                    }
-                }
-                if let page = scanPage, page.state == .ready, !page.issues.isEmpty {
-                    card(page)
-                        .padding(.horizontal, 16)
-                        .transition(.opacity)
-                }
             }
             .padding(.top, 6)
             .measuredHeight($statusHeight)
@@ -543,8 +523,15 @@ struct ProtectView: View {
         .padding(.bottom, 4)
     }
 
-    /// A scanned page's document in a strip, and the page's own tools.
+    /// Under a scanned page: once its copy is checked, what was done to it
+    /// and covered, or at once, what is wrong with it; then the document's
+    /// pages in a strip, and the page's own tools.
     @ViewBuilder private func pages(_ scan: ScanContext, _ page: ScannedPages.Page) -> some View {
+        if page.state == .ready, !page.issues.isEmpty || session.isReady {
+            card(page)
+                .padding(.horizontal, 16)
+                .transition(.opacity)
+        }
         ScanPageStrip(store: scans, current: scan.page, canScan: VNDocumentCameraViewController.isSupported,
                       open: { if $0 != scan.page { scan.open($0) } }, add: { add($0) },
                       turn: { reshape(.turn($0)) }, crop: { reshape(.crop($0)) },

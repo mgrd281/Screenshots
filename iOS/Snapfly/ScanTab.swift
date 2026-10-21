@@ -396,9 +396,10 @@ private struct PageCard: View {
                 } else if !page.issues.isEmpty {
                     Image(systemName: "exclamationmark")
                         .font(.caption.weight(.heavy))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.black.opacity(0.85))
                         .frame(width: 22, height: 22)
                         .background(Color.orange, in: Circle())
+                        .overlay(Circle().strokeBorder(.white, lineWidth: 1.5))
                         .padding(6)
                 }
             }

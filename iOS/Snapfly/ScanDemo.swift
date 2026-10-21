@@ -5,7 +5,8 @@ import Foundation
 /// (editor), comparing Before and After (compare), a second page blurred at
 /// its bottom (warning), Save and Share open (sheet) or without covers
 /// (uncovered), the pages in black and white (bw), corners to set by hand
-/// (corners), or the Scan tab with its pages (tab); `-SnapflyReduceMotion`
+/// (corners), the Scan tab with its pages (tab) or with none yet, for
+/// photos chosen from Photos (empty); `-SnapflyReduceMotion`
 /// plays it as Reduce Motion would. The photos are drawn here
 /// (`ScanSample`) and made ready as any photo is, where the page is in them
 /// already known. Nothing of it is in a release build.
@@ -33,7 +34,7 @@ enum ScanDemo {
     /// The photos: one, or two where the strip or the warning shows; for
     /// corners, without where the page is, to set it by hand.
     static func photos() -> [ScanPhoto] {
-        guard let page = ScanSample.page() else { return [] }
+        guard state != "empty", let page = ScanSample.page() else { return [] }
         let flaws: [ScanSample.Flaw]
         switch state {
         case "editor", "corners": flaws = [.none]

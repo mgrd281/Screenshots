@@ -74,7 +74,13 @@ final class ScanFixtureTests: XCTestCase {
         XCTAssertEqual(prepared.checked.issues, [], "nothing wrong with a sharp photo")
         let read = prepared.checked.reading.map(\.string).joined(separator: " ")
         for amount in ScanSample.amounts { XCTAssertTrue(read.contains(amount), "\(amount) is read after cleaning") }
+        // Grey print, as the labels and the address under the company are, still reads.
+        for word in ["Rechnungsnr", "Kundennr", "Beispielweg"] {
+            XCTAssertTrue(read.contains(word), "\(word), printed in grey, is read after cleaning")
+        }
         Self.keep(photo.image, "photo", longest: 1600)
+        // The photo whole, for Photos on the simulator, where the scan is made from it.
+        Self.keep(photo.image, "photo-full", longest: 4032)
         Self.keep(prepared.straightened, "before")
         Self.keep(prepared.cleaned, "after-color")
         Self.note("color", prepared)
@@ -107,6 +113,45 @@ final class ScanFixtureTests: XCTestCase {
         Self.keep(black.cleaned, "after-black-and-white")
         Self.note("gray", gray)
         Self.note("black-and-white", black)
+    }
+
+    func testColorKeepsTheLogosColor() async throws {
+        let color = try await cleaned()
+        let bitmap = try XCTUnwrap(ScanCleaner.bitmap(color.cleaned))
+        // Inside the teal logo, left of its letter, on the page as printed.
+        let x = 133 * bitmap.width / ScanSample.width, y = 164 * bitmap.height / ScanSample.height
+        var sums = (red: 0, green: 0, blue: 0)
+        for dy in -2...2 {
+            for dx in -2...2 {
+                let pixel = bitmap.color(x: x + dx, y: y + dy)
+                sums = (sums.red + Int(pixel.red), sums.green + Int(pixel.green), sums.blue + Int(pixel.blue))
+            }
+        }
+        let mean = (red: sums.red / 25, green: sums.green / 25, blue: sums.blue / 25)
+        XCTAssertGreaterThan(mean.green - mean.red, 40, "the logo stays teal: \(mean)")
+        XCTAssertGreaterThan(mean.blue - mean.red, 30, "the logo stays teal: \(mean)")
+    }
+
+    func testAResultPushedTooFarIsCaught() async throws {
+        let prepared = try await cleaned()
+        // The totals gone white, as too harsh a cleaning leaves faint print.
+        var bitmap = try XCTUnwrap(ScanCleaner.bitmap(prepared.cleaned))
+        let left = bitmap.width * 6 / 10, top = bitmap.height * 44 / 100, bottom = bitmap.height * 52 / 100
+        for y in top..<bottom {
+            for x in left..<bitmap.width {
+                let i = (y * bitmap.width + x) * 4
+                bitmap.pixels[i] = 255
+                bitmap.pixels[i + 1] = 255
+                bitmap.pixels[i + 2] = 255
+            }
+        }
+        let whitened = try XCTUnwrap(ScanCleaner.image(bitmap, gray: false))
+        let checked = await ScanCleaner.check(before: prepared.straightened, after: whitened, mode: .color, photo: nil)
+        XCTAssertEqual(checked.textKept, false)
+        let lost = try XCTUnwrap(checked.issues.first { $0.kind == .lessText }, "\(checked.issues)")
+        let area = try XCTUnwrap(lost.area)
+        // From 0 to 1 from the bottom left: where the totals were.
+        XCTAssertTrue(area.intersects(CGRect(x: 0.6, y: 0.48, width: 0.4, height: 0.08)), "\(area)")
     }
 
     func testABlurredBottomAndAReflectionAreSaidForWhereTheyAre() async throws {

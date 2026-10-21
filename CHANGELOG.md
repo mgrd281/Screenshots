@@ -6,6 +6,23 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, Scan cleans each page as a good scanner does, from the
+  camera or from photos you choose in Photos: the page is found and cut
+  from the photo (its corners set by hand, with a loupe, where Snapfly is
+  not sure), made flat in its own shape, turned upright and levelled, its
+  light made even, the paper white and the print dark and sharp. Only the
+  picture as a whole changes: nothing is drawn, filled in, taken away or
+  guessed. Each page is read before and after, and where a number is no
+  longer read, the text is blurred, a reflection hides it, the page is
+  small in the picture or the lens looks smudged, an orange card says where,
+  with Take Again; then the covers are found on the cleaned page. In
+  Review, the cleaned page wipes in over the photo and its covers sweep in;
+  Compare shows Before and After either side of a divider; the document's
+  pages sit in a strip, to reorder, add or delete; and Color, Grayscale or
+  Black and White changes every page. Save and Share makes one A4 PDF,
+  whose text you can find and copy without what is covered, or a PNG for
+  each page, with covers, where every save starts, or without, which says
+  the file holds every private detail.
 - Studio, for screen recordings on the Mac. A recording opens in it once it
   hangs, already zoomed in where you clicked and typed, following the
   pointer there, with a ring at each click. Draw arrows, boxes, circles,

@@ -83,8 +83,8 @@ struct MarkCanvas: UIViewRepresentable {
     var animated = true
     var reveal: Reveal?
     /// A scanned page as it was before it was cleaned: shown on the leading
-    /// side of the divider while comparing, and under the wipe; nil for a
-    /// screenshot.
+    /// side of the divider while comparing, without the covers, which show
+    /// on the cleaned side, and under the wipe; nil for a screenshot.
     var before: UIImage? = nil
     /// Where the divider stands while Before and After are compared, from 0
     /// to 1 from the leading edge; nil while they are not.
@@ -134,9 +134,9 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     private let content = UIView()
     private let picture = UIImageView()
     private let overlay = MarksView()
-    /// A scanned page before it was cleaned, over the picture where its
-    /// mask lets it show: on the leading side of the divider, or all of it
-    /// until the wipe has passed.
+    /// A scanned page before it was cleaned, over the picture and its
+    /// covers where its mask lets it show: on the leading side of the
+    /// divider, or all of it until the wipe has passed.
     private let before = UIImageView()
     private let beforeMask = CALayer()
     private let scanMarks = ScanMarksView()
@@ -186,8 +186,8 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         backgroundColor = .clear
         addSubview(content)
         content.addSubview(picture)
-        content.addSubview(before)
         content.addSubview(overlay)
+        content.addSubview(before)
         content.addSubview(scanMarks)
         before.contentMode = .scaleToFill
         before.layer.cornerRadius = 12

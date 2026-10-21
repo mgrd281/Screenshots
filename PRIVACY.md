@@ -122,10 +122,15 @@ or turn on syncing with your iPhone (below).
   pictures in memory, never on disk, and forgets it when the iPhone app goes
   to the background, unless you turn on Faster picture processing (below). The iPhone app notes which screenshots you protected
   lately by their place in Photos alone, to show them again; nothing of what
-  they show. A page scanned with the iPhone's camera stays in memory while
-  the app is open and is never saved unless you save its covered copy, or
-  the covered PDF of the pages, which holds pictures of the covered pages
-  and no text; the camera is used only while you scan. A tap on an app
+  they show. A page scanned with the iPhone's camera, or a photo of a page
+  you choose in Photos, is straightened, brightened and checked on the
+  iPhone, stays in memory while the app is open and is never saved unless
+  you save it: its covered copy, or the pages as one PDF or a picture each,
+  with covers, as every save starts, or, if you choose so, without them,
+  when the file holds every private detail. A covered PDF's text to find
+  and copy is read from the covered pages, so nothing under a cover is in
+  it. The camera is used only while you scan, and Photos gives Snapfly only
+  the photos you choose. A tap on an app
   under the pages or in Protect Picture puts the covered copy on the
   clipboard and opens that app, or its website; Snapfly sends nothing
   itself, and it reaches the app only when you paste it there. The share extension, which covers a
@@ -209,11 +214,16 @@ nie auf der Festplatte, damit ein Bild nach einer geänderten Einstellung nicht
 noch einmal gelesen werden muss; die iPhone-App vergisst ihn, sobald sie in den
 Hintergrund geht. Welche Bildschirmfotos du zuletzt geschützt hast, merkt sich
 die iPhone-App nur über ihre Kennung in Fotos, nichts von ihrem Inhalt. Eine
-mit der Kamera des iPhones gescannte Seite bleibt nur im Arbeitsspeicher,
-solange die App offen ist, und wird nie gesichert, außer du sicherst ihre
-abgedeckte Kopie oder das abgedeckte PDF der Seiten, das nur Bilder der
-abgedeckten Seiten enthält, keinen Text; die Kamera läuft nur, während du
-scannst. Tippst du unter den Seiten oder in „Bild schützen“ auf eine App,
+mit der Kamera des iPhones gescannte Seite oder ein Foto einer Seite, das du
+in Fotos auswählst, wird auf dem iPhone gerade gerückt, aufgehellt und
+geprüft, bleibt nur im Arbeitsspeicher, solange die App offen ist, und wird
+nie gesichert, außer du sicherst sie: ihre abgedeckte Kopie oder die Seiten
+als ein PDF oder je ein Bild, mit Abdeckung, wie jedes Sichern beginnt, oder,
+wenn du es so wählst, ohne, dann mit allen privaten Angaben. Der
+durchsuchbare Text eines abgedeckten PDFs wird von den abgedeckten Seiten
+gelesen, darum steht nichts darin, was abgedeckt ist. Die Kamera läuft nur,
+während du scannst, und Fotos gibt Snapfly nur die Fotos, die du auswählst.
+Tippst du unter den Seiten oder in „Bild schützen“ auf eine App,
 legt Snapfly die abgedeckte Kopie in die Zwischenablage und öffnet die App
 oder ihre Website; Snapfly selbst sendet nichts, sie kommt erst dort an,
 wenn du sie einsetzt. Die
