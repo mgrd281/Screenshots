@@ -2396,9 +2396,11 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     bring them back for 30 days.
 - **More** is Settings as a tab (`SettingsView.swift`, `MoreParts.swift`,
   at the owner's request, October 2026): a short overview with a page for
-  each part, on `phone-hide-ground` with its bar of the same ground, so no
-  words show through it. A large title "More", no Done; the pages it opens
-  have an inline title on the same ground, and no tab bar under them.
+  each part, on `phone-hide-ground`. A large title "More" on the system's
+  own bar (a solid bar under a large title hides it on iOS 26), no Done;
+  the pages it opens have an inline title on a bar of the same ground, so
+  no words show through it, and no tab bar under them. At the
+  accessibility sizes the hero's badge goes under its state.
   16pt in at the sides, its parts 32pt apart. Its tokens are `phone-hide-*`
   and `phone-more-*`, one accent only: every symbol on a mint
   `phone-symbol-tile`, but the grey ones in Features.

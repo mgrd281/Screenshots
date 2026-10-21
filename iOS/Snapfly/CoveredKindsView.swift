@@ -273,7 +273,7 @@ struct PresetControl: View {
                         .font(.subheadline.weight(on ? .semibold : .medium))
                         .foregroundStyle(SnapflyTokens.hideText)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.8)
+                        .minimumScaleFactor(0.5)
                         .padding(.horizontal, 8)
                         .frame(maxWidth: .infinity, minHeight: 36)
                         .background {

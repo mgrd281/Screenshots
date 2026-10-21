@@ -42,9 +42,8 @@ struct SettingsView: View {
             .background(SnapflyTokens.hideGround.ignoresSafeArea())
             .navigationTitle(inTab ? L("More") : L("Settings"))
             .navigationBarTitleDisplayMode(inTab ? .large : .inline)
-            // The bar is the page's own ground, so no words show through it.
-            .toolbarBackground(SnapflyTokens.hideGround, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
+            // The large title stays the system's: a solid bar under it hides
+            // it on iOS 26. The pages under it have their own solid bar.
             .toolbar {
                 if !inTab {
                     ToolbarItem(placement: .confirmationAction) {
@@ -114,7 +113,9 @@ struct SettingsView: View {
         let summary = store.summary
         let off = summary.isOff
         return VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 8) {
+            // The badge beside the state, or under it at the largest sizes.
+            AnyLayout(typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+                      : AnyLayout(HStackLayout(spacing: 8))) {
                 Label {
                     Text(off ? L("Protection Off") : L("Protection On"))
                 } icon: {
@@ -122,7 +123,7 @@ struct SettingsView: View {
                 }
                 .font(.subheadline.weight(.semibold))
                 .contentTransition(.opacity)
-                Spacer(minLength: 8)
+                if !typeSize.isAccessibilitySize { Spacer(minLength: 8) }
                 MoreBadge(title: summary.presetTitle, ground: .white.opacity(0.16), ink: .white)
                     .contentTransition(.opacity)
             }
@@ -195,6 +196,7 @@ struct SettingsView: View {
                 Text(value)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white)
+                    .minimumScaleFactor(0.8)
                     .contentTransition(.opacity)
             }
             .lineLimit(1)
