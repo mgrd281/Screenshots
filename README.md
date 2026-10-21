@@ -406,13 +406,13 @@ username, a total, a date, a link, a medicine and a QR code. It says what
 was covered there, and what you checked that the sample does not show. It
 speaks for that sample only; a real screenshot can read differently.
 
-Under Also hide on the Mac, or Always Hide on the iPhone (below), add your
-own details first: your name, your address, your bank cards and your bank
-accounts, each in a sheet of its own (on the Mac: Name; Street and house
-number, Postcode and Town; Card number; IBAN, each with a name for it if
-you like; on the iPhone: First Name and Last Name; Street, Postcode and
-Town; Card Number; IBAN). They are covered whatever kinds are checked, and
-never left to check, in these forms:
+Under Always Hide, a pane of its own in Settings on the Mac and under More
+› Advanced on the iPhone (below), add your own details first: your name,
+your address, your bank cards and your bank accounts, each in a sheet of
+its own (First Name and Last Name; Street and No., Postcode and Town; Card
+number; IBAN; on the Mac a card or an account with a name for it if you
+like). The forms below are the matcher's; the rows show a detail alone. They are covered whatever
+kinds are checked, and never left to check, in these forms:
 
 | Detail | Covered |
 |---|---|
@@ -436,10 +436,11 @@ word before there were details moves to the name detail by itself.
 Then rules of your own: a word, like your shop's name, covered wherever it
 appears, in capitals or not; a label, like Customer number, whose value is
 covered: Automatic takes the rest of its line, or the line below when
-nothing follows it, and on the iPhone a label can keep to Rest of the Line
-or Next Line instead; or, for whoever knows them, a pattern, made on the
-Mac. On the iPhone each rule has its own switch, and one turned off covers
-nothing until it is on again. Your details and
+nothing follows it, or a label can keep to Same Line or Next Line;
+or, for whoever knows them, a pattern, made on the Mac. A rule's sheet
+covers a made-up example with it as it is typed. Each rule has its own
+switch, and one turned off covers nothing until it is on again; the
+section says how many are on. Your details and
 rules apply to everything that leaves the line, and to the copies saved
 from Finder. A word that is a person's name also helps Snapfly tell that
 name wherever it is written as a name for sure: covered as Names, Patient
@@ -1147,24 +1148,24 @@ watch the screen, so there is no line there. What it keeps is the covering:
   this iPhone. Under Advanced, Always Hide (below), and how to set up the
   double tap on the back.
 - **Always Hide**, under More › Advanced, is what Snapfly covers in every
-  picture besides the kinds chosen. Your Details lists your name, address,
-  cards and accounts, each with its kind's icon; a name shows two of the
-  ways it is also found (Also finds) and how many more, a card or an
-  account its last four digits alone. Your Rules lists words and labels,
-  with how many are on: a label shows what it covers ("Customer
-  number: ▇▇▇"), and each rule has its own switch. Add Detail opens a sheet with
-  the four kinds as tiles: a name's First Name and Last Name show, as they
-  are typed, every form it is found in, from the same list the covering
-  uses; Add waits for what can be kept: a name, a street or a postcode with
-  its town, a card that adds up, a valid IBAN. Add Rule
-  opens a sheet for a Word or After Label, a label's reach (Automatic, Rest
-  of the Line, Next Line) and an example that covers what is typed as it
-  is typed. Opening a sheet puts the cursor in its first field, and Return
-  goes on to the next, then adds. Edit reorders and deletes, and a swipe
-  deletes too. With nothing yet, it offers your name first and the two
-  kinds of rule. The strip at the top says what is true in code: only on
-  this iPhone, never sent. It does not say "no backup", since a backup
-  holds the details, sealed to this iPhone.
+  picture besides the kinds chosen. Under its title, one quiet line says
+  what is true in code: only on this iPhone, never sent. It does not say
+  "no backup", since a backup holds the details, sealed to this iPhone.
+  Your Details lists your name, address, cards and accounts, each on one
+  line with its kind's icon, a card or an account by its last four digits
+  alone ("•••• 4242"). Your Rules lists words and labels, each with its
+  kind, what it covers and its own switch, and says how many are on. The
+  sheets are as tall as what they hold and sit whole above the keyboard:
+  Add Detail lists the four kinds, and one chosen moves on to its fields,
+  with a way back; Add waits for what can be kept: a name, a street or a
+  postcode with its town, a card that adds up, a valid IBAN. Add Rule
+  takes a Word or After Label, a label's reach (Automatic, Same Line,
+  Next Line), and shows one line of an example covered as you type; an
+  empty rule can't be saved. Opening a sheet puts the cursor in its first
+  field, and Return goes on to the next, then adds. Edit reorders and
+  deletes, and a swipe deletes too. With nothing yet, it offers your name
+  first and the two kinds of rule. Empty rules that Settings once kept
+  are taken out as Snapfly reads the rules.
 - **Faster picture processing** is off until you turn it on, after a page
   that says what it does. It reads your pictures from the last 60 days on
   the iPhone ahead of time, newest first: the screenshots only, every photo
@@ -1307,8 +1308,10 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/OwnRules.swift` | The owner's own rules, a word, a label or a pattern, kept with the settings, each on or off and a label with its reach; and their own details, a name, an address, a bank card or account, kept in the device's keychain alone (`OwnDetailStore`, with what may be promised of it) |
 | `Shared/OwnDetails.swift` | The owner's details found in the ways they are written (a name in every form, from the one list the iPhone's sheet shows, a street with its number and a postcode with its town, a card's number whole or by its last four digits, an IBAN with or without spaces and a German or Austrian account's number, across a line break and with one character misread), hidden before words go to the AI assistant, and checked, grouped, masked and shown as they are typed (tested on Linux) |
 | `Shared/RuleSample.swift` | The example in a rule's sheet: a few made-up lines covered by the engine itself with the rule as typed (tested on Linux) |
+| `AlwaysHidePane.swift` | Always Hide on the Mac, a pane of its own in Settings: the details and rules as rows, a switch for each rule, and the sheets to add or change either, a rule's example shown as typed |
+| `Shared/HideParts.swift` | What Always Hide shows on both: each kind of detail's colour, a rule's words and symbol, and words with some of them covered |
 | `iOS/Snapfly/AlwaysHide.swift` | Always Hide on the iPhone (More › Advanced): the details and rules as rows, the privacy strip as the keychain code allows, rules turned on and off, Edit and a swipe to delete, the screen with nothing yet, and the made-up set the simulator's frames and UI tests open (`-SnapflyAlwaysHide`, debug builds only) |
-| `iOS/Snapfly/AlwaysHideSheets.swift` | Always Hide's sheets: New Detail with the four kinds, a name's forms as typed and the checks before Add; New Rule with Word or After Label, a label's reach and the example covered as typed |
+| `iOS/Snapfly/AlwaysHideSheets.swift` | Always Hide's sheets, as tall as what they hold: the four kinds, then a kind's fields and the checks before Add; New Rule with Word or After Label, a label's reach and a line of an example covered as typed |
 | `iOS/Snapfly/OwnDetailsSettings.swift` | Your Name's row under Settings › People, and the tile each kind of detail is shown with |
 | `iOS/SnapflyUITests` | Always Hide driven on the simulator in German: a name added, both kinds of rule, a rule off and on, a swipe to delete, and the screen with nothing yet |
 | `scripts/always-hide-checks.sh` | Runs those UI tests for the Always Hide Checks workflow and keeps frames of the screen and each sheet, light and dark, at the largest text sizes and in Arabic and English, on the newest iPhone and the smallest, for the `always-hide-captures` pre-release |

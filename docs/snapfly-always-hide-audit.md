@@ -222,7 +222,57 @@ option and the default for every rule kept before.
   makes them.
 - **A card's or an account's own name** ("Girokonto") is kept and shown in
   its row, but the new sheet has no field for it.
-- **The Mac's sheet** still says a detail is "covered however it is
-  written" (`OwnDetails.note(for:)`, shown on the Mac alone). The iPhone's
-  sheets and footer no longer promise that. Outside this screen; for the
-  owner to decide.
+
+## 6. The Mac, after
+
+At the owner's request, the Mac followed in a pull request of its own:
+
+- Always Hide is a pane of its own in Settings
+  (`Sources/Tendedero/AlwaysHidePane.swift`), taken out of Privacy.
+- It shows the same rows, switches and "N active" as the iPhone, and sheets
+  with First Name and Last Name, a label's reach and the live example.
+- The footer and the sheet no longer promise "wherever and however".
+  `OwnDetails.note(for:)`, which said it, is gone.
+- What both apps draw alike is in `Sources/Tendedero/Shared/HideParts.swift`.
+
+## 7. Fix round 1 (from the owner's device)
+
+### Why two rules had no words
+
+Settings once added a rule's row the moment Add Rule was tapped, on the
+iPhone (`AdvancedSettings`, before) and on the Mac (`Preferences.addRule`,
+before), as `OwnRule()` with no text, and kept it with the settings. The
+old screens showed such rows as empty fields and the covering skipped them
+(`isBlank`). The new screen read every kept rule:
+
+- the empty rows became rules with no title, their switches on, since
+  `isEnabled` decodes as true;
+- a label's chip showed ": 00000";
+- "N aktiv" counted rules that cover something (`isActive`, which leaves
+  empty ones out), so it said "0 aktiv" beside two switches that were on.
+
+### What was fixed
+
+- `OwnRules.load` takes empty rules out and writes the settings back
+  without them. `OwnRules.save` and `OwnDetailStore` never keep one.
+- `OwnRule.canSave` is what both apps' sheets ask before Save, and what the
+  iPhone's store asks before it keeps anything.
+- "N aktiv" is `OwnRules.activeCount`: the rules switched on.
+- Tests: `AlwaysHideTests.testEmptyRulesKeptBeforeAreTakenOutAndTheOthersStay`,
+  `testAnEmptyRuleIsNeverSaved` and `testTheActiveCountIsTheRulesSwitchedOn`.
+
+### The screen and its sheets
+
+- **The overview:**
+  - an inline title on an opaque bar, and Edit as a plain button;
+  - the privacy banner is now one quiet line;
+  - no variant chips;
+  - 64 pt rows with values on one line;
+  - the system switch in the accent;
+  - plain pluses.
+- **The sheets:**
+  - as tall as their content, with nothing in them scrolling;
+  - a close button;
+  - the list of kinds first, then the kind's fields;
+  - no variants card;
+  - a readable button while it waits.

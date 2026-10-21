@@ -7,16 +7,24 @@ keeps a download of each version.
 ## 1.1.0
 
 - On the iPhone, Also hide is now Always Hide, under More › Advanced, and
-  shows at a glance what is covered in every picture. Your details stand as
-  rows with their kind's icon: a name with two of the ways it is also
-  found, a card or an IBAN by its last four digits alone. Your rules have a
-  switch each and say how many are on, and a label shows what it covers.
-  A new detail is chosen by its kind, a name typed as first and last name,
-  with every form it is found in shown as you type it; a new rule is a word
-  or comes after a label, with an example covered as you type. A label
-  covers what follows it, or the line below when nothing does, as before,
-  or always the rest of its line or always the next line. Edit reorders
-  and deletes, and a swipe deletes too.
+  shows at a glance what is covered in every picture, with one quiet line
+  on what keeps it private. Your details stand as rows with their kind's
+  icon, a card or an IBAN by its last four digits alone. Your rules have a
+  switch each and say how many are on. Its sheets are just as tall as what
+  they hold and sit whole above the keyboard: a new detail is chosen from
+  a list of the four kinds, a name typed as first and last name; a new
+  rule is a word or comes after a label, with one line of an example
+  covered as you type. A label covers what follows it, or the line below
+  when nothing does, as before, or always the same line or always the next
+  line. Edit reorders and deletes, and a swipe deletes too. Empty rules
+  that Settings once kept, shown as rules without a word, are gone, and an
+  empty rule can no longer be saved.
+- On the Mac, your details and rules have a pane of their own in
+  Settings, Always Hide, as on the iPhone: each detail with its kind's
+  colour, a card or an IBAN by its last four digits; each rule with what
+  it covers and a switch, and how many are on. A name is typed as first
+  and last name; a rule's sheet covers an example as you type and lets a
+  label keep to the same line or the next line.
 - Your details and rules are covered for sure, never marked to check. A
   name, a card's number or an IBAN broken over two lines is covered, and
   so is one with a letter misread; what your rules cover is hidden from the

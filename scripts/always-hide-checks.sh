@@ -13,7 +13,7 @@ derived=build/always-hide
 bundle=de.ghazarian.Snapfly
 mkdir -p "$out"
 
-# The newest iPhone the runner has, a Pro where there is one.
+# The newest iPhone the runner has, the largest: a Pro Max where there is one.
 device=$(xcrun simctl list devices available --json | python3 -c '
 import json, sys
 best = None
@@ -25,7 +25,7 @@ for runtime, devices in json.load(sys.stdin)["devices"].items():
         name = device["name"]
         if not name.startswith("iPhone"):
             continue
-        score = (version, "Pro" in name and "Max" not in name, name)
+        score = (version, "Pro Max" in name, "Plus" in name or "Air" in name, name)
         if best is None or score > best[0]:
             best = (score, device["udid"], name)
 print(best[1])
@@ -33,6 +33,12 @@ print(best[2], file=sys.stderr)
 ')
 xcrun simctl boot "$device" || true
 xcrun simctl bootstatus "$device" -b
+# The keyboard's first-run tip would sit over the sheets.
+quiet_keyboard() {
+  xcrun simctl spawn "$1" defaults write com.apple.keyboard.preferences DidShowContinuousPathIntroduction -bool true || true
+  xcrun simctl spawn "$1" defaults write com.apple.keyboard.preferences DidShowGestureKeyboardIntroduction -bool true || true
+}
+quiet_keyboard "$device"
 xcrun simctl status_bar "$device" override --time 9:41 --dataNetwork wifi --wifiMode active --wifiBars 3 \
   --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100
 
@@ -59,17 +65,24 @@ shot() {
   xcrun simctl ui "$on" appearance "$appearance"
   xcrun simctl terminate "$on" "$bundle" >/dev/null 2>&1 || true
   xcrun simctl launch "$on" "$bundle" "${arguments[@]}" >/dev/null
-  sleep 4
+  sleep 5
   xcrun simctl io "$on" screenshot "$out/$name.png" >/dev/null
 }
 
-states=(filled empty editing name address card account editCard word label labelNext)
+# Once to warm up: a first launch takes longer than the frame waits.
+xcrun simctl launch "$device" "$bundle" -SnapflyAlwaysHide filled >/dev/null
+sleep 10
+xcrun simctl terminate "$device" "$bundle" >/dev/null 2>&1 || true
+
+states=(filled empty editing picker name address card account editCard word label labelNext)
 for state in "${states[@]}"; do shot "$device" "de-light-$state" "$state" light de; done
 for state in "${states[@]}"; do shot "$device" "de-dark-$state" "$state" dark de; done
 for state in "${states[@]}"; do shot "$device" "de-xxxl-$state" "$state" light de UICTContentSizeCategoryXXXL; done
-shot "$device" "de-accessibility-xxxl-filled" filled light de UICTContentSizeCategoryAccessibilityXXXL
-shot "$device" "de-accessibility-xxxl-name" name light de UICTContentSizeCategoryAccessibilityXXXL
+for state in "${states[@]}"; do
+  shot "$device" "de-accessibility-xxxl-$state" "$state" light de UICTContentSizeCategoryAccessibilityXXXL
+done
 shot "$device" "ar-light-filled" filled light ar
+shot "$device" "ar-light-picker" picker light ar
 shot "$device" "ar-light-name" name light ar
 shot "$device" "en-light-filled" filled light en
 
@@ -98,10 +111,13 @@ if [ -n "$small" ] && [ "$small" != "$device" ]; then
   (
     xcrun simctl boot "$small" || true
     xcrun simctl bootstatus "$small" -b
+    quiet_keyboard "$small"
     xcrun simctl status_bar "$small" override --time 9:41 --batteryState charged --batteryLevel 100 || true
     xcrun simctl install "$small" "$app"
+    xcrun simctl launch "$small" "$bundle" -SnapflyAlwaysHide filled >/dev/null
+    sleep 10
     for state in "${states[@]}"; do shot "$small" "de-small-$state" "$state" light de; done
-    shot "$small" "de-small-dark-filled" filled dark de
+    for state in "${states[@]}"; do shot "$small" "de-small-dark-$state" "$state" dark de; done
     shot "$small" "de-small-xxxl-filled" filled light de UICTContentSizeCategoryXXXL
     shot "$small" "de-small-xxxl-name" name light de UICTContentSizeCategoryXXXL
   ) || echo "The smallest iPhone could not be captured." >&2

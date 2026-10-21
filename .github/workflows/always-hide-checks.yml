@@ -18,6 +18,7 @@ on:
       - "Sources/Tendedero/Shared/OwnRules.swift"
       - "Sources/Tendedero/Shared/OwnDetails.swift"
       - "Sources/Tendedero/Shared/RuleSample.swift"
+      - "Sources/Tendedero/Shared/HideParts.swift"
       - "scripts/always-hide-checks.sh"
       - ".github/workflows/always-hide-checks.yml"
   workflow_dispatch:

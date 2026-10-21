@@ -37,7 +37,7 @@ struct OwnNameRow: View {
 struct OwnDetailTile: View {
     let kind: OwnRule.Kind
     /// Its side at the body's text size.
-    static let base: CGFloat = 32
+    static let base: CGFloat = 36
     @ScaledMetric(relativeTo: .body) private var size = OwnDetailTile.base
 
     var body: some View {

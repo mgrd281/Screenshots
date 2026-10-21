@@ -38,8 +38,8 @@ or turn on syncing with your iPhone (below).
   Requests to OpenAI ask it not to store them for later retrieval. What they
   do with it is set by their own privacy policies and your account with them;
   they bill each request to that account. Nothing of it goes to the developer.
-- **Your own details, only if you add them.** Under Also hide on the Mac,
-  or Always Hide on the iPhone, you may add your name, your address, bank
+- **Your own details, only if you add them.** Under Always Hide, on the
+  Mac and the iPhone, you may add your name, your address, bank
   cards and bank accounts, so Snapfly covers them in the ways they are
   written. They are kept in the keychain of the Mac or iPhone you add them
   on, on that device alone and never in iCloud. A backup of the iPhone
@@ -169,7 +169,7 @@ Bildschirmfotos nur, wenn du „Mehr finden mit Claude“ unter Datenschutz
 einschaltest. Auf dem iPhone schickt „Erklären“ in „Bild schützen“ nur die
 geschützte Kopie, nie das Original, und deine Fragen dazu, und nur, wenn du
 darauf tippst. Der Schlüssel bleibt im Schlüsselbund deines Macs oder iPhones. Deine eigenen
-Angaben unter „Außerdem verbergen“ auf dem Mac und „Immer verbergen“ auf dem iPhone, also Name,
+Angaben unter „Immer verbergen“ auf dem Mac und dem iPhone, also Name,
 Adresse, Bankkarten und Bankkonten, bleiben im Schlüsselbund des Geräts, auf dem du sie einträgst,
 und nie in iCloud; ein Backup des iPhones enthält sie nur versiegelt für genau dieses iPhone, kein
 anderes Gerät kann sie öffnen. Sie werden nie gesendet, und bevor die Wörter eines Bildschirmfotos

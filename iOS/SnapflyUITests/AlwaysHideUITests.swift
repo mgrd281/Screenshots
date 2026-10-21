@@ -1,9 +1,11 @@
 import XCTest
 
 /// Always Hide driven on the simulator as the owner would use it, in
-/// German: adding a name, both kinds of rule, turning a rule off, deleting
-/// with a swipe, and the screen with nothing yet. The app holds a made-up
-/// set in memory alone (`-SnapflyAlwaysHide`), so nothing is kept.
+/// German: adding a name, choosing a kind from the list and going back,
+/// both kinds of rule, an empty rule that cannot be saved, turning a rule
+/// off, deleting with a swipe, and the screen with nothing yet. The app
+/// holds a made-up set in memory alone (`-SnapflyAlwaysHide`), so nothing
+/// is kept.
 final class AlwaysHideUITests: XCTestCase {
     override func setUp() {
         continueAfterFailure = false
@@ -27,13 +29,17 @@ final class AlwaysHideUITests: XCTestCase {
         return XCTWaiter.wait(for: [settled], timeout: timeout) == .completed
     }
 
-    private func hasFocus(_ element: XCUIElement, timeout: TimeInterval = 3) -> Bool {
+    private func hasFocus(_ element: XCUIElement, timeout: TimeInterval = 6) -> Bool {
         let focused = expectation(for: NSPredicate(format: "hasKeyboardFocus == true"), evaluatedWith: element)
         return XCTWaiter.wait(for: [focused], timeout: timeout) == .completed
     }
 
-    /// Scrolls until the element can be tapped, as a finger would: rows
-    /// lower down, or under a sheet's button over the keyboard.
+    private func gone(_ element: XCUIElement, timeout: TimeInterval = 5) -> Bool {
+        let away = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: element)
+        return XCTWaiter.wait(for: [away], timeout: timeout) == .completed
+    }
+
+    /// Scrolls until the element can be tapped, as a finger would.
     private func reveal(_ element: XCUIElement, in container: XCUIElement) {
         for _ in 0..<5 where !(element.exists && element.isHittable) {
             container.swipeUp(velocity: .slow)
@@ -49,7 +55,7 @@ final class AlwaysHideUITests: XCTestCase {
         XCTAssertFalse(app.buttons.matching(identifier: "always-hide-detail").firstMatch.exists)
     }
 
-    func testANameIsAddedWithTheWaysItIsAlsoFound() {
+    func testANameIsAddedFromItsTwoFields() {
         let app = launch("empty")
         let add = app.buttons["always-hide-add-name"]
         XCTAssertTrue(add.waitForExistence(timeout: 15))
@@ -62,20 +68,35 @@ final class AlwaysHideUITests: XCTestCase {
         let surname = app.textFields["always-hide-field-surname"]
         XCTAssertTrue(hasFocus(surname), "Return goes on to the next field")
         surname.typeText("Mustermann")
-        let variants = app.descendants(matching: .any)["always-hide-variants"]
-        XCTAssertTrue(variants.waitForExistence(timeout: 2))
-        XCTAssertTrue(variants.label.contains("MUSTERMANN, Max"), variants.label)
-        XCTAssertTrue(variants.label.contains("M. Mustermann"), variants.label)
         XCTAssertTrue(app.buttons["always-hide-save-detail"].isEnabled)
         // Return on the last field adds it.
         surname.typeText("\n")
         let row = app.buttons.matching(identifier: "always-hide-detail").firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 5))
         XCTAssertTrue(row.label.contains("Max Mustermann"), row.label)
-        XCTAssertTrue(row.label.contains("MUSTERMANN, Max"), "the row says how else it is found: \(row.label)")
     }
 
-    func testAWordAndALabelAreAddedAsRules() {
+    func testAKindIsChosenFromTheListAndTheWayBackLeadsToIt() {
+        let app = launch("filled")
+        let add = app.buttons["always-hide-add-detail"]
+        XCTAssertTrue(add.waitForExistence(timeout: 15))
+        add.tap()
+        let address = app.buttons["always-hide-kind-address"]
+        XCTAssertTrue(address.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["always-hide-kind-name"].exists)
+        XCTAssertTrue(app.buttons["always-hide-kind-card"].exists)
+        XCTAssertTrue(app.buttons["always-hide-kind-account"].exists)
+        address.tap()
+        let street = app.textFields["always-hide-field-street"]
+        XCTAssertTrue(street.waitForExistence(timeout: 5))
+        XCTAssertTrue(hasFocus(street), "the kind's first field is focused")
+        app.buttons["always-hide-back"].tap()
+        XCTAssertTrue(app.buttons["always-hide-kind-address"].waitForExistence(timeout: 5), "back at the list")
+        app.buttons["always-hide-close"].tap()
+        XCTAssertTrue(gone(app.buttons["always-hide-kind-address"]), "the close button closes the sheet")
+    }
+
+    func testAWordAndALabelAreAddedAsRulesAndAnEmptyOneCannotBe() {
         let app = launch("empty")
         let word = app.buttons["always-hide-template-word"]
         XCTAssertTrue(word.waitForExistence(timeout: 15))
@@ -83,11 +104,15 @@ final class AlwaysHideUITests: XCTestCase {
         let text = app.textFields["always-hide-rule-text"]
         XCTAssertTrue(text.waitForExistence(timeout: 5))
         XCTAssertTrue(hasFocus(text))
+        XCTAssertFalse(app.buttons["always-hide-save-rule"].isEnabled, "an empty rule is never saved")
+        text.typeText("   ")
+        XCTAssertFalse(app.buttons["always-hide-save-rule"].isEnabled, "spaces alone are no rule either")
         text.typeText("Musterfirma")
         XCTAssertTrue(app.descendants(matching: .any)["always-hide-preview"].exists)
         app.buttons["always-hide-save-rule"].tap()
         let rules = app.buttons.matching(identifier: "always-hide-rule")
         XCTAssertTrue(wait(for: rules, count: 1))
+        XCTAssertTrue(rules.element(boundBy: 0).label.contains("Musterfirma"), rules.element(boundBy: 0).label)
         XCTAssertTrue(rules.element(boundBy: 0).label.contains("Wort · überall im Bild"), rules.element(boundBy: 0).label)
 
         app.buttons["always-hide-add-rule"].tap()
@@ -97,10 +122,10 @@ final class AlwaysHideUITests: XCTestCase {
         let label = app.textFields["always-hide-rule-text"]
         label.tap()
         label.typeText("Kundennummer")
-        XCTAssertTrue(app.buttons["always-hide-reach-automatic"].isSelected, "Automatic first, as before")
-        let nextLine = app.buttons["always-hide-reach-nextLine"]
-        reveal(nextLine, in: app.scrollViews.firstMatch)
-        nextLine.tap()
+        let reach = app.segmentedControls["always-hide-reach"]
+        XCTAssertTrue(reach.waitForExistence(timeout: 2))
+        XCTAssertTrue(reach.buttons["Automatisch"].isSelected, "Automatic first, as before")
+        reach.buttons["Nächste Zeile"].tap()
         app.buttons["always-hide-save-rule"].tap()
         XCTAssertTrue(wait(for: rules, count: 2))
         XCTAssertTrue(rules.element(boundBy: 1).label.contains("Kundennummer"), rules.element(boundBy: 1).label)
@@ -108,7 +133,7 @@ final class AlwaysHideUITests: XCTestCase {
         XCTAssertTrue(wait(for: app.staticTexts["always-hide-active-count"], label: "2 aktiv"))
     }
 
-    func testARuleIsTurnedOffAndOnAgain() {
+    func testARuleIsTurnedOffAndOnAgainAndTheCountFollows() {
         let app = launch("filled")
         XCTAssertTrue(app.buttons.matching(identifier: "always-hide-detail").firstMatch.waitForExistence(timeout: 15))
         // The rules stand below the details: scrolled to, as a finger would.
@@ -117,6 +142,10 @@ final class AlwaysHideUITests: XCTestCase {
         XCTAssertTrue(rule.isHittable)
         let count = app.staticTexts["always-hide-active-count"]
         XCTAssertTrue(count.exists)
+        // As many as the switches that are on.
+        let on = app.switches.matching(identifier: "always-hide-rule-switch").allElementsBoundByIndex
+            .filter { ($0.value as? String) == "1" }.count
+        XCTAssertEqual(count.label, "\(on) aktiv")
         XCTAssertEqual(count.label, "2 aktiv")
         XCTAssertEqual(rule.value as? String, "1")
         XCTAssertTrue(rule.label.contains("Musterfirma"), "the switch says whose it is: \(rule.label)")

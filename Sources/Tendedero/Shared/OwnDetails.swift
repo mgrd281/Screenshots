@@ -691,28 +691,6 @@ enum OwnDetails {
         }
     }
 
-    /// What a detail's sheet says under its fields: what is wrong with what
-    /// was typed, or how it is covered.
-    static func note(for detail: OwnRule) -> (text: String, isProblem: Bool) {
-        switch detail.kind {
-        case .name:
-            let shown = examples(of: detail.text)
-            return (shown.isEmpty
-                ? L("Covered however it is written: surname first, in capitals, with an initial, or a part of it alone.")
-                : String(format: L("Covered however it is written, like %@."), shown.joined(separator: " · ")), false)
-        case .address:
-            return (L("Covered: the street with its house number, and the postcode with the town where they stand together. A town or a postcode alone is everyone’s, so it stays."), false)
-        case .card:
-            if let problem = cardProblem(detail.text) { return (problem, true) }
-            return (L("Covered whole, however it is grouped, and where only its last four digits show, like “•••• 4242”."), false)
-        case .account:
-            if let problem = ibanProblem(detail.text) { return (problem, true) }
-            return (L("Covered with and without spaces, where only its last digits show, and a German or Austrian account’s number on its own."), false)
-        case .word, .label, .pattern:
-            return ("", false)
-        }
-    }
-
     // MARK: As shown
 
     /// A detail as a row shows it, most of a number hidden: "Visa", "•••• 4242".
@@ -740,18 +718,23 @@ enum OwnDetails {
         }
     }
 
-    /// A detail's value as the iPhone's rows show it: a name as it reads, a
-    /// number with all but its last four digits hidden, its country kept
-    /// for an IBAN: "•••• •••• •••• 4242", "DE•• •••• •••• 3000".
+    /// A detail's value as the rows show it, on one line: a name as it
+    /// reads, an address by its street and town, a card's or an IBAN's
+    /// number by its last four digits alone: "•••• 4242", "•••• 3000".
     static func masked(_ detail: OwnRule) -> String {
         switch detail.kind {
         case .name:
             return displayName(detail.text)
         case .card:
-            return "•••• •••• •••• " + String(digits(detail.text).suffix(4))
+            return "•••• " + String(digits(detail.text).suffix(4))
         case .account:
-            let iban = compact(iban: detail.text)
-            return String(iban.prefix(2)) + "•• •••• •••• " + String(iban.suffix(4))
+            return "•••• " + String(compact(iban: detail.text).suffix(4))
+        case .address:
+            // On one line: the street with its number, and the town.
+            let street = detail.text.trimmingCharacters(in: .whitespaces)
+            let town = detail.city.trimmingCharacters(in: .whitespaces)
+            let place = town.isEmpty ? detail.postcode.trimmingCharacters(in: .whitespaces) : town
+            return [street, place].filter { !$0.isEmpty }.joined(separator: ", ")
         default:
             return summary(of: detail)
         }

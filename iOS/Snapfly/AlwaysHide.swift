@@ -1,12 +1,13 @@
 import SwiftUI
 
 /// Always Hide (Immer verbergen), from More: what Snapfly covers in every
-/// picture, whatever kinds are chosen. Under the title, what keeps it
-/// private; then the owner's details, each on its kind's colour, a number
-/// by its last four digits and a name with the ways it is also found; then
-/// the owner's rules, each with its switch; with nothing yet, a start with
-/// the name and two kinds of rule. Edit reorders and deletes, a swipe
-/// deletes, and a tap opens a row's sheet (`DetailSheet`, `RuleSheet`).
+/// picture, whatever kinds are chosen. Under an inline title, what it does
+/// and, in one quiet line, what keeps it private; then the owner's details,
+/// each on its kind's colour with a number by its last four digits; then the
+/// owner's rules, each with its switch and how many are on; with nothing
+/// yet, a start with the name and two kinds of rule. Edit reorders and
+/// deletes, a swipe deletes, and a tap opens a row's sheet (`DetailSheet`,
+/// `RuleSheet`).
 struct AlwaysHideView: View {
     @StateObject private var store: AlwaysHideStore
     @State private var detailRequest: DetailRequest?
@@ -31,9 +32,9 @@ struct AlwaysHideView: View {
 
     var body: some View {
         List {
-            intro
             if store.isEmpty {
-                HideStart(addName: { detailRequest = .new(.name) }, addRule: { ruleRequest = .new($0) })
+                HideStart(addName: { detailRequest = .new(.name, choosing: false) },
+                          addRule: { ruleRequest = .new($0) })
             } else {
                 details
                 rules
@@ -46,13 +47,19 @@ struct AlwaysHideView: View {
         .environment(\.editMode, $editMode)
         .animation(change, value: store.isEmpty)
         .navigationTitle(L("Always Hide"))
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
+        // The bar is the page's own ground, so nothing shows through it.
+        .toolbarBackground(SnapflyTokens.hideGround, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
             if !store.isEmpty {
                 ToolbarItem(placement: .topBarTrailing) {
-                    EditButton()
-                        .environment(\.editMode, $editMode)
-                        .accessibilityIdentifier("always-hide-edit")
+                    Button(editMode.isEditing ? L("Done") : L("Edit")) {
+                        withAnimation(change) { editMode = editMode.isEditing ? .inactive : .active }
+                    }
+                    .fontWeight(editMode.isEditing ? .semibold : .regular)
+                    .tint(SnapflyTokens.hideAccent)
+                    .accessibilityIdentifier("always-hide-edit")
                 }
             }
         }
@@ -61,15 +68,11 @@ struct AlwaysHideView: View {
         .sheet(item: $detailRequest) { request in
             DetailSheet(request: request) { kept in
                 withAnimation(change) { store.put(detail: kept) }
-            } remove: {
-                withAnimation(change) { store.remove(detail: request.draft.id) }
             }
         }
         .sheet(item: $ruleRequest) { request in
             RuleSheet(request: request) { kept in
                 withAnimation(change) { store.put(rule: kept) }
-            } remove: {
-                withAnimation(change) { store.remove(rule: request.draft.id) }
             }
         }
         .onAppear {
@@ -85,21 +88,6 @@ struct AlwaysHideView: View {
 
     // MARK: Parts
 
-    /// What the screen does, and what keeps it private.
-    private var intro: some View {
-        Section {
-            VStack(alignment: .leading, spacing: 16) {
-                Text(L("Snapfly covers these in every picture, on top of your categories."))
-                    .font(.subheadline)
-                    .foregroundStyle(SnapflyTokens.hideSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                PrivacyStrip()
-            }
-            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 8, trailing: 0))
-            .listRowBackground(Color.clear)
-        }
-    }
-
     private var details: some View {
         Section {
             ForEach(store.details) { detail in
@@ -108,10 +96,16 @@ struct AlwaysHideView: View {
             }
             .onDelete { offsets in withAnimation(change) { store.deleteDetails(at: offsets) } }
             .onMove { from, to in store.moveDetails(from: from, to: to) }
-            HideAddRow(title: L("Add Detail"), identifier: "always-hide-add-detail") { detailRequest = .new(.name) }
-                .listRowBackground(HideRowBackground(top: store.details.isEmpty, bottom: true))
+            HideAddRow(title: L("Add Detail"), identifier: "always-hide-add-detail") {
+                detailRequest = .new(.name, choosing: true)
+            }
+            .listRowBackground(HideRowBackground(top: store.details.isEmpty, bottom: true))
         } header: {
-            HideHeader(title: L("Your Details"))
+            VStack(alignment: .leading, spacing: 0) {
+                HideIntro()
+                HideHeader(title: L("Your Details"))
+                    .padding(.top, 24)
+            }
         }
     }
 
@@ -185,14 +179,14 @@ final class AlwaysHideStore: ObservableObject {
     /// Made-up details and rules, changed in memory alone, never kept.
     init(holding details: [OwnRule], rules: [OwnRule]) {
         self.details = details
-        self.rules = rules
+        self.rules = rules.filter { !$0.isBlank }
         inMemory = true
     }
 
     var isEmpty: Bool { details.isEmpty && rules.isEmpty }
 
-    /// How many rules cover something now.
-    var activeRules: Int { rules.filter(\.isActive).count }
+    /// How many rules cover something now, as their switches show.
+    var activeRules: Int { OwnRules.activeCount(rules) }
 
     func reload() {
         guard !inMemory else { return }
@@ -200,7 +194,9 @@ final class AlwaysHideStore: ObservableObject {
         rules = OwnRules.load()
     }
 
+    /// A detail as its sheet keeps it; never one that covers nothing.
     func put(detail: OwnRule) {
+        guard detail.canSave else { return }
         if let i = details.firstIndex(where: { $0.id == detail.id }) { details[i] = detail } else { details.append(detail) }
         keep()
     }
@@ -210,7 +206,9 @@ final class AlwaysHideStore: ObservableObject {
         keep()
     }
 
+    /// A rule as its sheet keeps it; never an empty one.
     func put(rule: OwnRule) {
+        guard rule.canSave else { return }
         if let i = rules.firstIndex(where: { $0.id == rule.id }) { rules[i] = rule } else { rules.append(rule) }
         keep()
     }
@@ -254,8 +252,8 @@ final class AlwaysHideStore: ObservableObject {
 }
 
 /// What keeps the owner's details private, each said only while the code
-/// makes it so (`OwnDetailStore`): Always Hide's strip, and the line over a
-/// detail's button.
+/// makes it so (`OwnDetailStore`): the line under Always Hide's words, and
+/// the line over a detail's button.
 enum AlwaysHidePromise: CaseIterable {
     case onThisPhone, noBackup, neverSent
 
@@ -275,42 +273,62 @@ enum AlwaysHidePromise: CaseIterable {
         }
     }
 
-    var symbol: String {
-        switch self {
-        case .onThisPhone: "iphone"
-        case .noBackup: "icloud.slash"
-        case .neverSent: "lock.fill"
-        }
+    /// What holds, in one line: "Nur auf diesem iPhone · Nie gesendet".
+    static var line: String? {
+        let held = allCases.filter(\.holds).map(\.title)
+        return held.isEmpty ? nil : held.joined(separator: " · ")
     }
 
-    static var shown: [AlwaysHidePromise] { allCases.filter(\.holds) }
-
-    /// The line over a detail's button, as much of it as holds.
-    static var sentence: String? {
-        switch (onThisPhone.holds, noBackup.holds, neverSent.holds) {
-        case (true, true, true): L("Stays on this iPhone alone. No backup, never sent.")
-        case (true, false, true): L("Stays on this iPhone alone and is never sent.")
-        case (true, _, false): L("Stays on this iPhone alone.")
-        case (false, _, true): L("Never sent.")
-        case (false, _, false): nil
-        }
+    /// The line over a detail's button.
+    static var hint: String {
+        onThisPhone.holds ? L("Stays on this iPhone alone. Other spellings are found too.")
+            : L("Other spellings are found too.")
     }
 }
 
 // MARK: Rows
 
-/// One of the owner's details: its kind's symbol on its colour, its value,
-/// a number by its last four digits, its kind, and for a name the ways it is
-/// also found, two of them and how many more. A tap opens it to change it.
+/// What the page does, and what keeps it private, in one quiet line.
+private struct HideIntro: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(L("Snapfly covers these in every picture, on top of your categories."))
+                .font(.subheadline)
+                .foregroundStyle(SnapflyTokens.hideSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+            if let line = AlwaysHidePromise.line {
+                Label {
+                    Text(line)
+                } icon: {
+                    Image(systemName: "lock")
+                }
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(SnapflyTokens.hideAccent)
+                .labelStyle(TightLabelStyle())
+                .accessibilityIdentifier("always-hide-privacy")
+            }
+        }
+        .textCase(nil)
+    }
+}
+
+/// An icon and its words, closer than a list's label puts them.
+private struct TightLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 4) {
+            configuration.icon
+            configuration.title
+        }
+    }
+}
+
+/// One of the owner's details: its kind's symbol on its colour, its value
+/// on one line, a number by its last four digits, and its kind. A tap opens
+/// it to change it.
 struct HideDetailRow: View {
     let detail: OwnRule
     let open: () -> Void
-    @ScaledMetric(relativeTo: .body) private var tile = OwnDetailTile.base
-
-    /// The ways the name is also found, besides as it is written.
-    private var others: [String] {
-        detail.kind == .name ? Array(OwnDetails.nameVariants(detail.text).dropFirst()) : []
-    }
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     private var kindLine: String {
         let caption = detail.caption.trimmingCharacters(in: .whitespaces)
@@ -320,137 +338,84 @@ struct HideDetailRow: View {
 
     var body: some View {
         Button(action: open) {
-            HStack(alignment: .top, spacing: 12) {
+            HStack(spacing: 12) {
                 OwnDetailTile(kind: detail.kind)
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(verbatim: OwnDetails.masked(detail))
                         .font(.body.weight(.semibold))
                         .monospacedDigit()
                         .foregroundStyle(SnapflyTokens.hideText)
-                        .lineLimit(3)
                     Text(kindLine)
                         .font(.footnote)
                         .foregroundStyle(SnapflyTokens.hideSecondary)
-                    if !others.isEmpty {
-                        AlsoFinds(variants: others)
-                            .padding(.top, 4)
-                    }
                 }
+                .lineLimit(typeSize.isAccessibilitySize ? 3 : 1)
                 .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
                 Spacer(minLength: 8)
                 Image(systemName: "chevron.forward")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.tertiary)
-                    .frame(minHeight: tile)
             }
-            .padding(.vertical, 4)
+            .frame(minHeight: SnapflyTokens.hideRowHeight)
             .contentShape(Rectangle())
         }
         .buttonStyle(RowPressStyle())
+        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(verbatim: spoken))
+        .accessibilityLabel(Text(verbatim: detail.kind == .name ? "\(kindLine), \(OwnDetails.masked(detail))"
+                                 : OwnDetails.spoken(detail)))
         .accessibilityAddTraits(.isButton)
         .accessibilityIdentifier("always-hide-detail")
     }
-
-    private var spoken: String {
-        let said = detail.kind == .name ? "\(kindLine), \(OwnDetails.masked(detail))" : OwnDetails.spoken(detail)
-        guard !others.isEmpty else { return said }
-        return said + ". " + L("Also finds") + " " + others.joined(separator: ", ")
-    }
 }
 
-/// "Also finds" and two of the other ways of a name, with how many more.
-private struct AlsoFinds: View {
-    let variants: [String]
-
-    var body: some View {
-        ChipFlow(spacing: 8) {
-            Text(L("Also finds"))
-                .font(.footnote)
-                .foregroundStyle(SnapflyTokens.hideSecondary)
-            ForEach(variants.prefix(2), id: \.self) { variant in
-                HideChip(text: variant)
-            }
-            if variants.count > 2 {
-                HideChip(text: String(format: L("+%d"), variants.count - 2))
-            }
-        }
-    }
-}
-
-/// One of the owner's rules: its symbol, its word or label, what it covers,
-/// a label's sample, and its switch. A tap on the words opens it to change it.
+/// One of the owner's rules: its symbol, its word or label, its kind and
+/// what it covers, and its switch. A tap on the words opens it to change it.
 struct HideRuleRow: View {
     let rule: OwnRule
     let open: () -> Void
     let enable: (Bool) -> Void
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    private var shown: String { rule.text.trimmingCharacters(in: .whitespaces) }
 
     var body: some View {
         HStack(spacing: 12) {
             Button(action: open) {
-                HStack(alignment: .top, spacing: 12) {
+                HStack(spacing: 12) {
                     HideRuleTile(kind: rule.kind)
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(verbatim: rule.text.trimmingCharacters(in: .whitespaces))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(verbatim: shown)
                             .font(.body.weight(.semibold))
                             .foregroundStyle(rule.isEnabled ? SnapflyTokens.hideText : SnapflyTokens.hideSecondary)
-                            .lineLimit(3)
-                        Text(Self.subtitle(of: rule))
+                        Text(RuleWords.subtitle(of: rule))
                             .font(.footnote)
                             .foregroundStyle(SnapflyTokens.hideSecondary)
-                        if rule.kind == .label {
-                            LabelChip(label: rule.text)
-                                .padding(.top, 4)
-                        }
                     }
+                    .lineLimit(typeSize.isAccessibilitySize ? 3 : 1)
                     .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
                     Spacer(minLength: 0)
                 }
+                .frame(minHeight: SnapflyTokens.hideRowHeight)
                 .contentShape(Rectangle())
             }
             .buttonStyle(RowPressStyle())
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text(verbatim: rule.text + ", " + Self.subtitle(of: rule)))
+            .accessibilityLabel(Text(verbatim: shown + ", " + RuleWords.subtitle(of: rule)))
             .accessibilityAddTraits(.isButton)
             .accessibilityIdentifier("always-hide-rule")
             Toggle(isOn: Binding(get: { rule.isEnabled }, set: enable)) {
-                Text(String(format: L("Rule “%@” active"), rule.text.trimmingCharacters(in: .whitespaces)))
+                Text(String(format: L("Rule “%@” active"), shown))
             }
             .labelsHidden()
-            .tint(SnapflyTokens.hideSwitch)
+            .tint(SnapflyTokens.hideAccent)
             .accessibilityIdentifier("always-hide-rule-switch")
         }
-        .padding(.vertical, 4)
+        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
     }
 
-    /// What a rule covers, after its kind: "Word · anywhere in the picture".
-    static func subtitle(of rule: OwnRule) -> String {
-        switch (rule.kind, rule.reach) {
-        case (.label, .automatic): L("Label · automatic")
-        case (.label, .restOfLine): L("Label · rest of the line")
-        case (.label, .nextLine): L("Label · next line")
-        case (.pattern, _): L("Pattern · anywhere in the picture")
-        default: L("Word · anywhere in the picture")
-        }
-    }
-}
-
-/// A label with a covered value after it, as a rule's row shows it.
-private struct LabelChip: View {
-    let label: String
-
-    var body: some View {
-        let shown = label.trimmingCharacters(in: CharacterSet(charactersIn: " :"))
-        CoveredLineText(segments: [(String(format: L("%@:"), shown) + " ", false), ("00000", true)])
-            .font(.footnote)
-            .foregroundStyle(SnapflyTokens.hideSecondary)
-            .lineLimit(1)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(SnapflyTokens.hideGround, in: Capsule())
-            .accessibilityHidden(true)
-    }
+    /// What a rule covers, after its kind: "Wort · überall im Bild".
+    static func subtitle(of rule: OwnRule) -> String { RuleWords.subtitle(of: rule) }
 }
 
 /// The last row of a section: a plus and what it adds, in green.
@@ -465,18 +430,18 @@ private struct HideAddRow: View {
             HStack(spacing: 12) {
                 Image(systemName: "plus")
                     .font(.body.weight(.semibold))
-                    .frame(width: tile, height: tile)
+                    .frame(width: tile)
                     .accessibilityHidden(true)
                 Text(title)
-                    .font(.body.weight(.semibold))
-                    .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
+                    .font(.body)
                 Spacer(minLength: 0)
             }
             .foregroundStyle(SnapflyTokens.hideAccent)
-            .frame(minHeight: SnapflyTokens.touch)
+            .frame(minHeight: 52)
             .contentShape(Rectangle())
         }
         .buttonStyle(RowPressStyle())
+        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
         .accessibilityIdentifier(identifier)
     }
 }
@@ -504,14 +469,16 @@ private struct HideHeader: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Text(title)
+                .font(.subheadline.weight(.semibold))
                 .accessibilityAddTraits(.isHeader)
             Spacer(minLength: 8)
             if let trailing {
                 Text(trailing)
+                    .font(.footnote)
+                    .monospacedDigit()
                     .accessibilityIdentifier("always-hide-active-count")
             }
         }
-        .font(.subheadline.weight(.semibold))
         .foregroundStyle(SnapflyTokens.hideSecondary)
         .textCase(nil)
     }
@@ -524,40 +491,6 @@ private struct HideFooter: View {
         Text(L("Applies to every picture, also when written differently. Still check the result before you share it."))
             .font(.footnote)
             .foregroundStyle(SnapflyTokens.hideSecondary)
-    }
-}
-
-/// What keeps the owner's details private, each where the code makes it
-/// so: side by side, one under another where they do not fit.
-private struct PrivacyStrip: View {
-    var body: some View {
-        let promises = AlwaysHidePromise.shown
-        if !promises.isEmpty {
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 16) { items(promises) }
-                VStack(alignment: .leading, spacing: 8) { items(promises) }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(SnapflyTokens.hideAccentSoft,
-                        in: RoundedRectangle(cornerRadius: SnapflyTokens.hideCardRadius, style: .continuous))
-            .accessibilityElement(children: .combine)
-            .accessibilityIdentifier("always-hide-privacy")
-        }
-    }
-
-    private func items(_ promises: [AlwaysHidePromise]) -> some View {
-        ForEach(promises, id: \.self) { promise in
-            Label {
-                Text(promise.title)
-                    .fixedSize(horizontal: false, vertical: true)
-            } icon: {
-                Image(systemName: promise.symbol)
-            }
-            .font(.footnote.weight(.semibold))
-            .foregroundStyle(SnapflyTokens.hideAccent)
-        }
     }
 }
 
@@ -603,6 +536,8 @@ private struct HideStart: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 24)
             .listRowBackground(HideRowBackground(top: true, bottom: true))
+        } header: {
+            HideIntro()
         }
         Section {
             HideTemplateRow(kind: .word, title: L("Word"), detail: L("Like your company’s name")) { addRule(.word) }
@@ -628,7 +563,7 @@ private struct HideTemplateRow: View {
         Button(action: action) {
             HStack(spacing: 12) {
                 HideRuleTile(kind: kind)
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.body.weight(.semibold))
                         .foregroundStyle(SnapflyTokens.hideText)
@@ -638,16 +573,16 @@ private struct HideTemplateRow: View {
                 }
                 .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
                 Spacer(minLength: 8)
-                Image(systemName: "plus.circle.fill")
-                    .font(.title3)
+                Image(systemName: "plus")
+                    .font(.body.weight(.semibold))
                     .foregroundStyle(SnapflyTokens.hideAccent)
                     .accessibilityHidden(true)
             }
-            .padding(.vertical, 4)
-            .frame(minHeight: SnapflyTokens.touch)
+            .frame(minHeight: SnapflyTokens.hideRowHeight)
             .contentShape(Rectangle())
         }
         .buttonStyle(RowPressStyle())
+        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
         .accessibilityIdentifier(kind == .word ? "always-hide-template-word" : "always-hide-template-label")
     }
 }
@@ -661,8 +596,8 @@ private struct HideTemplateRow: View {
 /// the ones banks print as examples.
 enum AlwaysHideSample {
     #if DEBUG
-    /// What was asked for: filled, empty, editing, name, address, card,
-    /// account, word, label, labelNext or editCard.
+    /// What was asked for: filled, empty, editing, picker, name, address,
+    /// card, account, editCard, word, label or labelNext.
     static let state: String? = {
         let arguments = ProcessInfo.processInfo.arguments
         guard let index = arguments.firstIndex(of: "-SnapflyAlwaysHide"), index + 1 < arguments.count else { return nil }
@@ -683,18 +618,20 @@ enum AlwaysHideSample {
     }
 
     static let rules = [OwnRule(text: "Musterfirma", kind: .word),
-                        OwnRule(text: "Kundennummer", kind: .label, reach: .restOfLine),
+                        OwnRule(text: "Kundennummer", kind: .label),
                         OwnRule(text: "Aktenzeichen", kind: .label, reach: .nextLine, isEnabled: false)]
 
     static var opensEditing: Bool { state == "editing" }
 
-    /// The detail's sheet the sample opens, from the details it shows.
+    /// The detail's sheet the sample opens, from the details it shows: the
+    /// list of kinds, or a kind's fields as if chosen from it.
     static func detail(from details: [OwnRule]) -> DetailRequest? {
         switch state ?? "" {
-        case "name": return DetailRequest(draft: name, isNew: true, choosing: true)
-        case "address": return DetailRequest(draft: address, isNew: true, choosing: true)
-        case "card": return DetailRequest(draft: card, isNew: true, choosing: true)
-        case "account": return DetailRequest(draft: account, isNew: true, choosing: true)
+        case "picker": return .new(.name, choosing: true)
+        case "name": return .chosen(name)
+        case "address": return .chosen(address)
+        case "card": return .chosen(card)
+        case "account": return .chosen(account)
         case "editCard": return details.first { $0.kind == .card }.map { DetailRequest.edit($0) }
         default: return nil
         }
@@ -749,7 +686,7 @@ enum AlwaysHideSample {
         HideDetailRow(detail: OwnRule(text: OwnDetails.nameText(given: "Max", surname: "Mustermann"), kind: .name)) {}
         HideDetailRow(detail: OwnRule(text: "4242424242424242", kind: .card)) {}
         HideDetailRow(detail: OwnRule(text: "DE89370400440532013000", kind: .account)) {}
-        HideRuleRow(rule: OwnRule(text: "Kundennummer", kind: .label, reach: .restOfLine)) {} enable: { _ in }
+        HideRuleRow(rule: OwnRule(text: "Kundennummer", kind: .label)) {} enable: { _ in }
         HideRuleRow(rule: OwnRule(text: "Musterfirma", kind: .word, isEnabled: false)) {} enable: { _ in }
     }
 }
