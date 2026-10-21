@@ -385,6 +385,7 @@ private struct KindRow: View {
         }
         .buttonStyle(RowPressStyle())
         .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
         .accessibilityIdentifier("always-hide-kind-" + kind.rawValue)
     }
 }

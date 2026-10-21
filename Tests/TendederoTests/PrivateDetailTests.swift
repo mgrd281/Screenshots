@@ -359,7 +359,7 @@ final class PrivateDetailTests: XCTestCase {
         let defaults = try XCTUnwrap(UserDefaults(suiteName: "PrivateDetailTests-\(UUID().uuidString)"))
         let rules = [OwnRule(text: "", kind: .word), OwnRule(text: "Kundennummer", kind: .label)]
         OwnRules.save(rules, to: defaults)
-        XCTAssertEqual(OwnRules.load(from: defaults), rules)
+        XCTAssertEqual(OwnRules.load(from: defaults), [rules[1]], "an empty rule is never kept")
         XCTAssertEqual(pieces("Kundennummer 5", rules: [OwnRule(text: "   ", kind: .word)]), [])
     }
 

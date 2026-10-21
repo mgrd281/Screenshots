@@ -718,9 +718,9 @@ enum OwnDetails {
         }
     }
 
-    /// A detail's value as the iPhone's rows show it: a name as it reads, a
-    /// number with all but its last four digits hidden, its country kept
-    /// for an IBAN: "•••• •••• •••• 4242", "DE•• •••• •••• 3000".
+    /// A detail's value as the rows show it, on one line: a name as it
+    /// reads, an address by its street and town, a card's or an IBAN's
+    /// number by its last four digits alone: "•••• 4242", "•••• 3000".
     static func masked(_ detail: OwnRule) -> String {
         switch detail.kind {
         case .name:
