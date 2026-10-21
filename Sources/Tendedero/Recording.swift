@@ -13,6 +13,8 @@ import UniformTypeIdentifiers
 /// Snapfly's own line and controls stay out of the recording. Sound is
 /// what Settings › General chooses: none, the Mac's own, the microphone, or
 /// both mixed into one track. The microphone is asked for only when chosen.
+/// Where the pointer goes, clicks and types meanwhile is noted for Studio,
+/// which opens on the recording once it hangs, unless turned off.
 @MainActor
 final class Recording {
     static let shared = Recording()
@@ -26,6 +28,8 @@ final class Recording {
     private(set) var isRecording = false
 
     private var recorder: Recorder?
+    /// What is done while recording, for Studio.
+    private var studio: StudioCapture?
     private var file: URL?
     private var frame = CGRect.zero
     private var started = Date()
@@ -55,6 +59,9 @@ final class Recording {
                 self.recorder = recorder
                 self.file = file
                 self.frame = setup.frame
+                let studio = StudioCapture(frame: setup.frame)
+                studio.start()
+                self.studio = studio
                 showControls(for: region, frame: setup.frame)
             } catch {
                 log.error("Could not record the screen: \(error.localizedDescription, privacy: .public)")
@@ -69,6 +76,9 @@ final class Recording {
         guard let recorder, let file else { return }
         self.recorder = nil
         self.file = nil
+        let studio = studio
+        self.studio = nil
+        studio?.stop()
         hideControls()
         let frame = frame
         Task { @MainActor in
@@ -89,7 +99,17 @@ final class Recording {
                 Notice.show(L("Could not save the recording."), on: nil)
                 return
             }
+            // What was done, timed from the first picture, for Studio.
+            if let studio, let first = recorder.firstPicture {
+                StudioStore.setEvents(studio.events(since: first), for: url)
+            }
             onFinish(url)
+            if Studio.opensAfterRecording {
+                // Once it has flown to the line.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                    MainActor.assumeIsolated { StudioEditor.shared.open(url) }
+                }
+            }
         }
     }
 
@@ -308,6 +328,9 @@ final class Recorder: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sen
     private var finished = false
     private var lastTime = CMTime.invalid
     private var lastHostTime = CMTime.invalid
+    /// When the first picture came, on the host clock, for Studio's events.
+    /// Read once `finish` is done.
+    private(set) var firstPicture: Double?
 
     init(filter: SCContentFilter, configuration: SCStreamConfiguration, url: URL,
          sound: RecordingSound = .none) throws {
@@ -419,6 +442,7 @@ final class Recorder: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sen
             writer.startSession(atSourceTime: time)
             sessionStarted = true
             sessionStart = time
+            firstPicture = StudioCapture.now
         }
         guard input.isReadyForMoreMediaData, input.append(sampleBuffer) else { return }
         lastTime = time

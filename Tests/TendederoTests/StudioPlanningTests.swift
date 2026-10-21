@@ -242,6 +242,12 @@ final class StudioPlanningTests: XCTestCase {
         XCTAssertEqual(numbers[c], 3)
     }
 
+    func testMarksAtTheSameTimeSitInRowsOfTheirOwn() {
+        let rows = StudioTimeline.rows(of: [(0, 3), (1, 4), (3, 5), (2, 6), (2.5, 7)])
+        XCTAssertEqual(rows, [0, 1, 0, 2, 2])
+        XCTAssertEqual(StudioTimeline.rows(of: []), [])
+    }
+
     func testTimesReadAsAClock() {
         XCTAssertEqual(StudioTimeline.text(7.9), "0:07")
         XCTAssertEqual(StudioTimeline.text(65), "1:05")

@@ -1613,3 +1613,35 @@
 "Your Own Details" = "Öz məlumatların";
 "Your Protection" = "Qoruman";
 "Your name, address, cards and rules, covered in every picture" = "Adın, ünvanın, kartların və qaydaların, hər şəkildə gizlədilir";
+
+/* Studio */
+"A ring where each click landed." = "Hər kliklə toxunulan yerdə halqa.";
+"Add Zoom" = "Yaxınlaşdırma əlavə et";
+"Could not open the recording." = "Yazını açmaq mümkün olmadı.";
+"Could not save the video." = "Videonu saxlamaq mümkün olmadı.";
+"Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Yaxınlaşdırmanı köçürmək üçün zaman xəttində sürüşdür, uzatmaq və ya qısaltmaq üçün kənarlarını sürüşdür.";
+"Drag the frame on the picture to choose what it looks at." = "Nəyə baxacağını seçmək üçün şəkildəki çərçivəni sürüşdür.";
+"Draw" = "Çək";
+"Edit in Studio…" = "Studioda redaktə et…";
+"From where the video is, for three seconds." = "Videonun olduğu yerdən, üç saniyə.";
+"How close" = "Nə qədər yaxın";
+"It shows for three seconds from where the video is. Drag it on the timeline to change when." = "Videonun olduğu yerdən üç saniyə görünür. Vaxtını dəyişmək üçün zaman xəttində sürüşdür.";
+"Looks at" = "Baxır";
+"Made from your clicks and typing" = "Kliklərin və yazmağından yaradılıb";
+"One Place" = "Bir yer";
+"Open Studio after recording" = "Yazıdan sonra Studionu aç";
+"Play" = "Oynat";
+"Recording" = "Yazı";
+"Save Video" = "Videonu saxla";
+"Saving the video…" = "Video saxlanılır…";
+"Show clicks" = "Klikləri göstər";
+"Studio" = "Studio";
+"Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never." = "Studio klikləyib yazdığın yerə yaxınlaşır, oxlar və rəqəmlər əlavə edir. Göstəricinin hara getdiyi və düymələrin nə vaxt basıldığı bu Mac-də qalır; hansı düymələr olduğu heç vaxt saxlanılmır.";
+"The Pointer" = "Göstərici";
+"This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand." = "Bu yazı Studiodan əvvəl edilib, ona görə yaxınlaşmaq üçün klikləri yoxdur. Yaxınlaşdırmaları əllə əlavə et.";
+"Time" = "Vaxt";
+"Timeline Zoom" = "Zaman xəttini böyüt";
+"Words on the video" = "Videodakı sözlər";
+"Zoom" = "Yaxınlaşdırma";
+"Zoom in on clicks and typing" = "Kliklərdə və yazanda yaxınlaşdır";
+"Zooms: %d" = "Yaxınlaşdırmalar: %d";

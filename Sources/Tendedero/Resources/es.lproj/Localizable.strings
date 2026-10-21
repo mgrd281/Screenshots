@@ -1611,3 +1611,35 @@
 "Your Own Details" = "Tus propios datos";
 "Your Protection" = "Tu protección";
 "Your name, address, cards and rules, covered in every picture" = "Tu nombre, dirección, tarjetas y reglas, ocultos en cada imagen";
+
+/* Studio */
+"A ring where each click landed." = "Un anillo donde cayó cada clic.";
+"Add Zoom" = "Añadir zoom";
+"Could not open the recording." = "No se pudo abrir la grabación.";
+"Could not save the video." = "No se pudo guardar el vídeo.";
+"Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Arrastra un zoom en la línea de tiempo para moverlo, o sus extremos para alargarlo o acortarlo.";
+"Drag the frame on the picture to choose what it looks at." = "Arrastra el marco sobre la imagen para elegir adónde mira.";
+"Draw" = "Dibujar";
+"Edit in Studio…" = "Editar en Studio…";
+"From where the video is, for three seconds." = "Desde donde está el vídeo, durante tres segundos.";
+"How close" = "Cuánto acercar";
+"It shows for three seconds from where the video is. Drag it on the timeline to change when." = "Aparece durante tres segundos desde donde está el vídeo. Arrástralo en la línea de tiempo para cambiar cuándo.";
+"Looks at" = "Mira a";
+"Made from your clicks and typing" = "Hecho con tus clics y lo que escribiste";
+"One Place" = "Un lugar";
+"Open Studio after recording" = "Abrir Studio después de grabar";
+"Play" = "Reproducir";
+"Recording" = "Grabación";
+"Save Video" = "Guardar vídeo";
+"Saving the video…" = "Guardando el vídeo…";
+"Show clicks" = "Mostrar clics";
+"Studio" = "Studio";
+"Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never." = "Studio se acerca donde haces clic y escribes, y añade flechas y números. Por dónde fue el puntero y cuándo se pulsaron teclas se queda en este Mac; qué teclas, nunca.";
+"The Pointer" = "El puntero";
+"This recording was made before Studio, so it has no clicks to zoom in on. Add zooms by hand." = "Esta grabación se hizo antes de Studio, así que no tiene clics a los que acercarse. Añade zooms a mano.";
+"Time" = "Tiempo";
+"Timeline Zoom" = "Zoom de la línea de tiempo";
+"Words on the video" = "Palabras en el vídeo";
+"Zoom" = "Zoom";
+"Zoom in on clicks and typing" = "Acercar al hacer clic y escribir";
+"Zooms: %d" = "Zooms: %d";

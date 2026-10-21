@@ -69,6 +69,11 @@ final class Preferences: ObservableObject {
         set { change { RecordingSound.current = newValue } }
     }
 
+    var opensStudio: Bool {
+        get { Studio.opensAfterRecording }
+        set { change { Studio.opensAfterRecording = newValue } }
+    }
+
     var opensAtLogin: Bool {
         get { SMAppService.mainApp.status == .enabled }
         set { change { if newValue != opensAtLogin { AppDelegate.toggleLaunchAtLogin() } } }
@@ -1070,13 +1075,17 @@ private struct GeneralPane: View {
                             .disabled(sound.hasVoice && !RecordingSound.microphoneAvailable)
                     }
                 }
+                Toggle(L("Open Studio after recording"), isOn: $prefs.opensStudio)
             } header: {
                 Text(L("Screen recordings"))
             } footer: {
-                Text(RecordingSound.microphoneAvailable
-                     ? L("The Mac’s sound is what you hear, without Snapfly’s own. The microphone is asked for the first time it records; both are mixed into one track.")
-                     : L("The Mac’s sound is what you hear, without Snapfly’s own. Recording the microphone too needs macOS 15."))
-                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(RecordingSound.microphoneAvailable
+                         ? L("The Mac’s sound is what you hear, without Snapfly’s own. The microphone is asked for the first time it records; both are mixed into one track.")
+                         : L("The Mac’s sound is what you hear, without Snapfly’s own. Recording the microphone too needs macOS 15."))
+                    Text(L("Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never."))
+                }
+                .foregroundStyle(.secondary)
             }
             Section {
                 Toggle(L("Sounds"), isOn: $prefs.sounds)

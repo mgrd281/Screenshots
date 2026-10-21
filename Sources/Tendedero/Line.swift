@@ -455,6 +455,12 @@ final class Line: ObservableObject {
         }
     }
 
+    /// Edit in Studio, from a recording's menu.
+    func studio(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling && $0.isRecording }) else { return }
+        StudioEditor.shared.open(item.url)
+    }
+
     /// Make GIF, from a recording's menu: a looping GIF of it hangs as the
     /// newest and comes picked and copied, ready to send.
     func makeGIF(_ id: UUID) {
@@ -1032,6 +1038,7 @@ final class Line: ObservableObject {
             Drawings.set(drawing, for: new)
             Drawings.set(.empty, for: old)
         }
+        StudioStore.move(from: old, to: new)
         prints[old.path] = nil
         save()
         PrivateDetails.prepare(new)
@@ -1574,6 +1581,8 @@ final class Line: ObservableObject {
         UserDefaults.standard.set(live.filter(\.pinned).map(\.url.path), forKey: pinnedKey)
         PrivateDetails.keepHand(only: Set(paths))
         Drawings.keep(only: Set(paths))
+        // A recording's Studio work stays while it can come back from the history.
+        StudioStore.keep(only: Set(paths).union(History.paths))
         // The history's words stay known too, for its search.
         TextIndex.keep(only: Set(paths).union(History.paths))
     }

@@ -417,6 +417,20 @@ enum StudioTimeline {
         return numbers
     }
 
+    /// The row each span sits in on the timeline, so spans at the same time
+    /// sit one above another: the first row free by then, at most `rows`,
+    /// the last taking the rest.
+    static func rows(of spans: [(start: Double, end: Double)], rows: Int = 3) -> [Int] {
+        var ends = [Double](repeating: -.infinity, count: max(1, rows))
+        var placed = [Int](repeating: 0, count: spans.count)
+        for i in spans.indices.sorted(by: { spans[$0].start < spans[$1].start }) {
+            let row = ends.firstIndex { $0 <= spans[i].start + 0.0001 } ?? ends.count - 1
+            placed[i] = row
+            ends[row] = max(ends[row], spans[i].end)
+        }
+        return placed
+    }
+
     /// A time as the timeline says it: "0:07", "1:05", "1:02:03".
     static func text(_ seconds: Double) -> String {
         let whole = max(0, Int(seconds.rounded(.down)))
