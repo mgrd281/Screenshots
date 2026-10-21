@@ -106,6 +106,12 @@ Motion and Low Power Mode. The first run uses them all.
 | `motion.lock` | spring 0.45 / 0.8 | The scanner's outline closing onto the page's corners |
 | `motion.change` | 0.25 s ease-in-out | Always Hide: a row coming or going, a rule turned, a sheet's part changing with the kind chosen; no bounce |
 | `zoom.grid` | spring 0.42 / 0.86 | iPhone screenshot grids: pinched past a tenth, the cards settle into three or four to a row, from the size the fingers left them at; a pinch called off settles back the same way; at once with Reduce Motion |
+| `more.appear` | 0.26 s ease-out, rising 8 pt | More's hero, Protection, Features and Help, the first time More shows in a launch, `stagger.more` apart; never again that launch |
+| `more.draw` | 0.35 s ease-out, scaled from the leading edge | The hero's little bill: its covers drawn in, 80 ms apart, after 0.12 s, the first time More shows |
+| `more.style` | 0.25 s ease-in-out cross-fade | A new cover look in the hero, the Cover Style tile and the bill; the chosen look's ring slides on `.snappy` |
+| `more.pill` | 0.18 s ease-out; the rows on `.snappy` | A kind's pill turned: its colour, its check growing in from 40%, its neighbours closing up; with a selection haptic |
+| `more.grow` | spring 0.35 s, no bounce | Cover Style's bill: covers growing over whole lines with Strongest protection, the last four digits sliding in from the trailing side |
+| `more.press` | spring 0.22 / 0.9, to 97% | A tile, a chip or a button of More pressed, back on release; no haptic |
 
 ### Stagger
 
@@ -113,6 +119,8 @@ Motion and Low Power Mode. The first run uses them all.
 |---|---|---|
 | `stagger.cover` | 45 ms | Hide Part, and the iPhone's Protect Picture: covers grow in line by line, each over 0.32 s on a cubic ease-out from the reading side |
 | `stagger.demo` | 170 ms | iPhone first run: the sample invoice's name, email and IBAN, and then the doctor's letter's patient, date of birth and diagnosis, covered one after another, slow enough to follow; found before that as the reading light reaches each |
+| `stagger.more` | 40 ms, four at most | More's parts coming in, all within 0.4 s |
+| `stagger.cascade` | 15 ms, 0.12 s at most | More's pills changed by a preset or a group's All On or All Off, down the page, all within 0.3 s, with one light impact |
 | `stagger.grid` | 35 ms, twelve at most | iPhone: screenshot cards rise 8 pt into the grid the first time it has any, on `spring.reveal` |
 | `stagger.list` | 90 ms, four at most | Site arrivals: the four steps |
 | `stagger.hang` | 110 ms | Site first view: photos drop onto the rope |
@@ -209,7 +217,9 @@ Motion and Low Power Mode. The first run uses them all.
   `UIAccessibility.isReduceMotionEnabled`): covers and the scan line are
   simply there or absent, grid cards and the status capsule fade over
   0.15 s; the shield's bounce is the system's, which Reduce Motion tones
-  down itself.
+  down itself. On More (`MoreMotion`) nothing moves, scales or staggers:
+  0.15 s cross-fades, a pill keeps its check's room so nothing reflows,
+  the system's push instead of the zoom, and the numbers still change.
 - **Rule:** a change that adds motion defines its reduced form in the same
   change.
 

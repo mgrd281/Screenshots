@@ -406,8 +406,8 @@ username, a total, a date, a link, a medicine and a QR code. It says what
 was covered there, and what you checked that the sample does not show. It
 speaks for that sample only; a real screenshot can read differently.
 
-Under Always Hide, a pane of its own in Settings on the Mac and under More
-› Advanced on the iPhone (below), add your own details first: your name,
+Under Always Hide, a pane of its own in Settings on the Mac and a tile
+under More on the iPhone (below), add your own details first: your name,
 your address, your bank cards and your bank accounts, each in a sheet of
 its own (First Name and Last Name; Street and No., Postcode and Town; Card
 number; IBAN; on the Mac a card or an account with a name for it if you
@@ -1004,8 +1004,10 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Photos, which iOS asks about first (Photos keeps it 30 days to bring
   back). Select chooses several, by a tap on each or a finger drawn
   across, and Remove asks which of the two, as Photos does in an album.
-  More holds Settings and Help & Introduction. While a picture is open the tab bar
-  steps aside.
+  More is Settings as a short overview, with a page for each part (below).
+  While a picture is open the tab bar steps aside; on More it stays whole
+  as a page scrolls, and steps aside on More's pages, so it never sits
+  over a row.
 - **The first run** shows what Snapfly does in under fifteen seconds, on
   three made-up documents of one made-up person, each a standing A4 page
   that looks like a real one, before anything is asked (`FIRST_RUN.md`):
@@ -1036,8 +1038,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   page. With Reduce Motion or Low Power Mode it cross-fades instead of
   moving; with VoiceOver it starts at its end, the letter described as it
   is. It shows once,
-  never again after an ordinary update, and from More › Help &
-  Introduction › Watch the Demo whenever you like. Until Photos may be
+  never again after an ordinary update, and from More › Help › Watch the
+  Demo whenever you like. Until Photos may be
   read, the Photos tab asks with a calm card, and the other tabs are there.
 - **From any app's share sheet.** Share a picture from Photos, Messages,
   Safari or anywhere else and choose Snapfly: it is covered right there, as
@@ -1132,22 +1134,34 @@ watch the screen, so there is no line there. What it keeps is the covering:
   far; Copy takes an answer. Without a key it offers to set one up. Hold a
   screenshot in the grid for Cover and Copy, Cover and Share or Cover and
   Save, without opening it. The screenshot itself stays as it was.
-  Settings chooses what to cover, in the same six groups as on the Mac,
-  with Check All, Recommended and Uncheck All. People opens with Your
-  Name: your name, saved under Your Details, with "always covered" and a
-  shield, or a row to add it; then Names, Patient names and Other people,
-  each a switch of its own that covers its own people. Cover look picks how covers look, from the same six
-  as on the Mac, with Keep the last four digits and Strongest protection.
-  Reading and checking holds Apple Intelligence, how long the last
-  screenshot took, the middle and the 95th percentile of the last fifty,
-  and Faster picture processing (below). AI Assistant chooses Claude or
-  ChatGPT and keeps your own key in this iPhone's keychain, pasted with the
-  system's Paste and checked with them at once; then the model, from your
-  key's own list, and Find more with Claude (or ChatGPT), as on the Mac.
-  Send to Apps turns each app on or off and drags them into order, kept on
-  this iPhone. Under Advanced, Always Hide (below), and how to set up the
-  double tap on the back.
-- **Always Hide**, under More › Advanced, is what Snapfly covers in every
+  More opens on a card that says how much is covered: how many of the
+  twenty-two kinds are on, the preset they make (Recommended, All, Your
+  Choice or None), a little document covered in the look chosen, and three
+  chips to the look, your details and your rules. With nothing chosen it
+  turns grey and says Protection Off. Under it, Protection: four tiles, each
+  with what it holds now, opening its page. What Is Covered sets
+  Recommended, All or None at once (the same as Check All, Recommended and
+  Uncheck All before), shows the five groups as tabs (People and
+  Companies, Money, Health, Documents, Access) and each kind as a pill to
+  turn on or off, with All On or All Off for a group; Names, Patient names
+  and Other people each cover their own people, as the note under People
+  says, and a card leads to your own details in Always Hide. Cover Style
+  shows a made-up bill covered in the look chosen, as the two switches
+  have it, with the six looks to choose from, Keep the last four digits and
+  Strongest protection. Detection holds Apple Intelligence, which runs only
+  on this iPhone, the check every copy gets before it leaves, always on,
+  Faster picture processing (below), and how long covering took on this
+  iPhone, the middle and the 95th percentile of the last fifty. Then
+  Features: AI Assistant chooses Claude or ChatGPT and keeps your own key
+  in this iPhone's keychain, pasted with the system's Paste and checked
+  with them at once; then the model, from your key's own list, and Find
+  more with Claude (or ChatGPT), as on the Mac. Send to Apps turns each app
+  on or off and drags them into order, kept on this iPhone. Double Tap the
+  Back says how to set up the double tap, and Mac and iCloud holds
+  syncing and the Macs on another Apple account. Then Help: the
+  introduction and the demo, and the version. Every setting keeps the
+  value it had: only where it shows moved.
+- **Always Hide**, a tile under More › Protection, is what Snapfly covers in every
   picture besides the kinds chosen. Under its title, one quiet line says
   what is true in code: only on this iPhone, never sent. It does not say
   "no backup", since a backup holds the details, sealed to this iPhone.
@@ -1239,7 +1253,7 @@ short hint, once, the first time something is in reach, like the lock on
 a covered photo or picking several photos.
 
 On the iPhone, the introduction shows on your screenshots: tap one, then
-the apps beside it. Settings › Help & Introduction starts it again.
+the apps beside it. More › Help › Introduction starts it again.
 
 <br>
 
@@ -1301,7 +1315,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/ExportCheck.swift` | The last check before a copy leaves: every cover landed where something showed |
 | `Shared/Timing.swift` | How long each step of covering takes, for Instruments and the log, numbers only |
 | `Shared/CoverLook.swift` | How covers look (ink, labelled, blur, pixels, dots, erased), drawn from the colors around what is covered; keeping the last four digits; the samples Settings shows |
-| `Shared/CoverLookPicker.swift` | The tiles to choose the look by, in Settings on the Mac and on the iPhone |
+| `Shared/CoverLookPicker.swift` | The tiles to choose the look by, in Settings on the Mac |
+| `Shared/CoverSummary.swift` | What the iPhone's More counts: the kinds on of the twenty-two, the preset they are, the five groups, a group turned on or off, and what Always Hide holds (tested on Linux) |
+| `Shared/CoverSample.swift` | The made-up bill Cover Style covers, and what Keep the last four digits leaves of each line |
 | `Shared/Protection.swift` | Strongest protection, and Apple Intelligence, on the device, or the AI assistant, when turned on, finding what the patterns miss, kept per screenshot |
 | `Shared/AIAccount.swift` | The AI assistant: Claude or ChatGPT, the key in the keychain, the model, the requests and their answers, a conversation's turns, answers streamed as they are written, checking a key by its list of models, what each task asks, and what each failure means |
 | `Shared/AIConnection.swift` | Whether the key kept for each assistant works, as last checked, and the models it may use, for the Mac's and the iPhone's settings |
@@ -1310,10 +1326,18 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/RuleSample.swift` | The example in a rule's sheet: a few made-up lines covered by the engine itself with the rule as typed (tested on Linux) |
 | `AlwaysHidePane.swift` | Always Hide on the Mac, a pane of its own in Settings: the details and rules as rows, a switch for each rule, and the sheets to add or change either, a rule's example shown as typed |
 | `Shared/HideParts.swift` | What Always Hide shows on both: each kind of detail's colour, a rule's words and symbol, and words with some of them covered |
-| `iOS/Snapfly/AlwaysHide.swift` | Always Hide on the iPhone (More › Advanced): the details and rules as rows, the privacy strip as the keychain code allows, rules turned on and off, Edit and a swipe to delete, the screen with nothing yet, and the made-up set the simulator's frames and UI tests open (`-SnapflyAlwaysHide`, debug builds only) |
+| `iOS/Snapfly/AlwaysHide.swift` | Always Hide on the iPhone (More › Protection): the details and rules as rows, the privacy strip as the keychain code allows, rules turned on and off, Edit and a swipe to delete, the screen with nothing yet, and the made-up set the simulator's frames and UI tests open (`-SnapflyAlwaysHide`, debug builds only) |
 | `iOS/Snapfly/AlwaysHideSheets.swift` | Always Hide's sheets, as tall as what they hold: the four kinds, then a kind's fields and the checks before Add; New Rule with Word or After Label, a label's reach and a line of an example covered as typed |
-| `iOS/Snapfly/OwnDetailsSettings.swift` | Your Name's row under Settings › People, and the tile each kind of detail is shown with |
-| `iOS/SnapflyUITests` | Always Hide driven on the simulator in German: a name added, both kinds of rule, a rule off and on, a swipe to delete, and the screen with nothing yet |
+| `iOS/Snapfly/OwnDetailsSettings.swift` | The mint tile every symbol under More and in Always Hide stands on |
+| `iOS/Snapfly/SettingsView.swift` | More on the iPhone: the hero card, the four Protection tiles, Features and Help, the pages they open, growing out of their tile from iOS 18 on; and Double Tap the Back |
+| `iOS/Snapfly/MoreStore.swift` | What More shows and changes, kept under the keys it always was, and the made-up choices the simulator's frames and UI tests open (`-SnapflyMore`, debug builds only) |
+| `iOS/Snapfly/MoreParts.swift` | More's motion and its pieces: the cards, the press, the meter, the pills' rows, and the covers drawn small on paper as a copy draws them |
+| `iOS/Snapfly/CoveredKindsView.swift` | What Is Covered: the count and its preset, Recommended, All and None, the groups as tabs, each kind a pill |
+| `iOS/Snapfly/CoverStylePage.swift` | Cover Style: the made-up bill covered as chosen, the six looks and the two switches |
+| `iOS/Snapfly/DetectionView.swift` | Detection: Apple Intelligence, the check before sharing, Faster picture processing, and how long covering took |
+| `iOS/SnapflyUITests` | Always Hide and More driven on the simulator in German: a name added, both kinds of rule, a rule off and on, a swipe to delete, the screen with nothing yet; More's counts, pills, presets, tabs, looks and tab bar, and the walks its videos are made of |
+| `scripts/more-checks.sh` | Runs More's UI tests for the More Checks workflow, keeps frames of the tab and each page (light, dark, the largest text sizes, Arabic and English, the newest and the smallest iPhone) and records its motion with and without Reduce Motion, for the `more-captures` pre-release |
+| `docs/snapfly-more-audit.md` | More's audit before Version 2: every setting, where it is kept, its default and who reads it, where each went, the floating button, and the cover looks checked in code |
 | `scripts/always-hide-checks.sh` | Runs those UI tests for the Always Hide Checks workflow and keeps frames of the screen and each sheet, light and dark, at the largest text sizes and in Arabic and English, on the newest iPhone and the smallest, for the `always-hide-captures` pre-release |
 | `docs/snapfly-always-hide-audit.md` | Always Hide's audit: what there was, where details and rules are kept, how covering uses them, how a label's reach was decided, what is promised and what holds in code, and what changed |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |

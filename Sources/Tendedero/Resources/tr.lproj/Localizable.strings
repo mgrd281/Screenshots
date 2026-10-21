@@ -120,7 +120,6 @@
 "Send to %@" = "Gönder: %@";
 "Send to Apps" = "Uygulamalara gönder";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "Bir uygulamaya dokunmak her sayfayı örter ve ona verir, gerektiğinde paylaşım sayfası üzerinden.";
-"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "Taramadan sonra ve Resmi koru'da resmin yanında duran uygulamalar, onlara örtülü kopyayı vermek için. Mac'tekiyle aynı uygulamalar.";
 "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "Dokunmak korunan kopyayı uygulamaya verir. WhatsApp onunla açılır; ChatGPT, Claude ve diğer yapay zeka sohbetleri onu kopyalanmış olarak açılır, yapıştırman için; diğerleri paylaşma sayfasından, orada uygulamaya dokunursun. Tarayıcıda hiçbir şey açılmaz.";
 "Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste." = "%@ için kopyalandı: oradaki klavyenin üstündeki resme dokun ya da mesaj alanını basılı tut ve Yapıştır’a dokun.";
 "Opening %@…" = "%@ açılıyor…";
@@ -521,7 +520,6 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhone’unun arkasına iki kez dokun: en yeni ekran görüntüsü gizlenir ve kopyalanır, sohbete yapıştırmaya hazır olur.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Bir kez ayarlamak için Ayarlar › Erişilebilirlik › Dokunma › Arkaya Dokunma › Çift Dokunma’yı aç ve %@ seç.";
 "Cover the Latest Screenshot" = "En yeni ekran görüntüsünü gizle";
-"Double tap the back of your iPhone" = "iPhone’unun arkasına iki kez dokun";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "Her şey bu iPhone’da olur. Hiçbir şey bir yere gönderilmez.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly ekran görüntülerini henüz göremiyor. Snapfly’ı bir kez aç ve izin ver.";
 "There is no screenshot yet." = "Henüz ekran görüntüsü yok.";
@@ -789,7 +787,6 @@
 "Snapfly covers its private details at once, right on this iPhone." = "Snapfly özel bilgilerini hemen, doğrudan bu iPhone’da örter.";
 "Snapfly lives in the menu bar" = "Snapfly menü çubuğunda yaşar";
 "Snapfly on your own screen, step by step. About a minute." = "Kendi ekranında Snapfly, adım adım. Yaklaşık bir dakika.";
-"Snapfly on your own screenshots, step by step." = "Kendi ekran görüntülerinle Snapfly, adım adım.";
 "Start" = "Başlat";
 "Start Again" = "Yeniden başlat";
 "Start Introduction" = "Tanıtımı başlat";
@@ -842,7 +839,6 @@
 "Explain" = "Açıkla";
 "In Protect Picture: what a document says, what matters in it and what to do, then answers to your questions about it." = "Resmi koru'da: bir belgenin ne dediği, içinde neyin önemli olduğu ve ne yapman gerektiği, ardından onunla ilgili sorularının yanıtları.";
 "Explain sends the protected copy, never the original, straight to Anthropic or OpenAI with your own key, and only when you tap it. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Açıkla, orijinali asla değil, korunan kopyayı kendi anahtarınla doğrudan Anthropic'e ya da OpenAI'ye gönderir ve yalnızca ona dokunduğunda. Her istek oradaki hesabına yansıtılır; Claude ya da ChatGPT aboneliği bunu kapsamaz.";
-"Your own Claude or ChatGPT explains documents in Protect Picture." = "Kendi Claude'un ya da ChatGPT'n belgeleri Resmi koru'da açıklar.";
 "What do I have to do?" = "Ne yapmam gerekiyor?";
 "Is there a deadline?" = "Bir son tarih var mı?";
 "Explain it more simply." = "Daha basit açıkla.";
@@ -1309,7 +1305,6 @@
 "“%@” uses the same Apple account, so Sync with your Mac is now on." = "“%@” aynı Apple Hesabını kullanıyor, bu yüzden Mac’inizle eşzamanla artık açık.";
 
 /* Protection: whose names, companies, and the iPhone's protect screen */
-"Advanced" = "Gelişmiş";
 "Apple Intelligence is reading…" = "Apple Intelligence okuyor…";
 "Checking the copy…" = "Kopya denetleniyor…";
 "Companies and organizations" = "Şirketler ve kuruluşlar";
@@ -1327,13 +1322,11 @@
 "Opening…" = "Açılıyor…";
 "Passwords and access" = "Parolalar ve erişim";
 "Protect a Photo" = "Fotoğraf koru";
-"Reading and checking" = "Okuma ve denetim";
 "Show the screenshot as it was" = "Ekran görüntüsünü önceki hâliyle göster";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly bunlardan emin değil: her birini kontrol et, aç ya da kapat.";
 "The copy could not be checked, so it stays here." = "Kopya denetlenemedi, bu yüzden burada kalıyor.";
 "The copy could not be made." = "Kopya oluşturulamadı.";
 "To check" = "Kontrol edilecek";
-"What the patterns find shows at once; Apple Intelligence adds to it. Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "Kalıpların bulduğu hemen görünür; Apple Intelligence buna ekler. Her kopya çıkmadan önce herkesin okuyabileceği gibi yeniden okunur ve hâlâ görünen özel bilgiler de gizlenir.";
 "%d of %d" = "%2$d içinden %1$d";
 "%d photos chosen" = "%d fotoğraf seçildi";
 "%d places still to check" = "Hâlâ kontrol edilecek %d yer var";
@@ -1363,7 +1356,6 @@
 "Last %d days" = "Son %d gün";
 "Last update" = "Son güncelleme";
 "Marker" = "Keçeli kalem";
-"Median %@ · 95%% under %@" = "Ortanca %@ · %%95'i %@ altında";
 "Not Now" = "Şimdi değil";
 "Not downloaded for this. Prepared once they are on this iPhone." = "Bunun için indirilmez. Bu iPhone'a geldiklerinde hazırlanır.";
 "Not fully protected: %d places to check are not covered" = "Tam korunmuyor: kontrol edilecek %d yer örtülmedi";
@@ -1507,9 +1499,6 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "Bilgi ekle";
 "Your Details" = "Bilgilerin";
-"Your Name" = "Adın";
-"%@ · always covered" = "%@ · her zaman örtülür";
-"Add it, and it is covered however it is written" = "Ekle, nasıl yazılırsa yazılsın örtülsün";
 "First and last name" = "Ad ve soyad";
 "Street and house number" = "Sokak ve bina numarası";
 "Postcode" = "Posta kodu";
@@ -1580,3 +1569,45 @@
 "Label · Automatic" = "Etiket · Otomatik";
 "Label · Same Line" = "Etiket · Aynı satır";
 "Label · Next Line" = "Etiket · Sonraki satır";
+"%d details" = "%d bilgi";
+"1 detail" = "1 bilgi";
+"%d rules" = "%d kural";
+"1 rule" = "1 kural";
+"%d of %d active" = "%2$d içinden %1$d etkin";
+"95%% under %@" = "%%95'i %@ altında";
+"Median %@" = "Ortanca %@";
+"Access" = "Erişim";
+"Active" = "Etkin";
+"All Off" = "Tümünü kapat";
+"All On" = "Tümünü aç";
+"All three together cover everyone’s names." = "Üçü birlikte herkesin adını gizler.";
+"Always On" = "Her zaman açık";
+"Apple Intelligence off" = "Apple Intelligence kapalı";
+"Apple Intelligence on" = "Apple Intelligence açık";
+"Cards, accounts and phone numbers stay recognisable." = "Kartlar, hesaplar ve telefon numaraları tanınabilir kalır.";
+"Categories covered in every picture" = "Her resimde gizlenen kategoriler";
+"Check before sharing" = "Paylaşmadan önce denetim";
+"Cover Style" = "Gizleme görünümü";
+"Detection" = "Algılama";
+"Double Tap the Back" = "Arkaya çift dokunma";
+"Every copy is read again before it leaves, and whatever private still shows is covered too." = "Her kopya çıkmadan önce yeniden okunur ve hâlâ görünen özel ne varsa o da gizlenir.";
+"Features" = "Özellikler";
+"Help" = "Yardım";
+"Invoice to" = "Fatura alıcısı";
+"Mac and iCloud" = "Mac ve iCloud";
+"Strongest protection covers whole lines, these digits too." = "“En güçlü koruma” satırların tamamını, bu rakamları da gizler.";
+"Own Details" = "Kendi bilgilerin";
+"People and Companies" = "Kişiler ve şirketler";
+"Performance on This iPhone" = "Bu iPhone’daki performans";
+"Protection Off" = "Koruma kapalı";
+"Protection On" = "Koruma etkin";
+"Rules" = "Kurallar";
+"Runs only on this iPhone" = "Yalnızca bu iPhone’da çalışır";
+"Shows once a few screenshots are protected." = "Birkaç ekran görüntüsü korunduktan sonra görünür.";
+"Version %@ (%@)" = "Sürüm %@ (%@)";
+"What Is Covered" = "Neler gizlenir";
+"Whole lines, with more room around them." = "Satırların tamamı, çevresinde daha fazla boşlukla.";
+"Your Choice" = "Kendi seçimin";
+"Your Own Details" = "Kendi bilgilerin";
+"Your Protection" = "Koruman";
+"Your name, address, cards and rules, covered in every picture" = "Adın, adresin, kartların ve kuralların, her resimde gizlenir";

@@ -122,7 +122,6 @@
 "Send to %@" = "Send to %@";
 "Send to Apps" = "Send to Apps";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "A tap on an app covers every page and hands them to it, through the share sheet where needed.";
-"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac.";
 "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser.";
 "Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste." = "Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste.";
 "Opening %@…" = "Opening %@…";
@@ -523,7 +522,6 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@.";
 "Cover the Latest Screenshot" = "Cover the Latest Screenshot";
-"Double tap the back of your iPhone" = "Double tap the back of your iPhone";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "Everything happens on this iPhone. Nothing is sent anywhere.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly may not see your screenshots yet. Open Snapfly once and allow it.";
 "There is no screenshot yet." = "There is no screenshot yet.";
@@ -791,7 +789,6 @@
 "Snapfly covers its private details at once, right on this iPhone." = "Snapfly covers its private details at once, right on this iPhone.";
 "Snapfly lives in the menu bar" = "Snapfly lives in the menu bar";
 "Snapfly on your own screen, step by step. About a minute." = "Snapfly on your own screen, step by step. About a minute.";
-"Snapfly on your own screenshots, step by step." = "Snapfly on your own screenshots, step by step.";
 "Start" = "Start";
 "Start Again" = "Start Again";
 "Start Introduction" = "Start Introduction";
@@ -844,7 +841,6 @@
 "Explain" = "Explain";
 "In Protect Picture: what a document says, what matters in it and what to do, then answers to your questions about it." = "In Protect Picture: what a document says, what matters in it and what to do, then answers to your questions about it.";
 "Explain sends the protected copy, never the original, straight to Anthropic or OpenAI with your own key, and only when you tap it. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Explain sends the protected copy, never the original, straight to Anthropic or OpenAI with your own key, and only when you tap it. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it.";
-"Your own Claude or ChatGPT explains documents in Protect Picture." = "Your own Claude or ChatGPT explains documents in Protect Picture.";
 "What do I have to do?" = "What do I have to do?";
 "Is there a deadline?" = "Is there a deadline?";
 "Explain it more simply." = "Explain it more simply.";
@@ -1311,7 +1307,6 @@
 "“%@” uses the same Apple account, so Sync with your Mac is now on." = "“%@” uses the same Apple account, so Sync with your Mac is now on.";
 
 /* Protection: whose names, companies, and the iPhone's protect screen */
-"Advanced" = "Advanced";
 "Apple Intelligence is reading…" = "Apple Intelligence is reading…";
 "Checking the copy…" = "Checking the copy…";
 "Companies and organizations" = "Companies and organizations";
@@ -1329,13 +1324,11 @@
 "Opening…" = "Opening…";
 "Passwords and access" = "Passwords and access";
 "Protect a Photo" = "Protect a Photo";
-"Reading and checking" = "Reading and checking";
 "Show the screenshot as it was" = "Show the screenshot as it was";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly is not sure about these: check each, and turn it on or off.";
 "The copy could not be checked, so it stays here." = "The copy could not be checked, so it stays here.";
 "The copy could not be made." = "The copy could not be made.";
 "To check" = "To check";
-"What the patterns find shows at once; Apple Intelligence adds to it. Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "What the patterns find shows at once; Apple Intelligence adds to it. Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too.";
 "%d of %d" = "%d of %d";
 "%d photos chosen" = "%d photos chosen";
 "%d places still to check" = "%d places still to check";
@@ -1365,7 +1358,6 @@
 "Last %d days" = "Last %d days";
 "Last update" = "Last update";
 "Marker" = "Marker";
-"Median %@ · 95%% under %@" = "Median %@ · 95%% under %@";
 "Not Now" = "Not Now";
 "Not downloaded for this. Prepared once they are on this iPhone." = "Not downloaded for this. Prepared once they are on this iPhone.";
 "Not fully protected: %d places to check are not covered" = "Not fully protected: %d places to check are not covered";
@@ -1509,9 +1501,6 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "Add Detail";
 "Your Details" = "Your Details";
-"Your Name" = "Your Name";
-"%@ · always covered" = "%@ · always covered";
-"Add it, and it is covered however it is written" = "Add it, and it is covered however it is written";
 "First and last name" = "First and last name";
 "Street and house number" = "Street and house number";
 "Postcode" = "Postcode";
@@ -1582,3 +1571,45 @@
 "Label · Automatic" = "Label · Automatic";
 "Label · Same Line" = "Label · Same Line";
 "Label · Next Line" = "Label · Next Line";
+"%d details" = "%d details";
+"1 detail" = "1 detail";
+"%d rules" = "%d rules";
+"1 rule" = "1 rule";
+"%d of %d active" = "%d of %d active";
+"95%% under %@" = "95%% under %@";
+"Median %@" = "Median %@";
+"Access" = "Access";
+"Active" = "Active";
+"All Off" = "All Off";
+"All On" = "All On";
+"All three together cover everyone’s names." = "All three together cover everyone’s names.";
+"Always On" = "Always On";
+"Apple Intelligence off" = "Apple Intelligence off";
+"Apple Intelligence on" = "Apple Intelligence on";
+"Cards, accounts and phone numbers stay recognisable." = "Cards, accounts and phone numbers stay recognisable.";
+"Categories covered in every picture" = "Categories covered in every picture";
+"Check before sharing" = "Check before sharing";
+"Cover Style" = "Cover Style";
+"Detection" = "Detection";
+"Double Tap the Back" = "Double Tap the Back";
+"Every copy is read again before it leaves, and whatever private still shows is covered too." = "Every copy is read again before it leaves, and whatever private still shows is covered too.";
+"Features" = "Features";
+"Help" = "Help";
+"Invoice to" = "Invoice to";
+"Mac and iCloud" = "Mac and iCloud";
+"Strongest protection covers whole lines, these digits too." = "Strongest protection covers whole lines, these digits too.";
+"Own Details" = "Own Details";
+"People and Companies" = "People and Companies";
+"Performance on This iPhone" = "Performance on This iPhone";
+"Protection Off" = "Protection Off";
+"Protection On" = "Protection On";
+"Rules" = "Rules";
+"Runs only on this iPhone" = "Runs only on this iPhone";
+"Shows once a few screenshots are protected." = "Shows once a few screenshots are protected.";
+"Version %@ (%@)" = "Version %@ (%@)";
+"What Is Covered" = "What Is Covered";
+"Whole lines, with more room around them." = "Whole lines, with more room around them.";
+"Your Choice" = "Your Choice";
+"Your Own Details" = "Your Own Details";
+"Your Protection" = "Your Protection";
+"Your name, address, cards and rules, covered in every picture" = "Your name, address, cards and rules, covered in every picture";

@@ -1,0 +1,75 @@
+# More without an iPhone: builds the app for the simulator, runs its UI
+# tests, and keeps still frames of the tab and its pages on made-up choices,
+# light and dark, at the largest text sizes and on the smallest iPhone, and
+# videos of the motion, with and without Reduce Motion. The frames and the
+# videos go to the "more-captures" pre-release on the Releases page, for
+# review; the test results stay with the run. Runs when More or what it
+# shows changes, and by hand.
+name: More Checks
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths:
+      - "iOS/Snapfly/SettingsView.swift"
+      - "iOS/Snapfly/MoreStore.swift"
+      - "iOS/Snapfly/MoreParts.swift"
+      - "iOS/Snapfly/CoveredKindsView.swift"
+      - "iOS/Snapfly/CoverStylePage.swift"
+      - "iOS/Snapfly/DetectionView.swift"
+      - "iOS/Snapfly/HomeParts.swift"
+      - "iOS/Snapfly/OwnDetailsSettings.swift"
+      - "iOS/Snapfly/AppTabs.swift"
+      - "iOS/SnapflyUITests/MoreUITests.swift"
+      - "Sources/Tendedero/Shared/CoverSummary.swift"
+      - "Sources/Tendedero/Shared/CoverSample.swift"
+      - "scripts/more-checks.sh"
+      - ".github/workflows/more-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: more-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run the UI tests, capture the frames and record the motion
+        run: scripts/more-checks.sh
+
+      - name: Keep the frames, the videos and the test results with the run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: more-checks
+          path: |
+            captures/more/
+            build/more.xcresult
+          if-no-files-found: ignore
+
+      - name: Publish the frames and the videos for review
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          files=(captures/more/*.png captures/more/*.mp4)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "Nothing to publish."
+            exit 0
+          fi
+          tag=more-captures
+          notes="More on the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: the tab and each page on made-up choices, light and dark, at the largest text sizes and on the smallest iPhone, and videos of the motion, with and without Reduce Motion. For review; not a download of Snapfly."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --notes "$notes" --prerelease
+          else
+            gh release create "$tag" --prerelease --title "More captures" --notes "$notes" --target "$GITHUB_SHA"
+          fi
+          gh release upload "$tag" "${files[@]}" --clobber

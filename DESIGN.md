@@ -56,22 +56,36 @@ colors:
   phone-editor-ground: "#F8F9FA"  # under the page in Protect Picture, near-white so the page stands on it; black in dark
   phone-ink: "#1F1F1F"         # the cover ink, as a covered copy shows it (white 12%), light and dark
   phone-pen-ink: "#2B45A0"     # a ballpoint's blue: the signature and the stamp on the first run's doctor's letter, on its white paper only
-  # Always Hide on the iPhone (iOS/Snapfly/AlwaysHide.swift), its own palette at the owner's request (October 2026). Light value first, dark after.
-  phone-hide-ground: "#F2F3F5"      # the screen's and its sheets' ground; #0E1012 in dark
-  phone-hide-card: "#FFFFFF"        # its rows and cards; #1C1F23 in dark
-  phone-hide-separator: "#ECEEF1"   # between its rows, inset to the words; #2C3036 in dark
-  phone-hide-text: "#111318"        # its words; #F2F4F6 in dark
-  phone-hide-secondary: "#5F6670"   # its quieter words: 5.8:1 on its cards, 5.2:1 on its ground; #A3ABB5 in dark (7.2:1, 8.2:1)
-  phone-hide-accent: "#077A56"      # its green words, edges and pluses: 5.4:1 on its cards; #1FA774 in dark
-  phone-hide-accent-soft: "#E7F4EE" # behind the Example badge and the empty state's name symbol: the green on it 4.7:1; #102A20 in dark
+  # More and its pages, and Always Hide, on the iPhone (iOS/Snapfly/SettingsView.swift, AlwaysHide.swift), their own palette at the owner's request (October 2026). Light value first, dark after.
+  phone-hide-ground: "#F2F3F5"      # the screens' and the sheets' ground, and their bars; #0B0D10 in dark
+  phone-hide-card: "#FFFFFF"        # rows, tiles and cards; #17191D in dark
+  phone-hide-separator: "#ECEEF1"   # between rows, inset to the words, and the meter's track; #262A30 in dark
+  phone-hide-text: "#111318"        # words: 18:1 on the cards; #F3F4F6 in dark (17:1)
+  phone-hide-secondary: "#5F6670"   # quieter words: 5.8:1 on the cards, 5.2:1 on the ground; #A0A7B0 in dark (7.3:1, 8.4:1)
+  phone-hide-accent: "#077A56"      # green words, edges, switches and pluses: 5.4:1 on the cards; #5BD6A6 in dark (9.7:1)
+  phone-hide-accent-soft: "#E7F4EE" # the mint behind every symbol's tile, the badges and the empty state's name symbol: the green words on it 4.7:1; #11392C in dark (7:1)
+  phone-more-glyph: "#0B7F58"       # a symbol on its mint tile, the meter, the status dot and the chosen look's ring: the one accent, 4.4:1 on the mint; #5BD6A6 in dark
+  phone-more-hero: "#0E3B2E"        # More's hero card, white words on it 12:1; #0F3A2D in dark
+  phone-more-hero-edge: "#0E3B2E"   # the hero's 1pt edge, unseen by day; #1D5644 in dark
+  phone-more-hero-off: "#2A2E34"    # the hero with nothing covered, day and night
+  phone-more-pill-on: "#0B7F58"     # a kind turned on: white words on it 5:1; #5BD6A6 in dark with phone-more-pill-on-text
+  phone-more-pill-on-text: "#FFFFFF" # its words and check; #0B0D10 in dark (10:1)
+  phone-more-pill-edge: "#D5D9DF"   # a kind turned off: phone-hide-card inside this edge; #343941 in dark
+  phone-more-track: "#E4E6EA"       # the presets' segmented track; #1E2126 in dark
+  phone-more-thumb: "#FFFFFF"       # the thumb raised on it for the preset chosen; #3A3F47 in dark
+  phone-more-neutral-tile: "#EEF0F2" # the quiet tiles in More's Features; #262A30 in dark
+  phone-more-neutral-glyph: "#4A5059" # their symbols, 7:1; #B4BBC4 in dark
+  phone-paper: "#FFFFFF"            # a document drawn small under More (the hero's, the tile's, the looks' and the bill in Cover Style): white paper in light and dark alike
+  phone-paper-text: "#111318"       # its words
+  phone-paper-label: "#5F6670"      # its labels, 5.8:1
+  phone-paper-line: "#D6DAE0"       # its lines of words drawn as bars
   phone-hide-button: "#077A56"      # its main button, the same in light and dark: white on it 5.4:1
   phone-hide-button-off: "#E4E6EA"  # the main button while it waits, and the close button's circle; #2C3036 in dark
   phone-hide-button-off-text: "#4A5059" # the waiting button's words: 6.5:1 on it; #B4BBC4 in dark (6.8:1)
-  phone-hide-rule-tile: "#EEF0F2"   # behind a rule's symbol, phone-hide-text on it; #2C3036 in dark
   phone-hide-field: "#F2F3F5"       # the fields in a sheet, on the sheet's phone-hide-card; #2A2E34 in dark
   phone-hide-field-line: "#E1E4E8"  # between those fields, inset to the words; #3A3F46 in dark
   phone-hide-warning: "#B35200"     # what is wrong with what was typed: 4.6:1 on its ground; #FFA54D in dark
-  phone-detail-name: "#077A56"      # each kind of detail's tile, the same in light and dark, its symbol white on it: a name (5.4:1)
+  phone-detail-name: "#077A56"      # each kind of detail's tile in the Mac's Always Hide pane (DetailTint), the same in light and dark, its symbol white on it: a name (5.4:1); the iPhone's tiles are all mint
   phone-detail-address: "#1F6FE0"   # an address (4.8:1)
   phone-detail-card: "#D9660B"      # a bank card (3.6:1, over a symbol's 3:1)
   phone-detail-account: "#7C4DDB"   # a bank account (5.3:1)
@@ -112,7 +126,9 @@ rounded:
   shelf: "24pt"
   island: "30pt"
   phone-hide-card: "18pt"        # Always Hide's small cards: a sheet's fields and its example
-  phone-hide-row: "22pt"         # Always Hide's sections of rows
+  phone-hide-row: "22pt"         # Always Hide's sections of rows, and More's tiles and cards
+  phone-more-hero: "28pt"        # More's hero card
+  phone-more-button: "18pt"      # More's buttons: the hero's chips and Help's two
   phone-hide-sheet: "32pt"       # Always Hide's sheets
   full: "999pt"
 spacing:
@@ -210,10 +226,14 @@ components:
     size: "52pt"                   # an app to send to: on the first run's share row and under scanned pages; its icon from the asset catalogue (Logo* from SVG, vector kept; Chat* the owner's logos as app icons, 192px), clipped to continuous corners of 12 with a hairline of .primary at 8%, the name in caption .secondary under it, 64pt wide, 12pt apart in a row that scrolls sideways; More, last, is .tertiarySystemFill with ellipsis
   phone-rail-icon:
     size: "40pt"                   # a way out beside the page in Protect Picture: an app's phone-share-tile icon at 40pt (continuous corners of 9.2, the same hairline), or Photos, Files or the share sheet as a glyph 17pt medium in .primary on a tile of secondarySystemGroupedBackground of the same size; 44pt to the finger, 8pt apart, one above another, 12pt in from the screen's trailing edge, no frame, name or divider; pressed, 90% on a spring (0.25, 0.7)
-  phone-detail-tile:
-    size: "36pt"                   # at the body's text size, growing with it: one of the owner's details in Always Hide, and the owner's name first under People in Settings: its symbol (person.fill, house.fill, creditcard.fill, building.columns.fill), callout semibold white, on its kind's colour (phone-detail-*) with continuous corners of a quarter of its side, 12pt before the words
-  phone-rule-tile:
-    size: "36pt"                   # one of the owner's rules in Always Hide: its symbol (textformat, "Aa", for a word; tag.fill for a label; chevron.left.forwardslash.chevron.right for a pattern), callout semibold phone-hide-text on phone-hide-rule-tile, corners of a quarter of its side
+  phone-symbol-tile:
+    size: "36pt"                   # at the body's text size, growing with it to 52pt at most (SymbolTile): every symbol under More and in Always Hide, a detail's (person.fill, house.fill, creditcard.fill, building.columns.fill), a rule's (textformat for a word, tag for a label, chevron.left.forwardslash.chevron.right for a pattern) and each tile's, callout semibold phone-more-glyph on phone-hide-accent-soft, continuous corners of 28% of its side, 12pt before the words; 32pt in More's Features, phone-more-neutral-glyph on phone-more-neutral-tile. Editing at the accessibility sizes, Always Hide's rows leave it out, so the words keep their room
+  phone-more-tile:
+    height: "112pt"                # at least: a tile under More › Protection, two to a row 12pt apart (one at the accessibility sizes), 16pt in, on phone-hide-card with rounded.phone-hide-row: its symbol tile, the avatar or the little document on top, then its name in subheadline semibold over what it holds now in footnote phone-hide-secondary
+  phone-more-pill:
+    height: "38pt"                 # at least: a kind in What Is Covered, a capsule 12 by 8pt in, subheadline medium; on, phone-more-pill-on with a checkmark (caption bold) 4pt before the words in phone-more-pill-on-text; off, phone-hide-card inside a 1pt phone-more-pill-edge; 8pt apart in rows that wrap (PillFlow), its touch 3pt larger round it
+  phone-more-chip:
+    height: "44pt"                 # at least: one of the hero's three chips, white at 12% with rounded.phone-more-button, 12 by 8pt in, its name in caption white 72% over its value in subheadline semibold white; side by side, sharing the width, or one above another at text sizes above xLarge
   phone-hide-row:
     height: "64pt"                 # at least, at the body's text size: a detail or a rule in Always Hide's inset grouped list on phone-hide-card (rounded.phone-hide-row on the section's first and last), 16pt in at the sides, its words on one line; an add row 52pt; hairlines of phone-hide-separator inset to the words
   phone-hide-field:
@@ -1928,7 +1948,9 @@ else is shared.
 - **Don't** use colors outside this file, or hex in views. Add a token here
   first.
 - **Don't** use generic dashboard templates: no KPI tiles, no hero numbers, no
-  sidebar-plus-cards web layouts.
+  sidebar-plus-cards web layouts. The one exception is the iPhone's More,
+  at the owner's request (October 2026): its hero's count, its preset and
+  Always On badges and its two timing cards (above).
 - **Don't** add decoration without a job: no emoji as icons, no ornamental
   dividers, no confetti.
 - **Don't** steal focus from the app in front, or block with a modal what a
@@ -1948,7 +1970,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
 - **The tab bar** (`AppTabs.swift`) is the system's `TabView`, never a bar
   of our own, so it is Liquid Glass from iOS 26 on, where it also shrinks
   to the tab shown while a page scrolls down (`tabBarMinimizeBehavior`),
-  and the system's bar before. Four tabs, each with its own navigation:
+  but on More, where it stays whole: shrunk, it is one round button with
+  the tab's symbol, More's "…", over the rows. The system's bar before
+  iOS 26. Four tabs, each with its own navigation:
   Photos (`photo.on.rectangle.angled`), Scan (`doc.viewfinder`), Protected
   (`checkmark.shield`) and More (`ellipsis.circle`), tinted with the
   accent; a selection haptic marks each change. The tab bar steps aside
@@ -2295,7 +2319,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     doctor's letter", with each detail Covered or its value; the pages
     behind it are hidden from VoiceOver.
   - It shows once (`firstRunSeen`), never again after an ordinary update,
-    and from More › Help & Introduction › Watch the Demo (`play.circle`).
+    and from More › Help › Watch the Demo (`play.circle`).
 - **Scan** (`ScanTab.swift`), a large title, 16 pt in:
   - A card of `phone-surface` with corners of 24 and a hairline of
     `.primary` at 6%, padded 20 by 24, its contents centred 18 pt apart: a
@@ -2370,7 +2394,105 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     for iOS's own question; Don't Allow leaves everything as it was, and
     once deleted, the cards leave the same way and a note says Photos can
     bring them back for 30 days.
-- **More** is Settings as a tab: a large title "More", no Done.
+- **More** is Settings as a tab (`SettingsView.swift`, `MoreParts.swift`,
+  at the owner's request, October 2026): a short overview with a page for
+  each part, on `phone-hide-ground`. A large title "More" on the system's
+  own bar (a solid bar under a large title hides it on iOS 26), no Done;
+  the pages it opens have an inline title on a bar of the same ground, so
+  no words show through it, and no tab bar under them. At the
+  accessibility sizes the hero's badge goes under its state.
+  16pt in at the sides, its parts 32pt apart. Its tokens are `phone-hide-*`
+  and `phone-more-*`, one accent only: every symbol on a mint
+  `phone-symbol-tile`, but the grey ones in Features.
+  - **The hero** ("Your Protection"), `rounded.phone-more-hero`, 20pt in,
+    on `phone-more-hero` with its edge: `checkmark.shield.fill` and
+    Protection On in subheadline semibold white, the preset as a badge
+    (caption semibold, white on white 16%) on the trailing side; the count
+    of kinds on, bold at 52pt growing with the large title, rolling to its
+    new value, with "/ 22" in title 3 semibold white 72% and "Categories
+    covered in every picture" in subheadline white 80%; on the trailing
+    side a little bill, white paper 70 by 92pt, corners 8, turned 6°, with
+    a shadow of black 25%, radius 8, y 4, its name, IBAN and phone covered
+    in the look chosen (left out at the accessibility sizes); then three
+    `phone-more-chip`s: Style, Own Details and Rules, the rules switched
+    on. With nothing on, `phone-more-hero-off`, `shield.slash.fill`,
+    Protection Off and None, cross-fading.
+  - **Protection**, a heading in title 3 semibold, then four
+    `phone-more-tile`s, two to a row: What Is Covered (`eye.slash`, a 4pt
+    meter of `phone-more-glyph` on `phone-hide-separator`, "13 of 22
+    active"), Always Hide (a mint circle with the name's initials in
+    subheadline bold, or `person.fill`; "1 detail · 2 rules"), Cover Style
+    (a little document in the look chosen, the look's name) and Detection
+    (`text.viewfinder`, a status dot and "Apple Intelligence on", grey and
+    off when it is off or not on this iPhone).
+  - **Features**, one card of 56pt rows, 16pt in: AI Assistant
+    (`sparkles`, its name or Off), Send to Apps (`paperplane`, how many),
+    Double Tap the Back (`hand.tap`) and, where the build has iCloud, Mac
+    and iCloud (`laptopcomputer.and.iphone`, On or Off), each with
+    `chevron.forward`, hairlines from the words.
+  - **Help**: Introduction (`hand.wave`) and Watch the Demo
+    (`play.circle`) side by side, or one above the other when they do not
+    fit, each on `phone-hide-card` with `rounded.phone-more-button`, the
+    symbol in title 3 semibold `phone-more-glyph` over the words in
+    subheadline semibold; then "Version 1.1.0 (214)" in footnote
+    `phone-hide-secondary`, centred.
+  - **What Is Covered** (`CoveredKindsView.swift`): "13 of 22" in large
+    title bold, rolling, with the preset as a badge (`phone-hide-accent`
+    on `phone-hide-accent-soft`; Your Choice when it is none), under it
+    when it does not fit; "Categories covered in every picture"; then
+    Recommended, All and None, a segmented control of our own, so it can
+    show none chosen: a capsule of `phone-more-track`, 4pt in, the chosen
+    one raised on a `phone-more-thumb` capsule with a shadow of black 8%,
+    radius 2, y 1, at least 36pt high, sliding to the next. They write
+    exactly what Check All, Recommended and Uncheck All wrote. Then the
+    groups as tabs that scroll sideways, "All", "People 7/10", "Money 1/2"
+    and so on: capsules 38pt high of `phone-hide-card`, the chosen one
+    `phone-hide-text` with `phone-hide-card` words, sliding to the next
+    and scrolled into view; a tab shows its group alone. Then a card per
+    group: its name in headline, "x of y active", All On or All Off in
+    subheadline semibold `phone-hide-accent`, and its kinds as
+    `phone-more-pill`s. Under People and Companies, what Names, Patient
+    names and Other people each cover, in footnote. Last, Your Own
+    Details, a card that opens Always Hide.
+  - **Cover Style** (`CoverStylePage.swift`): a made-up bill on
+    `phone-paper` with `rounded.phone-hide-row` and a hairline, 20pt in,
+    "Invoice to" in caption semibold capitals, then a name, an IBAN and a
+    phone number in subheadline medium, covered in the look as a copy
+    covers it (`CoverSwatch` draws each look by the renderer's rules on
+    white), the last four digits left with Keep the last four digits,
+    whole lines with more room with Strongest protection; then the six
+    looks three to a row (two at the accessibility sizes), each a little
+    document on `phone-paper`, corners 12, the chosen one in a 2.5pt
+    `phone-more-glyph` ring, corners 16, that moves to the next; then the
+    two switches in a card, each with one line in footnote; then what every
+    look keeps, in footnote.
+  - **Detection** (`DetectionView.swift`): one card with Find more with
+    Apple Intelligence and "Runs only on this iPhone", a switch, off and
+    dimmed where Apple Intelligence is not; Check before sharing with an
+    Always On badge, not a switch; Faster picture processing, On or Off,
+    opening its page. Then Performance on This iPhone: Picture shown and
+    Ready to share as two cards, the median in title bold over "95% under
+    …" in footnote, and the last screenshot's time under them; before any
+    were covered, a line that says they show once some are.
+  - **Mac and iCloud**: Sync and Another Apple account as before
+    (`SyncSection`), as a page of its own.
+  - **Motion** (`MoreMotion`), each with its still answer: the parts rise
+    8pt and fade in, 40ms apart, 0.26 s each, the first time More shows in
+    a launch, never again; the hero's covers draw in from the reading side
+    (scaled from the leading edge), 0.35 s, 80ms apart; a new look
+    cross-fades in 0.25 s, the ring and the tabs' capsule slide
+    (`matchedGeometryEffect`); counts roll (`numericText`) and the meter
+    grows on `.snappy`; a pill's colour turns in 0.18 s, its check grows
+    in, and the rows close up on `.snappy`, with a selection haptic; a
+    preset or All On runs down the pills it changes, 15ms apart and within
+    0.3 s, with one light impact; covers grow over the whole line with no
+    overshoot (a spring of 0.35 s, no bounce) and the last four digits
+    slide in from the trailing side; tiles, chips and buttons give to 97%
+    on a quick spring. A tile's page grows out of it from iOS 18 on
+    (`matchedTransitionSource`, `.zoom`), the system's push before. No
+    haptic on a page opening. With Reduce Motion nothing moves or scales:
+    0.15 s cross-fades, the check's room kept so no pill changes width,
+    the system's push, and the numbers still change.
 - **The share extension** (`iOS/Share`), in any app's share sheet: the
   system's sheet with an inline "Snapfly", Cancel and Done (semibold), on
   `systemGroupedBackground`, 16 pt in. The covered picture fitted whole,
@@ -2647,27 +2769,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   subheadline semibold, each on one line (shrinking to 80% rather than
   wrapping), 8 pt apart on the trailing side, the main one filled. The hole and the card move on a spring
   (0.45, 0.86), a 0.15 s ease-out with Reduce Motion. Offered once when
-  the first screenshots show, again from Settings › Help & Introduction.
-- Settings opens with Check All, Recommended and Uncheck All as small
-  bordered buttons sharing a row, under "Hide private details", then the
-  six groups. People opens with Your Name (`OwnNameRow`): the name
-  detail's `phone-detail-tile`, "Your Name" in body over "<the name> ·
-  always covered" in footnote `.secondary`, two lines at most, and
-  `checkmark.shield.fill` in semibold phone-protect at the trailing edge;
-  without a saved name, "Add it, and it is covered however it is written"
-  and `plus.circle.fill`. A tap opens the name's sheet (`DetailSheet`,
-  below). Then Names, Patient names and Other people, each with its
-  subtitle in footnote `.secondary`, each a switch of its own, as on the
-  Mac, over the Mac's footer. Then "Cover
-  look", the Mac's tiles three to a row with Keep the last four digits and
-  Strongest protection under them; then "Reading and checking": Find more
-  with Apple Intelligence and, once a screenshot was covered, how long the
-  last one took, then Picture shown and Ready to share, each "Median %@ ·
-  95% under %@" over the last fifty, then a row Faster picture processing,
-  On or Off, opening its page (below); then AI Assistant (above); then
-  Sync; then "Advanced", two rows that open pages:
-  Always Hide (`text.badge.plus`) and Double tap the back of your iPhone
-  (`hand.tap`); then Help & Introduction.
+  the first screenshots show, again from More › Help › Introduction.
 
 - **Always Hide** (`AlwaysHide.swift`, `AlwaysHideSheets.swift`), from More,
   on `phone-hide-ground`, with its own tokens (`phone-hide-*`, at the
@@ -2675,7 +2777,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - An inline title, "Always Hide", on a bar of `phone-hide-ground`, so
     nothing scrolls through it; Edit, then Done, a plain text button in
     the accent, while there is something to edit. The tab bar is hidden,
-    so its minimised More button never sits over a row.
+    as under every page of More.
   - What it does in subheadline `phone-hide-secondary`, then one quiet line
     8pt under it: `lock` and the promises that hold in code
     (`AlwaysHidePromise`, from `OwnDetailStore`) joined with " · ", in
@@ -2684,7 +2786,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     out of backups.
   - Your Details, 24pt under that line, an inset grouped section of
     `phone-hide-row`s, 24pt from the next, headed in subheadline semibold
-    `phone-hide-secondary`. A row per detail: its `phone-detail-tile`; its
+    `phone-hide-secondary`. A row per detail: its `phone-symbol-tile`; its
     value in body semibold on one line (a name as it reads, "Musterstraße
     12, Musterstadt", a card or an IBAN "•••• 4242"); its kind in footnote,
     with the card's network or its own name; `chevron.forward`. The ways a
@@ -2692,7 +2794,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     `plus` and its words in the accent. VoiceOver reads a row as one:
     "Visa, ending in 4242".
   - Your Rules, headed with "N active", the rules whose switch is on. A row
-    per rule: its `phone-rule-tile`; its word or label in body semibold,
+    per rule: its `phone-symbol-tile`; its word or label in body semibold,
     `phone-hide-secondary` while off; its kind and what it covers in
     footnote ("Word · anywhere in the picture", "Label · Automatic"); the
     system's switch tinted `phone-hide-accent`, read "Rule “Customer
@@ -2733,7 +2835,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     The first field is focused and Return goes on to the next, then adds.
     No swipe down while something was typed. A kept detail opens straight
     at its fields, a card's or account's number hidden there with `eye`
-    (44pt) to show it, and Save. Your Name under People opens the same.
+    (44pt) to show it, and Save.
   - **New Rule** (`RuleSheet`): Word and After Label, a segmented control,
     with Pattern too for a pattern kept before; the one field, focused; for
     a label, Automatic, Same Line and Next Line, a second segmented control,
@@ -2776,7 +2878,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - Send to Mac, a bordered button with `laptopcomputer.and.arrow.down`,
     under Copy, Share and Save; once pressed it waits dimmed and the note
     says it is on its way.
-  - Settings has a Sync section before Help & Introduction: the toggle with
+  - More › Mac and iCloud holds Sync: the toggle with
     its footnote, This iPhone with the state (orange with
     `exclamationmark.triangle.fill` when it needs the owner), Sync Now while
     on, and a row per device with its symbol, name and when it was last

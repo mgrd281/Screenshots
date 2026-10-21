@@ -29,7 +29,7 @@
 "Send the newest photo" = "Neuestes Foto senden";
 "Change Shortcut…" = "Tastenkurzbefehl ändern …";
 "Change Shortcut" = "Tastenkurzbefehl ändern";
-"None" = "Keiner";
+"None" = "Keine";
 "Space" = "Leertaste";
 "Press the new shortcut" = "Drücke den neuen Tastenkurzbefehl";
 "Escape cancels. Delete removes the shortcut." = "Escape bricht ab. Löschen entfernt den Tastenkurzbefehl.";
@@ -120,7 +120,6 @@
 "Send to %@" = "An %@ senden";
 "Send to Apps" = "An Apps senden";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "Ein Tippen auf eine App verdeckt jede Seite und übergibt sie ihr, wo nötig über das Teilen-Menü.";
-"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "Die Apps nach einem Scan und neben dem Bild in „Bild schützen“, um ihnen die verdeckte Kopie zu übergeben. Dieselben Apps wie auf dem Mac.";
 "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "Ein Tippen gibt die geschützte Kopie an die App. WhatsApp öffnet sich mit ihr; ChatGPT, Claude und die anderen KI-Chats öffnen sich mit ihr kopiert, zum Einsetzen; die übrigen über das Teilen-Menü, wo du die App antippst. Nichts öffnet sich im Browser.";
 "Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste." = "Für %@ kopiert: Tippe dort über der Tastatur auf „Foto“ oder halte das Nachrichtenfeld gedrückt und tippe auf „Einsetzen“.";
 "Opening %@…" = "%@ wird geöffnet …";
@@ -521,7 +520,6 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "Tippe zweimal auf die Rückseite deines iPhone: Das neueste Bildschirmfoto wird verdeckt und kopiert, bereit zum Einsetzen in einen Chat.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Zum einmaligen Einrichten öffne Einstellungen › Bedienungshilfen › Tippen › Auf Rückseite tippen › Doppeltippen und wähle %@.";
 "Cover the Latest Screenshot" = "Neuestes Bildschirmfoto verdecken";
-"Double tap the back of your iPhone" = "Zweimal auf die Rückseite deines iPhone tippen";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "Alles geschieht auf diesem iPhone. Nichts wird irgendwohin gesendet.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly darf deine Bildschirmfotos noch nicht sehen. Öffne Snapfly einmal und erlaube es.";
 "There is no screenshot yet." = "Es gibt noch kein Bildschirmfoto.";
@@ -576,7 +574,7 @@
 "Links" = "Links";
 "People" = "Personen";
 "Check All" = "Alle auswählen";
-"Recommended" = "Empfohlene";
+"Recommended" = "Empfohlen";
 "Uncheck All" = "Alle abwählen";
 "Add Rule" = "Regel hinzufügen";
 "Word" = "Wort";
@@ -789,7 +787,6 @@
 "Snapfly covers its private details at once, right on this iPhone." = "Snapfly verdeckt seine privaten Angaben sofort, direkt auf diesem iPhone.";
 "Snapfly lives in the menu bar" = "Snapfly wohnt in der Menüleiste";
 "Snapfly on your own screen, step by step. About a minute." = "Snapfly auf deinem eigenen Bildschirm, Schritt für Schritt. Etwa eine Minute.";
-"Snapfly on your own screenshots, step by step." = "Snapfly mit deinen eigenen Bildschirmfotos, Schritt für Schritt.";
 "Start" = "Starten";
 "Start Again" = "Neu starten";
 "Start Introduction" = "Einführung starten";
@@ -842,7 +839,6 @@
 "Explain" = "Erklären";
 "In Protect Picture: what a document says, what matters in it and what to do, then answers to your questions about it." = "In „Bild schützen“: was ein Dokument sagt, was darin wichtig ist und was zu tun ist, dann Antworten auf deine Fragen dazu.";
 "Explain sends the protected copy, never the original, straight to Anthropic or OpenAI with your own key, and only when you tap it. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "Erklären schickt die geschützte Kopie, nie das Original, direkt an Anthropic oder OpenAI, mit deinem eigenen Schlüssel und nur, wenn du darauf tippst. Jede Anfrage wird dort deinem Konto berechnet; ein Abo von Claude oder ChatGPT deckt das nicht ab.";
-"Your own Claude or ChatGPT explains documents in Protect Picture." = "Dein eigenes Claude oder ChatGPT erklärt Dokumente in „Bild schützen“.";
 "What do I have to do?" = "Was muss ich tun?";
 "Is there a deadline?" = "Gibt es eine Frist?";
 "Explain it more simply." = "Erklär es einfacher.";
@@ -1309,7 +1305,6 @@
 "“%@” uses the same Apple account, so Sync with your Mac is now on." = "„%@“ nutzt denselben Apple Account, deshalb ist „Mit deinem Mac synchronisieren“ jetzt eingeschaltet.";
 
 /* Protection: whose names, companies, and the iPhone's protect screen */
-"Advanced" = "Erweitert";
 "Apple Intelligence is reading…" = "Apple Intelligence liest …";
 "Checking the copy…" = "Kopie wird geprüft …";
 "Companies and organizations" = "Unternehmen und Organisationen";
@@ -1322,18 +1317,16 @@
 "Without a clear role, as in chats and lists" = "Ohne erkennbare Rolle, etwa in Chats und Listen";
 "Finding private details…" = "Private Angaben werden gesucht …";
 "Last screenshot" = "Letztes Bildschirmfoto";
-"Money" = "Finanzen";
+"Money" = "Geld";
 "On" = "Ein";
 "Opening…" = "Wird geöffnet …";
 "Passwords and access" = "Passwörter und Zugänge";
 "Protect a Photo" = "Foto schützen";
-"Reading and checking" = "Lesen und Prüfen";
 "Show the screenshot as it was" = "Bildschirmfoto wie vorher zeigen";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Bei diesen ist sich Snapfly nicht sicher: Prüf jede Stelle und schalte sie ein oder aus.";
 "The copy could not be checked, so it stays here." = "Die Kopie konnte nicht geprüft werden, deshalb bleibt sie hier.";
 "The copy could not be made." = "Die Kopie konnte nicht erstellt werden.";
 "To check" = "Zu prüfen";
-"What the patterns find shows at once; Apple Intelligence adds to it. Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "Was die Muster finden, siehst du sofort; Apple Intelligence ergänzt es. Jede Kopie wird vor dem Teilen noch einmal gelesen, wie jeder sie lesen könnte, und was Privates noch zu sehen ist, wird auch verdeckt.";
 "%d of %d" = "%d von %d";
 "%d photos chosen" = "%d Fotos ausgewählt";
 "%d places still to check" = "Noch %d Stellen zu prüfen";
@@ -1363,7 +1356,6 @@
 "Last %d days" = "Letzte %d Tage";
 "Last update" = "Letzte Aktualisierung";
 "Marker" = "Marker";
-"Median %@ · 95%% under %@" = "Median %@ · 95 %% unter %@";
 "Not Now" = "Nicht jetzt";
 "Not downloaded for this. Prepared once they are on this iPhone." = "Dafür wird nichts geladen. Sie werden vorbereitet, sobald sie auf diesem iPhone sind.";
 "Not fully protected: %d places to check are not covered" = "Nicht vollständig geschützt: %d zu prüfende Stellen sind nicht verdeckt";
@@ -1507,9 +1499,6 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "Angabe hinzufügen";
 "Your Details" = "Deine Angaben";
-"Your Name" = "Dein Name";
-"%@ · always covered" = "%@ · immer verdeckt";
-"Add it, and it is covered however it is written" = "Füge ihn hinzu, dann wird er verdeckt, wie auch immer er geschrieben ist";
 "First and last name" = "Vor- und Nachname";
 "Street and house number" = "Straße und Hausnummer";
 "Postcode" = "PLZ";
@@ -1580,3 +1569,45 @@
 "Label · Automatic" = "Bezeichnung · Automatisch";
 "Label · Same Line" = "Bezeichnung · Gleiche Zeile";
 "Label · Next Line" = "Bezeichnung · Nächste Zeile";
+"%d details" = "%d Angaben";
+"1 detail" = "1 Angabe";
+"%d rules" = "%d Regeln";
+"1 rule" = "1 Regel";
+"%d of %d active" = "%d von %d aktiv";
+"95%% under %@" = "95 %% unter %@";
+"Median %@" = "Median %@";
+"Access" = "Zugänge";
+"Active" = "Aktiv";
+"All Off" = "Alle aus";
+"All On" = "Alle an";
+"All three together cover everyone’s names." = "Alle drei zusammen verdecken die Namen aller.";
+"Always On" = "Immer an";
+"Apple Intelligence off" = "Apple Intelligence aus";
+"Apple Intelligence on" = "Apple Intelligence an";
+"Cards, accounts and phone numbers stay recognisable." = "Karten, Konten und Telefonnummern bleiben erkennbar.";
+"Categories covered in every picture" = "Kategorien werden in jedem Bild verdeckt";
+"Check before sharing" = "Prüfung vor dem Teilen";
+"Cover Style" = "Stil der Abdeckung";
+"Detection" = "Erkennung";
+"Double Tap the Back" = "Rückseite doppelt tippen";
+"Every copy is read again before it leaves, and whatever private still shows is covered too." = "Jede Kopie wird vor dem Teilen noch einmal gelesen, und was noch Privates zu sehen ist, wird auch verdeckt.";
+"Features" = "Funktionen";
+"Help" = "Hilfe";
+"Invoice to" = "Rechnung an";
+"Mac and iCloud" = "Mac und iCloud";
+"Strongest protection covers whole lines, these digits too." = "„Stärkster Schutz“ verdeckt ganze Zeilen, auch diese Ziffern.";
+"Own Details" = "Eigene Angaben";
+"People and Companies" = "Personen und Firmen";
+"Performance on This iPhone" = "Leistung auf diesem iPhone";
+"Protection Off" = "Schutz aus";
+"Protection On" = "Schutz aktiv";
+"Rules" = "Regeln";
+"Runs only on this iPhone" = "Läuft nur auf diesem iPhone";
+"Shows once a few screenshots are protected." = "Erscheint, sobald ein paar Bildschirmfotos geschützt sind.";
+"Version %@ (%@)" = "Version %@ (%@)";
+"What Is Covered" = "Was verdeckt wird";
+"Whole lines, with more room around them." = "Ganze Zeilen, mit mehr Rand drumherum.";
+"Your Choice" = "Eigene Auswahl";
+"Your Own Details" = "Deine eigenen Angaben";
+"Your Protection" = "Dein Schutz";
+"Your name, address, cards and rules, covered in every picture" = "Dein Name, deine Adresse, Karten und Regeln, in jedem Bild verdeckt";

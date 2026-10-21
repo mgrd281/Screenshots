@@ -122,7 +122,6 @@
 "Send to %@" = "Göndər: %@";
 "Send to Apps" = "Tətbiqlərə göndər";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "Tətbiqə toxunuş bütün səhifələri örtür və onlara verir, lazım olduqda paylaşma pəncərəsi ilə.";
-"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "Skandan sonra və «Şəkli qoru»da şəklin yanında olan tətbiqlər, örtülmüş nüsxəni onlara vermək üçün. Mac-dakı ilə eyni tətbiqlər.";
 "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "Toxunuş qorunan nüsxəni tətbiqə verir. WhatsApp onunla açılır; ChatGPT, Claude və digər AI söhbətləri onu kopyalanmış halda açılır ki, yapışdırasan; qalanları paylaşma pəncərəsindən, orada tətbiqə toxunursan. Heç nə brauzerdə açılmır.";
 "Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste." = "%@ üçün kopyalandı: oradakı klaviaturanın üstündəki şəklə toxun və ya mesaj sahəsini basılı saxla və «Yapışdır»a toxun.";
 "Opening %@…" = "%@ açılır…";
@@ -523,7 +522,6 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhone-un arxasına iki dəfə toxun: ən yeni ekran şəkli gizlədilir və kopyalanır, söhbətə yapışdırmağa hazırdır.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Bir dəfə qurmaq üçün Parametrlər › Əlçatımlılıq › Toxunma › Arxaya toxunma › İki dəfə toxunma bölməsini aç və %@ seç.";
 "Cover the Latest Screenshot" = "Ən yeni ekran şəklini gizlət";
-"Double tap the back of your iPhone" = "iPhone-un arxasına iki dəfə toxun";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "Hər şey bu iPhone-da baş verir. Heç nə heç yerə göndərilmir.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly hələ ekran şəkillərini görə bilmir. Snapfly-ı bir dəfə aç və icazə ver.";
 "There is no screenshot yet." = "Hələ ekran şəkli yoxdur.";
@@ -791,7 +789,6 @@
 "Snapfly covers its private details at once, right on this iPhone." = "Snapfly onun şəxsi məlumatlarını dərhal, elə bu iPhone-da örtür.";
 "Snapfly lives in the menu bar" = "Snapfly menyu sətrində yaşayır";
 "Snapfly on your own screen, step by step. About a minute." = "Snapfly öz ekranında, addım-addım. Təxminən bir dəqiqə.";
-"Snapfly on your own screenshots, step by step." = "Snapfly öz ekran şəkillərində, addım-addım.";
 "Start" = "Başla";
 "Start Again" = "Yenidən başla";
 "Start Introduction" = "Tanışlığa başla";
@@ -844,7 +841,6 @@
 "Explain" = "İzah et";
 "In Protect Picture: what a document says, what matters in it and what to do, then answers to your questions about it." = "«Şəkli qoru»da: sənədin nə dediyi, onda nəyin vacib olduğu və nə etməli olduğun, sonra onun haqqında suallarına cavablar.";
 "Explain sends the protected copy, never the original, straight to Anthropic or OpenAI with your own key, and only when you tap it. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "«İzah et» qorunan nüsxəni, heç vaxt orijinalı yox, öz açarınla birbaşa Anthropic və ya OpenAI-yə göndərir və yalnız ona toxunanda. Hər sorğu oradakı hesabına yazılır; Claude və ya ChatGPT abunəliyi bunu əhatə etmir.";
-"Your own Claude or ChatGPT explains documents in Protect Picture." = "Öz Claude və ya ChatGPT-n sənədləri «Şəkli qoru»da izah edir.";
 "What do I have to do?" = "Nə etməliyəm?";
 "Is there a deadline?" = "Son tarix varmı?";
 "Explain it more simply." = "Daha sadə izah et.";
@@ -1311,7 +1307,6 @@
 "“%@” uses the same Apple account, so Sync with your Mac is now on." = "“%@” eyni Apple hesabından istifadə edir, ona görə də Mac ilə sinxronlaşdır indi yanılıdır.";
 
 /* Protection: whose names, companies, and the iPhone's protect screen */
-"Advanced" = "Əlavə";
 "Apple Intelligence is reading…" = "Apple Intelligence oxuyur…";
 "Checking the copy…" = "Nüsxə yoxlanılır…";
 "Companies and organizations" = "Şirkətlər və təşkilatlar";
@@ -1329,13 +1324,11 @@
 "Opening…" = "Açılır…";
 "Passwords and access" = "Parollar və giriş";
 "Protect a Photo" = "Şəkli qoru";
-"Reading and checking" = "Oxuma və yoxlama";
 "Show the screenshot as it was" = "Ekran şəklini olduğu kimi göstər";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly bunlardan əmin deyil: hər birini yoxla, aç ya da söndür.";
 "The copy could not be checked, so it stays here." = "Nüsxəni yoxlamaq olmadı, ona görə burada qalır.";
 "The copy could not be made." = "Nüsxəni hazırlamaq olmadı.";
 "To check" = "Yoxlanacaq";
-"What the patterns find shows at once; Apple Intelligence adds to it. Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "Nümunələrin tapdığı dərhal görünür, Apple Intelligence isə ona əlavə edir. Hər nüsxə çıxmazdan əvvəl hər kəsin oxuya biləcəyi kimi yenidən oxunur və hələ görünən şəxsi məlumat da gizlədilir.";
 "%d of %d" = "%2$d-dən %1$d";
 "%d photos chosen" = "%d foto seçildi";
 "%d places still to check" = "Hələ yoxlanılacaq %d yer var";
@@ -1365,7 +1358,6 @@
 "Last %d days" = "Son %d gün";
 "Last update" = "Son yenilənmə";
 "Marker" = "Marker";
-"Median %@ · 95%% under %@" = "Median %@ · 95%% %@-dən az";
 "Not Now" = "İndi yox";
 "Not downloaded for this. Prepared once they are on this iPhone." = "Bunun üçün endirilmir. Bu iPhone-a düşəndə hazırlanır.";
 "Not fully protected: %d places to check are not covered" = "Tam qorunmayıb: yoxlanılacaq %d yer örtülməyib";
@@ -1509,9 +1501,6 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "Məlumat əlavə et";
 "Your Details" = "Məlumatların";
-"Your Name" = "Adın";
-"%@ · always covered" = "%@ · həmişə örtülür";
-"Add it, and it is covered however it is written" = "Əlavə et, necə yazılsa da örtülsün";
 "First and last name" = "Ad və soyad";
 "Street and house number" = "Küçə və ev nömrəsi";
 "Postcode" = "Poçt indeksi";
@@ -1582,3 +1571,45 @@
 "Label · Automatic" = "Etiket · Avtomatik";
 "Label · Same Line" = "Etiket · Eyni sətir";
 "Label · Next Line" = "Etiket · Növbəti sətir";
+"%d details" = "%d məlumat";
+"1 detail" = "1 məlumat";
+"%d rules" = "%d qayda";
+"1 rule" = "1 qayda";
+"%d of %d active" = "%2$d-dən %1$d aktiv";
+"95%% under %@" = "95%% %@-dən az";
+"Median %@" = "Median %@";
+"Access" = "Giriş";
+"Active" = "Aktiv";
+"All Off" = "Hamısını söndür";
+"All On" = "Hamısını aç";
+"All three together cover everyone’s names." = "Üçü birlikdə hamının adlarını gizlədir.";
+"Always On" = "Həmişə açıq";
+"Apple Intelligence off" = "Apple Intelligence söndürülüb";
+"Apple Intelligence on" = "Apple Intelligence açıq";
+"Cards, accounts and phone numbers stay recognisable." = "Kartlar, hesablar və telefon nömrələri tanınan qalır.";
+"Categories covered in every picture" = "Hər şəkildə gizlədilən kateqoriyalar";
+"Check before sharing" = "Paylaşmadan əvvəl yoxlama";
+"Cover Style" = "Gizlətmənin görünüşü";
+"Detection" = "Aşkarlama";
+"Double Tap the Back" = "Arxaya iki dəfə toxunma";
+"Every copy is read again before it leaves, and whatever private still shows is covered too." = "Hər nüsxə çıxmazdan əvvəl yenidən oxunur və hələ görünən şəxsi nə varsa, o da gizlədilir.";
+"Features" = "Funksiyalar";
+"Help" = "Kömək";
+"Invoice to" = "Faktura alan";
+"Mac and iCloud" = "Mac və iCloud";
+"Strongest protection covers whole lines, these digits too." = "«Ən güclü qoruma» bütün sətirləri, bu rəqəmləri də gizlədir.";
+"Own Details" = "Öz məlumatların";
+"People and Companies" = "İnsanlar və şirkətlər";
+"Performance on This iPhone" = "Bu iPhone-da performans";
+"Protection Off" = "Qoruma söndürülüb";
+"Protection On" = "Qoruma aktivdir";
+"Rules" = "Qaydalar";
+"Runs only on this iPhone" = "Yalnız bu iPhone-da işləyir";
+"Shows once a few screenshots are protected." = "Bir neçə ekran şəkli qorunduqdan sonra görünür.";
+"Version %@ (%@)" = "Versiya %@ (%@)";
+"What Is Covered" = "Nə gizlədilir";
+"Whole lines, with more room around them." = "Bütün sətirlər, ətrafında daha çox boşluqla.";
+"Your Choice" = "Öz seçimin";
+"Your Own Details" = "Öz məlumatların";
+"Your Protection" = "Qoruman";
+"Your name, address, cards and rules, covered in every picture" = "Adın, ünvanın, kartların və qaydaların, hər şəkildə gizlədilir";

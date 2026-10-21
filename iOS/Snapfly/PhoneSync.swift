@@ -177,6 +177,21 @@ struct ReceivedView: View {
     }
 }
 
+/// Mac and iCloud (Mac und iCloud), from More › Features: syncing and the
+/// Macs on another Apple account, as Settings had them.
+struct MacAndCloudView: View {
+    @ObservedObject var sync: SyncCenter
+
+    var body: some View {
+        Form {
+            SyncSection(sync: sync)
+        }
+        .navigationTitle(L("Mac and iCloud"))
+        .navigationBarTitleDisplayMode(.inline)
+        .formPage()
+    }
+}
+
 /// Syncing in Settings: on or off, how it stands, and the owner's devices.
 struct SyncSection: View {
     @ObservedObject var sync: SyncCenter

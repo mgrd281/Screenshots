@@ -10,8 +10,8 @@ enum AppTab: Hashable {
 @MainActor
 final class AppTabs: ObservableObject {
     static let shared = AppTabs()
-    /// Photos first; More where screenshots made in CI and the UI tests ask for Always Hide.
-    @Published var selection = AlwaysHideSample.requested ? AppTab.more : AppTab.photos
+    /// Photos first; More where screenshots made in CI and the UI tests ask for it or Always Hide.
+    @Published var selection = AlwaysHideSample.requested || MoreSample.requested ? AppTab.more : AppTab.photos
     /// The first run's Try It Now: the Scan tab opens the camera as it shows.
     @Published var scanRequested = false
 }
@@ -62,7 +62,8 @@ struct ContentView: View {
                 .tabItem { Label(L("More"), systemImage: "ellipsis.circle") }
                 .tag(AppTab.more)
         }
-        .tabBarShrinksOnScroll()
+        // On More the tab bar stays whole, so its shrunk button never sits over a row.
+        .tabBarShrinksOnScroll(tabs.selection != .more)
         .sensoryFeedback(.selection, trigger: tabs.selection)
         // One share sheet for the whole app, whichever tab asked for it.
         .sheet(item: $coverer.sharing) { file in
@@ -79,10 +80,11 @@ struct ContentView: View {
 
 extension View {
     /// From iOS 26, the tab bar shrinks to its chosen tab while a page
-    /// scrolls down, and comes back as it scrolls up.
-    @ViewBuilder func tabBarShrinksOnScroll() -> some View {
+    /// scrolls down, and comes back as it scrolls up; or, not shrinking, it
+    /// stays whole.
+    @ViewBuilder func tabBarShrinksOnScroll(_ shrinks: Bool = true) -> some View {
         if #available(iOS 26, *) {
-            tabBarMinimizeBehavior(.onScrollDown)
+            tabBarMinimizeBehavior(shrinks ? .onScrollDown : .never)
         } else {
             self
         }

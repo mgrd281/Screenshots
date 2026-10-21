@@ -120,7 +120,6 @@
 "Send to %@" = "إرسال إلى %@";
 "Send to Apps" = "الإرسال إلى التطبيقات";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "النقر على تطبيق يغطي كل الصفحات ويسلّمها له، عبر قائمة المشاركة عند الحاجة.";
-"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "التطبيقات بعد المسح وبجانب الصورة في «حماية الصورة»، لتسليمها النسخة المغطاة. التطبيقات نفسها كما على الماك.";
 "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "لمسة تسلّم النسخة المحمية للتطبيق. واتساب يفتح بها مباشرة؛ وChatGPT وClaude وسائر تطبيقات الذكاء الاصطناعي تفتح وهي منسوخة لتلصقها؛ والباقي من ورقة المشاركة، حيث تلمس التطبيق. لا يُفتح شيء في المتصفح.";
 "Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste." = "نُسخت لـ%@: المس الصورة فوق لوحة المفاتيح هناك، أو اضغط مطوّلاً في خانة الرسالة ثم اختر «لصق».";
 "Opening %@…" = "جارٍ فتح %@…";
@@ -521,7 +520,6 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "انقر مرتين على ظهر الآيفون: تُغطّى أحدث لقطة شاشة وتُنسخ، جاهزة للّصق في الدردشة.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "لضبط ذلك مرة واحدة، افتح الإعدادات › تسهيلات الاستخدام › اللمس › النقر على الظهر › نقر مزدوج، واختر %@.";
 "Cover the Latest Screenshot" = "تغطية أحدث لقطة شاشة";
-"Double tap the back of your iPhone" = "انقر مرتين على ظهر الآيفون";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "كل شيء يحدث على هذا الآيفون. لا يُرسل شيء إلى أي مكان.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "لا يُسمح لـ Snapfly برؤية لقطات شاشتك بعد. افتح Snapfly مرة واحدة واسمح له.";
 "There is no screenshot yet." = "لا توجد لقطة شاشة بعد.";
@@ -789,7 +787,6 @@
 "Snapfly covers its private details at once, right on this iPhone." = "يغطي Snapfly بياناتها الخاصة فورًا، على هذا الآيفون نفسه.";
 "Snapfly lives in the menu bar" = "Snapfly يسكن في شريط القوائم";
 "Snapfly on your own screen, step by step. About a minute." = "Snapfly على شاشتك نفسها، خطوة بخطوة. نحو دقيقة.";
-"Snapfly on your own screenshots, step by step." = "Snapfly على لقطاتك أنت، خطوة بخطوة.";
 "Start" = "ابدأ";
 "Start Again" = "ابدأ من جديد";
 "Start Introduction" = "ابدأ التعريف";
@@ -842,7 +839,6 @@
 "Explain" = "اشرح";
 "In Protect Picture: what a document says, what matters in it and what to do, then answers to your questions about it." = "في «حماية الصورة»: ماذا يقول المستند، وما المهم فيه، وما عليك فعله، ثم أجوبة عن أسئلتك حوله.";
 "Explain sends the protected copy, never the original, straight to Anthropic or OpenAI with your own key, and only when you tap it. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "«اشرح» يرسل النسخة المحمية، لا الأصل أبدًا، مباشرة إلى Anthropic أو OpenAI بمفتاحك أنت، وفقط حين تضغط عليه. يُحسب كل طلب على حسابك هناك؛ ولا يشمله اشتراك Claude أو ChatGPT.";
-"Your own Claude or ChatGPT explains documents in Protect Picture." = "Claude أو ChatGPT الخاص بك يشرح المستندات في «حماية الصورة».";
 "What do I have to do?" = "ماذا عليّ أن أفعل؟";
 "Is there a deadline?" = "هل هناك موعد نهائي؟";
 "Explain it more simply." = "اشرحه بكلمات أبسط.";
@@ -1309,7 +1305,6 @@
 "“%@” uses the same Apple account, so Sync with your Mac is now on." = "يستخدم «%@» حساب Apple نفسه، لذلك تم تشغيل «المزامنة مع الماك».";
 
 /* Protection: whose names, companies, and the iPhone's protect screen */
-"Advanced" = "متقدّم";
 "Apple Intelligence is reading…" = "Apple Intelligence يقرأ…";
 "Checking the copy…" = "جارٍ فحص النسخة…";
 "Companies and organizations" = "الشركات والمؤسسات";
@@ -1327,13 +1322,11 @@
 "Opening…" = "جارٍ الفتح…";
 "Passwords and access" = "كلمات المرور والدخول";
 "Protect a Photo" = "احمِ صورة";
-"Reading and checking" = "القراءة والفحص";
 "Show the screenshot as it was" = "اعرض لقطة الشاشة كما كانت";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly غير متأكد من هذه: تحقّق من كلٍّ منها، وغطِّه أو اكشفه.";
 "The copy could not be checked, so it stays here." = "تعذّر فحص النسخة، فبقيت هنا.";
 "The copy could not be made." = "تعذّر صنع النسخة.";
 "To check" = "للتحقق";
-"What the patterns find shows at once; Apple Intelligence adds to it. Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "ما تجده الأنماط يظهر فورًا، ثم يضيف إليه Apple Intelligence. وتُقرأ كل نسخة من جديد قبل أن تخرج، كما قد يقرؤها أي أحد، ويُغطّى كل ما يبقى ظاهرًا من المعلومات الخاصة.";
 "%d of %d" = "%1$d من %2$d";
 "%d photos chosen" = "تم اختيار %d صورة";
 "%d places still to check" = "لا يزال %d موضعًا للتحقق";
@@ -1363,7 +1356,6 @@
 "Last %d days" = "آخر %d يومًا";
 "Last update" = "آخر تحديث";
 "Marker" = "قلم التحديد";
-"Median %@ · 95%% under %@" = "الوسيط %1$@ · ‏95%% أقل من %2$@";
 "Not Now" = "ليس الآن";
 "Not downloaded for this. Prepared once they are on this iPhone." = "لا يتم تنزيلها لهذا الغرض. تُجهَّز عندما تصبح على هذا الـ iPhone.";
 "Not fully protected: %d places to check are not covered" = "غير محمية بالكامل: %d من المواضع التي تحتاج تحققًا غير مغطاة";
@@ -1507,9 +1499,6 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "إضافة معلومة";
 "Your Details" = "معلوماتك";
-"Your Name" = "اسمك";
-"%@ · always covered" = "%@ · مُغطّى دائمًا";
-"Add it, and it is covered however it is written" = "أضفه ليُغطّى أينما كُتب وكيفما كُتب";
 "First and last name" = "الاسم الأول واسم العائلة";
 "Street and house number" = "الشارع ورقم المنزل";
 "Postcode" = "الرمز البريدي";
@@ -1580,3 +1569,45 @@
 "Label · Automatic" = "تسمية · تلقائي";
 "Label · Same Line" = "تسمية · السطر نفسه";
 "Label · Next Line" = "تسمية · السطر التالي";
+"%d details" = "%d معلومات";
+"1 detail" = "معلومة واحدة";
+"%d rules" = "%d قواعد";
+"1 rule" = "قاعدة واحدة";
+"%d of %d active" = "%1$d من %2$d مفعّلة";
+"95%% under %@" = "‏95%% أقل من %@";
+"Median %@" = "الوسيط %@";
+"Access" = "الدخول";
+"Active" = "مفعّل";
+"All Off" = "إيقاف الكل";
+"All On" = "تفعيل الكل";
+"All three together cover everyone’s names." = "الثلاثة معًا تخفي أسماء الجميع.";
+"Always On" = "مفعّل دائمًا";
+"Apple Intelligence off" = "Apple Intelligence متوقف";
+"Apple Intelligence on" = "Apple Intelligence مفعّل";
+"Cards, accounts and phone numbers stay recognisable." = "تبقى البطاقات والحسابات وأرقام الهواتف قابلة للتمييز.";
+"Categories covered in every picture" = "فئات تُخفى في كل صورة";
+"Check before sharing" = "الفحص قبل المشاركة";
+"Cover Style" = "شكل الإخفاء";
+"Detection" = "الكشف";
+"Double Tap the Back" = "النقر مرتين على الظهر";
+"Every copy is read again before it leaves, and whatever private still shows is covered too." = "تُقرأ كل نسخة مرة أخرى قبل أن تخرج، ويُخفى كل ما بقي ظاهرًا من الخاص.";
+"Features" = "الميزات";
+"Help" = "المساعدة";
+"Invoice to" = "فاتورة إلى";
+"Mac and iCloud" = "Mac و iCloud";
+"Strongest protection covers whole lines, these digits too." = "«أقوى حماية» تخفي الأسطر كاملة، وهذه الأرقام أيضًا.";
+"Own Details" = "معلوماتك";
+"People and Companies" = "الأشخاص والشركات";
+"Performance on This iPhone" = "الأداء على هذا الآيفون";
+"Protection Off" = "الحماية متوقفة";
+"Protection On" = "الحماية مفعّلة";
+"Rules" = "القواعد";
+"Runs only on this iPhone" = "يعمل على هذا الآيفون فقط";
+"Shows once a few screenshots are protected." = "يظهر بعد حماية بعض لقطات الشاشة.";
+"Version %@ (%@)" = "الإصدار %1$@ (%2$@)";
+"What Is Covered" = "ما يُخفى";
+"Whole lines, with more room around them." = "أسطر كاملة، مع هامش أوسع حولها.";
+"Your Choice" = "اختيارك";
+"Your Own Details" = "معلوماتك الخاصة";
+"Your Protection" = "حمايتك";
+"Your name, address, cards and rules, covered in every picture" = "اسمك وعنوانك وبطاقاتك وقواعدك، مخفية في كل صورة";

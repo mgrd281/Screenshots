@@ -120,7 +120,6 @@
 "Send to %@" = "%@に送信";
 "Send to Apps" = "アプリに送信";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "アプリをタップすると全ページを隠してそのアプリに渡します。必要なときは共有シートを使います。";
-"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "スキャン後と「画像を保護」で画像の横に並ぶアプリ。隠したコピーを渡せます。Macと同じアプリです。";
 "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "タップすると保護したコピーをアプリに渡します。WhatsAppはそのまま開き、ChatGPT、ClaudeなどのAIチャットはコピーした状態で開くのでペーストします。その他は共有シートから、アプリをタップします。ブラウザでは何も開きません。";
 "Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste." = "%@用にコピーしました：キーボードの上の写真をタップするか、メッセージ欄を長押しして「ペースト」をタップします。";
 "Opening %@…" = "%@を開いています…";
@@ -521,7 +520,6 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhoneの背面をダブルタップ：最新のスクリーンショットが隠されてコピーされ、チャットにペーストできます。";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "一度だけ設定するには、設定 › アクセシビリティ › タッチ › 背面タップ › ダブルタップを開き、%@を選びます。";
 "Cover the Latest Screenshot" = "最新のスクリーンショットを隠す";
-"Double tap the back of your iPhone" = "iPhoneの背面をダブルタップ";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "すべてこのiPhone上で行われます。どこにも送信されません。";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapflyはまだスクリーンショットを見られません。Snapflyを一度開いて許可してください。";
 "There is no screenshot yet." = "スクリーンショットはまだありません。";
@@ -789,7 +787,6 @@
 "Snapfly covers its private details at once, right on this iPhone." = "Snapflyがこの iPhone 上ですぐに個人情報を隠します。";
 "Snapfly lives in the menu bar" = "Snapflyはメニューバーにいます";
 "Snapfly on your own screen, step by step. About a minute." = "あなたの画面で、Snapflyを一歩ずつ紹介します。約1分です。";
-"Snapfly on your own screenshots, step by step." = "あなたのスクリーンショットで、Snapflyを一歩ずつ紹介します。";
 "Start" = "開始";
 "Start Again" = "最初から";
 "Start Introduction" = "はじめにを開始";
@@ -842,7 +839,6 @@
 "Explain" = "説明";
 "In Protect Picture: what a document says, what matters in it and what to do, then answers to your questions about it." = "「画像を保護」で：書類の内容、大事な点、するべきことを示し、続けて書類についての質問に答えます。";
 "Explain sends the protected copy, never the original, straight to Anthropic or OpenAI with your own key, and only when you tap it. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "「説明」は、元の画像ではなく保護されたコピーを、あなた自身のキーでAnthropicまたはOpenAIに直接送ります。送るのはタップしたときだけです。各リクエストはそちらのアカウントに請求され、ClaudeやChatGPTのサブスクリプションには含まれません。";
-"Your own Claude or ChatGPT explains documents in Protect Picture." = "あなた自身のClaudeまたはChatGPTが、「画像を保護」で書類を説明します。";
 "What do I have to do?" = "何をすればいいですか？";
 "Is there a deadline?" = "期限はありますか？";
 "Explain it more simply." = "もっとやさしく説明して。";
@@ -1309,7 +1305,6 @@
 "“%@” uses the same Apple account, so Sync with your Mac is now on." = "“%@”は同じApple Accountを使っているため、「Macと同期」をオンにしました。";
 
 /* Protection: whose names, companies, and the iPhone's protect screen */
-"Advanced" = "詳細設定";
 "Apple Intelligence is reading…" = "Apple Intelligenceが読み取り中…";
 "Checking the copy…" = "コピーを確認中…";
 "Companies and organizations" = "会社と団体";
@@ -1327,13 +1322,11 @@
 "Opening…" = "開いています…";
 "Passwords and access" = "パスワードとアクセス";
 "Protect a Photo" = "写真を保護";
-"Reading and checking" = "読み取りと確認";
 "Show the screenshot as it was" = "元のスクリーンショットを表示";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapflyが判断しきれないものです。一つずつ確認して、オンかオフにしてください。";
 "The copy could not be checked, so it stays here." = "コピーを確認できなかったため、ここに留めます。";
 "The copy could not be made." = "コピーを作成できませんでした。";
 "To check" = "要確認";
-"What the patterns find shows at once; Apple Intelligence adds to it. Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "パターンで見つかったものはすぐに表示され、Apple Intelligenceがそれに加えます。どのコピーも送る前に誰もが読むように読み直され、まだ見える個人情報も隠されます。";
 "%d of %d" = "%2$d 件中 %1$d 件";
 "%d photos chosen" = "%d 枚の写真を選択";
 "%d places still to check" = "まだ確認が必要な箇所が %d か所あります";
@@ -1363,7 +1356,6 @@
 "Last %d days" = "過去 %d 日間";
 "Last update" = "最終更新";
 "Marker" = "マーカー";
-"Median %@ · 95%% under %@" = "中央値 %@ · 95%% が %@ 未満";
 "Not Now" = "今はしない";
 "Not downloaded for this. Prepared once they are on this iPhone." = "このためにダウンロードはしません。この iPhone に保存されたら準備します。";
 "Not fully protected: %d places to check are not covered" = "完全には保護されていません: 確認が必要な %d か所が隠されていません";
@@ -1507,9 +1499,6 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "情報を追加";
 "Your Details" = "あなたの情報";
-"Your Name" = "あなたの名前";
-"%@ · always covered" = "%@ · 常に隠されます";
-"Add it, and it is covered however it is written" = "追加すると、どう書かれていても隠されます";
 "First and last name" = "姓名";
 "Street and house number" = "番地・通り";
 "Postcode" = "郵便番号";
@@ -1580,3 +1569,45 @@
 "Label · Automatic" = "ラベル · 自動";
 "Label · Same Line" = "ラベル · 同じ行";
 "Label · Next Line" = "ラベル · 次の行";
+"%d details" = "情報 %d件";
+"1 detail" = "情報 1件";
+"%d rules" = "ルール %d件";
+"1 rule" = "ルール 1件";
+"%d of %d active" = "%2$d件中 %1$d件が有効";
+"95%% under %@" = "95%% が %@ 未満";
+"Median %@" = "中央値 %@";
+"Access" = "アクセス";
+"Active" = "有効";
+"All Off" = "すべてオフ";
+"All On" = "すべてオン";
+"All three together cover everyone’s names." = "3つすべてで、全員の名前を隠します。";
+"Always On" = "常にオン";
+"Apple Intelligence off" = "Apple Intelligence オフ";
+"Apple Intelligence on" = "Apple Intelligence オン";
+"Cards, accounts and phone numbers stay recognisable." = "カード、口座、電話番号が見分けられます。";
+"Categories covered in every picture" = "すべての画像で隠すカテゴリ";
+"Check before sharing" = "共有前の確認";
+"Cover Style" = "隠し方";
+"Detection" = "検出";
+"Double Tap the Back" = "背面タップ";
+"Every copy is read again before it leaves, and whatever private still shows is covered too." = "どのコピーも送る前にもう一度読み取り、まだ見える個人情報も隠します。";
+"Features" = "機能";
+"Help" = "ヘルプ";
+"Invoice to" = "請求先";
+"Mac and iCloud" = "MacとiCloud";
+"Strongest protection covers whole lines, these digits too." = "「最強の保護」は行全体を隠すため、この4桁も隠れます。";
+"Own Details" = "自分の情報";
+"People and Companies" = "人物と会社";
+"Performance on This iPhone" = "このiPhoneでの性能";
+"Protection Off" = "保護オフ";
+"Protection On" = "保護オン";
+"Rules" = "ルール";
+"Runs only on this iPhone" = "このiPhone上だけで動作します";
+"Shows once a few screenshots are protected." = "スクリーンショットをいくつか保護すると表示されます。";
+"Version %@ (%@)" = "バージョン %@ (%@)";
+"What Is Covered" = "隠す内容";
+"Whole lines, with more room around them." = "行全体を、周りに余白を広く取って隠します。";
+"Your Choice" = "カスタム";
+"Your Own Details" = "あなた自身の情報";
+"Your Protection" = "あなたの保護";
+"Your name, address, cards and rules, covered in every picture" = "名前、住所、カード、ルールを、すべての画像で隠します";

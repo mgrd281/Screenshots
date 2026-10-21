@@ -122,7 +122,6 @@
 "Send to %@" = "%@ को भेजें";
 "Send to Apps" = "ऐप्स को भेजें";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "किसी ऐप पर टैप करने से हर पेज ढक जाता है और उसे सौंप दिया जाता है, ज़रूरत हो तो शेयर शीट से।";
-"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "स्कैन के बाद और «चित्र सुरक्षित करें» में तस्वीर के बगल में दिखने वाले ऐप, उन्हें ढकी हुई कॉपी सौंपने के लिए। वही ऐप जो Mac पर हैं।";
 "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "टैप करने से सुरक्षित प्रति ऐप को मिलती है। WhatsApp उसके साथ खुलता है; ChatGPT, Claude और दूसरी AI चैट उसे कॉपी करके खुलती हैं, ताकि आप पेस्ट करें; बाकी शेयर शीट से, जहाँ आप ऐप पर टैप करें। ब्राउज़र में कुछ नहीं खुलता।";
 "Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste." = "%@ के लिए कॉपी किया: वहाँ कीबोर्ड के ऊपर वाली तस्वीर पर टैप करें, या संदेश बॉक्स को दबाकर रखें और पेस्ट करें पर टैप करें।";
 "Opening %@…" = "%@ खुल रहा है…";
@@ -523,7 +522,6 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "अपने iPhone के पीछे दो बार टैप करें: नया स्क्रीनशॉट छिप कर कॉपी हो जाता है, चैट में पेस्ट करने के लिए तैयार।";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "एक बार सेट करने के लिए सेटिंग्ज़ › ऐक्सेसिबिलिटी › स्पर्श › बैक टैप › डबल टैप खोलें और %@ चुनें।";
 "Cover the Latest Screenshot" = "नया स्क्रीनशॉट छिपाएँ";
-"Double tap the back of your iPhone" = "अपने iPhone के पीछे दो बार टैप करें";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "सब कुछ इसी iPhone पर होता है। कुछ भी कहीं नहीं भेजा जाता।";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly अभी आपके स्क्रीनशॉट नहीं देख सकता। Snapfly को एक बार खोलें और अनुमति दें।";
 "There is no screenshot yet." = "अभी कोई स्क्रीनशॉट नहीं है।";
@@ -791,7 +789,6 @@
 "Snapfly covers its private details at once, right on this iPhone." = "Snapfly उसकी निजी जानकारी तुरंत ढक देता है, इसी iPhone पर।";
 "Snapfly lives in the menu bar" = "Snapfly मेन्यू बार में रहता है";
 "Snapfly on your own screen, step by step. About a minute." = "Snapfly आपकी अपनी स्क्रीन पर, कदम-दर-कदम। लगभग एक मिनट।";
-"Snapfly on your own screenshots, step by step." = "Snapfly आपके अपने स्क्रीनशॉट पर, कदम-दर-कदम।";
 "Start" = "शुरू करें";
 "Start Again" = "फिर से शुरू करें";
 "Start Introduction" = "परिचय शुरू करें";
@@ -844,7 +841,6 @@
 "Explain" = "समझाएँ";
 "In Protect Picture: what a document says, what matters in it and what to do, then answers to your questions about it." = "चित्र सुरक्षित करें में: दस्तावेज़ क्या कहता है, उसमें क्या ज़रूरी है और क्या करना है, फिर उसके बारे में आपके सवालों के जवाब।";
 "Explain sends the protected copy, never the original, straight to Anthropic or OpenAI with your own key, and only when you tap it. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "समझाएँ सुरक्षित कॉपी, कभी भी मूल नहीं, आपकी अपनी कुंजी से सीधे Anthropic या OpenAI को भेजता है, और केवल तब जब आप उस पर टैप करें। हर अनुरोध का बिल वहाँ आपके खाते में जाता है; Claude या ChatGPT की सदस्यता इसे कवर नहीं करती।";
-"Your own Claude or ChatGPT explains documents in Protect Picture." = "आपका अपना Claude या ChatGPT चित्र सुरक्षित करें में दस्तावेज़ समझाता है।";
 "What do I have to do?" = "मुझे क्या करना है?";
 "Is there a deadline?" = "क्या कोई अंतिम तिथि है?";
 "Explain it more simply." = "इसे और आसान शब्दों में समझाएँ।";
@@ -1311,7 +1307,6 @@
 "“%@” uses the same Apple account, so Sync with your Mac is now on." = "“%@” वही Apple खाता इस्तेमाल करता है, इसलिए अपने Mac के साथ सिंक करें अब चालू है।";
 
 /* Protection: whose names, companies, and the iPhone's protect screen */
-"Advanced" = "उन्नत";
 "Apple Intelligence is reading…" = "Apple Intelligence पढ़ रहा है…";
 "Checking the copy…" = "कॉपी की जाँच हो रही है…";
 "Companies and organizations" = "कंपनियाँ और संगठन";
@@ -1329,13 +1324,11 @@
 "Opening…" = "खुल रहा है…";
 "Passwords and access" = "पासवर्ड और पहुँच";
 "Protect a Photo" = "फ़ोटो सुरक्षित करें";
-"Reading and checking" = "पढ़ना और जाँचना";
 "Show the screenshot as it was" = "स्क्रीनशॉट वैसा ही दिखाएँ जैसा था";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly इनके बारे में पक्का नहीं है: हर एक को जाँचें और चालू या बंद करें।";
 "The copy could not be checked, so it stays here." = "कॉपी की जाँच नहीं हो सकी, इसलिए वह यहीं रहती है।";
 "The copy could not be made." = "कॉपी नहीं बन सकी।";
 "To check" = "जाँचने के लिए";
-"What the patterns find shows at once; Apple Intelligence adds to it. Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "पैटर्न जो पाते हैं वह तुरंत दिखता है; Apple Intelligence उसमें और जोड़ता है। हर कॉपी बाहर जाने से पहले फिर से पढ़ी जाती है, जैसे कोई भी पढ़ सकता है, और जो निजी अब भी दिखता है वह भी छिपा दिया जाता है।";
 "%d of %d" = "%2$d में से %1$d";
 "%d photos chosen" = "%d फ़ोटो चुनी गईं";
 "%d places still to check" = "अभी %d जगहें जाँचनी बाकी हैं";
@@ -1365,7 +1358,6 @@
 "Last %d days" = "पिछले %d दिन";
 "Last update" = "आख़िरी अपडेट";
 "Marker" = "मार्कर";
-"Median %@ · 95%% under %@" = "माध्यिका %@ · 95%% %@ से कम";
 "Not Now" = "अभी नहीं";
 "Not downloaded for this. Prepared once they are on this iPhone." = "इसके लिए डाउनलोड नहीं की जातीं। इस iPhone पर आने पर तैयार की जाएँगी।";
 "Not fully protected: %d places to check are not covered" = "पूरी तरह सुरक्षित नहीं: जाँचने वाली %d जगहें ढकी नहीं हैं";
@@ -1509,9 +1501,6 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "जानकारी जोड़ें";
 "Your Details" = "आपकी जानकारी";
-"Your Name" = "आपका नाम";
-"%@ · always covered" = "%@ · हमेशा ढका जाता है";
-"Add it, and it is covered however it is written" = "इसे जोड़ें, फिर यह जैसे भी लिखा हो, ढका जाएगा";
 "First and last name" = "पहला नाम और उपनाम";
 "Street and house number" = "सड़क और मकान नंबर";
 "Postcode" = "पिन कोड";
@@ -1582,3 +1571,45 @@
 "Label · Automatic" = "लेबल · स्वचालित";
 "Label · Same Line" = "लेबल · उसी पंक्ति में";
 "Label · Next Line" = "लेबल · अगली पंक्ति";
+"%d details" = "%d जानकारियाँ";
+"1 detail" = "1 जानकारी";
+"%d rules" = "%d नियम";
+"1 rule" = "1 नियम";
+"%d of %d active" = "%2$d में से %1$d सक्रिय";
+"95%% under %@" = "95%% %@ से कम";
+"Median %@" = "माध्यिका %@";
+"Access" = "पहुँच";
+"Active" = "सक्रिय";
+"All Off" = "सभी बंद";
+"All On" = "सभी चालू";
+"All three together cover everyone’s names." = "तीनों मिलकर सभी के नाम ढकते हैं।";
+"Always On" = "हमेशा चालू";
+"Apple Intelligence off" = "Apple Intelligence बंद";
+"Apple Intelligence on" = "Apple Intelligence चालू";
+"Cards, accounts and phone numbers stay recognisable." = "कार्ड, खाते और फ़ोन नंबर पहचान में आते रहते हैं।";
+"Categories covered in every picture" = "हर चित्र में ढकी जाने वाली श्रेणियाँ";
+"Check before sharing" = "साझा करने से पहले जाँच";
+"Cover Style" = "ढकने की शैली";
+"Detection" = "पहचान";
+"Double Tap the Back" = "पीछे दो बार टैप";
+"Every copy is read again before it leaves, and whatever private still shows is covered too." = "हर प्रति बाहर जाने से पहले फिर से पढ़ी जाती है, और जो निजी अब भी दिखे, वह भी ढक दिया जाता है।";
+"Features" = "सुविधाएँ";
+"Help" = "सहायता";
+"Invoice to" = "चालान प्राप्तकर्ता";
+"Mac and iCloud" = "Mac और iCloud";
+"Strongest protection covers whole lines, these digits too." = "“सबसे मज़बूत सुरक्षा” पूरी पंक्तियाँ ढकती है, ये अंक भी।";
+"Own Details" = "अपनी जानकारी";
+"People and Companies" = "लोग और कंपनियाँ";
+"Performance on This iPhone" = "इस iPhone पर प्रदर्शन";
+"Protection Off" = "सुरक्षा बंद";
+"Protection On" = "सुरक्षा चालू";
+"Rules" = "नियम";
+"Runs only on this iPhone" = "केवल इसी iPhone पर चलता है";
+"Shows once a few screenshots are protected." = "कुछ स्क्रीनशॉट सुरक्षित होने पर दिखेगा।";
+"Version %@ (%@)" = "संस्करण %@ (%@)";
+"What Is Covered" = "क्या ढका जाता है";
+"Whole lines, with more room around them." = "पूरी पंक्तियाँ, आसपास ज़्यादा जगह के साथ।";
+"Your Choice" = "आपका चुनाव";
+"Your Own Details" = "आपकी अपनी जानकारी";
+"Your Protection" = "आपकी सुरक्षा";
+"Your name, address, cards and rules, covered in every picture" = "आपका नाम, पता, कार्ड और नियम, हर चित्र में ढके हुए";

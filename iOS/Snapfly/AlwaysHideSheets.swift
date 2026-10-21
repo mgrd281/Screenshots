@@ -696,19 +696,12 @@ private struct FieldLine: View {
     }
 }
 
-/// A rule's symbol, dark on a quiet grey: "Aa" for a word, a tag for a label.
+/// A rule's symbol on its mint tile: "Aa" for a word, a tag for a label.
 struct HideRuleTile: View {
     let kind: OwnRule.Kind
-    @ScaledMetric(relativeTo: .body) private var size = OwnDetailTile.base
 
     var body: some View {
-        let side = min(size, OwnDetailTile.largest)
-        Image(systemName: Self.symbol(kind))
-            .font(.callout.weight(.semibold))
-            .foregroundStyle(SnapflyTokens.hideText)
-            .frame(width: side, height: side)
-            .background(SnapflyTokens.hideRuleTile, in: RoundedRectangle(cornerRadius: side / 4, style: .continuous))
-            .accessibilityHidden(true)
+        SymbolTile(symbol: Self.symbol(kind))
     }
 
     static func symbol(_ kind: OwnRule.Kind) -> String { RuleWords.symbol(kind) }
