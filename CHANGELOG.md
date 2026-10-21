@@ -6,16 +6,34 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, Also hide is now Always Hide, under More › Advanced, and
+  shows at a glance what is covered in every picture. Your details stand as
+  rows with their kind's icon: a name with two of the ways it is also
+  found, a card or an IBAN by its last four digits alone. Your rules have a
+  switch each and say how many are on, and a label shows what it covers.
+  A new detail is chosen by its kind, a name typed as first and last name,
+  with every form it is found in shown as you type it; a new rule is a word
+  or comes after a label, with an example covered as you type. A label
+  covers what follows it, or the line below when nothing does, as before,
+  or always the rest of its line or always the next line. Edit reorders
+  and deletes, and a swipe deletes too.
+- Your details and rules are covered for sure, never marked to check. A
+  name, a card's number or an IBAN broken over two lines is covered, and
+  so is one with a letter misread; what your rules cover is hidden from the
+  words sent to the AI assistant too. A card is kept only once its number
+  adds up, on the Mac as well. Rules kept before stay on and work as they
+  did.
 - Your own details under Also hide, on the Mac and the iPhone: your name,
   your address, your bank cards and your bank accounts. Each is covered
-  wherever and however it is written, whatever is checked: a name surname
-  first, in capitals or with an initial; a street with its house number and
-  the postcode with the town; a card's whole number and "•••• 4242" where
-  only its last digits show; an IBAN with or without spaces, and a German
+  in the ways it is written, whatever is checked: a name surname first, in
+  capitals or with an initial; a street with its house number and the
+  postcode with the town; a card's whole number and "•••• 4242" where only
+  its last digits show; an IBAN with or without spaces, and a German
   account's number. A card's number is grouped and its network named as you
   type it, an IBAN checked. They stay in the keychain of that device alone,
-  never in a backup, and are hidden from the words sent to the AI assistant.
-  A name saved as a word moves there by itself.
+  never in iCloud, and in an iPhone's backup only sealed to that iPhone;
+  they are hidden from the words sent to the AI assistant. A name saved as
+  a word moves there by itself.
 - On the iPhone, the Protected tab clears up easily. Hold a screenshot and
   tap Remove from Protected: it leaves the list at once, with Undo for a
   few seconds, and stays in Photos. Or tap Delete from Photos, which iOS

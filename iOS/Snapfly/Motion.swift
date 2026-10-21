@@ -39,6 +39,12 @@ enum SnapflyMotion {
     static func lock(_ calm: Bool) -> Animation {
         calm ? Self.calm : .spring(response: 0.45, dampingFraction: 0.8)
     }
+
+    /// A row coming or going, or a part of a sheet changing, as in Always
+    /// Hide (`motion.change`): a quarter of a second, no bounce.
+    static func change(_ calm: Bool) -> Animation {
+        calm ? Self.calm : .easeInOut(duration: 0.25)
+    }
 }
 
 /// A button that gives a little under the finger (`scale.press`), at once

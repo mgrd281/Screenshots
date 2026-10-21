@@ -406,32 +406,40 @@ username, a total, a date, a link, a medicine and a QR code. It says what
 was covered there, and what you checked that the sample does not show. It
 speaks for that sample only; a real screenshot can read differently.
 
-Under Also hide, add your own details first: your name, your address,
-your bank cards and your bank accounts, each in a sheet of its own (Name;
-Street and house number, Postcode and Town; Card number; IBAN, each with a
-name for it if you like). They are covered wherever and however they are
-written, whatever kinds are checked:
+Under Also hide on the Mac, or Always Hide on the iPhone (below), add your
+own details first: your name, your address, your bank cards and your bank
+accounts, each in a sheet of its own (on the Mac: Name; Street and house
+number, Postcode and Town; Card number; IBAN, each with a name for it if
+you like; on the iPhone: First Name and Last Name; Street, Postcode and
+Town; Card Number; IBAN). They are covered whatever kinds are checked, and
+never left to check, in these forms:
 
 | Detail | Covered |
 |---|---|
-| Name | as typed, surname first ("Musterfrau, Erika"), in capitals, with an initial ("E. Musterfrau"), the surname alone, and the first name alone from four letters, a letter misread in a long one too |
-| Address | the street with its house number, "Straße" or "Str.", with or without a hyphen, and the postcode with the town; never a town or a postcode alone, nor another house ("14a", "140") |
-| Bank card | the whole number, however it is grouped, and where only its last four digits show: "•••• 4242", "XXXX-XXXX-XXXX-4242", "Visa 4242", "endet auf 4242" |
-| Bank account | the IBAN with and without spaces, an O read for a 0, with its middle hidden ("DE89 •••• 3000"), and a German or Austrian account's number on its own |
+| Name | as typed, surname first ("Mustermann, Max", "MUSTERMANN, Max"), in capitals, with an initial ("M. Mustermann"), the surname alone, and the first name alone from four letters; across a line break, with a comma, dot, slash or semicolon between its words; one letter misread in a word of five letters or more beside the rest of the name, or of seven alone |
+| Address | the street with its house number, "Straße" or "Str.", with or without a hyphen, and the postcode with the town; one letter misread in a street or town of five letters or more; never a town or a postcode alone, nor another house ("14a", "140") |
+| Bank card | the whole number, however it is grouped, across a line break, one digit misread (no other valid card is one digit from it), and where only its last four digits show: "•••• 4242", "XXXX-XXXX-XXXX-4242", "Visa 4242", "endet auf 4242" |
+| Bank account | the IBAN with and without spaces, across a line break, an O read for a 0, one character misread (no other valid IBAN is one from it), with its middle hidden ("DE89 •••• 3000"), and a German or Austrian account's number on its own |
 
 A card's number is grouped as you type it, its network named beside it
-(Visa, Mastercard, American Express and others), and one that does not add
-up is marked; an IBAN is checked as it is typed and kept only once it adds
-up. Settings shows a card or an account by its last four digits; a kept
-one's number shows again only after Show. They stay in the keychain of the
-Mac or iPhone they are added on, on the iPhone in no backup and not in
-iCloud, and are never sent: with Find more with Claude (or ChatGPT) on,
-they are hidden in the words before those go. A name saved as a word before
-there were details moves to the name detail by itself.
+(Visa, Mastercard, American Express and others); a card is kept only once
+it adds up (the Luhn check), and an IBAN, checked as it is typed, only
+once it adds up too. Settings shows a card or an account by its last four
+digits; a kept one's number shows again only after Show (on the iPhone,
+the eye in its sheet). They stay in the keychain of the Mac or iPhone they
+are added on, never in iCloud; on the iPhone, a backup holds them only
+sealed to that same iPhone, so no other can open them. They are never
+sent: with Find more with Claude (or ChatGPT) on, they are hidden in the
+words before those go, and so is what your rules cover. A name saved as a
+word before there were details moves to the name detail by itself.
 
 Then rules of your own: a word, like your shop's name, covered wherever it
-appears; a label, like Customer number, whose value is covered, on its line
-or the line below; or, for whoever knows them, a pattern. Your details and
+appears, in capitals or not; a label, like Customer number, whose value is
+covered: Automatic takes the rest of its line, or the line below when
+nothing follows it, and on the iPhone a label can keep to Rest of the Line
+or Next Line instead; or, for whoever knows them, a pattern, made on the
+Mac. On the iPhone each rule has its own switch, and one turned off covers
+nothing until it is on again. Your details and
 rules apply to everything that leaves the line, and to the copies saved
 from Finder. A word that is a person's name also helps Snapfly tell that
 name wherever it is written as a name for sure: covered as Names, Patient
@@ -1136,8 +1144,27 @@ watch the screen, so there is no line there. What it keeps is the covering:
   system's Paste and checked with them at once; then the model, from your
   key's own list, and Find more with Claude (or ChatGPT), as on the Mac.
   Send to Apps turns each app on or off and drags them into order, kept on
-  this iPhone. Under Advanced, add rules of your own, as on the Mac, and see how to set
-  up the double tap on the back.
+  this iPhone. Under Advanced, Always Hide (below), and how to set up the
+  double tap on the back.
+- **Always Hide**, under More › Advanced, is what Snapfly covers in every
+  picture besides the kinds chosen. Your Details lists your name, address,
+  cards and accounts, each with its kind's icon; a name shows two of the
+  ways it is also found (Also finds) and how many more, a card or an
+  account its last four digits alone. Your Rules lists words and labels,
+  with how many are on: a label shows what it covers ("Customer
+  number: ▇▇▇"), and each rule has its own switch. Add Detail opens a sheet with
+  the four kinds as tiles: a name's First Name and Last Name show, as they
+  are typed, every form it is found in, from the same list the covering
+  uses; Add waits for what can be kept: a name, a street or a postcode with
+  its town, a card that adds up, a valid IBAN. Add Rule
+  opens a sheet for a Word or After Label, a label's reach (Automatic, Rest
+  of the Line, Next Line) and an example that covers what is typed as it
+  is typed. Opening a sheet puts the cursor in its first field, and Return
+  goes on to the next, then adds. Edit reorders and deletes, and a swipe
+  deletes too. With nothing yet, it offers your name first and the two
+  kinds of rule. The strip at the top says what is true in code: only on
+  this iPhone, never sent. It does not say "no backup", since a backup
+  holds the details, sealed to this iPhone.
 - **Faster picture processing** is off until you turn it on, after a page
   that says what it does. It reads your pictures from the last 60 days on
   the iPhone ahead of time, newest first: the screenshots only, every photo
@@ -1277,9 +1304,15 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/Protection.swift` | Strongest protection, and Apple Intelligence, on the device, or the AI assistant, when turned on, finding what the patterns miss, kept per screenshot |
 | `Shared/AIAccount.swift` | The AI assistant: Claude or ChatGPT, the key in the keychain, the model, the requests and their answers, a conversation's turns, answers streamed as they are written, checking a key by its list of models, what each task asks, and what each failure means |
 | `Shared/AIConnection.swift` | Whether the key kept for each assistant works, as last checked, and the models it may use, for the Mac's and the iPhone's settings |
-| `Shared/OwnRules.swift` | The owner's own rules, a word, a label or a pattern, kept with the settings; and their own details, a name, an address, a bank card or account, kept in the device's keychain alone (`OwnDetailStore`) |
-| `Shared/OwnDetails.swift` | The owner's details found however they are written (a name in every form, a street with its number and a postcode with its town, a card's number whole or by its last four digits, an IBAN with or without spaces and a German or Austrian account's number), hidden before words go to the AI assistant, and checked, grouped and shown as they are typed (tested on Linux) |
-| `iOS/Snapfly/OwnDetailsSettings.swift` | Also hide's rows of the owner's details on the iPhone, and the sheet each is added or changed in |
+| `Shared/OwnRules.swift` | The owner's own rules, a word, a label or a pattern, kept with the settings, each on or off and a label with its reach; and their own details, a name, an address, a bank card or account, kept in the device's keychain alone (`OwnDetailStore`, with what may be promised of it) |
+| `Shared/OwnDetails.swift` | The owner's details found in the ways they are written (a name in every form, from the one list the iPhone's sheet shows, a street with its number and a postcode with its town, a card's number whole or by its last four digits, an IBAN with or without spaces and a German or Austrian account's number, across a line break and with one character misread), hidden before words go to the AI assistant, and checked, grouped, masked and shown as they are typed (tested on Linux) |
+| `Shared/RuleSample.swift` | The example in a rule's sheet: a few made-up lines covered by the engine itself with the rule as typed (tested on Linux) |
+| `iOS/Snapfly/AlwaysHide.swift` | Always Hide on the iPhone (More › Advanced): the details and rules as rows, the privacy strip as the keychain code allows, rules turned on and off, Edit and a swipe to delete, the screen with nothing yet, and the made-up set the simulator's frames and UI tests open (`-SnapflyAlwaysHide`, debug builds only) |
+| `iOS/Snapfly/AlwaysHideSheets.swift` | Always Hide's sheets: New Detail with the four kinds, a name's forms as typed and the checks before Add; New Rule with Word or After Label, a label's reach and the example covered as typed |
+| `iOS/Snapfly/OwnDetailsSettings.swift` | Your Name's row under Settings › People, and the tile each kind of detail is shown with |
+| `iOS/SnapflyUITests` | Always Hide driven on the simulator in German: a name added, both kinds of rule, a rule off and on, a swipe to delete, and the screen with nothing yet |
+| `scripts/always-hide-checks.sh` | Runs those UI tests for the Always Hide Checks workflow and keeps frames of the screen and each sheet, light and dark, at the largest text sizes and in Arabic and English, on the newest iPhone and the smallest, for the `always-hide-captures` pre-release |
+| `docs/snapfly-always-hide-audit.md` | Always Hide's audit: what there was, where details and rules are kept, how covering uses them, how a label's reach was decided, what is promised and what holds in code, and what changed |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
 | `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |

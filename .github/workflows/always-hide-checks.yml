@@ -1,0 +1,69 @@
+# Always Hide without an iPhone: builds the app for the simulator, runs its
+# UI tests, and keeps still frames of the screen and its sheets on made-up
+# details, light and dark, at the largest text sizes and on the smallest
+# iPhone. The frames go to the "always-hide-captures" pre-release on the
+# Releases page, for review; the test results stay with the run. Runs when
+# Always Hide or what it keeps changes, and by hand.
+name: Always Hide Checks
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths:
+      - "iOS/Snapfly/AlwaysHide.swift"
+      - "iOS/Snapfly/AlwaysHideSheets.swift"
+      - "iOS/Snapfly/OwnDetailsSettings.swift"
+      - "iOS/Snapfly/SettingsView.swift"
+      - "iOS/SnapflyUITests/**"
+      - "Sources/Tendedero/Shared/OwnRules.swift"
+      - "Sources/Tendedero/Shared/OwnDetails.swift"
+      - "Sources/Tendedero/Shared/RuleSample.swift"
+      - "scripts/always-hide-checks.sh"
+      - ".github/workflows/always-hide-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: always-hide-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run the UI tests and capture the frames
+        run: scripts/always-hide-checks.sh
+
+      - name: Keep the frames and the test results with the run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: always-hide-checks
+          path: |
+            captures/always-hide/
+            build/always-hide.xcresult
+          if-no-files-found: ignore
+
+      - name: Publish the frames for review
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          frames=(captures/always-hide/*.png)
+          if [ ${#frames[@]} -eq 0 ]; then
+            echo "No frames to publish."
+            exit 0
+          fi
+          tag=always-hide-captures
+          notes="Always Hide on the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: the screen and each sheet on made-up details, light and dark, at the largest text sizes and on the smallest iPhone. For review; not a download of Snapfly."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --notes "$notes" --prerelease
+          else
+            gh release create "$tag" --prerelease --title "Always Hide captures" --notes "$notes" --target "$GITHUB_SHA"
+          fi
+          gh release upload "$tag" "${frames[@]}" --clobber

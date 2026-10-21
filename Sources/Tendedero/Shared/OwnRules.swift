@@ -264,6 +264,22 @@ enum OwnDetailStore {
     private static let account = "details"
     private static let kept = Kept()
 
+    // What keeps the details private, as this store keeps them, for the
+    // screens that say so (Always Hide on the iPhone). Each is true only
+    // while the code below makes it so.
+
+    /// For this device alone: the keychain's ThisDeviceOnly class, never
+    /// synchronizable, so never in iCloud Keychain or on another device.
+    static let staysOnThisDevice = true
+    /// Out of every backup: not so. A ThisDeviceOnly item is copied into a
+    /// backup, sealed so that it opens on this same device alone; only the
+    /// WhenPasscodeSet class stays out, and it cannot be read while the
+    /// iPhone is locked, nor kept on one without a passcode.
+    static let staysOutOfBackups = false
+    /// Never sent: no request carries them, and the words of a picture that
+    /// go to the AI assistant have them hidden first (`Finder.masking`).
+    static let neverSent = true
+
     static var details: [OwnRule] {
         get { kept.value { read() } }
         set { keep(newValue) }

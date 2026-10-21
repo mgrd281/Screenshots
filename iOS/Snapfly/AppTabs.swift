@@ -10,7 +10,8 @@ enum AppTab: Hashable {
 @MainActor
 final class AppTabs: ObservableObject {
     static let shared = AppTabs()
-    @Published var selection = AppTab.photos
+    /// Photos first; More where screenshots made in CI and the UI tests ask for Always Hide.
+    @Published var selection = AlwaysHideSample.requested ? AppTab.more : AppTab.photos
     /// The first run's Try It Now: the Scan tab opens the camera as it shows.
     @Published var scanRequested = false
 }

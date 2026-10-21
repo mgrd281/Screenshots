@@ -40,6 +40,62 @@ enum SnapflyTokens {
     /// A ballpoint's blue, for the signature and the stamp on the first
     /// run's doctor's letter; it is printed on white in light and dark alike.
     static let penInk = Color(red: 43 / 255, green: 69 / 255, blue: 160 / 255)
+
+    // MARK: Always Hide
+
+    /// The ground of Always Hide and its sheets: a cool light grey; near
+    /// black at night.
+    static let hideGround = color(0xF2F3F5, dark: 0x0E1012)
+    /// Its rows and cards.
+    static let hideCard = color(0xFFFFFF, dark: 0x1C1F23)
+    /// The lines between its rows, inset to the words.
+    static let hideSeparator = color(0xECEEF1, dark: 0x2C3036)
+    /// Its words: 18:1 on its cards.
+    static let hideText = color(0x111318, dark: 0xF2F4F6)
+    /// Its quieter words: 5.8:1 on its cards and 5.2:1 on its ground; at
+    /// night 7.2:1 and 8.2:1.
+    static let hideSecondary = color(0x5F6670, dark: 0xA3ABB5)
+    /// Its green, as words and edges: 5.4:1 on its cards; at night 5.4:1.
+    static let hideAccent = color(0x077A56, dark: 0x1FA774)
+    /// The soft green behind its chips, its rules' symbols and what keeps
+    /// it private; the green words on it 4.7:1, at night 5:1.
+    static let hideAccentSoft = color(0xE7F4EE, dark: 0x102A20)
+    /// Its main button, the same green in light and dark: white on it 5.4:1.
+    static let hideButton = Color(red: 7 / 255, green: 122 / 255, blue: 86 / 255)
+    /// A rule's switch, on.
+    static let hideSwitch = color(0x0A8A62, dark: 0x1FA774)
+    /// What is wrong with what was typed, in words: 4.6:1 on its ground; at
+    /// night 9.7:1.
+    static let hideWarning = color(0xB35200, dark: 0xFFA54D)
+    /// The rows' and sections' corners, and the small cards' and tiles'.
+    static let hideRowRadius: CGFloat = 22
+    static let hideCardRadius: CGFloat = 18
+    /// The chosen kind's edge, and the others'.
+    static let hideChosenEdge: CGFloat = 2
+    static let hideHairline: CGFloat = 1
+    /// The smallest a finger's target is.
+    static let touch: CGFloat = 44
+
+    /// Each kind of the owner's details by a colour of its own, the same in
+    /// light and dark, its symbol white on it: 5.4:1, 4.8:1, 3.6:1, 5.3:1.
+    static func detail(_ kind: OwnRule.Kind) -> Color {
+        switch kind {
+        case .address: Color(red: 31 / 255, green: 111 / 255, blue: 224 / 255)
+        case .card: Color(red: 217 / 255, green: 102 / 255, blue: 11 / 255)
+        case .account: Color(red: 124 / 255, green: 77 / 255, blue: 219 / 255)
+        case .name, .word, .label, .pattern: hideButton
+        }
+    }
+
+    /// A colour as its hex, and another at night.
+    private static func color(_ hex: UInt32, dark: UInt32) -> Color {
+        func ui(_ hex: UInt32) -> UIColor {
+            UIColor(red: CGFloat(hex >> 16 & 0xFF) / 255, green: CGFloat(hex >> 8 & 0xFF) / 255,
+                    blue: CGFloat(hex & 0xFF) / 255, alpha: 1)
+        }
+        let day = ui(hex), night = ui(dark)
+        return Color(UIColor { $0.userInterfaceStyle == .dark ? night : day })
+    }
 }
 
 // MARK: The picture of stacked photos

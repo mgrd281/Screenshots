@@ -38,15 +38,17 @@ or turn on syncing with your iPhone (below).
   Requests to OpenAI ask it not to store them for later retrieval. What they
   do with it is set by their own privacy policies and your account with them;
   they bill each request to that account. Nothing of it goes to the developer.
-- **Your own details, only if you add them.** Under Also hide you may add
-  your name, your address, bank cards and bank accounts, so Snapfly covers
-  them wherever and however they are written. They are kept in the keychain
-  of the Mac or iPhone you add them on, on that device alone: on the iPhone
-  in no backup and not in iCloud. Settings shows a card's or an account's
-  number by its last four digits. They are never sent, never written to a
-  log, and before the words of a screenshot go to the AI assistant, with
-  Find more with Claude (or ChatGPT) turned on, every one of your details in
-  them is hidden.
+- **Your own details, only if you add them.** Under Also hide on the Mac,
+  or Always Hide on the iPhone, you may add your name, your address, bank
+  cards and bank accounts, so Snapfly covers them in the ways they are
+  written. They are kept in the keychain of the Mac or iPhone you add them
+  on, on that device alone and never in iCloud. A backup of the iPhone
+  holds them only sealed to that same iPhone, so no other device can open
+  them. Settings shows a card's or an account's number by its last four
+  digits. They are never sent, never written to a log, and before the words
+  of a screenshot go to the AI assistant, with Find more with Claude (or
+  ChatGPT) turned on, every one of your details in them is hidden, and so
+  is what your own rules cover.
 - **Share links, only when you choose Copy Link.** Snapfly then uploads that
   one photo, as it leaves the line with its private details covered, or that
   recording or PDF, to Snapfly's link service on Cloudflare (Cloudflare R2, in
@@ -167,10 +169,12 @@ Bildschirmfotos nur, wenn du „Mehr finden mit Claude“ unter Datenschutz
 einschaltest. Auf dem iPhone schickt „Erklären“ in „Bild schützen“ nur die
 geschützte Kopie, nie das Original, und deine Fragen dazu, und nur, wenn du
 darauf tippst. Der Schlüssel bleibt im Schlüsselbund deines Macs oder iPhones. Deine eigenen
-Angaben unter „Außerdem verbergen“, also Name, Adresse, Bankkarten und Bankkonten, bleiben im
-Schlüsselbund des Geräts, auf dem du sie einträgst, auf dem iPhone in keinem Backup und nicht in
-iCloud. Sie werden nie gesendet, und bevor die Wörter eines Bildschirmfotos an den KI-Assistenten
-gehen, sind sie darin verdeckt. Texterkennung,
+Angaben unter „Außerdem verbergen“ auf dem Mac und „Immer verbergen“ auf dem iPhone, also Name,
+Adresse, Bankkarten und Bankkonten, bleiben im Schlüsselbund des Geräts, auf dem du sie einträgst,
+und nie in iCloud; ein Backup des iPhones enthält sie nur versiegelt für genau dieses iPhone, kein
+anderes Gerät kann sie öffnen. Sie werden nie gesendet, und bevor die Wörter eines Bildschirmfotos
+an den KI-Assistenten gehen, sind sie darin verdeckt, ebenso, was deine eigenen Regeln verdecken.
+Texterkennung,
 Abdecken privater Angaben, Übersetzen und Beschreiben laufen auf deinem Mac.
 Schaltest du Synchronisieren auf dem Mac und dem iPhone ein, gleicht Snapfly
 beide über dein eigenes iCloud ab, in der privaten Datenbank deines
