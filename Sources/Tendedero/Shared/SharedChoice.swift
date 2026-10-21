@@ -4,8 +4,9 @@ import Security
 /// What the iPhone's share extension covers: the kinds, the look and the
 /// owner's own rules and details chosen in the app, kept in a keychain item
 /// of the group the app and its extension share, as the extension cannot
-/// read the app's settings, on this iPhone alone, in no backup. Only the
-/// choice is kept, never a picture or a word read. The Mac does not use it.
+/// read the app's settings: for this iPhone alone, never in iCloud, and in
+/// a backup only in a form that opens on this same iPhone. Only the choice
+/// is kept, never a picture or a word read. The Mac does not use it.
 struct SharedChoice: Codable, Equatable {
     var kinds: [String]
     var style: String

@@ -541,7 +541,7 @@ enum Finder {
     ///   (`Analysis.spared`), as the iPhone's editor lists them.
     static func analysis(in image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all,
                          intelligence: Bool = true, spare: Bool = false) -> Analysis {
-        let rules = rules.filter { !$0.isBlank }
+        let rules = rules.filter(\.isActive)
         let (chosen, scope) = resolved(chosen)
         guard !chosen.isEmpty || !rules.isEmpty || spare else { return Analysis() }
         let codes = Timing.measure("codes") { Self.codes(in: image, chosen) }
@@ -656,7 +656,7 @@ enum Finder {
                         hand: [CGRect] = [], intelligence: Bool = true, style: CoverStyle = .current) -> Protected? {
         let started = Timing.start()
         defer { Timing.report(since: started) }
-        let rules = rules.filter { !$0.isBlank }
+        let rules = rules.filter(\.isActive)
         let found = analysis(in: image, chosen, rules: rules, intelligence: intelligence)
         let hidden = hand.map { Area(rect: $0, kind: nil) }
         guard !found.areas.isEmpty || !hidden.isEmpty else { return Protected(image: image, areas: [], possible: found.possible) }
@@ -674,7 +674,7 @@ enum Finder {
     static func finish(_ image: CGImage, covering areas: [Area], leaving left: [CGRect] = [],
                        _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all,
                        style: CoverStyle = .current) -> (image: CGImage, added: [Area])? {
-        let rules = rules.filter { !$0.isBlank }
+        let rules = rules.filter(\.isActive)
         guard var covered = Timing.measure("cover", { cover(image, areas: areas, style: style) }) else { return nil }
         // Only what is read can be read again.
         guard !chosen.subtracting([.faces, .barcodes]).isEmpty || !rules.isEmpty else { return (covered, []) }
@@ -696,7 +696,7 @@ enum Finder {
     /// row beside its cover. What is drawn on a cover is never read as text.
     static func stillReadable(in covered: CGImage, hidden: [Area], _ chosen: Set<PrivateDetail>,
                               rules: [OwnRule] = OwnRules.all) -> [Area] {
-        let rules = rules.filter { !$0.isBlank }
+        let rules = rules.filter(\.isActive)
         let (chosen, scope) = resolved(chosen)
         // A covered copy is read once; it is not kept with the pictures read.
         let lines = read(covered, remember: false)
@@ -914,7 +914,7 @@ enum Finder {
                                intelligence: Bool, scope: NameScope, spare: Bool = false) -> Analysis {
         // Faces and codes are not read as text: with nothing else chosen, no reading.
         let patterns = printed.compactMap { code in printedPattern(ofCode: code.payload).map { ($0, code.kind) } }
-        guard !chosen.subtracting([.faces, .barcodes]).isEmpty || rules.contains(where: { !$0.isBlank })
+        guard !chosen.subtracting([.faces, .barcodes]).isEmpty || rules.contains(where: \.isActive)
             || !patterns.isEmpty || spare else { return Analysis() }
         let lines = Timing.measure("read") { read(image) }
         let printedHits = patterns.isEmpty ? [] : Text(lines).hits(forPatterns: patterns)
@@ -1267,7 +1267,7 @@ enum Finder {
 
     private static func collect(_ strings: [String], boxes: [CGRect], part: (Int, Range<String.Index>) -> CGRect?,
                                 _ chosen: Set<PrivateDetail>, rules: [OwnRule], scope: NameScope) -> Findings {
-        let rules = rules.filter { !$0.isBlank }
+        let rules = rules.filter(\.isActive)
         guard !strings.isEmpty, !chosen.isEmpty || !rules.isEmpty else { return Findings() }
         let text = Text(strings, boxes: boxes)
         let mine = ownWords(in: rules)
@@ -1335,7 +1335,26 @@ enum Finder {
                                   doctors: column))
         // Each person's role, read as when everyone's names are covered.
         let whose = decided(people, in: strings, [.names], scope: .everyone, own: mine, doctors: column)
-        return Findings(hits: owned(kept, by: whose, kind: document), possible: isolated(possible, by: form, in: strings))
+        return sure(of: Findings(hits: owned(kept, by: whose, kind: document),
+                                 possible: isolated(possible, by: form, in: strings)))
+    }
+
+    /// What the owner's own rules and details cover is covered for sure:
+    /// never to check, however else it was found, and no longer a place
+    /// that only may be private.
+    private static func sure(of findings: Findings) -> Findings {
+        let own = findings.hits.filter { $0.kind == nil }
+        guard !own.isEmpty else { return findings }
+        func isOwn(_ hit: Hit) -> Bool { own.contains { $0.line == hit.line && overlap($0.range, hit.range) } }
+        var sure = findings
+        sure.hits = findings.hits.map { hit in
+            guard hit.check, hit.kind != nil, isOwn(hit) else { return hit }
+            var hit = hit
+            hit.check = false
+            return hit
+        }
+        sure.possible = findings.possible.filter { !isOwn($0) }
+        return sure
     }
 
     /// Whose the details are that go with a person: the address under a
@@ -1525,8 +1544,8 @@ enum Finder {
     /// wherever it is written, and stays on this device; the name detail is
     /// covered by itself too (`OwnDetails`).
     static func ownNames(in rules: [OwnRule]) -> [[String]] {
-        rules.filter { ($0.kind == .word || $0.kind == .name) && !$0.isBlank }.compactMap { rule in
-            let text = rule.text.trimmingCharacters(in: .whitespaces)
+        rules.filter { ($0.kind == .word || $0.kind == .name) && $0.isActive }.compactMap { rule in
+            let text = rule.kind == .name ? OwnDetails.displayName(rule.text) : rule.text.trimmingCharacters(in: .whitespaces)
             guard rule.kind == .name || !DocumentSense.isOrganization(text) else { return nil }
             return DocumentSense.nameWords(text.capitalized)
         }
@@ -1538,24 +1557,44 @@ enum Finder {
     }
 
     /// The owner's own rules: words and patterns wherever they appear, and
-    /// what follows a label, on its line or on the line below.
+    /// what follows a label, on its line or on the line below, as its reach
+    /// says (`labelPlaces`).
     private static func own(in text: Text, _ rules: [OwnRule]) -> [Hit] {
         var hits = ruleRanges(in: text.full, rules).flatMap { text.hits($0, nil) }
-        for rule in rules where rule.kind == .label && !rule.isBlank {
+        for place in labelPlaces(text.strings, rules, below: { Self.line(below: $0, in: text.boxes, gap: 2) }) {
+            hits.append(Hit(line: place.line, range: place.range.map { NSRange($0, in: text.strings[place.line]) }, kind: nil))
+        }
+        return hits
+    }
+
+    /// Where a label rule covers: a line, and a part of it, or all of it.
+    typealias LabelPlace = (line: Int, range: Range<String.Index>?)
+
+    /// What the owner's label rules cover in these lines: where a line
+    /// begins with a label, the rest of that line, or the line `below` it,
+    /// whole, as the rule's reach says. Automatically, the rest of the line,
+    /// or the line below where nothing follows the label on its line.
+    static func labelPlaces(_ strings: [String], _ rules: [OwnRule], below: (Int) -> Int?) -> [LabelPlace] {
+        var places: [LabelPlace] = []
+        for rule in rules where rule.kind == .label && rule.isActive {
             let label = rule.text.trimmingCharacters(in: .whitespaces)
-            for (i, string) in text.strings.enumerated() {
+            for (i, string) in strings.enumerated() {
                 guard let found = string.range(of: label, options: [.caseInsensitive, .diacriticInsensitive, .anchored]) else { continue }
                 // The whole label, not the start of a longer word.
                 if found.upperBound < string.endIndex, string[found.upperBound].isLetter { continue }
                 let rest = string[found.upperBound...].drop { ": -–\t".contains($0) }
-                if !rest.isEmpty {
-                    hits.append(Hit(line: i, range: NSRange(rest.startIndex..<string.endIndex, in: string), kind: nil))
-                } else if let next = Self.line(below: i, in: text.boxes, gap: 2) {
-                    hits.append(Hit(line: next, range: nil, kind: nil))
+                let restOfLine: LabelPlace? = rest.isEmpty ? nil : (i, rest.startIndex..<string.endIndex)
+                let next: LabelPlace? = below(i).map { ($0, nil) }
+                let place: LabelPlace?
+                switch rule.reach {
+                case .automatic: place = restOfLine ?? next
+                case .restOfLine: place = restOfLine
+                case .nextLine: place = next
                 }
+                if let place { places.append(place) }
             }
         }
-        return hits
+        return places
     }
 
     /// The owner's words, patterns and details in plain text: a word whole,
@@ -1565,7 +1604,7 @@ enum Finder {
     static func ruleRanges(in full: String, _ rules: [OwnRule]) -> [NSRange] {
         let whole = NSRange(full.startIndex..., in: full)
         var found: [NSRange] = []
-        for rule in rules where !rule.isBlank {
+        for rule in rules where rule.isActive {
             let text = rule.text.trimmingCharacters(in: .whitespaces)
             let pattern: String
             switch rule.kind {
@@ -1582,6 +1621,40 @@ enum Finder {
             found += regex.matches(in: full, range: whole).map(\.range).filter { $0.length > 0 }
         }
         return found + OwnDetails.ranges(in: full, rules)
+    }
+
+    /// The lines with the owner's own rules and details in them hidden, as
+    /// their words go to the AI assistant: a word or a pattern wherever it
+    /// is, what follows a label, the next line taken for the line below,
+    /// and each detail, in a few more ways than the covering takes. They are
+    /// covered anyway, so they never leave this device.
+    static func masking(_ lines: [String], _ rules: [OwnRule]) -> [String] {
+        let rules = rules.filter(\.isActive)
+        guard !rules.isEmpty, !lines.isEmpty else { return lines }
+        let text = Text(lines, boxes: [])
+        var hits = ruleRanges(in: text.full, rules.filter { !$0.kind.isDetail }).flatMap { text.hits($0, nil) }
+        hits += OwnDetails.ranges(in: text.full, rules, masking: true).flatMap { text.hits($0, nil) }
+        for place in labelPlaces(lines, rules, below: { $0 + 1 < lines.count ? $0 + 1 : nil }) {
+            hits.append(Hit(line: place.line, range: place.range.map { NSRange($0, in: lines[place.line]) }, kind: nil))
+        }
+        return lines.enumerated().map { i, line in
+            let places = hits.filter { $0.line == i }
+            if places.contains(where: { $0.range == nil }) { return "•••" }
+            // Places that overlap as one, then each from the end, so the rest stay where they were.
+            var merged: [NSRange] = []
+            for range in places.compactMap(\.range).sorted(by: { $0.location < $1.location }) {
+                if let last = merged.last, range.location <= NSMaxRange(last) {
+                    merged[merged.count - 1] = NSUnionRange(last, range)
+                } else {
+                    merged.append(range)
+                }
+            }
+            var masked = line as NSString
+            for range in merged.reversed() {
+                masked = masked.replacingCharacters(in: range, with: "•••") as NSString
+            }
+            return masked as String
+        }
     }
 
     /// Letters under this many pixels high are often misread, like
