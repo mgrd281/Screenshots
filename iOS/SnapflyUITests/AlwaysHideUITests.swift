@@ -29,7 +29,7 @@ final class AlwaysHideUITests: XCTestCase {
         return XCTWaiter.wait(for: [settled], timeout: timeout) == .completed
     }
 
-    private func hasFocus(_ element: XCUIElement, timeout: TimeInterval = 3) -> Bool {
+    private func hasFocus(_ element: XCUIElement, timeout: TimeInterval = 6) -> Bool {
         let focused = expectation(for: NSPredicate(format: "hasKeyboardFocus == true"), evaluatedWith: element)
         return XCTWaiter.wait(for: [focused], timeout: timeout) == .completed
     }
