@@ -122,7 +122,8 @@ struct ScanCornerEditor: View {
     }
 
     private func handle(_ corner: Int, in frame: CGRect) -> some View {
-        Circle()
+        // In two parts, so the compiler checks each in good time.
+        let dot = Circle()
             .fill(Color.white)
             .frame(width: 22, height: 22)
             .overlay(Circle().strokeBorder(SnapflyTokens.protect, lineWidth: 3))
@@ -141,6 +142,7 @@ struct ScanCornerEditor: View {
                     quad.corners = corners
                 }
                 .onEnded { _ in dragging = nil })
+        return dot
             .accessibilityElement()
             .accessibilityLabel(Self.name(of: corner))
             .accessibilityIdentifier("scan-corner-\(corner)")

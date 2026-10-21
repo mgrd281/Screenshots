@@ -104,7 +104,7 @@ struct ProtectView: View {
 
     var body: some View {
         // The picture is the screen: the tab bar steps aside while it is open.
-        lifecycle(dialogs(scanning(sheets(screen))))
+        lifecycle(scanDialogs(dialogs(scanning(sheets(screen)))))
             .toolbar(.hidden, for: .tabBar)
     }
 
@@ -243,7 +243,14 @@ struct ProtectView: View {
                 }
                 Button(L("Cancel"), role: .cancel) {}
             }
-            .confirmationDialog(deleting.map { String(format: L("Delete page %d?"), (scans.index(of: $0.id) ?? 0) + 1) } ?? "",
+    }
+
+    /// A scanned page's questions, in a chain of their own so neither chain
+    /// grows too long to type-check: deleting the page, and turning or
+    /// cutting it again where covers were drawn on it by hand.
+    private func scanDialogs(_ content: some View) -> some View {
+        content
+            .confirmationDialog(deleteTitle,
                                 isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
                                 titleVisibility: .visible, presenting: deleting) { ref in
                 Button(L("Delete Page"), role: .destructive) {
@@ -314,6 +321,13 @@ struct ProtectView: View {
                 try? await Task.sleep(for: .seconds(note.failed ? 5 : 2))
                 if self.note == note { self.note = nil }
             }
+    }
+
+    /// The question before a page is deleted, with its number.
+    private var deleteTitle: String {
+        guard let deleting else { return "" }
+        let number: Int = (scans.index(of: deleting.id) ?? 0) + 1
+        return String(format: L("Delete page %d?"), number)
     }
 
     private var motion: Animation {
