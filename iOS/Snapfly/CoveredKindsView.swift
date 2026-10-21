@@ -370,9 +370,10 @@ private struct CoverStage: View {
                     // All three made at once, so a page turned to before a
                     // sweep is there to sweep on.
                     HStack(spacing: 0) {
-                        ForEach(CoverStudioSample.allCases, id: \.self) { page in
+                        ForEach(CoverStudioSample.allCases) { page in
                             paper(page, scale: scale)
                                 .containerRelativeFrame(.horizontal)
+                                .id(page)
                         }
                     }
                     .scrollTargetLayout()
