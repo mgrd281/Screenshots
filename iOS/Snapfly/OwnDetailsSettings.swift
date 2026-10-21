@@ -38,14 +38,17 @@ struct OwnDetailTile: View {
     let kind: OwnRule.Kind
     /// Its side at the body's text size.
     static let base: CGFloat = 36
+    /// Its side at the largest text sizes, so the words keep their room.
+    static let largest: CGFloat = 52
     @ScaledMetric(relativeTo: .body) private var size = OwnDetailTile.base
 
     var body: some View {
+        let side = min(size, OwnDetailTile.largest)
         Image(systemName: kind.symbol)
             .font(.callout.weight(.semibold))
             .foregroundStyle(.white)
-            .frame(width: size, height: size)
-            .background(SnapflyTokens.detail(kind), in: RoundedRectangle(cornerRadius: size / 4, style: .continuous))
+            .frame(width: side, height: side)
+            .background(SnapflyTokens.detail(kind), in: RoundedRectangle(cornerRadius: side / 4, style: .continuous))
             .accessibilityHidden(true)
     }
 }
