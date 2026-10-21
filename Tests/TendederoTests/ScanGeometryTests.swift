@@ -57,6 +57,24 @@ final class ScanGeometryTests: XCTestCase {
         XCTAssertEqual(ScanQuad.inset(0.1).area, 0.64, accuracy: 1e-9)
     }
 
+    func testCornersTurnWithTheirPicture() {
+        let quad = ScanQuad(topLeft: CGPoint(x: 0.1, y: 0.9), topRight: CGPoint(x: 0.8, y: 0.85),
+                            bottomRight: CGPoint(x: 0.85, y: 0.1), bottomLeft: CGPoint(x: 0.15, y: 0.05))
+        let once = quad.turned(1)
+        // Turned clockwise, the old bottom left is now at the top left.
+        XCTAssertEqual(once.topLeft.x, 0.05, accuracy: 1e-9)
+        XCTAssertEqual(once.topLeft.y, 0.85, accuracy: 1e-9)
+        XCTAssertEqual(once.topRight.x, 0.9, accuracy: 1e-9)
+        XCTAssertEqual(once.topRight.y, 0.9, accuracy: 1e-9)
+        XCTAssertTrue(once.isUsable)
+        func same(_ a: ScanQuad, _ b: ScanQuad) -> Bool {
+            zip(a.corners, b.corners).allSatisfy { abs($0.x - $1.x) < 1e-9 && abs($0.y - $1.y) < 1e-9 }
+        }
+        XCTAssertTrue(same(quad.turned(1).turned(3), quad))
+        XCTAssertTrue(same(quad.turned(4), quad))
+        XCTAssertTrue(same(quad.turned(2).turned(2), quad))
+    }
+
     func testLinesThatAgreeSayHowFarThePageLeans() {
         let degree = Double.pi / 180
         let leaning = (0..<8).map { (angle: 2 * degree + Double($0 % 3 - 1) * 0.2 * degree, length: 100.0) }

@@ -25,14 +25,14 @@ enum CoveredCopy {
                 guard Finder.failures == failures else { return done.resume(returning: nil) }
                 let places = made.areas.map(\.rect)
                 if Finder.coversHold(original: image, covered: made.image, areas: places) {
-                    return done.resume(returning: (made.image, CoverReport(made.areas)))
+                    return done.resume(returning: (made.image, CoverReport(made.areas, places: places)))
                 }
                 // A look that let something through is made again in ink, the surest.
                 guard let ink = Finder.cover(image, areas: made.areas, style: .ink),
                       Finder.coversHold(original: image, covered: ink, areas: places) else {
                     return done.resume(returning: nil)
                 }
-                done.resume(returning: (ink, CoverReport(made.areas)))
+                done.resume(returning: (ink, CoverReport(made.areas, places: places)))
             }
         }
     }

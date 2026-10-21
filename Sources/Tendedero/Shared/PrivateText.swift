@@ -1697,6 +1697,13 @@ enum Finder {
         linesRead(in: image, remember: false)
     }
 
+    /// Every line in a picture, read now and kept as its reading, so covering
+    /// it next reads nothing again, as a scanned page's check reads it; nil
+    /// when Vision could not read it.
+    static func reading(of image: CGImage) -> [TextLine]? {
+        linesRead(in: image, remember: true)
+    }
+
     /// Every word in a picture and where it is, from the reading kept of it,
     /// so a word can be hidden with a tap. In memory only, while it is open.
     static func words(in image: CGImage) -> [(text: String, box: CGRect)] {

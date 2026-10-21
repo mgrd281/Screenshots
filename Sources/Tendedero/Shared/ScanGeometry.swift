@@ -63,6 +63,25 @@ struct ScanQuad: Equatable, Sendable {
         return abs(sum) / 2
     }
 
+    /// The same corners in the picture turned clockwise by quarter turns,
+    /// each named again for where it is then.
+    func turned(_ quarterTurns: Int) -> ScanQuad {
+        let turns = ((quarterTurns % 4) + 4) % 4
+        let points = corners.map { point -> CGPoint in
+            var p = point
+            // A quarter turn clockwise takes (x, y), from the bottom left, to (y, 1 - x).
+            for _ in 0..<turns { p = CGPoint(x: p.y, y: 1 - p.x) }
+            return p
+        }
+        // Round the page the same way, from the corner now at the top left.
+        let first = points.indices.min { a, b in
+            let pa = points[a], pb = points[b]
+            return (pa.x - pa.y) < (pb.x - pb.y)
+        } ?? 0
+        let order = (0..<4).map { points[(first + $0) % 4] }
+        return ScanQuad(topLeft: order[0], topRight: order[1], bottomRight: order[2], bottomLeft: order[3])
+    }
+
     /// The corners in a picture's pixels, from its bottom left.
     func pixels(in size: CGSize) -> ScanQuad {
         var quad = self
