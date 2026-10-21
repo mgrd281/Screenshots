@@ -430,7 +430,7 @@ private struct HideAddRow: View {
             HStack(spacing: 12) {
                 Image(systemName: "plus")
                     .font(.body.weight(.semibold))
-                    .frame(width: tile)
+                    .frame(width: min(tile, OwnDetailTile.largest))
                     .accessibilityHidden(true)
                 Text(title)
                     .font(.body)
@@ -597,7 +597,8 @@ private struct HideTemplateRow: View {
 enum AlwaysHideSample {
     #if DEBUG
     /// What was asked for: filled, empty, editing, picker, name, address,
-    /// card, account, editCard, word, label or labelNext.
+    /// card, account, editCard, word, label, labelNext, or blankName and
+    /// blankWord, the sheets with nothing typed.
     static let state: String? = {
         let arguments = ProcessInfo.processInfo.arguments
         guard let index = arguments.firstIndex(of: "-SnapflyAlwaysHide"), index + 1 < arguments.count else { return nil }
@@ -628,6 +629,7 @@ enum AlwaysHideSample {
     static func detail(from details: [OwnRule]) -> DetailRequest? {
         switch state ?? "" {
         case "picker": return .new(.name, choosing: true)
+        case "blankName": return .chosen(OwnRule(kind: .name))
         case "name": return .chosen(name)
         case "address": return .chosen(address)
         case "card": return .chosen(card)
@@ -648,6 +650,7 @@ enum AlwaysHideSample {
         case "word": RuleRequest(draft: OwnRule(text: "Projekt Nordlicht", kind: .word), isNew: true)
         case "label": RuleRequest(draft: OwnRule(text: "Kundennummer", kind: .label), isNew: true)
         case "labelNext": RuleRequest(draft: OwnRule(text: "Aktenzeichen", kind: .label, reach: .nextLine), isNew: true)
+        case "blankWord": RuleRequest.new(.word)
         default: nil
         }
     }
