@@ -249,6 +249,8 @@ private struct CoverStage: View {
     /// How tall it may be while a sheet is open; nil while none is.
     let room: CGFloat?
     @Environment(\.moreStill) private var still
+    /// How far a sideways drag has moved the documents.
+    @GestureState(resetTransaction: Transaction(animation: .smooth(duration: 0.3))) private var drag: CGFloat = 0
 
     private static let padding: CGFloat = 18
     private static let compactPadding: CGFloat = 12
@@ -366,21 +368,33 @@ private struct CoverStage: View {
                         move(by: step)
                     })
             } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    // All three made at once, so a page turned to before a
-                    // sweep is there to sweep on.
+                // All three side by side, moved by the document shown, so
+                // the stage always shows the one it names, and a page turned
+                // to before a sweep is there to sweep on.
+                GeometryReader { box in
+                    let width = box.size.width
                     HStack(spacing: 0) {
                         ForEach(CoverStudioSample.allCases) { page in
                             paper(page, scale: scale)
-                                .containerRelativeFrame(.horizontal)
-                                .id(page)
+                                .frame(width: width)
                         }
                     }
-                    .scrollTargetLayout()
+                    .offset(x: -CGFloat(sample.rawValue) * width + drag)
+                    .frame(width: width, alignment: .leading)
                 }
-                .scrollTargetBehavior(.paging)
-                .scrollPosition(id: Binding(get: { Optional(sample) }, set: { if let page = $0 { sample = page } }))
-                .scrollClipDisabled()
+                .environment(\.layoutDirection, .leftToRight)
+                .contentShape(Rectangle())
+                .simultaneousGesture(DragGesture(minimumDistance: 12)
+                    .updating($drag) { swipe, drag, _ in
+                        // Sideways only; up and down scroll the page.
+                        guard abs(swipe.translation.width) > abs(swipe.translation.height) else { return }
+                        drag = edged(swipe.translation.width)
+                    }
+                    .onEnded { swipe in
+                        let width = swipe.predictedEndTranslation.width
+                        guard abs(swipe.translation.width) > abs(swipe.translation.height), abs(width) > 60 else { return }
+                        turn(by: width < 0 ? 1 : -1)
+                    })
                 // The paper's shadow shows past the top and the foot, never
                 // the next document past the sides.
                 .mask(Rectangle().padding(.vertical, -60))
@@ -405,6 +419,19 @@ private struct CoverStage: View {
             .rotationEffect(.degrees(-1.5))
             .scaleEffect(scale)
             .frame(width: size.width * scale, height: (size.height + 12) * scale)
+    }
+
+    /// A drag past the first or the last document gives way less.
+    private func edged(_ width: CGFloat) -> CGFloat {
+        let last = sample == CoverStudioSample.allCases.last
+        let first = sample == CoverStudioSample.allCases.first
+        return (width < 0 && last) || (width > 0 && first) ? width / 3 : width
+    }
+
+    /// A swipe: the next or the previous document, stopping at the ends.
+    private func turn(by step: Int) {
+        guard let next = CoverStudioSample(rawValue: sample.rawValue + step) else { return }
+        withAnimation(.smooth(duration: 0.3)) { sample = next }
     }
 
     private func move(by step: Int) {
@@ -434,6 +461,8 @@ private struct CoverStage: View {
         }
         .padding(.horizontal, 10)
         .studioGlass(in: Capsule())
+        // In the order the documents lie, in every language.
+        .environment(\.layoutDirection, .leftToRight)
         .animation(still ? MoreMotion.fade : .snappy, value: sample)
     }
 }
