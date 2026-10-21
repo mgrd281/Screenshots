@@ -67,10 +67,12 @@ struct ScanTab: View {
             .ignoresSafeArea()
         }
         .fullScreenCover(item: wantedCorners) { wanted in
-            if let page = store.page(wanted.id) {
-                ScanCornerEditor(image: page.source, quad: page.quad ?? .inset(0.06)) { quad in
+            if let page = store.page(wanted.id), let picture = page.source ?? store.picture(wanted.id) {
+                ScanCornerEditor(image: picture, quad: page.quad ?? .inset(0.06)) { quad in
                     if let quad { store.setCorners(wanted.id, quad) } else { store.remove(wanted.id) }
                 }
+            } else {
+                Color.black.ignoresSafeArea()
             }
         }
         .sheet(isPresented: $saving) { ScanSaveSheet() }
@@ -357,15 +359,16 @@ private struct Viewfinder: View {
 }
 
 /// A scanned page as a small square card, its top showing, with its
-/// number in the document; while it is made ready, a spinner; once opened
-/// and its copy checked, the shield the protected screenshots carry, or
-/// where something on it is wrong, an orange mark.
+/// number in the document; while it is made ready, a spinner; while its
+/// corners wait to be set, the crop glyph in dark amber; once opened and its
+/// copy checked, the shield the protected screenshots carry, or where
+/// something on it is wrong, an orange mark.
 private struct PageCard: View {
     let page: ScannedPages.Page
     let number: Int
     let session: ProtectSession?
 
-    private var working: Bool { page.state == .waiting || page.state == .improving || page.state == .needsCorners }
+    private var working: Bool { page.state == .waiting || page.state == .improving }
 
     var body: some View {
         Color(.secondarySystemBackground)
@@ -378,7 +381,13 @@ private struct PageCard: View {
                 }
             }
             .overlay {
-                if working { ProgressView() }
+                if working {
+                    ProgressView()
+                } else if page.state == .needsCorners {
+                    Image(systemName: "crop")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(SnapflyTokens.scanWarnText)
+                }
             }
             .overlay(alignment: .bottomLeading) {
                 Text(number, format: .number)
@@ -413,6 +422,7 @@ private struct PageCard: View {
 
     private var value: String {
         if working { return L("being brightened") }
+        if page.state == .needsCorners { return L("corners to set") }
         if session?.isReady == true { return L("Protected") }
         return page.issues.isEmpty ? "" : L("hard to read")
     }

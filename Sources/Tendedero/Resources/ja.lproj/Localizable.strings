@@ -1556,6 +1556,11 @@
 "Page %d could not be read." = "ページ%dを読み取れませんでした。";
 "Page %d could not be read. Delete it or take it again." = "ページ%dを読み取れませんでした。削除するか撮り直してください。";
 "Page %d could not be covered, so nothing was saved." = "ページ%dを隠せなかったため、何も保存されませんでした。";
+"Set the page's corners." = "ページの角を合わせてください。";
+"Set Corners" = "角を合わせる";
+"Page %d waits for its corners. Open it to set them." = "%d ページ目は角の指定を待っています。開いて角を合わせてください。";
+"corners to set" = "角の指定待ち";
+"Page %d could not be covered, so nothing was copied." = "%d ページ目を隠せなかったため、何もコピーされませんでした。";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "送る前に隠す";

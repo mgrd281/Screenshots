@@ -1556,6 +1556,11 @@
 "Page %d could not be read." = "无法读取第 %d 页。";
 "Page %d could not be read. Delete it or take it again." = "无法读取第 %d 页。请删除或重新拍摄。";
 "Page %d could not be covered, so nothing was saved." = "第 %d 页无法遮盖，因此未存储任何内容。";
+"Set the page's corners." = "请设定页面的四角。";
+"Set Corners" = "设定四角";
+"Page %d waits for its corners. Open it to set them." = "第 %d 页等待设定四角。打开它进行设定。";
+"corners to set" = "待设定四角";
+"Page %d could not be covered, so nothing was copied." = "第 %d 页无法遮盖，因此没有复制任何内容。";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "发送之前先遮盖";

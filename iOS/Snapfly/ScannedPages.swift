@@ -1,27 +1,29 @@
+import ImageIO
 import Photos
 import PhotosUI
 import SwiftUI
 import UIKit
 import UniformTypeIdentifiers
 
-/// A photo chosen to scan: the picture upright, the lens its notes give,
-/// and where the page is in it when that is known already.
+/// A photo chosen to scan: as Photos gave it, a few megabytes, decoded only
+/// while its page is made, to spare memory; or a picture drawn already; and
+/// where the page is in it, when that is known already.
 struct ScanPhoto {
-    let image: CGImage
-    var focal: Double? = nil
+    var image: CGImage? = nil
+    var data: Data? = nil
     var quad: ScanQuad? = nil
 
-    /// A photo from its data as Photos gives it, turned upright; nil when
-    /// it cannot be read.
+    /// A photo from its data as Photos gives it; nil when it is no picture.
     init?(data: Data) {
-        guard let image = Covering.upright(data) else { return nil }
-        self.image = image
-        focal = ScanCleaner.focalLength(of: data, width: image.width, height: image.height)
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil), CGImageSourceGetCount(source) > 0,
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+              (properties[kCGImagePropertyPixelWidth] as? Int ?? 0) > 0,
+              (properties[kCGImagePropertyPixelHeight] as? Int ?? 0) > 0 else { return nil }
+        self.data = data
     }
 
-    init(image: CGImage, focal: Double? = nil, quad: ScanQuad? = nil) {
+    init(image: CGImage, quad: ScanQuad? = nil) {
         self.image = image
-        self.focal = focal
         self.quad = quad
     }
 
@@ -74,15 +76,21 @@ final class ScannedPages: ObservableObject {
 
         let id = UUID()
         let origin: Origin
-        /// The picture as it came: the camera's page, or the photo.
-        let source: CGImage
-        /// The photo's lens, in pixels, where its notes say, for the page's true shape.
-        let focal: Double?
+        /// The picture as it came: the camera's page, or a photo drawn
+        /// already; a photo from Photos only while its page is made or its
+        /// corners are set, kept otherwise as Photos gave it (`data`).
+        fileprivate(set) var source: CGImage?
+        /// A photo as Photos gave it, decoded again whenever its page is made.
+        let data: Data?
+        /// The photo's lens, in pixels, where its notes say, for the page's
+        /// true shape; read when the page is first made.
+        fileprivate(set) var focal: Double?
         /// Where the page is in the photo, from 0 to 1 from the bottom left;
         /// nil for a camera's page, taken whole.
         var quad: ScanQuad?
-        /// Quarter turns clockwise and the lean taken away; nil until found.
-        var way: (turns: Int, skew: Double)?
+        /// Quarter turns clockwise and the lean taken away; nil until found,
+        /// and the lean nil while it is to be measured again.
+        var way: (turns: Int, skew: Double?)?
         /// Before and after cleaning, once made.
         var straightened: CGImage?
         var cleaned: CGImage?
@@ -106,16 +114,12 @@ final class ScannedPages: ObservableObject {
         /// Each time it is asked for again, so work begun before is dropped.
         fileprivate var job = 0
 
-        init(origin: Origin, source: CGImage, focal: Double? = nil, quad: ScanQuad? = nil) {
+        init(origin: Origin, source: CGImage?, data: Data? = nil, quad: ScanQuad? = nil) {
             self.origin = origin
             self.source = source
-            self.focal = focal
+            self.data = data
             self.quad = quad
         }
-
-        /// What is covered and leaves: the cleaned page, or the page as it
-        /// came while it is made.
-        var image: CGImage { cleaned ?? source }
 
         /// What is wrong with it, most important first, and the place of
         /// each, for the editor's highlights.
@@ -154,7 +158,7 @@ final class ScannedPages: ObservableObject {
     /// set by hand before anything else, as when Vision is not sure.
     @discardableResult
     func add(photos: [ScanPhoto], unsure: Bool = false, at index: Int? = nil) -> [Page] {
-        var new = photos.map { Page(origin: .photo, source: $0.image, focal: $0.focal, quad: $0.quad) }
+        var new = photos.map { Page(origin: .photo, source: $0.image, data: $0.data, quad: $0.quad) }
         if unsure {
             for i in new.indices {
                 new[i].quad = new[i].quad ?? .inset(0.06)
@@ -210,8 +214,13 @@ final class ScannedPages: ObservableObject {
 
     func page(_ id: UUID) -> Page? { pages.first { $0.id == id } }
 
-    /// The page as it is covered: cleaned once it is ready.
-    func image(_ id: UUID) -> CGImage? { page(id)?.image }
+    /// A page's picture as it came, no longer than `longest`, for its
+    /// corners to be set: kept, or decoded again from the photo.
+    func picture(_ id: UUID, longest: Int = 2048) -> CGImage? {
+        guard let page = page(id) else { return nil }
+        if let source = page.source { return ScanCleaner.smaller(source, longest: longest) }
+        return page.data.flatMap { Covering.upright($0, longest: longest) }
+    }
 
     /// The cleaned page once it is ready, waiting for it; nil when it could
     /// not be made or was taken away.
@@ -230,11 +239,11 @@ final class ScannedPages: ObservableObject {
     }
 
     /// A page's protection, made the first time it is opened, before the
-    /// screen that shows it.
+    /// screen that shows it; kept only for a page of the document.
     func session(_ id: UUID) -> ProtectSession {
         if let session = sessions[id] { return session }
         let session = ProtectSession(source: .scanned(id))
-        sessions[id] = session
+        if index(of: id) != nil { sessions[id] = session }
         return session
     }
 
@@ -264,10 +273,10 @@ final class ScannedPages: ObservableObject {
         improve()
     }
 
-    /// A page turned a quarter clockwise; its covers are found again.
+    /// A page turned a quarter clockwise; its covers are found again. Only
+    /// once it has been made upright, as it is shown.
     func turn(_ id: UUID) {
-        guard let index = index(of: id) else { return }
-        let way = pages[index].way ?? (0, 0)
+        guard let index = index(of: id), let way = pages[index].way else { return }
         pages[index].way = ((way.turns + 1) % 4, way.skew)
         restart(index)
     }
@@ -276,14 +285,18 @@ final class ScannedPages: ObservableObject {
     func setCorners(_ id: UUID, _ quad: ScanQuad) {
         guard let index = index(of: id) else { return }
         pages[index].quad = quad
-        // The lean is found again for the new cut; the quarter turns stay.
-        if let way = pages[index].way { pages[index].way = (way.turns, 0) }
+        // The lean is measured again for the new cut; the quarter turns stay.
+        if let way = pages[index].way { pages[index].way = (way.turns, nil) }
         restart(index)
         if cornersWanted == id { cornersWanted = pages.first { $0.state == .needsCorners }?.id }
     }
 
+    /// A page made again from its picture. An editor open on it starts
+    /// afresh, with a new protection made here rather than while the editor
+    /// is drawn; the old one stops (`ProtectSession`).
     private func restart(_ index: Int) {
-        sessions[pages[index].id] = nil
+        let id = pages[index].id
+        if sessions[id] != nil { sessions[id] = ProtectSession(source: .scanned(id)) }
         pages[index].revision += 1
         pages[index].shown = false
         again(index, reshape: true)
@@ -311,34 +324,46 @@ final class ScannedPages: ObservableObject {
     }
 
     private func prepare(_ id: UUID) async {
-        guard let index = index(of: id) else { return }
-        improving = index + 1
-        let job = pages[index].job
+        guard let first = index(of: id) else { return }
+        improving = first + 1
+        let job = pages[first].job
+        // The picture as it came: a photo from Photos is decoded again, off the main thread.
+        var picture = pages[first].source
+        if picture == nil {
+            let data = pages[first].data
+            picture = await Task.detached(priority: .userInitiated) { data.flatMap { Covering.upright($0) } }.value
+        }
+        guard let source = picture else { return failed(id, job: job) }
+        guard var at = self.index(of: id), pages[at].job == job else { return }
         // A photo's page is found first; where Vision is not sure, its corners wait for the owner.
-        if pages[index].origin == .photo, pages[index].quad == nil {
-            let source = pages[index].source
+        if pages[at].origin == .photo, pages[at].quad == nil {
             let found = await Task.detached(priority: .userInitiated) { ScanCleaner.page(in: source) }.value
-            guard let at = self.index(of: id), pages[at].job == job else { return }
+            guard let now = self.index(of: id), pages[now].job == job else { return }
+            at = now
             if let found, found.confidence >= Self.sure {
                 pages[at].quad = found.quad
             } else {
                 pages[at].quad = found?.quad ?? .inset(0.06)
                 pages[at].state = .needsCorners
+                // Its picture is kept while its corners are set.
+                pages[at].source = source
                 if cornersWanted == nil { cornersWanted = id }
                 return
             }
         }
-        guard let at = self.index(of: id) else { return }
         pages[at].state = .improving
         let page = pages[at], mode = self.mode
-        let photo = page.origin == .photo ? page.source : nil
+        let photo = page.origin == .photo ? source : nil
+        let focal = page.focal ?? page.data.flatMap {
+            ScanCleaner.focalLength(of: $0, width: source.width, height: source.height)
+        }
         let prepared: ScanCleaner.Prepared?
-        if !page.reshape, let straight = page.straightened, let way = page.way {
+        if !page.reshape, let straight = page.straightened, let way = page.way, let skew = way.skew {
             prepared = await Task.detached(priority: .userInitiated) {
-                await ScanCleaner.finished(straight, turns: way.turns, skew: way.skew, mode: mode, photo: photo)
+                await ScanCleaner.finished(straight, turns: way.turns, skew: skew, mode: mode, photo: photo)
             }.value
         } else {
-            let source = page.source, quad = page.quad, way = page.way, focal = page.focal
+            let quad = page.quad, way = page.way
             prepared = await Task.detached(priority: .userInitiated) {
                 await ScanCleaner.prepare(source, quad: quad, way: way, focal: focal, mode: mode)
             }.value
@@ -348,28 +373,35 @@ final class ScannedPages: ObservableObject {
         }.value
         // Asked for again meanwhile: what was made is dropped, and it waits its turn.
         guard let done = self.index(of: id), pages[done].job == job, self.mode == mode else { return }
-        guard let prepared else {
-            pages[done].state = .failed
-            settle(id)
-            return
-        }
+        guard let prepared else { return failed(id, job: job) }
         let colorsOnly = !page.reshape
         if pages[done].straightened !== prepared.straightened { pages[done].before = UIImage(cgImage: prepared.straightened) }
         pages[done].straightened = prepared.straightened
         pages[done].cleaned = prepared.cleaned
         pages[done].thumbnail = thumbnail
         pages[done].way = (prepared.turns, prepared.skew)
+        pages[done].focal = focal
         pages[done].issues = prepared.checked.issues
         pages[done].textKept = prepared.checked.textKept
         pages[done].reading = prepared.checked.reading
         pages[done].reshape = false
         pages[done].state = .ready
+        // A photo from Photos is let go now, kept as Photos gave it.
+        if pages[done].data != nil { pages[done].source = nil }
         // An editor open on it keeps its covers on the page in its new colours.
         if colorsOnly, let session = sessions[id] { session.replace(prepared.cleaned) }
         settle(id)
         if !colorsOnly, prepared.checked.issues.contains(where: \.asksForRetake) {
             UINotificationFeedbackGenerator().notificationOccurred(.warning)
         }
+    }
+
+    /// A page whose picture could not be read or made says so, and what
+    /// waited for it goes on without it; unless it was asked for again.
+    private func failed(_ id: UUID, job: Int) {
+        guard let index = index(of: id), pages[index].job == job else { return }
+        pages[index].state = .failed
+        settle(id)
     }
 
     // MARK: Leaving
@@ -385,6 +417,7 @@ final class ScannedPages: ObservableObject {
             making = index + 1
             if let session = sessions[page.id] {
                 guard let copy = await checked(session) else {
+                    if case .failed = session.stage { throw ScanProblem(message: String(format: failing, index + 1)) }
                     throw ScanProblem(message: String(format: L("Page %d is not ready yet. Open it to check it."), index + 1))
                 }
                 done.append(copy)
@@ -452,10 +485,11 @@ final class ScannedPages: ObservableObject {
     }
 
     /// The pages as PNGs, full size, without notes: covered, or cleaned only.
-    func pngs(covered: Bool) async throws -> [Data] {
+    /// `failing` names a page that cannot be covered.
+    func pngs(covered: Bool, failing: String) async throws -> [Data] {
         let images: [CGImage]
         if covered {
-            images = try await self.covered(failing: L("Page %d could not be covered, so nothing was saved.")).map(\.image)
+            images = try await self.covered(failing: failing).map(\.image)
         } else {
             images = try await uncovered().map(\.image)
         }

@@ -1556,6 +1556,11 @@
 "Page %d could not be read." = "Seite %d konnte nicht gelesen werden.";
 "Page %d could not be read. Delete it or take it again." = "Seite %d konnte nicht gelesen werden. Lösche sie oder nimm sie neu auf.";
 "Page %d could not be covered, so nothing was saved." = "Seite %d konnte nicht abgedeckt werden, darum wurde nichts gesichert.";
+"Set the page's corners." = "Setze die Ecken der Seite.";
+"Set Corners" = "Ecken setzen";
+"Page %d waits for its corners. Open it to set them." = "Seite %d wartet auf ihre Ecken. Öffne sie, um sie zu setzen.";
+"corners to set" = "Ecken zu setzen";
+"Page %d could not be covered, so nothing was copied." = "Seite %d konnte nicht abgedeckt werden, darum wurde nichts kopiert.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Abgedeckt, bevor du sendest";

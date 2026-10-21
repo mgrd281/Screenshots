@@ -9,15 +9,16 @@ import XCTest
 
 /// The scan through Vision and Core Image, as on an iPhone, on made-up
 /// photos of a made-up invoice (`ScanSample`): the page found where it
-/// lies, made flat in A4's shape and turned upright; cleaned with every
-/// number still read and every detail still found; each look keeping what
-/// it should; blur and a reflection said for the right part; and what
-/// leaves: covers in the PDF's pixels and not in its text, nothing said of
-/// who made it but Snapfly, PNGs without notes, and a page as the camera
-/// gives it going through as before. With SCAN_CAPTURES set to a folder,
-/// it keeps the pictures before and after, with their numbers. Each photo
-/// is taken, and each page made ready, once for all the tests that look at
-/// it.
+/// lies, made flat in A4's shape and turned upright, and levelled again
+/// when it is cut again; cleaned with every number still read and every
+/// detail still found; each look keeping what it should; blur and a
+/// reflection said for the right part; and what leaves: covers in the
+/// PDF's pixels and not in its text, greys where the PDF says greys,
+/// nothing said of who made it but Snapfly, PNGs without notes, and a page
+/// as the camera gives it going through as before. With SCAN_CAPTURES set
+/// to a folder, it keeps the pictures before and after, with their
+/// numbers. Each photo is taken, and each page made ready, once for all the
+/// tests that look at it.
 final class ScanFixtureTests: XCTestCase {
     private static let page = ScanSample.page()
     private static var photos: [String: ScanSample.Photo] = [:]
@@ -65,6 +66,27 @@ final class ScanFixtureTests: XCTestCase {
         let prepared = try await cleaned(turns: 1)
         XCTAssertEqual(prepared.turns, 3, "a quarter turn back")
         XCTAssertLessThan(prepared.straightened.width, prepared.straightened.height, "upright")
+    }
+
+    func testCuttingAgainMeasuresTheLeanAgain() throws {
+        let photo = try photo()
+        // The page's corners turned 2° about its middle, in the photo's pixels: the cut leans.
+        let width = CGFloat(photo.image.width), height = CGFloat(photo.image.height)
+        let angle = 2 * CGFloat.pi / 180
+        let corners = photo.quad.corners
+        let middle = CGPoint(x: corners.map(\.x).reduce(0, +) / 4, y: corners.map(\.y).reduce(0, +) / 4)
+        var leaning = photo.quad
+        leaning.corners = corners.map { corner in
+            let x = (corner.x - middle.x) * width, y = (corner.y - middle.y) * height
+            return CGPoint(x: middle.x + (x * cos(angle) - y * sin(angle)) / width,
+                           y: middle.y + (x * sin(angle) + y * cos(angle)) / height)
+        }
+        let kept = try XCTUnwrap(ScanCleaner.flattened(photo.image, quad: leaning, way: (0, 0)))
+        XCTAssertGreaterThan(abs(ScanCleaner.lean(of: kept.image)), Double(angle) / 2, "the cut leans")
+        let again = try XCTUnwrap(ScanCleaner.flattened(photo.image, quad: leaning, way: (0, nil)))
+        XCTAssertEqual(again.turns, 0, "the quarter turns stay")
+        XCTAssertGreaterThan(abs(again.skew), Double(angle) / 2, "its lean is measured again")
+        XCTAssertLessThan(abs(ScanCleaner.lean(of: again.image)), Double(angle) / 4, "and taken away")
     }
 
     func testCleaningKeepsEveryNumberAndTheTextReadsTheSame() async throws {
@@ -211,6 +233,27 @@ final class ScanFixtureTests: XCTestCase {
         XCTAssertEqual(box.height, 841.89, accuracy: 0.01)
         Self.keep(rendered, "pdf-covered")
         Self.write("covered-pdf-text.txt", text)
+    }
+
+    func testAPageDrawnInColorIsInGraysInAGrayPDF() throws {
+        // A covered page is drawn in colour; at 300 to 600 dots an inch it is not drawn again in size.
+        let width = 2600, height = 3677
+        XCTAssertEqual(ScanGeometry.printScale(width: width, height: height), 1)
+        let space = try XCTUnwrap(CGColorSpace(name: CGColorSpace.sRGB))
+        let context = try XCTUnwrap(CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                                              space: space, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue))
+        context.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
+        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        context.setFillColor(CGColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1))
+        context.fill(CGRect(x: 300, y: 3000, width: 1400, height: 120))
+        let covered = try XCTUnwrap(context.makeImage())
+        let page = try XCTUnwrap(ScanCleaner.pdfPage(covered, mode: .gray, words: []))
+        guard case .jpeg(let jpeg, _, _, let gray) = page.picture else { return XCTFail("a JPEG") }
+        XCTAssertTrue(gray)
+        let source = try XCTUnwrap(CGImageSourceCreateWithData(jpeg as CFData, nil))
+        let decoded = try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, nil))
+        XCTAssertEqual(decoded.colorSpace?.model, .monochrome, "one channel, as the PDF says")
+        XCTAssertNotNil(Self.rendered(try XCTUnwrap(ScanPDF.make([page]))))
     }
 
     func testBlackAndWhiteMakesTheSmallestPDF() async throws {

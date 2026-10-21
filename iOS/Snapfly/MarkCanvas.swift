@@ -371,7 +371,7 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         hold.isEnabled = hold.isEnabled && !comparing
         if let split = self.split {
             accessibilityLabel = L("Comparison of Before and After")
-            accessibilityValue = split.formatted(.percent.precision(.fractionLength(0)))
+            accessibilityValue = Double(split).formatted(.percent.precision(.fractionLength(0)))
             accessibilityHint = nil
             accessibilityTraits = .adjustable
         } else {

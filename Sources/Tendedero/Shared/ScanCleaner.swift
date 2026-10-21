@@ -42,7 +42,7 @@ enum ScanCleaner {
     /// The page cut from its picture by `quad` (none for a page as the
     /// camera gave it), turned (`way`, or as it reads best when nil),
     /// cleaned in `mode` and checked. Nil when the picture could not be read.
-    static func prepare(_ source: CGImage, quad: ScanQuad?, way: (turns: Int, skew: Double)? = nil, focal: Double? = nil,
+    static func prepare(_ source: CGImage, quad: ScanQuad?, way: (turns: Int, skew: Double?)? = nil, focal: Double? = nil,
                         mode: ScanColor) async -> Prepared? {
         guard let straight = flattened(source, quad: quad, way: way, focal: focal) else { return nil }
         return await finished(straight.image, turns: straight.turns, skew: straight.skew, mode: mode,
@@ -50,8 +50,9 @@ enum ScanCleaner {
     }
 
     /// The page cut from its picture, flat, upright and level, and how it
-    /// was turned.
-    static func flattened(_ source: CGImage, quad: ScanQuad?, way: (turns: Int, skew: Double)? = nil,
+    /// was turned: as `way` says, its lean measured again where it gives
+    /// none, as for a page cut again; as it reads best without one.
+    static func flattened(_ source: CGImage, quad: ScanQuad?, way: (turns: Int, skew: Double?)? = nil,
                           focal: Double? = nil) -> (image: CGImage, turns: Int, skew: Double)? {
         let flat: CGImage
         if let quad {
@@ -60,7 +61,15 @@ enum ScanCleaner {
         } else {
             flat = source
         }
-        let found = way ?? upright(flat)
+        let found: (turns: Int, skew: Double)
+        if let way, let skew = way.skew {
+            found = (way.turns, skew)
+        } else if let way {
+            guard let standing = turned(flat, quarterTurns: way.turns, skew: 0) else { return nil }
+            found = (way.turns, lean(of: standing))
+        } else {
+            found = upright(flat)
+        }
         guard let straight = turned(flat, quarterTurns: found.turns, skew: found.skew) else { return nil }
         return (straight, found.turns, found.skew)
     }
@@ -156,12 +165,27 @@ enum ScanCleaner {
         // Lines in the page as it reads, in its pixels, to measure their lean.
         let width = Double(turns % 2 == 0 ? small.width : small.height)
         let height = Double(turns % 2 == 0 ? small.height : small.width)
-        let leaning = lines[turns].map { line -> (angle: Double, length: Double) in
+        return (turns, lean(of: lines[turns], width: width, height: height))
+    }
+
+    /// How far a page's lines lean, in radians, read as it stands.
+    static func lean(of page: CGImage) -> Double {
+        guard let small = smaller(page, longest: 1400) else { return 0 }
+        let request = VNRecognizeTextRequest()
+        request.recognitionLevel = .fast
+        request.usesLanguageCorrection = false
+        try? VNImageRequestHandler(cgImage: small, options: [:]).perform([request])
+        return lean(of: request.results ?? [], width: Double(small.width), height: Double(small.height))
+    }
+
+    /// How far lines read on a page lean, measured in its pixels.
+    private static func lean(of lines: [VNRecognizedTextObservation], width: Double, height: Double) -> Double {
+        let leaning = lines.map { line -> (angle: Double, length: Double) in
             let dx = Double(line.topRight.x - line.topLeft.x) * width
             let dy = Double(line.topRight.y - line.topLeft.y) * height
             return (atan2(dy, dx), hypot(dx, dy))
         }
-        return (turns, ScanGeometry.skew(of: leaning))
+        return ScanGeometry.skew(of: leaning)
     }
 
     /// The page turned clockwise by quarter turns, then by `skew` back to
@@ -252,7 +276,8 @@ enum ScanCleaner {
     /// suggests, since a blurred subject can look smudged too.
     static func smudged(_ picture: CGImage) async -> Bool {
         if #available(iOS 26, macOS 26, *) {
-            guard let observation = try? await DetectLensSmudgeRequest().perform(on: picture) else { return false }
+            guard let observation = try? await DetectLensSmudgeRequest().perform(on: picture, orientation: nil)
+            else { return false }
             return observation.confidence >= 0.9
         }
         return false
@@ -280,14 +305,16 @@ enum ScanCleaner {
     }
 
     /// A page as the PDF holds it: drawn larger or smaller first to about
-    /// 300 dots an inch (`ScanGeometry.printScale`); colour and greys as a
-    /// JPEG at 0.9 without what it says about itself, black and white as one
-    /// bit a pixel. Nil when it could not be made.
+    /// 300 dots an inch (`ScanGeometry.printScale`), and in greys when they
+    /// are asked for, as a covered page, drawn in colour, is not yet;
+    /// colour and greys as a JPEG at 0.9 without what it says about itself,
+    /// black and white as one bit a pixel. Nil when it could not be made.
     static func pdfPage(_ page: CGImage, mode: ScanColor, words: [ScanPDF.Word]) -> ScanPDF.Page? {
         let scale = ScanGeometry.printScale(width: page.width, height: page.height)
         let width = max(1, Int((Double(page.width) * scale).rounded()))
         let height = max(1, Int((Double(page.height) * scale).rounded()))
-        guard let printed = scale == 1 ? page : resized(page, width: width, height: height, gray: mode.isGray)
+        let inColor = mode.isGray && page.colorSpace?.model != .monochrome
+        guard let printed = scale == 1 && !inColor ? page : resized(page, width: width, height: height, gray: mode.isGray)
         else { return nil }
         if mode == .blackAndWhite {
             guard let bitmap = bitmap(printed) else { return nil }
@@ -295,8 +322,9 @@ enum ScanCleaner {
             return ScanPDF.Page(picture: .bits(bits, width: bitmap.width, height: bitmap.height), words: words)
         }
         guard let jpeg = jpeg(printed, quality: 0.9) else { return nil }
+        // The PDF says greys only where the JPEG holds them.
         return ScanPDF.Page(picture: .jpeg(ScanPDF.stripped(jpeg: jpeg), width: printed.width, height: printed.height,
-                                           gray: mode.isGray), words: words)
+                                           gray: printed.colorSpace?.model == .monochrome), words: words)
     }
 
     /// A JPEG of a picture, with nothing but the picture asked for.

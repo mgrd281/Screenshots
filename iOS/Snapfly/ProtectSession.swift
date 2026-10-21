@@ -127,6 +127,8 @@ final class ProtectSession: ObservableObject {
             failure = L("The picture could not be read.")
             return
         }
+        // A scanned page made again meanwhile, turned or cut, has a new protection: this one stops.
+        if case .scanned(let id) = source, ScannedPages.shared.opened(id) !== self { return }
         self.image = image
         original = UIImage(cgImage: image)
         if preview == nil { Timing.record(.shown, Timing.milliseconds(since: started)) }

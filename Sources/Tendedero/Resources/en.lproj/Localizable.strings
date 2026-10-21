@@ -1558,6 +1558,11 @@
 "Page %d could not be read." = "Page %d could not be read.";
 "Page %d could not be read. Delete it or take it again." = "Page %d could not be read. Delete it or take it again.";
 "Page %d could not be covered, so nothing was saved." = "Page %d could not be covered, so nothing was saved.";
+"Set the page's corners." = "Set the page's corners.";
+"Set Corners" = "Set Corners";
+"Page %d waits for its corners. Open it to set them." = "Page %d waits for its corners. Open it to set them.";
+"corners to set" = "corners to set";
+"Page %d could not be covered, so nothing was copied." = "Page %d could not be covered, so nothing was copied.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Covered before you send";

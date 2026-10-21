@@ -18,20 +18,35 @@ struct ScanContext {
 struct ScanEditor: View {
     @ObservedObject private var store = ScannedPages.shared
     @State private var current: UUID
+    /// The open page's shape, kept while the page is taken away, so no
+    /// editor is made for a page that is gone.
+    @State private var revision: Int
     @Environment(\.dismiss) private var dismiss
 
     init(page: UUID) {
         _current = State(initialValue: page)
+        _revision = State(initialValue: ScannedPages.shared.page(page)?.revision ?? 0)
     }
 
     var body: some View {
-        ProtectView(source: .scanned(current), scan: ScanContext(page: current, open: { current = $0 }))
-            .id("\(current.uuidString)-\(store.page(current)?.revision ?? 0)")
+        ProtectView(source: .scanned(current), scan: ScanContext(page: current, open: show))
+            .id("\(current.uuidString)-\(revision)")
+            .onChange(of: store.page(current)?.revision) { _, shape in
+                if let shape { revision = shape }
+            }
             .onChange(of: store.pages.map(\.id)) { before, ids in
                 guard !ids.contains(current) else { return }
                 guard let place = before.firstIndex(of: current), !ids.isEmpty else { return dismiss() }
-                current = ids[min(place, ids.count - 1)]
+                show(ids[min(place, ids.count - 1)])
             }
+    }
+
+    /// Another page of the document, its protection made first, before
+    /// its editor is drawn.
+    private func show(_ page: UUID) {
+        _ = store.session(page)
+        revision = store.page(page)?.revision ?? 0
+        current = page
     }
 }
 
@@ -45,6 +60,13 @@ enum ScanAdding: Equatable {
 /// A page, by its id, for a sheet that shows it.
 struct ScanPageRef: Identifiable, Equatable {
     let id: UUID
+}
+
+/// A page whose corners are set again, with its picture as it came,
+/// decoded once for the corner editor.
+struct ScanCrop: Identifiable {
+    let id: UUID
+    let picture: CGImage
 }
 
 /// A page to turn or to cut again, while it is asked whether what was
@@ -70,19 +92,25 @@ enum ScanReshape: Equatable {
 // MARK: How the page stands
 
 /// While a scanned page is made ready, in the status capsule's glass: a
-/// spinner and what is happening; or that it could not be read, with Take
-/// Again.
+/// spinner and what is happening; that its corners wait to be set, with
+/// Set Corners; or that it could not be read, with Take Again.
 struct ScanWorking: View {
     let state: ScannedPages.Page.State
     let retake: () -> Void
+    let corners: () -> Void
 
     var body: some View {
         HStack(spacing: 8) {
-            if state == .failed {
+            switch state {
+            case .failed:
                 Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                 Text(L("The page could not be read."))
                 Button(L("Take Again"), action: retake).fontWeight(.semibold)
-            } else {
+            case .needsCorners:
+                Image(systemName: "crop").foregroundStyle(.orange)
+                Text(L("Set the page's corners."))
+                Button(L("Set Corners"), action: corners).fontWeight(.semibold)
+            default:
                 ProgressView().controlSize(.small)
                 Text(L("Straightening and brightening…"))
             }
@@ -207,7 +235,8 @@ struct ScanStatusCard: View {
 
 /// The document's pages under the page open, in a strip of glass: each
 /// small, in order, the one open ringed in green, one with something wrong
-/// marked in orange, one still being made with a spinner. A tap opens a
+/// marked in orange, one still being made with a spinner, one whose corners
+/// wait to be set with the crop glyph in dark amber. A tap opens a
 /// page; dragged onto another it takes that one's place; held, it offers
 /// Turn, Crop and Delete. The plus adds pages, from the camera or photos.
 struct ScanPageStrip: View {
@@ -282,6 +311,7 @@ struct ScanPageStrip: View {
         }
         .contextMenu {
             Button { turn(page.id) } label: { Label(L("Turn"), systemImage: "rotate.right") }
+                .disabled(page.way == nil)
             Button { crop(page.id) } label: { Label(L("Crop"), systemImage: "crop") }
             Button(role: .destructive) { delete(page.id) } label: { Label(L("Delete Page"), systemImage: "trash") }
         }
@@ -300,7 +330,6 @@ struct ScanPageStrip: View {
     /// A page small, as the strip shows it.
     private func card(_ page: ScannedPages.Page, chosen: Bool) -> some View {
         let shape = RoundedRectangle(cornerRadius: SnapflyTokens.scanThumbRadius, style: .continuous)
-        let working = page.state == .waiting || page.state == .improving || page.state == .needsCorners
         return Color(.secondarySystemBackground)
             .overlay {
                 if let thumbnail = page.thumbnail {
@@ -308,7 +337,13 @@ struct ScanPageStrip: View {
                 }
             }
             .overlay {
-                if working { ProgressView().controlSize(.small) }
+                if page.state == .needsCorners {
+                    Image(systemName: "crop")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(SnapflyTokens.scanWarnText)
+                } else if page.state == .waiting || page.state == .improving {
+                    ProgressView().controlSize(.small)
+                }
             }
             .frame(width: 34, height: 46)
             .clipShape(shape)
@@ -339,6 +374,7 @@ struct ScanPageStrip: View {
     private func label(_ page: ScannedPages.Page, index: Int) -> String {
         var words = [String(format: L("Page %d of %d"), index + 1, store.pages.count)]
         if !page.issues.isEmpty { words.append(L("hard to read")) }
+        if page.state == .needsCorners { words.append(L("corners to set")) }
         if page.state == .waiting || page.state == .improving { words.append(L("being brightened")) }
         return words.joined(separator: ", ")
     }
@@ -351,6 +387,8 @@ struct ScanPageTools: View {
     let comparing: Bool
     let mode: ScanColor
     let ready: Bool
+    /// Whether the page has been made upright once, to be turned from there.
+    let canTurn: Bool
     let compare: () -> Void
     let crop: () -> Void
     let turn: () -> Void
@@ -370,6 +408,7 @@ struct ScanPageTools: View {
             Button(action: turn) { DockIcon(symbol: "rotate.right") }
                 .accessibilityLabel(L("Turn"))
                 .accessibilityIdentifier("scan-turn")
+                .disabled(!canTurn)
             Menu {
                 ForEach(ScanColor.allCases) { option in
                     Button { choose(option) } label: {

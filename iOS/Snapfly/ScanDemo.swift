@@ -32,7 +32,8 @@ enum ScanDemo {
     static let still = arguments.contains("-SnapflyReduceMotion")
 
     /// The photos: one, or two where the strip or the warning shows; for
-    /// corners, without where the page is, to set it by hand.
+    /// corners, without where the page is, to set it by hand. Each as a PNG,
+    /// as Photos gives its photos, so it is decoded as theirs are.
     static func photos() -> [ScanPhoto] {
         guard state != "empty", let page = ScanSample.page() else { return [] }
         let flaws: [ScanSample.Flaw]
@@ -42,9 +43,10 @@ enum ScanDemo {
         default: flaws = [.none, .none]
         }
         return flaws.compactMap { flaw in
-            ScanSample.photographed(page, flaw: flaw).map { photo in
-                ScanPhoto(image: photo.image, quad: unsure ? nil : photo.quad)
-            }
+            guard let photo = ScanSample.photographed(page, flaw: flaw), let png = Covering.png(photo.image),
+                  var scan = ScanPhoto(data: png) else { return nil }
+            scan.quad = unsure ? nil : photo.quad
+            return scan
         }
     }
     #else

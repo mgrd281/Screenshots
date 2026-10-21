@@ -96,7 +96,7 @@ colors:
   phone-scan-good-text: "#075E43"   # its words and seal: 6.9:1 on phone-scan-good; #5BD6A6 in dark (7:1)
   phone-scan-warn: "#FFF4E0"        # a scanned page's card when something on it is wrong, and Save and Share's warning; #3A2A10 in dark
   phone-scan-warn-edge: "#F3D7A6"   # their 1pt edge, and the card's button; #6E4F1F in dark
-  phone-scan-warn-text: "#6E4206"   # their words: 7.9:1 on phone-scan-warn, 6.2:1 on its button; #F5C77E in dark (8.8:1, 4.8:1)
+  phone-scan-warn-text: "#6E4206"   # their words: 7.9:1 on phone-scan-warn, 6.2:1 on its button; #F5C77E in dark (8.8:1, 4.8:1); also Save and Share's lines for a page not ready, on the bar, and the crop glyph on a page whose corners wait
 typography:
   field:
     fontFamily: "SF Pro, system-ui"
@@ -276,7 +276,7 @@ components:
   phone-scan-card:
     height: "44pt"                 # at least: under a scanned page, 16pt in from the screen's sides and 520pt wide at most, footnote medium 14pt in and 10pt down, rounded.phone-scan-card; green (phone-scan-good, its words and checkmark.seal.fill in phone-scan-good-text) once the copy is checked, a tap opening Details; amber (phone-scan-warn with a 1pt phone-scan-warn-edge, exclamationmark.triangle.fill and the words in phone-scan-warn-text) at once where something is wrong, its button (Take Again, or Compare where cleaning read less) footnote semibold on a phone-scan-warn-edge capsule, 44pt to the finger
   phone-scan-strip:
-    height: "52pt"                 # the document's pages under the card, in glass with rounded.phone-scan-strip, as wide as its pages and scrolling sideways once they no longer fit: each page 34 × 46 with rounded.phone-scan-thumb in a 44 × 52 cell, 6pt apart; the page open ringed 2pt in phone-protect-tint, the others a 0.5pt hairline of .primary at 10%; a page being made, a small spinner over it; the plus (phone-dock-icon) at the end
+    height: "52pt"                 # the document's pages under the card, in glass with rounded.phone-scan-strip, as wide as its pages and scrolling sideways once they no longer fit: each page 34 × 46 with rounded.phone-scan-thumb in a 44 × 52 cell, 6pt apart; the page open ringed 2pt in phone-protect-tint, the others a 0.5pt hairline of .primary at 10%; a page being made, a small spinner over it; one whose corners wait, the crop glyph (caption semibold, phone-scan-warn-text); the plus (phone-dock-icon) at the end
   phone-scan-badge:
     size: "15pt"                   # a page with something wrong, at its top trailing corner in the strip (22pt on the Scan tab's cards): orange with a black exclamationmark at 85% (9pt heavy; caption heavy at 22pt), ringed 1.5pt in white
   phone-scan-tools:
@@ -2436,8 +2436,10 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     made ready; the pages wait under "Scanned pages" (title 3 semibold, Clear
     on the trailing edge) as the grid's square cards in the order scanned, a
     document's order: the cleaned page small, its top showing, a spinner
-    over it while it is made ready; its number in caption 2 medium on an
-    ultra-thin capsule 4 pt in at the bottom leading corner; once it was
+    over it while it is made ready, or the crop glyph (title 3 semibold,
+    `phone-scan-warn-text`) while its corners wait; its number in caption 2
+    medium on an ultra-thin capsule 4 pt in at the bottom leading corner;
+    once it was
     opened and its copy is checked, the protected shield (white on a 22 pt
     `phone-protect` circle, top trailing), which scales in, or where
     something on it is wrong, `phone-scan-badge` there. Holding a card offers
@@ -2798,7 +2800,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - **A scanned page** (`ScanEditing.swift`) is reviewed here, titled
     "Review", with Next (semibold) after the menu, which opens Save and
     Share. While it is made ready, the status capsule says so
-    ("Straightening and brightening…"), or that it could not be read, with
+    ("Straightening and brightening…"), that its corners wait ("Set the
+    page's corners.", with Set Corners, which opens the corner editor, for
+    when it could not open by itself), or that it could not be read, with
     Take Again. Once cleaned, it wipes in over the page as it came, once,
     from the leading edge (`scan.wipe`), and then its covers sweep in as on
     any picture. Under the page, its card (`phone-scan-card`): green once
@@ -2821,7 +2825,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     steps of ten; choosing a tool ends it. The colours (Color with "Logos
     stay in color", Grayscale, Black and white with "Smallest file, pale
     stamps can go") change every page of the document, their covers kept.
-    Turning a page or cropping it finds its covers again; where something
+    Turning a page (once it has been made upright) or cropping it finds its
+    covers again, its lean measured again for a new cut; where something
     was covered on it by hand, a dialog asks first ("Covers drawn by hand
     go"). Delete asks too ("Delete page 2?"), and then the page in its place
     opens, or the one before it; with none left, the Scan tab shows. The
@@ -2853,8 +2858,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   and the places still to check. On the bar's material at the bottom, Copy,
   Save and Share, 44 pt, Share in `phone-protect` with white words: a PDF is
   saved to Files and pictures to Photos. While they work, which page is
-  covered; where pages are still made ready or one could not be read, the
-  bar says so instead and waits. Then a note and a success haptic; without
+  covered; where pages are still made ready, one waits for its corners or
+  one could not be read, the bar says so instead (the last two in
+  `phone-scan-warn-text`) and waits. Then a note and a success haptic; without
   covers the words say so ("Copied, without covers") beside a plain
   checkmark, never the protected shield.
 - **Details** (`ReviewSheet`) is a sheet at medium or large height, the

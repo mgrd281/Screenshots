@@ -1556,6 +1556,11 @@
 "Page %d could not be read." = "%d쪽을 읽을 수 없습니다.";
 "Page %d could not be read. Delete it or take it again." = "%d쪽을 읽을 수 없습니다. 삭제하거나 다시 촬영하세요.";
 "Page %d could not be covered, so nothing was saved." = "%d쪽을 가릴 수 없어 아무것도 저장하지 않았습니다.";
+"Set the page's corners." = "페이지의 모서리를 지정하세요.";
+"Set Corners" = "모서리 지정";
+"Page %d waits for its corners. Open it to set them." = "%d쪽의 모서리를 지정해야 합니다. 열어서 지정하세요.";
+"corners to set" = "모서리 지정 필요";
+"Page %d could not be covered, so nothing was copied." = "%d쪽을 가릴 수 없어 아무것도 복사하지 않았습니다.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "보내기 전에 가려집니다";

@@ -291,7 +291,12 @@ struct ScanSaveSheet: View {
                 Label(String(format: L("Page %d could not be read. Delete it or take it again."), index + 1),
                       systemImage: "exclamationmark.triangle.fill")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(SnapflyTokens.scanWarnText)
+            } else if let index = store.pages.firstIndex(where: { $0.state == .needsCorners }) {
+                Label(String(format: L("Page %d waits for its corners. Open it to set them."), index + 1),
+                      systemImage: "crop")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(SnapflyTokens.scanWarnText)
             } else if let improving = store.improving {
                 HStack(spacing: 8) {
                     ProgressView().controlSize(.small)
@@ -385,7 +390,12 @@ struct ScanSaveSheet: View {
             }
             return
         }
-        let pngs = try await store.pngs(covered: covered)
+        let failing = switch way {
+        case .copy: L("Page %d could not be covered, so nothing was copied.")
+        case .save: L("Page %d could not be covered, so nothing was saved.")
+        case .share: L("Page %d could not be covered, so nothing was sent.")
+        }
+        let pngs = try await store.pngs(covered: covered, failing: failing)
         switch way {
         case .copy:
             UIPasteboard.general.setItems(pngs.map { [UTType.png.identifier: $0] })
@@ -397,7 +407,7 @@ struct ScanSaveSheet: View {
                 }
                 done(covered ? L("Saved to Photos") : L("Saved to Photos, without covers"))
             } catch {
-                failed()
+                failed(L("The picture could not be saved."))
             }
         case .share:
             let urls = pngs.enumerated().compactMap { index, png in

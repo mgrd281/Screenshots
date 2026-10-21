@@ -1556,6 +1556,11 @@
 "Page %d could not be read." = "Sayfa %d okunamadı.";
 "Page %d could not be read. Delete it or take it again." = "Sayfa %d okunamadı. Sil veya yeniden çek.";
 "Page %d could not be covered, so nothing was saved." = "Sayfa %d gizlenemedi, bu yüzden hiçbir şey kaydedilmedi.";
+"Set the page's corners." = "Sayfanın köşelerini belirle.";
+"Set Corners" = "Köşeleri belirle";
+"Page %d waits for its corners. Open it to set them." = "Sayfa %d köşelerini bekliyor. Belirlemek için aç.";
+"corners to set" = "köşeleri belirlenecek";
+"Page %d could not be covered, so nothing was copied." = "Sayfa %d kapatılamadı, bu yüzden hiçbir şey kopyalanmadı.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Göndermeden önce kapatılır";

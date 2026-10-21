@@ -71,8 +71,8 @@ struct ProtectView: View {
     @State private var sweeping = false
     /// Save and Share, for the whole document.
     @State private var saving = false
-    /// The page whose corners are set again.
-    @State private var cropping: ScanPageRef?
+    /// The page whose corners are set again, with its picture.
+    @State private var cropping: ScanCrop?
     /// The page to delete, while it is asked.
     @State private var deleting: ScanPageRef?
     /// A page to turn or cut again with covers drawn by hand, while it is asked.
@@ -191,12 +191,13 @@ struct ProtectView: View {
     private func scanning(_ content: some View) -> some View {
         content
             .sheet(isPresented: $saving) { ScanSaveSheet() }
-            .fullScreenCover(item: $cropping) { ref in
-                if let page = scans.page(ref.id) {
-                    ScanCornerEditor(image: page.source, quad: page.quad ?? .whole) { quad in
+            .fullScreenCover(item: $cropping) { crop in
+                if let page = scans.page(crop.id) {
+                    ScanCornerEditor(image: crop.picture, quad: page.quad ?? .whole) { quad in
                         cropping = nil
-                        guard let quad, quad != page.quad ?? .whole else { return }
-                        scans.setCorners(ref.id, quad)
+                        // Corners waited for are set even where they stay as Vision put them.
+                        guard let quad, quad != page.quad ?? .whole || page.state == .needsCorners else { return }
+                        scans.setCorners(crop.id, quad)
                     }
                 } else {
                     Color.black.onAppear { cropping = nil }
@@ -469,7 +470,7 @@ struct ProtectView: View {
     /// ready, what is being done to it.
     @ViewBuilder private var capsule: some View {
         if let page = scanPage, page.state != .ready {
-            ScanWorking(state: page.state, retake: { retake(page) })
+            ScanWorking(state: page.state, retake: { retake(page) }, corners: { reshape(.crop(page.id)) })
         } else {
             PrivacyStatus(stage: session.stage, tally: session.plan.tally, found: found,
                           nothingFound: session.found
@@ -538,8 +539,9 @@ struct ProtectView: View {
                       delete: { deleting = ScanPageRef(id: $0) })
             .padding(.horizontal, 16)
         ScanPageTools(comparing: split != nil, mode: scans.mode, ready: page.state == .ready && session.original != nil,
-                      compare: { compare() }, crop: { reshape(.crop(page.id)) }, turn: { reshape(.turn(page.id)) },
-                      choose: { scans.setMode($0) }, delete: { deleting = ScanPageRef(id: page.id) })
+                      canTurn: page.way != nil, compare: { compare() }, crop: { reshape(.crop(page.id)) },
+                      turn: { reshape(.turn(page.id)) }, choose: { scans.setMode($0) },
+                      delete: { deleting = ScanPageRef(id: page.id) })
     }
 
     /// The one bar of tools, kept in place while drawing.
@@ -752,8 +754,12 @@ struct ProtectView: View {
 
     private func reshaped(_ change: ScanReshape) {
         switch change {
-        case .turn(let page): scans.turn(page)
-        case .crop(let page): cropping = ScanPageRef(id: page)
+        case .turn(let page):
+            scans.turn(page)
+        case .crop(let page):
+            // The picture as it came, decoded once, as large as the corner editor shows it.
+            guard let picture = scans.picture(page) else { return failed(L("The picture could not be read.")) }
+            cropping = ScanCrop(id: page, picture: picture)
         }
     }
 

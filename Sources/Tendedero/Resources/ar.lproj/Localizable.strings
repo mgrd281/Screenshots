@@ -1556,6 +1556,11 @@
 "Page %d could not be read." = "تعذّرت قراءة الصفحة %d.";
 "Page %d could not be read. Delete it or take it again." = "تعذّرت قراءة الصفحة %d. احذفها أو التقطها مجددًا.";
 "Page %d could not be covered, so nothing was saved." = "تعذّرت تغطية الصفحة %d، لذلك لم يُحفظ شيء.";
+"Set the page's corners." = "حدّد زوايا الصفحة.";
+"Set Corners" = "تحديد الزوايا";
+"Page %d waits for its corners. Open it to set them." = "الصفحة %d تنتظر تحديد زواياها. افتحها لتحدّدها.";
+"corners to set" = "زواياها بانتظار التحديد";
+"Page %d could not be covered, so nothing was copied." = "تعذّرت تغطية الصفحة %d، لذلك لم يُنسخ شيء.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "مغطّاة قبل أن ترسلها";

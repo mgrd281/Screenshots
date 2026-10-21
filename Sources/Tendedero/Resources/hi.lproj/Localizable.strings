@@ -1558,6 +1558,11 @@
 "Page %d could not be read." = "पेज %d पढ़ा नहीं जा सका।";
 "Page %d could not be read. Delete it or take it again." = "पेज %d पढ़ा नहीं जा सका। उसे हटाएँ या फिर से लें।";
 "Page %d could not be covered, so nothing was saved." = "पेज %d छिपाया नहीं जा सका, इसलिए कुछ नहीं सहेजा गया।";
+"Set the page's corners." = "पेज के कोने तय करें।";
+"Set Corners" = "कोने तय करें";
+"Page %d waits for its corners. Open it to set them." = "पेज %d के कोने तय होने बाकी हैं। उन्हें तय करने के लिए उसे खोलें।";
+"corners to set" = "कोने तय करने हैं";
+"Page %d could not be covered, so nothing was copied." = "पेज %d ढका नहीं जा सका, इसलिए कुछ कॉपी नहीं हुआ।";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "भेजने से पहले ढका हुआ";
