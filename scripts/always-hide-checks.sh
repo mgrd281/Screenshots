@@ -65,7 +65,7 @@ shot() {
   xcrun simctl ui "$on" appearance "$appearance"
   xcrun simctl terminate "$on" "$bundle" >/dev/null 2>&1 || true
   xcrun simctl launch "$on" "$bundle" "${arguments[@]}" >/dev/null
-  sleep 5
+  sleep 6
   xcrun simctl io "$on" screenshot "$out/$name.png" >/dev/null
 }
 
@@ -74,7 +74,7 @@ xcrun simctl launch "$device" "$bundle" -SnapflyAlwaysHide filled >/dev/null
 sleep 10
 xcrun simctl terminate "$device" "$bundle" >/dev/null 2>&1 || true
 
-states=(filled empty editing picker name address card account editCard word label labelNext)
+states=(filled empty editing picker name address card account editCard word label labelNext blankName blankWord)
 for state in "${states[@]}"; do shot "$device" "de-light-$state" "$state" light de; done
 for state in "${states[@]}"; do shot "$device" "de-dark-$state" "$state" dark de; done
 for state in "${states[@]}"; do shot "$device" "de-xxxl-$state" "$state" light de UICTContentSizeCategoryXXXL; done

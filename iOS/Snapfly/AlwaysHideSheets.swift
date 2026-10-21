@@ -134,6 +134,15 @@ struct DetailSheet: View {
                         .transition(push)
                 }
             }
+        } footer: {
+            if !picking {
+                Button(action: submit) {
+                    Text(request.isNew ? L("Add") : L("Save"))
+                }
+                .buttonStyle(HidePrimaryButtonStyle())
+                .disabled(!canKeep)
+                .accessibilityIdentifier("always-hide-save-detail")
+            }
         }
         .interactiveDismissDisabled(changed)
         .onAppear { if !picking { focusFirst() } }
@@ -150,9 +159,6 @@ struct DetailSheet: View {
                 }
             }
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 24)
-        .padding(.bottom, 16)
     }
 
     // MARK: Step two, a kind's fields
@@ -188,16 +194,7 @@ struct DetailSheet: View {
             .background(SnapflyTokens.hideField,
                         in: RoundedRectangle(cornerRadius: SnapflyTokens.hideCardRadius, style: .continuous))
             note
-            Button(action: submit) {
-                Text(request.isNew ? L("Add") : L("Save"))
-            }
-            .buttonStyle(HidePrimaryButtonStyle())
-            .disabled(!canKeep)
-            .accessibilityIdentifier("always-hide-save-detail")
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 24)
-        .padding(.bottom, 16)
     }
 
     private func field(_ title: String, text: Binding<String>, as field: Field, content: UITextContentType,
@@ -423,6 +420,7 @@ struct RuleSheet: View {
     @State private var reach: OwnRule.Reach
     @FocusState private var focused: Bool
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     init(request: RuleRequest, save: @escaping (OwnRule) -> Void) {
         self.request = request
@@ -496,16 +494,14 @@ struct RuleSheet: View {
                         .foregroundStyle(SnapflyTokens.hideWarning)
                 }
                 preview
-                Button(action: submit) {
-                    Text(L("Save Rule"))
-                }
-                .buttonStyle(HidePrimaryButtonStyle())
-                .disabled(!canSave)
-                .accessibilityIdentifier("always-hide-save-rule")
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 24)
-            .padding(.bottom, 16)
+        } footer: {
+            Button(action: submit) {
+                Text(L("Save Rule"))
+            }
+            .buttonStyle(HidePrimaryButtonStyle())
+            .disabled(!canSave)
+            .accessibilityIdentifier("always-hide-save-rule")
         }
         .interactiveDismissDisabled(changed)
         .onAppear {
@@ -546,10 +542,11 @@ struct RuleSheet: View {
             previewLine
                 .font(.subheadline)
                 .foregroundStyle(SnapflyTokens.hideText)
-                .lineLimit(1)
+                .lineLimit(typeSize.isAccessibilitySize ? 4 : 1)
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 16)
+        .padding(.vertical, typeSize.isAccessibilitySize ? 12 : 0)
         .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
         .background(SnapflyTokens.hideField,
                     in: RoundedRectangle(cornerRadius: SnapflyTokens.hideCardRadius, style: .continuous))
@@ -585,11 +582,13 @@ struct RuleSheet: View {
 // MARK: Pieces
 
 /// A sheet as tall as what it holds, nothing in it scrolling, so it never
-/// resizes as the owner types and sits whole above the keyboard. At the
-/// accessibility text sizes it may be taller than the screen: then it fills
-/// it and scrolls.
-struct FittedSheet<Content: View>: View {
+/// resizes as the owner types and sits whole above the keyboard: its parts,
+/// then, 16pt under them, its one action. At the accessibility text sizes
+/// it may be taller than the screen: then it fills it and the parts scroll
+/// while the action stays pinned above the keyboard.
+struct FittedSheet<Content: View, Footer: View>: View {
     @ViewBuilder let content: Content
+    @ViewBuilder let footer: Footer
     @State private var height: CGFloat = 320
     @Environment(\.dynamicTypeSize) private var typeSize
 
@@ -598,22 +597,45 @@ struct FittedSheet<Content: View>: View {
             if typeSize.isAccessibilitySize {
                 ScrollView {
                     content
+                        .padding(.horizontal, 24)
+                        .padding(.top, 24)
+                        .padding(.bottom, 16)
                 }
                 .scrollDismissesKeyboard(.interactively)
+                .scrollBounceBehavior(.basedOnSize)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    footer
+                        .padding(.horizontal, 24)
+                        .padding(.top, 8)
+                        .padding(.bottom, 16)
+                        .background(SnapflyTokens.hideCard)
+                }
                 .presentationDetents([.large])
             } else {
-                content
-                    .fixedSize(horizontal: false, vertical: true)
-                    .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { measured in
-                        if measured > 0 { height = measured }
-                    }
-                    .frame(maxHeight: .infinity, alignment: .top)
-                    .presentationDetents([.height(height)])
+                VStack(alignment: .leading, spacing: 16) {
+                    content
+                    footer
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 24)
+                .padding(.bottom, 16)
+                .fixedSize(horizontal: false, vertical: true)
+                .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { measured in
+                    if measured > 0 { height = measured }
+                }
+                .frame(maxHeight: .infinity, alignment: .top)
+                .presentationDetents([.height(height)])
             }
         }
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(SnapflyTokens.hideSheetRadius)
         .presentationBackground(SnapflyTokens.hideCard)
+    }
+}
+
+extension FittedSheet where Footer == EmptyView {
+    init(@ViewBuilder content: () -> Content) {
+        self.init(content: content, footer: { EmptyView() })
     }
 }
 
@@ -680,11 +702,12 @@ struct HideRuleTile: View {
     @ScaledMetric(relativeTo: .body) private var size = OwnDetailTile.base
 
     var body: some View {
+        let side = min(size, OwnDetailTile.largest)
         Image(systemName: Self.symbol(kind))
             .font(.callout.weight(.semibold))
             .foregroundStyle(SnapflyTokens.hideText)
-            .frame(width: size, height: size)
-            .background(SnapflyTokens.hideRuleTile, in: RoundedRectangle(cornerRadius: size / 4, style: .continuous))
+            .frame(width: side, height: side)
+            .background(SnapflyTokens.hideRuleTile, in: RoundedRectangle(cornerRadius: side / 4, style: .continuous))
             .accessibilityHidden(true)
     }
 
