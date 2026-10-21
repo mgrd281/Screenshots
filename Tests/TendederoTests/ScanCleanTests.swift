@@ -104,7 +104,7 @@ final class ScanCleanTests: XCTestCase {
         for y in top..<(top + rows) {
             for x in 20..<(page.bitmap.width - 20) {
                 let (red, green, blue) = page.bitmap.color(x: x, y: y)
-                page.bitmap.set(x: x, y: y, UInt8(Float(red) * 0.86), UInt8(Float(green) * 0.86), UInt8(Float(blue) * 0.86))
+                page.bitmap.set(x: x, y: y, Self.dimmed(red, 0.86), Self.dimmed(green, 0.86), Self.dimmed(blue, 0.86))
             }
         }
         let cleaned = ScanClean.clean(page.bitmap, .color)
@@ -120,8 +120,10 @@ final class ScanCleanTests: XCTestCase {
         for y in 0..<40 {
             for x in 0..<60 {
                 seed = seed &* 1_664_525 &+ 1_013_904_223
-                let grain = Int(seed >> 29) - 4
-                let value = UInt8(x < 30 ? 240 + grain : 30 + grain)
+                let high: UInt32 = seed >> 29
+                let grain: Int = Int(high) - 4
+                let level: Int = x < 30 ? 240 + grain : 30 + grain
+                let value = UInt8(level)
                 page.set(x: x, y: y, value, value, value)
             }
         }
@@ -144,14 +146,15 @@ final class ScanCleanTests: XCTestCase {
             for y in y0..<(y0 + 2) {
                 for x in 30..<(page.bitmap.width - 30) {
                     let (red, green, blue) = page.bitmap.color(x: x, y: y)
-                    page.bitmap.set(x: x, y: y, UInt8(Float(red) * grey), UInt8(Float(green) * grey), UInt8(Float(blue) * grey))
+                    page.bitmap.set(x: x, y: y, Self.dimmed(red, grey), Self.dimmed(green, grey), Self.dimmed(blue, grey))
                 }
             }
             let black = ScanClean.clean(page.bitmap, .blackAndWhite)
             let along = (30..<(page.bitmap.width - 30)).map { x in
                 black.brightness(x: x, y: y0) == 0 || black.brightness(x: x, y: y0 + 1) == 0
             }
-            let share = Double(along.filter { $0 }.count) / Double(along.count)
+            let dark: Int = along.filter { $0 }.count
+            let share: Double = Double(dark) / Double(along.count)
             XCTAssertTrue(share == 0 || share > 0.97, "a line of \(grey) is \(Int(share * 100)) % black")
         }
     }
@@ -164,7 +167,14 @@ final class ScanCleanTests: XCTestCase {
         let soft = ScanClean.blurred(edge, width: 40, height: 30, radius: 2)
         XCTAssertEqual(soft[15 * 40 + 5], 0)
         XCTAssertEqual(soft[15 * 40 + 35], 255)
-        XCTAssertTrue((40...220).contains(soft[15 * 40 + 20]), "\(soft[15 * 40 + 20])")
+        let middle: UInt8 = soft[15 * 40 + 20]
+        XCTAssertTrue((40...220).contains(middle), "\(middle)")
+    }
+
+    /// A channel darkened to `share` of itself, as a grey band drawn over the page.
+    private static func dimmed(_ value: UInt8, _ share: Float) -> UInt8 {
+        let darker: Float = Float(value) * share
+        return UInt8(darker)
     }
 }
 
@@ -192,7 +202,8 @@ enum ScanPaperFixture {
         var bitmap = ScanBitmap(width: width, height: height, red: 0, green: 0, blue: 0)
         let paper: (Float, Float, Float) = (246, 245, 241)
         func light(_ x: Int, _ y: Int) -> Float {
-            let t = (Float(x) / Float(width) + Float(y) / Float(height)) / 2
+            let across: Float = Float(x) / Float(width), down: Float = Float(y) / Float(height)
+            let t: Float = (across + down) / 2
             return 1 - 0.5 * t
         }
         var marks = [UInt8](repeating: 0, count: width * height)
@@ -251,8 +262,11 @@ enum ScanPaperFixture {
         let stamp = (x: width * 2 / 3, y: height * 3 / 4, r: width / 10)
         for yy in (stamp.y - stamp.r)...(stamp.y + stamp.r) {
             for xx in (stamp.x - stamp.r)...(stamp.x + stamp.r) {
-                let d = hypot(Float(xx - stamp.x), Float(yy - stamp.y))
-                if d <= Float(stamp.r), d >= Float(stamp.r) - Float(max(3, unit * 2)) { marks[yy * width + xx] = 4 }
+                let dx = Float(xx - stamp.x), dy = Float(yy - stamp.y)
+                let d: Float = hypot(dx, dy)
+                let outer = Float(stamp.r), ring = Float(max(3, unit * 2))
+                let inner: Float = outer - ring
+                if d <= outer, d >= inner { marks[yy * width + xx] = 4 }
             }
         }
         colors[4] = (240, 180, 180)
@@ -278,19 +292,32 @@ enum ScanPaperFixture {
         func noise() -> Float {
             guard grain > 0 else { return 0 }
             seed = seed &* 1_664_525 &+ 1_013_904_223
-            return Float(Int(seed >> 16) % (2 * grain + 1) - grain)
+            let high: UInt32 = seed >> 16
+            let spread: Int = 2 * grain + 1
+            let value: Int = Int(high) % spread - grain
+            return Float(value)
         }
         for yy in 0..<height {
             for xx in 0..<width {
                 let shade = light(xx, yy)
                 let base = colors[Int(marks[yy * width + xx])] ?? paper
-                bitmap.set(x: xx, y: yy, UInt8(min(max(base.0 * cast.0 * shade + noise(), 0), 255)),
-                           UInt8(min(max(base.1 * cast.1 * shade + noise(), 0), 255)),
-                           UInt8(min(max(base.2 * cast.2 * shade + noise(), 0), 255)))
+                // Red, green and blue each take the next of the grain, in that order.
+                let red = Self.channel(base.0 * cast.0 * shade, noise())
+                let green = Self.channel(base.1 * cast.1 * shade, noise())
+                let blue = Self.channel(base.2 * cast.2 * shade, noise())
+                bitmap.set(x: xx, y: yy, red, green, blue)
             }
         }
         page.bitmap = bitmap
         return page
+    }
+
+    /// One channel of a pixel: its colour under the lamp with the camera's
+    /// grain, kept between 0 and 255.
+    static func channel(_ value: Float, _ noise: Float) -> UInt8 {
+        let grained: Float = value + noise
+        let kept: Float = min(max(grained, 0), 255)
+        return UInt8(kept)
     }
 }
 

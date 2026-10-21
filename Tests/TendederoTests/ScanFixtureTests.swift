@@ -57,7 +57,9 @@ final class ScanFixtureTests: XCTestCase {
     func testTheFlatPageHasA4sShapeAndThePhotosPixels() throws {
         let photo = try photo()
         let flat = try XCTUnwrap(ScanCleaner.straightened(photo.image, quad: photo.quad))
-        XCTAssertEqual(Double(flat.width) / Double(flat.height), 1 / 2.0.squareRoot(), accuracy: 0.002)
+        let shape: Double = Double(flat.width) / Double(flat.height)
+        let a4: Double = 1 / 2.0.squareRoot()
+        XCTAssertEqual(shape, a4, accuracy: 0.002)
         XCTAssertGreaterThan(flat.height, 2800, "as many pixels as the photo has for the page")
         Self.keep(flat, "flat")
     }
@@ -72,21 +74,25 @@ final class ScanFixtureTests: XCTestCase {
         let photo = try photo()
         // The page's corners turned 2° about its middle, in the photo's pixels: the cut leans.
         let width = CGFloat(photo.image.width), height = CGFloat(photo.image.height)
-        let angle = 2 * CGFloat.pi / 180
+        let angle: CGFloat = 2 * .pi / 180
+        let turnCos: CGFloat = cos(angle), turnSin: CGFloat = sin(angle)
         let corners = photo.quad.corners
-        let middle = CGPoint(x: corners.map(\.x).reduce(0, +) / 4, y: corners.map(\.y).reduce(0, +) / 4)
+        let acrossSum: CGFloat = corners.map(\.x).reduce(0, +), downSum: CGFloat = corners.map(\.y).reduce(0, +)
+        let middle = CGPoint(x: acrossSum / 4, y: downSum / 4)
         var leaning = photo.quad
-        leaning.corners = corners.map { corner in
-            let x = (corner.x - middle.x) * width, y = (corner.y - middle.y) * height
-            return CGPoint(x: middle.x + (x * cos(angle) - y * sin(angle)) / width,
-                           y: middle.y + (x * sin(angle) + y * cos(angle)) / height)
+        leaning.corners = corners.map { corner -> CGPoint in
+            let x: CGFloat = (corner.x - middle.x) * width, y: CGFloat = (corner.y - middle.y) * height
+            let turnedX: CGFloat = x * turnCos - y * turnSin
+            let turnedY: CGFloat = x * turnSin + y * turnCos
+            return CGPoint(x: middle.x + turnedX / width, y: middle.y + turnedY / height)
         }
+        let lean = Double(angle)
         let kept = try XCTUnwrap(ScanCleaner.flattened(photo.image, quad: leaning, way: (0, 0)))
-        XCTAssertGreaterThan(abs(ScanCleaner.lean(of: kept.image)), Double(angle) / 2, "the cut leans")
+        XCTAssertGreaterThan(abs(ScanCleaner.lean(of: kept.image)), lean / 2, "the cut leans")
         let again = try XCTUnwrap(ScanCleaner.flattened(photo.image, quad: leaning, way: (0, nil)))
         XCTAssertEqual(again.turns, 0, "the quarter turns stay")
-        XCTAssertGreaterThan(abs(again.skew), Double(angle) / 2, "its lean is measured again")
-        XCTAssertLessThan(abs(ScanCleaner.lean(of: again.image)), Double(angle) / 4, "and taken away")
+        XCTAssertGreaterThan(abs(again.skew), lean / 2, "its lean is measured again")
+        XCTAssertLessThan(abs(ScanCleaner.lean(of: again.image)), lean / 4, "and taken away")
     }
 
     func testCleaningKeepsEveryNumberAndTheTextReadsTheSame() async throws {
@@ -146,7 +152,9 @@ final class ScanFixtureTests: XCTestCase {
         for dy in -2...2 {
             for dx in -2...2 {
                 let pixel = bitmap.color(x: x + dx, y: y + dy)
-                sums = (sums.red + Int(pixel.red), sums.green + Int(pixel.green), sums.blue + Int(pixel.blue))
+                sums.red += Int(pixel.red)
+                sums.green += Int(pixel.green)
+                sums.blue += Int(pixel.blue)
             }
         }
         let mean = (red: sums.red / 25, green: sums.green / 25, blue: sums.blue / 25)
@@ -214,7 +222,9 @@ final class ScanFixtureTests: XCTestCase {
         })
         let rendered = try XCTUnwrap(Self.rendered(data))
         let bitmap = try XCTUnwrap(ScanCleaner.bitmap(rendered))
-        let x = Int(iban.midX * CGFloat(bitmap.width)), y = Int((1 - iban.midY) * CGFloat(bitmap.height))
+        let across: CGFloat = iban.midX * CGFloat(bitmap.width)
+        let down: CGFloat = (1 - iban.midY) * CGFloat(bitmap.height)
+        let x = Int(across), y = Int(down)
         XCTAssertLessThan(bitmap.brightness(x: x, y: y), 80, "covered in the pixels")
         // Without covers, every word is there.
         let open = try XCTUnwrap(ScanCleaner.pdfPage(prepared.cleaned, mode: .color,
@@ -300,7 +310,8 @@ final class ScanFixtureTests: XCTestCase {
         guard let provider = CGDataProvider(data: data as CFData), let document = CGPDFDocument(provider),
               let page = document.page(at: 1) else { return nil }
         let box = page.getBoxRect(.mediaBox)
-        let width = Int(box.width * 150 / 72), height = Int(box.height * 150 / 72)
+        let wide: CGFloat = box.width * 150 / 72, high: CGFloat = box.height * 150 / 72
+        let width = Int(wide), height = Int(high)
         guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
                                       space: CGColorSpace(name: CGColorSpace.sRGB)!,
                                       bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return nil }
@@ -317,7 +328,11 @@ final class ScanFixtureTests: XCTestCase {
         var names: [String] = []
         var i = 8
         while i + 8 <= bytes.count {
-            let length = Int(bytes[i]) << 24 | Int(bytes[i + 1]) << 16 | Int(bytes[i + 2]) << 8 | Int(bytes[i + 3])
+            var length = 0
+            for byte in bytes[i..<(i + 4)] {
+                let value: Int = Int(byte)
+                length = length << 8 | value
+            }
             names.append(String(decoding: bytes[(i + 4)..<(i + 8)], as: UTF8.self))
             i += 12 + length
         }

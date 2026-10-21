@@ -66,8 +66,9 @@ struct ScanIssue: Equatable, Sendable {
     /// The most important first: what was read less, then what hides text.
     static func ordered(_ issues: [ScanIssue]) -> [ScanIssue] {
         let rank: [Kind: Int] = [.lessText: 0, .glare: 1, .blurred: 2, .smudge: 3, .small: 4]
-        return issues.enumerated().sorted {
-            (rank[$0.element.kind] ?? 9, $0.offset) < (rank[$1.element.kind] ?? 9, $1.offset)
+        return issues.enumerated().sorted { a, b in
+            let first: Int = rank[a.element.kind] ?? 9, second: Int = rank[b.element.kind] ?? 9
+            return first != second ? first < second : a.offset < b.offset
         }.map(\.element)
     }
 }
@@ -128,7 +129,8 @@ enum ScanQuality {
         for ty in stride(from: 0, through: h - size, by: size) {
             for tx in stride(from: 0, through: w - size, by: size) {
                 for y in 0..<size {
-                    for x in 0..<size { values[y * size + x] = plane[(ty + y) * w + tx + x] }
+                    let row: Int = (ty + y) * w + tx
+                    for x in 0..<size { values[y * size + x] = plane[row + x] }
                 }
                 tiles.append(measure(values, size: size, x: tx, y: ty, tuning: tuning))
             }
@@ -160,21 +162,26 @@ enum ScanQuality {
         let printed = tiles.filter(\.hasPrint)
         var blurredThirds: [Int] = [], measuredThirds = 0
         for third in 0..<3 {
-            let inThird = printed.filter { tile in
-                min(2, Int(Double(tile.y + tile.size / 2) / Double(height) * 3)) == third
-            }
+            let inThird = printed.filter { Self.third(of: $0, height: height) == third }
             guard inThird.count >= tuning.fewestTiles else { continue }
             measuredThirds += 1
-            let share = Double(inThird.filter { $0.sharpness < tuning.sharpEdges }.count) / Double(inThird.count)
+            let soft = inThird.filter { $0.sharpness < tuning.sharpEdges }.count
+            let share: Double = Double(soft) / Double(inThird.count)
             if share >= tuning.blurredShare { blurredThirds.append(third) }
         }
         guard !blurredThirds.isEmpty else { return nil }
         let blurredTiles = printed.filter { tile in
-            let third = min(2, Int(Double(tile.y + tile.size / 2) / Double(height) * 3))
-            return tile.sharpness < tuning.sharpEdges && blurredThirds.contains(third)
+            tile.sharpness < tuning.sharpEdges && blurredThirds.contains(Self.third(of: tile, height: height))
         }
         let rect = normalized(blurredTiles, width: width, height: height)
         return (rect, blurredThirds.count == measuredThirds && measuredThirds >= 2)
+    }
+
+    /// Which third of the page, top to bottom from 0, a tile's middle is in.
+    private static func third(of tile: Tile, height: Int) -> Int {
+        let middle = Double(tile.y + tile.size / 2)
+        let share: Double = middle / Double(height)
+        return min(2, Int(share * 3))
     }
 
     // MARK: Glare
@@ -196,7 +203,8 @@ enum ScanQuality {
         var counts = [Int](repeating: 0, count: 256)
         for value in values { counts[Int(value)] += 1 }
         func percentile(_ share: Double) -> Float {
-            let rank = Int(Double(values.count) * share)
+            let count = Double(values.count)
+            let rank = Int(count * share)
             var seen = 0
             for value in 0..<256 {
                 seen += counts[value]
@@ -205,13 +213,13 @@ enum ScanQuality {
             return 255
         }
         let low = percentile(0.05), high = percentile(0.95), paper = percentile(0.9)
-        let contrast = high - low
+        let contrast: Float = high - low
         let whiteCount = counts[Int(tuning.glareWhite)...].reduce(0, +)
-        let white = Float(whiteCount) / Float(values.count)
-        let darkLine = high - contrast / 2
+        let white: Float = Float(whiteCount) / Float(values.count)
+        let darkLine: Float = high - contrast / 2
         var darkCount = 0
         for value in values where Float(value) < darkLine { darkCount += 1 }
-        let darkShare = Float(darkCount) / Float(values.count)
+        let darkShare: Float = Float(darkCount) / Float(values.count)
         guard contrast >= tuning.printContrast, darkShare >= 0.01, darkShare <= 0.6 else {
             return Tile(x: x, y: y, size: size, hasPrint: false, sharpness: 0, white: white, paper: paper)
         }
@@ -223,9 +231,11 @@ enum ScanQuality {
                 let middle = Float(values[p])
                 let left = Float(values[p - 1]), right = Float(values[p + 1])
                 let up = Float(values[p - size]), down = Float(values[p + size])
-                let turn = max(abs(right - left), abs(down - up)) / 2
+                let across: Float = abs(right - left), downwards: Float = abs(down - up)
+                let turn: Float = max(across, downwards) / 2
                 guard turn >= 0.15 * contrast else { continue }
-                let laplacian = 4 * middle - left - right - up - down
+                let around: Float = left + right + up + down
+                let laplacian: Float = 4 * middle - around
                 sum += laplacian * laplacian
                 edges += 1
             }
@@ -233,7 +243,8 @@ enum ScanQuality {
         guard edges >= 20 else {
             return Tile(x: x, y: y, size: size, hasPrint: false, sharpness: 0, white: white, paper: paper)
         }
-        let sharpness = (sum / Float(edges)).squareRoot() / contrast
+        let spread: Float = (sum / Float(edges)).squareRoot()
+        let sharpness: Float = spread / contrast
         return Tile(x: x, y: y, size: size, hasPrint: true, sharpness: sharpness, white: white, paper: paper)
     }
 
@@ -247,10 +258,12 @@ enum ScanQuality {
             for x in 0..<w {
                 var sum = 0
                 for dy in 0..<factor {
-                    let row = (y * factor + dy) * width + x * factor
+                    let line: Int = y * factor + dy
+                    let row: Int = line * width + x * factor
                     for dx in 0..<factor { sum += Int(plane[row + dx]) }
                 }
-                out[y * w + x] = UInt8(sum / area)
+                let mean: Int = sum / area
+                out[y * w + x] = UInt8(mean)
             }
         }
         return (out, w, h)
@@ -267,7 +280,8 @@ enum ScanQuality {
             maxY = max(maxY, tile.y + tile.size)
         }
         let w = CGFloat(width), h = CGFloat(height)
-        return CGRect(x: CGFloat(minX) / w, y: 1 - CGFloat(maxY) / h, width: CGFloat(maxX - minX) / w,
-                      height: CGFloat(maxY - minY) / h)
+        let left: CGFloat = CGFloat(minX) / w, bottom: CGFloat = 1 - CGFloat(maxY) / h
+        let across: CGFloat = CGFloat(maxX - minX) / w, down: CGFloat = CGFloat(maxY - minY) / h
+        return CGRect(x: left, y: bottom, width: across, height: down)
     }
 }

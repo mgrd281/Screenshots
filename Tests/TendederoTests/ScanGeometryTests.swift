@@ -33,10 +33,13 @@ final class ScanGeometryTests: XCTestCase {
     func testTheFlatPageHasThePhotosPixelsAndNoMore() {
         let quad = Self.photographed(width: 210, height: 297, tilt: 30, pan: 10, roll: 4, in: photo)
         let size = ScanGeometry.size(of: quad, in: photo, aspect: 1 / 2.0.squareRoot(), longest: 4096)
-        XCTAssertEqual(Double(size.width) / Double(size.height), 1 / 2.0.squareRoot(), accuracy: 0.002)
+        let shape: Double = Double(size.width) / Double(size.height)
+        let a4: Double = 1 / 2.0.squareRoot()
+        XCTAssertEqual(shape, a4, accuracy: 0.002)
         let pixels = quad.pixels(in: photo)
-        let tallest = max(hypot(pixels.topLeft.x - pixels.bottomLeft.x, pixels.topLeft.y - pixels.bottomLeft.y),
-                          hypot(pixels.topRight.x - pixels.bottomRight.x, pixels.topRight.y - pixels.bottomRight.y))
+        let left: CGFloat = hypot(pixels.topLeft.x - pixels.bottomLeft.x, pixels.topLeft.y - pixels.bottomLeft.y)
+        let right: CGFloat = hypot(pixels.topRight.x - pixels.bottomRight.x, pixels.topRight.y - pixels.bottomRight.y)
+        let tallest = max(left, right)
         XCTAssertLessThanOrEqual(CGFloat(size.height), tallest * 1.5)
         let small = ScanGeometry.size(of: quad, in: photo, aspect: 1 / 2.0.squareRoot(), longest: 1000)
         XCTAssertEqual(max(small.width, small.height), 1000)
@@ -77,12 +80,18 @@ final class ScanGeometryTests: XCTestCase {
 
     func testLinesThatAgreeSayHowFarThePageLeans() {
         let degree = Double.pi / 180
-        let leaning = (0..<8).map { (angle: 2 * degree + Double($0 % 3 - 1) * 0.2 * degree, length: 100.0) }
+        let leaning = (0..<8).map { k -> (angle: Double, length: Double) in
+            let wobble: Double = Double(k % 3 - 1) * 0.2 * degree
+            return (angle: 2 * degree + wobble, length: 100.0)
+        }
         XCTAssertEqual(ScanGeometry.skew(of: leaning), 2 * degree, accuracy: 0.25 * degree)
         XCTAssertEqual(ScanGeometry.skew(of: [(angle: 2 * degree, length: 100)]), 0, "one line is not enough")
         let level = (0..<8).map { _ in (angle: 0.1 * degree, length: 100.0) }
         XCTAssertEqual(ScanGeometry.skew(of: level), 0, "too little to straighten")
-        let scattered = (0..<9).map { (angle: Double($0 - 4) * 3 * degree, length: 100.0) }
+        let scattered = (0..<9).map { k -> (angle: Double, length: Double) in
+            let apart: Double = Double(k - 4) * 3
+            return (angle: apart * degree, length: 100.0)
+        }
         XCTAssertEqual(ScanGeometry.skew(of: scattered), 0, "lines that do not agree")
     }
 
@@ -129,18 +138,27 @@ final class ScanGeometryTests: XCTestCase {
         let (a, b, c) = (tilt * r, pan * r, roll * r)
         func rotate(_ p: (Double, Double, Double)) -> (Double, Double, Double) {
             // Round the across axis, then up, then the view's axis.
-            let x1 = p.0, y1 = p.1 * cos(a) - p.2 * sin(a), z1 = p.1 * sin(a) + p.2 * cos(a)
-            let x2 = x1 * cos(b) + z1 * sin(b), y2 = y1, z2 = -x1 * sin(b) + z1 * cos(b)
-            return (x2 * cos(c) - y2 * sin(c), x2 * sin(c) + y2 * cos(c), z2)
+            let x1: Double = p.0
+            let y1: Double = p.1 * cos(a) - p.2 * sin(a)
+            let z1: Double = p.1 * sin(a) + p.2 * cos(a)
+            let x2: Double = x1 * cos(b) + z1 * sin(b)
+            let y2: Double = y1
+            let z2: Double = -x1 * sin(b) + z1 * cos(b)
+            let x3: Double = x2 * cos(c) - y2 * sin(c)
+            let y3: Double = x2 * sin(c) + y2 * cos(c)
+            return (x3, y3, z2)
         }
         let focal = 3000.0, away = 500.0
+        let wide = Double(size.width), high = Double(size.height)
         func seen(_ x: Double, _ y: Double) -> CGPoint {
             let p = rotate((x, y, 0))
-            let z = p.2 + away
-            return CGPoint(x: (focal * p.0 / z + Double(size.width) / 2) / Double(size.width),
-                           y: (focal * p.1 / z + Double(size.height) / 2) / Double(size.height))
+            let z: Double = p.2 + away
+            let across: Double = (focal * p.0 / z + wide / 2) / wide
+            let down: Double = (focal * p.1 / z + high / 2) / high
+            return CGPoint(x: across, y: down)
         }
-        return ScanQuad(topLeft: seen(-width / 2, height / 2), topRight: seen(width / 2, height / 2),
-                        bottomRight: seen(width / 2, -height / 2), bottomLeft: seen(-width / 2, -height / 2))
+        let halfWidth: Double = width / 2, halfHeight: Double = height / 2
+        return ScanQuad(topLeft: seen(-halfWidth, halfHeight), topRight: seen(halfWidth, halfHeight),
+                        bottomRight: seen(halfWidth, -halfHeight), bottomLeft: seen(-halfWidth, -halfHeight))
     }
 }

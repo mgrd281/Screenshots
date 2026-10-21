@@ -165,7 +165,9 @@ enum ScanClean {
     /// and blue (Rec. 709).
     @inline(__always)
     static func brightness(_ red: UInt8, _ green: UInt8, _ blue: UInt8) -> UInt8 {
-        UInt8((54 * Int(red) + 183 * Int(green) + 19 * Int(blue) + 128) >> 8)
+        let r = Int(red), g = Int(green), b = Int(blue)
+        let weighed: Int = 54 * r + 183 * g + 19 * b + 128
+        return UInt8(truncatingIfNeeded: weighed >> 8)
     }
 
     // MARK: The paper
@@ -185,7 +187,8 @@ enum ScanClean {
 
         init(of page: ScanBitmap, tuning: Tuning) {
             let w = page.width, h = page.height
-            let cell = max(4, Int((Double(min(w, h)) * tuning.cell).rounded()))
+            let shorter = Double(min(w, h))
+            let cell = max(4, Int((shorter * tuning.cell).rounded()))
             let columns = (w + cell - 1) / cell, rows = (h + cell - 1) / cell
             self.cell = cell
             self.columns = columns
@@ -200,17 +203,19 @@ enum ScanClean {
                         for y in top..<bottom {
                             var i = y * w * 4
                             for x in 0..<w {
-                                let base = columnOf[x] * 768
-                                c[base + Int(px[i])] += 1
-                                c[base + 256 + Int(px[i + 1])] += 1
-                                c[base + 512 + Int(px[i + 2])] += 1
+                                let base: Int = columnOf[x] * 768
+                                let red = Int(px[i]), green = Int(px[i + 1]), blue = Int(px[i + 2])
+                                c[base + red] += 1
+                                c[base + 256 + green] += 1
+                                c[base + 512 + blue] += 1
                                 i += 4
                             }
                         }
                     }
                     for column in 0..<columns {
                         let left = column * cell, right = min(w, left + cell)
-                        let rank = Int32((Double((right - left) * (bottom - top)) * tuning.paperShare).rounded(.down))
+                        let area = Double((right - left) * (bottom - top))
+                        let rank = Int32((area * tuning.paperShare).rounded(.down))
                         let n = row * columns + column, base = column * 768
                         red[n] = Self.value(at: rank, in: counts, from: base)
                         green[n] = Self.value(at: rank, in: counts, from: base + 256)
@@ -276,7 +281,8 @@ enum ScanClean {
         }
 
         static func lightness(_ red: Float, _ green: Float, _ blue: Float) -> Float {
-            0.2126 * red + 0.7152 * green + 0.0722 * blue
+            let r: Float = 0.2126 * red, g: Float = 0.7152 * green, b: Float = 0.0722 * blue
+            return r + g + b
         }
 
         /// Cells of print take the paper of the cells around them, from the
@@ -348,11 +354,12 @@ enum ScanClean {
         var leftCell = [Int](repeating: 0, count: w), rightCell = leftCell
         var across = [Float](repeating: 0, count: w)
         for x in 0..<w {
-            let u = (Float(x) + 0.5) / cell - 0.5
-            let c0 = min(max(Int(u.rounded(.down)), 0), paper.columns - 1)
+            let u: Float = (Float(x) + 0.5) / cell - 0.5
+            let c0: Int = min(max(Int(u.rounded(.down)), 0), paper.columns - 1)
             leftCell[x] = c0
             rightCell[x] = min(c0 + 1, paper.columns - 1)
-            across[x] = min(max(u - Float(c0), 0), 1)
+            let past: Float = u - Float(c0)
+            across[x] = min(max(past, 0), 1)
         }
         let floor = (red: tuning.dimmest * max(paper.level.red, 1), green: tuning.dimmest * max(paper.level.green, 1),
                      blue: tuning.dimmest * max(paper.level.blue, 1))
@@ -360,29 +367,53 @@ enum ScanClean {
         var rowRed = [Float](repeating: 0, count: paper.columns), rowGreen = rowRed, rowBlue = rowRed
         out.pixels.withUnsafeMutableBufferPointer { px in
             for y in 0..<h {
-                let v = (Float(y) + 0.5) / cell - 0.5
-                let r0 = min(max(Int(v.rounded(.down)), 0), paper.rows - 1), r1 = min(r0 + 1, paper.rows - 1)
-                let down = min(max(v - Float(r0), 0), 1)
+                let v: Float = (Float(y) + 0.5) / cell - 0.5
+                let r0: Int = min(max(Int(v.rounded(.down)), 0), paper.rows - 1)
+                let r1: Int = min(r0 + 1, paper.rows - 1)
+                let past: Float = v - Float(r0)
+                let down: Float = min(max(past, 0), 1)
                 for c in 0..<paper.columns {
                     let a = r0 * paper.columns + c, b = r1 * paper.columns + c
-                    rowRed[c] = paper.red[a] + (paper.red[b] - paper.red[a]) * down
-                    rowGreen[c] = paper.green[a] + (paper.green[b] - paper.green[a]) * down
-                    rowBlue[c] = paper.blue[a] + (paper.blue[b] - paper.blue[a]) * down
+                    rowRed[c] = Self.between(paper.red[a], paper.red[b], down)
+                    rowGreen[c] = Self.between(paper.green[a], paper.green[b], down)
+                    rowBlue[c] = Self.between(paper.blue[a], paper.blue[b], down)
                 }
                 var i = y * w * 4
                 for x in 0..<w {
                     let c0 = leftCell[x], c1 = rightCell[x], t = across[x]
-                    let red = max(rowRed[c0] + (rowRed[c1] - rowRed[c0]) * t, floor.red)
-                    let green = max(rowGreen[c0] + (rowGreen[c1] - rowGreen[c0]) * t, floor.green)
-                    let blue = max(rowBlue[c0] + (rowBlue[c1] - rowBlue[c0]) * t, floor.blue)
-                    px[i] = UInt8(min(Float(px[i]) / red, 1) * 255 + 0.5)
-                    px[i + 1] = UInt8(min(Float(px[i + 1]) / green, 1) * 255 + 0.5)
-                    px[i + 2] = UInt8(min(Float(px[i + 2]) / blue, 1) * 255 + 0.5)
+                    let red: Float = max(Self.between(rowRed[c0], rowRed[c1], t), floor.red)
+                    let green: Float = max(Self.between(rowGreen[c0], rowGreen[c1], t), floor.green)
+                    let blue: Float = max(Self.between(rowBlue[c0], rowBlue[c1], t), floor.blue)
+                    px[i] = Self.share(px[i], of: red)
+                    px[i + 1] = Self.share(px[i + 1], of: green)
+                    px[i + 2] = Self.share(px[i + 2], of: blue)
                     i += 4
                 }
             }
         }
         return out
+    }
+
+    /// The point `t` of the way from `a` to `b`.
+    @inline(__always)
+    private static func between(_ a: Float, _ b: Float, _ t: Float) -> Float {
+        let step: Float = (b - a) * t
+        return a + step
+    }
+
+    /// `a` and `b` mixed, `t` of `b`.
+    @inline(__always)
+    private static func blend(_ a: Float, _ b: Float, _ t: Float) -> Float {
+        let kept: Float = a * (1 - t), added: Float = b * t
+        return kept + added
+    }
+
+    /// A pixel's value as its share of its paper's, of 255.
+    @inline(__always)
+    private static func share(_ value: UInt8, of paper: Float) -> UInt8 {
+        let part: Float = min(Float(value) / paper, 1)
+        let shown: Float = part * 255 + 0.5
+        return UInt8(shown)
     }
 
     /// The paper's grain smoothed: each pixel the mean of the neighbours,
@@ -414,7 +445,8 @@ enum ScanClean {
                                     }
                                 }
                             }
-                            dst[p + k] = UInt8((sum + count / 2) / count)
+                            let mean: Int = (sum + count / 2) / count
+                            dst[p + k] = UInt8(mean)
                         }
                     }
                 }
@@ -441,10 +473,13 @@ enum ScanClean {
     /// it shows: white at the white point and over, black at the black
     /// point and under, the greys between a little darker.
     static func curve(_ tuning: Tuning) -> [UInt8] {
-        (0...255).map { step in
-            let share = Float(step) / 255
-            let t = min(max((share - tuning.blackPoint) / (tuning.whitePoint - tuning.blackPoint), 0), 1)
-            return UInt8((powf(t, tuning.gamma) * 255).rounded())
+        let span: Float = tuning.whitePoint - tuning.blackPoint
+        return (0...255).map { step -> UInt8 in
+            let share: Float = Float(step) / 255
+            let along: Float = (share - tuning.blackPoint) / span
+            let t: Float = min(max(along, 0), 1)
+            let shown: Float = (powf(t, tuning.gamma) * 255).rounded()
+            return UInt8(shown)
         }
     }
 
@@ -456,17 +491,21 @@ enum ScanClean {
     static func sharpen(_ page: inout ScanBitmap, tuning: Tuning = .standard) {
         guard tuning.sharpen > 0 else { return }
         let w = page.width, h = page.height
-        let radius = max(1, Int((Double(min(w, h)) / 1240).rounded()))
+        let shorter = Double(min(w, h))
+        let radius = max(1, Int((shorter / 1240).rounded()))
         let plane = page.brightness
         let soft = blurred(blurred(plane, width: w, height: h, radius: radius), width: w, height: h, radius: radius)
         let amount = tuning.sharpen, threshold = tuning.sharpenThreshold
         page.pixels.withUnsafeMutableBufferPointer { px in
             for p in 0..<(w * h) {
-                let difference = Float(plane[p]) - Float(soft[p])
+                let difference: Float = Float(plane[p]) - Float(soft[p])
                 guard abs(difference) > threshold else { continue }
-                let change = amount * difference
+                let change: Float = amount * difference
                 for k in 0..<3 {
-                    px[p * 4 + k] = UInt8(min(max((Float(px[p * 4 + k]) + change).rounded(), 0), 255))
+                    let index = p * 4 + k
+                    let value: Float = (Float(px[index]) + change).rounded()
+                    let clamped: Float = min(max(value, 0), 255)
+                    px[index] = UInt8(clamped)
                 }
             }
         }
@@ -475,19 +514,25 @@ enum ScanClean {
     /// The mean of each pixel's square around it, `radius` each way, the
     /// edges repeated: across, then down.
     static func blurred(_ plane: [UInt8], width w: Int, height h: Int, radius: Int) -> [UInt8] {
-        let span = Int32(2 * radius + 1)
+        let width: Int = 2 * radius + 1
+        let span = Int32(width), half: Int32 = span / 2
         var across = [UInt8](repeating: 0, count: w * h)
         plane.withUnsafeBufferPointer { src in
             across.withUnsafeMutableBufferPointer { dst in
                 for y in 0..<h {
                     let row = y * w
                     var sum: Int32 = 0
-                    for k in -radius...radius { sum += Int32(src[row + min(max(k, 0), w - 1)]) }
+                    for k in -radius...radius {
+                        let x: Int = min(max(k, 0), w - 1)
+                        sum += Int32(src[row + x])
+                    }
                     for x in 0..<w {
-                        dst[row + x] = UInt8((sum + span / 2) / span)
-                        let leaving = src[row + min(max(x - radius, 0), w - 1)]
-                        let coming = src[row + min(x + radius + 1, w - 1)]
-                        sum += Int32(coming) - Int32(leaving)
+                        let mean: Int32 = (sum + half) / span
+                        dst[row + x] = UInt8(mean)
+                        let back: Int = min(max(x - radius, 0), w - 1)
+                        let ahead: Int = min(x + radius + 1, w - 1)
+                        let leaving = Int32(src[row + back]), coming = Int32(src[row + ahead])
+                        sum += coming - leaving
                     }
                 }
             }
@@ -497,12 +542,17 @@ enum ScanClean {
             down.withUnsafeMutableBufferPointer { dst in
                 for x in 0..<w {
                     var sum: Int32 = 0
-                    for k in -radius...radius { sum += Int32(src[min(max(k, 0), h - 1) * w + x]) }
+                    for k in -radius...radius {
+                        let y: Int = min(max(k, 0), h - 1)
+                        sum += Int32(src[y * w + x])
+                    }
                     for y in 0..<h {
-                        dst[y * w + x] = UInt8((sum + span / 2) / span)
-                        let leaving = src[min(max(y - radius, 0), h - 1) * w + x]
-                        let coming = src[min(y + radius + 1, h - 1) * w + x]
-                        sum += Int32(coming) - Int32(leaving)
+                        let mean: Int32 = (sum + half) / span
+                        dst[y * w + x] = UInt8(mean)
+                        let back: Int = min(max(y - radius, 0), h - 1)
+                        let ahead: Int = min(y + radius + 1, h - 1)
+                        let leaving = Int32(src[back * w + x]), coming = Int32(src[ahead * w + x])
+                        sum += coming - leaving
                     }
                 }
             }
@@ -535,39 +585,50 @@ enum ScanClean {
     static func blackAndWhite(_ page: ScanBitmap, tuning: Tuning = .standard) -> ScanBitmap {
         let w = page.width, h = page.height
         let plane = page.brightness
-        let window = max(8, Int(Double(min(w, h)) * tuning.window))
+        let shorter = Double(min(w, h))
+        let window = max(8, Int(shorter * tuning.window))
         let block = max(1, window / 8)
         let smallWidth = (w + block - 1) / block, smallHeight = (h + block - 1) / block
         var small = [UInt8](repeating: 0, count: smallWidth * smallHeight)
         for sy in 0..<smallHeight {
             for sx in 0..<smallWidth {
                 var sum = 0, count = 0
-                for y in (sy * block)..<min(h, sy * block + block) {
-                    for x in (sx * block)..<min(w, sx * block + block) {
+                let top: Int = sy * block, left: Int = sx * block
+                let bottom: Int = min(h, top + block), right: Int = min(w, left + block)
+                for y in top..<bottom {
+                    for x in left..<right {
                         sum += Int(plane[y * w + x])
                         count += 1
                     }
                 }
-                small[sy * smallWidth + sx] = UInt8(sum / max(count, 1))
+                let mean: Int = sum / max(count, 1)
+                small[sy * smallWidth + sx] = UInt8(mean)
             }
         }
         let mean = blurred(small, width: smallWidth, height: smallHeight, radius: max(1, window / (2 * block)))
         // 2 for print, 1 for pale, 0 for paper.
         var kind = [UInt8](repeating: 0, count: w * h)
         var queue: [Int] = []
+        let blockSize = Float(block)
         for y in 0..<h {
-            let v = (Float(y) + 0.5) / Float(block) - 0.5
-            let r0 = min(max(Int(v.rounded(.down)), 0), smallHeight - 1), r1 = min(r0 + 1, smallHeight - 1)
-            let down = min(max(v - Float(r0), 0), 1)
+            let v: Float = (Float(y) + 0.5) / blockSize - 0.5
+            let r0: Int = min(max(Int(v.rounded(.down)), 0), smallHeight - 1)
+            let r1: Int = min(r0 + 1, smallHeight - 1)
+            let pastRow: Float = v - Float(r0)
+            let down: Float = min(max(pastRow, 0), 1)
             for x in 0..<w {
                 let p = y * w + x
                 let value = plane[p]
-                let u = (Float(x) + 0.5) / Float(block) - 0.5
-                let c0 = min(max(Int(u.rounded(.down)), 0), smallWidth - 1), c1 = min(c0 + 1, smallWidth - 1)
-                let across = min(max(u - Float(c0), 0), 1)
-                let top = Float(mean[r0 * smallWidth + c0]) * (1 - across) + Float(mean[r0 * smallWidth + c1]) * across
-                let bottom = Float(mean[r1 * smallWidth + c0]) * (1 - across) + Float(mean[r1 * smallWidth + c1]) * across
-                let around = top + (bottom - top) * down
+                let u: Float = (Float(x) + 0.5) / blockSize - 0.5
+                let c0: Int = min(max(Int(u.rounded(.down)), 0), smallWidth - 1)
+                let c1: Int = min(c0 + 1, smallWidth - 1)
+                let pastColumn: Float = u - Float(c0)
+                let across: Float = min(max(pastColumn, 0), 1)
+                let topLeft = Float(mean[r0 * smallWidth + c0]), topRight = Float(mean[r0 * smallWidth + c1])
+                let bottomLeft = Float(mean[r1 * smallWidth + c0]), bottomRight = Float(mean[r1 * smallWidth + c1])
+                let top: Float = Self.blend(topLeft, topRight, across)
+                let bottom: Float = Self.blend(bottomLeft, bottomRight, across)
+                let around: Float = Self.between(top, bottom, down)
                 if value <= tuning.alwaysBlack || Float(value) < around * tuning.dark {
                     kind[p] = 2
                     queue.append(p)

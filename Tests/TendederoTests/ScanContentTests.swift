@@ -6,7 +6,9 @@ import XCTest
 /// or changed marks its line, and so do lines gone when enough of them are.
 final class ScanContentTests: XCTestCase {
     private func line(_ text: String, row: Int, x: CGFloat = 0.1, width: CGFloat = 0.6) -> ScanContent.Line {
-        ScanContent.Line(text: text, box: CGRect(x: x, y: 0.9 - CGFloat(row) * 0.04, width: width, height: 0.025))
+        let down: CGFloat = CGFloat(row) * 0.04
+        let y: CGFloat = 0.9 - down
+        return ScanContent.Line(text: text, box: CGRect(x: x, y: y, width: width, height: 0.025))
     }
 
     private var invoice: [ScanContent.Line] {

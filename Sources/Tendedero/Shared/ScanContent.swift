@@ -28,15 +28,15 @@ enum ScanContent {
         for line in before {
             let numbers = self.numbers(in: line.text)
             guard !numbers.isEmpty else { continue }
-            let read = after.filter { sameRow($0.box, line.box) }
-                .sorted { $0.box.minX < $1.box.minX }
-                .map { digits(in: $0.text) }
-                .joined()
+            let row: [Line] = after.filter { sameRow($0.box, line.box) }
+            let ordered: [Line] = row.sorted { $0.box.minX < $1.box.minX }
+            let read: String = ordered.map { digits(in: $0.text) }.joined()
             if numbers.contains(where: { !read.contains($0) }) { places.append(line.box) }
         }
         let counted = before.filter { letters(in: $0.text) >= shortest }
         let left = after.filter { letters(in: $0.text) >= shortest }
-        if Double(left.count) < Double(counted.count) * linesKept, counted.count - left.count >= fewestGone {
+        let kept: Double = Double(counted.count) * linesKept
+        if Double(left.count) < kept, counted.count - left.count >= fewestGone {
             for line in counted where !after.contains(where: { sameRow($0.box, line.box) }) {
                 places.append(line.box)
             }
@@ -80,9 +80,10 @@ enum ScanContent {
     /// Whether two lines are read in the same place: overlapping across,
     /// and sharing at least half of the lower one's height.
     static func sameRow(_ a: CGRect, _ b: CGRect) -> Bool {
-        let shared = min(a.maxY, b.maxY) - max(a.minY, b.minY)
-        let across = min(a.maxX, b.maxX) - max(a.minX, b.minX)
-        return across > -0.01 && shared >= 0.5 * min(a.height, b.height)
+        let shared: CGFloat = min(a.maxY, b.maxY) - max(a.minY, b.minY)
+        let across: CGFloat = min(a.maxX, b.maxX) - max(a.minX, b.minX)
+        let half: CGFloat = 0.5 * min(a.height, b.height)
+        return across > -0.01 && shared >= half
     }
 
     /// Places that touch, as one.

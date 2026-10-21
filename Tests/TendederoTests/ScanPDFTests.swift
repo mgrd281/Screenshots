@@ -57,12 +57,16 @@ final class ScanPDFTests: XCTestCase {
         let tm = try XCTUnwrap(parts.firstIndex(of: "Tm"))
         XCTAssertEqual(Double(parts[tm - 2])!, 297.64, accuracy: 0.01)
         let size = Double(parts[1])!
-        XCTAssertEqual(size, 0.02 * 841.89 / 0.925, accuracy: 0.01)
-        XCTAssertEqual(Double(parts[tm - 1])!, 0.4 * 841.89 + 0.207 * size, accuracy: 0.01)
+        let tall: Double = 0.02 * 841.89 / 0.925
+        XCTAssertEqual(size, tall, accuracy: 0.01)
+        let baseline: Double = 0.4 * 841.89 + 0.207 * size
+        XCTAssertEqual(Double(parts[tm - 1])!, baseline, accuracy: 0.01)
         // As wide as the word was read, its space left out of the stretch.
         let stretch = Double(parts[3])!
-        let units = "Gesamt".utf8.reduce(0) { $0 + ScanPDF.width(of: $1) }
-        XCTAssertEqual(Double(units) * size / 1000 * stretch / 100, 0.1 * 595.28, accuracy: 0.05)
+        let units: Int = "Gesamt".utf8.reduce(0) { $0 + ScanPDF.width(of: $1) }
+        let drawn: Double = Double(units) * size / 1000 * stretch / 100
+        let read: Double = 0.1 * 595.28
+        XCTAssertEqual(drawn, read, accuracy: 0.05)
         let pdf = try file([page])
         XCTAssertTrue(pdf.contains("/BaseFont /Helvetica /Encoding /WinAnsiEncoding /FirstChar 32 /LastChar 255"))
         XCTAssertTrue(pdf.contains("/Resources << /XObject << /Im0 7 0 R >> /Font << /F1 4 0 R >> >>"))
@@ -106,7 +110,10 @@ final class ScanPDFTests: XCTestCase {
 
     func testAJPEGLosesWhatItSaysAboutItselfAndKeepsThePicture() {
         func segment(_ marker: UInt8, _ body: [UInt8]) -> [UInt8] {
-            [0xFF, marker, UInt8((body.count + 2) >> 8), UInt8((body.count + 2) & 0xFF)] + body
+            let length: Int = body.count + 2
+            let high: UInt8 = UInt8(length >> 8), low: UInt8 = UInt8(length & 0xFF)
+            let head: [UInt8] = [0xFF, marker, high, low]
+            return head + body
         }
         let tables: [UInt8] = segment(0xDB, [0, 1, 2, 3]) + segment(0xC0, [8, 0, 1, 0, 1, 1, 1, 0x11, 0])
         let picture: [UInt8] = tables + segment(0xC4, [0, 5]) + segment(0xEE, Array("Adobe".utf8))

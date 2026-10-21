@@ -50,7 +50,7 @@ enum ScanPDF {
         file.add(2, "<< /Type /Pages /Kids [\(kids)] /Count \(pages.count) >>")
         file.add(3, "<< /Producer (Snapfly) >>")
         if hasText {
-            let widths = (32...255).map { String(width(of: UInt8($0))) }.joined(separator: " ")
+            let widths = (32...255).map { code -> String in String(width(of: UInt8(code))) }.joined(separator: " ")
             file.add(4, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding "
                 + "/FirstChar 32 /LastChar 255 /Widths [\(widths)] >>")
         }
@@ -119,7 +119,8 @@ enum ScanPDF {
             var table = "xref\n0 \(offsets.count)\n0000000000 65535 f \n"
             for number in 1..<offsets.count {
                 let offset = String(offsets[number])
-                table += String(repeating: "0", count: max(0, 10 - offset.count)) + offset + " 00000 n \n"
+                let padding = String(repeating: "0", count: max(0, 10 - offset.count))
+                table += padding + offset + " 00000 n \n"
             }
             table += "trailer\n<< /Size \(offsets.count) /Root 1 0 R /Info 3 0 R >>\nstartxref\n\(data.count)\n%%EOF\n"
             out.append(Data(table.utf8))
@@ -135,15 +136,20 @@ enum ScanPDF {
         let placed = page.words.compactMap { word -> String? in
             guard let bytes = encoded(word.text) else { return nil }
             let shown = bytes.reversed().drop { $0 == 0x20 }.reversed()
-            let units = shown.reduce(0) { $0 + width(of: $1) }
-            let box = CGRect(x: picture.minX + word.box.minX * picture.width, y: picture.minY + word.box.minY * picture.height,
-                             width: word.box.width * picture.width, height: word.box.height * picture.height)
+            let units: Int = shown.reduce(0) { $0 + width(of: $1) }
+            let left: CGFloat = picture.minX + word.box.minX * picture.width
+            let bottom: CGFloat = picture.minY + word.box.minY * picture.height
+            let across: CGFloat = word.box.width * picture.width, high: CGFloat = word.box.height * picture.height
+            let box = CGRect(x: left, y: bottom, width: across, height: high)
             guard units > 0, box.width > 0, box.height > 0 else { return nil }
             // Helvetica reaches 0.718 of its size up from the line and 0.207 down.
-            let size = box.height / 0.925
-            let stretch = min(max(box.width / (CGFloat(units) * size / 1000) * 100, 10), 1000)
+            let size: CGFloat = box.height / 0.925
+            let natural: CGFloat = CGFloat(units) * size / 1000
+            let wanted: CGFloat = box.width / natural * 100
+            let stretch: CGFloat = min(max(wanted, 10), 1000)
+            let baseline: CGFloat = box.minY + 0.207 * size
             let hex = bytes.map { String(format: "%02X", $0) }.joined()
-            return "/F1 \(text(size)) Tf \(text(stretch)) Tz 1 0 0 1 \(text(box.minX)) \(text(box.minY + 0.207 * size)) Tm <\(hex)> Tj"
+            return "/F1 \(text(size)) Tf \(text(stretch)) Tz 1 0 0 1 \(text(box.minX)) \(text(baseline)) Tm <\(hex)> Tj"
         }
         if !placed.isEmpty {
             lines += ["BT", "3 Tr"] + placed + ["ET"]
@@ -241,7 +247,8 @@ enum ScanPDF {
                 return Data(out)
             }
             guard i + 3 < bytes.count else { return jpeg }
-            let length = Int(bytes[i + 2]) << 8 | Int(bytes[i + 3])
+            let high = Int(bytes[i + 2]), low = Int(bytes[i + 3])
+            let length: Int = high << 8 | low
             guard length >= 2, i + 2 + length <= bytes.count else { return jpeg }
             // APP0 to APP15 and comments say things about the picture; APP14
             // (Adobe) says how its colours are stored, so it stays.
@@ -259,7 +266,8 @@ enum ScanPDF {
         var out = [UInt8](repeating: 0, count: rowBytes * height)
         for y in 0..<height {
             for x in 0..<width where brightness[y * width + x] >= 128 {
-                out[y * rowBytes + x / 8] |= 0x80 >> UInt8(x % 8)
+                let bit: UInt8 = 0x80 >> UInt8(x % 8)
+                out[y * rowBytes + x / 8] |= bit
             }
         }
         return Data(out)
@@ -276,9 +284,10 @@ enum ScanPDF {
         guard let deflated = try? (data as NSData).compressed(using: .zlib) as Data else { return nil }
         var out = Data([0x78, 0x9C])
         out.append(deflated)
-        let check = adler32(data)
-        out.append(contentsOf: [UInt8(check >> 24), UInt8((check >> 16) & 0xFF), UInt8((check >> 8) & 0xFF),
-                                UInt8(check & 0xFF)])
+        let check: UInt32 = adler32(data)
+        let shifts: [UInt32] = [24, 16, 8, 0]
+        let bytes: [UInt8] = shifts.map { shift -> UInt8 in UInt8(truncatingIfNeeded: check >> shift) }
+        out.append(contentsOf: bytes)
         return out
         #else
         return nil
@@ -299,18 +308,21 @@ enum ScanPDF {
                 count = 0
             }
         }
-        return (b % 65521) << 16 | (a % 65521)
+        let high: UInt32 = b % 65521, low: UInt32 = a % 65521
+        return high << 16 | low
     }
 
     /// A number as PDF writes it: a point, at most three decimals, no
     /// trailing zeros, whatever the device's language.
     static func text(_ value: CGFloat) -> String {
-        let thousandths = Int((Double(value) * 1000).rounded())
+        let scaled: Double = Double(value) * 1000
+        let thousandths = Int(scaled.rounded())
         let sign = thousandths < 0 ? "-" : ""
         let whole = abs(thousandths) / 1000, part = abs(thousandths) % 1000
         guard part != 0 else { return sign + String(whole) }
         var decimals = String(part)
-        decimals = String(repeating: "0", count: 3 - decimals.count) + decimals
+        let padding = String(repeating: "0", count: 3 - decimals.count)
+        decimals = padding + decimals
         while decimals.hasSuffix("0") { decimals.removeLast() }
         return "\(sign)\(whole).\(decimals)"
     }
