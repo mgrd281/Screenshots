@@ -40,7 +40,7 @@ final class ScanFixtureTests: XCTestCase {
         let key = "\(flaw.rawValue)-\(turns)-\(mode.rawValue)"
         if let prepared = Self.made[key] { return prepared }
         let photo = try photo(flaw, turns: turns)
-        let prepared = try await XCTUnwrapAsync(await ScanCleaner.prepare(photo.image, quad: photo.quad, mode: mode))
+        let prepared = try XCTUnwrapAsync(await ScanCleaner.prepare(photo.image, quad: photo.quad, mode: mode))
         Self.made[key] = prepared
         return prepared
     }
@@ -203,7 +203,7 @@ final class ScanFixtureTests: XCTestCase {
 
     func testThePDFHasItsCoversInItsPixelsAndNotInItsText() async throws {
         let prepared = try await cleaned()
-        let covered = try await XCTUnwrapAsync(await CoveredCopy.make(prepared.cleaned, PrivateDetail.recommended, rules: [],
+        let covered = try XCTUnwrapAsync(await CoveredCopy.make(prepared.cleaned, PrivateDetail.recommended, rules: [],
                                                                      style: .ink, intelligence: false))
         let places = covered.report.places
         XCTAssertFalse(places.isEmpty)
@@ -293,13 +293,13 @@ final class ScanFixtureTests: XCTestCase {
 
     func testAPageAsTheCameraGivesItGoesThroughAsBefore() async throws {
         let page = try page
-        let prepared = try await XCTUnwrapAsync(await ScanCleaner.prepare(page, quad: nil, mode: .color))
+        let prepared = try XCTUnwrapAsync(await ScanCleaner.prepare(page, quad: nil, mode: .color))
         XCTAssertEqual(prepared.turns, 0)
         XCTAssertEqual(prepared.skew, 0)
         XCTAssertEqual(prepared.straightened.width, page.width)
         XCTAssertEqual(prepared.straightened.height, page.height)
         XCTAssertEqual(prepared.checked.textKept, true)
-        let covered = try await XCTUnwrapAsync(await CoveredCopy.make(prepared.cleaned, PrivateDetail.recommended, rules: [],
+        let covered = try XCTUnwrapAsync(await CoveredCopy.make(prepared.cleaned, PrivateDetail.recommended, rules: [],
                                                                      style: .ink, intelligence: false))
         let pages = try [covered.image, covered.image].map { try XCTUnwrap(ScanCleaner.pdfPage($0, mode: .color, words: [])) }
         let pdf = try XCTUnwrap(PDFDocument(data: try XCTUnwrap(ScanPDF.make(pages))))
