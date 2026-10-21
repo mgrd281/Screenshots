@@ -168,7 +168,7 @@ struct MoreMeter: View {
                 GeometryReader { proxy in
                     Capsule()
                         .fill(SnapflyTokens.moreGlyph)
-                        .frame(width: max(0, min(1, share)) * proxy.size.width)
+                        .frame(width: CGFloat(max(0, min(1, share))) * proxy.size.width)
                 }
             }
             .clipShape(Capsule())
@@ -310,7 +310,7 @@ struct CoverSwatch: View {
         var size = first
         var resolved = context.resolve(Text(word).font(.system(size: size, weight: .bold)).foregroundStyle(.white.opacity(0.92)))
         let room = place.width - size * 1.2
-        let width = resolved.measure(in: CGSize(width: .infinity, height: .infinity)).width
+        let width = resolved.measure(in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity)).width
         if width > room {
             guard room > 0 else { return }
             size *= room / width
