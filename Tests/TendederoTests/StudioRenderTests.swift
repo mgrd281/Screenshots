@@ -269,7 +269,11 @@ private enum StudioSample {
         writer.startSession(atSourceTime: .zero)
         let fps = 30
         for i in 0..<Int(seconds * Double(fps)) {
-            while !input.isReadyForMoreMediaData { Thread.sleep(forTimeInterval: 0.002) }
+            while !input.isReadyForMoreMediaData {
+                // A writer that failed is never ready again.
+                guard writer.status == .writing else { throw writer.error ?? StudioExport.Failure.cannotWrite }
+                Thread.sleep(forTimeInterval: 0.002)
+            }
             var made: CVPixelBuffer?
             guard let pool = adaptor.pixelBufferPool,
                   CVPixelBufferPoolCreatePixelBuffer(nil, pool, &made) == kCVReturnSuccess, let buffer = made

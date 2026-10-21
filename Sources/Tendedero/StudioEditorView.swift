@@ -1004,23 +1004,32 @@ private struct StudioTimelineView: View {
     private func zoomBlock(_ zoom: StudioZoom, pps: CGFloat) -> some View {
         let chosen = model.selection == .zoom(zoom.id)
         let width = max(10, CGFloat(zoom.duration) * pps)
-        return RoundedRectangle(cornerRadius: 6, style: .continuous)
-            .fill(chosen ? Color.accentColor : Color.accentColor.opacity(0.28))
-            .overlay(RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .strokeBorder(Color.accentColor.opacity(chosen ? 0 : 0.7), lineWidth: 1))
+        // Worked out apart, so the view below stays quick to compile.
+        let scale: String = String(format: "%.1f×", zoom.scale)
+        let icon: String = zoom.automatic ? "sparkle.magnifyingglass" : "plus.magnifyingglass"
+        let tip: String = zoom.automatic ? L("Made from your clicks and typing") : L("Zoom")
+        let span: String = StudioTimeline.text(zoom.start) + " – " + StudioTimeline.text(zoom.end)
+        let value: String = span + ", " + scale
+        let traits: AccessibilityTraits = chosen ? [.isButton, .isSelected] : .isButton
+        let fill: Color = chosen ? Color.accentColor : Color.accentColor.opacity(0.28)
+        let edge: Color = Color.accentColor.opacity(chosen ? 0 : 0.7)
+        let words: Color = chosen ? Color.white : Color.primary
+        let block = RoundedRectangle(cornerRadius: 6, style: .continuous)
+            .fill(fill)
+            .overlay(RoundedRectangle(cornerRadius: 6, style: .continuous).strokeBorder(edge, lineWidth: 1))
             .overlay(alignment: .leading) {
                 if width > 56 {
-                    Label(String(format: "%.1f×", zoom.scale),
-                          systemImage: zoom.automatic ? "sparkle.magnifyingglass" : "plus.magnifyingglass")
+                    Label(scale, systemImage: icon)
                         .font(.system(size: 10, weight: .semibold))
                         .monospacedDigit()
-                        .foregroundStyle(chosen ? Color.white : Color.primary)
+                        .foregroundStyle(words)
                         .lineLimit(1)
                         .padding(.leading, 8)
                 }
             }
             .overlay { if chosen { grips(width: width, height: Self.track) } }
             .frame(width: width, height: Self.track)
+        let handled = block
             .contentShape(Rectangle())
             .gesture(blockDrag(.zoom(zoom.id), start: zoom.start, end: zoom.end, pps: pps))
             .contextMenu {
@@ -1029,12 +1038,12 @@ private struct StudioTimelineView: View {
                     model.deleteSelected()
                 }
             }
-            .help(zoom.automatic ? L("Made from your clicks and typing") : L("Zoom"))
+            .help(tip)
+        return handled
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(L("Zoom"))
-            .accessibilityValue(StudioTimeline.text(zoom.start) + " – " + StudioTimeline.text(zoom.end) + ", "
-                                + String(format: "%.1f×", zoom.scale))
-            .accessibilityAddTraits(chosen ? [.isButton, .isSelected] : .isButton)
+            .accessibilityValue(value)
+            .accessibilityAddTraits(traits)
             .accessibilityAction { model.choose(.zoom(zoom.id)) }
     }
 
@@ -1042,16 +1051,24 @@ private struct StudioTimelineView: View {
         let chosen = model.selection == .mark(item.id)
         let width = max(10, CGFloat(item.end - item.start) * pps)
         let ink = Color(cgColor: item.mark.ink.color)
-        return RoundedRectangle(cornerRadius: 5, style: .continuous)
-            .fill(ink.opacity(chosen ? 0.9 : 0.32))
-            .overlay(RoundedRectangle(cornerRadius: 5, style: .continuous)
-                .strokeBorder(chosen ? Color.accentColor : ink.opacity(0.8), lineWidth: chosen ? 2 : 1))
+        // Worked out apart, so the view below stays quick to compile.
+        let name: String = model.name(of: item)
+        let said: String = item.mark.kind == .text && !item.mark.text.isEmpty ? " · " + item.mark.text : ""
+        let title: String = name + said
+        let value: String = StudioTimeline.text(item.start) + " – " + StudioTimeline.text(item.end)
+        let traits: AccessibilityTraits = chosen ? [.isButton, .isSelected] : .isButton
+        let fill: Color = ink.opacity(chosen ? 0.9 : 0.32)
+        let edge: Color = chosen ? Color.accentColor : ink.opacity(0.8)
+        let line: CGFloat = chosen ? 2 : 1
+        let words: Color = chosen ? Color(cgColor: item.mark.ink.onColor) : Color.primary
+        let block = RoundedRectangle(cornerRadius: 5, style: .continuous)
+            .fill(fill)
+            .overlay(RoundedRectangle(cornerRadius: 5, style: .continuous).strokeBorder(edge, lineWidth: line))
             .overlay(alignment: .leading) {
                 if width > 40 {
-                    Text(model.name(of: item) + (item.mark.kind == .text && !item.mark.text.isEmpty
-                                                    ? " · " + item.mark.text : ""))
+                    Text(verbatim: title)
                         .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(chosen ? Color(cgColor: item.mark.ink.onColor) : Color.primary)
+                        .foregroundStyle(words)
                         .lineLimit(1)
                         .padding(.leading, 6)
                         .padding(.trailing, 4)
@@ -1059,6 +1076,7 @@ private struct StudioTimelineView: View {
             }
             .overlay { if chosen { grips(width: width, height: Self.markRow - 2) } }
             .frame(width: width, height: Self.markRow - 2)
+        let handled = block
             .contentShape(Rectangle())
             .gesture(blockDrag(.mark(item.id), start: item.start, end: item.end, pps: pps))
             .contextMenu {
@@ -1067,10 +1085,11 @@ private struct StudioTimelineView: View {
                     model.deleteSelected()
                 }
             }
+        return handled
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(model.name(of: item))
-            .accessibilityValue(StudioTimeline.text(item.start) + " – " + StudioTimeline.text(item.end))
-            .accessibilityAddTraits(chosen ? [.isButton, .isSelected] : .isButton)
+            .accessibilityLabel(name)
+            .accessibilityValue(value)
+            .accessibilityAddTraits(traits)
             .accessibilityAction { model.choose(.mark(item.id)) }
     }
 
