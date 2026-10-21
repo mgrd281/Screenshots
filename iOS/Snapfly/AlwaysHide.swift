@@ -3,7 +3,7 @@ import SwiftUI
 /// Always Hide (Immer verbergen), from More: what Snapfly covers in every
 /// picture, whatever kinds are chosen. Under an inline title, what it does
 /// and, in one quiet line, what keeps it private; then the owner's details,
-/// each on its kind's colour with a number by its last four digits; then the
+/// each on its mint tile with a number by its last four digits; then the
 /// owner's rules, each with its switch and how many are on; with nothing
 /// yet, a start with the name and two kinds of rule. Edit reorders and
 /// deletes, a swipe deletes, and a tap opens a row's sheet (`DetailSheet`,
@@ -63,7 +63,7 @@ struct AlwaysHideView: View {
                 }
             }
         }
-        // The pages under More keep the tab bar's minimised button off their rows.
+        // The pages under More keep the tab bar off their rows.
         .toolbar(.hidden, for: .tabBar)
         .sheet(item: $detailRequest) { request in
             DetailSheet(request: request) { kept in
@@ -322,13 +322,16 @@ private struct TightLabelStyle: LabelStyle {
     }
 }
 
-/// One of the owner's details: its kind's symbol on its colour, its value
+/// One of the owner's details: its kind's symbol on its mint tile, its value
 /// on one line, a number by its last four digits, and its kind. A tap opens
 /// it to change it.
 struct HideDetailRow: View {
     let detail: OwnRule
     let open: () -> Void
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.editMode) private var editMode
+
+    private var editing: Bool { editMode?.wrappedValue.isEditing == true }
 
     private var kindLine: String {
         let caption = detail.caption.trimmingCharacters(in: .whitespaces)
@@ -339,7 +342,10 @@ struct HideDetailRow: View {
     var body: some View {
         Button(action: open) {
             HStack(spacing: 12) {
-                OwnDetailTile(kind: detail.kind)
+                // Editing at the largest sizes, the words keep the room the tile had.
+                if !(editing && typeSize.isAccessibilitySize) {
+                    OwnDetailTile(kind: detail.kind)
+                }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(verbatim: OwnDetails.masked(detail))
                         .font(.body.weight(.semibold))
@@ -352,9 +358,11 @@ struct HideDetailRow: View {
                 .lineLimit(typeSize.isAccessibilitySize ? 3 : 1)
                 .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
                 Spacer(minLength: 8)
-                Image(systemName: "chevron.forward")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.tertiary)
+                if !editing {
+                    Image(systemName: "chevron.forward")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.tertiary)
+                }
             }
             .frame(minHeight: SnapflyTokens.hideRowHeight)
             .contentShape(Rectangle())
@@ -376,6 +384,7 @@ struct HideRuleRow: View {
     let open: () -> Void
     let enable: (Bool) -> Void
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.editMode) private var editMode
 
     private var shown: String { rule.text.trimmingCharacters(in: .whitespaces) }
 
@@ -383,7 +392,9 @@ struct HideRuleRow: View {
         HStack(spacing: 12) {
             Button(action: open) {
                 HStack(spacing: 12) {
-                    HideRuleTile(kind: rule.kind)
+                    if !(editMode?.wrappedValue.isEditing == true && typeSize.isAccessibilitySize) {
+                        HideRuleTile(kind: rule.kind)
+                    }
                     VStack(alignment: .leading, spacing: 2) {
                         Text(verbatim: shown)
                             .font(.body.weight(.semibold))
@@ -613,7 +624,8 @@ enum AlwaysHideSample {
     static let account = OwnRule(text: "DE89370400440532013000", kind: .account)
 
     static var content: (details: [OwnRule], rules: [OwnRule])? {
-        guard let state else { return nil }
+        // More's sample counts the same made-up name, card and rules on its tile.
+        guard let state else { return MoreSample.requested ? ([name, card], rules) : nil }
         guard state != "empty" else { return ([], []) }
         return ([name, address, card, account], rules)
     }

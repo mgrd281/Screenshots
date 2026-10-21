@@ -59,7 +59,8 @@ or turn on syncing with your iPhone (below).
   not store it. The links you made, with the token that deletes each one, are
   kept on your Mac.
 - **Syncing with your iPhone, only if you turn it on.** With Sync on in
-  Settings on the Mac and on the iPhone, Snapfly keeps them in step through
+  Settings on the Mac and under More › Mac and iCloud on the iPhone,
+  Snapfly keeps them in step through
   your own iCloud, in the private database of your Apple account, which only
   your devices signed in to it can read. What goes is the copy that leaves the
   line, with its private details covered, a small preview of it, and facts

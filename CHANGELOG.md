@@ -6,7 +6,22 @@ keeps a download of each version.
 
 ## 1.1.0
 
-- On the iPhone, Also hide is now Always Hide, under More › Advanced, and
+- On the iPhone, More is a short overview now, with a page for each part.
+  A card says how many of the twenty-two kinds are covered in every
+  picture, with a little document covered in your look, and turns grey,
+  Protection Off, when none is. Four tiles open What Is Covered, Always
+  Hide, Cover Style and Detection, each showing what it holds. What Is
+  Covered sets Recommended, All or None at once and shows each kind as a
+  pill, in five groups you can look at one by one, with All On and All Off
+  for a group. Cover Style shows a bill covered in the look you choose, as
+  the two switches have it. Detection holds Apple Intelligence, the check
+  every copy gets before it leaves, and how fast covering is on your
+  iPhone. AI Assistant, Send to Apps, the double tap on the back, and Mac
+  and iCloud sit under Features, the introduction and the demo under Help.
+  Every setting keeps the value it had. The tab bar no longer shrinks to a
+  round button over the rows on More, and every icon there is in the one
+  green.
+- On the iPhone, Also hide is now Always Hide, under More, and
   shows at a glance what is covered in every picture, with one quiet line
   on what keeps it private. Your details stand as rows with their kind's
   icon, a card or an IBAN by its last four digits alone. Your rules have a

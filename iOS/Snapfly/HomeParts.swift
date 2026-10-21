@@ -41,33 +41,32 @@ enum SnapflyTokens {
     /// run's doctor's letter; it is printed on white in light and dark alike.
     static let penInk = Color(red: 43 / 255, green: 69 / 255, blue: 160 / 255)
 
-    // MARK: Always Hide
+    // MARK: More and Always Hide
 
-    /// The ground of Always Hide and its sheets: a cool light grey; near
-    /// black at night.
-    static let hideGround = color(0xF2F3F5, dark: 0x0E1012)
-    /// Its rows and cards.
-    static let hideCard = color(0xFFFFFF, dark: 0x1C1F23)
-    /// The lines between its rows, inset to the words.
-    static let hideSeparator = color(0xECEEF1, dark: 0x2C3036)
-    /// Its words: 18:1 on its cards.
-    static let hideText = color(0x111318, dark: 0xF2F4F6)
-    /// Its quieter words: 5.8:1 on its cards and 5.2:1 on its ground; at
-    /// night 7.2:1 and 8.2:1.
-    static let hideSecondary = color(0x5F6670, dark: 0xA3ABB5)
-    /// Its green, as words and edges: 5.4:1 on its cards; at night 5.4:1.
-    static let hideAccent = color(0x077A56, dark: 0x1FA774)
-    /// The soft green behind its chips, its rules' symbols and what keeps
-    /// it private; the green words on it 4.7:1, at night 5:1.
-    static let hideAccentSoft = color(0xE7F4EE, dark: 0x102A20)
+    /// The ground of More, its pages, Always Hide and its sheets: a cool
+    /// light grey; near black at night.
+    static let hideGround = color(0xF2F3F5, dark: 0x0B0D10)
+    /// Their rows and cards.
+    static let hideCard = color(0xFFFFFF, dark: 0x17191D)
+    /// The lines between their rows, inset to the words.
+    static let hideSeparator = color(0xECEEF1, dark: 0x262A30)
+    /// Their words: 18:1 on their cards; at night 17:1.
+    static let hideText = color(0x111318, dark: 0xF3F4F6)
+    /// Their quieter words: 5.8:1 on their cards and 5.2:1 on their ground;
+    /// at night 7.3:1 and 8.4:1.
+    static let hideSecondary = color(0x5F6670, dark: 0xA0A7B0)
+    /// Their green, as words and edges: 5.4:1 on their cards; at night the
+    /// light green, 9.7:1.
+    static let hideAccent = color(0x077A56, dark: 0x5BD6A6)
+    /// The mint behind every symbol's tile, the chips and what keeps the
+    /// details private; the green words on it 4.7:1, at night 7:1.
+    static let hideAccentSoft = color(0xE7F4EE, dark: 0x11392C)
     /// Its main button, the same green in light and dark: white on it 5.4:1.
     static let hideButton = Color(red: 7 / 255, green: 122 / 255, blue: 86 / 255)
     /// The main button while it waits: a grey with dark grey words, 6.5:1;
     /// at night 6.8:1. Never pale words on a pale green.
     static let hideButtonOff = color(0xE4E6EA, dark: 0x2C3036)
     static let hideButtonOffText = color(0x4A5059, dark: 0xB4BBC4)
-    /// A rule's symbol, on a quiet grey.
-    static let hideRuleTile = color(0xEEF0F2, dark: 0x2C3036)
     /// The fields in a sheet, grey on the sheet's white, and the lines
     /// between them.
     static let hideField = color(0xF2F3F5, dark: 0x2A2E34)
@@ -85,9 +84,38 @@ enum SnapflyTokens {
     /// The smallest a finger's target is.
     static let touch: CGFloat = 44
 
-    /// Each kind of the owner's details by a colour of its own, the same in
-    /// light and dark, its symbol white on it: 5.4:1, 4.8:1, 3.6:1, 5.3:1.
-    static func detail(_ kind: OwnRule.Kind) -> Color { DetailTint.of(kind) }
+    /// A symbol on its mint tile: the one accent, 4.4:1 (3:1 is what a
+    /// symbol needs); at night the light green, 7:1.
+    static let moreGlyph = color(0x0B7F58, dark: 0x5BD6A6)
+    /// More's hero card: a deep green, white words on it 12:1; at night a
+    /// little deeper, inside an edge of a lighter green.
+    static let moreHero = color(0x0E3B2E, dark: 0x0F3A2D)
+    static let moreHeroEdge = color(0x0E3B2E, dark: 0x1D5644)
+    /// The hero with nothing covered: a neutral dark grey, day and night.
+    static let moreHeroOff = Color(red: 42 / 255, green: 46 / 255, blue: 52 / 255)
+    /// A kind turned on: solid green with white words, 5:1; at night the
+    /// light green with near-black words, 10:1.
+    static let morePillOn = color(0x0B7F58, dark: 0x5BD6A6)
+    static let morePillOnText = color(0xFFFFFF, dark: 0x0B0D10)
+    /// A kind turned off: the card, inside a grey edge.
+    static let morePillEdge = color(0xD5D9DF, dark: 0x343941)
+    /// The preset control's track, and the thumb raised on it for the
+    /// preset chosen: white by day, a lighter grey at night.
+    static let moreTrack = color(0xE4E6EA, dark: 0x1E2126)
+    static let moreThumb = color(0xFFFFFF, dark: 0x3A3F47)
+    /// The quiet tiles of More's Features: grey, the symbol dark grey, 7:1.
+    static let moreNeutralTile = color(0xEEF0F2, dark: 0x262A30)
+    static let moreNeutralGlyph = color(0x4A5059, dark: 0xB4BBC4)
+    /// A document drawn small, as a cover look shows on it: white paper in
+    /// light and dark alike, its words near black and grey, its lines grey.
+    static let morePaper = Color.white
+    static let morePaperText = Color(red: 17 / 255, green: 19 / 255, blue: 24 / 255)
+    static let morePaperLabel = Color(red: 95 / 255, green: 102 / 255, blue: 112 / 255)
+    static let morePaperLine = Color(red: 214 / 255, green: 218 / 255, blue: 224 / 255)
+    /// More's corners: the hero's, and the buttons'. Tiles and cards take
+    /// `hideRowRadius`, pills are capsules.
+    static let moreHeroRadius: CGFloat = 28
+    static let moreButtonRadius: CGFloat = 18
 
     /// A colour as its hex, and another at night.
     private static func color(_ hex: UInt32, dark: UInt32) -> Color {

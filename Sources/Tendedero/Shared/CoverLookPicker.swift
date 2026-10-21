@@ -1,8 +1,8 @@
 import SwiftUI
 
 /// The cover looks three to a row, each a little chat covered by the same
-/// code as a copy, to pick one by looking: in Settings on the Mac and on the
-/// iPhone.
+/// code as a copy, to pick one by looking: in Settings on the Mac. The
+/// iPhone's Cover Style page draws its own (`CoverStylePage`).
 struct CoverLookPicker: View {
     @Binding var selection: CoverStyle
     @Environment(\.colorScheme) private var scheme

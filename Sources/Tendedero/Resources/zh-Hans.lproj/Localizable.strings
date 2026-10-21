@@ -120,7 +120,6 @@
 "Send to %@" = "发送到 %@";
 "Send to Apps" = "发送到 App";
 "A tap on an app covers every page and hands them to it, through the share sheet where needed." = "轻点某个应用会遮盖每一页并交给它，需要时通过共享面板。";
-"The apps after a scan and beside the picture in Protect Picture, to hand them the covered copy. The same apps as on the Mac." = "扫描后以及“保护图片”中图片旁边的应用，用来把遮盖后的副本交给它们。与 Mac 上的应用相同。";
 "A tap hands the protected copy to the app. WhatsApp opens with it; ChatGPT, Claude and the other AI chats open with it copied, to paste; the rest from the share sheet, where you tap the app. Nothing opens in a browser." = "轻点即可把受保护的副本交给 App。WhatsApp 会直接带着它打开；ChatGPT、Claude 及其他 AI 聊天会在已复制的状态下打开，供你粘贴；其余的从共享表单中打开，在那里轻点 App。不会在浏览器中打开任何内容。";
 "Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste." = "已为 %@ 拷贝：轻点键盘上方的图片，或按住消息输入框，然后轻点“粘贴”。";
 "Opening %@…" = "正在打开 %@…";
@@ -521,7 +520,6 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "轻点两下 iPhone 背面：最新的截图会被隐藏并拷贝，可直接粘贴到聊天中。";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "只需设置一次：打开“设置”›“辅助功能”›“触控”›“轻点背面”›“轻点两下”，然后选择 %@。";
 "Cover the Latest Screenshot" = "隐藏最新截图";
-"Double tap the back of your iPhone" = "轻点两下 iPhone 背面";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "一切都在这台 iPhone 上完成。不会发送到任何地方。";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly 还不能查看你的截图。请打开 Snapfly 一次并允许。";
 "There is no screenshot yet." = "还没有截图。";
@@ -789,7 +787,6 @@
 "Snapfly covers its private details at once, right on this iPhone." = "Snapfly 会立刻在这台 iPhone 上遮盖其中的私人信息。";
 "Snapfly lives in the menu bar" = "Snapfly 住在菜单栏里";
 "Snapfly on your own screen, step by step. About a minute." = "在你自己的屏幕上一步步认识 Snapfly。约一分钟。";
-"Snapfly on your own screenshots, step by step." = "用你自己的截图一步步认识 Snapfly。";
 "Start" = "开始";
 "Start Again" = "重新开始";
 "Start Introduction" = "开始入门介绍";
@@ -842,7 +839,6 @@
 "Explain" = "解释";
 "In Protect Picture: what a document says, what matters in it and what to do, then answers to your questions about it." = "在“保护图片”中：说明文档讲了什么、哪些要紧、该做什么，然后回答你关于它的问题。";
 "Explain sends the protected copy, never the original, straight to Anthropic or OpenAI with your own key, and only when you tap it. They bill each request to your account there; a Claude or ChatGPT subscription does not cover it." = "“解释”只在你轻点时，用你自己的密钥把受保护的副本（绝不是原图）直接发送给 Anthropic 或 OpenAI。每次请求都计入你在那里的账户；Claude 或 ChatGPT 订阅不包含这项费用。";
-"Your own Claude or ChatGPT explains documents in Protect Picture." = "你自己的 Claude 或 ChatGPT 会在“保护图片”中解释文档。";
 "What do I have to do?" = "我需要做什么？";
 "Is there a deadline?" = "有截止日期吗？";
 "Explain it more simply." = "说得更简单些。";
@@ -1309,7 +1305,6 @@
 "“%@” uses the same Apple account, so Sync with your Mac is now on." = "“%@”使用同一个 Apple 账户，因此“与你的 Mac 同步”现已打开。";
 
 /* Protection: whose names, companies, and the iPhone's protect screen */
-"Advanced" = "高级";
 "Apple Intelligence is reading…" = "Apple Intelligence 正在读取…";
 "Checking the copy…" = "正在检查副本…";
 "Companies and organizations" = "公司和机构";
@@ -1327,13 +1322,11 @@
 "Opening…" = "正在打开…";
 "Passwords and access" = "密码和访问";
 "Protect a Photo" = "保护照片";
-"Reading and checking" = "读取与检查";
 "Show the screenshot as it was" = "显示原始截图";
 "Snapfly is not sure about these: check each, and turn it on or off." = "Snapfly 对这些不确定：请逐一检查，并打开或关闭。";
 "The copy could not be checked, so it stays here." = "无法检查副本，因此它会留在这里。";
 "The copy could not be made." = "无法生成副本。";
 "To check" = "待检查";
-"What the patterns find shows at once; Apple Intelligence adds to it. Every copy is read again before it leaves, as anyone could read it, and whatever private still shows is covered too." = "规则找到的内容会立即显示，Apple Intelligence 会再补充。每个副本在发出前都会像任何人那样被重新读取，仍可看出的私人信息也会被遮盖。";
 "%d of %d" = "%1$d / %2$d";
 "%d photos chosen" = "已选 %d 张照片";
 "%d places still to check" = "还有 %d 处需要检查";
@@ -1363,7 +1356,6 @@
 "Last %d days" = "最近 %d 天";
 "Last update" = "上次更新";
 "Marker" = "马克笔";
-"Median %@ · 95%% under %@" = "中位数 %@ · 95%% 低于 %@";
 "Not Now" = "以后再说";
 "Not downloaded for this. Prepared once they are on this iPhone." = "不会为此下载。存到此 iPhone 上后再准备。";
 "Not fully protected: %d places to check are not covered" = "未完全保护：有 %d 处待检查的位置未遮盖";
@@ -1507,9 +1499,6 @@
 /* Also hide: the owner's own details, covered wherever they show */
 "Add Detail" = "添加信息";
 "Your Details" = "你的信息";
-"Your Name" = "你的姓名";
-"%@ · always covered" = "%@ · 始终遮盖";
-"Add it, and it is covered however it is written" = "添加后，无论怎样书写都会被遮盖";
 "First and last name" = "名字和姓氏";
 "Street and house number" = "街道和门牌号";
 "Postcode" = "邮政编码";
@@ -1580,3 +1569,45 @@
 "Label · Automatic" = "标签 · 自动";
 "Label · Same Line" = "标签 · 同一行";
 "Label · Next Line" = "标签 · 下一行";
+"%d details" = "%d 条信息";
+"1 detail" = "1 条信息";
+"%d rules" = "%d 条规则";
+"1 rule" = "1 条规则";
+"%d of %d active" = "%1$d / %2$d 已启用";
+"95%% under %@" = "95%% 低于 %@";
+"Median %@" = "中位数 %@";
+"Access" = "访问";
+"Active" = "已启用";
+"All Off" = "全部关闭";
+"All On" = "全部打开";
+"All three together cover everyone’s names." = "三项一起会遮盖所有人的姓名。";
+"Always On" = "始终开启";
+"Apple Intelligence off" = "Apple Intelligence 已关闭";
+"Apple Intelligence on" = "Apple Intelligence 已打开";
+"Cards, accounts and phone numbers stay recognisable." = "银行卡、账户和电话号码仍可辨认。";
+"Categories covered in every picture" = "每张图片中遮盖的类别";
+"Check before sharing" = "分享前检查";
+"Cover Style" = "遮盖样式";
+"Detection" = "识别";
+"Double Tap the Back" = "轻点背面两下";
+"Every copy is read again before it leaves, and whatever private still shows is covered too." = "每份副本发出前都会再读一遍，仍能看到的隐私也会被遮盖。";
+"Features" = "功能";
+"Help" = "帮助";
+"Invoice to" = "账单寄往";
+"Mac and iCloud" = "Mac 和 iCloud";
+"Strongest protection covers whole lines, these digits too." = "“最强保护”会遮盖整行，这些数字也会遮盖。";
+"Own Details" = "自己的信息";
+"People and Companies" = "人物和公司";
+"Performance on This iPhone" = "此 iPhone 上的性能";
+"Protection Off" = "保护已关闭";
+"Protection On" = "保护已开启";
+"Rules" = "规则";
+"Runs only on this iPhone" = "仅在此 iPhone 上运行";
+"Shows once a few screenshots are protected." = "保护几张截图后显示。";
+"Version %@ (%@)" = "版本 %@ (%@)";
+"What Is Covered" = "遮盖内容";
+"Whole lines, with more room around them." = "整行遮盖，四周留出更多空间。";
+"Your Choice" = "自定义";
+"Your Own Details" = "你自己的信息";
+"Your Protection" = "你的保护";
+"Your name, address, cards and rules, covered in every picture" = "你的姓名、地址、卡片和规则，在每张图片中都会遮盖";
