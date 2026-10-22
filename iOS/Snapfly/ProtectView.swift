@@ -323,13 +323,13 @@ struct ProtectView: View {
             }
     }
 
-    /// The question before a page is deleted, with its number.
     /// How many places are still to check, one or more, before a picture leaves.
     private var checkTitle: String {
         let left: Int = session.plan.tally.toCheck
         return left == 1 ? L("1 place still to check") : String(format: L("%d places still to check"), left)
     }
 
+    /// The question before a page is deleted, with its number.
     private var deleteTitle: String {
         guard let deleting else { return "" }
         let number: Int = (scans.index(of: deleting.id) ?? 0) + 1
