@@ -276,15 +276,29 @@ struct SelectionBar: View {
 }
 
 /// Over the bottom while the Protected tab's screenshots are being chosen:
+/// Merge into PDF, which puts them together in a new PDF project; and
 /// Remove, which asks, as Photos does in an album, whether to take them off
 /// this list, where they stay in Photos, or delete them from Photos.
 struct RemoveBar: View {
     let count: Int
+    var merge: (() -> Void)? = nil
     let remove: (Removing) -> Void
     @State private var asking = false
 
     var body: some View {
         VStack(spacing: 10) {
+            if let merge {
+                Button(action: merge) {
+                    Label(L("Merge into PDF"), systemImage: "doc.on.doc")
+                        .font(.body.weight(.semibold))
+                        .frame(maxWidth: .infinity, minHeight: 30)
+                }
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .tint(SnapflyTokens.protect)
+                .disabled(count == 0)
+                .accessibilityIdentifier("protected-merge")
+            }
             Button(role: .destructive) {
                 asking = true
             } label: {

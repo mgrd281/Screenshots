@@ -48,6 +48,10 @@ struct CanvasActions {
     /// The divider between Before and After moved, from 0 to 1 from the
     /// leading edge.
     var split: (CGFloat) -> Void = { _ in }
+    /// A PDF's page swiped up or down while it is shown whole: whether there
+    /// is a page that way (1 the next, -1 the one before), and going there.
+    var canPage: (Int) -> Bool = { _ in false }
+    var page: (Int) -> Void = { _ in }
 }
 
 /// A place to show close up, each time its count changes.
@@ -96,6 +100,11 @@ struct MarkCanvas: UIViewRepresentable {
     /// Places to look at again, from 0 to 1 from the bottom left, outlined
     /// in orange over the page; never in the copy.
     var issues: [CGRect] = []
+    /// How far two fingers or a double tap zoom in: 6 times, 8 on a PDF's page.
+    var maxZoom: CGFloat = 6
+    /// Where a PDF's page came in from as it opens: from below (1), the
+    /// next page, or from above (-1); 0 for any other picture.
+    var arrival: CGFloat = 0
     let actions: CanvasActions
 
     func makeUIView(context: Context) -> CanvasView {
@@ -105,6 +114,11 @@ struct MarkCanvas: UIViewRepresentable {
     func updateUIView(_ view: CanvasView, context: Context) {
         view.actions = actions
         view.animates = animated
+        if view.maximumZoomScale != maxZoom { view.maximumZoomScale = maxZoom }
+        if arrival != 0, !context.coordinator.arrived {
+            context.coordinator.arrived = true
+            view.arrive(from: arrival)
+        }
         view.show(image, marks: marks, checking: checking, isCopy: isCopy, tool: tool, selected: selected,
                   markerWidth: markerWidth, eraserReach: eraserReach)
         view.compare(before: before, split: split, issues: issues, holding: holdsBefore)
@@ -126,6 +140,8 @@ struct MarkCanvas: UIViewRepresentable {
         var revealed: Reveal?
         /// The wipes shown.
         var wipes = 0
+        /// The page came in once.
+        var arrived = false
     }
 }
 
@@ -173,6 +189,11 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     private lazy var hold = UILongPressGestureRecognizer(target: self, action: #selector(held(_:)))
     private lazy var edit = UIPanGestureRecognizer(target: self, action: #selector(dragged(_:)))
     private lazy var besideTap = UITapGestureRecognizer(target: self, action: #selector(tappedBeside(_:)))
+    private lazy var swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swiped(_:)))
+    private lazy var swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(swiped(_:)))
+    private lazy var swipes = SwipeGate(canvas: self)
+    /// Where the page comes in from once it is on screen; 0 once it came.
+    private var arriving: CGFloat = 0
 
     init() {
         super.init(frame: .zero)
@@ -223,6 +244,13 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         // Beside the picture only: a tap on it is the picture's.
         besideTap.require(toFail: tap)
         addGestureRecognizer(besideTap)
+        // A PDF's next page is a swipe up away, the one before a swipe down.
+        swipeUp.direction = .up
+        swipeDown.direction = .down
+        for swipe in [swipeUp, swipeDown] {
+            swipe.delegate = swipes
+            addGestureRecognizer(swipe)
+        }
         isAccessibilityElement = true
         accessibilityIdentifier = "protect-canvas"
         accessibilityLabel = L("Covered screenshot")
@@ -349,6 +377,65 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         let seen = CGSize(width: bounds.width / shown, height: bounds.height / shown)
         zoom(to: CGRect(x: place.midX - seen.width / 2, y: place.midY - seen.height / 2, width: seen.width,
                         height: seen.height), animated: true)
+    }
+
+    // MARK: A PDF's pages
+
+    /// Whether a swipe may turn to another page: only with Select in hand,
+    /// the page shown whole, not comparing and not on the mark selected.
+    fileprivate func swipeMayBegin(_ gesture: UIGestureRecognizer) -> Bool {
+        let step = gesture === swipeUp ? 1 : -1
+        return !tool.draws && split == nil && zoomScale <= minimumZoomScale + 0.01
+            && overlay.grab(at: gesture.location(in: content)) == nil && actions.canPage(step)
+    }
+
+    /// The page leaves the way it was swiped, a little and fading, and the
+    /// next one is opened; with Reduce Motion it only fades.
+    @objc private func swiped(_ gesture: UISwipeGestureRecognizer) {
+        let step = gesture.direction == .up ? 1 : -1
+        let away = CGAffineTransform(translationX: 0, y: -CGFloat(step) * bounds.height * 0.3)
+        UIView.animate(withDuration: 0.18, delay: 0, options: [.curveEaseIn, .beginFromCurrentState]) {
+            if self.animates { self.transform = away }
+            self.alpha = 0
+        } completion: { _ in
+            self.actions.page(step)
+        }
+    }
+
+    /// The page comes in from below or above once it is on screen.
+    func arrive(from side: CGFloat) {
+        arriving = side
+        if window != nil { comeIn() }
+    }
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        if window != nil, arriving != 0 { comeIn() }
+    }
+
+    private func comeIn() {
+        let side = arriving
+        arriving = 0
+        alpha = 0
+        if animates { transform = CGAffineTransform(translationX: 0, y: side * bounds.height * 0.3) }
+        UIView.animate(withDuration: animates ? 0.42 : 0.2, delay: 0, usingSpringWithDamping: animates ? 0.86 : 1,
+                       initialSpringVelocity: 0, options: [.allowUserInteraction]) {
+            self.transform = .identity
+            self.alpha = 1
+        }
+    }
+
+    /// With VoiceOver, three fingers up or down turn to the next page or the one before.
+    override func accessibilityScroll(_ direction: UIAccessibilityScrollDirection) -> Bool {
+        let step: Int
+        switch direction {
+        case .down, .next: step = 1
+        case .up, .previous: step = -1
+        default: return false
+        }
+        guard actions.canPage(step) else { return false }
+        actions.page(step)
+        return true
     }
 
     // MARK: Before and after
@@ -958,5 +1045,25 @@ private final class ScanMarksView: UIView {
             arrow.close()
             arrow.fill()
         }
+    }
+}
+
+/// Lets a swipe over a PDF's page turn to another page while the picture's
+/// own pan goes on as before.
+@MainActor
+private final class SwipeGate: NSObject, UIGestureRecognizerDelegate {
+    weak var canvas: CanvasView?
+
+    init(canvas: CanvasView) {
+        self.canvas = canvas
+    }
+
+    func gestureRecognizerShouldBegin(_ gesture: UIGestureRecognizer) -> Bool {
+        canvas?.swipeMayBegin(gesture) ?? false
+    }
+
+    func gestureRecognizer(_ gesture: UIGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer) -> Bool {
+        true
     }
 }

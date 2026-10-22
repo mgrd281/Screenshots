@@ -12,7 +12,7 @@ final class AppTabs: ObservableObject {
     static let shared = AppTabs()
     /// Photos first; More where screenshots made in CI and the UI tests ask for it or Always Hide, and
     /// Scan for made-up scans.
-    @Published var selection = ScanDemo.requested ? AppTab.scan
+    @Published var selection = ScanDemo.requested || ProjectDemo.showsTab ? AppTab.scan
         : AlwaysHideSample.requested || MoreSample.requested ? AppTab.more : AppTab.photos
     /// The first run's Try It Now: the Scan tab opens the camera as it shows.
     @Published var scanRequested = false
@@ -21,10 +21,14 @@ final class AppTabs: ObservableObject {
 /// Snapfly on the iPhone: the screenshots in Photos, a document scanned with
 /// the camera, the screenshots protected lately, and More with Settings and
 /// help, each a tab of the system's tab bar, in Liquid Glass from iOS 26 on.
-/// The first run shows over all of it, from the first frame.
+/// The first run shows over all of it, from the first frame. A PDF project
+/// shows over the tabs, as it is started, opened again, or a PDF or a picture
+/// is opened in Snapfly from Files, Mail or Safari.
 struct ContentView: View {
     @StateObject private var library = Library()
     @ObservedObject private var tabs = AppTabs.shared
+    @ObservedObject private var projects = ProjectStore.shared
+    @Environment(\.scenePhase) private var phase
     @ObservedObject private var coverer = QuickCoverer.shared
     @ObservedObject private var batch = BatchCover.shared
     @ObservedObject private var firstRun = FirstRunCoordinator.shared
@@ -46,6 +50,15 @@ struct ContentView: View {
         }
         .onChange(of: firstRun.showing) { _, showing in
             if !showing { appReady = true }
+        }
+        // "Open in Snapfly": the file becomes a new PDF project.
+        .onOpenURL { url in
+            guard url.isFileURL else { return }
+            ProjectStore.shared.start(.files([url]))
+        }
+        // A project is written at once as Snapfly goes away.
+        .onChange(of: phase) { _, now in
+            if now != .active { ProjectStore.shared.flush() }
         }
     }
 
@@ -77,6 +90,7 @@ struct ContentView: View {
             ShareFilesSheet(files: files)
                 .ignoresSafeArea()
         }
+        .fullScreenCover(item: $projects.shown) { _ in ProjectCover() }
     }
 }
 
@@ -206,7 +220,8 @@ final class QuickCoverer: ObservableObject {
 /// in the same grid as the Photos tab, each opened again or covered from
 /// its menu. Holding one, or choosing several with Select, takes them off
 /// the list, where they stay in Photos and Undo puts them back, or deletes
-/// them from Photos, as iOS asks first.
+/// them from Photos, as iOS asks first; several chosen are merged into a
+/// PDF project, in the order they show.
 struct ProtectedTab: View {
     @ObservedObject var library: Library
     @ObservedObject private var coverer = QuickCoverer.shared
@@ -250,7 +265,7 @@ struct ProtectedTab: View {
             // While choosing, the tab bar steps aside for the choice's own bar.
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 if let selection {
-                    RemoveBar(count: selection.count) { way in
+                    RemoveBar(count: selection.count, merge: { merge(selection) }) { way in
                         remove(shots.filter { selection.contains($0.localIdentifier) }, way)
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -320,6 +335,14 @@ struct ProtectedTab: View {
 
     private func reload() {
         shots = library.mayRead ? Library.assets(Recent.ids) : []
+    }
+
+    /// The screenshots chosen, in the order they show, as the pages of a new PDF project.
+    private func merge(_ chosen: GridSelection) {
+        let ids = shots.map(\.localIdentifier).filter(chosen.contains)
+        guard !ids.isEmpty else { return }
+        withAnimation(.snappy) { selection = nil }
+        ProjectStore.shared.start(.screenshots(ids))
     }
 
     /// Takes screenshots off the list at once, with Undo; or deletes them
