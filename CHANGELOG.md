@@ -25,6 +25,8 @@ keeps a download of each version.
   the file holds every private detail.
 - On the iPhone, a covered picture saved as a PNG leaves without the Exif
   note the system writes into it.
+- On the iPhone, the question before a picture leaves says "1 place still
+  to check" for one, not "1 places".
 - Studio, for screen recordings on the Mac. A recording opens in it once it
   hangs, already zoomed in where you clicked and typed, following the
   pointer there, with a ring at each click. Draw arrows, boxes, circles,
