@@ -129,6 +129,7 @@ Motion and Low Power Mode. The first run uses them all.
 | `more.pill` | 0.18 s ease-out; the rows on `.snappy` | A kind's pill turned: its colour, its check growing in from 40%, its neighbours closing up; with a selection haptic |
 | `more.grow` | spring 0.35 s, no bounce | Cover Style's bill: covers growing over whole lines with Strongest protection, the last four digits sliding in from the trailing side |
 | `more.press` | spring 0.22 / 0.9, to 97% | A tile, a chip or a button of More pressed, back on release; no haptic |
+| `scan.wipe` | 0.5 s ease-out, from the leading edge; a 0.3 s cross-fade with Reduce Motion | A scanned page's cleaning, once: the cleaned page wipes in over the page as it came, then its covers grow in on `stagger.cover` (at once with Reduce Motion) |
 
 ### Stagger
 
@@ -219,6 +220,8 @@ Motion and Low Power Mode. The first run uses them all.
 | Failure | No shake or beep: a `Notice` says what happened and what to do |
 | Copy ready (iPhone) | The status capsule's shield bounces up once (`symbolEffect(.bounce)`) with a success haptic |
 | Scan tab shown (iPhone) | `sweep.scan`: a green reading line crosses the drawn page once, 0.9 s, fading in and out at the ends; none with Reduce Motion |
+| Pages scanned (iPhone) | A light impact as they come; a warning haptic for a page to take again; the page's warning said once to VoiceOver |
+| Before and After (iPhone) | The divider follows the finger with no easing, its handle the same size whatever the zoom; VoiceOver moves it in tenths |
 
 ### Reduce Motion
 

@@ -107,6 +107,24 @@ enum SnapflyTokens {
     static let moreHeroRadius: CGFloat = 28
     static let moreButtonRadius: CGFloat = 18
 
+    // MARK: Scan
+
+    /// The status over a scanned page that is clean: a soft green, its
+    /// words a deep green, 6.9:1; at night a deep green with light green
+    /// words, 7:1.
+    static let scanGood = color(0xE7F4EE, dark: 0x11392C)
+    static let scanGoodText = color(0x075E43, dark: 0x5BD6A6)
+    /// The status over a page with something to look at: a soft amber with
+    /// an edge of a deeper one, its words a dark brown, 7.9:1; at night a
+    /// deep brown with light amber words, 8.8:1.
+    static let scanWarn = color(0xFFF4E0, dark: 0x3A2A10)
+    static let scanWarnEdge = color(0xF3D7A6, dark: 0x6E4F1F)
+    static let scanWarnText = color(0x6E4206, dark: 0xF5C77E)
+    /// The status card's corners, the page strip's, and its small pages'.
+    static let scanCardRadius: CGFloat = 16
+    static let scanStripRadius: CGFloat = 18
+    static let scanThumbRadius: CGFloat = 8
+
     // MARK: What Is Covered
 
     /// What Is Covered's stage takes the hero's greens (`moreHero`,

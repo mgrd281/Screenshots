@@ -1,6 +1,8 @@
+import PhotosUI
 import SwiftUI
 import UIKit
 import UniformTypeIdentifiers
+import VisionKit
 
 /// A picture being protected, the page in the middle of a bright screen:
 /// shown at once, its private places marked as they are found, then
@@ -15,9 +17,19 @@ import UniformTypeIdentifiers
 /// Holding the eye shows the picture as it was. Every way out waits until
 /// the copy is made and checked, and asks first while places are still to
 /// check; only that copy ever leaves. The picture itself stays as it was.
+///
+/// A scanned page is reviewed here too. Once cleaned, it wipes in over the
+/// page as it came, then its covers sweep in; a card under the page says
+/// what was done and covered, or what is wrong and where, outlined in
+/// orange on the page. Under it, the document's pages in a strip, and the
+/// page's own tools: Compare Before and After, Crop, Turn, the colours and
+/// Delete. Next opens Save and Share for the whole document.
 struct ProtectView: View {
     @StateObject private var session: ProtectSession
     @ObservedObject private var sync = SyncCenter.shared
+    @ObservedObject private var scans = ScannedPages.shared
+    /// A scanned page's place in its document; nil for any other picture.
+    private let scan: ScanContext?
     @State private var tool = EditTool.select
     @State private var selected: Int?
     @State private var markerWidth = HandShape.widths[1]
@@ -50,17 +62,49 @@ struct ProtectView: View {
     /// The floating controls' heights, so the picture is fitted between them.
     @State private var statusHeight: CGFloat = 0
     @State private var docksHeight: CGFloat = 0
+    /// A scanned page: where the divider stands while Before and After are
+    /// compared, from 0 to 1 from the leading edge; nil while they are not.
+    @State private var split: CGFloat?
+    /// Each wipe of the cleaned page over the page as it came.
+    @State private var wipes = 0
+    /// While the wipe passes, the covers wait, to sweep in after it.
+    @State private var sweeping = false
+    /// Save and Share, for the whole document.
+    @State private var saving = false
+    /// The page whose corners are set again, with its picture.
+    @State private var cropping: ScanCrop?
+    /// The page to delete, while it is asked.
+    @State private var deleting: ScanPageRef?
+    /// A page to turn or cut again with covers drawn by hand, while it is asked.
+    @State private var reshaping: ScanReshape?
+    /// Pages from the camera or photos: the page they are taken again for,
+    /// nil for pages added.
+    @State private var replacing: UUID?
+    @State private var shooting = false
+    @State private var choosingPhotos = false
+    @State private var picked: [PhotosPickerItem] = []
+    /// The made-up scans' state shown once, for pictures made in CI.
+    @State private var demoShown = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     /// Right to left, the apps stand on the left, and the room for them too.
     @Environment(\.layoutDirection) private var direction
 
-    init(source: ProtectSession.Source) {
+    init(source: ProtectSession.Source, scan: ScanContext? = nil) {
         _session = StateObject(wrappedValue: ProtectSession.made(for: source))
+        self.scan = scan
+    }
+
+    /// Reduce Motion, or the made-up scans played as it would (`ScanDemo`).
+    private var still: Bool { reduceMotion || ScanDemo.still }
+
+    /// The scanned page open, while it is in the document.
+    private var scanPage: ScannedPages.Page? {
+        scan.flatMap { scans.page($0.page) }
     }
 
     var body: some View {
         // The picture is the screen: the tab bar steps aside while it is open.
-        lifecycle(dialogs(sheets(screen)))
+        lifecycle(scanDialogs(dialogs(scanning(sheets(screen)))))
             .toolbar(.hidden, for: .tabBar)
     }
 
@@ -78,7 +122,7 @@ struct ProtectView: View {
                         AppRail(pending: pending, leave: leave)
                             .phoneGuideTarget(.actions)
                             .padding(.trailing, Self.railEdge)
-                            .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .trailing)))
+                            .transition(still ? .opacity : .opacity.combined(with: .move(edge: .trailing)))
                     }
                 }
                 .padding(.top, statusHeight + 8)
@@ -98,10 +142,19 @@ struct ProtectView: View {
         .animation(motion, value: selected)
         .animation(motion, value: note)
         .animation(motion, value: hint)
-        .navigationTitle(L("Protect Picture"))
+        .animation(motion, value: split != nil)
+        .navigationTitle(scan == nil ? L("Protect Picture") : L("Review"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) { more }
+            if scan != nil {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(L("Next")) { saving = true }
+                        .fontWeight(.semibold)
+                        .disabled(scans.pages.isEmpty)
+                        .accessibilityIdentifier("scan-next")
+                }
+            }
         }
         .toolbar(focus ? .hidden : .visible, for: .navigationBar)
         .statusBarHidden(focus)
@@ -133,9 +186,43 @@ struct ProtectView: View {
             }
     }
 
+    /// A scanned page's sheets: Save and Share, its corners set again, and
+    /// the camera or photos to add pages or take one again.
+    private func scanning(_ content: some View) -> some View {
+        content
+            .sheet(isPresented: $saving) { ScanSaveSheet() }
+            .fullScreenCover(item: $cropping) { crop in
+                if let page = scans.page(crop.id) {
+                    ScanCornerEditor(image: crop.picture, quad: page.quad ?? .whole) { quad in
+                        cropping = nil
+                        // Corners waited for are set even where they stay as Vision put them.
+                        guard let quad, quad != page.quad ?? .whole || page.state == .needsCorners else { return }
+                        scans.setCorners(crop.id, quad)
+                    }
+                } else {
+                    Color.black.onAppear { cropping = nil }
+                }
+            }
+            .fullScreenCover(isPresented: $shooting) {
+                DocumentScanner { images in
+                    shooting = false
+                    took(camera: images)
+                }
+                .ignoresSafeArea()
+            }
+            .photosPicker(isPresented: $choosingPhotos, selection: $picked, maxSelectionCount: replacing == nil ? 20 : 1,
+                          selectionBehavior: .ordered, matching: .images)
+            .onChange(of: picked) { _, items in
+                guard !items.isEmpty else { return }
+                let target = replacing
+                picked = []
+                Task { await took(photos: items, replacing: target) }
+            }
+    }
+
     private func dialogs(_ content: some View) -> some View {
         content
-            .confirmationDialog(String(format: L("%d places still to check"), session.plan.tally.toCheck),
+            .confirmationDialog(checkTitle,
                                 isPresented: Binding(get: { waiting != nil }, set: { if !$0 { waiting = nil } }),
                                 titleVisibility: .visible, presenting: waiting) { way in
                 Button(L("Check Now")) { reviewing = true }
@@ -158,6 +245,32 @@ struct ProtectView: View {
             }
     }
 
+    /// A scanned page's questions, in a chain of their own so neither chain
+    /// grows too long to type-check: deleting the page, and turning or
+    /// cutting it again where covers were drawn on it by hand.
+    private func scanDialogs(_ content: some View) -> some View {
+        content
+            .confirmationDialog(deleteTitle,
+                                isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
+                                titleVisibility: .visible, presenting: deleting) { ref in
+                Button(L("Delete Page"), role: .destructive) {
+                    withAnimation(motion) { scans.remove(ref.id) }
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                }
+                Button(L("Cancel"), role: .cancel) {}
+            } message: { _ in
+                Text(L("The other pages stay as they are."))
+            }
+            .confirmationDialog(L("Covers drawn by hand go"),
+                                isPresented: Binding(get: { reshaping != nil }, set: { if !$0 { reshaping = nil } }),
+                                titleVisibility: .visible, presenting: reshaping) { change in
+                Button(change.title) { reshaped(change) }
+                Button(L("Cancel"), role: .cancel) {}
+            } message: { _ in
+                Text(L("The page's private details are found again, and what you covered by hand on it is taken away."))
+            }
+    }
+
     private func lifecycle(_ content: some View) -> some View {
         content
             .phoneGuide(on: .shot)
@@ -165,6 +278,7 @@ struct ProtectView: View {
                 // Preparing other photos waits, so this one opens fast.
                 PhotoIndexer.shared.hold()
                 session.start()
+                showCleaning()
                 PhoneGuide.shared.screen = .shot
                 PhoneGuide.shared.happened(.openedShot)
             }
@@ -174,14 +288,25 @@ struct ProtectView: View {
             }
             .onChange(of: tool) { _, tool in
                 selected = nil
+                split = nil
                 UISelectionFeedbackGenerator().selectionChanged()
                 hint = hintText(for: tool)
             }
             .onChange(of: session.isReady) { _, ready in
+                if ready { showDemo() }
                 // A way tapped while the copy was made goes now.
                 guard ready, let way = pending else { return }
                 pending = nil
                 leave(way)
+            }
+            .onChange(of: session.original != nil) { _, shown in
+                if shown { showCleaning() }
+            }
+            .task(id: wipes) {
+                guard wipes > 0 else { return }
+                sweeping = true
+                try? await Task.sleep(for: .milliseconds(still ? 300 : 500))
+                sweeping = false
             }
             .onChange(of: session.stage) { _, stage in
                 if case .failed = stage { pending = nil }
@@ -198,8 +323,21 @@ struct ProtectView: View {
             }
     }
 
+    /// How many places are still to check, one or more, before a picture leaves.
+    private var checkTitle: String {
+        let left: Int = session.plan.tally.toCheck
+        return left == 1 ? L("1 place still to check") : String(format: L("%d places still to check"), left)
+    }
+
+    /// The question before a page is deleted, with its number.
+    private var deleteTitle: String {
+        guard let deleting else { return "" }
+        let number: Int = (scans.index(of: deleting.id) ?? 0) + 1
+        return String(format: L("Delete page %d?"), number)
+    }
+
     private var motion: Animation {
-        reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.35, dampingFraction: 0.86)
+        still ? .easeOut(duration: 0.15) : .spring(response: 0.35, dampingFraction: 0.86)
     }
 
     /// How far the apps stand in from the screen's trailing edge, and the
@@ -226,12 +364,16 @@ struct ProtectView: View {
     // MARK: The picture
 
     @ViewBuilder private func picture(chrome: UIEdgeInsets) -> some View {
-        if let shown = showsOriginal ? session.original : session.copy ?? session.original ?? session.preview {
-            MarkCanvas(image: shown, marks: showsOriginal ? [] : session.plan.marks,
+        // While a scanned page's cleaning wipes in, the page alone: its
+        // covers sweep in after it.
+        if let shown = showsOriginal || sweeping ? session.original : session.copy ?? session.original ?? session.preview {
+            MarkCanvas(image: shown, marks: showsOriginal || sweeping ? [] : session.plan.marks,
                        checking: Set(session.plan.marks.filter(session.plan.needsCheck).map(\.id)),
-                       isCopy: !showsOriginal && session.copy != nil, tool: tool, selected: selected,
+                       isCopy: !showsOriginal && !sweeping && session.copy != nil, tool: tool, selected: selected,
                        markerWidth: markerWidth, eraserReach: eraserReach, chrome: chrome,
-                       animated: !reduceMotion, reveal: reveal, actions: actions)
+                       animated: !still, reveal: reveal, before: scanPage?.before,
+                       split: showsOriginal ? nil : split, wipes: wipes, holdsBefore: scanPage?.shown == false,
+                       issues: showsOriginal ? [] : scanPage?.places ?? [], actions: actions)
                 .accessibilityAction(named: L("Details")) { reviewing = true }
         } else if case .failed = session.stage {
             ContentUnavailableView(L("The picture could not be read."), systemImage: "exclamationmark.triangle")
@@ -272,7 +414,8 @@ struct ProtectView: View {
                 } else if tool == .select, session.original != nil {
                     focus = true
                 }
-            })
+            },
+            split: { split = $0 })
     }
 
     /// Selecting: a tap on a place selects it, on a word hides it, and
@@ -313,14 +456,12 @@ struct ProtectView: View {
     // MARK: Over the picture
 
     /// Under the title: how the picture stands, the eye in line with the
-    /// apps, and how to use the tool just chosen.
+    /// apps, Before and After over the page while they are compared, and
+    /// how to use the tool just chosen.
     private var top: some View {
         VStack(spacing: 6) {
             ZStack {
-                PrivacyStatus(stage: session.stage, tally: session.plan.tally, found: found,
-                              nothingFound: session.found
-                                  && session.plan.marks.allSatisfy { $0.origin == .spared && !$0.covered },
-                              open: { reviewing = true }, dontWait: session.dontWait, retry: session.retry)
+                capsule
                     .padding(.horizontal, Self.railEdge + AppRail.width + 8)
                 eye
                     .frame(maxWidth: .infinity, alignment: .trailing)
@@ -328,6 +469,10 @@ struct ProtectView: View {
             }
             .padding(.top, 6)
             .measuredHeight($statusHeight)
+            if split != nil {
+                CompareLabels()
+                    .transition(.opacity)
+            }
             if let hint {
                 Text(hint)
                     .font(.footnote)
@@ -339,6 +484,27 @@ struct ProtectView: View {
                     .transition(.opacity)
             }
         }
+    }
+
+    /// How the picture stands, in its capsule; while a scanned page is made
+    /// ready, what is being done to it.
+    @ViewBuilder private var capsule: some View {
+        if let page = scanPage, page.state != .ready {
+            ScanWorking(state: page.state, retake: { retake(page) }, corners: { reshape(.crop(page.id)) })
+        } else {
+            PrivacyStatus(stage: session.stage, tally: session.plan.tally, found: found,
+                          nothingFound: session.found
+                              && session.plan.marks.allSatisfy { $0.origin == .spared && !$0.covered },
+                          open: { reviewing = true }, dontWait: session.dontWait, retry: session.retry)
+        }
+    }
+
+    /// A scanned page's card: what was done to it and covered, or what is
+    /// wrong with it.
+    private func card(_ page: ScannedPages.Page) -> some View {
+        ScanStatusCard(page: page, mode: scans.mode, covered: session.plan.covered.count,
+                       toCheck: session.plan.tally.toCheck, open: { reviewing = true },
+                       retake: { retake(page) }, compare: { compare() })
     }
 
     /// Over the bottom: what was done or went wrong, the place selected,
@@ -367,12 +533,35 @@ struct ProtectView: View {
                 .transition(.opacity)
             } else {
                 if let mark = selectedMark { selection(mark) }
-                docks
-                    .measuredHeight($docksHeight)
-                    .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .bottom)))
+                VStack(spacing: 8) {
+                    if let scan, let page = scanPage { pages(scan, page) }
+                    docks
+                }
+                .measuredHeight($docksHeight)
+                .transition(still ? .opacity : .opacity.combined(with: .move(edge: .bottom)))
             }
         }
         .padding(.bottom, 4)
+    }
+
+    /// Under a scanned page: once its copy is checked, what was done to it
+    /// and covered, or at once, what is wrong with it; then the document's
+    /// pages in a strip, and the page's own tools.
+    @ViewBuilder private func pages(_ scan: ScanContext, _ page: ScannedPages.Page) -> some View {
+        if page.state == .ready, !page.issues.isEmpty || session.isReady {
+            card(page)
+                .padding(.horizontal, 16)
+                .transition(.opacity)
+        }
+        ScanPageStrip(store: scans, current: scan.page, canScan: VNDocumentCameraViewController.isSupported,
+                      open: { if $0 != scan.page { scan.open($0) } }, add: { add($0) },
+                      turn: { reshape(.turn($0)) }, crop: { reshape(.crop($0)) },
+                      delete: { deleting = ScanPageRef(id: $0) })
+            .padding(.horizontal, 16)
+        ScanPageTools(comparing: split != nil, mode: scans.mode, ready: page.state == .ready && session.original != nil,
+                      canTurn: page.way != nil, compare: { compare() }, crop: { reshape(.crop(page.id)) },
+                      turn: { reshape(.turn(page.id)) }, choose: { scans.setMode($0) },
+                      delete: { deleting = ScanPageRef(id: page.id) })
     }
 
     /// The one bar of tools, kept in place while drawing.
@@ -515,6 +704,92 @@ struct ProtectView: View {
         .frame(minHeight: 40)
         .editorGlass(in: Capsule())
         .transition(.opacity)
+    }
+
+    // MARK: Scanned pages
+
+    /// A scanned page's cleaning, shown once: the cleaned page wipes in
+    /// over the page as it came, then its covers sweep in.
+    private func showCleaning() {
+        guard session.original != nil, let page = scanPage, !page.shown else { return }
+        wipes += 1
+        scans.markShown(page.id)
+    }
+
+    /// Before and After, the divider in the middle; again, the page alone.
+    private func compare() {
+        selected = nil
+        split = split == nil ? 0.5 : nil
+        UISelectionFeedbackGenerator().selectionChanged()
+    }
+
+    /// Pages from the camera or from photos, added or taking a page's place.
+    private func add(_ adding: ScanAdding) {
+        switch adding {
+        case .camera(let page):
+            replacing = page
+            shooting = true
+        case .photos(let page):
+            replacing = page
+            choosingPhotos = true
+        }
+    }
+
+    /// A page taken again as it was taken: with the camera, or from photos.
+    private func retake(_ page: ScannedPages.Page) {
+        let camera = page.origin == .camera && VNDocumentCameraViewController.isSupported
+        add(camera ? .camera(replacing: page.id) : .photos(replacing: page.id))
+    }
+
+    /// The camera's pages: in the place of the page taken again, which the
+    /// editor follows, or after the others, the first of them opened.
+    private func took(camera images: [CGImage]) {
+        let target = replacing
+        replacing = nil
+        guard !images.isEmpty else { return }
+        if let target {
+            scans.replace(target, camera: images)
+        } else if let first = scans.add(camera: images).first {
+            scan?.open(first.id)
+        }
+    }
+
+    /// The photos chosen, as the camera's pages are.
+    private func took(photos items: [PhotosPickerItem], replacing target: UUID?) async {
+        replacing = nil
+        let photos = await ScanPhoto.read(items)
+        guard !photos.isEmpty else { return failed(L("The picture could not be read.")) }
+        if let target {
+            scans.replace(target, photos: photos)
+        } else if let first = scans.add(photos: photos).first {
+            scan?.open(first.id)
+        }
+    }
+
+    /// A page turned or cut again has its private details found again:
+    /// where something was covered on it by hand, it asks first.
+    private func reshape(_ change: ScanReshape) {
+        if scans.opened(change.page)?.plan.hasHand == true { reshaping = change } else { reshaped(change) }
+    }
+
+    private func reshaped(_ change: ScanReshape) {
+        switch change {
+        case .turn(let page):
+            scans.turn(page)
+        case .crop(let page):
+            // The picture as it came, decoded once, as large as the corner editor shows it.
+            guard let picture = scans.picture(page) else { return failed(L("The picture could not be read.")) }
+            cropping = ScanCrop(id: page, picture: picture)
+        }
+    }
+
+    /// For pictures made in CI: Before and After compared, or Save and
+    /// Share open, once the page's copy is checked (`ScanDemo`).
+    private func showDemo() {
+        guard scan != nil, !demoShown else { return }
+        demoShown = true
+        if ScanDemo.compares { split = 0.5 }
+        if ScanDemo.opensSheet { saving = true }
     }
 
     // MARK: Ways out

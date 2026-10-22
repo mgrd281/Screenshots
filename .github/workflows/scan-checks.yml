@@ -1,0 +1,73 @@
+# Scan without an iPhone: the engine on this Mac on made-up photos of a
+# made-up invoice, each picture kept before and after with what was read on
+# it; then the app on the simulator: its UI tests, still frames of the Scan
+# tab, Review and Save and Share, light and dark, at the largest text sizes,
+# on the newest iPhone and the smallest, in German, Arabic and English, and
+# videos of the walks, from Photos to sharing among them, with and without
+# Reduce Motion. The pictures, the numbers and the videos go to the
+# "scan-captures" pre-release on the Releases page, for review; the test
+# results stay with the run. Runs when the scan or what it shows changes,
+# and by hand.
+name: Scan Checks
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths:
+      - "Sources/Tendedero/Shared/Scan*.swift"
+      - "Tests/TendederoTests/Scan*.swift"
+      - "iOS/Snapfly/Scan*.swift"
+      - "iOS/Snapfly/ProtectView.swift"
+      - "iOS/Snapfly/ProtectSession.swift"
+      - "iOS/Snapfly/MarkCanvas.swift"
+      - "iOS/SnapflyUITests/ScanUITests.swift"
+      - "scripts/scan-checks.sh"
+      - ".github/workflows/scan-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scan-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test the engine, run the UI tests, capture the frames and record the motion
+        run: scripts/scan-checks.sh
+
+      - name: Keep the pictures, the videos and the test results with the run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scan-checks
+          path: |
+            captures/scan/
+            build/scan.xcresult
+          if-no-files-found: ignore
+
+      - name: Publish the pictures, the numbers and the videos for review
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          files=(captures/scan/*.png captures/scan/*.mp4 captures/scan/*.txt)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "Nothing to publish."
+            exit 0
+          fi
+          tag=scan-captures
+          notes="Scan on this Mac and the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: made-up photos of a made-up invoice before and after cleaning, with what was read on them (scan-numbers.txt, scan-detection.txt, scan-pdf-sizes.txt, scan-covered-pdf-text.txt); the Scan tab, Review and Save and Share, light and dark, at the largest text sizes, on the newest iPhone and the smallest, in German, Arabic and English; and videos of the walks, with and without Reduce Motion. For review; not a download of Snapfly."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --notes "$notes" --prerelease
+          else
+            gh release create "$tag" --prerelease --title "Scan captures" --notes "$notes" --target "$GITHUB_SHA"
+          fi
+          gh release upload "$tag" "${files[@]}" --clobber

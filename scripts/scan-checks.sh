@@ -1,0 +1,178 @@
+#!/bin/bash
+# Scan without an iPhone, for review. First the engine on this Mac: the scan's
+# fixture tests (Tests/TendederoTests/ScanFixtureTests.swift) on made-up
+# photos of a made-up invoice, keeping each picture before and after and what
+# was read on it (SCAN_CAPTURES). Then the app on the simulator, the engine
+# built optimized as on a phone: its UI tests (iOS/SnapflyUITests/
+# ScanUITests.swift), still frames of the Scan tab, Review and Save and Share
+# on the made-up photos (-SnapflyScan), in German, light and dark, at the
+# largest accessibility text size, on the newest iPhone the runner has and on
+# the smallest, and in Arabic and English; then videos of the walks (simctl
+# io recordVideo), from Photos to sharing among them, and the same walks with
+# Reduce Motion. Writes everything to captures/scan and the test results to
+# build/scan.xcresult. A failed test fails the run, once the frames are made.
+set -euo pipefail
+
+out=captures/scan
+derived=build/scan
+bundle=de.ghazarian.Snapfly
+mkdir -p "$out"
+
+# The engine, with its pictures and numbers. Its photo whole goes into
+# Photos on the simulator, for the walk from Photos, and is not published.
+engine=0
+SCAN_CAPTURES="$PWD/$out" swift test --filter ScanFixtureTests || engine=$?
+photo=build/scan-photo.png
+if [ -f "$out/scan-photo-full.png" ]; then
+  mkdir -p build
+  mv "$out/scan-photo-full.png" "$photo"
+fi
+
+# The newest iPhone the runner has, the largest: a Pro Max where there is one.
+device=$(xcrun simctl list devices available --json | python3 -c '
+import json, sys
+best = None
+for runtime, devices in json.load(sys.stdin)["devices"].items():
+    if "iOS-" not in runtime:
+        continue
+    version = tuple(int(part) for part in runtime.split("iOS-")[-1].split("-") if part.isdigit())
+    for device in devices:
+        name = device["name"]
+        if not name.startswith("iPhone"):
+            continue
+        score = (version, "Pro Max" in name, "Plus" in name or "Air" in name, name)
+        if best is None or score > best[0]:
+            best = (score, device["udid"], name)
+print(best[1])
+print(best[2], file=sys.stderr)
+')
+xcrun simctl boot "$device" || true
+xcrun simctl bootstatus "$device" -b
+xcrun simctl status_bar "$device" override --time 9:41 --dataNetwork wifi --wifiMode active --wifiBars 3 \
+  --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100
+if [ -f "$photo" ]; then xcrun simctl addmedia "$device" "$photo" || echo "The photo could not go into Photos." >&2; fi
+
+# Debug, for the made-up scans, but optimized: the engine's loops are as
+# quick as in the App Store's build.
+xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -configuration Debug -destination "id=$device" \
+  -derivedDataPath "$derived" CODE_SIGNING_ALLOWED=NO SWIFT_OPTIMIZATION_LEVEL=-O -quiet build-for-testing
+app="$derived/Build/Products/Debug-iphonesimulator/Snapfly.app"
+
+# The UI tests, in light; the walks for the videos skip themselves here.
+xcrun simctl ui "$device" appearance light
+tests=0
+rm -rf build/scan.xcresult
+xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -destination "id=$device" -derivedDataPath "$derived" \
+  -only-testing:SnapflyUITests/ScanUITests -resultBundlePath build/scan.xcresult CODE_SIGNING_ALLOWED=NO \
+  SWIFT_OPTIMIZATION_LEVEL=-O test-without-building || tests=$?
+
+xcrun simctl install "$device" "$app"
+
+# A frame of a state, as the made-up scans open it, once the pages are made
+# ready and covered: on a device, in an appearance and a language, at a text
+# size when one is given.
+shot() {
+  local on=$1 name=$2 state=$3 appearance=$4 language=$5 size=${6:-}
+  local arguments=(-SnapflyScan "$state" -AppleLanguages "($language)" -AppleLocale "$language")
+  if [ -n "$size" ]; then arguments+=(-UIPreferredContentSizeCategoryName "$size"); fi
+  local settle=30
+  if [ "$state" = corners ]; then settle=12; fi
+  if [ "$state" = warning ] || [ "$state" = sheet ] || [ "$state" = uncovered ]; then settle=45; fi
+  xcrun simctl ui "$on" appearance "$appearance"
+  xcrun simctl terminate "$on" "$bundle" >/dev/null 2>&1 || true
+  xcrun simctl launch "$on" "$bundle" "${arguments[@]}" >/dev/null
+  sleep "$settle"
+  xcrun simctl io "$on" screenshot "$out/$name.png" >/dev/null
+}
+
+# Once to warm up: a first launch takes longer than the frame waits.
+xcrun simctl launch "$device" "$bundle" -SnapflyScan editor >/dev/null
+sleep 40
+xcrun simctl terminate "$device" "$bundle" >/dev/null 2>&1 || true
+
+# Each state, or the ones given.
+frames() {
+  local on=$1 prefix=$2 appearance=$3 language=$4 size=$5
+  shift 5
+  local states=("$@")
+  if [ ${#states[@]} -eq 0 ]; then states=(tab editor compare warning bw corners sheet uncovered); fi
+  for state in "${states[@]}"; do
+    shot "$on" "$prefix-$state" "$state" "$appearance" "$language" "$size"
+  done
+}
+frames "$device" de-light light de ""
+frames "$device" de-dark dark de ""
+frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL tab editor warning sheet
+frames "$device" de-xxxl light de UICTContentSizeCategoryXXXL editor sheet
+frames "$device" ar-light light ar "" tab editor sheet
+frames "$device" en-light light en "" editor sheet
+
+# Videos of the walks: the motion as it plays, then with Reduce Motion.
+# Never a reason to stop.
+record() {
+  local name=$1 test=$2 still=${3:-}
+  xcrun simctl ui "$device" appearance light
+  xcrun simctl io "$device" recordVideo --codec=h264 --force "$out/$name.mp4" >/dev/null 2>&1 &
+  local recorder=$!
+  sleep 2
+  env TEST_RUNNER_SNAPFLY_RECORD=1 ${still:+TEST_RUNNER_SNAPFLY_STILL=1} \
+    xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -destination "id=$device" -derivedDataPath "$derived" \
+    -only-testing:"SnapflyUITests/ScanUITests/$test" CODE_SIGNING_ALLOWED=NO SWIFT_OPTIMIZATION_LEVEL=-O -quiet \
+    test-without-building || echo "The walk $test did not finish." >&2
+  sleep 1
+  kill -INT "$recorder" 2>/dev/null || true
+  wait "$recorder" 2>/dev/null || true
+}
+(
+  if [ -f "$photo" ]; then record from-photos testRecordFromPhotosToSharing; fi
+  record wipe-and-compare testRecordWipeAndCompare
+  record pages-and-warning testRecordPagesAndWarning
+  if [ -f "$photo" ]; then record reduce-motion-from-photos testRecordFromPhotosToSharing still; fi
+  record reduce-motion-wipe-and-compare testRecordWipeAndCompare still
+) || echo "The videos could not all be recorded." >&2
+
+# And on the smallest iPhone there is.
+small=$(xcrun simctl list devices available --json | python3 -c '
+import json, sys
+order = ("SE", "mini", "16e", "17e")
+best = None
+for runtime, devices in json.load(sys.stdin)["devices"].items():
+    if "iOS-" not in runtime:
+        continue
+    version = tuple(int(part) for part in runtime.split("iOS-")[-1].split("-") if part.isdigit())
+    if version < (17,):
+        continue
+    for device in devices:
+        for rank, word in enumerate(order):
+            if device["name"].startswith("iPhone") and word in device["name"]:
+                score = (-rank, version)
+                if best is None or score > best[0]:
+                    best = (score, device["udid"], device["name"])
+print(best[1] if best else "")
+if best: print(best[2], file=sys.stderr)
+')
+# Frames more, never a reason to stop.
+if [ -n "$small" ] && [ "$small" != "$device" ]; then
+  (
+    xcrun simctl boot "$small" || true
+    xcrun simctl bootstatus "$small" -b
+    xcrun simctl status_bar "$small" override --time 9:41 --batteryState charged --batteryLevel 100 || true
+    xcrun simctl install "$small" "$app"
+    xcrun simctl launch "$small" "$bundle" -SnapflyScan editor >/dev/null
+    sleep 40
+    frames "$small" de-small light de ""
+    frames "$small" de-small-dark dark de "" editor warning sheet
+    frames "$small" de-small-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL editor sheet
+  ) || echo "The smallest iPhone could not be captured." >&2
+  xcrun simctl shutdown "$small" || true
+fi
+
+ls -l "$out"
+if [ "$engine" != 0 ]; then
+  echo "The scan's fixture tests failed." >&2
+  exit "$engine"
+fi
+if [ "$tests" != 0 ]; then
+  echo "The UI tests failed." >&2
+  exit "$tests"
+fi

@@ -45,6 +45,9 @@ struct CanvasActions {
     var turn: (Int, CGFloat) -> Void = { _, _ in }
     /// A tap beside the picture, not on it.
     var outside: () -> Void = {}
+    /// The divider between Before and After moved, from 0 to 1 from the
+    /// leading edge.
+    var split: (CGFloat) -> Void = { _ in }
 }
 
 /// A place to show close up, each time its count changes.
@@ -74,9 +77,25 @@ struct MarkCanvas: UIViewRepresentable {
     let eraserReach: CGFloat
     /// What the floating controls cover on each side, safe areas included.
     var chrome = UIEdgeInsets.zero
-    /// Whether a change of the room is shown growing or shrinking.
+    /// Whether changes are shown moving: the room growing or shrinking, the
+    /// first covers growing in, the cleaned page wiping in; not with Reduce
+    /// Motion.
     var animated = true
     var reveal: Reveal?
+    /// A scanned page as it was before it was cleaned: shown on the leading
+    /// side of the divider while comparing, without the covers, which show
+    /// on the cleaned side, and under the wipe; nil for a screenshot.
+    var before: UIImage? = nil
+    /// Where the divider stands while Before and After are compared, from 0
+    /// to 1 from the leading edge; nil while they are not.
+    var split: CGFloat? = nil
+    /// Each time it grows, the cleaned page wipes in over the page before.
+    var wipes = 0
+    /// The page before shown whole, until its wipe begins.
+    var holdsBefore = false
+    /// Places to look at again, from 0 to 1 from the bottom left, outlined
+    /// in orange over the page; never in the copy.
+    var issues: [CGRect] = []
     let actions: CanvasActions
 
     func makeUIView(context: Context) -> CanvasView {
@@ -85,12 +104,18 @@ struct MarkCanvas: UIViewRepresentable {
 
     func updateUIView(_ view: CanvasView, context: Context) {
         view.actions = actions
+        view.animates = animated
         view.show(image, marks: marks, checking: checking, isCopy: isCopy, tool: tool, selected: selected,
                   markerWidth: markerWidth, eraserReach: eraserReach)
+        view.compare(before: before, split: split, issues: issues, holding: holdsBefore)
         view.place(chrome: chrome, animated: animated)
         if let reveal, reveal != context.coordinator.revealed {
             context.coordinator.revealed = reveal
             view.reveal(reveal.rect)
+        }
+        if wipes != context.coordinator.wipes {
+            context.coordinator.wipes = wipes
+            view.wipe(animated: animated)
         }
     }
 
@@ -99,6 +124,8 @@ struct MarkCanvas: UIViewRepresentable {
     final class Coordinator {
         /// The place last shown close up, so it is shown once.
         var revealed: Reveal?
+        /// The wipes shown.
+        var wipes = 0
     }
 }
 
@@ -107,6 +134,17 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     private let content = UIView()
     private let picture = UIImageView()
     private let overlay = MarksView()
+    /// A scanned page before it was cleaned, over the picture and its
+    /// covers where its mask lets it show: on the leading side of the
+    /// divider, or all of it until the wipe has passed.
+    private let before = UIImageView()
+    private let beforeMask = CALayer()
+    private let scanMarks = ScanMarksView()
+    private var split: CGFloat?
+    private var wiping = false
+    private var holding = false
+    /// A wipe asked for before the page was laid out, run once it is.
+    private var pendingWipe: Bool?
     private var imageSize = CGSize.zero
     /// The room the picture was last fitted to, so it is fitted again only
     /// when the room changes.
@@ -116,6 +154,8 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     private var tool = EditTool.select
     private var markerWidth: CGFloat = HandShape.widths[1]
     private var eraserReach: CGFloat = 0.03
+    /// Whether the first covers grow in, rather than show at once.
+    var animates = true
 
     /// What a drag on the selected mark takes hold of.
     enum GrabKind {
@@ -147,6 +187,20 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         addSubview(content)
         content.addSubview(picture)
         content.addSubview(overlay)
+        content.addSubview(before)
+        content.addSubview(scanMarks)
+        before.contentMode = .scaleToFill
+        before.layer.cornerRadius = 12
+        before.layer.cornerCurve = .continuous
+        before.clipsToBounds = true
+        before.isHidden = true
+        before.isUserInteractionEnabled = false
+        beforeMask.backgroundColor = UIColor.black.cgColor
+        before.layer.mask = beforeMask
+        scanMarks.isOpaque = false
+        scanMarks.backgroundColor = .clear
+        scanMarks.isUserInteractionEnabled = false
+        scanMarks.contentMode = .redraw
         picture.contentMode = .scaleToFill
         picture.layer.cornerRadius = 12
         picture.layer.cornerCurve = .continuous
@@ -170,6 +224,7 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         besideTap.require(toFail: tap)
         addGestureRecognizer(besideTap)
         isAccessibilityElement = true
+        accessibilityIdentifier = "protect-canvas"
         accessibilityLabel = L("Covered screenshot")
         accessibilityHint = L("Details lists every place, to cover or uncover each one.")
     }
@@ -195,7 +250,7 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         // The first covers found grow in over their places, line by line.
         let arriving = !isCopy && !overlay.marks.contains(where: \.covered) && marks.contains(where: \.covered)
         overlay.marks = marks
-        if arriving { overlay.arrive() }
+        if arriving, animates { overlay.arrive() }
         overlay.checking = checking
         overlay.isCopy = isCopy
         overlay.selected = selected
@@ -241,6 +296,13 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         content.center = CGPoint(x: size.width / 2, y: size.height / 2)
         picture.frame = content.bounds
         overlay.frame = content.bounds
+        before.frame = content.bounds
+        scanMarks.frame = content.bounds
+        masked()
+        if let animated = pendingWipe {
+            pendingWipe = nil
+            wipe(animated: animated)
+        }
         content.layer.shadowPath = UIBezierPath(roundedRect: content.bounds, cornerRadius: 12).cgPath
         contentSize = size
         center()
@@ -256,6 +318,8 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         // Handles keep their size on the screen.
         overlay.zoom = zoomScale
         overlay.setNeedsDisplay()
+        scanMarks.zoom = zoomScale
+        scanMarks.setNeedsDisplay()
     }
 
     func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
@@ -287,6 +351,114 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
                         height: seen.height), animated: true)
     }
 
+    // MARK: Before and after
+
+    /// A scanned page's page before cleaning, the divider while comparing
+    /// and the places to look at again. While comparing, one finger moves
+    /// the divider and two move the page, and VoiceOver adjusts it in
+    /// tenths.
+    func compare(before image: UIImage?, split: CGFloat?, issues: [CGRect], holding: Bool = false) {
+        if before.image !== image { before.image = image }
+        self.holding = holding
+        let comparing = split != nil && image != nil
+        self.split = comparing ? split : nil
+        scanMarks.split = self.split
+        scanMarks.issues = issues
+        scanMarks.zoom = zoomScale
+        scanMarks.setNeedsDisplay()
+        masked()
+        if comparing { panGestureRecognizer.minimumNumberOfTouches = 2 }
+        hold.isEnabled = hold.isEnabled && !comparing
+        if let split = self.split {
+            accessibilityLabel = L("Comparison of Before and After")
+            accessibilityValue = Double(split).formatted(.percent.precision(.fractionLength(0)))
+            accessibilityHint = nil
+            accessibilityTraits = .adjustable
+        } else {
+            accessibilityLabel = L("Covered screenshot")
+            accessibilityValue = nil
+            accessibilityHint = L("Details lists every place, to cover or uncover each one.")
+            accessibilityTraits = []
+        }
+    }
+
+    override func accessibilityIncrement() {
+        guard let split else { return }
+        actions.split(min(1, ((split + 0.1) * 10).rounded() / 10))
+    }
+
+    override func accessibilityDecrement() {
+        guard let split else { return }
+        actions.split(max(0, ((split - 0.1) * 10).rounded() / 10))
+    }
+
+    /// The cleaned page sweeping in over the page before it, from the
+    /// leading edge, in 0.5 s, easing out; with Reduce Motion it fades in.
+    func wipe(animated: Bool) {
+        guard before.image != nil else { return }
+        guard before.bounds.width > 0 else {
+            pendingWipe = animated
+            return
+        }
+        wiping = true
+        before.isHidden = false
+        let bounds = before.bounds
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        beforeMask.frame = bounds
+        before.alpha = 1
+        CATransaction.commit()
+        let finish = { [weak self] in
+            self?.wiping = false
+            self?.masked()
+        }
+        guard animated else {
+            UIView.animate(withDuration: 0.3, animations: { self.before.alpha = 0 }, completion: { _ in
+                self.before.alpha = 1
+                finish()
+            })
+            return
+        }
+        let rightToLeft = effectiveUserInterfaceLayoutDirection == .rightToLeft
+        CATransaction.begin()
+        CATransaction.setAnimationDuration(0.5)
+        CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: .easeOut))
+        CATransaction.setCompletionBlock(finish)
+        beforeMask.frame = CGRect(x: rightToLeft ? 0 : bounds.width, y: 0, width: 0, height: bounds.height)
+        CATransaction.commit()
+    }
+
+    /// Before shown on the leading side of the divider while comparing, and
+    /// not at all otherwise; left alone while the wipe passes.
+    private func masked() {
+        guard !wiping else { return }
+        let bounds = before.bounds
+        if holding, before.image != nil {
+            before.isHidden = false
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            beforeMask.frame = bounds
+            CATransaction.commit()
+            return
+        }
+        guard let split, before.image != nil else {
+            before.isHidden = true
+            return
+        }
+        before.isHidden = false
+        let width = bounds.width * split
+        let leading = effectiveUserInterfaceLayoutDirection == .rightToLeft ? bounds.width - width : 0
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        beforeMask.frame = CGRect(x: leading, y: 0, width: width, height: bounds.height)
+        CATransaction.commit()
+    }
+
+    private func moveSplit(to point: CGPoint) {
+        let across = min(max(point.x / max(content.bounds.width, 1), 0), 1)
+        actions.split(effectiveUserInterfaceLayoutDirection == .rightToLeft ? 1 - across : across)
+    }
+
     // MARK: Places
 
     /// A point on the picture, from 0 to 1 from the bottom left.
@@ -301,17 +473,19 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     /// selected where it holds it, and the picture anywhere else.
     override func gestureRecognizerShouldBegin(_ gesture: UIGestureRecognizer) -> Bool {
         if gesture === edit {
-            if tool.draws { return true }
+            if tool.draws || split != nil { return true }
             grab = overlay.grab(at: gesture.location(in: content))
             return grab != nil
         }
-        if gesture === panGestureRecognizer, !tool.draws, overlay.grab(at: gesture.location(in: content)) != nil {
+        if gesture === panGestureRecognizer, !tool.draws, split == nil, overlay.grab(at: gesture.location(in: content)) != nil {
             return false
         }
         return super.gestureRecognizerShouldBegin(gesture)
     }
 
     @objc private func tapped(_ gesture: UITapGestureRecognizer) {
+        // While comparing, a tap moves the divider there.
+        if split != nil { return moveSplit(to: gesture.location(in: content)) }
         let point = normalized(gesture.location(in: content))
         switch tool {
         case .select: actions.tap(point)
@@ -345,6 +519,10 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
 
     @objc private func dragged(_ gesture: UIPanGestureRecognizer) {
         let point = gesture.location(in: content)
+        if split != nil {
+            if gesture.state == .began || gesture.state == .changed { moveSplit(to: point) }
+            return
+        }
         switch gesture.state {
         case .began:
             start = point
@@ -729,5 +907,56 @@ private final class MarksView: UIView {
     private func view(_ rect: CGRect) -> CGRect {
         CGRect(x: rect.minX * bounds.width, y: (1 - rect.maxY) * bounds.height,
                width: rect.width * bounds.width, height: rect.height * bounds.height)
+    }
+}
+
+/// Over a scanned page: the divider between Before and After while they
+/// are compared, a white line with a round handle that keeps its size on
+/// the screen, and the places to look at again, outlined in orange.
+private final class ScanMarksView: UIView {
+    /// From 0 to 1 from the leading edge; nil while not comparing.
+    var split: CGFloat?
+    /// From 0 to 1 from the bottom left.
+    var issues: [CGRect] = []
+    var zoom: CGFloat = 1
+
+    override func draw(_ rect: CGRect) {
+        guard let context = UIGraphicsGetCurrentContext() else { return }
+        let scale = 1 / max(zoom, 1)
+        for issue in issues {
+            let place = CGRect(x: issue.minX * bounds.width, y: (1 - issue.maxY) * bounds.height,
+                               width: issue.width * bounds.width, height: issue.height * bounds.height)
+                .insetBy(dx: -4 * scale, dy: -4 * scale)
+            let path = UIBezierPath(roundedRect: place, cornerRadius: 6 * scale)
+            UIColor.systemOrange.withAlphaComponent(0.12).setFill()
+            path.fill()
+            UIColor.systemOrange.setStroke()
+            path.lineWidth = 2 * scale
+            path.setLineDash([5 * scale, 3 * scale], count: 2, phase: 0)
+            path.stroke()
+        }
+        guard let split else { return }
+        let across = effectiveUserInterfaceLayoutDirection == .rightToLeft ? 1 - split : split
+        let x = across * bounds.width
+        context.saveGState()
+        context.setShadow(offset: CGSize(width: 0, height: 1 * scale), blur: 4 * scale,
+                          color: UIColor.black.withAlphaComponent(0.35).cgColor)
+        UIColor.white.setFill()
+        UIBezierPath(rect: CGRect(x: x - 1 * scale, y: 0, width: 2 * scale, height: bounds.height)).fill()
+        let size = 32 * scale
+        let handle = CGRect(x: x - size / 2, y: bounds.midY - size / 2, width: size, height: size)
+        UIBezierPath(ovalIn: handle).fill()
+        context.restoreGState()
+        // Two small arrows on the handle, pointing apart.
+        UIColor.darkGray.setFill()
+        for direction: CGFloat in [-1, 1] {
+            let tip = CGPoint(x: x + direction * 9 * scale, y: bounds.midY)
+            let arrow = UIBezierPath()
+            arrow.move(to: tip)
+            arrow.addLine(to: CGPoint(x: tip.x - direction * 5 * scale, y: tip.y - 5 * scale))
+            arrow.addLine(to: CGPoint(x: tip.x - direction * 5 * scale, y: tip.y + 5 * scale))
+            arrow.close()
+            arrow.fill()
+        }
     }
 }
