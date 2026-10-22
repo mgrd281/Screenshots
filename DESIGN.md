@@ -300,7 +300,7 @@ components:
   phone-project-bar:
     height: "52pt"                 # the overview's bar on the bar's material, 16pt in: Add (a capsule of systemBackground with a shadow of black 6%, radius 6, y 2) and Next (white on phone-protect), body semibold, 12pt apart, one under another at the accessibility sizes; while choosing, Turn, Duplicate, As PDF and Delete, a 20pt glyph over caption medium in phone-protect-tint (Delete red), at 50% and not usable while none is chosen
   phone-project-toast:
-    height: "44pt"                 # at least: subheadline medium white on a phone-project-toast capsule, 18pt in (12pt at the trailing end), Undo, then Redo, in subheadline semibold phone-project-toast-action, a shadow of black 20%, radius 10, y 4, 16pt from the screen's sides, 12pt over the bar; it rises on a spring (0.35 s, damping 0.85), only fades with Reduce Motion, stays 4 s, and VoiceOver reads it out
+    height: "44pt"                 # at least: subheadline medium white on a phone-project-toast capsule, 18pt in (12pt at the trailing end), Undo, then Redo, in subheadline semibold phone-project-toast-action, a shadow of black 20%, radius 10, y 4, 16pt from the screen's sides, 12pt over the bar; it rises on a spring (0.35 s, damping 0.85), only fades with Reduce Motion, stays 6 s, and VoiceOver reads it out
   phone-project-indicator:
     height: "28pt"                 # "3 / 12" over a PDF's page as it opens: footnote semibold, figures of one width, 12pt in, a glass capsule; gone after 1.5 s in 0.4 s (0.15 s with Reduce Motion)
   draw-swatch:

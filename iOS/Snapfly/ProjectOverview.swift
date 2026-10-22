@@ -33,6 +33,8 @@ struct ExportScope: Identifiable {
 struct ProjectOverview: View {
     @ObservedObject private var store = ProjectStore.shared
     @State private var path: [UUID] = []
+    /// How tall the bar is, so the notes stand over it.
+    @State private var barHeight: CGFloat = 0
     @State private var selecting = false
     @State private var selection: Set<UUID> = []
     @State private var adding: ProjectAdding?
@@ -74,13 +76,14 @@ struct ProjectOverview: View {
                 .background(Color(.systemGroupedBackground).ignoresSafeArea())
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbar }
-                .safeAreaInset(edge: .bottom, spacing: 0) { bar }
+                .safeAreaInset(edge: .bottom, spacing: 0) { bar.measuredHeight($barHeight) }
                 .overlay(alignment: .bottom) {
+                    // Over the bar, never on its buttons.
                     VStack(spacing: 8) {
                         ProjectWorking()
                         ProjectToastView()
                     }
-                    .padding(.bottom, 12)
+                    .padding(.bottom, (pages.isEmpty && !selecting ? 0 : barHeight) + 12)
                 }
                 .navigationDestination(for: UUID.self) { page in ProjectEditor(page: page) }
         }

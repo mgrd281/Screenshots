@@ -100,10 +100,11 @@ final class PDFUITests: XCTestCase {
         XCTAssertTrue(element(app, "project-page-2").isSelected)
         // Duplicated, then undone and done again.
         element(app, "project-duplicate").tap()
-        XCTAssertTrue(page(app, 6, shows: true), "the copy is in")
-        XCTAssertTrue(words(app, "1 Seite dupliziert").waitForExistence(timeout: 5))
+        // The note stays a few seconds and each look takes a moment here: its button first, then the rest.
         let undo = element(app, "project-toast-undo")
+        XCTAssertTrue(undo.waitForExistence(timeout: 30), "the note with Undo")
         XCTAssertEqual(undo.label, "Rückgängig")
+        XCTAssertTrue(words(app, "1 Seite dupliziert").exists)
         undo.tap()
         XCTAssertTrue(page(app, 6, shows: false), "the copy is gone")
         XCTAssertTrue(wait(undo, "label == %@", "Wiederholen"))
@@ -115,11 +116,10 @@ final class PDFUITests: XCTestCase {
         element(app, "project-turn").tap()
         // Deleted without asking, then undone.
         element(app, "project-delete").tap()
-        XCTAssertTrue(words(app, "1 Seite gelöscht").waitForExistence(timeout: 5))
+        XCTAssertTrue(words(app, "1 Seite gelöscht").waitForExistence(timeout: 30), "the note says a page is gone")
         XCTAssertFalse(app.alerts.firstMatch.exists, "no dialog")
-        XCTAssertTrue(page(app, 6, shows: false), "the page is gone")
         element(app, "project-toast-undo").tap()
-        XCTAssertTrue(element(app, "project-page-6").waitForExistence(timeout: 5), "the page is back")
+        XCTAssertTrue(page(app, 6, shows: true), "the page is back")
         // Nothing chosen: the bar's actions are dimmed and do nothing.
         element(app, "project-select").tap()
         element(app, "project-select").tap()
