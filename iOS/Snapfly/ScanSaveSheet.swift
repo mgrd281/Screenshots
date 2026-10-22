@@ -311,7 +311,9 @@ struct ScanSaveSheet: View {
                 noted(note.text, failed: note.failed)
                     .transition(.opacity)
             }
-            HStack(spacing: 10) {
+            // One under another at the accessibility sizes, so each keeps its words.
+            let row = typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(spacing: 8)) : AnyLayout(HStackLayout(spacing: 10))
+            row {
                 way(.copy, title: L("Copy"), symbol: "doc.on.doc")
                 way(.save, title: L("Save"), symbol: format == .pdf ? "folder" : "photo.on.rectangle.angled")
                 way(.share, title: L("Share"), symbol: "square.and.arrow.up")

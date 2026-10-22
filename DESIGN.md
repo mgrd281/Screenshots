@@ -2856,7 +2856,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   number changed." with `checkmark.seal` where every page read the same;
   "Check the marked places." with an orange triangle where one read less),
   and the places still to check. On the bar's material at the bottom, Copy,
-  Save and Share, 44 pt, Share in `phone-protect` with white words: a PDF is
+  Save and Share, 44 pt, side by side (one under another at the
+  accessibility sizes), Share in `phone-protect` with white words: a PDF is
   saved to Files and pictures to Photos. While they work, which page is
   covered; where pages are still made ready, one waits for its corners or
   one could not be read, the bar says so instead (the last two in
