@@ -46,12 +46,13 @@ xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -configuration Debug -
   -derivedDataPath "$derived" CODE_SIGNING_ALLOWED=NO -quiet build-for-testing
 app="$derived/Build/Products/Debug-iphonesimulator/Snapfly.app"
 
-# The UI tests, in light.
+# The UI tests, in light. Scan's run in the Scan Checks workflow, on a build
+# optimized for its made-up scans: in this one a page takes minutes to make.
 xcrun simctl ui "$device" appearance light
 tests=0
 rm -rf build/always-hide.xcresult
 xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -destination "id=$device" -derivedDataPath "$derived" \
-  -only-testing:SnapflyUITests -resultBundlePath build/always-hide.xcresult CODE_SIGNING_ALLOWED=NO \
+  -skip-testing:SnapflyUITests/ScanUITests -resultBundlePath build/always-hide.xcresult CODE_SIGNING_ALLOWED=NO \
   test-without-building || tests=$?
 
 xcrun simctl install "$device" "$app"
