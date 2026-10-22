@@ -64,6 +64,33 @@ enum CoveredCopy {
         guard let destination = CGImageDestinationCreateWithData(data, UTType.png.identifier as CFString, 1, nil)
         else { return nil }
         CGImageDestinationAddImage(destination, image, nil)
-        return CGImageDestinationFinalize(destination) ? data as Data : nil
+        return CGImageDestinationFinalize(destination) ? plain(data as Data) : nil
+    }
+
+    /// A PNG without the parts that say things about the picture rather than
+    /// show it, which newer systems write on their own: Exif, text, and when
+    /// it was made. Its colour stays. Anything that does not read as a PNG
+    /// is given back unchanged.
+    static func plain(_ png: Data) -> Data {
+        let bytes = [UInt8](png)
+        let signature: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
+        guard bytes.count > 8, Array(bytes[0..<8]) == signature else { return png }
+        let notes: Set<String> = ["eXIf", "tEXt", "zTXt", "iTXt", "tIME"]
+        var out = signature
+        var i = 8
+        while i + 12 <= bytes.count {
+            // A chunk: its length, its name, its bytes, and their checksum.
+            var length = 0
+            for byte in bytes[i..<(i + 4)] {
+                let value: Int = Int(byte)
+                length = length << 8 | value
+            }
+            let end: Int = i + 12 + length
+            guard end <= bytes.count else { return png }
+            let name = String(decoding: bytes[(i + 4)..<(i + 8)], as: UTF8.self)
+            if !notes.contains(name) { out += bytes[i..<end] }
+            i = end
+        }
+        return i == bytes.count ? Data(out) : png
     }
 }

@@ -21,6 +21,32 @@ final class ScanQualityTests: XCTestCase {
         XCTAssertTrue(blur.asksForRetake)
     }
 
+    func testAPageBlurredPastItsEdgesStillSaysSo() throws {
+        // So blurred that its print has no edges left, with the camera's grain over it.
+        var page = ScanPaperFixture.page(width: 1100, printTo: 0.95).bitmap
+        page = Self.blurred(page, rows: (page.height * 7 / 10)..<page.height, passes: 4, radius: 4)
+        page = Self.grained(page, by: 3)
+        let blur = try XCTUnwrap(ScanQuality.issues(in: page, dpi: 200).first { $0.kind == .blurred })
+        XCTAssertEqual(blur.part, .bottom, "\(String(describing: blur.area))")
+    }
+
+    func testASoftShadowIsNotBlur() {
+        var page = ScanPaperFixture.page(width: 1100, printTo: 0.95).bitmap
+        // The phone's shadow over the bottom right, darkening softly into its corner.
+        for y in 0..<page.height {
+            for x in 0..<page.width {
+                let into: Int = x + y - page.width / 2 - page.height * 3 / 4
+                guard into > 0 else { continue }
+                let reach: Float = min(Float(into) / 160, 1)
+                let kept: Float = 1 - 0.3 * reach
+                let (red, green, blue) = page.color(x: x, y: y)
+                page.set(x: x, y: y, Self.dimmed(red, kept), Self.dimmed(green, kept), Self.dimmed(blue, kept))
+            }
+        }
+        page = Self.grained(page, by: 3)
+        XCTAssertFalse(ScanQuality.issues(in: page, dpi: 200).contains { $0.kind == .blurred })
+    }
+
     func testAPageBlurredAllOverSaysSoForAllOfIt() throws {
         var page = ScanPaperFixture.page(width: 1100, printTo: 0.95).bitmap
         page = Self.blurred(page, rows: 0..<page.height, passes: 3, radius: 2)
@@ -77,6 +103,28 @@ final class ScanQualityTests: XCTestCase {
         XCTAssertFalse(issue.asksForRetake)
         XCTAssertNotEqual(issue.message(in: .blackAndWhite), issue.message(in: .color))
         XCTAssertEqual(issue.message(in: .gray), issue.message(in: .color))
+    }
+
+    /// The page with a camera's grain: each channel up to `amount` lighter or darker.
+    static func grained(_ page: ScanBitmap, by amount: Int) -> ScanBitmap {
+        var out = page
+        var seed: UInt32 = 5
+        let spread: Int = 2 * amount + 1
+        for i in 0..<out.pixels.count where i % 4 != 3 {
+            seed = seed &* 1_664_525 &+ 1_013_904_223
+            let high: UInt32 = seed >> 16
+            let shift: Int = Int(high) % spread - amount
+            let value: Int = Int(out.pixels[i]) + shift
+            let kept: Int = min(max(value, 0), 255)
+            out.pixels[i] = UInt8(kept)
+        }
+        return out
+    }
+
+    /// A channel darkened to `share` of itself.
+    static func dimmed(_ value: UInt8, _ share: Float) -> UInt8 {
+        let darker: Float = Float(value) * share
+        return UInt8(darker)
     }
 
     /// The rows given blurred: brightness boxed `passes` times, in grey.

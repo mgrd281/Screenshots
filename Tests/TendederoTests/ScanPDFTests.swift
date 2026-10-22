@@ -11,9 +11,57 @@ final class ScanPDFTests: XCTestCase {
         .jpeg(Data([0xFF, 0xD8, 0xFF, 0xD9]), width: width, height: height, gray: gray)
     }
 
-    /// The PDF's bytes as text, one character a byte.
+    /// The PDF's bytes as text, one character a byte, its packed streams
+    /// unpacked as a reader unpacks them.
     private func file(_ pages: [ScanPDF.Page]) throws -> String {
-        String(try XCTUnwrap(ScanPDF.make(pages)).map { Character(Unicode.Scalar($0)) })
+        let data = try Self.unpacked(try XCTUnwrap(ScanPDF.make(pages)))
+        return String(data.map { Character(Unicode.Scalar($0)) })
+    }
+
+    private struct Unreadable: Error {}
+
+    /// The file with each FlateDecode stream inflated in its place. Only
+    /// Apple's systems pack streams, so elsewhere the file is as it was.
+    static func unpacked(_ file: Data) throws -> Data {
+        #if canImport(Darwin)
+        let bytes = [UInt8](file)
+        let mark = Array("/Filter /FlateDecode /Length ".utf8), open = Array(" >>\nstream\n".utf8)
+        var out = Data()
+        var i = 0
+        while let at = Self.index(of: mark, in: bytes, from: i) {
+            var j = at + mark.count
+            var length = 0
+            while j < bytes.count, (0x30...0x39).contains(bytes[j]) {
+                let digit: Int = Int(bytes[j]) - 0x30
+                length = length * 10 + digit
+                j += 1
+            }
+            guard j + open.count <= bytes.count, Array(bytes[j..<(j + open.count)]) == open else { throw Unreadable() }
+            let start = j + open.count
+            guard length > 6, start + length <= bytes.count else { throw Unreadable() }
+            // zlib's frame: two bytes before the deflated ones, and their Adler-32 after.
+            let deflated = Data(bytes[(start + 2)..<(start + length - 4)])
+            let inflated = try (deflated as NSData).decompressed(using: .zlib) as Data
+            out.append(contentsOf: bytes[i..<at])
+            out.append(Data("/Length \(inflated.count) >>\nstream\n".utf8))
+            out.append(inflated)
+            i = start + length
+        }
+        out.append(contentsOf: bytes[i...])
+        return out
+        #else
+        return file
+        #endif
+    }
+
+    /// Where `part` first starts in `bytes`, from `start` on.
+    static func index(of part: [UInt8], in bytes: [UInt8], from start: Int) -> Int? {
+        var i = start
+        while i + part.count <= bytes.count {
+            if bytes[i] == part[0], Array(bytes[i..<(i + part.count)]) == part { return i }
+            i += 1
+        }
+        return nil
     }
 
     func testEveryPageIsA4WithItsPictureInOrder() throws {

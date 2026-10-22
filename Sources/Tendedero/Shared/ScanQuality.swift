@@ -87,6 +87,12 @@ enum ScanQuality {
         var tile = 64
         /// A tile holds print when its dark and its light differ this much.
         var printContrast: Float = 50
+        /// Print blurred so much that its edges are gone still differs this
+        /// much, its steepest turns under this share of the difference, and
+        /// is no more than this share dark, where a shadow's edge is darker.
+        var softContrast: Float = 30
+        var softSteepness: Float = 0.25
+        var softDark: Float = 0.45
         /// Edges less sharp than this are blurred: about a Gaussian blur of
         /// 1.7 pixels at the measured size, where small print starts to blur.
         var sharpEdges: Float = 0.12
@@ -220,11 +226,13 @@ enum ScanQuality {
         var darkCount = 0
         for value in values where Float(value) < darkLine { darkCount += 1 }
         let darkShare: Float = Float(darkCount) / Float(values.count)
-        guard contrast >= tuning.printContrast, darkShare >= 0.01, darkShare <= 0.6 else {
+        guard contrast >= min(tuning.printContrast, tuning.softContrast), darkShare >= 0.01, darkShare <= 0.6 else {
             return Tile(x: x, y: y, size: size, hasPrint: false, sharpness: 0, white: white, paper: paper)
         }
-        // The Laplacian's spread where the brightness turns, against the contrast.
+        // The Laplacian's spread where the brightness turns, against the
+        // contrast; and how steep each turn is, in half levels.
         var sum: Float = 0, edges = 0
+        var steps = [Int](repeating: 0, count: 256)
         for row in 1..<(size - 1) {
             for column in 1..<(size - 1) {
                 let p = row * size + column
@@ -233,6 +241,7 @@ enum ScanQuality {
                 let up = Float(values[p - size]), down = Float(values[p + size])
                 let across: Float = abs(right - left), downwards: Float = abs(down - up)
                 let turn: Float = max(across, downwards) / 2
+                steps[min(255, Int(turn * 2))] += 1
                 guard turn >= 0.15 * contrast else { continue }
                 let around: Float = left + right + up + down
                 let laplacian: Float = 4 * middle - around
@@ -240,12 +249,31 @@ enum ScanQuality {
                 edges += 1
             }
         }
-        guard edges >= 20 else {
+        if contrast >= tuning.printContrast, edges >= 20 {
+            let spread: Float = (sum / Float(edges)).squareRoot()
+            let sharpness: Float = spread / contrast
+            return Tile(x: x, y: y, size: size, hasPrint: true, sharpness: sharpness, white: white, paper: paper)
+        }
+        // Too few edges: print so blurred that its turns are all gentle, which
+        // is print without sharpness, or nothing that counts as print.
+        let steepest: Float = Self.steepest(steps) / contrast
+        guard contrast >= tuning.softContrast, darkShare <= tuning.softDark, steepest < tuning.softSteepness else {
             return Tile(x: x, y: y, size: size, hasPrint: false, sharpness: 0, white: white, paper: paper)
         }
-        let spread: Float = (sum / Float(edges)).squareRoot()
-        let sharpness: Float = spread / contrast
-        return Tile(x: x, y: y, size: size, hasPrint: true, sharpness: sharpness, white: white, paper: paper)
+        return Tile(x: x, y: y, size: size, hasPrint: true, sharpness: 0, white: white, paper: paper)
+    }
+
+    /// The steepest of a tile's turns, leaving out the steepest 2 %, which
+    /// may be grain: from their counts by half levels.
+    private static func steepest(_ steps: [Int]) -> Float {
+        let total = steps.reduce(0, +)
+        let kept: Int = total - total / 50
+        var seen = 0
+        for (halves, count) in steps.enumerated() {
+            seen += count
+            if seen >= kept { return Float(halves) / 2 }
+        }
+        return 127.5
     }
 
     /// The plane made smaller by a whole factor, each pixel the mean of its square.
