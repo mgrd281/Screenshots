@@ -126,6 +126,15 @@ AD = {
         mail=dict(title="Neue E-Mail", to="An:", toName="Lena Hoffmann", subject="Betreff:", subjectText="Deine Rechnung",
                   hello="Hallo Lena,", text="anbei die Rechnung von gestern.", bye="Viele Grüße"),
         cta="Entdecke viel mehr!",
+        # The new cut: the iPhone app, still to come, and what its papers say.
+        soon="Bald auch fürs iPhone",
+        photo="Foto",
+        steps=["Klick auf „Teilen“", "Klick auf „Als PDF sichern“", "Klick auf „Senden“"],
+        recent=[("Steuer 2025", 3), ("Mietvertrag", 12)],
+        receipt=dict(shop="Bäckerei Sonne", place="Hauptstraße 5, Köln", lines=[("2 Brötchen", "1,60"), ("Kaffee", "2,90"), ("Apfelkuchen", "3,40")],
+                     total="Summe", total_v="7,90 €", card="Karte", card_v="4871 0093 5521 4821"),
+        letter=dict(title="Rechnung", no="Nr. 2026-118", to="Lena Hoffmann", street="Lindenweg 12, 50667 Köln",
+                    iban="DE89 3704 0044 0532 0130 00", project="Rechnung"),
         legal="WhatsApp, ChatGPT und Claude sind Marken ihrer Inhaber. Snapfly ist mit ihnen nicht verbunden.",
     ),
 }
@@ -140,6 +149,16 @@ def ad(lang, cut="short"):
     words["history"] = L(lang, "History")
     words["days"] = L(lang, "%d days").replace("%d", "30")
     words["more"] = [L(lang, "Record Screen"), L(lang, "Capture Whole Page"), "Zeitstempel", "und vieles mehr"]
+    # The new cut's iPhone, with the labels its screens show.
+    words["phone"] = {k: L(lang, k) for k in (
+        "Scan", "Scan Document", "Create and Edit PDFs", "Photos, scans and PDFs into one file", "Merge", "Open PDF",
+        "Recently Edited", "Photos", "Protected", "More", "Add", "Save and Share", "Page moved", "Undo", "Name",
+        "With Covers", "Without Covers", "Private details stay covered", "Share", "Copy", "Save", "Receipt", "Invoice",
+        "Done")}
+    words["phone"]["pages"] = L(lang, "%d pages")
+    words["phone"]["page"] = L(lang, "1 page")
+    # The Mac cut's four newer tools, by the names the app gives them.
+    words["feat"] = [L(lang, k) for k in ("Record Screen", "Capture Whole Page", "Guide", "Convert to SVG…")]
     data = {
         "lang": lang,
         "cut": cut,
@@ -162,9 +181,10 @@ def ad(lang, cut="short"):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    if args[:1] in (["ad"], ["ad-long"]):
+    if args[:1] in (["ad"], ["ad-long"], ["ad-neu"], ["ad-mac"]):
+        cut = {"ad": "short", "ad-long": "long", "ad-neu": "neu", "ad-mac": "mac"}[args[0]]
         for lang in (args[1:] or ["de"]):
-            print(f"Wrote promo/{ad(lang, 'long' if args[0] == 'ad-long' else 'short')}")
+            print(f"Wrote promo/{ad(lang, cut)}")
         sys.exit()
     for lang in (args or ["en", "de", "ar"]):
         page(lang)
