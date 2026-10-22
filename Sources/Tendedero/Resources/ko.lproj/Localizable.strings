@@ -1831,3 +1831,9 @@
 "Undone" = "실행 취소됨";
 "about %@" = "약 %@";
 "selected" = "선택됨";
+"1 page turned" = "1페이지 회전됨";
+"%d pages turned" = "%d페이지 회전됨";
+"Page moved" = "페이지 이동됨";
+"1 page added" = "1페이지 추가됨";
+"%d pages added" = "%d페이지 추가됨";
+"Blank page added" = "빈 페이지 추가됨";

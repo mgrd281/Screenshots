@@ -1833,3 +1833,9 @@
 "Undone" = "Geri qaytarıldı";
 "about %@" = "təxminən %@";
 "selected" = "seçilib";
+"1 page turned" = "1 səhifə döndərildi";
+"%d pages turned" = "%d səhifə döndərildi";
+"Page moved" = "Səhifə köçürüldü";
+"1 page added" = "1 səhifə əlavə olundu";
+"%d pages added" = "%d səhifə əlavə olundu";
+"Blank page added" = "Boş səhifə əlavə olundu";

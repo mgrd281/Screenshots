@@ -1831,3 +1831,9 @@
 "Undone" = "Geri alındı";
 "about %@" = "yaklaşık %@";
 "selected" = "seçili";
+"1 page turned" = "1 sayfa döndürüldü";
+"%d pages turned" = "%d sayfa döndürüldü";
+"Page moved" = "Sayfa taşındı";
+"1 page added" = "1 sayfa eklendi";
+"%d pages added" = "%d sayfa eklendi";
+"Blank page added" = "Boş sayfa eklendi";

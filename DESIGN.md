@@ -97,6 +97,9 @@ colors:
   phone-scan-warn: "#FFF4E0"        # a scanned page's card when something on it is wrong, and Save and Share's warning; #3A2A10 in dark
   phone-scan-warn-edge: "#F3D7A6"   # their 1pt edge, and the card's button; #6E4F1F in dark
   phone-scan-warn-text: "#6E4206"   # their words: 7.9:1 on phone-scan-warn, 6.2:1 on its button; #F5C77E in dark (8.8:1, 4.8:1); also Save and Share's lines for a page not ready, on the bar, and the crop glyph on a page whose corners wait
+  phone-project-toast: "#1F2226"    # the note after pages were turned, moved, added or deleted, a capsule over the bottom: white words on it 16:1; #3A3F46 in dark (10.6:1)
+  phone-project-toast-action: "#7FE0B8" # its Undo and Redo: 10:1 on phone-project-toast; #9FE8C9 in dark (7.5:1)
+  phone-project-tile: "#E7F4EE"     # the glyphs' tiles on the Scan tab's PDF card and in Recently Edited, the glyph in phone-protect-tint on it (4:1); #11392C in dark
 typography:
   field:
     fontFamily: "SF Pro, system-ui"
@@ -141,6 +144,9 @@ rounded:
   phone-scan-card: "16pt"        # a scanned page's card
   phone-scan-strip: "18pt"       # the strip of a document's pages
   phone-scan-thumb: "8pt"        # a page small in the strip
+  phone-project-card: "20pt"     # the Scan tab's card to make PDFs
+  phone-project-tile: "16pt"     # its two tiles, and Recently Edited's card
+  phone-project-page: "4pt"      # a page small in the pages' overview (3pt in the editor's strip)
   full: "999pt"
 spacing:
   hairline: "2pt"
@@ -287,6 +293,16 @@ components:
     stroke: "2pt, dashed 5 and 3"  # where something is wrong on a scanned page: systemOrange round it, 4pt out, corners of 6, filled with the same orange at 12%; on the screen only, never in a copy
   phone-scan-loupe:
     size: "120pt"                  # the corner editor's loupe: the picture 2.5× under the corner dragged, a phone-protect cross 22pt wide and 1.5pt thick, a 3pt white ring and a shadow of black 40%, radius 8, y 3, in the top corner away from the finger; the handles 22pt white circles ringed 3pt in phone-protect, 44pt to the finger; outside the page, black at 50%, its edges 2pt white
+  phone-project-page:
+    columns: "3"                   # the pages' overview: three to a row (two at the accessibility sizes), 16pt in from the sides, 14pt apart and 18pt between rows; each page in A4's room (1 : 1.414), fitted in its own shape, never stretched or cut, on white with rounded.phone-project-page and a shadow of black 10%, radius 3, y 1; under it, 8pt down, its number in caption 2 bold in a 20pt circle of tertiarySystemFill and where it came from in caption .secondary, one line cut in the middle; chosen, a 2.5pt phone-protect-tint ring 4pt out with corners of 6; while choosing, Photos' check (24pt, phone-protect with a white tick and ring, else white at 85% ringed in black 25%) 6pt in at its bottom trailing corner
+  phone-project-lift:
+    scale: "1.04"                  # a page held 0.3 s: lifted on a spring (0.35 s, damping 0.85) with a shadow of black 24%, radius 18, y 10, a light impact, the page left behind at 45%; a 3pt phone-protect bar with round ends shows where it lands, the others making room on the same spring; near the top or bottom edge the grid scrolls; a selection haptic at each new place, a soft impact once dropped; with Reduce Motion it is not made larger and everything settles in 0.15 s
+  phone-project-bar:
+    height: "52pt"                 # the overview's bar on the bar's material, 16pt in: Add (a capsule of systemBackground with a shadow of black 6%, radius 6, y 2) and Next (white on phone-protect), body semibold, 12pt apart, one under another at the accessibility sizes; while choosing, Turn, Duplicate, As PDF and Delete, a 20pt glyph over caption medium in phone-protect-tint (Delete red), at 50% and not usable while none is chosen
+  phone-project-toast:
+    height: "44pt"                 # at least: subheadline medium white on a phone-project-toast capsule, 18pt in (12pt at the trailing end), Undo, then Redo, in subheadline semibold phone-project-toast-action, a shadow of black 20%, radius 10, y 4, 16pt from the screen's sides, 12pt over the bar; it rises on a spring (0.35 s, damping 0.85), only fades with Reduce Motion, stays 4 s, and VoiceOver reads it out
+  phone-project-indicator:
+    height: "28pt"                 # "3 / 12" over a PDF's page as it opens: footnote semibold, figures of one width, 12pt in, a glass capsule; gone after 1.5 s in 0.4 s (0.15 s with Reduce Motion)
   draw-swatch:
     size: "18pt"                   # an ink, with a 1pt hairline of .primary at 18%; chosen: a 2pt accent ring 3pt out
   draw-handle:
@@ -2915,6 +2931,75 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   `phone-scan-warn-text`) and waits. Then a note for 6 s and a success
   haptic; without covers the words say so ("Copied, without covers") beside
   a plain checkmark, never the protected shield.
+- **PDF projects** (`ProjectOverview`, `ProjectEditing`,
+  `ProjectExportSheet`, `ProjectEntry`) put photos, scans and PDFs into one
+  file, the files themselves left as they are.
+  - **Ways in.** On the Scan tab, under the scanned pages, a card on
+    `SnapflyTokens.card` with `rounded.phone-project-card`, a 6% hairline of
+    `.primary` and 16 pt in: "Create and Edit PDFs" in the headline over two
+    tiles side by side (one under another at the accessibility sizes) on
+    `tertiarySystemGroupedBackground` with `rounded.phone-project-tile`, at
+    least 128 pt high, 14 pt in: a 40 pt glyph tile of `phone-project-tile`
+    with corners of 12 (`doc.on.doc` for Merge, `doc.text.magnifyingglass` for
+    Open PDF),
+    then subheadline semibold over a footnote ("Photos, scans and PDFs into
+    one file", "Put pages in order and cover them"). Under it, **Recently
+    Edited**: five projects at most in one card (`rounded.phone-project-tile`),
+    each row at least 60 pt with a 36 pt `doc.richtext` tile (corners of
+    10), its name, "4 pages · 5 min. ago" in footnote `.secondary` and a chevron; held,
+    Delete. The Protected tab's bar, while screenshots are chosen, has Merge
+    into PDF (prominent, `phone-protect`), in the grid's order. A PDF or a
+    picture opened from Files, Mail or Safari starts a project too.
+  - **The pages' overview**, full screen on `systemGroupedBackground`: an
+    inline title, the project's name in the headline over "6 pages" in
+    caption `.secondary` (a tap renames it; while choosing, "2 pages
+    selected"), Cancel on the leading side (Select All while choosing) and
+    Select (Done, semibold) on the trailing one. Under it, a footnote says
+    to tap a page to choose it and to hold and drag it to change the order;
+    then the pages (`phone-project-page`), each named where it came from
+    ("Rechnung · p. 2", "Photo", "Scanned", "Screenshot", with its kind once
+    read: "Invoice"). A tap opens a page, or while choosing chooses it with
+    a selection haptic; held a moment it lifts and is dragged
+    (`phone-project-lift`); VoiceOver moves it earlier or later, turns or
+    deletes it. Then the bar (`phone-project-bar`): Add, a menu of From
+    Photos, From Files, Scan, Blank Page and Scanned Pages, new pages going
+    after the one chosen or at the end; and Next, to the first page. Every
+    change (turned, duplicated, deleted, moved, added) shows its note
+    (`phone-project-toast`) and can be undone by it, then done again, 200
+    steps back; the grid hands the same undo to the system's own gestures. With nothing added yet, a
+    40 pt `doc.on.doc` in `phone-protect-tint`, "Add photos, scans and PDFs"
+    in title 3 bold, a subheadline saying the files stay as they are, and
+    the same sources as rows of `secondarySystemGroupedBackground`, corners
+    of 14, at least 54 pt, 420 pt wide at most. A PDF with a password asks
+    for it in an alert every time it is opened ("It is not kept"), and asks
+    again after a wrong one; a signed PDF says once that its signature will
+    not hold in the new file.
+  - **A page in the editor** is the editor of any picture (the tools to
+    cover, draw and read, as on a screenshot), with "Page 2 of 6" as its
+    title, the pages' grid (`square.grid.2x2`) on the leading side and Next
+    on the trailing one. Shown whole, a swipe up opens the next page and a
+    swipe down the one before: the page leaves 30% of the screen's height
+    the way it went, fading, in 0.18 s, and the next comes in from the other
+    side on a spring (0.42 s, damping 0.86), only fading with Reduce Motion;
+    VoiceOver's three fingers do the same. A page zooms to 8×. Over it,
+    "2 / 6" (`phone-project-indicator`); over the docks the pages' strip
+    (`phone-scan-strip`, each page in its own shape, dragged onto another to
+    move it, held for Turn, Duplicate and Delete Page), its plus the same
+    Add menu. A page turned has its covers found again, upright.
+  - **Save and Share** (`ProjectExportSheet`), a sheet as tall as what it
+    holds on `systemBackground`: "Save and Share" in title 2 bold over "PDF,
+    6 pages", and a 30 pt close button; the name in a field of
+    `secondarySystemBackground` (corners of 14, at least 52 pt) with ".pdf"
+    after it; with pictures among the pages, **Page Size for Pictures**
+    (Original, A4, Letter: a picture is fitted onto the page whole, never
+    stretched or cut, a PDF's own pages keep their size); **Quality** (High,
+    Medium, Small, segmented) with "about 2.4 MB" on the trailing side; the
+    covers as in the scan's sheet (With Covers, Recommended, where every
+    save starts; Without Covers, "Only the pages", and then the
+    `phone-scan-warn` card); Searchable Text; the places still to check on
+    pages already opened. On the bar's material, Copy, Save and Share, Share
+    in `phone-protect`. While it works, "Covering page 3 of 6 …"; then the
+    note for 6 s with a success haptic, without covers a plain checkmark.
 - **Details** (`ReviewSheet`) is a sheet at medium or large height, the
   picture still usable behind it at medium. First, while there are places
   Snapfly was not sure about, "To check" with "%d of %d checked" and a

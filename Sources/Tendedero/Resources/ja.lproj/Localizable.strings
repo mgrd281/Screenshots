@@ -1831,3 +1831,9 @@
 "Undone" = "取り消しました";
 "about %@" = "約 %@";
 "selected" = "選択中";
+"1 page turned" = "1 ページを回転しました";
+"%d pages turned" = "%d ページを回転しました";
+"Page moved" = "ページを移動しました";
+"1 page added" = "1 ページを追加しました";
+"%d pages added" = "%d ページを追加しました";
+"Blank page added" = "空白ページを追加しました";

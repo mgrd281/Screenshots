@@ -1831,3 +1831,9 @@
 "Undone" = "已撤销";
 "about %@" = "约 %@";
 "selected" = "已选择";
+"1 page turned" = "已旋转 1 页";
+"%d pages turned" = "已旋转 %d 页";
+"Page moved" = "已移动页面";
+"1 page added" = "已添加 1 页";
+"%d pages added" = "已添加 %d 页";
+"Blank page added" = "已添加空白页";

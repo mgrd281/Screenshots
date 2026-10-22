@@ -1833,3 +1833,9 @@
 "Undone" = "Undone";
 "about %@" = "about %@";
 "selected" = "selected";
+"1 page turned" = "1 page turned";
+"%d pages turned" = "%d pages turned";
+"Page moved" = "Page moved";
+"1 page added" = "1 page added";
+"%d pages added" = "%d pages added";
+"Blank page added" = "Blank page added";

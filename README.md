@@ -1071,11 +1071,53 @@ watch the screen, so there is no line there. What it keeps is the covering:
   with Undo for five seconds while it stays in Photos, and Delete from
   Photos, which iOS asks about first (Photos keeps it 30 days to bring
   back). Select chooses several, by a tap on each or a finger drawn
-  across, and Remove asks which of the two, as Photos does in an album.
-  More is Settings as a short overview, with a page for each part (below).
+  across, and Remove asks which of the two, as Photos does in an album;
+  Merge into PDF puts the screenshots chosen, in the order they show, into
+  a new PDF project. More is Settings as a short overview, with a page for each part (below).
   While a picture is open the tab bar steps aside; on More it stays whole
   as a page scrolls, and steps aside on More's pages, so it never sits
   over a row.
+- **PDF projects.** Under the scan card, "PDF erstellen und bearbeiten"
+  offers Merge (photos, scans and PDFs into one file) and Open PDF (a PDF
+  from Files, to put its pages in order and cover them), and Recently
+  Edited lists the projects changed last, with their page count and when.
+  A PDF or a picture opened in Snapfly from Files, Mail or Safari starts a
+  project too. Pages come from Photos (in the order chosen), from Files
+  (PDF, JPEG, PNG, HEIC: a PDF brings all its pages), from the document
+  camera, as an empty page, or from the Scan tab's pages; each file is
+  copied in as it came and never changed (`PDFProject`, `ProjectStore`).
+  The overview shows the pages three to a row (two at the largest text
+  sizes), each small in its own shape, a narrow receipt narrow, with its
+  number and where it comes from ("Rechnung.pdf · S. 1", "Foto · Beleg",
+  "Scan · Brief", its kind read from its words on the iPhone). Held, a
+  page lifts a little larger with a deeper shadow while its place fades, a
+  green bar shows where it will land, the others make room on a spring and
+  the grid scrolls near its edges; a haptic marks the lift, each new place
+  and the drop. A tap chooses pages, and the bar turns them a quarter,
+  duplicates them, makes a PDF of them alone or deletes them, without
+  asking: a dark note says what was done, with Undo, then Redo. Every page
+  operation can be undone and done again. Next opens the pages in Protect Picture, one at a time, under
+  "Seite 1 von 6": a swipe up opens the next page and a swipe down the one
+  before while the page shows whole, two fingers or a double tap zoom up to
+  eight times, "3 / 12" shows as a page opens, and the project's pages wait
+  in the strip, to open, drag, turn, duplicate or delete. A PDF's words are
+  read from its own text, letter for letter, where it has text, and from
+  the picture only where it has none, as in a photo pasted on the page; its
+  covers are found as on any picture. A PDF locked with a password asks for
+  it each time it opens, and it is never kept; a signed PDF says once that
+  editing it ends the signature. Save and Share takes the file's name
+  before its fixed ".pdf", how pictures sit on their pages (Original, A4 or
+  US Letter, with 10 mm round them, never stretched or cut), the quality
+  (High, Medium, Small, 300, 200 or 150 dpi) with how large the file will
+  be, worked out from its own pages, covers (where every save starts) or
+  none, which keeps a PDF's pages as they are and warns as a scan does, and
+  searchable text; then Copy, Save to Files or Share. Covered, every page
+  is drawn as a picture with its covers and its words read again from the
+  covered page. Save as Pictures, in the editor's menu, makes a covered PNG
+  of each page. A project is written a moment after each change into
+  Snapfly's own storage on the iPhone, with complete file protection and
+  never in a backup, and opens again where it was left, even after Snapfly
+  was closed by force; Delete in Recently Edited removes it and its copies.
 - **The first run** shows what Snapfly does in under fifteen seconds, on
   three made-up documents of one made-up person, each a standing A4 page
   that looks like a real one, before anything is asked (`FIRST_RUN.md`):
@@ -1446,6 +1488,10 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/ScanEditing.swift`, `ScanCorners.swift`, `ScanSaveSheet.swift` | A scanned page in Protect Picture: its card, the strip of the document's pages, its own tools and Before and After; the corner editor with its loupe; Save and Share, with the format, covers, searchable text and the check line |
 | `iOS/Snapfly/ScanDemo.swift` | Made-up scans for the pictures and videos made in CI (`-SnapflyScan`, `scripts/scan-checks.sh`), and a made-up photographed invoice in the Photos tab (`-SnapflyDocumentPhoto`), in debug builds only |
 | `iOS/Snapfly/ScanHelp.swift` | The card that offers to clean a photographed document in Protect Picture, with Clean Up and Revert; the sheet an AI chat opens for scanned pages, with what goes and the questions; the document's kind beside its pages |
+| `Shared/PDFProject.swift`, `PDFPageGeometry.swift` | Tested on Linux: a PDF project (its files, its pages and their turns), the page operations, undo and redo, how pictures sit on Original, A4 or Letter pages, the quality and the size estimate; where things on a turned PDF page are, its text in lines and words, and whether a PDF is signed |
+| `Shared/PDFPages.swift`, `PDFFixtures.swift` | A PDF opened from its copy with PDFKit: locked and unlocked, its pages drawn turned, its text in lines as the covers read them; pictures read, turned and kept without notes; the project's pages put together into one PDF; and the made-up files for the tests (debug only) |
+| `iOS/Snapfly/ProjectStore.swift`, `ProjectDemo.swift` | The PDF projects kept on the iPhone, protected and out of backups: files copied in as they came, autosave, opening again after a forced close, passwords asked and never kept, page operations with undo, pages drawn small and large, and the PDF or pictures made with covers; the made-up project for CI (debug only) |
+| `iOS/Snapfly/ProjectOverview.swift`, `ProjectEditing.swift`, `ProjectExportSheet.swift`, `ProjectEntry.swift` | The pages' overview with its lift, drag and drop, choosing and the dark note with Undo; the editor's pages, strip and "3 / 12"; Save and Share with page size, quality and size; the Scan tab's PDF card and Recently Edited |
 | `Shared/ScanNaming.swift`, `ScanAsk.swift`, `ScanOrder.swift` | Tested on Linux: a scanned document's name and kind from the words outside its covers, never a covered word or the owner's name, with Apple Intelligence on the device or by when it was scanned; when a photo counts as a photographed document; the questions for an AI chat; the pages' order |
 | `iOS/Snapfly/SendToApps.swift`, `Assets.xcassets/Chat*.imageset` | Send to on the iPhone: the apps chosen (`SendApps`), their icons, the row of them after a scan, the column beside the picture in Protect Picture (`AppRail`) with Photos, Files and the share sheet, and choosing and ordering them; the hand-over (`Handoff`): one picture straight to WhatsApp, one to an AI chat by opening its app with it copied, anything else through the share sheet, never a website |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, three or four to a row with a pinch, See All, and the iPhone's green |

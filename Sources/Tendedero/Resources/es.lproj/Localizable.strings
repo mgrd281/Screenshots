@@ -1831,3 +1831,9 @@
 "Undone" = "Deshecho";
 "about %@" = "aprox. %@";
 "selected" = "seleccionada";
+"1 page turned" = "1 página girada";
+"%d pages turned" = "%d páginas giradas";
+"Page moved" = "Página movida";
+"1 page added" = "1 página añadida";
+"%d pages added" = "%d páginas añadidas";
+"Blank page added" = "Página en blanco añadida";

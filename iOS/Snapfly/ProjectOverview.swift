@@ -206,6 +206,9 @@ struct ProjectOverview: View {
                          turn: { store.turn([$0]) }, delete: { store.delete([$0]) })
                     .ignoresSafeArea(.container, edges: .bottom)
                     .accessibilityIdentifier("project-grid")
+                    #if DEBUG
+                    .overlay(alignment: .topLeading) { FrameMeterMark() }
+                    #endif
             }
         }
     }
@@ -637,6 +640,20 @@ final class PageGridController: UIViewController, UICollectionViewDelegate {
         return true
     }
 
+    #if DEBUG
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if drag == nil { FrameMeter.shared.start("scroll") }
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate, drag == nil { FrameMeter.shared.stop() }
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if drag == nil { FrameMeter.shared.stop() }
+    }
+    #endif
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt path: IndexPath) {
         collectionView.deselectItem(at: path, animated: false)
         guard order.indices.contains(path.item) else { return }
@@ -670,6 +687,9 @@ final class PageGridController: UIViewController, UICollectionViewDelegate {
         drag = Drag(id: order[path.item], from: path.item, at: path.item, lifted: lifted,
                     hold: CGPoint(x: point.x - cell.center.x, y: point.y - cell.center.y), finger: point)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        #if DEBUG
+        FrameMeter.shared.start("reorder")
+        #endif
         let still = self.still
         UIView.animate(withDuration: still ? 0.15 : 0.35, delay: 0, usingSpringWithDamping: still ? 1 : 0.85,
                        initialSpringVelocity: 0, options: [.allowUserInteraction]) {
@@ -762,6 +782,9 @@ final class PageGridController: UIViewController, UICollectionViewDelegate {
         link?.invalidate()
         link = nil
         guard let drag else { return }
+        #if DEBUG
+        FrameMeter.shared.stop()
+        #endif
         if cancelled, drag.at != drag.from { reorder(to: drag.from) }
         let landing = cancelled ? drag.from : drag.at
         let frame = collection.layoutAttributesForItem(at: IndexPath(item: landing, section: 0))?.frame ?? drag.lifted.frame
@@ -845,3 +868,71 @@ struct PageCell: View {
         .shadow(color: .black.opacity(0.15), radius: 2, y: 1)
     }
 }
+
+#if DEBUG
+/// For the numbers made in CI: the frames drawn while the grid scrolls or a
+/// page is dragged, and how many came late, as Instruments counts a hitch:
+/// a frame later than half a frame more than it should take.
+@MainActor
+final class FrameMeter: NSObject, ObservableObject {
+    static let shared = FrameMeter()
+    @Published private(set) var summary = "none"
+    private var link: CADisplayLink?
+    private var what = ""
+    private var last: CFTimeInterval = 0
+    private var frames = 0
+    private var late = 0
+    private var lateTime: CFTimeInterval = 0
+    private var total: CFTimeInterval = 0
+
+    func start(_ what: String) {
+        stop()
+        self.what = what
+        last = 0
+        frames = 0
+        late = 0
+        lateTime = 0
+        total = 0
+        let link = CADisplayLink(target: self, selector: #selector(tick(_:)))
+        link.add(to: .main, forMode: .common)
+        self.link = link
+    }
+
+    @objc private func tick(_ link: CADisplayLink) {
+        let expected = link.targetTimestamp - link.timestamp
+        if last > 0 {
+            let took = link.timestamp - last
+            total += took
+            frames += 1
+            if took > expected * 1.5 {
+                late += 1
+                lateTime += took - expected
+            }
+        }
+        last = link.timestamp
+    }
+
+    func stop() {
+        guard let link else { return }
+        link.invalidate()
+        self.link = nil
+        guard total > 0 else { return }
+        summary = String(format: "%@: %d frames in %.1f s, %d late, hitch time %.1f ms per s", what, frames, total, late,
+                         lateTime * 1000 / total)
+    }
+}
+
+/// The numbers as invisible words the UI tests read, in debug builds only.
+struct FrameMeterMark: View {
+    @ObservedObject private var meter = FrameMeter.shared
+
+    var body: some View {
+        Text(verbatim: meter.summary)
+            .font(.system(size: 2))
+            .foregroundStyle(.clear)
+            .frame(width: 2, height: 2)
+            .allowsHitTesting(false)
+            .accessibilityIdentifier("project-frame-meter")
+    }
+}
+#endif

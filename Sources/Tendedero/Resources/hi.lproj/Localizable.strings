@@ -1833,3 +1833,9 @@
 "Undone" = "पूर्ववत किया गया";
 "about %@" = "लगभग %@";
 "selected" = "चयनित";
+"1 page turned" = "1 पेज घुमाया गया";
+"%d pages turned" = "%d पेज घुमाए गए";
+"Page moved" = "पेज खिसकाया गया";
+"1 page added" = "1 पेज जोड़ा गया";
+"%d pages added" = "%d पेज जोड़े गए";
+"Blank page added" = "खाली पेज जोड़ा गया";

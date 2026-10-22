@@ -350,7 +350,8 @@ struct PagePaper: View {
                 .shadow(color: .black.opacity(0.10), radius: 3, y: 1)
                 .frame(width: room.width, height: room.height)
         }
-        .animation(reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.35, dampingFraction: 0.85), value: turns)
+        .animation(reduceMotion || ScanDemo.still ? .easeOut(duration: 0.15) : .spring(response: 0.35, dampingFraction: 0.85),
+                   value: turns)
         .accessibilityHidden(true)
     }
 }
@@ -387,6 +388,8 @@ struct ProjectToastView: View {
     @ObservedObject private var store = ProjectStore.shared
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    private var still: Bool { reduceMotion || ScanDemo.still }
+
     var body: some View {
         Group {
             if let toast = store.toast {
@@ -407,15 +410,15 @@ struct ProjectToastView: View {
                 .background(SnapflyTokens.projectToast, in: Capsule())
                 .shadow(color: .black.opacity(0.2), radius: 10, y: 4)
                 .padding(.horizontal, 16)
-                .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                .transition(still ? .opacity : .move(edge: .bottom).combined(with: .opacity))
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("project-toast")
                 .onAppear { UIAccessibility.post(notification: .announcement, argument: toast.text) }
             }
         }
-        .animation(reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.35, dampingFraction: 0.85), value: store.toast)
+        .animation(still ? .easeOut(duration: 0.15) : .spring(response: 0.35, dampingFraction: 0.85), value: store.toast)
         .task(id: store.toast) {
-            guard store.toast != nil else { return }
+            guard store.toast != nil, !ProjectDemo.keepsToast else { return }
             try? await Task.sleep(for: .seconds(4))
             if !Task.isCancelled { store.toast = nil }
         }

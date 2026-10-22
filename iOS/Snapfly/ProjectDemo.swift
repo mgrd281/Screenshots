@@ -7,7 +7,9 @@ import Foundation
 /// Undo (deleted); its first page in the editor (editor); Save and Share
 /// (export), without covers (uncovered); 300 pages (long); a PDF locked
 /// with a password (locked); a signed PDF (signed); nothing added yet
-/// (empty); or the Scan tab with the project among the recent ones (tab).
+/// (empty); the Scan tab with the project among the recent ones (tab); or
+/// nothing made, so the project open when Snapfly was left opens again,
+/// as after Snapfly was closed by force (reopen).
 /// Everything on them is made up (`PDFFixtures`). Nothing of it is in a
 /// release build.
 enum ProjectDemo {
@@ -19,10 +21,14 @@ enum ProjectDemo {
     }()
 
     static var requested: Bool { state != nil }
+    /// A made-up project is made, rather than the one left opened again.
+    static var makes: Bool { requested && state != "reopen" }
     static var showsTab: Bool { state == "tab" }
     static var selects: Bool { state == "select" }
     static var opensExport: Bool { state == "export" || state == "uncovered" }
     static var uncovered: Bool { state == "uncovered" }
+    /// The note after a page was deleted stays, for its picture.
+    static var keepsToast: Bool { state == "deleted" }
 
     /// The made-up files written where the app keeps what is temporary, then added as a file from Files would be.
     @MainActor static func start(_ store: ProjectStore) {
@@ -65,10 +71,12 @@ enum ProjectDemo {
     }
     #else
     static let requested = false
+    static let makes = false
     static let showsTab = false
     static let selects = false
     static let opensExport = false
     static let uncovered = false
+    static let keepsToast = false
     @MainActor static func start(_ store: ProjectStore) {}
     #endif
 }

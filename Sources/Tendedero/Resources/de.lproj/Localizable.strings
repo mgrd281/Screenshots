@@ -1831,3 +1831,9 @@
 "Undone" = "Rückgängig gemacht";
 "about %@" = "ca. %@";
 "selected" = "ausgewählt";
+"1 page turned" = "1 Seite gedreht";
+"%d pages turned" = "%d Seiten gedreht";
+"Page moved" = "Seite verschoben";
+"1 page added" = "1 Seite hinzugefügt";
+"%d pages added" = "%d Seiten hinzugefügt";
+"Blank page added" = "Leere Seite hinzugefügt";

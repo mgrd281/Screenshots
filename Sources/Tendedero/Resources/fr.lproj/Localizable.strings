@@ -1831,3 +1831,9 @@
 "Undone" = "Annulé";
 "about %@" = "env. %@";
 "selected" = "sélectionnée";
+"1 page turned" = "1 page pivotée";
+"%d pages turned" = "%d pages pivotées";
+"Page moved" = "Page déplacée";
+"1 page added" = "1 page ajoutée";
+"%d pages added" = "%d pages ajoutées";
+"Blank page added" = "Page vierge ajoutée";

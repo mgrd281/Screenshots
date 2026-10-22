@@ -166,7 +166,7 @@ final class ProjectStore: ObservableObject {
             let found = await Self.run(on: writer) { Self.readAll() }
             projects = found.sorted { $0.modified > $1.modified }
             #if DEBUG
-            if ProjectDemo.requested { return ProjectDemo.start(self) }
+            if ProjectDemo.makes { return ProjectDemo.start(self) }
             #endif
             // Where Snapfly was left with a project open, it opens again there.
             if let id = UserDefaults.standard.string(forKey: Self.openKey).flatMap(UUID.init(uuidString:)) {
@@ -485,6 +485,7 @@ final class ProjectStore: ObservableObject {
                 project.files += files
                 project.insert(pages, at: index)
             }
+            toast = ProjectToast(text: count == 1 ? L("1 page added") : String(format: L("%d pages added"), count))
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             readKinds(files.filter { file in
                 pages.contains { page in
@@ -657,8 +658,9 @@ final class ProjectStore: ObservableObject {
     }
 
     func turn(_ ids: Set<UUID>) {
-        guard !ids.isEmpty else { return }
-        change(L("Turn")) { $0.turn(ids) }
+        let count = project?.pages.filter { ids.contains($0.id) }.count ?? 0
+        guard count > 0, change(L("Turn"), { $0.turn(ids) }) else { return }
+        toast = ProjectToast(text: count == 1 ? L("1 page turned") : String(format: L("%d pages turned"), count))
         UISelectionFeedbackGenerator().selectionChanged()
     }
 
@@ -682,8 +684,8 @@ final class ProjectStore: ObservableObject {
     }
 
     func move(from: Int, to place: Int) {
-        guard from != place else { return }
-        change(L("Move")) { $0.move(from: from, to: place) }
+        guard from != place, change(L("Move"), { $0.move(from: from, to: place) }) else { return }
+        toast = ProjectToast(text: L("Page moved"))
     }
 
     func move(_ id: UUID, to place: Int) {
@@ -699,6 +701,7 @@ final class ProjectStore: ObservableObject {
         change(L("Add Blank Page")) { project in
             made = project.insertBlank(at: index ?? project.pages.count, size: size)
         }
+        if made != nil { toast = ProjectToast(text: L("Blank page added")) }
         return made
     }
 

@@ -1831,3 +1831,9 @@
 "Undone" = "تم التراجع";
 "about %@" = "نحو %@";
 "selected" = "مُختارة";
+"1 page turned" = "تم تدوير صفحة واحدة";
+"%d pages turned" = "تم تدوير %d صفحات";
+"Page moved" = "نُقلت الصفحة";
+"1 page added" = "أُضيفت صفحة واحدة";
+"%d pages added" = "أُضيفت %d صفحات";
+"Blank page added" = "أُضيفت صفحة فارغة";

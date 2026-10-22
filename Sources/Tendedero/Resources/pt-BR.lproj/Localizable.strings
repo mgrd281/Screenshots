@@ -1831,3 +1831,9 @@
 "Undone" = "Desfeito";
 "about %@" = "aprox. %@";
 "selected" = "selecionada";
+"1 page turned" = "1 página girada";
+"%d pages turned" = "%d páginas giradas";
+"Page moved" = "Página movida";
+"1 page added" = "1 página adicionada";
+"%d pages added" = "%d páginas adicionadas";
+"Blank page added" = "Página em branco adicionada";
