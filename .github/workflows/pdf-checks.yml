@@ -1,0 +1,76 @@
+# PDF projects without an iPhone: the PDF tests on this Mac on made-up
+# files, with their numbers; then the app on the simulator: its UI tests,
+# with the frames counted while 300 pages scroll and while a page is
+# dragged, still frames of the Scan tab's PDF card, the pages' overview,
+# the editor, Save and Share, a locked and a signed PDF and 300 pages, light
+# and dark, at the largest text sizes, on the newest iPhone and the
+# smallest, in German, Arabic and English, and videos of merging and
+# dragging pages, with and without Reduce Motion. The pictures, the numbers
+# and the videos go to the "pdf-captures" pre-release on the Releases page,
+# for review; the test results stay with the run. Runs when PDF projects or
+# what they show change, and by hand.
+name: PDF Checks
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths:
+      - "Sources/Tendedero/Shared/PDF*.swift"
+      - "Sources/Tendedero/Shared/ScanPDF.swift"
+      - "Tests/TendederoTests/PDF*.swift"
+      - "iOS/Snapfly/Project*.swift"
+      - "iOS/Snapfly/ProtectView.swift"
+      - "iOS/Snapfly/ProtectSession.swift"
+      - "iOS/Snapfly/MarkCanvas.swift"
+      - "iOS/Snapfly/ScanTab.swift"
+      - "iOS/SnapflyUITests/PDFUITests.swift"
+      - "scripts/pdf-checks.sh"
+      - ".github/workflows/pdf-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pdf-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test on this Mac, run the UI tests, capture the frames and record the motion
+        run: scripts/pdf-checks.sh
+
+      - name: Keep the pictures, the videos and the test results with the run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-checks
+          path: |
+            captures/pdf/
+            build/pdf.xcresult
+          if-no-files-found: ignore
+
+      - name: Publish the pictures, the numbers and the videos for review
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          files=(captures/pdf/*.png captures/pdf/*.mp4 captures/pdf/*.txt)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "Nothing to publish."
+            exit 0
+          fi
+          tag=pdf-captures
+          notes="PDF projects on this Mac and the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: made-up files (a three-page invoice with real text, the same locked, a signed contract, 300 pages, photos of a narrow receipt and a sideways page), with the numbers (pdf-300-pages.txt, pdf-covered-text.txt); the Scan tab's PDF card, the pages' overview, pages chosen, a page deleted with Undo, the editor, Save and Share, a locked and a signed PDF and 300 pages, light and dark, at the largest text sizes, on the newest iPhone and the smallest, in German, Arabic and English; and videos of merging and dragging pages, with and without Reduce Motion. For review; not a download of Snapfly."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --notes "$notes" --prerelease
+          else
+            gh release create "$tag" --prerelease --title "PDF captures" --notes "$notes" --target "$GITHUB_SHA"
+          fi
+          gh release upload "$tag" "${files[@]}" --clobber

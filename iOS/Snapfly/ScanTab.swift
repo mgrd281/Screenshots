@@ -10,6 +10,8 @@ import VisionKit
 /// under "Scanned pages" in the document's order, for Save and Share (one
 /// A4 PDF or a PNG each, covered or only cleaned) or an app. Pages stay in
 /// memory while the app runs, and are never saved unless the owner saves them.
+/// Under the scan card, "PDF erstellen und bearbeiten" starts a PDF project
+/// (`ProjectStore`), and the projects changed last wait under it.
 struct ScanTab: View {
     @ObservedObject private var store = ScannedPages.shared
     @ObservedObject private var tabs = AppTabs.shared
@@ -36,6 +38,8 @@ struct ScanTab: View {
                     }
                     .sensoryFeedback(.impact(weight: .light), trigger: presses)
                     if !store.pages.isEmpty { scanned }
+                    PDFStartCard()
+                    RecentProjects()
                     steps
                 }
                 .padding(.horizontal, 16)
@@ -258,9 +262,12 @@ private struct ScanCard: View {
     let scan: () -> Void
 
     var body: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: 14) {
+            // A little smaller than it was, so the PDF card under it shows too.
             Viewfinder()
                 .frame(width: 132, height: 132)
+                .scaleEffect(0.8)
+                .frame(width: 106, height: 106)
                 .accessibilityHidden(true)
             VStack(spacing: 6) {
                 Text(L("Scan a document"))
@@ -295,7 +302,7 @@ private struct ScanCard: View {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 24)
+        .padding(.vertical, 18)
         .frame(maxWidth: .infinity)
         .background(SnapflyTokens.surface, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).strokeBorder(Color.primary.opacity(0.06)))

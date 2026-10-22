@@ -125,6 +125,17 @@ enum SnapflyTokens {
     static let scanStripRadius: CGFloat = 18
     static let scanThumbRadius: CGFloat = 8
 
+    // MARK: PDF projects
+
+    /// The dark note after a page operation: near-black with white words,
+    /// 16:1; at night a dark grey above the black ground, 10.6:1.
+    static let projectToast = color(0x1F2226, dark: 0x3A3F46)
+    /// Its Undo and Redo: a light green on it, 10:1 and 7.5:1.
+    static let projectToastAction = color(0x7FE0B8, dark: 0x9FE8C9)
+    /// Round the glyphs of the Scan tab's PDF tiles: the soft green, the
+    /// glyph in `protectTint` on it 4:1, as a glyph needs 3:1.
+    static let projectTile = color(0xE7F4EE, dark: 0x11392C)
+
     // MARK: What Is Covered
 
     /// What Is Covered's stage takes the hero's greens (`moreHero`,

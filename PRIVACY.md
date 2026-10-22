@@ -149,6 +149,22 @@ or turn on syncing with your iPhone (below).
   look and your own rules are kept for it in the iPhone's keychain, never a
   picture or a word read. How long each step of covering took is written to the device's
   log as numbers only, never a word of what was read.
+- **PDF projects are kept on the iPhone, protected.** A PDF project keeps
+  copies of the files you add to it (PDFs, photos, scans, screenshots) and
+  the order and turns of its pages in Snapfly's own storage on the iPhone,
+  so it opens again where you left it. They are kept with complete file
+  protection, so they cannot be read while the iPhone is locked, are left
+  out of the iPhone's backups and are never synced or sent anywhere.
+  Deleting a project in Recently Edited deletes them. The files you add are
+  copied as they are and never changed. A PDF's password is asked each time
+  it opens and never kept. A PDF's words are read from its own text on the
+  iPhone, and a photo's kind (receipt, letter) from its words, only there.
+  The covers you draw by hand on a project's pages are kept only while the
+  app is open. A PDF leaves only when you copy, save or share it: with
+  covers, as every save starts, every page is a picture with its private
+  details covered and its text read from the covered page; without, the
+  PDF's own pages and text as they are, when the file holds every private
+  detail.
 - **Faster picture processing on the iPhone, only if you turn it on.** It is
   off until you turn it on in Settings, after a page that says what it does;
   allowing Snapfly to see your photos is not a yes to it. Then the iPhone
@@ -229,7 +245,21 @@ in Fotos auswählst, wird auf dem iPhone gerade gerückt, aufgehellt und
 geprüft, bleibt nur im Arbeitsspeicher, solange die App offen ist, und wird
 nie gesichert, außer du sicherst sie: ihre abgedeckte Kopie oder die Seiten
 als ein PDF oder je ein Bild, mit Abdeckung, wie jedes Sichern beginnt, oder,
-wenn du es so wählst, ohne, dann mit allen privaten Angaben. Der
+wenn du es so wählst, ohne, dann mit allen privaten Angaben. Ein PDF-Projekt
+behält Kopien der Dateien, die du ihm hinzufügst (PDFs, Fotos, Scans,
+Bildschirmfotos), und Reihenfolge und Drehung seiner Seiten im eigenen
+Speicher von Snapfly auf dem iPhone, damit es dort weitergeht, wo du
+aufgehört hast: mit vollständigem Dateischutz, also nicht lesbar, solange
+das iPhone gesperrt ist, nicht in Backups, nie synchronisiert oder
+versendet. Löschst du ein Projekt unter „Zuletzt bearbeitet“, sind sie
+weg. Die Dateien selbst werden unverändert kopiert und nie geändert. Das
+Passwort einer PDF wird bei jedem Öffnen erfragt und nie gespeichert. Was
+du auf den Seiten eines Projekts von Hand abdeckst, bleibt nur, solange die
+App offen ist. Ein PDF verlässt das iPhone nur, wenn du es kopierst,
+sicherst oder teilst: mit Abdeckung ist jede Seite ein Bild, ihre privaten
+Angaben abgedeckt und ihr Text von der abgedeckten Seite gelesen; ohne
+Abdeckung die Seiten und der Text der PDF, wie sie sind, mit allen privaten
+Angaben. Der
 durchsuchbare Text eines abgedeckten PDFs wird von den abgedeckten Seiten
 gelesen, darum steht nichts darin, was abgedeckt ist. Die Kamera läuft nur,
 während du scannst, und Fotos gibt Snapfly nur die Fotos, die du auswählst.

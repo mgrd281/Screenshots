@@ -20,6 +20,8 @@ final class ProtectSession: ObservableObject {
         case picture(UUID)
         /// A page scanned with the camera, kept while the app runs.
         case scanned(UUID)
+        /// A page of the PDF project open, kept with the project (`ProjectStore`).
+        case page(UUID)
     }
 
     /// How far the protection is.
@@ -90,6 +92,7 @@ final class ProtectSession: ObservableObject {
     /// so it opens again as it was left and its PDF takes it as it is.
     static func made(for source: Source) -> ProtectSession {
         if case .scanned(let id) = source { return ScannedPages.shared.session(id) }
+        if case .page(let id) = source { return ProjectStore.shared.session(id) }
         return ProtectSession(source: source)
     }
 
@@ -104,6 +107,12 @@ final class ProtectSession: ObservableObject {
 
     /// Whether the copy may leave: made and checked for the places as they are.
     var isReady: Bool { stage == .ready }
+
+    /// Whether the picture could not be read or covered.
+    var hasFailed: Bool {
+        if case .failed = stage { return true }
+        return false
+    }
 
     /// Whether Apple Intelligence, or the AI assistant, reads along for
     /// the kinds chosen.
@@ -155,6 +164,7 @@ final class ProtectSession: ObservableObject {
         }
         // A scanned page made again meanwhile, turned or cut, has a new protection: this one stops.
         if case .scanned(let id) = source, ScannedPages.shared.opened(id) !== self { return }
+        if case .page(let id) = source, ProjectStore.shared.opened(id) !== self { return }
         self.image = image
         original = UIImage(cgImage: image)
         if preview == nil { Timing.record(.shown, Timing.milliseconds(since: started)) }
@@ -164,6 +174,8 @@ final class ProtectSession: ObservableObject {
         if case .asset(let id) = source, await PhotoIndexer.reuse(for: id, image: image) {
             log.info("Prepared reading reused")
         }
+        // A PDF's page is read from its text, letter for letter, where it has text.
+        if case .page(let id) = source { await ProjectStore.shared.prepareReading(id, for: image) }
         await analyse(image, started: started, offering: true)
     }
 
@@ -469,6 +481,24 @@ final class ProtectSession: ObservableObject {
         return png != nil
     }
 
+    /// The page drawn again, sharper, for a PDF, covered where the copy is
+    /// covered now, read again and checked as the copy is; the page shown
+    /// here is not changed. Nil where it could not be made or checked.
+    func cover(_ picture: CGImage) async -> (image: CGImage, places: [CGRect])? {
+        let areas = plan.covered, left = plan.left
+        let chosen = chosen, rules = rules, style = style
+        return await Self.background { () -> (image: CGImage, places: [CGRect])? in
+            guard let done = Finder.finish(picture, covering: areas, leaving: left, chosen, rules: rules, style: style)
+            else { return nil }
+            let places = Finder.checked(areas + done.added, aspect: CGFloat(picture.width) / CGFloat(max(1, picture.height)))
+            if Finder.coversHold(original: picture, covered: done.image, areas: places) { return (done.image, places) }
+            // A look that let something through is made again in ink, the surest.
+            guard let ink = Finder.cover(picture, areas: areas + done.added, style: .ink),
+                  Finder.coversHold(original: picture, covered: ink, areas: places) else { return nil }
+            return (ink, places)
+        }
+    }
+
     /// A scanned page in other colours: the same places on it, the copy
     /// made and checked again.
     func replace(_ picture: CGImage) {
@@ -498,6 +528,8 @@ final class ProtectSession: ObservableObject {
         case .scanned(let id):
             // Cleaned first, then covered.
             return await ScannedPages.shared.ready(id)
+        case .page(let id):
+            return await ProjectStore.shared.picture(id)
         }
     }
 

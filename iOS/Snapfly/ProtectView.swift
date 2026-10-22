@@ -24,12 +24,20 @@ import VisionKit
 /// orange on the page. Under it, the document's pages in a strip, and the
 /// page's own tools: Compare Before and After, Crop, Turn, the colours and
 /// Delete. Next opens Save and Share for the whole document.
+///
+/// A PDF project's page is covered here too, under its title "Page 1 of 6":
+/// the grid button goes back to the overview of the pages, a swipe up or
+/// down turns to the next page or the one before, it zooms up to eight
+/// times, "3 / 12" shows over it as it opens, the project's strip is under
+/// it, and Next saves and shares the PDF.
 struct ProtectView: View {
     @StateObject private var session: ProtectSession
     @ObservedObject private var sync = SyncCenter.shared
     @ObservedObject private var scans = ScannedPages.shared
     /// A scanned page's place in its document; nil for any other picture.
     private let scan: ScanContext?
+    /// A PDF project's page: its place and the ways to the others; nil for any other picture.
+    private let project: ProjectContext?
     @State private var tool = EditTool.select
     @State private var selected: Int?
     @State private var markerWidth = HandShape.widths[1]
@@ -93,9 +101,10 @@ struct ProtectView: View {
     /// Right to left, the apps stand on the left, and the room for them too.
     @Environment(\.layoutDirection) private var direction
 
-    init(source: ProtectSession.Source, scan: ScanContext? = nil) {
+    init(source: ProtectSession.Source, scan: ScanContext? = nil, project: ProjectContext? = nil) {
         _session = StateObject(wrappedValue: ProtectSession.made(for: source))
         self.scan = scan
+        self.project = project
     }
 
     /// Reduce Motion, or the made-up scans played as it would (`ScanDemo`).
@@ -150,10 +159,26 @@ struct ProtectView: View {
         .animation(motion, value: session.documentPage != nil)
         .animation(motion, value: session.cleaning)
         .animation(motion, value: session.cleaned)
-        .navigationTitle(scan == nil ? L("Protect Picture") : L("Review"))
+        .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            if let project {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: project.overview) {
+                        Image(systemName: "square.grid.2x2")
+                    }
+                    .accessibilityLabel(L("All Pages"))
+                    .accessibilityIdentifier("project-overview")
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) { more }
+            if let project {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(L("Next"), action: project.export)
+                        .fontWeight(.semibold)
+                        .accessibilityIdentifier("project-next")
+                }
+            }
             if scan != nil {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(L("Next")) { saving = true }
@@ -166,6 +191,12 @@ struct ProtectView: View {
         .toolbar(focus ? .hidden : .visible, for: .navigationBar)
         .statusBarHidden(focus)
         .persistentSystemOverlays(focus ? .hidden : .automatic)
+    }
+
+    /// "Page 1 of 6" on a PDF's page, "Review" on a scanned page, else "Protect Picture".
+    private var title: String {
+        if let project { return String(format: L("Page %d of %d"), project.number, project.count) }
+        return scan == nil ? L("Protect Picture") : L("Review")
     }
 
     private func sheets(_ content: some View) -> some View {
@@ -383,7 +414,8 @@ struct ProtectView: View {
                        markerWidth: markerWidth, eraserReach: eraserReach, chrome: chrome,
                        animated: !still, reveal: reveal, before: scanPage?.before,
                        split: showsOriginal ? nil : split, wipes: wipes, holdsBefore: scanPage?.shown == false,
-                       issues: showsOriginal ? [] : scanPage?.places ?? [], actions: actions)
+                       issues: showsOriginal ? [] : scanPage?.places ?? [], maxZoom: zoomLimit,
+                       arrival: arrival, actions: actions)
                 .accessibilityAction(named: L("Details")) { reviewing = true }
         } else if case .failed = session.stage {
             ContentUnavailableView(L("The picture could not be read."), systemImage: "exclamationmark.triangle")
@@ -391,6 +423,16 @@ struct ProtectView: View {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+    }
+
+    /// Eight times on a PDF's page, six on any other picture.
+    private var zoomLimit: CGFloat {
+        project == nil ? 6 : 8
+    }
+
+    /// Where a PDF's page came in from.
+    private var arrival: CGFloat {
+        project?.arrival ?? 0
     }
 
     private var actions: CanvasActions {
@@ -425,7 +467,9 @@ struct ProtectView: View {
                     focus = true
                 }
             },
-            split: { split = $0 })
+            split: { split = $0 },
+            canPage: { project?.canStep($0) ?? false },
+            page: { project?.step($0) })
     }
 
     /// Selecting: a tap on a place selects it, on a word hides it, and
@@ -488,6 +532,9 @@ struct ProtectView: View {
                 }
             }
             .measuredHeight($statusHeight)
+            if let project {
+                PageIndicator(number: project.number, count: project.count)
+            }
             if split != nil {
                 CompareLabels()
                     .transition(.opacity)
@@ -554,6 +601,11 @@ struct ProtectView: View {
                 if let mark = selectedMark { selection(mark) }
                 VStack(spacing: 8) {
                     if let scan, let page = scanPage { pages(scan, page) }
+                    if let project {
+                        ProjectPageStrip(store: .shared, current: project.page, open: project.open, add: project.add,
+                                         blank: project.blank, scanned: project.scanned)
+                            .padding(.horizontal, 16)
+                    }
                     docks
                 }
                 .measuredHeight($docksHeight)
@@ -647,6 +699,12 @@ struct ProtectView: View {
                 Label(L("Full Screen"), systemImage: "arrow.up.left.and.arrow.down.right")
             }
             Divider()
+            if let project {
+                Button(action: project.pictures) {
+                    Label(L("Save as Pictures"), systemImage: "photo.on.rectangle")
+                }
+                Divider()
+            }
             Button {
                 choosingApps = true
             } label: {

@@ -6,6 +6,25 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, PDF projects: put photos, scans, screenshots and PDFs
+  together into one PDF, or open a PDF to put its pages in order and cover
+  them. Under the scan card, "PDF erstellen und bearbeiten" offers Merge
+  and Open PDF, and Recently Edited goes on where you left off; a PDF or a
+  picture opened in Snapfly from Files, Mail or Safari starts a project, and
+  the Protected tab merges the screenshots you choose. The overview shows
+  the pages three to a row in their own shape, with where each comes from;
+  hold a page and drag it to its place while the others make room; choose
+  pages to turn, duplicate, save as a PDF of their own or delete, and undo
+  or redo each step from the note that says what was done. The pages open
+  in Protect Picture, a swipe up or down to the next or the one before,
+  zoom up to eight times, with their covers found from the PDF's own text.
+  A PDF's password is asked each time and never kept, and a signed PDF
+  says that editing ends its signature. Save and Share sets the page size
+  for pictures (Original, A4, US Letter), the quality with the file's size,
+  covers and searchable text. The files you add are never changed; the
+  project is kept on the iPhone, protected and out of backups, and opens
+  again where you left it.
+
 - On the iPhone, Scan cleans each page as a good scanner does, from the
   camera or from photos you choose in Photos: the page is found and cut
   from the photo (its corners set by hand, with a loupe, where Snapfly is
