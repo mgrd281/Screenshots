@@ -75,11 +75,12 @@ struct ScanIssue: Equatable, Sendable {
 
 /// How well a page can be read as it was taken, before it is cleaned:
 /// blurred parts, a reflection, and too few pixels for its size. Blur is
-/// measured in tiles that hold print: how sharply the brightness turns at
-/// the print's edges (the Laplacian's spread there), against how dark the
-/// print is, so faint print is not taken for blurred; print blurred until
-/// none of its edges is left counts as blurred too. The page is measured
-/// at about the same size whatever the camera, so the measures mean the same.
+/// measured in tiles that hold print: how steeply the brightness turns at
+/// the print's edges, against how dark the print is, so faint print is not
+/// taken for blurred; print blurred until none of its edges is left counts
+/// as blurred too. The camera's grain is taken out first, speck by speck,
+/// so its specks are not taken for sharp print. The page is measured at
+/// about the same size whatever the camera, so the measures mean the same.
 enum ScanQuality {
     struct Tuning: Equatable, Sendable {
         /// The page is measured at about this many pixels on its longer side, or more.
@@ -94,9 +95,16 @@ enum ScanQuality {
         var softContrast: Float = 30
         var softSteepness: Float = 0.25
         var softDark: Float = 0.45
-        /// Edges less sharp than this are blurred: about a Gaussian blur of
-        /// 1.7 pixels at the measured size, where small print starts to blur.
-        var sharpEdges: Float = 0.12
+        /// The print's edges are where the brightness turns by this share of
+        /// the tile's contrast or more, and are measured when there are at
+        /// least `fewestEdges` of them.
+        var edgeTurn: Float = 0.1
+        var fewestEdges = 20
+        /// Edges are blurred when the steepest tenth of them turns by less
+        /// than this share of the contrast from one pixel to the next: about
+        /// a Gaussian blur of 1.6 pixels at the measured size, where small
+        /// print starts to blur.
+        var sharpEdges: Float = 0.25
         /// A part of the page is blurred when this share of its tiles with
         /// print is, and there are at least `fewestTiles` of them.
         var blurredShare = 0.5
@@ -129,7 +137,8 @@ enum ScanQuality {
     /// The page's tiles, measured, and the measured page's size.
     static func tiles(of page: ScanBitmap, tuning: Tuning = .init()) -> (tiles: [Tile], width: Int, height: Int) {
         let factor = max(1, max(page.width, page.height) / max(1, tuning.measuredSide))
-        let (plane, w, h) = shrunk(page.brightness, width: page.width, height: page.height, by: factor)
+        let clear = despeckled(page.brightness, width: page.width, height: page.height)
+        let (plane, w, h) = shrunk(clear, width: page.width, height: page.height, by: factor)
         let size = tuning.tile
         var tiles: [Tile] = []
         var values = [UInt8](repeating: 0, count: size * size)
@@ -230,51 +239,89 @@ enum ScanQuality {
         guard contrast >= min(tuning.printContrast, tuning.softContrast), darkShare >= 0.01, darkShare <= 0.6 else {
             return Tile(x: x, y: y, size: size, hasPrint: false, sharpness: 0, white: white, paper: paper)
         }
-        // The Laplacian's spread where the brightness turns, against the
-        // contrast; and how steep each turn is, in half levels.
-        var sum: Float = 0, edges = 0
-        var steps = [Int](repeating: 0, count: 256)
+        // How steep each turn of the brightness is, in half levels: all of
+        // them, and those at the print's edges.
+        var steps = [Int](repeating: 0, count: 256), edgeSteps = [Int](repeating: 0, count: 256)
+        var edges = 0
+        let edgeTurn: Float = tuning.edgeTurn * contrast
         for row in 1..<(size - 1) {
             for column in 1..<(size - 1) {
                 let p = row * size + column
-                let middle = Float(values[p])
                 let left = Float(values[p - 1]), right = Float(values[p + 1])
                 let up = Float(values[p - size]), down = Float(values[p + size])
                 let across: Float = abs(right - left), downwards: Float = abs(down - up)
                 let turn: Float = max(across, downwards) / 2
-                steps[min(255, Int(turn * 2))] += 1
-                guard turn >= 0.15 * contrast else { continue }
-                let around: Float = left + right + up + down
-                let laplacian: Float = 4 * middle - around
-                sum += laplacian * laplacian
+                let halves: Int = min(255, Int(turn * 2))
+                steps[halves] += 1
+                guard turn >= edgeTurn else { continue }
+                edgeSteps[halves] += 1
                 edges += 1
             }
         }
-        if contrast >= tuning.printContrast, edges >= 20 {
-            let spread: Float = (sum / Float(edges)).squareRoot()
-            let sharpness: Float = spread / contrast
+        if contrast >= tuning.printContrast, edges >= tuning.fewestEdges {
+            let sharpness: Float = Self.steepest(edgeSteps, leaving: 0.1) / contrast
             return Tile(x: x, y: y, size: size, hasPrint: true, sharpness: sharpness, white: white, paper: paper)
         }
         // Too few edges: print so blurred that its turns are all gentle, which
         // is print without sharpness, or nothing that counts as print.
-        let steepest: Float = Self.steepest(steps) / contrast
+        let steepest: Float = Self.steepest(steps, leaving: 0.02) / contrast
         guard contrast >= tuning.softContrast, darkShare <= tuning.softDark, steepest < tuning.softSteepness else {
             return Tile(x: x, y: y, size: size, hasPrint: false, sharpness: 0, white: white, paper: paper)
         }
         return Tile(x: x, y: y, size: size, hasPrint: true, sharpness: 0, white: white, paper: paper)
     }
 
-    /// The steepest of a tile's turns, leaving out the steepest 2 %, which
-    /// may be grain: from their counts by half levels.
-    private static func steepest(_ steps: [Int]) -> Float {
+    /// The steepest of some turns, from their counts by half levels,
+    /// leaving out the steepest `share` of them, which may be grain.
+    private static func steepest(_ steps: [Int], leaving share: Double) -> Float {
         let total = steps.reduce(0, +)
-        let kept: Int = total - total / 50
+        let left: Double = Double(total) * share
+        let kept: Int = total - Int(left)
         var seen = 0
         for (halves, count) in steps.enumerated() {
             seen += count
             if seen >= kept { return Float(halves) / 2 }
         }
         return 127.5
+    }
+
+    /// Each pixel the middle one of the nine in its square, those along the
+    /// border as they are: a camera's grain is taken out speck by speck,
+    /// while print wider than a pixel keeps its edges where and as sharp as
+    /// they were.
+    static func despeckled(_ plane: [UInt8], width w: Int, height h: Int) -> [UInt8] {
+        guard w > 2, h > 2 else { return plane }
+        var out = plane
+        plane.withUnsafeBufferPointer { src in
+            out.withUnsafeMutableBufferPointer { dst in
+                for y in 1..<(h - 1) {
+                    let above = (y - 1) * w, row = y * w, below = (y + 1) * w
+                    for x in 1..<(w - 1) {
+                        var p0 = src[above + x - 1], p1 = src[above + x], p2 = src[above + x + 1]
+                        var p3 = src[row + x - 1], p4 = src[row + x], p5 = src[row + x + 1]
+                        var p6 = src[below + x - 1], p7 = src[below + x], p8 = src[below + x + 1]
+                        // Nineteen exchanges leave the middle of the nine in p4.
+                        order(&p1, &p2); order(&p4, &p5); order(&p7, &p8)
+                        order(&p0, &p1); order(&p3, &p4); order(&p6, &p7)
+                        order(&p1, &p2); order(&p4, &p5); order(&p7, &p8)
+                        order(&p0, &p3); order(&p5, &p8); order(&p4, &p7)
+                        order(&p3, &p6); order(&p1, &p4); order(&p2, &p5)
+                        order(&p4, &p7); order(&p4, &p2); order(&p6, &p4)
+                        order(&p4, &p2)
+                        dst[row + x] = p4
+                    }
+                }
+            }
+        }
+        return out
+    }
+
+    /// The two in order, the smaller first.
+    @inline(__always)
+    private static func order(_ a: inout UInt8, _ b: inout UInt8) {
+        let smaller = min(a, b)
+        b = max(a, b)
+        a = smaller
     }
 
     /// The plane made smaller by a whole factor, each pixel the mean of its square.

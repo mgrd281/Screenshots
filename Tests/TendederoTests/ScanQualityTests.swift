@@ -30,6 +30,37 @@ final class ScanQualityTests: XCTestCase {
         XCTAssertEqual(blur.part, .bottom, "\(String(describing: blur.area))")
     }
 
+    func testACamerasBrightSpecksAreNotTakenForSharpPrint() throws {
+        // Grain as a photo in dim light has it: a sixth of the pixels brighter by up to 45 levels.
+        let page = ScanPaperFixture.page(width: 1100, printTo: 0.95).bitmap
+        let blurred = Self.speckled(Self.blurred(page, rows: (page.height * 7 / 10)..<page.height, passes: 3, radius: 2))
+        let blur = try XCTUnwrap(ScanQuality.issues(in: blurred, dpi: 200).first { $0.kind == .blurred })
+        XCTAssertEqual(blur.part, .bottom, "\(String(describing: blur.area))")
+        XCTAssertEqual(ScanQuality.issues(in: Self.speckled(page), dpi: 200), [], "a sharp page stays sharp")
+    }
+
+    func testDespecklingTakesTheMiddleOfEachSquareOfNine() {
+        var seed: UInt32 = 9
+        let width = 23, height = 17
+        let plane: [UInt8] = (0..<(width * height)).map { _ in
+            seed = seed &* 1_664_525 &+ 1_013_904_223
+            return UInt8(truncatingIfNeeded: seed >> 24)
+        }
+        let clear = ScanQuality.despeckled(plane, width: width, height: height)
+        for y in 0..<height {
+            for x in 0..<width {
+                let p = y * width + x
+                guard x > 0, y > 0, x < width - 1, y < height - 1 else {
+                    XCTAssertEqual(clear[p], plane[p], "the border as it was")
+                    continue
+                }
+                var square: [UInt8] = []
+                for dy in -1...1 { for dx in -1...1 { square.append(plane[p + dy * width + dx]) } }
+                XCTAssertEqual(clear[p], square.sorted()[4], "at \(x), \(y)")
+            }
+        }
+    }
+
     func testASoftShadowIsNotBlur() {
         var page = ScanPaperFixture.page(width: 1100, printTo: 0.95).bitmap
         // The phone's shadow over the bottom right, darkening softly into its corner.
@@ -117,6 +148,25 @@ final class ScanQualityTests: XCTestCase {
             let value: Int = Int(out.pixels[i]) + shift
             let kept: Int = min(max(value, 0), 255)
             out.pixels[i] = UInt8(kept)
+        }
+        return out
+    }
+
+    /// The page with a camera's bright specks: one pixel in six, each
+    /// channel brighter by 25 to 45 levels.
+    static func speckled(_ page: ScanBitmap) -> ScanBitmap {
+        var out = page
+        var seed: UInt32 = 13
+        for i in stride(from: 0, to: out.pixels.count, by: 4) {
+            seed = seed &* 1_664_525 &+ 1_013_904_223
+            let high: UInt32 = seed >> 16
+            guard high % 6 == 0 else { continue }
+            for k in 0..<3 {
+                seed = seed &* 1_664_525 &+ 1_013_904_223
+                let lift: Int = 25 + Int(seed >> 16) % 21
+                let value: Int = Int(out.pixels[i + k]) + lift
+                out.pixels[i + k] = UInt8(min(value, 255))
+            }
         }
         return out
     }
