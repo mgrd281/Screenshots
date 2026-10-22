@@ -129,6 +129,7 @@ AD = {
         # The new cut: the iPhone app, still to come, and what its papers say.
         soon="Bald auch fürs iPhone",
         photo="Foto",
+        steps=["Klick auf „Teilen“", "Klick auf „Als PDF sichern“", "Klick auf „Senden“"],
         recent=[("Steuer 2025", 3), ("Mietvertrag", 12)],
         receipt=dict(shop="Bäckerei Sonne", place="Hauptstraße 5, Köln", lines=[("2 Brötchen", "1,60"), ("Kaffee", "2,90"), ("Apfelkuchen", "3,40")],
                      total="Summe", total_v="7,90 €", card="Karte", card_v="4871 0093 5521 4821"),
@@ -156,6 +157,8 @@ def ad(lang, cut="short"):
         "Done")}
     words["phone"]["pages"] = L(lang, "%d pages")
     words["phone"]["page"] = L(lang, "1 page")
+    # The Mac cut's four newer tools, by the names the app gives them.
+    words["feat"] = [L(lang, k) for k in ("Record Screen", "Capture Whole Page", "Guide", "Convert to SVG…")]
     data = {
         "lang": lang,
         "cut": cut,
@@ -178,8 +181,8 @@ def ad(lang, cut="short"):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    if args[:1] in (["ad"], ["ad-long"], ["ad-neu"]):
-        cut = {"ad": "short", "ad-long": "long", "ad-neu": "neu"}[args[0]]
+    if args[:1] in (["ad"], ["ad-long"], ["ad-neu"], ["ad-mac"]):
+        cut = {"ad": "short", "ad-long": "long", "ad-neu": "neu", "ad-mac": "mac"}[args[0]]
         for lang in (args[1:] or ["de"]):
             print(f"Wrote promo/{ad(lang, cut)}")
         sys.exit()

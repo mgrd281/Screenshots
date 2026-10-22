@@ -117,6 +117,41 @@ const CUTS = {
              lift: 21.45, drop: 22.25, saveTap: 22.87, cover: 23.23, shareTap: 23.69, out: [24.25, 24.6] },
     end: { wall: 24.3, icon: 24.45, word: 24.66, tag: 25.1, free: 25.78, soon: 26.45, url: 27.0 },
   },
+  // Every Mac feature in under a minute, a short line of voice for each.
+  mac: {
+    duration: 52.5,
+    blocks: [
+      { from: 0, to: at(2.88), lines: [[["Schon wieder", 0.05, "small"]], [["30 ", at(0.8), "grad"], ["Screenshots", at(1.24), "grad"]], [["auf dem ", at(1.92), "small"], ["Desktop?", at(2.42)]]] },
+      { from: at(3.18), to: at(5.6), lines: [[["Mit Snapfly", at(3.18), "small"]], [["hängt jeder", at(3.96)]], [["Screenshot", at(4.68)]]] },
+      { from: at(5.67), to: at(7.2), lines: [[["sofort an", at(5.67), "small"]], [["einer Leine.", at(6.2), "grad"]]] },
+      { from: at(7.44), to: at(8.35), lines: [[["Neuer", at(7.44), "small"]], [["Screenshot?", at(7.85), "grad"]]] },
+      { from: at(8.78), to: at(11.1), lines: [[["Ein Klick", at(8.78), "grad"]], [["auf den Knopf", at(9.26)]], [["am Bildschirmrand.", at(9.9), "small"]]] },
+      { from: at(11.44), to: at(14.0), lines: [[["Ein Klick auf den", at(11.44), "small"]], [["Papierflieger,", at(12.33), "grad"]], [["und er ist im Chat.", at(13.1), "small"]]] },
+      { from: at(14.34), to: at(16.94), lines: [[["WhatsApp.", at(14.34)]], [["ChatGPT.", at(15.13)]], [["Claude.", at(16.22), "grad"]]] },
+      { from: at(17.16), to: at(20.0), lines: [[["Der Knopf über dem Chat", at(17.16), "small"]], [["schickt alle", at(18.58)]], [["auf einmal.", at(19.4), "grad"]]] },
+      { from: at(20.5), to: at(22.09), lines: [[["Namen und", at(20.5), "small"]], [["Kontonummern?", at(21.19), "grad"]]] },
+      { from: at(22.38), to: at(23.87), lines: [[["Werden", at(22.38), "small"]], [["automatisch", at(22.87), "grad"]], [["verdeckt.", at(23.3)]]] },
+      { from: at(24.16), to: at(27.3), lines: [[["Snapfly findet", at(24.16), "small"]], [["jedes Wort", at(25.2), "grad"]], [["in deinen Screenshots.", at(26.0), "small"]]] },
+      { from: at(27.52), to: at(30.0), lines: [[["Mehrere Screenshots", at(27.52), "small"]], [["werden zu", at(28.66)]], [["einem PDF.", at(29.2), "grad"]]] },
+      { from: at(30.47), to: at(31.4), lines: [[["Fremde", at(30.47), "small"]], [["Sprache?", at(30.9), "grad"]]] },
+      { from: at(31.79), to: at(32.9), lines: [[["Wird", at(31.79), "small"]], [["übersetzt.", at(32.0), "grad"]]] },
+      { from: at(33.11), to: at(35.6), lines: [[["Bildschirm", at(33.11)]], [["aufnehmen,", at(33.8), "grad"]], [["mit automatischem Zoom.", at(34.5), "small"]]] },
+      { from: at(35.96), to: at(37.2), lines: [[["Ganze Seiten", at(35.96)]], [["erfassen.", at(36.57), "grad"]]] },
+      { from: at(37.75), to: at(40.9), lines: [[["Anleitungen,", at(37.75), "grad"]], [["Schritt für Schritt,", at(38.78), "small"]], [["ganz von selbst.", at(39.85), "small"]]] },
+      { from: at(41.2), to: at(42.73), lines: [[["Aus Bildern", at(41.2), "small"]], [["wird SVG.", at(41.9), "grad"]]] },
+      { from: at(43.21), to: at(46.1), lines: [[["Der Verlauf", at(43.21), "small"]], [["hebt alles", at(44.27)]], [["30 Tage auf.", at(44.74), "grad"]]] },
+    ],
+    desk: { mark: 3.18, rope: 3.8, sweep: 4.4, zoom: [5.67, 6.4], tidy: 6.9,
+            button: { in: 7.5, click: 9.0, drag: [9.35, 9.95], flash: 10.15, hang: 10.9 }, out: [11.2, 11.55], push: 3.1 },
+    chat: { in: 11.4, clicks: [12.33, 18.58], button: true, gptIn: 15.13, fan: 19.4, out: [20.25, 20.6] },
+    doc: { in: [20.4, 20.8], name: 20.5, iban: 21.19, cover: 22.87, lock: 23.4, out: [23.95, 24.25] },
+    search: { in: 24.2, type: 24.5, find: 25.2, zoom: 26.0, out: 27.35 },
+    pdf: { in: 27.45, picks: [27.8, 28.05, 28.3], merge: 28.66, badge: 29.3, out: 30.1 },
+    translate: { in: 30.15, menu: 30.6, click: 31.1, swap: 31.79, out: 32.95 },
+    feat: { items: [33.11, 35.96, 37.75, 41.2], zoom: 34.9, out: 42.75 },
+    sent: { in: 42.95, click: 43.3, close: 43.8, history: 43.9, days: 44.74, out: 46.0 },
+    end: { wall: 46.15, icon: 46.3, word: 46.35, tag: 46.9, free: 47.35, url: 48.3 },
+  },
 };
 const CUT = CUTS[DATA.cut || "short"];
 const DURATION = CUT.duration;
@@ -877,7 +912,66 @@ function phoneScene(P) {
   };
 }
 
+// "Bildschirm aufnehmen, mit automatischem Zoom. Ganze Seiten erfassen.
+// Anleitungen, Schritt für Schritt. Aus Bildern wird SVG.": one window that
+// shows each tool in turn, each sliding in as it is named.
+function featureScene(F) {
+  const X = 110, Y = 690, W = 860;
+  const win = (title, body) => el("div", "doc feat", document.body, `<div class="bar">${LIGHTS}<b>${title}</b></div><div class="stage">${body}</div>`);
+  const [tRec, tPage, tGuide, tSvg] = T.feat;
+  const rec = win(tRec, `<div class="zoomer">${DATA.art2.chart}</div><span class="recpill"><i></i>REC <span class="tm">00:00</span></span>`);
+  const page = win(tPage, `<div class="tall">${[DATA.art2.map, DATA.art3.invoice, DATA.art2.calendar].map((s) => `<div>${s}</div>`).join("")}</div>
+    <div class="whole">${[DATA.art2.map, DATA.art3.invoice, DATA.art2.calendar].join("")}</div>`);
+  const guide = win(tGuide, T.steps.map((s, k) => `<div class="step"><b>${k + 1}</b><div class="th">${[DATA.art3.sunset, DATA.art3.chart, DATA.art3.map][k]}</div><span>${s}</span></div>`).join(""));
+  const svg = win(tSvg, `<div class="png">${DATA.art2.sunset}</div><div class="vec">${DATA.art3.sunset}</div><i class="wipe"></i>
+    <span class="tag png-tag">PNG</span><span class="tag vec-tag">SVG</span>`);
+  const wins = [rec, page, guide, svg];
+  const zoomer = rec.querySelector(".zoomer"), tm = rec.querySelector(".tm"), dot = rec.querySelector(".recpill i");
+  const tall = page.querySelector(".tall"), whole = page.querySelector(".whole");
+  const steps = [...guide.querySelectorAll(".step")];
+  const vec = svg.querySelector(".vec"), wipe = svg.querySelector(".wipe"), vecTag = svg.querySelector(".vec-tag");
+  const pointer = makePointer();
+  return (t) => {
+    const cues = F.items.map(at), end = at(F.out);
+    wins.forEach((w, i) => {
+      const a = cues[i], b = i < 3 ? cues[i + 1] : end;
+      const into = outQuart(prog(t, a - 0.1, a + 0.3)), away = inOut(prog(t, b - 0.1, b + 0.25));
+      show(w, t >= a - 0.1 && t < b + 0.25 ? into * (1 - (i === 3 ? away : 0)) : 0);
+      style(w, { left: `${X}px`, top: `${Y}px`, width: `${W}px`, zIndex: String(4 + i),
+                 transform: `translateX(${lerp(260, 0, into) - (i < 3 ? 1100 * away : 0)}px) translateY(${i === 3 ? -50 * away : 0}px) rotate(${lerp(4, 0, into)}deg)` });
+    });
+    // Recording: the clock runs, the dot blinks, and the view zooms in on a click.
+    const s = Math.max(0, Math.floor((t - cues[0]) * 1.6));
+    tm.textContent = `00:${String(s).padStart(2, "0")}`;
+    show(dot, Math.floor(t * 2.5) % 2 ? 0.35 : 1);
+    const z = inOut(prog(t, at(F.zoom), at(F.zoom) + 0.6));
+    zoomer.style.transform = `scale(${lerp(1, 1.9, z)})`;
+    const zr = rec.querySelector(".stage").getBoundingClientRect();
+    const cx = zr.left + zr.width * 0.74, cy = zr.top + zr.height * 0.32;
+    const p = pointerPath(t, { x: cx - 160, y: cy + 200 }, [{ x: cx, y: cy, t: at(F.zoom) - 0.1 }]);
+    pointer(p.x, p.y, prog(t, cues[0] + 0.3, cues[0] + 0.5) * (1 - prog(t, cues[1] - 0.3, cues[1] - 0.1)), p.press, p.rp);
+    // The whole page: it scrolls by itself, then shows whole beside it.
+    tall.style.transform = `translateY(${-760 * inOut(prog(t, cues[1] + 0.2, cues[1] + 1.1))}px)`;
+    const wh = outBack(prog(t, cues[1] + 1.05, cues[1] + 1.4));
+    show(whole, prog(t, cues[1] + 1.05, cues[1] + 1.2));
+    whole.style.transform = `scale(${lerp(0.6, 1, wh)})`;
+    // The guide writes itself, a step at each click.
+    steps.forEach((st, k) => {
+      const sp = prog(t, cues[2] + 0.35 + k * 0.75, cues[2] + 0.7 + k * 0.75);
+      show(st, outQuart(sp));
+      st.style.transform = `translateY(${lerp(30, 0, outQuart(sp))}px)`;
+    });
+    // From picture to SVG: a line sweeps across and leaves sharp shapes behind it.
+    const sw = inOut(prog(t, cues[3] + 0.25, cues[3] + 1.0));
+    vec.style.clipPath = `inset(0 ${100 - 100 * sw}% 0 0)`;
+    wipe.style.left = `${80 + (W - 160) * sw}px`;
+    show(wipe, sw > 0 && sw < 1 ? 1 : 0);
+    show(vecTag, prog(t, cues[3] + 0.8, cues[3] + 1.0));
+  };
+}
+
 const extras = [];
+if (CUT.feat) extras.push(featureScene(CUT.feat));
 if (CUT.phone) extras.push(phoneScene(CUT.phone));
 if (CUT.desk.button) extras.push(deskShotScene(CUT.desk.button));
 if (CUT.mail) extras.push(mailScene(CUT.mail));

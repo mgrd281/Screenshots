@@ -126,6 +126,34 @@ deinen Mac." Syncing between Mac and iPhone is left out until it is
 checked on real devices (`SYNC.md`). When the iPhone app is in the App
 Store, "bald" can go.
 
+### The Mac cut
+
+About 52 seconds (October 2026), Mac only, a short line of voice for each
+feature: the line, the screenshot button, the paper plane into WhatsApp,
+the button over the chat, the covering, search, a PDF, translation, then
+one window that shows Record Screen with its automatic zoom, Capture Whole
+Page, a guide writing itself and a picture becoming SVG, and the history.
+It reuses the long cut's scenes and its music.
+
+```sh
+python3 promo/build.py ad-mac                                            # writes promo/ad-mac-de.html
+python3 promo/ad-sound.py --mac voice-mac.mp3 music.wav ad-mac-sound.m4a
+node promo/render.js ad-mac --audio ad-mac-sound.m4a                     # renders promo/out/Snapfly-ad-mac-de.mp4
+```
+
+Its script: "Schon wieder dreißig Screenshots auf dem Desktop? Mit Snapfly
+hängt jeder Screenshot sofort an einer Leine. Neuer Screenshot? Ein Klick
+auf den Knopf am Bildschirmrand. Ein Klick auf den Papierflieger, und er
+ist im Chat. WhatsApp, ChatGPT, Claude. Der Knopf über dem Chat schickt
+alle auf einmal. Namen und Kontonummern? Werden automatisch verdeckt.
+Snapfly findet jedes Wort in deinen Screenshots. Mehrere Screenshots werden
+zu einem PDF. Fremde Sprache? Wird übersetzt. Bildschirm aufnehmen, mit
+automatischem Zoom. Ganze Seiten erfassen. Anleitungen, Schritt für
+Schritt, ganz von selbst. Aus Bildern wird SVG. Und der Verlauf hebt alles
+dreißig Tage auf. Snapfly. Kostenlos für deinen Mac." Share links are left
+out until the owner's Cloudflare account is set up and Copy Link is in the
+builds.
+
 All cuts share `ad.js`. Each cut in its `CUTS` table has its captions and
 the moments of each scene in its own voice; a scene a cut leaves out is not
 built.

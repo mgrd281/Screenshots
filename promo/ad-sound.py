@@ -6,6 +6,7 @@ loudness.
     python3 promo/ad-sound.py voice.mp3 music.wav out/ad-sound.m4a
     python3 promo/ad-sound.py --long voice-long.mp3 music.wav out/ad-long-sound.m4a
     python3 promo/ad-sound.py --neu voice-neu.mp3 music.wav out/ad-neu-sound.m4a
+    python3 promo/ad-sound.py --mac voice-mac.mp3 music.wav out/ad-mac-sound.m4a
 
 The voice and the music are not kept in the repository: they come from the
 voice and music service the owner chose, and are passed in here. Standard
@@ -112,6 +113,32 @@ CUTS = {
             + [("click", at(23.69), 0.7), ("whoosh", at(23.89), 0.5, 0.6), ("chime", at(24.0), 0.3)]
             + ending(at(24.3), at(24.66), at(25.78))
             + [("pop", at(26.45), 0.4)]),
+    "mac": (52.5, FILES
+            + [("chime", at(3.18), 0.5), ("whoosh", at(4.4), 0.55, 1.1), ("whoosh", at(5.67), 0.35, 0.8), ("whoosh", at(6.9), 0.3, 0.8)]
+            # The screenshot button: a click, the drag, the shutter, onto the line.
+            + [("pop", at(7.7), 0.35), ("click", at(9.0), 0.7), ("swipe", at(9.35), 0.3),
+               ("shutter", at(10.15), 0.8), ("whoosh", at(10.25), 0.45, 0.7), ("pop", at(10.9), 0.6)]
+            # The plane into WhatsApp, Lena's answer; the button over the chat sends two.
+            + [("click", at(12.33), 0.7), ("whoosh", at(12.33) + 0.12, 0.5, 0.75), ("pop", at(12.33) + 0.87, 0.55),
+               ("pop", at(12.33) + 1.97, 0.35), ("whoosh", at(15.13), 0.3, 0.4)]
+            + [("click", at(18.58), 0.7), ("whoosh", at(18.58) + 0.12, 0.5, 0.5), ("whoosh", at(18.58) + 0.24, 0.4, 0.5),
+               ("pop", at(18.58) + 0.62, 0.5), ("pop", at(18.58) + 0.74, 0.5), ("whoosh", at(19.4), 0.35, 0.5)]
+            + covering(at(20.5), at(21.19), at(22.87), at(23.4))
+            # Search, a PDF, a translation.
+            + [("tick", at(24.5) + i * 0.07, 0.25) for i in range(8)]
+            + [("chime", at(25.2), 0.3), ("whoosh", at(26.0), 0.35, 0.6)]
+            + [("click", at(p), 0.5) for p in (27.8, 28.05, 28.3)]
+            + [("whoosh", at(28.66), 0.45, 0.7), ("pop", at(29.3), 0.5)]
+            + [("pop", at(30.6), 0.3), ("click", at(31.1), 0.6), ("whoosh", at(31.79), 0.3, 0.7)]
+            # Recording with its zoom, the whole page, the guide's steps, the SVG.
+            + [("whoosh", at(33.01), 0.4, 0.5), ("tick", at(33.3), 0.4), ("click", at(34.8), 0.6), ("whoosh", at(34.9), 0.35, 0.6)]
+            + [("whoosh", at(35.86), 0.4, 0.5), ("swipe", at(36.4), 0.35), ("shutter", at(37.2), 0.5)]
+            + [("whoosh", at(37.65), 0.4, 0.5)] + [("pop", at(38.1) + k * 0.75, 0.45) for k in range(3)]
+            + [("whoosh", at(41.1), 0.4, 0.5), ("whoosh", at(41.45), 0.35, 0.75), ("chime", at(42.2), 0.3)]
+            # Sent and gone; the history.
+            + [("click", at(43.3), 0.7), ("whoosh", at(43.4), 0.5, 0.75), ("swipe", at(43.8), 0.35),
+               ("whoosh", at(43.9), 0.35, 0.6), ("pop", at(44.74), 0.5)]
+            + ending(at(46.15), at(46.35), at(47.35))),
 }
 
 
@@ -250,7 +277,7 @@ def mix(voice, music, out, cut="short"):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    cut = {"--long": "long", "--neu": "neu"}.get(args[0] if args else "", "short")
+    cut = {"--long": "long", "--neu": "neu", "--mac": "mac"}.get(args[0] if args else "", "short")
     args = args[1:] if cut != "short" else args
     if len(args) != 3:
         sys.exit(__doc__)
