@@ -387,7 +387,7 @@ struct PageThumb: View {
 // MARK: Notes over the pages
 
 /// What was just done to the pages, in a dark capsule over the bottom, with
-/// Undo, then Redo, for 4 seconds.
+/// Undo, then Redo, for 6 seconds, as long as the note after saving.
 struct ProjectToastView: View {
     @ObservedObject private var store = ProjectStore.shared
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -423,7 +423,7 @@ struct ProjectToastView: View {
         .animation(still ? .easeOut(duration: 0.15) : .spring(response: 0.35, dampingFraction: 0.85), value: store.toast)
         .task(id: store.toast) {
             guard store.toast != nil, !ProjectDemo.keepsToast else { return }
-            try? await Task.sleep(for: .seconds(4))
+            try? await Task.sleep(for: .seconds(6))
             if !Task.isCancelled { store.toast = nil }
         }
     }
