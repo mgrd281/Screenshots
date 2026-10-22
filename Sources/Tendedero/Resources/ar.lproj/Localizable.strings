@@ -1330,6 +1330,7 @@
 "%d of %d" = "%1$d من %2$d";
 "%d photos chosen" = "تم اختيار %d صورة";
 "%d places still to check" = "لا يزال %d موضعًا للتحقق";
+"1 place still to check" = "لا يزال موضع واحد للتحقق";
 "All allowed photos" = "كل الصور المسموح بها";
 "Allowing Snapfly to see your photos is not a yes to this. You can pause it, or delete what was prepared, at any time." = "السماح لـ Snapfly برؤية صورك ليس موافقة على هذا. يمكنك إيقافه مؤقتًا أو حذف ما تم تجهيزه في أي وقت.";
 "Change Allowed Photos…" = "تغيير الصور المسموح بها…";

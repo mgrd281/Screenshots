@@ -1332,6 +1332,7 @@
 "%d of %d" = "%2$d में से %1$d";
 "%d photos chosen" = "%d फ़ोटो चुनी गईं";
 "%d places still to check" = "अभी %d जगहें जाँचनी बाकी हैं";
+"1 place still to check" = "अभी 1 जगह जाँचनी बाकी है";
 "All allowed photos" = "सभी अनुमति-प्राप्त फ़ोटो";
 "Allowing Snapfly to see your photos is not a yes to this. You can pause it, or delete what was prepared, at any time." = "Snapfly को आपकी फ़ोटो देखने की अनुमति देना इसकी सहमति नहीं है। आप इसे कभी भी रोक सकते हैं या तैयार की गई चीज़ें मिटा सकते हैं।";
 "Change Allowed Photos…" = "अनुमति-प्राप्त फ़ोटो बदलें…";

@@ -1330,6 +1330,7 @@
 "%d of %d" = "%2$d içinden %1$d";
 "%d photos chosen" = "%d fotoğraf seçildi";
 "%d places still to check" = "Hâlâ kontrol edilecek %d yer var";
+"1 place still to check" = "Hâlâ kontrol edilecek 1 yer var";
 "All allowed photos" = "İzin verilen tüm fotoğraflar";
 "Allowing Snapfly to see your photos is not a yes to this. You can pause it, or delete what was prepared, at any time." = "Snapfly'ın fotoğraflarını görmesine izin vermek buna onay vermek demek değildir. İstediğin zaman duraklatabilir ya da hazırlananları silebilirsin.";
 "Change Allowed Photos…" = "İzin verilen fotoğrafları değiştir…";

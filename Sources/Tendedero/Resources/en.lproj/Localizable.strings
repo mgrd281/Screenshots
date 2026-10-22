@@ -1332,6 +1332,7 @@
 "%d of %d" = "%d of %d";
 "%d photos chosen" = "%d photos chosen";
 "%d places still to check" = "%d places still to check";
+"1 place still to check" = "1 place still to check";
 "All allowed photos" = "All allowed photos";
 "Allowing Snapfly to see your photos is not a yes to this. You can pause it, or delete what was prepared, at any time." = "Allowing Snapfly to see your photos is not a yes to this. You can pause it, or delete what was prepared, at any time.";
 "Change Allowed Photos…" = "Change Allowed Photos…";

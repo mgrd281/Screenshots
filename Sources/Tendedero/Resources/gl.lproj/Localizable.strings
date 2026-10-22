@@ -1330,6 +1330,7 @@
 "%d of %d" = "%d de %d";
 "%d photos chosen" = "%d fotos escollidas";
 "%d places still to check" = "Aínda quedan %d lugares por revisar";
+"1 place still to check" = "Aínda queda 1 lugar por revisar";
 "All allowed photos" = "Todas as fotos permitidas";
 "Allowing Snapfly to see your photos is not a yes to this. You can pause it, or delete what was prepared, at any time." = "Permitir que Snapfly vexa as túas fotos non é un si a isto. Podes poñelo en pausa ou borrar o preparado en calquera momento.";
 "Change Allowed Photos…" = "Cambiar as fotos permitidas…";

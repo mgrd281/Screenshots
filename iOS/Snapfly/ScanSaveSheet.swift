@@ -253,6 +253,7 @@ struct ScanSaveSheet: View {
             : kept ? L("Only straightened and brightened. No text, no number changed.")
             : L("Only straightened and brightened.")
         let toCheck = store.pages.reduce(0) { $0 + (store.opened($1.id)?.plan.tally.toCheck ?? 0) }
+        let left: String = toCheck == 1 ? L("1 place still to check") : String(format: L("%d places still to check"), toCheck)
         return VStack(alignment: .leading, spacing: 8) {
             Label {
                 Text(words).fixedSize(horizontal: false, vertical: true)
@@ -262,7 +263,7 @@ struct ScanSaveSheet: View {
             }
             if covered, toCheck > 0 {
                 Label {
-                    Text(String(format: L("%d places still to check"), toCheck))
+                    Text(left)
                 } icon: {
                     Image(systemName: "circle.dashed").foregroundStyle(Color.orange)
                 }

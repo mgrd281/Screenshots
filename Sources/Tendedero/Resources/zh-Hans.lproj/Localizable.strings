@@ -1330,6 +1330,7 @@
 "%d of %d" = "%1$d / %2$d";
 "%d photos chosen" = "已选 %d 张照片";
 "%d places still to check" = "还有 %d 处需要检查";
+"1 place still to check" = "还有 1 处需要检查";
 "All allowed photos" = "所有已允许的照片";
 "Allowing Snapfly to see your photos is not a yes to this. You can pause it, or delete what was prepared, at any time." = "允许 Snapfly 查看你的照片并不等于同意此功能。你可以随时暂停，或删除已准备的内容。";
 "Change Allowed Photos…" = "更改允许的照片…";

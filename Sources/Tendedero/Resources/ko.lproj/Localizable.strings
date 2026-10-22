@@ -1330,6 +1330,7 @@
 "%d of %d" = "%2$d개 중 %1$d개";
 "%d photos chosen" = "사진 %d장 선택됨";
 "%d places still to check" = "아직 확인할 곳이 %d곳 있습니다";
+"1 place still to check" = "아직 확인할 곳이 1곳 있습니다";
 "All allowed photos" = "허용된 모든 사진";
 "Allowing Snapfly to see your photos is not a yes to this. You can pause it, or delete what was prepared, at any time." = "Snapfly가 사진을 볼 수 있게 허용했다고 해서 이 기능에 동의한 것은 아닙니다. 언제든지 일시 정지하거나 준비된 내용을 삭제할 수 있습니다.";
 "Change Allowed Photos…" = "허용된 사진 변경…";
