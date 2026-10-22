@@ -2958,8 +2958,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     to tap a page to choose it and to hold and drag it to change the order;
     then the pages (`phone-project-page`), each named where it came from
     ("Rechnung · p. 2", "Photo", "Scanned", "Screenshot", with its kind once
-    read: "Invoice"). A tap opens a page, or while choosing chooses it with
-    a selection haptic; held a moment it lifts and is dragged
+    read: "Invoice"). A tap chooses a page, and starts choosing, with a
+    selection haptic; Next opens the first page in the editor. Held a
+    moment, a page lifts and is dragged
     (`phone-project-lift`); VoiceOver moves it earlier or later, turns or
     deletes it. Then the bar (`phone-project-bar`): Add, a menu of From
     Photos, From Files, Scan, Blank Page and Scanned Pages, new pages going

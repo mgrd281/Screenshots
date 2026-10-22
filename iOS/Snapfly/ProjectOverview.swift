@@ -535,7 +535,7 @@ final class PageGridController: UIViewController, UICollectionViewDelegate {
             let columns = large ? 2 : 3
             let inset: CGFloat = 16
             let room = environment.container.effectiveContentSize.width - inset * 2
-            let width = floor((room - spacing * CGFloat(columns - 1)) / CGFloat(columns))
+            let width = max(1, floor((room - spacing * CGFloat(columns - 1)) / CGFloat(columns)))
             let words = UIFontMetrics(forTextStyle: .caption1).scaledValue(for: 30, compatibleWith: environment.traitCollection)
             let height = ceil(width * 1.414 + 8 + words)
             let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(width),

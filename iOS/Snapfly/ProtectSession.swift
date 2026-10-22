@@ -108,6 +108,12 @@ final class ProtectSession: ObservableObject {
     /// Whether the copy may leave: made and checked for the places as they are.
     var isReady: Bool { stage == .ready }
 
+    /// Whether the picture could not be read or covered.
+    var hasFailed: Bool {
+        if case .failed = stage { return true }
+        return false
+    }
+
     /// Whether Apple Intelligence, or the AI assistant, reads along for
     /// the kinds chosen.
     private var asksIntelligence: Bool {

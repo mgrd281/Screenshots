@@ -271,20 +271,24 @@ struct ProjectPageStrip: View {
         .editorGlass(in: RoundedRectangle(cornerRadius: SnapflyTokens.scanStripRadius, style: .continuous))
     }
 
+    /// The page small, ringed while it is open; apart from the button, so
+    /// the compiler checks each in good time.
+    private func paper(_ page: ProjectPage, chosen: Bool) -> some View {
+        PagePaper(source: page.source, aspect: store.aspect(page.source), turns: page.turns,
+                  locked: store.isLocked(page), corner: 3)
+            .frame(width: 34, height: 46)
+            .overlay {
+                RoundedRectangle(cornerRadius: SnapflyTokens.scanThumbRadius, style: .continuous)
+                    .strokeBorder(chosen ? SnapflyTokens.protectTint : Color.clear, lineWidth: 2)
+                    .padding(-3)
+            }
+            .frame(width: SnapflyTokens.touch, height: 52)
+            .contentShape(Rectangle())
+    }
+
     private func thumb(_ page: ProjectPage, index: Int) -> some View {
         let chosen = page.id == current
-        let base = Button { open(page.id) } label: {
-            PagePaper(source: page.source, aspect: store.aspect(page.source), turns: page.turns,
-                      locked: store.isLocked(page), corner: 3)
-                .frame(width: 34, height: 46)
-                .overlay {
-                    RoundedRectangle(cornerRadius: SnapflyTokens.scanThumbRadius, style: .continuous)
-                        .strokeBorder(chosen ? SnapflyTokens.protectTint : Color.clear, lineWidth: 2)
-                        .padding(-3)
-                }
-                .frame(width: SnapflyTokens.touch, height: 52)
-                .contentShape(Rectangle())
-        }
+        let base = Button { open(page.id) } label: { paper(page, chosen: chosen) }
         .buttonStyle(.plain)
         .draggable(page.id.uuidString) {
             PagePaper(source: page.source, aspect: store.aspect(page.source), turns: page.turns, locked: false, corner: 3)

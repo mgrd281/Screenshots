@@ -304,6 +304,7 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        if window != nil, arriving != 0 { comeIn() }
         guard imageSize.width > 0, imageSize.height > 0, bounds.width > 0, bounds.height > 0 else { return }
         let room = bounds.inset(by: chrome).size
         if room != fitted, fitted == .zero || zoomScale <= minimumZoomScale + 0.01 {
@@ -398,6 +399,14 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
             if self.animates { self.transform = away }
             self.alpha = 0
         } completion: { _ in
+            // The pages changed meanwhile: the page comes back rather than staying gone.
+            guard self.actions.canPage(step) else {
+                UIView.animate(withDuration: 0.2) {
+                    self.transform = .identity
+                    self.alpha = 1
+                }
+                return
+            }
             self.actions.page(step)
         }
     }
@@ -405,6 +414,7 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     /// The page comes in from below or above once it is on screen.
     func arrive(from side: CGFloat) {
         arriving = side
+        alpha = 0
         if window != nil { comeIn() }
     }
 
@@ -413,7 +423,9 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         if window != nil, arriving != 0 { comeIn() }
     }
 
+    /// Once the page has its size, so it comes from as far as it should.
     private func comeIn() {
+        guard arriving != 0, bounds.height > 0 else { return }
         let side = arriving
         arriving = 0
         alpha = 0

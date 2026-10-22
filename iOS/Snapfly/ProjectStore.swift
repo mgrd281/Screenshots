@@ -110,6 +110,8 @@ final class ProjectStore: ObservableObject {
     private var sessions: [UUID: ProtectSession] = [:]
     private var used: [UUID] = []
     private var sources: [UUID: PDFSource] = [:]
+    /// The PDFs still waiting for their password.
+    private var stillLocked: Set<UUID> = []
     private var aspects: [String: CGFloat] = [:]
     private let thumbnails = NSCache<NSString, UIImage>()
     private let wanted = Wanted()
@@ -126,6 +128,8 @@ final class ProjectStore: ObservableObject {
     private static let keptSessions = 6
 
     private init() {
+        // Each change is a step of its own, even two made in the same moment.
+        undoManager.groupsByEvent = false
         undoManager.levelsOfUndo = ProjectHistory.limit
         thumbnails.totalCostLimit = 80 * 1024 * 1024
         load()
@@ -164,12 +168,14 @@ final class ProjectStore: ObservableObject {
     private func load() {
         Task {
             let found = await Self.run(on: writer) { Self.readAll() }
-            projects = found.sorted { $0.modified > $1.modified }
+            // A project started while they were read, as by a PDF opened in Snapfly, stays.
+            let known = Set(found.map(\.id))
+            projects = (found + projects.filter { !known.contains($0.id) }).sorted { $0.modified > $1.modified }
             #if DEBUG
             if ProjectDemo.makes { return ProjectDemo.start(self) }
             #endif
             // Where Snapfly was left with a project open, it opens again there.
-            if let id = UserDefaults.standard.string(forKey: Self.openKey).flatMap(UUID.init(uuidString:)) {
+            if project == nil, let id = UserDefaults.standard.string(forKey: Self.openKey).flatMap(UUID.init(uuidString:)) {
                 open(id)
             }
         }
@@ -305,6 +311,7 @@ final class ProjectStore: ObservableObject {
         sessions = [:]
         used = []
         sources = [:]
+        stillLocked = []
         aspects = [:]
         revisions = [:]
         thumbnails.removeAllObjects()
@@ -343,7 +350,10 @@ final class ProjectStore: ObservableObject {
     private func openSources() {
         guard let project else { return }
         for file in project.files where file.kind == .pdf && sources[file.id] == nil {
-            if let url = url(of: file.id), let source = PDFSource(url: url) { sources[file.id] = source }
+            if let url = url(of: file.id), let source = PDFSource(url: url) {
+                sources[file.id] = source
+                if source.isLocked { stillLocked.insert(file.id) }
+            }
         }
         askForLocked()
     }
@@ -352,7 +362,7 @@ final class ProjectStore: ObservableObject {
     private func askForLocked() {
         guard locked == nil, let project else { return }
         locked = project.files.first { file in
-            sources[file.id]?.isLocked == true && project.pages.contains { $0.source.file == file.id }
+            stillLocked.contains(file.id) && project.pages.contains { $0.source.file == file.id }
         }
     }
 
@@ -367,6 +377,7 @@ final class ProjectStore: ObservableObject {
         }
         wrongPassword = false
         locked = nil
+        stillLocked.remove(file.id)
         // Its pages can be drawn now, and an editor open on one starts afresh.
         aspects = aspects.filter { !$0.key.contains(file.id.uuidString) }
         for page in project?.pages ?? [] where page.source.file == file.id {
@@ -393,6 +404,11 @@ final class ProjectStore: ObservableObject {
     }
 
     private func password(for file: ProjectFile) async -> Bool {
+        // A PDF asked about before, while another was being added, is left out.
+        if let waiting = unlocking {
+            unlocking = nil
+            waiting.resume(returning: false)
+        }
         locked = file
         wrongPassword = false
         return await withCheckedContinuation { unlocking = $0 }
@@ -401,7 +417,7 @@ final class ProjectStore: ObservableObject {
     /// Whether a page's PDF waits for its password.
     func isLocked(_ page: ProjectPage) -> Bool {
         guard case .pdf(let file, _) = page.source else { return false }
-        return sources[file]?.isLocked ?? true
+        return sources[file] == nil || stillLocked.contains(file)
     }
 
     // MARK: Adding
@@ -425,6 +441,7 @@ final class ProjectStore: ObservableObject {
         switch items {
         case .files(let urls):
             for (n, url) in urls.enumerated() {
+                guard project?.id == id else { break }
                 adding = ProjectProgress(done: n, total: total)
                 guard let copied = await Self.run(on: writer, { Self.copy(url, into: id) }) else {
                     failed += 1
@@ -434,12 +451,19 @@ final class ProjectStore: ObservableObject {
                     added(copied, origin: .file)
                     continue
                 }
-                guard let file = await opened(copied, in: id) else { continue }
-                signed = signed || sources[file.id]?.isSigned == true
-                added(file, origin: .file)
+                switch await opened(copied, in: id) {
+                case .file(let file):
+                    signed = signed || sources[file.id]?.isSigned == true
+                    added(file, origin: .file)
+                case .unreadable:
+                    failed += 1
+                case .left:
+                    break
+                }
             }
         case .photos(let items):
             for (n, item) in items.enumerated() {
+                guard project?.id == id else { break }
                 adding = ProjectProgress(done: n, total: total)
                 guard let data = try? await item.loadTransferable(type: Data.self) else {
                     failed += 1
@@ -455,6 +479,7 @@ final class ProjectStore: ObservableObject {
             }
         case .pictures(let images, let origin, let kind):
             for (n, image) in images.enumerated() {
+                guard project?.id == id else { break }
                 adding = ProjectProgress(done: n, total: total)
                 let file = await Self.run(on: writer) { () -> ProjectFile? in
                     guard let jpeg = PictureTools.jpeg(image, quality: 0.92) else { return nil }
@@ -468,6 +493,7 @@ final class ProjectStore: ObservableObject {
             }
         case .screenshots(let ids):
             for (n, asset) in Library.assets(ids).enumerated() {
+                guard project?.id == id else { break }
                 adding = ProjectProgress(done: n, total: total)
                 guard let image = await Library.image(of: asset), let png = Covering.png(image),
                       let file = await Self.run(on: writer, { Self.store(png, ending: "png", name: L("Screenshot"), into: id) })
@@ -478,7 +504,19 @@ final class ProjectStore: ObservableObject {
                 added(file, origin: .screenshot)
             }
         }
-        guard project?.id == id else { return }
+        guard project?.id == id else {
+            // Closed while they were added: the copies go, or the whole folder once the project is gone.
+            let gone = !projects.contains { $0.id == id }
+            let folder = Self.filesFolder(id), whole = Self.folder(id), copies = files.map(\.stored)
+            writer.async {
+                if gone {
+                    try? FileManager.default.removeItem(at: whole)
+                } else {
+                    for stored in copies { try? FileManager.default.removeItem(at: folder.appendingPathComponent(stored)) }
+                }
+            }
+            return
+        }
         if !pages.isEmpty {
             let count = pages.count
             change(count == 1 ? L("Add Page") : L("Add Pages")) { project in
@@ -501,28 +539,44 @@ final class ProjectStore: ObservableObject {
         }
     }
 
+    /// A PDF added: opened, or one that could not be read, or one left out
+    /// because its password was not given.
+    private enum Opened {
+        case file(ProjectFile)
+        case unreadable
+        case left
+    }
+
     /// A PDF copied in, opened, and asked for its password where it has
-    /// one; nil where it cannot be read or its password was not given, and
-    /// its copy goes again.
-    private func opened(_ copied: ProjectFile, in project: UUID) async -> ProjectFile? {
+    /// one; where it cannot be read or its password was not given, its copy
+    /// goes again.
+    private func opened(_ copied: ProjectFile, in project: UUID) async -> Opened {
         let url = Self.filesFolder(project).appendingPathComponent(copied.stored)
-        guard let source = PDFSource(url: url) else {
+        func drop() {
+            sources[copied.id] = nil
+            stillLocked.remove(copied.id)
             writer.async { try? FileManager.default.removeItem(at: url) }
-            return nil
+        }
+        guard let source = PDFSource(url: url) else {
+            drop()
+            return .unreadable
         }
         sources[copied.id] = source
         if source.isLocked {
+            stillLocked.insert(copied.id)
             let given = await password(for: copied)
             guard given else {
-                sources[copied.id] = nil
-                writer.async { try? FileManager.default.removeItem(at: url) }
-                return nil
+                drop()
+                return .left
             }
         }
         let count = source.pageCount
-        guard count > 0 else { return nil }
-        return ProjectFile(id: copied.id, kind: .pdf, name: copied.name, stored: copied.stored, pageCount: count,
-                           digest: copied.digest)
+        guard count > 0 else {
+            drop()
+            return .unreadable
+        }
+        return .file(ProjectFile(id: copied.id, kind: .pdf, name: copied.name, stored: copied.stored, pageCount: count,
+                                 digest: copied.digest))
     }
 
     /// A file copied into the project's folder as it came: a PDF, or a
@@ -597,8 +651,10 @@ final class ProjectStore: ObservableObject {
         remember(now)
         if now.pages != before {
             history.record(before)
+            undoManager.beginUndoGrouping()
             undoManager.registerUndo(withTarget: self) { store in MainActor.assumeIsolated { store.stepBack() } }
             undoManager.setActionName(name)
+            undoManager.endUndoGrouping()
             settle(before, now.pages)
         }
         updateUndo()
@@ -623,7 +679,9 @@ final class ProjectStore: ObservableObject {
         now.modified = .now
         project = now
         remember(now)
+        undoManager.beginUndoGrouping()
         undoManager.registerUndo(withTarget: self) { store in MainActor.assumeIsolated { store.stepForward() } }
+        undoManager.endUndoGrouping()
         settle(before, pages)
         updateUndo()
         scheduleSave()
@@ -636,7 +694,9 @@ final class ProjectStore: ObservableObject {
         now.modified = .now
         project = now
         remember(now)
+        undoManager.beginUndoGrouping()
         undoManager.registerUndo(withTarget: self) { store in MainActor.assumeIsolated { store.stepBack() } }
+        undoManager.endUndoGrouping()
         settle(before, pages)
         updateUndo()
         scheduleSave()
@@ -765,13 +825,13 @@ final class ProjectStore: ObservableObject {
         switch source {
         case .pdf(let file, let index):
             guard let pdf = sources[file] else { return nil }
-            return await Self.run(on: queue) {
+            return await Self.run(on: queue) { () -> CGImage? in
                 if let key, !wanted.contains(key) { return nil }
                 return pdf.render(index, turns: turns, dpi: dpi, longest: longest)
             }
         case .picture(let file, _, _):
             guard let url = url(of: file) else { return nil }
-            return await Self.run(on: queue) {
+            return await Self.run(on: queue) { () -> CGImage? in
                 if let key, !wanted.contains(key) { return nil }
                 return PictureTools.read(url, longest: longest).flatMap { PictureTools.turned($0, quarters: turns) }
             }
@@ -913,11 +973,11 @@ final class ProjectStore: ObservableObject {
     private func covered(_ page: ProjectPage, _ image: CGImage, failing: String,
                          number: Int) async throws -> (image: CGImage, places: [CGRect]) {
         await prepareReading(page, for: image)
-        if let session = sessions[page.id] {
+        if let session = sessions[page.id], !session.hasFailed {
             // A copy being made again after a change is waited for, half a minute at most.
             var waited = 0
             while !session.isReady, waited < 300 {
-                if case .failed = session.stage { break }
+                if session.hasFailed { break }
                 try? await Task.sleep(for: .milliseconds(100))
                 waited += 1
             }

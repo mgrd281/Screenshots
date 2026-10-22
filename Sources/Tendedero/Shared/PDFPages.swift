@@ -19,7 +19,8 @@ final class PDFSource: @unchecked Sendable {
     let isSigned: Bool
 
     init?(url: URL) {
-        guard let data = try? Data(contentsOf: url, options: .mappedIfSafe), PDFFacts.isPDF(data),
+        // Read whole rather than mapped: the copy is closed while the iPhone is locked.
+        guard let data = try? Data(contentsOf: url), PDFFacts.isPDF(data),
               let document = PDFDocument(data: data) else { return nil }
         self.url = url
         self.document = document

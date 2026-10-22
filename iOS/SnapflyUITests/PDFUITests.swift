@@ -54,6 +54,11 @@ final class PDFUITests: XCTestCase {
         element(app, "project-title")
     }
 
+    /// Whether the project has a page in this place, as the grid shows it.
+    private func page(_ app: XCUIApplication, _ number: Int, shows: Bool) -> Bool {
+        wait(element(app, "project-page-\(number)"), "exists == %@", NSNumber(value: shows))
+    }
+
     // MARK: Checks
 
     func testTheScanTabOffersToMergeOrOpenAPDFAndListsTheProject() {
@@ -95,15 +100,15 @@ final class PDFUITests: XCTestCase {
         XCTAssertTrue(element(app, "project-page-2").isSelected)
         // Duplicated, then undone and done again.
         element(app, "project-duplicate").tap()
-        XCTAssertTrue(wait(title(app), "label CONTAINS %@", "6 Seiten"), title(app).label)
+        XCTAssertTrue(page(app, 6, shows: true), "the copy is in")
         XCTAssertTrue(words(app, "1 Seite dupliziert").waitForExistence(timeout: 5))
         let undo = element(app, "project-toast-undo")
         XCTAssertEqual(undo.label, "Rückgängig")
         undo.tap()
-        XCTAssertTrue(wait(title(app), "label CONTAINS %@", "5 Seiten"), title(app).label)
+        XCTAssertTrue(page(app, 6, shows: false), "the copy is gone")
         XCTAssertTrue(wait(undo, "label == %@", "Wiederholen"))
         undo.tap()
-        XCTAssertTrue(wait(title(app), "label CONTAINS %@", "6 Seiten"), title(app).label)
+        XCTAssertTrue(page(app, 6, shows: true), "the copy is back")
         // Another page chosen, turned.
         element(app, "project-page-3").tap()
         XCTAssertTrue(wait(title(app), "label CONTAINS %@", "1 Seite ausgewählt"), title(app).label)
@@ -112,7 +117,7 @@ final class PDFUITests: XCTestCase {
         element(app, "project-delete").tap()
         XCTAssertTrue(words(app, "1 Seite gelöscht").waitForExistence(timeout: 5))
         XCTAssertFalse(app.alerts.firstMatch.exists, "no dialog")
-        XCTAssertTrue(wait(title(app), "label CONTAINS %@", "5 Seiten"), title(app).label)
+        XCTAssertTrue(page(app, 6, shows: false), "the page is gone")
         element(app, "project-toast-undo").tap()
         XCTAssertTrue(element(app, "project-page-6").waitForExistence(timeout: 5), "the page is back")
         // Nothing chosen: the bar's actions are dimmed and do nothing.
@@ -155,7 +160,9 @@ final class PDFUITests: XCTestCase {
         XCTAssertTrue(canvas.waitForExistence(timeout: 60))
         canvas.swipeUp()
         XCTAssertTrue(app.navigationBars["Seite 2 von 5"].waitForExistence(timeout: 20))
-        element(app, "protect-canvas").swipeDown()
+        let next = element(app, "protect-canvas")
+        XCTAssertTrue(next.waitForExistence(timeout: 60))
+        next.swipeDown()
         XCTAssertTrue(app.navigationBars["Seite 1 von 5"].waitForExistence(timeout: 20))
         // The strip opens another page.
         element(app, "project-thumb-4").tap()
@@ -165,8 +172,9 @@ final class PDFUITests: XCTestCase {
     }
 
     func testSaveAndShareOffersSizeQualityAndCovers() {
-        let app = overview("export")
-        XCTAssertTrue(words(app, "Sichern und teilen").waitForExistence(timeout: 20))
+        // The sheet opens over the pages once they are in.
+        let app = launch("export")
+        XCTAssertTrue(words(app, "Sichern und teilen").waitForExistence(timeout: 90))
         XCTAssertTrue(words(app, "PDF, 5 Seiten").exists)
         XCTAssertTrue(element(app, "project-export-name").exists)
         XCTAssertTrue(words(app, "Seitengröße für Bilder").exists)
@@ -177,8 +185,12 @@ final class PDFUITests: XCTestCase {
         XCTAssertTrue(wait(estimate, "label BEGINSWITH %@", "ca. ", timeout: 60), estimate.label)
         XCTAssertTrue(element(app, "project-with-covers").isSelected)
         XCTAssertTrue(words(app, "Empfohlen").exists)
-        element(app, "project-without-covers").tap()
-        XCTAssertTrue(element(app, "project-uncovered-warning").waitForExistence(timeout: 5))
+        // The warning is read with the choice itself.
+        let without = element(app, "project-without-covers")
+        without.tap()
+        XCTAssertTrue(wait(without, "isSelected == %@", NSNumber(value: true)))
+        XCTAssertTrue((without.value as? String)?.contains("Diese Datei enthält alle privaten Angaben") == true,
+                      String(describing: without.value))
         XCTAssertTrue(words(app, "Enthält den ganzen Text").exists)
         for way in ["copy", "save", "share"] {
             XCTAssertTrue(element(app, "project-way-\(way)").exists, way)
@@ -200,7 +212,7 @@ final class PDFUITests: XCTestCase {
         alert.buttons["Öffnen"].tap()
         let again = app.alerts["Diese PDF ist mit einem Passwort geschützt."]
         XCTAssertTrue(again.waitForExistence(timeout: 10))
-        XCTAssertTrue(again.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "nicht das Passwort")).firstMatch.exists)
+        XCTAssertTrue(again.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "nicht das Passwort")).firstMatch.exists)
         again.secureTextFields.firstMatch.tap()
         again.secureTextFields.firstMatch.typeText("Muster-2026")
         again.buttons["Öffnen"].tap()
@@ -216,8 +228,8 @@ final class PDFUITests: XCTestCase {
         let app = launch("signed")
         let alert = app.alerts["Diese PDF ist digital signiert."]
         XCTAssertTrue(alert.waitForExistence(timeout: 30))
-        XCTAssertTrue(alert.staticTexts.containing(NSPredicate(format: "label CONTAINS %@",
-                                                               "Nach dem Bearbeiten ist die Signatur nicht mehr gültig.")).firstMatch.exists)
+        XCTAssertTrue(alert.staticTexts.matching(NSPredicate(format: "label CONTAINS %@",
+                                                             "Nach dem Bearbeiten ist die Signatur nicht mehr gültig.")).firstMatch.exists)
         alert.buttons["OK"].tap()
         XCTAssertTrue(element(app, "project-page-1").waitForExistence(timeout: 10))
     }
@@ -226,15 +238,15 @@ final class PDFUITests: XCTestCase {
         let app = overview()
         element(app, "project-page-2").tap()
         element(app, "project-delete").tap()
-        XCTAssertTrue(wait(title(app), "label CONTAINS %@", "4 Seiten"), title(app).label)
+        XCTAssertTrue(page(app, 5, shows: false), "the page is gone")
         // A moment for it to be written, then closed by force.
         sleep(2)
         app.terminate()
         let reopened = launch("reopen")
-        let title = element(reopened, "project-title")
-        XCTAssertTrue(title.waitForExistence(timeout: 30))
-        XCTAssertTrue(title.label.contains("Rechnung März"), title.label)
-        XCTAssertTrue(title.label.contains("4 Seiten"), title.label)
+        let heading = title(reopened)
+        XCTAssertTrue(heading.waitForExistence(timeout: 30))
+        XCTAssertTrue(heading.label.contains("Rechnung März"), heading.label)
+        XCTAssertTrue(wait(heading, "label CONTAINS %@", "4 Seiten"), heading.label)
     }
 
     func testThreeHundredPagesScrollAndReorderWithoutHitches() {
@@ -247,10 +259,11 @@ final class PDFUITests: XCTestCase {
         XCTAssertTrue(wait(meter, "label BEGINSWITH %@", "scroll", timeout: 20), meter.label)
         print("PDF-NUMBERS \(meter.label)")
         // A page held and dragged down to the bottom edge, so the grid scrolls under it.
-        let page = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "project-page-"))
+        let held = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "project-page-"))
             .element(boundBy: 1)
         let bottom = grid.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.97))
-        page.press(forDuration: 0.8, thenDragTo: bottom, withVelocity: .slow, thenHoldForDuration: 3)
+        held.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+            .press(forDuration: 0.8, thenDragTo: bottom, withVelocity: .slow, thenHoldForDuration: 3)
         XCTAssertTrue(wait(meter, "label BEGINSWITH %@", "reorder", timeout: 20), meter.label)
         print("PDF-NUMBERS \(meter.label)")
     }
