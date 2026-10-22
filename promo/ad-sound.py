@@ -5,6 +5,7 @@ loudness.
 
     python3 promo/ad-sound.py voice.mp3 music.wav out/ad-sound.m4a
     python3 promo/ad-sound.py --long voice-long.mp3 music.wav out/ad-long-sound.m4a
+    python3 promo/ad-sound.py --neu voice-neu.mp3 music.wav out/ad-neu-sound.m4a
 
 The voice and the music are not kept in the repository: they come from the
 voice and music service the owner chose, and are passed in here. Standard
@@ -95,6 +96,22 @@ CUTS = {
              # The call, and the confetti.
              + [("chime", at(71.21), 0.5), ("boom", at(71.72), 0.8)]
              + [("pop", at(71.72) + k * 0.06, 0.25) for k in range(6)]),
+    "neu": (30.5, FILES
+            + [("chime", at(2.96), 0.5), ("whoosh", at(4.35), 0.55, 1.1), ("whoosh", at(5.57), 0.35, 0.8)]
+            + sends([at(7.45), at(10.6) - 0.05], at(11.76))
+            + covering(at(12.71), at(13.3), at(14.8), at(15.4))
+            # The iPhone rises; a tap, the camera, the shutter.
+            + [("whoosh", at(16.2), 0.5, 0.7), ("click", at(18.1), 0.5), ("whoosh", at(18.2), 0.25, 0.4),
+               ("tick", at(18.5), 0.4), ("shutter", at(18.85), 0.8)]
+            # Photos and the PDF fly in as pages, the title, one page moved.
+            + [s for c in (19.63, 19.9, 20.28) for s in (("whoosh", at(c), 0.4, 0.5), ("pop", at(c) + 0.5, 0.45))]
+            + [("pop", at(21.0), 0.4), ("swipe", at(21.45), 0.4), ("pop", at(22.25), 0.5)]
+            # Save and Share: the sheet, the covers, Share, off it goes.
+            + [("click", at(22.87), 0.6), ("whoosh", at(22.97), 0.3, 0.4)]
+            + [("swipe", at(23.23) + i * 0.1, 0.4) for i in range(4)]
+            + [("click", at(23.69), 0.7), ("whoosh", at(23.89), 0.5, 0.6), ("chime", at(24.0), 0.3)]
+            + ending(at(24.3), at(24.66), at(25.78))
+            + [("pop", at(26.45), 0.4)]),
 }
 
 
@@ -233,8 +250,8 @@ def mix(voice, music, out, cut="short"):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    cut = "long" if args[:1] == ["--long"] else "short"
-    args = args[1:] if cut == "long" else args
+    cut = {"--long": "long", "--neu": "neu"}.get(args[0] if args else "", "short")
+    args = args[1:] if cut != "short" else args
     if len(args) != 3:
         sys.exit(__doc__)
     mix(*map(Path, args), cut)

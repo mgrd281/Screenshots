@@ -93,6 +93,30 @@ const CUTS = {
     more: { hit: 60.48, items: [61.6, 63.05, 64.78, 65.76], out: 66.85 },
     end: { wall: 66.95, icon: 67.1, word: 67.3, tag: 67.8, free: 68.59, url: 69.5, cta: 71.21, boom: 71.72 },
   },
+  // About thirty seconds with what came since: the short cut's three scenes,
+  // quicker, then the iPhone app that is still to come.
+  neu: {
+    duration: 30.5,
+    blocks: [
+      { from: 0, to: at(2.49), lines: [[["Schon wieder", 0.05, "small"]], [["30 ", at(0.6), "grad"], ["Screenshots", at(0.95), "grad"]], [["auf dem ", at(1.6), "small"], ["Desktop?", at(1.9)]]] },
+      { from: at(2.96), to: at(4.95), lines: [[["Mit Snapfly", at(2.96), "small"]], [["hängt jeder", at(3.62)]], [["Screenshot", at(4.35)]]] },
+      { from: at(5.0), to: at(6.96), lines: [[["sofort an", at(5.0), "small"]], [["einer Leine.", at(5.57), "grad"]]] },
+      { from: at(7.39), to: at(9.1), lines: [[["Ein Klick,", at(7.39), "grad"]], [["und er ist", at(8.13)]], [["im Chat.", at(8.55)]]] },
+      { from: at(9.72), to: at(12.25), lines: [[["WhatsApp.", at(9.72)]], [["ChatGPT.", at(10.55)]], [["Claude.", at(11.76), "grad"]]] },
+      { from: at(12.71), to: at(14.07), lines: [[["Namen und", at(12.71), "small"]], [["Kontonummern?", at(13.3), "grad"]]] },
+      { from: at(14.46), to: at(15.95), lines: [[["Werden", at(14.46), "small"]], [["automatisch", at(14.8), "grad"]], [["verdeckt.", at(15.35)]]] },
+      { from: at(16.43), to: at(18.03), lines: [[["Und bald auch ", at(16.43), "small"], ["auf dem", at(16.85), "small"]], [["iPhone.", at(17.26), "grad"]]] },
+      { from: at(18.32), to: at(19.4), lines: [[["Belege", at(18.32)]], [["scannen,", at(18.8), "grad"]]] },
+      { from: at(19.63), to: at(22.5), lines: [[["Fotos und ", at(19.63), "small"], ["PDFs", at(20.28), "small"]], [["zu einem", at(20.75)]], [["Dokument", at(21.0), "grad"]], [["zusammenfügen,", at(21.7), "small"]]] },
+      { from: at(22.87), to: at(24.15), lines: [[["und sicher", at(22.87)]], [["teilen.", at(23.69), "grad"]]] },
+    ],
+    desk: { mark: 2.96, rope: 3.6, sweep: 4.35, zoom: [5.57, 6.3], out: [6.85, 7.2], push: 2.9 },
+    chat: { in: 7.0, clicks: [7.45, 10.6], gptIn: 10.4, fan: 11.76, out: [12.45, 12.8] },
+    doc: { in: [12.35, 12.75], name: 12.71, iban: 13.3, cover: 14.8, lock: 15.4, out: [16.0, 16.35] },
+    phone: { in: 16.2, scanTap: 18.1, camera: 18.3, frame: 18.5, shutter: 18.85, photos: [19.63, 19.9], pdf: 20.28, title: 21.0,
+             lift: 21.45, drop: 22.25, saveTap: 22.87, cover: 23.23, shareTap: 23.69, out: [24.25, 24.6] },
+    end: { wall: 24.3, icon: 24.45, word: 24.66, tag: 25.1, free: 25.78, soon: 26.45, url: 27.0 },
+  },
 };
 const CUT = CUTS[DATA.cut || "short"];
 const DURATION = CUT.duration;
@@ -312,6 +336,7 @@ const free = el("div", "free", document.body, T.free);
 const url = el("div", "url", document.body, DATA.url);
 const legal = el("div", "legal", document.body, T.legal);
 const endCta = CUT.end.cta ? el("div", "end-cta", document.body, T.cta) : null;
+const soon = CUT.end.soon ? el("div", "soon", document.body, T.soon) : null;
 
 // MARK: The long cut's own scenes
 
@@ -687,7 +712,173 @@ function ctaScene(E) {
   };
 }
 
+// "Und bald auch auf dem iPhone: Belege scannen, Fotos und PDFs zu einem
+// Dokument zusammenfügen, und sicher teilen.": the Scan tab, a receipt
+// scanned, photos and a PDF flying in as pages, one page moved to the front,
+// the covers, and Save and Share. The phone is drawn in iPhone points
+// (390 × 844 for its screen) and scaled up as a whole.
+const G_PHOTO = line24('<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 5-4.5 4 3.5 3-2.5 4 3.5"/>');
+const G_SHIELD = line24('<path d="M12 3 5 6v5.5c0 4.4 3 7.7 7 9.5 4-1.8 7-5.1 7-9.5V6Z"/>');
+const G_SCAN = line24('<path d="M3 8V5.5A2.5 2.5 0 0 1 5.5 3H8M16 3h2.5A2.5 2.5 0 0 1 21 5.5V8M21 16v2.5a2.5 2.5 0 0 1-2.5 2.5H16M8 21H5.5A2.5 2.5 0 0 1 3 18.5V16M7 12h10"/>');
+const G_MORE = line24('<circle cx="12" cy="12" r="9"/><path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.6"/>');
+const G_DOC = line24('<path d="M7 3h7l5 5v13H7Z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>');
+const G_STACK = line24('<rect x="4" y="7" width="12" height="14" rx="2"/><path d="M8 4h10a2 2 0 0 1 2 2v12"/>');
+const G_SHARE = line24('<path d="M12 15V3M7.5 7.5 12 3l4.5 4.5M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/>');
+const G_CAMERA = line24('<path d="M4 8h3l2-3h6l2 3h3v11H4Z"/><circle cx="12" cy="13" r="3.5"/>');
+const G_PLUS = line24('<path d="M12 5v14M5 12h14"/>');
+function phoneScene(P) {
+  const X = 333, Y = 748, S = 1.25;
+  const ph = T.phone, R = T.receipt, Lt = T.letter;
+  const count = (n) => (n === 1 ? ph.page : ph.pages.replace("%d", n));
+  const phone = el("div", "phone", document.body, `
+    <div class="ph-bezel"></div>
+    <div class="ph-screen">
+      <div class="ph-layer ph-home">
+        <div class="ph-h1" style="top:58px">${ph.Scan}</div>
+        <div class="ph-btn" style="top:116px">${G_CAMERA}${ph["Scan Document"]}</div>
+        <div class="ph-card" style="top:190px">
+          <div class="hd"><span class="ph-tile">${G_DOC}</span><span><b>${ph["Create and Edit PDFs"]}</b><small>${ph["Photos, scans and PDFs into one file"]}</small></span></div>
+          <div class="ph-two"><span class="fill">${G_STACK}${ph.Merge}</span><span>${G_DOC}${ph["Open PDF"]}</span></div>
+        </div>
+        <div class="ph-sec" style="top:360px">${ph["Recently Edited"]}</div>
+        <div class="ph-card ph-list" style="top:398px">${T.recent.map(([n, k]) => `<div class="ph-row"><i></i><span><b>${n}</b><small>${count(k)}</small></span></div>`).join("")}</div>
+        <div class="ph-tabs">${[[G_PHOTO, ph.Photos], [G_SHIELD, ph.Protected], [G_SCAN, ph.Scan], [G_MORE, ph.More]]
+          .map(([g, l], i) => `<div class="ph-tab${i === 2 ? " on" : ""}">${g}<span>${l}</span></div>`).join("")}</div>
+      </div>
+      <div class="ph-layer ph-ov">
+        <div class="ph-nav"><span class="back">‹</span><span class="done">${ph.Done}</span></div>
+        <div class="ph-h1" style="top:96px">${Lt.project}</div>
+        <div class="ph-sub"></div>
+        <div class="ph-bar"><span class="ph-add">${G_PLUS}${ph.Add}</span><span class="ph-save">${G_SHARE}${ph["Save and Share"]}</span></div>
+      </div>
+      <div class="ph-layer ph-cam"><div class="ph-chip">${ph["Scan Document"]}</div><div class="ph-shutter"><i></i></div></div>
+      <div class="ph-layer ph-flash"></div>
+      <div class="ph-status"><b>9:41</b><i class="ph-island"></i></div>
+      <i class="ph-home-ind"></i>
+    </div>
+    <div class="ph-over"></div>`);
+  const $ = (s) => phone.querySelector(s);
+  const home = $(".ph-home"), ov = $(".ph-ov"), cam = $(".ph-cam"), flash = $(".ph-flash"), status = $(".ph-status");
+  const sub = $(".ph-sub"), save = $(".ph-save"), shutter = $(".ph-shutter"), over = $(".ph-over");
+  // The pages: the scanned receipt, two photos and the PDF's page, each in
+  // its own shape, a paper drawn at 200 points wide and scaled to fit.
+  const ink = '<i class="ink"></i>';
+  const receipt = `<div class="rc"><b>${R.shop}</b><small>${R.place}</small><hr>${R.lines.map(([a, b]) => `<p><span>${a}</span><span>${b}</span></p>`).join("")}
+    <hr><p class="tot"><span>${R.total}</span><span>${R.total_v}</span></p><p><span>${R.card}</span><span class="pv">${R.card_v}${ink}</span></p></div>`;
+  const letter = `<div class="lt"><b>${Lt.title}</b><small>${Lt.no}</small><p><span class="pv">${Lt.to}${ink}</span></p><p><span class="pv">${Lt.street}${ink}</span></p>
+    <div class="lines"><i style="width:90%"></i><i style="width:70%"></i><i style="width:82%"></i><i style="width:55%"></i></div><p><span class="pv">${Lt.iban}${ink}</span></p></div>`;
+  const PAGES = [
+    { w: 100, h: 140, html: `<div class="ph-in" style="transform:scale(.5)">${receipt}</div>`, label: ph.Receipt },
+    { w: 110, h: 73, html: DATA.art3.sunset, label: T.photo },
+    { w: 110, h: 73, html: DATA.art3.chart, label: T.photo },
+    { w: 99, h: 140, html: `<div class="ph-in" style="transform:scale(.495)">${letter}</div><span class="ph-badge">PDF</span>`, label: ph.Invoice },
+  ];
+  const pages = PAGES.map((p) => {
+    const n = el("div", "ph-page", over, `<div class="ph-paper">${p.html}</div><span class="ph-lab"></span>`);
+    style(n, { width: `${p.w}px`, height: `${p.h}px` });
+    n.querySelector(".ph-lab").style.top = `${p.h + 8 + (140 - p.h) / 2}px`;
+    return { ...p, n, lab: n.querySelector(".ph-lab"), inks: [...n.querySelectorAll(".ink")] };
+  });
+  const quad = el("i", "ph-quad", pages[0].n);
+  const toast = el("div", "ph-toast", over, `${ph["Page moved"]}<span>${ph.Undo}</span>`);
+  const sclip = el("div", "ph-sclip", over, `<div class="ph-dim"></div><div class="ph-sheet"><i class="grab"></i><div class="st">${ph["Save and Share"]}</div>
+    <div class="sf"><span>${ph.Name}</span>${Lt.project}</div><div class="seg"><span class="on">${ph["With Covers"]}</span><span>${ph["Without Covers"]}</span></div>
+    <div class="note">${G_SHIELD}${ph["Private details stay covered"]}</div>
+    <div class="sh"><span class="lbl">${G_SHARE}${ph.Share}</span><span class="ok">${ICON_CHECK}</span></div>
+    <div class="two2"><span>${ph.Copy}</span><span>${ph.Save}</span></div></div>`);
+  const dim = sclip.querySelector(".ph-dim"), sheet = sclip.querySelector(".ph-sheet"), shareBtn = sclip.querySelector(".sh");
+  const file = el("div", "ph-file", over, `<b>PDF</b><span>${Lt.project}.pdf<small>${count(4)}</small></span><i>${ICON_CHECK}</i>`);
+  const touch = el("i", "ph-touch", over);
+  // Where a node's middle is, in the phone's own points.
+  const middle = (node) => { const o = over.getBoundingClientRect(), r = node.getBoundingClientRect();
+    return { x: (r.left + r.width / 2 - o.left) / S, y: (r.top + r.height / 2 - o.top) / S }; };
+  // Three to a row, as the overview shows pages.
+  const slot = (s) => ({ x: 16 + (s % 3) * 124 + 55, y: 176 + Math.floor(s / 3) * 176 + 70 });
+  // Where each page flies in from, and when.
+  const FROM = [null, { x: -330, y: 140, r: -24, t: P.photos[0] }, { x: -300, y: 560, r: 18, t: P.photos[1] }, { x: 600, y: 260, r: 22, t: P.pdf }];
+  const ORDER0 = [0, 1, 2, 3], ORDER1 = [3, 0, 1, 2];
+  return (t) => {
+    const a = at(P.in), out = prog(t, at(P.out[0]), at(P.out[1]));
+    const rise = outQuart(prog(t, a, a + 0.6));
+    show(phone, prog(t, a, a + 0.15) * (1 - out));
+    style(phone, { left: `${X}px`, top: `${Y}px`, transform: `translateY(${lerp(1250, 0, rise) - 70 * inOut(out)}px) rotate(${lerp(9, 0, rise)}deg) scale(${S * lerp(1, 0.96, out)})` });
+    // The Scan tab, then the camera over it, then the pages' overview.
+    const camIn = outQuart(prog(t, at(P.camera) - 0.12, at(P.camera) + 0.2));
+    const ovAt = at(P.shutter) + 0.35, ovIn = prog(t, ovAt, ovAt + 0.25);
+    show(home, 1 - ovIn); show(ov, ovIn);
+    show(cam, camIn * (1 - ovIn));
+    cam.style.transform = `translateY(${lerp(120, 0, camIn)}px)`;
+    status.style.color = camIn > 0.5 && ovIn < 0.5 ? "#fff" : "#111318";
+    const fl = prog(t, at(P.shutter), at(P.shutter) + 0.3);
+    show(flash, fl > 0 && fl < 1 ? 0.9 * (1 - fl) : 0);
+    shutter.style.transform = `scale(${1 - 0.12 * Math.sin(Math.PI * prog(t, at(P.shutter) - 0.05, at(P.shutter) + 0.15))})`;
+    // The pages land one by one; the count follows them.
+    const landed = (i) => (i === 0 ? ovAt + 0.4 : at(FROM[i].t) + 0.5);
+    sub.textContent = count(pages.filter((p, i) => t >= landed(i)).length);
+    const title = outBack(prog(t, at(P.title), at(P.title) + 0.35));
+    ov.querySelector(".ph-h1").style.transform = `scale(${t >= at(P.title) ? lerp(1.12, 1, title) : 1})`;
+    // One page is held, lifted and taken to the front; the others make room.
+    const lift = outQuart(prog(t, at(P.lift), at(P.lift) + 0.2)) * (1 - outQuart(prog(t, at(P.drop), at(P.drop) + 0.2)));
+    const move = inOut(prog(t, at(P.lift) + 0.2, at(P.drop)));
+    const shift = inOut(prog(t, at(P.drop) - 0.5, at(P.drop) - 0.05));
+    pages.forEach((p, i) => {
+      const s0 = slot(ORDER0.indexOf(i)), s1 = slot(ORDER1.indexOf(i));
+      let x = lerp(s0.x, s1.x, i === 3 ? move : shift), y = lerp(s0.y, s1.y, i === 3 ? move : shift), r = 0, sc = 1 + 0.12 * (i === 3 ? lift : 0), o = 1, lean = 0;
+      if (i === 0) {
+        // The receipt on the table, crooked, then straight and into place.
+        const flat = outQuart(prog(t, at(P.shutter) + 0.1, at(P.shutter) + 0.35)), go = inOut(prog(t, ovAt, ovAt + 0.4));
+        x = lerp(195, x, go); y = lerp(390, y, go); r = lerp(-9, 0, flat); sc = lerp(2, 1, go);
+        o = camIn; lean = lerp(14, 0, flat);
+      } else {
+        const f = FROM[i], fly = inOut(prog(t, at(f.t), at(f.t) + 0.5));
+        o = t >= at(f.t) ? 1 : 0;
+        x = lerp(f.x, x, fly); y = lerp(f.y, y, fly) - Math.sin(Math.PI * fly) * 80; r = lerp(f.r, 0, fly) - (i === 3 ? 3 * lift : 0);
+        sc *= lerp(1.6, 1, fly);
+      }
+      show(p.n, o);
+      style(p.n, { left: `${x - p.w / 2}px`, top: `${y - p.h / 2}px`, zIndex: i === 3 ? "3" : "2",
+                   transform: `perspective(900px) rotateX(${lean}deg) rotate(${r}deg) scale(${sc})`,
+                   filter: i === 3 && lift > 0 ? `drop-shadow(0 ${14 * lift}px ${18 * lift}px rgba(0,0,0,.28))` : "" });
+      const pos = (t >= at(P.drop) ? ORDER1 : ORDER0).indexOf(i) + 1;
+      p.lab.innerHTML = `<b>${pos}</b> · ${p.label}`;
+      show(p.lab, i === 0 ? ovIn : prog(t, at(FROM[i].t) + 0.4, at(FROM[i].t) + 0.6));
+      p.inks.forEach((k, j) => { k.style.transform = `scaleX(${outQuart(prog(t, at(P.cover) + j * 0.1, at(P.cover) + 0.3 + j * 0.1))})`; });
+    });
+    show(quad, prog(t, at(P.frame), at(P.frame) + 0.15) * (1 - prog(t, at(P.shutter), at(P.shutter) + 0.2)));
+    quad.style.transform = `scale(${lerp(1.25, 1, outQuart(prog(t, at(P.frame), at(P.frame) + 0.3)))})`;
+    // "Page moved", with its Undo.
+    const tn = outQuart(prog(t, at(P.drop) + 0.1, at(P.drop) + 0.35)) * (1 - prog(t, at(P.saveTap), at(P.saveTap) + 0.2));
+    show(toast, tn);
+    toast.style.transform = `translateX(-50%) translateY(${lerp(20, 0, tn)}px)`;
+    // Save and Share: the sheet, with covers on, and Share.
+    const sh = outQuart(prog(t, at(P.saveTap) + 0.1, at(P.saveTap) + 0.45));
+    show(sclip, sh > 0 ? 1 : 0); show(dim, sh);
+    sheet.style.transform = `translateY(${lerp(480, 0, sh)}px)`;
+    save.style.transform = `scale(${1 - 0.08 * Math.sin(Math.PI * prog(t, at(P.saveTap) - 0.05, at(P.saveTap) + 0.15))})`;
+    const done = t >= at(P.shareTap) + 0.1;
+    show(shareBtn.querySelector(".lbl"), done ? 0 : 1); show(shareBtn.querySelector(".ok"), done ? 1 : 0);
+    shareBtn.style.transform = `scale(${1 - 0.06 * Math.sin(Math.PI * prog(t, at(P.shareTap) - 0.05, at(P.shareTap) + 0.15))})`;
+    const ff = prog(t, at(P.shareTap) + 0.2, at(P.shareTap) + 0.8);
+    show(file, ff > 0 ? 1 - prog(ff, 0.75, 1) : 0);
+    style(file, { left: `${lerp(195, 330, inOut(ff))}px`, top: `${lerp(640, -150, inOut(ff))}px`, transform: `translate(-50%, -50%) scale(${lerp(0.6, 1.25, outBack(Math.min(1, ff * 1.6)))}) rotate(${lerp(0, 8, ff)}deg)` });
+    // A finger: the scan button, the shutter, the page held and moved,
+    // Save and Share, Share.
+    const btn = middle(home.querySelector(".ph-btn")), sv = middle(save), sb = middle(shareBtn), pdf = pages[3];
+    const TAPS = [[P.scanTap, btn], [P.shutter, { x: 195, y: 740 }], [P.saveTap, sv], [P.shareTap, sb]];
+    let tx = 0, ty = 0, ta = 0, press = 0;
+    TAPS.forEach(([c, p]) => {
+      const w = prog(t, at(c) - 0.3, at(c) - 0.1) * (1 - prog(t, at(c) + 0.15, at(c) + 0.3));
+      if (w > ta) { ta = w; tx = p.x; ty = p.y; press = Math.sin(Math.PI * prog(t, at(c) - 0.05, at(c) + 0.15)); }
+    });
+    const hold = prog(t, at(P.lift) - 0.25, at(P.lift) - 0.05) * (1 - prog(t, at(P.drop) + 0.05, at(P.drop) + 0.2));
+    if (hold > ta) { const m = middle(pdf.n); ta = hold; tx = m.x; ty = m.y + 10; press = lift; }
+    show(touch, ta * 0.95);
+    style(touch, { left: `${tx}px`, top: `${ty}px`, transform: `scale(${1 - 0.18 * press})` });
+  };
+}
+
 const extras = [];
+if (CUT.phone) extras.push(phoneScene(CUT.phone));
 if (CUT.desk.button) extras.push(deskShotScene(CUT.desk.button));
 if (CUT.mail) extras.push(mailScene(CUT.mail));
 if (CUT.search) extras.push(searchScene(CUT.search));
@@ -949,7 +1140,12 @@ function seek(t) {
   style(free, { left: "540px", top: "1205px", transform: `translateX(-50%) scale(${lerp(0.7, 1, outBack(fr))})` });
   const ur = prog(t, at(E.url), at(E.url) + 0.5);
   show(url, outQuart(ur));
-  style(url, { top: "1385px" });
+  style(url, { top: soon ? "1398px" : "1385px" });
+  if (soon) {
+    const so = prog(t, at(E.soon), at(E.soon) + 0.45);
+    show(soon, outQuart(so));
+    style(soon, { top: "1335px", transform: `translateY(${lerp(24, 0, outQuart(so))}px)` });
+  }
   show(legal, outQuart(ur) * 0.8);
   style(legal, { top: "1450px" });
   const push = 1 + 0.03 * prog(t, at(E.icon) + 0.3, DURATION);

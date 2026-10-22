@@ -95,7 +95,38 @@ python3 promo/ad-sound.py --long voice-long.mp3 music.wav ad-long-sound.m4a
 node promo/render.js ad-long --audio ad-long-sound.m4a                    # renders promo/out/Snapfly-ad-long-de.mp4
 ```
 
-Both cuts share `ad.js`. Each cut in its `CUTS` table has its captions and
+### The new cut, with the iPhone
+
+About 30 seconds (October 2026) with what came since: the short cut's
+Desktop, the line and the three chats, quicker, the covering, and then the
+iPhone app, which is still in TestFlight, so the voice says "bald" and the
+end card "Bald auch fürs iPhone". On the iPhone, drawn in iPhone points
+with the app's own labels and colours:
+
+1. The Scan tab, Dokument scannen, and a receipt on a table that the frame
+   finds, a shutter, and the receipt straight as the first page.
+2. Two photos and a PDF's page fly in as pages, each in its own shape.
+3. The PDF's page is held and moved to the front; "Seite verschoben" with
+   Widerrufen.
+4. Sichern und teilen: the covers land on the pages, With Covers is on,
+   Teilen, and the PDF goes off.
+
+```sh
+python3 promo/build.py ad-neu                                            # writes promo/ad-neu-de.html
+python3 promo/ad-sound.py --neu voice-neu.mp3 music.wav ad-neu-sound.m4a
+node promo/render.js ad-neu --audio ad-neu-sound.m4a                     # renders promo/out/Snapfly-ad-neu-de.mp4
+```
+
+Its script: "Schon wieder dreißig Screenshots auf dem Desktop? Mit Snapfly
+hängt jeder Screenshot sofort an einer Leine. Ein Klick, und er ist im
+Chat. WhatsApp, ChatGPT, Claude. Namen und Kontonummern? Werden automatisch
+verdeckt. Und bald auch auf dem iPhone: Belege scannen, Fotos und PDFs zu
+einem Dokument zusammenfügen, und sicher teilen. Snapfly. Kostenlos für
+deinen Mac." Syncing between Mac and iPhone is left out until it is
+checked on real devices (`SYNC.md`). When the iPhone app is in the App
+Store, "bald" can go.
+
+All cuts share `ad.js`. Each cut in its `CUTS` table has its captions and
 the moments of each scene in its own voice; a scene a cut leaves out is not
 built.
 
