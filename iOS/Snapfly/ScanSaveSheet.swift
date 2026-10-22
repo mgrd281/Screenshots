@@ -102,7 +102,7 @@ struct ScanSaveSheet: View {
         }
         .task(id: note?.text) {
             guard note != nil else { return }
-            try? await Task.sleep(for: .seconds(3))
+            try? await Task.sleep(for: .seconds(6))
             note = nil
         }
     }

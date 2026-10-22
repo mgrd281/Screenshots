@@ -130,7 +130,6 @@ struct ScanCornerEditor: View {
             .shadow(color: .black.opacity(0.4), radius: 3, y: 1)
             .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch)
             .contentShape(Circle())
-            .position(shown(quad.corners[corner], in: frame))
             .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .named("corners"))
                 .onChanged { drag in
                     if dragging != corner {
@@ -142,6 +141,7 @@ struct ScanCornerEditor: View {
                     quad.corners = corners
                 }
                 .onEnded { _ in dragging = nil })
+        // Placed last, so the corner is one element where it shows, not all of the picture.
         return dot
             .accessibilityElement()
             .accessibilityLabel(Self.name(of: corner))
@@ -150,6 +150,7 @@ struct ScanCornerEditor: View {
             .accessibilityAction(named: L("Move Down")) { nudge(corner, x: 0, y: -0.01) }
             .accessibilityAction(named: L("Move Left")) { nudge(corner, x: -0.01, y: 0) }
             .accessibilityAction(named: L("Move Right")) { nudge(corner, x: 0.01, y: 0) }
+            .position(shown(quad.corners[corner], in: frame))
     }
 
     private func nudge(_ corner: Int, x: CGFloat, y: CGFloat) {

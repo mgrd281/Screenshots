@@ -2863,9 +2863,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   saved to Files and pictures to Photos. While they work, which page is
   covered; where pages are still made ready, one waits for its corners or
   one could not be read, the bar says so instead (the last two in
-  `phone-scan-warn-text`) and waits. Then a note and a success haptic; without
-  covers the words say so ("Copied, without covers") beside a plain
-  checkmark, never the protected shield.
+  `phone-scan-warn-text`) and waits. Then a note for 6 s and a success
+  haptic; without covers the words say so ("Copied, without covers") beside
+  a plain checkmark, never the protected shield.
 - **Details** (`ReviewSheet`) is a sheet at medium or large height, the
   picture still usable behind it at medium. First, while there are places
   Snapfly was not sure about, "To check" with "%d of %d checked" and a

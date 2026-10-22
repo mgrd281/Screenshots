@@ -225,8 +225,9 @@ final class ScanUITests: XCTestCase {
     }
 
     /// From Photos to sharing: the made-up photo chosen in the system's
-    /// picker (`simctl addmedia` put it in Photos), made ready, compared,
-    /// in other colours, then Save and Share without covers and back.
+    /// picker (`simctl addmedia` put it in Photos), its corners set by hand
+    /// where Vision is not sure of them, made ready, compared, in other
+    /// colours, then Save and Share without covers and back.
     func testRecordFromPhotosToSharing() throws {
         try recording()
         let app = launch("empty")
@@ -236,9 +237,44 @@ final class ScanUITests: XCTestCase {
         photos.tap()
         pause(2.5)
         pickNewest(app)
+        setCornersIfAsked(app)
         XCTAssertTrue(card(app).exists)
         pause(2)
         walkThrough(app)
+    }
+
+    /// Where the corners wait for the owner, as on the simulator, where
+    /// Vision finds no page: the whole picture first, then each corner
+    /// dragged slowly onto the page's corner in the made-up photo
+    /// (`ScanSample`), then Done. Otherwise nothing.
+    private func setCornersIfAsked(_ app: XCUIApplication) {
+        let done = element(app, "scan-corners-done")
+        let good = element(app, "scan-status-good"), warning = element(app, "scan-status-warning")
+        let either = expectation(for: NSPredicate { _, _ in done.exists || good.exists || warning.exists }, evaluatedWith: nil)
+        _ = XCTWaiter.wait(for: [either], timeout: Self.ready)
+        guard done.exists else { return }
+        pause(1.5)
+        element(app, "scan-corners-whole").tap()
+        pause(1)
+        // With the whole picture, the first and third corners are the picture's own.
+        let first: CGRect = element(app, "scan-corner-0").frame
+        let third: CGRect = element(app, "scan-corner-2").frame
+        let picture = CGRect(x: first.midX, y: first.midY, width: third.midX - first.midX, height: third.midY - first.midY)
+        // The page's corners in the photo, from its top left: top left, top right, bottom right, bottom left.
+        let page: [CGPoint] = [CGPoint(x: 0.172, y: 0.105), CGPoint(x: 0.847, y: 0.122),
+                               CGPoint(x: 0.923, y: 0.883), CGPoint(x: 0.083, y: 0.851)]
+        let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+        for (corner, point) in page.enumerated() {
+            let handle: CGRect = element(app, "scan-corner-\(corner)").frame
+            let x: CGFloat = picture.minX + point.x * picture.width
+            let y: CGFloat = picture.minY + point.y * picture.height
+            let from = origin.withOffset(CGVector(dx: handle.midX, dy: handle.midY))
+            from.press(forDuration: 0.3, thenDragTo: origin.withOffset(CGVector(dx: x, dy: y)),
+                       withVelocity: .slow, thenHoldForDuration: 0.3)
+            pause(0.6)
+        }
+        pause(1)
+        done.tap()
     }
 
     /// The newest photo in the system's picker, then its button that adds
