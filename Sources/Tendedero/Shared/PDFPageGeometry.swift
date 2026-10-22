@@ -88,7 +88,7 @@ enum PDFTextLayer {
     }
 
     /// The page's text cut into lines and words: a line ends at a line
-    /// break, a word at a space. `box` gives where each UTF-16 unit of the
+    /// break or where its words stand far apart, a word at a space. `box` gives where each UTF-16 unit of the
     /// text is, from 0 to 1 from the bottom left, or nil where a unit has
     /// no place, as a line break has none. Words without a place are left out.
     static func lines(_ text: String, box: (Int) -> CGRect?) -> [Line] {
@@ -119,14 +119,43 @@ enum PDFTextLayer {
                 }
             }
             guard !words.isEmpty else { return }
-            let whole = words.dropFirst().reduce(words[0].box) { $0.union($1.box) }
-            lines.append(Line(string: string, box: whole, words: words))
+            for run in columns(words) {
+                let first = run[0].range.location
+                let end = run[run.count - 1].range.location + run[run.count - 1].range.length
+                let shown = first == 0 && end == piece.count ? string : String(decoding: piece[first..<end], as: UTF16.self)
+                let placed = run.map { (range: NSRange(location: $0.range.location - first, length: $0.range.length), box: $0.box) }
+                let whole = run.dropFirst().reduce(run[0].box) { $0.union($1.box) }
+                lines.append(Line(string: shown, box: whole, words: placed))
+            }
         }
         for (index, unit) in units.enumerated() where unit == 0x0A || unit == 0x0D || unit == 0x2028 || unit == 0x2029 {
             finish(index)
         }
         finish(units.count)
         return lines
+    }
+
+    /// A line's words parted where they stand far apart, as a page's
+    /// columns do on one row, so each part is a line of its own, as the
+    /// lines read from a picture are: a gap wider than three times the
+    /// line's height parts them.
+    private static func columns(_ words: [(range: NSRange, box: CGRect)]) -> [[(range: NSRange, box: CGRect)]] {
+        guard words.count > 1 else { return [words] }
+        let whole = words.dropFirst().reduce(words[0].box) { $0.union($1.box) }
+        // A line runs across the page, or up or down it on a page turned.
+        let across = whole.width >= whole.height
+        let height = words.map { across ? $0.box.height : $0.box.width }.max() ?? 0
+        var runs = [[words[0]]]
+        for (before, word) in zip(words, words.dropFirst()) {
+            let gap = across ? max(word.box.minX - before.box.maxX, before.box.minX - word.box.maxX)
+                : max(word.box.minY - before.box.maxY, before.box.minY - word.box.maxY)
+            if height > 0, gap > height * 3 {
+                runs.append([word])
+            } else {
+                runs[runs.count - 1].append(word)
+            }
+        }
+        return runs
     }
 
     private static func isBlank(_ unit: UInt16) -> Bool {

@@ -84,8 +84,10 @@ enum PDFFixtures {
         let content = lines.map { text, size, y in
             "BT /F1 \(size) Tf 60 \(y) Td (\(text)) Tj ET"
         }.joined(separator: "\n")
-        let contents = Data("<< /Length ".utf8) + Data("\(latin(content).count)".utf8) + Data(" >>\nstream\n".utf8)
-            + latin(content) + Data("\nendstream".utf8)
+        let stream = latin(content)
+        var contents = Data("<< /Length \(stream.count) >>\nstream\n".utf8)
+        contents.append(stream)
+        contents.append(Data("\nendstream".utf8))
         let objects: [Data] = [
             Data("<< /Type /Catalog /Pages 2 0 R /AcroForm << /Fields [5 0 R] /SigFlags 3 >> >>".utf8),
             Data("<< /Type /Pages /Kids [3 0 R] /Count 1 >>".utf8),

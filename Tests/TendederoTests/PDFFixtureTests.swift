@@ -43,13 +43,15 @@ final class PDFFixtureTests: XCTestCase {
     /// Where the page is dark, as a share of a part of it from 0 to 1 from the bottom left.
     private static func ink(_ image: CGImage, in part: CGRect) -> Double {
         guard let bitmap = ScanCleaner.bitmap(image) else { return 0 }
+        // Made once: each reading of it makes the whole plane again.
+        let brightness = bitmap.brightness
         let x0 = Int(part.minX * CGFloat(bitmap.width)), x1 = Int(part.maxX * CGFloat(bitmap.width))
         let y0 = Int((1 - part.maxY) * CGFloat(bitmap.height)), y1 = Int((1 - part.minY) * CGFloat(bitmap.height))
         var dark = 0, all = 0
         for y in max(0, y0)..<min(bitmap.height, y1) {
             for x in max(0, x0)..<min(bitmap.width, x1) {
                 all += 1
-                if bitmap.brightness[y * bitmap.width + x] < 128 { dark += 1 }
+                if brightness[y * bitmap.width + x] < 128 { dark += 1 }
             }
         }
         return all == 0 ? 0 : Double(dark) / Double(all)

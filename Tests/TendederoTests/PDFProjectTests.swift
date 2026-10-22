@@ -314,6 +314,29 @@ final class PDFPageGeometryTests: XCTestCase {
         XCTAssertFalse(PDFTextLayer.holdsText("Seite 1"))
     }
 
+    func testWordsFarApartOnOneRowAreLinesOfTheirOwn() {
+        // The name on the left and the invoice's number on the right, as the
+        // text may give them on one row; then the same on a page turned.
+        let text = "Erika Mustermann Rechnungsnr. RE-2026-0412"
+        let units = Array(text.utf16)
+        let right = 17
+        func place(_ index: Int, turned: Bool) -> CGRect {
+            let along = index < right ? 0.1 + CGFloat(index) * 0.01 : 0.6 + CGFloat(index - right) * 0.01
+            return turned ? CGRect(x: 0.8, y: 1 - along - 0.01, width: 0.02, height: 0.01)
+                : CGRect(x: along, y: 0.8, width: 0.01, height: 0.02)
+        }
+        for turned in [false, true] {
+            let lines = PDFTextLayer.lines(text) { units.indices.contains($0) ? place($0, turned: turned) : nil }
+            XCTAssertEqual(lines.map(\.string), ["Erika Mustermann", "Rechnungsnr. RE-2026-0412"])
+            XCTAssertEqual(lines[1].words.map(\.range), [NSRange(location: 0, length: 12), NSRange(location: 13, length: 12)])
+            XCTAssertEqual(lines[1].words[0].box, place(right, turned: turned)
+                .union(place(right + 11, turned: turned)))
+        }
+        // Words a little apart stay one line.
+        let near = PDFTextLayer.lines("Summe 120,00") { CGRect(x: 0.1 + CGFloat($0) * 0.015, y: 0.5, width: 0.01, height: 0.02) }
+        XCTAssertEqual(near.map(\.string), ["Summe 120,00"])
+    }
+
     func testLinesReadFromThePictureAddOnlyWhatTheTextLacks() {
         let text = [CGRect(x: 0.1, y: 0.9, width: 0.5, height: 0.02), CGRect(x: 0.1, y: 0.8, width: 0.4, height: 0.02)]
         let read = [CGRect(x: 0.1, y: 0.9, width: 0.48, height: 0.02),
