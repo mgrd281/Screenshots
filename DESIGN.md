@@ -2434,7 +2434,10 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     as pages come and a warning haptic for a page to take again. The first
     page opens at once in Protect Picture as Review (below) while it is
     made ready; the pages wait under "Scanned pages" (title 3 semibold, Clear
-    on the trailing edge) as the grid's square cards in the order scanned, a
+    on the trailing edge; beside it, once the first page is read, the
+    document's kind, Invoice, Letter, Form or Receipt, in caption semibold
+    `phone-hide-accent` on a `phone-hide-accent-soft` capsule, as
+    Recommended is, read "Kind: Invoice") as the grid's square cards in the order scanned, a
     document's order: the cleaned page small, its top showing, a spinner
     over it while it is made ready, or the crop glyph (title 3 semibold,
     `phone-scan-warn-text`) while its corners wait; its number in caption 2
@@ -2454,7 +2457,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     of apps in a sheet (medium or large, Done). A tap covers every page as
     for the PDF and hands them over as Protect Picture's apps do
     (`Handoff`): one page straight to WhatsApp, one to an AI chat by opening
-    its app with it copied, Claude at a new chat (a note for six seconds
+    its app with it copied (an AI chat first opens **Hand Over to Claude**,
+    below), Claude at a new chat (a note for six seconds
     says to tap the picture above the keyboard there, or paste it), else
     the share sheet, where the app is tapped, never a website; while the pages are covered, the
     app's icon dims under a white spinner and the others wait. Once they
@@ -2693,7 +2697,31 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     Each step gives way to the next in place on a spring (0.42, 0.82), the
     capsule fitting its words (a 0.15 s ease-out with Reduce Motion); when
     the copy is ready, the shield bounces up once and a success haptic says
-    so. A tap opens Details; VoiceOver reads the whole state. The eye
+    so. A tap opens Details; VoiceOver reads the whole state.
+  - **A photographed document** (`DocumentOfferBanner`), for a picture
+    chosen with Protect a Photo only, never one Photos calls a screenshot
+    (`PHAsset` subtype, else the note iOS writes into one) and never a
+    scanned page: where Vision is at least 65% sure of a page covering a
+    fifth of the photo and at least 12 words were read (`DocumentPhoto`),
+    a card of the floating glass with corners of `phone-scan-card` (16) sits
+    8 pt under the status capsule, 16 pt from the screen's sides and 560 pt
+    wide at most, and the page makes room under it: `doc.viewfinder` in
+    `phone-protect-tint` (body semibold, 24 pt wide), footnote words ("Looks
+    like a photographed document. Straighten and brighten it?"), Clean Up
+    (small, bordered prominent, `phone-protect`, dimmed until the first
+    places are found) and a 32 pt `xmark` read as Not Now. Clean Up turns it
+    into a small spinner and "Straightening and brightening…"; the page is
+    cleaned as a scan is (`ScanCleaner`, in color), its covers found again
+    on the cleaned page as on any picture, and the card says "Straightened
+    and brightened. Its covers were found again on the cleaned page." with
+    `checkmark.seal` and Revert (small, bordered), which brings back the photo
+    and its covers as they were. Where a number read before cleaning is not
+    read after, the photo stays and the card says so with
+    `exclamationmark.triangle` in `phone-scan-warn-text`. Never cleaned
+    without the tap. Its words grow no larger than the first accessibility
+    size; it comes and goes with a fade and a move from the top (a 0.15 s
+    ease-out with Reduce Motion).
+  - The eye
     (`ToolButton`, 44 pt of glass) stands on the trailing side of the same
     row, in line with the apps: held down, it shows the screenshot as it
     was (white on `phone-protect` while held). Under them, for 2.5 s after a
@@ -2840,9 +2868,30 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     dimmed while the corners make no page) and Whole Picture under a footnote
     saying what to do; VoiceOver names each corner and moves it a little up,
     down, left or right.
+- **Hand Over to Claude** (`ScanAssistantSheet`), for scanned pages and a
+  page in Review, when an AI chat is tapped: a sheet at medium or large
+  height, a grouped list with Cancel. First the app's icon (44 pt) beside
+  "The covered copy is handed over to Claude." in body medium, over the
+  footnote "Never the original. Nothing is sent until you send it in
+  Claude."; then **Ask with It**: Explain the Document (`text.bubble`),
+  Summarize (`text.badge.checkmark`) and List Deadlines and Amounts
+  (`calendar.badge.clock`), under which a footnote says the share sheet opens
+  with a question, to tap the app there and send; then Hand Over Only
+  (`paperplane`), which hands the pages over as before. Each question asks
+  the chat never to guess what is covered or unreadable, nor to fill in or
+  correct a number (`ScanAsk`). Snapfly holds no key for it and sends
+  nothing itself.
 - **Save and Share** (`ScanSaveSheet`) is a sheet as tall as what it holds
   (the whole screen at the accessibility text sizes, where it scrolls), on
-  `systemGroupedBackground`, with Done: **Format** as two tiles side by side
+  `systemGroupedBackground`, with Done: first **Name**, the file's name in a
+  field on `secondarySystemGroupedBackground` with corners of 14, at least
+  44 pt high, ready to change: with Apple Intelligence on, suggested from
+  the words outside the covers on the first page (`ScanNaming`: kind,
+  sender, the date as written, never a covered word or the owner's name),
+  with "Suggested by Apple Intelligence from the words outside the covers."
+  under it in footnote `.secondary` beside `sparkles`; otherwise, or where
+  nothing holds, when the pages were scanned ("Scan 21.10.2026, 14.05");
+  a name typed is never replaced. Then **Format** as two tiles side by side
   on `secondarySystemGroupedBackground` with corners of 14 (PDF "A4, 2
   pages", Picture "PNG, 2 files"), the one chosen ringed 2 pt in
   `phone-protect-tint`, the other a 1 pt hairline; **Covers** as two rows in

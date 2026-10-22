@@ -1751,3 +1751,30 @@
 "Zoom" = "التكبير";
 "Zoom in on clicks and typing" = "التكبير عند النقر والكتابة";
 "Zooms: %d" = "التكبيرات: %d";
+
+/* Scan: photographed documents, names and AI chats */
+"Letter" = "رسالة";
+"Form" = "استمارة";
+"Receipt" = "إيصال";
+"Scan %@" = "مسح %@";
+"Explain the Document" = "اشرح المستند";
+"Summarize" = "لخّص";
+"List Deadlines and Amounts" = "اذكر المواعيد والمبالغ";
+"Explain this document in simple words: what it is, who sent it and what it asks of me." = "اشرح هذا المستند بكلمات بسيطة: ما هو، ومن أرسله، وماذا يطلب مني.";
+"Summarize this document in a few short points." = "لخّص هذا المستند في نقاط قصيرة قليلة.";
+"List every deadline and every amount in this document exactly as written, each with what it is for." = "اذكر كل موعد نهائي وكل مبلغ في هذا المستند كما هو مكتوب تمامًا، مع الغرض من كل منها.";
+"Parts are covered for privacy: never guess them. Never fill in or correct a number. Where something cannot be read, say so." = "بعض الأجزاء مغطّاة لحماية الخصوصية: لا تخمّنها أبدًا. لا تُكمل رقمًا ولا تصحّحه أبدًا. وحيث لا يمكن قراءة شيء، قل ذلك.";
+"Straightened, some text read less well, so the photo stays as it was." = "بعد تعديل الاستقامة صار بعض النص أصعب قراءة، لذلك بقيت الصورة كما كانت.";
+"Straightened and brightened. Its covers were found again on the cleaned page." = "عُدّلت استقامتها وفُتّحت. ووُجدت التغطيات من جديد على الصفحة المنظّفة.";
+"Looks like a photographed document. Straighten and brighten it?" = "تبدو صورة لمستند. هل تريد تعديل استقامتها وتفتيحها؟";
+"Clean Up" = "تنظيف";
+"Revert" = "إرجاع";
+"The covered copy is handed over to %@." = "تُسلَّم النسخة المغطّاة إلى %@.";
+"Never the original. Nothing is sent until you send it in %@." = "لا الأصل أبدًا. لا يُرسَل شيء حتى ترسله أنت في %@.";
+"Ask with It" = "اسأل معها";
+"With a question, the share sheet opens: tap %@ there, then send." = "مع سؤال تُفتح قائمة المشاركة: اضغط هناك على %@ ثم أرسل.";
+"Hand Over Only" = "تسليم فقط";
+"Hand Over to %@" = "تسليم إلى %@";
+"Kind: %@" = "النوع: %@";
+"Suggested by Apple Intelligence from the words outside the covers." = "اقترحه Apple Intelligence من الكلمات خارج التغطيات.";
+"An AI chat first offers questions for the covered pages. You ask them in its own app; Snapfly sends nothing itself." = "تعرض محادثة الذكاء الاصطناعي أولًا أسئلة عن الصفحات المغطّاة. تطرحها أنت في تطبيقها؛ ولا يرسل Snapfly شيئًا بنفسه.";

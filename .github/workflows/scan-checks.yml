@@ -1,7 +1,8 @@
 # Scan without an iPhone: the engine on this Mac on made-up photos of a
 # made-up invoice, each picture kept before and after with what was read on
 # it; then the app on the simulator: its UI tests, still frames of the Scan
-# tab, Review and Save and Share, light and dark, at the largest text sizes,
+# tab, Review and Save and Share, what goes to Claude, the Photos tab's
+# offer to clean a photographed document, light and dark, at the largest text sizes,
 # on the newest iPhone and the smallest, in German, Arabic and English, and
 # videos of the walks, from Photos to sharing among them, with and without
 # Reduce Motion. The pictures, the numbers and the videos go to the
@@ -64,7 +65,7 @@ jobs:
             exit 0
           fi
           tag=scan-captures
-          notes="Scan on this Mac and the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: made-up photos of a made-up invoice before and after cleaning, with what was read on them (scan-numbers.txt, scan-detection.txt, scan-pdf-sizes.txt, scan-covered-pdf-text.txt); the Scan tab, Review and Save and Share, light and dark, at the largest text sizes, on the newest iPhone and the smallest, in German, Arabic and English; and videos of the walks, with and without Reduce Motion. For review; not a download of Snapfly."
+          notes="Scan on this Mac and the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: made-up photos of a made-up invoice before and after cleaning, with what was read on them (scan-numbers.txt, scan-detection.txt, scan-pdf-sizes.txt, scan-covered-pdf-text.txt); the Scan tab, Review and Save and Share, what goes to Claude, and the Photos tab's offer to clean a photographed document, light and dark, at the largest text sizes, on the newest iPhone and the smallest, in German, Arabic and English; and videos of the walks, with and without Reduce Motion. For review; not a download of Snapfly."
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release edit "$tag" --notes "$notes" --prerelease
           else

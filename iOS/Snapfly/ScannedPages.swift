@@ -76,6 +76,8 @@ final class ScannedPages: ObservableObject {
 
         let id = UUID()
         let origin: Origin
+        /// When it was scanned or chosen, for the document's name.
+        let taken = Date.now
         /// The picture as it came: the camera's page, or a photo drawn
         /// already; a photo from Photos only while its page is made or its
         /// corners are set, kept otherwise as Photos gave it (`data`).
@@ -137,7 +139,13 @@ final class ScannedPages: ObservableObject {
     @Published private(set) var sendingTo: ChatTarget?
     /// A photo whose page Vision was not sure of, waiting for its corners.
     @Published var cornersWanted: UUID?
+    /// What the document is called and what kind it is, read from its first
+    /// page as its covers leave it (`ScanNaming`); nil until read.
+    @Published private(set) var title: ScanNaming.Result?
     @Published private var sessions: [UUID: ProtectSession] = [:]
+    /// What the title was read from, so it is read again only once that changes.
+    private var titleKey: String?
+    private var titling: Task<Void, Never>?
     private var worker: Task<Void, Never>?
     private var waiting: [UUID: [CheckedContinuation<CGImage?, Never>]] = [:]
     /// The pages whose warnings were said, so each is said once.
@@ -187,7 +195,9 @@ final class ScannedPages: ObservableObject {
     }
 
     func remove(_ id: UUID) {
+        let first = pages.first?.id
         pages.removeAll { $0.id == id }
+        if pages.first?.id != first { firstChanged() }
         sessions[id] = nil
         if cornersWanted == id { cornersWanted = pages.first { $0.state == .needsCorners }?.id }
         settle(id)
@@ -198,14 +208,17 @@ final class ScannedPages: ObservableObject {
         pages = []
         sessions = [:]
         cornersWanted = nil
+        title = nil
+        titleKey = nil
         gone.forEach(settle)
     }
 
     /// A page moved to another place in the document.
     func move(_ id: UUID, to place: Int) {
         guard let from = index(of: id) else { return }
-        let page = pages.remove(at: from)
-        pages.insert(page, at: min(max(place, 0), pages.count))
+        let first = pages.first?.id
+        pages = ScanOrder.moving(pages, from: from, to: place)
+        if pages.first?.id != first { firstChanged() }
     }
 
     // MARK: Finding
@@ -391,6 +404,7 @@ final class ScannedPages: ObservableObject {
         // An editor open on it keeps its covers on the page in its new colours.
         if colorsOnly, let session = sessions[id] { session.replace(prepared.cleaned) }
         settle(id)
+        if done == 0 { readTitle() }
         if !colorsOnly, prepared.checked.issues.contains(where: \.asksForRetake) {
             UINotificationFeedbackGenerator().notificationOccurred(.warning)
         }
@@ -500,26 +514,23 @@ final class ScannedPages: ObservableObject {
 
     /// Covers every page and hands them to the app: one page straight to
     /// WhatsApp, or to an AI chat opened with it copied, else through the
-    /// share sheet, where the app is tapped (`Handoff`). If a page cannot
-    /// be covered, nothing goes at all.
-    func send(to chat: ChatTarget) {
+    /// share sheet, where the app is tapped (`Handoff`); with a question for
+    /// an AI chat, through the share sheet with the question. The pages
+    /// are the same covered PNGs Save and Share makes. If a page cannot be
+    /// covered, nothing goes at all.
+    func send(to chat: ChatTarget, asking ask: ScanAsk? = nil) {
         guard making == nil, !pages.isEmpty else { return }
         sendingTo = chat
         Task {
             defer { sendingTo = nil }
-            let finished: [(image: CGImage, places: [CGRect])]
+            let pngs: [Data]
             do {
-                finished = try await covered(failing: L("Page %d could not be covered, so nothing was sent."))
+                pngs = try await self.pngs(covered: true, failing: L("Page %d could not be covered, so nothing was sent."))
             } catch {
                 return QuickCoverer.shared.show((error as? ScanProblem)?.message ?? L("The copy could not be made."), for: 4)
             }
-            let images = finished.map(\.image)
-            let pngs = await Task.detached(priority: .userInitiated) { images.compactMap(Covering.png) }.value
-            guard pngs.count == images.count else {
-                return QuickCoverer.shared.show(L("The copy could not be made."))
-            }
             let name = "Snapfly " + Date.now.formatted(.iso8601.year().month().day())
-            let shown = Handoff.shared.send(pngs, to: chat, named: name, opened: {
+            let shown = Handoff.shared.send(pngs, to: chat, named: name, asking: ask?.prompt, opened: {
                 QuickCoverer.shared.show(String(format: L("Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste."), chat.name),
                                          for: 6)
             }) { went in
@@ -529,8 +540,72 @@ final class ScannedPages: ObservableObject {
         }
     }
 
-    /// The name the files are offered under: the app and the day.
-    static var fileName: String {
-        "Snapfly " + Date.now.formatted(.iso8601.year().month().day())
+    // MARK: Its name
+
+    /// Another page is first: its title is read once it is ready.
+    private func firstChanged() {
+        title = nil
+        titleKey = nil
+        if pages.first?.state == .ready { readTitle() }
+    }
+
+    /// Reads the title again, off to the side, where the first page or its
+    /// covers changed: from its covers where its editor found them already;
+    /// otherwise only its kind, from its words, and nothing is covered for it.
+    func readTitle() {
+        titling?.cancel()
+        titling = Task { _ = await named(covering: false) }
+    }
+
+    /// The document's name and kind, read from the words its first page
+    /// shows with its covers on, as it leaves; with Apple Intelligence on,
+    /// on this device, never a word under a cover or of the owner's own
+    /// names; otherwise the name by when it was scanned. Read again only
+    /// where the page, its covers or the setting changed. Nil while the
+    /// first page is not ready, or its covers not yet known.
+    /// Where the first page was never opened, its covers are found as Save
+    /// and Share finds them, but only when `covering` and only on this
+    /// device: with the AI assistant reading along, which sends words out,
+    /// the name stays when the pages were scanned.
+    @discardableResult
+    func named(covering: Bool = true) async -> ScanNaming.Result? {
+        guard let first = pages.first, first.state == .ready, let image = first.cleaned else { return nil }
+        let places: [CGRect]
+        if let session = sessions[first.id] {
+            guard let made = await checked(session) else { return nil }
+            places = made.places
+        } else if covering, !Finder.asksAssistant {
+            guard let made = await Covering.cover(image, Choice.details) else { return nil }
+            places = made.report.places
+        } else {
+            let kind = ScanNaming.kind(of: first.reading.map(\.string))
+            let plain = ScanNaming.Result(name: ScanNaming.fallback(at: first.taken), kind: kind, suggested: false)
+            title = plain
+            titleKey = nil
+            return plain
+        }
+        guard let now = pages.first, now.id == first.id, now.revision == first.revision else { return nil }
+        let asks = ScanNaming.asksIntelligence
+        let key = "\(first.id) \(first.revision) \(mode) \(asks) " + places.map { "\($0)" }.joined(separator: ";")
+        if key == titleKey, let title { return title }
+        let words = Self.words(first.reading)
+        let own = Set(Finder.ownWords(in: OwnRules.all).map(OwnDetails.fold))
+        let visible = ScanNaming.visible(words, covered: places)
+        let reading = asks ? await ScanNaming.ask(visible) : nil
+        guard !Task.isCancelled, pages.first?.id == first.id else { return nil }
+        let result = ScanNaming.result(reading, visible: visible, own: own, scanned: first.taken)
+        title = result
+        titleKey = key
+        return result
+    }
+
+    /// A page's words as read, each with where it is, line by line.
+    private static func words(_ reading: [Finder.TextLine]) -> [[ScanNaming.Word]] {
+        reading.map { line in
+            line.words.compactMap { word -> ScanNaming.Word? in
+                guard let range = Range(word.range, in: line.string) else { return nil }
+                return ScanNaming.Word(text: String(line.string[range]), box: word.box)
+            }
+        }
     }
 }

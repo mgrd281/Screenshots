@@ -1751,3 +1751,30 @@
 "Zoom" = "Yakınlaştırma";
 "Zoom in on clicks and typing" = "Tıklamalarda ve yazarken yakınlaştır";
 "Zooms: %d" = "Yakınlaştırmalar: %d";
+
+/* Scan: photographed documents, names and AI chats */
+"Letter" = "Mektup";
+"Form" = "Form";
+"Receipt" = "Fiş";
+"Scan %@" = "Tarama %@";
+"Explain the Document" = "Belgeyi açıkla";
+"Summarize" = "Özetle";
+"List Deadlines and Amounts" = "Süreleri ve tutarları listele";
+"Explain this document in simple words: what it is, who sent it and what it asks of me." = "Bu belgeyi basit sözlerle açıkla: ne olduğu, kimin gönderdiği ve benden ne istediği.";
+"Summarize this document in a few short points." = "Bu belgeyi birkaç kısa maddede özetle.";
+"List every deadline and every amount in this document exactly as written, each with what it is for." = "Bu belgedeki her süreyi ve her tutarı yazıldığı gibi, her birinin ne için olduğuyla listele.";
+"Parts are covered for privacy: never guess them. Never fill in or correct a number. Where something cannot be read, say so." = "Bazı bölümler gizlilik için gizlendi: onları asla tahmin etme. Hiçbir sayıyı tamamlama ya da düzeltme. Okunamayan bir yer varsa söyle.";
+"Straightened, some text read less well, so the photo stays as it was." = "Düzeltilince bazı yazılar daha zor okunuyordu, bu yüzden fotoğraf olduğu gibi kalıyor.";
+"Straightened and brightened. Its covers were found again on the cleaned page." = "Düzeltildi ve aydınlatıldı. Gizlenecek yerler temizlenen sayfada yeniden bulundu.";
+"Looks like a photographed document. Straighten and brighten it?" = "Fotoğrafı çekilmiş bir belgeye benziyor. Düzeltilip aydınlatılsın mı?";
+"Clean Up" = "Temizle";
+"Revert" = "Geri döndür";
+"The covered copy is handed over to %@." = "Gizlenmiş kopya %@ uygulamasına verilir.";
+"Never the original. Nothing is sent until you send it in %@." = "Asla orijinali değil. %@ içinde sen gönderene kadar hiçbir şey gönderilmez.";
+"Ask with It" = "Birlikte sor";
+"With a question, the share sheet opens: tap %@ there, then send." = "Bir soruyla paylaşma sayfası açılır: orada %@ uygulamasına dokun, sonra gönder.";
+"Hand Over Only" = "Yalnızca ver";
+"Hand Over to %@" = "%@ uygulamasına ver";
+"Kind: %@" = "Tür: %@";
+"Suggested by Apple Intelligence from the words outside the covers." = "Gizlenen yerlerin dışındaki sözcüklerden Apple Intelligence önerdi.";
+"An AI chat first offers questions for the covered pages. You ask them in its own app; Snapfly sends nothing itself." = "Yapay zekâ sohbeti önce gizlenmiş sayfalar için sorular sunar. Onları kendi uygulamasında sorarsın; Snapfly kendisi hiçbir şey göndermez.";

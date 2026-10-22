@@ -1751,3 +1751,30 @@
 "Zoom" = "Zoom";
 "Zoom in on clicks and typing" = "Zoomer sur les clics et la saisie";
 "Zooms: %d" = "Zooms : %d";
+
+/* Scan: photographed documents, names and AI chats */
+"Letter" = "Lettre";
+"Form" = "Formulaire";
+"Receipt" = "Reçu";
+"Scan %@" = "Scan %@";
+"Explain the Document" = "Expliquer le document";
+"Summarize" = "Résumer";
+"List Deadlines and Amounts" = "Lister délais et montants";
+"Explain this document in simple words: what it is, who sent it and what it asks of me." = "Explique ce document avec des mots simples : ce que c’est, qui l’a envoyé et ce qu’il me demande.";
+"Summarize this document in a few short points." = "Résume ce document en quelques points courts.";
+"List every deadline and every amount in this document exactly as written, each with what it is for." = "Liste chaque délai et chaque montant de ce document exactement comme ils sont écrits, chacun avec son objet.";
+"Parts are covered for privacy: never guess them. Never fill in or correct a number. Where something cannot be read, say so." = "Des parties sont masquées pour la vie privée : ne les devine jamais. Ne complète ni ne corrige jamais un nombre. Si quelque chose est illisible, dis-le.";
+"Straightened, some text read less well, so the photo stays as it was." = "Redressé, une partie du texte se lisait moins bien : la photo reste telle quelle.";
+"Straightened and brightened. Its covers were found again on the cleaned page." = "Redressé et éclairci. Les masques ont été retrouvés sur la page nettoyée.";
+"Looks like a photographed document. Straighten and brighten it?" = "On dirait un document photographié. Le redresser et l’éclaircir ?";
+"Clean Up" = "Nettoyer";
+"Revert" = "Revenir";
+"The covered copy is handed over to %@." = "La copie masquée est transmise à %@.";
+"Never the original. Nothing is sent until you send it in %@." = "Jamais l’original. Rien n’est envoyé avant que vous l’envoyiez dans %@.";
+"Ask with It" = "Demander avec";
+"With a question, the share sheet opens: tap %@ there, then send." = "Avec une question, la feuille de partage s’ouvre : touchez-y %@, puis envoyez.";
+"Hand Over Only" = "Transmettre seulement";
+"Hand Over to %@" = "Transmettre à %@";
+"Kind: %@" = "Type : %@";
+"Suggested by Apple Intelligence from the words outside the covers." = "Suggéré par Apple Intelligence à partir des mots hors des masques.";
+"An AI chat first offers questions for the covered pages. You ask them in its own app; Snapfly sends nothing itself." = "Un chat d’IA propose d’abord des questions sur les pages masquées. Vous les posez dans sa propre app ; Snapfly n’envoie rien lui-même.";

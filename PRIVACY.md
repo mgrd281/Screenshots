@@ -1,6 +1,6 @@
 # Snapfly Privacy Policy
 
-*Last updated: October 20, 2026*
+*Last updated: October 22, 2026*
 
 Snapfly hangs your screenshots on a line at the top of the screen. Everything it
 does happens on your Mac, unless you set up the AI assistant with your own key
@@ -130,10 +130,20 @@ or turn on syncing with your iPhone (below).
   when the file holds every private detail. A covered PDF's text to find
   and copy is read from the covered pages, so nothing under a cover is in
   it. The camera is used only while you scan, and Photos gives Snapfly only
-  the photos you choose. A tap on an app
-  under the pages or in Protect Picture puts the covered copy on the
-  clipboard and opens that app, or its website; Snapfly sends nothing
-  itself, and it reaches the app only when you paste it there. The share extension, which covers a
+  the photos you choose. A photo chosen with Protect a Photo is looked at
+  on the iPhone, and only there, to tell a photographed paper document from
+  a screenshot; it is straightened and brightened only when you tap Clean
+  Up, and Revert brings it back. With Apple Intelligence on, the name Save
+  and Share suggests for scanned pages, and their kind, are read on the
+  iPhone by Apple Intelligence from the words the covers leave on the first
+  page, never a covered word; nothing of it leaves the iPhone, and with it
+  off the name is when the pages were scanned. A tap on an app under the
+  pages or in Protect Picture hands that app the covered copy, never the
+  original: on the clipboard, opening the app itself, never its website, or
+  through the share sheet, where you tap the app; for an AI chat, with the
+  question you chose in Snapfly, if any. Snapfly holds no key for those
+  apps and sends nothing itself: the copy reaches the app only when you
+  paste or share it there, and nothing goes from there until you send it. The share extension, which covers a
   picture shared to Snapfly from another app, works the same way, on the
   iPhone, and keeps nothing of the picture; what you chose to cover, the
   look and your own rules are kept for it in the iPhone's keychain, never a
@@ -223,10 +233,22 @@ wenn du es so wählst, ohne, dann mit allen privaten Angaben. Der
 durchsuchbare Text eines abgedeckten PDFs wird von den abgedeckten Seiten
 gelesen, darum steht nichts darin, was abgedeckt ist. Die Kamera läuft nur,
 während du scannst, und Fotos gibt Snapfly nur die Fotos, die du auswählst.
-Tippst du unter den Seiten oder in „Bild schützen“ auf eine App,
-legt Snapfly die abgedeckte Kopie in die Zwischenablage und öffnet die App
-oder ihre Website; Snapfly selbst sendet nichts, sie kommt erst dort an,
-wenn du sie einsetzt. Die
+Ein Foto, das du mit „Foto schützen“ wählst, wird nur auf dem iPhone
+angesehen, um ein fotografiertes Papierdokument von einem Bildschirmfoto zu
+unterscheiden; gerade gerückt und aufgehellt wird es nur, wenn du auf
+„Aufbereiten“ tippst, und „Rückgängig“ holt es zurück. Ist Apple
+Intelligence eingeschaltet, liest es den Namen, den „Sichern und teilen“
+für gescannte Seiten vorschlägt, und ihre Art auf dem iPhone aus den
+Wörtern, die die Abdeckungen auf der ersten Seite frei lassen, nie aus
+einem abgedeckten Wort; nichts davon verlässt das iPhone, und ohne Apple
+Intelligence ist der Name die Zeit des Scans. Tippst du unter den Seiten
+oder in „Bild schützen“ auf eine App, übergibt Snapfly ihr die abgedeckte
+Kopie, nie das Original: über die Zwischenablage, indem es die App selbst
+öffnet, nie ihre Website, oder über das Teilen-Menü, wo du die App
+antippst; einem KI-Chat mit der Frage, die du in Snapfly gewählt hast,
+falls du eine gewählt hast. Snapfly hat keinen Schlüssel für diese Apps
+und sendet selbst nichts: Die Kopie kommt erst dort an, wenn du sie
+einsetzt oder teilst, und von dort geht nichts weiter, bis du es sendest. Die
 Teilen-Erweiterung, die ein aus einer anderen App geteiltes Bild abdeckt,
 arbeitet genauso auf dem iPhone und behält nichts vom Bild; was du abdecken
 lässt, der Look und deine eigenen Regeln liegen für sie im Schlüsselbund des

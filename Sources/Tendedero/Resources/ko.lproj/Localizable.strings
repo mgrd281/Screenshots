@@ -1751,3 +1751,30 @@
 "Zoom" = "확대";
 "Zoom in on clicks and typing" = "클릭과 입력 시 확대";
 "Zooms: %d" = "확대: %d";
+
+/* Scan: photographed documents, names and AI chats */
+"Letter" = "편지";
+"Form" = "양식";
+"Receipt" = "영수증";
+"Scan %@" = "스캔 %@";
+"Explain the Document" = "문서 설명";
+"Summarize" = "요약";
+"List Deadlines and Amounts" = "기한과 금액 나열";
+"Explain this document in simple words: what it is, who sent it and what it asks of me." = "이 문서를 쉬운 말로 설명해 주세요. 무엇인지, 누가 보냈는지, 나에게 무엇을 요구하는지.";
+"Summarize this document in a few short points." = "이 문서를 짧은 요점 몇 개로 요약해 주세요.";
+"List every deadline and every amount in this document exactly as written, each with what it is for." = "이 문서의 모든 기한과 금액을 적힌 그대로, 각각의 용도와 함께 나열해 주세요.";
+"Parts are covered for privacy: never guess them. Never fill in or correct a number. Where something cannot be read, say so." = "개인 정보 보호를 위해 일부를 가렸습니다. 절대 추측하지 마세요. 숫자를 채우거나 고치지 마세요. 읽을 수 없는 곳은 그렇다고 말해 주세요.";
+"Straightened, some text read less well, so the photo stays as it was." = "반듯하게 하니 일부 글자가 덜 읽혀서 사진을 그대로 둡니다.";
+"Straightened and brightened. Its covers were found again on the cleaned page." = "반듯하게 펴고 밝게 했습니다. 정리한 페이지에서 가릴 곳을 다시 찾았습니다.";
+"Looks like a photographed document. Straighten and brighten it?" = "촬영한 문서처럼 보입니다. 반듯하게 펴고 밝게 할까요?";
+"Clean Up" = "정리";
+"Revert" = "되돌리기";
+"The covered copy is handed over to %@." = "가린 사본을 %@에 넘깁니다.";
+"Never the original. Nothing is sent until you send it in %@." = "원본은 넘기지 않습니다. %@에서 직접 보내기 전까지 아무것도 보내지 않습니다.";
+"Ask with It" = "함께 질문";
+"With a question, the share sheet opens: tap %@ there, then send." = "질문을 고르면 공유 시트가 열립니다. 거기서 %@을(를) 탭한 뒤 보내세요.";
+"Hand Over Only" = "넘기기만";
+"Hand Over to %@" = "%@에 넘기기";
+"Kind: %@" = "종류: %@";
+"Suggested by Apple Intelligence from the words outside the covers." = "가린 곳 밖의 단어로 Apple Intelligence가 제안했습니다.";
+"An AI chat first offers questions for the covered pages. You ask them in its own app; Snapfly sends nothing itself." = "AI 채팅은 먼저 가린 페이지에 대한 질문을 보여 줍니다. 질문은 그 앱에서 직접 하며, Snapfly는 아무것도 보내지 않습니다.";

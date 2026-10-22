@@ -196,6 +196,7 @@ final class ScanFixtureTests: XCTestCase {
         let glare = try XCTUnwrap(lit.checked.issues.first { $0.kind == .glare }, "\(lit.checked.issues)")
         XCTAssertEqual(glare.part, .top)
         Self.keep(blurred.image, "photo-blurred-bottom", longest: 1600)
+        Self.keep(blurred.image, "photo-blurred-full", longest: 4032)
         Self.keep(shiny.image, "photo-reflection", longest: 1600)
         Self.note("blurred bottom", soft)
         Self.note("reflection", lit)

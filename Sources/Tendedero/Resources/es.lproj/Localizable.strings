@@ -1751,3 +1751,30 @@
 "Zoom" = "Zoom";
 "Zoom in on clicks and typing" = "Acercar al hacer clic y escribir";
 "Zooms: %d" = "Zooms: %d";
+
+/* Scan: photographed documents, names and AI chats */
+"Letter" = "Carta";
+"Form" = "Formulario";
+"Receipt" = "Recibo";
+"Scan %@" = "Escaneo %@";
+"Explain the Document" = "Explicar el documento";
+"Summarize" = "Resumir";
+"List Deadlines and Amounts" = "Listar plazos e importes";
+"Explain this document in simple words: what it is, who sent it and what it asks of me." = "Explica este documento con palabras sencillas: qué es, quién lo envió y qué me pide.";
+"Summarize this document in a few short points." = "Resume este documento en unos pocos puntos breves.";
+"List every deadline and every amount in this document exactly as written, each with what it is for." = "Enumera cada plazo y cada importe de este documento tal como está escrito, cada uno con su finalidad.";
+"Parts are covered for privacy: never guess them. Never fill in or correct a number. Where something cannot be read, say so." = "Hay partes ocultas por privacidad: nunca las adivines. Nunca completes ni corrijas un número. Si algo no se puede leer, dilo.";
+"Straightened, some text read less well, so the photo stays as it was." = "Al enderezarla, parte del texto se leía peor, así que la foto queda como estaba.";
+"Straightened and brightened. Its covers were found again on the cleaned page." = "Enderezada y aclarada. Lo oculto se buscó de nuevo en la página limpia.";
+"Looks like a photographed document. Straighten and brighten it?" = "Parece un documento fotografiado. ¿Enderezarlo y aclararlo?";
+"Clean Up" = "Limpiar";
+"Revert" = "Revertir";
+"The covered copy is handed over to %@." = "La copia oculta se entrega a %@.";
+"Never the original. Nothing is sent until you send it in %@." = "Nunca el original. No se envía nada hasta que lo envíes en %@.";
+"Ask with It" = "Preguntar con ella";
+"With a question, the share sheet opens: tap %@ there, then send." = "Con una pregunta se abre el menú Compartir: toca %@ allí y envía.";
+"Hand Over Only" = "Solo entregar";
+"Hand Over to %@" = "Entregar a %@";
+"Kind: %@" = "Tipo: %@";
+"Suggested by Apple Intelligence from the words outside the covers." = "Sugerido por Apple Intelligence a partir de las palabras que no están ocultas.";
+"An AI chat first offers questions for the covered pages. You ask them in its own app; Snapfly sends nothing itself." = "Un chat de IA ofrece primero preguntas sobre las páginas ocultas. Las haces en su propia app; Snapfly no envía nada por sí mismo.";

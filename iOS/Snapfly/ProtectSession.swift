@@ -47,6 +47,17 @@ final class ProtectSession: ObservableObject {
     /// Apple Intelligence is still reading, and the copy waits for it.
     @Published private(set) var intelligencePending = false
     @Published private(set) var failure: String?
+    /// A photo chosen in Photos that looks like a photographed paper
+    /// document: where its page is, to offer to straighten and brighten it
+    /// as a scan is. Never done unasked, never for a screenshot.
+    @Published private(set) var documentPage: ScanQuad?
+    /// The page is being straightened and brightened.
+    @Published private(set) var cleaning = false
+    /// The photo shows straightened and brightened, its covers found again
+    /// on it, until Undo.
+    @Published private(set) var cleaned = false
+    /// Why the photo stayed as it was after Straighten and Brighten.
+    @Published var cleaningNote: String?
 
     private var image: CGImage?
     /// Every word read and where it is, so a tap hides one; in memory only.
@@ -58,6 +69,18 @@ final class ProtectSession: ObservableObject {
     private var generation = 0
     private var running: Task<Void, Never>?
     private var remaking: Task<Void, Never>?
+    /// The photo and its covers as they were before it was cleaned.
+    private var beforeCleaning: Kept?
+
+    /// A picture with its covers, as it stood, to go back to.
+    private struct Kept {
+        let image: CGImage
+        let original: UIImage?
+        let plan: ProtectionPlan
+        let words: [(text: String, box: CGRect)]
+        let copy: UIImage?
+        let png: Data?
+    }
 
     init(source: Source) {
         self.source = source
@@ -108,6 +131,9 @@ final class ProtectSession: ObservableObject {
         making = false
         intelligencePending = false
         failure = nil
+        // From the photo as it came.
+        cleaned = false
+        beforeCleaning = nil
         start()
     }
 
@@ -138,6 +164,13 @@ final class ProtectSession: ObservableObject {
         if case .asset(let id) = source, await PhotoIndexer.reuse(for: id, image: image) {
             log.info("Prepared reading reused")
         }
+        await analyse(image, started: started, offering: true)
+    }
+
+    /// Finds the places on the picture and makes the first copy, then lets
+    /// Apple Intelligence read along; for a photo chosen in Photos, first
+    /// looks whether it is a photographed document, to offer cleaning it.
+    private func analyse(_ image: CGImage, started: Date, offering: Bool) async {
         plan.aspect = CGFloat(image.width) / CGFloat(max(1, image.height))
         let chosen = chosen, rules = rules
         // What the patterns, the labels and the names find, without waiting
@@ -150,7 +183,10 @@ final class ProtectSession: ObservableObject {
         plan.add(found: first.areas, possible: first.possible, spared: first.spared)
         found = true
         // Read already: the words are there at once.
-        words = await Self.background { Finder.words(in: image) }
+        let read = await Self.background { Finder.words(in: image) }
+        guard !Task.isCancelled else { return }
+        words = read
+        if offering { offerCleaning(image) }
         log.info("First places shown after \(Timing.milliseconds(since: started), privacy: .public) ms")
         intelligencePending = asksIntelligence
         await make()
@@ -175,6 +211,96 @@ final class ProtectSession: ObservableObject {
     /// made and checked so far may leave, and what it finds later is left out.
     func dontWait() {
         guard intelligencePending, png != nil, !making else { return }
+        intelligencePending = false
+    }
+
+    // MARK: A photographed document
+
+    /// Looks once whether a photo chosen in Photos is a photographed paper
+    /// document, never a screenshot: a page Vision is sure of, with text
+    /// on it (`DocumentPhoto`). Then cleaning it is offered; nothing
+    /// changes until the owner taps.
+    private func offerCleaning(_ image: CGImage) {
+        guard case .picture(let id) = source, let info = Imported.shared.info(id), !info.screenshot else { return }
+        let count = words.count
+        Task {
+            let found: (quad: ScanQuad, confidence: Float)?
+            if let known = info.page {
+                found = (known, 1)
+            } else {
+                found = await Self.background { ScanCleaner.page(in: image) }
+            }
+            guard !cleaned, DocumentPhoto.offers(screenshot: info.screenshot, page: found?.quad,
+                                                 confidence: found?.confidence, words: count) else { return }
+            documentPage = found?.quad
+            #if DEBUG
+            if DocumentPhotoDemo.cleansAtOnce { clean() }
+            #endif
+        }
+    }
+
+    /// Straightens and brightens the photographed page as a scan is, then
+    /// finds its covers again on the cleaned page. Only its shape and light
+    /// change; where a number no longer reads after it, the photo stays as
+    /// it was and says why.
+    func clean() {
+        guard let quad = documentPage, let image, found, !cleaning, !cleaned else { return }
+        cleaning = true
+        cleaningNote = nil
+        var focal: Double?
+        if case .picture(let id) = source { focal = Imported.shared.info(id)?.focal }
+        let lens = focal
+        Task {
+            let prepared = await Task.detached(priority: .userInitiated) {
+                await ScanCleaner.prepare(image, quad: quad, focal: lens, mode: .color)
+            }.value
+            cleaning = false
+            guard let prepared, prepared.checked.textKept != false else {
+                cleaningNote = L("Straightened, some text read less well, so the photo stays as it was.")
+                UINotificationFeedbackGenerator().notificationOccurred(.warning)
+                return
+            }
+            beforeCleaning = Kept(image: image, original: original, plan: plan, words: words, copy: copy, png: png)
+            stopWork()
+            self.image = prepared.cleaned
+            original = UIImage(cgImage: prepared.cleaned)
+            plan = ProtectionPlan()
+            words = []
+            copy = nil
+            png = nil
+            found = false
+            failure = nil
+            cleaned = true
+            let page = prepared.cleaned
+            running = Task { await analyse(page, started: Timing.start(), offering: false) }
+        }
+    }
+
+    /// Back to the photo as it was, with its covers as they were.
+    func undoCleaning() {
+        guard let kept = beforeCleaning, !cleaning else { return }
+        stopWork()
+        image = kept.image
+        original = kept.original
+        plan = kept.plan
+        words = kept.words
+        copy = kept.copy
+        png = kept.png
+        found = true
+        failure = nil
+        cleaned = false
+        beforeCleaning = nil
+        // A copy still being made then is made again now.
+        if png == nil { changed() }
+    }
+
+    /// Whatever was being found or made for the picture before stops.
+    private func stopWork() {
+        running?.cancel()
+        remaking?.cancel()
+        running = nil
+        generation += 1
+        making = false
         intelligencePending = false
     }
 
@@ -389,18 +515,29 @@ final class ProtectSession: ObservableObject {
 @MainActor
 final class Imported {
     static let shared = Imported()
-    private var pictures: [UUID: CGImage] = [:]
+    private var pictures: [UUID: (image: CGImage, info: Info)] = [:]
+
+    /// What is known of a picture chosen: whether Photos calls it a
+    /// screenshot, its lens in pixels from its notes, and where its page is
+    /// where that is known already, as in a made-up photo.
+    struct Info {
+        var screenshot = false
+        var focal: Double?
+        var page: ScanQuad?
+    }
 
     /// Keeps a picture, upright, and gives the way back to it.
-    func keep(_ image: CGImage) -> UUID {
+    func keep(_ image: CGImage, info: Info = Info()) -> UUID {
         // A few at a time, so pictures not looked at again do not pile up.
         if pictures.count >= 4 { pictures.removeAll() }
         let id = UUID()
-        pictures[id] = image
+        pictures[id] = (image, info)
         return id
     }
 
-    func image(_ id: UUID) -> CGImage? { pictures[id] }
+    func image(_ id: UUID) -> CGImage? { pictures[id]?.image }
+
+    func info(_ id: UUID) -> Info? { pictures[id]?.info }
 }
 
 /// The screenshots protected lately, by their identifier in Photos, newest

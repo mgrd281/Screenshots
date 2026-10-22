@@ -1015,7 +1015,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   where Vision is not sure), made flat in its own shape, turned upright and
   levelled from its lines of text, then cleaned as a good scanner leaves a
   page: its light made even, the paper white and the print dark and sharp,
-  in Color, Grayscale or Black and white (`ScanCleaner`, `ScanClean`). Only
+  in Color, Grayscale or Black and white (`ScanCleaner`, `ScanClean`).
+  Several photos chosen at once make one document, its pages in the order
+  they were chosen. Only
   the picture as a whole changes: nothing is drawn, filled in, removed or
   guessed. Each page is read before and after, and where a number read
   before is not read after, the text is blurred, a reflection hides it, the
@@ -1023,7 +1025,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   orange card says where, with Take Again, the place outlined on the page
   and never in the copy. The covers are then found on the cleaned page. The
   pages wait as small numbered cards, in the order scanned, kept in memory
-  only while the app is open, and each opens in Protect Picture as Review:
+  only while the app is open, under the document's kind (Invoice, Letter,
+  Form or Receipt) where its words say it, and each opens in Protect
+  Picture as Review:
   the cleaned page wipes in over the page as it came, then its covers sweep
   in; a card under it says what was done and covered; Compare shows Before
   and After either side of a divider; the document's pages sit in a strip,
@@ -1035,7 +1039,12 @@ watch the screen, so there is no line there. What it keeps is the covering:
   covered pages, nothing of who made it but Snapfly) or a PNG for each page,
   with covers, where every save starts, or without, which says the file
   holds every private detail and is never called protected; then Copy,
-  Save or Share. Under them,
+  Save or Share. Its name comes first, to change: with Apple Intelligence
+  on, it is suggested on the iPhone from the words the covers leave on the
+  first page, its kind, who sent it and the date written on it, as
+  "Invoice Musterfirma 14.10.2026", never a word under a cover or your own
+  name and never guessed; otherwise, or where nothing holds, it is when the
+  pages were scanned, "Scan 21.10.2026, 14.05". Under them,
   Send to shows the same apps as under a photo on the Mac, by their icons
   as in the share sheet: ChatGPT, Claude, WhatsApp, Gmail, GMX and WEB.DE at
   first, and with More, at the end, any of Perplexity, Grok, DeepSeek, Qwen,
@@ -1047,7 +1056,14 @@ watch the screen, so there is no line there. What it keeps is the covering:
   ChatGPT, Claude or another AI chat by opening its app with the page
   copied, Claude at a new chat, the picture waiting above the keyboard
   there for one tap (iOS lets no app put a picture into another's chat
-  itself); and anything else, or an app not
+  itself). An AI chat first opens a sheet saying the covered copy goes to
+  it, never the original, with three questions to send with it (Explain
+  the Document, Summarize, List Deadlines and Amounts, each asking it never
+  to guess what is covered or unreadable, nor to fill in or correct a
+  number) and Hand Over Only; with a question, the share sheet takes the
+  pages and the question to the app, where you tap it and then send.
+  Snapfly holds no key for it and sends nothing itself; the conversation is
+  in your own app. Anything else, or an app not
   on the iPhone, through the system's share sheet, where you tap the app;
   nothing ever opens in a browser. Protected
   shows the last twelve screenshots protected, in the same grid. Holding
@@ -1102,7 +1118,12 @@ watch the screen, so there is no line there. What it keeps is the covering:
 - **The Photos tab** opens on Snapfly's picture of stacked photos, a page, a chat
   and a landscape with a green photo badge, drawn on the iPhone and showing
   no one's details, over Protect a Photo, a green button that opens any
-  picture from Photos. Once there are screenshots, the picture turns small
+  picture from Photos. Where that picture is a photographed paper document
+  (Vision is sure of the page, with text on it), and never where Photos
+  calls it a screenshot, a card above the page offers to straighten and
+  brighten it as a scan is; Clean Up does, the covers are found again on
+  the cleaned page, and Revert brings back the photo and its covers.
+  Nothing is cleaned without the tap. Once there are screenshots, the picture turns small
   beside its words and the screenshots come first: what the Mac sent and
   the newest three rows in square
   cards, three to a row, or four pinched closer with two fingers as in
@@ -1397,7 +1418,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/CoverStudio.swift` | What Is Covered's three made-up documents and the kind of each value, the groups' parts and symbols, how a group's tile reads and the order the covers run in (tested on Linux) |
 | `iOS/Snapfly/CoverStylePage.swift` | Cover Style: the made-up bill covered as chosen, the six looks and the two switches |
 | `iOS/Snapfly/DetectionView.swift` | Detection: Apple Intelligence, the check before sharing, Faster picture processing, and how long covering took |
-| `iOS/SnapflyUITests` | Always Hide, More and Scan driven on the simulator in German: a name added, both kinds of rule, a rule off and on, a swipe to delete, the screen with nothing yet; More's counts, switches, presets, sheets, looks and tab bar; Scan's tab, Review, Compare, a blurred page, the colours, deleting a page, corners set by hand and Save and Share; and the walks the videos are made of |
+| `iOS/SnapflyUITests` | Always Hide, More and Scan driven on the simulator in German: a name added, both kinds of rule, a rule off and on, a swipe to delete, the screen with nothing yet; More's counts, switches, presets, sheets, looks and tab bar; Scan's tab, Review, Compare, a blurred page, the colours, deleting a page, corners set by hand and Save and Share, a photographed document cleaned and reverted, a screenshot never offered it, what goes to an AI chat and that it is the covered export byte for byte, the name, and photos chosen together in their order; and the walks the videos are made of |
 | `scripts/scan-checks.sh` | Runs the scan's fixture tests on the Mac with their pictures and numbers, then its UI tests on the simulator for the Scan Checks workflow, keeps frames of the tab, Review and Save and Share (light, dark, the largest text sizes, Arabic and English, the newest and the smallest iPhone) and records the walks with and without Reduce Motion, for the `scan-captures` pre-release |
 | `scripts/more-checks.sh` | Runs More's UI tests for the More Checks workflow (What Is Covered alone at each push, all of More when run by hand), keeps frames of the tab and each page (light, dark, the largest text sizes, Arabic and English, the newest and the smallest iPhone) and records its motion with and without Reduce Motion, for the `more-captures` pre-release |
 | `docs/snapfly-covered-studio-audit.md` | What Is Covered's audit before the live preview: where the choice is kept, the twenty-two kinds and their groups, the presets' values and who reads them |
@@ -1423,7 +1444,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/ProtectedList.swift` | The iPhone's list of the screenshots protected lately: noted newest first, twelve at most, some taken off and put back in their places with Undo (tested on Linux) |
 | `iOS/Snapfly/ScanTab.swift`, `ScannedPages.swift` | The Scan tab: the system's document camera or photos chosen in Photos, the pages scanned while the app is open (`ScannedPages`), each made ready off the main thread and opened to review and cover, kept as left, and all of them sent to an app with one tap, or saved and shared, covered or not |
 | `iOS/Snapfly/ScanEditing.swift`, `ScanCorners.swift`, `ScanSaveSheet.swift` | A scanned page in Protect Picture: its card, the strip of the document's pages, its own tools and Before and After; the corner editor with its loupe; Save and Share, with the format, covers, searchable text and the check line |
-| `iOS/Snapfly/ScanDemo.swift` | Made-up scans for the pictures and videos made in CI (`-SnapflyScan`, `scripts/scan-checks.sh`), in debug builds only |
+| `iOS/Snapfly/ScanDemo.swift` | Made-up scans for the pictures and videos made in CI (`-SnapflyScan`, `scripts/scan-checks.sh`), and a made-up photographed invoice in the Photos tab (`-SnapflyDocumentPhoto`), in debug builds only |
+| `iOS/Snapfly/ScanHelp.swift` | The card that offers to clean a photographed document in Protect Picture, with Clean Up and Revert; the sheet an AI chat opens for scanned pages, with what goes and the questions; the document's kind beside its pages |
+| `Shared/ScanNaming.swift`, `ScanAsk.swift`, `ScanOrder.swift` | Tested on Linux: a scanned document's name and kind from the words outside its covers, never a covered word or the owner's name, with Apple Intelligence on the device or by when it was scanned; when a photo counts as a photographed document; the questions for an AI chat; the pages' order |
 | `iOS/Snapfly/SendToApps.swift`, `Assets.xcassets/Chat*.imageset` | Send to on the iPhone: the apps chosen (`SendApps`), their icons, the row of them after a scan, the column beside the picture in Protect Picture (`AppRail`) with Photos, Files and the share sheet, and choosing and ordering them; the hand-over (`Handoff`): one picture straight to WhatsApp, one to an AI chat by opening its app with it copied, anything else through the share sheet, never a website |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, three or four to a row with a pinch, See All, and the iPhone's green |
 | `Shared/GridSelection.swift`, `iOS/Snapfly/Selecting.swift` | Choosing several screenshots at once: tapped, or a finger drawn across them, and the card under the finger (tested on Linux); then their covered copies made one after another (`BatchCover`), saved to Photos or shared, with the choice's bar; on the Protected tab, the bar that removes them (`RemoveBar`) |

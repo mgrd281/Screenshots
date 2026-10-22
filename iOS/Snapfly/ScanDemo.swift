@@ -1,3 +1,4 @@
+import CoreGraphics
 import Foundation
 
 /// Made-up scans for pictures made in CI (`scripts/scan-checks.sh`), as
@@ -5,8 +6,9 @@ import Foundation
 /// (editor), comparing Before and After (compare), a second page blurred at
 /// its bottom (warning), Save and Share open (sheet) or without covers
 /// (uncovered), the pages in black and white (bw), corners to set by hand
-/// (corners), the Scan tab with its pages (tab) or with none yet, for
-/// photos chosen from Photos (empty); `-SnapflyReduceMotion`
+/// (corners), the Scan tab with its pages (tab), with what to ask Claude
+/// over it (assistant), or with none yet, for photos chosen from Photos
+/// (empty); `-SnapflyReduceMotion`
 /// plays it as Reduce Motion would. The photos are drawn here
 /// (`ScanSample`) and made ready as any photo is, where the page is in them
 /// already known. Nothing of it is in a release build.
@@ -22,7 +24,9 @@ enum ScanDemo {
     static var requested: Bool { state != nil }
     static var mode: ScanColor? { state == "bw" ? .blackAndWhite : nil }
     static var unsure: Bool { state == "corners" }
-    static var opensEditor: Bool { state != "tab" && state != "corners" }
+    static var opensEditor: Bool { state != "tab" && state != "corners" && state != "assistant" }
+    /// The sheet a tap on Claude opens, over the tab.
+    static var asksAssistant: Bool { state == "assistant" }
     /// Which page the editor opens on: the blurred one for the warning.
     static var page: Int { state == "warning" ? 1 : 0 }
     static var compares: Bool { state == "compare" }
@@ -54,11 +58,39 @@ enum ScanDemo {
     static let mode: ScanColor? = nil
     static let unsure = false
     static let opensEditor = false
+    static let asksAssistant = false
     static let page = 0
     static let compares = false
     static let opensSheet = false
     static let uncovered = false
     static let still = false
     static func photos() -> [ScanPhoto] { [] }
+    #endif
+}
+
+/// A made-up photo of the made-up invoice opened from the Photos tab, for
+/// pictures made in CI, as `-SnapflyDocumentPhoto` asks: offered to be
+/// straightened and brightened (offer), or cleaned at once (cleaned). Where
+/// its page is, is known, as Vision finds no page on the simulator.
+/// Nothing of it is in a release build.
+enum DocumentPhotoDemo {
+    #if DEBUG
+    private static let state: String? = {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard let index = arguments.firstIndex(of: "-SnapflyDocumentPhoto"), index + 1 < arguments.count else { return nil }
+        return arguments[index + 1]
+    }()
+
+    static var requested: Bool { state != nil }
+    static var cleansAtOnce: Bool { state == "cleaned" }
+
+    @MainActor static func photo() -> (image: CGImage, info: Imported.Info)? {
+        guard let page = ScanSample.page(), let photo = ScanSample.photographed(page) else { return nil }
+        return (photo.image, Imported.Info(screenshot: false, page: photo.quad))
+    }
+    #else
+    static let requested = false
+    static let cleansAtOnce = false
+    @MainActor static func photo() -> (image: CGImage, info: Imported.Info)? { nil }
     #endif
 }
