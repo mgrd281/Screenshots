@@ -259,12 +259,18 @@ final class PDFUITests: XCTestCase {
         XCTAssertTrue(wait(meter, "label BEGINSWITH %@", "scroll", timeout: 20), meter.label)
         print("PDF-NUMBERS \(meter.label)")
         // A page held and dragged down to the bottom edge, so the grid scrolls under it.
-        let held = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "project-page-"))
-            .element(boundBy: 1)
+        // The first hold can land while the grid still coasts from the swipes, and then it scrolls and lifts nothing: once more, from another page, when it did.
         let bottom = grid.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.97))
-        held.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-            .press(forDuration: 0.8, thenDragTo: bottom, withVelocity: .slow, thenHoldForDuration: 3)
-        XCTAssertTrue(wait(meter, "label BEGINSWITH %@", "reorder", timeout: 20), meter.label)
+        var lifted = false
+        for attempt in 1...2 where !lifted {
+            sleep(2)
+            let held = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "project-page-"))
+                .element(boundBy: attempt)
+            held.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+                .press(forDuration: 0.8, thenDragTo: bottom, withVelocity: .slow, thenHoldForDuration: 3)
+            lifted = wait(meter, "label BEGINSWITH %@", "reorder", timeout: 20)
+        }
+        XCTAssertTrue(lifted, meter.label)
         print("PDF-NUMBERS \(meter.label)")
     }
 
