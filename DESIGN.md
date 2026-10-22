@@ -2811,7 +2811,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     once where something is wrong, said once to VoiceOver, with Take Again
     (by the camera for a camera's page, else from Photos) or Compare where
     cleaning read less, its place outlined on the page (`phone-scan-issue`).
-    Under the card, the document's pages (`phone-scan-strip`, each read as
+    Its words grow no larger than the first accessibility size, so the page
+    keeps its room; VoiceOver reads them whole. Under the card, the
+    document's pages (`phone-scan-strip`, each read as
     "Page 2 of 2, hard to read" and selected where it is open): a tap opens
     one, dragged onto another it takes that one's place, held it offers
     Turn, Crop and Delete Page, and VoiceOver moves it earlier or later; the

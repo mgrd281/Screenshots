@@ -152,6 +152,8 @@ struct ScanStatusCard: View {
             }
         }
         .frame(maxWidth: 520)
+        // No larger than the first accessibility size, so the page keeps its room above.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .onAppear(perform: say)
         .onChange(of: page.issues) { _, _ in say() }
     }
