@@ -64,11 +64,10 @@ enum ScanCleaner {
         let found: (turns: Int, skew: Double)
         if let way, let skew = way.skew {
             found = (way.turns, skew)
-        } else if let way {
-            guard let standing = turned(flat, quarterTurns: way.turns, skew: 0) else { return nil }
-            found = (way.turns, lean(of: standing))
         } else {
-            found = upright(flat)
+            let turns = way?.turns ?? upright(flat)
+            guard let standing = turned(flat, quarterTurns: turns, skew: 0) else { return nil }
+            found = (turns, lean(of: standing))
         }
         guard let straight = turned(flat, quarterTurns: found.turns, skew: found.skew) else { return nil }
         return (straight, found.turns, found.skew)
@@ -139,21 +138,19 @@ enum ScanCleaner {
 
     // MARK: Upright and level
 
-    /// Which way up a page reads, in quarter turns clockwise, and how far
-    /// its lines lean, in radians, from a quick reading at a smaller size:
-    /// upright first, and the other ways only when upright reads little.
-    static func upright(_ page: CGImage) -> (turns: Int, skew: Double) {
-        guard let small = smaller(page, longest: 1400) else { return (0, 0) }
+    /// Which way up a page reads, in quarter turns clockwise, from a quick
+    /// reading at a smaller size: upright first, and the other ways only
+    /// when upright reads little.
+    static func upright(_ page: CGImage) -> Int {
+        guard let small = smaller(page, longest: 1400) else { return 0 }
         let ways: [CGImagePropertyOrientation] = [.up, .right, .down, .left]
         var scores = [Double](repeating: 0, count: 4)
-        var lines: [[VNRecognizedTextObservation]] = [[], [], [], []]
         for turns in 0..<4 {
             let request = VNRecognizeTextRequest()
             request.recognitionLevel = .fast
             request.usesLanguageCorrection = false
             try? VNImageRequestHandler(cgImage: small, orientation: ways[turns], options: [:]).perform([request])
             let found = request.results ?? []
-            lines[turns] = found
             scores[turns] = found.reduce(0) { sum, line in
                 guard let best = line.topCandidates(1).first else { return sum }
                 return sum + Double(best.confidence) * Double(best.string.filter(\.isLetter).count)
@@ -161,31 +158,14 @@ enum ScanCleaner {
             // Upright and read well: no need to read it the other ways.
             if turns == 0, scores[0] >= 60, found.count >= 4 { break }
         }
-        let turns = ScanGeometry.upright(scores)
-        // Lines in the page as it reads, in its pixels, to measure their lean.
-        let width = Double(turns % 2 == 0 ? small.width : small.height)
-        let height = Double(turns % 2 == 0 ? small.height : small.width)
-        return (turns, lean(of: lines[turns], width: width, height: height))
+        return ScanGeometry.upright(scores)
     }
 
-    /// How far a page's lines lean, in radians, read as it stands.
+    /// How far a page's lines lean, in radians, as it stands: from where
+    /// its print lies (`ScanGeometry.lean`), with no reading needed.
     static func lean(of page: CGImage) -> Double {
-        guard let small = smaller(page, longest: 1400) else { return 0 }
-        let request = VNRecognizeTextRequest()
-        request.recognitionLevel = .fast
-        request.usesLanguageCorrection = false
-        try? VNImageRequestHandler(cgImage: small, options: [:]).perform([request])
-        return lean(of: request.results ?? [], width: Double(small.width), height: Double(small.height))
-    }
-
-    /// How far lines read on a page lean, measured in its pixels.
-    private static func lean(of lines: [VNRecognizedTextObservation], width: Double, height: Double) -> Double {
-        let leaning = lines.map { line -> (angle: Double, length: Double) in
-            let dx = Double(line.topRight.x - line.topLeft.x) * width
-            let dy = Double(line.topRight.y - line.topLeft.y) * height
-            return (atan2(dy, dx), hypot(dx, dy))
-        }
-        return ScanGeometry.skew(of: leaning)
+        guard let small = smaller(page, longest: 1200), let bitmap = bitmap(small) else { return 0 }
+        return ScanGeometry.lean(of: bitmap)
     }
 
     /// The page turned clockwise by quarter turns, then by `skew` back to

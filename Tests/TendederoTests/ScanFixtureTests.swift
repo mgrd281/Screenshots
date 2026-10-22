@@ -291,6 +291,33 @@ final class ScanFixtureTests: XCTestCase {
         for chunk in ["tEXt", "zTXt", "iTXt", "eXIf", "tIME"] { XCTAssertFalse(chunks.contains(chunk), "\(chunk) in \(chunks)") }
     }
 
+    func testAPNGsNotesAreLeftOutAndItsPictureKept() {
+        func chunk(_ name: String, _ body: [UInt8]) -> [UInt8] {
+            let shifts: [Int] = [24, 16, 8, 0]
+            let length: [UInt8] = shifts.map { shift -> UInt8 in UInt8(truncatingIfNeeded: body.count >> shift) }
+            var out = length
+            out += Array(name.utf8)
+            out += body
+            out += [1, 2, 3, 4]
+            return out
+        }
+        let signature: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
+        let head = chunk("IHDR", [UInt8](repeating: 7, count: 13)), color = chunk("sRGB", [0])
+        let picture = chunk("IDAT", [UInt8](repeating: 9, count: 300)), end = chunk("IEND", [])
+        let notes: [[UInt8]] = [chunk("eXIf", Array("MM\0*".utf8)), chunk("tEXt", Array("Software\0Camera".utf8)),
+                                chunk("tIME", [7, 234, 10, 21, 12, 0, 0])]
+        var parts: [[UInt8]] = [signature, head, color]
+        parts += notes
+        parts += [picture, end]
+        let png = Data(parts.joined())
+        let plain = CoveredCopy.plain(png)
+        XCTAssertEqual(plain, Data([signature, head, color, picture, end].joined()))
+        XCTAssertEqual(Self.chunks(of: plain), ["IHDR", "sRGB", "IDAT", "IEND"])
+        XCTAssertEqual(CoveredCopy.plain(Data([1, 2, 3])), Data([1, 2, 3]), "not a PNG: as it was")
+        let cut = png.prefix(png.count - 3)
+        XCTAssertEqual(CoveredCopy.plain(cut), cut, "cut short: as it was")
+    }
+
     func testAPageAsTheCameraGivesItGoesThroughAsBefore() async throws {
         let page = try page
         let prepared = try XCTUnwrapAsync(await ScanCleaner.prepare(page, quad: nil, mode: .color))

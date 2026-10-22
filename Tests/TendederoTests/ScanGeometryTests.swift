@@ -2,7 +2,7 @@ import XCTest
 @testable import Tendedero
 
 /// A page's geometry: its true shape from a photo at an angle, A4 and
-/// Letter recognised, how far its lines lean, which way up it reads, and
+/// Letter recognised, how far its print leans, which way up it reads, and
 /// where it goes on an A4 page of a PDF, never stretched.
 final class ScanGeometryTests: XCTestCase {
     private let photo = CGSize(width: 3024, height: 4032)
@@ -78,21 +78,31 @@ final class ScanGeometryTests: XCTestCase {
         XCTAssertTrue(same(quad.turned(2).turned(2), quad))
     }
 
-    func testLinesThatAgreeSayHowFarThePageLeans() {
+    func testHowFarAPageLeansIsMeasuredFromItsPrint() {
+        let page = ScanPaperFixture.page(width: 900, printTo: 0.9).bitmap
         let degree = Double.pi / 180
-        let leaning = (0..<8).map { k -> (angle: Double, length: Double) in
-            let wobble: Double = Double(k % 3 - 1) * 0.2 * degree
-            return (angle: 2 * degree + wobble, length: 100.0)
+        XCTAssertEqual(ScanGeometry.lean(of: page), 0, "level")
+        for angle in [0.6, -1.2, 2.5, -4.0] {
+            let leaning = Self.turned(page, by: angle * degree)
+            XCTAssertEqual(ScanGeometry.lean(of: leaning), angle * degree, accuracy: 0.1 * degree, "\(angle)°")
         }
-        XCTAssertEqual(ScanGeometry.skew(of: leaning), 2 * degree, accuracy: 0.25 * degree)
-        XCTAssertEqual(ScanGeometry.skew(of: [(angle: 2 * degree, length: 100)]), 0, "one line is not enough")
-        let level = (0..<8).map { _ in (angle: 0.1 * degree, length: 100.0) }
-        XCTAssertEqual(ScanGeometry.skew(of: level), 0, "too little to straighten")
-        let scattered = (0..<9).map { k -> (angle: Double, length: Double) in
-            let apart: Double = Double(k - 4) * 3
-            return (angle: apart * degree, length: 100.0)
+        XCTAssertEqual(ScanGeometry.lean(of: Self.turned(page, by: 0.15 * degree)), 0, "too little to straighten")
+    }
+
+    func testAPageWithoutLinesHasNoLean() {
+        let blank = ScanBitmap(width: 600, height: 800, red: 240, green: 238, blue: 230)
+        XCTAssertEqual(ScanGeometry.lean(of: blank), 0)
+        // Dark dots strewn all over, as on a photo: nothing lines up.
+        var dots = blank
+        var seed: UInt32 = 3
+        for _ in 0..<6000 {
+            seed = seed &* 1_664_525 &+ 1_013_904_223
+            let across: UInt32 = seed >> 16
+            seed = seed &* 1_664_525 &+ 1_013_904_223
+            let down: UInt32 = seed >> 16
+            dots.set(x: Int(across) % 600, y: Int(down) % 800, 20, 20, 20)
         }
-        XCTAssertEqual(ScanGeometry.skew(of: scattered), 0, "lines that do not agree")
+        XCTAssertEqual(ScanGeometry.lean(of: dots), 0)
     }
 
     func testAPageTurnsOnlyWhenItReadsClearlyBetter() {
@@ -127,6 +137,36 @@ final class ScanGeometryTests: XCTestCase {
         XCTAssertEqual(ScanGeometry.printScale(width: 6000, height: 8485), 600 / ScanGeometry.dpi(width: 6000, height: 8485),
                        accuracy: 0.001)
         XCTAssertEqual(ScanGeometry.printScale(width: 300, height: 424), 4, "never more than four times")
+    }
+
+    /// The page turned counterclockwise as it is seen, by `angle` radians
+    /// about its middle, smoothly, its corners filled with its paper.
+    static func turned(_ page: ScanBitmap, by angle: Double) -> ScanBitmap {
+        let paper = page.color(x: 0, y: 0)
+        var out = ScanBitmap(width: page.width, height: page.height, red: paper.red, green: paper.green, blue: paper.blue)
+        let c = cos(angle), s = sin(angle)
+        let middleX = Double(page.width) / 2, middleY = Double(page.height) / 2
+        for y in 0..<page.height {
+            for x in 0..<page.width {
+                // Where this pixel was before the turn, rows running down.
+                let dx: Double = Double(x) - middleX, dy: Double = Double(y) - middleY
+                let sx: Double = middleX + dx * c - dy * s
+                let sy: Double = middleY + dx * s + dy * c
+                let x0 = Int(sx.rounded(.down)), y0 = Int(sy.rounded(.down))
+                guard x0 >= 0, y0 >= 0, x0 + 1 < page.width, y0 + 1 < page.height else { continue }
+                let fx: Double = sx - Double(x0), fy: Double = sy - Double(y0)
+                var mixed: [UInt8] = []
+                for k in 0..<3 {
+                    func at(_ px: Int, _ py: Int) -> Double { Double(page.pixels[(py * page.width + px) * 4 + k]) }
+                    let top: Double = at(x0, y0) * (1 - fx) + at(x0 + 1, y0) * fx
+                    let bottom: Double = at(x0, y0 + 1) * (1 - fx) + at(x0 + 1, y0 + 1) * fx
+                    let value: Double = top * (1 - fy) + bottom * fy
+                    mixed.append(UInt8(value.rounded()))
+                }
+                out.set(x: x, y: y, mixed[0], mixed[1], mixed[2])
+            }
+        }
+        return out
     }
 
     /// The corners of a flat page `width` by `height` as a camera sees it,

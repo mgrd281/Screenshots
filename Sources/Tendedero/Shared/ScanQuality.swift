@@ -77,7 +77,8 @@ struct ScanIssue: Equatable, Sendable {
 /// blurred parts, a reflection, and too few pixels for its size. Blur is
 /// measured in tiles that hold print: how sharply the brightness turns at
 /// the print's edges (the Laplacian's spread there), against how dark the
-/// print is, so faint print is not taken for blurred. The page is measured
+/// print is, so faint print is not taken for blurred; print blurred until
+/// none of its edges is left counts as blurred too. The page is measured
 /// at about the same size whatever the camera, so the measures mean the same.
 enum ScanQuality {
     struct Tuning: Equatable, Sendable {

@@ -189,28 +189,87 @@ enum ScanGeometry {
 
     // MARK: Upright and level
 
-    /// How far the lines of text lean, in radians, from each line's angle
-    /// and length: the middle of them, when at least three lines agree to a
-    /// degree; 0 when they lean too little to straighten or do not agree.
-    static func skew(of lines: [(angle: Double, length: Double)]) -> Double {
+    /// How far a page's lines of print lean, in radians, counterclockwise
+    /// as the page is seen: the angle at which its print lines up most into
+    /// rows, to a fortieth of a degree. 0 where its print agrees on too
+    /// little, as on a photo, or leans less than is worth straightening.
+    static func lean(of page: ScanBitmap) -> Double {
+        let factor = max(1, max(page.width, page.height) / 1000)
+        let (plane, width, height) = ScanQuality.shrunk(page.brightness, width: page.width, height: page.height, by: factor)
+        let marks = printed(plane, width: width, height: height)
+        let share: Double = Double(marks.count) / Double(max(1, width * height))
+        guard share >= 0.002, share <= 0.3 else { return 0 }
         let degree: Double = Double.pi / 180
-        let steepest: Double = 15 * degree
-        let usable = lines.filter { abs($0.angle) < steepest && $0.length > 0 }.sorted { $0.angle < $1.angle }
-        guard usable.count >= 3 else { return 0 }
-        let total: Double = usable.reduce(0) { $0 + $1.length }
-        var seen = 0.0
-        var middle = usable[0].angle
-        for line in usable {
-            seen += line.length
-            if seen >= total / 2 {
-                middle = line.angle
-                break
+        // Every quarter degree to 10° either way, then every fortieth around the best.
+        let coarse: [Double] = (-40...40).map { step -> Double in Double(step) * 0.25 * degree }
+        let scores: [Double] = coarse.map { rows(marks, leaning: $0, width: width, height: height) }
+        guard let best = scores.indices.max(by: { scores[$0] < scores[$1] }) else { return 0 }
+        let middle: Double = scores.sorted()[scores.count / 2]
+        // Lines that agree stand out well above the angles that smear them.
+        let standsOut: Double = 1.15 * middle
+        guard scores[best] >= standsOut, best > 0, best < coarse.count - 1 else { return 0 }
+        var angle = coarse[best], top = scores[best]
+        for step in -10...10 where step != 0 {
+            let tried: Double = coarse[best] + Double(step) * 0.025 * degree
+            let score = rows(marks, leaning: tried, width: width, height: height)
+            if score > top {
+                top = score
+                angle = tried
             }
         }
-        let agreeing: Double = usable.filter { abs($0.angle - middle) <= degree }.reduce(0) { $0 + $1.length }
-        let enough: Double = 0.6 * total, least: Double = 0.3 * degree
-        guard agreeing >= enough, abs(middle) >= least else { return 0 }
-        return middle
+        let least: Double = 0.3 * degree
+        return abs(angle) >= least ? angle : 0
+    }
+
+    /// Where the print is: pixels well darker than the paper around them,
+    /// so uneven light counts for nothing and a dark box for little.
+    static func printed(_ plane: [UInt8], width: Int, height: Int) -> [(x: Int, y: Int)] {
+        let block = 32
+        let across = (width + block - 1) / block, down = (height + block - 1) / block
+        var paper = [Float](repeating: 255, count: across * down)
+        for by in 0..<down {
+            for bx in 0..<across {
+                var counts = [Int](repeating: 0, count: 256)
+                var total = 0
+                for y in (by * block)..<min(height, by * block + block) {
+                    for x in (bx * block)..<min(width, bx * block + block) {
+                        counts[Int(plane[y * width + x])] += 1
+                        total += 1
+                    }
+                }
+                // The paper is the block's brightest tenth, where print is.
+                let rank: Int = total * 9 / 10
+                var seen = 0
+                for value in 0..<256 {
+                    seen += counts[value]
+                    if seen > rank {
+                        paper[by * across + bx] = Float(value)
+                        break
+                    }
+                }
+            }
+        }
+        var points: [(x: Int, y: Int)] = []
+        for y in 0..<height {
+            for x in 0..<width {
+                let around = paper[(y / block) * across + x / block]
+                let dark: Float = 0.6 * around
+                if around > 60, Float(plane[y * width + x]) < dark { points.append((x, y)) }
+            }
+        }
+        return points
+    }
+
+    /// How strongly points line up into rows leaning by `angle`: the sum of
+    /// the squares of how many fall in each row of a pixel.
+    static func rows(_ points: [(x: Int, y: Int)], leaning angle: Double, width: Int, height: Int) -> Double {
+        let c = cos(angle), s = sin(angle)
+        var counts = [Int](repeating: 0, count: height + 2 * width + 2)
+        for point in points {
+            let row: Double = Double(point.y) * c + Double(point.x) * s
+            counts[Int(row) + width + 1] += 1
+        }
+        return counts.reduce(0.0) { sum, count in sum + Double(count * count) }
     }
 
     /// Which way up a page reads best, in quarter turns clockwise, from how
