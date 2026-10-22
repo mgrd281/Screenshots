@@ -22,6 +22,50 @@ final class ScanCleanTests: XCTestCase {
         XCTAssertLessThanOrEqual(lightest - darkest, 7)
     }
 
+    func testAShadowOverSpeckledPaperComesOutAsWhiteAsTheRest() {
+        // The phone's shadow over the bottom right, and a camera's bright
+        // specks on a sixth of the pixels, as a photo in dim light has them.
+        var page = ScanPaperFixture.page(width: 600)
+        let width = page.bitmap.width, height = page.bitmap.height
+        var seed: UInt32 = 3
+        for y in 0..<height {
+            for x in 0..<width {
+                let across: Float = Float(x) / Float(width), down: Float = Float(y) / Float(height)
+                let into: Float = across + down - 1.2
+                let ramp: Float = min(max(into * 10, 0), 1)
+                let kept: Float = 1 - 0.3 * ramp
+                seed = seed &* 1_664_525 &+ 1_013_904_223
+                let high: UInt32 = seed >> 16
+                let speck: Float = high % 6 == 0 ? 40 : 0
+                let (red, green, blue) = page.bitmap.color(x: x, y: y)
+                page.bitmap.set(x: x, y: y, Self.shaded(red, kept, speck), Self.shaded(green, kept, speck),
+                                Self.shaded(blue, kept, speck))
+            }
+        }
+        let color = ScanClean.clean(page.bitmap, .color)
+        let black = ScanClean.clean(page.bitmap, .blackAndWhite)
+        let inShadow = page.paperSpots.filter { spot in
+            let across: Float = Float(spot.0) / Float(width), down: Float = Float(spot.1) / Float(height)
+            return across + down > 1.3
+        }
+        XCTAssertGreaterThanOrEqual(inShadow.count, 4, "some of the paper lies in the shadow")
+        for (x, y) in page.paperSpots {
+            // The paper as most of it is around the spot, not one speck or the gap beside it.
+            var values: [Int] = []
+            var blackPixels = 0
+            for dy in -3...3 {
+                for dx in -3...3 {
+                    let (red, green, blue) = color.color(x: x + dx, y: y + dy)
+                    values.append(Int(min(red, green, blue)))
+                    if black.brightness(x: x + dx, y: y + dy) == 0 { blackPixels += 1 }
+                }
+            }
+            values.sort()
+            XCTAssertGreaterThanOrEqual(values[values.count / 2], 248, "the paper is white at \(x), \(y)")
+            XCTAssertEqual(blackPixels, 0, "and has no black specks in black and white at \(x), \(y)")
+        }
+    }
+
     func testPrintKeepsItsDarknessEvenWhereTheLightIsDim() {
         let page = ScanPaperFixture.page()
         let cleaned = ScanClean.clean(page.bitmap, .color)
@@ -92,7 +136,8 @@ final class ScanCleanTests: XCTestCase {
         XCTAssertEqual(curve.count, 256)
         XCTAssertEqual(curve[0], 0)
         XCTAssertEqual(curve[255], 255)
-        XCTAssertEqual(curve[243], 255, "paper a little under its measured brightness is white")
+        XCTAssertEqual(curve[245], 255, "paper a little under its commonest value is white")
+        XCTAssertLessThan(curve[240], 255, "a light grey a little further under is not")
         XCTAssertLessThan(curve[128], 128, "mid greys a little darker")
         XCTAssertEqual(curve, curve.sorted(), "never out of order")
     }
@@ -175,6 +220,13 @@ final class ScanCleanTests: XCTestCase {
     private static func dimmed(_ value: UInt8, _ share: Float) -> UInt8 {
         let darker: Float = Float(value) * share
         return UInt8(darker)
+    }
+
+    /// A channel kept to `share` of its light by a shadow, with a speck's
+    /// brightness added.
+    private static func shaded(_ value: UInt8, _ share: Float, _ speck: Float) -> UInt8 {
+        let shown: Float = Float(value) * share + speck
+        return UInt8(min(shown, 255))
     }
 }
 

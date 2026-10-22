@@ -90,8 +90,9 @@ struct ScanBitmap: Equatable, Sendable {
 /// every number stay where and what they are. Only black and white can lose
 /// a mark too pale to tell from the paper, which its menu says.
 ///
-/// The paper's colour is measured in cells across the page: the brightness
-/// most of a cell's pixels stay under. A cell much darker than the page, or
+/// The paper's colour is measured in cells across the page: the commonest
+/// value among the brighter half of a cell's pixels, which neither its print
+/// nor a camera's bright specks move. A cell much darker than the page, or
 /// than the cells around it, holds a photo, a filled box or a band of
 /// colour, not paper, and is left out and filled in from its neighbours, so
 /// what is printed keeps its shade; the cells are then smoothed, so only the
@@ -104,8 +105,6 @@ enum ScanClean {
     struct Tuning: Equatable, Sendable {
         /// A cell's side, as a share of the page's shorter side.
         var cell = 1.0 / 60
-        /// A cell's paper is as bright as this share of its pixels.
-        var paperShare = 0.9
         /// A cell darker than this share of the page's paper holds print.
         var printFloor: Float = 0.45
         /// Or darker than this share of cells on both sides of it, like a
@@ -125,8 +124,10 @@ enum ScanClean {
         /// The grain: neighbours this close to a pixel, of 255, are smoothed
         /// with it; an edge, further apart, never is.
         var grain = 10
-        /// After the light is evened, this share of white and more is white.
-        var whitePoint: Float = 0.94
+        /// After the light is evened, this share of white and more is white:
+        /// the paper's grain below its commonest value, while a table's
+        /// light grey header stays grey.
+        var whitePoint: Float = 0.96
         /// And this share and less is black.
         var blackPoint: Float = 0.04
         /// Above 1, the print's greys a little darker.
@@ -214,12 +215,11 @@ enum ScanClean {
                     }
                     for column in 0..<columns {
                         let left = column * cell, right = min(w, left + cell)
-                        let area = Double((right - left) * (bottom - top))
-                        let rank = Int32((area * tuning.paperShare).rounded(.down))
+                        let half = Int32((right - left) * (bottom - top) / 2)
                         let n = row * columns + column, base = column * 768
-                        red[n] = Self.value(at: rank, in: counts, from: base)
-                        green[n] = Self.value(at: rank, in: counts, from: base + 256)
-                        blue[n] = Self.value(at: rank, in: counts, from: base + 512)
+                        red[n] = Self.commonest(above: half, in: counts, from: base)
+                        green[n] = Self.commonest(above: half, in: counts, from: base + 256)
+                        blue[n] = Self.commonest(above: half, in: counts, from: base + 512)
                     }
                 }
             }
@@ -264,14 +264,31 @@ enum ScanClean {
             self.blue = blue
         }
 
-        /// The value below which `rank` of a cell's pixels lie, in one channel.
-        private static func value(at rank: Int32, in counts: [Int32], from base: Int) -> Float {
-            var seen: Int32 = 0
+        /// A cell's paper in one channel: the commonest value above the
+        /// middle one, each counted with the two on either side, the
+        /// brighter where two are as common. The print lies below the
+        /// middle, and a camera's bright specks are spread too thin to be
+        /// common, so neither moves it, and grainy paper in a shadow comes
+        /// out as white as the rest.
+        private static func commonest(above half: Int32, in counts: [Int32], from base: Int) -> Float {
+            var seen: Int32 = 0, middle = 255
             for value in 0..<256 {
                 seen += counts[base + value]
-                if seen > rank { return Float(value) }
+                if seen > half {
+                    middle = value
+                    break
+                }
             }
-            return 255
+            var best = middle, most: Int32 = -1
+            for value in middle...255 {
+                var near: Int32 = 0
+                for k in max(0, value - 2)...min(255, value + 2) { near += counts[base + k] }
+                if near >= most {
+                    best = value
+                    most = near
+                }
+            }
+            return Float(best)
         }
 
         static func median(_ values: [Float]) -> Float {
