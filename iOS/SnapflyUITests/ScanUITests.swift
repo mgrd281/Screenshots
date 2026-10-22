@@ -9,7 +9,11 @@ import XCTest
 /// and Black and White holds for every page; deleting a page asks first;
 /// corners are set by hand where Vision is not sure; Save and Share starts
 /// with covers every time and warns without them, and a copy without covers
-/// says so. The `testRecord…` walks are slow on purpose, for the videos
+/// says so. A photographed document from Photos is offered cleaning, never
+/// a screenshot, and Revert brings the photo back; an AI chat says what goes
+/// to it and nothing leaves before a tap, and what leaves is the covered
+/// export byte for byte; the name never holds a covered name; photos
+/// chosen together keep their order. The `testRecord…` walks are slow on purpose, for the videos
 /// `scripts/scan-checks.sh` records, and run only there (`SNAPFLY_RECORD`).
 final class ScanUITests: XCTestCase {
     override func setUp() {
@@ -207,6 +211,159 @@ final class ScanUITests: XCTestCase {
         XCTAssertTrue(note.label.contains("ohne Abdeckung"), note.label)
     }
 
+    // MARK: Photos, names and AI chats
+
+    /// The editor in the Photos tab on a made-up photo of the made-up
+    /// invoice (`-SnapflyDocumentPhoto`), or on the invoice as a screenshot
+    /// (`-SnapflyEditorSample`).
+    private func launchPhoto(_ arguments: [String]) -> XCUIApplication {
+        let app = XCUIApplication()
+        var all = arguments + ["-AppleLanguages", "(de)", "-AppleLocale", "de_DE"]
+        if ProcessInfo.processInfo.environment["SNAPFLY_STILL"] != nil { all.append("-SnapflyReduceMotion") }
+        app.launchArguments = all
+        app.launch()
+        return app
+    }
+
+    /// The status once the copy is made and checked.
+    private func checked(_ app: XCUIApplication) -> XCUIElement {
+        app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@ OR label CONTAINS %@",
+                                                             "Zu prüfen", "Nichts Privates gefunden")).firstMatch
+    }
+
+    func testAPhotographedDocumentIsOfferedCleaningAndRevertBringsThePhotoBack() {
+        let app = launchPhoto(["-SnapflyDocumentPhoto", "offer"])
+        let offer = element(app, "photo-clean-offer")
+        XCTAssertTrue(offer.waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(words(app, "Sieht aus wie ein fotografiertes Dokument. Gerade rücken und aufhellen?").exists)
+        XCTAssertTrue(checked(app).waitForExistence(timeout: Self.ready), "the photo is covered as it is first")
+        // Never cleaned without the tap.
+        XCTAssertFalse(element(app, "photo-cleaned").exists)
+        let clean = element(app, "photo-clean")
+        XCTAssertEqual(clean.label, "Aufbereiten")
+        clean.tap()
+        let cleaned = element(app, "photo-cleaned")
+        XCTAssertTrue(cleaned.waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(gone(offer))
+        // Its covers are found again on the cleaned page, and checked.
+        XCTAssertTrue(checked(app).waitForExistence(timeout: Self.ready))
+        let revert = element(app, "photo-clean-undo")
+        XCTAssertEqual(revert.label, "Rückgängig")
+        revert.tap()
+        XCTAssertTrue(gone(cleaned))
+        XCTAssertTrue(offer.waitForExistence(timeout: 10), "the photo as it was, offered again")
+        XCTAssertTrue(checked(app).waitForExistence(timeout: 30), "with its covers as they were")
+    }
+
+    func testAScreenshotIsNeverOfferedCleaning() {
+        let app = launchPhoto(["-SnapflyEditorSample"])
+        XCTAssertTrue(checked(app).waitForExistence(timeout: Self.ready))
+        // Long enough for the page to have been looked for.
+        Thread.sleep(forTimeInterval: 5)
+        XCTAssertFalse(element(app, "photo-clean-offer").exists)
+    }
+
+    func testAnAIChatSaysWhatGoesAndNothingLeavesBeforeATap() {
+        let app = launch("assistant")
+        let what = element(app, "scan-ask-what")
+        XCTAssertTrue(what.waitForExistence(timeout: Self.ready))
+        XCTAssertEqual(what.label, "Die verdeckte Kopie wird an Claude übergeben.")
+        for ask in ["Dokument erklären", "Zusammenfassen", "Fristen und Beträge auflisten", "Nur übergeben"] {
+            XCTAssertTrue(app.buttons.matching(NSPredicate(format: "label == %@", ask)).firstMatch.exists, ask)
+        }
+        XCTAssertEqual(element(app, "audit-handed").label, "none", "nothing is handed over before a tap")
+        app.navigationBars.buttons["Abbrechen"].tap()
+        XCTAssertTrue(gone(what))
+        Thread.sleep(forTimeInterval: 2)
+        XCTAssertEqual(element(app, "audit-handed").label, "none", "nor after Cancel")
+    }
+
+    func testThePagesHandedToAnAIChatAreTheCoveredExportByteForByte() {
+        let app = launch("tab")
+        let save = element(app, "scan-save-share")
+        XCTAssertTrue(element(app, "scan-page-2").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(gone(element(app, "scan-improving"), timeout: Self.ready * 2))
+        // The covered pictures as Save and Share makes them.
+        save.tap()
+        element(app, "scan-format-picture").tap()
+        let copy = element(app, "scan-way-copy")
+        XCTAssertTrue(wait(copy, "isEnabled == %@", NSNumber(value: true), timeout: Self.ready))
+        copy.tap()
+        let exported = element(app, "audit-exported")
+        XCTAssertTrue(wait(exported, "label != %@", "none", timeout: Self.ready))
+        app.navigationBars.buttons["Fertig"].tap()
+        XCTAssertTrue(gone(copy))
+        // Then handed to Claude, after its sheet.
+        XCTAssertEqual(element(app, "audit-handed").label, "none")
+        element(app, "send-claude").tap()
+        let only = element(app, "scan-ask-none")
+        XCTAssertTrue(only.waitForExistence(timeout: 10))
+        only.tap()
+        // Two pages go through the share sheet; it is closed again to read what went.
+        let close = app.buttons.matching(NSPredicate(format: "label IN %@", argumentArray: [["Schließen", "Close"]])).firstMatch
+        if close.waitForExistence(timeout: Self.ready) { close.tap() } else { app.swipeDown(velocity: .fast) }
+        let handed = element(app, "audit-handed")
+        XCTAssertTrue(wait(handed, "label != %@", "none", timeout: 30))
+        XCTAssertEqual(handed.label, exported.label, "the same bytes, page by page")
+        XCTAssertEqual(handed.label.split(separator: " ").count, 2, "both pages")
+    }
+
+    func testTheNameNeverHoldsACoveredNameAndIsTheScanTimeWithoutAppleIntelligence() {
+        let app = launch("sheet")
+        let name = app.textFields["scan-name"]
+        XCTAssertTrue(name.waitForExistence(timeout: Self.ready))
+        // Long enough for a suggestion, where Apple Intelligence is there.
+        XCTAssertTrue(wait(element(app, "scan-way-copy"), "isEnabled == %@", NSNumber(value: true), timeout: Self.ready))
+        Thread.sleep(forTimeInterval: 5)
+        let value = name.value as? String ?? ""
+        XCTAssertFalse(value.localizedCaseInsensitiveContains("Mustermann"), value)
+        XCTAssertFalse(value.localizedCaseInsensitiveContains("Erika"), value)
+        if !element(app, "scan-name-suggested").exists {
+            let scanned = value.range(of: #"^Scan \d{2}\.\d{2}\.\d{4}, \d{2}\.\d{2}$"#, options: .regularExpression)
+            XCTAssertNotNil(scanned, value)
+        }
+    }
+
+    /// Two photos chosen from Photos (`simctl addmedia` put them there, the
+    /// blurred one first, so the sharp one is newest, first in the picker),
+    /// the blurred one chosen first: the document keeps the order they were
+    /// chosen in, not the picker's.
+    func testPhotosChosenTogetherKeepTheOrderTheyWereChosenIn() throws {
+        let app = launch("empty")
+        let photos = element(app, "scan-photos")
+        XCTAssertTrue(photos.waitForExistence(timeout: 20))
+        photos.tap()
+        let cells = app.descendants(matching: .any).matching(identifier: "PXGGridLayout-Info")
+        XCTAssertTrue(cells.firstMatch.waitForExistence(timeout: 20))
+        let squares: [CGRect] = cells.allElementsBoundByIndex.map { $0.frame }
+            .filter { (frame: CGRect) -> Bool in !frame.isEmpty && abs(frame.width - frame.height) < 4 }
+            .sorted { (a: CGRect, b: CGRect) -> Bool in a.minY != b.minY ? a.minY < b.minY : a.minX < b.minX }
+        try XCTSkipIf(squares.count < 2, "two photos are put in Photos by scripts/scan-checks.sh")
+        let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+        // The older, blurred one first, then the newer, sharp one.
+        for frame in [squares[1], squares[0]] {
+            origin.withOffset(CGVector(dx: frame.midX, dy: frame.midY)).tap()
+            Thread.sleep(forTimeInterval: 0.6)
+        }
+        let names = ["Hinzufügen", "Add", "Fertig", "Done"]
+        let add = app.buttons.matching(NSPredicate(format: "label IN %@", argumentArray: [names])).firstMatch
+        XCTAssertTrue(add.waitForExistence(timeout: 5))
+        add.tap()
+        // On the simulator Vision finds no page: each photo's corners are set, the first's, then the second's.
+        let done = element(app, "scan-corners-done")
+        for _ in 0..<2 where done.waitForExistence(timeout: Self.ready) {
+            dragCorners(app)
+            XCTAssertTrue(gone(done, timeout: 20))
+            pause(2)
+        }
+        let first = element(app, "scan-thumb-1"), second = element(app, "scan-thumb-2")
+        XCTAssertTrue(second.waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(wait(first, "label CONTAINS %@", "schwer lesbar", timeout: Self.ready * 2), first.label)
+        XCTAssertTrue(gone(element(app, "scan-improving"), timeout: Self.ready))
+        XCTAssertFalse(second.label.contains("schwer lesbar"), second.label)
+        pause(2)
+    }
+
     // MARK: Walks for the videos
 
     private func recording() throws {
@@ -253,6 +410,13 @@ final class ScanUITests: XCTestCase {
         let either = expectation(for: NSPredicate { _, _ in done.exists || good.exists || warning.exists }, evaluatedWith: nil)
         _ = XCTWaiter.wait(for: [either], timeout: Self.ready)
         guard done.exists else { return }
+        dragCorners(app)
+    }
+
+    /// In the corner editor: the whole picture first, then each corner
+    /// dragged slowly onto the page's corner in the made-up photo, then Done.
+    private func dragCorners(_ app: XCUIApplication) {
+        let done = element(app, "scan-corners-done")
         pause(1.5)
         element(app, "scan-corners-whole").tap()
         pause(1)
@@ -330,6 +494,42 @@ final class ScanUITests: XCTestCase {
         element(app, "scan-thumb-2").tap()
         XCTAssertTrue(card(app).exists)
         pause(2.5)
+    }
+
+    /// A photographed document from Photos: the offer, cleaning, its covers
+    /// found again, then Revert.
+    func testRecordCleaningAPhotographedDocument() throws {
+        try recording()
+        let app = launchPhoto(["-SnapflyDocumentPhoto", "offer"])
+        XCTAssertTrue(element(app, "photo-clean-offer").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(checked(app).waitForExistence(timeout: Self.ready))
+        pause(3)
+        element(app, "photo-clean").tap()
+        XCTAssertTrue(element(app, "photo-cleaned").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(checked(app).waitForExistence(timeout: Self.ready))
+        pause(3)
+        element(app, "photo-clean-undo").tap()
+        pause(3)
+    }
+
+    /// The scanned pages' name in Save and Share, then Claude: what goes to
+    /// it, a question chosen, and the share sheet it opens.
+    func testRecordNameAndHandOver() throws {
+        try recording()
+        let app = launch("tab")
+        XCTAssertTrue(element(app, "scan-page-2").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(gone(element(app, "scan-improving"), timeout: Self.ready * 2))
+        pause(1.5)
+        element(app, "scan-save-share").tap()
+        XCTAssertTrue(app.textFields["scan-name"].waitForExistence(timeout: 10))
+        pause(4)
+        app.navigationBars.buttons["Fertig"].tap()
+        pause(1.5)
+        element(app, "send-claude").tap()
+        XCTAssertTrue(element(app, "scan-ask-what").waitForExistence(timeout: 10))
+        pause(3)
+        element(app, "scan-ask-summarize").tap()
+        pause(5)
     }
 
     /// Compare, the divider dragged, the colours, then Save and Share

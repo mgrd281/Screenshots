@@ -1751,3 +1751,30 @@
 "Zoom" = "缩放";
 "Zoom in on clicks and typing" = "点按和输入时放大";
 "Zooms: %d" = "缩放：%d";
+
+/* Scan: photographed documents, names and AI chats */
+"Letter" = "信函";
+"Form" = "表格";
+"Receipt" = "收据";
+"Scan %@" = "扫描 %@";
+"Explain the Document" = "解释文档";
+"Summarize" = "总结";
+"List Deadlines and Amounts" = "列出期限和金额";
+"Explain this document in simple words: what it is, who sent it and what it asks of me." = "请用简单的话解释这份文档：它是什么、谁寄来的、要求我做什么。";
+"Summarize this document in a few short points." = "请用几个简短的要点总结这份文档。";
+"List every deadline and every amount in this document exactly as written, each with what it is for." = "请按原文列出这份文档中的每个期限和每笔金额，并注明各自的用途。";
+"Parts are covered for privacy: never guess them. Never fill in or correct a number. Where something cannot be read, say so." = "为保护隐私，部分内容已遮盖：请勿猜测。请勿补全或更正任何数字。无法读清的地方请直接说明。";
+"Straightened, some text read less well, so the photo stays as it was." = "拉直后部分文字更难辨认，因此照片保持原样。";
+"Straightened and brightened. Its covers were found again on the cleaned page." = "已拉直并提亮。已在整理后的页面上重新找到要遮盖的位置。";
+"Looks like a photographed document. Straighten and brighten it?" = "这看起来是一张拍摄的文档。要拉直并提亮吗？";
+"Clean Up" = "整理";
+"Revert" = "还原";
+"The covered copy is handed over to %@." = "已遮盖的副本将交给 %@。";
+"Never the original. Nothing is sent until you send it in %@." = "绝不是原件。在你于 %@ 中发送之前，不会发送任何内容。";
+"Ask with It" = "一起提问";
+"With a question, the share sheet opens: tap %@ there, then send." = "选择问题后会打开共享表单：在那里轻点 %@，然后发送。";
+"Hand Over Only" = "仅交出";
+"Hand Over to %@" = "交给 %@";
+"Kind: %@" = "类型：%@";
+"Suggested by Apple Intelligence from the words outside the covers." = "由 Apple Intelligence 根据遮盖之外的文字建议。";
+"An AI chat first offers questions for the covered pages. You ask them in its own app; Snapfly sends nothing itself." = "AI 聊天会先提供关于已遮盖页面的问题。你在它自己的 App 中提问；Snapfly 本身不会发送任何内容。";

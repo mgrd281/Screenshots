@@ -41,6 +41,10 @@ struct ProtectView: View {
     @State private var showsOptions = false
     /// The choice of apps beside the picture, from the menu.
     @State private var choosingApps = false
+    /// An AI chat tapped for a scanned page, while what to ask is chosen.
+    @State private var asking: AssistantChoice?
+    /// What was asked there, handed over once its sheet has gone.
+    @State private var asked: (chat: ChatTarget, ask: ScanAsk?)?
     /// Only the picture, until a tap brings the controls back.
     @State private var focus = false
     /// The mark held down, whose menu shows.
@@ -143,6 +147,9 @@ struct ProtectView: View {
         .animation(motion, value: note)
         .animation(motion, value: hint)
         .animation(motion, value: split != nil)
+        .animation(motion, value: session.documentPage != nil)
+        .animation(motion, value: session.cleaning)
+        .animation(motion, value: session.cleaned)
         .navigationTitle(scan == nil ? L("Protect Picture") : L("Review"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -169,6 +176,9 @@ struct ProtectView: View {
                     .presentationDetents([.medium, .large], selection: $explainHeight)
             }
             .sheet(isPresented: $choosingApps) { ChooseAppsSheet() }
+            .sheet(item: $asking, onDismiss: handOverAsked) { choice in
+                ScanAssistantSheet(chat: choice.chat) { asked = (choice.chat, $0) }
+            }
             .sheet(isPresented: $showsOptions) {
                 ToolOptions(tool: tool, markerWidth: $markerWidth, eraserReach: $eraserReach, session: session)
                     .presentationDetents([.height(300), .medium])
@@ -460,14 +470,23 @@ struct ProtectView: View {
     /// how to use the tool just chosen.
     private var top: some View {
         VStack(spacing: 6) {
-            ZStack {
-                capsule
-                    .padding(.horizontal, Self.railEdge + AppRail.width + 8)
-                eye
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    .padding(.trailing, Self.railEdge)
+            VStack(spacing: 8) {
+                ZStack {
+                    capsule
+                        .padding(.horizontal, Self.railEdge + AppRail.width + 8)
+                    eye
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .padding(.trailing, Self.railEdge)
+                }
+                .padding(.top, 6)
+                // A photographed document's offer to clean it, above the page, which makes room for it.
+                if scan == nil {
+                    DocumentOfferBanner(session: session)
+                        .frame(maxWidth: 560)
+                        .padding(.horizontal, 16)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
             }
-            .padding(.top, 6)
             .measuredHeight($statusHeight)
             if split != nil {
                 CompareLabels()
@@ -814,8 +833,17 @@ struct ProtectView: View {
         case .photos: save()
         case .files: saveFile()
         case .mac: send()
+        // For a scanned page, an AI chat first asks what to ask with it.
+        case .app(let chat) where scan != nil && chat.isAI: asking = AssistantChoice(chat: chat)
         case .app(let chat): send(to: chat)
         }
+    }
+
+    /// What was chosen for the AI chat, once its sheet has gone.
+    private func handOverAsked() {
+        guard let asked else { return }
+        self.asked = nil
+        send(to: asked.chat, asking: asked.ask)
     }
 
     private func done(_ text: String) {
@@ -883,10 +911,10 @@ struct ProtectView: View {
 
     /// The copy handed to the app: straight to WhatsApp, an AI chat opened
     /// with it copied, to paste, else through the share sheet, where the app
-    /// is tapped (`Handoff`).
-    private func send(to chat: ChatTarget) {
+    /// is tapped (`Handoff`); with a question, the share sheet with it.
+    private func send(to chat: ChatTarget, asking ask: ScanAsk? = nil) {
         guard session.isReady, let png = session.png else { return }
-        let shown = Handoff.shared.send([png], to: chat, named: baseName, opened: {
+        let shown = Handoff.shared.send([png], to: chat, named: baseName, asking: ask?.prompt, opened: {
             note = EditorNote(text: String(format: L("Copied for %@: tap the picture above the keyboard there, or hold the message field and tap Paste."), chat.name))
         }) { went in
             if went { session.left() }

@@ -1753,3 +1753,30 @@
 "Zoom" = "Zoom";
 "Zoom in on clicks and typing" = "Zoom in on clicks and typing";
 "Zooms: %d" = "Zooms: %d";
+
+/* Scan: photographed documents, names and AI chats */
+"Letter" = "Letter";
+"Form" = "Form";
+"Receipt" = "Receipt";
+"Scan %@" = "Scan %@";
+"Explain the Document" = "Explain the Document";
+"Summarize" = "Summarize";
+"List Deadlines and Amounts" = "List Deadlines and Amounts";
+"Explain this document in simple words: what it is, who sent it and what it asks of me." = "Explain this document in simple words: what it is, who sent it and what it asks of me.";
+"Summarize this document in a few short points." = "Summarize this document in a few short points.";
+"List every deadline and every amount in this document exactly as written, each with what it is for." = "List every deadline and every amount in this document exactly as written, each with what it is for.";
+"Parts are covered for privacy: never guess them. Never fill in or correct a number. Where something cannot be read, say so." = "Parts are covered for privacy: never guess them. Never fill in or correct a number. Where something cannot be read, say so.";
+"Straightened, some text read less well, so the photo stays as it was." = "Straightened, some text read less well, so the photo stays as it was.";
+"Straightened and brightened. Its covers were found again on the cleaned page." = "Straightened and brightened. Its covers were found again on the cleaned page.";
+"Looks like a photographed document. Straighten and brighten it?" = "Looks like a photographed document. Straighten and brighten it?";
+"Clean Up" = "Clean Up";
+"Revert" = "Revert";
+"The covered copy is handed over to %@." = "The covered copy is handed over to %@.";
+"Never the original. Nothing is sent until you send it in %@." = "Never the original. Nothing is sent until you send it in %@.";
+"Ask with It" = "Ask with It";
+"With a question, the share sheet opens: tap %@ there, then send." = "With a question, the share sheet opens: tap %@ there, then send.";
+"Hand Over Only" = "Hand Over Only";
+"Hand Over to %@" = "Hand Over to %@";
+"Kind: %@" = "Kind: %@";
+"Suggested by Apple Intelligence from the words outside the covers." = "Suggested by Apple Intelligence from the words outside the covers.";
+"An AI chat first offers questions for the covered pages. You ask them in its own app; Snapfly sends nothing itself." = "An AI chat first offers questions for the covered pages. You ask them in its own app; Snapfly sends nothing itself.";

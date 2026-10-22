@@ -23,6 +23,23 @@ keeps a download of each version.
   whose text you can find and copy without what is covered, or a PNG for
   each page, with covers, where every save starts, or without, which says
   the file holds every private detail.
+- On the iPhone, a photo chosen with Protect a Photo that looks like a
+  photographed paper document, never a screenshot, offers to straighten and
+  brighten it as a scan is: Clean Up does, its covers are found again on
+  the cleaned page, and Revert brings back the photo as it was. Nothing is
+  cleaned without the tap.
+- On the iPhone, Scan names the document in Save and Share, a name you can
+  change: with Apple Intelligence on, from the words outside the covers on
+  the first page, its kind, who sent it and its date, never a covered word
+  or your own name; otherwise by when it was scanned ("Scan 21.10.2026,
+  14.05"). The document's kind, Invoice, Letter, Form or Receipt, shows
+  beside its pages.
+- On the iPhone, a tap on ChatGPT, Claude or another AI chat for scanned
+  pages says the covered copy goes to it, never the original, and offers
+  three questions to send with it: Explain the Document, Summarize, and
+  List Deadlines and Amounts, each asking never to guess what is covered or
+  unreadable and never to fill in or correct a number. The conversation is
+  in your own app; Snapfly holds no key for it and sends nothing itself.
 - On the iPhone, a covered picture saved as a PNG leaves without the Exif
   note the system writes into it.
 - On the iPhone, the question before a picture leaves says "1 place still

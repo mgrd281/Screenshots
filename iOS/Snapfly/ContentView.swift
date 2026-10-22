@@ -60,7 +60,11 @@ struct PhotosTab: View {
             PhotoIndexer.shared.becameActive()
             // For screenshots made in CI: the editor on a made-up invoice.
             if EditorSample.requested, path.isEmpty, let sample = EditorSample.picture() {
-                path.append(ProtectSession.Source.picture(Imported.shared.keep(sample)))
+                path.append(ProtectSession.Source.picture(Imported.shared.keep(sample, info: Imported.Info(screenshot: true))))
+            }
+            // And on a made-up photo of a made-up invoice, offered to be cleaned.
+            if DocumentPhotoDemo.requested, path.isEmpty, let photo = DocumentPhotoDemo.photo() {
+                path.append(ProtectSession.Source.picture(Imported.shared.keep(photo.image, info: photo.info)))
             }
             guide.closeShot = { path.removeLast(path.count) }
             guide.openNewest = {
@@ -219,7 +223,8 @@ struct PhotosTab: View {
 
     /// Protect a Photo: the system's photo picker, any picture from Photos.
     private func protectButton(compact: Bool) -> some View {
-        PhotosPicker(selection: $picked, matching: .images) {
+        // From the library itself, so a screenshot is told from a photo.
+        PhotosPicker(selection: $picked, matching: .images, photoLibrary: .shared()) {
             Label(L("Protect a Photo"), systemImage: "shield.lefthalf.filled")
         }
         .buttonStyle(ProtectButtonStyle(compact: compact))
@@ -295,14 +300,18 @@ struct PhotosTab: View {
 
     // MARK: Actions
 
-    /// A photo chosen in Photos, read the right way up and opened to protect.
+    /// A photo chosen in Photos, read the right way up and opened to
+    /// protect, with whether Photos calls it a screenshot and its lens, so
+    /// a photographed document is told from a screenshot.
     private func open(_ item: PhotosPickerItem) async {
         defer { picked = nil }
         guard let data = try? await item.loadTransferable(type: Data.self), let image = Covering.upright(data) else {
             coverer.show(L("The picture could not be read."))
             return
         }
-        path.append(ProtectSession.Source.picture(Imported.shared.keep(image)))
+        let info = Imported.Info(screenshot: Library.isScreenshot(item.itemIdentifier, data: data),
+                                 focal: ScanCleaner.focalLength(of: data, width: image.width, height: image.height))
+        path.append(ProtectSession.Source.picture(Imported.shared.keep(image, info: info)))
     }
 
     // MARK: Before access

@@ -40,9 +40,11 @@ final class SendApps: ObservableObject {
 /// opens (`ChatTarget.PhoneHandoff`); one to an AI chat by opening its app
 /// with the picture on the clipboard, to paste there; anything else, or an
 /// app that does not open, through the system's share sheet, where every
-/// app that takes pictures shows and the owner taps it. Only the protected
-/// copy is ever handed over: the files are written for it alone and deleted
-/// once it is done, and the clipboard keeps it ten minutes at most.
+/// app that takes pictures shows and the owner taps it. With a question for
+/// an AI chat, the share sheet too, the question going with the pictures.
+/// Only the protected copy is ever handed over: the files are written for
+/// it alone and deleted once it is done, and the clipboard keeps it ten
+/// minutes at most. Nothing goes until the owner sends it in that app.
 @MainActor
 final class Handoff: NSObject, UIDocumentInteractionControllerDelegate {
     static let shared = Handoff()
@@ -53,13 +55,18 @@ final class Handoff: NSObject, UIDocumentInteractionControllerDelegate {
     private var handedOver = false
 
     /// Hands the pictures to an app, or, with none named, to whatever the
-    /// owner picks in the share sheet; `opened` runs when an AI chat's app
-    /// opened with the picture to paste, and `done` says whether they went.
-    /// False when nothing could be shown.
+    /// owner picks in the share sheet; with a question for an AI chat, the
+    /// share sheet, the question after the pictures. `opened` runs when an
+    /// AI chat's app opened with the picture to paste, and `done` says
+    /// whether they went. False when nothing could be shown.
     @discardableResult
-    func send(_ pngs: [Data], to chat: ChatTarget?, named name: String, opened: @escaping () -> Void = {},
-              done: @escaping (Bool) -> Void = { _ in }) -> Bool {
+    func send(_ pngs: [Data], to chat: ChatTarget?, named name: String, asking question: String? = nil,
+              opened: @escaping () -> Void = {}, done: @escaping (Bool) -> Void = { _ in }) -> Bool {
         guard !pngs.isEmpty, let host = Self.presenter() else { return false }
+        #if DEBUG
+        HandoffAudit.shared.handed(pngs)
+        #endif
+        if let question { return share(pngs, named: name, saying: question, from: host, done: done) }
         switch chat?.phoneHandoff(pictures: pngs.count) {
         case .direct?:
             if openInWhatsApp(pngs[0], named: name, from: host, done: done) { return true }
@@ -96,11 +103,14 @@ final class Handoff: NSObject, UIDocumentInteractionControllerDelegate {
         return false
     }
 
-    /// The share sheet with the pictures as files.
-    private func share(_ pngs: [Data], named name: String, from host: UIViewController,
+    /// The share sheet with the pictures as files, and the question after
+    /// them where there is one.
+    private func share(_ pngs: [Data], named name: String, saying question: String? = nil, from host: UIViewController,
                        done: @escaping (Bool) -> Void) -> Bool {
         guard let files = try? Self.write(pngs, named: name, as: "png") else { return false }
-        let sheet = UIActivityViewController(activityItems: files, applicationActivities: nil)
+        var items: [Any] = files
+        if let question { items.append(question) }
+        let sheet = UIActivityViewController(activityItems: items, applicationActivities: nil)
         // Nothing a protected picture has any use for.
         sheet.excludedActivityTypes = [.assignToContact, .addToReadingList]
         sheet.completionWithItemsHandler = { activity, completed, _, _ in
@@ -270,6 +280,7 @@ struct AppTiles: View {
                     .buttonStyle(.plain)
                     .disabled(busy != nil)
                     .accessibilityLabel(String(format: L("Send to %@"), chat.name))
+                    .accessibilityIdentifier("send-\(chat.rawValue)")
                 }
                 Button { choosing = true } label: {
                     tile(name: L("More")) {

@@ -17,6 +17,10 @@ struct ScanTab: View {
     @State private var path = NavigationPath()
     @State private var picked: [PhotosPickerItem] = []
     @State private var saving = false
+    /// An AI chat tapped, while what to ask with the pages is chosen.
+    @State private var asking: AssistantChoice?
+    /// What was asked there, handed over once its sheet has gone.
+    @State private var asked: (chat: ChatTarget, ask: ScanAsk?)?
     /// Each press of the scan button, for its haptic.
     @State private var presses = 0
 
@@ -76,6 +80,24 @@ struct ScanTab: View {
             }
         }
         .sheet(isPresented: $saving) { ScanSaveSheet() }
+        .sheet(item: $asking, onDismiss: handOverAsked) { choice in
+            ScanAssistantSheet(chat: choice.chat) { asked = (choice.chat, $0) }
+        }
+        #if DEBUG
+        .overlay(alignment: .topLeading) { HandoffAuditMarks() }
+        #endif
+    }
+
+    /// An AI chat first asks what to ask with the pages; any other app takes them at once.
+    private func send(_ chat: ChatTarget) {
+        if chat.isAI { asking = AssistantChoice(chat: chat) } else { store.send(to: chat) }
+    }
+
+    /// What was chosen for the AI chat, once its sheet has gone.
+    private func handOverAsked() {
+        guard let asked else { return }
+        self.asked = nil
+        store.send(to: asked.chat, asking: asked.ask)
     }
 
     /// A photo whose page Vision was not sure of, while its corners are set.
@@ -108,6 +130,7 @@ struct ScanTab: View {
                 Text(L("Scanned pages"))
                     .font(.title3.weight(.semibold))
                     .accessibilityAddTraits(.isHeader)
+                if let kind = store.title?.kind { PaperKindLabel(kind: kind) }
                 Spacer()
                 Button(L("Clear")) {
                     withAnimation(.easeOut(duration: 0.2)) { store.clear() }
@@ -137,7 +160,7 @@ struct ScanTab: View {
                 Text(L("Send to"))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
-                AppTiles(busy: store.sendingTo) { store.send(to: $0) }
+                AppTiles(busy: store.sendingTo) { send($0) }
                     .padding(.horizontal, -16)
             }
             .padding(.top, 4)
@@ -152,6 +175,7 @@ struct ScanTab: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(L("Each page is covered as Settings says, or as you left it after opening it."))
                 Text(L("A tap on an app covers every page and hands them to it, through the share sheet where needed."))
+                Text(L("An AI chat first offers questions for the covered pages. You ask them in its own app; Snapfly sends nothing itself."))
                 Text(L("Pages stay on this iPhone only while Snapfly is open."))
             }
             .font(.footnote)
@@ -218,6 +242,7 @@ struct ScanTab: View {
             if let mode = ScanDemo.mode { store.setMode(mode) }
             let photos = await Task.detached(priority: .userInitiated) { ScanDemo.photos() }.value
             let added = store.add(photos: photos, unsure: ScanDemo.unsure)
+            if ScanDemo.asksAssistant { asking = AssistantChoice(chat: .claude) }
             guard ScanDemo.opensEditor, let page = added.dropFirst(ScanDemo.page).first ?? added.first else { return }
             open(page.id)
         }

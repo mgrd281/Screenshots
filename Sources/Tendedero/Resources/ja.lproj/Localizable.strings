@@ -1751,3 +1751,30 @@
 "Zoom" = "ズーム";
 "Zoom in on clicks and typing" = "クリックと入力でズーム";
 "Zooms: %d" = "ズーム: %d";
+
+/* Scan: photographed documents, names and AI chats */
+"Letter" = "手紙";
+"Form" = "書式";
+"Receipt" = "領収書";
+"Scan %@" = "スキャン %@";
+"Explain the Document" = "書類を説明";
+"Summarize" = "要約";
+"List Deadlines and Amounts" = "期限と金額を一覧";
+"Explain this document in simple words: what it is, who sent it and what it asks of me." = "この書類をやさしい言葉で説明してください。何の書類か、誰が送ったか、私に何を求めているか。";
+"Summarize this document in a few short points." = "この書類をいくつかの短い要点に要約してください。";
+"List every deadline and every amount in this document exactly as written, each with what it is for." = "この書類のすべての期限と金額を、書かれているとおりに、それぞれの用途とともに一覧にしてください。";
+"Parts are covered for privacy: never guess them. Never fill in or correct a number. Where something cannot be read, say so." = "プライバシーのため一部を隠しています。決して推測しないでください。数字を補ったり直したりしないでください。読めない箇所はそう伝えてください。";
+"Straightened, some text read less well, so the photo stays as it was." = "傾きを直すと読みにくい文字があったため、写真はそのままです。";
+"Straightened and brightened. Its covers were found again on the cleaned page." = "傾きを直して明るくしました。きれいにしたページで隠す場所を見つけ直しました。";
+"Looks like a photographed document. Straighten and brighten it?" = "書類を撮った写真のようです。傾きを直して明るくしますか？";
+"Clean Up" = "整える";
+"Revert" = "元に戻す";
+"The covered copy is handed over to %@." = "隠したコピーを%@に渡します。";
+"Never the original. Nothing is sent until you send it in %@." = "元の写真は渡しません。%@で送信するまで何も送られません。";
+"Ask with It" = "一緒に質問";
+"With a question, the share sheet opens: tap %@ there, then send." = "質問を付けると共有シートが開きます。そこで%@をタップして送信してください。";
+"Hand Over Only" = "渡すだけ";
+"Hand Over to %@" = "%@に渡す";
+"Kind: %@" = "種類: %@";
+"Suggested by Apple Intelligence from the words outside the covers." = "隠した場所の外の言葉から Apple Intelligence が提案しました。";
+"An AI chat first offers questions for the covered pages. You ask them in its own app; Snapfly sends nothing itself." = "AIチャットでは、まず隠したページについての質問が表示されます。質問はそのアプリ内で行い、Snapfly自身は何も送信しません。";

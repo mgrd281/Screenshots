@@ -5,10 +5,13 @@
 # was read on it (SCAN_CAPTURES). Then the app on the simulator, the engine
 # built optimized as on a phone: its UI tests (iOS/SnapflyUITests/
 # ScanUITests.swift), still frames of the Scan tab, Review and Save and Share
-# on the made-up photos (-SnapflyScan), in German, light and dark, at the
+# on the made-up photos (-SnapflyScan), with what to ask Claude, and the
+# Photos tab's offer to clean a photographed document and the document
+# cleaned (-SnapflyDocumentPhoto), in German, light and dark, at the
 # largest accessibility text size, on the newest iPhone the runner has and on
 # the smallest, and in Arabic and English; then videos of the walks (simctl
-# io recordVideo), from Photos to sharing among them, and the same walks with
+# io recordVideo), from Photos to sharing, two photos chosen together,
+# cleaning a photo, the name and the hand-over to Claude among them, and walks with
 # Reduce Motion. Writes everything to captures/scan and the test results to
 # build/scan.xcresult. A failed test fails the run, once the frames are made.
 set -euo pipefail
@@ -18,15 +21,16 @@ derived=build/scan
 bundle=de.ghazarian.Snapfly
 mkdir -p "$out"
 
-# The engine, with its pictures and numbers. Its photo whole goes into
-# Photos on the simulator, for the walk from Photos, and is not published.
+# The engine, with its pictures and numbers. Its photos whole, sharp and
+# blurred at the bottom, go into Photos on the simulator, for the walks from
+# Photos, and are not published.
 engine=0
 SCAN_CAPTURES="$PWD/$out" swift test --filter ScanFixtureTests || engine=$?
 photo=build/scan-photo.png
-if [ -f "$out/scan-photo-full.png" ]; then
-  mkdir -p build
-  mv "$out/scan-photo-full.png" "$photo"
-fi
+blurred=build/scan-photo-blurred.png
+mkdir -p build
+if [ -f "$out/scan-photo-full.png" ]; then mv "$out/scan-photo-full.png" "$photo"; fi
+if [ -f "$out/scan-photo-blurred-full.png" ]; then mv "$out/scan-photo-blurred-full.png" "$blurred"; fi
 
 # The newest iPhone the runner has, the largest: a Pro Max where there is one.
 device=$(xcrun simctl list devices available --json | python3 -c '
@@ -50,6 +54,8 @@ xcrun simctl boot "$device" || true
 xcrun simctl bootstatus "$device" -b
 xcrun simctl status_bar "$device" override --time 9:41 --dataNetwork wifi --wifiMode active --wifiBars 3 \
   --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100
+# The blurred one first, so the sharp one is the newest, first in the picker.
+if [ -f "$blurred" ]; then xcrun simctl addmedia "$device" "$blurred" || echo "The blurred photo could not go into Photos." >&2; fi
 if [ -f "$photo" ]; then xcrun simctl addmedia "$device" "$photo" || echo "The photo could not go into Photos." >&2; fi
 
 # Debug, for the made-up scans, but optimized: the engine's loops are as
@@ -102,6 +108,23 @@ frames() {
 }
 frames "$device" de-light light de ""
 frames "$device" de-dark dark de ""
+
+# A photographed document opened from the Photos tab: the offer to clean
+# it, and cleaned, its covers found again.
+photo_shot() {
+  local on=$1 name=$2 state=$3 appearance=$4 language=$5
+  xcrun simctl ui "$on" appearance "$appearance"
+  xcrun simctl terminate "$on" "$bundle" >/dev/null 2>&1 || true
+  xcrun simctl launch "$on" "$bundle" -SnapflyDocumentPhoto "$state" -AppleLanguages "($language)" -AppleLocale "$language" >/dev/null
+  sleep 45
+  xcrun simctl io "$on" screenshot "$out/$name.png" >/dev/null
+}
+for appearance in light dark; do
+  photo_shot "$device" "de-$appearance-photo-offer" offer "$appearance" de
+  photo_shot "$device" "de-$appearance-photo-cleaned" cleaned "$appearance" de
+done
+frames "$device" de-light light de "" assistant
+frames "$device" de-dark dark de "" assistant
 frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL tab editor warning sheet
 frames "$device" de-xxxl light de UICTContentSizeCategoryXXXL editor sheet
 frames "$device" ar-light light ar "" tab editor sheet
@@ -125,6 +148,9 @@ record() {
 }
 (
   if [ -f "$photo" ]; then record from-photos testRecordFromPhotosToSharing; fi
+  if [ -f "$photo" ] && [ -f "$blurred" ]; then record two-photos testPhotosChosenTogetherKeepTheOrderTheyWereChosenIn; fi
+  record cleaning-a-photo testRecordCleaningAPhotographedDocument
+  record name-and-hand-over testRecordNameAndHandOver
   record wipe-and-compare testRecordWipeAndCompare
   record pages-and-warning testRecordPagesAndWarning
   if [ -f "$photo" ]; then record reduce-motion-from-photos testRecordFromPhotosToSharing still; fi
@@ -161,6 +187,7 @@ if [ -n "$small" ] && [ "$small" != "$device" ]; then
     xcrun simctl launch "$small" "$bundle" -SnapflyScan editor >/dev/null
     sleep 40
     frames "$small" de-small light de ""
+    photo_shot "$small" de-small-photo-offer offer light de
     frames "$small" de-small-dark dark de "" editor warning sheet
     frames "$small" de-small-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL editor sheet
   ) || echo "The smallest iPhone could not be captured." >&2

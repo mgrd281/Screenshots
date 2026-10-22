@@ -1753,3 +1753,30 @@
 "Zoom" = "ज़ूम";
 "Zoom in on clicks and typing" = "क्लिक और टाइपिंग पर ज़ूम करें";
 "Zooms: %d" = "ज़ूम: %d";
+
+/* Scan: photographed documents, names and AI chats */
+"Letter" = "पत्र";
+"Form" = "फ़ॉर्म";
+"Receipt" = "रसीद";
+"Scan %@" = "स्कैन %@";
+"Explain the Document" = "दस्तावेज़ समझाएँ";
+"Summarize" = "सारांश दें";
+"List Deadlines and Amounts" = "समय-सीमाएँ और राशियाँ सूचीबद्ध करें";
+"Explain this document in simple words: what it is, who sent it and what it asks of me." = "इस दस्तावेज़ को सरल शब्दों में समझाएँ: यह क्या है, इसे किसने भेजा और यह मुझसे क्या चाहता है।";
+"Summarize this document in a few short points." = "इस दस्तावेज़ का सारांश कुछ छोटे बिंदुओं में दें।";
+"List every deadline and every amount in this document exactly as written, each with what it is for." = "इस दस्तावेज़ की हर समय-सीमा और हर राशि ठीक वैसे ही सूचीबद्ध करें जैसे लिखी है, हर एक के उद्देश्य के साथ।";
+"Parts are covered for privacy: never guess them. Never fill in or correct a number. Where something cannot be read, say so." = "गोपनीयता के लिए कुछ हिस्से ढके हैं: उनका कभी अनुमान न लगाएँ। कोई संख्या कभी न भरें और न सुधारें। जहाँ कुछ पढ़ा न जा सके, वह बताएँ।";
+"Straightened, some text read less well, so the photo stays as it was." = "सीधा करने पर कुछ पाठ कम पढ़ने योग्य हुआ, इसलिए फ़ोटो पहले जैसी रहती है।";
+"Straightened and brightened. Its covers were found again on the cleaned page." = "सीधा और चमकीला किया गया। साफ़ पेज पर ढकने की जगहें फिर से ढूँढी गईं।";
+"Looks like a photographed document. Straighten and brighten it?" = "यह खींचा गया दस्तावेज़ लगता है। इसे सीधा और चमकीला करें?";
+"Clean Up" = "साफ़ करें";
+"Revert" = "वापस करें";
+"The covered copy is handed over to %@." = "ढकी हुई कॉपी %@ को सौंपी जाती है।";
+"Never the original. Nothing is sent until you send it in %@." = "मूल कभी नहीं। जब तक आप %@ में न भेजें, कुछ नहीं भेजा जाता।";
+"Ask with It" = "इसके साथ पूछें";
+"With a question, the share sheet opens: tap %@ there, then send." = "प्रश्न के साथ शेयर शीट खुलती है: वहाँ %@ पर टैप करें, फिर भेजें।";
+"Hand Over Only" = "केवल सौंपें";
+"Hand Over to %@" = "%@ को सौंपें";
+"Kind: %@" = "प्रकार: %@";
+"Suggested by Apple Intelligence from the words outside the covers." = "ढकी जगहों के बाहर के शब्दों से Apple Intelligence ने सुझाया।";
+"An AI chat first offers questions for the covered pages. You ask them in its own app; Snapfly sends nothing itself." = "AI चैट पहले ढके पेजों के लिए प्रश्न सुझाती है। आप उन्हें उसकी अपनी ऐप में पूछते हैं; Snapfly ख़ुद कुछ नहीं भेजता।";

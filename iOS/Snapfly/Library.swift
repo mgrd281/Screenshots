@@ -1,3 +1,4 @@
+import ImageIO
 import Photos
 import UIKit
 
@@ -34,6 +35,18 @@ final class Library: ObservableObject {
 
     nonisolated static func asset(_ id: String) -> PHAsset? {
         PHAsset.fetchAssets(withLocalIdentifiers: [id], options: nil).firstObject
+    }
+
+    /// Whether a picture chosen in the picker is a screenshot: as Photos
+    /// says, where Snapfly may see it there; else as the note iOS writes
+    /// into a screenshot says.
+    nonisolated static func isScreenshot(_ id: String?, data: Data) -> Bool {
+        if let id, let asset = asset(id) { return asset.mediaSubtypes.contains(.photoScreenshot) }
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+              let exif = properties[kCGImagePropertyExifDictionary] as? [CFString: Any],
+              let comment = exif[kCGImagePropertyExifUserComment] as? String else { return false }
+        return comment.localizedCaseInsensitiveContains("screenshot")
     }
 
     /// One screenshot at full size, as it was taken, the right way up.

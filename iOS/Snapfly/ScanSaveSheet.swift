@@ -27,7 +27,9 @@ struct PDFFile: FileDocument {
 /// and for a PDF its text to find and copy or not; then Copy, Save (a PDF
 /// to Files, pictures to Photos) or Share. Without covers, a warning says
 /// the file holds every private detail, and nothing that leaves is called
-/// protected. A line under it says what was done to the pages.
+/// protected. A line under it says what was done to the pages. First the
+/// file's name, to change: suggested by Apple Intelligence from the words
+/// outside the covers where it is on, else by when the pages were scanned.
 struct ScanSaveSheet: View {
     enum Format: Hashable {
         case pdf, picture
@@ -46,6 +48,12 @@ struct ScanSaveSheet: View {
     @State private var exporting: PDFFile?
     @State private var sharing: SharedFiles?
     @State private var note: (text: String, failed: Bool)?
+    /// The file's name, as suggested or typed.
+    @State private var name = ScanNaming.fallback(at: ScannedPages.shared.pages.first?.taken ?? .now)
+    @State private var suggested = false
+    /// The owner changed the name: no suggestion takes its place.
+    @State private var edited = false
+    @FocusState private var naming: Bool
     /// What the sheet holds, and its buttons, so it is as tall as they are.
     @State private var contentHeight: CGFloat = 520
     @State private var waysHeight: CGFloat = 110
@@ -65,6 +73,7 @@ struct ScanSaveSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
+                    named
                     formats
                     covers
                     if format == .pdf { text }
@@ -89,7 +98,7 @@ struct ScanSaveSheet: View {
         .presentationDetents([detent])
         .presentationDragIndicator(.visible)
         .fileExporter(isPresented: Binding(get: { exporting != nil }, set: { if !$0 { exporting = nil } }),
-                      document: exporting, contentType: .pdf, defaultFilename: ScannedPages.fileName) { result in
+                      document: exporting, contentType: .pdf, defaultFilename: fileName) { result in
             switch result {
             case .success: done(covered ? L("Saved to Files") : L("Saved to Files, without covers"))
             case .failure(let error):
@@ -104,6 +113,53 @@ struct ScanSaveSheet: View {
             guard note != nil else { return }
             try? await Task.sleep(for: .seconds(6))
             note = nil
+        }
+        .task {
+            // Read as the pages leave now, with their covers.
+            guard let title = await store.named(), !edited else { return }
+            name = title.name
+            suggested = title.suggested
+        }
+        #if DEBUG
+        .overlay(alignment: .topLeading) { HandoffAuditMarks() }
+        #endif
+    }
+
+    // MARK: Name
+
+    /// The name the files go under: as typed, made safe for a file, or by
+    /// when the pages were scanned where nothing is left of it.
+    private var fileName: String {
+        let safe = ScanNaming.safe(name)
+        return safe.isEmpty ? ScanNaming.fallback(at: store.pages.first?.taken ?? .now) : safe
+    }
+
+    private var named: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            heading(L("Name"))
+            TextField(L("Name"), text: $name)
+                .focused($naming)
+                .submitLabel(.done)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .padding(12)
+                .frame(minHeight: SnapflyTokens.touch)
+                .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .onChange(of: name) { _, _ in
+                    if naming {
+                        edited = true
+                        suggested = false
+                    }
+                }
+                .accessibilityIdentifier("scan-name")
+            if suggested {
+                Label(L("Suggested by Apple Intelligence from the words outside the covers."), systemImage: "sparkles")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .transition(.opacity)
+                    .accessibilityIdentifier("scan-name-suggested")
+            }
         }
     }
 
@@ -398,7 +454,7 @@ struct ScanSaveSheet: View {
             case .save:
                 exporting = PDFFile(data: pdf)
             case .share:
-                guard let url = write(pdf, as: ScannedPages.fileName + ".pdf") else { return failed() }
+                guard let url = write(pdf, as: fileName + ".pdf") else { return failed() }
                 sharing = SharedFiles(urls: [url])
             }
             return
@@ -409,6 +465,9 @@ struct ScanSaveSheet: View {
         case .share: L("Page %d could not be covered, so nothing was sent.")
         }
         let pngs = try await store.pngs(covered: covered, failing: failing)
+        #if DEBUG
+        if covered { HandoffAudit.shared.exported(pngs) }
+        #endif
         switch way {
         case .copy:
             UIPasteboard.general.setItems(pngs.map { [UTType.png.identifier: $0] })
@@ -424,7 +483,7 @@ struct ScanSaveSheet: View {
             }
         case .share:
             let urls = pngs.enumerated().compactMap { index, png in
-                write(png, as: ScannedPages.fileName + (pngs.count == 1 ? "" : " \(index + 1)") + ".png")
+                write(png, as: fileName + (pngs.count == 1 ? "" : " \(index + 1)") + ".png")
             }
             guard urls.count == pngs.count else { return failed() }
             sharing = SharedFiles(urls: urls)
