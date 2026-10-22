@@ -26,8 +26,14 @@ final class PDFProjectTests: XCTestCase {
     func testMixedSourcesKeepTheirOrder() {
         let project = Self.project()
         XCTAssertEqual(labels(project), ["Rechnung.pdf · p. 1", "Rechnung.pdf · p. 2", "Rechnung.pdf · p. 3",
-                                         "Photo · Receipt", "Scan · Letter"])
+                                         "Photo · Receipt", "Scanned · Letter"])
         XCTAssertTrue(project.hasPictures)
+        // A kind read later, by the picture's file.
+        var read = project
+        read.pages[3].source = .picture(file: Self.receipt.id, origin: .photo, kind: nil)
+        XCTAssertEqual(read.label(of: read.pages[3]), "Photo")
+        read.kinds[Self.receipt.id.uuidString] = .receipt
+        XCTAssertEqual(read.label(of: read.pages[3]), "Photo · Receipt")
         // Added in the middle, after the second page.
         var more = project
         more.insert([ProjectPage(source: .blank(width: 595.28, height: 841.89))], at: 2)
@@ -163,6 +169,7 @@ final class PDFProjectTests: XCTestCase {
         project.openPage = project.pages[2].id
         project.paper = .a4
         project.quality = .high
+        project.kinds[Self.letter.id.uuidString] = .letter
         let data = try JSONEncoder().encode(project)
         let read = try JSONDecoder().decode(PDFProject.self, from: data)
         XCTAssertEqual(read, project)

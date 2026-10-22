@@ -20,6 +20,9 @@ struct PDFProject: Codable, Equatable, Identifiable, Sendable {
     /// How pictures sit on their pages in the PDF.
     var paper: PaperSize
     var quality: ExportQuality
+    /// What kind of paper a picture shows, by its file, as its words told
+    /// once it was added; kept apart from the pages, so undoing never forgets it.
+    var kinds: [String: PaperKind]
 
     init(id: UUID = UUID(), name: String, created: Date = Date(), files: [ProjectFile] = [], pages: [ProjectPage] = []) {
         self.id = id
@@ -31,11 +34,12 @@ struct PDFProject: Codable, Equatable, Identifiable, Sendable {
         openPage = nil
         paper = .original
         quality = .medium
+        kinds = [:]
     }
 
     // A project written before a setting was added opens with its default.
     private enum CodingKeys: String, CodingKey {
-        case id, name, created, modified, files, pages, openPage, paper, quality
+        case id, name, created, modified, files, pages, openPage, paper, quality, kinds
     }
 
     init(from decoder: Decoder) throws {
@@ -49,6 +53,7 @@ struct PDFProject: Codable, Equatable, Identifiable, Sendable {
         openPage = try values.decodeIfPresent(UUID.self, forKey: .openPage)
         paper = try values.decodeIfPresent(PaperSize.self, forKey: .paper) ?? .original
         quality = try values.decodeIfPresent(ExportQuality.self, forKey: .quality) ?? .medium
+        kinds = try values.decodeIfPresent([String: PaperKind].self, forKey: .kinds) ?? [:]
     }
 
     func file(_ id: UUID) -> ProjectFile? { files.first { $0.id == id } }
@@ -74,11 +79,11 @@ struct PDFProject: Codable, Equatable, Identifiable, Sendable {
             let from: String
             switch origin {
             case .photo: from = L("Photo")
-            case .scan: from = L("Scan")
+            case .scan: from = L("Scanned")
             case .screenshot: from = L("Screenshot")
             case .file: from = file(id)?.name ?? L("Picture")
             }
-            guard let kind else { return from }
+            guard let kind = kind ?? kinds[id.uuidString] else { return from }
             return from + " · " + kind.title
         case .blank:
             return L("Blank Page")
