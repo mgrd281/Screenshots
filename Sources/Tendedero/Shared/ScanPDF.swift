@@ -1,7 +1,7 @@
 import Foundation
 
 /// Scanned pages as one PDF to send or keep: each page a picture on an A4
-/// page (`ScanGeometry.layout`), with, where asked, the words read on it laid
+/// page (`ScanGeometry.layout`), or on a page of its own size, with, where asked, the words read on it laid
 /// invisibly over it, so they can be found and copied; and nothing said of
 /// who made it but "Snapfly", no title, author, dates or other metadata. It
 /// is written here byte by byte, so nothing else is added.
@@ -27,6 +27,15 @@ enum ScanPDF {
         var picture: Picture
         /// Words laid invisibly over the picture, in reading order.
         var words: [Word] = []
+        /// The page's size and where the picture goes on it; nil for an A4
+        /// page laid out as a scanned page is (`ScanGeometry.layout`).
+        var frame: Frame? = nil
+    }
+
+    /// A page's size and the picture's place on it, in points from the bottom left.
+    struct Frame: Equatable, Sendable {
+        var page: CGSize
+        var picture: CGRect
     }
 
     /// A word read on a page, and where.
@@ -57,7 +66,8 @@ enum ScanPDF {
         for (index, page) in pages.enumerated() {
             let number = first + index * 3
             let size = page.picture.size
-            let layout = ScanGeometry.layout(width: size.width, height: size.height)
+            let layout = page.frame.map { (page: $0.page, picture: $0.picture) }
+                ?? ScanGeometry.layout(width: size.width, height: size.height)
             let font = hasText ? " /Font << /F1 4 0 R >>" : ""
             file.add(number, "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 \(text(layout.page.width)) "
                 + "\(text(layout.page.height))] /Resources << /XObject << /Im0 \(number + 2) 0 R >>\(font) >> "
