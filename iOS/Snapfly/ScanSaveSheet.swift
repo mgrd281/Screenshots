@@ -307,12 +307,8 @@ struct ScanSaveSheet: View {
                 .font(.footnote)
                 .foregroundStyle(.secondary)
             } else if let note {
-                Label(note.text, systemImage: note.failed ? "exclamationmark.triangle.fill"
-                      : covered ? "checkmark.circle.fill" : "checkmark.circle")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(note.failed ? Color.orange : covered ? SnapflyTokens.protectTint : Color.secondary)
+                noted(note.text, failed: note.failed)
                     .transition(.opacity)
-                    .accessibilityIdentifier("scan-note")
             }
             HStack(spacing: 10) {
                 way(.copy, title: L("Copy"), symbol: "doc.on.doc")
@@ -324,6 +320,20 @@ struct ScanSaveSheet: View {
         .padding(.top, 12)
         .padding(.bottom, 8)
         .background(.bar)
+    }
+
+    /// What the last way out did, or why it could not, in one line that
+    /// VoiceOver reads as its words alone: its symbol only shows it.
+    private func noted(_ text: String, failed: Bool) -> some View {
+        let symbol: String = failed ? "exclamationmark.triangle.fill" : covered ? "checkmark.circle.fill" : "checkmark.circle"
+        let tint: Color = failed ? Color.orange : covered ? SnapflyTokens.protectTint : Color.secondary
+        let line = Label(text, systemImage: symbol)
+            .font(.footnote.weight(.semibold))
+            .foregroundStyle(tint)
+        return line
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(text)
+            .accessibilityIdentifier("scan-note")
     }
 
     private func way(_ way: Way, title: String, symbol: String) -> some View {

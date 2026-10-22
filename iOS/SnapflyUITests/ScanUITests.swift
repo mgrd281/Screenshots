@@ -235,16 +235,42 @@ final class ScanUITests: XCTestCase {
         pause(1.5)
         photos.tap()
         pause(2.5)
-        // The picker's newest photo, then Add.
-        let photo = app.scrollViews.images.firstMatch
-        XCTAssertTrue(photo.waitForExistence(timeout: 20))
-        photo.tap()
-        pause(1)
-        let add = app.buttons.matching(NSPredicate(format: "label == %@ OR label == %@", "Hinzufügen", "Add")).firstMatch
-        if add.waitForExistence(timeout: 5) { add.tap() }
+        pickNewest(app)
         XCTAssertTrue(card(app).exists)
         pause(2)
         walkThrough(app)
+    }
+
+    /// The newest photo in the system's picker, then its button that adds
+    /// it. The picker runs on its own and takes a tap at a point, not on
+    /// its cell: the middle of the top left cell, where the newest is, or
+    /// where it lies on this iPhone if its cells cannot be found; then the
+    /// button by its name, or where it lies.
+    private func pickNewest(_ app: XCUIApplication) {
+        let cells = app.descendants(matching: .any).matching(identifier: "PXGGridLayout-Info")
+        let found = cells.firstMatch.waitForExistence(timeout: 20)
+        let frames: [CGRect] = found ? cells.allElementsBoundByIndex.map { $0.frame } : []
+        // A photo's cell is square; anything else of that name is not a photo.
+        let squares: [CGRect] = frames.filter { (frame: CGRect) -> Bool in
+            !frame.isEmpty && abs(frame.width - frame.height) < 4
+        }
+        let newest: CGRect? = squares.min { (a: CGRect, b: CGRect) -> Bool in
+            a.minY != b.minY ? a.minY < b.minY : a.minX < b.minX
+        }
+        if let newest {
+            let middle = CGVector(dx: newest.midX, dy: newest.midY)
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0)).withOffset(middle).tap()
+        } else {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.17, dy: 0.44)).tap()
+        }
+        pause(1)
+        let names = ["Hinzufügen", "Add", "Fertig", "Done"]
+        let add = app.buttons.matching(NSPredicate(format: "label IN %@", argumentArray: [names])).firstMatch
+        if add.waitForExistence(timeout: 5), add.isHittable {
+            add.tap()
+        } else {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.155)).tap()
+        }
     }
 
     /// The wipe, then comparing, the colours and Save and Share.
