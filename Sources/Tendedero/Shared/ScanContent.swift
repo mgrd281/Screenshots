@@ -23,8 +23,11 @@ enum ScanContent {
     /// The places where less was read after cleaning: each line with a
     /// number read before and not after, and, when enough lines are gone,
     /// each line gone. Empty when everything read before was read again.
-    static func lost(before: [Line], after: [Line]) -> [CGRect] {
+    static func lost(before: [Line], after: [Line], crossed: (CGRect) -> Bool = { _ in false }) -> [CGRect] {
         var places: [CGRect] = []
+        // A line a signature or a stamp crosses reads one way one time and
+        // another the next, cleaned or not: it says nothing of the cleaning.
+        let before = before.filter { !crossed($0.box) }
         for line in before {
             let numbers = self.numbers(in: line.text)
             guard !numbers.isEmpty else { continue }
@@ -42,6 +45,28 @@ enum ScanContent {
             }
         }
         return merged(places)
+    }
+
+    /// Whether a ballpoint's or a stamp's colour crosses print in a place,
+    /// from 0 to 1 from the bottom left: strongly coloured strokes over a
+    /// fiftieth of it, among grey or black print. A line printed in colour,
+    /// with no grey print, is not crossed.
+    static func crossed(_ page: ScanBitmap, _ box: CGRect) -> Bool {
+        let w = Double(page.width), h = Double(page.height)
+        let x0 = max(0, Int(box.minX * w)), x1 = min(page.width, Int((box.maxX * w).rounded(.up)))
+        let y0 = max(0, Int((1 - box.maxY) * h)), y1 = min(page.height, Int(((1 - box.minY) * h).rounded(.up)))
+        guard x1 > x0, y1 > y0 else { return false }
+        var coloured = 0, grey = 0
+        for y in y0..<y1 {
+            for x in x0..<x1 {
+                let i = (y * page.width + x) * 4
+                let r = Int(page.pixels[i]), g = Int(page.pixels[i + 1]), b = Int(page.pixels[i + 2])
+                let top = max(r, g, b), spread = top - min(r, g, b)
+                if spread >= 60, top < 235 { coloured += 1 } else if spread < 30, top < 140 { grey += 1 }
+            }
+        }
+        let all = (x1 - x0) * (y1 - y0)
+        return coloured * 50 >= all && grey * 50 >= all
     }
 
     /// The numbers in a line, each as its digits alone: digits with dots,

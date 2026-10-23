@@ -785,7 +785,10 @@ enum ScanCleaner {
         let readBefore = asLines(read)
         var kept: Bool?
         if readBefore.contains(where: { ScanContent.letters(in: $0.text) >= ScanContent.shortest }) {
-            let lost = ScanContent.lost(before: readBefore, after: asLines(reading))
+            let cleaned = bitmap(after)
+            let lost = ScanContent.lost(before: readBefore, after: asLines(reading)) { box in
+                cleaned.map { ScanContent.crossed($0, box) } ?? false
+            }
             issues += lost.map { ScanIssue(.lessText, area: $0) }
             kept = lost.isEmpty
         }
