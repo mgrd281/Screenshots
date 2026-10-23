@@ -465,9 +465,12 @@ enum ScanCleaner {
         let w = bitmap.width, h = bitmap.height, plane = bitmap.brightness
         var shifts: [(seam: Int, across: (slope: Double, offset: Double), up: (slope: Double, offset: Double))] = []
         for seam in seams where seam > 80 && seam < h - 80 {
-            guard let across = shift(of: plane, w, h, seam: seam, sideways: true),
-                  let up = shift(of: plane, w, h, seam: seam, sideways: false) else { continue }
-            shifts.append((seam, across, up))
+            // Each way on its own: a fold's box shows its sides sideways where
+            // no rule crosses it to say how far up or down the part stands.
+            let across = shift(of: plane, w, h, seam: seam, sideways: true)
+            let up = shift(of: plane, w, h, seam: seam, sideways: false)
+            guard across != nil || up != nil else { continue }
+            shifts.append((seam, across ?? (0, 0), up ?? (0, 0)))
         }
         return shifts
     }
