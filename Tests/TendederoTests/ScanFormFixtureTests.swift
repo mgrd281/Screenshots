@@ -44,6 +44,16 @@ final class ScanFormFixtureTests: XCTestCase {
             String(format: "seam %d across %+.1f%+.4fx up %+.1f%+.4fy", shift.seam, shift.across.offset, shift.across.slope,
                    shift.up.offset, shift.up.slope)
         }
+        // What each chunk across a seam says, sideways and up or down.
+        let seamBitmap = try XCTUnwrap(ScanCleaner.bitmap(prepared.straightened))
+        let seamPlane = seamBitmap.brightness
+        let chunks = seams.map { seam in
+            ["across", "up"].map { way in
+                let read = ScanCleaner.readings(of: seamPlane, seamBitmap.width, seamBitmap.height, seam: seam,
+                                                sideways: way == "across")
+                return "\(way) " + read.map { String(format: "x%.0f:%+d(%.1f)", $0.at, $0.by, $0.weight) }.joined(separator: " ")
+            }.joined(separator: " | ")
+        }
         // Which lines read before cleaning were not read after, as the check saw them.
         let areas = prepared.checked.issues.compactMap(\.area)
         let gone = (Finder.lines(in: prepared.straightened) ?? []).filter { line in
@@ -62,12 +72,13 @@ final class ScanFormFixtureTests: XCTestCase {
             \(String(format: "%.1f", seconds)) s on this Mac (debug build)
             \(measures)
             lost lines: \(gone)
+            chunks at the seams: \(chunks)
             placed: \(place)
             folds found (down from the top): \(folds); at the seams still: \(left.isEmpty ? "nothing read" : left.joined(separator: "; "))
             issues: \(prepared.checked.issues.map(\.kind.rawValue))
 
             """)
-        print("FORM \(variant.rawValue): placed \(place); folds \(folds); seams still \(left); lost lines \(gone)")
+        print("FORM \(variant.rawValue): placed \(place); folds \(folds); seams still \(left); chunks \(chunks); lost lines \(gone)")
         print("FORM \(variant.rawValue): \(measures) issues \(prepared.checked.issues.map(\.kind.rawValue))")
         return done
     }

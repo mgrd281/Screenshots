@@ -480,25 +480,7 @@ enum ScanCleaner {
     /// or up and down. Nil where the print there says too little to tell.
     static func shift(of plane: [UInt8], _ w: Int, _ h: Int, seam: Int,
                               sideways: Bool) -> (slope: Double, offset: Double)? {
-        // A part can be laid a sixtieth of the page's width off, as where a
-        // hand's shadow hides one end of a fold; a shift past the first few
-        // pixels must be seen clearly. Read from near each side, where a
-        // form's box has its sides and little else crosses a fold.
-        let band = 44, gap = 6, reach = sideways ? max(9, w / 60) : 9, near = 9
-        let above = (seam - band)..<(seam - gap), below = (seam + gap)..<(seam + band)
-        guard above.lowerBound > 2, below.upperBound < h - 2 else { return nil }
-        var found: [(at: Double, by: Int, weight: Double)] = []
-        let chunks = 11
-        for chunk in 0..<chunks {
-            let x0 = w / 25 + (w * 23 / 25) * chunk / chunks
-            let x1 = w / 25 + (w * 23 / 25) * (chunk + 1) / chunks
-            guard x1 - x0 > 40 else { continue }
-            let a = profile(plane, w, h, rows: above, columns: x0..<x1, sideways: sideways)
-            let b = profile(plane, w, h, rows: below, columns: x0..<x1, sideways: sideways)
-            guard a.reduce(0, +) + b.reduce(0, +) > 2000, let best = alignment(a, b, reach: reach),
-                  best.gain >= (abs(best.shift) > near ? 1.5 : 1.1) else { continue }
-            found.append((Double(x0 + x1) / 2, best.shift, best.gain - 1))
-        }
+        let found = readings(of: plane, w, h, seam: seam, sideways: sideways)
         guard found.count >= 2 else { return nil }
         // A line through the shifts found, each weighed by how clearly it
         // was seen, so the part moves as a whole.
@@ -511,13 +493,41 @@ enum ScanCleaner {
         return (slope, my - slope * mx)
     }
 
+    /// The shifts the print across a seam shows, each at the place across
+    /// the page it was read, how far, and how clearly.
+    static func readings(of plane: [UInt8], _ w: Int, _ h: Int, seam: Int,
+                         sideways: Bool) -> [(at: Double, by: Int, weight: Double)] {
+        // A part can be laid a sixtieth of the page's width off, as where a
+        // hand's shadow hides one end of a fold; a shift past the first few
+        // pixels must be seen clearly. Read from near each side, where a
+        // form's box has its sides and little else crosses a fold.
+        let band = 44, gap = 6, reach = sideways ? max(9, w / 60) : 9, near = 9
+        let above = (seam - band)..<(seam - gap), below = (seam + gap)..<(seam + band)
+        guard above.lowerBound > 2, below.upperBound < h - 2 else { return [] }
+        var found: [(at: Double, by: Int, weight: Double)] = []
+        let chunks = 11
+        for chunk in 0..<chunks {
+            let x0 = w / 25 + (w * 23 / 25) * chunk / chunks
+            let x1 = w / 25 + (w * 23 / 25) * (chunk + 1) / chunks
+            guard x1 - x0 > 40 else { continue }
+            let a = profile(plane, w, h, rows: above, columns: x0..<x1, sideways: sideways)
+            let b = profile(plane, w, h, rows: below, columns: x0..<x1, sideways: sideways)
+            guard a.reduce(0, +) + b.reduce(0, +) > 1200, let best = alignment(a, b, reach: reach),
+                  best.gain >= (abs(best.shift) > near ? 1.5 : 1.1) else { continue }
+            found.append((Double(x0 + x1) / 2, best.shift, best.gain - 1))
+        }
+        return found
+    }
+
     /// Where the edges stand across a band: for each column of it, sideways,
     /// or each row of it, how much the brightness turns there. Only turns
     /// well above the paper's grain count, so print and rules tell, and the
     /// grain does not.
     private static func profile(_ plane: [UInt8], _ w: Int, _ h: Int, rows: Range<Int>, columns: Range<Int>,
                                 sideways: Bool) -> [Double] {
-        let least = 60.0
+        // Faint print on tinted paper, a box's rule in a fold's shadow, turns
+        // the brightness by little more than half what black on white does.
+        let least = 30.0
         func turn(_ value: Int) -> Double { max(0, Double(value) - least) }
         if sideways {
             return columns.map { x in
