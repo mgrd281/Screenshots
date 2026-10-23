@@ -1,3 +1,4 @@
+import CoreGraphics
 import Foundation
 
 /// What is left to do with a page's light once its paper is evened and
@@ -53,6 +54,14 @@ extension ScanClean {
         var mild = tuning
         mild.blackPoint = Tuning.standard.blackPoint
         let colour = curve(mild)
+        let w = page.width, h = page.height
+        let plane = page.brightness
+        // The strong curve only where the pixel is a stroke of print: a narrow
+        // mark with the paper a few pixels around it. A wide grey fill — a
+        // table's header, a photo — and the paper itself take the gentle
+        // curve, so a light grey keeps its shade whatever the print's.
+        let soft = blurred(plane, width: w, height: h, radius: max(2, w / 1000))
+        let contrast = Int(tuning.printContrast)
         var out = page
         let low = tuning.neutralBelow, high = tuning.colourAbove
         out.pixels.withUnsafeMutableBufferPointer { px in
@@ -61,10 +70,13 @@ extension ScanClean {
                 let top = max(r, max(g, b)), bottom = min(r, min(g, b))
                 let saturation = top > 0 ? Float(top - bottom) / Float(top) : 0
                 let kept = min(1, max(0, (saturation - low) / max(1e-6, high - low)))
+                let p = i / 4
+                let stroke = Int(soft[p]) - Int(plane[p]) >= contrast
+                let strongWeight = stroke ? (1 - kept) : 0
                 for k in 0..<3 {
                     let value = Int(px[i + k])
                     let strong = Float(print[value]), gentle = Float(colour[value])
-                    px[i + k] = UInt8(min(255, max(0, strong + (gentle - strong) * kept + 0.5)))
+                    px[i + k] = UInt8(min(255, max(0, strong * strongWeight + gentle * (1 - strongWeight) + 0.5)))
                 }
             }
         }
@@ -77,10 +89,30 @@ extension ScanClean {
     /// it, so a wide grey fill, a table's header or a photo, whose middle
     /// has no paper near it, takes no part. Nil where there is too little
     /// print to tell.
-    static func printDarkness(_ page: ScanBitmap, tuning: Tuning = .standard) -> Float? {
+    static func printDarkness(_ page: ScanBitmap, tuning: Tuning = .standard, boxes: [CGRect] = []) -> Float? {
         let w = page.width, h = page.height
         guard w > 8, h > 8 else { return nil }
         let plane = page.brightness
+        // Inside the boxes of text read, the darkest 5 % of the pixels, then
+        // the median over the boxes, as a scanner reads its own print: the
+        // rules and boxes of the form are not print here, however dark.
+        if !boxes.isEmpty {
+            var values: [Int] = []
+            for box in boxes {
+                let x0 = max(0, Int(box.minX * Double(w))), x1 = min(w, Int(box.maxX * Double(w)))
+                let y0 = max(0, Int((1 - box.maxY) * Double(h))), y1 = min(h, Int((1 - box.minY) * Double(h)))
+                guard x1 - x0 > 4, y1 - y0 > 4 else { continue }
+                var pixels: [UInt8] = []
+                for y in y0..<y1 { for x in x0..<x1 { pixels.append(plane[y * w + x]) } }
+                pixels.sort()
+                let darkest = pixels.prefix(max(1, pixels.count / 20))
+                values.append(Int(darkest[darkest.startIndex + darkest.count / 2]))
+            }
+            if !values.isEmpty {
+                values.sort()
+                return Float(values[values.count / 2])
+            }
+        }
         let soft = blurred(plane, width: w, height: h, radius: max(2, w / 1000))
         var counts = [Int](repeating: 0, count: 256)
         var strokes = 0

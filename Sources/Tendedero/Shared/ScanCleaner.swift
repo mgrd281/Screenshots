@@ -145,8 +145,12 @@ enum ScanCleaner {
         // What is left bent, as a curl, is taken out after the edges are
         // cut, so its own shift never moves the page within the cut.
         let page = uncurled(cut) ?? cut
-        guard let cleaned = cleaned(page, mode) else { return nil }
-        let checked = await check(before: page, after: cleaned, mode: mode, photo: photo)
+        // Read the page before it is cleaned, so the print's own darkness is
+        // measured on the text it holds; the same reading then checks the
+        // result, so nothing is read twice.
+        let read = Finder.lines(in: page) ?? []
+        guard let cleaned = cleaned(page, mode, printBoxes: read.map(\.box)) else { return nil }
+        let checked = await check(before: page, after: cleaned, mode: mode, photo: photo, reading: read)
         return Prepared(straightened: page, cleaned: cleaned, turns: turns, skew: skew, checked: checked)
     }
 
@@ -578,9 +582,9 @@ enum ScanCleaner {
 
     /// The page cleaned in the colours asked for (`ScanClean`), in greys
     /// with one channel where they are grey.
-    static func cleaned(_ page: CGImage, _ mode: ScanColor) -> CGImage? {
+    static func cleaned(_ page: CGImage, _ mode: ScanColor, printBoxes: [CGRect] = []) -> CGImage? {
         guard let bitmap = bitmap(page) else { return nil }
-        return image(edgeCleaned(ScanClean.clean(bitmap, mode)), gray: mode.isGray)
+        return image(edgeCleaned(ScanClean.clean(bitmap, mode, printBoxes: printBoxes)), gray: mode.isGray)
     }
 
     /// Nothing of what the sheet lay on stays dark along the page's own
@@ -614,13 +618,14 @@ enum ScanCleaner {
     /// the page straightened, before cleaning; a smudged lens, from the
     /// photo where there is one, from iOS 26; and whether `after`, the
     /// cleaned page, reads every number and line `before` does.
-    static func check(before: CGImage, after: CGImage, mode: ScanColor, photo: CGImage?) async -> Checked {
+    static func check(before: CGImage, after: CGImage, mode: ScanColor, photo: CGImage?,
+                      reading known: [Finder.TextLine]? = nil) async -> Checked {
         var issues: [ScanIssue] = []
         if let measured = smaller(before, longest: 2400).flatMap(bitmap) {
             issues += ScanQuality.issues(in: measured, dpi: ScanGeometry.dpi(width: before.width, height: before.height))
         }
         if await smudged(photo ?? before) { issues.append(ScanIssue(.smudge)) }
-        let read = Finder.lines(in: before) ?? []
+        let read = known ?? Finder.lines(in: before) ?? []
         let reading = Finder.reading(of: after) ?? []
         let asLines = { (lines: [Finder.TextLine]) -> [ScanContent.Line] in
             lines.map { ScanContent.Line(text: $0.string, box: $0.box) }

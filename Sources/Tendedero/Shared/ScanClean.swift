@@ -1,3 +1,4 @@
+import CoreGraphics
 import Foundation
 
 /// How a scanned page keeps its colours: in colour, a logo and a stamp as
@@ -155,8 +156,8 @@ enum ScanClean {
         /// this share of it and more: a stroke, much darker, is left to the
         /// print's own tuning, so evened light never lightens print.
         var printEdge: Float = 0.78
-        var printTarget: Float = 45
-        var highestBlack: Float = 0.50
+        var printTarget: Float = 30
+        var highestBlack: Float = 0.75
         /// Colour weaker than `neutralBelow`, against how bright a pixel
         /// is, is taken away once the paper's colour is divided out, as
         /// tinted paper leaves on its print; stronger than `colourAbove`
@@ -182,14 +183,18 @@ enum ScanClean {
     }
 
     /// The page cleaned in the colours asked for.
-    static func clean(_ page: ScanBitmap, _ mode: ScanColor, tuning: Tuning = .standard) -> ScanBitmap {
+    static func clean(_ page: ScanBitmap, _ mode: ScanColor, tuning: Tuning = .standard,
+                      printBoxes: [CGRect] = []) -> ScanBitmap {
         let white = Int((tuning.whitePoint * 255).rounded(.up))
         let even = neutralized(denoised(evened(page, tuning: tuning), grain: tuning.grain, white: white), tuning: tuning)
-        // Light print, as a typewriter's or a carbon copy's, is taken darker.
+        // Sharpened first, then taken darker, so the darkening sets the print's
+        // final shade: an unsharp mask run after it would drive a stroke to
+        // black. The print's own darkness is read inside the boxes of text.
+        var sharpened = even
+        sharpen(&sharpened, tuning: tuning)
         var tuned = tuning
-        tuned.blackPoint = blackPoint(forPrint: printDarkness(even, tuning: tuning), tuning: tuning)
-        var cleaned = darkened(even, tuning: tuned)
-        sharpen(&cleaned, tuning: tuning)
+        tuned.blackPoint = blackPoint(forPrint: printDarkness(sharpened, tuning: tuning, boxes: printBoxes), tuning: tuning)
+        let cleaned = darkened(sharpened, tuning: tuned)
         switch mode {
         case .color: return cleaned
         case .gray: return grayed(cleaned)
