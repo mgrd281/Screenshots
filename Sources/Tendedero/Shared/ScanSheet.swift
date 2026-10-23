@@ -470,33 +470,42 @@ enum ScanSheet {
         guard w > 40, h > 40 else { return (0, 0, 0, 0) }
         let plane = page.brightness
         var cut = (left: 0, top: 0, right: 0, bottom: 0)
-        // Twice: the second time along the whole side within the first cut,
-        // so a sliver in a corner is caught too.
-        for pass in 0..<2 {
-            let rows = pass == 0 ? (h / 10)..<(h - h / 10) : cut.top..<(h - cut.bottom)
-            let columns = pass == 0 ? (w / 10)..<(w - w / 10) : cut.left..<(w - cut.right)
-            let deepAcross = Int(Double(w) * deepestCut), deepDown = Int(Double(h) * deepestCut)
-            func run(_ line: Int, length: Int, deepest: Int, at: (Int, Int) -> Int) -> Int {
-                // The paper just inside: the brightest tenth of the next stretch.
-                var inside: [UInt8] = []
-                for k in deepest..<min(length, 2 * deepest + 4) { inside.append(plane[at(line, k)]) }
-                guard !inside.isEmpty else { return 0 }
-                inside.sort()
-                let paper = Double(inside[inside.count * 9 / 10])
-                var k = 0
-                while k < length, Double(plane[at(line, k)]) < 0.78 * paper { k += 1 }
-                return k <= deepest ? k : 0
-            }
-            let margin = max(2, min(w, h) / 500)
-            func deepest(_ lines: Range<Int>, length: Int, deep: Int, at: @escaping (Int, Int) -> Int) -> Int {
-                var most = 0
-                for line in lines { most = max(most, run(line, length: length, deepest: deep, at: at)) }
-                return most > 0 ? min(deep, most + margin) : 0
-            }
+        let deepAcross = Int(Double(w) * deepestCut), deepDown = Int(Double(h) * deepestCut)
+        func run(_ line: Int, length: Int, deepest: Int, at: (Int, Int) -> Int) -> Int {
+            // The paper just inside: the brightest tenth of the next stretch.
+            var inside: [UInt8] = []
+            for k in deepest..<min(length, 2 * deepest + 4) { inside.append(plane[at(line, k)]) }
+            guard !inside.isEmpty else { return 0 }
+            inside.sort()
+            let paper = Double(inside[inside.count * 9 / 10])
+            var k = 0
+            while k < length, Double(plane[at(line, k)]) < 0.78 * paper { k += 1 }
+            return k <= deepest ? k : 0
+        }
+        let margin = max(2, min(w, h) / 500)
+        func deepest(_ lines: Range<Int>, length: Int, deep: Int, at: @escaping (Int, Int) -> Int) -> Int {
+            var most = 0
+            guard !lines.isEmpty else { return 0 }
+            for line in lines { most = max(most, run(line, length: length, deepest: deep, at: at)) }
+            return most > 0 ? min(deep, most + margin) : 0
+        }
+        // The sides first, down nearly the whole height, so a dark strip of
+        // what the sheet lay on along a side — at its corner too — is cut
+        // away and is never read as a top or a bottom edge.
+        for _ in 0..<2 {
+            let rows = (h / 50)..<(h - h / 50)
             cut.left = max(cut.left, deepest(rows, length: w, deep: deepAcross) { y, k in y * w + k })
             cut.right = max(cut.right, deepest(rows, length: w, deep: deepAcross) { y, k in y * w + (w - 1 - k) })
-            cut.top = max(cut.top, deepest(columns, length: h, deep: deepDown) { x, k in k * w + x })
-            cut.bottom = max(cut.bottom, deepest(columns, length: h, deep: deepDown) { x, k in (h - 1 - k) * w + x })
+        }
+        // Then the top and the bottom, read within the sides already cut
+        // away and a little further in, so no side strip is mistaken for
+        // one and no corner shifts the page.
+        for _ in 0..<2 {
+            let side = max(4, w / 100)
+            let lo = max(cut.left, side), hi = min(w, w - max(cut.right, side))
+            guard lo < hi else { break }
+            cut.top = max(cut.top, deepest(lo..<hi, length: h, deep: deepDown) { x, k in k * w + x })
+            cut.bottom = max(cut.bottom, deepest(lo..<hi, length: h, deep: deepDown) { x, k in (h - 1 - k) * w + x })
         }
         return cut
     }
