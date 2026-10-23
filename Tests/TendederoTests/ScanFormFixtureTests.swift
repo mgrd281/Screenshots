@@ -29,6 +29,21 @@ final class ScanFormFixtureTests: XCTestCase {
         let seconds = Date().timeIntervalSince(start)
         let bitmap = try XCTUnwrap(ScanCleaner.bitmap(prepared.cleaned))
         let measures = ScanFormMeasure.measure(bitmap, reading: prepared.checked.reading, variant: variant)
+        // For the pictures' notes: where the form lies on the page, the
+        // folds found, and what the print still says at each fold laid.
+        let placed = ScanFormPlace.of(bitmap)
+        let place = placed.map { place in
+            String(format: "x %.3f·form %+.1f, rows ", place.scale, place.offset)
+                + place.rows.map { "\(Int($0.form))→\(Int($0.page))" }.joined(separator: " ")
+        } ?? "not placed"
+        let folds = ScanCleaner.folds(in: photo.image, quad: quad).map { fold in
+            String(format: "%.3f/%.3f", 1 - fold.left.y, 1 - fold.right.y)
+        }
+        let seams = placed.map { place in variant.folds.map { Int(place.y($0.at * ScanForm.height)) } } ?? []
+        let left = ScanCleaner.shifts(in: try XCTUnwrap(ScanCleaner.bitmap(prepared.straightened)), at: seams).map { shift in
+            String(format: "seam %d across %+.1f%+.4fx up %+.1f%+.4fy", shift.seam, shift.across.offset, shift.across.slope,
+                   shift.up.offset, shift.up.slope)
+        }
         let done = (photo, prepared, measures, seconds)
         Self.made[variant] = done
         ScanFixtureTests.keep(photo.image, "form-\(variant.rawValue)-photo", longest: 1600)
@@ -41,6 +56,8 @@ final class ScanFormFixtureTests: XCTestCase {
             (\(Int(ScanGeometry.dpi(width: prepared.cleaned.width, height: prepared.cleaned.height))) dpi on A4), \
             \(String(format: "%.1f", seconds)) s on this Mac (debug build)
             \(measures)
+            placed: \(place)
+            folds found (down from the top): \(folds); at the seams still: \(left.isEmpty ? "nothing read" : left.joined(separator: "; "))
             issues: \(prepared.checked.issues.map(\.kind.rawValue))
 
             """)

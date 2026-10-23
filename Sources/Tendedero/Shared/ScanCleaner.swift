@@ -414,14 +414,9 @@ enum ScanCleaner {
     /// straight line, so a part is moved as a whole and nothing in it bends.
     static func aligned(_ page: CGImage, at seams: [Int]) -> CGImage? {
         guard !seams.isEmpty, let bitmap = bitmap(page) else { return page }
-        let w = bitmap.width, h = bitmap.height, plane = bitmap.brightness
+        let w = bitmap.width, h = bitmap.height
         guard w > 200, h > 200 else { return page }
-        var shifts: [(seam: Int, across: (slope: Double, offset: Double), up: (slope: Double, offset: Double))] = []
-        for seam in seams where seam > 80 && seam < h - 80 {
-            guard let across = shift(of: plane, w, h, seam: seam, sideways: true),
-                  let up = shift(of: plane, w, h, seam: seam, sideways: false) else { continue }
-            shifts.append((seam, across, up))
-        }
+        let shifts = self.shifts(in: bitmap, at: seams)
         guard !shifts.isEmpty else { return page }
         // Each row's part carries the shifts of every fold above it.
         var acrossAt = [(slope: Double, offset: Double)](repeating: (0, 0), count: h)
@@ -460,6 +455,21 @@ enum ScanCleaner {
             }
         }
         return image(out, gray: false)
+    }
+
+    /// At each seam, how far the part below it stands from the part above,
+    /// sideways and up or down, each as a line across the page; a seam
+    /// where the print says too little is left out.
+    static func shifts(in bitmap: ScanBitmap, at seams: [Int])
+        -> [(seam: Int, across: (slope: Double, offset: Double), up: (slope: Double, offset: Double))] {
+        let w = bitmap.width, h = bitmap.height, plane = bitmap.brightness
+        var shifts: [(seam: Int, across: (slope: Double, offset: Double), up: (slope: Double, offset: Double))] = []
+        for seam in seams where seam > 80 && seam < h - 80 {
+            guard let across = shift(of: plane, w, h, seam: seam, sideways: true),
+                  let up = shift(of: plane, w, h, seam: seam, sideways: false) else { continue }
+            shifts.append((seam, across, up))
+        }
+        return shifts
     }
 
     /// The shift that brings the edges of the print just below a fold into

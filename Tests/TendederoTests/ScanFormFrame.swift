@@ -69,7 +69,8 @@ struct ScanFormPlace {
         }
         guard rows.count >= 3 else { return nil }
         // The box's sides, down the first box: a little slanted, so a column
-        // counts where a pixel two either side of it is dark.
+        // counts where a pixel within six either side of it is dark, in
+        // three rows of every ten.
         let top = Int(rows.first { $0.form == 382 }?.page ?? loose.scale * 382 + loose.offset) + 10
         let bottom = Int(rows.first { $0.form == 1082 }?.page ?? loose.scale * 1082 + loose.offset) - 10
         guard top >= 0, bottom < h, bottom > top + 10 else { return nil }
@@ -79,10 +80,10 @@ struct ScanFormPlace {
             var dark = 0
             for y in stride(from: top, to: bottom, by: 2) {
                 var darkest: UInt8 = 255
-                for xx in max(0, x - 2)...min(w - 1, x + 2) { darkest = min(darkest, plane[y * w + xx]) }
+                for xx in max(0, x - 6)...min(w - 1, x + 6) { darkest = min(darkest, plane[y * w + xx]) }
                 if darkest < 200 { dark += 1 }
             }
-            if dark * 5 > (bottom - top) { run.append(x) } else if !run.isEmpty {
+            if dark * 20 > (bottom - top) * 3 { run.append(x) } else if !run.isEmpty {
                 columns.append(Double(run[0] + run[run.count - 1]) / 2)
                 run = []
             }
