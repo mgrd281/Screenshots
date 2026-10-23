@@ -114,8 +114,12 @@ final class ScanInvoiceFixtureTests: XCTestCase {
         let prepared = try await made().prepared
         XCTAssertTrue(prepared.checked.textKept ?? false, "every line reads after cleaning")
         XCTAssertFalse(prepared.checked.issues.contains { $0.kind == .lessText }, "no text lost")
+        // A number as its digits and marks: where Vision puts the euro sign,
+        // before it or after, says nothing of the number.
         func numbers(_ lines: [Finder.TextLine]) -> Set<String> {
-            Set(lines.flatMap { ScanFormMeasure.tokens(of: $0.string) }.filter { $0.contains(where: \.isNumber) })
+            Set(lines.flatMap { ScanFormMeasure.tokens(of: $0.string) }
+                .map { $0.filter { $0.isNumber || $0.isLetter || ".,-/".contains($0) } }
+                .filter { $0.contains(where: \.isNumber) })
         }
         let before = numbers(Finder.lines(in: prepared.straightened) ?? [])
         let after = numbers(prepared.checked.reading)
