@@ -69,12 +69,12 @@ enum ScanContent {
     }
 
     /// A line with the letters a reading takes for digits, beside a digit,
-    /// read as those digits: "Z00.0" as "200.0", "O4O-12" as "040-12". A
+    /// read as those digits: "Z00.0" as "200.0", "O4O-12" as "040-12", "1b" as "16". A
     /// typewriter's Z and 2, or O and 0, are read either way from one reading
     /// to the next, and that is not a number lost.
     static func readAsDigits(_ text: String) -> String {
         let alike: [Character: Character] = ["Z": "2", "z": "2", "O": "0", "o": "0", "D": "0", "I": "1", "l": "1",
-                                              "|": "1", "S": "5", "s": "5", "B": "8", "G": "6", "g": "9"]
+                                              "|": "1", "S": "5", "s": "5", "B": "8", "b": "6", "G": "6", "g": "9"]
         let characters = Array(text)
         func digitNear(_ i: Int) -> Bool {
             for j in [i - 1, i + 1] where j >= 0 && j < characters.count {

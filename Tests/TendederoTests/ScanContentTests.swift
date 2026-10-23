@@ -39,6 +39,8 @@ final class ScanContentTests: XCTestCase {
         let after = [line("Z00.0 G", row: 0), line("Fax O40-1234567", row: 1)]
         XCTAssertEqual(ScanContent.lost(before: before, after: after), [])
         XCTAssertEqual(ScanContent.readAsDigits("Z00.0 Gesamt O4O"), "200.0 Gesamt 040")
+        XCTAssertTrue(ScanContent.lost(before: [line("Muster 16", row: 0)], after: [line("Muster 1b", row: 0)]).isEmpty,
+                      "a 6 read as b beside a digit")
         XCTAssertEqual(ScanContent.readAsDigits("Schwarz 2 Seite"), "Schwarz 2 Seite")
         XCTAssertFalse(ScanContent.lost(before: [line("Z00.0 G", row: 0)], after: [line("Z0.0 G", row: 0)]).isEmpty,
                        "a digit gone is still gone")
