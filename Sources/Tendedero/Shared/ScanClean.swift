@@ -113,6 +113,12 @@ enum ScanClean {
         /// How many cells each way count as its sides: a filled box up to
         /// twice as wide keeps its fill all through.
         var around = 12
+        /// A darker patch is print, keeping its shade, where this share of
+        /// the change at its edge is made from one block (a quarter cell)
+        /// to the next; light, as a fold's or a shadow's, where it is spread
+        /// out more. Read only where the change is `edgeContrast` levels or more.
+        var edgeShare: Float = 0.42
+        var edgeContrast: Float = 8
         /// Passes of a cell's mean with its eight neighbours.
         var smoothing = 1
         /// A dim part of the page is brightened at most as if its paper
@@ -121,6 +127,10 @@ enum ScanClean {
         /// Paper darker than this, of 255, is no light page: its light is
         /// left as it is, so a dark screen photographed keeps its words.
         var darkestPaper: Float = 100
+        /// The paper a cell has, taken this share of it: the paper's own
+        /// grain and the blocks' over-bright reading are under it, so what
+        /// is paper shows white, and print keeps its shade.
+        var headroom: Float = 0.95
         /// The grain: neighbours this close to a pixel, of 255, are smoothed
         /// with it; an edge, further apart, never is.
         var grain = 10
@@ -132,6 +142,27 @@ enum ScanClean {
         var blackPoint: Float = 0.04
         /// Above 1, the print's greys a little darker.
         var gamma: Float = 1.15
+        /// The print's own darkness: of the pixels the paper around them makes
+        /// strokes, the darkest `printShare`'s middle, of 255, taken to
+        /// `printTarget` by a higher black point where it is light, as a
+        /// typewriter's or a carbon copy's print is; never above `highestBlack`
+        /// of white. A wide grey fill, whose paper is not around it, takes no
+        /// part, so a table's header and a photo keep their shade.
+        var printShare: Float = 0.25
+        /// A pixel this far under the paper around it, of 255, is a stroke.
+        var printContrast: Float = 10
+        /// The light is evened by the blocks' paper only where a pixel is
+        /// this share of it and more: a stroke, much darker, is left to the
+        /// print's own tuning, so evened light never lightens print.
+        var printEdge: Float = 0.78
+        var printTarget: Float = 45
+        var highestBlack: Float = 0.50
+        /// Colour weaker than `neutralBelow`, against how bright a pixel
+        /// is, is taken away once the paper's colour is divided out, as
+        /// tinted paper leaves on its print; stronger than `colourAbove`
+        /// is kept whole, as a ballpoint's, a stamp's or a logo's.
+        var neutralBelow: Float = 0.1
+        var colourAbove: Float = 0.24
         /// How much an edge is made clearer, and by how many levels it must
         /// stand out first, so what is left of the grain is left alone.
         var sharpen: Float = 0.6
@@ -153,7 +184,11 @@ enum ScanClean {
     /// The page cleaned in the colours asked for.
     static func clean(_ page: ScanBitmap, _ mode: ScanColor, tuning: Tuning = .standard) -> ScanBitmap {
         let white = Int((tuning.whitePoint * 255).rounded(.up))
-        var cleaned = curved(denoised(evened(page, tuning: tuning), grain: tuning.grain, white: white), tuning: tuning)
+        let even = neutralized(denoised(evened(page, tuning: tuning), grain: tuning.grain, white: white), tuning: tuning)
+        // Light print, as a typewriter's or a carbon copy's, is taken darker.
+        var tuned = tuning
+        tuned.blackPoint = blackPoint(forPrint: printDarkness(even, tuning: tuning), tuning: tuning)
+        var cleaned = darkened(even, tuning: tuned)
         sharpen(&cleaned, tuning: tuning)
         switch mode {
         case .color: return cleaned
@@ -185,6 +220,11 @@ enum ScanClean {
         let level: (red: Float, green: Float, blue: Float)
         /// Which cells hold paper rather than print, before they were filled in.
         let paper: [Bool]
+        /// The patches darker than the paper round them, and how sharp each
+        /// one's edge is, from 0 to 1: print at `edgeShare` and over, light
+        /// under it; nil where it could not be read, kept as print.
+        let darker: [(cells: [Int], sharpness: Float?)]
+        let edges: Edges
 
         init(of page: ScanBitmap, tuning: Tuning) {
             let w = page.width, h = page.height
@@ -252,6 +292,26 @@ enum ScanClean {
                     if across || down { paper[row * columns + column] = false }
                 }
             }
+            // A darker patch is print only where its edge is sharp, as a
+            // filled box's is; a fold's or a shadow's fades over many pixels,
+            // and is light, evened as paper is.
+            let edges = Edges(of: page, cell: cell, columns: columns, rows: rows)
+            var darker: [(cells: [Int], sharpness: Float?)] = []
+            for patch in Self.patches(paper: paper, firstPass: firstPass, columns: columns, rows: rows) {
+                let sharpness = edges.sharpness(of: patch, tuning: tuning)
+                darker.append((patch, sharpness))
+                // A patch that runs from one side of the page to the other,
+                // or from its top to its bottom, is light: no letter or box
+                // of print reaches both, while a fold's shadow and a curl's
+                // do, however sharp their edges are. So is one that reaches
+                // the page's own border, where its shadow falls.
+                if Self.spans(patch, columns: columns, rows: rows) || Self.borders(patch, columns: columns, rows: rows)
+                    || (sharpness ?? 1) < tuning.edgeShare {
+                    for n in patch { paper[n] = true }
+                }
+            }
+            self.darker = darker
+            self.edges = edges
             self.paper = paper
             Self.fill(&red, &green, &blue, known: paper, columns: columns, rows: rows, level: level)
             for _ in 0..<tuning.smoothing {
@@ -289,6 +349,28 @@ enum ScanClean {
                 }
             }
             return Float(best)
+        }
+
+        /// Whether a patch of cells reaches both of two opposite sides of the
+        /// page: down its whole width, or across its whole height.
+        private static func spans(_ patch: [Int], columns: Int, rows: Int) -> Bool {
+            var leastColumn = columns, mostColumn = -1, leastRow = rows, mostRow = -1
+            for n in patch {
+                leastColumn = min(leastColumn, n % columns)
+                mostColumn = max(mostColumn, n % columns)
+                leastRow = min(leastRow, n / columns)
+                mostRow = max(mostRow, n / columns)
+            }
+            return (leastColumn == 0 && mostColumn == columns - 1) || (leastRow == 0 && mostRow == rows - 1)
+        }
+
+        /// Whether a patch of cells reaches the page's own border, where a
+        /// shadow of the sheet's edge falls, rather than print.
+        private static func borders(_ patch: [Int], columns: Int, rows: Int) -> Bool {
+            patch.contains { n in
+                let row = n / columns, column = n % columns
+                return row == 0 || row == rows - 1 || column == 0 || column == columns - 1
+            }
         }
 
         static func median(_ values: [Float]) -> Float {
@@ -396,11 +478,39 @@ enum ScanClean {
                     rowBlue[c] = Self.between(paper.blue[a], paper.blue[b], down)
                 }
                 var i = y * w * 4
+                let cellRow = min(y / paper.cell, paper.rows - 1)
                 for x in 0..<w {
                     let c0 = leftCell[x], c1 = rightCell[x], t = across[x]
-                    let red: Float = max(Self.between(rowRed[c0], rowRed[c1], t), floor.red)
-                    let green: Float = max(Self.between(rowGreen[c0], rowGreen[c1], t), floor.green)
-                    let blue: Float = max(Self.between(rowBlue[c0], rowBlue[c1], t), floor.blue)
+                    var red: Float = Self.between(rowRed[c0], rowRed[c1], t)
+                    var green: Float = Self.between(rowGreen[c0], rowGreen[c1], t)
+                    var blue: Float = Self.between(rowBlue[c0], rowBlue[c1], t)
+                    // Paper anywhere, as the blocks have it just there: finer
+                    // than a cell, so a fold's or a shadow's light is evened
+                    // whole instead of averaged with the paper round it. A
+                    // cell of print, a filled box or a grey header, takes the
+                    // paper of the cells round it, and so keeps its shade.
+                    let cellIndex = cellRow * paper.columns + min(x / paper.cell, paper.columns - 1)
+                    if paper.paper[cellIndex] {
+                        let fine = paper.edges.fine(x: x, y: y)
+                        let here = Paper.lightness(red, green, blue)
+                        let there = Paper.lightness(fine.red, fine.green, fine.blue)
+                        // A dimmer paper near, all its colours taken down
+                        // alike, so the paper keeps its colour; and paper
+                        // only, so no stroke is lightened by its light: a
+                        // block that is all stroke says nothing of paper,
+                        // and is left to the cell's own.
+                        let own = Float(Self.brightness(px[i], px[i + 1], px[i + 2]))
+                        if there < here, there >= here * tuning.printEdge,
+                           own >= here * tuning.printEdge {
+                            let share = there / here
+                            red *= share
+                            green *= share
+                            blue *= share
+                        }
+                    }
+                    red = max(red, floor.red) * tuning.headroom
+                    green = max(green, floor.green) * tuning.headroom
+                    blue = max(blue, floor.blue) * tuning.headroom
                     px[i] = Self.share(px[i], of: red)
                     px[i + 1] = Self.share(px[i + 1], of: green)
                     px[i + 2] = Self.share(px[i + 2], of: blue)

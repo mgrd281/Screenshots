@@ -56,7 +56,9 @@ enum ScanCleaner {
                           focal: Double? = nil) -> (image: CGImage, turns: Int, skew: Double)? {
         let flat: CGImage
         if let quad {
-            guard let cut = straightened(source, quad: quad, focal: focal) else { return nil }
+            // A folded sheet is made flat part by part, from where its edges bend.
+            let folds = Timing.measure("folds") { self.folds(in: source, quad: quad) }
+            guard let cut = straightened(source, quad: quad, folds: folds, focal: focal) else { return nil }
             flat = cut
         } else {
             flat = source
@@ -76,9 +78,19 @@ enum ScanCleaner {
     /// A page already flat and upright, cleaned in `mode` and checked, as
     /// when only its colours change.
     static func finished(_ straight: CGImage, turns: Int, skew: Double, mode: ScanColor, photo: CGImage?) async -> Prepared? {
-        guard let cleaned = cleaned(straight, mode) else { return nil }
-        let checked = await check(before: straight, after: cleaned, mode: mode, photo: photo)
-        return Prepared(straightened: straight, cleaned: cleaned, turns: turns, skew: skew, checked: checked)
+        // Nothing of what the sheet lay on is left along its edges.
+        let page = trimmed(straight)
+        guard let cleaned = cleaned(page, mode) else { return nil }
+        let checked = await check(before: page, after: cleaned, mode: mode, photo: photo)
+        return Prepared(straightened: page, cleaned: cleaned, turns: turns, skew: skew, checked: checked)
+    }
+
+    /// The page cut in from its edges where anything of what it lay on shows.
+    static func trimmed(_ page: CGImage) -> CGImage {
+        guard let bitmap = bitmap(page) else { return page }
+        let cut = ScanSheet.inset(of: bitmap)
+        guard cut != (0, 0, 0, 0), let cutPage = image(ScanSheet.cropped(bitmap, cut), gray: false) else { return page }
+        return cutPage
     }
 
     // MARK: Finding the page
@@ -99,6 +111,76 @@ enum ScanCleaner {
         return quad.isUsable ? (quad, found.confidence) : nil
     }
 
+    /// The sheet's outline in a photo, from the document's mask: down its
+    /// left and its right edge, a point for each row of the mask, in the
+    /// photo's pixels from its bottom left. Nil where Vision gives no mask.
+    static func outline(in photo: CGImage) -> ScanOutline? {
+        let request = VNDetectDocumentSegmentationRequest()
+        guard (try? VNImageRequestHandler(cgImage: photo, options: [:]).perform([request])) != nil,
+              let mask = request.results?.first?.globalSegmentationMask?.pixelBuffer else { return nil }
+        CVPixelBufferLockBaseAddress(mask, .readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(mask, .readOnly) }
+        guard CVPixelBufferGetPixelFormatType(mask) == kCVPixelFormatType_OneComponent32Float,
+              let base = CVPixelBufferGetBaseAddress(mask) else { return nil }
+        let w = CVPixelBufferGetWidth(mask), h = CVPixelBufferGetHeight(mask), row = CVPixelBufferGetBytesPerRow(mask)
+        func value(_ x: Int, _ y: Int) -> Float { base.advanced(by: y * row + x * 4).assumingMemoryBound(to: Float.self).pointee }
+        let sx = CGFloat(photo.width) / CGFloat(w), sy = CGFloat(photo.height) / CGFloat(h)
+        var left: [CGPoint] = [], right: [CGPoint] = []
+        for y in 0..<h {
+            // The sheet's first and last pixel on the row, each to where the mask crosses a half.
+            var first: CGFloat?, last: CGFloat?
+            for x in 1..<w where value(x - 1, y) < 0.5 && value(x, y) >= 0.5 {
+                let a = value(x - 1, y), b = value(x, y)
+                first = CGFloat(x - 1) + CGFloat((0.5 - a) / max(1e-6, b - a)) + 0.5
+                break
+            }
+            for x in stride(from: w - 1, to: 0, by: -1) where value(x, y) < 0.5 && value(x - 1, y) >= 0.5 {
+                let a = value(x - 1, y), b = value(x, y)
+                last = CGFloat(x - 1) + CGFloat((a - 0.5) / max(1e-6, a - b)) + 0.5
+                break
+            }
+            guard let first, let last, last - first > CGFloat(w) / 8 else { continue }
+            // The mask's rows go down from the top; the photo's pixels up from the bottom.
+            let up = CGFloat(photo.height) - (CGFloat(y) + 0.5) * sy
+            left.append(CGPoint(x: first * sx, y: up))
+            right.append(CGPoint(x: last * sx, y: up))
+        }
+        return left.count >= 24 ? ScanOutline(left: left, right: right) : nil
+    }
+
+    /// The folds across the page in a photo, as both its edges bend, each
+    /// from 0 to 1 from the bottom left, as the corners are; none for a
+    /// page lying flat.
+    static func folds(in photo: CGImage, quad: ScanQuad) -> [(left: CGPoint, right: CGPoint)] {
+        guard let coarse = outline(in: photo), let pixels = bitmap(photo) else { return [] }
+        let outline = ScanSheet.refined(coarse, in: pixels)
+        let size = CGSize(width: photo.width, height: photo.height)
+        let corners = quad.pixels(in: size)
+        var found = ScanSheet.folds(ScanSheet.folds(of: outline), within: corners)
+        // A sheet lying nearly flat hardly bends its outline, but the band
+        // where its paper turns still shows; those folds are taken too,
+        // where the outline shows none at that height.
+        for band in ScanSheet.bands(of: pixels, within: outline) {
+            let along = Double((band.left.y + band.right.y) / 2) / Double(size.height)
+            let taken = found.contains { fold in
+                abs(Double((fold.left.y + fold.right.y) / 2) / Double(size.height) - along) < 0.04
+            }
+            // The band's ends are points of the outline itself, so lie on the
+            // sheet already; only one the outline does not show is added.
+            if !taken { found.append(band) }
+        }
+        // Each end on the page's own side: the parts they make are cut by
+        // the page's sides exactly, whole and to the page's own shape.
+        return ScanSheet.folds(ScanSheet.seated(found, on: corners), within: corners)
+            // From the top down, as the parts are laid: `panels` takes the
+            // folds in this order.
+            .sorted { ($0.left.y + $0.right.y) > ($1.left.y + $1.right.y) }
+            .map { fold in
+                (CGPoint(x: fold.left.x / size.width, y: fold.left.y / size.height),
+                 CGPoint(x: fold.right.x / size.width, y: fold.right.y / size.height))
+            }
+    }
+
     /// The lens's focal length in pixels, from the photo's own notes, for a
     /// page's true shape (`ScanGeometry.aspect`); nil where it does not say.
     static func focalLength(of data: Data, width: Int, height: Int) -> Double? {
@@ -114,10 +196,214 @@ enum ScanCleaner {
     /// shape (A4 or Letter exactly where it is close), with as many pixels
     /// as the photo gives it and no more.
     static func straightened(_ photo: CGImage, quad: ScanQuad, focal: Double? = nil, longest: Int = 4096) -> CGImage? {
+        straightened(photo, quad: quad, folds: [], focal: focal, longest: longest)
+    }
+
+    /// The page made flat part by part where it is folded: each part
+    /// between two folds cut by its own four corners and made flat with its
+    /// own perspective, all as wide as the page and as tall as each part's
+    /// own shape says, then laid one under the next, so every fold is one
+    /// row and a line crossing it goes on without a step. The page's shape
+    /// is the parts' together, A4 or Letter exactly where it is close. Only
+    /// pixels moved, as for a flat page.
+    static func straightened(_ photo: CGImage, quad: ScanQuad, folds: [(left: CGPoint, right: CGPoint)], focal: Double? = nil,
+                             longest: Int = 4096) -> CGImage? {
+        let panels = ScanSheet.panels(of: quad.clamped, folds: folds)
+        guard panels.count > 1 else { return flat(photo, quad: quad, focal: focal, longest: longest) }
         let size = CGSize(width: photo.width, height: photo.height)
-        let aspect = ScanGeometry.snapped(ScanGeometry.aspect(of: quad, in: size, focal: focal))
-        let target = ScanGeometry.size(of: quad, in: size, aspect: aspect, longest: longest)
-        let corners = quad.clamped.pixels(in: size)
+        // One lens for the page and all its parts: the page's own corners
+        // tell it, where the photo does not.
+        let lens = focal ?? ScanGeometry.focal(of: quad.clamped, in: size)
+        // Each part's height for a width of 1, from its own shape.
+        let parts = panels.map { 1 / max(ScanGeometry.aspect(of: $0, in: size, focal: lens), 1e-6) }
+        // The page's own shape, from its four corners as for a page lying
+        // flat: a part's own estimate is poor where a part is short.
+        let aspect = ScanGeometry.snapped(ScanGeometry.aspect(of: quad.clamped, in: size, focal: lens))
+        // As many pixels as the photo gives the page: its widest part across, its parts' sides down.
+        func distance(_ a: CGPoint, _ b: CGPoint) -> Double { Double(hypot(b.x - a.x, b.y - a.y)) }
+        let pixels = panels.map { $0.pixels(in: size) }
+        let across = pixels.map { max(distance($0.topLeft, $0.topRight), distance($0.bottomLeft, $0.bottomRight)) }.max() ?? 1
+        let down = pixels.map { max(distance($0.topLeft, $0.bottomLeft), distance($0.topRight, $0.bottomRight)) }.reduce(0, +)
+        var width = across, height = across / aspect
+        if height < down {
+            height = down
+            width = down * aspect
+        }
+        let shrink = min(1, Double(longest) / max(width, height))
+        let pageWidth = max(1, Int((width * shrink).rounded())), pageHeight = max(1, Int((height * shrink).rounded()))
+        // Each part's rows, in proportion, the last taking what rounding leaves.
+        let total = parts.reduce(0, +)
+        var bounds = [0]
+        for part in parts.dropLast() { bounds.append(bounds.last! + Int((Double(pageHeight) * part / total).rounded())) }
+        bounds.append(pageHeight)
+        guard let space = CGColorSpace(name: CGColorSpace.sRGB),
+              let context = CGContext(data: nil, width: pageWidth, height: pageHeight, bitsPerComponent: 8, bytesPerRow: 0,
+                                      space: space, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return nil }
+        for (index, panel) in panels.enumerated() {
+            let rows = bounds[index + 1] - bounds[index]
+            guard rows > 0 else { return nil }
+            // Each part reaches a few rows past each fold, cut away as it is
+            // laid, so its edge, which the cut softens, never shows at a fold.
+            let pad = 4
+            let above = index > 0 ? pad : 0, below = index < panels.count - 1 ? pad : 0
+            let corners = Self.extended(panel.pixels(in: size), rows: rows, above: above, below: below)
+            guard let part = cut(photo, corners: corners, width: pageWidth, height: rows + above + below) else { return nil }
+            // Core Graphics counts up from the bottom; the first part is the top.
+            let place = CGRect(x: 0, y: pageHeight - bounds[index + 1], width: pageWidth, height: rows)
+            context.saveGState()
+            context.clip(to: place)
+            context.draw(part, in: CGRect(x: 0, y: place.minY - CGFloat(below), width: CGFloat(pageWidth),
+                                          height: CGFloat(rows + above + below)))
+            context.restoreGState()
+        }
+        guard let laid = context.makeImage() else { return nil }
+        // The parts are laid from corners a few pixels from where the sheet's
+        // truly are; the print across each fold says by how much, and each
+        // part below is moved that much, so no line steps at a fold.
+        return aligned(laid, at: bounds.dropFirst().dropLast()) ?? laid
+    }
+
+    /// The page's parts moved to meet at each fold, as the print across the
+    /// fold says they should: the rows just below it against the rows just
+    /// above it, sideways and up or down, at points across the page, each a
+    /// straight line, so a part is moved as a whole and nothing in it bends.
+    static func aligned(_ page: CGImage, at seams: [Int]) -> CGImage? {
+        guard !seams.isEmpty, let bitmap = bitmap(page) else { return page }
+        let w = bitmap.width, h = bitmap.height, plane = bitmap.brightness
+        guard w > 200, h > 200 else { return page }
+        var shifts: [(seam: Int, across: (slope: Double, offset: Double), up: (slope: Double, offset: Double))] = []
+        for seam in seams where seam > 80 && seam < h - 80 {
+            guard let across = shift(of: plane, w, h, seam: seam, sideways: true),
+                  let up = shift(of: plane, w, h, seam: seam, sideways: false) else { continue }
+            shifts.append((seam, across, up))
+        }
+        guard !shifts.isEmpty else { return page }
+        // Each row's part carries the shifts of every fold above it.
+        var acrossAt = [(slope: Double, offset: Double)](repeating: (0, 0), count: h)
+        var upAt = acrossAt
+        var across = (slope: 0.0, offset: 0.0), up = (slope: 0.0, offset: 0.0), next = 0
+        for y in 0..<h {
+            while next < shifts.count, y >= shifts[next].seam {
+                across.slope += shifts[next].across.slope
+                across.offset += shifts[next].across.offset
+                up.slope += shifts[next].up.slope
+                up.offset += shifts[next].up.offset
+                next += 1
+            }
+            acrossAt[y] = across
+            upAt[y] = up
+        }
+        var out = bitmap
+        bitmap.pixels.withUnsafeBufferPointer { src in
+            out.pixels.withUnsafeMutableBufferPointer { dst in
+                for y in shifts[0].seam..<h {
+                    let fromY = Double(y) + upAt[y].offset + upAt[y].slope * Double(y)
+                    let y0 = min(max(Int(fromY.rounded(.down)), 0), h - 1), y1 = min(y0 + 1, h - 1)
+                    let ty = min(max(fromY - Double(y0), 0), 1)
+                    for x in 0..<w {
+                        let fromX = Double(x) + acrossAt[y].offset + acrossAt[y].slope * Double(x)
+                        let x0 = min(max(Int(fromX.rounded(.down)), 0), w - 1), x1 = min(x0 + 1, w - 1)
+                        let tx = min(max(fromX - Double(x0), 0), 1)
+                        let o = (y * w + x) * 4
+                        for k in 0..<3 {
+                            let top = Double(src[(y0 * w + x0) * 4 + k]) * (1 - tx) + Double(src[(y0 * w + x1) * 4 + k]) * tx
+                            let low = Double(src[(y1 * w + x0) * 4 + k]) * (1 - tx) + Double(src[(y1 * w + x1) * 4 + k]) * tx
+                            dst[o + k] = UInt8(min(255, max(0, top * (1 - ty) + low * ty + 0.5)))
+                        }
+                    }
+                }
+            }
+        }
+        return image(out, gray: false)
+    }
+
+    /// The shift that brings the edges of the print just below a fold into
+    /// line with those just above it, as a line across the page: sideways,
+    /// or up and down. Nil where the print there says too little to tell.
+    static func shift(of plane: [UInt8], _ w: Int, _ h: Int, seam: Int,
+                              sideways: Bool) -> (slope: Double, offset: Double)? {
+        let band = 44, gap = 6, reach = 9
+        let above = (seam - band)..<(seam - gap), below = (seam + gap)..<(seam + band)
+        guard above.lowerBound > 2, below.upperBound < h - 2 else { return nil }
+        var found: [(at: Double, by: Int, weight: Double)] = []
+        let chunks = 9
+        for chunk in 0..<chunks {
+            let x0 = w / 10 + (w * 4 / 5) * chunk / chunks
+            let x1 = w / 10 + (w * 4 / 5) * (chunk + 1) / chunks
+            guard x1 - x0 > 40 else { continue }
+            let a = profile(plane, w, h, rows: above, columns: x0..<x1, sideways: sideways)
+            let b = profile(plane, w, h, rows: below, columns: x0..<x1, sideways: sideways)
+            guard a.reduce(0, +) + b.reduce(0, +) > 2000, let best = alignment(a, b, reach: reach),
+                  best.gain >= 1.1 else { continue }
+            found.append((Double(x0 + x1) / 2, best.shift, best.gain - 1))
+        }
+        guard found.count >= 2 else { return nil }
+        // A line through the shifts found, each weighed by how clearly it
+        // was seen, so the part moves as a whole.
+        let total = found.map(\.weight).reduce(0, +)
+        let mx = found.map { $0.at * $0.weight }.reduce(0, +) / total
+        let my = found.map { Double($0.by) * $0.weight }.reduce(0, +) / total
+        let across = found.map { ($0.at - mx) * (Double($0.by) - my) * $0.weight }.reduce(0, +)
+        let down = found.map { ($0.at - mx) * ($0.at - mx) * $0.weight }.reduce(0, +)
+        let slope = down > 1e-9 ? across / down : 0
+        return (slope, my - slope * mx)
+    }
+
+    /// Where the edges stand across a band: for each column of it, sideways,
+    /// or each row of it, how much the brightness turns there. Only turns
+    /// well above the paper's grain count, so print and rules tell, and the
+    /// grain does not.
+    private static func profile(_ plane: [UInt8], _ w: Int, _ h: Int, rows: Range<Int>, columns: Range<Int>,
+                                sideways: Bool) -> [Double] {
+        let least = 60.0
+        func turn(_ value: Int) -> Double { max(0, Double(value) - least) }
+        if sideways {
+            return columns.map { x in
+                rows.reduce(0.0) { $0 + turn(abs(Int(plane[$1 * w + x + 1]) - Int(plane[$1 * w + x - 1]))) }
+            }
+        }
+        return rows.map { y in
+            columns.reduce(0.0) { $0 + turn(abs(Int(plane[y * w + $1]) - Int(plane[min(h - 1, y + 2) * w + $1]))) }
+        }
+    }
+
+    /// How far `b` stands from `a`, within `reach`, where the two are most
+    /// alike, and how much better that is than no shift at all.
+    private static func alignment(_ a: [Double], _ b: [Double], reach: Int) -> (shift: Int, gain: Double)? {
+        var best = 0, bestScore = 0.0, atZero = 0.0
+        for d in -reach...reach {
+            var score = 0.0, count = 0
+            for i in a.indices {
+                let j = i + d
+                guard j >= 0, j < b.count else { continue }
+                score += a[i] * b[j]
+                count += 1
+            }
+            guard count >= a.count / 2 else { continue }
+            let normal = score / Double(count)
+            if d == 0 { atZero = normal }
+            if normal > bestScore { bestScore = normal; best = d }
+        }
+        guard bestScore > 0 else { return nil }
+        return (best, bestScore / max(1e-9, atZero))
+    }
+
+    /// A part's corners moved up its sides by `above` of its `rows`, and
+    /// down them by `below`, as the part would go on past a fold.
+    private static func extended(_ quad: ScanQuad, rows: Int, above: Int, below: Int) -> ScanQuad {
+        func moved(_ point: CGPoint, away from: CGPoint, by share: CGFloat) -> CGPoint {
+            CGPoint(x: point.x + (point.x - from.x) * share, y: point.y + (point.y - from.y) * share)
+        }
+        let up = CGFloat(above) / CGFloat(max(1, rows)), down = CGFloat(below) / CGFloat(max(1, rows))
+        return ScanQuad(topLeft: moved(quad.topLeft, away: quad.bottomLeft, by: up),
+                        topRight: moved(quad.topRight, away: quad.bottomRight, by: up),
+                        bottomRight: moved(quad.bottomRight, away: quad.topRight, by: down),
+                        bottomLeft: moved(quad.bottomLeft, away: quad.topLeft, by: down))
+    }
+
+    /// The part of a photo inside four corners, in its pixels from the
+    /// bottom left, made flat at the size asked for.
+    private static func cut(_ photo: CGImage, corners: ScanQuad, width: Int, height: Int) -> CGImage? {
         guard let perspective = CIFilter(name: "CIPerspectiveCorrection") else { return nil }
         perspective.setValue(CIImage(cgImage: photo), forKey: kCIInputImageKey)
         perspective.setValue(CIVector(cgPoint: corners.topLeft), forKey: "inputTopLeft")
@@ -126,14 +412,22 @@ enum ScanCleaner {
         perspective.setValue(CIVector(cgPoint: corners.bottomLeft), forKey: "inputBottomLeft")
         guard let flat = perspective.outputImage, flat.extent.width >= 1, flat.extent.height >= 1 else { return nil }
         let origin = flat.transformed(by: CGAffineTransform(translationX: -flat.extent.minX, y: -flat.extent.minY))
-        let scale = CGFloat(target.height) / flat.extent.height
-        let stretch = (CGFloat(target.width) / flat.extent.width) / scale
+        let scale = CGFloat(height) / flat.extent.height
+        let stretch = (CGFloat(width) / flat.extent.width) / scale
         guard let resize = CIFilter(name: "CILanczosScaleTransform") else { return nil }
         resize.setValue(origin, forKey: kCIInputImageKey)
         resize.setValue(scale, forKey: kCIInputScaleKey)
         resize.setValue(stretch, forKey: kCIInputAspectRatioKey)
         guard let sized = resize.outputImage else { return nil }
-        return render(sized, width: target.width, height: target.height)
+        return render(sized, width: width, height: height)
+    }
+
+    /// A page lying flat, cut by its four corners.
+    private static func flat(_ photo: CGImage, quad: ScanQuad, focal: Double?, longest: Int) -> CGImage? {
+        let size = CGSize(width: photo.width, height: photo.height)
+        let aspect = ScanGeometry.snapped(ScanGeometry.aspect(of: quad, in: size, focal: focal))
+        let target = ScanGeometry.size(of: quad, in: size, aspect: aspect, longest: longest)
+        return cut(photo, corners: quad.clamped.pixels(in: size), width: target.width, height: target.height)
     }
 
     // MARK: Upright and level
