@@ -15,7 +15,33 @@ concurrency:
   group: build-${{ github.ref }}
   cancel-in-progress: true
 
+# The scan's tests draw and clean whole pages in a debug build and are nearly
+# all of the time the tests take, so they run beside the build, three jobs
+# side by side, and every other test runs in the build itself.
+env:
+  SCAN_TESTS: ScanFixtureTests|ScanFormFixtureTests|ScanQualityTests|ScanGeometryTests|ScanCleanTests|ScanInvoice
+
 jobs:
+  scan-tests:
+    name: scan tests (${{ matrix.part }})
+    runs-on: macos-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - part: made-up photos
+            filter: ScanFixtureTests
+          - part: sick note
+            filter: ScanFormFixtureTests|ScanQualityTests|ScanGeometryTests
+          - part: cleaning
+            filter: ScanCleanTests|ScanInvoice
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run the scan's tests
+        run: swift test --filter "${{ matrix.filter }}"
+
   build:
     runs-on: macos-latest
     env:
@@ -30,7 +56,7 @@ jobs:
         run: swift scripts/check-strings.swift
 
       - name: Run the tests
-        run: swift test
+        run: swift test --skip "$SCAN_TESTS"
 
       - name: Check the App Store edition
         run: |
