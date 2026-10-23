@@ -152,7 +152,7 @@ final class ScanInvoiceTests: XCTestCase {
         for y in 0..<h {
             for x in 0..<w {
                 let light = 1 - 0.12 * (Double(x) / Double(w) + Double(y) / Double(h)) / 2
-                let fill = x >= 140 && x < 800 && y >= 720 && y < 1080 ? 0.955 : 1
+                let fill = x >= 140 && x < 640 && y >= 720 && y < 1020 ? 0.955 : 1
                 for k in 0..<3 {
                     seed = seed &* 1_664_525 &+ 1_013_904_223
                     let grain = Double(seed >> 24) / 255 * 4 - 2
@@ -163,8 +163,8 @@ final class ScanInvoiceTests: XCTestCase {
         }
         let cleaned = ScanClean.clean(page, .color)
         var inside: [Double] = []
-        for y in stride(from: 760, to: 1040, by: 4) {
-            for x in stride(from: 180, to: 760, by: 4) where cleaned.brightness(x: x, y: y) > 200 {
+        for y in stride(from: 760, to: 980, by: 4) {
+            for x in stride(from: 180, to: 600, by: 4) where cleaned.brightness(x: x, y: y) > 200 {
                 inside.append(Double(cleaned.brightness(x: x, y: y)))
             }
         }

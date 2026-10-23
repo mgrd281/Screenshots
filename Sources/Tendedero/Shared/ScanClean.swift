@@ -118,6 +118,16 @@ enum ScanClean {
         /// In and round a pale fill, a pixel this share of its paper and
         /// more in every colour is the paper's grain, and white.
         var fillWhite: Float = 0.985
+        /// A pale fill's edge is sharper than this, from 0 to 1: a printed
+        /// one, not a soft shade of the light.
+        var fillEdgeShare: Float = 0.6
+        /// And a fill is this many cells at least: a watermark or a shaded row,
+        /// not a speck of a shadow's grain.
+        var fillCells = 60
+        var fillSolid = 0.4
+        /// And no larger than this share of the page: a fold's lower part, a
+        /// whole half darker for its angle, is light, not a fill.
+        var fillLargest = 0.15
         /// How many cells each way count as its sides: a filled box up to
         /// twice as wide keeps its fill all through.
         var around = 12
@@ -361,13 +371,15 @@ enum ScanClean {
             // it, which hold its edge; a soft one, the light's, is evened.
             var fills = [Bool](repeating: false, count: paper.count)
             let paleFills = Self.patches(paper: pale.map { !$0 }, firstPass: firstPass, columns: columns, rows: rows)
-            for found in paleFills where found.count >= 2 && !Self.spans(found, columns: columns, rows: rows) {
-                guard let sharpness = edges.sharpness(of: found, tuning: tuning), sharpness >= tuning.edgeShare else { continue }
+            for found in paleFills where found.count >= tuning.fillCells && !Self.spans(found, columns: columns, rows: rows) {
+                guard let sharpness = edges.sharpness(of: found, tuning: tuning), sharpness >= tuning.fillEdgeShare else { continue }
                 // A wide fill is taken whole: the cells next to it as light as
                 // it is belong to it, where paper is too far off on one side to tell.
                 let patch = Self.grown(found, paper: Self.median(found.map { beside[$0] }), lightness: lightness,
                                        firstPass: firstPass, columns: columns, rows: rows)
-                guard !Self.spans(patch, columns: columns, rows: rows) else { continue }
+                guard !Self.spans(patch, columns: columns, rows: rows),
+                      Double(patch.count) <= tuning.fillLargest * Double(columns * rows),
+                      Self.solid(found, columns: columns, rows: rows) >= tuning.fillSolid else { continue }
                 darker.append((patch, sharpness))
                 for n in patch {
                     let row = n / columns, column = n % columns
@@ -419,6 +431,22 @@ enum ScanClean {
                 }
             }
             return Float(best)
+        }
+
+        /// The share of a patch's cells whose eight neighbours are all in it
+        /// too: a blob's is large, a thin ring, a shadow's fringe, has none.
+        private static func solid(_ patch: [Int], columns: Int, rows: Int) -> Double {
+            let inside = Set(patch)
+            var inner = 0
+            for n in patch {
+                let row = n / columns, column = n % columns
+                var all = true
+                for r in (row - 1)...(row + 1) {
+                    for c in (column - 1)...(column + 1) where !inside.contains(r * columns + c) { all = false }
+                }
+                if all { inner += 1 }
+            }
+            return Double(inner) / Double(max(1, patch.count))
         }
 
         /// A patch with the cells next to it, and next to those, that are as

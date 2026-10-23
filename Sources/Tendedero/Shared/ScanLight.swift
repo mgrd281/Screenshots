@@ -78,8 +78,9 @@ extension ScanClean {
                             let red = Float(sum.0) / Float(max(1, count.0)) / max(1, under.red)
                             let green = Float(sum.1) / Float(max(1, count.1)) / max(1, under.green)
                             let blue = Float(sum.2) / Float(max(1, count.2)) / max(1, under.blue)
-                            // Paper beside the fill, its grain no more: left as cleaned.
-                            guard min(red, green, blue) < tuning.fillWhite else { continue }
+                            // Paper beside the fill, its grain no more, or print over it: left as cleaned.
+                            guard min(red, green, blue) < tuning.fillWhite, dst[p] >= 240, dst[p + 1] >= 240, dst[p + 2] >= 240
+                            else { continue }
                             dst[p] = min(dst[p], UInt8(min(255, max(0, red * 255 + 0.5))))
                             dst[p + 1] = min(dst[p + 1], UInt8(min(255, max(0, green * 255 + 0.5))))
                             dst[p + 2] = min(dst[p + 2], UInt8(min(255, max(0, blue * 255 + 0.5))))

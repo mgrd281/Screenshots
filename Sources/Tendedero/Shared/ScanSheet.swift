@@ -527,8 +527,9 @@ enum ScanSheet {
         let bandX = max(2, w / 80), bandY = max(2, h / 80)
         var out = bitmap
         for y in 0..<h {
-            for x in 0..<w where (x < bandX || x >= w - bandX || y < bandY || y >= h - bandY)
-                && bitmap.brightness(x: x, y: y) < 200 {
+            for x in 0..<w where x < bandX || x >= w - bandX || y < bandY || y >= h - bandY {
+                // Dark, or speckled as a shadow's grain is: not paper, not a fill.
+                guard bitmap.brightness(x: x, y: y) < 200 || speckled(bitmap, x, y) else { continue }
                 let i = (y * w + x) * 4
                 out.pixels[i] = 255
                 out.pixels[i + 1] = 255
@@ -536,6 +537,20 @@ enum ScanSheet {
             }
         }
         return out
+    }
+
+    /// Whether the brightness round a pixel, over 5 by 5, varies by more than
+    /// a fill's even shade does.
+    private static func speckled(_ page: ScanBitmap, _ x: Int, _ y: Int) -> Bool {
+        var least = 255, most = 0
+        for yy in max(0, y - 2)...min(page.height - 1, y + 2) {
+            for xx in max(0, x - 2)...min(page.width - 1, x + 2) {
+                let value = Int(page.brightness(x: xx, y: yy))
+                least = min(least, value)
+                most = max(most, value)
+            }
+        }
+        return most - least > 14
     }
 
     /// The page cut in by `inset`.
