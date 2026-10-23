@@ -25,9 +25,10 @@ enum ScanContent {
     /// each line gone. Empty when everything read before was read again.
     static func lost(before: [Line], after: [Line], crossed: (CGRect) -> Bool = { _ in false }) -> [CGRect] {
         var places: [CGRect] = []
-        // A line a signature or a stamp crosses reads one way one time and
-        // another the next, cleaned or not: it says nothing of the cleaning.
-        let before = before.filter { !crossed($0.box) }
+        // A line a signature or a stamp crosses, or runs close along, reads
+        // one way one time and another the next, cleaned or not: it says
+        // nothing of the cleaning.
+        let before = before.filter { !crossed($0.box.insetBy(dx: 0, dy: -$0.box.height)) }
         for line in before {
             let numbers = self.numbers(in: line.text)
             guard !numbers.isEmpty else { continue }

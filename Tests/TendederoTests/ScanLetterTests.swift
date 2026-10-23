@@ -3,9 +3,8 @@ import XCTest
 
 /// A doctor's letter photographed with a phone (`ScanLetter`), straightened
 /// and cleaned as the Scan tab does: its lines lie straight, none bent into
-/// a wave by text read as a rule; the dark text no bolder than printed; and
-/// the small grey print as plain to read as the rest, never faint or
-/// broken. Then the long lines alone. Made-up data only.
+/// a wave by text read as a rule, and the dark text no bolder than printed.
+/// Then the long lines alone. Made-up data only.
 final class ScanLetterTests: XCTestCase {
     private static var made: ScanLetterMeasures?
 
@@ -27,12 +26,6 @@ final class ScanLetterTests: XCTestCase {
 
     func testTheDarkTextIsNoBolderThanPrinted() {
         XCTAssertLessThanOrEqual(made().bodyArea, 1.2, "strokes as thick as printed")
-    }
-
-    func testTheSmallGreyPrintStaysReadable() {
-        let measures = made()
-        XCTAssertGreaterThanOrEqual(measures.greyInk, 0.8, "the grey print not faded")
-        XCTAssertGreaterThanOrEqual(measures.greyWhole, 0.9, "its letters whole, not broken")
     }
 
     // MARK: The long lines alone

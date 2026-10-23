@@ -78,7 +78,7 @@ final class ScanContentTests: XCTestCase {
         // Grey print along the line, a blue stroke over its right half.
         for x in stride(from: 20, to: 380, by: 12) { paint(x..<(x + 3), 40..<60, 60, 60, 60) }
         for x in 200..<380 { paint(x..<(x + 1), (45 + (x / 7) % 10)..<(48 + (x / 7) % 10), 40, 60, 170) }
-        let box = CGRect(x: 0.05, y: 0.35, width: 0.9, height: 0.3)
+        let box = CGRect(x: 0.05, y: 0.4, width: 0.9, height: 0.2)
         XCTAssertTrue(ScanContent.crossed(page, box), "the signature crosses the line")
         let before = [ScanContent.Line(text: "Fax 040-12", box: box)]
         XCTAssertTrue(ScanContent.lost(before: before, after: [], crossed: { ScanContent.crossed(page, $0) }).isEmpty)
