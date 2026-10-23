@@ -28,7 +28,7 @@ enum ScanContent {
         // A line a signature or a stamp crosses, or runs close along, reads
         // one way one time and another the next, cleaned or not: it says
         // nothing of the cleaning.
-        let before = before.filter { !crossed($0.box.insetBy(dx: 0, dy: -$0.box.height)) }
+        let before = before.filter { !crossed($0.box.insetBy(dx: 0, dy: -1.5 * $0.box.height)) }
         for line in before {
             let numbers = self.numbers(in: line.text)
             guard !numbers.isEmpty else { continue }
@@ -50,7 +50,7 @@ enum ScanContent {
 
     /// Whether a ballpoint's or a stamp's colour crosses print in a place,
     /// from 0 to 1 from the bottom left: strongly coloured strokes over a
-    /// fiftieth of it, among grey or black print. A line printed in colour,
+    /// hundredth of it, among grey or black print. A line printed in colour,
     /// with no grey print, is not crossed.
     static func crossed(_ page: ScanBitmap, _ box: CGRect) -> Bool {
         let w = Double(page.width), h = Double(page.height)
@@ -67,7 +67,7 @@ enum ScanContent {
             }
         }
         let all = (x1 - x0) * (y1 - y0)
-        return coloured * 50 >= all && grey * 50 >= all
+        return coloured * 100 >= all && grey * 50 >= all
     }
 
     /// The numbers in a line, each as its digits alone: digits with dots,
