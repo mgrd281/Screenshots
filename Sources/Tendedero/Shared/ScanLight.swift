@@ -40,6 +40,58 @@ extension ScanClean {
         return out
     }
 
+    // MARK: Pale fills kept
+
+    /// A pale fill printed with a sharp edge, as a watermark or a shaded row
+    /// is (`Paper.fills`), shown as it was printed: each pixel its share of
+    /// the paper round it, colour by colour, its grain smoothed as the
+    /// paper's is, wherever cleaning left it lighter than that. So the fill
+    /// keeps its tint, its streaks and its shape instead of going white with
+    /// the paper, and print over it, made darker, stays as dark.
+    static func filled(_ cleaned: ScanBitmap, from page: ScanBitmap, paper: Paper, tuning: Tuning = .standard)
+        -> ScanBitmap {
+        guard paper.fills.contains(true),
+              Paper.lightness(paper.level.red, paper.level.green, paper.level.blue) >= tuning.darkestPaper
+        else { return cleaned }
+        let w = page.width, h = page.height
+        var out = cleaned
+        page.pixels.withUnsafeBufferPointer { src in
+            out.pixels.withUnsafeMutableBufferPointer { dst in
+                for n in paper.fills.indices where paper.fills[n] {
+                    let row = n / paper.columns, column = n % paper.columns
+                    let top = row * paper.cell, left = column * paper.cell
+                    for y in top..<min(h, top + paper.cell) {
+                        for x in left..<min(w, left + paper.cell) {
+                            let under = paper.color(x: x, y: y)
+                            let p = (y * w + x) * 4
+                            let r0 = Int(src[p]), g0 = Int(src[p + 1]), b0 = Int(src[p + 2])
+                            var sum = (0, 0, 0), count = (0, 0, 0)
+                            for yy in max(0, y - 1)...min(h - 1, y + 1) {
+                                for xx in max(0, x - 1)...min(w - 1, x + 1) {
+                                    let q = (yy * w + xx) * 4
+                                    let r = Int(src[q]), g = Int(src[q + 1]), b = Int(src[q + 2])
+                                    if abs(r - r0) <= tuning.grain { sum.0 += r; count.0 += 1 }
+                                    if abs(g - g0) <= tuning.grain { sum.1 += g; count.1 += 1 }
+                                    if abs(b - b0) <= tuning.grain { sum.2 += b; count.2 += 1 }
+                                }
+                            }
+                            let red = Float(sum.0) / Float(max(1, count.0)) / max(1, under.red)
+                            let green = Float(sum.1) / Float(max(1, count.1)) / max(1, under.green)
+                            let blue = Float(sum.2) / Float(max(1, count.2)) / max(1, under.blue)
+                            // Paper beside the fill, its grain no more, or print over it: left as cleaned.
+                            guard min(red, green, blue) < tuning.fillWhite, dst[p] >= 240, dst[p + 1] >= 240, dst[p + 2] >= 240
+                            else { continue }
+                            dst[p] = min(dst[p], UInt8(min(255, max(0, red * 255 + 0.5))))
+                            dst[p + 1] = min(dst[p + 1], UInt8(min(255, max(0, green * 255 + 0.5))))
+                            dst[p + 2] = min(dst[p + 2], UInt8(min(255, max(0, blue * 255 + 0.5))))
+                        }
+                    }
+                }
+            }
+        }
+        return out
+    }
+
     // MARK: Dark print
 
     /// The page with its print as dark as the curve says and its paper
@@ -155,6 +207,21 @@ extension ScanClean {
 }
 
 extension ScanClean.Paper {
+    /// The paper's colour at a pixel, between the four nearest cells' middles.
+    func color(x: Int, y: Int) -> (red: Float, green: Float, blue: Float) {
+        let size = Float(cell)
+        let u = (Float(x) + 0.5) / size - 0.5, v = (Float(y) + 0.5) / size - 0.5
+        let c0 = min(max(Int(u.rounded(.down)), 0), columns - 1), r0 = min(max(Int(v.rounded(.down)), 0), rows - 1)
+        let c1 = min(c0 + 1, columns - 1), r1 = min(r0 + 1, rows - 1)
+        let tx = min(max(u - Float(c0), 0), 1), ty = min(max(v - Float(r0), 0), 1)
+        func mix(_ plane: [Float]) -> Float {
+            let top = plane[r0 * columns + c0] + (plane[r0 * columns + c1] - plane[r0 * columns + c0]) * tx
+            let bottom = plane[r1 * columns + c0] + (plane[r1 * columns + c1] - plane[r1 * columns + c0]) * tx
+            return top + (bottom - top) * ty
+        }
+        return (mix(red), mix(green), mix(blue))
+    }
+
     /// Cells marked as print because they are darker than the paper on
     /// both sides of them, joined where they touch: each patch a band, a
     /// box or a shadow, to tell apart by its edges.
