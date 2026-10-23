@@ -182,8 +182,18 @@ enum ScanClean {
         /// this share of it and more: a stroke, much darker, is left to the
         /// print's own tuning, so evened light never lightens print.
         var printEdge: Float = 0.78
+        /// A pixel under this share of the brightest close round it is a
+        /// stroke, and is evened by the cell's paper alone.
+        var strokeBelow: Float = 0.95
         var printTarget: Float = 30
         var highestBlack: Float = 0.75
+        /// Faint print (`strengthened`): a patch whose strokes stand out by
+        /// less than `faintTarget`, of 255, is deepened toward it, at most
+        /// `faintGain` times, by what each stroke stands out past
+        /// `faintFloor`, the grain.
+        var faintFloor: Float = 6
+        var faintTarget: Float = 70
+        var faintGain: Float = 4
         /// Colour weaker than `neutralBelow`, against how bright a pixel
         /// is, is taken away once the paper's colour is divided out, as
         /// tinted paper leaves on its print; stronger than `colourAbove`
@@ -215,10 +225,10 @@ enum ScanClean {
         let paper = Paper(of: page, tuning: tuning)
         let flat = uncreased(evened(page, paper: paper, tuning: tuning), tuning: tuning)
         let even = neutralized(denoised(flat, grain: tuning.grain, white: white), tuning: tuning)
-        // Sharpened first, then taken darker, so the darkening sets the print's
+        // Faint print deepened, sharpened, then taken darker, so the darkening sets the print's
         // final shade: an unsharp mask run after it would drive a stroke to
         // black. The print's own darkness is read inside the boxes of text.
-        var sharpened = even
+        var sharpened = strengthened(even, tuning: tuning)
         sharpen(&sharpened, tuning: tuning)
         var tuned = tuning
         tuned.blackPoint = blackPoint(forPrint: printDarkness(sharpened, tuning: tuning, boxes: printBoxes), tuning: tuning)
@@ -590,6 +600,10 @@ enum ScanClean {
         }
         let floor = (red: tuning.dimmest * max(paper.level.red, 1), green: tuning.dimmest * max(paper.level.green, 1),
                      blue: tuning.dimmest * max(paper.level.blue, 1))
+        // The brightest pixel close round each: a pixel well under it is a
+        // stroke, however faint, and never takes a fold's or a shadow's
+        // finer light, which faint small print would otherwise pass for.
+        let around = widest(page.brightness, width: w, height: h, radius: 2)
         var out = page
         var rowRed = [Float](repeating: 0, count: paper.columns), rowGreen = rowRed, rowBlue = rowRed
         out.pixels.withUnsafeMutableBufferPointer { px in
@@ -629,7 +643,7 @@ enum ScanClean {
                         // and is left to the cell's own.
                         let own = Float(Self.brightness(px[i], px[i + 1], px[i + 2]))
                         if there < here, there >= here * tuning.printEdge,
-                           own >= here * tuning.printEdge {
+                           own >= here * tuning.printEdge, own >= Float(around[y * w + x]) * tuning.strokeBelow {
                             let share = there / here
                             red *= share
                             green *= share

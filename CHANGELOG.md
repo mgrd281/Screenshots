@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, a phone photo of a letter comes out of Scan with its lines
+  straight, never bent into a wave by a row of text taken for a ruled line,
+  and its small light-grey print, an address or telephone numbers in a
+  margin, comes out plain to read instead of faint and broken.
+
 - On the iPhone, Scan cleans a real photo of a paper better, still only by
   making pixels lighter or darker and moving them, never by redrawing or
   retyping anything. A fold or a soft shadow from a hand or the phone is
