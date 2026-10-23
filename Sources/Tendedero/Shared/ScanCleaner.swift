@@ -137,14 +137,90 @@ enum ScanCleaner {
         return image(out, gray: false)
     }
 
+    /// What is still bent in a page — a curl at the bottom, a slant down it —
+    /// taken out by a smooth field measured from its own long lines: each
+    /// line's own height in every column, then a straight interpolation
+    /// between the lines, so every line lies straight and nothing jumps.
+    /// Only pixels are moved, as for a perspective correction.
+    static func undeformed(_ page: CGImage) -> CGImage? {
+        guard let bitmap = bitmap(page) else { return page }
+        let w = bitmap.width, h = bitmap.height
+        guard w > 120, h > 120 else { return page }
+        let plane = bitmap.brightness
+        let most = max(4, h / 200)
+        // Every long line: a row dark across most of the width, its thickness skipped.
+        var lineRows: [Int] = []
+        var row = Int(Double(h) * 0.05)
+        while row < h - h / 30, lineRows.count < 24 {
+            var dark = 0
+            var x = 0
+            while x < w { if plane[row * w + x] < 200 { dark += 1 }; x += 1 }
+            if dark > w * 3 / 5 {
+                lineRows.append(row)
+                row += max(4, h / 200)
+            } else {
+                row += 1
+            }
+        }
+        guard lineRows.count >= 1 else { return page }
+        // Each line's own height in every column, smoothed so a grain never bends one.
+        var deviations = [[Double]](repeating: [Double](repeating: 0, count: w), count: lineRows.count)
+        let reach = max(2, w / 80)
+        for (i, line) in lineRows.enumerated() {
+            var raw = [Double](repeating: 0, count: w)
+            for x in 0..<w {
+                var bestY = line, bestValue = 256.0
+                var y = max(0, line - most)
+                while y <= min(h - 1, line + most) {
+                    let value = Double(plane[y * w + x])
+                    if value < bestValue { bestValue = value; bestY = y }
+                    y += 1
+                }
+                raw[x] = Double(line - bestY)
+            }
+            for x in 0..<w {
+                var sum = 0.0, n = 0
+                var k = max(0, x - reach)
+                while k <= min(w - 1, x + reach) { sum += raw[k]; n += 1; k += 1 }
+                deviations[i][x] = n > 0 ? sum / Double(n) : 0
+            }
+        }
+        var out = bitmap
+        bitmap.pixels.withUnsafeBufferPointer { src in
+            out.pixels.withUnsafeMutableBufferPointer { dst in
+                var i = 0
+                for y in 0..<h {
+                    while i + 1 < lineRows.count, y > lineRows[i + 1] { i += 1 }
+                    let a = i, b = min(i + 1, lineRows.count - 1)
+                    var t = 0.0
+                    if b > a, lineRows[b] != lineRows[a] {
+                        t = min(1, max(0, Double(y - lineRows[a]) / Double(lineRows[b] - lineRows[a])))
+                    }
+                    for x in 0..<w {
+                        let shift = deviations[a][x] * (1 - t) + deviations[b][x] * t
+                        let fromY = min(max(Double(y) - shift, 0), Double(h - 1))
+                        let y0 = Int(fromY.rounded(.down)), y1 = min(y0 + 1, h - 1)
+                        let ty = fromY - Double(y0)
+                        let o = (y * w + x) * 4
+                        for k in 0..<3 {
+                            let v = Double(src[(y0 * w + x) * 4 + k]) * (1 - ty) + Double(src[(y1 * w + x) * 4 + k]) * ty
+                            dst[o + k] = UInt8(min(255, max(0, v + 0.5)))
+                        }
+                    }
+                }
+            }
+        }
+        return image(out, gray: false)
+    }
+
     /// A page already flat and upright, cleaned in `mode` and checked, as
     /// when only its colours change.
     static func finished(_ straight: CGImage, turns: Int, skew: Double, mode: ScanColor, photo: CGImage?) async -> Prepared? {
         // Nothing of what the sheet lay on is left along its edges.
         let cut = trimmed(straight)
-        // What is left bent, as a curl, is taken out after the edges are
-        // cut, so its own shift never moves the page within the cut.
-        let page = uncurled(cut) ?? cut
+        // What is still bent — a curl or a slant — is taken out after the
+        // edges are cut, by a field measured from the page's own long lines.
+        let page = undeformed(cut) ?? cut
         // Read the page before it is cleaned, so the print's own darkness is
         // measured on the text it holds; the same reading then checks the
         // result, so nothing is read twice.
