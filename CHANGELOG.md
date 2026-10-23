@@ -16,7 +16,11 @@ keeps a download of each version.
   parts are joined so lines go on without a step. Pink, yellow or blue paper
   turns white while a blue signature or a red stamp keeps its colour. Light
   print, as from a typewriter or a carbon copy, comes out dark. And the
-  edges are cut in until nothing of the table or floor is left.
+  edges are cut in until nothing of the table or floor is left. A page from
+  a flatbed scanner comes out as clean: the thin crease where it was folded
+  is evened out like a shadow, while a pale watermark or a shaded row keeps
+  the tint it was printed in, even where it reaches the sheet's edge,
+  instead of going white in places.
 
 - On the iPhone, PDF projects: put photos, scans, screenshots and PDFs
   together into one PDF, or open a PDF to put its pages in order and cover

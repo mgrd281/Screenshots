@@ -1,7 +1,8 @@
 #!/bin/bash
 # Scan without an iPhone, for review. First the engine on this Mac: the scan's
-# fixture tests (Tests/TendederoTests/ScanFixtureTests.swift) on made-up
-# photos of a made-up invoice, keeping each picture before and after and what
+# fixture tests (Tests/TendederoTests/ScanFixtureTests.swift, and the folded
+# sick note and the scanned invoice beside it) on made-up photos and scans of
+# made-up papers, keeping each picture before and after and what
 # was read on it (SCAN_CAPTURES). Then the app on the simulator, the engine
 # built optimized as on a phone: its UI tests (iOS/SnapflyUITests/
 # ScanUITests.swift), still frames of the Scan tab, Review and Save and Share
@@ -25,7 +26,7 @@ mkdir -p "$out"
 # blurred at the bottom, go into Photos on the simulator, for the walks from
 # Photos, and are not published.
 engine=0
-SCAN_CAPTURES="$PWD/$out" swift test --filter ScanFixtureTests || engine=$?
+SCAN_CAPTURES="$PWD/$out" swift test --filter "ScanFixtureTests|ScanFormFixtureTests|ScanInvoiceFixtureTests" || engine=$?
 photo=build/scan-photo.png
 blurred=build/scan-photo-blurred.png
 mkdir -p build

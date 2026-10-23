@@ -111,6 +111,13 @@ enum ScanClean {
         /// Or darker than this share of cells on both sides of it, like a
         /// table's grey header, which keeps its grey.
         var localFloor: Float = 0.94
+        /// Or darker than this share of cells on both sides of it, as a pale
+        /// watermark or a shaded row is: print, keeping its shade, where its
+        /// edge is sharp (`edgeShare`); light, evened, where it is not.
+        var paleFloor: Float = 0.985
+        /// In and round a pale fill, a pixel this share of its paper and
+        /// more in every colour is the paper's grain, and white.
+        var fillWhite: Float = 0.985
         /// How many cells each way count as its sides: a filled box up to
         /// twice as wide keeps its fill all through.
         var around = 12
@@ -120,6 +127,15 @@ enum ScanClean {
         /// out more. Read only where the change is `edgeContrast` levels or more.
         var edgeShare: Float = 0.42
         var edgeContrast: Float = 8
+        /// A crease (`uncreased`) is a dip in the paper of this many levels
+        /// and more, to no darker than `creaseFaint` of the paper beside it,
+        /// in `creaseReach` of the strips along it, the two at its ends
+        /// among them, and slanted at most `creaseSlant`.
+        var creaseStrips = 32
+        var creaseDepth: Float = 4
+        var creaseFaint: Float = 0.6
+        var creaseReach = 0.85
+        var creaseSlant = 0.01
         /// Passes of a cell's mean with its eight neighbours.
         var smoothing = 1
         /// A dim part of the page is brightened at most as if its paper
@@ -186,7 +202,9 @@ enum ScanClean {
     static func clean(_ page: ScanBitmap, _ mode: ScanColor, tuning: Tuning = .standard,
                       printBoxes: [CGRect] = []) -> ScanBitmap {
         let white = Int((tuning.whitePoint * 255).rounded(.up))
-        let even = neutralized(denoised(evened(page, tuning: tuning), grain: tuning.grain, white: white), tuning: tuning)
+        let paper = Paper(of: page, tuning: tuning)
+        let flat = uncreased(evened(page, paper: paper, tuning: tuning), tuning: tuning)
+        let even = neutralized(denoised(flat, grain: tuning.grain, white: white), tuning: tuning)
         // Sharpened first, then taken darker, so the darkening sets the print's
         // final shade: an unsharp mask run after it would drive a stroke to
         // black. The print's own darkness is read inside the boxes of text.
@@ -194,7 +212,7 @@ enum ScanClean {
         sharpen(&sharpened, tuning: tuning)
         var tuned = tuning
         tuned.blackPoint = blackPoint(forPrint: printDarkness(sharpened, tuning: tuning, boxes: printBoxes), tuning: tuning)
-        let cleaned = darkened(sharpened, tuning: tuned)
+        let cleaned = filled(darkened(sharpened, tuning: tuned), from: page, paper: paper, tuning: tuning)
         switch mode {
         case .color: return cleaned
         case .gray: return grayed(cleaned)
@@ -225,6 +243,9 @@ enum ScanClean {
         let level: (red: Float, green: Float, blue: Float)
         /// Which cells hold paper rather than print, before they were filled in.
         let paper: [Bool]
+        /// Which cells hold a pale fill printed with sharp edges, a watermark
+        /// or a shaded row, or its edge: it keeps its own shade (`filled`).
+        let fills: [Bool]
         /// The patches darker than the paper round them, and how sharp each
         /// one's edge is, from 0 to 1: print at `edgeShare` and over, light
         /// under it; nil where it could not be read, kept as print.
@@ -278,23 +299,43 @@ enum ScanClean {
             let pageLightness = Self.lightness(level.red, level.green, level.blue)
             var paper = lightness.map { $0 >= tuning.printFloor * pageLightness }
             let firstPass = paper
-            func brightest(from row: Int, _ column: Int, step: (Int, Int)) -> Float {
+            func brightest(from row: Int, _ column: Int, step: (Int, Int), reach: Int = tuning.around) -> Float {
                 var best: Float = 0
-                for k in 1...max(1, tuning.around) {
+                for k in 1...max(1, reach) {
                     let r = row + step.0 * k, c = column + step.1 * k
                     guard r >= 0, r < rows, c >= 0, c < columns else { break }
                     if firstPass[r * columns + c] { best = max(best, lightness[r * columns + c]) }
                 }
                 return best
             }
+            // And cells only a little darker than both sides, as a pale
+            // watermark or a shaded row is, looked for twice as far, as such
+            // a fill is often wide: print only where their edge is sharp, below.
+            var pale = [Bool](repeating: false, count: paper.count)
+            // The paper beside each pale cell: the dimmer of its two brighter sides.
+            var beside = [Float](repeating: 0, count: paper.count)
             for row in 0..<rows {
                 for column in 0..<columns where firstPass[row * columns + column] {
-                    let brighter = lightness[row * columns + column] / tuning.localFloor
-                    let across = brightest(from: row, column, step: (0, -1)) > brighter
-                        && brightest(from: row, column, step: (0, 1)) > brighter
-                    let down = brightest(from: row, column, step: (-1, 0)) > brighter
-                        && brightest(from: row, column, step: (1, 0)) > brighter
-                    if across || down { paper[row * columns + column] = false }
+                    let left = brightest(from: row, column, step: (0, -1)), right = brightest(from: row, column, step: (0, 1))
+                    let up = brightest(from: row, column, step: (-1, 0)), below = brightest(from: row, column, step: (1, 0))
+                    let here = lightness[row * columns + column]
+                    let brighter = here / tuning.localFloor, paler = here / tuning.paleFloor
+                    if (left > brighter && right > brighter) || (up > brighter && below > brighter) {
+                        paper[row * columns + column] = false
+                        continue
+                    }
+                    let far = 2 * tuning.around
+                    let farLeft = brightest(from: row, column, step: (0, -1), reach: far)
+                    let farRight = brightest(from: row, column, step: (0, 1), reach: far)
+                    let farUp = brightest(from: row, column, step: (-1, 0), reach: far)
+                    let farBelow = brightest(from: row, column, step: (1, 0), reach: far)
+                    if farLeft > paler && farRight > paler {
+                        pale[row * columns + column] = true
+                        beside[row * columns + column] = min(farLeft, farRight)
+                    } else if farUp > paler && farBelow > paler {
+                        pale[row * columns + column] = true
+                        beside[row * columns + column] = min(farUp, farBelow)
+                    }
                 }
             }
             // A darker patch is print only where its edge is sharp, as a
@@ -315,6 +356,30 @@ enum ScanClean {
                     for n in patch { paper[n] = true }
                 }
             }
+            // A pale fill keeps its shade where its edge is sharp, as a
+            // watermark's or a shaded row's is printed, with the cells round
+            // it, which hold its edge; a soft one, the light's, is evened.
+            var fills = [Bool](repeating: false, count: paper.count)
+            let paleFills = Self.patches(paper: pale.map { !$0 }, firstPass: firstPass, columns: columns, rows: rows)
+            for found in paleFills where found.count >= 2 && !Self.spans(found, columns: columns, rows: rows) {
+                guard let sharpness = edges.sharpness(of: found, tuning: tuning), sharpness >= tuning.edgeShare else { continue }
+                // A wide fill is taken whole: the cells next to it as light as
+                // it is belong to it, where paper is too far off on one side to tell.
+                let patch = Self.grown(found, paper: Self.median(found.map { beside[$0] }), lightness: lightness,
+                                       firstPass: firstPass, columns: columns, rows: rows)
+                guard !Self.spans(patch, columns: columns, rows: rows) else { continue }
+                darker.append((patch, sharpness))
+                for n in patch {
+                    let row = n / columns, column = n % columns
+                    for r in max(0, row - 1)...min(rows - 1, row + 1) {
+                        for c in max(0, column - 1)...min(columns - 1, column + 1) {
+                            paper[r * columns + c] = false
+                            fills[r * columns + c] = true
+                        }
+                    }
+                }
+            }
+            self.fills = fills
             self.darker = darker
             self.edges = edges
             self.paper = paper
@@ -354,6 +419,32 @@ enum ScanClean {
                 }
             }
             return Float(best)
+        }
+
+        /// A patch with the cells next to it, and next to those, that are as
+        /// light as the cell beside them: within 1 %, and within a third of
+        /// how much lighter the `paper` beside it is, so a fill is followed
+        /// across a page lit unevenly, and its sharp edge, a step from it to
+        /// the paper, is never crossed.
+        private static func grown(_ patch: [Int], paper: Float, lightness: [Float], firstPass: [Bool], columns: Int,
+                                  rows: Int) -> [Int] {
+            func neighbours(_ n: Int) -> [Int] {
+                let row = n / columns, column = n % columns
+                return [(row - 1, column), (row + 1, column), (row, column - 1), (row, column + 1)]
+                    .filter { $0.0 >= 0 && $0.0 < rows && $0.1 >= 0 && $0.1 < columns }.map { $0.0 * columns + $0.1 }
+            }
+            let level = median(patch.map { lightness[$0] })
+            var inside = Set(patch)
+            let step = min(level * 0.01, (paper - level) / 3)
+            guard step > 0 else { return patch }
+            var stack = patch
+            while let n = stack.popLast() {
+                for m in neighbours(n) where firstPass[m] && !inside.contains(m) && abs(lightness[m] - lightness[n]) <= step {
+                    inside.insert(m)
+                    stack.append(m)
+                }
+            }
+            return Array(inside)
         }
 
         /// Whether a patch of cells reaches both of two opposite sides of the
@@ -450,7 +541,11 @@ enum ScanClean {
     /// paper's colour where it is, 255 for the paper itself. A page whose
     /// paper is dark is left as it is.
     static func evened(_ page: ScanBitmap, tuning: Tuning = .standard) -> ScanBitmap {
-        let paper = Paper(of: page, tuning: tuning)
+        evened(page, paper: Paper(of: page, tuning: tuning), tuning: tuning)
+    }
+
+    /// The same, with the paper already measured.
+    static func evened(_ page: ScanBitmap, paper: Paper, tuning: Tuning) -> ScanBitmap {
         let pageLightness = Paper.lightness(paper.level.red, paper.level.green, paper.level.blue)
         guard pageLightness >= tuning.darkestPaper else { return page }
         let w = page.width, h = page.height, cell = Float(paper.cell)
