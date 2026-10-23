@@ -39,7 +39,7 @@ final class ScanFormFixtureTests: XCTestCase {
         let folds = ScanCleaner.folds(in: photo.image, quad: quad).map { fold in
             String(format: "%.3f/%.3f", 1 - fold.left.y, 1 - fold.right.y)
         }
-        let seams = placed.map { place in variant.folds.map { Int(place.y($0.at * ScanForm.height)) } } ?? []
+        let seams = placed.map { place in variant.folds.map { Int(place.y($0.at * Double(ScanForm.height))) } } ?? []
         let left = ScanCleaner.shifts(in: try XCTUnwrap(ScanCleaner.bitmap(prepared.straightened)), at: seams).map { shift in
             String(format: "seam %d across %+.1f%+.4fx up %+.1f%+.4fy", shift.seam, shift.across.offset, shift.across.slope,
                    shift.up.offset, shift.up.slope)
