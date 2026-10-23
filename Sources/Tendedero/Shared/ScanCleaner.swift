@@ -580,7 +580,32 @@ enum ScanCleaner {
     /// with one channel where they are grey.
     static func cleaned(_ page: CGImage, _ mode: ScanColor) -> CGImage? {
         guard let bitmap = bitmap(page) else { return nil }
-        return image(ScanClean.clean(bitmap, mode), gray: mode.isGray)
+        return image(edgeCleaned(ScanClean.clean(bitmap, mode)), gray: mode.isGray)
+    }
+
+    /// Nothing of what the sheet lay on stays dark along the page's own
+    /// edge: the outermost band, where a page keeps its margin, is made
+    /// white. A dark page — a screen photographed — keeps its own edges.
+    static func edgeCleaned(_ bitmap: ScanBitmap) -> ScanBitmap {
+        let w = bitmap.width, h = bitmap.height
+        guard w > 80, h > 80 else { return bitmap }
+        var column: [UInt8] = []
+        let step = max(1, h / 80)
+        var y = 0
+        while y < h { column.append(bitmap.brightness(x: w / 2, y: y)); y += step }
+        column.sort()
+        guard column[column.count / 2] > 128 else { return bitmap }
+        let bandX = max(2, w / 80), bandY = max(2, h / 80)
+        var out = bitmap
+        for y in 0..<h {
+            for x in 0..<w where x < bandX || x >= w - bandX || y < bandY || y >= h - bandY {
+                let i = (y * w + x) * 4
+                out.pixels[i] = 255
+                out.pixels[i + 1] = 255
+                out.pixels[i + 2] = 255
+            }
+        }
+        return out
     }
 
     // MARK: Checking
