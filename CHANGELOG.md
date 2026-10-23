@@ -20,7 +20,10 @@ keeps a download of each version.
   a flatbed scanner comes out as clean: the thin crease where it was folded
   is evened out like a shadow, while a pale watermark or a shaded row keeps
   the tint it was printed in, even where it reaches the sheet's edge,
-  instead of going white in places.
+  instead of going white in places. The orange note that less text reads
+  after cleaning no longer comes for a typewriter's Z or O read once as 2
+  or 0, and the part of a folded sheet below a fold is laid true where a
+  hand's shadow hid one end of the fold.
 
 - On the iPhone, PDF projects: put photos, scans, screenshots and PDFs
   together into one PDF, or open a PDF to put its pages in order and cover

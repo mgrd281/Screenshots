@@ -32,6 +32,18 @@ final class ScanContentTests: XCTestCase {
         XCTAssertEqual(ScanContent.lost(before: invoice, after: after), [])
     }
 
+    /// A typewriter's Z read as 2, or its O as 0, one reading to the next, is
+    /// the same number; a letter away from digits stays a letter.
+    func testALetterReadForADigitBesideDigitsIsTheSameNumber() {
+        let before = [line("200.0 G", row: 0), line("Fax 040-1234567", row: 1)]
+        let after = [line("Z00.0 G", row: 0), line("Fax O40-1234567", row: 1)]
+        XCTAssertEqual(ScanContent.lost(before: before, after: after), [])
+        XCTAssertEqual(ScanContent.readAsDigits("Z00.0 Gesamt O4O"), "200.0 Gesamt 040")
+        XCTAssertEqual(ScanContent.readAsDigits("Schwarz 2 Seite"), "Schwarz 2 Seite")
+        XCTAssertFalse(ScanContent.lost(before: [line("Z00.0 G", row: 0)], after: [line("Z0.0 G", row: 0)]).isEmpty,
+                       "a digit gone is still gone")
+    }
+
     func testANumberGoneOrChangedMarksItsLine() {
         var after = invoice
         // 49,80 read as 49,30, and the total not read at all.

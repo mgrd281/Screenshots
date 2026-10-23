@@ -74,15 +74,18 @@ enum ScanFormMeasure {
     /// Measured on a cleaned page that shows `frame` of the form, in the
     /// form's own pixels from its top left: all of it, or less where its
     /// edges were cut away.
+    /// Where the form lies on the page is read from its rules (`ScanFormPlace`),
+    /// or, where they cannot be read, taken as `frame`.
     static func measure(_ page: ScanBitmap, reading: [Finder.TextLine], variant: ScanForm.Variant,
                         frame: CGRect = CGRect(x: 0, y: 0, width: ScanForm.width, height: ScanForm.height)) -> ScanFormMeasures {
         var result = ScanFormMeasures()
         let w = page.width, h = page.height
         result.size = (w, h)
-        let sx = Double(w) / frame.width, sy = Double(h) / frame.height
+        let place = ScanFormPlace.of(page)
+        let sx = place?.scale ?? Double(w) / frame.width, sy = place?.scale ?? Double(h) / frame.height
         let to300 = 1 / sx
-        func px(_ x: Double) -> Double { (x - frame.minX) * sx }
-        func py(_ y: Double) -> Double { (y - frame.minY) * sy }
+        func px(_ x: Double) -> Double { place?.x(x) ?? (x - frame.minX) * sx }
+        func py(_ y: Double) -> Double { place?.y(y) ?? (y - frame.minY) * sy }
         // The paper: away from all that is printed, typed or read, and from the edges.
         var paper = [Bool](repeating: true, count: w * h)
         func clear(_ x0: Int, _ y0: Int, _ x1: Int, _ y1: Int) {

@@ -467,19 +467,23 @@ enum ScanCleaner {
     /// or up and down. Nil where the print there says too little to tell.
     static func shift(of plane: [UInt8], _ w: Int, _ h: Int, seam: Int,
                               sideways: Bool) -> (slope: Double, offset: Double)? {
-        let band = 44, gap = 6, reach = 9
+        // A part can be laid a sixtieth of the page's width off, as where a
+        // hand's shadow hides one end of a fold; a shift past the first few
+        // pixels must be seen clearly. Read from near each side, where a
+        // form's box has its sides and little else crosses a fold.
+        let band = 44, gap = 6, reach = sideways ? max(9, w / 60) : 9, near = 9
         let above = (seam - band)..<(seam - gap), below = (seam + gap)..<(seam + band)
         guard above.lowerBound > 2, below.upperBound < h - 2 else { return nil }
         var found: [(at: Double, by: Int, weight: Double)] = []
-        let chunks = 9
+        let chunks = 11
         for chunk in 0..<chunks {
-            let x0 = w / 10 + (w * 4 / 5) * chunk / chunks
-            let x1 = w / 10 + (w * 4 / 5) * (chunk + 1) / chunks
+            let x0 = w / 25 + (w * 23 / 25) * chunk / chunks
+            let x1 = w / 25 + (w * 23 / 25) * (chunk + 1) / chunks
             guard x1 - x0 > 40 else { continue }
             let a = profile(plane, w, h, rows: above, columns: x0..<x1, sideways: sideways)
             let b = profile(plane, w, h, rows: below, columns: x0..<x1, sideways: sideways)
             guard a.reduce(0, +) + b.reduce(0, +) > 2000, let best = alignment(a, b, reach: reach),
-                  best.gain >= 1.1 else { continue }
+                  best.gain >= (abs(best.shift) > near ? 1.5 : 1.1) else { continue }
             found.append((Double(x0 + x1) / 2, best.shift, best.gain - 1))
         }
         guard found.count >= 2 else { return nil }

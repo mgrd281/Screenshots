@@ -153,12 +153,18 @@ final class ScanFormFixtureTests: XCTestCase {
             let (_, prepared, _, _) = try await made(variant)
             XCTAssertTrue(prepared.checked.textKept ?? false, "\(variant): every line reads after cleaning")
             XCTAssertFalse(prepared.checked.issues.contains { $0.kind == .lessText }, "\(variant): no text lost")
-            func numbers(_ lines: [Finder.TextLine]) -> Set<String> {
-                Set(lines.flatMap { ScanFormMeasure.tokens(of: $0.string) }.filter { $0.contains(where: \.isNumber) })
+            // The form's own numbers, each as its digits: those read before
+            // cleaning must be read after, a typewriter's Z or O read either
+            // way, a reading that splits or spaces them otherwise alike.
+            let known = Set(ScanForm.text.flatMap { ScanContent.numbers(in: $0) })
+            func digits(_ lines: [Finder.TextLine]) -> [String] {
+                lines.map { ScanContent.digits(in: ScanContent.readAsDigits($0.string)) }
             }
-            let before = numbers(Finder.lines(in: prepared.straightened) ?? [])
-            let after = numbers(prepared.checked.reading)
-            XCTAssertTrue(before.subtracting(after).isEmpty, "\(variant): numbers lost \(before.subtracting(after))")
+            let before = digits(Finder.lines(in: prepared.straightened) ?? []), after = digits(prepared.checked.reading)
+            let read = known.filter { number in before.contains { $0.contains(number) } }
+            let lost = read.filter { number in !after.contains { $0.contains(number) } }
+            XCTAssertFalse(read.isEmpty, "\(variant): the form's numbers are read before cleaning")
+            XCTAssertTrue(lost.isEmpty, "\(variant): numbers lost \(lost.sorted())")
         }
     }
 }

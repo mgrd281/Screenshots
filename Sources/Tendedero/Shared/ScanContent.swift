@@ -30,7 +30,7 @@ enum ScanContent {
             guard !numbers.isEmpty else { continue }
             let row: [Line] = after.filter { sameRow($0.box, line.box) }
             let ordered: [Line] = row.sorted { $0.box.minX < $1.box.minX }
-            let read: String = ordered.map { digits(in: $0.text) }.joined()
+            let read: String = ordered.map { digits(in: readAsDigits($0.text)) }.joined()
             if numbers.contains(where: { !read.contains($0) }) { places.append(line.box) }
         }
         let counted = before.filter { letters(in: $0.text) >= shortest }
@@ -66,6 +66,26 @@ enum ScanContent {
         }
         if current.count >= 2 { numbers.append(current) }
         return numbers
+    }
+
+    /// A line with the letters a reading takes for digits, beside a digit,
+    /// read as those digits: "Z00.0" as "200.0", "O4O-12" as "040-12". A
+    /// typewriter's Z and 2, or O and 0, are read either way from one reading
+    /// to the next, and that is not a number lost.
+    static func readAsDigits(_ text: String) -> String {
+        let alike: [Character: Character] = ["Z": "2", "z": "2", "O": "0", "o": "0", "D": "0", "I": "1", "l": "1",
+                                              "|": "1", "S": "5", "s": "5", "B": "8", "G": "6", "g": "9"]
+        let characters = Array(text)
+        func digitNear(_ i: Int) -> Bool {
+            for j in [i - 1, i + 1] where j >= 0 && j < characters.count {
+                if characters[j].isASCII, characters[j].isNumber { return true }
+            }
+            return false
+        }
+        return String(characters.indices.map { i in
+            if let digit = alike[characters[i]], digitNear(i) { return digit }
+            return characters[i]
+        })
     }
 
     /// A line's digits, nothing else.
