@@ -58,7 +58,9 @@ final class ScanFormFixtureTests: XCTestCase {
         let areas = prepared.checked.issues.compactMap(\.area)
         let gone = (Finder.lines(in: prepared.straightened) ?? []).filter { line in
             areas.contains { !$0.intersection(line.box).isNull }
-        }.map(\.string)
+        }.map(\.string) + prepared.checked.reading.filter { line in
+            areas.contains { !$0.insetBy(dx: -0.02, dy: -0.01).intersection(line.box).isNull }
+        }.map { "after: " + $0.string }
         let done = (photo, prepared, measures, seconds)
         Self.made[variant] = done
         ScanFixtureTests.keep(photo.image, "form-\(variant.rawValue)-photo", longest: 1600)
