@@ -44,6 +44,11 @@ final class ScanFormFixtureTests: XCTestCase {
             String(format: "seam %d across %+.1f%+.4fx up %+.1f%+.4fy", shift.seam, shift.across.offset, shift.across.slope,
                    shift.up.offset, shift.up.slope)
         }
+        // Which lines read before cleaning were not read after, as the check saw them.
+        let areas = prepared.checked.issues.compactMap(\.area)
+        let gone = (Finder.lines(in: prepared.straightened) ?? []).filter { line in
+            areas.contains { !$0.intersection(line.box).isNull }
+        }.map(\.string)
         let done = (photo, prepared, measures, seconds)
         Self.made[variant] = done
         ScanFixtureTests.keep(photo.image, "form-\(variant.rawValue)-photo", longest: 1600)
@@ -56,11 +61,13 @@ final class ScanFormFixtureTests: XCTestCase {
             (\(Int(ScanGeometry.dpi(width: prepared.cleaned.width, height: prepared.cleaned.height))) dpi on A4), \
             \(String(format: "%.1f", seconds)) s on this Mac (debug build)
             \(measures)
+            lost lines: \(gone)
             placed: \(place)
             folds found (down from the top): \(folds); at the seams still: \(left.isEmpty ? "nothing read" : left.joined(separator: "; "))
             issues: \(prepared.checked.issues.map(\.kind.rawValue))
 
             """)
+        print("FORM \(variant.rawValue): placed \(place); folds \(folds); seams still \(left); lost lines \(gone)")
         print("FORM \(variant.rawValue): \(measures) issues \(prepared.checked.issues.map(\.kind.rawValue))")
         return done
     }
