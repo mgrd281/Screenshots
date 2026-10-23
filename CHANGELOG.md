@@ -6,6 +6,18 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, Scan cleans a real photo of a paper better, still only by
+  making pixels lighter or darker and moving them, never by redrawing or
+  retyping anything. A fold or a soft shadow from a hand or the phone is
+  evened out like the rest of the paper, while a printed grey box or a
+  photo keeps its grey: Snapfly tells them apart by their edges, soft for
+  light, sharp for print. A folded sheet is made flat part by part: where
+  both its edges bend at a fold, each part gets its own perspective and the
+  parts are joined so lines go on without a step. Pink, yellow or blue paper
+  turns white while a blue signature or a red stamp keeps its colour. Light
+  print, as from a typewriter or a carbon copy, comes out dark. And the
+  edges are cut in until nothing of the table or floor is left.
+
 - On the iPhone, PDF projects: put photos, scans, screenshots and PDFs
   together into one PDF, or open a PDF to put its pages in order and cover
   them. Under the scan card, "PDF erstellen und bearbeiten" offers Merge
