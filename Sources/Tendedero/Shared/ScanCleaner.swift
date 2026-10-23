@@ -544,7 +544,12 @@ enum ScanCleaner {
                   best.gain >= (abs(best.shift) > near ? 1.5 : 1.1) else { continue }
             found.append((Double(x0 + x1) / 2, best.shift, best.gain - 1))
         }
-        return found
+        // Text above a fold is not the text below it, and a chunk can match
+        // it anywhere: the readings count only where most of them agree.
+        guard !found.isEmpty else { return [] }
+        let middle = found.map(\.by).sorted()[found.count / 2]
+        let agreeing = found.filter { abs($0.by - middle) <= 3 }
+        return agreeing.count * 5 >= found.count * 3 ? agreeing : []
     }
 
     /// The lines down the page crossing a seam, each where it stands above
@@ -593,8 +598,10 @@ enum ScanCleaner {
     private static func profile(_ plane: [UInt8], _ w: Int, _ h: Int, rows: Range<Int>, columns: Range<Int>,
                                 sideways: Bool) -> [Double] {
         // Faint print on tinted paper, a box's rule in a fold's shadow, turns
-        // the brightness by little more than half what black on white does.
-        let least = 30.0
+        // the brightness by little more than half what black on white does;
+        // up and down, a fold's own shadow turns it by that much at its
+        // edges, so only print's turns count there.
+        let least = sideways ? 30.0 : 60.0
         func turn(_ value: Int) -> Double { max(0, Double(value) - least) }
         if sideways {
             return columns.map { x in
