@@ -75,11 +75,76 @@ enum ScanCleaner {
         return (straight, found.turns, found.skew)
     }
 
+    /// What is left bent, as a curl, once the parts are laid flat: the one
+    /// long line of the page that still lies in the curl is found, its own
+    /// height in each column is measured, and the pixels of the curl are
+    /// moved up or down by whole rows so that line lies straight again,
+    /// never redrawn and never re-sampled, so no mark is blurred.
+    static func uncurled(_ page: CGImage, from start: Double = 0.84) -> CGImage? {
+        guard let bitmap = bitmap(page) else { return page }
+        let w = bitmap.width, h = bitmap.height
+        let top = Int(Double(h) * start)
+        guard w > 120, h > 120, top > h / 10, h - top > h / 40 else { return page }
+        let plane = bitmap.brightness
+        let most = max(4, h / 300)
+        // The first long line in the curl: a row most of the width is dark on.
+        var line = -1
+        var row = top
+        while row < h - h / 30, line < 0 {
+            var dark = 0
+            var x = 0
+            while x < w { if plane[row * w + x] < 200 { dark += 1 }; x += 1 }
+            if dark > w / 2 { line = row }
+            row += 1
+        }
+        guard line >= 0 else { return page }
+        // Each column's own height of that line, near where it mostly lies.
+        var raw = [Double](repeating: 0, count: w)
+        for x in 0..<w {
+            var bestY = line, bestValue = 256.0
+            var y = max(top, line - most)
+            while y <= min(h - 1, line + most) {
+                let value = Double(plane[y * w + x])
+                if value < bestValue { bestValue = value; bestY = y }
+                y += 1
+            }
+            raw[x] = Double(line - bestY)
+        }
+        // Smoothed and kept in whole rows, so a grain never bends a line.
+        var smooth = [Int](repeating: 0, count: w)
+        let reach = max(2, w / 60)
+        for x in 0..<w {
+            var sum = 0.0, n = 0
+            var k = max(0, x - reach)
+            while k <= min(w - 1, x + reach) { sum += raw[k]; n += 1; k += 1 }
+            smooth[x] = n > 0 ? Int((sum / Double(n)).rounded()) : 0
+        }
+        var out = bitmap
+        bitmap.pixels.withUnsafeBufferPointer { src in
+            out.pixels.withUnsafeMutableBufferPointer { dst in
+                for y in top..<h {
+                    for x in 0..<w {
+                        let fromY = min(max(y - smooth[x], top), h - 1)
+                        let o = (y * w + x) * 4
+                        let s = (fromY * w + x) * 4
+                        dst[o] = src[s]
+                        dst[o + 1] = src[s + 1]
+                        dst[o + 2] = src[s + 2]
+                    }
+                }
+            }
+        }
+        return image(out, gray: false)
+    }
+
     /// A page already flat and upright, cleaned in `mode` and checked, as
     /// when only its colours change.
     static func finished(_ straight: CGImage, turns: Int, skew: Double, mode: ScanColor, photo: CGImage?) async -> Prepared? {
         // Nothing of what the sheet lay on is left along its edges.
-        let page = trimmed(straight)
+        let cut = trimmed(straight)
+        // What is left bent, as a curl, is taken out after the edges are
+        // cut, so its own shift never moves the page within the cut.
+        let page = uncurled(cut) ?? cut
         guard let cleaned = cleaned(page, mode) else { return nil }
         let checked = await check(before: page, after: cleaned, mode: mode, photo: photo)
         return Prepared(straightened: page, cleaned: cleaned, turns: turns, skew: skew, checked: checked)
