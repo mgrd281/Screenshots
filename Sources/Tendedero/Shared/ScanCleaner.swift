@@ -26,6 +26,20 @@ enum ScanCleaner {
         let turns: Int
         let skew: Double
         let checked: Checked
+        /// What the guard did with the lines whose reading cleaning changed.
+        var guarded = Guard()
+    }
+
+    /// The lines whose reading cleaning changed (`guarded`), and what was
+    /// done with each: read as before on its own, cleaned again gently,
+    /// kept as the light alone leaves it, or left cleaned where even that
+    /// reads otherwise.
+    struct Guard: Equatable, Sendable {
+        var changed = 0
+        var alone = 0
+        var gently = 0
+        var evened = 0
+        var otherwise = 0
     }
 
     /// What the checks found.
@@ -157,42 +171,56 @@ enum ScanCleaner {
         // measured on the text it holds; the same reading then checks the
         // result, so nothing is read twice.
         let read = Finder.lines(in: page) ?? []
-        guard let cleaned = guarded(page, mode, reading: read) else { return nil }
-        let checked = await check(before: page, after: cleaned, mode: mode, photo: photo, reading: read)
-        return Prepared(straightened: page, cleaned: cleaned, turns: turns, skew: skew, checked: checked)
+        guard let made = guarded(page, mode, reading: read) else { return nil }
+        let checked = await check(before: page, after: made.0, mode: mode, photo: photo, reading: read)
+        return Prepared(straightened: page, cleaned: made.0, turns: turns, skew: skew, checked: checked, guarded: made.1)
     }
 
     /// The page cleaned, and read again: every line read surely before
-    /// that reads otherwise after, a dot, an accent or a digit gone, is
-    /// cleaned again gently, and where even that changes it, kept as the
-    /// light alone leaves it (`ScanContent.changed`, `ScanClean.redone`).
-    /// Cleaning may make text clearer, never different. Each line cleaned
-    /// again is noted in the log. Black and white, whose menu says it can
-    /// lose a mark too pale to tell from the paper, is two values only.
-    static func guarded(_ page: CGImage, _ mode: ScanColor, reading read: [Finder.TextLine]) -> CGImage? {
+    /// that reads otherwise after, a dot, an accent or a digit gone
+    /// (`ScanContent.changed`), is read again on its own, as cleaned, then
+    /// cleaned again gently, then as the light alone leaves it
+    /// (`ScanClean.redone`), and the first that reads as before is kept.
+    /// Where none does, not even the page as the light alone leaves it, the
+    /// reading differs, not the cleaning, and the line stays cleaned.
+    /// Cleaning may make text clearer, never different. What was done is
+    /// noted in the log. Black and white, whose menu says it can lose a mark
+    /// too pale to tell from the paper, is two values only.
+    static func guarded(_ page: CGImage, _ mode: ScanColor, reading read: [Finder.TextLine]) -> (CGImage, Guard)? {
         guard let bitmap = bitmap(page) else { return nil }
         let made = ScanClean.cleaned(bitmap, mode, printBoxes: read.map(\.box))
         var pixels = ScanSheet.edgeCleaned(made.page)
         guard let first = image(pixels, gray: mode.isGray) else { return nil }
-        guard mode != .blackAndWhite else { return first }
+        guard mode != .blackAndWhite else { return (first, Guard()) }
         let before = read.map { ScanContent.Read(text: $0.string, box: $0.box, confidence: $0.confidence) }
-        guard let after = Finder.reading(of: first) else { return first }
+        guard let after = Finder.reading(of: first) else { return (first, Guard()) }
         let changed = ScanContent.changed(before: before, after: after.map { ScanContent.Line(text: $0.string, box: $0.box) })
-        guard !changed.isEmpty else { return first }
-        var kept = 0
+        var done = Guard(changed: changed.count)
+        guard !changed.isEmpty else { return (first, done) }
         for box in changed {
             let said = before.first { $0.box == box }?.text ?? ""
+            if reads(pixels, box: box, as: said) {
+                done.alone += 1
+                continue
+            }
             var gentle = pixels
             ScanClean.redone(made.base, into: &gentle, box: box, .gentle, mode: mode)
             if reads(gentle, box: box, as: said) {
                 pixels = gentle
+                done.gently += 1
+                continue
+            }
+            var kept = pixels
+            ScanClean.redone(made.base, into: &kept, box: box, .kept, mode: mode)
+            if reads(kept, box: box, as: said) {
+                pixels = kept
+                done.evened += 1
             } else {
-                ScanClean.redone(made.base, into: &pixels, box: box, .kept, mode: mode)
-                kept += 1
+                done.otherwise += 1
             }
         }
-        log.info("Cleaning changed \(changed.count, privacy: .public) lines: cleaned again gently, \(kept, privacy: .public) kept as evened")
-        return image(pixels, gray: mode.isGray) ?? first
+        log.info("Cleaning changed the reading of \(done.changed, privacy: .public) lines: \(done.alone, privacy: .public) read as before on their own, \(done.gently, privacy: .public) cleaned again gently, \(done.evened, privacy: .public) kept as evened, \(done.otherwise, privacy: .public) read otherwise even as evened and left cleaned")
+        return (image(pixels, gray: mode.isGray) ?? first, done)
     }
 
     /// Whether the line in `box` reads as `said` on a page: read on its own,

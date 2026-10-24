@@ -63,29 +63,60 @@ enum ScanContent {
     /// The lines whose reading changed with cleaning (`ScanCleaner`'s
     /// guard): each line read surely before, of a few letters at least,
     /// whose every character, an umlaut's dots, an accent, an @ and a digit
-    /// among them, is not read in the same order on its row after. Spaces
-    /// do not count, and more read after, as a neighbour's words joined to
-    /// the line, is not less. Cleaning may make text clearer, never
-    /// different, so each of these is cleaned again more gently.
+    /// among them, is not read in the same order on its row after
+    /// (`says`). Spaces do not count, and more read after, as a neighbour's
+    /// words joined to the line or a mark the reading before missed, is not
+    /// less. Cleaning may make text clearer, never different, so each of
+    /// these is cleaned again more gently.
     static func changed(before: [Read], after: [Line]) -> [CGRect] {
         before.compactMap { line in
             guard line.confidence >= sure, letters(in: line.text) >= shortest else { return nil }
             let row = after.filter { sameRow($0.box, line.box) }.sorted { $0.box.minX < $1.box.minX }
-            let read = compact(row.map(\.text).joined())
-            return read.contains(compact(line.text)) ? nil : line.box
+            return says(row.map(\.text).joined(), line.text) ? nil : line.box
         }
     }
 
     /// Whether a line read after cleaning says what it said before: every
-    /// character in the same order, spaces aside.
+    /// character in the same order, spaces aside, each with at least the
+    /// marks it had. A mark read after and not before, an umlaut's dots the
+    /// photo left too faint, is the print made clearer: cleaning only makes
+    /// a pixel darker or lighter and never draws one.
     static func says(_ after: String, _ before: String) -> Bool {
-        compact(after).contains(compact(before))
+        let read = marked(compact(after)), said = marked(compact(before))
+        guard !said.isEmpty else { return true }
+        guard read.count >= said.count else { return false }
+        for start in 0...(read.count - said.count) where (0..<said.count).allSatisfy({ n in
+            read[start + n].letter == said[n].letter && read[start + n].marks.isSuperset(of: said[n].marks)
+        }) {
+            return true
+        }
+        return false
     }
 
-    /// A line's characters without its spaces, each as it was read.
-    static func compact(_ text: String) -> String {
-        String(text.filter { !$0.isWhitespace })
+    /// Each character of a text as its letter and the marks over or under it.
+    private static func marked(_ text: String) -> [(letter: String, marks: Set<Unicode.Scalar>)] {
+        text.map { character in
+            let scalars = String(character).decomposedStringWithCanonicalMapping.unicodeScalars
+            let marks = scalars.filter { $0.properties.generalCategory == .nonspacingMark }
+            var letter = String.UnicodeScalarView()
+            letter.append(contentsOf: scalars.filter { $0.properties.generalCategory != .nonspacingMark })
+            return (String(letter), Set(marks))
+        }
     }
+
+    /// A line's characters without its spaces, each as it was read; every
+    /// kind of dash, and of centred dot, as one, as a reading gives either.
+    static func compact(_ text: String) -> String {
+        String(text.compactMap { character -> Character? in
+            if character.isWhitespace { return nil }
+            if dashes.contains(character) { return "-" }
+            if centredDots.contains(character) { return "·" }
+            return character
+        })
+    }
+
+    private static let dashes: Set<Character> = ["-", "\u{2010}", "\u{2011}", "\u{2012}", "\u{2013}", "\u{2014}", "\u{2212}"]
+    private static let centredDots: Set<Character> = ["·", "\u{2022}", "\u{2219}", "\u{22C5}"]
 
     /// Whether a ballpoint's or a stamp's colour crosses print in a place,
     /// from 0 to 1 from the bottom left: strongly coloured strokes over a

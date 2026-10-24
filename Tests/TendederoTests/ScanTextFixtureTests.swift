@@ -97,6 +97,8 @@ final class ScanTextFixtureTests: XCTestCase {
         let after: Int
         let sure: Float
         let box: CGRect?
+        let readBefore: String
+        let readAfter: String
     }
 
     private func lines(_ made: Made) -> [Line] {
@@ -105,14 +107,19 @@ final class ScanTextFixtureTests: XCTestCase {
             let before = said(made.before, text), after = said(made.after, text)
             return Line(print: print, text: text, before: before.map { distance($0.text, truth) } ?? truth.count,
                         after: after.map { distance($0.text, truth) } ?? truth.count, sure: before?.sure ?? 0,
-                        box: after?.box)
+                        box: after?.box, readBefore: before?.text ?? "", readAfter: after?.text ?? "")
         }
     }
 
     private func report(_ dpi: Int, _ made: Made, _ lines: [Line]) {
+        let done = made.prepared.guarded
         var text = "text letter at \(dpi) dpi: prepared in \(String(format: "%.1f", made.seconds)) s on this Mac (debug build)\n"
+        text += "  guard: \(done.changed) lines read otherwise after cleaning; \(done.alone) read as before on their own, "
+            + "\(done.gently) cleaned again gently, \(done.evened) kept as evened, \(done.otherwise) read otherwise even as evened\n"
         for line in lines {
-            text += "  \(line.print.rawValue) \(line.text): before \(line.before), after \(line.after) changed, sure \(String(format: "%.2f", line.sure))\n"
+            text += "  \(line.print.rawValue) \(line.text): before \(line.before), after \(line.after) wrong, sure \(String(format: "%.2f", line.sure))"
+            if line.before > 0 || line.after > 0 { text += " (read \"\(line.readBefore)\", then \"\(line.readAfter)\")" }
+            text += "\n"
         }
         print(text)
         ScanFixtureTests.write("text-\(dpi).txt", text)
@@ -120,26 +127,26 @@ final class ScanTextFixtureTests: XCTestCase {
 
     // MARK: Checks
 
-    /// Cleaning never changes what a line surely read says: not a dot, not
-    /// an accent, not a digit.
+    /// Cleaning never changes a character read right: not a dot, not an
+    /// accent, not a digit. Every line read surely and as printed before
+    /// reads as printed after, and the letter as a whole reads no worse.
     func testCleaningChangesNoCharacterOfALineReadSurely() async throws {
         for dpi in [200, 150] {
             let made = try await made(dpi: dpi)
             let lines = lines(made)
             report(dpi, made, lines)
-            // A line read exactly before stays exact; one Vision already misread
-            // before is not held to more than a character's noise.
-            for line in lines where line.sure >= ScanContent.sure {
-                XCTAssertLessThanOrEqual(line.after, line.before == 0 ? 0 : line.before + 1,
-                                         "\(dpi) dpi: \(line.text) reads worse after cleaning")
+            for line in lines where line.sure >= ScanContent.sure && line.before == 0 {
+                XCTAssertEqual(line.after, 0, "\(dpi) dpi: \(line.text) read as \"\(line.readAfter)\" after cleaning")
             }
+            XCTAssertLessThanOrEqual(lines.reduce(0) { $0 + $1.after }, lines.reduce(0) { $0 + $1.before },
+                                     "\(dpi) dpi: the letter reads no worse")
         }
     }
 
-    /// At 200 dots an inch the body reads as printed after cleaning, and the
-    /// grey column no worse than the photo did; its share of right characters
-    /// (the brief asks 99.5 %) is reported, since Vision itself misreads a few
-    /// 7 pt words in the photo.
+    /// At 200 dots an inch every line reads as printed, after cleaning: the
+    /// body all of it, the grey column 99.5 % of its characters. A dash or a
+    /// centred dot read as another of its kind is the same character
+    /// (`ScanContent.compact`).
     func testTheLetterReadsAsPrintedAfterCleaning() async throws {
         let made = try await made(dpi: 200)
         let lines = lines(made)
@@ -148,14 +155,14 @@ final class ScanTextFixtureTests: XCTestCase {
         let greyAccuracy = 1 - Double(grey.reduce(0) { $0 + $1.after }) / Double(greyCharacters)
         print("TEXT 200 dpi: grey column \(String(format: "%.4f", greyAccuracy)), body changed \(body.reduce(0) { $0 + $1.after })")
         XCTAssertEqual(body.reduce(0) { $0 + $1.after }, 0, "the body as printed: \(body.filter { $0.after > 0 }.map(\.text))")
-        XCTAssertLessThanOrEqual(grey.reduce(0) { $0 + $1.after }, grey.reduce(0) { $0 + $1.before },
-                                 "the grey column no worse than the photo: \(grey.filter { $0.after > $0.before }.map(\.text))")
+        XCTAssertGreaterThanOrEqual(greyAccuracy, 0.995,
+                                    "the grey column: \(grey.filter { $0.after > 0 }.map { "\($0.text) read \($0.readAfter)" })")
     }
 
-    /// The grey print comes out darker than it was photographed: in each of
-    /// its lines, the middle of its darkest 30 % of pixels is darker after
-    /// than before (the brief's 70 is reported, not asserted); and the blue
-    /// headings keep their hue.
+    /// The grey print comes out dark: in each of its lines, the middle of
+    /// the darkest 30 % of the pixels in the box round its ink at 70 or
+    /// darker; and the blue headings keep their hue. Vision's own box, with
+    /// its margin of paper, is reported beside it.
     func testTheGreyPrintIsDarkAndTheBlueStaysBlue() async throws {
         for dpi in [200, 150] {
             let made = try await made(dpi: dpi)
@@ -165,9 +172,10 @@ final class ScanTextFixtureTests: XCTestCase {
                 let box = try XCTUnwrap(line.box, "\(line.text) is read")
                 let pixels = self.pixels(page, in: box)
                 if line.print == .grey {
-                    let middle = self.darkest(pixels), was = self.darkest(self.pixels(photo, in: box))
-                    print("TEXT \(dpi) dpi darkest 30 %: \(line.text) \(was) -> \(middle)")
-                    XCTAssertLessThan(middle, was, "\(dpi) dpi: \(line.text) darker")
+                    let inked = self.inked(page, in: box)
+                    let middle = self.darkest(self.pixels(page, in: inked)), was = self.darkest(self.pixels(photo, in: inked))
+                    print("TEXT \(dpi) dpi darkest 30 %: \(line.text) \(was) -> \(middle), in Vision's box \(self.darkest(pixels))")
+                    XCTAssertLessThanOrEqual(middle, 70, "\(dpi) dpi: \(line.text) dark enough")
                 } else {
                     let inked = pixels.filter { ScanClean.brightness($0.0, $0.1, $0.2) < 200 }
                     XCTAssertGreaterThan(inked.count, 20, "\(dpi) dpi: \(line.text) has ink")
@@ -179,6 +187,24 @@ final class ScanTextFixtureTests: XCTestCase {
                 }
             }
         }
+    }
+
+    /// The part of a box its ink reaches: the rows and columns with a pixel
+    /// darker than 160.
+    private func inked(_ page: ScanBitmap, in box: CGRect) -> CGRect {
+        let w = Double(page.width), h = Double(page.height)
+        let x0 = max(0, Int(box.minX * w)), x1 = min(page.width, Int(box.maxX * w))
+        let y0 = max(0, Int((1 - box.maxY) * h)), y1 = min(page.height, Int((1 - box.minY) * h))
+        var left = x1, right = x0, top = y1, bottom = y0
+        for y in y0..<max(y0, y1) {
+            for x in x0..<max(x0, x1) {
+                let i = (y * page.width + x) * 4
+                guard ScanClean.brightness(page.pixels[i], page.pixels[i + 1], page.pixels[i + 2]) < 160 else { continue }
+                left = min(left, x); right = max(right, x + 1); top = min(top, y); bottom = max(bottom, y + 1)
+            }
+        }
+        guard right > left, bottom > top else { return box }
+        return CGRect(x: Double(left) / w, y: 1 - Double(bottom) / h, width: Double(right - left) / w, height: Double(bottom - top) / h)
     }
 
     /// The middle of the darkest 30 % of a box's pixels.

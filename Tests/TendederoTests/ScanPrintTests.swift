@@ -106,6 +106,36 @@ final class ScanPrintTests: XCTestCase {
         for dot in dots { XCTAssertLessThan(darkest(after, dot), darkest(before, dot), "the dot at \(dot.x) darker") }
     }
 
+    /// The middle of the darkest 30 % of the pixels where a line's letters are.
+    private func darkest(_ page: ScanBitmap, top: Int, count: Int = 24, size: Int = 14) -> UInt8 {
+        var values: [UInt8] = []
+        for y in (top - 5)..<(top + size) { for x in 40..<(40 + count * 9) { values.append(page.brightness(x: x, y: y)) } }
+        let dark = values.sorted().prefix(values.count * 3 / 10)
+        return dark[dark.startIndex + dark.count / 2]
+    }
+
+    /// A thin light face, its strokes a pixel wide, is toned further, so
+    /// the body of its ink comes out dark and not only the middles of its
+    /// strokes; a line whose ink is dark enough once toned is not.
+    func testAThinLightFaceIsTakenFurtherAndADarkEnoughOneIsNot() {
+        var undriven = ScanClean.Tuning.standard
+        undriven.lineDrive = 1
+        var thin = blank()
+        _ = letters(&thin, top: 60, stroke: 1, ink: (110, 110, 110))
+        let thinPage = photographed(thin)
+        let thinBoxes = [box(top: 60, in: thinPage)]
+        let driven = darkest(ScanClean.clean(thinPage, .color, printBoxes: thinBoxes), top: 60)
+        let plain = darkest(ScanClean.clean(thinPage, .color, tuning: undriven, printBoxes: thinBoxes), top: 60)
+        XCTAssertLessThan(driven, plain, "the body of its ink darker")
+        XCTAssertLessThanOrEqual(driven, 70, "as dark as the body")
+        var wide = blank()
+        _ = letters(&wide, top: 60, stroke: 5, ink: (120, 120, 120))
+        let widePage = photographed(wide)
+        let wideBoxes = [box(top: 60, in: widePage)]
+        XCTAssertEqual(ScanClean.clean(widePage, .color, printBoxes: wideBoxes),
+                       ScanClean.clean(widePage, .color, tuning: undriven, printBoxes: wideBoxes), "toned as it is")
+    }
+
     func testDarkPrintIsLeftToThePageCurve() {
         var printed = blank()
         _ = letters(&printed, top: 60, stroke: 3, ink: (30, 30, 32))

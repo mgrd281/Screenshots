@@ -6,12 +6,15 @@ keeps a download of each version.
 
 ## 1.1.0
 
-- On the iPhone, small light-grey print comes out of Scan as dark and plain
-  as the rest of the page, line by line, with every umlaut's dot, accent,
-  comma and @ kept, where cleaning used to leave "Arzte fur Radiologie".
-  Each page is read again after cleaning: a line that reads otherwise, a dot
-  or an accent gone, is cleaned again gently, or kept as the light alone
-  leaves it. Cleaning may make text clearer, never different.
+- On the iPhone, small light-grey print beside a page's dark text comes out
+  of Scan as dark and plain as the rest, line by line, with every umlaut's
+  dot, accent, comma and @ kept, where cleaning used to leave "Arzte fur
+  Radiologie". A thin light face comes out a little bolder, so it reads as
+  dark as the body. Each page is read again after cleaning: a line that
+  reads otherwise, a dot or an accent gone, is read on its own, cleaned
+  again gently, or kept as the light alone leaves it, whichever first reads
+  as before. A dot the photo left too faint to read before and cleaning
+  made readable counts as clearer, not different.
 
 - On the iPhone, Review says how many private details your categories leave
   visible ("Nichts verdeckt · 3 sichtbar") and lists them under Sichtbar

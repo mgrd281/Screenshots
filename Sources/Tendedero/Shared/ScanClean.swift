@@ -158,15 +158,16 @@ enum ScanClean {
         /// grain and the blocks' over-bright reading are under it, so what
         /// is paper shows white, and print keeps its shade.
         var headroom: Float = 0.95
-        /// Within the lines of text read, the paper is taken at its own
-        /// level instead: a mark a little darker than the paper, an
+        /// Within the lines of light neutral print read (`lightPrint`), the
+        /// paper is taken at its own level instead: a mark a little darker than the paper, an
         /// umlaut's dot, an accent or a thin grey stroke, keeps all of its
         /// contrast, and the grain there is left to the line's own toning
         /// (`toned`) and to the curve.
         var textHeadroom: Float = 1
         /// The grain: neighbours this close to a pixel, of 255, are smoothed
         /// with it; an edge, further apart, never is. Within the lines of
-        /// text read, `textGrain`, so a faint mark's rim is not smoothed away.
+        /// light print read, `textGrain`, so a faint mark's rim is not
+        /// smoothed away.
         var grain = 10
         var textGrain = 4
         /// After the light is evened, this share of white and more is white:
@@ -219,10 +220,18 @@ enum ScanClean {
         /// marks made as clear as its strokes by `lineSharpen`; and what is
         /// within `lineGrain` times the paper's spread of the paper, white.
         /// A window of paper darker than `linePaper` is a fill, left as it is.
+        /// Only print lighter than the page's own dark print by `lightApart`
+        /// counts (`lightPrint`). Where the body of a line's ink, its darkest
+        /// `lineBody` share, would stay lighter than `lineDark`, the line is
+        /// toned further, up to `lineDrive` times.
         var lightInk: Float = 100
         var lightInkFull: Float = 140
         var lineInk: Float = 6
         var lineGain: Float = 5
+        var lineDark: Float = 60
+        var lineBody: Float = 0.1
+        var lineDrive: Float = 2
+        var lightApart: Float = 40
         var lineWindow: Float = 4
         var lineSharpen: Float = 1.4
         var lineGrain: Float = 2.5
@@ -263,9 +272,13 @@ enum ScanClean {
         // Where text was read: only there is faint print looked for, and
         // small marks kept whole.
         let text = textMask(printBoxes, width: page.width, height: page.height)
-        let lines = printLines(printBoxes, width: page.width, height: page.height)
-        let flat = uncreased(evened(page, paper: paper, tuning: tuning, text: text), tuning: tuning)
-        let even = neutralized(denoised(flat, grain: tuning.grain, white: white, text: text, textGrain: tuning.textGrain),
+        // Light print, a grey column beside the body, is evened at its paper's
+        // own level, smoothed less and toned line by line, so its faintest marks stay.
+        let light = lightPrint(printBoxes, in: page, tuning: tuning)
+        let lines = printLines(light, width: page.width, height: page.height)
+        let faint = textMask(light, width: page.width, height: page.height)
+        let flat = uncreased(evened(page, paper: paper, tuning: tuning, text: faint), tuning: tuning)
+        let even = neutralized(denoised(flat, grain: tuning.grain, white: white, text: faint, textGrain: tuning.textGrain),
                                tuning: tuning)
         // Faint print deepened, sharpened, then taken darker, so the darkening sets the print's
         // final shade: an unsharp mask run after it would drive a stroke to
@@ -752,7 +765,7 @@ enum ScanClean {
 
     /// The paper's grain smoothed: each pixel the mean of the neighbours,
     /// itself among them, that are within `grain` of it, colour by colour,
-    /// or `textGrain` within the lines of text read (`text`), so a faint
+    /// or `textGrain` within the lines of light print read (`text`), so a faint
     /// mark's rim is kept. An edge's other side is further off, so it is
     /// never blurred. A pixel that stays at `white` or over whatever its
     /// neighbours are, which the curve makes white anyway, is left as it

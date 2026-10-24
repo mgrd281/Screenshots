@@ -163,7 +163,7 @@ final class ScanFormFixtureTests: XCTestCase {
             }
             if variant.folds.count == 1 {
                 let step = try XCTUnwrap(measures.foldStep, "the box's upright lines are found at the fold")
-                XCTAssertLessThanOrEqual(step, 2.1, "\(variant): no step at the fold, \(step) px")
+                XCTAssertLessThanOrEqual(step, 2, "\(variant): no step at the fold, \(step) px")
             }
         }
     }

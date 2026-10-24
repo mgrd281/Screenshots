@@ -1016,8 +1016,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   levelled from its lines of text, then cleaned as a good scanner leaves a
   page: its light made even, the paper white and the print dark and sharp,
   a curl taken out along the page's own ruled lines, small light-grey
-  print as dark and plain as the rest, line by line, every umlaut's dot,
-  accent, comma and @ of it kept (`ScanPrint`),
+  print beside the page's dark text as dark and plain as the rest, line by
+  line, every umlaut's dot, accent, comma and @ of it kept, a thin light
+  face a little bolder (`ScanPrint`),
   a fold's crease evened out like a shadow, while a pale watermark or a
   shaded row keeps the tint it was printed in, in Color, Grayscale or Black
   and white (`ScanCleaner`, `ScanClean`).
@@ -1025,9 +1026,11 @@ watch the screen, so there is no line there. What it keeps is the covering:
   they were chosen. Only
   the picture as a whole changes: nothing is drawn, filled in, removed or
   guessed. Each page is read before and after: a line read surely before
-  that reads otherwise after, a dot or an accent gone, is cleaned again
-  gently, or kept as the light alone leaves it, so cleaning never changes
-  what a line says (`SCAN_TEXT.md`). Where a number read
+  that reads otherwise after, a dot or an accent gone, is read on its own,
+  cleaned again gently, or kept as the light alone leaves it, whichever
+  first reads as before, so cleaning never changes what a line says; a mark
+  the photo left too faint to read before counts as clearer
+  (`SCAN_TEXT.md`). Where a number read
   before is not read after, the text is blurred, a reflection hides it, the
   page is small in the picture or, from iOS 26, the lens is smudged, a hint
   says where, with Look, the place outlined in orange on the page with its
@@ -1496,7 +1499,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Share/ShareViewController.swift`, `iOS/Share-Info.plist`, `iOS/*.entitlements` | The iPhone's share extension: a picture shared from any app, covered, checked, then copied, shared or saved |
 | `Shared/ScanPDF.swift` | Scanned pages as one PDF of A4 pages: each page as JPEG, or in black and white as one bit, fitted whole without stretching, an invisible text layer to find and copy, and nothing of who made it but the app (tested on Linux) |
 | `Shared/ScanClean.swift`, `ScanLight.swift`, `ScanPrint.swift`, `ScanCrease.swift`, `ScanBend.swift`, `ScanSheet.swift`, `ScanQuality.swift`, `ScanContent.swift`, `ScanGeometry.swift` | The scan's own rules, tested on Linux: the page's light made even, the paper white, a pale printed fill kept, a fold's crease evened out, a curl taken out along the page's ruled lines, light grey print toned line by line, as dark as the body, every small mark of it kept, the print sharp, in color, greys or black and white; a folded sheet's parts and clean edges; blur, reflections and a page too small found by part of the page; every number read before cleaning read after, and every character of a line read surely; the page's true shape, A4 where it is close, upright and level, and its place on A4 |
-| `Shared/ScanCleaner.swift` | The scan through Vision and Core Image, as on the iPhone: the page found in a photo and made flat, turned and levelled, cleaned, guarded (a line whose reading changed cleaned again gently, or kept as evened), checked (with a smudged lens from iOS 26), and its pages for the PDF, the covered ones read again for their text |
+| `Shared/ScanCleaner.swift` | The scan through Vision and Core Image, as on the iPhone: the page found in a photo and made flat, turned and levelled, cleaned, guarded (a line whose reading changed read on its own, cleaned again gently or kept as evened, whichever first reads as before), checked (with a smudged lens from iOS 26), and its pages for the PDF, the covered ones read again for their text |
 | `Shared/ScanSample.swift` | A made-up invoice, printed and photographed at an angle under a lamp, blurred or with a reflection where asked, and a made-up practice's letter naming the owner in every way a name and an address are written: for the tests and the pictures made in CI, in debug builds only |
 | `Shared/CoveredCopy.swift` | A picture's covered copy as it leaves the iPhone app or its share extension: covered, read again, checked in its pixels, or nothing, as when Vision could not read the picture (iOS may keep it from reading in the background) |
 | `Shared/SharedChoice.swift` | The kinds, look and own rules and details the iPhone app keeps in the keychain group it shares with its extension, on that iPhone alone |

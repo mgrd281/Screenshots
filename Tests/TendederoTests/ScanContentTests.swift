@@ -131,6 +131,25 @@ final class ScanContentTests: XCTestCase {
         XCTAssertEqual(ScanContent.changed(before: before, after: changed).count, 5, "each line changed")
     }
 
+    /// A mark read after cleaning that the reading before missed, an
+    /// umlaut's dots the photo left too faint, is the print made clearer,
+    /// not changed; a mark read before and lost after is a change, and so is
+    /// another letter under the same mark. A dash or a centred dot is read
+    /// as either of its kinds.
+    func testAMarkTheReadingBeforeMissedIsNoChange() {
+        let before = [read("Arzte fur Radiologie", row: 0), read("Dr. med. Rene Bruckner", row: 1),
+                      read("Öffnungszeiten Mo-Fr 8-18 Uhr", row: 2), read("Musterwall 7a • 20354 Hamburg", row: 3)]
+        let after = [line("Ärzte für Radiologie", row: 0), line("Dr. med. René Brückner", row: 1),
+                     line("Öffnungszeiten Mo–Fr 8–18 Uhr", row: 2), line("Musterwall 7a · 20354 Hamburg", row: 3)]
+        XCTAssertEqual(ScanContent.changed(before: before, after: after), [], "clearer, not changed")
+        XCTAssertEqual(ScanContent.changed(before: [read("Ärzte für Radiologie", row: 0)],
+                                           after: [line("Arzte für Radiologie", row: 0)]).count, 1, "a mark lost")
+        XCTAssertEqual(ScanContent.changed(before: [read("Arzte fur Radiologie", row: 0)],
+                                           after: [line("Örzte für Radiologie", row: 0)]).count, 1, "another letter")
+        XCTAssertTrue(ScanContent.says("Größer,MBA", "Größer, MBA"))
+        XCTAssertFalse(ScanContent.says("Grosser, MBA", "Größer, MBA"))
+    }
+
     /// A line read unsurely before says nothing sure of the page, and a line
     /// of a letter or two is too short to tell; another column's line on the
     /// same row is no part of it.

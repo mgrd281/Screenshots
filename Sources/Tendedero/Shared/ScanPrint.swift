@@ -12,8 +12,11 @@ import Foundation
 /// it lies, so a faint dot is darkened as much as the stroke beside it and
 /// keeps its place, size and shape; the paper's grain, and nothing darker,
 /// turns white. Dark print, coloured print and print on a fill are left to
-/// the page's own curve. Nothing is drawn, moved or thickened: each pixel
-/// is only made darker or lighter, as `ScanClean` does everywhere.
+/// the page's own curve. Nothing is drawn or moved: each pixel is only
+/// made darker or lighter, as `ScanClean` does everywhere. A thin light
+/// face is taken a little further, so the body of its strokes, not only
+/// their middles, comes out dark: it reads a little bolder, as dark as the
+/// body beside it.
 extension ScanClean {
     /// A line of text read, in the page's pixels, grown by 30 % of its
     /// height on every side, as far as its marks reach: an accent over a
@@ -42,6 +45,63 @@ extension ScanClean {
         }
     }
 
+    /// The boxes of text whose print is light and neutral, as the photo has
+    /// it: its darkest lighter than `lightInk` would be on white paper, and
+    /// lighter than the page's own dark print by `lightApart`, a grey
+    /// column beside black text, not black text a soft photo left grey (on
+    /// a faded page, whose darkest print is lighter than `lightInkFull`,
+    /// all of it); and as grey as the paper is, its colour divided out. Only these are
+    /// toned (`toned`), evened at the paper's own level and smoothed less
+    /// (`textHeadroom`, `textGrain`), so their faintest marks keep their
+    /// contrast; dark print and coloured print, a form's among them, are
+    /// cleaned as before.
+    static func lightPrint(_ boxes: [CGRect], in page: ScanBitmap, tuning: Tuning = .standard) -> [CGRect] {
+        let w = page.width, h = page.height
+        // Each box's darkest print as on white paper, and whether it is grey.
+        let measured: [(box: CGRect, ink: Float, neutral: Bool)] = boxes.compactMap { box in
+            let x0 = max(0, Int(Double(box.minX) * Double(w))), x1 = min(w, Int(Double(box.maxX) * Double(w)))
+            let y0 = max(0, Int((1 - Double(box.maxY)) * Double(h))), y1 = min(h, Int((1 - Double(box.minY)) * Double(h)))
+            guard x1 - x0 > 2, y1 - y0 > 2 else { return nil }
+            var values: [UInt8] = [], reds: [UInt8] = [], greens: [UInt8] = [], blues: [UInt8] = []
+            for y in y0..<y1 {
+                for x in x0..<x1 {
+                    let i = (y * w + x) * 4
+                    reds.append(page.pixels[i])
+                    greens.append(page.pixels[i + 1])
+                    blues.append(page.pixels[i + 2])
+                    values.append(brightness(page.pixels[i], page.pixels[i + 1], page.pixels[i + 2]))
+                }
+            }
+            func level(_ list: [UInt8], _ share: Double) -> Float {
+                let sorted = list.sorted()
+                return Float(sorted[min(sorted.count - 1, Int(Double(sorted.count) * share))])
+            }
+            let paper = level(values, 0.9), ink = level(values, 0.01)
+            guard paper > 0 else { return nil }
+            // How coloured the darkest of it is once the paper's own colour is divided out.
+            let paperRed = max(1, level(reds, 0.9)), paperGreen = max(1, level(greens, 0.9)), paperBlue = max(1, level(blues, 0.9))
+            let darkest = ink + 0.3 * (paper - ink)
+            var colour: Float = 0
+            var inked = 0
+            for (n, value) in values.enumerated() where Float(value) <= darkest {
+                let r = Float(reds[n]) / paperRed, g = Float(greens[n]) / paperGreen, b = Float(blues[n]) / paperBlue
+                let top = max(r, g, b)
+                colour += top > 0 ? (top - min(r, g, b)) / top : 0
+                inked += 1
+            }
+            return (box, min(255, ink * 255 / paper), inked > 0 && colour / Float(inked) < tuning.colourAbove)
+        }
+        guard !measured.isEmpty else { return [] }
+        // The page's own dark print: the darkest quarter of its lines. Where
+        // even that is light, a faded page, all of its print is.
+        let inks = measured.map(\.ink).sorted()
+        let dark = inks[inks.count / 4]
+        let allLight = dark >= tuning.lightInkFull
+        return measured.filter { line in
+            line.neutral && line.ink >= tuning.lightInk && (allLight || line.ink - dark >= tuning.lightApart)
+        }.map(\.box)
+    }
+
     /// How a stretch of a line is toned: its paper, its darkest ink and the
     /// paper's grain, of 255, and how much of the toning it takes, from 0,
     /// left to the page's curve, to 1.
@@ -65,7 +125,7 @@ extension ScanClean {
         func value(_ brightness: Float, tuning: Tuning) -> Float {
             let under = max(0, paper - brightness - grain)
             let depth = 255 - tuning.lineInk
-            let share = min(1, under * gain(tuning) / depth)
+            let share = min(1, under * gain(tuning) * tuning.lineDrive / depth)
             return 255 - depth * powf(share, tuning.gamma)
         }
     }
@@ -123,6 +183,39 @@ extension ScanClean {
         return tone
     }
 
+    /// How much further than its darkest ink a line is toned, from 1 to
+    /// `lineDrive`: enough for the body of its ink, its darkest `lineBody`
+    /// share, to come out `lineDark` or darker, not only the middles of its
+    /// strokes. A thin light face then reads as dark as the body text beside
+    /// it; a soft one, its ink spread wide already, is toned as it is.
+    static func drive(of plane: [UInt8], width w: Int, line: PrintLine, noise: Float, tuning: Tuning) -> Float {
+        guard tuning.lineDrive > 1 else { return 1 }
+        var counts = [Int](repeating: 0, count: 256)
+        var n = 0
+        for y in line.y0..<line.y1 {
+            for x in line.x0..<line.x1 {
+                counts[Int(plane[y * w + x])] += 1
+                n += 1
+            }
+        }
+        func level(_ share: Float) -> Float {
+            let wanted = max(1, Int(Float(n) * share))
+            var seen = 0
+            for value in 0..<256 {
+                seen += counts[value]
+                if seen >= wanted { return Float(value) }
+            }
+            return 255
+        }
+        let grain = min(16, max(2, tuning.lineGrain * noise))
+        let tone = Tone(paper: level(0.9), ink: level(0.01), grain: grain, strength: 1)
+        let body = tone.paper - level(tuning.lineBody) - grain
+        guard body > 1 else { return 1 }
+        let depth = 255 - tuning.lineInk
+        let share = powf((255 - tuning.lineDark) / depth, 1 / tuning.gamma)
+        return min(tuning.lineDrive, max(1, share * depth / (body * tone.gain(tuning))))
+    }
+
     /// How grainy a line's paper is: the spread of its pixels where no
     /// print is near, none of the eight round them darker than the paper
     /// by 30 levels and more. Its paper is white once evened, so only the
@@ -159,6 +252,8 @@ extension ScanClean {
         let plane = base.brightness
         for line in lines {
             let noise = grain(of: plane, width: w, height: h, line: line)
+            var tuning = tuning
+            tuning.lineDrive = drive(of: plane, width: w, line: line, noise: noise, tuning: tuning)
             let window = max(12, Int((Float(line.height) * tuning.lineWindow).rounded()))
             let step = max(6, window / 2)
             var middles: [Float] = []
@@ -243,6 +338,7 @@ extension ScanClean {
             var gentle = tuning
             gentle.lineSharpen = 0
             gentle.lineGain = 2
+            gentle.lineDrive = 1
             toned(base, into: &page, lines: [line], tuning: gentle, everyInk: true)
         case .kept:
             page.pixels.withUnsafeMutableBufferPointer { px in
