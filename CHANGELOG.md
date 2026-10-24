@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, Review says "Kleine Schrift unscharf" where a page's
+  smallest print reads unsurely, with Näher aufnehmen to take the page again
+  with the camera, or Neu aufnehmen für kleine Schrift for a photo.
+
 - On the iPhone, small light-grey print beside a page's dark text comes out
   of Scan as dark and plain as the rest, line by line, with every umlaut's
   dot, accent, comma and @ kept, where cleaning used to leave "Arzte fur
