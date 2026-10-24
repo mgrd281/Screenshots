@@ -1339,7 +1339,6 @@
 "Clear Hidden by Hand" = "Von Hand Verdecktes entfernen";
 "Continue Anyway" = "Trotzdem fortfahren";
 "Cover" = "Verdecken";
-"Covered. Check the marked places before sharing." = "Verdeckt. Prüfe die markierten Stellen vor dem Teilen.";
 "Delete Local Index" = "Lokalen Index löschen";
 "Delete everything prepared on this iPhone?" = "Alles auf diesem iPhone Vorbereitete löschen?";
 "Doctors, customers, staff, payees, senders and recipients" = "Ärzte, Kunden, Mitarbeitende, Zahlungsempfänger, Absender und Empfänger";
@@ -1349,7 +1348,6 @@
 "Each can be undone." = "Beides lässt sich widerrufen.";
 "Enable faster picture processing" = "Schnellere Bildverarbeitung aktivieren";
 "Eraser" = "Radierer";
-"Everything found is covered" = "Alles Gefundene ist verdeckt";
 "Faster picture processing" = "Schnellere Bildverarbeitung";
 "In medical letters, reports and forms" = "In Arztbriefen, Befunden und Formularen";
 "It works while Snapfly is open, and in the background while your iPhone is charging, when iOS allows." = "Es läuft, während Snapfly geöffnet ist, und im Hintergrund, während dein iPhone lädt, wenn iOS es erlaubt.";
@@ -1379,8 +1377,6 @@
 "Preparing waits until you go on. Your photos stay as they are." = "Die Vorbereitung wartet, bis du fortfährst. Deine Fotos bleiben, wie sie sind.";
 "Preparing…" = "Wird vorbereitet …";
 "Protect Picture" = "Bild schützen";
-"1 private detail found" = "1 sensible Angabe erkannt";
-"%d private details found" = "%d sensible Angaben erkannt";
 "%d to check" = "%d zu prüfen";
 "Protected" = "Geschützt";
 "Read on this iPhone only. Nothing is sent anywhere." = "Nur auf diesem iPhone gelesen. Nichts wird irgendwohin gesendet.";
@@ -1837,3 +1833,11 @@
 "1 page added" = "1 Seite hinzugefügt";
 "%d pages added" = "%d Seiten hinzugefügt";
 "Blank page added" = "Leere Seite hinzugefügt";
+
+/* The line under Review: what is covered, what is still to check, what is wrong with the picture. */
+"%d covered" = "%d verdeckt";
+"%d covered, everything checked" = "%d verdeckt, alles geprüft";
+"Nothing private" = "Nichts Privates";
+"1 hint" = "1 Hinweis";
+"%d hints" = "%d Hinweise";
+"Open the list." = "Liste öffnen.";

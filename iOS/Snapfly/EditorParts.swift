@@ -185,16 +185,16 @@ enum Leaving: Hashable, Identifiable {
 /// How the picture stands, in a small floating capsule under the title,
 /// as the engine has it, never ahead of it: while it is read, a spinner and
 /// the step, with Don't Wait while Apple Intelligence reads; after a
-/// failure, what went wrong and Try Again; then how many private details
-/// were found, with the small green shield, and how many of them are still
-/// to check; or that nothing private was found. A tap opens Details, to see
-/// and change every place.
+/// failure, what went wrong and Try Again; then how many places are
+/// covered, with the small green shield, and how many are still to check or
+/// what is wrong with the picture (`ReviewStatus`); that nothing private
+/// was found only when nothing is. A tap opens Details, to see and change
+/// every place.
 struct PrivacyStatus: View {
     let stage: ProtectSession.Stage
     let tally: ProtectionPlan.Tally
-    /// The private details found, sure or offered, not those hidden by hand.
-    let found: Int
-    let nothingFound: Bool
+    /// What is wrong with the picture itself, as a scanned page's faults.
+    var hints = 0
     let open: @MainActor () -> Void
     let dontWait: @MainActor () -> Void
     let retry: @MainActor () -> Void
@@ -240,33 +240,40 @@ struct PrivacyStatus: View {
         .sensoryFeedback(trigger: stage) { _, now in now == .ready ? .success : nil }
     }
 
+    private var status: ReviewStatus {
+        ReviewStatus(covered: tally.covered, open: tally.toCheck, hints: hints)
+    }
+
     private var counts: some View {
         HStack(spacing: 6) {
-            if nothingFound || found == 0 {
+            if status.state == .nothing {
                 Image(systemName: "checkmark.shield")
                     .foregroundStyle(SnapflyTokens.protectTint)
                 Text(L("Nothing private found"))
             } else {
-                Image(systemName: "checkmark.shield.fill")
+                Image(systemName: status.covered > 0 ? "checkmark.shield.fill" : "checkmark.shield")
                     .foregroundStyle(SnapflyTokens.protectTint)
                     .symbolEffect(.bounce.up, options: .nonRepeating, value: landed)
                     .onAppear { landed.toggle() }
-                Text(foundText)
-                    .fontWeight(.semibold)
-                    .contentTransition(.numericText())
-                if tally.toCheck > 0 {
-                    Text(verbatim: "·").foregroundStyle(.secondary)
+                if let covering = status.covering {
+                    Text(covering)
+                        .fontWeight(.semibold)
+                        .contentTransition(.numericText())
+                }
+                if let pending = status.pending {
+                    if status.covering != nil { Text(verbatim: "·").foregroundStyle(.secondary) }
                     // Where the words don't fit, the sign that some are to check, and how many.
                     ViewThatFits(in: .horizontal) {
-                        Text(String(format: L("%d to check"), tally.toCheck))
+                        Text(pending)
                         Label {
-                            Text(tally.toCheck, format: .number)
+                            Text(status.open > 0 ? status.open : status.hints, format: .number)
                         } icon: {
-                            Image(systemName: tally.exposed > 0 ? "exclamationmark.triangle.fill" : "circle.dashed")
+                            Image(systemName: status.open > 0 && tally.exposed == 0 ? "circle.dashed"
+                                : "exclamationmark.triangle.fill")
                         }
                         .labelStyle(.titleAndIcon)
                     }
-                    .foregroundStyle(tally.exposed > 0 ? Color.orange : Color.accentColor)
+                    .foregroundStyle(status.open > 0 && tally.exposed == 0 ? Color.accentColor : Color.orange)
                     .contentTransition(.numericText())
                 }
             }
@@ -279,18 +286,10 @@ struct PrivacyStatus: View {
         .contentShape(Capsule())
     }
 
-    private var foundText: String {
-        found == 1 ? L("1 private detail found") : String(format: L("%d private details found"), found)
-    }
-
     /// The whole of it in words, for VoiceOver.
     private var summary: String {
-        if nothingFound || found == 0 { return L("Nothing private found") }
-        let state = tally.exposed > 0
-            ? String(format: L("Not fully protected: %d places to check are not covered"), tally.exposed)
-            : tally.toCheck > 0 ? L("Covered. Check the marked places before sharing.") : L("Everything found is covered")
-        return "\(foundText). \(state). \(L("Protected")) \(tally.covered), \(L("To check")) \(tally.toCheck), "
-            + "\(L("Not protected")) \(tally.left)"
+        guard tally.exposed > 0 else { return status.spoken }
+        return status.spoken + " " + String(format: L("Not fully protected: %d places to check are not covered"), tally.exposed)
     }
 
     private var step: String {

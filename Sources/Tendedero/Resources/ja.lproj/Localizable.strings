@@ -1339,7 +1339,6 @@
 "Clear Hidden by Hand" = "手動で隠したものを消去";
 "Continue Anyway" = "このまま続ける";
 "Cover" = "隠す";
-"Covered. Check the marked places before sharing." = "隠しました。共有する前に印の付いた箇所を確認してください。";
 "Delete Local Index" = "ローカルインデックスを削除";
 "Delete everything prepared on this iPhone?" = "この iPhone で準備したものをすべて削除しますか？";
 "Doctors, customers, staff, payees, senders and recipients" = "医師、顧客、スタッフ、受取人、差出人、宛先";
@@ -1349,7 +1348,6 @@
 "Each can be undone." = "どちらも取り消せます。";
 "Enable faster picture processing" = "画像処理の高速化を有効にする";
 "Eraser" = "消しゴム";
-"Everything found is covered" = "見つかったものはすべて隠されています";
 "Faster picture processing" = "画像処理の高速化";
 "In medical letters, reports and forms" = "診療情報提供書、報告書、書類の中";
 "It works while Snapfly is open, and in the background while your iPhone is charging, when iOS allows." = "Snapfly を開いている間と、iOS が許可するときは iPhone の充電中にバックグラウンドで動作します。";
@@ -1379,8 +1377,6 @@
 "Preparing waits until you go on. Your photos stay as they are." = "再開するまで準備は止まります。写真はそのままです。";
 "Preparing…" = "準備中…";
 "Protect Picture" = "画像を保護";
-"1 private detail found" = "個人情報が1件見つかりました";
-"%d private details found" = "個人情報が%d件見つかりました";
 "%d to check" = "%d件要確認";
 "Protected" = "保護済み";
 "Read on this iPhone only. Nothing is sent anywhere." = "この iPhone の中だけで読み取ります。どこにも送信しません。";
@@ -1837,3 +1833,11 @@
 "1 page added" = "1 ページを追加しました";
 "%d pages added" = "%d ページを追加しました";
 "Blank page added" = "空白ページを追加しました";
+
+/* The line under Review: what is covered, what is still to check, what is wrong with the picture. */
+"%d covered" = "%d件を隠しました";
+"%d covered, everything checked" = "%d件を隠しました・すべて確認済み";
+"Nothing private" = "個人情報なし";
+"1 hint" = "注意 1件";
+"%d hints" = "注意 %d件";
+"Open the list." = "リストを開きます。";

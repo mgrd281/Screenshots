@@ -1341,7 +1341,6 @@
 "Clear Hidden by Hand" = "हाथ से छिपाया गया हटाएँ";
 "Continue Anyway" = "फिर भी जारी रखें";
 "Cover" = "ढकें";
-"Covered. Check the marked places before sharing." = "ढक दिया गया। साझा करने से पहले चिह्नित जगहें जाँचें।";
 "Delete Local Index" = "स्थानीय इंडेक्स मिटाएँ";
 "Delete everything prepared on this iPhone?" = "इस iPhone पर तैयार की गई सारी चीज़ें मिटाएँ?";
 "Doctors, customers, staff, payees, senders and recipients" = "डॉक्टर, ग्राहक, कर्मचारी, भुगतान प्राप्तकर्ता, प्रेषक और प्राप्तकर्ता";
@@ -1351,7 +1350,6 @@
 "Each can be undone." = "दोनों को पूर्ववत किया जा सकता है।";
 "Enable faster picture processing" = "तेज़ चित्र प्रोसेसिंग चालू करें";
 "Eraser" = "इरेज़र";
-"Everything found is covered" = "जो कुछ मिला, सब ढका है";
 "Faster picture processing" = "तेज़ चित्र प्रोसेसिंग";
 "In medical letters, reports and forms" = "चिकित्सा पत्रों, रिपोर्टों और फ़ॉर्म में";
 "It works while Snapfly is open, and in the background while your iPhone is charging, when iOS allows." = "यह तब चलता है जब Snapfly खुला हो, और iOS की अनुमति होने पर पृष्ठभूमि में, जब आपका iPhone चार्ज हो रहा हो।";
@@ -1381,8 +1379,6 @@
 "Preparing waits until you go on. Your photos stay as they are." = "आपके जारी रखने तक तैयारी रुकी रहती है। आपकी फ़ोटो जैसी हैं वैसी रहती हैं।";
 "Preparing…" = "तैयार हो रहा है…";
 "Protect Picture" = "चित्र सुरक्षित करें";
-"1 private detail found" = "1 निजी जानकारी मिली";
-"%d private details found" = "%d निजी जानकारियाँ मिलीं";
 "%d to check" = "%d जाँचने हैं";
 "Protected" = "सुरक्षित";
 "Read on this iPhone only. Nothing is sent anywhere." = "सिर्फ़ इसी iPhone पर पढ़ा जाता है। कुछ भी कहीं नहीं भेजा जाता।";
@@ -1839,3 +1835,11 @@
 "1 page added" = "1 पेज जोड़ा गया";
 "%d pages added" = "%d पेज जोड़े गए";
 "Blank page added" = "खाली पेज जोड़ा गया";
+
+/* The line under Review: what is covered, what is still to check, what is wrong with the picture. */
+"%d covered" = "%d ढके";
+"%d covered, everything checked" = "%d ढके, सब जाँचा गया";
+"Nothing private" = "कुछ निजी नहीं";
+"1 hint" = "1 सूचना";
+"%d hints" = "%d सूचनाएँ";
+"Open the list." = "सूची खोलें।";

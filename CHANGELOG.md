@@ -6,6 +6,16 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, the name you keep in Always Hide is covered on every page
+  even where the page's reading gets it a little wrong: surname first with
+  a comma, broken over two lines, in capitals, with its space left out or
+  put in, or with a letter misread, as an l for an i, a 1 or a 0 for a
+  letter, or rn for an m. It is also found again with what you added to
+  Always Hide since the page was opened. The line under Review never says
+  "Nichts Privates gefunden" while a place is still to check or the page
+  has a fault: it says "3 verdeckt · 4 zu prüfen", "3 verdeckt, alles
+  geprüft" or "Nichts Privates · 1 Hinweis".
+
 - On the iPhone, a phone photo of a letter comes out of Scan with its lines
   straight, never bent into a wave by a row of text taken for a ruled line,
   and its small light-grey print, an address or telephone numbers in a

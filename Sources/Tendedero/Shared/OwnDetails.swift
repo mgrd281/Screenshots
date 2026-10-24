@@ -155,15 +155,23 @@ enum OwnDetails {
             forms.append([first])
         }
         guard !forms.isEmpty else { return [] }
+        // Compared as text recognition reads them: an l as an i, an O as a 0.
+        forms = forms.map { $0.map(readAlike) }
         let tokens = tokens(in: line)
         var found: [Range<String.Index>] = []
         var i = 0
         while i < tokens.count {
             var matched = 0
-            for form in forms where i + form.count <= tokens.count
+            // The name in more words first, then with its spaces left out or
+            // put in, then a word of it alone.
+            for form in forms where form.count > 1 && i + form.count <= tokens.count
                 && fits(form, tokens[i..<i + form.count], in: line, masking: masking) {
                 matched = form.count
                 break
+            }
+            if matched == 0 { matched = joined(forms, tokens[i...], in: line) }
+            if matched == 0, forms.contains(where: { $0.count == 1 && fits($0, tokens[i...i], in: line, masking: masking) }) {
+                matched = 1
             }
             if matched > 0 {
                 found.append(tokens[i].range.lowerBound..<tokens[i + matched - 1].range.upperBound)
@@ -173,6 +181,29 @@ enum OwnDetails {
             }
         }
         return found
+    }
+
+    /// How many words from the first of these are a form of the name of
+    /// two words or more written with its spaces left out or put in, as
+    /// "ErikaMusterfrau" or "Erika Muster frau": its words together, the
+    /// same but for one letter misread in six or more; 0 where none is.
+    private static func joined(_ forms: [[String]], _ tokens: ArraySlice<Token>, in line: String) -> Int {
+        // Never a form with an initial: one letter more or less would be all of it.
+        for form in forms where form.count >= 2 && form.allSatisfy({ $0.count >= 3 }) {
+            let whole = form.joined()
+            var read = ""
+            var previous: Token?
+            for (n, token) in tokens.prefix(form.count + 2).enumerated() {
+                if let previous, !joins(previous, token, in: line) { break }
+                read += token.folded
+                previous = token
+                guard read.count <= whole.count + 1 else { break }
+                // As many words as the form has is the form, read word by word (`fits`).
+                guard n + 1 != form.count else { continue }
+                if read == whole || whole.count >= 6 && Finder.differsByOne(whole, read) { return n + 1 }
+            }
+        }
+        return 0
     }
 
     /// Whether these words of a text are this form of the name: each word
@@ -197,14 +228,32 @@ enum OwnDetails {
         }
         var previous: Token?
         for token in tokens {
-            if let previous {
-                let gap = line[previous.range.upperBound..<token.range.lowerBound]
-                guard gap.count <= 3, gap.filter(\.isNewline).count <= 1,
-                      gap.allSatisfy({ $0.isNewline || " ,.;/·\t".contains($0) }) else { return false }
-            }
+            if let previous, !joins(previous, token, in: line) { return false }
             previous = token
         }
         return true
+    }
+
+    /// Whether two words of a line are close enough to be one name: no more
+    /// than a comma, a dot, a semicolon, a slash and a space between them,
+    /// or the end of a line.
+    private static func joins(_ previous: Token, _ token: Token, in line: String) -> Bool {
+        let gap = line[previous.range.upperBound..<token.range.lowerBound]
+        return gap.count <= 3 && gap.filter(\.isNewline).count <= 1
+            && gap.allSatisfy { $0.isNewline || " ,.;/·\t".contains($0) }
+    }
+
+    /// A folded word as text recognition may read it, so a misread letter
+    /// of the kinds it often makes costs nothing: "rn" as "m", an l, a 1 or
+    /// a stroke as an i, a 0 as an o.
+    static func readAlike(_ folded: String) -> String {
+        String(folded.replacingOccurrences(of: "rn", with: "m").map { character -> Character in
+            switch character {
+            case "l", "1", "|": "i"
+            case "0": "o"
+            default: character
+            }
+        })
     }
 
     /// A word of a line, where it is and how it is compared.
@@ -213,16 +262,20 @@ enum OwnDetails {
         let folded: String
     }
 
-    /// The words of a line: letters, with an apostrophe or a hyphen inside.
+    /// The words of a line: letters, with an apostrophe or a hyphen inside,
+    /// and a 0, a 1 or a stroke among them that text recognition read for
+    /// a letter, as in "Mo1lmann".
     private static func tokens(in line: String) -> [Token] {
         let whole = NSRange(line.startIndex..., in: line)
         return wordPattern.matches(in: line, range: whole).compactMap { match in
             guard let range = Range(match.range, in: line) else { return nil }
-            return Token(range: range, folded: fold(String(line[range])))
+            let read = String(line[range]).replacingOccurrences(of: "|", with: "l")
+            return Token(range: range, folded: readAlike(fold(read)))
         }
     }
 
-    private static let wordPattern = try! NSRegularExpression(pattern: #"\p{L}[\p{L}\p{M}]*(?:['’\-]\p{L}[\p{L}\p{M}]*)*"#)
+    private static let wordPattern = try! NSRegularExpression(
+        pattern: #"\p{L}(?:[\p{L}\p{M}]|[01|](?=\p{L}))*(?:['’\-]\p{L}(?:[\p{L}\p{M}]|[01|](?=\p{L}))*)*"#)
 
     /// A name's words as typed, folded, without what stands round them.
     private static func words(of text: String) -> [String] {

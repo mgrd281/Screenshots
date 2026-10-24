@@ -1339,7 +1339,6 @@
 "Clear Hidden by Hand" = "Elle gizlenenleri temizle";
 "Continue Anyway" = "Yine de devam et";
 "Cover" = "Ört";
-"Covered. Check the marked places before sharing." = "Örtüldü. Paylaşmadan önce işaretli yerleri kontrol et.";
 "Delete Local Index" = "Yerel dizini sil";
 "Delete everything prepared on this iPhone?" = "Bu iPhone'da hazırlanan her şey silinsin mi?";
 "Doctors, customers, staff, payees, senders and recipients" = "Doktorlar, müşteriler, çalışanlar, alacaklılar, gönderenler ve alıcılar";
@@ -1349,7 +1348,6 @@
 "Each can be undone." = "Her biri geri alınabilir.";
 "Enable faster picture processing" = "Daha hızlı görüntü işlemeyi etkinleştir";
 "Eraser" = "Silgi";
-"Everything found is covered" = "Bulunan her şey örtüldü";
 "Faster picture processing" = "Daha hızlı görüntü işleme";
 "In medical letters, reports and forms" = "Doktor mektuplarında, raporlarda ve formlarda";
 "It works while Snapfly is open, and in the background while your iPhone is charging, when iOS allows." = "Snapfly açıkken ve iOS izin verdiğinde iPhone'un şarj olurken arka planda çalışır.";
@@ -1379,8 +1377,6 @@
 "Preparing waits until you go on. Your photos stay as they are." = "Sen devam edene kadar hazırlık bekler. Fotoğrafların olduğu gibi kalır.";
 "Preparing…" = "Hazırlanıyor…";
 "Protect Picture" = "Resmi koru";
-"1 private detail found" = "1 özel bilgi bulundu";
-"%d private details found" = "%d özel bilgi bulundu";
 "%d to check" = "%d kontrol edilecek";
 "Protected" = "Korunuyor";
 "Read on this iPhone only. Nothing is sent anywhere." = "Yalnızca bu iPhone'da okunur. Hiçbir şey hiçbir yere gönderilmez.";
@@ -1837,3 +1833,11 @@
 "1 page added" = "1 sayfa eklendi";
 "%d pages added" = "%d sayfa eklendi";
 "Blank page added" = "Boş sayfa eklendi";
+
+/* The line under Review: what is covered, what is still to check, what is wrong with the picture. */
+"%d covered" = "%d kapatıldı";
+"%d covered, everything checked" = "%d kapatıldı, hepsi kontrol edildi";
+"Nothing private" = "Özel bir şey yok";
+"1 hint" = "1 not";
+"%d hints" = "%d not";
+"Open the list." = "Listeyi aç.";

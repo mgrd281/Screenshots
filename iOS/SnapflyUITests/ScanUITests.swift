@@ -81,7 +81,8 @@ final class ScanUITests: XCTestCase {
         let card = element(app, "scan-status-good")
         XCTAssertTrue(card.waitForExistence(timeout: Self.ready))
         XCTAssertTrue(card.label.contains("Gerade gerückt und aufgehellt"), card.label)
-        XCTAssertTrue(card.label.contains("abgedeckt") || card.label.contains("Keine privaten Angaben"), card.label)
+        XCTAssertTrue(card.label.contains("abgedeckt") || card.label.contains("Keine privaten Angaben")
+                      || card.label.contains("Prüfe"), card.label)
         XCTAssertTrue(app.navigationBars["Prüfen"].exists)
         XCTAssertTrue(element(app, "scan-next").exists)
         let thumb = element(app, "scan-thumb-1")
@@ -227,8 +228,8 @@ final class ScanUITests: XCTestCase {
 
     /// The status once the copy is made and checked.
     private func checked(_ app: XCUIApplication) -> XCUIElement {
-        app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@ OR label CONTAINS %@",
-                                                             "Zu prüfen", "Nichts Privates gefunden")).firstMatch
+        app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS[c] %@ OR label CONTAINS %@ OR label CONTAINS %@",
+                                                             "zu prüfen", "verdeckt", "Nichts Privates")).firstMatch
     }
 
     func testAPhotographedDocumentIsOfferedCleaningAndRevertBringsThePhotoBack() {

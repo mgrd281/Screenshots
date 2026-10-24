@@ -558,9 +558,7 @@ struct ProtectView: View {
         if let page = scanPage, page.state != .ready {
             ScanWorking(state: page.state, retake: { retake(page) }, corners: { reshape(.crop(page.id)) })
         } else {
-            PrivacyStatus(stage: session.stage, tally: session.plan.tally, found: found,
-                          nothingFound: session.found
-                              && session.plan.marks.allSatisfy { $0.origin == .spared && !$0.covered },
+            PrivacyStatus(stage: session.stage, tally: session.plan.tally, hints: scanPage?.issues.count ?? 0,
                           open: { reviewing = true }, dontWait: session.dontWait, retry: session.retry)
         }
     }
@@ -649,11 +647,6 @@ struct ProtectView: View {
                     },
                     options: { showsOptions = true })
             .disabled(session.original == nil)
-    }
-
-    /// The private details found, sure or offered, for the status.
-    private var found: Int {
-        session.plan.marks.filter { $0.origin == .found || $0.origin == .possible }.count
     }
 
     /// The eye, held down to see the picture as it was.

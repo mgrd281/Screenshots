@@ -1339,7 +1339,6 @@
 "Clear Hidden by Hand" = "Effacer ce qui est masqué à la main";
 "Continue Anyway" = "Continuer quand même";
 "Cover" = "Couvrir";
-"Covered. Check the marked places before sharing." = "Couvert. Vérifie les endroits marqués avant de partager.";
 "Delete Local Index" = "Supprimer l’index local";
 "Delete everything prepared on this iPhone?" = "Supprimer tout ce qui a été préparé sur cet iPhone ?";
 "Doctors, customers, staff, payees, senders and recipients" = "Médecins, clients, personnel, bénéficiaires, expéditeurs et destinataires";
@@ -1349,7 +1348,6 @@
 "Each can be undone." = "Chacune peut être annulée.";
 "Enable faster picture processing" = "Activer un traitement d’image plus rapide";
 "Eraser" = "Gomme";
-"Everything found is covered" = "Tout ce qui a été trouvé est couvert";
 "Faster picture processing" = "Traitement d’image plus rapide";
 "In medical letters, reports and forms" = "Dans les courriers médicaux, comptes rendus et formulaires";
 "It works while Snapfly is open, and in the background while your iPhone is charging, when iOS allows." = "Cela fonctionne quand Snapfly est ouvert, et en arrière-plan pendant que ton iPhone charge, quand iOS le permet.";
@@ -1379,8 +1377,6 @@
 "Preparing waits until you go on. Your photos stay as they are." = "La préparation attend que tu reprennes. Tes photos restent telles quelles.";
 "Preparing…" = "Préparation…";
 "Protect Picture" = "Protéger l’image";
-"1 private detail found" = "1 donnée privée trouvée";
-"%d private details found" = "%d données privées trouvées";
 "%d to check" = "%d à vérifier";
 "Protected" = "Protégé";
 "Read on this iPhone only. Nothing is sent anywhere." = "Lu uniquement sur cet iPhone. Rien n’est envoyé nulle part.";
@@ -1837,3 +1833,11 @@
 "1 page added" = "1 page ajoutée";
 "%d pages added" = "%d pages ajoutées";
 "Blank page added" = "Page vierge ajoutée";
+
+/* The line under Review: what is covered, what is still to check, what is wrong with the picture. */
+"%d covered" = "%d masqués";
+"%d covered, everything checked" = "%d masqués, tout vérifié";
+"Nothing private" = "Rien de privé";
+"1 hint" = "1 remarque";
+"%d hints" = "%d remarques";
+"Open the list." = "Ouvrir la liste.";

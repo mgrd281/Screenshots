@@ -184,7 +184,8 @@ struct ScanStatusCard: View {
     private var goodWords: String {
         var words = [page.textKept == true ? L("Straightened and brightened, text unchanged.") : L("Straightened and brightened.")]
         switch covered {
-        case 0: words.append(L("No private details found."))
+        // Never while a place is still to check.
+        case 0: if toCheck == 0 { words.append(L("No private details found.")) }
         case 1: words.append(L("1 private detail covered."))
         default: words.append(String(format: L("%d private details covered."), covered))
         }
