@@ -40,6 +40,8 @@ enum ScanCleaner {
         var gently = 0
         var evened = 0
         var otherwise = 0
+        /// The lines cleaned again gently or kept as evened.
+        var redone: [CGRect] = []
     }
 
     /// What the checks found.
@@ -211,6 +213,7 @@ enum ScanCleaner {
             if reads(gentle, box: box, as: said) {
                 pixels = gentle
                 done.gently += 1
+                done.redone.append(box)
                 continue
             }
             var kept = pixels
@@ -218,6 +221,7 @@ enum ScanCleaner {
             if reads(kept, box: box, as: said) {
                 pixels = kept
                 done.evened += 1
+                done.redone.append(box)
             } else {
                 done.otherwise += 1
             }

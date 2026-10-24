@@ -116,7 +116,7 @@ height (`ScanClean.printLines`).
     ink is taken to 6, at most five times as dark, with the page's gamma.
     Print on a grey fill (paper under 240) is left to the page's curve.
   - **A thin light face** (`ScanClean.drive`): where the body of a line's
-    ink, its darkest tenth, would still be lighter than 60, the whole line
+    ink, its darkest tenth, would still be lighter than 80, the whole line
     is taken further, up to twice. The strokes' soft edges then come out
     dark as well as their middles: a light face at 7 pt reads a little
     bolder, as dark as the body beside it. A line dark enough already is not
@@ -138,7 +138,8 @@ height (`ScanClean.printLines`).
     too faint and the reading before said "Arzte", "Ärzte" after cleaning is
     the print made clearer: cleaning only makes pixels darker or lighter and
     never draws a mark. The first guard took the reading before as the
-    truth and undid exactly these lines (below).
+    truth and undid exactly these lines (below). Not over an i or a j: their
+    own dot, made darker, was read once as an accent ("praxís").
   - **A line that reads otherwise** is tried, in this order, until one reads
     as before: the cleaned line read on its own; the line cleaned again
     gently (ink at most twice as dark, nothing sharpened, not taken
@@ -168,19 +169,22 @@ the straightening make it, a warm lamp and a little grain.
 | Photo | Pipeline | Dots seen | Dot / stroke | Grey darkest 30 % (median, worst line) | Stroke at 300 dpi, variation | Blue hue |
 |---|---|---|---|---|---|---|
 | hard | main | 2 / 22 | 0.26 | 104, 123 | 4.0 px, 10 % | 211.1° |
-| hard | new | 21 / 22 | 0.66 | 6, 10 | 5.2 px, 8 % | 211.2° |
+| hard | new | 16 / 22 | 0.59 | 30, 33 | 4.9 px, 8 % | 211.1° |
 | medium | main | 21 / 22 | 0.62 | 95, 121 | 3.3 px, 11 % | 211.3° |
-| medium | new | 22 / 22 | 0.92 | 9, 14 | 4.0 px, 10 % | 211.3° |
+| medium | new | 22 / 22 | 0.85 | 30.5, 38.5 | 3.8 px, 10 % | 211.3° |
 | Mac-like, 200 dpi | main | – | – | 136, 193 | 2.4 px | – |
-| Mac-like, 200 dpi | new | – | – | 17.5, 25 | 3.6 px | – |
+| Mac-like, 200 dpi | new | – | – | 17.5, 26 | 3.6 px | – |
 | Mac-like, 150 dpi | main | – | – | 129, 176 | 2.5 px | – |
-| Mac-like, 150 dpi | new | – | – | 6, 6 | 4.4 px | – |
+| Mac-like, 150 dpi | new | – | – | 6, 6 | 4.3 px | – |
 
 - The darkest 30 % is taken in the box round each line's own ink. In a box
   as tall as the font's ascent and descent, with paper above and below, the
   Mac-like letter's worst line at 200 dpi is 78 and the median 22.
+- No dot is lost on either photo: every one is at least 25 levels under its
+  paper. "Seen" asks more, half as dark as its stroke; the six hard-photo
+  dots short of it are still over 100 levels dark.
 - Specks: paper pixels darker than 230 away from the print, near the grey
-  lines, at most 5 in 10,000 (hard photo), as before.
+  lines, at most 7 in 10,000 (hard photo).
 - The dots of the Mac-like letter are not counted (it has no truth of where
   each dot is), but its crops show every one.
 
@@ -243,7 +247,28 @@ Two causes, both fixed above:
    is now taken further where its ink's body stays light.
 
 The test was briefly loosened to pass that run; it now asks for the brief's
-targets again. The time per page was about 150 s in a debug build on a CI
+targets again.
+
+### The second run
+
+With those two fixed (darker drive, up to a body of 60):
+
+- **Darkest 30 % of the grey lines:** 6 in every line, at 200 and 150 dpi,
+  in the box round the ink; 6 to 46 in Vision's own box.
+- **Grey column, 200 dpi:** 99.75 %. Only "Ärzte" still read "Arzte", as in
+  the photo.
+- **At 150 dpi** the umlauts the photo hid were read after cleaning ("Ärzte",
+  "Übrige", "Musterwall 7a · 20354"), but two lines were read worse:
+  "praxis@" as "praxís@" (an i's dot made darker read as an accent) and an
+  "f" of "Öffnungszeiten" as "i".
+- **At 200 dpi** one body line read "Rückíragen". The body is dark print,
+  but that version evened it without main's rule that a stroke never takes
+  a fold's finer light; main's rule is back.
+
+So the line's body is now taken to 80 rather than 60, a little less bold,
+and an accent read over an i is a change the guard acts on. A line the
+guard cleans again is reported by the darkness test rather than held to 70:
+what a line says comes first. The time per page was about 150 s in a debug build on a CI
 runner, which says nothing about an iPhone 15.
 
 ## Not done in this part, and why

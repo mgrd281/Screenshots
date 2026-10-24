@@ -80,18 +80,24 @@ enum ScanContent {
     /// character in the same order, spaces aside, each with at least the
     /// marks it had. A mark read after and not before, an umlaut's dots the
     /// photo left too faint, is the print made clearer: cleaning only makes
-    /// a pixel darker or lighter and never draws one.
+    /// a pixel darker or lighter and never draws one. Not over an i or a j,
+    /// whose own dot, made darker, can read as an accent.
     static func says(_ after: String, _ before: String) -> Bool {
         let read = marked(compact(after)), said = marked(compact(before))
         guard !said.isEmpty else { return true }
         guard read.count >= said.count else { return false }
         for start in 0...(read.count - said.count) where (0..<said.count).allSatisfy({ n in
-            read[start + n].letter == said[n].letter && read[start + n].marks.isSuperset(of: said[n].marks)
+            let now = read[start + n], was = said[n]
+            return now.letter == was.letter && now.marks.isSuperset(of: was.marks)
+                && (now.marks == was.marks || !dotted.contains(now.letter))
         }) {
             return true
         }
         return false
     }
+
+    /// Letters with a dot of their own.
+    private static let dotted: Set<String> = ["i", "j", "I", "J", "ı", "ȷ"]
 
     /// Each character of a text as its letter and the marks over or under it.
     private static func marked(_ text: String) -> [(letter: String, marks: Set<Unicode.Scalar>)] {

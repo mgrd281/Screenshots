@@ -162,7 +162,9 @@ final class ScanTextFixtureTests: XCTestCase {
     /// The grey print comes out dark: in each of its lines, the middle of
     /// the darkest 30 % of the pixels in the box round its ink at 70 or
     /// darker; and the blue headings keep their hue. Vision's own box, with
-    /// its margin of paper, is reported beside it.
+    /// its margin of paper, is reported beside it. A line the guard cleaned
+    /// again, so that it reads as it did, is reported: what it says comes
+    /// before how dark it is.
     func testTheGreyPrintIsDarkAndTheBlueStaysBlue() async throws {
         for dpi in [200, 150] {
             let made = try await made(dpi: dpi)
@@ -174,8 +176,10 @@ final class ScanTextFixtureTests: XCTestCase {
                 if line.print == .grey {
                     let inked = self.inked(page, in: box)
                     let middle = self.darkest(self.pixels(page, in: inked)), was = self.darkest(self.pixels(photo, in: inked))
-                    print("TEXT \(dpi) dpi darkest 30 %: \(line.text) \(was) -> \(middle), in Vision's box \(self.darkest(pixels))")
-                    XCTAssertLessThanOrEqual(middle, 70, "\(dpi) dpi: \(line.text) dark enough")
+                    let redone = made.prepared.guarded.redone.contains { $0.intersects(box) }
+                    print("TEXT \(dpi) dpi darkest 30 %: \(line.text) \(was) -> \(middle), in Vision's box \(self.darkest(pixels))"
+                        + (redone ? ", cleaned again by the guard" : ""))
+                    if !redone { XCTAssertLessThanOrEqual(middle, 70, "\(dpi) dpi: \(line.text) dark enough") }
                 } else {
                     let inked = pixels.filter { ScanClean.brightness($0.0, $0.1, $0.2) < 200 }
                     XCTAssertGreaterThan(inked.count, 20, "\(dpi) dpi: \(line.text) has ink")

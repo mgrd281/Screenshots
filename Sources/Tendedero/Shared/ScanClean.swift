@@ -228,7 +228,7 @@ enum ScanClean {
         var lightInkFull: Float = 140
         var lineInk: Float = 6
         var lineGain: Float = 5
-        var lineDark: Float = 60
+        var lineDark: Float = 80
         var lineBody: Float = 0.1
         var lineDrive: Float = 2
         var lightApart: Float = 40

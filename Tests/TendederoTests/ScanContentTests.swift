@@ -148,6 +148,8 @@ final class ScanContentTests: XCTestCase {
                                            after: [line("Örzte für Radiologie", row: 0)]).count, 1, "another letter")
         XCTAssertTrue(ScanContent.says("Größer,MBA", "Größer, MBA"))
         XCTAssertFalse(ScanContent.says("Grosser, MBA", "Größer, MBA"))
+        // An i's own dot, made darker, read as an accent is a change.
+        XCTAssertFalse(ScanContent.says("praxís@radiologie-musterwall.de", "praxis@radiologie-musterwall.de"))
     }
 
     /// A line read unsurely before says nothing sure of the page, and a line
