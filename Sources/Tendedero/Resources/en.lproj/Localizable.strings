@@ -1492,13 +1492,6 @@
 "Straightening and brightening…" = "Straightening and brightening…";
 "The page could not be read." = "The page could not be read.";
 "Take Again" = "Take Again";
-"Straightened and brightened, text unchanged." = "Straightened and brightened, text unchanged.";
-"Straightened and brightened." = "Straightened and brightened.";
-"No private details found." = "No private details found.";
-"1 private detail covered." = "1 private detail covered.";
-"%d private details covered." = "%d private details covered.";
-"Check 1 place." = "Check 1 place.";
-"Check %d places." = "Check %d places.";
 "Before" = "Before";
 "After" = "After";
 "Comparison of Before and After" = "Comparison of Before and After";
@@ -1843,3 +1836,36 @@
 "1 hint" = "1 hint";
 "%d hints" = "%d hints";
 "Open the list." = "Open the list.";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "%d places to check";
+"1 place to check" = "1 place to check";
+"Collapsed" = "Collapsed";
+"Cover All" = "Cover All";
+"Decide what is covered. Nothing leaves your iPhone." = "Decide what is covered. Nothing leaves your iPhone.";
+"Discard Scan" = "Discard Scan";
+"Discard the whole scan?" = "Discard the whole scan?";
+"Every page goes, with what was covered on it." = "Every page goes, with what was covered on it.";
+"Everything checked" = "Everything checked";
+"Expanded" = "Expanded";
+"From your categories." = "From your categories.";
+"Hint" = "Hint";
+"Leave" = "Leave";
+"Look" = "Look";
+"Show With Covers" = "Show With Covers";
+"Show Without Covers" = "Show Without Covers";
+"Some covered by hand." = "Some covered by hand.";
+"Still open" = "Still open";
+"Your details from Always Hide, the rest from your categories." = "Your details from Always Hide, the rest from your categories.";
+"Your details from Always Hide." = "Your details from Always Hide.";
+"Cover Up" = "Cover Up";
+"Rectangle" = "Rectangle";
+"Brush" = "Brush";
+"Retake" = "Retake";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "Blurred";
+"Hard to read" = "Hard to read";
+"Reflection" = "Reflection";
+"Smudged lens" = "Smudged lens";
+"Too small" = "Too small";

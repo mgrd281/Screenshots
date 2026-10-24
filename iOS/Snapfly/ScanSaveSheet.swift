@@ -54,6 +54,10 @@ struct ScanSaveSheet: View {
     /// The owner changed the name: no suggestion takes its place.
     @State private var edited = false
     @FocusState private var naming: Bool
+    /// An AI chat tapped under Send To, while what to ask is chosen.
+    @State private var asking: AssistantChoice?
+    /// What was asked there, handed over once its sheet has gone.
+    @State private var asked: (chat: ChatTarget, ask: ScanAsk?)?
     /// What the sheet holds, and its buttons, so it is as tall as they are.
     @State private var contentHeight: CGFloat = 520
     @State private var waysHeight: CGFloat = 110
@@ -78,6 +82,7 @@ struct ScanSaveSheet: View {
                     covers
                     if format == .pdf { text }
                     checked
+                    if covered { sendTo }
                 }
                 .padding(16)
                 .measuredHeight($contentHeight)
@@ -104,6 +109,9 @@ struct ScanSaveSheet: View {
             case .failure(let error):
                 if (error as? CocoaError)?.code != .userCancelled { failed() }
             }
+        }
+        .sheet(item: $asking, onDismiss: handOverAsked) { choice in
+            ScanAssistantSheet(chat: choice.chat) { asked = (choice.chat, $0) }
         }
         .sheet(item: $sharing) { files in
             ShareFilesSheet(files: files)
@@ -329,6 +337,30 @@ struct ScanSaveSheet: View {
         .foregroundStyle(.secondary)
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier("scan-check-line")
+    }
+
+    // MARK: Send To
+
+    /// The apps chosen, as the Scan tab shows them, each taking every page
+    /// covered: straight to WhatsApp, an AI chat with what to ask, else the
+    /// share sheet. Only with covers: nothing uncovered goes to an app.
+    private var sendTo: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(L("Send to"))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+            AppTiles(busy: store.sendingTo) { chat in
+                if chat.isAI { asking = AssistantChoice(chat: chat) } else { store.send(to: chat) }
+            }
+            .padding(.horizontal, -16)
+        }
+    }
+
+    /// What was chosen for the AI chat, once its sheet has gone.
+    private func handOverAsked() {
+        guard let asked else { return }
+        self.asked = nil
+        store.send(to: asked.chat, asking: asked.ask)
     }
 
     // MARK: Ways out

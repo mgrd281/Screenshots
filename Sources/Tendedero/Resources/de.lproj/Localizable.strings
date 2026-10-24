@@ -1490,13 +1490,6 @@
 "Straightening and brightening…" = "Wird gerade gerückt und aufgehellt …";
 "The page could not be read." = "Die Seite konnte nicht gelesen werden.";
 "Take Again" = "Neu";
-"Straightened and brightened, text unchanged." = "Gerade gerückt und aufgehellt, Text unverändert.";
-"Straightened and brightened." = "Gerade gerückt und aufgehellt.";
-"No private details found." = "Keine privaten Angaben gefunden.";
-"1 private detail covered." = "1 private Angabe abgedeckt.";
-"%d private details covered." = "%d private Angaben abgedeckt.";
-"Check 1 place." = "Prüfe 1 Stelle.";
-"Check %d places." = "Prüfe %d Stellen.";
 "Before" = "Vorher";
 "After" = "Nachher";
 "Comparison of Before and After" = "Vergleich Vorher und Nachher";
@@ -1841,3 +1834,36 @@
 "1 hint" = "1 Hinweis";
 "%d hints" = "%d Hinweise";
 "Open the list." = "Liste öffnen.";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "%d Stellen zu prüfen";
+"1 place to check" = "1 Stelle zu prüfen";
+"Collapsed" = "Eingeklappt";
+"Cover All" = "Alle verdecken";
+"Decide what is covered. Nothing leaves your iPhone." = "Entscheide, was verdeckt wird. Nichts verlässt dein iPhone.";
+"Discard Scan" = "Scan verwerfen";
+"Discard the whole scan?" = "Den ganzen Scan verwerfen?";
+"Every page goes, with what was covered on it." = "Alle Seiten werden gelöscht, mit allem, was darauf verdeckt war.";
+"Everything checked" = "Alles geprüft";
+"Expanded" = "Ausgeklappt";
+"From your categories." = "Aus deinen Kategorien.";
+"Hint" = "Hinweis";
+"Leave" = "Lassen";
+"Look" = "Ansehen";
+"Show With Covers" = "Mit Abdeckung zeigen";
+"Show Without Covers" = "Ohne Abdeckung zeigen";
+"Some covered by hand." = "Einiges von Hand verdeckt.";
+"Still open" = "Offen";
+"Your details from Always Hide, the rest from your categories." = "Deine Angaben aus Immer verbergen, Rest aus deinen Kategorien.";
+"Your details from Always Hide." = "Deine Angaben aus Immer verbergen.";
+"Cover Up" = "Abdecken";
+"Rectangle" = "Rechteck";
+"Brush" = "Pinsel";
+"Retake" = "Neu aufnehmen";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "Unscharf";
+"Hard to read" = "Schwer lesbar";
+"Reflection" = "Spiegelung";
+"Smudged lens" = "Linse verschmiert";
+"Too small" = "Zu klein";

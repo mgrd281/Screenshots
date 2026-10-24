@@ -22,8 +22,8 @@ enum EditTool: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .select: L("Select")
-        case .marker: L("Marker")
-        case .box: L("Box")
+        case .marker: L("Brush")
+        case .box: L("Rectangle")
         case .lasso: L("Lasso")
         case .eraser: L("Eraser")
         }
@@ -100,6 +100,13 @@ struct MarkCanvas: UIViewRepresentable {
     /// Places to look at again, from 0 to 1 from the bottom left, outlined
     /// in orange over the page; never in the copy.
     var issues: [CGRect] = []
+    /// A short name for each of them, written beside its outline ("Unscharf").
+    var issueNames: [String] = []
+    /// On Review: places still to check outlined in orange over a wash of
+    /// it, rather than in the accent.
+    var checksInOrange = false
+    /// A scanned document's pages are swiped sideways, a PDF's up and down.
+    var pagesSideways = false
     /// How far two fingers or a double tap zoom in: 6 times, 8 on a PDF's page.
     var maxZoom: CGFloat = 6
     /// Where a PDF's page came in from as it opens: from below (1), the
@@ -114,14 +121,15 @@ struct MarkCanvas: UIViewRepresentable {
     func updateUIView(_ view: CanvasView, context: Context) {
         view.actions = actions
         view.animates = animated
+        view.sideways = pagesSideways
         if view.maximumZoomScale != maxZoom { view.maximumZoomScale = maxZoom }
         if arrival != 0, !context.coordinator.arrived {
             context.coordinator.arrived = true
             view.arrive(from: arrival)
         }
         view.show(image, marks: marks, checking: checking, isCopy: isCopy, tool: tool, selected: selected,
-                  markerWidth: markerWidth, eraserReach: eraserReach)
-        view.compare(before: before, split: split, issues: issues, holding: holdsBefore)
+                  markerWidth: markerWidth, eraserReach: eraserReach, orange: checksInOrange)
+        view.compare(before: before, split: split, issues: issues, names: issueNames, holding: holdsBefore)
         view.place(chrome: chrome, animated: animated)
         if let reveal, reveal != context.coordinator.revealed {
             context.coordinator.revealed = reveal
@@ -191,7 +199,11 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     private lazy var besideTap = UITapGestureRecognizer(target: self, action: #selector(tappedBeside(_:)))
     private lazy var swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swiped(_:)))
     private lazy var swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(swiped(_:)))
+    private lazy var swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swiped(_:)))
+    private lazy var swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swiped(_:)))
     private lazy var swipes = SwipeGate(canvas: self)
+    /// Pages are swiped sideways, as a scanned document's are; else up and down.
+    var sideways = false
     /// Where the page comes in from once it is on screen; 0 once it came.
     private var arriving: CGFloat = 0
 
@@ -247,7 +259,10 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         // A PDF's next page is a swipe up away, the one before a swipe down.
         swipeUp.direction = .up
         swipeDown.direction = .down
-        for swipe in [swipeUp, swipeDown] {
+        // A scanned document's next page is a swipe towards the leading edge away.
+        swipeLeft.direction = .left
+        swipeRight.direction = .right
+        for swipe in [swipeUp, swipeDown, swipeLeft, swipeRight] {
             swipe.delegate = swipes
             addGestureRecognizer(swipe)
         }
@@ -262,7 +277,7 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     }
 
     func show(_ image: UIImage, marks: [ProtectionPlan.Mark], checking: Set<Int>, isCopy: Bool, tool: EditTool,
-              selected: Int?, markerWidth: CGFloat, eraserReach: CGFloat) {
+              selected: Int?, markerWidth: CGFloat, eraserReach: CGFloat, orange: Bool = false) {
         if picture.image !== image {
             picture.image = image
             if image.size != imageSize {
@@ -277,8 +292,16 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         overlay.aspect = imageSize.height > 0 ? imageSize.width / imageSize.height : 1
         // The first covers found grow in over their places, line by line.
         let arriving = !isCopy && !overlay.marks.contains(where: \.covered) && marks.contains(where: \.covered)
+        // A place decided, covered or left, turns in a fifth of a second.
+        let decided = !arriving && overlay.marks.count == marks.count
+            && zip(overlay.marks, marks).contains { $0.id == $1.id && ($0.covered != $1.covered || $0.check != $1.check) }
+        if decided {
+            UIView.transition(with: overlay, duration: animates ? 0.2 : 0.15, options: [.transitionCrossDissolve, .allowUserInteraction],
+                              animations: {})
+        }
         overlay.marks = marks
         if arriving, animates { overlay.arrive() }
+        overlay.orange = orange
         overlay.checking = checking
         overlay.isCopy = isCopy
         overlay.selected = selected
@@ -385,16 +408,32 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     /// Whether a swipe may turn to another page: only with Select in hand,
     /// the page shown whole, not comparing and not on the mark selected.
     fileprivate func swipeMayBegin(_ gesture: UIGestureRecognizer) -> Bool {
-        let step = gesture === swipeUp ? 1 : -1
+        let across = gesture === swipeLeft || gesture === swipeRight
+        guard across == sideways else { return false }
+        let step = self.step(of: gesture)
         return !tool.draws && split == nil && zoomScale <= minimumZoomScale + 0.01
             && overlay.grab(at: gesture.location(in: content)) == nil && actions.canPage(step)
+    }
+
+    /// The page a swipe goes to: up or towards the leading edge the next
+    /// (1), down or towards the trailing edge the one before (-1).
+    private func step(of gesture: UIGestureRecognizer) -> Int {
+        let leftToRight = effectiveUserInterfaceLayoutDirection == .leftToRight
+        if gesture === swipeLeft { return leftToRight ? 1 : -1 }
+        if gesture === swipeRight { return leftToRight ? -1 : 1 }
+        return gesture === swipeUp ? 1 : -1
     }
 
     /// The page leaves the way it was swiped, a little and fading, and the
     /// next one is opened; with Reduce Motion it only fades.
     @objc private func swiped(_ gesture: UISwipeGestureRecognizer) {
-        let step = gesture.direction == .up ? 1 : -1
-        let away = CGAffineTransform(translationX: 0, y: -CGFloat(step) * bounds.height * 0.3)
+        let step = self.step(of: gesture)
+        let away: CGAffineTransform
+        switch gesture.direction {
+        case .left: away = CGAffineTransform(translationX: -bounds.width * 0.3, y: 0)
+        case .right: away = CGAffineTransform(translationX: bounds.width * 0.3, y: 0)
+        default: away = CGAffineTransform(translationX: 0, y: -CGFloat(step) * bounds.height * 0.3)
+        }
         UIView.animate(withDuration: 0.18, delay: 0, options: [.curveEaseIn, .beginFromCurrentState]) {
             if self.animates { self.transform = away }
             self.alpha = 0
@@ -429,7 +468,12 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
         let side = arriving
         arriving = 0
         alpha = 0
-        if animates { transform = CGAffineTransform(translationX: 0, y: side * bounds.height * 0.3) }
+        if animates {
+            // Sideways, the next page comes in from the trailing edge.
+            let trailing: CGFloat = effectiveUserInterfaceLayoutDirection == .leftToRight ? 1 : -1
+            transform = sideways ? CGAffineTransform(translationX: side * trailing * bounds.width * 0.3, y: 0)
+                : CGAffineTransform(translationX: 0, y: side * bounds.height * 0.3)
+        }
         UIView.animate(withDuration: animates ? 0.42 : 0.2, delay: 0, usingSpringWithDamping: animates ? 0.86 : 1,
                        initialSpringVelocity: 0, options: [.allowUserInteraction]) {
             self.transform = .identity
@@ -456,13 +500,14 @@ final class CanvasView: UIScrollView, UIScrollViewDelegate, UIGestureRecognizerD
     /// and the places to look at again. While comparing, one finger moves
     /// the divider and two move the page, and VoiceOver adjusts it in
     /// tenths.
-    func compare(before image: UIImage?, split: CGFloat?, issues: [CGRect], holding: Bool = false) {
+    func compare(before image: UIImage?, split: CGFloat?, issues: [CGRect], names: [String] = [], holding: Bool = false) {
         if before.image !== image { before.image = image }
         self.holding = holding
         let comparing = split != nil && image != nil
         self.split = comparing ? split : nil
         scanMarks.split = self.split
         scanMarks.issues = issues
+        scanMarks.names = names
         scanMarks.zoom = zoomScale
         scanMarks.setNeedsDisplay()
         masked()
@@ -737,6 +782,8 @@ private final class MarksView: UIView {
 
     var marks: [ProtectionPlan.Mark] = []
     var checking: Set<Int> = []
+    /// Places to check in orange over a wash of it, as Review shows them.
+    var orange = false
     var isCopy = false
     var aspect: CGFloat = 1
     var selected: Int?
@@ -844,10 +891,23 @@ private final class MarksView: UIView {
                     context.restoreGState()
                 }
             }
-            if checking.contains(mark.id) { outline(path, color: tintColor, in: context) }
+            if checking.contains(mark.id) { outline(path, color: checkColor, in: context) }
+        } else if checking.contains(mark.id) {
+            if orange {
+                context.saveGState()
+                checkColor.withAlphaComponent(0.10).setFill()
+                path.fill()
+                context.restoreGState()
+            }
+            outline(path, color: checkColor, in: context)
         } else {
-            outline(path, color: checking.contains(mark.id) ? tintColor : .secondaryLabel, in: context)
+            outline(path, color: .secondaryLabel, in: context)
         }
+    }
+
+    /// A place still to check: the accent, or Review's orange.
+    private var checkColor: UIColor {
+        orange ? UIColor(SnapflyTokens.reviewOpen) : tintColor
     }
 
     private func fill(_ path: UIBezierPath) {
@@ -1017,6 +1077,8 @@ private final class ScanMarksView: UIView {
     var split: CGFloat?
     /// From 0 to 1 from the bottom left.
     var issues: [CGRect] = []
+    /// A short name for each, written over its top leading corner.
+    var names: [String] = []
     var zoom: CGFloat = 1
 
     override func draw(_ rect: CGRect) {
@@ -1033,6 +1095,9 @@ private final class ScanMarksView: UIView {
             path.lineWidth = 2 * scale
             path.setLineDash([5 * scale, 3 * scale], count: 2, phase: 0)
             path.stroke()
+        }
+        for (issue, name) in zip(issues, names) where !name.isEmpty {
+            label(name, at: issue, scale: scale)
         }
         guard let split else { return }
         let across = effectiveUserInterfaceLayoutDirection == .rightToLeft ? 1 - split : split
@@ -1057,6 +1122,24 @@ private final class ScanMarksView: UIView {
             arrow.close()
             arrow.fill()
         }
+    }
+}
+
+extension ScanMarksView {
+    /// A fault's short name in a small orange tag over its outline's top
+    /// leading corner, its size kept on the screen.
+    fileprivate func label(_ name: String, at issue: CGRect, scale: CGFloat) {
+        let font = UIFont.systemFont(ofSize: 11 * scale, weight: .semibold)
+        let text = NSAttributedString(string: name, attributes: [.font: font, .foregroundColor: UIColor.white])
+        let size = text.size()
+        let leading = effectiveUserInterfaceLayoutDirection == .leftToRight
+        let left = (leading ? issue.minX : issue.maxX) * bounds.width + (leading ? -4 : 4) * scale
+        let top = (1 - issue.maxY) * bounds.height - 4 * scale
+        let tag = CGRect(x: leading ? left : left - size.width - 12 * scale, y: top - size.height - 6 * scale,
+                         width: size.width + 12 * scale, height: size.height + 4 * scale)
+        UIColor(SnapflyTokens.reviewOpen).setFill()
+        UIBezierPath(roundedRect: tag, cornerRadius: tag.height / 2).fill()
+        text.draw(at: CGPoint(x: tag.minX + 6 * scale, y: tag.minY + 2 * scale))
     }
 }
 

@@ -109,14 +109,9 @@ enum SnapflyTokens {
 
     // MARK: Scan
 
-    /// The status over a scanned page that is clean: a soft green, its
-    /// words a deep green, 6.9:1; at night a deep green with light green
-    /// words, 7:1.
-    static let scanGood = color(0xE7F4EE, dark: 0x11392C)
-    static let scanGoodText = color(0x075E43, dark: 0x5BD6A6)
-    /// The status over a page with something to look at: a soft amber with
-    /// an edge of a deeper one, its words a dark brown, 7.9:1; at night a
-    /// deep brown with light amber words, 8.8:1.
+    /// A warning in Save and Share: a soft amber with an edge of a deeper
+    /// one, its words a dark brown, 7.9:1; at night a deep brown with light
+    /// amber words, 8.8:1.
     static let scanWarn = color(0xFFF4E0, dark: 0x3A2A10)
     static let scanWarnEdge = color(0xF3D7A6, dark: 0x6E4F1F)
     static let scanWarnText = color(0x6E4206, dark: 0xF5C77E)
@@ -124,6 +119,22 @@ enum SnapflyTokens {
     static let scanCardRadius: CGFloat = 16
     static let scanStripRadius: CGFloat = 18
     static let scanThumbRadius: CGFloat = 8
+
+    // MARK: Review
+
+    /// What is still to check on Review: the status chip's count, the
+    /// dashed outline round a place and its dot on a small page, a deep
+    /// orange, 5.2:1 on white; at night a light orange, 8.6:1 on black.
+    static let reviewOpen = color(0xB35200, dark: 0xFFA54D)
+    /// The fill inside a place still to check, a wash of the same orange.
+    static let reviewOpenFill = color(0xB35200, dark: 0xFFA54D).opacity(0.10)
+    /// The tool in hand on Review's bar, and its labels: a mint pill under
+    /// a deep green.
+    static let reviewChosen = color(0xE7F4EE, dark: 0x11392C)
+    static let reviewChosenText = color(0x075E43, dark: 0x5BD6A6)
+    /// Review's bar of tools, its corners; its small pages, as they show.
+    static let reviewBarRadius: CGFloat = 28
+    static let reviewThumb = CGSize(width: 32, height: 44)
 
     // MARK: PDF projects
 

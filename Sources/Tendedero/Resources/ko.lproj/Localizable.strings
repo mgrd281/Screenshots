@@ -1490,13 +1490,6 @@
 "Straightening and brightening…" = "반듯하게 펴고 밝게 하는 중…";
 "The page could not be read." = "페이지를 읽을 수 없습니다.";
 "Take Again" = "다시 촬영";
-"Straightened and brightened, text unchanged." = "반듯하게 펴고 밝게 했으며 글자는 그대로입니다.";
-"Straightened and brightened." = "반듯하게 펴고 밝게 했습니다.";
-"No private details found." = "개인 정보를 찾지 못했습니다.";
-"1 private detail covered." = "개인 정보 1개를 가렸습니다.";
-"%d private details covered." = "개인 정보 %d개를 가렸습니다.";
-"Check 1 place." = "1곳을 확인하세요.";
-"Check %d places." = "%d곳을 확인하세요.";
 "Before" = "보정 전";
 "After" = "보정 후";
 "Comparison of Before and After" = "보정 전후 비교";
@@ -1841,3 +1834,36 @@
 "1 hint" = "알림 1개";
 "%d hints" = "알림 %d개";
 "Open the list." = "목록을 엽니다.";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "확인할 곳 %d개";
+"1 place to check" = "확인할 곳 1개";
+"Collapsed" = "접힘";
+"Cover All" = "모두 가리기";
+"Decide what is covered. Nothing leaves your iPhone." = "무엇을 가릴지 정하세요. iPhone 밖으로 나가는 것은 없습니다.";
+"Discard Scan" = "스캔 버리기";
+"Discard the whole scan?" = "스캔 전체를 버릴까요?";
+"Every page goes, with what was covered on it." = "모든 페이지가 가린 내용과 함께 삭제됩니다.";
+"Everything checked" = "모두 확인함";
+"Expanded" = "펼침";
+"From your categories." = "내 카테고리에서.";
+"Hint" = "알림";
+"Leave" = "두기";
+"Look" = "보기";
+"Show With Covers" = "가린 채로 보기";
+"Show Without Covers" = "가리지 않고 보기";
+"Some covered by hand." = "일부는 손으로 가림.";
+"Still open" = "미확인";
+"Your details from Always Hide, the rest from your categories." = "내 정보는 '항상 숨기기'에서, 나머지는 내 카테고리에서.";
+"Your details from Always Hide." = "내 정보는 '항상 숨기기'에서.";
+"Cover Up" = "가리기";
+"Rectangle" = "사각형";
+"Brush" = "브러시";
+"Retake" = "다시 찍기";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "흐림";
+"Hard to read" = "읽기 어려움";
+"Reflection" = "반사";
+"Smudged lens" = "렌즈 얼룩";
+"Too small" = "너무 작음";

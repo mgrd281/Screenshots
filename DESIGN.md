@@ -92,10 +92,11 @@ colors:
   phone-detail-address: "#1F6FE0"   # an address (4.8:1)
   phone-detail-card: "#D9660B"      # a bank card (3.6:1, over a symbol's 3:1)
   phone-detail-account: "#7C4DDB"   # a bank account (5.3:1)
-  phone-scan-good: "#E7F4EE"        # a scanned page's card under it once it is clean and checked; #11392C in dark
-  phone-scan-good-text: "#075E43"   # its words and seal: 6.9:1 on phone-scan-good; #5BD6A6 in dark (7:1)
-  phone-scan-warn: "#FFF4E0"        # a scanned page's card when something on it is wrong, and Save and Share's warning; #3A2A10 in dark
-  phone-scan-warn-edge: "#F3D7A6"   # their 1pt edge, and the card's button; #6E4F1F in dark
+  phone-review-open: "#B35200"      # Review: what is still to check, the chip's count, a place's dashed outline over a wash of it at 10%, a page's dot, a fault's tag; 5.2:1 on white; #FFA54D in dark (8.6:1 on black)
+  phone-review-chosen: "#E7F4EE"    # Review's bar: the mint pill under the tool in hand; #11392C in dark
+  phone-review-chosen-text: "#075E43" # the tool in hand's glyph and label on it: 6.9:1; #5BD6A6 in dark (7:1)
+  phone-scan-warn: "#FFF4E0"        # Save and Share's warning; #3A2A10 in dark
+  phone-scan-warn-edge: "#F3D7A6"   # its 1pt edge; #6E4F1F in dark
   phone-scan-warn-text: "#6E4206"   # their words: 7.9:1 on phone-scan-warn, 6.2:1 on its button; #F5C77E in dark (8.8:1, 4.8:1); also Save and Share's lines for a page not ready, on the bar, and the crop glyph on a page whose corners wait
   phone-project-toast: "#1F2226"    # the note after pages were turned, moved, added or deleted, a capsule over the bottom: white words on it 16:1; #3A3F46 in dark (10.6:1)
   phone-project-toast-action: "#7FE0B8" # its Undo and Redo: 10:1 on phone-project-toast; #9FE8C9 in dark (7.5:1)
@@ -141,8 +142,9 @@ rounded:
   phone-more-hero: "28pt"        # More's hero card
   phone-more-button: "18pt"      # More's buttons: the hero's chips and Help's two
   phone-hide-sheet: "32pt"       # Always Hide's sheets
-  phone-scan-card: "16pt"        # a scanned page's card
-  phone-scan-strip: "18pt"       # the strip of a document's pages
+  phone-scan-card: "16pt"        # the card offering to clean a photographed document
+  phone-scan-strip: "18pt"       # the strip of a PDF project's pages
+  phone-review-bar: "28pt"       # Review's one bar of tools
   phone-scan-thumb: "8pt"        # a page small in the strip
   phone-project-card: "20pt"     # the Scan tab's card to make PDFs
   phone-project-tile: "16pt"     # its two tiles, and Recently Edited's card
@@ -279,14 +281,22 @@ components:
     rounded: "18pt"                # the owner's question in Explain: the accent at 12%, 14pt by 10pt in, on the trailing side, 40pt clear of the leading edge
   phone-topic-sign:
     size: "36pt"                   # a topic in Details: a 2.5pt ring of phone-protect, round ends, over .primary at 8%, from the top round as much as is covered; inside, 5pt in, a circle with the glyph 14pt semibold: phone-protect with white once all is covered, phone-protect at 12% with a green glyph while some is, .primary at 6% with a .secondary glyph while none is
-  phone-scan-card:
-    height: "44pt"                 # at least: under a scanned page, 16pt in from the screen's sides and 520pt wide at most, footnote medium 14pt in and 10pt down, rounded.phone-scan-card; green (phone-scan-good, its words and checkmark.seal.fill in phone-scan-good-text) once the copy is checked, a tap opening Details; amber (phone-scan-warn with a 1pt phone-scan-warn-edge, exclamationmark.triangle.fill and the words in phone-scan-warn-text) at once where something is wrong, its button (Take Again, or Compare where cleaning read less) footnote semibold on a phone-scan-warn-edge capsule, 44pt to the finger
+  phone-review-header:
+    height: "44pt"                 # Review's own bar, 16pt in: a 44pt round back button of phone-glass (chevron.backward 17pt semibold), "Prüfen" in headline centred over "Seite 1 von 3" in footnote .secondary, the menu's 44pt round button of phone-glass (ellipsis), and Next: white body semibold, 20pt in, on a phone-protect capsule, the screen's one filled button
+  phone-review-chip:
+    height: "34pt"                 # the status chip under the bar (phone-status-capsule's glass): checkmark.shield.fill in phone-protect-tint, "4 verdeckt" semibold, a dot, then "2 zu prüfen" or "1 Hinweis" semibold in phone-review-open, and a chevron.right caption semibold in .tertiary; numbers change as numeric text; a tap opens the list
+  phone-review-pages:
+    size: "32 × 44pt"              # the document's pages under the page, centred, 10pt apart, each in a 44 × 56 cell with rounded.phone-scan-thumb and a 0.5pt hairline of .primary at 12%; the page open 12% larger, ringed 2pt in phone-protect-tint 3pt out; a page with something open, a 9pt dot of phone-review-open ringed 1.5pt in systemBackground at its top trailing corner, never a badge; the plus a dashed outline (.primary at 25%, 1pt, 3 and 3) the same size; scrolling sideways once they no longer fit
+  phone-review-bar:
+    padding: "8pt"                 # one bar of phone-glass with rounded.phone-review-bar, 12pt in from the sides: on top a switch of two segments, Abdecken and Seite (subheadline semibold, 36pt high, .primary at 6% under them, the one chosen white with a shadow of black 8%, radius 3, y 1, sliding on a spring 0.32, 0.84); under it the row, crossfading in 0.2 s: each tool its glyph 17pt semibold over a caption 2 label in a 44pt target, the tool in hand on a phone-review-chosen capsule in phone-review-chosen-text that glides to the next; 1pt dividers of .primary at 12%, 28pt high; Delete in red, last; at the accessibility sizes the glyphs alone
+  phone-review-eye:
+    size: "36pt"                   # in the page's top trailing corner, 24pt in to its middle: eye, or eye.slash while the covers are hidden, 15pt semibold, on a circle of phone-glass in a 44pt target
+  phone-review-list:
+    rounded: "32pt"                # the list of places to check, a sheet as tall as what it holds on phone-hide-ground: title 2 bold, the line under it in subheadline phone-hide-secondary, a 30pt close button; sections in subheadline semibold phone-hide-secondary over phone-hide-card cards with rounded.phone-hide-card; each row a 36pt sign (phone-review-open on it at 10%, corners of 10), its kind in subheadline semibold over its first words and page in footnote, Leave in subheadline semibold phone-hide-secondary and Cover white on a .primary capsule 36pt high; Cover All in phone-hide-accent on phone-hide-accent-soft; Look on a phone-hide-button-off capsule
   phone-scan-strip:
-    height: "52pt"                 # the document's pages under the card, in glass with rounded.phone-scan-strip, as wide as its pages and scrolling sideways once they no longer fit: each page 34 × 46 with rounded.phone-scan-thumb in a 44 × 52 cell, 6pt apart; the page open ringed 2pt in phone-protect-tint, the others a 0.5pt hairline of .primary at 10%; a page being made, a small spinner over it; one whose corners wait, the crop glyph (caption semibold, phone-scan-warn-text); the plus (phone-dock-icon) at the end
+    height: "52pt"                 # a PDF project's pages over the docks, in glass with rounded.phone-scan-strip, as wide as its pages and scrolling sideways once they no longer fit: each page 34 × 46 with rounded.phone-scan-thumb in a 44 × 52 cell, 6pt apart; the page open ringed 2pt in phone-protect-tint, the others a 0.5pt hairline of .primary at 10%; the plus (phone-dock-icon) at the end
   phone-scan-badge:
-    size: "15pt"                   # a page with something wrong, at its top trailing corner in the strip (22pt on the Scan tab's cards): orange with a black exclamationmark at 85% (9pt heavy; caption heavy at 22pt), ringed 1.5pt in white
-  phone-scan-tools:
-    height: "44pt"                 # the page's own tools in a glass capsule over the editing bar, phone-dock-icon each: Compare (rectangle.split.2x1, chosen in phone-protect-tint), Crop, Turn (rotate.right), the colours (circle.lefthalf.filled, a menu), a 1pt divider 24pt high, Delete Page (trash)
+    size: "22pt"                   # a page with something wrong on the Scan tab's cards: orange with a black exclamationmark at 85% (caption heavy), ringed 1.5pt in white
   phone-scan-divider:
     width: "2pt"                   # Before and After: a white line across the page with a shadow of black 35%, radius 4, y 1, and a 32pt white handle with two dark grey arrows pointing apart, the same size on the screen whatever the zoom; Before and After over the page's top corners in caption semibold capsules of glass, 26pt high
   phone-scan-issue:
@@ -2844,42 +2854,62 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     Cancel. Share opens the system's share sheet with a PNG file of the copy
     alone, named by when the picture was taken, deleted once the sheet
     closes; Save to Files offers the same PNG under the same name.
-  - **A scanned page** (`ScanEditing.swift`) is reviewed here, titled
-    "Review", with Next (semibold) after the menu, which opens Save and
-    Share. While it is made ready, the status capsule says so
-    ("Straightening and brightening…"), that its corners wait ("Set the
-    page's corners.", with Set Corners, which opens the corner editor, for
-    when it could not open by itself), or that it could not be read, with
-    Take Again. Once cleaned, it wipes in over the page as it came, once,
-    from the leading edge (`scan.wipe`), and then its covers sweep in as on
-    any picture. Under the page, its card (`phone-scan-card`): green once
-    the copy is checked ("Straightened and brightened, text unchanged. 3
-    private details covered.", and "Check 1 place." while one is); amber at
-    once where something is wrong, said once to VoiceOver, with Take Again
-    (by the camera for a camera's page, else from Photos) or Compare where
-    cleaning read less, its place outlined on the page (`phone-scan-issue`).
-    Its words grow no larger than the first accessibility size, so the page
-    keeps its room; VoiceOver reads them whole. Under the card, the
-    document's pages (`phone-scan-strip`, each read as
-    "Page 2 of 2, hard to read" and selected where it is open): a tap opens
-    one, dragged onto another it takes that one's place, held it offers
-    Turn, Crop and Delete Page, and VoiceOver moves it earlier or later; the
-    plus adds pages from the camera or from Photos, after the others, and
-    opens the first. Then the page's tools (`phone-scan-tools`): Compare
-    puts Before, the page straightened but not yet cleaned and without its
-    covers, on the leading side of the divider (`phone-scan-divider`) over
-    After, the cleaned page as it leaves, covers and all; one finger moves
-    the divider, or a tap puts it there, and two move the page; VoiceOver
-    reads one adjustable element, "Comparison of Before and After, 50%", in
-    steps of ten; choosing a tool ends it. The colours (Color with "Logos
-    stay in color", Grayscale, Black and white with "Smallest file, pale
-    stamps can go") change every page of the document, their covers kept.
-    Turning a page (once it has been made upright) or cropping it finds its
-    covers again, its lean measured again for a new cut; where something
-    was covered on it by hand, a dialog asks first ("Covers drawn by hand
-    go"). Delete asks too ("Delete page 2?"), and then the page in its place
-    opens, or the one before it; with none left, the Scan tab shows. The
-    tools to cover, the apps, the eye and the menu stay as on any picture.
+  - **A scanned page** is reviewed on **Review** (`ReviewParts.swift`,
+    `ScanEditing.swift`), a screen with one job: checking the covers.
+    Everything else is a tap away. Top to bottom:
+    - Its own bar (`phone-review-header`), the system's navigation bar
+      hidden: back, "Prüfen" over "Seite 1 von 3", the menu and Next, which
+      opens Save and Share. The menu holds KI fragen (Explain, the covered
+      copy only), Alle Seiten (back to the Scan tab's pages), Neu aufnehmen,
+      Send to Mac where a Mac is there, Full Screen, Clear Hidden by Hand,
+      Reset to Suggestions, and last, after a divider and in red, Scan
+      verwerfen, which asks first ("Den ganzen Scan verwerfen?").
+    - The status chip (`phone-review-chip`), the line `ReviewStatus` writes:
+      "4 verdeckt · 2 zu prüfen", "3 verdeckt, alles geprüft", "Nichts
+      Privates · 1 Hinweis", and Nichts Privates gefunden only when nothing
+      is covered, open or wrong. While the page is made ready it says so,
+      as the status capsule does. A tap opens the list. VoiceOver: "4
+      verdeckt, 2 zu prüfen. Liste öffnen."
+    - The page, as large as it can be: 7% of the width in from each side
+      (16pt at least), with no apps beside it. Places still to check are
+      outlined dashed in `phone-review-open` over a wash of it; a tap on one
+      opens the list there. A fault is outlined in orange
+      (`phone-scan-issue`) with its short name in a small orange tag
+      ("Unscharf"). The eye (`phone-review-eye`) shows the page without its
+      covers and again with them. Once cleaned, the page wipes in over the
+      page as it came, once (`scan.wipe`), then its covers sweep in. A swipe
+      sideways with Select in hand goes to the next page or the one before:
+      the page leaves 30% of the width, fading, in 0.18 s, the next comes in
+      from its side on a spring (0.42 s, damping 0.86); only fading with
+      Reduce Motion. For VoiceOver each place to check is an element of its
+      own ("Rechnungsnummer, zu prüfen") with Verdecken and Lassen.
+    - The pages (`phone-review-pages`), read as "Seite 2 von 3, zu prüfen":
+      a tap opens one, dragged onto another it takes that one's place, held
+      it offers Turn, Crop and Delete Page, VoiceOver moves it earlier or
+      later; the plus adds pages from the camera or Photos.
+    - One bar (`phone-review-bar`): **Abdecken** holds Widerrufen, then
+      Auswählen, Rechteck, Lasso, Pinsel and Radierer, then Wiederholen (the
+      tool in hand chosen again opens its options); **Seite** holds
+      Zuschneiden, Drehen, the colours (named as they are: Farbe,
+      Graustufen, Schwarzweiß; Color with "Logos stay in color", Black and
+      white with "Smallest file, pale stamps can go"), Vorher, which puts
+      Before on the leading side of the divider (`phone-scan-divider`) over
+      After, one finger moving the divider and VoiceOver reading one
+      adjustable "Comparison of Before and After, 50%"; and last, apart and
+      in red, Löschen, which asks first ("Delete page 2?"). Turning or
+      cropping a page finds its covers again; where something was covered
+      on it by hand a dialog asks first ("Covers drawn by hand go").
+    - **The list** (`phone-review-list`): "2 Stellen zu prüfen" or "Alles
+      geprüft", "Entscheide, was verdeckt wird. Nichts verlässt dein
+      iPhone."; **Offen**, every page's places still to check, each its
+      kind, its first words and its page, with Lassen and Verdecken, and
+      Alle verdecken; each decision is one change to undo, the mark on the
+      page turning with it in 0.2 s and a light haptic; **Hinweis**, each
+      page's faults with Ansehen, which opens that page with Seite in the
+      bar; **Verdeckt · 4**, one line ("Name, Adresse, IBAN" over where they
+      come from) that opens into the list of them, each with Aufdecken.
+      Every ready page is read as soon as Review opens, so the list, the
+      pages' dots and Always Hide hold for all of them.
   - **The corner editor** (`ScanCornerEditor`), full screen on black with a
     dark bar: the picture whole, the page's edges in white over the rest
     dimmed, and its four corners as handles; while one is dragged, a loupe

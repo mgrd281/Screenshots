@@ -1492,13 +1492,6 @@
 "Straightening and brightening…" = "Düzəldilir və işıqlandırılır…";
 "The page could not be read." = "Səhifə oxuna bilmədi.";
 "Take Again" = "Yenidən çək";
-"Straightened and brightened, text unchanged." = "Düzəldildi və işıqlandırıldı, mətn dəyişmədi.";
-"Straightened and brightened." = "Düzəldildi və işıqlandırıldı.";
-"No private details found." = "Şəxsi məlumat tapılmadı.";
-"1 private detail covered." = "1 şəxsi məlumat gizlədildi.";
-"%d private details covered." = "%d şəxsi məlumat gizlədildi.";
-"Check 1 place." = "1 yeri yoxla.";
-"Check %d places." = "%d yeri yoxla.";
 "Before" = "Əvvəl";
 "After" = "Sonra";
 "Comparison of Before and After" = "Əvvəl və sonra müqayisəsi";
@@ -1843,3 +1836,36 @@
 "1 hint" = "1 qeyd";
 "%d hints" = "%d qeyd";
 "Open the list." = "Siyahını aç.";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "%d yer yoxlanılmalı";
+"1 place to check" = "1 yer yoxlanılmalı";
+"Collapsed" = "Yığılıb";
+"Cover All" = "Hamısını ört";
+"Decide what is covered. Nothing leaves your iPhone." = "Nəyin örtüləcəyinə sən qərar ver. Heç nə iPhone-dan çıxmır.";
+"Discard Scan" = "Skanı at";
+"Discard the whole scan?" = "Bütün skan atılsın?";
+"Every page goes, with what was covered on it." = "Bütün səhifələr, üzərində örtülənlərlə birlikdə silinir.";
+"Everything checked" = "Hamısı yoxlanıldı";
+"Expanded" = "Açılıb";
+"From your categories." = "Kateqoriyalarından.";
+"Hint" = "Qeyd";
+"Leave" = "Saxla";
+"Look" = "Bax";
+"Show With Covers" = "Örtüklə göstər";
+"Show Without Covers" = "Örtüksüz göstər";
+"Some covered by hand." = "Bəziləri əllə örtülüb.";
+"Still open" = "Açıq";
+"Your details from Always Hide, the rest from your categories." = "Məlumatların «Həmişə gizlət»dən, qalanı kateqoriyalarından.";
+"Your details from Always Hide." = "Məlumatların «Həmişə gizlət»dən.";
+"Cover Up" = "Örtmək";
+"Rectangle" = "Düzbucaqlı";
+"Brush" = "Fırça";
+"Retake" = "Yenidən çək";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "Bulanıq";
+"Hard to read" = "Çətin oxunur";
+"Reflection" = "Parıltı";
+"Smudged lens" = "Linza ləkəli";
+"Too small" = "Çox kiçik";
