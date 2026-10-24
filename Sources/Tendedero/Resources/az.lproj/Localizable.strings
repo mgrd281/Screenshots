@@ -1341,7 +1341,6 @@
 "Clear Hidden by Hand" = "Əllə gizlədilənləri sil";
 "Continue Anyway" = "Yenə də davam et";
 "Cover" = "Ört";
-"Covered. Check the marked places before sharing." = "Örtüldü. Paylaşmadan əvvəl işarələnmiş yerləri yoxla.";
 "Delete Local Index" = "Yerli indeksi sil";
 "Delete everything prepared on this iPhone?" = "Bu iPhone-da hazırlananların hamısı silinsin?";
 "Doctors, customers, staff, payees, senders and recipients" = "Həkimlər, müştərilər, işçilər, ödəniş alanlar, göndərənlər və alıcılar";
@@ -1351,7 +1350,6 @@
 "Each can be undone." = "Hər birini geri qaytarmaq olar.";
 "Enable faster picture processing" = "Daha sürətli şəkil emalını aktivləşdir";
 "Eraser" = "Pozan";
-"Everything found is covered" = "Tapılanların hamısı örtülüb";
 "Faster picture processing" = "Daha sürətli şəkil emalı";
 "In medical letters, reports and forms" = "Həkim məktublarında, rəylərdə və formalarda";
 "It works while Snapfly is open, and in the background while your iPhone is charging, when iOS allows." = "Snapfly açıq olanda, iOS icazə verəndə isə iPhone şarj olunarkən arxa planda işləyir.";
@@ -1381,8 +1379,6 @@
 "Preparing waits until you go on. Your photos stay as they are." = "Sən davam edənə qədər hazırlıq gözləyir. Fotoların olduğu kimi qalır.";
 "Preparing…" = "Hazırlanır…";
 "Protect Picture" = "Şəkli qoru";
-"1 private detail found" = "1 şəxsi məlumat tapıldı";
-"%d private details found" = "%d şəxsi məlumat tapıldı";
 "%d to check" = "%d yoxlanılmalı";
 "Protected" = "Qorunur";
 "Read on this iPhone only. Nothing is sent anywhere." = "Yalnız bu iPhone-da oxunur. Heç nə heç yerə göndərilmir.";
@@ -1839,3 +1835,11 @@
 "1 page added" = "1 səhifə əlavə olundu";
 "%d pages added" = "%d səhifə əlavə olundu";
 "Blank page added" = "Boş səhifə əlavə olundu";
+
+/* The line under Review: what is covered, what is still to check, what is wrong with the picture. */
+"%d covered" = "%d örtülü";
+"%d covered, everything checked" = "%d örtülü, hamısı yoxlanıldı";
+"Nothing private" = "Şəxsi heç nə";
+"1 hint" = "1 qeyd";
+"%d hints" = "%d qeyd";
+"Open the list." = "Siyahını aç.";

@@ -65,7 +65,10 @@ final class ProtectSession: ObservableObject {
     /// Every word read and where it is, so a tap hides one; in memory only.
     private var words: [(text: String, box: CGRect)] = []
     private let chosen = Choice.details
-    private let rules = OwnRules.all
+    /// The owner's rules and details as they are now, read again each time
+    /// the picture is read, so a name kept in Always Hide meanwhile, or a
+    /// page cleaned, turned or cut, is covered with them.
+    private var rules: [OwnRule] { OwnRules.all }
     private let style = CoverStyle.current
     /// Each copy asked for; one made for older places is dropped.
     private var generation = 0

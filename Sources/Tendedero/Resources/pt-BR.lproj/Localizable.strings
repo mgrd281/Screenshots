@@ -1339,7 +1339,6 @@
 "Clear Hidden by Hand" = "Limpar o que foi ocultado à mão";
 "Continue Anyway" = "Continuar mesmo assim";
 "Cover" = "Cobrir";
-"Covered. Check the marked places before sharing." = "Coberto. Verifique os lugares marcados antes de compartilhar.";
 "Delete Local Index" = "Apagar índice local";
 "Delete everything prepared on this iPhone?" = "Apagar tudo o que foi preparado neste iPhone?";
 "Doctors, customers, staff, payees, senders and recipients" = "Médicos, clientes, equipe, beneficiários, remetentes e destinatários";
@@ -1349,7 +1348,6 @@
 "Each can be undone." = "Cada uma pode ser desfeita.";
 "Enable faster picture processing" = "Ativar processamento de imagens mais rápido";
 "Eraser" = "Borracha";
-"Everything found is covered" = "Tudo o que foi encontrado está coberto";
 "Faster picture processing" = "Processamento de imagens mais rápido";
 "In medical letters, reports and forms" = "Em cartas médicas, laudos e formulários";
 "It works while Snapfly is open, and in the background while your iPhone is charging, when iOS allows." = "Funciona com o Snapfly aberto e, quando o iOS permite, em segundo plano enquanto o iPhone carrega.";
@@ -1379,8 +1377,6 @@
 "Preparing waits until you go on. Your photos stay as they are." = "A preparação espera até você continuar. Suas fotos ficam como estão.";
 "Preparing…" = "Preparando…";
 "Protect Picture" = "Proteger imagem";
-"1 private detail found" = "1 dado privado encontrado";
-"%d private details found" = "%d dados privados encontrados";
 "%d to check" = "%d para revisar";
 "Protected" = "Protegido";
 "Read on this iPhone only. Nothing is sent anywhere." = "Lido só neste iPhone. Nada é enviado para lugar nenhum.";
@@ -1837,3 +1833,11 @@
 "1 page added" = "1 página adicionada";
 "%d pages added" = "%d páginas adicionadas";
 "Blank page added" = "Página em branco adicionada";
+
+/* The line under Review: what is covered, what is still to check, what is wrong with the picture. */
+"%d covered" = "%d cobertos";
+"%d covered, everything checked" = "%d cobertos, tudo revisado";
+"Nothing private" = "Nada privado";
+"1 hint" = "1 aviso";
+"%d hints" = "%d avisos";
+"Open the list." = "Abrir a lista.";

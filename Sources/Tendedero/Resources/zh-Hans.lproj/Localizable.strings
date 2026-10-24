@@ -1339,7 +1339,6 @@
 "Clear Hidden by Hand" = "清除手动遮盖";
 "Continue Anyway" = "仍然继续";
 "Cover" = "遮盖";
-"Covered. Check the marked places before sharing." = "已遮盖。分享前请检查标记的位置。";
 "Delete Local Index" = "删除本地索引";
 "Delete everything prepared on this iPhone?" = "删除此 iPhone 上准备的所有内容？";
 "Doctors, customers, staff, payees, senders and recipients" = "医生、客户、员工、收款人、发件人和收件人";
@@ -1349,7 +1348,6 @@
 "Each can be undone." = "均可撤销。";
 "Enable faster picture processing" = "启用更快的图片处理";
 "Eraser" = "橡皮擦";
-"Everything found is covered" = "找到的内容已全部遮盖";
 "Faster picture processing" = "更快的图片处理";
 "In medical letters, reports and forms" = "医疗信函、报告和表格中";
 "It works while Snapfly is open, and in the background while your iPhone is charging, when iOS allows." = "Snapfly 打开时运行；在 iOS 允许时，也会在 iPhone 充电时于后台运行。";
@@ -1379,8 +1377,6 @@
 "Preparing waits until you go on. Your photos stay as they are." = "在你继续之前，准备会暂停。你的照片保持不变。";
 "Preparing…" = "正在准备…";
 "Protect Picture" = "保护图片";
-"1 private detail found" = "找到 1 项隐私信息";
-"%d private details found" = "找到 %d 项隐私信息";
 "%d to check" = "%d 项待检查";
 "Protected" = "已保护";
 "Read on this iPhone only. Nothing is sent anywhere." = "仅在此 iPhone 上读取，不会发送到任何地方。";
@@ -1837,3 +1833,11 @@
 "1 page added" = "已添加 1 页";
 "%d pages added" = "已添加 %d 页";
 "Blank page added" = "已添加空白页";
+
+/* The line under Review: what is covered, what is still to check, what is wrong with the picture. */
+"%d covered" = "已遮盖 %d 处";
+"%d covered, everything checked" = "已遮盖 %d 处，全部已检查";
+"Nothing private" = "无私人信息";
+"1 hint" = "1 条提示";
+"%d hints" = "%d 条提示";
+"Open the list." = "打开列表。";

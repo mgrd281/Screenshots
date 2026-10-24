@@ -1339,7 +1339,6 @@
 "Clear Hidden by Hand" = "إزالة ما أُخفي يدويًا";
 "Continue Anyway" = "المتابعة على أي حال";
 "Cover" = "تغطية";
-"Covered. Check the marked places before sharing." = "تمت التغطية. تحقق من المواضع المحددة قبل المشاركة.";
 "Delete Local Index" = "حذف الفهرس المحلي";
 "Delete everything prepared on this iPhone?" = "حذف كل ما تم تجهيزه على هذا الـ iPhone؟";
 "Doctors, customers, staff, payees, senders and recipients" = "الأطباء والعملاء والموظفون والمستفيدون والمرسلون والمستلمون";
@@ -1349,7 +1348,6 @@
 "Each can be undone." = "يمكن التراجع عن كل منهما.";
 "Enable faster picture processing" = "تفعيل معالجة أسرع للصور";
 "Eraser" = "الممحاة";
-"Everything found is covered" = "كل ما وُجد مغطّى";
 "Faster picture processing" = "معالجة أسرع للصور";
 "In medical letters, reports and forms" = "في رسائل الأطباء والتقارير والاستمارات";
 "It works while Snapfly is open, and in the background while your iPhone is charging, when iOS allows." = "يعمل أثناء فتح Snapfly، وفي الخلفية أثناء شحن الـ iPhone عندما يسمح iOS بذلك.";
@@ -1379,8 +1377,6 @@
 "Preparing waits until you go on. Your photos stay as they are." = "يتوقف التجهيز حتى تتابع. تبقى صورك كما هي.";
 "Preparing…" = "جارٍ التجهيز…";
 "Protect Picture" = "حماية الصورة";
-"1 private detail found" = "تم العثور على معلومة خاصة واحدة";
-"%d private details found" = "تم العثور على %d من المعلومات الخاصة";
 "%d to check" = "%d للمراجعة";
 "Protected" = "محمي";
 "Read on this iPhone only. Nothing is sent anywhere." = "تُقرأ على هذا الـ iPhone فقط. لا يُرسل شيء إلى أي مكان.";
@@ -1837,3 +1833,11 @@
 "1 page added" = "أُضيفت صفحة واحدة";
 "%d pages added" = "أُضيفت %d صفحات";
 "Blank page added" = "أُضيفت صفحة فارغة";
+
+/* The line under Review: what is covered, what is still to check, what is wrong with the picture. */
+"%d covered" = "%d مغطّى";
+"%d covered, everything checked" = "%d مغطّى، رُوجع الكل";
+"Nothing private" = "لا شيء خاص";
+"1 hint" = "ملاحظة واحدة";
+"%d hints" = "%d ملاحظات";
+"Open the list." = "افتح القائمة.";

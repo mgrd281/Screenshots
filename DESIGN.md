@@ -2703,13 +2703,16 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     private details…, Checking the copy…, Apple Intelligence is reading…
     with Don't Wait in semibold); after a failure,
     `exclamationmark.triangle.fill` in orange, what went wrong and Try
-    Again; then `checkmark.shield.fill` in `phone-protect-tint` and how many
-    private details were found, sure or offered, never those hidden by hand
-    ("3 sensible Angaben erkannt", semibold), and while any are to check, a
-    dot and "1 zu prüfen" in the accent (orange while one is uncovered).
-    With nothing found but what Settings leaves visible, `checkmark.shield`
-    and Nothing private found. One line, shrinking to 85% at most; where
-    "1 zu prüfen" still doesn't fit, its sign and number alone.
+    Again; then `checkmark.shield.fill` in `phone-protect-tint` and the
+    line `ReviewStatus` writes: how many places are covered ("3 verdeckt",
+    semibold), and while any are to check, a dot and "1 zu prüfen" in the
+    accent (orange while one is uncovered); with none to check, "3
+    verdeckt, alles geprüft", or a dot and "1 Hinweis" in orange while the
+    page has a fault. "Nichts Privates · 1 Hinweis" with nothing covered
+    but a fault, and `checkmark.shield` with Nichts Privates gefunden only
+    when nothing is covered, to check or wrong. One line, shrinking to 85%
+    at most; where "1 zu prüfen" still doesn't fit, its sign and number
+    alone.
     Each step gives way to the next in place on a spring (0.42, 0.82), the
     capsule fitting its words (a 0.15 s ease-out with Reduce Motion); when
     the copy is ready, the shield bounces up once and a success haptic says

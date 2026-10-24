@@ -126,7 +126,8 @@ final class AlwaysHideTests: XCTestCase {
     func testTwoLettersMisreadAreAnotherName() {
         XCTAssertEqual(covered("Mox Mustermarn", max), ["Mustermarn"],
                        "one letter in each word: not the whole name, but the long surname alone still")
-        XCTAssertEqual(covered("Herr Musterrnann", max), [], "'rn' for 'm' is two")
+        XCTAssertEqual(covered("Herr Musterrnann", max), ["Musterrnann"],
+                       "'rn' for 'm' is how a reading misreads an m: the same letter, not two")
         XCTAssertEqual(covered("Meine Mutter", OwnRule(text: "Max Muster", kind: .name)), [],
                        "a short surname alone takes no misread letter")
     }

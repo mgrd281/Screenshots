@@ -38,6 +38,35 @@ final class OwnDetailsTests: XCTestCase {
                        ["Ludwig van Beethoven"])
     }
 
+    /// The owner's name as text recognition reads it off a cleaned page:
+    /// in its other order with a comma, broken over two lines, in capitals,
+    /// with its spaces left out or put in, and with a letter misread in the
+    /// ways a reading misreads one. Each is covered, not only offered.
+    func testANameIsFoundAsAReadingMisreadsIt() {
+        let jonas = OwnRule(text: "Jonas Mollmann", kind: .name)
+        XCTAssertEqual(covered("Mollmann, Jonas", jonas), ["Mollmann, Jonas"])
+        XCTAssertEqual(covered("Jonas\nMollmann", jonas), ["Jonas\nMollmann"], "over two lines")
+        XCTAssertEqual(covered("MOLLMANN, JONAS", jonas), ["MOLLMANN, JONAS"])
+        XCTAssertEqual(covered("JonasMollmann", jonas), ["JonasMollmann"], "its space left out")
+        XCTAssertEqual(covered("Jonas Moll mann", jonas), ["Jonas Moll mann"], "a space put in")
+        XCTAssertEqual(covered("Jonas  Mollmann", jonas), ["Jonas  Mollmann"], "two spaces")
+        XCTAssertEqual(covered("Jonas Moilmann", jonas), ["Jonas Moilmann"], "an l read as an i")
+        XCTAssertEqual(covered("Jonas Mo1lmann", jonas), ["Jonas Mo1lmann"], "an l read as a 1")
+        XCTAssertEqual(covered("Jonas Mo|lmann", jonas), ["Jonas Mo|lmann"], "an l read as a stroke")
+        XCTAssertEqual(covered("Jonas Mollrnann", jonas), ["Jonas Mollrnann"], "m read as rn")
+        XCTAssertEqual(covered("J0nas Mollmann", jonas), ["J0nas Mollmann"], "an O read as a 0")
+        XCTAssertEqual(covered("Mollrnann, J0nas", jonas), ["Mollrnann, J0nas"], "both, in the other order")
+        XCTAssertEqual(covered("Herr Mollmamn", jonas), ["Mollmamn"], "one letter misread in a long surname alone")
+        let jurgen = OwnRule(text: "Jürgen Weißmüller", kind: .name)
+        XCTAssertEqual(covered("Jurgen Weissmuller", jurgen), ["Jurgen Weissmuller"], "ü read as u, ß as ss")
+        XCTAssertEqual(covered("WEISSMÜLLER, JÜRGEN", jurgen), ["WEISSMÜLLER, JÜRGEN"])
+        // Still never another name, nor numbers beside a name.
+        XCTAssertEqual(covered("Jonas Hoffmann", jonas), ["Jonas"], "the given name alone, as always")
+        XCTAssertEqual(covered("Lukas Hoffmann", jonas), [])
+        XCTAssertEqual(covered("Jonas Mollmann 1980", jonas), ["Jonas Mollmann"])
+        XCTAssertEqual(covered("Mollmannstraße 4", jonas), [], "a street named after it is a street")
+    }
+
     func testANameIsNotFoundInOtherWords() {
         XCTAssertEqual(covered("Erik Mustermann", erika), [])
         XCTAssertEqual(covered("die musterfrau des Jahres", erika), [], "a word of it alone in small letters is a word")
@@ -243,6 +272,33 @@ final class OwnDetailsTests: XCTestCase {
         })
         XCTAssertEqual(texts, ["Erika Musterfrau", "Kastanienweg 14", "24999 Neustadt", "Musterfrau, Erika"])
         XCTAssertTrue(found.hits.allSatisfy { $0.kind == nil && !$0.check }, "the owner's own: covered for sure")
+    }
+
+    /// The third page of a made-up letter as text recognition reads it off
+    /// the cleaned page: the owner's name in bold at the top, misread, and
+    /// again surname first in a framed box, read with the box's edges and
+    /// an O for a 0. Names chosen, as they are by default: both are the
+    /// owner's, covered for sure, never only offered or left to check.
+    func testTheOwnersNameIsCoveredOnAPageReadWithMistakes() {
+        let jonas = OwnRule(text: "Jonas Mollmann", kind: .name)
+        let page: [FormFieldsTests.Piece] = [
+            ("Jonas Mollrnann", 0.08, 2),
+            ("Seite 3 von 3", 0.70, 2),
+            ("Weitere Angaben zur Behandlung", 0.08, 5),
+            ("| Mollmann, J0nas |", 0.08, 7),
+            ("Die Kontrolle erfolgt in sechs Wochen.", 0.08, 9),
+        ]
+        let made = FormFieldsTests.layout(page)
+        let found = Finder.findings(made.strings, boxes: made.boxes, part: made.part, [.names], rules: [jonas])
+        func text(_ hit: Finder.Hit) -> String {
+            let line = made.strings[hit.line]
+            return hit.range.flatMap { Range($0, in: line) }.map { String(line[$0]) } ?? line
+        }
+        let covered = found.hits.map(text)
+        XCTAssertTrue(found.hits.contains { $0.line == 0 && text($0).contains("Jonas Mollrnann") }, "the bold one: \(covered)")
+        XCTAssertTrue(found.hits.contains { $0.line == 3 && text($0).contains("Mollmann, J0nas") }, "the one in its box: \(covered)")
+        XCTAssertTrue(found.hits.filter { [0, 3].contains($0.line) }.allSatisfy { !$0.check }, "covered for sure")
+        XCTAssertTrue(found.possible.filter { [0, 3].contains($0.line) }.isEmpty, "never only offered")
     }
 
     /// A statement's lines, with nothing chosen: the owner's account and card.

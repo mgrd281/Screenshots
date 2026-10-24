@@ -1341,7 +1341,6 @@
 "Clear Hidden by Hand" = "Clear Hidden by Hand";
 "Continue Anyway" = "Continue Anyway";
 "Cover" = "Cover";
-"Covered. Check the marked places before sharing." = "Covered. Check the marked places before sharing.";
 "Delete Local Index" = "Delete Local Index";
 "Delete everything prepared on this iPhone?" = "Delete everything prepared on this iPhone?";
 "Doctors, customers, staff, payees, senders and recipients" = "Doctors, customers, staff, payees, senders and recipients";
@@ -1351,7 +1350,6 @@
 "Each can be undone." = "Each can be undone.";
 "Enable faster picture processing" = "Enable faster picture processing";
 "Eraser" = "Eraser";
-"Everything found is covered" = "Everything found is covered";
 "Faster picture processing" = "Faster picture processing";
 "In medical letters, reports and forms" = "In medical letters, reports and forms";
 "It works while Snapfly is open, and in the background while your iPhone is charging, when iOS allows." = "It works while Snapfly is open, and in the background while your iPhone is charging, when iOS allows.";
@@ -1381,8 +1379,6 @@
 "Preparing waits until you go on. Your photos stay as they are." = "Preparing waits until you go on. Your photos stay as they are.";
 "Preparing…" = "Preparing…";
 "Protect Picture" = "Protect Picture";
-"1 private detail found" = "1 private detail found";
-"%d private details found" = "%d private details found";
 "%d to check" = "%d to check";
 "Protected" = "Protected";
 "Read on this iPhone only. Nothing is sent anywhere." = "Read on this iPhone only. Nothing is sent anywhere.";
@@ -1839,3 +1835,11 @@
 "1 page added" = "1 page added";
 "%d pages added" = "%d pages added";
 "Blank page added" = "Blank page added";
+
+/* The line under Review: what is covered, what is still to check, what is wrong with the picture. */
+"%d covered" = "%d covered";
+"%d covered, everything checked" = "%d covered, everything checked";
+"Nothing private" = "Nothing private";
+"1 hint" = "1 hint";
+"%d hints" = "%d hints";
+"Open the list." = "Open the list.";
