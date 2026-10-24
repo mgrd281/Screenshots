@@ -48,6 +48,16 @@ enum ScanLetter {
         Line(x0: 130, x1: 1520, top: 708.5 + Double($0) * 42, size: 18, stroke: 2.6, ink: 30)
     } + [Line(x0: 130, x1: 1520, top: 1074, size: 18, stroke: 2.6, ink: 30)]
 
+    /// Where its lines of text lie, from 0 to 1 from the bottom left, as a
+    /// reading gives them to the cleaning.
+    static var textBoxes: [CGRect] {
+        (body + grey + boxed).map { line in
+            let top = line.top - line.size * 0.35
+            return CGRect(x: line.x0 / Double(width), y: 1 - line.bottom / Double(height),
+                          width: (line.x1 - line.x0) / Double(width), height: (line.bottom - top) / Double(height))
+        }
+    }
+
     /// How far the curled sheet bows down at its middle, in pixels.
     static let bow = 7.0
 
