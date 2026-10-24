@@ -72,7 +72,8 @@ final class OwnLetterFixtureTests: XCTestCase {
     }
 
     func testTheOwnersDetailsAreCoveredOnTheScannedLetterWithEveryKindOff() async throws {
-        XCTAssertEqual(check(try await scanned(), [], "scanned"), [])
+        let image = try await scanned()
+        XCTAssertEqual(check(image, [], "scanned"), [])
     }
 
     func testTheOwnersDetailsAndTheBirthDateAreCoveredWithTheKindsOn() async throws {
