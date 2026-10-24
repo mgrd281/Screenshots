@@ -158,9 +158,17 @@ enum ScanClean {
         /// grain and the blocks' over-bright reading are under it, so what
         /// is paper shows white, and print keeps its shade.
         var headroom: Float = 0.95
+        /// Within the lines of text read, the paper is taken at its own
+        /// level instead: a mark a little darker than the paper, an
+        /// umlaut's dot, an accent or a thin grey stroke, keeps all of its
+        /// contrast, and the grain there is left to the line's own toning
+        /// (`toned`) and to the curve.
+        var textHeadroom: Float = 1
         /// The grain: neighbours this close to a pixel, of 255, are smoothed
-        /// with it; an edge, further apart, never is.
+        /// with it; an edge, further apart, never is. Within the lines of
+        /// text read, `textGrain`, so a faint mark's rim is not smoothed away.
         var grain = 10
+        var textGrain = 4
         /// After the light is evened, this share of white and more is white:
         /// the paper's grain below its commonest value, while a table's
         /// light grey header stays grey.
@@ -204,6 +212,21 @@ enum ScanClean {
         /// stand out first, so what is left of the grain is left alone.
         var sharpen: Float = 0.6
         var sharpenThreshold: Float = 3
+        /// Light print, line by line (`toned`): where a line's darkest ink,
+        /// of 255, is lighter than `lightInk`, and wholly from `lightInkFull`
+        /// on, its ink is taken to `lineInk`, at most `lineGain` times, in
+        /// windows `lineWindow` times the line's height wide; its smallest
+        /// marks made as clear as its strokes by `lineSharpen`; and what is
+        /// within `lineGrain` times the paper's spread of the paper, white.
+        /// A window of paper darker than `linePaper` is a fill, left as it is.
+        var lightInk: Float = 100
+        var lightInkFull: Float = 140
+        var lineInk: Float = 6
+        var lineGain: Float = 5
+        var lineWindow: Float = 4
+        var lineSharpen: Float = 1.4
+        var lineGrain: Float = 2.5
+        var linePaper: Float = 240
         /// Black and white, against the mean brightness around a pixel in a
         /// window this share of the shorter side: darker than `dark` of it
         /// is print; darker than `pale` of it is print only where it
@@ -221,12 +244,29 @@ enum ScanClean {
     /// The page cleaned in the colours asked for.
     static func clean(_ page: ScanBitmap, _ mode: ScanColor, tuning: Tuning = .standard,
                       printBoxes: [CGRect] = []) -> ScanBitmap {
+        cleaned(page, mode, tuning: tuning, printBoxes: printBoxes).page
+    }
+
+    /// A page cleaned, with the page as it was before its print was toned
+    /// (`base`): what a line goes back to where cleaning would change what
+    /// it says (`ScanCleaner`).
+    struct Cleaned {
+        let page: ScanBitmap
+        let base: ScanBitmap
+    }
+
+    /// The page cleaned in the colours asked for, and its base.
+    static func cleaned(_ page: ScanBitmap, _ mode: ScanColor, tuning: Tuning = .standard,
+                        printBoxes: [CGRect] = []) -> Cleaned {
         let white = Int((tuning.whitePoint * 255).rounded(.up))
         let paper = Paper(of: page, tuning: tuning)
-        // Where text was read: only there is faint print looked for.
+        // Where text was read: only there is faint print looked for, and
+        // small marks kept whole.
         let text = textMask(printBoxes, width: page.width, height: page.height)
+        let lines = printLines(printBoxes, width: page.width, height: page.height)
         let flat = uncreased(evened(page, paper: paper, tuning: tuning, text: text), tuning: tuning)
-        let even = neutralized(denoised(flat, grain: tuning.grain, white: white), tuning: tuning)
+        let even = neutralized(denoised(flat, grain: tuning.grain, white: white, text: text, textGrain: tuning.textGrain),
+                               tuning: tuning)
         // Faint print deepened, sharpened, then taken darker, so the darkening sets the print's
         // final shade: an unsharp mask run after it would drive a stroke to
         // black. The print's own darkness is read inside the boxes of text.
@@ -234,12 +274,17 @@ enum ScanClean {
         sharpen(&sharpened, tuning: tuning)
         var tuned = tuning
         tuned.blackPoint = blackPoint(forPrint: printDarkness(sharpened, tuning: tuning, boxes: printBoxes), tuning: tuning)
-        let cleaned = filled(darkened(sharpened, tuning: tuned), from: page, paper: paper, tuning: tuning)
+        var darkened = darkened(sharpened, tuning: tuned)
+        // Light print, line by line, as dark as the rest, every mark of it kept.
+        toned(even, into: &darkened, lines: lines, tuning: tuning)
+        let cleaned = filled(darkened, from: page, paper: paper, tuning: tuning)
+        let shown: ScanBitmap
         switch mode {
-        case .color: return cleaned
-        case .gray: return grayed(cleaned)
-        case .blackAndWhite: return blackAndWhite(grayed(cleaned), tuning: tuning)
+        case .color: shown = cleaned
+        case .gray: shown = grayed(cleaned)
+        case .blackAndWhite: shown = blackAndWhite(grayed(cleaned), tuning: tuning)
         }
+        return Cleaned(page: shown, base: even)
     }
 
     /// How bright a colour is, from 0 to 255, as the eye weighs red, green
@@ -654,9 +699,10 @@ enum ScanClean {
                             blue *= share
                         }
                     }
-                    red = max(red, floor.red) * tuning.headroom
-                    green = max(green, floor.green) * tuning.headroom
-                    blue = max(blue, floor.blue) * tuning.headroom
+                    let headroom = text?[y * w + x] ?? false ? tuning.textHeadroom : tuning.headroom
+                    red = max(red, floor.red) * headroom
+                    green = max(green, floor.green) * headroom
+                    blue = max(blue, floor.blue) * headroom
                     px[i] = Self.share(px[i], of: red)
                     px[i + 1] = Self.share(px[i + 1], of: green)
                     px[i + 2] = Self.share(px[i + 2], of: blue)
@@ -705,11 +751,14 @@ enum ScanClean {
     }
 
     /// The paper's grain smoothed: each pixel the mean of the neighbours,
-    /// itself among them, that are within `grain` of it, colour by colour.
-    /// An edge's other side is further off, so it is never blurred. A pixel
-    /// that stays at `white` or over whatever its neighbours are, which the
-    /// curve makes white anyway, is left as it is, which is much quicker.
-    static func denoised(_ page: ScanBitmap, grain: Int, white: Int = 256) -> ScanBitmap {
+    /// itself among them, that are within `grain` of it, colour by colour,
+    /// or `textGrain` within the lines of text read (`text`), so a faint
+    /// mark's rim is kept. An edge's other side is further off, so it is
+    /// never blurred. A pixel that stays at `white` or over whatever its
+    /// neighbours are, which the curve makes white anyway, is left as it
+    /// is, which is much quicker.
+    static func denoised(_ page: ScanBitmap, grain: Int, white: Int = 256, text: [Bool]? = nil,
+                         textGrain: Int = 0) -> ScanBitmap {
         guard grain > 0 else { return page }
         let w = page.width, h = page.height
         guard w > 2, h > 2 else { return page }
@@ -719,15 +768,17 @@ enum ScanClean {
                 for y in 1..<(h - 1) {
                     for x in 1..<(w - 1) {
                         let p = (y * w + x) * 4
+                        let near = text?[y * w + x] ?? false ? textGrain : grain
+                        guard near > 0 else { continue }
                         for k in 0..<3 {
                             let middle = Int(src[p + k])
-                            guard middle - grain < white else { continue }
+                            guard middle - near < white else { continue }
                             var sum = 0, count = 0
                             for dy in -1...1 {
                                 let row = p + dy * w * 4 + k
                                 for dx in -1...1 {
                                     let value = Int(src[row + dx * 4])
-                                    if abs(value - middle) <= grain {
+                                    if abs(value - middle) <= near {
                                         sum += value
                                         count += 1
                                     }

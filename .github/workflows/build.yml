@@ -19,7 +19,7 @@ concurrency:
 # all of the time the tests take, so they run beside the build, three jobs
 # side by side, and every other test runs in the build itself.
 env:
-  SCAN_TESTS: ScanFixtureTests|ScanFormFixtureTests|ScanQualityTests|ScanGeometryTests|ScanCleanTests|ScanInvoice
+  SCAN_TESTS: ScanFixtureTests|ScanTextFixtureTests|ScanFormFixtureTests|ScanQualityTests|ScanGeometryTests|ScanCleanTests|ScanInvoice
 
 jobs:
   scan-tests:
@@ -31,7 +31,7 @@ jobs:
       matrix:
         include:
           - part: made-up photos
-            filter: ScanFixtureTests
+            filter: ScanFixtureTests|ScanTextFixtureTests
           - part: sick note
             filter: ScanFormFixtureTests|ScanQualityTests|ScanGeometryTests
           - part: cleaning
