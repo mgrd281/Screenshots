@@ -1870,3 +1870,9 @@
 "Smudged lens" = "लेंस गंदा";
 "Too small" = "बहुत छोटा";
 "The text could not be read. Nothing is covered yet." = "टेक्स्ट पढ़ा नहीं जा सका। अभी कुछ भी ढका नहीं गया है।";
+"Nothing covered" = "कुछ नहीं ढका";
+"%d visible" = "%d दिखाई दे रहे";
+"Left visible" = "दिखता छोड़ा गया";
+"Cover All Left Visible" = "दिखते सभी को ढकें";
+"Your categories leave these visible." = "तुम्हारी श्रेणियाँ इन्हें दिखता छोड़ती हैं।";
+"No name of yours is kept in Always Hide on this iPhone." = "इस iPhone पर हमेशा छिपाएँ में तुम्हारा कोई नाम सहेजा नहीं है।";

@@ -1870,3 +1870,9 @@
 "Smudged lens" = "Linza ləkəli";
 "Too small" = "Çox kiçik";
 "The text could not be read. Nothing is covered yet." = "Mətn oxuna bilmədi. Hələ heç nə örtülməyib.";
+"Nothing covered" = "Heç nə örtülməyib";
+"%d visible" = "%d görünür";
+"Left visible" = "Görünür qalıb";
+"Cover All Left Visible" = "Görünür qalanların hamısını ört";
+"Your categories leave these visible." = "Kateqoriyaların bunları görünür saxlayır.";
+"No name of yours is kept in Always Hide on this iPhone." = "Bu iPhone-da Həmişə gizlət bölməsində adın saxlanılmayıb.";

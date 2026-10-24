@@ -26,7 +26,7 @@ mkdir -p "$out"
 # blurred at the bottom, go into Photos on the simulator, for the walks from
 # Photos, and are not published.
 engine=0
-SCAN_CAPTURES="$PWD/$out" swift test --filter "ScanFixtureTests|ScanFormFixtureTests|ScanInvoiceFixtureTests|OwnLetterFixtureTests" || engine=$?
+SCAN_CAPTURES="$PWD/$out" swift test --filter "ScanFixtureTests|ScanFormFixtureTests|ScanInvoiceFixtureTests|OwnLetterFixtureTests|ScanTextFixtureTests" || engine=$?
 photo=build/scan-photo.png
 blurred=build/scan-photo-blurred.png
 mkdir -p build

@@ -6,6 +6,22 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, small light-grey print beside a page's dark text comes out
+  of Scan as dark and plain as the rest, line by line, with every umlaut's
+  dot, accent, comma and @ kept, where cleaning used to leave "Arzte fur
+  Radiologie". A thin light face comes out a little bolder, so it reads as
+  dark as the body. Each page is read again after cleaning: a line of that
+  grey print that reads otherwise, a dot or an accent gone, is read on its own, cleaned
+  again gently, or kept as the light alone leaves it, whichever first reads
+  as before. A dot the photo left too faint to read before and cleaning
+  made readable counts as clearer, not different.
+
+- On the iPhone, Review says how many private details your categories leave
+  visible ("Nichts verdeckt · 3 sichtbar") and lists them under Sichtbar
+  gelassen, each to cover with a tap, with a word where no name of yours is
+  kept in Always Hide on that iPhone. It never says "Nichts Privates" while
+  they show.
+
 - On the iPhone, Review is new: one job, checking the covers. A chip under
   the title says what is covered and what is still to check, and opens one
   list of every page's places, each with Lassen and Verdecken, Alle

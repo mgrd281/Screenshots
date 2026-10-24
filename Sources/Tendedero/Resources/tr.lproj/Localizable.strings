@@ -1868,3 +1868,9 @@
 "Smudged lens" = "Lens lekeli";
 "Too small" = "Çok küçük";
 "The text could not be read. Nothing is covered yet." = "Metin okunamadı. Henüz hiçbir şey örtülmedi.";
+"Nothing covered" = "Hiçbir şey örtülmedi";
+"%d visible" = "%d görünür";
+"Left visible" = "Görünür bırakıldı";
+"Cover All Left Visible" = "Görünür kalanların tümünü ört";
+"Your categories leave these visible." = "Kategorilerin bunları görünür bırakıyor.";
+"No name of yours is kept in Always Hide on this iPhone." = "Bu iPhone’da Her zaman gizle bölümünde adın kayıtlı değil.";

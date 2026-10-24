@@ -44,8 +44,8 @@ struct ProtectionPlan: Equatable {
     }
 
     /// How a picture's places stand, each counted once: covered for sure,
-    /// still to check, and left uncovered by the owner. A place only
-    /// offered is never counted as covered.
+    /// still to check, left uncovered by the owner, and left visible by the
+    /// categories chosen. A place only offered is never counted as covered.
     struct Tally: Equatable {
         var covered = 0
         var toCheck = 0
@@ -53,6 +53,9 @@ struct ProtectionPlan: Equatable {
         /// Places to check that are not covered, like a name offered: while
         /// any is, the picture is not fully protected.
         var exposed = 0
+        /// Private details the categories chosen leave visible, never
+        /// covered to leave: a name where Names is off.
+        var visible = 0
     }
 
     private(set) var marks: [Mark] = []
@@ -408,8 +411,10 @@ struct ProtectionPlan: Equatable {
             } else if mark.covered {
                 tally.covered += 1
             } else if mark.origin != .spared {
-                // What Settings leaves visible was never covered to leave.
                 tally.left += 1
+            } else {
+                // What Settings leaves visible was never covered to leave.
+                tally.visible += 1
             }
         }
         return tally

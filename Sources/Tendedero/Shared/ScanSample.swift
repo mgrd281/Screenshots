@@ -190,6 +190,72 @@ enum ScanSample {
         return context.makeImage()
     }
 
+    // MARK: Small grey print
+
+    /// What a line of the practice's letter is: the body, black; the
+    /// column's small print, light grey in a light face; or its headings,
+    /// blue and bold.
+    enum Print: String, Sendable {
+        case body, grey, blue
+    }
+
+    /// The practice's letter, line by line, as printed: a column of 7 pt
+    /// print in 55 % grey down the right, with blue headings, an e-mail
+    /// address, an IBAN-like number and words with ä, ö, ü, ß and É, beside
+    /// a body of 11 pt black print. Made up, every word of it.
+    static let textLines: [(print: Print, text: String)] = [
+        (.blue, "RADIOLOGIE AM MUSTERWALL"), (.blue, "MAMMA-DIAGNOSTIK"),
+        (.grey, "Ärzte für Radiologie"), (.grey, "Dr. med. Jörg Müller"), (.grey, "Dr. med. René Brückner"),
+        (.grey, "Dr. med. Sören Weiß"), (.grey, "Évelyne Größer, MBA"), (.grey, "Musterwall 7a · 20354 Hamburg"),
+        (.grey, "Telefon 040 1234567-0"), (.grey, "Telefax 040 1234567-66"), (.grey, "praxis@radiologie-musterwall.de"),
+        (.grey, "www.radiologie-musterwall.de"), (.blue, "MRT-DIAGNOSTIK"), (.grey, "Öffnungszeiten Mo–Fr 8–18 Uhr"),
+        (.grey, "Übrige Zeiten nach Absprache"), (.grey, "Musterbank Hamburg"), (.grey, "DE12 3456 7890 1234 5678 90"),
+        (.grey, "BIC MUSTDEHHXXX"), (.blue, "WEITERER STANDORT"), (.grey, "Radiologie Süderstraße"),
+        (.body, "Erika Musterfrau"), (.body, "Lindenallee 14"), (.body, "22301 Hamburg"),
+        (.body, "Befund vom 05.06.2026"), (.body, "Sehr geehrte Frau Kollegin,"),
+        (.body, "die Untersuchung ergab einen unauffälligen Befund."),
+        (.body, "Größere Veränderungen sind nicht erkennbar; die übrigen"),
+        (.body, "Strukturen erscheinen regelrecht. Ärztliche Rückfragen"),
+        (.body, "gern über unser Büro."), (.body, "Mit freundlichen Grüßen"),
+    ]
+
+    /// The grey print's ink, the headings' blue.
+    static let greyInk = CGColor(red: 115 / 255, green: 115 / 255, blue: 115 / 255, alpha: 1)
+    static let headingBlue = CGColor(red: 64 / 255, green: 128 / 255, blue: 196 / 255, alpha: 1)
+
+    /// The letter printed on A4 at `dpi` dots an inch: fewer for a page
+    /// photographed from further away, its small print the softer.
+    static func textLetter(dpi: Double = 200) -> CGImage? {
+        let width = Int((8.27 * dpi).rounded()), height = Int((11.69 * dpi).rounded())
+        guard let space = CGColorSpace(name: CGColorSpace.sRGB),
+              let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                                      space: space, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return nil }
+        context.setFillColor(CGColor(red: 0.98, green: 0.98, blue: 0.97, alpha: 1))
+        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        let point = CGFloat(dpi / 72)
+        let ink = CGColor(red: 0.08, green: 0.08, blue: 0.1, alpha: 1)
+        var column = CGFloat(height) - CGFloat(dpi) * 1.0
+        var body = CGFloat(height) - CGFloat(dpi) * 2.0
+        for (print, text) in textLines {
+            switch print {
+            case .blue:
+                if text != textLines.first?.text { column -= 6 * point }
+                writeAt(text, in: context, x: CGFloat(width) * 0.72, baseline: column - 7 * point, size: 7.5 * point,
+                        face: "Helvetica-Bold", color: headingBlue)
+                column -= 11 * point
+            case .grey:
+                writeAt(text, in: context, x: CGFloat(width) * 0.72, baseline: column - 7 * point, size: 7 * point,
+                        face: "Helvetica-Light", color: greyInk)
+                column -= 10.5 * point
+            case .body:
+                writeAt(text, in: context, x: CGFloat(dpi) * 0.9, baseline: body - 11 * point, size: 11 * point,
+                        face: text.hasPrefix("Befund") ? "Helvetica-Bold" : "Helvetica", color: ink)
+                body -= (text == "22301 Hamburg" ? 40 : 16) * point
+            }
+        }
+        return context.makeImage()
+    }
+
     /// A rectangle given from the page's top left.
     private static func box(_ x: Int, _ top: Int, _ w: Int, _ h: Int) -> CGRect {
         CGRect(x: x, y: height - top - h, width: w, height: h)
@@ -203,10 +269,10 @@ enum ScanSample {
                 bold: bold, color: color)
     }
 
-    /// Words on a baseline, where the context is.
+    /// Words on a baseline, where the context is, in Helvetica or `face`.
     private static func writeAt(_ text: String, in context: CGContext, x: CGFloat, baseline: CGFloat, size: CGFloat,
-                                bold: Bool = false, color: CGColor) {
-        let font = CTFontCreateWithName((bold ? "Helvetica-Bold" : "Helvetica") as CFString, size, nil)
+                                bold: Bool = false, face: String? = nil, color: CGColor) {
+        let font = CTFontCreateWithName((face ?? (bold ? "Helvetica-Bold" : "Helvetica")) as CFString, size, nil)
         let attributes: [NSAttributedString.Key: Any] = [
             NSAttributedString.Key(kCTFontAttributeName as String): font,
             NSAttributedString.Key(kCTForegroundColorAttributeName as String): color,

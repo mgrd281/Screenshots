@@ -26,6 +26,20 @@ enum ScanCleaner {
         let turns: Int
         let skew: Double
         let checked: Checked
+        /// What the guard did with the lines whose reading cleaning changed.
+        var guarded = Guard()
+    }
+
+    /// The lines whose reading cleaning changed (`guarded`), and what was
+    /// done with each: cleaned again gently, kept as the light alone leaves
+    /// it, or left cleaned where even that reads otherwise.
+    struct Guard: Equatable, Sendable {
+        var changed = 0
+        var gently = 0
+        var evened = 0
+        var otherwise = 0
+        /// The lines cleaned again gently or kept as evened.
+        var redone: [CGRect] = []
     }
 
     /// What the checks found.
@@ -157,9 +171,86 @@ enum ScanCleaner {
         // measured on the text it holds; the same reading then checks the
         // result, so nothing is read twice.
         let read = Finder.lines(in: page) ?? []
-        guard let cleaned = cleaned(page, mode, printBoxes: read.map(\.box)) else { return nil }
-        let checked = await check(before: page, after: cleaned, mode: mode, photo: photo, reading: read)
-        return Prepared(straightened: page, cleaned: cleaned, turns: turns, skew: skew, checked: checked)
+        guard let made = guarded(page, mode, reading: read) else { return nil }
+        let checked = await check(before: page, after: made.0, mode: mode, photo: photo, reading: read)
+        return Prepared(straightened: page, cleaned: made.0, turns: turns, skew: skew, checked: checked, guarded: made.1)
+    }
+
+    /// The page cleaned, and read again: every line read surely before that
+    /// reads otherwise after, a dot, an accent or a digit gone
+    /// (`ScanContent.changed`), is cleaned again and the whole page read
+    /// once more: light print gently (`ScanClean.redone`), dark print, which
+    /// is never toned, as the light alone leaves it within its own box. A
+    /// line that still reads otherwise goes a step further, a light one to
+    /// the light alone and read once more, and where that does not bring its
+    /// reading back either, the reading differs and not the cleaning, so the
+    /// line stays as cleaned. A line is never judged on a crop of its own:
+    /// Vision reads a line differently alone than on its page. Cleaning may
+    /// make text clearer, never different. What was done is noted in the
+    /// log. Black and white, whose menu says it can lose a mark too pale to
+    /// tell from the paper, is two values only.
+    static func guarded(_ page: CGImage, _ mode: ScanColor, reading read: [Finder.TextLine]) -> (CGImage, Guard)? {
+        guard let bitmap = bitmap(page) else { return nil }
+        let made = ScanClean.cleaned(bitmap, mode, printBoxes: read.map(\.box))
+        let cleaned = ScanSheet.edgeCleaned(made.page)
+        guard let first = image(cleaned, gray: mode.isGray) else { return nil }
+        guard mode != .blackAndWhite else { return (first, Guard()) }
+        let before = read.map { ScanContent.Read(text: $0.string, box: $0.box, confidence: $0.confidence) }
+        func changes(_ picture: CGImage, among boxes: [CGRect]) -> [CGRect]? {
+            guard let after = Finder.reading(of: picture) else { return nil }
+            let wanted = before.filter { line in boxes.contains(line.box) }
+            return ScanContent.changed(before: wanted, after: after.map { ScanContent.Line(text: $0.string, box: $0.box) })
+        }
+        guard let changed = changes(first, among: before.map(\.box)) else { return (first, Guard()) }
+        var done = Guard(changed: changed.count)
+        guard !changed.isEmpty else { return (first, done) }
+        /// How each changed line is cleaned: as cleaned, gently, or as the light alone leaves it.
+        enum Way { case cleaned, gently, evened, evenedWithMargin }
+        var ways: [CGRect: Way] = [:]
+        for box in changed { ways[box] = made.light.contains(box) ? .gently : .evened }
+        func laid(_ ways: [CGRect: Way]) -> ScanBitmap {
+            var pixels = cleaned
+            for (box, way) in ways {
+                switch way {
+                case .cleaned: break
+                case .gently: ScanClean.redone(made.base, into: &pixels, box: box, .gentle, mode: mode)
+                case .evened: ScanClean.redone(made.base, into: &pixels, box: box, .kept, mode: mode, grow: 0)
+                case .evenedWithMargin: ScanClean.redone(made.base, into: &pixels, box: box, .kept, mode: mode)
+                }
+            }
+            return pixels
+        }
+        var pixels = laid(ways)
+        var still = changed
+        if let picture = image(pixels, gray: mode.isGray), let again = changes(picture, among: changed) {
+            still = again
+        }
+        // A line that still reads otherwise: light print to the light alone, dark print as cleaned.
+        var promoted = false
+        for box in still {
+            if ways[box] == .gently {
+                ways[box] = .evenedWithMargin
+                promoted = true
+            } else {
+                ways[box] = .cleaned
+            }
+        }
+        if promoted {
+            pixels = laid(ways)
+            if let picture = image(pixels, gray: mode.isGray), let again = changes(picture, among: still) {
+                for box in again { ways[box] = .cleaned }
+            }
+        }
+        pixels = laid(ways)
+        for box in changed {
+            switch ways[box] ?? .cleaned {
+            case .gently: done.gently += 1; done.redone.append(box)
+            case .evened, .evenedWithMargin: done.evened += 1; done.redone.append(box)
+            case .cleaned: done.otherwise += 1
+            }
+        }
+        log.info("Cleaning changed the reading of \(done.changed, privacy: .public) lines: \(done.gently, privacy: .public) cleaned again gently, \(done.evened, privacy: .public) kept as evened, \(done.otherwise, privacy: .public) left as cleaned, as even the light alone did not bring their reading back")
+        return (image(pixels, gray: mode.isGray) ?? first, done)
     }
 
     /// The page cut in from its edges where anything of what it lay on shows.
@@ -685,15 +776,6 @@ enum ScanCleaner {
         }
         func middle(_ values: [UInt8]) -> CGFloat { CGFloat(values.sorted()[values.count / 2]) / 255 }
         return (middle(reds), middle(greens), middle(blues))
-    }
-
-    // MARK: Cleaning
-
-    /// The page cleaned in the colours asked for (`ScanClean`), in greys
-    /// with one channel where they are grey.
-    static func cleaned(_ page: CGImage, _ mode: ScanColor, printBoxes: [CGRect] = []) -> CGImage? {
-        guard let bitmap = bitmap(page) else { return nil }
-        return image(ScanSheet.edgeCleaned(ScanClean.clean(bitmap, mode, printBoxes: printBoxes)), gray: mode.isGray)
     }
 
     // MARK: Checking
