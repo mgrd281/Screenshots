@@ -99,7 +99,9 @@ height (`ScanClean.printLines`).
   - neutral once the paper's colour is divided out. A blue heading, a form
     printed in colour and a ballpoint do not count.
 
-  Everything else is cleaned exactly as on main.
+  Everything else is cleaned exactly as on main. Where text was read, a
+  stroke still never takes a fold's finer light, as on main, whatever its
+  shade.
 - **The paper at its own level inside light print** (`Tuning.textHeadroom
   = 1`): there the paper is no longer taken as 95 % of itself. A faint mark
   keeps all of its contrast; the grain there is left to the toning.
@@ -127,8 +129,8 @@ height (`ScanClean.printLines`).
   - **No seams:** windows blend into each other and over the line's edge.
   - Nothing is drawn or moved.
 - **The guard** (`ScanCleaner.guarded`, `ScanContent.changed`,
-  `ScanContent.says`): the cleaned page is read again. A line read before
-  with confidence 0.9 or more, of three letters or more, must still read
+  `ScanContent.says`): the cleaned page is read again. A line of light print,
+  the print the toning changes, read before with confidence 0.9 or more, of three letters or more, must still read
   with every character in the same order on its row, each with at least the
   marks it had. Spaces do not count, and a dash or a centred dot may be read
   as another of its kind.
@@ -144,6 +146,11 @@ height (`ScanClean.printLines`).
     paper white, the ink as photographed). Where not even the evened line
     reads as before, the reading differs and not the cleaning, so the line
     stays cleaned.
+
+  Dark print is cleaned exactly as on main, so the guard leaves it alone. The
+  first version also cleaned again a dark line of the made-up sick note
+  whose reading changed as it always has, and so moved a ruled line near
+  the fold by 0.015 px, past the test's 2 px.
 
   What the guard did is logged ("Cleaning changed the reading of N lines…")
   and kept with the page (`Prepared.guarded`) for the tests. Black and white

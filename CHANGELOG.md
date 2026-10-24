@@ -10,8 +10,8 @@ keeps a download of each version.
   of Scan as dark and plain as the rest, line by line, with every umlaut's
   dot, accent, comma and @ kept, where cleaning used to leave "Arzte fur
   Radiologie". A thin light face comes out a little bolder, so it reads as
-  dark as the body. Each page is read again after cleaning: a line that
-  reads otherwise, a dot or an accent gone, is read on its own, cleaned
+  dark as the body. Each page is read again after cleaning: a line of that
+  grey print that reads otherwise, a dot or an accent gone, is read on its own, cleaned
   again gently, or kept as the light alone leaves it, whichever first reads
   as before. A dot the photo left too faint to read before and cleaning
   made readable counts as clearer, not different.

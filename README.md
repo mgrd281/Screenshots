@@ -1025,8 +1025,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Several photos chosen at once make one document, its pages in the order
   they were chosen. Only
   the picture as a whole changes: nothing is drawn, filled in, removed or
-  guessed. Each page is read before and after: a line read surely before
-  that reads otherwise after, a dot or an accent gone, is read on its own,
+  guessed. Each page is read before and after: a line of light print read
+  surely before that reads otherwise after, a dot or an accent gone, is read on its own,
   cleaned again gently, or kept as the light alone leaves it, whichever
   first reads as before, so cleaning never changes what a line says; a mark
   the photo left too faint to read before counts as clearer

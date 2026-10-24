@@ -262,6 +262,8 @@ enum ScanClean {
     struct Cleaned {
         let page: ScanBitmap
         let base: ScanBitmap
+        /// The boxes of light print, toned line by line (`lightPrint`).
+        let light: [CGRect]
     }
 
     /// The page cleaned in the colours asked for, and its base.
@@ -277,7 +279,7 @@ enum ScanClean {
         let light = lightPrint(printBoxes, in: page, tuning: tuning)
         let lines = printLines(light, width: page.width, height: page.height)
         let faint = textMask(light, width: page.width, height: page.height)
-        let flat = uncreased(evened(page, paper: paper, tuning: tuning, text: faint), tuning: tuning)
+        let flat = uncreased(evened(page, paper: paper, tuning: tuning, text: text, faint: faint), tuning: tuning)
         let even = neutralized(denoised(flat, grain: tuning.grain, white: white, text: faint, textGrain: tuning.textGrain),
                                tuning: tuning)
         // Faint print deepened, sharpened, then taken darker, so the darkening sets the print's
@@ -297,7 +299,7 @@ enum ScanClean {
         case .gray: shown = grayed(cleaned)
         case .blackAndWhite: shown = blackAndWhite(grayed(cleaned), tuning: tuning)
         }
-        return Cleaned(page: shown, base: even)
+        return Cleaned(page: shown, base: even, light: light)
     }
 
     /// How bright a colour is, from 0 to 255, as the eye weighs red, green
@@ -642,8 +644,10 @@ enum ScanClean {
         evened(page, paper: Paper(of: page, tuning: tuning), tuning: tuning)
     }
 
-    /// The same, with the paper already measured.
-    static func evened(_ page: ScanBitmap, paper: Paper, tuning: Tuning, text: [Bool]? = nil) -> ScanBitmap {
+    /// The same, with the paper already measured; `text` where text was
+    /// read, `faint` where it is light print (`textHeadroom`).
+    static func evened(_ page: ScanBitmap, paper: Paper, tuning: Tuning, text: [Bool]? = nil,
+                       faint: [Bool]? = nil) -> ScanBitmap {
         let pageLightness = Paper.lightness(paper.level.red, paper.level.green, paper.level.blue)
         guard pageLightness >= tuning.darkestPaper else { return page }
         let w = page.width, h = page.height, cell = Float(paper.cell)
@@ -712,7 +716,7 @@ enum ScanClean {
                             blue *= share
                         }
                     }
-                    let headroom = text?[y * w + x] ?? false ? tuning.textHeadroom : tuning.headroom
+                    let headroom = faint?[y * w + x] ?? false ? tuning.textHeadroom : tuning.headroom
                     red = max(red, floor.red) * headroom
                     green = max(green, floor.green) * headroom
                     blue = max(blue, floor.blue) * headroom

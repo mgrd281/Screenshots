@@ -176,8 +176,9 @@ enum ScanCleaner {
         return Prepared(straightened: page, cleaned: made.0, turns: turns, skew: skew, checked: checked, guarded: made.1)
     }
 
-    /// The page cleaned, and read again: every line read surely before
-    /// that reads otherwise after, a dot, an accent or a digit gone
+    /// The page cleaned, and read again: every line of light print, the
+    /// print cleaning now tones line by line (`ScanClean.lightPrint`), read
+    /// surely before that reads otherwise after, a dot, an accent or a digit gone
     /// (`ScanContent.changed`), is read again on its own, as cleaned, then
     /// cleaned again gently, then as the light alone leaves it
     /// (`ScanClean.redone`), and the first that reads as before is kept.
@@ -192,8 +193,10 @@ enum ScanCleaner {
         var pixels = ScanSheet.edgeCleaned(made.page)
         guard let first = image(pixels, gray: mode.isGray) else { return nil }
         guard mode != .blackAndWhite else { return (first, Guard()) }
-        let before = read.map { ScanContent.Read(text: $0.string, box: $0.box, confidence: $0.confidence) }
-        guard let after = Finder.reading(of: first) else { return (first, Guard()) }
+        // Light print alone is toned; dark print is cleaned as it always was.
+        let before = read.filter { made.light.contains($0.box) }
+            .map { ScanContent.Read(text: $0.string, box: $0.box, confidence: $0.confidence) }
+        guard !before.isEmpty, let after = Finder.reading(of: first) else { return (first, Guard()) }
         let changed = ScanContent.changed(before: before, after: after.map { ScanContent.Line(text: $0.string, box: $0.box) })
         var done = Guard(changed: changed.count)
         guard !changed.isEmpty else { return (first, done) }
