@@ -158,12 +158,6 @@ enum ScanClean {
         /// grain and the blocks' over-bright reading are under it, so what
         /// is paper shows white, and print keeps its shade.
         var headroom: Float = 0.95
-        /// Within the lines of light neutral print read (`lightPrint`), the
-        /// paper is taken at its own level instead: a mark a little darker than the paper, an
-        /// umlaut's dot, an accent or a thin grey stroke, keeps all of its
-        /// contrast, and the grain there is left to the line's own toning
-        /// (`toned`) and to the curve.
-        var textHeadroom: Float = 1
         /// The grain: neighbours this close to a pixel, of 255, are smoothed
         /// with it; an edge, further apart, never is. Within the lines of
         /// light print read, `textGrain`, so a faint mark's rim is not
@@ -274,12 +268,12 @@ enum ScanClean {
         // Where text was read: only there is faint print looked for, and
         // small marks kept whole.
         let text = textMask(printBoxes, width: page.width, height: page.height)
-        // Light print, a grey column beside the body, is evened at its paper's
-        // own level, smoothed less and toned line by line, so its faintest marks stay.
+        // Light print, a grey column beside the body, is smoothed less and toned
+        // line by line, so its faintest marks stay.
         let light = lightPrint(printBoxes, in: page, tuning: tuning)
         let lines = printLines(light, width: page.width, height: page.height)
         let faint = textMask(light, width: page.width, height: page.height)
-        let flat = uncreased(evened(page, paper: paper, tuning: tuning, text: text, faint: faint), tuning: tuning)
+        let flat = uncreased(evened(page, paper: paper, tuning: tuning, text: text), tuning: tuning)
         let even = neutralized(denoised(flat, grain: tuning.grain, white: white, text: faint, textGrain: tuning.textGrain,
                                         darkest: Int(tuning.lightInk)), tuning: tuning)
         // Faint print deepened, sharpened, then taken darker, so the darkening sets the print's
@@ -644,10 +638,8 @@ enum ScanClean {
         evened(page, paper: Paper(of: page, tuning: tuning), tuning: tuning)
     }
 
-    /// The same, with the paper already measured; `text` where text was
-    /// read, `faint` where it is light print (`textHeadroom`).
-    static func evened(_ page: ScanBitmap, paper: Paper, tuning: Tuning, text: [Bool]? = nil,
-                       faint: [Bool]? = nil) -> ScanBitmap {
+    /// The same, with the paper already measured.
+    static func evened(_ page: ScanBitmap, paper: Paper, tuning: Tuning, text: [Bool]? = nil) -> ScanBitmap {
         let pageLightness = Paper.lightness(paper.level.red, paper.level.green, paper.level.blue)
         guard pageLightness >= tuning.darkestPaper else { return page }
         let w = page.width, h = page.height, cell = Float(paper.cell)
@@ -716,11 +708,7 @@ enum ScanClean {
                             blue *= share
                         }
                     }
-                    // Only light marks keep their contrast; a dark pixel, a rule's or a
-                    // box's, is evened as on any page.
-                    let lightMark = faint?[y * w + x] ?? false
-                        && Float(Self.brightness(px[i], px[i + 1], px[i + 2])) >= tuning.lightInk
-                    let headroom = lightMark ? tuning.textHeadroom : tuning.headroom
+                    let headroom = tuning.headroom
                     red = max(red, floor.red) * headroom
                     green = max(green, floor.green) * headroom
                     blue = max(blue, floor.blue) * headroom

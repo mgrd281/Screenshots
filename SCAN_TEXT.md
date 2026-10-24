@@ -102,9 +102,11 @@ height (`ScanClean.printLines`).
   Everything else is cleaned exactly as on main. Where text was read, a
   stroke still never takes a fold's finer light, as on main, whatever its
   shade.
-- **The paper at its own level inside light print** (`Tuning.textHeadroom
-  = 1`): there the paper is no longer taken as 95 % of itself. A faint mark
-  keeps all of its contrast; the grain there is left to the toning.
+- **The paper is still taken at 95 %** of itself inside light print. The
+  first version took it at its own level there, to keep a faint dot's rim;
+  that moved a ruled line at the sick note's fold by 0.017 px and is gone
+  (below). The toning starts from the evened page, so the dots are kept
+  either way; 3 fewer of the hard photo's 22 are "seen".
 - **Less smoothing inside light print** (`Tuning.textGrain = 4`): grain
   within 4 levels, not 10.
 - **Light print toned line by line** (`ScanPrint.swift`, `ScanClean.toned`).
@@ -170,17 +172,17 @@ the straightening make it, a warm lamp and a little grain.
 | Photo | Pipeline | Dots seen | Dot / stroke | Grey darkest 30 % (median, worst line) | Stroke at 300 dpi, variation | Blue hue |
 |---|---|---|---|---|---|---|
 | hard | main | 2 / 22 | 0.26 | 104, 123 | 4.0 px, 10 % | 211.1° |
-| hard | new | 16 / 22 | 0.59 | 30, 33 | 4.9 px, 8 % | 211.1° |
+| hard | new | 13 / 22 | 0.54 | 14, 22 | 4.6 px, 9 % | 211.1° |
 | medium | main | 21 / 22 | 0.62 | 95, 121 | 3.3 px, 11 % | 211.3° |
-| medium | new | 22 / 22 | 0.85 | 30.5, 38.5 | 3.8 px, 10 % | 211.3° |
+| medium | new | 22 / 22 | 0.86 | 24.5, 30.5 | 3.7 px, 11 % | 211.3° |
 | Mac-like, 200 dpi | main | – | – | 136, 193 | 2.4 px | – |
-| Mac-like, 200 dpi | new | – | – | 17.5, 26 | 3.6 px | – |
+| Mac-like, 200 dpi | new | – | – | 6, 43 | 3.4 px | – |
 | Mac-like, 150 dpi | main | – | – | 129, 176 | 2.5 px | – |
-| Mac-like, 150 dpi | new | – | – | 6, 6 | 4.3 px | – |
+| Mac-like, 150 dpi | new | – | – | 6, 6 | 4.0 px | – |
 
 - The darkest 30 % is taken in the box round each line's own ink. In a box
   as tall as the font's ascent and descent, with paper above and below, the
-  Mac-like letter's worst line at 200 dpi is 78 and the median 22.
+  Mac-like letter's worst line at 200 dpi is 110 and the median 34.
 - No dot is lost on either photo: every one is at least 25 levels under its
   paper. "Seen" asks more, half as dark as its stroke; the six hard-photo
   dots short of it are still over 100 levels dark.
@@ -260,17 +262,26 @@ again after cleaning a line again, and never trusts a crop.
 ### The sick note's fold
 
 The made-up sick note's step at the fold stayed at 2.0154 px, past the 2 px
-main keeps, on every run. A diagnostic test (`testWhereTheFoldStepComesFrom`)
-cleaned its straightened page again with the light print's rules turned off
-one by one: 2.0154 with everything, 2.0154 with the toning off, 1.9983 with
-the paper taken at 95 % and the smoothing at 10 again. So neither the toning
-nor the guard moves the line; the paper at its own level and the lighter
-smoothing do, by 0.017 px, on a sheet whose print the lamp makes light
-throughout (all 40 of its lines count as light print). Both now apply only to
-pixels as light as a light mark (100 and over), so a rule's or a box's dark
-pixels are evened and smoothed as on any page. The lab letters come out the
-same (dots, darkness, strokes). **Not verified:** that the step is back
-under 2 px; the test runs on the Mac only.
+main keeps, on every run. A diagnostic test cleaned its straightened page
+again with the light print's rules turned off one by one (the Mac, 3
+runs):
+
+| Rules | Step |
+|---|---|
+| everything | 2.0154 |
+| toning off | 2.0154 |
+| paper at 95 %, smoothing at 10 (both off) | 1.9983 |
+| paper at its own level only | 2.0163 |
+| lighter smoothing only | 1.9971 |
+| paper at 97.5 %, lighter smoothing | 2.0025 |
+
+So neither the toning nor the guard moves the line. The paper at its own
+level does, by 0.017 px, on a sheet whose print the lamp makes light
+throughout (all 40 of its lines count as light print); the lighter
+smoothing does not. Limiting it to pixels as light as a light mark did not
+help: the sheet's pink rules are light. The paper at its own level is gone,
+and the diagnostic with it. **Not verified:** that the step is under 2 px
+again; the test runs on the Mac only.
 
 ### The second run
 

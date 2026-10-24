@@ -154,39 +154,6 @@ final class ScanFormFixtureTests: XCTestCase {
 
     /// The long lines run straight at 300 dots an inch, 2 pixels' wander at
     /// most, and the box's upright lines meet at the fold without a step.
-    /// Where the pink sheet's step at the fold comes from: its straightened
-    /// page cleaned again with each of the light print's rules turned off,
-    /// and the step each leaves. Printed only, for the record.
-    func testWhereTheFoldStepComesFrom() async throws {
-        let (_, prepared, measures, _) = try await made(.pink)
-        let page = try XCTUnwrap(ScanCleaner.bitmap(prepared.straightened))
-        let boxes = (Finder.lines(in: prepared.straightened) ?? []).map(\.box)
-        let light = ScanClean.lightPrint(boxes, in: page)
-        var untoned = ScanClean.Tuning.standard
-        untoned.lineGain = 1
-        var unevened = ScanClean.Tuning.standard
-        unevened.textHeadroom = unevened.headroom
-        unevened.textGrain = unevened.grain
-        var neither = unevened
-        neither.lineGain = 1
-        var evenedOnly = ScanClean.Tuning.standard
-        evenedOnly.textGrain = evenedOnly.grain
-        var smoothedOnly = ScanClean.Tuning.standard
-        smoothedOnly.textHeadroom = smoothedOnly.headroom
-        var between = ScanClean.Tuning.standard
-        between.textHeadroom = 0.975
-        var text = "FOLD pink: as prepared \(measures.foldStep.map { String($0) } ?? "–"), \(boxes.count) lines, "
-            + "\(light.count) light, guard \(prepared.guarded)\n"
-        for (name, tuning) in [("standard", ScanClean.Tuning.standard), ("untoned", untoned), ("unevened", unevened),
-                               ("neither", neither), ("paper at its own level only", evenedOnly),
-                               ("lighter smoothing only", smoothedOnly), ("paper at 97.5 %", between)] {
-            let cleaned = ScanSheet.edgeCleaned(ScanClean.clean(page, .color, tuning: tuning, printBoxes: boxes))
-            let step = ScanFormMeasure.measure(cleaned, reading: prepared.checked.reading, variant: .pink).foldStep
-            text += "  \(name): \(step.map { String($0) } ?? "–")\n"
-        }
-        print(text)
-    }
-
     func testTheLinesAndTheFoldAreStraight() async throws {
         for variant in ScanForm.Variant.allCases {
             let (_, _, measures, _) = try await made(variant)
