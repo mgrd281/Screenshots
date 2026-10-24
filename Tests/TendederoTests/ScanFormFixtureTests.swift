@@ -169,10 +169,17 @@ final class ScanFormFixtureTests: XCTestCase {
         unevened.textGrain = unevened.grain
         var neither = unevened
         neither.lineGain = 1
+        var evenedOnly = ScanClean.Tuning.standard
+        evenedOnly.textGrain = evenedOnly.grain
+        var smoothedOnly = ScanClean.Tuning.standard
+        smoothedOnly.textHeadroom = smoothedOnly.headroom
+        var between = ScanClean.Tuning.standard
+        between.textHeadroom = 0.975
         var text = "FOLD pink: as prepared \(measures.foldStep.map { String($0) } ?? "–"), \(boxes.count) lines, "
             + "\(light.count) light, guard \(prepared.guarded)\n"
         for (name, tuning) in [("standard", ScanClean.Tuning.standard), ("untoned", untoned), ("unevened", unevened),
-                               ("neither", neither)] {
+                               ("neither", neither), ("paper at its own level only", evenedOnly),
+                               ("lighter smoothing only", smoothedOnly), ("paper at 97.5 %", between)] {
             let cleaned = ScanSheet.edgeCleaned(ScanClean.clean(page, .color, tuning: tuning, printBoxes: boxes))
             let step = ScanFormMeasure.measure(cleaned, reading: prepared.checked.reading, variant: .pink).foldStep
             text += "  \(name): \(step.map { String($0) } ?? "–")\n"
