@@ -14,9 +14,9 @@ final class ReviewStatusTests: XCTestCase {
         XCTAssertEqual(status(3, 4, 1).text, "3 covered · 4 to check", "what is to check comes before a hint")
         XCTAssertEqual(status(0, 2, 0).text, "2 to check")
         XCTAssertEqual(status(3, 0, 0).text, "3 covered, everything checked")
-        XCTAssertEqual(status(3, 0, 1).text, "3 covered · 1 hint")
-        XCTAssertEqual(status(3, 0, 2).text, "3 covered · 2 hints")
-        XCTAssertEqual(status(0, 0, 1).text, "Nothing private · 1 hint")
+        XCTAssertEqual(status(3, 0, 1).text, "3 covered · 1 quality hint")
+        XCTAssertEqual(status(3, 0, 2).text, "3 covered · 2 quality hints")
+        XCTAssertEqual(status(0, 0, 1).text, "Nothing private · 1 quality hint")
         XCTAssertEqual(status(0, 0, 0).text, "Nothing private found")
     }
 

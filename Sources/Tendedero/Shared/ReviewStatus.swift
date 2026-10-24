@@ -44,11 +44,12 @@ struct ReviewStatus: Equatable {
     }
 
     /// What is still open after it, shown apart: "2 zu prüfen", or
-    /// "1 Hinweis" where nothing is to check but the picture has a fault.
+    /// "1 Qualitätshinweis" where nothing is to check but the picture has a
+    /// fault.
     var pending: String? {
         if open > 0 { return String(format: L("%d to check"), open) }
         guard hints > 0, state != .nothing else { return nil }
-        return hints == 1 ? L("1 hint") : String(format: L("%d hints"), hints)
+        return hints == 1 ? L("1 quality hint") : String(format: L("%d quality hints"), hints)
     }
 
     /// The whole line, as it reads: "3 verdeckt · 4 zu prüfen".

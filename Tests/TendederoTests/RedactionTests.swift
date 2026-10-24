@@ -450,6 +450,30 @@ final class RedactionTests: XCTestCase {
         XCTAssertTrue(found.possible.isEmpty, "\(found.possible)")
     }
 
+    func testTheOwnersNameOverTwoLinesIsCoveredWhereAnotherColumnIsReadBetween() {
+        // The body's lines on the left, a letterhead's line on the right read
+        // between them; a given name this short is no name alone.
+        let lines = ["in unserer Praxis. Die Akte lautet auf Tim", "Dr. med. Tom Muster",
+                     "Brandtner. Rückfragen bitte an die Praxis."]
+        let boxes = [CGRect(x: 0.08, y: 0.50, width: 0.5, height: 0.015),
+                     CGRect(x: 0.70, y: 0.49, width: 0.2, height: 0.012),
+                     CGRect(x: 0.08, y: 0.48, width: 0.5, height: 0.015)]
+        func part(_ index: Int, _ range: Range<String.Index>) -> CGRect? {
+            let line = lines[index], share = boxes[index].width / CGFloat(line.count)
+            let start = CGFloat(line.distance(from: line.startIndex, to: range.lowerBound))
+            return CGRect(x: boxes[index].minX + start * share, y: boxes[index].minY,
+                          width: CGFloat(line.distance(from: range.lowerBound, to: range.upperBound)) * share,
+                          height: boxes[index].height)
+        }
+        let name = OwnRule(text: OwnDetails.nameText(given: "Tim", surname: "Brandtner"), kind: .name)
+        let found = Finder.findings(lines, boxes: boxes, part: part, [], rules: [name])
+        let covered = found.hits.map { hit in
+            hit.range.flatMap { Range($0, in: lines[hit.line]) }.map { String(lines[hit.line][$0]) } ?? lines[hit.line]
+        }
+        XCTAssertEqual(Set(covered), ["Tim", "Brandtner"], "\(covered)")
+        XCTAssertFalse(found.hits.contains { $0.line == 1 }, "the letterhead's line is no part of it")
+    }
+
     // MARK: Helpers
 
     /// What the engine covers on a made-up page laid out in rows and

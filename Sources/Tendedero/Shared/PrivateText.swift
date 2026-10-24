@@ -512,6 +512,9 @@ enum Finder {
         var areas: [Area] = []
         var possible: [Area] = []
         var spared: [Area] = []
+        /// Vision could not read the picture's text, as iOS may keep it from
+        /// doing in the background: nothing found is then not nothing there.
+        var unread = false
     }
 
     /// The kinds a picture's places are found for, beyond those chosen, so
@@ -563,7 +566,7 @@ enum Finder {
         }
         // The last word is Settings', whatever found a place.
         return Analysis(areas: areas.filter { allowed($0.kind, chosen) },
-                        possible: possible.filter { allowed($0.kind, chosen) }, spared: spared)
+                        possible: possible.filter { allowed($0.kind, chosen) }, spared: spared, unread: found.unread)
     }
 
     /// Whether a place may be covered, or offered to be: its kind is on, or
@@ -916,7 +919,8 @@ enum Finder {
         let patterns = printed.compactMap { code in printedPattern(ofCode: code.payload).map { ($0, code.kind) } }
         guard !chosen.subtracting([.faces, .barcodes]).isEmpty || rules.contains(where: \.isActive)
             || !patterns.isEmpty || spare else { return Analysis() }
-        let lines = Timing.measure("read") { read(image) }
+        let reading = Timing.measure("read") { linesRead(in: image, remember: true) }
+        let lines = reading ?? []
         let printedHits = patterns.isEmpty ? [] : Text(lines).hits(forPatterns: patterns)
         var found = Timing.measure("find") { findings(in: lines, chosen, rules: rules, scope: scope) }
         if intelligence {
@@ -951,7 +955,8 @@ enum Finder {
                 hit.kind != nil && !taken.contains { $0.line == hit.line && overlap($0.range, hit.range) }
             }
         }
-        return Analysis(areas: all.compactMap(place), possible: possible, spared: spared.compactMap(place))
+        return Analysis(areas: all.compactMap(place), possible: possible, spared: spared.compactMap(place),
+                        unread: reading == nil)
     }
 
     /// Where a detail found in a line is, and what it says: just its words,
@@ -1561,6 +1566,23 @@ enum Finder {
     /// says (`labelPlaces`).
     private static func own(in text: Text, _ rules: [OwnRule]) -> [Hit] {
         var hits = ruleRanges(in: text.full, rules).flatMap { text.hits($0, nil) }
+        // A name or a number run on into the next line of its column, where
+        // the reading puts a line of another column between the two, as a
+        // practice's letterhead down the side of a letter.
+        let details = rules.filter { $0.kind.isDetail && $0.isActive }
+        if !details.isEmpty, text.boxes.count == text.strings.count {
+            for i in text.strings.indices {
+                guard let j = Self.line(below: i, in: text.boxes, gap: 1.6), j != i + 1 else { continue }
+                let first = text.strings[i]
+                let split = first.utf16.count + 1
+                for range in OwnDetails.ranges(in: first + "\n" + text.strings[j], details)
+                where range.location < split - 1 && NSMaxRange(range) > split {
+                    hits.append(Hit(line: i, range: NSRange(location: range.location, length: split - 1 - range.location),
+                                    kind: nil))
+                    hits.append(Hit(line: j, range: NSRange(location: 0, length: NSMaxRange(range) - split), kind: nil))
+                }
+            }
+        }
         for place in labelPlaces(text.strings, rules, below: { Self.line(below: $0, in: text.boxes, gap: 2) }) {
             hits.append(Hit(line: place.line, range: place.range.map { NSRange($0, in: text.strings[place.line]) }, kind: nil))
         }

@@ -106,6 +106,16 @@ final class ScanUITests: XCTestCase {
         }
     }
 
+    func testTheOwnersNameAndAddressAreCoveredOnALetter() {
+        let app = launch("own")
+        let status = card(app)
+        XCTAssertTrue(wait(status, "label CONTAINS %@", "verdeckt", timeout: Self.ready), status.label)
+        XCTAssertFalse(status.label.contains("Nichts Privates"), status.label)
+        status.tap()
+        XCTAssertTrue(words(app, "Deine Angaben aus Immer verbergen").waitForExistence(timeout: 10),
+                      "the list says the owner's details are covered")
+    }
+
     func testCompareIsOneAdjustableComparison() {
         let app = launch("editor")
         XCTAssertTrue(card(app).exists)
@@ -126,7 +136,7 @@ final class ScanUITests: XCTestCase {
         let app = launch("warning")
         let status = element(app, "review-status")
         XCTAssertTrue(status.waitForExistence(timeout: Self.ready * 2))
-        XCTAssertTrue(status.label.contains("Hinweis") || status.label.contains("zu prüfen"), status.label)
+        XCTAssertTrue(status.label.contains("Qualitätshinweis") || status.label.contains("zu prüfen"), status.label)
         XCTAssertFalse(status.label.contains("Nichts Privates gefunden"), "never while a hint stands")
         let thumb = element(app, "scan-thumb-2")
         XCTAssertTrue(thumb.label.contains("Zu prüfen"), thumb.label)

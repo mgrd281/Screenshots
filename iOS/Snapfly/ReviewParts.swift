@@ -12,7 +12,9 @@ import VisionKit
 // MARK: The bar along the top
 
 /// Review's bar: the round back button, the title with the page under it
-/// ("Seite 1 von 3"), the menu, and Next, the one filled button.
+/// ("Seite 1 von 3"), the menu, and Next, the one filled button. The title
+/// stands in the middle of the screen, at least 12 points clear of the
+/// buttons on either side, and only where it would not be, between them.
 struct ReviewHeader<More: View>: View {
     let page: Int
     let pages: Int
@@ -22,7 +24,17 @@ struct ReviewHeader<More: View>: View {
     @ViewBuilder let menu: () -> More
 
     var body: some View {
-        ZStack {
+        ReviewHeaderLayout(gap: 12) {
+            Button(action: back) {
+                Image(systemName: "chevron.backward")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch)
+                    .editorGlass(in: Circle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L("Back"))
+            .accessibilityIdentifier("review-back")
             VStack(spacing: 1) {
                 Text(L("Review"))
                     .font(.headline)
@@ -35,29 +47,18 @@ struct ReviewHeader<More: View>: View {
                 }
             }
             .lineLimit(1)
-            .minimumScaleFactor(0.8)
-            .padding(.horizontal, 120)
+            .minimumScaleFactor(0.75)
             .accessibilityElement(children: .combine)
             .accessibilityAddTraits(.isHeader)
             .accessibilityIdentifier("review-title")
             HStack(spacing: 8) {
-                Button(action: back) {
-                    Image(systemName: "chevron.backward")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(.primary)
-                        .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch)
-                        .editorGlass(in: Circle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(L("Back"))
-                .accessibilityIdentifier("review-back")
-                Spacer(minLength: 0)
                 menu()
                 Button(action: next) {
                     Text(L("Next"))
-                        .font(.body.weight(.semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 20)
+                        .lineLimit(1)
+                        .padding(.horizontal, 16)
                         .frame(minHeight: SnapflyTokens.touch)
                         .background(SnapflyTokens.protect, in: Capsule())
                         .opacity(canGoOn ? 1 : 0.45)
@@ -66,9 +67,45 @@ struct ReviewHeader<More: View>: View {
                 .disabled(!canGoOn)
                 .accessibilityIdentifier("scan-next")
             }
+            .fixedSize()
         }
         .padding(.horizontal, 16)
         .padding(.top, 4)
+    }
+}
+
+/// Lays out Review's bar: the first view at the leading edge, the last at
+/// the trailing edge, and the one between them in the middle of the bar,
+/// `gap` points clear of both; where the middle leaves less room than
+/// that, the title sits in the room there is between them.
+struct ReviewHeaderLayout: Layout {
+    var gap: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let height = subviews.map { $0.sizeThatFits(.unspecified).height }.max() ?? 0
+        return CGSize(width: proposal.width ?? subviews.reduce(0) { $0 + $1.sizeThatFits(.unspecified).width }, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard subviews.count == 3 else { return }
+        let leading = subviews[0].sizeThatFits(.unspecified), trailing = subviews[2].sizeThatFits(.unspecified)
+        subviews[0].place(at: CGPoint(x: bounds.minX, y: bounds.midY), anchor: .leading, proposal: ProposedViewSize(leading))
+        subviews[2].place(at: CGPoint(x: bounds.maxX, y: bounds.midY), anchor: .trailing, proposal: ProposedViewSize(trailing))
+        // The room between the buttons, and the room the middle leaves.
+        let left = bounds.minX + leading.width + gap, right = bounds.maxX - trailing.width - gap
+        let room = max(0, right - left)
+        let side = max(leading.width, trailing.width) + gap
+        let centred = max(0, bounds.width - 2 * side)
+        let ideal = subviews[1].sizeThatFits(.unspecified).width
+        if ideal <= centred {
+            subviews[1].place(at: CGPoint(x: bounds.midX, y: bounds.midY), anchor: .center,
+                              proposal: ProposedViewSize(width: centred, height: bounds.height))
+        } else {
+            let width = min(ideal, room)
+            let x = min(max(bounds.midX, left + width / 2), right - width / 2)
+            subviews[1].place(at: CGPoint(x: x, y: bounds.midY), anchor: .center,
+                              proposal: ProposedViewSize(width: width, height: bounds.height))
+        }
     }
 }
 
@@ -96,8 +133,9 @@ enum ReviewMode: Hashable {
 /// Eraser, the tool in hand on a mint pill that glides to the next, then
 /// Redo. Page holds Crop, Turn, the colours (named as they are: Farbe,
 /// Graustufen, Schwarzweiß), Before and After, and last, apart and in red,
-/// Delete. Each is its icon over a short label; at the accessibility text
-/// sizes the icon alone, VoiceOver still saying its name.
+/// Delete. Each is its icon over a short label, Undo and Redo their icons
+/// alone; at the accessibility text sizes every icon alone, VoiceOver
+/// still saying its name.
 struct ReviewToolbar: View {
     @Binding var mode: ReviewMode
     @Binding var tool: EditTool
@@ -188,7 +226,7 @@ struct ReviewToolbar: View {
 
     private var coverRow: some View {
         HStack(spacing: 0) {
-            Button(action: undo) { item(L("Undo"), "arrow.uturn.backward") }
+            Button(action: undo) { edge("arrow.uturn.backward") }
                 .disabled(!canUndo)
                 .accessibilityLabel(L("Undo"))
             divider
@@ -208,7 +246,7 @@ struct ReviewToolbar: View {
                 .accessibilityIdentifier("review-tool-\(item.rawValue)")
             }
             divider
-            Button(action: redo) { item(L("Redo"), "arrow.uturn.forward") }
+            Button(action: redo) { edge("arrow.uturn.forward") }
                 .disabled(!canRedo)
                 .accessibilityLabel(L("Redo"))
         }
@@ -262,6 +300,13 @@ struct ReviewToolbar: View {
             .padding(.horizontal, 2)
     }
 
+    /// Undo or Redo at the bar's ends: the glyph alone, in a 36 point wide,
+    /// 44 point high target, so the tools between have room for their names.
+    private func edge(_ symbol: String) -> some View {
+        ReviewToolItem(title: "", symbol: symbol, chosen: false, tint: nil, labelled: false, space: space)
+            .frame(width: 36)
+    }
+
     /// A tool: its icon over its short label, a 44 pt target, on the mint
     /// pill while it is in hand.
     private func item(_ title: String, _ symbol: String, chosen: Bool = false, tint: Color? = nil) -> some View {
@@ -296,11 +341,13 @@ private struct ReviewToolItem: View {
                 Text(title)
                     .font(.caption2.weight(chosen ? .semibold : .regular))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.7)
+                    .minimumScaleFactor(0.65)
+                    // At least 6 points between two labels, on the smallest iPhone too.
+                    .padding(.horizontal, 3)
             }
         }
         .foregroundStyle(colour)
-        .padding(.horizontal, 2)
+        .padding(.horizontal, 1)
         .frame(maxWidth: .infinity, minHeight: SnapflyTokens.touch)
         .background {
             if chosen {
@@ -644,20 +691,11 @@ struct ReviewListSheet: View {
     }
 
     private func openRow(_ place: ReviewPlace) -> some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 12) {
-                sign(place.mark)
-                words(place)
-                Spacer(minLength: 4)
-                decisions(place)
-            }
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 12) {
-                    sign(place.mark)
-                    words(place)
-                }
-                decisions(place)
-            }
+        row(stacked: typeSize.isAccessibilitySize) {
+            sign(place.mark)
+            words(place)
+        } actions: {
+            decisions(place)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
@@ -665,6 +703,22 @@ struct ReviewListSheet: View {
         .accessibilityLabel("\(Self.name(of: place.mark)), \(L("To check")), \(String(format: L("Page %d"), place.number))")
         .accessibilityAction(named: L("Cover")) { decide(place, covered: true) }
         .accessibilityAction(named: L("Leave")) { decide(place, covered: false) }
+    }
+
+    /// A row of the list: its sign and words, then its buttons, which keep
+    /// their size while the words give way, cut short with "…"; at the
+    /// accessibility text sizes the buttons go under the words.
+    private func row<Lead: View, Actions: View>(stacked: Bool, @ViewBuilder _ lead: () -> Lead,
+                                                @ViewBuilder actions: () -> Actions) -> some View {
+        let layout = stacked ? AnyLayout(VStackLayout(alignment: .leading, spacing: 10))
+            : AnyLayout(HStackLayout(spacing: 12))
+        return layout {
+            HStack(spacing: 12) { lead() }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            actions()
+                .fixedSize()
+                .layoutPriority(1)
+        }
     }
 
     private func decisions(_ place: ReviewPlace) -> some View {
@@ -685,7 +739,6 @@ struct ReviewListSheet: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .fixedSize()
     }
 
     // MARK: Faults
@@ -696,7 +749,7 @@ struct ReviewListSheet: View {
             card {
                 ForEach(Array(faults.enumerated()), id: \.offset) { index, fault in
                     if index > 0 { Divider().padding(.leading, 60) }
-                    HStack(spacing: 12) {
+                    row(stacked: typeSize.isAccessibilitySize) {
                         Image(systemName: "exclamationmark.triangle")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(SnapflyTokens.reviewOpen)
@@ -711,7 +764,7 @@ struct ReviewListSheet: View {
                                 .font(.footnote)
                                 .foregroundStyle(SnapflyTokens.hideSecondary)
                         }
-                        Spacer(minLength: 4)
+                    } actions: {
                         Button(L("Look")) {
                             dismiss()
                             look(fault.page.id)
@@ -723,7 +776,6 @@ struct ReviewListSheet: View {
                         .background(SnapflyTokens.hideButtonOff, in: Capsule())
                         .frame(minHeight: SnapflyTokens.touch)
                         .buttonStyle(.plain)
-                        .fixedSize()
                     }
                     .padding(.horizontal, 14)
                     .padding(.vertical, 12)
@@ -774,16 +826,15 @@ struct ReviewListSheet: View {
                 if coveredOpen {
                     ForEach(covered) { place in
                         Divider().padding(.leading, 60)
-                        HStack(spacing: 12) {
+                        row(stacked: typeSize.isAccessibilitySize) {
                             sign(place.mark)
                             words(place)
-                            Spacer(minLength: 4)
+                        } actions: {
                             Button(L("Uncover")) { decide(place, covered: false) }
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(SnapflyTokens.hideSecondary)
                                 .frame(minHeight: SnapflyTokens.touch)
                                 .buttonStyle(.plain)
-                                .fixedSize()
                         }
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
@@ -840,11 +891,13 @@ struct ReviewListSheet: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(Self.name(of: place.mark))
                 .font(.subheadline.weight(.semibold))
-                .lineLimit(2)
+                .lineLimit(typeSize.isAccessibilitySize ? 3 : 1)
+                .truncationMode(.tail)
             Text(Self.excerpt(of: place.mark) + " · " + String(format: L("Page %d"), place.number))
                 .font(.footnote)
                 .foregroundStyle(SnapflyTokens.hideSecondary)
                 .lineLimit(1)
+                .truncationMode(.tail)
         }
     }
 

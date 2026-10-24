@@ -26,7 +26,7 @@ mkdir -p "$out"
 # blurred at the bottom, go into Photos on the simulator, for the walks from
 # Photos, and are not published.
 engine=0
-SCAN_CAPTURES="$PWD/$out" swift test --filter "ScanFixtureTests|ScanFormFixtureTests|ScanInvoiceFixtureTests" || engine=$?
+SCAN_CAPTURES="$PWD/$out" swift test --filter "ScanFixtureTests|ScanFormFixtureTests|ScanInvoiceFixtureTests|OwnLetterFixtureTests" || engine=$?
 photo=build/scan-photo.png
 blurred=build/scan-photo-blurred.png
 mkdir -p build
@@ -84,7 +84,7 @@ shot() {
   if [ -n "$size" ]; then arguments+=(-UIPreferredContentSizeCategoryName "$size"); fi
   local settle=30
   if [ "$state" = corners ]; then settle=12; fi
-  if [ "$state" = warning ] || [ "$state" = sheet ] || [ "$state" = uncovered ]; then settle=45; fi
+  if [ "$state" = warning ] || [ "$state" = sheet ] || [ "$state" = uncovered ] || [ "$state" = list ]; then settle=45; fi
   xcrun simctl ui "$on" appearance "$appearance"
   xcrun simctl terminate "$on" "$bundle" >/dev/null 2>&1 || true
   xcrun simctl launch "$on" "$bundle" "${arguments[@]}" >/dev/null
@@ -124,9 +124,9 @@ for appearance in light dark; do
   photo_shot "$device" "de-$appearance-photo-offer" offer "$appearance" de
   photo_shot "$device" "de-$appearance-photo-cleaned" cleaned "$appearance" de
 done
-frames "$device" de-light light de "" assistant
-frames "$device" de-dark dark de "" assistant
-frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL tab editor warning sheet
+frames "$device" de-light light de "" assistant own list
+frames "$device" de-dark dark de "" assistant own list
+frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL tab editor warning sheet list
 frames "$device" de-xxxl light de UICTContentSizeCategoryXXXL editor sheet
 frames "$device" ar-light light ar "" tab editor sheet
 frames "$device" en-light light en "" editor sheet
@@ -189,8 +189,8 @@ if [ -n "$small" ] && [ "$small" != "$device" ]; then
     sleep 40
     frames "$small" de-small light de ""
     photo_shot "$small" de-small-photo-offer offer light de
-    frames "$small" de-small-dark dark de "" editor warning sheet
-    frames "$small" de-small-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL editor sheet
+    frames "$small" de-small-dark dark de "" editor warning sheet own list
+    frames "$small" de-small-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL editor sheet list
   ) || echo "The smallest iPhone could not be captured." >&2
   xcrun simctl shutdown "$small" || true
 fi

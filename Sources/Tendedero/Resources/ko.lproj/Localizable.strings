@@ -1831,8 +1831,8 @@
 "%d covered" = "%d곳 가림";
 "%d covered, everything checked" = "%d곳 가림, 모두 확인함";
 "Nothing private" = "개인 정보 없음";
-"1 hint" = "알림 1개";
-"%d hints" = "알림 %d개";
+"1 quality hint" = "품질 알림 1개";
+"%d quality hints" = "품질 알림 %d개";
 "Open the list." = "목록을 엽니다.";
 
 /* Review: its bar of tools, the list of places to check, the menu. */
@@ -1867,3 +1867,4 @@
 "Reflection" = "반사";
 "Smudged lens" = "렌즈 얼룩";
 "Too small" = "너무 작음";
+"The text could not be read. Nothing is covered yet." = "텍스트를 읽을 수 없었습니다. 아직 아무것도 가리지 않았습니다.";

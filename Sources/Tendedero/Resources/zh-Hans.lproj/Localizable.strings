@@ -1831,8 +1831,8 @@
 "%d covered" = "已遮盖 %d 处";
 "%d covered, everything checked" = "已遮盖 %d 处，全部已检查";
 "Nothing private" = "无私人信息";
-"1 hint" = "1 条提示";
-"%d hints" = "%d 条提示";
+"1 quality hint" = "1 条画质提示";
+"%d quality hints" = "%d 条画质提示";
 "Open the list." = "打开列表。";
 
 /* Review: its bar of tools, the list of places to check, the menu. */
@@ -1867,3 +1867,4 @@
 "Reflection" = "反光";
 "Smudged lens" = "镜头脏污";
 "Too small" = "太小";
+"The text could not be read. Nothing is covered yet." = "无法读取文字。尚未遮盖任何内容。";

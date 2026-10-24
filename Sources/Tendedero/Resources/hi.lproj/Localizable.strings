@@ -1833,8 +1833,8 @@
 "%d covered" = "%d ढके";
 "%d covered, everything checked" = "%d ढके, सब जाँचा गया";
 "Nothing private" = "कुछ निजी नहीं";
-"1 hint" = "1 सूचना";
-"%d hints" = "%d सूचनाएँ";
+"1 quality hint" = "1 गुणवत्ता सूचना";
+"%d quality hints" = "%d गुणवत्ता सूचनाएँ";
 "Open the list." = "सूची खोलें।";
 
 /* Review: its bar of tools, the list of places to check, the menu. */
@@ -1869,3 +1869,4 @@
 "Reflection" = "चमक";
 "Smudged lens" = "लेंस गंदा";
 "Too small" = "बहुत छोटा";
+"The text could not be read. Nothing is covered yet." = "टेक्स्ट पढ़ा नहीं जा सका। अभी कुछ भी ढका नहीं गया है।";

@@ -195,6 +195,11 @@ final class ProtectSession: ObservableObject {
             Finder.analysis(in: image, chosen, rules: rules, intelligence: false, spare: true)
         }
         guard !Task.isCancelled else { return }
+        // Text that could not be read is never taken for nothing private.
+        guard !first.unread else {
+            failure = L("The text could not be read. Nothing is covered yet.")
+            return
+        }
         plan.add(found: first.areas, possible: first.possible, spared: first.spared)
         found = true
         // Read already: the words are there at once.

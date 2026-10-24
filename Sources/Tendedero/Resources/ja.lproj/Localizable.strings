@@ -1831,8 +1831,8 @@
 "%d covered" = "%d件を隠しました";
 "%d covered, everything checked" = "%d件を隠しました・すべて確認済み";
 "Nothing private" = "個人情報なし";
-"1 hint" = "注意 1件";
-"%d hints" = "注意 %d件";
+"1 quality hint" = "画質の注意 1件";
+"%d quality hints" = "画質の注意 %d件";
 "Open the list." = "リストを開きます。";
 
 /* Review: its bar of tools, the list of places to check, the menu. */
@@ -1867,3 +1867,4 @@
 "Reflection" = "反射";
 "Smudged lens" = "レンズの汚れ";
 "Too small" = "小さすぎ";
+"The text could not be read. Nothing is covered yet." = "文字を読み取れませんでした。まだ何も隠していません。";
