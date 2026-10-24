@@ -138,79 +138,11 @@ enum ScanCleaner {
     }
 
     /// What is still bent in a page — a curl at the bottom, a slant down it —
-    /// taken out by a smooth field measured from its own long lines: each
-    /// line's own height in every column, then a straight interpolation
-    /// between the lines, so every line lies straight and nothing jumps.
-    /// Only pixels are moved, as for a perspective correction.
+    /// taken out along its own long lines (`ScanBend`).
     static func undeformed(_ page: CGImage) -> CGImage? {
         guard let bitmap = bitmap(page) else { return page }
-        let w = bitmap.width, h = bitmap.height
-        guard w > 120, h > 120 else { return page }
-        let plane = bitmap.brightness
-        let most = max(4, h / 200)
-        // Every long line: a row dark across most of the width, its thickness skipped.
-        var lineRows: [Int] = []
-        var row = Int(Double(h) * 0.05)
-        while row < h - h / 30, lineRows.count < 24 {
-            var dark = 0
-            var x = 0
-            while x < w { if plane[row * w + x] < 200 { dark += 1 }; x += 1 }
-            if dark > w * 3 / 5 {
-                lineRows.append(row)
-                row += max(4, h / 200)
-            } else {
-                row += 1
-            }
-        }
-        guard lineRows.count >= 1 else { return page }
-        // Each line's own height in every column, smoothed so a grain never bends one.
-        var deviations = [[Double]](repeating: [Double](repeating: 0, count: w), count: lineRows.count)
-        let reach = max(2, w / 80)
-        for (i, line) in lineRows.enumerated() {
-            var raw = [Double](repeating: 0, count: w)
-            for x in 0..<w {
-                var bestY = line, bestValue = 256.0
-                var y = max(0, line - most)
-                while y <= min(h - 1, line + most) {
-                    let value = Double(plane[y * w + x])
-                    if value < bestValue { bestValue = value; bestY = y }
-                    y += 1
-                }
-                raw[x] = Double(line - bestY)
-            }
-            for x in 0..<w {
-                var sum = 0.0, n = 0
-                var k = max(0, x - reach)
-                while k <= min(w - 1, x + reach) { sum += raw[k]; n += 1; k += 1 }
-                deviations[i][x] = n > 0 ? sum / Double(n) : 0
-            }
-        }
-        var out = bitmap
-        bitmap.pixels.withUnsafeBufferPointer { src in
-            out.pixels.withUnsafeMutableBufferPointer { dst in
-                var i = 0
-                for y in 0..<h {
-                    while i + 1 < lineRows.count, y > lineRows[i + 1] { i += 1 }
-                    let a = i, b = min(i + 1, lineRows.count - 1)
-                    var t = 0.0
-                    if b > a, lineRows[b] != lineRows[a] {
-                        t = min(1, max(0, Double(y - lineRows[a]) / Double(lineRows[b] - lineRows[a])))
-                    }
-                    for x in 0..<w {
-                        let shift = deviations[a][x] * (1 - t) + deviations[b][x] * t
-                        let fromY = min(max(Double(y) - shift, 0), Double(h - 1))
-                        let y0 = Int(fromY.rounded(.down)), y1 = min(y0 + 1, h - 1)
-                        let ty = fromY - Double(y0)
-                        let o = (y * w + x) * 4
-                        for k in 0..<3 {
-                            let v = Double(src[(y0 * w + x) * 4 + k]) * (1 - ty) + Double(src[(y1 * w + x) * 4 + k]) * ty
-                            dst[o + k] = UInt8(min(255, max(0, v + 0.5)))
-                        }
-                    }
-                }
-            }
-        }
-        return image(out, gray: false)
+        let straight = ScanBend.undeformed(bitmap)
+        return straight == bitmap ? page : image(straight, gray: false)
     }
 
     /// A page already flat and upright, cleaned in `mode` and checked, as
@@ -410,32 +342,47 @@ enum ScanCleaner {
 
     /// The page's parts moved to meet at each fold, as the print across the
     /// fold says they should: the rows just below it against the rows just
-    /// above it, sideways and up or down, at points across the page, each a
-    /// straight line, so a part is moved as a whole and nothing in it bends.
+    /// above it, sideways and up or down, at points across the page; up or
+    /// down as a straight line, so a part is moved as a whole, and sideways
+    /// so too unless lines down the page cross the fold, each brought to
+    /// meet itself and the columns between them moved in proportion.
     static func aligned(_ page: CGImage, at seams: [Int]) -> CGImage? {
         guard !seams.isEmpty, let bitmap = bitmap(page) else { return page }
-        let w = bitmap.width, h = bitmap.height, plane = bitmap.brightness
+        let w = bitmap.width, h = bitmap.height
         guard w > 200, h > 200 else { return page }
-        var shifts: [(seam: Int, across: (slope: Double, offset: Double), up: (slope: Double, offset: Double))] = []
-        for seam in seams where seam > 80 && seam < h - 80 {
-            guard let across = shift(of: plane, w, h, seam: seam, sideways: true),
-                  let up = shift(of: plane, w, h, seam: seam, sideways: false) else { continue }
-            shifts.append((seam, across, up))
-        }
+        let shifts = self.shifts(in: bitmap, at: seams)
         guard !shifts.isEmpty else { return page }
+        // Sideways, each fold's shift in every column: between the lines
+        // down the page that cross it, where they do, as a part bowed by its
+        // fold stands further off in its middle than at its sides; else the
+        // line the print says.
+        let plane = bitmap.brightness
+        let fields: [[Double]] = shifts.map { shift in
+            let lined = crossing(plane, w, h, seam: shift.seam, reach: max(9, w / 60)).sorted { $0.at < $1.at }
+            guard lined.count >= 2 else { return (0..<w).map { shift.across.offset + shift.across.slope * Double($0) } }
+            var k = 0
+            return (0..<w).map { x in
+                let at = Double(x)
+                while k + 1 < lined.count - 1, at > lined[k + 1].at { k += 1 }
+                let a = lined[k], b = lined[k + 1]
+                if at <= a.at { return Double(a.by) }
+                if at >= b.at { return Double(b.by) }
+                return Double(a.by) + Double(b.by - a.by) * (at - a.at) / (b.at - a.at)
+            }
+        }
         // Each row's part carries the shifts of every fold above it.
-        var acrossAt = [(slope: Double, offset: Double)](repeating: (0, 0), count: h)
-        var upAt = acrossAt
-        var across = (slope: 0.0, offset: 0.0), up = (slope: 0.0, offset: 0.0), next = 0
+        var sums: [[Double]] = []
+        for field in fields { sums.append(zip(sums.last ?? [Double](repeating: 0, count: w), field).map { $0 + $1 }) }
+        var acrossAt = [Int](repeating: -1, count: h)
+        var upAt = [(slope: Double, offset: Double)](repeating: (0, 0), count: h)
+        var up = (slope: 0.0, offset: 0.0), next = 0
         for y in 0..<h {
             while next < shifts.count, y >= shifts[next].seam {
-                across.slope += shifts[next].across.slope
-                across.offset += shifts[next].across.offset
                 up.slope += shifts[next].up.slope
                 up.offset += shifts[next].up.offset
                 next += 1
             }
-            acrossAt[y] = across
+            acrossAt[y] = next - 1
             upAt[y] = up
         }
         var out = bitmap
@@ -445,8 +392,9 @@ enum ScanCleaner {
                     let fromY = Double(y) + upAt[y].offset + upAt[y].slope * Double(y)
                     let y0 = min(max(Int(fromY.rounded(.down)), 0), h - 1), y1 = min(y0 + 1, h - 1)
                     let ty = min(max(fromY - Double(y0), 0), 1)
+                    let across = sums[max(0, acrossAt[y])]
                     for x in 0..<w {
-                        let fromX = Double(x) + acrossAt[y].offset + acrossAt[y].slope * Double(x)
+                        let fromX = Double(x) + across[x]
                         let x0 = min(max(Int(fromX.rounded(.down)), 0), w - 1), x1 = min(x0 + 1, w - 1)
                         let tx = min(max(fromX - Double(x0), 0), 1)
                         let o = (y * w + x) * 4
@@ -462,26 +410,30 @@ enum ScanCleaner {
         return image(out, gray: false)
     }
 
+    /// At each seam, how far the part below it stands from the part above,
+    /// sideways and up or down, each as a line across the page; a seam
+    /// where the print says too little is left out.
+    static func shifts(in bitmap: ScanBitmap, at seams: [Int])
+        -> [(seam: Int, across: (slope: Double, offset: Double), up: (slope: Double, offset: Double))] {
+        let w = bitmap.width, h = bitmap.height, plane = bitmap.brightness
+        var shifts: [(seam: Int, across: (slope: Double, offset: Double), up: (slope: Double, offset: Double))] = []
+        for seam in seams where seam > 80 && seam < h - 80 {
+            // Each way on its own: a fold's box shows its sides sideways where
+            // no rule crosses it to say how far up or down the part stands.
+            let across = shift(of: plane, w, h, seam: seam, sideways: true)
+            let up = shift(of: plane, w, h, seam: seam, sideways: false)
+            guard across != nil || up != nil else { continue }
+            shifts.append((seam, across ?? (0, 0), up ?? (0, 0)))
+        }
+        return shifts
+    }
+
     /// The shift that brings the edges of the print just below a fold into
     /// line with those just above it, as a line across the page: sideways,
     /// or up and down. Nil where the print there says too little to tell.
     static func shift(of plane: [UInt8], _ w: Int, _ h: Int, seam: Int,
                               sideways: Bool) -> (slope: Double, offset: Double)? {
-        let band = 44, gap = 6, reach = 9
-        let above = (seam - band)..<(seam - gap), below = (seam + gap)..<(seam + band)
-        guard above.lowerBound > 2, below.upperBound < h - 2 else { return nil }
-        var found: [(at: Double, by: Int, weight: Double)] = []
-        let chunks = 9
-        for chunk in 0..<chunks {
-            let x0 = w / 10 + (w * 4 / 5) * chunk / chunks
-            let x1 = w / 10 + (w * 4 / 5) * (chunk + 1) / chunks
-            guard x1 - x0 > 40 else { continue }
-            let a = profile(plane, w, h, rows: above, columns: x0..<x1, sideways: sideways)
-            let b = profile(plane, w, h, rows: below, columns: x0..<x1, sideways: sideways)
-            guard a.reduce(0, +) + b.reduce(0, +) > 2000, let best = alignment(a, b, reach: reach),
-                  best.gain >= 1.1 else { continue }
-            found.append((Double(x0 + x1) / 2, best.shift, best.gain - 1))
-        }
+        let found = readings(of: plane, w, h, seam: seam, sideways: sideways)
         guard found.count >= 2 else { return nil }
         // A line through the shifts found, each weighed by how clearly it
         // was seen, so the part moves as a whole.
@@ -494,13 +446,94 @@ enum ScanCleaner {
         return (slope, my - slope * mx)
     }
 
+    /// The shifts the print across a seam shows, each at the place across
+    /// the page it was read, how far, and how clearly.
+    static func readings(of plane: [UInt8], _ w: Int, _ h: Int, seam: Int,
+                         sideways: Bool) -> [(at: Double, by: Int, weight: Double)] {
+        // A part can be laid a sixtieth of the page's width off, as where a
+        // hand's shadow hides one end of a fold; a shift past the first few
+        // pixels must be seen clearly. Read from near each side, where a
+        // form's box has its sides and little else crosses a fold.
+        let band = 44, gap = 6, reach = sideways ? max(9, w / 60) : 9, near = 9
+        let above = (seam - band)..<(seam - gap), below = (seam + gap)..<(seam + band)
+        guard above.lowerBound > 2, below.upperBound < h - 2 else { return [] }
+        // Lines down the page, a box's sides and its dividers, crossing the
+        // fold say it best: read clear of its shadow, where nothing else is
+        // dark from top to bottom of a band.
+        if sideways {
+            let lined = crossing(plane, w, h, seam: seam, reach: reach)
+            if lined.count >= 2 { return lined }
+        }
+        var found: [(at: Double, by: Int, weight: Double)] = []
+        let chunks = 11
+        for chunk in 0..<chunks {
+            let x0 = w / 25 + (w * 23 / 25) * chunk / chunks
+            let x1 = w / 25 + (w * 23 / 25) * (chunk + 1) / chunks
+            guard x1 - x0 > 40 else { continue }
+            let a = profile(plane, w, h, rows: above, columns: x0..<x1, sideways: sideways)
+            let b = profile(plane, w, h, rows: below, columns: x0..<x1, sideways: sideways)
+            guard a.reduce(0, +) + b.reduce(0, +) > 1200, let best = alignment(a, b, reach: reach),
+                  best.gain >= (abs(best.shift) > near ? 1.5 : 1.1) else { continue }
+            found.append((Double(x0 + x1) / 2, best.shift, best.gain - 1))
+        }
+        // Text above a fold is not the text below it, and a chunk can match
+        // it anywhere: the readings count only where most of them agree.
+        guard !found.isEmpty else { return [] }
+        let middle = found.map(\.by).sorted()[found.count / 2]
+        let agreeing = found.filter { abs($0.by - middle) <= 3 }
+        return agreeing.count * 5 >= found.count * 3 ? agreeing : []
+    }
+
+    /// The lines down the page crossing a seam, each where it stands above
+    /// the fold and how far sideways it goes on below it: columns dark in
+    /// nearly every row of a band above the fold's shadow, matched to the
+    /// nearest such below it within `reach`.
+    static func crossing(_ plane: [UInt8], _ w: Int, _ h: Int, seam: Int,
+                         reach: Int) -> [(at: Double, by: Int, weight: Double)] {
+        let clear = max(30, h / 80), tall = max(40, h / 40)
+        let above = (seam - clear - tall)..<(seam - clear), below = (seam + clear)..<(seam + clear + tall)
+        guard above.lowerBound >= 0, below.upperBound <= h else { return [] }
+        func lines(in rows: Range<Int>) -> [Double] {
+            var values: [UInt8] = []
+            for y in stride(from: rows.lowerBound, to: rows.upperBound, by: 4) {
+                for x in stride(from: 0, to: w, by: 4) { values.append(plane[y * w + x]) }
+            }
+            values.sort()
+            let paper = Int(values[values.count * 4 / 5])
+            let dark = paper - 40
+            guard dark > 0 else { return [] }
+            var middles: [Double] = []
+            var run: [Int] = []
+            for x in 0..<w {
+                let count = rows.reduce(0) { $0 + (Int(plane[$1 * w + x]) < dark ? 1 : 0) }
+                if count * 10 >= rows.count * 9 { run.append(x) } else if !run.isEmpty {
+                    if run.count <= 12 { middles.append(Double(run[0] + run[run.count - 1]) / 2) }
+                    run = []
+                }
+            }
+            return middles
+        }
+        let top = lines(in: above), bottom = lines(in: below)
+        var found: [(at: Double, by: Int, weight: Double)] = []
+        for x in top {
+            guard let match = bottom.min(by: { abs($0 - x) < abs($1 - x) }), abs(match - x) <= Double(reach),
+                  top.min(by: { abs($0 - match) < abs($1 - match) }) == x else { continue }
+            found.append((x, Int((match - x).rounded()), 4))
+        }
+        return found
+    }
+
     /// Where the edges stand across a band: for each column of it, sideways,
     /// or each row of it, how much the brightness turns there. Only turns
     /// well above the paper's grain count, so print and rules tell, and the
     /// grain does not.
     private static func profile(_ plane: [UInt8], _ w: Int, _ h: Int, rows: Range<Int>, columns: Range<Int>,
                                 sideways: Bool) -> [Double] {
-        let least = 60.0
+        // Faint print on tinted paper, a box's rule in a fold's shadow, turns
+        // the brightness by little more than half what black on white does;
+        // up and down, a fold's own shadow turns it by that much at its
+        // edges, so only print's turns count there.
+        let least = sideways ? 30.0 : 60.0
         func turn(_ value: Int) -> Double { max(0, Double(value) - least) }
         if sideways {
             return columns.map { x in
@@ -684,7 +717,10 @@ enum ScanCleaner {
         let readBefore = asLines(read)
         var kept: Bool?
         if readBefore.contains(where: { ScanContent.letters(in: $0.text) >= ScanContent.shortest }) {
-            let lost = ScanContent.lost(before: readBefore, after: asLines(reading))
+            let cleaned = bitmap(after)
+            let lost = ScanContent.lost(before: readBefore, after: asLines(reading)) { box in
+                cleaned.map { ScanContent.crossed($0, box) } ?? false
+            }
             issues += lost.map { ScanIssue(.lessText, area: $0) }
             kept = lost.isEmpty
         }

@@ -29,6 +29,38 @@ final class ScanFormFixtureTests: XCTestCase {
         let seconds = Date().timeIntervalSince(start)
         let bitmap = try XCTUnwrap(ScanCleaner.bitmap(prepared.cleaned))
         let measures = ScanFormMeasure.measure(bitmap, reading: prepared.checked.reading, variant: variant)
+        // For the pictures' notes: where the form lies on the page, the
+        // folds found, and what the print still says at each fold laid.
+        let placed = ScanFormPlace.of(bitmap)
+        let place = placed.map { place in
+            String(format: "x %.3f·form %+.1f, rows ", place.scale, place.offset)
+                + place.rows.map { "\(Int($0.form))→\(Int($0.page))" }.joined(separator: " ")
+        } ?? "not placed"
+        let folds = ScanCleaner.folds(in: photo.image, quad: quad).map { fold in
+            String(format: "%.3f/%.3f", 1 - fold.left.y, 1 - fold.right.y)
+        }
+        let seams = placed.map { place in variant.folds.map { Int(place.y($0.at * Double(ScanForm.height))) } } ?? []
+        let left = ScanCleaner.shifts(in: try XCTUnwrap(ScanCleaner.bitmap(prepared.straightened)), at: seams).map { shift in
+            String(format: "seam %d across %+.1f%+.4fx up %+.1f%+.4fy", shift.seam, shift.across.offset, shift.across.slope,
+                   shift.up.offset, shift.up.slope)
+        }
+        // What each chunk across a seam says, sideways and up or down.
+        let seamBitmap = try XCTUnwrap(ScanCleaner.bitmap(prepared.straightened))
+        let seamPlane = seamBitmap.brightness
+        let chunks = seams.map { seam in
+            ["across", "up"].map { way in
+                let read = ScanCleaner.readings(of: seamPlane, seamBitmap.width, seamBitmap.height, seam: seam,
+                                                sideways: way == "across")
+                return "\(way) " + read.map { String(format: "x%.0f:%+d(%.1f)", $0.at, $0.by, $0.weight) }.joined(separator: " ")
+            }.joined(separator: " | ")
+        }
+        // Which lines read before cleaning were not read after, as the check saw them.
+        let areas = prepared.checked.issues.compactMap(\.area)
+        let gone = (Finder.lines(in: prepared.straightened) ?? []).filter { line in
+            areas.contains { !$0.intersection(line.box).isNull }
+        }.map(\.string) + prepared.checked.reading.filter { line in
+            areas.contains { !$0.insetBy(dx: -0.02, dy: -0.01).intersection(line.box).isNull }
+        }.map { "after: " + $0.string }
         let done = (photo, prepared, measures, seconds)
         Self.made[variant] = done
         ScanFixtureTests.keep(photo.image, "form-\(variant.rawValue)-photo", longest: 1600)
@@ -41,9 +73,14 @@ final class ScanFormFixtureTests: XCTestCase {
             (\(Int(ScanGeometry.dpi(width: prepared.cleaned.width, height: prepared.cleaned.height))) dpi on A4), \
             \(String(format: "%.1f", seconds)) s on this Mac (debug build)
             \(measures)
+            lost lines: \(gone)
+            chunks at the seams: \(chunks)
+            placed: \(place)
+            folds found (down from the top): \(folds); at the seams still: \(left.isEmpty ? "nothing read" : left.joined(separator: "; "))
             issues: \(prepared.checked.issues.map(\.kind.rawValue))
 
             """)
+        print("FORM \(variant.rawValue): placed \(place); folds \(folds); seams still \(left); chunks \(chunks); lost lines \(gone)")
         print("FORM \(variant.rawValue): \(measures) issues \(prepared.checked.issues.map(\.kind.rawValue))")
         return done
     }
@@ -153,12 +190,18 @@ final class ScanFormFixtureTests: XCTestCase {
             let (_, prepared, _, _) = try await made(variant)
             XCTAssertTrue(prepared.checked.textKept ?? false, "\(variant): every line reads after cleaning")
             XCTAssertFalse(prepared.checked.issues.contains { $0.kind == .lessText }, "\(variant): no text lost")
-            func numbers(_ lines: [Finder.TextLine]) -> Set<String> {
-                Set(lines.flatMap { ScanFormMeasure.tokens(of: $0.string) }.filter { $0.contains(where: \.isNumber) })
+            // The form's own numbers, each as its digits: those read before
+            // cleaning must be read after, a typewriter's Z or O read either
+            // way, a reading that splits or spaces them otherwise alike.
+            let known = Set(ScanForm.text.flatMap { ScanContent.numbers(in: $0) })
+            func digits(_ lines: [Finder.TextLine]) -> [String] {
+                lines.map { ScanContent.digits(in: ScanContent.readAsDigits($0.string)) }
             }
-            let before = numbers(Finder.lines(in: prepared.straightened) ?? [])
-            let after = numbers(prepared.checked.reading)
-            XCTAssertTrue(before.subtracting(after).isEmpty, "\(variant): numbers lost \(before.subtracting(after))")
+            let before = digits(Finder.lines(in: prepared.straightened) ?? []), after = digits(prepared.checked.reading)
+            let read = known.filter { number in before.contains { $0.contains(number) } }
+            let lost = read.filter { number in !after.contains { $0.contains(number) } }
+            XCTAssertFalse(read.isEmpty, "\(variant): the form's numbers are read before cleaning")
+            XCTAssertTrue(lost.isEmpty, "\(variant): numbers lost \(lost.sorted())")
         }
     }
 }

@@ -32,6 +32,20 @@ final class ScanContentTests: XCTestCase {
         XCTAssertEqual(ScanContent.lost(before: invoice, after: after), [])
     }
 
+    /// A typewriter's Z read as 2, or its O as 0, one reading to the next, is
+    /// the same number; a letter away from digits stays a letter.
+    func testALetterReadForADigitBesideDigitsIsTheSameNumber() {
+        let before = [line("200.0 G", row: 0), line("Fax 040-1234567", row: 1)]
+        let after = [line("Z00.0 G", row: 0), line("Fax O40-1234567", row: 1)]
+        XCTAssertEqual(ScanContent.lost(before: before, after: after), [])
+        XCTAssertEqual(ScanContent.readAsDigits("Z00.0 Gesamt O4O"), "200.0 Gesamt 040")
+        XCTAssertTrue(ScanContent.lost(before: [line("Muster 16", row: 0)], after: [line("Muster 1b", row: 0)]).isEmpty,
+                      "a 6 read as b beside a digit")
+        XCTAssertEqual(ScanContent.readAsDigits("Schwarz 2 Seite"), "Schwarz 2 Seite")
+        XCTAssertFalse(ScanContent.lost(before: [line("Z00.0 G", row: 0)], after: [line("Z0.0 G", row: 0)]).isEmpty,
+                       "a digit gone is still gone")
+    }
+
     func testANumberGoneOrChangedMarksItsLine() {
         var after = invoice
         // 49,80 read as 49,30, and the total not read at all.
@@ -52,6 +66,29 @@ final class ScanContentTests: XCTestCase {
         let lost = ScanContent.lost(before: long, after: fewer)
         XCTAssertFalse(lost.isEmpty)
         XCTAssertTrue(lost.allSatisfy { $0.maxY <= long[15].box.maxY + 0.001 }, "only where lines are gone")
+    }
+
+    /// A number a signature crosses, read before and not after, is the
+    /// reading's way with the signature, not text the cleaning lost.
+    func testALineASignatureCrossesIsNotCounted() {
+        var page = ScanBitmap(width: 400, height: 100, red: 255, green: 255, blue: 255)
+        func paint(_ xs: Range<Int>, _ ys: Range<Int>, _ r: UInt8, _ g: UInt8, _ b: UInt8) {
+            for y in ys { for x in xs { let i = (y * 400 + x) * 4; page.pixels[i] = r; page.pixels[i + 1] = g; page.pixels[i + 2] = b } }
+        }
+        // Grey print along the line, a blue stroke over its right half.
+        for x in stride(from: 20, to: 380, by: 12) { paint(x..<(x + 3), 40..<60, 60, 60, 60) }
+        for x in 200..<380 { paint(x..<(x + 1), (45 + (x / 7) % 10)..<(48 + (x / 7) % 10), 40, 60, 170) }
+        let box = CGRect(x: 0.05, y: 0.4, width: 0.9, height: 0.2)
+        XCTAssertTrue(ScanContent.crossed(page, box), "the signature crosses the line")
+        let before = [ScanContent.Line(text: "Fax 040-12", box: box)]
+        XCTAssertTrue(ScanContent.lost(before: before, after: [], crossed: { ScanContent.crossed(page, $0) }).isEmpty)
+        XCTAssertFalse(ScanContent.lost(before: before, after: []).isEmpty, "uncrossed, it would count")
+        // Print in colour alone is not crossed.
+        var blue = ScanBitmap(width: 400, height: 100, red: 255, green: 255, blue: 255)
+        for x in stride(from: 20, to: 380, by: 12) {
+            for y in 40..<60 { for xx in x..<(x + 3) { let i = (y * 400 + xx) * 4; blue.pixels[i] = 30; blue.pixels[i + 1] = 60; blue.pixels[i + 2] = 170 } }
+        }
+        XCTAssertFalse(ScanContent.crossed(blue, box), "a line printed in blue is read as it is")
     }
 
     func testNumbersAreDigitsWithTheirSeparators() {
