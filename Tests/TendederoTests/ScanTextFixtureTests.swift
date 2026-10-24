@@ -114,8 +114,8 @@ final class ScanTextFixtureTests: XCTestCase {
     private func report(_ dpi: Int, _ made: Made, _ lines: [Line]) {
         let done = made.prepared.guarded
         var text = "text letter at \(dpi) dpi: prepared in \(String(format: "%.1f", made.seconds)) s on this Mac (debug build)\n"
-        text += "  guard: \(done.changed) lines read otherwise after cleaning; \(done.alone) read as before on their own, "
-            + "\(done.gently) cleaned again gently, \(done.evened) kept as evened, \(done.otherwise) read otherwise even as evened\n"
+        text += "  guard: \(done.changed) lines read otherwise after cleaning; "
+            + "\(done.gently) cleaned again gently, \(done.evened) kept as evened, \(done.otherwise) left as cleaned\n"
         for line in lines {
             text += "  \(line.print.rawValue) \(line.text): before \(line.before), after \(line.after) wrong, sure \(String(format: "%.2f", line.sure))"
             if line.before > 0 || line.after > 0 { text += " (read \"\(line.readBefore)\", then \"\(line.readAfter)\")" }

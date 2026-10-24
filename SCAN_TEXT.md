@@ -129,8 +129,8 @@ height (`ScanClean.printLines`).
   - **No seams:** windows blend into each other and over the line's edge.
   - Nothing is drawn or moved.
 - **The guard** (`ScanCleaner.guarded`, `ScanContent.changed`,
-  `ScanContent.says`): the cleaned page is read again. A line of light print,
-  the print the toning changes, read before with confidence 0.9 or more, of three letters or more, must still read
+  `ScanContent.says`): the cleaned page is read again. A line read before
+  with confidence 0.9 or more, of three letters or more, must still read
   with every character in the same order on its row, each with at least the
   marks it had. Spaces do not count, and a dash or a centred dot may be read
   as another of its kind.
@@ -140,20 +140,19 @@ height (`ScanClean.printLines`).
     never draws a mark. The first guard took the reading before as the
     truth and undid exactly these lines (below). Not over an i or a j: their
     own dot, made darker, was read once as an accent ("praxís").
-  - **A line that reads otherwise** is tried, in this order, until one reads
-    as before: the cleaned line read on its own; the line cleaned again
-    gently (ink at most twice as dark, nothing sharpened, not taken
-    further); the line as the evened page has it (the light evened, the
-    paper white, the ink as photographed). Where not even the evened line
-    reads as before, the reading differs and not the cleaning, so the line
-    stays cleaned.
+  - **A line that reads otherwise** is cleaned again and the whole page read
+    once more: light print gently (ink at most twice as dark, nothing
+    sharpened, not taken further), dark print, which is never toned, as the
+    evened page has it within its own box. A line that still reads
+    otherwise goes a step further, light print to the evened page and the
+    page is read once more; where even that does not bring its reading
+    back, the reading differs and not the cleaning, and the line stays as
+    cleaned. A line is never judged on a crop of its own: the second Mac run
+    showed Vision reads "Rückfragen" alone and "Rückíragen" on its page.
 
-  Dark print is never toned. A dark line that reads otherwise is not
-  cleaned again gently: it goes back to the evened page within its own box
-  only, without the 30 % margin, so no ruled line beside it moves. (Cleaning
-  a dark line of the sick note again with its margin moved a ruled line near
-  the fold by 0.015 px, past the test's 2 px; leaving dark lines unguarded
-  let a body line read "Rückíragen".)
+  A dark line is never cleaned again gently, and goes back to the evened page
+  within its own box only, without the 30 % margin, so no ruled line beside
+  it moves. (Leaving dark lines unguarded let a body line read "Rückíragen".)
 
   What the guard did is logged ("Cleaning changed the reading of N lines…")
   and kept with the page (`Prepared.guarded`) for the tests. Black and white
@@ -250,6 +249,13 @@ Two causes, both fixed above:
 
 The test was briefly loosened to pass that run; it now asks for the brief's
 targets again.
+
+### The third run
+
+At 200 dpi the guard found "Rückfragen" changed, read the line again on a
+crop of its own, found it right, and left the page as it was: Vision reads a
+line differently alone than on its page. The guard now reads the whole page
+again after cleaning a line again, and never trusts a crop.
 
 ### The sick note's fold
 
