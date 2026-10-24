@@ -1490,13 +1490,6 @@
 "Straightening and brightening…" = "Redressement et éclaircissement…";
 "The page could not be read." = "La page n’a pas pu être lue.";
 "Take Again" = "Reprendre";
-"Straightened and brightened, text unchanged." = "Redressée et éclaircie, texte inchangé.";
-"Straightened and brightened." = "Redressée et éclaircie.";
-"No private details found." = "Aucune donnée privée trouvée.";
-"1 private detail covered." = "1 donnée privée masquée.";
-"%d private details covered." = "%d données privées masquées.";
-"Check 1 place." = "Vérifie 1 endroit.";
-"Check %d places." = "Vérifie %d endroits.";
 "Before" = "Avant";
 "After" = "Après";
 "Comparison of Before and After" = "Comparaison avant et après";
@@ -1841,3 +1834,36 @@
 "1 hint" = "1 remarque";
 "%d hints" = "%d remarques";
 "Open the list." = "Ouvrir la liste.";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "%d endroits à vérifier";
+"1 place to check" = "1 endroit à vérifier";
+"Collapsed" = "Replié";
+"Cover All" = "Tout masquer";
+"Decide what is covered. Nothing leaves your iPhone." = "Décide ce qui est masqué. Rien ne quitte ton iPhone.";
+"Discard Scan" = "Abandonner le scan";
+"Discard the whole scan?" = "Abandonner tout le scan ?";
+"Every page goes, with what was covered on it." = "Toutes les pages sont supprimées, avec ce qui y était masqué.";
+"Everything checked" = "Tout est vérifié";
+"Expanded" = "Déplié";
+"From your categories." = "De tes catégories.";
+"Hint" = "Remarque";
+"Leave" = "Laisser";
+"Look" = "Voir";
+"Show With Covers" = "Afficher avec les masques";
+"Show Without Covers" = "Afficher sans les masques";
+"Some covered by hand." = "Certains masqués à la main.";
+"Still open" = "En attente";
+"Your details from Always Hide, the rest from your categories." = "Tes données de Toujours masquer, le reste de tes catégories.";
+"Your details from Always Hide." = "Tes données de Toujours masquer.";
+"Cover Up" = "Masquer";
+"Rectangle" = "Rectangle";
+"Brush" = "Pinceau";
+"Retake" = "Reprendre";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "Flou";
+"Hard to read" = "Difficile à lire";
+"Reflection" = "Reflet";
+"Smudged lens" = "Objectif sale";
+"Too small" = "Trop petit";

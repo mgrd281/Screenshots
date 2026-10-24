@@ -18,12 +18,13 @@ import VisionKit
 /// the copy is made and checked, and asks first while places are still to
 /// check; only that copy ever leaves. The picture itself stays as it was.
 ///
-/// A scanned page is reviewed here too. Once cleaned, it wipes in over the
-/// page as it came, then its covers sweep in; a card under the page says
-/// what was done and covered, or what is wrong and where, outlined in
-/// orange on the page. Under it, the document's pages in a strip, and the
-/// page's own tools: Compare Before and After, Crop, Turn, the colours and
-/// Delete. Next opens Save and Share for the whole document.
+/// A scanned page is reviewed here too, as Review (`ReviewParts`): its own
+/// bar along the top with Next, the status chip that opens the list of
+/// places to check, the page large with the eye in its corner, the
+/// document's pages small under it and one bar of tools, Covers or Page.
+/// Once cleaned, the page wipes in over the page as it came, then its
+/// covers sweep in; what is wrong is outlined in orange with its name.
+/// Next opens Save and Share for the whole document.
 ///
 /// A PDF project's page is covered here too, under its title "Page 1 of 6":
 /// the grid button goes back to the overview of the pages, a swipe up or
@@ -97,6 +98,13 @@ struct ProtectView: View {
     @State private var picked: [PhotosPickerItem] = []
     /// The made-up scans' state shown once, for pictures made in CI.
     @State private var demoShown = false
+    /// Review's bar of tools: the tools that cover, or the page's own.
+    @State private var reviewMode = ReviewMode.cover
+    /// The place tapped on the page, shown first in Review's list.
+    @State private var listFocus: Int?
+    /// The whole scan to discard, while it is asked.
+    @State private var discarding = false
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     /// Right to left, the apps stand on the left, and the room for them too.
     @Environment(\.layoutDirection) private var direction
@@ -105,7 +113,12 @@ struct ProtectView: View {
         _session = StateObject(wrappedValue: ProtectSession.made(for: source))
         self.scan = scan
         self.project = project
+        _reviewMode = State(initialValue: scan?.opensOnPage == true ? .page : .cover)
     }
+
+    /// A scanned document's page, on Review: its own bar along the top,
+    /// the status chip, the page large, its pages and one bar of tools.
+    private var isReview: Bool { scan != nil }
 
     /// Reduce Motion, or the made-up scans played as it would (`ScanDemo`).
     private var still: Bool { reduceMotion || ScanDemo.still }
@@ -126,12 +139,16 @@ struct ProtectView: View {
     private var screen: some View {
         GeometryReader { geometry in
             ZStack {
-                picture(chrome: chrome(geometry.safeAreaInsets))
+                picture(chrome: chrome(geometry.safeAreaInsets, size: geometry.size))
                     .ignoresSafeArea()
+                if isReview, !focus {
+                    reviewEye(in: geometry)
+                    openPlaces(in: geometry)
+                }
                 // Between the status and the tools, where hints and notes never move it.
                 HStack(spacing: 0) {
                     Spacer(minLength: 0)
-                    if !focus {
+                    if !focus, !isReview {
                         AppRail(pending: pending, leave: leave)
                             .phoneGuideTarget(.actions)
                             .padding(.trailing, Self.railEdge)
@@ -142,7 +159,7 @@ struct ProtectView: View {
                 .padding(.bottom, docksHeight + 12)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 VStack(spacing: 0) {
-                    if !focus { top.transition(.opacity) }
+                    if !focus { (isReview ? AnyView(reviewTop) : AnyView(top)).transition(.opacity) }
                     Spacer(minLength: 0)
                     bottom
                 }
@@ -171,7 +188,9 @@ struct ProtectView: View {
                     .accessibilityIdentifier("project-overview")
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) { more }
+            if !isReview {
+                ToolbarItem(placement: .topBarTrailing) { more }
+            }
             if let project {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(L("Next"), action: project.export)
@@ -179,16 +198,9 @@ struct ProtectView: View {
                         .accessibilityIdentifier("project-next")
                 }
             }
-            if scan != nil {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(L("Next")) { saving = true }
-                        .fontWeight(.semibold)
-                        .disabled(scans.pages.isEmpty)
-                        .accessibilityIdentifier("scan-next")
-                }
-            }
         }
-        .toolbar(focus ? .hidden : .visible, for: .navigationBar)
+        // Review draws its own bar.
+        .toolbar(focus || isReview ? .hidden : .visible, for: .navigationBar)
         .statusBarHidden(focus)
         .persistentSystemOverlays(focus ? .hidden : .automatic)
     }
@@ -201,7 +213,13 @@ struct ProtectView: View {
 
     private func sheets(_ content: some View) -> some View {
         content
-            .sheet(isPresented: $reviewing) { ReviewSheet(session: session, show: show) }
+            .sheet(isPresented: $reviewing, onDismiss: { listFocus = nil }) {
+                if let scan {
+                    ReviewListSheet(store: scans, current: scan.page, focus: listFocus) { look($0) }
+                } else {
+                    ReviewSheet(session: session, show: show)
+                }
+            }
             .sheet(isPresented: $explaining) {
                 ExplainSheet(session: session)
                     .presentationDetents([.medium, .large], selection: $explainHeight)
@@ -302,6 +320,16 @@ struct ProtectView: View {
             } message: { _ in
                 Text(L("The other pages stay as they are."))
             }
+            .confirmationDialog(L("Discard the whole scan?"), isPresented: $discarding, titleVisibility: .visible) {
+                Button(L("Discard Scan"), role: .destructive) {
+                    scans.clear()
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                    dismiss()
+                }
+                Button(L("Cancel"), role: .cancel) {}
+            } message: {
+                Text(L("Every page goes, with what was covered on it."))
+            }
             .confirmationDialog(L("Covers drawn by hand go"),
                                 isPresented: Binding(get: { reshaping != nil }, set: { if !$0 { reshaping = nil } }),
                                 titleVisibility: .visible, presenting: reshaping) { change in
@@ -320,6 +348,7 @@ struct ProtectView: View {
                 PhotoIndexer.shared.hold()
                 session.start()
                 showCleaning()
+                readEveryPage()
                 PhoneGuide.shared.screen = .shot
                 PhoneGuide.shared.happened(.openedShot)
             }
@@ -343,6 +372,7 @@ struct ProtectView: View {
             .onChange(of: session.original != nil) { _, shown in
                 if shown { showCleaning() }
             }
+            .onChange(of: scans.pages.map(\.state)) { _, _ in readEveryPage() }
             .task(id: wipes) {
                 guard wipes > 0 else { return }
                 sweeping = true
@@ -388,12 +418,19 @@ struct ProtectView: View {
 
     /// What the floating controls cover on each side, so the picture is
     /// fitted between them, left of the apps; only the safe areas in Full
-    /// Screen.
-    private func chrome(_ safe: EdgeInsets) -> UIEdgeInsets {
+    /// Screen. On Review there are no apps: the page takes about 86 % of
+    /// the width.
+    private func chrome(_ safe: EdgeInsets, size: CGSize) -> UIEdgeInsets {
         let side: CGFloat = 8
         if focus {
             return UIEdgeInsets(top: safe.top + side, left: safe.leading + side, bottom: safe.bottom + side,
                                 right: safe.trailing + side)
+        }
+        if isReview {
+            let width = size.width + safe.leading + safe.trailing
+            let margin = max(16, (width * 0.07).rounded())
+            return UIEdgeInsets(top: safe.top + statusHeight + 10, left: safe.leading + margin,
+                                bottom: safe.bottom + docksHeight + 10, right: safe.trailing + margin)
         }
         let leading = safe.leading + 16
         let trailing = safe.trailing + Self.railEdge + AppRail.width + Self.railGap
@@ -414,7 +451,9 @@ struct ProtectView: View {
                        markerWidth: markerWidth, eraserReach: eraserReach, chrome: chrome,
                        animated: !still, reveal: reveal, before: scanPage?.before,
                        split: showsOriginal ? nil : split, wipes: wipes, holdsBefore: scanPage?.shown == false,
-                       issues: showsOriginal ? [] : scanPage?.places ?? [], maxZoom: zoomLimit,
+                       issues: showsOriginal ? [] : scanPage?.places ?? [],
+                       issueNames: showsOriginal ? [] : issueNames, checksInOrange: isReview,
+                       pagesSideways: isReview, maxZoom: zoomLimit,
                        arrival: arrival, actions: actions)
                 .accessibilityAction(named: L("Details")) { reviewing = true }
         } else if case .failed = session.stage {
@@ -430,9 +469,14 @@ struct ProtectView: View {
         project == nil ? 6 : 8
     }
 
-    /// Where a PDF's page came in from.
+    /// Where a PDF's page or a scanned page came in from.
     private var arrival: CGFloat {
-        project?.arrival ?? 0
+        project?.arrival ?? scan?.arrival ?? 0
+    }
+
+    /// Each fault's short name, in the order of its outline on the page.
+    private var issueNames: [String] {
+        (scanPage?.issues ?? []).filter { $0.area != nil }.map(\.kind.tag)
     }
 
     private var actions: CanvasActions {
@@ -468,8 +512,16 @@ struct ProtectView: View {
                 }
             },
             split: { split = $0 },
-            canPage: { project?.canStep($0) ?? false },
-            page: { project?.step($0) })
+            canPage: { step in
+                if let project { return project.canStep(step) }
+                guard let scan, let index = scans.index(of: scan.page) else { return false }
+                return scans.pages.indices.contains(index + step)
+            },
+            page: { step in
+                if let project { return project.step(step) }
+                guard let scan, let index = scans.index(of: scan.page), scans.pages.indices.contains(index + step) else { return }
+                scan.open(scans.pages[index + step].id)
+            })
     }
 
     /// Selecting: a tap on a place selects it, on a word hides it, and
@@ -481,6 +533,12 @@ struct ProtectView: View {
         if focus {
             focus = false
         } else if let mark = session.plan.mark(at: point) {
+            // On Review, a place still to check opens the list, there.
+            if isReview, tool == .select, session.plan.needsCheck(mark) {
+                listFocus = mark.id
+                reviewing = true
+                return
+            }
             selected = selected == mark.id ? nil : mark.id
             UISelectionFeedbackGenerator().selectionChanged()
         } else if let id = session.hideWord(at: point) {
@@ -558,17 +616,9 @@ struct ProtectView: View {
         if let page = scanPage, page.state != .ready {
             ScanWorking(state: page.state, retake: { retake(page) }, corners: { reshape(.crop(page.id)) })
         } else {
-            PrivacyStatus(stage: session.stage, tally: session.plan.tally, hints: scanPage?.issues.count ?? 0,
+            PrivacyStatus(stage: session.stage, tally: session.plan.tally, hints: scanPage?.issues.count ?? 0, chip: isReview,
                           open: { reviewing = true }, dontWait: session.dontWait, retry: session.retry)
         }
-    }
-
-    /// A scanned page's card: what was done to it and covered, or what is
-    /// wrong with it.
-    private func card(_ page: ScannedPages.Page) -> some View {
-        ScanStatusCard(page: page, mode: scans.mode, covered: session.plan.covered.count,
-                       toCheck: session.plan.tally.toCheck, open: { reviewing = true },
-                       retake: { retake(page) }, compare: { compare() })
     }
 
     /// Over the bottom: what was done or went wrong, the place selected,
@@ -598,13 +648,14 @@ struct ProtectView: View {
             } else {
                 if let mark = selectedMark { selection(mark) }
                 VStack(spacing: 8) {
-                    if let scan, let page = scanPage { pages(scan, page) }
-                    if let project {
+                    if let scan, let page = scanPage {
+                        pages(scan, page)
+                    } else if let project {
                         ProjectPageStrip(store: .shared, current: project.page, open: project.open, add: project.add,
                                          blank: project.blank, scanned: project.scanned)
                             .padding(.horizontal, 16)
                     }
-                    docks
+                    if !isReview { docks }
                 }
                 .measuredHeight($docksHeight)
                 .transition(still ? .opacity : .opacity.combined(with: .move(edge: .bottom)))
@@ -613,24 +664,207 @@ struct ProtectView: View {
         .padding(.bottom, 4)
     }
 
-    /// Under a scanned page: once its copy is checked, what was done to it
-    /// and covered, or at once, what is wrong with it; then the document's
-    /// pages in a strip, and the page's own tools.
+    /// Under a scanned page: the document's pages, small, then Review's
+    /// one bar of tools, Covers or Page.
     @ViewBuilder private func pages(_ scan: ScanContext, _ page: ScannedPages.Page) -> some View {
-        if page.state == .ready, !page.issues.isEmpty || session.isReady {
-            card(page)
-                .padding(.horizontal, 16)
-                .transition(.opacity)
+        ReviewPages(store: scans, current: scan.page, open: { hasOpen($0) },
+                    show: { if $0 != scan.page { scan.open($0) } }, add: { add($0) },
+                    turn: { reshape(.turn($0)) }, crop: { reshape(.crop($0)) },
+                    delete: { deleting = ScanPageRef(id: $0) })
+        ReviewToolbar(mode: $reviewMode, tool: $tool,
+                      canUndo: session.plan.canUndo, canRedo: session.plan.canRedo,
+                      undo: {
+                          session.undo()
+                          selected = nil
+                      },
+                      redo: {
+                          session.redo()
+                          selected = nil
+                      },
+                      options: { showsOptions = true },
+                      comparing: split != nil, colour: scans.mode,
+                      ready: page.state == .ready && session.original != nil, canTurn: page.way != nil,
+                      compare: { compare() }, crop: { reshape(.crop(page.id)) }, turn: { reshape(.turn(page.id)) },
+                      choose: { scans.setMode($0) }, delete: { deleting = ScanPageRef(id: page.id) })
+            .disabled(session.original == nil && page.state == .ready)
+            .onChange(of: reviewMode) { _, mode in
+                // The page's tools are for the page as it is: nothing is drawn meanwhile.
+                if mode == .page { tool = .select }
+            }
+    }
+
+    /// Whether a page has something still open: a place to check, or a fault.
+    private func hasOpen(_ page: ScannedPages.Page) -> Bool {
+        !page.issues.isEmpty || (scans.opened(page.id)?.plan.tally.toCheck ?? 0) > 0
+    }
+
+    // MARK: Review
+
+    /// Review's bar along the top and the status chip under it, then Before
+    /// and After while they are compared, and how to use the tool just
+    /// chosen.
+    private var reviewTop: some View {
+        VStack(spacing: 6) {
+            VStack(spacing: 8) {
+                ReviewHeader(page: (scan.flatMap { scans.index(of: $0.page) } ?? 0) + 1, pages: scans.pages.count,
+                             canGoOn: !scans.pages.isEmpty, back: { dismiss() }, next: { saving = true }) {
+                    Menu { reviewMenu } label: { ReviewMenuLabel() }
+                        .accessibilityLabel(L("More"))
+                        .accessibilityIdentifier("review-more")
+                }
+                capsule
+            }
+            .padding(.top, 4)
+            .measuredHeight($statusHeight)
+            if split != nil {
+                CompareLabels()
+                    .transition(.opacity)
+            }
+            if let hint {
+                Text(hint)
+                    .font(.footnote)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .editorGlass(in: Capsule())
+                    .padding(.horizontal, 24)
+                    .transition(.opacity)
+            }
         }
-        ScanPageStrip(store: scans, current: scan.page, canScan: VNDocumentCameraViewController.isSupported,
-                      open: { if $0 != scan.page { scan.open($0) } }, add: { add($0) },
-                      turn: { reshape(.turn($0)) }, crop: { reshape(.crop($0)) },
-                      delete: { deleting = ScanPageRef(id: $0) })
-            .padding(.horizontal, 16)
-        ScanPageTools(comparing: split != nil, mode: scans.mode, ready: page.state == .ready && session.original != nil,
-                      canTurn: page.way != nil, compare: { compare() }, crop: { reshape(.crop(page.id)) },
-                      turn: { reshape(.turn(page.id)) }, choose: { scans.setMode($0) },
-                      delete: { deleting = ScanPageRef(id: page.id) })
+    }
+
+    /// Ask AI, every page, the page taken again, and what was in the menu
+    /// before; last, apart and in red, the whole scan discarded.
+    @ViewBuilder private var reviewMenu: some View {
+        Button {
+            explaining = true
+        } label: {
+            Label(L("Ask AI"), systemImage: "sparkles")
+        }
+        .disabled(session.original == nil)
+        Button {
+            dismiss()
+        } label: {
+            Label(L("All Pages"), systemImage: "square.grid.2x2")
+        }
+        if let page = scanPage {
+            Button {
+                retake(page)
+            } label: {
+                Label(L("Retake"), systemImage: "camera")
+            }
+        }
+        Divider()
+        if sync.canSend {
+            Button { leave(.mac) } label: { Label(Leaving.mac.title, systemImage: Leaving.mac.symbol) }
+                .disabled(sent)
+        }
+        Button {
+            tool = .select
+            focus = true
+        } label: {
+            Label(L("Full Screen"), systemImage: "arrow.up.left.and.arrow.down.right")
+        }
+        Button {
+            session.clearHand()
+            selected = nil
+        } label: {
+            Label(L("Clear Hidden by Hand"), systemImage: "eraser.line.dashed")
+        }
+        .disabled(!session.plan.hasHand)
+        Button {
+            session.resetToFound()
+            selected = nil
+        } label: {
+            Label(L("Reset to Suggestions"), systemImage: "arrow.counterclockwise")
+        }
+        .disabled(!session.plan.isChanged)
+        Divider()
+        Button(role: .destructive) {
+            discarding = true
+        } label: {
+            Label(L("Discard Scan"), systemImage: "trash")
+        }
+    }
+
+    /// Where the page stands on the screen, fitted into the room the bars
+    /// leave, as the canvas fits it while it is not zoomed; in the view's
+    /// own space, from its leading edge.
+    private func pageRect(in geometry: GeometryProxy) -> CGRect? {
+        guard let image = session.original ?? session.preview, image.size.width > 0, image.size.height > 0 else {
+            return nil
+        }
+        let safe = geometry.safeAreaInsets
+        let room = chrome(safe, size: geometry.size)
+        let width = geometry.size.width + safe.leading + safe.trailing
+        let height = geometry.size.height + safe.top + safe.bottom
+        let space = CGSize(width: width - room.left - room.right, height: height - room.top - room.bottom)
+        guard space.width > 0, space.height > 0 else { return nil }
+        let scale = min(space.width / image.size.width, space.height / image.size.height)
+        let size = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        return CGRect(x: room.left + (space.width - size.width) / 2 - safe.leading,
+                      y: room.top + (space.height - size.height) / 2 - safe.top,
+                      width: size.width, height: size.height)
+    }
+
+    /// The eye in the page's top trailing corner: a tap shows the page
+    /// without its covers, and again with them.
+    @ViewBuilder private func reviewEye(in geometry: GeometryProxy) -> some View {
+        if let page = pageRect(in: geometry), session.original != nil, split == nil {
+            Button {
+                showsOriginal.toggle()
+                UISelectionFeedbackGenerator().selectionChanged()
+            } label: {
+                Image(systemName: showsOriginal ? "eye.slash" : "eye")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .frame(width: 36, height: 36)
+                    .editorGlass(in: Circle())
+                    .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch)
+                    .contentShape(Circle())
+            }
+            .buttonStyle(.plain)
+            .position(x: page.maxX - 24, y: page.minY + 24)
+            .accessibilityLabel(showsOriginal ? L("Show With Covers") : L("Show Without Covers"))
+            .accessibilityIdentifier("review-eye")
+        }
+    }
+
+    /// For VoiceOver, each place still to check on the page is an element
+    /// of its own, "Rechnungsnummer, zu prüfen", to cover or leave.
+    @ViewBuilder private func openPlaces(in geometry: GeometryProxy) -> some View {
+        if let page = pageRect(in: geometry), !showsOriginal {
+            ForEach(session.plan.marks.filter(session.plan.needsCheck)) { mark in
+                Color.clear
+                    .frame(width: max(mark.rect.width * page.width, 24), height: max(mark.rect.height * page.height, 24))
+                    .position(x: page.minX + mark.rect.midX * page.width, y: page.minY + (1 - mark.rect.midY) * page.height)
+                    .allowsHitTesting(false)
+                    .accessibilityElement()
+                    .accessibilityLabel("\(ReviewListSheet.name(of: mark)), \(L("To check"))")
+                    .accessibilityAction(named: L("Cover")) { session.set([mark.id], covered: true) }
+                    .accessibilityAction(named: L("Leave")) { session.set([mark.id], covered: false) }
+            }
+        }
+    }
+
+    /// Every page ready is read as soon as Review opens, so what the owner
+    /// keeps in Always Hide is found on all of them, and the list and the
+    /// pages' dots say what is open everywhere.
+    private func readEveryPage() {
+        guard isReview else { return }
+        for page in scans.pages where page.state == .ready {
+            scans.session(page.id).start()
+        }
+    }
+
+    /// A fault's page with its own tools: Page in the bar.
+    private func look(_ page: UUID) {
+        guard let scan else { return }
+        if page == scan.page {
+            withAnimation(motion) { reviewMode = .page }
+        } else {
+            scan.look(page)
+        }
     }
 
     /// The one bar of tools, kept in place while drawing.

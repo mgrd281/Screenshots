@@ -6,6 +6,17 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, Review is new: one job, checking the covers. A chip under
+  the title says what is covered and what is still to check, and opens one
+  list of every page's places, each with Lassen and Verdecken, Alle
+  verdecken, the pages' hints and what is covered. The page is much larger,
+  the places to check outlined in orange, with an eye in its corner to see
+  it without covers and a swipe sideways to the next page. Under it, the
+  pages with a small orange dot where something is open, and one bar of
+  tools: Abdecken or Seite, with Löschen last and in red. Weiter is the one
+  green button; sending to apps is in Sichern und teilen, and the menu holds
+  KI fragen, Alle Seiten, Neu aufnehmen and Scan verwerfen.
+
 - On the iPhone, the name you keep in Always Hide is covered on every page
   even where the page's reading gets it a little wrong: surname first with
   a comma, broken over two lines, in capitals, with its space left out or

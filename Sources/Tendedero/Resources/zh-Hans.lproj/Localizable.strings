@@ -1490,13 +1490,6 @@
 "Straightening and brightening…" = "正在拉直并提亮…";
 "The page could not be read." = "无法读取页面。";
 "Take Again" = "重新拍摄";
-"Straightened and brightened, text unchanged." = "已拉直并提亮，文字未改动。";
-"Straightened and brightened." = "已拉直并提亮。";
-"No private details found." = "未找到隐私信息。";
-"1 private detail covered." = "已遮盖 1 项隐私信息。";
-"%d private details covered." = "已遮盖 %d 项隐私信息。";
-"Check 1 place." = "请检查 1 处。";
-"Check %d places." = "请检查 %d 处。";
 "Before" = "之前";
 "After" = "之后";
 "Comparison of Before and After" = "前后对比";
@@ -1841,3 +1834,36 @@
 "1 hint" = "1 条提示";
 "%d hints" = "%d 条提示";
 "Open the list." = "打开列表。";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "%d 处待检查";
+"1 place to check" = "1 处待检查";
+"Collapsed" = "已收起";
+"Cover All" = "全部遮盖";
+"Decide what is covered. Nothing leaves your iPhone." = "决定要遮盖什么。任何内容都不会离开你的 iPhone。";
+"Discard Scan" = "放弃扫描";
+"Discard the whole scan?" = "放弃整个扫描？";
+"Every page goes, with what was covered on it." = "所有页面及其上的遮盖都会被删除。";
+"Everything checked" = "全部已检查";
+"Expanded" = "已展开";
+"From your categories." = "来自你的类别。";
+"Hint" = "提示";
+"Leave" = "保留";
+"Look" = "查看";
+"Show With Covers" = "显示遮盖";
+"Show Without Covers" = "显示未遮盖";
+"Some covered by hand." = "部分为手动遮盖。";
+"Still open" = "待处理";
+"Your details from Always Hide, the rest from your categories." = "你的信息来自“始终隐藏”，其余来自你的类别。";
+"Your details from Always Hide." = "你的信息来自“始终隐藏”。";
+"Cover Up" = "遮盖";
+"Rectangle" = "矩形";
+"Brush" = "画笔";
+"Retake" = "重新拍摄";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "模糊";
+"Hard to read" = "难以辨认";
+"Reflection" = "反光";
+"Smudged lens" = "镜头脏污";
+"Too small" = "太小";

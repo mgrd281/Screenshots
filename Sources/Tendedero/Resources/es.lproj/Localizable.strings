@@ -1490,13 +1490,6 @@
 "Straightening and brightening…" = "Enderezando y aclarando…";
 "The page could not be read." = "No se pudo leer la página.";
 "Take Again" = "Repetir";
-"Straightened and brightened, text unchanged." = "Enderezada y aclarada, texto sin cambios.";
-"Straightened and brightened." = "Enderezada y aclarada.";
-"No private details found." = "No se encontraron datos privados.";
-"1 private detail covered." = "1 dato privado oculto.";
-"%d private details covered." = "%d datos privados ocultos.";
-"Check 1 place." = "Revisa 1 lugar.";
-"Check %d places." = "Revisa %d lugares.";
 "Before" = "Antes";
 "After" = "Después";
 "Comparison of Before and After" = "Comparación de antes y después";
@@ -1841,3 +1834,36 @@
 "1 hint" = "1 aviso";
 "%d hints" = "%d avisos";
 "Open the list." = "Abrir la lista.";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "%d lugares por revisar";
+"1 place to check" = "1 lugar por revisar";
+"Collapsed" = "Contraído";
+"Cover All" = "Tapar todo";
+"Decide what is covered. Nothing leaves your iPhone." = "Decide qué se tapa. Nada sale de tu iPhone.";
+"Discard Scan" = "Descartar escaneo";
+"Discard the whole scan?" = "¿Descartar todo el escaneo?";
+"Every page goes, with what was covered on it." = "Se eliminan todas las páginas, con lo que tenían tapado.";
+"Everything checked" = "Todo revisado";
+"Expanded" = "Desplegado";
+"From your categories." = "De tus categorías.";
+"Hint" = "Aviso";
+"Leave" = "Dejar";
+"Look" = "Ver";
+"Show With Covers" = "Mostrar con tapas";
+"Show Without Covers" = "Mostrar sin tapas";
+"Some covered by hand." = "Algo tapado a mano.";
+"Still open" = "Pendientes";
+"Your details from Always Hide, the rest from your categories." = "Tus datos de Ocultar siempre, el resto de tus categorías.";
+"Your details from Always Hide." = "Tus datos de Ocultar siempre.";
+"Cover Up" = "Tapar";
+"Rectangle" = "Rectángulo";
+"Brush" = "Pincel";
+"Retake" = "Volver a escanear";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "Borroso";
+"Hard to read" = "Difícil de leer";
+"Reflection" = "Reflejo";
+"Smudged lens" = "Lente sucia";
+"Too small" = "Demasiado pequeño";

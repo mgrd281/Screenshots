@@ -1025,19 +1025,27 @@ watch the screen, so there is no line there. What it keeps is the covering:
   the picture as a whole changes: nothing is drawn, filled in, removed or
   guessed. Each page is read before and after, and where a number read
   before is not read after, the text is blurred, a reflection hides it, the
-  page is small in the picture or, from iOS 26, the lens is smudged, an
-  orange card says where, with Take Again, the place outlined on the page
-  and never in the copy. The covers are then found on the cleaned page. The
+  page is small in the picture or, from iOS 26, the lens is smudged, a hint
+  says where, with Look, the place outlined in orange on the page with its
+  short name ("Unscharf") and never in the copy. The covers are then found on the cleaned page. The
   pages wait as small numbered cards, in the order scanned, kept in memory
   only while the app is open, under the document's kind (Invoice, Letter,
-  Form or Receipt) where its words say it, and each opens in Protect
-  Picture as Review:
-  the cleaned page wipes in over the page as it came, then its covers sweep
-  in; a card under it says what was done and covered; Compare shows Before
-  and After either side of a divider; the document's pages sit in a strip,
-  dragged into order, with a plus to add pages and Delete, and the page's
-  Crop, Turn and colours beside the tools to cover. A page opened opens
-  again as it was left. Next, or Save and Share under the cards, makes one
+  Form or Receipt) where its words say it, and each opens in **Review**,
+  whose one job is checking the covers: its own bar (back, "Prüfen" with
+  "Seite 1 von 3", the menu and Next); a status chip ("4 verdeckt · 2 zu
+  prüfen", never "Nichts Privates gefunden" while anything is open) that
+  opens the list of places to check on every page, each with Lassen and
+  Verdecken, Alle verdecken, the pages' hints with Ansehen, and what is
+  covered; the page as large as it can be, its places to check outlined in
+  orange, an eye in its corner to see it without covers, a swipe sideways
+  to the next page; the pages small under it, a dot on each with something
+  open, dragged into order, with a plus to add pages; and one bar with
+  Abdecken (Undo, Select, Rectangle, Lasso, Brush, Eraser, Redo) and Seite
+  (Crop, Turn, the colours, Before and After, Delete). The cleaned page
+  wipes in over the page as it came, then its covers sweep in. The menu
+  holds KI fragen, Alle Seiten, Neu aufnehmen and Scan verwerfen. A page
+  opened opens again as it was left. Next, or Save and Share under the
+  cards, makes one
   A4 PDF (an A4 page fills it, any other is centred with a 10 mm margin and
   never stretched, at 300 dpi or more, its searchable text read from the
   covered pages, nothing of who made it but Snapfly) or a PNG for each page,
@@ -1479,7 +1487,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
 | `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
-| `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the page on a bright ground, to zoom with its places marked, covered in steps and checked; the one bar of tools to select, draw, box, lasso and erase with their handles; the status capsule with how many details were found; Details, which checks the unsure places one by one and lists every place by whose it is and what it is, each topic covered with one switch; the ways out, which wait for the checked copy and ask while places are to check; the menu with Explain, Copy, Send to Mac and Full Screen; for a scanned page, Review: the wipe, Before and After, its card, pages and tools |
+| `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the page on a bright ground, to zoom with its places marked, covered in steps and checked; the one bar of tools to select, draw, box, lasso and erase with their handles; the status capsule with how many details were found; Details, which checks the unsure places one by one and lists every place by whose it is and what it is, each topic covered with one switch; the ways out, which wait for the checked copy and ask while places are to check; the menu with Explain, Copy, Send to Mac and Full Screen; for a scanned page, Review: the wipe, the status chip, the page large with its eye, its pages and its one bar |
 | `iOS/Share/ShareViewController.swift`, `iOS/Share-Info.plist`, `iOS/*.entitlements` | The iPhone's share extension: a picture shared from any app, covered, checked, then copied, shared or saved |
 | `Shared/ScanPDF.swift` | Scanned pages as one PDF of A4 pages: each page as JPEG, or in black and white as one bit, fitted whole without stretching, an invisible text layer to find and copy, and nothing of who made it but the app (tested on Linux) |
 | `Shared/ScanClean.swift`, `ScanLight.swift`, `ScanCrease.swift`, `ScanBend.swift`, `ScanSheet.swift`, `ScanQuality.swift`, `ScanContent.swift`, `ScanGeometry.swift` | The scan's own rules, tested on Linux: the page's light made even, the paper white, a pale printed fill kept, a fold's crease evened out, a curl taken out along the page's ruled lines, faint small print made plain where text was read, the print sharp, in color, greys or black and white; a folded sheet's parts and clean edges; blur, reflections and a page too small found by part of the page; every number read before cleaning read after; the page's true shape, A4 where it is close, upright and level, and its place on A4 |
@@ -1490,7 +1498,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab with Remove, Undo and Delete from Photos, and covering a screenshot from its menu in any tab |
 | `Shared/ProtectedList.swift` | The iPhone's list of the screenshots protected lately: noted newest first, twelve at most, some taken off and put back in their places with Undo (tested on Linux) |
 | `iOS/Snapfly/ScanTab.swift`, `ScannedPages.swift` | The Scan tab: the system's document camera or photos chosen in Photos, the pages scanned while the app is open (`ScannedPages`), each made ready off the main thread and opened to review and cover, kept as left, and all of them sent to an app with one tap, or saved and shared, covered or not |
-| `iOS/Snapfly/ScanEditing.swift`, `ScanCorners.swift`, `ScanSaveSheet.swift` | A scanned page in Protect Picture: its card, the strip of the document's pages, its own tools and Before and After; the corner editor with its loupe; Save and Share, with the format, covers, searchable text and the check line |
+| `iOS/Snapfly/ReviewParts.swift` | Review's own parts: its bar with back, title, menu and Next; the one bar of tools with Abdecken and Seite; the pages small with their dots; the list of places to check on every page, the pages' hints and what is covered; a fault's short name |
+| `iOS/Snapfly/ScanEditing.swift`, `ScanCorners.swift`, `ScanSaveSheet.swift` | A scanned page in Review, page after page, and Before and After's labels; the corner editor with its loupe; Save and Share, with the format, covers, searchable text, the check line and Send To |
 | `iOS/Snapfly/ScanDemo.swift` | Made-up scans for the pictures and videos made in CI (`-SnapflyScan`, `scripts/scan-checks.sh`), and a made-up photographed invoice in the Photos tab (`-SnapflyDocumentPhoto`), in debug builds only |
 | `iOS/Snapfly/ScanHelp.swift` | The card that offers to clean a photographed document in Protect Picture, with Clean Up and Revert; the sheet an AI chat opens for scanned pages, with what goes and the questions; the document's kind beside its pages |
 | `Shared/PDFProject.swift`, `PDFPageGeometry.swift` | Tested on Linux: a PDF project (its files, its pages and their turns), the page operations, undo and redo, how pictures sit on Original, A4 or Letter pages, the quality and the size estimate; where things on a turned PDF page are, its text in lines and words, and whether a PDF is signed |

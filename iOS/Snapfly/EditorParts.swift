@@ -195,6 +195,8 @@ struct PrivacyStatus: View {
     let tally: ProtectionPlan.Tally
     /// What is wrong with the picture itself, as a scanned page's faults.
     var hints = 0
+    /// On Review: what is open in orange, and a chevron, as a tap opens the list.
+    var chip = false
     let open: @MainActor () -> Void
     let dontWait: @MainActor () -> Void
     let retry: @MainActor () -> Void
@@ -217,9 +219,10 @@ struct PrivacyStatus: View {
                 Button(action: open) { counts }
                     .buttonStyle(.plain)
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(summary)
-                    .accessibilityHint(L("Details lists every place, to cover or uncover each one."))
+                    .accessibilityLabel(chip ? status.spoken : summary)
+                    .accessibilityHint(chip ? "" : L("Details lists every place, to cover or uncover each one."))
                     .accessibilityAddTraits(.isButton)
+                    .accessibilityIdentifier("review-status")
             default:
                 HStack(spacing: 8) {
                     ProgressView().controlSize(.small)
@@ -273,9 +276,16 @@ struct PrivacyStatus: View {
                         }
                         .labelStyle(.titleAndIcon)
                     }
-                    .foregroundStyle(status.open > 0 && tally.exposed == 0 ? Color.accentColor : Color.orange)
+                    .foregroundStyle(chip ? SnapflyTokens.reviewOpen
+                                     : status.open > 0 && tally.exposed == 0 ? Color.accentColor : Color.orange)
+                    .fontWeight(chip ? .semibold : nil)
                     .contentTransition(.numericText())
                 }
+            }
+            if chip {
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tertiary)
             }
         }
         .lineLimit(1)

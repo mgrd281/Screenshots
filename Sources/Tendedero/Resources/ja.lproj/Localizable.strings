@@ -1490,13 +1490,6 @@
 "Straightening and brightening…" = "傾きを直して明るくしています…";
 "The page could not be read." = "ページを読み取れませんでした。";
 "Take Again" = "撮り直す";
-"Straightened and brightened, text unchanged." = "傾きを直して明るくしました。文字は変わっていません。";
-"Straightened and brightened." = "傾きを直して明るくしました。";
-"No private details found." = "個人情報は見つかりませんでした。";
-"1 private detail covered." = "個人情報を1件隠しました。";
-"%d private details covered." = "個人情報を%d件隠しました。";
-"Check 1 place." = "1か所を確認してください。";
-"Check %d places." = "%dか所を確認してください。";
 "Before" = "補正前";
 "After" = "補正後";
 "Comparison of Before and After" = "補正前と補正後の比較";
@@ -1841,3 +1834,36 @@
 "1 hint" = "注意 1件";
 "%d hints" = "注意 %d件";
 "Open the list." = "リストを開きます。";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "要確認 %d か所";
+"1 place to check" = "要確認 1 か所";
+"Collapsed" = "折りたたみ済み";
+"Cover All" = "すべて隠す";
+"Decide what is covered. Nothing leaves your iPhone." = "何を隠すか決めてください。iPhone から外へは何も出ません。";
+"Discard Scan" = "スキャンを破棄";
+"Discard the whole scan?" = "スキャン全体を破棄しますか？";
+"Every page goes, with what was covered on it." = "すべてのページが、隠したものと一緒に削除されます。";
+"Everything checked" = "すべて確認済み";
+"Expanded" = "展開済み";
+"From your categories." = "カテゴリから。";
+"Hint" = "注意";
+"Leave" = "残す";
+"Look" = "見る";
+"Show With Covers" = "隠した状態で表示";
+"Show Without Covers" = "隠さずに表示";
+"Some covered by hand." = "一部は手で隠しました。";
+"Still open" = "未確認";
+"Your details from Always Hide, the rest from your categories." = "あなたの情報は「常に隠す」から、残りはカテゴリから。";
+"Your details from Always Hide." = "あなたの情報は「常に隠す」から。";
+"Cover Up" = "隠す";
+"Rectangle" = "四角形";
+"Brush" = "ブラシ";
+"Retake" = "撮り直す";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "ぼやけ";
+"Hard to read" = "読みにくい";
+"Reflection" = "反射";
+"Smudged lens" = "レンズの汚れ";
+"Too small" = "小さすぎ";

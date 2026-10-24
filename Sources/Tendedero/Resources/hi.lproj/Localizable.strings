@@ -1492,13 +1492,6 @@
 "Straightening and brightening…" = "सीधा और चमकीला किया जा रहा है…";
 "The page could not be read." = "पेज पढ़ा नहीं जा सका।";
 "Take Again" = "फिर से लें";
-"Straightened and brightened, text unchanged." = "सीधा और चमकीला किया गया, टेक्स्ट नहीं बदला।";
-"Straightened and brightened." = "सीधा और चमकीला किया गया।";
-"No private details found." = "कोई निजी जानकारी नहीं मिली।";
-"1 private detail covered." = "1 निजी जानकारी छिपाई गई।";
-"%d private details covered." = "%d निजी जानकारियाँ छिपाई गईं।";
-"Check 1 place." = "1 जगह जाँचें।";
-"Check %d places." = "%d जगहें जाँचें।";
 "Before" = "पहले";
 "After" = "बाद में";
 "Comparison of Before and After" = "पहले और बाद की तुलना";
@@ -1843,3 +1836,36 @@
 "1 hint" = "1 सूचना";
 "%d hints" = "%d सूचनाएँ";
 "Open the list." = "सूची खोलें।";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "%d जगहें जाँचनी हैं";
+"1 place to check" = "1 जगह जाँचनी है";
+"Collapsed" = "बंद";
+"Cover All" = "सब ढकें";
+"Decide what is covered. Nothing leaves your iPhone." = "तय करें कि क्या ढका जाए। कुछ भी आपके iPhone से बाहर नहीं जाता।";
+"Discard Scan" = "स्कैन हटाएँ";
+"Discard the whole scan?" = "पूरा स्कैन हटाएँ?";
+"Every page goes, with what was covered on it." = "सभी पेज, उन पर ढकी हर चीज़ के साथ, हट जाएँगे।";
+"Everything checked" = "सब जाँचा गया";
+"Expanded" = "खुला";
+"From your categories." = "आपकी श्रेणियों से।";
+"Hint" = "सूचना";
+"Leave" = "रहने दें";
+"Look" = "देखें";
+"Show With Covers" = "ढककर दिखाएँ";
+"Show Without Covers" = "बिना ढके दिखाएँ";
+"Some covered by hand." = "कुछ हाथ से ढके गए।";
+"Still open" = "बाकी";
+"Your details from Always Hide, the rest from your categories." = "आपकी जानकारी «हमेशा छिपाएँ» से, बाकी आपकी श्रेणियों से।";
+"Your details from Always Hide." = "आपकी जानकारी «हमेशा छिपाएँ» से।";
+"Cover Up" = "ढकें";
+"Rectangle" = "आयत";
+"Brush" = "ब्रश";
+"Retake" = "फिर से लें";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "धुँधला";
+"Hard to read" = "पढ़ना कठिन";
+"Reflection" = "चमक";
+"Smudged lens" = "लेंस गंदा";
+"Too small" = "बहुत छोटा";

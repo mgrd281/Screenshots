@@ -1490,13 +1490,6 @@
 "Straightening and brightening…" = "جارٍ تعديل الاستقامة والتفتيح…";
 "The page could not be read." = "تعذّرت قراءة الصفحة.";
 "Take Again" = "إعادة الالتقاط";
-"Straightened and brightened, text unchanged." = "عُدّلت الاستقامة وفُتّحت الصفحة، والنص بلا تغيير.";
-"Straightened and brightened." = "عُدّلت الاستقامة وفُتّحت الصفحة.";
-"No private details found." = "لم يُعثر على بيانات خاصة.";
-"1 private detail covered." = "غُطّي بيان خاص واحد.";
-"%d private details covered." = "غُطّي %d من البيانات الخاصة.";
-"Check 1 place." = "راجع موضعًا واحدًا.";
-"Check %d places." = "راجع %d من المواضع.";
 "Before" = "قبل";
 "After" = "بعد";
 "Comparison of Before and After" = "مقارنة قبل وبعد";
@@ -1841,3 +1834,36 @@
 "1 hint" = "ملاحظة واحدة";
 "%d hints" = "%d ملاحظات";
 "Open the list." = "افتح القائمة.";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "%d أماكن للمراجعة";
+"1 place to check" = "مكان واحد للمراجعة";
+"Collapsed" = "مطوي";
+"Cover All" = "غطِّ الكل";
+"Decide what is covered. Nothing leaves your iPhone." = "قرّر ما يُغطّى. لا شيء يغادر آيفونك.";
+"Discard Scan" = "تجاهل المسح";
+"Discard the whole scan?" = "تجاهل المسح كله؟";
+"Every page goes, with what was covered on it." = "تُحذف كل الصفحات مع كل ما غُطّي عليها.";
+"Everything checked" = "رُوجع الكل";
+"Expanded" = "مفتوح";
+"From your categories." = "من فئاتك.";
+"Hint" = "ملاحظة";
+"Leave" = "اترك";
+"Look" = "اعرض";
+"Show With Covers" = "اعرض مع التغطية";
+"Show Without Covers" = "اعرض بلا تغطية";
+"Some covered by hand." = "بعضها غُطّي باليد.";
+"Still open" = "مفتوحة";
+"Your details from Always Hide, the rest from your categories." = "بياناتك من «إخفاء دائمًا»، والباقي من فئاتك.";
+"Your details from Always Hide." = "بياناتك من «إخفاء دائمًا».";
+"Cover Up" = "تغطية";
+"Rectangle" = "مستطيل";
+"Brush" = "فرشاة";
+"Retake" = "التقط من جديد";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "غير واضح";
+"Hard to read" = "صعب القراءة";
+"Reflection" = "انعكاس";
+"Smudged lens" = "العدسة متّسخة";
+"Too small" = "صغير جدًا";

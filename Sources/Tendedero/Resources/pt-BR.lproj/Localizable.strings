@@ -1490,13 +1490,6 @@
 "Straightening and brightening…" = "Endireitando e clareando…";
 "The page could not be read." = "Não foi possível ler a página.";
 "Take Again" = "Refazer";
-"Straightened and brightened, text unchanged." = "Endireitada e clareada, texto inalterado.";
-"Straightened and brightened." = "Endireitada e clareada.";
-"No private details found." = "Nenhum dado privado encontrado.";
-"1 private detail covered." = "1 dado privado ocultado.";
-"%d private details covered." = "%d dados privados ocultados.";
-"Check 1 place." = "Revise 1 lugar.";
-"Check %d places." = "Revise %d lugares.";
 "Before" = "Antes";
 "After" = "Depois";
 "Comparison of Before and After" = "Comparação de antes e depois";
@@ -1841,3 +1834,36 @@
 "1 hint" = "1 aviso";
 "%d hints" = "%d avisos";
 "Open the list." = "Abrir a lista.";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "%d lugares para revisar";
+"1 place to check" = "1 lugar para revisar";
+"Collapsed" = "Recolhido";
+"Cover All" = "Cobrir tudo";
+"Decide what is covered. Nothing leaves your iPhone." = "Decida o que será coberto. Nada sai do seu iPhone.";
+"Discard Scan" = "Descartar digitalização";
+"Discard the whole scan?" = "Descartar toda a digitalização?";
+"Every page goes, with what was covered on it." = "Todas as páginas serão apagadas, com o que estava coberto nelas.";
+"Everything checked" = "Tudo revisado";
+"Expanded" = "Expandido";
+"From your categories." = "Das suas categorias.";
+"Hint" = "Aviso";
+"Leave" = "Deixar";
+"Look" = "Ver";
+"Show With Covers" = "Mostrar com coberturas";
+"Show Without Covers" = "Mostrar sem coberturas";
+"Some covered by hand." = "Algo coberto à mão.";
+"Still open" = "Pendentes";
+"Your details from Always Hide, the rest from your categories." = "Seus dados de Sempre ocultar, o resto das suas categorias.";
+"Your details from Always Hide." = "Seus dados de Sempre ocultar.";
+"Cover Up" = "Cobrir";
+"Rectangle" = "Retângulo";
+"Brush" = "Pincel";
+"Retake" = "Digitalizar de novo";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "Desfocado";
+"Hard to read" = "Difícil de ler";
+"Reflection" = "Reflexo";
+"Smudged lens" = "Lente suja";
+"Too small" = "Pequeno demais";

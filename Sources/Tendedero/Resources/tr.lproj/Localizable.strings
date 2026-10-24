@@ -1490,13 +1490,6 @@
 "Straightening and brightening…" = "Düzeltiliyor ve aydınlatılıyor…";
 "The page could not be read." = "Sayfa okunamadı.";
 "Take Again" = "Yeniden çek";
-"Straightened and brightened, text unchanged." = "Düzeltildi ve aydınlatıldı, metin değişmedi.";
-"Straightened and brightened." = "Düzeltildi ve aydınlatıldı.";
-"No private details found." = "Özel bilgi bulunamadı.";
-"1 private detail covered." = "1 özel bilgi gizlendi.";
-"%d private details covered." = "%d özel bilgi gizlendi.";
-"Check 1 place." = "1 yeri kontrol et.";
-"Check %d places." = "%d yeri kontrol et.";
 "Before" = "Önce";
 "After" = "Sonra";
 "Comparison of Before and After" = "Önce ve sonra karşılaştırması";
@@ -1841,3 +1834,36 @@
 "1 hint" = "1 not";
 "%d hints" = "%d not";
 "Open the list." = "Listeyi aç.";
+
+/* Review: its bar of tools, the list of places to check, the menu. */
+"%d places to check" = "%d yer kontrol edilecek";
+"1 place to check" = "1 yer kontrol edilecek";
+"Collapsed" = "Daraltıldı";
+"Cover All" = "Tümünü kapat";
+"Decide what is covered. Nothing leaves your iPhone." = "Neyin kapatılacağına sen karar ver. Hiçbir şey iPhone'undan çıkmaz.";
+"Discard Scan" = "Taramayı at";
+"Discard the whole scan?" = "Tüm tarama atılsın mı?";
+"Every page goes, with what was covered on it." = "Tüm sayfalar, üzerlerinde kapatılanlarla birlikte silinir.";
+"Everything checked" = "Hepsi kontrol edildi";
+"Expanded" = "Genişletildi";
+"From your categories." = "Kategorilerinden.";
+"Hint" = "Not";
+"Leave" = "Bırak";
+"Look" = "Bak";
+"Show With Covers" = "Kapalı göster";
+"Show Without Covers" = "Kapatmadan göster";
+"Some covered by hand." = "Bazıları elle kapatıldı.";
+"Still open" = "Açık";
+"Your details from Always Hide, the rest from your categories." = "Bilgilerin «Her zaman gizle»den, kalanı kategorilerinden.";
+"Your details from Always Hide." = "Bilgilerin «Her zaman gizle»den.";
+"Cover Up" = "Kapat";
+"Rectangle" = "Dikdörtgen";
+"Brush" = "Fırça";
+"Retake" = "Yeniden çek";
+
+/* A fault's short name on its outline over a scanned page. */
+"Blurred" = "Bulanık";
+"Hard to read" = "Okunması zor";
+"Reflection" = "Yansıma";
+"Smudged lens" = "Lens lekeli";
+"Too small" = "Çok küçük";

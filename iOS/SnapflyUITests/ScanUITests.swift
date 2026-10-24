@@ -3,9 +3,10 @@ import XCTest
 /// Scan driven on the simulator as the owner would use it, in German, on
 /// made-up photos of a made-up invoice (`-SnapflyScan`), made ready as any
 /// photo is: the tab offers the camera and Photos with its new lines; a page
-/// opens in Review once cleaned, its card saying what was done and covered;
-/// Compare is one adjustable comparison, and a finger moves its divider; a
-/// blurred page says so and offers to take it again; the colours are three,
+/// opens in Review once cleaned, its status chip saying what is covered and
+/// open, its tools under Covers and Page; Compare is one adjustable
+/// comparison, and a finger moves its divider; a blurred page has a hint in
+/// the list, with Look; the colours are three,
 /// and Black and White holds for every page; deleting a page asks first;
 /// corners are set by hand where Vision is not sure; Save and Share starts
 /// with covers every time and warns without them, and a copy without covers
@@ -51,12 +52,17 @@ final class ScanUITests: XCTestCase {
         return XCTWaiter.wait(for: [away], timeout: timeout) == .completed
     }
 
-    /// The page's card once it is clean and its copy checked, or its warning.
+    /// The page's status chip once it is clean and its copy checked.
     private func card(_ app: XCUIApplication) -> XCUIElement {
-        let good = element(app, "scan-status-good"), warning = element(app, "scan-status-warning")
-        let either = expectation(for: NSPredicate { _, _ in good.exists || warning.exists }, evaluatedWith: nil)
-        _ = XCTWaiter.wait(for: [either], timeout: Self.ready)
-        return good.exists ? good : warning
+        let status = element(app, "review-status")
+        _ = status.waitForExistence(timeout: Self.ready)
+        return status
+    }
+
+    /// Review's bar switched to the page's own tools.
+    private func pageTools(_ app: XCUIApplication) {
+        let page = element(app, "review-mode-page")
+        if page.waitForExistence(timeout: 10) { page.tap() }
     }
 
     // MARK: Checks
@@ -78,24 +84,32 @@ final class ScanUITests: XCTestCase {
 
     func testAPageOpensInReviewSayingWhatWasDone() {
         let app = launch("editor")
-        let card = element(app, "scan-status-good")
-        XCTAssertTrue(card.waitForExistence(timeout: Self.ready))
-        XCTAssertTrue(card.label.contains("Gerade gerückt und aufgehellt"), card.label)
-        XCTAssertTrue(card.label.contains("abgedeckt") || card.label.contains("Keine privaten Angaben")
-                      || card.label.contains("Prüfe"), card.label)
-        XCTAssertTrue(app.navigationBars["Prüfen"].exists)
+        let status = card(app)
+        XCTAssertTrue(status.exists)
+        XCTAssertTrue(["verdeckt", "zu prüfen", "Nichts Privates"].contains { status.label.contains($0) }, status.label)
+        let title = element(app, "review-title")
+        XCTAssertTrue(title.label.contains("Prüfen") && title.label.contains("Seite 1 von 1"), title.label)
         XCTAssertTrue(element(app, "scan-next").exists)
+        XCTAssertTrue(element(app, "review-back").exists)
+        XCTAssertTrue(element(app, "review-more").exists)
         let thumb = element(app, "scan-thumb-1")
         XCTAssertTrue(thumb.label.hasPrefix("Seite 1 von 1"), thumb.label)
         XCTAssertTrue(thumb.isSelected)
-        for tool in ["scan-compare", "scan-crop", "scan-turn", "scan-color", "scan-delete", "scan-add"] {
+        for tool in ["review-tool-select", "review-tool-box", "review-tool-lasso", "review-tool-marker",
+                     "review-tool-eraser", "scan-add"] {
             XCTAssertTrue(element(app, tool).exists, tool)
+        }
+        XCTAssertTrue(element(app, "review-tool-select").isSelected, "Select in hand")
+        pageTools(app)
+        for tool in ["scan-compare", "scan-crop", "scan-turn", "scan-color", "scan-delete"] {
+            XCTAssertTrue(element(app, tool).waitForExistence(timeout: 5), tool)
         }
     }
 
     func testCompareIsOneAdjustableComparison() {
         let app = launch("editor")
         XCTAssertTrue(card(app).exists)
+        pageTools(app)
         element(app, "scan-compare").tap()
         let canvas = element(app, "protect-canvas")
         XCTAssertTrue(wait(canvas, "label == %@", "Vergleich Vorher und Nachher"), canvas.label)
@@ -110,23 +124,28 @@ final class ScanUITests: XCTestCase {
 
     func testABlurredPageSaysSoAndOffersToTakeItAgain() {
         let app = launch("warning")
-        let warning = element(app, "scan-status-warning")
-        XCTAssertTrue(warning.waitForExistence(timeout: Self.ready * 2))
-        let blurred = words(app, "Unten ist der Text unscharf. Für ein klares Ergebnis neu aufnehmen.")
-        let less = words(app, "weniger Text lesbar")
-        XCTAssertTrue(blurred.exists || less.exists, "the card says what is wrong")
-        let action = element(app, "scan-status-action")
-        XCTAssertTrue(action.exists)
-        XCTAssertTrue(["Neu", "Vergleichen"].contains(action.label), action.label)
+        let status = element(app, "review-status")
+        XCTAssertTrue(status.waitForExistence(timeout: Self.ready * 2))
+        XCTAssertTrue(status.label.contains("Hinweis") || status.label.contains("zu prüfen"), status.label)
+        XCTAssertFalse(status.label.contains("Nichts Privates gefunden"), "never while a hint stands")
         let thumb = element(app, "scan-thumb-2")
-        XCTAssertTrue(thumb.label.contains("schwer lesbar"), thumb.label)
+        XCTAssertTrue(thumb.label.contains("Zu prüfen"), thumb.label)
         XCTAssertTrue(thumb.label.hasPrefix("Seite 2 von 2"), thumb.label)
         XCTAssertTrue(thumb.isSelected)
+        status.tap()
+        let blurred = words(app, "Unten ist der Text unscharf. Für ein klares Ergebnis neu aufnehmen.")
+        let less = words(app, "weniger Text lesbar")
+        XCTAssertTrue(blurred.waitForExistence(timeout: 5) || less.exists, "the list says what is wrong")
+        let look = app.buttons["Ansehen"].firstMatch
+        XCTAssertTrue(look.exists)
+        look.tap()
+        XCTAssertTrue(element(app, "scan-crop").waitForExistence(timeout: 5), "the page's own tools")
     }
 
     func testTheColorsAreThreeAndHoldForEveryPage() {
         let app = launch("editor")
         XCTAssertTrue(card(app).exists)
+        pageTools(app)
         let color = element(app, "scan-color")
         XCTAssertEqual(color.value as? String, "Farbe")
         color.tap()
@@ -142,6 +161,7 @@ final class ScanUITests: XCTestCase {
     func testBlackAndWhiteIsChosenForTheWholeDocument() {
         let app = launch("bw")
         XCTAssertTrue(card(app).exists)
+        pageTools(app)
         XCTAssertEqual(element(app, "scan-color").value as? String, "Schwarzweiß")
     }
 
@@ -152,6 +172,7 @@ final class ScanUITests: XCTestCase {
         first.tap()
         XCTAssertTrue(card(app).exists)
         XCTAssertTrue(element(app, "scan-thumb-2").exists)
+        pageTools(app)
         element(app, "scan-delete").tap()
         // The dialog's button, not the tool of the same name.
         let delete = app.buttons.matching(NSPredicate(format: "label == %@ AND identifier != %@", "Seite löschen", "scan-delete"))
@@ -407,8 +428,8 @@ final class ScanUITests: XCTestCase {
     /// (`ScanSample`), then Done. Otherwise nothing.
     private func setCornersIfAsked(_ app: XCUIApplication) {
         let done = element(app, "scan-corners-done")
-        let good = element(app, "scan-status-good"), warning = element(app, "scan-status-warning")
-        let either = expectation(for: NSPredicate { _, _ in done.exists || good.exists || warning.exists }, evaluatedWith: nil)
+        let status = element(app, "review-status")
+        let either = expectation(for: NSPredicate { _, _ in done.exists || status.exists }, evaluatedWith: nil)
         _ = XCTWaiter.wait(for: [either], timeout: Self.ready)
         guard done.exists else { return }
         dragCorners(app)
@@ -487,7 +508,7 @@ final class ScanUITests: XCTestCase {
     func testRecordPagesAndWarning() throws {
         try recording()
         let app = launch("warning")
-        XCTAssertTrue(element(app, "scan-status-warning").waitForExistence(timeout: Self.ready * 2))
+        XCTAssertTrue(element(app, "review-status").waitForExistence(timeout: Self.ready * 2))
         pause(2.5)
         element(app, "scan-thumb-1").tap()
         XCTAssertTrue(card(app).exists)
@@ -536,6 +557,8 @@ final class ScanUITests: XCTestCase {
     /// Compare, the divider dragged, the colours, then Save and Share
     /// without covers and with them again.
     private func walkThrough(_ app: XCUIApplication) {
+        pageTools(app)
+        pause(0.8)
         element(app, "scan-compare").tap()
         pause(1.2)
         let canvas = element(app, "protect-canvas")
