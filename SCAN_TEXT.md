@@ -148,10 +148,12 @@ height (`ScanClean.printLines`).
     reads as before, the reading differs and not the cleaning, so the line
     stays cleaned.
 
-  Dark print is cleaned exactly as on main, so the guard leaves it alone. The
-  first version also cleaned again a dark line of the made-up sick note
-  whose reading changed as it always has, and so moved a ruled line near
-  the fold by 0.015 px, past the test's 2 px.
+  Dark print is never toned. A dark line that reads otherwise is not
+  cleaned again gently: it goes back to the evened page within its own box
+  only, without the 30 % margin, so no ruled line beside it moves. (Cleaning
+  a dark line of the sick note again with its margin moved a ruled line near
+  the fold by 0.015 px, past the test's 2 px; leaving dark lines unguarded
+  let a body line read "Rückíragen".)
 
   What the guard did is logged ("Cleaning changed the reading of N lines…")
   and kept with the page (`Prepared.guarded`) for the tests. Black and white

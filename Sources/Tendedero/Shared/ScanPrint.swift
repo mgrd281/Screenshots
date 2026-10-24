@@ -32,10 +32,10 @@ extension ScanClean {
 
     /// The lines of text read, from 0 to 1 from the bottom left as Vision
     /// gives them, in pixels from the top left, grown.
-    static func printLines(_ boxes: [CGRect], width w: Int, height h: Int) -> [PrintLine] {
+    static func printLines(_ boxes: [CGRect], width w: Int, height h: Int, grow share: Double = 0.3) -> [PrintLine] {
         boxes.compactMap { box in
             let lineHeight = Double(box.height) * Double(h)
-            let grow = 0.3 * lineHeight
+            let grow = share * lineHeight
             let x0 = max(0, Int((Double(box.minX) * Double(w) - grow).rounded(.down)))
             let x1 = min(w, Int((Double(box.maxX) * Double(w) + grow).rounded(.up)))
             let y0 = max(0, Int(((1 - Double(box.maxY)) * Double(h) - grow).rounded(.down)))
@@ -329,9 +329,9 @@ extension ScanClean {
     /// page's colours. Black and white keeps the line in greys, so nothing
     /// of it is lost to a threshold.
     static func redone(_ base: ScanBitmap, into page: inout ScanBitmap, box: CGRect, _ again: Again, mode: ScanColor,
-                       tuning: Tuning = .standard) {
+                       grow: Double = 0.3, tuning: Tuning = .standard) {
         guard base.width == page.width, base.height == page.height,
-              let line = printLines([box], width: base.width, height: base.height).first else { return }
+              let line = printLines([box], width: base.width, height: base.height, grow: grow).first else { return }
         let w = base.width
         switch again {
         case .gentle:
