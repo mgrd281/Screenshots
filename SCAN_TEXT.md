@@ -340,11 +340,12 @@ take a burst, check the preview or say a hint while it is open. Part B
 therefore needs a camera of Snapfly's own, built in three stages, each
 merged on its own:
 
-1. **The engine, on Linux (this stage).** Merging a burst, the readiness
-   check on a preview, and the readability score with its hint in Review.
-2. **The camera** (not built): the full photo size with quality first, the
-   preview checked several times a second, the page taken by itself when
-   ready, one hint at a time on the glass bar, the burst merged.
+1. **The engine, on Linux.** Merging a burst, the readiness check on a
+   preview, and the readability score with its hint in Review.
+2. **The camera** (`PageCamera`, a test in More › Detection, off at first):
+   the full photo size with quality first, the preview checked ten times a
+   second, the page taken by itself when ready, one hint at a time on
+   glass, the burst merged. Below.
 3. **The detail shot** (not built): small print taken again close up and
    laid onto the page.
 
@@ -402,3 +403,60 @@ them. Under 0.9, Review shows "Kleine Schrift unscharf" with Näher
 aufnehmen (a scanned page: the camera opens to take it again) or Neu
 aufnehmen für kleine Schrift (a photo). `ScanReadabilityTests` checks it.
 **Not verified:** how often real pages get the hint.
+
+### The camera (`PageCamera`)
+
+Switched on with Schärfere kleine Schrift (Test) in More › Detection; Scan
+and Review's Take Again open it instead of the system's document camera.
+
+- **Lens.** The back camera that switches lenses by itself (triple, dual
+  wide, dual), so it moves to the close-focus lens near a page; else the
+  wide one. Its closest focus is written to the log.
+- **Size and quality.** Photos at the largest size the photo format offers
+  up to 24 MP (48 MP would take four times the memory and time per page),
+  quality first, never the flash.
+- **Focus, exposure, white.** On the page's middle as Vision finds it, set
+  again when the page moves; the white balance is kept once the page fills
+  a third of the view and the phone is still.
+- **Readiness**, ten times a second on the preview (`ScanReadiness`): the
+  page and its lines of text from Vision, the brightness at about 640 px,
+  stillness from Core Motion (still while it turns less than 0.12 rad/s and
+  moves less than 0.04 g), and from iOS 26 a smudged lens every 2 s. A hint
+  shows once it held for 0.4 s, VoiceOver reads it, and a light tap says
+  ready. The page is taken by itself once ready, then again only once the
+  page leaves the view or lies elsewhere. The shutter takes it by hand at
+  any time. The torch (at 15 %) is a button at the top.
+- **Several frames or one.** Where the photos are no larger than 12 MP, four
+  frames at the same exposure are merged (`ScanBurst`); larger, one photo
+  of the best quality, which the iPhone itself makes of several. The frames
+  stay in memory only.
+- **Its pages** are whole photos: the page is found in them as in a photo
+  from Photos, and the smudge check reads the photo.
+
+Its timings (taken, made) are written to the log.
+
+**Not verified:** all of it on an iPhone. The build compiles it; nothing
+here has run on a device. The 2.5 s from shutter to cleaned page, the
+comparison of Apple's single best shot with the merge, and the hints'
+thresholds on real paper need the owner's iPhone:
+
+### On the iPhone (for the owner)
+
+Switch on Schärfere kleine Schrift (Test) in More › Erkennung, then scan a
+made-up page with small print (the first run's sample invoice printed, or
+any printed page without private details) in each of these:
+
+1. **Normal light**, held at a comfortable distance: the page is taken by
+   itself within a few seconds, without a hint.
+2. **Dim light** (one lamp across the room): "Mehr Licht" shows; the torch
+   button helps.
+3. **A lamp at an angle** making a shine on the paper: "Spiegelung, Handy
+   leicht kippen" shows, and goes once the iPhone is tilted.
+4. **A shaky hand**: "Ruhig halten" shows, and nothing is taken until the
+   iPhone is still.
+5. **7 pt print at arm's length**: "Näher ran" shows until the letters are
+   large enough; then it is taken, and Review shows no "Kleine Schrift
+   unscharf".
+
+For each, say whether the hint was right and how long it took from the
+picture to the cleaned page.

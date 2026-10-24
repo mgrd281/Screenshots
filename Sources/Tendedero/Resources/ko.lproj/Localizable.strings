@@ -1883,3 +1883,9 @@
 "Small print" = "작은 글자";
 "Take Closer" = "가까이서 촬영";
 "Retake for Small Print" = "작은 글자를 위해 다시 촬영";
+"Torch" = "손전등";
+"Take Page" = "페이지 촬영";
+"Point the camera at a page" = "카메라를 페이지에 맞추세요";
+"Snapfly may not use the camera. Allow it in Settings." = "Snapfly가 카메라를 사용할 수 없습니다. 설정에서 허용하세요.";
+"Sharper Small Print (Test)" = "작은 글씨 더 선명하게(테스트)";
+"Scans with Snapfly's own camera: full resolution, several frames merged, and the page taken by itself once small print is sharp." = "Snapfly 자체 카메라로 스캔합니다. 최대 해상도로 여러 장을 합치고, 작은 글씨가 선명해지면 페이지를 자동으로 촬영합니다.";

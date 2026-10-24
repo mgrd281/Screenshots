@@ -6,6 +6,12 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, a test in More › Detection, Schärfere kleine Schrift
+  (Test), scans with Snapfly's own camera: photos at full size, the page
+  taken by itself once small print is sharp and the phone still, and one
+  short hint at a time otherwise (Ruhig halten, Näher ran, Spiegelung, Handy
+  leicht kippen, Mehr Licht, Linse reinigen). Off at first.
+
 - On the iPhone, Review says "Kleine Schrift unscharf" where a page's
   smallest print reads unsurely, with Näher aufnehmen to take the page again
   with the camera, or Neu aufnehmen für kleine Schrift for a photo.

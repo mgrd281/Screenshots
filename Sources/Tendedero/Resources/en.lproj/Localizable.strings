@@ -1885,3 +1885,9 @@
 "Small print" = "Small print";
 "Take Closer" = "Take Closer";
 "Retake for Small Print" = "Retake for Small Print";
+"Torch" = "Torch";
+"Take Page" = "Take Page";
+"Point the camera at a page" = "Point the camera at a page";
+"Snapfly may not use the camera. Allow it in Settings." = "Snapfly may not use the camera. Allow it in Settings.";
+"Sharper Small Print (Test)" = "Sharper Small Print (Test)";
+"Scans with Snapfly's own camera: full resolution, several frames merged, and the page taken by itself once small print is sharp." = "Scans with Snapfly's own camera: full resolution, several frames merged, and the page taken by itself once small print is sharp.";

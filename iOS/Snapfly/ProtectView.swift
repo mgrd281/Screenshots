@@ -265,11 +265,18 @@ struct ProtectView: View {
                 }
             }
             .fullScreenCover(isPresented: $shooting) {
-                DocumentScanner { images in
-                    shooting = false
-                    took(camera: images)
+                if PageCamera.isOn {
+                    PageCamera { images in
+                        shooting = false
+                        took(camera: images, whole: true)
+                    }
+                } else {
+                    DocumentScanner { images in
+                        shooting = false
+                        took(camera: images)
+                    }
+                    .ignoresSafeArea()
                 }
-                .ignoresSafeArea()
             }
             .photosPicker(isPresented: $choosingPhotos, selection: $picked, maxSelectionCount: replacing == nil ? 20 : 1,
                           selectionBehavior: .ordered, matching: .images)
@@ -1049,13 +1056,13 @@ struct ProtectView: View {
 
     /// The camera's pages: in the place of the page taken again, which the
     /// editor follows, or after the others, the first of them opened.
-    private func took(camera images: [CGImage]) {
+    private func took(camera images: [CGImage], whole: Bool = false) {
         let target = replacing
         replacing = nil
         guard !images.isEmpty else { return }
         if let target {
-            scans.replace(target, camera: images)
-        } else if let first = scans.add(camera: images).first {
+            scans.replace(target, camera: images, whole: whole)
+        } else if let first = scans.add(camera: images, whole: whole).first {
             scan?.open(first.id)
         }
     }

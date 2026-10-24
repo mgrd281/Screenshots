@@ -1883,3 +1883,9 @@
 "Small print" = "Petit texte";
 "Take Closer" = "Prendre de plus près";
 "Retake for Small Print" = "Reprendre pour le petit texte";
+"Torch" = "Lampe";
+"Take Page" = "Prendre la page";
+"Point the camera at a page" = "Pointez l’appareil vers une page";
+"Snapfly may not use the camera. Allow it in Settings." = "Snapfly ne peut pas utiliser l’appareil photo. Autorisez-le dans Réglages.";
+"Sharper Small Print (Test)" = "Petits caractères plus nets (test)";
+"Scans with Snapfly's own camera: full resolution, several frames merged, and the page taken by itself once small print is sharp." = "Numérise avec l’appareil photo de Snapfly : pleine résolution, plusieurs images fusionnées, et la page est prise d’elle-même dès que les petits caractères sont nets.";

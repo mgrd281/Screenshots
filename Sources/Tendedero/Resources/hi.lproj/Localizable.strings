@@ -1885,3 +1885,9 @@
 "Small print" = "छोटे अक्षर";
 "Take Closer" = "पास से लें";
 "Retake for Small Print" = "छोटे अक्षरों के लिए फिर से लें";
+"Torch" = "टॉर्च";
+"Take Page" = "पेज लें";
+"Point the camera at a page" = "कैमरा किसी पेज की ओर करें";
+"Snapfly may not use the camera. Allow it in Settings." = "Snapfly कैमरा इस्तेमाल नहीं कर सकता। सेटिंग्स में अनुमति दें।";
+"Sharper Small Print (Test)" = "छोटे अक्षर ज़्यादा साफ़ (परीक्षण)";
+"Scans with Snapfly's own camera: full resolution, several frames merged, and the page taken by itself once small print is sharp." = "Snapfly के अपने कैमरे से स्कैन करता है: पूरा रिज़ॉल्यूशन, कई फ़्रेम मिलाकर, और छोटे अक्षर साफ़ होते ही पेज अपने-आप लिया जाता है।";

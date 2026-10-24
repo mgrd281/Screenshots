@@ -1883,3 +1883,9 @@
 "Small print" = "خط صغير";
 "Take Closer" = "التقط عن قرب";
 "Retake for Small Print" = "أعد الالتقاط للخط الصغير";
+"Torch" = "المصباح";
+"Take Page" = "التقاط الصفحة";
+"Point the camera at a page" = "وجّه الكاميرا إلى صفحة";
+"Snapfly may not use the camera. Allow it in Settings." = "لا يُسمح لـ Snapfly باستخدام الكاميرا. اسمح بذلك في الإعدادات.";
+"Sharper Small Print (Test)" = "خط صغير أوضح (تجربة)";
+"Scans with Snapfly's own camera: full resolution, several frames merged, and the page taken by itself once small print is sharp." = "يمسح بكاميرا Snapfly الخاصة: دقة كاملة، ودمج عدة لقطات، وتُلتقط الصفحة تلقائيًا حين يصبح الخط الصغير واضحًا.";

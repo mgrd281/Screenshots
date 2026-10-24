@@ -245,6 +245,8 @@ components:
     rounded: "32pt"                # the camera on the first run: phone-ink filling the stage, the page at 80% in it, the shutter under it
   phone-shutter:
     size: "34pt"                   # the camera's shutter on the first run: a white ring of 2.5pt at 90% round a white button 5pt in, centred in the room under the page, smaller where the room is (14pt less than it)
+  phone-page-camera:
+    shutter: "68pt"                # Snapfly's own page camera (a test), dark, the preview filling the screen: phone-shutter's ring and button at 68pt centred at the bottom; Close (xmark) and the torch (flashlight.off.fill / on.fill) 44pt round buttons of phone-glass at the top; the one hint in callout semibold white on a phone-glass capsule, 16 by 10pt in, 20pt over the shutter, fading in 0.2 s (at once with Reduce Motion); the last page 44 × 58 with corners of 6 and its count on a phone-protect capsule at its corner; Done white on phone-protect, body semibold, once a page is taken; a light impact when ready, white at 25% over the preview while taking
   phone-grid-columns:
     count: "3, or 4 pinched closer"   # screenshots side by side in the iPhone's grids, flexible columns 8pt apart; the Photos tab shows three rows of the newest
   phone-chosen-mark:
