@@ -1889,3 +1889,8 @@
 "Snapfly may not use the camera. Allow it in Settings." = "Snapfly가 카메라를 사용할 수 없습니다. 설정에서 허용하세요.";
 "Sharper Small Print (Test)" = "작은 글씨 더 선명하게(테스트)";
 "Scans with Snapfly's own camera: full resolution, several frames merged, and the page taken by itself once small print is sharp." = "Snapfly 자체 카메라로 스캔합니다. 최대 해상도로 여러 장을 합치고, 작은 글씨가 선명해지면 페이지를 자동으로 촬영합니다.";
+"Take Small Print Closer" = "작은 글씨 가까이 촬영";
+"Hold the iPhone close over the small print." = "iPhone을 작은 글씨 위로 가까이 대세요.";
+"Point the camera at the small print" = "카메라를 작은 글씨에 맞추세요";
+"Close-up used" = "근접 사진을 사용함";
+"Close-up not used" = "근접 사진을 사용하지 않음";

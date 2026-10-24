@@ -18,7 +18,9 @@ import Vision
 /// frames and merges them (`ScanBurst`); larger, one photo of the best
 /// quality, which the iPhone already makes of several. The frames stay in
 /// memory only. `done` gets the pages, whole photos whose page is still to
-/// be found, or none when it was closed.
+/// be found, or none when it was closed. With `closeUp`, it takes one
+/// close-up of a page's small print (`ScanDetail`): no whole page in view,
+/// the letters larger, and it closes once it is taken.
 struct PageCamera: View {
     /// Whether Snapfly's own camera takes pages instead of the system's.
     static var isOn: Bool {
@@ -27,9 +29,16 @@ struct PageCamera: View {
     }
     static let key = "snapfly.scan.ownCamera"
 
+    let closeUp: Bool
     let done: ([CGImage]) -> Void
-    @StateObject private var camera = PageCameraModel()
+    @StateObject private var camera: PageCameraModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    init(closeUp: Bool = false, done: @escaping ([CGImage]) -> Void) {
+        self.closeUp = closeUp
+        self.done = done
+        _camera = StateObject(wrappedValue: PageCameraModel(closeUp: closeUp))
+    }
 
     var body: some View {
         ZStack {
@@ -37,8 +46,9 @@ struct PageCamera: View {
             PageCameraPreview(session: camera.session)
                 .ignoresSafeArea()
                 .accessibilityHidden(true)
-            VStack(spacing: 0) {
+            VStack(spacing: 12) {
                 top
+                if closeUp { card }
                 Spacer(minLength: 16)
                 hint
                     .padding(.bottom, 20)
@@ -58,6 +68,12 @@ struct PageCamera: View {
         .sensoryFeedback(.impact(weight: .light), trigger: camera.readyCount)
         .sensoryFeedback(.success, trigger: camera.pages.count)
         .onAppear { camera.start() }
+        // A close-up is one picture: the camera closes once it is taken.
+        .onChange(of: camera.pages.count) { _, count in
+            guard closeUp, count > 0 else { return }
+            camera.stop()
+            done(camera.pages)
+        }
         .onDisappear { camera.stop() }
         .animation(reduceMotion ? nil : .easeOut(duration: 0.2), value: camera.taking)
     }
@@ -88,6 +104,25 @@ struct PageCamera: View {
             }
         }
         .foregroundStyle(.white)
+    }
+
+    /// What a close-up is for, on glass under the buttons.
+    private var card: some View {
+        VStack(spacing: 4) {
+            Text(L("Take Small Print Closer"))
+                .font(.headline)
+            Text(L("Hold the iPhone close over the small print."))
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.8))
+        }
+        .foregroundStyle(.white)
+        .multilineTextAlignment(.center)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity)
+        .editorGlass(in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
     }
 
     /// The one hint, calm on glass; or what to point at, while no page is seen.
@@ -192,7 +227,8 @@ final class PageCameraModel: ObservableObject {
     @Published private(set) var readyCount = 0
 
     private let queue = DispatchQueue(label: "snapfly.page-camera")
-    private let analyzer = PageAnalyzer()
+    private let analyzer: PageAnalyzer
+    private let closeUp: Bool
     private let photos = AVCapturePhotoOutput()
     private let frames = AVCaptureVideoDataOutput()
     private var device: AVCaptureDevice?
@@ -211,10 +247,19 @@ final class PageCameraModel: ObservableObject {
     private var lastPage: CGRect?
     nonisolated private static let log = Logger(subsystem: "app.snapfly", category: "PageCamera")
 
+    init(closeUp: Bool = false) {
+        self.closeUp = closeUp
+        analyzer = PageAnalyzer(tuning: closeUp ? .closeUp : .init())
+    }
+
     /// The hint's words, or what to point at while no page is seen.
     var message: String? {
         if denied { return L("Snapfly may not use the camera. Allow it in Settings.") }
-        return hint?.message ?? (seesPage || taking ? nil : L("Point the camera at a page"))
+        guard let hint else {
+            if seesPage || taking { return nil }
+            return closeUp ? L("Point the camera at the small print") : L("Point the camera at a page")
+        }
+        return hint.message
     }
 
     func start() {
@@ -424,6 +469,14 @@ private final class PhotoTaker: NSObject, AVCapturePhotoCaptureDelegate {
 /// the phone has been still (Core Motion); tells `ScanReadiness`.
 private final class PageAnalyzer: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, @unchecked Sendable {
     let queue = DispatchQueue(label: "snapfly.page-camera.frames")
+    let tuning: ScanReadiness.Tuning
+
+    init(tuning: ScanReadiness.Tuning) {
+        self.tuning = tuning
+        super.init()
+    }
+
+    /// What the preview told, and where the page is; for a close-up, where its print is.
     var onLook: ((ScanReadiness.State, CGRect?) -> Void)?
     /// Kept while its photos are taken.
     var taker: AnyObject?
@@ -481,7 +534,8 @@ private final class PageAnalyzer: NSObject, AVCaptureVideoDataOutputSampleBuffer
         }
         let look = ScanReadiness.Look(plane: small.plane, width: small.width, height: small.height, page: page, lines: lines,
                                       photoHeight: photoHeight, still: still, smudged: smudged)
-        onLook?(ScanReadiness.state(of: look), page)
+        let aimed = tuning.needsPage ? page : lines.dropFirst().reduce(lines.first) { $0?.union($1) }
+        onLook?(ScanReadiness.state(of: look, tuning: tuning), aimed)
     }
 
     /// The preview's brightness, upright and no wider than about 640 pixels,

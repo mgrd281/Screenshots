@@ -48,6 +48,15 @@ final class ScanReadinessTests: XCTestCase {
         for hint in ScanReadiness.Hint.allCases { XCTAssertFalse(hint.message.isEmpty) }
     }
 
+    func testACloseUpOfSmallPrintNeedsNoWholePageButLargerLetters() {
+        var close = look(photoHeight: 1440)
+        close.page = nil
+        XCTAssertFalse(ScanReadiness.state(of: close).ready, "a page needs its page in view")
+        XCTAssertTrue(ScanReadiness.state(of: close, tuning: .closeUp).ready, "a close-up does not")
+        close.photoHeight = 900
+        XCTAssertEqual(ScanReadiness.state(of: close, tuning: .closeUp).hint, .closer, "letters 22 px: closer still")
+    }
+
     func testWithoutAPageOrTextNothingIsTakenAndNothingSaid() {
         var nothing = look()
         nothing.lines = []

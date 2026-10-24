@@ -346,8 +346,8 @@ merged on its own:
    the full photo size with quality first, the preview checked ten times a
    second, the page taken by itself when ready, one hint at a time on
    glass, the burst merged. Below.
-3. **The detail shot** (not built): small print taken again close up and
-   laid onto the page.
+3. **The detail shot** (`ScanDetail`, with the camera above): small print
+   taken again close up and laid onto the page. Below.
 
 ### Several frames, one page (`ScanBurst`)
 
@@ -440,6 +440,46 @@ here has run on a device. The 2.5 s from shutter to cleaned page, the
 comparison of Apple's single best shot with the merge, and the hints'
 thresholds on real paper need the owner's iPhone:
 
+### The detail shot (`ScanDetail`)
+
+With the camera on, Näher aufnehmen on "Kleine Schrift unscharf" in
+Review's list opens it for a close-up instead of taking the page again: a
+card "Kleine Schrift näher aufnehmen" over the preview, no whole page needed
+in view, the letters 24 px tall at least, and it closes once taken.
+
+The close-up is found on the straightened page around the small print's
+place: every size from 1.2 to 4 times as large (each 8 % more than the
+last) and every turn of −3° to 3° on both made small, by how the print's
+steepest edges correlate; the best four closer; then the best on the page
+itself, step by step down to 0.05 of a pixel. It is laid only where it
+matches with a correlation of 0.6 and more. Its light is brought to the
+page's by the paper and the mean, which a soft page keeps as a sharp one
+has it; it is made as small as the page, each colour apart, and fades in
+over 12 px. The page is then cleaned and checked again, and kept only where
+its small print reads more surely, by 0.02 of Vision's certainty at least,
+with no line or letter fewer (`ScanDetail.better`); otherwise the page stays
+as it was and a note says "Detailaufnahme nicht übernommen".
+
+Made-up close-up (`ScanDetailTests`): a page of small print, its lens soft
+(Gaussian 1.6 px), and a close-up 2.4 times as large, turned by 0.6°, lit
+darker, with grain:
+
+| | Measured |
+|---|---|
+| Found off by, at the small print's corners and middle | 0.30 px (target ≤ 1 px) |
+| Size found | 2.399 (taken at 2.4) |
+| Difference from the printed page inside the small print | 11.5 before, 9.4 laid |
+| Edge steepness there (printed with a lens of 0.8 px: 77.5) | 30.9 before, 109.6 laid |
+| A close-up of other print | not laid |
+
+The page's synthetic print picks each letter's shape and width by a hash of
+its place, as real text has no repeating stretch; a print that repeats
+exactly can be matched a few letters off, which the correlation threshold
+and the reading check are there to catch.
+
+**Not verified:** a real close-up. A close-up taken at a slant (not flat
+over the page) is laid by size, turn and place only, not perspective.
+
 ### On the iPhone (for the owner)
 
 Switch on Schärfere kleine Schrift (Test) in More › Erkennung, then scan a
@@ -457,6 +497,10 @@ any printed page without private details) in each of these:
 5. **7 pt print at arm's length**: "Näher ran" shows until the letters are
    large enough; then it is taken, and Review shows no "Kleine Schrift
    unscharf".
+
+6. **The detail shot**: on a page whose Review says "Kleine Schrift
+   unscharf", tap Näher aufnehmen, hold the iPhone close over the small
+   print: it is taken by itself, and a note says whether it was used.
 
 For each, say whether the hint was right and how long it took from the
 picture to the cleaned page.

@@ -94,6 +94,8 @@ struct ProtectView: View {
     /// nil for pages added.
     @State private var replacing: UUID?
     @State private var shooting = false
+    /// The page whose small print is taken again close up (`PageCamera`).
+    @State private var closingUp: ScanPageRef?
     @State private var choosingPhotos = false
     @State private var picked: [PhotosPickerItem] = []
     /// The made-up scans' state shown once, for pictures made in CI.
@@ -216,7 +218,9 @@ struct ProtectView: View {
             .sheet(isPresented: $reviewing, onDismiss: { listFocus = nil }) {
                 if let scan {
                     ReviewListSheet(store: scans, current: scan.page, focus: listFocus, look: { look($0) }, retake: { id in
-                        if let page = scans.pages.first(where: { $0.id == id }) { retake(page) }
+                        guard let page = scans.pages.first(where: { $0.id == id }) else { return }
+                        // With Snapfly's own camera, the small print alone is taken again, close up.
+                        if PageCamera.isOn, page.origin == .camera { closingUp = ScanPageRef(id: id) } else { retake(page) }
                     })
                 } else {
                     ReviewSheet(session: session, show: show)
@@ -276,6 +280,13 @@ struct ProtectView: View {
                         took(camera: images)
                     }
                     .ignoresSafeArea()
+                }
+            }
+            .fullScreenCover(item: $closingUp) { wanted in
+                PageCamera(closeUp: true) { images in
+                    closingUp = nil
+                    guard let detail = images.first else { return }
+                    Task { await tookCloser(detail, for: wanted.id) }
                 }
             }
             .photosPicker(isPresented: $choosingPhotos, selection: $picked, maxSelectionCount: replacing == nil ? 20 : 1,
@@ -1064,6 +1075,16 @@ struct ProtectView: View {
             scans.replace(target, camera: images, whole: whole)
         } else if let first = scans.add(camera: images, whole: whole).first {
             scan?.open(first.id)
+        }
+    }
+
+    /// A close-up of a page's small print, laid in where it reads more surely.
+    private func tookCloser(_ detail: CGImage, for page: UUID) async {
+        if await scans.takeCloser(page, detail: detail) {
+            note = EditorNote(text: L("Close-up used"))
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+        } else {
+            failed(L("Close-up not used"))
         }
     }
 

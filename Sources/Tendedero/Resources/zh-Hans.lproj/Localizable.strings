@@ -1889,3 +1889,8 @@
 "Snapfly may not use the camera. Allow it in Settings." = "Snapfly 无法使用相机。请在“设置”中允许。";
 "Sharper Small Print (Test)" = "更清晰的小字（测试）";
 "Scans with Snapfly's own camera: full resolution, several frames merged, and the page taken by itself once small print is sharp." = "使用 Snapfly 自己的相机扫描：全分辨率、合并多帧，小字清晰时自动拍下页面。";
+"Take Small Print Closer" = "近距离拍摄小字";
+"Hold the iPhone close over the small print." = "将 iPhone 靠近小字上方。";
+"Point the camera at the small print" = "将相机对准小字";
+"Close-up used" = "已采用近拍";
+"Close-up not used" = "未采用近拍";

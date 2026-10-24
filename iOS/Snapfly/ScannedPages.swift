@@ -302,6 +302,35 @@ final class ScannedPages: ObservableObject {
         restart(index)
     }
 
+    /// A page's small print taken again close up (`ScanDetail`): laid in,
+    /// cleaned and checked again, and kept only where it reads more surely;
+    /// false when it was not kept. Its covers stay where they are.
+    func takeCloser(_ id: UUID, detail: CGImage) async -> Bool {
+        guard let index = index(of: id), pages[index].state == .ready, let straight = pages[index].straightened,
+              let way = pages[index].way, let skew = way.skew,
+              let area = pages[index].issues.first(where: { $0.kind == .smallPrint })?.area else { return false }
+        let job = pages[index].job, mode = self.mode
+        let made = await Task.detached(priority: .userInitiated) {
+            await ScanCleaner.closer(straight, turns: way.turns, skew: skew, detail: detail, area: area, mode: mode)
+        }.value
+        guard let made else { return false }
+        let thumbnail = await Task.detached(priority: .userInitiated) {
+            ScanCleaner.smaller(made.cleaned, longest: 240).map { UIImage(cgImage: $0) }
+        }.value
+        // Asked for again meanwhile: what was made is dropped.
+        guard let done = self.index(of: id), pages[done].job == job, self.mode == mode else { return false }
+        pages[done].straightened = made.straightened
+        pages[done].before = UIImage(cgImage: made.straightened)
+        pages[done].cleaned = made.cleaned
+        pages[done].thumbnail = thumbnail
+        pages[done].issues = made.checked.issues
+        pages[done].textKept = made.checked.textKept
+        pages[done].reading = made.checked.reading
+        if let session = sessions[id] { session.replace(made.cleaned) }
+        if done == 0 { readTitle() }
+        return true
+    }
+
     /// A page cut from its picture by new corners; its covers are found again.
     func setCorners(_ id: UUID, _ quad: ScanQuad) {
         guard let index = index(of: id) else { return }
