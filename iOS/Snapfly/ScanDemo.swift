@@ -8,7 +8,9 @@ import Foundation
 /// (uncovered), the pages in black and white (bw), corners to set by hand
 /// (corners), the Scan tab with its pages (tab), with what to ask Claude
 /// over it (assistant), or with none yet, for photos chosen from Photos
-/// (empty); `-SnapflyReduceMotion`
+/// (empty), or a letter naming the owner, whose made-up name and address
+/// are then kept in Always Hide (own), or Review's list of what is to check
+/// over two pages, the second blurred (list); `-SnapflyReduceMotion`
 /// plays it as Reduce Motion would. The photos are drawn here
 /// (`ScanSample`) and made ready as any photo is, where the page is in them
 /// already known. Nothing of it is in a release build.
@@ -32,6 +34,10 @@ enum ScanDemo {
     static var compares: Bool { state == "compare" }
     static var opensSheet: Bool { state == "sheet" || state == "uncovered" }
     static var uncovered: Bool { state == "uncovered" }
+    /// The letter to the owner, with their details kept as Always Hide keeps them.
+    static var ownLetter: Bool { state == "own" }
+    /// Review's list, open over the first page.
+    static var opensList: Bool { state == "list" }
     /// Played as Reduce Motion would, for the videos (`-SnapflyReduceMotion`).
     static let still = arguments.contains("-SnapflyReduceMotion")
 
@@ -39,11 +45,11 @@ enum ScanDemo {
     /// corners, without where the page is, to set it by hand. Each as a PNG,
     /// as Photos gives its photos, so it is decoded as theirs are.
     static func photos() -> [ScanPhoto] {
-        guard state != "empty", let page = ScanSample.page() else { return [] }
+        guard state != "empty", let page = ownLetter ? ScanSample.letter() : ScanSample.page() else { return [] }
         let flaws: [ScanSample.Flaw]
         switch state {
-        case "editor", "corners": flaws = [.none]
-        case "warning": flaws = [.none, .blurredBottom]
+        case "editor", "corners", "own": flaws = [.none]
+        case "warning", "list": flaws = [.none, .blurredBottom]
         default: flaws = [.none, .none]
         }
         return flaws.compactMap { flaw in
@@ -52,6 +58,12 @@ enum ScanDemo {
             scan.quad = unsure ? nil : photo.quad
             return scan
         }
+    }
+
+    /// Keeps the owner's made-up details for the letter, as Always Hide does.
+    static func keepOwnDetails() {
+        guard ownLetter else { return }
+        OwnDetailStore.details = [ScanSample.ownName, ScanSample.ownAddress]
     }
     #else
     static let requested = false
@@ -63,8 +75,11 @@ enum ScanDemo {
     static let compares = false
     static let opensSheet = false
     static let uncovered = false
+    static let ownLetter = false
+    static let opensList = false
     static let still = false
     static func photos() -> [ScanPhoto] { [] }
+    static func keepOwnDetails() {}
     #endif
 }
 

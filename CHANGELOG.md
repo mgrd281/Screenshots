@@ -25,7 +25,16 @@ keeps a download of each version.
   Always Hide since the page was opened. The line under Review never says
   "Nichts Privates gefunden" while a place is still to check or the page
   has a fault: it says "3 verdeckt · 4 zu prüfen", "3 verdeckt, alles
-  geprüft" or "Nichts Privates · 1 Hinweis".
+  geprüft" or "Nichts Privates · 1 Qualitätshinweis".
+
+- On the iPhone, Review says so when the page's text could not be read,
+  with Try Again, instead of finding nothing private on it; and your name
+  is covered where it runs on into the next line of its column, even with
+  another column's line read between. Review's bar is tidier: the title in
+  the middle with room to the menu, a smaller Weiter, Undo and Redo as
+  icons alone so every tool's name shows on the smallest iPhone, the eye in
+  the page's bottom corner, and in the list a long kind cut short with
+  "…", its buttons under it at the largest text sizes.
 
 - On the iPhone, a phone photo of a letter comes out of Scan with its lines
   straight, never bent into a wave by a row of text taken for a ruled line,

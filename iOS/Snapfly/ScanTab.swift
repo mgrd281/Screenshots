@@ -244,6 +244,7 @@ struct ScanTab: View {
         guard ScanDemo.requested, store.pages.isEmpty else { return }
         Task {
             if let mode = ScanDemo.mode { store.setMode(mode) }
+            ScanDemo.keepOwnDetails()
             let photos = await Task.detached(priority: .userInitiated) { ScanDemo.photos() }.value
             let added = store.add(photos: photos, unsure: ScanDemo.unsure)
             if ScanDemo.asksAssistant { asking = AssistantChoice(chat: .claude) }

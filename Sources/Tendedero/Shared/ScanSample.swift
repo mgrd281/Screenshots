@@ -119,6 +119,77 @@ enum ScanSample {
         return context.makeImage()
     }
 
+    // MARK: A letter to the owner
+
+    /// The owner's details for the letter, as Always Hide keeps them: a
+    /// made-up name and address.
+    static let ownName = OwnRule(text: OwnDetails.nameText(given: "Lena", surname: "Brandtner"), kind: .name)
+    static let ownAddress = OwnRule(text: "Lindenallee 14", kind: .address, postcode: "22301", city: "Hamburg")
+
+    /// How the letter writes the owner's details, each as it is printed, to
+    /// be covered: plainly, surname first after a comma, in capitals, over
+    /// two lines, with one letter wrong, and the address on two lines and
+    /// on one after a comma. Each part with the words round it on its line.
+    static let ownVariants: [(name: String, parts: [(line: String, part: String)])] = [
+        ("plain", [("Lena Brandtner", "Lena Brandtner")]),
+        ("surname first", [("Brandtner, Lena", "Brandtner, Lena")]),
+        ("capitals", [("über LENA BRANDTNER nach", "LENA BRANDTNER")]),
+        ("line break", [("lautet auf Lena", "Lena"), ("Brandtner. Rückfragen", "Brandtner")]),
+        ("one letter wrong", [("von Lena Brandtnar bitte", "Lena Brandtnar")]),
+        ("street", [("Lindenallee 14", "Lindenallee 14")]),
+        ("town", [("22301 Hamburg", "22301 Hamburg")]),
+        ("address after a comma", [("Lindenallee 14,22301", "Lindenallee 14"), ("14,22301 Hamburg", "22301 Hamburg")]),
+    ]
+    /// The date of birth, covered as a kind, not as the owner's detail.
+    static let birthDate = "05.03.1992"
+
+    /// A made-up practice's letter to the owner, laid out as such letters
+    /// are: the practice's column down the right, the sender's line over
+    /// the address, the patient's box with the date of birth, and the body,
+    /// which names the owner in the other ways (`ownVariants`).
+    static func letter() -> CGImage? {
+        guard let space = CGColorSpace(name: CGColorSpace.sRGB),
+              let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                                      space: space, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return nil }
+        let ink = CGColor(red: 0.08, green: 0.08, blue: 0.1, alpha: 1)
+        let quiet = CGColor(red: 0.36, green: 0.36, blue: 0.38, alpha: 1)
+        context.setFillColor(CGColor(red: 0.98, green: 0.98, blue: 0.97, alpha: 1))
+        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        // The practice's column.
+        write("PRAXIS AM MUSTERPARK", in: context, x: 1180, top: 140, size: 30, bold: true, color: ink)
+        for (line, text) in ["Radiologie", "Musterpark 3", "20095 Hamburg", "Telefon 040 1234567", "",
+                             "Dr. med. Paul Beispiel", "Dr. med. Jana Probe", "Dr. med. Tom Muster"].enumerated() {
+            write(text, in: context, x: 1180, top: 200 + line * 40, size: 24, color: quiet)
+        }
+        // The sender's line, then the owner's address.
+        write("Praxis am Musterpark · Musterpark 3 · 20095 Hamburg", in: context, x: 140, top: 300, size: 18, color: quiet)
+        for (line, text) in ["Lena Brandtner", "Lindenallee 14", "22301 Hamburg"].enumerated() {
+            write(text, in: context, x: 140, top: 350 + line * 46, size: 32, color: ink)
+        }
+        write("Hamburg, den 05.06.2026", in: context, x: 760, top: 620, size: 28, color: ink)
+        write("Unser Zeichen: 4711023", in: context, x: 140, top: 660, size: 22, color: ink)
+        // The patient's box.
+        context.setStrokeColor(ink)
+        context.setLineWidth(3)
+        context.stroke(box(140, 700, 960, 110))
+        write("Brandtner, Lena", in: context, x: 160, top: 716, size: 28, bold: true, color: ink)
+        write("geb. \(birthDate)", in: context, x: 820, top: 716, size: 28, color: ink)
+        write("Lindenallee 14,22301 Hamburg", in: context, x: 160, top: 762, size: 28, color: ink)
+        write("MRT der Lendenwirbelsäule vom 05.06.2026", in: context, x: 140, top: 870, size: 30, bold: true, color: ink)
+        let body = ["Sehr geehrte Kolleginnen und Kollegen,",
+                    "wir berichten über LENA BRANDTNER nach der Untersuchung",
+                    "in unserer Praxis. Die Akte lautet auf Lena",
+                    "Brandtner. Rückfragen von Lena Brandtnar bitte an die",
+                    "Praxis. Die übrigen Segmente sind unauffällig.",
+                    "",
+                    "Mit freundlichen Grüßen",
+                    "Dr. med. Paul Beispiel"]
+        for (line, text) in body.enumerated() {
+            write(text, in: context, x: 140, top: 960 + line * 50, size: 30, color: ink)
+        }
+        return context.makeImage()
+    }
+
     /// A rectangle given from the page's top left.
     private static func box(_ x: Int, _ top: Int, _ w: Int, _ h: Int) -> CGRect {
         CGRect(x: x, y: height - top - h, width: w, height: h)

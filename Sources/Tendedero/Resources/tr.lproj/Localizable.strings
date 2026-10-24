@@ -1831,8 +1831,8 @@
 "%d covered" = "%d kapatıldı";
 "%d covered, everything checked" = "%d kapatıldı, hepsi kontrol edildi";
 "Nothing private" = "Özel bir şey yok";
-"1 hint" = "1 not";
-"%d hints" = "%d not";
+"1 quality hint" = "1 kalite notu";
+"%d quality hints" = "%d kalite notu";
 "Open the list." = "Listeyi aç.";
 
 /* Review: its bar of tools, the list of places to check, the menu. */
@@ -1867,3 +1867,4 @@
 "Reflection" = "Yansıma";
 "Smudged lens" = "Lens lekeli";
 "Too small" = "Çok küçük";
+"The text could not be read. Nothing is covered yet." = "Metin okunamadı. Henüz hiçbir şey örtülmedi.";

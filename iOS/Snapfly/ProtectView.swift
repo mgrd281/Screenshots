@@ -807,7 +807,7 @@ struct ProtectView: View {
                       width: size.width, height: size.height)
     }
 
-    /// The eye in the page's top trailing corner: a tap shows the page
+    /// The eye in the page's bottom trailing corner: a tap shows the page
     /// without its covers, and again with them.
     @ViewBuilder private func reviewEye(in geometry: GeometryProxy) -> some View {
         if let page = pageRect(in: geometry), session.original != nil, split == nil {
@@ -824,7 +824,7 @@ struct ProtectView: View {
                     .contentShape(Circle())
             }
             .buttonStyle(.plain)
-            .position(x: page.maxX - 24, y: page.minY + 24)
+            .position(x: page.maxX - 24, y: page.maxY - 24)
             .accessibilityLabel(showsOriginal ? L("Show With Covers") : L("Show Without Covers"))
             .accessibilityIdentifier("review-eye")
         }
@@ -1094,6 +1094,7 @@ struct ProtectView: View {
         demoShown = true
         if ScanDemo.compares { split = 0.5 }
         if ScanDemo.opensSheet { saving = true }
+        if ScanDemo.opensList { reviewing = true }
     }
 
     // MARK: Ways out

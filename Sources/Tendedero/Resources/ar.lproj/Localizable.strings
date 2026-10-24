@@ -1831,8 +1831,8 @@
 "%d covered" = "%d مغطّى";
 "%d covered, everything checked" = "%d مغطّى، رُوجع الكل";
 "Nothing private" = "لا شيء خاص";
-"1 hint" = "ملاحظة واحدة";
-"%d hints" = "%d ملاحظات";
+"1 quality hint" = "ملاحظة جودة واحدة";
+"%d quality hints" = "%d ملاحظات جودة";
 "Open the list." = "افتح القائمة.";
 
 /* Review: its bar of tools, the list of places to check, the menu. */
@@ -1867,3 +1867,4 @@
 "Reflection" = "انعكاس";
 "Smudged lens" = "العدسة متّسخة";
 "Too small" = "صغير جدًا";
+"The text could not be read. Nothing is covered yet." = "تعذّرت قراءة النص. لم يُغطَّ شيء بعد.";

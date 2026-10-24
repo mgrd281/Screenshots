@@ -1831,8 +1831,8 @@
 "%d covered" = "%d verdeckt";
 "%d covered, everything checked" = "%d verdeckt, alles geprüft";
 "Nothing private" = "Nichts Privates";
-"1 hint" = "1 Hinweis";
-"%d hints" = "%d Hinweise";
+"1 quality hint" = "1 Qualitätshinweis";
+"%d quality hints" = "%d Qualitätshinweise";
 "Open the list." = "Liste öffnen.";
 
 /* Review: its bar of tools, the list of places to check, the menu. */
@@ -1867,3 +1867,4 @@
 "Reflection" = "Spiegelung";
 "Smudged lens" = "Linse verschmiert";
 "Too small" = "Zu klein";
+"The text could not be read. Nothing is covered yet." = "Der Text konnte nicht gelesen werden. Noch ist nichts verdeckt.";
