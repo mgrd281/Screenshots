@@ -551,8 +551,10 @@ struct ReviewPlace: Identifiable {
 /// The list of places to check, as tall as what it holds: "2 Stellen zu
 /// prüfen" (or "Alles geprüft") and that nothing leaves the iPhone; then
 /// each place still open, on any page, with what it is, its first words and
-/// its page, and Leave or Cover, with Cover All over them; the page's
-/// faults, with Look, which opens that page's own tools; and what is
+/// its page, and Leave or Cover, with Cover All over them; the private
+/// details the categories chosen leave visible, each with Cover, and a word
+/// where no name of the owner's is kept in Always Hide on this iPhone; the
+/// page's faults, with Look, which opens that page's own tools; and what is
 /// covered, in one line that opens into the list of it. Each decision is
 /// one change to undo, and the mark on the page turns with it.
 struct ReviewListSheet: View {
@@ -588,6 +590,15 @@ struct ReviewListSheet: View {
         }
     }
 
+    /// What the categories chosen leave visible, never covered: a name
+    /// where Names is off.
+    private var visible: [ReviewPlace] {
+        sessions.flatMap { page, number, session in
+            session.plan.marks.filter { $0.origin == .spared && !$0.covered }
+                .map { ReviewPlace(page: page.id, number: number, mark: $0) }
+        }
+    }
+
     private var faults: [(page: ScannedPages.Page, number: Int, issue: ScanIssue)] {
         store.pages.enumerated().flatMap { index, page in page.issues.map { (page: page, number: index + 1, issue: $0) } }
     }
@@ -602,6 +613,7 @@ struct ReviewListSheet: View {
                 VStack(alignment: .leading, spacing: 20) {
                     heading
                     if !open.isEmpty { openSection }
+                    if !visible.isEmpty { visibleSection }
                     if !faults.isEmpty { faultSection }
                     if !covered.isEmpty { coveredSection }
                 }
@@ -623,6 +635,7 @@ struct ReviewListSheet: View {
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(SnapflyTokens.hideSheetRadius)
         .animation(motion, value: open.map(\.id))
+        .animation(motion, value: visible.map(\.id))
         .animation(motion, value: coveredOpen)
     }
 
@@ -739,6 +752,79 @@ struct ReviewListSheet: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: Left visible
+
+    private var visibleSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                sectionTitle("\(L("Left visible")) · \(visible.count)")
+                Spacer()
+                Button(L("Cover All")) { coverVisible() }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(SnapflyTokens.hideAccent)
+                    .padding(.horizontal, 14)
+                    .frame(minHeight: 34)
+                    .background(SnapflyTokens.hideAccentSoft, in: Capsule())
+                    .buttonStyle(.plain)
+                    .frame(minHeight: SnapflyTokens.touch)
+                    .accessibilityLabel(L("Cover All Left Visible"))
+                    .accessibilityIdentifier("review-cover-visible")
+            }
+            Text(visibleNote)
+                .font(.footnote)
+                .foregroundStyle(SnapflyTokens.hideSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("review-visible-note")
+            card {
+                ForEach(Array(visible.enumerated()), id: \.element.id) { index, place in
+                    if index > 0 { Divider().padding(.leading, 60) }
+                    row(stacked: typeSize.isAccessibilitySize) {
+                        sign(place.mark, muted: true)
+                        words(place)
+                    } actions: {
+                        Button(L("Cover")) { decide(place, covered: true) }
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Color(.systemBackground))
+                            .padding(.horizontal, 16)
+                            .frame(minHeight: 36)
+                            .background(Color.primary, in: Capsule())
+                            .frame(minHeight: SnapflyTokens.touch)
+                            .contentShape(Rectangle())
+                            .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 12)
+                    .id(place.id)
+                    .transition(.opacity)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("\(Self.name(of: place.mark)), \(L("Left visible")), \(String(format: L("Page %d"), place.number))")
+                    .accessibilityAction(named: L("Cover")) { decide(place, covered: true) }
+                }
+            }
+        }
+    }
+
+    /// Why these show: the categories chosen; and, where a name is among
+    /// them and none of the owner's is kept in Always Hide on this iPhone,
+    /// that too, as Always Hide is kept on each device alone.
+    private var visibleNote: String {
+        let note = L("Your categories leave these visible.")
+        let names = visible.contains { $0.mark.kind.map(PrivateDetail.allNames.contains) == true }
+        let ownName = OwnRules.all.contains { $0.kind == .name && $0.isActive }
+        guard names, !ownName else { return note }
+        return note + " " + L("No name of yours is kept in Always Hide on this iPhone.")
+    }
+
+    private func coverVisible() {
+        withAnimation(motion) {
+            for (_, _, session) in sessions {
+                let ids = Set(session.plan.marks.filter { $0.origin == .spared && !$0.covered }.map(\.id))
+                if !ids.isEmpty { session.set(ids, covered: true) }
+            }
+        }
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
     }
 
     // MARK: Faults
@@ -878,12 +964,15 @@ struct ReviewListSheet: View {
             .background(SnapflyTokens.hideCard, in: RoundedRectangle(cornerRadius: SnapflyTokens.hideCardRadius, style: .continuous))
     }
 
-    private func sign(_ mark: ProtectionPlan.Mark) -> some View {
+    /// A place's sign: in orange while it is open, quiet where the
+    /// categories leave it visible.
+    private func sign(_ mark: ProtectionPlan.Mark, muted: Bool = false) -> some View {
         Image(systemName: Self.symbol(of: mark))
             .font(.system(size: 16, weight: .semibold))
-            .foregroundStyle(SnapflyTokens.reviewOpen)
+            .foregroundStyle(muted ? SnapflyTokens.hideSecondary : SnapflyTokens.reviewOpen)
             .frame(width: 36, height: 36)
-            .background(SnapflyTokens.reviewOpenFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .background(muted ? SnapflyTokens.hideButtonOff : SnapflyTokens.reviewOpenFill,
+                        in: RoundedRectangle(cornerRadius: 10, style: .continuous))
             .accessibilityHidden(true)
     }
 

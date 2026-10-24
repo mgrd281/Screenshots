@@ -106,4 +106,42 @@ final class ScanContentTests: XCTestCase {
                                          CGRect(x: 0.6, y: 0.1, width: 0.1, height: 0.03)])
         XCTAssertEqual(merged.count, 2)
     }
+
+    // MARK: The guard: what a line says, each character
+
+    private func read(_ text: String, row: Int, x: CGFloat = 0.1, width: CGFloat = 0.6,
+                      sure: Float = 0.95) -> ScanContent.Read {
+        let box = line(text, row: row, x: x, width: width).box
+        return ScanContent.Read(text: text, box: box, confidence: sure)
+    }
+
+    /// An umlaut's dots, an accent, an @ or a digit read before cleaning and
+    /// not after changes the line; spaces, and more read beside it, do not.
+    func testALineWhoseDotsAreLostChanged() {
+        let before = [read("Ärzte für Radiologie", row: 0), read("Dr. med. René Brückner", row: 1),
+                      read("praxis@radiologie-musterwall.de", row: 2), read("Telefon 040 1234567-0", row: 3),
+                      read("Größer, Weiß", row: 4)]
+        let same = [line("Ärzte für  Radiologie", row: 0), line("Dr.med. René Brückner", row: 1),
+                    line("praxis@radiologie-musterwall.de", row: 2), line("Telefon 040 1234567-0 Telefax", row: 3),
+                    line("Größer,", row: 4, width: 0.2), line("Weiß", row: 4, x: 0.35, width: 0.2)]
+        XCTAssertEqual(ScanContent.changed(before: before, after: same), [], "the same, spaced or split otherwise")
+        let changed = [line("Arzte fur Radiologie", row: 0), line("Dr. med. Rene Bruckner", row: 1),
+                       line("praxisradiologie-musterwall.de", row: 2), line("Telefon 040 123456-0", row: 3),
+                       line("Grosser, Weiss", row: 4)]
+        XCTAssertEqual(ScanContent.changed(before: before, after: changed).count, 5, "each line changed")
+    }
+
+    /// A line read unsurely before says nothing sure of the page, and a line
+    /// of a letter or two is too short to tell; another column's line on the
+    /// same row is no part of it.
+    func testOnlySureLinesCount() {
+        let before = [read("Ärzte für Radiologie", row: 0, sure: 0.6), read("Ä", row: 1)]
+        let after = [line("Arzte fur Radiologie", row: 0), line("A", row: 1)]
+        XCTAssertEqual(ScanContent.changed(before: before, after: after), [])
+        let beside = [read("Musterbank Hamburg", row: 0, x: 0.7, width: 0.25)]
+        let otherColumn = [line("Musterbank Hamburg", row: 0, x: 0.7, width: 0.25), line("Befund vom 05.06.2026", row: 0)]
+        XCTAssertEqual(ScanContent.changed(before: beside, after: otherColumn), [])
+        XCTAssertEqual(ScanContent.changed(before: beside, after: [line("Befund vom 05.06.2026", row: 0)]).count, 1,
+                       "read nowhere on its row is changed")
+    }
 }

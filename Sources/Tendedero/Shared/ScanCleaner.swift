@@ -157,9 +157,59 @@ enum ScanCleaner {
         // measured on the text it holds; the same reading then checks the
         // result, so nothing is read twice.
         let read = Finder.lines(in: page) ?? []
-        guard let cleaned = cleaned(page, mode, printBoxes: read.map(\.box)) else { return nil }
+        guard let cleaned = guarded(page, mode, reading: read) else { return nil }
         let checked = await check(before: page, after: cleaned, mode: mode, photo: photo, reading: read)
         return Prepared(straightened: page, cleaned: cleaned, turns: turns, skew: skew, checked: checked)
+    }
+
+    /// The page cleaned, and read again: every line read surely before
+    /// that reads otherwise after, a dot, an accent or a digit gone, is
+    /// cleaned again gently, and where even that changes it, kept as the
+    /// light alone leaves it (`ScanContent.changed`, `ScanClean.redone`).
+    /// Cleaning may make text clearer, never different. Each line cleaned
+    /// again is noted in the log. Black and white, whose menu says it can
+    /// lose a mark too pale to tell from the paper, is two values only.
+    static func guarded(_ page: CGImage, _ mode: ScanColor, reading read: [Finder.TextLine]) -> CGImage? {
+        guard let bitmap = bitmap(page) else { return nil }
+        let made = ScanClean.cleaned(bitmap, mode, printBoxes: read.map(\.box))
+        var pixels = ScanSheet.edgeCleaned(made.page)
+        guard let first = image(pixels, gray: mode.isGray) else { return nil }
+        guard mode != .blackAndWhite else { return first }
+        let before = read.map { ScanContent.Read(text: $0.string, box: $0.box, confidence: $0.confidence) }
+        guard let after = Finder.reading(of: first) else { return first }
+        let changed = ScanContent.changed(before: before, after: after.map { ScanContent.Line(text: $0.string, box: $0.box) })
+        guard !changed.isEmpty else { return first }
+        var kept = 0
+        for box in changed {
+            let said = before.first { $0.box == box }?.text ?? ""
+            var gentle = pixels
+            ScanClean.redone(made.base, into: &gentle, box: box, .gentle, mode: mode)
+            if reads(gentle, box: box, as: said) {
+                pixels = gentle
+            } else {
+                ScanClean.redone(made.base, into: &pixels, box: box, .kept, mode: mode)
+                kept += 1
+            }
+        }
+        log.info("Cleaning changed \(changed.count, privacy: .public) lines: cleaned again gently, \(kept, privacy: .public) kept as evened")
+        return image(pixels, gray: mode.isGray) ?? first
+    }
+
+    /// Whether the line in `box` reads as `said` on a page: read on its own,
+    /// with a line's room round it.
+    static func reads(_ page: ScanBitmap, box: CGRect, as said: String) -> Bool {
+        let w = Double(page.width), h = Double(page.height)
+        let room = Double(box.height) * 0.8
+        let x0 = max(0, Int((Double(box.minX) - room) * w)), x1 = min(page.width, Int((Double(box.maxX) + room) * w))
+        let y0 = max(0, Int((1 - Double(box.maxY) - room) * h)), y1 = min(page.height, Int((1 - Double(box.minY) + room) * h))
+        guard x1 - x0 > 8, y1 - y0 > 8 else { return false }
+        var piece = ScanBitmap(width: x1 - x0, height: y1 - y0, red: 255, green: 255, blue: 255)
+        for y in y0..<y1 {
+            let from = (y * page.width + x0) * 4, to = (y - y0) * piece.width * 4
+            piece.pixels.replaceSubrange(to..<(to + piece.width * 4), with: page.pixels[from..<(from + piece.width * 4)])
+        }
+        guard let picture = image(piece, gray: false), let lines = Finder.lines(in: picture) else { return false }
+        return ScanContent.says(lines.sorted { $0.box.minY > $1.box.minY }.map(\.string).joined(), said)
     }
 
     /// The page cut in from its edges where anything of what it lay on shows.
@@ -685,15 +735,6 @@ enum ScanCleaner {
         }
         func middle(_ values: [UInt8]) -> CGFloat { CGFloat(values.sorted()[values.count / 2]) / 255 }
         return (middle(reds), middle(greens), middle(blues))
-    }
-
-    // MARK: Cleaning
-
-    /// The page cleaned in the colours asked for (`ScanClean`), in greys
-    /// with one channel where they are grey.
-    static func cleaned(_ page: CGImage, _ mode: ScanColor, printBoxes: [CGRect] = []) -> CGImage? {
-        guard let bitmap = bitmap(page) else { return nil }
-        return image(ScanSheet.edgeCleaned(ScanClean.clean(bitmap, mode, printBoxes: printBoxes)), gray: mode.isGray)
     }
 
     // MARK: Checking

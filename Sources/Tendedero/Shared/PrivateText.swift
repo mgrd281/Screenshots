@@ -244,6 +244,15 @@ enum Finder {
             parts = .kept(words)
         }
 
+        /// How sure the reading is of the line, from 0 to 1; a line kept
+        /// from an earlier reading counts as sure.
+        var confidence: Float {
+            switch parts {
+            case .read(let text): text.confidence
+            case .kept: 1
+            }
+        }
+
         /// The same reading, where it was found in the picture.
         func placed(box: CGRect, frame: CGRect) -> TextLine {
             switch parts {

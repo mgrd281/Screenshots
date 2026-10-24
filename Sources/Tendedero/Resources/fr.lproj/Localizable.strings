@@ -1868,3 +1868,9 @@
 "Smudged lens" = "Objectif sale";
 "Too small" = "Trop petit";
 "The text could not be read. Nothing is covered yet." = "Le texte n’a pas pu être lu. Rien n’est encore masqué.";
+"Nothing covered" = "Rien de masqué";
+"%d visible" = "%d visibles";
+"Left visible" = "Laissé visible";
+"Cover All Left Visible" = "Masquer tout ce qui est visible";
+"Your categories leave these visible." = "Tes catégories les laissent visibles.";
+"No name of yours is kept in Always Hide on this iPhone." = "Aucun nom à toi n’est enregistré dans Toujours masquer sur cet iPhone.";

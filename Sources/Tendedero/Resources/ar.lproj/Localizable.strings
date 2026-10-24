@@ -1868,3 +1868,9 @@
 "Smudged lens" = "العدسة متّسخة";
 "Too small" = "صغير جدًا";
 "The text could not be read. Nothing is covered yet." = "تعذّرت قراءة النص. لم يُغطَّ شيء بعد.";
+"Nothing covered" = "لم يُغطَّ شيء";
+"%d visible" = "%d ظاهر";
+"Left visible" = "تُرك ظاهراً";
+"Cover All Left Visible" = "تغطية كل ما تُرك ظاهراً";
+"Your categories leave these visible." = "فئاتك تترك هذه ظاهرة.";
+"No name of yours is kept in Always Hide on this iPhone." = "لا يوجد اسم لك محفوظ في «إخفاء دائمًا» على هذا الآيفون.";

@@ -242,19 +242,20 @@ final class ProtectionPlanTests: XCTestCase {
         return made
     }
 
-    func testWhatSettingsLeavesVisibleIsListedButNotCoveredOrCounted() throws {
+    func testWhatSettingsLeavesVisibleIsListedAndCountedAsVisibleNotAsCovered() throws {
         var plan = ProtectionPlan()
         plan.add(found: [area(0.1, 0.8, .names, role: .patient)], spared: [area(0.5, 0.6, .names, role: .doctor)])
         let doctor = try XCTUnwrap(plan.marks.first { $0.origin == .spared })
         XCTAssertFalse(doctor.covered)
         XCTAssertEqual(doctor.role, .doctor)
-        XCTAssertEqual(plan.tally, ProtectionPlan.Tally(covered: 1, toCheck: 0, left: 0, exposed: 0))
+        XCTAssertEqual(plan.tally, ProtectionPlan.Tally(covered: 1, toCheck: 0, left: 0, exposed: 0, visible: 1))
         XCTAssertEqual(plan.left, [doctor.rect], "the check of the copy leaves it too")
         let middle = CGPoint(x: doctor.rect.midX, y: doctor.rect.midY)
         XCTAssertNil(plan.mark(at: middle), "not on the picture until covered")
         plan.toggle(doctor.id)
         XCTAssertEqual(plan.mark(at: middle)?.id, doctor.id)
         XCTAssertEqual(plan.tally.covered, 2)
+        XCTAssertEqual(plan.tally.visible, 0, "covered with a tap, no longer visible")
         XCTAssertEqual(plan.report.kinds[.names], 2)
         // Back to what Snapfly found: visible again.
         plan.resetToFound()
