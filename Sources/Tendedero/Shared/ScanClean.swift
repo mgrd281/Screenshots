@@ -280,8 +280,8 @@ enum ScanClean {
         let lines = printLines(light, width: page.width, height: page.height)
         let faint = textMask(light, width: page.width, height: page.height)
         let flat = uncreased(evened(page, paper: paper, tuning: tuning, text: text, faint: faint), tuning: tuning)
-        let even = neutralized(denoised(flat, grain: tuning.grain, white: white, text: faint, textGrain: tuning.textGrain),
-                               tuning: tuning)
+        let even = neutralized(denoised(flat, grain: tuning.grain, white: white, text: faint, textGrain: tuning.textGrain,
+                                        darkest: Int(tuning.lightInk)), tuning: tuning)
         // Faint print deepened, sharpened, then taken darker, so the darkening sets the print's
         // final shade: an unsharp mask run after it would drive a stroke to
         // black. The print's own darkness is read inside the boxes of text.
@@ -716,7 +716,11 @@ enum ScanClean {
                             blue *= share
                         }
                     }
-                    let headroom = faint?[y * w + x] ?? false ? tuning.textHeadroom : tuning.headroom
+                    // Only light marks keep their contrast; a dark pixel, a rule's or a
+                    // box's, is evened as on any page.
+                    let lightMark = faint?[y * w + x] ?? false
+                        && Float(Self.brightness(px[i], px[i + 1], px[i + 2])) >= tuning.lightInk
+                    let headroom = lightMark ? tuning.textHeadroom : tuning.headroom
                     red = max(red, floor.red) * headroom
                     green = max(green, floor.green) * headroom
                     blue = max(blue, floor.blue) * headroom
@@ -769,13 +773,14 @@ enum ScanClean {
 
     /// The paper's grain smoothed: each pixel the mean of the neighbours,
     /// itself among them, that are within `grain` of it, colour by colour,
-    /// or `textGrain` within the lines of light print read (`text`), so a faint
-    /// mark's rim is kept. An edge's other side is further off, so it is
+    /// or `textGrain` within the lines of light print read (`text`) for a
+    /// pixel as light as `darkest`, so a faint mark's rim is kept and a
+    /// rule's or a box's line is smoothed as anywhere. An edge's other side is further off, so it is
     /// never blurred. A pixel that stays at `white` or over whatever its
     /// neighbours are, which the curve makes white anyway, is left as it
     /// is, which is much quicker.
     static func denoised(_ page: ScanBitmap, grain: Int, white: Int = 256, text: [Bool]? = nil,
-                         textGrain: Int = 0) -> ScanBitmap {
+                         textGrain: Int = 0, darkest: Int = 100) -> ScanBitmap {
         guard grain > 0 else { return page }
         let w = page.width, h = page.height
         guard w > 2, h > 2 else { return page }
@@ -785,7 +790,10 @@ enum ScanClean {
                 for y in 1..<(h - 1) {
                     for x in 1..<(w - 1) {
                         let p = (y * w + x) * 4
-                        let near = text?[y * w + x] ?? false ? textGrain : grain
+                        // Light marks only: a dark pixel, a rule's or a box's, is smoothed as on any page.
+                        let lightMark = text?[y * w + x] ?? false
+                            && Int(Self.brightness(src[p], src[p + 1], src[p + 2])) >= darkest
+                        let near = lightMark ? textGrain : grain
                         guard near > 0 else { continue }
                         for k in 0..<3 {
                             let middle = Int(src[p + k])

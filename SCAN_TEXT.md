@@ -251,6 +251,21 @@ Two causes, both fixed above:
 The test was briefly loosened to pass that run; it now asks for the brief's
 targets again.
 
+### The sick note's fold
+
+The made-up sick note's step at the fold stayed at 2.0154 px, past the 2 px
+main keeps, on every run. A diagnostic test (`testWhereTheFoldStepComesFrom`)
+cleaned its straightened page again with the light print's rules turned off
+one by one: 2.0154 with everything, 2.0154 with the toning off, 1.9983 with
+the paper taken at 95 % and the smoothing at 10 again. So neither the toning
+nor the guard moves the line; the paper at its own level and the lighter
+smoothing do, by 0.017 px, on a sheet whose print the lamp makes light
+throughout (all 40 of its lines count as light print). Both now apply only to
+pixels as light as a light mark (100 and over), so a rule's or a box's dark
+pixels are evened and smoothed as on any page. The lab letters come out the
+same (dots, darkness, strokes). **Not verified:** that the step is back
+under 2 px; the test runs on the Mac only.
+
 ### The second run
 
 With those two fixed (darker drive, up to a body of 60):
