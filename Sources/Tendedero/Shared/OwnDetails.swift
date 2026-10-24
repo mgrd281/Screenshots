@@ -155,8 +155,6 @@ enum OwnDetails {
             forms.append([first])
         }
         guard !forms.isEmpty else { return [] }
-        // Compared as text recognition reads them: an l as an i, an O as a 0.
-        forms = forms.map { $0.map(readAlike) }
         let tokens = tokens(in: line)
         var found: [Range<String.Index>] = []
         var i = 0
@@ -200,7 +198,7 @@ enum OwnDetails {
                 guard read.count <= whole.count + 1 else { break }
                 // As many words as the form has is the form, read word by word (`fits`).
                 guard n + 1 != form.count else { continue }
-                if read == whole || whole.count >= 6 && Finder.differsByOne(whole, read) { return n + 1 }
+                if same(whole, read, misreadFrom: 6) { return n + 1 }
             }
         }
         return 0
@@ -217,9 +215,8 @@ enum OwnDetails {
     private static func fits(_ form: [String], _ tokens: ArraySlice<Token>, in line: String, masking: Bool) -> Bool {
         let loosely = form.count == 1 && !masking ? 7 : 5
         var misread = false
-        for (word, token) in zip(form, tokens) where word != token.folded {
-            guard !misread, min(word.count, token.folded.count) >= loosely,
-                  Finder.differsByOne(word, token.folded) else { return false }
+        for (word, token) in zip(form, tokens) where word != token.folded && readAlike(word) != token.alike {
+            guard !misread, same(word, token.folded, misreadFrom: loosely) else { return false }
             misread = true
         }
         if form.count == 1 {
@@ -243,6 +240,17 @@ enum OwnDetails {
             && gap.allSatisfy { $0.isNewline || " ,.;/·\t".contains($0) }
     }
 
+    /// Whether a word read is this one: as it is, or as text recognition
+    /// reads letters alike (`readAlike`), or with one letter misread in a
+    /// word of `misreadFrom` letters or more.
+    private static func same(_ word: String, _ read: String, misreadFrom least: Int) -> Bool {
+        if word == read { return true }
+        let wanted = readAlike(word), seen = readAlike(read)
+        if wanted == seen { return true }
+        guard min(word.count, read.count) >= least else { return false }
+        return Finder.differsByOne(word, read) || Finder.differsByOne(wanted, seen)
+    }
+
     /// A folded word as text recognition may read it, so a misread letter
     /// of the kinds it often makes costs nothing: "rn" as "m", an l, a 1 or
     /// a stroke as an i, a 0 as an o.
@@ -260,6 +268,8 @@ enum OwnDetails {
     private struct Token {
         let range: Range<String.Index>
         let folded: String
+        /// As text recognition reads letters alike (`readAlike`).
+        let alike: String
     }
 
     /// The words of a line: letters, with an apostrophe or a hyphen inside,
@@ -270,7 +280,8 @@ enum OwnDetails {
         return wordPattern.matches(in: line, range: whole).compactMap { match in
             guard let range = Range(match.range, in: line) else { return nil }
             let read = String(line[range]).replacingOccurrences(of: "|", with: "l")
-            return Token(range: range, folded: readAlike(fold(read)))
+            let folded = fold(read)
+            return Token(range: range, folded: folded, alike: readAlike(folded))
         }
     }
 
