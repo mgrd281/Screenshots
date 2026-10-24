@@ -182,8 +182,18 @@ enum ScanClean {
         /// this share of it and more: a stroke, much darker, is left to the
         /// print's own tuning, so evened light never lightens print.
         var printEdge: Float = 0.78
+        /// A pixel under this share of the brightest close round it is a
+        /// stroke, and is evened by the cell's paper alone.
+        var strokeBelow: Float = 0.95
         var printTarget: Float = 30
         var highestBlack: Float = 0.75
+        /// Faint print (`strengthened`): a patch whose strokes stand out by
+        /// less than `faintTarget`, of 255, is deepened toward it, at most
+        /// `faintGain` times, by what each stroke stands out past
+        /// `faintFloor`, the grain.
+        var faintFloor: Float = 6
+        var faintTarget: Float = 70
+        var faintGain: Float = 4
         /// Colour weaker than `neutralBelow`, against how bright a pixel
         /// is, is taken away once the paper's colour is divided out, as
         /// tinted paper leaves on its print; stronger than `colourAbove`
@@ -213,12 +223,14 @@ enum ScanClean {
                       printBoxes: [CGRect] = []) -> ScanBitmap {
         let white = Int((tuning.whitePoint * 255).rounded(.up))
         let paper = Paper(of: page, tuning: tuning)
-        let flat = uncreased(evened(page, paper: paper, tuning: tuning), tuning: tuning)
+        // Where text was read: only there is faint print looked for.
+        let text = textMask(printBoxes, width: page.width, height: page.height)
+        let flat = uncreased(evened(page, paper: paper, tuning: tuning, text: text), tuning: tuning)
         let even = neutralized(denoised(flat, grain: tuning.grain, white: white), tuning: tuning)
-        // Sharpened first, then taken darker, so the darkening sets the print's
+        // Faint print deepened, sharpened, then taken darker, so the darkening sets the print's
         // final shade: an unsharp mask run after it would drive a stroke to
         // black. The print's own darkness is read inside the boxes of text.
-        var sharpened = even
+        var sharpened = strengthened(even, tuning: tuning, text: text)
         sharpen(&sharpened, tuning: tuning)
         var tuned = tuning
         tuned.blackPoint = blackPoint(forPrint: printDarkness(sharpened, tuning: tuning, boxes: printBoxes), tuning: tuning)
@@ -573,7 +585,7 @@ enum ScanClean {
     }
 
     /// The same, with the paper already measured.
-    static func evened(_ page: ScanBitmap, paper: Paper, tuning: Tuning) -> ScanBitmap {
+    static func evened(_ page: ScanBitmap, paper: Paper, tuning: Tuning, text: [Bool]? = nil) -> ScanBitmap {
         let pageLightness = Paper.lightness(paper.level.red, paper.level.green, paper.level.blue)
         guard pageLightness >= tuning.darkestPaper else { return page }
         let w = page.width, h = page.height, cell = Float(paper.cell)
@@ -590,6 +602,11 @@ enum ScanClean {
         }
         let floor = (red: tuning.dimmest * max(paper.level.red, 1), green: tuning.dimmest * max(paper.level.green, 1),
                      blue: tuning.dimmest * max(paper.level.blue, 1))
+        // The brightest pixel close round each: within the text read, a
+        // pixel well under it is a stroke, however faint, and never takes a
+        // fold's or a shadow's finer light, which faint small print would
+        // otherwise pass for.
+        let around = text == nil ? [] : widest(page.brightness, width: w, height: h, radius: 2)
         var out = page
         var rowRed = [Float](repeating: 0, count: paper.columns), rowGreen = rowRed, rowBlue = rowRed
         out.pixels.withUnsafeMutableBufferPointer { px in
@@ -629,7 +646,8 @@ enum ScanClean {
                         // and is left to the cell's own.
                         let own = Float(Self.brightness(px[i], px[i + 1], px[i + 2]))
                         if there < here, there >= here * tuning.printEdge,
-                           own >= here * tuning.printEdge {
+                           own >= here * tuning.printEdge,
+                           !(text?[y * w + x] ?? false) || own >= Float(around[y * w + x]) * tuning.strokeBelow {
                             let share = there / here
                             red *= share
                             green *= share
@@ -647,6 +665,21 @@ enum ScanClean {
             }
         }
         return out
+    }
+
+    /// The places of text read, from 0 to 1 from the bottom left, a little
+    /// larger, as a pixel mask; nil where none was read.
+    static func textMask(_ boxes: [CGRect], width w: Int, height h: Int) -> [Bool]? {
+        guard !boxes.isEmpty else { return nil }
+        var mask = [Bool](repeating: false, count: w * h)
+        for box in boxes {
+            let grown = box.insetBy(dx: -box.height * 0.5, dy: -box.height * 0.3)
+            let x0 = max(0, Int(grown.minX * Double(w))), x1 = min(w, Int((grown.maxX * Double(w)).rounded(.up)))
+            let y0 = max(0, Int((1 - grown.maxY) * Double(h))), y1 = min(h, Int(((1 - grown.minY) * Double(h)).rounded(.up)))
+            guard x1 > x0, y1 > y0 else { continue }
+            for y in y0..<y1 { for x in x0..<x1 { mask[y * w + x] = true } }
+        }
+        return mask
     }
 
     /// The point `t` of the way from `a` to `b`.
