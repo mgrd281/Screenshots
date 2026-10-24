@@ -1868,3 +1868,9 @@
 "Smudged lens" = "렌즈 얼룩";
 "Too small" = "너무 작음";
 "The text could not be read. Nothing is covered yet." = "텍스트를 읽을 수 없었습니다. 아직 아무것도 가리지 않았습니다.";
+"Nothing covered" = "가린 것 없음";
+"%d visible" = "%d개 보임";
+"Left visible" = "보이게 둠";
+"Cover All Left Visible" = "보이는 것 모두 가리기";
+"Your categories leave these visible." = "선택한 항목에서는 이것들이 보이게 남습니다.";
+"No name of yours is kept in Always Hide on this iPhone." = "이 iPhone의 항상 가리기에 저장된 이름이 없습니다.";

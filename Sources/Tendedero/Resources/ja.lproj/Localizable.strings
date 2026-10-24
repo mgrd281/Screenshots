@@ -1868,3 +1868,9 @@
 "Smudged lens" = "レンズの汚れ";
 "Too small" = "小さすぎ";
 "The text could not be read. Nothing is covered yet." = "文字を読み取れませんでした。まだ何も隠していません。";
+"Nothing covered" = "何も隠していません";
+"%d visible" = "%d件 表示中";
+"Left visible" = "表示のまま";
+"Cover All Left Visible" = "表示中のものをすべて隠す";
+"Your categories leave these visible." = "選んだ種類では、これらは表示されたままです。";
+"No name of yours is kept in Always Hide on this iPhone." = "このiPhoneの「常に隠す」には、あなたの名前が保存されていません。";

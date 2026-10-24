@@ -1870,3 +1870,9 @@
 "Smudged lens" = "Smudged lens";
 "Too small" = "Too small";
 "The text could not be read. Nothing is covered yet." = "The text could not be read. Nothing is covered yet.";
+"Nothing covered" = "Nothing covered";
+"%d visible" = "%d visible";
+"Left visible" = "Left visible";
+"Cover All Left Visible" = "Cover All Left Visible";
+"Your categories leave these visible." = "Your categories leave these visible.";
+"No name of yours is kept in Always Hide on this iPhone." = "No name of yours is kept in Always Hide on this iPhone.";

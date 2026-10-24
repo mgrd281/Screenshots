@@ -186,10 +186,10 @@ enum Leaving: Hashable, Identifiable {
 /// as the engine has it, never ahead of it: while it is read, a spinner and
 /// the step, with Don't Wait while Apple Intelligence reads; after a
 /// failure, what went wrong and Try Again; then how many places are
-/// covered, with the small green shield, and how many are still to check or
-/// what is wrong with the picture (`ReviewStatus`); that nothing private
-/// was found only when nothing is. A tap opens Details, to see and change
-/// every place.
+/// covered, with the small green shield, and how many are still to check,
+/// left visible by the categories chosen, or what is wrong with the picture
+/// (`ReviewStatus`); that nothing private was found only when nothing is. A
+/// tap opens Details, to see and change every place.
 struct PrivacyStatus: View {
     let stage: ProtectSession.Stage
     let tally: ProtectionPlan.Tally
@@ -244,7 +244,7 @@ struct PrivacyStatus: View {
     }
 
     private var status: ReviewStatus {
-        ReviewStatus(covered: tally.covered, open: tally.toCheck, hints: hints)
+        ReviewStatus(covered: tally.covered, open: tally.toCheck, hints: hints, visible: tally.visible)
     }
 
     private var counts: some View {
@@ -265,14 +265,16 @@ struct PrivacyStatus: View {
                 }
                 if let pending = status.pending {
                     if status.covering != nil { Text(verbatim: "·").foregroundStyle(.secondary) }
-                    // Where the words don't fit, the sign that some are to check, and how many.
+                    // Where the words don't fit, the sign that some are to check, or
+                    // are left visible, and how many.
                     ViewThatFits(in: .horizontal) {
                         Text(pending)
                         Label {
-                            Text(status.open > 0 ? status.open : status.hints, format: .number)
+                            Text(status.open > 0 ? status.open : status.visible > 0 ? status.visible : status.hints,
+                                 format: .number)
                         } icon: {
                             Image(systemName: status.open > 0 && tally.exposed == 0 ? "circle.dashed"
-                                : "exclamationmark.triangle.fill")
+                                : status.state == .visible ? "eye" : "exclamationmark.triangle.fill")
                         }
                         .labelStyle(.titleAndIcon)
                     }

@@ -1868,3 +1868,9 @@
 "Smudged lens" = "Linse verschmiert";
 "Too small" = "Zu klein";
 "The text could not be read. Nothing is covered yet." = "Der Text konnte nicht gelesen werden. Noch ist nichts verdeckt.";
+"Nothing covered" = "Nichts verdeckt";
+"%d visible" = "%d sichtbar";
+"Left visible" = "Sichtbar gelassen";
+"Cover All Left Visible" = "Alles Sichtbare verdecken";
+"Your categories leave these visible." = "Deine Kategorien lassen diese sichtbar.";
+"No name of yours is kept in Always Hide on this iPhone." = "Auf diesem iPhone ist in Immer verbergen kein Name von dir gespeichert.";

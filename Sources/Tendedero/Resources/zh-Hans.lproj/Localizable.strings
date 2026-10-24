@@ -1868,3 +1868,9 @@
 "Smudged lens" = "镜头脏污";
 "Too small" = "太小";
 "The text could not be read. Nothing is covered yet." = "无法读取文字。尚未遮盖任何内容。";
+"Nothing covered" = "未遮盖任何内容";
+"%d visible" = "%d 处可见";
+"Left visible" = "保持可见";
+"Cover All Left Visible" = "遮盖所有可见内容";
+"Your categories leave these visible." = "你选择的类别让这些保持可见。";
+"No name of yours is kept in Always Hide on this iPhone." = "这台 iPhone 的“始终隐藏”中没有保存你的名字。";

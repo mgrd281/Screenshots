@@ -1868,3 +1868,9 @@
 "Smudged lens" = "Lente sucia";
 "Too small" = "Demasiado pequeno";
 "The text could not be read. Nothing is covered yet." = "Non se puido ler o texto. Aínda non se cubriu nada.";
+"Nothing covered" = "Nada cuberto";
+"%d visible" = "%d visibles";
+"Left visible" = "Deixado visible";
+"Cover All Left Visible" = "Cubrir todo o visible";
+"Your categories leave these visible." = "As túas categorías déixanos visibles.";
+"No name of yours is kept in Always Hide on this iPhone." = "Neste iPhone non hai ningún nome teu en Ocultar sempre.";
