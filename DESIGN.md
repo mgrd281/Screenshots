@@ -2970,7 +2970,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
       Auswählen, Rechteck, Lasso, Pinsel and Radierer, then Wiederholen (the
       tool in hand chosen again opens its options); **Seite** holds
       Zuschneiden, Drehen, the colours (named as they are: Farbe,
-      Graustufen, Schwarzweiß; Color with "Logos stay in color", Black and
+      Originalfarbe, Graustufen, Schwarzweiß; Color with "Logos stay in
+      color", Original Color with "The paper keeps its own color" (a pink
+      form stays pink, evenly, at its paper's brightest), Black and
       white with "Smallest file, pale stamps can go"), Vorher, which puts
       Before on the leading side of the divider (`phone-scan-divider`) over
       After, one finger moving the divider and VoiceOver reading one

@@ -1906,6 +1906,8 @@
 "Prepare" = "Hazırlanır";
 "The page is straightened and brightened. No text is changed." = "Səhifə düzəldilir və aydınlaşdırılır. Heç bir mətn dəyişmir.";
 "Names, numbers and other private details are covered, as your settings say." = "Adlar, nömrələr və digər şəxsi məlumatlar ayarlarınıza görə örtülür.";
+"Original Color" = "Orijinal rəng";
+"The paper keeps its own color" = "Kağız öz rəngini saxlayır";
 "Document" = "Sənəd";
 "Show Preview" = "Önizləməni göstər";
 "Hide Preview" = "Önizləməni gizlət";

@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, a scanned page has a fourth colour, Originalfarbe: the
+  paper keeps its own colour, so a pink sick note stays pink, evenly lit
+  and straightened, the print as dark as in Farbe.
 - On the iPhone, the Scan tab's recent documents and scanned pages are
   veiled at first, so no word on them can be read when the screen is seen
   by others; the eye beside Alle anzeigen shows them, and Snapfly

@@ -1906,6 +1906,8 @@
 "Prepare" = "तैयार करना";
 "The page is straightened and brightened. No text is changed." = "पेज सीधा और उजला किया जाता है। कोई टेक्स्ट नहीं बदला जाता।";
 "Names, numbers and other private details are covered, as your settings say." = "नाम, नंबर और अन्य निजी जानकारी आपकी सेटिंग्स के अनुसार ढकी जाती है।";
+"Original Color" = "मूल रंग";
+"The paper keeps its own color" = "कागज़ अपना रंग रखता है";
 "Document" = "दस्तावेज़";
 "Show Preview" = "प्रीव्यू दिखाएँ";
 "Hide Preview" = "प्रीव्यू छिपाएँ";
