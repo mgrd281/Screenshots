@@ -1563,6 +1563,26 @@
 "Table" = "表";
 "Page %d could not be covered, so its text was not read." = "ページ%dを隠せなかったため、そのテキストは読み取っていません。";
 "The page is gone." = "このページはもうありません。";
+"Search in the text" = "テキスト内を検索";
+"Search" = "検索";
+"Correct Text" = "テキストを修正";
+"Done Correcting" = "修正を終える";
+"Translate" = "翻訳";
+"Undo All Corrections" = "すべての修正を取り消す";
+"Tap a paragraph or a table cell to correct it." = "段落または表のセルをタップして、テキストを修正します。";
+"1 line was read unsurely. It is marked; check it on the page." = "1行は自信のない状態で読み取られました。印が付いています。ページで確認してください。";
+"%d lines were read unsurely. They are marked; check them on the page." = "%d行は自信のない状態で読み取られました。印が付いています。ページで確認してください。";
+"Check on Page" = "ページで確認";
+"Includes your corrections. The PDF's text keeps what was read." = "修正内容を含みます。PDFのテキストは読み取ったままです。";
+"Opens the text to correct it." = "テキストを開いて修正します。";
+"Copy Table" = "表をコピー";
+"Share as CSV" = "CSVとして共有";
+"Table copied" = "表をコピーしました";
+"Read unsurely. Tap to correct." = "自信のない状態で読み取られました。タップして修正します。";
+"On the page" = "ページ上";
+"Back to What Was Read" = "読み取った状態に戻す";
+"Speed" = "速度";
+"No voice for this language is on this iPhone." = "このiPhoneには、この言語の音声がありません。";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "送る前に隠す";

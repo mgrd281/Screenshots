@@ -1563,6 +1563,26 @@
 "Table" = "Tablo";
 "Page %d could not be covered, so its text was not read." = "Sayfa %d gizlenemedi, bu yüzden metni okunmadı.";
 "The page is gone." = "Sayfa artık yok.";
+"Search in the text" = "Metinde ara";
+"Search" = "Ara";
+"Correct Text" = "Metni düzelt";
+"Done Correcting" = "Düzeltmeyi bitir";
+"Translate" = "Çevir";
+"Undo All Corrections" = "Tüm düzeltmeleri geri al";
+"Tap a paragraph or a table cell to correct it." = "Metni düzeltmek için bir paragrafa veya tablo hücresine dokun.";
+"1 line was read unsurely. It is marked; check it on the page." = "1 satır emin olunmadan okundu. İşaretli; sayfada kontrol et.";
+"%d lines were read unsurely. They are marked; check them on the page." = "%d satır emin olunmadan okundu. İşaretliler; sayfada kontrol et.";
+"Check on Page" = "Sayfada kontrol et";
+"Includes your corrections. The PDF's text keeps what was read." = "Düzeltmelerini içerir. PDF’in metni okunduğu gibi kalır.";
+"Opens the text to correct it." = "Düzeltmek için metni açar.";
+"Copy Table" = "Tabloyu kopyala";
+"Share as CSV" = "CSV olarak paylaş";
+"Table copied" = "Tablo kopyalandı";
+"Read unsurely. Tap to correct." = "Emin olunmadan okundu. Düzeltmek için dokun.";
+"On the page" = "Sayfada";
+"Back to What Was Read" = "Okunana geri dön";
+"Speed" = "Hız";
+"No voice for this language is on this iPhone." = "Bu iPhone’da bu dil için ses yok.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Göndermeden önce kapatılır";

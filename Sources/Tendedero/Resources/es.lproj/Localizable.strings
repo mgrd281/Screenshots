@@ -1563,6 +1563,26 @@
 "Table" = "Tabla";
 "Page %d could not be covered, so its text was not read." = "No se pudo ocultar la página %d, así que no se leyó su texto.";
 "The page is gone." = "La página ya no está.";
+"Search in the text" = "Buscar en el texto";
+"Search" = "Buscar";
+"Correct Text" = "Corregir texto";
+"Done Correcting" = "Terminar de corregir";
+"Translate" = "Traducir";
+"Undo All Corrections" = "Deshacer todas las correcciones";
+"Tap a paragraph or a table cell to correct it." = "Toca un párrafo o una celda de la tabla para corregir el texto.";
+"1 line was read unsurely. It is marked; check it on the page." = "Se leyó 1 línea con poca seguridad. Está marcada; compruébala en la página.";
+"%d lines were read unsurely. They are marked; check them on the page." = "Se leyeron %d líneas con poca seguridad. Están marcadas; compruébalas en la página.";
+"Check on Page" = "Comprobar en la página";
+"Includes your corrections. The PDF's text keeps what was read." = "Incluye tus correcciones. El texto del PDF se queda como se leyó.";
+"Opens the text to correct it." = "Abre el texto para corregirlo.";
+"Copy Table" = "Copiar tabla";
+"Share as CSV" = "Compartir como CSV";
+"Table copied" = "Tabla copiada";
+"Read unsurely. Tap to correct." = "Leído con poca seguridad. Toca para corregir.";
+"On the page" = "En la página";
+"Back to What Was Read" = "Volver a lo leído";
+"Speed" = "Velocidad";
+"No voice for this language is on this iPhone." = "No hay ninguna voz para este idioma en este iPhone.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Cubierto antes de enviarlo";

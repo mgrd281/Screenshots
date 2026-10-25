@@ -155,7 +155,7 @@ struct ScanSaveSheet: View {
                 .ignoresSafeArea()
         }
         .sheet(isPresented: $readingText) {
-            ScanReadingSheet(covered: covered, fileName: fileName) { [store, covered] in
+            ScanReadingSheet(covered: covered, fileName: fileName, edits: $store.textEdits) { [store, covered] in
                 try await store.reading(covered: covered)
             }
         }
@@ -568,7 +568,9 @@ struct ScanSaveSheet: View {
     /// The PDF, the pictures or the text made, then copied, saved or shared.
     private func make(_ way: Way, covered: Bool, searchable: Bool, format: Format) async throws {
         if format == .text {
-            let text = ScanReading.text(try await store.reading(covered: covered))
+            // As the text is open, with the corrections made to it.
+            let edits = store.textEdits
+            let text = ScanReading.text(try await store.reading(covered: covered).pages.map { ScanReading.applying(edits, to: $0) })
             guard !text.isEmpty else { return failed(L("Snapfly found no words on these pages.")) }
             switch way {
             case .copy:

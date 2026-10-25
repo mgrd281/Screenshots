@@ -142,6 +142,9 @@ final class ScannedPages: ObservableObject {
     @Published private(set) var sendingTo: ChatTarget?
     /// A photo whose page Vision was not sure of, waiting for its corners.
     @Published var cornersWanted: UUID?
+    /// The corrections made to the pages' text, each kept under the text as
+    /// it was read (`ScanReading.applying`); gone with the scan.
+    @Published var textEdits: [String: String] = [:]
     /// What the document is called and what kind it is, read from its first
     /// page as its covers leave it (`ScanNaming`); nil until read.
     @Published private(set) var title: ScanNaming.Result?
@@ -230,6 +233,7 @@ final class ScannedPages: ObservableObject {
         let gone = pages.map(\.id)
         pages = []
         sessions = [:]
+        textEdits = [:]
         cornersWanted = nil
         title = nil
         titleKey = nil
@@ -504,30 +508,36 @@ final class ScannedPages: ObservableObject {
 
     /// What the pages say, in reading order (`ScanReading`): read again on
     /// each covered page, every cover a mark and nothing from under one; or,
-    /// without covers, all of it as each page was read. Throws, saying which
-    /// page, when one is not ready or cannot be covered.
-    func reading(covered: Bool) async throws -> [ScanReading.Page] {
+    /// without covers, all of it as each page was read; with each page small,
+    /// as it was read, to check the text against. Throws, saying which page,
+    /// when one is not ready or cannot be covered.
+    func reading(covered: Bool) async throws -> ScanReadingResult {
         if covered {
             let pages = try await self.covered(failing: L("Page %d could not be covered, so its text was not read."))
             return await Task.detached(priority: .userInitiated) {
-                pages.map { page in
-                    ScanCleaner.page(Finder.lines(in: page.image) ?? [], hiding: page.places, aspect: ScanCleaner.aspect(of: page.image))
-                }
+                ScanReadingResult(
+                    pages: pages.map { page in
+                        ScanCleaner.page(Finder.lines(in: page.image) ?? [], hiding: page.places, aspect: ScanCleaner.aspect(of: page.image))
+                    },
+                    previews: pages.map { ScanReadingResult.preview(of: $0.image) })
             }.value
         }
         let pages = try await uncovered()
         return await Task.detached(priority: .userInitiated) {
-            pages.map { ScanCleaner.page($0.reading, aspect: ScanCleaner.aspect(of: $0.image)) }
+            ScanReadingResult(pages: pages.map { ScanCleaner.page($0.reading, aspect: ScanCleaner.aspect(of: $0.image)) },
+                              previews: pages.map { ScanReadingResult.preview(of: $0.image) })
         }.value
     }
 
     /// One page's text, covered, as `reading(covered:)` reads it.
-    func reading(of id: UUID) async throws -> ScanReading.Page {
+    func reading(of id: UUID) async throws -> ScanReadingResult {
         guard let index = index(of: id) else { throw ScanProblem(message: L("The page is gone.")) }
         let page = try await covered(pages[index], number: index + 1,
                                      failing: L("Page %d could not be covered, so its text was not read."))
         return await Task.detached(priority: .userInitiated) {
-            ScanCleaner.page(Finder.lines(in: page.image) ?? [], hiding: page.places, aspect: ScanCleaner.aspect(of: page.image))
+            ScanReadingResult(
+                pages: [ScanCleaner.page(Finder.lines(in: page.image) ?? [], hiding: page.places, aspect: ScanCleaner.aspect(of: page.image))],
+                previews: [ScanReadingResult.preview(of: page.image)])
         }.value
     }
 

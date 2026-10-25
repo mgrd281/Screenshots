@@ -1563,6 +1563,26 @@
 "Table" = "表格";
 "Page %d could not be covered, so its text was not read." = "第 %d 页无法遮盖，因此未读取其文字。";
 "The page is gone." = "此页已不存在。";
+"Search in the text" = "在文字中搜索";
+"Search" = "搜索";
+"Correct Text" = "更正文字";
+"Done Correcting" = "完成更正";
+"Translate" = "翻译";
+"Undo All Corrections" = "撤销所有更正";
+"Tap a paragraph or a table cell to correct it." = "轻点段落或表格单元格来更正文字。";
+"1 line was read unsurely. It is marked; check it on the page." = "有 1 行读取不确定，已做标记；请在页面上核对。";
+"%d lines were read unsurely. They are marked; check them on the page." = "有 %d 行读取不确定，已做标记；请在页面上核对。";
+"Check on Page" = "在页面上核对";
+"Includes your corrections. The PDF's text keeps what was read." = "包含你的更正。PDF 中的文字保持读取时的样子。";
+"Opens the text to correct it." = "打开文字以更正。";
+"Copy Table" = "复制表格";
+"Share as CSV" = "以 CSV 分享";
+"Table copied" = "表格已复制";
+"Read unsurely. Tap to correct." = "读取不确定。轻点以更正。";
+"On the page" = "页面上";
+"Back to What Was Read" = "恢复为读取的内容";
+"Speed" = "速度";
+"No voice for this language is on this iPhone." = "这台 iPhone 上没有这种语言的语音。";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "发送之前先遮盖";

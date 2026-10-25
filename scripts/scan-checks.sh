@@ -88,7 +88,7 @@ shot() {
   if [ "$state" = corners ]; then settle=12; fi
   if [ "$state" = warning ] || [ "$state" = sheet ] || [ "$state" = uncovered ] || [ "$state" = list ]; then settle=45; fi
   # Its text is read again on the covered pages once they are ready.
-  if [ "$state" = text ]; then settle=60; fi
+  if [ "$state" = text ] || [ "$state" = textpage ] || [ "$state" = textfix ]; then settle=60; fi
   # Three documents arrive a few seconds apart, then their first pages are covered.
   if [ "$state" = recent ]; then settle=75; fi
   xcrun simctl ui "$on" appearance "$appearance"
@@ -108,7 +108,7 @@ frames() {
   local on=$1 prefix=$2 appearance=$3 language=$4 size=$5
   shift 5
   local states=("$@")
-  if [ ${#states[@]} -eq 0 ]; then states=(tab editor compare warning bw corners sheet uncovered text); fi
+  if [ ${#states[@]} -eq 0 ]; then states=(tab editor compare warning bw corners sheet uncovered text textpage textfix); fi
   for state in "${states[@]}"; do
     shot "$on" "$prefix-$state" "$state" "$appearance" "$language" "$size"
   done

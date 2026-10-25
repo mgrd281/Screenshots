@@ -1563,6 +1563,26 @@
 "Table" = "표";
 "Page %d could not be covered, so its text was not read." = "%d쪽을 가릴 수 없어 텍스트를 읽지 않았습니다.";
 "The page is gone." = "이 페이지는 더 이상 없습니다.";
+"Search in the text" = "텍스트에서 검색";
+"Search" = "검색";
+"Correct Text" = "텍스트 수정";
+"Done Correcting" = "수정 완료";
+"Translate" = "번역";
+"Undo All Corrections" = "모든 수정 취소";
+"Tap a paragraph or a table cell to correct it." = "단락이나 표의 셀을 탭하여 텍스트를 수정하세요.";
+"1 line was read unsurely. It is marked; check it on the page." = "1개 줄이 확실하지 않게 읽혔습니다. 표시되어 있으니 페이지에서 확인하세요.";
+"%d lines were read unsurely. They are marked; check them on the page." = "%d개 줄이 확실하지 않게 읽혔습니다. 표시되어 있으니 페이지에서 확인하세요.";
+"Check on Page" = "페이지에서 확인";
+"Includes your corrections. The PDF's text keeps what was read." = "수정한 내용이 포함됩니다. PDF의 텍스트는 읽은 그대로 유지됩니다.";
+"Opens the text to correct it." = "텍스트를 열어 수정합니다.";
+"Copy Table" = "표 복사";
+"Share as CSV" = "CSV로 공유";
+"Table copied" = "표를 복사했습니다";
+"Read unsurely. Tap to correct." = "확실하지 않게 읽혔습니다. 탭하여 수정하세요.";
+"On the page" = "페이지에서";
+"Back to What Was Read" = "읽은 상태로 되돌리기";
+"Speed" = "속도";
+"No voice for this language is on this iPhone." = "이 iPhone에는 이 언어의 음성이 없습니다.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "보내기 전에 가려집니다";

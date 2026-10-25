@@ -1,50 +1,77 @@
-import AVFoundation
-import NaturalLanguage
 import SwiftUI
 import UIKit
 
-/// The scanned pages' text, to read, copy, share or hear: in reading order
-/// (`ScanReading`), a column to its end before the next, a table row by row
-/// as a grid, a heading set larger, every covered place a black bar whose
-/// words are never shown or spoken. With covers, read again on the covered
-/// pages; without, all of it, under a warning. Copy, Read Aloud (the
-/// system's voice for the text's language, on this iPhone) and Share (a
-/// .txt file) wait on the bar at the bottom.
+/// The scanned pages' text, to read, search, correct, translate, copy,
+/// share or hear: in reading order (`ScanReading`), a column to its end
+/// before the next, a table row by row as a grid that goes to a
+/// spreadsheet, a heading set larger, every covered place a black bar whose
+/// words are never shown, searched or spoken. With covers, read again on the
+/// covered pages; without, all of it, under a warning. A line the reading
+/// was not sure of is washed in orange; Page shows the pages with those
+/// lines outlined where they lie, each a tap to correct it against the
+/// page; a correction is kept in the text that is copied, shared and
+/// spoken (never in the PDF). Copy, Read Aloud (the system's voice, on this
+/// iPhone, with a player for pausing, skipping and speed) and Share (a .txt
+/// file) wait on the bar at the bottom.
 struct ScanReadingSheet: View {
     /// With covers: every covered place a bar.
     let covered: Bool
     /// The name a shared file goes under.
     let fileName: String
-    let read: () async throws -> [ScanReading.Page]
+    /// The corrections made, kept by the text as it was read.
+    @Binding var edits: [String: String]
+    let read: () async throws -> ScanReadingResult
 
-    @State private var pages: [ScanReading.Page]?
+    private enum Mode: Hashable {
+        case text, page
+    }
+
+    @State private var result: ScanReadingResult?
     @State private var failure: String?
+    @State private var mode = ScanDemo.readsPage ? Mode.page : Mode.text
+    @State private var query = ""
+    @State private var searching = false
+    @State private var matchIndex = 0
+    @State private var correcting = ScanDemo.corrects
+    @State private var correction: ReadingCorrection?
     /// What the last tap did, or why it could not, for a moment.
     @State private var note: Note?
     @State private var sharing: SharedFiles?
+    @State private var translating = false
     @StateObject private var speaker = ScanSpeaker()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var typeSize
 
+    struct Note: Equatable {
+        let text: String
+        let failed: Bool
+    }
+
+    /// The pages with the corrections made.
+    private var shown: [ScanReading.Page] {
+        (result?.pages ?? []).map { ScanReading.applying(edits, to: $0) }
+    }
+
+    /// The text as it is copied and shared, every cover a bar.
+    private var text: String {
+        ScanReading.text(shown)
+    }
+
+    private var hasPreviews: Bool {
+        result?.previews.contains { !$0.isEmpty } ?? false
+    }
+
     var body: some View {
         NavigationStack {
-            ScrollView {
-                content
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .accessibilityElement(children: .contain)
-                    .accessibilityIdentifier("scan-reading")
-            }
-            .background(Color(.systemBackground))
-            .safeAreaInset(edge: .bottom, spacing: 0) { bar }
-            .navigationTitle(L("Text"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(L("Done")) { dismiss() }
-                }
-            }
+            content
+                .background(Color(.systemBackground))
+                .safeAreaInset(edge: .bottom, spacing: 0) { bottom }
+                .navigationTitle(L("Text"))
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar { toolbar }
+                .searchable(text: $query, isPresented: $searching, placement: .navigationBarDrawer(displayMode: .automatic),
+                            prompt: L("Search in the text"))
+                .onChange(of: query) { _, _ in matchIndex = 0 }
         }
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
@@ -59,6 +86,10 @@ struct ScanReadingSheet: View {
             ShareFilesSheet(files: files)
                 .ignoresSafeArea()
         }
+        .sheet(item: $correction) { correction in
+            editor(correction)
+        }
+        .modifier(ReadingTranslation(isPresented: $translating, text: text))
     }
 
     // MARK: What it shows
@@ -70,22 +101,9 @@ struct ScanReadingSheet: View {
                 .foregroundStyle(SnapflyTokens.scanWarnText)
                 .padding(.top, 40)
                 .frame(maxWidth: .infinity)
+                .frame(maxHeight: .infinity, alignment: .top)
                 .accessibilityIdentifier("scan-reading-failed")
-        } else if let pages {
-            if pages.allSatisfy(\.blocks.isEmpty) {
-                ContentUnavailableView(L("No Text Found"), systemImage: "text.magnifyingglass",
-                                       description: Text(L("Snapfly found no words on these pages.")))
-                    .padding(.top, 40)
-            } else {
-                VStack(alignment: .leading, spacing: 24) {
-                    if !covered { warning }
-                    ForEach(Array(pages.enumerated()), id: \.offset) { index, page in
-                        pageView(page, number: index + 1, of: pages.count)
-                    }
-                    footnote
-                }
-            }
-        } else {
+        } else if result == nil {
             VStack(spacing: 12) {
                 ProgressView()
                 Text(L("Reading the text…"))
@@ -94,14 +112,96 @@ struct ScanReadingSheet: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 60)
+            .frame(maxHeight: .infinity, alignment: .top)
             .accessibilityElement(children: .combine)
+        } else if shown.allSatisfy({ $0.blocks.isEmpty }) {
+            ContentUnavailableView(L("No Text Found"), systemImage: "text.magnifyingglass",
+                                   description: Text(L("Snapfly found no words on these pages.")))
+                .padding(.top, 40)
+                .frame(maxHeight: .infinity, alignment: .top)
+        } else if mode == .page && hasPreviews {
+            pagePane
+        } else {
+            textPane
         }
     }
 
-    private func pageView(_ page: ScanReading.Page, number: Int, of count: Int) -> some View {
+    // MARK: Text
+
+    /// What the search and the voice are at, matched to blocks.
+    private struct Following {
+        var matches: [ScanReading.Match] = []
+        var current = 0
+        var piece: ScanReading.Utterance?
+        var spoken: NSRange?
+
+        func marks(at spot: ScanReading.Spot) -> ReadingMarks {
+            var marks = ReadingMarks()
+            for (index, match) in matches.enumerated() where match.spot == spot {
+                if index == current { marks.foundNow = match.range } else { marks.found.append(match.range) }
+            }
+            if let piece, let spoken, spot.row == nil, piece.row == nil, piece.page == spot.page, piece.block == spot.block {
+                marks.spoken = ScanReading.characterRange(spoken, in: piece.shown)
+            }
+            return marks
+        }
+
+        func speaking(page: Int, block: Int) -> Bool {
+            guard let piece else { return false }
+            return piece.page == page && piece.block == block && piece.row == nil
+        }
+
+        func row(page: Int, block: Int) -> Int? {
+            guard let piece, piece.page == page, piece.block == block else { return nil }
+            return piece.row
+        }
+
+        /// The block in focus, for the page and for scrolling: what is spoken, else the search's.
+        var focus: ScanReading.Spot? {
+            if let piece { return ScanReading.Spot(page: piece.page, block: piece.block) }
+            guard matches.indices.contains(current) else { return nil }
+            return matches[current].spot
+        }
+    }
+
+    private var following: Following {
+        let matches = ScanReading.matches(query, in: shown)
+        return Following(matches: matches, current: matches.isEmpty ? 0 : min(matchIndex, matches.count - 1),
+                         piece: speaker.piece, spoken: speaker.shownRange)
+    }
+
+    private var textPane: some View {
+        let following = self.following
+        let pages = shown
+        let unsure = ScanReading.unsureCount(pages)
+        return ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    if !covered { warning }
+                    if unsure > 0 { unsureRow(unsure) }
+                    if correcting { correctingHint }
+                    ForEach(Array(pages.enumerated()), id: \.offset) { number, page in
+                        pageText(page, number: number, count: pages.count, following: following)
+                    }
+                    footnote
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("scan-reading")
+            }
+            .onChange(of: following.focus) { _, spot in
+                guard let spot else { return }
+                withAnimation(.easeOut(duration: 0.25)) { proxy.scrollTo("b-\(spot.page)-\(spot.block)", anchor: .center) }
+            }
+        }
+    }
+
+    private func pageText(_ page: ScanReading.Page, number: Int, count: Int, following: Following) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             if count > 1 {
-                Text(String(format: L("Page %d of %d"), number, count))
+                Text(String(format: L("Page %d of %d"), number + 1, count))
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.secondary)
                     .textCase(.uppercase)
@@ -112,11 +212,35 @@ struct ScanReadingSheet: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
-            ForEach(Array(page.blocks.enumerated()), id: \.offset) { _, block in
-                ReadingBlock(block: block, rightToLeft: page.rightToLeft)
+            ForEach(Array(page.blocks.enumerated()), id: \.offset) { index, block in
+                blockView(block, number: number, index: index, rightToLeft: page.rightToLeft, following: following)
+                    .id("b-\(number)-\(index)")
             }
         }
         .environment(\.layoutDirection, page.rightToLeft ? .rightToLeft : .leftToRight)
+    }
+
+    @ViewBuilder
+    private func blockView(_ block: ScanReading.Block, number: Int, index: Int, rightToLeft: Bool, following: Following) -> some View {
+        let spot = ScanReading.Spot(page: number, block: index)
+        switch block {
+        case .paragraph(let paragraph):
+            ReadingParagraph(runs: ScanReading.runs(of: paragraph, rightToLeft: rightToLeft),
+                             label: ScanReading.runs(of: paragraph, rightToLeft: rightToLeft, mark: L("covered")).map(\.text).joined(),
+                             heading: paragraph.heading,
+                             marks: following.marks(at: spot),
+                             speaking: following.speaking(page: number, block: index),
+                             correcting: correcting,
+                             onCorrect: { startCorrecting(spot) })
+        case .table(let table):
+            ReadingTable(table: table, page: number, block: index,
+                         marks: { following.marks(at: $0) },
+                         speakingRow: following.row(page: number, block: index),
+                         correcting: correcting,
+                         onCorrect: { startCorrecting($0) },
+                         onCopy: { copyTable(table) },
+                         onShare: { shareTable(table, at: spot) })
+        }
     }
 
     /// Said first without covers, in the warning's colours.
@@ -135,21 +259,153 @@ struct ScanReadingSheet: View {
         .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(SnapflyTokens.scanWarnEdge))
     }
 
-    private var footnote: some View {
-        Label {
-            Text(covered ? L("Read on this iPhone. Each covered place is a black bar; what it hides is never shown or read aloud.")
-                 : L("Read on this iPhone, without covers."))
+    /// How many lines were read unsurely, washed in orange below, with a way
+    /// to the page to check them.
+    private func unsureRow(_ count: Int) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "questionmark.circle.fill")
+                .foregroundStyle(SnapflyTokens.reviewOpen)
+            Text(count == 1 ? L("1 line was read unsurely. It is marked; check it on the page.")
+                 : String(format: L("%d lines were read unsurely. They are marked; check them on the page."), count))
                 .fixedSize(horizontal: false, vertical: true)
-        } icon: {
-            Image(systemName: covered ? "checkmark.shield" : "doc.text")
+            Spacer(minLength: 0)
+            if hasPreviews {
+                Button(L("Check on Page")) { mode = .page }
+                    .font(.footnote.weight(.semibold))
+                    .accessibilityIdentifier("scan-reading-check")
+            }
+        }
+        .font(.footnote)
+        .padding(12)
+        .background(SnapflyTokens.reviewOpenFill, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .accessibilityIdentifier("scan-reading-unsure")
+    }
+
+    private var correctingHint: some View {
+        Label(L("Tap a paragraph or a table cell to correct it."), systemImage: "pencil")
+            .font(.footnote.weight(.medium))
+            .foregroundStyle(SnapflyTokens.protectTint)
+            .accessibilityIdentifier("scan-reading-correcting")
+    }
+
+    private var footnote: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label {
+                Text(covered ? L("Read on this iPhone. Each covered place is a black bar; what it hides is never shown or read aloud.")
+                     : L("Read on this iPhone, without covers."))
+                    .fixedSize(horizontal: false, vertical: true)
+            } icon: {
+                Image(systemName: covered ? "checkmark.shield" : "doc.text")
+            }
+            if !edits.isEmpty {
+                Label {
+                    Text(L("Includes your corrections. The PDF's text keeps what was read."))
+                        .fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    Image(systemName: "pencil")
+                }
+            }
         }
         .font(.footnote)
         .foregroundStyle(.secondary)
     }
 
+    // MARK: Page
+
+    private var pagePane: some View {
+        let pages = shown
+        let spot = following.focus
+        return ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    ForEach(Array(pages.enumerated()), id: \.offset) { number, page in
+                        ReadingPageImage(data: preview(number),
+                                         spots: ScanReading.unsureSpots(page, number: number),
+                                         focus: spot.flatMap { $0.page == number ? ScanReading.box(at: $0, in: pages) : nil },
+                                         onCorrect: { startCorrecting($0) })
+                            .id("p-\(number)")
+                    }
+                }
+                .padding(20)
+                .accessibilityIdentifier("scan-reading-pages")
+            }
+            .onAppear {
+                guard let spot else { return }
+                proxy.scrollTo("p-\(spot.page)", anchor: .top)
+            }
+            .onChange(of: spot) { _, new in
+                guard let new else { return }
+                withAnimation(.easeOut(duration: 0.25)) { proxy.scrollTo("p-\(new.page)", anchor: .top) }
+            }
+        }
+    }
+
+    private func preview(_ number: Int) -> Data {
+        guard let previews = result?.previews, previews.indices.contains(number) else { return Data() }
+        return previews[number]
+    }
+
+    // MARK: Toolbar
+
+    @ToolbarContentBuilder private var toolbar: some ToolbarContent {
+        ToolbarItem(placement: .confirmationAction) {
+            Button(L("Done")) { dismiss() }
+        }
+        ToolbarItem(placement: .topBarLeading) {
+            menu
+        }
+        ToolbarItem(placement: .principal) {
+            if result != nil && hasPreviews {
+                Picker(L("View"), selection: $mode) {
+                    Text(L("Text")).tag(Mode.text)
+                    Text(L("Page")).tag(Mode.page)
+                }
+                .pickerStyle(.segmented)
+                .frame(maxWidth: 220)
+                .accessibilityIdentifier("scan-reading-mode")
+            }
+        }
+    }
+
+    private var menu: some View {
+        Menu {
+            Button {
+                mode = .text
+                searching = true
+            } label: {
+                Label(L("Search"), systemImage: "magnifyingglass")
+            }
+            Button {
+                mode = .text
+                correcting.toggle()
+            } label: {
+                Label(correcting ? L("Done Correcting") : L("Correct Text"), systemImage: correcting ? "checkmark" : "pencil")
+            }
+            Button {
+                translating = true
+            } label: {
+                Label(L("Translate"), systemImage: "character.bubble")
+            }
+            if !edits.isEmpty {
+                Button(role: .destructive) {
+                    edits = [:]
+                } label: {
+                    Label(L("Undo All Corrections"), systemImage: "arrow.uturn.backward")
+                }
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+                .frame(minWidth: SnapflyTokens.touch, minHeight: SnapflyTokens.touch)
+                .contentShape(Rectangle())
+        }
+        .disabled(result == nil || text.isEmpty)
+        .accessibilityLabel(L("More"))
+        .accessibilityIdentifier("scan-reading-menu")
+    }
+
     // MARK: Copy, Read Aloud, Share
 
-    private var bar: some View {
+    private var bottom: some View {
         VStack(spacing: 10) {
             if let note {
                 Label(note.text, systemImage: note.failed ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
@@ -157,6 +413,12 @@ struct ScanReadingSheet: View {
                     .foregroundStyle(note.failed ? Color.orange : SnapflyTokens.protectTint)
                     .transition(.opacity)
                     .accessibilityIdentifier("scan-reading-note")
+            }
+            if mode == .text, !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                matchBar
+            }
+            if speaker.speaking {
+                ReadingPlayer(speaker: speaker)
             }
             let row = typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(spacing: 8)) : AnyLayout(HStackLayout(spacing: 10))
             row {
@@ -171,6 +433,37 @@ struct ScanReadingSheet: View {
         .padding(.bottom, 8)
         .background(.bar)
         .animation(.easeOut(duration: 0.2), value: note)
+        .animation(.easeOut(duration: 0.2), value: speaker.speaking)
+    }
+
+    /// Where the search is, and a way to the next place and the one before.
+    private var matchBar: some View {
+        let count = following.matches.count
+        return HStack(spacing: 4) {
+            Text(count == 0 ? L("No matches") : String(format: L("%d of %d"), min(matchIndex, count - 1) + 1, count))
+                .font(.footnote.weight(.semibold))
+                .monospacedDigit()
+                .foregroundStyle(count == 0 ? .secondary : .primary)
+                .accessibilityIdentifier("scan-reading-matches")
+            Spacer(minLength: 8)
+            stepButton("chevron.up", L("Previous"), id: "previous-match", by: -1, count: count)
+            stepButton("chevron.down", L("Next"), id: "next-match", by: 1, count: count)
+        }
+    }
+
+    private func stepButton(_ symbol: String, _ title: String, id: String, by step: Int, count: Int) -> some View {
+        Button {
+            guard count > 0 else { return }
+            matchIndex = (min(matchIndex, count - 1) + step + count) % count
+        } label: {
+            Image(systemName: symbol)
+                .font(.body.weight(.semibold))
+                .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch)
+                .contentShape(Rectangle())
+        }
+        .disabled(count == 0)
+        .accessibilityLabel(title)
+        .accessibilityIdentifier("scan-reading-\(id)")
     }
 
     private func action(_ title: String, symbol: String, id: String, prominent: Bool, run: @escaping () -> Void) -> some View {
@@ -189,19 +482,9 @@ struct ScanReadingSheet: View {
         .accessibilityIdentifier("scan-reading-\(id)")
     }
 
-    /// The pages' text as it is copied and shared, every cover a bar.
-    private var text: String {
-        ScanReading.text(pages ?? [])
-    }
-
-    /// As it is read aloud: every cover the word "covered", a table's cells parted by a pause.
-    private var spoken: String {
-        ScanReading.text(pages ?? [], mark: L("covered")).replacingOccurrences(of: "\t", with: ", ")
-    }
-
     private func load() async {
         do {
-            pages = try await read()
+            result = try await read()
         } catch {
             failure = (error as? ScanProblem)?.message ?? L("The text could not be read.")
         }
@@ -214,116 +497,85 @@ struct ScanReadingSheet: View {
     }
 
     private func speak() {
-        if speaker.speaking { speaker.stop() } else { speaker.speak(spoken) }
-    }
-
-    private func share() {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent(fileName + ".txt")
-        do {
-            try Data(text.utf8).write(to: url, options: [.atomic, .completeFileProtection])
-            sharing = SharedFiles(urls: [url])
-        } catch {
-            note = Note(text: L("The file could not be made."), failed: true)
+        if speaker.speaking {
+            speaker.stop()
+            return
+        }
+        let pieces = ScanReading.utterances(shown, spokenMark: L("covered"))
+        guard !pieces.isEmpty else { return }
+        if !speaker.start(pieces) {
+            note = Note(text: L("No voice for this language is on this iPhone."), failed: true)
             UINotificationFeedbackGenerator().notificationOccurred(.error)
         }
     }
 
-    struct Note: Equatable {
-        let text: String
-        let failed: Bool
+    private func share() {
+        guard let url = write(Data(text.utf8), as: fileName + ".txt") else { return }
+        sharing = SharedFiles(urls: [url])
     }
-}
 
-/// One block of a page: a paragraph or a heading as text to select, a
-/// table as a grid that scrolls sideways where it is wide.
-private struct ReadingBlock: View {
-    let block: ScanReading.Block
-    let rightToLeft: Bool
+    /// A table copied as tabs, to paste into cells in Numbers or Excel.
+    private func copyTable(_ table: ScanReading.Table) {
+        UIPasteboard.general.string = ScanReading.tsv(table)
+        note = Note(text: L("Table copied"), failed: false)
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+    }
 
-    var body: some View {
-        switch block {
-        case .paragraph(let paragraph):
-            let page = ScanReading.Page(blocks: [block], rightToLeft: rightToLeft)
-            Text(ScanReading.text(page))
-                .font(paragraph.heading ? .title3.weight(.semibold) : .body)
-                .lineSpacing(paragraph.heading ? 0 : 3)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .textSelection(.enabled)
-                .accessibilityLabel(ScanReading.text(page, mark: L("covered")))
-                .accessibilityAddTraits(paragraph.heading ? .isHeader : [])
-        case .table(let table):
-            ScrollView(.horizontal) {
-                Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 8) {
-                    ForEach(Array(table.rows.enumerated()), id: \.offset) { index, row in
-                        if index > 0 {
-                            Divider()
-                        }
-                        GridRow {
-                            ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
-                                Text(ScanReading.line(of: cell))
-                                    .font(.callout)
-                                    .monospacedDigit()
-                                    .fixedSize()
-                                    .textSelection(.enabled)
-                                    .accessibilityLabel(ScanReading.line(of: cell, mark: L("covered")))
-                            }
-                        }
-                    }
-                }
-                .padding(12)
+    /// A table as a CSV file a spreadsheet opens: UTF-8 with its byte order
+    /// mark, the delimiter this iPhone's numbers call for.
+    private func shareTable(_ table: ScanReading.Table, at spot: ScanReading.Spot) {
+        let delimiter = ScanReading.csvDelimiter(decimalSeparator: Locale.current.decimalSeparator)
+        let csv = ScanReading.csv(table, delimiter: delimiter)
+        var number = 1
+        for (pageIndex, page) in shown.enumerated() {
+            for (blockIndex, block) in page.blocks.enumerated() {
+                if case .table = block, (pageIndex, blockIndex) < (spot.page, spot.block) { number += 1 }
             }
-            .scrollIndicators(.hidden)
-            .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .accessibilityElement(children: .contain)
-            .accessibilityLabel(L("Table"))
+        }
+        let name = number == 1 ? fileName : "\(fileName) \(number)"
+        guard let url = write(Data([0xEF, 0xBB, 0xBF]) + Data(csv.utf8), as: name + ".csv") else { return }
+        sharing = SharedFiles(urls: [url])
+    }
+
+    private func write(_ data: Data, as name: String) -> URL? {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(name)
+        do {
+            try data.write(to: url, options: [.atomic, .completeFileProtection])
+            return url
+        } catch {
+            note = Note(text: L("The file could not be made."), failed: true)
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
+            return nil
         }
     }
-}
 
-/// Reads text aloud with the system's voice for its language, on this
-/// iPhone, ducking other sound while it speaks.
-@MainActor
-final class ScanSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
-    @Published private(set) var speaking = false
-    private let synthesizer = AVSpeechSynthesizer()
+    // MARK: Correcting
 
-    override init() {
-        super.init()
-        synthesizer.delegate = self
+    private func startCorrecting(_ spot: ScanReading.Spot) {
+        guard let pages = result?.pages, let key = ScanReading.editKey(at: spot, in: pages),
+              let current = ScanReading.text(at: spot, in: shown) else { return }
+        correction = ReadingCorrection(spot: spot, key: key, original: ScanReading.text(at: spot, in: pages) ?? current, current: current)
     }
 
-    func speak(_ text: String) {
-        stop()
-        guard !text.isEmpty else { return }
-        let utterance = AVSpeechUtterance(string: text)
-        if let language = NLLanguageRecognizer.dominantLanguage(for: text)?.rawValue,
-           let voice = AVSpeechSynthesisVoice(language: language) {
-            utterance.voice = voice
+    private func editor(_ correction: ReadingCorrection) -> some View {
+        var crop: UIImage?
+        if let result, result.previews.indices.contains(correction.spot.page),
+           let box = ScanReading.box(at: correction.spot, in: result.pages) {
+            crop = ScanTextEditSheet.crop(of: result.previews[correction.spot.page], box: box)
         }
-        let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
-        try? session.setActive(true)
-        synthesizer.speak(utterance)
-        speaking = true
+        return ScanTextEditSheet(correction: correction, page: crop,
+                                 onSave: { typed in save(typed, for: correction) },
+                                 onRevert: { edits[correction.key] = nil })
     }
 
-    func stop() {
-        if synthesizer.isSpeaking { synthesizer.stopSpeaking(at: .immediate) }
-        finished()
-    }
-
-    private func finished() {
-        guard speaking else { return }
-        speaking = false
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-    }
-
-    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        Task { @MainActor in self.finished() }
-    }
-
-    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        Task { @MainActor in self.finished() }
+    /// What was typed is kept under the text as it was read; typing that
+    /// text again is no correction at all.
+    private func save(_ typed: String, for correction: ReadingCorrection) {
+        let kept = typed.trimmingCharacters(in: .whitespacesAndNewlines)
+        if kept == correction.original.trimmingCharacters(in: .whitespacesAndNewlines) {
+            edits[correction.key] = nil
+        } else {
+            edits[correction.key] = kept
+        }
     }
 }

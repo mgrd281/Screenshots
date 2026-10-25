@@ -1563,6 +1563,26 @@
 "Table" = "جدول";
 "Page %d could not be covered, so its text was not read." = "تعذّرت تغطية الصفحة %d، لذلك لم يُقرأ نصها.";
 "The page is gone." = "لم تعد الصفحة موجودة.";
+"Search in the text" = "البحث في النص";
+"Search" = "بحث";
+"Correct Text" = "تصحيح النص";
+"Done Correcting" = "إنهاء التصحيح";
+"Translate" = "ترجمة";
+"Undo All Corrections" = "التراجع عن كل التصحيحات";
+"Tap a paragraph or a table cell to correct it." = "اضغط على فقرة أو خلية جدول لتصحيح النص.";
+"1 line was read unsurely. It is marked; check it on the page." = "قُرئ سطر واحد بشكل غير مؤكد. وهو مميّز؛ تحقق منه على الصفحة.";
+"%d lines were read unsurely. They are marked; check them on the page." = "عدد الأسطر التي قُرئت بشكل غير مؤكد: %d. وهي مميّزة؛ تحقق منها على الصفحة.";
+"Check on Page" = "تحقق على الصفحة";
+"Includes your corrections. The PDF's text keeps what was read." = "يتضمن تصحيحاتك. يبقى نص ملف PDF كما قُرئ.";
+"Opens the text to correct it." = "يفتح النص لتصحيحه.";
+"Copy Table" = "نسخ الجدول";
+"Share as CSV" = "مشاركة بصيغة CSV";
+"Table copied" = "تم نسخ الجدول";
+"Read unsurely. Tap to correct." = "قُرئ بشكل غير مؤكد. اضغط للتصحيح.";
+"On the page" = "على الصفحة";
+"Back to What Was Read" = "العودة إلى ما قُرئ";
+"Speed" = "السرعة";
+"No voice for this language is on this iPhone." = "لا يوجد صوت لهذه اللغة على هذا الآيفون.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "مغطّاة قبل أن ترسلها";

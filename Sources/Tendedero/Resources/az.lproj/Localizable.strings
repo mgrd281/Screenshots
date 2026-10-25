@@ -1565,6 +1565,26 @@
 "Table" = "Cədvəl";
 "Page %d could not be covered, so its text was not read." = "Səhifə %d gizlədilə bilmədi, ona görə mətni oxunmadı.";
 "The page is gone." = "Səhifə artıq yoxdur.";
+"Search in the text" = "Mətndə axtar";
+"Search" = "Axtar";
+"Correct Text" = "Mətni düzəlt";
+"Done Correcting" = "Düzəltməni bitir";
+"Translate" = "Tərcümə et";
+"Undo All Corrections" = "Bütün düzəlişləri geri al";
+"Tap a paragraph or a table cell to correct it." = "Mətni düzəltmək üçün abzasa və ya cədvəl xanasına toxun.";
+"1 line was read unsurely. It is marked; check it on the page." = "1 sətir əmin olmadan oxundu. Qeyd olunub; səhifədə yoxla.";
+"%d lines were read unsurely. They are marked; check them on the page." = "%d sətir əmin olmadan oxundu. Qeyd olunublar; səhifədə yoxla.";
+"Check on Page" = "Səhifədə yoxla";
+"Includes your corrections. The PDF's text keeps what was read." = "Düzəlişlərini daxil edir. PDF-in mətni oxunduğu kimi qalır.";
+"Opens the text to correct it." = "Mətni düzəltmək üçün açır.";
+"Copy Table" = "Cədvəli kopyala";
+"Share as CSV" = "CSV kimi paylaş";
+"Table copied" = "Cədvəl kopyalandı";
+"Read unsurely. Tap to correct." = "Əmin olmadan oxundu. Düzəltmək üçün toxun.";
+"On the page" = "Səhifədə";
+"Back to What Was Read" = "Oxunana qayıt";
+"Speed" = "Sürət";
+"No voice for this language is on this iPhone." = "Bu iPhone-da bu dil üçün səs yoxdur.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Göndərməmişdən əvvəl örtülür";
