@@ -1118,26 +1118,28 @@ watch the screen, so there is no line there. What it keeps is the covering:
   over a row.
 - **The Scan tab's start** has one job, a scan started in one tap
   (`ScanStart.swift`): the emerald card Dokument scannen, the whole of it
-  the button, with a page a mint line reads; three quick actions, Aus
-  Fotos, Zusammenfügen and PDF öffnen; and under Zuletzt the ten documents
-  edited last, newest first, in a row that scrolls sideways, each as its
-  first page covered as Settings says (never uncovered, never a badge on
-  it) and veiled until the eye beside Alle anzeigen shows the pictures,
-  a choice kept on the iPhone (`ScanVeil`: a few cells across, no word
-  readable at any size; veiled again while Snapfly is away, for the app
-  switcher, and while something on the page is still to check), its
-  name, its pages and the day, which opens it, or, held, shares,
-  renames or deletes it; Alle anzeigen shows them all. Under the scanned
-  pages, Unter Zuletzt behalten keeps them as a PDF project among the
-  documents (kept on this iPhone in the project's protected folder, never
-  in a backup), covered as Settings says where they show and leave, and
-  clears them from the scanned pages. Without documents,
-  "So geht's" says how a scan goes in four short steps instead. The "?"
-  opens "So funktioniert's". Scrolled past the card, the bar holds a green
-  Scannen pill. It comes in once per launch, and a new document drops into
-  the first place with a soft green ring; with Reduce Motion or Low Power
-  Mode everything only fades.
-- **PDF projects.** Zusammenfügen (photos, scans and PDFs into one file)
+  the button, with a page and a still mint line; three quick actions, Aus
+  Fotos, Verbinden and PDF öffnen, each title on one line; and under
+  Zuletzt the three documents edited last, newest first, side by side and
+  each whole: its first page covered as Settings says (never uncovered),
+  shown whole in its frame, never cropped, with a chip of how its places
+  stand ("2 zu prüfen" or "3 verdeckt", never "Nichts Privates"), and
+  veiled until the eye beside Alle anzeigen shows the pictures, a choice
+  kept on the iPhone (`ScanVeil`: a few cells across, no word readable at
+  any size; veiled again while Snapfly is away, for the app switcher, and
+  while something on the page is still to check), its name, its pages
+  and the day, which opens it, or, held, shares, renames or deletes it;
+  Alle anzeigen shows them all. Under the scanned pages, Unter Zuletzt
+  behalten keeps them as a PDF project among the documents (kept on this
+  iPhone in the project's protected folder, never in a backup), covered
+  as Settings says where they show and leave, and clears them from the
+  scanned pages. Without documents, Zuletzt says "Noch nichts gescannt."
+  The "?" (Hilfe) opens "So funktioniert's". Scrolled past the card, the
+  bar holds a green Scannen pill. The page ends 16 pt above the tab bar,
+  so nothing is cut under it. It comes in once per launch, and nothing on
+  it moves after that; with Reduce Motion or Low Power Mode everything
+  only fades.
+- **PDF projects.** Verbinden (photos, scans and PDFs into one file)
   and PDF öffnen (a PDF from Files, to put its pages in order and cover
   them) start one from the Scan tab, whose Zuletzt lists the projects
   changed last.

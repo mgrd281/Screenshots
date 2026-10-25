@@ -156,15 +156,36 @@ enum SnapflyTokens {
     static let scanHeroBottom = color(0x06603F, dark: 0x0A4F39)
     /// The words on the card's white Open Camera pill: 7.5:1.
     static let scanHeroInk = color(0x06603F, dark: 0x06603F)
-    /// The reading line crossing the card's page: a mint.
+    /// The line across the card's page, still: a mint.
     static let scanSweep = color(0x9FF2CF, dark: 0x9FF2CF)
     /// The quick actions' cards.
     static let scanQuick = color(0xFFFFFF, dark: 0x17191D)
+    /// The quick actions' glyphs, on `projectTile`: 4.4:1 in light, 7.1:1
+    /// in dark, as a glyph needs 3:1.
+    static let scanQuickGlyph = color(0x0B7F58, dark: 0x5BD6A6)
     /// Behind a recent document's page.
     static let scanRecentGround = color(0xE9ECEF, dark: 0x22252B)
+    /// A recent document's chip, "n verdeckt": dark green on the mint
+    /// (`projectTile`), 6.7:1; mint on the dark green, 7.1:1.
+    static let scanChipCoveredInk = color(0x06603F, dark: 0x5BD6A6)
+    /// "n zu prüfen": brown on a soft orange, 6.2:1; at night 8.0:1.
+    static let scanChipCheck = color(0xFFF1E0, dark: 0x3A2410)
+    static let scanChipCheckInk = color(0x8A4A0C, dark: 0xF6B36B)
     static let scanHeroRadius: CGFloat = 28
     static let scanQuickRadius: CGFloat = 22
     static let scanRecentRadius: CGFloat = 18
+    /// The page inside a recent document's frame.
+    static let scanRecentPageRadius: CGFloat = 5
+    /// The Scan tab's start: its side margin, the space between its
+    /// groups, under a group's header, and between tiles and cards.
+    static let scanMargin: CGFloat = 20
+    static let scanGroupGap: CGFloat = 24
+    static let scanHeaderGap: CGFloat = 12
+    static let scanItemGap: CGFloat = 10
+    /// A quick action's height, a recent document's frame, and the card's Open Camera pill.
+    static let scanQuickHeight: CGFloat = 100
+    static let scanRecentHeight: CGFloat = 156
+    static let scanPillHeight: CGFloat = 52
 
     // MARK: What Is Covered
 

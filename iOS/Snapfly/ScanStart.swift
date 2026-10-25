@@ -5,16 +5,17 @@ import UniformTypeIdentifiers
 
 /// The parts of the Scan tab's start (`ScanTab`): one job, a scan started
 /// in one tap. The emerald card that is the scan button, three quick
-/// actions, the documents edited last as their covered first pages, or how
-/// a scan goes while there are none yet, and "So funktioniert's" behind
-/// the "?". They come in once per launch, one after another.
+/// actions, the three documents edited last as their covered first pages,
+/// or "Noch nichts gescannt." while there are none yet, and "So
+/// funktioniert's" behind the "?". They come in once per launch, one after
+/// another; nothing on them moves after that.
 enum ScanStart {
     /// They came in once since Snapfly started: they do not again on every visit.
     @MainActor static var entered = false
     /// The newest document the row showed, so a new one is told as it arrives.
     @MainActor static var newest: UUID?
-    /// How many recent documents show.
-    static let shown = 10
+    /// How many recent documents show, side by side.
+    static let shown = 3
     /// Whether the documents' small pictures are shown or veiled
     /// (`ScanVeil`), kept on this iPhone; veiled until the owner shows them.
     static let previewKey = "snapfly.scan.showsPreviews"
@@ -68,6 +69,16 @@ struct ScanCalm: DynamicProperty {
 }
 
 extension View {
+    /// Content under the tab bar's glass reads as a soft blur, never as
+    /// sharp words; before iOS 26 the bar is solid already.
+    @ViewBuilder func softBottomEdge() -> some View {
+        if #available(iOS 26, *) {
+            scrollEdgeEffectStyle(.soft, for: .bottom)
+        } else {
+            self
+        }
+    }
+
     /// Rises into place as the start comes in: faded, 16 pt lower and a
     /// little smaller, then in place `step` × 50 ms after the first; with
     /// Reduce Motion or Low Power Mode, a short fade.
@@ -83,8 +94,8 @@ extension View {
 // MARK: The card
 
 /// The emerald card: "Nur auf diesem iPhone", "Dokument scannen", one line
-/// of what it does, the white Open Camera pill, and a page in a viewfinder
-/// a mint line reads. The whole card is the button.
+/// of what it does in white, the white Open Camera pill, and a page in a
+/// viewfinder with a mint line across it. The whole card is the button.
 struct ScanHero: View {
     let supported: Bool
     let scan: () -> Void
@@ -105,7 +116,7 @@ struct ScanHero: View {
                         .fixedSize(horizontal: false, vertical: true)
                     Text(L("Straight, bright and private details already covered."))
                         .font(.system(size: lineSize))
-                        .foregroundStyle(.white.opacity(0.9))
+                        .foregroundStyle(.white)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 6)
                     pill
@@ -119,13 +130,13 @@ struct ScanHero: View {
                 }
             }
             .padding(.horizontal, 22)
-            .padding(.vertical, 22)
+            .padding(.vertical, 24)
             .frame(maxWidth: .infinity, minHeight: 236, alignment: .leading)
             .background(
                 LinearGradient(colors: [SnapflyTokens.scanHeroTop, SnapflyTokens.scanHeroBottom],
                                startPoint: .topLeading, endPoint: .bottomTrailing),
                 in: RoundedRectangle(cornerRadius: SnapflyTokens.scanHeroRadius, style: .continuous))
-            .shadow(color: scheme == .dark ? .clear : SnapflyTokens.protect.opacity(0.28), radius: 18, y: 10)
+            .shadow(color: scheme == .dark ? .clear : .black.opacity(0.12), radius: 14, y: 8)
             .contentShape(RoundedRectangle(cornerRadius: SnapflyTokens.scanHeroRadius, style: .continuous))
         }
         .buttonStyle(PressStyle())
@@ -157,34 +168,24 @@ struct ScanHero: View {
             .minimumScaleFactor(0.8)
             .foregroundStyle(SnapflyTokens.scanHeroInk)
             .padding(.horizontal, 18)
-            .frame(minHeight: 50)
+            .frame(minHeight: SnapflyTokens.scanPillHeight)
             .background(.white, in: Capsule())
     }
 }
 
 /// A page tilted a little inside four white corners, its lines drawn with
-/// shapes, and a mint line reading it top to bottom every 2.6 s while the
-/// screen shows; still in the middle with Reduce Motion, in Low Power Mode
-/// and while Snapfly is away.
+/// shapes, and a mint line across its middle, still.
 private struct ScanHeroPage: View {
-    @ScanCalm private var calm
-    @Environment(\.scenePhase) private var phase
-
     var body: some View {
         ZStack {
             page
                 .rotationEffect(.degrees(-5))
             Corners()
                 .stroke(.white, style: StrokeStyle(lineWidth: 3.5, lineCap: .round, lineJoin: .round))
-            TimelineView(.animation(paused: calm || phase != .active)) { time in
-                line(at: calm || phase != .active ? 0.5 : Self.progress(time.date))
-            }
+            Capsule()
+                .fill(SnapflyTokens.scanSweep)
+                .frame(width: 104, height: 3)
         }
-    }
-
-    /// How far the line is through its 2.6 s, from 0 to 1.
-    private static func progress(_ date: Date) -> Double {
-        date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 2.6) / 2.6
     }
 
     private var page: some View {
@@ -206,18 +207,6 @@ private struct ScanHeroPage: View {
                 }
                 .padding(11)
             }
-    }
-
-    /// The mint line at `progress` of its way down, fading in and out at its ends.
-    private func line(at progress: Double) -> some View {
-        Capsule()
-            .fill(LinearGradient(colors: [SnapflyTokens.scanSweep.opacity(0), SnapflyTokens.scanSweep,
-                                          SnapflyTokens.scanSweep.opacity(0)],
-                                 startPoint: .leading, endPoint: .trailing))
-            .frame(width: 104, height: 3)
-            .shadow(color: SnapflyTokens.scanSweep.opacity(0.8), radius: 6)
-            .offset(y: CGFloat(progress - 0.5) * 120)
-            .opacity(calm ? 0.9 : sin(progress * .pi))
     }
 
     /// The four corners of a viewfinder.
@@ -242,8 +231,8 @@ private struct ScanHeroPage: View {
 
 // MARK: Quick actions
 
-/// Aus Fotos, Zusammenfügen and PDF öffnen side by side; one under another
-/// at the accessibility text sizes.
+/// Aus Fotos, Verbinden and PDF öffnen side by side, equally tall; one
+/// under another at the accessibility text sizes.
 struct ScanQuickActions: View {
     @Binding var picked: [PhotosPickerItem]
     @State private var choosingPDF = false
@@ -253,9 +242,10 @@ struct ScanQuickActions: View {
     var body: some View {
         Group {
             if typeSize.isAccessibilitySize {
-                VStack(spacing: 10) { actions }
+                VStack(spacing: SnapflyTokens.scanItemGap) { actions }
             } else {
-                HStack(spacing: 10) { actions }
+                HStack(spacing: SnapflyTokens.scanItemGap) { actions }
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .fileImporter(isPresented: $choosingPDF, allowedContentTypes: [.pdf]) { result in
@@ -266,16 +256,16 @@ struct ScanQuickActions: View {
 
     @ViewBuilder private var actions: some View {
         PhotosPicker(selection: $picked, maxSelectionCount: 20, selectionBehavior: .ordered, matching: .images) {
-            tile(L("From Photos"), symbol: "photo")
+            tile(L("From Photos"), symbol: "photo.on.rectangle")
         }
         .buttonStyle(PressStyle())
         .accessibilityLabel(L("Choose from Photos"))
         .accessibilityIdentifier("scan-photos")
         Button { ProjectStore.shared.start() } label: {
-            tile(L("Merge"), symbol: "plus.square.on.square")
+            tile(L("Combine"), symbol: "plus.square.on.square")
         }
         .buttonStyle(PressStyle())
-        .accessibilityLabel(L("Merge photos, scans and PDFs"))
+        .accessibilityLabel(L("Combine PDFs and photos"))
         .accessibilityIdentifier("project-merge")
         Button { choosingPDF = true } label: {
             tile(L("Open PDF"), symbol: "doc.text")
@@ -285,36 +275,33 @@ struct ScanQuickActions: View {
         .accessibilityIdentifier("project-open-pdf")
     }
 
-    private func label(_ title: String) -> some View {
-        Text(title)
-            .font(.system(size: labelSize, weight: .semibold))
-            .foregroundStyle(.primary)
-            .multilineTextAlignment(.leading)
-    }
-
+    /// The glyph top leading, the title bottom leading: on one line, a
+    /// little smaller where the tile is narrow; at the accessibility sizes,
+    /// beside the glyph, wrapped between words and never cut.
     private func tile(_ title: String, symbol: String) -> some View {
-        let layout = typeSize.isAccessibilitySize
+        let large = typeSize.isAccessibilitySize
+        let layout = large
             ? AnyLayout(HStackLayout(alignment: .center, spacing: 12)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 0))
         return layout {
             Image(systemName: symbol)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(SnapflyTokens.protectTint)
-                .frame(width: 34, height: 34)
-                .background(SnapflyTokens.projectTile, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(SnapflyTokens.scanQuickGlyph)
+                .frame(width: 24, height: 24)
+                .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch)
+                .background(SnapflyTokens.projectTile, in: Circle())
                 .accessibilityHidden(true)
-            if !typeSize.isAccessibilitySize { Spacer(minLength: 10) }
-            // On one line where it fits; else broken where its words allow
-            // ("Zusammen-fügen"), not wherever the line runs out.
-            ViewThatFits(in: .horizontal) {
-                label(title).lineLimit(1)
-                label(title.replacingOccurrences(of: "\u{AD}", with: "-\n"))
-                    .lineLimit(typeSize.isAccessibilitySize ? nil : 2)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            if typeSize.isAccessibilitySize { Spacer(minLength: 0) }
+            if !large { Spacer(minLength: 10) }
+            Text(title)
+                .font(.system(size: labelSize, weight: .semibold))
+                .foregroundStyle(.primary)
+                .multilineTextAlignment(.leading)
+                .lineLimit(large ? nil : 1)
+                .minimumScaleFactor(large ? 1 : 0.85)
+                .fixedSize(horizontal: false, vertical: large)
+            if large { Spacer(minLength: 0) }
         }
         .padding(14)
-        .frame(maxWidth: .infinity, minHeight: 96, alignment: .leading)
+        .frame(maxWidth: .infinity, minHeight: SnapflyTokens.scanQuickHeight, maxHeight: .infinity, alignment: .leading)
         .background(SnapflyTokens.scanQuick, in: RoundedRectangle(cornerRadius: SnapflyTokens.scanQuickRadius, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: SnapflyTokens.scanQuickRadius, style: .continuous)
             .strokeBorder(Color.primary.opacity(0.05)))
@@ -325,49 +312,51 @@ struct ScanQuickActions: View {
 
 // MARK: Recent documents
 
-/// "Zuletzt" and Alle anzeigen over the documents edited last, newest
-/// first, as their covered first pages in a row that scrolls sideways. A
-/// new one drops into the first place with a light tap, the others making
-/// room, and a soft green ring pulses twice round it.
+/// "Zuletzt", the eye and Alle anzeigen over the three documents edited
+/// last, newest first, side by side and each whole, as their covered first
+/// pages. A new one takes the first place with a light tap; with Reduce
+/// Motion it only fades in. Without documents, "Noch nichts gescannt."
 struct RecentDocuments: View {
     let projects: [PDFProject]
     let showAll: () -> Void
     @ScanCalm private var calm
-    /// The document that just arrived, while it is told.
-    @State private var arrived: UUID?
     @State private var landings = 0
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .firstTextBaseline) {
+        VStack(alignment: .leading, spacing: SnapflyTokens.scanHeaderGap) {
+            HStack(alignment: .center) {
                 Text(L("Recent"))
                     .font(.title2.weight(.bold))
                     .accessibilityAddTraits(.isHeader)
                 Spacer()
-                PreviewToggle()
-                Button(L("Show All"), action: showAll)
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(SnapflyTokens.protectTint)
-                    .frame(minHeight: SnapflyTokens.touch)
-                    .accessibilityIdentifier("scan-show-all")
+                if !projects.isEmpty {
+                    PreviewToggle()
+                    Button(L("Show All"), action: showAll)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(SnapflyTokens.protectTint)
+                        .frame(minHeight: SnapflyTokens.touch)
+                        .accessibilityIdentifier("scan-show-all")
+                }
             }
-            ScrollView(.horizontal) {
-                LazyHStack(alignment: .top, spacing: 12) {
+            if projects.isEmpty {
+                empty
+            } else {
+                HStack(alignment: .top, spacing: SnapflyTokens.scanItemGap) {
                     ForEach(projects) { project in
-                        RecentDocumentCard(project: project, arrived: arrived == project.id)
+                        RecentDocumentCard(project: project)
+                            .frame(maxWidth: .infinity)
                             .transition(calm ? .opacity : .asymmetric(
                                 insertion: .move(edge: .top).combined(with: .opacity),
                                 removal: .opacity))
                     }
+                    // Fewer than three keep the width of three.
+                    ForEach(min(projects.count, ScanStart.shown)..<ScanStart.shown, id: \.self) { _ in
+                        Color.clear.frame(maxWidth: .infinity, maxHeight: 1)
+                    }
                 }
-                .scrollTargetLayout()
+                .accessibilityElement(children: .contain)
+                .accessibilityLabel(L("Recent"))
             }
-            .scrollTargetBehavior(.viewAligned)
-            .scrollIndicators(.hidden)
-            .contentMargins(.horizontal, 20, for: .scrollContent)
-            .padding(.horizontal, -20)
-            .accessibilityElement(children: .contain)
-            .accessibilityLabel(L("Recent"))
         }
         .animation(calm ? SnapflyMotion.calm : SnapflyMotion.document(false), value: projects.map(\.id))
         .sensoryFeedback(.impact(weight: .light), trigger: landings)
@@ -375,39 +364,55 @@ struct RecentDocuments: View {
         .onChange(of: projects.first?.id) { _, first in notice(first) }
     }
 
-    /// A document new in the first place since the row last showed is told once.
+    /// No document yet: one calm line and where they will be.
+    private var empty: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(L("Nothing scanned yet."))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.primary)
+            Text(L("Scan a document and it waits here, covered."))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(SnapflyTokens.scanQuick, in: RoundedRectangle(cornerRadius: SnapflyTokens.scanQuickRadius, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: SnapflyTokens.scanQuickRadius, style: .continuous)
+            .strokeBorder(Color.primary.opacity(0.05)))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("scan-recent-empty")
+    }
+
+    /// A document new in the first place since the row last showed is told once, with a light tap.
     private func notice(_ first: UUID?) {
         defer { ScanStart.newest = first }
         guard let first, let before = ScanStart.newest, before != first,
               !projects.dropFirst().contains(where: { $0.id == first }) else { return }
-        withAnimation(calm ? SnapflyMotion.calm : .spring(response: 0.6, dampingFraction: 0.62)) { arrived = first }
         landings += 1
-        Task {
-            try? await Task.sleep(for: .seconds(1.6))
-            arrived = nil
-        }
     }
 }
 
-/// A recent document: its first page covered, 128 pt wide and 150 high on
-/// the grey, its name and how many pages it has and when it was changed;
-/// nothing drawn on the page. A tap opens it; held, Share, Rename and Delete.
+/// A recent document: its first page whole in an 18 pt frame 156 high, a
+/// chip with how its places stand, then its name and how many pages it
+/// has and when it was changed, one line each. A tap opens it; held,
+/// Share, Rename and Delete.
 struct RecentDocumentCard: View {
     let project: PDFProject
-    var arrived = false
-    var width: CGFloat = 128
     @ObservedObject private var store = ProjectStore.shared
     @AppStorage(ScanStart.previewKey) private var showsPreview = false
     @Environment(\.scenePhase) private var phase
     /// The first page covered, and the same veiled.
     @State private var picture: UIImage?
     @State private var veiled: UIImage?
+    /// How the first page's places stood when it was covered.
+    @State private var counts: ProjectStore.FirstCounts?
     @State private var unreadable = false
     @State private var renaming = false
     @State private var name = ""
-    @ScaledMetric(relativeTo: .body) private var scaled: CGFloat = 1
-    @ScaledMetric(relativeTo: .subheadline) private var nameSize: CGFloat = 15
-    @ScaledMetric(relativeTo: .footnote) private var aboutSize: CGFloat = 13
+    @ScaledMetric(relativeTo: .subheadline) private var nameSize: CGFloat = 13
+    @ScaledMetric(relativeTo: .footnote) private var aboutSize: CGFloat = 12
+    @ScaledMetric(relativeTo: .caption2) private var chipSize: CGFloat = 11
     @ScanCalm private var calm
 
     var body: some View {
@@ -418,14 +423,14 @@ struct RecentDocumentCard: View {
                     Text(project.name)
                         .font(.system(size: nameSize, weight: .semibold))
                         .foregroundStyle(.primary)
-                        .lineLimit(scaled > 1.3 ? 2 : 1)
+                        .lineLimit(1)
                     Text(RecentDocumentCard.about(project))
                         .font(.system(size: aboutSize))
                         .foregroundStyle(.secondary)
-                        .lineLimit(scaled > 1.3 ? 2 : 1)
+                        .lineLimit(1)
                 }
             }
-            .frame(width: width * min(scaled, 1.8), alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
         }
         .buttonStyle(PressStyle())
@@ -453,6 +458,7 @@ struct RecentDocumentCard: View {
         .task(id: project.pages.first.map { "\($0.id)-\($0.turns)" }) {
             picture = await store.coveredFirstPage(project)
             veiled = await store.veiledFirstPage(project)
+            counts = store.firstCounts(project)
             unreadable = picture == nil
         }
     }
@@ -462,51 +468,83 @@ struct RecentDocumentCard: View {
     /// still to check.
     private var hidden: Bool {
         guard showsPreview, phase == .active else { return true }
-        guard let first = project.pages.first else { return true }
-        return (store.opened(first.id)?.plan.tally.toCheck ?? 0) > 0
+        return state.toCheck > 0
     }
 
-    /// Its name, its pages and the day; never what is on the page.
+    /// How the first page's places stand: as it was left once opened, else
+    /// as it was covered for the picture.
+    private var state: (covered: Int, toCheck: Int) {
+        if let first = project.pages.first, let tally = store.opened(first.id)?.plan.tally {
+            return (tally.covered, tally.toCheck)
+        }
+        return (counts?.covered ?? 0, counts?.toCheck ?? 0)
+    }
+
+    /// "2 zu prüfen" while any place is still to check, else "3 verdeckt";
+    /// nothing where nothing was covered, never "Nichts Privates".
+    private var chip: (text: String, toCheck: Bool)? {
+        let state = state
+        if state.toCheck > 0 { return (String(format: L("%d to check"), state.toCheck), true) }
+        if state.covered > 0 { return (String(format: L("%d covered"), state.covered), false) }
+        return nil
+    }
+
+    /// Its name, its pages, the day and its chip; never what is on the page.
     private var spoken: String {
         var parts = [project.name.isEmpty ? L("Document") : project.name,
                      String(format: L("Pages: %d"), project.pages.count), Self.day(project.modified, spoken: true)]
+        if let chip { parts.append(chip.text) }
         if hidden { parts.append(L("Preview hidden")) }
         return parts.joined(separator: ", ")
     }
 
-    /// The first page covered, on the grey; a lock where it cannot be shown covered.
+    /// The first page covered and whole on the grey, the chip under it; a
+    /// lock where it cannot be shown covered.
     private var preview: some View {
-        let shape = RoundedRectangle(cornerRadius: SnapflyTokens.scanRecentRadius, style: .continuous)
+        let frame = RoundedRectangle(cornerRadius: SnapflyTokens.scanRecentRadius, style: .continuous)
+        let page = RoundedRectangle(cornerRadius: SnapflyTokens.scanRecentPageRadius, style: .continuous)
         return SnapflyTokens.scanRecentGround
-            .frame(height: 150 * min(scaled, 1.8))
-            .overlay(alignment: .top) {
-                if let shown = hidden ? veiled : picture {
-                    Image(uiImage: shown)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: (width - 28) * min(scaled, 1.8))
-                        .frame(maxHeight: .infinity, alignment: .top)
-                        .clipped()
-                        .shadow(color: .black.opacity(0.08), radius: 3, y: 1)
-                        .padding(.top, 14)
-                        .id(hidden)
-                        .transition(.opacity)
-                } else if unreadable {
-                    Image(systemName: "lock.doc")
-                        .font(.title2)
-                        .foregroundStyle(.secondary)
-                        .frame(maxHeight: .infinity)
-                } else {
-                    ProgressView()
-                        .frame(maxHeight: .infinity)
+            .frame(height: SnapflyTokens.scanRecentHeight)
+            .overlay {
+                Group {
+                    if let shown = hidden ? veiled : picture {
+                        Image(uiImage: shown)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(page)
+                            .overlay(page.strokeBorder(Color.primary.opacity(0.12), lineWidth: 1))
+                            .shadow(color: .black.opacity(0.10), radius: 3, y: 1)
+                            .id(hidden)
+                            .transition(.opacity)
+                    } else if unreadable {
+                        Image(systemName: "lock.doc")
+                            .font(.title2)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ProgressView()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, 12)
+                .padding(.top, 12)
+                .padding(.bottom, chip == nil ? 12 : 32)
+            }
+            .overlay(alignment: .bottomLeading) {
+                if let chip {
+                    Text(chip.text)
+                        .font(.system(size: chipSize, weight: .semibold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .foregroundStyle(chip.toCheck ? SnapflyTokens.scanChipCheckInk : SnapflyTokens.scanChipCoveredInk)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(chip.toCheck ? SnapflyTokens.scanChipCheck : SnapflyTokens.projectTile, in: Capsule())
+                        .padding(8)
                 }
             }
-            .clipShape(shape)
-            .overlay {
-                if arrived && !calm { ArrivalRing(shape: shape) }
-            }
+            .clipShape(frame)
             .animation(.easeOut(duration: calm ? 0.15 : 0.2), value: picture != nil)
-            .animation(.easeOut(duration: calm ? 0.15 : 0.2), value: hidden)
+            .animation(SnapflyMotion.toggle(calm), value: hidden)
     }
 
     /// "5 Seiten · Gestern"; spoken, "5 Seiten, gestern".
@@ -529,29 +567,6 @@ struct RecentDocumentCard: View {
     }
 }
 
-/// A soft green ring round a document that just arrived, pulsing twice.
-private struct ArrivalRing: View {
-    let shape: RoundedRectangle
-
-    var body: some View {
-        shape
-            .strokeBorder(SnapflyTokens.protectLight, lineWidth: 3)
-            .shadow(color: SnapflyTokens.protectLight.opacity(0.6), radius: 8)
-            .keyframeAnimator(initialValue: 0.0, repeating: false) { ring, glow in
-                ring.opacity(glow)
-            } keyframes: { _ in
-                KeyframeTrack {
-                    LinearKeyframe(1, duration: 0.3)
-                    LinearKeyframe(0.2, duration: 0.35)
-                    LinearKeyframe(1, duration: 0.3)
-                    LinearKeyframe(0, duration: 0.45)
-                }
-            }
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
-    }
-}
-
 /// Every document, newest first, as Alle anzeigen opens them.
 struct AllDocumentsView: View {
     @ObservedObject private var store = ProjectStore.shared
@@ -559,7 +574,8 @@ struct AllDocumentsView: View {
     var body: some View {
         let documents = store.projects.filter { !$0.pages.isEmpty }
         ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 128, maximum: 180), spacing: 12, alignment: .top)],
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 180), spacing: SnapflyTokens.scanItemGap,
+                                             alignment: .top)],
                       spacing: 20) {
                 ForEach(documents) { project in
                     RecentDocumentCard(project: project)
@@ -575,45 +591,7 @@ struct AllDocumentsView: View {
     }
 }
 
-// MARK: How a scan goes
-
-/// The four steps, short, under "So geht's", while there are no documents yet.
-struct ScanSteps: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(L("How It Goes"))
-                .font(.title2.weight(.bold))
-                .accessibilityAddTraits(.isHeader)
-            VStack(spacing: 0) {
-                ForEach(Array(Self.steps.enumerated()), id: \.offset) { index, step in
-                    if index > 0 { Divider().padding(.leading, 56) }
-                    HStack(alignment: .firstTextBaseline, spacing: 14) {
-                        ScanStepNumber(number: index + 1)
-                        Text(step)
-                            .font(.subheadline)
-                            .foregroundStyle(.primary)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Spacer(minLength: 0)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 14)
-                    .accessibilityElement(children: .combine)
-                }
-            }
-            .background(SnapflyTokens.scanQuick, in: RoundedRectangle(cornerRadius: SnapflyTokens.scanQuickRadius, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: SnapflyTokens.scanQuickRadius, style: .continuous)
-                .strokeBorder(Color.primary.opacity(0.05)))
-        }
-        .accessibilityIdentifier("scan-steps")
-    }
-
-    static var steps: [String] {
-        [L("Hold it over the page; it is taken by itself."),
-         L("Straightened and brightened, without changing the text."),
-         L("Private details are covered."),
-         L("Check, then share or save as a PDF.")]
-    }
-}
+// MARK: How it works
 
 /// A step's number in a mint circle.
 struct ScanStepNumber: View {

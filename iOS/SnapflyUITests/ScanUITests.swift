@@ -75,9 +75,9 @@ final class ScanUITests: XCTestCase {
         XCTAssertEqual(hero.label, "Dokument scannen")
         XCTAssertTrue(element(app, "scan-photos").exists)
         XCTAssertEqual(element(app, "scan-photos").label, "Aus Fotos wählen")
-        XCTAssertEqual(element(app, "project-merge").label, "Fotos, Scans und PDFs zusammenfügen")
+        XCTAssertEqual(element(app, "project-merge").label, "PDFs und Fotos verbinden")
         XCTAssertEqual(element(app, "project-open-pdf").label, "PDF öffnen, Seiten ordnen und verdecken")
-        XCTAssertTrue(element(app, "scan-help").exists)
+        XCTAssertEqual(element(app, "scan-help").label, "Hilfe")
         XCTAssertFalse(words(app, "Neu:").exists, "the tips are behind the ?")
         XCTAssertFalse(words(app, "PDF erstellen und bearbeiten").exists, "the PDF card is gone")
         XCTAssertTrue(element(app, "scan-page-1").waitForExistence(timeout: Self.ready))
@@ -149,13 +149,39 @@ final class ScanUITests: XCTestCase {
         }
     }
 
-    /// Without documents, how a scan goes, in four short steps.
-    func testWithoutDocumentsTheStepsShow() {
+    /// Without documents, Zuletzt says so in one calm line.
+    func testWithoutDocumentsZuletztSaysSo() {
         let app = launch("empty")
-        XCTAssertTrue(element(app, "scan-steps").waitForExistence(timeout: 20))
-        XCTAssertTrue(words(app, "So geht's").exists)
-        XCTAssertTrue(words(app, "Über die Seite halten, sie wird von selbst aufgenommen.").exists)
-        XCTAssertTrue(words(app, "Prüfen, dann teilen oder als PDF sichern.").exists)
+        let empty = element(app, "scan-recent-empty")
+        XCTAssertTrue(empty.waitForExistence(timeout: 20))
+        XCTAssertTrue(empty.label.hasPrefix("Noch nichts gescannt."), empty.label)
+        XCTAssertFalse(element(app, "scan-preview-toggle").exists, "no eye without pictures")
+    }
+
+    /// The three recent documents side by side, each whole on the screen,
+    /// and, scrolled to the end, above the tab bar.
+    func testTheRecentDocumentsShowWholeAboveTheTabBar() {
+        let app = launch("recent")
+        let cards = app.descendants(matching: .any).matching(identifier: "scan-recent")
+        let three = expectation(for: NSPredicate(format: "count == 3"), evaluatedWith: cards)
+        XCTAssertEqual(XCTWaiter.wait(for: [three], timeout: 90), .completed, "three documents")
+        app.swipeUp()
+        app.swipeUp()
+        Thread.sleep(forTimeInterval: 1.5)
+        let screen = app.windows.firstMatch.frame
+        let bar = app.tabBars.firstMatch
+        let frames = (0..<3).map { cards.element(boundBy: $0).frame }
+        for frame in frames {
+            XCTAssertGreaterThanOrEqual(frame.minX, screen.minX + 19, "\(frame)")
+            XCTAssertLessThanOrEqual(frame.maxX, screen.maxX - 19, "\(frame)")
+            if bar.exists { XCTAssertLessThanOrEqual(frame.maxY, bar.frame.minY, "above the tab bar: \(frame) \(bar.frame)") }
+        }
+        let widths = frames.map(\.width)
+        XCTAssertLessThan((widths.max() ?? 0) - (widths.min() ?? 0), 1, "equally wide: \(widths)")
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.name = "recent-scrolled-to-end"
+        shot.lifetime = .keepAlways
+        add(shot)
     }
 
     /// Scrolled past the card, the bar offers Scannen, which starts the scanner.

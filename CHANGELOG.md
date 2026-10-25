@@ -16,6 +16,11 @@ keeps a download of each version.
   veiled at first, so no word on them can be read when the screen is seen
   by others; the eye beside Alle anzeigen shows them, and Snapfly
   remembers your choice. They only ever show the covered copy.
+- On the iPhone, the Scan tab is calmer: the last three documents show
+  side by side, each page whole with how its places stand ("2 zu prüfen",
+  "3 verdeckt"), nothing hides under the tab bar, Zusammenfügen is now
+  Verbinden on one line, and the card's words and the tiles' icons are
+  easier to read.
 
 - On the iPhone, the Scan tab starts a scan in one tap: one green card,
   three quick actions (Aus Fotos, Zusammenfügen, PDF öffnen) and your
