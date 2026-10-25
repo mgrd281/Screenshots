@@ -858,16 +858,20 @@ enum ScanCleaner {
     }
 
     /// What a page says, in reading order (`ScanReading`): every word read,
-    /// none from under a cover, and each cover as a mark where it lies.
+    /// none from under a cover, and each cover as a mark where it lies. The
+    /// words of a line the reading was not sure of (`ScanContent.sure`) are
+    /// flagged, to be checked against the page; they are never changed.
     static func page(_ reading: [Finder.TextLine], hiding hidden: [CGRect] = [], aspect: CGFloat) -> ScanReading.Page {
         let segments = reading.flatMap { line -> [ScanReading.Segment] in
+            let unsure = line.confidence < ScanContent.sure
             let words = line.words.compactMap { word -> ScanReading.Word? in
                 guard let range = Range(word.range, in: line.string) else { return nil }
                 let text = String(line.string[range])
-                return text.isEmpty ? nil : ScanReading.Word(text: text, box: word.box)
+                return text.isEmpty ? nil : ScanReading.Word(text: text, box: word.box, unsure: unsure)
             }
             // A line whose words are not known is one word, hidden whole under any cover.
-            let known = words.isEmpty && !line.string.isEmpty ? [ScanReading.Word(text: line.string, box: line.box)] : words
+            let known = words.isEmpty && !line.string.isEmpty
+                ? [ScanReading.Word(text: line.string, box: line.box, unsure: unsure)] : words
             return ScanReading.segments(known, hiding: hidden)
         }
         return ScanReading.page(segments + ScanReading.marks(hidden), aspect: aspect)

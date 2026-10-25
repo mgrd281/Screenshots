@@ -22,6 +22,9 @@ enum ScanReading {
         var box: CGRect
         /// A cover lies here: what it hides is not known here and never shown.
         var covered = false
+        /// The reading was not sure of the line this word is on, so it is
+        /// shown with a mark to check against the page; never changed.
+        var unsure = false
 
         static func covered(_ box: CGRect) -> Word {
             Word(text: "", box: box, covered: true)
@@ -88,6 +91,12 @@ enum ScanReading {
         static let proseColumnCharacters = 30
         /// A table's rows: this share of them with cells in two columns or more.
         static let tableRows: CGFloat = 0.75
+        /// Print this much smaller than the page's usual line, or smaller, is
+        /// small print: a letter's foot, a sender's line.
+        static let smallPrint: CGFloat = 0.8
+        /// Columns of small print are a table only with numbers in one column
+        /// at least: this share of its cells.
+        static let tableNumbers: CGFloat = 0.6
         /// A heading is set this much larger than the usual line; print this
         /// much larger or smaller than the line before starts a paragraph.
         static let heading: CGFloat = 1.3
@@ -108,9 +117,29 @@ enum ScanReading {
         let kept = segments.filter { segment in
             !segment.words.isEmpty && (!segment.covered || segment.box.height <= usual * Tuning.coverLines)
         }
-        let items = kept.enumerated().map { Item(id: $0.offset, segment: $0.element, aspect: aspect) }
+        let items = kept.flatMap { parted($0, aspect: aspect, usual: usual) }.enumerated()
+            .map { Item(id: $0.offset, segment: $0.element, aspect: aspect) }
         let layout = Layout(usual: usual, width: aspect, rightToLeft: rightToLeft)
         return Page(blocks: layout.cut(items), rightToLeft: rightToLeft)
+    }
+
+    /// A line Vision read whole that holds a table's cells, their words far
+    /// apart, as the stretches between those gaps, so the cells can be told
+    /// apart; stretches of one row are read as the one line they were again.
+    private static func parted(_ segment: Segment, aspect: CGFloat, usual: CGFloat) -> [Segment] {
+        guard !segment.covered, segment.words.count > 1 else { return [segment] }
+        let reach = Tuning.columnGap * max(usual, segment.box.height)
+        var out: [Segment] = []
+        var current: [Word] = []
+        for word in segment.words {
+            if let last = current.last, aspect * max(word.box.minX - last.box.maxX, last.box.minX - word.box.maxX) >= reach {
+                out.append(Segment(words: current))
+                current = []
+            }
+            current.append(word)
+        }
+        if !current.isEmpty { out.append(Segment(words: current)) }
+        return out
     }
 
     /// Whether most letters are written from the right.
@@ -222,6 +251,13 @@ enum ScanReading {
                 let named = read.filter(Self.namesItsValue).count
                 if !read.isEmpty, 2 * named >= read.count { return nil }
             }
+            // Small print in columns of words alone, as a letter's foot, is read
+            // a column at a time, as it was set; a table of it has numbers.
+            let heights = items.filter { !$0.segment.covered }.map(\.height).sorted()
+            if let middle = heights.isEmpty ? nil : heights[heights.count / 2], middle <= Tuning.smallPrint * usual,
+               !hasNumbers(columns) {
+                return nil
+            }
             var columnOf: [Int: Int] = [:]
             for (index, column) in columns.enumerated() {
                 for item in column { columnOf[item.id] = index }
@@ -236,6 +272,26 @@ enum ScanReading {
                 }
             }
             return Table(rows: rows)
+        }
+
+        /// Whether a column of the candidate holds numbers: quantities, prices,
+        /// dates; at least two cells, and this share of the cells read.
+        private func hasNumbers(_ columns: [[Item]]) -> Bool {
+            columns.contains { column in
+                let read = column.filter { !$0.segment.covered }
+                guard read.count >= 2 else { return false }
+                let numbers = read.filter { Self.numeric($0.segment.words.map(\.text).joined(separator: " ")) }.count
+                return CGFloat(numbers) >= Tuning.tableNumbers * CGFloat(read.count)
+            }
+        }
+
+        /// A cell with a digit in it and hardly a letter: "85,00 €", "2 Std.", "14.10.", "RE-2026-0417".
+        static func numeric(_ text: String) -> Bool {
+            var digits = 0, letters = 0
+            for character in text {
+                if character.isNumber { digits += 1 } else if character.isLetter { letters += 1 }
+            }
+            return digits > 0 && letters <= 3
         }
 
         /// "Datum: 14.10.2026": a label, a colon and its value after it.
@@ -357,8 +413,7 @@ enum ScanReading {
         page.blocks.map { block -> String in
             switch block {
             case .paragraph(let paragraph):
-                let lines = paragraph.lines.map { line(of: $0, mark: mark) }
-                return paragraph.flows && !page.rightToLeft ? runOn(lines) : lines.joined(separator: paragraph.flows ? " " : "\n")
+                return runs(of: paragraph, rightToLeft: page.rightToLeft, mark: mark).map(\.text).joined()
             case .table(let table):
                 return table.rows.map { row in row.map { line(of: $0, mark: mark) }.joined(separator: "\t") }
                     .joined(separator: "\n")
@@ -368,18 +423,69 @@ enum ScanReading {
 
     /// Words as they stand on a line, every covered stretch as one mark.
     static func line(of words: [Word], mark: String = mark) -> String {
-        var parts: [String] = []
+        tokens(of: words, mark: mark).map(\.text).joined(separator: " ")
+    }
+
+    /// A stretch of a block's text and whether the reading was unsure of it.
+    struct Run: Equatable, Sendable {
+        var text: String
+        var unsure: Bool
+    }
+
+    /// A paragraph as the text it makes, in stretches that are sure or unsure.
+    /// Their texts together are what `text` gives for it.
+    static func runs(of paragraph: Paragraph, rightToLeft: Bool, mark: String = mark) -> [Run] {
+        let lines = paragraph.lines.map { tokens(of: $0, mark: mark) }.filter { !$0.isEmpty }
+        if paragraph.flows && !rightToLeft {
+            return joined([runOn(tokens: lines)])
+        }
+        return joined(lines, between: paragraph.flows ? " " : "\n")
+    }
+
+    /// A table's cell as the text it makes.
+    static func runs(ofCell words: [Word], mark: String = mark) -> [Run] {
+        joined([tokens(of: words, mark: mark)])
+    }
+
+    /// Words one by one, every covered stretch one token, the mark.
+    private static func tokens(of words: [Word], mark: String) -> [Run] {
+        var out: [Run] = []
         var inCover = false
         for word in words {
             if word.covered {
-                if !inCover { parts.append(mark) }
+                if !inCover { out.append(Run(text: mark, unsure: false)) }
                 inCover = true
             } else if !word.text.isEmpty {
-                parts.append(word.text)
+                out.append(Run(text: word.text, unsure: word.unsure))
                 inCover = false
             }
         }
-        return parts.joined(separator: " ")
+        return out
+    }
+
+    /// Lines of tokens as stretches: a space between tokens, `between` between
+    /// lines; the space goes to the side that is sure, so a mark never
+    /// underlines the gap beside it.
+    private static func joined(_ lines: [[Run]], between: String = " ") -> [Run] {
+        var out: [Run] = []
+        for (index, line) in lines.enumerated() {
+            for (at, token) in line.enumerated() {
+                let separator = at > 0 ? " " : (index > 0 ? between : "")
+                guard let last = out.last else {
+                    out.append(token)
+                    continue
+                }
+                if last.unsure == token.unsure {
+                    out[out.count - 1].text += separator + token.text
+                } else if token.unsure {
+                    out[out.count - 1].text += separator
+                    out.append(token)
+                } else {
+                    out.append(Run(text: separator + token.text, unsure: false))
+                }
+            }
+        }
+        return out
     }
 
     /// Lines of prose run on into one: a word broken over two lines with a
@@ -388,28 +494,32 @@ enum ScanReading {
     /// ("E-" "Mail") or the word is short, and "Haus- und Gartenbedarf" kept
     /// as it is.
     static func runOn(_ lines: [String]) -> String {
-        var out = ""
+        let tokens = lines.map { $0.split(separator: " ").map { Run(text: String($0), unsure: false) } }
+        return runOn(tokens: tokens).map(\.text).joined(separator: " ")
+    }
+
+    private static func runOn(tokens lines: [[Run]]) -> [Run] {
+        var out: [Run] = []
         for line in lines where !line.isEmpty {
-            guard !out.isEmpty else {
+            guard let last = out.last else {
                 out = line
                 continue
             }
-            let lastWord = out.split(separator: " ").last.map(String.init) ?? ""
-            let next = line.split(separator: " ").first.map { $0.lowercased().trimmingCharacters(in: .punctuationCharacters) } ?? ""
-            let hyphen = out.last.map { ["-", "\u{00AD}", "\u{2010}"].contains($0) } ?? false
-            guard hyphen, lastWord.count >= 2, let first = line.first, first.isLetter else {
-                out += " " + line
+            let next = line[0].text.lowercased().trimmingCharacters(in: .punctuationCharacters)
+            let hyphen = last.text.last.map { ["-", "\u{00AD}", "\u{2010}"].contains($0) } ?? false
+            guard hyphen, last.text.count >= 2, let first = line[0].text.first, first.isLetter else {
+                out += line
                 continue
             }
             if first.isLowercase, joiners.contains(next) {
-                out += " " + line
-            } else if first.isLowercase, lastWord.count >= 3 {
-                out.removeLast()
                 out += line
             } else {
-                // The hyphen stays, a plain one.
-                out.removeLast()
-                out += "-" + line
+                // Made whole where it goes on in small letters and the word is
+                // long enough; else the hyphen stays, a plain one.
+                let whole = first.isLowercase && last.text.count >= 3
+                out[out.count - 1] = Run(text: String(last.text.dropLast()) + (whole ? "" : "-") + line[0].text,
+                                         unsure: last.unsure || line[0].unsure)
+                out += line.dropFirst()
             }
         }
         return out
