@@ -240,14 +240,14 @@ final class ScanUITests: XCTestCase {
         XCTAssertTrue(element(app, "scan-crop").waitForExistence(timeout: 5), "the page's own tools")
     }
 
-    func testTheColorsAreThreeAndHoldForEveryPage() {
+    func testTheColorsAreFourAndHoldForEveryPage() {
         let app = launch("editor")
         XCTAssertTrue(card(app).exists)
         pageTools(app)
         let color = element(app, "scan-color")
         XCTAssertEqual(color.value as? String, "Farbe")
         color.tap()
-        for name in ["Farbe", "Graustufen", "Schwarzweiß"] {
+        for name in ["Farbe", "Originalfarbe", "Graustufen", "Schwarzweiß"] {
             let line = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
             XCTAssertTrue(line.waitForExistence(timeout: 5), name)
         }

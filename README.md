@@ -1021,7 +1021,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   face a little bolder (`ScanPrint`),
   a fold's crease evened out like a shadow, while a pale watermark or a
   shaded row keeps the tint it was printed in, in Color, Grayscale or Black
-  and white (`ScanCleaner`, `ScanClean`).
+  and white (`ScanCleaner`, `ScanClean`). Color makes the paper white;
+  Original Color keeps the paper's own colour, a pink sick note pink, as
+  evenly lit as Color makes it white.
   Several photos chosen at once make one document, its pages in the order
   they were chosen. Only
   the picture as a whole changes: nothing is drawn, filled in, removed or

@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, a scanned page has a fourth colour, Originalfarbe: the
+  paper keeps its own colour, so a pink sick note stays pink, evenly lit
+  and straightened, the print as dark as in Farbe.
 - On the iPhone, scanned pages can be kept: Unter Zuletzt behalten puts
   them among your recent documents, on this iPhone only.
 
