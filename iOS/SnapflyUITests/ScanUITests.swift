@@ -87,6 +87,20 @@ final class ScanUITests: XCTestCase {
 
     /// The card starts the scanner: Snapfly's own camera here, as the
     /// simulator has no document camera.
+    /// The pages kept as a document: they go into a PDF project among the recent ones.
+    func testScannedPagesAreKeptAsADocument() {
+        let app = launch("tab")
+        XCTAssertTrue(element(app, "scan-page-2").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(gone(element(app, "scan-improving"), timeout: Self.ready))
+        let keep = element(app, "scan-keep")
+        for _ in 0..<4 where !keep.isHittable { app.swipeUp() }
+        keep.tap()
+        XCTAssertTrue(element(app, "project-page-2").waitForExistence(timeout: 30), "the document opens with both pages")
+        element(app, "project-close").tap()
+        XCTAssertTrue(element(app, "scan-recent").waitForExistence(timeout: 30), "and waits among the recent ones")
+        XCTAssertFalse(element(app, "scan-page-1").exists, "the scanned pages moved into it")
+    }
+
     func testTheCardStartsTheScanner() {
         let app = launch("empty", ownCamera: true)
         let hero = element(app, "scan-camera")
@@ -103,10 +117,12 @@ final class ScanUITests: XCTestCase {
         let merge = element(app, "project-merge")
         XCTAssertTrue(merge.waitForExistence(timeout: 20))
         merge.tap()
-        XCTAssertTrue(element(app, "project-add").waitForExistence(timeout: 20), "a new PDF project opens")
+        // A new project opens empty, its pages' overview with no bar yet.
+        let close = element(app, "project-close")
+        XCTAssertTrue(close.waitForExistence(timeout: 20), "a new PDF project opens")
         // Closed empty, it is gone, so it does not open again over the next launch.
-        element(app, "project-close").tap()
-        XCTAssertTrue(gone(element(app, "project-add")))
+        close.tap()
+        XCTAssertTrue(gone(close))
         app.terminate()
         let again = launch("empty")
         let pdf = element(again, "project-open-pdf")

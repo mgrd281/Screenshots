@@ -1906,6 +1906,8 @@
 "Names, numbers and other private details are covered, as your settings say." = "名前、番号などの個人情報は、設定どおりに隠されます。";
 "Original Color" = "元の色";
 "The paper keeps its own color" = "用紙の色をそのまま残します";
+"Keep Under Recent" = "最近に保存";
+"Keeps the pages on this iPhone as a document. Covered as your settings say." = "ページを書類としてこのiPhoneに保存します。設定どおりに隠されます。";
 "Document" = "書類";
 "Show Preview" = "プレビューを表示";
 "Hide Preview" = "プレビューを隠す";

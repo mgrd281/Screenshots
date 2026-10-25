@@ -228,6 +228,17 @@ struct ScanTab: View {
             .disabled(store.making != nil)
             .frame(maxWidth: .infinity)
             .padding(.top, 4)
+            Button { store.saveAsDocument() } label: {
+                Label(L("Keep Under Recent"), systemImage: "tray.and.arrow.down")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(SnapflyTokens.protectTint)
+                    .frame(minHeight: SnapflyTokens.touch)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(PressStyle())
+            .disabled(store.making != nil || store.improving != nil)
+            .accessibilityHint(L("Keeps the pages on this iPhone as a document. Covered as your settings say."))
+            .accessibilityIdentifier("scan-keep")
             VStack(alignment: .leading, spacing: 4) {
                 Text(L("Each page is covered as Settings says, or as you left it after opening it."))
                 Text(L("A tap on an app covers every page and hands them to it, through the share sheet where needed."))

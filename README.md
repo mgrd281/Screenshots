@@ -1127,7 +1127,11 @@ watch the screen, so there is no line there. What it keeps is the covering:
   readable at any size; veiled again while Snapfly is away, for the app
   switcher, and while something on the page is still to check), its
   name, its pages and the day, which opens it, or, held, shares,
-  renames or deletes it; Alle anzeigen shows them all. Without documents,
+  renames or deletes it; Alle anzeigen shows them all. Under the scanned
+  pages, Unter Zuletzt behalten keeps them as a PDF project among the
+  documents (kept on this iPhone in the project's protected folder, never
+  in a backup), covered as Settings says where they show and leave, and
+  clears them from the scanned pages. Without documents,
   "So geht's" says how a scan goes in four short steps instead. The "?"
   opens "So funktioniert's". Scrolled past the card, the bar holds a green
   Scannen pill. It comes in once per launch, and a new document drops into
