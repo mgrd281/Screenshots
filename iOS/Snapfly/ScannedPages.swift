@@ -211,6 +211,21 @@ final class ScannedPages: ObservableObject {
         settle(id)
     }
 
+    /// The pages as a PDF project among the documents (`ProjectStore`): each
+    /// page as it was cleaned, in the document's order, kept on this iPhone
+    /// in the project's own protected folder, covered as Settings says where
+    /// it shows and leaves. The scanned pages are then cleared, as they now
+    /// live there. False while a page is not ready.
+    @discardableResult
+    func saveAsDocument() -> Bool {
+        guard !pages.isEmpty, pages.allSatisfy({ $0.state == .ready && $0.cleaned != nil }) else { return false }
+        let images = pages.compactMap(\.cleaned)
+        let kind = title?.kind
+        ProjectStore.shared.start(.pictures(images, origin: .scan, kind: kind))
+        clear()
+        return true
+    }
+
     func clear() {
         let gone = pages.map(\.id)
         pages = []

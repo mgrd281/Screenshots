@@ -10,6 +10,9 @@ keeps a download of each version.
   paper keeps its own colour, so a pink sick note stays pink, evenly lit
   and straightened, the print as dark as in Farbe.
 
+- On the iPhone, scanned pages can be kept: Unter Zuletzt behalten puts
+  them among your recent documents, on this iPhone only.
+
 - On the iPhone, the Scan tab starts a scan in one tap: one green card,
   three quick actions (Aus Fotos, Zusammenfügen, PDF öffnen) and your
   recent documents, each shown as its first page with the private details
