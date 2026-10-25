@@ -181,6 +181,50 @@ final class ScanReadingToolsTests: XCTestCase {
         XCTAssertEqual(ScanReading.find("東京", in: "東京都新宿区"), [0..<2])
     }
 
+    // MARK: Spots and matches
+
+    func testUnsureSpotsSayWhichLineAndCellAndEachHasItsOwnID() {
+        let block = paragraph([words("Alles sicher"), words("Betrag 12,50 €", y: 0.4, unsure: ["12,50"]), words("Datum 1.1.", y: 0.3, unsure: ["1.1."])])
+        let grid = table([["Lampe", "49,0O"], ["Kabel", "25,00"]])
+        guard case .table(var inner) = grid else { return XCTFail() }
+        inner.rows[1][1][0].unsure = true
+        let spots = ScanReading.unsureSpots(page(block, .table(inner)), number: 3)
+        XCTAssertEqual(spots.map(\.spot), [.init(page: 3, block: 0), .init(page: 3, block: 0), .init(page: 3, block: 1, row: 1, column: 1)])
+        XCTAssertEqual(spots.map(\.line), [1, 2, 0])
+        XCTAssertEqual(Set(spots.map(\.id)).count, 3)
+    }
+
+    func testTheTextAndTheKeyAtASpot() throws {
+        let one = paragraph([words("Erste Zeile"), words("zweite Zeile", y: 0.48)])
+        let grid = table([["Lampe", "49,00"], ["Kabel", "25,00"]])
+        let pages = [page(one, grid)]
+        XCTAssertEqual(ScanReading.text(at: .init(page: 0, block: 0), in: pages), "Erste Zeile zweite Zeile")
+        XCTAssertEqual(ScanReading.text(at: .init(page: 0, block: 1, row: 1, column: 1), in: pages), "25,00")
+        XCTAssertEqual(ScanReading.editKey(at: .init(page: 0, block: 1, row: 0, column: 0), in: pages), "c:Lampe")
+        XCTAssertEqual(ScanReading.editKey(at: .init(page: 0, block: 0), in: pages), "p:Erste Zeile zweite Zeile")
+        XCTAssertNil(ScanReading.text(at: .init(page: 1, block: 0), in: pages))
+        XCTAssertNil(ScanReading.text(at: .init(page: 0, block: 1), in: pages), "a table needs a cell")
+        XCTAssertNil(ScanReading.editKey(at: .init(page: 0, block: 5), in: pages))
+        XCTAssertNotNil(ScanReading.box(at: .init(page: 0, block: 1, row: 0, column: 1), in: pages))
+    }
+
+    func testMatchesAreFoundInReadingOrderInParagraphsAndCells() {
+        let one = paragraph([words("Die Rechnung liegt bei. Rechnung 4711")])
+        let grid = table([["Rechnungsnr.", "4711"], ["Datum", "14.10."]])
+        let matches = ScanReading.matches("rechnung", in: [page(one), page(grid)])
+        XCTAssertEqual(matches.map(\.spot), [.init(page: 0, block: 0), .init(page: 0, block: 0), .init(page: 1, block: 0, row: 0, column: 0)])
+        XCTAssertEqual(matches[0].range, 4..<12)
+        XCTAssertTrue(ScanReading.matches("   ", in: [page(one)]).isEmpty)
+        XCTAssertTrue(ScanReading.matches("zzz", in: [page(one)]).isEmpty)
+    }
+
+    func testCharacterRangesFollowUTF16() {
+        let text = "Café 😀 offen"
+        let range = (text as NSString).range(of: "offen")
+        XCTAssertEqual(ScanReading.characterRange(range, in: text), 7..<12)
+        XCTAssertNil(ScanReading.characterRange(NSRange(location: 99, length: 3), in: text))
+    }
+
     // MARK: Speaking
 
     func testACoverIsSpokenAsAWordAndWhatItHidesIsNotThere() {

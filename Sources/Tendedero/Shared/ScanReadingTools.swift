@@ -62,25 +62,100 @@ extension ScanReading {
         }
     }
 
-    /// Where the reading was unsure, to check against the page.
-    static func unsureBoxes(_ page: Page) -> [CGRect] {
-        var found: [CGRect] = []
-        func add(_ words: [Word]) {
-            let unsure = words.filter { $0.unsure && !$0.covered }
-            if !unsure.isEmpty { found.append(box(of: unsure)) }
+    /// A place in the pages' text: the page, the block, and in a table the
+    /// row and the column.
+    struct Spot: Hashable, Sendable {
+        var page: Int
+        var block: Int
+        var row: Int?
+        var column: Int?
+
+        init(page: Int, block: Int, row: Int? = nil, column: Int? = nil) {
+            self.page = page
+            self.block = block
+            self.row = row
+            self.column = column
         }
-        for block in page.blocks {
+    }
+
+    /// A line the reading was unsure of, and where it lies on the page.
+    struct UnsureSpot: Equatable, Sendable, Identifiable {
+        var spot: Spot
+        /// Which line of a paragraph it is; 0 for a table's cell.
+        var line: Int
+        var box: CGRect
+
+        var id: String { "\(spot.page)-\(spot.block)-\(spot.row ?? -1)-\(spot.column ?? -1)-\(line)" }
+    }
+
+    /// Where the reading was unsure, to check against the page.
+    static func unsureSpots(_ page: Page, number: Int = 0) -> [UnsureSpot] {
+        var found: [UnsureSpot] = []
+        func add(_ words: [Word], _ spot: Spot, line: Int) {
+            let unsure = words.filter { $0.unsure && !$0.covered }
+            if !unsure.isEmpty { found.append(UnsureSpot(spot: spot, line: line, box: box(of: unsure))) }
+        }
+        for (blockIndex, block) in page.blocks.enumerated() {
             switch block {
-            case .paragraph(let paragraph): paragraph.lines.forEach(add)
-            case .table(let table): table.rows.forEach { $0.forEach(add) }
+            case .paragraph(let paragraph):
+                for (line, words) in paragraph.lines.enumerated() { add(words, Spot(page: number, block: blockIndex), line: line) }
+            case .table(let table):
+                for (row, cells) in table.rows.enumerated() {
+                    for (column, cell) in cells.enumerated() { add(cell, Spot(page: number, block: blockIndex, row: row, column: column), line: 0) }
+                }
             }
         }
         return found
     }
 
+    static func unsureBoxes(_ page: Page) -> [CGRect] {
+        unsureSpots(page).map(\.box)
+    }
+
     /// How many lines (a table's cells count one each) were read unsurely.
     static func unsureCount(_ pages: [Page]) -> Int {
-        pages.reduce(0) { $0 + unsureBoxes($1).count }
+        pages.enumerated().reduce(0) { $0 + unsureSpots($1.element, number: $1.offset).count }
+    }
+
+    /// The text of the paragraph or the cell at a spot, as it is shown.
+    static func text(at spot: Spot, in pages: [Page]) -> String? {
+        guard pages.indices.contains(spot.page), pages[spot.page].blocks.indices.contains(spot.block) else { return nil }
+        let page = pages[spot.page]
+        switch page.blocks[spot.block] {
+        case .paragraph(let paragraph):
+            return runs(of: paragraph, rightToLeft: page.rightToLeft).map(\.text).joined()
+        case .table(let table):
+            guard let row = spot.row, let column = spot.column, table.rows.indices.contains(row),
+                  table.rows[row].indices.contains(column) else { return nil }
+            return line(of: table.rows[row][column])
+        }
+    }
+
+    /// The key a correction at a spot is kept under, from the pages as read.
+    static func editKey(at spot: Spot, in pages: [Page]) -> String? {
+        guard pages.indices.contains(spot.page), pages[spot.page].blocks.indices.contains(spot.block) else { return nil }
+        let page = pages[spot.page]
+        switch page.blocks[spot.block] {
+        case .paragraph(let paragraph):
+            return editKey(of: paragraph, rightToLeft: page.rightToLeft)
+        case .table(let table):
+            guard let row = spot.row, let column = spot.column, table.rows.indices.contains(row),
+                  table.rows[row].indices.contains(column) else { return nil }
+            return editKey(ofCell: table.rows[row][column])
+        }
+    }
+
+    /// The box of a paragraph or a cell at a spot.
+    static func box(at spot: Spot, in pages: [Page]) -> CGRect? {
+        guard pages.indices.contains(spot.page), pages[spot.page].blocks.indices.contains(spot.block) else { return nil }
+        switch pages[spot.page].blocks[spot.block] {
+        case .paragraph(let paragraph):
+            return box(of: paragraph.lines.flatMap { $0 })
+        case .table(let table):
+            guard let row = spot.row, let column = spot.column, table.rows.indices.contains(row),
+                  table.rows[row].indices.contains(column) else { return box(of: pages[spot.page].blocks[spot.block]) }
+            return box(of: table.rows[row][column])
+        }
     }
 
     // MARK: Tables
@@ -143,6 +218,43 @@ extension ScanReading {
             from = hit.upperBound > hit.lowerBound ? hit.upperBound : text.index(after: hit.upperBound)
         }
         return found
+    }
+
+    /// A few letters found in a paragraph or a cell, and where.
+    struct Match: Equatable, Sendable {
+        var spot: Spot
+        /// Character offsets in the text of that paragraph or cell.
+        var range: Range<Int>
+    }
+
+    /// Every place in the pages that holds the letters, in reading order.
+    static func matches(_ query: String, in pages: [Page]) -> [Match] {
+        guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return [] }
+        var found: [Match] = []
+        for (pageIndex, page) in pages.enumerated() {
+            for (blockIndex, block) in page.blocks.enumerated() {
+                switch block {
+                case .paragraph(let paragraph):
+                    let text = runs(of: paragraph, rightToLeft: page.rightToLeft).map(\.text).joined()
+                    found += find(query, in: text).map { Match(spot: Spot(page: pageIndex, block: blockIndex), range: $0) }
+                case .table(let table):
+                    for (row, cells) in table.rows.enumerated() {
+                        for (column, cell) in cells.enumerated() {
+                            found += find(query, in: line(of: cell)).map {
+                                Match(spot: Spot(page: pageIndex, block: blockIndex, row: row, column: column), range: $0)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return found
+    }
+
+    /// A range of UTF-16 units as character offsets in the text.
+    static func characterRange(_ range: NSRange, in text: String) -> Range<Int>? {
+        guard let found = Range(range, in: text) else { return nil }
+        return text.distance(from: text.startIndex, to: found.lowerBound)..<text.distance(from: text.startIndex, to: found.upperBound)
     }
 
     // MARK: Speaking
