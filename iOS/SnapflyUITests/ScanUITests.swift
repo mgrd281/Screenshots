@@ -103,10 +103,12 @@ final class ScanUITests: XCTestCase {
         let merge = element(app, "project-merge")
         XCTAssertTrue(merge.waitForExistence(timeout: 20))
         merge.tap()
-        XCTAssertTrue(element(app, "project-add").waitForExistence(timeout: 20), "a new PDF project opens")
+        // A new project opens empty, its pages' overview with no bar yet.
+        let close = element(app, "project-close")
+        XCTAssertTrue(close.waitForExistence(timeout: 20), "a new PDF project opens")
         // Closed empty, it is gone, so it does not open again over the next launch.
-        element(app, "project-close").tap()
-        XCTAssertTrue(gone(element(app, "project-add")))
+        close.tap()
+        XCTAssertTrue(gone(close))
         app.terminate()
         let again = launch("empty")
         let pdf = element(again, "project-open-pdf")
