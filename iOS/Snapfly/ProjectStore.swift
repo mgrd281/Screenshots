@@ -118,6 +118,8 @@ final class ProjectStore: ObservableObject {
     private let thumbnails = NSCache<NSString, UIImage>()
     /// The projects' first pages covered, for the Scan tab, by what they were drawn from.
     private let coveredFirst = NSCache<NSString, UIImage>()
+    /// The same, veiled (`ScanVeil`), by the covered picture they were made from.
+    private let veiledFirst = NSCache<UIImage, UIImage>()
     /// Covered one after another, the newest asked last.
     private var covering: Task<UIImage?, Never>?
     private let wanted = Wanted()
@@ -951,6 +953,20 @@ final class ProjectStore: ObservableObject {
         }
         covering = task
         return await task.value
+    }
+
+    /// A project's first page covered, then veiled (`ScanVeil`), as the Scan
+    /// tab shows it until the owner shows the pictures: made from the
+    /// covered copy only, never from the page without its covers.
+    func veiledFirstPage(_ project: PDFProject) async -> UIImage? {
+        guard let covered = await coveredFirstPage(project) else { return nil }
+        if let known = veiledFirst.object(forKey: covered) { return known }
+        guard let source = covered.cgImage else { return nil }
+        let made = await Self.run(on: small) { ScanVeil.image(source) }
+        guard let made else { return nil }
+        let image = UIImage(cgImage: made)
+        veiledFirst.setObject(image, forKey: covered)
+        return image
     }
 
     /// A project's first page as it shows, drawn from its copy in the

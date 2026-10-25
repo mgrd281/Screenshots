@@ -1908,3 +1908,8 @@
 "The paper keeps its own color" = "Das Papier behält seine Farbe";
 "Keep Under Recent" = "Unter Zuletzt behalten";
 "Keeps the pages on this iPhone as a document. Covered as your settings say." = "Behält die Seiten als Dokument auf diesem iPhone. Verdeckt, wie in deinen Einstellungen.";
+"Document" = "Dokument";
+"Show Preview" = "Vorschau zeigen";
+"Hide Preview" = "Vorschau verbergen";
+"Preview hidden" = "Vorschau verborgen";
+"Pages: %d" = "Seiten: %d";

@@ -69,7 +69,8 @@ final class PDFUITests: XCTestCase {
         let recent = element(app, "scan-recent")
         XCTAssertTrue(recent.waitForExistence(timeout: 60))
         XCTAssertTrue(words(app, "Zuletzt").exists)
-        XCTAssertTrue(recent.label.hasPrefix("Rechnung März, 5 Seiten, "), recent.label)
+        XCTAssertTrue(recent.label.hasPrefix("Rechnung März, Seiten: 5, "), recent.label)
+        XCTAssertTrue(recent.label.hasSuffix("Vorschau verborgen"), "veiled until shown: \(recent.label)")
         // Alle anzeigen lists it too.
         element(app, "scan-show-all").tap()
         XCTAssertTrue(element(app, "scan-all-documents").waitForExistence(timeout: 10))
@@ -86,6 +87,11 @@ final class PDFUITests: XCTestCase {
         let app = launch("tab")
         let recent = element(app, "scan-recent")
         XCTAssertTrue(recent.waitForExistence(timeout: 60))
+        // Veiled until shown: the eye shows the pictures, then veils them again at the end.
+        let eye = element(app, "scan-preview-toggle")
+        XCTAssertEqual(eye.label, "Vorschau zeigen")
+        eye.tap()
+        defer { eye.tap() }
         // Covered and drawn: the first time, Vision's models load first; two minutes at most.
         var picture = recent.screenshot().image
         var band = 0
@@ -100,6 +106,26 @@ final class PDFUITests: XCTestCase {
         attachment.lifetime = .keepAlways
         add(attachment)
         XCTAssertGreaterThanOrEqual(band, 24, "a cover's band, in pixels")
+    }
+
+    /// The pictures are veiled at first: nothing dark and sharp shows, and
+    /// the eye's choice is kept after Snapfly is closed and opened again.
+    func testTheRecentPicturesAreVeiledUntilShownAndTheChoiceIsKept() throws {
+        let app = launch("tab")
+        let recent = element(app, "scan-recent")
+        XCTAssertTrue(recent.waitForExistence(timeout: 60))
+        Thread.sleep(forTimeInterval: 20)
+        XCTAssertLessThan(try XCTUnwrap(Self.widestDarkRun(recent.screenshot().image)), 6, "no cover band, no print: veiled")
+        let eye = element(app, "scan-preview-toggle")
+        eye.tap()
+        XCTAssertEqual(eye.label, "Vorschau verbergen")
+        app.terminate()
+        let again = launch("tab")
+        let kept = element(again, "scan-preview-toggle")
+        XCTAssertTrue(kept.waitForExistence(timeout: 60))
+        XCTAssertEqual(kept.label, "Vorschau verbergen", "the choice is kept")
+        kept.tap()
+        XCTAssertEqual(kept.label, "Vorschau zeigen")
     }
 
     /// The widest run of near-black pixels in any row of the picture's upper part, the page.

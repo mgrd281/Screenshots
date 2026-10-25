@@ -369,11 +369,8 @@ private struct PageCard: View {
         Color(.secondarySystemBackground)
             .aspectRatio(1, contentMode: .fit)
             .overlay(alignment: .top) {
-                if let thumbnail = page.thumbnail {
-                    Image(uiImage: thumbnail)
-                        .resizable()
-                        .scaledToFill()
-                }
+                // Its covered copy only, veiled unless shown; none before it is covered.
+                if let session { CoveredPicture(session: session) }
             }
             .overlay {
                 if working {
@@ -420,6 +417,37 @@ private struct PageCard: View {
         if page.state == .needsCorners { return L("corners to set") }
         if session?.isReady == true { return L("Protected") }
         return page.issues.isEmpty ? "" : L("hard to read")
+    }
+
+    /// The page's covered copy, small: veiled unless the owner shows the
+    /// pictures, and always while Snapfly is away or something on the page
+    /// is still to check; nothing until its copy is made.
+    private struct CoveredPicture: View {
+        @ObservedObject var session: ProtectSession
+        @AppStorage(ScanStart.previewKey) private var shows = false
+        @Environment(\.scenePhase) private var phase
+        @State private var veiled: UIImage?
+
+        private var hidden: Bool { !shows || phase != .active || session.plan.tally.toCheck > 0 }
+
+        var body: some View {
+            Group {
+                if let copy = session.copy, session.isReady {
+                    if !hidden {
+                        Image(uiImage: copy).resizable().scaledToFill()
+                    } else if let veiled {
+                        Image(uiImage: veiled).resizable().scaledToFill()
+                    }
+                }
+            }
+            .animation(.easeOut(duration: 0.2), value: hidden)
+            .task(id: session.copy.map(ObjectIdentifier.init)) {
+                guard let copy = session.copy?.cgImage else { return veiled = nil }
+                veiled = await Task.detached(priority: .utility) {
+                    ScanCleaner.smaller(copy, longest: 360).flatMap(ScanVeil.image).map { UIImage(cgImage: $0) }
+                }.value
+            }
+        }
     }
 
     /// The shield, while the page's copy is made and checked as it was left.

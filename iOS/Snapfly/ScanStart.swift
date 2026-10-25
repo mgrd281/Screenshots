@@ -15,6 +15,42 @@ enum ScanStart {
     @MainActor static var newest: UUID?
     /// How many recent documents show.
     static let shown = 10
+    /// Whether the documents' small pictures are shown or veiled
+    /// (`ScanVeil`), kept on this iPhone; veiled until the owner shows them.
+    static let previewKey = "snapfly.scan.showsPreviews"
+}
+
+extension ScanVeil {
+    /// A small picture veiled, as a picture again; nil where it cannot be read.
+    static func image(_ picture: CGImage) -> CGImage? {
+        ScanCleaner.bitmap(picture).flatMap { ScanCleaner.image(veiled($0), gray: false) }
+    }
+}
+
+/// The round glass eye over the documents: shows their small pictures, or
+/// veils them again, with a light tap.
+struct PreviewToggle: View {
+    @AppStorage(ScanStart.previewKey) private var shows = false
+    @ScanCalm private var calm
+
+    var body: some View {
+        Button {
+            withAnimation(SnapflyMotion.toggle(calm)) { shows.toggle() }
+        } label: {
+            Image(systemName: shows ? "eye" : "eye.slash")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.primary)
+                .contentTransition(.symbolEffect(.replace))
+                .frame(width: 36, height: 36)
+                .editorGlass(in: Circle())
+                .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .sensoryFeedback(.impact(weight: .light), trigger: shows)
+        .accessibilityLabel(shows ? L("Hide Preview") : L("Show Preview"))
+        .accessibilityIdentifier("scan-preview-toggle")
+    }
 }
 
 /// Where the Scan tab goes besides a page: Alle anzeigen.
@@ -308,6 +344,7 @@ struct RecentDocuments: View {
                     .font(.title2.weight(.bold))
                     .accessibilityAddTraits(.isHeader)
                 Spacer()
+                PreviewToggle()
                 Button(L("Show All"), action: showAll)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(SnapflyTokens.protectTint)
@@ -360,7 +397,11 @@ struct RecentDocumentCard: View {
     var arrived = false
     var width: CGFloat = 128
     @ObservedObject private var store = ProjectStore.shared
+    @AppStorage(ScanStart.previewKey) private var showsPreview = false
+    @Environment(\.scenePhase) private var phase
+    /// The first page covered, and the same veiled.
     @State private var picture: UIImage?
+    @State private var veiled: UIImage?
     @State private var unreadable = false
     @State private var renaming = false
     @State private var name = ""
@@ -404,15 +445,33 @@ struct RecentDocumentCard: View {
             Button(L("Done")) { store.rename(project.id, to: name) }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(project.name + ", " + RecentDocumentCard.about(project, spoken: true))
+        .accessibilityLabel(spoken)
         .accessibilityAddTraits(.isButton)
         .accessibilityAction(named: L("Share")) { store.share(project.id) }
         .accessibilityAction(named: L("Delete")) { store.delete(project.id) }
         .accessibilityIdentifier("scan-recent")
         .task(id: project.pages.first.map { "\($0.id)-\($0.turns)" }) {
             picture = await store.coveredFirstPage(project)
+            veiled = await store.veiledFirstPage(project)
             unreadable = picture == nil
         }
+    }
+
+    /// Veiled unless the owner shows the pictures, and always while Snapfly
+    /// is away (the app switcher's snapshot) or something on the page is
+    /// still to check.
+    private var hidden: Bool {
+        guard showsPreview, phase == .active else { return true }
+        guard let first = project.pages.first else { return true }
+        return (store.opened(first.id)?.plan.tally.toCheck ?? 0) > 0
+    }
+
+    /// Its name, its pages and the day; never what is on the page.
+    private var spoken: String {
+        var parts = [project.name.isEmpty ? L("Document") : project.name,
+                     String(format: L("Pages: %d"), project.pages.count), Self.day(project.modified, spoken: true)]
+        if hidden { parts.append(L("Preview hidden")) }
+        return parts.joined(separator: ", ")
     }
 
     /// The first page covered, on the grey; a lock where it cannot be shown covered.
@@ -421,8 +480,8 @@ struct RecentDocumentCard: View {
         return SnapflyTokens.scanRecentGround
             .frame(height: 150 * min(scaled, 1.8))
             .overlay(alignment: .top) {
-                if let picture {
-                    Image(uiImage: picture)
+                if let shown = hidden ? veiled : picture {
+                    Image(uiImage: shown)
                         .resizable()
                         .scaledToFill()
                         .frame(width: (width - 28) * min(scaled, 1.8))
@@ -430,6 +489,7 @@ struct RecentDocumentCard: View {
                         .clipped()
                         .shadow(color: .black.opacity(0.08), radius: 3, y: 1)
                         .padding(.top, 14)
+                        .id(hidden)
                         .transition(.opacity)
                 } else if unreadable {
                     Image(systemName: "lock.doc")
@@ -445,7 +505,8 @@ struct RecentDocumentCard: View {
             .overlay {
                 if arrived && !calm { ArrivalRing(shape: shape) }
             }
-            .animation(.easeOut(duration: 0.2), value: picture != nil)
+            .animation(.easeOut(duration: calm ? 0.15 : 0.2), value: picture != nil)
+            .animation(.easeOut(duration: calm ? 0.15 : 0.2), value: hidden)
     }
 
     /// "5 Seiten · Gestern"; spoken, "5 Seiten, gestern".

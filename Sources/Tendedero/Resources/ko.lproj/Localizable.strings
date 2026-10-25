@@ -1908,3 +1908,8 @@
 "The paper keeps its own color" = "종이 색이 그대로 유지됩니다";
 "Keep Under Recent" = "최근에 보관";
 "Keeps the pages on this iPhone as a document. Covered as your settings say." = "페이지를 이 iPhone에 문서로 보관합니다. 설정에 따라 가려집니다.";
+"Document" = "문서";
+"Show Preview" = "미리보기 보기";
+"Hide Preview" = "미리보기 가리기";
+"Preview hidden" = "미리보기 가려짐";
+"Pages: %d" = "페이지: %d";

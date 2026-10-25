@@ -1908,3 +1908,8 @@
 "The paper keeps its own color" = "纸张保留原本的颜色";
 "Keep Under Recent" = "保存到“最近”";
 "Keeps the pages on this iPhone as a document. Covered as your settings say." = "将页面作为文稿保存在这台 iPhone 上，按你的设置遮盖。";
+"Document" = "文稿";
+"Show Preview" = "显示预览";
+"Hide Preview" = "隐藏预览";
+"Preview hidden" = "预览已隐藏";
+"Pages: %d" = "页数：%d";

@@ -1122,7 +1122,11 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Fotos, Zusammenfügen and PDF öffnen; and under Zuletzt the ten documents
   edited last, newest first, in a row that scrolls sideways, each as its
   first page covered as Settings says (never uncovered, never a badge on
-  it), its name, its pages and the day, which opens it, or, held, shares,
+  it) and veiled until the eye beside Alle anzeigen shows the pictures,
+  a choice kept on the iPhone (`ScanVeil`: a few cells across, no word
+  readable at any size; veiled again while Snapfly is away, for the app
+  switcher, and while something on the page is still to check), its
+  name, its pages and the day, which opens it, or, held, shares,
   renames or deletes it; Alle anzeigen shows them all. Under the scanned
   pages, Unter Zuletzt behalten keeps them as a PDF project among the
   documents (kept on this iPhone in the project's protected folder, never

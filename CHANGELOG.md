@@ -12,6 +12,10 @@ keeps a download of each version.
 
 - On the iPhone, scanned pages can be kept: Unter Zuletzt behalten puts
   them among your recent documents, on this iPhone only.
+- On the iPhone, the Scan tab's recent documents and scanned pages are
+  veiled at first, so no word on them can be read when the screen is seen
+  by others; the eye beside Alle anzeigen shows them, and Snapfly
+  remembers your choice. They only ever show the covered copy.
 
 - On the iPhone, the Scan tab starts a scan in one tap: one green card,
   three quick actions (Aus Fotos, Zusammenfügen, PDF öffnen) and your
