@@ -8,7 +8,7 @@ import XCTest
 /// times larger; shown, its owner's saved name is covered.
 final class ScanVeilTests: XCTestCase {
     /// A page of print: rows of strokes 1 to 4 px wide, as 7 to 24 pt print is at a thumbnail's size.
-    private static func print(width: Int = 240, height: Int = 340) -> ScanBitmap {
+    private static func printedPage(width: Int = 240, height: Int = 340) -> ScanBitmap {
         var page = ScanBitmap(width: width, height: height, red: 250, green: 248, blue: 244)
         for row in 0..<12 {
             let top = 12 + row * 20, stroke = 1 + row % 4
@@ -40,7 +40,7 @@ final class ScanVeilTests: XCTestCase {
     }
 
     func testNothingSharpIsLeftButThePagesShapeAndColourStay() {
-        let page = Self.print()
+        let page = Self.printedPage()
         let veiled = ScanVeil.veiled(page)
         XCTAssertGreaterThan(Self.steepest(page), 200, "the print is sharp")
         XCTAssertLessThanOrEqual(Self.steepest(veiled), 12, "no edge a letter could be read by")
