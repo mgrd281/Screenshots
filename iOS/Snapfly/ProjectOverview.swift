@@ -55,7 +55,13 @@ struct ProjectOverview: View {
     var body: some View {
         alerts(stack)
             .onAppear {
-                reopen()
+                // Opened to share from the Scan tab: Save and Share, over the pages.
+                if store.sharesOnOpen {
+                    store.sharesOnOpen = false
+                    exporting = ExportScope(only: nil)
+                } else {
+                    reopen()
+                }
                 askingPassword = store.locked != nil
             }
             .onChange(of: store.locked?.id) { _, id in

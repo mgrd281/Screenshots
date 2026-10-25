@@ -1456,12 +1456,10 @@
 /* Tabs, scanning and the Protected tab on the iPhone */
 "Scan" = "Tara";
 "Scan a document" = "Belge tara";
-"Scan Document" = "Belge Tara";
 "This iPhone cannot scan documents." = "Bu iPhone belge tarayamıyor.";
 "Scanned pages" = "Taranan sayfalar";
 "Page %d" = "Sayfa %d";
 "Pages stay on this iPhone only while Snapfly is open." = "Sayfalar yalnızca Snapfly açıkken bu iPhone'da kalır.";
-"Names, numbers and other private details are covered as Settings says." = "Adlar, numaralar ve diğer özel bilgiler Ayarlar'daki gibi kapatılır.";
 "Nothing protected yet" = "Henüz korunan bir şey yok";
 "The screenshots you protect show up here." = "Koruduğun ekran görüntüleri burada görünür.";
 "The last twelve, kept on this iPhone by their place in Photos alone." = "Son on iki tanesi, bu iPhone'da yalnızca Fotoğraflar'daki yerleriyle tutulur.";
@@ -1475,11 +1473,8 @@
 "Page %d could not be covered, so nothing was sent." = "Sayfa %d kapatılamadı, bu yüzden hiçbir şey gönderilmedi.";
 
 /* The iPhone: scanned pages straightened, brightened, reviewed and saved */
-"Letters, forms and receipts, straight from the camera. Straightened, brightened and with private details covered, all on this iPhone." = "Mektuplar, formlar ve fişler, doğrudan kameradan. Düzeltilmiş, aydınlatılmış ve özel bilgileri gizlenmiş, hepsi bu iPhone’da.";
 "Choose from Photos" = "Fotoğraflar’dan seç";
 "Hold your iPhone over the page. It is found and taken by itself." = "iPhone’unu sayfanın üzerinde tut. Sayfa kendiliğinden bulunur ve çekilir.";
-"New:" = "Yeni:";
-"The page is straightened and brightened, like a clean PDF. No text is changed." = "Sayfa temiz bir PDF gibi düzeltilir ve aydınlatılır. Hiçbir metin değişmez.";
 "Check the places, then copy, share or save the page as a PDF or a picture." = "Yerleri kontrol et, sonra sayfayı kopyala, paylaş ya da PDF veya resim olarak kaydet.";
 "Each page is covered as Settings says, or as you left it after opening it." = "Her sayfa Ayarlar’daki gibi ya da açtıktan sonra bıraktığın gibi gizlenir.";
 "Page %d of %d is being improved" = "Sayfa %d / %d iyileştiriliyor";
@@ -1789,7 +1784,6 @@
 "As PDF" = "PDF olarak";
 "Blank Page" = "Boş sayfa";
 "Covering page %d of %d …" = "Sayfa %d / %d örtülüyor…";
-"Create and Edit PDFs" = "PDF oluştur ve düzenle";
 "Document %@" = "Belge %@";
 "Duplicate" = "Çoğalt";
 "Enter the password for %@. It is not kept." = "%@ için parolayı girin. Parola saklanmaz.";
@@ -1804,10 +1798,7 @@
 "PDF, %@" = "PDF, %@";
 "Page Size for Pictures" = "Resimler için sayfa boyutu";
 "Password" = "Parola";
-"Photos, scans and PDFs into one file" = "Fotoğraf, tarama ve PDF’ler tek dosyada";
-"Put pages in order and cover them" = "Sayfaları sırala ve ört";
 "Quality" = "Kalite";
-"Recently Edited" = "Son düzenlenenler";
 "Save as Pictures" = "Resim olarak kaydet";
 "Scanned" = "Tarama";
 "Scanned Pages" = "Taranan sayfalar";
@@ -1894,3 +1885,22 @@
 "Point the camera at the small print" = "Kamerayı küçük yazıya tutun";
 "Close-up used" = "Yakın çekim kullanıldı";
 "Close-up not used" = "Yakın çekim kullanılmadı";
+"Straight, bright and private details already covered." = "Düz, aydınlık ve özel bilgiler zaten örtülü.";
+"Open Camera" = "Kamerayı Aç";
+"Opens the camera" = "Kamerayı açar";
+"Merge photos, scans and PDFs" = "Fotoğrafları, taramaları ve PDF’leri birleştir";
+"Open a PDF, put its pages in order and cover them" = "PDF aç, sayfalarını sırala ve ört";
+"Recent" = "Son";
+"Show All" = "Tümünü Gör";
+"All Documents" = "Tüm Belgeler";
+"How It Goes" = "Böyle işler";
+"Hold it over the page; it is taken by itself." = "Sayfanın üstünde tutun, kendiliğinden çekilir.";
+"Straightened and brightened, without changing the text." = "Metin değişmeden düzeltilir ve aydınlatılır.";
+"Private details are covered." = "Özel bilgiler örtülür.";
+"Check, then share or save as a PDF." = "Kontrol edin, sonra paylaşın veya PDF olarak kaydedin.";
+"How It Works" = "Nasıl Çalışır";
+"Everything happens on this iPhone." = "Her şey bu iPhone’da olur.";
+"Hold" = "Tut";
+"Prepare" = "Hazırla";
+"The page is straightened and brightened. No text is changed." = "Sayfa düzeltilir ve aydınlatılır. Hiçbir metin değişmez.";
+"Names, numbers and other private details are covered, as your settings say." = "Adlar, numaralar ve diğer özel bilgiler ayarlarınıza göre örtülür.";

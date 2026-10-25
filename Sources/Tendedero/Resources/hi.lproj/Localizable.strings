@@ -1458,12 +1458,10 @@
 /* Tabs, scanning and the Protected tab on the iPhone */
 "Scan" = "स्कैन";
 "Scan a document" = "दस्तावेज़ स्कैन करें";
-"Scan Document" = "दस्तावेज़ स्कैन करें";
 "This iPhone cannot scan documents." = "यह iPhone दस्तावेज़ स्कैन नहीं कर सकता।";
 "Scanned pages" = "स्कैन किए गए पेज";
 "Page %d" = "पेज %d";
 "Pages stay on this iPhone only while Snapfly is open." = "पेज इस iPhone पर सिर्फ़ तब तक रहते हैं जब तक Snapfly खुला है।";
-"Names, numbers and other private details are covered as Settings says." = "नाम, नंबर और दूसरी निजी जानकारी सेटिंग्स के अनुसार ढकी जाती है।";
 "Nothing protected yet" = "अभी तक कुछ सुरक्षित नहीं";
 "The screenshots you protect show up here." = "जिन स्क्रीनशॉट को आप सुरक्षित करते हैं, वे यहाँ दिखते हैं।";
 "The last twelve, kept on this iPhone by their place in Photos alone." = "आख़िरी बारह, इस iPhone पर सिर्फ़ Photos में उनकी जगह से याद रखे गए।";
@@ -1477,11 +1475,8 @@
 "Page %d could not be covered, so nothing was sent." = "पेज %d ढका नहीं जा सका, इसलिए कुछ नहीं भेजा गया।";
 
 /* The iPhone: scanned pages straightened, brightened, reviewed and saved */
-"Letters, forms and receipts, straight from the camera. Straightened, brightened and with private details covered, all on this iPhone." = "पत्र, फ़ॉर्म और रसीदें, सीधे कैमरे से। सीधी की गईं, चमकाई गईं और निजी जानकारी छिपाकर, सब कुछ इसी iPhone पर।";
 "Choose from Photos" = "फ़ोटो से चुनें";
 "Hold your iPhone over the page. It is found and taken by itself." = "iPhone को पेज के ऊपर रखें। पेज अपने आप पहचाना और लिया जाता है।";
-"New:" = "नया:";
-"The page is straightened and brightened, like a clean PDF. No text is changed." = "पेज साफ़ PDF की तरह सीधा और चमकीला किया जाता है। कोई टेक्स्ट नहीं बदलता।";
 "Check the places, then copy, share or save the page as a PDF or a picture." = "जगहें जाँचें, फिर पेज को कॉपी करें, साझा करें या PDF या तस्वीर के रूप में सहेजें।";
 "Each page is covered as Settings says, or as you left it after opening it." = "हर पेज सेटिंग्स के अनुसार छिपाया जाता है, या जैसा आपने उसे खोलने के बाद छोड़ा था।";
 "Page %d of %d is being improved" = "पेज %d / %d बेहतर किया जा रहा है";
@@ -1791,7 +1786,6 @@
 "As PDF" = "PDF के रूप में";
 "Blank Page" = "खाली पेज";
 "Covering page %d of %d …" = "पेज %d / %d ढका जा रहा है…";
-"Create and Edit PDFs" = "PDF बनाएँ और संपादित करें";
 "Document %@" = "दस्तावेज़ %@";
 "Duplicate" = "प्रतिलिपि बनाएँ";
 "Enter the password for %@. It is not kept." = "%@ का पासवर्ड डालें। इसे सहेजा नहीं जाता।";
@@ -1806,10 +1800,7 @@
 "PDF, %@" = "PDF, %@";
 "Page Size for Pictures" = "चित्रों के लिए पेज आकार";
 "Password" = "पासवर्ड";
-"Photos, scans and PDFs into one file" = "फ़ोटो, स्कैन और PDF एक फ़ाइल में";
-"Put pages in order and cover them" = "पेज क्रम में लगाएँ और ढकें";
 "Quality" = "गुणवत्ता";
-"Recently Edited" = "हाल में संपादित";
 "Save as Pictures" = "चित्रों के रूप में सहेजें";
 "Scanned" = "स्कैन";
 "Scanned Pages" = "स्कैन किए पेज";
@@ -1896,3 +1887,22 @@
 "Point the camera at the small print" = "कैमरा छोटे अक्षरों की ओर करें";
 "Close-up used" = "क्लोज़-अप इस्तेमाल हुआ";
 "Close-up not used" = "क्लोज़-अप इस्तेमाल नहीं हुआ";
+"Straight, bright and private details already covered." = "सीधा, साफ़ और निजी जानकारी पहले से ढकी हुई।";
+"Open Camera" = "कैमरा खोलें";
+"Opens the camera" = "कैमरा खोलता है";
+"Merge photos, scans and PDFs" = "फ़ोटो, स्कैन और PDF जोड़ें";
+"Open a PDF, put its pages in order and cover them" = "PDF खोलें, पेज क्रम में लगाएँ और ढकें";
+"Recent" = "हाल के";
+"Show All" = "सभी देखें";
+"All Documents" = "सभी दस्तावेज़";
+"How It Goes" = "ऐसे होता है";
+"Hold it over the page; it is taken by itself." = "पेज के ऊपर रखें, यह अपने-आप लिया जाता है।";
+"Straightened and brightened, without changing the text." = "सीधा और उजला किया जाता है, टेक्स्ट बदले बिना।";
+"Private details are covered." = "निजी जानकारी ढक दी जाती है।";
+"Check, then share or save as a PDF." = "जाँचें, फिर शेयर करें या PDF के रूप में सहेजें।";
+"How It Works" = "यह कैसे काम करता है";
+"Everything happens on this iPhone." = "सब कुछ इसी iPhone पर होता है।";
+"Hold" = "रखें";
+"Prepare" = "तैयार करना";
+"The page is straightened and brightened. No text is changed." = "पेज सीधा और उजला किया जाता है। कोई टेक्स्ट नहीं बदला जाता।";
+"Names, numbers and other private details are covered, as your settings say." = "नाम, नंबर और अन्य निजी जानकारी आपकी सेटिंग्स के अनुसार ढकी जाती है।";

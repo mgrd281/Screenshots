@@ -63,18 +63,65 @@ final class PDFUITests: XCTestCase {
 
     func testTheScanTabOffersToMergeOrOpenAPDFAndListsTheProject() {
         let app = launch("tab")
-        XCTAssertTrue(words(app, "PDF erstellen und bearbeiten").waitForExistence(timeout: 30))
-        XCTAssertTrue(element(app, "project-merge").exists)
-        XCTAssertTrue(words(app, "Fotos, Scans und PDFs zu einer Datei").exists)
+        XCTAssertTrue(element(app, "project-merge").waitForExistence(timeout: 30))
         XCTAssertTrue(element(app, "project-open-pdf").exists)
         XCTAssertTrue(element(app, "scan-camera").exists, "the scan card stays")
-        let recent = element(app, "project-recent")
+        let recent = element(app, "scan-recent")
         XCTAssertTrue(recent.waitForExistence(timeout: 60))
-        XCTAssertTrue(words(app, "Zuletzt bearbeitet").exists)
-        XCTAssertTrue(words(app, "Rechnung März").exists)
+        XCTAssertTrue(words(app, "Zuletzt").exists)
+        XCTAssertTrue(recent.label.hasPrefix("Rechnung März, 5 Seiten, "), recent.label)
+        // Alle anzeigen lists it too.
+        element(app, "scan-show-all").tap()
+        XCTAssertTrue(element(app, "scan-all-documents").waitForExistence(timeout: 10))
+        app.navigationBars.buttons.firstMatch.tap()
         // It opens again where it was left.
+        XCTAssertTrue(recent.waitForExistence(timeout: 10))
         recent.tap()
         XCTAssertTrue(element(app, "project-page-5").waitForExistence(timeout: 30))
+    }
+
+    /// The recent document shows its first page covered: a cover's dark
+    /// band, wider than any letter's stroke, is in its picture.
+    func testTheRecentDocumentShowsItsFirstPageCovered() throws {
+        let app = launch("tab")
+        let recent = element(app, "scan-recent")
+        XCTAssertTrue(recent.waitForExistence(timeout: 60))
+        // Covered and drawn: the first time, Vision's models load first; two minutes at most.
+        var picture = recent.screenshot().image
+        var band = 0
+        for _ in 0..<60 {
+            picture = recent.screenshot().image
+            band = try XCTUnwrap(Self.widestDarkRun(picture))
+            if band >= 24 { break }
+            Thread.sleep(forTimeInterval: 2)
+        }
+        let attachment = XCTAttachment(image: picture)
+        attachment.name = "recent-covered"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+        XCTAssertGreaterThanOrEqual(band, 24, "a cover's band, in pixels")
+    }
+
+    /// The widest run of near-black pixels in any row of the picture's upper part, the page.
+    static func widestDarkRun(_ image: UIImage) -> Int? {
+        guard let cg = image.cgImage else { return nil }
+        let w = cg.width, h = cg.height
+        var pixels = [UInt8](repeating: 0, count: w * h * 4)
+        guard let context = CGContext(data: &pixels, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w * 4,
+                                      space: CGColorSpaceCreateDeviceRGB(),
+                                      bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return nil }
+        context.draw(cg, in: CGRect(x: 0, y: 0, width: w, height: h))
+        var widest = 0
+        for y in 0..<(h * 6 / 10) {
+            var run = 0
+            for x in 0..<w {
+                let i = (y * w + x) * 4
+                let dark = Int(pixels[i]) + Int(pixels[i + 1]) + Int(pixels[i + 2]) < 3 * 70
+                run = dark ? run + 1 : 0
+                widest = max(widest, run)
+            }
+        }
+        return widest
     }
 
     func testMixedSourcesShowInTheirOrderWithWhereEachComesFrom() {

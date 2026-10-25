@@ -1456,12 +1456,10 @@
 /* Tabs, scanning and the Protected tab on the iPhone */
 "Scan" = "مسح";
 "Scan a document" = "امسح مستندًا";
-"Scan Document" = "امسح مستندًا";
 "This iPhone cannot scan documents." = "لا يستطيع هذا الآيفون مسح المستندات.";
 "Scanned pages" = "الصفحات الممسوحة";
 "Page %d" = "الصفحة %d";
 "Pages stay on this iPhone only while Snapfly is open." = "تبقى الصفحات على هذا الآيفون فقط ما دام «سنابفلاي» مفتوحًا.";
-"Names, numbers and other private details are covered as Settings says." = "تُغطّى الأسماء والأرقام والبيانات الخاصة الأخرى كما في الإعدادات.";
 "Nothing protected yet" = "لا شيء محمي بعد";
 "The screenshots you protect show up here." = "تظهر هنا لقطات الشاشة التي تحميها.";
 "The last twelve, kept on this iPhone by their place in Photos alone." = "آخر اثنتي عشرة، محفوظة على هذا الآيفون بمكانها في الصور فقط.";
@@ -1475,11 +1473,8 @@
 "Page %d could not be covered, so nothing was sent." = "تعذّرت تغطية الصفحة %d، لذلك لم يُرسَل شيء.";
 
 /* The iPhone: scanned pages straightened, brightened, reviewed and saved */
-"Letters, forms and receipts, straight from the camera. Straightened, brightened and with private details covered, all on this iPhone." = "رسائل ونماذج وإيصالات، مباشرة من الكاميرا. مستقيمة ومُفتّحة ومع تغطية البيانات الخاصة، وكل ذلك على هذا الآيفون.";
 "Choose from Photos" = "اختر من الصور";
 "Hold your iPhone over the page. It is found and taken by itself." = "أمسك الآيفون فوق الصفحة. سيتعرّف عليها ويلتقطها تلقائيًا.";
-"New:" = "جديد:";
-"The page is straightened and brightened, like a clean PDF. No text is changed." = "تُعدَّل استقامة الصفحة وتُفتَّح، مثل ملف PDF نظيف. لا يتغيّر أي نص.";
 "Check the places, then copy, share or save the page as a PDF or a picture." = "راجع المواضع، ثم انسخ الصفحة أو شاركها أو احفظها كملف PDF أو صورة.";
 "Each page is covered as Settings says, or as you left it after opening it." = "تُغطّى كل صفحة حسب الإعدادات، أو كما تركتها بعد فتحها.";
 "Page %d of %d is being improved" = "جارٍ تحسين الصفحة %d من %d";
@@ -1789,7 +1784,6 @@
 "As PDF" = "كملف PDF";
 "Blank Page" = "صفحة فارغة";
 "Covering page %d of %d …" = "تغطية الصفحة %d من %d …";
-"Create and Edit PDFs" = "إنشاء ملفات PDF وتعديلها";
 "Document %@" = "مستند %@";
 "Duplicate" = "تكرار";
 "Enter the password for %@. It is not kept." = "أدخل كلمة السر لـ %@. لا تُحفظ.";
@@ -1804,10 +1798,7 @@
 "PDF, %@" = "PDF، %@";
 "Page Size for Pictures" = "حجم الصفحة للصور";
 "Password" = "كلمة السر";
-"Photos, scans and PDFs into one file" = "صور ومسوحات وملفات PDF في ملف واحد";
-"Put pages in order and cover them" = "رتّب الصفحات وغطِّها";
 "Quality" = "الجودة";
-"Recently Edited" = "عُدّلت مؤخرًا";
 "Save as Pictures" = "حفظ كصور";
 "Scanned" = "مسح";
 "Scanned Pages" = "الصفحات الممسوحة";
@@ -1894,3 +1885,22 @@
 "Point the camera at the small print" = "وجّه الكاميرا إلى الخط الصغير";
 "Close-up used" = "استُخدمت اللقطة القريبة";
 "Close-up not used" = "لم تُستخدم اللقطة القريبة";
+"Straight, bright and private details already covered." = "مستقيم وواضح، والخاص مغطّى مسبقًا.";
+"Open Camera" = "فتح الكاميرا";
+"Opens the camera" = "يفتح الكاميرا";
+"Merge photos, scans and PDFs" = "دمج الصور والمسوحات وملفات PDF";
+"Open a PDF, put its pages in order and cover them" = "فتح PDF وترتيب صفحاته وتغطيتها";
+"Recent" = "الأحدث";
+"Show All" = "عرض الكل";
+"All Documents" = "كل المستندات";
+"How It Goes" = "هكذا تعمل";
+"Hold it over the page; it is taken by itself." = "أمسكه فوق الصفحة، فتُلتقط وحدها.";
+"Straightened and brightened, without changing the text." = "تُعدَّل وتُفتَّح دون تغيير النص.";
+"Private details are covered." = "تُغطّى البيانات الخاصة.";
+"Check, then share or save as a PDF." = "راجِع، ثم شارك أو احفظ كملف PDF.";
+"How It Works" = "كيف يعمل";
+"Everything happens on this iPhone." = "كل شيء يحدث على هذا الآيفون.";
+"Hold" = "أمسك";
+"Prepare" = "تجهيز";
+"The page is straightened and brightened. No text is changed." = "تُعدَّل الصفحة وتُفتَّح. لا يتغيّر أي نص.";
+"Names, numbers and other private details are covered, as your settings say." = "تُغطّى الأسماء والأرقام والبيانات الخاصة الأخرى كما في إعداداتك.";

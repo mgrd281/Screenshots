@@ -98,6 +98,8 @@ final class ProjectStore: ObservableObject {
     @Published private(set) var locked: ProjectFile?
     @Published private(set) var wrongPassword = false
     @Published var notice: ProjectNotice?
+    /// Save and Share opens as the project opens, as Share on the Scan tab asks.
+    @Published var sharesOnOpen = false
     @Published var toast: ProjectToast?
     /// Each page's shape, counted up when it is turned, so its editor starts afresh.
     @Published private(set) var revisions: [UUID: Int] = [:]
@@ -114,6 +116,10 @@ final class ProjectStore: ObservableObject {
     private var stillLocked: Set<UUID> = []
     private var aspects: [String: CGFloat] = [:]
     private let thumbnails = NSCache<NSString, UIImage>()
+    /// The projects' first pages covered, for the Scan tab, by what they were drawn from.
+    private let coveredFirst = NSCache<NSString, UIImage>()
+    /// Covered one after another, the newest asked last.
+    private var covering: Task<UIImage?, Never>?
     private let wanted = Wanted()
     private var saving: Task<Void, Never>?
     private var unlocking: CheckedContinuation<Bool, Never>?
@@ -167,7 +173,14 @@ final class ProjectStore: ObservableObject {
 
     private func load() {
         Task {
-            let found = await Self.run(on: writer) { Self.readAll() }
+            var found = await Self.run(on: writer) { Self.readAll() }
+            #if DEBUG
+            // Made-up starts begin without documents; one started meanwhile stays.
+            if ScanDemo.clearsDocuments {
+                for old in found { delete(old.id) }
+                found = []
+            }
+            #endif
             // A project started while they were read, as by a PDF opened in Snapfly, stays.
             let known = Set(found.map(\.id))
             projects = (found + projects.filter { !known.contains($0.id) }).sorted { $0.modified > $1.modified }
@@ -273,6 +286,27 @@ final class ProjectStore: ObservableObject {
         projects.removeAll { $0.id == id }
         let folder = Self.folder(id)
         writer.async { try? FileManager.default.removeItem(at: folder) }
+    }
+
+    /// Any project renamed, open or not, as the Scan tab's Rename asks.
+    func rename(_ id: UUID, to name: String) {
+        if project?.id == id { return rename(name) }
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, var now = projects.first(where: { $0.id == id }), now.name != trimmed else { return }
+        now.name = trimmed
+        now.modified = .now
+        guard let data = try? JSONEncoder().encode(now) else { return }
+        remember(now)
+        let folder = Self.folder(id)
+        writer.async {
+            try? data.write(to: folder.appendingPathComponent("project.json"), options: [.atomic, .completeFileProtection])
+        }
+    }
+
+    /// A project opened with Save and Share over it, as the Scan tab's Share asks.
+    func share(_ id: UUID) {
+        sharesOnOpen = true
+        open(id)
     }
 
     func rename(_ name: String) {
@@ -866,6 +900,81 @@ final class ProjectStore: ObservableObject {
             let read = Finder.lines(in: image) ?? []
             let extra = PDFTextLayer.added(read: read.map(\.box), over: layer.map(\.box)).map { read[$0] }
             Finder.remember(layer + extra, for: image)
+        }
+    }
+
+    // MARK: The first page covered, for the Scan tab
+
+    /// A project's first page, small and covered as Settings says, for the
+    /// Scan tab's recent documents: drawn and covered once, then kept in
+    /// memory and beside the project, closed while the iPhone is locked.
+    /// Nil where it cannot be read or covered, or its PDF is locked: an
+    /// uncovered page never shows there.
+    func coveredFirstPage(_ project: PDFProject) async -> UIImage? {
+        guard let page = project.pages.first else { return nil }
+        let details = Choice.details.map(\.rawValue).sorted().joined(separator: ",")
+        let made = "\(Self.key(page.source))-\(page.turns)-\(details)-\(CoverStyle.current)-\(OwnRules.all.count)"
+        let name = "Cover-" + SHA256.hash(data: Data(made.utf8)).prefix(8).map { String(format: "%02x", $0) }.joined() + ".jpg"
+        if let known = coveredFirst.object(forKey: name as NSString) { return known }
+        let folder = Self.folder(project.id)
+        let previous = covering
+        let task = Task { [weak self] () -> UIImage? in
+            _ = await previous?.value
+            guard let self else { return nil }
+            if let known = self.coveredFirst.object(forKey: name as NSString) { return known }
+            let kept = await Self.run(on: self.small) { () -> CGImage? in
+                PictureTools.read(folder.appendingPathComponent(name), longest: 480)
+            }
+            if let kept {
+                let image = UIImage(cgImage: kept)
+                self.coveredFirst.setObject(image, forKey: name as NSString)
+                return image
+            }
+            guard let drawn = await Self.firstPage(page, of: project, on: self.small),
+                  let covered = await Covering.cover(drawn, Choice.details)?.image else { return nil }
+            let small = await Self.run(on: self.small) { () -> CGImage? in
+                let small = ScanCleaner.smaller(covered, longest: 480) ?? covered
+                // Kept beside the project, in place of the one drawn before.
+                let old = (try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? []
+                for file in old where file.hasPrefix("Cover-") {
+                    try? FileManager.default.removeItem(at: folder.appendingPathComponent(file))
+                }
+                if let jpeg = ScanCleaner.jpeg(small, quality: 0.8) {
+                    try? jpeg.write(to: folder.appendingPathComponent(name), options: [.atomic, .completeFileProtection])
+                }
+                return small
+            }
+            guard let small else { return nil }
+            let image = UIImage(cgImage: small)
+            self.coveredFirst.setObject(image, forKey: name as NSString)
+            return image
+        }
+        covering = task
+        return await task.value
+    }
+
+    /// A project's first page as it shows, drawn from its copy in the
+    /// project's folder, whether the project is open or not; nil while its
+    /// PDF is locked.
+    nonisolated private static func firstPage(_ page: ProjectPage, of project: PDFProject,
+                                              on queue: DispatchQueue) async -> CGImage? {
+        let files = filesFolder(project.id)
+        return await run(on: queue) { () -> CGImage? in
+            switch page.source {
+            case .pdf(let file, let index):
+                guard let stored = project.file(file)?.stored, let pdf = PDFSource(url: files.appendingPathComponent(stored)),
+                      !pdf.isLocked else { return nil }
+                return pdf.render(index, turns: page.turns, dpi: 150, longest: 1400)
+            case .picture(let file, _, _):
+                guard let stored = project.file(file)?.stored else { return nil }
+                return PictureTools.read(files.appendingPathComponent(stored), longest: 1400)
+                    .flatMap { PictureTools.turned($0, quarters: page.turns) }
+            case .blank(let width, let height):
+                let size = PDFPageGeometry.shown(CGRect(x: 0, y: 0, width: width, height: height), rotation: page.turns % 2 * 90)
+                let scale = 480 / Double(max(size.width, size.height))
+                return PictureTools.blank(width: max(1, Int(Double(size.width) * scale)),
+                                          height: max(1, Int(Double(size.height) * scale)))
+            }
         }
     }
 

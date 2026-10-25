@@ -24,9 +24,10 @@ final class ScanUITests: XCTestCase {
     /// Long enough for the made-up photos to be made ready on the simulator.
     private static let ready: TimeInterval = 120
 
-    private func launch(_ state: String) -> XCUIApplication {
+    private func launch(_ state: String, ownCamera: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
-        var arguments = ["-SnapflyScan", state, "-AppleLanguages", "(de)", "-AppleLocale", "de_DE"]
+        var arguments = ["-SnapflyScan", state, "-AppleLanguages", "(de)", "-AppleLocale", "de_DE",
+                         "-snapfly.scan.ownCamera", ownCamera ? "YES" : "NO"]
         if ProcessInfo.processInfo.environment["SNAPFLY_STILL"] != nil { arguments.append("-SnapflyReduceMotion") }
         app.launchArguments = arguments
         app.launch()
@@ -67,19 +68,92 @@ final class ScanUITests: XCTestCase {
 
     // MARK: Checks
 
-    func testTheTabOffersTheCameraAndPhotosWithItsNewLines() {
+    func testTheStartOffersOneScanThreeQuickActionsAndThePages() {
         let app = launch("tab")
-        XCTAssertTrue(element(app, "scan-photos").waitForExistence(timeout: 20))
-        XCTAssertTrue(element(app, "scan-camera").exists)
-        XCTAssertTrue(words(app, "Aus Fotos wählen").exists)
-        XCTAssertTrue(words(app, "Gerade gerückt, aufgehellt und mit abgedeckten privaten Angaben").exists)
-        XCTAssertTrue(words(app, "Neu:").exists)
-        XCTAssertTrue(words(app, "Halte dein iPhone über die Seite. Sie wird").exists)
-        XCTAssertTrue(words(app, "als PDF oder Bild").exists)
-        XCTAssertFalse(words(app, "bevor irgendetwas").exists, "the old promise is gone")
+        let hero = element(app, "scan-camera")
+        XCTAssertTrue(hero.waitForExistence(timeout: 20))
+        XCTAssertEqual(hero.label, "Dokument scannen")
+        XCTAssertTrue(element(app, "scan-photos").exists)
+        XCTAssertEqual(element(app, "scan-photos").label, "Aus Fotos wählen")
+        XCTAssertEqual(element(app, "project-merge").label, "Fotos, Scans und PDFs zusammenfügen")
+        XCTAssertEqual(element(app, "project-open-pdf").label, "PDF öffnen, Seiten ordnen und verdecken")
+        XCTAssertTrue(element(app, "scan-help").exists)
+        XCTAssertFalse(words(app, "Neu:").exists, "the tips are behind the ?")
+        XCTAssertFalse(words(app, "PDF erstellen und bearbeiten").exists, "the PDF card is gone")
         XCTAssertTrue(element(app, "scan-page-1").waitForExistence(timeout: Self.ready))
         XCTAssertTrue(element(app, "scan-page-2").exists)
         XCTAssertTrue(element(app, "scan-save-share").exists)
+    }
+
+    /// The card starts the scanner: Snapfly's own camera here, as the
+    /// simulator has no document camera.
+    func testTheCardStartsTheScanner() {
+        let app = launch("empty", ownCamera: true)
+        let hero = element(app, "scan-camera")
+        XCTAssertTrue(hero.waitForExistence(timeout: 20))
+        hero.tap()
+        let close = element(app, "page-camera-close")
+        XCTAssertTrue(close.waitForExistence(timeout: 10), "the camera opens")
+        close.tap()
+        XCTAssertTrue(gone(close))
+    }
+
+    func testTheQuickActionsOpenTheirWays() {
+        let app = launch("empty")
+        let merge = element(app, "project-merge")
+        XCTAssertTrue(merge.waitForExistence(timeout: 20))
+        merge.tap()
+        XCTAssertTrue(element(app, "project-add").waitForExistence(timeout: 20), "a new PDF project opens")
+        // Closed empty, it is gone, so it does not open again over the next launch.
+        element(app, "project-close").tap()
+        XCTAssertTrue(gone(element(app, "project-add")))
+        app.terminate()
+        let again = launch("empty")
+        let pdf = element(again, "project-open-pdf")
+        XCTAssertTrue(pdf.waitForExistence(timeout: 20))
+        pdf.tap()
+        let names = ["Abbrechen", "Cancel"]
+        let cancel = again.buttons.matching(NSPredicate(format: "label IN %@", argumentArray: [names])).firstMatch
+        XCTAssertTrue(cancel.waitForExistence(timeout: 20), "Files opens")
+        cancel.tap()
+        let photos = element(again, "scan-photos")
+        XCTAssertTrue(photos.waitForExistence(timeout: 10))
+        photos.tap()
+        XCTAssertTrue(cancel.waitForExistence(timeout: 20), "the photo picker opens")
+    }
+
+    func testTheHelpOpensHowItWorks() {
+        let app = launch("empty")
+        let help = element(app, "scan-help")
+        XCTAssertTrue(help.waitForExistence(timeout: 20))
+        help.tap()
+        XCTAssertTrue(words(app, "So funktioniert's").waitForExistence(timeout: 10))
+        for line in ["Halten", "Aufbereiten", "Verdecken", "Teilen", "Alles geschieht auf diesem iPhone."] {
+            XCTAssertTrue(words(app, line).exists, line)
+        }
+    }
+
+    /// Without documents, how a scan goes, in four short steps.
+    func testWithoutDocumentsTheStepsShow() {
+        let app = launch("empty")
+        XCTAssertTrue(element(app, "scan-steps").waitForExistence(timeout: 20))
+        XCTAssertTrue(words(app, "So geht's").exists)
+        XCTAssertTrue(words(app, "Über die Seite halten, sie wird von selbst aufgenommen.").exists)
+        XCTAssertTrue(words(app, "Prüfen, dann teilen oder als PDF sichern.").exists)
+    }
+
+    /// Scrolled past the card, the bar offers Scannen, which starts the scanner.
+    func testScrolledTheBarOffersScanning() {
+        let app = launch("tab", ownCamera: true)
+        XCTAssertTrue(element(app, "scan-page-2").waitForExistence(timeout: Self.ready))
+        let pill = element(app, "scan-bar-camera")
+        XCTAssertFalse(pill.exists, "not while the card shows")
+        for _ in 0..<3 where !pill.exists {
+            app.swipeUp()
+        }
+        XCTAssertTrue(pill.waitForExistence(timeout: 5))
+        pill.tap()
+        XCTAssertTrue(element(app, "page-camera-close").waitForExistence(timeout: 10), "the camera opens")
     }
 
     func testAPageOpensInReviewSayingWhatWasDone() {
@@ -390,9 +464,17 @@ final class ScanUITests: XCTestCase {
         }
         let first = element(app, "scan-thumb-1"), second = element(app, "scan-thumb-2")
         XCTAssertTrue(second.waitForExistence(timeout: Self.ready))
-        XCTAssertTrue(wait(first, "label CONTAINS %@", "schwer lesbar", timeout: Self.ready * 2), first.label)
-        XCTAssertTrue(gone(element(app, "scan-improving"), timeout: Self.ready))
-        XCTAssertFalse(second.label.contains("schwer lesbar"), second.label)
+        XCTAssertTrue(gone(element(app, "scan-improving"), timeout: Self.ready * 2))
+        // The list's hint for the blurred photo opens its page: the first, as it was chosen first.
+        let status = card(app)
+        XCTAssertTrue(status.exists)
+        status.tap()
+        let blurred = words(app, "Unten ist der Text unscharf")
+        XCTAssertTrue(blurred.waitForExistence(timeout: 20), "the blurred photo's hint")
+        let looks = app.buttons.matching(NSPredicate(format: "label == %@", "Ansehen")).allElementsBoundByIndex
+        let look = try XCTUnwrap(looks.min { abs($0.frame.midY - blurred.frame.midY) < abs($1.frame.midY - blurred.frame.midY) })
+        look.tap()
+        XCTAssertTrue(wait(first, "isSelected == %@", NSNumber(value: true), timeout: 10), first.label)
         pause(2)
     }
 
@@ -430,6 +512,35 @@ final class ScanUITests: XCTestCase {
         XCTAssertTrue(card(app).exists)
         pause(2)
         walkThrough(app)
+    }
+
+    /// The start as it comes in, three made-up documents arriving one after
+    /// another, a press on the card that opens the camera, the bar's pill as
+    /// the card scrolls away, and "So funktioniert's".
+    func testRecordTheStart() throws {
+        try recording()
+        let app = launch("recent", ownCamera: true)
+        let hero = element(app, "scan-camera")
+        XCTAssertTrue(hero.waitForExistence(timeout: 20))
+        // The documents arrive, a few seconds apart.
+        let recent = element(app, "scan-recent")
+        XCTAssertTrue(recent.waitForExistence(timeout: 60))
+        pause(16)
+        hero.tap()
+        let close = element(app, "page-camera-close")
+        if close.waitForExistence(timeout: 10) {
+            pause(1.5)
+            close.tap()
+        }
+        pause(1.5)
+        app.swipeUp(velocity: .slow)
+        pause(2)
+        app.swipeDown(velocity: .slow)
+        pause(1.5)
+        element(app, "scan-help").tap()
+        pause(3)
+        app.swipeDown(velocity: .slow)
+        pause(2)
     }
 
     /// Where the corners wait for the owner, as on the simulator, where

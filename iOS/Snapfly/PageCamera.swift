@@ -91,6 +91,7 @@ struct PageCamera: View {
                     .editorGlass(in: Circle())
             }
             .accessibilityLabel(L("Cancel"))
+            .accessibilityIdentifier("page-camera-close")
             Spacer()
             if camera.hasTorch {
                 Button { camera.toggleTorch() } label: {

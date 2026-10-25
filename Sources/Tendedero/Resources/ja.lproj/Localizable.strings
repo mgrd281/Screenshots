@@ -1456,12 +1456,10 @@
 /* Tabs, scanning and the Protected tab on the iPhone */
 "Scan" = "スキャン";
 "Scan a document" = "書類をスキャン";
-"Scan Document" = "書類をスキャン";
 "This iPhone cannot scan documents." = "このiPhoneでは書類をスキャンできません。";
 "Scanned pages" = "スキャンしたページ";
 "Page %d" = "%dページ";
 "Pages stay on this iPhone only while Snapfly is open." = "ページはSnapflyを開いている間だけこのiPhoneに残ります。";
-"Names, numbers and other private details are covered as Settings says." = "名前、番号などの個人情報は設定どおりに隠されます。";
 "Nothing protected yet" = "まだ何も保護していません";
 "The screenshots you protect show up here." = "保護したスクリーンショットがここに表示されます。";
 "The last twelve, kept on this iPhone by their place in Photos alone." = "最新の12枚。このiPhoneには写真内の場所だけが記録されます。";
@@ -1475,11 +1473,8 @@
 "Page %d could not be covered, so nothing was sent." = "%d ページ目を隠せなかったため、何も送信されませんでした。";
 
 /* The iPhone: scanned pages straightened, brightened, reviewed and saved */
-"Letters, forms and receipts, straight from the camera. Straightened, brightened and with private details covered, all on this iPhone." = "手紙、書類、レシートをカメラから直接。傾きを直して明るくし、個人情報を隠します。すべてこのiPhone上で。";
 "Choose from Photos" = "写真から選ぶ";
 "Hold your iPhone over the page. It is found and taken by itself." = "iPhoneをページの上にかざします。ページは自動で見つかり、撮影されます。";
-"New:" = "新機能：";
-"The page is straightened and brightened, like a clean PDF. No text is changed." = "ページはきれいなPDFのように傾きを直して明るくなります。文字は一切変わりません。";
 "Check the places, then copy, share or save the page as a PDF or a picture." = "箇所を確認してから、ページをコピー、共有、またはPDFか画像として保存します。";
 "Each page is covered as Settings says, or as you left it after opening it." = "各ページは設定どおりに、または開いたあとに残した状態で隠されます。";
 "Page %d of %d is being improved" = "%d / %d ページを補正中";
@@ -1789,7 +1784,6 @@
 "As PDF" = "PDF として";
 "Blank Page" = "空白ページ";
 "Covering page %d of %d …" = "%d/%d ページを隠しています…";
-"Create and Edit PDFs" = "PDF の作成と編集";
 "Document %@" = "ドキュメント %@";
 "Duplicate" = "複製";
 "Enter the password for %@. It is not kept." = "%@ のパスワードを入力してください。パスワードは保存されません。";
@@ -1804,10 +1798,7 @@
 "PDF, %@" = "PDF、%@";
 "Page Size for Pictures" = "画像のページサイズ";
 "Password" = "パスワード";
-"Photos, scans and PDFs into one file" = "写真、スキャン、PDF を 1 つのファイルに";
-"Put pages in order and cover them" = "ページを並べ替えて隠す";
 "Quality" = "画質";
-"Recently Edited" = "最近編集した項目";
 "Save as Pictures" = "画像として保存";
 "Scanned" = "スキャン";
 "Scanned Pages" = "スキャンしたページ";
@@ -1894,3 +1885,22 @@
 "Point the camera at the small print" = "カメラを小さな文字に向けてください";
 "Close-up used" = "接写を使用しました";
 "Close-up not used" = "接写は使用されませんでした";
+"Straight, bright and private details already covered." = "まっすぐ、明るく、個人情報はすでに隠されています。";
+"Open Camera" = "カメラを開く";
+"Opens the camera" = "カメラを開きます";
+"Merge photos, scans and PDFs" = "写真、スキャン、PDFを結合";
+"Open a PDF, put its pages in order and cover them" = "PDFを開いて、ページを並べ替えて隠す";
+"Recent" = "最近";
+"Show All" = "すべて表示";
+"All Documents" = "すべての書類";
+"How It Goes" = "使い方";
+"Hold it over the page; it is taken by itself." = "ページの上にかざすと、自動で撮影されます。";
+"Straightened and brightened, without changing the text." = "テキストを変えずに、まっすぐ明るく整えます。";
+"Private details are covered." = "個人情報が隠されます。";
+"Check, then share or save as a PDF." = "確認してから、共有またはPDFとして保存します。";
+"How It Works" = "しくみ";
+"Everything happens on this iPhone." = "すべてこのiPhone上で行われます。";
+"Hold" = "かざす";
+"Prepare" = "整える";
+"The page is straightened and brightened. No text is changed." = "ページをまっすぐにして明るくします。テキストは一切変わりません。";
+"Names, numbers and other private details are covered, as your settings say." = "名前、番号などの個人情報は、設定どおりに隠されます。";

@@ -1456,12 +1456,10 @@
 /* Tabs, scanning and the Protected tab on the iPhone */
 "Scan" = "Scannen";
 "Scan a document" = "Dokument scannen";
-"Scan Document" = "Dokument scannen";
 "This iPhone cannot scan documents." = "Dieses iPhone kann keine Dokumente scannen.";
 "Scanned pages" = "Gescannte Seiten";
 "Page %d" = "Seite %d";
 "Pages stay on this iPhone only while Snapfly is open." = "Seiten bleiben nur auf diesem iPhone, solange Snapfly geöffnet ist.";
-"Names, numbers and other private details are covered as Settings says." = "Namen, Nummern und andere private Angaben werden abgedeckt, wie in den Einstellungen gewählt.";
 "Nothing protected yet" = "Noch nichts geschützt";
 "The screenshots you protect show up here." = "Die Bildschirmfotos, die du schützt, erscheinen hier.";
 "The last twelve, kept on this iPhone by their place in Photos alone." = "Die letzten zwölf, auf diesem iPhone nur über ihren Platz in Fotos gemerkt.";
@@ -1475,11 +1473,8 @@
 "Page %d could not be covered, so nothing was sent." = "Seite %d konnte nicht abgedeckt werden, darum wurde nichts gesendet.";
 
 /* The iPhone: scanned pages straightened, brightened, reviewed and saved */
-"Letters, forms and receipts, straight from the camera. Straightened, brightened and with private details covered, all on this iPhone." = "Briefe, Formulare und Belege, direkt von der Kamera. Gerade gerückt, aufgehellt und mit abgedeckten privaten Angaben, alles auf diesem iPhone.";
 "Choose from Photos" = "Aus Fotos wählen";
 "Hold your iPhone over the page. It is found and taken by itself." = "Halte dein iPhone über die Seite. Sie wird von selbst erkannt und aufgenommen.";
-"New:" = "Neu:";
-"The page is straightened and brightened, like a clean PDF. No text is changed." = "Die Seite wird gerade gerückt und aufgehellt, wie ein sauberes PDF. Kein Text wird verändert.";
 "Check the places, then copy, share or save the page as a PDF or a picture." = "Prüfe die Stellen, dann kopiere, teile oder sichere die Seite als PDF oder Bild.";
 "Each page is covered as Settings says, or as you left it after opening it." = "Jede Seite wird abgedeckt, wie in den Einstellungen gewählt, oder so, wie du sie nach dem Öffnen gelassen hast.";
 "Page %d of %d is being improved" = "Seite %d von %d wird verbessert";
@@ -1789,14 +1784,13 @@
 "As PDF" = "Als PDF";
 "Blank Page" = "Leere Seite";
 "Covering page %d of %d …" = "Verdecke Seite %d von %d …";
-"Create and Edit PDFs" = "PDF erstellen und bearbeiten";
 "Document %@" = "Dokument %@";
 "Duplicate" = "Duplizieren";
 "Enter the password for %@. It is not kept." = "Gib das Passwort für %@ ein. Es wird nicht gespeichert.";
 "From Files" = "Aus Dateien";
 "From Photos" = "Aus Fotos";
 "High" = "Hoch";
-"Merge" = "Zusammenfügen";
+"Merge" = "Zusammen­fügen";
 "Merge into PDF" = "Zu PDF zusammenfügen";
 "Move" = "Verschieben";
 "Only the pages" = "Nur die Seiten";
@@ -1804,10 +1798,7 @@
 "PDF, %@" = "PDF, %@";
 "Page Size for Pictures" = "Seitengröße für Bilder";
 "Password" = "Passwort";
-"Photos, scans and PDFs into one file" = "Fotos, Scans und PDFs zu einer Datei";
-"Put pages in order and cover them" = "Seiten ordnen und verdecken";
 "Quality" = "Qualität";
-"Recently Edited" = "Zuletzt bearbeitet";
 "Save as Pictures" = "Als Bilder sichern";
 "Scanned" = "Scan";
 "Scanned Pages" = "Gescannte Seiten";
@@ -1894,3 +1885,22 @@
 "Point the camera at the small print" = "Richte die Kamera auf die kleine Schrift";
 "Close-up used" = "Detailaufnahme übernommen";
 "Close-up not used" = "Detailaufnahme nicht übernommen";
+"Straight, bright and private details already covered." = "Gerade, hell und Privates schon verdeckt.";
+"Open Camera" = "Kamera öffnen";
+"Opens the camera" = "Öffnet die Kamera";
+"Merge photos, scans and PDFs" = "Fotos, Scans und PDFs zusammenfügen";
+"Open a PDF, put its pages in order and cover them" = "PDF öffnen, Seiten ordnen und verdecken";
+"Recent" = "Zuletzt";
+"Show All" = "Alle anzeigen";
+"All Documents" = "Alle Dokumente";
+"How It Goes" = "So geht's";
+"Hold it over the page; it is taken by itself." = "Über die Seite halten, sie wird von selbst aufgenommen.";
+"Straightened and brightened, without changing the text." = "Gerade gerückt und aufgehellt, ohne Text zu ändern.";
+"Private details are covered." = "Private Angaben werden abgedeckt.";
+"Check, then share or save as a PDF." = "Prüfen, dann teilen oder als PDF sichern.";
+"How It Works" = "So funktioniert's";
+"Everything happens on this iPhone." = "Alles geschieht auf diesem iPhone.";
+"Hold" = "Halten";
+"Prepare" = "Aufbereiten";
+"The page is straightened and brightened. No text is changed." = "Die Seite wird gerade gerückt und aufgehellt. Kein Text wird verändert.";
+"Names, numbers and other private details are covered, as your settings say." = "Namen, Nummern und andere private Angaben werden abgedeckt, wie in deinen Einstellungen.";

@@ -1456,12 +1456,10 @@
 /* Tabs, scanning and the Protected tab on the iPhone */
 "Scan" = "扫描";
 "Scan a document" = "扫描文稿";
-"Scan Document" = "扫描文稿";
 "This iPhone cannot scan documents." = "这台 iPhone 无法扫描文稿。";
 "Scanned pages" = "已扫描的页面";
 "Page %d" = "第 %d 页";
 "Pages stay on this iPhone only while Snapfly is open." = "页面只在 Snapfly 打开期间留在这台 iPhone 上。";
-"Names, numbers and other private details are covered as Settings says." = "姓名、号码和其他隐私信息会按设置遮盖。";
 "Nothing protected yet" = "还没有受保护的内容";
 "The screenshots you protect show up here." = "你保护过的截屏会显示在这里。";
 "The last twelve, kept on this iPhone by their place in Photos alone." = "最近十二张，这台 iPhone 只记住它们在“照片”中的位置。";
@@ -1475,11 +1473,8 @@
 "Page %d could not be covered, so nothing was sent." = "第 %d 页无法遮盖，因此没有发送任何内容。";
 
 /* The iPhone: scanned pages straightened, brightened, reviewed and saved */
-"Letters, forms and receipts, straight from the camera. Straightened, brightened and with private details covered, all on this iPhone." = "信件、表格和收据，直接用相机拍。拉直、提亮并遮盖隐私信息，全部在这台 iPhone 上完成。";
 "Choose from Photos" = "从照片中选择";
 "Hold your iPhone over the page. It is found and taken by itself." = "将 iPhone 放在页面上方。页面会被自动识别并拍下。";
-"New:" = "新功能：";
-"The page is straightened and brightened, like a clean PDF. No text is changed." = "页面会被拉直并提亮，就像一份干净的 PDF。不会改动任何文字。";
 "Check the places, then copy, share or save the page as a PDF or a picture." = "检查这些位置，然后拷贝、共享或将页面存储为 PDF 或图片。";
 "Each page is covered as Settings says, or as you left it after opening it." = "每一页都按设置遮盖，或保持你打开后留下的样子。";
 "Page %d of %d is being improved" = "正在优化第 %d 页，共 %d 页";
@@ -1789,7 +1784,6 @@
 "As PDF" = "存为 PDF";
 "Blank Page" = "空白页";
 "Covering page %d of %d …" = "正在遮盖第 %d 页，共 %d 页…";
-"Create and Edit PDFs" = "创建和编辑 PDF";
 "Document %@" = "文档 %@";
 "Duplicate" = "复制";
 "Enter the password for %@. It is not kept." = "请输入“%@”的密码。密码不会被保存。";
@@ -1804,10 +1798,7 @@
 "PDF, %@" = "PDF，%@";
 "Page Size for Pictures" = "图片的页面尺寸";
 "Password" = "密码";
-"Photos, scans and PDFs into one file" = "将照片、扫描件和 PDF 合成一个文件";
-"Put pages in order and cover them" = "整理页面并遮盖";
 "Quality" = "质量";
-"Recently Edited" = "最近编辑";
 "Save as Pictures" = "存储为图片";
 "Scanned" = "扫描件";
 "Scanned Pages" = "已扫描的页面";
@@ -1894,3 +1885,22 @@
 "Point the camera at the small print" = "将相机对准小字";
 "Close-up used" = "已采用近拍";
 "Close-up not used" = "未采用近拍";
+"Straight, bright and private details already covered." = "摆正、提亮，隐私已遮盖。";
+"Open Camera" = "打开相机";
+"Opens the camera" = "打开相机";
+"Merge photos, scans and PDFs" = "合并照片、扫描件和 PDF";
+"Open a PDF, put its pages in order and cover them" = "打开 PDF，排列页面并遮盖";
+"Recent" = "最近";
+"Show All" = "全部显示";
+"All Documents" = "所有文稿";
+"How It Goes" = "使用步骤";
+"Hold it over the page; it is taken by itself." = "举在页面上方，会自动拍摄。";
+"Straightened and brightened, without changing the text." = "摆正并提亮，不改动文字。";
+"Private details are covered." = "隐私信息会被遮盖。";
+"Check, then share or save as a PDF." = "检查后，共享或存储为 PDF。";
+"How It Works" = "工作原理";
+"Everything happens on this iPhone." = "一切都在这台 iPhone 上完成。";
+"Hold" = "举起";
+"Prepare" = "整理";
+"The page is straightened and brightened. No text is changed." = "页面会被摆正并提亮。不会改动任何文字。";
+"Names, numbers and other private details are covered, as your settings say." = "姓名、号码等隐私信息会按你的设置遮盖。";

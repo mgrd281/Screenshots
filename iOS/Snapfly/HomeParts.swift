@@ -147,6 +147,25 @@ enum SnapflyTokens {
     /// glyph in `protectTint` on it 4:1, as a glyph needs 3:1.
     static let projectTile = color(0xE7F4EE, dark: 0x11392C)
 
+    // MARK: The Scan tab's start
+
+    /// The scan card's emerald, top leading to bottom trailing. White on its
+    /// lightest point 4.9:1 in light (the brief's #0B8A60 gives 4.4:1, under
+    /// 4.5, so it starts a step darker), 6.5:1 in dark.
+    static let scanHeroTop = color(0x0A8058, dark: 0x0E6B4C)
+    static let scanHeroBottom = color(0x06603F, dark: 0x0A4F39)
+    /// The words on the card's white Open Camera pill: 7.5:1.
+    static let scanHeroInk = color(0x06603F, dark: 0x06603F)
+    /// The reading line crossing the card's page: a mint.
+    static let scanSweep = color(0x9FF2CF, dark: 0x9FF2CF)
+    /// The quick actions' cards.
+    static let scanQuick = color(0xFFFFFF, dark: 0x17191D)
+    /// Behind a recent document's page.
+    static let scanRecentGround = color(0xE9ECEF, dark: 0x22252B)
+    static let scanHeroRadius: CGFloat = 28
+    static let scanQuickRadius: CGFloat = 22
+    static let scanRecentRadius: CGFloat = 18
+
     // MARK: What Is Covered
 
     /// What Is Covered's stage takes the hero's greens (`moreHero`,
