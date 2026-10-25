@@ -1009,8 +1009,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
 
 - **Four tabs** in the system's tab bar, in Liquid Glass from iOS 26 on,
   where it shrinks to the tab shown as a page scrolls down: Photos, Scan,
-  Protected and More. Scan opens the system's document camera, or Choose
-  from Photos takes photos of pages: a letter, a form or a receipt is found
+  Protected and More. Scan opens the system's document camera, or Aus
+  Fotos takes photos of pages: a letter, a form or a receipt is found
   and cut from the photo by Vision (its corners set by hand, with a loupe,
   where Vision is not sure), made flat in its own shape, turned upright and
   levelled from its lines of text, then cleaned as a good scanner leaves a
@@ -1114,10 +1114,23 @@ watch the screen, so there is no line there. What it keeps is the covering:
   While a picture is open the tab bar steps aside; on More it stays whole
   as a page scrolls, and steps aside on More's pages, so it never sits
   over a row.
-- **PDF projects.** Under the scan card, "PDF erstellen und bearbeiten"
-  offers Merge (photos, scans and PDFs into one file) and Open PDF (a PDF
-  from Files, to put its pages in order and cover them), and Recently
-  Edited lists the projects changed last, with their page count and when.
+- **The Scan tab's start** has one job, a scan started in one tap
+  (`ScanStart.swift`): the emerald card Dokument scannen, the whole of it
+  the button, with a page a mint line reads; three quick actions, Aus
+  Fotos, Zusammenfügen and PDF öffnen; and under Zuletzt the ten documents
+  edited last, newest first, in a row that scrolls sideways, each as its
+  first page covered as Settings says (never uncovered, never a badge on
+  it), its name, its pages and the day, which opens it, or, held, shares,
+  renames or deletes it; Alle anzeigen shows them all. Without documents,
+  "So geht's" says how a scan goes in four short steps instead. The "?"
+  opens "So funktioniert's". Scrolled past the card, the bar holds a green
+  Scannen pill. It comes in once per launch, and a new document drops into
+  the first place with a soft green ring; with Reduce Motion or Low Power
+  Mode everything only fades.
+- **PDF projects.** Zusammenfügen (photos, scans and PDFs into one file)
+  and PDF öffnen (a PDF from Files, to put its pages in order and cover
+  them) start one from the Scan tab, whose Zuletzt lists the projects
+  changed last.
   A PDF or a picture opened in Snapfly from Files, Mail or Safari starts a
   project too. Pages come from Photos (in the order chosen), from Files
   (PDF, JPEG, PNG, HEIC: a PDF brings all its pages), from the document
@@ -1154,7 +1167,7 @@ watch the screen, so there is no line there. What it keeps is the covering:
   of each page. A project is written a moment after each change into
   Snapfly's own storage on the iPhone, with complete file protection and
   never in a backup, and opens again where it was left, even after Snapfly
-  was closed by force; Delete in Recently Edited removes it and its copies.
+  was closed by force; Delete under Zuletzt removes it and its copies.
 - **The first run** shows what Snapfly does in under fifteen seconds, on
   three made-up documents of one made-up person, each a standing A4 page
   that looks like a real one, before anything is asked (`FIRST_RUN.md`):
@@ -1534,7 +1547,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/PDFProject.swift`, `PDFPageGeometry.swift` | Tested on Linux: a PDF project (its files, its pages and their turns), the page operations, undo and redo, how pictures sit on Original, A4 or Letter pages, the quality and the size estimate; where things on a turned PDF page are, its text in lines and words, and whether a PDF is signed |
 | `Shared/PDFPages.swift`, `PDFFixtures.swift` | A PDF opened from its copy with PDFKit: locked and unlocked, its pages drawn turned, its text in lines as the covers read them; pictures read, turned and kept without notes; the project's pages put together into one PDF; and the made-up files for the tests (debug only) |
 | `iOS/Snapfly/ProjectStore.swift`, `ProjectDemo.swift` | The PDF projects kept on the iPhone, protected and out of backups: files copied in as they came, autosave, opening again after a forced close, passwords asked and never kept, page operations with undo, pages drawn small and large, and the PDF or pictures made with covers; the made-up project for CI (debug only) |
-| `iOS/Snapfly/ProjectOverview.swift`, `ProjectEditing.swift`, `ProjectExportSheet.swift`, `ProjectEntry.swift` | The pages' overview with its lift, drag and drop, choosing and the dark note with Undo; the editor's pages, strip and "3 / 12"; Save and Share with page size, quality and size; the Scan tab's PDF card and Recently Edited |
+| `iOS/Snapfly/ProjectOverview.swift`, `ProjectEditing.swift`, `ProjectExportSheet.swift` | The pages' overview with its lift, drag and drop, choosing and the dark note with Undo; the editor's pages, strip and "3 / 12"; Save and Share with page size, quality and size |
+| `iOS/Snapfly/ScanStart.swift` | The Scan tab's start: the emerald card that starts a scan, the quick actions, the recent documents as their covered first pages, Alle anzeigen, the steps while there are none, and "So funktioniert's" |
 | `Shared/ScanNaming.swift`, `ScanAsk.swift`, `ScanOrder.swift` | Tested on Linux: a scanned document's name and kind from the words outside its covers, never a covered word or the owner's name, with Apple Intelligence on the device or by when it was scanned; when a photo counts as a photographed document; the questions for an AI chat; the pages' order |
 | `iOS/Snapfly/SendToApps.swift`, `Assets.xcassets/Chat*.imageset` | Send to on the iPhone: the apps chosen (`SendApps`), their icons, the row of them after a scan, the column beside the picture in Protect Picture (`AppRail`) with Photos, Files and the share sheet, and choosing and ordering them; the hand-over (`Handoff`): one picture straight to WhatsApp, one to an AI chat by opening its app with it copied, anything else through the share sheet, never a website |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, three or four to a row with a pinch, See All, and the iPhone's green |

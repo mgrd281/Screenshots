@@ -6,6 +6,12 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, the Scan tab starts a scan in one tap: one green card,
+  three quick actions (Aus Fotos, Zusammenfügen, PDF öffnen) and your
+  recent documents, each shown as its first page with the private details
+  covered. How it works is behind the "?", and scrolled down, a green
+  Scannen button waits in the bar.
+
 - On the iPhone, a test in More › Detection, Schärfere kleine Schrift
   (Test), scans with Snapfly's own camera: photos at full size, the page
   taken by itself once small print is sharp and the phone still, and one

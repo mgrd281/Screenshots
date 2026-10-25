@@ -3,7 +3,10 @@ import SwiftUI
 import VisionKit
 
 /// The Scan tab: letters, forms and receipts from the system's document
-/// camera, or photos of them chosen from Photos. Each page is made flat,
+/// camera, or photos of them chosen from Photos. Its start has one job, a
+/// scan started in one tap (`ScanStart`): the emerald card, Aus Fotos,
+/// Zusammenfügen and PDF öffnen, and the documents edited last; scrolled
+/// past the card, a green Scannen pill in the bar takes its place. Each page is made flat,
 /// upright and level, cleaned as a good scanner leaves a page and checked
 /// (`ScannedPages`), then opened to cover its private details like any
 /// screenshot, in the editor with its pages (`ScanEditor`). The pages wait
@@ -25,30 +28,72 @@ struct ScanTab: View {
     @State private var asked: (chat: ChatTarget, ask: ScanAsk?)?
     /// Each press of the scan button, for its haptic.
     @State private var presses = 0
+    /// The card scrolled out of view: the bar offers Scannen instead.
+    @State private var heroHidden = false
+    /// "So funktioniert's", from the "?".
+    @State private var helping = false
+    /// The start came in, once per launch.
+    @State private var shown = ScanStart.entered
+    @ObservedObject private var projects = ProjectStore.shared
+    @ScanCalm private var calm
 
-    private let supported = VNDocumentCameraViewController.isSupported
+    /// The system's document camera, or Snapfly's own where it is on.
+    private var supported: Bool { VNDocumentCameraViewController.isSupported || PageCamera.isOn }
 
     var body: some View {
         NavigationStack(path: $path) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 28) {
-                    ScanCard(supported: supported, picked: $picked) {
-                        presses += 1
-                        scanning = true
+            ScrollViewReader { reader in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        ScanHero(supported: supported, scan: startScan)
+                            .onGeometryChange(for: Bool.self) { proxy in
+                                proxy.frame(in: .scrollView).maxY < 100
+                            } action: { hidden in
+                                withAnimation(SnapflyMotion.change(calm)) { heroHidden = hidden }
+                            }
+                            .scanEntrance(shown, step: 0, calm: calm)
+                        if !supported {
+                            Text(L("This iPhone cannot scan documents."))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .padding(.top, -12)
+                        }
+                        ScanQuickActions(picked: $picked)
+                            .scanEntrance(shown, step: 1, calm: calm)
+                        if !store.pages.isEmpty { scanned }
+                        Group {
+                            if recent.isEmpty {
+                                ScanSteps()
+                            } else {
+                                RecentDocuments(projects: recent) { path.append(ScanRoute.allDocuments) }
+                            }
+                        }
+                        .scanEntrance(shown, step: 2, calm: calm)
+                        Color.clear.frame(height: 1).id(Self.end)
                     }
-                    .sensoryFeedback(.impact(weight: .light), trigger: presses)
-                    if !store.pages.isEmpty { scanned }
-                    PDFStartCard()
-                    RecentProjects()
-                    steps
+                    .padding(.horizontal, 20)
+                    .padding(.top, 4)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 24)
+                .onChange(of: store.pages.count) { _, count in
+                    // For pictures made in CI: scrolled past the card once the pages are in.
+                    guard ScanDemo.scrolls, count > 0 else { return }
+                    Task {
+                        try? await Task.sleep(for: .seconds(2))
+                        withAnimation { reader.scrollTo(Self.end, anchor: .bottom) }
+                    }
+                }
             }
             .scrollIndicators(.hidden)
+            .background(Color(.systemGroupedBackground).ignoresSafeArea())
+            .sensoryFeedback(.impact(weight: .light), trigger: presses)
             .navigationTitle(L("Scan"))
+            .toolbar { bar }
+            .sheet(isPresented: $helping) { ScanHowSheet() }
+            .onAppear(perform: enter)
             .quickNotes()
             .overlay(alignment: .bottom) { improving }
+            .navigationDestination(for: ScanRoute.self) { _ in AllDocumentsView() }
             .navigationDestination(for: ProtectSession.Source.self) { source in
                 if case .scanned(let id) = source {
                     ScanEditor(page: id)
@@ -195,31 +240,65 @@ struct ScanTab: View {
         }
     }
 
-    /// How a scan goes, in four short steps, what is new among them.
-    private var steps: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            step("doc.viewfinder", Text(L("Hold your iPhone over the page. It is found and taken by itself.")))
-            step("sun.max", Text(L("New:")).fontWeight(.semibold).foregroundStyle(.primary) + Text(verbatim: " ")
-                + Text(L("The page is straightened and brightened, like a clean PDF. No text is changed.")))
-            step("eye.slash", Text(L("Names, numbers and other private details are covered as Settings says.")))
-            step("square.and.arrow.up", Text(L("Check the places, then copy, share or save the page as a PDF or a picture.")))
+    /// The "?" on the trailing side; scrolled past the card, on the leading
+    /// side, and the green Scannen pill on the trailing one.
+    @ToolbarContentBuilder private var bar: some ToolbarContent {
+        if heroHidden {
+            ToolbarItem(placement: .topBarLeading) { help }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: startScan) {
+                    Label(L("Scan"), systemImage: "dot.viewfinder")
+                        .labelStyle(.titleAndIcon)
+                }
+                .buttonStyle(ProtectButtonStyle(compact: true))
+                .disabled(!supported)
+                .transition(.opacity.combined(with: .offset(y: calm ? 0 : -10)))
+                .accessibilityLabel(L("Scan a document"))
+                .accessibilityHint(L("Opens the camera"))
+                .accessibilityIdentifier("scan-bar-camera")
+            }
+        } else {
+            ToolbarItem(placement: .topBarTrailing) { help }
         }
-        .padding(.horizontal, 4)
     }
 
-    private func step(_ symbol: String, _ text: Text) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Image(systemName: symbol)
-                .font(.body.weight(.semibold))
-                .foregroundStyle(SnapflyTokens.protect)
-                .frame(width: 24)
-                .accessibilityHidden(true)
-            text
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+    private var help: some View {
+        Button { helping = true } label: {
+            Image(systemName: "questionmark")
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(.primary)
+                .frame(width: 40, height: 40)
+                .background {
+                    // From iOS 26 the bar's own glass holds it.
+                    if #available(iOS 26, *) { Color.clear } else { Circle().fill(.regularMaterial) }
+                }
+                .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch)
+                .contentShape(Rectangle())
         }
-        .accessibilityElement(children: .combine)
+        .buttonStyle(.plain)
+        .accessibilityLabel(L("How It Works"))
+        .accessibilityIdentifier("scan-help")
+    }
+
+    /// The start's end, for pictures made in CI scrolled to it.
+    private static let end = "scan-end"
+
+    /// The documents edited last, newest first.
+    private var recent: [PDFProject] {
+        Array(projects.projects.filter { !$0.pages.isEmpty }.prefix(ScanStart.shown))
+    }
+
+    private func startScan() {
+        guard supported else { return }
+        presses += 1
+        scanning = true
+    }
+
+    /// The card, the quick actions and the documents rise in, once per launch.
+    private func enter() {
+        guard !ScanStart.entered else { return }
+        ScanStart.entered = true
+        shown = true
     }
 
     private func open(_ id: UUID) {
@@ -249,6 +328,8 @@ struct ScanTab: View {
     /// `-SnapflyScan` asks (`ScanDemo`).
     private func showDemo() {
         guard ScanDemo.requested, store.pages.isEmpty else { return }
+        if ScanDemo.opensHelp { helping = true }
+        if ScanDemo.makesRecent { Task { await ScanDemo.makeRecent(ProjectStore.shared) } }
         Task {
             if let mode = ScanDemo.mode { store.setMode(mode) }
             ScanDemo.keepOwnDetails()
@@ -257,143 +338,6 @@ struct ScanTab: View {
             if ScanDemo.asksAssistant { asking = AssistantChoice(chat: .claude) }
             guard ScanDemo.opensEditor, let page = added.dropFirst(ScanDemo.page).first ?? added.first else { return }
             open(page.id)
-        }
-    }
-}
-
-/// The scan tab's first card: a page in a viewfinder on the soft green,
-/// what scanning does, the green button that opens the camera, and the way
-/// to scan photos chosen from Photos instead.
-private struct ScanCard: View {
-    let supported: Bool
-    @Binding var picked: [PhotosPickerItem]
-    let scan: () -> Void
-
-    var body: some View {
-        VStack(spacing: 14) {
-            // A little smaller than it was, so the PDF card under it shows too.
-            Viewfinder()
-                .frame(width: 132, height: 132)
-                .scaleEffect(0.8)
-                .frame(width: 106, height: 106)
-                .accessibilityHidden(true)
-            VStack(spacing: 6) {
-                Text(L("Scan a document"))
-                    .font(.title2.weight(.bold))
-                Text(L("Letters, forms and receipts, straight from the camera. Straightened, brightened and with private details covered, all on this iPhone."))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .multilineTextAlignment(.center)
-            VStack(spacing: 4) {
-                Button(action: scan) {
-                    Label(L("Scan Document"), systemImage: "camera.viewfinder")
-                }
-                .buttonStyle(ProtectButtonStyle())
-                .disabled(!supported)
-                .accessibilityIdentifier("scan-camera")
-                PhotosPicker(selection: $picked, maxSelectionCount: 20, selectionBehavior: .ordered, matching: .images) {
-                    Text(L("Choose from Photos"))
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(SnapflyTokens.protectTint)
-                        .frame(minHeight: SnapflyTokens.touch)
-                        .padding(.horizontal, 12)
-                        .contentShape(Rectangle())
-                }
-                .accessibilityIdentifier("scan-photos")
-            }
-            if !supported {
-                Text(L("This iPhone cannot scan documents."))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 18)
-        .frame(maxWidth: .infinity)
-        .background(SnapflyTokens.surface, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).strokeBorder(Color.primary.opacity(0.06)))
-        .padding(.top, 4)
-    }
-}
-
-/// A page with a covered line in the corners of a viewfinder, drawn with
-/// shapes, so it fits light and dark and shows no one's details. Each time
-/// the tab shows, a green line reads the page once, top to bottom.
-private struct Viewfinder: View {
-    @State private var visits = 0
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    /// Where the reading line is, and how much it shows.
-    private struct Sweep {
-        var y: CGFloat = -44
-        var opacity = 0.0
-    }
-
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(SnapflyTokens.card)
-                .frame(width: 74, height: 96)
-                .shadow(color: .black.opacity(0.10), radius: 8, y: 4)
-                .overlay(alignment: .topLeading) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Capsule().fill(Color.primary.opacity(0.22)).frame(width: 30, height: 5)
-                        Capsule().fill(Color.primary.opacity(0.85)).frame(width: 46, height: 5)
-                        ForEach([CGFloat(50), 40, 48, 28], id: \.self) { width in
-                            Capsule().fill(Color.primary.opacity(0.10)).frame(width: width, height: 5)
-                        }
-                    }
-                    .padding(11)
-                }
-            if !reduceMotion { line }
-            Corners()
-                .stroke(SnapflyTokens.protect, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
-        }
-        .onAppear { visits += 1 }
-    }
-
-    /// The reading line: brightest in its middle, glowing softly, wider
-    /// than the page so it seems to come from the viewfinder.
-    private var line: some View {
-        Capsule()
-            .fill(LinearGradient(colors: [SnapflyTokens.protect.opacity(0), SnapflyTokens.protect, SnapflyTokens.protect.opacity(0)],
-                                 startPoint: .leading, endPoint: .trailing))
-            .frame(width: 96, height: 2.5)
-            .shadow(color: SnapflyTokens.protect.opacity(0.7), radius: 5)
-            .keyframeAnimator(initialValue: Sweep(), trigger: visits) { line, sweep in
-                line.offset(y: sweep.y).opacity(sweep.opacity)
-            } keyframes: { _ in
-                KeyframeTrack(\.y) {
-                    LinearKeyframe(-44, duration: 0.15)
-                    CubicKeyframe(44, duration: 0.9)
-                }
-                KeyframeTrack(\.opacity) {
-                    LinearKeyframe(0, duration: 0.15)
-                    LinearKeyframe(1, duration: 0.15)
-                    LinearKeyframe(1, duration: 0.55)
-                    LinearKeyframe(0, duration: 0.2)
-                }
-            }
-    }
-
-    /// The four corners of a viewfinder.
-    private struct Corners: Shape {
-        func path(in rect: CGRect) -> Path {
-            let arm = rect.width * 0.2, inset: CGFloat = 2
-            let r = rect.insetBy(dx: inset, dy: inset)
-            var path = Path()
-            let corners: [(CGPoint, CGFloat, CGFloat)] = [
-                (CGPoint(x: r.minX, y: r.minY), 1, 1), (CGPoint(x: r.maxX, y: r.minY), -1, 1),
-                (CGPoint(x: r.minX, y: r.maxY), 1, -1), (CGPoint(x: r.maxX, y: r.maxY), -1, -1),
-            ]
-            for (corner, dx, dy) in corners {
-                path.move(to: CGPoint(x: corner.x, y: corner.y + dy * arm))
-                path.addLine(to: corner)
-                path.addLine(to: CGPoint(x: corner.x + dx * arm, y: corner.y))
-            }
-            return path
         }
     }
 }

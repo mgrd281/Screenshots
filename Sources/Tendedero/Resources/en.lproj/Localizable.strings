@@ -1458,12 +1458,10 @@
 /* Tabs, scanning and the Protected tab on the iPhone */
 "Scan" = "Scan";
 "Scan a document" = "Scan a document";
-"Scan Document" = "Scan Document";
 "This iPhone cannot scan documents." = "This iPhone cannot scan documents.";
 "Scanned pages" = "Scanned pages";
 "Page %d" = "Page %d";
 "Pages stay on this iPhone only while Snapfly is open." = "Pages stay on this iPhone only while Snapfly is open.";
-"Names, numbers and other private details are covered as Settings says." = "Names, numbers and other private details are covered as Settings says.";
 "Nothing protected yet" = "Nothing protected yet";
 "The screenshots you protect show up here." = "The screenshots you protect show up here.";
 "The last twelve, kept on this iPhone by their place in Photos alone." = "The last twelve, kept on this iPhone by their place in Photos alone.";
@@ -1477,11 +1475,8 @@
 "Page %d could not be covered, so nothing was sent." = "Page %d could not be covered, so nothing was sent.";
 
 /* The iPhone: scanned pages straightened, brightened, reviewed and saved */
-"Letters, forms and receipts, straight from the camera. Straightened, brightened and with private details covered, all on this iPhone." = "Letters, forms and receipts, straight from the camera. Straightened, brightened and with private details covered, all on this iPhone.";
 "Choose from Photos" = "Choose from Photos";
 "Hold your iPhone over the page. It is found and taken by itself." = "Hold your iPhone over the page. It is found and taken by itself.";
-"New:" = "New:";
-"The page is straightened and brightened, like a clean PDF. No text is changed." = "The page is straightened and brightened, like a clean PDF. No text is changed.";
 "Check the places, then copy, share or save the page as a PDF or a picture." = "Check the places, then copy, share or save the page as a PDF or a picture.";
 "Each page is covered as Settings says, or as you left it after opening it." = "Each page is covered as Settings says, or as you left it after opening it.";
 "Page %d of %d is being improved" = "Page %d of %d is being improved";
@@ -1791,7 +1786,6 @@
 "As PDF" = "As PDF";
 "Blank Page" = "Blank Page";
 "Covering page %d of %d …" = "Covering page %d of %d …";
-"Create and Edit PDFs" = "Create and Edit PDFs";
 "Document %@" = "Document %@";
 "Duplicate" = "Duplicate";
 "Enter the password for %@. It is not kept." = "Enter the password for %@. It is not kept.";
@@ -1806,10 +1800,7 @@
 "PDF, %@" = "PDF, %@";
 "Page Size for Pictures" = "Page Size for Pictures";
 "Password" = "Password";
-"Photos, scans and PDFs into one file" = "Photos, scans and PDFs into one file";
-"Put pages in order and cover them" = "Put pages in order and cover them";
 "Quality" = "Quality";
-"Recently Edited" = "Recently Edited";
 "Save as Pictures" = "Save as Pictures";
 "Scanned" = "Scanned";
 "Scanned Pages" = "Scanned Pages";
@@ -1896,3 +1887,22 @@
 "Point the camera at the small print" = "Point the camera at the small print";
 "Close-up used" = "Close-up used";
 "Close-up not used" = "Close-up not used";
+"Straight, bright and private details already covered." = "Straight, bright and private details already covered.";
+"Open Camera" = "Open Camera";
+"Opens the camera" = "Opens the camera";
+"Merge photos, scans and PDFs" = "Merge photos, scans and PDFs";
+"Open a PDF, put its pages in order and cover them" = "Open a PDF, put its pages in order and cover them";
+"Recent" = "Recent";
+"Show All" = "Show All";
+"All Documents" = "All Documents";
+"How It Goes" = "How It Goes";
+"Hold it over the page; it is taken by itself." = "Hold it over the page; it is taken by itself.";
+"Straightened and brightened, without changing the text." = "Straightened and brightened, without changing the text.";
+"Private details are covered." = "Private details are covered.";
+"Check, then share or save as a PDF." = "Check, then share or save as a PDF.";
+"How It Works" = "How It Works";
+"Everything happens on this iPhone." = "Everything happens on this iPhone.";
+"Hold" = "Hold";
+"Prepare" = "Prepare";
+"The page is straightened and brightened. No text is changed." = "The page is straightened and brightened. No text is changed.";
+"Names, numbers and other private details are covered, as your settings say." = "Names, numbers and other private details are covered, as your settings say.";

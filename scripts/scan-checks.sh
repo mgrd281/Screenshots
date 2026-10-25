@@ -6,7 +6,9 @@
 # was read on it (SCAN_CAPTURES). Then the app on the simulator, the engine
 # built optimized as on a phone: its UI tests (iOS/SnapflyUITests/
 # ScanUITests.swift), still frames of the Scan tab, Review and Save and Share
-# on the made-up photos (-SnapflyScan), with what to ask Claude, and the
+# on the made-up photos (-SnapflyScan), the tab's start with made-up
+# documents arriving, without any, with "So funktioniert's" and scrolled
+# past its card, with what to ask Claude, and the
 # Photos tab's offer to clean a photographed document and the document
 # cleaned (-SnapflyDocumentPhoto), in German, light and dark, at the
 # largest accessibility text size, on the newest iPhone the runner has and on
@@ -85,6 +87,8 @@ shot() {
   local settle=30
   if [ "$state" = corners ]; then settle=12; fi
   if [ "$state" = warning ] || [ "$state" = sheet ] || [ "$state" = uncovered ] || [ "$state" = list ]; then settle=45; fi
+  # Three documents arrive a few seconds apart, then their first pages are covered.
+  if [ "$state" = recent ]; then settle=75; fi
   xcrun simctl ui "$on" appearance "$appearance"
   xcrun simctl terminate "$on" "$bundle" >/dev/null 2>&1 || true
   xcrun simctl launch "$on" "$bundle" "${arguments[@]}" >/dev/null
@@ -124,6 +128,12 @@ for appearance in light dark; do
   photo_shot "$device" "de-$appearance-photo-offer" offer "$appearance" de
   photo_shot "$device" "de-$appearance-photo-cleaned" cleaned "$appearance" de
 done
+# The start: with documents (recent), without (empty), "So funktioniert's"
+# (help), scrolled past its card (scrolled).
+start=(recent empty help scrolled)
+frames "$device" de-light light de "" "${start[@]}"
+frames "$device" de-dark dark de "" "${start[@]}"
+frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL recent empty
 frames "$device" de-light light de "" assistant own list
 frames "$device" de-dark dark de "" assistant own list
 frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL tab editor warning sheet list
@@ -152,6 +162,8 @@ record() {
   if [ -f "$photo" ] && [ -f "$blurred" ]; then record two-photos testPhotosChosenTogetherKeepTheOrderTheyWereChosenIn; fi
   record cleaning-a-photo testRecordCleaningAPhotographedDocument
   record name-and-hand-over testRecordNameAndHandOver
+  record start testRecordTheStart
+  record reduce-motion-start testRecordTheStart still
   record wipe-and-compare testRecordWipeAndCompare
   record pages-and-warning testRecordPagesAndWarning
   if [ -f "$photo" ]; then record reduce-motion-from-photos testRecordFromPhotosToSharing still; fi
@@ -188,6 +200,9 @@ if [ -n "$small" ] && [ "$small" != "$device" ]; then
     xcrun simctl launch "$small" "$bundle" -SnapflyScan editor >/dev/null
     sleep 40
     frames "$small" de-small light de ""
+    frames "$small" de-small light de "" "${start[@]}"
+    frames "$small" de-small-dark dark de "" recent empty
+    frames "$small" de-small-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL recent
     photo_shot "$small" de-small-photo-offer offer light de
     frames "$small" de-small-dark dark de "" editor warning sheet own list
     frames "$small" de-small-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL editor sheet list

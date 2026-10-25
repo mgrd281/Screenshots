@@ -10,7 +10,10 @@ import Foundation
 /// over it (assistant), or with none yet, for photos chosen from Photos
 /// (empty), or a letter naming the owner, whose made-up name and address
 /// are then kept in Always Hide (own), or Review's list of what is to check
-/// over two pages, the second blurred (list); `-SnapflyReduceMotion`
+/// over two pages, the second blurred (list); the Scan tab's start with
+/// "So funktioniert's" open (help), scrolled past its card (scrolled), or
+/// with three made-up documents arriving one after another (recent);
+/// `-SnapflyReduceMotion`
 /// plays it as Reduce Motion would. The photos are drawn here
 /// (`ScanSample`) and made ready as any photo is, where the page is in them
 /// already known. Nothing of it is in a release build.
@@ -26,7 +29,17 @@ enum ScanDemo {
     static var requested: Bool { state != nil }
     static var mode: ScanColor? { state == "bw" ? .blackAndWhite : nil }
     static var unsure: Bool { state == "corners" }
-    static var opensEditor: Bool { state != "tab" && state != "corners" && state != "assistant" }
+    static var opensEditor: Bool {
+        !["tab", "corners", "assistant", "help", "scrolled", "recent", "empty"].contains(state ?? "")
+    }
+    /// "So funktioniert's", open over the start.
+    static var opensHelp: Bool { state == "help" }
+    /// The start scrolled past its card, the pill in the bar.
+    static var scrolls: Bool { state == "scrolled" }
+    /// Made-up documents among the recent ones.
+    static var makesRecent: Bool { state == "recent" }
+    /// The start begins without documents, whatever an earlier run left.
+    static var clearsDocuments: Bool { ["empty", "help", "scrolled", "recent"].contains(state ?? "") }
     /// The sheet a tap on Claude opens, over the tab.
     static var asksAssistant: Bool { state == "assistant" }
     /// Which page the editor opens on: the blurred one for the warning.
@@ -45,7 +58,7 @@ enum ScanDemo {
     /// corners, without where the page is, to set it by hand. Each as a PNG,
     /// as Photos gives its photos, so it is decoded as theirs are.
     static func photos() -> [ScanPhoto] {
-        guard state != "empty", let page = ownLetter ? ScanSample.letter() : ScanSample.page() else { return [] }
+        guard !["empty", "help", "recent"].contains(state ?? ""), let page = ownLetter ? ScanSample.letter() : ScanSample.page() else { return [] }
         let flaws: [ScanSample.Flaw]
         switch state {
         case "editor", "corners", "own": flaws = [.none]
@@ -65,6 +78,36 @@ enum ScanDemo {
         guard ownLetter else { return }
         OwnDetailStore.details = [ScanSample.ownName, ScanSample.ownAddress]
     }
+
+    /// Three made-up documents, one after another, as they would arrive:
+    /// a contract, a letter of two photographed pages and an invoice, each
+    /// put together as a PDF project and closed, so it waits among the
+    /// recent ones. A few seconds apart, so each is seen arriving.
+    @MainActor static func makeRecent(_ store: ProjectStore) async {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("Made-up files", isDirectory: true)
+        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        func file(_ data: Data, _ name: String) -> URL {
+            let url = folder.appendingPathComponent(name)
+            try? data.write(to: url)
+            return url
+        }
+        let letter = [PDFFixtures.sideways(), PDFFixtures.receipt()].compactMap { $0 }
+        let documents: [(name: String, items: ProjectImport)] = [
+            ("Mietvertrag", .files([file(PDFFixtures.signed(), "Mietvertrag.pdf")])),
+            ("Brief 22.10.2026", .pictures(letter, origin: .photo)),
+            ("Rechnung Musterfirma", .files([file(PDFFixtures.invoice(), "Rechnung.pdf")])),
+        ]
+        try? await Task.sleep(for: .seconds(4))
+        for document in documents {
+            store.start()
+            await store.add(document.items)
+            // The made-up contract is signed; its warning is not what the pictures show.
+            store.notice = nil
+            store.rename(document.name)
+            store.close()
+            try? await Task.sleep(for: .seconds(5))
+        }
+    }
     #else
     static let requested = false
     static let mode: ScanColor? = nil
@@ -80,6 +123,11 @@ enum ScanDemo {
     static let still = false
     static func photos() -> [ScanPhoto] { [] }
     static func keepOwnDetails() {}
+    static let opensHelp = false
+    static let scrolls = false
+    static let makesRecent = false
+    static let clearsDocuments = false
+    @MainActor static func makeRecent(_ store: ProjectStore) async {}
     #endif
 }
 
