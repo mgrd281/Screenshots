@@ -86,14 +86,19 @@ final class PDFUITests: XCTestCase {
         let app = launch("tab")
         let recent = element(app, "scan-recent")
         XCTAssertTrue(recent.waitForExistence(timeout: 60))
-        // Covered and drawn, a minute at most.
-        Thread.sleep(forTimeInterval: 20)
-        let picture = recent.screenshot().image
+        // Covered and drawn: the first time, Vision's models load first; two minutes at most.
+        var picture = recent.screenshot().image
+        var band = 0
+        for _ in 0..<60 {
+            picture = recent.screenshot().image
+            band = try XCTUnwrap(Self.widestDarkRun(picture))
+            if band >= 24 { break }
+            Thread.sleep(forTimeInterval: 2)
+        }
         let attachment = XCTAttachment(image: picture)
         attachment.name = "recent-covered"
         attachment.lifetime = .keepAlways
         add(attachment)
-        let band = try XCTUnwrap(Self.widestDarkRun(picture))
         XCTAssertGreaterThanOrEqual(band, 24, "a cover's band, in pixels")
     }
 

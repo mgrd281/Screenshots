@@ -246,6 +246,13 @@ struct ScanQuickActions: View {
         .accessibilityIdentifier("project-open-pdf")
     }
 
+    private func label(_ title: String) -> some View {
+        Text(title)
+            .font(.system(size: labelSize, weight: .semibold))
+            .foregroundStyle(.primary)
+            .multilineTextAlignment(.leading)
+    }
+
     private func tile(_ title: String, symbol: String) -> some View {
         let layout = typeSize.isAccessibilitySize
             ? AnyLayout(HStackLayout(alignment: .center, spacing: 12)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 0))
@@ -257,12 +264,14 @@ struct ScanQuickActions: View {
                 .background(SnapflyTokens.projectTile, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 .accessibilityHidden(true)
             if !typeSize.isAccessibilitySize { Spacer(minLength: 10) }
-            Text(title)
-                .font(.system(size: labelSize, weight: .semibold))
-                .foregroundStyle(.primary)
-                .lineLimit(typeSize.isAccessibilitySize ? nil : 2)
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
+            // On one line where it fits; else broken where its words allow
+            // ("Zusammen-fügen"), not wherever the line runs out.
+            ViewThatFits(in: .horizontal) {
+                label(title).lineLimit(1)
+                label(title.replacingOccurrences(of: "\u{AD}", with: "-\n"))
+                    .lineLimit(typeSize.isAccessibilitySize ? nil : 2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             if typeSize.isAccessibilitySize { Spacer(minLength: 0) }
         }
         .padding(14)
