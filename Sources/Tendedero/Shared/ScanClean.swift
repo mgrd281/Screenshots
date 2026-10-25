@@ -5,13 +5,14 @@ import Foundation
 /// they are; in greys; or in black and white, the smallest file, where pale
 /// marks can go.
 enum ScanColor: String, CaseIterable, Identifiable, Sendable {
-    case color, gray, blackAndWhite
+    case color, original, gray, blackAndWhite
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
         case .color: L("Color")
+        case .original: L("Original Color")
         case .gray: L("Grayscale")
         case .blackAndWhite: L("Black and white")
         }
@@ -22,6 +23,7 @@ enum ScanColor: String, CaseIterable, Identifiable, Sendable {
     var detail: String? {
         switch self {
         case .color: L("Logos stay in color")
+        case .original: L("The paper keeps its own color")
         case .gray: nil
         case .blackAndWhite: L("Smallest file, pale stamps can go")
         }
@@ -290,10 +292,28 @@ enum ScanClean {
         let shown: ScanBitmap
         switch mode {
         case .color: shown = cleaned
+        case .original: shown = tinted(cleaned, by: paper.level)
         case .gray: shown = grayed(cleaned)
         case .blackAndWhite: shown = blackAndWhite(grayed(cleaned), tuning: tuning)
         }
         return Cleaned(page: shown, base: even, light: light)
+    }
+
+    /// The cleaned page on its own paper's colour again, for Original Color:
+    /// the white paper takes the paper's hue, as even as the cleaning left
+    /// it, at its brightest (the dimness of the room left out); the print
+    /// stays as dark as it was cleaned.
+    static func tinted(_ page: ScanBitmap, by level: (red: Float, green: Float, blue: Float)) -> ScanBitmap {
+        let brightest = max(level.red, level.green, level.blue)
+        guard brightest > 0 else { return page }
+        let factors = [level.red, level.green, level.blue].map { min(1, max(0, $0 / brightest)) }
+        var out = page
+        for i in stride(from: 0, to: out.pixels.count, by: 4) {
+            for c in 0..<3 {
+                out.pixels[i + c] = UInt8((Float(out.pixels[i + c]) * factors[c]).rounded())
+            }
+        }
+        return out
     }
 
     /// How bright a colour is, from 0 to 255, as the eye weighs red, green
