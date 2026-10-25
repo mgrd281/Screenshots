@@ -382,7 +382,7 @@ test("every one of the eight line styles can be picked and shows its holder", as
 test("the story's moments each play once as they come into view", async ({ page }) => {
   await page.goto("de/", { waitUntil: "networkidle" });
   const order = await page.evaluate(() => [...document.querySelectorAll("main > section")].map((s) => s.classList[1] || s.classList[0]));
-  expect(order.slice(1, 4), "after the send section, before the desktop to try").toEqual(["send", "story", "capture"]);
+  expect(order.slice(1, 4), "first after the first view, then the desktop to try and sending").toEqual(["story", "capture", "send"]);
   const story = page.locator("[data-story]");
   await expect(story).toHaveClass(/staged/);
   const beats = story.locator(".beat");

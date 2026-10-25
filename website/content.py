@@ -301,11 +301,11 @@ TEXT["de"] = dict(
     look_bold="Kräftige Farbe",
     menu_label="Snapfly",
 
-    hero_sub="Jedes Bildschirmfoto hängt an einer Leine oben auf deinem Bildschirm. Ein Klick kopiert es, oder du schickst es direkt in den Chat, in dem du gerade schreibst. Namen und andere private Angaben werden vorher verdeckt, ob es an ChatGPT geht oder an einen Menschen.",
+    hero_sub="Jedes Bildschirmfoto hängt an einer Leine oben auf deinem Bildschirm. Ein Klick kopiert es oder schickt es in den Chat, in dem du gerade schreibst – Namen und andere private Angaben schon verdeckt.",
     cta="Für Mac laden",
     badge_for="Laden für",
     cta_note="Kostenlos · ab macOS 14 · Apple Silicon und Intel",
-    try_hint="Probier’s aus: Zieh ein Bild an der Leine entlang, um die Reihenfolge zu ändern. Schick eines mit seinem Papierflieger oder alle mit der Taste von Snapfly über dem Chat. Halt diese Taste gedrückt, um eine Nachricht dazuzuschreiben.",
+    try_hint="Probier’s aus: Schick ein Bild mit seinem Papierflieger oder alle mit der Taste über dem Chat. Zieh ein Bild, um die Reihenfolge zu ändern.",
     chat_title="Chat",
     chat_in="Kannst du mir die Rechnung von gestern schicken?",
     chat_reply="Ist angekommen, danke!",
@@ -319,10 +319,12 @@ TEXT["de"] = dict(
     line_label="Bildschirmfotos an der Leine von Snapfly",
     refill="Neue Bildschirmfotos",
 
-    send_h="Alle auf einmal in WhatsApp oder ChatGPT, mit einem Klick.",
-    send_p="Die Senden-Taste am Ende der Leine setzt alle Bildschirmfotos darauf in die App im Vordergrund ein – WhatsApp, ChatGPT oder jeden Chat –, genau dort, wo du gerade schreibst. Jedes Bildschirmfoto hat außerdem einen eigenen Papierflieger, um nur dieses zu senden. <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> schickt das neueste, ohne dass du zur Maus greifst. Was gesendet ist, verlässt die Leine. So hängt dort nur, was noch zu senden ist. Über WhatsApp, ChatGPT und anderen Chats sitzt eine Senden-Taste direkt über ihrer eigenen. Halt sie gedrückt, um eine Nachricht dazuzuschreiben: Sie kommt nach den Bildern an.",
+    send_h="Alle auf einmal in den Chat.",
+    send_p="Über WhatsApp, ChatGPT und jedem anderen Chat sitzt eine Senden-Taste. Sie setzt alle Bildschirmfotos genau dort ein, wo du schreibst. Jedes hat auch einen eigenen Papierflieger, und <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> schickt das neueste. Halt die Taste gedrückt, um eine Nachricht dazuzuschreiben.",
     keys=["ctrl", "alt", ""],
     keys_label="Das Kürzel Control, Option, V",
+    eyebrows=dict(story="So funktioniert’s", capture="Zum Ausprobieren", send="Senden", desk="Aufräumen",
+                  private="Datenschutz", say="Bereich verdecken", menu="Alle Funktionen", styles="Stile", start="Loslegen"),
     story_h="So reist ein Bildschirmfoto.",
     story_p="Folg einem Bildschirmfoto von deiner Tastatur bis in einen Chat.",
     story=[
@@ -334,14 +336,14 @@ TEXT["de"] = dict(
     ],
 
     desk_h="Endlich ein aufgeräumter Schreibtisch.",
-    desk_p="Überlass Snapfly deine Bildschirmfotos, und sie landen nicht mehr auf dem Schreibtisch. Keine schwebende Vorschau, keine fünf Sekunden Warten: Jedes hängt sofort an der Leine. Zieh eines in einen Ordner, um es zu behalten. Alles andere verschwindet, wenn du fertig bist.",
+    desk_p="Bildschirmfotos landen nicht mehr auf dem Schreibtisch, sondern sofort an der Leine – ohne schwebende Vorschau, ohne Warten. Zieh eines in einen Ordner, um es zu behalten. Der Rest verschwindet, wenn du fertig bist.",
     desk_file="Bildschirmfoto 2026-10-15 um 09.{m}.{s}",
     desk_label="Ein Schreibtisch voller Bildschirmfotos, die nach oben an die Leine fliegen",
     replay="Noch mal abspielen",
 
     priv_h="Private Angaben bleiben privat.",
     stamp_covered="Private Angaben verdeckt",
-    priv_p="Bevor ein Bildschirmfoto an ChatGPT, eine andere KI oder einen Menschen geht, verdeckt Snapfly, was du wählst: Namen, Adressen, E-Mails, Telefonnummern, Bankkarten und Konten, Gesundheitsdaten. Namen heißt die Namen von Menschen: Firmen, Titel, Daten und Diagnosen daneben bleiben lesbar. Patientennamen, Weitere Personen wie Ärzte und Namen ohne erkennbare Rolle sind je ein eigener Schalter: So verdeckst du etwa nur die Namen der Patienten, nicht die der Ärzte. Dein eigener Name, eingetragen unter „Immer verbergen“, ist immer verdeckt. Was die Leine verlässt – kopiert, gesendet oder herausgezogen –, ist verdeckt. Snapfly liest den Text auf deinem Mac, und die Bilddatei selbst bleibt unverändert.",
+    priv_p="Bevor ein Bildschirmfoto an ChatGPT oder einen Menschen geht, verdeckt Snapfly, was du wählst: Namen, Adressen, E-Mails, Telefonnummern, Bankkarten und Konten, Gesundheitsdaten. Was du unter „Immer verbergen“ einträgst, ist immer verdeckt. Snapfly liest den Text auf deinem Mac, und die Bilddatei selbst bleibt unverändert.",
     example="Beispiel",
     inv=dict(title="Rechnung 2026-1042", date="14. Oktober 2026", bill="Rechnungsadresse",
              name="Lena Hoffmann", street="Lindenstraße 12", city="10969 Berlin",
@@ -375,7 +377,7 @@ TEXT["de"] = dict(
     caption_reply="Perfekt, danke dir!",
 
     cap_h="Ein Klick, und es hängt an der Leine.",
-    cap_p="Drück <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span> oder klick auf die Bildschirmfoto-Taste am Bildschirmrand, dann zieh über einen Bereich, klick auf ein Fenster oder nimm den ganzen Bildschirm. Es hängt sofort an der Leine: keine Datei auf dem Schreibtisch, kein Warten. Ein Menü, das beim Klicken zugeht? Nimm es mit Timer auf. Etwas bewegt sich? Nimm den Bildschirm auf.",
+    cap_p="Drück <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span> oder klick auf die Bildschirmfoto-Taste am Rand. Zieh über einen Bereich, klick auf ein Fenster oder nimm den ganzen Bildschirm – es hängt sofort an der Leine. Mit Timer und Bildschirmaufnahme.",
     desk=dict(
         label="Ein Mac-Schreibtisch mit Snapfly. Alles darauf funktioniert.",
         note="Alles hier funktioniert – mit Zeiger, Touch oder Tastatur.",
@@ -410,14 +412,14 @@ TEXT["de"] = dict(
     start_h="In vier Schritten startklar.",
     start_p="Vom Download bis zu deinem ersten Bildschirmfoto an der Leine.",
     start=[
-        ("Laden", "Lade Snapfly.zip, öffne die Datei und zieh Snapfly in deinen Ordner „Programme“. Snapfly ist von Apple signiert und beglaubigt."),
-        ("Öffnen", "Snapfly lebt in der Menüleiste, als kleines Foto an der Leine, ohne Symbol im Dock. Wähl beim ersten Mal „Einschalten“, dann hängen deine Bildschirmfotos an der Leine statt auf dem Schreibtisch."),
-        ("Erlauben", "Wenn du zum ersten Mal ein Bildschirmfoto machst oder sendest, bittet macOS um die Bildschirmaufnahme oder die Bedienungshilfen. Einstellungen › Berechtigungen zeigt jede davon, mit einer Taste zum Erlauben."),
-        ("Das erste Bild", "Drück ⌃⌥S und zieh über irgendetwas. Klick es an der Leine an, um es zu kopieren, oder auf seinen Papierflieger, um es in den Chat zu schicken, in dem du gerade schreibst."),
+        ("Laden", "Lade Snapfly.zip und zieh Snapfly in „Programme“. Von Apple signiert und beglaubigt."),
+        ("Öffnen", "Snapfly lebt in der Menüleiste. Wähl beim ersten Mal „Einschalten“, dann hängen deine Bildschirmfotos an der Leine."),
+        ("Erlauben", "macOS fragt einmal nach Bildschirmaufnahme und Bedienungshilfen. Einstellungen › Berechtigungen zeigt beides."),
+        ("Das erste Bild", "Drück ⌃⌥S und zieh über irgendetwas. Ein Klick kopiert es, sein Papierflieger schickt es in den Chat."),
     ],
 
     say_h="Sag, was verdeckt wird.",
-    say_p="Halt ein Bildschirmfoto gedrückt, wähl „Bereich verdecken …“ und sag es mit deinen Worten, etwa „alles außer Betrag und Datum“. Mit Apple Intelligence versteht Snapfly den ganzen Satz, auf deinem Mac. Ohne tippst du die Wörter, die weg sollen. Oder zieh ein Rechteck über irgendetwas.",
+    say_p="Halt ein Bildschirmfoto gedrückt, wähl „Bereich verdecken …“ und sag es in deinen Worten, etwa „alles außer Betrag und Datum“. Apple Intelligence versteht den Satz, auf deinem Mac. Oder zieh ein Rechteck darüber.",
     say_try="Probier’s aus: Klick auf ein Beispiel oder schreib selbst etwas.",
     say_file="Bildschirmfoto 2026-10-23 um 09.41.12",
     say_label="Das Fenster „Bereich verdecken“ mit einer Überweisung darin",
@@ -444,7 +446,7 @@ TEXT["de"] = dict(
 
     design_h="Nichts verlässt deinen Mac.",
     design_points=["Kein Konto.", "Kein eigener Server.", "Keine Analyse."],
-    design_p="Text lesen, Angaben verdecken, übersetzen und beschreiben: Das alles passiert auf deinem Mac, mit Apples eigenen Frameworks. Nichts, was du aufnimmst, wird hochgeladen, außer du schaltest Synchronisieren mit deinem iPhone ein: Dann gehen verdeckte Kopien über dein eigenes iCloud.",
+    design_p="Text lesen, verdecken, übersetzen und beschreiben passiert auf deinem Mac, mit Apples eigenen Frameworks. Nichts wird hochgeladen – außer du schaltest Synchronisieren mit deinem iPhone ein: Dann gehen verdeckte Kopien über dein eigenes iCloud.",
     design_link="Datenschutzerklärung lesen",
 
     close_h="Häng dein erstes Bildschirmfoto auf.",

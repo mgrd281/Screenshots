@@ -127,6 +127,11 @@ the website's footer. Both stay.
       type, cards dealt onto the line and a band of the app's words.
     - The owner asked to keep all three. A change to shared parts must hold
       in every look; check all three.
+    - In German the Mac desktop look takes the clean ground
+      (`static/clean.css`, linked only for `NEW_PARTS_LANGS`): the theme's
+      colour in the first view and the closing call, clean sections in
+      ink between, a short word over each title. See "The clean ground"
+      in `DESIGN.md`.
   - Three brand themes, Original Sunset (the default), Emerald Petrol and
     Signature Orange, are chosen with the swatches in the menu bar and kept
     in `localStorage` (`snapfly-brand`). Light or dark stays the system's.
