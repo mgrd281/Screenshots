@@ -31,9 +31,29 @@ final class ScanReadingFixtureTests: XCTestCase {
             let lines = try XCTUnwrap(Finder.lines(in: image), name)
             let page = ScanCleaner.page(lines, aspect: ScanCleaner.aspect(of: image))
             let text = ScanReading.text(page)
-            print("READING \(name) (\(lines.count) lines, \(page.blocks.count) blocks)\n\(text)\n--")
+            let confidences = Dictionary(grouping: lines.map { String(format: "%.2f", $0.confidence) }, by: { $0 })
+                .map { "\($0.key)×\($0.value.count)" }.sorted().joined(separator: " ")
+            let shape = page.blocks.map { block -> String in
+                switch block {
+                case .paragraph(let paragraph):
+                    return "\(paragraph.heading ? "heading" : paragraph.flows ? "prose" : "lines")(\(paragraph.lines.count))"
+                case .table(let table):
+                    return "table(\(table.rows.count)×\(table.rows.map(\.count).max() ?? 0))"
+                }
+            }.joined(separator: " ")
+            print("READING \(name) (\(lines.count) lines; confidence \(confidences); blocks \(shape))\n\(text)\n--")
             keep(name, text)
             XCTAssertFalse(text.isEmpty, name)
+            // What Vision gave, line by line with its words' places, to make tests from.
+            let raw = lines.map { line -> String in
+                let words = line.words.compactMap { word -> String? in
+                    guard let range = Range(word.range, in: line.string) else { return nil }
+                    return String(format: "%@@%.4f,%.4f,%.4f,%.4f", String(line.string[range]),
+                                  word.box.minX, word.box.minY, word.box.width, word.box.height)
+                }
+                return String(format: "%.2f ", line.confidence) + words.joined(separator: " ")
+            }
+            print("RAW \(name) \(ScanCleaner.aspect(of: image))\n\(raw.joined(separator: "\n"))\n--")
         }
     }
 
