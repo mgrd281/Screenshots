@@ -38,6 +38,13 @@ enum ScanReadiness {
         var dullPaper = 235.0
         /// Paper darker than this asks for more light.
         var darkPaper = 100.0
+        /// Whether a page must be seen: not for a close-up of its small
+        /// print (`closeUp`), which shows only a part of it.
+        var needsPage = true
+
+        /// For a close-up of small print: no whole page in view, and the
+        /// letters at least half again as tall as a page's need be.
+        static let closeUp = Tuning(smallestLetters: 24, needsPage: false)
     }
 
     /// What the preview shows: its brightness, from its top left; where the
@@ -72,7 +79,7 @@ enum ScanReadiness {
         let steady = look.still >= tuning.steadyFor
         let sharp = sharpness >= tuning.sharpEdges
         let large = letters >= tuning.smallestLetters
-        let found = look.page != nil && !look.lines.isEmpty
+        let found = (look.page != nil || !tuning.needsPage) && !look.lines.isEmpty
         let ready = found && steady && sharp && large && !glare
         var hint: Hint?
         if found, !ready {

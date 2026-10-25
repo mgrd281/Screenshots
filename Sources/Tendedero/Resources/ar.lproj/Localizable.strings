@@ -1883,3 +1883,14 @@
 "Small print" = "خط صغير";
 "Take Closer" = "التقط عن قرب";
 "Retake for Small Print" = "أعد الالتقاط للخط الصغير";
+"Torch" = "المصباح";
+"Take Page" = "التقاط الصفحة";
+"Point the camera at a page" = "وجّه الكاميرا إلى صفحة";
+"Snapfly may not use the camera. Allow it in Settings." = "لا يُسمح لـ Snapfly باستخدام الكاميرا. اسمح بذلك في الإعدادات.";
+"Sharper Small Print (Test)" = "خط صغير أوضح (تجربة)";
+"Scans with Snapfly's own camera: full resolution, several frames merged, and the page taken by itself once small print is sharp." = "يمسح بكاميرا Snapfly الخاصة: دقة كاملة، ودمج عدة لقطات، وتُلتقط الصفحة تلقائيًا حين يصبح الخط الصغير واضحًا.";
+"Take Small Print Closer" = "التقاط الخط الصغير عن قرب";
+"Hold the iPhone close over the small print." = "قرّب الآيفون فوق الخط الصغير.";
+"Point the camera at the small print" = "وجّه الكاميرا إلى الخط الصغير";
+"Close-up used" = "استُخدمت اللقطة القريبة";
+"Close-up not used" = "لم تُستخدم اللقطة القريبة";

@@ -340,13 +340,14 @@ take a burst, check the preview or say a hint while it is open. Part B
 therefore needs a camera of Snapfly's own, built in three stages, each
 merged on its own:
 
-1. **The engine, on Linux (this stage).** Merging a burst, the readiness
-   check on a preview, and the readability score with its hint in Review.
-2. **The camera** (not built): the full photo size with quality first, the
-   preview checked several times a second, the page taken by itself when
-   ready, one hint at a time on the glass bar, the burst merged.
-3. **The detail shot** (not built): small print taken again close up and
-   laid onto the page.
+1. **The engine, on Linux.** Merging a burst, the readiness check on a
+   preview, and the readability score with its hint in Review.
+2. **The camera** (`PageCamera`, a test in More › Detection, off at first):
+   the full photo size with quality first, the preview checked ten times a
+   second, the page taken by itself when ready, one hint at a time on
+   glass, the burst merged. Below.
+3. **The detail shot** (`ScanDetail`, with the camera above): small print
+   taken again close up and laid onto the page. Below.
 
 ### Several frames, one page (`ScanBurst`)
 
@@ -402,3 +403,104 @@ them. Under 0.9, Review shows "Kleine Schrift unscharf" with Näher
 aufnehmen (a scanned page: the camera opens to take it again) or Neu
 aufnehmen für kleine Schrift (a photo). `ScanReadabilityTests` checks it.
 **Not verified:** how often real pages get the hint.
+
+### The camera (`PageCamera`)
+
+Switched on with Schärfere kleine Schrift (Test) in More › Detection; Scan
+and Review's Take Again open it instead of the system's document camera.
+
+- **Lens.** The back camera that switches lenses by itself (triple, dual
+  wide, dual), so it moves to the close-focus lens near a page; else the
+  wide one. Its closest focus is written to the log.
+- **Size and quality.** Photos at the largest size the photo format offers
+  up to 24 MP (48 MP would take four times the memory and time per page),
+  quality first, never the flash.
+- **Focus, exposure, white.** On the page's middle as Vision finds it, set
+  again when the page moves; the white balance is kept once the page fills
+  a third of the view and the phone is still.
+- **Readiness**, ten times a second on the preview (`ScanReadiness`): the
+  page and its lines of text from Vision, the brightness at about 640 px,
+  stillness from Core Motion (still while it turns less than 0.12 rad/s and
+  moves less than 0.04 g), and from iOS 26 a smudged lens every 2 s. A hint
+  shows once it held for 0.4 s, VoiceOver reads it, and a light tap says
+  ready. The page is taken by itself once ready, then again only once the
+  page leaves the view or lies elsewhere. The shutter takes it by hand at
+  any time. The torch (at 15 %) is a button at the top.
+- **Several frames or one.** Where the photos are no larger than 12 MP, four
+  frames at the same exposure are merged (`ScanBurst`); larger, one photo
+  of the best quality, which the iPhone itself makes of several. The frames
+  stay in memory only.
+- **Its pages** are whole photos: the page is found in them as in a photo
+  from Photos, and the smudge check reads the photo.
+
+Its timings (taken, made) are written to the log.
+
+**Not verified:** all of it on an iPhone. The build compiles it; nothing
+here has run on a device. The 2.5 s from shutter to cleaned page, the
+comparison of Apple's single best shot with the merge, and the hints'
+thresholds on real paper need the owner's iPhone:
+
+### The detail shot (`ScanDetail`)
+
+With the camera on, Näher aufnehmen on "Kleine Schrift unscharf" in
+Review's list opens it for a close-up instead of taking the page again: a
+card "Kleine Schrift näher aufnehmen" over the preview, no whole page needed
+in view, the letters 24 px tall at least, and it closes once taken.
+
+The close-up is found on the straightened page around the small print's
+place: every size from 1.2 to 4 times as large (each 8 % more than the
+last) and every turn of −3° to 3° on both made small, by how the print's
+steepest edges correlate; the best four closer; then the best on the page
+itself, step by step down to 0.05 of a pixel. It is laid only where it
+matches with a correlation of 0.6 and more. Its light is brought to the
+page's by the paper and the mean, which a soft page keeps as a sharp one
+has it; it is made as small as the page, each colour apart, and fades in
+over 12 px. The page is then cleaned and checked again, and kept only where
+its small print reads more surely, by 0.02 of Vision's certainty at least,
+with no line or letter fewer (`ScanDetail.better`); otherwise the page stays
+as it was and a note says "Detailaufnahme nicht übernommen".
+
+Made-up close-up (`ScanDetailTests`): a page of small print, its lens soft
+(Gaussian 1.6 px), and a close-up 2.4 times as large, turned by 0.6°, lit
+darker, with grain:
+
+| | Measured |
+|---|---|
+| Found off by, at the small print's corners and middle | 0.30 px (target ≤ 1 px) |
+| Size found | 2.399 (taken at 2.4) |
+| Difference from the printed page inside the small print | 11.5 before, 9.4 laid |
+| Edge steepness there (printed with a lens of 0.8 px: 77.5) | 30.9 before, 109.6 laid |
+| A close-up of other print | not laid |
+
+The page's synthetic print picks each letter's shape and width by a hash of
+its place, as real text has no repeating stretch; a print that repeats
+exactly can be matched a few letters off, which the correlation threshold
+and the reading check are there to catch.
+
+**Not verified:** a real close-up. A close-up taken at a slant (not flat
+over the page) is laid by size, turn and place only, not perspective.
+
+### On the iPhone (for the owner)
+
+Switch on Schärfere kleine Schrift (Test) in More › Erkennung, then scan a
+made-up page with small print (the first run's sample invoice printed, or
+any printed page without private details) in each of these:
+
+1. **Normal light**, held at a comfortable distance: the page is taken by
+   itself within a few seconds, without a hint.
+2. **Dim light** (one lamp across the room): "Mehr Licht" shows; the torch
+   button helps.
+3. **A lamp at an angle** making a shine on the paper: "Spiegelung, Handy
+   leicht kippen" shows, and goes once the iPhone is tilted.
+4. **A shaky hand**: "Ruhig halten" shows, and nothing is taken until the
+   iPhone is still.
+5. **7 pt print at arm's length**: "Näher ran" shows until the letters are
+   large enough; then it is taken, and Review shows no "Kleine Schrift
+   unscharf".
+
+6. **The detail shot**: on a page whose Review says "Kleine Schrift
+   unscharf", tap Näher aufnehmen, hold the iPhone close over the small
+   print: it is taken by itself, and a note says whether it was used.
+
+For each, say whether the hint was right and how long it took from the
+picture to the cleaned page.

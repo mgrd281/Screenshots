@@ -1883,3 +1883,14 @@
 "Small print" = "Küçük yazı";
 "Take Closer" = "Yakından çek";
 "Retake for Small Print" = "Küçük yazı için yeniden çek";
+"Torch" = "Fener";
+"Take Page" = "Sayfayı çek";
+"Point the camera at a page" = "Kamerayı bir sayfaya tutun";
+"Snapfly may not use the camera. Allow it in Settings." = "Snapfly kamerayı kullanamıyor. Ayarlar’da izin verin.";
+"Sharper Small Print (Test)" = "Daha net küçük yazı (Test)";
+"Scans with Snapfly's own camera: full resolution, several frames merged, and the page taken by itself once small print is sharp." = "Snapfly’ın kendi kamerasıyla tarar: tam çözünürlük, birkaç kare birleştirilir ve küçük yazı net olunca sayfa kendiliğinden çekilir.";
+"Take Small Print Closer" = "Küçük yazıyı yakından çek";
+"Hold the iPhone close over the small print." = "iPhone’u küçük yazının üzerine yaklaştırın.";
+"Point the camera at the small print" = "Kamerayı küçük yazıya tutun";
+"Close-up used" = "Yakın çekim kullanıldı";
+"Close-up not used" = "Yakın çekim kullanılmadı";

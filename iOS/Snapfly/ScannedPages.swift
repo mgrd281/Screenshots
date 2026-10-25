@@ -90,6 +90,9 @@ final class ScannedPages: ObservableObject {
         /// Where the page is in the photo, from 0 to 1 from the bottom left;
         /// nil for a camera's page, taken whole.
         var quad: ScanQuad?
+        /// A whole photo from Snapfly's own camera (`PageCamera`), its page
+        /// found in it as a photo's is.
+        var findsPage = false
         /// Quarter turns clockwise and the lean taken away; nil until found,
         /// and the lean nil while it is to be measured again.
         var way: (turns: Int, skew: Double?)?
@@ -157,9 +160,14 @@ final class ScannedPages: ObservableObject {
     // MARK: Adding
 
     /// Pages from the camera, after those before, given back; a light tap says they came.
+    /// With `whole`, they are whole photos from Snapfly's own camera, their page still to be found.
     @discardableResult
-    func add(camera images: [CGImage], at index: Int? = nil) -> [Page] {
-        insert(images.map { Page(origin: .camera, source: $0) }, at: index)
+    func add(camera images: [CGImage], whole: Bool = false, at index: Int? = nil) -> [Page] {
+        insert(images.map { image in
+            var page = Page(origin: .camera, source: image)
+            page.findsPage = whole
+            return page
+        }, at: index)
     }
 
     /// Photos chosen, after those before. With `unsure`, their corners are
@@ -188,10 +196,10 @@ final class ScannedPages: ObservableObject {
 
     /// A page taken again: the new pages in its place, it gone.
     @discardableResult
-    func replace(_ id: UUID, camera images: [CGImage] = [], photos: [ScanPhoto] = []) -> [Page] {
+    func replace(_ id: UUID, camera images: [CGImage] = [], whole: Bool = false, photos: [ScanPhoto] = []) -> [Page] {
         guard let index = index(of: id), !(images.isEmpty && photos.isEmpty) else { return [] }
         remove(id)
-        return images.isEmpty ? add(photos: photos, at: index) : add(camera: images, at: index)
+        return images.isEmpty ? add(photos: photos, at: index) : add(camera: images, whole: whole, at: index)
     }
 
     func remove(_ id: UUID) {
@@ -294,6 +302,35 @@ final class ScannedPages: ObservableObject {
         restart(index)
     }
 
+    /// A page's small print taken again close up (`ScanDetail`): laid in,
+    /// cleaned and checked again, and kept only where it reads more surely;
+    /// false when it was not kept. Its covers stay where they are.
+    func takeCloser(_ id: UUID, detail: CGImage) async -> Bool {
+        guard let index = index(of: id), pages[index].state == .ready, let straight = pages[index].straightened,
+              let way = pages[index].way, let skew = way.skew,
+              let area = pages[index].issues.first(where: { $0.kind == .smallPrint })?.area else { return false }
+        let job = pages[index].job, mode = self.mode
+        let made = await Task.detached(priority: .userInitiated) {
+            await ScanCleaner.closer(straight, turns: way.turns, skew: skew, detail: detail, area: area, mode: mode)
+        }.value
+        guard let made else { return false }
+        let thumbnail = await Task.detached(priority: .userInitiated) {
+            ScanCleaner.smaller(made.cleaned, longest: 240).map { UIImage(cgImage: $0) }
+        }.value
+        // Asked for again meanwhile: what was made is dropped.
+        guard let done = self.index(of: id), pages[done].job == job, self.mode == mode else { return false }
+        pages[done].straightened = made.straightened
+        pages[done].before = UIImage(cgImage: made.straightened)
+        pages[done].cleaned = made.cleaned
+        pages[done].thumbnail = thumbnail
+        pages[done].issues = made.checked.issues
+        pages[done].textKept = made.checked.textKept
+        pages[done].reading = made.checked.reading
+        if let session = sessions[id] { session.replace(made.cleaned) }
+        if done == 0 { readTitle() }
+        return true
+    }
+
     /// A page cut from its picture by new corners; its covers are found again.
     func setCorners(_ id: UUID, _ quad: ScanQuad) {
         guard let index = index(of: id) else { return }
@@ -349,7 +386,7 @@ final class ScannedPages: ObservableObject {
         guard let source = picture else { return failed(id, job: job) }
         guard var at = self.index(of: id), pages[at].job == job else { return }
         // A photo's page is found first; where Vision is not sure, its corners wait for the owner.
-        if pages[at].origin == .photo, pages[at].quad == nil {
+        if pages[at].origin == .photo || pages[at].findsPage, pages[at].quad == nil {
             let found = await Task.detached(priority: .userInitiated) { ScanCleaner.page(in: source) }.value
             guard let now = self.index(of: id), pages[now].job == job else { return }
             at = now
@@ -366,7 +403,7 @@ final class ScannedPages: ObservableObject {
         }
         pages[at].state = .improving
         let page = pages[at], mode = self.mode
-        let photo = page.origin == .photo ? source : nil
+        let photo = page.origin == .photo || page.findsPage ? source : nil
         let focal = page.focal ?? page.data.flatMap {
             ScanCleaner.focalLength(of: $0, width: source.width, height: source.height)
         }

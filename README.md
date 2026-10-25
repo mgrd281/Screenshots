@@ -1037,7 +1037,21 @@ watch the screen, so there is no line there. What it keeps is the covering:
   short name ("Unscharf") and never in the copy. Where the page's smallest
   print reads unsurely (`ScanReadability`), the hint "Kleine Schrift
   unscharf" offers to take it again: Näher aufnehmen for a scanned page,
-  Neu aufnehmen für kleine Schrift for a photo. The covers are then found on the cleaned page. The
+  Neu aufnehmen für kleine Schrift for a photo. With Schärfere kleine
+  Schrift (Test) on in More › Detection, Scan takes pages with Snapfly's
+  own camera (`PageCamera`) instead of the system's: photos at full size (up
+  to 24 MP) and best quality, four frames merged where photos are 12 MP,
+  focus and exposure on the page's middle, and the page taken by itself
+  once the print is sharp, the phone still for 0.3 s and the smallest
+  letters 16 px tall; otherwise one hint at a time on glass over the
+  shutter (Ruhig halten, Näher ran, Spiegelung, Handy leicht kippen, Mehr
+  Licht, Linse reinigen), which VoiceOver reads out, a light tap when it is
+  ready, a torch at a low level and never the flash. Its pages are found in
+  the photo as a photo's are. Näher aufnehmen then takes only the small
+  print again, close up ("Kleine Schrift näher aufnehmen"), laid onto the
+  page to a fraction of a pixel (`ScanDetail`) and kept only where the
+  small print reads more surely; otherwise "Detailaufnahme nicht
+  übernommen". The covers are then found on the cleaned page. The
   pages wait as small numbered cards, in the order scanned, kept in memory
   only while the app is open, under the document's kind (Invoice, Letter,
   Form or Receipt) where its words say it, and each opens in **Review**,
@@ -1295,7 +1309,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   shows a made-up bill covered in the look chosen, as the two switches
   have it, with the six looks to choose from, Keep the last four digits and
   Strongest protection. Detection holds Apple Intelligence, which runs only
-  on this iPhone, the check every copy gets before it leaves, always on,
+  on this iPhone, Schärfere kleine Schrift (Test), Snapfly's own camera for
+  pages (off at first), the check every copy gets before it leaves, always on,
   Faster picture processing (below), and how long covering took on this
   iPhone, the middle and the 95th percentile of the last fifty. Then
   Features: AI Assistant chooses Claude or ChatGPT and keeps your own key
@@ -1483,7 +1498,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/CoverSampleDocument.swift` | The made-up documents on What Is Covered's stage, each value covered as its kind is turned on, in the look chosen, and ringed while its switch is shown |
 | `Shared/CoverStudio.swift` | What Is Covered's three made-up documents and the kind of each value, the groups' parts and symbols, how a group's tile reads and the order the covers run in (tested on Linux) |
 | `iOS/Snapfly/CoverStylePage.swift` | Cover Style: the made-up bill covered as chosen, the six looks and the two switches |
-| `iOS/Snapfly/DetectionView.swift` | Detection: Apple Intelligence, the check before sharing, Faster picture processing, and how long covering took |
+| `iOS/Snapfly/DetectionView.swift` | Detection: Apple Intelligence, Snapfly's own camera for pages (a test), the check before sharing, Faster picture processing, and how long covering took |
 | `iOS/SnapflyUITests` | Always Hide, More and Scan driven on the simulator in German: a name added, both kinds of rule, a rule off and on, a swipe to delete, the screen with nothing yet; More's counts, switches, presets, sheets, looks and tab bar; Scan's tab, Review, Compare, a blurred page, the colours, deleting a page, corners set by hand and Save and Share, the owner's name and address covered on a letter, a photographed document cleaned and reverted, a screenshot never offered it, what goes to an AI chat and that it is the covered export byte for byte, the name, and photos chosen together in their order; and the walks the videos are made of |
 | `scripts/scan-checks.sh` | Runs the scan's fixture tests on the Mac with their pictures and numbers, then its UI tests on the simulator for the Scan Checks workflow, keeps frames of the tab, Review, its list, the letter naming the owner and Save and Share (light, dark, the largest text sizes, Arabic and English, the newest and the smallest iPhone) and records the walks with and without Reduce Motion, for the `scan-captures` pre-release |
 | `scripts/more-checks.sh` | Runs More's UI tests for the More Checks workflow (What Is Covered alone at each push, all of More when run by hand), keeps frames of the tab and each page (light, dark, the largest text sizes, Arabic and English, the newest and the smallest iPhone) and records its motion with and without Reduce Motion, for the `more-captures` pre-release |
@@ -1502,7 +1517,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Share/ShareViewController.swift`, `iOS/Share-Info.plist`, `iOS/*.entitlements` | The iPhone's share extension: a picture shared from any app, covered, checked, then copied, shared or saved |
 | `Shared/ScanPDF.swift` | Scanned pages as one PDF of A4 pages: each page as JPEG, or in black and white as one bit, fitted whole without stretching, an invisible text layer to find and copy, and nothing of who made it but the app (tested on Linux) |
 | `Shared/ScanClean.swift`, `ScanLight.swift`, `ScanPrint.swift`, `ScanCrease.swift`, `ScanBend.swift`, `ScanSheet.swift`, `ScanQuality.swift`, `ScanContent.swift`, `ScanGeometry.swift` | The scan's own rules, tested on Linux: the page's light made even, the paper white, a pale printed fill kept, a fold's crease evened out, a curl taken out along the page's ruled lines, light grey print toned line by line, as dark as the body, every small mark of it kept, the print sharp, in color, greys or black and white; a folded sheet's parts and clean edges; blur, reflections and a page too small found by part of the page; every number read before cleaning read after, and every character of a line read surely; the page's true shape, A4 where it is close, upright and level, and its place on A4 |
-| `Shared/ScanBurst.swift`, `ScanReadiness.swift`, `ScanReadability.swift` | Capture with enough detail, tested on Linux (`SCAN_TEXT.md`, Part B): a few photos of one page laid over each other to a fraction of a pixel and merged, the shaken or reflected ones left out; whether the camera's preview is ready to take a page (sharp, still, letters large enough, no reflection) and the one hint to show; and how surely a page's smallest print reads. The camera that uses the first two is not built yet |
+| `Shared/ScanBurst.swift`, `ScanReadiness.swift`, `ScanReadability.swift` | Capture with enough detail, tested on Linux (`SCAN_TEXT.md`, Part B): a few photos of one page laid over each other to a fraction of a pixel and merged, the shaken or reflected ones left out; whether the camera's preview is ready to take a page (sharp, still, letters large enough, no reflection) and the one hint to show; and how surely a page's smallest print reads |
+| `Shared/ScanDetail.swift` | A close-up of a page's small print found on the page (its size, turn and place, to a fraction of a pixel), brought to the page's light and laid in with a soft edge; and whether the small print reads more surely with it, tested on Linux |
+| `iOS/Snapfly/PageCamera.swift` | Snapfly's own camera for pages, a test switched on in Detection: full photo size, focus and exposure on the page, the preview checked ten times a second (`ScanReadiness`), the page taken by itself when ready, one hint at a time, the torch, and four frames merged (`ScanBurst`) where photos are 12 MP; a close-up of small print for `ScanDetail` |
 | `Shared/ScanCleaner.swift` | The scan through Vision and Core Image, as on the iPhone: the page found in a photo and made flat, turned and levelled, cleaned, guarded (a line whose reading changed read on its own, cleaned again gently or kept as evened, whichever first reads as before), checked (with a smudged lens from iOS 26), and its pages for the PDF, the covered ones read again for their text |
 | `Shared/ScanSample.swift` | A made-up invoice, printed and photographed at an angle under a lamp, blurred or with a reflection where asked, and a made-up practice's letter naming the owner in every way a name and an address are written: for the tests and the pictures made in CI, in debug builds only |
 | `Shared/CoveredCopy.swift` | A picture's covered copy as it leaves the iPhone app or its share extension: covered, read again, checked in its pixels, or nothing, as when Vision could not read the picture (iOS may keep it from reading in the background) |

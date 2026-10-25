@@ -279,35 +279,44 @@ enum ScanBurst {
         var out = frame
         frame.pixels.withUnsafeBufferPointer { src in
             out.pixels.withUnsafeMutableBufferPointer { dst in
-                var wx = [Double](repeating: 0, count: 4), wy = [Double](repeating: 0, count: 4)
-                for y in 0..<h {
-                    let ry = Double(y) - cy
-                    for x in 0..<w {
-                        let rx = Double(x) - cx
-                        let fx = min(Double(w - 1), max(0, cx + cosine * rx - sine * ry + placement.dx))
-                        let fy = min(Double(h - 1), max(0, cy + sine * rx + cosine * ry + placement.dy))
-                        let x0 = Int(fx), y0 = Int(fy)
-                        Self.weights(fx - Double(x0), into: &wx)
-                        Self.weights(fy - Double(y0), into: &wy)
-                        let o = (y * w + x) * 4
-                        for c in 0..<3 {
-                            var value = 0.0
-                            for j in 0..<4 {
-                                let yy = min(h - 1, max(0, y0 + j - 1))
-                                var row = 0.0
-                                for i in 0..<4 {
-                                    let xx = min(w - 1, max(0, x0 + i - 1))
-                                    row += Double(src[(yy * w + xx) * 4 + c]) * wx[i]
+                // Bands of rows side by side, each on its own core.
+                let bands = Self.bands(h)
+                DispatchQueue.concurrentPerform(iterations: bands) { band in
+                    var wx = [Double](repeating: 0, count: 4), wy = [Double](repeating: 0, count: 4)
+                    for y in (band * h / bands)..<((band + 1) * h / bands) {
+                        let ry = Double(y) - cy
+                        for x in 0..<w {
+                            let rx = Double(x) - cx
+                            let fx = min(Double(w - 1), max(0, cx + cosine * rx - sine * ry + placement.dx))
+                            let fy = min(Double(h - 1), max(0, cy + sine * rx + cosine * ry + placement.dy))
+                            let x0 = Int(fx), y0 = Int(fy)
+                            Self.weights(fx - Double(x0), into: &wx)
+                            Self.weights(fy - Double(y0), into: &wy)
+                            let o = (y * w + x) * 4
+                            for c in 0..<3 {
+                                var value = 0.0
+                                for j in 0..<4 {
+                                    let yy = min(h - 1, max(0, y0 + j - 1))
+                                    var row = 0.0
+                                    for i in 0..<4 {
+                                        let xx = min(w - 1, max(0, x0 + i - 1))
+                                        row += Double(src[(yy * w + xx) * 4 + c]) * wx[i]
+                                    }
+                                    value += row * wy[j]
                                 }
-                                value += row * wy[j]
+                                dst[o + c] = UInt8(min(255, max(0, value.rounded())))
                             }
-                            dst[o + c] = UInt8(min(255, max(0, value.rounded())))
                         }
                     }
                 }
             }
         }
         return out
+    }
+
+    /// How many bands of rows a page is worked in, side by side.
+    static func bands(_ height: Int) -> Int {
+        max(1, min(height, ProcessInfo.processInfo.activeProcessorCount * 4))
     }
 
     /// The four weights of a cubic curve (Keys, a = −0.5) for a point `t`
@@ -338,36 +347,42 @@ enum ScanBurst {
         let w = out.width, h = out.height
         let plane = frames[0].brightness
         let count = frames.count
-        var values = [Double](repeating: 0, count: count)
-        var all = values
-        for y in 0..<h {
-            for x in 0..<w {
-                let p = y * w + x
-                var onEdge = false
-                if x > 0, x < w - 1, y > 0, y < h - 1 {
-                    let across = abs(Int(plane[p + 1]) - Int(plane[p - 1]))
-                    let down = abs(Int(plane[p + w]) - Int(plane[p - w]))
-                    onEdge = across + down >= edge
-                }
-                for c in 0..<3 {
-                    let i = p * 4 + c
-                    for n in 0..<count { values[n] = Double(frames[n].pixels[i]) }
-                    let anchor: Double
-                    if onEdge || count < 3 {
-                        anchor = values[0]
-                    } else {
-                        all = values
-                        all.sort()
-                        anchor = count % 2 == 1 ? all[count / 2] : (all[count / 2 - 1] + all[count / 2]) / 2
+        let sources = frames.map(\.pixels)
+        out.pixels.withUnsafeMutableBufferPointer { dst in
+            let bands = Self.bands(h)
+            DispatchQueue.concurrentPerform(iterations: bands) { band in
+                var values = [Double](repeating: 0, count: count)
+                var all = values
+                for y in (band * h / bands)..<((band + 1) * h / bands) {
+                    for x in 0..<w {
+                        let p = y * w + x
+                        var onEdge = false
+                        if x > 0, x < w - 1, y > 0, y < h - 1 {
+                            let across = abs(Int(plane[p + 1]) - Int(plane[p - 1]))
+                            let down = abs(Int(plane[p + w]) - Int(plane[p - w]))
+                            onEdge = across + down >= edge
+                        }
+                        for c in 0..<3 {
+                            let i = p * 4 + c
+                            for n in 0..<count { values[n] = Double(sources[n][i]) }
+                            let anchor: Double
+                            if onEdge || count < 3 {
+                                anchor = values[0]
+                            } else {
+                                all = values
+                                all.sort()
+                                anchor = count % 2 == 1 ? all[count / 2] : (all[count / 2 - 1] + all[count / 2]) / 2
+                            }
+                            // On an edge, only values very close to the sharpest frame's.
+                            let reach = onEdge ? closest : near
+                            var sum = 0.0, kept = 0.0
+                            for value in values where abs(value - anchor) <= reach {
+                                sum += value
+                                kept += 1
+                            }
+                            dst[i] = UInt8(min(255, max(0, (kept > 0 ? sum / kept : anchor).rounded())))
+                        }
                     }
-                    // On an edge, only values very close to the sharpest frame's.
-                    let reach = onEdge ? closest : near
-                    var sum = 0.0, kept = 0.0
-                    for value in values where abs(value - anchor) <= reach {
-                        sum += value
-                        kept += 1
-                    }
-                    out.pixels[i] = UInt8(min(255, max(0, (kept > 0 ? sum / kept : anchor).rounded())))
                 }
             }
         }

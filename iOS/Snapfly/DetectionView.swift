@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Detection (Erkennung), from More: Apple Intelligence reading along on this
-/// iPhone, a switch; the check before sharing, always on, not a switch;
+/// iPhone, a switch; Snapfly's own camera for pages, a test (`PageCamera`),
+/// a switch; the check before sharing, always on, not a switch;
 /// Faster picture processing, opening its page; and how long covering took
 /// on this iPhone lately, two tiles with the middle time large and the
 /// slowest but a few small. Kept where they always were (`Finder`,
@@ -10,6 +11,7 @@ struct DetectionView: View {
     @ObservedObject var store: MoreStore
     let openPreparing: () -> Void
     @ObservedObject private var indexer = PhotoIndexer.shared
+    @AppStorage(PageCamera.key) private var ownCamera = false
     @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
@@ -39,6 +41,15 @@ struct DetectionView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .accessibilityIdentifier("more-intelligence")
+            MoreDivider()
+            Toggle(isOn: $ownCamera) {
+                row(L("Sharper Small Print (Test)"), symbol: "text.magnifyingglass",
+                    detail: L("Scans with Snapfly's own camera: full resolution, several frames merged, and the page taken by itself once small print is sharp."))
+            }
+            .tint(SnapflyTokens.hideAccent)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .accessibilityIdentifier("more-own-camera")
             MoreDivider()
             HStack(spacing: 12) {
                 row(L("Check before sharing"), symbol: "checkmark.shield",

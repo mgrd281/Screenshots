@@ -813,6 +813,28 @@ enum ScanCleaner {
         return Checked(issues: ScanIssue.ordered(issues), textKept: kept, reading: reading)
     }
 
+    /// The page with a close-up of its small print laid in (`ScanDetail`),
+    /// cleaned and checked again, `area` the small print's place on the
+    /// straightened page from 0 to 1 from the bottom left; nil where the
+    /// close-up was not found on the page or its small print does not read
+    /// more surely with it.
+    static func closer(_ straightened: CGImage, turns: Int, skew: Double, detail: CGImage, area: CGRect,
+                       mode: ScanColor) async -> Prepared? {
+        guard let page = bitmap(straightened), let close = bitmap(detail) else { return nil }
+        let w = CGFloat(page.width), h = CGFloat(page.height)
+        // Its place in pixels from the top left, with a little of the page round it.
+        let place = CGRect(x: area.minX * w, y: (1 - area.maxY) * h, width: area.width * w, height: area.height * h)
+            .insetBy(dx: -0.02 * w, dy: -0.01 * h)
+        guard let laid = ScanDetail.laid(close, onto: page, around: place),
+              let straight = image(laid.page, gray: false) else { return nil }
+        let lines = { (picture: CGImage) in
+            (Finder.lines(in: picture) ?? []).map { ScanReadability.Line(text: $0.string, box: $0.box, confidence: $0.confidence) }
+        }
+        guard ScanDetail.better(before: lines(straightened), after: lines(straight),
+                                area: area.insetBy(dx: -0.02, dy: -0.01)) else { return nil }
+        return await finished(straight, turns: turns, skew: skew, mode: mode, photo: nil)
+    }
+
     /// Whether the camera's lens looks smudged in a picture, as Vision tells
     /// from iOS 26 and macOS 26 on: only when it is quite sure, as Apple
     /// suggests, since a blurred subject can look smudged too.

@@ -67,12 +67,19 @@ struct ScanTab: View {
             Task { await add(items) }
         }
         .fullScreenCover(isPresented: $scanning) {
-            DocumentScanner { images in
-                scanning = false
-                // The editor opens on the first page at once, while it is made ready.
-                if let first = store.add(camera: images).first { open(first.id) }
+            if PageCamera.isOn {
+                PageCamera { images in
+                    scanning = false
+                    if let first = store.add(camera: images, whole: true).first { open(first.id) }
+                }
+            } else {
+                DocumentScanner { images in
+                    scanning = false
+                    // The editor opens on the first page at once, while it is made ready.
+                    if let first = store.add(camera: images).first { open(first.id) }
+                }
+                .ignoresSafeArea()
             }
-            .ignoresSafeArea()
         }
         .fullScreenCover(item: wantedCorners) { wanted in
             if let page = store.page(wanted.id), let picture = page.source ?? store.picture(wanted.id) {
