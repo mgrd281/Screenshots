@@ -102,6 +102,29 @@ final class ScanCleanTests: XCTestCase {
         XCTAssertLessThanOrEqual(gray.brightness(x: page.stamp.0, y: page.stamp.1), 238)
     }
 
+    /// A pink form, as a sick note is printed on: Color makes its paper
+    /// white, Original Color keeps it pink, as even as Color makes white,
+    /// the print as dark.
+    func testOriginalColorKeepsThePapersOwnColour() {
+        let page = ScanPaperFixture.page(paper: (250, 222, 226))
+        let white = ScanClean.clean(page.bitmap, .color)
+        let pink = ScanClean.clean(page.bitmap, .original)
+        var reds: [Int] = [], greens: [Int] = [], brightness: [Int] = []
+        for (x, y) in page.paperSpots {
+            let (red, green, _) = pink.color(x: x, y: y)
+            reds.append(Int(red))
+            greens.append(Int(green))
+            brightness.append(Int(pink.brightness(x: x, y: y)))
+            XCTAssertGreaterThanOrEqual(Int(white.color(x: x, y: y).green), 245, "Color: white paper")
+        }
+        XCTAssertGreaterThanOrEqual(reds.min()!, 245, "the paper as bright as its brightest")
+        XCTAssertGreaterThanOrEqual(reds.min()! - greens.max()!, 18, "and pink")
+        XCTAssertLessThanOrEqual(brightness.max()! - brightness.min()!, 8, "evenly, the lamp's fall-off gone")
+        for (x, y) in page.inkSpots {
+            XCTAssertLessThanOrEqual(Int(pink.brightness(x: x, y: y)), Int(white.brightness(x: x, y: y)) + 2, "print as dark")
+        }
+    }
+
     func testGreyHasNoColourAndBlackAndWhiteHasTwoValues() {
         let page = ScanPaperFixture.page()
         let gray = ScanClean.clean(page.bitmap, .gray)
@@ -249,10 +272,10 @@ enum ScanPaperFixture {
     /// bright at its bottom right, its paper warm, with a camera's grain of
     /// up to `grain` levels either way, its print down to `printTo` of its
     /// height.
-    static func page(width: Int = 420, grain: Int = 0, printTo: Double = 5.0 / 8) -> Page {
+    static func page(width: Int = 420, grain: Int = 0, printTo: Double = 5.0 / 8,
+                     paper: (Float, Float, Float) = (246, 245, 241)) -> Page {
         let height = Int((Double(width) * 1.4142).rounded())
         var bitmap = ScanBitmap(width: width, height: height, red: 0, green: 0, blue: 0)
-        let paper: (Float, Float, Float) = (246, 245, 241)
         func light(_ x: Int, _ y: Int) -> Float {
             let across: Float = Float(x) / Float(width), down: Float = Float(y) / Float(height)
             let t: Float = (across + down) / 2
