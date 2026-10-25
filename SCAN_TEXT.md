@@ -593,6 +593,66 @@ order. Chrome's and Firefox's readers are said to do as poppler does (not
 tried). Latin, Greek, Cyrillic, Chinese, Japanese and Korean read alike in
 every reader tried.
 
+### What it does with the text
+
+- **Small print in columns is not a table.** Columns of words side by side
+  are a table only if some column holds numbers (a digit and hardly a
+  letter in at least 60 % of its cells, two cells at least) once the print
+  is at most 0.8 of the page's usual line. A letter's foot (company, bank,
+  court) is therefore read a column at a time, as it was set; an invoice's
+  table in smaller print has its prices and stays a table. In ordinary
+  print every candidate is a table as before, which keeps label and value
+  pairs together ("Name  Lena Hoffmann"). Found by writing the layouts of a
+  DIN 5008 letter, a bank statement, a contract, a form and an article
+  down, not on a real document.
+- **Cells Vision read as one line.** A line whose words stand a column's gap
+  or more apart (1.2 of the larger of its own and the page's usual line)
+  is parted there before the page is cut, so a table's row read whole can
+  still be told from the columns; the parts of one row are read as the one
+  line again where nothing else parts them.
+- **Unsure.** A line whose confidence is under 0.9 (`ScanContent.sure`, the
+  guard's threshold) flags its words. They are washed in orange in the text,
+  counted, and outlined on the page; nothing in the text is changed, copied
+  with a mark or left out for it. Vision gives a confidence per line, not
+  per word, so a flagged line is flagged whole. How often Vision gives less
+  than 0.9 on a real page is what the first CI run of
+  `ScanReadingFixtureTests` shows (it logs the confidences).
+- **Corrections.** A paragraph or a cell is corrected by hand, against the
+  part of the page it was read from. A correction is kept under the text
+  as it was read, in memory with the scan: the same text is corrected the
+  same again, another block with a different text never is, and the
+  corrected text is no longer flagged. It is in the text that is copied,
+  saved and shared and in the spoken text; it is not in the PDF's text
+  layer, whose words keep the places they were read in. Typing the text
+  as read again removes the correction; the menu undoes all of them.
+- **Tables to a spreadsheet.** Copy puts the rows on the clipboard with
+  tabs between the cells, which Numbers and Excel paste into cells. Share
+  makes a CSV: RFC 4180 (a cell with the delimiter, a quote or a line break
+  in quotes, quotes doubled, rows parted by CRLF), UTF-8 with its byte
+  order mark so Excel reads the accents, a semicolon where this iPhone
+  writes numbers with a decimal comma (as Excel's German list separator),
+  else a comma. A cell that would run as a formula ("=...", "@...", "-A1",
+  "+SUM(") gets an apostrophe in front; "-12,50" and "+49 30 1234" are left
+  alone. A covered cell is "███".
+- **Finding.** Letters are found whatever their case and accents ("uber"
+  finds "Über"), in paragraphs and cells, in reading order; the matches are
+  marked, counted, stepped through, and the view follows them. A cover is
+  "███" and is not found by the words it hides, as they are not there.
+- **Speaking.** The pages are cut into pieces: a paragraph, or a table's
+  row, with a pause between. A cover is said as "verdeckt" (the app's
+  language) and a line break or a cell's end is a comma's pause. The voice
+  is the best one installed for the text's language (premium before
+  enhanced before standard, the region of the iPhone first, simplified
+  Chinese the mainland's); a paragraph of 24 characters or more whose own
+  language the recognizer is 80 % sure of is said in that one. Where none
+  is installed for the text's language, a note says so and nothing is said
+  in another voice. The word being said is found in the shown text by a map
+  from each spoken unit to the characters it stands for (tested on
+  Linux, a cover included). Speed is 0.75 to 2 times the voice's own, kept.
+- **Translating.** The system's own translation sheet (iOS 17.4), given the
+  text as it is, covers as "███". It is Apple's, not Snapfly's: Snapfly
+  sends nothing itself.
+
 ### On the iPhone
 
 - **Save and Share** has a third format, Text ("TXT, 1 file"): Copy puts
@@ -600,11 +660,11 @@ every reader tried.
   .txt file. Show Text opens it whole first.
 - **Review's menu** has Show Text, for the page open, covered.
 - **The text** (`ScanReadingSheet`): page by page, a heading larger, a
-  table a grid, every word to select; Copy, Read Aloud and Share. Read
-  Aloud is the iPhone's own voice (`AVSpeechSynthesizer`) for the language
-  NaturalLanguage finds in the text, a cover read out as "verdeckt",
-  other sound turned down while it speaks. Without covers, the warning
-  comes first.
+  table a grid with a menu, every word to select; the menu searches,
+  corrects, translates; Seite shows the pages; Copy, Read Aloud with its
+  player and Share. Read Aloud is the iPhone's own voice
+  (`AVSpeechSynthesizer`), a cover read out as "verdeckt", other sound
+  turned down while it speaks. Without covers, the warning comes first.
 
 ### Results
 
@@ -632,11 +692,33 @@ every reader tried.
   the text in light and dark, Arabic and English, at the largest text
   sizes, on the newest iPhone and the smallest.
 
+### Also checked on Linux
+
+- `ScanReadingToolsTests` 26: the unsure stretches (the text is the same
+  with or without them, a joined word is unsure if a part was), where an
+  unsure line lies, corrections (they land on the text they were made on and
+  on nothing else, drop the unsure flag, keep the place, a cell stays one
+  cell, an emptied block leaves the text), a table as tabs and CSV (quotes,
+  CRLF, the delimiter, a cover cell, formulas defused, numbers left),
+  finding (case, accents, Arabic, Cyrillic, Chinese, no overlap), matches in
+  reading order, the speech pieces and the map from a spoken range back to
+  the shown text (a cover, a pause, an emoji and an accent).
+- `ScanReadingLayoutTests` 8: a DIN 5008 letter from the sender's line to
+  its three-column foot, an invoice whose rows Vision reads whole, a bank
+  statement, numbered clauses, a form, a headline over two columns, and a
+  justified line that is not parted.
+
 ### Not verified
 
-- Read Aloud on an iPhone: the voice, its language, other sound turned
-  down.
-- VoiceOver over the text.
+- Read Aloud on an iPhone: the voice, its language, the word marked as it
+  is said, pause and skip, other sound turned down.
+- VoiceOver over the text, the orange washes, the page's outlines and the
+  correction sheet.
+- The system's translation on a device, and how much it needs downloaded.
+- A CSV opened in Excel and Numbers (the BOM, the delimiter, the accents).
+- How Vision groups the lines of real pages: the layouts above are written
+  as Vision is expected to give them. `ScanReadingFixtureTests` logs what it
+  really gives on the made-up pages; the rules were not tuned on it yet.
 - Phrase search in right-to-left text: a reader that orders a line by
   where its words stand would take an Arabic line's words from the left.
   Single words are what the checks search for.
