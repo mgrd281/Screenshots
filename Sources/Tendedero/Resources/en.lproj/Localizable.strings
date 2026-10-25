@@ -1906,3 +1906,8 @@
 "Prepare" = "Prepare";
 "The page is straightened and brightened. No text is changed." = "The page is straightened and brightened. No text is changed.";
 "Names, numbers and other private details are covered, as your settings say." = "Names, numbers and other private details are covered, as your settings say.";
+"Document" = "Document";
+"Show Preview" = "Show Preview";
+"Hide Preview" = "Hide Preview";
+"Preview hidden" = "Preview hidden";
+"Pages: %d" = "Pages: %d";

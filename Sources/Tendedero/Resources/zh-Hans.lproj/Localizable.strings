@@ -1904,3 +1904,8 @@
 "Prepare" = "整理";
 "The page is straightened and brightened. No text is changed." = "页面会被摆正并提亮。不会改动任何文字。";
 "Names, numbers and other private details are covered, as your settings say." = "姓名、号码等隐私信息会按你的设置遮盖。";
+"Document" = "文稿";
+"Show Preview" = "显示预览";
+"Hide Preview" = "隐藏预览";
+"Preview hidden" = "预览已隐藏";
+"Pages: %d" = "页数：%d";

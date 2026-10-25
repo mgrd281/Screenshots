@@ -1904,3 +1904,8 @@
 "Prepare" = "Préparer";
 "The page is straightened and brightened. No text is changed." = "La page est redressée et éclaircie. Aucun texte n’est modifié.";
 "Names, numbers and other private details are covered, as your settings say." = "Les noms, numéros et autres données privées sont masqués, selon vos réglages.";
+"Document" = "Document";
+"Show Preview" = "Afficher l’aperçu";
+"Hide Preview" = "Masquer l’aperçu";
+"Preview hidden" = "Aperçu masqué";
+"Pages: %d" = "Pages : %d";

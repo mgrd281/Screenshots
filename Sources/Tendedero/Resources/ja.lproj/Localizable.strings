@@ -1904,3 +1904,8 @@
 "Prepare" = "整える";
 "The page is straightened and brightened. No text is changed." = "ページをまっすぐにして明るくします。テキストは一切変わりません。";
 "Names, numbers and other private details are covered, as your settings say." = "名前、番号などの個人情報は、設定どおりに隠されます。";
+"Document" = "書類";
+"Show Preview" = "プレビューを表示";
+"Hide Preview" = "プレビューを隠す";
+"Preview hidden" = "プレビュー非表示";
+"Pages: %d" = "ページ数：%d";

@@ -2488,8 +2488,16 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     "Fotos, Scans und PDFs zusammenfügen") and PDF öffnen (`doc.text`,
     Files; "PDF öffnen, Seiten ordnen und verdecken"). At the accessibility
     sizes they stand one under another, the glyph beside the label.
-  - **Zuletzt** (title 2 bold) with Alle anzeigen (subheadline medium,
-    `phone-protect-tint`) on the trailing side: the ten documents edited
+  - **Zuletzt** (title 2 bold) with, on the trailing side, the eye (a 36
+    pt round glass button in a 44 pt target, `eye.slash` while the pictures
+    are veiled, `eye` while shown, a light impact, "Vorschau zeigen" /
+    "Vorschau verbergen") and Alle anzeigen (subheadline medium,
+    `phone-protect-tint`). The pictures are veiled until the eye shows
+    them (`ScanVeil`, 12 cells across, smoothed: the page's shape and
+    colour, no word), always while Snapfly is away and while something on
+    the page is still to check; the veil and the page cross-fade in 0.2 s
+    (0.15 s with Reduce Motion). VoiceOver reads the name, "Seiten: 5" and
+    the day, then "Vorschau verborgen" while veiled. The row: the ten documents edited
     last, newest first, in a row that scrolls sideways and settles on a
     card, 20 pt in from the screen's edges, 12 pt apart. Each card 128 pt
     wide (growing with the text, up to 1.8 times): its first page covered
