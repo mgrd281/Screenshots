@@ -3412,8 +3412,9 @@ system to a web page. The brief and direction contract are in
     - the photo's menu opening from a stamp on a line;
     - a whole Mac desktop to try Snapfly on (below);
     - the Hide Part window, said in a sentence (below).
-  - **How a screenshot travels** (`section_story`), between the send
-    section and the desktop to try: five moments of one screenshot, each a
+  - **How a screenshot travels** (`section_story`), the first section
+    after the first view, before the desktop to try and the send section
+    (the clean ground's order, below): five moments of one screenshot, each a
     title (`clamp(1.5rem, 2.4vw, 2rem)`, 800) and a line beside a small Mac
     screen, the sides alternating; one column at 960 px and below, the words
     above the screen.
@@ -3790,6 +3791,68 @@ system to a web page. The brief and direction contract are in
     - New shared rules that must hold in every look are written with a
       leading `:root`, which outweighs `classic.css`; the menu bar's
       narrow-screen rules are some.
+  - **The clean ground** (`static/clean.css`, the owner's brief "Apple
+    level", October 2026) refines the classic look where the new parts are
+    shown (`NEW_PARTS_LANGS`, German for now): `build.py` links it only on
+    those pages, after `bold.css`, and every rule is scoped to
+    `<html data-look="classic">`, but for one that hides the short words
+    in the bold look.
+    - **Ground.** The theme's colour field stays in the first view and the
+      closing call (`--hero-bg`, `--close-bg`, the theme's earlier
+      wallpaper). Every section between is a clean surface in ink, with no
+      wash and no blurred scrim: `--c-bg` and `--c-alt` take turns (the
+      desktop to try, the clean desk, Hide Part, the line styles and the
+      four steps take `--c-alt`), and the statement on privacy is a band
+      (`--band-bg`, words in `--band-ink`). In the closing call the scrim
+      gives way to an even shade (black-violet at 20%), so its small words
+      keep 4.5:1.
+
+      | Token | Original Sunset | Emerald Petrol | Signature Orange |
+      | --- | --- | --- | --- |
+      | `--c-bg` | `#FFFFFF` / `#000000` | `#F7FAF8` / `#04100F` | `#FAFAF8` / `#121211` |
+      | `--c-alt` | `#F5F5F7` / `#161617` | `#EDF3F0` / `#0B1C1B` | `#F2F1EE` / `#1E1E1C` |
+      | `--c-ink` | `#1D1D1F` / `#F5F5F7` | `#1D1D1F` / `#F5F5F7` | `#171717` / `#F5F5F7` |
+      | `--c-ink-2` | `#6E6E73` / `#A1A1A6` | `#5E5E63` / `#A1A1A6` | `#5E5E5B` / `#A1A1A6` |
+      | `--c-eyebrow` | `#B0258A` / `#FF7AB6` | `#0E6B62` / `#5CCDB8` | `#B23E17` / `#FF8754` |
+      | `--band-bg` | `#000000` / the dark wallpaper | `#062F31` / teal `#168176` to `#07514E` | as before |
+
+      Light / dark. Every text pair is at least 4.5:1: `--c-ink-2` 4.7:1
+      on the lightest grey, `--c-eyebrow` 5.5:1 or more. `--c-tint` is the
+      eyebrow colour at 10–14%; `--c-fill`, `--c-fill-2` and `--c-edge`
+      are ink at 4.5–5%, 8–10% and 14–22% for keys, pills and shelves;
+      `--c-rope` is the line on the ground; `--c-card-shadow` lifts a card
+      (0 1 2 at 5–6%, 0 10 30 at 8–9%; at night a hairline and a deep
+      shadow).
+    - **Type.** Over each section's title, a short word (`.eyebrow`, from
+      `eyebrows` in `content.py`): `clamp(1.0625rem, 1.45vw, 1.3125rem)`,
+      600, in `--c-eyebrow`, 14 px over the title (10 px on phones). The
+      title `clamp(2.5rem, 5.2vw, 4.375rem)`, 700, line height 1.04,
+      tracking −0.028em, balanced; beside a demo `clamp(2.375rem, 4.2vw,
+      3.5rem)`. The line under it `clamp(1.125rem, 1.45vw, 1.3125rem)`,
+      line height 1.45, `--c-ink-2`, 31em at most. The privacy statement
+      `clamp(2.75rem, 6.4vw, 5.5rem)`. Headlines track −0.03em.
+    - **Rhythm.** Sections are `clamp(96px, 11vw, 160px)` apart (80 px on
+      phones); the photo's menu ends its section at `clamp(40px, 4vw,
+      64px)`, as its stage keeps room for submenus.
+    - **Steps.** Cards on `--c-bg` with radius 22, no hairline, the card
+      shadow, 26/24/28 px in. Their glyphs are line glyphs (download, the
+      line, a shield for the permissions, the viewfinder) at 24 px in
+      `--c-eyebrow` on a 44 px circle of `--c-tint`; the number in
+      `--c-eyebrow`.
+    - **One stroke.** The steps' glyphs, the pills under the demos, the
+      arrow to the privacy policy and the support page's question glyphs
+      draw at 1.9.
+    - **Pills under the demos** (Noch mal abspielen, Anleitung starten):
+      `--c-fill`, `--c-fill-2` on hover, no border, no blur, 15 px in ink.
+      The link to the privacy policy is `--band-strong`, 600, underlined
+      on hover.
+    - **Order.** The first view, how a screenshot travels, the desktop to
+      try, sending all at once (the send section), then the clean desk,
+      privacy, Hide Part, the photo's menu, the line styles, the privacy
+      statement, the four steps and the closing call. Funktionen leads to
+      how a screenshot travels.
+    - **Words.** Shorter in German: one idea per line, each paragraph three
+      sentences at most.
   - **The bold colour look** is the third, chosen by the owner as a
     luxury, modern brand look: one confident colour field per theme, giant
     type, the screenshots dealt onto the line like cards, and a band of

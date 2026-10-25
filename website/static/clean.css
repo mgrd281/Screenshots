@@ -1,0 +1,341 @@
+/* Snapfly website, the clean ground: the Mac desktop look, refined at the
+   owner's request (October 2026) for the languages that show the new parts
+   (NEW_PARTS_LANGS in build.py, German for now). build.py links this file
+   only on those pages, after classic.css and bold.css.
+
+   What it changes, in the classic look only:
+   - The theme's colour field stays where it is a moment: the first view
+     and the closing call. Every section between sits on a clean ground,
+     white and a light grey taking turns (black and a dark grey at night),
+     with words in ink; the statement on privacy is a dark band.
+   - Each section's title has a short word over it in the theme's ink, and
+     one type scale runs through the page.
+   - The steps' glyphs are one family: line glyphs in the theme's ink on a
+     soft round tint, all in one stroke.
+   Tokens are listed in DESIGN.md under "Website", "The clean ground". */
+
+/* MARK: Tokens */
+
+/* Original Sunset. */
+:root[data-look="classic"]:not([data-brand]) {
+  --c-bg: #FFFFFF;
+  --c-alt: #F5F5F7;
+  --c-ink: #1D1D1F;
+  --c-ink-2: #6E6E73;
+  --c-eyebrow: #B0258A;
+  --c-tint: rgba(176, 37, 138, 0.1);
+  --c-rope: #48484A;
+  --c-fill: rgba(0, 0, 0, 0.045);
+  --c-fill-2: rgba(0, 0, 0, 0.08);
+  --c-edge: rgba(0, 0, 0, 0.14);
+  --c-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.08);
+  --wall: var(--c-bg);
+  --hero-bg:
+  radial-gradient(95% 75% at 0% 0%, rgba(255, 196, 92, 0.95) 0%, rgba(255, 196, 92, 0) 62%),
+  radial-gradient(75% 65% at 100% 100%, rgba(178, 52, 214, 0.92) 0%, rgba(178, 52, 214, 0) 72%),
+  linear-gradient(155deg, #FF8A5C 0%, #FF5E62 40%, #D9449A 74%, #B234D6 100%);
+  --close-bg: var(--hero-bg);
+  --band-bg: #000000;
+  --band-ink: #FFFFFF;
+  --band-ink-2: rgba(255, 255, 255, 0.8);
+  --band-strong: #FF8A5C;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-look="classic"]:not([data-brand]) {
+    --c-bg: #000000;
+    --c-alt: #161617;
+    --c-ink: #F5F5F7;
+    --c-ink-2: #A1A1A6;
+    --c-eyebrow: #FF7AB6;
+    --c-tint: rgba(255, 122, 182, 0.14);
+    --c-rope: #C7C7CC;
+    --c-fill: rgba(255, 255, 255, 0.07);
+    --c-fill-2: rgba(255, 255, 255, 0.12);
+    --c-edge: rgba(255, 255, 255, 0.2);
+    --c-card-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.08), 0 10px 30px rgba(0, 0, 0, 0.6);
+    --hero-bg:
+    radial-gradient(95% 75% at 0% 0%, rgba(150, 82, 22, 0.9) 0%, rgba(150, 82, 22, 0) 62%),
+    radial-gradient(75% 65% at 100% 100%, rgba(86, 22, 124, 0.95) 0%, rgba(86, 22, 124, 0) 72%),
+    linear-gradient(155deg, #5E2B22 0%, #6C1E37 40%, #511651 74%, #300E4C 100%);
+    --band-bg: linear-gradient(155deg, #5E2B22 0%, #6C1E37 40%, #511651 74%, #300E4C 100%);
+    --band-strong: #FFFFFF;
+  }
+}
+
+/* Emerald Petrol. */
+:root[data-look="classic"][data-brand="emerald"] {
+  --c-bg: #F7FAF8;
+  --c-alt: #EDF3F0;
+  --c-ink: #1D1D1F;
+  --c-ink-2: #5E5E63;
+  --c-eyebrow: #0E6B62;
+  --c-tint: rgba(22, 129, 118, 0.12);
+  --c-rope: #062F31;
+  --c-fill: rgba(6, 47, 49, 0.05);
+  --c-fill-2: rgba(6, 47, 49, 0.09);
+  --c-edge: rgba(6, 47, 49, 0.16);
+  --c-card-shadow: 0 1px 2px rgba(6, 47, 49, 0.06), 0 10px 30px rgba(6, 47, 49, 0.09);
+  --wall: var(--c-bg);
+  --hero-bg:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E"),
+  linear-gradient(118deg, rgba(255, 255, 255, 0) 34%, rgba(255, 255, 255, 0.07) 46%, rgba(255, 255, 255, 0) 58%),
+  radial-gradient(62% 56% at 80% -8%, rgba(184, 222, 210, 0.66) 0%, rgba(184, 222, 210, 0) 70%),
+  radial-gradient(85% 70% at 0% 100%, rgba(6, 47, 49, 0.9) 0%, rgba(6, 47, 49, 0) 70%),
+  linear-gradient(160deg, #17806F 0%, #127569 26%, #0B625C 52%, #07514E 76%, #062F31 100%);
+  --close-bg: var(--hero-bg);
+  --band-bg: #062F31;
+  --band-ink: #FFFFFF;
+  --band-ink-2: rgba(255, 255, 255, 0.82);
+  --band-strong: #8FD6C4;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-look="classic"][data-brand="emerald"] {
+    --c-bg: #04100F;
+    --c-alt: #0B1C1B;
+    --c-ink: #F5F5F7;
+    --c-ink-2: #A1A1A6;
+    --c-eyebrow: #5CCDB8;
+    --c-tint: rgba(92, 205, 184, 0.14);
+    --c-rope: #B8DED2;
+    --c-fill: rgba(184, 222, 210, 0.08);
+    --c-fill-2: rgba(184, 222, 210, 0.14);
+    --c-edge: rgba(184, 222, 210, 0.22);
+    --c-card-shadow: 0 0 0 0.5px rgba(184, 222, 210, 0.1), 0 10px 30px rgba(0, 0, 0, 0.55);
+    --hero-bg:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .045 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E"),
+    linear-gradient(118deg, rgba(184, 222, 210, 0) 34%, rgba(184, 222, 210, 0.05) 46%, rgba(184, 222, 210, 0) 58%),
+    radial-gradient(58% 52% at 80% -10%, rgba(22, 129, 118, 0.6) 0%, rgba(22, 129, 118, 0) 72%),
+    radial-gradient(80% 66% at 0% 100%, rgba(7, 81, 78, 0.5) 0%, rgba(7, 81, 78, 0) 70%),
+    linear-gradient(160deg, #0B3E3B 0%, #08302F 38%, #052627 68%, #021516 100%);
+    --band-bg: linear-gradient(160deg, #168176 0%, #0B625C 55%, #07514E 100%);
+    --band-strong: #FFFFFF;
+  }
+}
+
+/* Signature Orange: its sections already stood on a clean ground; it takes
+   the same turns of grey and the same ink. */
+:root[data-look="classic"][data-brand="orange"] {
+  --c-bg: #FAFAF8;
+  --c-alt: #F2F1EE;
+  --c-ink: #171717;
+  --c-ink-2: #5E5E5B;
+  --c-eyebrow: #B23E17;
+  --c-tint: rgba(199, 70, 28, 0.1);
+  --c-rope: #171717;
+  --c-fill: rgba(23, 23, 23, 0.05);
+  --c-fill-2: rgba(23, 23, 23, 0.1);
+  --c-edge: rgba(23, 23, 23, 0.18);
+  --c-card-shadow: 0 1px 2px rgba(23, 23, 23, 0.06), 0 10px 30px rgba(90, 34, 10, 0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-look="classic"][data-brand="orange"] {
+    --c-bg: #121211;
+    --c-alt: #1E1E1C;
+    --c-ink: #F5F5F7;
+    --c-ink-2: #A1A1A6;
+    --c-eyebrow: #FF8754;
+    --c-tint: rgba(255, 135, 84, 0.14);
+    --c-rope: #FFE4D7;
+    --c-fill: rgba(255, 255, 255, 0.07);
+    --c-fill-2: rgba(255, 255, 255, 0.12);
+    --c-edge: rgba(255, 255, 255, 0.2);
+    --c-card-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.08), 0 10px 30px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* MARK: The ground
+
+   Each section is its own clean surface in ink: no wash, no blurred scrim
+   behind the words. White and the light grey take turns. */
+:root[data-look="classic"] .section {
+  --on-wall: var(--c-ink);
+  --on-wall-2: var(--c-ink-2);
+  --wash-light: transparent;
+  --scrim: transparent;
+  --kbd-wall-bg: var(--c-fill);
+  --kbd-wall-edge: var(--c-edge);
+  --pill-bg: var(--c-fill);
+  --pill-bg-hover: var(--c-fill-2);
+  --pill-edge: var(--c-edge);
+  --file-shadow: none;
+  --rope: var(--c-rope);
+  --shelf-bg: var(--c-fill-2);
+  --shelf-edge: var(--c-edge);
+  padding-block: clamp(96px, 11vw, 160px);
+  background: var(--c-bg);
+  color: var(--c-ink);
+}
+:root[data-look="classic"] .section.capture,
+:root[data-look="classic"] .section.desk,
+:root[data-look="classic"] .section.say,
+:root[data-look="classic"] .section.styles,
+:root[data-look="classic"] .section.start { background: var(--c-alt); }
+
+/* The statement on privacy: a dark band, words in white. */
+:root[data-look="classic"] .section.design {
+  --on-wall: var(--band-ink);
+  --on-wall-2: var(--band-ink-2);
+  background: var(--band-bg);
+  color: var(--band-ink);
+}
+
+/* MARK: Type
+
+   One scale: the short word over the title, the title, the line under it. */
+:root[data-look="classic"] .section .copy p.eyebrow {
+  max-width: none;
+  margin: 0 0 14px;
+  color: var(--c-eyebrow);
+  font-size: clamp(1.0625rem, 1.45vw, 1.3125rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+:root[data-look="classic"] .section h2 {
+  font-size: clamp(2.5rem, 5.2vw, 4.375rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+}
+:root[data-look="classic"] .section .copy p {
+  max-width: 31em;
+  margin-top: 20px;
+  color: var(--c-ink-2);
+  font-size: clamp(1.125rem, 1.45vw, 1.3125rem);
+  line-height: 1.45;
+  letter-spacing: -0.003em;
+  text-wrap: pretty;
+}
+:root[data-look="classic"] .section .split .copy h2 {
+  font-size: clamp(2.375rem, 4.2vw, 3.5rem);
+}
+:root[data-look="classic"] .section .copy p.try-note {
+  margin-top: 14px; font-size: 15px;
+}
+:root[data-look="classic"] .section.design h2.points {
+  font-size: clamp(2.75rem, 6.4vw, 5.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+:root[data-look="classic"] .section.design p {
+  max-width: 34em; color: var(--band-ink-2); font-size: clamp(1.125rem, 1.45vw, 1.3125rem); line-height: 1.45;
+}
+:root[data-look="classic"] .hero h1 {
+  letter-spacing: -0.03em; text-wrap: balance;
+}
+:root[data-look="classic"] .hero-sub {
+  max-width: 30em; font-size: clamp(1.125rem, 1.45vw, 1.375rem); line-height: 1.45; text-wrap: pretty;
+}
+:root[data-look="classic"] .close h2 {
+  letter-spacing: -0.03em;
+}
+
+/* The story's moments, in the same scale a step down. */
+:root[data-look="classic"] .beat-words h3 {
+  letter-spacing: -0.02em;
+}
+:root[data-look="classic"] .beat-words p {
+  color: var(--c-ink-2); font-size: clamp(1.0625rem, 1.3vw, 1.1875rem); line-height: 1.45;
+}
+
+/* MARK: Steps
+
+   The four steps as clean cards on the grey, still hanging on the line on a
+   wide screen. Their glyphs are line glyphs in the theme's ink on a soft
+   round tint, as the app's own tiles are. */
+:root[data-look="classic"] .step {
+  padding: 26px 24px 28px;
+  border-radius: 22px;
+  background: var(--c-bg);
+  color: var(--c-ink);
+  border: 0;
+  box-shadow: var(--c-card-shadow);
+}
+:root[data-look="classic"] .step-icon {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: var(--c-tint);
+  color: var(--c-eyebrow);
+  box-shadow: none;
+}
+:root[data-look="classic"] .step-icon .icon {
+  width: 24px; height: 24px;
+}
+:root[data-look="classic"] .step h3 {
+  font-size: 19px; letter-spacing: -0.015em;
+}
+:root[data-look="classic"] .step-n {
+  color: var(--c-eyebrow);
+}
+:root[data-look="classic"] .step p {
+  color: var(--c-ink-2); font-size: 15px; line-height: 1.47;
+}
+
+/* One stroke for the line glyphs the visitor reads as a set: the steps,
+   the buttons under the demos, the link to the privacy policy and the
+   support page's questions. */
+:root[data-look="classic"] :is(.step-icon, .replay, .desk-guide-btn, .link-arrow, .faq-icon) :is(path, circle, rect, g)[stroke] {
+  stroke-width: 1.9;
+}
+
+/* MARK: Buttons under the demos
+
+   Quiet pills in the theme's ink, the same in every section. */
+:root[data-look="classic"] .section :is(.replay, .desk-guide-btn) {
+  border: 0;
+  background: var(--c-fill);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  color: var(--c-ink);
+  font-size: 15px;
+}
+:root[data-look="classic"] .section :is(.replay, .desk-guide-btn):hover {
+  background: var(--c-fill-2);
+}
+:root[data-look="classic"] .section .link-arrow {
+  color: var(--band-strong);
+  font-size: clamp(1.0625rem, 1.3vw, 1.1875rem);
+  font-weight: 600;
+  text-decoration: none;
+}
+:root[data-look="classic"] .section .link-arrow:hover {
+  text-decoration: underline;
+}
+:root[data-look="classic"] .section.design strong {
+  color: var(--band-ink);
+}
+
+/* The photo's menu keeps room for its submenus under it; the section ends
+   closer to it. */
+:root[data-look="classic"] .section.menu-demo {
+  padding-bottom: clamp(40px, 4vw, 64px);
+}
+
+/* MARK: The closing call
+
+   The theme's colour field again, evenly a shade darker so its small words
+   keep 4.5:1, without the blurred scrim behind them. */
+:root[data-look="classic"]:not([data-brand="orange"]) .close {
+  --scrim: transparent;
+}
+:root[data-look="classic"]:not([data-brand="orange"]) .close::after {
+  background: rgba(20, 0, 30, 0.2);
+}
+
+@media (max-width: 640px) {
+  :root[data-look="classic"] .section {
+    padding-block: 80px;
+  }
+  :root[data-look="classic"] .section .copy p.eyebrow {
+    margin-bottom: 10px;
+  }
+}
+
+/* The bold look stays as it was: the short words over the titles are this
+   ground's alone. */
+:root[data-look="bold"] .eyebrow {
+  display: none;
+}

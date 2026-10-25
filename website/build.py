@@ -62,6 +62,13 @@ def esc(text):
     return html.escape(text, quote=True)
 
 
+def eyebrow(lang, key):
+    """The short word over a section's title, where the new parts are shown."""
+    if lang not in NEW_PARTS_LANGS:
+        return ""
+    return f'<p class="eyebrow">{esc(TEXT[lang]["eyebrows"][key])}</p>'
+
+
 # MARK: Icons, drawn for the site in one stroke weight
 
 def icon(name, cls="icon"):
@@ -376,6 +383,8 @@ def head(lang, page, title, desc):
     if lang == "en" and page == "index":
         redirect = f"<script>{REDIRECT_JS}</script>"
     p = prefix(lang)
+    # The clean ground (clean.css), where the new parts are shown.
+    clean = f'<link rel="stylesheet" href="{p}assets/clean.css">\n' if lang in NEW_PARTS_LANGS else ""
     return f"""<!doctype html>
 <html lang="{lang}" dir="{t["dir"]}" data-look="classic">
 <head>
@@ -404,7 +413,7 @@ def head(lang, page, title, desc):
 <link rel="stylesheet" href="{p}assets/site.css">
 <link rel="stylesheet" href="{p}assets/classic.css">
 <link rel="stylesheet" href="{p}assets/bold.css">
-<script src="{p}assets/site.js" defer></script>
+{clean}<script src="{p}assets/site.js" defer></script>
 </head>"""
 
 
@@ -565,11 +574,13 @@ def hero(lang):
 
 def section_send(lang):
     t = TEXT[lang]
+    anchor = "" if lang in NEW_PARTS_LANGS else ' id="features"'
     caps = [("⌃", t["keys"][0]), ("⌥", t["keys"][1]), ("V", t["keys"][2])]
     keys = "".join(f'<span class="keycap"><span class="keycap-glyph">{esc(g)}</span><span class="keycap-word">{esc(w)}</span></span>' for g, w in caps)
-    return f"""<section class="section send" id="features" aria-labelledby="send-h">
+    return f"""<section class="section send"{anchor} aria-labelledby="send-h">
   <div class="wrap split">
     <div class="copy">
+      {eyebrow(lang, "send")}
       <h2 id="send-h">{esc(t["send_h"])}</h2>
       <p>{t["send_p"]}</p>
     </div>
@@ -664,9 +675,10 @@ def section_story(lang):
         f'<li class="beat"><div class="beat-words"><h3>{esc(h)}</h3><p>{p}</p></div>'
         f'<div class="beat-art" aria-hidden="true">{story_scene(lang, kind)}</div></li>'
         for kind, (h, p) in zip(STORY_KINDS, t["story"]))
-    return f"""<section class="section story" aria-labelledby="story-h" data-story>
+    return f"""<section class="section story" id="features" aria-labelledby="story-h" data-story>
   <div class="wrap">
     <div class="copy center">
+      {eyebrow(lang, "story")}
       <h2 id="story-h">{esc(t["story_h"])}</h2>
       <p>{esc(t["story_p"])}</p>
     </div>
@@ -980,6 +992,7 @@ def section_capture(lang):
     return f"""<section class="section capture" aria-labelledby="cap-h">
   <div class="wrap">
     <div class="copy">
+      {eyebrow(lang, "capture")}
       <h2 id="cap-h">{esc(t["cap_h"])}</h2>
       <p>{t["cap_p"]}</p>
       {handstamp(TEXT[lang]["desk"]["toast"]["taken"], "cap-stamp")}
@@ -1053,7 +1066,7 @@ def section_capture(lang):
 def section_start(lang):
     """Four steps from the download to the first screenshot on the line."""
     t = TEXT[lang]
-    symbols = ["download", "hanging", "lock", "viewfinder"]
+    symbols = ["download", "hanging", "permission" if lang in NEW_PARTS_LANGS else "lock", "viewfinder"]
     # On a wide screen the steps hang on a line, each on its clip at its
     # place along the rope, a little crooked, like the photos.
     steps = "".join(
@@ -1064,6 +1077,7 @@ def section_start(lang):
     return f"""<section class="section start" aria-labelledby="start-h">
   <div class="wrap">
     <div class="copy">
+      {eyebrow(lang, "start")}
       <h2 id="start-h">{esc(t["start_h"])}</h2>
       <p>{esc(t["start_p"])}</p>
     </div>
@@ -1094,6 +1108,7 @@ def section_say(lang):
     return f"""<section class="section say" aria-labelledby="say-h">
   <div class="wrap">
     <div class="copy center">
+      {eyebrow(lang, "say")}
       <h2 id="say-h">{esc(t["say_h"])}</h2>
       <p>{esc(t["say_p"])}</p>
       <p class="try-note">{esc(t["say_try"])}</p>
@@ -1193,6 +1208,7 @@ def section_desk(lang):
   {rope("desk-rope")}
   <div class="wrap split">
     <div class="copy">
+      {eyebrow(lang, "desk")}
       <h2 id="desk-h">{esc(t["desk_h"])}</h2>
       <p>{esc(t["desk_p"])}</p>
       <p><button class="replay" type="button" data-replay>{icon("replay")}<span>{esc(t["replay"])}</span></button></p>
@@ -1214,6 +1230,7 @@ def section_private(lang):
     return f"""<section class="section private" aria-labelledby="priv-h">
   <div class="wrap split">
     <div class="copy">
+      {eyebrow(lang, "private")}
       <h2 id="priv-h">{esc(t["priv_h"])}</h2>
       <p>{esc(t["priv_p"])}</p>
     </div>
@@ -1278,6 +1295,7 @@ def section_menu(lang):
     return f"""<section class="section menu-demo" aria-labelledby="menu-h">
   <div class="wrap">
     <div class="copy">
+      {eyebrow(lang, "menu")}
       <h2 id="menu-h">{esc(t["menu_h"])}</h2>
       <p>{esc(t["menu_p"])}</p>
     </div>
@@ -1342,6 +1360,7 @@ def section_styles(lang):
   </div>
   <div class="wrap split">
     <div class="copy">
+      {eyebrow(lang, "styles")}
       <h2 id="styles-h">{esc(t["styles_h"])}</h2>
       <p>{esc(t["styles_p"])}</p>
     </div>
@@ -1400,8 +1419,12 @@ NEW_PARTS_LANGS = ("de",)
 
 def home(lang):
     t = TEXT[lang]
-    story = [section_story(lang)] if lang in NEW_PARTS_LANGS else []
-    main = "\n".join([hero(lang), section_send(lang), *story, section_capture(lang), section_desk(lang), section_private(lang),
+    if lang in NEW_PARTS_LANGS:
+        # How it works first, then the desktop to try it on, then each part in turn.
+        parts = [section_story(lang), section_capture(lang), section_send(lang)]
+    else:
+        parts = [section_send(lang), section_capture(lang)]
+    main = "\n".join([hero(lang), *parts, section_desk(lang), section_private(lang),
                       section_say(lang), section_menu(lang), section_styles(lang), section_design(lang), section_start(lang),
                       section_close(lang)])
     return document(lang, "index", t["title_home"], t["desc_home"], main)
