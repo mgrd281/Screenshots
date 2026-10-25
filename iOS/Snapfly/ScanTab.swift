@@ -5,7 +5,7 @@ import VisionKit
 /// The Scan tab: letters, forms and receipts from the system's document
 /// camera, or photos of them chosen from Photos. Its start has one job, a
 /// scan started in one tap (`ScanStart`): the emerald card, Aus Fotos,
-/// Zusammenfügen and PDF öffnen, and the documents edited last; scrolled
+/// Verbinden and PDF öffnen, and the three documents edited last; scrolled
 /// past the card, a green Scannen pill in the bar takes its place. Each page is made flat,
 /// upright and level, cleaned as a good scanner leaves a page and checked
 /// (`ScannedPages`), then opened to cover its private details like any
@@ -44,7 +44,7 @@ struct ScanTab: View {
         NavigationStack(path: $path) {
             ScrollViewReader { reader in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: SnapflyTokens.scanGroupGap) {
                         ScanHero(supported: supported, scan: startScan)
                             .onGeometryChange(for: Bool.self) { proxy in
                                 proxy.frame(in: .scrollView).maxY < 100
@@ -61,20 +61,16 @@ struct ScanTab: View {
                         ScanQuickActions(picked: $picked)
                             .scanEntrance(shown, step: 1, calm: calm)
                         if !store.pages.isEmpty { scanned }
-                        Group {
-                            if recent.isEmpty {
-                                ScanSteps()
-                            } else {
-                                RecentDocuments(projects: recent) { path.append(ScanRoute.allDocuments) }
-                            }
-                        }
-                        .scanEntrance(shown, step: 2, calm: calm)
+                        RecentDocuments(projects: recent) { path.append(ScanRoute.allDocuments) }
+                            .scanEntrance(shown, step: 2, calm: calm)
                         Color.clear.frame(height: 1).id(Self.end)
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, SnapflyTokens.scanMargin)
                     .padding(.top, 4)
-                    .padding(.bottom, 24)
+                    // Above the tab bar (in the safe area) by 16 pt once scrolled to the end.
+                    .padding(.bottom, 16)
                 }
+                .softBottomEdge()
                 .onChange(of: store.pages.count) { _, count in
                     // For pictures made in CI: scrolled past the card once the pages are in.
                     guard ScanDemo.scrolls, count > 0 else { return }
@@ -276,18 +272,19 @@ struct ScanTab: View {
     private var help: some View {
         Button { helping = true } label: {
             Image(systemName: "questionmark")
-                .font(.subheadline.weight(.bold))
+                .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(.primary)
-                .frame(width: 40, height: 40)
+                .frame(width: 36, height: 36)
                 .background {
-                    // From iOS 26 the bar's own glass holds it.
+                    // From iOS 26 the bar's own glass holds it, as it does the eye's.
                     if #available(iOS 26, *) { Color.clear } else { Circle().fill(.regularMaterial) }
                 }
                 .frame(width: SnapflyTokens.touch, height: SnapflyTokens.touch)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(L("How It Works"))
+        .accessibilityLabel(L("Help"))
+        .accessibilityHint(L("How It Works"))
         .accessibilityIdentifier("scan-help")
     }
 

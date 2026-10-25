@@ -120,6 +120,8 @@ final class ProjectStore: ObservableObject {
     private let coveredFirst = NSCache<NSString, UIImage>()
     /// The same, veiled (`ScanVeil`), by the covered picture they were made from.
     private let veiledFirst = NSCache<UIImage, UIImage>()
+    /// How their places stood when they were covered, by project.
+    private var firstCounted: [UUID: FirstCounts] = [:]
     /// Covered one after another, the newest asked last.
     private var covering: Task<UIImage?, Never>?
     private let wanted = Wanted()
@@ -917,23 +919,30 @@ final class ProjectStore: ObservableObject {
         let details = Choice.details.map(\.rawValue).sorted().joined(separator: ",")
         let made = "\(Self.key(page.source))-\(page.turns)-\(details)-\(CoverStyle.current)-\(OwnRules.all.count)"
         let name = "Cover-" + SHA256.hash(data: Data(made.utf8)).prefix(8).map { String(format: "%02x", $0) }.joined() + ".jpg"
-        if let known = coveredFirst.object(forKey: name as NSString) { return known }
+        let counted = name + ".counts"
+        if let known = coveredFirst.object(forKey: name as NSString), firstCounted[project.id]?.name == name { return known }
         let folder = Self.folder(project.id)
         let previous = covering
         let task = Task { [weak self] () -> UIImage? in
             _ = await previous?.value
             guard let self else { return nil }
             if let known = self.coveredFirst.object(forKey: name as NSString) { return known }
-            let kept = await Self.run(on: self.small) { () -> CGImage? in
-                PictureTools.read(folder.appendingPathComponent(name), longest: 480)
+            let kept = await Self.run(on: self.small) { () -> (CGImage, String?)? in
+                PictureTools.read(folder.appendingPathComponent(name), longest: 480).map {
+                    ($0, try? String(contentsOf: folder.appendingPathComponent(counted), encoding: .utf8))
+                }
             }
-            if let kept {
-                let image = UIImage(cgImage: kept)
+            // One kept before its counts were is covered again, once.
+            if let kept, let counts = FirstCounts(kept.1, name: name) {
+                let image = UIImage(cgImage: kept.0)
                 self.coveredFirst.setObject(image, forKey: name as NSString)
+                self.firstCounted[project.id] = counts
                 return image
             }
             guard let drawn = await Self.firstPage(page, of: project, on: self.small),
-                  let covered = await Covering.cover(drawn, Choice.details)?.image else { return nil }
+                  let result = await Covering.cover(drawn, Choice.details) else { return nil }
+            let covered = result.image
+            let counts = FirstCounts(covered: result.report.total, toCheck: result.report.toCheck, name: name)
             let small = await Self.run(on: self.small) { () -> CGImage? in
                 let small = ScanCleaner.smaller(covered, longest: 480) ?? covered
                 // Kept beside the project, in place of the one drawn before.
@@ -943,16 +952,47 @@ final class ProjectStore: ObservableObject {
                 }
                 if let jpeg = ScanCleaner.jpeg(small, quality: 0.8) {
                     try? jpeg.write(to: folder.appendingPathComponent(name), options: [.atomic, .completeFileProtection])
+                    try? Data(counts.written.utf8).write(to: folder.appendingPathComponent(counted),
+                                                         options: [.atomic, .completeFileProtection])
                 }
                 return small
             }
             guard let small else { return nil }
             let image = UIImage(cgImage: small)
             self.coveredFirst.setObject(image, forKey: name as NSString)
+            self.firstCounted[project.id] = counts
             return image
         }
         covering = task
         return await task.value
+    }
+
+    /// How a project's first page's places stood when it was covered for
+    /// the Scan tab: only counts, never what they hid; nil until it was.
+    func firstCounts(_ project: PDFProject) -> FirstCounts? { firstCounted[project.id] }
+
+    /// How many places a first page had covered and still to check, kept
+    /// beside its picture as "3,1".
+    struct FirstCounts: Equatable {
+        var covered: Int
+        var toCheck: Int
+        /// The picture they belong to.
+        var name: String
+
+        init(covered: Int, toCheck: Int, name: String) {
+            self.covered = covered
+            self.toCheck = toCheck
+            self.name = name
+        }
+
+        /// As written; nil where nothing was.
+        init?(_ written: String?, name: String) {
+            let parts = (written ?? "").split(separator: ",").compactMap { Int($0) }
+            guard parts.count == 2 else { return nil }
+            self.init(covered: parts[0], toCheck: parts[1], name: name)
+        }
+
+        var written: String { "\(covered),\(toCheck)" }
     }
 
     /// A project's first page covered, then veiled (`ScanVeil`), as the Scan

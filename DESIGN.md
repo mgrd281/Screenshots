@@ -104,8 +104,12 @@ colors:
   phone-scan-hero-top: "#0A8058"    # the Scan tab's emerald card, top leading: white on it 4.9:1 (the brief's #0B8A60 gave 4.4:1, under 4.5); #0E6B4C in dark (6.5:1)
   phone-scan-hero-bottom: "#06603F" # the card's bottom trailing; #0A4F39 in dark
   phone-scan-hero-ink: "#06603F"    # the words on the card's white Kamera öffnen pill: 7.5:1
-  phone-scan-sweep: "#9FF2CF"       # the mint line reading the card's page
-  phone-scan-quick: "#FFFFFF"       # the quick actions' cards and the steps' card; #17191D in dark
+  phone-scan-sweep: "#9FF2CF"       # the still mint line across the card's page
+  phone-scan-quick-glyph: "#0B7F58" # the quick actions' glyphs on phone-project-tile, 4.4:1; #5BD6A6 in dark (7.1:1)
+  phone-scan-chip-covered-ink: "#06603F" # "n verdeckt" on phone-project-tile, 6.7:1; #5BD6A6 in dark (7.1:1)
+  phone-scan-chip-check: "#FFF1E0"  # "n zu prüfen" chip; #3A2410 in dark
+  phone-scan-chip-check-ink: "#8A4A0C" # its words, 6.2:1; #F6B36B in dark (8.0:1)
+  phone-scan-quick: "#FFFFFF"       # the quick actions' cards and the empty Zuletzt card; #17191D in dark
   phone-scan-recent-ground: "#E9ECEF" # behind a recent document's covered page; #22252B in dark
 typography:
   field:
@@ -153,8 +157,9 @@ rounded:
   phone-review-bar: "28pt"       # Review's one bar of tools
   phone-scan-thumb: "8pt"        # a page small in the strip
   phone-scan-hero: "28pt"        # the Scan tab's emerald card
-  phone-scan-quick: "22pt"       # its three quick actions, and the steps' card
-  phone-scan-recent: "18pt"      # a recent document's page
+  phone-scan-quick: "22pt"       # its three quick actions, and the empty Zuletzt card
+  phone-scan-recent-page: "5pt"  # the page inside a recent document's frame
+  phone-scan-recent: "18pt"      # a recent document's frame
   phone-project-page: "4pt"      # a page small in the pages' overview (3pt in the editor's strip)
   full: "999pt"
 spacing:
@@ -2444,12 +2449,23 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   - It shows once (`firstRunSeen`), never again after an ordinary update,
     and from More › Help › Watch the Demo (`play.circle`).
 - **Scan** (`ScanTab.swift`, `ScanStart.swift`), one job, a scan started in
-  one tap (the owner's brief "Scannen, Start neu", October 2026), on
-  `systemGroupedBackground`, 20 pt in, its parts 24 pt apart:
+  one tap (the owner's briefs "Scannen, Start neu" and "Scannen Politur",
+  October 2026), on `systemGroupedBackground`, 20 pt in
+  (`SnapflyTokens.scanMargin`), its groups 24 pt apart (`scanGroupGap`), 12
+  pt under a group's header (`scanHeaderGap`), tiles and cards 10 pt apart
+  (`scanItemGap`). The Kamera öffnen pill is the only filled white pill on
+  a colour field; nothing else on the screen is louder. Once in, nothing
+  on it moves: no glow, no moving line, no pulsing ring.
+  - **End.** The scroll ends 16 pt above the tab bar (the bar is in the
+    safe area), so the last card shows whole; from iOS 26 what scrolls
+    under the bar's glass reads as a soft blur
+    (`scrollEdgeEffectStyle(.soft)`). With Reduce Transparency the system
+    makes the bar solid.
   - **Bar.** "Scannen" as a large title with "?" on the trailing side: a
-    40 pt glyph (`questionmark`, subheadline bold) in a 44 pt target, on
-    regular material before iOS 26 and in the bar's glass from it, opening
-    "So funktioniert's". Scrolled past the card, the title goes inline as
+    36 pt glyph (`questionmark`, 15 pt semibold) in a 44 pt target, on
+    regular material before iOS 26 and in the bar's glass from it, as the
+    eye's is, VoiceOver "Hilfe" (hint "So funktioniert's"), opening "So
+    funktioniert's", the only place the steps are told. Scrolled past the card, the title goes inline as
     the system's bar does, the "?" moves to the leading side and a green
     **Scannen** pill (`dot.viewfinder`, the compact protect button) comes in
     on the trailing side, fading and sliding 10 pt (`motion.change`), and
@@ -2459,35 +2475,34 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     "Öffnet die Kamera", a light impact): 236 pt high at least, growing
     with the text, corners of `phone-scan-hero`, a gradient from
     `phone-scan-hero-top` to `phone-scan-hero-bottom`, top leading to bottom
-    trailing, with a soft green shadow (`phone-protect` at 28%, radius 18,
-    y 10) in light only; 22 pt in. On its leading side: the chip "Nur auf
-    diesem iPhone" with `shield` (caption semibold white on black 18% with
-    a hairline of white 20%, so its small words keep 4.5:1), then
-    "Dokument scannen" (26 pt bold white, scaled with the text), one line
-    "Gerade, hell und Privates schon verdeckt." (14 pt, white 90%: at 82%
-    it fell under 4.5:1 on the lighter green) and the white pill Kamera
-    öffnen (`dot.viewfinder`, body semibold in `phone-scan-hero-ink`, 50 pt
-    high). On its trailing side, 112 by 150, hidden from VoiceOver and gone
-    at the accessibility sizes: a white page 78 by 104, tilted −5°, its
-    lines drawn with shapes, inside four white corner arms (3.5 pt, round
-    caps), and a mint line (`phone-scan-sweep`, 104 by 3 pt, clear at its
-    ends, a glow of the same at 80%, radius 6) reading it top to bottom in
-    2.6 s, fading in and out at the ends, again and again while the screen
-    shows; still in the middle with Reduce Motion, in Low Power Mode and
-    while Snapfly is away. Where neither camera can scan, the card is
-    dimmed over a footnote saying so.
-  - **Quick actions**, three in a row, 10 pt apart, each at least 96 pt
-    high on `phone-scan-quick` with corners of `phone-scan-quick`, a
-    hairline of `.primary` at 5% and a shadow of black 4%, radius 6, y 2,
-    14 pt in: a 34 pt glyph tile of `phone-project-tile` (corners of 10,
-    the glyph 16 pt semibold in `phone-protect-tint`) over the label in
-    14 pt semibold, two lines at most, never cut short ("Zusammen­fügen"
-    breaks at its soft hyphen): Aus Fotos (`photo`, the system's photo
-    picker, twenty at most, in the order chosen; VoiceOver "Aus Fotos
-    wählen"), Zusammenfügen (`plus.square.on.square`, a new PDF project;
-    "Fotos, Scans und PDFs zusammenfügen") and PDF öffnen (`doc.text`,
-    Files; "PDF öffnen, Seiten ordnen und verdecken"). At the accessibility
-    sizes they stand one under another, the glyph beside the label.
+    trailing, with a soft shadow (black 12%, radius 14, y 8) in light
+    only; 24 pt in at top and bottom, 22 pt at the sides. On its leading
+    side: the chip "Nur auf diesem iPhone" with `shield` (caption semibold
+    white on black 18% with a hairline of white 20%, so its small words
+    keep 4.5:1), then "Dokument scannen" (26 pt bold white, scaled with the
+    text), one line "Gerade, hell und Privates schon verdeckt." (14 pt,
+    white 100%: 4.9:1 on the lighter green in light, 6.5:1 in dark) and the
+    white pill Kamera öffnen (`dot.viewfinder`, body semibold in
+    `phone-scan-hero-ink`, 52 pt high, `scanPillHeight`). On its trailing
+    side, 112 by 150, hidden from VoiceOver and gone at the accessibility
+    sizes: a white page 78 by 104, tilted −5°, its lines drawn with shapes,
+    inside four white corner arms (3.5 pt, round caps), and a still mint
+    line (`phone-scan-sweep`, 104 by 3 pt) across its middle. Where neither
+    camera can scan, the card is dimmed over a footnote saying so.
+  - **Quick actions**, three in a row, 10 pt apart, equally tall, each at
+    least 100 pt high (`scanQuickHeight`) on `phone-scan-quick` with
+    corners of `phone-scan-quick`, a hairline of `.primary` at 5% and a
+    shadow of black 4%, radius 6, y 2, 14 pt in: top leading, a 24 pt glyph
+    (20 pt semibold) in `phone-scan-quick-glyph` in a 44 pt circle of
+    `phone-project-tile` (4.4:1 in light, 7.1:1 in dark; a glyph needs
+    3:1); bottom leading, the title in 14 pt semibold on one line (down to
+    85% where the tile is narrow, never hyphenated): Aus Fotos
+    (`photo.on.rectangle`, the system's photo picker, twenty at most, in
+    the order chosen; VoiceOver "Aus Fotos wählen"), Verbinden
+    (`plus.square.on.square`, a new PDF project; "PDFs und Fotos
+    verbinden") and PDF öffnen (`doc.text`, Files; "PDF öffnen, Seiten
+    ordnen und verdecken"). At the accessibility sizes they stand one
+    under another, the glyph beside the title, which wraps between words.
   - **Zuletzt** (title 2 bold) with, on the trailing side, the eye (a 36
     pt round glass button in a 44 pt target, `eye.slash` while the pictures
     are veiled, `eye` while shown, a light impact, "Vorschau zeigen" /
@@ -2495,31 +2510,39 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     `phone-protect-tint`). The pictures are veiled until the eye shows
     them (`ScanVeil`, 12 cells across, smoothed: the page's shape and
     colour, no word), always while Snapfly is away and while something on
-    the page is still to check; the veil and the page cross-fade in 0.2 s
-    (0.15 s with Reduce Motion). VoiceOver reads the name, "Seiten: 5" and
-    the day, then "Vorschau verborgen" while veiled. The row: the ten documents edited
-    last, newest first, in a row that scrolls sideways and settles on a
-    card, 20 pt in from the screen's edges, 12 pt apart. Each card 128 pt
-    wide (growing with the text, up to 1.8 times): its first page covered
-    as Settings says, drawn once and kept beside the project (closed while
-    the iPhone is locked), 14 pt down on `phone-scan-recent-ground` 150 pt
-    high with corners of `phone-scan-recent`, its top showing; never a
-    badge, a count or anything drawn on it, and never uncovered: where it
-    cannot be covered or its PDF is locked, `lock.doc` instead, and a
-    spinner while it is made. Under it the name (15 pt semibold, one line
-    with "…", two at the larger sizes) over "5 Seiten · Gestern" (13 pt
-    `.secondary`). A tap opens it; held, Teilen (it opens with Save and
-    Share over it), Umbenennen and Löschen (red). VoiceOver reads
-    "Mietvertrag, 5 Seiten, gestern". Alle anzeigen opens every document
-    in a grid of the same cards. A document new since the row last showed
-    drops into the first place on a spring with an overshoot (response
-    0.6, damping 0.62), the others sliding on `motion.document`, a ring of
-    `phone-protect-light` (3 pt, a glow of 60%, radius 8) pulses twice
-    round its page in 1.4 s, and a light impact lands with it.
-  - **So geht's**, instead, while there are no documents: the four steps,
-    short, in one card of `phone-scan-quick`, each after its number in a
-    26 pt circle of `phone-project-tile` (subheadline bold
-    `phone-protect-tint`), dividers between.
+    the page is still to check; the veil and the page cross-fade on the
+    toggle spring (`motion.toggle`, 0.15 s fade with Reduce Motion).
+    VoiceOver reads the name, "Seiten: 5", the day and the chip, then
+    "Vorschau verborgen" while veiled. Under it the three documents edited
+    last, newest first, side by side, each as wide as the others ((screen
+    − 40 − 2 × 10) / 3), none cut and nothing scrolling sideways; fewer
+    keep the width of three. Each card: a frame 156 pt high
+    (`scanRecentHeight`) with corners of `phone-scan-recent` on
+    `phone-scan-recent-ground`, the first page whole inside it, never
+    cropped (fitted and centred, 12 pt in, corners of
+    `phone-scan-recent-page`, a 1 pt hairline of `.primary` at 12% and a
+    shadow of black 10%, radius 3, y 1), covered as Settings says, drawn
+    once and kept beside the project with its counts (closed while the
+    iPhone is locked); where it cannot be covered or its PDF is locked,
+    `lock.doc` instead, and a spinner while it is made. At its bottom
+    leading corner, 8 pt in, the chip (11 pt semibold, 7 by 3 pt in, a
+    capsule) of how the first page's places stand, as it was left once
+    opened, else as it was covered: "2 zu prüfen" in
+    `phone-scan-chip-check-ink` on `phone-scan-chip-check` while any is
+    still to check, else "3 verdeckt" in `phone-scan-chip-covered-ink` on
+    `phone-project-tile`, and nothing where nothing was covered, never
+    "Nichts Privates". Under the frame the name (13 pt semibold) over "5
+    Seiten · Gestern" (12 pt `.secondary`), one line each with "…" at any
+    size; the frame and the chip stay whole. A tap opens it; held, Teilen
+    (it opens with Save and Share over it), Umbenennen and Löschen (red).
+    Alle anzeigen opens every document in a grid of the same cards. A
+    document new since the row last showed takes the first place on
+    `motion.document`, with a light impact.
+  - **Noch nichts gescannt.**, instead, while there are no documents:
+    under Zuletzt (no eye, no Alle anzeigen), one card of
+    `phone-scan-quick`, 16 pt in, the line in subheadline semibold over
+    "Scanne ein Dokument, dann wartet es hier, verdeckt." in subheadline
+    `.secondary`.
   - **So funktioniert's**, the "?"'s sheet, as tall as it needs: title 2
     bold over "Alles geschieht auf diesem iPhone." in subheadline
     `.secondary`, the 30 pt close button, then four rows on
@@ -2530,7 +2553,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     50 ms apart, on a spring (response 0.5, damping 0.86), in 0.6 s in
     all. Cards and buttons give under the finger (`PressStyle`). With
     Reduce Motion or Low Power Mode everything is a fade of 0.15 s: no
-    rising, no reading line, no overshoot, no ring.
+    rising.
   - Scanning is the system's document camera (`VNDocumentCameraViewController`),
     full screen; in a photo the page is found by Vision, and where Vision is
     less than 65% sure, the corner editor (below) opens first. Each page is
@@ -3048,7 +3071,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
 - **PDF projects** (`ProjectOverview`, `ProjectEditing`,
   `ProjectExportSheet`) put photos, scans and PDFs into one file, the files
   themselves left as they are.
-  - **Ways in.** On the Scan tab (above), Zusammenfügen and PDF öffnen
+  - **Ways in.** On the Scan tab (above), Verbinden and PDF öffnen
     among the quick actions, and the documents under Zuletzt. The Protected tab's bar, while screenshots are chosen, has Merge
     into PDF (prominent, `phone-protect`), in the grid's order. A PDF or a
     picture opened from Files, Mail or Safari starts a project too.
