@@ -1105,7 +1105,8 @@ final class ProjectStore: ObservableObject {
                                          number: number)
             let searchable = options.searchable
             let drawn = await Self.run(on: large) { () -> ScanPDF.Page? in
-                let words = searchable ? ScanCleaner.words(in: Finder.lines(in: made.image) ?? [], hiding: made.places) : []
+                let words = searchable ? ScanCleaner.words(in: Finder.lines(in: made.image) ?? [], hiding: made.places,
+                                                           aspect: ScanCleaner.aspect(of: made.image)) : []
                 return PDFComposer.page(made.image, ownPage: own, paper: paper, quality: quality, words: words)
             }
             guard let drawn else { throw ScanProblem(message: L("The file could not be made.")) }
@@ -1113,7 +1114,7 @@ final class ProjectStore: ObservableObject {
         }
         let searchable = options.searchable
         let made = await Self.run(on: large) { () -> ScanPDF.Page? in
-            let words = searchable ? ScanCleaner.words(in: Finder.lines(in: image) ?? []) : []
+            let words = searchable ? ScanCleaner.words(in: Finder.lines(in: image) ?? [], aspect: ScanCleaner.aspect(of: image)) : []
             return PDFComposer.page(image, ownPage: own, paper: paper, quality: quality, words: words)
         }
         guard let made else { throw ScanProblem(message: L("The file could not be made.")) }

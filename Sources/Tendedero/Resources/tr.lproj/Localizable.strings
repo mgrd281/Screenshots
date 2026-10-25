@@ -1547,6 +1547,23 @@
 "corners to set" = "köşeleri belirlenecek";
 "Page %d could not be covered, so nothing was copied." = "Sayfa %d kapatılamadı, bu yüzden hiçbir şey kopyalanmadı.";
 
+/* The iPhone: a scan's text in reading order, to read, copy, share or hear */
+"TXT, 1 file" = "TXT, 1 dosya";
+"Show Text" = "Metni göster";
+"In reading order, every covered place a black bar. Read it, copy it or hear it." = "Okuma sırasıyla, gizlenen her yer siyah bir şerit olarak. Oku, kopyala ya da dinle.";
+"In reading order, all of it. Read it, copy it or hear it." = "Okuma sırasıyla, tamamı. Oku, kopyala ya da dinle.";
+"Snapfly found no words on these pages." = "Snapfly bu sayfalarda hiç kelime bulamadı.";
+"No Text Found" = "Metin bulunamadı";
+"Reading the text…" = "Metin okunuyor…";
+"No words on this page." = "Bu sayfada kelime yok.";
+"Read on this iPhone. Each covered place is a black bar; what it hides is never shown or read aloud." = "Bu iPhone’da okundu. Gizlenen her yer siyah bir şerittir; altındaki hiçbir zaman gösterilmez ya da sesli okunmaz.";
+"Read on this iPhone, without covers." = "Bu iPhone’da okundu, gizlenmeden.";
+"Read Aloud" = "Sesli Oku";
+"The text could not be read." = "Metin okunamadı.";
+"Table" = "Tablo";
+"Page %d could not be covered, so its text was not read." = "Sayfa %d gizlenemedi, bu yüzden metni okunmadı.";
+"The page is gone." = "Sayfa artık yok.";
+
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Göndermeden önce kapatılır";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Ekran görüntülerin bu iPhone'da okunur ve sen seçmedikçe hiçbir şey dışarı çıkmaz.";

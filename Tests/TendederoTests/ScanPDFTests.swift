@@ -1,11 +1,16 @@
 import XCTest
+#if canImport(PDFKit) && canImport(CoreText)
+import CoreText
+import PDFKit
+#endif
 @testable import Tendedero
 
 /// Scanned pages as one PDF, read back byte by byte: an A4 page for each, in
 /// order, a picture of A4's shape filling it and any other within 10 mm,
-/// the words read laid invisibly where they were, a word outside the
-/// Western letters left out rather than changed, a table that says where
-/// every object starts, and nothing said of who made it but "Snapfly".
+/// the words read laid invisibly where they were in every script, with the
+/// font and the map back to their characters, a word with a character
+/// beyond UTF-16's units left out rather than changed, a table that says
+/// where every object starts, and nothing said of who made it but "Snapfly".
 final class ScanPDFTests: XCTestCase {
     private func jpeg(_ width: Int, _ height: Int, gray: Bool = false) -> ScanPDF.Page.Picture {
         .jpeg(Data([0xFF, 0xD8, 0xFF, 0xD9]), width: width, height: height, gray: gray)
@@ -97,37 +102,51 @@ final class ScanPDFTests: XCTestCase {
         let page = ScanPDF.Page(picture: jpeg(2480, 3508), words: words)
         let drawing = ScanPDF.drawing(page, on: CGRect(origin: .zero, size: ScanGeometry.a4))
         XCTAssertTrue(drawing.contains("BT\n3 Tr\n"), "invisible")
-        XCTAssertTrue(drawing.contains("<476573616D7420>"), "Gesamt and its space")
-        XCTAssertTrue(drawing.contains("<3336392C37332080>"), "the euro sign in WinAnsi")
-        // The word's box: x at half the page, the line a little above its bottom.
-        let first = try XCTUnwrap(drawing.split(separator: "\n").first { $0.contains("<4765") })
+        XCTAssertTrue(drawing.contains("<0047006500730061006D00740020>"), "Gesamt and its space, a UTF-16 unit each")
+        XCTAssertTrue(drawing.contains("<003300360039002C00370033002020AC>"), "the euro sign as itself")
+        // The word's box: x at half the page, its height the font's size, the line a fifth of it up.
+        let first = try XCTUnwrap(drawing.split(separator: "\n").first { $0.contains("<0047") })
         let parts = first.split(separator: " ")
         let tm = try XCTUnwrap(parts.firstIndex(of: "Tm"))
         XCTAssertEqual(Double(parts[tm - 2])!, 297.64, accuracy: 0.01)
         let size = Double(parts[1])!
-        let tall: Double = 0.02 * 841.89 / 0.925
-        XCTAssertEqual(size, tall, accuracy: 0.01)
-        let baseline: Double = 0.4 * 841.89 + 0.207 * size
-        XCTAssertEqual(Double(parts[tm - 1])!, baseline, accuracy: 0.01)
+        XCTAssertEqual(size, 0.02 * 841.89, accuracy: 0.01)
+        XCTAssertEqual(Double(parts[tm - 1])!, 0.4 * 841.89 + 0.2 * size, accuracy: 0.01)
         // As wide as the word was read, its space left out of the stretch.
         let stretch = Double(parts[3])!
-        let units: Int = "Gesamt".utf8.reduce(0) { $0 + ScanPDF.width(of: $1) }
-        let drawn: Double = Double(units) * size / 1000 * stretch / 100
-        let read: Double = 0.1 * 595.28
-        XCTAssertEqual(drawn, read, accuracy: 0.05)
+        let drawn: Double = Double("Gesamt".count * ScanFont.advance) * size / 1000 * stretch / 100
+        XCTAssertEqual(drawn, 0.1 * 595.28, accuracy: 0.05)
         let pdf = try file([page])
-        XCTAssertTrue(pdf.contains("/BaseFont /Helvetica /Encoding /WinAnsiEncoding /FirstChar 32 /LastChar 255"))
-        XCTAssertTrue(pdf.contains("/Resources << /XObject << /Im0 7 0 R >> /Font << /F1 4 0 R >> >>"))
+        XCTAssertTrue(pdf.contains("/Subtype /Type0 /BaseFont /SnapflyText /Encoding /Identity-H /DescendantFonts [5 0 R] /ToUnicode 6 0 R"))
+        XCTAssertTrue(pdf.contains("/Resources << /XObject << /Im0 12 0 R >> /Font << /F1 4 0 R >> >>"))
     }
 
-    func testAWordOutsideTheWesternLettersIsLeftOutNotChanged() {
-        XCTAssertNotNil(ScanPDF.encoded("Straße Müller €"))
-        XCTAssertEqual(ScanPDF.encoded("“Grüße”")?.first, 0x93)
-        XCTAssertNil(ScanPDF.encoded("Doğan"), "ğ is not there")
-        XCTAssertNil(ScanPDF.encoded("مرحبا"))
-        XCTAssertNil(ScanPDF.encoded(""))
-        let page = ScanPDF.Page(picture: jpeg(1000, 1414), words: [ScanPDF.Word(text: "Doğan", box: CGRect(x: 0.1, y: 0.1, width: 0.2, height: 0.02))])
+    func testEveryScriptIsKeptAndOnlyACharacterBeyondUTF16sUnitsIsLeftOut() {
+        for word in ["Straße Müller €", "“Grüße”", "Doğan İstanbul", "مرحبا", "Ελλάδα", "Москва", "東京都", "서울", "हिन्दी"] {
+            XCTAssertEqual(ScanPDF.units(word).map { String(decoding: $0, as: UTF16.self) }, word, word)
+        }
+        XCTAssertNil(ScanPDF.units("Danke 😀"), "an emoji is beyond the units")
+        XCTAssertNil(ScanPDF.units("Tab\there"), "a control character")
+        XCTAssertNil(ScanPDF.units(""))
+        let page = ScanPDF.Page(picture: jpeg(1000, 1414), words: [ScanPDF.Word(text: "😀", box: CGRect(x: 0.1, y: 0.1, width: 0.2, height: 0.02))])
         XCTAssertFalse(ScanPDF.drawing(page, on: CGRect(x: 0, y: 0, width: 595, height: 842)).contains("BT"))
+    }
+
+    func testTheWordsFontAndItsMapBackToTheCharactersAreInTheFile() throws {
+        let page = ScanPDF.Page(picture: jpeg(1000, 1414), words: [ScanPDF.Word(text: "مرحبا", box: CGRect(x: 0.1, y: 0.8, width: 0.3, height: 0.03))])
+        let data = try Self.unpacked(try XCTUnwrap(ScanPDF.make([page])))
+        let pdf = String(data.map { Character(Unicode.Scalar($0)) })
+        XCTAssertTrue(pdf.contains("/Subtype /CIDFontType2 /BaseFont /SnapflyText /CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >>"))
+        XCTAssertTrue(pdf.contains("/FontDescriptor 7 0 R /DW 500 /CIDToGIDMap 8 0 R"))
+        XCTAssertTrue(pdf.contains("/Type /FontDescriptor /FontName /SnapflyText /Flags 5"))
+        XCTAssertTrue(pdf.contains("/Length1 \(ScanFont.file.count)"))
+        XCTAssertTrue(pdf.contains("<0000> <FFFF>\nendcodespacerange"))
+        XCTAssertTrue(pdf.contains("<0600> <06FF> <0600>"), "Arabic's units map to themselves")
+        XCTAssertFalse(pdf.contains("<D800>"), "no surrogate halves")
+        let ranges = ScanFont.toUnicode.split(separator: "\n").filter { $0.hasSuffix(" beginbfrange") }
+            .compactMap { Int($0.split(separator: " ")[0]) }
+        XCTAssertEqual(ranges, [100, 100, 48], "248 ranges, a hundred at most at a time")
+        XCTAssertTrue(pdf.contains("<06450631062D06280627>"), "the word as its units")
     }
 
     func testWithoutWordsThereIsNoTextAndNoFont() throws {
@@ -206,6 +225,27 @@ final class ScanPDFTests: XCTestCase {
     func testNoPagesMakeNoPDF() {
         XCTAssertNil(ScanPDF.make([]))
     }
+
+    #if canImport(PDFKit) && canImport(CoreText)
+    /// Read back by PDFKit as anyone's reader reads it: every script's
+    /// words are found; and the font file itself opens as a font.
+    func testPDFKitFindsTheWordsInEveryScript() throws {
+        let words = ["Rechnung", "Größe", "İstanbul", "مرحبا", "Москва", "東京都", "서울"]
+        let page = ScanPDF.Page(picture: jpeg(1000, 1414), words: words.enumerated().map { index, word in
+            ScanPDF.Word(text: word, box: CGRect(x: 0.1, y: 0.9 - CGFloat(index) * 0.05, width: 0.3, height: 0.03))
+        })
+        let pdf = try XCTUnwrap(PDFDocument(data: try XCTUnwrap(ScanPDF.make([page]))))
+        let text = pdf.string ?? ""
+        for word in words {
+            XCTAssertTrue(text.contains(word), "\(word) in \(text)")
+        }
+        XCTAssertFalse(pdf.findString("Größe", withOptions: []).isEmpty, "found by search")
+        XCTAssertFalse(pdf.findString("مرحبا", withOptions: []).isEmpty, "a right-to-left word found by search, \(text)")
+        let provider = try XCTUnwrap(CGDataProvider(data: ScanFont.file as CFData))
+        XCTAssertNotNil(CGFont(provider), "Core Graphics opens the font")
+        XCTAssertNotNil(CTFontManagerCreateFontDescriptorFromData(ScanFont.file as CFData), "Core Text opens the font")
+    }
+    #endif
 
     /// Every text between two marks, in order.
     static func all(in text: String, between start: String, and end: String) -> [String] {

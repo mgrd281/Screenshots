@@ -1547,6 +1547,23 @@
 "corners to set" = "esquinas por colocar";
 "Page %d could not be covered, so nothing was copied." = "No se pudo cubrir la página %d, así que no se copió nada.";
 
+/* The iPhone: a scan's text in reading order, to read, copy, share or hear */
+"TXT, 1 file" = "TXT, 1 archivo";
+"Show Text" = "Mostrar texto";
+"In reading order, every covered place a black bar. Read it, copy it or hear it." = "En orden de lectura, cada lugar oculto como una barra negra. Léelo, cópialo o escúchalo.";
+"In reading order, all of it. Read it, copy it or hear it." = "En orden de lectura, completo. Léelo, cópialo o escúchalo.";
+"Snapfly found no words on these pages." = "Snapfly no encontró palabras en estas páginas.";
+"No Text Found" = "No se encontró texto";
+"Reading the text…" = "Leyendo el texto…";
+"No words on this page." = "No hay palabras en esta página.";
+"Read on this iPhone. Each covered place is a black bar; what it hides is never shown or read aloud." = "Leído en este iPhone. Cada lugar oculto es una barra negra; lo que tapa nunca se muestra ni se lee en voz alta.";
+"Read on this iPhone, without covers." = "Leído en este iPhone, sin ocultación.";
+"Read Aloud" = "Leer en voz alta";
+"The text could not be read." = "No se pudo leer el texto.";
+"Table" = "Tabla";
+"Page %d could not be covered, so its text was not read." = "No se pudo ocultar la página %d, así que no se leyó su texto.";
+"The page is gone." = "La página ya no está.";
+
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Cubierto antes de enviarlo";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Tus capturas se leen en este iPhone y nada sale de él salvo que tú lo decidas.";

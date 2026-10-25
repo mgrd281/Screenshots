@@ -307,6 +307,8 @@ components:
     size: "36pt"                   # in the page’s bottom trailing corner, 24pt in to its middle: eye, or eye.slash while the covers are hidden, 15pt semibold, on a circle of phone-glass in a 44pt target
   phone-review-list:
     rounded: "32pt"                # the list of places to check, a sheet as tall as what it holds on phone-hide-ground: title 2 bold, the line under it in subheadline phone-hide-secondary, a 30pt close button; sections in subheadline semibold phone-hide-secondary over phone-hide-card cards with rounded.phone-hide-card; each row a 36pt sign (phone-review-open on it at 10%, corners of 10), its kind in subheadline semibold over its first words and page in footnote, each on one line cut short with "…" while the buttons keep their size (at the accessibility sizes the kind on up to three lines and the buttons under the words), Leave in subheadline semibold phone-hide-secondary and Cover white on a .primary capsule 36pt high; Cover All in phone-hide-accent on phone-hide-accent-soft; Sichtbar gelassen, what the categories leave visible, its signs quiet (phone-hide-secondary on phone-hide-button-off), each with Cover, Cover All over them and a footnote saying why; Look on a phone-hide-button-off capsule
+  phone-scan-text:
+    padding: "20pt"                # a scan's text (ScanReadingSheet), a sheet at the large detent on systemBackground, "Text" inline with Done, its words 20pt in from the sides and 16pt from the top: "Seite 1 von 2" over each page where there are several (footnote semibold .secondary, upper case, a header for VoiceOver), 14pt over its blocks, pages 24pt apart; a paragraph in body with 3pt between lines, a heading in title 3 semibold, every word to select; a table a grid in callout with numbers in monospaced digits, cells 20pt apart across and 8pt down, a divider between rows, on secondarySystemBackground with rounded.inner, 12pt in, scrolling sideways where it is wide; each cover "███"; a page in Arabic or Hebrew laid out from the right; without covers phone-scan-warn's card first (rounded.inner, its edge, footnote medium phone-scan-warn-text); last, in footnote .secondary, checkmark.shield and "Read on this iPhone. Each covered place is a black bar; …" (doc.text and "Read on this iPhone, without covers." without); on the bar's material at the bottom Copy, Read Aloud (Stop with stop.fill while it speaks) and Share in phone-protect with white words, 44pt, side by side (one under another at the accessibility sizes), a note over them for 4 s; while it reads, a spinner over "Reading the text…"; with no words, ContentUnavailableView with text.magnifyingglass. VoiceOver reads a cover as "verdeckt" and a table as one "Tabelle"
   phone-scan-strip:
     height: "52pt"                 # a PDF project's pages over the docks, in glass with rounded.phone-scan-strip, as wide as its pages and scrolling sideways once they no longer fit: each page 34 × 46 with rounded.phone-scan-thumb in a 44 × 52 cell, 6pt apart; the page open ringed 2pt in phone-protect-tint, the others a 0.5pt hairline of .primary at 10%; the plus (phone-dock-icon) at the end
   phone-scan-badge:
@@ -2962,7 +2964,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     - Its own bar (`phone-review-header`), the system's navigation bar
       hidden: back, "Prüfen" over "Seite 1 von 3", the menu and Next, which
       opens Save and Share. The menu holds KI fragen (Explain, the covered
-      copy only), Alle Seiten (back to the Scan tab's pages), Neu aufnehmen,
+      copy only), Text anzeigen (`text.viewfinder`: the page's text,
+      covered, `phone-scan-text`), Alle Seiten (back to the Scan tab's pages), Neu aufnehmen,
       Send to Mac where a Mac is there, Full Screen, Clear Hidden by Hand,
       Reset to Suggestions, and last, after a divider and in red, Scan
       verwerfen, which asks first ("Den ganzen Scan verwerfen?").
@@ -3044,10 +3047,12 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   with "Suggested by Apple Intelligence from the words outside the covers."
   under it in footnote `.secondary` beside `sparkles`; otherwise, or where
   nothing holds, when the pages were scanned ("Scan 21.10.2026, 14.05");
-  a name typed is never replaced. Then **Format** as two tiles side by side
-  on `secondarySystemGroupedBackground` with corners of 14 (PDF "A4, 2
-  pages", Picture "PNG, 2 files"), the one chosen ringed 2 pt in
-  `phone-protect-tint`, the other a 1 pt hairline; **Covers** as two rows in
+  a name typed is never replaced. Then **Format** as three tiles side by
+  side, as tall as the tallest (one under another at the accessibility
+  sizes), on `secondarySystemGroupedBackground` with corners of 14 (PDF
+  "A4, 2 pages", Picture "PNG, 2 files", Text "TXT, 1 file" with
+  `text.alignleft`), the one chosen ringed 2 pt in `phone-protect-tint`, the
+  others a 1 pt hairline; **Covers** as two rows in
   one card: With Covers ("Private details stay covered", with Recommended
   in caption semibold `phone-hide-accent` on a `phone-hide-accent-soft`
   capsule), where every save starts, and Without Covers ("Only scanned
@@ -3055,14 +3060,19 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   of `phone-scan-warn` with its edge says "This file holds every private
   detail. Share it only with people you trust.", read by VoiceOver with the
   row itself; for a PDF, Searchable Text, a switch in `phone-protect` over
-  "Without the covered details" or "Holds all the text"; then the check line
+  "Without the covered details" or "Holds all the text"; for the text, Show
+  Text, a row at least 44 pt high on `secondarySystemGroupedBackground` with
+  corners of 14: `text.viewfinder` in `phone-protect-tint`, "Show Text" in
+  body medium over "In reading order, every covered place a black bar.
+  Read it, copy it or hear it." (or "…, all of it.") in footnote
+  `.secondary`, and a chevron, opening the text (`phone-scan-text`); then the check line
   in footnote `.secondary` ("Only straightened and brightened. No text, no
   number changed." with `checkmark.seal` where every page read the same;
   "Check the marked places." with an orange triangle where one read less),
   and the places still to check. On the bar's material at the bottom, Copy,
   Save and Share, 44 pt, side by side (one under another at the
-  accessibility sizes), Share in `phone-protect` with white words: a PDF is
-  saved to Files and pictures to Photos. While they work, which page is
+  accessibility sizes), Share in `phone-protect` with white words: a PDF or
+  the text is saved to Files and pictures to Photos. While they work, which page is
   covered; where pages are still made ready, one waits for its corners or
   one could not be read, the bar says so instead (the last two in
   `phone-scan-warn-text`) and waits. Then a note for 6 s and a success

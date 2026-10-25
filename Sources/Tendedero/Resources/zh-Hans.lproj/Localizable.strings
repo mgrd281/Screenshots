@@ -1547,6 +1547,23 @@
 "corners to set" = "待设定四角";
 "Page %d could not be covered, so nothing was copied." = "第 %d 页无法遮盖，因此没有复制任何内容。";
 
+/* The iPhone: a scan's text in reading order, to read, copy, share or hear */
+"TXT, 1 file" = "TXT，1 个文件";
+"Show Text" = "显示文字";
+"In reading order, every covered place a black bar. Read it, copy it or hear it." = "按阅读顺序显示，每个遮盖处为黑条。可阅读、复制或收听。";
+"In reading order, all of it. Read it, copy it or hear it." = "按阅读顺序显示全部内容。可阅读、复制或收听。";
+"Snapfly found no words on these pages." = "Snapfly 在这些页面上未找到文字。";
+"No Text Found" = "未找到文字";
+"Reading the text…" = "正在读取文字…";
+"No words on this page." = "此页没有文字。";
+"Read on this iPhone. Each covered place is a black bar; what it hides is never shown or read aloud." = "在这台 iPhone 上读取。每个遮盖处都是黑条；其下内容绝不会显示或朗读。";
+"Read on this iPhone, without covers." = "在这台 iPhone 上读取，未遮盖。";
+"Read Aloud" = "朗读";
+"The text could not be read." = "无法读取文字。";
+"Table" = "表格";
+"Page %d could not be covered, so its text was not read." = "第 %d 页无法遮盖，因此未读取其文字。";
+"The page is gone." = "此页已不存在。";
+
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "发送之前先遮盖";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "你的截屏只在这台 iPhone 上读取，除非你选择，否则什么都不会离开它。";

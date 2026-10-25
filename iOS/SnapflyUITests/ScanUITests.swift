@@ -10,7 +10,9 @@ import XCTest
 /// and Black and White holds for every page; deleting a page asks first;
 /// corners are set by hand where Vision is not sure; Save and Share starts
 /// with covers every time and warns without them, and a copy without covers
-/// says so. A photographed document from Photos is offered cleaning, never
+/// says so. The text, from Save and Share or from Review, has a bar where a
+/// cover is and never what it hides; without covers it holds everything,
+/// under the warning. A photographed document from Photos is offered cleaning, never
 /// a screenshot, and Revert brings the photo back; an AI chat says what goes
 /// to it and nothing leaves before a tap, and what leaves is the covered
 /// export byte for byte; the name never holds a covered name; photos
@@ -357,6 +359,65 @@ final class ScanUITests: XCTestCase {
         XCTAssertTrue(note.waitForExistence(timeout: 60))
         // Never called protected: the words say it left without covers.
         XCTAssertTrue(note.label.contains("ohne Abdeckung"), note.label)
+    }
+
+    // MARK: The text
+
+    /// Anything in the open text whose words hold these.
+    private func reading(_ app: XCUIApplication, holding words: String) -> XCUIElement {
+        element(app, "scan-reading").descendants(matching: .any)
+            .matching(NSPredicate(format: "label CONTAINS %@", words)).firstMatch
+    }
+
+    func testTheTextIsReadWithEveryCoverABarAndNeverWhatItHides() {
+        let app = launch("sheet")
+        let tile = element(app, "scan-format-text")
+        XCTAssertTrue(tile.waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(tile.label.contains("TXT, 1 Datei"), tile.label)
+        tile.tap()
+        XCTAssertTrue(wait(tile, "isSelected == %@", NSNumber(value: true)))
+        XCTAssertTrue(gone(app.switches["scan-searchable"]), "searchable text is for a PDF only")
+        let show = element(app, "scan-show-text")
+        XCTAssertTrue(show.waitForExistence(timeout: 10))
+        XCTAssertTrue(wait(show, "isEnabled == %@", NSNumber(value: true), timeout: Self.ready))
+        show.tap()
+        // Read on the covered pages: the items as printed, the customer's name a bar, read out as "verdeckt".
+        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(reading(app, holding: "verdeckt").exists, "a covered place is a bar")
+        XCTAssertFalse(reading(app, holding: "Mustermann").exists, "what a cover hides is never shown")
+        XCTAssertTrue(reading(app, holding: "Auf diesem iPhone gelesen.").exists)
+        XCTAssertEqual(element(app, "scan-reading-speak").label, "Vorlesen")
+        element(app, "scan-reading-copy").tap()
+        let note = element(app, "scan-reading-note")
+        XCTAssertTrue(note.waitForExistence(timeout: 10))
+        XCTAssertEqual(note.label, "Kopiert")
+    }
+
+    func testReviewShowsAPagesTextCovered() {
+        let app = launch("editor")
+        XCTAssertTrue(card(app).exists)
+        element(app, "review-more").tap()
+        let show = app.buttons["Text anzeigen"]
+        XCTAssertTrue(show.waitForExistence(timeout: 5))
+        show.tap()
+        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(reading(app, holding: "verdeckt").exists, "a covered place is a bar")
+        XCTAssertFalse(reading(app, holding: "Mustermann").exists, "what a cover hides is never shown")
+    }
+
+    func testWithoutCoversTheTextWarnsFirstAndHoldsEverything() {
+        let app = launch("uncovered")
+        let tile = element(app, "scan-format-text")
+        XCTAssertTrue(tile.waitForExistence(timeout: Self.ready))
+        tile.tap()
+        let show = element(app, "scan-show-text")
+        XCTAssertTrue(show.waitForExistence(timeout: 10))
+        XCTAssertTrue(wait(show, "isEnabled == %@", NSNumber(value: true), timeout: Self.ready))
+        XCTAssertTrue(show.label.contains("vollständig"), show.label)
+        show.tap()
+        XCTAssertTrue(reading(app, holding: "Mustermann").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(reading(app, holding: "Diese Datei enthält alle privaten Angaben").exists, "warned first")
+        XCTAssertTrue(reading(app, holding: "ohne Abdeckung").exists)
     }
 
     // MARK: Photos, names and AI chats

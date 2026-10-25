@@ -4,8 +4,9 @@ import Foundation
 /// Made-up scans for pictures made in CI (`scripts/scan-checks.sh`), as
 /// `-SnapflyScan` asks: the editor on a photo of a made-up invoice
 /// (editor), comparing Before and After (compare), a second page blurred at
-/// its bottom (warning), Save and Share open (sheet) or without covers
-/// (uncovered), the pages in black and white (bw), corners to set by hand
+/// its bottom (warning), Save and Share open (sheet), without covers
+/// (uncovered) or on the pages' text, open to read (text), the pages in
+/// black and white (bw), corners to set by hand
 /// (corners), the Scan tab with its pages (tab), with what to ask Claude
 /// over it (assistant), or with none yet, for photos chosen from Photos
 /// (empty), or a letter naming the owner, whose made-up name and address
@@ -45,8 +46,10 @@ enum ScanDemo {
     /// Which page the editor opens on: the blurred one for the warning.
     static var page: Int { state == "warning" ? 1 : 0 }
     static var compares: Bool { state == "compare" }
-    static var opensSheet: Bool { state == "sheet" || state == "uncovered" }
+    static var opensSheet: Bool { ["sheet", "uncovered", "text"].contains(state ?? "") }
     static var uncovered: Bool { state == "uncovered" }
+    /// Save and Share on the Text format, its text open to read.
+    static var opensText: Bool { state == "text" }
     /// The letter to the owner, with their details kept as Always Hide keeps them.
     static var ownLetter: Bool { state == "own" }
     /// Review's list, open over the first page.
@@ -118,6 +121,7 @@ enum ScanDemo {
     static let compares = false
     static let opensSheet = false
     static let uncovered = false
+    static let opensText = false
     static let ownLetter = false
     static let opensList = false
     static let still = false
