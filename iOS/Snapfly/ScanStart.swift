@@ -114,10 +114,13 @@ struct ScanHero: View {
     }
 
     private var pill: some View {
+        // One line, a little smaller where the screen is narrow; two at the accessibility sizes.
         Label(L("Open Camera"), systemImage: "dot.viewfinder")
             .font(.body.weight(.semibold))
+            .lineLimit(typeSize.isAccessibilitySize ? 2 : 1)
+            .minimumScaleFactor(0.8)
             .foregroundStyle(SnapflyTokens.scanHeroInk)
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 18)
             .frame(minHeight: 50)
             .background(.white, in: Capsule())
     }

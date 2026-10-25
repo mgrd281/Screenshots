@@ -173,12 +173,18 @@ final class ProjectStore: ObservableObject {
 
     private func load() {
         Task {
-            let found = await Self.run(on: writer) { Self.readAll() }
+            var found = await Self.run(on: writer) { Self.readAll() }
+            #if DEBUG
+            // Made-up starts begin without documents; one started meanwhile stays.
+            if ScanDemo.clearsDocuments {
+                for old in found { delete(old.id) }
+                found = []
+            }
+            #endif
             // A project started while they were read, as by a PDF opened in Snapfly, stays.
             let known = Set(found.map(\.id))
             projects = (found + projects.filter { !known.contains($0.id) }).sorted { $0.modified > $1.modified }
             #if DEBUG
-            if ScanDemo.clearsDocuments { for old in projects { delete(old.id) } }
             if ProjectDemo.makes { return ProjectDemo.start(self) }
             #endif
             // Where Snapfly was left with a project open, it opens again there.

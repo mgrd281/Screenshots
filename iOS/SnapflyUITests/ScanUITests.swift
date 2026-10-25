@@ -464,9 +464,17 @@ final class ScanUITests: XCTestCase {
         }
         let first = element(app, "scan-thumb-1"), second = element(app, "scan-thumb-2")
         XCTAssertTrue(second.waitForExistence(timeout: Self.ready))
-        XCTAssertTrue(wait(first, "label CONTAINS %@", "schwer lesbar", timeout: Self.ready * 2), first.label)
-        XCTAssertTrue(gone(element(app, "scan-improving"), timeout: Self.ready))
-        XCTAssertFalse(second.label.contains("schwer lesbar"), second.label)
+        XCTAssertTrue(gone(element(app, "scan-improving"), timeout: Self.ready * 2))
+        // The list's hint for the blurred photo opens its page: the first, as it was chosen first.
+        let status = card(app)
+        XCTAssertTrue(status.exists)
+        status.tap()
+        let blurred = words(app, "Unten ist der Text unscharf")
+        XCTAssertTrue(blurred.waitForExistence(timeout: 20), "the blurred photo's hint")
+        let looks = app.buttons.matching(NSPredicate(format: "label == %@", "Ansehen")).allElementsBoundByIndex
+        let look = try XCTUnwrap(looks.min { abs($0.frame.midY - blurred.frame.midY) < abs($1.frame.midY - blurred.frame.midY) })
+        look.tap()
+        XCTAssertTrue(wait(first, "isSelected == %@", NSNumber(value: true), timeout: 10), first.label)
         pause(2)
     }
 
