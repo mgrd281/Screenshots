@@ -215,7 +215,9 @@ struct ProtectView: View {
         content
             .sheet(isPresented: $reviewing, onDismiss: { listFocus = nil }) {
                 if let scan {
-                    ReviewListSheet(store: scans, current: scan.page, focus: listFocus) { look($0) }
+                    ReviewListSheet(store: scans, current: scan.page, focus: listFocus, look: { look($0) }, retake: { id in
+                        if let page = scans.pages.first(where: { $0.id == id }) { retake(page) }
+                    })
                 } else {
                     ReviewSheet(session: session, show: show)
                 }

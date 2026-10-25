@@ -2,7 +2,8 @@ import Foundation
 
 /// Something on a scanned page that makes it harder to read, said beside
 /// the page, never on it: text read less after cleaning, a reflection,
-/// blur, a smudged lens or a page too small in the picture.
+/// blur, small print that reads unsurely, a smudged lens or a page too
+/// small in the picture.
 struct ScanIssue: Equatable, Sendable {
     enum Kind: String, CaseIterable, Sendable {
         /// Less is read on the cleaned page than on the page before it was cleaned.
@@ -14,6 +15,8 @@ struct ScanIssue: Equatable, Sendable {
         case smudge
         /// Too few pixels for a page: fine print may not read.
         case small
+        /// The smallest print reads unsurely (`ScanReadability`).
+        case smallPrint
     }
 
     /// Which part of the page, top to bottom, for the words.
@@ -60,12 +63,13 @@ struct ScanIssue: Equatable, Sendable {
         case (.glare, .whole): L("A reflection hides text. Take it again for a clear result.")
         case (.smudge, _): L("The camera lens looks smudged. Wipe it and take the page again.")
         case (.small, _): L("The page is small in the picture, so fine print may not read. Take it again closer.")
+        case (.smallPrint, _): L("Small print is unsharp")
         }
     }
 
     /// The most important first: what was read less, then what hides text.
     static func ordered(_ issues: [ScanIssue]) -> [ScanIssue] {
-        let rank: [Kind: Int] = [.lessText: 0, .glare: 1, .blurred: 2, .smudge: 3, .small: 4]
+        let rank: [Kind: Int] = [.lessText: 0, .glare: 1, .blurred: 2, .smallPrint: 3, .smudge: 4, .small: 5]
         return issues.enumerated().sorted { a, b in
             let first: Int = rank[a.element.kind] ?? 9, second: Int = rank[b.element.kind] ?? 9
             return first != second ? first < second : a.offset < b.offset

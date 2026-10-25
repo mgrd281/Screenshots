@@ -792,6 +792,10 @@ enum ScanCleaner {
         }
         if await smudged(photo ?? before) { issues.append(ScanIssue(.smudge)) }
         let read = known ?? Finder.lines(in: before) ?? []
+        // How surely the smallest print reads as it was taken.
+        if let small = ScanReadability.issue(read.map { ScanReadability.Line(text: $0.string, box: $0.box, confidence: $0.confidence) }) {
+            issues.append(small)
+        }
         let reading = Finder.reading(of: after) ?? []
         let asLines = { (lines: [Finder.TextLine]) -> [ScanContent.Line] in
             lines.map { ScanContent.Line(text: $0.string, box: $0.box) }

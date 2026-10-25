@@ -564,6 +564,9 @@ struct ReviewListSheet: View {
     let focus: Int?
     /// A page's own tools, for a fault: the page opened in Page.
     let look: (UUID) -> Void
+    /// A page taken again, for small print that reads unsurely: with the
+    /// camera, or as it was taken.
+    let retake: (UUID) -> Void
     @StateObject private var watch = ReviewWatch()
     @State private var height: CGFloat = 420
     @State private var coveredOpen = false
@@ -851,9 +854,9 @@ struct ReviewListSheet: View {
                                 .foregroundStyle(SnapflyTokens.hideSecondary)
                         }
                     } actions: {
-                        Button(L("Look")) {
+                        Button(action(for: fault)) {
                             dismiss()
-                            look(fault.page.id)
+                            if fault.issue.kind == .smallPrint { retake(fault.page.id) } else { look(fault.page.id) }
                         }
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.primary)
@@ -868,6 +871,13 @@ struct ReviewListSheet: View {
                 }
             }
         }
+    }
+
+    /// What a fault's button does: small print is taken again, closer with
+    /// the camera or again for a photo; anything else is looked at.
+    private func action(for fault: (page: ScannedPages.Page, number: Int, issue: ScanIssue)) -> String {
+        guard fault.issue.kind == .smallPrint else { return L("Look") }
+        return fault.page.origin == .camera ? L("Take Closer") : L("Retake for Small Print")
     }
 
     // MARK: Covered
@@ -1039,6 +1049,7 @@ extension ScanIssue.Kind {
         case .lessText: L("Hard to read")
         case .smudge: L("Smudged lens")
         case .small: L("Too small")
+        case .smallPrint: L("Small print")
         }
     }
 }

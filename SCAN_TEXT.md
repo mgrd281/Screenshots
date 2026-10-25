@@ -1,9 +1,9 @@
 # The scan's text, from capture to export
 
 What cleaning does to small grey print and to an umlaut's dots, what was
-changed, the guard that keeps what a line says, and what is verified. Part A
-of the brief "Schrift" (October 2026); parts B (capture) and C ("Neu
-gesetzt") are not built yet.
+changed, the guard that keeps what a line says, and what is verified. Parts A
+and B of the brief "Schrift" (October 2026); part B is built in stages
+(below), part C ("Neu gesetzt") is not built.
 
 Everything here is measured on made-up letters. No real letter, name or
 health detail is in a test, a picture or a log.
@@ -329,3 +329,76 @@ runner, which says nothing about an iPhone 15.
   from CI, not this machine.
 - **On a device:** how the owner's own letter comes out, and the time per
   page.
+
+## Part B: capture with enough detail
+
+### Where it stands
+
+Scan Document opens the system's document camera
+(`VNDocumentCameraViewController`). Snapfly cannot choose its resolution,
+take a burst, check the preview or say a hint while it is open. Part B
+therefore needs a camera of Snapfly's own, built in three stages, each
+merged on its own:
+
+1. **The engine, on Linux (this stage).** Merging a burst, the readiness
+   check on a preview, and the readability score with its hint in Review.
+2. **The camera** (not built): the full photo size with quality first, the
+   preview checked several times a second, the page taken by itself when
+   ready, one hint at a time on the glass bar, the burst merged.
+3. **The detail shot** (not built): small print taken again close up and
+   laid onto the page.
+
+### Several frames, one page (`ScanBurst`)
+
+Each frame is laid over the sharpest one by a shift and a slight turn,
+found first by trying every shift within 4 % of the page and every turn
+within 1.5° on frames made small, then step by step down to a twentieth of
+a pixel at the print's steepest edges. Frames less sharp than 80 % of the
+sharpest, frames that still differ once laid over, and a frame with a
+reflection the others have not are left out. The merge takes, for each
+pixel, the mean of the values close to an anchor: on the print's edges the
+sharpest frame's own value, elsewhere the middle of all frames, so the
+grain is averaged away and a reflection or a speck in one frame does not
+count. Frames are drawn with a cubic curve, which keeps an edge's
+steepness.
+
+Made-up burst (`ScanBurstTests`): rows of 7 pt-like letters, four frames
+shifted by up to 6 px and turned by up to 0.4°, softened like a lens
+(Gaussian 0.8 px), grain of 5 levels:
+
+| | Sharpest frame alone | Merged |
+|---|---|---|
+| Difference from the printed page (root mean square) | 5.02 | 3.26 |
+| Edge steepness where the printed page's are steepest (printed: 79.8) | 80.1 (grain adds to it) | 79.5 |
+| A frame shaken by 7 px | – | left out |
+| A reflection in one frame | – | gone |
+
+The frames are laid over each other to within 0.25 px and 0.06°
+(`testFramesAreLaidOverEachOtherToAFractionOfAPixel`).
+
+**Not verified:** a burst from a real camera; the time on an iPhone (the
+merge is written in plain Swift for the tests; the camera will need the
+same done with Core Image or vImage to stay within 2.5 s). A comparison of
+Apple's single best shot (`.quality`) with this merge needs the camera.
+
+### Ready to take the page (`ScanReadiness`)
+
+Measured on a preview: the sharpest line of text's focus (how steeply its
+edges turn against how far they turn within three pixels, 0.35 and more),
+the phone still for 0.3 s, the smallest line's x-height at least 16 px in
+the full photo (a line read is about twice its x-height), and the paper
+without a reflection (1 % of it white out). Ready when all of these hold;
+otherwise one hint, the most important first: Ruhig halten, Näher ran,
+Spiegelung, Handy leicht kippen, Mehr Licht, Linse reinigen.
+`ScanReadinessTests` checks each on a made-up preview. A shake that smears
+thin strokes leaves their edges steep and takes their darkness, so motion
+is told by the phone's stillness, not the picture.
+
+### Readability score (`ScanReadability`)
+
+The lines up to 1.3 times as tall as the shortest line of a few letters are
+the page's small print; the score is the mean of how sure Vision was of
+them. Under 0.9, Review shows "Kleine Schrift unscharf" with Näher
+aufnehmen (a scanned page: the camera opens to take it again) or Neu
+aufnehmen für kleine Schrift (a photo). `ScanReadabilityTests` checks it.
+**Not verified:** how often real pages get the hint.
