@@ -3577,17 +3577,19 @@ system to a web page. The brief and direction contract are in
     title (`clamp(1.5rem, 2.4vw, 2rem)`, 800) and a line beside a small Mac
     screen, the sides alternating; one column at 960 px and below, the words
     above the screen.
-    German only for now, at the owner's request (`NEW_PARTS_LANGS` in
-    `build.py`).
+    In all three languages (`NEW_PARTS_LANGS` in `build.py`), which follow
+    together at the owner's request.
     - **The screen** is drawn at 460 × 280 and scaled as a whole to its
       column, 460 wide at most: `scale(tan(atan2(100cqw, 460px)))`, so CSS
       divides the two lengths. It takes the desktop demo's tokens (`--d-*`,
       set on `.story` too): one solid desktop with its grain, a 14 radius, a
       hairline and shadow 2, a 20 px menu bar in glass 1 with four menu
       titles, Snapfly's mark and the clock. In right-to-left pages it
-      mirrors.
+      mirrors, all but the keys, which read ⌃⌥S left to right in every
+      language.
     - **The moments.** Take it: the shortcut in a dark key strip (22 pt
-      keys, 82% black), pressed 140 ms apart, then a dashed accent selection
+      keys, 82% black) at the screen's reading start, clear of where the
+      drag ends, pressed 140 ms apart, then a dashed accent selection
       dragged corner to corner over an invoice window, and the flash. It
       hangs: the line comes down from under the menu bar (0.6 s) and the
       stamp drops onto its clip (`hang-in`). Private details get covered:
@@ -3760,7 +3762,9 @@ system to a web page. The brief and direction contract are in
   - The privacy and support pages are documents on the paper. On the
     support page each question leads with its glyph (22 px, in the accent,
     from Lucide in the site's single stroke), and its answer lines up under
-    the words, 38 px in. German only for now (`NEW_PARTS_LANGS`).
+    the words, 38 px in. In every language (`NEW_PARTS_LANGS`); in Arabic
+    the glyph leads from the right, and the two that point (the message
+    and the paper plane) turn round.
 - **The postal pieces.** All of them print in the theme's postal ink and
   are hidden from assistive technology; the words they carry are said
   elsewhere on the page.
@@ -3952,7 +3956,7 @@ system to a web page. The brief and direction contract are in
       narrow-screen rules are some.
   - **The clean ground** (`static/clean.css`, the owner's brief "Apple
     level", October 2026) refines the classic look where the new parts are
-    shown (`NEW_PARTS_LANGS`, German for now): `build.py` links it only on
+    shown (`NEW_PARTS_LANGS`, all three languages): `build.py` links it on
     those pages, after `bold.css`, and every rule is scoped to
     `<html data-look="classic">`, but for one that hides the short words
     in the bold look.
@@ -4001,17 +4005,19 @@ system to a web page. The brief and direction contract are in
     - **One stroke.** The steps' glyphs, the pills under the demos, the
       arrow to the privacy policy and the support page's question glyphs
       draw at 1.9.
-    - **Pills under the demos** (Noch mal abspielen, Anleitung starten):
+    - **Pills under the demos** (Play again and Start the guide; Noch mal
+      abspielen, Anleitung starten; إعادة التشغيل، ابدأ الإرشاد):
       `--c-fill`, `--c-fill-2` on hover, no border, no blur, 15 px in ink.
       The link to the privacy policy is `--band-strong`, 600, underlined
       on hover.
     - **Order.** The first view, how a screenshot travels, the desktop to
       try, sending all at once (the send section), then the clean desk,
       privacy, Hide Part, the photo's menu, the line styles, the privacy
-      statement, the four steps and the closing call. Funktionen leads to
-      how a screenshot travels.
-    - **Words.** Shorter in German: one idea per line, each paragraph three
-      sentences at most.
+      statement, the four steps and the closing call. Features (Funktionen,
+      المزايا) leads to how a screenshot travels.
+    - **Words.** Short in every language: one idea per line, each paragraph
+      three sentences at most, as in German, which English and Arabic
+      follow.
   - **The bold colour look** is the third, chosen by the owner as a
     luxury, modern brand look: one confident colour field per theme, giant
     type, the screenshots dealt onto the line like cards, and a band of
@@ -4174,6 +4180,8 @@ system to a web page. The brief and direction contract are in
   shared, still shows the old gradient wallpaper with the icon; it waits
   for the owner. Everything else is inline SVG drawn in `build.py`.
 - **Words.** Labels the app shows come from its `Localizable.strings`.
-  Everything else is in `website/content.py`, in English, German (du) and
-  Arabic (right to left), including the airmail label's four languages
-  (`AIRMAIL`) and the handstamp on the privacy section (`stamp_covered`).
+  Everything else is in `website/content.py`, in English (you), German (du)
+  and Arabic (the second person singular, right to left), including the
+  airmail label's four languages (`AIRMAIL`) and the handstamp on the
+  privacy section (`stamp_covered`). The three say the same things in the
+  same order and change together.

@@ -1,7 +1,7 @@
 /* Snapfly website, the clean ground: the Mac desktop look, refined at the
    owner's request (October 2026) for the languages that show the new parts
-   (NEW_PARTS_LANGS in build.py, German for now). build.py links this file
-   only on those pages, after classic.css and bold.css.
+   (NEW_PARTS_LANGS in build.py: English, German and Arabic). build.py
+   links this file on those pages, after classic.css and bold.css.
 
    What it changes, in the classic look only:
    - The theme's colour field stays where it is a moment: the first view
