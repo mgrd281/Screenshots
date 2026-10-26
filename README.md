@@ -1020,8 +1020,9 @@ iCloud account, and the two work as one:
   on the Mac. Six digits show, a new one every 30 seconds. On the iPhone, tap
   Connect to a Mac with a Code in Settings and type them; the Mac asks
   whether to connect that iPhone, and only a yes lets it in. The Mac then
-  shares its sync with that account alone, through iCloud. Disconnect… on
-  either side ends it.
+  shares its sync with that account alone, through iCloud; Cancel stops it
+  while it connects, should iCloud not answer. Disconnect… on either side
+  ends it.
 
 It goes through your own iCloud, never a server of Snapfly's, and a change
 made offline waits until it can go. The plan, the rules and what is verified

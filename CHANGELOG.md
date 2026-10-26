@@ -88,6 +88,10 @@ keeps a download of each version.
   Snapfly again, as an update does: two copies no longer run at once, where
   the one quitting could take back the screenshot settings the new one had
   just made, or keep its shortcuts from working.
+- On the Mac, connecting an iPhone on another Apple account can be
+  cancelled while it connects, should iCloud not answer, instead of
+  leaving no way out but quitting; once connected, Escape closes the sheet
+  as Done does.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

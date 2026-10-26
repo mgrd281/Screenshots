@@ -1205,10 +1205,12 @@ apps.
     typed it: its SF Symbol at 36 pt in `.secondary`, "Connect “iPhone”?"
     as the headline, what it will see in `.secondary`; Don't Connect
     (Escape) and Connect (Return, `.borderedProminent`). Then a spinner
-    with Connecting “iPhone”…, and an outcome: `checkmark.circle.fill` or
-    `exclamationmark.triangle.fill` at 36 pt in `.secondary`, a headline
-    and a line, with Done, or Cancel and Try Again. Nothing moves but the
-    bar, a second at a time, so Reduce Motion asks for nothing more.
+    with Connecting “iPhone”… and Cancel (Escape), which stops the attempt
+    should iCloud not answer, the device hearing no, and an outcome:
+    `checkmark.circle.fill` or `exclamationmark.triangle.fill` at 36 pt in
+    `.secondary`, a headline and a line, with Done (Return, and Escape
+    too), or Cancel and Try Again. Nothing moves but the bar, a second at a
+    time, so Reduce Motion asks for nothing more.
 
 ### Dialogs, sheets and panels
 - **Floating card** (`TextCard`) for results that belong to a photo:

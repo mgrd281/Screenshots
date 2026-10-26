@@ -244,9 +244,16 @@ private struct PairingSheet: View {
                 .keyboardShortcut(.defaultAction)
                 .buttonStyle(.borderedProminent)
         case .sharing:
+            // Stops the attempt, should iCloud not answer.
             Button(L("Cancel")) { dismiss() }
-                .disabled(true)
+                .keyboardShortcut(.cancelAction)
         case .joined, .sameAccount:
+            // Escape closes it too, as Done does.
+            Button { dismiss() } label: { EmptyView() }
+                .keyboardShortcut(.cancelAction)
+                .frame(width: 0, height: 0)
+                .opacity(0)
+                .accessibilityHidden(true)
             Button(L("Done")) { dismiss() }
                 .keyboardShortcut(.defaultAction)
                 .buttonStyle(.borderedProminent)
