@@ -377,6 +377,30 @@ final class PDFPageGeometryTests: XCTestCase {
         XCTAssertEqual(PDFTextLayer.added(read: read, over: text), [1, 2])
     }
 
+    func testEachLetterIsAskedForWherePDFKitCountsIt() {
+        // PDFKit counts no line break its text adds: without a ligature, they are passed over, and nothing is asked.
+        let plain = PDFTextLayer.characters(of: "Erika\nWeber", count: 10) { _ in
+            XCTFail("no character is asked for")
+            return nil
+        }
+        XCTAssertEqual(plain, [0, 1, 2, 3, 4, nil, 5, 6, 7, 8, 9])
+        // A ligature, "fi", is one of its characters: each character's text is found along the text.
+        let pieces = ["M", "u", "s", "t", "e", "r", "fi", "r", "m", "a", " ", "G", "m", "b", "H", "B", "e", "r", "l", "i", "n"]
+        let text = "Musterfirma GmbH\nBerlin"
+        let found = PDFTextLayer.characters(of: text, count: pieces.count) { pieces[$0] }
+        XCTAssertEqual(found, [0, 1, 2, 3, 4, 5, 6, 6, 7, 8, 9, 10, 11, 12, 13, 14, nil, 15, 16, 17, 18, 19, 20])
+        XCTAssertEqual(PDFTextLayer.share(found: found, of: text), 1)
+        // Written as one character, "ﬁ" is the letters it stands for.
+        XCTAssertEqual(PDFTextLayer.characters(of: "Pfiff\nab", count: 6) { ["P", "ﬁ", "f", "f", "a", "b"][$0] },
+                       [0, 1, 1, 2, 3, nil, 4, 5])
+        // As many characters as units: each unit is its own.
+        XCTAssertEqual(PDFTextLayer.characters(of: "a\nb", count: 3) { _ in nil }, [0, 1, 2])
+        // What cannot be found has no place, and too little found reads the page from its picture.
+        let lost = PDFTextLayer.characters(of: "abc\ndef", count: 5) { ["x", "y", "z", "q", "w"][$0] }
+        XCTAssertEqual(lost, [nil, nil, nil, nil, nil, nil, nil])
+        XCTAssertLessThan(PDFTextLayer.share(found: lost, of: "abc\ndef"), 0.95)
+    }
+
     func testASignedFileIsKnownByItsBytes() {
         let plain = Data("%PDF-1.7\n1 0 obj << /Type /Catalog >> endobj\n%%EOF".utf8)
         let signed = Data("""

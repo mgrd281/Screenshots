@@ -75,6 +75,13 @@ final class PDFFixtureTests: XCTestCase {
         XCTAssertTrue(lines.contains { $0.string.contains(PDFFixtures.iban) }, "the IBAN as written")
         let words = customer.words.compactMap { Range($0.range, in: customer.string).map { String(customer.string[$0]) } }
         XCTAssertEqual(words, ["Erika", "Mustermann"])
+        // Every word where it stands, after the line breaks PDFKit's text adds and the ligature in
+        // "Musterfirma": the name one row high, the invoice's number beside it where it starts, the last word in.
+        XCTAssertLessThan(customer.box.height, 0.02, "one row: \(customer.box)")
+        let number = try XCTUnwrap(lines.first { $0.string.hasPrefix("Rechnungsnr.") })
+        XCTAssertEqual(number.box.minX, 360 / 595.28, accuracy: 0.01)
+        XCTAssertLessThan(number.box.height, 0.02, "one row: \(number.box)")
+        XCTAssertTrue(lines.contains { $0.string.hasSuffix("BIC COBADEFFXXX") }, lines.map(\.string).joined(separator: "\n"))
         // Turned a quarter clockwise, the line stands at the top right.
         let turned = try XCTUnwrap(invoice.lines(0, turns: 1)?.first { $0.string.contains(PDFFixtures.customer) })
         XCTAssertGreaterThan(turned.box.minX, 0.7)
@@ -276,16 +283,21 @@ final class PDFFixtureTests: XCTestCase {
                 Range(word.range, in: line.string).map { "\(line.string[$0]) (\(shown(word.box)))" }
             }.joined(separator: ", ")
         }
-        // Each letter of the page's text and where PDFKit says it is, in points.
+        // Each letter of the page's text, the character PDFKit counts it as and where that is, in points.
         let file = try XCTUnwrap(PDFDocument(data: PDFFixtures.invoice())?.page(at: 0))
         let letters = (file.string ?? "") as NSString
+        let characters = PDFTextLayer.characters(of: letters as String, count: file.numberOfCharacters) {
+            file.selection(for: NSRange(location: $0, length: 1))?.string
+        }
         let placed = (0..<letters.length).map { unit -> String in
-            let place = file.characterBounds(at: unit)
             let letter = letters.substring(with: NSRange(location: unit, length: 1))
-            return "\(unit) \(letter.debugDescription) "
+            guard let character = characters[unit] else { return "\(unit) \(letter.debugDescription) none" }
+            let place = file.characterBounds(at: character)
+            return "\(unit) \(letter.debugDescription) \(character) "
                 + String(format: "x %.1f y %.1f w %.1f h %.1f", place.minX, place.minY, place.width, place.height)
         }
-        var lines = ["From the file, line by line:"]
+        var lines = ["PDFKit counts \(file.numberOfCharacters) characters, the text holds \(letters.length) units.",
+                     "From the file, line by line:"]
         lines += layer.map { "\($0.string) | \(shown($0.box)) | \(wordsShown($0))" }
         lines.append("Read from the picture besides:")
         lines += extra.map { "\($0.string) | \(shown($0.box))" }
@@ -293,10 +305,9 @@ final class PDFFixtureTests: XCTestCase {
         lines += places.map(shown)
         lines.append("Read from the covered picture:")
         lines += again.map { "\($0.string) | \(shown($0.box))" }
-        lines += ["The covered PDF's text:", text, "Each letter of the file's text:"]
-        lines += placed
+        lines += ["The covered PDF's text:", text]
         let report = lines.joined(separator: "\n")
-        keep("pdf-covers.txt", report)
+        keep("pdf-covers.txt", ([report, "Each letter of the file's text:"] + placed).joined(separator: "\n"))
         print("PDF-COVERS\n\(report)\nPDF-COVERS-END")
         // Covered: the customer's name and address, and the IBAN.
         for wanted in [PDFFixtures.customer, PDFFixtures.street, PDFFixtures.town, "DE89"] {

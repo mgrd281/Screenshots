@@ -168,6 +168,63 @@ enum PDFTextLayer {
         text.unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) }.count >= 12
     }
 
+    /// Which of PDFKit's characters each UTF-16 unit of a page's text is,
+    /// to ask where it stands: PDFKit counts its characters without the
+    /// line breaks its text adds, and a ligature, as "fi", once, so a unit's
+    /// own number would point a letter further on after each of them. Where
+    /// the counts say only line breaks were added, those are passed over;
+    /// otherwise each character's own text (`character`) is found along the
+    /// page's text, in order. Nil for a unit that is no character, or that
+    /// could not be found.
+    static func characters(of text: String, count: Int, character: (Int) -> String?) -> [Int?] {
+        let units = Array(text.utf16)
+        var found = [Int?](repeating: nil, count: units.count)
+        if count == units.count { return units.indices.map { $0 } }
+        if count == units.filter({ !isBreak($0) }).count {
+            var next = 0
+            for (index, unit) in units.enumerated() where !isBreak(unit) {
+                found[index] = next
+                next += 1
+            }
+            return found
+        }
+        var position = 0
+        for index in 0..<count {
+            guard let piece = character(index), !piece.isEmpty else { continue }
+            // A ligature written as one, "ﬁ", is the letters it stands for; an
+            // accent may be one unit or two.
+            let forms = [piece, piece.precomposedStringWithCompatibilityMapping,
+                         piece.decomposedStringWithCompatibilityMapping].map { Array($0.utf16) }
+            // Line breaks the text added are passed over, and a few other units at most.
+            var start = position, others = 0
+            search: while start < units.count {
+                for wanted in forms where start + wanted.count <= units.count
+                    && units[start..<(start + wanted.count)].elementsEqual(wanted) {
+                    for unit in start..<(start + wanted.count) { found[unit] = index }
+                    position = start + wanted.count
+                    break search
+                }
+                if !isBreak(units[start]) {
+                    others += 1
+                    if others > 3 { break }
+                }
+                start += 1
+            }
+        }
+        return found
+    }
+
+    /// How much of a page's text, line breaks and spaces aside, `characters` found.
+    static func share(found: [Int?], of text: String) -> Double {
+        let letters = zip(text.utf16, found).filter { !isBreak($0.0) && !isBlank($0.0) }
+        guard !letters.isEmpty else { return 1 }
+        return Double(letters.filter { $0.1 != nil }.count) / Double(letters.count)
+    }
+
+    private static func isBreak(_ unit: UInt16) -> Bool {
+        unit == 0x0A || unit == 0x0D || unit == 0x2028 || unit == 0x2029
+    }
+
     /// The lines read from the page's picture that its text does not hold
     /// already: a line mostly over a line of the text is the same line, and
     /// the text's is kept, letter for letter; any other, as in a photo

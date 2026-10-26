@@ -86,7 +86,9 @@ final class PDFSource: @unchecked Sendable {
 
     /// The words a page holds as text, in lines and where each word is,
     /// from 0 to 1 from the bottom left of the page as it shows. Nil where
-    /// the page holds no text worth reading, as a scan without text has none.
+    /// the page holds no text worth reading, as a scan without text has none,
+    /// or where its letters cannot be told apart from PDFKit's characters:
+    /// then the page is read from its picture, as a scan is.
     func lines(_ index: Int, turns: Int) -> [Finder.TextLine]? {
         lock.lock()
         defer { lock.unlock() }
@@ -94,10 +96,13 @@ final class PDFSource: @unchecked Sendable {
               PDFTextLayer.holdsText(text) else { return nil }
         let box = page.bounds(for: .cropBox)
         let rotation = PDFPageGeometry.rotation(page: page.rotation, turns: turns)
-        let count = (text as NSString).length
+        let characters = PDFTextLayer.characters(of: text, count: page.numberOfCharacters) {
+            page.selection(for: NSRange(location: $0, length: 1))?.string
+        }
+        guard PDFTextLayer.share(found: characters, of: text) >= 0.95 else { return nil }
         let found = PDFTextLayer.lines(text) { unit -> CGRect? in
-            guard unit < count else { return nil }
-            let place = page.characterBounds(at: unit)
+            guard characters.indices.contains(unit), let character = characters[unit] else { return nil }
+            let place = page.characterBounds(at: character)
             guard !place.isNull, place.width > 0 || place.height > 0 else { return nil }
             let shown = PDFPageGeometry.normalized(place, box: box, rotation: rotation)
             // Text beyond the page as it is cut, which a PDF cropped in Preview keeps, is not on it.
