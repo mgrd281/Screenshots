@@ -507,14 +507,18 @@ final class Line: ObservableObject {
 
     /// From a photo's menu: the photos picked when it is one of them, or
     /// only this one.
-    func paste(_ id: UUID) {
+    /// - Returns: whether they went at once, rather than waiting on Check
+    ///   Before Sending or a PDF still being covered.
+    @discardableResult
+    func paste(_ id: UUID) -> Bool {
         Guide.shared.happened(.photoUsed)
         let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
         if pickedIDs.contains(id) {
-            paste(picked)
+            return paste(picked)
         } else if let item = items.first(where: { $0.id == id }) {
-            paste([item])
+            return paste([item])
         }
+        return false
     }
 
     /// ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE, from a photo: the photos picked

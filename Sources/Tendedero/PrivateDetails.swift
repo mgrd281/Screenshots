@@ -494,15 +494,17 @@ enum Cover {
     }
 
     /// The picture as it is covered, upright and with nothing of the file but
-    /// its pixels: what a copy saved beside the original is made from, or
-    /// sent from Hide Private Details. Nil when it could not be read or
-    /// covered, Vision's reading too, so no such copy is made uncovered.
-    static func covered(of url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect]) -> CGImage? {
+    /// its pixels, and what was covered in it: what a copy saved beside the
+    /// original is made from, or sent from Hide Private Details. Nil when it
+    /// could not be read or covered, Vision's reading too, so no such copy is
+    /// made uncovered.
+    static func covered(of url: URL, _ chosen: Set<PrivateDetail>,
+                        hand: [CGRect]) -> (image: CGImage, report: CoverReport)? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = upright(source) else { return nil }
         let failures = Finder.failures
         guard let made = Finder.covered(image, chosen, hand: hand), Finder.failures == failures else { return nil }
-        return made.image
+        return (made.image, CoverReport(made.areas, hand: hand.count))
     }
 
     /// A copy of the screenshot with the chosen details and the parts hidden

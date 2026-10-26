@@ -667,9 +667,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
             MainActor.assumeIsolated {
                 guard let self else { return }
-                if !Paste.willPaste { Notice.show(L("Covered and copied, ready to paste.")) }
-                self.line.paste(id)
+                let willPaste = Paste.willPaste
+                // Copied once it went: a PDF still being covered says so itself.
+                guard self.line.paste(id), !willPaste else { return }
+                self.sayCopied(url, covering: CoveringProfile.detailsNow)
             }
+        }
+    }
+
+    /// Send Again's note where Snapfly may not paste: "covered" only when
+    /// something was, as the iPhone says it. A picture covered whole, as its
+    /// reading failed, has said so already; a recording goes as it is.
+    private func sayCopied(_ url: URL, covering chosen: Set<PrivateDetail>) {
+        let recording = Tendedero.isRecording(url)
+        let report = recording ? nil : PrivateDetails.report(for: url, covering: chosen)
+        let looked = !recording && PrivateDetails.covers(url)
+        if let report, !report.isEmpty {
+            Notice.show(L("Covered and copied, ready to paste."))
+        } else if report != nil, looked {
+            Notice.show(L("Nothing to cover was found. Copied as it is, ready to paste."))
+        } else if report != nil || !looked {
+            Notice.show(L("Copied. Paste it with ⌘V."))
         }
     }
 

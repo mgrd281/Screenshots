@@ -31,15 +31,17 @@ enum SaveCopy {
 
     /// Writes the copy to `target`, replacing a file there. A photo gets the
     /// chosen details and the parts hidden by hand covered; a PDF gets them
-    /// on each page, its boxes kept by page number from 1. Returns whether the
-    /// copy was written; nothing half done is left behind.
+    /// on each page, its boxes kept by page number from 1. Returns what was
+    /// covered in the copy, so a note says "covered" only when something
+    /// was, or nil when it was not written; nothing half done is left behind.
     static func write(_ url: URL, _ chosen: Set<PrivateDetail>, hand: [CGRect], pages: [Int: [CGRect]],
-                      to target: URL) -> Bool {
+                      to target: URL) -> CoverReport? {
         if isPDF(url) {
-            return DocumentCover.write(url, chosen, hand: pages, to: target) != nil
+            return DocumentCover.write(url, chosen, hand: pages, to: target)
         }
-        guard let image = Cover.covered(of: url, chosen, hand: hand) else { return false }
-        return writePicture(image, to: target, type: fileType(for: url))
+        guard let made = Cover.covered(of: url, chosen, hand: hand),
+              writePicture(made.image, to: target, type: fileType(for: url)) else { return nil }
+        return made.report
     }
 
     /// Only the pixels are written: the picture comes out without the

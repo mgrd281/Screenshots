@@ -360,9 +360,17 @@ final class CoverFilesModel: ObservableObject {
         if let activity { ProcessInfo.processInfo.endActivity(activity) }
         activity = nil
         close()
-        let saved = tally.covered + tally.nothing
-        guard !CoverFiles.shared.isKey, saved > 0, let destination else { return }
-        Notice.show(String(format: L("Covered copies saved: %ld"), saved), done: true, lasting: 8) {
+        // Only the copies with something covered are called covered; those
+        // with nothing to cover are named, to look at, as a watched folder's are.
+        let covered = tally.covered
+        let nothing = rows.filter { $0.state == .nothing }.map(\.item.url.lastPathComponent)
+        var lines: [String] = []
+        if covered > 0 { lines.append(String(format: L("Covered copies saved: %ld"), covered)) }
+        if !nothing.isEmpty {
+            lines.append(String(format: L("Nothing to cover in %@. Take a look."), FolderCover.names(nothing)))
+        }
+        guard !CoverFiles.shared.isKey, !lines.isEmpty, let destination else { return }
+        Notice.show(lines.joined(separator: " "), done: covered > 0, lasting: 8) {
             NSWorkspace.shared.activateFileViewerSelecting([destination])
         }
     }

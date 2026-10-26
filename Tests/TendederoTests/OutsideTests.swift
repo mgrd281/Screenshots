@@ -228,7 +228,10 @@ final class OutsideTests: XCTestCase {
             kCGImagePropertyTIFFDictionary: [kCGImagePropertyTIFFMake: "Apple", kCGImagePropertyTIFFModel: "iPhone"],
         ])
         let target = folder.appendingPathComponent(SaveCopy.suggestedName(for: photo))
-        XCTAssertTrue(SaveCopy.write(photo, [], hand: [CGRect(x: 0, y: 0, width: 0.5, height: 1)], pages: [:], to: target))
+        let report = try XCTUnwrap(SaveCopy.write(photo, [], hand: [CGRect(x: 0, y: 0, width: 0.5, height: 1)],
+                                                  pages: [:], to: target))
+        // What was covered comes back, so the note says "covered" only then.
+        XCTAssertEqual(report.hand, 1)
         XCTAssertEqual(target.lastPathComponent, String(format: L("%@ (covered)"), "IMG_0002") + ".jpg")
 
         let source = try XCTUnwrap(CGImageSourceCreateWithURL(target as CFURL, nil))
@@ -249,7 +252,9 @@ final class OutsideTests: XCTestCase {
         let pdf = folder.appendingPathComponent("Invoice.pdf")
         try makePDF(at: pdf, pages: 2)
         let target = folder.appendingPathComponent(SaveCopy.suggestedName(for: pdf))
-        XCTAssertTrue(SaveCopy.write(pdf, [], hand: [], pages: [2: [CGRect(x: 0, y: 0, width: 1, height: 1)]], to: target))
+        let report = try XCTUnwrap(SaveCopy.write(pdf, [], hand: [], pages: [2: [CGRect(x: 0, y: 0, width: 1, height: 1)]],
+                                                  to: target))
+        XCTAssertEqual(report.hand, 1)
         XCTAssertEqual(target.lastPathComponent, String(format: L("%@ (covered)"), "Invoice") + ".pdf")
 
         let copy = try XCTUnwrap(PDFDocument(url: target))

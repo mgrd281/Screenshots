@@ -198,7 +198,9 @@ final class FolderCover {
 
     private func speak() {
         var lines: [String] = []
-        if saved > 0 { lines.append(String(format: L("Covered copies saved: %ld"), saved)) }
+        // The copies with nothing to cover are named below, not counted as covered.
+        let covered = saved - nothingFound.count
+        if covered > 0 { lines.append(String(format: L("Covered copies saved: %ld"), covered)) }
         if !nothingFound.isEmpty {
             lines.append(String(format: L("Nothing to cover in %@. Take a look."), Self.names(nothingFound)))
         }

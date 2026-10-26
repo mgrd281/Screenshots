@@ -139,7 +139,7 @@ final class HideEditor: NSObject, NSWindowDelegate {
             DispatchQueue.main.async { [weak self, weak model] in
                 MainActor.assumeIsolated {
                     model?.saving = false
-                    if written {
+                    if written != nil {
                         Notice.show(String(format: L("Saved beside the original as %@."), target.lastPathComponent),
                                     done: true)
                         self?.window?.close()
@@ -173,21 +173,25 @@ final class HideEditor: NSObject, NSWindowDelegate {
             DispatchQueue.main.async { [weak self, weak model] in
                 MainActor.assumeIsolated {
                     model?.saving = false
-                    guard written else {
+                    guard let written else {
                         Notice.show(L("Could not save the copy."))
                         return
                     }
-                    self?.deliver(target, way, covering: chosen, from: window)
+                    self?.deliver(target, way, covering: chosen, covered: !written.isEmpty, from: window)
                 }
             }
         }
     }
 
-    private func deliver(_ file: URL, _ way: CopySend, covering chosen: Set<PrivateDetail>, from window: NSWindow) {
+    /// - Parameter covered: whether anything was covered in the copy, so
+    ///   the note says "covered" only then.
+    private func deliver(_ file: URL, _ way: CopySend, covering chosen: Set<PrivateDetail>, covered: Bool,
+                         from window: NSWindow) {
         switch way {
         case .copy:
             Self.clip(file)
-            Notice.show(L("Copied, covered. Paste it wherever you like."), done: true)
+            Notice.show(covered ? L("Copied, covered. Paste it wherever you like.")
+                                : L("Nothing to cover was found. Copied as it is, ready to paste."), done: true)
         case .share:
             guard let view = window.contentView else { return }
             let picker = NSSharingServicePicker(items: [file])
