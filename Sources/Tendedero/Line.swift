@@ -379,14 +379,17 @@ final class Line: ObservableObject {
     }
 
     /// ⌘-click: picks the photo, or puts it back, and copies every photo
-    /// picked, so they paste together into a chat or a message.
+    /// picked, so they paste together into a chat or a message. One that
+    /// cannot be copied yet, like a PDF still being covered, is not picked.
     /// - Parameter quietly: from the circle on the photo, whose check says
     ///   enough without "Copied" under each.
     func pick(_ id: UUID, quietly: Bool = false) {
         Guide.shared.happened(.photoUsed)
-        if pickedIDs.contains(id) { pickedIDs.remove(id) } else { pickedIDs.insert(id) }
+        let adding = !pickedIDs.contains(id)
+        if adding { pickedIDs.insert(id) } else { pickedIDs.remove(id) }
         let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
-        if !picked.isEmpty { copy(picked, covering: CoveringProfile.detailsNow, says: !quietly) }
+        guard !picked.isEmpty else { return }
+        if !copy(picked, covering: CoveringProfile.detailsNow, says: !quietly), adding { pickedIDs.remove(id) }
     }
 
     /// Every photo on the line picked, to put back the few that should not go.
@@ -567,7 +570,7 @@ final class Line: ObservableObject {
                 // A mailbox takes a photo only once a message is started: copied
                 // for you to paste, and left on the line.
                 if chat.copiesOnly {
-                    self?.copy(photos, covering: chosen, says: false)
+                    guard self?.copy(photos, covering: chosen, says: false) == true else { return }
                     Notice.show(L("Copied. Start a new message and paste."), done: true, lasting: 6)
                     return
                 }
@@ -641,11 +644,12 @@ final class Line: ObservableObject {
 
     /// The photos on their way: copied, flown over and pasted into the app in
     /// front, then noted in the History. Any taken down meanwhile stay down.
+    /// Not copied, like a PDF changed meanwhile and still being covered,
+    /// nothing goes: the clipboard holds something else.
     private func deliver(_ chosenPhotos: [Pegged], then caption: String?, replacing files: [UUID: URL],
                          covering chosen: Set<PrivateDetail>) {
         let photos = chosenPhotos.filter { photo in items.contains { $0.id == photo.id && !$0.falling } }
-        guard !photos.isEmpty else { return }
-        copy(photos, covering: chosen, replacing: files)
+        guard !photos.isEmpty, copy(photos, covering: chosen, replacing: files) else { return }
         pickedIDs = []
         // Only when the paste will happen: a photo flying into a chat that
         // never gets it would say the opposite.
@@ -945,14 +949,18 @@ final class Line: ObservableObject {
     }
 
     /// - Parameter says: "Copied" under each photo, for a moment.
+    /// - Returns: whether they are on the clipboard; not while a PDF among
+    ///   them is still being covered, which a note says.
+    @discardableResult
     private func copy(_ photos: [Pegged], covering chosen: Set<PrivateDetail>, replacing files: [UUID: URL] = [:],
-                      says: Bool = true) {
-        guard !stillCovering(photos, chosen) else { return }
+                      says: Bool = true) -> Bool {
+        guard !stillCovering(photos, chosen) else { return false }
         // With Hide private details on, a copy with them covered.
         Self.clip(photos.map { item in
             (url: files[item.id] ?? PrivateDetails.shareable(item.url, covering: chosen), original: item.url)
         })
         if says { showCopied(Set(photos.map(\.id))) }
+        return true
     }
 
     /// What leaves the line, on the clipboard: each copy as an item of its

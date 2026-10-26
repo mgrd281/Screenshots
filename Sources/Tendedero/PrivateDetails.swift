@@ -403,29 +403,18 @@ enum PrivateDetails {
         }
     }
 
-    /// Whether its covered copy is still being made, off the main thread,
-    /// so it cannot leave yet: a note says so, and it leaves a moment later.
-    /// One not made yet, like a photo or PDF in the History, starts being
-    /// made now, rather than on the main thread, where the screen would
-    /// wait for it and Apple Intelligence cannot read along. One whose
-    /// reading failed is made as it leaves, covered whole if that fails too.
+    /// Whether a PDF's covered copy is still being made, off the main
+    /// thread, so it cannot leave yet: a note says so, and it can be sent
+    /// once it is. One not made yet, like a PDF in the History, starts being
+    /// made now, rather than on the main thread, where the screen would wait
+    /// for every page. One whose covering failed is covered as it leaves,
+    /// painted whole if that fails too. A picture never waits: one not read
+    /// yet is read as it leaves (`handOut`), so what was asked for happens.
     static func stillCovering(_ url: URL, _ chosen: Set<PrivateDetail>) -> Bool {
-        guard let key = workKey(url, chosen), cached(key) == nil, !failedKeys.contains(key) else { return false }
+        guard isDocument(url), coversDocument(url, chosen), let key = documentKey(url, chosen), cached(key) == nil,
+              !failedKeys.contains(key) else { return false }
         if !inProgress.contains(key) { prepare(url, covering: chosen, shows: chosen == details) }
         return inProgress.contains(key)
-    }
-
-    /// The version a picture or PDF leaves as, when something is to be done
-    /// to it: covered, stamped, drawn on or cleaned; nil when it leaves as it is.
-    private static func workKey(_ url: URL, _ chosen: Set<PrivateDetail>) -> String? {
-        if isDocument(url) { return coversDocument(url, chosen) ? documentKey(url, chosen) : nil }
-        let hand = Self.hand(url)
-        let stamp = TimeStamp.mark(for: url)
-        let clean = strips(url)
-        let drawing = Drawings.saved(url)
-        guard !chosen.isEmpty || alwaysHides || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty,
-              isImage(url) else { return nil }
-        return key(for: url, chosen, hand, stamp, clean, drawing)
     }
 
     // MARK: A PDF from outside
