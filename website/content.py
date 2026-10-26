@@ -193,8 +193,8 @@ TEXT["en"] = dict(
     },
 
     design_h="Nothing leaves your Mac.",
-    design_points=["No account.", "No servers of our own.", "No analytics."],
-    design_p="Reading text, covering, translating and describing all happen on your Mac, with Apple’s own frameworks. Nothing is uploaded, unless you turn on Sync with your iPhone: then covered copies go through your own iCloud.",
+    design_points=["No account.", "No ads.", "No analytics."],
+    design_p="Reading text, covering, translating and describing all happen on your Mac, with Apple’s own frameworks. Nothing is uploaded unless you ask: Copy Link sends the one picture, and Sync with your iPhone sends covered copies through your own iCloud.",
     design_link="Read the privacy policy",
 
     close_h="Hang your first screenshot.",
@@ -471,8 +471,8 @@ TEXT["de"] = dict(
     },
 
     design_h="Nichts verlässt deinen Mac.",
-    design_points=["Kein Konto.", "Kein eigener Server.", "Keine Analyse."],
-    design_p="Text lesen, verdecken, übersetzen und beschreiben passiert auf deinem Mac, mit Apples eigenen Frameworks. Nichts wird hochgeladen – außer du schaltest Synchronisieren mit deinem iPhone ein: Dann gehen verdeckte Kopien über dein eigenes iCloud.",
+    design_points=["Kein Konto.", "Keine Werbung.", "Keine Analyse."],
+    design_p="Text lesen, verdecken, übersetzen und beschreiben passiert auf deinem Mac, mit Apples eigenen Frameworks. Nichts wird hochgeladen, außer du willst es: Link kopieren schickt das eine Bild, und Synchronisieren mit deinem iPhone schickt verdeckte Kopien über dein eigenes iCloud.",
     design_link="Datenschutzerklärung lesen",
 
     close_h="Häng dein erstes Bildschirmfoto auf.",
@@ -748,8 +748,8 @@ TEXT["ar"] = dict(
     },
 
     design_h="لا شيء يغادر جهازك.",
-    design_points=["بلا حساب.", "بلا خوادم خاصة بنا.", "بلا تحليلات."],
-    design_p="قراءة النص والتغطية والترجمة والوصف، كلها تحدث على جهاز Mac الخاص بك، بأدوات Apple نفسها. لا يُرفع شيء، إلا إذا شغّلت «المزامنة» مع جهاز iPhone: عندها تمرّ نسخ مغطّاة عبر iCloud الخاص بك.",
+    design_points=["بلا حساب.", "بلا إعلانات.", "بلا تحليلات."],
+    design_p="قراءة النص والتغطية والترجمة والوصف، كلها تحدث على جهاز Mac الخاص بك، بأدوات Apple نفسها. لا يُرفع شيء إلا إذا طلبت ذلك: «نسخ الرابط» يرسل تلك الصورة وحدها، و«المزامنة» مع جهاز iPhone ترسل نسخًا مغطّاة عبر iCloud الخاص بك.",
     design_link="اقرأ سياسة الخصوصية",
 
     close_h="علّق أول لقطة شاشة لك.",
