@@ -1,0 +1,9 @@
+/* The questions macOS asks before Snapfly may watch a folder, use the
+   microphone or ask a browser which page is open. The English ones are
+   written into Info.plist by scripts/build-app.sh; change both together. */
+
+"NSAppleEventsUsageDescription" = "Snapfly 会询问浏览器当前打开的是哪个页面，以便只在 ChatGPT 等聊天网站上显示发送按钮。";
+"NSDesktopFolderUsageDescription" = "Snapfly 会关注 macOS 保存截图的文件夹，以便把截图挂到晾衣绳上。";
+"NSDocumentsFolderUsageDescription" = "Snapfly 会关注你选择的文件夹，以便把新图片挂到晾衣绳上。";
+"NSDownloadsFolderUsageDescription" = "Snapfly 会关注你选择的文件夹，以便把新图片挂到晾衣绳上。";
+"NSMicrophoneUsageDescription" = "只有在“设置 › 通用”中选择了麦克风时，Snapfly 才会在屏幕录制时录下你的声音。";
