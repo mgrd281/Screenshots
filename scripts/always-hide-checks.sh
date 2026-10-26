@@ -55,6 +55,9 @@ xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -destination "id=$devi
   -skip-testing:SnapflyUITests/ScanUITests -resultBundlePath build/always-hide.xcresult CODE_SIGNING_ALLOWED=NO \
   test-without-building || tests=$?
 
+# The frames begin from a fresh install: a PDF project the tests left open
+# would open again over the sample.
+xcrun simctl uninstall "$device" "$bundle" >/dev/null 2>&1 || true
 xcrun simctl install "$device" "$app"
 
 # A frame of a state, as the sample opens it: on a device, in an
