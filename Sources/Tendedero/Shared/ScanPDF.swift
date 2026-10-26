@@ -8,7 +8,8 @@ import Foundation
 ///
 /// The words are set in `ScanFont`, a font of one empty glyph, each
 /// character by its UTF-16 unit, with a map back to the characters, so they
-/// are found in every script: German, Turkish, Arabic, Chinese alike. A word
+/// are found in every script: German, Turkish, Arabic, Chinese alike, a
+/// right-to-left word in the order it stands from the left (`visual`). A word
 /// with a character beyond those units (an emoji) is left out of the text,
 /// never written changed, and stays in the picture.
 enum ScanPDF {
@@ -174,7 +175,10 @@ enum ScanPDF {
                      "/Im0 Do", "Q"]
         let placed = page.words.compactMap { word -> String? in
             guard let units = units(word.text) else { return nil }
-            let shown = units.reversed().drop { $0 == 0x20 }.count
+            // As the word stands from the left: a right-to-left word's space comes first.
+            let codes = visual(units)
+            let before = codes.prefix { $0 == 0x20 }.count
+            let shown = codes.count - before - codes.reversed().prefix { $0 == 0x20 }.count
             let left: CGFloat = picture.minX + word.box.minX * picture.width
             let bottom: CGFloat = picture.minY + word.box.minY * picture.height
             let across: CGFloat = word.box.width * picture.width, high: CGFloat = word.box.height * picture.height
@@ -183,9 +187,11 @@ enum ScanPDF {
             let size: CGFloat = high
             let natural: CGFloat = CGFloat(shown * ScanFont.advance) * size / 1000
             let stretch: CGFloat = min(max(across / natural * 100, 10), 1000)
+            // A space before the word stands left of its box.
+            let start: CGFloat = left - CGFloat(before * ScanFont.advance) * size / 1000 * stretch / 100
             let baseline: CGFloat = bottom + CGFloat(ScanFont.descent) / 1000 * size
-            let hex = units.map { String(format: "%04X", $0) }.joined()
-            return "/F1 \(text(size)) Tf \(text(stretch)) Tz 1 0 0 1 \(text(left)) \(text(baseline)) Tm <\(hex)> Tj"
+            let hex = codes.map { String(format: "%04X", $0) }.joined()
+            return "/F1 \(text(size)) Tf \(text(stretch)) Tz 1 0 0 1 \(text(start)) \(text(baseline)) Tm <\(hex)> Tj"
         }
         if !placed.isEmpty {
             lines += ["BT", "3 Tr"] + placed + ["ET"]
@@ -205,6 +211,154 @@ enum ScanPDF {
             out.append(UInt16(scalar.value))
         }
         return out
+    }
+
+    // MARK: Right to left
+
+    /// A word's codes in the order they stand on the page from the left, as
+    /// most PDFs hold right-to-left text and readers turn it back (PDFKit,
+    /// poppler, pypdf): a word with Arabic or Hebrew letters as the Unicode
+    /// bidirectional algorithm lays it out in a right-to-left line, its
+    /// letters from the left, its numbers and Latin letters reading on as
+    /// they do; any other word as it is.
+    static func visual(_ units: [UInt16]) -> [UInt16] {
+        var kinds = units.map(direction(of:))
+        guard kinds.contains(where: { $0 == .right || $0 == .arabicLetter }) else { return units }
+        // A mark is of the kind of the letter it is on (W1).
+        for index in kinds.indices where kinds[index] == .mark {
+            kinds[index] = index == 0 ? .right : kinds[index - 1]
+        }
+        // A European number after Arabic letters is an Arabic one (W2);
+        // Arabic letters run right to left (W3).
+        var strong = Direction.right
+        for index in kinds.indices {
+            switch kinds[index] {
+            case .left, .right, .arabicLetter: strong = kinds[index]
+            case .european where strong == .arabicLetter: kinds[index] = .arabicNumber
+            default: break
+            }
+            if kinds[index] == .arabicLetter { kinds[index] = .right }
+        }
+        // One separator between two numbers of a kind is theirs (W4), a
+        // sign such as % or € beside a European number is its (W5), and the
+        // rest are neutral (W6).
+        for index in kinds.indices.dropFirst().dropLast() {
+            let previous = kinds[index - 1], next = kinds[index + 1]
+            switch kinds[index] {
+            case .separator where previous == .european && next == .european:
+                kinds[index] = .european
+            case .common where previous == next && (previous == .european || previous == .arabicNumber):
+                kinds[index] = previous
+            default:
+                break
+            }
+        }
+        for index in kinds.indices where kinds[index] == .european {
+            var other = index - 1
+            while other >= 0, kinds[other] == .terminator {
+                kinds[other] = .european
+                other -= 1
+            }
+            other = index + 1
+            while other < kinds.count, kinds[other] == .terminator {
+                kinds[other] = .european
+                other += 1
+            }
+        }
+        kinds = kinds.map { [.separator, .terminator, .common].contains($0) ? .neutral : $0 }
+        // A European number after Latin letters runs as they do (W7).
+        strong = .right
+        for index in kinds.indices {
+            switch kinds[index] {
+            case .left, .right: strong = kinds[index]
+            case .european where strong == .left: kinds[index] = .left
+            default: break
+            }
+        }
+        // Neutrals between two of one direction take it, numbers counting as
+        // right to left; any others the line's, right to left (N1, N2).
+        var index = 0
+        while index < kinds.count {
+            guard kinds[index] == .neutral else {
+                index += 1
+                continue
+            }
+            var end = index
+            while end < kinds.count, kinds[end] == .neutral { end += 1 }
+            let previous: Direction = index == 0 || kinds[index - 1] != .left ? .right : .left
+            let next: Direction = end == kinds.count || kinds[end] != .left ? .right : .left
+            for neutral in index..<end { kinds[neutral] = previous == next ? previous : .right }
+            index = end
+        }
+        // What runs left to right keeps its order, and the whole is turned round (L2).
+        var out = units
+        index = 0
+        while index < out.count {
+            guard kinds[index] != .right else {
+                index += 1
+                continue
+            }
+            var end = index
+            while end < out.count, kinds[end] != .right { end += 1 }
+            out[index..<end].reverse()
+            index = end
+        }
+        return out.reversed()
+    }
+
+    /// Which way a character runs, as the bidirectional algorithm says, for
+    /// what scanned words hold.
+    enum Direction: Equatable {
+        /// L, R and AL: letters left to right, right to left, and Arabic ones.
+        case left, right, arabicLetter
+        /// EN and AN: European numbers and Arabic ones.
+        case european, arabicNumber
+        /// ES, ET and CS: a plus or minus; a currency or percent sign; a comma, point, slash or colon.
+        case separator, terminator, common
+        /// NSM: a mark on the letter before it.
+        case mark
+        /// Spaces and the other signs.
+        case neutral
+    }
+
+    static func direction(of unit: UInt16) -> Direction {
+        switch unit {
+        case 0x30...0x39, 0xB2, 0xB3, 0xB9, 0x06F0...0x06F9, 0x2070, 0x2074...0x2079, 0x2080...0x2089, 0xFF10...0xFF19:
+            return .european
+        case 0x0600...0x0605, 0x0660...0x0669, 0x066B, 0x066C, 0x06DD, 0x08E2:
+            return .arabicNumber
+        case 0x2B, 0x2D, 0x207A, 0x207B, 0x208A, 0x208B, 0x2212, 0xFB29, 0xFE62, 0xFE63, 0xFF0B, 0xFF0D:
+            return .separator
+        case 0x23...0x25, 0xA2...0xA5, 0xB0, 0xB1, 0x0609, 0x060A, 0x066A, 0x2030...0x2034, 0x20A0...0x20CF, 0x2213,
+             0xFE5F, 0xFE69, 0xFE6A, 0xFF03...0xFF05, 0xFFE0, 0xFFE1, 0xFFE5, 0xFFE6:
+            return .terminator
+        case 0x2C, 0x2E, 0x2F, 0x3A, 0xA0, 0x060C, 0x202F, 0x2044, 0xFE50, 0xFE52, 0xFE55, 0xFF0C, 0xFF0E, 0xFF0F, 0xFF1A:
+            return .common
+        case 0x200E:
+            return .left
+        case 0x200F:
+            return .right
+        default:
+            break
+        }
+        guard let scalar = Unicode.Scalar(unit) else { return .neutral }
+        let category = scalar.properties.generalCategory
+        if category == .nonspacingMark || category == .enclosingMark { return .mark }
+        switch unit {
+        case 0x0590...0x05FF, 0x07C0...0x085F, 0xFB1D...0xFB4F:
+            return .right
+        case 0x0600...0x07BF, 0x0860...0x08FF, 0xFB50...0xFDFF, 0xFE70...0xFEFE:
+            return .arabicLetter
+        default:
+            break
+        }
+        switch category {
+        case .uppercaseLetter, .lowercaseLetter, .titlecaseLetter, .modifierLetter, .otherLetter, .spacingMark,
+             .decimalNumber, .letterNumber:
+            return .left
+        default:
+            return .neutral
+        }
     }
 
     // MARK: Pictures

@@ -603,16 +603,17 @@ stretched (Tz) to the box's width. Only a word with a character beyond
 those units (an emoji) or a control character is left out of the text; it
 stays in the picture.
 
-**Right to left.** Arabic and Hebrew words are written in reading order,
-each at its place. Apple's
-PDFKit, which the iPhone's Files and the Mac's Preview read with, takes
-them in that order (`testPDFKitFindsTheWordsInEveryScript`, on the Mac in
-CI). Readers that turn right-to-left text round themselves, because most
-PDFs hold it in the order it is drawn, show such a word backwards: on
-Linux, pdftotext (poppler) and pypdf 6.17.0 do; pdfminer.six reads it in
-order. Chrome's and Firefox's readers are said to do as poppler does (not
-tried). Latin, Greek, Cyrillic, Chinese, Japanese and Korean read alike in
-every reader tried.
+**Right to left.** An Arabic or Hebrew word is written in the order it
+stands on the page from the left (`ScanPDF.visual`: the Unicode
+bidirectional algorithm for a right-to-left line, its letters from the
+left, a number or Latin letters in it reading on as they do), as most PDFs
+hold such text and readers turn it back. Written in reading order, Apple's
+PDFKit, which the iPhone's Files and the Mac's Preview read with, read it
+backwards and did not find it (CI, October 2026). On Linux, pdftotext
+(poppler) and pypdf 6.17.0 read such words right; pypdf reads a two-word
+line ("شكرا جزيلا") in order too. pdfminer.six, which turns nothing round,
+shows them backwards. Latin, Greek, Cyrillic, Chinese, Japanese and Korean
+read alike in every reader tried.
 
 ### What it does with the text
 
@@ -708,13 +709,18 @@ every reader tried.
 ### Results
 
 - **Linux**, `swift test` on the scan's files in a package outside the
-  repository: `ScanReadingTests` 18, `ScanPDFTests` 12 and `ScanFontTests`
+  repository: `ScanReadingTests` 18, `ScanPDFTests` 14 and `ScanFontTests`
   5, all passing, with a check of the lab's own that writes a sample PDF.
 - **The font**: fontTools 4.53.1 opens all eleven of its tables: two
   glyphs, both 500 wide.
 - **A sample PDF** with "Rechnung", "Straße", "Grüße", "Doğan", "İstanbul",
   "مرحبا", "بالعالم", "Москва", "東京都" and "서울": pdftotext, pypdf and
-  pdfminer.six find every word; the two Arabic ones as said above.
+  pdfminer.six find every word. A second with right-to-left lines (Arabic
+  and Hebrew words, two to a line, a price beside a word, a year, a word
+  in brackets): pdftotext and pypdf read every word right but one that
+  holds letters and a number ("رقم:12"), whose colon pdftotext puts after
+  the number and whose number pypdf leaves out; pdfminer.six reads them
+  backwards, as said above.
 - **Strings**: `check-strings.swift` passes in all 13 languages.
 
 ### Checked on the Mac in CI, not here
@@ -770,7 +776,7 @@ every reader tried.
   made-up pages is checked (`ScanReadingVisionTests`); for real ones it is
   not, by rule. A made-up letter whose lines were broken short by hand
   keeps them as lines rather than running them on.
-- Phrase search in right-to-left text: a reader that orders a line by
-  where its words stand would take an Arabic line's words from the left.
-  Single words are what the checks search for.
+- How PDFKit orders the words of an Arabic line: the check reports it as a
+  notice on the build ("PDFKIT LINE") and asserts each word, not their
+  order. So phrase search in right-to-left text is not verified.
 - Real documents: none, by rule. Everything here is made up.
