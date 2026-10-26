@@ -25,6 +25,9 @@ final class StudioEditor: NSObject, NSWindowDelegate {
     private var waiting: URL?
     /// Cancel was clicked: the work goes back to how it was kept.
     private var discarding = false
+    /// When the recording open last changed, as Studio opened it: trimmed
+    /// meanwhile, its work is kept as the trim moved it, not as Studio had it.
+    private var openedVersion: Date?
 
     /// Opens a recording in Studio, as it was left: when a video was last
     /// saved from it, or its window last closed. While a video is being
@@ -67,6 +70,7 @@ final class StudioEditor: NSObject, NSWindowDelegate {
 
     private func show(_ model: StudioModel) {
         window?.close()
+        openedVersion = Self.version(of: model.url)
         let name = model.url.deletingPathExtension().lastPathComponent
         let view = StudioEditorView(model: model, title: name) { [weak self] save in
             if save { self?.save(model) } else { self?.cancel() }
@@ -103,13 +107,19 @@ final class StudioEditor: NSObject, NSWindowDelegate {
         window?.close()
     }
 
+    /// When a file last changed, to tell a recording trimmed meanwhile.
+    private static func version(of url: URL) -> Date? {
+        (try? FileManager.default.attributesOfItem(atPath: url.path))?[.modificationDate] as? Date
+    }
+
     func windowWillClose(_ notification: Notification) {
         guard (notification.object as? NSWindow) === window else { return }
         export?.set()
         export = nil
         // Closed any way but Cancel, by its close button or for another
-        // recording, the work is kept for next time, as Save Video keeps it.
-        if let model, !discarding, model.hasChanges {
+        // recording, the work is kept for next time, as Save Video keeps it;
+        // unless the recording was trimmed meanwhile, which moved it.
+        if let model, !discarding, model.hasChanges, Self.version(of: model.url) == openedVersion {
             model.end()
             StudioStore.setProject(model.project, for: model.url)
         }

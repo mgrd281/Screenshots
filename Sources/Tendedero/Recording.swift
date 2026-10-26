@@ -145,8 +145,9 @@ final class Recording {
     /// stopping on its way, is left half written. Written in pieces, it
     /// plays up to its last few seconds: at launch it comes out of hiding
     /// under a name like a recording's and hangs, and a note says so. One
-    /// that cannot be read is left as it is; one with nothing in it goes,
-    /// as does a sound mix cut short, whose recording is still there.
+    /// that cannot be read goes to the Trash, where it can be found still,
+    /// rather than taking room in hiding for ever; one with nothing in it
+    /// goes, as does a sound mix cut short, whose recording is still there.
     static func cleanUp() {
         let folders = [Inbox.legacyFolder, Inbox.folder] + (Workspace.shared.isOn ? [Workspace.shared.landing] : [])
         Task { @MainActor in
@@ -184,7 +185,8 @@ final class Recording {
                 case .empty:
                     try? fm.removeItem(at: file)
                 case .unreadable:
-                    log.error("A recording cut short could not be read, so it was left as it is")
+                    log.error("A recording cut short could not be read, so it went to the Trash")
+                    try? fm.trashItem(at: file, resultingItemURL: nil)
                 }
             }
         }
