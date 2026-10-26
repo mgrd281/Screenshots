@@ -298,7 +298,7 @@
 "Photos that leave the line stay here until you remove them." = "Photos that leave the line stay here until you remove them.";
 "Clear the history?" = "Clear the history?";
 "Clear History" = "Clear History";
-"The photos kept in it go to the Trash." = "The photos kept in it go to the Trash.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "The photos kept in it go to the Trash, and the Sent list is emptied too.";
 "No history yet" = "No history yet";
 "Photos that leave the line stay here for %d days." = "Photos that leave the line stay here for %d days.";
 "History is off. Turn it on in Settings, under Line." = "History is off. Turn it on in Settings, under Line.";

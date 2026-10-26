@@ -298,7 +298,7 @@
 "Photos that leave the line stay here until you remove them." = "İpdən çıxan şəkillər sən silənə qədər burada qalır.";
 "Clear the history?" = "Tarixçə təmizlənsin?";
 "Clear History" = "Tarixçəni təmizlə";
-"The photos kept in it go to the Trash." = "İçində saxlanan şəkillər Zibil qutusuna gedir.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "İçində saxlanan şəkillər Zibil qutusuna gedir, “Göndərilənlər” siyahısı da boşaldılır.";
 "No history yet" = "Hələ tarixçə yoxdur";
 "Photos that leave the line stay here for %d days." = "İpdən çıxan şəkillər burada %d gün qalır.";
 "History is off. Turn it on in Settings, under Line." = "Tarixçə söndürülüb. Onu Ayarlarda, İp bölməsində yandır.";

@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "Fotos, die die Leine verlassen, bleiben hier, bis du sie entfernst.";
 "Clear the history?" = "Verlauf löschen?";
 "Clear History" = "Verlauf löschen";
-"The photos kept in it go to the Trash." = "Die darin aufbewahrten Fotos kommen in den Papierkorb.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "Die darin aufbewahrten Fotos kommen in den Papierkorb, und die Liste „Gesendet“ wird auch geleert.";
 "No history yet" = "Noch kein Verlauf";
 "Photos that leave the line stay here for %d days." = "Fotos, die die Leine verlassen, bleiben hier %d Tage.";
 "History is off. Turn it on in Settings, under Line." = "Der Verlauf ist aus. Schalte ihn in den Einstellungen unter Leine ein.";

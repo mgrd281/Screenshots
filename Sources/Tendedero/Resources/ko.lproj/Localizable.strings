@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "빨랫줄에서 내려간 사진은 직접 지울 때까지 여기에 남아요.";
 "Clear the history?" = "기록을 지울까요?";
 "Clear History" = "기록 지우기";
-"The photos kept in it go to the Trash." = "기록에 보관된 사진은 휴지통으로 이동해요.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "기록에 보관된 사진은 휴지통으로 이동하고, ‘보낸 항목’ 목록도 비워져요.";
 "No history yet" = "아직 기록이 없어요";
 "Photos that leave the line stay here for %d days." = "빨랫줄에서 내려간 사진은 여기에 %d일 동안 남아요.";
 "History is off. Turn it on in Settings, under Line." = "기록이 꺼져 있어요. 설정의 빨랫줄에서 켜세요.";

@@ -298,7 +298,7 @@
 "Photos that leave the line stay here until you remove them." = "रस्सी से हटने वाली फ़ोटो तब तक यहाँ रहती हैं जब तक आप उन्हें न हटाएँ।";
 "Clear the history?" = "इतिहास साफ़ करें?";
 "Clear History" = "इतिहास साफ़ करें";
-"The photos kept in it go to the Trash." = "इसमें रखी फ़ोटो ट्रैश में चली जाती हैं।";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "इसमें रखी फ़ोटो ट्रैश में चली जाती हैं, और “भेजे गए” सूची भी खाली हो जाती है।";
 "No history yet" = "अभी कोई इतिहास नहीं";
 "Photos that leave the line stay here for %d days." = "रस्सी से हटने वाली फ़ोटो यहाँ %d दिन रहती हैं।";
 "History is off. Turn it on in Settings, under Line." = "इतिहास बंद है। इसे सेटिंग्स में, रस्सी के नीचे चालू करें।";

@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "الصور التي تخرج من الحبل تبقى هنا حتى تحذفها.";
 "Clear the history?" = "مسح السجل؟";
 "Clear History" = "مسح السجل";
-"The photos kept in it go to the Trash." = "الصور المحفوظة فيه تذهب إلى سلة المهملات.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "الصور المحفوظة فيه تذهب إلى سلة المهملات، وتُفرَّغ قائمة «المُرسَل» أيضًا.";
 "No history yet" = "لا يوجد سجل بعد";
 "Photos that leave the line stay here for %d days." = "الصور التي تخرج من الحبل تبقى هنا %d يومًا.";
 "History is off. Turn it on in Settings, under Line." = "السجل متوقف. شغّله من الإعدادات، تحت الحبل.";

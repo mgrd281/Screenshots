@@ -218,7 +218,8 @@ private struct HistoryView: View {
             Button(L("Clear History"), role: .destructive) { History.clear() }
             Button(L("Cancel"), role: .cancel) {}
         } message: {
-            Text(L("The photos kept in it go to the Trash."))
+            // Clearing empties both lists, the photos and what was sent where.
+            Text(L("The photos kept in it go to the Trash, and the Sent list is emptied too."))
         }
     }
 

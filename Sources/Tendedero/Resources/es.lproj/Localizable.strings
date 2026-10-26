@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "Las fotos que salen de la cuerda se quedan aquí hasta que las quites.";
 "Clear the history?" = "¿Borrar el historial?";
 "Clear History" = "Borrar historial";
-"The photos kept in it go to the Trash." = "Las fotos guardadas en él van a la Papelera.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "Las fotos guardadas en él van a la Papelera, y la lista «Enviados» también se vacía.";
 "No history yet" = "Aún no hay historial";
 "Photos that leave the line stay here for %d days." = "Las fotos que salen de la cuerda se quedan aquí %d días.";
 "History is off. Turn it on in Settings, under Line." = "El historial está desactivado. Actívalo en Ajustes, en Cuerda.";

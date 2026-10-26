@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "离开晾衣绳的照片会一直保留在这里，直到你移除。";
 "Clear the history?" = "要清除历史记录吗？";
 "Clear History" = "清除历史记录";
-"The photos kept in it go to the Trash." = "其中保留的照片会移到废纸篓。";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "其中保留的照片会移到废纸篓，“已发送”列表也会被清空。";
 "No history yet" = "还没有历史记录";
 "Photos that leave the line stay here for %d days." = "离开晾衣绳的照片会在这里保留 %d 天。";
 "History is off. Turn it on in Settings, under Line." = "历史记录已关闭。请在“设置”的“晾衣绳”中打开。";

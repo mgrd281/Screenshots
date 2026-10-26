@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "ロープから外れた写真は、削除するまでここに残ります。";
 "Clear the history?" = "履歴を消去しますか?";
 "Clear History" = "履歴を消去";
-"The photos kept in it go to the Trash." = "履歴に保存された写真はゴミ箱に移動します。";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "履歴に保存された写真はゴミ箱に移動し、「送信済み」の一覧も空になります。";
 "No history yet" = "履歴はまだありません";
 "Photos that leave the line stay here for %d days." = "ロープから外れた写真はここに%d日間残ります。";
 "History is off. Turn it on in Settings, under Line." = "履歴はオフです。「設定」の「ロープ」でオンにしてください。";

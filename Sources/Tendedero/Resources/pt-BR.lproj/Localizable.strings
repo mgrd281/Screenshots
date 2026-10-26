@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "As fotos que saem do varal ficam aqui até você removê-las.";
 "Clear the history?" = "Limpar o histórico?";
 "Clear History" = "Limpar histórico";
-"The photos kept in it go to the Trash." = "As fotos guardadas nele vão para o Lixo.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "As fotos guardadas nele vão para o Lixo, e a lista “Enviados” também é esvaziada.";
 "No history yet" = "Ainda não há histórico";
 "Photos that leave the line stay here for %d days." = "As fotos que saem do varal ficam aqui por %d dias.";
 "History is off. Turn it on in Settings, under Line." = "O histórico está desativado. Ative-o em Ajustes, em Varal.";
