@@ -34,6 +34,12 @@ keeps a download of each version.
   Back Tap no longer waits for Apple Intelligence or the AI assistant.
 - On the iPhone, a copy made without covers stays on this iPhone (not on a
   Mac or iPad nearby) and leaves the clipboard after ten minutes.
+- Share links take at most 1.2 GB a day from everyone together and ten
+  uploads a minute from one place, as uploads need no account; a pairing
+  code's record in iCloud can no longer be listed by anyone.
+- On the iPhone, Review reads a long scan's pages one after another, and a
+  change in Protect Picture no longer holds the screen while its copy is
+  made.
 - Fixes: a PDF cropped with text beyond its page no longer stops Snapfly;
   the share extension keeps within its memory with large photos and
   deletes its file when cancelled; what Apple Intelligence or the AI

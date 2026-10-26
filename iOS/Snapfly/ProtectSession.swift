@@ -147,6 +147,16 @@ final class ProtectSession: ObservableObject {
         running = Task { await run() }
     }
 
+    /// Waits until the places are found and the first copy is made, or it
+    /// failed, twenty seconds at most; not for Apple Intelligence, which
+    /// reads along after.
+    func firstPass() async {
+        for _ in 0..<200 where !Task.isCancelled {
+            if hasFailed || found && !making && png != nil { return }
+            try? await Task.sleep(for: .milliseconds(100))
+        }
+    }
+
     /// Starts over, after a failure.
     func retry() {
         running?.cancel()
@@ -479,16 +489,18 @@ final class ProtectSession: ObservableObject {
         making = true
         let areas = plan.covered, left = plan.left
         let chosen = chosen, rules = rules, style = style
-        let made = await Self.background { () -> (image: CGImage, added: [Finder.Area], holds: Bool)? in
+        // The PNG is made here too, off the main thread, so a change never holds the screen up.
+        let made = await Self.background { () -> (image: CGImage, added: [Finder.Area], holds: Bool, png: Data?)? in
             guard let done = Finder.finish(image, covering: areas, leaving: left, chosen, rules: rules, style: style)
             else { return nil }
             let places = Finder.checked(areas + done.added, aspect: CGFloat(image.width) / CGFloat(max(1, image.height)))
             if Finder.coversHold(original: image, covered: done.image, areas: places) {
-                return (done.image, done.added, true)
+                return (done.image, done.added, true, CoveredCopy.png(done.image))
             }
             // A look that let something through is made again in ink, the surest.
             guard let ink = Finder.cover(image, areas: areas + done.added, style: .ink) else { return nil }
-            return (ink, done.added, Finder.coversHold(original: image, covered: ink, areas: places))
+            let holds = Finder.coversHold(original: image, covered: ink, areas: places)
+            return (ink, done.added, holds, holds ? CoveredCopy.png(ink) : nil)
         }
         guard mine == generation, !Task.isCancelled else { return false }
         making = false
@@ -502,7 +514,7 @@ final class ProtectSession: ObservableObject {
         }
         plan.add(found: made.added)
         copy = UIImage(cgImage: made.image)
-        png = Covering.png(made.image)
+        png = made.png
         return png != nil
     }
 

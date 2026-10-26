@@ -888,8 +888,13 @@ struct ProtectView: View {
     /// pages' dots say what is open everywhere.
     private func readEveryPage() {
         guard isReview else { return }
-        for page in scans.pages where page.state == .ready {
-            scans.session(page.id).start()
+        let waiting = scans.pages.filter { $0.state == .ready }.map { scans.session($0.id) }
+        // One after another, so a long scan never reads all its pages at once.
+        Task {
+            for session in waiting {
+                session.start()
+                await session.firstPass()
+            }
         }
     }
 
