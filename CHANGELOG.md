@@ -65,9 +65,10 @@ keeps a download of each version.
 - Share links take at most 1.2 GB a day from everyone together and ten
   uploads a minute from one place, as uploads need no account; a pairing
   code's record in iCloud can no longer be listed by anyone.
-- On the iPhone, Review reads a long scan's pages one after another, and a
-  change in Protect Picture no longer holds the screen while its copy is
-  made.
+- On the iPhone, a long scan takes much less memory: each camera page is
+  kept as a JPEG once it is made, and a covered PDF is made a page at a
+  time; Review reads the pages one after another, and a change in Protect
+  Picture no longer holds the screen while its copy is made.
 - On the iPhone, the AI assistant's messages send you to More › AI
   Assistant, where it is set up, not to Settings; a PDF project's camera
   that cannot scan says why; the text sheet's warnings use the deeper

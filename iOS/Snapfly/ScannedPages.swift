@@ -82,8 +82,9 @@ final class ScannedPages: ObservableObject {
         /// already; a photo from Photos only while its page is made or its
         /// corners are set, kept otherwise as Photos gave it (`data`).
         fileprivate(set) var source: CGImage?
-        /// A photo as Photos gave it, decoded again whenever its page is made.
-        let data: Data?
+        /// A photo as Photos gave it, decoded again whenever its page is made;
+        /// a camera's page as a JPEG, once its page is made.
+        fileprivate(set) var data: Data?
         /// The photo's lens, in pixels, where its notes say, for the page's
         /// true shape; read when the page is first made.
         fileprivate(set) var focal: Double?
@@ -400,6 +401,17 @@ final class ScannedPages: ObservableObject {
         }
     }
 
+    /// A camera's picture as it came, written as a JPEG off the main thread,
+    /// then let go; decoded again when its page is made anew.
+    private func keepSmall(_ id: UUID, source: CGImage, job: Int) {
+        Task {
+            let jpeg = await Task.detached(priority: .utility) { ScanCleaner.jpeg(source, quality: 0.95) }.value
+            guard let jpeg, let at = index(of: id), pages[at].job == job, pages[at].data == nil else { return }
+            pages[at].data = jpeg
+            pages[at].source = nil
+        }
+    }
+
     private func prepare(_ id: UUID) async {
         guard let first = index(of: id) else { return }
         improving = first + 1
@@ -465,6 +477,9 @@ final class ScannedPages: ObservableObject {
         pages[done].state = .ready
         // A photo from Photos is let go now, kept as Photos gave it.
         if pages[done].data != nil { pages[done].source = nil }
+        // A camera's page is kept as a JPEG from now on, so a long scan does
+        // not hold every picture as it came, whole, in memory.
+        if pages[done].data == nil, pages[done].origin == .camera { keepSmall(id, source: source, job: job) }
         // An editor open on it keeps its covers on the page in its new colours.
         if colorsOnly, let session = sessions[id] { session.replace(prepared.cleaned) }
         settle(id)
