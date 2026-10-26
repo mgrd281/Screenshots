@@ -272,6 +272,8 @@
 "In chat apps" = "채팅 앱에서";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, 메시지, Mail, Outlook 등.";
 "Remove" = "제거";
+"Remove “%@”" = "“%@” 제거";
+"Removed “%@”. Click to put it back." = "“%@”을(를) 제거했습니다. 클릭하면 되돌립니다.";
 "Add a website" = "웹 사이트 추가";
 "Add" = "추가";
 "That isn't a website, or it is in the list already." = "웹 사이트가 아니거나 이미 목록에 있어요.";

@@ -30,7 +30,7 @@ struct AlwaysHidePane: View {
                     DetailRow(detail: detail) {
                         detailRequest = DetailDraft(draft: detail, isNew: false)
                     } remove: {
-                        prefs.removeRule(detail)
+                        prefs.removeRule(detail, named: DetailRow.name(of: detail))
                     }
                 }
                 Menu(L("Add Detail")) {
@@ -56,7 +56,7 @@ struct AlwaysHidePane: View {
                     } enable: { on in
                         prefs.setEnabled(on, rule: rule.id)
                     } remove: {
-                        prefs.removeRule(rule)
+                        prefs.removeRule(rule, named: RuleRow.name(of: rule))
                     }
                 }
                 Menu(L("Add Rule")) {
@@ -201,6 +201,15 @@ private struct DetailRow: View {
         detail.kind == .name ? "\(kindLine), \(OwnDetails.masked(detail))" : OwnDetails.spoken(detail)
     }
 
+    /// The detail as its remove button and the note after it name it: the
+    /// name or the address, or a card or an account by its last digits.
+    static func name(of detail: OwnRule) -> String {
+        switch detail.kind {
+        case .card, .account: OwnDetails.spoken(detail)
+        default: OwnDetails.masked(detail)
+        }
+    }
+
     var body: some View {
         HStack(spacing: 12) {
             DetailTile(kind: detail.kind)
@@ -222,7 +231,7 @@ private struct DetailRow: View {
             }
             .buttonStyle(.borderless)
             .help(L("Remove"))
-            .accessibilityLabel(L("Remove"))
+            .accessibilityLabel(Preferences.removeLabel(Self.name(of: detail)))
         }
         .padding(.vertical, 4)
     }
@@ -236,7 +245,12 @@ private struct RuleRow: View {
     let enable: (Bool) -> Void
     let remove: () -> Void
 
-    private var shown: String { rule.text.trimmingCharacters(in: .whitespaces) }
+    private var shown: String { Self.name(of: rule) }
+
+    /// The rule as its row, its remove button and the note after it name it.
+    static func name(of rule: OwnRule) -> String {
+        rule.text.trimmingCharacters(in: .whitespaces)
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -268,7 +282,7 @@ private struct RuleRow: View {
             }
             .buttonStyle(.borderless)
             .help(L("Remove"))
-            .accessibilityLabel(L("Remove"))
+            .accessibilityLabel(Preferences.removeLabel(Self.name(of: rule)))
         }
         .padding(.vertical, 4)
     }

@@ -591,7 +591,12 @@ design with monospaced digits.
     `.bordered`, at least 128 pt wide, so the buttons down a pane line up as
     one column. A longer label still gets its room. A row in a list is
     removed with a borderless `minus.circle` and its help tag, never a
-    worded button.
+    worded button. VoiceOver hears the row's name with it ("Remove “Lena
+    Hoffmann”", a card by its last four digits), and a done note for 6 s,
+    "Removed “…”. Click to put it back.", puts the row back where it was
+    (`Preferences.offerBack`): the owner's details and rules, the chat apps
+    and websites, saved messages, questions and prompts. A row with nothing
+    written in it goes without a note.
   - **Workspace** (`WorkspacePane`, `folder.fill`, between General and
     Line; absent in the App Store edition) is a grouped `Form`: the switch
     with its two footers (what off means, and the iCloud warning), a warning

@@ -272,6 +272,8 @@
 "In chat apps" = "チャットApp内";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT、Claude、WhatsApp、Telegram、メッセージ、メール、Outlookなど。";
 "Remove" = "削除";
+"Remove “%@”" = "「%@」を削除";
+"Removed “%@”. Click to put it back." = "「%@」を削除しました。クリックすると元に戻します。";
 "Add a website" = "Webサイトを追加";
 "Add" = "追加";
 "That isn't a website, or it is in the list already." = "Webサイトではないか、すでにリストにあります。";

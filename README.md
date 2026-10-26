@@ -483,7 +483,10 @@ nothing follows it, or a label can keep to Same Line or Next Line;
 or, for whoever knows them, a pattern, made on the Mac. A rule's sheet
 covers a made-up example with it as it is typed. Each rule has its own
 switch, and one turned off covers nothing until it is on again; the
-section says how many are on. Your details and
+section says how many are on. A detail or a rule removed by mistake comes
+back with a click on the note that says it went, for a few seconds, as do
+the saved messages, questions, prompts, chat apps and websites under Line.
+Your details and
 rules apply to everything that leaves the line, and to the copies saved
 from Finder. A word that is a person's name also helps Snapfly tell that
 name wherever it is written as a name for sure: covered as Names, Patient

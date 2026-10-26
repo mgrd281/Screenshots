@@ -274,6 +274,8 @@
 "In chat apps" = "चैट ऐप्स में";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook और दूसरे।";
 "Remove" = "हटाएँ";
+"Remove “%@”" = "“%@” हटाएँ";
+"Removed “%@”. Click to put it back." = "“%@” हटाया गया। वापस लाने के लिए क्लिक करें।";
 "Add a website" = "वेबसाइट जोड़ें";
 "Add" = "जोड़ें";
 "That isn't a website, or it is in the list already." = "यह वेबसाइट नहीं है, या पहले से सूची में है।";

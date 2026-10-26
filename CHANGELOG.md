@@ -72,6 +72,11 @@ keeps a download of each version.
 - On the Mac, Remove Key under AI Assistant asks first: Anthropic and
   OpenAI show a key only once, so a key removed by mistake means making a
   new one.
+- On the Mac, a detail or a rule removed under Always Hide comes back with
+  a click on the note that says it went, and so do saved messages,
+  questions, prompts, chat apps and websites under Line. VoiceOver names
+  what each remove button takes away, "Remove “Lena Hoffmann”", instead of
+  "Remove" alone.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

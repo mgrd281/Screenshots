@@ -272,6 +272,8 @@
 "In chat apps" = "Em apps de chat";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Mensagens, Mail, Outlook e outros.";
 "Remove" = "Remover";
+"Remove “%@”" = "Remover “%@”";
+"Removed “%@”. Click to put it back." = "“%@” removido. Clique para colocá-lo de volta.";
 "Add a website" = "Adicionar um site";
 "Add" = "Adicionar";
 "That isn't a website, or it is in the list already." = "Isso não é um site, ou ele já está na lista.";

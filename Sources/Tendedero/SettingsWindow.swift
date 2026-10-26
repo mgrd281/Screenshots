@@ -324,7 +324,16 @@ final class Preferences: ObservableObject {
     }
 
     func removeChatApp(_ bundleID: String) {
+        let apps = chatApps
+        guard let index = apps.firstIndex(where: { $0.bundleID == bundleID }) else { return }
+        let app = apps[index]
         chatApps.removeAll { $0.bundleID == bundleID }
+        offerBack(app.name) { [weak self] in
+            guard let self, !self.chatApps.contains(where: { $0.bundleID == bundleID }) else { return }
+            var apps = self.chatApps
+            apps.insert(app, at: min(index, apps.count))
+            self.chatApps = apps
+        }
     }
 
     var chatSites: [ChatButton.Site] {
@@ -348,7 +357,16 @@ final class Preferences: ObservableObject {
     }
 
     func removeChatSite(_ host: String) {
+        let sites = chatSites
+        guard let index = sites.firstIndex(where: { $0.host == host }) else { return }
+        let site = sites[index]
         chatSites.removeAll { $0.host == host }
+        offerBack(host) { [weak self] in
+            guard let self, !self.chatSites.contains(where: { $0.host == host }) else { return }
+            var sites = self.chatSites
+            sites.insert(site, at: min(index, sites.count))
+            self.chatSites = sites
+        }
     }
 
     /// The button as it looks with these settings, for the preview.
@@ -592,9 +610,16 @@ final class Preferences: ObservableObject {
     @Published var rules = OwnRules.all
     private var rulesSave: Task<Void, Never>?
 
-    func removeRule(_ rule: OwnRule) {
-        rules.removeAll { $0.id == rule.id }
+    /// A detail or a rule taken away, named as its row names it.
+    func removeRule(_ rule: OwnRule, named name: String) {
+        guard let index = rules.firstIndex(where: { $0.id == rule.id }) else { return }
+        rules.remove(at: index)
         saveRules()
+        offerBack(name) { [weak self] in
+            guard let self, !self.rules.contains(where: { $0.id == rule.id }) else { return }
+            self.rules.insert(rule, at: min(index, self.rules.count))
+            self.saveRules()
+        }
     }
 
     /// One of the owner's details or rules, new or changed, kept at once.
@@ -714,8 +739,14 @@ final class Preferences: ObservableObject {
     }
 
     func removeSavedMessage(_ message: SavedMessage) {
-        savedMessages.removeAll { $0.id == message.id }
+        guard let index = savedMessages.firstIndex(where: { $0.id == message.id }) else { return }
+        savedMessages.remove(at: index)
         saveSavedMessages()
+        offerBack(message.text) { [weak self] in
+            guard let self, !self.savedMessages.contains(where: { $0.id == message.id }) else { return }
+            self.savedMessages.insert(message, at: min(index, self.savedMessages.count))
+            self.saveSavedMessages()
+        }
     }
 
     func savedMessagesChanged() {
@@ -746,8 +777,14 @@ final class Preferences: ObservableObject {
     }
 
     func removeQuestion(_ question: AIQuestion) {
-        aiQuestions.removeAll { $0.id == question.id }
+        guard let index = aiQuestions.firstIndex(where: { $0.id == question.id }) else { return }
+        aiQuestions.remove(at: index)
         saveQuestions()
+        offerBack(question.text) { [weak self] in
+            guard let self, !self.aiQuestions.contains(where: { $0.id == question.id }) else { return }
+            self.aiQuestions.insert(question, at: min(index, self.aiQuestions.count))
+            self.saveQuestions()
+        }
     }
 
     func questionsChanged() {
@@ -803,8 +840,18 @@ final class Preferences: ObservableObject {
     }
 
     func removePrompt(_ prompt: AIPrompt) {
-        aiPrompts.removeAll { $0.id == prompt.id }
+        guard let index = aiPrompts.firstIndex(where: { $0.id == prompt.id }) else { return }
+        aiPrompts.remove(at: index)
         savePrompts()
+        // One with neither title nor words goes without a note.
+        let empty = prompt.isBlank && prompt.title.trimmingCharacters(in: .whitespaces).isEmpty
+        offerBack(empty ? "" : prompt.name(number: index + 1)) { [weak self] in
+            // Back in its place, unless nine are there by now.
+            guard let self, !self.aiPrompts.contains(where: { $0.id == prompt.id }),
+                  self.aiPrompts.count < AIPrompts.limit else { return }
+            self.aiPrompts.insert(prompt, at: min(index, self.aiPrompts.count))
+            self.savePrompts()
+        }
     }
 
     /// Keeps the prompts once they say something else than what is kept,
@@ -827,6 +874,33 @@ final class Preferences: ObservableObject {
         let before = OwnRules.fingerprint
         OwnRules.all = rules
         if OwnRules.fingerprint != before { line.readPrivateDetails() }
+    }
+
+    // MARK: Rows taken out
+
+    /// A row taken out of a list here: a note says so for a few seconds,
+    /// and a click on it puts the row back where it was. A row with nothing
+    /// written in it goes without one.
+    private func offerBack(_ name: String, putBack: @escaping () -> Void) {
+        let shown = Self.short(name)
+        guard !shown.isEmpty else { return }
+        Notice.show(String(format: L("Removed “%@”. Click to put it back."), shown), done: true, lasting: 6,
+                    onClick: putBack)
+    }
+
+    /// A row's name, as a note or VoiceOver says it: its first line with
+    /// words, cut short.
+    nonisolated static func short(_ text: String) -> String {
+        let line = text.split(whereSeparator: \.isNewline).map { $0.trimmingCharacters(in: .whitespaces) }
+            .first { !$0.isEmpty } ?? ""
+        return line.count > 40 ? String(line.prefix(39)) + "…" : line
+    }
+
+    /// What a row's remove button says to VoiceOver: Remove, and the row's
+    /// name, so each is told from the others.
+    nonisolated static func removeLabel(_ name: String) -> String {
+        let shown = short(name)
+        return shown.isEmpty ? L("Remove") : String(format: L("Remove “%@”"), shown)
     }
 
     /// Set to bring the window up on Permissions.
@@ -1433,7 +1507,7 @@ private struct ChatAppsSection: View {
                     }
                     .buttonStyle(.borderless)
                     .help(L("Remove"))
-                    .accessibilityLabel(L("Remove"))
+                    .accessibilityLabel(Preferences.removeLabel(app.name))
                 }
             }
             SettingsButton(L("Add App…")) { prefs.addChatApp() }
@@ -1466,7 +1540,7 @@ private struct ChatSitesSection: View {
                     }
                     .buttonStyle(.borderless)
                     .help(L("Remove"))
-                    .accessibilityLabel(L("Remove"))
+                    .accessibilityLabel(Preferences.removeLabel(site.host))
                 }
             }
             HStack {
@@ -1976,7 +2050,7 @@ private struct SavedMessagesSection: View {
                     }
                     .buttonStyle(.borderless)
                     .help(L("Remove"))
-                    .accessibilityLabel(L("Remove"))
+                    .accessibilityLabel(Preferences.removeLabel(message.text))
                 }
             }
             Button(L("Add Message")) { prefs.addSavedMessage() }
@@ -2013,7 +2087,7 @@ private struct AIQuestionsSection: View {
                     }
                     .buttonStyle(.borderless)
                     .help(L("Remove"))
-                    .accessibilityLabel(L("Remove"))
+                    .accessibilityLabel(Preferences.removeLabel(question.text))
                 }
             }
             HStack {
@@ -2069,7 +2143,7 @@ private struct AIPromptsSection: View {
                         }
                         .buttonStyle(.borderless)
                         .help(L("Remove"))
-                        .accessibilityLabel(L("Remove"))
+                        .accessibilityLabel(Preferences.removeLabel(prompt.name(number: index + 1)))
                     }
                 } label: {
                     Text(verbatim: "\(index + 1)").monospacedDigit().foregroundColor(.secondary)

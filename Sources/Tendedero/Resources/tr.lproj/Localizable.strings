@@ -272,6 +272,8 @@
 "In chat apps" = "Sohbet uygulamalarında";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Mesajlar, Mail, Outlook ve diğerleri.";
 "Remove" = "Kaldır";
+"Remove “%@”" = "“%@” kaldır";
+"Removed “%@”. Click to put it back." = "“%@” kaldırıldı. Geri koymak için tıkla.";
 "Add a website" = "Web sitesi ekle";
 "Add" = "Ekle";
 "That isn't a website, or it is in the list already." = "Bu bir web sitesi değil ya da zaten listede.";
