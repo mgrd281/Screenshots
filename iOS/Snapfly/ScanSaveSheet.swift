@@ -507,7 +507,7 @@ struct ScanSaveSheet: View {
     /// VoiceOver reads as its words alone: its symbol only shows it.
     private func noted(_ text: String, failed: Bool) -> some View {
         let symbol: String = failed ? "exclamationmark.triangle.fill" : covered ? "checkmark.circle.fill" : "checkmark.circle"
-        let tint: Color = failed ? Color.orange : covered ? SnapflyTokens.protectTint : Color.secondary
+        let tint: Color = failed ? SnapflyTokens.reviewOpen : covered ? SnapflyTokens.protectTint : Color.secondary
         let line = Label(text, systemImage: symbol)
             .font(.footnote.weight(.semibold))
             .foregroundStyle(tint)

@@ -700,7 +700,8 @@ struct ReviewListSheet: View {
                     if index > 0 { Divider().padding(.leading, 60) }
                     openRow(place)
                         .id(place.id)
-                        .transition(.opacity.combined(with: .move(edge: .leading)))
+                        // A row decided slides away, or only fades with Reduce Motion.
+                        .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .leading)))
                 }
             }
         }
@@ -907,10 +908,12 @@ struct ReviewListSheet: View {
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         Spacer(minLength: 4)
+                        // Pointing on in the reading direction, and down once open, in Arabic too.
                         Image(systemName: "chevron.right")
                             .font(.footnote.weight(.semibold))
                             .foregroundStyle(.tertiary)
                             .rotationEffect(.degrees(coveredOpen ? 90 : 0))
+                            .flipsForRightToLeftLayoutDirection(true)
                             .accessibilityHidden(true)
                     }
                     .padding(.horizontal, 14)

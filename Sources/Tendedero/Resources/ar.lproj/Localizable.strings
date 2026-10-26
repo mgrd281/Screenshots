@@ -749,7 +749,7 @@
 "A short hint, once, the first time something is in reach." = "تلميح قصير، مرة واحدة فقط، أول ما يصبح شيء في متناولك.";
 "About a minute" = "نحو دقيقة";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "في طرف الحبل: ابحث في لقطاتك، أو ألصقها كلها أو نزّلها، أو أنزلها كلها عن الحبل.";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "اختر ما يُخفى في الإعدادات، أعلى قائمة لقطاتك. وهناك أيضًا: تغطية أحدث لقطة بنقرتين على ظهر الآيفون.";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "اختر ما يُخفى في المزيد › ما يُخفى. وفي المزيد أيضًا: تغطية أحدث لقطة بنقرتين على ظهر الآيفون.";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "انقر «التقاط صورة للشاشة» واسحب فوق منطقة. تُعلَّق على الحبل فورًا.";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "انقر عليها فتُنسخ، جاهزة للصق في أي محادثة. أو اسحبها مباشرة إلى محادثة.";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "انقر على أيقونته: لقطات الشاشة والحبل والإعدادات وهذا التعريف، كلها هناك.";
@@ -1430,7 +1430,7 @@
 "Previous" = "السابق";
 "Goes as soon as the copy is ready." = "يُنفَّذ حين تجهز النسخة.";
 "Search words in screenshots" = "ابحث عن كلمات في اللقطات";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "تُوجد الكلمات في اللقطات المقروءة مسبقًا. شغّل «معالجة أسرع للصور» في الإعدادات.";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "لا تُوجد الكلمات والتفاصيل الخاصة إلا في اللقطات المقروءة مسبقًا. تقرؤها «معالجة أسرع للصور» في المزيد › الكشف.";
 "All Screenshots" = "كل اللقطات";
 "With Private Details" = "فيها تفاصيل خاصة";
 "Sort" = "الترتيب";
@@ -1950,3 +1950,8 @@
 "Hide Preview" = "إخفاء المعاينة";
 "Preview hidden" = "المعاينة مخفية";
 "Pages: %d" = "الصفحات: %d";
+"The camera could not scan. Try again." = "تعذّر على الكاميرا المسح. حاول مرة أخرى.";
+"Delete this document?" = "حذف هذا المستند؟";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "تُحذف صفحاته مع كل ما غُطّي عليها. وتبقى الصور والملفات التي جاءت منها كما هي.";
+"Turn off faster picture processing?" = "إيقاف «معالجة أسرع للصور»؟";
+"Size unknown" = "الحجم غير معروف";

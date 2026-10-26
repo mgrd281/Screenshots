@@ -208,12 +208,18 @@ struct PrivacyStatus: View {
         Group {
             switch stage {
             case .failed(let message):
+                // What went wrong wraps onto as many lines as it needs, beside Try Again.
                 HStack(spacing: 8) {
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
-                    Text(message).lineLimit(2)
-                    Button(L("Try Again"), action: retry).fontWeight(.semibold)
+                    Text(message)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button(L("Try Again"), action: retry)
+                        .fontWeight(.semibold)
+                        .fixedSize()
+                        .touchTarget()
                 }
                 .padding(.horizontal, 14)
+                .padding(.vertical, 6)
                 .frame(minHeight: 34)
             case .ready:
                 Button(action: open) { counts }
@@ -224,14 +230,20 @@ struct PrivacyStatus: View {
                     .accessibilityAddTraits(.isButton)
                     .accessibilityIdentifier("review-status")
             default:
+                // The step wraps rather than being cut, at larger text sizes too.
                 HStack(spacing: 8) {
                     ProgressView().controlSize(.small)
-                    Text(step).lineLimit(1)
+                    Text(step)
+                        .fixedSize(horizontal: false, vertical: true)
                     if stage == .intelligence {
-                        Button(L("Don't Wait"), action: dontWait).fontWeight(.semibold)
+                        Button(L("Don't Wait"), action: dontWait)
+                            .fontWeight(.semibold)
+                            .fixedSize()
+                            .touchTarget()
                     }
                 }
                 .padding(.horizontal, 14)
+                .padding(.vertical, 6)
                 .frame(minHeight: 34)
                 .accessibilityElement(children: .combine)
             }
@@ -278,14 +290,15 @@ struct PrivacyStatus: View {
                         }
                         .labelStyle(.titleAndIcon)
                     }
-                    .foregroundStyle(chip ? SnapflyTokens.reviewOpen
-                                     : status.open > 0 && tally.exposed == 0 ? Color.accentColor : Color.orange)
+                    // Orange words in the deeper orange, so they read on the glass.
+                    .foregroundStyle(!chip && status.open > 0 && tally.exposed == 0 ? Color.accentColor
+                                     : SnapflyTokens.reviewOpen)
                     .fontWeight(chip ? .semibold : nil)
                     .contentTransition(.numericText())
                 }
             }
             if chip {
-                Image(systemName: "chevron.right")
+                Image(systemName: "chevron.forward")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.tertiary)
             }
@@ -337,7 +350,9 @@ struct EditorNoteView: View {
                 .foregroundStyle(note.failed ? Color.orange : SnapflyTokens.protect)
             Text(note.text).lineLimit(2)
             if let way = note.retry {
-                Button(L("Try Again")) { retry(way) }.fontWeight(.semibold)
+                Button(L("Try Again")) { retry(way) }
+                    .fontWeight(.semibold)
+                    .touchTarget()
             }
         }
         .font(.footnote.weight(.semibold))
@@ -455,7 +470,7 @@ struct ReviewSheet: View {
                 Spacer()
                 Text(mark.covered ? L("Covered") : L("Not covered"))
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(mark.covered ? SnapflyTokens.protect : Color.orange)
+                    .foregroundStyle(mark.covered ? SnapflyTokens.protect : SnapflyTokens.reviewOpen)
             }
             if let crop = crop(of: mark) {
                 Image(uiImage: crop)
@@ -495,7 +510,7 @@ struct ReviewSheet: View {
                 Button {
                     index = (index - 1 + doubtful.count) % doubtful.count
                 } label: {
-                    Label(L("Previous"), systemImage: "chevron.left").labelStyle(.iconOnly)
+                    Label(L("Previous"), systemImage: "chevron.backward").labelStyle(.iconOnly)
                         .frame(minWidth: 44, minHeight: 44)
                 }
                 .accessibilityLabel(L("Previous"))
@@ -505,7 +520,7 @@ struct ReviewSheet: View {
                 Button {
                     index = (index + 1) % doubtful.count
                 } label: {
-                    Label(L("Next"), systemImage: "chevron.right").labelStyle(.iconOnly)
+                    Label(L("Next"), systemImage: "chevron.forward").labelStyle(.iconOnly)
                         .frame(minWidth: 44, minHeight: 44)
                 }
                 .accessibilityLabel(L("Next"))

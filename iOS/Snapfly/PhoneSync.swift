@@ -210,7 +210,7 @@ struct SyncSection: View {
                 LabeledContent(L("This iPhone")) {
                     if sync.state.needsAttention {
                         Text("\(Image(systemName: "exclamationmark.triangle.fill")) \(sync.state.text)")
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(SnapflyTokens.hideWarning)
                     } else {
                         Text(sync.state.text)
                     }
@@ -368,7 +368,7 @@ struct PairingJoinView: View {
         } footer: {
             if case .failed(let message) = guest.step {
                 Label(message, systemImage: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(SnapflyTokens.hideWarning)
             } else {
                 Text(L("On the Mac, open Snapfly's Settings, then Sync, and click Show Code. A new code shows every 30 seconds."))
             }

@@ -749,7 +749,7 @@
 "A short hint, once, the first time something is in reach." = "何かが初めて使えるようになったときに、一度だけ短いヒントを表示します。";
 "About a minute" = "約1分";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "ロープの端で：スクリーンショットを検索したり、すべてをペーストやダウンロードしたり、すべて外したりできます。";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "何を隠すかは、スクリーンショット一覧の上にある設定で選べます。そこでは、iPhoneの背面をダブルタップして最新のスクリーンショットを隠す方法も設定できます。";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "何を隠すかは「その他 › 隠す内容」で選べます。「その他」では、iPhoneの背面をダブルタップして最新のスクリーンショットを隠す設定もできます。";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "「スクリーンショットを撮る」をクリックして範囲をドラッグします。すぐにロープに掛かります。";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "クリックするとコピーされ、どのチャットにもペーストできます。チャットに直接ドラッグすることもできます。";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "アイコンをクリックすると、スクリーンショット、ロープ、設定、このはじめにのすべてがあります。";
@@ -1430,7 +1430,7 @@
 "Previous" = "前へ";
 "Goes as soon as the copy is ready." = "コピーの準備ができしだい実行します。";
 "Search words in screenshots" = "スクリーンショット内の言葉を検索";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "言葉は事前に読み取ったスクリーンショットから見つかります。設定で「画像処理の高速化」をオンにしてください。";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "言葉と個人情報が見つかるのは、事前に読み取ったスクリーンショットだけです。読み取るのは「その他 › 検出」の「画像処理の高速化」です。";
 "All Screenshots" = "すべてのスクリーンショット";
 "With Private Details" = "個人情報を含む";
 "Sort" = "並べ替え";
@@ -1950,3 +1950,8 @@
 "Hide Preview" = "プレビューを隠す";
 "Preview hidden" = "プレビュー非表示";
 "Pages: %d" = "ページ数：%d";
+"The camera could not scan. Try again." = "カメラでスキャンできませんでした。もう一度お試しください。";
+"Delete this document?" = "この書類を削除しますか？";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "ページは、隠したものと一緒に削除されます。元の写真やファイルはそのままです。";
+"Turn off faster picture processing?" = "画像処理の高速化をオフにしますか？";
+"Size unknown" = "サイズ不明";

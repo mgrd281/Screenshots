@@ -322,7 +322,8 @@ struct AppTiles: View {
 /// them, then Photos, Files and the share sheet as plain tiles of the same
 /// size; they scroll when they don't fit. A tap hands over the copy, with a
 /// light haptic; one tapped before the copy is ready waits, with a spinner,
-/// and goes once it is. Held, each offers the choice of apps.
+/// and goes once it is. Held, each offers the choice of apps. Turned off,
+/// as after a failure, each is dimmed.
 struct AppRail: View {
     @ObservedObject private var apps = SendApps.shared
     let pending: Leaving?
@@ -403,14 +404,16 @@ struct RailTile: View {
 }
 
 /// A rail icon pressed: a little smaller, back on a quick spring; with
-/// Reduce Motion, a little dimmer instead.
+/// Reduce Motion, a little dimmer instead. Off, as after a failure, it is
+/// dimmed, so it doesn't look ready to tap.
 private struct RailPress: ButtonStyle {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed && !reduceMotion ? 0.9 : 1)
-            .opacity(configuration.isPressed && reduceMotion ? 0.6 : 1)
+            .opacity(!isEnabled ? 0.4 : configuration.isPressed && reduceMotion ? 0.6 : 1)
             .animation(reduceMotion ? nil : .spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }

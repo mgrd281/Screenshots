@@ -1009,8 +1009,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
 
 - **Four tabs** in the system's tab bar, in Liquid Glass from iOS 26 on,
   where it shrinks to the tab shown as a page scrolls down: Photos, Scan,
-  Protected and More. Scan opens the system's document camera, or Aus
-  Fotos takes photos of pages: a letter, a form or a receipt is found
+  Protected and More. Scan opens the system's document camera (where it
+  cannot scan, a note says why, as when Snapfly may not use the camera),
+  or Aus Fotos takes photos of pages: a letter, a form or a receipt is found
   and cut from the photo by Vision (its corners set by hand, with a loupe,
   where Vision is not sure), made flat in its own shape, turned upright and
   levelled from its lines of text, then cleaned as a good scanner leaves a
@@ -1055,7 +1056,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   small print reads more surely; otherwise "Detailaufnahme nicht
   übernommen". The covers are then found on the cleaned page. The
   pages wait as small numbered cards, in the order scanned, kept in memory
-  only while the app is open, under the document's kind (Invoice, Letter,
+  only while the app is open (Clear beside them asks before they all go),
+  under the document's kind (Invoice, Letter,
   Form or Receipt) where its words say it, and each opens in **Review**,
   whose one job is checking the covers: its own bar (back, "Prüfen" with
   "Seite 1 von 3", the menu and Next); a status chip ("4 verdeckt · 2 zu
@@ -1165,7 +1167,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   kept on the iPhone (`ScanVeil`: a few cells across, no word readable at
   any size; veiled again while Snapfly is away, for the app switcher, and
   while something on the page is still to check), its name, its pages
-  and the day, which opens it, or, held, shares, renames or deletes it;
+  and the day, which opens it, or, held, shares, renames or, after asking,
+  deletes it;
   Alle anzeigen shows them all. Under the scanned pages, Unter Zuletzt
   behalten keeps them as a PDF project among the documents (kept on this
   iPhone in the project's protected folder, never in a backup), covered
@@ -1214,7 +1217,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   before its fixed ".pdf", how pictures sit on their pages (Original, A4 or
   US Letter, with 10 mm round them, never stretched or cut), the quality
   (High, Medium, Small, 300, 200 or 150 dpi) with how large the file will
-  be, worked out from its own pages, covers (where every save starts) or
+  be, worked out from its own pages (a dash where no page can be drawn for
+  it, as a PDF left locked), covers (where every save starts) or
   none, which keeps a PDF's pages as they are and warns as a scan does, and
   searchable text; then Copy, Save to Files or Share. Covered, every page
   is drawn as a picture with its covers and its words read again from the
@@ -1222,7 +1226,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   of each page. A project is written a moment after each change into
   Snapfly's own storage on the iPhone, with complete file protection and
   never in a backup, and opens again where it was left, even after Snapfly
-  was closed by force; Delete under Zuletzt removes it and its copies.
+  was closed by force; Delete under Zuletzt asks first, then removes it and
+  its copies.
 - **The first run** shows what Snapfly does in under fifteen seconds, on
   three made-up documents of one made-up person, each a standing A4 page
   that looks like a real one, before anything is asked (`FIRST_RUN.md`):
@@ -1265,7 +1270,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
 - **The Photos tab** opens on Snapfly's picture of stacked photos, a page, a chat
   and a landscape with a green photo badge, drawn on the iPhone and showing
   no one's details, over Protect a Photo, a green button that opens any
-  picture from Photos. Where that picture is a photographed paper document
+  picture from Photos (a note says "Opening…" while one comes from
+  iCloud). Where that picture is a photographed paper document
   (Vision is sure of the page, with text on it), and never where Photos
   calls it a screenshot, a card above the page offers to straighten and
   brighten it as a scan is; Clean Up does, the covers are found again on
@@ -1280,7 +1286,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   shield once it was protected;
   holding one offers Cover and Copy, Share or Save. Select, beside See
   All and in it, chooses several as Photos does: a tap each, or from iOS 18
-  on a finger drawn sideways across them, with Select All; then Save
+  on a finger drawn sideways across them, with Select All, the choice's
+  bar rising from the bottom (only fading in with Reduce Motion); then Save
   Covered Copies (one tap) covers each as Settings says, checks it and
   saves it to Photos as a new picture, one after another with how far it
   is and Stop, while Share sends the same copies at once. A copy that
@@ -1290,7 +1297,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   the one it was at. All of them are
   behind See All, which finds them by the words they say (those read ahead
   of time, below), shows only those with private details, protected or not,
-  and puts the newest or the oldest first. From iOS 18 on, a screenshot opens by growing out of its
+  and puts the newest or the oldest first. While none is read ahead of
+  time, a search or With Private Details says why, with a way to Faster
+  picture processing in More › Detection. From iOS 18 on, a screenshot opens by growing out of its
   card. How syncing stands sits beside the name at the top, and opens More.
   Tap a screenshot and it shows at once; what the patterns, the labels and
   the names find is marked a moment later, then the copy is made, read again
@@ -1342,7 +1351,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Details, Copy, Send to Mac while a Mac is there, Full Screen, the choice
   of apps, Clear Hidden by Hand and Reset to Suggestions.
   Tapped before the copy is ready, a way waits and goes once it is; while
-  places are still to check it asks first. Full Screen, or a tap on
+  places are still to check it asks first. After a failure, the capsule
+  says what went wrong in full with Try Again, and the ways out, Copy and
+  Send to Mac are dimmed until then, as there is no copy. Full Screen, or a tap on
   nothing, leaves the picture alone on black; a tap brings everything
   back. Explain, in the menu: with your own Claude or ChatGPT key set up
   (below), it sends the checked protected copy, smaller, and shows word by
@@ -1422,7 +1433,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Power Mode, when the iPhone is warm or short of memory, and while you
   protect a picture. Its page shows how far it is with real numbers, the
   photos only in iCloud, the last update and the room it takes, with
-  Pause, Prepare Now, Delete Local Index and Turn Off, which deletes it.
+  Pause, Prepare Now, Delete Local Index and Turn Off, which deletes it;
+  both ask first.
 - **Cover the Latest Screenshot** is a Shortcuts action that needs no opening
   of the app. Chosen for Back Tap (Settings › Accessibility › Touch › Back Tap
   › Double Tap), a double tap on the back of the iPhone covers the newest

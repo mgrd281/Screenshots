@@ -18,7 +18,7 @@ enum PhoneGuideTarget: Hashable {
 /// it points at and a card beside it. Tapping the real thing moves on;
 /// Next, Back and the cross are always there, and nothing is held back
 /// meanwhile. Offered once, as the first screenshots show; again from
-/// Settings.
+/// More › Help › Introduction.
 @MainActor
 final class PhoneGuide: ObservableObject {
     static let shared = PhoneGuide()
@@ -190,8 +190,9 @@ final class PhoneGuide: ObservableObject {
         progress.save()
     }
 
+    /// Where the choices are on the iPhone: the More tab, as Settings is a tab here.
     static var doneText: String {
-        L("Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone.")
+        L("Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone.")
     }
 
     private func announce(_ text: String) {

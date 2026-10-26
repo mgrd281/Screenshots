@@ -24,6 +24,7 @@ struct PhotosTab: View {
     @State private var presses = 0
     @Environment(\.scenePhase) private var phase
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// How many to a row, as pinched; the home screen shows three rows of
     /// the newest before See All.
@@ -130,14 +131,20 @@ struct PhotosTab: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             if let selection {
                 SelectionBar(count: selection.count, save: { coverChosen(.photos) }, share: { coverChosen(.share) })
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
             }
         }
         .toolbar(selection == nil ? .automatic : .hidden, for: .tabBar)
-        .animation(.snappy, value: selection == nil)
+        .animation(choosing, value: selection == nil)
         .onAppear {
             if !library.shots.isEmpty { guide.offerIfDue() }
         }
+    }
+
+    /// How choosing starts and ends, and its bar comes and goes: on
+    /// `.snappy`, or a short fade with Reduce Motion.
+    private var choosing: Animation {
+        reduceMotion ? SnapflyMotion.calm : .snappy
     }
 
     /// The screenshots chosen, covered as Settings says, one after another,
@@ -145,9 +152,10 @@ struct PhotosTab: View {
     private func coverChosen(_ way: BatchCover.Way) {
         guard let chosen = selection?.chosen, !chosen.isEmpty else { return }
         let assets = library.shots.filter { chosen.contains($0.localIdentifier) }
+        let motion = choosing
         Task {
             let failed = await batch.run(assets, way: way)
-            withAnimation(.snappy) {
+            withAnimation(motion) {
                 if failed.isEmpty { selection = nil } else { selection?.keep(failed) }
             }
         }
@@ -250,14 +258,14 @@ struct PhotosTab: View {
                         .font(.subheadline.weight(.medium))
                         .disabled(batch.running)
                         Button(L("Cancel")) {
-                            withAnimation(.snappy) { self.selection = nil }
+                            withAnimation(choosing) { self.selection = nil }
                         }
                         .font(.subheadline.weight(.semibold))
                         .disabled(batch.running)
                     } else {
                         // Several at once: chosen, then covered with one tap.
                         Button(L("Select")) {
-                            withAnimation(.snappy) { selection = GridSelection() }
+                            withAnimation(choosing) { selection = GridSelection() }
                         }
                         .font(.subheadline.weight(.medium))
                         // Always there: it also finds screenshots by their words.
@@ -294,7 +302,8 @@ struct PhotosTab: View {
                     .background(Color.primary.opacity(0.06), in: Capsule())
             }
             .buttonStyle(.plain)
-            .foregroundStyle(sync.state.needsAttention ? Color.orange : Color.secondary)
+            // Words in the deeper orange, which reads on the light page.
+            .foregroundStyle(sync.state.needsAttention ? SnapflyTokens.reviewOpen : Color.secondary)
         }
     }
 
@@ -305,6 +314,17 @@ struct PhotosTab: View {
     /// a photographed document is told from a screenshot.
     private func open(_ item: PhotosPickerItem) async {
         defer { picked = nil }
+        // A photo kept in iCloud can take a while to come: past a moment, a note
+        // says it is opening, gone once it opens or says why it could not.
+        let opening = L("Opening…")
+        let waiting = Task {
+            try? await Task.sleep(for: .milliseconds(400))
+            if !Task.isCancelled { coverer.show(opening, for: 60) }
+        }
+        defer {
+            waiting.cancel()
+            if coverer.note == opening { coverer.note = nil }
+        }
         guard let data = try? await item.loadTransferable(type: Data.self), let image = Covering.upright(data) else {
             coverer.show(L("The picture could not be read."))
             return

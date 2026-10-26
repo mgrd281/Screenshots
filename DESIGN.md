@@ -87,12 +87,12 @@ colors:
   phone-hide-button-off-text: "#4A5059" # the waiting button's words: 6.5:1 on it; #B4BBC4 in dark (6.8:1)
   phone-hide-field: "#F2F3F5"       # the fields in a sheet, on the sheet's phone-hide-card; #2A2E34 in dark
   phone-hide-field-line: "#E1E4E8"  # between those fields, inset to the words; #3A3F46 in dark
-  phone-hide-warning: "#B35200"     # what is wrong with what was typed: 4.6:1 on its ground; #FFA54D in dark
+  phone-hide-warning: "#B35200"     # what is wrong with what was typed: 4.6:1 on its ground; #FFA54D in dark; also More's other orange words, This iPhone's state when it needs the owner and a pairing code that did not work
   phone-detail-name: "#077A56"      # each kind of detail's tile in the Mac's Always Hide pane (DetailTint), the same in light and dark, its symbol white on it: a name (5.4:1); the iPhone's tiles are all mint
   phone-detail-address: "#1F6FE0"   # an address (4.8:1)
   phone-detail-card: "#D9660B"      # a bank card (3.6:1, over a symbol's 3:1)
   phone-detail-account: "#7C4DDB"   # a bank account (5.3:1)
-  phone-review-open: "#B35200"      # Review: what is still to check, the chip's count, a place's dashed outline over a wash of it at 10%, a page's dot, a fault's tag; 5.2:1 on white; #FFA54D in dark (8.6:1 on black)
+  phone-review-open: "#B35200"      # Review: what is still to check, the chip's count, a place's dashed outline over a wash of it at 10%, a page's dot, a fault's tag; 5.2:1 on white; #FFA54D in dark (8.6:1 on black); also every orange word outside More: the status capsule's open or uncovered count, Not covered in Details, what went wrong under a choice or a save, the sync chip that needs the owner (system orange, 2.2:1 on white, is for glyphs only)
   phone-review-chosen: "#E7F4EE"    # Review's bar: the mint pill under the tool in hand; #11392C in dark
   phone-review-chosen-text: "#075E43" # the tool in hand's glyph and label on it: 6.9:1; #5BD6A6 in dark (7:1)
   phone-scan-warn: "#FFF4E0"        # Save and Share's warning; #3A2A10 in dark
@@ -244,7 +244,9 @@ components:
   phone-glass:
     shadow: "black 12%, radius 10, y 4"   # floating controls before iOS 26: regular material, a 0.5pt hairline of .primary at 8%; Liquid Glass from iOS 26
   phone-status-capsule:
-    height: "34pt"                 # at least; footnote, 14pt in, 6pt under the navigation bar, centred clear of the eye and the apps' column
+    height: "34pt"                 # at least; footnote, 14pt in at the sides and 6pt above and below, 6pt under the navigation bar, centred clear of the eye and the apps' column; what went wrong and the step wrap onto more lines rather than being cut, Try Again and Don't Wait whole beside them
+  phone-touch-target:
+    size: "44pt"                   # at least, across and down (`touchTarget()`): a control drawn smaller, a text button in a capsule, a glyph, a small bordered button or a 32pt cross, takes a finger's target this size, centred on it, nothing moved or redrawn; where two sit closer, the later one takes the room between them
   phone-first-run-chip:
     height: "40pt"                 # a category on the first run: a capsule, subheadline semibold, 14pt in, 44pt to the finger; on, phone-protect with white and eye.slash.fill; off, secondarySystemBackground with a hairline of .primary at 10% and eye
   phone-first-run-stage:
@@ -298,7 +300,7 @@ components:
   phone-review-header:
     height: "44pt"                 # Review's own bar, 16pt in: a 44pt round back button of phone-glass (chevron.backward 17pt semibold), "Prüfen" in headline centred on the screen over "Seite 1 von 3" in footnote .secondary, at least 12pt clear of the buttons (where the middle leaves less, between them), the menu's 44pt round button of phone-glass (ellipsis), and Next: white callout (16pt) semibold, 16pt in, on a phone-protect capsule, the screen's one filled button
   phone-review-chip:
-    height: "34pt"                 # the status chip under the bar (phone-status-capsule's glass): checkmark.shield.fill in phone-protect-tint, "4 verdeckt" semibold, a dot, then "2 zu prüfen", "3 sichtbar" where the categories leave details visible (with "Nichts verdeckt" before it when none is covered), or "1 Qualitätshinweis" semibold in phone-review-open; where the words do not fit, the count with circle.dashed, eye or exclamationmark.triangle.fill, and a chevron.right caption semibold in .tertiary; numbers change as numeric text; a tap opens the list
+    height: "34pt"                 # the status chip under the bar (phone-status-capsule's glass): checkmark.shield.fill in phone-protect-tint, "4 verdeckt" semibold, a dot, then "2 zu prüfen", "3 sichtbar" where the categories leave details visible (with "Nichts verdeckt" before it when none is covered), or "1 Qualitätshinweis" semibold in phone-review-open; where the words do not fit, the count with circle.dashed, eye or exclamationmark.triangle.fill, and a chevron.forward caption semibold in .tertiary; numbers change as numeric text; a tap opens the list
   phone-review-pages:
     size: "32 × 44pt"              # the document's pages under the page, centred, 10pt apart, each in a 44 × 56 cell with rounded.phone-scan-thumb and a 0.5pt hairline of .primary at 12%; the page open 12% larger, ringed 2pt in phone-protect-tint 3pt out; a page with something open, a 9pt dot of phone-review-open ringed 1.5pt in systemBackground at its top trailing corner, never a badge; the plus a dashed outline (.primary at 25%, 1pt, 3 and 3) the same size; scrolling sideways once they no longer fit
   phone-review-bar:
@@ -2095,6 +2097,15 @@ its own (October 2026): its accent is `phone-accent` (the asset catalogue's
 AccentColor, `#07875C`, `#1FA774` in dark), and its one primary action is the
 green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
 
+- **Orange words** are never the system's orange, which is 2.2:1 on white:
+  they take `phone-review-open` (`phone-hide-warning` under More), the same
+  deeper orange, 4.5:1 and more on the light grounds and glass. The
+  system's orange stays for glyphs, which need 3:1. **A control drawn
+  smaller than a finger** takes `phone-touch-target` round it. **What
+  cannot be undone asks first**, in the system's confirmation dialog with
+  its title shown, the destructive button, Cancel and one line of what goes,
+  as Discard Scan does. **Arrows that mean next or on** are
+  `chevron.forward` and `chevron.backward`, so they turn round in Arabic.
 - Screenshots sit in small square cards, corners 12, in the grids, and at
   3:4, corners 14, where a card stands alone.
 - **The tab bar** (`AppTabs.swift`) is the system's `TabView`, never a bar
@@ -2112,7 +2123,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
 - **Photos** (`PhotosTab`). No navigation bar: a header in the page, 16 pt
   in, "Snapfly" in large title bold, at least 44 pt high, then on the
   trailing edge, while syncing is on, a chip with how it stands (footnote
-  in `.secondary`, orange with `exclamationmark.triangle.fill` when it
+  in `.secondary`, `phone-review-open` with `exclamationmark.triangle.fill` when it
   needs the owner, else `checkmark.icloud`, on a capsule of `.primary` at
   6%, padded 10 by 6, opening More). Settings is the More tab, so the
   header has no gear. Under the status bar is the page's own colour; from
@@ -2150,7 +2161,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     `shield.lefthalf.filled` and the words in body medium, white on
     `phone-protect`, padded 20 by 11, at least 44 pt tall; pressed, it is
     `phone-protect-pressed` and 97% as large (not smaller with Reduce
-    Motion), with a light impact. It opens the system's photo picker.
+    Motion), with a light impact. It opens the system's photo picker; a
+    photo that takes longer than 0.4 s to come, as from iCloud, has the
+    floating note say "Opening…" until it opens or says why it could not.
     Allow Access on the first launch, and Settings when access was refused,
     are the same pill.
   - Then From your Mac. What was protected lately is the Protected tab.
@@ -2165,12 +2178,14 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     let go past a tenth, the cards settle into the next grid on `zoom.grid`
     with a selection haptic; else they settle back. With Reduce Motion it
     doesn't follow and changes at once. See All's menu offers 3 per Row and
-    4 per Row for whoever doesn't pinch.
+    4 per Row for whoever doesn't pinch, settling on `.snappy`, at once with
+    Reduce Motion.
   - **Choosing several** (`GridSelection`, `Selecting.swift`), as in
     Photos: Select beside See All (on the Photos tab) or in See All's bar
     turns the grid to choosing, with Select All or Deselect All and Cancel
     in its place, the title "%d Selected" in See All, the tab bar stepping
-    aside and the choice's own bar over the bottom. A tap turns a card on or
+    aside and the choice's own bar over the bottom, rising on `.snappy`, a
+    0.15 s fade with Reduce Motion (Protected's bar too). A tap turns a card on or
     off; from iOS 18 on a finger drawn sideways across the cards takes in
     every card from the first to the one under it in reading order, all on
     or all off as the first was turned, while the page holds still (one
@@ -2188,8 +2203,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     be is never saved. While Snapfly is away it waits, and the one it was
     covering is read again once it is back. All well, the choosing ends and
     a note says how many were saved, with a success haptic; else those not
-    done stay chosen and the bar says why in footnote semibold orange with
-    `exclamationmark.triangle.fill`, with a warning haptic. Stopped, the
+    done stay chosen and the bar says why in footnote semibold
+    `phone-review-open` with `exclamationmark.triangle.fill`, with a warning
+    haptic. Stopped, the
     bar says how many were saved and that the rest stay chosen, in footnote
     `.secondary`, without a haptic, as nothing went wrong. Share makes the
     same copies and opens the share sheet with all of them.
@@ -2213,8 +2229,13 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     system's search field, always showing ("Search words in screenshots"),
     which finds the screenshots read ahead of time that say every word
     typed, case and accents aside; nothing found shows the system's search
-    empty state, and while nothing is read ahead of time a footnote in
-    `.secondary` with `text.magnifyingglass` says where to turn that on. A
+    empty state. While nothing is read ahead of time and words are typed or
+    With Private Details is chosen, a footnote in `.secondary` with
+    `text.magnifyingglass` says that words and private details are found only
+    in screenshots read ahead of time, by Faster picture processing in More ›
+    Detection, over that page's name with `chevron.forward` in the accent
+    (subheadline medium, as See All is, `phone-touch-target`), which opens it
+    on the More tab, Detection under it. A
     menu on the trailing edge (`line.3.horizontal.decrease.circle`, filled
     while it narrows) shows All Screenshots, With Private Details, Protected
     or Not protected, Newest First or Oldest First (`LibraryQuery`). Holding a card offers Cover and Copy
@@ -2536,7 +2557,10 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     "Nichts Privates". Under the frame the name (13 pt semibold) over "5
     Seiten · Gestern" (12 pt `.secondary`), one line each with "…" at any
     size; the frame and the chip stay whole. A tap opens it; held, Teilen
-    (it opens with Save and Share over it), Umbenennen and Löschen (red).
+    (it opens with Save and Share over it), Umbenennen and Löschen (red),
+    which asks first ("Dieses Dokument löschen?", Löschen, Abbrechen, and
+    that its pages go while the photos and files they came from stay), as
+    does VoiceOver's Löschen.
     Alle anzeigen opens every document in a grid of the same cards. A
     document new since the row last showed takes the first place on
     `motion.document`, with a light impact.
@@ -2557,14 +2581,20 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     Reduce Motion or Low Power Mode everything is a fade of 0.15 s: no
     rising.
   - Scanning is the system's document camera (`VNDocumentCameraViewController`),
-    full screen; in a photo the page is found by Vision, and where Vision is
+    full screen; where it cannot scan, it closes and the floating note says
+    why for 5 s ("Snapfly darf die Kamera nicht nutzen. Erlaube es in den
+    Einstellungen." where camera access is off, else "Die Kamera konnte
+    nicht scannen. Versuch es noch einmal."), and on Review the editor's
+    note says the same.
+    In a photo the page is found by Vision, and where Vision is
     less than 65% sure, the corner editor (below) opens first. Each page is
     made flat, upright, level, cleaned and checked off the main thread
     (`ScannedPages`, `ScanCleaner`), one after another, with a light impact
     as pages come and a warning haptic for a page to take again. The first
     page opens at once in Protect Picture as Review (below) while it is
     made ready; the pages wait under "Scanned pages" (title 3 semibold, Clear
-    on the trailing edge; beside it, once the first page is read, the
+    on the trailing edge, which asks first as Discard Scan does, "Den ganzen
+    Scan verwerfen?"; beside it, once the first page is read, the
     document's kind, Invoice, Letter, Form or Receipt, in caption semibold
     `phone-hide-accent` on a `phone-hide-accent-soft` capsule, as
     Recommended is, read "Kind: Invoice") as the grid's square cards in the order scanned, a
@@ -2817,11 +2847,14 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     private details…, Checking the copy…, Apple Intelligence is reading…
     with Don't Wait in semibold); after a failure,
     `exclamationmark.triangle.fill` in orange, what went wrong and Try
-    Again; then `checkmark.shield.fill` in `phone-protect-tint` and the
+    Again. What went wrong and the step wrap onto as many lines as they
+    need, never cut, the capsule growing with them and the glyphs and the
+    button whole beside them; Try Again and Don't Wait are
+    `phone-touch-target`s. Then `checkmark.shield.fill` in `phone-protect-tint` and the
     line `ReviewStatus` writes: how many places are covered ("3 verdeckt",
     semibold), and while any are to check, a dot and "1 zu prüfen" in the
-    accent (orange while one is uncovered); with none to check, "3
-    verdeckt, alles geprüft", or a dot and "1 Hinweis" in orange while the
+    accent (`phone-review-open` while one is uncovered); with none to check, "3
+    verdeckt, alles geprüft", or a dot and "1 Hinweis" in `phone-review-open` while the
     page has a fault. "Nichts Privates · 1 Hinweis" with nothing covered
     but a fault, and `checkmark.shield` with Nichts Privates gefunden only
     when nothing is covered, to check or wrong. One line, shrinking to 85%
@@ -2842,7 +2875,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     `phone-protect-tint` (body semibold, 24 pt wide), footnote words ("Looks
     like a photographed document. Straighten and brighten it?"), Clean Up
     (small, bordered prominent, `phone-protect`, dimmed until the first
-    places are found) and a 32 pt `xmark` read as Not Now. Clean Up turns it
+    places are found) and a 32 pt `xmark` read as Not Now, each a
+    `phone-touch-target`, as Revert is. Clean Up turns it
     into a small spinner and "Straightening and brightening…"; the page is
     cleaned as a scan is (`ScanCleaner`, in color), its covers found again
     on the cleaned page as on any picture, and the card says "Straightened
@@ -2878,7 +2912,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     the app. Nothing opens a website. A way tapped before the copy is ready waits with a small
     white spinner over its icon and goes once it is (tapped again, it no
     longer waits); while places are still to check it asks first. Held,
-    any of them offers Send to Apps, the choice and order of apps.
+    any of them offers Send to Apps, the choice and order of apps. After a
+    failure, when there is no copy to hand over, they are off at 40%, as
+    are Copy and Send to Mac in the menu, until Try Again.
   - **The tools** (`EditingDock`), one capsule of glass over the bottom,
     kept in place while drawing: Select (`hand.point.up.left`), Marker
     (`pencil.tip`), Box (`rectangle`), Lasso (`lasso`) and Eraser
@@ -2939,7 +2975,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     middle), the turn handle turns it; one finger elsewhere moves the
     picture. Over the tools floats a capsule of glass, subheadline, at
     least 40 pt high: Cover or Uncover, the width (`lineweight`) for a
-    stroke, Delete (`trash`) for what is by hand, and Done in semibold.
+    stroke, Delete (`trash`) for what is by hand, and Done in semibold,
+    14 pt apart, each a `phone-touch-target`.
     Holding a place down selects it and asks, in a confirmation dialog
     titled with its kind: Cover or Uncover, Delete for what is by hand,
     Cancel.
@@ -3011,10 +3048,13 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
       iPhone."; **Offen**, every page's places still to check, each its
       kind, its first words and its page, with Lassen and Verdecken, and
       Alle verdecken; each decision is one change to undo, the mark on the
-      page turning with it in 0.2 s and a light haptic; **Hinweis**, each
+      page turning with it in 0.2 s and a light haptic, its row leaving to
+      the leading side as it fades (only fading with Reduce Motion); **Hinweis**, each
       page's faults with Ansehen, which opens that page with Seite in the
       bar; **Verdeckt · 4**, one line ("Name, Adresse, IBAN" over where they
-      come from) that opens into the list of them, each with Aufdecken.
+      come from) that opens into the list of them, each with Aufdecken; its
+      chevron points on in the reading direction (mirrored in Arabic) and
+      turns down once open.
       Every ready page is read as soon as Review opens, so the list, the
       pages' dots and Always Hide hold for all of them.
   - **The corner editor** (`ScanCornerEditor`), full screen on black with a
@@ -3129,7 +3169,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     after it; with pictures among the pages, **Page Size for Pictures**
     (Original, A4, Letter: a picture is fitted onto the page whole, never
     stretched or cut, a PDF's own pages keep their size); **Quality** (High,
-    Medium, Small, segmented) with "about 2.4 MB" on the trailing side; the
+    Medium, Small, segmented) with "about 2.4 MB" on the trailing side (a
+    small spinner only while it is worked out, an en dash, read "Size
+    unknown", where no page could be drawn for it); the
     covers as in the scan's sheet (With Covers, Recommended, where every
     save starts; Without Covers, "Only the pages", and then the
     `phone-scan-warn` card); Searchable Text; the places still to check on
@@ -3141,14 +3183,14 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   Snapfly was not sure about, "To check" with "%d of %d checked" and a
   progress bar in `phone-protect`, over one place at a time, from the top
   of the picture down, starting at the first still to check: its kind in
-  the headline with Covered (`phone-protect`) or Not covered (orange) on
+  the headline with Covered (`phone-protect`) or Not covered (`phone-review-open`) on
   the trailing edge, the place itself cut from the screenshot (84 pt high
   at most, corners of 8, a hairline), the words it hides in footnote
   `.secondary`, then Leave Visible (bordered) and Keep Covered, or Cover
   (prominent, `phone-protect`), large and of equal width, each deciding
   and going on to the next place still to check; then Previous
-  (`chevron.left`), Show on Picture, which closes the sheet and shows the
-  place selected and zoomed in, and Next (`chevron.right`). Keeping a
+  (`chevron.backward`), Show on Picture, which closes the sheet and shows the
+  place selected and zoomed in, and Next (`chevron.forward`). Keeping a
   cover decides it without changing the picture (`ProtectionPlan.decide`),
   one change to undo. Once all are decided, "Everything is checked." with
   `checkmark.seal.fill`. Then every place by topic (`ProtectionPlan.topics`):
@@ -3345,8 +3387,11 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     subtitle when any, Could not be read when any, Last update (relative)
     and Room on this iPhone, over a footer of when it works and waits. Then
     Pause or Resume, Prepare Now, and Delete Local Index and Turn Off in
-    red, the first asking in a confirmation dialog, over a footer that
-    turning it off deletes everything prepared. Then "What is prepared":
+    red, each asking in a confirmation dialog (Turn Off: "Turn off faster
+    picture processing?", that it deletes everything prepared, and Cancel),
+    over a footer that turning it off deletes everything prepared. See All
+    opens this page on the More tab, Detection under it, from its hint.
+    Then "What is prepared":
     the photos as a picker, the period ("Last 60 days", or "The photos you
     chose"), Choose Photos… with Only selected photos, and Change Allowed
     Photos… under limited access, with a footer saying so.
@@ -3362,7 +3407,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     under Copy, Share and Save; once pressed it waits dimmed and the note
     says it is on its way.
   - More › Mac and iCloud holds Sync: the toggle with
-    its footnote, This iPhone with the state (orange with
+    its footnote, This iPhone with the state (`phone-hide-warning` with
     `exclamationmark.triangle.fill` when it needs the owner), Sync Now while
     on, and a row per device with its symbol, name and when it was last
     there.
@@ -3374,7 +3419,7 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     one centred field for the six digits, large title rounded with
     monospaced digits, the number pad, focused at once; it goes by itself
     once six digits are in, or with Connect. Its footer says where the code
-    is, or why it did not work, in orange after
+    is, or why it did not work, in `phone-hide-warning` after
     `exclamationmark.triangle.fill`. While it works, a row with a spinner
     and what is happening ("Say yes on “Studio” to connect."); when done,
     `checkmark.circle.fill` with what happened, and Done.

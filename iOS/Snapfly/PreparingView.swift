@@ -10,6 +10,8 @@ struct PreparingView: View {
     @ObservedObject private var indexer = PhotoIndexer.shared
     @State private var asking = false
     @State private var deleting = false
+    /// Turn Off tapped, while it is asked: it deletes everything prepared.
+    @State private var turningOff = false
     @State private var picked: [PhotosPickerItem] = []
 
     var body: some View {
@@ -34,6 +36,13 @@ struct PreparingView: View {
             Button(L("Delete Local Index"), role: .destructive) { Task { await indexer.deleteIndex() } }
         } message: {
             Text(L("Preparing waits until you go on. Your photos stay as they are."))
+        }
+        .confirmationDialog(L("Turn off faster picture processing?"), isPresented: $turningOff,
+                            titleVisibility: .visible) {
+            Button(L("Turn Off"), role: .destructive) { Task { await indexer.turnOff() } }
+            Button(L("Cancel"), role: .cancel) {}
+        } message: {
+            Text(L("Turning it off deletes everything prepared."))
         }
         .onChange(of: picked) { _, items in
             let ids = items.compactMap(\.itemIdentifier)
@@ -111,7 +120,7 @@ struct PreparingView: View {
                     .disabled(indexer.isRunning || indexer.progress.remaining == 0)
             }
             Button(L("Delete Local Index"), role: .destructive) { deleting = true }
-            Button(L("Turn Off"), role: .destructive) { Task { await indexer.turnOff() } }
+            Button(L("Turn Off"), role: .destructive) { turningOff = true }
         } footer: {
             Text(L("Turning it off deletes everything prepared."))
         }
