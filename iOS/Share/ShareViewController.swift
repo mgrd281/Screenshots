@@ -48,7 +48,8 @@ final class ShareModel: ObservableObject {
         let providers = (context?.inputItems as? [NSExtensionItem] ?? []).flatMap { $0.attachments ?? [] }
         guard let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(UTType.image.identifier) }),
               let data = await Self.data(of: provider),
-              let image = CoveredCopy.upright(data) else {
+              // Within an extension's memory: every iPhone and iPad screenshot whole, a large photo smaller.
+              let image = CoveredCopy.upright(data, longest: 2880) else {
             failure = L("The picture could not be read.")
             return
         }
@@ -77,7 +78,7 @@ final class ShareModel: ObservableObject {
     func copy() {
         guard let png else { return }
         UIPasteboard.general.setData(png, forPasteboardType: UTType.png.identifier)
-        show(L("Covered and copied, ready to paste."))
+        show(count == 0 ? L("Nothing to cover was found. Copied as it is, ready to paste.") : L("Covered and copied, ready to paste."))
     }
 
     func save() {
@@ -87,7 +88,7 @@ final class ShareModel: ObservableObject {
                 try await PHPhotoLibrary.shared().performChanges {
                     PHAssetCreationRequest.forAsset().addResource(with: .photo, data: png, options: nil)
                 }
-                show(L("Saved to Photos"))
+                show(count == 0 ? L("Nothing to cover was found. Saved to Photos as it is.") : L("Saved to Photos"))
             } catch {
                 show(L("The picture could not be saved."))
             }
@@ -111,6 +112,8 @@ final class ShareModel: ObservableObject {
     }
 
     func cancel() {
+        // Nothing of the picture is kept, shared or not.
+        if let sharing { try? FileManager.default.removeItem(at: sharing) }
         context?.cancelRequest(withError: CocoaError(.userCancelled))
     }
 

@@ -1202,7 +1202,13 @@ watch the screen, so there is no line there. What it keeps is the covering:
   in the strip, to open, drag, turn, duplicate or delete. A PDF's words are
   read from its own text, letter for letter, where it has text, and from
   the picture only where it has none, as in a photo pasted on the page; its
-  covers are found as on any picture. A PDF locked with a password asks for
+  covers are found as on any picture, on the iPhone alone (the AI
+  assistant never reads a project's or a scan's words). What you cover by
+  hand on a page, or cover though it was only offered, is kept with the
+  project, where it lies and never a word: it is there when the project
+  opens again, turns with its page, shows on its picture under Recent and
+  is covered in every copy, as what you covered on scanned pages is once
+  they are kept under Recent. A PDF locked with a password asks for
   it each time it opens, and it is never kept; a signed PDF says once that
   editing it ends the signature. Save and Share takes the file's name
   before its fixed ".pdf", how pictures sit on their pages (Original, A4 or
@@ -1420,7 +1426,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
 - **Cover the Latest Screenshot** is a Shortcuts action that needs no opening
   of the app. Chosen for Back Tap (Settings › Accessibility › Touch › Back Tap
   › Double Tap), a double tap on the back of the iPhone covers the newest
-  screenshot and copies it, ready to paste into a chat.
+  screenshot and copies it, ready to paste into a chat. It covers without
+  waiting for Apple Intelligence or the AI assistant, as the share
+  extension does, and says when it found nothing to cover.
 - **Cover Private Details** covers any picture a shortcut hands it.
 
 Both apps share the code in `Sources/Tendedero/Shared` (finding and covering

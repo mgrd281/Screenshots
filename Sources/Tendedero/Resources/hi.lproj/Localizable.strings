@@ -526,6 +526,8 @@
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly अभी आपके स्क्रीनशॉट नहीं देख सकता। Snapfly को एक बार खोलें और अनुमति दें।";
 "There is no screenshot yet." = "अभी कोई स्क्रीनशॉट नहीं है।";
 "Covered and copied, ready to paste." = "छिपाकर कॉपी कर दिया, पेस्ट करने के लिए तैयार।";
+"Nothing to cover was found. Copied as it is, ready to paste." = "छिपाने के लिए कुछ नहीं मिला। जैसी है वैसी कॉपी कर दी, पेस्ट करने के लिए तैयार।";
+"Nothing to cover was found. Saved to Photos as it is." = "छिपाने के लिए कुछ नहीं मिला। जैसी है वैसी फ़ोटो में सहेज दी।";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "फ़ाइलें जोड़ें…";

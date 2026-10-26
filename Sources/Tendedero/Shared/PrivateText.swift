@@ -637,7 +637,8 @@ enum Finder {
                 bottom = max(bottom, min(other.maxY, box.minY))
             }
         }
-        return bottom...top
+        // Lines beyond the page, as a cropped PDF's text can lie, leave no room, never less than none.
+        return bottom...max(bottom, top)
     }
 
     // MARK: Covered, and checked
@@ -1704,6 +1705,7 @@ enum Finder {
     /// background, so nothing read stays in memory longer than it is needed.
     static func forgetReadings() {
         readings.forget()
+        forgetAnswers()
     }
 
     /// How many times, since the app started, Vision could not read a whole

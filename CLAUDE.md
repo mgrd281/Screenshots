@@ -200,7 +200,7 @@ the website's footer. Both stay.
   - The Build Snapfly workflow's `iphone` job archives it unsigned, with the
     shared scheme `Snapfly`. `check-strings.swift` reads `iOS/Snapfly` too.
   - `iOS/Snapfly/PrivacyInfo.xcprivacy` declares the APIs Apple asks a reason
-    for (UserDefaults so far). Add to it when the app uses another.
+    for (UserDefaults and file timestamps so far). Add to it when the app uses another.
   - The first run's story is `Shared/FirstRun.swift`, tested on Linux; see
     `FIRST_RUN.md`. The **First Run Captures** workflow plays it on the
     simulator when it changes, and puts still frames, a recording and how

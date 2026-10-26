@@ -21,6 +21,24 @@ keeps a download of each version.
   player: pause, back and on, speed, the word being said marked. A table
   is told from the columns of a letter's foot, and a table whose cells
   Vision read as one line is parted into cells again.
+- On the iPhone, what you cover by hand on a PDF project's pages is kept
+  with the project and covered in every copy of it, also after Snapfly
+  was closed or a page was turned, and on its picture under Recent; what
+  you covered on scanned pages goes with them under Recent, and the scan
+  stays until its pages are in the document.
+- On the iPhone, the words of scanned pages and PDF projects are never sent
+  to the AI assistant, even with Find more turned on; screenshots and photos
+  still are, as before.
+- On the iPhone, Cover and Copy, Cover and Save, Back Tap and the share
+  extension say when they found nothing to cover instead of "Covered".
+  Back Tap no longer waits for Apple Intelligence or the AI assistant.
+- On the iPhone, a copy made without covers stays on this iPhone (not on a
+  Mac or iPad nearby) and leaves the clipboard after ten minutes.
+- Fixes: a PDF cropped with text beyond its page no longer stops Snapfly;
+  the share extension keeps within its memory with large photos and
+  deletes its file when cancelled; what Apple Intelligence or the AI
+  assistant said is forgotten with the rest when the iPhone app goes to the
+  background; the iPhone's sync folder is left out of its backups.
 - The text of scanned pages follows the page more closely: a receipt's
   items and prices are a table, an address beside a letter's details is
   read whole before them, a letterhead down the side comes after the

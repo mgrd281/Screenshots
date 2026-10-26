@@ -65,6 +65,19 @@ final class SyncCenter: ObservableObject {
             .appendingPathComponent("Sync", isDirectory: true)
     }
 
+    /// On the iPhone, the folder is left out of its backups: what it holds
+    /// (previews, covered copies, pictures fetched) is in iCloud already,
+    /// and a backup would keep another copy of it.
+    private static func keepOutOfBackups() {
+        #if os(iOS)
+        var root = folder
+        try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        var values = URLResourceValues()
+        values.isExcludedFromBackup = true
+        try? root.setResourceValues(values)
+        #endif
+    }
+
     /// When syncing was last turned on: what the other devices made before
     /// then is listed, not brought up in front of the owner.
     var since: Date {
@@ -84,6 +97,7 @@ final class SyncCenter: ObservableObject {
     func start(as device: SyncDevice) {
         guard cloud == nil, isAvailable else { return }
         self.device = device
+        Self.keepOutOfBackups()
         cloud = CloudSync(settings: settings, folder: Self.folder, device: device) { snapshot in
             Task { @MainActor in SyncCenter.shared.take(snapshot, in: .own) }
         }

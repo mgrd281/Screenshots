@@ -23,6 +23,35 @@ final class ProtectionPlanTests: XCTestCase {
         XCTAssertEqual(plan.report.kinds[.phones], 1)
     }
 
+    /// What the owner covered that Snapfly would not have is what a
+    /// document keeps, and it comes back by hand, not as a change to undo.
+    func testWhatTheOwnerCoveredIsKeptAndPutBack() throws {
+        var plan = ProtectionPlan()
+        plan.add(found: [area(0.1, 0.8)], possible: [area(0.1, 0.5)], spared: [area(0.1, 0.3, .addresses)])
+        let offered = try XCTUnwrap(plan.marks.first { $0.origin == .possible })
+        plan.toggle(offered.id)
+        plan.cover(CGRect(x: 0.6, y: 0.6, width: 0.2, height: 0.05))
+        let kept = plan.kept
+        XCTAssertEqual(kept.count, 2, "the offered place covered and the box by hand; not what Snapfly found itself")
+        func near(_ a: CGRect, _ b: CGRect) -> Bool {
+            abs(a.minX - b.minX) < 0.0001 && abs(a.minY - b.minY) < 0.0001 && abs(a.width - b.width) < 0.0001 && abs(a.height - b.height) < 0.0001
+        }
+        XCTAssertTrue(kept.contains { near($0.rect, offered.rect) && $0.shape == nil })
+        XCTAssertTrue(kept.contains { near($0.rect, CGRect(x: 0.6, y: 0.6, width: 0.2, height: 0.05)) && $0.shape != nil })
+        var again = ProtectionPlan()
+        again.restore(kept)
+        XCTAssertEqual(again.covered.count, 2)
+        XCTAssertTrue(again.marks.allSatisfy { $0.origin == .hand && $0.covered })
+        XCTAssertFalse(again.canUndo, "put back, not a change to undo")
+        again.add(found: [area(0.1, 0.8)])
+        XCTAssertEqual(again.covered.count, 3, "and what is found comes beside it")
+        // Off the picture, or too small to see: left.
+        var none = ProtectionPlan()
+        none.restore([KeptCover(rect: CGRect(x: 1.5, y: 1.5, width: 0.2, height: 0.1), shape: nil),
+                      KeptCover(rect: CGRect(x: 0.5, y: 0.5, width: 0.001, height: 0.001), shape: nil)])
+        XCTAssertTrue(none.marks.isEmpty)
+    }
+
     func testTheOwnerTurnsPlacesOffAndOnAndUndoes() throws {
         var plan = ProtectionPlan()
         plan.add(found: [area(0.1, 0.8)], possible: [area(0.1, 0.5)])

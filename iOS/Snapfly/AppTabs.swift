@@ -164,14 +164,16 @@ final class QuickCoverer: ObservableObject {
                 show(L("The copy could not be made."))
                 return
             }
+            // Said as it is: a copy with nothing covered is no covered copy.
+            let none = made.report.isEmpty
             switch way {
             case .copy:
                 Covering.copy(png)
-                show(L("Covered and copied, ready to paste."))
+                show(none ? L("Nothing to cover was found. Copied as it is, ready to paste.") : L("Covered and copied, ready to paste."))
             case .save:
                 do {
                     try await Covering.save(png)
-                    show(L("Saved to Photos"))
+                    show(none ? L("Nothing to cover was found. Saved to Photos as it is.") : L("Saved to Photos"))
                 } catch {
                     show(L("The picture could not be saved."))
                     return

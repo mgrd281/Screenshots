@@ -524,6 +524,8 @@
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapflyはまだスクリーンショットを見られません。Snapflyを一度開いて許可してください。";
 "There is no screenshot yet." = "スクリーンショットはまだありません。";
 "Covered and copied, ready to paste." = "隠してコピーしました。ペーストできます。";
+"Nothing to cover was found. Copied as it is, ready to paste." = "隠すものは見つかりませんでした。そのままコピーしました。ペーストできます。";
+"Nothing to cover was found. Saved to Photos as it is." = "隠すものは見つかりませんでした。そのまま写真に保存しました。";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "ファイルを追加…";

@@ -108,6 +108,11 @@ final class ProtectSession: ObservableObject {
         return .ready
     }
 
+    /// What the owner covered on a document's page before, kept with it
+    /// (`ProjectStore`), or on a scanned page moved into one: put back on the
+    /// page before anything is found on it.
+    var restored: [KeptCover] = []
+
     /// Whether the copy may leave: made and checked for the places as they are.
     var isReady: Bool { stage == .ready }
 
@@ -118,10 +123,21 @@ final class ProtectSession: ObservableObject {
     }
 
     /// Whether Apple Intelligence, or the AI assistant, reads along for
-    /// the kinds chosen.
+    /// the kinds chosen. A scanned page's or a PDF project's words stay on
+    /// this iPhone: the assistant, which would send them out, never reads
+    /// those (`Covering.coverHere`).
     private var asksIntelligence: Bool {
-        !chosen.isDisjoint(with: Finder.intelligentKinds.values)
-            && (Finder.asksAssistant || Finder.usesIntelligence && Finder.intelligenceAvailable)
+        guard !chosen.isDisjoint(with: Finder.intelligentKinds.values) else { return false }
+        if Finder.asksAssistant { return !isDocument }
+        return Finder.usesIntelligence && Finder.intelligenceAvailable
+    }
+
+    /// A scanned page or a page of a PDF project, not a screenshot or a photo.
+    private var isDocument: Bool {
+        switch source {
+        case .scanned, .page: true
+        case .asset, .picture: false
+        }
     }
 
     /// Starts once; the work goes on to its end even when the screen is
@@ -187,6 +203,7 @@ final class ProtectSession: ObservableObject {
     /// looks whether it is a photographed document, to offer cleaning it.
     private func analyse(_ image: CGImage, started: Date, offering: Bool) async {
         plan.aspect = CGFloat(image.width) / CGFloat(max(1, image.height))
+        if plan.marks.isEmpty, !restored.isEmpty { plan.restore(restored) }
         let chosen = chosen, rules = rules
         // What the patterns, the labels and the names find, without waiting
         // for Apple Intelligence, and what Settings leaves visible, listed

@@ -375,7 +375,7 @@ struct ProjectExportSheet: View {
                 let pdf = try await store.pdf(options, only: only)
                 switch way {
                 case .copy:
-                    UIPasteboard.general.setData(pdf, forPasteboardType: UTType.pdf.identifier)
+                    Clipboard.put(pdf, as: .pdf, covered: options.covered)
                     done(options.covered ? L("Copied") : L("Copied, without covers"))
                 case .save:
                     exporting = PDFFile(data: pdf)

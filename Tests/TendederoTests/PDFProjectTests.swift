@@ -170,12 +170,23 @@ final class PDFProjectTests: XCTestCase {
         project.paper = .a4
         project.quality = .high
         project.kinds[Self.letter.id.uuidString] = .letter
+        // What the owner covered by hand on a page: a box, a stroke and a place only offered.
+        let page = project.pages[4].id
+        project.covers[page.uuidString] = [
+            KeptCover(rect: CGRect(x: 0.1, y: 0.8, width: 0.3, height: 0.04), shape: .box(CGRect(x: 0.1, y: 0.8, width: 0.3, height: 0.04), angle: 0)),
+            KeptCover(rect: CGRect(x: 0.2, y: 0.4, width: 0.4, height: 0.05),
+                      shape: .stroke([CGPoint(x: 0.22, y: 0.42), CGPoint(x: 0.58, y: 0.43)], width: 0.035)),
+            KeptCover(rect: CGRect(x: 0.5, y: 0.1, width: 0.2, height: 0.03), shape: nil),
+        ]
         let data = try JSONEncoder().encode(project)
         let read = try JSONDecoder().decode(PDFProject.self, from: data)
         XCTAssertEqual(read, project)
         XCTAssertEqual(read.openPage, project.openPage)
         XCTAssertEqual(read.paper, .a4)
         XCTAssertEqual(read.quality, .high)
+        XCTAssertEqual(read.hand(on: page).count, 3, "every cover kept, shapes and all")
+        XCTAssertTrue(read.hand(on: project.pages[0].id).isEmpty)
+        XCTAssertFalse(String(decoding: data, as: UTF8.self).contains("Lena"), "where, never a word")
         // Written before the paper and the quality were kept: their defaults.
         let older = Data("""
         {"id":"\(project.id.uuidString)","name":"Alt","created":800000000,"files":[],"pages":[]}
@@ -184,6 +195,22 @@ final class PDFProjectTests: XCTestCase {
         XCTAssertEqual(old.paper, .original)
         XCTAssertEqual(old.quality, .medium)
         XCTAssertEqual(old.modified, old.created)
+        XCTAssertTrue(old.covers.isEmpty, "written before covers were kept: none")
+    }
+
+    /// A page turned a quarter: what the owner covered on it turns with it,
+    /// its box standing for the shape drawn.
+    func testACoverKeptTurnsWithItsPage() {
+        let cover = KeptCover(rect: CGRect(x: 0.1, y: 0.7, width: 0.3, height: 0.1),
+                              shape: .stroke([CGPoint(x: 0.12, y: 0.75), CGPoint(x: 0.38, y: 0.75)], width: 0.02))
+        let turned = cover.turned(by: 1)
+        XCTAssertNil(turned.shape)
+        XCTAssertEqual(turned.rect, PDFPageGeometry.turned(cover.rect, quarters: 1))
+        XCTAssertEqual(cover.turned(by: 4), cover, "a whole turn changes nothing")
+        let back = cover.turned(by: 1).turned(by: 3).rect
+        XCTAssertEqual(back.minX, cover.rect.minX, accuracy: 0.0001)
+        XCTAssertEqual(back.minY, cover.rect.minY, accuracy: 0.0001)
+        XCTAssertEqual(back.width, cover.rect.width, accuracy: 0.0001)
     }
 
     func testNames() {

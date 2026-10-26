@@ -524,6 +524,8 @@
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "لا يُسمح لـ Snapfly برؤية لقطات شاشتك بعد. افتح Snapfly مرة واحدة واسمح له.";
 "There is no screenshot yet." = "لا توجد لقطة شاشة بعد.";
 "Covered and copied, ready to paste." = "غُطّيت ونُسخت، جاهزة للّصق.";
+"Nothing to cover was found. Copied as it is, ready to paste." = "لم يُعثر على شيء لتغطيته. نُسخت كما هي، جاهزة للّصق.";
+"Nothing to cover was found. Saved to Photos as it is." = "لم يُعثر على شيء لتغطيته. حُفظت في الصور كما هي.";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "إضافة ملفات…";

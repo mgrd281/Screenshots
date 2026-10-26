@@ -217,15 +217,23 @@ final class ScannedPages: ObservableObject {
     /// The pages as a PDF project among the documents (`ProjectStore`): each
     /// page as it was cleaned, in the document's order, kept on this iPhone
     /// in the project's own protected folder, covered as Settings says where
-    /// it shows and leaves. The scanned pages are then cleared, as they now
-    /// live there. False while a page is not ready.
+    /// it shows and leaves, and where the owner covered it by hand. The
+    /// scanned pages are cleared once they are in it, as they then live
+    /// there; closed before, they stay here. False while a page is not ready.
     @discardableResult
     func saveAsDocument() -> Bool {
         guard !pages.isEmpty, pages.allSatisfy({ $0.state == .ready && $0.cleaned != nil }) else { return false }
         let images = pages.compactMap(\.cleaned)
         let kind = title?.kind
-        ProjectStore.shared.start(.pictures(images, origin: .scan, kind: kind))
-        clear()
+        let covers = pages.map { page -> [KeptCover] in
+            guard let session = sessions[page.id], session.found, !session.hasFailed else { return [] }
+            return session.plan.kept
+        }
+        let saved = pages.map(\.id)
+        ProjectStore.shared.start(.pictures(images, origin: .scan, kind: kind), covers: covers) { [weak self] added in
+            guard added, let self else { return }
+            if self.pages.map(\.id) == saved { self.clear() } else { saved.forEach(self.remove) }
+        }
         return true
     }
 
@@ -500,7 +508,7 @@ final class ScannedPages: ObservableObject {
             }
             return copy
         }
-        guard let image = await ready(page.id), let made = await Covering.cover(image, Choice.details) else {
+        guard let image = await ready(page.id), let made = await Covering.coverHere(image, Choice.details) else {
             throw ScanProblem(message: String(format: failing, number))
         }
         return (made.image, made.report.places)

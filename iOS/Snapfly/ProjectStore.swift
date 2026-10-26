@@ -220,6 +220,7 @@ final class ProjectStore: ObservableObject {
     /// Writes the open project now, as when Snapfly goes to the background.
     func flush() {
         saving?.cancel()
+        keepCovers()
         guard let project, let data = try? JSONEncoder().encode(project) else { return }
         let folder = Self.folder(project.id)
         writer.async {
@@ -231,7 +232,10 @@ final class ProjectStore: ObservableObject {
     // MARK: Opening and closing
 
     /// A new project, opened at once over the app, with what is added.
-    func start(_ items: ProjectImport? = nil) {
+    /// - Parameters:
+    ///   - covers: what the owner covered on each picture added, as `add` takes it.
+    ///   - done: told, once they are in or left out, whether any page was added.
+    func start(_ items: ProjectImport? = nil, covers: [[KeptCover]] = [], done: (@MainActor (Bool) -> Void)? = nil) {
         let new = PDFProject(name: ProjectNaming.name(files: [], pages: [], at: .now))
         // The project open before is kept, unless nothing was ever added to it.
         if let old = project, old.pages.isEmpty { delete(old.id) }
@@ -242,9 +246,13 @@ final class ProjectStore: ObservableObject {
         UserDefaults.standard.set(new.id.uuidString, forKey: Self.openKey)
         shown = ProjectRef(id: new.id)
         flush()
-        guard let items else { return }
+        guard let items else {
+            done?(false)
+            return
+        }
         Task {
-            await add(items)
+            let added = await add(items, covers: covers)
+            done?(added > 0)
             guard var now = project, now.id == new.id else { return }
             // Named once there is something to name it by.
             now.name = ProjectNaming.name(files: now.files, pages: now.pages, at: now.created)
@@ -260,6 +268,8 @@ final class ProjectStore: ObservableObject {
             return
         }
         if project?.id != id {
+            // What was covered on the pages of the one open before is kept with it first.
+            flush()
             reset()
             project = found
             tidy()
@@ -463,12 +473,18 @@ final class ProjectStore: ObservableObject {
     /// Files, photos, pictures or screenshots added after the page at
     /// `index`, or at the end, each copied into the project as it came: a
     /// PDF with all its pages, a picture as a page. Undone as one step.
-    func add(_ items: ProjectImport, at index: Int? = nil) async {
-        guard let id = project?.id else { return }
+    /// - Parameter covers: what the owner covered on each picture of
+    ///   `.pictures`, in their order (a scanned page's hand covers), kept
+    ///   with its page.
+    /// - Returns: how many pages were added.
+    @discardableResult
+    func add(_ items: ProjectImport, at index: Int? = nil, covers: [[KeptCover]] = []) async -> Int {
+        guard let id = project?.id else { return 0 }
         var files: [ProjectFile] = []
         var pages: [ProjectPage] = []
         var failed = 0
         var signed = false
+        var kept: [String: [KeptCover]] = [:]
         let total = items.count
         adding = ProjectProgress(done: 0, total: total)
         defer { adding = nil }
@@ -528,6 +544,7 @@ final class ProjectStore: ObservableObject {
                     continue
                 }
                 added(file, origin: origin, kind: kind)
+                if n < covers.count, !covers[n].isEmpty, let page = pages.last { kept[page.id.uuidString] = covers[n] }
             }
         case .screenshots(let ids):
             for (n, asset) in Library.assets(ids).enumerated() {
@@ -553,13 +570,14 @@ final class ProjectStore: ObservableObject {
                     for stored in copies { try? FileManager.default.removeItem(at: folder.appendingPathComponent(stored)) }
                 }
             }
-            return
+            return 0
         }
         if !pages.isEmpty {
             let count = pages.count
             change(count == 1 ? L("Add Page") : L("Add Pages")) { project in
                 project.files += files
                 project.insert(pages, at: index)
+                project.covers.merge(kept) { _, new in new }
             }
             toast = ProjectToast(text: count == 1 ? L("1 page added") : String(format: L("%d pages added"), count))
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -575,6 +593,7 @@ final class ProjectStore: ObservableObject {
         } else if signed {
             notice = .signed
         }
+        return pages.count
     }
 
     /// A PDF added: opened, or one that could not be read, or one left out
@@ -745,14 +764,37 @@ final class ProjectStore: ObservableObject {
         canRedo = history.canRedo
     }
 
-    /// A page turned another way has its private details found again on it.
+    /// A page turned another way has its private details found again on it;
+    /// what the owner covered on it turns with it.
     private func settle(_ before: [ProjectPage], _ after: [ProjectPage]) {
         let was = Dictionary(before.map { ($0.id, $0.turns) }, uniquingKeysWith: { first, _ in first })
-        for page in after where was[page.id].map({ $0 != page.turns }) == true {
+        for page in after {
+            guard let old = was[page.id], old != page.turns else { continue }
+            keepCovers()
+            if var now = project, let kept = now.covers[page.id.uuidString] {
+                let quarters = ((page.turns - old) % 4 + 4) % 4
+                now.covers[page.id.uuidString] = kept.map { $0.turned(by: quarters) }
+                project = now
+                remember(now)
+            }
             sessions[page.id] = nil
             used.removeAll { $0 == page.id }
             revisions[page.id, default: 0] += 1
         }
+    }
+
+    /// What the owner covered on the pages open in an editor, kept with the
+    /// project: where, never a word. A page whose places were not found yet,
+    /// or could not be, keeps what it had.
+    private func keepCovers() {
+        guard var now = project else { return }
+        for (id, session) in sessions where session.found && !session.hasFailed {
+            let kept = session.plan.kept
+            now.covers[id.uuidString] = kept.isEmpty ? nil : kept
+        }
+        guard now.covers != project?.covers else { return }
+        project = now
+        remember(now)
     }
 
     func turn(_ ids: Set<UUID>) {
@@ -917,7 +959,10 @@ final class ProjectStore: ObservableObject {
     func coveredFirstPage(_ project: PDFProject) async -> UIImage? {
         guard let page = project.pages.first else { return nil }
         let details = Choice.details.map(\.rawValue).sorted().joined(separator: ",")
-        let made = "\(Self.key(page.source))-\(page.turns)-\(details)-\(CoverStyle.current)-\(OwnRules.all.count)"
+        // What the owner covered by hand on it is covered on it too.
+        let hand = project.hand(on: page.id)
+        let places = hand.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
+        let made = "\(Self.key(page.source))-\(page.turns)-\(details)-\(CoverStyle.current)-\(OwnRules.all.count)-\(places)"
         let name = "Cover-" + SHA256.hash(data: Data(made.utf8)).prefix(8).map { String(format: "%02x", $0) }.joined() + ".jpg"
         let counted = name + ".counts"
         if let known = coveredFirst.object(forKey: name as NSString), firstCounted[project.id]?.name == name { return known }
@@ -940,7 +985,7 @@ final class ProjectStore: ObservableObject {
                 return image
             }
             guard let drawn = await Self.firstPage(page, of: project, on: self.small),
-                  let result = await Covering.cover(drawn, Choice.details) else { return nil }
+                  let result = await Covering.coverHere(drawn, Choice.details, hand: hand) else { return nil }
             let covered = result.image
             let counts = FirstCounts(covered: result.report.total, toCheck: result.report.toCheck, name: name)
             let small = await Self.run(on: self.small) { () -> CGImage? in
@@ -1044,6 +1089,7 @@ final class ProjectStore: ObservableObject {
             return session
         }
         let session = ProtectSession(source: .page(id))
+        session.restored = project?.covers[id.uuidString] ?? []
         sessions[id] = session
         touch(id)
         return session
@@ -1153,7 +1199,7 @@ final class ProjectStore: ObservableObject {
             guard let made = await session.cover(image) else { throw ScanProblem(message: String(format: failing, number)) }
             return made
         }
-        guard let made = await Covering.cover(image, Choice.details) else {
+        guard let made = await Covering.coverHere(image, Choice.details, hand: project?.hand(on: page.id) ?? []) else {
             throw ScanProblem(message: String(format: failing, number))
         }
         return (made.image, made.report.places)

@@ -524,6 +524,8 @@
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly가 아직 스크린샷을 볼 수 없습니다. Snapfly를 한 번 열고 허용하세요.";
 "There is no screenshot yet." = "아직 스크린샷이 없습니다.";
 "Covered and copied, ready to paste." = "가리고 복사했습니다. 붙여넣을 수 있습니다.";
+"Nothing to cover was found. Copied as it is, ready to paste." = "가릴 것을 찾지 못했습니다. 그대로 복사했습니다. 붙여넣을 수 있습니다.";
+"Nothing to cover was found. Saved to Photos as it is." = "가릴 것을 찾지 못했습니다. 그대로 사진에 저장했습니다.";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "파일 추가…";

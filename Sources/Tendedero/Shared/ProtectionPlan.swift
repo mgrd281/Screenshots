@@ -127,6 +127,37 @@ struct ProtectionPlan: Equatable {
         nextID = max(nextID, mark.id) + 1
     }
 
+    // MARK: Kept with a document
+
+    /// What the owner covered that Snapfly would not have, to keep with a
+    /// document's page: the parts hidden by hand, and places only offered,
+    /// or left visible by Settings, that the owner covered. Never a word.
+    var kept: [KeptCover] {
+        marks.compactMap { mark in
+            guard mark.covered else { return nil }
+            switch mark.origin {
+            case .hand: return KeptCover(rect: mark.rect, shape: mark.shape)
+            case .possible, .spared: return KeptCover(rect: mark.rect, shape: nil)
+            case .found: return nil
+            }
+        }
+    }
+
+    /// Puts back what the owner covered on a document's page before, by hand
+    /// as they left it: not a change to undo here, and one Snapfly never
+    /// changes. A box too small to see, or off the picture, is left.
+    mutating func restore(_ covers: [KeptCover]) {
+        for cover in covers {
+            let shape = cover.shape ?? .box(cover.rect.standardized, angle: 0)
+            let bounds = shape.bounds(aspect: aspect)
+            guard !bounds.intersection(Self.whole).isNull, max(bounds.width, bounds.height) >= 0.005 else { continue }
+            let mark = Mark(id: nextID, rect: bounds, kind: nil, origin: .hand, check: false, covered: true, text: nil,
+                            shape: shape)
+            append(mark)
+            touched.insert(mark.id)
+        }
+    }
+
     // MARK: What the owner changes
 
     /// Covers a place left uncovered, or uncovers a covered one.

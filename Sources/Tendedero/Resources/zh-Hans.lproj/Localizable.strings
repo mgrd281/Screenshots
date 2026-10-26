@@ -524,6 +524,8 @@
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly 还不能查看你的截图。请打开 Snapfly 一次并允许。";
 "There is no screenshot yet." = "还没有截图。";
 "Covered and copied, ready to paste." = "已隐藏并拷贝，可直接粘贴。";
+"Nothing to cover was found. Copied as it is, ready to paste." = "未发现需要隐藏的内容。已按原样拷贝，可直接粘贴。";
+"Nothing to cover was found. Saved to Photos as it is." = "未发现需要隐藏的内容。已按原样存储到“照片”。";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "添加文件…";

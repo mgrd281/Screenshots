@@ -100,7 +100,9 @@ final class PDFSource: @unchecked Sendable {
             let place = page.characterBounds(at: unit)
             guard !place.isNull, place.width > 0 || place.height > 0 else { return nil }
             let shown = PDFPageGeometry.normalized(place, box: box, rotation: rotation)
-            return shown.isNull ? nil : shown
+            // Text beyond the page as it is cut, which a PDF cropped in Preview keeps, is not on it.
+            let onPage = shown.isNull ? shown : shown.intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
+            return onPage.isNull ? nil : onPage
         }
         return found.map { line in
             Finder.TextLine(string: line.string, box: line.box,

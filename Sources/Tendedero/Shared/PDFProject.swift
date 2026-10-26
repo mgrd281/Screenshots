@@ -23,6 +23,11 @@ struct PDFProject: Codable, Equatable, Identifiable, Sendable {
     /// What kind of paper a picture shows, by its file, as its words told
     /// once it was added; kept apart from the pages, so undoing never forgets it.
     var kinds: [String: PaperKind]
+    /// What the owner covered on each page that Snapfly would not have, by
+    /// the page's id: parts hidden by hand, and places only offered that
+    /// they covered. Kept apart from the pages, so undoing never forgets it,
+    /// and never a word, only where they are.
+    var covers: [String: [KeptCover]]
 
     init(id: UUID = UUID(), name: String, created: Date = Date(), files: [ProjectFile] = [], pages: [ProjectPage] = []) {
         self.id = id
@@ -35,11 +40,12 @@ struct PDFProject: Codable, Equatable, Identifiable, Sendable {
         paper = .original
         quality = .medium
         kinds = [:]
+        covers = [:]
     }
 
     // A project written before a setting was added opens with its default.
     private enum CodingKeys: String, CodingKey {
-        case id, name, created, modified, files, pages, openPage, paper, quality, kinds
+        case id, name, created, modified, files, pages, openPage, paper, quality, kinds, covers
     }
 
     init(from decoder: Decoder) throws {
@@ -54,6 +60,13 @@ struct PDFProject: Codable, Equatable, Identifiable, Sendable {
         paper = try values.decodeIfPresent(PaperSize.self, forKey: .paper) ?? .original
         quality = try values.decodeIfPresent(ExportQuality.self, forKey: .quality) ?? .medium
         kinds = try values.decodeIfPresent([String: PaperKind].self, forKey: .kinds) ?? [:]
+        covers = try values.decodeIfPresent([String: [KeptCover]].self, forKey: .covers) ?? [:]
+    }
+
+    /// What the owner covered by hand on a page, as places from 0 to 1 from
+    /// its bottom left.
+    func hand(on page: UUID) -> [CGRect] {
+        covers[page.uuidString]?.map(\.rect) ?? []
     }
 
     func file(_ id: UUID) -> ProjectFile? { files.first { $0.id == id } }
@@ -211,6 +224,21 @@ struct ProjectPage: Codable, Equatable, Identifiable, Sendable {
         self.id = id
         self.source = source
         self.turns = turns
+    }
+}
+
+/// A place the owner covered on a page, kept with the project: its box,
+/// from 0 to 1 from the page's bottom left as shown, and the shape drawn by
+/// hand, if one was. Never a word of what it hides.
+struct KeptCover: Codable, Equatable, Sendable {
+    var rect: CGRect
+    var shape: HandShape?
+
+    /// The same place on the page turned clockwise by quarter turns: its box
+    /// turned, standing for the shape, which it covers whole.
+    func turned(by quarters: Int) -> KeptCover {
+        guard quarters % 4 != 0 else { return self }
+        return KeptCover(rect: PDFPageGeometry.turned(rect, quarters: quarters), shape: nil)
     }
 }
 

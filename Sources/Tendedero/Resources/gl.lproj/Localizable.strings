@@ -524,6 +524,8 @@
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly aínda non pode ver as túas capturas. Abre Snapfly unha vez e permíteo.";
 "There is no screenshot yet." = "Aínda non hai ningunha captura.";
 "Covered and copied, ready to paste." = "Oculta e copiada, lista para pegar.";
+"Nothing to cover was found. Copied as it is, ready to paste." = "Non se atopou nada que ocultar. Copiada tal como está, lista para pegar.";
+"Nothing to cover was found. Saved to Photos as it is." = "Non se atopou nada que ocultar. Gardada en Fotos tal como está.";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "Engadir ficheiros…";

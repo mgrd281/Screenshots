@@ -526,6 +526,8 @@
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly hələ ekran şəkillərini görə bilmir. Snapfly-ı bir dəfə aç və icazə ver.";
 "There is no screenshot yet." = "Hələ ekran şəkli yoxdur.";
 "Covered and copied, ready to paste." = "Gizlədildi və kopyalandı, yapışdırmağa hazırdır.";
+"Nothing to cover was found. Copied as it is, ready to paste." = "Gizlədiləcək heç nə tapılmadı. Olduğu kimi kopyalandı, yapışdırmağa hazırdır.";
+"Nothing to cover was found. Saved to Photos as it is." = "Gizlədiləcək heç nə tapılmadı. Olduğu kimi Şəkillərə yadda saxlanıldı.";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "Fayl əlavə et…";

@@ -35,6 +35,10 @@ or turn on syncing with your iPhone (below).
   with the key in the iPhone's keychain: only when you tap Explain in
   Protect Picture, Snapfly sends the protected copy of that picture, never
   the original, and the questions you ask about it, straight from the iPhone.
+  With Find more turned on there, the words of each screenshot or photo you
+  protect go there too, never those of scanned pages or of PDF projects,
+  which are covered on the iPhone alone; Back Tap, Shortcuts and the share
+  extension never ask it.
   Requests to OpenAI ask it not to store them for later retrieval. What they
   do with it is set by their own privacy policies and your account with them;
   they bill each request to that account. Nothing of it goes to the developer.
@@ -165,8 +169,10 @@ or turn on syncing with your iPhone (below).
   copied as they are and never changed. A PDF's password is asked each time
   it opens and never kept. A PDF's words are read from its own text on the
   iPhone, and a photo's kind (receipt, letter) from its words, only there.
-  The covers you draw by hand on a project's pages are kept only while the
-  app is open. A PDF leaves only when you copy, save or share it: with
+  What you cover by hand on a project's pages, and places only offered that
+  you cover, is kept with the project, where it lies and never a word, and
+  covered in every copy made of it; what you covered by hand on scanned
+  pages goes with them when you keep them under Recent. A PDF leaves only when you copy, save or share it: with
   covers, as every save starts, every page is a picture with its private
   details covered and its text read from the covered page; without, the
   PDF's own pages and text as they are, when the file holds every private
