@@ -1142,7 +1142,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   in your own app. Anything else, or an app not
   on the iPhone, through the system's share sheet, where you tap the app;
   nothing ever opens in a browser. Protected
-  shows the last twelve screenshots protected, in the same grid. Holding
+  shows the last twelve screenshots protected, in the same grid (with
+  Photos access off, it asks for it, as the Photos tab does). Holding
   one offers Remove from Protected, which takes it off the list at once,
   with Undo for five seconds while it stays in Photos, and Delete from
   Photos, which iOS asks about first (Photos keeps it 30 days to bring
@@ -1282,9 +1283,12 @@ watch the screen, so there is no line there. What it keeps is the covering:
   try again. Covering waits while Snapfly is in the background, where iOS
   may keep it from reading, and goes on once you're back, reading again
   the one it was at. All of them are
-  behind See All, which finds them by the words they say (those read ahead
+  behind See All, however many, which finds them by the words they say (those read ahead
   of time, below), shows only those with private details, protected or not,
-  and puts the newest or the oldest first. From iOS 18 on, a screenshot opens by growing out of its
+  and puts the newest or the oldest first. Where Snapfly may see only the
+  photos you chose, a line under the screenshots says so, since a new
+  screenshot shows only once you add it, and Change Allowed Photos… adds
+  it. From iOS 18 on, a screenshot opens by growing out of its
   card. How syncing stands sits beside the name at the top, and opens More.
   Tap a screenshot and it shows at once; what the patterns, the labels and
   the names find is marked a moment later, then the copy is made, read again
@@ -1422,6 +1426,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   › Double Tap), a double tap on the back of the iPhone covers the newest
   screenshot and copies it, ready to paste into a chat.
 - **Cover Private Details** covers any picture a shortcut hands it.
+- Both actions' names and descriptions, Siri's phrases and iOS's questions
+  for Photos and the camera come in the app's 13 languages.
 
 Both apps share the code in `Sources/Tendedero/Shared` (finding and covering
 private details, the atomic time, the translations, the apps a picture goes
@@ -1476,7 +1482,9 @@ short hint, once, the first time something is in reach, like the lock on
 a covered photo or picking several photos.
 
 On the iPhone, the introduction shows on your screenshots: tap one, then
-the apps beside it. More › Help › Introduction starts it again.
+the apps beside it. More › Help › Introduction starts it again, once
+Snapfly may see your screenshots; until then it opens the Photos tab,
+which asks for them.
 
 <br>
 
@@ -1577,6 +1585,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
 | `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the page on a bright ground, to zoom with its places marked, covered in steps and checked; the one bar of tools to select, draw, box, lasso and erase with their handles; the status capsule with how many details were found; Details, which checks the unsure places one by one and lists every place by whose it is and what it is, each topic covered with one switch; the ways out, which wait for the checked copy and ask while places are to check; the menu with Explain, Copy, Send to Mac and Full Screen; for a scanned page, Review: the wipe, the status chip, the page large with its eye, its pages and its one bar |
 | `iOS/Share/ShareViewController.swift`, `iOS/Share-Info.plist`, `iOS/*.entitlements` | The iPhone's share extension: a picture shared from any app, covered, checked, then copied, shared or saved |
+| `iOS/Snapfly/*.lproj`, `iOS/Share/*.lproj` | The iPhone's own translations beside `Localizable.strings`, which also holds the Shortcuts actions' names and descriptions: iOS's questions for the camera and Photos (`InfoPlist.strings`; the English ones are also the project's build settings) and Siri's phrases for Cover the Latest Screenshot (`AppShortcuts.strings`) |
 | `Shared/ScanPDF.swift` | Scanned pages as one PDF of A4 pages: each page as JPEG, or in black and white as one bit, fitted whole without stretching, an invisible text layer to find and copy in every script, and nothing of who made it but the app (tested on Linux) |
 | `Shared/ScanReading.swift`, `ScanReadingTools.swift`, `ScanFont.swift` | Tested on Linux: a page's words in reading order, a column to its end, a letterhead's side column after the letter, a table row by row, small print in columns not a table, a paragraph's lines run on and a word broken at a line's end joined, headings, right to left, every cover a mark and nothing from under one, the words the reading was unsure of kept apart (`ScanReading`); what is done with the text: corrections kept by the text as read, a table as tabs or CSV, finding, where an unsure line lies, and the text cut into pieces to speak with the spoken word found in the shown text (`ScanReadingTools`); the font of one empty glyph the PDF's invisible words are set in, written byte by byte, with the map from each glyph back to its character (`ScanFont`) |
 | `Shared/ScanClean.swift`, `ScanLight.swift`, `ScanPrint.swift`, `ScanCrease.swift`, `ScanBend.swift`, `ScanSheet.swift`, `ScanQuality.swift`, `ScanContent.swift`, `ScanGeometry.swift` | The scan's own rules, tested on Linux: the page's light made even, the paper white, a pale printed fill kept, a fold's crease evened out, a curl taken out along the page's ruled lines, light grey print toned line by line, as dark as the body, every small mark of it kept, the print sharp, in color, greys or black and white; a folded sheet's parts and clean edges; blur, reflections and a page too small found by part of the page; every number read before cleaning read after, and every character of a line read surely; the page's true shape, A4 where it is close, upright and level, and its place on A4 |
