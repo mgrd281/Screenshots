@@ -48,11 +48,14 @@ app="$derived/Build/Products/Debug-iphonesimulator/Snapfly.app"
 
 # The UI tests, in light. Scan's run in the Scan Checks workflow, on a build
 # optimized for its made-up scans: in this one a page takes minutes to make.
+# PDF's run in the PDF Checks workflow, optimized too: in this one a page's
+# note can be gone before a busy runner taps its Undo.
 xcrun simctl ui "$device" appearance light
 tests=0
 rm -rf build/always-hide.xcresult
 xcodebuild -project iOS/Snapfly.xcodeproj -scheme Snapfly -destination "id=$device" -derivedDataPath "$derived" \
-  -skip-testing:SnapflyUITests/ScanUITests -resultBundlePath build/always-hide.xcresult CODE_SIGNING_ALLOWED=NO \
+  -skip-testing:SnapflyUITests/ScanUITests -skip-testing:SnapflyUITests/PDFUITests \
+  -resultBundlePath build/always-hide.xcresult CODE_SIGNING_ALLOWED=NO \
   test-without-building || tests=$?
 
 # The frames begin from a fresh install: a PDF project the tests left open
