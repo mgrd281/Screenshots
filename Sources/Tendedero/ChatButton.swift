@@ -69,6 +69,8 @@ final class ChatButton {
     private var cancellables = Set<AnyCancellable>()
     /// The app and window it sits over right now.
     private var current: (app: String, window: CGRect)?
+    /// When the browser was asked for the page it sits over; nil over an app.
+    private var currentAsked: Date?
     /// Where the message box is, read through Accessibility now and then.
     private var fieldFrame: CGRect?
     private var ticks = 0
@@ -290,21 +292,24 @@ final class ChatButton {
         let key: String
         let layout: ChatLayout?
         let aiChat: Bool
+        let asked: Date?
         if let chat = Self.apps.first(where: { $0.bundleID == id }) {
             guard Self.inApps, chat.on else { return hide() }
             key = id
             layout = ChatLayouts.layout(forApp: id)
             aiChat = CoveringProfile.isAIChat(app: id, host: nil)
+            asked = nil
         } else if Self.browsers[id] != nil {
             // The browser is asked once a second, and at once when another
             // window or tab comes to the front: switching to another tab or
             // site hides it within a moment, and a chat just started moves it down.
             Self.seen(front.which, in: id)
-            let read = Self.page(in: id, since: Date().addingTimeInterval(-Self.pageFresh))?.url
-            guard let read, let host = read.host, let site = Self.site(for: host) else { return hide() }
+            let answer = Self.page(in: id, since: Date().addingTimeInterval(-Self.pageFresh))
+            guard let read = answer?.url, let host = read.host, let site = Self.site(for: host) else { return hide() }
             layout = ChatLayouts.layout(for: read)
             key = layout != nil && ChatLayouts.isNewChat(read) ? site + "#new" : site
             aiChat = CoveringProfile.isAIChat(app: nil, host: host)
+            asked = answer?.asked
         } else {
             return hide()
         }
@@ -313,6 +318,7 @@ final class ChatButton {
             ? AIPrompts.offered().enumerated().map { $1.name(number: $0 + 1) } : [])
         if fresh { fieldFrame = Self.messageBox(of: app.processIdentifier, in: window) }
         current = (key, window)
+        currentAsked = asked
         place(over: window, app: key, layout: layout)
         if !panel.isVisible {
             panel.alphaValue = 0
@@ -343,9 +349,20 @@ final class ChatButton {
     private static var asking: Set<String> = []
     /// Each browser's front window as last seen, and when it changed.
     private static var windows: [String: (which: String, changed: Date)] = [:]
-    /// An answer this old still says which page is in front: the browser
-    /// in front is asked again once a second.
+    /// An answer this old still says which page is in front, for where the
+    /// button sits: the browser in front is asked again once a second.
     private static let pageFresh: TimeInterval = 2.5
+    /// An answer this old still says which page is in front for what is
+    /// decided at once, like what is covered in what is sent: an older one,
+    /// as after a tab switched unseen, is asked again.
+    private static let pageNow: TimeInterval = 0.3
+
+    /// Whether an answer asked then still says which page is in front for
+    /// what is decided at once: a moment old, and asked since another
+    /// window or tab came to the front.
+    private static func isFresh(_ asked: Date, in browser: String) -> Bool {
+        Date().timeIntervalSince(asked) < pageNow && asked >= windows[browser]?.changed ?? .distantPast
+    }
 
     /// The browser's latest answer to which page it shows, asked for after
     /// `since`; nil until there is one. Once that answer is a second old it
@@ -393,13 +410,21 @@ final class ChatButton {
         return key.hasSuffix("#new") ? String(key.dropLast(4)) : key
     }
 
+    /// The chat website the button sits over, for what is decided at once,
+    /// like what is covered: only while the browser's answer that placed it
+    /// is a moment old; else nil, and the browser is asked (`pageInFront`).
+    var siteInFrontNow: String? {
+        guard let asked = currentAsked, let id = Paste.frontApp?.bundleIdentifier, Self.isFresh(asked, in: id)
+        else { return nil }
+        return siteInFront
+    }
+
     /// The page open in the browser in front, for the time stamp and what
-    /// is sent: its latest answer while fresh and asked since its window
-    /// last changed, else asked now, waiting a second at most.
+    /// is sent: its latest answer while a moment old and asked since its
+    /// window last changed, else asked now, waiting a second at most.
     static func pageInFront() -> URL? {
         guard let id = Paste.frontApp?.bundleIdentifier, let property = browsers[id] else { return nil }
-        if let latest = answers[id], Date().timeIntervalSince(latest.asked) < pageFresh,
-           latest.asked >= windows[id]?.changed ?? .distantPast {
+        if let latest = answers[id], isFresh(latest.asked, in: id) {
             return latest.url
         }
         let asked = Date()
@@ -410,6 +435,7 @@ final class ChatButton {
 
     private func hide() {
         current = nil
+        currentAsked = nil
         guard panel.isVisible else { return }
         panel.orderOut(nil)
     }

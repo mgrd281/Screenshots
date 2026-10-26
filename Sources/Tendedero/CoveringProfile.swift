@@ -40,11 +40,12 @@ enum CoveringProfile {
     }
 
     /// Whether an AI chat is in front: its app, or its website in a browser,
-    /// as the send button over chats knows it, else asked of the browser.
+    /// as the send button over chats knows it a moment ago, else asked of
+    /// the browser.
     static var aiChatInFront: Bool {
         guard let app = Paste.frontApp?.bundleIdentifier else { return false }
         if aiApps.contains(app) { return true }
-        let host = ChatButton.shared?.siteInFront ?? ChatButton.pageInFront()?.host
+        let host = ChatButton.shared?.siteInFrontNow ?? ChatButton.pageInFront()?.host
         return isAIChat(app: nil, host: host)
     }
 
