@@ -472,6 +472,18 @@ private struct LibraryCard: View {
         .onAppear { model.loadThumb(entry.url) }
         .onTapGesture(count: 2) { model.open([entry]) }
         .onTapGesture { model.select(entry, extending: NSEvent.modifierFlags.contains(.command)) }
+        // Reached with Tab where keyboard navigation is on, as buttons are:
+        // Space selects it, as a click does, and Return opens it, as a
+        // double-click does.
+        .focusable(true, interactions: .activate)
+        .onKeyPress(.space) {
+            model.select(entry, extending: NSEvent.modifierFlags.contains(.command))
+            return .handled
+        }
+        .onKeyPress(.return) {
+            model.open([entry])
+            return .handled
+        }
         .contextMenu { LibraryMenu(model: model, entries: model.targets(for: entry), hang: hang) }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(entry.url.deletingPathExtension().lastPathComponent)

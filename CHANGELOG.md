@@ -94,6 +94,11 @@ keeps a download of each version.
   as Done does.
 - On the Mac, with Reduce Motion on, a photo let go after a press and the
   pin badge settle with a short fade instead of a bouncy spring.
+- On the Mac, the workspace folder's name and a category's name are kept
+  when you leave the field, not only on Return, and History's cards can be
+  reached with Tab where keyboard navigation is on: Space or Return hangs
+  one again, and on the Workspace page Space selects it and Return opens
+  it.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

@@ -664,7 +664,8 @@ says so beside the switch.
 
 Settings › Workspace lists the categories. Rename one, hide it, move it up
 or down, choose which one new screenshots go to, add your own, or remove
-one: its screenshots move to Unsorted and nothing is deleted. Rename the
+one: its screenshots move to Unsorted and nothing is deleted. A name is
+kept when you press Return or leave its field. Rename the
 folder or choose Change Location…, or move it in the Finder: Snapfly finds
 it again, and what hangs on the line follows its files. The folder carries
 Snapfly's icon in the Finder, and looks like any folder if macOS refuses
@@ -674,7 +675,8 @@ while the screenshot is kept in Snapfly's own folder, so none is lost.
 
 In History, the Workspace page shows them by day as a grid or a list. Pick a
 category, search by name or by the words in the photo, press Return or
-double-click to open one, and use the menu for Hang on the line, Quick Look,
+double-click to open one (with keyboard navigation on, Tab reaches each
+card, Space selects it and Return opens it), and use the menu for Hang on the line, Quick Look,
 Copy Original, Copy File Path, Show in Finder, Move to Folder, Rename… and
 Move to Trash. Copy Original copies the files as they are, not covered, as
 the Finder would; to send one covered, hang it on the line. The same Move to
@@ -871,7 +873,8 @@ back as it was.
 Everything that leaves the line, sent or taken down, waits in the History
 for 30 days: History… in the menu bar, or <kbd>⌘</kbd>&thinsp;<kbd>Y</kbd>
 while the menu is open. It is grouped by day, and the search finds the words
-in every photo. A click hangs one on the line again; Send Again in its menu
+in every photo. A click hangs one on the line again (with keyboard
+navigation on, Tab reaches each photo, and Space or Return does the same); Send Again in its menu
 hangs it and sends it, covered, into the chat you had in front, and Copy
 copies it covered as you chose under Privacy, never the original. A screenshot from
 Snapfly's own folder moves into its History folder and goes to the Trash once

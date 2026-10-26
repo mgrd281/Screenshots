@@ -614,6 +614,10 @@ design with monospaced digits.
     plain field, its count in 11 pt `.secondary`, then borderless 20 pt
     buttons for hide, up, down and remove, all labelled, and a field with
     Add), and a last section with Delete…, a destructive button that asks.
+    The folder's and a category's name are kept on Return and when their
+    field is left or the pane closes; an empty or unchanged name changes
+    nothing and the field shows the name again, and a name refused is not
+    tried again until it changes.
   - General has a Screen recordings section with one Sound menu (No Sound,
     Mac's Sound, Microphone, Mac's Sound and Microphone); the microphone
     choices are greyed out before macOS 15, and the footer says why.
@@ -1726,7 +1730,10 @@ apps.
     Copy File Path, Move to Folder, Rename… and Move to Trash (red). List is
     a `Table` of Name, Category, Date and Size with the same menu. Empty, it says "No screenshots yet"
     with a Take Screenshot button. Each card is one VoiceOver element with
-    the same actions.
+    the same actions, and reached with Tab where keyboard navigation is on,
+    as buttons are (`focusable(interactions: .activate)`): Space selects
+    it and Return opens it, as a click and a double-click do. On the Photos
+    and Orders pages, Space or Return hangs a card again, as a click does.
   - The toolbar holds a segmented Photos | Orders | Sent picker in the middle, then
     the search, Export… (`square.and.arrow.up`, Sent only) and Clear
     History…, which clears both. Empty, each page uses
