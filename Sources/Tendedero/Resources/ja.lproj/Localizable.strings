@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "ロープから外れた写真は、削除するまでここに残ります。";
 "Clear the history?" = "履歴を消去しますか?";
 "Clear History" = "履歴を消去";
-"The photos kept in it go to the Trash." = "履歴に保存された写真はゴミ箱に移動します。";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "履歴に保存された写真はゴミ箱に移動し、「送信済み」の一覧も空になります。";
 "No history yet" = "履歴はまだありません";
 "Photos that leave the line stay here for %d days." = "ロープから外れた写真はここに%d日間残ります。";
 "History is off. Turn it on in Settings, under Line." = "履歴はオフです。「設定」の「ロープ」でオンにしてください。";
@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIFを作成中…";
 "The line is empty." = "ロープは空です。";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "ロープはフルスクリーンのアプリには表示されません。%2$@ で「%1$@」をオンにしてください。";
 "Another app already uses this shortcut." = "このショートカットはほかのアプリで使われています。";
 "Could not open the screenshot." = "スクリーンショットを開けませんでした。";
 "Could not combine the photos." = "写真を結合できませんでした。";
@@ -741,7 +742,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "「%1$@」はこれからすべての写真で隠されます。%2$@で変更できます。";
 "Always cover “%@”" = "「%@」を常に隠す";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "これからすべての写真で隠されます。プライバシーの自分のルールに入ります。";
+"Covered in every photo from now on, as a rule of your own under %@." = "これからすべての写真で隠されます。「%@」の自分のルールに入ります。";
 "Moved to the Trash. Click to put it back on the line." = "ゴミ箱に入れました。クリックするとロープに戻します。";
 "%d moved to the Trash. Click to put them back on the line." = "%d枚をゴミ箱に入れました。クリックするとロープに戻します。";
 "Taken down. Click to put it back on the line." = "外しました。クリックするとロープに戻します。";
@@ -799,6 +800,9 @@
 "Start Again" = "最初から";
 "Start Introduction" = "はじめにを開始";
 "Take a screenshot first: this shows on a photo on the line." = "まずスクリーンショットを撮ってください。ロープに掛かった写真で説明します。";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "最新の写真には隠したものがありません。何かを隠した写真で説明します。";
+"The newest on the line is a screen recording: this shows on a photo." = "ロープの最新のものは画面収録です。写真で説明します。";
+"No icons are on under the photos. Turn one on in %@." = "写真の下のアイコンがすべてオフです。%@ でオンにしてください。";
 "Taking a Screenshot" = "スクリーンショットを撮る";
 "Tap a screenshot" = "スクリーンショットをタップ";
 "The Tag at the End of the Line" = "ロープの端のタグ";
@@ -1102,6 +1106,14 @@
 "Covering…" = "隠しています…";
 "1 place covered" = "1 か所を隠しました";
 "%d places covered" = "%d か所を隠しました";
+"1 file covered" = "1 ファイルを隠しました";
+"%d files covered" = "%d ファイルを隠しました";
+"1 file with nothing to cover" = "隠すものがないファイル 1 件";
+"%d files with nothing to cover" = "隠すものがないファイル %d 件";
+"1 file not covered" = "隠せなかったファイル 1 件";
+"%d files not covered" = "隠せなかったファイル %d 件";
+"1 file stopped" = "停止したファイル 1 件";
+"%d files stopped" = "停止したファイル %d 件";
 "Nothing to cover" = "隠すものなし";
 "Locked with a password" = "パスワードで保護";
 "Over %d pages" = "%d ページ超";
@@ -1118,7 +1130,7 @@
 "What to cover" = "隠すもの";
 "Names Only" = "名前のみ";
 "As in Settings" = "設定と同じ";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "設定 › プライバシー の独自ルールも適用されます。各コピーはもう一度読み取られ、まだ見えるものがあればさらに隠されます。";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@ のあなたの情報とルールも適用されます。各コピーはもう一度読み取られ、まだ見えるものがあればさらに隠されます。";
 "Read on this Mac. Nothing is sent anywhere." = "この Mac で読み取ります。どこにも送信されません。";
 "The words of each file also go to %@, as set in Settings › Privacy." = "設定 › プライバシー の設定どおり、各ファイルの文字は %@ にも送られます。";
 "Cover 1 File" = "1 ファイルを隠す";
@@ -1292,7 +1304,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "別のApple AccountでサインインしているMac用です。MacでSnapflyの設定を開き、「同期」で「コードを表示」をクリックします。";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "別のApple AccountでサインインしているiPhone用です。このMacに表示されるコードをiPhoneで入力します。";
 "iCloud is not ready for connecting yet. Try again later." = "iCloudはまだ接続の準備ができていません。あとでもう一度お試しください。";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "iPhoneのSnapflyで設定を開き、「コードでMacに接続」をタップして、次を入力します:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "iPhoneのSnapflyで %1$@ を開き、「%2$@」をタップして、次を入力します:";
 "It stops syncing with this Mac. What it sent stays here." = "このMacとの同期を停止します。送られたものはここに残ります。";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "このMacと同じApple Accountを使っているため、あなたのデバイスの1台として同期します。";
 "It was declined on the Mac." = "Macで拒否されました。";

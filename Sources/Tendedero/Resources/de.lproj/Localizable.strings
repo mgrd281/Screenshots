@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "Fotos, die die Leine verlassen, bleiben hier, bis du sie entfernst.";
 "Clear the history?" = "Verlauf löschen?";
 "Clear History" = "Verlauf löschen";
-"The photos kept in it go to the Trash." = "Die darin aufbewahrten Fotos kommen in den Papierkorb.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "Die darin aufbewahrten Fotos kommen in den Papierkorb, und die Liste „Gesendet“ wird auch geleert.";
 "No history yet" = "Noch kein Verlauf";
 "Photos that leave the line stay here for %d days." = "Fotos, die die Leine verlassen, bleiben hier %d Tage.";
 "History is off. Turn it on in Settings, under Line." = "Der Verlauf ist aus. Schalte ihn in den Einstellungen unter Leine ein.";
@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF wird erstellt …";
 "The line is empty." = "Die Leine ist leer.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "Die Leine bleibt bei Apps im Vollbildmodus weg. Schalte „%1$@“ unter %2$@ ein.";
 "Another app already uses this shortcut." = "Dieses Kürzel nutzt schon eine andere App.";
 "Could not open the screenshot." = "Das Bildschirmfoto konnte nicht geöffnet werden.";
 "Could not combine the photos." = "Die Fotos konnten nicht zusammengefügt werden.";
@@ -741,7 +742,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "„%1$@“ wird ab jetzt in jedem Foto verdeckt. Ändern kannst du das unter %2$@.";
 "Always cover “%@”" = "„%@“ immer verdecken";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "Ab jetzt in jedem Foto verdeckt, als eigene Regel unter Datenschutz.";
+"Covered in every photo from now on, as a rule of your own under %@." = "Ab jetzt in jedem Foto verdeckt, als eigene Regel unter „%@“.";
 "Moved to the Trash. Click to put it back on the line." = "In den Papierkorb gelegt. Klick, um es wieder an die Leine zu hängen.";
 "%d moved to the Trash. Click to put them back on the line." = "%d in den Papierkorb gelegt. Klick, um sie wieder an die Leine zu hängen.";
 "Taken down. Click to put it back on the line." = "Abgenommen. Klick, um es wieder an die Leine zu hängen.";
@@ -799,6 +800,9 @@
 "Start Again" = "Neu starten";
 "Start Introduction" = "Einführung starten";
 "Take a screenshot first: this shows on a photo on the line." = "Mach zuerst ein Bildschirmfoto: Das zeigt sich an einem Foto auf der Leine.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "Auf dem neuesten Foto ist nichts verdeckt: Das zeigt sich an einem Foto, auf dem etwas verdeckt ist.";
+"The newest on the line is a screen recording: this shows on a photo." = "Das Neueste auf der Leine ist eine Bildschirmaufnahme: Das zeigt sich an einem Foto.";
+"No icons are on under the photos. Turn one on in %@." = "Unter den Fotos ist kein Symbol eingeschaltet. Schalte eines unter %@ ein.";
 "Taking a Screenshot" = "Ein Bildschirmfoto machen";
 "Tap a screenshot" = "Tippe auf ein Bildschirmfoto";
 "The Tag at the End of the Line" = "Das Schild am Ende der Leine";
@@ -1102,6 +1106,14 @@
 "Covering…" = "Wird verdeckt …";
 "1 place covered" = "1 Stelle verdeckt";
 "%d places covered" = "%d Stellen verdeckt";
+"1 file covered" = "1 Datei verdeckt";
+"%d files covered" = "%d Dateien verdeckt";
+"1 file with nothing to cover" = "1 Datei ohne etwas zu verdecken";
+"%d files with nothing to cover" = "%d Dateien ohne etwas zu verdecken";
+"1 file not covered" = "1 Datei nicht verdeckt";
+"%d files not covered" = "%d Dateien nicht verdeckt";
+"1 file stopped" = "1 Datei angehalten";
+"%d files stopped" = "%d Dateien angehalten";
 "Nothing to cover" = "Nichts zu verdecken";
 "Locked with a password" = "Mit Passwort geschützt";
 "Over %d pages" = "Über %d Seiten";
@@ -1118,7 +1130,7 @@
 "What to cover" = "Was verdeckt wird";
 "Names Only" = "Nur Namen";
 "As in Settings" = "Wie in Einstellungen";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Deine eigenen Regeln aus Einstellungen › Datenschutz gelten auch. Jede Kopie wird noch einmal gelesen und weiter verdeckt, falls noch etwas zu sehen ist.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "Deine Angaben und Regeln aus %@ gelten auch. Jede Kopie wird noch einmal gelesen und weiter verdeckt, falls noch etwas zu sehen ist.";
 "Read on this Mac. Nothing is sent anywhere." = "Auf diesem Mac gelesen. Nichts wird irgendwohin gesendet.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "Die Wörter jeder Datei gehen auch an %@, wie unter Einstellungen › Datenschutz eingestellt.";
 "Cover 1 File" = "1 Datei verdecken";
@@ -1292,7 +1304,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "Für einen Mac mit einem anderen Apple Account. Öffne auf dem Mac die Einstellungen von Snapfly, dann „Synchronisieren“, und klicke auf „Code zeigen“.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "Für ein iPhone mit einem anderen Apple Account: Es gibt den Code ein, den dieser Mac zeigt.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud ist noch nicht für das Verbinden bereit. Versuch es später noch einmal.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "Öffne in Snapfly auf dem iPhone die Einstellungen, tippe auf „Mit Code mit einem Mac verbinden“ und gib ein:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "Öffne in Snapfly auf dem iPhone %1$@, tippe auf „%2$@“ und gib ein:";
 "It stops syncing with this Mac. What it sent stays here." = "Es synchronisiert nicht mehr mit diesem Mac. Was es gesendet hat, bleibt hier.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "Es nutzt denselben Apple Account wie dieser Mac und synchronisiert daher als eines deiner eigenen Geräte.";
 "It was declined on the Mac." = "Auf dem Mac abgelehnt.";

@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "Las fotos que salen de la cuerda se quedan aquí hasta que las quites.";
 "Clear the history?" = "¿Borrar el historial?";
 "Clear History" = "Borrar historial";
-"The photos kept in it go to the Trash." = "Las fotos guardadas en él van a la Papelera.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "Las fotos guardadas en él van a la Papelera, y la lista «Enviados» también se vacía.";
 "No history yet" = "Aún no hay historial";
 "Photos that leave the line stay here for %d days." = "Las fotos que salen de la cuerda se quedan aquí %d días.";
 "History is off. Turn it on in Settings, under Line." = "El historial está desactivado. Actívalo en Ajustes, en Cuerda.";
@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "Creando GIF…";
 "The line is empty." = "La cuerda está vacía.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "La cuerda no aparece sobre apps a pantalla completa. Activa «%1$@» en %2$@.";
 "Another app already uses this shortcut." = "Otra app ya usa este atajo.";
 "Could not open the screenshot." = "No se pudo abrir la captura.";
 "Could not combine the photos." = "No se pudieron combinar las fotos.";
@@ -741,7 +742,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "«%1$@» se cubre a partir de ahora en todas las fotos. Puedes cambiarlo en %2$@.";
 "Always cover “%@”" = "Cubrir siempre «%@»";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "Se cubre desde ahora en todas las fotos, como regla propia en Privacidad.";
+"Covered in every photo from now on, as a rule of your own under %@." = "Se cubre desde ahora en todas las fotos, como regla propia en «%@».";
 "Moved to the Trash. Click to put it back on the line." = "Movida a la Papelera. Haz clic para volver a colgarla en el tendedero.";
 "%d moved to the Trash. Click to put them back on the line." = "%d movidas a la Papelera. Haz clic para volver a colgarlas en el tendedero.";
 "Taken down. Click to put it back on the line." = "Descolgada. Haz clic para volver a colgarla en el tendedero.";
@@ -799,6 +800,9 @@
 "Start Again" = "Empezar de nuevo";
 "Start Introduction" = "Empezar la introducción";
 "Take a screenshot first: this shows on a photo on the line." = "Haz primero una captura: esto se muestra en una foto de la cuerda.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "En la foto más reciente no hay nada tapado: esto se muestra en una foto con algo tapado.";
+"The newest on the line is a screen recording: this shows on a photo." = "Lo más reciente de la cuerda es una grabación de pantalla: esto se muestra en una foto.";
+"No icons are on under the photos. Turn one on in %@." = "No hay iconos activados bajo las fotos. Activa uno en %@.";
 "Taking a Screenshot" = "Hacer una captura";
 "Tap a screenshot" = "Toca una captura";
 "The Tag at the End of the Line" = "La etiqueta al final de la cuerda";
@@ -1102,6 +1106,14 @@
 "Covering…" = "Tapando…";
 "1 place covered" = "1 lugar tapado";
 "%d places covered" = "%d lugares tapados";
+"1 file covered" = "1 archivo tapado";
+"%d files covered" = "%d archivos tapados";
+"1 file with nothing to cover" = "1 archivo sin nada que tapar";
+"%d files with nothing to cover" = "%d archivos sin nada que tapar";
+"1 file not covered" = "1 archivo sin tapar";
+"%d files not covered" = "%d archivos sin tapar";
+"1 file stopped" = "1 archivo detenido";
+"%d files stopped" = "%d archivos detenidos";
 "Nothing to cover" = "Nada que tapar";
 "Locked with a password" = "Protegido con contraseña";
 "Over %d pages" = "Más de %d páginas";
@@ -1118,7 +1130,7 @@
 "What to cover" = "Qué tapar";
 "Names Only" = "Solo nombres";
 "As in Settings" = "Como en Ajustes";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "También se aplican tus propias reglas de Ajustes › Privacidad. Cada copia se vuelve a leer y se tapa más si algo sigue viéndose.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "También se aplican tus datos y reglas de %@. Cada copia se vuelve a leer y se tapa más si algo sigue viéndose.";
 "Read on this Mac. Nothing is sent anywhere." = "Se lee en este Mac. No se envía nada a ningún sitio.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "Las palabras de cada archivo también van a %@, como se indica en Ajustes › Privacidad.";
 "Cover 1 File" = "Tapar 1 archivo";
@@ -1292,7 +1304,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "Para un Mac con otra cuenta de Apple. En el Mac, abre los Ajustes de Snapfly, luego Sincronización, y haz clic en Mostrar código.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "Para un iPhone con otra cuenta de Apple: escribe el código que muestra este Mac.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud aún no está listo para conectar. Inténtalo más tarde.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "En Snapfly en el iPhone, abre Ajustes, toca Conectar con un Mac mediante código y escribe:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "En Snapfly en el iPhone, abre %1$@, toca «%2$@» y escribe:";
 "It stops syncing with this Mac. What it sent stays here." = "Deja de sincronizarse con este Mac. Lo que envió se queda aquí.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "Usa la misma cuenta de Apple que este Mac, así que se sincroniza como uno de tus dispositivos.";
 "It was declined on the Mac." = "Se rechazó en el Mac.";

@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "离开晾衣绳的照片会一直保留在这里，直到你移除。";
 "Clear the history?" = "要清除历史记录吗？";
 "Clear History" = "清除历史记录";
-"The photos kept in it go to the Trash." = "其中保留的照片会移到废纸篓。";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "其中保留的照片会移到废纸篓，“已发送”列表也会被清空。";
 "No history yet" = "还没有历史记录";
 "Photos that leave the line stay here for %d days." = "离开晾衣绳的照片会在这里保留 %d 天。";
 "History is off. Turn it on in Settings, under Line." = "历史记录已关闭。请在“设置”的“晾衣绳”中打开。";
@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "正在制作 GIF…";
 "The line is empty." = "晾衣绳是空的。";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "晾衣绳不会出现在全屏 App 上。请在“%2$@”中打开“%1$@”。";
 "Another app already uses this shortcut." = "另一个 App 已在使用此快捷键。";
 "Could not open the screenshot." = "无法打开截屏。";
 "Could not combine the photos." = "无法合并照片。";
@@ -741,7 +742,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "从现在起，每张照片中的“%1$@”都会被遮盖。可在“%2$@”中更改。";
 "Always cover “%@”" = "始终遮盖“%@”";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "从现在起每张照片都会遮盖，作为“隐私”中的自定义规则。";
+"Covered in every photo from now on, as a rule of your own under %@." = "从现在起每张照片都会遮盖，作为“%@”中的自定义规则。";
 "Moved to the Trash. Click to put it back on the line." = "已移到废纸篓。点按可放回晾衣绳。";
 "%d moved to the Trash. Click to put them back on the line." = "已将 %d 张移到废纸篓。点按可放回晾衣绳。";
 "Taken down. Click to put it back on the line." = "已取下。点按可放回晾衣绳。";
@@ -799,6 +800,9 @@
 "Start Again" = "重新开始";
 "Start Introduction" = "开始入门介绍";
 "Take a screenshot first: this shows on a photo on the line." = "请先截一张图：这要在晾衣绳上的照片上演示。";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "最新的照片上没有遮盖任何内容：这要在有遮盖内容的照片上演示。";
+"The newest on the line is a screen recording: this shows on a photo." = "晾衣绳上最新的是一段屏幕录制：这要在照片上演示。";
+"No icons are on under the photos. Turn one on in %@." = "照片下方没有打开任何图标。请在“%@”中打开一个。";
 "Taking a Screenshot" = "截屏";
 "Tap a screenshot" = "轻点一张截图";
 "The Tag at the End of the Line" = "晾衣绳末端的标签";
@@ -1102,6 +1106,14 @@
 "Covering…" = "正在遮盖…";
 "1 place covered" = "已遮盖 1 处";
 "%d places covered" = "已遮盖 %d 处";
+"1 file covered" = "已遮盖 1 个文件";
+"%d files covered" = "已遮盖 %d 个文件";
+"1 file with nothing to cover" = "1 个文件无需遮盖";
+"%d files with nothing to cover" = "%d 个文件无需遮盖";
+"1 file not covered" = "1 个文件未遮盖";
+"%d files not covered" = "%d 个文件未遮盖";
+"1 file stopped" = "1 个文件已停止";
+"%d files stopped" = "%d 个文件已停止";
 "Nothing to cover" = "无需遮盖";
 "Locked with a password" = "受密码保护";
 "Over %d pages" = "超过 %d 页";
@@ -1118,7 +1130,7 @@
 "What to cover" = "遮盖内容";
 "Names Only" = "仅姓名";
 "As in Settings" = "与设置相同";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "“设置 › 隐私”中你自己的规则同样适用。每份副本都会再次读取，如仍有内容可见则会进一步遮盖。";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "“%@”中你的信息和规则同样适用。每份副本都会再次读取，如仍有内容可见则会进一步遮盖。";
 "Read on this Mac. Nothing is sent anywhere." = "在这台 Mac 上读取，不会发送到任何地方。";
 "The words of each file also go to %@, as set in Settings › Privacy." = "按照“设置 › 隐私”中的设定，每个文件的文字也会发送给 %@。";
 "Cover 1 File" = "遮盖 1 个文件";
@@ -1292,7 +1304,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "适用于登录其他 Apple 账户的 Mac。在 Mac 上打开 Snapfly 的设置，进入“同步”，点按“显示配对码”。";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "适用于登录其他 Apple 账户的 iPhone：在 iPhone 上输入这台 Mac 显示的配对码。";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud 尚未准备好连接。请稍后重试。";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "在 iPhone 上的 Snapfly 中打开设置，轻点“用配对码连接 Mac”，然后输入：";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "在 iPhone 上的 Snapfly 中打开“%1$@”，轻点“%2$@”，然后输入：";
 "It stops syncing with this Mac. What it sent stays here." = "它将停止与这台 Mac 同步。它已发送的内容会留在这里。";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "它与这台 Mac 使用同一个 Apple 账户，因此会作为你自己的设备同步。";
 "It was declined on the Mac." = "已在 Mac 上被拒绝。";

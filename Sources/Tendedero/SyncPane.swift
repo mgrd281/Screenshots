@@ -203,7 +203,9 @@ private struct PairingSheet: View {
         return VStack(spacing: 10) {
             Text(L("Connect an iPhone on another Apple account"))
                 .font(.headline)
-            Text(L("In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:"))
+            // The way there in the iPhone's own words: More › Mac and iCloud.
+            Text(String(format: L("In Snapfly on the iPhone, open %1$@, tap %2$@, and type:"),
+                        [L("More"), L("Mac and iCloud")].joined(separator: " › "), L("Connect to a Mac with a Code")))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
             Text(current.spaced)

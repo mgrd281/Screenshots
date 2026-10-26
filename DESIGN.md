@@ -599,7 +599,9 @@ design with monospaced digits.
 - **Screens and devices.** Snapfly is macOS only; there is no mobile layout.
   It must handle these instead:
   - several displays: the line goes to the screen with the pointer;
-  - full screen Spaces;
+  - full screen Spaces: the line stays away unless Over full screen apps
+    is on, and asked for there (Show line, ⌃⌥T, Search) the floating note
+    says so and where to turn it on, never nothing or "The line is empty.";
   - a line moved down or across with its grip;
   - all three sizes;
   - all eight styles.
@@ -942,15 +944,20 @@ apps.
     of a state symbol, Name (the path inside what was brought, truncated in
     the middle), Kind and Result, then a footer: the progress bar with
     "312 of 1,000 · about 4 min left" and Stop while running, and after it
-    the tally in symbols.
+    the tally in symbols, one VoiceOver element whose counts each say what
+    they count ("12 files covered, 3 files with nothing to cover").
+  - Done while the window is behind, a note counts only the copies with
+    something covered ("Covered copies saved: 12") and names up to three
+    with nothing to cover; a click shows the folder.
   - State symbols: `circle` in `.tertiary` waiting, a mini progress view
     working, `checkmark.shield.fill` green covered,
     `exclamationmark.circle.fill` orange nothing to cover,
     `xmark.octagon.fill` red not covered, `minus.circle` stopped.
   - On the right a 300 pt grouped `Form`: What to cover, with four small
     bordered buttons two by two (Names Only, As in Settings, All, None), the
-    kinds in Settings › Privacy's six groups as switches, a note on own
-    rules and where the files are read; at the bottom the prominent Cover
+    kinds in Settings › Privacy's six groups as switches, a note that the
+    details and rules of Settings › Always Hide apply too, and where the
+    files are read; at the bottom the prominent Cover
     1,000 Files, or Show in Finder and Start Over after a run.
 - **Photo context menu.**
   - Short, as a Mac app's own menus are: about fifteen rows, what is done
@@ -1013,7 +1020,8 @@ apps.
     selectable, and a borderless `doc.on.doc` that turns into a checkmark
     once copied, with a divider between rows. The note says it is read as
     the screenshot shows it, not covered. Its footer has Copy Row and Copy
-    All (the primary); it sends nothing. With the AI assistant set up, the
+    All (the primary), each turning into "Copied" with a checkmark on its
+    own; it sends nothing. With the AI assistant set up, the
     rows read on the Mac show at once under the note "Asking Claude for the
     rest…", and the parts it adds, Product among them, join in their place;
     the note then says which were read on the Mac and which in the covered
@@ -1131,7 +1139,8 @@ apps.
     `minus.circle`. With no details, Start with your name and Add Name,
     prominent. Add Detail, a menu of the four kinds. The footer says they
     are covered in every picture, whatever is checked under Privacy, and
-    stay in this Mac's keychain, never sent.
+    stay in this Mac's keychain, never sent; that holds in code too, with
+    no kind checked or Hide private details off (`PrivateDetails.alwaysHides`).
   - Your Rules, headed with "N active": a row each with its symbol in
     `.secondary` on a 24 pt `.quaternary` tile, its word or label
     (`.secondary` while off), its kind and what it covers in callout, a
@@ -1172,7 +1181,8 @@ apps.
   - **Pairing sheet** (`PairingSheet`), 440 pt wide, 24 pt padding, its
     content centred in at least 190 pt over a row of buttons on the
     trailing edge. Showing the code: the headline, one line of how in
-    `.secondary`, the six digits as "042 917" in 44 pt semibold rounded
+    `.secondary`, naming the iPhone's way in its own words ("open More ›
+    Mac and iCloud, tap Connect to a Mac with a Code"), the six digits as "042 917" in 44 pt semibold rounded
     with monospaced digits (selectable, read digit by digit by VoiceOver),
     a 180 pt linear progress bar running down the 30 seconds, and "A new
     code in 12 seconds" in caption `.secondary`; Cancel. When a device
@@ -1227,9 +1237,9 @@ apps.
       `plus.circle.fill`, at most 220 pt wide, the word truncated in the
       middle, kept 90 pt from the picture's sides, adds the word as a rule
       of the owner's own (`OwnRules.add`, once in any case, without the
-      punctuation round it); its help says where the rule lives, and a
-      footer then says it is covered from now on and where to
-      change it (in the footer of Say what to hide). Every photo is read
+      punctuation round it); its help says where the rule lives, Always
+      Hide, and a footer then says it is covered from now on and where to
+      change it, Settings › Always Hide (in the footer of Say what to hide). Every photo is read
       again, and Settings shows the rule. The button fades and goes with the
       next click, drag, page or the word's box removed.
     - The **footer**, under a divider, holds Cancel and Done on the
@@ -1321,7 +1331,8 @@ apps.
     rows where they overlap. Blocks (`studio-block`) move by their middle
     and stretch by their ends (8 pt each); a zoom made from clicks shows
     `sparkle.magnifyingglass`, one changed by hand `plus.magnifyingglass`,
-    with its closeness ("2.0×"). A click on the ruler or pictures moves the
+    with its closeness ("2.0×", its number as the Mac's region writes it,
+    "2,0×" in German). A click on the ruler or pictures moves the
     video and keeps what is chosen; on an empty track it chooses nothing.
     The playhead (`studio-playhead`) runs through all of it.
   - The **inspector** (340 pt, a grouped form over a footer): Zoom, with
@@ -1550,7 +1561,10 @@ apps.
     ("Ended at step 3 of 7. It goes on from there."), Show Me How with a
     menu of one thing at a time (`GuideLesson`: a screenshot, what gets
     covered, sending into a chat, a photo's menu, the tag), and Tips while
-    you work as a switch. Starting one closes Settings first.
+    you work as a switch. Starting one closes Settings first; when the line
+    has nothing for a lesson to point at (no photo, nothing covered on the
+    newest, a screen recording, or every icon under photos off), Settings
+    stays open and the floating note says why (`Guide.missing(for:)`).
 - **No modal alerts** for things that can be said inline in the card.
 - **Privacy pane.** Grouped form. First a row of three small `.bordered`
   buttons, Check All, Recommended and Uncheck All, sharing the row in equal
@@ -1660,14 +1674,18 @@ apps.
     cards 150–200 pt wide, 16 pt apart, 24 pt around.
   - A card is the photo fitted on a 12 pt rounded fill of `.primary` at 5%,
     112 pt high, with its time under it (11 pt, `.secondary`, monospaced
-    digits). On hover it lifts (1.02 and a photo card's hover shadow) and a
+    digits). While its thumbnail is made, a small spinner; when none can be
+    made, `exclamationmark.triangle` at 16 pt in `.secondary`, never a
+    spinner for ever. On hover it lifts (1.02 and a photo card's hover shadow) and a
     22 pt accent circle with `arrow.uturn.up` says a click hangs it again.
     Its menu: Hang on the line, Send Again (it hangs, the window closes, and
     once the app in front before it is back, the photo goes in, covered;
-    else it stays copied with a note), Copy (covered as Settings says, made
-    and put on the clipboard as the line's Copy does it, never the original;
-    a PDF still being covered waits with the line's note), Open, Show in
-    Finder, and Remove from History.
+    else it stays copied with a note that says "covered" only when something
+    was), Copy (as it would leave the line: covered as Settings says, with
+    the parts hidden by hand and what was drawn, which the History keeps
+    with the photo; made and put on the clipboard as the line's Copy does
+    it, never the original; a PDF still being covered waits with the line's
+    note), Open, Show in Finder, and Remove from History.
   - **Orders** groups the photos with an order, invoice or customer number
     (the first one read, top to bottom) under that number, as a `number`
     label in the day headers' style, selectable, over the same grid; the
@@ -1676,7 +1694,8 @@ apps.
     segment. Its bar holds a category menu ("All (12)", then each visible
     category with its count), Open Workspace and a Grid | List segmented
     control. Grid is the cards above (112 pt, thumbnails made as they come
-    into view and at most 400 kept), with the category beside the time and a
+    into view and at most 400 kept, the same warning where one cannot be
+    made), with the category beside the time and a
     2.5 pt accent ring and a check on a selected one; a click selects,
     ⌘-click adds, a double-click opens, and the menu is Hang on the line,
     Open, Quick Look, Show in Finder, Copy Original (Copy Originals for
@@ -1687,7 +1706,8 @@ apps.
     the same actions.
   - The toolbar holds a segmented Photos | Orders | Sent picker in the middle, then
     the search, Export… (`square.and.arrow.up`, Sent only) and Clear
-    History…, which clears both. Empty, each page uses
+    History…, which clears both, as its question says ("The photos kept in
+    it go to the Trash, and the Sent list is emptied too."). Empty, each page uses
     `ContentUnavailableView` (Sent with `paperplane`).
   - **Sent** is a standard `Table`, newest first: Date (day, month, year,
     hour and minute, monospaced digits), Photo, Sent to, Covered (the kinds'
@@ -1832,7 +1852,9 @@ apps.
     `.primary` at 12%, 8 pt apart, then "+2" in the count's chip; under
     them, after a 10 pt semibold `.secondary` glyph, the covered line
     (`lock.fill`: "Covered: Names · Emails", "Nothing private found" or
-    "Hide private details is off.") and, for photos like ones sent before,
+    "Hide private details is off.", the last only when no kind is checked
+    and nothing, not even the owner's own details, was covered; the copies
+    are made first, so it is said of them) and, for photos like ones sent before,
     `paperplane.fill` with "Sent to WhatsApp · Today at 14:05", or "Sent
     before: 2 of 3" for several.
   - A caption note says why it shows: AI chats can keep what they are

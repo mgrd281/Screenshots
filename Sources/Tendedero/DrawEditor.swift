@@ -80,12 +80,12 @@ final class DrawEditor: NSObject, NSWindowDelegate {
     }
 
     /// What Hide private details covers, read in the background, and the
-    /// picture with it and the parts hidden by hand covered in the chosen
-    /// look and checked, as it goes out.
+    /// picture with it, the owner's own details and rules and the parts
+    /// hidden by hand covered in the chosen look and checked, as it goes out.
     private func readCovered(_ url: URL, into model: DrawModel) {
         let chosen = PrivateDetails.details
         let hand = model.hand
-        guard !chosen.isEmpty || !hand.isEmpty else { return }
+        guard !chosen.isEmpty || PrivateDetails.alwaysHides || !hand.isEmpty else { return }
         let size = model.image.size
         DispatchQueue.global(qos: .userInitiated).async { [weak model] in
             guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),

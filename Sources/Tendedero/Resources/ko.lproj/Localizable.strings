@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "빨랫줄에서 내려간 사진은 직접 지울 때까지 여기에 남아요.";
 "Clear the history?" = "기록을 지울까요?";
 "Clear History" = "기록 지우기";
-"The photos kept in it go to the Trash." = "기록에 보관된 사진은 휴지통으로 이동해요.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "기록에 보관된 사진은 휴지통으로 이동하고, ‘보낸 항목’ 목록도 비워져요.";
 "No history yet" = "아직 기록이 없어요";
 "Photos that leave the line stay here for %d days." = "빨랫줄에서 내려간 사진은 여기에 %d일 동안 남아요.";
 "History is off. Turn it on in Settings, under Line." = "기록이 꺼져 있어요. 설정의 빨랫줄에서 켜세요.";
@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF 만드는 중…";
 "The line is empty." = "빨랫줄이 비어 있어요.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "빨랫줄은 전체 화면 앱 위에는 나타나지 않아요. %2$@에서 ‘%1$@’을(를) 켜세요.";
 "Another app already uses this shortcut." = "다른 앱이 이미 이 단축키를 사용해요.";
 "Could not open the screenshot." = "스크린샷을 열지 못했어요.";
 "Could not combine the photos." = "사진을 합치지 못했어요.";
@@ -741,7 +742,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@”은(는) 이제 모든 사진에서 가려집니다. %2$@에서 바꿀 수 있습니다.";
 "Always cover “%@”" = "“%@” 항상 가리기";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "이제 모든 사진에서 가려지며, 개인정보 보호의 나만의 규칙에 들어갑니다.";
+"Covered in every photo from now on, as a rule of your own under %@." = "이제 모든 사진에서 가려지며, ‘%@’의 나만의 규칙에 들어갑니다.";
 "Moved to the Trash. Click to put it back on the line." = "휴지통으로 옮겼습니다. 클릭하면 빨랫줄에 다시 겁니다.";
 "%d moved to the Trash. Click to put them back on the line." = "%d장을 휴지통으로 옮겼습니다. 클릭하면 빨랫줄에 다시 겁니다.";
 "Taken down. Click to put it back on the line." = "걷어냈습니다. 클릭하면 빨랫줄에 다시 겁니다.";
@@ -799,6 +800,9 @@
 "Start Again" = "다시 시작";
 "Start Introduction" = "소개 시작";
 "Take a screenshot first: this shows on a photo on the line." = "먼저 스크린샷을 찍으세요. 빨랫줄에 걸린 사진에서 보여 드려요.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "가장 최근 사진에는 가린 것이 없어요. 무언가 가린 사진에서 보여 드려요.";
+"The newest on the line is a screen recording: this shows on a photo." = "빨랫줄의 가장 최근 항목은 화면 기록이에요. 사진에서 보여 드려요.";
+"No icons are on under the photos. Turn one on in %@." = "사진 아래에 켜진 아이콘이 없어요. %@에서 하나를 켜세요.";
 "Taking a Screenshot" = "스크린샷 찍기";
 "Tap a screenshot" = "스크린샷을 탭하세요";
 "The Tag at the End of the Line" = "빨랫줄 끝의 태그";
@@ -1102,6 +1106,14 @@
 "Covering…" = "가리는 중…";
 "1 place covered" = "1곳 가림";
 "%d places covered" = "%d곳 가림";
+"1 file covered" = "파일 1개 가림";
+"%d files covered" = "파일 %d개 가림";
+"1 file with nothing to cover" = "가릴 것이 없는 파일 1개";
+"%d files with nothing to cover" = "가릴 것이 없는 파일 %d개";
+"1 file not covered" = "가리지 못한 파일 1개";
+"%d files not covered" = "가리지 못한 파일 %d개";
+"1 file stopped" = "중지된 파일 1개";
+"%d files stopped" = "중지된 파일 %d개";
 "Nothing to cover" = "가릴 것 없음";
 "Locked with a password" = "암호로 잠김";
 "Over %d pages" = "%d페이지 초과";
@@ -1118,7 +1130,7 @@
 "What to cover" = "가릴 항목";
 "Names Only" = "이름만";
 "As in Settings" = "설정과 동일";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "설정 › 개인정보 보호의 사용자 규칙도 적용됩니다. 모든 사본은 다시 읽혀 아직 보이는 것이 있으면 더 가려집니다.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@의 내 정보와 규칙도 적용됩니다. 모든 사본은 다시 읽혀 아직 보이는 것이 있으면 더 가려집니다.";
 "Read on this Mac. Nothing is sent anywhere." = "이 Mac에서 읽습니다. 아무것도 전송되지 않습니다.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "설정 › 개인정보 보호에 따라 각 파일의 단어가 %@에도 전송됩니다.";
 "Cover 1 File" = "파일 1개 가리기";
@@ -1292,7 +1304,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "다른 Apple 계정으로 로그인한 Mac용이에요. Mac에서 Snapfly 설정을 열고 동기화에서 코드 보기를 클릭하세요.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "다른 Apple 계정으로 로그인한 iPhone용이에요. 이 Mac에 보이는 코드를 iPhone에 입력해요.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud가 아직 연결할 준비가 되지 않았어요. 나중에 다시 시도하세요.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "iPhone의 Snapfly에서 설정을 열고 코드로 Mac에 연결을 탭한 다음 입력하세요:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "iPhone의 Snapfly에서 %1$@을(를) 열고 ‘%2$@’을(를) 탭한 다음 입력하세요:";
 "It stops syncing with this Mac. What it sent stays here." = "이 Mac과의 동기화를 멈춰요. 보낸 것은 여기에 남아요.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "이 Mac과 같은 Apple 계정을 사용하므로 내 기기 중 하나로 동기화돼요.";
 "It was declined on the Mac." = "Mac에서 거절했어요.";

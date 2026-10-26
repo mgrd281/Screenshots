@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "Les photos qui quittent la corde restent ici jusqu’à ce que tu les retires.";
 "Clear the history?" = "Effacer l’historique ?";
 "Clear History" = "Effacer l’historique";
-"The photos kept in it go to the Trash." = "Les photos qu’il garde vont à la Corbeille.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "Les photos qu’il garde vont à la Corbeille, et la liste « Envoyés » est vidée aussi.";
 "No history yet" = "Pas encore d’historique";
 "Photos that leave the line stay here for %d days." = "Les photos qui quittent la corde restent ici %d jours.";
 "History is off. Turn it on in Settings, under Line." = "L’historique est désactivé. Active-le dans Réglages, sous Corde.";
@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "Création du GIF…";
 "The line is empty." = "La corde est vide.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "La corde reste à l’écart des apps en plein écran. Activez « %1$@ » dans %2$@.";
 "Another app already uses this shortcut." = "Une autre app utilise déjà ce raccourci.";
 "Could not open the screenshot." = "Impossible d’ouvrir la capture.";
 "Could not combine the photos." = "Impossible d’assembler les photos.";
@@ -741,7 +742,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "« %1$@ » est désormais masqué sur chaque photo. Vous pouvez le modifier dans %2$@.";
 "Always cover “%@”" = "Toujours masquer « %@ »";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "Masqué désormais sur chaque photo, comme règle personnelle dans Confidentialité.";
+"Covered in every photo from now on, as a rule of your own under %@." = "Masqué désormais sur chaque photo, comme règle personnelle dans « %@ ».";
 "Moved to the Trash. Click to put it back on the line." = "Placée dans la corbeille. Cliquez pour la raccrocher sur la corde.";
 "%d moved to the Trash. Click to put them back on the line." = "%d placées dans la corbeille. Cliquez pour les raccrocher sur la corde.";
 "Taken down. Click to put it back on the line." = "Décrochée. Cliquez pour la raccrocher sur la corde.";
@@ -799,6 +800,9 @@
 "Start Again" = "Recommencer";
 "Start Introduction" = "Commencer l’introduction";
 "Take a screenshot first: this shows on a photo on the line." = "Prenez d’abord une capture : cela se montre sur une photo de la corde.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "Rien n’est masqué sur la photo la plus récente : cela se montre sur une photo où quelque chose est masqué.";
+"The newest on the line is a screen recording: this shows on a photo." = "Le plus récent sur la corde est un enregistrement de l’écran : cela se montre sur une photo.";
+"No icons are on under the photos. Turn one on in %@." = "Aucune icône n’est activée sous les photos. Activez-en une dans %@.";
 "Taking a Screenshot" = "Prendre une capture";
 "Tap a screenshot" = "Touchez une capture";
 "The Tag at the End of the Line" = "L’étiquette au bout de la corde";
@@ -1102,6 +1106,14 @@
 "Covering…" = "Masquage…";
 "1 place covered" = "1 endroit masqué";
 "%d places covered" = "%d endroits masqués";
+"1 file covered" = "1 fichier masqué";
+"%d files covered" = "%d fichiers masqués";
+"1 file with nothing to cover" = "1 fichier sans rien à masquer";
+"%d files with nothing to cover" = "%d fichiers sans rien à masquer";
+"1 file not covered" = "1 fichier non masqué";
+"%d files not covered" = "%d fichiers non masqués";
+"1 file stopped" = "1 fichier arrêté";
+"%d files stopped" = "%d fichiers arrêtés";
 "Nothing to cover" = "Rien à masquer";
 "Locked with a password" = "Protégé par un mot de passe";
 "Over %d pages" = "Plus de %d pages";
@@ -1118,7 +1130,7 @@
 "What to cover" = "Quoi masquer";
 "Names Only" = "Noms seulement";
 "As in Settings" = "Comme dans Réglages";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Vos propres règles de Réglages › Confidentialité s’appliquent aussi. Chaque copie est relue et masquée davantage si quelque chose reste visible.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "Tes données et règles de %@ s’appliquent aussi. Chaque copie est relue et masquée davantage si quelque chose reste visible.";
 "Read on this Mac. Nothing is sent anywhere." = "Lu sur ce Mac. Rien n’est envoyé nulle part.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "Les mots de chaque fichier sont aussi envoyés à %@, comme réglé dans Réglages › Confidentialité.";
 "Cover 1 File" = "Masquer 1 fichier";
@@ -1292,7 +1304,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "Pour un Mac connecté à un autre compte Apple. Sur le Mac, ouvrez les Réglages de Snapfly, puis Synchronisation, et cliquez sur Afficher le code.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "Pour un iPhone connecté à un autre compte Apple : il saisit le code affiché par ce Mac.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud n’est pas encore prêt pour la connexion. Réessayez plus tard.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "Dans Snapfly sur l’iPhone, ouvrez les Réglages, touchez Se connecter à un Mac avec un code et saisissez :";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "Dans Snapfly sur l’iPhone, ouvrez %1$@, touchez « %2$@ » et saisissez :";
 "It stops syncing with this Mac. What it sent stays here." = "Il cesse de se synchroniser avec ce Mac. Ce qu’il a envoyé reste ici.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "Il utilise le même compte Apple que ce Mac : il se synchronise donc comme l’un de vos appareils.";
 "It was declined on the Mac." = "Refusé sur le Mac.";

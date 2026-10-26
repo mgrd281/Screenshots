@@ -1,5 +1,6 @@
 // Checks the translations: every L("...") in the code has an entry in each
-// language, and no language keeps entries the code no longer uses.
+// language, and no language keeps entries the code no longer uses; and each
+// language asks every one of the Mac's permission questions.
 // A missing translation is only a warning, because the app shows the English
 // text instead. Everything else is an error.
 // Usage: swift scripts/check-strings.swift
@@ -63,9 +64,41 @@ for folder in languages {
     for key in keys.subtracting(used).sorted() { problems.append("\(folder): unused \"\(key)\"") }
 }
 
+// The questions macOS asks before the Mac app may watch a folder, use the
+// microphone or ask a browser: scripts/build-app.sh writes the English ones
+// into Info.plist, and each language's InfoPlist.strings asks every one of
+// them, the English one in the same words, and nothing else.
+let buildScript = try String(contentsOfFile: "scripts/build-app.sh", encoding: .utf8)
+let usage = try NSRegularExpression(pattern: #"<key>(NS\w+UsageDescription)</key>\s*<string>([^<]*)</string>"#)
+var asked: [String: String] = [:]
+for match in usage.matches(in: buildScript, range: NSRange(buildScript.startIndex..., in: buildScript)) {
+    let key = String(buildScript[Range(match.range(at: 1), in: buildScript)!])
+    asked[key] = String(buildScript[Range(match.range(at: 2), in: buildScript)!])
+}
+if asked.isEmpty { problems.append("scripts/build-app.sh: no usage descriptions found in its Info.plist") }
+let macQuestions = sources.appendingPathComponent("InfoPlist")
+for folder in languages {
+    let url = macQuestions.appendingPathComponent(folder).appendingPathComponent("InfoPlist.strings")
+    guard let table = NSDictionary(contentsOf: url) as? [String: String] else {
+        problems.append("\(folder): the Mac's InfoPlist.strings is missing or cannot be read")
+        continue
+    }
+    for key in Set(asked.keys).subtracting(table.keys).sorted() {
+        problems.append("\(folder): the Mac's InfoPlist.strings misses \(key)")
+    }
+    for key in Set(table.keys).subtracting(asked.keys).sorted() {
+        problems.append("\(folder): the Mac's InfoPlist.strings has \(key), which scripts/build-app.sh does not ask")
+    }
+    if folder == "en.lproj" {
+        for (key, english) in asked.sorted(by: { $0.key < $1.key }) where table[key].map({ $0 != english }) ?? false {
+            problems.append("en.lproj: the Mac's InfoPlist.strings words \(key) otherwise than scripts/build-app.sh")
+        }
+    }
+}
+
 warnings.forEach { print("warning: \($0)") }
 if problems.isEmpty {
-    print("\(used.count) strings, checked in \(languages.map { $0.replacingOccurrences(of: ".lproj", with: "") }.joined(separator: ", "))")
+    print("\(used.count) strings and the Mac's \(asked.count) permission questions, checked in \(languages.map { $0.replacingOccurrences(of: ".lproj", with: "") }.joined(separator: ", "))")
 } else {
     problems.forEach { print($0) }
     exit(1)

@@ -298,7 +298,7 @@
 "Photos that leave the line stay here until you remove them." = "Photos that leave the line stay here until you remove them.";
 "Clear the history?" = "Clear the history?";
 "Clear History" = "Clear History";
-"The photos kept in it go to the Trash." = "The photos kept in it go to the Trash.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "The photos kept in it go to the Trash, and the Sent list is emptied too.";
 "No history yet" = "No history yet";
 "Photos that leave the line stay here for %d days." = "Photos that leave the line stay here for %d days.";
 "History is off. Turn it on in Settings, under Line." = "History is off. Turn it on in Settings, under Line.";
@@ -347,6 +347,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "Making GIF…";
 "The line is empty." = "The line is empty.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "The line stays away from full screen apps. Turn on %1$@ in %2$@.";
 "Another app already uses this shortcut." = "Another app already uses this shortcut.";
 "Could not open the screenshot." = "Could not open the screenshot.";
 "Could not combine the photos." = "Could not combine the photos.";
@@ -743,7 +744,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” is covered from now on, in every photo. Change it in %2$@.";
 "Always cover “%@”" = "Always cover “%@”";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "Covered in every photo from now on, as a rule of your own under Privacy.";
+"Covered in every photo from now on, as a rule of your own under %@." = "Covered in every photo from now on, as a rule of your own under %@.";
 "Moved to the Trash. Click to put it back on the line." = "Moved to the Trash. Click to put it back on the line.";
 "%d moved to the Trash. Click to put them back on the line." = "%d moved to the Trash. Click to put them back on the line.";
 "Taken down. Click to put it back on the line." = "Taken down. Click to put it back on the line.";
@@ -801,6 +802,9 @@
 "Start Again" = "Start Again";
 "Start Introduction" = "Start Introduction";
 "Take a screenshot first: this shows on a photo on the line." = "Take a screenshot first: this shows on a photo on the line.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "Nothing is covered on the newest photo: this shows on one with something covered.";
+"The newest on the line is a screen recording: this shows on a photo." = "The newest on the line is a screen recording: this shows on a photo.";
+"No icons are on under the photos. Turn one on in %@." = "No icons are on under the photos. Turn one on in %@.";
 "Taking a Screenshot" = "Taking a Screenshot";
 "Tap a screenshot" = "Tap a screenshot";
 "The Tag at the End of the Line" = "The Tag at the End of the Line";
@@ -1104,6 +1108,14 @@
 "Covering…" = "Covering…";
 "1 place covered" = "1 place covered";
 "%d places covered" = "%d places covered";
+"1 file covered" = "1 file covered";
+"%d files covered" = "%d files covered";
+"1 file with nothing to cover" = "1 file with nothing to cover";
+"%d files with nothing to cover" = "%d files with nothing to cover";
+"1 file not covered" = "1 file not covered";
+"%d files not covered" = "%d files not covered";
+"1 file stopped" = "1 file stopped";
+"%d files stopped" = "%d files stopped";
 "Nothing to cover" = "Nothing to cover";
 "Locked with a password" = "Locked with a password";
 "Over %d pages" = "Over %d pages";
@@ -1120,7 +1132,7 @@
 "What to cover" = "What to cover";
 "Names Only" = "Names Only";
 "As in Settings" = "As in Settings";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows.";
 "Read on this Mac. Nothing is sent anywhere." = "Read on this Mac. Nothing is sent anywhere.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "The words of each file also go to %@, as set in Settings › Privacy.";
 "Cover 1 File" = "Cover 1 File";
@@ -1294,7 +1306,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "For an iPhone signed in to another Apple account: it types the code this Mac shows.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud is not ready for connecting yet. Try again later.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "In Snapfly on the iPhone, open %1$@, tap %2$@, and type:";
 "It stops syncing with this Mac. What it sent stays here." = "It stops syncing with this Mac. What it sent stays here.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "It uses the same Apple account as this Mac, so it syncs as one of your own devices.";
 "It was declined on the Mac." = "It was declined on the Mac.";

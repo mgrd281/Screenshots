@@ -296,7 +296,7 @@
 "Photos that leave the line stay here until you remove them." = "الصور التي تخرج من الحبل تبقى هنا حتى تحذفها.";
 "Clear the history?" = "مسح السجل؟";
 "Clear History" = "مسح السجل";
-"The photos kept in it go to the Trash." = "الصور المحفوظة فيه تذهب إلى سلة المهملات.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "الصور المحفوظة فيه تذهب إلى سلة المهملات، وتُفرَّغ قائمة «المُرسَل» أيضًا.";
 "No history yet" = "لا يوجد سجل بعد";
 "Photos that leave the line stay here for %d days." = "الصور التي تخرج من الحبل تبقى هنا %d يومًا.";
 "History is off. Turn it on in Settings, under Line." = "السجل متوقف. شغّله من الإعدادات، تحت الحبل.";
@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "جارٍ إنشاء GIF…";
 "The line is empty." = "الحبل فارغ.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "يبقى الحبل بعيدًا عن التطبيقات بملء الشاشة. فعّل «%1$@» في %2$@.";
 "Another app already uses this shortcut." = "تطبيق آخر يستخدم هذا الاختصار.";
 "Could not open the screenshot." = "تعذّر فتح صورة الشاشة.";
 "Could not combine the photos." = "تعذّر دمج الصور.";
@@ -741,7 +742,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "«%1$@» تُغطّى من الآن في كل صورة. يمكنك تغيير ذلك في %2$@.";
 "Always cover “%@”" = "تغطية «%@» دائمًا";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "يُغطّى من الآن في كل صورة، كقاعدة خاصة بك ضمن الخصوصية.";
+"Covered in every photo from now on, as a rule of your own under %@." = "يُغطّى من الآن في كل صورة، كقاعدة خاصة بك ضمن «%@».";
 "Moved to the Trash. Click to put it back on the line." = "نُقلت إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
 "%d moved to the Trash. Click to put them back on the line." = "نُقلت %d إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
 "Taken down. Click to put it back on the line." = "أُنزلت. انقر لإعادتها إلى الحبل.";
@@ -799,6 +800,9 @@
 "Start Again" = "ابدأ من جديد";
 "Start Introduction" = "ابدأ التعريف";
 "Take a screenshot first: this shows on a photo on the line." = "التقط صورة للشاشة أولًا: هذا يُعرض على صورة على الحبل.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "لا شيء مغطّى في أحدث صورة: هذا يُعرض على صورة فيها شيء مغطّى.";
+"The newest on the line is a screen recording: this shows on a photo." = "أحدث ما على الحبل تسجيل شاشة: هذا يُعرض على صورة.";
+"No icons are on under the photos. Turn one on in %@." = "لا توجد أيقونات مفعّلة تحت الصور. فعّل واحدة في %@.";
 "Taking a Screenshot" = "التقاط صورة للشاشة";
 "Tap a screenshot" = "اضغط على لقطة";
 "The Tag at the End of the Line" = "الشارة في طرف الحبل";
@@ -1102,6 +1106,14 @@
 "Covering…" = "يجري التغطية…";
 "1 place covered" = "غُطّي مكان واحد";
 "%d places covered" = "غُطّي %d مكان";
+"1 file covered" = "ملف واحد مغطّى";
+"%d files covered" = "%d ملف مغطّى";
+"1 file with nothing to cover" = "ملف واحد لا شيء فيه للتغطية";
+"%d files with nothing to cover" = "%d ملف لا شيء فيه للتغطية";
+"1 file not covered" = "ملف واحد لم يُغطَّ";
+"%d files not covered" = "%d ملف لم يُغطَّ";
+"1 file stopped" = "ملف واحد أُوقف";
+"%d files stopped" = "%d ملف أُوقف";
 "Nothing to cover" = "لا شيء للتغطية";
 "Locked with a password" = "مقفل بكلمة سر";
 "Over %d pages" = "أكثر من %d صفحة";
@@ -1118,7 +1130,7 @@
 "What to cover" = "ما الذي يُغطّى";
 "Names Only" = "الأسماء فقط";
 "As in Settings" = "كما في الإعدادات";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "تُطبَّق أيضًا قواعدك الخاصة من الإعدادات › الخصوصية. وتُقرأ كل نسخة مرة أخرى، ويُغطّى المزيد إن بقي شيء ظاهرًا.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "تُطبَّق أيضًا معلوماتك وقواعدك من %@. وتُقرأ كل نسخة مرة أخرى، ويُغطّى المزيد إن بقي شيء ظاهرًا.";
 "Read on this Mac. Nothing is sent anywhere." = "تُقرأ على هذا الماك. لا يُرسَل شيء إلى أي مكان.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "تذهب كلمات كل ملف أيضًا إلى %@، كما هو مضبوط في الإعدادات › الخصوصية.";
 "Cover 1 File" = "غطِّ ملفًا واحدًا";
@@ -1292,7 +1304,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "لماك مسجَّل بحساب Apple آخر. على الماك افتح إعدادات Snapfly، ثم المزامنة، وانقر عرض الرمز.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "لآيفون مسجَّل بحساب Apple آخر: يكتب الرمز الذي يعرضه هذا الماك.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud غير جاهز للربط بعد. حاول لاحقاً.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "في Snapfly على الآيفون افتح الإعدادات، واضغط الربط بماك برمز، واكتب:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "في Snapfly على الآيفون افتح %1$@، واضغط «%2$@»، واكتب:";
 "It stops syncing with this Mac. What it sent stays here." = "يتوقف عن المزامنة مع هذا الماك. ما أرسله يبقى هنا.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "يستخدم حساب Apple نفسه الذي يستخدمه هذا الماك، لذلك يتزامن كأحد أجهزتك.";
 "It was declined on the Mac." = "رُفض الطلب على الماك.";

@@ -99,6 +99,8 @@ final class BackdropModel: ObservableObject {
     func load(_ url: URL) {
         let chosen = PrivateDetails.details
         let hand = PrivateDetails.hand(url)
+        // The owner's own details and rules are covered whatever is chosen.
+        let covers = !chosen.isEmpty || PrivateDetails.alwaysHides || !hand.isEmpty
         var drawing = Drawings.saved(url)
         drawing.backdrop = nil
         let stamp = TimeStamp.mark(for: url)
@@ -107,7 +109,7 @@ final class BackdropModel: ObservableObject {
             guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
                   let image = Cover.upright(source) else { return }
             var picture = image
-            if !chosen.isEmpty || !hand.isEmpty, let made = Finder.covered(image, chosen, hand: hand) {
+            if covers, let made = Finder.covered(image, chosen, hand: hand) {
                 picture = made.image
             }
             if !drawing.isEmpty, let drawn = Drawing.render(picture, drawing) { picture = drawn }

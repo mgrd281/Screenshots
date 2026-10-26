@@ -298,7 +298,7 @@
 "Photos that leave the line stay here until you remove them." = "İpdən çıxan şəkillər sən silənə qədər burada qalır.";
 "Clear the history?" = "Tarixçə təmizlənsin?";
 "Clear History" = "Tarixçəni təmizlə";
-"The photos kept in it go to the Trash." = "İçində saxlanan şəkillər Zibil qutusuna gedir.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "İçində saxlanan şəkillər Zibil qutusuna gedir, “Göndərilənlər” siyahısı da boşaldılır.";
 "No history yet" = "Hələ tarixçə yoxdur";
 "Photos that leave the line stay here for %d days." = "İpdən çıxan şəkillər burada %d gün qalır.";
 "History is off. Turn it on in Settings, under Line." = "Tarixçə söndürülüb. Onu Ayarlarda, İp bölməsində yandır.";
@@ -347,6 +347,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF yaradılır…";
 "The line is empty." = "İp boşdur.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "İp tam ekran proqramlardan uzaq durur. %2$@ bölməsində “%1$@” seçimini aç.";
 "Another app already uses this shortcut." = "Bu qısayolu artıq başqa tətbiq istifadə edir.";
 "Could not open the screenshot." = "Ekran şəkli açıla bilmədi.";
 "Could not combine the photos." = "Şəkillər birləşdirilə bilmədi.";
@@ -743,7 +744,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” bundan sonra hər fotoda örtülür. Bunu %2$@ bölməsində dəyişə bilərsiniz.";
 "Always cover “%@”" = "“%@” həmişə örtülsün";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "Bundan sonra hər fotoda örtülür, Məxfilik bölməsində öz qaydan kimi.";
+"Covered in every photo from now on, as a rule of your own under %@." = "Bundan sonra hər fotoda örtülür, “%@” bölməsində öz qaydan kimi.";
 "Moved to the Trash. Click to put it back on the line." = "Zibil qutusuna atıldı. Yenidən ipə asmaq üçün klikləyin.";
 "%d moved to the Trash. Click to put them back on the line." = "%d zibil qutusuna atıldı. Yenidən ipə asmaq üçün klikləyin.";
 "Taken down. Click to put it back on the line." = "İpdən götürüldü. Yenidən ipə asmaq üçün klikləyin.";
@@ -801,6 +802,9 @@
 "Start Again" = "Yenidən başla";
 "Start Introduction" = "Tanışlığa başla";
 "Take a screenshot first: this shows on a photo on the line." = "Əvvəlcə ekran şəkli çək: bu, ipdəki fotonun üzərində göstərilir.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "Ən yeni fotoda heç nə örtülməyib: bu, içində nəsə örtülmüş fotoda göstərilir.";
+"The newest on the line is a screen recording: this shows on a photo." = "İpdəki ən yenisi ekran yazısıdır: bu, fotonun üzərində göstərilir.";
+"No icons are on under the photos. Turn one on in %@." = "Fotoların altında heç bir ikon açıq deyil. %@ bölməsində birini aç.";
 "Taking a Screenshot" = "Ekran şəkli çəkmək";
 "Tap a screenshot" = "Bir ekran şəklinə toxun";
 "The Tag at the End of the Line" = "İpin sonundakı etiket";
@@ -1104,6 +1108,14 @@
 "Covering…" = "Örtülür…";
 "1 place covered" = "1 yer örtüldü";
 "%d places covered" = "%d yer örtüldü";
+"1 file covered" = "1 fayl örtüldü";
+"%d files covered" = "%d fayl örtüldü";
+"1 file with nothing to cover" = "Örtüləcək heç nə olmayan 1 fayl";
+"%d files with nothing to cover" = "Örtüləcək heç nə olmayan %d fayl";
+"1 file not covered" = "1 fayl örtülmədi";
+"%d files not covered" = "%d fayl örtülmədi";
+"1 file stopped" = "1 fayl dayandırıldı";
+"%d files stopped" = "%d fayl dayandırıldı";
 "Nothing to cover" = "Örtüləcək heç nə yoxdur";
 "Locked with a password" = "Parol ilə kilidlənib";
 "Over %d pages" = "%d səhifədən çox";
@@ -1120,7 +1132,7 @@
 "What to cover" = "Nə örtülsün";
 "Names Only" = "Yalnız adlar";
 "As in Settings" = "Ayarlardakı kimi";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Ayarlar › Məxfilik bölməsindəki öz qaydaların da tətbiq olunur. Hər nüsxə yenidən oxunur və nəsə görünürsə, daha çox örtülür.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@ bölməsindəki məlumatların və qaydaların da tətbiq olunur. Hər nüsxə yenidən oxunur və nəsə görünürsə, daha çox örtülür.";
 "Read on this Mac. Nothing is sent anywhere." = "Bu Mac-də oxunur. Heç nə heç yerə göndərilmir.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "Hər faylın sözləri də Ayarlar › Məxfilik bölməsində seçildiyi kimi %@ xidmətinə gedir.";
 "Cover 1 File" = "1 faylı ört";
@@ -1294,7 +1306,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "Başqa Apple hesabına daxil olmuş Mac üçün. Mac-da Snapfly-ın Ayarlarını, sonra Sinxronlaşdırma bölməsini açın və Kodu göstər düyməsinə klikləyin.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "Başqa Apple hesabına daxil olmuş iPhone üçün: o, bu Mac-ın göstərdiyi kodu yazır.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud hələ qoşulmağa hazır deyil. Sonra yenidən cəhd edin.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "iPhone-dakı Snapfly-da Ayarları açın, Mac-a kodla qoşul düyməsinə toxunun və yazın:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "iPhone-dakı Snapfly-da %1$@ bölməsini açın, “%2$@” düyməsinə toxunun və yazın:";
 "It stops syncing with this Mac. What it sent stays here." = "Bu Mac ilə sinxronlaşmanı dayandırır. Göndərdikləri burada qalır.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "Bu Mac ilə eyni Apple hesabından istifadə edir, ona görə də öz cihazlarınızdan biri kimi sinxronlaşır.";
 "It was declined on the Mac." = "Mac-da rədd edildi.";

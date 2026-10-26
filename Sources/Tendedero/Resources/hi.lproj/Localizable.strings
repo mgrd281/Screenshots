@@ -298,7 +298,7 @@
 "Photos that leave the line stay here until you remove them." = "रस्सी से हटने वाली फ़ोटो तब तक यहाँ रहती हैं जब तक आप उन्हें न हटाएँ।";
 "Clear the history?" = "इतिहास साफ़ करें?";
 "Clear History" = "इतिहास साफ़ करें";
-"The photos kept in it go to the Trash." = "इसमें रखी फ़ोटो ट्रैश में चली जाती हैं।";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "इसमें रखी फ़ोटो ट्रैश में चली जाती हैं, और “भेजे गए” सूची भी खाली हो जाती है।";
 "No history yet" = "अभी कोई इतिहास नहीं";
 "Photos that leave the line stay here for %d days." = "रस्सी से हटने वाली फ़ोटो यहाँ %d दिन रहती हैं।";
 "History is off. Turn it on in Settings, under Line." = "इतिहास बंद है। इसे सेटिंग्स में, रस्सी के नीचे चालू करें।";
@@ -347,6 +347,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF बन रहा है…";
 "The line is empty." = "रस्सी ख़ाली है।";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "रस्सी फ़ुल स्क्रीन ऐप्स से दूर रहती है। %2$@ में “%1$@” चालू करें।";
 "Another app already uses this shortcut." = "यह शॉर्टकट पहले से कोई दूसरा ऐप इस्तेमाल करता है।";
 "Could not open the screenshot." = "स्क्रीनशॉट खोला नहीं जा सका।";
 "Could not combine the photos." = "तस्वीरें जोड़ी नहीं जा सकीं।";
@@ -743,7 +744,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” अब से हर फ़ोटो में ढका रहेगा। इसे %2$@ में बदल सकते हैं।";
 "Always cover “%@”" = "“%@” को हमेशा ढकें";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "अब से हर फ़ोटो में ढका रहेगा, गोपनीयता में आपके अपने नियम के रूप में।";
+"Covered in every photo from now on, as a rule of your own under %@." = "अब से हर फ़ोटो में ढका रहेगा, “%@” में आपके अपने नियम के रूप में।";
 "Moved to the Trash. Click to put it back on the line." = "ट्रैश में ले जाया गया। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
 "%d moved to the Trash. Click to put them back on the line." = "%d फ़ोटो ट्रैश में ले जाई गईं। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
 "Taken down. Click to put it back on the line." = "उतार दी गई। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
@@ -801,6 +802,9 @@
 "Start Again" = "फिर से शुरू करें";
 "Start Introduction" = "परिचय शुरू करें";
 "Take a screenshot first: this shows on a photo on the line." = "पहले एक स्क्रीनशॉट लें: यह रस्सी पर टंगी फ़ोटो पर दिखाया जाता है।";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "सबसे नई फ़ोटो में कुछ भी ढका नहीं है: यह ऐसी फ़ोटो पर दिखाया जाता है जिसमें कुछ ढका हो।";
+"The newest on the line is a screen recording: this shows on a photo." = "रस्सी पर सबसे नई चीज़ एक स्क्रीन रिकॉर्डिंग है: यह फ़ोटो पर दिखाया जाता है।";
+"No icons are on under the photos. Turn one on in %@." = "फ़ोटो के नीचे कोई आइकन चालू नहीं है। %@ में एक चालू करें।";
 "Taking a Screenshot" = "स्क्रीनशॉट लेना";
 "Tap a screenshot" = "किसी स्क्रीनशॉट पर टैप करें";
 "The Tag at the End of the Line" = "रस्सी के आख़िर का टैग";
@@ -1104,6 +1108,14 @@
 "Covering…" = "ढका जा रहा है…";
 "1 place covered" = "1 जगह ढकी गई";
 "%d places covered" = "%d जगहें ढकी गईं";
+"1 file covered" = "1 फ़ाइल ढकी गई";
+"%d files covered" = "%d फ़ाइलें ढकी गईं";
+"1 file with nothing to cover" = "1 फ़ाइल जिसमें ढकने को कुछ नहीं";
+"%d files with nothing to cover" = "%d फ़ाइलें जिनमें ढकने को कुछ नहीं";
+"1 file not covered" = "1 फ़ाइल नहीं ढकी गई";
+"%d files not covered" = "%d फ़ाइलें नहीं ढकी गईं";
+"1 file stopped" = "1 फ़ाइल रोकी गई";
+"%d files stopped" = "%d फ़ाइलें रोकी गईं";
 "Nothing to cover" = "ढकने को कुछ नहीं";
 "Locked with a password" = "पासवर्ड से बंद";
 "Over %d pages" = "%d से ज़्यादा पेज";
@@ -1120,7 +1132,7 @@
 "What to cover" = "क्या ढकना है";
 "Names Only" = "केवल नाम";
 "As in Settings" = "सेटिंग्स के अनुसार";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "सेटिंग्स › गोपनीयता के आपके अपने नियम भी लागू होते हैं। हर कॉपी फिर से पढ़ी जाती है, और कुछ दिखे तो और ढका जाता है।";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@ की आपकी जानकारी और नियम भी लागू होते हैं। हर कॉपी फिर से पढ़ी जाती है, और कुछ दिखे तो और ढका जाता है।";
 "Read on this Mac. Nothing is sent anywhere." = "इसी Mac पर पढ़ा जाता है। कुछ भी कहीं नहीं भेजा जाता।";
 "The words of each file also go to %@, as set in Settings › Privacy." = "हर फ़ाइल के शब्द %@ को भी जाते हैं, जैसा सेटिंग्स › गोपनीयता में तय है।";
 "Cover 1 File" = "1 फ़ाइल ढकें";
@@ -1294,7 +1306,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "दूसरे Apple खाते में साइन इन Mac के लिए। Mac पर Snapfly की सेटिंग्स खोलें, फिर सिंक, और कोड दिखाएँ पर क्लिक करें।";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "दूसरे Apple खाते में साइन इन iPhone के लिए: वह यह Mac जो कोड दिखाता है, उसे टाइप करता है।";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud अभी जोड़ने के लिए तैयार नहीं है। बाद में कोशिश करें।";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "iPhone पर Snapfly में सेटिंग्स खोलें, कोड से Mac से जोड़ें पर टैप करें, और टाइप करें:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "iPhone पर Snapfly में %1$@ खोलें, “%2$@” पर टैप करें, और टाइप करें:";
 "It stops syncing with this Mac. What it sent stays here." = "यह इस Mac के साथ सिंक करना बंद कर देता है। इसने जो भेजा, वह यहीं रहता है।";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "यह इस Mac वाला ही Apple खाता इस्तेमाल करता है, इसलिए यह आपके अपने डिवाइस की तरह सिंक होता है।";
 "It was declined on the Mac." = "Mac पर मना कर दिया गया।";

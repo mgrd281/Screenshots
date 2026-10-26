@@ -216,6 +216,7 @@ final class Line: ObservableObject {
         items[i].falling = true
         hitRects[id] = nil
         pickedIDs.remove(id)
+        holdMarks(of: items[i].url)
         save()
         if !quietly { play("Pop", volume: 0.25) }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
@@ -507,14 +508,18 @@ final class Line: ObservableObject {
 
     /// From a photo's menu: the photos picked when it is one of them, or
     /// only this one.
-    func paste(_ id: UUID) {
+    /// - Returns: whether they went at once, rather than waiting on Check
+    ///   Before Sending or a PDF still being covered.
+    @discardableResult
+    func paste(_ id: UUID) -> Bool {
         Guide.shared.happened(.photoUsed)
         let picked = items.filter { pickedIDs.contains($0.id) && !$0.falling }
         if pickedIDs.contains(id) {
-            paste(picked)
+            return paste(picked)
         } else if let item = items.first(where: { $0.id == id }) {
-            paste([item])
+            return paste([item])
         }
+        return false
     }
 
     /// ChatGPT, Claude, WhatsApp, Gmail, GMX or WEB.DE, from a photo: the photos picked
@@ -554,12 +559,15 @@ final class Line: ObservableObject {
         guard let reason = SendCheck.reason(SendCheck.when, app: chat.installedAppID, host: chat.hosts.first,
                                             inBrowser: inBrowser, chatApps: Set(ChatButton.apps.map(\.bundleID)),
                                             chatSites: ChatButton.sites.map(\.host)) else { return go() }
+        // The copies first, so what was covered in them is known. Your own
+        // details and rules are covered with no kind checked too.
+        let copies = photos.map { PrivateDetails.shareable($0.url, covering: chosen) }
         var covered = CoverReport()
         for photo in photos {
             if let report = PrivateDetails.report(for: photo.url, covering: chosen) { covered.add(report) }
         }
-        SendCheck.shared.show(photos.map { PrivateDetails.shareable($0.url, covering: chosen) },
-                              to: chat.name, reason: reason, covered: covered, hides: !chosen.isEmpty,
+        SendCheck.shared.show(copies, to: chat.name, reason: reason, covered: covered,
+                              hides: !chosen.isEmpty || !covered.isEmpty,
                               sentBefore: photos.compactMap { sentBefore[$0.id] }, above: nil, send: go)
     }
 
@@ -591,12 +599,14 @@ final class Line: ObservableObject {
         guard !photos.isEmpty, !stillCovering(photos, chosen) else { return false }
         // Into an AI chat, or a place not known as a chat: the card first.
         if Paste.willPaste, let destination = SendLog.destination, let reason = SendCheck.reasonNow {
+            // The copies first, so what was covered in them is known.
+            let copies = photos.map { files[$0.id] ?? PrivateDetails.shareable($0.url, covering: chosen) }
             var covered = CoverReport()
             for photo in photos {
                 if let report = PrivateDetails.report(for: photo.url, covering: chosen) { covered.add(report) }
             }
-            SendCheck.shared.show(photos.map { files[$0.id] ?? PrivateDetails.shareable($0.url, covering: chosen) },
-                                  to: destination, reason: reason, covered: covered, hides: !chosen.isEmpty,
+            SendCheck.shared.show(copies, to: destination, reason: reason, covered: covered,
+                                  hides: !chosen.isEmpty || !covered.isEmpty,
                                   sentBefore: photos.compactMap { sentBefore[$0.id] },
                                   above: ChatButton.shared?.capsuleFrame) { [weak self] in
                 self?.deliver(photos, then: caption, replacing: files, covering: chosen)
@@ -782,6 +792,25 @@ final class Line: ObservableObject {
             if !History.keep(url, owned: true) { try? FileManager.default.trashItem(at: url, resultingItemURL: nil) }
         }
         UserDefaults.standard.set(waiting.filter { !due.contains($0) }, forKey: Self.trashLaterKey)
+    }
+
+    /// Photos that left the line a moment ago, each with how many times,
+    /// whose note can still put them back: what was hidden by hand and
+    /// drawn on them is kept meanwhile, also with no history to keep it.
+    private var justLeft: [String: Int] = [:]
+
+    /// Keeps a photo's marks for as long as its note can bring it back.
+    private func holdMarks(of url: URL) {
+        let path = url.path
+        justLeft[path, default: 0] += 1
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                let left = (self.justLeft[path] ?? 1) - 1
+                self.justLeft[path] = left > 0 ? left : nil
+                self.save()
+            }
+        }
     }
 
     /// Text, like a translation, straight into the app in front.
@@ -1035,22 +1064,16 @@ final class Line: ObservableObject {
     }
 
     /// A photo's file moved, like into a Workspace category: its card keeps
-    /// its place, and what was done to it, parts hidden by hand and
-    /// drawings, goes with it.
+    /// its place, and what was done to it, parts hidden by hand, a PDF's
+    /// pages too, and drawings, goes with it.
     func relocate(from old: URL, to new: URL) {
         let was = old.standardizedFileURL.path
         guard let index = items.firstIndex(where: { $0.url.standardizedFileURL.path == was }) else { return }
-        let hand = PrivateDetails.hand(old)
-        let drawing = Drawings.saved(old)
+        // Kept under the card's own path, as it was hidden and drawn.
+        let hung = items[index].url
         items[index].url = new
-        if !hand.isEmpty {
-            PrivateDetails.setHand(hand, for: new)
-            PrivateDetails.setHand([], for: old)
-        }
-        if !drawing.isEmpty {
-            Drawings.set(drawing, for: new)
-            Drawings.set(.empty, for: old)
-        }
+        PrivateDetails.moveHand(from: hung, to: new)
+        Drawings.move(from: hung, to: new)
         StudioStore.move(from: old, to: new)
         prints[old.path] = nil
         save()
@@ -1267,7 +1290,7 @@ final class Line: ObservableObject {
 
     /// With Hide private details on, every photo is read ahead of time, so
     /// copying one stays instant. Off, they show as they are again, but for
-    /// parts hidden by hand.
+    /// the owner's own details and rules and parts hidden by hand.
     func readPrivateDetails() {
         for item in items where !item.falling { cover(item.url) }
     }
@@ -1610,8 +1633,14 @@ final class Line: ObservableObject {
         let paths = live.map(\.url.path)
         UserDefaults.standard.set(paths, forKey: storeKey)
         UserDefaults.standard.set(live.filter(\.pinned).map(\.url.path), forKey: pinnedKey)
-        PrivateDetails.keepHand(only: Set(paths))
-        Drawings.keep(only: Set(paths))
+        // What was hidden by hand and drawn stays with a photo while it can
+        // come back: from the history, from a sent photo still waiting to go
+        // there, or from the note of one just taken down. It leaves covered
+        // from any of them as it did from the line.
+        let waiting = UserDefaults.standard.stringArray(forKey: Self.trashLaterKey) ?? []
+        let marked = Set(paths).union(History.paths).union(waiting).union(justLeft.keys)
+        PrivateDetails.keepHand(only: marked)
+        Drawings.keep(only: marked)
         // A recording's Studio work stays while it can come back from the history.
         StudioStore.keep(only: Set(paths).union(History.paths))
         // The history's words stay known too, for its search.

@@ -191,8 +191,10 @@ struct StudioEditorView: View {
         return false
     }
 
-    private static func times(_ scale: Double) -> String {
-        String(format: "%.1f×", scale)
+    /// How close a zoom comes, "2.0×", its number written as the Mac's
+    /// region writes numbers, like "2,0×" in German.
+    static func times(_ scale: Double) -> String {
+        scale.formatted(.number.precision(.fractionLength(1))) + "×"
     }
 
     /// The tools in a row, the chosen one in the accent, with how to use it.
@@ -1005,7 +1007,7 @@ private struct StudioTimelineView: View {
         let chosen = model.selection == .zoom(zoom.id)
         let width = max(10, CGFloat(zoom.duration) * pps)
         // Worked out apart, so the view below stays quick to compile.
-        let scale: String = String(format: "%.1f×", zoom.scale)
+        let scale: String = StudioEditorView.times(zoom.scale)
         let icon: String = zoom.automatic ? "sparkle.magnifyingglass" : "plus.magnifyingglass"
         let tip: String = zoom.automatic ? L("Made from your clicks and typing") : L("Zoom")
         let span: String = StudioTimeline.text(zoom.start) + " – " + StudioTimeline.text(zoom.end)

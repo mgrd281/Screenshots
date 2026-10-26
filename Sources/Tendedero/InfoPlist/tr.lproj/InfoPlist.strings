@@ -1,0 +1,9 @@
+/* The questions macOS asks before Snapfly may watch a folder, use the
+   microphone or ask a browser which page is open. The English ones are
+   written into Info.plist by scripts/build-app.sh; change both together. */
+
+"NSAppleEventsUsageDescription" = "Snapfly, gönder düğmesi yalnızca ChatGPT gibi sohbet sitelerinde görünsün diye tarayıcına hangi sayfanın açık olduğunu sorar.";
+"NSDesktopFolderUsageDescription" = "Snapfly, ekran görüntülerini ipe asabilmek için macOS’un onları kaydettiği klasörü izler.";
+"NSDocumentsFolderUsageDescription" = "Snapfly, yeni görselleri ipe asabilmek için seçtiğin klasörü izler.";
+"NSDownloadsFolderUsageDescription" = "Snapfly, yeni görselleri ipe asabilmek için seçtiğin klasörü izler.";
+"NSMicrophoneUsageDescription" = "Snapfly, yalnızca Ayarlar › Genel altında mikrofonu seçtiysen, sesini ekran kaydıyla birlikte kaydeder.";

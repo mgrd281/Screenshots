@@ -228,6 +228,24 @@ final class DrawingTests: XCTestCase {
         XCTAssertTrue(Drawings.saved(url).isEmpty)
     }
 
+    /// A drawing goes with its photo into the History and back, so the copy
+    /// from there is drawn on and cut as the line's was.
+    func testADrawingGoesWithItsPhoto() {
+        let key = "drawings"
+        let before = UserDefaults.standard.object(forKey: key)
+        defer { UserDefaults.standard.set(before, forKey: key) }
+        let url = URL(fileURLWithPath: "/tmp/Snapfly drawing test.png")
+        let kept = URL(fileURLWithPath: "/tmp/Snapfly drawing test/History/Snapfly drawing test.png")
+        let drawing = Drawing(marks: [mark(.box, CGPoint(x: 0.1, y: 0.1), CGPoint(x: 0.4, y: 0.3))])
+        Drawings.set(drawing, for: url)
+        Drawings.move(from: url, to: kept)
+        XCTAssertEqual(Drawings.saved(kept), drawing)
+        XCTAssertTrue(Drawings.saved(url).isEmpty)
+        Drawings.move(from: kept, to: url)
+        XCTAssertEqual(Drawings.saved(url), drawing)
+        XCTAssertTrue(Drawings.saved(kept).isEmpty)
+    }
+
     func testTheCoveredCopyIsDrawnOnAndCut() throws {
         let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)

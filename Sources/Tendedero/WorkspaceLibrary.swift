@@ -429,12 +429,19 @@ private struct LibraryCard: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .fill(Color.primary.opacity(0.05))
-                if let thumb = model.thumb(for: entry.url), thumb.size.width > 0 {
-                    Image(nsImage: thumb)
-                        .resizable()
-                        .interpolation(.high)
-                        .aspectRatio(contentMode: .fit)
-                        .padding(6)
+                if let thumb = model.thumb(for: entry.url) {
+                    if thumb.size.width > 0 {
+                        Image(nsImage: thumb)
+                            .resizable()
+                            .interpolation(.high)
+                            .aspectRatio(contentMode: .fit)
+                            .padding(6)
+                    } else {
+                        // No picture could be made of it: no spinner for ever.
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.system(size: 16))
+                            .foregroundStyle(.secondary)
+                    }
                 } else {
                     ProgressView().controlSize(.small)
                 }
