@@ -367,6 +367,11 @@ private struct HistoryCard: View {
                         .interpolation(.high)
                         .aspectRatio(contentMode: .fit)
                         .padding(6)
+                } else if thumb != nil {
+                    // No picture could be made of it: no spinner for ever.
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.system(size: 16))
+                        .foregroundStyle(.secondary)
                 } else {
                     ProgressView().controlSize(.small)
                 }
