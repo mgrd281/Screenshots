@@ -377,6 +377,29 @@ final class PDFPageGeometryTests: XCTestCase {
         XCTAssertEqual(PDFTextLayer.added(read: read, over: text), [1, 2])
     }
 
+    func testEachLetterIsAskedForWherePDFKitCountsIt() {
+        // PDFKit's characters leave out the line breaks its text adds, though it counts as many as the text.
+        let plain = ["E", "r", "i", "k", "a", "W", "e", "b", "e", "r"]
+        XCTAssertEqual(PDFTextLayer.characters(of: "Erika\nWeber", count: 11) { $0 < plain.count ? plain[$0] : nil },
+                       [0, 1, 2, 3, 4, nil, 5, 6, 7, 8, 9])
+        // Where its characters are the text's own, each unit is its own.
+        let same = ["a", "\n", "b"]
+        XCTAssertEqual(PDFTextLayer.characters(of: "a\nb", count: 3) { same[$0] }, [0, 1, 2])
+        // A ligature, "fi", is one of its characters: each character's text is found along the text.
+        let pieces = ["M", "u", "s", "t", "e", "r", "fi", "r", "m", "a", " ", "G", "m", "b", "H", "B", "e", "r", "l", "i", "n"]
+        let text = "Musterfirma GmbH\nBerlin"
+        let found = PDFTextLayer.characters(of: text, count: pieces.count) { pieces[$0] }
+        XCTAssertEqual(found, [0, 1, 2, 3, 4, 5, 6, 6, 7, 8, 9, 10, 11, 12, 13, 14, nil, 15, 16, 17, 18, 19, 20])
+        XCTAssertEqual(PDFTextLayer.share(found: found, of: text), 1)
+        // Written as one character, "ﬁ" is the letters it stands for.
+        XCTAssertEqual(PDFTextLayer.characters(of: "Pfiff\nab", count: 6) { ["P", "ﬁ", "f", "f", "a", "b"][$0] },
+                       [0, 1, 1, 2, 3, nil, 4, 5])
+        // What cannot be found has no place, and how much was found is told.
+        let lost = PDFTextLayer.characters(of: "abc\ndef", count: 5) { ["x", "y", "z", "q", "w"][$0] }
+        XCTAssertEqual(lost, [nil, nil, nil, nil, nil, nil, nil])
+        XCTAssertLessThan(PDFTextLayer.share(found: lost, of: "abc\ndef"), 0.95)
+    }
+
     func testASignedFileIsKnownByItsBytes() {
         let plain = Data("%PDF-1.7\n1 0 obj << /Type /Catalog >> endobj\n%%EOF".utf8)
         let signed = Data("""

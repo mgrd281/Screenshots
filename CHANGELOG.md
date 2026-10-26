@@ -231,7 +231,15 @@ keeps a download of each version.
   date each stay a line of their own.
 - Scanned PDFs can be searched in every script: Turkish, Arabic, Greek,
   Cyrillic, Chinese, Japanese and Korean words are found and copied, not
-  only Western ones, and the text under the pages is in reading order.
+  only Western ones, and the text under the pages is in reading order. A
+  table's cells stay apart in it, also in a covered PDF project, so a row
+  copied from it reads "Beratung 2 Std. 180,00 €", not "Beratung2 Std.".
+- On the iPhone, the covers on a PDF's pages sit on the words they hide.
+  Read from the PDF's own text, the words were placed a letter further on
+  after each line break and each ligature, as "fi", so lower on a page a
+  cover could reach into the words beside it, such as an invoice's number
+  and date, and stop short of a word's end, which the check of every copy
+  then covered.
 
 - On the iPhone, a scanned page has a fourth colour, Originalfarbe: the
   paper keeps its own colour, so a pink sick note stays pink, evenly lit

@@ -115,6 +115,15 @@ final class ScanReadingTests: XCTestCase {
         XCTAssertEqual(ScanReading.text(page), "Brot\t2,49\nMilch 1,5 %\t1,19\nÄpfel 1 kg\t2,99\nKaffee\t6,49")
     }
 
+    func testATablesCellsStayApartInThePDFsWords() {
+        let names = ["Brot", "Milch 1,5 %", "Äpfel 1 kg", "Kaffee"]
+        let prices = ["2,49", "1,19", "2,99", "6,49"]
+        let page = read(lines(names, x: 40, top: 200) + lines(prices, x: 220, top: 200.6))
+        // A space after every word of a row but its last, as a line has.
+        XCTAssertEqual(ScanReading.words(page).map(\.text),
+                       ["Brot ", "2,49", "Milch ", "1,5 ", "% ", "1,19", "Äpfel ", "1 ", "kg ", "2,99", "Kaffee ", "6,49"])
+    }
+
     // MARK: Paragraphs
 
     func testProseRunsOnAndItsBrokenWordsAreMadeWhole() {

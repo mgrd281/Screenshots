@@ -75,6 +75,13 @@ final class PDFFixtureTests: XCTestCase {
         XCTAssertTrue(lines.contains { $0.string.contains(PDFFixtures.iban) }, "the IBAN as written")
         let words = customer.words.compactMap { Range($0.range, in: customer.string).map { String(customer.string[$0]) } }
         XCTAssertEqual(words, ["Erika", "Mustermann"])
+        // Every word where it stands, after the line breaks PDFKit's text adds and the ligature in
+        // "Musterfirma": the name one row high, the invoice's number beside it where it starts, the last word in.
+        XCTAssertLessThan(customer.box.height, 0.02, "one row: \(customer.box)")
+        let number = try XCTUnwrap(lines.first { $0.string.hasPrefix("Rechnungsnr.") })
+        XCTAssertEqual(number.box.minX, 360 / 595.28, accuracy: 0.01)
+        XCTAssertLessThan(number.box.height, 0.02, "one row: \(number.box)")
+        XCTAssertTrue(lines.contains { $0.string.hasSuffix("BIC COBADEFFXXX") }, lines.map(\.string).joined(separator: "\n"))
         // Turned a quarter clockwise, the line stands at the top right.
         let turned = try XCTUnwrap(invoice.lines(0, turns: 1)?.first { $0.string.contains(PDFFixtures.customer) })
         XCTAssertGreaterThan(turned.box.minX, 0.7)
@@ -243,6 +250,91 @@ final class PDFFixtureTests: XCTestCase {
         XCTAssertFalse(text.contains("Mustermann"))
         XCTAssertFalse(text.contains("0532"))
         keep("pdf-covered-text.txt", text)
+    }
+
+    /// The invoice's first page covered as the iPhone covers a PDF's page
+    /// (`ProjectStore.prepareReading`): its words from the file, and what
+    /// the picture shows that the file does not hold. The name, the address
+    /// under it and the IBAN are covered, each word whole; the invoice's
+    /// number and date beside the address, on the same rows, are not, nor
+    /// their labels; and the covered PDF holds the words left uncovered.
+    /// Where each letter of the file's text is, what was read and where each
+    /// cover lies are kept for review (`pdf-covers.txt`).
+    func testTheNumberAndDateBesideTheAddressStayUncovered() async throws {
+        let invoice = try source(PDFFixtures.invoice())
+        let page = try XCTUnwrap(invoice.render(0, turns: 0, dpi: 200, longest: 2400))
+        let layer = try XCTUnwrap(invoice.lines(0, turns: 0))
+        let read = Finder.lines(in: page) ?? []
+        let extra = PDFTextLayer.added(read: read.map(\.box), over: layer.map(\.box)).map { read[$0] }
+        Finder.remember(layer + extra, for: page)
+        let made = try XCTUnwrapAsync(await CoveredCopy.make(page, PrivateDetail.recommended, rules: [], style: .ink,
+                                                             intelligence: false))
+        let places = made.report.places
+        let again = Finder.lines(in: made.image) ?? []
+        let words = ScanCleaner.words(in: again, hiding: places, aspect: ScanCleaner.aspect(of: made.image))
+        let covered = try XCTUnwrap(PDFComposer.page(made.image, ownPage: try XCTUnwrap(invoice.size(of: 0, turns: 0)),
+                                                     paper: .original, quality: .high, words: words))
+        let text = PDFDocument(data: try XCTUnwrap(ScanPDF.make([covered])))?.string ?? ""
+        func shown(_ rect: CGRect) -> String {
+            String(format: "x %.3f to %.3f, y %.3f to %.3f", rect.minX, rect.maxX, rect.minY, rect.maxY)
+        }
+        func wordsShown(_ line: Finder.TextLine) -> String {
+            line.words.compactMap { word in
+                Range(word.range, in: line.string).map { "\(line.string[$0]) (\(shown(word.box)))" }
+            }.joined(separator: ", ")
+        }
+        // Each letter of the page's text, the character PDFKit counts it as and where that is, in points.
+        let file = try XCTUnwrap(PDFDocument(data: PDFFixtures.invoice())?.page(at: 0))
+        let letters = (file.string ?? "") as NSString
+        let pieces = (0..<file.numberOfCharacters).map { file.selection(for: NSRange(location: $0, length: 1)) }
+        let characters = PDFTextLayer.characters(of: letters as String, count: pieces.count) { pieces[$0]?.string }
+        let placed = (0..<letters.length).map { unit -> String in
+            let letter = letters.substring(with: NSRange(location: unit, length: 1))
+            guard let character = characters[unit], let place = pieces[character]?.bounds(for: file) else {
+                return "\(unit) \(letter.debugDescription) none"
+            }
+            return "\(unit) \(letter.debugDescription) \(character) "
+                + String(format: "x %.1f y %.1f w %.1f h %.1f", place.minX, place.minY, place.width, place.height)
+        }
+        let first = placed.prefix(140).joined(separator: "\n")
+        var lines = ["PDFKit counts \(file.numberOfCharacters) characters, the text holds \(letters.length) units.", first,
+                     "From the file, line by line:"]
+        lines += layer.map { "\($0.string) | \(shown($0.box)) | \(wordsShown($0))" }
+        lines.append("Read from the picture besides:")
+        lines += extra.map { "\($0.string) | \(shown($0.box))" }
+        lines.append("Covered:")
+        lines += places.map(shown)
+        lines.append("Read from the covered picture:")
+        lines += again.map { "\($0.string) | \(shown($0.box))" }
+        lines += ["The covered PDF's text:", text]
+        let report = lines.joined(separator: "\n")
+        keep("pdf-covers.txt", ([report, "Each letter of the file's text:"] + placed).joined(separator: "\n"))
+        print("PDF-COVERS\n\(report)\nPDF-COVERS-END")
+        // Covered: the customer's name and address, and the IBAN.
+        for wanted in [PDFFixtures.customer, PDFFixtures.street, PDFFixtures.town, "DE89"] {
+            let line = try XCTUnwrap(layer.first { $0.string.contains(wanted) }, "\(wanted) in the file's text")
+            XCTAssertTrue(places.contains { $0.intersects(line.box) }, "\(wanted) is covered")
+        }
+        // Not covered: the number and the date beside the address, word by word.
+        let beside = ["Rechnungsnr.", "RE-2026-0412", "Datum", "21.10.2026"]
+        let found = layer.flatMap { line in
+            line.words.compactMap { word -> (text: String, box: CGRect)? in
+                guard let range = Range(word.range, in: line.string), beside.contains(String(line.string[range]))
+                else { return nil }
+                return (String(line.string[range]), word.box)
+            }
+        }
+        XCTAssertEqual(found.map { $0.text }.sorted(), beside.sorted())
+        for word in found {
+            XCTAssertFalse(places.contains { $0.intersects(word.box) }, "\(word.text) is not covered")
+        }
+        // The covered PDF's text: what is left, and nothing from under a cover.
+        for left in ["Musterfirma", "Rechnung", "Einrichtung", "380,68", "RE-2026-0412", "21.10.2026"] {
+            XCTAssertTrue(text.contains(left), "\(left) in the covered PDF's text")
+        }
+        for hidden in ["Mustermann", "0532"] {
+            XCTAssertFalse(text.contains(hidden), "\(hidden) is not in the covered PDF's text")
+        }
     }
 
     /// The invoice's first page read by Vision and put in reading order

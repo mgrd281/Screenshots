@@ -725,7 +725,8 @@ enum ScanReading {
 
     /// What the pages say, for the words laid invisibly in a PDF: in
     /// reading order, each with a space after it where another follows on
-    /// its line or in its cell; nothing covered.
+    /// its line or in its row, so a table's cells are never copied run
+    /// together; nothing covered.
     static func words(_ page: Page) -> [ScanPDF.Word] {
         var out: [ScanPDF.Word] = []
         func add(_ words: [Word]) {
@@ -739,7 +740,7 @@ enum ScanReading {
             case .paragraph(let paragraph):
                 paragraph.lines.forEach(add)
             case .table(let table):
-                for row in table.rows { row.forEach(add) }
+                for row in table.rows { add(row.flatMap { $0 }) }
             }
         }
         return out

@@ -67,7 +67,7 @@ jobs:
             exit 0
           fi
           tag=pdf-captures
-          notes="PDF projects on this Mac and the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: made-up files (a three-page invoice with real text, the same locked, a signed contract, 300 pages, photos of a narrow receipt and a sideways page), with the numbers (pdf-300-pages.txt, pdf-covered-text.txt); the Scan tab's PDF card, the pages' overview, pages chosen, a page deleted with Undo, the editor, Save and Share, a locked and a signed PDF and 300 pages, light and dark, at the largest text sizes, on the newest iPhone and the smallest, in German, Arabic and English; and videos of merging and dragging pages, with and without Reduce Motion. For review; not a download of Snapfly."
+          notes="PDF projects on this Mac and the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: made-up files (a three-page invoice with real text, the same locked, a signed contract, 300 pages, photos of a narrow receipt and a sideways page), with the numbers (pdf-300-pages.txt, pdf-covered-text.txt) and where the invoice's covers lie (pdf-covers.txt); the Scan tab's PDF card, the pages' overview, pages chosen, a page deleted with Undo, the editor, Save and Share, a locked and a signed PDF and 300 pages, light and dark, at the largest text sizes, on the newest iPhone and the smallest, in German, Arabic and English; and videos of merging and dragging pages, with and without Reduce Motion. For review; not a download of Snapfly."
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release edit "$tag" --notes "$notes" --prerelease
           else

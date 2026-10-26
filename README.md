@@ -1258,8 +1258,10 @@ watch the screen, so there is no line there. What it keeps is the covering:
   before while the page shows whole, two fingers or a double tap zoom up to
   eight times, "3 / 12" shows as a page opens, and the project's pages wait
   in the strip, to open, drag, turn, duplicate or delete. A PDF's words are
-  read from its own text, letter for letter, where it has text, and from
-  the picture only where it has none, as in a photo pasted on the page; its
+  read from its own text, letter for letter, where it has text, each where
+  PDFKit places it (which counts no line break and a ligature, as "fi",
+  once), and from the picture only where it has none, as in a photo pasted
+  on the page; its
   covers are found as on any picture, on the iPhone alone (the AI
   assistant never reads a project's or a scan's words). What you cover by
   hand on a page, cover though it was only offered, or move or make larger
