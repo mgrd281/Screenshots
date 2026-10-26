@@ -100,7 +100,7 @@ keeps a download of each version.
   Assistant, where it is set up, not to Settings; a PDF project's camera
   that cannot scan says why; the text sheet's warnings use the deeper
   orange.
-- Fixes: on the Mac, Save a Copy… over the very file it copies, as a GIF
+- Fixes: on the Mac, Save Copy… over the very file it copies, as a GIF
   or a PDF with nothing to cover can be, no longer deletes it; a PDF
   cropped with text beyond its page no longer stops Snapfly;
   the share extension keeps within its memory with large photos and
