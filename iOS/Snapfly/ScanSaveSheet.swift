@@ -109,6 +109,12 @@ struct ScanSaveSheet: View {
     @State private var asking: AssistantChoice?
     /// What was asked there, handed over once its sheet has gone.
     @State private var asked: (chat: ChatTarget, ask: ScanAsk?)?
+    /// What the pages ask to be paid, once read; nil where they ask for nothing.
+    @State private var due: PaymentDue.Found?
+    /// The calendar's own form, open for the reminder.
+    @State private var reminding = false
+    /// The reminder was added to the calendar.
+    @State private var reminded = false
     /// What the sheet holds, and its buttons, so it is as tall as they are.
     @State private var contentHeight: CGFloat = 520
     @State private var waysHeight: CGFloat = 110
@@ -140,6 +146,7 @@ struct ScanSaveSheet: View {
                     }
                     checked
                     if covered { sendTo }
+                    reminder
                 }
                 .padding(16)
                 .measuredHeight($contentHeight)
@@ -200,6 +207,22 @@ struct ScanSaveSheet: View {
             guard ScanDemo.opensText, ready else { return }
             try? await Task.sleep(for: .seconds(1))
             readingText = true
+        }
+        .task(id: ready) {
+            // Read once every page is, as they were read, on this iPhone.
+            guard ready else { return }
+            due = await store.paymentDue()
+        }
+        .sheet(isPresented: $reminding) {
+            if let due {
+                PaymentReminderForm(due: due) { added in
+                    reminding = false
+                    guard added else { return }
+                    reminded = true
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                }
+                .ignoresSafeArea()
+            }
         }
         .task(id: note?.text) {
             guard note != nil else { return }
@@ -501,6 +524,58 @@ struct ScanSaveSheet: View {
             }
             .padding(.horizontal, -16)
         }
+    }
+
+    // MARK: Reminder
+
+    /// The day the pages ask to be paid by, with the amount, as a reminder
+    /// for the owner's own calendar: shown only where that day is still to
+    /// come, and added only in the calendar's own form.
+    @ViewBuilder private var reminder: some View {
+        if let due, let today = PaymentDue.Day(ScanDemo.today, in: .current), due.day >= today {
+            VStack(alignment: .leading, spacing: 10) {
+                heading(L("Reminder"))
+                Button {
+                    reminding = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: reminded ? "calendar.badge.checkmark" : "calendar.badge.plus")
+                            .font(.title3)
+                            .foregroundStyle(SnapflyTokens.protectTint)
+                            .frame(width: 28)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(L("Add Payment Reminder")).font(.body.weight(.medium))
+                            Text(reminded ? L("Added to Calendar.") : Self.when(due))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "chevron.forward")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .padding(12)
+                    .frame(minHeight: SnapflyTokens.touch)
+                    .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("scan-reminder")
+                Text(L("Calendar's own form opens, filled in. Snapfly never sees your calendar."))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .transition(.opacity)
+        }
+    }
+
+    /// "369,73 € bis 28.10.2026 bezahlen", the day as the owner's region writes it.
+    private static func when(_ due: PaymentDue.Found) -> String {
+        let day = due.day.date(in: .current)?.formatted(date: .numeric, time: .omitted) ?? ""
+        guard let amount = due.amount else { return String(format: L("Pay by %@"), day) }
+        return String(format: L("Pay %1$@ by %2$@"), amount, day)
     }
 
     /// What was chosen for the AI chat, once its sheet has gone.

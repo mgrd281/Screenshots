@@ -2002,3 +2002,13 @@
 "Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "इसके पेज, उन पर ढकी हर चीज़ के साथ, हट जाएँगे। जिन फ़ोटो और फ़ाइलों से वे आए, वे जैसी हैं वैसी रहती हैं।";
 "Turn off faster picture processing?" = "तेज़ चित्र प्रोसेसिंग बंद करें?";
 "Size unknown" = "आकार अज्ञात";
+"Reminder" = "रिमाइंडर";
+"Add Payment Reminder" = "भुगतान रिमाइंडर जोड़ें";
+"Added to Calendar." = "कैलेंडर में जोड़ा गया।";
+"Pay %1$@ by %2$@" = "%2$@ तक %1$@ का भुगतान करें";
+"Pay by %@" = "%@ तक भुगतान करें";
+"Calendar's own form opens, filled in. Snapfly never sees your calendar." = "कैलेंडर का अपना फ़ॉर्म भरा हुआ खुलता है। Snapfly आपका कैलेंडर कभी नहीं देखता।";
+"Pay %@" = "%@ को भुगतान करें";
+"Payment Due" = "भुगतान देय";
+"Amount: %@" = "राशि: %@";
+"Invoice number: %@" = "इनवॉइस नंबर: %@";

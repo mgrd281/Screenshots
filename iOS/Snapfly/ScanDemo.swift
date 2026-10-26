@@ -4,7 +4,8 @@ import Foundation
 /// Made-up scans for pictures made in CI (`scripts/scan-checks.sh`), as
 /// `-SnapflyScan` asks: the editor on a photo of a made-up invoice
 /// (editor), comparing Before and After (compare), a second page blurred at
-/// its bottom (warning), Save and Share open (sheet), without covers
+/// its bottom (warning), Save and Share open (sheet), on the invoice still
+/// to pay, offering its reminder (due), without covers
 /// (uncovered) or on the pages' text, open to read (text), on its Page view
 /// (textpage) or correcting (textfix), the pages in
 /// black and white (bw), corners to set by hand
@@ -47,7 +48,15 @@ enum ScanDemo {
     /// Which page the editor opens on: the blurred one for the warning.
     static var page: Int { state == "warning" ? 1 : 0 }
     static var compares: Bool { state == "compare" }
-    static var opensSheet: Bool { ["sheet", "uncovered", "text", "textpage", "textfix"].contains(state ?? "") }
+    static var opensSheet: Bool { ["sheet", "due", "uncovered", "text", "textpage", "textfix"].contains(state ?? "") }
+    /// The invoice without its stamp, still to pay.
+    static var remindsToPay: Bool { state == "due" }
+    /// The day it is, for what is still to come: the invoice's own date in
+    /// the made-up scans, so its day to pay by is always ahead.
+    static var today: Date {
+        guard requested, let day = PaymentDue.Day(year: 2026, month: 10, day: 14) else { return .now }
+        return day.date(in: .current) ?? .now
+    }
     static var uncovered: Bool { state == "uncovered" }
     /// Save and Share on the Text format, its text open to read.
     static var opensText: Bool { ["text", "textpage", "textfix"].contains(state ?? "") }
@@ -65,10 +74,11 @@ enum ScanDemo {
     /// corners, without where the page is, to set it by hand. Each as a PNG,
     /// as Photos gives its photos, so it is decoded as theirs are.
     static func photos() -> [ScanPhoto] {
-        guard !["empty", "help", "recent"].contains(state ?? ""), let page = ownLetter ? ScanSample.letter() : ScanSample.page() else { return [] }
+        guard !["empty", "help", "recent"].contains(state ?? ""),
+              let page = ownLetter ? ScanSample.letter() : ScanSample.page(paid: !remindsToPay) else { return [] }
         let flaws: [ScanSample.Flaw]
         switch state {
-        case "editor", "corners", "own": flaws = [.none]
+        case "editor", "corners", "own", "due": flaws = [.none]
         case "warning", "list": flaws = [.none, .blurredBottom]
         default: flaws = [.none, .none]
         }
@@ -124,6 +134,8 @@ enum ScanDemo {
     static let page = 0
     static let compares = false
     static let opensSheet = false
+    static let remindsToPay = false
+    static var today: Date { .now }
     static let uncovered = false
     static let opensText = false
     static let readsPage = false

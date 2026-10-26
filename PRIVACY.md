@@ -1,6 +1,6 @@
 # Snapfly Privacy Policy
 
-*Last updated: October 22, 2026*
+*Last updated: October 26, 2026*
 
 Snapfly hangs your screenshots on a line at the top of the screen. Everything it
 does happens on your Mac, unless you set up the AI assistant with your own key
@@ -128,6 +128,13 @@ or turn on syncing with your iPhone (below).
   asks first. Turning it off or removing the app deletes nothing. If iCloud
   Drive keeps your Desktop, Apple copies the folder to iCloud, private details
   covered or not; that is Apple's service and your choice.
+- **Payment reminders, only when you add one.** When scanned pages ask to
+  be paid by a day, Save and Share on the iPhone offers a reminder, read
+  from the pages on the iPhone. Add Payment Reminder opens the calendar's
+  own form, shown by iOS apart from Snapfly, filled in with the day, the
+  amount, the company to pay and the invoice's number; the event is added
+  only when you tap Add there, to the calendar you choose. Snapfly asks for
+  no access to your calendar and never sees or reads it.
 - **Calls.** While Not during a call is on, Snapfly asks the Mac whether the
   microphone is in use, so the line keeps away during a meeting and nothing
   of Snapfly shows in what you share. It hears nothing doing so.

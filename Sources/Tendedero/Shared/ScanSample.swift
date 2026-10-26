@@ -41,7 +41,8 @@ enum ScanSample {
 
     /// The invoice as printed: white paper, black print, a teal logo, a
     /// table with a grey header, a pale red stamp and a blue signature.
-    static func page() -> CGImage? {
+    /// Without `paid`, it is still to pay: no stamp says BEZAHLT.
+    static func page(paid: Bool = true) -> CGImage? {
         guard let space = CGColorSpace(name: CGColorSpace.sRGB),
               let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
                                       space: space, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return nil }
@@ -90,19 +91,21 @@ enum ScanSample {
         write("Bitte überweisen Sie den Betrag bis zum 28.10.2026.", in: context, x: 120, top: 1310, size: 29, color: ink)
         write("IBAN: \(iban) · BIC: COBADEFFXXX", in: context, x: 120, top: 1362, size: 29, color: ink)
         write("Telefon: 030 1234567 · E-Mail: \(email)", in: context, x: 120, top: 1414, size: 29, color: ink)
-        // A pale stamp, turned a little, and a signature in a ballpoint's blue.
-        context.saveGState()
-        context.translateBy(x: 1180, y: CGFloat(height - 1640))
-        context.rotate(by: 0.14)
-        let red = CGColor(red: 0.8, green: 0.25, blue: 0.25, alpha: 0.55)
-        context.setStrokeColor(red)
-        context.setLineWidth(8)
-        context.addPath(CGPath(roundedRect: CGRect(x: -270, y: -95, width: 540, height: 190), cornerWidth: 18,
-                               cornerHeight: 18, transform: nil))
-        context.strokePath()
-        writeAt("BEZAHLT", in: context, x: -220, baseline: 0, size: 76, bold: true, color: red)
-        writeAt("16.10.2026", in: context, x: -220, baseline: -64, size: 40, color: red)
-        context.restoreGState()
+        // Where it is paid, a pale stamp, turned a little; then a signature in a ballpoint's blue.
+        if paid {
+            context.saveGState()
+            context.translateBy(x: 1180, y: CGFloat(height - 1640))
+            context.rotate(by: 0.14)
+            let red = CGColor(red: 0.8, green: 0.25, blue: 0.25, alpha: 0.55)
+            context.setStrokeColor(red)
+            context.setLineWidth(8)
+            context.addPath(CGPath(roundedRect: CGRect(x: -270, y: -95, width: 540, height: 190), cornerWidth: 18,
+                                   cornerHeight: 18, transform: nil))
+            context.strokePath()
+            writeAt("BEZAHLT", in: context, x: -220, baseline: 0, size: 76, bold: true, color: red)
+            writeAt("16.10.2026", in: context, x: -220, baseline: -64, size: 40, color: red)
+            context.restoreGState()
+        }
         context.setStrokeColor(CGColor(red: 0.17, green: 0.27, blue: 0.63, alpha: 1))
         context.setLineWidth(5)
         context.setLineCap(.round)

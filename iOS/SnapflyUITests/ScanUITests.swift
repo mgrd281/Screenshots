@@ -380,6 +380,17 @@ final class ScanUITests: XCTestCase {
         XCTAssertTrue(note.label.contains("ohne Abdeckung"), note.label)
     }
 
+    /// The made-up invoice still to pay: Save and Share offers a reminder
+    /// for the day it names, with its total, added in the calendar's own
+    /// form, which Snapfly never sees into.
+    func testAnInvoiceToPayOffersAReminderForItsDay() {
+        let app = launch("due")
+        let reminder = element(app, "scan-reminder")
+        XCTAssertTrue(reminder.waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(reminder.label.contains("369,73 €") && reminder.label.contains("28.10.2026"), reminder.label)
+        XCTAssertTrue(words(app, "Snapfly sieht deinen Kalender nie.").exists)
+    }
+
     // MARK: The text
 
     /// Anything in the open text whose words hold these.

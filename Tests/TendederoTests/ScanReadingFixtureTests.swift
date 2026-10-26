@@ -57,6 +57,22 @@ final class ScanReadingFixtureTests: XCTestCase {
         }
     }
 
+    /// The invoice still to pay, as Vision reads it: the 28th of October to
+    /// pay by, its total, the company and its number (`PaymentDue`); with
+    /// its BEZAHLT stamp, nothing.
+    func testTheInvoiceStillToPayIsReadForItsReminder() throws {
+        func text(_ image: CGImage) throws -> String {
+            ScanReading.text(ScanCleaner.page(try XCTUnwrap(Finder.lines(in: image)), aspect: ScanCleaner.aspect(of: image)))
+        }
+        let unpaid = try text(try XCTUnwrap(ScanSample.page(paid: false)))
+        let found = try XCTUnwrap(PaymentDue.find(in: unpaid), unpaid)
+        XCTAssertEqual(found.day, PaymentDue.Day(year: 2026, month: 10, day: 28))
+        XCTAssertEqual(found.amount, "369,73 €")
+        XCTAssertEqual(found.payee, "Musterfirma GmbH")
+        XCTAssertEqual(found.reference, "RE-2026-0417")
+        XCTAssertNil(PaymentDue.find(in: try text(try XCTUnwrap(ScanSample.page()))), "stamped BEZAHLT")
+    }
+
     func testACoveredLineIsAMarkAndNeverItsWords() throws {
         let image = try XCTUnwrap(ScanSample.letter())
         let lines = try XCTUnwrap(Finder.lines(in: image))

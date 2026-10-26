@@ -2000,3 +2000,13 @@
 "Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "Seine Seiten werden gelöscht, mit allem, was darauf verdeckt war. Die Fotos und Dateien, aus denen sie stammen, bleiben, wie sie sind.";
 "Turn off faster picture processing?" = "Schnellere Bildverarbeitung ausschalten?";
 "Size unknown" = "Größe unbekannt";
+"Reminder" = "Erinnerung";
+"Add Payment Reminder" = "Zahlungserinnerung hinzufügen";
+"Added to Calendar." = "Zum Kalender hinzugefügt.";
+"Pay %1$@ by %2$@" = "%1$@ bis %2$@ bezahlen";
+"Pay by %@" = "Bis %@ bezahlen";
+"Calendar's own form opens, filled in. Snapfly never sees your calendar." = "Das Formular des Kalenders öffnet sich, schon ausgefüllt. Snapfly sieht deinen Kalender nie.";
+"Pay %@" = "%@ bezahlen";
+"Payment Due" = "Zahlung fällig";
+"Amount: %@" = "Betrag: %@";
+"Invoice number: %@" = "Rechnungsnummer: %@";

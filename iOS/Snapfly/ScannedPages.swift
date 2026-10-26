@@ -753,6 +753,22 @@ final class ScannedPages: ObservableObject {
         return result
     }
 
+    // MARK: What it asks to be paid
+
+    /// What the pages ask to be paid, read from all of them as they were
+    /// read, without covers, on this iPhone (`PaymentDue`), for a reminder
+    /// the owner adds to their own calendar; never a company named with
+    /// the owner's own words. Nil while a page is not ready, or where the
+    /// pages ask for nothing.
+    func paymentDue() async -> PaymentDue.Found? {
+        guard let pages = try? await uncovered() else { return nil }
+        let own = Set(Finder.ownWords(in: OwnRules.all).map(OwnDetails.fold))
+        return await Task.detached(priority: .utility) {
+            let text = ScanReading.text(pages.map { ScanCleaner.page($0.reading, aspect: ScanCleaner.aspect(of: $0.image)) })
+            return PaymentDue.find(in: text, own: own)
+        }.value
+    }
+
     /// A page's words as read, each with where it is, line by line.
     private static func words(_ reading: [Finder.TextLine]) -> [[ScanNaming.Word]] {
         reading.map { line in
