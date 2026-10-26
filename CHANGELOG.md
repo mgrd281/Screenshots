@@ -24,6 +24,11 @@ keeps a download of each version.
   Motion, and the arrows for next and on point the right way in Arabic.
 - On the iPhone, See All shows every screenshot, not only the newest 90, so
   older ones can be found, searched for and filtered too.
+- On the iPhone, All Documents on the Scan tab searches every document:
+  type words, and the documents with a page holding them stay, each
+  saying on which pages and how often. They are read once on the iPhone,
+  a PDF's own text or what Vision reads on a scanned page, and the words
+  never leave it.
 - On the iPhone, where Snapfly may see only the photos you chose, the Photos
   tab says so and offers Change Allowed Photos…, since a new screenshot
   shows only once you add it; it no longer asks you to take one.

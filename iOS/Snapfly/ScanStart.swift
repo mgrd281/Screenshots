@@ -577,27 +577,103 @@ struct RecentDocumentCard: View {
     }
 }
 
-/// Every document, newest first, as Alle anzeigen opens them.
+/// Every document, newest first, as Alle anzeigen opens them, and a search
+/// in all of them (`DocumentSearch`): the documents with a page that holds
+/// every word searched for, each saying on which pages and how often,
+/// never the words around them. Each is read once on this iPhone for it
+/// (`DocumentWords`), the first search saying how far that has come.
 struct AllDocumentsView: View {
     @ObservedObject private var store = ProjectStore.shared
+    @State private var search = ""
+    /// What each document holds of the search, as far as it is read.
+    @State private var found: [UUID: DocumentSearch.Found] = [:]
+    /// How many documents are read for the search, while they are.
+    @State private var reading: (done: Int, of: Int)?
 
     var body: some View {
         let documents = store.projects.filter { !$0.pages.isEmpty }
+        let searching = !DocumentSearch.words(search).isEmpty
+        let shown = searching ? documents.filter { found[$0.id] != nil } : documents
         ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 180), spacing: SnapflyTokens.scanItemGap,
-                                             alignment: .top)],
-                      spacing: 20) {
-                ForEach(documents) { project in
-                    RecentDocumentCard(project: project)
+            VStack(alignment: .leading, spacing: 0) {
+                if searching { status(none: shown.isEmpty) }
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 180), spacing: SnapflyTokens.scanItemGap,
+                                                 alignment: .top)],
+                          spacing: 20) {
+                    ForEach(shown) { project in
+                        if searching, let hit = found[project.id] {
+                            VStack(alignment: .leading, spacing: 6) {
+                                RecentDocumentCard(project: project)
+                                    .accessibilityValue(DocumentSearch.label(hit))
+                                Text(DocumentSearch.label(hit))
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(SnapflyTokens.protectTint)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .accessibilityHidden(true)
+                            }
+                        } else {
+                            RecentDocumentCard(project: project)
+                        }
+                    }
                 }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .navigationTitle(L("All Documents"))
         .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $search, prompt: L("Search in All Documents"))
+        .task(id: search) { await find(search, in: documents) }
         .accessibilityIdentifier("scan-all-documents")
+    }
+
+    /// How far the search has come, or that nothing holds it, and where it runs.
+    private func status(none: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            if let reading {
+                HStack(spacing: 8) {
+                    ProgressView().controlSize(.small)
+                    Text(String(format: L("Reading the documents … %d of %d"), reading.done, reading.of))
+                        .monospacedDigit()
+                }
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .accessibilityElement(children: .combine)
+            } else if none {
+                Text(L("No matches"))
+                    .font(.subheadline.weight(.semibold))
+                    .accessibilityIdentifier("scan-search-none")
+            }
+            Label(L("Everything happens on this iPhone."), systemImage: "lock")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+    }
+
+    /// Each document read for the search, one after another, a moment after
+    /// typing stops; the documents found shown as soon as they are.
+    private func find(_ search: String, in documents: [PDFProject]) async {
+        guard !DocumentSearch.words(search).isEmpty else {
+            found = [:]
+            reading = nil
+            return
+        }
+        try? await Task.sleep(for: .milliseconds(250))
+        guard !Task.isCancelled else { return }
+        var results: [UUID: DocumentSearch.Found] = [:]
+        reading = (0, documents.count)
+        for (index, project) in documents.enumerated() {
+            let words = await DocumentWords.shared.words(of: project)
+            guard !Task.isCancelled else { return }
+            if let hit = DocumentSearch.find(search, in: words) { results[project.id] = hit }
+            found = results
+            reading = (index + 1, documents.count)
+        }
+        reading = nil
     }
 }
 

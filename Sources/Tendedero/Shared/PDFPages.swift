@@ -84,6 +84,15 @@ final class PDFSource: @unchecked Sendable {
         return context.makeImage()
     }
 
+    /// The words a page holds as text, as PDFKit gives them, for a search;
+    /// nil where it holds none worth reading or the document is locked.
+    func text(_ index: Int) -> String? {
+        lock.lock()
+        defer { lock.unlock() }
+        guard !document.isLocked, let text = document.page(at: index)?.string, PDFTextLayer.holdsText(text) else { return nil }
+        return text
+    }
+
     /// The words a page holds as text, in lines and where each word is,
     /// from 0 to 1 from the bottom left of the page as it shows. Nil where
     /// the page holds no text worth reading, as a scan without text has none.

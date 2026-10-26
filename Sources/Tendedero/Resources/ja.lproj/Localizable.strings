@@ -219,6 +219,12 @@
 "Search…" = "検索…";
 "%d found" = "%d件";
 "No matches" = "一致なし";
+"Search in All Documents" = "すべての書類を検索";
+"Reading the documents … %d of %d" = "書類を読み込み中… %d / %d";
+"Pages %@" = "%@ページ";
+"+%d more" = "ほか%d件";
+"1 match" = "1件一致";
+"%d matches" = "%d件一致";
 "Return picks them, ready to send." = "Returnキーで選択し、送信の準備をします。";
 /* Sent */
 "Take photos down once sent" = "送信したら写真を外す";

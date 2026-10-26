@@ -221,6 +221,12 @@
 "Search…" = "Search…";
 "%d found" = "%d found";
 "No matches" = "No matches";
+"Search in All Documents" = "Search in All Documents";
+"Reading the documents … %d of %d" = "Reading the documents … %d of %d";
+"Pages %@" = "Pages %@";
+"+%d more" = "+%d more";
+"1 match" = "1 match";
+"%d matches" = "%d matches";
 "Return picks them, ready to send." = "Return picks them, ready to send.";
 /* Sent */
 "Take photos down once sent" = "Take photos down once sent";

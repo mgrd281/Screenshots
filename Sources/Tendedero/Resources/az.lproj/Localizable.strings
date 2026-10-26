@@ -221,6 +221,12 @@
 "Search…" = "Axtar…";
 "%d found" = "%d tapıldı";
 "No matches" = "Heç nə tapılmadı";
+"Search in All Documents" = "Bütün sənədlərdə axtar";
+"Reading the documents … %d of %d" = "Sənədlər oxunur … %d / %d";
+"Pages %@" = "Səhifələr %@";
+"+%d more" = "+%d daha";
+"1 match" = "1 nəticə";
+"%d matches" = "%d nəticə";
 "Return picks them, ready to send." = "Return onları seçir, göndərməyə hazır edir.";
 /* Sent */
 "Take photos down once sent" = "Göndərilən şəkilləri ipdən götür";

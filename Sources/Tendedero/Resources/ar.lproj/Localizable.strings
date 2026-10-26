@@ -219,6 +219,12 @@
 "Search…" = "بحث…";
 "%d found" = "%d نتيجة";
 "No matches" = "لا توجد نتائج";
+"Search in All Documents" = "البحث في كل المستندات";
+"Reading the documents … %d of %d" = "تُقرأ المستندات … %d من %d";
+"Pages %@" = "الصفحات %@";
+"+%d more" = "و%d أخرى";
+"1 match" = "نتيجة واحدة";
+"%d matches" = "%d نتائج";
 "Return picks them, ready to send." = "اضغط Return لتحديدها وتجهيزها للإرسال.";
 /* Sent */
 "Take photos down once sent" = "إزالة الصور بعد إرسالها";

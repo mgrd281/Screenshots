@@ -1224,7 +1224,14 @@ watch the screen, so there is no line there. What it keeps is the covering:
   while something on the page is still to check), its name, its pages
   and the day, which opens it, or, held, shares, renames or, after asking,
   deletes it;
-  Alle anzeigen shows them all. Under the scanned pages, Unter Zuletzt
+  Alle anzeigen shows them all, and its search field searches all of
+  them: the documents with a page holding every word typed, case and
+  accents aside, each saying on which pages and how often ("Seite 2 · 3
+  Treffer"), never the words around them. Each document is read once for
+  it on the iPhone (`DocumentWords`): a PDF's own text, else what Vision
+  reads on the page, kept beside the document, closed while the iPhone is
+  locked, never sent and deleted with it; the first search says how far
+  that has come. Under the scanned pages, Unter Zuletzt
   behalten keeps them as a PDF project among the documents (kept on this
   iPhone in the project's protected folder, never in a backup), covered
   as Settings says where they show and leave, and clears them from the
@@ -1693,7 +1700,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/PDFPages.swift`, `PDFFixtures.swift` | A PDF opened from its copy with PDFKit: locked and unlocked, its pages drawn turned, its text in lines as the covers read them; pictures read, turned and kept without notes; the project's pages put together into one PDF; and the made-up files for the tests (debug only) |
 | `iOS/Snapfly/ProjectStore.swift`, `ProjectDemo.swift` | The PDF projects kept on the iPhone, protected and out of backups: files copied in as they came, autosave, opening again after a forced close, passwords asked and never kept, page operations with undo, pages drawn small and large, and the PDF or pictures made with covers; the made-up project for CI (debug only) |
 | `iOS/Snapfly/ProjectOverview.swift`, `ProjectEditing.swift`, `ProjectExportSheet.swift` | The pages' overview with its lift, drag and drop, choosing and the dark note with Undo; the editor's pages, strip and "3 / 12"; Save and Share with page size, quality and size |
-| `iOS/Snapfly/ScanStart.swift` | The Scan tab's start: the emerald card that starts a scan, the quick actions, the recent documents as their covered first pages, Alle anzeigen, the steps while there are none, and "So funktioniert's" |
+| `iOS/Snapfly/ScanStart.swift` | The Scan tab's start: the emerald card that starts a scan, the quick actions, the recent documents as their covered first pages, Alle anzeigen with its search in all documents, the steps while there are none, and "So funktioniert's" |
+| `iOS/Snapfly/DocumentWords.swift`, `Shared/DocumentSearch.swift` | The words on each page of every document, read once on the iPhone and kept beside it for a search; the search itself, tested on Linux: every word on one page, folded, and where and how often, never the words around them |
 | `Shared/ScanNaming.swift`, `ScanAsk.swift`, `ScanOrder.swift` | Tested on Linux: a scanned document's name and kind from the words outside its covers, never a covered word or the owner's name, with Apple Intelligence on the device or by when it was scanned; when a photo counts as a photographed document; the questions for an AI chat; the pages' order |
 | `iOS/Snapfly/SendToApps.swift`, `Assets.xcassets/Chat*.imageset` | Send to on the iPhone: the apps chosen (`SendApps`), their icons, the row of them after a scan, the column beside the picture in Protect Picture (`AppRail`) with Photos, Files and the share sheet, and choosing and ordering them; the hand-over (`Handoff`): one picture straight to WhatsApp, one to an AI chat by opening its app with it copied, anything else through the share sheet, never a website |
 | `iOS/Snapfly/ContentView.swift`, `HomeParts.swift`, `Assets.xcassets/AccentColor.colorset` | The iPhone's Photos tab: the picture of stacked photos, the green Protect a Photo, the screenshot cards and their grid, three or four to a row with a pinch, See All, and the iPhone's green |
