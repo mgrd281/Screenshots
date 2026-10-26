@@ -12,9 +12,10 @@ import XCTest
 /// with the file's size, and covers; a locked PDF asks for its password and
 /// asks again after Snapfly was closed, so it was never kept; a signed PDF
 /// warns; and the project opens again where it was left after Snapfly was
-/// closed by force. With 300 pages, the frames drawn while it scrolls and
-/// while a page is dragged are counted (`PDF-NUMBERS` lines). The
-/// `testRecord…` walks are slow on purpose, for the videos
+/// closed by force, a box drawn by hand on its page there again. With 300
+/// pages, the frames drawn while it scrolls and while a page is dragged are
+/// counted (`PDF-NUMBERS` lines). The `testRecord…` walks are slow on
+/// purpose, for the videos
 /// `scripts/pdf-checks.sh` records, and run only there (`SNAPFLY_RECORD`).
 final class PDFUITests: XCTestCase {
     override func setUp() {
@@ -320,6 +321,32 @@ final class PDFUITests: XCTestCase {
         XCTAssertTrue(heading.waitForExistence(timeout: 30))
         XCTAssertTrue(heading.label.contains("Rechnung März"), heading.label)
         XCTAssertTrue(wait(heading, "label CONTAINS %@", "4 Seiten"), heading.label)
+    }
+
+    func testWhatIsCoveredByHandIsThereAgainAfterSnapflyWasClosed() {
+        let app = overview()
+        element(app, "project-next").tap()
+        XCTAssertTrue(app.navigationBars["Seite 1 von 5"].waitForExistence(timeout: 20))
+        // The tools wake once the page is read; a box is drawn on it.
+        let box = app.buttons["Rechteck"]
+        XCTAssertTrue(wait(box, "isEnabled == %@", NSNumber(value: true), timeout: 120), "the tools")
+        box.tap()
+        let canvas = element(app, "protect-canvas")
+        canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.3, dy: 0.62))
+            .press(forDuration: 0.2, thenDragTo: canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.66)))
+        XCTAssertTrue(wait(app.buttons["Widerrufen"], "isEnabled == %@", NSNumber(value: true)), "the box is drawn")
+        // Left for the Home Screen, as Snapfly is before it is closed from the app switcher, then closed.
+        XCUIDevice.shared.press(.home)
+        sleep(2)
+        app.terminate()
+        let reopened = launch("reopen")
+        let bar = reopened.navigationBars["Seite 1 von 5"]
+        XCTAssertTrue(bar.waitForExistence(timeout: 60), "the page it was left on opens again")
+        XCTAssertTrue(wait(reopened.buttons["Rechteck"], "isEnabled == %@", NSNumber(value: true), timeout: 120))
+        bar.buttons["Mehr"].tap()
+        let clear = reopened.buttons["Von Hand Verdecktes entfernen"]
+        XCTAssertTrue(clear.waitForExistence(timeout: 10))
+        XCTAssertTrue(clear.isEnabled, "what was covered by hand is there again")
     }
 
     func testThreeHundredPagesScrollAndReorderWithoutHitches() {
