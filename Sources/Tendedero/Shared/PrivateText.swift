@@ -1708,18 +1708,29 @@ enum Finder {
         forgetAnswers()
     }
 
-    /// How many times, since the app started, Vision could not read a whole
-    /// picture, or look in it for faces or codes, as iOS may keep it from
-    /// doing in the background. What was found then is not all there is: a
+    /// How many times Vision could not read a whole picture, or look in it
+    /// for faces or codes, as iOS may keep it from doing in the background,
+    /// on the thread asking. What was found then is not all there is: a
     /// covered copy made while it happened is not trusted (`CoveredCopy`).
+    /// Counted for each thread, as a picture is read and covered on one, so
+    /// a failure with another picture read at the same time is never taken
+    /// for this one's.
     static var failures: Int {
+        (Thread.current.threadDictionary[failuresKey] as? Int) ?? 0
+    }
+
+    /// The same, on every thread together, since the app started.
+    static var allFailures: Int {
         failureCount.withLock { $0 }
     }
 
+    private static let failuresKey = "SnapflyVisionFailures"
     private static let failureCount = OSAllocatedUnfairLock(initialState: 0)
 
     private static func failed() {
         failureCount.withLock { $0 += 1 }
+        let here = Thread.current.threadDictionary
+        here[failuresKey] = ((here[failuresKey] as? Int) ?? 0) + 1
     }
 
     /// Every line in a picture, as `read` gives it, for a photo prepared

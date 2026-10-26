@@ -55,10 +55,10 @@ final class ProtectionTests: XCTestCase {
     /// would give none (`CoveredCopy`).
     func testACoveredCopyIsMadeFromAPictureReadWithoutAFailure() async throws {
         let image = try drawn(["Mail lena.hoffmann@example.com"])
-        let failures = Finder.failures
+        let failures = Finder.allFailures
         let made = await CoveredCopy.make(image, [.emails], rules: [], style: .ink, intelligence: false)
         XCTAssertGreaterThanOrEqual(made?.report.kinds[.emails] ?? 0, 1)
-        XCTAssertEqual(Finder.failures, failures)
+        XCTAssertEqual(Finder.allFailures, failures)
     }
 
     func testTheStrongestProtectionCoversWholeLinesWithMoreRoom() throws {
