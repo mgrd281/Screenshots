@@ -87,8 +87,9 @@ shot() {
   local settle=30
   if [ "$state" = corners ]; then settle=12; fi
   if [ "$state" = warning ] || [ "$state" = sheet ] || [ "$state" = uncovered ] || [ "$state" = list ]; then settle=45; fi
-  # Its text is read again on the covered pages once they are ready.
-  if [ "$state" = text ] || [ "$state" = textpage ] || [ "$state" = textfix ]; then settle=60; fi
+  # Its text is read again on the covered pages once they are ready, which
+  # after the UI tests can take this runner the two minutes the tests allow.
+  if [ "$state" = text ] || [ "$state" = textpage ] || [ "$state" = textfix ]; then settle=120; fi
   # Three documents arrive a few seconds apart, then their first pages are covered.
   if [ "$state" = recent ]; then settle=75; fi
   xcrun simctl ui "$on" appearance "$appearance"

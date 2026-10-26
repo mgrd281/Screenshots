@@ -370,6 +370,11 @@ final class ScanUITests: XCTestCase {
             .matching(NSPredicate(format: "label CONTAINS %@", words)).firstMatch
     }
 
+    /// An item of the made-up invoice that stays as printed in its text.
+    /// Not "Druckpatronen Schwarz": two words that could be a name, in a
+    /// document about money, are covered and left for the owner to check.
+    private static let item = "Versandpauschale"
+
     func testTheTextIsReadWithEveryCoverABarAndNeverWhatItHides() {
         let app = launch("sheet")
         let tile = element(app, "scan-format-text")
@@ -383,7 +388,7 @@ final class ScanUITests: XCTestCase {
         XCTAssertTrue(wait(show, "isEnabled == %@", NSNumber(value: true), timeout: Self.ready))
         show.tap()
         // Read on the covered pages: the items as printed, the customer's name a bar, read out as "verdeckt".
-        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(reading(app, holding: Self.item).waitForExistence(timeout: Self.ready))
         XCTAssertTrue(reading(app, holding: "verdeckt").exists, "a covered place is a bar")
         XCTAssertFalse(reading(app, holding: "Mustermann").exists, "what a cover hides is never shown")
         XCTAssertTrue(reading(app, holding: "Auf diesem iPhone gelesen.").exists)
@@ -401,20 +406,20 @@ final class ScanUITests: XCTestCase {
         let show = app.buttons["Text anzeigen"]
         XCTAssertTrue(show.waitForExistence(timeout: 5))
         show.tap()
-        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(reading(app, holding: Self.item).waitForExistence(timeout: Self.ready))
         XCTAssertTrue(reading(app, holding: "verdeckt").exists, "a covered place is a bar")
         XCTAssertFalse(reading(app, holding: "Mustermann").exists, "what a cover hides is never shown")
     }
 
     func testTheTextCanBeSearchedAndItsMatchesCounted() {
         let app = launch("text")
-        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(reading(app, holding: Self.item).waitForExistence(timeout: Self.ready))
         element(app, "scan-reading-menu").tap()
         app.buttons["Suchen"].tap()
         let field = app.searchFields.firstMatch
         XCTAssertTrue(field.waitForExistence(timeout: 10))
         field.tap()
-        field.typeText("Druckpatronen")
+        field.typeText(Self.item)
         let matches = element(app, "scan-reading-matches")
         XCTAssertTrue(matches.waitForExistence(timeout: 10))
         XCTAssertTrue(matches.label.contains(" von "), matches.label)
@@ -424,11 +429,11 @@ final class ScanUITests: XCTestCase {
 
     func testAParagraphOrCellIsCorrectedAndAllCorrectionsAreUndone() {
         let app = launch("text")
-        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(reading(app, holding: Self.item).waitForExistence(timeout: Self.ready))
         element(app, "scan-reading-menu").tap()
         app.buttons["Text korrigieren"].tap()
         XCTAssertTrue(element(app, "scan-reading-correcting").waitForExistence(timeout: 10))
-        let target = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Druckpatronen")).firstMatch
+        let target = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", Self.item)).firstMatch
         XCTAssertTrue(target.waitForExistence(timeout: 10))
         target.tap()
         let editor = app.textViews["scan-edit-text"]
@@ -444,7 +449,7 @@ final class ScanUITests: XCTestCase {
 
     func testPageShowsThePagesAndTextComesBack() {
         let app = launch("text")
-        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(reading(app, holding: Self.item).waitForExistence(timeout: Self.ready))
         let mode = element(app, "scan-reading-mode")
         XCTAssertTrue(mode.waitForExistence(timeout: 10))
         mode.buttons["Seite"].tap()
@@ -456,7 +461,7 @@ final class ScanUITests: XCTestCase {
     /// Where a German voice is installed the player shows; else the note says there is none.
     func testReadAloudShowsThePlayerOrSaysThereIsNoVoice() {
         let app = launch("text")
-        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(reading(app, holding: Self.item).waitForExistence(timeout: Self.ready))
         element(app, "scan-reading-speak").tap()
         let pause = element(app, "scan-reading-pause"), note = element(app, "scan-reading-note")
         XCTAssertTrue(pause.waitForExistence(timeout: 15) || note.waitForExistence(timeout: 5))
@@ -470,7 +475,7 @@ final class ScanUITests: XCTestCase {
     /// Where Vision reads the items as a table, it goes to a spreadsheet.
     func testATableIsCopiedForASpreadsheetWhereThereIsOne() {
         let app = launch("text")
-        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        XCTAssertTrue(reading(app, holding: Self.item).waitForExistence(timeout: Self.ready))
         let menu = element(app, "scan-reading-table-menu")
         guard menu.waitForExistence(timeout: 3) else { return }
         menu.tap()
