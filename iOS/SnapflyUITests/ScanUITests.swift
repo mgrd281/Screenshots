@@ -190,6 +190,26 @@ final class ScanUITests: XCTestCase {
         add(shot)
     }
 
+    /// All Documents searches every document's words: the made-up
+    /// invoice's terms, on its second page, are found, saying where, and a
+    /// word no document holds finds nothing.
+    func testAllDocumentsFindsWordsInEveryDocument() {
+        let app = launch("recent")
+        let cards = app.descendants(matching: .any).matching(identifier: "scan-recent")
+        let three = expectation(for: NSPredicate(format: "count == 3"), evaluatedWith: cards)
+        XCTAssertEqual(XCTWaiter.wait(for: [three], timeout: 90), .completed, "three documents")
+        element(app, "scan-show-all").tap()
+        let field = app.searchFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 10))
+        field.tap()
+        field.typeText("Zahlungsbedingungen")
+        let found = cards.matching(NSPredicate(format: "value CONTAINS %@", "Seite 2")).firstMatch
+        XCTAssertTrue(found.waitForExistence(timeout: 60), "the invoice, on its second page")
+        XCTAssertTrue((found.value as? String)?.contains("1 Treffer") == true, String(describing: found.value))
+        field.typeText("xyz")
+        XCTAssertTrue(element(app, "scan-search-none").waitForExistence(timeout: 30))
+    }
+
     /// Scrolled past the card, the bar offers Scannen, which starts the scanner.
     func testScrolledTheBarOffersScanning() {
         let app = launch("tab", ownCamera: true)

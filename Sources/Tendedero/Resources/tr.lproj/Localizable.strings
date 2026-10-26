@@ -219,6 +219,12 @@
 "Search…" = "Ara…";
 "%d found" = "%d bulundu";
 "No matches" = "Sonuç yok";
+"Search in All Documents" = "Tüm belgelerde ara";
+"Reading the documents … %d of %d" = "Belgeler okunuyor… %d / %d";
+"Pages %@" = "Sayfa %@";
+"+%d more" = "+%d daha";
+"1 match" = "1 sonuç";
+"%d matches" = "%d sonuç";
 "Return picks them, ready to send." = "Return onları seçer, göndermeye hazır olur.";
 /* Sent */
 "Take photos down once sent" = "Gönderilen fotoğrafları ipten indir";

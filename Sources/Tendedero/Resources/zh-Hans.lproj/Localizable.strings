@@ -219,6 +219,12 @@
 "Search…" = "搜索…";
 "%d found" = "找到 %d 张";
 "No matches" = "无结果";
+"Search in All Documents" = "在所有文稿中搜索";
+"Reading the documents … %d of %d" = "正在读取文稿… %d/%d";
+"Pages %@" = "第 %@ 页";
+"+%d more" = "另外 %d 页";
+"1 match" = "1 处匹配";
+"%d matches" = "%d 处匹配";
 "Return picks them, ready to send." = "按 Return 键选中它们，即可发送。";
 /* Sent */
 "Take photos down once sent" = "发送后取下照片";

@@ -219,6 +219,12 @@
 "Search…" = "Buscar…";
 "%d found" = "%d encontradas";
 "No matches" = "Nenhum resultado";
+"Search in All Documents" = "Buscar em todos os documentos";
+"Reading the documents … %d of %d" = "Lendo os documentos… %d de %d";
+"Pages %@" = "Páginas %@";
+"+%d more" = "+%d outras";
+"1 match" = "1 resultado";
+"%d matches" = "%d resultados";
 "Return picks them, ready to send." = "Return as seleciona, prontas para enviar.";
 /* Sent */
 "Take photos down once sent" = "Tirar as fotos depois de enviar";

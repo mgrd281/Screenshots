@@ -221,6 +221,12 @@
 "Search…" = "खोजें…";
 "%d found" = "%d मिले";
 "No matches" = "कुछ नहीं मिला";
+"Search in All Documents" = "सभी दस्तावेज़ों में खोजें";
+"Reading the documents … %d of %d" = "दस्तावेज़ पढ़े जा रहे हैं… %d / %d";
+"Pages %@" = "पेज %@";
+"+%d more" = "+%d और";
+"1 match" = "1 परिणाम";
+"%d matches" = "%d परिणाम";
 "Return picks them, ready to send." = "Return दबाने से वे चुन ली जाती हैं, भेजने के लिए तैयार।";
 /* Sent */
 "Take photos down once sent" = "भेजने के बाद फ़ोटो हटाएँ";

@@ -2662,7 +2662,17 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     which asks first ("Dieses Dokument löschen?", Löschen, Abbrechen, and
     that its pages go while the photos and files they came from stay), as
     does VoiceOver's Löschen.
-    Alle anzeigen opens every document in a grid of the same cards. A
+    Alle anzeigen opens every document in a grid of the same cards, with
+    the system's search field (`.searchable`, "In allen Dokumenten
+    suchen"): while words are typed, a moment after typing stops, only the
+    documents with a page holding every word stay, each card with "Seite 2
+    · 3 Treffer" under it in caption semibold `phone-protect-tint` (read
+    by VoiceOver as the card's value), never the words around them. Over
+    the grid, 20 pt in, while documents are read for the first search a
+    small spinner beside "Dokumente werden gelesen … 3 von 12" in
+    footnote `.secondary` (monospaced digits), "Keine Treffer" in
+    subheadline semibold where none holds them, and `lock` with
+    "Alles passiert auf diesem iPhone." in footnote `.secondary`. A
     document new since the row last showed takes the first place on
     `motion.document`, with a light impact.
   - **Noch nichts gescannt.**, instead, while there are no documents:

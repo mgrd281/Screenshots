@@ -219,6 +219,12 @@
 "Search…" = "검색…";
 "%d found" = "%d개 찾음";
 "No matches" = "결과 없음";
+"Search in All Documents" = "모든 문서에서 검색";
+"Reading the documents … %d of %d" = "문서를 읽는 중… %d/%d";
+"Pages %@" = "%@쪽";
+"+%d more" = "외 %d개";
+"1 match" = "1개 일치";
+"%d matches" = "%d개 일치";
 "Return picks them, ready to send." = "Return 키를 누르면 선택되어 바로 보낼 수 있습니다.";
 /* Sent */
 "Take photos down once sent" = "보낸 사진 내리기";

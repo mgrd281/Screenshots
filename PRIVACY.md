@@ -138,6 +138,12 @@ or turn on syncing with your iPhone (below).
 - **Calls.** While Not during a call is on, Snapfly asks the Mac whether the
   microphone is in use, so the line keeps away during a meeting and nothing
   of Snapfly shows in what you share. It hears nothing doing so.
+- **Searching your documents.** To search all documents on the iPhone,
+  Snapfly reads the words on each of their pages once, on the iPhone, and
+  keeps them beside each document, in its protected folder, closed while
+  the iPhone is locked, never in a backup and never sent. They go when the
+  document is deleted. A search shows only which documents and pages hold
+  the words, never the words around them.
 - **What is read stays in memory, briefly.** To cover a screenshot again
   without reading it again, Snapfly keeps the text it read in the last few
   pictures in memory, never on disk, and forgets it when the iPhone app goes
