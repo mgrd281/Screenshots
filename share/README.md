@@ -5,12 +5,16 @@ copies its link. This folder is the service behind it, on the owner's
 Cloudflare account:
 
 - `worker.js`: the Worker. `POST /api/files` takes a picture, a film or a
-  PDF (up to 95 MB, twenty uploads a minute from one address) and answers
+  PDF (up to 95 MB, ten uploads a minute from one address, 1.2 GB a day
+  from everyone together, counted by the Durable Object `Quota`, which
+  keeps the day's total and nothing about who sent what) and answers
   with its link and a delete token; `/<id>` is the link's page, `/<id>/file`
   the file, `DELETE /api/files/<id>` with the token takes it down. A link
   stops working seven days after its upload.
-- `wrangler.toml`: the Worker's settings, its R2 bucket `snapfly-share` and
-  its rate limit.
+- `wrangler.toml`: the Worker's settings, its R2 bucket `snapfly-share`,
+  its rate limit and the day's count (`QUOTA`). Uploads need no account, so
+  the day's bound keeps what anyone can make the bucket hold within R2's
+  free 10 GB; raise `DAILY_BYTES` when more people share.
 - `worker.test.mjs`: its tests, `node --test share/worker.test.mjs`.
 
 ## Setting it up, once

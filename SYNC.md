@@ -245,7 +245,10 @@ one account, which stays as it is.
 2. For each code, the Mac puts a record in iCloud's **public** database,
    named from a hash of the code and holding the Mac's name, sealed with a
    key made from the code (HKDF-SHA256, AES-GCM). It takes the record down
-   when the code runs out or the sheet closes.
+   when the code runs out or the sheet closes. A `Pairing` record can be
+   fetched by its name only, never listed: its type has no index on the
+   record's name, so nobody can look through the codes in use and work them
+   out from their hashes.
 3. On the iPhone, Settings › Connect to a Mac with a Code. The iPhone looks
    for that record: none means a wrong or old code; after five wrong codes
    in a row it waits a minute. It then leaves a request, sealed likewise,
@@ -372,6 +375,11 @@ Profiles:
    cktool did not take it, the type has to come from a share made once with
    a development build, then Deploy Schema Changes again. Until then,
    sharing fails on the Mac with "Could not share with that device".
+5. **After a change to the schema.** The CloudKit Schema workflow puts it
+   into development by itself; Deploy Schema Changes, then Deploy, brings
+   it to production. Since October 2026 `Pairing` records can no longer be
+   listed (no index on their names): deploy once more for that to hold in
+   TestFlight and App Store builds.
 
 Nothing from steps 1 and 2 goes into GitHub; step 3's token does, as a secret.
 

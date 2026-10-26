@@ -83,7 +83,7 @@ DEFINE SCHEMA
         "___etag"       STRING,
         "___modTime"    TIMESTAMP,
         "___modifiedBy" REFERENCE,
-        "___recordID"   REFERENCE QUERYABLE,
+        "___recordID"   REFERENCE,
         payload         BYTES,
         GRANT WRITE TO "_creator",
         GRANT CREATE TO "_icloud",

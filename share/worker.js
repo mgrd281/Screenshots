@@ -8,6 +8,11 @@
 export const DAYS = 7;
 /** The largest file taken, under the 100 MB a Worker accepts. */
 export const MAX_BYTES = 95 * 1024 * 1024;
+/** What all uploads together may come to in a day: plenty for people
+ * sharing their screenshots, and a bound on what anyone can make the bucket
+ * hold, as uploads need no account. Seven days of it stay within R2's free
+ * 10 GB; raise it when more people share. */
+export const DAILY_BYTES = 1_200_000_000;
 
 /** What may be shared, by type, and how it is shown. Never HTML or SVG. */
 export const TYPES = {
@@ -53,6 +58,25 @@ async function route(request, env) {
 
 // MARK: Upload and delete
 
+/** How many bytes were uploaded today, by everyone together: one count in
+ * one place, so uploads at the same moment are counted one after another.
+ * Nothing else is kept, not who sent what. */
+export class Quota {
+  constructor(state) {
+    this.state = state;
+  }
+
+  async fetch(request) {
+    const { bytes } = await request.json();
+    const today = new Date().toISOString().slice(0, 10);
+    const day = await this.state.storage.get("day");
+    const sent = day === today ? (await this.state.storage.get("bytes")) || 0 : 0;
+    if (!(bytes > 0) || sent + bytes > DAILY_BYTES) return new Response(null, { status: 429 });
+    await this.state.storage.put({ day: today, bytes: sent + bytes });
+    return new Response(null, { status: 204 });
+  }
+}
+
 async function upload(request, env, url) {
   const type = (request.headers.get("Content-Type") || "").split(";")[0].trim().toLowerCase();
   const known = TYPES[type];
@@ -66,6 +90,12 @@ async function upload(request, env, url) {
     const place = request.headers.get("CF-Connecting-IP") || "unknown";
     const { success } = await env.UPLOADS.limit({ key: place });
     if (!success) return json({ error: "busy" }, 429);
+  }
+  // All uploads together, a day at a time; counted, never who sent them.
+  if (env.QUOTA) {
+    const quota = env.QUOTA.get(env.QUOTA.idFromName("uploads"));
+    const answer = await quota.fetch("https://quota/take", { method: "POST", body: JSON.stringify({ bytes: length }) });
+    if (answer.status !== 204) return json({ error: "busy" }, 429);
   }
 
   const id = randomID();

@@ -58,10 +58,14 @@ or turn on syncing with your iPhone (below).
   recording or PDF, to Snapfly's link service on Cloudflare (Cloudflare R2, in
   the developer's account), and copies its link. Anyone with the link can see
   the file for seven days; then it is deleted for good, and Delete Link
-  deletes it sooner. No name, account or address is kept with it; the service
-  sees your internet address only to stop too many uploads at once, and does
-  not store it. The links you made, with the token that deletes each one, are
-  kept on your Mac.
+  deletes it sooner. A chat app that shows a link with a small picture of
+  it fetches that picture itself and may keep its own copy, as it keeps
+  what is sent in it; Snapfly cannot delete that. No name, account or
+  address is kept with it; the service sees your internet address only to
+  stop too many uploads at once, and does not store it, and counts how much
+  is uploaded each day, by everyone together, to keep within a bound. The
+  links you made, with the token that deletes each one, are kept on your
+  Mac.
 - **Syncing with your iPhone, only if you turn it on.** With Sync on in
   Settings on the Mac and under More › Mac and iCloud on the iPhone,
   Snapfly keeps them in step through

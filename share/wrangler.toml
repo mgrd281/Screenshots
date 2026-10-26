@@ -13,11 +13,22 @@ SITE_URL = "https://mgrd281.github.io/Screenshots/"
 binding = "SHARES"
 bucket_name = "snapfly-share"
 
-# Uploads from one place: twenty a minute at most.
+# Uploads from one place: ten a minute at most.
 [[ratelimits]]
 name = "UPLOADS"
 namespace_id = "1001"
 
   [ratelimits.simple]
-  limit = 20
+  limit = 10
   period = 60
+
+# All uploads together: 1.2 GB a day at most (DAILY_BYTES), so seven days of
+# them stay within R2's free 10 GB; counted in one Durable Object that keeps
+# the day's total and nothing else.
+[[durable_objects.bindings]]
+name = "QUOTA"
+class_name = "Quota"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Quota"]
