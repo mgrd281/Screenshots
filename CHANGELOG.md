@@ -92,6 +92,8 @@ keeps a download of each version.
   cancelled while it connects, should iCloud not answer, instead of
   leaving no way out but quitting; once connected, Escape closes the sheet
   as Done does.
+- On the Mac, with Reduce Motion on, a photo let go after a press and the
+  pin badge settle with a short fade instead of a bouncy spring.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens
