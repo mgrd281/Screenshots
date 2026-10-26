@@ -1589,6 +1589,12 @@
 
 /* The iPhone: a scan's text in reading order, to read, copy, share or hear */
 "TXT, 1 file" = "TXT, 1 fichier";
+"File Type" = "Type de fichier";
+"Plain Text" = "Texte brut";
+"Word Document" = "Document Word";
+"DOCX, 1 file" = "DOCX, 1 fichier";
+"To change in Word or Pages, its tables kept as tables." = "À modifier dans Word ou Pages, les tableaux restent des tableaux.";
+"Plain text, a table's cells apart by tabs." = "Texte brut, les cellules d’un tableau séparées par des tabulations.";
 "Show Text" = "Afficher le texte";
 "In reading order, every covered place a black bar. Read it, copy it or hear it." = "Dans l’ordre de lecture, chaque endroit masqué en barre noire. Lis-le, copie-le ou écoute-le.";
 "In reading order, all of it. Read it, copy it or hear it." = "Dans l’ordre de lecture, en entier. Lis-le, copie-le ou écoute-le.";

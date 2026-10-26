@@ -1589,6 +1589,12 @@
 
 /* The iPhone: a scan's text in reading order, to read, copy, share or hear */
 "TXT, 1 file" = "TXT، ملف واحد";
+"File Type" = "نوع الملف";
+"Plain Text" = "نص عادي";
+"Word Document" = "مستند Word";
+"DOCX, 1 file" = "DOCX، ملف واحد";
+"To change in Word or Pages, its tables kept as tables." = "للتعديل في Word أو Pages، وتبقى الجداول جداول.";
+"Plain text, a table's cells apart by tabs." = "نص عادي، وخلايا الجدول مفصولة بمسافات الجدولة.";
 "Show Text" = "عرض النص";
 "In reading order, every covered place a black bar. Read it, copy it or hear it." = "بترتيب القراءة، وكل موضع مُغطّى شريط أسود. اقرأه أو انسخه أو استمع إليه.";
 "In reading order, all of it. Read it, copy it or hear it." = "بترتيب القراءة، كاملًا. اقرأه أو انسخه أو استمع إليه.";

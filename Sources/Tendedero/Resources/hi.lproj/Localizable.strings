@@ -1591,6 +1591,12 @@
 
 /* The iPhone: a scan's text in reading order, to read, copy, share or hear */
 "TXT, 1 file" = "TXT, 1 फ़ाइल";
+"File Type" = "फ़ाइल प्रकार";
+"Plain Text" = "सादा टेक्स्ट";
+"Word Document" = "Word दस्तावेज़";
+"DOCX, 1 file" = "DOCX, 1 फ़ाइल";
+"To change in Word or Pages, its tables kept as tables." = "Word या Pages में बदलने के लिए, तालिकाएँ तालिका ही रहती हैं।";
+"Plain text, a table's cells apart by tabs." = "सादा टेक्स्ट, तालिका के खाने टैब से अलग।";
 "Show Text" = "टेक्स्ट दिखाएँ";
 "In reading order, every covered place a black bar. Read it, copy it or hear it." = "पढ़ने के क्रम में, हर छिपी जगह एक काली पट्टी। पढ़ें, कॉपी करें या सुनें।";
 "In reading order, all of it. Read it, copy it or hear it." = "पढ़ने के क्रम में, पूरा टेक्स्ट। पढ़ें, कॉपी करें या सुनें।";

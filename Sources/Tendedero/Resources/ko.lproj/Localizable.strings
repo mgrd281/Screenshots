@@ -1589,6 +1589,12 @@
 
 /* The iPhone: a scan's text in reading order, to read, copy, share or hear */
 "TXT, 1 file" = "TXT, 파일 1개";
+"File Type" = "파일 유형";
+"Plain Text" = "일반 텍스트";
+"Word Document" = "Word 문서";
+"DOCX, 1 file" = "DOCX, 파일 1개";
+"To change in Word or Pages, its tables kept as tables." = "Word나 Pages에서 편집할 수 있으며, 표는 표로 유지됩니다.";
+"Plain text, a table's cells apart by tabs." = "일반 텍스트이며, 표의 셀은 탭으로 구분됩니다.";
 "Show Text" = "텍스트 보기";
 "In reading order, every covered place a black bar. Read it, copy it or hear it." = "읽는 순서대로, 가린 곳은 모두 검은 막대로 표시합니다. 읽고, 복사하고, 들을 수 있습니다.";
 "In reading order, all of it. Read it, copy it or hear it." = "읽는 순서대로, 전부 표시합니다. 읽고, 복사하고, 들을 수 있습니다.";
