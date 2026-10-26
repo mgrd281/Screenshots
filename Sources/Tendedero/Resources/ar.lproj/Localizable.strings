@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "جارٍ إنشاء GIF…";
 "The line is empty." = "الحبل فارغ.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "يبقى الحبل بعيدًا عن التطبيقات بملء الشاشة. فعّل «%1$@» في %2$@.";
 "Another app already uses this shortcut." = "تطبيق آخر يستخدم هذا الاختصار.";
 "Could not open the screenshot." = "تعذّر فتح صورة الشاشة.";
 "Could not combine the photos." = "تعذّر دمج الصور.";

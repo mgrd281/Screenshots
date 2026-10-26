@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF oluşturuluyor…";
 "The line is empty." = "İp boş.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "İp tam ekran uygulamaların üzerinde görünmez. %2$@ bölümünde “%1$@” seçeneğini aç.";
 "Another app already uses this shortcut." = "Bu kısayolu zaten başka bir uygulama kullanıyor.";
 "Could not open the screenshot." = "Ekran görüntüsü açılamadı.";
 "Could not combine the photos." = "Fotoğraflar birleştirilemedi.";

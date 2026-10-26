@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "Creando GIF…";
 "The line is empty." = "A corda está baleira.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "A corda non aparece sobre apps a pantalla completa. Activa «%1$@» en %2$@.";
 "Another app already uses this shortcut." = "Outra app xa usa este atallo.";
 "Could not open the screenshot." = "Non se puido abrir a captura.";
 "Could not combine the photos." = "Non se puideron combinar as fotos.";

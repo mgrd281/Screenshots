@@ -347,6 +347,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF बन रहा है…";
 "The line is empty." = "रस्सी ख़ाली है।";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "रस्सी फ़ुल स्क्रीन ऐप्स से दूर रहती है। %2$@ में “%1$@” चालू करें।";
 "Another app already uses this shortcut." = "यह शॉर्टकट पहले से कोई दूसरा ऐप इस्तेमाल करता है।";
 "Could not open the screenshot." = "स्क्रीनशॉट खोला नहीं जा सका।";
 "Could not combine the photos." = "तस्वीरें जोड़ी नहीं जा सकीं।";

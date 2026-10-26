@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF wird erstellt …";
 "The line is empty." = "Die Leine ist leer.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "Die Leine bleibt bei Apps im Vollbildmodus weg. Schalte „%1$@“ unter %2$@ ein.";
 "Another app already uses this shortcut." = "Dieses Kürzel nutzt schon eine andere App.";
 "Could not open the screenshot." = "Das Bildschirmfoto konnte nicht geöffnet werden.";
 "Could not combine the photos." = "Die Fotos konnten nicht zusammengefügt werden.";

@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "正在制作 GIF…";
 "The line is empty." = "晾衣绳是空的。";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "晾衣绳不会出现在全屏 App 上。请在“%2$@”中打开“%1$@”。";
 "Another app already uses this shortcut." = "另一个 App 已在使用此快捷键。";
 "Could not open the screenshot." = "无法打开截屏。";
 "Could not combine the photos." = "无法合并照片。";

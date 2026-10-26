@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "Criando GIF…";
 "The line is empty." = "O varal está vazio.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "O varal não aparece sobre apps em tela cheia. Ative “%1$@” em %2$@.";
 "Another app already uses this shortcut." = "Outro app já usa este atalho.";
 "Could not open the screenshot." = "Não foi possível abrir a captura.";
 "Could not combine the photos." = "Não foi possível combinar as fotos.";

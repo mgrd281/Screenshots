@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIFを作成中…";
 "The line is empty." = "ロープは空です。";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "ロープはフルスクリーンのアプリには表示されません。%2$@ で「%1$@」をオンにしてください。";
 "Another app already uses this shortcut." = "このショートカットはほかのアプリで使われています。";
 "Could not open the screenshot." = "スクリーンショットを開けませんでした。";
 "Could not combine the photos." = "写真を結合できませんでした。";

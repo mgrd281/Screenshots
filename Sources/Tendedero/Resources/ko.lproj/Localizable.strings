@@ -345,6 +345,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF 만드는 중…";
 "The line is empty." = "빨랫줄이 비어 있어요.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "빨랫줄은 전체 화면 앱 위에는 나타나지 않아요. %2$@에서 ‘%1$@’을(를) 켜세요.";
 "Another app already uses this shortcut." = "다른 앱이 이미 이 단축키를 사용해요.";
 "Could not open the screenshot." = "스크린샷을 열지 못했어요.";
 "Could not combine the photos." = "사진을 합치지 못했어요.";

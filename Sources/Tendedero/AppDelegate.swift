@@ -796,11 +796,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                                    x: x, width: width, shift: line.shift(width: width)))
     }
 
+    /// Whether a full screen app keeps the line away from its screen, as it
+    /// does unless Settings › Line lets it come over one.
+    private var lineBlocked: Bool {
+        panel.screen.map(FullScreen.blocksLine(on:))
+            ?? LinePanel.screenUnderPointer().map(FullScreen.blocksLine(on:)) ?? false
+    }
+
     /// Decides whether the panel is ordered in at all: something to show,
     /// and no full screen app on that screen.
     private func refresh() {
-        let blocked = panel.screen.map(FullScreen.blocksLine(on:))
-            ?? LinePanel.screenUnderPointer().map(FullScreen.blocksLine(on:)) ?? false
+        let blocked = lineBlocked
         if wanted && !blocked {
             present()
         } else {
@@ -872,7 +878,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func openSearch() {
         if !isRevealed { toggle() }
         guard isRevealed else {
-            Notice.show(L("The line is empty."))
+            // Kept away by a full screen app, which toggle has said.
+            if !lineBlocked { Notice.show(L("The line is empty.")) }
             return
         }
         SearchBar.shared.show(for: line, at: CGPoint(x: panel.frame.midX, y: panel.frame.minY + 6))
@@ -893,7 +900,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             updateCapacity()
             refresh()
             reveal(pinned: true)
-            if isRevealed { Guide.shared.lineCameDown() }
+            if isRevealed {
+                Guide.shared.lineCameDown()
+            } else if lineBlocked {
+                // Asked for, it says why it stays up, and where to change that.
+                Notice.show(String(format: L("The line stays away from full screen apps. Turn on %1$@ in %2$@."),
+                                   L("Over full screen apps"), [L("Settings"), L("Line")].joined(separator: " › ")))
+            }
         }
     }
 

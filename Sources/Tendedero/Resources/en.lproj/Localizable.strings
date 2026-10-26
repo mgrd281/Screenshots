@@ -347,6 +347,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "Making GIF…";
 "The line is empty." = "The line is empty.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "The line stays away from full screen apps. Turn on %1$@ in %2$@.";
 "Another app already uses this shortcut." = "Another app already uses this shortcut.";
 "Could not open the screenshot." = "Could not open the screenshot.";
 "Could not combine the photos." = "Could not combine the photos.";
