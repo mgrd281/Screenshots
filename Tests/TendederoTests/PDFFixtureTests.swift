@@ -286,17 +286,18 @@ final class PDFFixtureTests: XCTestCase {
         // Each letter of the page's text, the character PDFKit counts it as and where that is, in points.
         let file = try XCTUnwrap(PDFDocument(data: PDFFixtures.invoice())?.page(at: 0))
         let letters = (file.string ?? "") as NSString
-        let characters = PDFTextLayer.characters(of: letters as String, count: file.numberOfCharacters) {
-            file.selection(for: NSRange(location: $0, length: 1))?.string
-        }
+        let pieces = (0..<file.numberOfCharacters).map { file.selection(for: NSRange(location: $0, length: 1)) }
+        let characters = PDFTextLayer.characters(of: letters as String, count: pieces.count) { pieces[$0]?.string }
         let placed = (0..<letters.length).map { unit -> String in
             let letter = letters.substring(with: NSRange(location: unit, length: 1))
-            guard let character = characters[unit] else { return "\(unit) \(letter.debugDescription) none" }
-            let place = file.characterBounds(at: character)
+            guard let character = characters[unit], let place = pieces[character]?.bounds(for: file) else {
+                return "\(unit) \(letter.debugDescription) none"
+            }
             return "\(unit) \(letter.debugDescription) \(character) "
                 + String(format: "x %.1f y %.1f w %.1f h %.1f", place.minX, place.minY, place.width, place.height)
         }
-        var lines = ["PDFKit counts \(file.numberOfCharacters) characters, the text holds \(letters.length) units.",
+        let first = placed.prefix(140).joined(separator: "\n")
+        var lines = ["PDFKit counts \(file.numberOfCharacters) characters, the text holds \(letters.length) units.", first,
                      "From the file, line by line:"]
         lines += layer.map { "\($0.string) | \(shown($0.box)) | \(wordsShown($0))" }
         lines.append("Read from the picture besides:")

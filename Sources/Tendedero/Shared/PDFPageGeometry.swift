@@ -169,25 +169,16 @@ enum PDFTextLayer {
     }
 
     /// Which of PDFKit's characters each UTF-16 unit of a page's text is,
-    /// to ask where it stands: PDFKit counts its characters without the
-    /// line breaks its text adds, and a ligature, as "fi", once, so a unit's
-    /// own number would point a letter further on after each of them. Where
-    /// the counts say only line breaks were added, those are passed over;
-    /// otherwise each character's own text (`character`) is found along the
-    /// page's text, in order. Nil for a unit that is no character, or that
-    /// could not be found.
+    /// to ask where it stands: PDFKit's own count of characters leaves out
+    /// the line breaks its text adds and counts a ligature, as "fi", once,
+    /// though it says it holds as many as the text, so a unit's own number
+    /// would point a letter further on after each of them. Each character's
+    /// own text (`character`) is found along the page's text, in order, past
+    /// the line breaks. Nil for a unit that is no character, or that could
+    /// not be found.
     static func characters(of text: String, count: Int, character: (Int) -> String?) -> [Int?] {
         let units = Array(text.utf16)
         var found = [Int?](repeating: nil, count: units.count)
-        if count == units.count { return units.indices.map { $0 } }
-        if count == units.filter({ !isBreak($0) }).count {
-            var next = 0
-            for (index, unit) in units.enumerated() where !isBreak(unit) {
-                found[index] = next
-                next += 1
-            }
-            return found
-        }
         var position = 0
         for index in 0..<count {
             guard let piece = character(index), !piece.isEmpty else { continue }

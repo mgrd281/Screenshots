@@ -378,12 +378,13 @@ final class PDFPageGeometryTests: XCTestCase {
     }
 
     func testEachLetterIsAskedForWherePDFKitCountsIt() {
-        // PDFKit counts no line break its text adds: without a ligature, they are passed over, and nothing is asked.
-        let plain = PDFTextLayer.characters(of: "Erika\nWeber", count: 10) { _ in
-            XCTFail("no character is asked for")
-            return nil
-        }
-        XCTAssertEqual(plain, [0, 1, 2, 3, 4, nil, 5, 6, 7, 8, 9])
+        // PDFKit's characters leave out the line breaks its text adds, though it counts as many as the text.
+        let plain = ["E", "r", "i", "k", "a", "W", "e", "b", "e", "r"]
+        XCTAssertEqual(PDFTextLayer.characters(of: "Erika\nWeber", count: 11) { $0 < plain.count ? plain[$0] : nil },
+                       [0, 1, 2, 3, 4, nil, 5, 6, 7, 8, 9])
+        // Where its characters are the text's own, each unit is its own.
+        let same = ["a", "\n", "b"]
+        XCTAssertEqual(PDFTextLayer.characters(of: "a\nb", count: 3) { same[$0] }, [0, 1, 2])
         // A ligature, "fi", is one of its characters: each character's text is found along the text.
         let pieces = ["M", "u", "s", "t", "e", "r", "fi", "r", "m", "a", " ", "G", "m", "b", "H", "B", "e", "r", "l", "i", "n"]
         let text = "Musterfirma GmbH\nBerlin"
@@ -393,8 +394,6 @@ final class PDFPageGeometryTests: XCTestCase {
         // Written as one character, "ﬁ" is the letters it stands for.
         XCTAssertEqual(PDFTextLayer.characters(of: "Pfiff\nab", count: 6) { ["P", "ﬁ", "f", "f", "a", "b"][$0] },
                        [0, 1, 1, 2, 3, nil, 4, 5])
-        // As many characters as units: each unit is its own.
-        XCTAssertEqual(PDFTextLayer.characters(of: "a\nb", count: 3) { _ in nil }, [0, 1, 2])
         // What cannot be found has no place, and too little found reads the page from its picture.
         let lost = PDFTextLayer.characters(of: "abc\ndef", count: 5) { ["x", "y", "z", "q", "w"][$0] }
         XCTAssertEqual(lost, [nil, nil, nil, nil, nil, nil, nil])

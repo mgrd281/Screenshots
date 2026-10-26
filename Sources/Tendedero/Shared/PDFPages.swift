@@ -96,13 +96,13 @@ final class PDFSource: @unchecked Sendable {
               PDFTextLayer.holdsText(text) else { return nil }
         let box = page.bounds(for: .cropBox)
         let rotation = PDFPageGeometry.rotation(page: page.rotation, turns: turns)
-        let characters = PDFTextLayer.characters(of: text, count: page.numberOfCharacters) {
-            page.selection(for: NSRange(location: $0, length: 1))?.string
-        }
+        // Each of PDFKit's characters with its own text and place, asked together, so the two always agree.
+        let pieces = (0..<page.numberOfCharacters).map { page.selection(for: NSRange(location: $0, length: 1)) }
+        let characters = PDFTextLayer.characters(of: text, count: pieces.count) { pieces[$0]?.string }
         guard PDFTextLayer.share(found: characters, of: text) >= 0.95 else { return nil }
         let found = PDFTextLayer.lines(text) { unit -> CGRect? in
-            guard characters.indices.contains(unit), let character = characters[unit] else { return nil }
-            let place = page.characterBounds(at: character)
+            guard characters.indices.contains(unit), let character = characters[unit],
+                  let place = pieces[character]?.bounds(for: page) else { return nil }
             guard !place.isNull, place.width > 0 || place.height > 0 else { return nil }
             let shown = PDFPageGeometry.normalized(place, box: box, rotation: rotation)
             // Text beyond the page as it is cut, which a PDF cropped in Preview keeps, is not on it.
