@@ -262,7 +262,7 @@ struct PhotosTab: View {
                         .font(.subheadline.weight(.medium))
                         // Always there: it also finds screenshots by their words.
                         NavigationLink {
-                            AllScreenshotsView(shots: library.shots, protected: protected, zoom: zoom, quick: coverer.cover)
+                            AllScreenshotsView(library: library, protected: protected, zoom: zoom, quick: coverer.cover)
                         } label: {
                             HStack(spacing: 3) {
                                 Text(L("See All"))

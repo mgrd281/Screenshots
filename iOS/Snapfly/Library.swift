@@ -7,6 +7,9 @@ import UIKit
 final class Library: ObservableObject {
     @Published private(set) var access = PHPhotoLibrary.authorizationStatus(for: .readWrite)
     @Published private(set) var shots: [PHAsset] = []
+    /// Each time the screenshots were read again, so See All, while it
+    /// shows, fetches every one of them again too.
+    @Published private(set) var loads = 0
 
     var mayRead: Bool { access == .authorized || access == .limited }
 
@@ -20,15 +23,17 @@ final class Library: ObservableObject {
     func load() {
         access = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         shots = mayRead ? Self.screenshots(limit: 90) : []
+        loads += 1
     }
 
-    /// The newest screenshots, from the album Photos keeps of them.
-    nonisolated static func screenshots(limit: Int) -> [PHAsset] {
+    /// The newest screenshots, or every one without a limit, from the album
+    /// Photos keeps of them.
+    nonisolated static func screenshots(limit: Int? = nil) -> [PHAsset] {
         guard let album = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumScreenshots,
                                                                   options: nil).firstObject else { return [] }
         let options = PHFetchOptions()
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        options.fetchLimit = limit
+        if let limit { options.fetchLimit = limit }
         let result = PHAsset.fetchAssets(in: album, options: options)
         return result.objects(at: IndexSet(integersIn: 0..<result.count))
     }

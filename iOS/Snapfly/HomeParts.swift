@@ -753,10 +753,15 @@ struct ScreenshotGrid: View {
 /// read ahead of time on this iPhone, shown by what they hold or whether
 /// they were protected, newest or oldest first.
 struct AllScreenshotsView: View {
-    let shots: [PHAsset]
+    @ObservedObject var library: Library
     let protected: Set<String>
     let zoom: Namespace.ID
     let quick: @MainActor (PHAsset, QuickCover) -> Void
+    /// Every screenshot, fetched as See All opens and again once the library
+    /// was read again; nil until then.
+    @State private var every: [PHAsset]?
+    /// The library's reading they were fetched at.
+    @State private var fetched: Int?
     @State private var query = LibraryQuery()
     @AppStorage(GridZoom.key) private var columns = GridZoom.standard
     /// The screenshots chosen, while several are being chosen.
@@ -826,7 +831,29 @@ struct AllScreenshotsView: View {
         .toolbar(selection == nil ? .automatic : .hidden, for: .tabBar)
         .animation(.snappy, value: selection == nil)
         .quickNotes()
-        .task { await load() }
+        .task(id: library.loads) { await refresh() }
+    }
+
+    /// Every screenshot, once fetched; until then the newest, as the Photos
+    /// tab has them.
+    private var shots: [PHAsset] { every ?? library.shots }
+
+    /// Every screenshot, fetched off the main thread as there may be
+    /// thousands: as See All opens, and again once the library was read
+    /// again since. Then what those read ahead of time say.
+    private func refresh() async {
+        if fetched != library.loads {
+            let reading = library.loads
+            var found: [PHAsset] = []
+            if library.mayRead {
+                found = await Task.detached(priority: .userInitiated) { Library.screenshots() }.value
+            }
+            // Gone meanwhile, or the library was read again: the next fetch shows instead.
+            if Task.isCancelled { return }
+            every = found
+            fetched = reading
+        }
+        await load()
     }
 
     /// Select All, or Deselect All once all those shown are.
@@ -897,12 +924,14 @@ struct AllScreenshotsView: View {
         return query.apply(items).compactMap { byID[$0.id] }
     }
 
-    /// The words and kinds of the screenshots read ahead of time.
+    /// The words and kinds of the screenshots read ahead of time, asked for
+    /// all at once.
     private func load() async {
+        let photos = await IndexStore.shared.photos(shots.map(\.localIdentifier))
+        if Task.isCancelled { return }
         var found: [String: (text: String, kinds: [String])] = [:]
-        for asset in shots {
-            guard let photo = await IndexStore.shared.photo(asset.localIdentifier) else { continue }
-            found[asset.localIdentifier] = (photo.lines.map(\.text).joined(separator: " "), photo.kinds)
+        for (id, photo) in photos {
+            found[id] = (photo.lines.map(\.text).joined(separator: " "), photo.kinds)
         }
         read = found
         loaded = true
