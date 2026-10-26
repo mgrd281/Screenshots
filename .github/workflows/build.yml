@@ -56,7 +56,9 @@ jobs:
         run: swift scripts/check-strings.swift
 
       - name: Run the tests
-        run: swift test --skip "$SCAN_TESTS"
+        run: |
+          set -o pipefail
+          swift test --skip "$SCAN_TESTS" 2>&1 | tee "$RUNNER_TEMP/tests.log"
 
       - name: Check the App Store edition
         run: |
@@ -147,6 +149,12 @@ jobs:
       - name: Remove the signing keychain
         if: always()
         run: scripts/signing.sh cleanup
+
+      # Last, so the end of the log shows it: how PDFKit reads back the
+      # Arabic words of a scanned page's text layer (ScanPDFTests).
+      - name: Say how PDFKit reads an Arabic line
+        if: always()
+        run: grep -h "PDFKIT LINE" "$RUNNER_TEMP/tests.log" | sed 's/^.*PDFKIT LINE::/PDFKit reads: /' || true
 
   # The iPhone app (iOS/), built for a device but not signed, so a change to
   # the code both apps share is checked on the iPhone too.
