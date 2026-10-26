@@ -157,6 +157,9 @@ final class WorkspaceLibraryModel: ObservableObject {
         NSWorkspace.shared.activateFileViewerSelecting(entries.map(\.url))
     }
 
+    /// The files themselves, as the Finder copies them, for pasting into a
+    /// folder: the originals, not covered, which the menu's name says. A
+    /// covered copy leaves from the line, once the screenshot hangs there.
     func copy(_ entries: [LibraryItem]) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.writeObjects(entries.map { $0.url as NSURL })
@@ -213,7 +216,7 @@ final class WorkspaceLibraryModel: ObservableObject {
             Workspace.shared.relocated(entry.url, target)
             reload()
         } catch {
-            log.error("Could not rename a screenshot: \(error.localizedDescription, privacy: .public)")
+            log.error("Could not rename a screenshot: \(error.localizedDescription, privacy: .private)")
             Notice.show(L("Could not rename the screenshot."))
         }
     }
@@ -384,7 +387,9 @@ private struct LibraryMenu: View {
         Button(L("Quick Look")) { model.quickLook(entries) }
         Button(L("Show in Finder")) { model.reveal(entries) }
         Divider()
-        Button(L("Copy")) { model.copy(entries) }
+        // The files as they are, not covered: named so beside the History's
+        // and the line's Copy, which hand out the covered copy.
+        Button(entries.count == 1 ? L("Copy Original") : L("Copy Originals")) { model.copy(entries) }
         Button(L("Copy File Path")) { model.copyPath(entries) }
         Divider()
         Menu(L("Move to Folder")) {
@@ -424,12 +429,19 @@ private struct LibraryCard: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .fill(Color.primary.opacity(0.05))
-                if let thumb = model.thumb(for: entry.url), thumb.size.width > 0 {
-                    Image(nsImage: thumb)
-                        .resizable()
-                        .interpolation(.high)
-                        .aspectRatio(contentMode: .fit)
-                        .padding(6)
+                if let thumb = model.thumb(for: entry.url) {
+                    if thumb.size.width > 0 {
+                        Image(nsImage: thumb)
+                            .resizable()
+                            .interpolation(.high)
+                            .aspectRatio(contentMode: .fit)
+                            .padding(6)
+                    } else {
+                        // No picture could be made of it: no spinner for ever.
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.system(size: 16))
+                            .foregroundStyle(.secondary)
+                    }
                 } else {
                     ProgressView().controlSize(.small)
                 }
@@ -467,6 +479,18 @@ private struct LibraryCard: View {
         .onAppear { model.loadThumb(entry.url) }
         .onTapGesture(count: 2) { model.open([entry]) }
         .onTapGesture { model.select(entry, extending: NSEvent.modifierFlags.contains(.command)) }
+        // Reached with Tab where keyboard navigation is on, as buttons are:
+        // Space selects it, as a click does, and Return opens it, as a
+        // double-click does.
+        .focusable(true, interactions: .activate)
+        .onKeyPress(.space) {
+            model.select(entry, extending: NSEvent.modifierFlags.contains(.command))
+            return .handled
+        }
+        .onKeyPress(.return) {
+            model.open([entry])
+            return .handled
+        }
         .contextMenu { LibraryMenu(model: model, entries: model.targets(for: entry), hang: hang) }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(entry.url.deletingPathExtension().lastPathComponent)

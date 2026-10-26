@@ -108,6 +108,19 @@ final class ProtectSession: ObservableObject {
         return .ready
     }
 
+    /// What the owner covered on a document's page before, kept with it
+    /// (`ProjectStore`), or on a scanned page moved into one: put back on the
+    /// page as it opens, before anything is found on it or drawn.
+    var restored: [KeptCover] = []
+
+    /// Whether the plan holds what the owner covered: the picture was opened
+    /// and what was kept put back, so the plan is what to keep from now on.
+    private(set) var holdsCovers = false
+
+    /// Whether it stopped for a new protection of its page, made again
+    /// meanwhile, turned or cut: nothing more comes of it.
+    private var replaced = false
+
     /// Whether the copy may leave: made and checked for the places as they are.
     var isReady: Bool { stage == .ready }
 
@@ -118,24 +131,74 @@ final class ProtectSession: ObservableObject {
     }
 
     /// Whether Apple Intelligence, or the AI assistant, reads along for
-    /// the kinds chosen.
+    /// the kinds chosen. A scanned page's or a PDF project's words stay on
+    /// this iPhone: the assistant, which would send them out, never reads
+    /// those (`Covering.coverHere`).
     private var asksIntelligence: Bool {
-        !chosen.isDisjoint(with: Finder.intelligentKinds.values)
-            && (Finder.asksAssistant || Finder.usesIntelligence && Finder.intelligenceAvailable)
+        guard !chosen.isDisjoint(with: Finder.intelligentKinds.values) else { return false }
+        if Finder.asksAssistant { return !isDocument }
+        return Finder.usesIntelligence && Finder.intelligenceAvailable
+    }
+
+    /// A scanned page or a page of a PDF project, not a screenshot or a photo.
+    private var isDocument: Bool {
+        switch source {
+        case .scanned, .page: true
+        case .asset, .picture: false
+        }
     }
 
     /// Starts once; the work goes on to its end even when the screen is
-    /// left, so what Apple Intelligence answers is kept for next time.
+    /// left, so what Apple Intelligence answers is kept for next time. A
+    /// page let go of (`rest`) is read and made anew, as the owner left it.
     func start() {
         guard running == nil else { return }
+        if isResting {
+            isResting = false
+            found = false
+        }
         running = Task { await run() }
     }
 
-    /// Starts over, after a failure.
+    /// Whether its pictures were let go of (`rest`): its places are kept as
+    /// the owner left them, checked when it was made.
+    private(set) var isResting = false
+
+    /// Lets go of the page's pictures while it is not looked at, as a long
+    /// PDF's pages would pile up, keeping the places as the owner left them;
+    /// only once its copy is made and checked, so nothing found is lost.
+    func rest() {
+        guard isReady, !isResting else { return }
+        running?.cancel()
+        remaking?.cancel()
+        running = nil
+        remaking = nil
+        image = nil
+        original = nil
+        preview = nil
+        copy = nil
+        png = nil
+        isResting = true
+    }
+
+    /// Waits until the places are found and the first copy is made, or it
+    /// failed or was made again anew, twenty seconds at most; not for Apple
+    /// Intelligence, which reads along after.
+    func firstPass() async {
+        for _ in 0..<200 where !Task.isCancelled {
+            if hasFailed || replaced || found && !making && png != nil { return }
+            try? await Task.sleep(for: .milliseconds(100))
+        }
+    }
+
+    /// Starts over, after a failure, with what the owner covered as it
+    /// stood; a cleaned photo starts again from the photo as it came.
     func retry() {
         running?.cancel()
         remaking?.cancel()
         running = nil
+        if holdsCovers, !cleaned { restored = plan.kept }
+        holdsCovers = false
         plan = ProtectionPlan()
         copy = nil
         png = nil
@@ -166,9 +229,23 @@ final class ProtectSession: ObservableObject {
             return
         }
         // A scanned page made again meanwhile, turned or cut, has a new protection: this one stops.
-        if case .scanned(let id) = source, ScannedPages.shared.opened(id) !== self { return }
-        if case .page(let id) = source, ProjectStore.shared.opened(id) !== self { return }
+        if case .scanned(let id) = source, ScannedPages.shared.opened(id) !== self {
+            replaced = true
+            return
+        }
+        if case .page(let id) = source, ProjectStore.shared.opened(id) !== self {
+            replaced = true
+            return
+        }
         self.image = image
+        // What the owner covered before is back before the picture shows, so
+        // a part drawn while it is read never puts it aside.
+        plan.aspect = CGFloat(image.width) / CGFloat(max(1, image.height))
+        if !holdsCovers {
+            plan.restore(restored)
+            restored = []
+            holdsCovers = true
+        }
         original = UIImage(cgImage: image)
         if preview == nil { Timing.record(.shown, Timing.milliseconds(since: started)) }
         quick.cancel()
@@ -462,16 +539,18 @@ final class ProtectSession: ObservableObject {
         making = true
         let areas = plan.covered, left = plan.left
         let chosen = chosen, rules = rules, style = style
-        let made = await Self.background { () -> (image: CGImage, added: [Finder.Area], holds: Bool)? in
+        // The PNG is made here too, off the main thread, so a change never holds the screen up.
+        let made = await Self.background { () -> (image: CGImage, added: [Finder.Area], holds: Bool, png: Data?)? in
             guard let done = Finder.finish(image, covering: areas, leaving: left, chosen, rules: rules, style: style)
             else { return nil }
             let places = Finder.checked(areas + done.added, aspect: CGFloat(image.width) / CGFloat(max(1, image.height)))
             if Finder.coversHold(original: image, covered: done.image, areas: places) {
-                return (done.image, done.added, true)
+                return (done.image, done.added, true, CoveredCopy.png(done.image))
             }
             // A look that let something through is made again in ink, the surest.
             guard let ink = Finder.cover(image, areas: areas + done.added, style: .ink) else { return nil }
-            return (ink, done.added, Finder.coversHold(original: image, covered: ink, areas: places))
+            let holds = Finder.coversHold(original: image, covered: ink, areas: places)
+            return (ink, done.added, holds, holds ? CoveredCopy.png(ink) : nil)
         }
         guard mine == generation, !Task.isCancelled else { return false }
         making = false
@@ -485,7 +564,7 @@ final class ProtectSession: ObservableObject {
         }
         plan.add(found: made.added)
         copy = UIImage(cgImage: made.image)
-        png = Covering.png(made.image)
+        png = made.png
         return png != nil
     }
 

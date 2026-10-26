@@ -56,7 +56,9 @@ jobs:
         run: swift scripts/check-strings.swift
 
       - name: Run the tests
-        run: swift test --skip "$SCAN_TESTS"
+        run: |
+          set -o pipefail
+          swift test --skip "$SCAN_TESTS" 2>&1 | tee "$RUNNER_TEMP/tests.log"
 
       - name: Check the App Store edition
         run: |
@@ -90,7 +92,10 @@ jobs:
           BUILD_NUMBER: ${{ github.run_number }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: scripts/build-app.sh
+        run: |
+          scripts/build-app.sh
+          # macOS's questions for the folders, the microphone and the browser, in each language.
+          test -f build/Snapfly.app/Contents/Resources/de.lproj/InfoPlist.strings
 
       - name: Notarize
         if: env.SIGN_IDENTITY != '' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
@@ -145,6 +150,13 @@ jobs:
         if: always()
         run: scripts/signing.sh cleanup
 
+      # Last, so the end of the log shows it: how PDFKit reads back the
+      # Arabic words of a scanned page's text layer (ScanPDFTests).
+      - name: Say how PDFKit reads an Arabic line
+        if: always()
+        run: |
+          grep -h "PDFKIT LINE" "$RUNNER_TEMP/tests.log" | sed 's/^.*PDFKIT LINE::/PDFKit reads: /' || true
+
   # The iPhone app (iOS/), built for a device but not signed, so a change to
   # the code both apps share is checked on the iPhone too.
   iphone:
@@ -161,3 +173,6 @@ jobs:
           test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/PrivacyInfo.xcprivacy
           # The share extension rides inside the app, with its own privacy manifest.
           test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/PlugIns/SnapflyShare.appex/PrivacyInfo.xcprivacy
+          # iOS's questions for the camera and Photos, in each language, in both.
+          test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/de.lproj/InfoPlist.strings
+          test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/PlugIns/SnapflyShare.appex/de.lproj/InfoPlist.strings

@@ -152,6 +152,9 @@
 "Remove All" = "すべて削除";
 "Cancel" = "キャンセル";
 "Done" = "完了";
+"Discard your changes?" = "変更を破棄しますか？";
+"They are kept only once you click %@." = "「%@」をクリックするまで保存されません。";
+"Keep Editing" = "編集を続ける";
 /* TextCard, GrabArea */
 "Translate Text" = "テキストを翻訳";
 "Describe" = "説明を作成";
@@ -269,6 +272,8 @@
 "In chat apps" = "チャットApp内";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT、Claude、WhatsApp、Telegram、メッセージ、メール、Outlookなど。";
 "Remove" = "削除";
+"Remove “%@”" = "「%@」を削除";
+"Removed “%@”. Click to put it back." = "「%@」を削除しました。クリックすると元に戻します。";
 "Add a website" = "Webサイトを追加";
 "Add" = "追加";
 "That isn't a website, or it is in the list already." = "Webサイトではないか、すでにリストにあります。";
@@ -296,7 +301,7 @@
 "Photos that leave the line stay here until you remove them." = "ロープから外れた写真は、削除するまでここに残ります。";
 "Clear the history?" = "履歴を消去しますか?";
 "Clear History" = "履歴を消去";
-"The photos kept in it go to the Trash." = "履歴に保存された写真はゴミ箱に移動します。";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "履歴に保存された写真はゴミ箱に移動し、「送信済み」の一覧も空になります。";
 "No history yet" = "履歴はまだありません";
 "Photos that leave the line stay here for %d days." = "ロープから外れた写真はここに%d日間残ります。";
 "History is off. Turn it on in Settings, under Line." = "履歴はオフです。「設定」の「ロープ」でオンにしてください。";
@@ -334,6 +339,8 @@
 "Could not take the screenshot." = "スクリーンショットを撮れませんでした。";
 "Could not record the screen." = "画面を収録できませんでした。";
 "Could not save the recording." = "収録を保存できませんでした。";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "収録のサウンドを 1 つのトラックにまとめられませんでした。プレーヤーによっては一部しか再生されないことがあります。";
+"A recording cut short last time was kept. Click to show it in Finder." = "前回途中で止まった収録を残しました。クリックするとFinderに表示します。";
 "Could not make the GIF." = "GIFを作成できませんでした。";
 "Make GIF" = "GIFを作成";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligenceが応答できなかったため、入力した語句を表示箇所すべてで隠しました。";
@@ -345,6 +352,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIFを作成中…";
 "The line is empty." = "ロープは空です。";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "ロープはフルスクリーンのアプリには表示されません。%2$@ で「%1$@」をオンにしてください。";
 "Another app already uses this shortcut." = "このショートカットはほかのアプリで使われています。";
 "Could not open the screenshot." = "スクリーンショットを開けませんでした。";
 "Could not combine the photos." = "写真を結合できませんでした。";
@@ -503,6 +511,7 @@
 "Cover Private Details" = "個人情報を隠す";
 "No screenshots yet" = "スクリーンショットはまだありません";
 "Take a screenshot, then come back here." = "スクリーンショットを撮ってから、ここに戻ってください。";
+"Snapfly sees only the photos you chose. New screenshots show up here once you add them." = "Snapflyが見られるのは、あなたが選んだ写真だけです。新しいスクリーンショットは、追加するとここに表示されます。";
 "Allow Snapfly to see your screenshots" = "Snapflyにスクリーンショットへのアクセスを許可";
 "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapflyは、スクリーンショット内の名前、住所などの個人情報をこのiPhone上で隠します。";
 "Allow Access" = "アクセスを許可";
@@ -520,10 +529,15 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhoneの背面をダブルタップ：最新のスクリーンショットが隠されてコピーされ、チャットにペーストできます。";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "一度だけ設定するには、設定 › アクセシビリティ › タッチ › 背面タップ › ダブルタップを開き、%@を選びます。";
 "Cover the Latest Screenshot" = "最新のスクリーンショットを隠す";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "最新のスクリーンショットの個人情報を隠してコピーします。そのままペーストできます。";
+"Cover Screenshot" = "スクリーンショットを隠す";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "画像内の名前、住所、メールアドレス、電話番号、口座情報を隠します。";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "すべてこのiPhone上で行われます。どこにも送信されません。";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapflyはまだスクリーンショットを見られません。Snapflyを一度開いて許可してください。";
 "There is no screenshot yet." = "スクリーンショットはまだありません。";
 "Covered and copied, ready to paste." = "隠してコピーしました。ペーストできます。";
+"Nothing to cover was found. Copied as it is, ready to paste." = "隠すものは見つかりませんでした。そのままコピーしました。ペーストできます。";
+"Nothing to cover was found. Saved to Photos as it is." = "隠すものは見つかりませんでした。そのまま写真に保存しました。";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "ファイルを追加…";
@@ -536,6 +550,8 @@
 "This PDF is too long: up to %d pages." = "このPDFは長すぎます（最大%dページ）。";
 "Still covering the private details…" = "個人情報を隠しています…";
 "Could not cover the private details in this PDF." = "このPDFの個人情報を隠せませんでした。";
+"Could not read this picture, so all of it is covered." = "この画像を読み取れなかったため、全体を隠しました。";
+"Could not read this PDF, so every page is covered whole." = "このPDFを読み取れなかったため、すべてのページを全面的に隠しました。";
 "Page %d of %d" = "%d / %d ページ";
 "Previous Page" = "前のページ";
 "Next Page" = "次のページ";
@@ -639,7 +655,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "1か月分のレシートを、一覧ページ付きの1つのPDFにまとめて税理士に渡せます。";
 "Image" = "画像";
 "Plain file names" = "シンプルなファイル名";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "画像は新しいファイルとして送られ、いつ・どこで・何で作られたかの情報は含まれません。シンプルなファイル名にすると、撮影日時ではなく「画像」という名前にもなります。";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "画像は新しいファイルとして送られ、いつ・どこで・何で作られたかの情報は含まれません。シンプルなファイル名にすると、撮影日時ではなく「画像」、PDFは「書類」という名前にもなります。隠している情報を含む名前は、いずれの場合も置き換えられます。";
 "Cover what lands in a folder" = "フォルダに届いたものを隠す";
 "Save copies in" = "コピーの保存先";
 "Cover a folder" = "フォルダを隠す";
@@ -733,7 +749,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "「%1$@」はこれからすべての写真で隠されます。%2$@で変更できます。";
 "Always cover “%@”" = "「%@」を常に隠す";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "これからすべての写真で隠されます。プライバシーの自分のルールに入ります。";
+"Covered in every photo from now on, as a rule of your own under %@." = "これからすべての写真で隠されます。「%@」の自分のルールに入ります。";
 "Moved to the Trash. Click to put it back on the line." = "ゴミ箱に入れました。クリックするとロープに戻します。";
 "%d moved to the Trash. Click to put them back on the line." = "%d枚をゴミ箱に入れました。クリックするとロープに戻します。";
 "Taken down. Click to put it back on the line." = "外しました。クリックするとロープに戻します。";
@@ -747,7 +763,7 @@
 "A short hint, once, the first time something is in reach." = "何かが初めて使えるようになったときに、一度だけ短いヒントを表示します。";
 "About a minute" = "約1分";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "ロープの端で：スクリーンショットを検索したり、すべてをペーストやダウンロードしたり、すべて外したりできます。";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "何を隠すかは、スクリーンショット一覧の上にある設定で選べます。そこでは、iPhoneの背面をダブルタップして最新のスクリーンショットを隠す方法も設定できます。";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "何を隠すかは「その他 › 隠す内容」で選べます。「その他」では、iPhoneの背面をダブルタップして最新のスクリーンショットを隠す設定もできます。";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "「スクリーンショットを撮る」をクリックして範囲をドラッグします。すぐにロープに掛かります。";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "クリックするとコピーされ、どのチャットにもペーストできます。チャットに直接ドラッグすることもできます。";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "アイコンをクリックすると、スクリーンショット、ロープ、設定、このはじめにのすべてがあります。";
@@ -791,6 +807,9 @@
 "Start Again" = "最初から";
 "Start Introduction" = "はじめにを開始";
 "Take a screenshot first: this shows on a photo on the line." = "まずスクリーンショットを撮ってください。ロープに掛かった写真で説明します。";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "最新の写真には隠したものがありません。何かを隠した写真で説明します。";
+"The newest on the line is a screen recording: this shows on a photo." = "ロープの最新のものは画面収録です。写真で説明します。";
+"No icons are on under the photos. Turn one on in %@." = "写真の下のアイコンがすべてオフです。%@ でオンにしてください。";
 "Taking a Screenshot" = "スクリーンショットを撮る";
 "Tap a screenshot" = "スクリーンショットをタップ";
 "The Tag at the End of the Line" = "ロープの端のタグ";
@@ -827,6 +846,8 @@
 "Product" = "商品";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "このMacで隠さずに読み取りました。%@が隠したコピーから読み取った内容を追加しました。";
 "Remove Key" = "キーを削除";
+"Remove the key for %@?" = "%@のキーを削除しますか？";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "元に戻せません。%@はキーを一度しか表示しないため、新しいキーを作り直す必要があります。";
 "Reply" = "返信";
 "The answer was empty." = "回答が空でした。";
 "The keychain did not keep the key." = "キーチェーンにキーを保存できませんでした。";
@@ -1049,6 +1070,8 @@
 "List" = "リスト";
 "Grid or List" = "グリッドまたはリスト";
 "Copy File Path" = "ファイルのパスをコピー";
+"Copy Original" = "オリジナルをコピー";
+"Copy Originals" = "オリジナルをコピー";
 "Rename" = "名前を変更";
 "Rename…" = "名前を変更…";
 
@@ -1092,6 +1115,14 @@
 "Covering…" = "隠しています…";
 "1 place covered" = "1 か所を隠しました";
 "%d places covered" = "%d か所を隠しました";
+"1 file covered" = "1 ファイルを隠しました";
+"%d files covered" = "%d ファイルを隠しました";
+"1 file with nothing to cover" = "隠すものがないファイル 1 件";
+"%d files with nothing to cover" = "隠すものがないファイル %d 件";
+"1 file not covered" = "隠せなかったファイル 1 件";
+"%d files not covered" = "隠せなかったファイル %d 件";
+"1 file stopped" = "停止したファイル 1 件";
+"%d files stopped" = "停止したファイル %d 件";
 "Nothing to cover" = "隠すものなし";
 "Locked with a password" = "パスワードで保護";
 "Over %d pages" = "%d ページ超";
@@ -1108,7 +1139,7 @@
 "What to cover" = "隠すもの";
 "Names Only" = "名前のみ";
 "As in Settings" = "設定と同じ";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "設定 › プライバシー の独自ルールも適用されます。各コピーはもう一度読み取られ、まだ見えるものがあればさらに隠されます。";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@ のあなたの情報とルールも適用されます。各コピーはもう一度読み取られ、まだ見えるものがあればさらに隠されます。";
 "Read on this Mac. Nothing is sent anywhere." = "この Mac で読み取ります。どこにも送信されません。";
 "The words of each file also go to %@, as set in Settings › Privacy." = "設定 › プライバシー の設定どおり、各ファイルの文字は %@ にも送られます。";
 "Cover 1 File" = "1 ファイルを隠す";
@@ -1157,9 +1188,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@がキーを受け付けませんでした。設定 › AIアシスタントで確認してください。";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@がキーを受け付けませんでした。その他 › AIアシスタントで確認してください。";
 "%@ did not accept this key. Check it, or make a new one." = "%@がこのキーを受け付けませんでした。確認するか、新しいキーを作成してください。";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@はモデル%@を知りません。設定 › AIアシスタントで別のモデルを選んでください。";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@はモデル%@を知りません。その他 › AIアシスタントで別のモデルを選んでください。";
 "Add your %@ key in Settings › AI Assistant." = "設定 › AIアシスタントに%@のキーを追加してください。";
+"Add your %@ key in More › AI Assistant." = "その他 › AIアシスタントに%@のキーを追加してください。";
 "Change" = "変更";
 "Check Again" = "もう一度確認";
 "Checking the key…" = "キーを確認中…";
@@ -1212,6 +1246,12 @@
 "Edit…" = "編集…";
 "Add Prompt" = "プロンプトを追加";
 "Standard Prompts" = "標準のプロンプト";
+"Replace your question with the standard ones?" = "あなたの質問を標準の質問に置き換えますか？";
+"Replace your %d questions with the standard ones?" = "%d件の質問を標準の質問に置き換えますか？";
+"Replace your prompt with the standard ones?" = "あなたのプロンプトを標準のプロンプトに置き換えますか？";
+"Replace your %d prompts with the standard ones?" = "%d件のプロンプトを標準のプロンプトに置き換えますか？";
+"What you wrote can't be brought back." = "書いた内容は元に戻せません。";
+"Replace" = "置き換える";
 "Not written yet" = "まだ書かれていません";
 "Title" = "タイトル";
 "Prompt" = "プロンプト";
@@ -1279,7 +1319,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "別のApple AccountでサインインしているMac用です。MacでSnapflyの設定を開き、「同期」で「コードを表示」をクリックします。";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "別のApple AccountでサインインしているiPhone用です。このMacに表示されるコードをiPhoneで入力します。";
 "iCloud is not ready for connecting yet. Try again later." = "iCloudはまだ接続の準備ができていません。あとでもう一度お試しください。";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "iPhoneのSnapflyで設定を開き、「コードでMacに接続」をタップして、次を入力します:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "iPhoneのSnapflyで %1$@ を開き、「%2$@」をタップして、次を入力します:";
 "It stops syncing with this Mac. What it sent stays here." = "このMacとの同期を停止します。送られたものはここに残ります。";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "このMacと同じApple Accountを使っているため、あなたのデバイスの1台として同期します。";
 "It was declined on the Mac." = "Macで拒否されました。";
@@ -1428,7 +1468,7 @@
 "Previous" = "前へ";
 "Goes as soon as the copy is ready." = "コピーの準備ができしだい実行します。";
 "Search words in screenshots" = "スクリーンショット内の言葉を検索";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "言葉は事前に読み取ったスクリーンショットから見つかります。設定で「画像処理の高速化」をオンにしてください。";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "言葉と個人情報が見つかるのは、事前に読み取ったスクリーンショットだけです。読み取るのは「その他 › 検出」の「画像処理の高速化」です。";
 "All Screenshots" = "すべてのスクリーンショット";
 "With Private Details" = "個人情報を含む";
 "Sort" = "並べ替え";
@@ -1746,6 +1786,7 @@
 "A ring where each click landed." = "クリックした場所ごとに輪を表示します。";
 "Add Zoom" = "ズームを追加";
 "Could not open the recording." = "収録を開けませんでした。";
+"Your new recording opens in Studio once you close this one." = "これを閉じると、新しい収録がスタジオで開きます。";
 "Could not save the video." = "ビデオを保存できませんでした。";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "タイムラインでズームをドラッグすると移動し、端をドラッグすると長さを変えられます。";
 "Drag the frame on the picture to choose what it looks at." = "画像上の枠をドラッグして、映す場所を選びます。";
@@ -1948,3 +1989,8 @@
 "Hide Preview" = "プレビューを隠す";
 "Preview hidden" = "プレビュー非表示";
 "Pages: %d" = "ページ数：%d";
+"The camera could not scan. Try again." = "カメラでスキャンできませんでした。もう一度お試しください。";
+"Delete this document?" = "この書類を削除しますか？";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "ページは、隠したものと一緒に削除されます。元の写真やファイルはそのままです。";
+"Turn off faster picture processing?" = "画像処理の高速化をオフにしますか？";
+"Size unknown" = "サイズ不明";

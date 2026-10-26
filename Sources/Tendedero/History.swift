@@ -82,8 +82,9 @@ enum History {
                 kept = unique(url.lastPathComponent, in: folder)
                 try fm.moveItem(at: url, to: kept)
                 StudioStore.move(from: url, to: kept)
+                moveMarks(from: url, to: kept)
             } catch {
-                log.error("Could not keep \(url.lastPathComponent, privacy: .public) in the history: \(error.localizedDescription, privacy: .public)")
+                log.error("Could not keep \(url.lastPathComponent, privacy: .private) in the history: \(error.localizedDescription, privacy: .private)")
                 return false
             }
         }
@@ -102,6 +103,7 @@ enum History {
         do {
             try FileManager.default.moveItem(at: entry.url, to: back)
             StudioStore.move(from: entry.url, to: back)
+            moveMarks(from: entry.url, to: back)
             return back
         } catch {
             return entry.url
@@ -113,15 +115,32 @@ enum History {
         entries.removeAll { $0.path == entry.path }
         if isKept(entry.url) {
             try? FileManager.default.trashItem(at: entry.url, resultingItemURL: nil)
+            forgetMarks(entry.url)
         }
     }
 
     static func clear() {
         for entry in entries where isKept(entry.url) {
             try? FileManager.default.trashItem(at: entry.url, resultingItemURL: nil)
+            forgetMarks(entry.url)
         }
         entries = []
         SendLog.clear()
+    }
+
+    /// What was hidden by hand and drawn on a photo goes with its file, into
+    /// the history and back, so Copy and Send Again cover it as the line did.
+    /// A file from anywhere else keeps its place, and its marks with it.
+    private static func moveMarks(from old: URL, to new: URL) {
+        PrivateDetails.moveHand(from: old, to: new)
+        Drawings.move(from: old, to: new)
+    }
+
+    /// A kept file's marks go with it to the Trash. Those of a file from
+    /// anywhere else stay while it may hang again, until the line lets them go.
+    private static func forgetMarks(_ url: URL) {
+        PrivateDetails.forgetHand(url)
+        Drawings.set(.empty, for: url)
     }
 
     /// What has had its days, or whose file is gone, leaves. Runs at launch
@@ -133,7 +152,10 @@ enum History {
         var stay: [Entry] = []
         for entry in entries {
             if entry.left < cutoff {
-                if isKept(entry.url) { try? fm.trashItem(at: entry.url, resultingItemURL: nil) }
+                if isKept(entry.url) {
+                    try? fm.trashItem(at: entry.url, resultingItemURL: nil)
+                    forgetMarks(entry.url)
+                }
             } else if fm.fileExists(atPath: entry.path) {
                 stay.append(entry)
             }

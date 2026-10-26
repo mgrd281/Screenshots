@@ -22,11 +22,14 @@ struct ProjectProgress: Equatable {
 enum ProjectNotice: Identifiable, Equatable {
     case signed
     case unreadable(Int)
+    /// The document camera could not scan, as when it may not be used.
+    case camera
 
     var id: String {
         switch self {
         case .signed: "signed"
         case .unreadable(let count): "unreadable-\(count)"
+        case .camera: "camera"
         }
     }
 }
@@ -103,15 +106,23 @@ final class ProjectStore: ObservableObject {
     @Published var toast: ProjectToast?
     /// Each page's shape, counted up when it is turned, so its editor starts afresh.
     @Published private(set) var revisions: [UUID: Int] = [:]
+    /// Counted up each time the project's PDFs are read or one is unlocked,
+    /// so pages drawn before, like the grid's, are drawn again as they are.
+    @Published private(set) var sourcesRead = 0
 
     /// The project's own undo, which the system's gestures reach too.
     let undoManager = UndoManager()
     private var history = ProjectHistory()
     /// Each page's protection once opened: kept while the app runs, the
-    /// newest few, and every one with changes made by hand.
+    /// newest few, and every one with changes made by hand, whose pictures
+    /// are let go of once it is older (`ProtectSession.rest`).
     private var sessions: [UUID: ProtectSession] = [:]
     private var used: [UUID] = []
     private var sources: [UUID: PDFSource] = [:]
+    /// The project's PDFs being read off the main thread as it opens: their
+    /// pages wait for them (`sourcesOpened`), shown neither locked nor unreadable.
+    private var opening: Set<UUID> = []
+    private var openingSources: Task<Void, Never>?
     /// The PDFs still waiting for their password.
     private var stillLocked: Set<UUID> = []
     private var aspects: [String: CGFloat] = [:]
@@ -220,6 +231,7 @@ final class ProjectStore: ObservableObject {
     /// Writes the open project now, as when Snapfly goes to the background.
     func flush() {
         saving?.cancel()
+        keepCovers()
         guard let project, let data = try? JSONEncoder().encode(project) else { return }
         let folder = Self.folder(project.id)
         writer.async {
@@ -231,7 +243,10 @@ final class ProjectStore: ObservableObject {
     // MARK: Opening and closing
 
     /// A new project, opened at once over the app, with what is added.
-    func start(_ items: ProjectImport? = nil) {
+    /// - Parameters:
+    ///   - covers: what the owner covered on each picture added, as `add` takes it.
+    ///   - done: told, once they are in or left out, whether any page was added.
+    func start(_ items: ProjectImport? = nil, covers: [[KeptCover]] = [], done: (@MainActor (Bool) -> Void)? = nil) {
         let new = PDFProject(name: ProjectNaming.name(files: [], pages: [], at: .now))
         // The project open before is kept, unless nothing was ever added to it.
         if let old = project, old.pages.isEmpty { delete(old.id) }
@@ -242,9 +257,13 @@ final class ProjectStore: ObservableObject {
         UserDefaults.standard.set(new.id.uuidString, forKey: Self.openKey)
         shown = ProjectRef(id: new.id)
         flush()
-        guard let items else { return }
+        guard let items else {
+            done?(false)
+            return
+        }
         Task {
-            await add(items)
+            let added = await add(items, covers: covers)
+            done?(added > 0)
             guard var now = project, now.id == new.id else { return }
             // Named once there is something to name it by.
             now.name = ProjectNaming.name(files: now.files, pages: now.pages, at: now.created)
@@ -260,6 +279,8 @@ final class ProjectStore: ObservableObject {
             return
         }
         if project?.id != id {
+            // What was covered on the pages of the one open before is kept with it first.
+            flush()
             reset()
             project = found
             tidy()
@@ -349,6 +370,8 @@ final class ProjectStore: ObservableObject {
         sessions = [:]
         used = []
         sources = [:]
+        opening = []
+        openingSources = nil
         stillLocked = []
         aspects = [:]
         revisions = [:]
@@ -385,15 +408,35 @@ final class ProjectStore: ObservableObject {
 
     // MARK: PDFs and their passwords
 
+    /// The project's PDFs read off the main thread, as a large one takes a
+    /// moment to read; then the first one locked asks for its password.
     private func openSources() {
         guard let project else { return }
-        for file in project.files where file.kind == .pdf && sources[file.id] == nil {
-            if let url = url(of: file.id), let source = PDFSource(url: url) {
+        let toOpen = project.files.filter { $0.kind == .pdf && sources[$0.id] == nil && !opening.contains($0.id) }
+            .compactMap { file in url(of: file.id).map { (id: file.id, url: $0) } }
+        guard !toOpen.isEmpty else { return askForLocked() }
+        let id = project.id
+        opening.formUnion(toOpen.map { $0.id })
+        let before = openingSources
+        openingSources = Task {
+            await before?.value
+            let made = await Self.run(on: large) { toOpen.map { (id: $0.id, source: PDFSource(url: $0.url)) } }
+            // Another project opened meanwhile: these are not its own.
+            guard self.project?.id == id else { return }
+            for file in made {
+                opening.remove(file.id)
+                guard sources[file.id] == nil, let source = file.source else { continue }
                 sources[file.id] = source
                 if source.isLocked { stillLocked.insert(file.id) }
             }
+            sourcesRead += 1
+            askForLocked()
         }
-        askForLocked()
+    }
+
+    /// Waits for the PDFs being read as the project opened.
+    private func sourcesOpened() async {
+        await openingSources?.value
     }
 
     /// The first PDF still locked whose pages the project shows asks for its password.
@@ -422,6 +465,7 @@ final class ProjectStore: ObservableObject {
             sessions[page.id] = nil
             revisions[page.id, default: 0] += 1
         }
+        sourcesRead += 1
         objectWillChange.send()
         if let waiting = unlocking {
             unlocking = nil
@@ -455,6 +499,8 @@ final class ProjectStore: ObservableObject {
     /// Whether a page's PDF waits for its password.
     func isLocked(_ page: ProjectPage) -> Bool {
         guard case .pdf(let file, _) = page.source else { return false }
+        // Still being read as the project opens: not shown yet, not locked.
+        if opening.contains(file) { return false }
         return sources[file] == nil || stillLocked.contains(file)
     }
 
@@ -463,12 +509,18 @@ final class ProjectStore: ObservableObject {
     /// Files, photos, pictures or screenshots added after the page at
     /// `index`, or at the end, each copied into the project as it came: a
     /// PDF with all its pages, a picture as a page. Undone as one step.
-    func add(_ items: ProjectImport, at index: Int? = nil) async {
-        guard let id = project?.id else { return }
+    /// - Parameter covers: what the owner covered on each picture of
+    ///   `.pictures`, in their order (a scanned page's hand covers), kept
+    ///   with its page.
+    /// - Returns: how many pages were added.
+    @discardableResult
+    func add(_ items: ProjectImport, at index: Int? = nil, covers: [[KeptCover]] = []) async -> Int {
+        guard let id = project?.id else { return 0 }
         var files: [ProjectFile] = []
         var pages: [ProjectPage] = []
         var failed = 0
         var signed = false
+        var kept: [String: [KeptCover]] = [:]
         let total = items.count
         adding = ProjectProgress(done: 0, total: total)
         defer { adding = nil }
@@ -528,13 +580,17 @@ final class ProjectStore: ObservableObject {
                     continue
                 }
                 added(file, origin: origin, kind: kind)
+                if n < covers.count, !covers[n].isEmpty, let page = pages.last { kept[page.id.uuidString] = covers[n] }
             }
         case .screenshots(let ids):
             for (n, asset) in Library.assets(ids).enumerated() {
                 guard project?.id == id else { break }
                 adding = ProjectProgress(done: n, total: total)
-                guard let image = await Library.image(of: asset), let png = Covering.png(image),
-                      let file = await Self.run(on: writer, { Self.store(png, ending: "png", name: L("Screenshot"), into: id) })
+                // Made a PNG off the main thread, as it is written.
+                guard let image = await Library.image(of: asset),
+                      let file = await Self.run(on: writer, {
+                          Covering.png(image).flatMap { Self.store($0, ending: "png", name: L("Screenshot"), into: id) }
+                      })
                 else {
                     failed += 1
                     continue
@@ -553,13 +609,14 @@ final class ProjectStore: ObservableObject {
                     for stored in copies { try? FileManager.default.removeItem(at: folder.appendingPathComponent(stored)) }
                 }
             }
-            return
+            return 0
         }
         if !pages.isEmpty {
             let count = pages.count
             change(count == 1 ? L("Add Page") : L("Add Pages")) { project in
                 project.files += files
                 project.insert(pages, at: index)
+                project.covers.merge(kept) { _, new in new }
             }
             toast = ProjectToast(text: count == 1 ? L("1 page added") : String(format: L("%d pages added"), count))
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -575,6 +632,7 @@ final class ProjectStore: ObservableObject {
         } else if signed {
             notice = .signed
         }
+        return pages.count
     }
 
     /// A PDF added: opened, or one that could not be read, or one left out
@@ -595,7 +653,14 @@ final class ProjectStore: ObservableObject {
             stillLocked.remove(copied.id)
             writer.async { try? FileManager.default.removeItem(at: url) }
         }
-        guard let source = PDFSource(url: url) else {
+        // Read off the main thread, as a large PDF takes a moment.
+        let read = await Self.run(on: large) { PDFSource(url: url) }
+        // Another project opened meanwhile: it is not added to that one.
+        guard self.project?.id == project else {
+            drop()
+            return .left
+        }
+        guard let source = read else {
             drop()
             return .unreadable
         }
@@ -745,14 +810,38 @@ final class ProjectStore: ObservableObject {
         canRedo = history.canRedo
     }
 
-    /// A page turned another way has its private details found again on it.
+    /// A page turned another way has its private details found again on it;
+    /// what the owner covered on it turns with it.
     private func settle(_ before: [ProjectPage], _ after: [ProjectPage]) {
         let was = Dictionary(before.map { ($0.id, $0.turns) }, uniquingKeysWith: { first, _ in first })
-        for page in after where was[page.id].map({ $0 != page.turns }) == true {
+        for page in after {
+            guard let old = was[page.id], old != page.turns else { continue }
+            keepCovers()
+            if var now = project, let kept = now.covers[page.id.uuidString] {
+                let quarters = ((page.turns - old) % 4 + 4) % 4
+                now.covers[page.id.uuidString] = kept.map { $0.turned(by: quarters) }
+                project = now
+                remember(now)
+            }
             sessions[page.id] = nil
             used.removeAll { $0 == page.id }
             revisions[page.id, default: 0] += 1
         }
+    }
+
+    /// What the owner covered on the pages open in an editor, kept with the
+    /// project: where, never a word. Once a page's picture opened, its plan
+    /// holds every cover, also where its places could not be found or its
+    /// copy made; a page not opened yet keeps what it had.
+    private func keepCovers() {
+        guard var now = project else { return }
+        for (id, session) in sessions where session.holdsCovers {
+            let kept = session.plan.kept
+            now.covers[id.uuidString] = kept.isEmpty ? nil : kept
+        }
+        guard now.covers != project?.covers else { return }
+        project = now
+        remember(now)
     }
 
     func turn(_ ids: Set<UUID>) {
@@ -762,8 +851,11 @@ final class ProjectStore: ObservableObject {
         UISelectionFeedbackGenerator().selectionChanged()
     }
 
+    /// A copy of each page right after it, covered where the owner covered
+    /// it, up to the last change in its editor.
     @discardableResult
     func duplicate(_ ids: Set<UUID>) -> [UUID] {
+        keepCovers()
         var made: [UUID] = []
         change(L("Duplicate")) { made = $0.duplicate(ids) }
         if !made.isEmpty {
@@ -862,6 +954,7 @@ final class ProjectStore: ObservableObject {
         let wanted = self.wanted
         switch source {
         case .pdf(let file, let index):
+            if opening.contains(file) { await sourcesOpened() }
             guard let pdf = sources[file] else { return nil }
             return await Self.run(on: queue) { () -> CGImage? in
                 if let key, !wanted.contains(key) { return nil }
@@ -897,7 +990,9 @@ final class ProjectStore: ObservableObject {
     }
 
     private func prepareReading(_ page: ProjectPage, for image: CGImage) async {
-        guard case .pdf(let file, let index) = page.source, let pdf = sources[file] else { return }
+        guard case .pdf(let file, let index) = page.source else { return }
+        if opening.contains(file) { await sourcesOpened() }
+        guard let pdf = sources[file] else { return }
         let turns = page.turns
         await Self.run(on: large) {
             guard let layer = pdf.lines(index, turns: turns) else { return }
@@ -917,7 +1012,10 @@ final class ProjectStore: ObservableObject {
     func coveredFirstPage(_ project: PDFProject) async -> UIImage? {
         guard let page = project.pages.first else { return nil }
         let details = Choice.details.map(\.rawValue).sorted().joined(separator: ",")
-        let made = "\(Self.key(page.source))-\(page.turns)-\(details)-\(CoverStyle.current)-\(OwnRules.all.count)"
+        // What the owner covered by hand on it is covered on it too.
+        let hand = project.hand(on: page.id)
+        let places = hand.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
+        let made = "\(Self.key(page.source))-\(page.turns)-\(details)-\(CoverStyle.current)-\(OwnRules.all.count)-\(places)"
         let name = "Cover-" + SHA256.hash(data: Data(made.utf8)).prefix(8).map { String(format: "%02x", $0) }.joined() + ".jpg"
         let counted = name + ".counts"
         if let known = coveredFirst.object(forKey: name as NSString), firstCounted[project.id]?.name == name { return known }
@@ -940,7 +1038,7 @@ final class ProjectStore: ObservableObject {
                 return image
             }
             guard let drawn = await Self.firstPage(page, of: project, on: self.small),
-                  let result = await Covering.cover(drawn, Choice.details) else { return nil }
+                  let result = await Covering.coverHere(drawn, Choice.details, hand: hand) else { return nil }
             let covered = result.image
             let counts = FirstCounts(covered: result.report.total, toCheck: result.report.toCheck, name: name)
             let small = await Self.run(on: self.small) { () -> CGImage? in
@@ -1044,6 +1142,7 @@ final class ProjectStore: ObservableObject {
             return session
         }
         let session = ProtectSession(source: .page(id))
+        session.restored = project?.covers[id.uuidString] ?? []
         sessions[id] = session
         touch(id)
         return session
@@ -1060,6 +1159,11 @@ final class ProjectStore: ObservableObject {
             used.removeAll { $0 == old }
             sessions[old] = nil
         }
+        // Those keep what the owner chose and let go of their pictures, after
+        // the screen being drawn now, which may be what asked for this page.
+        let older = used.dropLast(Self.keptSessions).compactMap { sessions[$0] }
+        guard !older.isEmpty else { return }
+        Task { for session in older { session.rest() } }
     }
 
     // MARK: Leaving
@@ -1069,6 +1173,9 @@ final class ProjectStore: ObservableObject {
     /// `only` the pages chosen, else all. Throws, saying which page, when
     /// one cannot be read or covered.
     func pdf(_ options: ProjectExport, only: Set<UUID>? = nil) async throws -> Data {
+        await sourcesOpened()
+        // A page covered as Settings says has the owner's covers up to the last change.
+        keepCovers()
         guard let project else { throw ScanProblem(message: L("The file could not be made.")) }
         let pages = only.map { project.only($0).pages } ?? project.pages
         guard !pages.isEmpty else { throw ScanProblem(message: L("The file could not be made.")) }
@@ -1140,20 +1247,22 @@ final class ProjectStore: ObservableObject {
                          number: Int) async throws -> (image: CGImage, places: [CGRect]) {
         await prepareReading(page, for: image)
         if let session = sessions[page.id], !session.hasFailed {
-            // A copy being made again after a change is waited for, half a minute at most.
+            // A copy being made again after a change is waited for, half a
+            // minute at most; a page whose pictures were let go of was checked
+            // before, and its places are as the owner left them.
             var waited = 0
-            while !session.isReady, waited < 300 {
+            while !session.isReady, !session.isResting, waited < 300 {
                 if session.hasFailed { break }
                 try? await Task.sleep(for: .milliseconds(100))
                 waited += 1
             }
-            guard session.isReady else {
+            guard session.isReady || session.isResting else {
                 throw ScanProblem(message: String(format: L("Page %d is not ready yet. Open it to check it."), number))
             }
             guard let made = await session.cover(image) else { throw ScanProblem(message: String(format: failing, number)) }
             return made
         }
-        guard let made = await Covering.cover(image, Choice.details) else {
+        guard let made = await Covering.coverHere(image, Choice.details, hand: project?.hand(on: page.id) ?? []) else {
             throw ScanProblem(message: String(format: failing, number))
         }
         return (made.image, made.report.places)
@@ -1161,6 +1270,8 @@ final class ProjectStore: ObservableObject {
 
     /// The pages as PNGs, each covered, for Save as Pictures.
     func pngs(only: Set<UUID>? = nil) async throws -> [Data] {
+        await sourcesOpened()
+        keepCovers()
         guard let project else { throw ScanProblem(message: L("The copy could not be made.")) }
         let pages = only.map { project.only($0).pages } ?? project.pages
         making = ProjectProgress(done: 0, total: pages.count)
@@ -1174,7 +1285,11 @@ final class ProjectStore: ObservableObject {
             }
             let covered = try await covered(page, image, failing: L("Page %d could not be covered, so nothing was saved."),
                                             number: index + 1)
-            guard let png = Covering.png(covered.image) else { throw ScanProblem(message: L("The copy could not be made.")) }
+            // Made a PNG off the main thread, as a large page takes a moment.
+            let drawn = covered.image
+            guard let png = await Self.run(on: large, { Covering.png(drawn) }) else {
+                throw ScanProblem(message: L("The copy could not be made."))
+            }
             made.append(png)
         }
         return made
@@ -1183,6 +1298,7 @@ final class ProjectStore: ObservableObject {
     /// How large the PDF will be, from a few of its pages made as it would
     /// make them, without covers, which change little; nil where none could be made.
     func estimate(_ options: ProjectExport, only: Set<UUID>? = nil) async -> Int? {
+        await sourcesOpened()
         guard let project else { return nil }
         let pages = only.map { project.only($0).pages } ?? project.pages
         var sizes: [Int] = []

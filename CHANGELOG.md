@@ -6,6 +6,157 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, what can't be undone asks first: Clear beside the scanned
+  pages, Delete on a recent document, and Turn Off for faster picture
+  processing, which deletes everything prepared.
+- On the iPhone, the app says more when something doesn't work: a camera
+  that cannot scan says why, a photo coming from iCloud shows "Opening…",
+  See All says why a search or With Private Details finds nothing yet and
+  opens More › Detection to change it, the PDF's size shows a dash instead
+  of spinning for ever, and after a failure the editor's apps, Copy and
+  Send to Mac are dimmed instead of doing nothing. The introduction now
+  names More instead of Settings.
+- On the iPhone, easier to read and to tap: orange words are a deeper
+  orange that reads on light grounds, small buttons (Try Again, Don't Wait,
+  the selected place's Cover, Delete and Done, Clean Up, Revert and its
+  cross) take a finger's 44 pt, what went wrong in the status capsule shows
+  whole instead of being cut, the bars that slide up only fade with Reduce
+  Motion, and the arrows for next and on point the right way in Arabic.
+- On the iPhone, See All shows every screenshot, not only the newest 90, so
+  older ones can be found, searched for and filtered too.
+- On the iPhone, where Snapfly may see only the photos you chose, the Photos
+  tab says so and offers Change Allowed Photos…, since a new screenshot
+  shows only once you add it; it no longer asks you to take one.
+- On the iPhone, with Photos access off, Protected asks for it as the Photos
+  tab does, instead of saying nothing was protected, and More › Help ›
+  Introduction no longer waits unseen to show up later.
+- On the iPhone, iOS's questions for Photos and the camera, and the
+  Shortcuts actions' descriptions, short name and Siri phrases, are in all
+  13 languages, not only in English.
+- On the Mac, Copy in a History photo's menu copies it as it would leave
+  the line, covered as you chose under Privacy, never the original. On
+  History's Workspace page, the item that copies the files as they are is
+  now called Copy Original.
+- On the Mac, what you hid by hand and what you drew stay with a photo that
+  leaves the line, so it leaves covered as before from the History's Copy,
+  Send Again and Hang on the line, and from a note's "put it back"; they
+  were forgotten the moment it left. They go to the Trash with it.
+- On the Mac, your details and rules under Always Hide are covered whatever
+  is checked under Privacy, as Always Hide says, also with Hide private
+  details off in the menu bar or every kind unchecked; before, they then
+  left uncovered. The texts about your rules now point to Settings › Always
+  Hide instead of Privacy.
+- On the Mac, "covered" is said only when something was: Cover Files and a
+  watched folder count only the copies with something covered and name
+  those with nothing to cover, and Send Again and Hide Private Details'
+  Copy say "Nothing to cover was found" otherwise. Clear History says it
+  empties the Sent list too.
+- On the Mac, Show Me How says why when the line has nothing for it to
+  show, like a newest photo with nothing covered or a screen recording, and
+  Settings stays open. Over a full screen app, Show line and Search say that
+  the line stays away and where to change that, instead of nothing or "The
+  line is empty."
+- On the Mac, macOS's questions before Snapfly may watch a folder, use the
+  microphone or ask your browser which page is open are in all 13
+  languages, not only in English.
+- On the Mac, the pairing code tells the iPhone's way there, More › Mac and
+  iCloud; VoiceOver reads Cover Files' counts with what they count; Copy
+  Row says "Copied" on its own button; Studio writes how close a zoom
+  comes in your region's numbers, like "2,0×"; and a History or Workspace
+  thumbnail that cannot be made shows a warning instead of spinning for ever.
+- On the Mac, the time stamp names the website that was open by its name
+  alone, like mail.google.com, in the band and in the stamped copy's
+  description, never the rest of the address, which can hold a search, an
+  email address or a sign-in link. A screenshot stamped before leaves the
+  line with its website's name alone too.
+- On the Mac, a picture that cannot be read, or whose covers cannot be
+  drawn, never leaves as it is: what goes into a chat, onto the clipboard,
+  out by drag, through Copy Link or to the AI assistant is the whole picture
+  covered, with a note, and it is read again the next time. A PDF goes with
+  every page covered whole, never as the original; a page that cannot be
+  read no longer leaves half covered. Sync sends a picture's covered copy
+  only once it was read, and a copy saved from Finder, Cover Files or a
+  watched folder is not made from a picture that could not be read.
+- On the Mac, Plain file names call a covered PDF "Document" too, as
+  pictures are called "Image", and a copy whose file name holds a detail
+  you cover, like an IBAN in a bank statement's name, or one of your own
+  rules, is called so either way, also when it goes from Hide Private
+  Details.
+- On the Mac in Arabic, what is drawn over a picture sits where it belongs:
+  Hide Part's covers and boxes, Search's marks on a photo, Draw on Photo,
+  Studio's picture and timeline, and the introduction's ring. Take down
+  everything to the left or to the right takes down the photos on that
+  side of the screen, and photos fly to where they really hang.
+- On the Mac, Hide Part, Draw on Photo and Background ask before their
+  close button, or another photo opened in them, throws away what you
+  changed, and opening the same photo again brings its window back as you
+  left it. Studio keeps your zooms and arrows when its window closes, unless
+  you click Cancel or trimmed the recording meanwhile, and a new recording
+  waits for Studio to be closed instead of taking their place.
+- On the Mac, Standard Prompts and Standard Questions ask before they
+  replace what you wrote, and a look at Settings › Line no longer keeps the
+  standard questions as your own: they stay in the language Snapfly
+  speaks, and Standard Questions shows only once you changed them.
+- On the Mac, Remove Key under AI Assistant asks first: Anthropic and
+  OpenAI show a key only once, so a key removed by mistake means making a
+  new one.
+- On the Mac, a detail or a rule removed under Always Hide comes back with
+  a click on the note that says it went, and so do saved messages,
+  questions, prompts, chat apps and websites under Line. VoiceOver names
+  what each remove button takes away, "Remove “Lena Hoffmann”", instead of
+  "Remove" alone.
+- On the Mac in Arabic, a translation, a description or an answer in the
+  text card starts on the right when it is in Arabic and on the left when
+  it is in English, instead of the other way round.
+- On the Mac, words beside a green or orange symbol are in the text colour,
+  so they can be read on a light background: Allowed and Not allowed yet
+  under Permissions, a pattern that cannot be read and what is wrong with a
+  card or an IBAN under Always Hide, and Cover Files' counts.
+- On the Mac, Reopen Snapfly under Permissions quits first and then opens
+  Snapfly again, as an update does: two copies no longer run at once, where
+  the one quitting could take back the screenshot settings the new one had
+  just made, or keep its shortcuts from working.
+- On the Mac, connecting an iPhone on another Apple account can be
+  cancelled while it connects, should iCloud not answer, instead of
+  leaving no way out but quitting, and an account let in only then is taken
+  off again; once connected, Escape closes the sheet as Done does.
+- On the Mac, with Reduce Motion on, a photo let go after a press and the
+  pin badge settle with a short fade instead of a bouncy spring.
+- On the Mac, the workspace folder's name and a category's name are kept
+  when you leave the field, not only on Return, and History's cards can be
+  reached with Tab where keyboard navigation is on: Space or Return hangs
+  one again, and on the Workspace page Space selects it and Return opens
+  it.
+- On the Mac, quitting, logging out or Install and Reopen while the screen
+  is recorded saves the recording first, as Stop does, instead of deleting
+  it. A recording cut short anyway, as by a crash, is now written in
+  pieces: the next time Snapfly opens, it hangs on the line up to its last
+  few seconds, with a note; one that cannot be played goes to the Trash.
+- On the Mac, a recording with both the Mac's sound and the microphone can
+  no longer leave Snapfly saving it for ever: when the two can't be mixed
+  into one track, the recording keeps both and a note says so.
+- On the Mac, Markup open on two photos at once saves each one's Done to its
+  own photo, never one over the other.
+- On the Mac, screenshots go on hanging after the workspace folder went to
+  the Trash and was made again, a disk was ejected and put back, or
+  Snapfly was let into the Desktop later: what could not be watched is
+  tried again each time Snapfly comes to the front, and with inbox mode
+  off, the Screenshot app's location is read again then too. A folder that
+  could not be read for a moment no longer hangs its old screenshots again
+  as new ones.
+- On the Mac, the send button over a browser asks it for the open page
+  once a second, and as soon as another tab comes to the front, instead of
+  five times a second, so a busy browser slows Snapfly down far less.
+  Opening a chat's website waits for the browser the same way; what a send
+  covers, Check Before Sending and the time stamp still ask it right then.
+- On the Mac, a guide's Copy no longer hangs the guide on the line as a new
+  screenshot while Snapfly watches the clipboard: it goes with a file of
+  it, as photos copied from the line do.
+- On the Mac, the launch no longer waits on the network for the Mac's name,
+  Check for Updates stays responsive while it checks a download, and
+  covered copies waiting to be pasted are cleared after a day on a Mac that
+  keeps Snapfly running, besides at each launch.
+
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens
   it, from Review's menu too. It comes in reading order (one column after
@@ -21,6 +172,58 @@ keeps a download of each version.
   player: pause, back and on, speed, the word being said marked. A table
   is told from the columns of a letter's foot, and a table whose cells
   Vision read as one line is parted into cells again.
+- On the iPhone, what you cover by hand on a PDF project's pages, and a
+  cover Snapfly found that you moved or made larger, is kept with the
+  project and covered in every copy of it: also after Snapfly was closed, a
+  page was turned or duplicated, or Try Again, and on its picture under
+  Recent, which shows a change at once. It is back on the page as soon as
+  the page shows, so nothing drawn meanwhile puts it aside. What you covered
+  on scanned pages goes with them under Recent and into a project, and the
+  scan stays until its pages are in the document.
+- On the iPhone, the words of scanned pages and PDF projects are never sent
+  to the AI assistant, even with Find more turned on; screenshots and photos
+  still are, as before.
+- On the iPhone, Cover and Copy, Cover and Save, Back Tap and the share
+  extension say when they found nothing to cover instead of "Covered".
+  Back Tap and the Cover Private Details shortcut no longer wait for Apple
+  Intelligence or the AI assistant.
+- On the iPhone, a copy made without covers stays on this iPhone (not on a
+  Mac or iPad nearby) and leaves the clipboard after ten minutes.
+- Share links take at most 1.2 GB a day from everyone together and ten
+  uploads a minute from one place, as uploads need no account; a pairing
+  code's record in iCloud can no longer be listed by anyone.
+- On the iPhone, a long scan takes much less memory: each camera page is
+  kept as a JPEG, at its full size, once it is made, and a covered PDF, the
+  pages as pictures and the text are made a page at a time; Review reads the
+  pages one after another, and a change in Protect Picture no longer holds
+  the screen while its copy is made.
+- On the iPhone, a long PDF project takes less memory too: a page you
+  changed by hand keeps what you chose but lets go of its pictures once you
+  have moved a few pages on, and is made again when you come back to it. A
+  large PDF, a photo chosen in Photos, a page to crop and Cover and Copy's
+  picture are read or made without holding up the screen.
+- On the iPhone, the AI assistant's messages send you to More › AI
+  Assistant, where it is set up, not to Settings; a PDF project's camera
+  that cannot scan says why; the text sheet's warnings use the deeper
+  orange.
+- On the Mac, a PDF copied, sent, saved or linked, from the History too,
+  while it is still being covered says so for a moment instead of holding
+  Snapfly up for all its pages, and a send never pastes what was on the
+  clipboard before; a photo copied in a hurry is read again with Apple
+  Intelligence before the line keeps it; the line reads two photos at a
+  time, the newest first, instead of all at once after a change in Settings,
+  and does not draw one again that looks the same. The History makes its
+  pictures only while its window is open, and lets them go when it closes,
+  instead of keeping one of every photo it holds from launch on.
+- Fixes: on the Mac, Save Copy… over the very file it copies, as a GIF
+  or a PDF with nothing to cover can be, no longer deletes it; Studio no
+  longer stops Snapfly when a video cannot be written, as on a full disk;
+  a PDF
+  cropped with text beyond its page no longer stops Snapfly;
+  the share extension keeps within its memory with large photos and
+  deletes its file when cancelled; what Apple Intelligence or the AI
+  assistant said is forgotten with the rest when the iPhone app goes to the
+  background; the iPhone's sync folder is left out of its backups.
 - The text of scanned pages follows the page more closely: a receipt's
   items and prices are a table, an address beside a letter's details is
   read whole before them, a letterhead down the side comes after the

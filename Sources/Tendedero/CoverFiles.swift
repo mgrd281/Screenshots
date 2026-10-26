@@ -223,9 +223,10 @@ final class CoverFilesModel: ObservableObject {
         }
     }
 
-    /// Something to cover: a kind chosen, or a rule of the owner's own.
+    /// Something to cover: a kind chosen, or one of the owner's own details
+    /// or rules that is on, as the covering counts them.
     var canCover: Bool {
-        !chosen.isEmpty || OwnRules.all.contains { !$0.isBlank }
+        !chosen.isEmpty || PrivateDetails.alwaysHides
     }
 
     // MARK: Covering
@@ -256,7 +257,7 @@ final class CoverFilesModel: ObservableObject {
         do {
             try fm.createDirectory(at: folder, withIntermediateDirectories: false)
         } catch {
-            log.error("Could not make the folder for covered copies: \(error.localizedDescription, privacy: .public)")
+            log.error("Could not make the folder for covered copies: \(error.localizedDescription, privacy: .private)")
             Notice.show(L("Could not make a folder there. Choose another place."))
             close()
             return
@@ -360,9 +361,17 @@ final class CoverFilesModel: ObservableObject {
         if let activity { ProcessInfo.processInfo.endActivity(activity) }
         activity = nil
         close()
-        let saved = tally.covered + tally.nothing
-        guard !CoverFiles.shared.isKey, saved > 0, let destination else { return }
-        Notice.show(String(format: L("Covered copies saved: %ld"), saved), done: true, lasting: 8) {
+        // Only the copies with something covered are called covered; those
+        // with nothing to cover are named, to look at, as a watched folder's are.
+        let covered = tally.covered
+        let nothing = rows.filter { $0.state == .nothing }.map(\.item.url.lastPathComponent)
+        var lines: [String] = []
+        if covered > 0 { lines.append(String(format: L("Covered copies saved: %ld"), covered)) }
+        if !nothing.isEmpty {
+            lines.append(String(format: L("Nothing to cover in %@. Take a look."), FolderCover.names(nothing)))
+        }
+        guard !CoverFiles.shared.isKey, !lines.isEmpty, let destination else { return }
+        Notice.show(lines.joined(separator: " "), done: covered > 0, lasting: 8) {
             NSWorkspace.shared.activateFileViewerSelecting([destination])
         }
     }
@@ -596,19 +605,36 @@ private struct CoverFilesView: View {
         case .done:
             let tally = model.tally
             HStack(spacing: 16) {
-                Label("\(tally.covered)", systemImage: "checkmark.shield.fill")
-                    .foregroundStyle(.green)
-                    .help(L("Covered"))
-                Label("\(tally.nothing)", systemImage: "exclamationmark.circle.fill")
-                    .foregroundStyle(.orange)
-                    .help(L("Nothing to cover"))
-                Label("\(tally.failed)", systemImage: "xmark.octagon.fill")
-                    .foregroundStyle(.red)
-                    .help(L("Not covered"))
+                // The colour on each symbol alone; the counts in the text
+                // colour, which reads on every ground. Each count is said with
+                // what it counts, not as a bare number.
+                Label {
+                    Text("\(tally.covered)")
+                } icon: {
+                    Image(systemName: "checkmark.shield.fill").foregroundStyle(.green)
+                }
+                .help(L("Covered"))
+                .accessibilityLabel(Self.spoken(tally.covered, one: L("1 file covered"), many: L("%d files covered")))
+                Label {
+                    Text("\(tally.nothing)")
+                } icon: {
+                    Image(systemName: "exclamationmark.circle.fill").foregroundStyle(.orange)
+                }
+                .help(L("Nothing to cover"))
+                .accessibilityLabel(Self.spoken(tally.nothing, one: L("1 file with nothing to cover"),
+                                                many: L("%d files with nothing to cover")))
+                Label {
+                    Text("\(tally.failed)")
+                } icon: {
+                    Image(systemName: "xmark.octagon.fill").foregroundStyle(.red)
+                }
+                .help(L("Not covered"))
+                .accessibilityLabel(Self.spoken(tally.failed, one: L("1 file not covered"), many: L("%d files not covered")))
                 if tally.stopped > 0 {
                     Label("\(tally.stopped)", systemImage: "minus.circle")
                         .foregroundStyle(.secondary)
                         .help(L("Stopped"))
+                        .accessibilityLabel(Self.spoken(tally.stopped, one: L("1 file stopped"), many: L("%d files stopped")))
                 }
                 Spacer()
                 if tally.nothing > 0 {
@@ -637,6 +663,11 @@ private struct CoverFilesView: View {
             }
         }
         return text
+    }
+
+    /// A count of files as VoiceOver says it: "12 files covered".
+    private static func spoken(_ n: Int, one: String, many: String) -> String {
+        n == 1 ? one : String(format: many, n)
     }
 }
 
@@ -696,7 +727,8 @@ private struct CoverFilesInspector: View {
                     }
                 }
                 Section {
-                    Text(L("Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows."))
+                    Text(String(format: L("Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows."),
+                                [L("Settings"), L("Always Hide")].joined(separator: " › ")))
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
                     Text(readWhere)

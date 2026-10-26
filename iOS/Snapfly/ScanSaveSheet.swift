@@ -507,7 +507,7 @@ struct ScanSaveSheet: View {
     /// VoiceOver reads as its words alone: its symbol only shows it.
     private func noted(_ text: String, failed: Bool) -> some View {
         let symbol: String = failed ? "exclamationmark.triangle.fill" : covered ? "checkmark.circle.fill" : "checkmark.circle"
-        let tint: Color = failed ? Color.orange : covered ? SnapflyTokens.protectTint : Color.secondary
+        let tint: Color = failed ? SnapflyTokens.reviewOpen : covered ? SnapflyTokens.protectTint : Color.secondary
         let line = Label(text, systemImage: symbol)
             .font(.footnote.weight(.semibold))
             .foregroundStyle(tint)
@@ -574,7 +574,7 @@ struct ScanSaveSheet: View {
             guard !text.isEmpty else { return failed(L("Snapfly found no words on these pages.")) }
             switch way {
             case .copy:
-                UIPasteboard.general.string = text
+                Clipboard.put(text, covered: covered)
                 done(covered ? L("Copied") : L("Copied, without covers"))
             case .save:
                 exportingText = TextFile(text: text)
@@ -588,7 +588,7 @@ struct ScanSaveSheet: View {
             let pdf = try await store.pdf(covered: covered, text: searchable)
             switch way {
             case .copy:
-                UIPasteboard.general.setData(pdf, forPasteboardType: UTType.pdf.identifier)
+                Clipboard.put(pdf, as: .pdf, covered: covered)
                 done(covered ? L("Copied") : L("Copied, without covers"))
             case .save:
                 exporting = PDFFile(data: pdf)
@@ -609,7 +609,7 @@ struct ScanSaveSheet: View {
         #endif
         switch way {
         case .copy:
-            UIPasteboard.general.setItems(pngs.map { [UTType.png.identifier: $0] })
+            Clipboard.put(pngs.map { [UTType.png.identifier: $0] }, covered: covered)
             done(covered ? L("Copied") : L("Copied, without covers"))
         case .save:
             do {

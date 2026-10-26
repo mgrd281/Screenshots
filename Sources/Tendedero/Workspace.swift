@@ -141,6 +141,9 @@ final class Workspace: ObservableObject {
         var watch: Int32 = -1
         var problem: Problem?
         var needsIcon = false
+        /// The folder new screenshots go to had to be made, like after the
+        /// workspace went to the Trash: a new folder at the same place.
+        var remade = false
     }
 
     /// Finds the folder, makes it and the folder new screenshots go to, writes
@@ -170,13 +173,14 @@ final class Workspace: ObservableObject {
             return Outcome(root: root, problem: .unsafe)
         }
         do {
-            try fm.createDirectory(at: config.folder(of: config.defaultCategory, root: root),
-                                   withIntermediateDirectories: true)
+            let landing = config.folder(of: config.defaultCategory, root: root)
+            let remade = !fm.fileExists(atPath: landing.path)
+            try fm.createDirectory(at: landing, withIntermediateDirectories: true)
             try WorkspaceMarker.ensure(in: root)
             let data = try? root.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil)
             let fd = open(root.path, O_EVTONLY)
             return Outcome(root: root, adopted: adopted, bookmark: data, watch: fd,
-                           needsIcon: iconFor != root.standardizedFileURL.path)
+                           needsIcon: iconFor != root.standardizedFileURL.path, remade: remade)
         } catch {
             return Outcome(root: root, problem: problem(for: error))
         }
@@ -234,7 +238,9 @@ final class Workspace: ObservableObject {
         }
         watch(outcome.watch)
         isReady = true
-        if publish() { onChange() }
+        // A folder made again is a new one at the same place, which the
+        // screenshot watcher opens anew.
+        if publish() || outcome.remade { onChange() }
         refreshStats()
     }
 
@@ -375,7 +381,7 @@ final class Workspace: ObservableObject {
                 self.rebased(from, to)
                 if self.publish() { self.onChange() }
             } catch {
-                log.error("Could not rename a category folder: \(error.localizedDescription, privacy: .public)")
+                log.error("Could not rename a category folder: \(error.localizedDescription, privacy: .private)")
                 Notice.show(L("Could not rename the folder."))
                 self.objectWillChange.send()
             }
@@ -515,7 +521,7 @@ final class Workspace: ObservableObject {
                 }
                 if self.publish() { self.onChange() }
             } catch {
-                log.error("Could not rename the workspace: \(error.localizedDescription, privacy: .public)")
+                log.error("Could not rename the workspace: \(error.localizedDescription, privacy: .private)")
                 Notice.show(L("Could not rename the folder."))
                 self.objectWillChange.send()
             }
@@ -570,7 +576,7 @@ final class Workspace: ObservableObject {
                 self.settleSoon(after: 0)
                 Notice.show(String(format: L("The workspace is now in %@."), Folders.placeName(to)), done: true)
             } catch {
-                log.error("Could not move the workspace: \(error.localizedDescription, privacy: .public)")
+                log.error("Could not move the workspace: \(error.localizedDescription, privacy: .private)")
                 Notice.show(L("Could not move the workspace. Nothing was changed."))
             }
         }

@@ -28,9 +28,22 @@ enum AIQuestions {
         set { save(newValue) }
     }
 
-    /// Whether the questions were changed in Settings.
+    /// Whether the questions were changed in Settings: kept, and saying
+    /// something the standard ones do not. Ones kept that say just what
+    /// they say, as leaving Settings once kept them, count as standard.
     static func isCustomised(in defaults: UserDefaults = .standard) -> Bool {
-        defaults.data(forKey: key) != nil
+        defaults.data(forKey: key) != nil && !areStandard(load(from: defaults))
+    }
+
+    /// Whether two lists of questions say the same, in the same order.
+    static func sameWords(_ a: [AIQuestion], _ b: [AIQuestion]) -> Bool {
+        a.map(\.text) == b.map(\.text)
+    }
+
+    /// Whether questions say just what the standard ones say, in the
+    /// language Snapfly speaks now.
+    static func areStandard(_ questions: [AIQuestion]) -> Bool {
+        sameWords(questions, standard)
     }
 
     static func load(from defaults: UserDefaults = .standard) -> [AIQuestion] {
@@ -39,7 +52,10 @@ enum AIQuestions {
         return questions
     }
 
+    /// The standard questions are not kept, so they follow the language
+    /// Snapfly speaks.
     static func save(_ questions: [AIQuestion], to defaults: UserDefaults = .standard) {
+        guard !areStandard(questions) else { return restore(in: defaults) }
         defaults.set(try? JSONEncoder().encode(questions), forKey: key)
     }
 

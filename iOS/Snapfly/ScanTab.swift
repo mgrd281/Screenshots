@@ -1,3 +1,4 @@
+import AVFoundation
 import PhotosUI
 import SwiftUI
 import VisionKit
@@ -32,6 +33,8 @@ struct ScanTab: View {
     @State private var heroHidden = false
     /// "So funktioniert's", from the "?".
     @State private var helping = false
+    /// Clear tapped beside the scanned pages, while it is asked.
+    @State private var discarding = false
     /// The start came in, once per launch.
     @State private var shown = ScanStart.entered
     @ObservedObject private var projects = ProjectStore.shared
@@ -118,6 +121,9 @@ struct ScanTab: View {
                     scanning = false
                     // The editor opens on the first page at once, while it is made ready.
                     if let first = store.add(camera: images).first { open(first.id) }
+                } failed: {
+                    // Never a camera that just closes: the note says why, as when it may not be used.
+                    QuickCoverer.shared.show(DocumentScanner.failure, for: 5)
                 }
                 .ignoresSafeArea()
             }
@@ -184,11 +190,18 @@ struct ScanTab: View {
                     .accessibilityAddTraits(.isHeader)
                 if let kind = store.title?.kind { PaperKindLabel(kind: kind) }
                 Spacer()
-                Button(L("Clear")) {
-                    withAnimation(.easeOut(duration: 0.2)) { store.clear() }
-                }
-                .font(.subheadline.weight(.medium))
-                .disabled(store.making != nil)
+                // The pages live in memory alone, so clearing them asks first, as the editor's Discard Scan does.
+                Button(L("Clear")) { discarding = true }
+                    .font(.subheadline.weight(.medium))
+                    .disabled(store.making != nil)
+                    .confirmationDialog(L("Discard the whole scan?"), isPresented: $discarding, titleVisibility: .visible) {
+                        Button(L("Discard Scan"), role: .destructive) {
+                            withAnimation(.easeOut(duration: 0.2)) { store.clear() }
+                        }
+                        Button(L("Cancel"), role: .cancel) {}
+                    } message: {
+                        Text(L("Every page goes, with what was covered on it."))
+                    }
             }
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 76, maximum: 160), spacing: 8)], spacing: 8) {
                 ForEach(Array(store.pages.enumerated()), id: \.element.id) { index, page in
@@ -466,9 +479,20 @@ private struct PageCard: View {
 }
 
 /// The system's document camera; `done` gets the pages, upright and
-/// cropped, or none when it was cancelled or failed.
+/// cropped, or none when it was cancelled or failed; `failed` is told
+/// after `done` when it could not scan, so a note can say why.
 struct DocumentScanner: UIViewControllerRepresentable {
     let done: ([CGImage]) -> Void
+    var failed: () -> Void = {}
+
+    /// What the note says when the camera could not scan: that Snapfly may
+    /// not use it, where that is why.
+    static var failure: String {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .denied, .restricted: L("Snapfly may not use the camera. Allow it in Settings.")
+        default: L("The camera could not scan. Try again.")
+        }
+    }
 
     func makeUIViewController(context: Context) -> VNDocumentCameraViewController {
         let camera = VNDocumentCameraViewController()
@@ -478,12 +502,16 @@ struct DocumentScanner: UIViewControllerRepresentable {
 
     func updateUIViewController(_ camera: VNDocumentCameraViewController, context: Context) {}
 
-    func makeCoordinator() -> Coordinator { Coordinator(done: done) }
+    func makeCoordinator() -> Coordinator { Coordinator(done: done, failed: failed) }
 
     final class Coordinator: NSObject, VNDocumentCameraViewControllerDelegate {
         let done: ([CGImage]) -> Void
+        let failed: () -> Void
 
-        init(done: @escaping ([CGImage]) -> Void) { self.done = done }
+        init(done: @escaping ([CGImage]) -> Void, failed: @escaping () -> Void) {
+            self.done = done
+            self.failed = failed
+        }
 
         func documentCameraViewController(_ controller: VNDocumentCameraViewController,
                                           didFinishWith scan: VNDocumentCameraScan) {
@@ -496,6 +524,7 @@ struct DocumentScanner: UIViewControllerRepresentable {
 
         func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
             done([])
+            failed()
         }
     }
 }

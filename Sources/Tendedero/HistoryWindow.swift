@@ -20,6 +20,7 @@ final class HistoryWindow: NSObject, NSWindowDelegate {
 
     func show() {
         History.purge()
+        model.isShown = true
         model.reload()
         if window == nil {
             let host = NSHostingController(rootView: HistoryView(model: model, hang: { [weak self] url in
@@ -50,6 +51,9 @@ final class HistoryWindow: NSObject, NSWindowDelegate {
 
     func windowWillClose(_ notification: Notification) {
         model.search = ""
+        // Its pictures are let go of until it opens again.
+        model.isShown = false
+        model.thumbs = [:]
     }
 }
 
@@ -81,15 +85,31 @@ final class HistoryModel: ObservableObject {
         }
     }
 
+    /// Whether the window is open: only then are its pictures made and its
+    /// photos read, so a History of many days takes nothing while it is shut.
+    var isShown = false
+    /// The pictures being made, so a change meanwhile does not ask again.
+    private var making: Set<String> = []
+
     func reload() {
         entries = History.entries
         sent = SendLog.entries
-        for entry in entries where thumbs[entry.path] == nil {
+        // Those gone from the History let go of their pictures.
+        let paths = Set(entries.map(\.path))
+        if thumbs.keys.contains(where: { !paths.contains($0) }) { thumbs = thumbs.filter { paths.contains($0.key) } }
+        guard isShown else { return }
+        for entry in entries where thumbs[entry.path] == nil && !making.contains(entry.path) {
             let url = entry.url
+            making.insert(url.path)
             DispatchQueue.global(qos: .userInitiated).async {
                 let image = makeThumbnail(url, maxPixels: 480)
                 DispatchQueue.main.async {
-                    MainActor.assumeIsolated { self.thumbs[url.path] = image ?? NSImage() }
+                    MainActor.assumeIsolated {
+                        self.making.remove(url.path)
+                        // Closed meanwhile: not kept.
+                        guard self.isShown else { return }
+                        self.thumbs[url.path] = image ?? NSImage()
+                    }
                 }
             }
             TextIndex.read(url)
@@ -218,7 +238,8 @@ private struct HistoryView: View {
             Button(L("Clear History"), role: .destructive) { History.clear() }
             Button(L("Cancel"), role: .cancel) {}
         } message: {
-            Text(L("The photos kept in it go to the Trash."))
+            // Clearing empties both lists, the photos and what was sent where.
+            Text(L("The photos kept in it go to the Trash, and the Sent list is emptied too."))
         }
     }
 
@@ -366,6 +387,11 @@ private struct HistoryCard: View {
                         .interpolation(.high)
                         .aspectRatio(contentMode: .fit)
                         .padding(6)
+                } else if thumb != nil {
+                    // No picture could be made of it: no spinner for ever.
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.system(size: 16))
+                        .foregroundStyle(.secondary)
                 } else {
                     ProgressView().controlSize(.small)
                 }
@@ -392,14 +418,22 @@ private struct HistoryCard: View {
         .animation(Motion.spring(response: 0.25, damping: 0.85, reduced: reduceMotion), value: hovering)
         .onTapGesture(count: 2) { NSWorkspace.shared.open(entry.url) }
         .onTapGesture { takeBack() }
+        // Reached with Tab where keyboard navigation is on, as buttons are;
+        // Space or Return hangs it again, as a click does.
+        .focusable(true, interactions: .activate)
+        .onKeyPress(.space) {
+            takeBack()
+            return .handled
+        }
+        .onKeyPress(.return) {
+            takeBack()
+            return .handled
+        }
         .help(L("Hang on the line"))
         .contextMenu {
             Button(L("Hang on the line")) { takeBack() }
             Button(L("Send Again")) { send() }
-            Button(L("Copy")) {
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.writeObjects([entry.url as NSURL])
-            }
+            Button(L("Copy")) { copy() }
             Button(L("Open")) { NSWorkspace.shared.open(entry.url) }
             Button(L("Show in Finder")) { NSWorkspace.shared.activateFileViewerSelecting([entry.url]) }
             Divider()
@@ -419,5 +453,19 @@ private struct HistoryCard: View {
     private func send() {
         guard let url = History.takeBack(entry) else { return }
         sendAgain(url)
+    }
+
+    /// The photo as it would leave the line: covered as Settings says, with
+    /// the parts hidden by hand and what was drawn, which the History keeps
+    /// with it, made and put on the clipboard as the line's own Copy does it,
+    /// never the original. A PDF still being covered waits, with a note, as
+    /// it does on the line.
+    private func copy() {
+        let chosen = CoveringProfile.detailsNow
+        guard !PrivateDetails.stillCovering(entry.url, chosen) else {
+            Notice.show(L("Still covering the private details…"))
+            return
+        }
+        Line.clip([(url: PrivateDetails.shareable(entry.url, covering: chosen), original: entry.url)])
     }
 }

@@ -31,6 +31,19 @@ final class LabelTests: XCTestCase {
         XCTAssertEqual(Finder.room(around: name, line: 0, in: [name, touching], covered: [0]).lowerBound, 0.8, accuracy: 0.0001)
     }
 
+    /// A PDF cropped in Preview keeps the text cut off, its lines beyond the
+    /// page: a line there, over another, leaves no room, and nothing traps.
+    func testLinesBeyondThePageLeaveNoRoomAndNothingTraps() {
+        let above = CGRect(x: 0.1, y: 1.3, width: 0.3, height: 0.02)
+        let under = CGRect(x: 0.1, y: 1.2, width: 0.3, height: 0.02)
+        let room = Finder.room(around: above, line: 0, in: [above, under], covered: [0])
+        XCTAssertLessThanOrEqual(room.lowerBound, room.upperBound)
+        let below = CGRect(x: 0.1, y: -0.3, width: 0.3, height: 0.02)
+        let over = CGRect(x: 0.1, y: -0.2, width: 0.3, height: 0.02)
+        let low = Finder.room(around: below, line: 0, in: [below, over], covered: [0])
+        XCTAssertLessThanOrEqual(low.lowerBound, low.upperBound)
+    }
+
     func testALabelIsKnownWithTheDotsOfAMenuOnItsRow() {
         for line in ["Kunde", "Kunde ⋯", "Kunde ...", "Kunde …", "Kunde •••", "Rechnungsadresse:", "KUNDE"] {
             XCTAssertTrue(Finder.isLabel(line), line)

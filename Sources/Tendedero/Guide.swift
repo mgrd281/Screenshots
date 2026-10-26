@@ -237,6 +237,9 @@ final class Guide {
     var frame: (GuideTarget) -> CGRect? = { _ in nil }
     /// Whether what a step needs is there, like a photo with something covered.
     var has: (GuideStep.Need) -> Bool = { _ in false }
+    /// Why what a step needs is not there, in a note's words, like the
+    /// newest photo having nothing covered; nil when it cannot be told.
+    var lacks: (GuideStep.Need) -> String? = { _ in nil }
     /// Keeps the line down while a step points at it, and lets it go after.
     var holdLine: (Bool) -> Void = { _ in }
     /// The screen the line hangs on.
@@ -348,18 +351,29 @@ final class Guide {
     }
 
     /// One thing, from Help & Introduction. It needs a photo on the line,
-    /// unless it starts with the screenshot.
+    /// unless it starts with the screenshot; without what it shows, a note
+    /// says why.
     func show(_ lesson: GuideLesson) {
-        let all = Self.introductionSteps.filter { lesson.steps.contains($0.id) }
-        steps = all
-        self.lesson = lesson
-        then = nil
-        guard let first = GuideFlow.step(after: nil, in: ids, shows: shows) else {
-            // Only a missing photo is for taking a screenshot.
-            if !has(.photo) { Notice.show(L("Take a screenshot first: this shows on a photo on the line.")) }
+        if let missing = missing(for: lesson) {
+            Notice.show(missing)
             return
         }
+        steps = Self.introductionSteps.filter { lesson.steps.contains($0.id) }
+        self.lesson = lesson
+        then = nil
+        guard let first = GuideFlow.step(after: nil, in: ids, shows: shows) else { return }
         show(.step(first), focus: true)
+    }
+
+    /// Why a lesson has nothing to show on the line as it is, in a note's
+    /// words: no photo yet, or none with what it points at, like the lock.
+    /// Nil when one of its steps can show.
+    func missing(for lesson: GuideLesson) -> String? {
+        let needs = Self.introductionSteps.filter { lesson.steps.contains($0.id) }.map(\.needs)
+        guard !needs.contains(where: { $0.map(has) ?? true }) else { return nil }
+        // Only a missing photo is for taking a screenshot.
+        guard has(.photo) else { return L("Take a screenshot first: this shows on a photo on the line.") }
+        return needs.compactMap { $0.flatMap(lacks) }.first
     }
 
     private static var introductionSteps: [GuideStep] {
@@ -879,6 +893,9 @@ struct GuideShadeView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        // Placed on the screen, from its left, in every language, so the edge
+        // rings the hole the shade leaves.
+        .environment(\.layoutDirection, .leftToRight)
         .opacity(model.shown ? 1 : 0)
         .animation(.easeOut(duration: 0.2), value: model.shown)
         .animation(Motion.spring(response: 0.45, damping: 0.86, reduced: reduceMotion), value: model.hole)

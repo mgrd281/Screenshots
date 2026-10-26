@@ -62,7 +62,7 @@ final class SendCheck: NSObject, NSWindowDelegate {
         guard when != .never, let app = Paste.frontApp?.bundleIdentifier else { return nil }
         let inBrowser = ChatButton.browserIDs.contains(app)
         // Asking a browser for its page takes a moment: only in a browser.
-        let host = inBrowser ? ChatButton.shared?.siteInFront ?? ChatButton.pageInFront()?.host : nil
+        let host = inBrowser ? ChatButton.shared?.siteInFrontNow ?? ChatButton.pageInFront()?.host : nil
         return reason(when, app: app, host: host, inBrowser: inBrowser,
                       chatApps: Set(ChatButton.apps.map(\.bundleID)), chatSites: ChatButton.sites.map(\.host))
     }

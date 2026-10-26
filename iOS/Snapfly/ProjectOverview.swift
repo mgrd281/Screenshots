@@ -211,6 +211,7 @@ struct ProjectOverview: View {
                     .padding(.top, 8)
                     .padding(.bottom, 4)
                 PageGrid(pages: pages, labels: labels, selecting: selecting, selection: selection,
+                         sourcesRead: store.sourcesRead,
                          reduceMotion: reduceMotion || ScanDemo.still, tap: tap, move: { store.move(from: $0, to: $1) },
                          turn: { store.turn([$0]) }, delete: { store.delete([$0]) })
                     .ignoresSafeArea(.container, edges: .bottom)
@@ -274,7 +275,7 @@ struct ProjectOverview: View {
                     .font(.body.weight(.medium))
                     .foregroundStyle(.primary)
                 Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
+                Image(systemName: "chevron.forward")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.tertiary)
                     .accessibilityHidden(true)
@@ -322,7 +323,7 @@ struct ProjectOverview: View {
             } label: {
                 HStack(spacing: 8) {
                     Text(L("Next"))
-                    Image(systemName: "chevron.right")
+                    Image(systemName: "chevron.forward")
                         .font(.footnote.weight(.bold))
                         .accessibilityHidden(true)
                 }
@@ -429,6 +430,7 @@ struct ProjectOverview: View {
         switch store.notice {
         case .signed: L("This PDF is digitally signed.")
         case .unreadable(let count): count == 1 ? L("1 file could not be read.") : String(format: L("%d files could not be read."), count)
+        case .camera: DocumentScanner.failure
         case nil: ""
         }
     }
@@ -437,7 +439,7 @@ struct ProjectOverview: View {
         switch store.notice {
         case .signed: L("After editing, the signature is no longer valid.")
         case .unreadable: L("Snapfly reads PDFs and pictures (JPEG, PNG, HEIC).")
-        case nil: ""
+        case .camera, nil: ""
         }
     }
 
@@ -455,6 +457,9 @@ struct PageGrid: UIViewControllerRepresentable {
     let labels: [UUID: String]
     let selecting: Bool
     let selection: Set<UUID>
+    /// Counted up as the project's PDFs are read or unlocked: every page is
+    /// drawn again then, as its size and whether it is locked are known.
+    let sourcesRead: Int
     let reduceMotion: Bool
     let tap: (UUID) -> Void
     let move: (Int, Int) -> Void
@@ -587,8 +592,8 @@ final class PageGridController: UIViewController, UICollectionViewDelegate {
         // Numbers, sources, turns and choices drawn again where they changed:
         // all of them once the order changed, here or by a drop.
         let reordered = before.map { $0.pages.map(\.id) != ids } ?? false
-        let looks = before.map { $0.selecting != grid.selecting || $0.selection != grid.selection || $0.labels != grid.labels }
-            ?? false
+        let looks = before.map { $0.selecting != grid.selecting || $0.selection != grid.selection || $0.labels != grid.labels
+            || $0.sourcesRead != grid.sourcesRead } ?? false
         let kept = Set(shown)
         let again = moved || reordered || looks ? ids.filter { kept.contains($0) }
             : ids.filter { changed.contains($0) && kept.contains($0) }

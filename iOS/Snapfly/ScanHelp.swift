@@ -19,6 +19,7 @@ struct DocumentOfferBanner: View {
                      text: L("Straightened and brightened. Its covers were found again on the cleaned page.")) {
                     Button(L("Revert")) { session.undoCleaning() }
                         .buttonStyle(.bordered)
+                        .touchTarget()
                         .accessibilityIdentifier("photo-clean-undo")
                 }
                 .accessibilityIdentifier("photo-cleaned")
@@ -35,6 +36,7 @@ struct DocumentOfferBanner: View {
                         .buttonStyle(.borderedProminent)
                         .tint(SnapflyTokens.protect)
                         .disabled(!session.found)
+                        .touchTarget()
                         .accessibilityIdentifier("photo-clean")
                     close { dismissed = true }
                 }
@@ -71,13 +73,14 @@ struct DocumentOfferBanner: View {
         .accessibilityElement(children: .contain)
     }
 
+    /// The cross, drawn in 32 pt, a finger's 44 pt to touch.
     private func close(_ action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: "xmark")
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(.secondary)
                 .frame(width: 32, height: 32)
-                .contentShape(Rectangle())
+                .touchTarget()
         }
         .buttonStyle(.plain)
         .accessibilityLabel(L("Not Now"))

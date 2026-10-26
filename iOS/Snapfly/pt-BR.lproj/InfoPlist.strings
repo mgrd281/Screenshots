@@ -1,0 +1,7 @@
+/* The questions iOS asks before Snapfly may use the camera or Photos.
+   The English ones are the build settings' INFOPLIST_KEY_* in
+   iOS/Snapfly.xcodeproj; change both together. */
+
+"NSCameraUsageDescription" = "O Snapfly escaneia documentos com a câmera para ocultar os dados privados deles neste iPhone.";
+"NSPhotoLibraryAddUsageDescription" = "O Snapfly salva em Fotos a cópia coberta de uma captura quando você pede.";
+"NSPhotoLibraryUsageDescription" = "O Snapfly mostra suas capturas e oculta os dados privados nelas, neste iPhone.";

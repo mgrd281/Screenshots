@@ -65,6 +65,19 @@ final class SyncCenter: ObservableObject {
             .appendingPathComponent("Sync", isDirectory: true)
     }
 
+    /// On the iPhone, the folder is left out of its backups: what it holds
+    /// (previews, covered copies, pictures fetched) is in iCloud already,
+    /// and a backup would keep another copy of it.
+    private static func keepOutOfBackups() {
+        #if os(iOS)
+        var root = folder
+        try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        var values = URLResourceValues()
+        values.isExcludedFromBackup = true
+        try? root.setResourceValues(values)
+        #endif
+    }
+
     /// When syncing was last turned on: what the other devices made before
     /// then is listed, not brought up in front of the owner.
     var since: Date {
@@ -84,6 +97,7 @@ final class SyncCenter: ObservableObject {
     func start(as device: SyncDevice) {
         guard cloud == nil, isAvailable else { return }
         self.device = device
+        Self.keepOutOfBackups()
         cloud = CloudSync(settings: settings, folder: Self.folder, device: device) { snapshot in
             Task { @MainActor in SyncCenter.shared.take(snapshot, in: .own) }
         }
@@ -265,6 +279,24 @@ final class SyncCenter: ObservableObject {
     func disconnect(_ device: SyncDevice) async throws {
         guard let cloud, let user = device.account else { return }
         try await cloud.removeAccess(user)
+    }
+
+    /// Whether this Mac shares its zones with that account already, as
+    /// after an earlier pairing.
+    func shares(with user: String) async -> Bool {
+        guard let cloud else { return false }
+        return await cloud.shares(with: user)
+    }
+
+    /// Takes an account off this Mac's zones again, as when its pairing was
+    /// cancelled while it was being let in.
+    func removeAccess(_ user: String) async {
+        guard let cloud else { return }
+        do {
+            try await cloud.removeAccess(user)
+        } catch {
+            log.error("An account let in by a cancelled pairing could not be taken off: \(error.localizedDescription, privacy: .public)")
+        }
     }
 
     /// Joins a Mac on another Apple account, once its shares were accepted.

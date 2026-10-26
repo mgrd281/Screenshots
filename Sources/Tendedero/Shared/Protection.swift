@@ -227,6 +227,12 @@ extension Finder {
     #endif
 
     private static let memory = Memory()
+
+    /// Forgets what Apple Intelligence and the AI assistant said, which is
+    /// kept by the lines' words, with the pictures read lately.
+    static func forgetAnswers() {
+        memory.forget()
+    }
 }
 
 /// What Apple Intelligence said about each screenshot's lines, kept for a
@@ -247,6 +253,12 @@ private final class Memory: @unchecked Sendable {
         // A few hundred screenshots' worth at most.
         if answers.count >= 300 { answers.removeAll() }
         answers[key] = pieces
+    }
+
+    func forget() {
+        lock.lock()
+        defer { lock.unlock() }
+        answers.removeAll()
     }
 }
 

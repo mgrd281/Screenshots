@@ -24,6 +24,7 @@ struct PhotosTab: View {
     @State private var presses = 0
     @Environment(\.scenePhase) private var phase
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// How many to a row, as pinched; the home screen shows three rows of
     /// the newest before See All.
@@ -42,7 +43,7 @@ struct PhotosTab: View {
                 } else if library.access == .notDetermined {
                     welcome
                 } else {
-                    denied
+                    PhotosAccessDenied()
                 }
             }
             .navigationTitle("Snapfly")
@@ -130,14 +131,20 @@ struct PhotosTab: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             if let selection {
                 SelectionBar(count: selection.count, save: { coverChosen(.photos) }, share: { coverChosen(.share) })
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
             }
         }
         .toolbar(selection == nil ? .automatic : .hidden, for: .tabBar)
-        .animation(.snappy, value: selection == nil)
+        .animation(choosing, value: selection == nil)
         .onAppear {
             if !library.shots.isEmpty { guide.offerIfDue() }
         }
+    }
+
+    /// How choosing starts and ends, and its bar comes and goes: on
+    /// `.snappy`, or a short fade with Reduce Motion.
+    private var choosing: Animation {
+        reduceMotion ? SnapflyMotion.calm : .snappy
     }
 
     /// The screenshots chosen, covered as Settings says, one after another,
@@ -145,9 +152,10 @@ struct PhotosTab: View {
     private func coverChosen(_ way: BatchCover.Way) {
         guard let chosen = selection?.chosen, !chosen.isEmpty else { return }
         let assets = library.shots.filter { chosen.contains($0.localIdentifier) }
+        let motion = choosing
         Task {
             let failed = await batch.run(assets, way: way)
-            withAnimation(.snappy) {
+            withAnimation(motion) {
                 if failed.isEmpty { selection = nil } else { selection?.keep(failed) }
             }
         }
@@ -175,9 +183,14 @@ struct PhotosTab: View {
             VStack(spacing: 4) {
                 Text(L("No screenshots yet"))
                     .font(.subheadline.weight(.semibold))
-                Text(L("Take a screenshot, then come back here."))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                // A new screenshot never joins the photos chosen by itself.
+                if library.access == .limited {
+                    LimitedPhotosNote(center: true) { Library.changeAllowedPhotos { library.load() } }
+                } else {
+                    Text(L("Take a screenshot, then come back here."))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
             .multilineTextAlignment(.center)
             .padding(.top, 8)
@@ -250,19 +263,19 @@ struct PhotosTab: View {
                         .font(.subheadline.weight(.medium))
                         .disabled(batch.running)
                         Button(L("Cancel")) {
-                            withAnimation(.snappy) { self.selection = nil }
+                            withAnimation(choosing) { self.selection = nil }
                         }
                         .font(.subheadline.weight(.semibold))
                         .disabled(batch.running)
                     } else {
                         // Several at once: chosen, then covered with one tap.
                         Button(L("Select")) {
-                            withAnimation(.snappy) { selection = GridSelection() }
+                            withAnimation(choosing) { selection = GridSelection() }
                         }
                         .font(.subheadline.weight(.medium))
                         // Always there: it also finds screenshots by their words.
                         NavigationLink {
-                            AllScreenshotsView(shots: library.shots, protected: protected, zoom: zoom, quick: coverer.cover)
+                            AllScreenshotsView(library: library, protected: protected, zoom: zoom, quick: coverer.cover)
                         } label: {
                             HStack(spacing: 3) {
                                 Text(L("See All"))
@@ -276,6 +289,9 @@ struct PhotosTab: View {
                 ScreenshotGrid(shots: Array(library.shots.prefix(GridZoom.preview(columns: columns))), protected: protected, place: .home, zoom: zoom,
                                quick: coverer.cover, selection: $selection, sweeping: $sweeping)
                     .disabled(batch.running)
+                if library.access == .limited {
+                    LimitedPhotosNote { Library.changeAllowedPhotos { library.load() } }
+                }
             }
         }
     }
@@ -294,7 +310,8 @@ struct PhotosTab: View {
                     .background(Color.primary.opacity(0.06), in: Capsule())
             }
             .buttonStyle(.plain)
-            .foregroundStyle(sync.state.needsAttention ? Color.orange : Color.secondary)
+            // Words in the deeper orange, which reads on the light page.
+            .foregroundStyle(sync.state.needsAttention ? SnapflyTokens.reviewOpen : Color.secondary)
         }
     }
 
@@ -305,7 +322,21 @@ struct PhotosTab: View {
     /// a photographed document is told from a screenshot.
     private func open(_ item: PhotosPickerItem) async {
         defer { picked = nil }
-        guard let data = try? await item.loadTransferable(type: Data.self), let image = Covering.upright(data) else {
+        // A photo kept in iCloud can take a while to come: past a moment, a note
+        // says it is opening, gone once it opens or says why it could not.
+        let opening = L("Opening…")
+        let waiting = Task {
+            try? await Task.sleep(for: .milliseconds(400))
+            if !Task.isCancelled { coverer.show(opening, for: 60) }
+        }
+        defer {
+            waiting.cancel()
+            if coverer.note == opening { coverer.note = nil }
+        }
+        // Decoded off the main thread, as a large photo takes a moment.
+        guard let data = try? await item.loadTransferable(type: Data.self),
+              let image = await Task.detached(priority: .userInitiated, operation: { Covering.upright(data) }).value
+        else {
             coverer.show(L("The picture could not be read."))
             return
         }
@@ -362,8 +393,12 @@ struct PhotosTab: View {
         .scrollBounceBehavior(.basedOnSize)
         .sensoryFeedback(.impact(weight: .light), trigger: presses)
     }
+}
 
-    private var denied: some View {
+/// Photos refused: what Snapfly needs, and the way to Settings. On the
+/// Photos tab, and on Protected, which can't show a screenshot without it.
+struct PhotosAccessDenied: View {
+    var body: some View {
         ContentUnavailableView {
             Label(L("Allow Snapfly to see your screenshots"), systemImage: "photo.badge.exclamationmark")
         } description: {
@@ -374,5 +409,32 @@ struct PhotosTab: View {
             }
             .buttonStyle(ProtectButtonStyle())
         }
+    }
+}
+
+/// Under limited access: Snapfly sees only the photos chosen, and a new
+/// screenshot joins them only once it is added, so a line says so, over
+/// the system's picker of the photos Snapfly may see.
+struct LimitedPhotosNote: View {
+    /// Centred, under No screenshots yet; else leading, under the grid.
+    var center = false
+    let change: () -> Void
+
+    var body: some View {
+        VStack(alignment: center ? .center : .leading, spacing: 0) {
+            Text(L("Snapfly sees only the photos you chose. New screenshots show up here once you add them."))
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(center ? .center : .leading)
+                .fixedSize(horizontal: false, vertical: true)
+            Button(action: change) {
+                Text(L("Change Allowed Photos…"))
+                    .font(.footnote.weight(.semibold))
+                    .frame(minHeight: SnapflyTokens.touch)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.borderless)
+        }
+        .frame(maxWidth: .infinity, alignment: center ? .center : .leading)
     }
 }

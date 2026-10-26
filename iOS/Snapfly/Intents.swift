@@ -29,13 +29,16 @@ struct CoverLatestScreenshot: AppIntent {
             throw Problem(text: L("The picture could not be read."))
         }
         let chosen = Choice.details
-        guard let covered = await Covering.cover(image, chosen), let png = Covering.png(covered.image) else {
+        // Without waiting for Apple Intelligence or the AI assistant, as the
+        // share extension does: Back Tap is meant to be done in a moment.
+        guard let covered = await Covering.cover(image, chosen, intelligence: false), let png = Covering.png(covered.image) else {
             throw Problem(text: L("The copy could not be made."))
         }
         Covering.copy(png)
         Recent.note(asset.localIdentifier)
+        let said = covered.report.isEmpty ? L("Nothing to cover was found. Copied as it is, ready to paste.") : L("Covered and copied, ready to paste.")
         return .result(value: IntentFile(data: png, filename: "Snapfly.png", type: .png),
-                       dialog: IntentDialog(stringLiteral: L("Covered and copied, ready to paste.")))
+                       dialog: IntentDialog(stringLiteral: said))
     }
 }
 
@@ -53,7 +56,7 @@ struct CoverPicture: AppIntent {
         guard let image = Covering.upright(picture.data) else {
             throw Problem(text: L("The picture could not be read."))
         }
-        guard let covered = await Covering.cover(image, Choice.details), let png = Covering.png(covered.image) else {
+        guard let covered = await Covering.cover(image, Choice.details, intelligence: false), let png = Covering.png(covered.image) else {
             throw Problem(text: L("The copy could not be made."))
         }
         return .result(value: IntentFile(data: png, filename: "Snapfly.png", type: .png))

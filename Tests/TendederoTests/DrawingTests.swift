@@ -228,6 +228,24 @@ final class DrawingTests: XCTestCase {
         XCTAssertTrue(Drawings.saved(url).isEmpty)
     }
 
+    /// A drawing goes with its photo into the History and back, so the copy
+    /// from there is drawn on and cut as the line's was.
+    func testADrawingGoesWithItsPhoto() {
+        let key = "drawings"
+        let before = UserDefaults.standard.object(forKey: key)
+        defer { UserDefaults.standard.set(before, forKey: key) }
+        let url = URL(fileURLWithPath: "/tmp/Snapfly drawing test.png")
+        let kept = URL(fileURLWithPath: "/tmp/Snapfly drawing test/History/Snapfly drawing test.png")
+        let drawing = Drawing(marks: [mark(.box, CGPoint(x: 0.1, y: 0.1), CGPoint(x: 0.4, y: 0.3))])
+        Drawings.set(drawing, for: url)
+        Drawings.move(from: url, to: kept)
+        XCTAssertEqual(Drawings.saved(kept), drawing)
+        XCTAssertTrue(Drawings.saved(url).isEmpty)
+        Drawings.move(from: kept, to: url)
+        XCTAssertEqual(Drawings.saved(url), drawing)
+        XCTAssertTrue(Drawings.saved(kept).isEmpty)
+    }
+
     func testTheCoveredCopyIsDrawnOnAndCut() throws {
         let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
@@ -247,8 +265,11 @@ final class DrawingTests: XCTestCase {
         let copy = try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, nil))
         XCTAssertEqual(copy.width, 160)
         XCTAssertEqual(copy.height, 120)
-        // Nothing drawn and nothing to cover makes no copy.
-        XCTAssertNil(Cover.covering(url, [], drawing: .empty))
+        // Nothing drawn and nothing to cover makes no copy: the screenshot
+        // itself, with nothing covered, which is no failure.
+        let none = try XCTUnwrap(Cover.covering(url, [], drawing: .empty))
+        XCTAssertEqual(none.url, url)
+        XCTAssertTrue(none.report.isEmpty)
     }
 
     func testASavedCopyIsNamedAfterTheOriginal() {
@@ -256,6 +277,26 @@ final class DrawingTests: XCTestCase {
         let url = URL(fileURLWithPath: "/tmp/Screenshot 2026-10-17 at 14.05.32.png")
         XCTAssertEqual(Line.copyName(for: url, as: "jpg"),
                        String(format: L("%@ (edited)"), "Screenshot 2026-10-17 at 14.05.32") + ".jpg")
+    }
+
+    /// A copy saved over the very file it is, as a GIF can be, is never
+    /// removed to make room for itself: the same file is told by what it
+    /// is on disk, also when its name is typed in other capitals.
+    func testTheSameFileIsToldWhateverItsName() throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let gif = folder.appendingPathComponent("Animation.gif")
+        try Data("GIF89a".utf8).write(to: gif)
+        XCTAssertTrue(Line.sameFile(gif, gif))
+        XCTAssertTrue(Line.sameFile(gif, folder.appendingPathComponent("./Animation.gif")))
+        let other = folder.appendingPathComponent("Other.gif")
+        try Data("GIF89a".utf8).write(to: other)
+        XCTAssertFalse(Line.sameFile(gif, other))
+        XCTAssertFalse(Line.sameFile(gif, folder.appendingPathComponent("Not there yet.gif")))
+        // The Mac's disks ignore case, as the runner's does.
+        let shouting = folder.appendingPathComponent("ANIMATION.gif")
+        if FileManager.default.fileExists(atPath: shouting.path) { XCTAssertTrue(Line.sameFile(gif, shouting)) }
     }
 
     // MARK: Helpers

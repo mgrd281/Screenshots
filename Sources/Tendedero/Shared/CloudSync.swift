@@ -208,6 +208,13 @@ actor CloudSync {
         return links
     }
 
+    /// Whether this Mac's zones are shared with that account already, as
+    /// after an earlier pairing; false where that cannot be told.
+    func shares(with user: String) async -> Bool {
+        guard space == .own, let share = try? await zoneShare(zone) else { return false }
+        return share.participants.contains { $0.role != .owner && $0.userIdentity.userRecordID?.recordName == user }
+    }
+
     /// Takes a device's account off this Mac's zones, and its devices off
     /// the list. What it sent stays.
     func removeAccess(_ user: String) async throws {

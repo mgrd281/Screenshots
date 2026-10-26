@@ -75,7 +75,7 @@ ease-out.
 |---|---|---|
 | `spring.row` | 0.25 / 0.85 | A history row on hover |
 | `spring.control` | 0.3 / 0.8 | The capture button (1.08) and the chat button (1.04) on hover |
-| `spring.card` | 0.3 / 0.6 | A photo card on hover (1.035) and the pin badge |
+| `spring.card` | 0.3 / 0.6 | A photo card on hover (1.035), letting go of a pressed photo, and the pin badge (which only fades with Reduce Motion) |
 | `spring.reveal` | 0.42 / 0.82 | The line comes down; on the iPhone, grid cards rising, the status capsule changing step, and a topic's ring in Details growing as it is covered |
 | `spring.arrive` | 0.42 / 0.72 | A photo arrives and swings on its clip (16°) |
 | `spring.spread` | 0.42 / 0.8 | The card stack fans out |

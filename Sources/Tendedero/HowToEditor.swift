@@ -242,14 +242,24 @@ final class HowToEditorModel: ObservableObject {
         make(kind, to: url) { url in Notice.savedCopy(url) }
     }
 
-    /// The tall picture on the pasteboard, to paste into a chat.
+    /// The tall picture on the pasteboard, to paste into a chat, with a file
+    /// of it, as the line's copies carry: apps that take files paste that,
+    /// and the clipboard watcher knows it for Snapfly's own, so it does not
+    /// hang as a new screenshot.
     func copyImage() {
         guard ready, !busy else { return }
         busy = true
         let guide = self.guide, folder = self.folder
+        let name = HowToRender.name(of: guide)
         let rightToLeft = NSApp.userInterfaceLayoutDirection == .rightToLeft
         DispatchQueue.global(qos: .userInitiated).async {
             let data = HowToRender.image(guide, in: folder, rightToLeft: rightToLeft).flatMap(HowToRender.png)
+            // Beside the covered copies, which wait there to be pasted too.
+            let file = data.flatMap { data -> URL? in
+                guard let target = Cover.newCopy(of: URL(fileURLWithPath: name + ".png"), ext: "png"),
+                      (try? data.write(to: target, options: .atomic)) != nil else { return nil }
+                return target
+            }
             DispatchQueue.main.async {
                 MainActor.assumeIsolated { [weak self] in
                     self?.busy = false
@@ -257,9 +267,12 @@ final class HowToEditorModel: ObservableObject {
                         Notice.show(L("Could not make the guide."))
                         return
                     }
+                    let entry = NSPasteboardItem()
+                    entry.setData(data, forType: .png)
+                    if let file { entry.setString(file.absoluteString, forType: .fileURL) }
                     let pasteboard = NSPasteboard.general
                     pasteboard.clearContents()
-                    pasteboard.setData(data, forType: .png)
+                    pasteboard.writeObjects([entry])
                     Notice.show(L("Copied. Paste it into a chat or an email."), done: true)
                 }
             }

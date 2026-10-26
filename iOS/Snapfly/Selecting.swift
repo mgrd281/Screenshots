@@ -244,7 +244,7 @@ struct SelectionBar: View {
                 if let outcome = batch.outcome, outcome.isProblem {
                     Label(outcome.text, systemImage: "exclamationmark.triangle.fill")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(SnapflyTokens.reviewOpen)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 } else if let outcome = batch.outcome {

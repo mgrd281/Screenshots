@@ -9,7 +9,7 @@ import Foundation
 /// turned box stays square on a picture of any shape: `aspect` is the
 /// picture's width over its height. Pure, so it is checked without a
 /// picture; drawn in solid ink by `Finder.cover`.
-enum HandShape: Equatable, Sendable {
+enum HandShape: Codable, Equatable, Sendable {
     /// A stroke of the marker through these points; its width is a share
     /// of the picture's width.
     case stroke([CGPoint], width: CGFloat)

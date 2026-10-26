@@ -169,6 +169,38 @@ final class OutsideTests: XCTestCase {
         XCTAssertEqual(PrivateDetails.owner(ofHandKey: "/tmp/Shot.png"), "/tmp/Shot.png")
     }
 
+    /// What was hidden by hand goes with its file into the History and back,
+    /// a PDF's pages too, so it leaves covered from there, and is forgotten
+    /// with it; no other file's goes along.
+    @MainActor
+    func testHandBoxesGoWithTheirFileAndAreForgottenWithIt() {
+        let key = "handCovers"
+        let before = UserDefaults.standard.object(forKey: key)
+        defer { UserDefaults.standard.set(before, forKey: key) }
+        UserDefaults.standard.removeObject(forKey: key)
+        let shot = URL(fileURLWithPath: "/tmp/Snapfly hand test/Screenshot.png")
+        let pdf = URL(fileURLWithPath: "/tmp/Snapfly hand test/Rechnung.pdf")
+        let other = URL(fileURLWithPath: "/tmp/Snapfly hand test/Screenshot 2.png")
+        let box = CGRect(x: 0.1, y: 0.2, width: 0.3, height: 0.4)
+        PrivateDetails.setHand([box], for: shot)
+        PrivateDetails.setHand([box], for: pdf, page: 2)
+        PrivateDetails.setHand([box], for: other)
+
+        let kept = URL(fileURLWithPath: "/tmp/Snapfly hand test/History/Screenshot.png")
+        let keptPDF = URL(fileURLWithPath: "/tmp/Snapfly hand test/History/Rechnung.pdf")
+        PrivateDetails.moveHand(from: shot, to: kept)
+        PrivateDetails.moveHand(from: pdf, to: keptPDF)
+        XCTAssertEqual(PrivateDetails.hand(kept), [box])
+        XCTAssertEqual(PrivateDetails.hand(keptPDF, page: 2), [box])
+        XCTAssertTrue(PrivateDetails.hand(shot).isEmpty)
+        XCTAssertTrue(PrivateDetails.handPages(pdf).isEmpty)
+        XCTAssertEqual(PrivateDetails.hand(other), [box], "a file beside it keeps its own")
+
+        PrivateDetails.forgetHand(keptPDF)
+        XCTAssertTrue(PrivateDetails.handPages(keptPDF).isEmpty)
+        XCTAssertEqual(PrivateDetails.hand(kept), [box])
+    }
+
     /// A photo from a phone says where it was taken; what leaves the line
     /// does not. A screenshot carries nothing of the kind.
     func testAPhotoLeavesWithoutWhereItWasTaken() throws {
@@ -189,8 +221,8 @@ final class OutsideTests: XCTestCase {
         let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] ?? [:]
         XCTAssertNil(properties[kCGImagePropertyGPSDictionary])
         XCTAssertFalse(Cover.strips(clean))
-        // Nothing to cover and nothing to take out: nothing to copy.
-        XCTAssertNil(Cover.copy(of: screenshot, []))
+        // Nothing to cover and nothing to take out: no copy, the screenshot itself.
+        XCTAssertEqual(Cover.copy(of: screenshot, []), screenshot)
     }
 
     /// A photo stored turned, with a note to turn it back, is read upright.
@@ -228,7 +260,10 @@ final class OutsideTests: XCTestCase {
             kCGImagePropertyTIFFDictionary: [kCGImagePropertyTIFFMake: "Apple", kCGImagePropertyTIFFModel: "iPhone"],
         ])
         let target = folder.appendingPathComponent(SaveCopy.suggestedName(for: photo))
-        XCTAssertTrue(SaveCopy.write(photo, [], hand: [CGRect(x: 0, y: 0, width: 0.5, height: 1)], pages: [:], to: target))
+        let report = try XCTUnwrap(SaveCopy.write(photo, [], hand: [CGRect(x: 0, y: 0, width: 0.5, height: 1)],
+                                                  pages: [:], to: target))
+        // What was covered comes back, so the note says "covered" only then.
+        XCTAssertEqual(report.hand, 1)
         XCTAssertEqual(target.lastPathComponent, String(format: L("%@ (covered)"), "IMG_0002") + ".jpg")
 
         let source = try XCTUnwrap(CGImageSourceCreateWithURL(target as CFURL, nil))
@@ -249,7 +284,9 @@ final class OutsideTests: XCTestCase {
         let pdf = folder.appendingPathComponent("Invoice.pdf")
         try makePDF(at: pdf, pages: 2)
         let target = folder.appendingPathComponent(SaveCopy.suggestedName(for: pdf))
-        XCTAssertTrue(SaveCopy.write(pdf, [], hand: [], pages: [2: [CGRect(x: 0, y: 0, width: 1, height: 1)]], to: target))
+        let report = try XCTUnwrap(SaveCopy.write(pdf, [], hand: [], pages: [2: [CGRect(x: 0, y: 0, width: 1, height: 1)]],
+                                                  to: target))
+        XCTAssertEqual(report.hand, 1)
         XCTAssertEqual(target.lastPathComponent, String(format: L("%@ (covered)"), "Invoice") + ".pdf")
 
         let copy = try XCTUnwrap(PDFDocument(url: target))

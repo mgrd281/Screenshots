@@ -35,6 +35,10 @@ or turn on syncing with your iPhone (below).
   with the key in the iPhone's keychain: only when you tap Explain in
   Protect Picture, Snapfly sends the protected copy of that picture, never
   the original, and the questions you ask about it, straight from the iPhone.
+  With Find more turned on there, the words of each screenshot or photo you
+  protect go there too, never those of scanned pages or of PDF projects,
+  which are covered on the iPhone alone; Back Tap, Shortcuts and the share
+  extension never ask it.
   Requests to OpenAI ask it not to store them for later retrieval. What they
   do with it is set by their own privacy policies and your account with them;
   they bill each request to that account. Nothing of it goes to the developer.
@@ -54,16 +58,21 @@ or turn on syncing with your iPhone (below).
   recording or PDF, to Snapfly's link service on Cloudflare (Cloudflare R2, in
   the developer's account), and copies its link. Anyone with the link can see
   the file for seven days; then it is deleted for good, and Delete Link
-  deletes it sooner. No name, account or address is kept with it; the service
-  sees your internet address only to stop too many uploads at once, and does
-  not store it. The links you made, with the token that deletes each one, are
-  kept on your Mac.
+  deletes it sooner. A chat app that shows a link with a small picture of
+  it fetches that picture itself and may keep its own copy, as it keeps
+  what is sent in it; Snapfly cannot delete that. No name, account or
+  address is kept with it; the service sees your internet address only to
+  stop too many uploads at once, and does not store it, and counts how much
+  is uploaded each day, by everyone together, to keep within a bound. The
+  links you made, with the token that deletes each one, are kept on your
+  Mac.
 - **Syncing with your iPhone, only if you turn it on.** With Sync on in
   Settings on the Mac and under More › Mac and iCloud on the iPhone,
   Snapfly keeps them in step through
   your own iCloud, in the private database of your Apple account, which only
   your devices signed in to it can read. What goes is the copy that leaves the
-  line, with its private details covered, a small preview of it, and facts
+  line, with its private details covered (a picture that could not be read
+  waits until it is), a small preview of it, and facts
   about it: its name, when it was taken, what kinds of details were covered,
   never the covered words. Originals go only if you choose Originals too, and
   only those taken from then on. The contents of each record are encrypted
@@ -85,7 +94,9 @@ or turn on syncing with your iPhone (below).
   deletes them only when you ask it to. A photo or PDF you bring stays where it
   is, unchanged: what leaves the line is a copy, a photo without where and with
   what it was taken, a PDF drawn again page by page with the details you chose
-  covered. Cover Files does the same for many files at once, saving each copy
+  covered. When a picture or a page cannot be read, or its covers cannot be
+  drawn, what leaves is all of it covered, never the original, and a note
+  says so. Cover Files does the same for many files at once, saving each copy
   in a new folder you choose; it reads them on your Mac, unless Find more with
   Claude or ChatGPT is on under Privacy, which sends the words of each.
 - **Permissions.** Accessibility access lets Snapfly paste into the app you are
@@ -97,8 +108,11 @@ or turn on syncing with your iPhone (below).
   screenshots and recordings you ask for, with ⌃⌥S, the screenshot button,
   Record Screen or Record a Guide. So that the send button shows only on chat websites, it asks
   the browser in front for the address of the open page, once you allow it,
-  and reads nothing else. While the time stamp is on, that address is also
-  written on the stamp of a new screenshot, which stays on your Mac. Settings › Permissions shows each of these, and you
+  and reads nothing else. While the time stamp is on, the stamp of a new
+  screenshot also names the website that was open, by its name alone, like
+  mail.google.com, never the rest of the address, which can hold a search,
+  an email address or a sign-in link. The stamp goes with every copy that
+  leaves the line, so that name goes with it. Settings › Permissions shows each of these, and you
   can turn any off at any time in System Settings.
 - **Guides.** While you record a guide, Snapfly takes a screenshot of the
   screen at each click and asks the app you clicked, through Accessibility,
@@ -165,8 +179,10 @@ or turn on syncing with your iPhone (below).
   copied as they are and never changed. A PDF's password is asked each time
   it opens and never kept. A PDF's words are read from its own text on the
   iPhone, and a photo's kind (receipt, letter) from its words, only there.
-  The covers you draw by hand on a project's pages are kept only while the
-  app is open. A PDF leaves only when you copy, save or share it: with
+  What you cover by hand on a project's pages, and places only offered that
+  you cover, is kept with the project, where it lies and never a word, and
+  covered in every copy made of it; what you covered by hand on scanned
+  pages goes with them when you keep them under Recent. A PDF leaves only when you copy, save or share it: with
   covers, as every save starts, every page is a picture with its private
   details covered and its text read from the covered page; without, the
   PDF's own pages and text as they are, when the file holds every private

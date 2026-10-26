@@ -217,6 +217,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
         }
 
+        // Each time Snapfly comes to the front, the folders it could not
+        // watch are tried again.
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.reviveWatchers() }
+        }
+
         // The introduction once, then the question about screenshots once.
         if Guide.shared.offersAtLaunch || !Inbox.wasOffered {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in self?.welcome() }
@@ -249,6 +257,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         hangFiles(urls, from: nil)
     }
 
+    /// Quitting while the screen is recorded, from the menu, by logging out
+    /// or with Install and Reopen, saves the recording first, as Stop does.
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard Recording.shared.isRecording else { return .terminateNow }
+        Task { @MainActor in
+            await Recording.shared.finishBeforeQuitting()
+            NSApp.reply(toApplicationShouldTerminate: true)
+        }
+        return .terminateLater
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         if Inbox.isEnabled { Inbox.restore() }
     }
@@ -268,7 +287,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let safety = ScreenshotWatcher(
                 folder: ScreenshotWatcher.desktop,
                 onNew: { [weak self] url in
-                    log.notice("Screenshot landed on the Desktop despite inbox mode: \(url.lastPathComponent, privacy: .public)")
+                    log.notice("Screenshot landed on the Desktop despite inbox mode: \(url.lastPathComponent, privacy: .private)")
                     self?.hangCapture(url)
                 },
                 onChange: { [weak self] in self?.line.prune() })
@@ -287,6 +306,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             extra.start()
             folderWatchers.append(extra)
         }
+    }
+
+    /// Watches again what can be watched now: a folder that could not be
+    /// opened, like the Desktop before Snapfly was let in, or that went, like
+    /// one on a disk ejected. The Screenshot app may also save somewhere
+    /// else since it was last read, with inbox mode off.
+    private func reviveWatchers() {
+        if !Edition.appStore,
+           ScreenshotWatcher.screenshotFolder().standardizedFileURL.path != watcher.folder.standardizedFileURL.path {
+            return startWatcher()
+        }
+        watcher.revive()
+        safetyWatcher?.revive()
+        folderWatchers.forEach { $0.revive() }
     }
 
     /// Up to three folders: enough for another screenshot app or an export
@@ -439,14 +472,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     /// Quitting from the menu or logging out runs applicationWillTerminate.
-    /// A plain kill does not, so settings are also restored on those signals.
+    /// A plain kill does not, so settings are also restored on those signals,
+    /// and a recording under way is saved first, a few seconds at most.
     private func restoreSettingsOnTermination() {
         for sig in [SIGTERM, SIGINT, SIGHUP] {
             signal(sig, SIG_IGN)
             let source = DispatchSource.makeSignalSource(signal: sig, queue: .main)
             source.setEventHandler {
-                if Inbox.isEnabled { Inbox.restore() }
-                exit(0)
+                MainActor.assumeIsolated {
+                    if Inbox.isEnabled { Inbox.restore() }
+                    guard Recording.shared.isRecording else { exit(0) }
+                    Task { @MainActor in
+                        await Recording.shared.finishBeforeQuitting(within: 5)
+                        exit(0)
+                    }
+                }
             }
             source.resume()
             signalSources.append(source)
@@ -667,9 +707,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
             MainActor.assumeIsolated {
                 guard let self else { return }
-                if !Paste.willPaste { Notice.show(L("Covered and copied, ready to paste.")) }
-                self.line.paste(id)
+                let willPaste = Paste.willPaste
+                // Copied once it went: a PDF still being covered says so itself.
+                guard self.line.paste(id), !willPaste else { return }
+                self.sayCopied(url, covering: CoveringProfile.detailsNow)
             }
+        }
+    }
+
+    /// Send Again's note where Snapfly may not paste: "covered" only when
+    /// something was, as the iPhone says it. A picture covered whole, as its
+    /// reading failed, has said so already; a recording goes as it is.
+    private func sayCopied(_ url: URL, covering chosen: Set<PrivateDetail>) {
+        let recording = Tendedero.isRecording(url)
+        let report = recording ? nil : PrivateDetails.report(for: url, covering: chosen)
+        let looked = !recording && PrivateDetails.covers(url)
+        if let report, !report.isEmpty {
+            Notice.show(L("Covered and copied, ready to paste."))
+        } else if report != nil, looked {
+            Notice.show(L("Nothing to cover was found. Copied as it is, ready to paste."))
+        } else if report != nil || !looked {
+            Notice.show(L("Copied. Paste it with ⌘V."))
         }
     }
 
@@ -693,6 +751,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             itemsChanged()
             return
         }
+        // Its covered copy is being made: old ones may go.
+        pruneCoveredCopies()
         guard let from else {
             Guide.shared.happened(.photoHung)
             return
@@ -754,16 +814,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     /// Where a card will hang, in screen coordinates, using the same layout
-    /// as the line view.
+    /// as the line view, mirrored where SwiftUI lays the line out right to
+    /// left.
     private func cardFrame(for id: UUID) -> CGRect? {
         guard let index = line.items.firstIndex(where: { $0.id == id }) else { return nil }
         let width = panel.frame.width
         let x = Layout.x(index: index, count: line.items.count, width: width,
                          visible: line.visibleCount, scroll: line.scroll, spread: line.spread)
+        let across = line.runsRightToLeft(width: width) ? width - x : x
         let viewTop = panel.drop + Layout.ropeY(x: x, width: width, shift: line.shift(width: width)) - Layout.pinAbove
         let cardTop = viewTop + PeggedView.cardOffsetBelowTop
         let size = PeggedView.cardSize(for: line.items[index].thumb.size)
-        return CGRect(x: panel.frame.minX + x - size.width / 2,
+        return CGRect(x: panel.frame.minX + across - size.width / 2,
                       y: panel.frame.maxY - cardTop - size.height,
                       width: size.width, height: size.height)
     }
@@ -778,11 +840,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                                    x: x, width: width, shift: line.shift(width: width)))
     }
 
+    /// Whether a full screen app keeps the line away from its screen, as it
+    /// does unless Settings › Line lets it come over one.
+    private var lineBlocked: Bool {
+        panel.screen.map(FullScreen.blocksLine(on:))
+            ?? LinePanel.screenUnderPointer().map(FullScreen.blocksLine(on:)) ?? false
+    }
+
     /// Decides whether the panel is ordered in at all: something to show,
     /// and no full screen app on that screen.
     private func refresh() {
-        let blocked = panel.screen.map(FullScreen.blocksLine(on:))
-            ?? LinePanel.screenUnderPointer().map(FullScreen.blocksLine(on:)) ?? false
+        let blocked = lineBlocked
         if wanted && !blocked {
             present()
         } else {
@@ -854,7 +922,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func openSearch() {
         if !isRevealed { toggle() }
         guard isRevealed else {
-            Notice.show(L("The line is empty."))
+            // Kept away by a full screen app, which toggle has said.
+            if !lineBlocked { Notice.show(L("The line is empty.")) }
             return
         }
         SearchBar.shared.show(for: line, at: CGPoint(x: panel.frame.midX, y: panel.frame.minY + 6))
@@ -875,7 +944,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             updateCapacity()
             refresh()
             reveal(pinned: true)
-            if isRevealed { Guide.shared.lineCameDown() }
+            if isRevealed {
+                Guide.shared.lineCameDown()
+            } else if lineBlocked {
+                // Asked for, it says why it stays up, and where to change that.
+                Notice.show(String(format: L("The line stays away from full screen apps. Turn on %1$@ in %2$@."),
+                                   L("Over full screen apps"), [L("Settings"), L("Line")].joined(separator: " › ")))
+            }
         }
     }
 
@@ -1144,6 +1219,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let guide = Guide.shared
         guide.frame = { [weak self] target in self?.guideFrame(of: target) }
         guide.has = { [weak self] need in self?.guideHas(need) ?? false }
+        guide.lacks = { [weak self] need in self?.guideLacks(need) }
         guide.holdLine = { [weak self] hold in self?.guideHoldsLine(hold) }
         guide.screen = { [weak self] in self?.panel.screen ?? LinePanel.screenUnderPointer() }
     }
@@ -1203,6 +1279,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             return ChatTarget.takes(item) && !ChatTarget.onPhotosNow.isEmpty
         case .twoPhotos:
             return line.liveCount >= 2
+        }
+    }
+
+    /// Why the newest photo lacks what a step needs, for Show Me How's note:
+    /// a screen recording, nothing covered, or every icon under the photos
+    /// turned off.
+    private func guideLacks(_ need: GuideStep.Need) -> String? {
+        guard let item = guidePhoto else { return nil }
+        switch need {
+        case .coveredPhoto, .iconsUnderPhotos:
+            if item.isRecording { return L("The newest on the line is a screen recording: this shows on a photo.") }
+            if need == .coveredPhoto {
+                return L("Nothing is covered on the newest photo: this shows on one with something covered.")
+            }
+            return String(format: L("No icons are on under the photos. Turn one on in %@."),
+                          [L("Settings"), L("Line"), L("Icons under photos")].joined(separator: " › "))
+        case .photo, .twoPhotos:
+            return nil
         }
     }
 
@@ -1543,6 +1637,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             alert.informativeText = L("Move Snapfly to the Applications folder and try again.")
             NSApp.activate(ignoringOtherApps: true)
             alert.runModal()
+        }
+    }
+
+    // MARK: Covered copies
+
+    /// When the covered copies were last thinned out; they are emptied at
+    /// each launch.
+    private var prunedAt = Date()
+
+    /// Covered copies wait in the temporary folder to be pasted. On a Mac
+    /// that runs Snapfly for days, they are thinned out as new ones are
+    /// made, an hour apart at most: those made a day ago or more go, but the
+    /// ones the line shows, which go out again. Not while one may still be
+    /// on its way: with files on the clipboard, or a photo dragged out in
+    /// the last minutes.
+    private func pruneCoveredCopies() {
+        let now = Date()
+        guard now.timeIntervalSince(prunedAt) > 3600, !GrabView.isDragging,
+              now.timeIntervalSince(GrabView.lastDragEnd) > 300,
+              NSPasteboard.general.types?.contains(.fileURL) != true else { return }
+        prunedAt = now
+        let shown = line.items.filter { !$0.falling }.compactMap { PrivateDetails.shown($0.url) }
+        let keeping = Set(shown.map { $0.deletingLastPathComponent().lastPathComponent })
+        let limit = now.addingTimeInterval(-24 * 3600)
+        DispatchQueue.global(qos: .utility).async {
+            AppDelegate.pruneCopies(in: Cover.folder, madeBefore: limit, keeping: keeping)
+        }
+    }
+
+    /// Takes away the copies in `folder`, each in a folder of its own, made
+    /// before `limit`, but those whose folders are named in `keeping`.
+    nonisolated static func pruneCopies(in folder: URL, madeBefore limit: Date, keeping: Set<String>) {
+        let fm = FileManager.default
+        let copies = (try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: [.creationDateKey])) ?? []
+        for entry in copies where !keeping.contains(entry.lastPathComponent) {
+            let made = (try? entry.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? .distantFuture
+            if made < limit { try? fm.removeItem(at: entry) }
         }
     }
 

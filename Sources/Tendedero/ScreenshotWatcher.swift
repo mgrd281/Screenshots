@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 /// Watches the folder macOS saves screenshots to and reports new ones.
 /// Tendedero never takes screenshots itself: you keep your usual shortcut
@@ -15,6 +16,8 @@ final class ScreenshotWatcher {
     private let acceptsDocuments: Bool
     private var known: Set<String>?
     private var source: DispatchSourceFileSystemObject?
+    /// The folder as it was opened, while it is watched.
+    private var opened: Int32 = -1
     private var pending: DispatchWorkItem?
     /// A `start()` that is still waiting on the folder, off the main thread.
     private var starting = false
@@ -92,16 +95,56 @@ final class ScreenshotWatcher {
             return
         }
         guard fd >= 0 else {
-            NSLog("Snapfly: cannot watch \(folder.path)")
+            log.error("Could not watch \(self.folder.path, privacy: .private)")
             return
         }
         let src = DispatchSource.makeFileSystemObjectSource(
-            fileDescriptor: fd, eventMask: [.write, .rename, .delete], queue: .main)
-        src.setEventHandler { [weak self] in self?.scheduleScan() }
+            fileDescriptor: fd, eventMask: [.write, .rename, .delete, .revoke], queue: .main)
+        src.setEventHandler { [weak self] in
+            guard let self else { return }
+            // The folder itself was moved, like to the Trash, deleted, or its
+            // disk ejected: it is watched again where it should be, once it
+            // is there.
+            if let events = self.source?.data, !events.isDisjoint(with: [.rename, .delete, .revoke]),
+               !self.isWatching(fd) {
+                return self.rewatch()
+            }
+            self.scheduleScan()
+        }
         src.setCancelHandler { close(fd) }
         src.resume()
         source = src
+        opened = fd
         refresh()
+    }
+
+    /// Whether the folder open is still the one at the folder's path: the
+    /// same folder on the same disk, not one moved away, or made anew there.
+    private func isWatching(_ fd: Int32) -> Bool {
+        var watched = stat()
+        var atPath = stat()
+        guard fstat(fd, &watched) == 0, stat(folder.path, &atPath) == 0 else { return false }
+        return watched.st_dev == atPath.st_dev && watched.st_ino == atPath.st_ino
+    }
+
+    /// Opens the folder at its path again, keeping what was known in it, so
+    /// only what is new there hangs.
+    private func rewatch() {
+        pending?.cancel()
+        pending = nil
+        source?.cancel()
+        source = nil
+        opened = -1
+        start()
+    }
+
+    /// Tries again where watching stopped: the folder could not be opened,
+    /// like the Desktop before Snapfly was let in, or is no longer the one
+    /// at its path, like a folder on a disk ejected and put back.
+    func revive() {
+        guard !stopped, !starting else { return }
+        if source != nil, opened >= 0, isWatching(opened) { return }
+        rewatch()
     }
 
     /// Safe to call while `start()` or a listing is still pending: the file
@@ -114,6 +157,7 @@ final class ScreenshotWatcher {
         pending = nil
         source?.cancel()
         source = nil
+        opened = -1
     }
 
     private func scheduleScan() {
@@ -136,25 +180,29 @@ final class ScreenshotWatcher {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
             let files = self.listFolder()
-            let settled = files.filter { self.creationDate($0) < self.launchDate }
-            let candidates = files.filter { self.isCandidate($0) }
+            let settled = files?.filter { self.creationDate($0) < self.launchDate } ?? []
+            let candidates = files?.filter { self.isCandidate($0) } ?? []
             DispatchQueue.main.async { self.adopt(files, settled, candidates) }
         }
     }
 
     /// Takes a finished listing, reports what is new, then runs the listing
-    /// that was asked for while this one was in flight.
-    private func adopt(_ files: [URL], _ settled: [URL], _ candidates: [URL]) {
+    /// that was asked for while this one was in flight. A folder that could
+    /// not be read says nothing of what is in it: what was known stays known,
+    /// so the files there are not taken for new ones once it reads again.
+    private func adopt(_ files: [URL]?, _ settled: [URL], _ candidates: [URL]) {
         listing = false
         guard !stopped else { return }
         // The first listing adopts everything that was already there when the
         // app launched. Later ones compare against the previous listing.
         let first = known == nil
-        let base = known ?? Set(settled.map(\.path))
-        for url in candidates where !base.contains(url.path) {
-            onNew(url)
+        if let files {
+            let base = known ?? Set(settled.map(\.path))
+            for url in candidates where !base.contains(url.path) {
+                onNew(url)
+            }
+            known = Set(files.map(\.path))
         }
-        known = Set(files.map(\.path))
         if !first { onChange() }
         if missed {
             missed = false
@@ -162,9 +210,10 @@ final class ScreenshotWatcher {
         }
     }
 
-    private func listFolder() -> [URL] {
-        let urls = (try? FileManager.default.contentsOfDirectory(
-            at: folder, includingPropertiesForKeys: [.creationDateKey], options: [.skipsHiddenFiles])) ?? []
+    /// Nil when the folder could not be read.
+    private func listFolder() -> [URL]? {
+        guard let urls = try? FileManager.default.contentsOfDirectory(
+            at: folder, includingPropertiesForKeys: [.creationDateKey], options: [.skipsHiddenFiles]) else { return nil }
         return urls.sorted { creationDate($0) < creationDate($1) }
     }
 

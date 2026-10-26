@@ -152,6 +152,9 @@
 "Remove All" = "모두 제거";
 "Cancel" = "취소";
 "Done" = "완료";
+"Discard your changes?" = "변경 사항을 버릴까요?";
+"They are kept only once you click %@." = "“%@”을(를) 클릭해야 저장됩니다.";
+"Keep Editing" = "계속 편집";
 /* TextCard, GrabArea */
 "Translate Text" = "텍스트 번역하기";
 "Describe" = "설명 만들기";
@@ -269,6 +272,8 @@
 "In chat apps" = "채팅 앱에서";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, 메시지, Mail, Outlook 등.";
 "Remove" = "제거";
+"Remove “%@”" = "“%@” 제거";
+"Removed “%@”. Click to put it back." = "“%@”을(를) 제거했습니다. 클릭하면 되돌립니다.";
 "Add a website" = "웹 사이트 추가";
 "Add" = "추가";
 "That isn't a website, or it is in the list already." = "웹 사이트가 아니거나 이미 목록에 있어요.";
@@ -296,7 +301,7 @@
 "Photos that leave the line stay here until you remove them." = "빨랫줄에서 내려간 사진은 직접 지울 때까지 여기에 남아요.";
 "Clear the history?" = "기록을 지울까요?";
 "Clear History" = "기록 지우기";
-"The photos kept in it go to the Trash." = "기록에 보관된 사진은 휴지통으로 이동해요.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "기록에 보관된 사진은 휴지통으로 이동하고, ‘보낸 항목’ 목록도 비워져요.";
 "No history yet" = "아직 기록이 없어요";
 "Photos that leave the line stay here for %d days." = "빨랫줄에서 내려간 사진은 여기에 %d일 동안 남아요.";
 "History is off. Turn it on in Settings, under Line." = "기록이 꺼져 있어요. 설정의 빨랫줄에서 켜세요.";
@@ -334,6 +339,8 @@
 "Could not take the screenshot." = "스크린샷을 찍지 못했어요.";
 "Could not record the screen." = "화면을 기록하지 못했어요.";
 "Could not save the recording." = "기록을 저장하지 못했어요.";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "기록의 소리를 하나의 트랙으로 합치지 못했어요. 일부 플레이어에서는 일부만 재생될 수 있어요.";
+"A recording cut short last time was kept. Click to show it in Finder." = "지난번에 중간에 끊긴 기록을 남겨 두었어요. Finder에서 보려면 클릭하세요.";
 "Could not make the GIF." = "GIF를 만들지 못했어요.";
 "Make GIF" = "GIF 만들기";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence가 응답하지 못해 입력한 단어를 나오는 곳마다 가렸어요.";
@@ -345,6 +352,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF 만드는 중…";
 "The line is empty." = "빨랫줄이 비어 있어요.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "빨랫줄은 전체 화면 앱 위에는 나타나지 않아요. %2$@에서 ‘%1$@’을(를) 켜세요.";
 "Another app already uses this shortcut." = "다른 앱이 이미 이 단축키를 사용해요.";
 "Could not open the screenshot." = "스크린샷을 열지 못했어요.";
 "Could not combine the photos." = "사진을 합치지 못했어요.";
@@ -503,6 +511,7 @@
 "Cover Private Details" = "개인 정보 가리기";
 "No screenshots yet" = "아직 스크린샷이 없습니다";
 "Take a screenshot, then come back here." = "스크린샷을 찍은 다음 여기로 돌아오세요.";
+"Snapfly sees only the photos you chose. New screenshots show up here once you add them." = "Snapfly는 선택한 사진만 볼 수 있습니다. 새 스크린샷은 추가해야 여기에 표시됩니다.";
 "Allow Snapfly to see your screenshots" = "Snapfly가 스크린샷을 볼 수 있도록 허용";
 "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly는 스크린샷 속 이름, 주소 등 개인 정보를 이 iPhone에서 바로 가립니다.";
 "Allow Access" = "접근 허용";
@@ -520,10 +529,15 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhone 뒷면을 두 번 탭하세요: 최신 스크린샷이 가려지고 복사되어 채팅에 붙여넣을 수 있습니다.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "한 번만 설정하려면 설정 › 손쉬운 사용 › 터치 › 뒷면 탭 › 이중 탭을 열고 %@을(를) 선택하세요.";
 "Cover the Latest Screenshot" = "최신 스크린샷 가리기";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "최신 스크린샷 속 개인 정보를 가리고 복사합니다. 바로 붙여넣을 수 있습니다.";
+"Cover Screenshot" = "스크린샷 가리기";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "이미지 속 이름, 주소, 이메일, 전화번호, 계좌 정보를 가립니다.";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "모든 것이 이 iPhone에서 이루어집니다. 아무것도 다른 곳으로 보내지 않습니다.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly가 아직 스크린샷을 볼 수 없습니다. Snapfly를 한 번 열고 허용하세요.";
 "There is no screenshot yet." = "아직 스크린샷이 없습니다.";
 "Covered and copied, ready to paste." = "가리고 복사했습니다. 붙여넣을 수 있습니다.";
+"Nothing to cover was found. Copied as it is, ready to paste." = "가릴 것을 찾지 못했습니다. 그대로 복사했습니다. 붙여넣을 수 있습니다.";
+"Nothing to cover was found. Saved to Photos as it is." = "가릴 것을 찾지 못했습니다. 그대로 사진에 저장했습니다.";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "파일 추가…";
@@ -536,6 +550,8 @@
 "This PDF is too long: up to %d pages." = "이 PDF는 너무 길어요. 최대 %d쪽까지 돼요.";
 "Still covering the private details…" = "아직 개인 정보를 가리는 중이에요…";
 "Could not cover the private details in this PDF." = "이 PDF의 개인 정보를 가리지 못했어요.";
+"Could not read this picture, so all of it is covered." = "이 이미지를 읽지 못해서 전체를 가렸어요.";
+"Could not read this PDF, so every page is covered whole." = "이 PDF를 읽지 못해서 모든 페이지를 전부 가렸어요.";
 "Page %d of %d" = "%d/%d쪽";
 "Previous Page" = "이전 쪽";
 "Next Page" = "다음 쪽";
@@ -639,7 +655,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "한 달 치 영수증을 목록 페이지와 함께 PDF 하나로 묶어 세무사에게 전달해요.";
 "Image" = "이미지";
 "Plain file names" = "간단한 파일 이름";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "이미지는 언제, 어디서, 무엇으로 만들었는지에 대한 정보 없이 새 파일로 나갑니다. 간단한 파일 이름을 켜면 찍은 시간 대신 ‘이미지’라는 이름도 붙습니다.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "이미지는 언제, 어디서, 무엇으로 만들었는지에 대한 정보 없이 새 파일로 나갑니다. 간단한 파일 이름을 켜면 찍은 시간 대신 ‘이미지’라는 이름이, PDF에는 ‘문서’라는 이름이 붙습니다. 가리는 정보가 들어 있는 이름은 어느 경우든 바뀝니다.";
 "Cover what lands in a folder" = "폴더에 들어오는 것 가리기";
 "Save copies in" = "사본 저장 위치";
 "Cover a folder" = "폴더 가리기";
@@ -733,7 +749,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@”은(는) 이제 모든 사진에서 가려집니다. %2$@에서 바꿀 수 있습니다.";
 "Always cover “%@”" = "“%@” 항상 가리기";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "이제 모든 사진에서 가려지며, 개인정보 보호의 나만의 규칙에 들어갑니다.";
+"Covered in every photo from now on, as a rule of your own under %@." = "이제 모든 사진에서 가려지며, ‘%@’의 나만의 규칙에 들어갑니다.";
 "Moved to the Trash. Click to put it back on the line." = "휴지통으로 옮겼습니다. 클릭하면 빨랫줄에 다시 겁니다.";
 "%d moved to the Trash. Click to put them back on the line." = "%d장을 휴지통으로 옮겼습니다. 클릭하면 빨랫줄에 다시 겁니다.";
 "Taken down. Click to put it back on the line." = "걷어냈습니다. 클릭하면 빨랫줄에 다시 겁니다.";
@@ -747,7 +763,7 @@
 "A short hint, once, the first time something is in reach." = "무언가를 처음 쓸 수 있게 될 때 한 번만 짧은 도움말을 보여 줍니다.";
 "About a minute" = "약 1분";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "빨랫줄 끝에서: 스크린샷을 검색하고, 모두 붙여넣거나 다운로드하거나, 모두 걷어낼 수 있어요.";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "무엇을 가릴지는 스크린샷 목록 위의 설정에서 고르세요. 그곳에서 iPhone 뒷면을 두 번 탭해 최신 스크린샷을 가리는 방법도 볼 수 있어요.";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "무엇을 가릴지는 더 보기 › 가리는 항목에서 고르세요. 더 보기에서는 iPhone 뒷면을 두 번 탭해 최신 스크린샷을 가리는 방법도 볼 수 있어요.";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "‘스크린샷 찍기’를 클릭하고 영역 위로 드래그하세요. 바로 빨랫줄에 걸립니다.";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "클릭하면 복사되어 어느 채팅에든 붙여넣을 수 있어요. 채팅으로 바로 드래그해도 됩니다.";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "아이콘을 클릭하세요. 스크린샷, 빨랫줄, 설정, 그리고 이 소개가 모두 그곳에 있어요.";
@@ -791,6 +807,9 @@
 "Start Again" = "다시 시작";
 "Start Introduction" = "소개 시작";
 "Take a screenshot first: this shows on a photo on the line." = "먼저 스크린샷을 찍으세요. 빨랫줄에 걸린 사진에서 보여 드려요.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "가장 최근 사진에는 가린 것이 없어요. 무언가 가린 사진에서 보여 드려요.";
+"The newest on the line is a screen recording: this shows on a photo." = "빨랫줄의 가장 최근 항목은 화면 기록이에요. 사진에서 보여 드려요.";
+"No icons are on under the photos. Turn one on in %@." = "사진 아래에 켜진 아이콘이 없어요. %@에서 하나를 켜세요.";
 "Taking a Screenshot" = "스크린샷 찍기";
 "Tap a screenshot" = "스크린샷을 탭하세요";
 "The Tag at the End of the Line" = "빨랫줄 끝의 태그";
@@ -827,6 +846,8 @@
 "Product" = "상품";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "이 Mac에서 가리지 않고 읽었어요. %@이(가) 가린 사본에서 읽은 내용을 더했어요.";
 "Remove Key" = "키 제거";
+"Remove the key for %@?" = "%@ 키를 제거할까요?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "되돌릴 수 없습니다. %@에서는 키를 한 번만 보여 주므로 새 키를 다시 만들어야 합니다.";
 "Reply" = "답장";
 "The answer was empty." = "답이 비어 있었어요.";
 "The keychain did not keep the key." = "키체인에 키를 저장하지 못했어요.";
@@ -1049,6 +1070,8 @@
 "List" = "목록";
 "Grid or List" = "그리드 또는 목록";
 "Copy File Path" = "파일 경로 복사";
+"Copy Original" = "원본 복사";
+"Copy Originals" = "원본 복사";
 "Rename" = "이름 변경";
 "Rename…" = "이름 변경…";
 
@@ -1092,6 +1115,14 @@
 "Covering…" = "가리는 중…";
 "1 place covered" = "1곳 가림";
 "%d places covered" = "%d곳 가림";
+"1 file covered" = "파일 1개 가림";
+"%d files covered" = "파일 %d개 가림";
+"1 file with nothing to cover" = "가릴 것이 없는 파일 1개";
+"%d files with nothing to cover" = "가릴 것이 없는 파일 %d개";
+"1 file not covered" = "가리지 못한 파일 1개";
+"%d files not covered" = "가리지 못한 파일 %d개";
+"1 file stopped" = "중지된 파일 1개";
+"%d files stopped" = "중지된 파일 %d개";
 "Nothing to cover" = "가릴 것 없음";
 "Locked with a password" = "암호로 잠김";
 "Over %d pages" = "%d페이지 초과";
@@ -1108,7 +1139,7 @@
 "What to cover" = "가릴 항목";
 "Names Only" = "이름만";
 "As in Settings" = "설정과 동일";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "설정 › 개인정보 보호의 사용자 규칙도 적용됩니다. 모든 사본은 다시 읽혀 아직 보이는 것이 있으면 더 가려집니다.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@의 내 정보와 규칙도 적용됩니다. 모든 사본은 다시 읽혀 아직 보이는 것이 있으면 더 가려집니다.";
 "Read on this Mac. Nothing is sent anywhere." = "이 Mac에서 읽습니다. 아무것도 전송되지 않습니다.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "설정 › 개인정보 보호에 따라 각 파일의 단어가 %@에도 전송됩니다.";
 "Cover 1 File" = "파일 1개 가리기";
@@ -1157,9 +1188,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@이(가) 키를 받지 않았어요. 설정 › AI 도우미에서 확인하세요.";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@이(가) 키를 받지 않았어요. 더 보기 › AI 도우미에서 확인하세요.";
 "%@ did not accept this key. Check it, or make a new one." = "%@이(가) 이 키를 받지 않았어요. 확인하거나 새 키를 만드세요.";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@이(가) %@ 모델을 몰라요. 설정 › AI 도우미에서 다른 모델을 선택하세요.";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@이(가) %@ 모델을 몰라요. 더 보기 › AI 도우미에서 다른 모델을 선택하세요.";
 "Add your %@ key in Settings › AI Assistant." = "설정 › AI 도우미에 %@ 키를 추가하세요.";
+"Add your %@ key in More › AI Assistant." = "더 보기 › AI 도우미에 %@ 키를 추가하세요.";
 "Change" = "변경";
 "Check Again" = "다시 확인";
 "Checking the key…" = "키 확인 중…";
@@ -1212,6 +1246,12 @@
 "Edit…" = "편집…";
 "Add Prompt" = "프롬프트 추가";
 "Standard Prompts" = "기본 프롬프트";
+"Replace your question with the standard ones?" = "내 질문을 기본 질문으로 바꿀까요?";
+"Replace your %d questions with the standard ones?" = "질문 %d개를 기본 질문으로 바꿀까요?";
+"Replace your prompt with the standard ones?" = "내 프롬프트를 기본 프롬프트로 바꿀까요?";
+"Replace your %d prompts with the standard ones?" = "프롬프트 %d개를 기본 프롬프트로 바꿀까요?";
+"What you wrote can't be brought back." = "작성한 내용은 되돌릴 수 없습니다.";
+"Replace" = "바꾸기";
 "Not written yet" = "아직 쓰지 않음";
 "Title" = "제목";
 "Prompt" = "프롬프트";
@@ -1279,7 +1319,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "다른 Apple 계정으로 로그인한 Mac용이에요. Mac에서 Snapfly 설정을 열고 동기화에서 코드 보기를 클릭하세요.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "다른 Apple 계정으로 로그인한 iPhone용이에요. 이 Mac에 보이는 코드를 iPhone에 입력해요.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud가 아직 연결할 준비가 되지 않았어요. 나중에 다시 시도하세요.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "iPhone의 Snapfly에서 설정을 열고 코드로 Mac에 연결을 탭한 다음 입력하세요:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "iPhone의 Snapfly에서 %1$@을(를) 열고 ‘%2$@’을(를) 탭한 다음 입력하세요:";
 "It stops syncing with this Mac. What it sent stays here." = "이 Mac과의 동기화를 멈춰요. 보낸 것은 여기에 남아요.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "이 Mac과 같은 Apple 계정을 사용하므로 내 기기 중 하나로 동기화돼요.";
 "It was declined on the Mac." = "Mac에서 거절했어요.";
@@ -1428,7 +1468,7 @@
 "Previous" = "이전";
 "Goes as soon as the copy is ready." = "사본이 준비되면 바로 실행돼요.";
 "Search words in screenshots" = "스크린샷에서 단어 검색";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "단어는 미리 읽은 스크린샷에서 찾아요. 설정에서 ‘더 빠른 사진 처리’를 켜세요.";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "단어와 개인 정보는 미리 읽은 스크린샷에서만 찾을 수 있어요. 미리 읽기는 더 보기 › 감지의 ‘더 빠른 사진 처리’가 해요.";
 "All Screenshots" = "모든 스크린샷";
 "With Private Details" = "개인 정보 포함";
 "Sort" = "정렬";
@@ -1746,6 +1786,7 @@
 "A ring where each click landed." = "클릭한 곳마다 고리를 표시합니다.";
 "Add Zoom" = "확대 추가";
 "Could not open the recording." = "녹화를 열 수 없습니다.";
+"Your new recording opens in Studio once you close this one." = "이 녹화를 닫으면 새 녹화가 스튜디오에서 열립니다.";
 "Could not save the video." = "비디오를 저장할 수 없습니다.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "타임라인에서 확대를 드래그해 옮기거나, 양 끝을 드래그해 길이를 바꾸세요.";
 "Drag the frame on the picture to choose what it looks at." = "그림 위의 틀을 드래그해 보이는 곳을 고르세요.";
@@ -1948,3 +1989,8 @@
 "Hide Preview" = "미리보기 가리기";
 "Preview hidden" = "미리보기 가려짐";
 "Pages: %d" = "페이지: %d";
+"The camera could not scan. Try again." = "카메라로 스캔할 수 없습니다. 다시 시도하세요.";
+"Delete this document?" = "이 문서를 삭제할까요?";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "페이지가 가린 내용과 함께 삭제됩니다. 원래의 사진과 파일은 그대로 남습니다.";
+"Turn off faster picture processing?" = "더 빠른 사진 처리를 끌까요?";
+"Size unknown" = "크기를 알 수 없음";

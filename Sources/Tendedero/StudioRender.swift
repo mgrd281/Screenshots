@@ -154,6 +154,16 @@ enum StudioExport {
             stopped = true
             lock.unlock()
         }
+
+        /// Sets it, true for the one call that did: what ends a piece of work
+        /// and leaves its group does so once, whichever comes first.
+        func setFirst() -> Bool {
+            lock.lock()
+            defer { lock.unlock() }
+            guard !stopped else { return false }
+            stopped = true
+            return true
+        }
     }
 
     /// Something that happened on one of the inputs' queues, read once they
@@ -165,7 +175,6 @@ enum StudioExport {
         var index = 0
         var current: CVPixelBuffer?
         var next: CMSampleBuffer?
-        var done = false
         /// The last share of the work told, in hundredths.
         var told = -1
 
@@ -280,18 +289,22 @@ enum StudioExport {
         let group = DispatchGroup()
         let failed = Flag()
 
-        // Each input's work stays on its own queue, its state with it.
+        // Each input's work stays on its own queue, its state with it, and
+        // each ends once: by itself, or in the wait below should the writer
+        // fail, so the group is left as often as it was entered.
         group.enter()
         let state = PictureState(next: next)
+        let pictureEnded = Flag()
+        var endings = [pictureEnded]
         let pictureQueue = DispatchQueue(label: "de.ghazarian.Snapfly.studio.picture")
         picture.requestMediaDataWhenReady(on: pictureQueue) {
             func finish(_ failure: Bool) {
-                guard !state.done else { return }
-                state.done = true
+                guard pictureEnded.setFirst() else { return }
                 if failure { failed.set() }
                 picture.markAsFinished()
                 group.leave()
             }
+            guard !pictureEnded.isSet else { return }
             while picture.isReadyForMoreMediaData {
                 guard !stop.isSet, state.index < total else { return finish(false) }
                 let t = Double(state.index) / Double(rate)
@@ -325,6 +338,7 @@ enum StudioExport {
         for (n, copy) in copies.enumerated() {
             group.enter()
             let soundDone = Flag()
+            endings.append(soundDone)
             let queue = DispatchQueue(label: "de.ghazarian.Snapfly.studio.sound.\(n)")
             copy.to.requestMediaDataWhenReady(on: queue) {
                 while copy.to.isReadyForMoreMediaData {
@@ -334,7 +348,7 @@ enum StudioExport {
                         // The writer has failed: it asks for nothing more.
                         failed.set()
                     }
-                    soundDone.set()
+                    guard soundDone.setFirst() else { return }
                     copy.to.markAsFinished()
                     group.leave()
                     return
@@ -343,10 +357,15 @@ enum StudioExport {
         }
 
         // Should the writer or the reader fail while an input waits, it is
-        // never asked for more: the wait ends then too.
+        // never asked for more: the wait ends then too, and each input not
+        // ended yet is ended here, as a group freed while entered stops the app.
+        let waiting = endings
         while group.wait(timeout: .now() + .milliseconds(250)) == .timedOut {
             if writer.status == .failed || reader.status == .failed {
                 failed.set()
+                for ending in waiting {
+                    if ending.setFirst() { group.leave() }
+                }
                 break
             }
         }

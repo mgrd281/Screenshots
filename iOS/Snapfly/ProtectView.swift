@@ -153,7 +153,9 @@ struct ProtectView: View {
                 HStack(spacing: 0) {
                     Spacer(minLength: 0)
                     if !focus, !isReview {
+                        // After a failure there is no copy to hand over: the ways out wait, dimmed.
                         AppRail(pending: pending, leave: leave)
+                            .disabled(session.hasFailed)
                             .phoneGuideTarget(.actions)
                             .padding(.trailing, Self.railEdge)
                             .transition(still ? .opacity : .opacity.combined(with: .move(edge: .trailing)))
@@ -286,6 +288,8 @@ struct ProtectView: View {
                     DocumentScanner { images in
                         shooting = false
                         took(camera: images)
+                    } failed: {
+                        failed(DocumentScanner.failure)
                     }
                     .ignoresSafeArea()
                 }
@@ -793,7 +797,7 @@ struct ProtectView: View {
         Divider()
         if sync.canSend {
             Button { leave(.mac) } label: { Label(Leaving.mac.title, systemImage: Leaving.mac.symbol) }
-                .disabled(sent)
+                .disabled(sent || session.hasFailed)
         }
         Button {
             tool = .select
@@ -888,8 +892,13 @@ struct ProtectView: View {
     /// pages' dots say what is open everywhere.
     private func readEveryPage() {
         guard isReview else { return }
-        for page in scans.pages where page.state == .ready {
-            scans.session(page.id).start()
+        let waiting = scans.pages.filter { $0.state == .ready }.map { scans.session($0.id) }
+        // One after another, so a long scan never reads all its pages at once.
+        Task {
+            for session in waiting {
+                session.start()
+                await session.firstPass()
+            }
         }
     }
 
@@ -950,10 +959,12 @@ struct ProtectView: View {
             }
             .disabled(session.plan.marks.isEmpty)
             Divider()
+            // After a failure there is no copy to copy or send.
             Button { leave(.copy) } label: { Label(Leaving.copy.title, systemImage: Leaving.copy.symbol) }
+                .disabled(session.hasFailed)
             if sync.canSend {
                 Button { leave(.mac) } label: { Label(Leaving.mac.title, systemImage: Leaving.mac.symbol) }
-                    .disabled(sent)
+                    .disabled(sent || session.hasFailed)
             }
             Button {
                 tool = .select
@@ -1007,8 +1018,10 @@ struct ProtectView: View {
 
     /// What can be done with the mark selected, floating over the tools.
     private func selection(_ mark: ProtectionPlan.Mark) -> some View {
+        // Each control is a finger's 44 pt round it, the capsule as it was drawn.
         HStack(spacing: 14) {
             Button(mark.covered ? L("Uncover") : L("Cover")) { session.toggle(mark.id) }
+                .touchTarget()
             if case .stroke(_, let width) = mark.shape {
                 Menu {
                     ForEach(HandShape.widths.indices, id: \.self) { i in
@@ -1024,6 +1037,7 @@ struct ProtectView: View {
                     }
                 } label: {
                     Image(systemName: "lineweight")
+                        .touchTarget()
                 }
                 .accessibilityLabel(L("Width"))
             }
@@ -1034,10 +1048,12 @@ struct ProtectView: View {
                 } label: {
                     Image(systemName: "trash")
                 }
+                .touchTarget()
                 .accessibilityLabel(L("Delete"))
             }
             Button(L("Done")) { selected = nil }
                 .fontWeight(.semibold)
+                .touchTarget()
         }
         .font(.subheadline)
         .padding(.horizontal, 16)
@@ -1127,9 +1143,11 @@ struct ProtectView: View {
         case .turn(let page):
             scans.turn(page)
         case .crop(let page):
-            // The picture as it came, decoded once, as large as the corner editor shows it.
-            guard let picture = scans.picture(page) else { return failed(L("The picture could not be read.")) }
-            cropping = ScanCrop(id: page, picture: picture)
+            // The picture as it came, decoded once off the main thread, as large as the corner editor shows it.
+            Task {
+                guard let picture = await scans.pictureAsItCame(page) else { return failed(L("The picture could not be read.")) }
+                cropping = ScanCrop(id: page, picture: picture)
+            }
         }
     }
 

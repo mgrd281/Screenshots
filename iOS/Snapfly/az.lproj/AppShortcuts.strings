@@ -1,0 +1,6 @@
+/* What Siri listens for to run Cover the Latest Screenshot (Intents.swift):
+   each phrase as the code writes it, with the app's name as its
+   placeholder, which every phrase and translation holds once. */
+
+"Cover my latest screenshot with ${applicationName}" = "${applicationName} ilə ən yeni ekran şəklimi gizlət";
+"${applicationName}, cover my screenshot" = "${applicationName}, ekran şəklimi gizlət";

@@ -538,7 +538,8 @@ struct Drawing: Codable, Equatable, Sendable {
     }
 }
 
-/// The drawings on the photos on the line, kept under each file's path.
+/// The drawings on the photos on the line, and on those in the History,
+/// kept under each file's path.
 enum Drawings {
     private static let key = "drawings"
 
@@ -554,10 +555,19 @@ enum Drawings {
         UserDefaults.standard.set(all, forKey: key)
     }
 
-    /// Forgets the drawings on photos that have left the line.
+    /// Forgets the drawings on photos that have left the line, and can come
+    /// back neither from the History nor from a note.
     static func keep(only paths: Set<String>) {
         guard let all = UserDefaults.standard.dictionary(forKey: key),
               all.keys.contains(where: { !paths.contains($0) }) else { return }
         UserDefaults.standard.set(all.filter { paths.contains($0.key) }, forKey: key)
+    }
+
+    /// A drawing goes with a file that moves, like into the History and back.
+    static func move(from old: URL, to new: URL) {
+        guard var all = UserDefaults.standard.dictionary(forKey: key),
+              let drawing = all.removeValue(forKey: old.path) else { return }
+        all[new.path] = drawing
+        UserDefaults.standard.set(all, forKey: key)
     }
 }

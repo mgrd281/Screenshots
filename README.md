@@ -140,6 +140,8 @@ each with what it is for, whether it is given, and one button that asks for it
 or opens the right page of System Settings. It updates as you switch things
 in System Settings. Each is asked for only when what needs it is first used,
 and once one was refused, Permissions Needed… appears in the menu bar.
+Reopen Snapfly, under a refused Screen Recording, quits first and opens
+Snapfly again a moment later, as an update does, so two never run at once.
 
 Help sits beside it, in Settings › Support: the support page, Report a
 Problem and Suggest a Feature, which open an email with the version, macOS
@@ -155,7 +157,10 @@ WEB.DE and GMX in a browser, where the photos go into the message being
 written. Settings lists
 the apps, by name and icon, and the websites; turn any off, remove it, or add
 your own. To know the page, Snapfly asks the
-browser, and macOS asks you once whether it may. It shows the newest photo and how many
+browser, and macOS asks you once whether it may. It asks once a second, and
+as soon as another tab comes to the front, so a busy browser seldom slows
+Snapfly down; what a send covers, Check Before Sending and the time stamp
+ask it right then. It shows the newest photo and how many
 will go. One click and they are in, without a trip to the top of the screen.
 Over the chats it knows, like ChatGPT, Claude, Gemini, WhatsApp, Telegram
 or Slack, it finds that spot by itself, measured on each one: on a new chat,
@@ -219,14 +224,19 @@ Dock shows the time; click it, press the shortcut again, or choose Stop
 Recording in the menu bar to stop. The recording hangs on the line, ready to
 trim or send, and opens in Studio (below). Make GIF in its menu turns it into a looping GIF that every chat
 plays, which hangs next to it and stays animated when sent. Snapfly's own
-line and controls stay out of it.
+line and controls stay out of it. Quit, log out or install an update while
+recording, and the recording is saved first, as Stop saves it. One cut short
+anyway, as by a crash, is written in pieces: the next time Snapfly opens, it
+hangs on the line up to its last few seconds, and a note says so; one that
+cannot be played goes to the Trash.
 
 A recording has sound when you choose it, in Settings › General under Screen
 recordings: the Mac's sound, what you hear without Snapfly's own; the
 microphone, your voice, asked for the first time and on macOS 15 or later;
 or both, mixed into one track that every player and chat plays. It has none
 until chosen. If the microphone isn't allowed, the recording goes on without
-it and a note says where to allow it.
+it and a note says where to allow it. Should the mixing fail, the recording
+keeps both tracks, and a note says so.
 
 ### Studio: zoomed in, pointed out.
 
@@ -255,7 +265,10 @@ camera moves. Space plays and pauses, ← and → move a second, ⌘Z undoes.
 Save Video writes a new video beside the recording, at its size and sixty
 frames a second, with its sound, and hangs it on the line; the recording
 itself is never changed. What you changed stays with the recording for the
-next time, and Trim keeps it in step; Cancel leaves it as it was. Turn off opening Studio after each recording
+next time, also when you close the window or open another recording in
+Studio, and Trim keeps it in step; only Cancel leaves it as it was. A
+recording just made waits, with a note, until you close Studio, so it never
+takes the place of the work in front. Turn off opening Studio after each recording
 in Settings › General, under Screen recordings. Where the pointer went and
 when keys were pressed stay on your Mac, never which keys; typing is only
 noticed where Snapfly may use Accessibility. A recording made before Studio
@@ -409,7 +422,13 @@ statement: "•••• 1111". It holds for copies and for Copy Text alike.
 
 Every copy is checked before it leaves: once covered, it is read again as
 anyone could read it, and whatever private still shows, or any piece of what
-was hidden left beside its cover, is covered too. Under Protection, Find more
+was hidden left beside its cover, is covered too. A picture that can't be
+read, or whose covers can't be drawn, never leaves as it is: what goes is
+the whole picture in cover ink, a note says so, and it is read again the
+next time; a PDF goes with every page painted whole, and a copy saved from
+Finder, Cover Files or a watched folder is not made. Until it is read, the
+line shows it as it is, without the lock, and Sync sends no covered copy of
+it. Under Protection, Find more
 with Apple Intelligence (on where the Mac has it) lets the model on the Mac
 read the words as well and cover what the patterns miss, like a name in a
 sentence; it only ever adds covers, and nothing leaves the Mac. What it
@@ -474,10 +493,16 @@ nothing follows it, or a label can keep to Same Line or Next Line;
 or, for whoever knows them, a pattern, made on the Mac. A rule's sheet
 covers a made-up example with it as it is typed. Each rule has its own
 switch, and one turned off covers nothing until it is on again; the
-section says how many are on. Your details and
+section says how many are on. A detail or a rule removed by mistake comes
+back with a click on the note that says it went, for a few seconds, as do
+the saved messages, questions, prompts, chat apps and websites under Line.
+Your details and
 rules apply to everything that leaves the line, and to the copies saved
-from Finder. A word that is a person's name also helps Snapfly tell that
-name wherever it is written as a name for sure: covered as Names, Patient
+from Finder, whatever is checked under Privacy: also with no kind checked,
+or with Hide private details off in the menu bar, they are covered, and a
+copy whose file name holds one is renamed. A word that is a person's name
+also helps Snapfly tell that name wherever it is written as a name for
+sure: covered as Names, Patient
 names or Other people say. Such a word becomes your name under Your
 Details by itself as Snapfly starts, so it is covered however it is written.
 
@@ -492,15 +517,17 @@ the notes a file carries on when, where and with what it was made, or the
 Finder's note of where it was downloaded from. A PNG stays a PNG, pixel for
 pixel; a photo goes as a JPEG; a GIF goes as itself, so it keeps moving.
 Turn on Plain file names under Privacy, and pictures are called Image too,
-rather than after when they were taken.
+and PDFs Document, rather than after when they were taken. A file whose
+name holds a detail you cover, like an IBAN in a bank statement's name,
+or one of your own rules, is called so either way.
 
 To cover a whole folder, turn on Cover what lands in a folder under
 Privacy and choose two folders, like the one invoices are downloaded to
 and another for the copies. Every picture or PDF that lands in the first
 gets a copy with what you checked covered, saved under its name in the
 second, one after another in the background. A note says how many were
-saved, and names the files where nothing was found, so you can take a
-look. What was in the folder before stays as it is.
+saved with something covered, and names the files where nothing was found,
+so you can take a look. What was in the folder before stays as it is.
 
 AI chats may keep what goes into them on their servers. Turn on Cover
 everything in AI chats under Privacy, and whatever you send, copy or drag
@@ -564,6 +591,11 @@ the drawing stays with the photo until it leaves the line. Drawing explains
 a picture; it never hides anything, so the lock counts only what is
 covered.
 
+Draw on Photo, Hide Part and Background ask before their close button, or
+another photo opened in the same window, lets changes go: Keep Editing, or
+Discard. Cancel and Done never ask, and the same photo opened again brings
+its window back as you left it.
+
 Every edit says where it went. Done says the drawing is kept with the
 photo, and Save Copy…, under Keep as a file in the window, keeps the photo
 as it goes out as a file of its own, wherever you choose; a photo's menu
@@ -623,7 +655,8 @@ stays out of the sentences.
 
 Hang on the Line makes it a PDF of numbered A4 pages and hangs it, ready to
 send. Save writes a PDF, or one tall picture that shows whole in a chat, or
-copies that picture. The last 20 guides stay on your Mac, under Recent
+copies that picture, with a file of it for apps that take files; watching
+the clipboard leaves it alone, as it does photos copied from the line. The last 20 guides stay on your Mac, under Recent
 Guides in the menu bar. The App Store edition can't ask other apps what was
 clicked, so its steps say "Click here." and mark the click with a ring.
 
@@ -643,9 +676,11 @@ says so beside the switch.
 
 Settings › Workspace lists the categories. Rename one, hide it, move it up
 or down, choose which one new screenshots go to, add your own, or remove
-one: its screenshots move to Unsorted and nothing is deleted. Rename the
+one: its screenshots move to Unsorted and nothing is deleted. A name is
+kept when you press Return or leave its field. Rename the
 folder or choose Change Location…, or move it in the Finder: Snapfly finds
-it again, and what hangs on the line follows its files. The folder carries
+it again, and what hangs on the line follows its files. Moved to the Trash,
+it is made again where it was, and new screenshots go on hanging. The folder carries
 Snapfly's icon in the Finder, and looks like any folder if macOS refuses
 it. A screenshot is written whole or not at all and never over another file,
 and when the disk is full or the folder can't be reached, a note says why
@@ -653,9 +688,12 @@ while the screenshot is kept in Snapfly's own folder, so none is lost.
 
 In History, the Workspace page shows them by day as a grid or a list. Pick a
 category, search by name or by the words in the photo, press Return or
-double-click to open one, and use the menu for Hang on the line, Quick Look,
-Copy, Copy File Path, Show in Finder, Move to Folder, Rename… and Move to
-Trash. The same Move to Folder is in the menu of a photo on the line.
+double-click to open one (with keyboard navigation on, Tab reaches each
+card, Space selects it and Return opens it), and use the menu for Hang on the line, Quick Look,
+Copy Original, Copy File Path, Show in Finder, Move to Folder, Rename… and
+Move to Trash. Copy Original copies the files as they are, not covered, as
+the Finder would; to send one covered, hang it on the line. The same Move to
+Folder is in the menu of a photo on the line.
 
 Delete… in Settings asks first, then moves the screenshots to the Trash, and
 leaves any file in the folder that isn't Snapfly's. Only a folder Snapfly
@@ -673,7 +711,7 @@ as many as a thousand and more; folders are opened all the way down, and
 files of other kinds are counted but get no copy. On the right, choose what
 to cover: Names Only, everyone's names, as it starts; As in Settings, All,
 or each kind on its own, from the same list as Settings › Privacy. Your own
-rules there apply too.
+details and rules from Settings › Always Hide apply too.
 
 Cover Files then asks where to save, and makes a new folder there, named
 with the day and time, with the folders the files came in kept inside it.
@@ -683,8 +721,11 @@ with how far it has got and about how long is left. Stop ends it after the
 files being read. The list then shows how each went: covered, with how many
 places; nothing to cover, to look at before sending; or not covered, locked
 with a password, over 200 pages or unreadable, which get no copy at all.
-The files themselves are never changed. Selecting several files or a folder
-in Finder and choosing Hide Private Details with Snapfly opens it too.
+VoiceOver reads the counts under it with what each counts, and the note
+when it is done counts only the copies with something covered, naming those
+with nothing to cover. The files themselves are never changed. Selecting
+several files or a folder in Finder and choosing Hide Private Details with
+Snapfly opens it too.
 
 <br>
 
@@ -728,7 +769,7 @@ at the top. It works in any browser and in any window that scrolls. It turns
 the scroll wheel in small turns, as a hand would, and if the page does not
 follow the wheel, it presses Page Down instead. The picture hangs on the line
 like any screenshot, and with the time stamp on, it is stamped with the time
-and the page's address. It needs the permission to press keys, the same one
+and the website's name. It needs the permission to press keys, the same one
 the send button uses.
 
 <br>
@@ -739,9 +780,11 @@ Turn on Stamp the date and time under General in Settings, and every
 screenshot of the whole screen gets a band above it, like a letterhead,
 that says when and where it was taken: the date and the time to the
 second, from the atomic clock of the PTB in Germany (or the Mac's clock
-when there is no connection); the page that was open in the browser; and
-the screenshot's SHA-256 fingerprint, so anyone can check the copy was
-made from that very file. Choose Every screenshot to stamp all of them,
+when there is no connection); the website that was open in the browser, by
+its name alone, like mail.google.com, never the rest of its address, which
+can hold a search, an email address or a sign-in link; and the
+screenshot's SHA-256 fingerprint, so anyone can check the copy was made
+from that very file. Choose Every screenshot to stamp all of them,
 and type a few words, like your shop's name, to stand before the date.
 
 The screenshot itself stays as it was. A stamped copy is saved next to it,
@@ -823,15 +866,17 @@ Two come with Snapfly: Natural writing, which asks for a text that reads
 as a skilled person would write it, accurate and in your own voice, and
 Reply to a customer. Write up to nine of your own in Settings, under Line
 › Prompts for AI chats, each with a title and as long as it needs; they
-are in a photo's menu under Ask AI too.
+are in a photo's menu under Ask AI too. Standard Prompts brings the two
+back, after asking while any of yours is written.
 
 Something to ask about it? Right-click ChatGPT or Claude on the photo, or
 choose Ask ChatGPT or Ask Claude in its menu, and the photo goes with a
 question after it, like "Summarize this in a few lines" or "What should I
 reply to this?"; the chat answers in the language you ask in. The five
 questions that come with Snapfly are yours to change under Questions for
-ChatGPT and Claude in Settings, under Line. Nothing is sent until you
-press Return in the chat.
+ChatGPT and Claude in Settings, under Line; until you change them, they
+follow the language Snapfly speaks, and Standard Questions asks before it
+replaces yours. Nothing is sent until you press Return in the chat.
 
 <br>
 
@@ -844,12 +889,18 @@ back as it was.
 Everything that leaves the line, sent or taken down, waits in the History
 for 30 days: History… in the menu bar, or <kbd>⌘</kbd>&thinsp;<kbd>Y</kbd>
 while the menu is open. It is grouped by day, and the search finds the words
-in every photo. A click hangs one on the line again; Send Again in its menu
-hangs it and sends it, covered, into the chat you had in front. A screenshot from
+in every photo. A click hangs one on the line again (with keyboard
+navigation on, Tab reaches each photo, and Space or Return does the same); Send Again in its menu
+hangs it and sends it, covered, into the chat you had in front, and Copy
+copies it as it would leave the line, never the original. What you hid by
+hand or drew on a photo goes with it into the History and back, so it
+leaves covered from there too, and from a note's "put it back"; it is
+forgotten once the photo has gone for good. A screenshot from
 Snapfly's own folder moves into its History folder and goes to the Trash once
 its days are up; a file from anywhere else stays where it is. Choose 7, 30
 or 90 days, a year or forever, or turn it off, in Settings, under Line. It
-all stays on your Mac.
+all stays on your Mac. Clear History… empties the photos and the Sent list
+alike, and says so before it does.
 
 Orders, at the top of the window, puts the photos that show an order,
 invoice or customer number together under that number, the order with the
@@ -934,7 +985,8 @@ Save). Snapfly checks the key with them at once, by asking for the models
 it may use, which costs nothing: Ready. The key works, or that they did not
 accept it. The key stays in your keychain; Settings shows only its last four
 characters, with Change and Remove Key beside them, and Check Again checks it
-once more. Model is a menu of the models your key may use, by their names,
+once more. Remove Key asks first, since a key cannot be shown again: you
+would make a new one. Model is a menu of the models your key may use, by their names,
 newest first (Claude Opus 5.5, Sonnet 5.5 and Haiku 5.5 until the key is
 checked); Other… takes a model's ID by hand. What it does lists Write a
 Reply, Explain and Order Details, and holds the switch Find more with Claude
@@ -989,10 +1041,12 @@ iCloud account, and the two work as one:
 - **Another Apple account? Pair with a code.** If the iPhone is signed in to
   a different Apple account than the Mac, click Show Code… in Settings › Sync
   on the Mac. Six digits show, a new one every 30 seconds. On the iPhone, tap
-  Connect to a Mac with a Code in Settings and type them; the Mac asks
+  Connect to a Mac with a Code under More › Mac and iCloud, as the Mac's
+  sheet says, and type them; the Mac asks
   whether to connect that iPhone, and only a yes lets it in. The Mac then
-  shares its sync with that account alone, through iCloud. Disconnect… on
-  either side ends it.
+  shares its sync with that account alone, through iCloud; Cancel stops it
+  while it connects, should iCloud not answer. Disconnect… on either side
+  ends it.
 
 It goes through your own iCloud, never a server of Snapfly's, and a change
 made offline waits until it can go. The plan, the rules and what is verified
@@ -1009,8 +1063,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
 
 - **Four tabs** in the system's tab bar, in Liquid Glass from iOS 26 on,
   where it shrinks to the tab shown as a page scrolls down: Photos, Scan,
-  Protected and More. Scan opens the system's document camera, or Aus
-  Fotos takes photos of pages: a letter, a form or a receipt is found
+  Protected and More. Scan opens the system's document camera (where it
+  cannot scan, a note says why, as when Snapfly may not use the camera),
+  or Aus Fotos takes photos of pages: a letter, a form or a receipt is found
   and cut from the photo by Vision (its corners set by hand, with a loupe,
   where Vision is not sure), made flat in its own shape, turned upright and
   levelled from its lines of text, then cleaned as a good scanner leaves a
@@ -1055,7 +1110,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   small print reads more surely; otherwise "Detailaufnahme nicht
   übernommen". The covers are then found on the cleaned page. The
   pages wait as small numbered cards, in the order scanned, kept in memory
-  only while the app is open, under the document's kind (Invoice, Letter,
+  only while the app is open (Clear beside them asks before they all go),
+  under the document's kind (Invoice, Letter,
   Form or Receipt) where its words say it, and each opens in **Review**,
   whose one job is checking the covers: its own bar (back, "Prüfen" with
   "Seite 1 von 3", the menu and Next); a status chip ("4 verdeckt · 2 zu
@@ -1142,7 +1198,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   in your own app. Anything else, or an app not
   on the iPhone, through the system's share sheet, where you tap the app;
   nothing ever opens in a browser. Protected
-  shows the last twelve screenshots protected, in the same grid. Holding
+  shows the last twelve screenshots protected, in the same grid (with
+  Photos access off, it asks for it, as the Photos tab does). Holding
   one offers Remove from Protected, which takes it off the list at once,
   with Undo for five seconds while it stays in Photos, and Delete from
   Photos, which iOS asks about first (Photos keeps it 30 days to bring
@@ -1165,7 +1222,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   kept on the iPhone (`ScanVeil`: a few cells across, no word readable at
   any size; veiled again while Snapfly is away, for the app switcher, and
   while something on the page is still to check), its name, its pages
-  and the day, which opens it, or, held, shares, renames or deletes it;
+  and the day, which opens it, or, held, shares, renames or, after asking,
+  deletes it;
   Alle anzeigen shows them all. Under the scanned pages, Unter Zuletzt
   behalten keeps them as a PDF project among the documents (kept on this
   iPhone in the project's protected folder, never in a backup), covered
@@ -1202,13 +1260,22 @@ watch the screen, so there is no line there. What it keeps is the covering:
   in the strip, to open, drag, turn, duplicate or delete. A PDF's words are
   read from its own text, letter for letter, where it has text, and from
   the picture only where it has none, as in a photo pasted on the page; its
-  covers are found as on any picture. A PDF locked with a password asks for
+  covers are found as on any picture, on the iPhone alone (the AI
+  assistant never reads a project's or a scan's words). What you cover by
+  hand on a page, cover though it was only offered, or move or make larger
+  of what Snapfly found, is kept with the project, where it lies and never
+  a word: it is back as soon as the page shows, when the project opens
+  again or after Try Again, turns with its page, goes with its copy when
+  the page is duplicated, shows on its picture under Recent and is covered
+  in every copy, as what you covered on scanned pages is once they are kept
+  under Recent or added to a project. A PDF locked with a password asks for
   it each time it opens, and it is never kept; a signed PDF says once that
   editing it ends the signature. Save and Share takes the file's name
   before its fixed ".pdf", how pictures sit on their pages (Original, A4 or
   US Letter, with 10 mm round them, never stretched or cut), the quality
   (High, Medium, Small, 300, 200 or 150 dpi) with how large the file will
-  be, worked out from its own pages, covers (where every save starts) or
+  be, worked out from its own pages (a dash where no page can be drawn for
+  it, as a PDF left locked), covers (where every save starts) or
   none, which keeps a PDF's pages as they are and warns as a scan does, and
   searchable text; then Copy, Save to Files or Share. Covered, every page
   is drawn as a picture with its covers and its words read again from the
@@ -1216,7 +1283,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   of each page. A project is written a moment after each change into
   Snapfly's own storage on the iPhone, with complete file protection and
   never in a backup, and opens again where it was left, even after Snapfly
-  was closed by force; Delete under Zuletzt removes it and its copies.
+  was closed by force; Delete under Zuletzt asks first, then removes it and
+  its copies.
 - **The first run** shows what Snapfly does in under fifteen seconds, on
   three made-up documents of one made-up person, each a standing A4 page
   that looks like a real one, before anything is asked (`FIRST_RUN.md`):
@@ -1259,7 +1327,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
 - **The Photos tab** opens on Snapfly's picture of stacked photos, a page, a chat
   and a landscape with a green photo badge, drawn on the iPhone and showing
   no one's details, over Protect a Photo, a green button that opens any
-  picture from Photos. Where that picture is a photographed paper document
+  picture from Photos (a note says "Opening…" while one comes from
+  iCloud). Where that picture is a photographed paper document
   (Vision is sure of the page, with text on it), and never where Photos
   calls it a screenshot, a card above the page offers to straighten and
   brighten it as a scan is; Clean Up does, the covers are found again on
@@ -1274,7 +1343,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   shield once it was protected;
   holding one offers Cover and Copy, Share or Save. Select, beside See
   All and in it, chooses several as Photos does: a tap each, or from iOS 18
-  on a finger drawn sideways across them, with Select All; then Save
+  on a finger drawn sideways across them, with Select All, the choice's
+  bar rising from the bottom (only fading in with Reduce Motion); then Save
   Covered Copies (one tap) covers each as Settings says, checks it and
   saves it to Photos as a new picture, one after another with how far it
   is and Stop, while Share sends the same copies at once. A copy that
@@ -1282,9 +1352,14 @@ watch the screen, so there is no line there. What it keeps is the covering:
   try again. Covering waits while Snapfly is in the background, where iOS
   may keep it from reading, and goes on once you're back, reading again
   the one it was at. All of them are
-  behind See All, which finds them by the words they say (those read ahead
+  behind See All, however many, which finds them by the words they say (those read ahead
   of time, below), shows only those with private details, protected or not,
-  and puts the newest or the oldest first. From iOS 18 on, a screenshot opens by growing out of its
+  and puts the newest or the oldest first. While none is read ahead of
+  time, a search or With Private Details says why, with a way to Faster
+  picture processing in More › Detection. Where Snapfly may see only the
+  photos you chose, a line under the screenshots says so, since a new
+  screenshot shows only once you add it, and Change Allowed Photos… adds
+  it. From iOS 18 on, a screenshot opens by growing out of its
   card. How syncing stands sits beside the name at the top, and opens More.
   Tap a screenshot and it shows at once; what the patterns, the labels and
   the names find is marked a moment later, then the copy is made, read again
@@ -1336,7 +1411,9 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Details, Copy, Send to Mac while a Mac is there, Full Screen, the choice
   of apps, Clear Hidden by Hand and Reset to Suggestions.
   Tapped before the copy is ready, a way waits and goes once it is; while
-  places are still to check it asks first. Full Screen, or a tap on
+  places are still to check it asks first. After a failure, the capsule
+  says what went wrong in full with Try Again, and the ways out, Copy and
+  Send to Mac are dimmed until then, as there is no copy. Full Screen, or a tap on
   nothing, leaves the picture alone on black; a tap brings everything
   back. Explain, in the menu: with your own Claude or ChatGPT key set up
   (below), it sends the checked protected copy, smaller, and shows word by
@@ -1416,12 +1493,18 @@ watch the screen, so there is no line there. What it keeps is the covering:
   Power Mode, when the iPhone is warm or short of memory, and while you
   protect a picture. Its page shows how far it is with real numbers, the
   photos only in iCloud, the last update and the room it takes, with
-  Pause, Prepare Now, Delete Local Index and Turn Off, which deletes it.
+  Pause, Prepare Now, Delete Local Index and Turn Off, which deletes it;
+  both ask first.
 - **Cover the Latest Screenshot** is a Shortcuts action that needs no opening
   of the app. Chosen for Back Tap (Settings › Accessibility › Touch › Back Tap
   › Double Tap), a double tap on the back of the iPhone covers the newest
-  screenshot and copies it, ready to paste into a chat.
-- **Cover Private Details** covers any picture a shortcut hands it.
+  screenshot and copies it, ready to paste into a chat. It covers without
+  waiting for Apple Intelligence or the AI assistant, as the share
+  extension does, and says when it found nothing to cover.
+- **Cover Private Details** covers any picture a shortcut hands it, the same
+  way, without waiting for Apple Intelligence or the AI assistant.
+- Both actions' names and descriptions, Siri's phrases and iOS's questions
+  for Photos and the camera come in the app's 13 languages.
 
 Both apps share the code in `Sources/Tendedero/Shared` (finding and covering
 private details, the atomic time, the translations, the apps a picture goes
@@ -1473,10 +1556,15 @@ Ended before its end, it goes on from there with Continue Introduction in
 the menu bar. Settings › Support › Help & Introduction starts it again,
 shows one thing at a time on the line (Show Me How), and turns tips off: a
 short hint, once, the first time something is in reach, like the lock on
-a covered photo or picking several photos.
+a covered photo or picking several photos. When the line has nothing for
+Show Me How to point at, like a lock on a photo with nothing covered, or
+the icons under a photo when the newest is a screen recording, Settings
+stays open and a note says why.
 
 On the iPhone, the introduction shows on your screenshots: tap one, then
-the apps beside it. More › Help › Introduction starts it again.
+the apps beside it. More › Help › Introduction starts it again, once
+Snapfly may see your screenshots; until then it opens the Photos tab,
+which asks for them.
 
 <br>
 
@@ -1502,7 +1590,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `LineIcon.swift` | Snapfly's mark in the menu bar and Settings: a photo hanging on a line |
 | `SettingsWindow.swift` | The settings window: General, Workspace, Line, AI Assistant, Privacy, Permissions, Support and About |
 | `AIAssistantSettings.swift` | Settings › AI Assistant: the assistant tiles, the key checked with the provider, the model from its own list, and what it does |
-| `Support.swift` | Settings › Support: the help page, an email about a problem or an idea with the details filled in, and those details to copy |
+| `Support.swift` | Settings › Support: the introduction and Show Me How, which stays in Settings with a note when the line has nothing to show, the help page, an email about a problem or an idea with the details filled in, and those details to copy |
 | `LinePanel.swift` | The transparent strip along the top of the screen |
 | `LineView.swift` | The line and where each photo hangs, as far across the screen as it was moved |
 | `PeggedView.swift` | One photo: glass frame, clip, swing and breeze, and the covered places shown from the lock |
@@ -1520,13 +1608,13 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `DesktopIcons.swift` | Hide Desktop Icons: the wallpaper laid over the icons on every screen |
 | `Calls.swift` | Not during a call: whether the microphone is in use, and Snapfly's windows kept out of a shared screen while it is |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
-| `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
+| `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies, or the whole picture in cover ink where reading or covering fails |
 | `FolderCover.swift` | Cover a folder: watches one folder and saves covered copies of what lands there in another |
 | `FloatingPhotos.swift` | Keep on Top: a photo floating over every app in a small window of its own |
 | `SelfTest.swift` | Test on a Sample: a made-up order with nearly every kind of detail, covered as Settings says |
 | `CoveringProfile.swift` | Cover everything in AI chats: which chats count, and what to cover for the app in front |
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
-| `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
+| `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF, or its pages painted whole where that fails |
 | `HideSend.swift` | Send covered, in Hide Private Details: the copy straight to a chat, the clipboard or the Share menu |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
 | `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-two kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names, Patient names and Other people each their own people, a name in a column of doctors a doctor's; a letter's address under a name, a date of birth and a reference number known as that person's; and, for the iPhone's Details, what Settings leaves visible; the lines read kept a while in memory, or given from a photo prepared ahead of time; a reading Vision could not do is counted, never kept |
@@ -1543,6 +1631,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/CoverSummary.swift` | What the iPhone's More counts: the kinds on of the twenty-two, the preset they are, the five groups, a group turned on or off, and what Always Hide holds (tested on Linux) |
 | `Shared/CoverSample.swift` | The made-up bill Cover Style covers, and what Keep the last four digits leaves of each line |
 | `Shared/Protection.swift` | Strongest protection, and Apple Intelligence, on the device, or the AI assistant, when turned on, finding what the patterns miss, kept per screenshot |
+| `Shared/ReadingQueue.swift` | Pictures read a few at a time, the newest asked first, so a line full of them, read again after a change in Settings, never reads them all at once (tested on Linux) |
 | `Shared/AIAccount.swift` | The AI assistant: Claude or ChatGPT, the key in the keychain, the model, the requests and their answers, a conversation's turns, answers streamed as they are written, checking a key by its list of models, what each task asks, and what each failure means |
 | `Shared/AIConnection.swift` | Whether the key kept for each assistant works, as last checked, and the models it may use, for the Mac's and the iPhone's settings |
 | `Shared/OwnRules.swift` | The owner's own rules, a word, a label or a pattern, kept with the settings, each on or off and a label with its reach; and their own details, a name, an address, a bank card or account, kept in the device's keychain alone (`OwnDetailStore`, with what may be promised of it) |
@@ -1566,10 +1655,11 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `scripts/more-checks.sh` | Runs More's UI tests for the More Checks workflow (What Is Covered alone at each push, all of More when run by hand), keeps frames of the tab and each page (light, dark, the largest text sizes, Arabic and English, the newest and the smallest iPhone) and records its motion with and without Reduce Motion, for the `more-captures` pre-release |
 | `docs/snapfly-covered-studio-audit.md` | What Is Covered's audit before the live preview: where the choice is kept, the twenty-two kinds and their groups, the presets' values and who reads them |
 | `docs/snapfly-more-audit.md` | More's audit before Version 2: every setting, where it is kept, its default and who reads it, where each went, the floating button, and the cover looks checked in code |
-| `scripts/always-hide-checks.sh` | Runs the UI tests in `iOS/SnapflyUITests` for the Always Hide Checks workflow, all but Scan's, which the Scan Checks workflow runs on an optimized build, and keeps frames of the screen and each sheet, light and dark, at the largest text sizes and in Arabic and English, on the newest iPhone and the smallest, for the `always-hide-captures` pre-release |
+| `scripts/always-hide-checks.sh` | Runs the UI tests in `iOS/SnapflyUITests` for the Always Hide Checks workflow, all but Scan's and PDF's, which the Scan Checks and PDF Checks workflows run on optimized builds, and keeps frames of the screen and each sheet, light and dark, at the largest text sizes and in Arabic and English, on the newest iPhone and the smallest, for the `always-hide-captures` pre-release |
 | `docs/snapfly-always-hide-audit.md` | Always Hide's audit: what there was, where details and rules are kept, how covering uses them, how a label's reach was decided, what is promised and what holds in code, and what changed |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
-| `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
+| `TimeStamp.swift` | The band above a screenshot with the time, the website and the fingerprint, and the stamped copy next to it |
+| `Shared/StampSite.swift` | The website a stamp names: the host of the page's address alone, never its path, search or fragment (tested on Linux) |
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
 | `Shared/CoverReport.swift` | What was covered in a picture, kind by kind, for the lock, the photo's menu, VoiceOver and the iPhone |
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
@@ -1577,6 +1667,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
 | `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the page on a bright ground, to zoom with its places marked, covered in steps and checked; the one bar of tools to select, draw, box, lasso and erase with their handles; the status capsule with how many details were found; Details, which checks the unsure places one by one and lists every place by whose it is and what it is, each topic covered with one switch; the ways out, which wait for the checked copy and ask while places are to check; the menu with Explain, Copy, Send to Mac and Full Screen; for a scanned page, Review: the wipe, the status chip, the page large with its eye, its pages and its one bar |
 | `iOS/Share/ShareViewController.swift`, `iOS/Share-Info.plist`, `iOS/*.entitlements` | The iPhone's share extension: a picture shared from any app, covered, checked, then copied, shared or saved |
+| `Sources/Tendedero/InfoPlist/*.lproj` | The Mac's questions before it may watch the Desktop, Documents or Downloads, use the microphone or ask a browser which page is open (`InfoPlist.strings`), in each language; the English ones are in `scripts/build-app.sh`, and `scripts/check-strings.swift` checks every language asks each |
+| `iOS/Snapfly/*.lproj`, `iOS/Share/*.lproj` | The iPhone's own translations beside `Localizable.strings`, which also holds the Shortcuts actions' names and descriptions: iOS's questions for the camera and Photos (`InfoPlist.strings`; the English ones are also the project's build settings) and Siri's phrases for Cover the Latest Screenshot (`AppShortcuts.strings`) |
 | `Shared/ScanPDF.swift` | Scanned pages as one PDF of A4 pages: each page as JPEG, or in black and white as one bit, fitted whole without stretching, an invisible text layer to find and copy in every script, and nothing of who made it but the app (tested on Linux) |
 | `Shared/ScanReading.swift`, `ScanReadingTools.swift`, `ScanFont.swift` | Tested on Linux: a page's words in reading order, a column to its end, a letterhead's side column after the letter, a table row by row, small print in columns not a table, a paragraph's lines run on and a word broken at a line's end joined, headings, right to left, every cover a mark and nothing from under one, the words the reading was unsure of kept apart (`ScanReading`); what is done with the text: corrections kept by the text as read, a table as tabs or CSV, finding, where an unsure line lies, and the text cut into pieces to speak with the spoken word found in the shown text (`ScanReadingTools`); the font of one empty glyph the PDF's invisible words are set in, written byte by byte, with the map from each glyph back to its character (`ScanFont`) |
 | `Shared/ScanClean.swift`, `ScanLight.swift`, `ScanPrint.swift`, `ScanCrease.swift`, `ScanBend.swift`, `ScanSheet.swift`, `ScanQuality.swift`, `ScanContent.swift`, `ScanGeometry.swift` | The scan's own rules, tested on Linux: the page's light made even, the paper white, a pale printed fill kept, a fold's crease evened out, a curl taken out along the page's ruled lines, light grey print toned line by line, as dark as the body, every small mark of it kept, the print sharp, in color, greys or black and white; a folded sheet's parts and clean edges; blur, reflections and a page too small found by part of the page; every number read before cleaning read after, and every character of a line read surely; the page's true shape, A4 where it is close, upright and level, and its place on A4 |
@@ -1634,7 +1726,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Collage.swift` | Joins several screenshots into one image, or into one PDF |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
-| `History.swift` | What left the line, kept for 7 or 30 days |
+| `History.swift` | What left the line, kept for 7 or 30 days, with what was hidden by hand and drawn on it, moved with the file into its folder and back |
 | `HistoryWindow.swift` | The History window: by day, searchable, a click hangs a photo again; Sent lists what went where |
 | `Shared/OrderCard.swift` | The parts of an order read off a screenshot, for Order Details: number, date, total, name, address, email, phone, tracking, code, product, with a GiroCode or Swiss QR bill read as a transfer |
 | `Bookkeeping.swift` | Save for Bookkeeping and Email to Bookkeeping…: a covered copy named for its day, order and total, and its line in Snapfly.csv |
@@ -1691,7 +1783,12 @@ The Snapfly icon is drawn in code by `scripts/make-icon.py` into
 `scripts/make-dmg.sh` builds the disk image for releases.
 
 Translations live in `Sources/Tendedero/Resources`, one `.lproj` folder per
-language. `swift scripts/check-strings.swift` checks that none is missing.
+language. The questions macOS asks before Snapfly may watch a folder, use the
+microphone or ask a browser which page is open live apart, in
+`Sources/Tendedero/InfoPlist`, one `InfoPlist.strings` per language, as the
+iPhone app takes in all of Resources beside its own; their English is in
+`scripts/build-app.sh`, which copies them into the app.
+`swift scripts/check-strings.swift` checks that none is missing.
 
 </details>
 
@@ -1700,7 +1797,7 @@ language. `swift scripts/check-strings.swift` checks that none is missing.
 ---
 
 <sub>
-1. On first launch, Snapfly offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Snapfly quits or the option is turned off in Settings. Snapfly hides automatically while an app is in full screen.
+1. On first launch, Snapfly offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Snapfly quits or the option is turned off in Settings. Without it, Snapfly picks screenshots up wherever the Screenshot app saves them, and looks at that place again each time Snapfly comes to the front, so a new location, a disk put back or a Desktop opened to it later count too. Snapfly hides automatically while an app is in full screen, unless Over full screen apps is on in Settings › Line; asked for there with Show line or Search, a note says so and where to turn it on.
 
    The Mac App Store edition may not change those settings, so its first launch starts with Snapfly's own screenshots instead, which need nothing set up: Try It Now takes the first one. Pointing the Screenshot app at Pictures › Snapfly stays a choice, in that first window and under General in Settings.
 </sub>

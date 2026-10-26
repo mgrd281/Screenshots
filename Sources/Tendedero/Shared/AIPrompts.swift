@@ -57,9 +57,22 @@ enum AIPrompts {
         set { save(newValue) }
     }
 
-    /// Whether the prompts were changed in Settings.
+    /// Whether the prompts were changed in Settings: kept, and saying
+    /// something the standard ones do not.
     static func isCustomised(in defaults: UserDefaults = .standard) -> Bool {
-        defaults.data(forKey: key) != nil
+        defaults.data(forKey: key) != nil && !areStandard(load(from: defaults))
+    }
+
+    /// Whether two lists of prompts have the same titles and words, in the
+    /// same order.
+    static func sameWords(_ a: [AIPrompt], _ b: [AIPrompt]) -> Bool {
+        a.map(\.title) == b.map(\.title) && a.map(\.text) == b.map(\.text)
+    }
+
+    /// Whether prompts say just what the standard ones say, in the
+    /// language Snapfly speaks now.
+    static func areStandard(_ prompts: [AIPrompt]) -> Bool {
+        sameWords(prompts, standard)
     }
 
     static func load(from defaults: UserDefaults = .standard) -> [AIPrompt] {
@@ -68,7 +81,10 @@ enum AIPrompts {
         return prompts
     }
 
+    /// The standard prompts are not kept, so they follow the language
+    /// Snapfly speaks.
     static func save(_ prompts: [AIPrompt], to defaults: UserDefaults = .standard) {
+        guard !areStandard(prompts) else { return restore(in: defaults) }
         defaults.set(try? JSONEncoder().encode(Array(prompts.prefix(limit))), forKey: key)
     }
 

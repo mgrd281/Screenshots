@@ -12,27 +12,32 @@ enum CoveredCopy {
     /// Nil when the copy could not be made, Vision could not read the
     /// picture or the copy, or its covers did not all land, so a picture
     /// never leaves uncovered.
+    /// - Parameter hand: parts the owner covered by hand, from 0 to 1 from
+    ///   the bottom left, covered too, whatever is found.
     static func make(_ image: CGImage, _ chosen: Set<PrivateDetail>, rules: [OwnRule] = OwnRules.all,
-                     style: CoverStyle = .current, intelligence: Bool = true) async -> (image: CGImage, report: CoverReport)? {
+                     style: CoverStyle = .current, hand: [CGRect] = [],
+                     intelligence: Bool = true) async -> (image: CGImage, report: CoverReport)? {
         await withCheckedContinuation { done in
             DispatchQueue.global(qos: .userInitiated).async {
                 let failures = Finder.failures
-                guard let made = Finder.protect(image, chosen, rules: rules, intelligence: intelligence, style: style) else {
+                guard let made = Finder.protect(image, chosen, rules: rules, hand: hand, intelligence: intelligence, style: style) else {
                     return done.resume(returning: nil)
                 }
                 // Nothing found where nothing could be read is no proof that
                 // nothing is there.
                 guard Finder.failures == failures else { return done.resume(returning: nil) }
-                let places = made.areas.map(\.rect)
+                let byHand = hand.map { Finder.Area(rect: $0, kind: nil) }
+                let places = made.areas.map(\.rect) + hand
+                let report = CoverReport(made.areas, hand: hand.count, places: places)
                 if Finder.coversHold(original: image, covered: made.image, areas: places) {
-                    return done.resume(returning: (made.image, CoverReport(made.areas, places: places)))
+                    return done.resume(returning: (made.image, report))
                 }
                 // A look that let something through is made again in ink, the surest.
-                guard let ink = Finder.cover(image, areas: made.areas, style: .ink),
+                guard let ink = Finder.cover(image, areas: made.areas + byHand, style: .ink),
                       Finder.coversHold(original: image, covered: ink, areas: places) else {
                     return done.resume(returning: nil)
                 }
-                done.resume(returning: (ink, CoverReport(made.areas, places: places)))
+                done.resume(returning: (ink, report))
             }
         }
     }

@@ -1,7 +1,7 @@
 // Run with: node --test share/
 import test from "node:test";
 import assert from "node:assert/strict";
-import worker, { DAYS, MAX_BYTES, randomID, expired, wording } from "./worker.js";
+import worker, { DAYS, MAX_BYTES, DAILY_BYTES, Quota, randomID, expired, wording } from "./worker.js";
 
 /** An R2 bucket in memory, with what the Worker uses of it. */
 class Bucket {
@@ -119,6 +119,34 @@ test("too many uploads from one place are turned away", async () => {
   const e = env();
   e.UPLOADS = { limit: async () => ({ success: false }) };
   assert.equal((await upload(e)).status, 429);
+});
+
+/** The day's count, as Cloudflare keeps a Durable Object: one, in memory. */
+function quota() {
+  const kept = new Map();
+  const counter = new Quota({ storage: {
+    async get(key) { return kept.get(key); },
+    async put(values) { for (const [key, value] of Object.entries(values)) kept.set(key, value); },
+  } });
+  return {
+    kept,
+    idFromName: (name) => name,
+    get: () => ({ fetch: (url, init) => counter.fetch(new Request(url, init)) }),
+  };
+}
+
+test("all uploads together stop at the day's bound, and a new day starts again", async () => {
+  const e = env();
+  e.QUOTA = quota();
+  assert.equal((await upload(e)).status, 201);
+  assert.equal(e.QUOTA.kept.get("bytes"), 5);
+  e.QUOTA.kept.set("bytes", DAILY_BYTES - 4);
+  assert.equal((await upload(e)).status, 429, "five bytes more than the day allows");
+  assert.equal(e.SHARES.items.size, 1, "and nothing of it was kept");
+  e.QUOTA.kept.set("day", "2000-01-01");
+  assert.equal((await upload(e)).status, 201, "a new day");
+  assert.equal(e.QUOTA.kept.get("bytes"), 5);
+  assert.deepEqual([...e.QUOTA.kept.keys()].sort(), ["bytes", "day"], "the day and its count, nothing about who");
 });
 
 test("unknown paths and IDs show nothing", async () => {

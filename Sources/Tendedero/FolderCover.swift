@@ -149,14 +149,16 @@ final class FolderCover {
 
     /// The covered copy written to `target`, a PDF as a PDF and a picture as
     /// a PNG, and what was covered in it. Nil, with nothing left behind,
-    /// when the file cannot be read.
+    /// when the file cannot be read, Vision's reading too: nothing found
+    /// then is no proof that nothing is there.
     nonisolated static func coverCopy(of url: URL, _ chosen: Set<PrivateDetail>, to target: URL) -> CoverReport? {
         if isDocument(url) {
             return DocumentCover.write(url, chosen, hand: [:], to: target)
         }
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = Cover.upright(source) else { return nil }
-        guard let made = Finder.covered(image, chosen),
+        let failures = Finder.failures
+        guard let made = Finder.covered(image, chosen), Finder.failures == failures,
               let destination = CGImageDestinationCreateWithURL(target as CFURL, UTType.png.identifier as CFString, 1, nil)
         else { return nil }
         CGImageDestinationAddImage(destination, made.image, nil)
@@ -196,7 +198,9 @@ final class FolderCover {
 
     private func speak() {
         var lines: [String] = []
-        if saved > 0 { lines.append(String(format: L("Covered copies saved: %ld"), saved)) }
+        // The copies with nothing to cover are named below, not counted as covered.
+        let covered = saved - nothingFound.count
+        if covered > 0 { lines.append(String(format: L("Covered copies saved: %ld"), covered)) }
         if !nothingFound.isEmpty {
             lines.append(String(format: L("Nothing to cover in %@. Take a look."), Self.names(nothingFound)))
         }

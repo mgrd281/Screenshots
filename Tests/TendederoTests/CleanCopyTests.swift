@@ -82,9 +82,50 @@ final class CleanCopyTests: XCTestCase {
         let copy = try XCTUnwrap(Cover.plain(original))
         XCTAssertEqual(copy.deletingPathExtension().lastPathComponent, L("Image"))
         XCTAssertEqual(copy.pathExtension, "png")
-        // A covered PDF keeps its name, which is mostly its title.
+        // A covered PDF is called Document with them, whatever its title says.
         XCTAssertEqual(Cover.newCopy(of: folder.appendingPathComponent("Rechnung 1024.pdf"), ext: "pdf")?
+            .deletingPathExtension().lastPathComponent, L("Document"))
+    }
+
+    /// A name that holds a detail being covered leaves as "Image" or
+    /// "Document", plain names or not; any other name stays, a screenshot's
+    /// date and time too while dates are not covered.
+    func testANameHoldingACoveredDetailIsReplaced() throws {
+        let before = Cover.plainNames
+        Cover.plainNames = false
+        addTeardownBlock { Cover.plainNames = before }
+        let statement = folder.appendingPathComponent("Kontoauszug_DE89370400440532013000.pdf")
+        XCTAssertEqual(Cover.newCopy(of: statement, ext: "pdf", covering: [.bank])?
+            .deletingPathExtension().lastPathComponent, L("Document"))
+        let invoice = folder.appendingPathComponent("Rechnung 1024.pdf")
+        XCTAssertEqual(Cover.newCopy(of: invoice, ext: "pdf", covering: [.bank])?
             .deletingPathExtension().lastPathComponent, "Rechnung 1024")
+        XCTAssertTrue(Cover.nameHolds("Rechnung lena.hoffmann@example.com", [.emails]))
+        XCTAssertFalse(Cover.nameHolds("Rechnung lena.hoffmann@example.com", []), "nothing covered, nothing replaced")
+        XCTAssertFalse(Cover.nameHolds("Screenshot 2026-10-17 at 17.41.47", PrivateDetail.recommended))
+        XCTAssertTrue(Cover.nameHolds("Screenshot 2026-10-17 at 17.41.47", [.dates]))
+    }
+
+    /// Copies waiting to be pasted thin out on a Mac that keeps Snapfly
+    /// running: those made over a day ago go, but those the line shows.
+    func testOldCopiesGoButThoseTheLineShowsStay() throws {
+        let fm = FileManager.default
+        let now = Date()
+        func copy(_ name: String, madeHoursAgo hours: Double) throws -> URL {
+            let place = folder.appendingPathComponent(name, isDirectory: true)
+            try fm.createDirectory(at: place, withIntermediateDirectories: true)
+            try Data("png".utf8).write(to: place.appendingPathComponent("Screenshot.png"))
+            try fm.setAttributes([.creationDate: now.addingTimeInterval(-hours * 3600)], ofItemAtPath: place.path)
+            return place
+        }
+        let old = try copy("old", madeHoursAgo: 30)
+        let shown = try copy("shown", madeHoursAgo: 30)
+        let fresh = try copy("fresh", madeHoursAgo: 2)
+
+        AppDelegate.pruneCopies(in: folder, madeBefore: now.addingTimeInterval(-24 * 3600), keeping: ["shown"])
+        XCTAssertFalse(fm.fileExists(atPath: old.path))
+        XCTAssertTrue(fm.fileExists(atPath: shown.path))
+        XCTAssertTrue(fm.fileExists(atPath: fresh.path))
     }
 
     // MARK: Helpers

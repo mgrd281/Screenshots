@@ -152,6 +152,9 @@
 "Remove All" = "إزالة الكل";
 "Cancel" = "إلغاء";
 "Done" = "تم";
+"Discard your changes?" = "تجاهل تغييراتك؟";
+"They are kept only once you click %@." = "لا تُحفَظ إلا بعد أن تنقر «%@».";
+"Keep Editing" = "تابع التعديل";
 /* TextCard, GrabArea */
 "Translate Text" = "ترجمة النص";
 "Describe" = "وصف ذكي";
@@ -269,6 +272,8 @@
 "In chat apps" = "في تطبيقات المحادثة";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT وClaude وWhatsApp وTelegram والرسائل وMail وOutlook وغيرها.";
 "Remove" = "إزالة";
+"Remove “%@”" = "إزالة «%@»";
+"Removed “%@”. Click to put it back." = "أُزيل «%@». انقر لإعادته.";
 "Add a website" = "إضافة موقع";
 "Add" = "إضافة";
 "That isn't a website, or it is in the list already." = "هذا ليس موقعًا، أو أنه موجود في القائمة.";
@@ -296,7 +301,7 @@
 "Photos that leave the line stay here until you remove them." = "الصور التي تخرج من الحبل تبقى هنا حتى تحذفها.";
 "Clear the history?" = "مسح السجل؟";
 "Clear History" = "مسح السجل";
-"The photos kept in it go to the Trash." = "الصور المحفوظة فيه تذهب إلى سلة المهملات.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "الصور المحفوظة فيه تذهب إلى سلة المهملات، وتُفرَّغ قائمة «المُرسَل» أيضًا.";
 "No history yet" = "لا يوجد سجل بعد";
 "Photos that leave the line stay here for %d days." = "الصور التي تخرج من الحبل تبقى هنا %d يومًا.";
 "History is off. Turn it on in Settings, under Line." = "السجل متوقف. شغّله من الإعدادات، تحت الحبل.";
@@ -334,6 +339,8 @@
 "Could not take the screenshot." = "تعذّر التقاط صورة الشاشة.";
 "Could not record the screen." = "تعذّر تسجيل الشاشة.";
 "Could not save the recording." = "تعذّر حفظ التسجيل.";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "تعذّر دمج صوت التسجيل في مسار صوت واحد. قد تشغّل بعض المشغّلات جزءًا منه فقط.";
+"A recording cut short last time was kept. Click to show it in Finder." = "حُفظ تسجيل انقطع في المرة السابقة. انقر لإظهاره في Finder.";
 "Could not make the GIF." = "تعذّر إنشاء صورة GIF.";
 "Make GIF" = "إنشاء GIF";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "لم يستطع Apple Intelligence الإجابة، لذا أُخفيت الكلمات المكتوبة أينما ظهرت.";
@@ -345,6 +352,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "جارٍ إنشاء GIF…";
 "The line is empty." = "الحبل فارغ.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "يبقى الحبل بعيدًا عن التطبيقات بملء الشاشة. فعّل «%1$@» في %2$@.";
 "Another app already uses this shortcut." = "تطبيق آخر يستخدم هذا الاختصار.";
 "Could not open the screenshot." = "تعذّر فتح صورة الشاشة.";
 "Could not combine the photos." = "تعذّر دمج الصور.";
@@ -503,6 +511,7 @@
 "Cover Private Details" = "تغطية المعلومات الخاصة";
 "No screenshots yet" = "لا توجد لقطات شاشة بعد";
 "Take a screenshot, then come back here." = "التقط لقطة شاشة، ثم عُد إلى هنا.";
+"Snapfly sees only the photos you chose. New screenshots show up here once you add them." = "يرى Snapfly الصور التي اخترتها فقط. تظهر لقطات الشاشة الجديدة هنا بعد أن تضيفها.";
 "Allow Snapfly to see your screenshots" = "اسمح لـ Snapfly برؤية لقطات شاشتك";
 "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "يغطي Snapfly الأسماء والعناوين وغيرها من المعلومات الخاصة في لقطات شاشتك، على هذا الآيفون نفسه.";
 "Allow Access" = "السماح بالوصول";
@@ -520,10 +529,15 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "انقر مرتين على ظهر الآيفون: تُغطّى أحدث لقطة شاشة وتُنسخ، جاهزة للّصق في الدردشة.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "لضبط ذلك مرة واحدة، افتح الإعدادات › تسهيلات الاستخدام › اللمس › النقر على الظهر › نقر مزدوج، واختر %@.";
 "Cover the Latest Screenshot" = "تغطية أحدث لقطة شاشة";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "يغطي المعلومات الخاصة في أحدث لقطة شاشة لديك وينسخها، جاهزة للّصق.";
+"Cover Screenshot" = "تغطية لقطة الشاشة";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "يغطي الأسماء والعناوين والبريد الإلكتروني وأرقام الهواتف والبيانات المصرفية في الصورة.";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "كل شيء يحدث على هذا الآيفون. لا يُرسل شيء إلى أي مكان.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "لا يُسمح لـ Snapfly برؤية لقطات شاشتك بعد. افتح Snapfly مرة واحدة واسمح له.";
 "There is no screenshot yet." = "لا توجد لقطة شاشة بعد.";
 "Covered and copied, ready to paste." = "غُطّيت ونُسخت، جاهزة للّصق.";
+"Nothing to cover was found. Copied as it is, ready to paste." = "لم يُعثر على شيء لتغطيته. نُسخت كما هي، جاهزة للّصق.";
+"Nothing to cover was found. Saved to Photos as it is." = "لم يُعثر على شيء لتغطيته. حُفظت في الصور كما هي.";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "إضافة ملفات…";
@@ -536,6 +550,8 @@
 "This PDF is too long: up to %d pages." = "ملف PDF هذا طويل جدًا: الحد %d صفحة.";
 "Still covering the private details…" = "ما زالت المعلومات الخاصة تُغطّى…";
 "Could not cover the private details in this PDF." = "تعذّرت تغطية المعلومات الخاصة في ملف PDF هذا.";
+"Could not read this picture, so all of it is covered." = "تعذّرت قراءة هذه الصورة، لذا غُطّيت كلها.";
+"Could not read this PDF, so every page is covered whole." = "تعذّرت قراءة ملف PDF هذا، لذا غُطّيت كل صفحة بالكامل.";
 "Page %d of %d" = "الصفحة %d من %d";
 "Previous Page" = "الصفحة السابقة";
 "Next Page" = "الصفحة التالية";
@@ -639,7 +655,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "إيصالات شهر كامل في ملف PDF واحد، مع صفحة تسردها، لتسليمها إلى مستشارك الضريبي.";
 "Image" = "صورة";
 "Plain file names" = "أسماء ملفات بسيطة";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "تخرج الصور ملفاتٍ جديدة، بلا ملاحظات عن متى وأين وبماذا صُنعت. ومع الأسماء البسيطة تُسمّى أيضاً «صورة»، لا باسم وقت التقاطها.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "تخرج الصور ملفاتٍ جديدة، بلا ملاحظات عن متى وأين وبماذا صُنعت. ومع الأسماء البسيطة تُسمّى أيضاً «صورة»، وملفات PDF «مستند»، لا باسم وقت التقاطها. والاسم الذي يحمل معلومة تغطيها يُستبدل في كل الأحوال.";
 "Cover what lands in a folder" = "تغطية ما يصل إلى مجلد";
 "Save copies in" = "حفظ النسخ في";
 "Cover a folder" = "تغطية مجلد";
@@ -733,7 +749,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "«%1$@» تُغطّى من الآن في كل صورة. يمكنك تغيير ذلك في %2$@.";
 "Always cover “%@”" = "تغطية «%@» دائمًا";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "يُغطّى من الآن في كل صورة، كقاعدة خاصة بك ضمن الخصوصية.";
+"Covered in every photo from now on, as a rule of your own under %@." = "يُغطّى من الآن في كل صورة، كقاعدة خاصة بك ضمن «%@».";
 "Moved to the Trash. Click to put it back on the line." = "نُقلت إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
 "%d moved to the Trash. Click to put them back on the line." = "نُقلت %d إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
 "Taken down. Click to put it back on the line." = "أُنزلت. انقر لإعادتها إلى الحبل.";
@@ -747,7 +763,7 @@
 "A short hint, once, the first time something is in reach." = "تلميح قصير، مرة واحدة فقط، أول ما يصبح شيء في متناولك.";
 "About a minute" = "نحو دقيقة";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "في طرف الحبل: ابحث في لقطاتك، أو ألصقها كلها أو نزّلها، أو أنزلها كلها عن الحبل.";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "اختر ما يُخفى في الإعدادات، أعلى قائمة لقطاتك. وهناك أيضًا: تغطية أحدث لقطة بنقرتين على ظهر الآيفون.";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "اختر ما يُخفى في المزيد › ما يُخفى. وفي المزيد أيضًا: تغطية أحدث لقطة بنقرتين على ظهر الآيفون.";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "انقر «التقاط صورة للشاشة» واسحب فوق منطقة. تُعلَّق على الحبل فورًا.";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "انقر عليها فتُنسخ، جاهزة للصق في أي محادثة. أو اسحبها مباشرة إلى محادثة.";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "انقر على أيقونته: لقطات الشاشة والحبل والإعدادات وهذا التعريف، كلها هناك.";
@@ -791,6 +807,9 @@
 "Start Again" = "ابدأ من جديد";
 "Start Introduction" = "ابدأ التعريف";
 "Take a screenshot first: this shows on a photo on the line." = "التقط صورة للشاشة أولًا: هذا يُعرض على صورة على الحبل.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "لا شيء مغطّى في أحدث صورة: هذا يُعرض على صورة فيها شيء مغطّى.";
+"The newest on the line is a screen recording: this shows on a photo." = "أحدث ما على الحبل تسجيل شاشة: هذا يُعرض على صورة.";
+"No icons are on under the photos. Turn one on in %@." = "لا توجد أيقونات مفعّلة تحت الصور. فعّل واحدة في %@.";
 "Taking a Screenshot" = "التقاط صورة للشاشة";
 "Tap a screenshot" = "اضغط على لقطة";
 "The Tag at the End of the Line" = "الشارة في طرف الحبل";
@@ -827,6 +846,8 @@
 "Product" = "المنتج";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "قُرئ على هذا الـ Mac دون تغطية؛ وأضاف %@ ما قرأه في النسخة المغطّاة.";
 "Remove Key" = "إزالة المفتاح";
+"Remove the key for %@?" = "هل تزيل مفتاح %@؟";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "لا يمكن التراجع عن هذا: تعرض %@ المفتاح مرة واحدة فقط، فستحتاج إلى إنشاء مفتاح جديد هناك.";
 "Reply" = "الرد";
 "The answer was empty." = "كان الجواب فارغًا.";
 "The keychain did not keep the key." = "لم تحتفظ سلسلة المفاتيح بالمفتاح.";
@@ -1049,6 +1070,8 @@
 "List" = "قائمة";
 "Grid or List" = "شبكة أو قائمة";
 "Copy File Path" = "انسخ مسار الملف";
+"Copy Original" = "انسخ الأصل";
+"Copy Originals" = "انسخ الأصول";
 "Rename" = "أعد التسمية";
 "Rename…" = "أعد التسمية…";
 
@@ -1092,6 +1115,14 @@
 "Covering…" = "يجري التغطية…";
 "1 place covered" = "غُطّي مكان واحد";
 "%d places covered" = "غُطّي %d مكان";
+"1 file covered" = "ملف واحد مغطّى";
+"%d files covered" = "%d ملف مغطّى";
+"1 file with nothing to cover" = "ملف واحد لا شيء فيه للتغطية";
+"%d files with nothing to cover" = "%d ملف لا شيء فيه للتغطية";
+"1 file not covered" = "ملف واحد لم يُغطَّ";
+"%d files not covered" = "%d ملف لم يُغطَّ";
+"1 file stopped" = "ملف واحد أُوقف";
+"%d files stopped" = "%d ملف أُوقف";
 "Nothing to cover" = "لا شيء للتغطية";
 "Locked with a password" = "مقفل بكلمة سر";
 "Over %d pages" = "أكثر من %d صفحة";
@@ -1108,7 +1139,7 @@
 "What to cover" = "ما الذي يُغطّى";
 "Names Only" = "الأسماء فقط";
 "As in Settings" = "كما في الإعدادات";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "تُطبَّق أيضًا قواعدك الخاصة من الإعدادات › الخصوصية. وتُقرأ كل نسخة مرة أخرى، ويُغطّى المزيد إن بقي شيء ظاهرًا.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "تُطبَّق أيضًا معلوماتك وقواعدك من %@. وتُقرأ كل نسخة مرة أخرى، ويُغطّى المزيد إن بقي شيء ظاهرًا.";
 "Read on this Mac. Nothing is sent anywhere." = "تُقرأ على هذا الماك. لا يُرسَل شيء إلى أي مكان.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "تذهب كلمات كل ملف أيضًا إلى %@، كما هو مضبوط في الإعدادات › الخصوصية.";
 "Cover 1 File" = "غطِّ ملفًا واحدًا";
@@ -1157,9 +1188,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "لم يقبل %@ المفتاح. تحقّق منه في الإعدادات › المساعد الذكي.";
+"%@ did not accept the key. Check it in More › AI Assistant." = "لم يقبل %@ المفتاح. تحقّق منه في المزيد › المساعد الذكي.";
 "%@ did not accept this key. Check it, or make a new one." = "لم يقبل %@ هذا المفتاح. تحقّق منه، أو أنشئ مفتاحًا جديدًا.";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "لا يعرف %@ النموذج %@. اختر نموذجًا آخر في الإعدادات › المساعد الذكي.";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "لا يعرف %@ النموذج %@. اختر نموذجًا آخر في المزيد › المساعد الذكي.";
 "Add your %@ key in Settings › AI Assistant." = "أضف مفتاح %@ في الإعدادات › المساعد الذكي.";
+"Add your %@ key in More › AI Assistant." = "أضف مفتاح %@ في المزيد › المساعد الذكي.";
 "Change" = "تغيير";
 "Check Again" = "تحقّق مجددًا";
 "Checking the key…" = "جارٍ التحقق من المفتاح…";
@@ -1212,6 +1246,12 @@
 "Edit…" = "تحرير…";
 "Add Prompt" = "إضافة رسالة";
 "Standard Prompts" = "الرسائل الأساسية";
+"Replace your question with the standard ones?" = "هل تستبدل سؤالك بالأسئلة الأساسية؟";
+"Replace your %d questions with the standard ones?" = "هل تستبدل أسئلتك الـ%d بالأسئلة الأساسية؟";
+"Replace your prompt with the standard ones?" = "هل تستبدل رسالتك بالرسائل الأساسية؟";
+"Replace your %d prompts with the standard ones?" = "هل تستبدل رسائلك الـ%d بالرسائل الأساسية؟";
+"What you wrote can't be brought back." = "لا يمكن استرجاع ما كتبته.";
+"Replace" = "استبدال";
 "Not written yet" = "لم تُكتب بعد";
 "Title" = "العنوان";
 "Prompt" = "الرسالة";
@@ -1279,7 +1319,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "لماك مسجَّل بحساب Apple آخر. على الماك افتح إعدادات Snapfly، ثم المزامنة، وانقر عرض الرمز.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "لآيفون مسجَّل بحساب Apple آخر: يكتب الرمز الذي يعرضه هذا الماك.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud غير جاهز للربط بعد. حاول لاحقاً.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "في Snapfly على الآيفون افتح الإعدادات، واضغط الربط بماك برمز، واكتب:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "في Snapfly على الآيفون افتح %1$@، واضغط «%2$@»، واكتب:";
 "It stops syncing with this Mac. What it sent stays here." = "يتوقف عن المزامنة مع هذا الماك. ما أرسله يبقى هنا.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "يستخدم حساب Apple نفسه الذي يستخدمه هذا الماك، لذلك يتزامن كأحد أجهزتك.";
 "It was declined on the Mac." = "رُفض الطلب على الماك.";
@@ -1428,7 +1468,7 @@
 "Previous" = "السابق";
 "Goes as soon as the copy is ready." = "يُنفَّذ حين تجهز النسخة.";
 "Search words in screenshots" = "ابحث عن كلمات في اللقطات";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "تُوجد الكلمات في اللقطات المقروءة مسبقًا. شغّل «معالجة أسرع للصور» في الإعدادات.";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "لا تُوجد الكلمات والتفاصيل الخاصة إلا في اللقطات المقروءة مسبقًا. تقرؤها «معالجة أسرع للصور» في المزيد › الكشف.";
 "All Screenshots" = "كل اللقطات";
 "With Private Details" = "فيها تفاصيل خاصة";
 "Sort" = "الترتيب";
@@ -1746,6 +1786,7 @@
 "A ring where each click landed." = "حلقة حيث وقعت كل نقرة.";
 "Add Zoom" = "إضافة تكبير";
 "Could not open the recording." = "تعذّر فتح التسجيل.";
+"Your new recording opens in Studio once you close this one." = "يُفتح تسجيلك الجديد في الاستوديو بعد أن تغلق هذا.";
 "Could not save the video." = "تعذّر حفظ الفيديو.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "اسحب التكبير على الشريط الزمني لنقله، أو اسحب طرفيه لإطالته أو تقصيره.";
 "Drag the frame on the picture to choose what it looks at." = "اسحب الإطار على الصورة لتختار ما ينظر إليه.";
@@ -1948,3 +1989,8 @@
 "Hide Preview" = "إخفاء المعاينة";
 "Preview hidden" = "المعاينة مخفية";
 "Pages: %d" = "الصفحات: %d";
+"The camera could not scan. Try again." = "تعذّر على الكاميرا المسح. حاول مرة أخرى.";
+"Delete this document?" = "حذف هذا المستند؟";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "تُحذف صفحاته مع كل ما غُطّي عليها. وتبقى الصور والملفات التي جاءت منها كما هي.";
+"Turn off faster picture processing?" = "إيقاف «معالجة أسرع للصور»؟";
+"Size unknown" = "الحجم غير معروف";

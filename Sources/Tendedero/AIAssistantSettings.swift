@@ -17,6 +17,8 @@ struct AIAssistantPane: View {
     @State private var changing = false
     @State private var model = ""
     @State private var other = false
+    /// Remove Key was clicked, and waits for its question.
+    @State private var confirmsRemoval = false
 
     private static let otherTag = "\u{0}other"
 
@@ -89,6 +91,14 @@ struct AIAssistantPane: View {
         .onAppear(perform: load)
         .onChange(of: prefs.aiProvider) { _, _ in load() }
         .onChange(of: model) { _, value in AIAccount.setModel(value, for: provider) }
+        // A provider shows a key only once, so it is not removed unasked.
+        .confirmationDialog(String(format: L("Remove the key for %@?"), provider.name), isPresented: $confirmsRemoval) {
+            Button(L("Remove Key"), role: .destructive, action: remove)
+            Button(L("Cancel"), role: .cancel) {}
+        } message: {
+            Text(String(format: L("This can't be undone: %@ shows a key only once, so you would make a new one there."),
+                        provider.maker))
+        }
     }
 
     // MARK: Connection
@@ -157,7 +167,7 @@ struct AIAssistantPane: View {
             LabeledContent {
                 HStack(spacing: 8) {
                     Button(L("Change")) { changing = true }
-                    Button(L("Remove Key"), role: .destructive, action: remove)
+                    Button(L("Remove Key"), role: .destructive) { confirmsRemoval = true }
                 }
             } label: {
                 Text(L("API key"))

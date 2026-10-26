@@ -152,6 +152,9 @@
 "Remove All" = "全部移除";
 "Cancel" = "取消";
 "Done" = "完成";
+"Discard your changes?" = "要放弃你的更改吗？";
+"They are kept only once you click %@." = "只有点按“%@”后才会保留。";
+"Keep Editing" = "继续编辑";
 /* TextCard, GrabArea */
 "Translate Text" = "翻译文本";
 "Describe" = "生成描述";
@@ -269,6 +272,8 @@
 "In chat apps" = "在聊天 App 中";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT、Claude、WhatsApp、Telegram、信息、邮件、Outlook 等。";
 "Remove" = "移除";
+"Remove “%@”" = "移除“%@”";
+"Removed “%@”. Click to put it back." = "已移除“%@”。点按可放回。";
 "Add a website" = "添加网站";
 "Add" = "添加";
 "That isn't a website, or it is in the list already." = "这不是网站，或已在列表中。";
@@ -296,7 +301,7 @@
 "Photos that leave the line stay here until you remove them." = "离开晾衣绳的照片会一直保留在这里，直到你移除。";
 "Clear the history?" = "要清除历史记录吗？";
 "Clear History" = "清除历史记录";
-"The photos kept in it go to the Trash." = "其中保留的照片会移到废纸篓。";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "其中保留的照片会移到废纸篓，“已发送”列表也会被清空。";
 "No history yet" = "还没有历史记录";
 "Photos that leave the line stay here for %d days." = "离开晾衣绳的照片会在这里保留 %d 天。";
 "History is off. Turn it on in Settings, under Line." = "历史记录已关闭。请在“设置”的“晾衣绳”中打开。";
@@ -334,6 +339,8 @@
 "Could not take the screenshot." = "无法截屏。";
 "Could not record the screen." = "无法录制屏幕。";
 "Could not save the recording." = "无法存储录制内容。";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "无法将录制内容的声音混合为一条音轨。部分播放器可能只播放其中一部分。";
+"A recording cut short last time was kept. Click to show it in Finder." = "已保留上次中断的录制内容。点按可在访达中显示。";
 "Could not make the GIF." = "无法制作 GIF。";
 "Make GIF" = "制作 GIF";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple 智能无法回答，因此在出现输入字词的地方都已隐藏。";
@@ -345,6 +352,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "正在制作 GIF…";
 "The line is empty." = "晾衣绳是空的。";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "晾衣绳不会出现在全屏 App 上。请在“%2$@”中打开“%1$@”。";
 "Another app already uses this shortcut." = "另一个 App 已在使用此快捷键。";
 "Could not open the screenshot." = "无法打开截屏。";
 "Could not combine the photos." = "无法合并照片。";
@@ -503,6 +511,7 @@
 "Cover Private Details" = "隐藏私人信息";
 "No screenshots yet" = "还没有截图";
 "Take a screenshot, then come back here." = "先截个图，再回到这里。";
+"Snapfly sees only the photos you chose. New screenshots show up here once you add them." = "Snapfly 只能看到你选择的照片。新的截图需要你添加后才会显示在这里。";
 "Allow Snapfly to see your screenshots" = "允许 Snapfly 查看你的截图";
 "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly 直接在这台 iPhone 上隐藏截图中的姓名、地址等私人信息。";
 "Allow Access" = "允许访问";
@@ -520,10 +529,15 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "轻点两下 iPhone 背面：最新的截图会被隐藏并拷贝，可直接粘贴到聊天中。";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "只需设置一次：打开“设置”›“辅助功能”›“触控”›“轻点背面”›“轻点两下”，然后选择 %@。";
 "Cover the Latest Screenshot" = "隐藏最新截图";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "隐藏你最新截图中的私人信息并拷贝，可直接粘贴。";
+"Cover Screenshot" = "隐藏截图";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "隐藏图片中的姓名、地址、电子邮件、电话号码和银行信息。";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "一切都在这台 iPhone 上完成。不会发送到任何地方。";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly 还不能查看你的截图。请打开 Snapfly 一次并允许。";
 "There is no screenshot yet." = "还没有截图。";
 "Covered and copied, ready to paste." = "已隐藏并拷贝，可直接粘贴。";
+"Nothing to cover was found. Copied as it is, ready to paste." = "未发现需要隐藏的内容。已按原样拷贝，可直接粘贴。";
+"Nothing to cover was found. Saved to Photos as it is." = "未发现需要隐藏的内容。已按原样存储到“照片”。";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "添加文件…";
@@ -536,6 +550,8 @@
 "This PDF is too long: up to %d pages." = "此 PDF 太长：最多 %d 页。";
 "Still covering the private details…" = "仍在遮盖隐私信息…";
 "Could not cover the private details in this PDF." = "无法遮盖此 PDF 中的隐私信息。";
+"Could not read this picture, so all of it is covered." = "无法读取此图像，因此已将其全部遮盖。";
+"Could not read this PDF, so every page is covered whole." = "无法读取此 PDF，因此已将每一页完全遮盖。";
 "Page %d of %d" = "第 %d 页，共 %d 页";
 "Previous Page" = "上一页";
 "Next Page" = "下一页";
@@ -639,7 +655,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "把一个月的收据合成一个 PDF，附带列表页，方便交给税务顾问。";
 "Image" = "图像";
 "Plain file names" = "简单文件名";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "图片会作为新文件发出，不带何时、何地或用什么制作的信息。开启简单文件名后，它们还会被命名为“图像”，而不是拍摄时间。";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "图片会作为新文件发出，不带何时、何地或用什么制作的信息。开启简单文件名后，它们还会被命名为“图像”，PDF 则命名为“文稿”，而不是拍摄时间。含有你所遮盖信息的名称无论如何都会被替换。";
 "Cover what lands in a folder" = "遮盖放入文件夹的内容";
 "Save copies in" = "副本存储到";
 "Cover a folder" = "遮盖文件夹";
@@ -733,7 +749,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "从现在起，每张照片中的“%1$@”都会被遮盖。可在“%2$@”中更改。";
 "Always cover “%@”" = "始终遮盖“%@”";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "从现在起每张照片都会遮盖，作为“隐私”中的自定义规则。";
+"Covered in every photo from now on, as a rule of your own under %@." = "从现在起每张照片都会遮盖，作为“%@”中的自定义规则。";
 "Moved to the Trash. Click to put it back on the line." = "已移到废纸篓。点按可放回晾衣绳。";
 "%d moved to the Trash. Click to put them back on the line." = "已将 %d 张移到废纸篓。点按可放回晾衣绳。";
 "Taken down. Click to put it back on the line." = "已取下。点按可放回晾衣绳。";
@@ -747,7 +763,7 @@
 "A short hint, once, the first time something is in reach." = "某项功能第一次可用时，显示一次简短提示。";
 "About a minute" = "约一分钟";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "在晾衣绳末端：搜索截图，全部粘贴或下载，或全部取下。";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "在截图上方的“设置”中选择要遮盖的内容。那里还有：轻点两下 iPhone 背面遮盖最新截图。";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "在“更多”›“遮盖内容”中选择要遮盖的内容。“更多”中还有：轻点两下 iPhone 背面遮盖最新截屏。";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "点按“截屏”，然后拖过一个区域。它会立刻挂到晾衣绳上。";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "点按它即可拷贝，随时粘贴到任何聊天。也可以直接拖进聊天。";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "点按它的图标：截屏、晾衣绳、设置和这个入门介绍都在那里。";
@@ -791,6 +807,9 @@
 "Start Again" = "重新开始";
 "Start Introduction" = "开始入门介绍";
 "Take a screenshot first: this shows on a photo on the line." = "请先截一张图：这要在晾衣绳上的照片上演示。";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "最新的照片上没有遮盖任何内容：这要在有遮盖内容的照片上演示。";
+"The newest on the line is a screen recording: this shows on a photo." = "晾衣绳上最新的是一段屏幕录制：这要在照片上演示。";
+"No icons are on under the photos. Turn one on in %@." = "照片下方没有打开任何图标。请在“%@”中打开一个。";
 "Taking a Screenshot" = "截屏";
 "Tap a screenshot" = "轻点一张截图";
 "The Tag at the End of the Line" = "晾衣绳末端的标签";
@@ -827,6 +846,8 @@
 "Product" = "商品";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "在这台 Mac 上未遮盖读取；%@ 补充了它在遮盖副本中读到的内容。";
 "Remove Key" = "移除密钥";
+"Remove the key for %@?" = "要移除 %@ 的密钥吗？";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "此操作无法撤销：%@ 只显示一次密钥，你需要在那里重新创建一个。";
 "Reply" = "回复";
 "The answer was empty." = "回答为空。";
 "The keychain did not keep the key." = "钥匙串未能保存密钥。";
@@ -1049,6 +1070,8 @@
 "List" = "列表";
 "Grid or List" = "网格或列表";
 "Copy File Path" = "拷贝文件路径";
+"Copy Original" = "拷贝原件";
+"Copy Originals" = "拷贝原件";
 "Rename" = "重命名";
 "Rename…" = "重命名…";
 
@@ -1092,6 +1115,14 @@
 "Covering…" = "正在遮盖…";
 "1 place covered" = "已遮盖 1 处";
 "%d places covered" = "已遮盖 %d 处";
+"1 file covered" = "已遮盖 1 个文件";
+"%d files covered" = "已遮盖 %d 个文件";
+"1 file with nothing to cover" = "1 个文件无需遮盖";
+"%d files with nothing to cover" = "%d 个文件无需遮盖";
+"1 file not covered" = "1 个文件未遮盖";
+"%d files not covered" = "%d 个文件未遮盖";
+"1 file stopped" = "1 个文件已停止";
+"%d files stopped" = "%d 个文件已停止";
 "Nothing to cover" = "无需遮盖";
 "Locked with a password" = "受密码保护";
 "Over %d pages" = "超过 %d 页";
@@ -1108,7 +1139,7 @@
 "What to cover" = "遮盖内容";
 "Names Only" = "仅姓名";
 "As in Settings" = "与设置相同";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "“设置 › 隐私”中你自己的规则同样适用。每份副本都会再次读取，如仍有内容可见则会进一步遮盖。";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "“%@”中你的信息和规则同样适用。每份副本都会再次读取，如仍有内容可见则会进一步遮盖。";
 "Read on this Mac. Nothing is sent anywhere." = "在这台 Mac 上读取，不会发送到任何地方。";
 "The words of each file also go to %@, as set in Settings › Privacy." = "按照“设置 › 隐私”中的设定，每个文件的文字也会发送给 %@。";
 "Cover 1 File" = "遮盖 1 个文件";
@@ -1157,9 +1188,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ 未接受此密钥。请在“设置 › AI 助手”中检查。";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@ 未接受此密钥。请在“更多 › AI 助手”中检查。";
 "%@ did not accept this key. Check it, or make a new one." = "%@ 未接受此密钥。请检查它，或新建一个。";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ 不认识模型 %@。请在“设置 › AI 助手”中选择其他模型。";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@ 不认识模型 %@。请在“更多 › AI 助手”中选择其他模型。";
 "Add your %@ key in Settings › AI Assistant." = "请在“设置 › AI 助手”中添加你的 %@ 密钥。";
+"Add your %@ key in More › AI Assistant." = "请在“更多 › AI 助手”中添加你的 %@ 密钥。";
 "Change" = "更改";
 "Check Again" = "重新检查";
 "Checking the key…" = "正在检查密钥…";
@@ -1212,6 +1246,12 @@
 "Edit…" = "编辑…";
 "Add Prompt" = "添加提示词";
 "Standard Prompts" = "标准提示词";
+"Replace your question with the standard ones?" = "要将你的问题替换为标准问题吗？";
+"Replace your %d questions with the standard ones?" = "要将你的 %d 个问题替换为标准问题吗？";
+"Replace your prompt with the standard ones?" = "要将你的提示词替换为标准提示词吗？";
+"Replace your %d prompts with the standard ones?" = "要将你的 %d 个提示词替换为标准提示词吗？";
+"What you wrote can't be brought back." = "你写的内容将无法恢复。";
+"Replace" = "替换";
 "Not written yet" = "尚未填写";
 "Title" = "标题";
 "Prompt" = "提示词";
@@ -1279,7 +1319,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "适用于登录其他 Apple 账户的 Mac。在 Mac 上打开 Snapfly 的设置，进入“同步”，点按“显示配对码”。";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "适用于登录其他 Apple 账户的 iPhone：在 iPhone 上输入这台 Mac 显示的配对码。";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud 尚未准备好连接。请稍后重试。";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "在 iPhone 上的 Snapfly 中打开设置，轻点“用配对码连接 Mac”，然后输入：";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "在 iPhone 上的 Snapfly 中打开“%1$@”，轻点“%2$@”，然后输入：";
 "It stops syncing with this Mac. What it sent stays here." = "它将停止与这台 Mac 同步。它已发送的内容会留在这里。";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "它与这台 Mac 使用同一个 Apple 账户，因此会作为你自己的设备同步。";
 "It was declined on the Mac." = "已在 Mac 上被拒绝。";
@@ -1428,7 +1468,7 @@
 "Previous" = "上一个";
 "Goes as soon as the copy is ready." = "副本准备好后立即执行。";
 "Search words in screenshots" = "在截屏中搜索文字";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "文字会在预先读取的截屏中找到。请在设置中打开“更快的图片处理”。";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "只有预先读取的截屏才能找到文字和私人信息。读取由“更多”›“识别”中的“更快的图片处理”完成。";
 "All Screenshots" = "所有截屏";
 "With Private Details" = "含私人信息";
 "Sort" = "排序";
@@ -1746,6 +1786,7 @@
 "A ring where each click landed." = "在每次点按的位置显示一个圆环。";
 "Add Zoom" = "添加缩放";
 "Could not open the recording." = "无法打开录制内容。";
+"Your new recording opens in Studio once you close this one." = "关闭当前录制后，新录制会在 Studio 中打开。";
 "Could not save the video." = "无法存储视频。";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "在时间线上拖移缩放可移动它，拖移两端可调整长短。";
 "Drag the frame on the picture to choose what it looks at." = "拖移画面上的框，选择镜头看向哪里。";
@@ -1948,3 +1989,8 @@
 "Hide Preview" = "隐藏预览";
 "Preview hidden" = "预览已隐藏";
 "Pages: %d" = "页数：%d";
+"The camera could not scan. Try again." = "相机无法扫描。请再试一次。";
+"Delete this document?" = "要删除此文稿吗？";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "其页面及上面的遮盖都会被删除。原来的照片和文件保持不变。";
+"Turn off faster picture processing?" = "要关闭更快的图片处理吗？";
+"Size unknown" = "大小未知";

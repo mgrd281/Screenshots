@@ -4,10 +4,10 @@ import CryptoKit
 import UniformTypeIdentifiers
 
 /// When a screenshot was taken, as evidence: a band above the picture with
-/// the date and time from the PTB's atomic clock, the page that was open in
-/// the browser, and the screenshot's fingerprint, with a word of the user's
-/// own if they want one. It is off until turned on in Settings, and then
-/// marks screenshots of the whole screen, or every screenshot.
+/// the date and time from the PTB's atomic clock, the website that was open
+/// in the browser, and the screenshot's fingerprint, with a word of the
+/// user's own if they want one. It is off until turned on in Settings, and
+/// then marks screenshots of the whole screen, or every screenshot.
 ///
 /// The screenshot itself never changes. A stamped copy is saved next to it,
 /// and like a covered detail the stamp shows on the photo that hangs and on
@@ -25,7 +25,9 @@ enum TimeStamp {
         /// By the atomic clock when `atomic`, by the Mac's clock otherwise.
         var taken: Date
         var atomic: Bool
-        /// The page open in the browser in front, if it was one.
+        /// The website open in the browser in front, if it was one, by its
+        /// host alone (`StampSite`); one kept from before holds the whole
+        /// address, of which the stamp shows the host too.
         var page: String?
         /// SHA-256 of the screenshot as it arrived.
         var fingerprint: String?
@@ -96,7 +98,8 @@ enum TimeStamp {
         let taken = created(url) ?? Date()
         guard Date().timeIntervalSince(taken) < 60 else { return }
         pending.insert(url.path)
-        let page = ChatButton.pageInFront()?.absoluteString
+        // The website alone, never the rest of its address (`StampSite`).
+        let page = ChatButton.pageInFront().flatMap { StampSite.host(of: $0.absoluteString) }
         AtomicTime.offset { offset in
             DispatchQueue.global(qos: .utility).async {
                 let record = Record(taken: taken.addingTimeInterval(offset ?? 0), atomic: offset != nil,
@@ -202,14 +205,16 @@ enum TimeStamp {
     // MARK: The words
 
     /// The lines of the band: the user's words and the date and time; where
-    /// the time comes from; the page; the fingerprint.
+    /// the time comes from; the website; the fingerprint.
     static func mark(_ record: Record, text: String, locale: Locale,
                      timeZone: TimeZone = .autoupdatingCurrent, rightToLeft: Bool) -> Mark {
         var rows = [Row(text: label(text: text, date: record.taken, locale: locale, timeZone: timeZone), kind: .title)]
         rows.append(Row(text: record.atomic ? L("Atomic time from the PTB, Germany") : L("Time from the Mac’s clock"),
                         kind: .detail))
-        if let page = record.page {
-            rows.append(Row(text: String(format: L("Page: %@"), page), kind: .detail))
+        // The website alone: a stamp kept from before with the whole address
+        // shows no more of it than one made now.
+        if let site = record.page.flatMap(StampSite.host(of:)) {
+            rows.append(Row(text: String(format: L("Page: %@"), site), kind: .detail))
         }
         if let fingerprint = record.fingerprint {
             rows.append(Row(text: String(format: L("Fingerprint (SHA-256): %@"), fingerprint), kind: .code))

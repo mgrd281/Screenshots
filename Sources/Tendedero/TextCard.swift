@@ -314,6 +314,8 @@ final class TextCardModel: ObservableObject {
     /// Order Details: the order's parts, and the one copied last.
     @Published private(set) var fields: [OrderCard.Field] = []
     @Published private(set) var copiedField: OrderCard.Part?
+    /// Order Details' Copy Row, which says so on its own button.
+    @Published private(set) var copiedRow = false
     @Published private(set) var target: Locale.Language
     @Published private(set) var pending: Pending?
     /// The result reads right to left, like Arabic.
@@ -494,12 +496,14 @@ final class TextCardModel: ObservableObject {
         copiedField = field.part
     }
 
-    /// Every part in one row with tabs between, for a spreadsheet.
+    /// Every part in one row with tabs between, for a spreadsheet. Its own
+    /// button says it was copied, not Copy All's.
     func copyRow() {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(OrderCard.row(fields), forType: .string)
-        copied = true
+        copied = false
+        copiedRow = true
     }
 
     // MARK: Translating
@@ -653,6 +657,7 @@ final class TextCardModel: ObservableObject {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(text, forType: .string)
+        copiedRow = false
         copied = true
     }
 
@@ -672,6 +677,9 @@ final class TextCardModel: ObservableObject {
 private struct TextCardView: View {
     @ObservedObject var model: TextCardModel
     let close: () -> Void
+    /// The card's reading direction, which a result in another follows
+    /// its own way.
+    @Environment(\.layoutDirection) private var layoutDirection
 
     private var title: String {
         switch model.kind {
@@ -796,12 +804,15 @@ private struct TextCardView: View {
     }
 
     private func result(_ text: String) -> some View {
-        let rtl = model.rightToLeft
+        // Leading is the card's own side: a result written the other way,
+        // Arabic on an English card or English on an Arabic one, starts on
+        // the trailing side instead.
+        let flips = model.rightToLeft != (layoutDirection == .rightToLeft)
         let words = Text(text)
             .font(.system(size: 13))
             .lineSpacing(2)
-            .multilineTextAlignment(rtl ? .trailing : .leading)
-            .frame(maxWidth: .infinity, alignment: rtl ? .trailing : .leading)
+            .multilineTextAlignment(flips ? .trailing : .leading)
+            .frame(maxWidth: .infinity, alignment: flips ? .trailing : .leading)
             .fixedSize(horizontal: false, vertical: true)
             .textSelection(.enabled)
         return Group {
@@ -880,7 +891,7 @@ private struct TextCardView: View {
                 model.copyRow()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { close() }
             } label: {
-                Label(L("Copy Row"), systemImage: "tablecells")
+                Label(model.copiedRow ? L("Copied") : L("Copy Row"), systemImage: model.copiedRow ? "checkmark" : "tablecells")
             }
             .controlSize(.large)
             .help(L("Every part in one row, for a spreadsheet"))

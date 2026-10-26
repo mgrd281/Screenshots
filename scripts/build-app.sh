@@ -75,6 +75,16 @@ for dir in Sources/Tendedero/Resources/*.lproj; do
   cp -R "$dir" "$APP/Contents/Resources/"
   LANGUAGES="$LANGUAGES<string>$(basename "$dir" .lproj)</string>"
 done
+# macOS's questions before Snapfly may watch a folder, use the microphone or
+# ask a browser, in each language. The English ones are the Info.plist's
+# below; scripts/check-strings.swift checks that every language asks each.
+# They live apart from Resources, which the iPhone app takes in whole, beside
+# an InfoPlist.strings of its own in each language.
+for strings in Sources/Tendedero/InfoPlist/*.lproj/InfoPlist.strings; do
+  LPROJ="$(basename "$(dirname "$strings")")"
+  mkdir -p "$APP/Contents/Resources/$LPROJ"
+  cp "$strings" "$APP/Contents/Resources/$LPROJ/InfoPlist.strings"
+done
 
 # The logos of WhatsApp, Gmail, GMX and WEB.DE, shown beside the paper plane.
 cp -R assets/chat-logos "$APP/Contents/Resources/chat-logos"

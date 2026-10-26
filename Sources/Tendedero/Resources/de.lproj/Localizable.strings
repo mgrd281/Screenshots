@@ -152,6 +152,9 @@
 "Remove All" = "Alle entfernen";
 "Cancel" = "Abbrechen";
 "Done" = "Fertig";
+"Discard your changes?" = "Deine Änderungen verwerfen?";
+"They are kept only once you click %@." = "Sie bleiben erst erhalten, wenn du auf „%@“ klickst.";
+"Keep Editing" = "Weiter bearbeiten";
 /* TextCard, GrabArea */
 "Translate Text" = "Text übersetzen";
 "Describe" = "Beschreiben";
@@ -269,6 +272,8 @@
 "In chat apps" = "In Chat-Apps";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Nachrichten, Mail, Outlook und andere.";
 "Remove" = "Entfernen";
+"Remove “%@”" = "„%@“ entfernen";
+"Removed “%@”. Click to put it back." = "„%@“ entfernt. Klick, um es zurückzuholen.";
 "Add a website" = "Website hinzufügen";
 "Add" = "Hinzufügen";
 "That isn't a website, or it is in the list already." = "Das ist keine Website, oder sie steht schon in der Liste.";
@@ -296,7 +301,7 @@
 "Photos that leave the line stay here until you remove them." = "Fotos, die die Leine verlassen, bleiben hier, bis du sie entfernst.";
 "Clear the history?" = "Verlauf löschen?";
 "Clear History" = "Verlauf löschen";
-"The photos kept in it go to the Trash." = "Die darin aufbewahrten Fotos kommen in den Papierkorb.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "Die darin aufbewahrten Fotos kommen in den Papierkorb, und die Liste „Gesendet“ wird auch geleert.";
 "No history yet" = "Noch kein Verlauf";
 "Photos that leave the line stay here for %d days." = "Fotos, die die Leine verlassen, bleiben hier %d Tage.";
 "History is off. Turn it on in Settings, under Line." = "Der Verlauf ist aus. Schalte ihn in den Einstellungen unter Leine ein.";
@@ -334,6 +339,8 @@
 "Could not take the screenshot." = "Das Bildschirmfoto konnte nicht aufgenommen werden.";
 "Could not record the screen." = "Der Bildschirm konnte nicht aufgenommen werden.";
 "Could not save the recording." = "Die Aufnahme konnte nicht gesichert werden.";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "Der Ton der Aufnahme konnte nicht zu einer Tonspur gemischt werden. Manche Player spielen vielleicht nur einen Teil davon ab.";
+"A recording cut short last time was kept. Click to show it in Finder." = "Eine Aufnahme, die letztes Mal abgebrochen wurde, ist erhalten geblieben. Klick, um sie im Finder zu zeigen.";
 "Could not make the GIF." = "Das GIF konnte nicht erstellt werden.";
 "Make GIF" = "GIF erstellen";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence konnte nicht antworten, deshalb sind die eingegebenen Wörter überall ausgeblendet, wo sie vorkommen.";
@@ -345,6 +352,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF wird erstellt …";
 "The line is empty." = "Die Leine ist leer.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "Die Leine bleibt bei Apps im Vollbildmodus weg. Schalte „%1$@“ unter %2$@ ein.";
 "Another app already uses this shortcut." = "Dieses Kürzel nutzt schon eine andere App.";
 "Could not open the screenshot." = "Das Bildschirmfoto konnte nicht geöffnet werden.";
 "Could not combine the photos." = "Die Fotos konnten nicht zusammengefügt werden.";
@@ -503,6 +511,7 @@
 "Cover Private Details" = "Private Angaben verdecken";
 "No screenshots yet" = "Noch keine Bildschirmfotos";
 "Take a screenshot, then come back here." = "Mach ein Bildschirmfoto und komm dann hierher zurück.";
+"Snapfly sees only the photos you chose. New screenshots show up here once you add them." = "Snapfly sieht nur die Fotos, die du ausgewählt hast. Neue Bildschirmfotos erscheinen hier, sobald du sie hinzufügst.";
 "Allow Snapfly to see your screenshots" = "Erlaube Snapfly, deine Bildschirmfotos zu sehen";
 "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly verdeckt Namen, Adressen und andere private Angaben in deinen Bildschirmfotos, direkt auf diesem iPhone.";
 "Allow Access" = "Zugriff erlauben";
@@ -520,10 +529,15 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "Tippe zweimal auf die Rückseite deines iPhone: Das neueste Bildschirmfoto wird verdeckt und kopiert, bereit zum Einsetzen in einen Chat.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Zum einmaligen Einrichten öffne Einstellungen › Bedienungshilfen › Tippen › Auf Rückseite tippen › Doppeltippen und wähle %@.";
 "Cover the Latest Screenshot" = "Neuestes Bildschirmfoto verdecken";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "Verdeckt die privaten Angaben in deinem neuesten Bildschirmfoto und kopiert es, bereit zum Einsetzen.";
+"Cover Screenshot" = "Bildschirmfoto verdecken";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "Verdeckt Namen, Adressen, E-Mails, Telefonnummern und Bankdaten in einem Bild.";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "Alles geschieht auf diesem iPhone. Nichts wird irgendwohin gesendet.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly darf deine Bildschirmfotos noch nicht sehen. Öffne Snapfly einmal und erlaube es.";
 "There is no screenshot yet." = "Es gibt noch kein Bildschirmfoto.";
 "Covered and copied, ready to paste." = "Verdeckt und kopiert, bereit zum Einsetzen.";
+"Nothing to cover was found. Copied as it is, ready to paste." = "Nichts zu verdecken gefunden. So kopiert, wie es ist, bereit zum Einsetzen.";
+"Nothing to cover was found. Saved to Photos as it is." = "Nichts zu verdecken gefunden. So in Fotos gesichert, wie es ist.";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "Dateien hinzufügen …";
@@ -536,6 +550,8 @@
 "This PDF is too long: up to %d pages." = "Dieses PDF ist zu lang: höchstens %d Seiten.";
 "Still covering the private details…" = "Private Angaben werden noch verdeckt …";
 "Could not cover the private details in this PDF." = "Die privaten Angaben in diesem PDF konnten nicht verdeckt werden.";
+"Could not read this picture, so all of it is covered." = "Dieses Bild konnte nicht gelesen werden, darum ist es ganz verdeckt.";
+"Could not read this PDF, so every page is covered whole." = "Dieses PDF konnte nicht gelesen werden, darum ist jede Seite ganz verdeckt.";
 "Page %d of %d" = "Seite %d von %d";
 "Previous Page" = "Vorherige Seite";
 "Next Page" = "Nächste Seite";
@@ -639,7 +655,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Die Belege eines Monats in einem PDF, mit einer Seite, die sie auflistet, für deine Steuerberatung.";
 "Image" = "Bild";
 "Plain file names" = "Schlichte Dateinamen";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Bilder gehen als frische Dateien hinaus, ohne Angaben dazu, wann, wo oder womit sie entstanden sind. Mit schlichten Dateinamen heißen sie außerdem „Bild“ statt nach dem Zeitpunkt der Aufnahme.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "Bilder gehen als frische Dateien hinaus, ohne Angaben dazu, wann, wo oder womit sie entstanden sind. Mit schlichten Dateinamen heißen sie außerdem „Bild“ und PDFs „Dokument“ statt nach dem Zeitpunkt der Aufnahme. Ein Name, der eine Angabe enthält, die du verdeckst, wird in jedem Fall ersetzt.";
 "Cover what lands in a folder" = "Abdecken, was in einem Ordner landet";
 "Save copies in" = "Kopien sichern in";
 "Cover a folder" = "Ordner abdecken";
@@ -733,7 +749,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "„%1$@“ wird ab jetzt in jedem Foto verdeckt. Ändern kannst du das unter %2$@.";
 "Always cover “%@”" = "„%@“ immer verdecken";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "Ab jetzt in jedem Foto verdeckt, als eigene Regel unter Datenschutz.";
+"Covered in every photo from now on, as a rule of your own under %@." = "Ab jetzt in jedem Foto verdeckt, als eigene Regel unter „%@“.";
 "Moved to the Trash. Click to put it back on the line." = "In den Papierkorb gelegt. Klick, um es wieder an die Leine zu hängen.";
 "%d moved to the Trash. Click to put them back on the line." = "%d in den Papierkorb gelegt. Klick, um sie wieder an die Leine zu hängen.";
 "Taken down. Click to put it back on the line." = "Abgenommen. Klick, um es wieder an die Leine zu hängen.";
@@ -747,7 +763,7 @@
 "A short hint, once, the first time something is in reach." = "Ein kurzer Hinweis, einmal, wenn etwas zum ersten Mal in Reichweite ist.";
 "About a minute" = "Etwa eine Minute";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "Am Ende der Leine: Bildschirmfotos durchsuchen, alle einfügen oder laden, oder alle abnehmen.";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "Was verdeckt wird, wählst du in den Einstellungen, oben über deinen Bildschirmfotos. Dort auch: das neueste Bildschirmfoto mit doppeltem Tippen auf die Rückseite deines iPhone verdecken.";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "Was verdeckt wird, wählst du unter Mehr › Was verdeckt wird. Auch unter Mehr: das neueste Bildschirmfoto mit doppeltem Tippen auf die Rückseite deines iPhone verdecken.";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "Klick auf „Bildschirmfoto aufnehmen“ und zieh über einen Bereich. Es hängt sofort an der Leine.";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "Klick darauf, und es ist kopiert, bereit zum Einfügen in jeden Chat. Oder zieh es direkt in einen hinein.";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "Klick auf sein Symbol: Bildschirmfotos, die Leine, die Einstellungen und diese Einführung findest du dort.";
@@ -791,6 +807,9 @@
 "Start Again" = "Neu starten";
 "Start Introduction" = "Einführung starten";
 "Take a screenshot first: this shows on a photo on the line." = "Mach zuerst ein Bildschirmfoto: Das zeigt sich an einem Foto auf der Leine.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "Auf dem neuesten Foto ist nichts verdeckt: Das zeigt sich an einem Foto, auf dem etwas verdeckt ist.";
+"The newest on the line is a screen recording: this shows on a photo." = "Das Neueste auf der Leine ist eine Bildschirmaufnahme: Das zeigt sich an einem Foto.";
+"No icons are on under the photos. Turn one on in %@." = "Unter den Fotos ist kein Symbol eingeschaltet. Schalte eines unter %@ ein.";
 "Taking a Screenshot" = "Ein Bildschirmfoto machen";
 "Tap a screenshot" = "Tippe auf ein Bildschirmfoto";
 "The Tag at the End of the Line" = "Das Schild am Ende der Leine";
@@ -827,6 +846,8 @@
 "Product" = "Produkt";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Auf diesem Mac gelesen, nicht verdeckt; %@ hat ergänzt, was es in der verdeckten Kopie gelesen hat.";
 "Remove Key" = "Schlüssel entfernen";
+"Remove the key for %@?" = "Den Schlüssel für %@ entfernen?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "Das lässt sich nicht rückgängig machen: %@ zeigt einen Schlüssel nur einmal, du müsstest dort einen neuen erstellen.";
 "Reply" = "Antwort";
 "The answer was empty." = "Die Antwort war leer.";
 "The keychain did not keep the key." = "Der Schlüsselbund hat den Schlüssel nicht behalten.";
@@ -1049,6 +1070,8 @@
 "List" = "Liste";
 "Grid or List" = "Raster oder Liste";
 "Copy File Path" = "Dateipfad kopieren";
+"Copy Original" = "Original kopieren";
+"Copy Originals" = "Originale kopieren";
 "Rename" = "Umbenennen";
 "Rename…" = "Umbenennen …";
 
@@ -1092,6 +1115,14 @@
 "Covering…" = "Wird verdeckt …";
 "1 place covered" = "1 Stelle verdeckt";
 "%d places covered" = "%d Stellen verdeckt";
+"1 file covered" = "1 Datei verdeckt";
+"%d files covered" = "%d Dateien verdeckt";
+"1 file with nothing to cover" = "1 Datei ohne etwas zu verdecken";
+"%d files with nothing to cover" = "%d Dateien ohne etwas zu verdecken";
+"1 file not covered" = "1 Datei nicht verdeckt";
+"%d files not covered" = "%d Dateien nicht verdeckt";
+"1 file stopped" = "1 Datei angehalten";
+"%d files stopped" = "%d Dateien angehalten";
 "Nothing to cover" = "Nichts zu verdecken";
 "Locked with a password" = "Mit Passwort geschützt";
 "Over %d pages" = "Über %d Seiten";
@@ -1108,7 +1139,7 @@
 "What to cover" = "Was verdeckt wird";
 "Names Only" = "Nur Namen";
 "As in Settings" = "Wie in Einstellungen";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Deine eigenen Regeln aus Einstellungen › Datenschutz gelten auch. Jede Kopie wird noch einmal gelesen und weiter verdeckt, falls noch etwas zu sehen ist.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "Deine Angaben und Regeln aus %@ gelten auch. Jede Kopie wird noch einmal gelesen und weiter verdeckt, falls noch etwas zu sehen ist.";
 "Read on this Mac. Nothing is sent anywhere." = "Auf diesem Mac gelesen. Nichts wird irgendwohin gesendet.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "Die Wörter jeder Datei gehen auch an %@, wie unter Einstellungen › Datenschutz eingestellt.";
 "Cover 1 File" = "1 Datei verdecken";
@@ -1157,9 +1188,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ hat den Schlüssel nicht angenommen. Prüf ihn unter Einstellungen › KI-Assistent.";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@ hat den Schlüssel nicht angenommen. Prüf ihn unter Mehr › KI-Assistent.";
 "%@ did not accept this key. Check it, or make a new one." = "%@ hat diesen Schlüssel nicht angenommen. Prüf ihn oder erstell einen neuen.";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ kennt das Modell %@ nicht. Wähl unter Einstellungen › KI-Assistent ein anderes.";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@ kennt das Modell %@ nicht. Wähl unter Mehr › KI-Assistent ein anderes.";
 "Add your %@ key in Settings › AI Assistant." = "Füg deinen %@-Schlüssel unter Einstellungen › KI-Assistent hinzu.";
+"Add your %@ key in More › AI Assistant." = "Füg deinen %@-Schlüssel unter Mehr › KI-Assistent hinzu.";
 "Change" = "Ändern";
 "Check Again" = "Erneut prüfen";
 "Checking the key…" = "Schlüssel wird geprüft …";
@@ -1212,6 +1246,12 @@
 "Edit…" = "Bearbeiten …";
 "Add Prompt" = "Prompt hinzufügen";
 "Standard Prompts" = "Standard-Prompts";
+"Replace your question with the standard ones?" = "Deine Frage durch die Standardfragen ersetzen?";
+"Replace your %d questions with the standard ones?" = "Deine %d Fragen durch die Standardfragen ersetzen?";
+"Replace your prompt with the standard ones?" = "Deinen Prompt durch die Standard-Prompts ersetzen?";
+"Replace your %d prompts with the standard ones?" = "Deine %d Prompts durch die Standard-Prompts ersetzen?";
+"What you wrote can't be brought back." = "Was du geschrieben hast, lässt sich nicht zurückholen.";
+"Replace" = "Ersetzen";
 "Not written yet" = "Noch nicht geschrieben";
 "Title" = "Titel";
 "Prompt" = "Prompt";
@@ -1279,7 +1319,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "Für einen Mac mit einem anderen Apple Account. Öffne auf dem Mac die Einstellungen von Snapfly, dann „Synchronisieren“, und klicke auf „Code zeigen“.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "Für ein iPhone mit einem anderen Apple Account: Es gibt den Code ein, den dieser Mac zeigt.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud ist noch nicht für das Verbinden bereit. Versuch es später noch einmal.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "Öffne in Snapfly auf dem iPhone die Einstellungen, tippe auf „Mit Code mit einem Mac verbinden“ und gib ein:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "Öffne in Snapfly auf dem iPhone %1$@, tippe auf „%2$@“ und gib ein:";
 "It stops syncing with this Mac. What it sent stays here." = "Es synchronisiert nicht mehr mit diesem Mac. Was es gesendet hat, bleibt hier.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "Es nutzt denselben Apple Account wie dieser Mac und synchronisiert daher als eines deiner eigenen Geräte.";
 "It was declined on the Mac." = "Auf dem Mac abgelehnt.";
@@ -1428,7 +1468,7 @@
 "Previous" = "Zurück";
 "Goes as soon as the copy is ready." = "Startet, sobald die Kopie fertig ist.";
 "Search words in screenshots" = "Wörter in Bildschirmfotos suchen";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "Wörter werden in vorab gelesenen Bildschirmfotos gefunden. Schalte in den Einstellungen „Schnellere Bildverarbeitung“ ein.";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "Wörter und private Angaben werden nur in vorab gelesenen Bildschirmfotos gefunden. Das Lesen übernimmt „Schnellere Bildverarbeitung“ unter Mehr › Erkennung.";
 "All Screenshots" = "Alle Bildschirmfotos";
 "With Private Details" = "Mit privaten Angaben";
 "Sort" = "Sortieren";
@@ -1746,6 +1786,7 @@
 "A ring where each click landed." = "Ein Ring, wo jeder Klick war.";
 "Add Zoom" = "Zoom hinzufügen";
 "Could not open the recording." = "Die Aufnahme konnte nicht geöffnet werden.";
+"Your new recording opens in Studio once you close this one." = "Deine neue Aufnahme öffnet sich im Studio, sobald du diese schließt.";
 "Could not save the video." = "Das Video konnte nicht gesichert werden.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Zieh einen Zoom auf der Zeitleiste, um ihn zu verschieben, oder seine Enden, um ihn länger oder kürzer zu machen.";
 "Drag the frame on the picture to choose what it looks at." = "Zieh den Rahmen auf dem Bild, um zu wählen, wohin er schaut.";
@@ -1948,3 +1989,8 @@
 "Hide Preview" = "Vorschau verbergen";
 "Preview hidden" = "Vorschau verborgen";
 "Pages: %d" = "Seiten: %d";
+"The camera could not scan. Try again." = "Die Kamera konnte nicht scannen. Versuch es noch einmal.";
+"Delete this document?" = "Dieses Dokument löschen?";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "Seine Seiten werden gelöscht, mit allem, was darauf verdeckt war. Die Fotos und Dateien, aus denen sie stammen, bleiben, wie sie sind.";
+"Turn off faster picture processing?" = "Schnellere Bildverarbeitung ausschalten?";
+"Size unknown" = "Größe unbekannt";

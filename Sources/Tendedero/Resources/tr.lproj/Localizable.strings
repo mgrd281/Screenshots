@@ -152,6 +152,9 @@
 "Remove All" = "Tümünü kaldır";
 "Cancel" = "Vazgeç";
 "Done" = "Bitti";
+"Discard your changes?" = "Değişikliklerin atılsın mı?";
+"They are kept only once you click %@." = "Yalnızca “%@” düğmesine tıkladığında saklanır.";
+"Keep Editing" = "Düzenlemeye devam et";
 /* TextCard, GrabArea */
 "Translate Text" = "Metni çevir";
 "Describe" = "Açıklama yaz";
@@ -269,6 +272,8 @@
 "In chat apps" = "Sohbet uygulamalarında";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Mesajlar, Mail, Outlook ve diğerleri.";
 "Remove" = "Kaldır";
+"Remove “%@”" = "“%@” kaldır";
+"Removed “%@”. Click to put it back." = "“%@” kaldırıldı. Geri koymak için tıkla.";
 "Add a website" = "Web sitesi ekle";
 "Add" = "Ekle";
 "That isn't a website, or it is in the list already." = "Bu bir web sitesi değil ya da zaten listede.";
@@ -296,7 +301,7 @@
 "Photos that leave the line stay here until you remove them." = "İpten çıkan fotoğraflar sen kaldırana kadar burada kalır.";
 "Clear the history?" = "Geçmiş temizlensin mi?";
 "Clear History" = "Geçmişi temizle";
-"The photos kept in it go to the Trash." = "İçinde tutulan fotoğraflar Çöp Sepeti’ne gider.";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "İçinde tutulan fotoğraflar Çöp Sepeti’ne gider, “Gönderilenler” listesi de boşaltılır.";
 "No history yet" = "Henüz geçmiş yok";
 "Photos that leave the line stay here for %d days." = "İpten çıkan fotoğraflar burada %d gün kalır.";
 "History is off. Turn it on in Settings, under Line." = "Geçmiş kapalı. Ayarlar’da, İp altında aç.";
@@ -334,6 +339,8 @@
 "Could not take the screenshot." = "Ekran görüntüsü alınamadı.";
 "Could not record the screen." = "Ekran kaydedilemedi.";
 "Could not save the recording." = "Kayıt saklanamadı.";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "Kaydın sesi tek bir ses kanalında birleştirilemedi. Bazı oynatıcılar yalnızca bir kısmını çalabilir.";
+"A recording cut short last time was kept. Click to show it in Finder." = "Geçen sefer yarıda kalan bir kayıt saklandı. Finder'da göstermek için tıkla.";
 "Could not make the GIF." = "GIF oluşturulamadı.";
 "Make GIF" = "GIF oluştur";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence yanıt veremedi, bu yüzden yazılan sözcükler göründükleri her yerde gizlendi.";
@@ -345,6 +352,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF oluşturuluyor…";
 "The line is empty." = "İp boş.";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "İp tam ekran uygulamaların üzerinde görünmez. %2$@ bölümünde “%1$@” seçeneğini aç.";
 "Another app already uses this shortcut." = "Bu kısayolu zaten başka bir uygulama kullanıyor.";
 "Could not open the screenshot." = "Ekran görüntüsü açılamadı.";
 "Could not combine the photos." = "Fotoğraflar birleştirilemedi.";
@@ -503,6 +511,7 @@
 "Cover Private Details" = "Özel bilgileri gizle";
 "No screenshots yet" = "Henüz ekran görüntüsü yok";
 "Take a screenshot, then come back here." = "Bir ekran görüntüsü al, sonra buraya dön.";
+"Snapfly sees only the photos you chose. New screenshots show up here once you add them." = "Snapfly yalnızca seçtiğin fotoğrafları görür. Yeni ekran görüntüleri, onları eklediğinde burada görünür.";
 "Allow Snapfly to see your screenshots" = "Snapfly’ın ekran görüntülerini görmesine izin ver";
 "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly ekran görüntülerindeki adları, adresleri ve diğer özel bilgileri doğrudan bu iPhone’da gizler.";
 "Allow Access" = "Erişime izin ver";
@@ -520,10 +529,15 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhone’unun arkasına iki kez dokun: en yeni ekran görüntüsü gizlenir ve kopyalanır, sohbete yapıştırmaya hazır olur.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Bir kez ayarlamak için Ayarlar › Erişilebilirlik › Dokunma › Arkaya Dokunma › Çift Dokunma’yı aç ve %@ seç.";
 "Cover the Latest Screenshot" = "En yeni ekran görüntüsünü gizle";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "En yeni ekran görüntündeki özel bilgileri gizler ve onu kopyalar, yapıştırmaya hazır.";
+"Cover Screenshot" = "Ekran görüntüsünü gizle";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "Bir resimdeki adları, adresleri, e-postaları, telefon numaralarını ve banka bilgilerini gizler.";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "Her şey bu iPhone’da olur. Hiçbir şey bir yere gönderilmez.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly ekran görüntülerini henüz göremiyor. Snapfly’ı bir kez aç ve izin ver.";
 "There is no screenshot yet." = "Henüz ekran görüntüsü yok.";
 "Covered and copied, ready to paste." = "Gizlendi ve kopyalandı, yapıştırmaya hazır.";
+"Nothing to cover was found. Copied as it is, ready to paste." = "Gizlenecek bir şey bulunamadı. Olduğu gibi kopyalandı, yapıştırmaya hazır.";
+"Nothing to cover was found. Saved to Photos as it is." = "Gizlenecek bir şey bulunamadı. Olduğu gibi Fotoğraflar’a kaydedildi.";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "Dosya ekle…";
@@ -536,6 +550,8 @@
 "This PDF is too long: up to %d pages." = "Bu PDF çok uzun: en fazla %d sayfa.";
 "Still covering the private details…" = "Özel bilgiler hâlâ gizleniyor…";
 "Could not cover the private details in this PDF." = "Bu PDF’teki özel bilgiler gizlenemedi.";
+"Could not read this picture, so all of it is covered." = "Bu görsel okunamadı, bu yüzden tamamı gizlendi.";
+"Could not read this PDF, so every page is covered whole." = "Bu PDF okunamadı, bu yüzden her sayfa tamamen gizlendi.";
 "Page %d of %d" = "Sayfa %d / %d";
 "Previous Page" = "Önceki sayfa";
 "Next Page" = "Sonraki sayfa";
@@ -639,7 +655,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Bir ayın fişleri, onları listeleyen bir sayfayla tek bir PDF’te, mali müşavirine vermen için.";
 "Image" = "Görsel";
 "Plain file names" = "Sade dosya adları";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Görseller ne zaman, nerede ya da neyle yapıldıklarına dair notlar olmadan yeni dosyalar olarak çıkar. Sade dosya adlarıyla ayrıca çekildikleri zamana göre değil, “Görsel” diye adlandırılır.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "Görseller ne zaman, nerede ya da neyle yapıldıklarına dair notlar olmadan yeni dosyalar olarak çıkar. Sade dosya adlarıyla ayrıca çekildikleri zamana göre değil, “Görsel”, PDF’ler ise “Belge” diye adlandırılır. Gizlediğin bir bilgiyi taşıyan ad her durumda değiştirilir.";
 "Cover what lands in a folder" = "Bir klasöre düşenleri kapat";
 "Save copies in" = "Kopyaları şuraya kaydet";
 "Cover a folder" = "Klasörü kapat";
@@ -733,7 +749,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” bundan sonra her fotoğrafta örtülür. Bunu %2$@ bölümünden değiştirebilirsin.";
 "Always cover “%@”" = "“%@” her zaman örtülsün";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "Bundan sonra her fotoğrafta örtülür; Gizlilik altında kendi kuralın olarak.";
+"Covered in every photo from now on, as a rule of your own under %@." = "Bundan sonra her fotoğrafta örtülür; “%@” altında kendi kuralın olarak.";
 "Moved to the Trash. Click to put it back on the line." = "Çöp Kutusu’na taşındı. Yeniden ipe asmak için tıkla.";
 "%d moved to the Trash. Click to put them back on the line." = "%d tanesi Çöp Kutusu’na taşındı. Yeniden ipe asmak için tıkla.";
 "Taken down. Click to put it back on the line." = "İndirildi. Yeniden ipe asmak için tıkla.";
@@ -747,7 +763,7 @@
 "A short hint, once, the first time something is in reach." = "Bir şey ilk kez elinin altına geldiğinde, bir kez, kısa bir ipucu.";
 "About a minute" = "Yaklaşık bir dakika";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "İpin sonunda: ekran görüntülerinde ara, hepsini yapıştır ya da indir veya hepsini ipten indir.";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "Neyin gizleneceğini ekran görüntülerinin üstündeki Ayarlar’da seç. Orada ayrıca: iPhone’un arkasına iki kez dokunarak en yeni ekran görüntüsünü örtmek.";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "Neyin gizleneceğini Daha fazla › Neler gizlenir’de seç. Daha fazla’da ayrıca: iPhone’un arkasına iki kez dokunarak en yeni ekran görüntüsünü örtmek.";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "“Ekran görüntüsü al”a tıkla ve bir alanın üzerinde sürükle. Hemen ipe asılır.";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "Tıkla, kopyalanır ve herhangi bir sohbete yapıştırılmaya hazır olur. Ya da doğrudan bir sohbete sürükle.";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "Simgesine tıkla: ekran görüntüleri, ip, Ayarlar ve bu tanıtım, hepsi orada.";
@@ -791,6 +807,9 @@
 "Start Again" = "Yeniden başlat";
 "Start Introduction" = "Tanıtımı başlat";
 "Take a screenshot first: this shows on a photo on the line." = "Önce bir ekran görüntüsü al: bu, ipteki bir fotoğrafta gösterilir.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "En yeni fotoğrafta gizlenen bir şey yok: bu, içinde gizlenen bir şey olan bir fotoğrafta gösterilir.";
+"The newest on the line is a screen recording: this shows on a photo." = "İpteki en yeni öğe bir ekran kaydı: bu, bir fotoğrafta gösterilir.";
+"No icons are on under the photos. Turn one on in %@." = "Fotoğrafların altında açık simge yok. %@ bölümünden birini aç.";
 "Taking a Screenshot" = "Ekran görüntüsü almak";
 "Tap a screenshot" = "Bir ekran görüntüsüne dokun";
 "The Tag at the End of the Line" = "İpin sonundaki etiket";
@@ -827,6 +846,8 @@
 "Product" = "Ürün";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Bu Mac’te örtülmeden okundu; %@ örtülü kopyada okuduklarını ekledi.";
 "Remove Key" = "Anahtarı kaldır";
+"Remove the key for %@?" = "%@ anahtarı kaldırılsın mı?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "Bu geri alınamaz: %@ bir anahtarı yalnızca bir kez gösterir, bu yüzden orada yeni bir tane oluşturman gerekir.";
 "Reply" = "Yanıt";
 "The answer was empty." = "Yanıt boştu.";
 "The keychain did not keep the key." = "Anahtar Zinciri anahtarı tutmadı.";
@@ -1049,6 +1070,8 @@
 "List" = "Liste";
 "Grid or List" = "Izgara veya liste";
 "Copy File Path" = "Dosya yolunu kopyala";
+"Copy Original" = "Orijinali kopyala";
+"Copy Originals" = "Orijinalleri kopyala";
 "Rename" = "Yeniden adlandır";
 "Rename…" = "Yeniden adlandır…";
 
@@ -1092,6 +1115,14 @@
 "Covering…" = "Kapatılıyor…";
 "1 place covered" = "1 yer kapatıldı";
 "%d places covered" = "%d yer kapatıldı";
+"1 file covered" = "1 dosya kapatıldı";
+"%d files covered" = "%d dosya kapatıldı";
+"1 file with nothing to cover" = "Kapatılacak bir şey olmayan 1 dosya";
+"%d files with nothing to cover" = "Kapatılacak bir şey olmayan %d dosya";
+"1 file not covered" = "1 dosya kapatılamadı";
+"%d files not covered" = "%d dosya kapatılamadı";
+"1 file stopped" = "1 dosya durduruldu";
+"%d files stopped" = "%d dosya durduruldu";
 "Nothing to cover" = "Kapatılacak bir şey yok";
 "Locked with a password" = "Parolayla kilitli";
 "Over %d pages" = "%d sayfadan fazla";
@@ -1108,7 +1139,7 @@
 "What to cover" = "Neler kapatılsın";
 "Names Only" = "Yalnızca adlar";
 "As in Settings" = "Ayarlardaki gibi";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Ayarlar › Gizlilik’teki kendi kuralların da uygulanır. Her kopya yeniden okunur ve hâlâ görünen bir şey varsa daha fazla kapatılır.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@ bölümündeki bilgilerin ve kuralların da uygulanır. Her kopya yeniden okunur ve hâlâ görünen bir şey varsa daha fazla kapatılır.";
 "Read on this Mac. Nothing is sent anywhere." = "Bu Mac’te okunur. Hiçbir şey hiçbir yere gönderilmez.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "Ayarlar › Gizlilik’te ayarlandığı gibi her dosyanın kelimeleri %@’a da gider.";
 "Cover 1 File" = "1 dosyayı kapat";
@@ -1157,9 +1188,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ anahtarı kabul etmedi. Ayarlar › Yapay Zekâ Asistanı’nda kontrol et.";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@ anahtarı kabul etmedi. Daha fazla › Yapay Zekâ Asistanı’nda kontrol et.";
 "%@ did not accept this key. Check it, or make a new one." = "%@ bu anahtarı kabul etmedi. Kontrol et ya da yenisini oluştur.";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@, %@ modelini tanımıyor. Ayarlar › Yapay Zekâ Asistanı’nda başka birini seç.";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@, %@ modelini tanımıyor. Daha fazla › Yapay Zekâ Asistanı’nda başka birini seç.";
 "Add your %@ key in Settings › AI Assistant." = "%@ anahtarını Ayarlar › Yapay Zekâ Asistanı’nda ekle.";
+"Add your %@ key in More › AI Assistant." = "%@ anahtarını Daha fazla › Yapay Zekâ Asistanı’nda ekle.";
 "Change" = "Değiştir";
 "Check Again" = "Yeniden Kontrol Et";
 "Checking the key…" = "Anahtar kontrol ediliyor…";
@@ -1212,6 +1246,12 @@
 "Edit…" = "Düzenle…";
 "Add Prompt" = "İstem ekle";
 "Standard Prompts" = "Standart istemler";
+"Replace your question with the standard ones?" = "Sorun standart sorularla değiştirilsin mi?";
+"Replace your %d questions with the standard ones?" = "%d sorun standart sorularla değiştirilsin mi?";
+"Replace your prompt with the standard ones?" = "İstemin standart istemlerle değiştirilsin mi?";
+"Replace your %d prompts with the standard ones?" = "%d istemin standart istemlerle değiştirilsin mi?";
+"What you wrote can't be brought back." = "Yazdıklarını geri getiremezsin.";
+"Replace" = "Değiştir";
 "Not written yet" = "Henüz yazılmadı";
 "Title" = "Başlık";
 "Prompt" = "İstem";
@@ -1279,7 +1319,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "Başka bir Apple Hesabıyla oturum açılmış Mac için. Mac’te Snapfly’ın Ayarlar’ını, sonra Eşzamanlama’yı açın ve Kodu Göster’e tıklayın.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "Başka bir Apple Hesabıyla oturum açılmış iPhone için: Bu Mac’in gösterdiği kodu yazar.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud henüz bağlanmaya hazır değil. Daha sonra yeniden deneyin.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "iPhone’daki Snapfly’da Ayarlar’ı açın, Kodla bir Mac’e bağlan’a dokunun ve şunu yazın:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "iPhone’daki Snapfly’da %1$@ bölümünü açın, “%2$@” seçeneğine dokunun ve şunu yazın:";
 "It stops syncing with this Mac. What it sent stays here." = "Bu Mac ile eşzamanlamayı bırakır. Gönderdikleri burada kalır.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "Bu Mac ile aynı Apple Hesabını kullandığından kendi aygıtlarınızdan biri olarak eşzamanlanır.";
 "It was declined on the Mac." = "Mac’te reddedildi.";
@@ -1428,7 +1468,7 @@
 "Previous" = "Önceki";
 "Goes as soon as the copy is ready." = "Kopya hazır olur olmaz yapılır.";
 "Search words in screenshots" = "Ekran görüntülerinde kelime ara";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "Kelimeler önceden okunmuş ekran görüntülerinde bulunur. Ayarlar’da “Daha hızlı görüntü işleme”yi aç.";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "Kelimeler ve özel bilgiler yalnızca önceden okunmuş ekran görüntülerinde bulunur. Onları Daha fazla › Algılama’daki “Daha hızlı görüntü işleme” okur.";
 "All Screenshots" = "Tüm ekran görüntüleri";
 "With Private Details" = "Özel bilgi içerenler";
 "Sort" = "Sırala";
@@ -1746,6 +1786,7 @@
 "A ring where each click landed." = "Her tıklamanın olduğu yerde bir halka.";
 "Add Zoom" = "Yakınlaştırma Ekle";
 "Could not open the recording." = "Kayıt açılamadı.";
+"Your new recording opens in Studio once you close this one." = "Yeni kaydın, bunu kapattığında Studio’da açılır.";
 "Could not save the video." = "Video kaydedilemedi.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Taşımak için zaman çizelgesinde bir yakınlaştırmayı sürükle, uzatmak ya da kısaltmak için uçlarını sürükle.";
 "Drag the frame on the picture to choose what it looks at." = "Nereye bakacağını seçmek için resimdeki çerçeveyi sürükle.";
@@ -1948,3 +1989,8 @@
 "Hide Preview" = "Önizlemeyi Gizle";
 "Preview hidden" = "Önizleme gizli";
 "Pages: %d" = "Sayfa: %d";
+"The camera could not scan. Try again." = "Kamera tarama yapamadı. Yeniden dene.";
+"Delete this document?" = "Bu belge silinsin mi?";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "Sayfaları, üzerlerinde kapatılanlarla birlikte silinir. Geldikleri fotoğraflar ve dosyalar olduğu gibi kalır.";
+"Turn off faster picture processing?" = "Daha hızlı görüntü işleme kapatılsın mı?";
+"Size unknown" = "Boyut bilinmiyor";

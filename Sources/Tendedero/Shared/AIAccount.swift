@@ -191,12 +191,24 @@ enum AIError: Error, Equatable {
     case offline
     case other(String)
 
+    /// The iPhone, where the assistant is set up under More.
+    private static var onPhone: Bool {
+        #if os(iOS)
+        return true
+        #else
+        return false
+        #endif
+    }
+
     var message: String {
         switch self {
+        // Where the assistant is set up: Settings on the Mac, More on the iPhone.
         case .noKey:
-            String(format: L("Add your %@ key in Settings › AI Assistant."), AIAccount.provider.name)
+            String(format: Self.onPhone ? L("Add your %@ key in More › AI Assistant.") : L("Add your %@ key in Settings › AI Assistant."),
+                   AIAccount.provider.name)
         case .badKey:
-            String(format: L("%@ did not accept the key. Check it in Settings › AI Assistant."), AIAccount.provider.name)
+            String(format: Self.onPhone ? L("%@ did not accept the key. Check it in More › AI Assistant.")
+                       : L("%@ did not accept the key. Check it in Settings › AI Assistant."), AIAccount.provider.name)
         case .noCredit:
             String(format: L("Your %@ account has no credit left. Add some on their website."), AIAccount.provider.name)
         case .busy:
@@ -204,7 +216,8 @@ enum AIError: Error, Equatable {
         case .refused:
             String(format: L("%@ would not answer about this screenshot."), AIAccount.provider.name)
         case .unknownModel(let model):
-            String(format: L("%@ does not know the model %@. Choose another one in Settings › AI Assistant."),
+            String(format: Self.onPhone ? L("%@ does not know the model %@. Choose another one in More › AI Assistant.")
+                       : L("%@ does not know the model %@. Choose another one in Settings › AI Assistant."),
                    AIAccount.provider.name, model)
         case .offline:
             L("Could not reach the internet. Check the connection and try again.")

@@ -121,11 +121,15 @@ struct ScanWorking: View {
             case .failed:
                 Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                 Text(L("The page could not be read."))
-                Button(L("Take Again"), action: retake).fontWeight(.semibold)
+                Button(L("Take Again"), action: retake)
+                    .fontWeight(.semibold)
+                    .touchTarget()
             case .needsCorners:
                 Image(systemName: "crop").foregroundStyle(.orange)
                 Text(L("Set the page's corners."))
-                Button(L("Set Corners"), action: corners).fontWeight(.semibold)
+                Button(L("Set Corners"), action: corners)
+                    .fontWeight(.semibold)
+                    .touchTarget()
             default:
                 ProgressView().controlSize(.small)
                 Text(L("Straightening and brightening…"))

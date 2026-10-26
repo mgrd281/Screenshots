@@ -396,7 +396,7 @@ struct RecentDocuments: View {
 /// A recent document: its first page whole in an 18 pt frame 156 high, a
 /// chip with how its places stand, then its name and how many pages it
 /// has and when it was changed, one line each. A tap opens it; held,
-/// Share, Rename and Delete.
+/// Share, Rename and Delete, which asks first: nothing brings it back.
 struct RecentDocumentCard: View {
     let project: PDFProject
     @ObservedObject private var store = ProjectStore.shared
@@ -410,6 +410,8 @@ struct RecentDocumentCard: View {
     @State private var unreadable = false
     @State private var renaming = false
     @State private var name = ""
+    /// Delete chosen, while it is asked.
+    @State private var deleting = false
     @ScaledMetric(relativeTo: .subheadline) private var nameSize: CGFloat = 13
     @ScaledMetric(relativeTo: .footnote) private var aboutSize: CGFloat = 12
     @ScaledMetric(relativeTo: .caption2) private var chipSize: CGFloat = 11
@@ -440,22 +442,30 @@ struct RecentDocumentCard: View {
                 name = project.name
                 renaming = true
             } label: { Label(L("Rename"), systemImage: "pencil") }
-            Button(role: .destructive) {
-                withAnimation(SnapflyMotion.document(calm)) { store.delete(project.id) }
-            } label: { Label(L("Delete"), systemImage: "trash") }
+            Button(role: .destructive) { deleting = true } label: { Label(L("Delete"), systemImage: "trash") }
         }
         .alert(L("Rename"), isPresented: $renaming) {
             TextField(L("Name"), text: $name)
             Button(L("Cancel"), role: .cancel) {}
             Button(L("Done")) { store.rename(project.id, to: name) }
         }
+        // Its folder goes for good, so Delete asks first, as Discard Scan does.
+        .confirmationDialog(L("Delete this document?"), isPresented: $deleting, titleVisibility: .visible) {
+            Button(L("Delete"), role: .destructive) {
+                withAnimation(SnapflyMotion.document(calm)) { store.delete(project.id) }
+            }
+            Button(L("Cancel"), role: .cancel) {}
+        } message: {
+            Text(L("Its pages go, with what was covered on them. The photos and files they came from stay as they are."))
+        }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(spoken)
         .accessibilityAddTraits(.isButton)
         .accessibilityAction(named: L("Share")) { store.share(project.id) }
-        .accessibilityAction(named: L("Delete")) { store.delete(project.id) }
+        .accessibilityAction(named: L("Delete")) { deleting = true }
         .accessibilityIdentifier("scan-recent")
-        .task(id: project.pages.first.map { "\($0.id)-\($0.turns)" }) {
+        // Drawn again when the first page turns, or what was covered on it by hand changes.
+        .task(id: project.pages.first.map { "\($0.id)-\($0.turns)-\(project.hand(on: $0.id))" }) {
             picture = await store.coveredFirstPage(project)
             veiled = await store.veiledFirstPage(project)
             counts = store.firstCounts(project)

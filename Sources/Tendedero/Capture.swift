@@ -429,7 +429,7 @@ final class Capture {
                     if saved {
                         self.onCapture(destination)
                     } else {
-                        log.error("Could not save a screenshot to \(destination.path, privacy: .public)")
+                        log.error("Could not save a screenshot to \(destination.path, privacy: .private)")
                         Notice.show(L("Could not save the screenshot. Check that the disk has room and the folder is still there."))
                     }
                 }
@@ -476,11 +476,12 @@ final class Capture {
         }
     }
 
-    nonisolated static func stamp() -> String {
+    /// When a capture was made, as its name says it: now, unless given.
+    nonisolated static func stamp(_ date: Date = Date()) -> String {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
         f.dateFormat = "yyyy-MM-dd 'at' HH.mm.ss"
-        return f.string(from: Date())
+        return f.string(from: date)
     }
 }
 

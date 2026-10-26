@@ -154,6 +154,9 @@
 "Remove All" = "सभी हटाएँ";
 "Cancel" = "रद्द करें";
 "Done" = "हो गया";
+"Discard your changes?" = "अपने बदलाव हटाएँ?";
+"They are kept only once you click %@." = "ये तभी रखे जाते हैं जब आप “%@” पर क्लिक करते हैं।";
+"Keep Editing" = "संपादन जारी रखें";
 /* TextCard, GrabArea */
 "Translate Text" = "टेक्स्ट का अनुवाद करें";
 "Describe" = "वर्णन लिखें";
@@ -271,6 +274,8 @@
 "In chat apps" = "चैट ऐप्स में";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook और दूसरे।";
 "Remove" = "हटाएँ";
+"Remove “%@”" = "“%@” हटाएँ";
+"Removed “%@”. Click to put it back." = "“%@” हटाया गया। वापस लाने के लिए क्लिक करें।";
 "Add a website" = "वेबसाइट जोड़ें";
 "Add" = "जोड़ें";
 "That isn't a website, or it is in the list already." = "यह वेबसाइट नहीं है, या पहले से सूची में है।";
@@ -298,7 +303,7 @@
 "Photos that leave the line stay here until you remove them." = "रस्सी से हटने वाली फ़ोटो तब तक यहाँ रहती हैं जब तक आप उन्हें न हटाएँ।";
 "Clear the history?" = "इतिहास साफ़ करें?";
 "Clear History" = "इतिहास साफ़ करें";
-"The photos kept in it go to the Trash." = "इसमें रखी फ़ोटो ट्रैश में चली जाती हैं।";
+"The photos kept in it go to the Trash, and the Sent list is emptied too." = "इसमें रखी फ़ोटो ट्रैश में चली जाती हैं, और “भेजे गए” सूची भी खाली हो जाती है।";
 "No history yet" = "अभी कोई इतिहास नहीं";
 "Photos that leave the line stay here for %d days." = "रस्सी से हटने वाली फ़ोटो यहाँ %d दिन रहती हैं।";
 "History is off. Turn it on in Settings, under Line." = "इतिहास बंद है। इसे सेटिंग्स में, रस्सी के नीचे चालू करें।";
@@ -336,6 +341,8 @@
 "Could not take the screenshot." = "स्क्रीनशॉट नहीं लिया जा सका।";
 "Could not record the screen." = "स्क्रीन रिकॉर्ड नहीं हो सकी।";
 "Could not save the recording." = "रिकॉर्डिंग सहेजी नहीं जा सकी।";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "रिकॉर्डिंग की आवाज़ एक ट्रैक में नहीं मिलाई जा सकी। कुछ प्लेयर शायद उसका सिर्फ़ एक हिस्सा चलाएँ।";
+"A recording cut short last time was kept. Click to show it in Finder." = "पिछली बार बीच में रुकी एक रिकॉर्डिंग रखी गई। Finder में दिखाने के लिए क्लिक करें।";
 "Could not make the GIF." = "GIF नहीं बन सका।";
 "Make GIF" = "GIF बनाएँ";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence जवाब नहीं दे सका, इसलिए लिखे गए शब्द जहाँ भी दिखें छिपा दिए गए।";
@@ -347,6 +354,7 @@
 /* Notes instead of beeps */
 "Making GIF…" = "GIF बन रहा है…";
 "The line is empty." = "रस्सी ख़ाली है।";
+"The line stays away from full screen apps. Turn on %1$@ in %2$@." = "रस्सी फ़ुल स्क्रीन ऐप्स से दूर रहती है। %2$@ में “%1$@” चालू करें।";
 "Another app already uses this shortcut." = "यह शॉर्टकट पहले से कोई दूसरा ऐप इस्तेमाल करता है।";
 "Could not open the screenshot." = "स्क्रीनशॉट खोला नहीं जा सका।";
 "Could not combine the photos." = "तस्वीरें जोड़ी नहीं जा सकीं।";
@@ -505,6 +513,7 @@
 "Cover Private Details" = "निजी जानकारी छिपाएँ";
 "No screenshots yet" = "अभी कोई स्क्रीनशॉट नहीं";
 "Take a screenshot, then come back here." = "स्क्रीनशॉट लें, फिर यहाँ वापस आएँ।";
+"Snapfly sees only the photos you chose. New screenshots show up here once you add them." = "Snapfly सिर्फ़ वही फ़ोटो देखता है जो आपने चुनी हैं। नए स्क्रीनशॉट यहाँ तब दिखते हैं जब आप उन्हें जोड़ते हैं।";
 "Allow Snapfly to see your screenshots" = "Snapfly को अपने स्क्रीनशॉट देखने दें";
 "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly आपके स्क्रीनशॉट में नाम, पते और दूसरी निजी जानकारी इसी iPhone पर छिपाता है।";
 "Allow Access" = "अनुमति दें";
@@ -522,10 +531,15 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "अपने iPhone के पीछे दो बार टैप करें: नया स्क्रीनशॉट छिप कर कॉपी हो जाता है, चैट में पेस्ट करने के लिए तैयार।";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "एक बार सेट करने के लिए सेटिंग्ज़ › ऐक्सेसिबिलिटी › स्पर्श › बैक टैप › डबल टैप खोलें और %@ चुनें।";
 "Cover the Latest Screenshot" = "नया स्क्रीनशॉट छिपाएँ";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "आपके सबसे नए स्क्रीनशॉट की निजी जानकारी छिपाता है और उसे कॉपी करता है, पेस्ट करने के लिए तैयार।";
+"Cover Screenshot" = "स्क्रीनशॉट छिपाएँ";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "तस्वीर में नाम, पते, ईमेल, फ़ोन नंबर और बैंक विवरण छिपाता है।";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "सब कुछ इसी iPhone पर होता है। कुछ भी कहीं नहीं भेजा जाता।";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly अभी आपके स्क्रीनशॉट नहीं देख सकता। Snapfly को एक बार खोलें और अनुमति दें।";
 "There is no screenshot yet." = "अभी कोई स्क्रीनशॉट नहीं है।";
 "Covered and copied, ready to paste." = "छिपाकर कॉपी कर दिया, पेस्ट करने के लिए तैयार।";
+"Nothing to cover was found. Copied as it is, ready to paste." = "छिपाने के लिए कुछ नहीं मिला। जैसी है वैसी कॉपी कर दी, पेस्ट करने के लिए तैयार।";
+"Nothing to cover was found. Saved to Photos as it is." = "छिपाने के लिए कुछ नहीं मिला। जैसी है वैसी फ़ोटो में सहेज दी।";
 
 /* Photos and PDFs from anywhere on the Mac */
 "Add Files…" = "फ़ाइलें जोड़ें…";
@@ -538,6 +552,8 @@
 "This PDF is too long: up to %d pages." = "यह PDF बहुत लंबा है: अधिकतम %d पेज।";
 "Still covering the private details…" = "निजी जानकारी अभी छिपाई जा रही है…";
 "Could not cover the private details in this PDF." = "इस PDF की निजी जानकारी नहीं छिपाई जा सकी।";
+"Could not read this picture, so all of it is covered." = "यह चित्र पढ़ा नहीं जा सका, इसलिए पूरा चित्र छिपा दिया गया है।";
+"Could not read this PDF, so every page is covered whole." = "यह PDF पढ़ा नहीं जा सका, इसलिए हर पेज पूरा छिपा दिया गया है।";
 "Page %d of %d" = "पेज %d / %d";
 "Previous Page" = "पिछला पेज";
 "Next Page" = "अगला पेज";
@@ -641,7 +657,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "एक महीने की रसीदें एक PDF में, उनकी सूची वाले पृष्ठ के साथ, आपके टैक्स सलाहकार को देने के लिए।";
 "Image" = "चित्र";
 "Plain file names" = "सादे फ़ाइल नाम";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "चित्र नई फ़ाइलों के रूप में जाते हैं, इस जानकारी के बिना कि वे कब, कहाँ या किससे बनाए गए। सादे फ़ाइल नामों के साथ उनका नाम भी “चित्र” होता है, न कि लेने के समय के अनुसार।";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "चित्र नई फ़ाइलों के रूप में जाते हैं, इस जानकारी के बिना कि वे कब, कहाँ या किससे बनाए गए। सादे फ़ाइल नामों के साथ उनका नाम भी “चित्र” होता है, और PDF का “दस्तावेज़”, न कि लेने के समय के अनुसार। जिस नाम में ऐसी कोई जानकारी हो जिसे आप छिपाते हैं, वह हर हाल में बदल दिया जाता है।";
 "Cover what lands in a folder" = "फ़ोल्डर में आने वाली चीज़ें ढकें";
 "Save copies in" = "कॉपियाँ यहाँ सहेजें";
 "Cover a folder" = "फ़ोल्डर ढकें";
@@ -735,7 +751,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” अब से हर फ़ोटो में ढका रहेगा। इसे %2$@ में बदल सकते हैं।";
 "Always cover “%@”" = "“%@” को हमेशा ढकें";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "अब से हर फ़ोटो में ढका रहेगा, गोपनीयता में आपके अपने नियम के रूप में।";
+"Covered in every photo from now on, as a rule of your own under %@." = "अब से हर फ़ोटो में ढका रहेगा, “%@” में आपके अपने नियम के रूप में।";
 "Moved to the Trash. Click to put it back on the line." = "ट्रैश में ले जाया गया। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
 "%d moved to the Trash. Click to put them back on the line." = "%d फ़ोटो ट्रैश में ले जाई गईं। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
 "Taken down. Click to put it back on the line." = "उतार दी गई। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
@@ -749,7 +765,7 @@
 "A short hint, once, the first time something is in reach." = "कोई चीज़ पहली बार पहुँच में आने पर, एक बार, एक छोटा-सा संकेत।";
 "About a minute" = "लगभग एक मिनट";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "रस्सी के आख़िर में: अपने स्क्रीनशॉट में खोजें, सबको पेस्ट या डाउनलोड करें, या सब उतार दें।";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "क्या छिपेगा, यह अपने स्क्रीनशॉट के ऊपर सेटिंग्स में चुनें। वहीं यह भी: iPhone के पीछे दो बार टैप करके सबसे नया स्क्रीनशॉट ढकना।";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "क्या छिपेगा, यह “और › क्या ढका जाता है” में चुनें। “और” में यह भी है: iPhone के पीछे दो बार टैप करके सबसे नया स्क्रीनशॉट ढकना।";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "“स्क्रीनशॉट लें” पर क्लिक करें और किसी हिस्से पर ड्रैग करें। वह तुरंत रस्सी पर टंग जाता है।";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "उस पर क्लिक करें, वह कॉपी हो जाता है, किसी भी चैट में पेस्ट करने को तैयार। या उसे सीधे चैट में ड्रैग करें।";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "इसके आइकन पर क्लिक करें: स्क्रीनशॉट, रस्सी, सेटिंग्स और यह परिचय, सब वहीं हैं।";
@@ -793,6 +809,9 @@
 "Start Again" = "फिर से शुरू करें";
 "Start Introduction" = "परिचय शुरू करें";
 "Take a screenshot first: this shows on a photo on the line." = "पहले एक स्क्रीनशॉट लें: यह रस्सी पर टंगी फ़ोटो पर दिखाया जाता है।";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "सबसे नई फ़ोटो में कुछ भी ढका नहीं है: यह ऐसी फ़ोटो पर दिखाया जाता है जिसमें कुछ ढका हो।";
+"The newest on the line is a screen recording: this shows on a photo." = "रस्सी पर सबसे नई चीज़ एक स्क्रीन रिकॉर्डिंग है: यह फ़ोटो पर दिखाया जाता है।";
+"No icons are on under the photos. Turn one on in %@." = "फ़ोटो के नीचे कोई आइकन चालू नहीं है। %@ में एक चालू करें।";
 "Taking a Screenshot" = "स्क्रीनशॉट लेना";
 "Tap a screenshot" = "किसी स्क्रीनशॉट पर टैप करें";
 "The Tag at the End of the Line" = "रस्सी के आख़िर का टैग";
@@ -829,6 +848,8 @@
 "Product" = "उत्पाद";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "इस Mac पर बिना ढके पढ़ा गया; %@ ने ढकी हुई कॉपी में जो पढ़ा, वह जोड़ा।";
 "Remove Key" = "कुंजी हटाएँ";
+"Remove the key for %@?" = "%@ की कुंजी हटाएँ?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "इसे पूर्ववत नहीं किया जा सकता: %@ कुंजी सिर्फ़ एक बार दिखाता है, इसलिए आपको वहाँ नई कुंजी बनानी होगी।";
 "Reply" = "जवाब";
 "The answer was empty." = "जवाब ख़ाली था।";
 "The keychain did not keep the key." = "कीचेन ने कुंजी नहीं रखी।";
@@ -1051,6 +1072,8 @@
 "List" = "सूची";
 "Grid or List" = "ग्रिड या सूची";
 "Copy File Path" = "फ़ाइल का पथ कॉपी करें";
+"Copy Original" = "मूल कॉपी करें";
+"Copy Originals" = "मूल फ़ाइलें कॉपी करें";
 "Rename" = "नाम बदलें";
 "Rename…" = "नाम बदलें…";
 
@@ -1094,6 +1117,14 @@
 "Covering…" = "ढका जा रहा है…";
 "1 place covered" = "1 जगह ढकी गई";
 "%d places covered" = "%d जगहें ढकी गईं";
+"1 file covered" = "1 फ़ाइल ढकी गई";
+"%d files covered" = "%d फ़ाइलें ढकी गईं";
+"1 file with nothing to cover" = "1 फ़ाइल जिसमें ढकने को कुछ नहीं";
+"%d files with nothing to cover" = "%d फ़ाइलें जिनमें ढकने को कुछ नहीं";
+"1 file not covered" = "1 फ़ाइल नहीं ढकी गई";
+"%d files not covered" = "%d फ़ाइलें नहीं ढकी गईं";
+"1 file stopped" = "1 फ़ाइल रोकी गई";
+"%d files stopped" = "%d फ़ाइलें रोकी गईं";
 "Nothing to cover" = "ढकने को कुछ नहीं";
 "Locked with a password" = "पासवर्ड से बंद";
 "Over %d pages" = "%d से ज़्यादा पेज";
@@ -1110,7 +1141,7 @@
 "What to cover" = "क्या ढकना है";
 "Names Only" = "केवल नाम";
 "As in Settings" = "सेटिंग्स के अनुसार";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "सेटिंग्स › गोपनीयता के आपके अपने नियम भी लागू होते हैं। हर कॉपी फिर से पढ़ी जाती है, और कुछ दिखे तो और ढका जाता है।";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@ की आपकी जानकारी और नियम भी लागू होते हैं। हर कॉपी फिर से पढ़ी जाती है, और कुछ दिखे तो और ढका जाता है।";
 "Read on this Mac. Nothing is sent anywhere." = "इसी Mac पर पढ़ा जाता है। कुछ भी कहीं नहीं भेजा जाता।";
 "The words of each file also go to %@, as set in Settings › Privacy." = "हर फ़ाइल के शब्द %@ को भी जाते हैं, जैसा सेटिंग्स › गोपनीयता में तय है।";
 "Cover 1 File" = "1 फ़ाइल ढकें";
@@ -1159,9 +1190,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ ने कुंजी स्वीकार नहीं की। इसे सेटिंग्स › AI सहायक में जाँचें।";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@ ने कुंजी स्वीकार नहीं की। इसे और › AI सहायक में जाँचें।";
 "%@ did not accept this key. Check it, or make a new one." = "%@ ने यह कुंजी स्वीकार नहीं की। इसे जाँचें, या नई बनाएँ।";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ मॉडल %@ को नहीं जानता। सेटिंग्स › AI सहायक में कोई दूसरा चुनें।";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@ मॉडल %@ को नहीं जानता। और › AI सहायक में कोई दूसरा चुनें।";
 "Add your %@ key in Settings › AI Assistant." = "सेटिंग्स › AI सहायक में अपनी %@ कुंजी जोड़ें।";
+"Add your %@ key in More › AI Assistant." = "और › AI सहायक में अपनी %@ कुंजी जोड़ें।";
 "Change" = "बदलें";
 "Check Again" = "फिर से जाँचें";
 "Checking the key…" = "कुंजी जाँची जा रही है…";
@@ -1214,6 +1248,12 @@
 "Edit…" = "संपादित करें…";
 "Add Prompt" = "प्रॉम्प्ट जोड़ें";
 "Standard Prompts" = "मानक प्रॉम्प्ट";
+"Replace your question with the standard ones?" = "अपना सवाल मानक सवालों से बदलें?";
+"Replace your %d questions with the standard ones?" = "अपने %d सवाल मानक सवालों से बदलें?";
+"Replace your prompt with the standard ones?" = "अपना प्रॉम्प्ट मानक प्रॉम्प्ट से बदलें?";
+"Replace your %d prompts with the standard ones?" = "अपने %d प्रॉम्प्ट मानक प्रॉम्प्ट से बदलें?";
+"What you wrote can't be brought back." = "आपने जो लिखा है, वह वापस नहीं लाया जा सकता।";
+"Replace" = "बदलें";
 "Not written yet" = "अभी लिखा नहीं गया";
 "Title" = "शीर्षक";
 "Prompt" = "प्रॉम्प्ट";
@@ -1281,7 +1321,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "दूसरे Apple खाते में साइन इन Mac के लिए। Mac पर Snapfly की सेटिंग्स खोलें, फिर सिंक, और कोड दिखाएँ पर क्लिक करें।";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "दूसरे Apple खाते में साइन इन iPhone के लिए: वह यह Mac जो कोड दिखाता है, उसे टाइप करता है।";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud अभी जोड़ने के लिए तैयार नहीं है। बाद में कोशिश करें।";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "iPhone पर Snapfly में सेटिंग्स खोलें, कोड से Mac से जोड़ें पर टैप करें, और टाइप करें:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "iPhone पर Snapfly में %1$@ खोलें, “%2$@” पर टैप करें, और टाइप करें:";
 "It stops syncing with this Mac. What it sent stays here." = "यह इस Mac के साथ सिंक करना बंद कर देता है। इसने जो भेजा, वह यहीं रहता है।";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "यह इस Mac वाला ही Apple खाता इस्तेमाल करता है, इसलिए यह आपके अपने डिवाइस की तरह सिंक होता है।";
 "It was declined on the Mac." = "Mac पर मना कर दिया गया।";
@@ -1430,7 +1470,7 @@
 "Previous" = "पिछला";
 "Goes as soon as the copy is ready." = "कॉपी तैयार होते ही हो जाएगा।";
 "Search words in screenshots" = "स्क्रीनशॉट में शब्द खोजें";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "शब्द पहले से पढ़े गए स्क्रीनशॉट में मिलते हैं। सेटिंग्स में “तेज़ चित्र प्रोसेसिंग” चालू करें।";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "शब्द और निजी जानकारी सिर्फ़ पहले से पढ़े गए स्क्रीनशॉट में मिलती है। इन्हें “और › पहचान” में “तेज़ चित्र प्रोसेसिंग” पढ़ती है।";
 "All Screenshots" = "सभी स्क्रीनशॉट";
 "With Private Details" = "निजी जानकारी वाले";
 "Sort" = "क्रम";
@@ -1748,6 +1788,7 @@
 "A ring where each click landed." = "हर क्लिक की जगह एक घेरा।";
 "Add Zoom" = "ज़ूम जोड़ें";
 "Could not open the recording." = "रिकॉर्डिंग नहीं खुल सकी।";
+"Your new recording opens in Studio once you close this one." = "आपकी नई रिकॉर्डिंग इसे बंद करते ही स्टूडियो में खुलेगी।";
 "Could not save the video." = "वीडियो सहेजा नहीं जा सका।";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "ज़ूम को खिसकाने के लिए टाइमलाइन पर खींचें, या उसे लंबा या छोटा करने के लिए उसके सिरे खींचें।";
 "Drag the frame on the picture to choose what it looks at." = "यह चुनने के लिए कि वह कहाँ देखे, तस्वीर पर फ़्रेम खींचें।";
@@ -1950,3 +1991,8 @@
 "Hide Preview" = "प्रीव्यू छिपाएँ";
 "Preview hidden" = "प्रीव्यू छिपा है";
 "Pages: %d" = "पेज: %d";
+"The camera could not scan. Try again." = "कैमरा स्कैन नहीं कर सका। फिर कोशिश करें।";
+"Delete this document?" = "यह दस्तावेज़ हटाएँ?";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "इसके पेज, उन पर ढकी हर चीज़ के साथ, हट जाएँगे। जिन फ़ोटो और फ़ाइलों से वे आए, वे जैसी हैं वैसी रहती हैं।";
+"Turn off faster picture processing?" = "तेज़ चित्र प्रोसेसिंग बंद करें?";
+"Size unknown" = "आकार अज्ञात";

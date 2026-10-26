@@ -23,7 +23,8 @@ struct ProjectExportSheet: View {
                                                paper: ProjectStore.shared.project?.paper ?? .original,
                                                quality: ProjectStore.shared.project?.quality ?? .medium)
     @State private var estimate: Int?
-    @State private var estimating = false
+    /// From the start, so the first moment shows the spinner, not the dash.
+    @State private var estimating = true
     @State private var working: Way?
     @State private var exporting: PDFFile?
     @State private var sharing: SharedFiles?
@@ -154,12 +155,16 @@ struct ProjectExportSheet: View {
             HStack(alignment: .firstTextBaseline) {
                 heading(L("Quality"))
                 Spacer()
+                // The spinner only while it is worked out; a dash where no page could be drawn for it.
                 Group {
-                    if let estimate, !estimating {
+                    if estimating {
+                        ProgressView().controlSize(.mini)
+                    } else if let estimate {
                         Text(String(format: L("about %@"), ByteCountFormatter.string(fromByteCount: Int64(estimate), countStyle: .file)))
                             .contentTransition(.numericText())
                     } else {
-                        ProgressView().controlSize(.mini)
+                        Text(verbatim: "–")
+                            .accessibilityLabel(L("Size unknown"))
                     }
                 }
                 .font(.subheadline)
@@ -303,7 +308,7 @@ struct ProjectExportSheet: View {
                 Label(note.text, systemImage: note.failed ? "exclamationmark.triangle.fill"
                       : options.covered ? "checkmark.circle.fill" : "checkmark.circle")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(note.failed ? Color.orange : options.covered ? SnapflyTokens.protectTint : Color.secondary)
+                    .foregroundStyle(note.failed ? SnapflyTokens.reviewOpen : options.covered ? SnapflyTokens.protectTint : Color.secondary)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(note.text)
                     .accessibilityIdentifier("project-export-note")
@@ -375,7 +380,7 @@ struct ProjectExportSheet: View {
                 let pdf = try await store.pdf(options, only: only)
                 switch way {
                 case .copy:
-                    UIPasteboard.general.setData(pdf, forPasteboardType: UTType.pdf.identifier)
+                    Clipboard.put(pdf, as: .pdf, covered: options.covered)
                     done(options.covered ? L("Copied") : L("Copied, without covers"))
                 case .save:
                     exporting = PDFFile(data: pdf)

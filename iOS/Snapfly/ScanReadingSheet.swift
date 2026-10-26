@@ -419,7 +419,7 @@ struct ScanReadingSheet: View {
             if let note {
                 Label(note.text, systemImage: note.failed ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(note.failed ? Color.orange : SnapflyTokens.protectTint)
+                    .foregroundStyle(note.failed ? SnapflyTokens.reviewOpen : SnapflyTokens.protectTint)
                     .transition(.opacity)
                     .accessibilityIdentifier("scan-reading-note")
             }
@@ -500,7 +500,7 @@ struct ScanReadingSheet: View {
     }
 
     private func copy() {
-        UIPasteboard.general.string = text
+        Clipboard.put(text, covered: covered)
         note = Note(text: covered ? L("Copied") : L("Copied, without covers"), failed: false)
         UINotificationFeedbackGenerator().notificationOccurred(.success)
     }
@@ -525,7 +525,7 @@ struct ScanReadingSheet: View {
 
     /// A table copied as tabs, to paste into cells in Numbers or Excel.
     private func copyTable(_ table: ScanReading.Table) {
-        UIPasteboard.general.string = ScanReading.tsv(table)
+        Clipboard.put(ScanReading.tsv(table), covered: covered)
         note = Note(text: L("Table copied"), failed: false)
         UINotificationFeedbackGenerator().notificationOccurred(.success)
     }

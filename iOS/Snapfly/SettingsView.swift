@@ -14,6 +14,8 @@ struct SettingsView: View {
     @StateObject private var store = MoreStore()
     @ObservedObject private var sendApps = SendApps.shared
     @ObservedObject private var sync = SyncCenter.shared
+    /// Pages asked for from another tab, like Faster picture processing from See All.
+    @ObservedObject private var tabs = AppTabs.shared
     @State private var path = SettingsView.firstPath
     /// The page's parts and the hero's covers are in: at once after the
     /// first time in a launch.
@@ -64,6 +66,16 @@ struct SettingsView: View {
                 }
             }
         }
+        .onAppear(perform: openAsked)
+        .onChange(of: tabs.morePages) { openAsked() }
+    }
+
+    /// Pages asked for from another tab, like Faster picture processing
+    /// from See All, opened over More's top as it shows.
+    private func openAsked() {
+        guard inTab, !tabs.morePages.isEmpty else { return }
+        path = tabs.morePages.map { MoreRoute(page: $0) }
+        tabs.morePages = []
     }
 
     /// Where More opens: Always Hide or one of its pages, as screenshots
@@ -429,6 +441,9 @@ struct SettingsView: View {
     private var helpButtons: some View {
         helpButton(L("Introduction"), symbol: "hand.wave", id: "more-introduction") {
             if inTab { AppTabs.shared.selection = .photos } else { dismiss() }
+            // It shows on the screenshots: without Photos, the Photos tab asks
+            // for them first, and no introduction waits to show up later.
+            guard Library.mayReadNow else { return }
             // Once the sheet or the tab has gone, on the screenshots themselves.
             Task { @MainActor in
                 try? await Task.sleep(for: .seconds(0.4))

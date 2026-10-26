@@ -41,8 +41,17 @@ enum Choice {
 enum Covering {
     /// The picture with the chosen details covered and checked, and what
     /// was covered; nil when the copy could not be made (`CoveredCopy`).
-    static func cover(_ image: CGImage, _ chosen: Set<PrivateDetail>) async -> (image: CGImage, report: CoverReport)? {
-        await CoveredCopy.make(image, chosen)
+    static func cover(_ image: CGImage, _ chosen: Set<PrivateDetail>, intelligence: Bool = true) async -> (image: CGImage, report: CoverReport)? {
+        await CoveredCopy.make(image, chosen, intelligence: intelligence)
+    }
+
+    /// A scanned page or a page of a PDF project, covered on this iPhone
+    /// alone: Apple Intelligence reads along where it is on, but never the
+    /// AI assistant, which would send its words out; a document's words
+    /// stay here. `hand` is what the owner covered on it by hand, kept with
+    /// the document, from 0 to 1 from its bottom left.
+    static func coverHere(_ image: CGImage, _ chosen: Set<PrivateDetail>, hand: [CGRect] = []) async -> (image: CGImage, report: CoverReport)? {
+        await CoveredCopy.make(image, chosen, hand: hand, intelligence: !Finder.asksAssistant)
     }
 
     static func upright(_ data: Data, longest: Int = 4096) -> CGImage? {
