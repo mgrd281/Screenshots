@@ -6,9 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
-- On the Mac, Copy in a History photo's menu copies it as it would leave
-  the line, covered, never the original. On History's Workspace page, the
-  item that copies the files as they are is now called Copy Original.
+- On the Mac, Copy in a History photo's menu copies it covered as you
+  chose under Privacy, never the original. On History's Workspace page,
+  the item that copies the files as they are is now called Copy Original.
 - On the Mac, the time stamp names the website that was open by its name
   alone, like mail.google.com, in the band and in the stamped copy's
   description, never the rest of the address, which can hold a search, an

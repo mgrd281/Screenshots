@@ -1660,10 +1660,10 @@ apps.
     22 pt accent circle with `arrow.uturn.up` says a click hangs it again.
     Its menu: Hang on the line, Send Again (it hangs, the window closes, and
     once the app in front before it is back, the photo goes in, covered;
-    else it stays copied with a note), Copy (the copy that leaves the line,
-    covered as Settings says, as the line's Copy makes it; a PDF still being
-    covered waits with the line's note), Open, Show in Finder, and Remove
-    from History.
+    else it stays copied with a note), Copy (covered as Settings says, made
+    and put on the clipboard as the line's Copy does it, never the original;
+    a PDF still being covered waits with the line's note), Open, Show in
+    Finder, and Remove from History.
   - **Orders** groups the photos with an order, invoice or customer number
     (the first one read, top to bottom) under that number, as a `number`
     label in the day headers' style, selectable, over the same grid; the

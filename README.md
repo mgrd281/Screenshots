@@ -858,7 +858,7 @@ for 30 days: History… in the menu bar, or <kbd>⌘</kbd>&thinsp;<kbd>Y</kbd>
 while the menu is open. It is grouped by day, and the search finds the words
 in every photo. A click hangs one on the line again; Send Again in its menu
 hangs it and sends it, covered, into the chat you had in front, and Copy
-copies it as it would leave the line, covered, never the original. A screenshot from
+copies it covered as you chose under Privacy, never the original. A screenshot from
 Snapfly's own folder moves into its History folder and goes to the Trash once
 its days are up; a file from anywhere else stays where it is. Choose 7, 30
 or 90 days, a year or forever, or turn it off, in Settings, under Line. It
