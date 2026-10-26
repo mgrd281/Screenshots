@@ -107,7 +107,7 @@ struct GrabArea: NSViewRepresentable {
         view.setAccessibilityValue(said.isEmpty ? nil : said.joined(separator: ". "))
         // AppKit runs accessibility actions on the main thread.
         let send = NSAccessibilityCustomAction(name: L("Paste into the app in front")) {
-            MainActor.assumeIsolated { line.paste(id) }
+            MainActor.assumeIsolated { _ = line.paste(id) }
             return true
         }
         let pin = NSAccessibilityCustomAction(name: pinned ? L("Unpin") : L("Pin")) {

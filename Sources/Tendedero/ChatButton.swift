@@ -296,10 +296,9 @@ final class ChatButton {
             layout = ChatLayouts.layout(forApp: id)
             aiChat = CoveringProfile.isAIChat(app: id, host: nil)
         } else if Self.browsers[id] != nil {
-            // The browser is asked off the main thread, once a second and at
-            // once when another window or tab comes to the front: switching
-            // to another tab or site hides it within a moment, and a chat
-            // just started moves it down.
+            // The browser is asked once a second, and at once when another
+            // window or tab comes to the front: switching to another tab or
+            // site hides it within a moment, and a chat just started moves it down.
             Self.seen(front.which, in: id)
             let read = Self.page(in: id, since: Date().addingTimeInterval(-Self.pageFresh))?.url
             guard let read, let host = read.host, let site = Self.site(for: host) else { return hide() }
@@ -350,10 +349,10 @@ final class ChatButton {
 
     /// The browser's latest answer to which page it shows, asked for after
     /// `since`; nil until there is one. Once that answer is a second old it
-    /// is asked again, through Apple Events and off the main thread, so a
-    /// busy browser never holds Snapfly up and is asked once a second at
-    /// most. macOS asks once whether Snapfly may; without it, the answer has
-    /// no page, and the button stays away from the browser.
+    /// is asked again, through Apple Events, a moment later, so a busy
+    /// browser is asked once a second at most, not at every tick. macOS asks
+    /// once whether Snapfly may; without it, the answer has no page, and the
+    /// button stays away from the browser.
     static func page(in browser: String, since: Date) -> PageAnswer? {
         let latest = answers[browser]
         if latest.map({ Date().timeIntervalSince($0.asked) >= 1 }) ?? true { ask(browser) }
@@ -370,7 +369,7 @@ final class ChatButton {
         if answers[browser].map({ Date().timeIntervalSince($0.asked) >= 0.25 }) ?? true { ask(browser) }
     }
 
-    /// Asks the browser in the background, unless it is being asked already.
+    /// Asks the browser a moment later, unless it is being asked already.
     private static func ask(_ browser: String) {
         guard let property = browsers[browser], !asking.contains(browser) else { return }
         asking.insert(browser)
@@ -637,28 +636,27 @@ final class ChatButton {
     }
 }
 
-/// Asks a browser which page it shows, through Apple Events: one question
-/// at a time, each waiting a second at most, on a queue of its own, or
-/// where it is asked when the answer cannot wait.
-private final class PageReader: @unchecked Sendable {
+/// Asks a browser which page it shows, through Apple Events, each question
+/// waiting a second at most. On the main thread, where NSAppleScript must
+/// be used: a moment after what is being drawn, and once a second at most
+/// (`ChatButton.page`), so a busy browser seldom holds Snapfly up.
+@MainActor
+private final class PageReader {
     static let shared = PageReader()
 
-    private let queue = DispatchQueue(label: "de.ghazarian.Snapfly.page", qos: .userInitiated)
-    /// One question at a time, from the queue or from the main thread.
-    private let lock = NSLock()
-    /// Made once for each browser, and used under the lock alone.
+    /// Made once for each browser.
     private var scripts: [String: NSAppleScript] = [:]
 
-    /// Asks in the background; the answer comes on the queue.
-    func ask(_ browser: String, _ property: String, then done: @escaping @Sendable (URL?) -> Void) {
-        queue.async { done(self.read(browser, property)) }
+    /// Asks a moment later, once what is being drawn now is drawn.
+    func ask(_ browser: String, _ property: String, then done: @escaping (URL?) -> Void) {
+        DispatchQueue.main.async {
+            MainActor.assumeIsolated { done(self.read(browser, property)) }
+        }
     }
 
     /// Asks and waits for the answer: nil when the browser would not say,
     /// was busy, or Snapfly may not ask it.
     func read(_ browser: String, _ property: String) -> URL? {
-        lock.lock()
-        defer { lock.unlock() }
         let script: NSAppleScript
         if let cached = scripts[browser] {
             script = cached

@@ -157,9 +157,9 @@ WEB.DE and GMX in a browser, where the photos go into the message being
 written. Settings lists
 the apps, by name and icon, and the websites; turn any off, remove it, or add
 your own. To know the page, Snapfly asks the
-browser, and macOS asks you once whether it may. It asks in the background,
-once a second and as soon as another tab comes to the front, so a busy
-browser never slows Snapfly down. It shows the newest photo and how many
+browser, and macOS asks you once whether it may. It asks once a second, and
+as soon as another tab comes to the front, so a busy browser seldom slows
+Snapfly down. It shows the newest photo and how many
 will go. One click and they are in, without a trip to the top of the screen.
 Over the chats it knows, like ChatGPT, Claude, Gemini, WhatsApp, Telegram
 or Slack, it finds that spot by itself, measured on each one: on a new chat,
