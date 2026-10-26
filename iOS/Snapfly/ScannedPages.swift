@@ -581,15 +581,23 @@ final class ScannedPages: ObservableObject {
         let mode = self.mode
         let file: Data?
         if covered {
-            let pages = try await self.covered(failing: L("Page %d could not be covered, so no PDF was made."))
-            file = await Task.detached(priority: .userInitiated) {
-                let made = pages.compactMap { page -> ScanPDF.Page? in
-                    let words = text ? ScanCleaner.words(in: Finder.lines(in: page.image) ?? [], hiding: page.places,
-                                                         aspect: ScanCleaner.aspect(of: page.image)) : []
-                    return ScanCleaner.pdfPage(page.image, mode: mode, words: words)
-                }
-                return made.count == pages.count ? ScanPDF.make(made) : nil
-            }.value
+            // A page at a time, covered and made the PDF's page at once, so a
+            // long scan never holds every page covered whole together.
+            var made: [ScanPDF.Page] = []
+            defer { making = nil }
+            for (index, page) in pages.enumerated() {
+                making = index + 1
+                let one = try await self.covered(page, number: index + 1, failing: L("Page %d could not be covered, so no PDF was made."))
+                let drawn = await Task.detached(priority: .userInitiated) { () -> ScanPDF.Page? in
+                    let words = text ? ScanCleaner.words(in: Finder.lines(in: one.image) ?? [], hiding: one.places,
+                                                         aspect: ScanCleaner.aspect(of: one.image)) : []
+                    return ScanCleaner.pdfPage(one.image, mode: mode, words: words)
+                }.value
+                guard let drawn else { throw ScanProblem(message: L("The file could not be made.")) }
+                made.append(drawn)
+            }
+            let all = made
+            file = await Task.detached(priority: .userInitiated) { ScanPDF.make(all) }.value
         } else {
             let pages = try await uncovered()
             file = await Task.detached(priority: .userInitiated) {
