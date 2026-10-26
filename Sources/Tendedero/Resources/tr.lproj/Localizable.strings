@@ -1228,6 +1228,12 @@
 "Edit…" = "Düzenle…";
 "Add Prompt" = "İstem ekle";
 "Standard Prompts" = "Standart istemler";
+"Replace your question with the standard ones?" = "Sorun standart sorularla değiştirilsin mi?";
+"Replace your %d questions with the standard ones?" = "%d sorun standart sorularla değiştirilsin mi?";
+"Replace your prompt with the standard ones?" = "İstemin standart istemlerle değiştirilsin mi?";
+"Replace your %d prompts with the standard ones?" = "%d istemin standart istemlerle değiştirilsin mi?";
+"What you wrote can't be brought back." = "Yazdıklarını geri getiremezsin.";
+"Replace" = "Değiştir";
 "Not written yet" = "Henüz yazılmadı";
 "Title" = "Başlık";
 "Prompt" = "İstem";

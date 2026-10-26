@@ -1806,8 +1806,13 @@ apps.
     the field prompted with the first standard question, under them Add
     Question and, once the questions were changed, Standard Questions,
     which puts the five back; a footer saying where they are offered. Saved
-    like the messages. The standard five are localized, so a chat answers
-    in the user's language.
+    like the messages, but only once they say something else than what is
+    kept: questions that say what the standard ones say are not kept. The
+    standard five are localized, so a chat answers in the user's language.
+    While any question is written, Standard Questions asks first in a
+    confirmation dialog, "Replace your 3 questions with the standard
+    ones?", with a destructive Replace and Cancel over the line that what
+    was written can't be brought back; Standard Prompts asks the same.
   - **Settings › Line › Prompts for AI chats**: a switch, Numbers beside
     the send button (on), then one row per prompt: its number in
     `.secondary` and its title, the first line of its text under them (Not

@@ -64,6 +64,10 @@ keeps a download of each version.
   away what you changed. Opening the same photo again brings its window
   back as you left it, and a new recording waits for Studio to be closed
   instead of replacing the zooms and arrows you were working on.
+- On the Mac, Standard Prompts and Standard Questions ask before they
+  replace what you wrote, and a look at Settings › Line no longer keeps the
+  standard questions as your own: they stay in the language Snapfly
+  speaks, and Standard Questions shows only once you changed them.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

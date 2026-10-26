@@ -1228,6 +1228,12 @@
 "Edit…" = "Editar…";
 "Add Prompt" = "Engadir prompt";
 "Standard Prompts" = "Prompts estándar";
+"Replace your question with the standard ones?" = "Substituír a túa pregunta polas preguntas estándar?";
+"Replace your %d questions with the standard ones?" = "Substituír as túas %d preguntas polas preguntas estándar?";
+"Replace your prompt with the standard ones?" = "Substituír o teu prompt polos prompts estándar?";
+"Replace your %d prompts with the standard ones?" = "Substituír os teus %d prompts polos prompts estándar?";
+"What you wrote can't be brought back." = "O que escribiches non se poderá recuperar.";
+"Replace" = "Substituír";
 "Not written yet" = "Aínda sen escribir";
 "Title" = "Título";
 "Prompt" = "Prompt";

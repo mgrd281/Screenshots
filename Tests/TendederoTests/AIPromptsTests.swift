@@ -38,6 +38,25 @@ final class AIPromptsTests: XCTestCase {
         XCTAssertEqual(AIPrompts.offered(from: defaults).count, 2)
     }
 
+    func testTheStandardPromptsAreNotKept() throws {
+        let (defaults, suite) = try defaults()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        // Saved as they stand, they are not kept, so they follow the
+        // language Snapfly speaks; kept that way before, they still count
+        // as standard.
+        AIPrompts.save(AIPrompts.standard, to: defaults)
+        XCTAssertNil(defaults.data(forKey: AIPrompts.key))
+        XCTAssertFalse(AIPrompts.isCustomised(in: defaults))
+        defaults.set(try JSONEncoder().encode(AIPrompts.standard), forKey: AIPrompts.key)
+        XCTAssertFalse(AIPrompts.isCustomised(in: defaults))
+        // A new title is a change, and kept.
+        var changed = AIPrompts.standard
+        changed[1].title = "Antwort an die Kundin"
+        AIPrompts.save(changed, to: defaults)
+        XCTAssertTrue(AIPrompts.isCustomised(in: defaults))
+        XCTAssertTrue(AIPrompts.sameWords(AIPrompts.load(from: defaults), changed))
+    }
+
     func testNineAtMostOneDigitEach() throws {
         let (defaults, suite) = try defaults()
         defer { defaults.removePersistentDomain(forName: suite) }

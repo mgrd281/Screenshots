@@ -1228,6 +1228,12 @@
 "Edit…" = "編集…";
 "Add Prompt" = "プロンプトを追加";
 "Standard Prompts" = "標準のプロンプト";
+"Replace your question with the standard ones?" = "あなたの質問を標準の質問に置き換えますか？";
+"Replace your %d questions with the standard ones?" = "%d件の質問を標準の質問に置き換えますか？";
+"Replace your prompt with the standard ones?" = "あなたのプロンプトを標準のプロンプトに置き換えますか？";
+"Replace your %d prompts with the standard ones?" = "%d件のプロンプトを標準のプロンプトに置き換えますか？";
+"What you wrote can't be brought back." = "書いた内容は元に戻せません。";
+"Replace" = "置き換える";
 "Not written yet" = "まだ書かれていません";
 "Title" = "タイトル";
 "Prompt" = "プロンプト";

@@ -1228,6 +1228,12 @@
 "Edit…" = "编辑…";
 "Add Prompt" = "添加提示词";
 "Standard Prompts" = "标准提示词";
+"Replace your question with the standard ones?" = "要将你的问题替换为标准问题吗？";
+"Replace your %d questions with the standard ones?" = "要将你的 %d 个问题替换为标准问题吗？";
+"Replace your prompt with the standard ones?" = "要将你的提示词替换为标准提示词吗？";
+"Replace your %d prompts with the standard ones?" = "要将你的 %d 个提示词替换为标准提示词吗？";
+"What you wrote can't be brought back." = "你写的内容将无法恢复。";
+"Replace" = "替换";
 "Not written yet" = "尚未填写";
 "Title" = "标题";
 "Prompt" = "提示词";

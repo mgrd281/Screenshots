@@ -759,10 +759,14 @@ final class Preferences: ObservableObject {
         }
     }
 
+    /// Keeps the questions once they say something else than what is kept,
+    /// so leaving the pane keeps nothing and the standard ones go on
+    /// following the language Snapfly speaks.
     func saveQuestions() {
         questionsSave?.cancel()
+        guard !AIQuestions.sameWords(aiQuestions, AIQuestions.all) else { return }
         AIQuestions.all = aiQuestions
-        questionsCustomised = true
+        questionsCustomised = AIQuestions.isCustomised()
     }
 
     /// The standard questions again, in place of the owner's.
@@ -803,9 +807,12 @@ final class Preferences: ObservableObject {
         savePrompts()
     }
 
+    /// Keeps the prompts once they say something else than what is kept,
+    /// as the questions are kept.
     private func savePrompts() {
+        guard !AIPrompts.sameWords(aiPrompts, AIPrompts.all) else { return }
         AIPrompts.all = aiPrompts
-        promptsCustomised = true
+        promptsCustomised = AIPrompts.isCustomised()
     }
 
     /// The standard prompts again, in place of the owner's.
@@ -1985,9 +1992,14 @@ private struct SavedMessagesSection: View {
 }
 
 /// The questions a photo can go into ChatGPT or Claude with: one row each,
-/// as the saved messages, with a way back to the standard ones.
+/// as the saved messages, with a way back to the standard ones that asks
+/// first while any is written.
 private struct AIQuestionsSection: View {
     @ObservedObject var prefs: Preferences
+    @State private var confirmsStandard = false
+
+    /// The questions written, which the standard ones would replace.
+    private var written: Int { prefs.aiQuestions.filter { !$0.isBlank }.count }
 
     var body: some View {
         Section {
@@ -2007,7 +2019,9 @@ private struct AIQuestionsSection: View {
             HStack {
                 Button(L("Add Question")) { prefs.addQuestion() }
                 if prefs.questionsCustomised {
-                    Button(L("Standard Questions")) { prefs.restoreQuestions() }
+                    Button(L("Standard Questions")) {
+                        if written > 0 { confirmsStandard = true } else { prefs.restoreQuestions() }
+                    }
                 }
             }
         } header: {
@@ -2018,6 +2032,14 @@ private struct AIQuestionsSection: View {
         }
         .onChange(of: prefs.aiQuestions) { _, _ in prefs.questionsChanged() }
         .onDisappear { prefs.saveQuestions() }
+        .confirmationDialog(written == 1 ? L("Replace your question with the standard ones?")
+                                : String(format: L("Replace your %d questions with the standard ones?"), written),
+                            isPresented: $confirmsStandard) {
+            Button(L("Replace"), role: .destructive) { prefs.restoreQuestions() }
+            Button(L("Cancel"), role: .cancel) {}
+        } message: {
+            Text(L("What you wrote can't be brought back."))
+        }
     }
 }
 
@@ -2027,6 +2049,10 @@ private struct AIQuestionsSection: View {
 private struct AIPromptsSection: View {
     @ObservedObject var prefs: Preferences
     @State private var editing: AIPrompt?
+    @State private var confirmsStandard = false
+
+    /// The prompts written, which the standard ones would replace.
+    private var written: Int { prefs.aiPrompts.filter { !$0.isBlank }.count }
 
     var body: some View {
         Section {
@@ -2056,7 +2082,9 @@ private struct AIPromptsSection: View {
                 Button(L("Add Prompt")) { editing = prefs.addPrompt() }
                     .disabled(prefs.aiPrompts.count >= AIPrompts.limit)
                 if prefs.promptsCustomised {
-                    Button(L("Standard Prompts")) { prefs.restorePrompts() }
+                    Button(L("Standard Prompts")) {
+                        if written > 0 { confirmsStandard = true } else { prefs.restorePrompts() }
+                    }
                 }
             }
         } header: {
@@ -2073,6 +2101,14 @@ private struct AIPromptsSection: View {
             } cancel: {
                 editing = nil
             }
+        }
+        .confirmationDialog(written == 1 ? L("Replace your prompt with the standard ones?")
+                                : String(format: L("Replace your %d prompts with the standard ones?"), written),
+                            isPresented: $confirmsStandard) {
+            Button(L("Replace"), role: .destructive) { prefs.restorePrompts() }
+            Button(L("Cancel"), role: .cancel) {}
+        } message: {
+            Text(L("What you wrote can't be brought back."))
         }
     }
 

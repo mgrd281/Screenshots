@@ -1230,6 +1230,12 @@
 "Edit…" = "संपादित करें…";
 "Add Prompt" = "प्रॉम्प्ट जोड़ें";
 "Standard Prompts" = "मानक प्रॉम्प्ट";
+"Replace your question with the standard ones?" = "अपना सवाल मानक सवालों से बदलें?";
+"Replace your %d questions with the standard ones?" = "अपने %d सवाल मानक सवालों से बदलें?";
+"Replace your prompt with the standard ones?" = "अपना प्रॉम्प्ट मानक प्रॉम्प्ट से बदलें?";
+"Replace your %d prompts with the standard ones?" = "अपने %d प्रॉम्प्ट मानक प्रॉम्प्ट से बदलें?";
+"What you wrote can't be brought back." = "आपने जो लिखा है, वह वापस नहीं लाया जा सकता।";
+"Replace" = "बदलें";
 "Not written yet" = "अभी लिखा नहीं गया";
 "Title" = "शीर्षक";
 "Prompt" = "प्रॉम्प्ट";

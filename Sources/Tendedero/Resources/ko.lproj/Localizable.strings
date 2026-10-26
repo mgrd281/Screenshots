@@ -1228,6 +1228,12 @@
 "Edit…" = "편집…";
 "Add Prompt" = "프롬프트 추가";
 "Standard Prompts" = "기본 프롬프트";
+"Replace your question with the standard ones?" = "내 질문을 기본 질문으로 바꿀까요?";
+"Replace your %d questions with the standard ones?" = "질문 %d개를 기본 질문으로 바꿀까요?";
+"Replace your prompt with the standard ones?" = "내 프롬프트를 기본 프롬프트로 바꿀까요?";
+"Replace your %d prompts with the standard ones?" = "프롬프트 %d개를 기본 프롬프트로 바꿀까요?";
+"What you wrote can't be brought back." = "작성한 내용은 되돌릴 수 없습니다.";
+"Replace" = "바꾸기";
 "Not written yet" = "아직 쓰지 않음";
 "Title" = "제목";
 "Prompt" = "프롬프트";

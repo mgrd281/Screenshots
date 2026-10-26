@@ -843,15 +843,17 @@ Two come with Snapfly: Natural writing, which asks for a text that reads
 as a skilled person would write it, accurate and in your own voice, and
 Reply to a customer. Write up to nine of your own in Settings, under Line
 › Prompts for AI chats, each with a title and as long as it needs; they
-are in a photo's menu under Ask AI too.
+are in a photo's menu under Ask AI too. Standard Prompts brings the two
+back, after asking while any of yours is written.
 
 Something to ask about it? Right-click ChatGPT or Claude on the photo, or
 choose Ask ChatGPT or Ask Claude in its menu, and the photo goes with a
 question after it, like "Summarize this in a few lines" or "What should I
 reply to this?"; the chat answers in the language you ask in. The five
 questions that come with Snapfly are yours to change under Questions for
-ChatGPT and Claude in Settings, under Line. Nothing is sent until you
-press Return in the chat.
+ChatGPT and Claude in Settings, under Line; until you change them, they
+follow the language Snapfly speaks, and Standard Questions asks before it
+replaces yours. Nothing is sent until you press Return in the chat.
 
 <br>
 

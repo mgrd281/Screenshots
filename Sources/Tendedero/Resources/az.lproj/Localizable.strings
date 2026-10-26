@@ -1230,6 +1230,12 @@
 "Edit…" = "Redaktə et…";
 "Add Prompt" = "Prompt əlavə et";
 "Standard Prompts" = "Standart promptlar";
+"Replace your question with the standard ones?" = "Sualın standart suallarla əvəz olunsun?";
+"Replace your %d questions with the standard ones?" = "%d sualın standart suallarla əvəz olunsun?";
+"Replace your prompt with the standard ones?" = "Promptun standart promptlarla əvəz olunsun?";
+"Replace your %d prompts with the standard ones?" = "%d promptun standart promptlarla əvəz olunsun?";
+"What you wrote can't be brought back." = "Yazdıqlarını geri qaytarmaq olmaz.";
+"Replace" = "Əvəz et";
 "Not written yet" = "Hələ yazılmayıb";
 "Title" = "Başlıq";
 "Prompt" = "Prompt";

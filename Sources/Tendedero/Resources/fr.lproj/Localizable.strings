@@ -1228,6 +1228,12 @@
 "Edit…" = "Modifier…";
 "Add Prompt" = "Ajouter un prompt";
 "Standard Prompts" = "Prompts standard";
+"Replace your question with the standard ones?" = "Remplacer ta question par les questions standard ?";
+"Replace your %d questions with the standard ones?" = "Remplacer tes %d questions par les questions standard ?";
+"Replace your prompt with the standard ones?" = "Remplacer ton prompt par les prompts standard ?";
+"Replace your %d prompts with the standard ones?" = "Remplacer tes %d prompts par les prompts standard ?";
+"What you wrote can't be brought back." = "Ce que tu as écrit ne pourra pas être récupéré.";
+"Replace" = "Remplacer";
 "Not written yet" = "Pas encore écrit";
 "Title" = "Titre";
 "Prompt" = "Prompt";

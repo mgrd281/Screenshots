@@ -1228,6 +1228,12 @@
 "Edit…" = "تحرير…";
 "Add Prompt" = "إضافة رسالة";
 "Standard Prompts" = "الرسائل الأساسية";
+"Replace your question with the standard ones?" = "هل تستبدل سؤالك بالأسئلة الأساسية؟";
+"Replace your %d questions with the standard ones?" = "هل تستبدل أسئلتك الـ%d بالأسئلة الأساسية؟";
+"Replace your prompt with the standard ones?" = "هل تستبدل رسالتك بالرسائل الأساسية؟";
+"Replace your %d prompts with the standard ones?" = "هل تستبدل رسائلك الـ%d بالرسائل الأساسية؟";
+"What you wrote can't be brought back." = "لا يمكن استرجاع ما كتبته.";
+"Replace" = "استبدال";
 "Not written yet" = "لم تُكتب بعد";
 "Title" = "العنوان";
 "Prompt" = "الرسالة";
