@@ -223,9 +223,10 @@ final class CoverFilesModel: ObservableObject {
         }
     }
 
-    /// Something to cover: a kind chosen, or a rule of the owner's own.
+    /// Something to cover: a kind chosen, or one of the owner's own details
+    /// or rules that is on, as the covering counts them.
     var canCover: Bool {
-        !chosen.isEmpty || OwnRules.all.contains { !$0.isBlank }
+        !chosen.isEmpty || PrivateDetails.alwaysHides
     }
 
     // MARK: Covering
