@@ -20,6 +20,7 @@ final class HistoryWindow: NSObject, NSWindowDelegate {
 
     func show() {
         History.purge()
+        model.isShown = true
         model.reload()
         if window == nil {
             let host = NSHostingController(rootView: HistoryView(model: model, hang: { [weak self] url in
@@ -50,6 +51,9 @@ final class HistoryWindow: NSObject, NSWindowDelegate {
 
     func windowWillClose(_ notification: Notification) {
         model.search = ""
+        // Its pictures are let go of until it opens again.
+        model.isShown = false
+        model.thumbs = [:]
     }
 }
 
@@ -81,15 +85,31 @@ final class HistoryModel: ObservableObject {
         }
     }
 
+    /// Whether the window is open: only then are its pictures made and its
+    /// photos read, so a History of many days takes nothing while it is shut.
+    var isShown = false
+    /// The pictures being made, so a change meanwhile does not ask again.
+    private var making: Set<String> = []
+
     func reload() {
         entries = History.entries
         sent = SendLog.entries
-        for entry in entries where thumbs[entry.path] == nil {
+        // Those gone from the History let go of their pictures.
+        let paths = Set(entries.map(\.path))
+        if thumbs.keys.contains(where: { !paths.contains($0) }) { thumbs = thumbs.filter { paths.contains($0.key) } }
+        guard isShown else { return }
+        for entry in entries where thumbs[entry.path] == nil && !making.contains(entry.path) {
             let url = entry.url
+            making.insert(url.path)
             DispatchQueue.global(qos: .userInitiated).async {
                 let image = makeThumbnail(url, maxPixels: 480)
                 DispatchQueue.main.async {
-                    MainActor.assumeIsolated { self.thumbs[url.path] = image ?? NSImage() }
+                    MainActor.assumeIsolated {
+                        self.making.remove(url.path)
+                        // Closed meanwhile: not kept.
+                        guard self.isShown else { return }
+                        self.thumbs[url.path] = image ?? NSImage()
+                    }
                 }
             }
             TextIndex.read(url)

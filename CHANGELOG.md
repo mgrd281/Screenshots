@@ -134,7 +134,9 @@ keeps a download of each version.
   read again with Apple Intelligence before the line keeps it; the line
   reads two photos at a time, the newest first, instead of all at once
   after a change in Settings, and does not draw one again that looks the
-  same.
+  same. The History makes its pictures only while its window is open, and
+  lets them go when it closes, instead of keeping one of every photo it
+  holds from launch on.
 - Fixes: on the Mac, Save Copy… over the very file it copies, as a GIF
   or a PDF with nothing to cover can be, no longer deletes it; a PDF
   cropped with text beyond its page no longer stops Snapfly;
