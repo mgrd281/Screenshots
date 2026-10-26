@@ -163,7 +163,7 @@ final class HideEditor: NSObject, NSWindowDelegate {
         }
         let hand = model.hand
         let pages = model.handByPage
-        guard let target = Self.sendFile(for: url) else {
+        guard let target = Self.sendFile(for: url, covering: chosen) else {
             Notice.show(L("Could not save the copy."))
             return
         }

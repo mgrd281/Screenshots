@@ -107,7 +107,7 @@ final class ClipboardWatcher {
             onImage(url)
         } catch {
             try? fm.removeItem(at: url)
-            log.error("Could not save a copied image: \(error.localizedDescription, privacy: .public)")
+            log.error("Could not save a copied image: \(error.localizedDescription, privacy: .private)")
         }
     }
 

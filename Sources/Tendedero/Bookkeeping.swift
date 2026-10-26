@@ -114,7 +114,7 @@ enum Bookkeeping {
                 try note(line(day: day, file: target.lastPathComponent, fields: fields, covering: covering), in: folder)
                 Notice.show(String(format: L("Saved for the books as %@."), target.lastPathComponent), done: true)
             } catch {
-                log.error("Could not save for the books: \(error.localizedDescription, privacy: .public)")
+                log.error("Could not save for the books: \(error.localizedDescription, privacy: .private)")
                 Notice.show(L("Could not save it for the books."))
             }
         }

@@ -82,9 +82,28 @@ final class CleanCopyTests: XCTestCase {
         let copy = try XCTUnwrap(Cover.plain(original))
         XCTAssertEqual(copy.deletingPathExtension().lastPathComponent, L("Image"))
         XCTAssertEqual(copy.pathExtension, "png")
-        // A covered PDF keeps its name, which is mostly its title.
+        // A covered PDF is called Document with them, whatever its title says.
         XCTAssertEqual(Cover.newCopy(of: folder.appendingPathComponent("Rechnung 1024.pdf"), ext: "pdf")?
+            .deletingPathExtension().lastPathComponent, L("Document"))
+    }
+
+    /// A name that holds a detail being covered leaves as "Image" or
+    /// "Document", plain names or not; any other name stays, a screenshot's
+    /// date and time too while dates are not covered.
+    func testANameHoldingACoveredDetailIsReplaced() throws {
+        let before = Cover.plainNames
+        Cover.plainNames = false
+        addTeardownBlock { Cover.plainNames = before }
+        let statement = folder.appendingPathComponent("Kontoauszug_DE89370400440532013000.pdf")
+        XCTAssertEqual(Cover.newCopy(of: statement, ext: "pdf", covering: [.bank])?
+            .deletingPathExtension().lastPathComponent, L("Document"))
+        let invoice = folder.appendingPathComponent("Rechnung 1024.pdf")
+        XCTAssertEqual(Cover.newCopy(of: invoice, ext: "pdf", covering: [.bank])?
             .deletingPathExtension().lastPathComponent, "Rechnung 1024")
+        XCTAssertTrue(Cover.nameHolds("Rechnung lena.hoffmann@example.com", [.emails]))
+        XCTAssertFalse(Cover.nameHolds("Rechnung lena.hoffmann@example.com", []), "nothing covered, nothing replaced")
+        XCTAssertFalse(Cover.nameHolds("Screenshot 2026-10-17 at 17.41.47", PrivateDetail.recommended))
+        XCTAssertTrue(Cover.nameHolds("Screenshot 2026-10-17 at 17.41.47", [.dates]))
     }
 
     // MARK: Helpers

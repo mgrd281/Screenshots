@@ -69,7 +69,7 @@ final class VectorEditor: NSObject, NSWindowDelegate {
                     try svg.write(to: target, atomically: true, encoding: .utf8)
                     Notice.savedCopy(target)
                 } catch {
-                    log.error("Could not save the SVG: \(error.localizedDescription, privacy: .public)")
+                    log.error("Could not save the SVG: \(error.localizedDescription, privacy: .private)")
                     Notice.show(L("Could not save the SVG."))
                 }
             }

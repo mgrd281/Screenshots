@@ -544,6 +544,8 @@
 "This PDF is too long: up to %d pages." = "This PDF is too long: up to %d pages.";
 "Still covering the private details…" = "Still covering the private details…";
 "Could not cover the private details in this PDF." = "Could not cover the private details in this PDF.";
+"Could not read this picture, so all of it is covered." = "Could not read this picture, so all of it is covered.";
+"Could not read this PDF, so every page is covered whole." = "Could not read this PDF, so every page is covered whole.";
 "Page %d of %d" = "Page %d of %d";
 "Previous Page" = "Previous Page";
 "Next Page" = "Next Page";
@@ -647,7 +649,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor.";
 "Image" = "Image";
 "Plain file names" = "Plain file names";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way.";
 "Cover what lands in a folder" = "Cover what lands in a folder";
 "Save copies in" = "Save copies in";
 "Cover a folder" = "Cover a folder";
@@ -1057,6 +1059,8 @@
 "List" = "List";
 "Grid or List" = "Grid or List";
 "Copy File Path" = "Copy File Path";
+"Copy Original" = "Copy Original";
+"Copy Originals" = "Copy Originals";
 "Rename" = "Rename";
 "Rename…" = "Rename…";
 

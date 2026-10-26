@@ -37,7 +37,7 @@ final class Markup: NSObject, NSSharingServiceDelegate {
 
     nonisolated func sharingService(_ sharingService: NSSharingService,
                                     didFailToShareItems items: [Any], error: Error) {
-        log.notice("Markup ended without saving: \(error.localizedDescription, privacy: .public)")
+        log.notice("Markup ended without saving: \(error.localizedDescription, privacy: .private)")
     }
 
     // MARK: Writing back
@@ -100,7 +100,7 @@ final class Markup: NSObject, NSSharingServiceDelegate {
             try data.write(to: target, options: .atomic)
             onSaved(target)
         } catch {
-            log.error("Could not save markup: \(error.localizedDescription, privacy: .public)")
+            log.error("Could not save markup: \(error.localizedDescription, privacy: .private)")
             Notice.show(L("Could not save the changes."))
         }
     }

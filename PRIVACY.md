@@ -71,7 +71,8 @@ or turn on syncing with your iPhone (below).
   Snapfly keeps them in step through
   your own iCloud, in the private database of your Apple account, which only
   your devices signed in to it can read. What goes is the copy that leaves the
-  line, with its private details covered, a small preview of it, and facts
+  line, with its private details covered (a picture that could not be read
+  waits until it is), a small preview of it, and facts
   about it: its name, when it was taken, what kinds of details were covered,
   never the covered words. Originals go only if you choose Originals too, and
   only those taken from then on. The contents of each record are encrypted
@@ -93,7 +94,9 @@ or turn on syncing with your iPhone (below).
   deletes them only when you ask it to. A photo or PDF you bring stays where it
   is, unchanged: what leaves the line is a copy, a photo without where and with
   what it was taken, a PDF drawn again page by page with the details you chose
-  covered. Cover Files does the same for many files at once, saving each copy
+  covered. When a picture or a page cannot be read, or its covers cannot be
+  drawn, what leaves is all of it covered, never the original, and a note
+  says so. Cover Files does the same for many files at once, saving each copy
   in a new folder you choose; it reads them on your Mac, unless Find more with
   Claude or ChatGPT is on under Privacy, which sends the words of each.
 - **Permissions.** Accessibility access lets Snapfly paste into the app you are
@@ -105,8 +108,11 @@ or turn on syncing with your iPhone (below).
   screenshots and recordings you ask for, with ⌃⌥S, the screenshot button,
   Record Screen or Record a Guide. So that the send button shows only on chat websites, it asks
   the browser in front for the address of the open page, once you allow it,
-  and reads nothing else. While the time stamp is on, that address is also
-  written on the stamp of a new screenshot, which stays on your Mac. Settings › Permissions shows each of these, and you
+  and reads nothing else. While the time stamp is on, the stamp of a new
+  screenshot also names the website that was open, by its name alone, like
+  mail.google.com, never the rest of the address, which can hold a search,
+  an email address or a sign-in link. The stamp goes with every copy that
+  leaves the line, so that name goes with it. Settings › Permissions shows each of these, and you
   can turn any off at any time in System Settings.
 - **Guides.** While you record a guide, Snapfly takes a screenshot of the
   screen at each click and asks the app you clicked, through Accessibility,

@@ -542,6 +542,8 @@
 "This PDF is too long: up to %d pages." = "Este PDF é longo demais: até %d páginas.";
 "Still covering the private details…" = "Ainda ocultando os dados privados…";
 "Could not cover the private details in this PDF." = "Não foi possível ocultar os dados privados deste PDF.";
+"Could not read this picture, so all of it is covered." = "Não foi possível ler esta imagem, por isso ela foi ocultada por inteiro.";
+"Could not read this PDF, so every page is covered whole." = "Não foi possível ler este PDF, por isso cada página foi ocultada por inteiro.";
 "Page %d of %d" = "Página %d de %d";
 "Previous Page" = "Página anterior";
 "Next Page" = "Próxima página";
@@ -645,7 +647,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Os recibos de um mês em um PDF, com uma página que os lista, para entregar ao seu contador.";
 "Image" = "Imagem";
 "Plain file names" = "Nomes de arquivo simples";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "As imagens saem como arquivos novos, sem notas sobre quando, onde ou com o que foram feitas. Com nomes simples, elas também se chamam “Imagem”, e não pelo momento em que foram tiradas.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "As imagens saem como arquivos novos, sem notas sobre quando, onde ou com o que foram feitas. Com nomes simples, elas também se chamam “Imagem”, e os PDFs “Documento”, e não pelo momento em que foram tiradas. Um nome que contém um dado que você oculta é trocado de qualquer forma.";
 "Cover what lands in a folder" = "Cobrir o que chega a uma pasta";
 "Save copies in" = "Salvar cópias em";
 "Cover a folder" = "Cobrir uma pasta";
@@ -1055,6 +1057,8 @@
 "List" = "Lista";
 "Grid or List" = "Grade ou lista";
 "Copy File Path" = "Copiar caminho do arquivo";
+"Copy Original" = "Copiar original";
+"Copy Originals" = "Copiar originais";
 "Rename" = "Renomear";
 "Rename…" = "Renomear…";
 

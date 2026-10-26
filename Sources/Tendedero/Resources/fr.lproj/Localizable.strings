@@ -542,6 +542,8 @@
 "This PDF is too long: up to %d pages." = "Ce PDF est trop long : %d pages au maximum.";
 "Still covering the private details…" = "Les données privées sont encore en cours de masquage…";
 "Could not cover the private details in this PDF." = "Impossible de masquer les données privées de ce PDF.";
+"Could not read this picture, so all of it is covered." = "Impossible de lire cette image : elle est donc entièrement masquée.";
+"Could not read this PDF, so every page is covered whole." = "Impossible de lire ce PDF : chaque page est donc entièrement masquée.";
 "Page %d of %d" = "Page %d sur %d";
 "Previous Page" = "Page précédente";
 "Next Page" = "Page suivante";
@@ -645,7 +647,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Les reçus d’un mois dans un seul PDF, avec une page qui les liste, à remettre à ton conseiller fiscal.";
 "Image" = "Image";
 "Plain file names" = "Noms de fichier simples";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Les images partent en fichiers neufs, sans notes sur quand, où ou avec quoi elles ont été faites. Avec des noms simples, elles s’appellent aussi « Image » et non d’après le moment de la capture.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "Les images partent en fichiers neufs, sans notes sur quand, où ou avec quoi elles ont été faites. Avec des noms simples, elles s’appellent aussi « Image », et les PDF « Document », et non d’après le moment de la capture. Un nom qui contient une donnée que tu masques est remplacé dans tous les cas.";
 "Cover what lands in a folder" = "Masquer ce qui arrive dans un dossier";
 "Save copies in" = "Enregistrer les copies dans";
 "Cover a folder" = "Masquer un dossier";
@@ -1055,6 +1057,8 @@
 "List" = "Liste";
 "Grid or List" = "Grille ou liste";
 "Copy File Path" = "Copier le chemin du fichier";
+"Copy Original" = "Copier l’original";
+"Copy Originals" = "Copier les originaux";
 "Rename" = "Renommer";
 "Rename…" = "Renommer…";
 

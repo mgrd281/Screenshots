@@ -429,7 +429,7 @@ final class Capture {
                     if saved {
                         self.onCapture(destination)
                     } else {
-                        log.error("Could not save a screenshot to \(destination.path, privacy: .public)")
+                        log.error("Could not save a screenshot to \(destination.path, privacy: .private)")
                         Notice.show(L("Could not save the screenshot. Check that the disk has room and the folder is still there."))
                     }
                 }

@@ -542,6 +542,8 @@
 "This PDF is too long: up to %d pages." = "此 PDF 太长：最多 %d 页。";
 "Still covering the private details…" = "仍在遮盖隐私信息…";
 "Could not cover the private details in this PDF." = "无法遮盖此 PDF 中的隐私信息。";
+"Could not read this picture, so all of it is covered." = "无法读取此图像，因此已将其全部遮盖。";
+"Could not read this PDF, so every page is covered whole." = "无法读取此 PDF，因此已将每一页完全遮盖。";
 "Page %d of %d" = "第 %d 页，共 %d 页";
 "Previous Page" = "上一页";
 "Next Page" = "下一页";
@@ -645,7 +647,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "把一个月的收据合成一个 PDF，附带列表页，方便交给税务顾问。";
 "Image" = "图像";
 "Plain file names" = "简单文件名";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "图片会作为新文件发出，不带何时、何地或用什么制作的信息。开启简单文件名后，它们还会被命名为“图像”，而不是拍摄时间。";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "图片会作为新文件发出，不带何时、何地或用什么制作的信息。开启简单文件名后，它们还会被命名为“图像”，PDF 则命名为“文稿”，而不是拍摄时间。含有你所遮盖信息的名称无论如何都会被替换。";
 "Cover what lands in a folder" = "遮盖放入文件夹的内容";
 "Save copies in" = "副本存储到";
 "Cover a folder" = "遮盖文件夹";
@@ -1055,6 +1057,8 @@
 "List" = "列表";
 "Grid or List" = "网格或列表";
 "Copy File Path" = "拷贝文件路径";
+"Copy Original" = "拷贝原件";
+"Copy Originals" = "拷贝原件";
 "Rename" = "重命名";
 "Rename…" = "重命名…";
 

@@ -157,6 +157,9 @@ final class WorkspaceLibraryModel: ObservableObject {
         NSWorkspace.shared.activateFileViewerSelecting(entries.map(\.url))
     }
 
+    /// The files themselves, as the Finder copies them, for pasting into a
+    /// folder: the originals, not covered, which the menu's name says. A
+    /// covered copy leaves from the line, once the screenshot hangs there.
     func copy(_ entries: [LibraryItem]) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.writeObjects(entries.map { $0.url as NSURL })
@@ -213,7 +216,7 @@ final class WorkspaceLibraryModel: ObservableObject {
             Workspace.shared.relocated(entry.url, target)
             reload()
         } catch {
-            log.error("Could not rename a screenshot: \(error.localizedDescription, privacy: .public)")
+            log.error("Could not rename a screenshot: \(error.localizedDescription, privacy: .private)")
             Notice.show(L("Could not rename the screenshot."))
         }
     }
@@ -384,7 +387,9 @@ private struct LibraryMenu: View {
         Button(L("Quick Look")) { model.quickLook(entries) }
         Button(L("Show in Finder")) { model.reveal(entries) }
         Divider()
-        Button(L("Copy")) { model.copy(entries) }
+        // The files as they are, not covered: named so beside the History's
+        // and the line's Copy, which hand out the covered copy.
+        Button(entries.count == 1 ? L("Copy Original") : L("Copy Originals")) { model.copy(entries) }
         Button(L("Copy File Path")) { model.copyPath(entries) }
         Divider()
         Menu(L("Move to Folder")) {

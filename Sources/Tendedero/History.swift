@@ -83,7 +83,7 @@ enum History {
                 try fm.moveItem(at: url, to: kept)
                 StudioStore.move(from: url, to: kept)
             } catch {
-                log.error("Could not keep \(url.lastPathComponent, privacy: .public) in the history: \(error.localizedDescription, privacy: .public)")
+                log.error("Could not keep \(url.lastPathComponent, privacy: .private) in the history: \(error.localizedDescription, privacy: .private)")
                 return false
             }
         }

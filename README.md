@@ -409,7 +409,13 @@ statement: "•••• 1111". It holds for copies and for Copy Text alike.
 
 Every copy is checked before it leaves: once covered, it is read again as
 anyone could read it, and whatever private still shows, or any piece of what
-was hidden left beside its cover, is covered too. Under Protection, Find more
+was hidden left beside its cover, is covered too. A picture that can't be
+read, or whose covers can't be drawn, never leaves as it is: what goes is
+the whole picture in cover ink, a note says so, and it is read again the
+next time; a PDF goes with every page painted whole, and a copy saved from
+Finder, Cover Files or a watched folder is not made. Until it is read, the
+line shows it as it is, without the lock, and Sync sends no covered copy of
+it. Under Protection, Find more
 with Apple Intelligence (on where the Mac has it) lets the model on the Mac
 read the words as well and cover what the patterns miss, like a name in a
 sentence; it only ever adds covers, and nothing leaves the Mac. What it
@@ -492,7 +498,9 @@ the notes a file carries on when, where and with what it was made, or the
 Finder's note of where it was downloaded from. A PNG stays a PNG, pixel for
 pixel; a photo goes as a JPEG; a GIF goes as itself, so it keeps moving.
 Turn on Plain file names under Privacy, and pictures are called Image too,
-rather than after when they were taken.
+and PDFs Document, rather than after when they were taken. A file whose
+name holds a detail you cover, like an IBAN in a bank statement's name,
+or one of your own rules, is called so either way.
 
 To cover a whole folder, turn on Cover what lands in a folder under
 Privacy and choose two folders, like the one invoices are downloaded to
@@ -654,8 +662,10 @@ while the screenshot is kept in Snapfly's own folder, so none is lost.
 In History, the Workspace page shows them by day as a grid or a list. Pick a
 category, search by name or by the words in the photo, press Return or
 double-click to open one, and use the menu for Hang on the line, Quick Look,
-Copy, Copy File Path, Show in Finder, Move to Folder, Rename… and Move to
-Trash. The same Move to Folder is in the menu of a photo on the line.
+Copy Original, Copy File Path, Show in Finder, Move to Folder, Rename… and
+Move to Trash. Copy Original copies the files as they are, not covered, as
+the Finder would; to send one covered, hang it on the line. The same Move to
+Folder is in the menu of a photo on the line.
 
 Delete… in Settings asks first, then moves the screenshots to the Trash, and
 leaves any file in the folder that isn't Snapfly's. Only a folder Snapfly
@@ -728,7 +738,7 @@ at the top. It works in any browser and in any window that scrolls. It turns
 the scroll wheel in small turns, as a hand would, and if the page does not
 follow the wheel, it presses Page Down instead. The picture hangs on the line
 like any screenshot, and with the time stamp on, it is stamped with the time
-and the page's address. It needs the permission to press keys, the same one
+and the website's name. It needs the permission to press keys, the same one
 the send button uses.
 
 <br>
@@ -739,9 +749,11 @@ Turn on Stamp the date and time under General in Settings, and every
 screenshot of the whole screen gets a band above it, like a letterhead,
 that says when and where it was taken: the date and the time to the
 second, from the atomic clock of the PTB in Germany (or the Mac's clock
-when there is no connection); the page that was open in the browser; and
-the screenshot's SHA-256 fingerprint, so anyone can check the copy was
-made from that very file. Choose Every screenshot to stamp all of them,
+when there is no connection); the website that was open in the browser, by
+its name alone, like mail.google.com, never the rest of its address, which
+can hold a search, an email address or a sign-in link; and the
+screenshot's SHA-256 fingerprint, so anyone can check the copy was made
+from that very file. Choose Every screenshot to stamp all of them,
 and type a few words, like your shop's name, to stand before the date.
 
 The screenshot itself stays as it was. A stamped copy is saved next to it,
@@ -845,7 +857,8 @@ Everything that leaves the line, sent or taken down, waits in the History
 for 30 days: History… in the menu bar, or <kbd>⌘</kbd>&thinsp;<kbd>Y</kbd>
 while the menu is open. It is grouped by day, and the search finds the words
 in every photo. A click hangs one on the line again; Send Again in its menu
-hangs it and sends it, covered, into the chat you had in front. A screenshot from
+hangs it and sends it, covered, into the chat you had in front, and Copy
+copies it covered as you chose under Privacy, never the original. A screenshot from
 Snapfly's own folder moves into its History folder and goes to the Trash once
 its days are up; a file from anywhere else stays where it is. Choose 7, 30
 or 90 days, a year or forever, or turn it off, in Settings, under Line. It
@@ -1548,13 +1561,13 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `DesktopIcons.swift` | Hide Desktop Icons: the wallpaper laid over the icons on every screen |
 | `Calls.swift` | Not during a call: whether the microphone is in use, and Snapfly's windows kept out of a shared screen while it is |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
-| `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
+| `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies, or the whole picture in cover ink where reading or covering fails |
 | `FolderCover.swift` | Cover a folder: watches one folder and saves covered copies of what lands there in another |
 | `FloatingPhotos.swift` | Keep on Top: a photo floating over every app in a small window of its own |
 | `SelfTest.swift` | Test on a Sample: a made-up order with nearly every kind of detail, covered as Settings says |
 | `CoveringProfile.swift` | Cover everything in AI chats: which chats count, and what to cover for the app in front |
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
-| `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
+| `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF, or its pages painted whole where that fails |
 | `HideSend.swift` | Send covered, in Hide Private Details: the copy straight to a chat, the clipboard or the Share menu |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
 | `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-two kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names, Patient names and Other people each their own people, a name in a column of doctors a doctor's; a letter's address under a name, a date of birth and a reference number known as that person's; and, for the iPhone's Details, what Settings leaves visible; the lines read kept a while in memory, or given from a photo prepared ahead of time; a reading Vision could not do is counted, never kept |
@@ -1597,7 +1610,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `scripts/always-hide-checks.sh` | Runs the UI tests in `iOS/SnapflyUITests` for the Always Hide Checks workflow, all but Scan's, which the Scan Checks workflow runs on an optimized build, and keeps frames of the screen and each sheet, light and dark, at the largest text sizes and in Arabic and English, on the newest iPhone and the smallest, for the `always-hide-captures` pre-release |
 | `docs/snapfly-always-hide-audit.md` | Always Hide's audit: what there was, where details and rules are kept, how covering uses them, how a label's reach was decided, what is promised and what holds in code, and what changed |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
-| `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
+| `TimeStamp.swift` | The band above a screenshot with the time, the website and the fingerprint, and the stamped copy next to it |
+| `Shared/StampSite.swift` | The website a stamp names: the host of the page's address alone, never its path, search or fragment (tested on Linux) |
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
 | `Shared/CoverReport.swift` | What was covered in a picture, kind by kind, for the lock, the photo's menu, VoiceOver and the iPhone |
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |

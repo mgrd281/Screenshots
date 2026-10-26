@@ -542,6 +542,8 @@
 "This PDF is too long: up to %d pages." = "Dieses PDF ist zu lang: höchstens %d Seiten.";
 "Still covering the private details…" = "Private Angaben werden noch verdeckt …";
 "Could not cover the private details in this PDF." = "Die privaten Angaben in diesem PDF konnten nicht verdeckt werden.";
+"Could not read this picture, so all of it is covered." = "Dieses Bild konnte nicht gelesen werden, darum ist es ganz verdeckt.";
+"Could not read this PDF, so every page is covered whole." = "Dieses PDF konnte nicht gelesen werden, darum ist jede Seite ganz verdeckt.";
 "Page %d of %d" = "Seite %d von %d";
 "Previous Page" = "Vorherige Seite";
 "Next Page" = "Nächste Seite";
@@ -645,7 +647,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Die Belege eines Monats in einem PDF, mit einer Seite, die sie auflistet, für deine Steuerberatung.";
 "Image" = "Bild";
 "Plain file names" = "Schlichte Dateinamen";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Bilder gehen als frische Dateien hinaus, ohne Angaben dazu, wann, wo oder womit sie entstanden sind. Mit schlichten Dateinamen heißen sie außerdem „Bild“ statt nach dem Zeitpunkt der Aufnahme.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "Bilder gehen als frische Dateien hinaus, ohne Angaben dazu, wann, wo oder womit sie entstanden sind. Mit schlichten Dateinamen heißen sie außerdem „Bild“ und PDFs „Dokument“ statt nach dem Zeitpunkt der Aufnahme. Ein Name, der eine Angabe enthält, die du verdeckst, wird in jedem Fall ersetzt.";
 "Cover what lands in a folder" = "Abdecken, was in einem Ordner landet";
 "Save copies in" = "Kopien sichern in";
 "Cover a folder" = "Ordner abdecken";
@@ -1055,6 +1057,8 @@
 "List" = "Liste";
 "Grid or List" = "Raster oder Liste";
 "Copy File Path" = "Dateipfad kopieren";
+"Copy Original" = "Original kopieren";
+"Copy Originals" = "Originale kopieren";
 "Rename" = "Umbenennen";
 "Rename…" = "Umbenennen …";
 

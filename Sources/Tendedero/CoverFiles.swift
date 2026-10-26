@@ -256,7 +256,7 @@ final class CoverFilesModel: ObservableObject {
         do {
             try fm.createDirectory(at: folder, withIntermediateDirectories: false)
         } catch {
-            log.error("Could not make the folder for covered copies: \(error.localizedDescription, privacy: .public)")
+            log.error("Could not make the folder for covered copies: \(error.localizedDescription, privacy: .private)")
             Notice.show(L("Could not make a folder there. Choose another place."))
             close()
             return

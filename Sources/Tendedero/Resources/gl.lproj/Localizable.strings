@@ -542,6 +542,8 @@
 "This PDF is too long: up to %d pages." = "Este PDF é demasiado longo: ata %d páxinas.";
 "Still covering the private details…" = "Aínda se están ocultando os datos privados…";
 "Could not cover the private details in this PDF." = "Non se puideron ocultar os datos privados deste PDF.";
+"Could not read this picture, so all of it is covered." = "Non se puido ler esta imaxe, así que se ocultou enteira.";
+"Could not read this PDF, so every page is covered whole." = "Non se puido ler este PDF, así que cada páxina se ocultou enteira.";
 "Page %d of %d" = "Páxina %d de %d";
 "Previous Page" = "Páxina anterior";
 "Next Page" = "Páxina seguinte";
@@ -645,7 +647,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Os recibos dun mes nun PDF, cunha páxina que os enumera, para entregar á túa asesoría fiscal.";
 "Image" = "Imaxe";
 "Plain file names" = "Nomes de ficheiro simples";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "As imaxes saen como ficheiros novos, sen notas de cando, onde nin con que se fixeron. Con nomes simples chámanse ademais «Imaxe», non segundo cando se tomaron.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "As imaxes saen como ficheiros novos, sen notas de cando, onde nin con que se fixeron. Con nomes simples chámanse ademais «Imaxe», e os PDF «Documento», non segundo cando se tomaron. Un nome que leva un dato que ocultas substitúese en calquera caso.";
 "Cover what lands in a folder" = "Tapar o que chega a un cartafol";
 "Save copies in" = "Gardar copias en";
 "Cover a folder" = "Tapar un cartafol";
@@ -1055,6 +1057,8 @@
 "List" = "Lista";
 "Grid or List" = "Grella ou lista";
 "Copy File Path" = "Copiar a ruta do ficheiro";
+"Copy Original" = "Copiar o orixinal";
+"Copy Originals" = "Copiar os orixinais";
 "Rename" = "Cambiar nome";
 "Rename…" = "Cambiar nome…";
 

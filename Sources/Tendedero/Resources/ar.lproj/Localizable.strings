@@ -542,6 +542,8 @@
 "This PDF is too long: up to %d pages." = "ملف PDF هذا طويل جدًا: الحد %d صفحة.";
 "Still covering the private details…" = "ما زالت المعلومات الخاصة تُغطّى…";
 "Could not cover the private details in this PDF." = "تعذّرت تغطية المعلومات الخاصة في ملف PDF هذا.";
+"Could not read this picture, so all of it is covered." = "تعذّرت قراءة هذه الصورة، لذا غُطّيت كلها.";
+"Could not read this PDF, so every page is covered whole." = "تعذّرت قراءة ملف PDF هذا، لذا غُطّيت كل صفحة بالكامل.";
 "Page %d of %d" = "الصفحة %d من %d";
 "Previous Page" = "الصفحة السابقة";
 "Next Page" = "الصفحة التالية";
@@ -645,7 +647,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "إيصالات شهر كامل في ملف PDF واحد، مع صفحة تسردها، لتسليمها إلى مستشارك الضريبي.";
 "Image" = "صورة";
 "Plain file names" = "أسماء ملفات بسيطة";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "تخرج الصور ملفاتٍ جديدة، بلا ملاحظات عن متى وأين وبماذا صُنعت. ومع الأسماء البسيطة تُسمّى أيضاً «صورة»، لا باسم وقت التقاطها.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "تخرج الصور ملفاتٍ جديدة، بلا ملاحظات عن متى وأين وبماذا صُنعت. ومع الأسماء البسيطة تُسمّى أيضاً «صورة»، وملفات PDF «مستند»، لا باسم وقت التقاطها. والاسم الذي يحمل معلومة تغطيها يُستبدل في كل الأحوال.";
 "Cover what lands in a folder" = "تغطية ما يصل إلى مجلد";
 "Save copies in" = "حفظ النسخ في";
 "Cover a folder" = "تغطية مجلد";
@@ -1055,6 +1057,8 @@
 "List" = "قائمة";
 "Grid or List" = "شبكة أو قائمة";
 "Copy File Path" = "انسخ مسار الملف";
+"Copy Original" = "انسخ الأصل";
+"Copy Originals" = "انسخ الأصول";
 "Rename" = "أعد التسمية";
 "Rename…" = "أعد التسمية…";
 

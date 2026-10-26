@@ -463,11 +463,17 @@ literal value in a view.
   again as anyone could read it, and a detail still readable, or a piece of
   three letters or more of what was hidden left beside its cover, is covered
   too, in two more rounds at most. What is drawn on a cover is never read as
-  text. The strongest protection covers each line with a detail whole, with
-  0.45 of its height of room across and 0.35 up and down instead of 0.25
-  and 0.2. Apple Intelligence, where it is on, only adds covers: never on a
-  guess, only words that are in their line, never waited for on the main
-  thread, and not for Test on a Sample, which reads the same each time.
+  text. **A failure covers everything**: where Vision could not read a
+  picture (`Finder.failures` moved) or a cover could not be drawn or written,
+  what leaves is the whole picture in cover ink, a PDF each page so, made
+  without reading it, with a note; it is never kept as the picture's
+  reading, the line does not show it as read, and Sync sends no covered
+  copy of it until it is. The strongest protection covers each line with a
+  detail whole, with 0.45 of its height of room across and 0.35 up and down
+  instead of 0.25 and 0.2. Apple Intelligence, where it is on, only adds
+  covers: never on a guess, only words that are in their line, never waited
+  for on the main thread, and not for Test on a Sample, which reads the
+  same each time.
   Copy Text leaves out what it found once it has answered, and with the
   strongest protection, whole lines, as they are covered.
 - **Photo badge** is black 55% with a white glyph or text, over a picture: the
@@ -1592,8 +1598,9 @@ apps.
   keeps the photos. Then one with Plain file names (off at
   first), over a footer saying pictures leave as fresh files without notes
   on when, where or with what they were made, and are named "Image" with it
-  on. The owner's own details and rules have their own pane, Always Hide
-  (below). Then
+  on, PDFs "Document", and that a name holding a detail being covered is
+  replaced either way. The owner's own details and rules have their own
+  pane, Always Hide (below). Then
   "Cover a folder": a toggle, Cover what lands in a folder (off at first;
   turned on, it asks for any folder not chosen yet and stays off without
   both), and two rows, Watched folder and Save copies in, each with the
@@ -1657,8 +1664,10 @@ apps.
     22 pt accent circle with `arrow.uturn.up` says a click hangs it again.
     Its menu: Hang on the line, Send Again (it hangs, the window closes, and
     once the app in front before it is back, the photo goes in, covered;
-    else it stays copied with a note), Copy, Open, Show in Finder, and
-    Remove from History.
+    else it stays copied with a note), Copy (covered as Settings says, made
+    and put on the clipboard as the line's Copy does it, never the original;
+    a PDF still being covered waits with the line's note), Open, Show in
+    Finder, and Remove from History.
   - **Orders** groups the photos with an order, invoice or customer number
     (the first one read, top to bottom) under that number, as a `number`
     label in the day headers' style, selectable, over the same grid; the
@@ -1670,9 +1679,10 @@ apps.
     into view and at most 400 kept), with the category beside the time and a
     2.5 pt accent ring and a check on a selected one; a click selects,
     ⌘-click adds, a double-click opens, and the menu is Hang on the line,
-    Open, Quick Look, Show in Finder, Copy, Copy File Path, Move to Folder,
-    Rename… and Move to Trash (red). List is a `Table` of Name, Category,
-    Date and Size with the same menu. Empty, it says "No screenshots yet"
+    Open, Quick Look, Show in Finder, Copy Original (Copy Originals for
+    several: the files as they are, not covered, as the Finder copies them),
+    Copy File Path, Move to Folder, Rename… and Move to Trash (red). List is
+    a `Table` of Name, Category, Date and Size with the same menu. Empty, it says "No screenshots yet"
     with a Take Screenshot button. Each card is one VoiceOver element with
     the same actions.
   - The toolbar holds a segmented Photos | Orders | Sent picker in the middle, then
@@ -2015,7 +2025,9 @@ screenshot itself.
      with monospaced digits, in the title colour;
   2. where the time came from: the PTB's atomic clock, or the Mac's clock
      when it could not be reached (regular, 0.86×, detail colour);
-  3. the page open in the browser in front, if one was (the same);
+  3. the website open in the browser in front, if one was (the same): its
+     host alone, like mail.google.com, never the rest of its address, since
+     the band is drawn after the covering (`StampSite`);
   4. the screenshot's SHA-256 fingerprint (SF Mono, 0.8×, code colour).
   A line too long for the image ends in "…".
 - **Size.** The text is 0.95% of the image's width, at least 11 px; each

@@ -41,6 +41,10 @@ enum MacSync {
     static func read(_ url: URL) {
         let chosen = PrivateDetails.details
         guard SyncCenter.shared.settings.on, !chosen.isEmpty, SyncCenter.isPicture(url) else { return }
+        // Only a reading of it as it is now that went well: a picture Vision
+        // could not read goes nowhere, not even covered whole, which is no
+        // covered copy of it, and it is not read again here on its way.
+        guard PrivateDetails.shown(url) != nil else { return }
         let copy = PrivateDetails.shareable(url)
         guard copy != url else { return }
         let redaction = SyncRedaction(kinds: PrivateDetails.coveredKeys(url, covering: chosen),
