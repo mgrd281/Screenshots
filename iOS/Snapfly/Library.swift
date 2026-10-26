@@ -7,8 +7,17 @@ import UIKit
 final class Library: ObservableObject {
     @Published private(set) var access = PHPhotoLibrary.authorizationStatus(for: .readWrite)
     @Published private(set) var shots: [PHAsset] = []
+    /// Each time the screenshots were read again, so See All, while it
+    /// shows, fetches every one of them again too.
+    @Published private(set) var loads = 0
 
     var mayRead: Bool { access == .authorized || access == .limited }
+
+    /// Whether Snapfly may see the screenshots now, all of them or those chosen.
+    nonisolated static var mayReadNow: Bool {
+        let access = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        return access == .authorized || access == .limited
+    }
 
     func ask() {
         Task {
@@ -20,17 +29,30 @@ final class Library: ObservableObject {
     func load() {
         access = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         shots = mayRead ? Self.screenshots(limit: 90) : []
+        loads += 1
     }
 
-    /// The newest screenshots, from the album Photos keeps of them.
-    nonisolated static func screenshots(limit: Int) -> [PHAsset] {
+    /// The newest screenshots, or every one without a limit, from the album
+    /// Photos keeps of them.
+    nonisolated static func screenshots(limit: Int? = nil) -> [PHAsset] {
         guard let album = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumScreenshots,
                                                                   options: nil).firstObject else { return [] }
         let options = PHFetchOptions()
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        options.fetchLimit = limit
+        if let limit { options.fetchLimit = limit }
         let result = PHAsset.fetchAssets(in: album, options: options)
         return result.objects(at: IndexSet(integersIn: 0..<result.count))
+    }
+
+    /// The system's picker of the photos Snapfly may see, under limited
+    /// access, over whatever shows; `then` once it is closed.
+    static func changeAllowedPhotos(then done: @escaping @MainActor () -> Void = {}) {
+        let scene = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
+        guard var top = scene?.keyWindow?.rootViewController else { return }
+        while let shown = top.presentedViewController { top = shown }
+        PHPhotoLibrary.shared().presentLimitedLibraryPicker(from: top) { _ in
+            DispatchQueue.main.async { MainActor.assumeIsolated { done() } }
+        }
     }
 
     nonisolated static func asset(_ id: String) -> PHAsset? {

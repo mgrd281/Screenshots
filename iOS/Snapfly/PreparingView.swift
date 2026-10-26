@@ -142,7 +142,7 @@ struct PreparingView: View {
                 }
             }
             if indexer.isLimited {
-                Button(L("Change Allowed Photos…")) { Self.changeAllowedPhotos() }
+                Button(L("Change Allowed Photos…")) { Library.changeAllowedPhotos() }
             }
         } header: {
             Text(L("What is prepared"))
@@ -151,14 +151,6 @@ struct PreparingView: View {
                 Text(L("Snapfly may see only some of your photos. Only those can be prepared."))
             }
         }
-    }
-
-    /// The system's picker of the photos Snapfly may see, under limited access.
-    private static func changeAllowedPhotos() {
-        let scene = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
-        guard var top = scene?.keyWindow?.rootViewController else { return }
-        while let shown = top.presentedViewController { top = shown }
-        PHPhotoLibrary.shared().presentLimitedLibraryPicker(from: top)
     }
 }
 

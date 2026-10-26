@@ -22,6 +22,17 @@ keeps a download of each version.
   cross) take a finger's 44 pt, what went wrong in the status capsule shows
   whole instead of being cut, the bars that slide up only fade with Reduce
   Motion, and the arrows for next and on point the right way in Arabic.
+- On the iPhone, See All shows every screenshot, not only the newest 90, so
+  older ones can be found, searched for and filtered too.
+- On the iPhone, where Snapfly may see only the photos you chose, the Photos
+  tab says so and offers Change Allowed Photos…, since a new screenshot
+  shows only once you add it; it no longer asks you to take one.
+- On the iPhone, with Photos access off, Protected asks for it as the Photos
+  tab does, instead of saying nothing was protected, and More › Help ›
+  Introduction no longer waits unseen to show up later.
+- On the iPhone, iOS's questions for Photos and the camera, and the
+  Shortcuts actions' descriptions, short name and Siri phrases, are in all
+  13 languages, not only in English.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

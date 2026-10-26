@@ -243,7 +243,10 @@ struct ProtectedTab: View {
     var body: some View {
         NavigationStack {
             Group {
-                if shots.isEmpty {
+                if !library.mayRead, library.access != .notDetermined {
+                    // Photos refused: the screenshots protected stay listed, but can't show.
+                    PhotosAccessDenied()
+                } else if shots.isEmpty {
                     ContentUnavailableView {
                         Label(L("Nothing protected yet"), systemImage: "checkmark.shield")
                     } description: {

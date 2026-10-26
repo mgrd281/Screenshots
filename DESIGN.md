@@ -2225,7 +2225,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     caching manager and kept in memory while the app runs. From iOS 18 on, a
     screenshot opens by growing out of the card tapped (the system's zoom
     transition, a fade with Reduce Motion), from the grid, the row or See
-    All alike. See All shows every screenshot in the same grid, under the
+    All alike. See All shows every screenshot in the same grid, not only
+    the newest (they show at once, the rest a moment later), under the
     system's search field, always showing ("Search words in screenshots"),
     which finds the screenshots read ahead of time that say every word
     typed, case and accents aside; nothing found shows the system's search
@@ -2254,6 +2255,17 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     are read on the iPhone and nothing leaves it unless the owner chooses,
     in footnote `.secondary`, 20 pt apart, centred, 24 pt in. The tab bar
     stays, so a document can be scanned first.
+  - **Refused**, the Photos tab is the system's empty state
+    (`PhotosAccessDenied`): `photo.badge.exclamationmark`, "Allow Snapfly to
+    see your screenshots", where to allow it, and Settings as the green pill.
+  - **Under limited access** Snapfly sees only the photos chosen, and a new
+    screenshot shows only once it is added, so a footnote in `.secondary`
+    says so (`LimitedPhotosNote`), over Change Allowed Photos…, a borderless
+    button in the accent, footnote semibold, 44 pt to the finger, which opens
+    the system's picker of the photos Snapfly may see; the screenshots are
+    read again once it closes. It sits 12 pt under the grid, leading; with
+    no screenshots, centred under No screenshots yet, in place of the line
+    asking for a screenshot.
 - **The first run** (`FirstRunExperience.swift`, the story in
   `Shared/FirstRun.swift`, `FIRST_RUN.md`) shows over everything from the
   first frame, on `systemBackground` with the safe areas kept, until it is
@@ -2637,7 +2649,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
 - **Protected** (`ProtectedTab`), a large title: the last twelve screenshots
   protected, in the Photos tab's grid with the shield on each, over a
   footnote of how they are kept; with none, the system's empty state with
-  `checkmark.shield`.
+  `checkmark.shield`; with Photos refused, the Photos tab's own state
+  (`PhotosAccessDenied`), as the list, though kept, can't show without it.
   - **Taking them off** (`ProtectedList`), as Photos does in an album.
     Holding a card adds a section under the three Cover items: Remove from
     Protected (`minus.circle`) and Delete from Photos (`trash`,
@@ -3294,7 +3307,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   subheadline semibold, each on one line (shrinking to 80% rather than
   wrapping), 8 pt apart on the trailing side, the main one filled. The hole and the card move on a spring
   (0.45, 0.86), a 0.15 s ease-out with Reduce Motion. Offered once when
-  the first screenshots show, again from More › Help › Introduction.
+  the first screenshots show, again from More › Help › Introduction, which
+  opens the Photos tab; without access to Photos the tab asks for it first,
+  and the introduction doesn't start.
 
 - **Always Hide** (`AlwaysHide.swift`, `AlwaysHideSheets.swift`), from More,
   on `phone-hide-ground`, with its own tokens (`phone-hide-*`, at the

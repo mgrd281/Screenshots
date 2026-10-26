@@ -503,6 +503,7 @@
 "Cover Private Details" = "개인 정보 가리기";
 "No screenshots yet" = "아직 스크린샷이 없습니다";
 "Take a screenshot, then come back here." = "스크린샷을 찍은 다음 여기로 돌아오세요.";
+"Snapfly sees only the photos you chose. New screenshots show up here once you add them." = "Snapfly는 선택한 사진만 볼 수 있습니다. 새 스크린샷은 추가해야 여기에 표시됩니다.";
 "Allow Snapfly to see your screenshots" = "Snapfly가 스크린샷을 볼 수 있도록 허용";
 "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly는 스크린샷 속 이름, 주소 등 개인 정보를 이 iPhone에서 바로 가립니다.";
 "Allow Access" = "접근 허용";
@@ -520,6 +521,9 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhone 뒷면을 두 번 탭하세요: 최신 스크린샷이 가려지고 복사되어 채팅에 붙여넣을 수 있습니다.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "한 번만 설정하려면 설정 › 손쉬운 사용 › 터치 › 뒷면 탭 › 이중 탭을 열고 %@을(를) 선택하세요.";
 "Cover the Latest Screenshot" = "최신 스크린샷 가리기";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "최신 스크린샷 속 개인 정보를 가리고 복사합니다. 바로 붙여넣을 수 있습니다.";
+"Cover Screenshot" = "스크린샷 가리기";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "이미지 속 이름, 주소, 이메일, 전화번호, 계좌 정보를 가립니다.";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "모든 것이 이 iPhone에서 이루어집니다. 아무것도 다른 곳으로 보내지 않습니다.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly가 아직 스크린샷을 볼 수 없습니다. Snapfly를 한 번 열고 허용하세요.";
 "There is no screenshot yet." = "아직 스크린샷이 없습니다.";

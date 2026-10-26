@@ -1,0 +1,7 @@
+/* The questions iOS asks before Snapfly may use the camera or Photos.
+   The English ones are the build settings' INFOPLIST_KEY_* in
+   iOS/Snapfly.xcodeproj; change both together. */
+
+"NSCameraUsageDescription" = "يمسح Snapfly المستندات بالكاميرا ليغطي معلوماتها الخاصة على هذا الآيفون.";
+"NSPhotoLibraryAddUsageDescription" = "يحفظ Snapfly النسخة المغطّاة من لقطة الشاشة في الصور عندما تطلب ذلك.";
+"NSPhotoLibraryUsageDescription" = "يعرض Snapfly لقطات شاشتك ويغطي المعلومات الخاصة فيها، على هذا الآيفون.";

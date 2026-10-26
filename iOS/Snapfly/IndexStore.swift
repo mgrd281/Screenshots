@@ -33,6 +33,16 @@ actor IndexStore {
         return try? JSONDecoder().decode(IndexedPhoto.self, from: data)
     }
 
+    /// Those of these photos that were prepared, by their identifier, asked
+    /// for at once, as See All does for every screenshot.
+    func photos(_ ids: [String]) -> [String: IndexedPhoto] {
+        var found: [String: IndexedPhoto] = [:]
+        for id in ids {
+            if let photo = photo(id) { found[id] = photo }
+        }
+        return found
+    }
+
     // MARK: Writing
 
     /// Keeps a photo as prepared. Written even while the iPhone is locked;

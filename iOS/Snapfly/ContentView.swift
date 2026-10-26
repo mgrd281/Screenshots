@@ -43,7 +43,7 @@ struct PhotosTab: View {
                 } else if library.access == .notDetermined {
                     welcome
                 } else {
-                    denied
+                    PhotosAccessDenied()
                 }
             }
             .navigationTitle("Snapfly")
@@ -183,9 +183,14 @@ struct PhotosTab: View {
             VStack(spacing: 4) {
                 Text(L("No screenshots yet"))
                     .font(.subheadline.weight(.semibold))
-                Text(L("Take a screenshot, then come back here."))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                // A new screenshot never joins the photos chosen by itself.
+                if library.access == .limited {
+                    LimitedPhotosNote(center: true) { Library.changeAllowedPhotos { library.load() } }
+                } else {
+                    Text(L("Take a screenshot, then come back here."))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
             .multilineTextAlignment(.center)
             .padding(.top, 8)
@@ -270,7 +275,7 @@ struct PhotosTab: View {
                         .font(.subheadline.weight(.medium))
                         // Always there: it also finds screenshots by their words.
                         NavigationLink {
-                            AllScreenshotsView(shots: library.shots, protected: protected, zoom: zoom, quick: coverer.cover)
+                            AllScreenshotsView(library: library, protected: protected, zoom: zoom, quick: coverer.cover)
                         } label: {
                             HStack(spacing: 3) {
                                 Text(L("See All"))
@@ -284,6 +289,9 @@ struct PhotosTab: View {
                 ScreenshotGrid(shots: Array(library.shots.prefix(GridZoom.preview(columns: columns))), protected: protected, place: .home, zoom: zoom,
                                quick: coverer.cover, selection: $selection, sweeping: $sweeping)
                     .disabled(batch.running)
+                if library.access == .limited {
+                    LimitedPhotosNote { Library.changeAllowedPhotos { library.load() } }
+                }
             }
         }
     }
@@ -382,8 +390,12 @@ struct PhotosTab: View {
         .scrollBounceBehavior(.basedOnSize)
         .sensoryFeedback(.impact(weight: .light), trigger: presses)
     }
+}
 
-    private var denied: some View {
+/// Photos refused: what Snapfly needs, and the way to Settings. On the
+/// Photos tab, and on Protected, which can't show a screenshot without it.
+struct PhotosAccessDenied: View {
+    var body: some View {
         ContentUnavailableView {
             Label(L("Allow Snapfly to see your screenshots"), systemImage: "photo.badge.exclamationmark")
         } description: {
@@ -394,5 +406,32 @@ struct PhotosTab: View {
             }
             .buttonStyle(ProtectButtonStyle())
         }
+    }
+}
+
+/// Under limited access: Snapfly sees only the photos chosen, and a new
+/// screenshot joins them only once it is added, so a line says so, over
+/// the system's picker of the photos Snapfly may see.
+struct LimitedPhotosNote: View {
+    /// Centred, under No screenshots yet; else leading, under the grid.
+    var center = false
+    let change: () -> Void
+
+    var body: some View {
+        VStack(alignment: center ? .center : .leading, spacing: 0) {
+            Text(L("Snapfly sees only the photos you chose. New screenshots show up here once you add them."))
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(center ? .center : .leading)
+                .fixedSize(horizontal: false, vertical: true)
+            Button(action: change) {
+                Text(L("Change Allowed Photos…"))
+                    .font(.footnote.weight(.semibold))
+                    .frame(minHeight: SnapflyTokens.touch)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.borderless)
+        }
+        .frame(maxWidth: .infinity, alignment: center ? .center : .leading)
     }
 }

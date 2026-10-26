@@ -161,3 +161,6 @@ jobs:
           test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/PrivacyInfo.xcprivacy
           # The share extension rides inside the app, with its own privacy manifest.
           test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/PlugIns/SnapflyShare.appex/PrivacyInfo.xcprivacy
+          # iOS's questions for the camera and Photos, in each language, in both.
+          test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/de.lproj/InfoPlist.strings
+          test -f build/iphone/Snapfly.xcarchive/Products/Applications/Snapfly.app/PlugIns/SnapflyShare.appex/de.lproj/InfoPlist.strings

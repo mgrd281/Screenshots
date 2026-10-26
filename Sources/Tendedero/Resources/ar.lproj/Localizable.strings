@@ -503,6 +503,7 @@
 "Cover Private Details" = "تغطية المعلومات الخاصة";
 "No screenshots yet" = "لا توجد لقطات شاشة بعد";
 "Take a screenshot, then come back here." = "التقط لقطة شاشة، ثم عُد إلى هنا.";
+"Snapfly sees only the photos you chose. New screenshots show up here once you add them." = "يرى Snapfly الصور التي اخترتها فقط. تظهر لقطات الشاشة الجديدة هنا بعد أن تضيفها.";
 "Allow Snapfly to see your screenshots" = "اسمح لـ Snapfly برؤية لقطات شاشتك";
 "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "يغطي Snapfly الأسماء والعناوين وغيرها من المعلومات الخاصة في لقطات شاشتك، على هذا الآيفون نفسه.";
 "Allow Access" = "السماح بالوصول";
@@ -520,6 +521,9 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "انقر مرتين على ظهر الآيفون: تُغطّى أحدث لقطة شاشة وتُنسخ، جاهزة للّصق في الدردشة.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "لضبط ذلك مرة واحدة، افتح الإعدادات › تسهيلات الاستخدام › اللمس › النقر على الظهر › نقر مزدوج، واختر %@.";
 "Cover the Latest Screenshot" = "تغطية أحدث لقطة شاشة";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "يغطي المعلومات الخاصة في أحدث لقطة شاشة لديك وينسخها، جاهزة للّصق.";
+"Cover Screenshot" = "تغطية لقطة الشاشة";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "يغطي الأسماء والعناوين والبريد الإلكتروني وأرقام الهواتف والبيانات المصرفية في الصورة.";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "كل شيء يحدث على هذا الآيفون. لا يُرسل شيء إلى أي مكان.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "لا يُسمح لـ Snapfly برؤية لقطات شاشتك بعد. افتح Snapfly مرة واحدة واسمح له.";
 "There is no screenshot yet." = "لا توجد لقطة شاشة بعد.";

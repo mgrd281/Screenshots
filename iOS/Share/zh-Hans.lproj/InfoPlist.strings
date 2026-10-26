@@ -1,0 +1,5 @@
+/* The question iOS asks before the share extension saves to Photos.
+   The English one is the build setting INFOPLIST_KEY_* in
+   iOS/Snapfly.xcodeproj; change both together. */
+
+"NSPhotoLibraryAddUsageDescription" = "当你要求时，Snapfly 会把图片遮盖后的副本存储到“照片”。";
