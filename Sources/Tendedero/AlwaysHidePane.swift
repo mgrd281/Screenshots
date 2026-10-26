@@ -169,6 +169,23 @@ private struct DetailTile: View {
     }
 }
 
+/// What is wrong, in callout: the warning's symbol in orange, the words in
+/// the text colour, since system orange is too light for words on a light
+/// ground.
+private struct HideWarning: View {
+    let text: String
+
+    var body: some View {
+        Label {
+            Text(text)
+        } icon: {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(.orange)
+        }
+        .font(.callout)
+    }
+}
+
 /// A rule's symbol, quiet: "Aa" for a word, a tag for a label.
 private struct RuleTile: View {
     let kind: OwnRule.Kind
@@ -263,9 +280,7 @@ private struct RuleRow: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
                 if !rule.isReadable {
-                    Label(L("This pattern cannot be read."), systemImage: "exclamationmark.triangle.fill")
-                        .font(.callout)
-                        .foregroundStyle(.orange)
+                    HideWarning(text: L("This pattern cannot be read."))
                 }
             }
             .accessibilityElement(children: .combine)
@@ -441,9 +456,7 @@ private struct DetailSheet: View {
     /// What is wrong with what was typed; else how it is also found.
     @ViewBuilder private var note: some View {
         if let problem {
-            Label(problem, systemImage: "exclamationmark.triangle.fill")
-                .font(.callout)
-                .foregroundStyle(.orange)
+            HideWarning(text: problem)
         } else if let hint {
             Text(hint)
                 .font(.callout)
@@ -565,9 +578,7 @@ private struct RuleSheet: View {
 
     @ViewBuilder private var hint: some View {
         if !draft.isReadable {
-            Label(L("This pattern cannot be read."), systemImage: "exclamationmark.triangle.fill")
-                .font(.callout)
-                .foregroundStyle(.orange)
+            HideWarning(text: L("This pattern cannot be read."))
         } else if kind != .pattern {
             Text(kind == .label ? L("Found where a line begins with it, in capitals or small letters.")
                  : L("Covered everywhere, whether written in capitals or small letters."))

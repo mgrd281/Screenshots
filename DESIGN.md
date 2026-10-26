@@ -498,7 +498,12 @@ literal value in a view.
   or a guide is recorded, as macOS marks recording.
 - **Allowed green** and **not allowed orange** (`.green`, `.orange`) are only
   for a permission's state, and whether the AI assistant's key works, and the orange for a rule's pattern that cannot
-  be read, with a symbol beside the word, never color alone.
+  be read, with a symbol beside the word, never color alone. They colour
+  the symbol alone: the word beside it stays `.primary` (`.secondary` where
+  it is quiet), since system green and orange are about 2.1:1 and 2.2:1 on
+  white, under the 4.5:1 words need. The same holds for what is wrong with
+  a card or an IBAN typed under Always Hide and for Cover Files' counts,
+  whose red symbol keeps its count in `.primary` too.
 - **Island black** is pure black, to blend into the notch and the menu bar
   above it.
 - **Drawing inks** (`Drawing.Ink`) are the six colours Draw on Photo draws
@@ -1673,7 +1678,8 @@ apps.
     on the trailing edge the state and one regular button.
   - States: Allowed (`checkmark.circle.fill`, green), Not allowed yet
     (`exclamationmark.circle.fill`, orange), Not asked yet or Not open
-    (`circle.dashed`, `.secondary`), in callout medium.
+    (`circle.dashed`, `.secondary`), in callout medium. The colour is on the
+    symbol; the words are `.primary`, or `.secondary` for the last two.
   - The button says what happens: Allow…, Open System Settings… once
     refused, or Open and Allow… for a browser that is not open. None shows
     once allowed.

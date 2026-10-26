@@ -330,16 +330,23 @@ private struct PermissionRow: View {
     }
 }
 
-/// Allowed in green, not allowed in orange, not asked yet in grey.
+/// Allowed with a green symbol, not allowed with an orange one, not asked
+/// yet in grey. The colour is on the symbol alone: system green and orange
+/// are too light for words on a light ground.
 private struct PermissionStatus: View {
     let status: Permissions.Status
 
     var body: some View {
-        Label(text, systemImage: symbol)
-            .font(.callout.weight(.medium))
-            .foregroundStyle(color)
-            .labelStyle(.titleAndIcon)
-            .fixedSize()
+        Label {
+            Text(text)
+                .foregroundStyle(words)
+        } icon: {
+            Image(systemName: symbol)
+                .foregroundStyle(color)
+        }
+        .font(.callout.weight(.medium))
+        .labelStyle(.titleAndIcon)
+        .fixedSize()
     }
 
     private var text: String {
@@ -363,6 +370,13 @@ private struct PermissionStatus: View {
         switch status {
         case .allowed: .green
         case .denied: .orange
+        case .notAsked, .notRunning: .secondary
+        }
+    }
+
+    private var words: Color {
+        switch status {
+        case .allowed, .denied: .primary
         case .notAsked, .notRunning: .secondary
         }
     }

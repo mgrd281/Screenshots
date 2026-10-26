@@ -596,15 +596,26 @@ private struct CoverFilesView: View {
         case .done:
             let tally = model.tally
             HStack(spacing: 16) {
-                Label("\(tally.covered)", systemImage: "checkmark.shield.fill")
-                    .foregroundStyle(.green)
-                    .help(L("Covered"))
-                Label("\(tally.nothing)", systemImage: "exclamationmark.circle.fill")
-                    .foregroundStyle(.orange)
-                    .help(L("Nothing to cover"))
-                Label("\(tally.failed)", systemImage: "xmark.octagon.fill")
-                    .foregroundStyle(.red)
-                    .help(L("Not covered"))
+                // The colour on each symbol alone; the counts in the text
+                // colour, which reads on every ground.
+                Label {
+                    Text("\(tally.covered)")
+                } icon: {
+                    Image(systemName: "checkmark.shield.fill").foregroundStyle(.green)
+                }
+                .help(L("Covered"))
+                Label {
+                    Text("\(tally.nothing)")
+                } icon: {
+                    Image(systemName: "exclamationmark.circle.fill").foregroundStyle(.orange)
+                }
+                .help(L("Nothing to cover"))
+                Label {
+                    Text("\(tally.failed)")
+                } icon: {
+                    Image(systemName: "xmark.octagon.fill").foregroundStyle(.red)
+                }
+                .help(L("Not covered"))
                 if tally.stopped > 0 {
                     Label("\(tally.stopped)", systemImage: "minus.circle")
                         .foregroundStyle(.secondary)
