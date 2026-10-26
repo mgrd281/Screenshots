@@ -1589,6 +1589,12 @@
 
 /* The iPhone: a scan's text in reading order, to read, copy, share or hear */
 "TXT, 1 file" = "TXT，1 个文件";
+"File Type" = "文件类型";
+"Plain Text" = "纯文本";
+"Word Document" = "Word 文稿";
+"DOCX, 1 file" = "DOCX，1 个文件";
+"To change in Word or Pages, its tables kept as tables." = "可在 Word 或 Pages 中编辑，表格仍保留为表格。";
+"Plain text, a table's cells apart by tabs." = "纯文本，表格的单元格以制表符分隔。";
 "Show Text" = "显示文字";
 "In reading order, every covered place a black bar. Read it, copy it or hear it." = "按阅读顺序显示，每个遮盖处为黑条。可阅读、复制或收听。";
 "In reading order, all of it. Read it, copy it or hear it." = "按阅读顺序显示全部内容。可阅读、复制或收听。";

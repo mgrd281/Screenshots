@@ -43,8 +43,30 @@ struct TextFile: FileDocument {
     }
 }
 
+/// The scanned pages' text as a Word document (`WordFile`), for the system's file exporter.
+struct WordDocumentFile: FileDocument {
+    /// A Word document, .docx.
+    static let docx = UTType("org.openxmlformats.wordprocessingml.document") ?? .data
+    static var readableContentTypes: [UTType] { [docx] }
+    let data: Data
+
+    init(data: Data) {
+        self.data = data
+    }
+
+    init(configuration: ReadConfiguration) throws {
+        guard let data = configuration.file.regularFileContents else { throw CocoaError(.fileReadCorruptFile) }
+        self.data = data
+    }
+
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        FileWrapper(regularFileWithContents: data)
+    }
+}
+
 /// Save and Share: the scanned pages as one A4 PDF, as a PNG each, or as
-/// their text in reading order (`ScanReading`), with
+/// their text in reading order (`ScanReading`), as plain text or a Word
+/// document with its tables kept (`WordFile`), with
 /// their covers (recommended, and where every save starts) or only cleaned,
 /// and for a PDF its text to find and copy or not; then Copy, Save (a PDF
 /// or the text to Files, pictures to Photos) or Share. The text opens whole
@@ -67,6 +89,9 @@ struct ScanSaveSheet: View {
     /// Every save starts covered.
     @State private var covered = !ScanDemo.uncovered
     @State private var searchable = true
+    /// The text as a Word document rather than plain text.
+    @State private var asWord = false
+    @State private var exportingWord: WordDocumentFile?
     @State private var working: Way?
     @State private var exporting: PDFFile?
     @State private var exportingText: TextFile?
@@ -109,7 +134,10 @@ struct ScanSaveSheet: View {
                     formats
                     covers
                     if format == .pdf { text }
-                    if format == .text { showText }
+                    if format == .text {
+                        showText
+                        textKind
+                    }
                     checked
                     if covered { sendTo }
                 }
@@ -119,6 +147,14 @@ struct ScanSaveSheet: View {
             .scrollBounceBehavior(.basedOnSize)
             .fileExporter(isPresented: Binding(get: { exportingText != nil }, set: { if !$0 { exportingText = nil } }),
                           document: exportingText, contentType: .plainText, defaultFilename: fileName) { result in
+                switch result {
+                case .success: done(covered ? L("Saved to Files") : L("Saved to Files, without covers"))
+                case .failure(let error):
+                    if (error as? CocoaError)?.code != .userCancelled { failed() }
+                }
+            }
+            .fileExporter(isPresented: Binding(get: { exportingWord != nil }, set: { if !$0 { exportingWord = nil } }),
+                          document: exportingWord, contentType: WordDocumentFile.docx, defaultFilename: fileName) { result in
                 switch result {
                 case .success: done(covered ? L("Saved to Files") : L("Saved to Files, without covers"))
                 case .failure(let error):
@@ -231,7 +267,7 @@ struct ScanSaveSheet: View {
                      detail: count == 1 ? L("A4, 1 page") : String(format: L("A4, %d pages"), count))
                 tile(.picture, symbol: "photo", title: L("Picture"),
                      detail: count == 1 ? L("PNG, 1 file") : String(format: L("PNG, %d files"), count))
-                tile(.text, symbol: "text.alignleft", title: L("Text"), detail: L("TXT, 1 file"))
+                tile(.text, symbol: "text.alignleft", title: L("Text"), detail: asWord ? L("DOCX, 1 file") : L("TXT, 1 file"))
             }
             // Side by side, as tall as the tallest.
             .fixedSize(horizontal: false, vertical: true)
@@ -397,6 +433,27 @@ struct ScanSaveSheet: View {
         .transition(.opacity)
     }
 
+    /// The text as plain text, its table's cells apart by tabs, or as a
+    /// Word document to change, its tables kept as tables.
+    private var textKind: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Picker(L("File Type"), selection: $asWord) {
+                Text(L("Plain Text")).tag(false)
+                Text(L("Word Document")).tag(true)
+            }
+            .pickerStyle(.segmented)
+            .accessibilityIdentifier("scan-text-kind")
+            Text(asWord ? L("To change in Word or Pages, its tables kept as tables.")
+                 : L("Plain text, a table's cells apart by tabs."))
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(12)
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .transition(.opacity)
+    }
+
     /// What was done to the pages, as the checks found it: only geometry and
     /// light, and no text or number changed where every page read the same;
     /// and the places still to check on pages opened, with covers.
@@ -554,32 +611,39 @@ struct ScanSaveSheet: View {
         guard working == nil else { return }
         working = way
         note = nil
-        let covered = covered, searchable = searchable, format = format
+        let covered = covered, searchable = searchable, format = format, asWord = asWord
         Task {
             defer { working = nil }
             do {
-                try await make(way, covered: covered, searchable: searchable, format: format)
+                try await make(way, covered: covered, searchable: searchable, format: format, asWord: asWord)
             } catch {
                 failed((error as? ScanProblem)?.message)
             }
         }
     }
 
-    /// The PDF, the pictures or the text made, then copied, saved or shared.
-    private func make(_ way: Way, covered: Bool, searchable: Bool, format: Format) async throws {
+    /// The PDF, the pictures or the text made, then copied, saved or shared;
+    /// the text as plain text, or saved and shared as a Word document.
+    private func make(_ way: Way, covered: Bool, searchable: Bool, format: Format, asWord: Bool) async throws {
         if format == .text {
             // As the text is open, with the corrections made to it.
             let edits = store.textEdits
-            let text = ScanReading.text(try await store.reading(covered: covered).pages.map { ScanReading.applying(edits, to: $0) })
+            let pages = try await store.reading(covered: covered).pages.map { ScanReading.applying(edits, to: $0) }
+            let text = ScanReading.text(pages)
             guard !text.isEmpty else { return failed(L("Snapfly found no words on these pages.")) }
             switch way {
             case .copy:
                 Clipboard.put(text, covered: covered)
                 done(covered ? L("Copied") : L("Copied, without covers"))
             case .save:
-                exportingText = TextFile(text: text)
+                if asWord {
+                    exportingWord = WordDocumentFile(data: WordFile.data(pages))
+                } else {
+                    exportingText = TextFile(text: text)
+                }
             case .share:
-                guard let url = write(Data(text.utf8), as: fileName + ".txt") else { return failed() }
+                let file = asWord ? write(WordFile.data(pages), as: fileName + ".docx") : write(Data(text.utf8), as: fileName + ".txt")
+                guard let url = file else { return failed() }
                 sharing = SharedFiles(urls: [url])
             }
             return

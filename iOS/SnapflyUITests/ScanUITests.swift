@@ -352,6 +352,21 @@ final class ScanUITests: XCTestCase {
         XCTAssertTrue(with.isSelected)
     }
 
+    /// The text as a Word document, chosen beside plain text under the
+    /// Text tile, which then says DOCX.
+    func testTheTextCanLeaveAsAWordDocument() {
+        let app = launch("sheet")
+        let tile = element(app, "scan-format-text")
+        XCTAssertTrue(tile.waitForExistence(timeout: Self.ready))
+        tile.tap()
+        let word = app.segmentedControls["scan-text-kind"].buttons["Word-Dokument"]
+        XCTAssertTrue(word.waitForExistence(timeout: 10))
+        XCTAssertTrue(app.segmentedControls["scan-text-kind"].buttons["Reiner Text"].isSelected, "plain text first")
+        word.tap()
+        XCTAssertTrue(wait(tile, "label CONTAINS %@", "DOCX, 1 Datei"), tile.label)
+        XCTAssertTrue(words(app, "Zum Bearbeiten in Word oder Pages").exists)
+    }
+
     func testACopyWithoutCoversSaysSo() {
         let app = launch("uncovered")
         let copy = element(app, "scan-way-copy")

@@ -3207,7 +3207,13 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   corners of 14: `text.viewfinder` in `phone-protect-tint`, "Show Text" in
   body medium over "In reading order, every covered place a black bar.
   Read it, copy it or hear it." (or "…, all of it.") in footnote
-  `.secondary`, and a chevron, opening the text (`phone-scan-text`); then the check line
+  `.secondary`, and a chevron, opening the text (`phone-scan-text`), and
+  under it File Type, a card on `secondarySystemGroupedBackground` with
+  corners of 14: a segmented Plain Text | Word Document over a footnote
+  saying what each is ("Plain text, a table's cells apart by tabs." or "To
+  change in Word or Pages, its tables kept as tables."), the Text tile then
+  saying "DOCX, 1 file"; Copy copies the text either way, Save and Share
+  make a .docx (`WordFile`). Then the check line
   in footnote `.secondary` ("Only straightened and brightened. No text, no
   number changed." with `checkmark.seal` where every page read the same;
   "Check the marked places." with an orange triangle where one read less),

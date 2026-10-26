@@ -1134,7 +1134,10 @@ watch the screen, so there is no line there. What it keeps is the covering:
   never stretched, at 300 dpi or more, its searchable text read from the
   covered pages, in every script, Arabic, Chinese and Korean too, nothing
   of who made it but Snapfly), a PNG for each page, or the text as one TXT
-  file, with covers, where every save starts, or without, which says the
+  file or a Word document (.docx, to change in Word or Pages: a heading a
+  heading, an address's lines kept, a table a table with its cells, a page
+  break between pages, Arabic from the right, every cover the bar, and
+  nothing of who made it or when), with covers, where every save starts, or without, which says the
   file holds every private detail and is never called protected; then
   Copy, Save or Share. The text is in reading order (`ScanReading`): a
   column to its end before the next, a letterhead's side column after the
@@ -1687,6 +1690,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/ReviewParts.swift` | Review's own parts: its bar with back, title, menu and Next; the one bar of tools with Abdecken and Seite; the pages small with their dots; the list of places to check on every page, the pages' hints and what is covered; a fault's short name |
 | `iOS/Snapfly/ScanEditing.swift`, `ScanCorners.swift`, `ScanSaveSheet.swift` | A scanned page in Review, page after page, and Before and After's labels; the corner editor with its loupe; Save and Share, with the format (PDF, Picture or Text), covers, searchable text, the check line and Send To |
 | `iOS/Snapfly/ScanReadingSheet.swift`, `ScanReadingParts.swift`, `ScanSpeaker.swift` | The pages' text open whole, in reading order, every cover a black bar: a heading larger, a table as a grid with a menu to copy it as cells or share it as CSV, every word to select, the lines read unsurely washed in orange, search, Seite (the pages with those lines outlined) and correcting against the page, translation, Copy, Vorlesen with a player (the word being said marked, pause, back and on, speed, the best voice for the language, a cover read out as "verdeckt") and Share as a .txt file |
+| `Shared/WordFile.swift` | Tested on Linux: the pages' text as a Word document (.docx) for Save and Share's Text, its headings, lines, tables, covers and pages as the text has them, Arabic from the right, in a ZIP written by hand with nothing of who made it or when |
 | `iOS/Snapfly/ScanDemo.swift` | Made-up scans for the pictures and videos made in CI (`-SnapflyScan`, `scripts/scan-checks.sh`), and a made-up photographed invoice in the Photos tab (`-SnapflyDocumentPhoto`), in debug builds only |
 | `iOS/Snapfly/ScanHelp.swift` | The card that offers to clean a photographed document in Protect Picture, with Clean Up and Revert; the sheet an AI chat opens for scanned pages, with what goes and the questions; the document's kind beside its pages |
 | `Shared/PDFProject.swift`, `PDFPageGeometry.swift` | Tested on Linux: a PDF project (its files, its pages and their turns), the page operations, undo and redo, how pictures sit on Original, A4 or Letter pages, the quality and the size estimate; where things on a turned PDF page are, its text in lines and words, and whether a PDF is signed |

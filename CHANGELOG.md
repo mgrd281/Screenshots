@@ -16,6 +16,10 @@ keeps a download of each version.
   of spinning for ever, and after a failure the editor's apps, Copy and
   Send to Mac are dimmed instead of doing nothing. The introduction now
   names More instead of Settings.
+- On the iPhone, a scan's text can leave as a Word document: under Text in
+  Save and Share, choose Word Document, and Save or Share make a .docx to
+  change in Word or Pages, its headings, an address's lines and its tables
+  kept as they are, every covered place a black bar.
 - On the iPhone, easier to read and to tap: orange words are a deeper
   orange that reads on light grounds, small buttons (Try Again, Don't Wait,
   the selected place's Cover, Delete and Done, Clean Up, Revert and its
