@@ -106,6 +106,9 @@ final class ProjectStore: ObservableObject {
     @Published var toast: ProjectToast?
     /// Each page's shape, counted up when it is turned, so its editor starts afresh.
     @Published private(set) var revisions: [UUID: Int] = [:]
+    /// Counted up each time the project's PDFs are read or one is unlocked,
+    /// so pages drawn before, like the grid's, are drawn again as they are.
+    @Published private(set) var sourcesRead = 0
 
     /// The project's own undo, which the system's gestures reach too.
     let undoManager = UndoManager()
@@ -426,7 +429,7 @@ final class ProjectStore: ObservableObject {
                 sources[file.id] = source
                 if source.isLocked { stillLocked.insert(file.id) }
             }
-            objectWillChange.send()
+            sourcesRead += 1
             askForLocked()
         }
     }
@@ -462,6 +465,7 @@ final class ProjectStore: ObservableObject {
             sessions[page.id] = nil
             revisions[page.id, default: 0] += 1
         }
+        sourcesRead += 1
         objectWillChange.send()
         if let waiting = unlocking {
             unlocking = nil
