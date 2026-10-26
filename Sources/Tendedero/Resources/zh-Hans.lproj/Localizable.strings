@@ -799,6 +799,9 @@
 "Start Again" = "重新开始";
 "Start Introduction" = "开始入门介绍";
 "Take a screenshot first: this shows on a photo on the line." = "请先截一张图：这要在晾衣绳上的照片上演示。";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "最新的照片上没有遮盖任何内容：这要在有遮盖内容的照片上演示。";
+"The newest on the line is a screen recording: this shows on a photo." = "晾衣绳上最新的是一段屏幕录制：这要在照片上演示。";
+"No icons are on under the photos. Turn one on in %@." = "照片下方没有打开任何图标。请在“%@”中打开一个。";
 "Taking a Screenshot" = "截屏";
 "Tap a screenshot" = "轻点一张截图";
 "The Tag at the End of the Line" = "晾衣绳末端的标签";

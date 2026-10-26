@@ -801,6 +801,9 @@
 "Start Again" = "फिर से शुरू करें";
 "Start Introduction" = "परिचय शुरू करें";
 "Take a screenshot first: this shows on a photo on the line." = "पहले एक स्क्रीनशॉट लें: यह रस्सी पर टंगी फ़ोटो पर दिखाया जाता है।";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "सबसे नई फ़ोटो में कुछ भी ढका नहीं है: यह ऐसी फ़ोटो पर दिखाया जाता है जिसमें कुछ ढका हो।";
+"The newest on the line is a screen recording: this shows on a photo." = "रस्सी पर सबसे नई चीज़ एक स्क्रीन रिकॉर्डिंग है: यह फ़ोटो पर दिखाया जाता है।";
+"No icons are on under the photos. Turn one on in %@." = "फ़ोटो के नीचे कोई आइकन चालू नहीं है। %@ में एक चालू करें।";
 "Taking a Screenshot" = "स्क्रीनशॉट लेना";
 "Tap a screenshot" = "किसी स्क्रीनशॉट पर टैप करें";
 "The Tag at the End of the Line" = "रस्सी के आख़िर का टैग";

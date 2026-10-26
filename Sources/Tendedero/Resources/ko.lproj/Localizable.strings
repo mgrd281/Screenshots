@@ -799,6 +799,9 @@
 "Start Again" = "다시 시작";
 "Start Introduction" = "소개 시작";
 "Take a screenshot first: this shows on a photo on the line." = "먼저 스크린샷을 찍으세요. 빨랫줄에 걸린 사진에서 보여 드려요.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "가장 최근 사진에는 가린 것이 없어요. 무언가 가린 사진에서 보여 드려요.";
+"The newest on the line is a screen recording: this shows on a photo." = "빨랫줄의 가장 최근 항목은 화면 기록이에요. 사진에서 보여 드려요.";
+"No icons are on under the photos. Turn one on in %@." = "사진 아래에 켜진 아이콘이 없어요. %@에서 하나를 켜세요.";
 "Taking a Screenshot" = "스크린샷 찍기";
 "Tap a screenshot" = "스크린샷을 탭하세요";
 "The Tag at the End of the Line" = "빨랫줄 끝의 태그";

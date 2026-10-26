@@ -799,6 +799,9 @@
 "Start Again" = "最初から";
 "Start Introduction" = "はじめにを開始";
 "Take a screenshot first: this shows on a photo on the line." = "まずスクリーンショットを撮ってください。ロープに掛かった写真で説明します。";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "最新の写真には隠したものがありません。何かを隠した写真で説明します。";
+"The newest on the line is a screen recording: this shows on a photo." = "ロープの最新のものは画面収録です。写真で説明します。";
+"No icons are on under the photos. Turn one on in %@." = "写真の下のアイコンがすべてオフです。%@ でオンにしてください。";
 "Taking a Screenshot" = "スクリーンショットを撮る";
 "Tap a screenshot" = "スクリーンショットをタップ";
 "The Tag at the End of the Line" = "ロープの端のタグ";

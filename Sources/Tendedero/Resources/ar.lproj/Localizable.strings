@@ -799,6 +799,9 @@
 "Start Again" = "ابدأ من جديد";
 "Start Introduction" = "ابدأ التعريف";
 "Take a screenshot first: this shows on a photo on the line." = "التقط صورة للشاشة أولًا: هذا يُعرض على صورة على الحبل.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "لا شيء مغطّى في أحدث صورة: هذا يُعرض على صورة فيها شيء مغطّى.";
+"The newest on the line is a screen recording: this shows on a photo." = "أحدث ما على الحبل تسجيل شاشة: هذا يُعرض على صورة.";
+"No icons are on under the photos. Turn one on in %@." = "لا توجد أيقونات مفعّلة تحت الصور. فعّل واحدة في %@.";
 "Taking a Screenshot" = "التقاط صورة للشاشة";
 "Tap a screenshot" = "اضغط على لقطة";
 "The Tag at the End of the Line" = "الشارة في طرف الحبل";

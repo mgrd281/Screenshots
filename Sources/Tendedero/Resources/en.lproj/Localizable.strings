@@ -801,6 +801,9 @@
 "Start Again" = "Start Again";
 "Start Introduction" = "Start Introduction";
 "Take a screenshot first: this shows on a photo on the line." = "Take a screenshot first: this shows on a photo on the line.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "Nothing is covered on the newest photo: this shows on one with something covered.";
+"The newest on the line is a screen recording: this shows on a photo." = "The newest on the line is a screen recording: this shows on a photo.";
+"No icons are on under the photos. Turn one on in %@." = "No icons are on under the photos. Turn one on in %@.";
 "Taking a Screenshot" = "Taking a Screenshot";
 "Tap a screenshot" = "Tap a screenshot";
 "The Tag at the End of the Line" = "The Tag at the End of the Line";

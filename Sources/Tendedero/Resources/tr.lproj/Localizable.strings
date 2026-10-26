@@ -799,6 +799,9 @@
 "Start Again" = "Yeniden başlat";
 "Start Introduction" = "Tanıtımı başlat";
 "Take a screenshot first: this shows on a photo on the line." = "Önce bir ekran görüntüsü al: bu, ipteki bir fotoğrafta gösterilir.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "En yeni fotoğrafta gizlenen bir şey yok: bu, içinde gizlenen bir şey olan bir fotoğrafta gösterilir.";
+"The newest on the line is a screen recording: this shows on a photo." = "İpteki en yeni öğe bir ekran kaydı: bu, bir fotoğrafta gösterilir.";
+"No icons are on under the photos. Turn one on in %@." = "Fotoğrafların altında açık simge yok. %@ bölümünden birini aç.";
 "Taking a Screenshot" = "Ekran görüntüsü almak";
 "Tap a screenshot" = "Bir ekran görüntüsüne dokun";
 "The Tag at the End of the Line" = "İpin sonundaki etiket";

@@ -799,6 +799,9 @@
 "Start Again" = "Neu starten";
 "Start Introduction" = "Einführung starten";
 "Take a screenshot first: this shows on a photo on the line." = "Mach zuerst ein Bildschirmfoto: Das zeigt sich an einem Foto auf der Leine.";
+"Nothing is covered on the newest photo: this shows on one with something covered." = "Auf dem neuesten Foto ist nichts verdeckt: Das zeigt sich an einem Foto, auf dem etwas verdeckt ist.";
+"The newest on the line is a screen recording: this shows on a photo." = "Das Neueste auf der Leine ist eine Bildschirmaufnahme: Das zeigt sich an einem Foto.";
+"No icons are on under the photos. Turn one on in %@." = "Unter den Fotos ist kein Symbol eingeschaltet. Schalte eines unter %@ ein.";
 "Taking a Screenshot" = "Ein Bildschirmfoto machen";
 "Tap a screenshot" = "Tippe auf ein Bildschirmfoto";
 "The Tag at the End of the Line" = "Das Schild am Ende der Leine";

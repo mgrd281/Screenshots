@@ -1144,6 +1144,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let guide = Guide.shared
         guide.frame = { [weak self] target in self?.guideFrame(of: target) }
         guide.has = { [weak self] need in self?.guideHas(need) ?? false }
+        guide.lacks = { [weak self] need in self?.guideLacks(need) }
         guide.holdLine = { [weak self] hold in self?.guideHoldsLine(hold) }
         guide.screen = { [weak self] in self?.panel.screen ?? LinePanel.screenUnderPointer() }
     }
@@ -1203,6 +1204,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             return ChatTarget.takes(item) && !ChatTarget.onPhotosNow.isEmpty
         case .twoPhotos:
             return line.liveCount >= 2
+        }
+    }
+
+    /// Why the newest photo lacks what a step needs, for Show Me How's note:
+    /// a screen recording, nothing covered, or every icon under the photos
+    /// turned off.
+    private func guideLacks(_ need: GuideStep.Need) -> String? {
+        guard let item = guidePhoto else { return nil }
+        switch need {
+        case .coveredPhoto, .iconsUnderPhotos:
+            if item.isRecording { return L("The newest on the line is a screen recording: this shows on a photo.") }
+            if need == .coveredPhoto {
+                return L("Nothing is covered on the newest photo: this shows on one with something covered.")
+            }
+            return String(format: L("No icons are on under the photos. Turn one on in %@."),
+                          [L("Settings"), L("Line"), L("Icons under photos")].joined(separator: " › "))
+        case .photo, .twoPhotos:
+            return nil
         }
     }
 

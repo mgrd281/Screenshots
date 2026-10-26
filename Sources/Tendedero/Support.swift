@@ -90,7 +90,13 @@ struct SupportPane: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { Guide.shared.startIntroduction() }
     }
 
+    /// The window steps aside for it too, unless the line has nothing for it
+    /// to show: then the window stays, and a note says why.
     private func show(_ lesson: GuideLesson) {
+        if let missing = Guide.shared.missing(for: lesson) {
+            Notice.show(missing)
+            return
+        }
         SettingsWindow.shared.close()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { Guide.shared.show(lesson) }
     }
