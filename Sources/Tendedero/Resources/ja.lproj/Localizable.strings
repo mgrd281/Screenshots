@@ -741,7 +741,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "「%1$@」はこれからすべての写真で隠されます。%2$@で変更できます。";
 "Always cover “%@”" = "「%@」を常に隠す";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "これからすべての写真で隠されます。プライバシーの自分のルールに入ります。";
+"Covered in every photo from now on, as a rule of your own under %@." = "これからすべての写真で隠されます。「%@」の自分のルールに入ります。";
 "Moved to the Trash. Click to put it back on the line." = "ゴミ箱に入れました。クリックするとロープに戻します。";
 "%d moved to the Trash. Click to put them back on the line." = "%d枚をゴミ箱に入れました。クリックするとロープに戻します。";
 "Taken down. Click to put it back on the line." = "外しました。クリックするとロープに戻します。";
@@ -1118,7 +1118,7 @@
 "What to cover" = "隠すもの";
 "Names Only" = "名前のみ";
 "As in Settings" = "設定と同じ";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "設定 › プライバシー の独自ルールも適用されます。各コピーはもう一度読み取られ、まだ見えるものがあればさらに隠されます。";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@ のあなたの情報とルールも適用されます。各コピーはもう一度読み取られ、まだ見えるものがあればさらに隠されます。";
 "Read on this Mac. Nothing is sent anywhere." = "この Mac で読み取ります。どこにも送信されません。";
 "The words of each file also go to %@, as set in Settings › Privacy." = "設定 › プライバシー の設定どおり、各ファイルの文字は %@ にも送られます。";
 "Cover 1 File" = "1 ファイルを隠す";

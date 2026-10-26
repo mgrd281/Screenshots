@@ -741,7 +741,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "从现在起，每张照片中的“%1$@”都会被遮盖。可在“%2$@”中更改。";
 "Always cover “%@”" = "始终遮盖“%@”";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "从现在起每张照片都会遮盖，作为“隐私”中的自定义规则。";
+"Covered in every photo from now on, as a rule of your own under %@." = "从现在起每张照片都会遮盖，作为“%@”中的自定义规则。";
 "Moved to the Trash. Click to put it back on the line." = "已移到废纸篓。点按可放回晾衣绳。";
 "%d moved to the Trash. Click to put them back on the line." = "已将 %d 张移到废纸篓。点按可放回晾衣绳。";
 "Taken down. Click to put it back on the line." = "已取下。点按可放回晾衣绳。";
@@ -1118,7 +1118,7 @@
 "What to cover" = "遮盖内容";
 "Names Only" = "仅姓名";
 "As in Settings" = "与设置相同";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "“设置 › 隐私”中你自己的规则同样适用。每份副本都会再次读取，如仍有内容可见则会进一步遮盖。";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "“%@”中你的信息和规则同样适用。每份副本都会再次读取，如仍有内容可见则会进一步遮盖。";
 "Read on this Mac. Nothing is sent anywhere." = "在这台 Mac 上读取，不会发送到任何地方。";
 "The words of each file also go to %@, as set in Settings › Privacy." = "按照“设置 › 隐私”中的设定，每个文件的文字也会发送给 %@。";
 "Cover 1 File" = "遮盖 1 个文件";

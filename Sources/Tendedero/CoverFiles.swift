@@ -696,7 +696,8 @@ private struct CoverFilesInspector: View {
                     }
                 }
                 Section {
-                    Text(L("Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows."))
+                    Text(String(format: L("Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows."),
+                                [L("Settings"), L("Always Hide")].joined(separator: " › ")))
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
                     Text(readWhere)

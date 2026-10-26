@@ -741,7 +741,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” bundan sonra her fotoğrafta örtülür. Bunu %2$@ bölümünden değiştirebilirsin.";
 "Always cover “%@”" = "“%@” her zaman örtülsün";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "Bundan sonra her fotoğrafta örtülür; Gizlilik altında kendi kuralın olarak.";
+"Covered in every photo from now on, as a rule of your own under %@." = "Bundan sonra her fotoğrafta örtülür; “%@” altında kendi kuralın olarak.";
 "Moved to the Trash. Click to put it back on the line." = "Çöp Kutusu’na taşındı. Yeniden ipe asmak için tıkla.";
 "%d moved to the Trash. Click to put them back on the line." = "%d tanesi Çöp Kutusu’na taşındı. Yeniden ipe asmak için tıkla.";
 "Taken down. Click to put it back on the line." = "İndirildi. Yeniden ipe asmak için tıkla.";
@@ -1118,7 +1118,7 @@
 "What to cover" = "Neler kapatılsın";
 "Names Only" = "Yalnızca adlar";
 "As in Settings" = "Ayarlardaki gibi";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Ayarlar › Gizlilik’teki kendi kuralların da uygulanır. Her kopya yeniden okunur ve hâlâ görünen bir şey varsa daha fazla kapatılır.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@ bölümündeki bilgilerin ve kuralların da uygulanır. Her kopya yeniden okunur ve hâlâ görünen bir şey varsa daha fazla kapatılır.";
 "Read on this Mac. Nothing is sent anywhere." = "Bu Mac’te okunur. Hiçbir şey hiçbir yere gönderilmez.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "Ayarlar › Gizlilik’te ayarlandığı gibi her dosyanın kelimeleri %@’a da gider.";
 "Cover 1 File" = "1 dosyayı kapat";

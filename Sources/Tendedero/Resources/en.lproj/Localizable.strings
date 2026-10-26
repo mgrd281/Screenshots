@@ -743,7 +743,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” is covered from now on, in every photo. Change it in %2$@.";
 "Always cover “%@”" = "Always cover “%@”";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "Covered in every photo from now on, as a rule of your own under Privacy.";
+"Covered in every photo from now on, as a rule of your own under %@." = "Covered in every photo from now on, as a rule of your own under %@.";
 "Moved to the Trash. Click to put it back on the line." = "Moved to the Trash. Click to put it back on the line.";
 "%d moved to the Trash. Click to put them back on the line." = "%d moved to the Trash. Click to put them back on the line.";
 "Taken down. Click to put it back on the line." = "Taken down. Click to put it back on the line.";
@@ -1120,7 +1120,7 @@
 "What to cover" = "What to cover";
 "Names Only" = "Names Only";
 "As in Settings" = "As in Settings";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows.";
 "Read on this Mac. Nothing is sent anywhere." = "Read on this Mac. Nothing is sent anywhere.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "The words of each file also go to %@, as set in Settings › Privacy.";
 "Cover 1 File" = "Cover 1 File";

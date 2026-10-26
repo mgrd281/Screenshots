@@ -743,7 +743,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@” अब से हर फ़ोटो में ढका रहेगा। इसे %2$@ में बदल सकते हैं।";
 "Always cover “%@”" = "“%@” को हमेशा ढकें";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "अब से हर फ़ोटो में ढका रहेगा, गोपनीयता में आपके अपने नियम के रूप में।";
+"Covered in every photo from now on, as a rule of your own under %@." = "अब से हर फ़ोटो में ढका रहेगा, “%@” में आपके अपने नियम के रूप में।";
 "Moved to the Trash. Click to put it back on the line." = "ट्रैश में ले जाया गया। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
 "%d moved to the Trash. Click to put them back on the line." = "%d फ़ोटो ट्रैश में ले जाई गईं। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
 "Taken down. Click to put it back on the line." = "उतार दी गई। रस्सी पर वापस टाँगने के लिए क्लिक करें।";
@@ -1120,7 +1120,7 @@
 "What to cover" = "क्या ढकना है";
 "Names Only" = "केवल नाम";
 "As in Settings" = "सेटिंग्स के अनुसार";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "सेटिंग्स › गोपनीयता के आपके अपने नियम भी लागू होते हैं। हर कॉपी फिर से पढ़ी जाती है, और कुछ दिखे तो और ढका जाता है।";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@ की आपकी जानकारी और नियम भी लागू होते हैं। हर कॉपी फिर से पढ़ी जाती है, और कुछ दिखे तो और ढका जाता है।";
 "Read on this Mac. Nothing is sent anywhere." = "इसी Mac पर पढ़ा जाता है। कुछ भी कहीं नहीं भेजा जाता।";
 "The words of each file also go to %@, as set in Settings › Privacy." = "हर फ़ाइल के शब्द %@ को भी जाते हैं, जैसा सेटिंग्स › गोपनीयता में तय है।";
 "Cover 1 File" = "1 फ़ाइल ढकें";

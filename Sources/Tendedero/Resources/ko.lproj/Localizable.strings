@@ -741,7 +741,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "“%1$@”은(는) 이제 모든 사진에서 가려집니다. %2$@에서 바꿀 수 있습니다.";
 "Always cover “%@”" = "“%@” 항상 가리기";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "이제 모든 사진에서 가려지며, 개인정보 보호의 나만의 규칙에 들어갑니다.";
+"Covered in every photo from now on, as a rule of your own under %@." = "이제 모든 사진에서 가려지며, ‘%@’의 나만의 규칙에 들어갑니다.";
 "Moved to the Trash. Click to put it back on the line." = "휴지통으로 옮겼습니다. 클릭하면 빨랫줄에 다시 겁니다.";
 "%d moved to the Trash. Click to put them back on the line." = "%d장을 휴지통으로 옮겼습니다. 클릭하면 빨랫줄에 다시 겁니다.";
 "Taken down. Click to put it back on the line." = "걷어냈습니다. 클릭하면 빨랫줄에 다시 겁니다.";
@@ -1118,7 +1118,7 @@
 "What to cover" = "가릴 항목";
 "Names Only" = "이름만";
 "As in Settings" = "설정과 동일";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "설정 › 개인정보 보호의 사용자 규칙도 적용됩니다. 모든 사본은 다시 읽혀 아직 보이는 것이 있으면 더 가려집니다.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "%@의 내 정보와 규칙도 적용됩니다. 모든 사본은 다시 읽혀 아직 보이는 것이 있으면 더 가려집니다.";
 "Read on this Mac. Nothing is sent anywhere." = "이 Mac에서 읽습니다. 아무것도 전송되지 않습니다.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "설정 › 개인정보 보호에 따라 각 파일의 단어가 %@에도 전송됩니다.";
 "Cover 1 File" = "파일 1개 가리기";

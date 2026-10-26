@@ -741,7 +741,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "«%1$@» تُغطّى من الآن في كل صورة. يمكنك تغيير ذلك في %2$@.";
 "Always cover “%@”" = "تغطية «%@» دائمًا";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "يُغطّى من الآن في كل صورة، كقاعدة خاصة بك ضمن الخصوصية.";
+"Covered in every photo from now on, as a rule of your own under %@." = "يُغطّى من الآن في كل صورة، كقاعدة خاصة بك ضمن «%@».";
 "Moved to the Trash. Click to put it back on the line." = "نُقلت إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
 "%d moved to the Trash. Click to put them back on the line." = "نُقلت %d إلى سلة المهملات. انقر لإعادتها إلى الحبل.";
 "Taken down. Click to put it back on the line." = "أُنزلت. انقر لإعادتها إلى الحبل.";
@@ -1118,7 +1118,7 @@
 "What to cover" = "ما الذي يُغطّى";
 "Names Only" = "الأسماء فقط";
 "As in Settings" = "كما في الإعدادات";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "تُطبَّق أيضًا قواعدك الخاصة من الإعدادات › الخصوصية. وتُقرأ كل نسخة مرة أخرى، ويُغطّى المزيد إن بقي شيء ظاهرًا.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "تُطبَّق أيضًا معلوماتك وقواعدك من %@. وتُقرأ كل نسخة مرة أخرى، ويُغطّى المزيد إن بقي شيء ظاهرًا.";
 "Read on this Mac. Nothing is sent anywhere." = "تُقرأ على هذا الماك. لا يُرسَل شيء إلى أي مكان.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "تذهب كلمات كل ملف أيضًا إلى %@، كما هو مضبوط في الإعدادات › الخصوصية.";
 "Cover 1 File" = "غطِّ ملفًا واحدًا";

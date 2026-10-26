@@ -432,13 +432,13 @@ final class HideModel: ObservableObject {
     }
 
     /// The word offered is covered in every photo from now on, as a rule of
-    /// the owner's own, which Settings › Privacy lists.
+    /// the owner's own, which Settings › Always Hide lists.
     func alwaysCover() {
         guard let offer else { return }
         self.offer = nil
         OwnRules.add(word: offer.word)
         note = String(format: L("“%1$@” is covered from now on, in every photo. Change it in %2$@."), offer.word,
-                      [L("Settings"), L("Privacy")].joined(separator: " › "))
+                      [L("Settings"), L("Always Hide")].joined(separator: " › "))
         rulesChanged?()
     }
 
@@ -890,7 +890,7 @@ private struct HideEditorView: View {
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.small)
-        .help(L("Covered in every photo from now on, as a rule of your own under Privacy."))
+        .help(String(format: L("Covered in every photo from now on, as a rule of your own under %@."), L("Always Hide")))
         .position(x: x, y: y)
         .transition(.opacity)
     }

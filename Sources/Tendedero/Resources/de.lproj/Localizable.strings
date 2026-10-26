@@ -741,7 +741,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "„%1$@“ wird ab jetzt in jedem Foto verdeckt. Ändern kannst du das unter %2$@.";
 "Always cover “%@”" = "„%@“ immer verdecken";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "Ab jetzt in jedem Foto verdeckt, als eigene Regel unter Datenschutz.";
+"Covered in every photo from now on, as a rule of your own under %@." = "Ab jetzt in jedem Foto verdeckt, als eigene Regel unter „%@“.";
 "Moved to the Trash. Click to put it back on the line." = "In den Papierkorb gelegt. Klick, um es wieder an die Leine zu hängen.";
 "%d moved to the Trash. Click to put them back on the line." = "%d in den Papierkorb gelegt. Klick, um sie wieder an die Leine zu hängen.";
 "Taken down. Click to put it back on the line." = "Abgenommen. Klick, um es wieder an die Leine zu hängen.";
@@ -1118,7 +1118,7 @@
 "What to cover" = "Was verdeckt wird";
 "Names Only" = "Nur Namen";
 "As in Settings" = "Wie in Einstellungen";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Deine eigenen Regeln aus Einstellungen › Datenschutz gelten auch. Jede Kopie wird noch einmal gelesen und weiter verdeckt, falls noch etwas zu sehen ist.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "Deine Angaben und Regeln aus %@ gelten auch. Jede Kopie wird noch einmal gelesen und weiter verdeckt, falls noch etwas zu sehen ist.";
 "Read on this Mac. Nothing is sent anywhere." = "Auf diesem Mac gelesen. Nichts wird irgendwohin gesendet.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "Die Wörter jeder Datei gehen auch an %@, wie unter Einstellungen › Datenschutz eingestellt.";
 "Cover 1 File" = "1 Datei verdecken";

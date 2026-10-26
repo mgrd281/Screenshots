@@ -741,7 +741,7 @@
 /* Click to cover, the order of the icons under photos, and notes that take a change back */
 "“%1$@” is covered from now on, in every photo. Change it in %2$@." = "«%1$@» cóbrese a partir de agora en todas as fotos. Podes cambialo en %2$@.";
 "Always cover “%@”" = "Cubrir sempre «%@»";
-"Covered in every photo from now on, as a rule of your own under Privacy." = "Cóbrese desde agora en todas as fotos, como regra propia en Privacidade.";
+"Covered in every photo from now on, as a rule of your own under %@." = "Cóbrese desde agora en todas as fotos, como regra propia en «%@».";
 "Moved to the Trash. Click to put it back on the line." = "Movida á Papeleira. Preme para volver colgala na corda.";
 "%d moved to the Trash. Click to put them back on the line." = "%d movidas á Papeleira. Preme para volver colgalas na corda.";
 "Taken down. Click to put it back on the line." = "Descolgada. Preme para volver colgala na corda.";
@@ -1118,7 +1118,7 @@
 "What to cover" = "Que tapar";
 "Names Only" = "Só nomes";
 "As in Settings" = "Como en Axustes";
-"Your own rules from Settings › Privacy apply too. Every copy is read again, and covered more if anything still shows." = "Tamén se aplican as túas propias regras de Axustes › Privacidade. Cada copia vólvese ler e tápase máis se algo segue a verse.";
+"Your details and rules from %@ apply too. Every copy is read again, and covered more if anything still shows." = "Tamén se aplican os teus datos e regras de %@. Cada copia vólvese ler e tápase máis se algo segue a verse.";
 "Read on this Mac. Nothing is sent anywhere." = "Lese neste Mac. Non se envía nada a ningures.";
 "The words of each file also go to %@, as set in Settings › Privacy." = "As palabras de cada ficheiro tamén van a %@, como se indica en Axustes › Privacidade.";
 "Cover 1 File" = "Tapar 1 ficheiro";
