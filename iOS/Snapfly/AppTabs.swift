@@ -16,6 +16,9 @@ final class AppTabs: ObservableObject {
         : AlwaysHideSample.requested || MoreSample.requested ? AppTab.more : AppTab.photos
     /// The first run's Try It Now: the Scan tab opens the camera as it shows.
     @Published var scanRequested = false
+    /// Pages of More asked for from another tab, like Faster picture
+    /// processing from See All: More opens them as it shows, then empties this.
+    @Published var morePages: [MorePage] = []
 }
 
 /// Snapfly on the iPhone: the screenshots in Photos, a document scanned with
@@ -268,11 +271,11 @@ struct ProtectedTab: View {
                     RemoveBar(count: selection.count, merge: { merge(selection) }) { way in
                         remove(shots.filter { selection.contains($0.localIdentifier) }, way)
                     }
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .toolbar(selection == nil ? .automatic : .hidden, for: .tabBar)
-            .animation(.snappy, value: selection == nil)
+            .animation(choosing, value: selection == nil)
             .overlay(alignment: .bottom) {
                 if let removed {
                     HStack(spacing: 12) {
@@ -319,7 +322,7 @@ struct ProtectedTab: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(L("Cancel")) {
-                    withAnimation(.snappy) { selection = nil }
+                    withAnimation(choosing) { selection = nil }
                 }
                 .fontWeight(.semibold)
             }
@@ -327,10 +330,16 @@ struct ProtectedTab: View {
         if selection == nil, !shots.isEmpty {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(L("Select")) {
-                    withAnimation(.snappy) { selection = GridSelection() }
+                    withAnimation(choosing) { selection = GridSelection() }
                 }
             }
         }
+    }
+
+    /// How choosing starts and ends, and its bar comes and goes: on
+    /// `.snappy`, or a short fade with Reduce Motion.
+    private var choosing: Animation {
+        reduceMotion ? SnapflyMotion.calm : .snappy
     }
 
     private func reload() {
@@ -341,7 +350,7 @@ struct ProtectedTab: View {
     private func merge(_ chosen: GridSelection) {
         let ids = shots.map(\.localIdentifier).filter(chosen.contains)
         guard !ids.isEmpty else { return }
-        withAnimation(.snappy) { selection = nil }
+        withAnimation(choosing) { selection = nil }
         ProjectStore.shared.start(.screenshots(ids))
     }
 

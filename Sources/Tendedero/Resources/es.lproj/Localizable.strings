@@ -747,7 +747,7 @@
 "A short hint, once, the first time something is in reach." = "Una pista breve, una sola vez, la primera vez que algo está a tu alcance.";
 "About a minute" = "Alrededor de un minuto";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "Al final de la cuerda: busca en tus capturas, pégalas o descárgalas todas, o descuélgalas todas.";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "Elige qué se oculta en Ajustes, arriba de tus capturas. Ahí también: cubrir la captura más reciente con un doble toque en la parte trasera del iPhone.";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "Elige qué se oculta en Más › Qué se oculta. También en Más: cubrir la captura más reciente con un doble toque en la parte trasera del iPhone.";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "Haz clic en «Hacer captura» y arrastra sobre una zona. Se cuelga en la cuerda al instante.";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "Haz clic y se copia, lista para pegar en cualquier chat. O arrástrala directamente a uno.";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "Haz clic en su icono: capturas, la cuerda, los Ajustes y esta introducción están ahí.";
@@ -1428,7 +1428,7 @@
 "Previous" = "Anterior";
 "Goes as soon as the copy is ready." = "Se hará en cuanto la copia esté lista.";
 "Search words in screenshots" = "Buscar palabras en capturas";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "Las palabras se encuentran en capturas leídas de antemano. Activa «Procesamiento de imágenes más rápido» en Ajustes.";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "Las palabras y los datos privados solo se encuentran en capturas leídas de antemano. Las lee «Procesamiento de imágenes más rápido», en Más › Detección.";
 "All Screenshots" = "Todas las capturas";
 "With Private Details" = "Con datos privados";
 "Sort" = "Ordenar";
@@ -1948,3 +1948,8 @@
 "Hide Preview" = "Ocultar vista previa";
 "Preview hidden" = "Vista previa oculta";
 "Pages: %d" = "Páginas: %d";
+"The camera could not scan. Try again." = "La cámara no pudo escanear. Inténtalo de nuevo.";
+"Delete this document?" = "¿Eliminar este documento?";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "Se eliminan sus páginas, con lo que tenían tapado. Las fotos y los archivos de los que vienen quedan como están.";
+"Turn off faster picture processing?" = "¿Desactivar el procesamiento de imágenes más rápido?";
+"Size unknown" = "Tamaño desconocido";

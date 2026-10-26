@@ -767,6 +767,7 @@ struct AllScreenshotsView: View {
     /// only while this shows.
     @State private var read: [String: (text: String, kinds: [String])] = [:]
     @State private var loaded = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         let shown = matching
@@ -780,13 +781,30 @@ struct AllScreenshotsView: View {
                     .padding(16)
                     .disabled(batch.running)
             }
-            if loaded, read.isEmpty, !query.words.isEmpty {
-                Label(L("Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings."),
-                      systemImage: "text.magnifyingglass")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 24)
+            // Words and private details need screenshots read ahead of time: why
+            // nothing shows, and the way to where that is turned on.
+            if loaded, read.isEmpty, !query.words.isEmpty || query.filter == .privateDetails {
+                VStack(alignment: .leading, spacing: 8) {
+                    Label(L("Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection."),
+                          systemImage: "text.magnifyingglass")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button(action: openPreparing) {
+                        HStack(spacing: 3) {
+                            Text(L("Faster picture processing"))
+                            Image(systemName: "chevron.forward")
+                                .font(.footnote.weight(.semibold))
+                                .accessibilityHidden(true)
+                        }
+                        .font(.subheadline.weight(.medium))
+                    }
+                    .touchTarget()
+                    .accessibilityIdentifier("see-all-preparing")
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
             }
         }
         .scrollDisabled(sweeping)
@@ -800,7 +818,7 @@ struct AllScreenshotsView: View {
                 ToolbarItem(placement: .topBarLeading) { allOrNone(shown.map(\.localIdentifier)) }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(L("Cancel")) {
-                        withAnimation(.snappy) { selection = nil }
+                        withAnimation(choosing) { selection = nil }
                     }
                     .fontWeight(.semibold)
                     .disabled(batch.running)
@@ -809,7 +827,7 @@ struct AllScreenshotsView: View {
             if selection == nil {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(L("Select")) {
-                        withAnimation(.snappy) { selection = GridSelection() }
+                        withAnimation(choosing) { selection = GridSelection() }
                     }
                     .disabled(shown.isEmpty)
                 }
@@ -820,13 +838,26 @@ struct AllScreenshotsView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             if let selection {
                 SelectionBar(count: selection.count, save: { coverChosen(.photos) }, share: { coverChosen(.share) })
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
             }
         }
         .toolbar(selection == nil ? .automatic : .hidden, for: .tabBar)
-        .animation(.snappy, value: selection == nil)
+        .animation(choosing, value: selection == nil)
         .quickNotes()
         .task { await load() }
+    }
+
+    /// How choosing starts and ends, and its bar comes and goes: on
+    /// `.snappy`, or a short fade with Reduce Motion.
+    private var choosing: Animation {
+        reduceMotion ? SnapflyMotion.calm : .snappy
+    }
+
+    /// More › Detection › Faster picture processing, where screenshots are
+    /// read ahead of time, on the More tab.
+    private func openPreparing() {
+        AppTabs.shared.morePages = [.detection, .preparing]
+        AppTabs.shared.selection = .more
     }
 
     /// Select All, or Deselect All once all those shown are.
@@ -852,9 +883,10 @@ struct AllScreenshotsView: View {
         let shown = matching.filter { chosen.contains($0.localIdentifier) }
         let first = Set(shown.map(\.localIdentifier))
         let assets = shown + shots.filter { chosen.contains($0.localIdentifier) && !first.contains($0.localIdentifier) }
+        let motion = choosing
         Task {
             let failed = await batch.run(assets, way: way)
-            withAnimation(.snappy) {
+            withAnimation(motion) {
                 if failed.isEmpty { selection = nil } else { selection?.keep(failed) }
             }
         }
@@ -873,9 +905,9 @@ struct AllScreenshotsView: View {
                 Text(L("Newest First")).tag(LibraryQuery.Order.newest)
                 Text(L("Oldest First")).tag(LibraryQuery.Order.oldest)
             }
-            // As a pinch does, for whoever doesn't pinch.
+            // As a pinch does, for whoever doesn't pinch: with Reduce Motion, at once.
             Picker(L("Per Row"), selection: Binding(get: { GridZoom.clamped(columns) },
-                                                    set: { new in withAnimation(.snappy) { columns = new } })) {
+                                                    set: { new in withAnimation(reduceMotion ? nil : .snappy) { columns = new } })) {
                 ForEach(Array(GridZoom.range), id: \.self) { count in
                     Text(String(format: L("%d per Row"), count)).tag(count)
                 }

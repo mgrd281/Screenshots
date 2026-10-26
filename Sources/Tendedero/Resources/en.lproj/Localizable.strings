@@ -749,7 +749,7 @@
 "A short hint, once, the first time something is in reach." = "A short hint, once, the first time something is in reach.";
 "About a minute" = "About a minute";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "At the end of the line: search your screenshots, paste or download them all, or take them all down.";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone.";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone.";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "Click Take Screenshot and drag over an area. It hangs on the line at once.";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "Click it and it is copied, ready to paste into any chat. Or drag it straight into one.";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "Click its icon: screenshots, the line, Settings and this introduction are all there.";
@@ -1430,7 +1430,7 @@
 "Previous" = "Previous";
 "Goes as soon as the copy is ready." = "Goes as soon as the copy is ready.";
 "Search words in screenshots" = "Search words in screenshots";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings.";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection.";
 "All Screenshots" = "All Screenshots";
 "With Private Details" = "With Private Details";
 "Sort" = "Sort";
@@ -1950,3 +1950,8 @@
 "Hide Preview" = "Hide Preview";
 "Preview hidden" = "Preview hidden";
 "Pages: %d" = "Pages: %d";
+"The camera could not scan. Try again." = "The camera could not scan. Try again.";
+"Delete this document?" = "Delete this document?";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "Its pages go, with what was covered on them. The photos and files they came from stay as they are.";
+"Turn off faster picture processing?" = "Turn off faster picture processing?";
+"Size unknown" = "Size unknown";

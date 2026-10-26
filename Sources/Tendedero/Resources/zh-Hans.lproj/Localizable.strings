@@ -747,7 +747,7 @@
 "A short hint, once, the first time something is in reach." = "某项功能第一次可用时，显示一次简短提示。";
 "About a minute" = "约一分钟";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "在晾衣绳末端：搜索截图，全部粘贴或下载，或全部取下。";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "在截图上方的“设置”中选择要遮盖的内容。那里还有：轻点两下 iPhone 背面遮盖最新截图。";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "在“更多”›“遮盖内容”中选择要遮盖的内容。“更多”中还有：轻点两下 iPhone 背面遮盖最新截屏。";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "点按“截屏”，然后拖过一个区域。它会立刻挂到晾衣绳上。";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "点按它即可拷贝，随时粘贴到任何聊天。也可以直接拖进聊天。";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "点按它的图标：截屏、晾衣绳、设置和这个入门介绍都在那里。";
@@ -1428,7 +1428,7 @@
 "Previous" = "上一个";
 "Goes as soon as the copy is ready." = "副本准备好后立即执行。";
 "Search words in screenshots" = "在截屏中搜索文字";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "文字会在预先读取的截屏中找到。请在设置中打开“更快的图片处理”。";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "只有预先读取的截屏才能找到文字和私人信息。读取由“更多”›“识别”中的“更快的图片处理”完成。";
 "All Screenshots" = "所有截屏";
 "With Private Details" = "含私人信息";
 "Sort" = "排序";
@@ -1948,3 +1948,8 @@
 "Hide Preview" = "隐藏预览";
 "Preview hidden" = "预览已隐藏";
 "Pages: %d" = "页数：%d";
+"The camera could not scan. Try again." = "相机无法扫描。请再试一次。";
+"Delete this document?" = "要删除此文稿吗？";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "其页面及上面的遮盖都会被删除。原来的照片和文件保持不变。";
+"Turn off faster picture processing?" = "要关闭更快的图片处理吗？";
+"Size unknown" = "大小未知";

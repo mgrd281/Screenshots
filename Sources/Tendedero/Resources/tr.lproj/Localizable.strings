@@ -747,7 +747,7 @@
 "A short hint, once, the first time something is in reach." = "Bir şey ilk kez elinin altına geldiğinde, bir kez, kısa bir ipucu.";
 "About a minute" = "Yaklaşık bir dakika";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "İpin sonunda: ekran görüntülerinde ara, hepsini yapıştır ya da indir veya hepsini ipten indir.";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "Neyin gizleneceğini ekran görüntülerinin üstündeki Ayarlar’da seç. Orada ayrıca: iPhone’un arkasına iki kez dokunarak en yeni ekran görüntüsünü örtmek.";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "Neyin gizleneceğini Daha fazla › Neler gizlenir’de seç. Daha fazla’da ayrıca: iPhone’un arkasına iki kez dokunarak en yeni ekran görüntüsünü örtmek.";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "“Ekran görüntüsü al”a tıkla ve bir alanın üzerinde sürükle. Hemen ipe asılır.";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "Tıkla, kopyalanır ve herhangi bir sohbete yapıştırılmaya hazır olur. Ya da doğrudan bir sohbete sürükle.";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "Simgesine tıkla: ekran görüntüleri, ip, Ayarlar ve bu tanıtım, hepsi orada.";
@@ -1428,7 +1428,7 @@
 "Previous" = "Önceki";
 "Goes as soon as the copy is ready." = "Kopya hazır olur olmaz yapılır.";
 "Search words in screenshots" = "Ekran görüntülerinde kelime ara";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "Kelimeler önceden okunmuş ekran görüntülerinde bulunur. Ayarlar’da “Daha hızlı görüntü işleme”yi aç.";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "Kelimeler ve özel bilgiler yalnızca önceden okunmuş ekran görüntülerinde bulunur. Onları Daha fazla › Algılama’daki “Daha hızlı görüntü işleme” okur.";
 "All Screenshots" = "Tüm ekran görüntüleri";
 "With Private Details" = "Özel bilgi içerenler";
 "Sort" = "Sırala";
@@ -1948,3 +1948,8 @@
 "Hide Preview" = "Önizlemeyi Gizle";
 "Preview hidden" = "Önizleme gizli";
 "Pages: %d" = "Sayfa: %d";
+"The camera could not scan. Try again." = "Kamera tarama yapamadı. Yeniden dene.";
+"Delete this document?" = "Bu belge silinsin mi?";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "Sayfaları, üzerlerinde kapatılanlarla birlikte silinir. Geldikleri fotoğraflar ve dosyalar olduğu gibi kalır.";
+"Turn off faster picture processing?" = "Daha hızlı görüntü işleme kapatılsın mı?";
+"Size unknown" = "Boyut bilinmiyor";

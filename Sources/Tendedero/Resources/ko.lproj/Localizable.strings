@@ -747,7 +747,7 @@
 "A short hint, once, the first time something is in reach." = "무언가를 처음 쓸 수 있게 될 때 한 번만 짧은 도움말을 보여 줍니다.";
 "About a minute" = "약 1분";
 "At the end of the line: search your screenshots, paste or download them all, or take them all down." = "빨랫줄 끝에서: 스크린샷을 검색하고, 모두 붙여넣거나 다운로드하거나, 모두 걷어낼 수 있어요.";
-"Choose what gets hidden in Settings, at the top of your screenshots. There, too: covering the newest screenshot with a double tap on the back of your iPhone." = "무엇을 가릴지는 스크린샷 목록 위의 설정에서 고르세요. 그곳에서 iPhone 뒷면을 두 번 탭해 최신 스크린샷을 가리는 방법도 볼 수 있어요.";
+"Choose what gets hidden in More › What Is Covered. In More, too: covering the newest screenshot with a double tap on the back of your iPhone." = "무엇을 가릴지는 더 보기 › 가리는 항목에서 고르세요. 더 보기에서는 iPhone 뒷면을 두 번 탭해 최신 스크린샷을 가리는 방법도 볼 수 있어요.";
 "Click Take Screenshot and drag over an area. It hangs on the line at once." = "‘스크린샷 찍기’를 클릭하고 영역 위로 드래그하세요. 바로 빨랫줄에 걸립니다.";
 "Click it and it is copied, ready to paste into any chat. Or drag it straight into one." = "클릭하면 복사되어 어느 채팅에든 붙여넣을 수 있어요. 채팅으로 바로 드래그해도 됩니다.";
 "Click its icon: screenshots, the line, Settings and this introduction are all there." = "아이콘을 클릭하세요. 스크린샷, 빨랫줄, 설정, 그리고 이 소개가 모두 그곳에 있어요.";
@@ -1428,7 +1428,7 @@
 "Previous" = "이전";
 "Goes as soon as the copy is ready." = "사본이 준비되면 바로 실행돼요.";
 "Search words in screenshots" = "스크린샷에서 단어 검색";
-"Words are found in screenshots read ahead of time. Turn on Faster picture processing in Settings." = "단어는 미리 읽은 스크린샷에서 찾아요. 설정에서 ‘더 빠른 사진 처리’를 켜세요.";
+"Words and private details are found only in screenshots read ahead of time. Faster picture processing reads them, in More › Detection." = "단어와 개인 정보는 미리 읽은 스크린샷에서만 찾을 수 있어요. 미리 읽기는 더 보기 › 감지의 ‘더 빠른 사진 처리’가 해요.";
 "All Screenshots" = "모든 스크린샷";
 "With Private Details" = "개인 정보 포함";
 "Sort" = "정렬";
@@ -1948,3 +1948,8 @@
 "Hide Preview" = "미리보기 가리기";
 "Preview hidden" = "미리보기 가려짐";
 "Pages: %d" = "페이지: %d";
+"The camera could not scan. Try again." = "카메라로 스캔할 수 없습니다. 다시 시도하세요.";
+"Delete this document?" = "이 문서를 삭제할까요?";
+"Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "페이지가 가린 내용과 함께 삭제됩니다. 원래의 사진과 파일은 그대로 남습니다.";
+"Turn off faster picture processing?" = "더 빠른 사진 처리를 끌까요?";
+"Size unknown" = "크기를 알 수 없음";

@@ -274,7 +274,7 @@ struct ProjectOverview: View {
                     .font(.body.weight(.medium))
                     .foregroundStyle(.primary)
                 Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
+                Image(systemName: "chevron.forward")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.tertiary)
                     .accessibilityHidden(true)
@@ -322,7 +322,7 @@ struct ProjectOverview: View {
             } label: {
                 HStack(spacing: 8) {
                     Text(L("Next"))
-                    Image(systemName: "chevron.right")
+                    Image(systemName: "chevron.forward")
                         .font(.footnote.weight(.bold))
                         .accessibilityHidden(true)
                 }
