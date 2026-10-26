@@ -108,11 +108,16 @@ struct PeggedView: View {
                 RoundedRectangle(cornerRadius: Frame.radius - Frame.inset, style: .continuous)
                     .strokeBorder(Color.white.opacity(0.18), lineWidth: 0.5)
             )
-            .overlay(alignment: .topLeading) {
-                // Search: each place the words are, marked like a highlighter.
-                ForEach(Array(places.enumerated()), id: \.offset) { _, place in
-                    Highlight(place: place, photo: photoSize)
+            .overlay {
+                // Search: each place the words are, marked like a highlighter,
+                // laid out from the left as the picture is, in every language.
+                ZStack(alignment: .topLeading) {
+                    ForEach(Array(places.enumerated()), id: \.offset) { _, place in
+                        Highlight(place: place, photo: photoSize)
+                    }
                 }
+                .frame(width: photoSize.width, height: photoSize.height, alignment: .topLeading)
+                .environment(\.layoutDirection, .leftToRight)
             }
             .overlay {
                 // On the lock: the rest of the photo steps back, and what is

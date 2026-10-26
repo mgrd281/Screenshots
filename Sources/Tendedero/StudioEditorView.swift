@@ -408,6 +408,9 @@ private struct StudioCanvas: View {
                 .accessibilityValue(String(format: L("Zooms: %d"), model.project.zooms.count) + ", "
                                     + String(format: L("Drawings: %d"), model.project.marks.count))
         }
+        // Laid out from the left, as the recording is, in every language, so
+        // what is drawn lands where the pointer is.
+        .environment(\.layoutDirection, .leftToRight)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(nsColor: .underPageBackgroundColor))
         .onChange(of: model.tool) { _, _ in
@@ -846,6 +849,9 @@ private struct StudioTimelineView: View {
                 }
             }
         }
+        // Time runs from the left in every language, as a video's does, so the
+        // ruler, the pictures, the blocks and the playhead agree.
+        .environment(\.layoutDirection, .leftToRight)
         .background(Color(nsColor: .windowBackgroundColor))
     }
 

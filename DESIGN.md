@@ -420,6 +420,18 @@ stays out of the way.
 - **Right to left.** Arabic must read right to left: align and order by
   reading direction, not by fixed left and right. The text card already
   aligns RTL results.
+  - A picture and what is drawn over it are laid out from the left in every
+    language (`.environment(\.layoutDirection, .leftToRight)` on the canvas
+    alone), as the picture is: Hide Part's covers and boxes, Draw on Photo's
+    and Studio's canvases, Search's marks on a photo and the introduction's
+    ring round its hole. Words on a picture, like Always cover, keep the
+    window's direction. Studio's timeline runs from the left too, as a
+    video's time does, with its row symbols before it.
+  - The line itself runs right to left, as SwiftUI lays it out. What is
+    measured in `Layout` is mirrored to match where the photos really are
+    (`Line.runsRightToLeft`): the flights, the introduction's hole and
+    dragging along the line, and Take down everything to the left or to the
+    right means the screen's left and right.
 - **Size.** Pointer targets are at least 20×20 pt and spaced so they don't
   touch. Touch sizes (44 pt) do not apply on the Mac.
 

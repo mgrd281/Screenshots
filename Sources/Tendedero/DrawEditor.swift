@@ -491,6 +491,9 @@ private struct DrawEditorView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(title)
             .accessibilityValue(String(format: L("Drawings: %d"), model.drawing.marks.count))
+            // Laid out from the left, as the picture is, in every language, so
+            // what is drawn lands where the pointer is.
+            .environment(\.layoutDirection, .leftToRight)
     }
 
     private static func cursor(for tool: DrawTool) -> NSCursor {

@@ -562,6 +562,8 @@ private struct HideEditorView: View {
     @State private var hovered: Int?
     @State private var crosshair = false
     @FocusState private var fieldFocused: Bool
+    /// The window's reading direction, for the words on the picture.
+    @Environment(\.layoutDirection) private var layoutDirection
 
     private static let cover = Color(white: 0.12)
 
@@ -662,6 +664,9 @@ private struct HideEditorView: View {
         .onDisappear {
             if crosshair { NSCursor.pop() }
         }
+        // Laid out from the left, as the picture is, in every language, so
+        // the covers and the boxes sit on what they hide.
+        .environment(\.layoutDirection, .leftToRight)
     }
 
     /// A PDF's pages, one at a time, under the page showing.
@@ -887,6 +892,8 @@ private struct HideEditorView: View {
                 .lineLimit(1)
                 .truncationMode(.middle)
                 .frame(maxWidth: 220)
+                // Its words in the window's reading direction, on the picture laid out from the left.
+                .environment(\.layoutDirection, layoutDirection)
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.small)

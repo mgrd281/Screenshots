@@ -754,16 +754,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     /// Where a card will hang, in screen coordinates, using the same layout
-    /// as the line view.
+    /// as the line view, mirrored where SwiftUI lays the line out right to
+    /// left.
     private func cardFrame(for id: UUID) -> CGRect? {
         guard let index = line.items.firstIndex(where: { $0.id == id }) else { return nil }
         let width = panel.frame.width
         let x = Layout.x(index: index, count: line.items.count, width: width,
                          visible: line.visibleCount, scroll: line.scroll, spread: line.spread)
+        let across = line.runsRightToLeft(width: width) ? width - x : x
         let viewTop = panel.drop + Layout.ropeY(x: x, width: width, shift: line.shift(width: width)) - Layout.pinAbove
         let cardTop = viewTop + PeggedView.cardOffsetBelowTop
         let size = PeggedView.cardSize(for: line.items[index].thumb.size)
-        return CGRect(x: panel.frame.minX + x - size.width / 2,
+        return CGRect(x: panel.frame.minX + across - size.width / 2,
                       y: panel.frame.maxY - cardTop - size.height,
                       width: size.width, height: size.height)
     }

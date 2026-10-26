@@ -54,6 +54,11 @@ keeps a download of each version.
   you cover, like an IBAN in a bank statement's name, or one of your own
   rules, is called so either way, also when it goes from Hide Private
   Details.
+- On the Mac in Arabic, what is drawn over a picture sits where it belongs:
+  Hide Part's covers and boxes, Search's marks on a photo, Draw on Photo,
+  Studio's picture and timeline, and the introduction's ring. Take down
+  everything to the left or to the right takes down the photos on that
+  side of the screen, and photos fly to where they really hang.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

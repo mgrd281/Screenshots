@@ -229,12 +229,29 @@ final class Line: ObservableObject {
         takeDown(items.filter { !$0.falling && !$0.pinned })
     }
 
-    /// The photos hung before (left) or after (right) this one, that would
-    /// go with it: pinned ones stay.
+    /// The photos to the left or the right of this one on the screen, that
+    /// would go with it: pinned ones stay. Those hung before it are on the
+    /// left, or on the right where the line runs right to left.
     func neighbours(of id: UUID, toTheLeft: Bool) -> [Pegged] {
         let live = items.filter { !$0.falling }
         guard let i = live.firstIndex(where: { $0.id == id }) else { return [] }
-        return (toTheLeft ? Array(live[..<i]) : Array(live[(i + 1)...])).filter { !$0.pinned }
+        let before = toTheLeft != runsRightToLeft(width: nil)
+        return (before ? Array(live[..<i]) : Array(live[(i + 1)...])).filter { !$0.pinned }
+    }
+
+    /// Whether the line runs right to left on the screen, the oldest photo
+    /// on the right, as SwiftUI lays it out in a right-to-left language.
+    /// Read off where the photos really are, or, with fewer than two to tell
+    /// by, where the tag is on a line `width` wide; without either, it runs
+    /// left to right.
+    func runsRightToLeft(width: CGFloat?) -> Bool {
+        let shown = items.filter { !$0.falling }.compactMap { hitRects[$0.id] }
+        if let first = shown.first, let last = shown.last, first.midX != last.midX {
+            return first.midX > last.midX
+        }
+        guard let width, !tagRect.isNull else { return false }
+        let x = Layout.tagX(count: items.count, width: width, visible: visibleCount, scroll: scroll)
+        return abs(tagRect.midX - x) > abs(tagRect.midX - (width - x))
     }
 
     /// Pins a photo to the line, or lets it go with the rest again.
