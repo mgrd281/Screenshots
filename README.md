@@ -414,8 +414,8 @@ read, or whose covers can't be drawn, never leaves as it is: what goes is
 the whole picture in cover ink, a note says so, and it is read again the
 next time; a PDF goes with every page painted whole, and a copy saved from
 Finder, Cover Files or a watched folder is not made. Until it is read, the
-line shows it as it is, without the lock, and Sync leaves it on the Mac.
-Under Protection, Find more
+line shows it as it is, without the lock, and Sync sends no covered copy of
+it. Under Protection, Find more
 with Apple Intelligence (on where the Mac has it) lets the model on the Mac
 read the words as well and cover what the patterns miss, like a name in a
 sentence; it only ever adds covers, and nothing leaves the Mac. What it

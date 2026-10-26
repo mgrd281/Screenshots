@@ -19,9 +19,9 @@ keeps a download of each version.
   out by drag, through Copy Link or to the AI assistant is the whole picture
   covered, with a note, and it is read again the next time. A PDF goes with
   every page covered whole, never as the original; a page that cannot be
-  read no longer leaves half covered. Sync sends a picture only once it was
-  read, and a copy saved from Finder, Cover Files or a watched folder is not
-  made from a picture that could not be read.
+  read no longer leaves half covered. Sync sends a picture's covered copy
+  only once it was read, and a copy saved from Finder, Cover Files or a
+  watched folder is not made from a picture that could not be read.
 - On the Mac, Plain file names call a covered PDF "Document" too, as
   pictures are called "Image", and a copy whose file name holds a detail
   you cover, like an IBAN in a bank statement's name, or one of your own
