@@ -6,6 +6,23 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, what can't be undone asks first: Clear beside the scanned
+  pages, Delete on a recent document, and Turn Off for faster picture
+  processing, which deletes everything prepared.
+- On the iPhone, the app says more when something doesn't work: a camera
+  that cannot scan says why, a photo coming from iCloud shows "Opening…",
+  See All says why a search or With Private Details finds nothing yet and
+  opens More › Detection to change it, the PDF's size shows a dash instead
+  of spinning for ever, and after a failure the editor's apps, Copy and
+  Send to Mac are dimmed instead of doing nothing. The introduction now
+  names More instead of Settings.
+- On the iPhone, easier to read and to tap: orange words are a deeper
+  orange that reads on light grounds, small buttons (Try Again, Don't Wait,
+  the selected place's Cover, Delete and Done, Clean Up, Revert and its
+  cross) take a finger's 44 pt, what went wrong in the status capsule shows
+  whole instead of being cut, the bars that slide up only fade with Reduce
+  Motion, and the arrows for next and on point the right way in Arabic.
+
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens
   it, from Review's menu too. It comes in reading order (one column after
