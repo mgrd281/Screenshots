@@ -1165,9 +1165,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ açarı qəbul etmədi. Onu Ayarlar › Süni intellekt köməkçisi bölməsində yoxla.";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@ açarı qəbul etmədi. Onu Daha çox › Süni intellekt köməkçisi bölməsində yoxla.";
 "%@ did not accept this key. Check it, or make a new one." = "%@ bu açarı qəbul etmədi. Onu yoxla və ya yenisini yarat.";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ %@ modelini tanımır. Ayarlar › Süni intellekt köməkçisi bölməsində başqasını seç.";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@ %@ modelini tanımır. Daha çox › Süni intellekt köməkçisi bölməsində başqasını seç.";
 "Add your %@ key in Settings › AI Assistant." = "%@ açarını Ayarlar › Süni intellekt köməkçisi bölməsində əlavə et.";
+"Add your %@ key in More › AI Assistant." = "%@ açarını Daha çox › Süni intellekt köməkçisi bölməsində əlavə et.";
 "Change" = "Dəyiş";
 "Check Again" = "Yenidən yoxla";
 "Checking the key…" = "Açar yoxlanılır…";

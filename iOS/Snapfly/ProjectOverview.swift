@@ -429,6 +429,7 @@ struct ProjectOverview: View {
         switch store.notice {
         case .signed: L("This PDF is digitally signed.")
         case .unreadable(let count): count == 1 ? L("1 file could not be read.") : String(format: L("%d files could not be read."), count)
+        case .camera: DocumentScanner.failure
         case nil: ""
         }
     }
@@ -437,7 +438,7 @@ struct ProjectOverview: View {
         switch store.notice {
         case .signed: L("After editing, the signature is no longer valid.")
         case .unreadable: L("Snapfly reads PDFs and pictures (JPEG, PNG, HEIC).")
-        case nil: ""
+        case .camera, nil: ""
         }
     }
 

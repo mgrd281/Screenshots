@@ -1163,9 +1163,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ no aceptó la clave. Revísala en Ajustes › Asistente de IA.";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@ no aceptó la clave. Revísala en Más › Asistente de IA.";
 "%@ did not accept this key. Check it, or make a new one." = "%@ no aceptó esta clave. Revísala o crea una nueva.";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ no conoce el modelo %@. Elige otro en Ajustes › Asistente de IA.";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@ no conoce el modelo %@. Elige otro en Más › Asistente de IA.";
 "Add your %@ key in Settings › AI Assistant." = "Añade tu clave de %@ en Ajustes › Asistente de IA.";
+"Add your %@ key in More › AI Assistant." = "Añade tu clave de %@ en Más › Asistente de IA.";
 "Change" = "Cambiar";
 "Check Again" = "Comprobar de nuevo";
 "Checking the key…" = "Comprobando la clave…";

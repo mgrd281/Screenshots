@@ -1163,9 +1163,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ 未接受此密钥。请在“设置 › AI 助手”中检查。";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@ 未接受此密钥。请在“更多 › AI 助手”中检查。";
 "%@ did not accept this key. Check it, or make a new one." = "%@ 未接受此密钥。请检查它，或新建一个。";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ 不认识模型 %@。请在“设置 › AI 助手”中选择其他模型。";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@ 不认识模型 %@。请在“更多 › AI 助手”中选择其他模型。";
 "Add your %@ key in Settings › AI Assistant." = "请在“设置 › AI 助手”中添加你的 %@ 密钥。";
+"Add your %@ key in More › AI Assistant." = "请在“更多 › AI 助手”中添加你的 %@ 密钥。";
 "Change" = "更改";
 "Check Again" = "重新检查";
 "Checking the key…" = "正在检查密钥…";

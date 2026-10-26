@@ -68,6 +68,10 @@ keeps a download of each version.
 - On the iPhone, Review reads a long scan's pages one after another, and a
   change in Protect Picture no longer holds the screen while its copy is
   made.
+- On the iPhone, the AI assistant's messages send you to More › AI
+  Assistant, where it is set up, not to Settings; a PDF project's camera
+  that cannot scan says why; the text sheet's warnings use the deeper
+  orange.
 - Fixes: a PDF cropped with text beyond its page no longer stops Snapfly;
   the share extension keeps within its memory with large photos and
   deletes its file when cancelled; what Apple Intelligence or the AI

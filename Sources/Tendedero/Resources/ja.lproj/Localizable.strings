@@ -1163,9 +1163,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@がキーを受け付けませんでした。設定 › AIアシスタントで確認してください。";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@がキーを受け付けませんでした。その他 › AIアシスタントで確認してください。";
 "%@ did not accept this key. Check it, or make a new one." = "%@がこのキーを受け付けませんでした。確認するか、新しいキーを作成してください。";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@はモデル%@を知りません。設定 › AIアシスタントで別のモデルを選んでください。";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@はモデル%@を知りません。その他 › AIアシスタントで別のモデルを選んでください。";
 "Add your %@ key in Settings › AI Assistant." = "設定 › AIアシスタントに%@のキーを追加してください。";
+"Add your %@ key in More › AI Assistant." = "その他 › AIアシスタントに%@のキーを追加してください。";
 "Change" = "変更";
 "Check Again" = "もう一度確認";
 "Checking the key…" = "キーを確認中…";

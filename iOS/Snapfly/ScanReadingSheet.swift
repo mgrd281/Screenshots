@@ -419,7 +419,7 @@ struct ScanReadingSheet: View {
             if let note {
                 Label(note.text, systemImage: note.failed ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(note.failed ? Color.orange : SnapflyTokens.protectTint)
+                    .foregroundStyle(note.failed ? SnapflyTokens.reviewOpen : SnapflyTokens.protectTint)
                     .transition(.opacity)
                     .accessibilityIdentifier("scan-reading-note")
             }

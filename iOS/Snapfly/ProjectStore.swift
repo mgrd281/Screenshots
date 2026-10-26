@@ -22,11 +22,14 @@ struct ProjectProgress: Equatable {
 enum ProjectNotice: Identifiable, Equatable {
     case signed
     case unreadable(Int)
+    /// The document camera could not scan, as when it may not be used.
+    case camera
 
     var id: String {
         switch self {
         case .signed: "signed"
         case .unreadable(let count): "unreadable-\(count)"
+        case .camera: "camera"
         }
     }
 }

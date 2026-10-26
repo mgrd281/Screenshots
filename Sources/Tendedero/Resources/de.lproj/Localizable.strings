@@ -1163,9 +1163,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ hat den Schlüssel nicht angenommen. Prüf ihn unter Einstellungen › KI-Assistent.";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@ hat den Schlüssel nicht angenommen. Prüf ihn unter Mehr › KI-Assistent.";
 "%@ did not accept this key. Check it, or make a new one." = "%@ hat diesen Schlüssel nicht angenommen. Prüf ihn oder erstell einen neuen.";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ kennt das Modell %@ nicht. Wähl unter Einstellungen › KI-Assistent ein anderes.";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@ kennt das Modell %@ nicht. Wähl unter Mehr › KI-Assistent ein anderes.";
 "Add your %@ key in Settings › AI Assistant." = "Füg deinen %@-Schlüssel unter Einstellungen › KI-Assistent hinzu.";
+"Add your %@ key in More › AI Assistant." = "Füg deinen %@-Schlüssel unter Mehr › KI-Assistent hinzu.";
 "Change" = "Ändern";
 "Check Again" = "Erneut prüfen";
 "Checking the key…" = "Schlüssel wird geprüft …";

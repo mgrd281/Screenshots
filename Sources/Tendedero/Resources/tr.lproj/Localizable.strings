@@ -1163,9 +1163,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ anahtarı kabul etmedi. Ayarlar › Yapay Zekâ Asistanı’nda kontrol et.";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@ anahtarı kabul etmedi. Daha fazla › Yapay Zekâ Asistanı’nda kontrol et.";
 "%@ did not accept this key. Check it, or make a new one." = "%@ bu anahtarı kabul etmedi. Kontrol et ya da yenisini oluştur.";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@, %@ modelini tanımıyor. Ayarlar › Yapay Zekâ Asistanı’nda başka birini seç.";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@, %@ modelini tanımıyor. Daha fazla › Yapay Zekâ Asistanı’nda başka birini seç.";
 "Add your %@ key in Settings › AI Assistant." = "%@ anahtarını Ayarlar › Yapay Zekâ Asistanı’nda ekle.";
+"Add your %@ key in More › AI Assistant." = "%@ anahtarını Daha fazla › Yapay Zekâ Asistanı’nda ekle.";
 "Change" = "Değiştir";
 "Check Again" = "Yeniden Kontrol Et";
 "Checking the key…" = "Anahtar kontrol ediliyor…";

@@ -1165,9 +1165,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ ने कुंजी स्वीकार नहीं की। इसे सेटिंग्स › AI सहायक में जाँचें।";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@ ने कुंजी स्वीकार नहीं की। इसे और › AI सहायक में जाँचें।";
 "%@ did not accept this key. Check it, or make a new one." = "%@ ने यह कुंजी स्वीकार नहीं की। इसे जाँचें, या नई बनाएँ।";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ मॉडल %@ को नहीं जानता। सेटिंग्स › AI सहायक में कोई दूसरा चुनें।";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@ मॉडल %@ को नहीं जानता। और › AI सहायक में कोई दूसरा चुनें।";
 "Add your %@ key in Settings › AI Assistant." = "सेटिंग्स › AI सहायक में अपनी %@ कुंजी जोड़ें।";
+"Add your %@ key in More › AI Assistant." = "और › AI सहायक में अपनी %@ कुंजी जोड़ें।";
 "Change" = "बदलें";
 "Check Again" = "फिर से जाँचें";
 "Checking the key…" = "कुंजी जाँची जा रही है…";

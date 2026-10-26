@@ -1163,9 +1163,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "لم يقبل %@ المفتاح. تحقّق منه في الإعدادات › المساعد الذكي.";
+"%@ did not accept the key. Check it in More › AI Assistant." = "لم يقبل %@ المفتاح. تحقّق منه في المزيد › المساعد الذكي.";
 "%@ did not accept this key. Check it, or make a new one." = "لم يقبل %@ هذا المفتاح. تحقّق منه، أو أنشئ مفتاحًا جديدًا.";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "لا يعرف %@ النموذج %@. اختر نموذجًا آخر في الإعدادات › المساعد الذكي.";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "لا يعرف %@ النموذج %@. اختر نموذجًا آخر في المزيد › المساعد الذكي.";
 "Add your %@ key in Settings › AI Assistant." = "أضف مفتاح %@ في الإعدادات › المساعد الذكي.";
+"Add your %@ key in More › AI Assistant." = "أضف مفتاح %@ في المزيد › المساعد الذكي.";
 "Change" = "تغيير";
 "Check Again" = "تحقّق مجددًا";
 "Checking the key…" = "جارٍ التحقق من المفتاح…";

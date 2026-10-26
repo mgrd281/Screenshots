@@ -1165,9 +1165,12 @@
 
 /* Settings › AI Assistant */
 "%@ did not accept the key. Check it in Settings › AI Assistant." = "%@ did not accept the key. Check it in Settings › AI Assistant.";
+"%@ did not accept the key. Check it in More › AI Assistant." = "%@ did not accept the key. Check it in More › AI Assistant.";
 "%@ did not accept this key. Check it, or make a new one." = "%@ did not accept this key. Check it, or make a new one.";
 "%@ does not know the model %@. Choose another one in Settings › AI Assistant." = "%@ does not know the model %@. Choose another one in Settings › AI Assistant.";
+"%@ does not know the model %@. Choose another one in More › AI Assistant." = "%@ does not know the model %@. Choose another one in More › AI Assistant.";
 "Add your %@ key in Settings › AI Assistant." = "Add your %@ key in Settings › AI Assistant.";
+"Add your %@ key in More › AI Assistant." = "Add your %@ key in More › AI Assistant.";
 "Change" = "Change";
 "Check Again" = "Check Again";
 "Checking the key…" = "Checking the key…";

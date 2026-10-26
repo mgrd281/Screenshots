@@ -200,6 +200,9 @@ struct ProjectAdder: ViewModifier {
                     guard !images.isEmpty else { return }
                     let at = index
                     Task { await ProjectStore.shared.add(.pictures(images, origin: .scan), at: at) }
+                } failed: {
+                    // Never a camera that just closes: the project says why.
+                    ProjectStore.shared.notice = .camera
                 }
                 .ignoresSafeArea()
             }
