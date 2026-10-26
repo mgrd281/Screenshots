@@ -175,9 +175,14 @@ struct PhotosTab: View {
             VStack(spacing: 4) {
                 Text(L("No screenshots yet"))
                     .font(.subheadline.weight(.semibold))
-                Text(L("Take a screenshot, then come back here."))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                // A new screenshot never joins the photos chosen by itself.
+                if library.access == .limited {
+                    LimitedPhotosNote(center: true) { Library.changeAllowedPhotos { library.load() } }
+                } else {
+                    Text(L("Take a screenshot, then come back here."))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
             .multilineTextAlignment(.center)
             .padding(.top, 8)
@@ -276,6 +281,9 @@ struct PhotosTab: View {
                 ScreenshotGrid(shots: Array(library.shots.prefix(GridZoom.preview(columns: columns))), protected: protected, place: .home, zoom: zoom,
                                quick: coverer.cover, selection: $selection, sweeping: $sweeping)
                     .disabled(batch.running)
+                if library.access == .limited {
+                    LimitedPhotosNote { Library.changeAllowedPhotos { library.load() } }
+                }
             }
         }
     }
@@ -374,5 +382,32 @@ struct PhotosTab: View {
             }
             .buttonStyle(ProtectButtonStyle())
         }
+    }
+}
+
+/// Under limited access: Snapfly sees only the photos chosen, and a new
+/// screenshot joins them only once it is added, so a line says so, over
+/// the system's picker of the photos Snapfly may see.
+struct LimitedPhotosNote: View {
+    /// Centred, under No screenshots yet; else leading, under the grid.
+    var center = false
+    let change: () -> Void
+
+    var body: some View {
+        VStack(alignment: center ? .center : .leading, spacing: 0) {
+            Text(L("Snapfly sees only the photos you chose. New screenshots show up here once you add them."))
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(center ? .center : .leading)
+                .fixedSize(horizontal: false, vertical: true)
+            Button(action: change) {
+                Text(L("Change Allowed Photos…"))
+                    .font(.footnote.weight(.semibold))
+                    .frame(minHeight: SnapflyTokens.touch)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.borderless)
+        }
+        .frame(maxWidth: .infinity, alignment: center ? .center : .leading)
     }
 }

@@ -38,6 +38,17 @@ final class Library: ObservableObject {
         return result.objects(at: IndexSet(integersIn: 0..<result.count))
     }
 
+    /// The system's picker of the photos Snapfly may see, under limited
+    /// access, over whatever shows; `then` once it is closed.
+    static func changeAllowedPhotos(then done: @escaping @MainActor () -> Void = {}) {
+        let scene = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
+        guard var top = scene?.keyWindow?.rootViewController else { return }
+        while let shown = top.presentedViewController { top = shown }
+        PHPhotoLibrary.shared().presentLimitedLibraryPicker(from: top) { _ in
+            DispatchQueue.main.async { MainActor.assumeIsolated { done() } }
+        }
+    }
+
     nonisolated static func asset(_ id: String) -> PHAsset? {
         PHAsset.fetchAssets(withLocalIdentifiers: [id], options: nil).firstObject
     }

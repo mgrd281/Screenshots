@@ -503,6 +503,7 @@
 "Cover Private Details" = "Ocultar dados privados";
 "No screenshots yet" = "Ainda não há capturas";
 "Take a screenshot, then come back here." = "Faça uma captura de tela e volte aqui.";
+"Snapfly sees only the photos you chose. New screenshots show up here once you add them." = "O Snapfly vê só as fotos que você escolheu. Capturas novas aparecem aqui quando você as adiciona.";
 "Allow Snapfly to see your screenshots" = "Permita que o Snapfly veja suas capturas";
 "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "O Snapfly oculta nomes, endereços e outros dados privados das suas capturas, neste próprio iPhone.";
 "Allow Access" = "Permitir acesso";

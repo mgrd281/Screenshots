@@ -503,6 +503,7 @@
 "Cover Private Details" = "隐藏私人信息";
 "No screenshots yet" = "还没有截图";
 "Take a screenshot, then come back here." = "先截个图，再回到这里。";
+"Snapfly sees only the photos you chose. New screenshots show up here once you add them." = "Snapfly 只能看到你选择的照片。新的截图需要你添加后才会显示在这里。";
 "Allow Snapfly to see your screenshots" = "允许 Snapfly 查看你的截图";
 "Snapfly covers names, addresses and other private details in your screenshots, right on this iPhone." = "Snapfly 直接在这台 iPhone 上隐藏截图中的姓名、地址等私人信息。";
 "Allow Access" = "允许访问";
