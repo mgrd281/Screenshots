@@ -33,9 +33,37 @@ keeps a download of each version.
 - On the iPhone, iOS's questions for Photos and the camera, and the
   Shortcuts actions' descriptions, short name and Siri phrases, are in all
   13 languages, not only in English.
-- On the Mac, Copy in a History photo's menu copies it covered as you
-  chose under Privacy, never the original. On History's Workspace page,
-  the item that copies the files as they are is now called Copy Original.
+- On the Mac, Copy in a History photo's menu copies it as it would leave
+  the line, covered as you chose under Privacy, never the original. On
+  History's Workspace page, the item that copies the files as they are is
+  now called Copy Original.
+- On the Mac, what you hid by hand and what you drew stay with a photo that
+  leaves the line, so it leaves covered as before from the History's Copy,
+  Send Again and Hang on the line, and from a note's "put it back"; they
+  were forgotten the moment it left. They go to the Trash with it.
+- On the Mac, your details and rules under Always Hide are covered whatever
+  is checked under Privacy, as Always Hide says, also with Hide private
+  details off in the menu bar or every kind unchecked; before, they then
+  left uncovered. The texts about your rules now point to Settings › Always
+  Hide instead of Privacy.
+- On the Mac, "covered" is said only when something was: Cover Files and a
+  watched folder count only the copies with something covered and name
+  those with nothing to cover, and Send Again and Hide Private Details'
+  Copy say "Nothing to cover was found" otherwise. Clear History says it
+  empties the Sent list too.
+- On the Mac, Show Me How says why when the line has nothing for it to
+  show, like a newest photo with nothing covered or a screen recording, and
+  Settings stays open. Over a full screen app, Show line and Search say that
+  the line stays away and where to change that, instead of nothing or "The
+  line is empty."
+- On the Mac, macOS's questions before Snapfly may watch a folder, use the
+  microphone or ask your browser which page is open are in all 13
+  languages, not only in English.
+- On the Mac, the pairing code tells the iPhone's way there, More › Mac and
+  iCloud; VoiceOver reads Cover Files' counts with what they count; Copy
+  Row says "Copied" on its own button; Studio writes how close a zoom
+  comes in your region's numbers, like "2,0×"; and a History or Workspace
+  thumbnail that cannot be made shows a warning instead of spinning for ever.
 - On the Mac, the time stamp names the website that was open by its name
   alone, like mail.google.com, in the band and in the stamped copy's
   description, never the rest of the address, which can hold a search, an
