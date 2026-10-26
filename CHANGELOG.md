@@ -59,11 +59,12 @@ keeps a download of each version.
   Studio's picture and timeline, and the introduction's ring. Take down
   everything to the left or to the right takes down the photos on that
   side of the screen, and photos fly to where they really hang.
-- On the Mac, Hide Part, Draw on Photo, Background and Studio ask before
-  their close button, or another photo or recording opened in them, throws
-  away what you changed. Opening the same photo again brings its window
-  back as you left it, and a new recording waits for Studio to be closed
-  instead of replacing the zooms and arrows you were working on.
+- On the Mac, Hide Part, Draw on Photo and Background ask before their
+  close button, or another photo opened in them, throws away what you
+  changed, and opening the same photo again brings its window back as you
+  left it. Studio keeps your zooms and arrows when its window closes, unless
+  you click Cancel, and a new recording waits for Studio to be closed
+  instead of taking their place.
 - On the Mac, Standard Prompts and Standard Questions ask before they
   replace what you wrote, and a look at Settings › Line no longer keeps the
   standard questions as your own: they stay in the language Snapfly

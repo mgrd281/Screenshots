@@ -255,10 +255,10 @@ camera moves. Space plays and pauses, ← and → move a second, ⌘Z undoes.
 Save Video writes a new video beside the recording, at its size and sixty
 frames a second, with its sound, and hangs it on the line; the recording
 itself is never changed. What you changed stays with the recording for the
-next time, and Trim keeps it in step; Cancel leaves it as it was. The close
-button, or another recording opened in Studio, asks first while there are
-changes not saved yet, and a recording just made waits, with a note, until
-you close Studio. Turn off opening Studio after each recording
+next time, also when you close the window or open another recording in
+Studio, and Trim keeps it in step; only Cancel leaves it as it was. A
+recording just made waits, with a note, until you close Studio, so it never
+takes the place of the work in front. Turn off opening Studio after each recording
 in Settings › General, under Screen recordings. Where the pointer went and
 when keys were pressed stay on your Mac, never which keys; typing is only
 noticed where Snapfly may use Accessibility. A recording made before Studio

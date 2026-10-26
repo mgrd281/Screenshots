@@ -23,12 +23,14 @@ final class StudioEditor: NSObject, NSWindowDelegate {
     /// A recording to open once the video being saved is done, or once
     /// Studio is closed.
     private var waiting: URL?
+    /// Cancel was clicked: the work goes back to how it was kept.
+    private var discarding = false
 
-    /// Opens a recording in Studio, as it was when a video was last saved
-    /// from it. While a video is being saved, it opens once that is done.
-    /// The recording open comes forward when it is opened again. Over
-    /// changes not saved yet, another asks first, and one just recorded
-    /// waits, with a note, until Studio is closed.
+    /// Opens a recording in Studio, as it was left: when a video was last
+    /// saved from it, or its window last closed. While a video is being
+    /// saved, it opens once that is done. The recording open comes forward
+    /// when it is opened again, and one just recorded waits, with a note,
+    /// while Studio holds changes, so the work in front stays where it is.
     func open(_ url: URL, justRecorded: Bool = false) {
         guard export == nil else {
             waiting = url
@@ -41,13 +43,10 @@ final class StudioEditor: NSObject, NSWindowDelegate {
                 window.makeKeyAndOrderFront(nil)
                 return
             }
-            if model.hasChanges {
-                if justRecorded {
-                    waiting = url
-                    Notice.show(L("Your new recording opens in Studio once you close this one."), done: true, lasting: 6)
-                    return
-                }
-                guard EditorChanges.mayDiscard(in: window, keptBy: L("Save Video")) else { return }
+            if justRecorded, model.hasChanges {
+                waiting = url
+                Notice.show(L("Your new recording opens in Studio once you close this one."), done: true, lasting: 6)
+                return
             }
         }
         // Opened now, so none waits for Studio to close any more.
@@ -70,7 +69,7 @@ final class StudioEditor: NSObject, NSWindowDelegate {
         window?.close()
         let name = model.url.deletingPathExtension().lastPathComponent
         let view = StudioEditorView(model: model, title: name) { [weak self] save in
-            if save { self?.save(model) } else { self?.window?.close() }
+            if save { self?.save(model) } else { self?.cancel() }
         } stop: { [weak self] in
             self?.export?.set()
         }
@@ -98,16 +97,23 @@ final class StudioEditor: NSObject, NSWindowDelegate {
         model.load()
     }
 
-    /// The close button asks first over changes not saved yet.
-    func windowShouldClose(_ sender: NSWindow) -> Bool {
-        guard sender === window, let model, model.hasChanges else { return true }
-        return EditorChanges.mayDiscard(in: sender, keptBy: L("Save Video"))
+    /// Cancel: the window closes, and the work goes back to how it was kept.
+    private func cancel() {
+        discarding = true
+        window?.close()
     }
 
     func windowWillClose(_ notification: Notification) {
         guard (notification.object as? NSWindow) === window else { return }
         export?.set()
         export = nil
+        // Closed any way but Cancel, by its close button or for another
+        // recording, the work is kept for next time, as Save Video keeps it.
+        if let model, !discarding, model.hasChanges {
+            model.end()
+            StudioStore.setProject(model.project, for: model.url)
+        }
+        discarding = false
         model?.close()
         model = nil
         window = nil
@@ -377,8 +383,7 @@ final class StudioModel: ObservableObject {
     var canUndo: Bool { !undone.isEmpty || (before.map { $0 != project } ?? false) }
     var canRedo: Bool { !redone.isEmpty }
 
-    /// Whether the work changed since it was opened or kept: what closing
-    /// the window without Save Video would lose.
+    /// Whether the work changed since it was opened or kept.
     var hasChanges: Bool { project != keptWork }
 
     /// The work as it is now is kept, as Save Video keeps it.

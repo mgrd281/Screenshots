@@ -591,10 +591,10 @@ enum HidePartLayout {
 }
 
 /// Asks before what was changed in an editor's window is let go: Hide
-/// Part's, Draw on Photo's, Background's and Studio's, when the close
-/// button is clicked or another picture is opened in it. Keep Editing is
-/// the default; Discard lets the changes go. Cancel and Done in the window
-/// ask nothing.
+/// Part's, Draw on Photo's and Background's, when the close button is
+/// clicked or another picture is opened in it. Keep Editing is the
+/// default; Discard lets the changes go. Cancel and Done in the window ask
+/// nothing. Studio keeps its work instead, since it changes nothing sent.
 @MainActor
 enum EditorChanges {
     /// - Parameter action: the button in the window that keeps them, like Done.
