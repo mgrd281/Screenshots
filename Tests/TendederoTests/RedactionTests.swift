@@ -474,7 +474,120 @@ final class RedactionTests: XCTestCase {
         XCTAssertFalse(found.hits.contains { $0.line == 1 }, "the letterhead's line is no part of it")
     }
 
+    // MARK: What an invoice charges for
+
+    /// The made-up invoice as Vision read it on a Mac: "Druckpatronen
+    /// Schwarz" in the column under "Pos Beschreibung", its price on its
+    /// row, is what the invoice charges for, two words that only look like
+    /// a name; Erika Mustermann, over her street, is the customer.
+    func testAnInvoicesItemIsOfferedNotCoveredAsAName() {
+        let found = protect(read: ScanReadingVisionTests.invoice, PrivateDetail.allNames)
+        let report = "covered \(found.covered), checked \(found.checked), offered \(found.possible)"
+        XCTAssertFalse(found.covered.contains { $0.contains("Druckpatronen") || $0.contains("Schwarz") }, report)
+        XCTAssertTrue(found.possible.contains("Druckpatronen Schwarz"), "one tap from covered: \(report)")
+        XCTAssertTrue(found.covered.contains("Erika Mustermann"), report)
+        for kept in ["Beratung", "Versandpauschale", "Beschreibung", "24,90", "Musterfirma"] {
+            XCTAssertFalse(found.covered.contains { $0.contains(kept) }, "\(kept) stays: \(report)")
+        }
+    }
+
+    /// A course's invoice: the people taking part, each in a column of
+    /// their own beside the course's price, are names, not what is sold.
+    func testAColumnOfPeopleStaysCoveredBesideItsPrices() {
+        let course: [FormFieldsTests.Piece] = [
+            ("Musterakademie GmbH", 0.05, 0),
+            ("Rechnung Nr. 2026-0815", 0.05, 2), ("Datum 20.10.2026", 0.60, 2),
+            ("Pos", 0.05, 4), ("Teilnehmer", 0.10, 4), ("Kurs", 0.40, 4), ("Betrag", 0.80, 4),
+            ("1", 0.05, 5), ("Lena Weber", 0.10, 5), ("Tabellen", 0.40, 5), ("199,00 €", 0.80, 5),
+            ("2", 0.05, 6), ("Jonas Brandt", 0.10, 6), ("Tabellen", 0.40, 6), ("199,00 €", 0.80, 6),
+            ("Netto", 0.62, 8), ("398,00 €", 0.80, 8),
+            ("Gesamt", 0.62, 9), ("473,62 €", 0.80, 9),
+        ]
+        let found = protect(form: course, PrivateDetail.allNames)
+        for name in ["Lena Weber", "Jonas Brandt"] {
+            XCTAssertTrue(found.covered.contains(name), "\(name): covered \(found.covered), offered \(found.possible)")
+        }
+    }
+
+    /// The rule alone, without the Natural Language framework: a line is
+    /// an item with its price on its row, under the nearest header up its
+    /// column, when that header names what is sold and no people.
+    func testAnItemIsARowOfAColumnOfItemsBesideItsPrice() {
+        func items(_ pieces: [FormFieldsTests.Piece]) -> [String] {
+            let made = FormFieldsTests.layout(pieces)
+            return made.strings.indices.filter { Finder.isItem($0, strings: made.strings, boxes: made.boxes) }
+                .map { made.strings[$0] }
+        }
+        let header: [FormFieldsTests.Piece] = [("Pos", 0.05, 4), ("Beschreibung", 0.10, 4), ("Menge", 0.50, 4),
+                                               ("Betrag", 0.80, 4)]
+        XCTAssertEqual(items(header + [("Druckpatronen Schwarz", 0.10, 5), ("2", 0.50, 5), ("49,80 €", 0.80, 5),
+                                       ("Kabel Blau", 0.10, 6), ("1", 0.50, 6), ("5,90 €", 0.80, 6)]),
+                       ["Druckpatronen Schwarz", "Kabel Blau"])
+        // The header read as one line, a compound, and in English.
+        XCTAssertEqual(items([("Pos Artikelbezeichnung Menge Preis", 0.05, 4), ("Druckpatronen Schwarz", 0.10, 5),
+                              ("EUR 24,90", 0.80, 5)]), ["Druckpatronen Schwarz"])
+        XCTAssertEqual(items([("Item", 0.10, 4), ("Qty", 0.50, 4), ("Amount", 0.80, 4), ("Ink Cartridge", 0.10, 5),
+                              ("$12.99", 0.80, 5)]), ["Ink Cartridge"])
+        // Without a price on its row: a line an item's words wrap onto, or
+        // the customer's name beside the date.
+        XCTAssertEqual(items(header + [("Druckpatronen Schwarz", 0.10, 5), ("2", 0.50, 5)]), [])
+        XCTAssertEqual(items([("Erika Mustermann", 0.05, 4), ("14.10.2026", 0.80, 4)]), [])
+        // A column of people, or a header naming people beside what is sold.
+        XCTAssertEqual(items([("Teilnehmer", 0.10, 4), ("Betrag", 0.80, 4), ("Lena Weber", 0.10, 5),
+                              ("199,00 €", 0.80, 5)]), [])
+        XCTAssertEqual(items([("Pos Name Beschreibung Betrag", 0.05, 4), ("Lena Weber", 0.10, 5),
+                              ("199,00 €", 0.80, 5)]), [])
+        // A sentence about what is charged for heads no column; a header
+        // a new section away heads none here.
+        XCTAssertEqual(items([("Für unsere Leistungen berechnen wir:", 0.05, 3), ("Lena Weber", 0.10, 4),
+                              ("199,00 €", 0.80, 4)]), [])
+        XCTAssertEqual(items([("Beschreibung", 0.10, 0), ("Betrag", 0.80, 0), ("Lena Weber", 0.10, 8),
+                              ("199,00 €", 0.80, 8)]), [])
+    }
+
+    func testAPriceIsAnAmountNotAQuantityADateOrANumber() {
+        for price in ["24,90 €", "€ 5.90", "1.234,56", "EUR 5,90", "$12.99", "5 €", "49,80"] {
+            XCTAssertTrue(Finder.isPrice(price), price)
+        }
+        for other in ["2", "14.10.2026", "RE-2026-0417", "MwSt. 19%", "Telefon: 030 1234567", "Kundennr. 48213",
+                      "IBAN: DE89 3704 0044 0532 0130 00"] {
+            XCTAssertFalse(Finder.isPrice(other), other)
+        }
+    }
+
     // MARK: Helpers
+
+    /// What the engine covers on a page as Vision read it, as
+    /// `ScanReadingVisionTests` keeps it: a line each, its box round its
+    /// words.
+    private func protect(read dump: String, _ chosen: Set<PrivateDetail>)
+        -> (covered: [String], checked: [String], possible: [String], hits: [Finder.Hit]) {
+        var lines: [String] = [], boxes: [CGRect] = []
+        for row in dump.split(separator: "\n").dropFirst() {
+            let words = row.split(separator: " ").dropFirst().compactMap { part -> (text: String, box: CGRect)? in
+                guard let at = part.lastIndex(of: "@") else { return nil }
+                let box = part[part.index(after: at)...].split(separator: ",").compactMap { Double($0) }.map { CGFloat($0) }
+                guard box.count == 4 else { return nil }
+                return (String(part[..<at]), CGRect(x: box[0], y: box[1], width: box[2], height: box[3]))
+            }
+            guard let first = words.first else { continue }
+            lines.append(words.map(\.text).joined(separator: " "))
+            boxes.append(words.dropFirst().reduce(first.box) { $0.union($1.box) })
+        }
+        func part(_ index: Int, _ range: Range<String.Index>) -> CGRect? {
+            let line = lines[index], share = boxes[index].width / CGFloat(line.count)
+            let start = CGFloat(line.distance(from: line.startIndex, to: range.lowerBound))
+            return CGRect(x: boxes[index].minX + start * share, y: boxes[index].minY,
+                          width: CGFloat(line.distance(from: range.lowerBound, to: range.upperBound)) * share,
+                          height: boxes[index].height)
+        }
+        let found = Finder.findings(lines, boxes: boxes, part: part, chosen)
+        func text(_ hit: Finder.Hit) -> String {
+            let line = lines[hit.line]
+            return hit.range.flatMap { Range($0, in: line) }.map { String(line[$0]) } ?? line
+        }
+        return (found.hits.map(text), found.hits.filter(\.check).map(text), found.possible.map(text), found.hits)
+    }
 
     /// What the engine covers on a made-up page laid out in rows and
     /// columns, as `protect` does for one line per row.

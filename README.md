@@ -333,7 +333,12 @@ readable, and so do a phone number, an address, an amount or a diagnosis,
 each a kind of its own. A line that only looks like a name, with nothing to
 vouch for it, is offered to check; in a doctor's letter, an invoice or a
 bank statement it is covered and marked to check instead, so a patient's
-name never stays readable as a mere suggestion.
+name never stays readable as a mere suggestion. What an invoice charges for
+is no one's name: a line like "Druckpatronen Schwarz", with its price on its
+row, under a column headed Beschreibung, Artikel, Leistung, Description or
+Item, is only offered. A column headed Name, Teilnehmer or Kunde holds
+names whatever their price, and a name the Natural Language framework or
+the page itself vouches for is covered wherever it stands.
 
 Printed forms are read field by field, as a person reads them: each label,
 and its value after it, beside it, or under it in its column, on one line or

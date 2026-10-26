@@ -419,10 +419,10 @@ final class ScanUITests: XCTestCase {
             .matching(NSPredicate(format: "label CONTAINS %@", words)).firstMatch
     }
 
-    /// An item of the made-up invoice that stays as printed in its text.
-    /// Not "Druckpatronen Schwarz": two words that could be a name, in a
-    /// document about money, are covered and left for the owner to check.
-    private static let item = "Versandpauschale"
+    /// An item of the made-up invoice that stays as printed in its text:
+    /// two words that could be a name, but in the column of what the
+    /// invoice charges for, beside their price, so only offered to cover.
+    private static let item = "Druckpatronen Schwarz"
 
     func testTheTextIsReadWithEveryCoverABarAndNeverWhatItHides() {
         let app = launch("sheet")
