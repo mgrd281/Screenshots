@@ -1565,6 +1565,27 @@
 "Table" = "तालिका";
 "Page %d could not be covered, so its text was not read." = "पेज %d छिपाया नहीं जा सका, इसलिए उसका टेक्स्ट नहीं पढ़ा गया।";
 "The page is gone." = "यह पेज अब नहीं है।";
+"Search in the text" = "टेक्स्ट में खोजें";
+"Search" = "खोजें";
+"Correct Text" = "टेक्स्ट सुधारें";
+"Done Correcting" = "सुधारना पूरा करें";
+"Translate" = "अनुवाद करें";
+"Undo All Corrections" = "सभी सुधार वापस लें";
+"Tap a paragraph or a table cell to correct it." = "टेक्स्ट सुधारने के लिए किसी अनुच्छेद या तालिका के खाने पर टैप करें।";
+"1 line was read unsurely. It is marked; check it on the page." = "1 पंक्ति अनिश्चितता के साथ पढ़ी गई। वह चिह्नित है; उसे पेज पर जाँचें।";
+"%d lines were read unsurely. They are marked; check them on the page." = "%d पंक्तियाँ अनिश्चितता के साथ पढ़ी गईं। वे चिह्नित हैं; उन्हें पेज पर जाँचें।";
+"Check on Page" = "पेज पर जाँचें";
+"Includes your corrections. The PDF's text keeps what was read." = "इसमें आपके सुधार शामिल हैं। PDF का टेक्स्ट वैसा ही रहता है जैसा पढ़ा गया था।";
+"Opens the text to correct it." = "सुधारने के लिए टेक्स्ट खोलता है।";
+"Copy Table" = "तालिका कॉपी करें";
+"Share as CSV" = "CSV के रूप में साझा करें";
+"Table copied" = "तालिका कॉपी हो गई";
+"Read unsurely. Tap to correct." = "अनिश्चितता के साथ पढ़ा गया। सुधारने के लिए टैप करें।";
+"Read unsurely" = "अनिश्चितता के साथ पढ़ा गया";
+"On the page" = "पेज पर";
+"Back to What Was Read" = "जैसा पढ़ा गया था, वैसा करें";
+"Speed" = "गति";
+"No voice for this language is on this iPhone." = "इस iPhone पर इस भाषा की कोई आवाज़ नहीं है।";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "भेजने से पहले ढका हुआ";

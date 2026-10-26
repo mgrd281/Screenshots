@@ -287,8 +287,10 @@ final class ScanPDFTests: XCTestCase {
         }
         XCTAssertFalse(pdf.findString("Größe", withOptions: []).isEmpty, "found by search")
         XCTAssertFalse(pdf.findString("مرحبا", withOptions: []).isEmpty, "a right-to-left word found by search, \(text)")
-        // How PDFKit orders the words of a right-to-left line, to the log.
-        print("PDFKIT LINE", text.split(separator: "\n").filter { $0.contains("شكرا") || $0.contains("جزيلا") })
+        // How PDFKit orders the words of a right-to-left line, as a notice on the build.
+        let line = text.split(separator: "\n").filter { $0.contains("شكرا") || $0.contains("جزيلا") }.joined(separator: " | ")
+        let scalars = line.unicodeScalars.map { String(format: "%04X", $0.value) }.joined(separator: " ")
+        print("::notice title=PDFKIT LINE::\(line) (\(scalars))")
         let provider = try XCTUnwrap(CGDataProvider(data: ScanFont.file as CFData))
         XCTAssertNotNil(CGFont(provider), "Core Graphics opens the font")
         XCTAssertNotNil(CTFontManagerCreateFontDescriptorFromData(ScanFont.file as CFData), "Core Text opens the font")

@@ -1563,6 +1563,27 @@
 "Table" = "Tableau";
 "Page %d could not be covered, so its text was not read." = "La page %d n’a pas pu être masquée, donc son texte n’a pas été lu.";
 "The page is gone." = "La page n’existe plus.";
+"Search in the text" = "Rechercher dans le texte";
+"Search" = "Rechercher";
+"Correct Text" = "Corriger le texte";
+"Done Correcting" = "Terminer la correction";
+"Translate" = "Traduire";
+"Undo All Corrections" = "Annuler toutes les corrections";
+"Tap a paragraph or a table cell to correct it." = "Touche un paragraphe ou une cellule de tableau pour corriger le texte.";
+"1 line was read unsurely. It is marked; check it on the page." = "1 ligne a été lue avec incertitude. Elle est marquée ; vérifie-la sur la page.";
+"%d lines were read unsurely. They are marked; check them on the page." = "%d lignes ont été lues avec incertitude. Elles sont marquées ; vérifie-les sur la page.";
+"Check on Page" = "Vérifier sur la page";
+"Includes your corrections. The PDF's text keeps what was read." = "Inclut tes corrections. Le texte du PDF reste tel qu’il a été lu.";
+"Opens the text to correct it." = "Ouvre le texte pour le corriger.";
+"Copy Table" = "Copier le tableau";
+"Share as CSV" = "Partager en CSV";
+"Table copied" = "Tableau copié";
+"Read unsurely. Tap to correct." = "Lu avec incertitude. Touche pour corriger.";
+"Read unsurely" = "Lu avec incertitude";
+"On the page" = "Sur la page";
+"Back to What Was Read" = "Revenir au texte lu";
+"Speed" = "Vitesse";
+"No voice for this language is on this iPhone." = "Aucune voix pour cette langue n’est installée sur cet iPhone.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Masqué avant l’envoi";

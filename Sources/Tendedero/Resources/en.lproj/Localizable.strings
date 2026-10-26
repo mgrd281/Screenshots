@@ -1565,6 +1565,27 @@
 "Table" = "Table";
 "Page %d could not be covered, so its text was not read." = "Page %d could not be covered, so its text was not read.";
 "The page is gone." = "The page is gone.";
+"Search in the text" = "Search in the text";
+"Search" = "Search";
+"Correct Text" = "Correct Text";
+"Done Correcting" = "Done Correcting";
+"Translate" = "Translate";
+"Undo All Corrections" = "Undo All Corrections";
+"Tap a paragraph or a table cell to correct it." = "Tap a paragraph or a table cell to correct it.";
+"1 line was read unsurely. It is marked; check it on the page." = "1 line was read unsurely. It is marked; check it on the page.";
+"%d lines were read unsurely. They are marked; check them on the page." = "%d lines were read unsurely. They are marked; check them on the page.";
+"Check on Page" = "Check on Page";
+"Includes your corrections. The PDF's text keeps what was read." = "Includes your corrections. The PDF's text keeps what was read.";
+"Opens the text to correct it." = "Opens the text to correct it.";
+"Copy Table" = "Copy Table";
+"Share as CSV" = "Share as CSV";
+"Table copied" = "Table copied";
+"Read unsurely. Tap to correct." = "Read unsurely. Tap to correct.";
+"Read unsurely" = "Read unsurely";
+"On the page" = "On the page";
+"Back to What Was Read" = "Back to What Was Read";
+"Speed" = "Speed";
+"No voice for this language is on this iPhone." = "No voice for this language is on this iPhone.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Covered before you send";

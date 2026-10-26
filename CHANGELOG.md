@@ -13,6 +13,19 @@ keeps a download of each version.
   row, a paragraph whole, a word broken at a line's end joined again);
   every covered place is a black bar, and nothing under a cover is ever
   shown or read aloud. Vorlesen speaks it with the iPhone's own voice.
+- The text of scanned pages does more: search it (matches marked and
+  counted), see the pages with the lines the reading was not sure of
+  outlined where they lie and correct a word or a cell against the page,
+  hand a table to Numbers or Excel (copy it as cells, or share a CSV file),
+  translate it with the iPhone's own translation, and hear it with a
+  player: pause, back and on, speed, the word being said marked. A table
+  is told from the columns of a letter's foot, and a table whose cells
+  Vision read as one line is parted into cells again.
+- The text of scanned pages follows the page more closely: a receipt's
+  items and prices are a table, an address beside a letter's details is
+  read whole before them, a letterhead down the side comes after the
+  letter instead of between its lines, and lines such as "IBAN: …" or a
+  date each stay a line of their own.
 - Scanned PDFs can be searched in every script: Turkish, Arabic, Greek,
   Cyrillic, Chinese, Japanese and Korean words are found and copied, not
   only Western ones, and the text under the pages is in reading order.

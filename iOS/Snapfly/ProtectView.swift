@@ -234,8 +234,9 @@ struct ProtectView: View {
             }
             .sheet(isPresented: $choosingApps) { ChooseAppsSheet() }
             .sheet(item: $readingPage) { page in
-                ScanReadingSheet(covered: true, fileName: ScanNaming.fallback(at: scans.page(page.id)?.taken ?? .now)) { [scans] in
-                    [try await scans.reading(of: page.id)]
+                ScanReadingSheet(covered: true, fileName: ScanNaming.fallback(at: scans.page(page.id)?.taken ?? .now),
+                                 edits: $scans.textEdits) { [scans] in
+                    try await scans.reading(of: page.id)
                 }
             }
             .sheet(item: $asking, onDismiss: handOverAsked) { choice in

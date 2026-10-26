@@ -15,7 +15,8 @@ import XCTest
 /// under the warning. A photographed document from Photos is offered cleaning, never
 /// a screenshot, and Revert brings the photo back; an AI chat says what goes
 /// to it and nothing leaves before a tap, and what leaves is the covered
-/// export byte for byte; the name never holds a covered name; photos
+/// export byte for byte; the name never holds a covered name; the text can be
+/// searched, corrected and undone, and shown on its pages; photos
 /// chosen together keep their order. The `testRecord…` walks are slow on purpose, for the videos
 /// `scripts/scan-checks.sh` records, and run only there (`SNAPFLY_RECORD`).
 final class ScanUITests: XCTestCase {
@@ -403,6 +404,80 @@ final class ScanUITests: XCTestCase {
         XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
         XCTAssertTrue(reading(app, holding: "verdeckt").exists, "a covered place is a bar")
         XCTAssertFalse(reading(app, holding: "Mustermann").exists, "what a cover hides is never shown")
+    }
+
+    func testTheTextCanBeSearchedAndItsMatchesCounted() {
+        let app = launch("text")
+        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        element(app, "scan-reading-menu").tap()
+        app.buttons["Suchen"].tap()
+        let field = app.searchFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 10))
+        field.tap()
+        field.typeText("Druckpatronen")
+        let matches = element(app, "scan-reading-matches")
+        XCTAssertTrue(matches.waitForExistence(timeout: 10))
+        XCTAssertTrue(matches.label.contains(" von "), matches.label)
+        XCTAssertTrue(element(app, "scan-reading-next-match").exists)
+        XCTAssertTrue(element(app, "scan-reading-previous-match").exists)
+    }
+
+    func testAParagraphOrCellIsCorrectedAndAllCorrectionsAreUndone() {
+        let app = launch("text")
+        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        element(app, "scan-reading-menu").tap()
+        app.buttons["Text korrigieren"].tap()
+        XCTAssertTrue(element(app, "scan-reading-correcting").waitForExistence(timeout: 10))
+        let target = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Druckpatronen")).firstMatch
+        XCTAssertTrue(target.waitForExistence(timeout: 10))
+        target.tap()
+        let editor = app.textViews["scan-edit-text"]
+        XCTAssertTrue(editor.waitForExistence(timeout: 10))
+        editor.typeText(" XL")
+        element(app, "scan-edit-done").tap()
+        XCTAssertTrue(reading(app, holding: "XL").waitForExistence(timeout: 10), "the correction is in the text")
+        XCTAssertTrue(words(app, "Enthält deine Korrekturen").waitForExistence(timeout: 10), "the text says it has corrections")
+        element(app, "scan-reading-menu").tap()
+        app.buttons["Alle Korrekturen zurücknehmen"].tap()
+        XCTAssertTrue(gone(reading(app, holding: "XL")))
+    }
+
+    func testPageShowsThePagesAndTextComesBack() {
+        let app = launch("text")
+        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        let mode = element(app, "scan-reading-mode")
+        XCTAssertTrue(mode.waitForExistence(timeout: 10))
+        mode.buttons["Seite"].tap()
+        XCTAssertTrue(element(app, "scan-reading-pages").waitForExistence(timeout: 10))
+        mode.buttons["Text"].tap()
+        XCTAssertTrue(element(app, "scan-reading").waitForExistence(timeout: 10))
+    }
+
+    /// Where a German voice is installed the player shows; else the note says there is none.
+    func testReadAloudShowsThePlayerOrSaysThereIsNoVoice() {
+        let app = launch("text")
+        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        element(app, "scan-reading-speak").tap()
+        let pause = element(app, "scan-reading-pause"), note = element(app, "scan-reading-note")
+        XCTAssertTrue(pause.waitForExistence(timeout: 15) || note.waitForExistence(timeout: 5))
+        if pause.exists {
+            XCTAssertTrue(element(app, "scan-reading-speed").exists)
+            element(app, "scan-reading-stop").tap()
+            XCTAssertTrue(gone(pause))
+        }
+    }
+
+    /// Where Vision reads the items as a table, it goes to a spreadsheet.
+    func testATableIsCopiedForASpreadsheetWhereThereIsOne() {
+        let app = launch("text")
+        XCTAssertTrue(reading(app, holding: "Druckpatronen").waitForExistence(timeout: Self.ready))
+        let menu = element(app, "scan-reading-table-menu")
+        guard menu.waitForExistence(timeout: 3) else { return }
+        menu.tap()
+        app.buttons["Tabelle kopieren"].tap()
+        let note = element(app, "scan-reading-note")
+        XCTAssertTrue(note.waitForExistence(timeout: 10))
+        XCTAssertEqual(note.label, "Tabelle kopiert")
     }
 
     func testWithoutCoversTheTextWarnsFirstAndHoldsEverything() {

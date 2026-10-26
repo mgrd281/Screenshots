@@ -129,7 +129,13 @@ or turn on syncing with your iPhone (below).
   with covers, as every save starts, or, if you choose so, without them,
   when the file holds every private detail. A covered PDF's text to find
   and copy is read from the covered pages, so nothing under a cover is in
-  it. The camera is used only while you scan, and Photos gives Snapfly only
+  it. The same goes for the text of scanned pages (Text in Save and Share,
+  Show Text in Review): it is read on the iPhone from the covered pages,
+  so nothing under a cover is shown, searched, translated or read aloud.
+  Read Aloud uses the iPhone's own voice; Translate hands the text to the
+  system's own translation, and Snapfly sends nothing itself. The
+  corrections you make to the text stay in memory while the scan is open;
+  a TXT or CSV file is made only when you share it. The camera is used only while you scan, and Photos gives Snapfly only
   the photos you choose. A photo chosen with Protect a Photo is looked at
   on the iPhone, and only there, to tell a photographed paper document from
   a screenshot; it is straightened and brightened only when you tap Clean
@@ -261,7 +267,14 @@ Angaben abgedeckt und ihr Text von der abgedeckten Seite gelesen; ohne
 Abdeckung die Seiten und der Text der PDF, wie sie sind, mit allen privaten
 Angaben. Der
 durchsuchbare Text eines abgedeckten PDFs wird von den abgedeckten Seiten
-gelesen, darum steht nichts darin, was abgedeckt ist. Die Kamera läuft nur,
+gelesen, darum steht nichts darin, was abgedeckt ist. Ebenso der Text der
+gescannten Seiten („Text“ in „Sichern und teilen“, „Text anzeigen“ in der
+Prüfung): Er wird auf dem iPhone von den abgedeckten Seiten gelesen, darum
+wird nichts, was abgedeckt ist, gezeigt, gesucht, übersetzt oder
+vorgelesen. Vorlesen nutzt die Stimme des iPhones; „Übersetzen“ übergibt
+den Text an die Übersetzung des Systems, Snapfly sendet selbst nichts.
+Korrekturen am Text bleiben im Arbeitsspeicher, solange der Scan offen ist;
+eine TXT- oder CSV-Datei entsteht nur, wenn du sie teilst. Die Kamera läuft nur,
 während du scannst, und Fotos gibt Snapfly nur die Fotos, die du auswählst.
 Ein Foto, das du mit „Foto schützen“ wählst, wird nur auf dem iPhone
 angesehen, um ein fotografiertes Papierdokument von einem Bildschirmfoto zu

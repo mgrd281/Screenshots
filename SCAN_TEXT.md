@@ -529,26 +529,47 @@ and found in the PDF. October 2026.
 The page is cut as a reader takes it in, by the gaps between its lines,
 measured in the line's own height (the page's width to height kept):
 
-1. **Bands first**, across the page, where the gap between two lines is
+1. **A letterhead down the side** comes off first: where white space runs
+   down the whole of a part, wider than 1.2 lines, and one side is a column
+   of words (not numbers) set at most 0.7 times as tall as the print beside
+   it, each side three lines or more, the sides are read one after the
+   other, from the reading side. So a letter's text is not cut band by band
+   with the letterhead beside it.
+2. **Bands**, across the page, where the gap between two lines is
    wider than 0.6 of a line, or than one and a half times the usual space
    between lines plus a quarter of a line. Only spaces under one and a half
    lines count as usual, so the space between blocks does not widen it, and
    1.5-spaced paragraphs stay whole.
-2. **Then columns**, down a band, where a gap is wider than 1.2 lines.
-3. Columns side by side are **a table** when at least 75 % of their rows
+3. **Then columns**, down a band, where a gap is wider than 1.2 lines.
+   An **address** first among them (two to six lines, the last a postcode
+   and a place: "20095 Hamburg", "D-20095 Hamburg") shares no table's rows
+   with what stands beside it: it is read whole, then the rest, as a
+   letter's details beside its address are.
+4. Columns side by side are **a table** when at least 75 % of their rows
    reach into two or more of them, no column is prose (four lines or more
    with half of them 30 characters or longer) and no column after the
    first names its own value ("Datum: 14.10.2026", as the details beside a
    DIN 5008 address do). A table is read row by row, its cells parted by a
    tab. A single row across columns is one line.
-4. What is left is cut into **paragraphs**: a new one where the print's
+   **Cells set close**, as a receipt's items and the prices Vision reads
+   apart from them, are a table too: two lines or more of cells, a corridor
+   of white at least 0.4 of a line down them, numbers in a column. Among
+   lines that are not cells (the shop's address over the items) they are a
+   band of their own.
+5. What is left is cut into **paragraphs**: a new one where the print's
    size changes more than 1.3 times, or after a short line ending in ".",
    "!" or "?". A paragraph's lines run on when it is at least 0.45 of the
    page wide or half its lines hold 32 characters, and 70 % of its lines
    before the last fill 0.7 of its width; otherwise (an address, a list)
-   each line stays a line. One or two lines at least 1.3 times as tall as
-   the usual line are **a heading**.
-5. A page mostly in Arabic or Hebrew letters is read **from the right**:
+   each line stays a line. A line that names what follows ("Anwesend: …",
+   "IBAN: …": up to three words from a capital to a colon) or is a number
+   alone (a date, a time) never runs on. Short lines over a paragraph's
+   first full one (a subject line, a salutation) stand on their own when
+   three lines or more run on after them. One or two lines at least 1.3
+   times as tall as the usual line, and as the lines around them, are
+   **a heading**: a letter's closing set larger than its letterhead's small
+   print is none.
+6. A page mostly in Arabic or Hebrew letters is read **from the right**:
    its columns right to left, and so a table's cells.
 
 A word broken at a line's end is **joined** where the lines run on:
@@ -594,6 +615,84 @@ line ("شكرا جزيلا") in order too. pdfminer.six, which turns nothing rou
 shows them backwards. Latin, Greek, Cyrillic, Chinese, Japanese and Korean
 read alike in every reader tried.
 
+### What it does with the text
+
+- **Small print in columns is not a table.** Columns of words side by side
+  are a table only if some column holds numbers (a digit and hardly a
+  letter in at least 60 % of its cells, two cells at least) once the print
+  is at most 0.8 of the page's usual line. A letter's foot (company, bank,
+  court) is therefore read a column at a time, as it was set; an invoice's
+  table in smaller print has its prices and stays a table. In ordinary
+  print every candidate is a table as before, which keeps label and value
+  pairs together ("Name  Lena Hoffmann"). Found by writing the layouts of a
+  DIN 5008 letter, a bank statement, a contract, a form and an article
+  down, not on a real document.
+- **Cells Vision read as one line.** A line whose words stand a column's gap
+  or more apart (1.2 of the larger of its own and the page's usual line)
+  is parted there before the page is cut, so a table's row read whole can
+  still be told from the columns; the parts of one row are read as the one
+  line again where nothing else parts them.
+- **Rows set far apart stay a table.** Invoices set with room or rules
+  between their rows have gaps wider than any band gap, which cut each row
+  out of its table. Three lines or more at an even pace, two of them in
+  cells, that share a corridor of white running down through all of them
+  are rows: the white between them is no band. The pace breaks where the
+  space is more than twice its usual (an address and the table under it),
+  and the rows end with the last line of cells.
+- **A cell that wraps joins its row.** A line in one column that goes on a
+  cell of the row above, nearer to it than the rows are to each other or
+  starting in small letters ("inklusive Schulung"), is part of that cell. A
+  title standing over its rows ("Hardware") is not.
+- **Boxes that hug the letters.** Vision's boxes follow the letters: a line
+  without a tail (g, j, p, q, y) is a fifth shorter than one with. The
+  layout tests read every page twice, with boxes that fill the line and with
+  boxes that hug it, and a paragraph of lines unlike in height stays whole.
+  The size at which print counts as larger (1.3 times) is close to that
+  difference; the CI log of `ScanReadingFixtureTests` shows what Vision's
+  boxes really do, to set it by.
+- **Unsure.** A line whose confidence is under 0.9 (`ScanContent.sure`, the
+  guard's threshold) flags its words. They are washed in orange in the text,
+  counted, and outlined on the page; nothing in the text is changed, copied
+  with a mark or left out for it. Vision gives a confidence per line, not
+  per word, so a flagged line is flagged whole. How often Vision gives less
+  than 0.9 on a real page is what the first CI run of
+  `ScanReadingFixtureTests` shows (it logs the confidences).
+- **Corrections.** A paragraph or a cell is corrected by hand, against the
+  part of the page it was read from. A correction is kept under the text
+  as it was read, in memory with the scan: the same text is corrected the
+  same again, another block with a different text never is, and the
+  corrected text is no longer flagged. It is in the text that is copied,
+  saved and shared and in the spoken text; it is not in the PDF's text
+  layer, whose words keep the places they were read in. Typing the text
+  as read again removes the correction; the menu undoes all of them.
+- **Tables to a spreadsheet.** Copy puts the rows on the clipboard with
+  tabs between the cells, which Numbers and Excel paste into cells. Share
+  makes a CSV: RFC 4180 (a cell with the delimiter, a quote or a line break
+  in quotes, quotes doubled, rows parted by CRLF), UTF-8 with its byte
+  order mark so Excel reads the accents, a semicolon where this iPhone
+  writes numbers with a decimal comma (as Excel's German list separator),
+  else a comma. A cell that would run as a formula ("=...", "@...", "-A1",
+  "+SUM(") gets an apostrophe in front; "-12,50" and "+49 30 1234" are left
+  alone. A covered cell is "███".
+- **Finding.** Letters are found whatever their case and accents ("uber"
+  finds "Über"), in paragraphs and cells, in reading order; the matches are
+  marked, counted, stepped through, and the view follows them. A cover is
+  "███" and is not found by the words it hides, as they are not there.
+- **Speaking.** The pages are cut into pieces: a paragraph, or a table's
+  row, with a pause between. A cover is said as "verdeckt" (the app's
+  language) and a line break or a cell's end is a comma's pause. The voice
+  is the best one installed for the text's language (premium before
+  enhanced before standard, the region of the iPhone first, simplified
+  Chinese the mainland's); a paragraph of 24 characters or more whose own
+  language the recognizer is 80 % sure of is said in that one. Where none
+  is installed for the text's language, a note says so and nothing is said
+  in another voice. The word being said is found in the shown text by a map
+  from each spoken unit to the characters it stands for (tested on
+  Linux, a cover included). Speed is 0.75 to 2 times the voice's own, kept.
+- **Translating.** The system's own translation sheet (iOS 17.4), given the
+  text as it is, covers as "███". It is Apple's, not Snapfly's: Snapfly
+  sends nothing itself.
+
 ### On the iPhone
 
 - **Save and Share** has a third format, Text ("TXT, 1 file"): Copy puts
@@ -601,11 +700,11 @@ read alike in every reader tried.
   .txt file. Show Text opens it whole first.
 - **Review's menu** has Show Text, for the page open, covered.
 - **The text** (`ScanReadingSheet`): page by page, a heading larger, a
-  table a grid, every word to select; Copy, Read Aloud and Share. Read
-  Aloud is the iPhone's own voice (`AVSpeechSynthesizer`) for the language
-  NaturalLanguage finds in the text, a cover read out as "verdeckt",
-  other sound turned down while it speaks. Without covers, the warning
-  comes first.
+  table a grid with a menu, every word to select; the menu searches,
+  corrects, translates; Seite shows the pages; Copy, Read Aloud with its
+  player and Share. Read Aloud is the iPhone's own voice
+  (`AVSpeechSynthesizer`), a cover read out as "verdeckt", other sound
+  turned down while it speaks. Without covers, the warning comes first.
 
 ### Results
 
@@ -638,12 +737,46 @@ read alike in every reader tried.
   the text in light and dark, Arabic and English, at the largest text
   sizes, on the newest iPhone and the smallest.
 
+### Also checked on Linux
+
+- `ScanReadingToolsTests` 26: the unsure stretches (the text is the same
+  with or without them, a joined word is unsure if a part was), where an
+  unsure line lies, corrections (they land on the text they were made on and
+  on nothing else, drop the unsure flag, keep the place, a cell stays one
+  cell, an emptied block leaves the text), a table as tabs and CSV (quotes,
+  CRLF, the delimiter, a cover cell, formulas defused, numbers left),
+  finding (case, accents, Arabic, Cyrillic, Chinese, no overlap), matches in
+  reading order, the speech pieces and the map from a spoken range back to
+  the shown text (a cover, a pause, an emoji and an accent).
+- `ScanReadingVisionTests` 5: what Vision gave on a Mac in CI for five
+  made-up pages, each line and each word's box as the log has them, read
+  in order here. A receipt whose prices Vision read apart from their items
+  is a table; an invoice reads its address whole, then its details as a
+  table of labels and values, its items and its totals; "IBAN: …" and
+  "Telefon: …" stay lines of their own, and a page turned on its side
+  reads its three lines as three; a letter with a letterhead of small
+  print down its side reads its text through, then the letterhead.
+- `ScanReadingLayoutTests` 12, each page read with filled and with hugging
+  boxes: a DIN 5008 letter from the sender's line to its three-column foot,
+  an invoice whose rows Vision reads whole, one whose rows are set far apart,
+  one whose descriptions wrap under a title row, a bank statement, numbered
+  clauses, a form, a headline over two columns, two columns whose paragraphs
+  do not line up, a long paragraph of lines unlike in height, and a
+  justified line that is not parted.
+
 ### Not verified
 
-- Read Aloud on an iPhone: the voice, its language, other sound turned
-  down.
-- VoiceOver over the text.
-- How PDFKit orders the words of an Arabic line: the check prints it to
-  the log ("PDFKIT LINE") and asserts each word, not their order. So
-  phrase search in right-to-left text is not verified.
+- Read Aloud on an iPhone: the voice, its language, the word marked as it
+  is said, pause and skip, other sound turned down.
+- VoiceOver over the text, the orange washes, the page's outlines and the
+  correction sheet.
+- The system's translation on a device, and how much it needs downloaded.
+- A CSV opened in Excel and Numbers (the BOM, the delimiter, the accents).
+- How Vision groups the lines of real documents: what it gave for five
+  made-up pages is checked (`ScanReadingVisionTests`); for real ones it is
+  not, by rule. A made-up letter whose lines were broken short by hand
+  keeps them as lines rather than running them on.
+- How PDFKit orders the words of an Arabic line: the check reports it as a
+  notice on the build ("PDFKIT LINE") and asserts each word, not their
+  order. So phrase search in right-to-left text is not verified.
 - Real documents: none, by rule. Everything here is made up.

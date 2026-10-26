@@ -1563,6 +1563,27 @@
 "Table" = "Táboa";
 "Page %d could not be covered, so its text was not read." = "Non se puido ocultar a páxina %d, así que non se leu o seu texto.";
 "The page is gone." = "A páxina xa non está.";
+"Search in the text" = "Buscar no texto";
+"Search" = "Buscar";
+"Correct Text" = "Corrixir o texto";
+"Done Correcting" = "Rematar a corrección";
+"Translate" = "Traducir";
+"Undo All Corrections" = "Desfacer todas as correccións";
+"Tap a paragraph or a table cell to correct it." = "Toca un parágrafo ou unha cela da táboa para corrixir o texto.";
+"1 line was read unsurely. It is marked; check it on the page." = "Liuse 1 liña con pouca seguridade. Está marcada; compróbaa na páxina.";
+"%d lines were read unsurely. They are marked; check them on the page." = "Liéronse %d liñas con pouca seguridade. Están marcadas; compróbaas na páxina.";
+"Check on Page" = "Comprobar na páxina";
+"Includes your corrections. The PDF's text keeps what was read." = "Inclúe as túas correccións. O texto do PDF queda como se leu.";
+"Opens the text to correct it." = "Abre o texto para corrixilo.";
+"Copy Table" = "Copiar a táboa";
+"Share as CSV" = "Compartir como CSV";
+"Table copied" = "Táboa copiada";
+"Read unsurely. Tap to correct." = "Lido con pouca seguridade. Toca para corrixir.";
+"Read unsurely" = "Lido con pouca seguridade";
+"On the page" = "Na páxina";
+"Back to What Was Read" = "Volver ao lido";
+"Speed" = "Velocidade";
+"No voice for this language is on this iPhone." = "Non hai ningunha voz para este idioma neste iPhone.";
 
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Cuberto antes de envialo";

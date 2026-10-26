@@ -1087,10 +1087,35 @@ watch the screen, so there is no line there. What it keeps is the covering:
   word broken at a line's end joined again ("Bildschirm-foto" is
   "Bildschirmfoto", "E-Mail" stays), Arabic and Hebrew read from the
   right; every covered place is "███", and nothing under a cover is read.
+  Columns of small print without numbers, as a letter's foot, are read a
+  column at a time and not as a table; a line Vision read whole with its
+  cells far apart is parted into cells again. A receipt's items and the
+  prices Vision reads apart from them are a table; an address is read
+  whole before the details beside it; a letterhead of small print down
+  the side comes after the letter; a line such as "IBAN: …" or a date
+  alone stays a line.
   Text anzeigen opens it whole: a heading larger, a table as a grid, every
-  word to select, with Copy, Vorlesen (the iPhone's own voice for the
-  text's language, a cover read out as "verdeckt") and Share, a .txt file;
-  without covers it starts with the warning. Its name comes first, to change: with Apple Intelligence
+  word to select, with Copy, Vorlesen and Share, a .txt file; without
+  covers it starts with the warning. A line the reading was not sure of
+  (Vision's confidence under 0.9) is washed in orange, and a row says how
+  many; Seite shows the pages with those lines outlined where they lie, each
+  a tap to correct it against the page, and the block the search or the
+  voice is at washed in green. Text korrigieren makes a paragraph or a
+  table cell a button that opens it beside the part of the page it was
+  read from; a correction is kept under the text as it was read, so it
+  never lands on another block, goes into the copied, shared and spoken
+  text, and is undone from the menu; the PDF's text keeps what was read.
+  The menu also searches (matches marked, counted, stepped through, case
+  and accents ignored), and translates the text with the system's own
+  translation (iOS 17.4). A table has a menu to copy it as cells for Numbers
+  or Excel, or to share it as a CSV file (UTF-8 with its byte order mark,
+  a semicolon where numbers are written with a decimal comma, a cell a
+  spreadsheet would run as a formula defused). Vorlesen has a player:
+  paragraph by paragraph and a table row by row, the word being said
+  marked and scrolled to, back and on, pause, a speed from 0.75 to 2, the
+  best voice installed for the text's language (a paragraph in another
+  language in that one), and a note, not a wrong voice, where none is
+  installed. Its name comes first, to change: with Apple Intelligence
   on, it is suggested on the iPhone from the words the covers leave on the
   first page, its kind, who sent it and the date written on it, as
   "Invoice Musterfirma 14.10.2026", never a word under a cover or your own
@@ -1536,7 +1561,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/CoverStudio.swift` | What Is Covered's three made-up documents and the kind of each value, the groups' parts and symbols, how a group's tile reads and the order the covers run in (tested on Linux) |
 | `iOS/Snapfly/CoverStylePage.swift` | Cover Style: the made-up bill covered as chosen, the six looks and the two switches |
 | `iOS/Snapfly/DetectionView.swift` | Detection: Apple Intelligence, Snapfly's own camera for pages (a test), the check before sharing, Faster picture processing, and how long covering took |
-| `iOS/SnapflyUITests` | Always Hide, More and Scan driven on the simulator in German: a name added, both kinds of rule, a rule off and on, a swipe to delete, the screen with nothing yet; More's counts, switches, presets, sheets, looks and tab bar; Scan's tab, Review, Compare, a blurred page, the colours, deleting a page, corners set by hand and Save and Share, the owner's name and address covered on a letter, a photographed document cleaned and reverted, a screenshot never offered it, what goes to an AI chat and that it is the covered export byte for byte, the name, the text with a bar where a cover is and never what it hides, from Save and Share and from Review, and with the warning without covers, and photos chosen together in their order; and the walks the videos are made of |
+| `iOS/SnapflyUITests` | Always Hide, More and Scan driven on the simulator in German: a name added, both kinds of rule, a rule off and on, a swipe to delete, the screen with nothing yet; More's counts, switches, presets, sheets, looks and tab bar; Scan's tab, Review, Compare, a blurred page, the colours, deleting a page, corners set by hand and Save and Share, the owner's name and address covered on a letter, a photographed document cleaned and reverted, a screenshot never offered it, what goes to an AI chat and that it is the covered export byte for byte, the name, the text with a bar where a cover is and never what it hides, from Save and Share and from Review, and with the warning without covers, searched with its matches counted, a cell or paragraph corrected and all corrections undone, Seite and back, the player or the note that no voice is there, and photos chosen together in their order; and the walks the videos are made of |
 | `scripts/scan-checks.sh` | Runs the scan's fixture tests on the Mac with their pictures and numbers, then its UI tests on the simulator for the Scan Checks workflow, keeps frames of the tab, Review, its list, the letter naming the owner, Save and Share and the pages' text (light, dark, the largest text sizes, Arabic and English, the newest and the smallest iPhone) and records the walks with and without Reduce Motion, for the `scan-captures` pre-release |
 | `scripts/more-checks.sh` | Runs More's UI tests for the More Checks workflow (What Is Covered alone at each push, all of More when run by hand), keeps frames of the tab and each page (light, dark, the largest text sizes, Arabic and English, the newest and the smallest iPhone) and records its motion with and without Reduce Motion, for the `more-captures` pre-release |
 | `docs/snapfly-covered-studio-audit.md` | What Is Covered's audit before the live preview: where the choice is kept, the twenty-two kinds and their groups, the presets' values and who reads them |
@@ -1553,7 +1578,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the page on a bright ground, to zoom with its places marked, covered in steps and checked; the one bar of tools to select, draw, box, lasso and erase with their handles; the status capsule with how many details were found; Details, which checks the unsure places one by one and lists every place by whose it is and what it is, each topic covered with one switch; the ways out, which wait for the checked copy and ask while places are to check; the menu with Explain, Copy, Send to Mac and Full Screen; for a scanned page, Review: the wipe, the status chip, the page large with its eye, its pages and its one bar |
 | `iOS/Share/ShareViewController.swift`, `iOS/Share-Info.plist`, `iOS/*.entitlements` | The iPhone's share extension: a picture shared from any app, covered, checked, then copied, shared or saved |
 | `Shared/ScanPDF.swift` | Scanned pages as one PDF of A4 pages: each page as JPEG, or in black and white as one bit, fitted whole without stretching, an invisible text layer to find and copy in every script, and nothing of who made it but the app (tested on Linux) |
-| `Shared/ScanReading.swift`, `ScanFont.swift` | Tested on Linux: a page's words in reading order, a column to its end, a letterhead's side column after the letter, a table row by row, a paragraph's lines run on and a word broken at a line's end joined, headings, right to left, every cover a mark and nothing from under one (`ScanReading`); the font of one empty glyph the PDF's invisible words are set in, written byte by byte, with the map from each glyph back to its character (`ScanFont`) |
+| `Shared/ScanReading.swift`, `ScanReadingTools.swift`, `ScanFont.swift` | Tested on Linux: a page's words in reading order, a column to its end, a letterhead's side column after the letter, a table row by row, small print in columns not a table, a paragraph's lines run on and a word broken at a line's end joined, headings, right to left, every cover a mark and nothing from under one, the words the reading was unsure of kept apart (`ScanReading`); what is done with the text: corrections kept by the text as read, a table as tabs or CSV, finding, where an unsure line lies, and the text cut into pieces to speak with the spoken word found in the shown text (`ScanReadingTools`); the font of one empty glyph the PDF's invisible words are set in, written byte by byte, with the map from each glyph back to its character (`ScanFont`) |
 | `Shared/ScanClean.swift`, `ScanLight.swift`, `ScanPrint.swift`, `ScanCrease.swift`, `ScanBend.swift`, `ScanSheet.swift`, `ScanQuality.swift`, `ScanContent.swift`, `ScanGeometry.swift` | The scan's own rules, tested on Linux: the page's light made even, the paper white, a pale printed fill kept, a fold's crease evened out, a curl taken out along the page's ruled lines, light grey print toned line by line, as dark as the body, every small mark of it kept, the print sharp, in color, greys or black and white; a folded sheet's parts and clean edges; blur, reflections and a page too small found by part of the page; every number read before cleaning read after, and every character of a line read surely; the page's true shape, A4 where it is close, upright and level, and its place on A4 |
 | `Shared/ScanBurst.swift`, `ScanReadiness.swift`, `ScanReadability.swift` | Capture with enough detail, tested on Linux (`SCAN_TEXT.md`, Part B): a few photos of one page laid over each other to a fraction of a pixel and merged, the shaken or reflected ones left out; whether the camera's preview is ready to take a page (sharp, still, letters large enough, no reflection) and the one hint to show; and how surely a page's smallest print reads |
 | `Shared/ScanDetail.swift` | A close-up of a page's small print found on the page (its size, turn and place, to a fraction of a pixel), brought to the page's light and laid in with a soft edge; and whether the small print reads more surely with it, tested on Linux |
@@ -1567,7 +1592,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/ScanTab.swift`, `ScannedPages.swift` | The Scan tab: the system's document camera or photos chosen in Photos, the pages scanned while the app is open (`ScannedPages`), each made ready off the main thread and opened to review and cover, kept as left, and all of them sent to an app with one tap, or saved and shared, covered or not |
 | `iOS/Snapfly/ReviewParts.swift` | Review's own parts: its bar with back, title, menu and Next; the one bar of tools with Abdecken and Seite; the pages small with their dots; the list of places to check on every page, the pages' hints and what is covered; a fault's short name |
 | `iOS/Snapfly/ScanEditing.swift`, `ScanCorners.swift`, `ScanSaveSheet.swift` | A scanned page in Review, page after page, and Before and After's labels; the corner editor with its loupe; Save and Share, with the format (PDF, Picture or Text), covers, searchable text, the check line and Send To |
-| `iOS/Snapfly/ScanReadingSheet.swift` | The pages' text open whole, in reading order, every cover a black bar: a heading larger, a table as a grid, every word to select, Copy, Vorlesen with the iPhone's own voice, a cover read out as "verdeckt", and Share as a .txt file |
+| `iOS/Snapfly/ScanReadingSheet.swift`, `ScanReadingParts.swift`, `ScanSpeaker.swift` | The pages' text open whole, in reading order, every cover a black bar: a heading larger, a table as a grid with a menu to copy it as cells or share it as CSV, every word to select, the lines read unsurely washed in orange, search, Seite (the pages with those lines outlined) and correcting against the page, translation, Copy, Vorlesen with a player (the word being said marked, pause, back and on, speed, the best voice for the language, a cover read out as "verdeckt") and Share as a .txt file |
 | `iOS/Snapfly/ScanDemo.swift` | Made-up scans for the pictures and videos made in CI (`-SnapflyScan`, `scripts/scan-checks.sh`), and a made-up photographed invoice in the Photos tab (`-SnapflyDocumentPhoto`), in debug builds only |
 | `iOS/Snapfly/ScanHelp.swift` | The card that offers to clean a photographed document in Protect Picture, with Clean Up and Revert; the sheet an AI chat opens for scanned pages, with what goes and the questions; the document's kind beside its pages |
 | `Shared/PDFProject.swift`, `PDFPageGeometry.swift` | Tested on Linux: a PDF project (its files, its pages and their turns), the page operations, undo and redo, how pictures sit on Original, A4 or Letter pages, the quality and the size estimate; where things on a turned PDF page are, its text in lines and words, and whether a PDF is signed |
