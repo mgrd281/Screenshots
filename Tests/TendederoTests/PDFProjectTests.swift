@@ -394,7 +394,7 @@ final class PDFPageGeometryTests: XCTestCase {
         // Written as one character, "ﬁ" is the letters it stands for.
         XCTAssertEqual(PDFTextLayer.characters(of: "Pfiff\nab", count: 6) { ["P", "ﬁ", "f", "f", "a", "b"][$0] },
                        [0, 1, 1, 2, 3, nil, 4, 5])
-        // What cannot be found has no place, and too little found reads the page from its picture.
+        // What cannot be found has no place, and how much was found is told.
         let lost = PDFTextLayer.characters(of: "abc\ndef", count: 5) { ["x", "y", "z", "q", "w"][$0] }
         XCTAssertEqual(lost, [nil, nil, nil, nil, nil, nil, nil])
         XCTAssertLessThan(PDFTextLayer.share(found: lost, of: "abc\ndef"), 0.95)

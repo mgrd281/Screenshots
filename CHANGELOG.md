@@ -239,8 +239,7 @@ keeps a download of each version.
   after each line break and each ligature, as "fi", so lower on a page a
   cover could reach into the words beside it, such as an invoice's number
   and date, and stop short of a word's end, which the check of every copy
-  then covered. A page whose letters cannot be matched is read from its
-  picture, as a scan is.
+  then covered.
 
 - On the iPhone, a scanned page has a fourth colour, Originalfarbe: the
   paper keeps its own colour, so a pink sick note stays pink, evenly lit

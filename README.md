@@ -1261,7 +1261,7 @@ watch the screen, so there is no line there. What it keeps is the covering:
   read from its own text, letter for letter, where it has text, each where
   PDFKit places it (which counts no line break and a ligature, as "fi",
   once), and from the picture only where it has none, as in a photo pasted
-  on the page, or where its letters cannot be matched to PDFKit's; its
+  on the page; its
   covers are found as on any picture, on the iPhone alone (the AI
   assistant never reads a project's or a scan's words). What you cover by
   hand on a page, cover though it was only offered, or move or make larger

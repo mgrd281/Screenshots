@@ -86,9 +86,7 @@ final class PDFSource: @unchecked Sendable {
 
     /// The words a page holds as text, in lines and where each word is,
     /// from 0 to 1 from the bottom left of the page as it shows. Nil where
-    /// the page holds no text worth reading, as a scan without text has none,
-    /// or where its letters cannot be told apart from PDFKit's characters:
-    /// then the page is read from its picture, as a scan is.
+    /// the page holds no text worth reading, as a scan without text has none.
     func lines(_ index: Int, turns: Int) -> [Finder.TextLine]? {
         lock.lock()
         defer { lock.unlock() }
@@ -99,10 +97,19 @@ final class PDFSource: @unchecked Sendable {
         // Each of PDFKit's characters with its own text and place, asked together, so the two always agree.
         let pieces = (0..<page.numberOfCharacters).map { page.selection(for: NSRange(location: $0, length: 1)) }
         let characters = PDFTextLayer.characters(of: text, count: pieces.count) { pieces[$0]?.string }
-        guard PDFTextLayer.share(found: characters, of: text) >= 0.95 else { return nil }
+        // Where the characters cannot be asked one by one, as in some PDFs written by hand, a unit's own number is asked.
+        let matched = PDFTextLayer.share(found: characters, of: text) >= 0.95
+        let count = (text as NSString).length
         let found = PDFTextLayer.lines(text) { unit -> CGRect? in
-            guard characters.indices.contains(unit), let character = characters[unit],
-                  let place = pieces[character]?.bounds(for: page) else { return nil }
+            let place: CGRect
+            if matched {
+                guard characters.indices.contains(unit), let character = characters[unit],
+                      let piece = pieces[character]?.bounds(for: page) else { return nil }
+                place = piece
+            } else {
+                guard unit < count else { return nil }
+                place = page.characterBounds(at: unit)
+            }
             guard !place.isNull, place.width > 0 || place.height > 0 else { return nil }
             let shown = PDFPageGeometry.normalized(place, box: box, rotation: rotation)
             // Text beyond the page as it is cut, which a PDF cropped in Preview keeps, is not on it.
