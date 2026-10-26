@@ -54,6 +54,14 @@ keeps a download of each version.
   you cover, like an IBAN in a bank statement's name, or one of your own
   rules, is called so either way, also when it goes from Hide Private
   Details.
+- On the Mac, quitting, logging out or Install and Reopen while the screen
+  is recorded saves the recording first, as Stop does, instead of deleting
+  it. A recording cut short anyway, as by a crash, is now written in
+  pieces: the next time Snapfly opens, it hangs on the line up to its last
+  few seconds, with a note.
+- On the Mac, a recording with both the Mac's sound and the microphone can
+  no longer leave Snapfly saving it for ever: when the two can't be mixed
+  into one track, the recording keeps both and a note says so.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

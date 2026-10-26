@@ -334,6 +334,8 @@
 "Could not take the screenshot." = "无法截屏。";
 "Could not record the screen." = "无法录制屏幕。";
 "Could not save the recording." = "无法存储录制内容。";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "无法将录制内容的声音混合为一条音轨。部分播放器可能只播放其中一部分。";
+"A recording cut short last time was kept. Click to show it in Finder." = "已保留上次中断的录制内容。点按可在访达中显示。";
 "Could not make the GIF." = "无法制作 GIF。";
 "Make GIF" = "制作 GIF";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple 智能无法回答，因此在出现输入字词的地方都已隐藏。";

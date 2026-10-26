@@ -120,10 +120,13 @@ enum Updater {
             return
         }
         try? FileManager.default.removeItem(at: found.folder)
-        // Opens again once this one has quit.
+        // Opens again once this one has quit, which saving a recording under
+        // way may hold up for some seconds; half a minute at most.
         let reopen = Process()
         reopen.executableURL = URL(fileURLWithPath: "/bin/sh")
-        reopen.arguments = ["-c", "sleep 1; /usr/bin/open \"$0\"", current.path]
+        reopen.arguments = ["-c",
+                            "n=0; while kill -0 \"$1\" 2>/dev/null && [ $n -lt 150 ]; do sleep 0.2; n=$((n+1)); done; /usr/bin/open \"$0\"",
+                            current.path, String(ProcessInfo.processInfo.processIdentifier)]
         try? reopen.run()
         NSApp.terminate(nil)
     }

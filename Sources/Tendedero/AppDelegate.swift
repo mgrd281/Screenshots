@@ -249,6 +249,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         hangFiles(urls, from: nil)
     }
 
+    /// Quitting while the screen is recorded, from the menu, by logging out
+    /// or with Install and Reopen, saves the recording first, as Stop does.
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard Recording.shared.isRecording else { return .terminateNow }
+        Task { @MainActor in
+            await Recording.shared.finishBeforeQuitting()
+            NSApp.reply(toApplicationShouldTerminate: true)
+        }
+        return .terminateLater
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         if Inbox.isEnabled { Inbox.restore() }
     }
@@ -439,14 +450,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     /// Quitting from the menu or logging out runs applicationWillTerminate.
-    /// A plain kill does not, so settings are also restored on those signals.
+    /// A plain kill does not, so settings are also restored on those signals,
+    /// and a recording under way is saved first, a few seconds at most.
     private func restoreSettingsOnTermination() {
         for sig in [SIGTERM, SIGINT, SIGHUP] {
             signal(sig, SIG_IGN)
             let source = DispatchSource.makeSignalSource(signal: sig, queue: .main)
             source.setEventHandler {
-                if Inbox.isEnabled { Inbox.restore() }
-                exit(0)
+                MainActor.assumeIsolated {
+                    if Inbox.isEnabled { Inbox.restore() }
+                    guard Recording.shared.isRecording else { exit(0) }
+                    Task { @MainActor in
+                        await Recording.shared.finishBeforeQuitting(within: 5)
+                        exit(0)
+                    }
+                }
             }
             source.resume()
             signalSources.append(source)

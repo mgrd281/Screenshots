@@ -126,11 +126,26 @@ enum SoundMix {
             }
             writer.startSession(atSourceTime: first.presentationTimeStamp)
             let group = DispatchGroup()
-            copy(from: pictures, to: picturesIn, first: first, label: "pictures", group: group)
-            copy(from: sound, to: soundIn, first: nil, label: "sound", group: group)
-            group.wait()
+            let endings = [Ending(), Ending()]
+            copy(from: pictures, to: picturesIn, first: first, label: "pictures", group: group, ending: endings[0])
+            copy(from: sound, to: soundIn, first: nil, label: "sound", group: group, ending: endings[1])
+            // Should the writer or the reader fail while an input waits, it is
+            // never asked for more: the wait ends then too, as Studio's does,
+            // and so it does once mixing takes a minute longer than the movie
+            // lasts. Each input not ended yet is ended here, once, so the
+            // group is left as often as it was entered.
+            let deadline = Date().addingTimeInterval(60 + max(0, CMTimeGetSeconds(asset.duration)))
+            var failed = false
+            while group.wait(timeout: .now() + .milliseconds(250)) == .timedOut {
+                guard writer.status == .failed || reader.status == .failed || Date() > deadline else { continue }
+                failed = true
+                for ending in endings {
+                    if ending.end() { group.leave() }
+                }
+            }
 
-            guard reader.status == .completed else {
+            guard !failed, reader.status == .completed else {
+                reader.cancelReading()
                 writer.cancelWriting()
                 try? fm.removeItem(at: out)
                 return false
@@ -152,23 +167,45 @@ enum SoundMix {
 
     /// Copies one output into one input as fast as the input takes it.
     private static func copy(from output: AVAssetReaderOutput, to input: AVAssetWriterInput, first: CMSampleBuffer?,
-                             label: String, group: DispatchGroup) {
+                             label: String, group: DispatchGroup, ending: Ending) {
         group.enter()
         let queue = DispatchQueue(label: "de.ghazarian.Snapfly.mix.\(label)")
         var pending = first
-        var ended = false
         input.requestMediaDataWhenReady(on: queue) {
-            guard !ended else { return }
+            guard !ending.isSet else { return }
             while input.isReadyForMoreMediaData {
                 let buffer = pending ?? output.copyNextSampleBuffer()
                 pending = nil
                 guard let buffer, input.append(buffer) else {
-                    ended = true
-                    input.markAsFinished()
-                    group.leave()
+                    if ending.end() {
+                        input.markAsFinished()
+                        group.leave()
+                    }
                     return
                 }
             }
+        }
+    }
+
+    /// Whether an input's copying has ended: once, on its own queue, or in
+    /// the wait when the writer or the reader has failed.
+    private final class Ending: @unchecked Sendable {
+        private let lock = NSLock()
+        private var ended = false
+
+        var isSet: Bool {
+            lock.lock()
+            defer { lock.unlock() }
+            return ended
+        }
+
+        /// True for the one that ends it, false once it has ended.
+        func end() -> Bool {
+            lock.lock()
+            defer { lock.unlock() }
+            guard !ended else { return false }
+            ended = true
+            return true
         }
     }
 }

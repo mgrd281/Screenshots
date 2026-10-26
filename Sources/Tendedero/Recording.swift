@@ -36,6 +36,8 @@ final class Recording {
     private var tick: Timer?
     private var badge: CaptureBadge?
     private var edge: RecordingEdge?
+    /// The recording being saved, from Stop until it hangs.
+    private var saving: Task<Void, Never>?
 
     func start(_ region: Capture.Region) {
         guard !isRecording else { return }
@@ -81,14 +83,21 @@ final class Recording {
         studio?.stop()
         hideControls()
         let frame = frame
-        Task { @MainActor in
+        saving = Task { @MainActor in
+            defer { saving = nil }
             var saved = await recorder.finish()
             // The Mac's sound and the voice, as one track every player and
-            // chat plays. Should that fail, both tracks stay.
+            // chat plays. Should that fail, both tracks stay, and a note
+            // says so.
             if saved, recorder.hasTwoSoundTracks {
                 let note = Notice.show(L("Saving the recording…"), working: true)
-                if !(await SoundMix.mixDown(file)) { log.error("Could not mix the recording's sound into one track") }
+                let mixed = await SoundMix.mixDown(file)
                 Notice.end(note)
+                if !mixed {
+                    log.error("Could not mix the recording's sound into one track")
+                    Notice.show(L("Could not mix the recording’s sound into one track. Some players may play only part of it."),
+                                lasting: 6)
+                }
                 saved = FileManager.default.fileExists(atPath: file.path)
             }
             isRecording = false
@@ -113,16 +122,118 @@ final class Recording {
         }
     }
 
-    /// A recording cut short by quitting is left half written. It goes at
-    /// launch.
+    /// Quitting while the screen is recorded keeps the recording: it stops
+    /// and is saved as Stop does, and quitting waits for that, never longer
+    /// than `seconds`. Cut off then, it is kept at the next launch.
+    func finishBeforeQuitting(within seconds: TimeInterval = 15) async {
+        stop()
+        // Still starting, there is nothing to save yet.
+        guard let saving else { return }
+        let note = Notice.show(L("Saving the recording…"), working: true)
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            let once = ResumeOnce(continuation)
+            Task { @MainActor in
+                await saving.value
+                once.resume()
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + seconds) { once.resume() }
+        }
+        Notice.end(note)
+    }
+
+    /// A recording cut short, by a quit that could not wait or by Snapfly
+    /// stopping on its way, is left half written. Written in pieces, it
+    /// plays up to its last few seconds: at launch it comes out of hiding
+    /// under a name like a recording's and hangs, and a note says so. One
+    /// that cannot be read is left as it is; one with nothing in it goes,
+    /// as does a sound mix cut short, whose recording is still there.
     static func cleanUp() {
-        let fm = FileManager.default
-        for folder in [Inbox.legacyFolder, Inbox.folder] {
-            let files = (try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? []
-            for file in files where file.lastPathComponent.hasPrefix(".recording-") || file.lastPathComponent.hasPrefix(".mix-") {
-                try? fm.removeItem(at: file)
+        let folders = [Inbox.legacyFolder, Inbox.folder] + (Workspace.shared.isOn ? [Workspace.shared.landing] : [])
+        Task { @MainActor in
+            // The Workspace's folder can make the system wait, so this is done
+            // off the main thread, as the Workspace's own work is.
+            let kept = await Task.detached(priority: .utility) { await Recording.keepCutShort(in: folders) }.value
+            guard !kept.isEmpty else { return }
+            kept.forEach { Recording.shared.onFinish($0) }
+            Notice.show(L("A recording cut short last time was kept. Click to show it in Finder."),
+                        done: true, lasting: 8) {
+                NSWorkspace.shared.activateFileViewerSelecting(kept)
             }
         }
+    }
+
+    /// The recordings cut short in these folders that still play, out of
+    /// hiding. Each folder is looked in once.
+    nonisolated private static func keepCutShort(in folders: [URL]) async -> [URL] {
+        let fm = FileManager.default
+        var looked = Set<String>()
+        var kept: [URL] = []
+        for folder in folders {
+            guard looked.insert(folder.standardizedFileURL.path).inserted else { continue }
+            for file in (try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? [] {
+                let name = file.lastPathComponent
+                if name.hasPrefix(".mix-") {
+                    // The recording it was being mixed from is still there.
+                    try? fm.removeItem(at: file)
+                    continue
+                }
+                guard name.hasPrefix(".recording-") else { continue }
+                switch await leftover(file) {
+                case .plays:
+                    if let url = bringOut(file) { kept.append(url) }
+                case .empty:
+                    try? fm.removeItem(at: file)
+                case .unreadable:
+                    log.error("A recording cut short could not be read, so it was left as it is")
+                }
+            }
+        }
+        return kept
+    }
+
+    /// What a recording cut short holds.
+    private enum Leftover {
+        /// Pictures to play.
+        case plays
+        /// Nothing, not even a picture.
+        case empty
+        /// It could not be opened as a movie.
+        case unreadable
+    }
+
+    nonisolated private static func leftover(_ file: URL) async -> Leftover {
+        let size = (try? file.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0
+        guard size > 0 else { return .empty }
+        let asset = AVURLAsset(url: file)
+        do {
+            let pictures = try await asset.loadTracks(withMediaType: .video)
+            let duration = try await asset.load(.duration)
+            return !pictures.isEmpty && duration.seconds > 0 ? .plays : .empty
+        } catch {
+            return .unreadable
+        }
+    }
+
+    /// Out of hiding, beside where it was, named for when it was made, as a
+    /// recording saved is, and readable only by the user.
+    nonisolated private static func bringOut(_ file: URL) -> URL? {
+        let fm = FileManager.default
+        let folder = file.deletingLastPathComponent()
+        let stamp = Capture.stamp((try? file.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? Date())
+        var url = folder.appendingPathComponent("Snapfly \(stamp).mov")
+        var n = 2
+        while fm.fileExists(atPath: url.path) {
+            url = folder.appendingPathComponent("Snapfly \(stamp) \(n).mov")
+            n += 1
+        }
+        do {
+            try fm.moveItem(at: file, to: url)
+        } catch {
+            log.error("Could not keep a recording cut short: \(error.localizedDescription, privacy: .private)")
+            return nil
+        }
+        try? fm.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
+        return url
     }
 
     /// Named like a screenshot, readable only by the user, and tagged with
@@ -176,6 +287,24 @@ final class Recording {
         badge = nil
         edge?.orderOut(nil)
         edge = nil
+    }
+}
+
+/// Ends a wait once, whichever comes first: the work done, or the time up.
+private final class ResumeOnce: @unchecked Sendable {
+    private let lock = NSLock()
+    private var continuation: CheckedContinuation<Void, Never>?
+
+    init(_ continuation: CheckedContinuation<Void, Never>) {
+        self.continuation = continuation
+    }
+
+    func resume() {
+        lock.lock()
+        let waiting = continuation
+        continuation = nil
+        lock.unlock()
+        waiting?.resume()
     }
 }
 
@@ -342,6 +471,9 @@ final class Recorder: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sen
         ])
         input.expectsMediaDataInRealTime = true
         super.init()
+        // Written in pieces, so a recording cut short, by a quit that could
+        // not wait or by a crash, still plays up to its last few seconds.
+        writer.movieFragmentInterval = CMTime(seconds: 5, preferredTimescale: 600)
         guard writer.canAdd(input) else { throw RecorderError.cannotWrite }
         writer.add(input)
         if sound.hasMac {

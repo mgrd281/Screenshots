@@ -334,6 +334,8 @@
 "Could not take the screenshot." = "スクリーンショットを撮れませんでした。";
 "Could not record the screen." = "画面を収録できませんでした。";
 "Could not save the recording." = "収録を保存できませんでした。";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "収録のサウンドを 1 つのトラックにまとめられませんでした。プレーヤーによっては一部しか再生されないことがあります。";
+"A recording cut short last time was kept. Click to show it in Finder." = "前回途中で止まった収録を残しました。クリックするとFinderに表示します。";
 "Could not make the GIF." = "GIFを作成できませんでした。";
 "Make GIF" = "GIFを作成";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligenceが応答できなかったため、入力した語句を表示箇所すべてで隠しました。";

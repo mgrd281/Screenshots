@@ -334,6 +334,8 @@
 "Could not take the screenshot." = "Impossible de prendre la capture.";
 "Could not record the screen." = "Impossible d’enregistrer l’écran.";
 "Could not save the recording." = "Impossible d’enregistrer la vidéo.";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "Impossible de mixer le son de l’enregistrement en une seule piste. Certains lecteurs n’en liront peut-être qu’une partie.";
+"A recording cut short last time was kept. Click to show it in Finder." = "Un enregistrement interrompu la dernière fois a été conservé. Clique pour l’afficher dans le Finder.";
 "Could not make the GIF." = "Impossible de créer le GIF.";
 "Make GIF" = "Créer un GIF";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence n’a pas pu répondre : les mots saisis sont masqués partout où ils apparaissent.";

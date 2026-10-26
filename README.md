@@ -219,14 +219,18 @@ Dock shows the time; click it, press the shortcut again, or choose Stop
 Recording in the menu bar to stop. The recording hangs on the line, ready to
 trim or send, and opens in Studio (below). Make GIF in its menu turns it into a looping GIF that every chat
 plays, which hangs next to it and stays animated when sent. Snapfly's own
-line and controls stay out of it.
+line and controls stay out of it. Quit, log out or install an update while
+recording, and the recording is saved first, as Stop saves it. One cut short
+anyway, as by a crash, is written in pieces: the next time Snapfly opens, it
+hangs on the line up to its last few seconds, and a note says so.
 
 A recording has sound when you choose it, in Settings › General under Screen
 recordings: the Mac's sound, what you hear without Snapfly's own; the
 microphone, your voice, asked for the first time and on macOS 15 or later;
 or both, mixed into one track that every player and chat plays. It has none
 until chosen. If the microphone isn't allowed, the recording goes on without
-it and a note says where to allow it.
+it and a note says where to allow it. Should the mixing fail, the recording
+keeps both tracks, and a note says so.
 
 ### Studio: zoomed in, pointed out.
 
