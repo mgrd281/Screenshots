@@ -78,6 +78,9 @@ enum ScanReading {
         static let bandGap: CGFloat = 0.6
         /// White space running down everything that parts it into columns.
         static let columnGap: CGFloat = 1.2
+        /// Cells set close, as a receipt's items and their prices: white space
+        /// this narrow down rows of them parts them, with numbers in a column.
+        static let cellGap: CGFloat = 0.4
         /// A line at least this share of its block's width runs on.
         static let fill: CGFloat = 0.7
         /// Lines run on only in a block at least this share of the page's
@@ -94,6 +97,9 @@ enum ScanReading {
         /// Print this much smaller than the page's usual line, or smaller, is
         /// small print: a letter's foot, a sender's line.
         static let smallPrint: CGFloat = 0.8
+        /// A column of words set this much smaller than the one beside it, or
+        /// smaller, is a letterhead down the page's side, read on its own.
+        static let sidebar: CGFloat = 0.7
         /// Rows of a table end where the space between lines is more than twice
         /// its usual, and at least this many usual lines.
         static let rowPace: CGFloat = 0.8
@@ -202,6 +208,13 @@ enum ScanReading {
         /// nothing parts them.
         func cut(_ items: [Item]) -> [Block] {
             guard items.count > 1 else { return leaf(items) }
+            // A column of smaller print down the side of the text, as a
+            // letterhead beside a letter, is read on its own, not band by band
+            // with the text.
+            let down = gaps(items.map { ($0.left, $0.right) }).filter { $0.size >= Tuning.columnGap * usual }
+            if !down.isEmpty, rows(items).count > 1, hasSidebar(split(items, at: down) { $0.left }) {
+                return columns(items, at: down)
+            }
             let least = bandGap(items)
             // White space between the rows of a table is no band, however wide.
             let spans = rowSpans(items)
@@ -211,11 +224,58 @@ enum ScanReading {
             if !across.isEmpty {
                 return split(items, at: across) { $0.top }.flatMap(cut)
             }
-            let down = gaps(items.map { ($0.left, $0.right) }).filter { $0.size >= Tuning.columnGap * usual }
             if !down.isEmpty {
                 return columns(items, at: down)
             }
+            // Rows of cells set close among lines that are not, as a receipt's
+            // items under its address, are a band of their own.
+            let lines = rows(items)
+            if let run = cellRun(lines), run.count < lines.count {
+                return [lines[..<run.lowerBound], lines[run], lines[run.upperBound...]]
+                    .map { $0.flatMap { $0 } }.filter { !$0.isEmpty }.flatMap(cut)
+            }
+            if let table = closeTable(items) { return [.table(table)] }
             return leaf(items)
+        }
+
+        /// Whether a column of words, not numbers, is set in print well
+        /// smaller than the one beside it, each of three lines or more.
+        private func hasSidebar(_ columns: [[Item]]) -> Bool {
+            let sizes = columns.compactMap { column -> (size: CGFloat, words: Bool)? in
+                guard rows(column).count >= 3 else { return nil }
+                let heights = column.filter { !$0.segment.covered }.map(\.height).sorted()
+                return heights.isEmpty ? nil : (heights[heights.count / 2], !hasNumbers([column]))
+            }
+            guard let largest = sizes.map(\.size).max() else { return false }
+            return sizes.contains { $0.words && $0.size <= Tuning.sidebar * largest }
+        }
+
+        /// Two lines or more one after another, each of cells, down which a
+        /// narrow corridor of white runs, with numbers in a column: a
+        /// receipt's items and their prices.
+        private func cellRun(_ lines: [[Item]]) -> Range<Int>? {
+            var start = 0
+            while start < lines.count {
+                var end = start
+                while end < lines.count, lines[end].count >= 2 { end += 1 }
+                if end - start >= 2, closeColumns(lines[start..<end].flatMap { $0 }) != nil { return start..<end }
+                start = max(end, start + 1)
+            }
+            return nil
+        }
+
+        /// The columns a narrow corridor parts items into, where one holds numbers.
+        private func closeColumns(_ items: [Item]) -> [[Item]]? {
+            let narrow = gaps(items.map { ($0.left, $0.right) }).filter { $0.size >= Tuning.cellGap * usual }
+            guard !narrow.isEmpty else { return nil }
+            let parts = split(items, at: narrow) { $0.left }
+            return hasNumbers(parts) ? parts : nil
+        }
+
+        /// Rows of cells set close, as a receipt's, as a table.
+        private func closeTable(_ items: [Item]) -> Table? {
+            guard rows(items).count >= 2, let parts = closeColumns(items) else { return nil }
+            return table(items, parts)
         }
 
         /// Where rows of cells stand, from the top of the first to the bottom
@@ -282,8 +342,26 @@ enum ScanReading {
             // One line across them all is read as one line.
             if rows(items).count == 1 { return leaf(items) }
             let parts = split(items, at: gaps) { $0.left }
+            let reading = rightToLeft ? Array(parts.reversed()) : parts
+            // An address shares no table's rows with what stands beside it,
+            // as a letter's details do: it is read whole, then the rest.
+            if reading.count >= 2, isAddress(reading[0]) {
+                return cut(reading[0]) + cut(reading.dropFirst().flatMap { $0 })
+            }
             if let table = table(items, parts) { return [.table(table)] }
-            return (rightToLeft ? parts.reversed() : parts).flatMap(cut)
+            return reading.flatMap(cut)
+        }
+
+        /// An address: two to six lines, the last a postcode and a place ("20095 Hamburg", "D-20095 Hamburg").
+        private func isAddress(_ items: [Item]) -> Bool {
+            let lines = rows(items)
+            guard (2...6).contains(lines.count), let last = lines.last else { return false }
+            let words = last.flatMap(\.segment.words).filter { !$0.covered }.map(\.text)
+            guard words.count >= 2, let place = words[1].first, place.isUppercase else { return false }
+            let code = words[0].split(separator: "-").last.map(String.init) ?? words[0]
+            let country = words[0].dropLast(code.count)
+            return (4...5).contains(code.count) && code.allSatisfy { $0.isASCII && $0.isNumber }
+                && (country.isEmpty || (country.count <= 3 && country.dropLast().allSatisfy(\.isUppercase)))
         }
 
         private func table(_ items: [Item], _ columns: [[Item]]) -> Table? {
@@ -404,10 +482,26 @@ enum ScanReading {
                 current.append(line)
             }
             if !current.isEmpty { groups.append(current) }
-            return groups.map { group -> Block in
+            // Short lines over a paragraph's first full one, as a subject line
+            // and a salutation over a letter's text, stand on their own.
+            var parted: [[[Item]]] = []
+            for group in groups {
+                if let first = group.firstIndex(where: { span($0) >= Tuning.fill * blockWidth }), first > 0,
+                   group.count - first >= 3, flows(Array(group[first...]), blockWidth: blockWidth) {
+                    parted += [Array(group[..<first]), Array(group[first...])]
+                } else {
+                    parted.append(group)
+                }
+            }
+            return parted.map { group -> Block in
                 let words = group.map { $0.flatMap(\.segment.words) }
                 let heights = group.map(height).sorted()
-                let heading = group.count <= 2 && heights[heights.count / 2] >= Tuning.heading * usual
+                let middle = heights[heights.count / 2]
+                // Larger than the page's usual print, and than the lines around it.
+                let own = Set(group.flatMap { $0.map(\.id) })
+                let around = lines.filter { !own.contains($0[0].id) }.map(height).sorted()
+                let heading = group.count <= 2 && middle >= Tuning.heading * usual
+                    && (around.isEmpty || middle >= Tuning.heading * around[around.count / 2])
                 return .paragraph(Paragraph(lines: words, flows: flows(group, blockWidth: blockWidth), heading: heading))
             }
         }
@@ -416,11 +510,29 @@ enum ScanReading {
         /// block, in a block wide on the page or of long lines.
         private func flows(_ lines: [[Item]], blockWidth: CGFloat) -> Bool {
             guard lines.count >= 2 else { return false }
+            // A line that names what follows ("Anwesend: …", "IBAN: …") or is
+            // a number alone (a date, a time) stands on its own.
+            if lines.dropFirst().contains(where: startsWithLabel) || lines.contains(where: isNumber) { return false }
             let counts = lines.map { $0.reduce(0) { $0 + $1.characters } }.sorted()
             guard blockWidth >= Tuning.proseWidth * width || counts[counts.count / 2] >= Tuning.proseCharacters else { return false }
             let before = lines.dropLast()
             let full = before.filter { span($0) >= Tuning.fill * blockWidth }.count
             return CGFloat(full) >= 0.7 * CGFloat(before.count)
+        }
+
+        /// "Anwesend: Max Muster", "Nächster Termin: 28.10.2026": a line that
+        /// starts by naming what follows, in up to three words and a colon.
+        private func startsWithLabel(_ line: [Item]) -> Bool {
+            let words = Array(line.flatMap(\.segment.words).prefix(3))
+            guard words.first?.text.first?.isUppercase == true,
+                  let colon = words.firstIndex(where: { $0.text.hasSuffix(":") }) else { return false }
+            return words[...colon].allSatisfy { !$0.covered && !$0.text.contains(where: \.isNumber) }
+        }
+
+        /// A line of a number alone, as a date, a time or an amount.
+        private func isNumber(_ line: [Item]) -> Bool {
+            let words = line.flatMap(\.segment.words)
+            return !words.contains(where: \.covered) && Self.numeric(words.map(\.text).joined(separator: " "))
         }
 
         /// The items that lie on one line together, top to bottom, each line

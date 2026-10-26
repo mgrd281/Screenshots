@@ -1089,7 +1089,11 @@ watch the screen, so there is no line there. What it keeps is the covering:
   right; every covered place is "███", and nothing under a cover is read.
   Columns of small print without numbers, as a letter's foot, are read a
   column at a time and not as a table; a line Vision read whole with its
-  cells far apart is parted into cells again.
+  cells far apart is parted into cells again. A receipt's items and the
+  prices Vision reads apart from them are a table; an address is read
+  whole before the details beside it; a letterhead of small print down
+  the side comes after the letter; a line such as "IBAN: …" or a date
+  alone stays a line.
   Text anzeigen opens it whole: a heading larger, a table as a grid, every
   word to select, with Copy, Vorlesen and Share, a .txt file; without
   covers it starts with the warning. A line the reading was not sure of

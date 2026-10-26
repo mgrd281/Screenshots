@@ -529,26 +529,47 @@ and found in the PDF. October 2026.
 The page is cut as a reader takes it in, by the gaps between its lines,
 measured in the line's own height (the page's width to height kept):
 
-1. **Bands first**, across the page, where the gap between two lines is
+1. **A letterhead down the side** comes off first: where white space runs
+   down the whole of a part, wider than 1.2 lines, and one side is a column
+   of words (not numbers) set at most 0.7 times as tall as the print beside
+   it, each side three lines or more, the sides are read one after the
+   other, from the reading side. So a letter's text is not cut band by band
+   with the letterhead beside it.
+2. **Bands**, across the page, where the gap between two lines is
    wider than 0.6 of a line, or than one and a half times the usual space
    between lines plus a quarter of a line. Only spaces under one and a half
    lines count as usual, so the space between blocks does not widen it, and
    1.5-spaced paragraphs stay whole.
-2. **Then columns**, down a band, where a gap is wider than 1.2 lines.
-3. Columns side by side are **a table** when at least 75 % of their rows
+3. **Then columns**, down a band, where a gap is wider than 1.2 lines.
+   An **address** first among them (two to six lines, the last a postcode
+   and a place: "20095 Hamburg", "D-20095 Hamburg") shares no table's rows
+   with what stands beside it: it is read whole, then the rest, as a
+   letter's details beside its address are.
+4. Columns side by side are **a table** when at least 75 % of their rows
    reach into two or more of them, no column is prose (four lines or more
    with half of them 30 characters or longer) and no column after the
    first names its own value ("Datum: 14.10.2026", as the details beside a
    DIN 5008 address do). A table is read row by row, its cells parted by a
    tab. A single row across columns is one line.
-4. What is left is cut into **paragraphs**: a new one where the print's
+   **Cells set close**, as a receipt's items and the prices Vision reads
+   apart from them, are a table too: two lines or more of cells, a corridor
+   of white at least 0.4 of a line down them, numbers in a column. Among
+   lines that are not cells (the shop's address over the items) they are a
+   band of their own.
+5. What is left is cut into **paragraphs**: a new one where the print's
    size changes more than 1.3 times, or after a short line ending in ".",
    "!" or "?". A paragraph's lines run on when it is at least 0.45 of the
    page wide or half its lines hold 32 characters, and 70 % of its lines
    before the last fill 0.7 of its width; otherwise (an address, a list)
-   each line stays a line. One or two lines at least 1.3 times as tall as
-   the usual line are **a heading**.
-5. A page mostly in Arabic or Hebrew letters is read **from the right**:
+   each line stays a line. A line that names what follows ("Anwesend: …",
+   "IBAN: …": up to three words from a capital to a colon) or is a number
+   alone (a date, a time) never runs on. Short lines over a paragraph's
+   first full one (a subject line, a salutation) stand on their own when
+   three lines or more run on after them. One or two lines at least 1.3
+   times as tall as the usual line, and as the lines around them, are
+   **a heading**: a letter's closing set larger than its letterhead's small
+   print is none.
+6. A page mostly in Arabic or Hebrew letters is read **from the right**:
    its columns right to left, and so a table's cells.
 
 A word broken at a line's end is **joined** where the lines run on:
@@ -721,6 +742,14 @@ every reader tried.
   finding (case, accents, Arabic, Cyrillic, Chinese, no overlap), matches in
   reading order, the speech pieces and the map from a spoken range back to
   the shown text (a cover, a pause, an emoji and an accent).
+- `ScanReadingVisionTests` 5: what Vision gave on a Mac in CI for five
+  made-up pages, each line and each word's box as the log has them, read
+  in order here. A receipt whose prices Vision read apart from their items
+  is a table; an invoice reads its address whole, then its details as a
+  table of labels and values, its items and its totals; "IBAN: …" and
+  "Telefon: …" stay lines of their own, and a page turned on its side
+  reads its three lines as three; a letter with a letterhead of small
+  print down its side reads its text through, then the letterhead.
 - `ScanReadingLayoutTests` 12, each page read with filled and with hugging
   boxes: a DIN 5008 letter from the sender's line to its three-column foot,
   an invoice whose rows Vision reads whole, one whose rows are set far apart,
@@ -737,9 +766,10 @@ every reader tried.
   correction sheet.
 - The system's translation on a device, and how much it needs downloaded.
 - A CSV opened in Excel and Numbers (the BOM, the delimiter, the accents).
-- How Vision groups the lines of real pages: the layouts above are written
-  as Vision is expected to give them. `ScanReadingFixtureTests` logs what it
-  really gives on the made-up pages; the rules were not tuned on it yet.
+- How Vision groups the lines of real documents: what it gave for five
+  made-up pages is checked (`ScanReadingVisionTests`); for real ones it is
+  not, by rule. A made-up letter whose lines were broken short by hand
+  keeps them as lines rather than running them on.
 - Phrase search in right-to-left text: a reader that orders a line by
   where its words stand would take an Arabic line's words from the left.
   Single words are what the checks search for.
