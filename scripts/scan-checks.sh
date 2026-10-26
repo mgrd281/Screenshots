@@ -6,6 +6,7 @@
 # was read on it (SCAN_CAPTURES). Then the app on the simulator, the engine
 # built optimized as on a phone: its UI tests (iOS/SnapflyUITests/
 # ScanUITests.swift), still frames of the Scan tab, Review, Save and Share
+# (also on the invoice still to pay, with its reminder)
 # and the pages' text on the made-up photos (-SnapflyScan), the tab's start with made-up
 # documents arriving, without any, with "So funktioniert's" and scrolled
 # past its card, with what to ask Claude, and the
@@ -86,7 +87,7 @@ shot() {
   if [ -n "$size" ]; then arguments+=(-UIPreferredContentSizeCategoryName "$size"); fi
   local settle=30
   if [ "$state" = corners ]; then settle=12; fi
-  if [ "$state" = warning ] || [ "$state" = sheet ] || [ "$state" = uncovered ] || [ "$state" = list ]; then settle=45; fi
+  if [ "$state" = warning ] || [ "$state" = sheet ] || [ "$state" = due ] || [ "$state" = uncovered ] || [ "$state" = list ]; then settle=45; fi
   # Its text is read again on the covered pages once they are ready, which
   # after the UI tests can take this runner the two minutes the tests allow.
   if [ "$state" = text ] || [ "$state" = textpage ] || [ "$state" = textfix ]; then settle=120; fi
@@ -137,12 +138,12 @@ start=(recent empty help scrolled)
 frames "$device" de-light light de "" "${start[@]}"
 frames "$device" de-dark dark de "" "${start[@]}"
 frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL recent empty
-frames "$device" de-light light de "" assistant own list
-frames "$device" de-dark dark de "" assistant own list
+frames "$device" de-light light de "" assistant own list due
+frames "$device" de-dark dark de "" assistant own list due
 frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL tab editor warning sheet list text
 frames "$device" de-xxxl light de UICTContentSizeCategoryXXXL editor sheet text
-frames "$device" ar-light light ar "" tab editor sheet text
-frames "$device" en-light light en "" editor sheet text
+frames "$device" ar-light light ar "" tab editor sheet text due
+frames "$device" en-light light en "" editor sheet text due
 
 # Videos of the walks: the motion as it plays, then with Reduce Motion.
 # Never a reason to stop.

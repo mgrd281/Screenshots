@@ -1994,3 +1994,13 @@
 "Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "Sayfaları, üzerlerinde kapatılanlarla birlikte silinir. Geldikleri fotoğraflar ve dosyalar olduğu gibi kalır.";
 "Turn off faster picture processing?" = "Daha hızlı görüntü işleme kapatılsın mı?";
 "Size unknown" = "Boyut bilinmiyor";
+"Reminder" = "Hatırlatma";
+"Add Payment Reminder" = "Ödeme hatırlatması ekle";
+"Added to Calendar." = "Takvime eklendi.";
+"Pay %1$@ by %2$@" = "%1$@ tutarını %2$@ tarihine kadar öde";
+"Pay by %@" = "%@ tarihine kadar öde";
+"Calendar's own form opens, filled in. Snapfly never sees your calendar." = "Takvimin kendi formu doldurulmuş olarak açılır. Snapfly takvimini asla görmez.";
+"Pay %@" = "%@ ödemesi";
+"Payment Due" = "Ödeme günü";
+"Amount: %@" = "Tutar: %@";
+"Invoice number: %@" = "Fatura numarası: %@";

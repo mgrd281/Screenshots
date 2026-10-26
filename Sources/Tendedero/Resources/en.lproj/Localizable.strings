@@ -1996,3 +1996,13 @@
 "Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "Its pages go, with what was covered on them. The photos and files they came from stay as they are.";
 "Turn off faster picture processing?" = "Turn off faster picture processing?";
 "Size unknown" = "Size unknown";
+"Reminder" = "Reminder";
+"Add Payment Reminder" = "Add Payment Reminder";
+"Added to Calendar." = "Added to Calendar.";
+"Pay %1$@ by %2$@" = "Pay %1$@ by %2$@";
+"Pay by %@" = "Pay by %@";
+"Calendar's own form opens, filled in. Snapfly never sees your calendar." = "Calendar's own form opens, filled in. Snapfly never sees your calendar.";
+"Pay %@" = "Pay %@";
+"Payment Due" = "Payment Due";
+"Amount: %@" = "Amount: %@";
+"Invoice number: %@" = "Invoice number: %@";

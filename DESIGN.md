@@ -3211,7 +3211,20 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
   in footnote `.secondary` ("Only straightened and brightened. No text, no
   number changed." with `checkmark.seal` where every page read the same;
   "Check the marked places." with an orange triangle where one read less),
-  and the places still to check. On the bar's material at the bottom, Copy,
+  and the places still to check. Last, where the pages ask to be paid by a
+  day still to come (`PaymentDue`, read on the iPhone from all of them
+  without covers: never for one stamped paid, paid by direct debit or a
+  credit note), **Reminder**: a row like Show Text, `calendar.badge.plus`
+  in `phone-protect-tint`, "Add Payment Reminder" in body medium over "Pay
+  369,73 € by 28.10.2026" (the day as the region writes it) in footnote
+  `.secondary`, and a chevron; under it, in footnote `.secondary`,
+  "Calendar's own form opens, filled in. Snapfly never sees your
+  calendar." A tap opens iOS's own event form (`EKEventEditViewController`,
+  shown apart from Snapfly, which asks for no access to the calendar):
+  a whole day, an alert at 9:00 the day before, "Pay Musterfirma GmbH" as
+  its title and the amount and the invoice's number in its notes. Once
+  added, a success haptic, and the row shows `calendar.badge.checkmark`
+  over "Added to Calendar." On the bar's material at the bottom, Copy,
   Save and Share, 44 pt, side by side (one under another at the
   accessibility sizes), Share in `phone-protect` with white words: a PDF or
   the text is saved to Files and pictures to Photos. While they work, which page is

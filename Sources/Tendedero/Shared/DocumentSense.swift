@@ -106,6 +106,11 @@ enum DocumentSense {
                                                         "gartenbank", "sandbank", "nebelbank", "insgesamt", "gesamt",
                                                         "samt", "amt", "laborwerte", "laborwert"]
 
+    /// Whether a word is a company's legal form, as it is written: "GmbH", "AG".
+    static func isLegalForm(_ word: String) -> Bool {
+        legalForms.contains(word.trimmingCharacters(in: CharacterSet(charactersIn: ",;:()[]\"'")))
+    }
+
     /// Whether a word, as it is written, makes its line an organization.
     static func isOrganizationWord(_ word: String) -> Bool {
         let trimmed = word.trimmingCharacters(in: CharacterSet(charactersIn: ",;:()[]\"'"))

@@ -1994,3 +1994,13 @@
 "Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "其页面及上面的遮盖都会被删除。原来的照片和文件保持不变。";
 "Turn off faster picture processing?" = "要关闭更快的图片处理吗？";
 "Size unknown" = "大小未知";
+"Reminder" = "提醒";
+"Add Payment Reminder" = "添加付款提醒";
+"Added to Calendar." = "已添加到日历。";
+"Pay %1$@ by %2$@" = "在 %2$@ 前支付 %1$@";
+"Pay by %@" = "在 %@ 前付款";
+"Calendar's own form opens, filled in. Snapfly never sees your calendar." = "将打开日历自己的表单，已填好。Snapfly 不会看到你的日历。";
+"Pay %@" = "向 %@ 付款";
+"Payment Due" = "付款到期";
+"Amount: %@" = "金额：%@";
+"Invoice number: %@" = "发票号码：%@";

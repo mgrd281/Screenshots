@@ -1994,3 +1994,13 @@
 "Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "Elimínanse as súas páxinas, co que tiñan tapado. As fotos e os ficheiros de onde veñen quedan como están.";
 "Turn off faster picture processing?" = "Desactivar o procesamento de imaxes máis rápido?";
 "Size unknown" = "Tamaño descoñecido";
+"Reminder" = "Lembrete";
+"Add Payment Reminder" = "Engadir lembrete de pagamento";
+"Added to Calendar." = "Engadido ao calendario.";
+"Pay %1$@ by %2$@" = "Pagar %1$@ ata o %2$@";
+"Pay by %@" = "Pagar ata o %@";
+"Calendar's own form opens, filled in. Snapfly never sees your calendar." = "Ábrese o formulario do propio Calendario, xa cuberto. Snapfly nunca ve o teu calendario.";
+"Pay %@" = "Pagar a %@";
+"Payment Due" = "Pagamento pendente";
+"Amount: %@" = "Importe: %@";
+"Invoice number: %@" = "Número de factura: %@";

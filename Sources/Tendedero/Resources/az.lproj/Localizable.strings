@@ -1996,3 +1996,13 @@
 "Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "Onun səhifələri, üzərində örtülənlərlə birlikdə silinir. Gəldikləri şəkillər və fayllar olduğu kimi qalır.";
 "Turn off faster picture processing?" = "Daha sürətli şəkil emalı söndürülsün?";
 "Size unknown" = "Ölçü bilinmir";
+"Reminder" = "Xatırlatma";
+"Add Payment Reminder" = "Ödəniş xatırlatması əlavə et";
+"Added to Calendar." = "Təqvimə əlavə edildi.";
+"Pay %1$@ by %2$@" = "%1$@ məbləğini %2$@ tarixinədək ödə";
+"Pay by %@" = "%@ tarixinədək ödə";
+"Calendar's own form opens, filled in. Snapfly never sees your calendar." = "Təqvimin öz forması doldurulmuş halda açılır. Snapfly təqvimini heç vaxt görmür.";
+"Pay %@" = "%@ ödənişi";
+"Payment Due" = "Ödəniş vaxtı";
+"Amount: %@" = "Məbləğ: %@";
+"Invoice number: %@" = "Faktura nömrəsi: %@";

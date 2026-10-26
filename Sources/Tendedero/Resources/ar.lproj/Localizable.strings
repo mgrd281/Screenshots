@@ -1994,3 +1994,13 @@
 "Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "تُحذف صفحاته مع كل ما غُطّي عليها. وتبقى الصور والملفات التي جاءت منها كما هي.";
 "Turn off faster picture processing?" = "إيقاف «معالجة أسرع للصور»؟";
 "Size unknown" = "الحجم غير معروف";
+"Reminder" = "تذكير";
+"Add Payment Reminder" = "إضافة تذكير بالدفع";
+"Added to Calendar." = "أُضيف إلى التقويم.";
+"Pay %1$@ by %2$@" = "ادفع %1$@ حتى %2$@";
+"Pay by %@" = "ادفع حتى %@";
+"Calendar's own form opens, filled in. Snapfly never sees your calendar." = "يُفتح نموذج التقويم نفسه وقد مُلئ. لا يرى Snapfly تقويمك أبدًا.";
+"Pay %@" = "الدفع لـ%@";
+"Payment Due" = "موعد الدفع";
+"Amount: %@" = "المبلغ: %@";
+"Invoice number: %@" = "رقم الفاتورة: %@";

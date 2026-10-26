@@ -1994,3 +1994,13 @@
 "Its pages go, with what was covered on them. The photos and files they came from stay as they are." = "ページは、隠したものと一緒に削除されます。元の写真やファイルはそのままです。";
 "Turn off faster picture processing?" = "画像処理の高速化をオフにしますか？";
 "Size unknown" = "サイズ不明";
+"Reminder" = "リマインダー";
+"Add Payment Reminder" = "支払いのリマインダーを追加";
+"Added to Calendar." = "カレンダーに追加しました。";
+"Pay %1$@ by %2$@" = "%2$@までに%1$@を支払う";
+"Pay by %@" = "%@までに支払う";
+"Calendar's own form opens, filled in. Snapfly never sees your calendar." = "カレンダー自身の入力画面が記入済みで開きます。Snapflyがあなたのカレンダーを見ることはありません。";
+"Pay %@" = "%@への支払い";
+"Payment Due" = "支払い期限";
+"Amount: %@" = "金額：%@";
+"Invoice number: %@" = "請求書番号：%@";
