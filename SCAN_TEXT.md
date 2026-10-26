@@ -610,6 +610,24 @@ every reader tried.
   is parted there before the page is cut, so a table's row read whole can
   still be told from the columns; the parts of one row are read as the one
   line again where nothing else parts them.
+- **Rows set far apart stay a table.** Invoices set with room or rules
+  between their rows have gaps wider than any band gap, which cut each row
+  out of its table. Three lines or more at an even pace, two of them in
+  cells, that share a corridor of white running down through all of them
+  are rows: the white between them is no band. The pace breaks where the
+  space is more than twice its usual (an address and the table under it),
+  and the rows end with the last line of cells.
+- **A cell that wraps joins its row.** A line in one column that goes on a
+  cell of the row above, nearer to it than the rows are to each other or
+  starting in small letters ("inklusive Schulung"), is part of that cell. A
+  title standing over its rows ("Hardware") is not.
+- **Boxes that hug the letters.** Vision's boxes follow the letters: a line
+  without a tail (g, j, p, q, y) is a fifth shorter than one with. The
+  layout tests read every page twice, with boxes that fill the line and with
+  boxes that hug it, and a paragraph of lines unlike in height stays whole.
+  The size at which print counts as larger (1.3 times) is close to that
+  difference; the CI log of `ScanReadingFixtureTests` shows what Vision's
+  boxes really do, to set it by.
 - **Unsure.** A line whose confidence is under 0.9 (`ScanContent.sure`, the
   guard's threshold) flags its words. They are washed in orange in the text,
   counted, and outlined on the page; nothing in the text is changed, copied
@@ -703,9 +721,12 @@ every reader tried.
   finding (case, accents, Arabic, Cyrillic, Chinese, no overlap), matches in
   reading order, the speech pieces and the map from a spoken range back to
   the shown text (a cover, a pause, an emoji and an accent).
-- `ScanReadingLayoutTests` 8: a DIN 5008 letter from the sender's line to
-  its three-column foot, an invoice whose rows Vision reads whole, a bank
-  statement, numbered clauses, a form, a headline over two columns, and a
+- `ScanReadingLayoutTests` 12, each page read with filled and with hugging
+  boxes: a DIN 5008 letter from the sender's line to its three-column foot,
+  an invoice whose rows Vision reads whole, one whose rows are set far apart,
+  one whose descriptions wrap under a title row, a bank statement, numbered
+  clauses, a form, a headline over two columns, two columns whose paragraphs
+  do not line up, a long paragraph of lines unlike in height, and a
   justified line that is not parted.
 
 ### Not verified
