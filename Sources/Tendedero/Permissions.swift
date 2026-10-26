@@ -135,8 +135,15 @@ enum Permissions {
     }
 
     /// Quits and opens again: macOS applies Screen Recording only to a
-    /// fresh start.
+    /// fresh start. The new copy opens only once this one has quit, as after
+    /// an update (`Updater.reopen`). The App Store edition, which changes
+    /// none of the Mac's settings, has macOS open a new copy first, as its
+    /// sandbox may keep a shell from opening it.
     static func reopen() {
+        guard Edition.appStore else {
+            Updater.reopen(Bundle.main.bundleURL)
+            return
+        }
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.createsNewApplicationInstance = true
         NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration) { _, _ in

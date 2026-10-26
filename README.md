@@ -140,6 +140,8 @@ each with what it is for, whether it is given, and one button that asks for it
 or opens the right page of System Settings. It updates as you switch things
 in System Settings. Each is asked for only when what needs it is first used,
 and once one was refused, Permissions Needed… appears in the menu bar.
+Reopen Snapfly, under a refused Screen Recording, quits first and opens
+Snapfly again a moment later, as an update does, so two never run at once.
 
 Help sits beside it, in Settings › Support: the support page, Report a
 Problem and Suggest a Feature, which open an email with the version, macOS

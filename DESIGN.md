@@ -1685,7 +1685,10 @@ apps.
     once allowed.
   - Help appears only where it is needed: Reopen Snapfly under a refused
     Screen Recording, and how to add Snapfly with + under a refused
-    Accessibility.
+    Accessibility. Reopen Snapfly quits first and opens the app again a
+    second later, as Install and Reopen does (`Updater.reopen`), so the copy
+    quitting never undoes what the new one set up; the App Store edition
+    has macOS open the new copy first.
   - It reads the states every second while open, so a switch turned in
     System Settings shows at once.
   - The menu bar shows Permissions Needed… with `exclamationmark.triangle`

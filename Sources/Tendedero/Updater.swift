@@ -120,11 +120,17 @@ enum Updater {
             return
         }
         try? FileManager.default.removeItem(at: found.folder)
-        // Opens again once this one has quit.
-        let reopen = Process()
-        reopen.executableURL = URL(fileURLWithPath: "/bin/sh")
-        reopen.arguments = ["-c", "sleep 1; /usr/bin/open \"$0\"", current.path]
-        try? reopen.run()
+        reopen(current)
+    }
+
+    /// Quits, and opens the app at `app` again once this copy has gone, so
+    /// two never run side by side: the one quitting would put back the
+    /// screenshot settings the new one has just set, and hold its shortcuts.
+    static func reopen(_ app: URL) {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/bin/sh")
+        process.arguments = ["-c", "sleep 1; /usr/bin/open \"$0\"", app.path]
+        try? process.run()
         NSApp.terminate(nil)
     }
 

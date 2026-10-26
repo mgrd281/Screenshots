@@ -84,6 +84,10 @@ keeps a download of each version.
   so they can be read on a light background: Allowed and Not allowed yet
   under Permissions, a pattern that cannot be read and what is wrong with a
   card or an IBAN under Always Hide, and Cover Files' counts.
+- On the Mac, Reopen Snapfly under Permissions quits first and then opens
+  Snapfly again, as an update does: two copies no longer run at once, where
+  the one quitting could take back the screenshot settings the new one had
+  just made, or keep its shortcuts from working.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens
