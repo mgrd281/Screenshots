@@ -1,0 +1,10 @@
+Novidades da 1.1.0:
+- Escanear documentos: páginas endireitadas e limpas, dados privados cobertos, cada cobertura conferida em Revisar.
+- Salve escaneamentos como PDF, imagens, texto ou Documento do Word.
+- Mostrar texto: copie, busque e traduza o texto de um escaneamento, ou ouça com Ler em voz alta.
+- Adicionar lembrete de pagamento para uma fatura em aberto.
+- Todos os Documentos busca as palavras em cada documento.
+- Projetos PDF: fotos, escaneamentos, capturas e PDFs em um só arquivo.
+- Sempre ocultar: seus próprios dados, cobertos em toda imagem.
+- Envie a cópia protegida para o ChatGPT, Claude, WhatsApp e outros apps com um toque.
+- Mensagens mais claras, botões maiores e muitas correções.

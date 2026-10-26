@@ -1,0 +1,25 @@
+Snapfly suspend chaque capture d’écran à une corde en haut de ton écran et masque les données privées avant que quoi que ce soit ne quitte ton Mac.
+
+LA CORDE
+Laisse le pointeur dans la barre des menus et la corde descend avec tes captures. Éloigne-le et elle remonte. Les captures ne s’empilent plus sur le Bureau. Snapfly te montre une fois où diriger l’app Capture d’écran.
+
+DROIT DANS LA CONVERSATION
+Clique sur l’avion en papier d’une photo, ou appuie sur ⌃⌥V, et elle part directement dans l’app où tu écris. Les icônes sous chaque photo l’envoient à ChatGPT, Claude, WhatsApp ou Gmail. Une fois envoyée, elle quitte la corde.
+
+DONNÉES PRIVÉES, MASQUÉES
+Tout ce qui quitte la corde, copié, envoyé ou glissé, a les données choisies dans Confidentialité masquées : noms, adresses, dates de naissance, e-mails, numéros de téléphone, visages, cartes et comptes bancaires, montants, données de santé, numéros d’identité et fiscaux, numéros de commande et de suivi, codes QR et codes-barres, mots de passe, clés d’API et adresses IP. Ton nom, ton adresse et tes propres règles vont dans Toujours masquer. Le reste, tu le masques à la main avec Masquer une partie. Choisis l’aspect du masquage, ou garde les quatre derniers chiffres.
+
+AUSSI SUR LA CORDE
+- Copier le texte copie les mots d’une capture.
+- Combine plusieurs captures en une seule image, ou fais-en un PDF.
+- Traduire le texte et Décrire, avec les outils d’Apple sur ton Mac.
+- Cherche les mots de toutes tes captures avec ⌃⌥F.
+- Enregistre l’écran avec ⌃⌥R et ajoute zooms et flèches dans Studio.
+- Suspends aussi des photos et des PDF depuis le Finder ; ils partent masqués de la même façon.
+- Masquer dans des fichiers masque de nombreux PDF et images d’un coup, dans des copies.
+
+MAC ET IPHONE
+Active la synchronisation et Snapfly pour iPhone reste à jour via ton propre iCloud. Seules les copies masquées partent, sauf si tu choisis aussi les originaux.
+
+SUR TON MAC
+Lire, masquer et traduire se fait sur ton Mac. Sans compte. Sans pistage.

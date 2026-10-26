@@ -1,0 +1,10 @@
+Neu in 1.1.0:
+- Dokumente scannen: Seiten gerade und sauber, private Angaben verdeckt, jede Abdeckung unter Prüfen kontrolliert.
+- Scans als PDF, Bilder, Text oder Word-Dokument sichern.
+- Text anzeigen: Text eines Scans kopieren, durchsuchen, übersetzen oder mit Vorlesen anhören.
+- Zahlungserinnerung hinzufügen für eine offene Rechnung.
+- Alle Dokumente durchsucht die Wörter in jedem Dokument.
+- PDF-Projekte: Fotos, Scans, Bildschirmfotos und PDFs in einer Datei.
+- Immer verbergen: deine eigenen Angaben, in jedem Bild verdeckt.
+- Die geschützte Kopie mit einem Tipp an ChatGPT, Claude, WhatsApp und andere Apps senden.
+- Klarere Hinweise, größere Tasten und viele Korrekturen.

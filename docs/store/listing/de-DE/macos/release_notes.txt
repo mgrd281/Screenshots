@@ -1,0 +1,9 @@
+Neu in 1.1.0:
+- Studio für Bildschirmaufnahmen: Zooms, wo du geklickt hast, Pfeile, Rahmen und Wörter.
+- Synchronisieren mit Snapfly fürs iPhone über deine eigene iCloud, mit einem Code auch über verschiedene Apple-Accounts.
+- Immer verbergen hat einen eigenen Bereich: Deine Angaben und Regeln werden in jedem Bild verdeckt.
+- Namen verdeckt nur Menschen; Unternehmen und Organisationen sind eine eigene Art.
+- Dateien verdecken verdeckt viele PDFs und Bilder auf einmal.
+- Hintergrund, In SVG umwandeln, Anleitung aufnehmen und Schreibtischsymbole ausblenden.
+- Verdecken geht schneller, und ein Bild, das nicht gelesen werden kann, geht nie unverdeckt hinaus.
+- Viele Korrekturen, auch für Arabisch, VoiceOver und „Bewegung reduzieren“.

@@ -1,0 +1,9 @@
+Novedades de la 1.1.0:
+- Studio para grabaciones de pantalla: zooms donde hiciste clic, flechas, recuadros y textos.
+- Sincronización con Snapfly para iPhone a través de tu propio iCloud, o con un código entre cuentas de Apple distintas.
+- Ocultar siempre tiene su propio panel: tus datos y reglas se tapan en cada imagen.
+- Nombres tapa solo a personas; Empresas y organizaciones es un tipo aparte.
+- Tapar archivos tapa muchos PDF e imágenes a la vez.
+- Fondo, Convertir a SVG, Grabar una guía y Ocultar iconos del escritorio.
+- Tapar es más rápido, y una imagen que no se puede leer nunca sale sin tapar.
+- Muchas correcciones, también para árabe, VoiceOver y Reducir movimiento.

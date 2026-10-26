@@ -1,0 +1,25 @@
+Snapfly hangs every screenshot on a line at the top of your screen and covers private details before anything leaves your Mac.
+
+THE LINE
+Rest the pointer in the menu bar and the line comes down with your screenshots. Move away and it tucks itself up again. Screenshots no longer pile up on the Desktop. Snapfly shows you once where to point the Screenshot app.
+
+INTO THE CHAT IN FRONT
+Click the paper plane on a photo, or press ⌃⌥V, and it goes straight into the app you are typing in. The icons under each photo send it to ChatGPT, Claude, WhatsApp or Gmail. Once sent, it leaves the line.
+
+PRIVATE DETAILS, COVERED
+Whatever leaves the line, copied, sent or dragged out, has the details you chose under Privacy covered: names, addresses, dates of birth, emails, phone numbers, faces, bank cards and accounts, amounts, health details, ID and tax numbers, order and tracking numbers, QR codes and barcodes, passwords, API keys and IP addresses. Your own name, address and rules go under Always Hide. Anything else you hide by hand with Hide Part. Choose how covers look, or keep the last four digits.
+
+MORE ON THE LINE
+- Copy Text copies the words in a screenshot.
+- Combine several into one image, or make one PDF of them.
+- Translate Text and Describe, with Apple's own tools on your Mac.
+- Search the words in all your screenshots with ⌃⌥F.
+- Record the screen with ⌃⌥R and add zooms and arrows in Studio.
+- Hang photos and PDFs from Finder too; they leave covered the same way.
+- Cover Files covers many PDFs and pictures at once, in copies.
+
+MAC AND IPHONE
+Turn on Sync and Snapfly for iPhone keeps in step through your own iCloud. Only covered copies go, unless you choose originals too.
+
+ON YOUR MAC
+Reading, covering and translating happen on your Mac. No account. No tracking.

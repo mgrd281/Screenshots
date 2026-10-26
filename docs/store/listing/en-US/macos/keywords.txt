@@ -1,0 +1,1 @@
+redact,privacy,hide,private,chat,send,menu bar,clipboard,ChatGPT,Claude,WhatsApp,PDF,OCR,translate

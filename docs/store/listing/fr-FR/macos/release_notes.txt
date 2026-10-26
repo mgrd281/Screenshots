@@ -1,0 +1,9 @@
+Nouveautés de la 1.1.0 :
+- Studio pour les enregistrements d’écran : zooms là où tu as cliqué, flèches, cadres et textes.
+- Synchronisation avec Snapfly pour iPhone via ton propre iCloud, ou avec un code entre comptes Apple différents.
+- Toujours masquer a sa propre sous-fenêtre : tes données et tes règles sont masquées dans chaque image.
+- Noms ne masque que des personnes ; Entreprises et organisations est un type à part.
+- Masquer dans des fichiers masque de nombreux PDF et images d’un coup.
+- Arrière-plan, Convertir en SVG, Enregistrer un guide et Masquer les icônes du Bureau.
+- Le masquage est plus rapide, et une image illisible ne part jamais sans masque.
+- De nombreuses corrections, aussi pour l’arabe, VoiceOver et Réduire les animations.

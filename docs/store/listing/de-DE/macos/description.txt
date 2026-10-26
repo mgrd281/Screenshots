@@ -1,0 +1,25 @@
+Snapfly hängt jedes Bildschirmfoto an eine Leine oben auf deinem Bildschirm und verdeckt private Angaben, bevor etwas deinen Mac verlässt.
+
+DIE LEINE
+Lass den Zeiger in der Menüleiste ruhen, und die Leine kommt mit deinen Bildschirmfotos herunter. Fährst du weg, verschwindet sie wieder. Bildschirmfotos stapeln sich nicht mehr auf dem Schreibtisch. Snapfly zeigt dir einmal, wo du das in der App „Bildschirmfoto“ einstellst.
+
+DIREKT IN DEN CHAT
+Klick auf den Papierflieger an einem Foto oder drück ⌃⌥V, und es landet direkt in der App, in der du gerade schreibst. Die Symbole unter jedem Foto schicken es an ChatGPT, Claude, WhatsApp oder Gmail. Einmal gesendet, verlässt es die Leine.
+
+PRIVATE ANGABEN, VERDECKT
+Was die Leine verlässt, ob kopiert, gesendet oder herausgezogen, hat die Angaben verdeckt, die du unter Datenschutz gewählt hast: Namen, Adressen, Geburtsdaten, E-Mails, Telefonnummern, Gesichter, Bankkarten und Konten, Beträge, Gesundheitsangaben, Ausweis- und Steuernummern, Bestell- und Sendungsnummern, QR-Codes und Barcodes, Passwörter, API-Schlüssel und IP-Adressen. Deinen eigenen Namen, deine Adresse und eigene Regeln trägst du unter Immer verbergen ein. Alles andere verdeckst du von Hand mit Bereich verdecken. Wähl, wie die Abdeckung aussieht, oder lass die letzten vier Ziffern zeigen.
+
+MEHR AN DER LEINE
+- Text kopieren holt die Wörter aus einem Bildschirmfoto.
+- Füg mehrere zu einem Bild zusammen oder mach ein PDF daraus.
+- Text übersetzen und Beschreiben, mit Apples eigenen Werkzeugen auf deinem Mac.
+- Durchsuch die Wörter in all deinen Bildschirmfotos mit ⌃⌥F.
+- Nimm den Bildschirm mit ⌃⌥R auf und setz im Studio Zooms und Pfeile.
+- Häng auch Fotos und PDFs aus dem Finder auf; sie gehen genauso verdeckt hinaus.
+- Dateien verdecken verdeckt viele PDFs und Bilder auf einmal, in Kopien.
+
+MAC UND IPHONE
+Schalte Synchronisieren ein, und Snapfly fürs iPhone bleibt über deine eigene iCloud auf demselben Stand. Es gehen nur verdeckte Kopien, außer du wählst auch Originale.
+
+AUF DEINEM MAC
+Lesen, Verdecken und Übersetzen passieren auf deinem Mac. Kein Konto. Kein Tracking.

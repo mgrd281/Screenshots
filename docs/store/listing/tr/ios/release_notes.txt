@@ -1,0 +1,10 @@
+1.1.0’daki yenilikler:
+- Belge tarama: düzeltilmiş ve temizlenmiş sayfalar, örtülü özel bilgiler, Gözden geçir’de kontrol edilen her örtü.
+- Taramaları PDF, görsel, metin ya da Word belgesi olarak kaydet.
+- Metni göster: Taranan metni kopyala, ara, çevir ya da Sesli Oku ile dinle.
+- Ödenecek bir fatura için Ödeme hatırlatması ekle.
+- Tüm Belgeler, her belgedeki kelimelerde arar.
+- PDF projeleri: fotoğraflar, taramalar, ekran görüntüleri ve PDF’ler tek dosyada.
+- Her zaman gizle: kendi bilgilerin her görselde örtülü.
+- Korunan kopyayı tek dokunuşla ChatGPT, Claude, WhatsApp ve diğer uygulamalara gönder.
+- Daha net mesajlar, daha büyük düğmeler ve pek çok düzeltme.
