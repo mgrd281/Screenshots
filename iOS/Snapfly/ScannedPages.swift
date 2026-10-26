@@ -271,6 +271,17 @@ final class ScannedPages: ObservableObject {
         return page.data.flatMap { Covering.upright($0, longest: longest) }
     }
 
+    /// The same, made off the main thread, as decoding a large photo takes
+    /// a moment: for Crop, tapped on a page already made.
+    func pictureAsItCame(_ id: UUID, longest: Int = 2048) async -> CGImage? {
+        guard let page = page(id) else { return nil }
+        let source = page.source, data = page.data
+        return await Task.detached(priority: .userInitiated) { () -> CGImage? in
+            if let source { return ScanCleaner.smaller(source, longest: longest) }
+            return data.flatMap { Covering.upright($0, longest: longest) }
+        }.value
+    }
+
     /// The cleaned page once it is ready, waiting for it; nil when it could
     /// not be made or was taken away.
     func ready(_ id: UUID) async -> CGImage? {
@@ -499,22 +510,9 @@ final class ScannedPages: ObservableObject {
 
     // MARK: Leaving
 
-    /// Every page covered, in their order, with where each is covered: one
-    /// opened before as it was left there, once its copy is checked, any
-    /// other as Settings says. Throws, saying which page, when one is not
-    /// ready or cannot be covered; `failing` names a page that cannot.
-    func covered(failing: String) async throws -> [(image: CGImage, places: [CGRect])] {
-        var done: [(image: CGImage, places: [CGRect])] = []
-        defer { making = nil }
-        for (index, page) in pages.enumerated() {
-            making = index + 1
-            done.append(try await covered(page, number: index + 1, failing: failing))
-        }
-        return done
-    }
-
     /// One page covered, with where: as its editor left it once its copy is
-    /// checked, or as Settings says.
+    /// checked, or as Settings says. Throws, saying which page, when it is
+    /// not ready or cannot be covered; `failing` names a page that cannot.
     private func covered(_ page: Page, number: Int, failing: String) async throws -> (image: CGImage, places: [CGRect]) {
         if let session = sessions[page.id] {
             guard let copy = await checked(session) else {
@@ -536,14 +534,22 @@ final class ScannedPages: ObservableObject {
     /// when one is not ready or cannot be covered.
     func reading(covered: Bool) async throws -> ScanReadingResult {
         if covered {
-            let pages = try await self.covered(failing: L("Page %d could not be covered, so its text was not read."))
-            return await Task.detached(priority: .userInitiated) {
-                ScanReadingResult(
-                    pages: pages.map { page in
-                        ScanCleaner.page(Finder.lines(in: page.image) ?? [], hiding: page.places, aspect: ScanCleaner.aspect(of: page.image))
-                    },
-                    previews: pages.map { ScanReadingResult.preview(of: $0.image) })
-            }.value
+            // A page at a time, covered and read at once, so a long scan never
+            // holds every page covered whole together.
+            var read = ScanReadingResult(pages: [], previews: [])
+            defer { making = nil }
+            for (index, page) in pages.enumerated() {
+                making = index + 1
+                let one = try await self.covered(page, number: index + 1,
+                                                 failing: L("Page %d could not be covered, so its text was not read."))
+                let done = await Task.detached(priority: .userInitiated) {
+                    (page: ScanCleaner.page(Finder.lines(in: one.image) ?? [], hiding: one.places, aspect: ScanCleaner.aspect(of: one.image)),
+                     preview: ScanReadingResult.preview(of: one.image))
+                }.value
+                read.pages.append(done.page)
+                read.previews.append(done.preview)
+            }
+            return read
         }
         let pages = try await uncovered()
         return await Task.detached(priority: .userInitiated) {
@@ -630,14 +636,26 @@ final class ScannedPages: ObservableObject {
     /// The pages as PNGs, full size, without notes: covered, or cleaned only.
     /// `failing` names a page that cannot be covered.
     func pngs(covered: Bool, failing: String) async throws -> [Data] {
-        let images: [CGImage]
-        if covered {
-            images = try await self.covered(failing: failing).map(\.image)
-        } else {
-            images = try await uncovered().map(\.image)
+        // A page at a time, made a PNG at once, so a long scan never holds
+        // every page whole together.
+        var pngs: [Data] = []
+        defer { making = nil }
+        for (index, page) in pages.enumerated() {
+            making = index + 1
+            let image: CGImage
+            if covered {
+                image = try await self.covered(page, number: index + 1, failing: failing).image
+            } else {
+                guard let cleaned = await ready(page.id) else {
+                    throw ScanProblem(message: String(format: L("Page %d could not be read."), index + 1))
+                }
+                image = cleaned
+            }
+            guard let png = await Task.detached(priority: .userInitiated, operation: { Covering.png(image) }).value else {
+                throw ScanProblem(message: L("The file could not be made."))
+            }
+            pngs.append(png)
         }
-        let pngs = await Task.detached(priority: .userInitiated) { images.compactMap(Covering.png) }.value
-        guard pngs.count == images.count else { throw ScanProblem(message: L("The file could not be made.")) }
         return pngs
     }
 

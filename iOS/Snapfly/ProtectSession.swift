@@ -141,10 +141,36 @@ final class ProtectSession: ObservableObject {
     }
 
     /// Starts once; the work goes on to its end even when the screen is
-    /// left, so what Apple Intelligence answers is kept for next time.
+    /// left, so what Apple Intelligence answers is kept for next time. A
+    /// page let go of (`rest`) is read and made anew, as the owner left it.
     func start() {
         guard running == nil else { return }
+        if isResting {
+            isResting = false
+            found = false
+        }
         running = Task { await run() }
+    }
+
+    /// Whether its pictures were let go of (`rest`): its places are kept as
+    /// the owner left them, checked when it was made.
+    private(set) var isResting = false
+
+    /// Lets go of the page's pictures while it is not looked at, as a long
+    /// PDF's pages would pile up, keeping the places as the owner left them;
+    /// only once its copy is made and checked, so nothing found is lost.
+    func rest() {
+        guard isReady, !isResting else { return }
+        running?.cancel()
+        remaking?.cancel()
+        running = nil
+        remaking = nil
+        image = nil
+        original = nil
+        preview = nil
+        copy = nil
+        png = nil
+        isResting = true
     }
 
     /// Waits until the places are found and the first copy is made, or it

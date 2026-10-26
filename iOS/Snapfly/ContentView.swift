@@ -333,7 +333,10 @@ struct PhotosTab: View {
             waiting.cancel()
             if coverer.note == opening { coverer.note = nil }
         }
-        guard let data = try? await item.loadTransferable(type: Data.self), let image = Covering.upright(data) else {
+        // Decoded off the main thread, as a large photo takes a moment.
+        guard let data = try? await item.loadTransferable(type: Data.self),
+              let image = await Task.detached(priority: .userInitiated, operation: { Covering.upright(data) }).value
+        else {
             coverer.show(L("The picture could not be read."))
             return
         }

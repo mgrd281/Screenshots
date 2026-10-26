@@ -163,7 +163,13 @@ final class QuickCoverer: ObservableObject {
                 show(L("The picture could not be read."))
                 return
             }
-            guard let made = await Covering.cover(image, Choice.details), let png = Covering.png(made.image) else {
+            guard let made = await Covering.cover(image, Choice.details) else {
+                show(L("The copy could not be made."))
+                return
+            }
+            // Made off the main thread, as a full-size PNG takes a moment.
+            let picture = made.image
+            guard let png = await Task.detached(priority: .userInitiated, operation: { Covering.png(picture) }).value else {
                 show(L("The copy could not be made."))
                 return
             }

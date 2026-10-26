@@ -1143,9 +1143,11 @@ struct ProtectView: View {
         case .turn(let page):
             scans.turn(page)
         case .crop(let page):
-            // The picture as it came, decoded once, as large as the corner editor shows it.
-            guard let picture = scans.picture(page) else { return failed(L("The picture could not be read.")) }
-            cropping = ScanCrop(id: page, picture: picture)
+            // The picture as it came, decoded once off the main thread, as large as the corner editor shows it.
+            Task {
+                guard let picture = await scans.pictureAsItCame(page) else { return failed(L("The picture could not be read.")) }
+                cropping = ScanCrop(id: page, picture: picture)
+            }
         }
     }
 
