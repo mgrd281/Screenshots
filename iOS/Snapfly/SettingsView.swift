@@ -429,6 +429,9 @@ struct SettingsView: View {
     private var helpButtons: some View {
         helpButton(L("Introduction"), symbol: "hand.wave", id: "more-introduction") {
             if inTab { AppTabs.shared.selection = .photos } else { dismiss() }
+            // It shows on the screenshots: without Photos, the Photos tab asks
+            // for them first, and no introduction waits to show up later.
+            guard Library.mayReadNow else { return }
             // Once the sheet or the tab has gone, on the screenshots themselves.
             Task { @MainActor in
                 try? await Task.sleep(for: .seconds(0.4))

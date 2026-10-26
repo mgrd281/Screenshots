@@ -13,6 +13,12 @@ final class Library: ObservableObject {
 
     var mayRead: Bool { access == .authorized || access == .limited }
 
+    /// Whether Snapfly may see the screenshots now, all of them or those chosen.
+    nonisolated static var mayReadNow: Bool {
+        let access = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        return access == .authorized || access == .limited
+    }
+
     func ask() {
         Task {
             access = await PHPhotoLibrary.requestAuthorization(for: .readWrite)

@@ -42,7 +42,7 @@ struct PhotosTab: View {
                 } else if library.access == .notDetermined {
                     welcome
                 } else {
-                    denied
+                    PhotosAccessDenied()
                 }
             }
             .navigationTitle("Snapfly")
@@ -370,8 +370,12 @@ struct PhotosTab: View {
         .scrollBounceBehavior(.basedOnSize)
         .sensoryFeedback(.impact(weight: .light), trigger: presses)
     }
+}
 
-    private var denied: some View {
+/// Photos refused: what Snapfly needs, and the way to Settings. On the
+/// Photos tab, and on Protected, which can't show a screenshot without it.
+struct PhotosAccessDenied: View {
+    var body: some View {
         ContentUnavailableView {
             Label(L("Allow Snapfly to see your screenshots"), systemImage: "photo.badge.exclamationmark")
         } description: {
