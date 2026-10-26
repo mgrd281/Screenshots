@@ -123,8 +123,11 @@ final class ScanUITests: XCTestCase {
         // A new project opens empty, its pages' overview with no bar yet.
         let close = element(app, "project-close")
         XCTAssertTrue(close.waitForExistence(timeout: 20), "a new PDF project opens")
-        // Closed empty, it is gone, so it does not open again over the next launch.
+        // Closed empty, it is gone, so it does not open again over the next launch. A tap
+        // while the project still slides in can be lost, so it is tapped once it can be.
+        XCTAssertTrue(wait(close, "hittable == %@", NSNumber(value: true)))
         close.tap()
+        if !gone(close, timeout: 5), close.exists { close.tap() }
         XCTAssertTrue(gone(close))
         app.terminate()
         let again = launch("empty")

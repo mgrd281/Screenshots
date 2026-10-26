@@ -421,6 +421,9 @@ struct ScanReadingSheet: View {
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(note.failed ? SnapflyTokens.reviewOpen : SnapflyTokens.protectTint)
                     .transition(.opacity)
+                    // Read as what it says, not as "Selected" for its tick.
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(note.text)
                     .accessibilityIdentifier("scan-reading-note")
             }
             if mode == .text, !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {

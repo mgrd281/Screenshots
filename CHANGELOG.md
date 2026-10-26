@@ -172,6 +172,8 @@ keeps a download of each version.
   player: pause, back and on, speed, the word being said marked. A table
   is told from the columns of a letter's foot, and a table whose cells
   Vision read as one line is parted into cells again.
+- On the iPhone, VoiceOver reads the text sheet's note as what it says,
+  such as "Kopiert", rather than "Ausgewählt" for its tick.
 - On the iPhone, what you cover by hand on a PDF project's pages, and a
   cover Snapfly found that you moved or made larger, is kept with the
   project and covered in every copy of it: also after Snapfly was closed, a
