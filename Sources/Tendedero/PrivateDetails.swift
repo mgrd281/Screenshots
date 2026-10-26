@@ -39,6 +39,11 @@ enum PrivateDetails {
 
     nonisolated static var hidden: Bool { !details.isEmpty }
 
+    /// Whether the owner's own details or rules cover something now. Always
+    /// Hide covers them in every picture, whatever kinds are chosen, also
+    /// with Hide private details off.
+    nonisolated static var alwaysHides: Bool { OwnRules.all.contains(where: \.isActive) }
+
     static func toggle(_ detail: PrivateDetail) {
         var chosen = details
         if chosen.contains(detail) { chosen.remove(detail) } else { chosen.insert(detail) }
@@ -107,11 +112,12 @@ enum PrivateDetails {
 
     // MARK: What leaves
 
-    /// Whether anything is covered in a screenshot: details chosen, or parts
-    /// hidden by hand. A PDF of Snapfly's own was covered as it was made.
+    /// Whether anything is covered in a screenshot: details chosen, the
+    /// owner's own details and rules, or parts hidden by hand. A PDF of
+    /// Snapfly's own was covered as it was made.
     static func covers(_ url: URL) -> Bool {
         if isDocument(url) { return coversDocument(url, details) }
-        return hidden || !hand(url).isEmpty
+        return hidden || alwaysHides || !hand(url).isEmpty
     }
 
     /// Whether a screenshot leaves the line changed: covered, stamped with
@@ -206,8 +212,9 @@ enum PrivateDetails {
         let stamp = TimeStamp.mark(for: url)
         let clean = strips(url)
         let drawing = Drawings.saved(url)
-        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty, isImage(url),
-              let key = key(for: url, chosen, hand, stamp, clean, drawing) else { return url }
+        // The owner's own details and rules are covered whatever is chosen.
+        guard !chosen.isEmpty || alwaysHides || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty,
+              isImage(url), let key = key(for: url, chosen, hand, stamp, clean, drawing) else { return url }
         if let done = cached(key) { return done }
         // Not read yet, like a capture copied the instant it hangs.
         let failures = Finder.failures
@@ -242,7 +249,7 @@ enum PrivateDetails {
         let stamp = TimeStamp.mark(for: url)
         let clean = strips(url)
         let drawing = Drawings.saved(url)
-        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty,
+        guard !chosen.isEmpty || alwaysHides || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty,
               let key = key(for: url, chosen, hand, stamp, clean, drawing), let done = cached(key) else { return nil }
         shownKeys[url.path] = key
         return done
@@ -269,8 +276,8 @@ enum PrivateDetails {
         let stamp = TimeStamp.mark(for: url)
         let clean = strips(url)
         let drawing = Drawings.saved(url)
-        guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty, isImage(url),
-              let key = key(for: url, chosen, hand, stamp, clean, drawing) else {
+        guard !chosen.isEmpty || alwaysHides || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty,
+              isImage(url), let key = key(for: url, chosen, hand, stamp, clean, drawing) else {
             // Nothing to change: it leaves as a fresh file all the same.
             preparePlain(url, chosen)
             return
@@ -422,12 +429,12 @@ enum PrivateDetails {
     }
 
     /// Whether anything is to be covered in a PDF brought in: kinds chosen,
-    /// or parts hidden by hand. Make PDF's own were covered as Settings
-    /// checks; more than that, like every kind for an AI chat, is covered
-    /// in them again.
+    /// the owner's own details and rules, or parts hidden by hand. Make
+    /// PDF's own were covered as Settings checks; more than that, like every
+    /// kind for an AI chat, is covered in them again.
     private static func coversDocument(_ url: URL, _ chosen: Set<PrivateDetail>) -> Bool {
         let protects = DocumentCover.protects(url) || (isDocument(url) && !chosen.isSubset(of: details))
-        return protects && (!chosen.isEmpty || !handPages(url).isEmpty)
+        return protects && (!chosen.isEmpty || alwaysHides || !handPages(url).isEmpty)
     }
 
     /// The file, when it last changed, what to cover, what was hidden by
@@ -583,14 +590,14 @@ enum Cover {
     /// Whether a file's name holds a detail of a kind covered, found by its
     /// shape and fitting its kind as a find of the patterns must
     /// (`Finder.fit`), so a screenshot's date and time are no phone number,
-    /// or one of the owner's own rules. Nothing while nothing is covered.
-    /// People's names are not looked for in it: Plain file names leaves
-    /// every name out.
+    /// or one of the owner's own rules, which count whatever kinds are
+    /// covered, as they are covered so. People's names are not looked for
+    /// in it: Plain file names leaves every name out.
     static func nameHolds(_ name: String, _ chosen: Set<PrivateDetail>) -> Bool {
-        guard !chosen.isEmpty else { return false }
         // The words of a file's name are often joined with underscores.
         let words = name.replacingOccurrences(of: "_", with: " ")
         if !Finder.ruleRanges(in: words, OwnRules.all).isEmpty { return true }
+        guard !chosen.isEmpty else { return false }
         return chosen.contains { kind in
             Finder.patternRanges(in: words, [kind]).contains { found in
                 Range(found, in: words).map { Finder.fit(kind, $0, in: words, medical: false) != .no } ?? false

@@ -554,12 +554,15 @@ final class Line: ObservableObject {
         guard let reason = SendCheck.reason(SendCheck.when, app: chat.installedAppID, host: chat.hosts.first,
                                             inBrowser: inBrowser, chatApps: Set(ChatButton.apps.map(\.bundleID)),
                                             chatSites: ChatButton.sites.map(\.host)) else { return go() }
+        // The copies first, so what was covered in them is known. Your own
+        // details and rules are covered with no kind checked too.
+        let copies = photos.map { PrivateDetails.shareable($0.url, covering: chosen) }
         var covered = CoverReport()
         for photo in photos {
             if let report = PrivateDetails.report(for: photo.url, covering: chosen) { covered.add(report) }
         }
-        SendCheck.shared.show(photos.map { PrivateDetails.shareable($0.url, covering: chosen) },
-                              to: chat.name, reason: reason, covered: covered, hides: !chosen.isEmpty,
+        SendCheck.shared.show(copies, to: chat.name, reason: reason, covered: covered,
+                              hides: !chosen.isEmpty || !covered.isEmpty,
                               sentBefore: photos.compactMap { sentBefore[$0.id] }, above: nil, send: go)
     }
 
@@ -591,12 +594,14 @@ final class Line: ObservableObject {
         guard !photos.isEmpty, !stillCovering(photos, chosen) else { return false }
         // Into an AI chat, or a place not known as a chat: the card first.
         if Paste.willPaste, let destination = SendLog.destination, let reason = SendCheck.reasonNow {
+            // The copies first, so what was covered in them is known.
+            let copies = photos.map { files[$0.id] ?? PrivateDetails.shareable($0.url, covering: chosen) }
             var covered = CoverReport()
             for photo in photos {
                 if let report = PrivateDetails.report(for: photo.url, covering: chosen) { covered.add(report) }
             }
-            SendCheck.shared.show(photos.map { files[$0.id] ?? PrivateDetails.shareable($0.url, covering: chosen) },
-                                  to: destination, reason: reason, covered: covered, hides: !chosen.isEmpty,
+            SendCheck.shared.show(copies, to: destination, reason: reason, covered: covered,
+                                  hides: !chosen.isEmpty || !covered.isEmpty,
                                   sentBefore: photos.compactMap { sentBefore[$0.id] },
                                   above: ChatButton.shared?.capsuleFrame) { [weak self] in
                 self?.deliver(photos, then: caption, replacing: files, covering: chosen)
@@ -1267,7 +1272,7 @@ final class Line: ObservableObject {
 
     /// With Hide private details on, every photo is read ahead of time, so
     /// copying one stays instant. Off, they show as they are again, but for
-    /// parts hidden by hand.
+    /// the owner's own details and rules and parts hidden by hand.
     func readPrivateDetails() {
         for item in items where !item.falling { cover(item.url) }
     }
