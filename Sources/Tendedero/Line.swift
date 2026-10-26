@@ -132,6 +132,9 @@ final class Line: ObservableObject {
     @Published private(set) var sentBefore: [UUID: SendLog.Sent] = [:]
     /// Each photo's print, by its path, once its words are read.
     private var prints: [String: TextPrint] = [:]
+    /// The covered copy each photo shows, so the same one shown again, as
+    /// after each change in Settings, is not drawn small again.
+    private var shownCopies: [UUID: URL] = [:]
     private var sendLogWatch: NSObjectProtocol?
     private var rulesWatch: NSObjectProtocol?
 
@@ -216,6 +219,7 @@ final class Line: ObservableObject {
         items[i].falling = true
         hitRects[id] = nil
         pickedIDs.remove(id)
+        shownCopies[id] = nil
         holdMarks(of: items[i].url)
         save()
         if !quietly { play("Pop", volume: 0.25) }
@@ -1192,6 +1196,8 @@ final class Line: ObservableObject {
         guard let i = items.firstIndex(where: { $0.url == url && !$0.falling }),
               let thumb = makeThumbnail(url) else { return }
         items[i].thumb = thumb
+        // It shows the photo itself until its new copy is read.
+        shownCopies[items[i].id] = nil
         PrivateDetails.prepare(url)
         // Edited, it says something new.
         prints[url.path] = nil
@@ -1567,11 +1573,17 @@ final class Line: ObservableObject {
             items[i].preparing = false
         }
         guard shown == url || PrivateDetails.alters(url),
-              let i = items.firstIndex(where: { $0.url == url && !$0.falling }),
-              let thumb = makeThumbnail(shown) else { return }
+              let i = items.firstIndex(where: { $0.url == url && !$0.falling }) else { return }
+        // A covered copy is a file of its own for each version: the same one
+        // again looks the same, and its picture is there already. The photo
+        // itself may have changed, as Markup saves over it.
+        let id = items[i].id
+        if shown != url, shownCopies[id] == shown { return }
+        guard let thumb = makeThumbnail(shown) else { return }
         items[i].thumb = thumb
         items[i].altered = shown != url
         items[i].covered = shown != url && PrivateDetails.isCovered(url)
+        shownCopies[id] = shown != url ? shown : nil
     }
 
     /// What was covered in a photo, for its menu; nil when nothing was.

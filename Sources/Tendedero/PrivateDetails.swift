@@ -172,6 +172,11 @@ enum PrivateDetails {
     /// its covered copy, or the file itself when there was nothing to hide.
     private static var results: [String: URL] = [:]
     private static var inProgress: Set<String> = []
+    /// Versions whose reading in the background failed: made as they leave
+    /// instead, and covered whole if that fails too, never waited for again.
+    private static var failedKeys: Set<String> = []
+    /// Pictures read two at a time, the newest first (`ReadingQueue`).
+    private static let reading = ReadingQueue(width: 2)
 
     /// Called once a screenshot has been read, with the screenshot and what
     /// to hand out for it, so the line can show it that way.
@@ -247,13 +252,29 @@ enum PrivateDetails {
         // picture goes covered instead, never kept as its reading nor shown
         // on the line as read, so it is read again the next time.
         guard let made, Finder.failures == failures else { return coveredWhole(url) }
+        // Made here, on the main thread, where Apple Intelligence or the
+        // assistant never reads along: it leaves now, but is not kept nor
+        // shown on the line as read; the reading in the background, with
+        // them, is.
+        if readsAlong(chosen) {
+            prepare(url, covering: chosen, shows: chosen == details)
+            return made.url
+        }
         results[key] = made.url
         reports[key] = made.report
+        failedKeys.remove(key)
         if chosen == details {
             shownKeys[url.path] = key
             onRead?(url, made.url)
         }
         return made.url
+    }
+
+    /// Whether Apple Intelligence, or the AI assistant, reads along for
+    /// these kinds, as it does off the main thread only.
+    private static func readsAlong(_ chosen: Set<PrivateDetail>) -> Bool {
+        guard !chosen.isDisjoint(with: Finder.intelligentKinds.values) else { return false }
+        return Finder.asksAssistant || Finder.usesIntelligence && Finder.intelligenceAvailable
     }
 
     /// What leaves for a picture whose reading or covers failed: all of it
@@ -316,7 +337,9 @@ enum PrivateDetails {
         if shows { waitingToShow.insert(key) }
         guard !inProgress.contains(key) else { return }
         inProgress.insert(key)
-        DispatchQueue.global(qos: .utility).async {
+        // A few at a time, the newest first, so a line full of photos read
+        // again never reads them all at once.
+        reading.add {
             let failures = Finder.failures
             let made = Cover.covering(url, chosen, hand: hand, stamp: stamp, clean: clean, drawing: drawing)
             // Read only where Vision could read it and its copy was made, as
@@ -329,9 +352,11 @@ enum PrivateDetails {
                     // again as it leaves, and goes covered whole if that
                     // fails too.
                     guard let read else {
+                        failedKeys.insert(key)
                         waitingToShow.remove(key)
                         return
                     }
+                    failedKeys.remove(key)
                     results[key] = read.url
                     reports[key] = read.report
                     if read.url == url { preparePlain(url, chosen) }
@@ -378,11 +403,29 @@ enum PrivateDetails {
         }
     }
 
-    /// Whether a PDF is still being covered with the given kinds, so it
-    /// cannot leave yet.
+    /// Whether its covered copy is still being made, off the main thread,
+    /// so it cannot leave yet: a note says so, and it leaves a moment later.
+    /// One not made yet, like a photo or PDF in the History, starts being
+    /// made now, rather than on the main thread, where the screen would
+    /// wait for it and Apple Intelligence cannot read along. One whose
+    /// reading failed is made as it leaves, covered whole if that fails too.
     static func stillCovering(_ url: URL, _ chosen: Set<PrivateDetail>) -> Bool {
-        guard isDocument(url), let key = documentKey(url, chosen) else { return false }
+        guard let key = workKey(url, chosen), cached(key) == nil, !failedKeys.contains(key) else { return false }
+        if !inProgress.contains(key) { prepare(url, covering: chosen, shows: chosen == details) }
         return inProgress.contains(key)
+    }
+
+    /// The version a picture or PDF leaves as, when something is to be done
+    /// to it: covered, stamped, drawn on or cleaned; nil when it leaves as it is.
+    private static func workKey(_ url: URL, _ chosen: Set<PrivateDetail>) -> String? {
+        if isDocument(url) { return coversDocument(url, chosen) ? documentKey(url, chosen) : nil }
+        let hand = Self.hand(url)
+        let stamp = TimeStamp.mark(for: url)
+        let clean = strips(url)
+        let drawing = Drawings.saved(url)
+        guard !chosen.isEmpty || alwaysHides || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty,
+              isImage(url) else { return nil }
+        return key(for: url, chosen, hand, stamp, clean, drawing)
     }
 
     // MARK: A PDF from outside
@@ -402,6 +445,7 @@ enum PrivateDetails {
         results[key] = made.url
         reports[key] = made.report
         inProgress.remove(key)
+        failedKeys.remove(key)
         if chosen == details {
             shownKeys[url.path] = key
             onRead?(url, made.url)
@@ -435,6 +479,9 @@ enum PrivateDetails {
                     if let made {
                         results[key] = made.url
                         reports[key] = made.report
+                        failedKeys.remove(key)
+                    } else {
+                        failedKeys.insert(key)
                     }
                     guard waitingToShow.remove(key) != nil else { return }
                     if made != nil {

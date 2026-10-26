@@ -128,6 +128,13 @@ keeps a download of each version.
   Assistant, where it is set up, not to Settings; a PDF project's camera
   that cannot scan says why; the text sheet's warnings use the deeper
   orange.
+- On the Mac, a photo or PDF copied, sent, saved or linked while it is
+  still being read says so for a moment, as a PDF did, instead of holding
+  Snapfly up while it is read a second time, and a copy made in a hurry is
+  read again with Apple Intelligence before the line keeps it; the line
+  reads two photos at a time, the newest first, instead of all at once
+  after a change in Settings, and does not draw one again that looks the
+  same.
 - Fixes: on the Mac, Save Copy… over the very file it copies, as a GIF
   or a PDF with nothing to cover can be, no longer deletes it; a PDF
   cropped with text beyond its page no longer stops Snapfly;
