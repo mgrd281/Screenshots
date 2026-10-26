@@ -189,8 +189,8 @@ final class OutsideTests: XCTestCase {
         let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] ?? [:]
         XCTAssertNil(properties[kCGImagePropertyGPSDictionary])
         XCTAssertFalse(Cover.strips(clean))
-        // Nothing to cover and nothing to take out: nothing to copy.
-        XCTAssertNil(Cover.copy(of: screenshot, []))
+        // Nothing to cover and nothing to take out: no copy, the screenshot itself.
+        XCTAssertEqual(Cover.copy(of: screenshot, []), screenshot)
     }
 
     /// A photo stored turned, with a note to turn it back, is read upright.

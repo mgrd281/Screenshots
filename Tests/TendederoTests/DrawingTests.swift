@@ -247,8 +247,11 @@ final class DrawingTests: XCTestCase {
         let copy = try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, nil))
         XCTAssertEqual(copy.width, 160)
         XCTAssertEqual(copy.height, 120)
-        // Nothing drawn and nothing to cover makes no copy.
-        XCTAssertNil(Cover.covering(url, [], drawing: .empty))
+        // Nothing drawn and nothing to cover makes no copy: the screenshot
+        // itself, with nothing covered, which is no failure.
+        let none = try XCTUnwrap(Cover.covering(url, [], drawing: .empty))
+        XCTAssertEqual(none.url, url)
+        XCTAssertTrue(none.report.isEmpty)
     }
 
     func testASavedCopyIsNamedAfterTheOriginal() {
