@@ -169,6 +169,38 @@ final class OutsideTests: XCTestCase {
         XCTAssertEqual(PrivateDetails.owner(ofHandKey: "/tmp/Shot.png"), "/tmp/Shot.png")
     }
 
+    /// What was hidden by hand goes with its file into the History and back,
+    /// a PDF's pages too, so it leaves covered from there, and is forgotten
+    /// with it; no other file's goes along.
+    @MainActor
+    func testHandBoxesGoWithTheirFileAndAreForgottenWithIt() {
+        let key = "handCovers"
+        let before = UserDefaults.standard.object(forKey: key)
+        defer { UserDefaults.standard.set(before, forKey: key) }
+        UserDefaults.standard.removeObject(forKey: key)
+        let shot = URL(fileURLWithPath: "/tmp/Snapfly hand test/Screenshot.png")
+        let pdf = URL(fileURLWithPath: "/tmp/Snapfly hand test/Rechnung.pdf")
+        let other = URL(fileURLWithPath: "/tmp/Snapfly hand test/Screenshot 2.png")
+        let box = CGRect(x: 0.1, y: 0.2, width: 0.3, height: 0.4)
+        PrivateDetails.setHand([box], for: shot)
+        PrivateDetails.setHand([box], for: pdf, page: 2)
+        PrivateDetails.setHand([box], for: other)
+
+        let kept = URL(fileURLWithPath: "/tmp/Snapfly hand test/History/Screenshot.png")
+        let keptPDF = URL(fileURLWithPath: "/tmp/Snapfly hand test/History/Rechnung.pdf")
+        PrivateDetails.moveHand(from: shot, to: kept)
+        PrivateDetails.moveHand(from: pdf, to: keptPDF)
+        XCTAssertEqual(PrivateDetails.hand(kept), [box])
+        XCTAssertEqual(PrivateDetails.hand(keptPDF, page: 2), [box])
+        XCTAssertTrue(PrivateDetails.hand(shot).isEmpty)
+        XCTAssertTrue(PrivateDetails.handPages(pdf).isEmpty)
+        XCTAssertEqual(PrivateDetails.hand(other), [box], "a file beside it keeps its own")
+
+        PrivateDetails.forgetHand(keptPDF)
+        XCTAssertTrue(PrivateDetails.handPages(keptPDF).isEmpty)
+        XCTAssertEqual(PrivateDetails.hand(kept), [box])
+    }
+
     /// A photo from a phone says where it was taken; what leaves the line
     /// does not. A screenshot carries nothing of the kind.
     func testAPhotoLeavesWithoutWhereItWasTaken() throws {

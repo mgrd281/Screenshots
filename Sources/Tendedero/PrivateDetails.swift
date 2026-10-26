@@ -69,11 +69,34 @@ enum PrivateDetails {
         UserDefaults.standard.set(all, forKey: handKey)
     }
 
-    /// Forgets what was hidden in screenshots that have left the line.
+    /// Forgets what was hidden in screenshots that have left the line, and
+    /// can come back neither from the History nor from a note.
     static func keepHand(only paths: Set<String>) {
         guard let all = UserDefaults.standard.dictionary(forKey: handKey),
               all.keys.contains(where: { !paths.contains(owner(ofHandKey: $0)) }) else { return }
         UserDefaults.standard.set(all.filter { paths.contains(owner(ofHandKey: $0.key)) }, forKey: handKey)
+    }
+
+    /// What was hidden by hand goes with a file that moves, like into the
+    /// History and back, a PDF's pages too, so it leaves covered from there
+    /// as it did from the line.
+    static func moveHand(from old: URL, to new: URL) {
+        guard var all = UserDefaults.standard.dictionary(forKey: handKey) else { return }
+        let keys = all.keys.filter { owner(ofHandKey: $0) == old.path }
+        guard !keys.isEmpty else { return }
+        for key in keys {
+            let boxes = all.removeValue(forKey: key)
+            all[new.path + String(key.dropFirst(old.path.count))] = boxes
+        }
+        UserDefaults.standard.set(all, forKey: handKey)
+    }
+
+    /// Forgets what was hidden by hand in a file, a PDF's pages too, as it
+    /// leaves the History for good.
+    static func forgetHand(_ url: URL) {
+        guard let all = UserDefaults.standard.dictionary(forKey: handKey),
+              all.keys.contains(where: { owner(ofHandKey: $0) == url.path }) else { return }
+        UserDefaults.standard.set(all.filter { owner(ofHandKey: $0.key) != url.path }, forKey: handKey)
     }
 
     // MARK: A PDF's pages

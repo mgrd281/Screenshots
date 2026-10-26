@@ -216,6 +216,7 @@ final class Line: ObservableObject {
         items[i].falling = true
         hitRects[id] = nil
         pickedIDs.remove(id)
+        holdMarks(of: items[i].url)
         save()
         if !quietly { play("Pop", volume: 0.25) }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
@@ -793,6 +794,25 @@ final class Line: ObservableObject {
         UserDefaults.standard.set(waiting.filter { !due.contains($0) }, forKey: Self.trashLaterKey)
     }
 
+    /// Photos that left the line a moment ago, each with how many times,
+    /// whose note can still put them back: what was hidden by hand and
+    /// drawn on them is kept meanwhile, also with no history to keep it.
+    private var justLeft: [String: Int] = [:]
+
+    /// Keeps a photo's marks for as long as its note can bring it back.
+    private func holdMarks(of url: URL) {
+        let path = url.path
+        justLeft[path, default: 0] += 1
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                let left = (self.justLeft[path] ?? 1) - 1
+                self.justLeft[path] = left > 0 ? left : nil
+                self.save()
+            }
+        }
+    }
+
     /// Text, like a translation, straight into the app in front.
     func sendText(_ text: String) {
         Self.pasteText(text)
@@ -1044,22 +1064,16 @@ final class Line: ObservableObject {
     }
 
     /// A photo's file moved, like into a Workspace category: its card keeps
-    /// its place, and what was done to it, parts hidden by hand and
-    /// drawings, goes with it.
+    /// its place, and what was done to it, parts hidden by hand, a PDF's
+    /// pages too, and drawings, goes with it.
     func relocate(from old: URL, to new: URL) {
         let was = old.standardizedFileURL.path
         guard let index = items.firstIndex(where: { $0.url.standardizedFileURL.path == was }) else { return }
-        let hand = PrivateDetails.hand(old)
-        let drawing = Drawings.saved(old)
+        // Kept under the card's own path, as it was hidden and drawn.
+        let hung = items[index].url
         items[index].url = new
-        if !hand.isEmpty {
-            PrivateDetails.setHand(hand, for: new)
-            PrivateDetails.setHand([], for: old)
-        }
-        if !drawing.isEmpty {
-            Drawings.set(drawing, for: new)
-            Drawings.set(.empty, for: old)
-        }
+        PrivateDetails.moveHand(from: hung, to: new)
+        Drawings.move(from: hung, to: new)
         StudioStore.move(from: old, to: new)
         prints[old.path] = nil
         save()
@@ -1601,8 +1615,14 @@ final class Line: ObservableObject {
         let paths = live.map(\.url.path)
         UserDefaults.standard.set(paths, forKey: storeKey)
         UserDefaults.standard.set(live.filter(\.pinned).map(\.url.path), forKey: pinnedKey)
-        PrivateDetails.keepHand(only: Set(paths))
-        Drawings.keep(only: Set(paths))
+        // What was hidden by hand and drawn stays with a photo while it can
+        // come back: from the history, from a sent photo still waiting to go
+        // there, or from the note of one just taken down. It leaves covered
+        // from any of them as it did from the line.
+        let waiting = UserDefaults.standard.stringArray(forKey: Self.trashLaterKey) ?? []
+        let marked = Set(paths).union(History.paths).union(waiting).union(justLeft.keys)
+        PrivateDetails.keepHand(only: marked)
+        Drawings.keep(only: marked)
         // A recording's Studio work stays while it can come back from the history.
         StudioStore.keep(only: Set(paths).union(History.paths))
         // The history's words stay known too, for its search.

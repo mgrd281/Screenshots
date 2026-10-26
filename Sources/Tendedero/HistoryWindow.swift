@@ -419,10 +419,11 @@ private struct HistoryCard: View {
         sendAgain(url)
     }
 
-    /// The photo covered as Settings says, made and put on the clipboard as
-    /// the line's own Copy does it, never the original. A PDF still being
-    /// covered waits, with a note, as it does on the line. What was hidden by
-    /// hand stays behind: it is forgotten once a photo leaves the line.
+    /// The photo as it would leave the line: covered as Settings says, with
+    /// the parts hidden by hand and what was drawn, which the History keeps
+    /// with it, made and put on the clipboard as the line's own Copy does it,
+    /// never the original. A PDF still being covered waits, with a note, as
+    /// it does on the line.
     private func copy() {
         let chosen = CoveringProfile.detailsNow
         guard !PrivateDetails.stillCovering(entry.url, chosen) else {
