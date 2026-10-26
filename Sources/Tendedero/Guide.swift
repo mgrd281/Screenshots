@@ -893,6 +893,9 @@ struct GuideShadeView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        // Placed on the screen, from its left, in every language, so the edge
+        // rings the hole the shade leaves.
+        .environment(\.layoutDirection, .leftToRight)
         .opacity(model.shown ? 1 : 0)
         .animation(.easeOut(duration: 0.2), value: model.shown)
         .animation(Motion.spring(response: 0.45, damping: 0.86, reduced: reduceMotion), value: model.hole)

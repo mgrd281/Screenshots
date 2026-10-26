@@ -9,6 +9,10 @@ import SwiftUI
 struct WorkspacePane: View {
     @ObservedObject var workspace: Workspace
     @State private var folderName = ""
+    /// The folder's name last tried, so leaving the field after Return, or
+    /// after a name refused, does not try it again.
+    @State private var triedName = ""
+    @FocusState private var folderFocused: Bool
     @State private var newCategory = ""
 
     var body: some View {
@@ -43,6 +47,21 @@ struct WorkspacePane: View {
             workspace.refreshStats()
         }
         .onChange(of: workspace.config.name) { _, name in folderName = name }
+        // A name typed and left, as the pane closes, is kept too.
+        .onDisappear { renameFolder(onReturn: false) }
+    }
+
+    /// The folder's name as typed: on Return, and once the field is left,
+    /// unless that name was tried already. An empty name or the same one
+    /// changes nothing, and the field shows the name again.
+    private func renameFolder(onReturn: Bool) {
+        guard let name = WorkspaceNames.clean(folderName), name != workspace.config.name else {
+            folderName = workspace.config.name
+            return
+        }
+        guard onReturn || folderName != triedName else { return }
+        triedName = folderName
+        workspace.rename(to: folderName)
     }
 
     // MARK: Pieces
@@ -79,7 +98,11 @@ struct WorkspacePane: View {
                 Text(Folders.placeName(workspace.root))
             }
             TextField(L("Folder name"), text: $folderName)
-                .onSubmit { workspace.rename(to: folderName) }
+                .focused($folderFocused)
+                .onSubmit { renameFolder(onReturn: true) }
+                .onChange(of: folderFocused) { _, focused in
+                    if !focused { renameFolder(onReturn: false) }
+                }
             LabeledContent {
                 Text(storage)
                     .monospacedDigit()
@@ -169,6 +192,10 @@ private struct CategoryRow: View {
     let first: Bool
     let last: Bool
     @State private var name = ""
+    /// The name last tried, so leaving the field after Return, or after a
+    /// name refused, does not try it again.
+    @State private var triedName = ""
+    @FocusState private var focused: Bool
 
     private var isDefault: Bool { workspace.config.defaultID == category.id }
 
@@ -182,7 +209,11 @@ private struct CategoryRow: View {
                 .labelsHidden()
                 .textFieldStyle(.plain)
                 .foregroundStyle(category.hidden ? .secondary : .primary)
-                .onSubmit { workspace.renameCategory(category.id, to: name) }
+                .focused($focused)
+                .onSubmit { rename(onReturn: true) }
+                .onChange(of: focused) { _, now in
+                    if !now { rename(onReturn: false) }
+                }
             if let tally = workspace.tallies[category.id], tally.count > 0 {
                 Text("\(tally.count)")
                     .font(.system(size: 11))
@@ -203,6 +234,21 @@ private struct CategoryRow: View {
         }
         .onAppear { name = category.name }
         .onChange(of: category.name) { _, new in name = new }
+        // A name typed and left, as the pane closes, is kept too.
+        .onDisappear { rename(onReturn: false) }
+    }
+
+    /// The name as typed: on Return, and once the field is left, unless
+    /// that name was tried already. An empty name or the same one changes
+    /// nothing, and the field shows the name again.
+    private func rename(onReturn: Bool) {
+        guard let cleaned = WorkspaceNames.clean(name), cleaned != category.name else {
+            name = category.name
+            return
+        }
+        guard onReturn || name != triedName else { return }
+        triedName = name
+        workspace.renameCategory(category.id, to: name)
     }
 
     private func tool(_ symbol: String, _ label: String, action: @escaping () -> Void) -> some View {

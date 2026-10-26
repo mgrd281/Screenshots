@@ -152,6 +152,9 @@
 "Remove All" = "إزالة الكل";
 "Cancel" = "إلغاء";
 "Done" = "تم";
+"Discard your changes?" = "تجاهل تغييراتك؟";
+"They are kept only once you click %@." = "لا تُحفَظ إلا بعد أن تنقر «%@».";
+"Keep Editing" = "تابع التعديل";
 /* TextCard, GrabArea */
 "Translate Text" = "ترجمة النص";
 "Describe" = "وصف ذكي";
@@ -269,6 +272,8 @@
 "In chat apps" = "في تطبيقات المحادثة";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT وClaude وWhatsApp وTelegram والرسائل وMail وOutlook وغيرها.";
 "Remove" = "إزالة";
+"Remove “%@”" = "إزالة «%@»";
+"Removed “%@”. Click to put it back." = "أُزيل «%@». انقر لإعادته.";
 "Add a website" = "إضافة موقع";
 "Add" = "إضافة";
 "That isn't a website, or it is in the list already." = "هذا ليس موقعًا، أو أنه موجود في القائمة.";
@@ -839,6 +844,8 @@
 "Product" = "المنتج";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "قُرئ على هذا الـ Mac دون تغطية؛ وأضاف %@ ما قرأه في النسخة المغطّاة.";
 "Remove Key" = "إزالة المفتاح";
+"Remove the key for %@?" = "هل تزيل مفتاح %@؟";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "لا يمكن التراجع عن هذا: تعرض %@ المفتاح مرة واحدة فقط، فستحتاج إلى إنشاء مفتاح جديد هناك.";
 "Reply" = "الرد";
 "The answer was empty." = "كان الجواب فارغًا.";
 "The keychain did not keep the key." = "لم تحتفظ سلسلة المفاتيح بالمفتاح.";
@@ -1237,6 +1244,12 @@
 "Edit…" = "تحرير…";
 "Add Prompt" = "إضافة رسالة";
 "Standard Prompts" = "الرسائل الأساسية";
+"Replace your question with the standard ones?" = "هل تستبدل سؤالك بالأسئلة الأساسية؟";
+"Replace your %d questions with the standard ones?" = "هل تستبدل أسئلتك الـ%d بالأسئلة الأساسية؟";
+"Replace your prompt with the standard ones?" = "هل تستبدل رسالتك بالرسائل الأساسية؟";
+"Replace your %d prompts with the standard ones?" = "هل تستبدل رسائلك الـ%d بالرسائل الأساسية؟";
+"What you wrote can't be brought back." = "لا يمكن استرجاع ما كتبته.";
+"Replace" = "استبدال";
 "Not written yet" = "لم تُكتب بعد";
 "Title" = "العنوان";
 "Prompt" = "الرسالة";
@@ -1771,6 +1784,7 @@
 "A ring where each click landed." = "حلقة حيث وقعت كل نقرة.";
 "Add Zoom" = "إضافة تكبير";
 "Could not open the recording." = "تعذّر فتح التسجيل.";
+"Your new recording opens in Studio once you close this one." = "يُفتح تسجيلك الجديد في الاستوديو بعد أن تغلق هذا.";
 "Could not save the video." = "تعذّر حفظ الفيديو.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "اسحب التكبير على الشريط الزمني لنقله، أو اسحب طرفيه لإطالته أو تقصيره.";
 "Drag the frame on the picture to choose what it looks at." = "اسحب الإطار على الصورة لتختار ما ينظر إليه.";

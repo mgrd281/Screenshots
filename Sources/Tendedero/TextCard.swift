@@ -677,6 +677,9 @@ final class TextCardModel: ObservableObject {
 private struct TextCardView: View {
     @ObservedObject var model: TextCardModel
     let close: () -> Void
+    /// The card's reading direction, which a result in another follows
+    /// its own way.
+    @Environment(\.layoutDirection) private var layoutDirection
 
     private var title: String {
         switch model.kind {
@@ -801,12 +804,15 @@ private struct TextCardView: View {
     }
 
     private func result(_ text: String) -> some View {
-        let rtl = model.rightToLeft
+        // Leading is the card's own side: a result written the other way,
+        // Arabic on an English card or English on an Arabic one, starts on
+        // the trailing side instead.
+        let flips = model.rightToLeft != (layoutDirection == .rightToLeft)
         let words = Text(text)
             .font(.system(size: 13))
             .lineSpacing(2)
-            .multilineTextAlignment(rtl ? .trailing : .leading)
-            .frame(maxWidth: .infinity, alignment: rtl ? .trailing : .leading)
+            .multilineTextAlignment(flips ? .trailing : .leading)
+            .frame(maxWidth: .infinity, alignment: flips ? .trailing : .leading)
             .fixedSize(horizontal: false, vertical: true)
             .textSelection(.enabled)
         return Group {

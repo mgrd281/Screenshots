@@ -418,6 +418,17 @@ private struct HistoryCard: View {
         .animation(Motion.spring(response: 0.25, damping: 0.85, reduced: reduceMotion), value: hovering)
         .onTapGesture(count: 2) { NSWorkspace.shared.open(entry.url) }
         .onTapGesture { takeBack() }
+        // Reached with Tab where keyboard navigation is on, as buttons are;
+        // Space or Return hangs it again, as a click does.
+        .focusable(true, interactions: .activate)
+        .onKeyPress(.space) {
+            takeBack()
+            return .handled
+        }
+        .onKeyPress(.return) {
+            takeBack()
+            return .handled
+        }
         .help(L("Hang on the line"))
         .contextMenu {
             Button(L("Hang on the line")) { takeBack() }

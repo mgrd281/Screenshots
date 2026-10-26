@@ -154,6 +154,9 @@
 "Remove All" = "Remove All";
 "Cancel" = "Cancel";
 "Done" = "Done";
+"Discard your changes?" = "Discard your changes?";
+"They are kept only once you click %@." = "They are kept only once you click %@.";
+"Keep Editing" = "Keep Editing";
 /* TextCard, GrabArea */
 "Translate Text" = "Translate Text";
 "Describe" = "Describe";
@@ -271,6 +274,8 @@
 "In chat apps" = "In chat apps";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others.";
 "Remove" = "Remove";
+"Remove “%@”" = "Remove “%@”";
+"Removed “%@”. Click to put it back." = "Removed “%@”. Click to put it back.";
 "Add a website" = "Add a website";
 "Add" = "Add";
 "That isn't a website, or it is in the list already." = "That isn't a website, or it is in the list already.";
@@ -841,6 +846,8 @@
 "Product" = "Product";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Read on this Mac, not covered; %@ added what it read in the covered copy.";
 "Remove Key" = "Remove Key";
+"Remove the key for %@?" = "Remove the key for %@?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "This can't be undone: %@ shows a key only once, so you would make a new one there.";
 "Reply" = "Reply";
 "The answer was empty." = "The answer was empty.";
 "The keychain did not keep the key." = "The keychain did not keep the key.";
@@ -1239,6 +1246,12 @@
 "Edit…" = "Edit…";
 "Add Prompt" = "Add Prompt";
 "Standard Prompts" = "Standard Prompts";
+"Replace your question with the standard ones?" = "Replace your question with the standard ones?";
+"Replace your %d questions with the standard ones?" = "Replace your %d questions with the standard ones?";
+"Replace your prompt with the standard ones?" = "Replace your prompt with the standard ones?";
+"Replace your %d prompts with the standard ones?" = "Replace your %d prompts with the standard ones?";
+"What you wrote can't be brought back." = "What you wrote can't be brought back.";
+"Replace" = "Replace";
 "Not written yet" = "Not written yet";
 "Title" = "Title";
 "Prompt" = "Prompt";
@@ -1773,6 +1786,7 @@
 "A ring where each click landed." = "A ring where each click landed.";
 "Add Zoom" = "Add Zoom";
 "Could not open the recording." = "Could not open the recording.";
+"Your new recording opens in Studio once you close this one." = "Your new recording opens in Studio once you close this one.";
 "Could not save the video." = "Could not save the video.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter.";
 "Drag the frame on the picture to choose what it looks at." = "Drag the frame on the picture to choose what it looks at.";

@@ -324,7 +324,16 @@ final class Preferences: ObservableObject {
     }
 
     func removeChatApp(_ bundleID: String) {
+        let apps = chatApps
+        guard let index = apps.firstIndex(where: { $0.bundleID == bundleID }) else { return }
+        let app = apps[index]
         chatApps.removeAll { $0.bundleID == bundleID }
+        offerBack(app.name) { [weak self] in
+            guard let self, !self.chatApps.contains(where: { $0.bundleID == bundleID }) else { return }
+            var apps = self.chatApps
+            apps.insert(app, at: min(index, apps.count))
+            self.chatApps = apps
+        }
     }
 
     var chatSites: [ChatButton.Site] {
@@ -348,7 +357,16 @@ final class Preferences: ObservableObject {
     }
 
     func removeChatSite(_ host: String) {
+        let sites = chatSites
+        guard let index = sites.firstIndex(where: { $0.host == host }) else { return }
+        let site = sites[index]
         chatSites.removeAll { $0.host == host }
+        offerBack(host) { [weak self] in
+            guard let self, !self.chatSites.contains(where: { $0.host == host }) else { return }
+            var sites = self.chatSites
+            sites.insert(site, at: min(index, sites.count))
+            self.chatSites = sites
+        }
     }
 
     /// The button as it looks with these settings, for the preview.
@@ -592,9 +610,16 @@ final class Preferences: ObservableObject {
     @Published var rules = OwnRules.all
     private var rulesSave: Task<Void, Never>?
 
-    func removeRule(_ rule: OwnRule) {
-        rules.removeAll { $0.id == rule.id }
+    /// A detail or a rule taken away, named as its row names it.
+    func removeRule(_ rule: OwnRule, named name: String) {
+        guard let index = rules.firstIndex(where: { $0.id == rule.id }) else { return }
+        rules.remove(at: index)
         saveRules()
+        offerBack(name) { [weak self] in
+            guard let self, !self.rules.contains(where: { $0.id == rule.id }) else { return }
+            self.rules.insert(rule, at: min(index, self.rules.count))
+            self.saveRules()
+        }
     }
 
     /// One of the owner's details or rules, new or changed, kept at once.
@@ -714,8 +739,14 @@ final class Preferences: ObservableObject {
     }
 
     func removeSavedMessage(_ message: SavedMessage) {
-        savedMessages.removeAll { $0.id == message.id }
+        guard let index = savedMessages.firstIndex(where: { $0.id == message.id }) else { return }
+        savedMessages.remove(at: index)
         saveSavedMessages()
+        offerBack(message.text) { [weak self] in
+            guard let self, !self.savedMessages.contains(where: { $0.id == message.id }) else { return }
+            self.savedMessages.insert(message, at: min(index, self.savedMessages.count))
+            self.saveSavedMessages()
+        }
     }
 
     func savedMessagesChanged() {
@@ -746,8 +777,14 @@ final class Preferences: ObservableObject {
     }
 
     func removeQuestion(_ question: AIQuestion) {
-        aiQuestions.removeAll { $0.id == question.id }
+        guard let index = aiQuestions.firstIndex(where: { $0.id == question.id }) else { return }
+        aiQuestions.remove(at: index)
         saveQuestions()
+        offerBack(question.text) { [weak self] in
+            guard let self, !self.aiQuestions.contains(where: { $0.id == question.id }) else { return }
+            self.aiQuestions.insert(question, at: min(index, self.aiQuestions.count))
+            self.saveQuestions()
+        }
     }
 
     func questionsChanged() {
@@ -759,10 +796,14 @@ final class Preferences: ObservableObject {
         }
     }
 
+    /// Keeps the questions once they say something else than what is kept,
+    /// so leaving the pane keeps nothing and the standard ones go on
+    /// following the language Snapfly speaks.
     func saveQuestions() {
         questionsSave?.cancel()
+        guard !AIQuestions.sameWords(aiQuestions, AIQuestions.all) else { return }
         AIQuestions.all = aiQuestions
-        questionsCustomised = true
+        questionsCustomised = AIQuestions.isCustomised()
     }
 
     /// The standard questions again, in place of the owner's.
@@ -799,13 +840,26 @@ final class Preferences: ObservableObject {
     }
 
     func removePrompt(_ prompt: AIPrompt) {
-        aiPrompts.removeAll { $0.id == prompt.id }
+        guard let index = aiPrompts.firstIndex(where: { $0.id == prompt.id }) else { return }
+        aiPrompts.remove(at: index)
         savePrompts()
+        // One with neither title nor words goes without a note.
+        let empty = prompt.isBlank && prompt.title.trimmingCharacters(in: .whitespaces).isEmpty
+        offerBack(empty ? "" : prompt.name(number: index + 1)) { [weak self] in
+            // Back in its place, unless nine are there by now.
+            guard let self, !self.aiPrompts.contains(where: { $0.id == prompt.id }),
+                  self.aiPrompts.count < AIPrompts.limit else { return }
+            self.aiPrompts.insert(prompt, at: min(index, self.aiPrompts.count))
+            self.savePrompts()
+        }
     }
 
+    /// Keeps the prompts once they say something else than what is kept,
+    /// as the questions are kept.
     private func savePrompts() {
+        guard !AIPrompts.sameWords(aiPrompts, AIPrompts.all) else { return }
         AIPrompts.all = aiPrompts
-        promptsCustomised = true
+        promptsCustomised = AIPrompts.isCustomised()
     }
 
     /// The standard prompts again, in place of the owner's.
@@ -820,6 +874,33 @@ final class Preferences: ObservableObject {
         let before = OwnRules.fingerprint
         OwnRules.all = rules
         if OwnRules.fingerprint != before { line.readPrivateDetails() }
+    }
+
+    // MARK: Rows taken out
+
+    /// A row taken out of a list here: a note says so for a few seconds,
+    /// and a click on it puts the row back where it was. A row with nothing
+    /// written in it goes without one.
+    private func offerBack(_ name: String, putBack: @escaping () -> Void) {
+        let shown = Self.short(name)
+        guard !shown.isEmpty else { return }
+        Notice.show(String(format: L("Removed “%@”. Click to put it back."), shown), done: true, lasting: 6,
+                    onClick: putBack)
+    }
+
+    /// A row's name, as a note or VoiceOver says it: its first line with
+    /// words, cut short.
+    nonisolated static func short(_ text: String) -> String {
+        let line = text.split(whereSeparator: \.isNewline).map { $0.trimmingCharacters(in: .whitespaces) }
+            .first { !$0.isEmpty } ?? ""
+        return line.count > 40 ? String(line.prefix(39)) + "…" : line
+    }
+
+    /// What a row's remove button says to VoiceOver: Remove, and the row's
+    /// name, so each is told from the others.
+    nonisolated static func removeLabel(_ name: String) -> String {
+        let shown = short(name)
+        return shown.isEmpty ? L("Remove") : String(format: L("Remove “%@”"), shown)
     }
 
     /// Set to bring the window up on Permissions.
@@ -1426,7 +1507,7 @@ private struct ChatAppsSection: View {
                     }
                     .buttonStyle(.borderless)
                     .help(L("Remove"))
-                    .accessibilityLabel(L("Remove"))
+                    .accessibilityLabel(Preferences.removeLabel(app.name))
                 }
             }
             SettingsButton(L("Add App…")) { prefs.addChatApp() }
@@ -1459,7 +1540,7 @@ private struct ChatSitesSection: View {
                     }
                     .buttonStyle(.borderless)
                     .help(L("Remove"))
-                    .accessibilityLabel(L("Remove"))
+                    .accessibilityLabel(Preferences.removeLabel(site.host))
                 }
             }
             HStack {
@@ -1969,7 +2050,7 @@ private struct SavedMessagesSection: View {
                     }
                     .buttonStyle(.borderless)
                     .help(L("Remove"))
-                    .accessibilityLabel(L("Remove"))
+                    .accessibilityLabel(Preferences.removeLabel(message.text))
                 }
             }
             Button(L("Add Message")) { prefs.addSavedMessage() }
@@ -1985,9 +2066,14 @@ private struct SavedMessagesSection: View {
 }
 
 /// The questions a photo can go into ChatGPT or Claude with: one row each,
-/// as the saved messages, with a way back to the standard ones.
+/// as the saved messages, with a way back to the standard ones that asks
+/// first while any is written.
 private struct AIQuestionsSection: View {
     @ObservedObject var prefs: Preferences
+    @State private var confirmsStandard = false
+
+    /// The questions written, which the standard ones would replace.
+    private var written: Int { prefs.aiQuestions.filter { !$0.isBlank }.count }
 
     var body: some View {
         Section {
@@ -2001,13 +2087,15 @@ private struct AIQuestionsSection: View {
                     }
                     .buttonStyle(.borderless)
                     .help(L("Remove"))
-                    .accessibilityLabel(L("Remove"))
+                    .accessibilityLabel(Preferences.removeLabel(question.text))
                 }
             }
             HStack {
                 Button(L("Add Question")) { prefs.addQuestion() }
                 if prefs.questionsCustomised {
-                    Button(L("Standard Questions")) { prefs.restoreQuestions() }
+                    Button(L("Standard Questions")) {
+                        if written > 0 { confirmsStandard = true } else { prefs.restoreQuestions() }
+                    }
                 }
             }
         } header: {
@@ -2018,6 +2106,14 @@ private struct AIQuestionsSection: View {
         }
         .onChange(of: prefs.aiQuestions) { _, _ in prefs.questionsChanged() }
         .onDisappear { prefs.saveQuestions() }
+        .confirmationDialog(written == 1 ? L("Replace your question with the standard ones?")
+                                : String(format: L("Replace your %d questions with the standard ones?"), written),
+                            isPresented: $confirmsStandard) {
+            Button(L("Replace"), role: .destructive) { prefs.restoreQuestions() }
+            Button(L("Cancel"), role: .cancel) {}
+        } message: {
+            Text(L("What you wrote can't be brought back."))
+        }
     }
 }
 
@@ -2027,6 +2123,10 @@ private struct AIQuestionsSection: View {
 private struct AIPromptsSection: View {
     @ObservedObject var prefs: Preferences
     @State private var editing: AIPrompt?
+    @State private var confirmsStandard = false
+
+    /// The prompts written, which the standard ones would replace.
+    private var written: Int { prefs.aiPrompts.filter { !$0.isBlank }.count }
 
     var body: some View {
         Section {
@@ -2043,7 +2143,7 @@ private struct AIPromptsSection: View {
                         }
                         .buttonStyle(.borderless)
                         .help(L("Remove"))
-                        .accessibilityLabel(L("Remove"))
+                        .accessibilityLabel(Preferences.removeLabel(prompt.name(number: index + 1)))
                     }
                 } label: {
                     Text(verbatim: "\(index + 1)").monospacedDigit().foregroundColor(.secondary)
@@ -2056,7 +2156,9 @@ private struct AIPromptsSection: View {
                 Button(L("Add Prompt")) { editing = prefs.addPrompt() }
                     .disabled(prefs.aiPrompts.count >= AIPrompts.limit)
                 if prefs.promptsCustomised {
-                    Button(L("Standard Prompts")) { prefs.restorePrompts() }
+                    Button(L("Standard Prompts")) {
+                        if written > 0 { confirmsStandard = true } else { prefs.restorePrompts() }
+                    }
                 }
             }
         } header: {
@@ -2073,6 +2175,14 @@ private struct AIPromptsSection: View {
             } cancel: {
                 editing = nil
             }
+        }
+        .confirmationDialog(written == 1 ? L("Replace your prompt with the standard ones?")
+                                : String(format: L("Replace your %d prompts with the standard ones?"), written),
+                            isPresented: $confirmsStandard) {
+            Button(L("Replace"), role: .destructive) { prefs.restorePrompts() }
+            Button(L("Cancel"), role: .cancel) {}
+        } message: {
+            Text(L("What you wrote can't be brought back."))
         }
     }
 

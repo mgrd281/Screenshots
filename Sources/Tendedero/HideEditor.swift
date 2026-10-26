@@ -12,6 +12,10 @@ final class HideEditor: NSObject, NSWindowDelegate {
     static let shared = HideEditor()
 
     private var window: NSWindow?
+    /// The picture open, and whether for a copy.
+    private var opened: (url: URL, copying: Bool)?
+    /// Whether closing would lose boxes or choices not kept yet.
+    private var hasChanges: () -> Bool = { false }
 
     /// Calls back once new boxes are saved; not when cancelled.
     func edit(_ url: URL, saved: @escaping () -> Void) {
@@ -26,6 +30,13 @@ final class HideEditor: NSObject, NSWindowDelegate {
     }
 
     private func show(_ url: URL, copying: Bool, saved: @escaping () -> Void) {
+        // The same picture again: its window comes forward, as it was left.
+        if let window, let opened, opened.url == url, opened.copying == copying {
+            NSApp.activate(ignoringOtherApps: true)
+            window.makeKeyAndOrderFront(nil)
+            return
+        }
+        guard mayLetGo() else { return }
         window?.close()
         let document = isDocument(url)
         let pages = document ? DocumentCover.pageCount(url) : 1
@@ -107,8 +118,23 @@ final class HideEditor: NSObject, NSWindowDelegate {
         window.delegate = self
         window.center()
         self.window = window
+        opened = (url, copying)
+        hasChanges = { [weak model] in model?.hasChanges(since: stored) ?? false }
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
+    }
+
+    /// Whether the window open may give way, to its close button or another
+    /// picture: at once with nothing changed, else once the owner chooses
+    /// to discard the changes.
+    private func mayLetGo() -> Bool {
+        guard let window, hasChanges() else { return true }
+        return EditorChanges.mayDiscard(in: window, keptBy: opened?.copying == true ? L("Save Copy…") : L("Done"))
+    }
+
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        guard sender === window else { return true }
+        return mayLetGo()
     }
 
     /// Asks where the copy goes: in the folder of the original, under a name
@@ -223,6 +249,8 @@ final class HideEditor: NSObject, NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         guard (notification.object as? NSWindow) === window else { return }
         window = nil
+        opened = nil
+        hasChanges = { false }
     }
 
     /// A page of a PDF, at the size it shows on screen.
@@ -327,6 +355,8 @@ final class HideModel: ObservableObject {
     var refresh: (() -> Void)?
     /// The copy is being written.
     @Published var saving = false
+    /// What a copy hid when the window opened.
+    private let firstChosen: Set<PrivateDetail>
 
     /// A word hidden with a click, offered to be covered always.
     struct WordOffer: Equatable {
@@ -345,11 +375,23 @@ final class HideModel: ObservableObject {
         self.hand = hand
         self.chosen = chosen
         self.copying = copying
+        firstChosen = chosen
     }
 
     /// Keeps the boxes of the page showing, before turning or saving.
     func keepPage() {
         handByPage[page] = hand
+    }
+
+    /// Whether boxes were drawn or taken away on any page, or a copy's
+    /// choice of what to hide changed, since the window opened: what
+    /// closing it would lose.
+    /// - Parameter stored: the boxes kept for a page.
+    func hasChanges(since stored: (Int) -> [CGRect]) -> Bool {
+        if copying, chosen != firstChosen { return true }
+        var pages = handByPage
+        pages[page] = hand
+        return pages.contains { stored($0.key) != $0.value }
     }
 
     func go(to page: Int) {
@@ -552,6 +594,27 @@ enum HidePartLayout {
     }
 }
 
+/// Asks before what was changed in an editor's window is let go: Hide
+/// Part's, Draw on Photo's and Background's, when the close button is
+/// clicked or another picture is opened in it. Keep Editing is the
+/// default; Discard lets the changes go. Cancel and Done in the window ask
+/// nothing. Studio keeps its work instead, since it changes nothing sent.
+@MainActor
+enum EditorChanges {
+    /// - Parameter action: the button in the window that keeps them, like Done.
+    static func mayDiscard(in window: NSWindow, keptBy action: String) -> Bool {
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+        let alert = NSAlert()
+        alert.messageText = L("Discard your changes?")
+        alert.informativeText = String(format: L("They are kept only once you click %@."), action)
+        alert.addButton(withTitle: L("Keep Editing"))
+        alert.addButton(withTitle: L("Discard"))
+        alert.buttons.last?.hasDestructiveAction = true
+        return alert.runModal() == .alertSecondButtonReturn
+    }
+}
+
 /// The window: the picture on its canvas, and on the trailing edge the
 /// inspector, a grouped form of what to hide over the Cancel and Done
 /// buttons.
@@ -566,6 +629,8 @@ private struct HideEditorView: View {
     @State private var hovered: Int?
     @State private var crosshair = false
     @FocusState private var fieldFocused: Bool
+    /// The window's reading direction, for the words on the picture.
+    @Environment(\.layoutDirection) private var layoutDirection
 
     private static let cover = Color(white: 0.12)
 
@@ -666,6 +731,9 @@ private struct HideEditorView: View {
         .onDisappear {
             if crosshair { NSCursor.pop() }
         }
+        // Laid out from the left, as the picture is, in every language, so
+        // the covers and the boxes sit on what they hide.
+        .environment(\.layoutDirection, .leftToRight)
     }
 
     /// A PDF's pages, one at a time, under the page showing.
@@ -891,6 +959,8 @@ private struct HideEditorView: View {
                 .lineLimit(1)
                 .truncationMode(.middle)
                 .frame(maxWidth: 220)
+                // Its words in the window's reading direction, on the picture laid out from the left.
+                .environment(\.layoutDirection, layoutDirection)
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.small)

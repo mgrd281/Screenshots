@@ -11,6 +11,9 @@ final class DrawEditor: NSObject, NSWindowDelegate {
     static let shared = DrawEditor()
 
     private var window: NSWindow?
+    /// The photo open, and its drawing.
+    private var url: URL?
+    private var model: DrawModel?
 
     /// How the window was left: the drawing saved, or saved with a copy of
     /// the photo as it goes out, or neither.
@@ -21,6 +24,13 @@ final class DrawEditor: NSObject, NSWindowDelegate {
     /// Calls back once the drawing is saved, saying whether a copy is to be
     /// saved too; not when cancelled.
     func edit(_ url: URL, saved: @escaping (_ copy: Bool) -> Void) {
+        // The same photo again: its window comes forward, as it was left.
+        if let window, self.url == url {
+            NSApp.activate(ignoringOtherApps: true)
+            window.makeKeyAndOrderFront(nil)
+            return
+        }
+        guard mayLetGo() else { return }
         window?.close()
         guard let image = NSImage(contentsOf: url), image.size.width > 0, image.size.height > 0 else {
             Notice.show(L("Could not open the screenshot."))
@@ -58,13 +68,30 @@ final class DrawEditor: NSObject, NSWindowDelegate {
         window.delegate = self
         window.center()
         self.window = window
+        self.url = url
+        self.model = model
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
+    }
+
+    /// Whether the window open may give way, to its close button or another
+    /// photo: at once with nothing changed, else once the owner chooses to
+    /// discard the changes.
+    private func mayLetGo() -> Bool {
+        guard let window, model?.hasChanges == true else { return true }
+        return EditorChanges.mayDiscard(in: window, keptBy: L("Done"))
+    }
+
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        guard sender === window else { return true }
+        return mayLetGo()
     }
 
     func windowWillClose(_ notification: Notification) {
         guard (notification.object as? NSWindow) === window else { return }
         window = nil
+        url = nil
+        model = nil
     }
 
     /// The picture's pixels across and down, upright, for the marks' sizes
@@ -211,6 +238,8 @@ final class DrawModel: ObservableObject {
     @Published private var redone: [Drawing] = []
     /// The drawing as it was when a change began, kept for Undo once it ends.
     private var before: Drawing?
+    /// The drawing the window opened with, as it would be kept.
+    private let opened: Drawing
 
     private static let toolKey = "drawTool"
     private static let inkKey = "drawInk"
@@ -222,6 +251,7 @@ final class DrawModel: ObservableObject {
         self.pixels = pixels
         self.drawing = drawing
         self.hand = hand
+        opened = drawing.tidied
         let defaults = UserDefaults.standard
         tool = defaults.string(forKey: Self.toolKey).flatMap(DrawTool.init(rawValue:)).flatMap { $0.kind == nil ? nil : $0 }
             ?? .arrow
@@ -291,6 +321,10 @@ final class DrawModel: ObservableObject {
 
     var canUndo: Bool { !undone.isEmpty || (before.map { $0 != drawing } ?? false) }
     var canRedo: Bool { !redone.isEmpty }
+
+    /// Whether the drawing differs from the one the window opened with:
+    /// what closing it without Done would lose.
+    var hasChanges: Bool { drawing.tidied != opened }
 
     func undo() {
         end()
@@ -491,6 +525,9 @@ private struct DrawEditorView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(title)
             .accessibilityValue(String(format: L("Drawings: %d"), model.drawing.marks.count))
+            // Laid out from the left, as the picture is, in every language, so
+            // what is drawn lands where the pointer is.
+            .environment(\.layoutDirection, .leftToRight)
     }
 
     private static func cursor(for tool: DrawTool) -> NSCursor {

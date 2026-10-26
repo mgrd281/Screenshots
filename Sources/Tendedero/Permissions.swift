@@ -135,8 +135,15 @@ enum Permissions {
     }
 
     /// Quits and opens again: macOS applies Screen Recording only to a
-    /// fresh start.
+    /// fresh start. The new copy opens only once this one has quit, as after
+    /// an update (`Updater.reopen`). The App Store edition, which changes
+    /// none of the Mac's settings, has macOS open a new copy first, as its
+    /// sandbox may keep a shell from opening it.
     static func reopen() {
+        guard Edition.appStore else {
+            Updater.reopen(Bundle.main.bundleURL)
+            return
+        }
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.createsNewApplicationInstance = true
         NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration) { _, _ in
@@ -330,16 +337,23 @@ private struct PermissionRow: View {
     }
 }
 
-/// Allowed in green, not allowed in orange, not asked yet in grey.
+/// Allowed with a green symbol, not allowed with an orange one, not asked
+/// yet in grey. The colour is on the symbol alone: system green and orange
+/// are too light for words on a light ground.
 private struct PermissionStatus: View {
     let status: Permissions.Status
 
     var body: some View {
-        Label(text, systemImage: symbol)
-            .font(.callout.weight(.medium))
-            .foregroundStyle(color)
-            .labelStyle(.titleAndIcon)
-            .fixedSize()
+        Label {
+            Text(text)
+                .foregroundStyle(words)
+        } icon: {
+            Image(systemName: symbol)
+                .foregroundStyle(color)
+        }
+        .font(.callout.weight(.medium))
+        .labelStyle(.titleAndIcon)
+        .fixedSize()
     }
 
     private var text: String {
@@ -363,6 +377,13 @@ private struct PermissionStatus: View {
         switch status {
         case .allowed: .green
         case .denied: .orange
+        case .notAsked, .notRunning: .secondary
+        }
+    }
+
+    private var words: Color {
+        switch status {
+        case .allowed, .denied: .primary
         case .notAsked, .notRunning: .secondary
         }
     }

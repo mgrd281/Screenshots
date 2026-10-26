@@ -418,8 +418,23 @@ stays out of the way.
   that takes the keyboard. The search bar, Hide Part and the shortcut recorder
   already do.
 - **Right to left.** Arabic must read right to left: align and order by
-  reading direction, not by fixed left and right. The text card already
-  aligns RTL results.
+  reading direction, not by fixed left and right. The text card aligns a
+  result by the result's own direction: on the card's leading side when it
+  reads the card's way, on the trailing side when it reads the other, so
+  Arabic starts on the right and English on the left in every language.
+  - A picture and what is drawn over it are laid out from the left in every
+    language (`.environment(\.layoutDirection, .leftToRight)` on the canvas
+    alone), as the picture is: Hide Part's covers and boxes, Draw on Photo's
+    and Studio's canvases, Search's marks on a photo and the introduction's
+    ring round its hole. Words on a picture, like Always cover, keep the
+    window's direction. Studio's timeline runs from the left too, as a
+    video's time does, with its row symbols before it.
+  - The line itself is laid out by SwiftUI, which mirrors it in a
+    right-to-left language. What is measured in `Layout` follows where the
+    photos really are (`Line.runsRightToLeft`, read off the screen, and
+    never in a left-to-right language): the flights, the introduction's
+    hole and dragging along the line, and Take down everything to the left
+    or to the right means the screen's left and right.
 - **Size.** Pointer targets are at least 20×20 pt and spaced so they don't
   touch. Touch sizes (44 pt) do not apply on the Mac.
 
@@ -484,7 +499,12 @@ literal value in a view.
   or a guide is recorded, as macOS marks recording.
 - **Allowed green** and **not allowed orange** (`.green`, `.orange`) are only
   for a permission's state, and whether the AI assistant's key works, and the orange for a rule's pattern that cannot
-  be read, with a symbol beside the word, never color alone.
+  be read, with a symbol beside the word, never color alone. They colour
+  the symbol alone: the word beside it stays `.primary` (`.secondary` where
+  it is quiet), since system green and orange are about 2.1:1 and 2.2:1 on
+  white, under the 4.5:1 words need. The same holds for what is wrong with
+  a card or an IBAN typed under Always Hide and for Cover Files' counts,
+  whose red symbol keeps its count in `.primary` too.
 - **Island black** is pure black, to blend into the notch and the menu bar
   above it.
 - **Drawing inks** (`Drawing.Ink`) are the six colours Draw on Photo draws
@@ -579,7 +599,12 @@ design with monospaced digits.
     `.bordered`, at least 128 pt wide, so the buttons down a pane line up as
     one column. A longer label still gets its room. A row in a list is
     removed with a borderless `minus.circle` and its help tag, never a
-    worded button.
+    worded button. VoiceOver hears the row's name with it ("Remove “Lena
+    Hoffmann”", a card by its last four digits), and a done note for 6 s,
+    "Removed “…”. Click to put it back.", puts the row back where it was
+    (`Preferences.offerBack`): the owner's details and rules, the chat apps
+    and websites, saved messages, questions and prompts. A row with nothing
+    written in it goes without a note.
   - **Workspace** (`WorkspacePane`, `folder.fill`, between General and
     Line; absent in the App Store edition) is a grouped `Form`: the switch
     with its two footers (what off means, and the iCloud warning), a warning
@@ -590,6 +615,10 @@ design with monospaced digits.
     plain field, its count in 11 pt `.secondary`, then borderless 20 pt
     buttons for hide, up, down and remove, all labelled, and a field with
     Add), and a last section with Delete…, a destructive button that asks.
+    The folder's and a category's name are kept on Return and when their
+    field is left or the pane closes; an empty or unchanged name changes
+    nothing and the field shows the name again. Return always tries;
+    leaving the field does not try again a name just refused.
   - General has a Screen recordings section with one Sound menu (No Sound,
     Mac's Sound, Microphone, Mac's Sound and Microphone); the microphone
     choices are greyed out before macOS 15, and the footer says why.
@@ -1064,7 +1093,9 @@ apps.
       Without a key, or with one refused, a row "No key yet?" saying where
       to make one, with Get a Key… as a `SettingsButton`. Then the key: kept,
       "Saved in your keychain, ending in …WXYZ", never the key, with Change
-      and Remove Key (destructive) on the trailing edge; else a rounded
+      and Remove Key (destructive) on the trailing edge, which asks first in
+      a confirmation dialog, "Remove the key for Claude?", since the
+      provider shows a key only once; else a rounded
       secure field, prompted "Paste your key here", then a borderless
       `doc.on.clipboard` that pastes the copied key and saves it in one click
       (labelled), Cancel while changing one, and Save as
@@ -1189,10 +1220,12 @@ apps.
     typed it: its SF Symbol at 36 pt in `.secondary`, "Connect “iPhone”?"
     as the headline, what it will see in `.secondary`; Don't Connect
     (Escape) and Connect (Return, `.borderedProminent`). Then a spinner
-    with Connecting “iPhone”…, and an outcome: `checkmark.circle.fill` or
-    `exclamationmark.triangle.fill` at 36 pt in `.secondary`, a headline
-    and a line, with Done, or Cancel and Try Again. Nothing moves but the
-    bar, a second at a time, so Reduce Motion asks for nothing more.
+    with Connecting “iPhone”… and Cancel (Escape), which stops the attempt
+    should iCloud not answer, the device hearing no, and an outcome:
+    `checkmark.circle.fill` or `exclamationmark.triangle.fill` at 36 pt in
+    `.secondary`, a headline and a line, with Done (Return, and Escape
+    too), or Cancel and Try Again. Nothing moves but the bar, a second at a
+    time, so Reduce Motion asks for nothing more.
 
 ### Dialogs, sheets and panels
 - **Floating card** (`TextCard`) for results that belong to a photo:
@@ -1206,6 +1239,16 @@ apps.
 - **Search bar.** One field, a result count chip and close.
 - **Full windows** (Hide Part, Settings) for focused work. They are standard
   titled windows with Cancel and Done bound to Escape and Return.
+  - **Changes are not let go unasked** (`EditorChanges`). Hide Part, Draw on
+    Photo and Background ask before their close button, or another picture
+    opened in the same window, lets changes go: an alert, "Discard your
+    changes?", that names the button that keeps them, with Keep Editing
+    (the default, Return) and Discard (destructive). Cancel and Done ask
+    nothing. The same picture opened again brings its window forward as it
+    was left. Studio keeps its work instead, as Save Video keeps it,
+    whenever its window closes but by Cancel, since its work changes
+    nothing that is sent; a recording just made waits while Studio holds
+    changes, with a done note, and opens once Studio is closed.
   - Hide Part (`HideEditor.swift`) is a resizable window of two columns,
     never smaller than 760 × 480, opening as large as the picture needs and
     at most 80% of the screen (`HidePartLayout`), so a tall page opens a
@@ -1656,13 +1699,17 @@ apps.
     on the trailing edge the state and one regular button.
   - States: Allowed (`checkmark.circle.fill`, green), Not allowed yet
     (`exclamationmark.circle.fill`, orange), Not asked yet or Not open
-    (`circle.dashed`, `.secondary`), in callout medium.
+    (`circle.dashed`, `.secondary`), in callout medium. The colour is on the
+    symbol; the words are `.primary`, or `.secondary` for the last two.
   - The button says what happens: Allow…, Open System Settings… once
     refused, or Open and Allow… for a browser that is not open. None shows
     once allowed.
   - Help appears only where it is needed: Reopen Snapfly under a refused
     Screen Recording, and how to add Snapfly with + under a refused
-    Accessibility.
+    Accessibility. Reopen Snapfly quits first and opens the app again a
+    second later, as Install and Reopen does (`Updater.reopen`), so the copy
+    quitting never undoes what the new one set up; the App Store edition
+    has macOS open the new copy first.
   - It reads the states every second while open, so a switch turned in
     System Settings shows at once.
   - The menu bar shows Permissions Needed… with `exclamationmark.triangle`
@@ -1703,7 +1750,10 @@ apps.
     Copy File Path, Move to Folder, Rename… and Move to Trash (red). List is
     a `Table` of Name, Category, Date and Size with the same menu. Empty, it says "No screenshots yet"
     with a Take Screenshot button. Each card is one VoiceOver element with
-    the same actions.
+    the same actions, and reached with Tab where keyboard navigation is on,
+    as buttons are (`focusable(interactions: .activate)`): Space selects
+    it and Return opens it, as a click and a double-click do. On the Photos
+    and Orders pages, Space or Return hangs a card again, as a click does.
   - The toolbar holds a segmented Photos | Orders | Sent picker in the middle, then
     the search, Export… (`square.and.arrow.up`, Sent only) and Clear
     History…, which clears both, as its question says ("The photos kept in
@@ -1806,8 +1856,13 @@ apps.
     the field prompted with the first standard question, under them Add
     Question and, once the questions were changed, Standard Questions,
     which puts the five back; a footer saying where they are offered. Saved
-    like the messages. The standard five are localized, so a chat answers
-    in the user's language.
+    like the messages, but only once they say something else than what is
+    kept: questions that say what the standard ones say are not kept. The
+    standard five are localized, so a chat answers in the user's language.
+    While any question is written, Standard Questions asks first in a
+    confirmation dialog, "Replace your 3 questions with the standard
+    ones?", with a destructive Replace and Cancel over the line that what
+    was written can't be brought back; Standard Prompts asks the same.
   - **Settings › Line › Prompts for AI chats**: a switch, Numbers beside
     the send button (on), then one row per prompt: its number in
     `.secondary` and its title, the first line of its text under them (Not

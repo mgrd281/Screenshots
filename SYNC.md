@@ -258,7 +258,9 @@ one account, which stays as it is.
    share its two zones (`Snapfly`, `SnapflyFiles`) with **that account
    alone**, to read and write, as zone-wide shares with no public
    permission, and answers with the two share links, sealed. No yes within
-   three minutes, no answer.
+   three minutes, no answer. Cancel while it shares, or the sheet closed,
+   stops the sharing; the device then hears no, and is never sent the
+   links, even where the share was already saved.
 5. The iPhone accepts both shares, takes its request down, and syncs with
    the Mac's zones through its shared database: a second engine and ledger,
    in a folder of its own (`Sync/Shared/<owner>`). Its own iCloud stays

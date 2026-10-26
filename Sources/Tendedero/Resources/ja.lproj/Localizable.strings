@@ -152,6 +152,9 @@
 "Remove All" = "すべて削除";
 "Cancel" = "キャンセル";
 "Done" = "完了";
+"Discard your changes?" = "変更を破棄しますか？";
+"They are kept only once you click %@." = "「%@」をクリックするまで保存されません。";
+"Keep Editing" = "編集を続ける";
 /* TextCard, GrabArea */
 "Translate Text" = "テキストを翻訳";
 "Describe" = "説明を作成";
@@ -269,6 +272,8 @@
 "In chat apps" = "チャットApp内";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT、Claude、WhatsApp、Telegram、メッセージ、メール、Outlookなど。";
 "Remove" = "削除";
+"Remove “%@”" = "「%@」を削除";
+"Removed “%@”. Click to put it back." = "「%@」を削除しました。クリックすると元に戻します。";
 "Add a website" = "Webサイトを追加";
 "Add" = "追加";
 "That isn't a website, or it is in the list already." = "Webサイトではないか、すでにリストにあります。";
@@ -839,6 +844,8 @@
 "Product" = "商品";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "このMacで隠さずに読み取りました。%@が隠したコピーから読み取った内容を追加しました。";
 "Remove Key" = "キーを削除";
+"Remove the key for %@?" = "%@のキーを削除しますか？";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "元に戻せません。%@はキーを一度しか表示しないため、新しいキーを作り直す必要があります。";
 "Reply" = "返信";
 "The answer was empty." = "回答が空でした。";
 "The keychain did not keep the key." = "キーチェーンにキーを保存できませんでした。";
@@ -1237,6 +1244,12 @@
 "Edit…" = "編集…";
 "Add Prompt" = "プロンプトを追加";
 "Standard Prompts" = "標準のプロンプト";
+"Replace your question with the standard ones?" = "あなたの質問を標準の質問に置き換えますか？";
+"Replace your %d questions with the standard ones?" = "%d件の質問を標準の質問に置き換えますか？";
+"Replace your prompt with the standard ones?" = "あなたのプロンプトを標準のプロンプトに置き換えますか？";
+"Replace your %d prompts with the standard ones?" = "%d件のプロンプトを標準のプロンプトに置き換えますか？";
+"What you wrote can't be brought back." = "書いた内容は元に戻せません。";
+"Replace" = "置き換える";
 "Not written yet" = "まだ書かれていません";
 "Title" = "タイトル";
 "Prompt" = "プロンプト";
@@ -1771,6 +1784,7 @@
 "A ring where each click landed." = "クリックした場所ごとに輪を表示します。";
 "Add Zoom" = "ズームを追加";
 "Could not open the recording." = "収録を開けませんでした。";
+"Your new recording opens in Studio once you close this one." = "これを閉じると、新しい収録がスタジオで開きます。";
 "Could not save the video." = "ビデオを保存できませんでした。";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "タイムラインでズームをドラッグすると移動し、端をドラッグすると長さを変えられます。";
 "Drag the frame on the picture to choose what it looks at." = "画像上の枠をドラッグして、映す場所を選びます。";

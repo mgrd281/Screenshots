@@ -152,6 +152,9 @@
 "Remove All" = "모두 제거";
 "Cancel" = "취소";
 "Done" = "완료";
+"Discard your changes?" = "변경 사항을 버릴까요?";
+"They are kept only once you click %@." = "“%@”을(를) 클릭해야 저장됩니다.";
+"Keep Editing" = "계속 편집";
 /* TextCard, GrabArea */
 "Translate Text" = "텍스트 번역하기";
 "Describe" = "설명 만들기";
@@ -269,6 +272,8 @@
 "In chat apps" = "채팅 앱에서";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, 메시지, Mail, Outlook 등.";
 "Remove" = "제거";
+"Remove “%@”" = "“%@” 제거";
+"Removed “%@”. Click to put it back." = "“%@”을(를) 제거했습니다. 클릭하면 되돌립니다.";
 "Add a website" = "웹 사이트 추가";
 "Add" = "추가";
 "That isn't a website, or it is in the list already." = "웹 사이트가 아니거나 이미 목록에 있어요.";
@@ -839,6 +844,8 @@
 "Product" = "상품";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "이 Mac에서 가리지 않고 읽었어요. %@이(가) 가린 사본에서 읽은 내용을 더했어요.";
 "Remove Key" = "키 제거";
+"Remove the key for %@?" = "%@ 키를 제거할까요?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "되돌릴 수 없습니다. %@에서는 키를 한 번만 보여 주므로 새 키를 다시 만들어야 합니다.";
 "Reply" = "답장";
 "The answer was empty." = "답이 비어 있었어요.";
 "The keychain did not keep the key." = "키체인에 키를 저장하지 못했어요.";
@@ -1237,6 +1244,12 @@
 "Edit…" = "편집…";
 "Add Prompt" = "프롬프트 추가";
 "Standard Prompts" = "기본 프롬프트";
+"Replace your question with the standard ones?" = "내 질문을 기본 질문으로 바꿀까요?";
+"Replace your %d questions with the standard ones?" = "질문 %d개를 기본 질문으로 바꿀까요?";
+"Replace your prompt with the standard ones?" = "내 프롬프트를 기본 프롬프트로 바꿀까요?";
+"Replace your %d prompts with the standard ones?" = "프롬프트 %d개를 기본 프롬프트로 바꿀까요?";
+"What you wrote can't be brought back." = "작성한 내용은 되돌릴 수 없습니다.";
+"Replace" = "바꾸기";
 "Not written yet" = "아직 쓰지 않음";
 "Title" = "제목";
 "Prompt" = "프롬프트";
@@ -1771,6 +1784,7 @@
 "A ring where each click landed." = "클릭한 곳마다 고리를 표시합니다.";
 "Add Zoom" = "확대 추가";
 "Could not open the recording." = "녹화를 열 수 없습니다.";
+"Your new recording opens in Studio once you close this one." = "이 녹화를 닫으면 새 녹화가 스튜디오에서 열립니다.";
 "Could not save the video." = "비디오를 저장할 수 없습니다.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "타임라인에서 확대를 드래그해 옮기거나, 양 끝을 드래그해 길이를 바꾸세요.";
 "Drag the frame on the picture to choose what it looks at." = "그림 위의 틀을 드래그해 보이는 곳을 고르세요.";

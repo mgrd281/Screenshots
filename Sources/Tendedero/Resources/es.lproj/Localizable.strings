@@ -152,6 +152,9 @@
 "Remove All" = "Quitar todo";
 "Cancel" = "Cancelar";
 "Done" = "Listo";
+"Discard your changes?" = "¿Descartar tus cambios?";
+"They are kept only once you click %@." = "Solo se guardan cuando haces clic en «%@».";
+"Keep Editing" = "Seguir editando";
 /* TextCard, GrabArea */
 "Translate Text" = "Traducir texto";
 "Describe" = "Describir";
@@ -269,6 +272,8 @@
 "In chat apps" = "En apps de chat";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Mensajes, Mail, Outlook y otras.";
 "Remove" = "Eliminar";
+"Remove “%@”" = "Quitar «%@»";
+"Removed “%@”. Click to put it back." = "Se quitó «%@». Haz clic para volver a ponerlo.";
 "Add a website" = "Añadir un sitio web";
 "Add" = "Añadir";
 "That isn't a website, or it is in the list already." = "No es un sitio web, o ya está en la lista.";
@@ -839,6 +844,8 @@
 "Product" = "Producto";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Leído en este Mac, sin tapar; %@ añadió lo que leyó en la copia tapada.";
 "Remove Key" = "Quitar clave";
+"Remove the key for %@?" = "¿Quitar la clave de %@?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "No se puede deshacer: %@ muestra cada clave solo una vez, así que tendrías que crear una nueva allí.";
 "Reply" = "Respuesta";
 "The answer was empty." = "La respuesta estaba vacía.";
 "The keychain did not keep the key." = "El llavero no guardó la clave.";
@@ -1237,6 +1244,12 @@
 "Edit…" = "Editar…";
 "Add Prompt" = "Añadir prompt";
 "Standard Prompts" = "Prompts estándar";
+"Replace your question with the standard ones?" = "¿Reemplazar tu pregunta por las preguntas estándar?";
+"Replace your %d questions with the standard ones?" = "¿Reemplazar tus %d preguntas por las preguntas estándar?";
+"Replace your prompt with the standard ones?" = "¿Reemplazar tu prompt por los prompts estándar?";
+"Replace your %d prompts with the standard ones?" = "¿Reemplazar tus %d prompts por los prompts estándar?";
+"What you wrote can't be brought back." = "Lo que escribiste no se podrá recuperar.";
+"Replace" = "Reemplazar";
 "Not written yet" = "Aún sin escribir";
 "Title" = "Título";
 "Prompt" = "Prompt";
@@ -1771,6 +1784,7 @@
 "A ring where each click landed." = "Un anillo donde cayó cada clic.";
 "Add Zoom" = "Añadir zoom";
 "Could not open the recording." = "No se pudo abrir la grabación.";
+"Your new recording opens in Studio once you close this one." = "Tu nueva grabación se abre en Studio cuando cierres esta.";
 "Could not save the video." = "No se pudo guardar el vídeo.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Arrastra un zoom en la línea de tiempo para moverlo, o sus extremos para alargarlo o acortarlo.";
 "Drag the frame on the picture to choose what it looks at." = "Arrastra el marco sobre la imagen para elegir adónde mira.";

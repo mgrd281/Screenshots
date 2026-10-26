@@ -152,6 +152,9 @@
 "Remove All" = "Remover tudo";
 "Cancel" = "Cancelar";
 "Done" = "OK";
+"Discard your changes?" = "Descartar suas alterações?";
+"They are kept only once you click %@." = "Elas só ficam guardadas quando você clica em “%@”.";
+"Keep Editing" = "Continuar editando";
 /* TextCard, GrabArea */
 "Translate Text" = "Traduzir texto";
 "Describe" = "Descrever";
@@ -269,6 +272,8 @@
 "In chat apps" = "Em apps de chat";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Mensagens, Mail, Outlook e outros.";
 "Remove" = "Remover";
+"Remove “%@”" = "Remover “%@”";
+"Removed “%@”. Click to put it back." = "“%@” removido. Clique para colocá-lo de volta.";
 "Add a website" = "Adicionar um site";
 "Add" = "Adicionar";
 "That isn't a website, or it is in the list already." = "Isso não é um site, ou ele já está na lista.";
@@ -839,6 +844,8 @@
 "Product" = "Produto";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Lido neste Mac, sem cobrir; o %@ acrescentou o que leu na cópia coberta.";
 "Remove Key" = "Remover chave";
+"Remove the key for %@?" = "Remover a chave do %@?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "Isso não pode ser desfeito: a %@ mostra cada chave só uma vez, então você teria que criar uma nova lá.";
 "Reply" = "Resposta";
 "The answer was empty." = "A resposta veio vazia.";
 "The keychain did not keep the key." = "O Porta-chaves não guardou a chave.";
@@ -1237,6 +1244,12 @@
 "Edit…" = "Editar…";
 "Add Prompt" = "Adicionar prompt";
 "Standard Prompts" = "Prompts padrão";
+"Replace your question with the standard ones?" = "Substituir sua pergunta pelas perguntas padrão?";
+"Replace your %d questions with the standard ones?" = "Substituir suas %d perguntas pelas perguntas padrão?";
+"Replace your prompt with the standard ones?" = "Substituir seu prompt pelos prompts padrão?";
+"Replace your %d prompts with the standard ones?" = "Substituir seus %d prompts pelos prompts padrão?";
+"What you wrote can't be brought back." = "O que você escreveu não poderá ser recuperado.";
+"Replace" = "Substituir";
 "Not written yet" = "Ainda não escrito";
 "Title" = "Título";
 "Prompt" = "Prompt";
@@ -1771,6 +1784,7 @@
 "A ring where each click landed." = "Um anel onde cada clique caiu.";
 "Add Zoom" = "Adicionar zoom";
 "Could not open the recording." = "Não foi possível abrir a gravação.";
+"Your new recording opens in Studio once you close this one." = "Sua nova gravação abre no Studio quando você fechar esta.";
 "Could not save the video." = "Não foi possível salvar o vídeo.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Arraste um zoom na linha do tempo para movê-lo, ou suas pontas para deixá-lo mais longo ou mais curto.";
 "Drag the frame on the picture to choose what it looks at." = "Arraste o quadro sobre a imagem para escolher para onde ele olha.";

@@ -69,6 +69,8 @@ final class PairingHost: ObservableObject {
     private let sync: SyncCenter
     private let name: String
     private var task: Task<Void, Never>?
+    /// Sharing with the device let in, which the sheet's Cancel stops.
+    private var sharing: Task<Void, Never>?
     private var database: CKDatabase?
     /// The offer records up, by code.
     private var offered: [String: String] = [:]
@@ -99,10 +101,13 @@ final class PairingHost: ObservableObject {
         task = Task { [weak self] in await self?.run() }
     }
 
-    /// The sheet closed: the code stops working at once.
+    /// The sheet closed: the code stops working at once, and sharing still
+    /// under way stops too.
     func end() {
         task?.cancel()
         task = nil
+        sharing?.cancel()
+        sharing = nil
         if let database { Task { [names = Array(offered.values)] in await PairingCloud.remove(names, from: database) } }
         offered = [:]
     }
@@ -111,7 +116,7 @@ final class PairingHost: ObservableObject {
     func accept() {
         guard case .asking(let request) = step, let asking else { return }
         step = .sharing(request.device.name)
-        Task {
+        sharing = Task {
             if request.user == sync.account {
                 await answer(.init(outcome: .sameAccount, name: name, owner: sync.account), code: asking.code)
                 step = .sameAccount(request.device.name)
@@ -119,9 +124,19 @@ final class PairingHost: ObservableObject {
             }
             do {
                 let links = try await sync.invite(request.user)
+                // Cancelled meanwhile: the device hears no, and is sent
+                // nothing it could join with.
+                guard !Task.isCancelled else {
+                    await answer(.init(outcome: .declined, name: name), code: asking.code)
+                    return
+                }
                 await answer(.init(outcome: .joined, shares: links, name: name, owner: sync.account), code: asking.code)
                 step = .joined(request.device.name)
             } catch {
+                guard !Task.isCancelled else {
+                    await answer(.init(outcome: .declined, name: name), code: asking.code)
+                    return
+                }
                 log.error("Sharing with a paired device failed: \(error.localizedDescription, privacy: .public)")
                 await answer(.init(outcome: .failed, name: name), code: asking.code)
                 step = .failed(PairingCloud.isOffline(error)

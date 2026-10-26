@@ -107,7 +107,7 @@ final class Recording {
             if Studio.opensAfterRecording {
                 // Once it has flown to the line.
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                    MainActor.assumeIsolated { StudioEditor.shared.open(url) }
+                    MainActor.assumeIsolated { StudioEditor.shared.open(url, justRecorded: true) }
                 }
             }
         }

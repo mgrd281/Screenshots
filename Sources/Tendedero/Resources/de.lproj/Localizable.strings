@@ -152,6 +152,9 @@
 "Remove All" = "Alle entfernen";
 "Cancel" = "Abbrechen";
 "Done" = "Fertig";
+"Discard your changes?" = "Deine Änderungen verwerfen?";
+"They are kept only once you click %@." = "Sie bleiben erst erhalten, wenn du auf „%@“ klickst.";
+"Keep Editing" = "Weiter bearbeiten";
 /* TextCard, GrabArea */
 "Translate Text" = "Text übersetzen";
 "Describe" = "Beschreiben";
@@ -269,6 +272,8 @@
 "In chat apps" = "In Chat-Apps";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Nachrichten, Mail, Outlook und andere.";
 "Remove" = "Entfernen";
+"Remove “%@”" = "„%@“ entfernen";
+"Removed “%@”. Click to put it back." = "„%@“ entfernt. Klick, um es zurückzuholen.";
 "Add a website" = "Website hinzufügen";
 "Add" = "Hinzufügen";
 "That isn't a website, or it is in the list already." = "Das ist keine Website, oder sie steht schon in der Liste.";
@@ -839,6 +844,8 @@
 "Product" = "Produkt";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Auf diesem Mac gelesen, nicht verdeckt; %@ hat ergänzt, was es in der verdeckten Kopie gelesen hat.";
 "Remove Key" = "Schlüssel entfernen";
+"Remove the key for %@?" = "Den Schlüssel für %@ entfernen?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "Das lässt sich nicht rückgängig machen: %@ zeigt einen Schlüssel nur einmal, du müsstest dort einen neuen erstellen.";
 "Reply" = "Antwort";
 "The answer was empty." = "Die Antwort war leer.";
 "The keychain did not keep the key." = "Der Schlüsselbund hat den Schlüssel nicht behalten.";
@@ -1237,6 +1244,12 @@
 "Edit…" = "Bearbeiten …";
 "Add Prompt" = "Prompt hinzufügen";
 "Standard Prompts" = "Standard-Prompts";
+"Replace your question with the standard ones?" = "Deine Frage durch die Standardfragen ersetzen?";
+"Replace your %d questions with the standard ones?" = "Deine %d Fragen durch die Standardfragen ersetzen?";
+"Replace your prompt with the standard ones?" = "Deinen Prompt durch die Standard-Prompts ersetzen?";
+"Replace your %d prompts with the standard ones?" = "Deine %d Prompts durch die Standard-Prompts ersetzen?";
+"What you wrote can't be brought back." = "Was du geschrieben hast, lässt sich nicht zurückholen.";
+"Replace" = "Ersetzen";
 "Not written yet" = "Noch nicht geschrieben";
 "Title" = "Titel";
 "Prompt" = "Prompt";
@@ -1771,6 +1784,7 @@
 "A ring where each click landed." = "Ein Ring, wo jeder Klick war.";
 "Add Zoom" = "Zoom hinzufügen";
 "Could not open the recording." = "Die Aufnahme konnte nicht geöffnet werden.";
+"Your new recording opens in Studio once you close this one." = "Deine neue Aufnahme öffnet sich im Studio, sobald du diese schließt.";
 "Could not save the video." = "Das Video konnte nicht gesichert werden.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Zieh einen Zoom auf der Zeitleiste, um ihn zu verschieben, oder seine Enden, um ihn länger oder kürzer zu machen.";
 "Drag the frame on the picture to choose what it looks at." = "Zieh den Rahmen auf dem Bild, um zu wählen, wohin er schaut.";

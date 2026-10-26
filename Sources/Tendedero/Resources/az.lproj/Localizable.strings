@@ -154,6 +154,9 @@
 "Remove All" = "Hamısını sil";
 "Cancel" = "Ləğv et";
 "Done" = "Hazırdır";
+"Discard your changes?" = "Dəyişikliklərin atılsın?";
+"They are kept only once you click %@." = "Onlar yalnız “%@” düyməsini kliklədikdən sonra saxlanılır.";
+"Keep Editing" = "Redaktəyə davam et";
 /* TextCard, GrabArea */
 "Translate Text" = "Mətni tərcümə et";
 "Describe" = "Təsvir yaz";
@@ -271,6 +274,8 @@
 "In chat apps" = "Söhbət tətbiqlərində";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Mesajlar, Mail, Outlook və digərləri.";
 "Remove" = "Sil";
+"Remove “%@”" = "“%@” sil";
+"Removed “%@”. Click to put it back." = "“%@” silindi. Geri qaytarmaq üçün klikləyin.";
 "Add a website" = "Veb sayt əlavə et";
 "Add" = "Əlavə et";
 "That isn't a website, or it is in the list already." = "Bu veb sayt deyil, ya da artıq siyahıdadır.";
@@ -841,6 +846,8 @@
 "Product" = "Məhsul";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Bu Mac-da örtülmədən oxundu; %@ örtülmüş nüsxədə oxuduğunu əlavə etdi.";
 "Remove Key" = "Açarı sil";
+"Remove the key for %@?" = "%@ açarı silinsin?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "Bunu geri qaytarmaq olmaz: %@ açarı yalnız bir dəfə göstərir, ona görə orada yenisini yaratmalı olacaqsan.";
 "Reply" = "Cavab";
 "The answer was empty." = "Cavab boş idi.";
 "The keychain did not keep the key." = "Açar zənciri açarı saxlamadı.";
@@ -1239,6 +1246,12 @@
 "Edit…" = "Redaktə et…";
 "Add Prompt" = "Prompt əlavə et";
 "Standard Prompts" = "Standart promptlar";
+"Replace your question with the standard ones?" = "Sualın standart suallarla əvəz olunsun?";
+"Replace your %d questions with the standard ones?" = "%d sualın standart suallarla əvəz olunsun?";
+"Replace your prompt with the standard ones?" = "Promptun standart promptlarla əvəz olunsun?";
+"Replace your %d prompts with the standard ones?" = "%d promptun standart promptlarla əvəz olunsun?";
+"What you wrote can't be brought back." = "Yazdıqlarını geri qaytarmaq olmaz.";
+"Replace" = "Əvəz et";
 "Not written yet" = "Hələ yazılmayıb";
 "Title" = "Başlıq";
 "Prompt" = "Prompt";
@@ -1773,6 +1786,7 @@
 "A ring where each click landed." = "Hər kliklə toxunulan yerdə halqa.";
 "Add Zoom" = "Yaxınlaşdırma əlavə et";
 "Could not open the recording." = "Yazını açmaq mümkün olmadı.";
+"Your new recording opens in Studio once you close this one." = "Yeni yazın bunu bağladıqdan sonra Studioda açılır.";
 "Could not save the video." = "Videonu saxlamaq mümkün olmadı.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Yaxınlaşdırmanı köçürmək üçün zaman xəttində sürüşdür, uzatmaq və ya qısaltmaq üçün kənarlarını sürüşdür.";
 "Drag the frame on the picture to choose what it looks at." = "Nəyə baxacağını seçmək üçün şəkildəki çərçivəni sürüşdür.";

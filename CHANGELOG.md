@@ -82,6 +82,51 @@ keeps a download of each version.
   you cover, like an IBAN in a bank statement's name, or one of your own
   rules, is called so either way, also when it goes from Hide Private
   Details.
+- On the Mac in Arabic, what is drawn over a picture sits where it belongs:
+  Hide Part's covers and boxes, Search's marks on a photo, Draw on Photo,
+  Studio's picture and timeline, and the introduction's ring. Take down
+  everything to the left or to the right takes down the photos on that
+  side of the screen, and photos fly to where they really hang.
+- On the Mac, Hide Part, Draw on Photo and Background ask before their
+  close button, or another photo opened in them, throws away what you
+  changed, and opening the same photo again brings its window back as you
+  left it. Studio keeps your zooms and arrows when its window closes, unless
+  you click Cancel, and a new recording waits for Studio to be closed
+  instead of taking their place.
+- On the Mac, Standard Prompts and Standard Questions ask before they
+  replace what you wrote, and a look at Settings › Line no longer keeps the
+  standard questions as your own: they stay in the language Snapfly
+  speaks, and Standard Questions shows only once you changed them.
+- On the Mac, Remove Key under AI Assistant asks first: Anthropic and
+  OpenAI show a key only once, so a key removed by mistake means making a
+  new one.
+- On the Mac, a detail or a rule removed under Always Hide comes back with
+  a click on the note that says it went, and so do saved messages,
+  questions, prompts, chat apps and websites under Line. VoiceOver names
+  what each remove button takes away, "Remove “Lena Hoffmann”", instead of
+  "Remove" alone.
+- On the Mac in Arabic, a translation, a description or an answer in the
+  text card starts on the right when it is in Arabic and on the left when
+  it is in English, instead of the other way round.
+- On the Mac, words beside a green or orange symbol are in the text colour,
+  so they can be read on a light background: Allowed and Not allowed yet
+  under Permissions, a pattern that cannot be read and what is wrong with a
+  card or an IBAN under Always Hide, and Cover Files' counts.
+- On the Mac, Reopen Snapfly under Permissions quits first and then opens
+  Snapfly again, as an update does: two copies no longer run at once, where
+  the one quitting could take back the screenshot settings the new one had
+  just made, or keep its shortcuts from working.
+- On the Mac, connecting an iPhone on another Apple account can be
+  cancelled while it connects, should iCloud not answer, instead of
+  leaving no way out but quitting; once connected, Escape closes the sheet
+  as Done does.
+- On the Mac, with Reduce Motion on, a photo let go after a press and the
+  pin badge settle with a short fade instead of a bouncy spring.
+- On the Mac, the workspace folder's name and a category's name are kept
+  when you leave the field, not only on Return, and History's cards can be
+  reached with Tab where keyboard navigation is on: Space or Return hangs
+  one again, and on the Workspace page Space selects it and Return opens
+  it.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

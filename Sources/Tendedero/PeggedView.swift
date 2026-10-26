@@ -108,11 +108,16 @@ struct PeggedView: View {
                 RoundedRectangle(cornerRadius: Frame.radius - Frame.inset, style: .continuous)
                     .strokeBorder(Color.white.opacity(0.18), lineWidth: 0.5)
             )
-            .overlay(alignment: .topLeading) {
-                // Search: each place the words are, marked like a highlighter.
-                ForEach(Array(places.enumerated()), id: \.offset) { _, place in
-                    Highlight(place: place, photo: photoSize)
+            .overlay {
+                // Search: each place the words are, marked like a highlighter,
+                // laid out from the left as the picture is, in every language.
+                ZStack(alignment: .topLeading) {
+                    ForEach(Array(places.enumerated()), id: \.offset) { _, place in
+                        Highlight(place: place, photo: photoSize)
+                    }
                 }
+                .frame(width: photoSize.width, height: photoSize.height, alignment: .topLeading)
+                .environment(\.layoutDirection, .leftToRight)
             }
             .overlay {
                 // On the lock: the rest of the photo steps back, and what is
@@ -198,9 +203,11 @@ struct PeggedView: View {
             }
             .shadow(color: .black.opacity(hovering ? 0.26 : 0.18), radius: hovering ? 14 : 10, y: hovering ? 8 : 5)
             // Holding presses the photo in slowly, so a long press feels like
-            // it is building up to something.
+            // it is building up to something; letting go springs back, or
+            // eases back with Reduce Motion.
             .scaleEffect(pressed ? 0.95 : (hovering ? 1.035 : 1), anchor: .top)
-            .animation(pressed ? .easeInOut(duration: 0.45) : .spring(response: 0.3, dampingFraction: 0.6), value: pressed)
+            .animation(pressed ? .easeInOut(duration: 0.45)
+                       : Motion.spring(response: 0.3, damping: 0.6, reduced: reduceMotion), value: pressed)
             .opacity(dragging ? 0.45 : 1)
             .overlay(alignment: .topLeading) {
                 Corner(pinned: item.pinned, trashes: line.isInInbox(item.id), hovering: hovering, dragging: dragging)
@@ -335,6 +342,8 @@ private struct Corner: View {
     let trashes: Bool
     let hovering: Bool
     let dragging: Bool
+    /// Reduce Motion: the pin fades in and out instead of springing.
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
@@ -345,7 +354,7 @@ private struct Corner: View {
                     .frame(width: 20, height: 20)
                     .background(Color.orange, in: Circle())
                     .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
-                    .transition(.scale(scale: 0.4).combined(with: .opacity))
+                    .transition(reduceMotion ? .opacity : .scale(scale: 0.4).combined(with: .opacity))
             } else {
                 Image(systemName: trashes ? "xmark" : "eye.slash")
                     .font(.system(size: 8, weight: .bold))
@@ -359,7 +368,7 @@ private struct Corner: View {
         .padding(3)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
-        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: pinned)
+        .animation(Motion.spring(response: 0.3, damping: 0.6, reduced: reduceMotion), value: pinned)
     }
 }
 

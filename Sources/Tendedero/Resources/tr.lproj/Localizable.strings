@@ -152,6 +152,9 @@
 "Remove All" = "Tümünü kaldır";
 "Cancel" = "Vazgeç";
 "Done" = "Bitti";
+"Discard your changes?" = "Değişikliklerin atılsın mı?";
+"They are kept only once you click %@." = "Yalnızca “%@” düğmesine tıkladığında saklanır.";
+"Keep Editing" = "Düzenlemeye devam et";
 /* TextCard, GrabArea */
 "Translate Text" = "Metni çevir";
 "Describe" = "Açıklama yaz";
@@ -269,6 +272,8 @@
 "In chat apps" = "Sohbet uygulamalarında";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Mesajlar, Mail, Outlook ve diğerleri.";
 "Remove" = "Kaldır";
+"Remove “%@”" = "“%@” kaldır";
+"Removed “%@”. Click to put it back." = "“%@” kaldırıldı. Geri koymak için tıkla.";
 "Add a website" = "Web sitesi ekle";
 "Add" = "Ekle";
 "That isn't a website, or it is in the list already." = "Bu bir web sitesi değil ya da zaten listede.";
@@ -839,6 +844,8 @@
 "Product" = "Ürün";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Bu Mac’te örtülmeden okundu; %@ örtülü kopyada okuduklarını ekledi.";
 "Remove Key" = "Anahtarı kaldır";
+"Remove the key for %@?" = "%@ anahtarı kaldırılsın mı?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "Bu geri alınamaz: %@ bir anahtarı yalnızca bir kez gösterir, bu yüzden orada yeni bir tane oluşturman gerekir.";
 "Reply" = "Yanıt";
 "The answer was empty." = "Yanıt boştu.";
 "The keychain did not keep the key." = "Anahtar Zinciri anahtarı tutmadı.";
@@ -1237,6 +1244,12 @@
 "Edit…" = "Düzenle…";
 "Add Prompt" = "İstem ekle";
 "Standard Prompts" = "Standart istemler";
+"Replace your question with the standard ones?" = "Sorun standart sorularla değiştirilsin mi?";
+"Replace your %d questions with the standard ones?" = "%d sorun standart sorularla değiştirilsin mi?";
+"Replace your prompt with the standard ones?" = "İstemin standart istemlerle değiştirilsin mi?";
+"Replace your %d prompts with the standard ones?" = "%d istemin standart istemlerle değiştirilsin mi?";
+"What you wrote can't be brought back." = "Yazdıklarını geri getiremezsin.";
+"Replace" = "Değiştir";
 "Not written yet" = "Henüz yazılmadı";
 "Title" = "Başlık";
 "Prompt" = "İstem";
@@ -1771,6 +1784,7 @@
 "A ring where each click landed." = "Her tıklamanın olduğu yerde bir halka.";
 "Add Zoom" = "Yakınlaştırma Ekle";
 "Could not open the recording." = "Kayıt açılamadı.";
+"Your new recording opens in Studio once you close this one." = "Yeni kaydın, bunu kapattığında Studio’da açılır.";
 "Could not save the video." = "Video kaydedilemedi.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Taşımak için zaman çizelgesinde bir yakınlaştırmayı sürükle, uzatmak ya da kısaltmak için uçlarını sürükle.";
 "Drag the frame on the picture to choose what it looks at." = "Nereye bakacağını seçmek için resimdeki çerçeveyi sürükle.";

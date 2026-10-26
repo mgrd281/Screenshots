@@ -152,6 +152,9 @@
 "Remove All" = "Tout supprimer";
 "Cancel" = "Annuler";
 "Done" = "Terminé";
+"Discard your changes?" = "Abandonner tes modifications ?";
+"They are kept only once you click %@." = "Elles ne sont gardées qu’une fois que tu cliques sur « %@ ».";
+"Keep Editing" = "Continuer à modifier";
 /* TextCard, GrabArea */
 "Translate Text" = "Traduire le texte";
 "Describe" = "Décrire";
@@ -269,6 +272,8 @@
 "In chat apps" = "Dans les apps de discussion";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook et d’autres.";
 "Remove" = "Supprimer";
+"Remove “%@”" = "Supprimer « %@ »";
+"Removed “%@”. Click to put it back." = "« %@ » supprimé. Cliquez pour le remettre.";
 "Add a website" = "Ajouter un site web";
 "Add" = "Ajouter";
 "That isn't a website, or it is in the list already." = "Ce n’est pas un site web, ou il est déjà dans la liste.";
@@ -839,6 +844,8 @@
 "Product" = "Produit";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Lu sur ce Mac, non masqué ; %@ a ajouté ce qu’il a lu dans la copie masquée.";
 "Remove Key" = "Supprimer la clé";
+"Remove the key for %@?" = "Supprimer la clé pour %@ ?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "C’est irréversible : %@ n’affiche une clé qu’une seule fois, il faudrait donc en créer une nouvelle là-bas.";
 "Reply" = "Réponse";
 "The answer was empty." = "La réponse était vide.";
 "The keychain did not keep the key." = "Le trousseau n’a pas gardé la clé.";
@@ -1237,6 +1244,12 @@
 "Edit…" = "Modifier…";
 "Add Prompt" = "Ajouter un prompt";
 "Standard Prompts" = "Prompts standard";
+"Replace your question with the standard ones?" = "Remplacer ta question par les questions standard ?";
+"Replace your %d questions with the standard ones?" = "Remplacer tes %d questions par les questions standard ?";
+"Replace your prompt with the standard ones?" = "Remplacer ton prompt par les prompts standard ?";
+"Replace your %d prompts with the standard ones?" = "Remplacer tes %d prompts par les prompts standard ?";
+"What you wrote can't be brought back." = "Ce que tu as écrit ne pourra pas être récupéré.";
+"Replace" = "Remplacer";
 "Not written yet" = "Pas encore écrit";
 "Title" = "Titre";
 "Prompt" = "Prompt";
@@ -1771,6 +1784,7 @@
 "A ring where each click landed." = "Un anneau là où chaque clic a eu lieu.";
 "Add Zoom" = "Ajouter un zoom";
 "Could not open the recording." = "Impossible d’ouvrir l’enregistrement.";
+"Your new recording opens in Studio once you close this one." = "Ton nouvel enregistrement s’ouvre dans Studio dès que tu fermes celui-ci.";
 "Could not save the video." = "Impossible d’enregistrer la vidéo.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Fais glisser un zoom sur la timeline pour le déplacer, ou ses bords pour l’allonger ou le raccourcir.";
 "Drag the frame on the picture to choose what it looks at." = "Fais glisser le cadre sur l’image pour choisir ce qu’il regarde.";

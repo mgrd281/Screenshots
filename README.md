@@ -140,6 +140,8 @@ each with what it is for, whether it is given, and one button that asks for it
 or opens the right page of System Settings. It updates as you switch things
 in System Settings. Each is asked for only when what needs it is first used,
 and once one was refused, Permissions Needed… appears in the menu bar.
+Reopen Snapfly, under a refused Screen Recording, quits first and opens
+Snapfly again a moment later, as an update does, so two never run at once.
 
 Help sits beside it, in Settings › Support: the support page, Report a
 Problem and Suggest a Feature, which open an email with the version, macOS
@@ -255,7 +257,10 @@ camera moves. Space plays and pauses, ← and → move a second, ⌘Z undoes.
 Save Video writes a new video beside the recording, at its size and sixty
 frames a second, with its sound, and hangs it on the line; the recording
 itself is never changed. What you changed stays with the recording for the
-next time, and Trim keeps it in step; Cancel leaves it as it was. Turn off opening Studio after each recording
+next time, also when you close the window or open another recording in
+Studio, and Trim keeps it in step; only Cancel leaves it as it was. A
+recording just made waits, with a note, until you close Studio, so it never
+takes the place of the work in front. Turn off opening Studio after each recording
 in Settings › General, under Screen recordings. Where the pointer went and
 when keys were pressed stay on your Mac, never which keys; typing is only
 noticed where Snapfly may use Accessibility. A recording made before Studio
@@ -480,7 +485,10 @@ nothing follows it, or a label can keep to Same Line or Next Line;
 or, for whoever knows them, a pattern, made on the Mac. A rule's sheet
 covers a made-up example with it as it is typed. Each rule has its own
 switch, and one turned off covers nothing until it is on again; the
-section says how many are on. Your details and
+section says how many are on. A detail or a rule removed by mistake comes
+back with a click on the note that says it went, for a few seconds, as do
+the saved messages, questions, prompts, chat apps and websites under Line.
+Your details and
 rules apply to everything that leaves the line, and to the copies saved
 from Finder, whatever is checked under Privacy: also with no kind checked,
 or with Hide private details off in the menu bar, they are covered, and a
@@ -575,6 +583,11 @@ the drawing stays with the photo until it leaves the line. Drawing explains
 a picture; it never hides anything, so the lock counts only what is
 covered.
 
+Draw on Photo, Hide Part and Background ask before their close button, or
+another photo opened in the same window, lets changes go: Keep Editing, or
+Discard. Cancel and Done never ask, and the same photo opened again brings
+its window back as you left it.
+
 Every edit says where it went. Done says the drawing is kept with the
 photo, and Save Copy…, under Keep as a file in the window, keeps the photo
 as it goes out as a file of its own, wherever you choose; a photo's menu
@@ -654,7 +667,8 @@ says so beside the switch.
 
 Settings › Workspace lists the categories. Rename one, hide it, move it up
 or down, choose which one new screenshots go to, add your own, or remove
-one: its screenshots move to Unsorted and nothing is deleted. Rename the
+one: its screenshots move to Unsorted and nothing is deleted. A name is
+kept when you press Return or leave its field. Rename the
 folder or choose Change Location…, or move it in the Finder: Snapfly finds
 it again, and what hangs on the line follows its files. The folder carries
 Snapfly's icon in the Finder, and looks like any folder if macOS refuses
@@ -664,7 +678,8 @@ while the screenshot is kept in Snapfly's own folder, so none is lost.
 
 In History, the Workspace page shows them by day as a grid or a list. Pick a
 category, search by name or by the words in the photo, press Return or
-double-click to open one, and use the menu for Hang on the line, Quick Look,
+double-click to open one (with keyboard navigation on, Tab reaches each
+card, Space selects it and Return opens it), and use the menu for Hang on the line, Quick Look,
 Copy Original, Copy File Path, Show in Finder, Move to Folder, Rename… and
 Move to Trash. Copy Original copies the files as they are, not covered, as
 the Finder would; to send one covered, hang it on the line. The same Move to
@@ -841,15 +856,17 @@ Two come with Snapfly: Natural writing, which asks for a text that reads
 as a skilled person would write it, accurate and in your own voice, and
 Reply to a customer. Write up to nine of your own in Settings, under Line
 › Prompts for AI chats, each with a title and as long as it needs; they
-are in a photo's menu under Ask AI too.
+are in a photo's menu under Ask AI too. Standard Prompts brings the two
+back, after asking while any of yours is written.
 
 Something to ask about it? Right-click ChatGPT or Claude on the photo, or
 choose Ask ChatGPT or Ask Claude in its menu, and the photo goes with a
 question after it, like "Summarize this in a few lines" or "What should I
 reply to this?"; the chat answers in the language you ask in. The five
 questions that come with Snapfly are yours to change under Questions for
-ChatGPT and Claude in Settings, under Line. Nothing is sent until you
-press Return in the chat.
+ChatGPT and Claude in Settings, under Line; until you change them, they
+follow the language Snapfly speaks, and Standard Questions asks before it
+replaces yours. Nothing is sent until you press Return in the chat.
 
 <br>
 
@@ -862,7 +879,8 @@ back as it was.
 Everything that leaves the line, sent or taken down, waits in the History
 for 30 days: History… in the menu bar, or <kbd>⌘</kbd>&thinsp;<kbd>Y</kbd>
 while the menu is open. It is grouped by day, and the search finds the words
-in every photo. A click hangs one on the line again; Send Again in its menu
+in every photo. A click hangs one on the line again (with keyboard
+navigation on, Tab reaches each photo, and Space or Return does the same); Send Again in its menu
 hangs it and sends it, covered, into the chat you had in front, and Copy
 copies it as it would leave the line, never the original. What you hid by
 hand or drew on a photo goes with it into the History and back, so it
@@ -957,7 +975,8 @@ Save). Snapfly checks the key with them at once, by asking for the models
 it may use, which costs nothing: Ready. The key works, or that they did not
 accept it. The key stays in your keychain; Settings shows only its last four
 characters, with Change and Remove Key beside them, and Check Again checks it
-once more. Model is a menu of the models your key may use, by their names,
+once more. Remove Key asks first, since a key cannot be shown again: you
+would make a new one. Model is a menu of the models your key may use, by their names,
 newest first (Claude Opus 5.5, Sonnet 5.5 and Haiku 5.5 until the key is
 checked); Other… takes a model's ID by hand. What it does lists Write a
 Reply, Explain and Order Details, and holds the switch Find more with Claude
@@ -1015,8 +1034,9 @@ iCloud account, and the two work as one:
   Connect to a Mac with a Code under More › Mac and iCloud, as the Mac's
   sheet says, and type them; the Mac asks
   whether to connect that iPhone, and only a yes lets it in. The Mac then
-  shares its sync with that account alone, through iCloud. Disconnect… on
-  either side ends it.
+  shares its sync with that account alone, through iCloud; Cancel stops it
+  while it connects, should iCloud not answer. Disconnect… on either side
+  ends it.
 
 It goes through your own iCloud, never a server of Snapfly's, and a change
 made offline waits until it can go. The plan, the rules and what is verified

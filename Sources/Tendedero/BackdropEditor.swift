@@ -10,6 +10,9 @@ final class BackdropEditor: NSObject, NSWindowDelegate {
     static let shared = BackdropEditor()
 
     private var window: NSWindow?
+    /// The photo open, and its background as chosen so far.
+    private var url: URL?
+    private var model: BackdropModel?
 
     /// The last background chosen, the one a photo without one starts from.
     private static let lastKey = "backdropLast"
@@ -25,6 +28,13 @@ final class BackdropEditor: NSObject, NSWindowDelegate {
     /// Calls back with the background chosen, or nil when it was removed;
     /// not when cancelled.
     func edit(_ url: URL, chosen: @escaping (Backdrop?) -> Void) {
+        // The same photo again: its window comes forward, as it was left.
+        if let window, self.url == url {
+            NSApp.activate(ignoringOtherApps: true)
+            window.makeKeyAndOrderFront(nil)
+            return
+        }
+        guard mayLetGo() else { return }
         window?.close()
         guard let pixels = NSImage(contentsOf: url)?.size, pixels.width > 0, pixels.height > 0 else {
             Notice.show(L("Could not open the screenshot."))
@@ -62,13 +72,30 @@ final class BackdropEditor: NSObject, NSWindowDelegate {
         window.delegate = self
         window.center()
         self.window = window
+        self.url = url
+        self.model = model
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
+    }
+
+    /// Whether the window open may give way, to its close button or another
+    /// photo: at once with nothing changed, else once the owner chooses to
+    /// discard the changes.
+    private func mayLetGo() -> Bool {
+        guard let window, model?.hasChanges == true else { return true }
+        return EditorChanges.mayDiscard(in: window, keptBy: L("Done"))
+    }
+
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        guard sender === window else { return true }
+        return mayLetGo()
     }
 
     func windowWillClose(_ notification: Notification) {
         guard (notification.object as? NSWindow) === window else { return }
         window = nil
+        url = nil
+        model = nil
     }
 }
 
@@ -83,6 +110,8 @@ final class BackdropModel: ObservableObject {
     @Published private(set) var preview: NSImage?
     /// Whether the photo had a background before, so it can be removed.
     let had: Bool
+    /// The background the window opened with.
+    private let opened: Backdrop
 
     private var base: CGImage?
     private var generation = 0
@@ -93,7 +122,12 @@ final class BackdropModel: ObservableObject {
     init(backdrop: Backdrop, had: Bool) {
         self.backdrop = backdrop
         self.had = had
+        opened = backdrop
     }
+
+    /// Whether the background was changed since the window opened: what
+    /// closing it without Done would lose.
+    var hasChanges: Bool { backdrop != opened }
 
     /// Makes the picture shown inside, off the main thread.
     func load(_ url: URL) {

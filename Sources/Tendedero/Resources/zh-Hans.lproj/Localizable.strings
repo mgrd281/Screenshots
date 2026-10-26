@@ -152,6 +152,9 @@
 "Remove All" = "全部移除";
 "Cancel" = "取消";
 "Done" = "完成";
+"Discard your changes?" = "要放弃你的更改吗？";
+"They are kept only once you click %@." = "只有点按“%@”后才会保留。";
+"Keep Editing" = "继续编辑";
 /* TextCard, GrabArea */
 "Translate Text" = "翻译文本";
 "Describe" = "生成描述";
@@ -269,6 +272,8 @@
 "In chat apps" = "在聊天 App 中";
 "ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others." = "ChatGPT、Claude、WhatsApp、Telegram、信息、邮件、Outlook 等。";
 "Remove" = "移除";
+"Remove “%@”" = "移除“%@”";
+"Removed “%@”. Click to put it back." = "已移除“%@”。点按可放回。";
 "Add a website" = "添加网站";
 "Add" = "添加";
 "That isn't a website, or it is in the list already." = "这不是网站，或已在列表中。";
@@ -839,6 +844,8 @@
 "Product" = "商品";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "在这台 Mac 上未遮盖读取；%@ 补充了它在遮盖副本中读到的内容。";
 "Remove Key" = "移除密钥";
+"Remove the key for %@?" = "要移除 %@ 的密钥吗？";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "此操作无法撤销：%@ 只显示一次密钥，你需要在那里重新创建一个。";
 "Reply" = "回复";
 "The answer was empty." = "回答为空。";
 "The keychain did not keep the key." = "钥匙串未能保存密钥。";
@@ -1237,6 +1244,12 @@
 "Edit…" = "编辑…";
 "Add Prompt" = "添加提示词";
 "Standard Prompts" = "标准提示词";
+"Replace your question with the standard ones?" = "要将你的问题替换为标准问题吗？";
+"Replace your %d questions with the standard ones?" = "要将你的 %d 个问题替换为标准问题吗？";
+"Replace your prompt with the standard ones?" = "要将你的提示词替换为标准提示词吗？";
+"Replace your %d prompts with the standard ones?" = "要将你的 %d 个提示词替换为标准提示词吗？";
+"What you wrote can't be brought back." = "你写的内容将无法恢复。";
+"Replace" = "替换";
 "Not written yet" = "尚未填写";
 "Title" = "标题";
 "Prompt" = "提示词";
@@ -1771,6 +1784,7 @@
 "A ring where each click landed." = "在每次点按的位置显示一个圆环。";
 "Add Zoom" = "添加缩放";
 "Could not open the recording." = "无法打开录制内容。";
+"Your new recording opens in Studio once you close this one." = "关闭当前录制后，新录制会在 Studio 中打开。";
 "Could not save the video." = "无法存储视频。";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "在时间线上拖移缩放可移动它，拖移两端可调整长短。";
 "Drag the frame on the picture to choose what it looks at." = "拖移画面上的框，选择镜头看向哪里。";
