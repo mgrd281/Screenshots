@@ -487,7 +487,8 @@ TEXT["de"] = dict(
     updated_label="Stand",
     updated="26. Oktober 2026",
 
-    privacy_title="Datenschutzerklärung",
+    # A soft hyphen: on a phone the long word breaks there instead of being cut.
+    privacy_title="Datenschutz\u00aderklärung",
     privacy_short_h="Kurz gesagt",
     privacy_short="Snapfly erhebt keine personenbezogenen Daten. Die App arbeitet vollständig auf deinem Mac; von sich aus fragt sie nur für den Zeitstempel eine Atomuhr nach der Uhrzeit. Richtest du den KI-Assistenten mit deinem eigenen Schlüssel ein, geht ein verdecktes Bildschirmfoto nur dann an Claude oder ChatGPT, wenn du es willst. Mit „Link kopieren“ liegt eine verdeckte Datei sieben Tage lang hinter einem Link, dann wird sie gelöscht. Schaltest du Synchronisieren ein, gehen verdeckte Kopien über dein eigenes iCloud an dein iPhone. Diese Website setzt keine Cookies und nutzt keine Analyse.",
     privacy=[
