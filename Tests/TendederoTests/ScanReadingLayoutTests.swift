@@ -131,6 +131,58 @@ final class ScanReadingLayoutTests: XCTestCase {
         }
     }
 
+    // MARK: Descriptions that wrap
+
+    func testADescriptionThatWrapsStaysInItsRowAndATitleDoesNot() {
+        both {
+            var segments = [stretch("Rechnung", x: 57, top: 150, size: 16)]
+            segments.append(row([("Pos", 57), ("Beschreibung", 110), ("Menge", 340), ("Betrag", 500)], top: 200))
+            segments.append(stretch("Hardware", x: 110, top: 226))
+            segments.append(row([("1", 57), ("Beratung und Einrichtung des Systems", 110), ("3", 350), ("255,00 €", 505)], top: 250))
+            segments.append(stretch("inklusive Schulung", x: 110, top: 262))
+            segments.append(row([("2", 57), ("Druckpatronen Schwarz", 110), ("2", 350), ("49,80 €", 505)], top: 288))
+            segments.append(row([("3", 57), ("Versandpauschale Express", 110), ("1", 350), ("5,90 €", 505)], top: 324))
+            segments.append(stretch("Original Paket", x: 110, top: 336))
+            segments.append(row([("4", 57), ("Lizenz", 110), ("1", 350), ("90,00 €", 505)], top: 372))
+            let page = ScanReading.page(segments, aspect: Self.aspect)
+            let text = ScanReading.text(page)
+            XCTAssertTrue(text.contains("1\tBeratung und Einrichtung des Systems inklusive Schulung\t3\t255,00 €"), "hugging boxes: \(hugging): \(text)")
+            XCTAssertTrue(text.contains("3\tVersandpauschale Express Original Paket\t1\t5,90 €"), "a wrapped line near its row, in capitals too: \(text)")
+            XCTAssertTrue(text.contains("2\tDruckpatronen Schwarz\t2\t49,80 €"), text)
+            XCTAssertTrue(text.contains("4\tLizenz\t1\t90,00 €"), text)
+            XCTAssertFalse(text.contains("Systems inklusive Schulung 2"), "no row runs into the next: \(text)")
+        }
+    }
+
+    // MARK: Rows set with room between them
+
+    func testRowsSetFarApartAreStillATable() {
+        both {
+            // 3 usual lines from one row to the next, as invoices set with rules between rows are.
+            var segments = [stretch("Rechnung", x: 57, top: 150, size: 16)]
+            segments.append(row([("Pos", 57), ("Beschreibung", 110), ("Menge", 340), ("Betrag", 500)], top: 200))
+            for (index, item) in [("Beratung", "3", "255,00 €"), ("Druckpatronen", "2", "49,80 €"), ("Versand", "1", "5,90 €"), ("Lizenz", "1", "90,00 €")].enumerated() {
+                segments.append(row([("\(index + 1)", 57), (item.0, 110), (item.1, 350), (item.2, 505)], top: 236 + CGFloat(index) * 34))
+            }
+            segments += lines(["Bitte überweisen Sie den Betrag innerhalb von vierzehn Tagen", "auf das unten genannte Konto, damit nichts verloren geht."], x: 57, top: 420)
+            let page = ScanReading.page(segments, aspect: Self.aspect)
+            let text = ScanReading.text(page)
+            let tables = page.blocks.filter { if case .table = $0 { true } else { false } }
+            XCTAssertEqual(tables.count, 1, "hugging boxes: \(hugging): \(text)")
+            XCTAssertTrue(text.contains("Pos\tBeschreibung\tMenge\tBetrag\n1\tBeratung\t3\t255,00 €\n2\tDruckpatronen"), text)
+            XCTAssertTrue(text.hasSuffix("Bitte überweisen Sie den Betrag innerhalb von vierzehn Tagen auf das unten genannte Konto, damit nichts verloren geht."), text)
+        }
+    }
+
+    func testTwoColumnsWhoseParagraphsDoNotLineUpAreReadAColumnAtATime() {
+        both {
+            let left = ["Die Stadt hat in diesem Jahr mehr", "Besucher als je zuvor gezählt.", "", "Vor allem im Sommer kamen viele", "Gäste aus dem Ausland, die sich", "für die alten Gassen begeistern.", "", "Auch die Hotels melden viel."]
+            let right = ["Die Verwaltung plant neue Radwege", "und mehr Platz für Fußgänger in", "der Altstadt. Anwohner begrüßen", "das, fordern aber auch ruhigere", "Nächte in den belebten Straßen.", "", "Ein runder Tisch soll im Winter", "Lösungen erarbeiten."]
+            let text = read(lines(left, x: 57, top: 140, pitch: 14).filter { !$0.words.isEmpty } + lines(right, x: 330, top: 140, pitch: 14).filter { !$0.words.isEmpty })
+            order(text, ["Die Stadt hat", "Auch die Hotels melden viel.", "Die Verwaltung plant", "Lösungen erarbeiten."])
+        }
+    }
+
     // MARK: A bank statement
 
     func testABankStatementIsATableWithItsDatesAndAmounts() {

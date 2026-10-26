@@ -94,6 +94,9 @@ enum ScanReading {
         /// Print this much smaller than the page's usual line, or smaller, is
         /// small print: a letter's foot, a sender's line.
         static let smallPrint: CGFloat = 0.8
+        /// Rows of a table end where the space between lines is more than twice
+        /// its usual, and at least this many usual lines.
+        static let rowPace: CGFloat = 0.8
         /// Columns of small print are a table only with numbers in one column
         /// at least: this share of its cells.
         static let tableNumbers: CGFloat = 0.6
@@ -200,7 +203,11 @@ enum ScanReading {
         func cut(_ items: [Item]) -> [Block] {
             guard items.count > 1 else { return leaf(items) }
             let least = bandGap(items)
-            let across = gaps(items.map { ($0.top, $0.bottom) }).filter { $0.size >= least }
+            // White space between the rows of a table is no band, however wide.
+            let spans = rowSpans(items)
+            let across = gaps(items.map { ($0.top, $0.bottom) }).filter { gap in
+                gap.size >= least && !spans.contains { gap.start >= $0.top && gap.start + gap.size <= $0.bottom }
+            }
             if !across.isEmpty {
                 return split(items, at: across) { $0.top }.flatMap(cut)
             }
@@ -209,6 +216,48 @@ enum ScanReading {
                 return columns(items, at: down)
             }
             return leaf(items)
+        }
+
+        /// Where rows of cells stand, from the top of the first to the bottom
+        /// of the last: three lines or more at an even pace, two of them in
+        /// cells, that share a corridor of white running down through all of
+        /// them; a line of one cell close under a row is a cell that wrapped,
+        /// and the rows end with the last line of cells.
+        private func rowSpans(_ items: [Item]) -> [(top: CGFloat, bottom: CGFloat)] {
+            let lines = rows(items)
+            guard lines.count >= 3 else { return [] }
+            func top(_ line: [Item]) -> CGFloat { line.map(\.top).min() ?? 0 }
+            func bottom(_ line: [Item]) -> CGFloat { line.map(\.bottom).max() ?? 0 }
+            func corridor(_ lines: ArraySlice<[Item]>) -> Bool {
+                !gaps(lines.flatMap { $0 }.map { ($0.left, $0.right) }).filter { $0.size >= Tuning.columnGap * usual }.isEmpty
+            }
+            var spans: [(top: CGFloat, bottom: CGFloat)] = []
+            var start = 0
+            while start < lines.count {
+                guard lines[start].count >= 2 else {
+                    start += 1
+                    continue
+                }
+                var end = start
+                while end + 1 < lines.count, corridor(lines[start...(end + 1)]) { end += 1 }
+                // The pace of the lines: a break in it, as between an address and its table, ends the rows.
+                let between = (start..<end).map { max(0, top(lines[$0 + 1]) - bottom(lines[$0])) }.sorted()
+                let reach = between.isEmpty ? usual : max(2 * between[between.count / 2], Tuning.rowPace * usual)
+                var from = start
+                for line in start...end {
+                    let breaks = line > start && top(lines[line]) - bottom(lines[line - 1]) > reach
+                    if breaks || line == end {
+                        var last = breaks ? line - 1 : line
+                        while last > from, lines[last].count < 2 { last -= 1 }
+                        if last - from + 1 >= 3, lines[from...last].filter({ $0.count >= 2 }).count >= 2 {
+                            spans.append((top(lines[from]), bottom(lines[last])))
+                        }
+                        from = line
+                    }
+                }
+                start = end + 1
+            }
+            return spans
         }
 
         /// The white space a band needs: wider than the space between the
@@ -262,16 +311,49 @@ enum ScanReading {
             for (index, column) in columns.enumerated() {
                 for item in column { columnOf[item.id] = index }
             }
-            let lines = rows(items)
-            let spanning = lines.filter { Set($0.compactMap { columnOf[$0.id] }).count >= 2 }.count
+            let lines = logicalRows(rows(items), columnOf: columnOf)
+            let spanning = lines.filter { Set($0.flatMap { $0 }.compactMap { columnOf[$0.id] }).count >= 2 }.count
             guard lines.count >= 2, spanning >= 2, CGFloat(spanning) >= Tuning.tableRows * CGFloat(lines.count) else { return nil }
             let order = rightToLeft ? Array(columns.indices.reversed()) : Array(columns.indices)
-            let rows = lines.map { line -> [[Word]] in
+            let rows = lines.map { row -> [[Word]] in
                 order.map { column in
-                    line.filter { columnOf[$0.id] == column }.flatMap(\.segment.words)
+                    row.flatMap { line in line.filter { columnOf[$0.id] == column }.flatMap(\.segment.words) }
                 }
             }
             return Table(rows: rows)
+        }
+
+        /// The lines of a table candidate as its rows: a line in one column
+        /// that goes on a cell of the row above, close under it (nearer than
+        /// the rows are to each other) or starting in small letters, a
+        /// description that wraps ("Beratung und Einrichtung" / "inklusive
+        /// Schulung"), belongs to that row; a title standing over its rows
+        /// ("Hardware") does not.
+        private func logicalRows(_ lines: [[Item]], columnOf: [Int: Int]) -> [[[Item]]] {
+            func columnSet(_ line: [Item]) -> Set<Int> { Set(line.compactMap { columnOf[$0.id] }) }
+            func top(_ line: [Item]) -> CGFloat { line.map(\.top).min() ?? 0 }
+            func bottom(_ line: [Item]) -> CGFloat { line.map(\.bottom).max() ?? 0 }
+            // How far apart two lines of cells standing one under the other are.
+            var gaps: [CGFloat] = []
+            for (line, next) in zip(lines, lines.dropFirst()) where columnSet(line).count >= 2 && columnSet(next).count >= 2 {
+                gaps.append(top(next) - bottom(line))
+            }
+            let rowGap = gaps.isEmpty ? nil : gaps.sorted()[gaps.count / 2]
+            var rows: [[[Item]]] = []
+            for line in lines {
+                let columns = columnSet(line)
+                if columns.count == 1, let column = columns.first, let current = rows.last, let head = current.first, let above = current.last,
+                   columnSet(head).count >= 2, columnSet(head).contains(column) {
+                    let tight = rowGap.map { top(line) - bottom(above) <= 0.75 * $0 } ?? false
+                    let small = !(line.first?.segment.words.first?.text.first?.isUppercase ?? true)
+                    if tight || small {
+                        rows[rows.count - 1].append(line)
+                        continue
+                    }
+                }
+                rows.append([line])
+            }
+            return rows
         }
 
         /// Whether a column of the candidate holds numbers: quantities, prices,
