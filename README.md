@@ -730,7 +730,7 @@ at the top. It works in any browser and in any window that scrolls. It turns
 the scroll wheel in small turns, as a hand would, and if the page does not
 follow the wheel, it presses Page Down instead. The picture hangs on the line
 like any screenshot, and with the time stamp on, it is stamped with the time
-and the page's address. It needs the permission to press keys, the same one
+and the website's name. It needs the permission to press keys, the same one
 the send button uses.
 
 <br>
@@ -741,9 +741,11 @@ Turn on Stamp the date and time under General in Settings, and every
 screenshot of the whole screen gets a band above it, like a letterhead,
 that says when and where it was taken: the date and the time to the
 second, from the atomic clock of the PTB in Germany (or the Mac's clock
-when there is no connection); the page that was open in the browser; and
-the screenshot's SHA-256 fingerprint, so anyone can check the copy was
-made from that very file. Choose Every screenshot to stamp all of them,
+when there is no connection); the website that was open in the browser, by
+its name alone, like mail.google.com, never the rest of its address, which
+can hold a search, an email address or a sign-in link; and the
+screenshot's SHA-256 fingerprint, so anyone can check the copy was made
+from that very file. Choose Every screenshot to stamp all of them,
 and type a few words, like your shop's name, to stand before the date.
 
 The screenshot itself stays as it was. A stamped copy is saved next to it,
@@ -1572,7 +1574,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `scripts/always-hide-checks.sh` | Runs the UI tests in `iOS/SnapflyUITests` for the Always Hide Checks workflow, all but Scan's, which the Scan Checks workflow runs on an optimized build, and keeps frames of the screen and each sheet, light and dark, at the largest text sizes and in Arabic and English, on the newest iPhone and the smallest, for the `always-hide-captures` pre-release |
 | `docs/snapfly-always-hide-audit.md` | Always Hide's audit: what there was, where details and rules are kept, how covering uses them, how a label's reach was decided, what is promised and what holds in code, and what changed |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
-| `TimeStamp.swift` | The band above a screenshot with the time, the page and the fingerprint, and the stamped copy next to it |
+| `TimeStamp.swift` | The band above a screenshot with the time, the website and the fingerprint, and the stamped copy next to it |
+| `Shared/StampSite.swift` | The website a stamp names: the host of the page's address alone, never its path, search or fragment (tested on Linux) |
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
 | `Shared/CoverReport.swift` | What was covered in a picture, kind by kind, for the lock, the photo's menu, VoiceOver and the iPhone |
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |

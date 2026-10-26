@@ -57,14 +57,32 @@ final class TimeStampTests: XCTestCase {
         XCTAssertFalse(mac.rows[1].text.contains("PTB"))
     }
 
-    func testPageAndFingerprintAreWritten() {
-        let mark = TimeStamp.mark(TimeStamp.Record(taken: taken, atomic: true, page: "https://www.kaufland.de/shops/LLC/",
+    func testWebsiteAndFingerprintAreWritten() {
+        let mark = TimeStamp.mark(TimeStamp.Record(taken: taken, atomic: true, page: "www.kaufland.de",
                                                    fingerprint: "0f3a"),
                                   text: "", locale: german, timeZone: utc, rightToLeft: true)
-        XCTAssertTrue(mark.rows[2].text.contains("https://www.kaufland.de/shops/LLC/"))
+        XCTAssertTrue(mark.rows[2].text.contains("www.kaufland.de"))
         XCTAssertEqual(mark.rows[3].kind, .code)
         XCTAssertTrue(mark.rows[3].text.contains("0f3a"))
         XCTAssertTrue(mark.rightToLeft)
+    }
+
+    /// A stamp kept from before, with the page's whole address, shows only
+    /// its website: a search, a mailbox's folder or a token in the rest of
+    /// the address is never drawn after the covering.
+    func testAnAddressKeptBeforeShowsItsWebsiteAlone() {
+        let page = "https://mail.google.com/mail/u/0/?token=a1B2c3#search/lena.hoffmann%40example.com"
+        let mark = TimeStamp.mark(TimeStamp.Record(taken: taken, atomic: true, page: page),
+                                  text: "", locale: german, timeZone: utc, rightToLeft: false)
+        XCTAssertEqual(mark.rows.count, 3)
+        XCTAssertTrue(mark.rows[2].text.contains("mail.google.com"))
+        XCTAssertFalse(mark.rows[2].text.contains("lena"))
+        XCTAssertFalse(mark.rows[2].text.contains("token"))
+        XCTAssertFalse(mark.rows[2].text.contains("/mail/"))
+        // A file open in the browser is no website: no line for it.
+        let file = TimeStamp.mark(TimeStamp.Record(taken: taken, atomic: true, page: "file:///Users/lena/Kontoauszug.pdf"),
+                                  text: "", locale: german, timeZone: utc, rightToLeft: false)
+        XCTAssertEqual(file.rows.count, 2)
     }
 
     func testRecordSurvivesTheRoundTrip() throws {

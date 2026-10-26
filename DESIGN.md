@@ -2016,7 +2016,9 @@ screenshot itself.
      with monospaced digits, in the title colour;
   2. where the time came from: the PTB's atomic clock, or the Mac's clock
      when it could not be reached (regular, 0.86×, detail colour);
-  3. the page open in the browser in front, if one was (the same);
+  3. the website open in the browser in front, if one was (the same): its
+     host alone, like mail.google.com, never the rest of its address, since
+     the band is drawn after the covering (`StampSite`);
   4. the screenshot's SHA-256 fingerprint (SF Mono, 0.8×, code colour).
   A line too long for the image ends in "…".
 - **Size.** The text is 0.95% of the image's width, at least 11 px; each

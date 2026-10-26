@@ -9,6 +9,11 @@ keeps a download of each version.
 - On the Mac, Copy in a History photo's menu copies it as it would leave
   the line, covered, never the original. On History's Workspace page, the
   item that copies the files as they are is now called Copy Original.
+- On the Mac, the time stamp names the website that was open by its name
+  alone, like mail.google.com, in the band and in the stamped copy's
+  description, never the rest of the address, which can hold a search, an
+  email address or a sign-in link. A screenshot stamped before leaves the
+  line with its website's name alone too.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens
