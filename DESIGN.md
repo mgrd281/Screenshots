@@ -429,11 +429,12 @@ stays out of the way.
     ring round its hole. Words on a picture, like Always cover, keep the
     window's direction. Studio's timeline runs from the left too, as a
     video's time does, with its row symbols before it.
-  - The line itself runs right to left, as SwiftUI lays it out. What is
-    measured in `Layout` is mirrored to match where the photos really are
-    (`Line.runsRightToLeft`): the flights, the introduction's hole and
-    dragging along the line, and Take down everything to the left or to the
-    right means the screen's left and right.
+  - The line itself is laid out by SwiftUI, which mirrors it in a
+    right-to-left language. What is measured in `Layout` follows where the
+    photos really are (`Line.runsRightToLeft`, read off the screen, and
+    never in a left-to-right language): the flights, the introduction's
+    hole and dragging along the line, and Take down everything to the left
+    or to the right means the screen's left and right.
 - **Size.** Pointer targets are at least 20×20 pt and spaced so they don't
   touch. Touch sizes (44 pt) do not apply on the Mac.
 
@@ -616,8 +617,8 @@ design with monospaced digits.
     Add), and a last section with Delete…, a destructive button that asks.
     The folder's and a category's name are kept on Return and when their
     field is left or the pane closes; an empty or unchanged name changes
-    nothing and the field shows the name again, and a name refused is not
-    tried again until it changes.
+    nothing and the field shows the name again. Return always tries;
+    leaving the field does not try again a name just refused.
   - General has a Screen recordings section with one Sound menu (No Sound,
     Mac's Sound, Microphone, Mac's Sound and Microphone); the microphone
     choices are greyed out before macOS 15, and the footer says why.
