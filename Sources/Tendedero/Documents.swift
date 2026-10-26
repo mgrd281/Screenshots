@@ -80,7 +80,7 @@ enum DocumentCover {
     /// The same copy, with what was covered on its pages.
     static func covering(_ url: URL, _ chosen: Set<PrivateDetail>,
                          hand: [Int: [CGRect]]) -> (url: URL, report: CoverReport)? {
-        guard let target = Cover.newCopy(of: url, ext: "pdf"),
+        guard let target = Cover.newCopy(of: url, ext: "pdf", covering: chosen),
               let report = write(url, chosen, hand: hand, to: target) else { return nil }
         return (target, report)
     }

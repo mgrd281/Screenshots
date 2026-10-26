@@ -641,7 +641,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "إيصالات شهر كامل في ملف PDF واحد، مع صفحة تسردها، لتسليمها إلى مستشارك الضريبي.";
 "Image" = "صورة";
 "Plain file names" = "أسماء ملفات بسيطة";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "تخرج الصور ملفاتٍ جديدة، بلا ملاحظات عن متى وأين وبماذا صُنعت. ومع الأسماء البسيطة تُسمّى أيضاً «صورة»، لا باسم وقت التقاطها.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "تخرج الصور ملفاتٍ جديدة، بلا ملاحظات عن متى وأين وبماذا صُنعت. ومع الأسماء البسيطة تُسمّى أيضاً «صورة»، وملفات PDF «مستند»، لا باسم وقت التقاطها. والاسم الذي يحمل معلومة تغطيها يُستبدل في كل الأحوال.";
 "Cover what lands in a folder" = "تغطية ما يصل إلى مجلد";
 "Save copies in" = "حفظ النسخ في";
 "Cover a folder" = "تغطية مجلد";

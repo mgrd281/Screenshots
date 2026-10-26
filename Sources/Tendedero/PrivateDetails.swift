@@ -197,7 +197,7 @@ enum PrivateDetails {
     static func shareable(_ url: URL, covering chosen: Set<PrivateDetail>) -> URL {
         let done = handOut(url, covering: chosen)
         // With nothing to change, a picture still leaves as a fresh file.
-        return done == url && isImage(url) ? plain(url) : done
+        return done == url && isImage(url) ? plain(url, chosen) : done
     }
 
     private static func handOut(_ url: URL, covering chosen: Set<PrivateDetail>) -> URL {
@@ -272,11 +272,11 @@ enum PrivateDetails {
         guard !chosen.isEmpty || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty, isImage(url),
               let key = key(for: url, chosen, hand, stamp, clean, drawing) else {
             // Nothing to change: it leaves as a fresh file all the same.
-            preparePlain(url)
+            preparePlain(url, chosen)
             return
         }
         if let done = cached(key) {
-            if done == url { preparePlain(url) }
+            if done == url { preparePlain(url, chosen) }
             if shows {
                 shownKeys[url.path] = key
                 onRead?(url, done)
@@ -304,7 +304,7 @@ enum PrivateDetails {
                     }
                     results[key] = read.url
                     reports[key] = read.report
-                    if read.url == url { preparePlain(url) }
+                    if read.url == url { preparePlain(url, chosen) }
                     guard waitingToShow.remove(key) != nil else { return }
                     shownKeys[url.path] = key
                     onRead?(url, read.url)
@@ -315,26 +315,30 @@ enum PrivateDetails {
 
     // MARK: A fresh file
 
-    /// A picture as a fresh file, made once for each version of it.
-    private static func plain(_ url: URL) -> URL {
-        guard let key = plainKey(url) else { return url }
+    /// A picture as a fresh file, made once for each version of it and each
+    /// choice its name is checked against (`Cover.newCopy`).
+    private static func plain(_ url: URL, _ chosen: Set<PrivateDetail>) -> URL {
+        guard let key = plainKey(url, chosen) else { return url }
         if let done = cached(key) { return done }
-        let done = Cover.plain(url) ?? url
+        let done = Cover.plain(url, covering: chosen) ?? url
         results[key] = done
         return done
     }
 
-    private static func plainKey(_ url: URL) -> String? {
-        modified(url).map { "plain|\(url.path)|\($0.timeIntervalSinceReferenceDate)|\(Cover.plainNames)" }
+    private static func plainKey(_ url: URL, _ chosen: Set<PrivateDetail>) -> String? {
+        let kinds = chosen.map(\.rawValue).sorted().joined(separator: ",")
+        return modified(url).map {
+            "plain|\(url.path)|\($0.timeIntervalSinceReferenceDate)|\(Cover.plainNames)|\(kinds)|\(OwnRules.fingerprint)"
+        }
     }
 
     /// The fresh file made ahead of time, off the main thread, so copying a
     /// picture with nothing to cover stays instant.
-    private static func preparePlain(_ url: URL) {
-        guard isImage(url), let key = plainKey(url), cached(key) == nil, !inProgress.contains(key) else { return }
+    private static func preparePlain(_ url: URL, _ chosen: Set<PrivateDetail>) {
+        guard isImage(url), let key = plainKey(url, chosen), cached(key) == nil, !inProgress.contains(key) else { return }
         inProgress.insert(key)
         DispatchQueue.global(qos: .utility).async {
-            let made = Cover.plain(url)
+            let made = Cover.plain(url, covering: chosen)
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     results[key] = made ?? url
@@ -427,14 +431,14 @@ enum PrivateDetails {
     }
 
     /// The file, when it last changed, what to cover, what was hidden by
-    /// hand on each page and how covers look.
+    /// hand on each page, how covers look and what the copy is called.
     private static func documentKey(_ url: URL, _ chosen: Set<PrivateDetail>) -> String? {
         guard let date = modified(url) else { return nil }
         let kinds = chosen.map(\.rawValue).sorted().joined(separator: ",")
         let pages = handPages(url).sorted { $0.key < $1.key }.map { page, boxes in
             "\(page):" + boxes.map { "\($0.minX),\($0.minY),\($0.width),\($0.height)" }.joined(separator: ";")
         }.joined(separator: "/")
-        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(pages)|\(OwnRules.fingerprint)|\(Finder.lookKey)"
+        return "\(url.path)|\(date.timeIntervalSinceReferenceDate)|\(kinds)|\(pages)|\(OwnRules.fingerprint)|\(Finder.lookKey)|\(Cover.plainNames)"
     }
 
     private static func modified(_ url: URL) -> Date? {
@@ -549,7 +553,7 @@ enum Cover {
 
         // A folder of its own, so the copy keeps the screenshot's name.
         let type = clean ? UTType.jpeg : UTType.png
-        guard let target = newCopy(of: url, ext: clean ? "jpg" : "png"),
+        guard let target = newCopy(of: url, ext: clean ? "jpg" : "png", covering: chosen),
               let destination = CGImageDestinationCreateWithURL(target as CFURL, type.identifier as CFString, 1, nil)
         else { return nil }
         let options: [CFString: Any] = clean ? [kCGImageDestinationLossyCompressionQuality: 0.9] : [:]
@@ -559,10 +563,15 @@ enum Cover {
     }
 
     /// Where a copy goes: a folder of its own, so it keeps the original's
-    /// name, which is what the chat shows.
-    static func newCopy(of url: URL, ext: String) -> URL? {
-        // A PDF keeps its name, which is mostly its title.
-        let name = plainNames && ext != "pdf" ? L("Image") : url.deletingPathExtension().lastPathComponent
+    /// name, which is what the chat shows. With Plain file names on, or
+    /// where the name itself holds a detail of a kind covered or one of the
+    /// owner's own rules, like an account number in a statement's name, it
+    /// is called “Image”, or “Document” for a PDF.
+    static func newCopy(of url: URL, ext: String,
+                        covering chosen: Set<PrivateDetail> = PrivateDetails.details) -> URL? {
+        let own = url.deletingPathExtension().lastPathComponent
+        let plainName = ext == "pdf" ? L("Document") : L("Image")
+        let name = plainNames || nameHolds(own, chosen) ? plainName : own
         let target = folder.appendingPathComponent(UUID().uuidString, isDirectory: true)
             .appendingPathComponent(name)
             .appendingPathExtension(ext)
@@ -571,9 +580,27 @@ enum Cover {
         return target
     }
 
+    /// Whether a file's name holds a detail of a kind covered, found by its
+    /// shape and fitting its kind as a find of the patterns must
+    /// (`Finder.fit`), so a screenshot's date and time are no phone number,
+    /// or one of the owner's own rules. Nothing while nothing is covered.
+    /// People's names are not looked for in it: Plain file names leaves
+    /// every name out.
+    static func nameHolds(_ name: String, _ chosen: Set<PrivateDetail>) -> Bool {
+        guard !chosen.isEmpty else { return false }
+        // The words of a file's name are often joined with underscores.
+        let words = name.replacingOccurrences(of: "_", with: " ")
+        if !Finder.ruleRanges(in: words, OwnRules.all).isEmpty { return true }
+        return chosen.contains { kind in
+            Finder.patternRanges(in: words, [kind]).contains { found in
+                Range(found, in: words).map { Finder.fit(kind, $0, in: words, medical: false) != .no } ?? false
+            }
+        }
+    }
+
     /// Plain file names, from Settings › Privacy: pictures leave named
-    /// “Image”, not after the file, whose name often says when it was taken.
-    /// Off unless turned on.
+    /// “Image”, and PDFs “Document”, not after the file, whose name often
+    /// says when it was taken or what it holds. Off unless turned on.
     static var plainNames: Bool {
         get { UserDefaults.standard.bool(forKey: "plainFileNames") }
         set { UserDefaults.standard.set(newValue, forKey: "plainFileNames") }
@@ -624,14 +651,15 @@ enum Cover {
     /// PNG stays a PNG, pixel for pixel; a JPEG or HEIC photo goes as a JPEG,
     /// any other picture as a PNG. Nil for a GIF, which goes as itself so it
     /// keeps moving, and for what cannot be read.
-    static func plain(_ url: URL) -> URL? {
+    /// - Parameter chosen: what is covered, which its name is checked for.
+    static func plain(_ url: URL, covering chosen: Set<PrivateDetail> = PrivateDetails.details) -> URL? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               CGImageSourceGetCount(source) == 1 else { return nil }
         let type = (CGImageSourceGetType(source) as String?).flatMap { UTType($0) }
         if type?.conforms(to: .gif) == true { return nil }
         guard let image = upright(source) else { return nil }
         let photo = type.map { $0.conforms(to: .jpeg) || $0.conforms(to: .heic) || $0.conforms(to: .heif) } ?? false
-        guard let target = newCopy(of: url, ext: photo ? "jpg" : "png"),
+        guard let target = newCopy(of: url, ext: photo ? "jpg" : "png", covering: chosen),
               let destination = CGImageDestinationCreateWithURL(
                 target as CFURL, (photo ? UTType.jpeg : UTType.png).identifier as CFString, 1, nil)
         else { return nil }

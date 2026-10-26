@@ -95,9 +95,10 @@ private struct SendTile: View {
 
 extension HideEditor {
     /// Where a copy to send is written: a folder of its own, under the
-    /// original's name, so that is the name the chat shows. Copies from
-    /// before last week go.
-    static func sendFile(for url: URL) -> URL? {
+    /// original's name, so that is the name the chat shows, or “Image” or
+    /// “Document” where the line's copies would be called so
+    /// (`Cover.newCopy`). Copies from before last week go.
+    static func sendFile(for url: URL, covering chosen: Set<PrivateDetail>) -> URL? {
         let fm = FileManager.default
         let base = fm.temporaryDirectory.appendingPathComponent("Snapfly Send", isDirectory: true)
         let weekAgo = Date().addingTimeInterval(-7 * 24 * 3600)
@@ -107,7 +108,9 @@ extension HideEditor {
         }
         let folder = base.appendingPathComponent(UUID().uuidString, isDirectory: true)
         guard (try? fm.createDirectory(at: folder, withIntermediateDirectories: true)) != nil else { return nil }
-        let name = url.deletingPathExtension().lastPathComponent + "." + SaveCopy.fileExtension(for: url)
+        let own = url.deletingPathExtension().lastPathComponent
+        let plain = Cover.plainNames || Cover.nameHolds(own, chosen)
+        let name = (plain ? (isDocument(url) ? L("Document") : L("Image")) : own) + "." + SaveCopy.fileExtension(for: url)
         return folder.appendingPathComponent(name)
     }
 

@@ -641,7 +641,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "把一个月的收据合成一个 PDF，附带列表页，方便交给税务顾问。";
 "Image" = "图像";
 "Plain file names" = "简单文件名";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "图片会作为新文件发出，不带何时、何地或用什么制作的信息。开启简单文件名后，它们还会被命名为“图像”，而不是拍摄时间。";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "图片会作为新文件发出，不带何时、何地或用什么制作的信息。开启简单文件名后，它们还会被命名为“图像”，PDF 则命名为“文稿”，而不是拍摄时间。含有你所遮盖信息的名称无论如何都会被替换。";
 "Cover what lands in a folder" = "遮盖放入文件夹的内容";
 "Save copies in" = "副本存储到";
 "Cover a folder" = "遮盖文件夹";

@@ -641,7 +641,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "1か月分のレシートを、一覧ページ付きの1つのPDFにまとめて税理士に渡せます。";
 "Image" = "画像";
 "Plain file names" = "シンプルなファイル名";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "画像は新しいファイルとして送られ、いつ・どこで・何で作られたかの情報は含まれません。シンプルなファイル名にすると、撮影日時ではなく「画像」という名前にもなります。";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "画像は新しいファイルとして送られ、いつ・どこで・何で作られたかの情報は含まれません。シンプルなファイル名にすると、撮影日時ではなく「画像」、PDFは「書類」という名前にもなります。隠している情報を含む名前は、いずれの場合も置き換えられます。";
 "Cover what lands in a folder" = "フォルダに届いたものを隠す";
 "Save copies in" = "コピーの保存先";
 "Cover a folder" = "フォルダを隠す";

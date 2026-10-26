@@ -1779,7 +1779,7 @@ private struct PrivacyPane: View {
             Section {
                 Toggle(L("Plain file names"), isOn: $prefs.plainNames)
             } footer: {
-                Text(L("Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken."))
+                Text(L("Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way."))
                     .foregroundStyle(.secondary)
             }
             Section {

@@ -1594,8 +1594,9 @@ apps.
   keeps the photos. Then one with Plain file names (off at
   first), over a footer saying pictures leave as fresh files without notes
   on when, where or with what they were made, and are named "Image" with it
-  on. The owner's own details and rules have their own pane, Always Hide
-  (below). Then
+  on, PDFs "Document", and that a name holding a detail being covered is
+  replaced either way. The owner's own details and rules have their own
+  pane, Always Hide (below). Then
   "Cover a folder": a toggle, Cover what lands in a folder (off at first;
   turned on, it asks for any folder not chosen yet and stays off without
   both), and two rows, Watched folder and Save copies in, each with the

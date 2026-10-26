@@ -641,7 +641,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Bir ayın fişleri, onları listeleyen bir sayfayla tek bir PDF’te, mali müşavirine vermen için.";
 "Image" = "Görsel";
 "Plain file names" = "Sade dosya adları";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Görseller ne zaman, nerede ya da neyle yapıldıklarına dair notlar olmadan yeni dosyalar olarak çıkar. Sade dosya adlarıyla ayrıca çekildikleri zamana göre değil, “Görsel” diye adlandırılır.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "Görseller ne zaman, nerede ya da neyle yapıldıklarına dair notlar olmadan yeni dosyalar olarak çıkar. Sade dosya adlarıyla ayrıca çekildikleri zamana göre değil, “Görsel”, PDF’ler ise “Belge” diye adlandırılır. Gizlediğin bir bilgiyi taşıyan ad her durumda değiştirilir.";
 "Cover what lands in a folder" = "Bir klasöre düşenleri kapat";
 "Save copies in" = "Kopyaları şuraya kaydet";
 "Cover a folder" = "Klasörü kapat";

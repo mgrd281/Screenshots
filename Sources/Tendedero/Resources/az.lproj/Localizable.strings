@@ -643,7 +643,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Bir ayın qəbzləri bir PDF-də, onları sadalayan səhifə ilə, vergi məsləhətçinə vermək üçün.";
 "Image" = "Şəkil";
 "Plain file names" = "Sadə fayl adları";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Şəkillər nə vaxt, harada və nə ilə yaradıldığı barədə qeydlər olmadan yeni fayllar kimi çıxır. Sadə fayl adları ilə onlar həm də çəkildiyi vaxta görə yox, “Şəkil” adlanır.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "Şəkillər nə vaxt, harada və nə ilə yaradıldığı barədə qeydlər olmadan yeni fayllar kimi çıxır. Sadə fayl adları ilə onlar həm də çəkildiyi vaxta görə yox, “Şəkil”, PDF-lər isə “Sənəd” adlanır. Örtdüyün məlumatı daşıyan ad hər halda dəyişdirilir.";
 "Cover what lands in a folder" = "Qovluğa düşənləri ört";
 "Save copies in" = "Nüsxələri saxla";
 "Cover a folder" = "Qovluğu ört";

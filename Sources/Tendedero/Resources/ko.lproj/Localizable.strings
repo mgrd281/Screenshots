@@ -641,7 +641,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "한 달 치 영수증을 목록 페이지와 함께 PDF 하나로 묶어 세무사에게 전달해요.";
 "Image" = "이미지";
 "Plain file names" = "간단한 파일 이름";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "이미지는 언제, 어디서, 무엇으로 만들었는지에 대한 정보 없이 새 파일로 나갑니다. 간단한 파일 이름을 켜면 찍은 시간 대신 ‘이미지’라는 이름도 붙습니다.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "이미지는 언제, 어디서, 무엇으로 만들었는지에 대한 정보 없이 새 파일로 나갑니다. 간단한 파일 이름을 켜면 찍은 시간 대신 ‘이미지’라는 이름이, PDF에는 ‘문서’라는 이름이 붙습니다. 가리는 정보가 들어 있는 이름은 어느 경우든 바뀝니다.";
 "Cover what lands in a folder" = "폴더에 들어오는 것 가리기";
 "Save copies in" = "사본 저장 위치";
 "Cover a folder" = "폴더 가리기";

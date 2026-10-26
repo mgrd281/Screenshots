@@ -643,7 +643,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor.";
 "Image" = "Image";
 "Plain file names" = "Plain file names";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way.";
 "Cover what lands in a folder" = "Cover what lands in a folder";
 "Save copies in" = "Save copies in";
 "Cover a folder" = "Cover a folder";

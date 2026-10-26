@@ -641,7 +641,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "Os recibos dun mes nun PDF, cunha páxina que os enumera, para entregar á túa asesoría fiscal.";
 "Image" = "Imaxe";
 "Plain file names" = "Nomes de ficheiro simples";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "As imaxes saen como ficheiros novos, sen notas de cando, onde nin con que se fixeron. Con nomes simples chámanse ademais «Imaxe», non segundo cando se tomaron.";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "As imaxes saen como ficheiros novos, sen notas de cando, onde nin con que se fixeron. Con nomes simples chámanse ademais «Imaxe», e os PDF «Documento», non segundo cando se tomaron. Un nome que leva un dato que ocultas substitúese en calquera caso.";
 "Cover what lands in a folder" = "Tapar o que chega a un cartafol";
 "Save copies in" = "Gardar copias en";
 "Cover a folder" = "Tapar un cartafol";

@@ -498,7 +498,9 @@ the notes a file carries on when, where and with what it was made, or the
 Finder's note of where it was downloaded from. A PNG stays a PNG, pixel for
 pixel; a photo goes as a JPEG; a GIF goes as itself, so it keeps moving.
 Turn on Plain file names under Privacy, and pictures are called Image too,
-rather than after when they were taken.
+and PDFs Document, rather than after when they were taken. A file whose
+name holds a detail you cover, like an IBAN in a bank statement's name,
+or one of your own rules, is called so either way.
 
 To cover a whole folder, turn on Cover what lands in a folder under
 Privacy and choose two folders, like the one invoices are downloaded to

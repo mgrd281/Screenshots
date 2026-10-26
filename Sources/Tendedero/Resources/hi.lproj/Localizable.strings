@@ -643,7 +643,7 @@
 "A month's receipts in one PDF, with a page listing them, to hand to your tax advisor." = "एक महीने की रसीदें एक PDF में, उनकी सूची वाले पृष्ठ के साथ, आपके टैक्स सलाहकार को देने के लिए।";
 "Image" = "चित्र";
 "Plain file names" = "सादे फ़ाइल नाम";
-"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, not after when they were taken." = "चित्र नई फ़ाइलों के रूप में जाते हैं, इस जानकारी के बिना कि वे कब, कहाँ या किससे बनाए गए। सादे फ़ाइल नामों के साथ उनका नाम भी “चित्र” होता है, न कि लेने के समय के अनुसार।";
+"Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way." = "चित्र नई फ़ाइलों के रूप में जाते हैं, इस जानकारी के बिना कि वे कब, कहाँ या किससे बनाए गए। सादे फ़ाइल नामों के साथ उनका नाम भी “चित्र” होता है, और PDF का “दस्तावेज़”, न कि लेने के समय के अनुसार। जिस नाम में ऐसी कोई जानकारी हो जिसे आप छिपाते हैं, वह हर हाल में बदल दिया जाता है।";
 "Cover what lands in a folder" = "फ़ोल्डर में आने वाली चीज़ें ढकें";
 "Save copies in" = "कॉपियाँ यहाँ सहेजें";
 "Cover a folder" = "फ़ोल्डर ढकें";
