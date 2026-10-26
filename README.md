@@ -255,7 +255,10 @@ camera moves. Space plays and pauses, ← and → move a second, ⌘Z undoes.
 Save Video writes a new video beside the recording, at its size and sixty
 frames a second, with its sound, and hangs it on the line; the recording
 itself is never changed. What you changed stays with the recording for the
-next time, and Trim keeps it in step; Cancel leaves it as it was. Turn off opening Studio after each recording
+next time, and Trim keeps it in step; Cancel leaves it as it was. The close
+button, or another recording opened in Studio, asks first while there are
+changes not saved yet, and a recording just made waits, with a note, until
+you close Studio. Turn off opening Studio after each recording
 in Settings › General, under Screen recordings. Where the pointer went and
 when keys were pressed stay on your Mac, never which keys; typing is only
 noticed where Snapfly may use Accessibility. A recording made before Studio
@@ -571,6 +574,11 @@ and the line shows the photo that way. The file itself stays as it is, and
 the drawing stays with the photo until it leaves the line. Drawing explains
 a picture; it never hides anything, so the lock counts only what is
 covered.
+
+Draw on Photo, Hide Part and Background ask before their close button, or
+another photo opened in the same window, lets changes go: Keep Editing, or
+Discard. Cancel and Done never ask, and the same photo opened again brings
+its window back as you left it.
 
 Every edit says where it went. Done says the drawing is kept with the
 photo, and Save Copy…, under Keep as a file in the window, keeps the photo

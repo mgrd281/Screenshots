@@ -152,6 +152,9 @@
 "Remove All" = "すべて削除";
 "Cancel" = "キャンセル";
 "Done" = "完了";
+"Discard your changes?" = "変更を破棄しますか？";
+"They are kept only once you click %@." = "「%@」をクリックするまで保存されません。";
+"Keep Editing" = "編集を続ける";
 /* TextCard, GrabArea */
 "Translate Text" = "テキストを翻訳";
 "Describe" = "説明を作成";
@@ -1759,6 +1762,7 @@
 "A ring where each click landed." = "クリックした場所ごとに輪を表示します。";
 "Add Zoom" = "ズームを追加";
 "Could not open the recording." = "収録を開けませんでした。";
+"Your new recording opens in Studio once you close this one." = "これを閉じると、新しい収録がスタジオで開きます。";
 "Could not save the video." = "ビデオを保存できませんでした。";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "タイムラインでズームをドラッグすると移動し、端をドラッグすると長さを変えられます。";
 "Drag the frame on the picture to choose what it looks at." = "画像上の枠をドラッグして、映す場所を選びます。";

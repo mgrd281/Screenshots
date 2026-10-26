@@ -154,6 +154,9 @@
 "Remove All" = "Hamısını sil";
 "Cancel" = "Ləğv et";
 "Done" = "Hazırdır";
+"Discard your changes?" = "Dəyişikliklərin atılsın?";
+"They are kept only once you click %@." = "Onlar yalnız “%@” düyməsini kliklədikdən sonra saxlanılır.";
+"Keep Editing" = "Redaktəyə davam et";
 /* TextCard, GrabArea */
 "Translate Text" = "Mətni tərcümə et";
 "Describe" = "Təsvir yaz";
@@ -1761,6 +1764,7 @@
 "A ring where each click landed." = "Hər kliklə toxunulan yerdə halqa.";
 "Add Zoom" = "Yaxınlaşdırma əlavə et";
 "Could not open the recording." = "Yazını açmaq mümkün olmadı.";
+"Your new recording opens in Studio once you close this one." = "Yeni yazın bunu bağladıqdan sonra Studioda açılır.";
 "Could not save the video." = "Videonu saxlamaq mümkün olmadı.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Yaxınlaşdırmanı köçürmək üçün zaman xəttində sürüşdür, uzatmaq və ya qısaltmaq üçün kənarlarını sürüşdür.";
 "Drag the frame on the picture to choose what it looks at." = "Nəyə baxacağını seçmək üçün şəkildəki çərçivəni sürüşdür.";

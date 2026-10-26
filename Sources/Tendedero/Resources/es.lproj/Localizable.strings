@@ -152,6 +152,9 @@
 "Remove All" = "Quitar todo";
 "Cancel" = "Cancelar";
 "Done" = "Listo";
+"Discard your changes?" = "¿Descartar tus cambios?";
+"They are kept only once you click %@." = "Solo se guardan cuando haces clic en «%@».";
+"Keep Editing" = "Seguir editando";
 /* TextCard, GrabArea */
 "Translate Text" = "Traducir texto";
 "Describe" = "Describir";
@@ -1759,6 +1762,7 @@
 "A ring where each click landed." = "Un anillo donde cayó cada clic.";
 "Add Zoom" = "Añadir zoom";
 "Could not open the recording." = "No se pudo abrir la grabación.";
+"Your new recording opens in Studio once you close this one." = "Tu nueva grabación se abre en Studio cuando cierres esta.";
 "Could not save the video." = "No se pudo guardar el vídeo.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Arrastra un zoom en la línea de tiempo para moverlo, o sus extremos para alargarlo o acortarlo.";
 "Drag the frame on the picture to choose what it looks at." = "Arrastra el marco sobre la imagen para elegir adónde mira.";

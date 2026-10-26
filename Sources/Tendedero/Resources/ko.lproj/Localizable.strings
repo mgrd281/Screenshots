@@ -152,6 +152,9 @@
 "Remove All" = "모두 제거";
 "Cancel" = "취소";
 "Done" = "완료";
+"Discard your changes?" = "변경 사항을 버릴까요?";
+"They are kept only once you click %@." = "“%@”을(를) 클릭해야 저장됩니다.";
+"Keep Editing" = "계속 편집";
 /* TextCard, GrabArea */
 "Translate Text" = "텍스트 번역하기";
 "Describe" = "설명 만들기";
@@ -1759,6 +1762,7 @@
 "A ring where each click landed." = "클릭한 곳마다 고리를 표시합니다.";
 "Add Zoom" = "확대 추가";
 "Could not open the recording." = "녹화를 열 수 없습니다.";
+"Your new recording opens in Studio once you close this one." = "이 녹화를 닫으면 새 녹화가 스튜디오에서 열립니다.";
 "Could not save the video." = "비디오를 저장할 수 없습니다.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "타임라인에서 확대를 드래그해 옮기거나, 양 끝을 드래그해 길이를 바꾸세요.";
 "Drag the frame on the picture to choose what it looks at." = "그림 위의 틀을 드래그해 보이는 곳을 고르세요.";

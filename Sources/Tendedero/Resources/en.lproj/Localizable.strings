@@ -154,6 +154,9 @@
 "Remove All" = "Remove All";
 "Cancel" = "Cancel";
 "Done" = "Done";
+"Discard your changes?" = "Discard your changes?";
+"They are kept only once you click %@." = "They are kept only once you click %@.";
+"Keep Editing" = "Keep Editing";
 /* TextCard, GrabArea */
 "Translate Text" = "Translate Text";
 "Describe" = "Describe";
@@ -1761,6 +1764,7 @@
 "A ring where each click landed." = "A ring where each click landed.";
 "Add Zoom" = "Add Zoom";
 "Could not open the recording." = "Could not open the recording.";
+"Your new recording opens in Studio once you close this one." = "Your new recording opens in Studio once you close this one.";
 "Could not save the video." = "Could not save the video.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter.";
 "Drag the frame on the picture to choose what it looks at." = "Drag the frame on the picture to choose what it looks at.";

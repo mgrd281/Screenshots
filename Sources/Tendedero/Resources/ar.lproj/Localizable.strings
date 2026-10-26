@@ -152,6 +152,9 @@
 "Remove All" = "إزالة الكل";
 "Cancel" = "إلغاء";
 "Done" = "تم";
+"Discard your changes?" = "تجاهل تغييراتك؟";
+"They are kept only once you click %@." = "لا تُحفَظ إلا بعد أن تنقر «%@».";
+"Keep Editing" = "تابع التعديل";
 /* TextCard, GrabArea */
 "Translate Text" = "ترجمة النص";
 "Describe" = "وصف ذكي";
@@ -1759,6 +1762,7 @@
 "A ring where each click landed." = "حلقة حيث وقعت كل نقرة.";
 "Add Zoom" = "إضافة تكبير";
 "Could not open the recording." = "تعذّر فتح التسجيل.";
+"Your new recording opens in Studio once you close this one." = "يُفتح تسجيلك الجديد في الاستوديو بعد أن تغلق هذا.";
 "Could not save the video." = "تعذّر حفظ الفيديو.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "اسحب التكبير على الشريط الزمني لنقله، أو اسحب طرفيه لإطالته أو تقصيره.";
 "Drag the frame on the picture to choose what it looks at." = "اسحب الإطار على الصورة لتختار ما ينظر إليه.";

@@ -20,16 +20,38 @@ final class StudioEditor: NSObject, NSWindowDelegate {
     private var model: StudioModel?
     private var export: StudioExport.Stop?
 
-    /// A recording to open once the video being saved is done.
+    /// A recording to open once the video being saved is done, or once
+    /// Studio is closed.
     private var waiting: URL?
 
     /// Opens a recording in Studio, as it was when a video was last saved
     /// from it. While a video is being saved, it opens once that is done.
-    func open(_ url: URL) {
+    /// The recording open comes forward when it is opened again. Over
+    /// changes not saved yet, another asks first, and one just recorded
+    /// waits, with a note, until Studio is closed.
+    func open(_ url: URL, justRecorded: Bool = false) {
         guard export == nil else {
             waiting = url
             return
         }
+        if let window, let model {
+            // The same recording: its window comes forward, as it was left.
+            guard model.url != url else {
+                NSApp.activate(ignoringOtherApps: true)
+                window.makeKeyAndOrderFront(nil)
+                return
+            }
+            if model.hasChanges {
+                if justRecorded {
+                    waiting = url
+                    Notice.show(L("Your new recording opens in Studio once you close this one."), done: true, lasting: 6)
+                    return
+                }
+                guard EditorChanges.mayDiscard(in: window, keptBy: L("Save Video")) else { return }
+            }
+        }
+        // Opened now, so none waits for Studio to close any more.
+        waiting = nil
         Task { @MainActor in
             let asset = AVURLAsset(url: url)
             guard let duration = try? await asset.load(.duration).seconds, duration > 0,
@@ -76,6 +98,12 @@ final class StudioEditor: NSObject, NSWindowDelegate {
         model.load()
     }
 
+    /// The close button asks first over changes not saved yet.
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        guard sender === window, let model, model.hasChanges else { return true }
+        return EditorChanges.mayDiscard(in: sender, keptBy: L("Save Video"))
+    }
+
     func windowWillClose(_ notification: Notification) {
         guard (notification.object as? NSWindow) === window else { return }
         export?.set()
@@ -83,6 +111,11 @@ final class StudioEditor: NSObject, NSWindowDelegate {
         model?.close()
         model = nil
         window = nil
+        // A recording that waited for Studio opens now.
+        if let next = waiting {
+            waiting = nil
+            DispatchQueue.main.async { MainActor.assumeIsolated { StudioEditor.shared.open(next) } }
+        }
     }
 
     /// Writes the video as Studio shows it, beside the recording, keeps the
@@ -92,6 +125,7 @@ final class StudioEditor: NSObject, NSWindowDelegate {
         model.pause()
         model.end()
         StudioStore.setProject(model.project, for: model.url)
+        model.markKept()
         let base = model.url.deletingPathExtension().lastPathComponent
         let target = Collage.newFile(String(format: L("%@ (edited)"), base), "mov")
         let stop = StudioExport.Stop()
@@ -215,6 +249,8 @@ final class StudioModel: ObservableObject {
     @Published private var redone: [StudioProject] = []
     private var before: StudioProject?
     private var finished: NSObjectProtocol?
+    /// The work as it was opened or last kept with Save Video.
+    private var keptWork: StudioProject
 
     /// The tools that draw over a recording, with Select first.
     static let tools: [DrawTool] = [.select, .arrow, .box, .circle, .step, .text]
@@ -226,6 +262,7 @@ final class StudioModel: ObservableObject {
         self.pixels = pixels
         self.events = events
         self.project = project
+        keptWork = project
         look = StudioLook(project: project, events: events, duration: duration, pixels: pixels)
         player = AVPlayer(playerItem: AVPlayerItem(url: url))
         player.actionAtItemEnd = .pause
@@ -339,6 +376,15 @@ final class StudioModel: ObservableObject {
 
     var canUndo: Bool { !undone.isEmpty || (before.map { $0 != project } ?? false) }
     var canRedo: Bool { !redone.isEmpty }
+
+    /// Whether the work changed since it was opened or kept: what closing
+    /// the window without Save Video would lose.
+    var hasChanges: Bool { project != keptWork }
+
+    /// The work as it is now is kept, as Save Video keeps it.
+    func markKept() {
+        keptWork = project
+    }
 
     func undo() {
         end()

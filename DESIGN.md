@@ -1208,6 +1208,14 @@ apps.
 - **Search bar.** One field, a result count chip and close.
 - **Full windows** (Hide Part, Settings) for focused work. They are standard
   titled windows with Cancel and Done bound to Escape and Return.
+  - **Changes are not let go unasked** (`EditorChanges`). Hide Part, Draw on
+    Photo, Background and Studio ask before their close button, or another
+    picture or recording opened in the same window, lets changes go: an
+    alert, "Discard your changes?", that names the button that keeps them,
+    with Keep Editing (the default, Return) and Discard (destructive).
+    Cancel and Done ask nothing. The same picture opened again brings its
+    window forward as it was left. A recording just made waits while Studio
+    holds changes, with a done note, and opens once Studio is closed.
   - Hide Part (`HideEditor.swift`) is a resizable window of two columns,
     never smaller than 760 × 480, opening as large as the picture needs and
     at most 80% of the screen (`HidePartLayout`), so a tall page opens a
