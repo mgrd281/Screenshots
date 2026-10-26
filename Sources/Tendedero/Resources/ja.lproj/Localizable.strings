@@ -1106,6 +1106,14 @@
 "Covering…" = "隠しています…";
 "1 place covered" = "1 か所を隠しました";
 "%d places covered" = "%d か所を隠しました";
+"1 file covered" = "1 ファイルを隠しました";
+"%d files covered" = "%d ファイルを隠しました";
+"1 file with nothing to cover" = "隠すものがないファイル 1 件";
+"%d files with nothing to cover" = "隠すものがないファイル %d 件";
+"1 file not covered" = "隠せなかったファイル 1 件";
+"%d files not covered" = "隠せなかったファイル %d 件";
+"1 file stopped" = "停止したファイル 1 件";
+"%d files stopped" = "停止したファイル %d 件";
 "Nothing to cover" = "隠すものなし";
 "Locked with a password" = "パスワードで保護";
 "Over %d pages" = "%d ページ超";

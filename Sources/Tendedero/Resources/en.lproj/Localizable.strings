@@ -1108,6 +1108,14 @@
 "Covering…" = "Covering…";
 "1 place covered" = "1 place covered";
 "%d places covered" = "%d places covered";
+"1 file covered" = "1 file covered";
+"%d files covered" = "%d files covered";
+"1 file with nothing to cover" = "1 file with nothing to cover";
+"%d files with nothing to cover" = "%d files with nothing to cover";
+"1 file not covered" = "1 file not covered";
+"%d files not covered" = "%d files not covered";
+"1 file stopped" = "1 file stopped";
+"%d files stopped" = "%d files stopped";
 "Nothing to cover" = "Nothing to cover";
 "Locked with a password" = "Locked with a password";
 "Over %d pages" = "Over %d pages";

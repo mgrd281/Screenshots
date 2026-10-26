@@ -604,19 +604,25 @@ private struct CoverFilesView: View {
         case .done:
             let tally = model.tally
             HStack(spacing: 16) {
+                // Each count is said with what it counts, not as a bare number.
                 Label("\(tally.covered)", systemImage: "checkmark.shield.fill")
                     .foregroundStyle(.green)
                     .help(L("Covered"))
+                    .accessibilityLabel(Self.spoken(tally.covered, one: L("1 file covered"), many: L("%d files covered")))
                 Label("\(tally.nothing)", systemImage: "exclamationmark.circle.fill")
                     .foregroundStyle(.orange)
                     .help(L("Nothing to cover"))
+                    .accessibilityLabel(Self.spoken(tally.nothing, one: L("1 file with nothing to cover"),
+                                                    many: L("%d files with nothing to cover")))
                 Label("\(tally.failed)", systemImage: "xmark.octagon.fill")
                     .foregroundStyle(.red)
                     .help(L("Not covered"))
+                    .accessibilityLabel(Self.spoken(tally.failed, one: L("1 file not covered"), many: L("%d files not covered")))
                 if tally.stopped > 0 {
                     Label("\(tally.stopped)", systemImage: "minus.circle")
                         .foregroundStyle(.secondary)
                         .help(L("Stopped"))
+                        .accessibilityLabel(Self.spoken(tally.stopped, one: L("1 file stopped"), many: L("%d files stopped")))
                 }
                 Spacer()
                 if tally.nothing > 0 {
@@ -645,6 +651,11 @@ private struct CoverFilesView: View {
             }
         }
         return text
+    }
+
+    /// A count of files as VoiceOver says it: "12 files covered".
+    private static func spoken(_ n: Int, one: String, many: String) -> String {
+        n == 1 ? one : String(format: many, n)
     }
 }
 

@@ -1106,6 +1106,14 @@
 "Covering…" = "正在遮盖…";
 "1 place covered" = "已遮盖 1 处";
 "%d places covered" = "已遮盖 %d 处";
+"1 file covered" = "已遮盖 1 个文件";
+"%d files covered" = "已遮盖 %d 个文件";
+"1 file with nothing to cover" = "1 个文件无需遮盖";
+"%d files with nothing to cover" = "%d 个文件无需遮盖";
+"1 file not covered" = "1 个文件未遮盖";
+"%d files not covered" = "%d 个文件未遮盖";
+"1 file stopped" = "1 个文件已停止";
+"%d files stopped" = "%d 个文件已停止";
 "Nothing to cover" = "无需遮盖";
 "Locked with a password" = "受密码保护";
 "Over %d pages" = "超过 %d 页";

@@ -1108,6 +1108,14 @@
 "Covering…" = "Örtülür…";
 "1 place covered" = "1 yer örtüldü";
 "%d places covered" = "%d yer örtüldü";
+"1 file covered" = "1 fayl örtüldü";
+"%d files covered" = "%d fayl örtüldü";
+"1 file with nothing to cover" = "Örtüləcək heç nə olmayan 1 fayl";
+"%d files with nothing to cover" = "Örtüləcək heç nə olmayan %d fayl";
+"1 file not covered" = "1 fayl örtülmədi";
+"%d files not covered" = "%d fayl örtülmədi";
+"1 file stopped" = "1 fayl dayandırıldı";
+"%d files stopped" = "%d fayl dayandırıldı";
 "Nothing to cover" = "Örtüləcək heç nə yoxdur";
 "Locked with a password" = "Parol ilə kilidlənib";
 "Over %d pages" = "%d səhifədən çox";

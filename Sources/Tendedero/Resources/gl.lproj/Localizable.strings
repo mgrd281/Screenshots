@@ -1106,6 +1106,14 @@
 "Covering…" = "Tapando…";
 "1 place covered" = "1 lugar tapado";
 "%d places covered" = "%d lugares tapados";
+"1 file covered" = "1 ficheiro tapado";
+"%d files covered" = "%d ficheiros tapados";
+"1 file with nothing to cover" = "1 ficheiro sen nada que tapar";
+"%d files with nothing to cover" = "%d ficheiros sen nada que tapar";
+"1 file not covered" = "1 ficheiro sen tapar";
+"%d files not covered" = "%d ficheiros sen tapar";
+"1 file stopped" = "1 ficheiro detido";
+"%d files stopped" = "%d ficheiros detidos";
 "Nothing to cover" = "Nada que tapar";
 "Locked with a password" = "Protexido con contrasinal";
 "Over %d pages" = "Máis de %d páxinas";

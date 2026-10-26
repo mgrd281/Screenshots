@@ -1106,6 +1106,14 @@
 "Covering…" = "يجري التغطية…";
 "1 place covered" = "غُطّي مكان واحد";
 "%d places covered" = "غُطّي %d مكان";
+"1 file covered" = "ملف واحد مغطّى";
+"%d files covered" = "%d ملف مغطّى";
+"1 file with nothing to cover" = "ملف واحد لا شيء فيه للتغطية";
+"%d files with nothing to cover" = "%d ملف لا شيء فيه للتغطية";
+"1 file not covered" = "ملف واحد لم يُغطَّ";
+"%d files not covered" = "%d ملف لم يُغطَّ";
+"1 file stopped" = "ملف واحد أُوقف";
+"%d files stopped" = "%d ملف أُوقف";
 "Nothing to cover" = "لا شيء للتغطية";
 "Locked with a password" = "مقفل بكلمة سر";
 "Over %d pages" = "أكثر من %d صفحة";

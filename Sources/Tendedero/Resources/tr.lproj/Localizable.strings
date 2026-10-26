@@ -1106,6 +1106,14 @@
 "Covering…" = "Kapatılıyor…";
 "1 place covered" = "1 yer kapatıldı";
 "%d places covered" = "%d yer kapatıldı";
+"1 file covered" = "1 dosya kapatıldı";
+"%d files covered" = "%d dosya kapatıldı";
+"1 file with nothing to cover" = "Kapatılacak bir şey olmayan 1 dosya";
+"%d files with nothing to cover" = "Kapatılacak bir şey olmayan %d dosya";
+"1 file not covered" = "1 dosya kapatılamadı";
+"%d files not covered" = "%d dosya kapatılamadı";
+"1 file stopped" = "1 dosya durduruldu";
+"%d files stopped" = "%d dosya durduruldu";
 "Nothing to cover" = "Kapatılacak bir şey yok";
 "Locked with a password" = "Parolayla kilitli";
 "Over %d pages" = "%d sayfadan fazla";

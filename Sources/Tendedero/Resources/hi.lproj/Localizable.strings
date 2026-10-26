@@ -1108,6 +1108,14 @@
 "Covering…" = "ढका जा रहा है…";
 "1 place covered" = "1 जगह ढकी गई";
 "%d places covered" = "%d जगहें ढकी गईं";
+"1 file covered" = "1 फ़ाइल ढकी गई";
+"%d files covered" = "%d फ़ाइलें ढकी गईं";
+"1 file with nothing to cover" = "1 फ़ाइल जिसमें ढकने को कुछ नहीं";
+"%d files with nothing to cover" = "%d फ़ाइलें जिनमें ढकने को कुछ नहीं";
+"1 file not covered" = "1 फ़ाइल नहीं ढकी गई";
+"%d files not covered" = "%d फ़ाइलें नहीं ढकी गईं";
+"1 file stopped" = "1 फ़ाइल रोकी गई";
+"%d files stopped" = "%d फ़ाइलें रोकी गईं";
 "Nothing to cover" = "ढकने को कुछ नहीं";
 "Locked with a password" = "पासवर्ड से बंद";
 "Over %d pages" = "%d से ज़्यादा पेज";

@@ -1106,6 +1106,14 @@
 "Covering…" = "가리는 중…";
 "1 place covered" = "1곳 가림";
 "%d places covered" = "%d곳 가림";
+"1 file covered" = "파일 1개 가림";
+"%d files covered" = "파일 %d개 가림";
+"1 file with nothing to cover" = "가릴 것이 없는 파일 1개";
+"%d files with nothing to cover" = "가릴 것이 없는 파일 %d개";
+"1 file not covered" = "가리지 못한 파일 1개";
+"%d files not covered" = "가리지 못한 파일 %d개";
+"1 file stopped" = "중지된 파일 1개";
+"%d files stopped" = "중지된 파일 %d개";
 "Nothing to cover" = "가릴 것 없음";
 "Locked with a password" = "암호로 잠김";
 "Over %d pages" = "%d페이지 초과";

@@ -1106,6 +1106,14 @@
 "Covering…" = "Masquage…";
 "1 place covered" = "1 endroit masqué";
 "%d places covered" = "%d endroits masqués";
+"1 file covered" = "1 fichier masqué";
+"%d files covered" = "%d fichiers masqués";
+"1 file with nothing to cover" = "1 fichier sans rien à masquer";
+"%d files with nothing to cover" = "%d fichiers sans rien à masquer";
+"1 file not covered" = "1 fichier non masqué";
+"%d files not covered" = "%d fichiers non masqués";
+"1 file stopped" = "1 fichier arrêté";
+"%d files stopped" = "%d fichiers arrêtés";
 "Nothing to cover" = "Rien à masquer";
 "Locked with a password" = "Protégé par un mot de passe";
 "Over %d pages" = "Plus de %d pages";

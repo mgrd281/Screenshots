@@ -1106,6 +1106,14 @@
 "Covering…" = "Wird verdeckt …";
 "1 place covered" = "1 Stelle verdeckt";
 "%d places covered" = "%d Stellen verdeckt";
+"1 file covered" = "1 Datei verdeckt";
+"%d files covered" = "%d Dateien verdeckt";
+"1 file with nothing to cover" = "1 Datei ohne etwas zu verdecken";
+"%d files with nothing to cover" = "%d Dateien ohne etwas zu verdecken";
+"1 file not covered" = "1 Datei nicht verdeckt";
+"%d files not covered" = "%d Dateien nicht verdeckt";
+"1 file stopped" = "1 Datei angehalten";
+"%d files stopped" = "%d Dateien angehalten";
 "Nothing to cover" = "Nichts zu verdecken";
 "Locked with a password" = "Mit Passwort geschützt";
 "Over %d pages" = "Über %d Seiten";
