@@ -268,7 +268,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let safety = ScreenshotWatcher(
                 folder: ScreenshotWatcher.desktop,
                 onNew: { [weak self] url in
-                    log.notice("Screenshot landed on the Desktop despite inbox mode: \(url.lastPathComponent, privacy: .public)")
+                    log.notice("Screenshot landed on the Desktop despite inbox mode: \(url.lastPathComponent, privacy: .private)")
                     self?.hangCapture(url)
                 },
                 onChange: { [weak self] in self?.line.prune() })

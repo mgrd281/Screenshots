@@ -375,7 +375,7 @@ final class Workspace: ObservableObject {
                 self.rebased(from, to)
                 if self.publish() { self.onChange() }
             } catch {
-                log.error("Could not rename a category folder: \(error.localizedDescription, privacy: .public)")
+                log.error("Could not rename a category folder: \(error.localizedDescription, privacy: .private)")
                 Notice.show(L("Could not rename the folder."))
                 self.objectWillChange.send()
             }
@@ -515,7 +515,7 @@ final class Workspace: ObservableObject {
                 }
                 if self.publish() { self.onChange() }
             } catch {
-                log.error("Could not rename the workspace: \(error.localizedDescription, privacy: .public)")
+                log.error("Could not rename the workspace: \(error.localizedDescription, privacy: .private)")
                 Notice.show(L("Could not rename the folder."))
                 self.objectWillChange.send()
             }
@@ -570,7 +570,7 @@ final class Workspace: ObservableObject {
                 self.settleSoon(after: 0)
                 Notice.show(String(format: L("The workspace is now in %@."), Folders.placeName(to)), done: true)
             } catch {
-                log.error("Could not move the workspace: \(error.localizedDescription, privacy: .public)")
+                log.error("Could not move the workspace: \(error.localizedDescription, privacy: .private)")
                 Notice.show(L("Could not move the workspace. Nothing was changed."))
             }
         }

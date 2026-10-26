@@ -216,7 +216,7 @@ final class WorkspaceLibraryModel: ObservableObject {
             Workspace.shared.relocated(entry.url, target)
             reload()
         } catch {
-            log.error("Could not rename a screenshot: \(error.localizedDescription, privacy: .public)")
+            log.error("Could not rename a screenshot: \(error.localizedDescription, privacy: .private)")
             Notice.show(L("Could not rename the screenshot."))
         }
     }

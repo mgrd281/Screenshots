@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 /// Watches the folder macOS saves screenshots to and reports new ones.
 /// Tendedero never takes screenshots itself: you keep your usual shortcut
@@ -92,7 +93,7 @@ final class ScreenshotWatcher {
             return
         }
         guard fd >= 0 else {
-            NSLog("Snapfly: cannot watch \(folder.path)")
+            log.error("Could not watch \(self.folder.path, privacy: .private)")
             return
         }
         let src = DispatchSource.makeFileSystemObjectSource(

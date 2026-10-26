@@ -56,7 +56,7 @@ enum Downloads {
                 try FileManager.default.copyItem(at: made, to: target)
                 saved.append(target)
             } catch {
-                log.error("Could not download a photo: \(error.localizedDescription, privacy: .public)")
+                log.error("Could not download a photo: \(error.localizedDescription, privacy: .private)")
             }
         }
         switch saved.count {

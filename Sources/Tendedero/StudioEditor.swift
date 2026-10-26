@@ -116,7 +116,7 @@ final class StudioEditor: NSObject, NSWindowDelegate {
                     model.exporting = nil
                 }
                 if !stop.isSet {
-                    log.error("Could not save a Studio video: \(error.localizedDescription, privacy: .public)")
+                    log.error("Could not save a Studio video: \(error.localizedDescription, privacy: .private)")
                     Notice.show(L("Could not save the video."))
                 }
             }

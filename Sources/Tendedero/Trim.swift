@@ -40,7 +40,7 @@ final class Trim: NSObject, NSWindowDelegate {
             .receive(on: RunLoop.main)
             .sink { [weak self, weak playerView] status in
                 guard let self, let playerView, status == .readyToPlay, playerView.canBeginTrimming else {
-                    log.error("Could not trim \(url.lastPathComponent, privacy: .public)")
+                    log.error("Could not trim \(url.lastPathComponent, privacy: .private)")
                     return
                 }
                 playerView.beginTrimming { result in
@@ -87,12 +87,12 @@ final class Trim: NSObject, NSWindowDelegate {
             await export.export()
             if export.status == .completed,
                (try? FileManager.default.replaceItemAt(target, withItemAt: temp)) != nil {
-                log.notice("Trimmed \(target.lastPathComponent, privacy: .public)")
+                log.notice("Trimmed \(target.lastPathComponent, privacy: .private)")
                 // Studio's zooms, marks and clicks move with the new start.
                 StudioStore.trimmed(target, from: start.seconds, keeping: CMTimeSubtract(end, start).seconds)
                 onSaved(target)
             } else {
-                log.error("Could not trim \(target.lastPathComponent, privacy: .public): \(export.error?.localizedDescription ?? "", privacy: .public)")
+                log.error("Could not trim \(target.lastPathComponent, privacy: .private): \(export.error?.localizedDescription ?? "", privacy: .private)")
                 try? FileManager.default.removeItem(at: temp)
                 Notice.show(L("Could not trim the recording."))
             }

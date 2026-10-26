@@ -325,7 +325,7 @@ final class Line: ObservableObject {
                     try FileManager.default.moveItem(at: trashed, to: target)
                     urls.append(target)
                 } catch {
-                    log.error("Could not take \(trashed.lastPathComponent, privacy: .public) out of the Trash: \(error.localizedDescription, privacy: .public)")
+                    log.error("Could not take \(trashed.lastPathComponent, privacy: .private) out of the Trash: \(error.localizedDescription, privacy: .private)")
                     lost = true
                 }
             } else if FileManager.default.fileExists(atPath: way.url.path) {
@@ -1011,12 +1011,12 @@ final class Line: ObservableObject {
         do {
             var resulting: NSURL?
             try FileManager.default.trashItem(at: item.url, resultingItemURL: &resulting)
-            log.notice("Trashed \(item.url.lastPathComponent, privacy: .public)")
+            log.notice("Trashed \(item.url.lastPathComponent, privacy: .private)")
             if soundOn && !quietly { Line.trashSound?.play() }
             drop(id, quietly: true)
             return (resulting as URL?) ?? item.url
         } catch {
-            log.error("Could not trash \(item.url.path, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            log.error("Could not trash \(item.url.path, privacy: .private): \(error.localizedDescription, privacy: .private)")
             if !quietly { Notice.show(L("Could not move it to the Trash.")) }
             return nil
         }
@@ -1133,7 +1133,7 @@ final class Line: ObservableObject {
             drop(id, quietly: true)
             Notice.saved(target)
         } catch {
-            log.error("Could not save to Desktop: \(error.localizedDescription, privacy: .public)")
+            log.error("Could not save to Desktop: \(error.localizedDescription, privacy: .private)")
             Notice.show(L("Could not save it to the Desktop."))
         }
     }
@@ -1469,7 +1469,7 @@ final class Line: ObservableObject {
                     try FileManager.default.copyItem(at: made, to: target)
                     Notice.savedCopy(target)
                 } catch {
-                    log.error("Could not save a copy: \(error.localizedDescription, privacy: .public)")
+                    log.error("Could not save a copy: \(error.localizedDescription, privacy: .private)")
                     Notice.show(L("Could not save the copy."))
                 }
             }
