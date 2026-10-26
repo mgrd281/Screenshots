@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 from urllib.parse import quote, urlparse
 
-from content import AIRMAIL, DOWNLOAD, EMAIL, LANGS, MAKER, REPO, SITE_URL, TEXT
+from content import AIRMAIL, DOWNLOAD, EMAIL, LANGS, MAKER, PRIVACY_UPDATED, REPO, SITE_URL, TEXT
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "_site"
@@ -649,7 +649,7 @@ def story_scene(lang, kind):
                  'stroke="#1d1d1f" stroke-width="1.4" stroke-linecap="round"/></svg>')
         inner = (f'{window}<span class="sc-sel"></span><span class="sc-flash"></span>'
                  f'<span class="sc-cross">{cross}</span>'
-                 '<span class="sc-keys" dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span>')
+                 '<span class="sc-keys"><span class="sc-keys-row" dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span></span>')
     elif kind == "hang":
         stamp = scene_stamp(230, 42, 156, "-2deg", art_invoice(lang, "story-hang", covered=False))
         inner = f'<div class="sc-line">{scene_rope()}{stamp}</div>'
@@ -1414,7 +1414,10 @@ def section_close(lang):
 </section>"""
 
 
-NEW_PARTS_LANGS = ("de",)
+# The languages that show the newest parts: the story, the short words over
+# the titles, the question glyphs and the clean ground. All three follow
+# together now, at the owner's request.
+NEW_PARTS_LANGS = ("en", "de", "ar")
 
 
 def home(lang):
@@ -1442,7 +1445,7 @@ def doc_head(lang, title, extra=""):
 
 def privacy(lang):
     t = TEXT[lang]
-    updated = f'<p class="muted">{esc(t["updated_label"])}: <time datetime="2026-10-15">{esc(t["updated"])}</time></p>'
+    updated = f'<p class="muted">{esc(t["updated_label"])}: <time datetime="{PRIVACY_UPDATED}">{esc(t["updated"])}</time></p>'
     sections = "\n".join(f'<section><h2>{esc(h)}</h2>{body}</section>' for h, body in t["privacy"])
     main = f"""<article class="doc wrap narrow">
   {doc_head(lang, t["privacy_title"], updated)}

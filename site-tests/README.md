@@ -23,7 +23,13 @@ phone sizes:
   look its band stands still.
 - with a mouse, each look and brand chip takes a click 24 pt tall (the
   target reaches past its cell);
-- after photos are sent into the chat, the page's ids are still unique.
+- after photos are sent into the chat, the page's ids are still unique;
+- the newest parts in every language: how a screenshot travels, the short
+  word over each title, the clean ground and the support page's question
+  glyphs, in English and Arabic in their own words; the story's moments
+  play once as they come into view, or show how they end with Reduce
+  Motion; and in Arabic the story and the glyphs read from the right, the
+  keys ⌃⌥S still left to right.
 
 ## Running them
 

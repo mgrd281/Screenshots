@@ -100,11 +100,14 @@ the website's footer. Both stay.
     publishes it from `main` on GitHub Pages.
   - Words live in `website/content.py`. Labels the app shows come from its
     `Localizable.strings`, so change them there.
-  - **For now, site edits are German only** (the owner's request). Words in
-    `website/content.py` change in `de` alone. The newest parts (the scroll
-    story and the question glyphs) show only in the languages listed in
-    `NEW_PARTS_LANGS` in `build.py`, which is German. English and Arabic stay
-    as they were until the owner says the others follow.
+  - **All three languages follow together** (the owner's decision, October
+    2026, after a time of German-only edits). A change to the words in
+    `website/content.py` is made in `en`, `de` and `ar` alike, each in its
+    own natural words, with the app's own labels in that language. The
+    newest parts (the scroll story, the short words over the titles, the
+    question glyphs and the clean ground) show in every language listed in
+    `NEW_PARTS_LANGS` in `build.py`, which is all three. Arabic reads right
+    to left: check new parts there too, in both looks.
   - System fonts only, and nothing loaded from another host.
   - `vercel.json` builds the same site on Vercel. `SNAPFLY_SITE_URL` (ending in
     a slash) sets the address the pages point to; set it to the custom domain.
@@ -127,8 +130,8 @@ the website's footer. Both stay.
       type, cards dealt onto the line and a band of the app's words.
     - The owner asked to keep all three. A change to shared parts must hold
       in every look; check all three.
-    - In German the Mac desktop look takes the clean ground
-      (`static/clean.css`, linked only for `NEW_PARTS_LANGS`): the theme's
+    - The Mac desktop look takes the clean ground
+      (`static/clean.css`, linked for `NEW_PARTS_LANGS`): the theme's
       colour in the first view and the closing call, clean sections in
       ink between, a short word over each title. See "The clean ground"
       in `DESIGN.md`.

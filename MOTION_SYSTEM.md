@@ -331,7 +331,7 @@ has no half-mixed frames.
 ### D. Scroll storytelling
 
 Restrained: things arrive once as they come into view (ships today). The
-"how a screenshot travels" section (ships today, German only for now) follows one screenshot
+"how a screenshot travels" section (ships today, in all three languages) follows one screenshot
 through five beats, each on a small Mac screen, each played once and never
 scrubbed, when three quarters of its screen is in view above the window's
 bottom quarter, so the next one waits for the eye:

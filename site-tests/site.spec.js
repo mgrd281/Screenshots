@@ -376,60 +376,132 @@ test("every one of the eight line styles can be picked and shows its holder", as
   }).toBe(true);
 });
 
+// The newest parts (the story, the short words over the titles, the question
+// glyphs and the clean ground) show in all three languages, which follow
+// together (NEW_PARTS_LANGS in build.py).
+for (const [dir, lang] of languages) {
+  test(`${lang}: the story, the short words and the clean ground are there`, async ({ page }) => {
+    await page.goto(dir, { waitUntil: "networkidle" });
+    await expect(page.locator('link[rel="stylesheet"][href$="assets/clean.css"]')).toHaveCount(1);
+    await expect(page.locator("[data-story] .beat")).toHaveCount(5);
+    // The menu bar's Features leads to the story.
+    await expect(page.locator("#features")).toHaveClass(/\bstory\b/);
+    // A short word over the title of every section but the privacy band.
+    await expect(page.locator(".section .copy > .eyebrow")).toHaveCount(9);
+    await expect(page.locator(".section.story .eyebrow")).toBeVisible();
+    // Sections between the first view and the close stand on a clean ground.
+    expect(await page.locator(".section.send").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgb(255, 255, 255)");
+    // The bold look keeps its titles without them.
+    await page.locator('[data-look-pick="bold"]').click();
+    await expect.poll(() => lookOf(page)).toBe("bold");
+    await expect(page.locator(".section.story .eyebrow")).toBeHidden();
+  });
+}
+
+// English and Arabic say the new parts in their own words, not in German.
+test("the new parts are translated, not German", async ({ page }) => {
+  const words = async (dir) => {
+    await page.goto(dir, { waitUntil: "networkidle" });
+    return page.locator(".eyebrow, #story-h, .beat-words h3, .beat-words p").allTextContents();
+  };
+  const german = await words("de/");
+  for (const dir of ["", "ar/"]) {
+    const own = await words(dir);
+    expect(own.length, dir || "en").toBe(german.length);
+    expect(own.filter((w) => german.includes(w)), dir || "en").toEqual([]);
+  }
+});
+
 // How a screenshot travels: five moments, each a small screen that waits at
 // its first frame and plays once when it is well in view; the ones further
 // down wait for the eye to get there.
-test("the story's moments each play once as they come into view", async ({ page }) => {
-  await page.goto("de/", { waitUntil: "networkidle" });
-  const order = await page.evaluate(() => [...document.querySelectorAll("main > section")].map((s) => s.classList[1] || s.classList[0]));
-  expect(order.slice(1, 4), "first after the first view, then the desktop to try and sending").toEqual(["story", "capture", "send"]);
-  const story = page.locator("[data-story]");
-  await expect(story).toHaveClass(/staged/);
-  const beats = story.locator(".beat");
-  await expect(beats).toHaveCount(5);
-  const stamp = page.locator(".sc-hang .sc-peg");
-  expect(await stamp.evaluate((e) => getComputedStyle(e).opacity), "waits at its first frame").toBe("0");
-  await page.locator(".sc-hang").evaluate((e) => e.scrollIntoView({ block: "center", behavior: "instant" }));
-  await expect(beats.nth(1)).toHaveClass(/play/);
-  await expect.poll(() => stamp.evaluate((e) => getComputedStyle(e).opacity), { timeout: 4000 }).toBe("1");
-  await expect(beats.nth(4)).not.toHaveClass(/play/);
-  // Each scene keeps to its column, scaled as a whole.
-  const fits = await page.locator(".scene-fit").evaluateAll((all) => all.map((fit) => {
-    const box = fit.getBoundingClientRect(), screen = fit.querySelector(".sc-screen").getBoundingClientRect();
-    return Math.abs(box.width - screen.width) < 1 && Math.abs(box.height - screen.height) < 1;
-  }));
-  expect(fits).toEqual([true, true, true, true, true]);
-});
+for (const [dir, lang] of languages) {
+  test(`${lang}: the story's moments each play once as they come into view`, async ({ page }) => {
+    await page.goto(dir, { waitUntil: "networkidle" });
+    const order = await page.evaluate(() => [...document.querySelectorAll("main > section")].map((s) => s.classList[1] || s.classList[0]));
+    expect(order.slice(1, 4), "first after the first view, then the desktop to try and sending").toEqual(["story", "capture", "send"]);
+    const story = page.locator("[data-story]");
+    await expect(story).toHaveClass(/staged/);
+    const beats = story.locator(".beat");
+    await expect(beats).toHaveCount(5);
+    const stamp = page.locator(".sc-hang .sc-peg");
+    expect(await stamp.evaluate((e) => getComputedStyle(e).opacity), "waits at its first frame").toBe("0");
+    await page.locator(".sc-hang").evaluate((e) => e.scrollIntoView({ block: "center", behavior: "instant" }));
+    await expect(beats.nth(1)).toHaveClass(/play/);
+    await expect.poll(() => stamp.evaluate((e) => getComputedStyle(e).opacity), { timeout: 4000 }).toBe("1");
+    await expect(beats.nth(4)).not.toHaveClass(/play/);
+    // Each scene keeps to its column, scaled as a whole.
+    const fits = await page.locator(".scene-fit").evaluateAll((all) => all.map((fit) => {
+      const box = fit.getBoundingClientRect(), screen = fit.querySelector(".sc-screen").getBoundingClientRect();
+      return Math.abs(box.width - screen.width) < 1 && Math.abs(box.height - screen.height) < 1;
+    }));
+    expect(fits).toEqual([true, true, true, true, true]);
+  });
 
-test("with Reduce Motion the story shows how each moment ends", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("de/", { waitUntil: "networkidle" });
-  await expect(page.locator("[data-story]")).not.toHaveClass(/staged/);
-  const opacity = (selector) => page.locator(selector).evaluate((e) => getComputedStyle(e).opacity);
-  expect(await opacity(".sc-hang .sc-peg")).toBe("1");
-  expect(await opacity(".sc-cover .badge-lock")).toBe("1");
-  expect(await opacity(".sc-fly .sc-flier")).toBe("0");
-  expect(await opacity(".sc-fly .sc-img")).toBe("1");
-  expect(await page.locator(".sc-clear .sc-line").evaluate((e) => getComputedStyle(e).transform)).not.toBe("none");
-});
+  test(`${lang}: with Reduce Motion the story shows how each moment ends`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(dir, { waitUntil: "networkidle" });
+    await expect(page.locator("[data-story]")).not.toHaveClass(/staged/);
+    const opacity = (selector) => page.locator(selector).evaluate((e) => getComputedStyle(e).opacity);
+    expect(await opacity(".sc-hang .sc-peg")).toBe("1");
+    expect(await opacity(".sc-cover .badge-lock")).toBe("1");
+    expect(await opacity(".sc-fly .sc-flier")).toBe("0");
+    expect(await opacity(".sc-fly .sc-img")).toBe("1");
+    expect(await page.locator(".sc-clear .sc-line").evaluate((e) => getComputedStyle(e).transform)).not.toBe("none");
+  });
+}
 
-// Every question on the support page leads with its own glyph.
-test("every question on the support page has its glyph", async ({ page }) => {
-  for (const dir of ["de/"]) {
+// The story reads from the reading start: in Arabic everything in it is
+// mirrored but the keys, which read left to right in every language.
+for (const [dir, lang, direction] of [["", "en", "ltr"], ["ar/", "ar", "rtl"]]) {
+  test(`${lang}: the story reads from the ${direction === "rtl" ? "right" : "left"}`, async ({ page }, info) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(dir, { waitUntil: "networkidle" });
+    const rtl = direction === "rtl";
+    const boxes = await page.evaluate(() => {
+      const box = (selector) => {
+        const r = document.querySelector(selector).getBoundingClientRect();
+        return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, mid: r.left + r.width / 2 };
+      };
+      return {
+        words: box(".beat:first-child .beat-words"), art: box(".beat:first-child .beat-art"),
+        screen: box(".sc-take .sc-screen"), keys: box(".sc-take .sc-keys"), cross: box(".sc-take .sc-cross"),
+        first: box(".sc-take .sc-keys kbd:first-child"), last: box(".sc-take .sc-keys kbd:last-child"),
+        fly: box(".sc-fly .sc-screen"), chat: box(".sc-fly .sc-chat"),
+      };
+    });
+    // The keys sit at the reading start and the drag ends at the other side,
+    // clear of them; ⌃ comes first, on the left.
+    expect(boxes.keys.mid > boxes.screen.mid, "keys at the reading start").toBe(rtl);
+    expect(boxes.cross.mid > boxes.screen.mid, "drag ends at the reading end").toBe(!rtl);
+    expect(rtl ? boxes.cross.right <= boxes.keys.left : boxes.keys.right <= boxes.cross.left, "drag's end clear of the keys").toBe(true);
+    expect(boxes.first.left).toBeLessThan(boxes.last.left);
+    // The chat it flies into sits toward the reading end.
+    expect(boxes.chat.mid > boxes.fly.mid, "chat at the reading end").toBe(!rtl);
+    // The first moment's words lead: beside the screen on a wide window,
+    // over it on a phone.
+    if (info.project.name === "desktop") expect(rtl ? boxes.words.left >= boxes.art.right : boxes.words.right <= boxes.art.left).toBe(true);
+    else expect(boxes.words.bottom).toBeLessThanOrEqual(boxes.art.top + 1);
+  });
+}
+
+// Every question on the support page leads with its own glyph, at the
+// reading start; the ones that point toward the reading end turn round in
+// Arabic.
+for (const [dir, lang, direction] of languages) {
+  test(`${lang}: every question on the support page has its glyph`, async ({ page }) => {
     await page.goto(dir + "support.html", { waitUntil: "networkidle" });
     const questions = await page.locator(".faq").count();
     expect(questions).toBeGreaterThan(10);
     expect(await page.locator(".faq summary > svg.faq-icon").count()).toBe(questions);
-  }
-});
-
-// The newest parts of the site are German only for now (NEW_PARTS_LANGS in
-// build.py); English and Arabic keep their pages as they were.
-test("the story and the question glyphs are German for now", async ({ page }) => {
-  for (const dir of ["", "ar/"]) {
-    await page.goto(dir, { waitUntil: "networkidle" });
-    await expect(page.locator("[data-story]")).toHaveCount(0);
-    await page.goto(dir + "support.html", { waitUntil: "networkidle" });
-    await expect(page.locator(".faq-icon")).toHaveCount(0);
-  }
-});
+    const first = await page.locator(".faq").first().evaluate((faq) => {
+      const icon = faq.querySelector(".faq-icon").getBoundingClientRect(), words = faq.querySelector(".faq-q").getBoundingClientRect();
+      return { iconLeft: icon.left, iconRight: icon.right, wordsLeft: words.left, wordsRight: words.right };
+    });
+    if (direction === "rtl") expect(first.iconLeft).toBeGreaterThanOrEqual(first.wordsRight);
+    else expect(first.iconRight).toBeLessThanOrEqual(first.wordsLeft);
+    const turned = await page.locator(".faq-icon.turn").evaluateAll((all) => all.map((i) => getComputedStyle(i).transform));
+    expect(turned.length).toBe(2);
+    for (const t of turned) expect(t).toBe(direction === "rtl" ? "matrix(-1, 0, 0, 1, 0, 0)" : "none");
+  });
+}
