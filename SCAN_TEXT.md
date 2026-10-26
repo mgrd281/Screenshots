@@ -3,7 +3,8 @@
 What cleaning does to small grey print and to an umlaut's dots, what was
 changed, the guard that keeps what a line says, and what is verified. Parts A
 and B of the brief "Schrift" (October 2026); part B is built in stages
-(below), part C ("Neu gesetzt") is not built.
+(below), part C ("Neu gesetzt") is not built. Last, Reading: the text in
+reading order, as Text in Save and Share and in the PDF, in every script.
 
 Everything here is measured on made-up letters. No real letter, name or
 health detail is in a test, a picture or a log.
@@ -504,3 +505,145 @@ any printed page without private details) in each of these:
 
 For each, say whether the hint was right and how long it took from the
 picture to the cleaned page.
+
+## Reading: the text in order, in every script
+
+What a scan says, as a person reads it: copied, kept as a TXT file, heard,
+and found in the PDF. October 2026.
+
+### What was wrong
+
+- The lines came in Vision's order, top to bottom across the whole page:
+  two columns were read across each other, a letterhead's side column (the
+  hours, the bank) broke into the letter, and a table's cells came one
+  under another.
+- Every line of print was a line of text: a paragraph came apart at each
+  line's end, and a word broken there stayed broken ("Bildschirm-",
+  "foto").
+- The PDF's invisible words were in Helvetica's Western encoding. A word
+  with a Turkish ğ, and every word in Arabic, Greek, Cyrillic, Chinese,
+  Japanese or Korean, was left out, so it could not be found.
+
+### Reading order (`ScanReading`)
+
+The page is cut as a reader takes it in, by the gaps between its lines,
+measured in the line's own height (the page's width to height kept):
+
+1. **Bands first**, across the page, where the gap between two lines is
+   wider than 0.6 of a line, or than one and a half times the usual space
+   between lines plus a quarter of a line. Only spaces under one and a half
+   lines count as usual, so the space between blocks does not widen it, and
+   1.5-spaced paragraphs stay whole.
+2. **Then columns**, down a band, where a gap is wider than 1.2 lines.
+3. Columns side by side are **a table** when at least 75 % of their rows
+   reach into two or more of them, no column is prose (four lines or more
+   with half of them 30 characters or longer) and no column after the
+   first names its own value ("Datum: 14.10.2026", as the details beside a
+   DIN 5008 address do). A table is read row by row, its cells parted by a
+   tab. A single row across columns is one line.
+4. What is left is cut into **paragraphs**: a new one where the print's
+   size changes more than 1.3 times, or after a short line ending in ".",
+   "!" or "?". A paragraph's lines run on when it is at least 0.45 of the
+   page wide or half its lines hold 32 characters, and 70 % of its lines
+   before the last fill 0.7 of its width; otherwise (an address, a list)
+   each line stays a line. One or two lines at least 1.3 times as tall as
+   the usual line are **a heading**.
+5. A page mostly in Arabic or Hebrew letters is read **from the right**:
+   its columns right to left, and so a table's cells.
+
+A word broken at a line's end is **joined** where the lines run on:
+"Bildschirm-" and "foto" are "Bildschirmfoto". A part of two letters keeps
+its hyphen ("E-" and "mail" are "E-mail"), a part going on with a capital
+keeps it too ("E-Mail"), and one before "und", "oder", "bis" and the like
+keeps its space ("Haus- und Hofladen").
+
+### Covers
+
+Nothing under a cover is read. A word more than 5 % under a cover is
+dropped, its line split there, and each cover is a mark of its own at its
+place: "███" in the text, "verdeckt" read aloud. So the text says where
+something is covered and nothing of what. A cover taller than two and a
+half lines covers a picture (a photo, a signature) and is left out. With
+covers, the text is read again on the covered pages; what was read on the
+original is never used. Without covers, it is what was read on the cleaned
+pages, under the warning.
+
+### The PDF in every script (`ScanFont`)
+
+The words are set in a font made for them, written byte by byte: TrueType,
+624 bytes, two glyphs (an empty .notdef and a glyph without outlines),
+each half an em wide. The PDF names it a Type0 font with Identity-H, its
+glyphs a CIDFontType2 whose CIDToGIDMap draws every code with glyph 1, and
+a ToUnicode map in which each two-byte code is the UTF-16 unit it stands
+for (248 ranges, a hundred at most at a time, the surrogate halves left
+out). Each word is written as its UTF-16 units, invisible (3 Tr), its size
+its box's height, its baseline a fifth of that above the box's foot, and
+stretched (Tz) to the box's width. Only a word with a character beyond
+those units (an emoji) or a control character is left out of the text; it
+stays in the picture.
+
+**Right to left.** An Arabic or Hebrew word is written in the order it
+stands on the page from the left (`ScanPDF.visual`: the Unicode
+bidirectional algorithm for a right-to-left line, its letters from the
+left, a number or Latin letters in it reading on as they do), as most PDFs
+hold such text and readers turn it back. Written in reading order, Apple's
+PDFKit, which the iPhone's Files and the Mac's Preview read with, read it
+backwards and did not find it (CI, October 2026). On Linux, pdftotext
+(poppler) and pypdf 6.17.0 read such words right; pypdf reads a two-word
+line ("شكرا جزيلا") in order too. pdfminer.six, which turns nothing round,
+shows them backwards. Latin, Greek, Cyrillic, Chinese, Japanese and Korean
+read alike in every reader tried.
+
+### On the iPhone
+
+- **Save and Share** has a third format, Text ("TXT, 1 file"): Copy puts
+  the text on the clipboard, Save keeps a .txt in Files, Share hands on a
+  .txt file. Show Text opens it whole first.
+- **Review's menu** has Show Text, for the page open, covered.
+- **The text** (`ScanReadingSheet`): page by page, a heading larger, a
+  table a grid, every word to select; Copy, Read Aloud and Share. Read
+  Aloud is the iPhone's own voice (`AVSpeechSynthesizer`) for the language
+  NaturalLanguage finds in the text, a cover read out as "verdeckt",
+  other sound turned down while it speaks. Without covers, the warning
+  comes first.
+
+### Results
+
+- **Linux**, `swift test` on the scan's files in a package outside the
+  repository: `ScanReadingTests` 18, `ScanPDFTests` 14 and `ScanFontTests`
+  5, all passing, with a check of the lab's own that writes a sample PDF.
+- **The font**: fontTools 4.53.1 opens all eleven of its tables: two
+  glyphs, both 500 wide.
+- **A sample PDF** with "Rechnung", "Straße", "Grüße", "Doğan", "İstanbul",
+  "مرحبا", "بالعالم", "Москва", "東京都" and "서울": pdftotext, pypdf and
+  pdfminer.six find every word. A second with right-to-left lines (Arabic
+  and Hebrew words, two to a line, a price beside a word, a year, a word
+  in brackets): pdftotext and pypdf read every word right but one that
+  holds letters and a number ("رقم:12"), whose colon pdftotext puts after
+  the number and whose number pypdf leaves out; pdfminer.six reads them
+  backwards, as said above.
+- **Strings**: `check-strings.swift` passes in all 13 languages.
+
+### Checked on the Mac in CI, not here
+
+- PDFKit finds every script, and a right-to-left word by search
+  (`testPDFKitFindsTheWordsInEveryScript`); Core Graphics and Core Text
+  open the font.
+- Vision reads the made-up invoice in order, its items row by row, each
+  with its price, and with the customer covered, a mark where the name was
+  and the name nowhere (`testTheInvoiceReadsInOrderRowByRow`).
+- On the simulator (Scan Checks): the Text format and the text from Save
+  and Share and from Review, a bar where a cover is and never what it
+  hides, and without covers the warning first (`ScanUITests`); frames of
+  the text in light and dark, Arabic and English, at the largest text
+  sizes, on the newest iPhone and the smallest.
+
+### Not verified
+
+- Read Aloud on an iPhone: the voice, its language, other sound turned
+  down.
+- VoiceOver over the text.
+- How PDFKit orders the words of an Arabic line: the check prints it to
+  the log ("PDFKIT LINE") and asserts each word, not their order. So
+  phrase search in right-to-left text is not verified.
+- Real documents: none, by rule. Everything here is made up.

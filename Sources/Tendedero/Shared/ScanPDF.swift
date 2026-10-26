@@ -2,12 +2,15 @@ import Foundation
 
 /// Scanned pages as one PDF to send or keep: each page a picture on an A4
 /// page (`ScanGeometry.layout`), or on a page of its own size, with, where asked, the words read on it laid
-/// invisibly over it, so they can be found and copied; and nothing said of
-/// who made it but "Snapfly", no title, author, dates or other metadata. It
-/// is written here byte by byte, so nothing else is added.
+/// invisibly over it in reading order, so they can be found and copied; and
+/// nothing said of who made it but "Snapfly", no title, author, dates or
+/// other metadata. It is written here byte by byte, so nothing else is added.
 ///
-/// The words are in Helvetica's Western encoding (WinAnsi), which every
-/// reader knows; a word with a letter outside it is left out of the text,
+/// The words are set in `ScanFont`, a font of one empty glyph, each
+/// character by its UTF-16 unit, with a map back to the characters, so they
+/// are found in every script: German, Turkish, Arabic, Chinese alike, a
+/// right-to-left word in the order it stands from the left (`visual`). A word
+/// with a character beyond those units (an emoji) is left out of the text,
 /// never written changed, and stays in the picture.
 enum ScanPDF {
     struct Page: Equatable {
@@ -49,20 +52,16 @@ enum ScanPDF {
     /// One PDF of the pages, in their order; nil without pages.
     static func make(_ pages: [Page]) -> Data? {
         guard !pages.isEmpty else { return nil }
-        let hasText = pages.contains { page in page.words.contains { encoded($0.text) != nil } }
-        // 1 the catalogue, 2 the pages, 3 what says who made it, 4 the font;
-        // then each page, its contents and its picture.
-        let first = hasText ? 5 : 4
+        let hasText = pages.contains { page in page.words.contains { units($0.text) != nil } }
+        // 1 the catalogue, 2 the pages, 3 what says who made it; with words,
+        // 4 to 9 their font; then each page, its contents and its picture.
+        let first = hasText ? 10 : 4
         var file = Writer(objects: first + pages.count * 3)
         file.add(1, "<< /Type /Catalog /Pages 2 0 R >>")
         let kids = pages.indices.map { "\(first + $0 * 3) 0 R" }.joined(separator: " ")
         file.add(2, "<< /Type /Pages /Kids [\(kids)] /Count \(pages.count) >>")
         file.add(3, "<< /Producer (Snapfly) >>")
-        if hasText {
-            let widths = (32...255).map { code -> String in String(width(of: UInt8(code))) }.joined(separator: " ")
-            file.add(4, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding "
-                + "/FirstChar 32 /LastChar 255 /Widths [\(widths)] >>")
-        }
+        if hasText { addFont(to: &file) }
         for (index, page) in pages.enumerated() {
             let number = first + index * 3
             let size = page.picture.size
@@ -95,6 +94,27 @@ enum ScanPDF {
         return file.finished()
     }
 
+    /// The words' font as objects 4 to 9: the font, its glyphs' font with
+    /// every code its own UTF-16 unit, the map back to the characters, the
+    /// font's description, which glyph each code is drawn with (the one
+    /// empty glyph), and the font file itself (`ScanFont`).
+    private static func addFont(to file: inout Writer) {
+        let name = ScanFont.name
+        file.add(4, "<< /Type /Font /Subtype /Type0 /BaseFont /\(name) /Encoding /Identity-H "
+            + "/DescendantFonts [5 0 R] /ToUnicode 6 0 R >>")
+        file.add(5, "<< /Type /Font /Subtype /CIDFontType2 /BaseFont /\(name) "
+            + "/CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> "
+            + "/FontDescriptor 7 0 R /DW \(ScanFont.advance) /CIDToGIDMap 8 0 R >>")
+        file.add(6, packed: Data(ScanFont.toUnicode.utf8))
+        file.add(7, "<< /Type /FontDescriptor /FontName /\(name) /Flags 5 "
+            + "/FontBBox [0 -\(ScanFont.descent) \(ScanFont.advance) \(ScanFont.ascent)] /ItalicAngle 0 "
+            + "/Ascent \(ScanFont.ascent) /Descent -\(ScanFont.descent) /CapHeight \(ScanFont.ascent) /StemV 80 "
+            + "/FontFile2 9 0 R >>")
+        // Every code to glyph 1, two bytes a code.
+        file.add(8, packed: Data([UInt8](repeating: 0, count: 0x20000).enumerated().map { $0.offset % 2 == 1 ? 1 : 0 }))
+        file.add(9, packed: ScanFont.file, "/Length1 \(ScanFont.file.count)")
+    }
+
     /// The file as it is written: numbered objects, then the table of where
     /// each starts, then the trailer that names the catalogue and the Producer.
     private struct Writer {
@@ -115,6 +135,16 @@ enum ScanPDF {
             body.append(bytes)
             body.append(Data("\nendstream".utf8))
             add(number, body)
+        }
+
+        /// A stream packed where it can be, else as it is.
+        mutating func add(_ number: Int, packed bytes: Data, _ dictionary: String = "") {
+            let head = dictionary.isEmpty ? "" : " " + dictionary
+            if let packed = ScanPDF.zlib(bytes) {
+                add(number, stream: "/Filter /FlateDecode" + head, packed)
+            } else {
+                add(number, stream: dictionary, bytes)
+            }
         }
 
         mutating func add(_ number: Int, _ body: Data) {
@@ -144,22 +174,24 @@ enum ScanPDF {
         var lines = ["q", "\(text(picture.width)) 0 0 \(text(picture.height)) \(text(picture.minX)) \(text(picture.minY)) cm",
                      "/Im0 Do", "Q"]
         let placed = page.words.compactMap { word -> String? in
-            guard let bytes = encoded(word.text) else { return nil }
-            let shown = bytes.reversed().drop { $0 == 0x20 }.reversed()
-            let units: Int = shown.reduce(0) { $0 + width(of: $1) }
+            guard let units = units(word.text) else { return nil }
+            // As the word stands from the left: a right-to-left word's space comes first.
+            let codes = visual(units)
+            let before = codes.prefix { $0 == 0x20 }.count
+            let shown = codes.count - before - codes.reversed().prefix { $0 == 0x20 }.count
             let left: CGFloat = picture.minX + word.box.minX * picture.width
             let bottom: CGFloat = picture.minY + word.box.minY * picture.height
             let across: CGFloat = word.box.width * picture.width, high: CGFloat = word.box.height * picture.height
-            let box = CGRect(x: left, y: bottom, width: across, height: high)
-            guard units > 0, box.width > 0, box.height > 0 else { return nil }
-            // Helvetica reaches 0.718 of its size up from the line and 0.207 down.
-            let size: CGFloat = box.height / 0.925
-            let natural: CGFloat = CGFloat(units) * size / 1000
-            let wanted: CGFloat = box.width / natural * 100
-            let stretch: CGFloat = min(max(wanted, 10), 1000)
-            let baseline: CGFloat = box.minY + 0.207 * size
-            let hex = bytes.map { String(format: "%02X", $0) }.joined()
-            return "/F1 \(text(size)) Tf \(text(stretch)) Tz 1 0 0 1 \(text(box.minX)) \(text(baseline)) Tm <\(hex)> Tj"
+            guard shown > 0, across > 0, high > 0 else { return nil }
+            // The font reaches 0.8 of its size up from the line and 0.2 down: the word's height is its size.
+            let size: CGFloat = high
+            let natural: CGFloat = CGFloat(shown * ScanFont.advance) * size / 1000
+            let stretch: CGFloat = min(max(across / natural * 100, 10), 1000)
+            // A space before the word stands left of its box.
+            let start: CGFloat = left - CGFloat(before * ScanFont.advance) * size / 1000 * stretch / 100
+            let baseline: CGFloat = bottom + CGFloat(ScanFont.descent) / 1000 * size
+            let hex = codes.map { String(format: "%04X", $0) }.joined()
+            return "/F1 \(text(size)) Tf \(text(stretch)) Tz 1 0 0 1 \(text(start)) \(text(baseline)) Tm <\(hex)> Tj"
         }
         if !placed.isEmpty {
             lines += ["BT", "3 Tr"] + placed + ["ET"]
@@ -169,66 +201,165 @@ enum ScanPDF {
 
     // MARK: Text
 
-    /// A word in the Western encoding, or nil when a letter of it is not there.
-    static func encoded(_ text: String) -> [UInt8]? {
-        var bytes: [UInt8] = []
+    /// A word as the font's codes, its UTF-16 units; nil when it is empty
+    /// or holds a character beyond them or a control character.
+    static func units(_ text: String) -> [UInt16]? {
+        guard !text.isEmpty else { return nil }
+        var out: [UInt16] = []
         for scalar in text.unicodeScalars {
-            let value = scalar.value
-            if (0x20...0x7E).contains(value) || (0xA0...0xFF).contains(value) {
-                bytes.append(UInt8(value))
-            } else if let code = windows[value] {
-                bytes.append(code)
-            } else {
-                return nil
+            guard scalar.value <= 0xFFFF, scalar.value >= 0x20, !(0x7F...0x9F).contains(scalar.value) else { return nil }
+            out.append(UInt16(scalar.value))
+        }
+        return out
+    }
+
+    // MARK: Right to left
+
+    /// A word's codes in the order they stand on the page from the left, as
+    /// most PDFs hold right-to-left text and readers turn it back (PDFKit,
+    /// poppler, pypdf): a word with Arabic or Hebrew letters as the Unicode
+    /// bidirectional algorithm lays it out in a right-to-left line, its
+    /// letters from the left, its numbers and Latin letters reading on as
+    /// they do; any other word as it is.
+    static func visual(_ units: [UInt16]) -> [UInt16] {
+        var kinds = units.map(direction(of:))
+        guard kinds.contains(where: { $0 == .right || $0 == .arabicLetter }) else { return units }
+        // A mark is of the kind of the letter it is on (W1).
+        for index in kinds.indices where kinds[index] == .mark {
+            kinds[index] = index == 0 ? .right : kinds[index - 1]
+        }
+        // A European number after Arabic letters is an Arabic one (W2);
+        // Arabic letters run right to left (W3).
+        var strong = Direction.right
+        for index in kinds.indices {
+            switch kinds[index] {
+            case .left, .right, .arabicLetter: strong = kinds[index]
+            case .european where strong == .arabicLetter: kinds[index] = .arabicNumber
+            default: break
+            }
+            if kinds[index] == .arabicLetter { kinds[index] = .right }
+        }
+        // One separator between two numbers of a kind is theirs (W4), a
+        // sign such as % or € beside a European number is its (W5), and the
+        // rest are neutral (W6).
+        for index in kinds.indices.dropFirst().dropLast() {
+            let previous = kinds[index - 1], next = kinds[index + 1]
+            switch kinds[index] {
+            case .separator where previous == .european && next == .european:
+                kinds[index] = .european
+            case .common where previous == next && (previous == .european || previous == .arabicNumber):
+                kinds[index] = previous
+            default:
+                break
             }
         }
-        return bytes.isEmpty ? nil : bytes
+        for index in kinds.indices where kinds[index] == .european {
+            var other = index - 1
+            while other >= 0, kinds[other] == .terminator {
+                kinds[other] = .european
+                other -= 1
+            }
+            other = index + 1
+            while other < kinds.count, kinds[other] == .terminator {
+                kinds[other] = .european
+                other += 1
+            }
+        }
+        kinds = kinds.map { [.separator, .terminator, .common].contains($0) ? .neutral : $0 }
+        // A European number after Latin letters runs as they do (W7).
+        strong = .right
+        for index in kinds.indices {
+            switch kinds[index] {
+            case .left, .right: strong = kinds[index]
+            case .european where strong == .left: kinds[index] = .left
+            default: break
+            }
+        }
+        // Neutrals between two of one direction take it, numbers counting as
+        // right to left; any others the line's, right to left (N1, N2).
+        var index = 0
+        while index < kinds.count {
+            guard kinds[index] == .neutral else {
+                index += 1
+                continue
+            }
+            var end = index
+            while end < kinds.count, kinds[end] == .neutral { end += 1 }
+            let previous: Direction = index == 0 || kinds[index - 1] != .left ? .right : .left
+            let next: Direction = end == kinds.count || kinds[end] != .left ? .right : .left
+            for neutral in index..<end { kinds[neutral] = previous == next ? previous : .right }
+            index = end
+        }
+        // What runs left to right keeps its order, and the whole is turned round (L2).
+        var out = units
+        index = 0
+        while index < out.count {
+            guard kinds[index] != .right else {
+                index += 1
+                continue
+            }
+            var end = index
+            while end < out.count, kinds[end] != .right { end += 1 }
+            out[index..<end].reverse()
+            index = end
+        }
+        return out.reversed()
     }
 
-    /// The letters WinAnsi keeps between 0x80 and 0x9F.
-    private static let windows: [UInt32: UInt8] = [
-        0x20AC: 0x80, 0x201A: 0x82, 0x0192: 0x83, 0x201E: 0x84, 0x2026: 0x85, 0x2020: 0x86, 0x2021: 0x87,
-        0x02C6: 0x88, 0x2030: 0x89, 0x0160: 0x8A, 0x2039: 0x8B, 0x0152: 0x8C, 0x017D: 0x8E, 0x2018: 0x91,
-        0x2019: 0x92, 0x201C: 0x93, 0x201D: 0x94, 0x2022: 0x95, 0x2013: 0x96, 0x2014: 0x97, 0x02DC: 0x98,
-        0x2122: 0x99, 0x0161: 0x9A, 0x203A: 0x9B, 0x0153: 0x9C, 0x017E: 0x9E, 0x0178: 0x9F,
-    ]
+    /// Which way a character runs, as the bidirectional algorithm says, for
+    /// what scanned words hold.
+    enum Direction: Equatable {
+        /// L, R and AL: letters left to right, right to left, and Arabic ones.
+        case left, right, arabicLetter
+        /// EN and AN: European numbers and Arabic ones.
+        case european, arabicNumber
+        /// ES, ET and CS: a plus or minus; a currency or percent sign; a comma, point, slash or colon.
+        case separator, terminator, common
+        /// NSM: a mark on the letter before it.
+        case mark
+        /// Spaces and the other signs.
+        case neutral
+    }
 
-    /// How wide a letter of the Western encoding is in Helvetica, in
-    /// thousandths of its size, as Adobe's metrics give it.
-    static func width(of code: UInt8) -> Int {
-        switch code {
-        case 0x20...0x7E: return ascii[Int(code) - 0x20]
-        case 0xA0...0xFF: return latin[Int(code) - 0xA0]
-        case 0x80: return 556
-        case 0x82, 0x91, 0x92: return 222
-        case 0x84, 0x88, 0x8B, 0x93, 0x94, 0x98, 0x9B: return 333
-        case 0x85, 0x89, 0x8C, 0x97, 0x99: return 1000
-        case 0x8A, 0x9F: return 667
-        case 0x8E: return 611
-        case 0x95: return 350
-        case 0x9A, 0x9E: return 500
-        case 0x9C: return 944
-        default: return 556
+    static func direction(of unit: UInt16) -> Direction {
+        switch unit {
+        case 0x30...0x39, 0xB2, 0xB3, 0xB9, 0x06F0...0x06F9, 0x2070, 0x2074...0x2079, 0x2080...0x2089, 0xFF10...0xFF19:
+            return .european
+        case 0x0600...0x0605, 0x0660...0x0669, 0x066B, 0x066C, 0x06DD, 0x08E2:
+            return .arabicNumber
+        case 0x2B, 0x2D, 0x207A, 0x207B, 0x208A, 0x208B, 0x2212, 0xFB29, 0xFE62, 0xFE63, 0xFF0B, 0xFF0D:
+            return .separator
+        case 0x23...0x25, 0xA2...0xA5, 0xB0, 0xB1, 0x0609, 0x060A, 0x066A, 0x2030...0x2034, 0x20A0...0x20CF, 0x2213,
+             0xFE5F, 0xFE69, 0xFE6A, 0xFF03...0xFF05, 0xFFE0, 0xFFE1, 0xFFE5, 0xFFE6:
+            return .terminator
+        case 0x2C, 0x2E, 0x2F, 0x3A, 0xA0, 0x060C, 0x202F, 0x2044, 0xFE50, 0xFE52, 0xFE55, 0xFF0C, 0xFF0E, 0xFF0F, 0xFF1A:
+            return .common
+        case 0x200E:
+            return .left
+        case 0x200F:
+            return .right
+        default:
+            break
+        }
+        guard let scalar = Unicode.Scalar(unit) else { return .neutral }
+        let category = scalar.properties.generalCategory
+        if category == .nonspacingMark || category == .enclosingMark { return .mark }
+        switch unit {
+        case 0x0590...0x05FF, 0x07C0...0x085F, 0xFB1D...0xFB4F:
+            return .right
+        case 0x0600...0x07BF, 0x0860...0x08FF, 0xFB50...0xFDFF, 0xFE70...0xFEFE:
+            return .arabicLetter
+        default:
+            break
+        }
+        switch category {
+        case .uppercaseLetter, .lowercaseLetter, .titlecaseLetter, .modifierLetter, .otherLetter, .spacingMark,
+             .decimalNumber, .letterNumber:
+            return .left
+        default:
+            return .neutral
         }
     }
-
-    private static let ascii = [
-        278, 278, 355, 556, 556, 889, 667, 191, 333, 333, 389, 584, 278, 333, 278, 278,
-        556, 556, 556, 556, 556, 556, 556, 556, 556, 556, 278, 278, 584, 584, 584, 556,
-        1015, 667, 667, 722, 722, 667, 611, 778, 722, 278, 500, 667, 556, 833, 722, 778,
-        667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 278, 278, 278, 469, 556,
-        333, 556, 556, 500, 556, 556, 278, 556, 556, 222, 222, 500, 222, 833, 556, 556,
-        556, 556, 333, 500, 278, 556, 500, 722, 500, 500, 500, 334, 260, 334, 584,
-    ]
-
-    private static let latin = [
-        278, 333, 556, 556, 556, 556, 260, 556, 333, 737, 370, 556, 584, 333, 737, 333,
-        400, 584, 333, 333, 333, 556, 537, 278, 333, 333, 365, 556, 834, 834, 834, 611,
-        667, 667, 667, 667, 667, 667, 1000, 722, 667, 667, 667, 667, 278, 278, 278, 278,
-        722, 722, 778, 778, 778, 778, 778, 584, 778, 722, 722, 722, 722, 667, 667, 611,
-        556, 556, 556, 556, 556, 556, 889, 500, 556, 556, 556, 556, 278, 278, 278, 278,
-        556, 556, 556, 556, 556, 556, 556, 584, 611, 556, 556, 556, 556, 500, 556, 500,
-    ]
 
     // MARK: Pictures
 

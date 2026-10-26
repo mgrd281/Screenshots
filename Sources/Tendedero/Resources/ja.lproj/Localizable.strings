@@ -1547,6 +1547,23 @@
 "corners to set" = "角の指定待ち";
 "Page %d could not be covered, so nothing was copied." = "%d ページ目を隠せなかったため、何もコピーされませんでした。";
 
+/* The iPhone: a scan's text in reading order, to read, copy, share or hear */
+"TXT, 1 file" = "TXT、1ファイル";
+"Show Text" = "テキストを表示";
+"In reading order, every covered place a black bar. Read it, copy it or hear it." = "読む順に表示し、隠した箇所はすべて黒い帯になります。読んだり、コピーしたり、聞いたりできます。";
+"In reading order, all of it. Read it, copy it or hear it." = "読む順に、すべてを表示します。読んだり、コピーしたり、聞いたりできます。";
+"Snapfly found no words on these pages." = "Snapflyはこれらのページで文字を見つけられませんでした。";
+"No Text Found" = "テキストが見つかりません";
+"Reading the text…" = "テキストを読み取っています…";
+"No words on this page." = "このページには文字がありません。";
+"Read on this iPhone. Each covered place is a black bar; what it hides is never shown or read aloud." = "このiPhone上で読み取りました。隠した箇所はすべて黒い帯で、その下の内容は表示も読み上げもされません。";
+"Read on this iPhone, without covers." = "このiPhone上で読み取りました。隠していません。";
+"Read Aloud" = "読み上げ";
+"The text could not be read." = "テキストを読み取れませんでした。";
+"Table" = "表";
+"Page %d could not be covered, so its text was not read." = "ページ%dを隠せなかったため、そのテキストは読み取っていません。";
+"The page is gone." = "このページはもうありません。";
+
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "送る前に隠す";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "スクリーンショットはこのiPhoneの中で読み取られ、あなたが選ばない限り何も外に出ません。";

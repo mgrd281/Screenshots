@@ -1549,6 +1549,23 @@
 "corners to set" = "corners to set";
 "Page %d could not be covered, so nothing was copied." = "Page %d could not be covered, so nothing was copied.";
 
+/* The iPhone: a scan's text in reading order, to read, copy, share or hear */
+"TXT, 1 file" = "TXT, 1 file";
+"Show Text" = "Show Text";
+"In reading order, every covered place a black bar. Read it, copy it or hear it." = "In reading order, every covered place a black bar. Read it, copy it or hear it.";
+"In reading order, all of it. Read it, copy it or hear it." = "In reading order, all of it. Read it, copy it or hear it.";
+"Snapfly found no words on these pages." = "Snapfly found no words on these pages.";
+"No Text Found" = "No Text Found";
+"Reading the text…" = "Reading the text…";
+"No words on this page." = "No words on this page.";
+"Read on this iPhone. Each covered place is a black bar; what it hides is never shown or read aloud." = "Read on this iPhone. Each covered place is a black bar; what it hides is never shown or read aloud.";
+"Read on this iPhone, without covers." = "Read on this iPhone, without covers.";
+"Read Aloud" = "Read Aloud";
+"The text could not be read." = "The text could not be read.";
+"Table" = "Table";
+"Page %d could not be covered, so its text was not read." = "Page %d could not be covered, so its text was not read.";
+"The page is gone." = "The page is gone.";
+
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "Covered before you send";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "Your screenshots are read on this iPhone, and nothing leaves it unless you choose.";

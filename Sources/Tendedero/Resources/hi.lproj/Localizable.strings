@@ -1549,6 +1549,23 @@
 "corners to set" = "कोने तय करने हैं";
 "Page %d could not be covered, so nothing was copied." = "पेज %d ढका नहीं जा सका, इसलिए कुछ कॉपी नहीं हुआ।";
 
+/* The iPhone: a scan's text in reading order, to read, copy, share or hear */
+"TXT, 1 file" = "TXT, 1 फ़ाइल";
+"Show Text" = "टेक्स्ट दिखाएँ";
+"In reading order, every covered place a black bar. Read it, copy it or hear it." = "पढ़ने के क्रम में, हर छिपी जगह एक काली पट्टी। पढ़ें, कॉपी करें या सुनें।";
+"In reading order, all of it. Read it, copy it or hear it." = "पढ़ने के क्रम में, पूरा टेक्स्ट। पढ़ें, कॉपी करें या सुनें।";
+"Snapfly found no words on these pages." = "Snapfly को इन पेजों पर कोई शब्द नहीं मिला।";
+"No Text Found" = "कोई टेक्स्ट नहीं मिला";
+"Reading the text…" = "टेक्स्ट पढ़ा जा रहा है…";
+"No words on this page." = "इस पेज पर कोई शब्द नहीं है।";
+"Read on this iPhone. Each covered place is a black bar; what it hides is never shown or read aloud." = "इसी iPhone पर पढ़ा गया। हर छिपी जगह एक काली पट्टी है; उसके नीचे जो है, वह कभी दिखाया या ज़ोर से पढ़ा नहीं जाता।";
+"Read on this iPhone, without covers." = "इसी iPhone पर पढ़ा गया, बिना छिपाए।";
+"Read Aloud" = "ज़ोर से पढ़ें";
+"The text could not be read." = "टेक्स्ट पढ़ा नहीं जा सका।";
+"Table" = "तालिका";
+"Page %d could not be covered, so its text was not read." = "पेज %d छिपाया नहीं जा सका, इसलिए उसका टेक्स्ट नहीं पढ़ा गया।";
+"The page is gone." = "यह पेज अब नहीं है।";
+
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "भेजने से पहले ढका हुआ";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "आपके स्क्रीनशॉट इसी iPhone पर पढ़े जाते हैं, और आपकी मर्ज़ी के बिना कुछ भी बाहर नहीं जाता।";

@@ -1547,6 +1547,23 @@
 "corners to set" = "زواياها بانتظار التحديد";
 "Page %d could not be covered, so nothing was copied." = "تعذّرت تغطية الصفحة %d، لذلك لم يُنسخ شيء.";
 
+/* The iPhone: a scan's text in reading order, to read, copy, share or hear */
+"TXT, 1 file" = "TXT، ملف واحد";
+"Show Text" = "عرض النص";
+"In reading order, every covered place a black bar. Read it, copy it or hear it." = "بترتيب القراءة، وكل موضع مُغطّى شريط أسود. اقرأه أو انسخه أو استمع إليه.";
+"In reading order, all of it. Read it, copy it or hear it." = "بترتيب القراءة، كاملًا. اقرأه أو انسخه أو استمع إليه.";
+"Snapfly found no words on these pages." = "لم يجد Snapfly أي كلمات في هذه الصفحات.";
+"No Text Found" = "لم يُعثر على نص";
+"Reading the text…" = "تجري قراءة النص…";
+"No words on this page." = "لا كلمات في هذه الصفحة.";
+"Read on this iPhone. Each covered place is a black bar; what it hides is never shown or read aloud." = "قُرئ على هذا الآيفون. كل موضع مُغطّى شريط أسود، وما تحته لا يُعرض ولا يُقرأ بصوت عالٍ أبدًا.";
+"Read on this iPhone, without covers." = "قُرئ على هذا الآيفون، بدون تغطية.";
+"Read Aloud" = "قراءة بصوت عالٍ";
+"The text could not be read." = "تعذّرت قراءة النص.";
+"Table" = "جدول";
+"Page %d could not be covered, so its text was not read." = "تعذّرت تغطية الصفحة %d، لذلك لم يُقرأ نصها.";
+"The page is gone." = "لم تعد الصفحة موجودة.";
+
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "مغطّاة قبل أن ترسلها";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "تُقرأ صور الشاشة على هذا الآيفون، ولا يخرج منه شيء إلا إذا اخترت ذلك.";

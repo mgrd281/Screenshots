@@ -6,6 +6,17 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, the text of scanned pages can be read, copied, heard and
+  shared: Save and Share has a third format, Text, and Text anzeigen opens
+  it, from Review's menu too. It comes in reading order (one column after
+  the other, a letterhead's side column after the letter, a table row by
+  row, a paragraph whole, a word broken at a line's end joined again);
+  every covered place is a black bar, and nothing under a cover is ever
+  shown or read aloud. Vorlesen speaks it with the iPhone's own voice.
+- Scanned PDFs can be searched in every script: Turkish, Arabic, Greek,
+  Cyrillic, Chinese, Japanese and Korean words are found and copied, not
+  only Western ones, and the text under the pages is in reading order.
+
 - On the iPhone, a scanned page has a fourth colour, Originalfarbe: the
   paper keeps its own colour, so a pink sick note stays pink, evenly lit
   and straightened, the print as dark as in Farbe.

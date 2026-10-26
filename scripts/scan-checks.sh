@@ -5,8 +5,8 @@
 # made-up papers, keeping each picture before and after and what
 # was read on it (SCAN_CAPTURES). Then the app on the simulator, the engine
 # built optimized as on a phone: its UI tests (iOS/SnapflyUITests/
-# ScanUITests.swift), still frames of the Scan tab, Review and Save and Share
-# on the made-up photos (-SnapflyScan), the tab's start with made-up
+# ScanUITests.swift), still frames of the Scan tab, Review, Save and Share
+# and the pages' text on the made-up photos (-SnapflyScan), the tab's start with made-up
 # documents arriving, without any, with "So funktioniert's" and scrolled
 # past its card, with what to ask Claude, and the
 # Photos tab's offer to clean a photographed document and the document
@@ -87,6 +87,8 @@ shot() {
   local settle=30
   if [ "$state" = corners ]; then settle=12; fi
   if [ "$state" = warning ] || [ "$state" = sheet ] || [ "$state" = uncovered ] || [ "$state" = list ]; then settle=45; fi
+  # Its text is read again on the covered pages once they are ready.
+  if [ "$state" = text ]; then settle=60; fi
   # Three documents arrive a few seconds apart, then their first pages are covered.
   if [ "$state" = recent ]; then settle=75; fi
   xcrun simctl ui "$on" appearance "$appearance"
@@ -106,7 +108,7 @@ frames() {
   local on=$1 prefix=$2 appearance=$3 language=$4 size=$5
   shift 5
   local states=("$@")
-  if [ ${#states[@]} -eq 0 ]; then states=(tab editor compare warning bw corners sheet uncovered); fi
+  if [ ${#states[@]} -eq 0 ]; then states=(tab editor compare warning bw corners sheet uncovered text); fi
   for state in "${states[@]}"; do
     shot "$on" "$prefix-$state" "$state" "$appearance" "$language" "$size"
   done
@@ -136,10 +138,10 @@ frames "$device" de-dark dark de "" "${start[@]}"
 frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL recent empty
 frames "$device" de-light light de "" assistant own list
 frames "$device" de-dark dark de "" assistant own list
-frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL tab editor warning sheet list
-frames "$device" de-xxxl light de UICTContentSizeCategoryXXXL editor sheet
-frames "$device" ar-light light ar "" tab editor sheet
-frames "$device" en-light light en "" editor sheet
+frames "$device" de-accessibility-xxxl light de UICTContentSizeCategoryAccessibilityXXXL tab editor warning sheet list text
+frames "$device" de-xxxl light de UICTContentSizeCategoryXXXL editor sheet text
+frames "$device" ar-light light ar "" tab editor sheet text
+frames "$device" en-light light en "" editor sheet text
 
 # Videos of the walks: the motion as it plays, then with Reduce Motion.
 # Never a reason to stop.

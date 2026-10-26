@@ -1547,6 +1547,23 @@
 "corners to set" = "모서리 지정 필요";
 "Page %d could not be covered, so nothing was copied." = "%d쪽을 가릴 수 없어 아무것도 복사하지 않았습니다.";
 
+/* The iPhone: a scan's text in reading order, to read, copy, share or hear */
+"TXT, 1 file" = "TXT, 파일 1개";
+"Show Text" = "텍스트 보기";
+"In reading order, every covered place a black bar. Read it, copy it or hear it." = "읽는 순서대로, 가린 곳은 모두 검은 막대로 표시합니다. 읽고, 복사하고, 들을 수 있습니다.";
+"In reading order, all of it. Read it, copy it or hear it." = "읽는 순서대로, 전부 표시합니다. 읽고, 복사하고, 들을 수 있습니다.";
+"Snapfly found no words on these pages." = "Snapfly가 이 페이지들에서 단어를 찾지 못했습니다.";
+"No Text Found" = "텍스트를 찾을 수 없음";
+"Reading the text…" = "텍스트를 읽는 중…";
+"No words on this page." = "이 페이지에는 단어가 없습니다.";
+"Read on this iPhone. Each covered place is a black bar; what it hides is never shown or read aloud." = "이 iPhone에서 읽었습니다. 가린 곳은 모두 검은 막대이며, 가려진 내용은 표시되거나 소리 내어 읽히지 않습니다.";
+"Read on this iPhone, without covers." = "이 iPhone에서 읽었습니다. 가리지 않았습니다.";
+"Read Aloud" = "소리 내어 읽기";
+"The text could not be read." = "텍스트를 읽을 수 없습니다.";
+"Table" = "표";
+"Page %d could not be covered, so its text was not read." = "%d쪽을 가릴 수 없어 텍스트를 읽지 않았습니다.";
+"The page is gone." = "이 페이지는 더 이상 없습니다.";
+
 /* The iPhone: the first launch, covering a sample card */
 "Covered before you send" = "보내기 전에 가려집니다";
 "Your screenshots are read on this iPhone, and nothing leaves it unless you choose." = "스크린샷은 이 iPhone에서 읽히며, 직접 선택하지 않는 한 아무것도 밖으로 나가지 않습니다.";

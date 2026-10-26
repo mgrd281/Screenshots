@@ -234,7 +234,8 @@ final class PDFFixtureTests: XCTestCase {
         XCTAssertFalse(read.contains("0532"), read)
         XCTAssertFalse(read.contains("Mustermann"), read)
         // And the PDF's page with its words read from the covered page, none from under a cover.
-        let words = ScanCleaner.words(in: Finder.lines(in: made.image) ?? [], hiding: made.report.places)
+        let words = ScanCleaner.words(in: Finder.lines(in: made.image) ?? [], hiding: made.report.places,
+                                      aspect: ScanCleaner.aspect(of: made.image))
         let covered = try XCTUnwrap(PDFComposer.page(made.image, ownPage: try XCTUnwrap(invoice.size(of: 0, turns: 0)),
                                                      paper: .original, quality: .high, words: words))
         let file = try XCTUnwrap(ScanPDF.make([covered]))
@@ -242,6 +243,36 @@ final class PDFFixtureTests: XCTestCase {
         XCTAssertFalse(text.contains("Mustermann"))
         XCTAssertFalse(text.contains("0532"))
         keep("pdf-covered-text.txt", text)
+    }
+
+    /// The invoice's first page read by Vision and put in reading order
+    /// (`ScanReading`): the shop, the customer's address line by line, the
+    /// invoice's number and date beside it after it, then the items row by
+    /// row, each with its price, and the total; covered, the customer is a
+    /// mark where the name was, and never the name.
+    func testTheInvoiceReadsInOrderRowByRow() async throws {
+        let invoice = try source(PDFFixtures.invoice())
+        let page = try XCTUnwrap(invoice.render(0, turns: 0, dpi: 200, longest: 2400))
+        let lines = try XCTUnwrap(Finder.lines(in: page))
+        let text = ScanReading.text(ScanCleaner.page(lines, aspect: ScanCleaner.aspect(of: page)))
+        keep("reading-invoice.txt", text)
+        print("READING\n\(text)")
+        let order = ["Musterfirma GmbH", PDFFixtures.customer, "Musterstraße 12", "20095 Hamburg", "Rechnung", "Beratung",
+                     "Einrichtung", "Lizenz", "Gesamt", "Bitte bis"]
+        var from = text.startIndex
+        for words in order {
+            let found = try XCTUnwrap(text.range(of: words, range: from..<text.endIndex), "\(words) after what came before: \(text)")
+            from = found.upperBound
+        }
+        let rows = text.split(separator: "\n")
+        for (item, price) in [("Beratung", "180,00"), ("Einrichtung", "90,00"), ("Lizenz", "49,90")] {
+            XCTAssertTrue(rows.contains { $0.contains(item) && $0.contains(price) }, "\(item) and its price on one line: \(text)")
+        }
+        // Covered: a mark where the name was.
+        let name = try XCTUnwrap(lines.first { $0.string.contains(PDFFixtures.customer) }).box
+        let covered = ScanReading.text(ScanCleaner.page(lines, hiding: [name], aspect: ScanCleaner.aspect(of: page)))
+        XCTAssertFalse(covered.contains("Mustermann"), covered)
+        XCTAssertTrue(covered.contains("\(ScanReading.mark)\nMusterstraße 12"), covered)
     }
 }
 #endif

@@ -47,6 +47,8 @@ struct ProtectView: View {
     @State private var reviewing = false
     @State private var explaining = false
     @State private var explainHeight = PresentationDetent.large
+    /// A scanned page whose text is open, covered, to read, copy or hear.
+    @State private var readingPage: ScanPageRef?
     @State private var showsOptions = false
     /// The choice of apps beside the picture, from the menu.
     @State private var choosingApps = false
@@ -231,6 +233,11 @@ struct ProtectView: View {
                     .presentationDetents([.medium, .large], selection: $explainHeight)
             }
             .sheet(isPresented: $choosingApps) { ChooseAppsSheet() }
+            .sheet(item: $readingPage) { page in
+                ScanReadingSheet(covered: true, fileName: ScanNaming.fallback(at: scans.page(page.id)?.taken ?? .now)) { [scans] in
+                    [try await scans.reading(of: page.id)]
+                }
+            }
             .sheet(item: $asking, onDismiss: handOverAsked) { choice in
                 ScanAssistantSheet(chat: choice.chat) { asked = (choice.chat, $0) }
             }
@@ -753,8 +760,8 @@ struct ProtectView: View {
         }
     }
 
-    /// Ask AI, every page, the page taken again, and what was in the menu
-    /// before; last, apart and in red, the whole scan discarded.
+    /// Ask AI, the page's text, every page, the page taken again, and what
+    /// was in the menu before; last, apart and in red, the whole scan discarded.
     @ViewBuilder private var reviewMenu: some View {
         Button {
             explaining = true
@@ -762,6 +769,14 @@ struct ProtectView: View {
             Label(L("Ask AI"), systemImage: "sparkles")
         }
         .disabled(session.original == nil)
+        if let page = scanPage {
+            Button {
+                readingPage = ScanPageRef(id: page.id)
+            } label: {
+                Label(L("Show Text"), systemImage: "text.viewfinder")
+            }
+            .disabled(page.state != .ready)
+        }
         Button {
             dismiss()
         } label: {

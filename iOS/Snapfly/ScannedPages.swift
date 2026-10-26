@@ -481,20 +481,54 @@ final class ScannedPages: ObservableObject {
         defer { making = nil }
         for (index, page) in pages.enumerated() {
             making = index + 1
-            if let session = sessions[page.id] {
-                guard let copy = await checked(session) else {
-                    if case .failed = session.stage { throw ScanProblem(message: String(format: failing, index + 1)) }
-                    throw ScanProblem(message: String(format: L("Page %d is not ready yet. Open it to check it."), index + 1))
-                }
-                done.append(copy)
-            } else {
-                guard let image = await ready(page.id), let made = await Covering.cover(image, Choice.details) else {
-                    throw ScanProblem(message: String(format: failing, index + 1))
-                }
-                done.append((made.image, made.report.places))
-            }
+            done.append(try await covered(page, number: index + 1, failing: failing))
         }
         return done
+    }
+
+    /// One page covered, with where: as its editor left it once its copy is
+    /// checked, or as Settings says.
+    private func covered(_ page: Page, number: Int, failing: String) async throws -> (image: CGImage, places: [CGRect]) {
+        if let session = sessions[page.id] {
+            guard let copy = await checked(session) else {
+                if case .failed = session.stage { throw ScanProblem(message: String(format: failing, number)) }
+                throw ScanProblem(message: String(format: L("Page %d is not ready yet. Open it to check it."), number))
+            }
+            return copy
+        }
+        guard let image = await ready(page.id), let made = await Covering.cover(image, Choice.details) else {
+            throw ScanProblem(message: String(format: failing, number))
+        }
+        return (made.image, made.report.places)
+    }
+
+    /// What the pages say, in reading order (`ScanReading`): read again on
+    /// each covered page, every cover a mark and nothing from under one; or,
+    /// without covers, all of it as each page was read. Throws, saying which
+    /// page, when one is not ready or cannot be covered.
+    func reading(covered: Bool) async throws -> [ScanReading.Page] {
+        if covered {
+            let pages = try await self.covered(failing: L("Page %d could not be covered, so its text was not read."))
+            return await Task.detached(priority: .userInitiated) {
+                pages.map { page in
+                    ScanCleaner.page(Finder.lines(in: page.image) ?? [], hiding: page.places, aspect: ScanCleaner.aspect(of: page.image))
+                }
+            }.value
+        }
+        let pages = try await uncovered()
+        return await Task.detached(priority: .userInitiated) {
+            pages.map { ScanCleaner.page($0.reading, aspect: ScanCleaner.aspect(of: $0.image)) }
+        }.value
+    }
+
+    /// One page's text, covered, as `reading(covered:)` reads it.
+    func reading(of id: UUID) async throws -> ScanReading.Page {
+        guard let index = index(of: id) else { throw ScanProblem(message: L("The page is gone.")) }
+        let page = try await covered(pages[index], number: index + 1,
+                                     failing: L("Page %d could not be covered, so its text was not read."))
+        return await Task.detached(priority: .userInitiated) {
+            ScanCleaner.page(Finder.lines(in: page.image) ?? [], hiding: page.places, aspect: ScanCleaner.aspect(of: page.image))
+        }.value
     }
 
     /// A page's copy as its editor left it, once made and checked: waited
@@ -532,7 +566,8 @@ final class ScannedPages: ObservableObject {
             let pages = try await self.covered(failing: L("Page %d could not be covered, so no PDF was made."))
             file = await Task.detached(priority: .userInitiated) {
                 let made = pages.compactMap { page -> ScanPDF.Page? in
-                    let words = text ? ScanCleaner.words(in: Finder.lines(in: page.image) ?? [], hiding: page.places) : []
+                    let words = text ? ScanCleaner.words(in: Finder.lines(in: page.image) ?? [], hiding: page.places,
+                                                         aspect: ScanCleaner.aspect(of: page.image)) : []
                     return ScanCleaner.pdfPage(page.image, mode: mode, words: words)
                 }
                 return made.count == pages.count ? ScanPDF.make(made) : nil
@@ -541,7 +576,8 @@ final class ScannedPages: ObservableObject {
             let pages = try await uncovered()
             file = await Task.detached(priority: .userInitiated) {
                 let made = pages.compactMap { page in
-                    ScanCleaner.pdfPage(page.image, mode: mode, words: text ? ScanCleaner.words(in: page.reading) : [])
+                    ScanCleaner.pdfPage(page.image, mode: mode,
+                                        words: text ? ScanCleaner.words(in: page.reading, aspect: ScanCleaner.aspect(of: page.image)) : [])
                 }
                 return made.count == pages.count ? ScanPDF.make(made) : nil
             }.value

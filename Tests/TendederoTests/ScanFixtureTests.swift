@@ -209,7 +209,7 @@ final class ScanFixtureTests: XCTestCase {
         let places = covered.report.places
         XCTAssertFalse(places.isEmpty)
         let reading = Finder.lines(in: covered.image) ?? []
-        let words = ScanCleaner.words(in: reading, hiding: places)
+        let words = ScanCleaner.words(in: reading, hiding: places, aspect: ScanCleaner.aspect(of: covered.image))
         let page = try XCTUnwrap(ScanCleaner.pdfPage(covered.image, mode: .color, words: words))
         let data = try XCTUnwrap(ScanPDF.make([page]))
         let pdf = try XCTUnwrap(PDFDocument(data: data))
@@ -231,7 +231,8 @@ final class ScanFixtureTests: XCTestCase {
         XCTAssertLessThan(bitmap.brightness(x: x, y: y), 80, "covered in the pixels")
         // Without covers, every word is there.
         let open = try XCTUnwrap(ScanCleaner.pdfPage(prepared.cleaned, mode: .color,
-                                                     words: ScanCleaner.words(in: prepared.checked.reading)))
+                                                     words: ScanCleaner.words(in: prepared.checked.reading,
+                                                                              aspect: ScanCleaner.aspect(of: prepared.cleaned))))
         let openText = try XCTUnwrap(PDFDocument(data: try XCTUnwrap(ScanPDF.make([open])))?.page(at: 0)?.string)
         XCTAssertTrue(openText.contains("Mustermann"), openText)
         // Nothing said of who made it but Snapfly.

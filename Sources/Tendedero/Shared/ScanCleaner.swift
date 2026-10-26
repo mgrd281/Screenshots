@@ -849,23 +849,33 @@ enum ScanCleaner {
 
     // MARK: Leaving
 
-    /// The words read on a page for the PDF's text, each with a space after
-    /// it when another follows on its line, none inside `hidden`: the
-    /// covered places, from 0 to 1 from the bottom left.
-    static func words(in reading: [Finder.TextLine], hiding hidden: [CGRect] = []) -> [ScanPDF.Word] {
-        reading.flatMap { line -> [ScanPDF.Word] in
-            let words = line.words.compactMap { word -> (text: String, box: CGRect)? in
+    /// The words read on a page for the PDF's text, in reading order
+    /// (`ScanReading`), each with a space after it when another follows on
+    /// its line, none inside `hidden`: the covered places, from 0 to 1 from
+    /// the bottom left. `aspect` is the page's width over its height.
+    static func words(in reading: [Finder.TextLine], hiding hidden: [CGRect] = [], aspect: CGFloat) -> [ScanPDF.Word] {
+        ScanReading.words(page(reading, hiding: hidden, aspect: aspect))
+    }
+
+    /// What a page says, in reading order (`ScanReading`): every word read,
+    /// none from under a cover, and each cover as a mark where it lies.
+    static func page(_ reading: [Finder.TextLine], hiding hidden: [CGRect] = [], aspect: CGFloat) -> ScanReading.Page {
+        let segments = reading.flatMap { line -> [ScanReading.Segment] in
+            let words = line.words.compactMap { word -> ScanReading.Word? in
                 guard let range = Range(word.range, in: line.string) else { return nil }
-                let covered = hidden.contains { place in
-                    let shared = place.intersection(word.box)
-                    return !shared.isNull && shared.width * shared.height > 0.05 * word.box.width * word.box.height
-                }
-                return covered ? nil : (String(line.string[range]), word.box)
+                let text = String(line.string[range])
+                return text.isEmpty ? nil : ScanReading.Word(text: text, box: word.box)
             }
-            return words.enumerated().map { index, word in
-                ScanPDF.Word(text: index < words.count - 1 ? word.text + " " : word.text, box: word.box)
-            }
+            // A line whose words are not known is one word, hidden whole under any cover.
+            let known = words.isEmpty && !line.string.isEmpty ? [ScanReading.Word(text: line.string, box: line.box)] : words
+            return ScanReading.segments(known, hiding: hidden)
         }
+        return ScanReading.page(segments + ScanReading.marks(hidden), aspect: aspect)
+    }
+
+    /// A picture's width over its height.
+    static func aspect(of image: CGImage) -> CGFloat {
+        image.height > 0 ? CGFloat(image.width) / CGFloat(image.height) : 1
     }
 
     /// A page as the PDF holds it: drawn larger or smaller first to about

@@ -22,17 +22,40 @@ struct PDFFile: FileDocument {
     }
 }
 
-/// Save and Share: the scanned pages as one A4 PDF or as a PNG each, with
+/// The scanned pages' text, for the system's file exporter.
+struct TextFile: FileDocument {
+    static var readableContentTypes: [UTType] { [.plainText] }
+    let text: String
+
+    init(text: String) {
+        self.text = text
+    }
+
+    init(configuration: ReadConfiguration) throws {
+        guard let data = configuration.file.regularFileContents, let text = String(data: data, encoding: .utf8) else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+        self.text = text
+    }
+
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        FileWrapper(regularFileWithContents: Data(text.utf8))
+    }
+}
+
+/// Save and Share: the scanned pages as one A4 PDF, as a PNG each, or as
+/// their text in reading order (`ScanReading`), with
 /// their covers (recommended, and where every save starts) or only cleaned,
 /// and for a PDF its text to find and copy or not; then Copy, Save (a PDF
-/// to Files, pictures to Photos) or Share. Without covers, a warning says
+/// or the text to Files, pictures to Photos) or Share. The text opens whole
+/// to read, copy or hear (`ScanReadingSheet`). Without covers, a warning says
 /// the file holds every private detail, and nothing that leaves is called
 /// protected. A line under it says what was done to the pages. First the
 /// file's name, to change: suggested by Apple Intelligence from the words
 /// outside the covers where it is on, else by when the pages were scanned.
 struct ScanSaveSheet: View {
     enum Format: Hashable {
-        case pdf, picture
+        case pdf, picture, text
     }
 
     enum Way {
@@ -40,12 +63,15 @@ struct ScanSaveSheet: View {
     }
 
     @ObservedObject private var store = ScannedPages.shared
-    @State private var format = Format.pdf
+    @State private var format = ScanDemo.opensText ? Format.text : Format.pdf
     /// Every save starts covered.
     @State private var covered = !ScanDemo.uncovered
     @State private var searchable = true
     @State private var working: Way?
     @State private var exporting: PDFFile?
+    @State private var exportingText: TextFile?
+    /// The text open whole, to read, copy or hear.
+    @State private var readingText = false
     @State private var sharing: SharedFiles?
     @State private var note: (text: String, failed: Bool)?
     /// The file's name, as suggested or typed.
@@ -66,6 +92,8 @@ struct ScanSaveSheet: View {
     @Environment(\.dynamicTypeSize) private var typeSize
 
     private var count: Int { store.pages.count }
+    /// Every page cleaned and covered, so nothing waits.
+    private var ready: Bool { !store.pages.isEmpty && !store.pages.contains { $0.state != .ready } }
 
     /// As tall as what it holds, its title bar too; at the accessibility
     /// text sizes, the whole screen, where it scrolls.
@@ -81,6 +109,7 @@ struct ScanSaveSheet: View {
                     formats
                     covers
                     if format == .pdf { text }
+                    if format == .text { showText }
                     checked
                     if covered { sendTo }
                 }
@@ -88,6 +117,14 @@ struct ScanSaveSheet: View {
                 .measuredHeight($contentHeight)
             }
             .scrollBounceBehavior(.basedOnSize)
+            .fileExporter(isPresented: Binding(get: { exportingText != nil }, set: { if !$0 { exportingText = nil } }),
+                          document: exportingText, contentType: .plainText, defaultFilename: fileName) { result in
+                switch result {
+                case .success: done(covered ? L("Saved to Files") : L("Saved to Files, without covers"))
+                case .failure(let error):
+                    if (error as? CocoaError)?.code != .userCancelled { failed() }
+                }
+            }
             .background(Color(.systemGroupedBackground))
             .safeAreaInset(edge: .bottom, spacing: 0) { ways.measuredHeight($waysHeight) }
             .navigationTitle(L("Save and Share"))
@@ -116,6 +153,17 @@ struct ScanSaveSheet: View {
         .sheet(item: $sharing) { files in
             ShareFilesSheet(files: files)
                 .ignoresSafeArea()
+        }
+        .sheet(isPresented: $readingText) {
+            ScanReadingSheet(covered: covered, fileName: fileName) { [store, covered] in
+                try await store.reading(covered: covered)
+            }
+        }
+        .task(id: ready) {
+            // The made-up scans in CI: the text opens once every page is ready.
+            guard ScanDemo.opensText, ready else { return }
+            try? await Task.sleep(for: .seconds(1))
+            readingText = true
         }
         .task(id: note?.text) {
             guard note != nil else { return }
@@ -176,12 +224,17 @@ struct ScanSaveSheet: View {
     private var formats: some View {
         VStack(alignment: .leading, spacing: 10) {
             heading(L("Format"))
-            HStack(spacing: 12) {
+            // One under another at the accessibility sizes, so each keeps its words.
+            let row = typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(spacing: 10)) : AnyLayout(HStackLayout(spacing: 10))
+            row {
                 tile(.pdf, symbol: "doc.richtext", title: "PDF",
                      detail: count == 1 ? L("A4, 1 page") : String(format: L("A4, %d pages"), count))
                 tile(.picture, symbol: "photo", title: L("Picture"),
                      detail: count == 1 ? L("PNG, 1 file") : String(format: L("PNG, %d files"), count))
+                tile(.text, symbol: "text.alignleft", title: L("Text"), detail: L("TXT, 1 file"))
             }
+            // Side by side, as tall as the tallest.
+            .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -196,10 +249,13 @@ struct ScanSaveSheet: View {
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(chosen ? SnapflyTokens.protectTint : .secondary)
                 Text(title).font(.headline)
-                Text(detail).font(.footnote).foregroundStyle(.secondary)
+                Text(detail)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(14)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .padding(12)
             .background(Color(.secondarySystemGroupedBackground), in: shape)
             .overlay(shape.strokeBorder(chosen ? SnapflyTokens.protectTint : Color.primary.opacity(0.08), lineWidth: chosen ? 2 : 1))
             .contentShape(shape)
@@ -207,7 +263,7 @@ struct ScanSaveSheet: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(chosen ? [.isButton, .isSelected] : .isButton)
-        .accessibilityIdentifier(kind == .pdf ? "scan-format-pdf" : "scan-format-picture")
+        .accessibilityIdentifier("scan-format-\(kind)")
     }
 
     // MARK: Covers
@@ -307,6 +363,40 @@ struct ScanSaveSheet: View {
         .transition(.opacity)
     }
 
+    /// The text whole, to read, copy or hear, before it leaves.
+    private var showText: some View {
+        Button {
+            readingText = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "text.viewfinder")
+                    .font(.title3)
+                    .foregroundStyle(SnapflyTokens.protectTint)
+                    .frame(width: 28)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(L("Show Text")).font(.body.weight(.medium))
+                    Text(covered ? L("In reading order, every covered place a black bar. Read it, copy it or hear it.")
+                         : L("In reading order, all of it. Read it, copy it or hear it."))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.forward")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(12)
+            .frame(minHeight: SnapflyTokens.touch)
+            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(!ready)
+        .accessibilityIdentifier("scan-show-text")
+        .transition(.opacity)
+    }
+
     /// What was done to the pages, as the checks found it: only geometry and
     /// light, and no text or number changed where every page read the same;
     /// and the places still to check on pages opened, with covers.
@@ -403,7 +493,7 @@ struct ScanSaveSheet: View {
             let row = typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(spacing: 8)) : AnyLayout(HStackLayout(spacing: 10))
             row {
                 way(.copy, title: L("Copy"), symbol: "doc.on.doc")
-                way(.save, title: L("Save"), symbol: format == .pdf ? "folder" : "photo.on.rectangle.angled")
+                way(.save, title: L("Save"), symbol: format == .picture ? "photo.on.rectangle.angled" : "folder")
                 way(.share, title: L("Share"), symbol: "square.and.arrow.up")
             }
         }
@@ -448,7 +538,7 @@ struct ScanSaveSheet: View {
         .accessibilityIdentifier("scan-way-\(way)")
         .tint(way == .share ? SnapflyTokens.protect : Color(.tertiarySystemFill))
         .foregroundStyle(way == .share ? Color.white : Color.primary)
-        .disabled(working != nil || store.pages.isEmpty || store.pages.contains { $0.state != .ready })
+        .disabled(working != nil || !ready)
     }
 
     private func heading(_ text: String) -> some View {
@@ -475,8 +565,23 @@ struct ScanSaveSheet: View {
         }
     }
 
-    /// The PDF or the pictures made, then copied, saved or shared.
+    /// The PDF, the pictures or the text made, then copied, saved or shared.
     private func make(_ way: Way, covered: Bool, searchable: Bool, format: Format) async throws {
+        if format == .text {
+            let text = ScanReading.text(try await store.reading(covered: covered))
+            guard !text.isEmpty else { return failed(L("Snapfly found no words on these pages.")) }
+            switch way {
+            case .copy:
+                UIPasteboard.general.string = text
+                done(covered ? L("Copied") : L("Copied, without covers"))
+            case .save:
+                exportingText = TextFile(text: text)
+            case .share:
+                guard let url = write(Data(text.utf8), as: fileName + ".txt") else { return failed() }
+                sharing = SharedFiles(urls: [url])
+            }
+            return
+        }
         if format == .pdf {
             let pdf = try await store.pdf(covered: covered, text: searchable)
             switch way {
