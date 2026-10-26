@@ -226,16 +226,20 @@ final class ScannedPages: ObservableObject {
         guard !pages.isEmpty, pages.allSatisfy({ $0.state == .ready && $0.cleaned != nil }) else { return false }
         let images = pages.compactMap(\.cleaned)
         let kind = title?.kind
-        let covers = pages.map { page -> [KeptCover] in
-            guard let session = sessions[page.id], session.found, !session.hasFailed else { return [] }
-            return session.plan.kept
-        }
+        let covers = pages.map { kept(on: $0.id) }
         let saved = pages.map(\.id)
         ProjectStore.shared.start(.pictures(images, origin: .scan, kind: kind), covers: covers) { [weak self] added in
             guard added, let self else { return }
             if self.pages.map(\.id) == saved { self.clear() } else { saved.forEach(self.remove) }
         }
         return true
+    }
+
+    /// What the owner covered on a page, to keep with it in a document:
+    /// where, never a word; nothing for a page whose picture never opened.
+    func kept(on id: UUID) -> [KeptCover] {
+        guard let session = sessions[id], session.holdsCovers else { return [] }
+        return session.plan.kept
     }
 
     func clear() {
@@ -427,11 +431,14 @@ final class ScannedPages: ObservableObject {
         guard let first = index(of: id) else { return }
         improving = first + 1
         let job = pages[first].job
-        // The picture as it came: a photo from Photos is decoded again, off the main thread.
+        // The picture as it came: a photo from Photos is decoded again, off
+        // the main thread; a camera's page, kept as a JPEG, at the size the
+        // camera took it, as it was made the first time.
         var picture = pages[first].source
         if picture == nil {
             let data = pages[first].data
-            picture = await Task.detached(priority: .userInitiated) { data.flatMap { Covering.upright($0) } }.value
+            let longest = pages[first].origin == .camera ? 8192 : 4096
+            picture = await Task.detached(priority: .userInitiated) { data.flatMap { Covering.upright($0, longest: longest) } }.value
         }
         guard let source = picture else { return failed(id, job: job) }
         guard var at = self.index(of: id), pages[at].job == job else { return }

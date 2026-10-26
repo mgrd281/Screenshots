@@ -133,7 +133,8 @@ struct PDFProject: Codable, Equatable, Identifiable, Sendable {
         }
     }
 
-    /// A copy of each page right after it, turned as it is; the copies' ids.
+    /// A copy of each page right after it, turned as it is and covered where
+    /// the owner covered it; the copies' ids.
     @discardableResult
     mutating func duplicate(_ ids: Set<UUID>) -> [UUID] {
         var made: [UUID] = []
@@ -144,6 +145,7 @@ struct PDFProject: Codable, Equatable, Identifiable, Sendable {
             let copy = ProjectPage(source: page.source, turns: page.turns)
             result.append(copy)
             made.append(copy.id)
+            covers[copy.id.uuidString] = covers[page.id.uuidString]
         }
         pages = result
         return made

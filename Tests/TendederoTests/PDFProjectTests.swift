@@ -91,7 +91,9 @@ final class PDFProjectTests: XCTestCase {
         project.turn([ids[1]], by: -1)
         XCTAssertEqual(project.pages[project.index(of: ids[1])!].turns, 3)
 
-        // A copy right after each page, turned as it is.
+        // A copy right after each page, turned as it is, covered where it is.
+        let hidden = [KeptCover(rect: CGRect(x: 0.1, y: 0.8, width: 0.3, height: 0.04), shape: nil)]
+        project.covers[ids[3].uuidString] = hidden
         let copies = project.duplicate([ids[1], ids[3]])
         XCTAssertEqual(copies.count, 2)
         XCTAssertEqual(project.pages.count, 7)
@@ -100,6 +102,8 @@ final class PDFProjectTests: XCTestCase {
         let second = project.index(of: ids[1])!
         XCTAssertEqual(project.pages[second + 1].id, copies[1])
         XCTAssertEqual(project.pages[second + 1].turns, 3)
+        XCTAssertEqual(project.covers[copies[0].uuidString], hidden, "what was covered by hand on it is covered on its copy")
+        XCTAssertNil(project.covers[copies[1].uuidString])
 
         // Taken away, and an empty page put in.
         project.openPage = copies[0]

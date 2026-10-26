@@ -214,13 +214,16 @@ struct ProjectAdder: ViewModifier {
 }
 
 extension ProjectStore {
-    /// The Scan tab's pages, cleaned, added as scans of the kind its first page shows.
+    /// The Scan tab's pages, cleaned, added as scans of the kind its first
+    /// page shows, with what the owner covered on them by hand.
     func addScanned(at index: Int?) {
         let scans = ScannedPages.shared
-        let images = scans.pages.compactMap { $0.state == .ready ? $0.cleaned : nil }
+        let ready = scans.pages.filter { $0.state == .ready && $0.cleaned != nil }
+        let images = ready.compactMap(\.cleaned)
         guard !images.isEmpty else { return }
         let kind = scans.title?.kind
-        Task { await add(.pictures(images, origin: .scan, kind: kind), at: index) }
+        let covers = ready.map { scans.kept(on: $0.id) }
+        Task { await add(.pictures(images, origin: .scan, kind: kind), at: index, covers: covers) }
     }
 }
 

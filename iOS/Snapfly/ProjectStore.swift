@@ -830,11 +830,12 @@ final class ProjectStore: ObservableObject {
     }
 
     /// What the owner covered on the pages open in an editor, kept with the
-    /// project: where, never a word. A page whose places were not found yet,
-    /// or could not be, keeps what it had.
+    /// project: where, never a word. Once a page's picture opened, its plan
+    /// holds every cover, also where its places could not be found or its
+    /// copy made; a page not opened yet keeps what it had.
     private func keepCovers() {
         guard var now = project else { return }
-        for (id, session) in sessions where session.found && !session.hasFailed {
+        for (id, session) in sessions where session.holdsCovers {
             let kept = session.plan.kept
             now.covers[id.uuidString] = kept.isEmpty ? nil : kept
         }
@@ -850,8 +851,11 @@ final class ProjectStore: ObservableObject {
         UISelectionFeedbackGenerator().selectionChanged()
     }
 
+    /// A copy of each page right after it, covered where the owner covered
+    /// it, up to the last change in its editor.
     @discardableResult
     func duplicate(_ ids: Set<UUID>) -> [UUID] {
+        keepCovers()
         var made: [UUID] = []
         change(L("Duplicate")) { made = $0.duplicate(ids) }
         if !made.isEmpty {
@@ -1170,6 +1174,8 @@ final class ProjectStore: ObservableObject {
     /// one cannot be read or covered.
     func pdf(_ options: ProjectExport, only: Set<UUID>? = nil) async throws -> Data {
         await sourcesOpened()
+        // A page covered as Settings says has the owner's covers up to the last change.
+        keepCovers()
         guard let project else { throw ScanProblem(message: L("The file could not be made.")) }
         let pages = only.map { project.only($0).pages } ?? project.pages
         guard !pages.isEmpty else { throw ScanProblem(message: L("The file could not be made.")) }
@@ -1265,6 +1271,7 @@ final class ProjectStore: ObservableObject {
     /// The pages as PNGs, each covered, for Save as Pictures.
     func pngs(only: Set<UUID>? = nil) async throws -> [Data] {
         await sourcesOpened()
+        keepCovers()
         guard let project else { throw ScanProblem(message: L("The copy could not be made.")) }
         let pages = only.map { project.only($0).pages } ?? project.pages
         making = ProjectProgress(done: 0, total: pages.count)

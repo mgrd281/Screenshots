@@ -52,6 +52,34 @@ final class ProtectionPlanTests: XCTestCase {
         XCTAssertTrue(none.marks.isEmpty)
     }
 
+    /// A place Snapfly found that the owner made larger, or moved, is kept as
+    /// they left it, so the page covers what they meant when it opens again;
+    /// one they only agreed with is found again instead. Found again under
+    /// the part put back, its words come with it, for the copy's check.
+    func testAFoundPlaceTheOwnerResizedOrMovedIsKeptAsLeft() throws {
+        var plan = ProtectionPlan()
+        plan.add(found: [area(0.1, 0.8), area(0.1, 0.6), area(0.1, 0.4)])
+        let ids = plan.marks.map(\.id)
+        plan.resize(ids[0], to: CGRect(x: 0.1, y: 0.8, width: 0.3, height: 0.03))
+        plan.move([ids[1]], by: CGPoint(x: 0.04, y: 0))
+        plan.decide([ids[2]])
+        let kept = plan.kept
+        XCTAssertEqual(kept.count, 2, "the one made larger and the one moved; not the one only agreed with")
+        XCTAssertTrue(kept.contains { abs($0.rect.width - 0.3) < 0.0001 && abs($0.rect.minX - 0.1) < 0.0001 })
+        XCTAssertTrue(kept.contains { abs($0.rect.minX - 0.14) < 0.0001 && abs($0.rect.width - 0.2) < 0.0001 })
+        XCTAssertTrue(kept.allSatisfy { $0.shape == nil })
+
+        var again = ProtectionPlan()
+        again.restore(kept)
+        again.add(found: [area(0.1, 0.8), area(0.1, 0.6), area(0.1, 0.4)])
+        XCTAssertEqual(again.marks.count, 3, "each part put back stands for the place found under it")
+        XCTAssertEqual(again.covered.count, 3)
+        XCTAssertEqual(again.covered.filter { $0.text == "Lena Weber" }.count, 3, "every cover is checked for its words")
+        let larger = try XCTUnwrap(again.marks.first { abs($0.rect.width - 0.3) < 0.0001 })
+        XCTAssertEqual(larger.origin, .hand)
+        XCTAssertTrue(larger.covered)
+    }
+
     func testTheOwnerTurnsPlacesOffAndOnAndUndoes() throws {
         var plan = ProtectionPlan()
         plan.add(found: [area(0.1, 0.8)], possible: [area(0.1, 0.5)])

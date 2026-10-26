@@ -464,7 +464,8 @@ struct RecentDocumentCard: View {
         .accessibilityAction(named: L("Share")) { store.share(project.id) }
         .accessibilityAction(named: L("Delete")) { deleting = true }
         .accessibilityIdentifier("scan-recent")
-        .task(id: project.pages.first.map { "\($0.id)-\($0.turns)" }) {
+        // Drawn again when the first page turns, or what was covered on it by hand changes.
+        .task(id: project.pages.first.map { "\($0.id)-\($0.turns)-\(project.hand(on: $0.id))" }) {
             picture = await store.coveredFirstPage(project)
             veiled = await store.veiledFirstPage(project)
             counts = store.firstCounts(project)

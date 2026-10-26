@@ -35,7 +35,7 @@ struct ProtectionPlan: Equatable {
         var check: Bool
         var covered: Bool
         /// What it hides, to check the copy by; never shown or written down.
-        let text: String?
+        var text: String?
         /// Drawn by hand, in solid ink; nil, the box itself.
         var shape: HandShape? = nil
         /// Whose it is, where Snapfly is sure: a patient's name, the address
@@ -67,6 +67,9 @@ struct ProtectionPlan: Equatable {
     private var nextID = 0
     /// Marks the owner changed, which Snapfly no longer changes.
     private var touched: Set<Int> = []
+    /// Marks the owner moved or resized, which a document keeps as they
+    /// were left.
+    private var reshaped: Set<Int> = []
 
     /// A change of the owner's: the marks it changed, as they were and as
     /// they are, nil where there was none; and whether each was touched.
@@ -96,6 +99,11 @@ struct ProtectionPlan: Equatable {
                     marks[index].covered = true
                     marks[index].check = area.check
                     marks[index].role = marks[index].role ?? area.role
+                } else if marks[index].origin == .hand, marks[index].text == nil {
+                    // A part covered by hand, as one put back is, where a
+                    // detail is found takes its words, so the copy is
+                    // checked for them too.
+                    marks[index].text = area.text
                 }
                 continue
             }
@@ -130,15 +138,16 @@ struct ProtectionPlan: Equatable {
     // MARK: Kept with a document
 
     /// What the owner covered that Snapfly would not have, to keep with a
-    /// document's page: the parts hidden by hand, and places only offered,
-    /// or left visible by Settings, that the owner covered. Never a word.
+    /// document's page: the parts hidden by hand, places only offered, or
+    /// left visible by Settings, that the owner covered, and places found
+    /// that the owner moved or resized, as they were left. Never a word.
     var kept: [KeptCover] {
         marks.compactMap { mark in
             guard mark.covered else { return nil }
             switch mark.origin {
             case .hand: return KeptCover(rect: mark.rect, shape: mark.shape)
             case .possible, .spared: return KeptCover(rect: mark.rect, shape: nil)
-            case .found: return nil
+            case .found: return reshaped.contains(mark.id) ? KeptCover(rect: mark.rect, shape: nil) : nil
             }
         }
     }
@@ -210,6 +219,7 @@ struct ProtectionPlan: Equatable {
                 mark.rect = mark.rect.offsetBy(dx: room.x, dy: room.y)
             }
         }
+        reshaped.formUnion(ids)
     }
 
     /// Gives a mark a new box, as its handles are dragged: a turned box
@@ -226,6 +236,7 @@ struct ProtectionPlan: Equatable {
                 mark.rect = rect
             }
         }
+        reshaped.insert(id)
     }
 
     /// Turns a box drawn by hand further, in radians.

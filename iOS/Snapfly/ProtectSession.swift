@@ -110,8 +110,16 @@ final class ProtectSession: ObservableObject {
 
     /// What the owner covered on a document's page before, kept with it
     /// (`ProjectStore`), or on a scanned page moved into one: put back on the
-    /// page before anything is found on it.
+    /// page as it opens, before anything is found on it or drawn.
     var restored: [KeptCover] = []
+
+    /// Whether the plan holds what the owner covered: the picture was opened
+    /// and what was kept put back, so the plan is what to keep from now on.
+    private(set) var holdsCovers = false
+
+    /// Whether it stopped for a new protection of its page, made again
+    /// meanwhile, turned or cut: nothing more comes of it.
+    private var replaced = false
 
     /// Whether the copy may leave: made and checked for the places as they are.
     var isReady: Bool { stage == .ready }
@@ -174,20 +182,23 @@ final class ProtectSession: ObservableObject {
     }
 
     /// Waits until the places are found and the first copy is made, or it
-    /// failed, twenty seconds at most; not for Apple Intelligence, which
-    /// reads along after.
+    /// failed or was made again anew, twenty seconds at most; not for Apple
+    /// Intelligence, which reads along after.
     func firstPass() async {
         for _ in 0..<200 where !Task.isCancelled {
-            if hasFailed || found && !making && png != nil { return }
+            if hasFailed || replaced || found && !making && png != nil { return }
             try? await Task.sleep(for: .milliseconds(100))
         }
     }
 
-    /// Starts over, after a failure.
+    /// Starts over, after a failure, with what the owner covered as it
+    /// stood; a cleaned photo starts again from the photo as it came.
     func retry() {
         running?.cancel()
         remaking?.cancel()
         running = nil
+        if holdsCovers, !cleaned { restored = plan.kept }
+        holdsCovers = false
         plan = ProtectionPlan()
         copy = nil
         png = nil
@@ -218,9 +229,23 @@ final class ProtectSession: ObservableObject {
             return
         }
         // A scanned page made again meanwhile, turned or cut, has a new protection: this one stops.
-        if case .scanned(let id) = source, ScannedPages.shared.opened(id) !== self { return }
-        if case .page(let id) = source, ProjectStore.shared.opened(id) !== self { return }
+        if case .scanned(let id) = source, ScannedPages.shared.opened(id) !== self {
+            replaced = true
+            return
+        }
+        if case .page(let id) = source, ProjectStore.shared.opened(id) !== self {
+            replaced = true
+            return
+        }
         self.image = image
+        // What the owner covered before is back before the picture shows, so
+        // a part drawn while it is read never puts it aside.
+        plan.aspect = CGFloat(image.width) / CGFloat(max(1, image.height))
+        if !holdsCovers {
+            plan.restore(restored)
+            restored = []
+            holdsCovers = true
+        }
         original = UIImage(cgImage: image)
         if preview == nil { Timing.record(.shown, Timing.milliseconds(since: started)) }
         quick.cancel()
@@ -239,7 +264,6 @@ final class ProtectSession: ObservableObject {
     /// looks whether it is a photographed document, to offer cleaning it.
     private func analyse(_ image: CGImage, started: Date, offering: Bool) async {
         plan.aspect = CGFloat(image.width) / CGFloat(max(1, image.height))
-        if plan.marks.isEmpty, !restored.isEmpty { plan.restore(restored) }
         let chosen = chosen, rules = rules
         // What the patterns, the labels and the names find, without waiting
         // for Apple Intelligence, and what Settings leaves visible, listed
