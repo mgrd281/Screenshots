@@ -1598,6 +1598,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/CoverSummary.swift` | What the iPhone's More counts: the kinds on of the twenty-two, the preset they are, the five groups, a group turned on or off, and what Always Hide holds (tested on Linux) |
 | `Shared/CoverSample.swift` | The made-up bill Cover Style covers, and what Keep the last four digits leaves of each line |
 | `Shared/Protection.swift` | Strongest protection, and Apple Intelligence, on the device, or the AI assistant, when turned on, finding what the patterns miss, kept per screenshot |
+| `Shared/ReadingQueue.swift` | Pictures read a few at a time, the newest asked first, so a line full of them, read again after a change in Settings, never reads them all at once (tested on Linux) |
 | `Shared/AIAccount.swift` | The AI assistant: Claude or ChatGPT, the key in the keychain, the model, the requests and their answers, a conversation's turns, answers streamed as they are written, checking a key by its list of models, what each task asks, and what each failure means |
 | `Shared/AIConnection.swift` | Whether the key kept for each assistant works, as last checked, and the models it may use, for the Mac's and the iPhone's settings |
 | `Shared/OwnRules.swift` | The owner's own rules, a word, a label or a pattern, kept with the settings, each on or off and a label with its reach; and their own details, a name, an address, a bank card or account, kept in the device's keychain alone (`OwnDetailStore`, with what may be promised of it) |
