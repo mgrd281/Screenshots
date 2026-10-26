@@ -838,6 +838,8 @@
 "Product" = "Ürün";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Bu Mac’te örtülmeden okundu; %@ örtülü kopyada okuduklarını ekledi.";
 "Remove Key" = "Anahtarı kaldır";
+"Remove the key for %@?" = "%@ anahtarı kaldırılsın mı?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "Bu geri alınamaz: %@ bir anahtarı yalnızca bir kez gösterir, bu yüzden orada yeni bir tane oluşturman gerekir.";
 "Reply" = "Yanıt";
 "The answer was empty." = "Yanıt boştu.";
 "The keychain did not keep the key." = "Anahtar Zinciri anahtarı tutmadı.";

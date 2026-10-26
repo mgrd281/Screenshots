@@ -1068,7 +1068,9 @@ apps.
       Without a key, or with one refused, a row "No key yet?" saying where
       to make one, with Get a Key… as a `SettingsButton`. Then the key: kept,
       "Saved in your keychain, ending in …WXYZ", never the key, with Change
-      and Remove Key (destructive) on the trailing edge; else a rounded
+      and Remove Key (destructive) on the trailing edge, which asks first in
+      a confirmation dialog, "Remove the key for Claude?", since the
+      provider shows a key only once; else a rounded
       secure field, prompted "Paste your key here", then a borderless
       `doc.on.clipboard` that pastes the copied key and saves it in one click
       (labelled), Cancel while changing one, and Save as

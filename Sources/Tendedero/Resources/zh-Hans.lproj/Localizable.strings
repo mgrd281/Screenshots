@@ -838,6 +838,8 @@
 "Product" = "商品";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "在这台 Mac 上未遮盖读取；%@ 补充了它在遮盖副本中读到的内容。";
 "Remove Key" = "移除密钥";
+"Remove the key for %@?" = "要移除 %@ 的密钥吗？";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "此操作无法撤销：%@ 只显示一次密钥，你需要在那里重新创建一个。";
 "Reply" = "回复";
 "The answer was empty." = "回答为空。";
 "The keychain did not keep the key." = "钥匙串未能保存密钥。";

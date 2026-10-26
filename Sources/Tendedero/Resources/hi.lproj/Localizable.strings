@@ -840,6 +840,8 @@
 "Product" = "उत्पाद";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "इस Mac पर बिना ढके पढ़ा गया; %@ ने ढकी हुई कॉपी में जो पढ़ा, वह जोड़ा।";
 "Remove Key" = "कुंजी हटाएँ";
+"Remove the key for %@?" = "%@ की कुंजी हटाएँ?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "इसे पूर्ववत नहीं किया जा सकता: %@ कुंजी सिर्फ़ एक बार दिखाता है, इसलिए आपको वहाँ नई कुंजी बनानी होगी।";
 "Reply" = "जवाब";
 "The answer was empty." = "जवाब ख़ाली था।";
 "The keychain did not keep the key." = "कीचेन ने कुंजी नहीं रखी।";

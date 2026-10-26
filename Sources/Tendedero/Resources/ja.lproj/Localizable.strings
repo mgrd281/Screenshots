@@ -838,6 +838,8 @@
 "Product" = "商品";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "このMacで隠さずに読み取りました。%@が隠したコピーから読み取った内容を追加しました。";
 "Remove Key" = "キーを削除";
+"Remove the key for %@?" = "%@のキーを削除しますか？";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "元に戻せません。%@はキーを一度しか表示しないため、新しいキーを作り直す必要があります。";
 "Reply" = "返信";
 "The answer was empty." = "回答が空でした。";
 "The keychain did not keep the key." = "キーチェーンにキーを保存できませんでした。";

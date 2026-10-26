@@ -838,6 +838,8 @@
 "Product" = "المنتج";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "قُرئ على هذا الـ Mac دون تغطية؛ وأضاف %@ ما قرأه في النسخة المغطّاة.";
 "Remove Key" = "إزالة المفتاح";
+"Remove the key for %@?" = "هل تزيل مفتاح %@؟";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "لا يمكن التراجع عن هذا: تعرض %@ المفتاح مرة واحدة فقط، فستحتاج إلى إنشاء مفتاح جديد هناك.";
 "Reply" = "الرد";
 "The answer was empty." = "كان الجواب فارغًا.";
 "The keychain did not keep the key." = "لم تحتفظ سلسلة المفاتيح بالمفتاح.";

@@ -957,7 +957,8 @@ Save). Snapfly checks the key with them at once, by asking for the models
 it may use, which costs nothing: Ready. The key works, or that they did not
 accept it. The key stays in your keychain; Settings shows only its last four
 characters, with Change and Remove Key beside them, and Check Again checks it
-once more. Model is a menu of the models your key may use, by their names,
+once more. Remove Key asks first, since a key cannot be shown again: you
+would make a new one. Model is a menu of the models your key may use, by their names,
 newest first (Claude Opus 5.5, Sonnet 5.5 and Haiku 5.5 until the key is
 checked); Other… takes a model's ID by hand. What it does lists Write a
 Reply, Explain and Order Details, and holds the switch Find more with Claude

@@ -838,6 +838,8 @@
 "Product" = "Produto";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Lido neste Mac, sen tapar; %@ engadiu o que leu na copia tapada.";
 "Remove Key" = "Quitar clave";
+"Remove the key for %@?" = "Quitar a clave de %@?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "Non se pode desfacer: %@ mostra cada clave só unha vez, así que terías que crear unha nova alí.";
 "Reply" = "Resposta";
 "The answer was empty." = "A resposta estaba baleira.";
 "The keychain did not keep the key." = "O chaveiro non gardou a clave.";

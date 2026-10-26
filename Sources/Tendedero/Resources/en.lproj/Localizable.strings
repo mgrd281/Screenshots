@@ -840,6 +840,8 @@
 "Product" = "Product";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Read on this Mac, not covered; %@ added what it read in the covered copy.";
 "Remove Key" = "Remove Key";
+"Remove the key for %@?" = "Remove the key for %@?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "This can't be undone: %@ shows a key only once, so you would make a new one there.";
 "Reply" = "Reply";
 "The answer was empty." = "The answer was empty.";
 "The keychain did not keep the key." = "The keychain did not keep the key.";

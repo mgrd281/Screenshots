@@ -68,6 +68,9 @@ keeps a download of each version.
   replace what you wrote, and a look at Settings › Line no longer keeps the
   standard questions as your own: they stay in the language Snapfly
   speaks, and Standard Questions shows only once you changed them.
+- On the Mac, Remove Key under AI Assistant asks first: Anthropic and
+  OpenAI show a key only once, so a key removed by mistake means making a
+  new one.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

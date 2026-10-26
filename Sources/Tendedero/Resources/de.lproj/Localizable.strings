@@ -838,6 +838,8 @@
 "Product" = "Produkt";
 "Read on this Mac, not covered; %@ added what it read in the covered copy." = "Auf diesem Mac gelesen, nicht verdeckt; %@ hat ergänzt, was es in der verdeckten Kopie gelesen hat.";
 "Remove Key" = "Schlüssel entfernen";
+"Remove the key for %@?" = "Den Schlüssel für %@ entfernen?";
+"This can't be undone: %@ shows a key only once, so you would make a new one there." = "Das lässt sich nicht rückgängig machen: %@ zeigt einen Schlüssel nur einmal, du müsstest dort einen neuen erstellen.";
 "Reply" = "Antwort";
 "The answer was empty." = "Die Antwort war leer.";
 "The keychain did not keep the key." = "Der Schlüsselbund hat den Schlüssel nicht behalten.";
