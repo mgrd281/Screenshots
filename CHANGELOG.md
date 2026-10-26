@@ -100,7 +100,9 @@ keeps a download of each version.
   Assistant, where it is set up, not to Settings; a PDF project's camera
   that cannot scan says why; the text sheet's warnings use the deeper
   orange.
-- Fixes: a PDF cropped with text beyond its page no longer stops Snapfly;
+- Fixes: on the Mac, Save a Copy… over the very file it copies, as a GIF
+  or a PDF with nothing to cover can be, no longer deletes it; a PDF
+  cropped with text beyond its page no longer stops Snapfly;
   the share extension keeps within its memory with large photos and
   deletes its file when cancelled; what Apple Intelligence or the AI
   assistant said is forgotten with the rest when the iPhone app goes to the

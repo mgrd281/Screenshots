@@ -1463,6 +1463,13 @@ final class Line: ObservableObject {
         panel.begin { response in
             MainActor.assumeIsolated {
                 guard response == .OK, let target = panel.url else { return }
+                // The copy is the very file chosen, as a GIF or a PDF with
+                // nothing to cover is when saved over itself: it is there
+                // already, and is never removed to make room for itself.
+                if Self.sameFile(made, target) {
+                    Notice.savedCopy(target)
+                    return
+                }
                 do {
                     // The panel has already asked whether to replace it.
                     if FileManager.default.fileExists(atPath: target.path) { try FileManager.default.removeItem(at: target) }
@@ -1480,6 +1487,17 @@ final class Line: ObservableObject {
     /// in the kind the copy is: "Screenshot (edited).png".
     nonisolated static func copyName(for url: URL, as ext: String) -> String {
         String(format: L("%@ (edited)"), url.deletingPathExtension().lastPathComponent) + "." + ext
+    }
+
+    /// Whether two addresses name the same file on disk, whatever the case
+    /// of their letters or the links on the way, as the Mac's disks ignore case.
+    nonisolated static func sameFile(_ a: URL, _ b: URL) -> Bool {
+        let key: Set<URLResourceKey> = [.fileResourceIdentifierKey]
+        if let first = (try? a.resourceValues(forKeys: key))?.fileResourceIdentifier,
+           let second = (try? b.resourceValues(forKeys: key))?.fileResourceIdentifier {
+            return first.isEqual(second)
+        }
+        return a.standardizedFileURL.resolvingSymlinksInPath().path == b.standardizedFileURL.resolvingSymlinksInPath().path
     }
 
     private func cover(_ url: URL) {

@@ -261,6 +261,26 @@ final class DrawingTests: XCTestCase {
                        String(format: L("%@ (edited)"), "Screenshot 2026-10-17 at 14.05.32") + ".jpg")
     }
 
+    /// A copy saved over the very file it is, as a GIF can be, is never
+    /// removed to make room for itself: the same file is told by what it
+    /// is on disk, also when its name is typed in other capitals.
+    func testTheSameFileIsToldWhateverItsName() throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let gif = folder.appendingPathComponent("Animation.gif")
+        try Data("GIF89a".utf8).write(to: gif)
+        XCTAssertTrue(Line.sameFile(gif, gif))
+        XCTAssertTrue(Line.sameFile(gif, folder.appendingPathComponent("./Animation.gif")))
+        let other = folder.appendingPathComponent("Other.gif")
+        try Data("GIF89a".utf8).write(to: other)
+        XCTAssertFalse(Line.sameFile(gif, other))
+        XCTAssertFalse(Line.sameFile(gif, folder.appendingPathComponent("Not there yet.gif")))
+        // The Mac's disks ignore case, as the runner's does.
+        let shouting = folder.appendingPathComponent("ANIMATION.gif")
+        if FileManager.default.fileExists(atPath: shouting.path) { XCTAssertTrue(Line.sameFile(gif, shouting)) }
+    }
+
     // MARK: Helpers
 
     private func cg(_ color: (r: UInt8, g: UInt8, b: UInt8)) -> CGColor {
