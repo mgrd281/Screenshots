@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 from urllib.parse import quote, urlparse
 
-from content import AIRMAIL, DOWNLOAD, EMAIL, LANGS, MAKER, REPO, SITE_URL, TEXT
+from content import AIRMAIL, DOWNLOAD, EMAIL, LANGS, MAKER, PRIVACY_UPDATED, REPO, SITE_URL, TEXT
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "_site"
@@ -1445,7 +1445,7 @@ def doc_head(lang, title, extra=""):
 
 def privacy(lang):
     t = TEXT[lang]
-    updated = f'<p class="muted">{esc(t["updated_label"])}: <time datetime="2026-10-15">{esc(t["updated"])}</time></p>'
+    updated = f'<p class="muted">{esc(t["updated_label"])}: <time datetime="{PRIVACY_UPDATED}">{esc(t["updated"])}</time></p>'
     sections = "\n".join(f'<section><h2>{esc(h)}</h2>{body}</section>' for h, body in t["privacy"])
     main = f"""<article class="doc wrap narrow">
   {doc_head(lang, t["privacy_title"], updated)}

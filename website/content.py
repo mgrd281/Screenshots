@@ -12,6 +12,9 @@ DOWNLOAD = "https://github.com/mgrd281/Screenshots/releases/download/latest/Snap
 REPO = "https://github.com/mgrd281/Screenshots"
 EMAIL = "mgrdegh@gmx.de"
 MAKER = "Mgrdegh Ghazarian"
+# The day the privacy policy last changed. It is the same policy in every
+# language, so one date; each language writes it out as "updated".
+PRIVACY_UPDATED = "2026-10-26"
 
 # Code, folder, name in the language menu.
 LANGS = [("en", "", "English"), ("de", "de/", "Deutsch"), ("ar", "ar/", "العربية")]
@@ -482,7 +485,7 @@ TEXT["de"] = dict(
     footer_contact="Kontakt",
 
     updated_label="Stand",
-    updated="22. Oktober 2026",
+    updated="26. Oktober 2026",
 
     privacy_title="Datenschutzerklärung",
     privacy_short_h="Kurz gesagt",
