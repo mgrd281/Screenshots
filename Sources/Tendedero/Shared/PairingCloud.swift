@@ -122,27 +122,33 @@ final class PairingHost: ObservableObject {
                 step = .sameAccount(request.device.name)
                 return
             }
+            // Let in by an earlier pairing, the account stays in should this one be cancelled.
+            let known = await sync.shares(with: request.user)
             do {
                 let links = try await sync.invite(request.user)
                 // Cancelled meanwhile: the device hears no, and is sent
                 // nothing it could join with.
-                guard !Task.isCancelled else {
-                    await answer(.init(outcome: .declined, name: name), code: asking.code)
-                    return
-                }
+                guard !Task.isCancelled else { return withdraw(request.user, known: known, code: asking.code) }
                 await answer(.init(outcome: .joined, shares: links, name: name, owner: sync.account), code: asking.code)
                 step = .joined(request.device.name)
             } catch {
-                guard !Task.isCancelled else {
-                    await answer(.init(outcome: .declined, name: name), code: asking.code)
-                    return
-                }
+                guard !Task.isCancelled else { return withdraw(request.user, known: known, code: asking.code) }
                 log.error("Sharing with a paired device failed: \(error.localizedDescription, privacy: .public)")
                 await answer(.init(outcome: .failed, name: name), code: asking.code)
                 step = .failed(PairingCloud.isOffline(error)
                     ? L("Could not reach iCloud. Check the connection and try again.")
                     : L("Could not share with that device. Try again in a moment."))
             }
+        }
+    }
+
+    /// Cancelled while the device was being let in: it hears no, from a task
+    /// of its own, as the cancelled one may not reach iCloud any more, and
+    /// an account let in only now is taken off this Mac's zones again.
+    private func withdraw(_ user: String, known: Bool, code: String) {
+        Task {
+            await answer(.init(outcome: .declined, name: name), code: code)
+            if !known { await sync.removeAccess(user) }
         }
     }
 
