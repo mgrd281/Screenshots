@@ -1414,7 +1414,10 @@ def section_close(lang):
 </section>"""
 
 
-NEW_PARTS_LANGS = ("de",)
+# The languages that show the newest parts: the story, the short words over
+# the titles, the question glyphs and the clean ground. All three follow
+# together now, at the owner's request.
+NEW_PARTS_LANGS = ("en", "de", "ar")
 
 
 def home(lang):

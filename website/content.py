@@ -28,7 +28,7 @@ TEXT["en"] = dict(
     title_home="Snapfly: screenshots, one click from any chat",
     desc_home="Snapfly hangs every screenshot on a line at the top of your Mac's screen, ready to copy or send into any chat, with private details covered. Free for macOS 14 or later.",
     title_privacy="Privacy Policy · Snapfly",
-    desc_privacy="Snapfly collects no data. It runs entirely on your Mac, and the only thing it asks the internet is the time.",
+    desc_privacy="Snapfly collects no data. It runs entirely on your Mac, and on its own it asks the internet only for the time.",
     title_support="Support · Snapfly",
     desc_support="Help with Snapfly, the screenshot line for the Mac, and how to reach us.",
     skip="Skip to content",
@@ -46,11 +46,11 @@ TEXT["en"] = dict(
     look_bold="Bold colour",
     menu_label="Snapfly",
 
-    hero_sub="Every screenshot you take hangs on a line at the top of your screen. Click one to copy it, or send it straight into the chat you’re typing in. Names and other private details are covered first, whether it goes to ChatGPT or to a person.",
+    hero_sub="Every screenshot hangs on a line at the top of your screen. One click copies it or sends it into the chat you’re typing in, with names and other private details already covered.",
     cta="Download for Mac",
     badge_for="Download for",
     cta_note="Free · macOS 14 or later · Apple silicon and Intel",
-    try_hint="Try it: drag a screenshot along the line to change the order. Send one with its paper plane, or all of them with Snapfly’s button over the chat. Hold that button to add a message.",
+    try_hint="Try it: send a screenshot with its paper plane, or all of them with the button over the chat. Drag one to change the order.",
     chat_title="Chat",
     chat_in="Can you send me yesterday’s invoice?",
     chat_reply="Got it, thanks!",
@@ -64,20 +64,31 @@ TEXT["en"] = dict(
     line_label="Screenshots hanging on Snapfly’s line",
     refill="New screenshots",
 
-    send_h="All of them into WhatsApp or ChatGPT, with one click.",
-    send_p="The send button at the end of the line pastes every screenshot on it into the app in front, WhatsApp, ChatGPT or any chat, right where you were typing. Each screenshot also carries its own paper plane, to send just that one. <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> sends the newest one without reaching for the mouse. Once sent, it leaves the line, so the line only holds what’s still to send. Over WhatsApp, ChatGPT and other chats, a send button sits right above their own. Hold it to add a message, which arrives after the photos.",
+    send_h="All at once into the chat.",
+    send_p="A send button sits over WhatsApp, ChatGPT and every other chat. It pastes all your screenshots right where you’re typing. Each one also has its own paper plane, and <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></span> sends the newest. Hold the button to add a message.",
     keys=["control", "option", ""],
     keys_label="The shortcut Control, Option, V",
+    eyebrows=dict(story="How it works", capture="Try it", send="Send", desk="Tidy up",
+                  private="Privacy", say="Hide Part", menu="All features", styles="Line styles", start="Get started"),
+    story_h="How a screenshot travels.",
+    story_p="Follow one screenshot from your keyboard into a chat.",
+    story=[
+        ("Take it.", "Press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span> and drag over what you need, or click a window."),
+        ("It hangs on the line.", "The line comes down with it at the top of your screen, and nothing lands on the Desktop. One click copies it."),
+        ("Private details get covered.", "The names, email addresses and account numbers you chose are covered in whatever leaves the line."),
+        ("It flies into the chat.", "Click its paper plane, and it lands right where you were typing: in WhatsApp, ChatGPT or any other chat."),
+        ("The line tucks itself away.", "What’s sent leaves the line, and an empty line goes back up. Your screen is clear for the next one."),
+    ],
 
     desk_h="Your Desktop, finally clear.",
-    desk_p="Let Snapfly handle your screenshots and they skip the Desktop. No floating thumbnail, no five-second wait: each one hangs the instant you take it. Drag one into a folder to keep it. Everything else lets go when you’re done.",
+    desk_p="Screenshots skip the Desktop and hang on the line at once, with no floating thumbnail and no waiting. Drag one into a folder to keep it. The rest goes away when you’re done.",
     desk_file="Screenshot 2026-10-15 at 09.{m}.{s}",
     desk_label="A Desktop covered in screenshot files, which fly up onto the line",
     replay="Play again",
 
     priv_h="Private details stay private.",
     stamp_covered="Private details covered",
-    priv_p="Before a screenshot goes to ChatGPT, another AI or a person, Snapfly covers what you choose: names, addresses, emails, phone numbers, bank cards and accounts, health details. Whatever leaves the line, copied, sent or dragged out, leaves covered. Snapfly reads the text on your Mac, and the screenshot file itself never changes.",
+    priv_p="Before a screenshot goes to ChatGPT or a person, Snapfly covers what you choose: names, addresses, emails, phone numbers, bank cards and accounts, health details. What you add under Always Hide is always covered. Snapfly reads the text on your Mac, and the image file itself stays unchanged.",
     example="Example",
     inv=dict(title="Invoice 2026-1042", date="October 14, 2026", bill="Billing address",
              name="Lena Hoffmann", street="Lindenstraße 12", city="10969 Berlin",
@@ -111,7 +122,7 @@ TEXT["en"] = dict(
     caption_reply="Perfect, thank you!",
 
     cap_h="One click, and it’s on the line.",
-    cap_p="Press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span> or click the screenshot button at the edge of the screen, then drag over an area, click a window or take the whole screen. It hangs on the line at once: no file on the Desktop, nothing to wait for. A menu that closes when you click? Take it with a timer. Something that moves? Record it.",
+    cap_p="Press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span> or click the screenshot button at the edge. Drag over an area, click a window or take the whole screen, and it hangs on the line at once. With a timer and screen recording.",
     desk=dict(
         label="A Mac desktop with Snapfly on it. Everything on it works.",
         note="Everything here works, with the pointer, by touch or with the keyboard.",
@@ -146,14 +157,14 @@ TEXT["en"] = dict(
     start_h="Start in four steps.",
     start_p="From the download to your first screenshot on the line.",
     start=[
-        ("Download it", "Download Snapfly.zip, open it, and drag Snapfly into your Applications folder. It’s signed and notarized by Apple."),
-        ("Open it", "Snapfly lives in the menu bar as a little photo on a line, with no Dock icon. The first time, choose Turn on, and your screenshots hang on the line instead of the Desktop."),
-        ("Allow it", "The first time you take or send a screenshot, macOS asks you to allow Screen Recording or Accessibility. Settings › Permissions shows each one, with one button to allow it."),
-        ("Take your first one", "Press ⌃⌥S and drag over anything. Click it on the line to copy it, or click its paper plane to send it into the chat you’re typing in."),
+        ("Download it", "Download Snapfly.zip and drag Snapfly into Applications. Signed and notarized by Apple."),
+        ("Open it", "Snapfly lives in the menu bar. The first time, choose Turn on, and your screenshots hang on the line."),
+        ("Allow it", "macOS asks once for Screen Recording and Accessibility. Settings › Permissions shows both."),
+        ("Your first screenshot", "Press ⌃⌥S and drag over anything. One click copies it, and its paper plane sends it into the chat."),
     ],
 
     say_h="Say what to hide.",
-    say_p="Hold a screenshot, choose Hide Part…, and say it in your own words, like “everything but the amount and the date”. With Apple Intelligence, Snapfly understands the whole sentence, on your Mac. Without it, type the words to hide. Or drag a box over anything.",
+    say_p="Hold a screenshot, choose Hide Part…, and say it in your own words, like “everything but the amount and the date”. Apple Intelligence understands the sentence, on your Mac. Or drag a box over it.",
     say_try="Try it: click an example, or write your own.",
     say_file="Screenshot 2026-10-23 at 09.41.12",
     say_label="The Hide Part window, with a bank transfer in it",
@@ -179,8 +190,8 @@ TEXT["en"] = dict(
     },
 
     design_h="Nothing leaves your Mac.",
-    design_points=["No account.", "No cloud.", "No analytics."],
-    design_p="Reading text, covering details, translating and describing all happen on your Mac, with Apple’s own frameworks. Nothing you capture is uploaded anywhere.",
+    design_points=["No account.", "No servers of our own.", "No analytics."],
+    design_p="Reading text, covering, translating and describing all happen on your Mac, with Apple’s own frameworks. Nothing is uploaded, unless you turn on Sync with your iPhone: then covered copies go through your own iCloud.",
     design_link="Read the privacy policy",
 
     close_h="Hang your first screenshot.",
@@ -193,25 +204,37 @@ TEXT["en"] = dict(
     footer_contact="Contact",
 
     updated_label="Last updated",
-    updated="October 17, 2026",
+    updated="October 26, 2026",
 
     privacy_title="Privacy Policy",
     privacy_short_h="In short",
-    privacy_short="Snapfly collects no personal data. It works entirely on your Mac; its only connection is to ask an atomic clock for the time, for the time stamp. This website sets no cookies and uses no analytics.",
+    privacy_short="Snapfly collects no personal data. It works entirely on your Mac; the only thing it asks on its own is the time, from an atomic clock, for the time stamp. If you set up the AI assistant with your own key, a covered screenshot goes to Claude or ChatGPT only when you want it to. With Copy Link, a covered file waits behind a link for seven days, then it is deleted. If you turn on Sync, covered copies go to your iPhone through your own iCloud. This website sets no cookies and uses no analytics.",
     privacy=[
         ("Who is responsible",
          f"""<p>Snapfly is made by {MAKER}. For any question about privacy, write to <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>"""),
         ("The Snapfly app",
          """<ul>
 <li><strong>No data is collected.</strong> Snapfly has no account, no analytics, no advertising and no tracking. It does not send your screenshots, their text or anything about you to us or to anyone else.</li>
-<li><strong>Nothing leaves your Mac.</strong> Reading the text in a screenshot, covering private details, searching, translating and describing all run on your Mac, with Apple’s frameworks.</li>
-<li><strong>The time stamp.</strong> While Stamp the date and time is on, Snapfly asks the atomic clock of the PTB, Germany’s national metrology institute (ptbtime1.ptb.de), for the exact time of each new screenshot, the way a clock sets itself (NTP). Only that question goes out, with no data about you or your screenshots. With the stamp off, the app never connects to the internet.</li>
-<li><strong>Your files.</strong> Snapfly reads the screenshots in the folders you let it watch, and in the Mac App Store edition the Snapfly folder in Pictures, and the photos and PDFs you bring to it yourself. It copies, sends, moves or deletes a screenshot only when you ask it to, or, if you leave that setting on, after you have sent it into a chat. A photo or PDF you bring stays where it is, unchanged. What leaves the line is a copy: a photo without where and with what it was taken, a PDF drawn again page by page with the details you chose covered.</li>
+<li><strong>Nothing leaves your Mac on its own.</strong> Reading the text in a screenshot, covering private details, searching, translating and describing all run on your Mac, with Apple’s frameworks.</li>
+<li><strong>The time stamp.</strong> While Stamp the date and time is on, Snapfly asks the atomic clock of the PTB, Germany’s national metrology institute (ptbtime1.ptb.de), for the exact time of each new screenshot, the way a clock sets itself (NTP). Only that question goes out, with no data about you or your screenshots. With the stamp off and no AI assistant set up, the app never connects to the internet, except when you choose Check for Updates…: then it downloads the newest version from GitHub and sends nothing about you.</li>
+<li><strong>The AI assistant, only if you set it up.</strong> In Settings › AI Assistant you can give Snapfly your own API key for Claude (Anthropic) or ChatGPT (OpenAI). It stays in your Mac’s keychain. When you save it, open that pane or choose Check Again, Snapfly uses the key to ask Anthropic or OpenAI for the list of models it may use, to see that it works; nothing else goes with it. Only when you choose Write a Reply, Explain or Order Details for a screenshot does Snapfly send that screenshot, with its private details covered as for an AI chat, and what you write with it, straight from your Mac to Anthropic or OpenAI. If you turn on Find more with Claude (or ChatGPT) under Privacy, the words of each screenshot go there too, so that private details that were missed get covered; it is off until you turn it on. On the iPhone you set it up under More › AI Assistant; the key stays in the iPhone’s keychain, and only when you tap Explain in Protect Picture do the protected copy of that picture, never the original, and your questions about it go straight to Anthropic or OpenAI. If you turn on Find more with Claude (or ChatGPT) there, the words of each screenshot and photo you protect go there too, never the words of scanned pages or of PDF projects: those are covered on the iPhone alone. Requests to OpenAI ask it not to store them for later retrieval. What the provider does with them is set by its privacy policy and your account there, to which it bills each request. Nothing of it goes to us.</li>
+<li><strong>Your own details, only if you add them.</strong> Under Always Hide, on the Mac and the iPhone, you can add your name, your address, bank cards and bank accounts, so that Snapfly covers them, in other spellings too. They stay in the keychain of the Mac or iPhone you add them on, only there and never in iCloud; a backup of the iPhone holds them only sealed to that same iPhone, and no other device can open them. Settings shows a card’s or an account’s number by its last four digits only. They are never sent and never logged, and before the words of a screenshot go to the AI assistant, with Find more with Claude (or ChatGPT) turned on, all your details in them are covered, and so is what your own rules cover.</li>
+<li><strong>Links, only when you choose Copy Link.</strong> Snapfly then uploads that one photo, as it leaves the line, with its private details covered, or that recording or PDF, to Snapfly’s link service on Cloudflare (Cloudflare R2, in the developer’s account), and copies the link. Anyone with the link can see the file for seven days; then it is deleted for good, or sooner with Delete Link. When a chat app shows the link with a small picture, it fetches that picture itself and may keep its own copy, as it keeps what is sent in it; Snapfly cannot delete that. No name, account or address is stored with it; the service sees your IP address only to fend off too many uploads at once, and does not store it, and it counts how much everyone uploads together in a day, to keep within a limit. The links you made stay on your Mac, together with the key that deletes them.</li>
+<li><strong>Syncing with the iPhone, only if you turn it on.</strong> If you turn on syncing on the Mac in Settings › Sync and on the iPhone under More › Mac and iCloud, Snapfly keeps the two in step through your own iCloud, in the private database of your Apple account, which only your devices signed in to it can read. What goes is the copy that leaves the line, with its private details covered, a small preview of it and facts about it: its name, when it was taken and which kinds of details are covered, never the covered words. Originals go only if you choose Originals too, and only those taken from then on. The contents of each record are encrypted with your iCloud keys; Apple encrypts the pictures in iCloud, end to end only if you have turned on Advanced Data Protection for iCloud. Nothing of it goes to us or through a server of Snapfly’s. Turn it off and nothing more goes; what is in iCloud stays until you remove Snapfly’s data in your iCloud settings.</li>
+<li><strong>Connecting with a code, for another Apple account.</strong> When an iPhone on another Apple account enters the code your Mac shows under Settings › Sync › Show Code… (a new one every 30 seconds), and you say yes on the Mac, your Mac shares its synced screenshots through iCloud with that account alone. The iPhone then sees what your Mac syncs, and what it sends hangs on your line. To connect, short notes sealed with the code wait in Snapfly’s public iCloud database for about a minute: the devices’ names and an iCloud identifier that names no one. Disconnect… on the Mac takes the account off the share again.</li>
+<li><strong>Your files.</strong> Snapfly reads the screenshots in the folders you let it watch, and in the Mac App Store edition the Snapfly folder in Pictures, and the photos and PDFs you bring to it yourself. It copies, sends, moves or deletes a screenshot only when you ask it to, or, if you leave that setting on, after you have sent it into a chat. A photo or PDF you bring stays where it is, unchanged. What leaves the line is a copy: a photo without where and with what it was taken, a PDF drawn again page by page with the details you chose covered. Cover Files does the same with many files at once and saves each copy in a new folder you choose; they are read on your Mac, unless Find more with Claude or ChatGPT is on under Privacy: then the words of each file go there.</li>
 <li><strong>Copied images.</strong> If you turn on Hang copied images, Snapfly looks at images you copy, to hang them on the line. It leaves alone anything copied together with text or a file, and anything a password manager marks as private.</li>
-<li><strong>The Accessibility permission</strong> lets the send button paste a screenshot into the app you are using, by pressing ⌘V there. Snapfly uses it for nothing else. You can turn it off at any time in System Settings › Privacy &amp; Security › Accessibility.</li>
-<li><strong>The Screen Recording permission</strong> lets Snapfly take the screenshots and recordings you ask for, with ⌃⌥S, the screenshot button or Record Screen. It captures only when you ask, and what it takes stays on your Mac.</li>
-<li><strong>Browsers.</strong> So that the send button shows only on chat websites, Snapfly asks the browser in front for the address of the page that is open, once you allow it. While the time stamp is on, it also writes that address on the stamp of a new screenshot, which stays on your Mac with it. It reads nothing else from the browser.</li>
+<li><strong>The Accessibility permission</strong> lets the send button paste a screenshot into the app you are using, by pressing ⌘V there. While you take a screenshot, smart selection uses it to ask the app under the pointer where a picture or a button sits there, to outline it: only where things are, and nothing of it leaves your Mac. While you record a guide, Snapfly uses it to ask the app you click what was clicked there. Snapfly uses it for nothing else. You can turn it off at any time in System Settings › Privacy &amp; Security › Accessibility.</li>
+<li><strong>The Screen Recording permission</strong> lets Snapfly take the screenshots and recordings you ask for, with ⌃⌥S, the screenshot button, Record Screen or Record a Guide. It captures only when you ask, and what it takes stays on your Mac.</li>
+<li><strong>Guides.</strong> While you record a guide, Snapfly takes a screenshot at each click and asks the app you clicked, through Accessibility, what was clicked there: its kind and its name, never what you type. Snapfly does not record what you type. The guide and its screenshots stay on your Mac, in Snapfly’s own folder, the last 20 of them, until you delete them. What you send or save from a guide has its private details covered.</li>
+<li><strong>The workspace, only if you turn it on.</strong> In Settings › Workspace you can have Snapfly keep screenshots in a folder on your Desktop, with a folder for each kind. It stays on your Mac and is yours: Snapfly reads and writes only in that folder, moves screenshots between its folders when you ask, and moves them to the Trash only when you choose Move to Trash or Delete…, which asks first. Turning it off or removing the app deletes nothing. If iCloud Drive keeps your Desktop, Apple copies the folder to iCloud, whether private details are covered or not; that is Apple’s service and your choice.</li>
+<li><strong>Sound in screen recordings, only if you choose it.</strong> In Settings › General you can have recordings take the Mac’s sound, your microphone or both. macOS asks you before the microphone is used for the first time. The sound is only in the recording, stays on your Mac like it, and goes nowhere.</li>
+<li><strong>Browsers.</strong> So that the send button shows only on chat websites, Snapfly asks the browser in front for the address of the page that is open, once you allow it. While the time stamp is on, the stamp of a new screenshot also names the website that was open, by its name alone, like mail.google.com, never the rest of the address, which can hold a search, an email address or a sign-in link. The stamp goes with every copy that leaves the line, and that name with it. It reads nothing else from the browser.</li>
 <li>Settings › Permissions shows each of these, whether it is allowed, and how to change it.</li>
+<li><strong>What is read stays in memory, briefly.</strong> So that a screenshot need not be read again after a setting changes, Snapfly keeps the text read in the last few pictures in memory, never on disk; the iPhone app forgets it as soon as it goes to the background, unless you turn on Faster picture processing (below). The iPhone app remembers which screenshots you protected lately only by their identifier in Photos. How long each step of covering took is written to the device’s log only as a number, never a word that was read.</li>
+<li><strong>Scanning, and photos of documents, on the iPhone.</strong> A scanned page or a photo of a page is straightened, brightened and checked on the iPhone, and stays only in memory until you save or share it. A photo you choose with Protect a Photo is looked at on the iPhone alone, to tell a photographed document from a screenshot, and is only cleaned up when you tap Clean Up. The name for scanned pages is suggested by Apple Intelligence on the iPhone, from the words outside the covers alone; nothing of it leaves the iPhone. The text of scanned pages (as Text in Save and Share, and under Show Text) is read on the iPhone from the covered pages, so nothing that is covered is in it: not on screen, not in search, not in the translation, not read aloud. Read Aloud uses the iPhone’s own voice; Translate hands the text to the system’s translation, and Snapfly sends nothing itself. Your corrections to the text stay in memory while the scan is open; a TXT or CSV file is made only when you share it. When you tap an AI chat like Claude or ChatGPT, it gets the covered copy, never the original, with a question if you want one; Snapfly holds no key for it and sends nothing itself: you have the conversation in your own app.</li>
+<li><strong>PDF projects stay protected on the iPhone.</strong> A PDF project keeps copies of the files you add, and the order of its pages, in Snapfly’s own storage on the iPhone: with complete file protection, unreadable while the iPhone is locked, left out of backups and never synced. The files themselves are never changed. A PDF’s password is asked each time it opens and never kept. Delete a project and its copies are gone. With covers, every page of the saved PDF is a picture, its private details covered and its text read from the covered page. What you cover by hand on a page stays with the project, only where it lies and never a word, and is covered in every copy made of it.</li>
+<li><strong>Faster picture processing on the iPhone, only if you turn it on.</strong> It is off until you turn it on in Settings, after a page that explains what it does; letting Snapfly see your photos is not a yes to it. Then the iPhone reads your pictures from the last 60 days ahead of time: screenshots only, all the photos you allowed, or only the photos you pick. The words read, where they are and which kinds of details they hold stay on the iPhone alone, in Snapfly’s own folder, locked while the iPhone is locked and left out of backups. Nothing of it is sent anywhere, and photos that are only in iCloud are not downloaded for it. Pause stops it, Delete Local Index deletes everything prepared, and turning it off deletes it too.</li>
 <li><strong>Your settings</strong>, such as the line style and what to cover, are stored on your Mac only.</li>
 </ul>"""),
         ("Apple’s services",
@@ -247,7 +270,7 @@ TEXT["en"] = dict(
 <p>For a menu that closes when you click, choose Take Screenshot with Timer in Snapfly’s menu in the menu bar and pick the seconds, then open the menu before the countdown ends.</p>"""),
         ("How do I record the screen?",
          """<p>Choose Record Screen in Snapfly’s menu in the menu bar, or press <span class='chord'><kbd>⌃</kbd><kbd>⌥</kbd><kbd>R</kbd></span>. Drag over an area or click a window. To stop, click the red button at the bottom of the screen. The recording hangs on the line; hold it and choose Make GIF to turn it into a GIF.</p>"""),
-        ("How do I send a message with the photos?",
+        ("Can I send a message with the photos?",
          """<p>Press and hold the send button over the chat, or right-click it and choose Send with a Message…. Write your message and press Return: the photos go first, then your words.</p>"""),
         ("How do I change the order on the line?",
          """<p>Drag a screenshot left or right along the line. Send all and Copy all keep that order. With VoiceOver, use Move Earlier and Move Later.</p>"""),
@@ -559,7 +582,7 @@ TEXT["ar"] = dict(
     title_home="Snapfly: لقطات الشاشة، على بُعد نقرة من أي دردشة",
     desc_home="يعلّق Snapfly كل لقطة شاشة على حبل في أعلى شاشة جهاز Mac، جاهزة للنسخ أو الإرسال إلى أي دردشة، والمعلومات الخاصة مغطّاة. مجاني لنظام macOS 14 أو أحدث.",
     title_privacy="سياسة الخصوصية · Snapfly",
-    desc_privacy="لا يجمع Snapfly أي بيانات. يعمل بالكامل على جهاز Mac، ولا يسأل الإنترنت إلا عن الوقت.",
+    desc_privacy="لا يجمع Snapfly أي بيانات. يعمل بالكامل على جهاز Mac، ولا يسأل الإنترنت من تلقاء نفسه إلا عن الوقت.",
     title_support="الدعم · Snapfly",
     desc_support="مساعدة في استخدام Snapfly، حبل لقطات الشاشة على Mac، وطريقة التواصل معنا.",
     skip="انتقل إلى المحتوى",
@@ -577,11 +600,11 @@ TEXT["ar"] = dict(
     look_bold="اللون الجريء",
     menu_label="Snapfly",
 
-    hero_sub="كل لقطة شاشة تلتقطها تُعلَّق على حبل في أعلى شاشتك. انقرها لتنسخها، أو أرسلها مباشرة إلى الدردشة التي تكتب فيها. والأسماء وغيرها من المعلومات الخاصة تُغطّى قبل الإرسال، سواء ذهبت إلى ChatGPT أو إلى شخص.",
+    hero_sub="كل لقطة شاشة تُعلَّق على حبل في أعلى شاشتك. ونقرة واحدة تنسخها أو ترسلها إلى الدردشة التي تكتب فيها، والأسماء وغيرها من المعلومات الخاصة مغطّاة مسبقًا.",
     cta="تنزيل لجهاز Mac",
     badge_for="حمّله لنظام",
     cta_note="مجاني · macOS 14 أو أحدث · Apple silicon و Intel",
-    try_hint="جرّبه: اسحب لقطة على طول الحبل لتغيّر ترتيبها. أرسل واحدة بطائرتها الورقية، أو كلها بزر Snapfly فوق الدردشة. واضغط على هذا الزر مطوّلًا لتضيف رسالة.",
+    try_hint="جرّبه: أرسل لقطة بطائرتها الورقية، أو أرسلها كلها بالزر فوق الدردشة. واسحب لقطة لتغيّر الترتيب.",
     chat_title="دردشة",
     chat_in="ممكن ترسل لي فاتورة أمس؟",
     chat_reply="وصلت، شكرًا!",
@@ -595,20 +618,31 @@ TEXT["ar"] = dict(
     line_label="لقطات شاشة معلّقة على حبل Snapfly",
     refill="لقطات جديدة",
 
-    send_h="كلها إلى WhatsApp أو ChatGPT، بنقرة واحدة.",
-    send_p="زر الإرسال في آخر الحبل يلصق كل اللقطات المعلّقة عليه في التطبيق الذي أمامك، WhatsApp أو ChatGPT أو أي دردشة، في المكان الذي تكتب فيه. وعلى كل لقطة أيضًا طائرة ورقية لإرسالها وحدها. واختصار <bdi class=\"chord\" dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></bdi> يرسل أحدث لقطة دون أن تلمس الفأرة. وما يُرسَل يغادر الحبل، فلا يبقى عليه إلا ما لم يُرسَل بعد. وفوق WhatsApp و ChatGPT وغيرهما من الدردشات، يظهر زر إرسال فوق زرّها مباشرة. اضغط عليه مطوّلًا لتضيف رسالة تصل بعد الصور.",
+    send_h="كلها إلى الدردشة دفعة واحدة.",
+    send_p="يظهر زر إرسال فوق WhatsApp و ChatGPT وكل دردشة أخرى. يلصق لقطاتك كلها في المكان الذي تكتب فيه تمامًا. ولكل لقطة أيضًا طائرتها الورقية، والاختصار <bdi class=\"chord\" dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>V</kbd></bdi> يرسل أحدثها. اضغط على الزر مطوّلًا لتضيف رسالة.",
     keys=["control", "option", ""],
     keys_label="الاختصار Control و Option و V",
+    eyebrows=dict(story="كيف يعمل", capture="جرّبه بنفسك", send="الإرسال", desk="بلا فوضى",
+                  private="الخصوصية", say="إخفاء جزء", menu="كل المزايا", styles="أشكال الحبل", start="ابدأ الآن"),
+    story_h="هكذا تسافر لقطة الشاشة.",
+    story_p="تابع لقطة شاشة من لوحة المفاتيح حتى تصل إلى الدردشة.",
+    story=[
+        ("التقطها.", "اضغط <bdi class=\"chord\" dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></bdi> واسحب فوق ما تحتاجه، أو انقر نافذة."),
+        ("تُعلَّق على الحبل.", "ينزل الحبل بها في أعلى شاشتك، ولا يصل شيء إلى سطح المكتب. ونقرة واحدة تنسخها."),
+        ("المعلومات الخاصة تُغطّى.", "الأسماء وعناوين البريد الإلكتروني وأرقام الحسابات التي اخترتها تبقى مغطّاة في كل ما يغادر الحبل."),
+        ("تطير إلى الدردشة.", "انقر طائرتها الورقية، فتصل إلى حيث كنت تكتب: في WhatsApp أو ChatGPT أو أي دردشة أخرى."),
+        ("يختفي الحبل من جديد.", "ما يُرسَل يغادر الحبل، والحبل الفارغ يصعد من جديد. وتصبح شاشتك جاهزة للّقطة التالية."),
+    ],
 
     desk_h="سطح مكتب نظيف أخيرًا.",
-    desk_p="اترك لقطات الشاشة لـ Snapfly فلا تصل إلى سطح المكتب أبدًا. لا صورة مصغّرة عائمة ولا انتظار خمس ثوانٍ: كل لقطة تُعلَّق لحظة التقاطها. اسحب واحدة إلى مجلد لتحتفظ بها، والباقي يختفي حين تنتهي.",
+    desk_p="لم تعد لقطات الشاشة تصل إلى سطح المكتب، بل تُعلَّق على الحبل فورًا، بلا صورة مصغّرة عائمة ولا انتظار. اسحب واحدة إلى مجلد لتحتفظ بها. والباقي يختفي حين تنتهي.",
     desk_file="لقطة شاشة 2026-10-15 في 9.{m}.{s} ص",
     desk_label="سطح مكتب مليء بملفات لقطات الشاشة، تطير إلى الحبل",
     replay="إعادة التشغيل",
 
     priv_h="معلوماتك الخاصة تبقى خاصة.",
     stamp_covered="المعلومات الخاصة مغطّاة",
-    priv_p="قبل أن تذهب اللقطة إلى ChatGPT أو أي ذكاء اصطناعي آخر أو إلى شخص، يغطّي Snapfly ما تختاره: الأسماء، والعناوين، والبريد الإلكتروني، وأرقام الهواتف، والبطاقات والحسابات البنكية، والمعلومات الصحية. كل ما يغادر الحبل، نسخًا أو إرسالًا أو سحبًا، يغادره مغطّى. يقرأ Snapfly النص على جهازك، ولا يتغيّر ملف اللقطة نفسه.",
+    priv_p="قبل أن تذهب اللقطة إلى ChatGPT أو إلى شخص، يغطّي Snapfly ما تختاره: الأسماء، والعناوين، والبريد الإلكتروني، وأرقام الهواتف، والبطاقات والحسابات البنكية، والمعلومات الصحية. وما تضيفه في «إخفاء دائمًا» يبقى مغطّى دائمًا. يقرأ Snapfly النص على جهازك، ويبقى ملف الصورة نفسه دون تغيير.",
     example="مثال",
     inv=dict(title="فاتورة 2026-1042", date="14 أكتوبر 2026", bill="عنوان الفاتورة",
              name="لينا هوفمان", street="شارع ليندن 12", city="10969 برلين",
@@ -642,7 +676,7 @@ TEXT["ar"] = dict(
     caption_reply="ممتاز، شكرًا لك!",
 
     cap_h="نقرة واحدة، وتصبح على الحبل.",
-    cap_p="اضغط <bdi class=\"chord\" dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></bdi> أو انقر زر التصوير عند حافة الشاشة، ثم اسحب فوق منطقة، أو انقر نافذة، أو التقط الشاشة كلها. تُعلَّق اللقطة على الحبل فورًا: لا ملف على سطح المكتب ولا انتظار. قائمة تُغلق حين تنقر؟ التقطها بالمؤقت. شيء يتحرّك؟ سجّل الشاشة.",
+    cap_p="اضغط <bdi class=\"chord\" dir=\"ltr\"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></bdi> أو انقر زر التصوير عند الحافة. اسحب فوق منطقة، أو انقر نافذة، أو التقط الشاشة كلها، فتُعلَّق على الحبل فورًا. وفيه أيضًا مؤقت وتسجيل للشاشة.",
     desk=dict(
         label="سطح مكتب Mac عليه Snapfly. كل ما فيه يعمل.",
         note="كل شيء هنا يعمل: بالمؤشر أو باللمس أو بلوحة المفاتيح.",
@@ -677,14 +711,14 @@ TEXT["ar"] = dict(
     start_h="ابدأ في أربع خطوات.",
     start_p="من التنزيل حتى أول لقطة على الحبل.",
     start=[
-        ("نزّله", "نزّل الملف Snapfly.zip وافتحه، ثم اسحب Snapfly إلى مجلد «التطبيقات». التطبيق موقّع ومُعتمَد من Apple."),
-        ("افتحه", "يعيش Snapfly في شريط القوائم على شكل صورة صغيرة معلّقة على حبل، وليس له أيقونة في Dock. في المرة الأولى اختر «تشغيل»، فتُعلَّق لقطاتك على الحبل بدل سطح المكتب."),
-        ("اسمح له", "أول مرة تلتقط فيها لقطة أو ترسلها، يطلب منك macOS السماح بتسجيل الشاشة أو بتسهيلات الاستخدام. وتعرض الإعدادات › الأذونات كل إذن منها، مع زر واحد للسماح به."),
-        ("أول لقطة", "اضغط \u2066⌃⌥S\u2069 واسحب فوق أي شيء. انقرها على الحبل لتنسخها، أو انقر طائرتها الورقية لترسلها إلى الدردشة التي تكتب فيها."),
+        ("نزّله", "نزّل Snapfly.zip واسحب Snapfly إلى «التطبيقات». موقّع ومُعتمَد من Apple."),
+        ("افتحه", "يعيش Snapfly في شريط القوائم. في المرة الأولى اختر «تشغيل»، فتُعلَّق لقطاتك على الحبل."),
+        ("اسمح له", "يطلب macOS مرة واحدة السماح بتسجيل الشاشة وبتسهيلات الاستخدام. وتعرض الإعدادات › الأذونات كليهما."),
+        ("أول لقطة", "اضغط \u2066⌃⌥S\u2069 واسحب فوق أي شيء. نقرة واحدة تنسخها، وطائرتها الورقية ترسلها إلى الدردشة."),
     ],
 
     say_h="قل ما تريد إخفاءه.",
-    say_p="اضغط مطوّلًا على لقطة، واختر «إخفاء جزء…»، ثم قلها بكلماتك، مثل «كل شيء ما عدا المبلغ والتاريخ». مع Apple Intelligence يفهم Snapfly الجملة كلها، على جهازك. ومن دونها اكتب الكلمات التي تريد إخفاءها. أو اسحب مربعًا فوق أي شيء.",
+    say_p="اضغط مطوّلًا على لقطة، واختر «إخفاء جزء…»، ثم قلها بكلماتك، مثل «كل شيء ما عدا المبلغ والتاريخ». يفهم Apple Intelligence الجملة، على جهازك. أو اسحب مربعًا فوق ما تريد إخفاءه.",
     say_try="جرّبه: انقر مثالًا، أو اكتب ما تريد.",
     say_file="لقطة شاشة 2026-10-23 في 9.41.12 ص",
     say_label="نافذة «إخفاء جزء» وفيها تحويل بنكي",
@@ -710,8 +744,8 @@ TEXT["ar"] = dict(
     },
 
     design_h="لا شيء يغادر جهازك.",
-    design_points=["بلا حساب.", "بلا سحابة.", "بلا تتبّع."],
-    design_p="قراءة النص وتغطية المعلومات والترجمة والوصف، كلها تحدث على جهاز Mac الخاص بك، بأدوات Apple نفسها. لا يُرفع شيء مما تلتقطه إلى أي مكان.",
+    design_points=["بلا حساب.", "بلا خوادم خاصة بنا.", "بلا تحليلات."],
+    design_p="قراءة النص والتغطية والترجمة والوصف، كلها تحدث على جهاز Mac الخاص بك، بأدوات Apple نفسها. لا يُرفع شيء، إلا إذا شغّلت «المزامنة» مع جهاز iPhone: عندها تمرّ نسخ مغطّاة عبر iCloud الخاص بك.",
     design_link="اقرأ سياسة الخصوصية",
 
     close_h="علّق أول لقطة شاشة لك.",
@@ -724,25 +758,37 @@ TEXT["ar"] = dict(
     footer_contact="تواصل معنا",
 
     updated_label="آخر تحديث",
-    updated="17 أكتوبر 2026",
+    updated="26 أكتوبر 2026",
 
     privacy_title="سياسة الخصوصية",
     privacy_short_h="باختصار",
-    privacy_short="لا يجمع Snapfly أي بيانات شخصية. يعمل بالكامل على جهاز Mac، واتصاله الوحيد سؤال ساعة ذرية عن الوقت من أجل ختم الوقت. وهذا الموقع لا يستخدم ملفات تعريف الارتباط (الكوكيز) ولا أدوات تحليل.",
+    privacy_short="لا يجمع Snapfly أي بيانات شخصية. يعمل بالكامل على جهاز Mac الخاص بك، ولا يسأل من تلقاء نفسه إلا ساعةً ذرية عن الوقت، من أجل ختم الوقت. وإن أعددت المساعد الذكي بمفتاحك الخاص، فلا تذهب لقطة مغطّاة إلى Claude أو ChatGPT إلا حين تريد. ومع «نسخ الرابط» يبقى ملف مغطّى خلف رابط سبعة أيام، ثم يُحذف. وإن شغّلت «المزامنة»، تذهب نسخ مغطّاة إلى جهاز iPhone عبر iCloud الخاص بك. وهذا الموقع لا يستخدم ملفات تعريف الارتباط (الكوكيز) ولا أدوات تحليل.",
     privacy=[
         ("المسؤول",
          f"""<p>يطوّر Snapfly <bdi>{MAKER}</bdi>. لأي سؤال عن الخصوصية، راسلنا على <a href="mailto:{EMAIL}"><bdi>{EMAIL}</bdi></a>.</p>"""),
         ("تطبيق Snapfly",
          """<ul>
 <li><strong>لا تُجمع أي بيانات.</strong> لا حساب في Snapfly، ولا تحليلات، ولا إعلانات، ولا تتبّع. لا يرسل التطبيق لقطاتك ولا نصوصها ولا أي شيء عنك إلينا أو إلى أي أحد.</li>
-<li><strong>لا يخرج شيء من جهازك.</strong> قراءة النص في اللقطة، وتغطية المعلومات الخاصة، والبحث، والترجمة، والوصف، كلها تعمل على جهازك بأدوات Apple.</li>
-<li><strong>ختم الوقت.</strong> ما دام «اختم التاريخ والوقت» مفعّلًا، يسأل Snapfly الساعة الذرية لمعهد PTB الألماني للقياس (<bdi>ptbtime1.ptb.de</bdi>) عن الوقت الدقيق لكل لقطة جديدة، بالطريقة التي تضبط بها الساعات نفسها (NTP). لا يخرج إلا هذا السؤال، بلا أي بيانات عنك أو عن لقطاتك. وحين يكون الختم مطفأً، لا يتصل التطبيق بالإنترنت أبدًا.</li>
-<li><strong>ملفاتك.</strong> يقرأ Snapfly لقطات الشاشة في المجلدات التي تسمح له بمراقبتها، وفي نسخة Mac App Store مجلد Snapfly داخل «الصور»، والصور وملفات PDF التي تعطيه إياها بنفسك. ولا ينسخ لقطة أو يرسلها أو ينقلها أو يحذفها إلا حين تطلب ذلك، أو، إن أبقيت هذا الإعداد مفعّلًا، بعد أن ترسلها إلى دردشة. والصورة أو ملف PDF الذي تعطيه إياه يبقى في مكانه دون تغيير، وما يخرج من الحبل نسخة منه: صورة بلا مكان التقاطها ولا بيانات الكاميرا، وملف PDF أُعيد رسمه صفحةً صفحة مع تغطية البيانات التي اخترتها.</li>
+<li><strong>لا يخرج شيء من جهازك من تلقاء نفسه.</strong> قراءة النص في اللقطة، وتغطية المعلومات الخاصة، والبحث، والترجمة، والوصف، كلها تعمل على جهازك بأدوات Apple.</li>
+<li><strong>ختم الوقت.</strong> ما دام «اختم التاريخ والوقت» مفعّلًا، يسأل Snapfly الساعة الذرية لمعهد PTB الألماني للقياس (<bdi>ptbtime1.ptb.de</bdi>) عن الوقت الدقيق لكل لقطة جديدة، بالطريقة التي تضبط بها الساعات نفسها (NTP). لا يخرج إلا هذا السؤال، بلا أي بيانات عنك أو عن لقطاتك. وحين يكون الختم مطفأً ولا يكون المساعد الذكي مُعدًّا، لا يتصل التطبيق بالإنترنت أبدًا، إلا حين تختار «البحث عن تحديثات…»: عندها ينزّل أحدث إصدار من GitHub ولا يرسل شيئًا عنك.</li>
+<li><strong>المساعد الذكي، فقط إن أعددته.</strong> في الإعدادات › المساعد الذكي يمكنك أن تعطي Snapfly مفتاح API الخاص بك لـ Claude (من Anthropic) أو ChatGPT (من OpenAI). ويبقى المفتاح في سلسلة مفاتيح جهاز Mac. وحين تحفظه، أو تفتح ذلك القسم، أو تختار «تحقّق مجددًا»، يسأل Snapfly بالمفتاح Anthropic أو OpenAI عن قائمة النماذج التي يحق له استخدامها، ليتأكد أنه يعمل؛ ولا يذهب معه شيء آخر. ولا يرسل Snapfly لقطة إلا حين تختار لها «اكتب ردًا» أو «اشرح» أو «تفاصيل الطلب»: عندها يرسل تلك اللقطة، ومعلوماتها الخاصة مغطّاة كما لدردشة ذكاء اصطناعي، وما تكتبه معها، من جهاز Mac مباشرة إلى Anthropic أو OpenAI. وإن شغّلت «اكتشف المزيد مع Claude» (أو ChatGPT) في الخصوصية، تذهب كلمات كل لقطة إلى هناك أيضًا، لتُغطّى المعلومات الخاصة التي فاتت التغطية؛ وهذا الخيار مطفأ حتى تشغّله. وعلى جهاز iPhone تُعدّه من المزيد › المساعد الذكي؛ ويبقى المفتاح في سلسلة مفاتيح الـ iPhone، ولا تذهب النسخة المحمية من الصورة، لا الأصل أبدًا، وأسئلتك عنها مباشرة إلى Anthropic أو OpenAI إلا حين تلمس «اشرح» في «حماية الصورة». وإن شغّلت هناك «اكتشف المزيد مع Claude» (أو ChatGPT)، تذهب أيضًا كلمات كل لقطة شاشة وكل صورة تحميها، ولا تذهب أبدًا كلمات الصفحات الممسوحة ولا مشاريع PDF: فهذه تُغطّى على الـ iPhone وحده. وتطلب الطلبات المرسلة إلى OpenAI ألّا تُحفظ لاسترجاعها لاحقًا. وما يفعله المزوّد بها تحكمه سياسة الخصوصية لديه وحسابك عنده، الذي يُحتسب عليه كل طلب. ولا يصلنا شيء من ذلك.</li>
+<li><strong>معلوماتك أنت، فقط إن أضفتها.</strong> في «إخفاء دائمًا» على جهاز Mac وعلى جهاز iPhone يمكنك أن تضيف اسمك وعنوانك وبطاقاتك وحساباتك البنكية، ليغطّيها Snapfly، حتى حين تُكتب بطرق أخرى. وتبقى في سلسلة مفاتيح الـ Mac أو الـ iPhone الذي تضيفها عليه، هناك فقط، ولا تذهب أبدًا إلى iCloud؛ ولا تحويها النسخة الاحتياطية للـ iPhone إلا مختومة لذلك الـ iPhone نفسه، فلا يستطيع جهاز آخر فتحها. ولا تعرض الإعدادات رقم البطاقة أو الحساب إلا بأرقامه الأربعة الأخيرة. ولا تُرسَل أبدًا ولا تُسجَّل أبدًا، وقبل أن تذهب كلمات لقطة إلى المساعد الذكي، حين يكون «اكتشف المزيد مع Claude» (أو ChatGPT) مفعّلًا، تُغطّى فيها كل معلوماتك، وكذلك ما تغطّيه قواعدك الخاصة.</li>
+<li><strong>الروابط، فقط حين تختار «نسخ الرابط».</strong> عندها يرفع Snapfly تلك الصورة وحدها، كما تغادر الحبل ومعلوماتها الخاصة مغطّاة، أو ذلك التسجيل أو ملف PDF، إلى خدمة روابط Snapfly على Cloudflare (Cloudflare R2، في حساب المطوّر)، وينسخ الرابط. ويستطيع كل من لديه الرابط أن يرى الملف سبعة أيام؛ ثم يُحذف نهائيًا، أو قبل ذلك بـ «حذف الرابط». وحين يعرض تطبيق دردشة الرابط بصورة صغيرة، فإنه يجلب تلك الصورة بنفسه وقد يحتفظ بنسخة خاصة به، كما يحتفظ بما يُرسَل فيه؛ ولا يستطيع Snapfly حذفها. ولا يُحفظ معه اسم ولا حساب ولا عنوان؛ ولا ترى الخدمة عنوان IP الخاص بك إلا لصدّ عمليات الرفع الكثيرة دفعة واحدة، ولا تحفظه، وتحسب كم يرفع الجميع معًا في اليوم، لتبقى ضمن حدّ معيّن. وتبقى الروابط التي أنشأتها على جهاز Mac، ومعها المفتاح الذي يحذفها.</li>
+<li><strong>المزامنة مع جهاز iPhone، فقط إن شغّلتها.</strong> إن شغّلت المزامنة على جهاز Mac من الإعدادات › المزامنة، وعلى جهاز iPhone من المزيد › Mac و iCloud، يُبقي Snapfly الجهازين متزامنين عبر iCloud الخاص بك، في قاعدة البيانات الخاصة بحسابك في Apple، التي لا تقرؤها إلا أجهزتك المسجَّلة فيه. والذي يذهب هو النسخة التي تغادر الحبل ومعلوماتها الخاصة مغطّاة، ومعاينة صغيرة منها، ومعلومات عنها: اسمها، ووقت التقاطها، وأنواع المعلومات المغطّاة، لا الكلمات المغطّاة أبدًا. ولا تذهب الأصول إلا إن اخترت «الأصول أيضًا»، ولا يذهب منها إلا ما التُقط بعد ذلك. ومحتوى كل سجل مشفّر بمفاتيح iCloud الخاصة بك؛ وتشفّر Apple الصور في iCloud، تشفيرًا تامًّا بين الطرفين فقط إن كنت قد شغّلت «حماية البيانات المتقدمة» لـ iCloud. ولا يذهب شيء من ذلك إلينا ولا يمرّ عبر خادم لـ Snapfly. وإن أطفأتها، لا يذهب شيء بعد ذلك؛ ويبقى ما في iCloud حتى تزيل بيانات Snapfly من إعدادات iCloud.</li>
+<li><strong>الربط برمز، لحساب Apple آخر.</strong> حين يُدخل جهاز iPhone مسجَّل بحساب Apple آخر الرمز الذي يعرضه جهاز Mac في الإعدادات › المزامنة › «عرض الرمز…» (رمز جديد كل 30 ثانية)، وتوافق على جهاز Mac، يشارك جهاز Mac لقطاته المتزامنة عبر iCloud مع ذلك الحساب وحده. عندها يرى الـ iPhone ما يزامنه جهاز Mac، وما يرسله يُعلَّق على حبلك. وللربط تبقى ملاحظات قصيرة مختومة بالرمز في قاعدة بيانات iCloud العامة الخاصة بـ Snapfly نحو دقيقة: أسماء الجهازين ومعرّف iCloud لا يدلّ على أحد. و«افصل…» على جهاز Mac يُخرج الحساب من المشاركة من جديد.</li>
+<li><strong>ملفاتك.</strong> يقرأ Snapfly لقطات الشاشة في المجلدات التي تسمح له بمراقبتها، وفي نسخة Mac App Store مجلد Snapfly داخل «الصور»، والصور وملفات PDF التي تعطيه إياها بنفسك. ولا ينسخ لقطة أو يرسلها أو ينقلها أو يحذفها إلا حين تطلب ذلك، أو، إن أبقيت هذا الإعداد مفعّلًا، بعد أن ترسلها إلى دردشة. والصورة أو ملف PDF الذي تعطيه إياه يبقى في مكانه دون تغيير، وما يخرج من الحبل نسخة منه: صورة بلا مكان التقاطها ولا بيانات الكاميرا، وملف PDF أُعيد رسمه صفحةً صفحة مع تغطية البيانات التي اخترتها. و«تغطية الملفات» تفعل الشيء نفسه مع ملفات كثيرة دفعة واحدة، وتحفظ كل نسخة في مجلد جديد تختاره؛ وتُقرأ الملفات على جهازك، إلا إذا كان «اكتشف المزيد مع Claude» أو ChatGPT مفعّلًا في الخصوصية: عندها تذهب كلمات كل ملف إلى هناك.</li>
 <li><strong>الصور المنسوخة.</strong> إن فعّلت «تعليق الصور المنسوخة»، ينظر Snapfly إلى الصور التي تنسخها ليعلّقها على الحبل. ويترك كل ما نُسخ مع نص أو ملف، وكل ما يعلّمه مدير كلمات المرور بأنه خاص.</li>
-<li><strong>إذن تسهيلات الاستخدام</strong> يسمح لزر الإرسال بلصق اللقطة في التطبيق الذي تستخدمه، بالضغط على ⌘V هناك. ولا يستخدمه Snapfly لأي شيء آخر. ويمكنك إيقافه في أي وقت من إعدادات النظام › الخصوصية والأمن › تسهيلات الاستخدام.</li>
-<li><strong>إذن تسجيل الشاشة</strong> يسمح لـ Snapfly بالتقاط اللقطات والتسجيلات التي تطلبها، بـ <bdi dir="ltr">⌃⌥S</bdi> أو زر التصوير أو «تسجيل الشاشة». لا يلتقط شيئًا إلا حين تطلب، وما يلتقطه يبقى على جهازك.</li>
-<li><strong>المتصفحات.</strong> كي يظهر زر الإرسال على مواقع الدردشة وحدها، يسأل Snapfly المتصفح الذي أمامك عن عنوان الصفحة المفتوحة، بعد أن تسمح له. وحين يكون ختم الوقت مفعّلًا، يكتب هذا العنوان أيضًا على ختم اللقطة الجديدة، ويبقى معها على جهازك. ولا يقرأ من المتصفح شيئًا آخر.</li>
+<li><strong>إذن تسهيلات الاستخدام</strong> يسمح لزر الإرسال بلصق اللقطة في التطبيق الذي تستخدمه، بالضغط على ⌘V هناك. وأثناء التقاط لقطة، يستخدمه التحديد الذكي ليسأل التطبيق الذي تحت المؤشر أين توجد فيه صورة أو زر، ليرسم حوله إطارًا: الموضع فقط، ولا يغادر شيء منه جهازك. وأثناء تسجيل دليل، يستخدمه Snapfly ليسأل التطبيق الذي تنقر فيه عمّا نُقر هناك. ولا يستخدمه Snapfly لأي شيء آخر. ويمكنك إيقافه في أي وقت من إعدادات النظام › الخصوصية والأمن › تسهيلات الاستخدام.</li>
+<li><strong>إذن تسجيل الشاشة</strong> يسمح لـ Snapfly بالتقاط اللقطات والتسجيلات التي تطلبها، بـ <bdi dir="ltr">⌃⌥S</bdi> أو زر التصوير أو «تسجيل الشاشة» أو «تسجيل دليل». لا يلتقط شيئًا إلا حين تطلب، وما يلتقطه يبقى على جهازك.</li>
+<li><strong>الأدلة.</strong> أثناء تسجيلك دليلًا، يلتقط Snapfly لقطة شاشة عند كل نقرة، ويسأل التطبيق الذي نقرت فيه، عبر تسهيلات الاستخدام، عمّا نُقر هناك: نوعه واسمه، لا ما تكتبه أبدًا. ولا يسجّل Snapfly ما تكتبه. ويبقى الدليل ولقطاته على جهازك، في مجلد Snapfly الخاص، آخر 20 دليلًا، حتى تحذفها. وما ترسله أو تحفظه من دليل تكون معلوماته الخاصة مغطّاة.</li>
+<li><strong>مساحة العمل، فقط إن شغّلتها.</strong> في الإعدادات › مساحة العمل يمكنك أن تجعل Snapfly يحفظ اللقطات في مجلد على سطح المكتب، مع مجلد لكل نوع. ويبقى المجلد على جهازك وهو ملكك: لا يقرأ Snapfly ولا يكتب إلا في ذلك المجلد، وينقل اللقطات بين مجلداته حين تطلب، ولا ينقلها إلى سلة المهملات إلا حين تختار «نقل إلى سلة المهملات» أو «احذف…»، الذي يسألك أولًا. وإيقافها أو إزالة التطبيق لا يحذف شيئًا. وإن كان iCloud Drive يحفظ سطح المكتب، تنسخ Apple المجلد إلى iCloud، سواء كانت المعلومات الخاصة مغطّاة أم لا؛ وهذه خدمة Apple واختيارك أنت.</li>
+<li><strong>الصوت في تسجيلات الشاشة، فقط إن اخترته.</strong> في الإعدادات › عام يمكنك أن تجعل التسجيلات تلتقط صوت جهاز Mac، أو الميكروفون، أو كليهما. ويسألك macOS قبل استخدام الميكروفون أول مرة. والصوت في التسجيل فقط، ويبقى مثله على جهازك، ولا يذهب إلى أي مكان.</li>
+<li><strong>المتصفحات.</strong> كي يظهر زر الإرسال على مواقع الدردشة وحدها، يسأل Snapfly المتصفح الذي أمامك عن عنوان الصفحة المفتوحة، بعد أن تسمح له. وحين يكون ختم الوقت مفعّلًا، يذكر ختم اللقطة الجديدة أيضًا الموقع الذي كان مفتوحًا، باسمه فقط، مثل <bdi>mail.google.com</bdi>، لا بقية العنوان أبدًا، فقد يكون فيها بحث أو عنوان بريد إلكتروني أو رابط لتسجيل الدخول. ويذهب الختم مع كل نسخة تغادر الحبل، ومعه هذا الاسم. ولا يقرأ من المتصفح شيئًا آخر.</li>
 <li>تعرض الإعدادات › الأذونات كل إذن منها، وهل هو مسموح، وكيف تغيّره.</li>
+<li><strong>ما يُقرأ يبقى في الذاكرة قليلًا فقط.</strong> كي لا تُقرأ اللقطة من جديد بعد تغيير أحد الإعدادات، يحتفظ Snapfly بالنص المقروء من آخر الصور في الذاكرة، لا على القرص أبدًا؛ وينساه تطبيق الـ iPhone حالما ينتقل إلى الخلفية، إلا إذا شغّلت «معالجة أسرع للصور» (أدناه). ولا يتذكّر تطبيق الـ iPhone اللقطات التي حميتها مؤخرًا إلا بمعرّفها في تطبيق الصور. ومدة كل خطوة من خطوات التغطية تُكتب في سجل الجهاز رقمًا فقط، لا كلمة مقروءة أبدًا.</li>
+<li><strong>المسح الضوئي وصور المستندات على جهاز iPhone.</strong> الصفحة الممسوحة أو صورة الصفحة تُعدَّل استقامتها وتُفتَّح وتُفحص على الـ iPhone، وتبقى في الذاكرة فقط حتى تحفظها أو تشاركها. والصورة التي تختارها بـ «احمِ صورة» لا يُنظر إليها إلا على الـ iPhone، لتمييز مستند مصوَّر من لقطة شاشة، ولا تُنظَّف إلا حين تلمس «تنظيف». واسم الصفحات الممسوحة يقترحه Apple Intelligence على الـ iPhone، من الكلمات خارج التغطيات فقط؛ ولا يغادر شيء منه الـ iPhone. ونص الصفحات الممسوحة (بصيغة «نص» في «الحفظ والمشاركة»، وفي «عرض النص») يُقرأ على الـ iPhone من الصفحات المغطّاة، فلا يكون فيه شيء مغطّى: لا في العرض، ولا في البحث، ولا في الترجمة، ولا في القراءة بصوت عالٍ. وتستخدم «قراءة بصوت عالٍ» صوت الـ iPhone نفسه؛ و«ترجمة» تسلّم النص إلى ترجمة النظام، ولا يرسل Snapfly شيئًا بنفسه. وتصحيحاتك للنص تبقى في الذاكرة ما دام المسح مفتوحًا؛ ولا يُنشأ ملف TXT أو CSV إلا حين تشاركه. وحين تلمس دردشة ذكاء اصطناعي مثل Claude أو ChatGPT، تحصل على النسخة المغطّاة، لا الأصل أبدًا، ومعها سؤال إن أردت؛ وليس لدى Snapfly مفتاح لها ولا يرسل شيئًا بنفسه: فالمحادثة تجريها أنت في تطبيقك.</li>
+<li><strong>مشاريع PDF تبقى محمية على جهاز iPhone.</strong> يحتفظ مشروع PDF بنسخ من الملفات التي تضيفها، وبترتيب صفحاته، في مساحة التخزين الخاصة بـ Snapfly على الـ iPhone: مع الحماية الكاملة للملفات، فلا يمكن قراءتها ما دام الـ iPhone مقفلًا، ولا تدخل في النسخ الاحتياطية، ولا تُزامَن أبدًا. والملفات نفسها لا تتغيّر أبدًا. وكلمة سر ملف PDF تُطلب في كل مرة يُفتح فيها، ولا تُحفظ أبدًا. وإن حذفت مشروعًا، ذهبت نسخه. ومع التغطية، تكون كل صفحة في ملف PDF المحفوظ صورةً، ومعلوماتها الخاصة مغطّاة، ونصها مقروء من الصفحة المغطّاة. وما تغطّيه بيدك على صفحة يبقى مع المشروع، موضعه فقط، لا كلمة أبدًا، ويكون مغطّى في كل نسخة منه.</li>
+<li><strong>معالجة أسرع للصور على جهاز iPhone، فقط إن شغّلتها.</strong> هي مطفأة حتى تشغّلها في الإعدادات، بعد صفحة تشرح ما تفعله؛ وسماحك لـ Snapfly برؤية صورك ليس موافقة عليها. عندها يقرأ الـ iPhone صورك من آخر 60 يومًا مسبقًا: لقطات الشاشة فقط، أو كل الصور التي سمحت بها، أو الصور التي تختارها فقط. والكلمات المقروءة، ومواضعها، وأنواع المعلومات التي فيها، تبقى على الـ iPhone وحده، في مجلد Snapfly الخاص، مقفلة ما دام الـ iPhone مقفلًا، ولا تدخل في النسخ الاحتياطية. ولا يُرسَل شيء منها إلى أي مكان، والصور الموجودة في iCloud فقط لا تُنزَّل لذلك. و«إيقاف مؤقت» يوقفها، و«حذف الفهرس المحلي» يحذف كل ما جُهّز، وإطفاؤها يحذفه أيضًا.</li>
 <li><strong>إعداداتك</strong>، مثل شكل الحبل وما يُغطّى، تُحفظ على جهازك فقط.</li>
 </ul>"""),
         ("خدمات Apple",
