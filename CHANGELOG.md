@@ -6,15 +6,15 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the iPhone, what can't be undone asks first: Clear beside the scanned
+  pages, Delete on a recent document, and Turn Off for faster picture
+  processing, which deletes everything prepared.
 - On the iPhone, a scanned invoice or letter that asks to be paid by a day
   still to come offers a payment reminder at the end of Save and Share:
   the calendar's own form opens filled in, the day, the amount, the company
   and the invoice's number as the page writes them, with an alert the day
   before. It is read on the iPhone, never for a document stamped paid or
   paid by direct debit, and Snapfly needs no access to your calendar.
-- On the iPhone, what can't be undone asks first: Clear beside the scanned
-  pages, Delete on a recent document, and Turn Off for faster picture
-  processing, which deletes everything prepared.
 - On the iPhone, the app says more when something doesn't work: a camera
   that cannot scan says why, a photo coming from iCloud shows "Opening…",
   See All says why a search or With Private Details finds nothing yet and
