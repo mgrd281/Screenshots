@@ -339,6 +339,8 @@
 "Could not take the screenshot." = "Ekran görüntüsü alınamadı.";
 "Could not record the screen." = "Ekran kaydedilemedi.";
 "Could not save the recording." = "Kayıt saklanamadı.";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "Kaydın sesi tek bir ses kanalında birleştirilemedi. Bazı oynatıcılar yalnızca bir kısmını çalabilir.";
+"A recording cut short last time was kept. Click to show it in Finder." = "Geçen sefer yarıda kalan bir kayıt saklandı. Finder'da göstermek için tıkla.";
 "Could not make the GIF." = "GIF oluşturulamadı.";
 "Make GIF" = "GIF oluştur";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence yanıt veremedi, bu yüzden yazılan sözcükler göründükleri her yerde gizlendi.";

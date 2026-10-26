@@ -335,11 +335,16 @@ extension ChatTarget {
         } else if !NSWorkspace.shared.open(newChat) {
             return finish(false)
         }
+        let opened = Date()
         Self.wait(within: 20, every: 0.25, for: {
             guard let front = Paste.frontApp?.bundleIdentifier,
                   front == browser || ChatButton.browserIDs.contains(front) else { return false }
             // A browser that can't say which page it shows is trusted to.
-            guard let page = ChatButton.pageInFront() else { return true }
+            guard ChatButton.browserIDs.contains(front) else { return true }
+            // It is asked off the main thread, once a second at most; the
+            // wait is for an answer asked once the chat was opened.
+            guard let answer = ChatButton.page(in: front, since: opened) else { return false }
+            guard let page = answer.url else { return true }
             return chat.owns(host: page.host)
         }) { shown in
             guard shown else { return finish(false) }

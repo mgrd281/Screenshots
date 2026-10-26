@@ -217,6 +217,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
         }
 
+        // Each time Snapfly comes to the front, the folders it could not
+        // watch are tried again.
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.reviveWatchers() }
+        }
+
         // The introduction once, then the question about screenshots once.
         if Guide.shared.offersAtLaunch || !Inbox.wasOffered {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in self?.welcome() }
@@ -247,6 +255,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             return
         }
         hangFiles(urls, from: nil)
+    }
+
+    /// Quitting while the screen is recorded, from the menu, by logging out
+    /// or with Install and Reopen, saves the recording first, as Stop does.
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard Recording.shared.isRecording else { return .terminateNow }
+        Task { @MainActor in
+            await Recording.shared.finishBeforeQuitting()
+            NSApp.reply(toApplicationShouldTerminate: true)
+        }
+        return .terminateLater
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -287,6 +306,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             extra.start()
             folderWatchers.append(extra)
         }
+    }
+
+    /// Watches again what can be watched now: a folder that could not be
+    /// opened, like the Desktop before Snapfly was let in, or that went, like
+    /// one on a disk ejected. The Screenshot app may also save somewhere
+    /// else since it was last read, with inbox mode off.
+    private func reviveWatchers() {
+        if !Edition.appStore,
+           ScreenshotWatcher.screenshotFolder().standardizedFileURL.path != watcher.folder.standardizedFileURL.path {
+            return startWatcher()
+        }
+        watcher.revive()
+        safetyWatcher?.revive()
+        folderWatchers.forEach { $0.revive() }
     }
 
     /// Up to three folders: enough for another screenshot app or an export
@@ -439,14 +472,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     /// Quitting from the menu or logging out runs applicationWillTerminate.
-    /// A plain kill does not, so settings are also restored on those signals.
+    /// A plain kill does not, so settings are also restored on those signals,
+    /// and a recording under way is saved first, a few seconds at most.
     private func restoreSettingsOnTermination() {
         for sig in [SIGTERM, SIGINT, SIGHUP] {
             signal(sig, SIG_IGN)
             let source = DispatchSource.makeSignalSource(signal: sig, queue: .main)
             source.setEventHandler {
-                if Inbox.isEnabled { Inbox.restore() }
-                exit(0)
+                MainActor.assumeIsolated {
+                    if Inbox.isEnabled { Inbox.restore() }
+                    guard Recording.shared.isRecording else { exit(0) }
+                    Task { @MainActor in
+                        await Recording.shared.finishBeforeQuitting(within: 5)
+                        exit(0)
+                    }
+                }
             }
             source.resume()
             signalSources.append(source)
@@ -711,6 +751,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             itemsChanged()
             return
         }
+        // Its covered copy is being made: old ones may go.
+        pruneCoveredCopies()
         guard let from else {
             Guide.shared.happened(.photoHung)
             return
@@ -1595,6 +1637,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             alert.informativeText = L("Move Snapfly to the Applications folder and try again.")
             NSApp.activate(ignoringOtherApps: true)
             alert.runModal()
+        }
+    }
+
+    // MARK: Covered copies
+
+    /// When the covered copies were last thinned out; they are emptied at
+    /// each launch.
+    private var prunedAt = Date()
+
+    /// Covered copies wait in the temporary folder to be pasted. On a Mac
+    /// that runs Snapfly for days, they are thinned out as new ones are
+    /// made, an hour apart at most: those made a day ago or more go, but the
+    /// ones the line shows, which go out again. Not while one may still be
+    /// on its way: with files on the clipboard, or a photo dragged out in
+    /// the last minutes.
+    private func pruneCoveredCopies() {
+        let now = Date()
+        guard now.timeIntervalSince(prunedAt) > 3600, !GrabView.isDragging,
+              now.timeIntervalSince(GrabView.lastDragEnd) > 300,
+              NSPasteboard.general.types?.contains(.fileURL) != true else { return }
+        prunedAt = now
+        let shown = line.items.filter { !$0.falling }.compactMap { PrivateDetails.shown($0.url) }
+        let keeping = Set(shown.map { $0.deletingLastPathComponent().lastPathComponent })
+        let limit = now.addingTimeInterval(-24 * 3600)
+        DispatchQueue.global(qos: .utility).async {
+            AppDelegate.pruneCopies(in: Cover.folder, madeBefore: limit, keeping: keeping)
+        }
+    }
+
+    /// Takes away the copies in `folder`, each in a folder of its own, made
+    /// before `limit`, but those whose folders are named in `keeping`.
+    nonisolated static func pruneCopies(in folder: URL, madeBefore limit: Date, keeping: Set<String>) {
+        let fm = FileManager.default
+        let copies = (try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: [.creationDateKey])) ?? []
+        for entry in copies where !keeping.contains(entry.lastPathComponent) {
+            let made = (try? entry.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? .distantFuture
+            if made < limit { try? fm.removeItem(at: entry) }
         }
     }
 

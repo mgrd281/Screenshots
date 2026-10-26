@@ -339,6 +339,8 @@
 "Could not take the screenshot." = "Das Bildschirmfoto konnte nicht aufgenommen werden.";
 "Could not record the screen." = "Der Bildschirm konnte nicht aufgenommen werden.";
 "Could not save the recording." = "Die Aufnahme konnte nicht gesichert werden.";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "Der Ton der Aufnahme konnte nicht zu einer Tonspur gemischt werden. Manche Player spielen vielleicht nur einen Teil davon ab.";
+"A recording cut short last time was kept. Click to show it in Finder." = "Eine Aufnahme, die letztes Mal abgebrochen wurde, ist erhalten geblieben. Klick, um sie im Finder zu zeigen.";
 "Could not make the GIF." = "Das GIF konnte nicht erstellt werden.";
 "Make GIF" = "GIF erstellen";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence konnte nicht antworten, deshalb sind die eingegebenen Wörter überall ausgeblendet, wo sie vorkommen.";

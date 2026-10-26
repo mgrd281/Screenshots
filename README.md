@@ -157,7 +157,9 @@ WEB.DE and GMX in a browser, where the photos go into the message being
 written. Settings lists
 the apps, by name and icon, and the websites; turn any off, remove it, or add
 your own. To know the page, Snapfly asks the
-browser, and macOS asks you once whether it may. It shows the newest photo and how many
+browser, and macOS asks you once whether it may. It asks in the background,
+once a second and as soon as another tab comes to the front, so a busy
+browser never slows Snapfly down. It shows the newest photo and how many
 will go. One click and they are in, without a trip to the top of the screen.
 Over the chats it knows, like ChatGPT, Claude, Gemini, WhatsApp, Telegram
 or Slack, it finds that spot by itself, measured on each one: on a new chat,
@@ -221,14 +223,18 @@ Dock shows the time; click it, press the shortcut again, or choose Stop
 Recording in the menu bar to stop. The recording hangs on the line, ready to
 trim or send, and opens in Studio (below). Make GIF in its menu turns it into a looping GIF that every chat
 plays, which hangs next to it and stays animated when sent. Snapfly's own
-line and controls stay out of it.
+line and controls stay out of it. Quit, log out or install an update while
+recording, and the recording is saved first, as Stop saves it. One cut short
+anyway, as by a crash, is written in pieces: the next time Snapfly opens, it
+hangs on the line up to its last few seconds, and a note says so.
 
 A recording has sound when you choose it, in Settings › General under Screen
 recordings: the Mac's sound, what you hear without Snapfly's own; the
 microphone, your voice, asked for the first time and on macOS 15 or later;
 or both, mixed into one track that every player and chat plays. It has none
 until chosen. If the microphone isn't allowed, the recording goes on without
-it and a note says where to allow it.
+it and a note says where to allow it. Should the mixing fail, the recording
+keeps both tracks, and a note says so.
 
 ### Studio: zoomed in, pointed out.
 
@@ -647,7 +653,8 @@ stays out of the sentences.
 
 Hang on the Line makes it a PDF of numbered A4 pages and hangs it, ready to
 send. Save writes a PDF, or one tall picture that shows whole in a chat, or
-copies that picture. The last 20 guides stay on your Mac, under Recent
+copies that picture, with a file of it for apps that take files; watching
+the clipboard leaves it alone, as it does photos copied from the line. The last 20 guides stay on your Mac, under Recent
 Guides in the menu bar. The App Store edition can't ask other apps what was
 clicked, so its steps say "Click here." and mark the click with a ring.
 
@@ -670,7 +677,8 @@ or down, choose which one new screenshots go to, add your own, or remove
 one: its screenshots move to Unsorted and nothing is deleted. A name is
 kept when you press Return or leave its field. Rename the
 folder or choose Change Location…, or move it in the Finder: Snapfly finds
-it again, and what hangs on the line follows its files. The folder carries
+it again, and what hangs on the line follows its files. Moved to the Trash,
+it is made again where it was, and new screenshots go on hanging. The folder carries
 Snapfly's icon in the Finder, and looks like any folder if macOS refuses
 it. A screenshot is written whole or not at all and never over another file,
 and when the disk is full or the folder can't be reached, a note says why
@@ -1784,7 +1792,7 @@ iPhone app takes in all of Resources beside its own; their English is in
 ---
 
 <sub>
-1. On first launch, Snapfly offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Snapfly quits or the option is turned off in Settings. Snapfly hides automatically while an app is in full screen, unless Over full screen apps is on in Settings › Line; asked for there with Show line or Search, a note says so and where to turn it on.
+1. On first launch, Snapfly offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Snapfly quits or the option is turned off in Settings. Without it, Snapfly picks screenshots up wherever the Screenshot app saves them, and looks at that place again each time Snapfly comes to the front, so a new location, a disk put back or a Desktop opened to it later count too. Snapfly hides automatically while an app is in full screen, unless Over full screen apps is on in Settings › Line; asked for there with Show line or Search, a note says so and where to turn it on.
 
    The Mac App Store edition may not change those settings, so its first launch starts with Snapfly's own screenshots instead, which need nothing set up: Try It Now takes the first one. Pointing the Screenshot app at Pictures › Snapfly stays a choice, in that first window and under General in Settings.
 </sub>

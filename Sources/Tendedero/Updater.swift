@@ -43,7 +43,12 @@ enum Updater {
                 Notice.show(String(format: L("Snapfly %@ is up to date."), version), done: true)
                 return
             }
-            guard teamIdentifier(of: found.app) == team, isValid(found.app, team: team) else {
+            // Every file of it is checked, which takes a moment: off the main thread.
+            let app = found.app
+            let trusted = await Task.detached(priority: .userInitiated) {
+                Updater.teamIdentifier(of: app) == team && Updater.isValid(app, team: team)
+            }.value
+            guard trusted else {
                 try? FileManager.default.removeItem(at: found.folder)
                 log.error("An update was not signed as Snapfly is; it was not installed")
                 Notice.show(L("The update could not be checked, so it was not installed."))
@@ -126,10 +131,14 @@ enum Updater {
     /// Quits, and opens the app at `app` again once this copy has gone, so
     /// two never run side by side: the one quitting would put back the
     /// screenshot settings the new one has just set, and hold its shortcuts.
+    /// Quitting may wait some seconds for a recording under way to be saved;
+    /// the new copy waits for it half a minute at most.
     static func reopen(_ app: URL) {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/bin/sh")
-        process.arguments = ["-c", "sleep 1; /usr/bin/open \"$0\"", app.path]
+        process.arguments = ["-c",
+                             "n=0; while kill -0 \"$1\" 2>/dev/null && [ $n -lt 150 ]; do sleep 0.2; n=$((n+1)); done; /usr/bin/open \"$0\"",
+                             app.path, String(ProcessInfo.processInfo.processIdentifier)]
         try? process.run()
         NSApp.terminate(nil)
     }

@@ -215,8 +215,6 @@ final class ChatButton {
         return host
     }
 
-    private var scripts: [String: NSAppleScript] = [:]
-
     init(line: Line) {
         self.line = line
         panel = ChatButtonPanel(model: model)
@@ -279,10 +277,11 @@ final class ChatButton {
         // Not during a call: the photo on it is for no shared screen.
         guard timer != nil, Self.isEnabled, hasSomethingToSend, !Calls.shared.keepingAway,
               let app = Paste.frontApp, let id = app.bundleIdentifier,
-              let window = Self.frontWindow(of: app.processIdentifier) else {
+              let front = Self.frontWindowSeen(of: app.processIdentifier) else {
             hide()
             return
         }
+        let window = front.frame
         // The message box moves rarely; once a second is enough to follow it.
         let fresh = ticks % 5 == 0
         ticks += 1
@@ -297,9 +296,12 @@ final class ChatButton {
             layout = ChatLayouts.layout(forApp: id)
             aiChat = CoveringProfile.isAIChat(app: id, host: nil)
         } else if Self.browsers[id] != nil {
-            // Read at every tick: switching to another tab or site hides it
-            // within a fifth of a second, and a chat just started moves it down.
-            let read = readPage(in: id)
+            // The browser is asked off the main thread, once a second and at
+            // once when another window or tab comes to the front: switching
+            // to another tab or site hides it within a moment, and a chat
+            // just started moves it down.
+            Self.seen(front.which, in: id)
+            let read = Self.page(in: id, since: Date().addingTimeInterval(-Self.pageFresh))?.url
             guard let read, let host = read.host, let site = Self.site(for: host) else { return hide() }
             layout = ChatLayouts.layout(for: read)
             key = layout != nil && ChatLayouts.isNewChat(read) ? site + "#new" : site
@@ -330,29 +332,59 @@ final class ChatButton {
         return sites.first { $0.on && (host == $0.host || host.hasSuffix("." + $0.host)) }?.host
     }
 
-    /// Asks the browser for the page in front, through Apple Events. macOS
-    /// asks once whether Snapfly may; without it, the button stays away
-    /// from the browser. A busy browser gets a second at most.
-    private func readPage(in browser: String) -> URL? {
-        guard let property = Self.browsers[browser] else { return nil }
-        let script: NSAppleScript
-        if let cached = scripts[browser] {
-            script = cached
-        } else {
-            let source = """
-            with timeout of 1 second
-                tell application id "\(browser)" to return \(property)
-            end timeout
-            """
-            guard let made = NSAppleScript(source: source) else { return nil }
-            scripts[browser] = made
-            script = made
+    /// What a browser said its page in front was, and when it was asked.
+    struct PageAnswer {
+        /// Nil when it would not say, or Snapfly may not ask it.
+        var url: URL?
+        var asked: Date
+    }
+
+    /// The browsers' latest answers, and those being asked now.
+    private static var answers: [String: PageAnswer] = [:]
+    private static var asking: Set<String> = []
+    /// Each browser's front window as last seen, and when it changed.
+    private static var windows: [String: (which: String, changed: Date)] = [:]
+    /// An answer this old still says which page is in front: the browser
+    /// in front is asked again once a second.
+    private static let pageFresh: TimeInterval = 2.5
+
+    /// The browser's latest answer to which page it shows, asked for after
+    /// `since`; nil until there is one. Once that answer is a second old it
+    /// is asked again, through Apple Events and off the main thread, so a
+    /// busy browser never holds Snapfly up and is asked once a second at
+    /// most. macOS asks once whether Snapfly may; without it, the answer has
+    /// no page, and the button stays away from the browser.
+    static func page(in browser: String, since: Date) -> PageAnswer? {
+        let latest = answers[browser]
+        if latest.map({ Date().timeIntervalSince($0.asked) >= 1 }) ?? true { ask(browser) }
+        guard let latest, latest.asked >= since else { return nil }
+        return latest
+    }
+
+    /// Notes the browser's front window. Another window, or another title,
+    /// as with another tab in front, has the browser asked again at once,
+    /// a quarter of a second apart at most for a title that keeps changing.
+    private static func seen(_ which: String, in browser: String) {
+        guard windows[browser]?.which != which else { return }
+        windows[browser] = (which, Date())
+        if answers[browser].map({ Date().timeIntervalSince($0.asked) >= 0.25 }) ?? true { ask(browser) }
+    }
+
+    /// Asks the browser in the background, unless it is being asked already.
+    private static func ask(_ browser: String) {
+        guard let property = browsers[browser], !asking.contains(browser) else { return }
+        asking.insert(browser)
+        let asked = Date()
+        PageReader.shared.ask(browser, property) { url in
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated {
+                    ChatButton.asking.remove(browser)
+                    if (ChatButton.answers[browser]?.asked ?? .distantPast) < asked {
+                        ChatButton.answers[browser] = PageAnswer(url: url, asked: asked)
+                    }
+                }
+            }
         }
-        var error: NSDictionary?
-        let result = script.executeAndReturnError(&error)
-        guard error == nil, let text = result.stringValue, let url = URL(string: text), url.host != nil
-        else { return nil }
-        return url
     }
 
     /// The chat website the button sits over in the browser in front, like
@@ -362,10 +394,19 @@ final class ChatButton {
         return key.hasSuffix("#new") ? String(key.dropLast(4)) : key
     }
 
-    /// The page open in the browser in front, for the time stamp.
+    /// The page open in the browser in front, for the time stamp and what
+    /// is sent: its latest answer while fresh and asked since its window
+    /// last changed, else asked now, waiting a second at most.
     static func pageInFront() -> URL? {
-        guard let shared, let id = Paste.frontApp?.bundleIdentifier, browsers[id] != nil else { return nil }
-        return shared.readPage(in: id)
+        guard let id = Paste.frontApp?.bundleIdentifier, let property = browsers[id] else { return nil }
+        if let latest = answers[id], Date().timeIntervalSince(latest.asked) < pageFresh,
+           latest.asked >= windows[id]?.changed ?? .distantPast {
+            return latest.url
+        }
+        let asked = Date()
+        let url = PageReader.shared.read(id, property)
+        answers[id] = PageAnswer(url: url, asked: asked)
+        return url
     }
 
     private func hide() {
@@ -541,6 +582,12 @@ final class ChatButton {
     /// The app's frontmost ordinary window, from the window server, which
     /// needs no permission and works in the sandbox too.
     static func frontWindow(of pid: pid_t) -> CGRect? {
+        frontWindowSeen(of: pid)?.frame
+    }
+
+    /// The same, with what tells it from another: its number, and its title
+    /// where macOS lets Snapfly read it, which changes with the tab in front.
+    private static func frontWindowSeen(of pid: pid_t) -> (frame: CGRect, which: String)? {
         guard let main = NSScreen.screens.first,
               let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID)
                 as? [[String: Any]] else { return nil }
@@ -550,7 +597,10 @@ final class ChatButton {
                   let bounds = info[kCGWindowBounds as String] as? NSDictionary,
                   let b = CGRect(dictionaryRepresentation: bounds as CFDictionary),
                   b.width > 300, b.height > 200 else { continue }
-            return CGRect(x: b.minX, y: main.frame.maxY - b.maxY, width: b.width, height: b.height)
+            let number = info[kCGWindowNumber as String] as? Int ?? 0
+            let title = info[kCGWindowName as String] as? String ?? ""
+            return (CGRect(x: b.minX, y: main.frame.maxY - b.maxY, width: b.width, height: b.height),
+                    "\(number) \(title)")
         }
         return nil
     }
@@ -584,6 +634,49 @@ final class ChatButton {
                            width: extent.width, height: extent.height)
         guard window.contains(CGPoint(x: frame.midX, y: frame.midY)), frame.midY < window.midY else { return nil }
         return frame
+    }
+}
+
+/// Asks a browser which page it shows, through Apple Events: one question
+/// at a time, each waiting a second at most, on a queue of its own, or
+/// where it is asked when the answer cannot wait.
+private final class PageReader: @unchecked Sendable {
+    static let shared = PageReader()
+
+    private let queue = DispatchQueue(label: "de.ghazarian.Snapfly.page", qos: .userInitiated)
+    /// One question at a time, from the queue or from the main thread.
+    private let lock = NSLock()
+    /// Made once for each browser, and used under the lock alone.
+    private var scripts: [String: NSAppleScript] = [:]
+
+    /// Asks in the background; the answer comes on the queue.
+    func ask(_ browser: String, _ property: String, then done: @escaping @Sendable (URL?) -> Void) {
+        queue.async { done(self.read(browser, property)) }
+    }
+
+    /// Asks and waits for the answer: nil when the browser would not say,
+    /// was busy, or Snapfly may not ask it.
+    func read(_ browser: String, _ property: String) -> URL? {
+        lock.lock()
+        defer { lock.unlock() }
+        let script: NSAppleScript
+        if let cached = scripts[browser] {
+            script = cached
+        } else {
+            let source = """
+            with timeout of 1 second
+                tell application id "\(browser)" to return \(property)
+            end timeout
+            """
+            guard let made = NSAppleScript(source: source) else { return nil }
+            scripts[browser] = made
+            script = made
+        }
+        var error: NSDictionary?
+        let result = script.executeAndReturnError(&error)
+        guard error == nil, let text = result.stringValue, let url = URL(string: text), url.host != nil
+        else { return nil }
+        return url
     }
 }
 

@@ -339,6 +339,8 @@
 "Could not take the screenshot." = "스크린샷을 찍지 못했어요.";
 "Could not record the screen." = "화면을 기록하지 못했어요.";
 "Could not save the recording." = "기록을 저장하지 못했어요.";
+"Could not mix the recording’s sound into one track. Some players may play only part of it." = "기록의 소리를 하나의 트랙으로 합치지 못했어요. 일부 플레이어에서는 일부만 재생될 수 있어요.";
+"A recording cut short last time was kept. Click to show it in Finder." = "지난번에 중간에 끊긴 기록을 남겨 두었어요. Finder에서 보려면 클릭하세요.";
 "Could not make the GIF." = "GIF를 만들지 못했어요.";
 "Make GIF" = "GIF 만들기";
 "Apple Intelligence could not answer, so the words typed are hidden where they appear." = "Apple Intelligence가 응답하지 못해 입력한 단어를 나오는 곳마다 가렸어요.";

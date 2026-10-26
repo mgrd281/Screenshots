@@ -127,6 +127,34 @@ keeps a download of each version.
   reached with Tab where keyboard navigation is on: Space or Return hangs
   one again, and on the Workspace page Space selects it and Return opens
   it.
+- On the Mac, quitting, logging out or Install and Reopen while the screen
+  is recorded saves the recording first, as Stop does, instead of deleting
+  it. A recording cut short anyway, as by a crash, is now written in
+  pieces: the next time Snapfly opens, it hangs on the line up to its last
+  few seconds, with a note.
+- On the Mac, a recording with both the Mac's sound and the microphone can
+  no longer leave Snapfly saving it for ever: when the two can't be mixed
+  into one track, the recording keeps both and a note says so.
+- On the Mac, Markup open on two photos at once saves each one's Done to its
+  own photo, never one over the other.
+- On the Mac, screenshots go on hanging after the workspace folder went to
+  the Trash and was made again, a disk was ejected and put back, or
+  Snapfly was let into the Desktop later: what could not be watched is
+  tried again each time Snapfly comes to the front, and with inbox mode
+  off, the Screenshot app's location is read again then too. A folder that
+  could not be read for a moment no longer hangs its old screenshots again
+  as new ones.
+- On the Mac, the send button over a browser asks it for the open page
+  once a second, and as soon as another tab comes to the front, instead of
+  five times a second, so a busy browser slows Snapfly down far less.
+  Opening a chat's website waits for the browser the same way.
+- On the Mac, a guide's Copy no longer hangs the guide on the line as a new
+  screenshot while Snapfly watches the clipboard: it goes with a file of
+  it, as photos copied from the line do.
+- On the Mac, the launch no longer waits on the network for the Mac's name,
+  Check for Updates stays responsive while it checks a download, and
+  covered copies waiting to be pasted are cleared after a day on a Mac that
+  keeps Snapfly running, besides at each launch.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

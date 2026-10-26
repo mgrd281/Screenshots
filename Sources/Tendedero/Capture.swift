@@ -476,11 +476,12 @@ final class Capture {
         }
     }
 
-    nonisolated static func stamp() -> String {
+    /// When a capture was made, as its name says it: now, unless given.
+    nonisolated static func stamp(_ date: Date = Date()) -> String {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
         f.dateFormat = "yyyy-MM-dd 'at' HH.mm.ss"
-        return f.string(from: Date())
+        return f.string(from: date)
     }
 }
 

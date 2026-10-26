@@ -11,7 +11,9 @@ final class Markup: NSObject, NSSharingServiceDelegate {
     /// Called with the file once the edited image has been written back.
     var onSaved: (URL) -> Void = { _ in }
 
-    private var editing: URL?
+    /// Each Markup window open, with the file it was opened on, so Done in
+    /// one writes that photo and never another's.
+    private var editing: [(service: NSSharingService, url: URL)] = []
     private static let serviceName = NSSharingService.Name("com.apple.MarkupUI.Markup")
 
     func edit(_ url: URL) {
@@ -21,10 +23,17 @@ final class Markup: NSObject, NSSharingServiceDelegate {
             NSWorkspace.shared.open(url)
             return
         }
-        editing = url
+        editing.append((service, url))
         service.delegate = self
         NSApp.activate(ignoringOtherApps: true)
         service.perform(withItems: [url])
+    }
+
+    /// The file a Markup window was opened on, now that it is done. Each
+    /// window's service is kept until then, so no other can take its place.
+    private func done(with service: ObjectIdentifier) -> URL? {
+        guard let index = editing.firstIndex(where: { ObjectIdentifier($0.service) == service }) else { return nil }
+        return editing.remove(at: index).url
     }
 
     // MARK: NSSharingServiceDelegate
@@ -32,19 +41,21 @@ final class Markup: NSObject, NSSharingServiceDelegate {
     /// Done was pressed. The extension hands back the edited image and the
     /// host app is the one that writes it over the original file.
     nonisolated func sharingService(_ sharingService: NSSharingService, didShareItems items: [Any]) {
-        MainActor.assumeIsolated { self.save(items) }
+        let service = ObjectIdentifier(sharingService)
+        MainActor.assumeIsolated { self.save(items, from: service) }
     }
 
     nonisolated func sharingService(_ sharingService: NSSharingService,
                                     didFailToShareItems items: [Any], error: Error) {
         log.notice("Markup ended without saving: \(error.localizedDescription, privacy: .private)")
+        let service = ObjectIdentifier(sharingService)
+        DispatchQueue.main.async { MainActor.assumeIsolated { _ = self.done(with: service) } }
     }
 
     // MARK: Writing back
 
-    private func save(_ items: [Any]) {
-        guard let target = editing, let item = items.first else { return }
-        editing = nil
+    private func save(_ items: [Any], from service: ObjectIdentifier) {
+        guard let target = done(with: service), let item = items.first else { return }
         log.notice("Markup returned \(String(describing: type(of: item)), privacy: .public)")
 
         switch item {
