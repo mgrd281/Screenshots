@@ -521,6 +521,9 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "轻点两下 iPhone 背面：最新的截图会被隐藏并拷贝，可直接粘贴到聊天中。";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "只需设置一次：打开“设置”›“辅助功能”›“触控”›“轻点背面”›“轻点两下”，然后选择 %@。";
 "Cover the Latest Screenshot" = "隐藏最新截图";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "隐藏你最新截图中的私人信息并拷贝，可直接粘贴。";
+"Cover Screenshot" = "隐藏截图";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "隐藏图片中的姓名、地址、电子邮件、电话号码和银行信息。";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "一切都在这台 iPhone 上完成。不会发送到任何地方。";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly 还不能查看你的截图。请打开 Snapfly 一次并允许。";
 "There is no screenshot yet." = "还没有截图。";

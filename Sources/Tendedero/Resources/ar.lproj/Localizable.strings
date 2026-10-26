@@ -521,6 +521,9 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "انقر مرتين على ظهر الآيفون: تُغطّى أحدث لقطة شاشة وتُنسخ، جاهزة للّصق في الدردشة.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "لضبط ذلك مرة واحدة، افتح الإعدادات › تسهيلات الاستخدام › اللمس › النقر على الظهر › نقر مزدوج، واختر %@.";
 "Cover the Latest Screenshot" = "تغطية أحدث لقطة شاشة";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "يغطي المعلومات الخاصة في أحدث لقطة شاشة لديك وينسخها، جاهزة للّصق.";
+"Cover Screenshot" = "تغطية لقطة الشاشة";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "يغطي الأسماء والعناوين والبريد الإلكتروني وأرقام الهواتف والبيانات المصرفية في الصورة.";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "كل شيء يحدث على هذا الآيفون. لا يُرسل شيء إلى أي مكان.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "لا يُسمح لـ Snapfly برؤية لقطات شاشتك بعد. افتح Snapfly مرة واحدة واسمح له.";
 "There is no screenshot yet." = "لا توجد لقطة شاشة بعد.";

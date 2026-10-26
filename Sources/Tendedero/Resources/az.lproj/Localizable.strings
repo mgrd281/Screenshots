@@ -523,6 +523,9 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhone-un arxasına iki dəfə toxun: ən yeni ekran şəkli gizlədilir və kopyalanır, söhbətə yapışdırmağa hazırdır.";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "Bir dəfə qurmaq üçün Parametrlər › Əlçatımlılıq › Toxunma › Arxaya toxunma › İki dəfə toxunma bölməsini aç və %@ seç.";
 "Cover the Latest Screenshot" = "Ən yeni ekran şəklini gizlət";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "Ən yeni ekran şəklindəki şəxsi məlumatları gizlədir və onu kopyalayır, yapışdırmağa hazırdır.";
+"Cover Screenshot" = "Ekran şəklini gizlət";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "Şəkildəki adları, ünvanları, e-poçtları, telefon nömrələrini və bank məlumatlarını gizlədir.";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "Hər şey bu iPhone-da baş verir. Heç nə heç yerə göndərilmir.";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly hələ ekran şəkillərini görə bilmir. Snapfly-ı bir dəfə aç və icazə ver.";
 "There is no screenshot yet." = "Hələ ekran şəkli yoxdur.";

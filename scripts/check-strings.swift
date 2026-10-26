@@ -19,6 +19,11 @@ var problems: [String] = []
 var warnings: [String] = []
 let literal = try NSRegularExpression(pattern: #"\bL\(\s*"((?:[^"\\]|\\.)*)"\s*\)"#)
 let anyCall = try NSRegularExpression(pattern: #"\bL\("#)
+// What Shortcuts shows of the iPhone's actions: their titles, descriptions,
+// parameters' titles and short titles, which iOS looks up in
+// Localizable.strings by their English text, as L() does.
+let intentLiteral = try NSRegularExpression(
+    pattern: #"(?:LocalizedStringResource\s*=|IntentDescription\(|\b(?:title|shortTitle):)\s*"((?:[^"\\]|\\.)*)""#)
 for folder in [sources, iPhone, shareExtension] {
     for case let file as URL in fm.enumerator(at: folder, includingPropertiesForKeys: nil)!
     where file.pathExtension == "swift" && file.lastPathComponent != "Localization.swift" {
@@ -28,6 +33,12 @@ for folder in [sources, iPhone, shareExtension] {
         for match in literals {
             let key = String(text[Range(match.range(at: 1), in: text)!])
             used.insert(key.replacingOccurrences(of: #"\""#, with: #"""#))
+        }
+        if text.contains("import AppIntents") {
+            for match in intentLiteral.matches(in: text, range: range) {
+                let key = String(text[Range(match.range(at: 1), in: text)!])
+                used.insert(key.replacingOccurrences(of: #"\""#, with: #"""#))
+            }
         }
         let calls = anyCall.numberOfMatches(in: text, range: range)
         if calls != literals.count {

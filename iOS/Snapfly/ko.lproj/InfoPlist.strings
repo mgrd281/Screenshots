@@ -1,0 +1,7 @@
+/* The questions iOS asks before Snapfly may use the camera or Photos.
+   The English ones are the build settings' INFOPLIST_KEY_* in
+   iOS/Snapfly.xcodeproj; change both together. */
+
+"NSCameraUsageDescription" = "Snapfly는 카메라로 문서를 스캔해 이 iPhone에서 문서 속 개인 정보를 가립니다.";
+"NSPhotoLibraryAddUsageDescription" = "Snapfly는 요청할 때 스크린샷의 가린 사본을 사진에 저장합니다.";
+"NSPhotoLibraryUsageDescription" = "Snapfly는 이 iPhone에서 스크린샷을 보여 주고 그 속의 개인 정보를 가립니다.";

@@ -523,6 +523,9 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "अपने iPhone के पीछे दो बार टैप करें: नया स्क्रीनशॉट छिप कर कॉपी हो जाता है, चैट में पेस्ट करने के लिए तैयार।";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "एक बार सेट करने के लिए सेटिंग्ज़ › ऐक्सेसिबिलिटी › स्पर्श › बैक टैप › डबल टैप खोलें और %@ चुनें।";
 "Cover the Latest Screenshot" = "नया स्क्रीनशॉट छिपाएँ";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "आपके सबसे नए स्क्रीनशॉट की निजी जानकारी छिपाता है और उसे कॉपी करता है, पेस्ट करने के लिए तैयार।";
+"Cover Screenshot" = "स्क्रीनशॉट छिपाएँ";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "तस्वीर में नाम, पते, ईमेल, फ़ोन नंबर और बैंक विवरण छिपाता है।";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "सब कुछ इसी iPhone पर होता है। कुछ भी कहीं नहीं भेजा जाता।";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapfly अभी आपके स्क्रीनशॉट नहीं देख सकता। Snapfly को एक बार खोलें और अनुमति दें।";
 "There is no screenshot yet." = "अभी कोई स्क्रीनशॉट नहीं है।";

@@ -521,6 +521,9 @@
 "Double tap the back of your iPhone: the latest screenshot is covered and copied, ready to paste into a chat." = "iPhoneの背面をダブルタップ：最新のスクリーンショットが隠されてコピーされ、チャットにペーストできます。";
 "To set it up once, open Settings › Accessibility › Touch › Back Tap › Double Tap, and choose %@." = "一度だけ設定するには、設定 › アクセシビリティ › タッチ › 背面タップ › ダブルタップを開き、%@を選びます。";
 "Cover the Latest Screenshot" = "最新のスクリーンショットを隠す";
+"Covers the private details in your newest screenshot and copies it, ready to paste." = "最新のスクリーンショットの個人情報を隠してコピーします。そのままペーストできます。";
+"Cover Screenshot" = "スクリーンショットを隠す";
+"Covers names, addresses, emails, phone numbers and bank details in a picture." = "画像内の名前、住所、メールアドレス、電話番号、口座情報を隠します。";
 "Everything happens on this iPhone. Nothing is sent anywhere." = "すべてこのiPhone上で行われます。どこにも送信されません。";
 "Snapfly may not see your screenshots yet. Open Snapfly once and allow it." = "Snapflyはまだスクリーンショットを見られません。Snapflyを一度開いて許可してください。";
 "There is no screenshot yet." = "スクリーンショットはまだありません。";
