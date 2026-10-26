@@ -538,7 +538,7 @@ final class ScannedPages: ObservableObject {
             // holds every page covered whole together.
             var read = ScanReadingResult(pages: [], previews: [])
             defer { making = nil }
-            for (index, page) in pages.enumerated() {
+            for (index, page) in self.pages.enumerated() {
                 making = index + 1
                 let one = try await self.covered(page, number: index + 1,
                                                  failing: L("Page %d could not be covered, so its text was not read."))
