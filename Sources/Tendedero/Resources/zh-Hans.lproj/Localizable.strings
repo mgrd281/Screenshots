@@ -1292,7 +1292,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "适用于登录其他 Apple 账户的 Mac。在 Mac 上打开 Snapfly 的设置，进入“同步”，点按“显示配对码”。";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "适用于登录其他 Apple 账户的 iPhone：在 iPhone 上输入这台 Mac 显示的配对码。";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud 尚未准备好连接。请稍后重试。";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "在 iPhone 上的 Snapfly 中打开设置，轻点“用配对码连接 Mac”，然后输入：";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "在 iPhone 上的 Snapfly 中打开“%1$@”，轻点“%2$@”，然后输入：";
 "It stops syncing with this Mac. What it sent stays here." = "它将停止与这台 Mac 同步。它已发送的内容会留在这里。";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "它与这台 Mac 使用同一个 Apple 账户，因此会作为你自己的设备同步。";
 "It was declined on the Mac." = "已在 Mac 上被拒绝。";

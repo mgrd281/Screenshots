@@ -1292,7 +1292,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "لماك مسجَّل بحساب Apple آخر. على الماك افتح إعدادات Snapfly، ثم المزامنة، وانقر عرض الرمز.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "لآيفون مسجَّل بحساب Apple آخر: يكتب الرمز الذي يعرضه هذا الماك.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud غير جاهز للربط بعد. حاول لاحقاً.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "في Snapfly على الآيفون افتح الإعدادات، واضغط الربط بماك برمز، واكتب:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "في Snapfly على الآيفون افتح %1$@، واضغط «%2$@»، واكتب:";
 "It stops syncing with this Mac. What it sent stays here." = "يتوقف عن المزامنة مع هذا الماك. ما أرسله يبقى هنا.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "يستخدم حساب Apple نفسه الذي يستخدمه هذا الماك، لذلك يتزامن كأحد أجهزتك.";
 "It was declined on the Mac." = "رُفض الطلب على الماك.";

@@ -1292,7 +1292,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "Başka bir Apple Hesabıyla oturum açılmış Mac için. Mac’te Snapfly’ın Ayarlar’ını, sonra Eşzamanlama’yı açın ve Kodu Göster’e tıklayın.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "Başka bir Apple Hesabıyla oturum açılmış iPhone için: Bu Mac’in gösterdiği kodu yazar.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud henüz bağlanmaya hazır değil. Daha sonra yeniden deneyin.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "iPhone’daki Snapfly’da Ayarlar’ı açın, Kodla bir Mac’e bağlan’a dokunun ve şunu yazın:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "iPhone’daki Snapfly’da %1$@ bölümünü açın, “%2$@” seçeneğine dokunun ve şunu yazın:";
 "It stops syncing with this Mac. What it sent stays here." = "Bu Mac ile eşzamanlamayı bırakır. Gönderdikleri burada kalır.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "Bu Mac ile aynı Apple Hesabını kullandığından kendi aygıtlarınızdan biri olarak eşzamanlanır.";
 "It was declined on the Mac." = "Mac’te reddedildi.";

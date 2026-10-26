@@ -1294,7 +1294,7 @@
 "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code." = "For a Mac signed in to another Apple account. On the Mac, open Snapfly's Settings, then Sync, and click Show Code.";
 "For an iPhone signed in to another Apple account: it types the code this Mac shows." = "For an iPhone signed in to another Apple account: it types the code this Mac shows.";
 "iCloud is not ready for connecting yet. Try again later." = "iCloud is not ready for connecting yet. Try again later.";
-"In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:" = "In Snapfly on the iPhone, open Settings, tap Connect to a Mac with a Code, and type:";
+"In Snapfly on the iPhone, open %1$@, tap %2$@, and type:" = "In Snapfly on the iPhone, open %1$@, tap %2$@, and type:";
 "It stops syncing with this Mac. What it sent stays here." = "It stops syncing with this Mac. What it sent stays here.";
 "It uses the same Apple account as this Mac, so it syncs as one of your own devices." = "It uses the same Apple account as this Mac, so it syncs as one of your own devices.";
 "It was declined on the Mac." = "It was declined on the Mac.";
