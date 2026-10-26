@@ -463,14 +463,14 @@ struct ReviewSheet: View {
             if session.plan.toCheck == 0 {
                 Label(L("Everything is checked."), systemImage: "checkmark.seal.fill")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(SnapflyTokens.protect)
+                    .foregroundStyle(SnapflyTokens.protectTint)
             }
             HStack(alignment: .firstTextBaseline) {
                 Text(title(of: mark)).font(.headline)
                 Spacer()
                 Text(mark.covered ? L("Covered") : L("Not covered"))
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(mark.covered ? SnapflyTokens.protect : SnapflyTokens.reviewOpen)
+                    .foregroundStyle(mark.covered ? SnapflyTokens.protectTint : SnapflyTokens.reviewOpen)
             }
             if let crop = crop(of: mark) {
                 Image(uiImage: crop)
