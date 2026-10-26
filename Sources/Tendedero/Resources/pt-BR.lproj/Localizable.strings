@@ -536,6 +536,8 @@
 "This PDF is too long: up to %d pages." = "Este PDF é longo demais: até %d páginas.";
 "Still covering the private details…" = "Ainda ocultando os dados privados…";
 "Could not cover the private details in this PDF." = "Não foi possível ocultar os dados privados deste PDF.";
+"Could not read this picture, so all of it is covered." = "Não foi possível ler esta imagem, por isso ela foi ocultada por inteiro.";
+"Could not read this PDF, so every page is covered whole." = "Não foi possível ler este PDF, por isso cada página foi ocultada por inteiro.";
 "Page %d of %d" = "Página %d de %d";
 "Previous Page" = "Página anterior";
 "Next Page" = "Próxima página";

@@ -63,7 +63,8 @@ or turn on syncing with your iPhone (below).
   Snapfly keeps them in step through
   your own iCloud, in the private database of your Apple account, which only
   your devices signed in to it can read. What goes is the copy that leaves the
-  line, with its private details covered, a small preview of it, and facts
+  line, with its private details covered (a picture that could not be read
+  waits until it is), a small preview of it, and facts
   about it: its name, when it was taken, what kinds of details were covered,
   never the covered words. Originals go only if you choose Originals too, and
   only those taken from then on. The contents of each record are encrypted
@@ -85,7 +86,9 @@ or turn on syncing with your iPhone (below).
   deletes them only when you ask it to. A photo or PDF you bring stays where it
   is, unchanged: what leaves the line is a copy, a photo without where and with
   what it was taken, a PDF drawn again page by page with the details you chose
-  covered. Cover Files does the same for many files at once, saving each copy
+  covered. When a picture or a page cannot be read, or its covers cannot be
+  drawn, what leaves is all of it covered, never the original, and a note
+  says so. Cover Files does the same for many files at once, saving each copy
   in a new folder you choose; it reads them on your Mac, unless Find more with
   Claude or ChatGPT is on under Privacy, which sends the words of each.
 - **Permissions.** Accessibility access lets Snapfly paste into the app you are

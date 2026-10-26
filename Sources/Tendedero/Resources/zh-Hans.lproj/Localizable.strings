@@ -536,6 +536,8 @@
 "This PDF is too long: up to %d pages." = "此 PDF 太长：最多 %d 页。";
 "Still covering the private details…" = "仍在遮盖隐私信息…";
 "Could not cover the private details in this PDF." = "无法遮盖此 PDF 中的隐私信息。";
+"Could not read this picture, so all of it is covered." = "无法读取此图像，因此已将其全部遮盖。";
+"Could not read this PDF, so every page is covered whole." = "无法读取此 PDF，因此已将每一页完全遮盖。";
 "Page %d of %d" = "第 %d 页，共 %d 页";
 "Previous Page" = "上一页";
 "Next Page" = "下一页";

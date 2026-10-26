@@ -85,9 +85,39 @@ enum DocumentCover {
         return (target, report)
     }
 
+    /// What leaves in place of a PDF whose covering failed: the same pages,
+    /// each painted whole in the covers' ink (cover-ink in DESIGN.md), made
+    /// without drawing or reading one, so nothing of it can show, and with
+    /// no text, links or details of the original. One A4 page where its
+    /// pages cannot be told, as when it is locked; where not even that can
+    /// be written, a file that is not there, so that nothing at all leaves.
+    static func inked(_ url: URL) -> URL {
+        var sizes: [CGSize] = []
+        if let document = PDFDocument(url: url), !document.isLocked {
+            for index in 0..<document.pageCount {
+                guard let page = document.page(at: index) else { continue }
+                let size = pageSize(of: page)
+                if size.width > 0, size.height > 0 { sizes.append(size) }
+            }
+        }
+        if sizes.isEmpty { sizes = [CGSize(width: 595, height: 842)] }
+        guard let target = Cover.newCopy(of: url, ext: "pdf"),
+              let context = CGContext(target as CFURL, mediaBox: nil, [kCGPDFContextCreator: "Snapfly"] as CFDictionary)
+        else { return Cover.nowhere(ext: "pdf") }
+        for size in sizes {
+            var box = CGRect(origin: .zero, size: size)
+            context.beginPage(mediaBox: &box)
+            context.setFillColor(CGColor(gray: 0.12, alpha: 1))
+            context.fill(box)
+            context.endPage()
+        }
+        context.closePDF()
+        return target
+    }
+
     /// Writes the protected PDF to `target`, replacing a file there, and
     /// says what was covered on its pages. Nil, with nothing left behind,
-    /// when a page could not be drawn.
+    /// when a page could not be drawn, or Vision could not read one.
     static func write(_ url: URL, _ chosen: Set<PrivateDetail>, hand: [Int: [CGRect]], to target: URL) -> CoverReport? {
         guard let document = PDFDocument(url: url), !document.isLocked,
               document.pageCount > 0, document.pageCount <= maxPages,
@@ -100,7 +130,11 @@ enum DocumentCover {
             let done: Bool = autoreleasepool {
                 guard let page = document.page(at: index), let image = render(page) else { return false }
                 let byHand = hand[index + 1] ?? []
-                guard let made = Finder.covered(image, chosen, hand: byHand) else { return false }
+                // A page Vision could not read fails the whole PDF: nothing
+                // found there is no proof that nothing is there.
+                let failures = Finder.failures
+                guard let made = Finder.covered(image, chosen, hand: byHand), Finder.failures == failures
+                else { return false }
                 report.add(CoverReport(made.areas, hand: byHand.count))
                 var box = CGRect(origin: .zero, size: pageSize(of: page))
                 context.beginPage(mediaBox: &box)

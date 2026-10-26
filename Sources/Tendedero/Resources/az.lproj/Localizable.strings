@@ -538,6 +538,8 @@
 "This PDF is too long: up to %d pages." = "Bu PDF çox uzundur: ən çox %d səhifə.";
 "Still covering the private details…" = "Şəxsi məlumatlar hələ örtülür…";
 "Could not cover the private details in this PDF." = "Bu PDF-də şəxsi məlumatlar örtülə bilmədi.";
+"Could not read this picture, so all of it is covered." = "Bu şəkil oxuna bilmədi, ona görə hamısı örtüldü.";
+"Could not read this PDF, so every page is covered whole." = "Bu PDF oxuna bilmədi, ona görə hər səhifə tam örtüldü.";
 "Page %d of %d" = "Səhifə %d / %d";
 "Previous Page" = "Əvvəlki səhifə";
 "Next Page" = "Növbəti səhifə";

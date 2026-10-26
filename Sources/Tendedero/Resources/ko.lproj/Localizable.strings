@@ -536,6 +536,8 @@
 "This PDF is too long: up to %d pages." = "이 PDF는 너무 길어요. 최대 %d쪽까지 돼요.";
 "Still covering the private details…" = "아직 개인 정보를 가리는 중이에요…";
 "Could not cover the private details in this PDF." = "이 PDF의 개인 정보를 가리지 못했어요.";
+"Could not read this picture, so all of it is covered." = "이 이미지를 읽지 못해서 전체를 가렸어요.";
+"Could not read this PDF, so every page is covered whole." = "이 PDF를 읽지 못해서 모든 페이지를 전부 가렸어요.";
 "Page %d of %d" = "%d/%d쪽";
 "Previous Page" = "이전 쪽";
 "Next Page" = "다음 쪽";

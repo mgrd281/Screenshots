@@ -14,6 +14,14 @@ keeps a download of each version.
   description, never the rest of the address, which can hold a search, an
   email address or a sign-in link. A screenshot stamped before leaves the
   line with its website's name alone too.
+- On the Mac, a picture that cannot be read, or whose covers cannot be
+  drawn, never leaves as it is: what goes into a chat, onto the clipboard,
+  out by drag, through Copy Link or to the AI assistant is the whole picture
+  covered, with a note, and it is read again the next time. A PDF goes with
+  every page covered whole, never as the original; a page that cannot be
+  read no longer leaves half covered. Sync sends a picture only once it was
+  read, and a copy saved from Finder, Cover Files or a watched folder is not
+  made from a picture that could not be read.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

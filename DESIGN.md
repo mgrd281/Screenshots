@@ -461,9 +461,13 @@ literal value in a view.
   again as anyone could read it, and a detail still readable, or a piece of
   three letters or more of what was hidden left beside its cover, is covered
   too, in two more rounds at most. What is drawn on a cover is never read as
-  text. The strongest protection covers each line with a detail whole, with
-  0.45 of its height of room across and 0.35 up and down instead of 0.25
-  and 0.2. Apple Intelligence, where it is on, only adds covers: never on a
+  text. **A failure covers everything**: where Vision could not read a
+  picture (`Finder.failures` moved) or a cover could not be drawn or written,
+  what leaves is the whole picture in cover ink, a PDF each page so, made
+  without reading it, with a note; it is never kept as the picture's
+  reading, the line does not show it as read, and Sync waits. The strongest
+  protection covers each line with a detail whole, with 0.45 of its height
+  of room across and 0.35 up and down instead of 0.25 and 0.2. Apple Intelligence, where it is on, only adds covers: never on a
   guess, only words that are in their line, never waited for on the main
   thread, and not for Test on a Sample, which reads the same each time.
   Copy Text leaves out what it found once it has answered, and with the

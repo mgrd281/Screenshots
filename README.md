@@ -409,7 +409,13 @@ statement: "•••• 1111". It holds for copies and for Copy Text alike.
 
 Every copy is checked before it leaves: once covered, it is read again as
 anyone could read it, and whatever private still shows, or any piece of what
-was hidden left beside its cover, is covered too. Under Protection, Find more
+was hidden left beside its cover, is covered too. A picture that can't be
+read, or whose covers can't be drawn, never leaves as it is: what goes is
+the whole picture in cover ink, a note says so, and it is read again the
+next time; a PDF goes with every page painted whole, and a copy saved from
+Finder, Cover Files or a watched folder is not made. Until it is read, the
+line shows it as it is, without the lock, and Sync leaves it on the Mac.
+Under Protection, Find more
 with Apple Intelligence (on where the Mac has it) lets the model on the Mac
 read the words as well and cover what the patterns miss, like a name in a
 sentence; it only ever adds covers, and nothing leaves the Mac. What it
@@ -1525,13 +1531,13 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `DesktopIcons.swift` | Hide Desktop Icons: the wallpaper laid over the icons on every screen |
 | `Calls.swift` | Not during a call: whether the microphone is in use, and Snapfly's windows kept out of a shared screen while it is |
 | `Permissions.swift` | Settings › Permissions: every permission, its state and the button that gives it |
-| `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies |
+| `PrivateDetails.swift` | What to cover, read ahead for each photo on the line, and the covered copies, or the whole picture in cover ink where reading or covering fails |
 | `FolderCover.swift` | Cover a folder: watches one folder and saves covered copies of what lands there in another |
 | `FloatingPhotos.swift` | Keep on Top: a photo floating over every app in a small window of its own |
 | `SelfTest.swift` | Test on a Sample: a made-up order with nearly every kind of detail, covered as Settings says |
 | `CoveringProfile.swift` | Cover everything in AI chats: which chats count, and what to cover for the app in front |
 | `Outside.swift` | Photos and PDFs from anywhere: what can hang, dragging them to the line or the menu bar icon, and Finder's Send Safely with Snapfly |
-| `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF |
+| `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF, or its pages painted whole where that fails |
 | `HideSend.swift` | Send covered, in Hide Private Details: the copy straight to a chat, the clipboard or the Share menu |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
 | `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-two kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names, Patient names and Other people each their own people, a name in a column of doctors a doctor's; a letter's address under a name, a date of birth and a reference number known as that person's; and, for the iPhone's Details, what Settings leaves visible; the lines read kept a while in memory, or given from a photo prepared ahead of time; a reading Vision could not do is counted, never kept |

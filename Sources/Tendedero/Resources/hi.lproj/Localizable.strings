@@ -538,6 +538,8 @@
 "This PDF is too long: up to %d pages." = "यह PDF बहुत लंबा है: अधिकतम %d पेज।";
 "Still covering the private details…" = "निजी जानकारी अभी छिपाई जा रही है…";
 "Could not cover the private details in this PDF." = "इस PDF की निजी जानकारी नहीं छिपाई जा सकी।";
+"Could not read this picture, so all of it is covered." = "यह चित्र पढ़ा नहीं जा सका, इसलिए पूरा चित्र छिपा दिया गया है।";
+"Could not read this PDF, so every page is covered whole." = "यह PDF पढ़ा नहीं जा सका, इसलिए हर पेज पूरा छिपा दिया गया है।";
 "Page %d of %d" = "पेज %d / %d";
 "Previous Page" = "पिछला पेज";
 "Next Page" = "अगला पेज";

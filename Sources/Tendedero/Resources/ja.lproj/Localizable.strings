@@ -536,6 +536,8 @@
 "This PDF is too long: up to %d pages." = "このPDFは長すぎます（最大%dページ）。";
 "Still covering the private details…" = "個人情報を隠しています…";
 "Could not cover the private details in this PDF." = "このPDFの個人情報を隠せませんでした。";
+"Could not read this picture, so all of it is covered." = "この画像を読み取れなかったため、全体を隠しました。";
+"Could not read this PDF, so every page is covered whole." = "このPDFを読み取れなかったため、すべてのページを全面的に隠しました。";
 "Page %d of %d" = "%d / %d ページ";
 "Previous Page" = "前のページ";
 "Next Page" = "次のページ";

@@ -536,6 +536,8 @@
 "This PDF is too long: up to %d pages." = "ملف PDF هذا طويل جدًا: الحد %d صفحة.";
 "Still covering the private details…" = "ما زالت المعلومات الخاصة تُغطّى…";
 "Could not cover the private details in this PDF." = "تعذّرت تغطية المعلومات الخاصة في ملف PDF هذا.";
+"Could not read this picture, so all of it is covered." = "تعذّرت قراءة هذه الصورة، لذا غُطّيت كلها.";
+"Could not read this PDF, so every page is covered whole." = "تعذّرت قراءة ملف PDF هذا، لذا غُطّيت كل صفحة بالكامل.";
 "Page %d of %d" = "الصفحة %d من %d";
 "Previous Page" = "الصفحة السابقة";
 "Next Page" = "الصفحة التالية";

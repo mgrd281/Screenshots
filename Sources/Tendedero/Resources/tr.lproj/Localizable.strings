@@ -536,6 +536,8 @@
 "This PDF is too long: up to %d pages." = "Bu PDF çok uzun: en fazla %d sayfa.";
 "Still covering the private details…" = "Özel bilgiler hâlâ gizleniyor…";
 "Could not cover the private details in this PDF." = "Bu PDF’teki özel bilgiler gizlenemedi.";
+"Could not read this picture, so all of it is covered." = "Bu görsel okunamadı, bu yüzden tamamı gizlendi.";
+"Could not read this PDF, so every page is covered whole." = "Bu PDF okunamadı, bu yüzden her sayfa tamamen gizlendi.";
 "Page %d of %d" = "Sayfa %d / %d";
 "Previous Page" = "Önceki sayfa";
 "Next Page" = "Sonraki sayfa";

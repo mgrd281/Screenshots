@@ -402,9 +402,11 @@ final class Line: ObservableObject {
         pickedIDs = []
         DispatchQueue.global(qos: .userInitiated).async {
             let urls = photos.map { url, hand, drawing in
-                hand.isEmpty && drawing.isEmpty ? url : Cover.copy(of: url, [], hand: hand, drawing: drawing) ?? url
+                hand.isEmpty && drawing.isEmpty ? url : Cover.copy(of: url, [], hand: hand, drawing: drawing)
             }
-            let joined = Collage.join(urls, arrangement)
+            // A part hidden by hand that could not be covered fails the whole
+            // join, rather than showing in it.
+            let joined = urls.contains(nil) ? nil : Collage.join(urls.compactMap { $0 }, arrangement)
             DispatchQueue.main.async { [weak self] in
                 MainActor.assumeIsolated {
                     guard let self, let joined, let id = self.hang(joined) else {
