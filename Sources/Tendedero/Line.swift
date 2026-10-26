@@ -242,9 +242,10 @@ final class Line: ObservableObject {
     /// Whether the line runs right to left on the screen, the oldest photo
     /// on the right, as SwiftUI lays it out in a right-to-left language.
     /// Read off where the photos really are, or, with fewer than two to tell
-    /// by, where the tag is on a line `width` wide; without either, it runs
-    /// left to right.
+    /// by, where the tag is on a line `width` wide; without either, and in
+    /// a left-to-right language, it runs left to right.
     func runsRightToLeft(width: CGFloat?) -> Bool {
+        guard NSApp.userInterfaceLayoutDirection == .rightToLeft else { return false }
         let shown = items.filter { !$0.falling }.compactMap { hitRects[$0.id] }
         if let first = shown.first, let last = shown.last, first.midX != last.midX {
             return first.midX > last.midX
