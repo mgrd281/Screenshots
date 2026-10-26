@@ -121,6 +121,48 @@ final class ScanPDFTests: XCTestCase {
         XCTAssertTrue(pdf.contains("/Resources << /XObject << /Im0 12 0 R >> /Font << /F1 4 0 R >> >>"))
     }
 
+    /// A right-to-left word is written as it stands from the left, as most
+    /// PDFs hold such words and readers turn them back: its numbers and
+    /// Latin letters read on as they are; every other word is as it reads.
+    func testARightToLeftWordIsWrittenAsItStandsFromTheLeft() {
+        func visual(_ word: String) -> String {
+            String(decoding: ScanPDF.visual(Array(word.utf16)), as: UTF16.self)
+        }
+        XCTAssertEqual(visual("مرحبا"), "ابحرم")
+        XCTAssertEqual(visual("שלום"), "םולש")
+        XCTAssertEqual(visual("مرحبا "), " ابحرم", "the space after it stands left of it")
+        XCTAssertEqual(visual("(مرحبا)،"), "،)ابحرم(")
+        XCTAssertEqual(visual("عام2026"), "2026ماع", "a number reads on from the left")
+        XCTAssertEqual(visual("٢٠٢٦م"), "م٢٠٢٦")
+        XCTAssertEqual(visual("رقم:12"), "12:مقر")
+        XCTAssertEqual(visual("PDF-ملف"), "فلم-PDF")
+        let marked = "بِسْمِ"
+        XCTAssertEqual(visual(marked), String(String.UnicodeScalarView(marked.unicodeScalars.reversed())), "marks with their letters")
+        for word in ["Rechnung", "Größe ", "İstanbul", "Москва", "東京都", "서울", "हिन्दी", "2026", "١٢٣", "٥٠٪", "12,50€", "(Note)"] {
+            XCTAssertEqual(visual(word), word, word)
+        }
+    }
+
+    func testARightToLeftWordsSpaceStandsLeftOfItsBox() throws {
+        let page = ScanPDF.Page(picture: jpeg(2480, 3508), words: [
+            ScanPDF.Word(text: "مرحبا ", box: CGRect(x: 0.5, y: 0.4, width: 0.1, height: 0.02)),
+            ScanPDF.Word(text: "Gesamt ", box: CGRect(x: 0.5, y: 0.3, width: 0.1, height: 0.02)),
+        ])
+        let lines = ScanPDF.drawing(page, on: CGRect(origin: .zero, size: ScanGeometry.a4)).split(separator: "\n")
+        let arabic = try XCTUnwrap(lines.first { $0.contains("Tj") && $0.contains("<00200627") }, "the space first, then the word from the left")
+        let latin = try XCTUnwrap(lines.first { $0.contains("<0047") })
+        func numbers(_ line: Substring) throws -> (size: Double, stretch: Double, x: Double) {
+            let parts = line.split(separator: " ")
+            let tm = try XCTUnwrap(parts.firstIndex(of: "Tm"))
+            return (Double(parts[1])!, Double(parts[3])!, Double(parts[tm - 2])!)
+        }
+        let (size, stretch, x) = try numbers(arabic)
+        let space: Double = Double(ScanFont.advance) * size / 1000 * stretch / 100
+        XCTAssertEqual(x + space, 297.64, accuracy: 0.01, "its letters from the box's left")
+        XCTAssertEqual(Double("مرحبا".utf16.count * ScanFont.advance) * size / 1000 * stretch / 100, 0.1 * 595.28, accuracy: 0.05)
+        XCTAssertEqual(try numbers(latin).x, 297.64, accuracy: 0.01, "a left-to-right word at its box")
+    }
+
     func testEveryScriptIsKeptAndOnlyACharacterBeyondUTF16sUnitsIsLeftOut() {
         for word in ["Straße Müller €", "“Grüße”", "Doğan İstanbul", "مرحبا", "Ελλάδα", "Москва", "東京都", "서울", "हिन्दी"] {
             XCTAssertEqual(ScanPDF.units(word).map { String(decoding: $0, as: UTF16.self) }, word, word)
@@ -146,7 +188,7 @@ final class ScanPDFTests: XCTestCase {
         let ranges = ScanFont.toUnicode.split(separator: "\n").filter { $0.hasSuffix(" beginbfrange") }
             .compactMap { Int($0.split(separator: " ")[0]) }
         XCTAssertEqual(ranges, [100, 100, 48], "248 ranges, a hundred at most at a time")
-        XCTAssertTrue(pdf.contains("<06450631062D06280627>"), "the word as its units")
+        XCTAssertTrue(pdf.contains("<06270628062D06310645>"), "the word as its units, as it stands from the left")
     }
 
     func testWithoutWordsThereIsNoTextAndNoFont() throws {
@@ -231,16 +273,22 @@ final class ScanPDFTests: XCTestCase {
     /// words are found; and the font file itself opens as a font.
     func testPDFKitFindsTheWordsInEveryScript() throws {
         let words = ["Rechnung", "Größe", "İstanbul", "مرحبا", "Москва", "東京都", "서울"]
-        let page = ScanPDF.Page(picture: jpeg(1000, 1414), words: words.enumerated().map { index, word in
+        var placed = words.enumerated().map { index, word in
             ScanPDF.Word(text: word, box: CGRect(x: 0.1, y: 0.9 - CGFloat(index) * 0.05, width: 0.3, height: 0.03))
-        })
+        }
+        // A right-to-left line of two words, the first on the right.
+        placed += [ScanPDF.Word(text: "شكرا ", box: CGRect(x: 0.6, y: 0.4, width: 0.2, height: 0.03)),
+                   ScanPDF.Word(text: "جزيلا", box: CGRect(x: 0.35, y: 0.4, width: 0.2, height: 0.03))]
+        let page = ScanPDF.Page(picture: jpeg(1000, 1414), words: placed)
         let pdf = try XCTUnwrap(PDFDocument(data: try XCTUnwrap(ScanPDF.make([page]))))
         let text = pdf.string ?? ""
-        for word in words {
+        for word in words + ["شكرا", "جزيلا"] {
             XCTAssertTrue(text.contains(word), "\(word) in \(text)")
         }
         XCTAssertFalse(pdf.findString("Größe", withOptions: []).isEmpty, "found by search")
         XCTAssertFalse(pdf.findString("مرحبا", withOptions: []).isEmpty, "a right-to-left word found by search, \(text)")
+        // How PDFKit orders the words of a right-to-left line, to the log.
+        print("PDFKIT LINE", text.split(separator: "\n").filter { $0.contains("شكرا") || $0.contains("جزيلا") })
         let provider = try XCTUnwrap(CGDataProvider(data: ScanFont.file as CFData))
         XCTAssertNotNil(CGFont(provider), "Core Graphics opens the font")
         XCTAssertNotNil(CTFontManagerCreateFontDescriptorFromData(ScanFont.file as CFData), "Core Text opens the font")
