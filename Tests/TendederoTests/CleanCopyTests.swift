@@ -106,6 +106,28 @@ final class CleanCopyTests: XCTestCase {
         XCTAssertTrue(Cover.nameHolds("Screenshot 2026-10-17 at 17.41.47", [.dates]))
     }
 
+    /// Copies waiting to be pasted thin out on a Mac that keeps Snapfly
+    /// running: those made over a day ago go, but those the line shows.
+    func testOldCopiesGoButThoseTheLineShowsStay() throws {
+        let fm = FileManager.default
+        let now = Date()
+        func copy(_ name: String, madeHoursAgo hours: Double) throws -> URL {
+            let place = folder.appendingPathComponent(name, isDirectory: true)
+            try fm.createDirectory(at: place, withIntermediateDirectories: true)
+            try Data("png".utf8).write(to: place.appendingPathComponent("Screenshot.png"))
+            try fm.setAttributes([.creationDate: now.addingTimeInterval(-hours * 3600)], ofItemAtPath: place.path)
+            return place
+        }
+        let old = try copy("old", madeHoursAgo: 30)
+        let shown = try copy("shown", madeHoursAgo: 30)
+        let fresh = try copy("fresh", madeHoursAgo: 2)
+
+        AppDelegate.pruneCopies(in: folder, madeBefore: now.addingTimeInterval(-24 * 3600), keeping: ["shown"])
+        XCTAssertFalse(fm.fileExists(atPath: old.path))
+        XCTAssertTrue(fm.fileExists(atPath: shown.path))
+        XCTAssertTrue(fm.fileExists(atPath: fresh.path))
+    }
+
     // MARK: Helpers
 
     /// Stripes of grey with a coloured corner, so every pixel counts.

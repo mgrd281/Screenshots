@@ -75,6 +75,13 @@ keeps a download of each version.
   the background, once a second and as soon as another tab comes to the
   front, so a busy browser no longer slows Snapfly down. Opening a chat's
   website waits for the browser the same way.
+- On the Mac, a guide's Copy no longer hangs the guide on the line as a new
+  screenshot while Snapfly watches the clipboard: it goes with a file of
+  it, as photos copied from the line do.
+- On the Mac, the launch no longer waits on the network for the Mac's name,
+  Check for Updates stays responsive while it checks a download, and
+  covered copies waiting to be pasted are cleared after a day on a Mac that
+  keeps Snapfly running, besides at each launch.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

@@ -437,6 +437,9 @@ struct GrabArea: NSViewRepresentable {
 
 final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     static var isDragging = false
+    /// When the last photo was let go of, as the app it was dropped on may
+    /// still be reading its file.
+    static var lastDragEnd = Date.distantPast
     /// A photo's menu is open. It reaches past the line, so the line waits.
     static var isShowingMenu = false
 
@@ -854,6 +857,7 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
 
     func draggingSession(_ session: NSDraggingSession, endedAt screenPoint: NSPoint, operation: NSDragOperation) {
         GrabView.isDragging = false
+        GrabView.lastDragEnd = Date()
         startedDrag = false
         downPoint = nil
         log.notice("Drag ended with operation \(operation.rawValue, privacy: .public)")

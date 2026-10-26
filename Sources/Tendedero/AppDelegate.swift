@@ -733,6 +733,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             itemsChanged()
             return
         }
+        // Its covered copy is being made: old ones may go.
+        pruneCoveredCopies()
         guard let from else {
             Guide.shared.happened(.photoHung)
             return
@@ -1583,6 +1585,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             alert.informativeText = L("Move Snapfly to the Applications folder and try again.")
             NSApp.activate(ignoringOtherApps: true)
             alert.runModal()
+        }
+    }
+
+    // MARK: Covered copies
+
+    /// When the covered copies were last thinned out; they are emptied at
+    /// each launch.
+    private var prunedAt = Date()
+
+    /// Covered copies wait in the temporary folder to be pasted. On a Mac
+    /// that runs Snapfly for days, they are thinned out as new ones are
+    /// made, an hour apart at most: those made a day ago or more go, but the
+    /// ones the line shows, which go out again. Not while one may still be
+    /// on its way: with files on the clipboard, or a photo dragged out in
+    /// the last minutes.
+    private func pruneCoveredCopies() {
+        let now = Date()
+        guard now.timeIntervalSince(prunedAt) > 3600, !GrabView.isDragging,
+              now.timeIntervalSince(GrabView.lastDragEnd) > 300,
+              NSPasteboard.general.types?.contains(.fileURL) != true else { return }
+        prunedAt = now
+        let shown = line.items.filter { !$0.falling }.compactMap { PrivateDetails.shown($0.url) }
+        let keeping = Set(shown.map { $0.deletingLastPathComponent().lastPathComponent })
+        let limit = now.addingTimeInterval(-24 * 3600)
+        DispatchQueue.global(qos: .utility).async {
+            AppDelegate.pruneCopies(in: Cover.folder, madeBefore: limit, keeping: keeping)
+        }
+    }
+
+    /// Takes away the copies in `folder`, each in a folder of its own, made
+    /// before `limit`, but those whose folders are named in `keeping`.
+    nonisolated static func pruneCopies(in folder: URL, madeBefore limit: Date, keeping: Set<String>) {
+        let fm = FileManager.default
+        let copies = (try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: [.creationDateKey])) ?? []
+        for entry in copies where !keeping.contains(entry.lastPathComponent) {
+            let made = (try? entry.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? .distantFuture
+            if made < limit { try? fm.removeItem(at: entry) }
         }
     }
 

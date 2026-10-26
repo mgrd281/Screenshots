@@ -637,7 +637,8 @@ stays out of the sentences.
 
 Hang on the Line makes it a PDF of numbered A4 pages and hangs it, ready to
 send. Save writes a PDF, or one tall picture that shows whole in a chat, or
-copies that picture. The last 20 guides stay on your Mac, under Recent
+copies that picture, with a file of it for apps that take files; watching
+the clipboard leaves it alone, as it does photos copied from the line. The last 20 guides stay on your Mac, under Recent
 Guides in the menu bar. The App Store edition can't ask other apps what was
 clicked, so its steps say "Click here." and mark the click with a ring.
 

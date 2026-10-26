@@ -1,4 +1,5 @@
 import AppKit
+import SystemConfiguration
 
 /// Syncing on the Mac: what hangs on the line goes to the iPhone as it
 /// leaves the line, covered, once Settings › Sync is on; what the iPhone
@@ -14,9 +15,17 @@ enum MacSync {
     /// This Mac, as the iPhone lists it.
     static var device: SyncDevice {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
-        return SyncDevice(id: SyncSettings.deviceID(), name: Host.current().localizedName ?? "Mac", platform: .mac,
+        return SyncDevice(id: SyncSettings.deviceID(), name: name, platform: .mac,
                           model: model, registered: SyncCenter.registered, lastSeen: Date(), lastSync: nil,
                           appVersion: version, schema: SyncSchema.current)
+    }
+
+    /// The Mac's name from System Settings › General › Sharing, as Finder and
+    /// AirDrop show it. Read where it is kept, without looking up the
+    /// network names that can hold up the launch.
+    private static var name: String {
+        let name = SCDynamicStoreCopyComputerName(nil, nil).map { $0 as String } ?? ""
+        return name.isEmpty ? "Mac" : name
     }
 
     /// The hardware, like "Mac15,3".
