@@ -957,13 +957,17 @@ struct AllScreenshotsView: View {
     }
 
     /// The words and kinds of the screenshots read ahead of time, asked for
-    /// all at once.
+    /// a hundred at a time, so a screenshot opened meanwhile never waits for
+    /// a large library's to be read.
     private func load() async {
-        let photos = await IndexStore.shared.photos(shots.map(\.localIdentifier))
-        if Task.isCancelled { return }
+        let ids = shots.map(\.localIdentifier)
         var found: [String: (text: String, kinds: [String])] = [:]
-        for (id, photo) in photos {
-            found[id] = (photo.lines.map(\.text).joined(separator: " "), photo.kinds)
+        for start in stride(from: 0, to: ids.count, by: 100) {
+            let photos = await IndexStore.shared.photos(Array(ids[start..<min(start + 100, ids.count)]))
+            if Task.isCancelled { return }
+            for (id, photo) in photos {
+                found[id] = (photo.lines.map(\.text).joined(separator: " "), photo.kinds)
+            }
         }
         read = found
         loaded = true
