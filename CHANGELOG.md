@@ -77,6 +77,9 @@ keeps a download of each version.
   questions, prompts, chat apps and websites under Line. VoiceOver names
   what each remove button takes away, "Remove “Lena Hoffmann”", instead of
   "Remove" alone.
+- On the Mac in Arabic, a translation, a description or an answer in the
+  text card starts on the right when it is in Arabic and on the left when
+  it is in English, instead of the other way round.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

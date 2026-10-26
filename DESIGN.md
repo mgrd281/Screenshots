@@ -418,8 +418,10 @@ stays out of the way.
   that takes the keyboard. The search bar, Hide Part and the shortcut recorder
   already do.
 - **Right to left.** Arabic must read right to left: align and order by
-  reading direction, not by fixed left and right. The text card already
-  aligns RTL results.
+  reading direction, not by fixed left and right. The text card aligns a
+  result by the result's own direction: on the card's leading side when it
+  reads the card's way, on the trailing side when it reads the other, so
+  Arabic starts on the right and English on the left in every language.
   - A picture and what is drawn over it are laid out from the left in every
     language (`.environment(\.layoutDirection, .leftToRight)` on the canvas
     alone), as the picture is: Hide Part's covers and boxes, Draw on Photo's
