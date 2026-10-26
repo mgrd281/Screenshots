@@ -1,0 +1,10 @@
+Nouveautés de la 1.1.0 :
+- Scanner des documents : pages redressées et nettoyées, données privées masquées, chaque masque contrôlé dans Vérifier.
+- Enregistre tes scans en PDF, en images, en texte ou en Document Word.
+- Afficher le texte : copie, cherche et traduis le texte d’un scan, ou écoute-le avec Lire à voix haute.
+- Ajouter un rappel de paiement pour une facture à payer.
+- Tous les documents cherche les mots dans chaque document.
+- Projets PDF : photos, scans, captures et PDF dans un seul fichier.
+- Toujours masquer : tes propres données, masquées dans chaque image.
+- Envoie la copie protégée à ChatGPT, Claude, WhatsApp et d’autres apps d’un toucher.
+- Messages plus clairs, boutons plus grands et de nombreuses corrections.

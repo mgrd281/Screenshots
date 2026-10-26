@@ -1,0 +1,25 @@
+Snapfly her ekran görüntüsünü ekranının üstündeki bir ipe asar ve Mac’inden bir şey çıkmadan önce özel bilgileri örter.
+
+İP
+İmleci menü çubuğunda beklet, ip ekran görüntülerinle aşağı iner. Uzaklaş, yeniden toplanır. Ekran görüntüleri artık masaüstünde birikmez. Snapfly, Ekran Görüntüsü uygulamasını nereye yönlendireceğini sana bir kez gösterir.
+
+DOĞRUDAN SOHBETE
+Bir fotoğraftaki kâğıt uçağa tıkla ya da ⌃⌥V’ye bas; fotoğraf doğrudan yazdığın uygulamaya gider. Her fotoğrafın altındaki simgeler onu ChatGPT, Claude, WhatsApp ya da Gmail’e gönderir. Gönderilen fotoğraf ipten ayrılır.
+
+ÖZEL BİLGİLER ÖRTÜLÜ
+İpten çıkan her şeyde, kopyalansın, gönderilsin ya da sürüklensin, Gizlilik’te seçtiğin bilgiler örtülür: isimler, adresler, doğum tarihleri, e-postalar, telefon numaraları, yüzler, banka kartları ve hesapları, tutarlar, sağlık bilgileri, kimlik ve vergi numaraları, sipariş ve kargo takip numaraları, QR kodları ve barkodlar, parolalar, API anahtarları ve IP adresleri. Kendi adını, adresini ve kurallarını Her zaman gizle’ye eklersin. Geri kalanı Bir kısmı gizle ile elle örtersin. Örtünün görünüşünü seç ya da son dört rakamı göster.
+
+İPTE DAHA FAZLASI
+- Metni kopyala, bir ekran görüntüsündeki kelimeleri kopyalar.
+- Birkaçını tek görselde birleştir ya da hepsinden bir PDF oluştur.
+- Metni çevir ve Açıklama yaz, Mac’inde Apple’ın kendi araçlarıyla.
+- Tüm ekran görüntülerindeki kelimeleri ⌃⌥F ile ara.
+- Ekranı ⌃⌥R ile kaydet, Studio’da yakınlaştırma ve oklar ekle.
+- Finder’dan fotoğraf ve PDF de as; onlar da aynı şekilde örtülü çıkar.
+- Dosyaları kapat, çok sayıda PDF ve görseli tek seferde, kopyalarında örter.
+
+MAC VE IPHONE
+Eşzamanlamayı aç, iPhone için Snapfly kendi iCloud’un üzerinden aynı durumda kalsın. Yalnızca örtülü kopyalar gider; istersen asıllarını da seçebilirsin.
+
+MAC’İNDE
+Okuma, örtme ve çeviri Mac’inde gerçekleşir. Hesap yok. İzleme yok.

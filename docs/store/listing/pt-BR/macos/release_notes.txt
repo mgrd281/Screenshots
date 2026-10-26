@@ -1,0 +1,9 @@
+Novidades da 1.1.0:
+- Studio para gravações de tela: zooms onde você clicou, setas, caixas e textos.
+- Sincronização com o Snapfly para iPhone pelo seu próprio iCloud, ou com um código entre contas Apple diferentes.
+- Sempre ocultar tem o próprio painel: seus dados e regras ficam cobertos em toda imagem.
+- Nomes cobre só pessoas; Empresas e organizações é um tipo à parte.
+- Cobrir arquivos cobre muitos PDFs e imagens de uma vez.
+- Fundo, Converter para SVG, Gravar um guia e Ocultar ícones da Mesa.
+- A cobertura ficou mais rápida, e uma imagem que não pode ser lida nunca sai descoberta.
+- Muitas correções, também para árabe, VoiceOver e Reduzir movimento.

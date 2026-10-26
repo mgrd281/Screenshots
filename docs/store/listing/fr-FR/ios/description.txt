@@ -1,0 +1,25 @@
+Snapfly masque les données privées de tes captures, photos et documents avant que tu les partages. La lecture et le masquage se font sur ton iPhone.
+
+PROTÉGER UNE PHOTO
+Ouvre une capture ou une photo et Snapfly masque noms, adresses, e-mails, numéros de téléphone, coordonnées bancaires, montants, données de santé, numéros d’identité et plus encore. Les endroits dont il n’est pas sûr t’attendent : Garder masqué ou Laisser visible. Masque davantage à la main avec le marqueur, un cadre ou le lasso. Choisis un Style du masquage, garde les quatre derniers chiffres ou active Protection maximale.
+
+TOUJOURS MASQUER
+Ajoute ton nom, ton adresse, tes cartes et tes comptes, ainsi que tes propres mots ou libellés. Snapfly les masque dans chaque image.
+
+SCANNER DES DOCUMENTS
+Scanne une lettre, une facture ou un formulaire avec l’appareil photo, ou prends des pages dans tes photos. Snapfly redresse et nettoie chaque page, masque les données privées et te laisse contrôler chaque masque dans Vérifier. Enregistrer et partager crée un PDF, une image par page, du texte ou un Document Word, masqués.
+- Afficher le texte : copie, cherche et traduis le texte d’un scan, ou écoute-le avec Lire à voix haute. Rien sous un masque n’est montré ni lu.
+- Ajouter un rappel de paiement : pour une facture à payer, le formulaire du Calendrier s’ouvre déjà rempli. Snapfly ne voit jamais ton calendrier.
+- Tous les documents cherche les mots dans chaque document.
+- Les projets PDF réunissent photos, scans, captures et PDF dans un fichier, à ordonner et masquer.
+
+SEULE LA COPIE PROTÉGÉE PART
+D’un toucher, envoie à ChatGPT, Claude, WhatsApp, Gmail et d’autres apps, ou dans Photos et Fichiers. C’est la copie protégée qui part, jamais l’original.
+
+RACCOURCIS ET TOUCHER LE DOS
+Masquer la dernière capture masque ta capture la plus récente et la copie. Associe-la au double toucher au dos de ton iPhone. Snapfly est aussi dans le menu de partage de chaque app.
+
+AVEC TON MAC
+Active la synchronisation et Snapfly pour Mac reste à jour via ton propre iCloud. Seules les copies masquées partent, sauf si tu choisis aussi les originaux.
+
+Sans compte. Sans pistage.

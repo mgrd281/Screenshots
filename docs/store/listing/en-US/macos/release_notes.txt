@@ -1,0 +1,9 @@
+What's new in 1.1.0:
+- Studio for screen recordings: zooms where you clicked, arrows, boxes and words.
+- Sync with Snapfly for iPhone through your own iCloud, or pair with a code across Apple accounts.
+- Always Hide has its own pane: your details and rules are covered in every picture.
+- Names covers people only; companies and organizations are a kind of their own.
+- Cover Files covers many PDFs and pictures at once.
+- Background, Convert to SVG, Record a Guide and Hide Desktop Icons.
+- Covering is faster, and a picture that cannot be read never leaves uncovered.
+- Many fixes, also for Arabic, VoiceOver and Reduce Motion.

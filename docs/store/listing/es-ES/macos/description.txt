@@ -1,0 +1,25 @@
+Snapfly cuelga cada captura de pantalla en una cuerda en la parte de arriba de tu pantalla y tapa los datos privados antes de que nada salga de tu Mac.
+
+LA CUERDA
+Deja el puntero en la barra de menús y la cuerda baja con tus capturas. Aléjalo y vuelve a subir. Las capturas ya no se amontonan en el escritorio. Snapfly te muestra una vez adónde dirigir la app Captura de pantalla.
+
+DIRECTO AL CHAT
+Haz clic en el avión de papel de una foto, o pulsa ⌃⌥V, y va directa a la app en la que escribes. Los iconos bajo cada foto la envían a ChatGPT, Claude, WhatsApp o Gmail. Una vez enviada, sale de la cuerda.
+
+DATOS PRIVADOS, TAPADOS
+Todo lo que sale de la cuerda, copiado, enviado o arrastrado, lleva tapados los datos que elegiste en Privacidad: nombres, direcciones, fechas de nacimiento, correos, teléfonos, caras, tarjetas y cuentas bancarias, importes, datos de salud, números de identidad y fiscales, números de pedido y de seguimiento, códigos QR y de barras, contraseñas, claves de API y direcciones IP. Tu nombre, tu dirección y tus propias reglas van en Ocultar siempre. Lo demás lo tapas a mano con Ocultar una parte. Elige cómo se ve lo tapado, o deja a la vista los últimos cuatro dígitos.
+
+MÁS EN LA CUERDA
+- Copiar texto copia las palabras de una captura.
+- Une varias en una sola imagen, o crea un PDF con ellas.
+- Traducir texto y Describir, con las herramientas de Apple en tu Mac.
+- Busca las palabras de todas tus capturas con ⌃⌥F.
+- Graba la pantalla con ⌃⌥R y añade zooms y flechas en Studio.
+- Cuelga también fotos y PDF desde el Finder; salen tapados igual.
+- Tapar archivos tapa muchos PDF e imágenes a la vez, en copias.
+
+MAC Y IPHONE
+Activa la sincronización y Snapfly para iPhone se mantiene al día a través de tu propio iCloud. Solo van copias tapadas, salvo que elijas también los originales.
+
+EN TU MAC
+Leer, tapar y traducir ocurre en tu Mac. Sin cuenta. Sin rastreo.

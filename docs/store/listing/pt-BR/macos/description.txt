@@ -1,0 +1,25 @@
+O Snapfly pendura cada captura de tela em um varal no alto da sua tela e cobre os dados privados antes que qualquer coisa saia do seu Mac.
+
+O VARAL
+Deixe o ponteiro na barra de menus e o varal desce com as suas capturas. Afaste-o e ele sobe de novo. As capturas não se acumulam mais na Mesa. O Snapfly mostra uma vez para onde apontar o app Captura de Tela.
+
+DIRETO PARA O CHAT
+Clique no avião de papel de uma foto, ou pressione ⌃⌥V, e ela vai direto para o app em que você está escrevendo. Os ícones sob cada foto a enviam para o ChatGPT, Claude, WhatsApp ou Gmail. Depois de enviada, ela sai do varal.
+
+DADOS PRIVADOS, COBERTOS
+Tudo o que sai do varal, copiado, enviado ou arrastado, sai com os dados escolhidos em Privacidade cobertos: nomes, endereços, datas de nascimento, e-mails, telefones, rostos, cartões e contas bancárias, valores, dados de saúde, números de identidade e fiscais, números de pedido e de rastreio, códigos QR e de barras, senhas, chaves de API e endereços IP. Seu nome, seu endereço e suas próprias regras ficam em Sempre ocultar. O resto você cobre à mão com Ocultar uma parte. Escolha a aparência da cobertura, ou mantenha os quatro últimos dígitos.
+
+MAIS NO VARAL
+- Copiar texto copia as palavras de uma captura.
+- Junte várias em uma só imagem, ou crie um PDF com elas.
+- Traduzir texto e Descrever, com as ferramentas da Apple no seu Mac.
+- Busque as palavras de todas as suas capturas com ⌃⌥F.
+- Grave a tela com ⌃⌥R e adicione zooms e setas no Studio.
+- Pendure também fotos e PDFs do Finder; eles saem cobertos do mesmo jeito.
+- Cobrir arquivos cobre muitos PDFs e imagens de uma vez, em cópias.
+
+MAC E IPHONE
+Ative a sincronização e o Snapfly para iPhone fica em dia pelo seu próprio iCloud. Só vão cópias cobertas, a não ser que você escolha também os originais.
+
+NO SEU MAC
+Ler, cobrir e traduzir acontece no seu Mac. Sem conta. Sem rastreamento.

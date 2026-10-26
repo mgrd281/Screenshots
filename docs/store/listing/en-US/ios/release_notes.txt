@@ -1,0 +1,10 @@
+What's new in 1.1.0:
+- Scan documents: pages straightened and cleaned, private details covered, every cover checked in Review.
+- Save scans as a PDF, pictures, text or a Word document.
+- Show Text: copy, search and translate a scan's text, or hear it with Read Aloud.
+- Add Payment Reminder for an invoice still to pay.
+- All Documents searches the words in every document.
+- PDF projects: photos, scans, screenshots and PDFs in one file.
+- Always Hide: your own details, covered in every picture.
+- Send the protected copy to ChatGPT, Claude, WhatsApp and other apps with one tap.
+- Clearer messages, larger buttons and many fixes.

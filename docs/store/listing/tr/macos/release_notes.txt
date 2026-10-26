@@ -1,0 +1,9 @@
+1.1.0’daki yenilikler:
+- Ekran kayıtları için Studio: tıkladığın yerde yakınlaştırma, oklar, kutular ve yazılar.
+- Kendi iCloud’un üzerinden iPhone için Snapfly ile eşzamanlama; farklı Apple hesapları arasında bir kodla eşleştirme.
+- Her zaman gizle’nin kendi bölmesi var: bilgilerin ve kuralların her görselde örtülür.
+- İsimler yalnızca kişileri örter; Şirketler ve kuruluşlar ayrı bir türdür.
+- Dosyaları kapat, çok sayıda PDF ve görseli tek seferde örter.
+- Arka plan, SVG’ye dönüştür, Rehber kaydet ve Masaüstü simgelerini gizle.
+- Örtme daha hızlı; okunamayan bir görsel asla örtülmeden çıkmaz.
+- Arapça, VoiceOver ve Hareketi Azalt için de pek çok düzeltme.
