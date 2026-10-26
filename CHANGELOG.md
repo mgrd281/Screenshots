@@ -64,6 +64,13 @@ keeps a download of each version.
   into one track, the recording keeps both and a note says so.
 - On the Mac, Markup open on two photos at once saves each one's Done to its
   own photo, never one over the other.
+- On the Mac, screenshots go on hanging after the workspace folder went to
+  the Trash and was made again, a disk was ejected and put back, or
+  Snapfly was let into the Desktop later: what could not be watched is
+  tried again each time Snapfly comes to the front, and with inbox mode
+  off, the Screenshot app's location is read again then too. A folder that
+  could not be read for a moment no longer hangs its old screenshots again
+  as new ones.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens

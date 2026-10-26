@@ -657,7 +657,8 @@ Settings › Workspace lists the categories. Rename one, hide it, move it up
 or down, choose which one new screenshots go to, add your own, or remove
 one: its screenshots move to Unsorted and nothing is deleted. Rename the
 folder or choose Change Location…, or move it in the Finder: Snapfly finds
-it again, and what hangs on the line follows its files. The folder carries
+it again, and what hangs on the line follows its files. Moved to the Trash,
+it is made again where it was, and new screenshots go on hanging. The folder carries
 Snapfly's icon in the Finder, and looks like any folder if macOS refuses
 it. A screenshot is written whole or not at all and never over another file,
 and when the disk is full or the folder can't be reached, a note says why
@@ -1747,7 +1748,7 @@ language. `swift scripts/check-strings.swift` checks that none is missing.
 ---
 
 <sub>
-1. On first launch, Snapfly offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Snapfly quits or the option is turned off in Settings. Snapfly hides automatically while an app is in full screen.
+1. On first launch, Snapfly offers to handle your screenshots. If you accept, it turns off the floating thumbnail and saves new screenshots to its own folder, two settings also found under Options in Cmd+Shift+5. Your previous settings are saved and restored when Snapfly quits or the option is turned off in Settings. Without it, Snapfly picks screenshots up wherever the Screenshot app saves them, and looks at that place again each time Snapfly comes to the front, so a new location, a disk put back or a Desktop opened to it later count too. Snapfly hides automatically while an app is in full screen.
 
    The Mac App Store edition may not change those settings, so its first launch starts with Snapfly's own screenshots instead, which need nothing set up: Try It Now takes the first one. Pointing the Screenshot app at Pictures › Snapfly stays a choice, in that first window and under General in Settings.
 </sub>

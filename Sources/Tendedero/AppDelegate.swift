@@ -217,6 +217,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
         }
 
+        // Each time Snapfly comes to the front, the folders it could not
+        // watch are tried again.
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.reviveWatchers() }
+        }
+
         // The introduction once, then the question about screenshots once.
         if Guide.shared.offersAtLaunch || !Inbox.wasOffered {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in self?.welcome() }
@@ -298,6 +306,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             extra.start()
             folderWatchers.append(extra)
         }
+    }
+
+    /// Watches again what can be watched now: a folder that could not be
+    /// opened, like the Desktop before Snapfly was let in, or that went, like
+    /// one on a disk ejected. The Screenshot app may also save somewhere
+    /// else since it was last read, with inbox mode off.
+    private func reviveWatchers() {
+        if !Edition.appStore,
+           ScreenshotWatcher.screenshotFolder().standardizedFileURL.path != watcher.folder.standardizedFileURL.path {
+            return startWatcher()
+        }
+        watcher.revive()
+        safetyWatcher?.revive()
+        folderWatchers.forEach { $0.revive() }
     }
 
     /// Up to three folders: enough for another screenshot app or an export
