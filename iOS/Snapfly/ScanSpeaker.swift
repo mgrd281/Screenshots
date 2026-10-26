@@ -1,5 +1,7 @@
 import AVFoundation
+import Combine
 import NaturalLanguage
+import UIKit
 
 /// Reads the scanned pages' text aloud, a paragraph or a table's row at a
 /// time (`ScanReading.utterances`), with the system's own voice for the
@@ -62,6 +64,8 @@ final class ScanSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate
         let session = AVAudioSession.sharedInstance()
         try? session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
         try? session.setActive(true)
+        // The screen stays on while it reads, so the iPhone locking does not cut it off.
+        UIApplication.shared.isIdleTimerDisabled = true
         say(first)
         return true
     }
@@ -126,6 +130,7 @@ final class ScanSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate
         state = .idle
         index = nil
         shownRange = nil
+        UIApplication.shared.isIdleTimerDisabled = false
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 

@@ -1579,6 +1579,7 @@
 "Share as CSV" = "CSVとして共有";
 "Table copied" = "表をコピーしました";
 "Read unsurely. Tap to correct." = "自信のない状態で読み取られました。タップして修正します。";
+"Read unsurely" = "自信のない状態で読み取り";
 "On the page" = "ページ上";
 "Back to What Was Read" = "読み取った状態に戻す";
 "Speed" = "速度";

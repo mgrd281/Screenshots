@@ -52,7 +52,7 @@ enum ReadingText {
         var text = AttributedString()
         for run in runs {
             var piece = AttributedString(run.text)
-            if run.unsure { piece.backgroundColor = unsure }
+            if run.unsure { piece[AttributeScopes.SwiftUIAttributes.BackgroundColorAttribute.self] = unsure }
             text.append(piece)
         }
         func paint(_ range: Range<Int>, _ color: Color) {
@@ -60,7 +60,7 @@ enum ReadingText {
             guard range.lowerBound >= 0, range.lowerBound < range.upperBound, range.upperBound <= characters.count else { return }
             let from = characters.index(characters.startIndex, offsetBy: range.lowerBound)
             let to = characters.index(from, offsetBy: range.count)
-            text[from..<to].backgroundColor = color
+            text[from..<to][AttributeScopes.SwiftUIAttributes.BackgroundColorAttribute.self] = color
         }
         for range in marks.found { paint(range, Self.found) }
         if let range = marks.foundNow { paint(range, Self.foundNow) }
@@ -109,6 +109,7 @@ struct ReadingParagraph: View {
                 }
             }
             .accessibilityLabel(label)
+            .accessibilityValue(runs.contains(where: \.unsure) ? L("Read unsurely") : "")
             .accessibilityAddTraits(heading ? .isHeader : [])
         return Group {
             if selectable { text.textSelection(.enabled) } else { text }
@@ -171,11 +172,13 @@ struct ReadingTable: View {
     }
 
     @ViewBuilder private func cell(_ words: [ScanReading.Word], _ spot: ScanReading.Spot) -> some View {
-        let text = Text(ReadingText.attributed(ScanReading.runs(ofCell: words), marks: marks(spot)))
+        let runs = ScanReading.runs(ofCell: words)
+        let text = Text(ReadingText.attributed(runs, marks: marks(spot)))
             .font(.callout)
             .monospacedDigit()
             .fixedSize()
             .accessibilityLabel(ScanReading.line(of: words, mark: L("covered")))
+            .accessibilityValue(runs.contains(where: \.unsure) ? L("Read unsurely") : "")
         if correcting {
             Button { onCorrect(spot) } label: { text }
                 .buttonStyle(.plain)

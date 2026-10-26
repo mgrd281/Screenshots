@@ -39,8 +39,11 @@ struct ScanReadingSheet: View {
     @State private var sharing: SharedFiles?
     @State private var translating = false
     @StateObject private var speaker = ScanSpeaker()
+    /// Which page is being covered, while the text waits for it.
+    @ObservedObject private var scans = ScannedPages.shared
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     struct Note: Equatable {
         let text: String
@@ -109,6 +112,12 @@ struct ScanReadingSheet: View {
                 Text(L("Reading the text…"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                if let making = scans.making, scans.pages.count > 1 {
+                    Text(String(format: L("Page %d of %d"), making, scans.pages.count))
+                        .font(.footnote)
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                }
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 60)
@@ -193,7 +202,7 @@ struct ScanReadingSheet: View {
             }
             .onChange(of: following.focus) { _, spot in
                 guard let spot else { return }
-                withAnimation(.easeOut(duration: 0.25)) { proxy.scrollTo("b-\(spot.page)-\(spot.block)", anchor: .center) }
+                withAnimation(reduceMotion ? nil : .easeOut(duration: 0.25)) { proxy.scrollTo("b-\(spot.page)-\(spot.block)", anchor: .center) }
             }
         }
     }
@@ -335,7 +344,7 @@ struct ScanReadingSheet: View {
             }
             .onChange(of: spot) { _, new in
                 guard let new else { return }
-                withAnimation(.easeOut(duration: 0.25)) { proxy.scrollTo("p-\(new.page)", anchor: .top) }
+                withAnimation(reduceMotion ? nil : .easeOut(duration: 0.25)) { proxy.scrollTo("p-\(new.page)", anchor: .top) }
             }
         }
     }
