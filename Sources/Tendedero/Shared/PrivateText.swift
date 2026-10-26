@@ -2481,7 +2481,7 @@ enum Finder {
         let sensitive = kind != .general
         let headings = unvouched.filter { capitals($0) || kind == .invoice && isItem($0, in: text) }
         if sensitive {
-            let covered = unvouched.filter { !capitals($0) }
+            let covered = unvouched.filter { !headings.contains($0) }
             hits += covered.map { Hit(line: $0, range: nil, kind: .names, check: true) }
             found.formUnion(covered)
         }
