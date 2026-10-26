@@ -154,7 +154,8 @@ jobs:
       # Arabic words of a scanned page's text layer (ScanPDFTests).
       - name: Say how PDFKit reads an Arabic line
         if: always()
-        run: grep -h "PDFKIT LINE" "$RUNNER_TEMP/tests.log" | sed 's/^.*PDFKIT LINE::/PDFKit reads: /' || true
+        run: |
+          grep -h "PDFKIT LINE" "$RUNNER_TEMP/tests.log" | sed 's/^.*PDFKIT LINE::/PDFKit reads: /' || true
 
   # The iPhone app (iOS/), built for a device but not signed, so a change to
   # the code both apps share is checked on the iPhone too.
