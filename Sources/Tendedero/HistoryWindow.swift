@@ -396,10 +396,7 @@ private struct HistoryCard: View {
         .contextMenu {
             Button(L("Hang on the line")) { takeBack() }
             Button(L("Send Again")) { send() }
-            Button(L("Copy")) {
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.writeObjects([entry.url as NSURL])
-            }
+            Button(L("Copy")) { copy() }
             Button(L("Open")) { NSWorkspace.shared.open(entry.url) }
             Button(L("Show in Finder")) { NSWorkspace.shared.activateFileViewerSelecting([entry.url]) }
             Divider()
@@ -419,5 +416,17 @@ private struct HistoryCard: View {
     private func send() {
         guard let url = History.takeBack(entry) else { return }
         sendAgain(url)
+    }
+
+    /// The copy that leaves the line, as the line's own Copy gives it:
+    /// covered as Settings says, never the original. A PDF still being
+    /// covered waits, with a note, as it does on the line.
+    private func copy() {
+        let chosen = CoveringProfile.detailsNow
+        guard !PrivateDetails.stillCovering(entry.url, chosen) else {
+            Notice.show(L("Still covering the private details…"))
+            return
+        }
+        Line.clip([(url: PrivateDetails.shareable(entry.url, covering: chosen), original: entry.url)])
     }
 }

@@ -654,8 +654,10 @@ while the screenshot is kept in Snapfly's own folder, so none is lost.
 In History, the Workspace page shows them by day as a grid or a list. Pick a
 category, search by name or by the words in the photo, press Return or
 double-click to open one, and use the menu for Hang on the line, Quick Look,
-Copy, Copy File Path, Show in Finder, Move to Folder, Rename… and Move to
-Trash. The same Move to Folder is in the menu of a photo on the line.
+Copy Original, Copy File Path, Show in Finder, Move to Folder, Rename… and
+Move to Trash. Copy Original copies the files as they are, not covered, as
+the Finder would; to send one covered, hang it on the line. The same Move to
+Folder is in the menu of a photo on the line.
 
 Delete… in Settings asks first, then moves the screenshots to the Trash, and
 leaves any file in the folder that isn't Snapfly's. Only a folder Snapfly
@@ -845,7 +847,8 @@ Everything that leaves the line, sent or taken down, waits in the History
 for 30 days: History… in the menu bar, or <kbd>⌘</kbd>&thinsp;<kbd>Y</kbd>
 while the menu is open. It is grouped by day, and the search finds the words
 in every photo. A click hangs one on the line again; Send Again in its menu
-hangs it and sends it, covered, into the chat you had in front. A screenshot from
+hangs it and sends it, covered, into the chat you had in front, and Copy
+copies it as it would leave the line, covered, never the original. A screenshot from
 Snapfly's own folder moves into its History folder and goes to the Trash once
 its days are up; a file from anywhere else stays where it is. Choose 7, 30
 or 90 days, a year or forever, or turn it off, in Settings, under Line. It

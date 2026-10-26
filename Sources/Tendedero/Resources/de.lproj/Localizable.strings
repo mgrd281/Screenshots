@@ -1049,6 +1049,8 @@
 "List" = "Liste";
 "Grid or List" = "Raster oder Liste";
 "Copy File Path" = "Dateipfad kopieren";
+"Copy Original" = "Original kopieren";
+"Copy Originals" = "Originale kopieren";
 "Rename" = "Umbenennen";
 "Rename…" = "Umbenennen …";
 

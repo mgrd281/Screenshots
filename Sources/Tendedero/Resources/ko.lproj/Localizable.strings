@@ -1049,6 +1049,8 @@
 "List" = "목록";
 "Grid or List" = "그리드 또는 목록";
 "Copy File Path" = "파일 경로 복사";
+"Copy Original" = "원본 복사";
+"Copy Originals" = "원본 복사";
 "Rename" = "이름 변경";
 "Rename…" = "이름 변경…";
 

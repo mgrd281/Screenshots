@@ -1049,6 +1049,8 @@
 "List" = "Liste";
 "Grid or List" = "Izgara veya liste";
 "Copy File Path" = "Dosya yolunu kopyala";
+"Copy Original" = "Orijinali kopyala";
+"Copy Originals" = "Orijinalleri kopyala";
 "Rename" = "Yeniden adlandır";
 "Rename…" = "Yeniden adlandır…";
 

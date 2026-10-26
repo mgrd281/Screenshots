@@ -1051,6 +1051,8 @@
 "List" = "सूची";
 "Grid or List" = "ग्रिड या सूची";
 "Copy File Path" = "फ़ाइल का पथ कॉपी करें";
+"Copy Original" = "मूल कॉपी करें";
+"Copy Originals" = "मूल फ़ाइलें कॉपी करें";
 "Rename" = "नाम बदलें";
 "Rename…" = "नाम बदलें…";
 

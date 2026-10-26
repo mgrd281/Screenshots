@@ -895,20 +895,32 @@ final class Line: ObservableObject {
     private func copy(_ photos: [Pegged], covering chosen: Set<PrivateDetail>, replacing files: [UUID: URL] = [:],
                       says: Bool = true) {
         guard !stillCovering(photos, chosen) else { return }
-        let entries = photos.map { item -> NSPasteboardItem in
+        // With Hide private details on, a copy with them covered.
+        Self.clip(photos.map { item in
+            (url: files[item.id] ?? PrivateDetails.shareable(item.url, covering: chosen), original: item.url)
+        })
+        if says { showCopied(Set(photos.map(\.id))) }
+    }
+
+    /// What leaves the line, on the clipboard: each copy as an item of its
+    /// own, as Finder copies several files, so apps paste them all. The
+    /// History's Copy puts a photo there the same way.
+    /// - Parameter copies: what leaves for each photo, and the photo's own file.
+    static func clip(_ copies: [(url: URL, original: URL)]) {
+        let entries = copies.map { made -> NSPasteboardItem in
             let entry = NSPasteboardItem()
-            // With Hide private details on, a copy with them covered.
-            let url = files[item.id] ?? PrivateDetails.shareable(item.url, covering: chosen)
+            let url = made.url
+            let picture = isImage(made.original)
             // A recording or a PDF is copied as the file, which apps paste as
             // the video or the document.
             // A GIF keeps moving: it goes as itself, not as a still.
-            if item.isImage, url.pathExtension.lowercased() == "gif", let gif = try? Data(contentsOf: url) {
+            if picture, url.pathExtension.lowercased() == "gif", let gif = try? Data(contentsOf: url) {
                 entry.setData(gif, forType: NSPasteboard.PasteboardType("com.compuserve.gif"))
-            } else if item.isImage, url != item.url, url.pathExtension == "jpg", let jpeg = try? Data(contentsOf: url) {
+            } else if picture, url != made.original, url.pathExtension == "jpg", let jpeg = try? Data(contentsOf: url) {
                 // A photo's clean copy goes as the JPEG it is, rather than
                 // a PNG several times its size.
                 entry.setData(jpeg, forType: NSPasteboard.PasteboardType("public.jpeg"))
-            } else if item.isImage, let png = pngData(url) {
+            } else if picture, let png = pngData(url) {
                 entry.setData(png, forType: .png)
             }
             entry.setString(url.absoluteString, forType: .fileURL)
@@ -917,7 +929,6 @@ final class Line: ObservableObject {
         let pb = NSPasteboard.general
         pb.clearContents()
         pb.writeObjects(entries)
-        if says { showCopied(Set(photos.map(\.id))) }
     }
 
     /// A PDF still being covered cannot leave yet: a note says so, rather
@@ -1612,7 +1623,7 @@ final class Line: ObservableObject {
         sound.play()
     }
 
-    private func pngData(_ url: URL) -> Data? {
+    private static func pngData(_ url: URL) -> Data? {
         if url.pathExtension.lowercased() == "png" { return try? Data(contentsOf: url) }
         guard let tiff = NSImage(contentsOf: url)?.tiffRepresentation,
               let rep = NSBitmapImageRep(data: tiff) else { return nil }

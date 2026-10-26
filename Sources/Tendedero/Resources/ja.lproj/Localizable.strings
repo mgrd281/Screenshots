@@ -1049,6 +1049,8 @@
 "List" = "リスト";
 "Grid or List" = "グリッドまたはリスト";
 "Copy File Path" = "ファイルのパスをコピー";
+"Copy Original" = "オリジナルをコピー";
+"Copy Originals" = "オリジナルをコピー";
 "Rename" = "名前を変更";
 "Rename…" = "名前を変更…";
 

@@ -1049,6 +1049,8 @@
 "List" = "قائمة";
 "Grid or List" = "شبكة أو قائمة";
 "Copy File Path" = "انسخ مسار الملف";
+"Copy Original" = "انسخ الأصل";
+"Copy Originals" = "انسخ الأصول";
 "Rename" = "أعد التسمية";
 "Rename…" = "أعد التسمية…";
 

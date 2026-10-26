@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- On the Mac, Copy in a History photo's menu copies it as it would leave
+  the line, covered, never the original. On History's Workspace page, the
+  item that copies the files as they are is now called Copy Original.
+
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens
   it, from Review's menu too. It comes in reading order (one column after

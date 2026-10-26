@@ -1655,8 +1655,10 @@ apps.
     22 pt accent circle with `arrow.uturn.up` says a click hangs it again.
     Its menu: Hang on the line, Send Again (it hangs, the window closes, and
     once the app in front before it is back, the photo goes in, covered;
-    else it stays copied with a note), Copy, Open, Show in Finder, and
-    Remove from History.
+    else it stays copied with a note), Copy (the copy that leaves the line,
+    covered as Settings says, as the line's Copy makes it; a PDF still being
+    covered waits with the line's note), Open, Show in Finder, and Remove
+    from History.
   - **Orders** groups the photos with an order, invoice or customer number
     (the first one read, top to bottom) under that number, as a `number`
     label in the day headers' style, selectable, over the same grid; the
@@ -1668,9 +1670,10 @@ apps.
     into view and at most 400 kept), with the category beside the time and a
     2.5 pt accent ring and a check on a selected one; a click selects,
     ⌘-click adds, a double-click opens, and the menu is Hang on the line,
-    Open, Quick Look, Show in Finder, Copy, Copy File Path, Move to Folder,
-    Rename… and Move to Trash (red). List is a `Table` of Name, Category,
-    Date and Size with the same menu. Empty, it says "No screenshots yet"
+    Open, Quick Look, Show in Finder, Copy Original (Copy Originals for
+    several: the files as they are, not covered, as the Finder copies them),
+    Copy File Path, Move to Folder, Rename… and Move to Trash (red). List is
+    a `Table` of Name, Category, Date and Size with the same menu. Empty, it says "No screenshots yet"
     with a Take Screenshot button. Each card is one VoiceOver element with
     the same actions.
   - The toolbar holds a segmented Photos | Orders | Sent picker in the middle, then

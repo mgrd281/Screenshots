@@ -1049,6 +1049,8 @@
 "List" = "Lista";
 "Grid or List" = "Cuadrícula o lista";
 "Copy File Path" = "Copiar ruta del archivo";
+"Copy Original" = "Copiar original";
+"Copy Originals" = "Copiar originales";
 "Rename" = "Cambiar nombre";
 "Rename…" = "Cambiar nombre…";
 
