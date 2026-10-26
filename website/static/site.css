@@ -3561,12 +3561,14 @@ input[role="switch"]:checked::before { translate: 16px 0; }
   bottom: 12px;
   z-index: 3;
   display: flex;
-  gap: 3px;
   padding: 4px;
   border-radius: 9px;
   background: rgba(28, 28, 30, 0.82);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+/* The keys read left to right in every language; the strip round them sits
+   at the reading start, so in Arabic it keeps clear of the drag's end. */
+.sc-keys-row { display: flex; gap: 3px; }
 .section .sc-keys kbd {
   display: grid;
   place-items: center;

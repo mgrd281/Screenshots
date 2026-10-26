@@ -649,7 +649,7 @@ def story_scene(lang, kind):
                  'stroke="#1d1d1f" stroke-width="1.4" stroke-linecap="round"/></svg>')
         inner = (f'{window}<span class="sc-sel"></span><span class="sc-flash"></span>'
                  f'<span class="sc-cross">{cross}</span>'
-                 '<span class="sc-keys" dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span>')
+                 '<span class="sc-keys"><span class="sc-keys-row" dir="ltr"><kbd>⌃</kbd><kbd>⌥</kbd><kbd>S</kbd></span></span>')
     elif kind == "hang":
         stamp = scene_stamp(230, 42, 156, "-2deg", art_invoice(lang, "story-hang", covered=False))
         inner = f'<div class="sc-line">{scene_rope()}{stamp}</div>'
