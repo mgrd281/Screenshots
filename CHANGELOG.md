@@ -211,7 +211,9 @@ keeps a download of each version.
   lets them go when it closes, instead of keeping one of every photo it
   holds from launch on.
 - Fixes: on the Mac, Save Copy… over the very file it copies, as a GIF
-  or a PDF with nothing to cover can be, no longer deletes it; a PDF
+  or a PDF with nothing to cover can be, no longer deletes it; Studio no
+  longer stops Snapfly when a video cannot be written, as on a full disk;
+  a PDF
   cropped with text beyond its page no longer stops Snapfly;
   the share extension keeps within its memory with large photos and
   deletes its file when cancelled; what Apple Intelligence or the AI
