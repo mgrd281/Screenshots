@@ -71,6 +71,10 @@ keeps a download of each version.
   off, the Screenshot app's location is read again then too. A folder that
   could not be read for a moment no longer hangs its old screenshots again
   as new ones.
+- On the Mac, the send button over a browser asks it for the open page in
+  the background, once a second and as soon as another tab comes to the
+  front, so a busy browser no longer slows Snapfly down. Opening a chat's
+  website waits for the browser the same way.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens
