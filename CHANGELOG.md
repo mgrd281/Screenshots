@@ -62,6 +62,8 @@ keeps a download of each version.
 - On the Mac, a recording with both the Mac's sound and the microphone can
   no longer leave Snapfly saving it for ever: when the two can't be mixed
   into one track, the recording keeps both and a note says so.
+- On the Mac, Markup open on two photos at once saves each one's Done to its
+  own photo, never one over the other.
 
 - On the iPhone, the text of scanned pages can be read, copied, heard and
   shared: Save and Share has a third format, Text, and Text anzeigen opens
