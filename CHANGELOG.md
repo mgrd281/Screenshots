@@ -91,8 +91,8 @@ keeps a download of each version.
   close button, or another photo opened in them, throws away what you
   changed, and opening the same photo again brings its window back as you
   left it. Studio keeps your zooms and arrows when its window closes, unless
-  you click Cancel, and a new recording waits for Studio to be closed
-  instead of taking their place.
+  you click Cancel or trimmed the recording meanwhile, and a new recording
+  waits for Studio to be closed instead of taking their place.
 - On the Mac, Standard Prompts and Standard Questions ask before they
   replace what you wrote, and a look at Settings › Line no longer keeps the
   standard questions as your own: they stay in the language Snapfly
@@ -118,8 +118,8 @@ keeps a download of each version.
   just made, or keep its shortcuts from working.
 - On the Mac, connecting an iPhone on another Apple account can be
   cancelled while it connects, should iCloud not answer, instead of
-  leaving no way out but quitting; once connected, Escape closes the sheet
-  as Done does.
+  leaving no way out but quitting, and an account let in only then is taken
+  off again; once connected, Escape closes the sheet as Done does.
 - On the Mac, with Reduce Motion on, a photo let go after a press and the
   pin badge settle with a short fade instead of a bouncy spring.
 - On the Mac, the workspace folder's name and a category's name are kept
@@ -131,7 +131,7 @@ keeps a download of each version.
   is recorded saves the recording first, as Stop does, instead of deleting
   it. A recording cut short anyway, as by a crash, is now written in
   pieces: the next time Snapfly opens, it hangs on the line up to its last
-  few seconds, with a note.
+  few seconds, with a note; one that cannot be played goes to the Trash.
 - On the Mac, a recording with both the Mac's sound and the microphone can
   no longer leave Snapfly saving it for ever: when the two can't be mixed
   into one track, the recording keeps both and a note says so.
@@ -147,7 +147,8 @@ keeps a download of each version.
 - On the Mac, the send button over a browser asks it for the open page
   once a second, and as soon as another tab comes to the front, instead of
   five times a second, so a busy browser slows Snapfly down far less.
-  Opening a chat's website waits for the browser the same way.
+  Opening a chat's website waits for the browser the same way; what a send
+  covers, Check Before Sending and the time stamp still ask it right then.
 - On the Mac, a guide's Copy no longer hangs the guide on the line as a new
   screenshot while Snapfly watches the clipboard: it goes with a file of
   it, as photos copied from the line do.
@@ -171,27 +172,31 @@ keeps a download of each version.
   player: pause, back and on, speed, the word being said marked. A table
   is told from the columns of a letter's foot, and a table whose cells
   Vision read as one line is parted into cells again.
-- On the iPhone, what you cover by hand on a PDF project's pages is kept
-  with the project and covered in every copy of it, also after Snapfly
-  was closed or a page was turned, and on its picture under Recent; what
-  you covered on scanned pages goes with them under Recent, and the scan
-  stays until its pages are in the document.
+- On the iPhone, what you cover by hand on a PDF project's pages, and a
+  cover Snapfly found that you moved or made larger, is kept with the
+  project and covered in every copy of it: also after Snapfly was closed, a
+  page was turned or duplicated, or Try Again, and on its picture under
+  Recent, which shows a change at once. It is back on the page as soon as
+  the page shows, so nothing drawn meanwhile puts it aside. What you covered
+  on scanned pages goes with them under Recent and into a project, and the
+  scan stays until its pages are in the document.
 - On the iPhone, the words of scanned pages and PDF projects are never sent
   to the AI assistant, even with Find more turned on; screenshots and photos
   still are, as before.
 - On the iPhone, Cover and Copy, Cover and Save, Back Tap and the share
   extension say when they found nothing to cover instead of "Covered".
-  Back Tap no longer waits for Apple Intelligence or the AI assistant.
+  Back Tap and the Cover Private Details shortcut no longer wait for Apple
+  Intelligence or the AI assistant.
 - On the iPhone, a copy made without covers stays on this iPhone (not on a
   Mac or iPad nearby) and leaves the clipboard after ten minutes.
 - Share links take at most 1.2 GB a day from everyone together and ten
   uploads a minute from one place, as uploads need no account; a pairing
   code's record in iCloud can no longer be listed by anyone.
 - On the iPhone, a long scan takes much less memory: each camera page is
-  kept as a JPEG once it is made, and a covered PDF, the pages as pictures
-  and the text are made a page at a time; Review reads the pages one after
-  another, and a change in Protect Picture no longer holds the screen while
-  its copy is made.
+  kept as a JPEG, at its full size, once it is made, and a covered PDF, the
+  pages as pictures and the text are made a page at a time; Review reads the
+  pages one after another, and a change in Protect Picture no longer holds
+  the screen while its copy is made.
 - On the iPhone, a long PDF project takes less memory too: a page you
   changed by hand keeps what you chose but lets go of its pictures once you
   have moved a few pages on, and is made again when you come back to it. A
@@ -201,15 +206,15 @@ keeps a download of each version.
   Assistant, where it is set up, not to Settings; a PDF project's camera
   that cannot scan says why; the text sheet's warnings use the deeper
   orange.
-- On the Mac, a photo or PDF copied, sent, saved or linked while it is
-  still being read says so for a moment, as a PDF did, instead of holding
-  Snapfly up while it is read a second time, and a copy made in a hurry is
-  read again with Apple Intelligence before the line keeps it; the line
-  reads two photos at a time, the newest first, instead of all at once
-  after a change in Settings, and does not draw one again that looks the
-  same. The History makes its pictures only while its window is open, and
-  lets them go when it closes, instead of keeping one of every photo it
-  holds from launch on.
+- On the Mac, a PDF copied, sent, saved or linked, from the History too,
+  while it is still being covered says so for a moment instead of holding
+  Snapfly up for all its pages, and a send never pastes what was on the
+  clipboard before; a photo copied in a hurry is read again with Apple
+  Intelligence before the line keeps it; the line reads two photos at a
+  time, the newest first, instead of all at once after a change in Settings,
+  and does not draw one again that looks the same. The History makes its
+  pictures only while its window is open, and lets them go when it closes,
+  instead of keeping one of every photo it holds from launch on.
 - Fixes: on the Mac, Save Copy… over the very file it copies, as a GIF
   or a PDF with nothing to cover can be, no longer deletes it; Studio no
   longer stops Snapfly when a video cannot be written, as on a full disk;

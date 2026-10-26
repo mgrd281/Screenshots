@@ -159,7 +159,8 @@ the apps, by name and icon, and the websites; turn any off, remove it, or add
 your own. To know the page, Snapfly asks the
 browser, and macOS asks you once whether it may. It asks once a second, and
 as soon as another tab comes to the front, so a busy browser seldom slows
-Snapfly down. It shows the newest photo and how many
+Snapfly down; what a send covers, Check Before Sending and the time stamp
+ask it right then. It shows the newest photo and how many
 will go. One click and they are in, without a trip to the top of the screen.
 Over the chats it knows, like ChatGPT, Claude, Gemini, WhatsApp, Telegram
 or Slack, it finds that spot by itself, measured on each one: on a new chat,
@@ -226,7 +227,8 @@ plays, which hangs next to it and stays animated when sent. Snapfly's own
 line and controls stay out of it. Quit, log out or install an update while
 recording, and the recording is saved first, as Stop saves it. One cut short
 anyway, as by a crash, is written in pieces: the next time Snapfly opens, it
-hangs on the line up to its last few seconds, and a note says so.
+hangs on the line up to its last few seconds, and a note says so; one that
+cannot be played goes to the Trash.
 
 A recording has sound when you choose it, in Settings › General under Screen
 recordings: the Mac's sound, what you hear without Snapfly's own; the
@@ -1260,11 +1262,13 @@ watch the screen, so there is no line there. What it keeps is the covering:
   the picture only where it has none, as in a photo pasted on the page; its
   covers are found as on any picture, on the iPhone alone (the AI
   assistant never reads a project's or a scan's words). What you cover by
-  hand on a page, or cover though it was only offered, is kept with the
-  project, where it lies and never a word: it is there when the project
-  opens again, turns with its page, shows on its picture under Recent and
-  is covered in every copy, as what you covered on scanned pages is once
-  they are kept under Recent. A PDF locked with a password asks for
+  hand on a page, cover though it was only offered, or move or make larger
+  of what Snapfly found, is kept with the project, where it lies and never
+  a word: it is back as soon as the page shows, when the project opens
+  again or after Try Again, turns with its page, goes with its copy when
+  the page is duplicated, shows on its picture under Recent and is covered
+  in every copy, as what you covered on scanned pages is once they are kept
+  under Recent or added to a project. A PDF locked with a password asks for
   it each time it opens, and it is never kept; a signed PDF says once that
   editing it ends the signature. Save and Share takes the file's name
   before its fixed ".pdf", how pictures sit on their pages (Original, A4 or
@@ -1497,7 +1501,8 @@ watch the screen, so there is no line there. What it keeps is the covering:
   screenshot and copies it, ready to paste into a chat. It covers without
   waiting for Apple Intelligence or the AI assistant, as the share
   extension does, and says when it found nothing to cover.
-- **Cover Private Details** covers any picture a shortcut hands it.
+- **Cover Private Details** covers any picture a shortcut hands it, the same
+  way, without waiting for Apple Intelligence or the AI assistant.
 - Both actions' names and descriptions, Siri's phrases and iOS's questions
   for Photos and the camera come in the app's 13 languages.
 
