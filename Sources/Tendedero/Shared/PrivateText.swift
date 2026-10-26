@@ -2368,9 +2368,11 @@ enum Finder {
     /// counts once something vouches for it: the framework, an email
     /// address, or a name met elsewhere. In a medical, banking or shop
     /// document one that nothing vouches for is covered and marked for the
-    /// owner to check; elsewhere it is only offered, as German capitalizes
-    /// every noun. The words of the names found are covered wherever they
-    /// come again, read as loosely as text recognition reads them.
+    /// owner to check; elsewhere, and in an invoice's column of what it
+    /// charges for, beside its price, it is only offered, as German
+    /// capitalizes every noun. The words of the names found are covered
+    /// wherever they come again, read as loosely as text recognition reads
+    /// them.
     /// - Parameter own: the words of the owner's own name (`ownWords`): a
     ///   line or a word of it is a name for sure, read as loosely as a
     ///   misread letter in a word of five letters or more.
@@ -2472,11 +2474,12 @@ enum Finder {
         }
         // A line shaped like a name that nothing vouches for: in a document
         // about a person's health, money or order, covered and checked;
-        // elsewhere, or written in capitals, as a letterhead writes its
-        // headings, only offered.
+        // elsewhere, written in capitals, as a letterhead writes its
+        // headings, or one of the things an invoice charges for, as
+        // "Druckpatronen Schwarz", only offered.
         let unvouched = candidates.filter { !found.contains($0.0) }.map(\.0)
         let sensitive = kind != .general
-        let headings = unvouched.filter(capitals)
+        let headings = unvouched.filter { capitals($0) || kind == .invoice && isItem($0, in: text) }
         if sensitive {
             let covered = unvouched.filter { !capitals($0) }
             hits += covered.map { Hit(line: $0, range: nil, kind: .names, check: true) }
@@ -2505,6 +2508,90 @@ enum Finder {
         return words.count >= 2 && words.allSatisfy(headerWords.contains)
             && words.contains { ["name", "vorname", "nachname", "familienname", "patient", "patientin",
                                  "patientenname", "surname", "kunde", "kundin"].contains($0) }
+    }
+
+    /// Words that head an invoice's column of what it charges for.
+    private static let itemColumns: Set<String> = ["beschreibung", "bezeichnung", "artikel", "leistung", "leistungen",
+                                                   "produkt", "produkte", "ware", "waren", "position", "positionen",
+                                                   "posten", "description", "item", "items", "product", "products",
+                                                   "service", "services", "article", "articles", "goods"]
+    /// Words that head a column of people, whose rows are names whatever
+    /// stands beside them.
+    private static let peopleColumns: Set<String> = ["name", "namen", "vorname", "nachname", "familienname",
+                                                     "teilnehmer", "teilnehmerin", "teilnehmende", "kunde", "kundin",
+                                                     "empfänger", "empfängerin", "auftraggeber", "mitarbeiter",
+                                                     "mitarbeiterin", "person", "personen", "gast", "gäste",
+                                                     "reisender", "reisende", "passagier", "patient", "patientin",
+                                                     "mitglied", "schüler", "schülerin", "fahrer", "fahrerin",
+                                                     "participant", "participants", "attendee", "guest", "passenger",
+                                                     "employee", "customer", "recipient", "payee", "member", "student"]
+    /// Words that head an invoice's other columns.
+    private static let otherColumns: Set<String> = ["pos", "nr", "art.-nr", "artikelnr", "artikelnummer", "menge",
+                                                    "anzahl", "stk", "stück", "einheit", "me", "preis", "einzelpreis",
+                                                    "e-preis", "gesamtpreis", "gesamt", "betrag", "summe", "netto",
+                                                    "brutto", "mwst", "ust", "steuer", "rabatt", "datum", "zeitraum",
+                                                    "stunden", "std", "in", "€", "eur", "chf", "$", "usd", "%", "no",
+                                                    "qty", "quantity", "unit", "price", "amount", "total", "tax",
+                                                    "vat", "date", "rate", "hours", "each"]
+
+    /// The words of a line, as a table's header has them: small letters,
+    /// without the punctuation round them.
+    private static func columnWords(_ line: String) -> [String] {
+        line.lowercased().split(whereSeparator: { $0 == " " || $0 == "|" || $0 == "\t" || $0 == "/" })
+            .map { $0.trimmingCharacters(in: CharacterSet(charactersIn: ":.,;()")) }.filter { !$0.isEmpty }
+    }
+
+    /// Whether a word heads an invoice's column of what it charges for:
+    /// one of those words, or a compound ending in one, as
+    /// "Artikelbezeichnung" or "Leistungsbeschreibung".
+    private static func isItemColumn(_ word: String) -> Bool {
+        itemColumns.contains(word) || word.hasSuffix("bezeichnung") || word.hasSuffix("beschreibung")
+    }
+
+    /// Whether a line holds a price, as an invoice's row does: "24,90 €",
+    /// "€ 5.90", "1.234,56". A quantity alone, as "2", or a date, is none.
+    static func isPrice(_ line: String) -> Bool {
+        line.range(of: #"(?:€|£|\$|\bEUR|\bUSD|\bGBP|\bCHF)\s?\d|\d\s?(?:€|£|EUR\b|USD\b|GBP\b|CHF\b)|(?<![\d.,])\d{1,3}(?:[.,\x{00A0} ]\d{3})*[.,]\d{2}(?![\d.,]*\d)"#,
+                   options: .regularExpression) != nil
+    }
+
+    /// Whether a line of an invoice is one of the things it charges for, as
+    /// its table lists them: with a price on its row, under a header that
+    /// names its column so, like "Beschreibung" or "Artikel", the nearest
+    /// up its column. A column of people, like "Teilnehmer", holds names
+    /// whatever their price; so does a line without one, as the customer's
+    /// name in the address, and one under no header.
+    static func isItem(_ index: Int, strings: [String], boxes: [CGRect]) -> Bool {
+        let box = boxes[index]
+        let priced = boxes.indices.contains { other in
+            let beside = boxes[other]
+            let overlap = min(box.maxY, beside.maxY) - max(box.minY, beside.minY)
+            return other != index && overlap > min(box.height, beside.height) * 0.5 && isPrice(strings[other])
+        }
+        guard priced else { return false }
+        // Up its column, line by line, to the first that heads it; a gap a
+        // new section would leave ends the column.
+        let above = boxes.indices.filter { other in
+            let line = boxes[other]
+            return other != index && line.minY >= box.maxY - box.height * 0.3
+                && min(line.maxX, box.maxX) - max(line.minX, box.minX) > 0
+        }.sorted { boxes[$0].minY < boxes[$1].minY }
+        var last = box
+        for other in above {
+            let line = boxes[other]
+            guard line.minY - last.maxY < max(line.height, last.height) * 3 else { return false }
+            let words = columnWords(strings[other])
+            if (1...8).contains(words.count),
+               words.allSatisfy({ isItemColumn($0) || peopleColumns.contains($0) || otherColumns.contains($0) }) {
+                return words.contains(where: isItemColumn) && !words.contains(where: peopleColumns.contains)
+            }
+            last = line
+        }
+        return false
+    }
+
+    fileprivate static func isItem(_ index: Int, in text: Text) -> Bool {
+        isItem(index, strings: text.strings, boxes: text.boxes)
     }
 
     /// Whether a word is one of the names found, or that word as text

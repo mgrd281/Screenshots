@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- What an invoice charges for is no longer covered as a person's name: an
+  item like "Druckpatronen Schwarz", with its price on its row, under a
+  column headed Beschreibung, Artikel or Item, stays readable and is only
+  offered to cover. A column of people, like Teilnehmer, stays covered.
 - On the iPhone, what can't be undone asks first: Clear beside the scanned
   pages, Delete on a recent document, and Turn Off for faster picture
   processing, which deletes everything prepared.
