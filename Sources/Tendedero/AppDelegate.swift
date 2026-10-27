@@ -264,9 +264,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         return false
     }
 
-    /// When the menu bar icon cannot be seen, not yet allowed in the menu
-    /// bar on macOS 26 or hidden behind the camera's notch on a full menu
-    /// bar, Settings opens instead, with a note on how to bring the icon
+    /// When the menu bar icon cannot be seen, turned off in System Settings
+    /// › Menu Bar on macOS 26 or hidden behind the camera's notch on a full
+    /// menu bar, Settings opens instead, with a note on how to bring the icon
     /// back, so a launch never shows nothing. While the welcome or a
     /// question shows, it looks again once they are gone.
     private func showSettingsIfIconHidden(tries: Int = 60) {
@@ -289,10 +289,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
 
-    /// Whether the menu bar icon is on a screen. From macOS 26 the menu bar
-    /// shows it for Snapfly, and an icon it does not show, because it is
-    /// not allowed there, has no screen; before, it is Snapfly's own window,
-    /// covered when the notch hides it.
+    /// Whether the menu bar icon is on a screen. From macOS 26 Control
+    /// Center shows it for Snapfly, and an icon it does not show has no
+    /// screen; before, it is Snapfly's own window, covered when the notch
+    /// hides it.
     private var iconIsVisible: Bool {
         guard statusItem.isVisible, let window = statusItem.button?.window, let screen = window.screen
         else { return false }

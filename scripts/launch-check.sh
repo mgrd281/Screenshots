@@ -66,8 +66,15 @@ has_icon() {
 # A window to find Snapfly by, like Settings: at the normal level, and large.
 has_window() { awk '$2 == 0 && $6 >= 300 && $7 >= 200 { found = 1 } END { exit !found }' "$OUT/$1.txt"; }
 running() { pgrep -x Snapfly >/dev/null; }
+# Quit at once: Snapfly saves before it quits on a plain kill, which a
+# question on screen can hold up.
+stop() {
+  pkill -9 -x Snapfly 2>/dev/null || true
+  for _ in 1 2 3 4 5 6 7 8 9 10; do running || return 0; sleep 1; done
+  fail "Snapfly was still running after it was killed."
+}
 
-pkill -x Snapfly 2>/dev/null || true
+stop
 echo "== before"
 swift scripts/app-windows.swift menubar | tee "$OUT/before-menubar.txt"
 open "$APP"
@@ -86,8 +93,8 @@ look reopened
 has_window reopened || fail "Opening Snapfly again while it runs showed no window."
 
 # Quit, and opened as on a Mac where it ran before: no welcome, the icon.
-pkill -x Snapfly || true
-sleep 3
+stop
+sleep 2
 open "$APP"
 sleep 10
 look second-launch
@@ -97,18 +104,22 @@ has_icon second-launch || warn "No menu bar icon window of Snapfly's showed on t
 # Once more, as on the Mac of a reviewer who saw the welcome and the
 # question before: nothing asks, so the icon shows, or Settings when the
 # menu bar has no room for it.
-pkill -x Snapfly || true
-sleep 3
+stop
+sleep 2
 # The question counts as asked, from the arguments, which the app's own
 # settings cannot be written over from outside its sandbox.
 open "$APP" --args -inboxOffered YES
 sleep 15
 look third-launch
-running || fail "Snapfly was not running 10 seconds after it was opened the third time."
-has_icon third-launch || has_window third-launch \
-  || fail "Neither the menu bar icon nor Settings showed on a launch with nothing to ask."
+running || fail "Snapfly was not running 15 seconds after it was opened the third time."
+if has_icon third-launch; then
+  # Settings opens by itself only for an icon the menu bar does not show.
+  ! has_window third-launch || fail "Settings opened by itself although the menu bar shows the icon."
+else
+  has_window third-launch || fail "Neither the menu bar icon nor Settings showed on a launch with nothing to ask."
+fi
 
-pkill -x Snapfly || true
+stop
 # A crash leaves a report; it says why.
 for report in ~/Library/Logs/DiagnosticReports/Snapfly*; do
   [ -e "$report" ] || continue
