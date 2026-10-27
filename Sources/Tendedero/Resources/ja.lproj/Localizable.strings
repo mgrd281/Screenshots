@@ -809,6 +809,7 @@
 "Snapfly covers its private details at once, right on this iPhone." = "Snapflyがこの iPhone 上ですぐに個人情報を隠します。";
 "Snapfly lives in the menu bar" = "Snapflyはメニューバーにいます";
 "The menu bar has no room for Snapfly's icon. Open Snapfly again to come back to Settings." = "メニューバーにSnapflyのアイコンを表示する場所がありません。Snapflyをもう一度開くと設定に戻れます。";
+"Snapfly's icon is not in the menu bar. Turn on Snapfly in System Settings › Menu Bar, under Allow in the Menu Bar. Open Snapfly again to come back to Settings." = "Snapflyのアイコンがメニューバーにありません。システム設定 › メニューバーの「メニューバーでの表示を許可」でSnapflyをオンにしてください。Snapflyをもう一度開くと設定に戻れます。";
 "Snapfly on your own screen, step by step. About a minute." = "あなたの画面で、Snapflyを一歩ずつ紹介します。約1分です。";
 "Start" = "開始";
 "Start Again" = "最初から";

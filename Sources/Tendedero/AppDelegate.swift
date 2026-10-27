@@ -264,23 +264,40 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         return false
     }
 
-    /// When the menu bar icon cannot be seen, hidden behind the camera's
-    /// notch on a full menu bar or kept out of it in System Settings,
-    /// Settings opens instead, with a note on how to come back, so a launch
-    /// never shows nothing.
-    private func showSettingsIfIconHidden() {
-        guard NSMenu.menuBarVisible(), NSApp.modalWindow == nil, !Guide.shared.isRunning,
-              !iconIsVisible else { return }
+    /// When the menu bar icon cannot be seen, not yet allowed in the menu
+    /// bar on macOS 26 or hidden behind the camera's notch on a full menu
+    /// bar, Settings opens instead, with a note on how to bring the icon
+    /// back, so a launch never shows nothing. While the welcome or a
+    /// question shows, it looks again once they are gone.
+    private func showSettingsIfIconHidden(tries: Int = 60) {
+        guard NSMenu.menuBarVisible(), !iconIsVisible else { return }
+        guard NSApp.modalWindow == nil, !Guide.shared.isRunning else {
+            if tries > 0 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+                    self?.showSettingsIfIconHidden(tries: tries - 1)
+                }
+            }
+            return
+        }
         openSettings()
-        Notice.show(L("The menu bar has no room for Snapfly's icon. Open Snapfly again to come back to Settings."),
-                    lasting: 8)
+        if #available(macOS 26, *) {
+            Notice.show(L("Snapfly's icon is not in the menu bar. Turn on Snapfly in System Settings › Menu Bar, under Allow in the Menu Bar. Open Snapfly again to come back to Settings."),
+                        lasting: 12)
+        } else {
+            Notice.show(L("The menu bar has no room for Snapfly's icon. Open Snapfly again to come back to Settings."),
+                        lasting: 8)
+        }
     }
 
-    /// Whether the menu bar icon is on a screen and not covered.
+    /// Whether the menu bar icon is on a screen. From macOS 26 the menu bar
+    /// shows it for Snapfly, and an icon it does not show, because it is
+    /// not allowed there, has no screen; before, it is Snapfly's own window,
+    /// covered when the notch hides it.
     private var iconIsVisible: Bool {
-        guard statusItem.isVisible, let window = statusItem.button?.window, window.isVisible,
-              window.occlusionState.contains(.visible) else { return false }
-        return NSScreen.screens.contains { $0.frame.intersects(window.frame) }
+        guard statusItem.isVisible, let window = statusItem.button?.window, let screen = window.screen
+        else { return false }
+        if #available(macOS 26, *) { return true }
+        return window.isVisible && window.occlusionState.contains(.visible) && screen.frame.intersects(window.frame)
     }
 
     /// Quitting while the screen is recorded, from the menu, by logging out

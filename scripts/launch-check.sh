@@ -55,13 +55,21 @@ look() {
   screencapture -x "$OUT/$1.png" 2>/dev/null || true
 }
 
-# The menu bar icon: a window at the status bar's level, on the screen.
-has_icon() { awk '$2 == 25 && $4 >= 0 && $6 > 0 && $7 > 0 { found = 1 } END { exit !found }' "$OUT/$1.txt"; }
+# The menu bar icon: a window of Snapfly's at the status bar's level, or,
+# from macOS 26, where Control Center shows every app's icon, one more
+# window at that level than before Snapfly was opened.
+icons() { awk '$2 == 25 && $6 > 0 && $7 > 0' "$1" | wc -l; }
+has_icon() {
+  awk '$2 == 25 && $4 >= 0 && $6 > 0 && $7 > 0 { found = 1 } END { exit !found }' "$OUT/$1.txt" \
+    || [ "$(icons "$OUT/$1-menubar.txt")" -gt "$(icons "$OUT/before-menubar.txt")" ]
+}
 # A window to find Snapfly by, like Settings: at the normal level, and large.
 has_window() { awk '$2 == 0 && $6 >= 300 && $7 >= 200 { found = 1 } END { exit !found }' "$OUT/$1.txt"; }
 running() { pgrep -x Snapfly >/dev/null; }
 
 pkill -x Snapfly 2>/dev/null || true
+echo "== before"
+swift scripts/app-windows.swift menubar | tee "$OUT/before-menubar.txt"
 open "$APP"
 sleep 10
 look first-launch
@@ -91,10 +99,10 @@ has_icon second-launch || warn "No menu bar icon window of Snapfly's showed on t
 # menu bar has no room for it.
 pkill -x Snapfly || true
 sleep 3
-defaults write "$HOME/Library/Containers/de.ghazarian.Snapfly/Data/Library/Preferences/de.ghazarian.Snapfly" \
-  inboxOffered -bool true
-open "$APP"
-sleep 10
+# The question counts as asked, from the arguments, which the app's own
+# settings cannot be written over from outside its sandbox.
+open "$APP" --args -inboxOffered YES
+sleep 15
 look third-launch
 running || fail "Snapfly was not running 10 seconds after it was opened the third time."
 has_icon third-launch || has_window third-launch \

@@ -11,8 +11,9 @@ keeps a download of each version.
   column headed Beschreibung, Artikel or Item, stays readable and is only
   offered to cover. A column of people, like Teilnehmer, stays covered.
 - On the Mac, opening Snapfly again while it runs opens Settings, and when
-  the menu bar has no room for its icon, Settings opens by itself at
-  launch, so Snapfly can always be found.
+  the menu bar does not show its icon, Settings opens by itself at launch
+  and says where to allow it (on macOS 26, System Settings › Menu Bar), so
+  Snapfly can always be found.
 - On the iPhone, what can't be undone asks first: Clear beside the scanned
   pages, Delete on a recent document, and Turn Off for faster picture
   processing, which deletes everything prepared.
