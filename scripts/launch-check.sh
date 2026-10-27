@@ -33,10 +33,10 @@ codesign --force --sign - --entitlements "$ENTITLEMENTS" "$APP"
 codesign -d --entitlements - "$APP" 2>/dev/null | grep -q app-sandbox
 
 FAILED=0
-fail() { echo "::error::$1"; FAILED=1; }
+fail() { echo "::error::$1"; echo "FAILED: $1"; FAILED=1; }
 # The icon's window may belong to the system's menu bar on a newer macOS,
 # so a missing one is said, not failed on.
-warn() { echo "::warning::$1"; }
+warn() { echo "::warning::$1"; echo "WARNING: $1"; }
 
 # Snapfly's windows on screen, as "level x y width height" per line.
 windows() {
@@ -50,6 +50,8 @@ windows() {
 look() {
   echo "== $1"
   windows | tee "$OUT/$1.txt"
+  echo "-- the menu bar's windows"
+  swift scripts/app-windows.swift menubar | tee "$OUT/$1-menubar.txt"
   screencapture -x "$OUT/$1.png" 2>/dev/null || true
 }
 
@@ -83,6 +85,20 @@ sleep 10
 look second-launch
 running || fail "Snapfly was not running 10 seconds after it was opened the second time."
 has_icon second-launch || warn "No menu bar icon window of Snapfly's showed on the second launch."
+
+# Once more, as on the Mac of a reviewer who saw the welcome and the
+# question before: nothing asks, so the icon shows, or Settings when the
+# menu bar has no room for it.
+pkill -x Snapfly || true
+sleep 3
+defaults write "$HOME/Library/Containers/de.ghazarian.Snapfly/Data/Library/Preferences/de.ghazarian.Snapfly" \
+  inboxOffered -bool true
+open "$APP"
+sleep 10
+look third-launch
+running || fail "Snapfly was not running 10 seconds after it was opened the third time."
+has_icon third-launch || has_window third-launch \
+  || fail "Neither the menu bar icon nor Settings showed on a launch with nothing to ask."
 
 pkill -x Snapfly || true
 # A crash leaves a report; it says why.

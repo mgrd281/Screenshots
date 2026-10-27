@@ -86,6 +86,24 @@ jobs:
           path: captures/launch
           if-no-files-found: ignore
 
+      # The same pictures on a pre-release, to look at without a Mac.
+      - name: Publish what the launch showed
+        if: always() && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          files=(captures/launch/*.png captures/launch/*.txt)
+          if [ ${#files[@]} -eq 0 ]; then exit 0; fi
+          tag=launch-check
+          notes="What the sandboxed App Store edition showed when opened, made by Build Snapfly from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7} (scripts/launch-check.sh). For review; not a download of Snapfly."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --notes "$notes" --prerelease
+          else
+            gh release create "$tag" --prerelease --title "Launch check" --notes "$notes" --target "$GITHUB_SHA"
+          fi
+          gh release upload "$tag" "${files[@]}" --clobber
+
       - name: Get the Developer ID
         if: env.CAN_SIGN == 'true'
         env:
