@@ -4,6 +4,9 @@ The texts for Snapfly's page in App Store Connect, ready to paste. Nothing
 here is uploaded by a workflow or a script: the owner copies each file into
 App Store Connect by hand.
 
+The notes for App Review, and what each review asked for, are in
+`../app-review.md`.
+
 ## Folders
 
 One folder per App Store Connect language:

@@ -70,6 +70,22 @@ jobs:
           swiftc -typecheck scripts/asc.swift
           for script in scripts/*.sh; do bash -n "$script"; done
 
+      # Opens the App Store edition as App Review does, sandboxed, and fails
+      # when nothing shows: on the first launch, opened again, or after a
+      # quit. One architecture is enough to see it; the release build below
+      # replaces it.
+      - name: Open the App Store edition
+        run: |
+          STORE=1 ARCHS=arm64 scripts/build-app.sh debug
+          scripts/launch-check.sh
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: launch-check
+          path: captures/launch
+          if-no-files-found: ignore
+
       - name: Get the Developer ID
         if: env.CAN_SIGN == 'true'
         env:

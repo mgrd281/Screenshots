@@ -257,6 +257,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         hangFiles(urls, from: nil)
     }
 
+    /// Opened again from Finder, Launchpad or Spotlight while it runs:
+    /// Settings, a window to find Snapfly by, as it has no Dock icon.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if launched { openSettings() }
+        return false
+    }
+
+    /// When the menu bar icon cannot be seen, hidden behind the camera's
+    /// notch on a full menu bar or kept out of it in System Settings,
+    /// Settings opens instead, with a note on how to come back, so a launch
+    /// never shows nothing.
+    private func showSettingsIfIconHidden() {
+        guard NSMenu.menuBarVisible(), NSApp.modalWindow == nil, !Guide.shared.isRunning,
+              !iconIsVisible else { return }
+        openSettings()
+        Notice.show(L("The menu bar has no room for Snapfly's icon. Open Snapfly again to come back to Settings."),
+                    lasting: 8)
+    }
+
+    /// Whether the menu bar icon is on a screen and not covered.
+    private var iconIsVisible: Bool {
+        guard statusItem.isVisible, let window = statusItem.button?.window, window.isVisible,
+              window.occlusionState.contains(.visible) else { return false }
+        return NSScreen.screens.contains { $0.frame.intersects(window.frame) }
+    }
+
     /// Quitting while the screen is recorded, from the menu, by logging out
     /// or with Install and Reopen, saves the recording first, as Stop does.
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -558,6 +584,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             button.window?.delegate = statusDrop
         }
         launched = true
+        // Once the menu bar has placed the icon, and after the welcome,
+        // which shows on its own.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in self?.showSettingsIfIconHidden() }
         if !waitingFiles.isEmpty {
             let urls = waitingFiles
             waitingFiles = []
