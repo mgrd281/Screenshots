@@ -810,6 +810,8 @@
 "Skip for Now" = "İndilik keç";
 "Snapfly covers its private details at once, right on this iPhone." = "Snapfly onun şəxsi məlumatlarını dərhal, elə bu iPhone-da örtür.";
 "Snapfly lives in the menu bar" = "Snapfly menyu sətrində yaşayır";
+"The menu bar has no room for Snapfly's icon. Open Snapfly again to come back to Settings." = "Menyu zolağında Snapfly ikonu üçün yer yoxdur. Ayarlara qayıtmaq üçün Snapfly-ı yenidən aç.";
+"Snapfly's icon is not in the menu bar. Turn on Snapfly in System Settings › Menu Bar, under Allow in the Menu Bar. Open Snapfly again to come back to Settings." = "Snapfly ikonu menyu zolağında deyil. Sistem Ayarları › Menyu Zolağı bölməsində, «Menyu Zolağında İcazə Ver» altında Snapfly-ı aç. Ayarlara qayıtmaq üçün Snapfly-ı yenidən aç.";
 "Snapfly on your own screen, step by step. About a minute." = "Snapfly öz ekranında, addım-addım. Təxminən bir dəqiqə.";
 "Start" = "Başla";
 "Start Again" = "Yenidən başla";

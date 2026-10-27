@@ -44,11 +44,12 @@ build_arch() {
 }
 
 # A universal binary, so it runs on Apple silicon and on Intel Macs, from
-# macOS 14 Sonoma onwards.
+# macOS 14 Sonoma onwards. ARCHS=arm64 builds one, for a quick check.
 OUT="$(mktemp -d)"
-build_arch arm64
-build_arch x86_64
-lipo -create "$OUT/Tendedero-arm64" "$OUT/Tendedero-x86_64" -output "$OUT/Tendedero"
+ARCHS="${ARCHS:-arm64 x86_64}"
+for ARCH in $ARCHS; do build_arch "$ARCH"; done
+# shellcheck disable=SC2046
+lipo -create $(for ARCH in $ARCHS; do echo "$OUT/Tendedero-$ARCH"; done) -output "$OUT/Tendedero"
 BIN="$OUT/Tendedero"
 
 rm -rf "$APP"

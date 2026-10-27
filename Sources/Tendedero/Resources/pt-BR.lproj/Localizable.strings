@@ -808,6 +808,8 @@
 "Skip for Now" = "Pular por agora";
 "Snapfly covers its private details at once, right on this iPhone." = "O Snapfly cobre os dados privados na hora, neste mesmo iPhone.";
 "Snapfly lives in the menu bar" = "O Snapfly fica na barra de menus";
+"The menu bar has no room for Snapfly's icon. Open Snapfly again to come back to Settings." = "Não há espaço na barra de menus para o ícone do Snapfly. Abra o Snapfly de novo para voltar aos Ajustes.";
+"Snapfly's icon is not in the menu bar. Turn on Snapfly in System Settings › Menu Bar, under Allow in the Menu Bar. Open Snapfly again to come back to Settings." = "O ícone do Snapfly não está na barra de menus. Ative o Snapfly em Ajustes do Sistema › Barra de Menus, em “Permitir na Barra de Menus”. Abra o Snapfly de novo para voltar aos Ajustes.";
 "Snapfly on your own screen, step by step. About a minute." = "O Snapfly na sua própria tela, passo a passo. Cerca de um minuto.";
 "Start" = "Começar";
 "Start Again" = "Começar de novo";

@@ -90,6 +90,8 @@ the website's footer. Both stay.
     with `#if !APP_STORE` and give the store edition a public way, as
     `FullScreen.swift` does. `scripts/check-private-apis.sh` checks the
     binary in both workflows.
+  - `docs/store/app-review.md` holds the notes for App Review and what
+    each review asked for; add to it with each rejection.
   - The privacy policy for the store listing is the website's privacy page
     (below). `PRIVACY.md` is the short version in the repository.
 - **Website.** `website/` builds https://mgrd281.github.io/Screenshots/ (English),

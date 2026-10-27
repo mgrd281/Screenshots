@@ -257,6 +257,49 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         hangFiles(urls, from: nil)
     }
 
+    /// Opened again from Finder, Launchpad or Spotlight while it runs:
+    /// Settings, a window to find Snapfly by, as it has no Dock icon.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if launched { openSettings() }
+        return false
+    }
+
+    /// When the menu bar icon cannot be seen, turned off in System Settings
+    /// › Menu Bar on macOS 26 or hidden behind the camera's notch on a full
+    /// menu bar, Settings opens instead, with a note on how to bring the icon
+    /// back, so a launch never shows nothing. While the welcome or a
+    /// question shows, it looks again once they are gone.
+    private func showSettingsIfIconHidden(tries: Int = 60) {
+        guard NSMenu.menuBarVisible(), !iconIsVisible else { return }
+        guard NSApp.modalWindow == nil, !Guide.shared.isRunning else {
+            if tries > 0 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+                    self?.showSettingsIfIconHidden(tries: tries - 1)
+                }
+            }
+            return
+        }
+        openSettings()
+        if #available(macOS 26, *) {
+            Notice.show(L("Snapfly's icon is not in the menu bar. Turn on Snapfly in System Settings › Menu Bar, under Allow in the Menu Bar. Open Snapfly again to come back to Settings."),
+                        lasting: 12)
+        } else {
+            Notice.show(L("The menu bar has no room for Snapfly's icon. Open Snapfly again to come back to Settings."),
+                        lasting: 8)
+        }
+    }
+
+    /// Whether the menu bar icon is on a screen. From macOS 26 Control
+    /// Center shows it for Snapfly, and an icon it does not show has no
+    /// screen; before, it is Snapfly's own window, covered when the notch
+    /// hides it.
+    private var iconIsVisible: Bool {
+        guard statusItem.isVisible, let window = statusItem.button?.window, let screen = window.screen
+        else { return false }
+        if #available(macOS 26, *) { return true }
+        return window.isVisible && window.occlusionState.contains(.visible) && screen.frame.intersects(window.frame)
+    }
+
     /// Quitting while the screen is recorded, from the menu, by logging out
     /// or with Install and Reopen, saves the recording first, as Stop does.
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -558,6 +601,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             button.window?.delegate = statusDrop
         }
         launched = true
+        // Once the menu bar has placed the icon, and after the welcome,
+        // which shows on its own.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in self?.showSettingsIfIconHidden() }
         if !waitingFiles.isEmpty {
             let urls = waitingFiles
             waitingFiles = []
