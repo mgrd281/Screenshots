@@ -81,7 +81,8 @@ enum DocumentSense {
                                                   "e.V.", "eV", "e.K.", "Inc", "Inc.", "LLC", "Ltd", "Ltd.", "Limited",
                                                   "Corp", "Corp.", "Corporation", "PLC", "plc", "S.A.", "SA", "SARL",
                                                   "S.L.", "B.V.", "BV", "N.V.", "NV", "S.p.A.", "SpA", "Srl", "S.r.l.",
-                                                  "Oy", "A/S", "AB", "LLP", "ООО", "ОАО", "ЗАО", "ПАО", "АО"]
+                                                  "Oy", "A/S", "AB", "LLP", "Ltda", "Ltda.", "S/A", "EIRELI", "SAS",
+                                                  "S.A.S.", "S.L.U.", "A.Ş.", "Şti.", "ООО", "ОАО", "ЗАО", "ПАО", "АО"]
     /// Words that name an organization wherever they stand, small letters.
     private static let organizationWords: Set<String> = [
         "praxis", "gemeinschaftspraxis", "arztpraxis", "practice", "klinik", "klinikum", "uniklinik", "universitätsklinikum",
@@ -486,7 +487,10 @@ enum DocumentSense {
         return cues
     }()
     private static let birthCues = ["geb.", "geb ", "geboren", "geburtsdatum", "geb.-dat", "geb.dat", "dob",
-                                    "d.o.b.", "date of birth", "born", "née", "تاريخ الميلاد", "дата рождения"]
+                                    "d.o.b.", "date of birth", "born", "née", "né le", "date de naissance",
+                                    "fecha de nacimiento", "nacido el", "nacida el", "f. nac.", "data de nascimento",
+                                    "nascido em", "nascida em", "doğum tarihi", "d. tarihi", "تاريخ الميلاد",
+                                    "تاريخ الولادة", "дата рождения"]
     private static let closings = ["mit freundlichen grüßen", "mit freundlichen kollegialen grüßen",
                                    "mit kollegialen grüßen", "freundliche grüße", "viele grüße", "beste grüße",
                                    "sincerely", "kind regards", "best regards", "yours faithfully", "unterschrift",

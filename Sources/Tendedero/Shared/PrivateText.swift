@@ -479,6 +479,48 @@ enum Finder {
                       "مفتاح api", "المفتاح السري", "رمز الوصول"] {
             labels[label] = key
         }
+        // The same labels in French, Spanish, Portuguese, Turkish and
+        // more Arabic, as letters, transfers, payslips and forms print them.
+        for label in ["expéditeur", "expéditrice", "destinataire", "adresse de livraison", "adresse de facturation",
+                      "remitente", "destinatario", "destinataria", "dirección", "dirección de envío",
+                      "dirección de facturación", "destinatário", "destinatária", "endereço", "endereço de entrega",
+                      "endereço de cobrança", "adres", "teslimat adresi", "fatura adresi",
+                      // An email's sender and recipients.
+                      "de", "à", "para", "kimden", "kime", "من", "إلى"] where labels[label] == nil {
+            labels[label] = person
+        }
+        for label in ["client", "cliente", "nom et prénom", "nom complet", "patiente", "salarié", "salariée",
+                      "employé", "employée", "donneur d'ordre", "bénéficiaire", "titulaire", "titulaire du compte",
+                      "médecin", "médecin traitant", "paciente", "nombre completo", "nombre y apellidos",
+                      "trabajador", "trabajadora", "empleado", "empleada", "ordenante", "beneficiario",
+                      "beneficiaria", "titular", "titular de la cuenta", "médico", "médica", "nome completo",
+                      "funcionário", "funcionária", "empregado", "empregada", "colaborador", "colaboradora",
+                      "remetente", "favorecido", "favorecida", "beneficiário", "beneficiária", "titular da conta",
+                      "müşteri", "hasta", "ad soyad", "adı soyadı", "ad", "soyad", "soyadı", "isim", "personel",
+                      "çalışan", "gönderen", "alıcı", "hesap sahibi", "doktor", "hekim",
+                      "المحول", "المحوِّل", "المستفيد", "صاحب الحساب", "الموظف", "اسم العميل", "اسم المريض",
+                      "اسم الموظف"] where labels[label] == nil {
+            labels[label] = name
+        }
+        for label in ["rue", "code postal", "ville", "calle", "código postal", "ciudad", "rua", "cep", "cidade",
+                      "cadde", "sokak", "posta kodu", "il", "ilçe", "şehir"] where labels[label] == nil {
+            labels[label] = place
+        }
+        for label in ["diagnostic", "diagnóstico", "tanı", "teşhis", "traitement", "tratamiento", "tratamento",
+                      "tedavi", "médicament", "medicamento", "ilaç"] where labels[label] == nil {
+            labels[label] = health
+        }
+        for label in ["dni", "nie", "nif", "n.i.f", "número de identidad", "número de la seguridad social", "nss",
+                      "naf", "cpf", "rg", "pis", "t.c. kimlik no", "tc kimlik no", "t.c. kimlik numarası",
+                      "kimlik no", "kimlik numarası", "vergi no", "vergi numarası", "sgk no",
+                      "n° de sécurité sociale", "numéro de sécurité sociale", "numéro fiscal", "codice fiscale",
+                      "رقم الهوية الوطنية", "رقم الإقامة", "رقم السجل المدني"] where labels[label] == nil {
+            labels[label] = identity
+        }
+        for label in ["mot de passe", "code de vérification", "contraseña", "código", "código de verificación",
+                      "senha", "código de verificação", "şifre", "doğrulama kodu", "kod"] where labels[label] == nil {
+            labels[label] = code
+        }
         for label in ["ip", "ip address", "ip-adresse", "ipv4", "ipv6", "ipv4 address", "ipv6 address",
                       "ipv4-adresse", "ipv6-adresse", "public ip", "öffentliche ip", "عنوان ip"] {
             labels[label] = network
@@ -1289,6 +1331,7 @@ enum Finder {
         var learned = Set<String>()
         var found = patterns(in: text, chosen)
         found += labelled(strings, boxes: boxes, part: part, chosen, learned: &learned)
+        found += speakers(strings, chosen, learned: &learned)
         let form = FormFields.read(strings, boxes: boxes, part: part)
         var possible: [Hit] = []
         for value in form.values {
@@ -1447,8 +1490,12 @@ enum Finder {
         guard (2...7).contains(words.count),
               let first = words.first.map({ String($0).lowercased().trimmingCharacters(in: .punctuationCharacters) }),
               !notStreets.contains(first) else { return false }
-        return line.range(of: #"^\p{Lu}[\p{L}'’.\-]*(?:\s[\p{L}'’.\-]+){0,4}\s\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?(?:\s?,\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:\s[\p{L}'’.\-()]+){0,3})?$"#,
+        return line.range(of: #"^\p{Lu}[\p{L}'’.\-]*(?:\s[\p{L}'’.\-]+){0,4}\s(?:(?:No|Nº|N°|nº|n°)[.:]?\s?)?\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?(?:\s?,\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-/]+(?:\s[\p{L}'’.\-()/]+){0,3})?$"#,
                           options: .regularExpression) != nil
+            // A street in a script without capitals, like Arabic: "شارع التحلية 44",
+            // maybe with its town and postcode after a comma: ", جدة 21577".
+            || line.range(of: #"^\p{Lo}[\p{Lo}\p{M}]*(?:\s\p{Lo}[\p{Lo}\p{M}]*){1,4}\s\d{1,4}(?:\s?[,،]\s?\p{Lo}[\p{Lo}\p{M}]*(?:\s\p{Lo}[\p{Lo}\p{M}]*){0,2}\s\d{5})?$"#,
+                             options: .regularExpression) != nil
             || line.range(of: #"^\d{1,5}[a-zA-Z]?\s\p{Lu}[\p{L}'’.\-]+(?:\s[\p{L}'’.\-]+){0,4}$"#,
                           options: .regularExpression) != nil
     }
@@ -1456,8 +1503,12 @@ enum Finder {
     /// Whether a line is a postcode with its town: "23456 Musterstadt",
     /// "D-23456 Musterstadt", "1010 Wien", "Springfield, IL 62704".
     static func isTownLine(_ line: String) -> Bool {
-        line.range(of: #"^(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s+\p{Lu}[\p{L}'’.\-]+(?:\s[\p{L}'’.\-()/]+){0,3}$"#,
+        line.range(of: #"^(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s+\p{Lu}[\p{L}'’.\-/]+(?:\s[\p{L}'’.\-()/]+){0,3}$"#,
                    options: .regularExpression) != nil
+            // A town before its postcode, in a script without capitals: "الرياض 12271";
+            // never a number's label, like "رقم الطلب 12345".
+            || line.range(of: #"^(?!رقم|هاتف|جوال|فاكس)\p{Lo}[\p{Lo}\p{M}]*(?:\s\p{Lo}[\p{Lo}\p{M}]*){0,2}\s\d{5}$"#,
+                          options: .regularExpression) != nil
             || line.range(of: #"^\p{Lu}[\p{L}'’.\- ]+,?\s(?:[A-Z]{2}\s\d{5}(?:-\d{4})?|[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2})$"#,
                           options: .regularExpression) != nil
     }
@@ -2079,6 +2130,11 @@ enum Finder {
             // "Dein Code lautet 482913", "PIN: 1234", "TAN 123 456": the digits after the word.
             found += matches(#"\b(?:code|pin|tan|otp|passwort|password|kennwort)\b[^\n\d]{0,30}?(\d(?:[ -]?\d){3,7})(?!\d)"#,
                              .caseInsensitive, group: 1)
+            // The same in Spanish, Portuguese, Turkish and Arabic: "Tu código
+            // de verificación es 202886", "Doğrulama kodun 271030", "رمز التحقق
+            // الخاص بك هو 042088". Never a postcode: "código postal", "posta kodu".
+            found += matches(#"(?<!posta )\b(?:código|codigo|kod(?:u|un|unuz)?|şifre(?:n|niz)?|senha|contraseña|رمز)\b(?!\s*postal)[^\n\d]{0,30}?(\d(?:[ -]?\d){3,7})(?!\d)"#,
+                             .caseInsensitive, group: 1)
             // A password given in a setting or in the middle of a line: "password=…".
             found += matches(#"\b(?:password|passwort|passwd|kennwort)["']?\s*[:=]\s*["']?([^\s"',;]{4,})"#,
                              .caseInsensitive, group: 1)
@@ -2143,7 +2199,7 @@ enum Finder {
     }
 
     /// A date of birth after its word: the date is group 1.
-    private static let birthPattern = #"(?:\bgeb(?:oren)?\.?(?:\s?am)?|\bgeburtsdatum|\bgeb\.?-?\s?dat(?:um|\.)?|\bdate of birth|\bd\.?o\.?b\.?|\bborn(?:\s+on)?|\bnée? le|\bnacid[oa] el|تاريخ الميلاد|дата рождения|(?<![\w*])\*)\s*:?\s*(\d{1,2}\s?[./-]\s?\d{1,2}\s?[./-]\s?(?:\d{4}|\d{2})\b|\d{4}-\d{2}-\d{2}\b|\d{1,2}\.?\s(?:Jan|Feb|Mär|Mar|Apr|Mai|May|Jun|Jul|Aug|Sep|Okt|Oct|Nov|Dez|Dec)[a-zäöüé]*\.?\s\d{4}\b)"#
+    private static let birthPattern = #"(?:\bgeb(?:oren)?\.?(?:\s?am)?|\bgeburtsdatum|\bgeb\.?-?\s?dat(?:um|\.)?|\bdate of birth|\bd\.?o\.?b\.?|\bborn(?:\s+on)?|\bnée? le|\bdate de naissance|\bnacid[oa] el|\bfecha de nacimiento|\bf\. ?nac\.|\bdata de nascimento|\bnascid[oa] em|\bdoğum tarihi|\bd\. ?tarihi|تاريخ الميلاد|تاريخ الولادة|дата рождения|(?<![\w*])\*)\s*:?\s*(\d{1,2}\s?[./-]\s?\d{1,2}\s?[./-]\s?(?:\d{4}|\d{2})\b|\d{4}-\d{2}-\d{2}\b|\d{1,2}\.?\s(?:Jan|Feb|Mär|Mar|Apr|Mai|May|Jun|Jul|Aug|Sep|Okt|Oct|Nov|Dez|Dec)[a-zäöüé]*\.?\s\d{4}\b)"#
 
     /// The countries a BIC names, in its fifth and sixth letters.
     private static let bicCountries = "DE|AT|CH|LI|LU|NL|BE|FR|IT|ES|PT|GB|IE|PL|CZ|SK|HU|SI|HR|DK|SE|NO|FI|EE|LV|LT|GR|CY|MT|BG|RO|TR|US|CA|AE|SA|QA|KW|BH|OM|JO|LB|EG|MA|TN|IL|UA|RS|BA|AL|MK|IS|AU|NZ|SG|HK|JP|CN|IN|KR|BR|MX|ZA"
@@ -2246,6 +2302,46 @@ enum Finder {
                       first == 0 || !besideALabel(next) else { break }
                 add(next, from: strings[next].startIndex, first: n == 0, in: block, role: role)
                 last = next
+            }
+        }
+        return hits
+    }
+
+    /// The people writing in a chat, by the name before the colon at the
+    /// start of their messages: "Lena: Bis morgen!". A name counts when it
+    /// starts at least two lines, or one line beside another such name, and
+    /// is no label; it is then looked for elsewhere too, like "Hallo Lena".
+    /// Words that start a line before a colon without being anyone's name,
+    /// as in a log or a list of notes.
+    private static let notSpeakers: Set<String> = [
+        "error", "warning", "note", "notes", "info", "tip", "todo", "fixme", "status", "result", "update", "question",
+        "answer", "re", "fwd", "fw", "aw", "wg", "hinweis", "achtung", "tipp", "frage", "antwort", "ergebnis",
+        "fehler", "warnung", "summe", "total", "q", "a",
+    ]
+
+    static func speakers(_ strings: [String], _ chosen: Set<PrivateDetail>, learned: inout Set<String>) -> [Hit] {
+        var lines: [String: [Int]] = [:]
+        for (index, string) in strings.enumerated() {
+            guard let colon = string.firstIndex(of: ":"), string.index(after: colon) < string.endIndex,
+                  string[string.index(after: colon)] == " " else { continue }
+            let word = String(string[..<colon])
+            guard (2...20).contains(word.count), word.allSatisfy({ $0.isLetter || "'’-".contains($0) }),
+                  let first = word.first, first.isUppercase || first.isLetter && !first.isLowercase,
+                  labels[normalized(word)] == nil, !notSpeakers.contains(normalized(word)) else { continue }
+            lines[word, default: []].append(index)
+        }
+        let speaking = lines.filter { $0.value.count >= 2 }
+        guard !speaking.isEmpty, speaking.count >= 2 || speaking.values.contains(where: { $0.count >= 3 }) else {
+            return []
+        }
+        var hits: [Hit] = []
+        for (word, indices) in speaking {
+            learned.insert(fold(word))
+            guard chosen.contains(.names) else { continue }
+            for index in indices {
+                let string = strings[index]
+                hits.append(Hit(line: index, range: NSRange(string.startIndex..<string.firstIndex(of: ":")!, in: string),
+                                kind: .names))
             }
         }
         return hits
