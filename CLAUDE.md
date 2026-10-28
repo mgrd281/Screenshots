@@ -229,6 +229,9 @@ the website's footer. Both stay.
   means people's names: `DocumentSense` tells a person from a company and
   whose a name is. `RedactionTests` hold the cases; add one with each fix,
   and never fit the engine to one screenshot.
+  `CoverAccuracyTests` measures the engine on the made-up documents of
+  `CoverCorpus` at every build; raise its floors when covering gets better,
+  never lower them to let a change through.
 - Swift 5 language mode, macOS 14 deployment target, universal binary.
   Gate newer APIs with `if #available` and `#if canImport(...)`. Examples:
   - Translation needs macOS 15;

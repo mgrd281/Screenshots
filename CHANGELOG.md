@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Covering reads more languages: labels like Beneficiario, Favorecido,
+  Müşteri, Bénéficiaire, DNI, CPF and T.C. Kimlik No, verification codes
+  and dates of birth in Spanish, Portuguese, Turkish and Arabic, Turkish and
+  Arabic streets, and the writers' names in a chat. Every build now measures
+  covering on 98 made-up documents in seven languages.
 - What an invoice charges for is no longer covered as a person's name: an
   item like "Druckpatronen Schwarz", with its price on its row, under a
   column headed Beschreibung, Artikel or Item, stays readable and is only

@@ -13,9 +13,12 @@ import XCTest
 final class CoverAccuracyTests: XCTestCase {
     /// The least share of each kind that must be covered whole, as last
     /// measured.
-    static let floors: [PrivateDetail: Double] = [:]
+    static let floors: [PrivateDetail: Double] = [
+        .names: 0.49, .addresses: 0.73, .birthDates: 0.57, .emails: 1, .phones: 1, .bank: 1, .health: 0.42,
+        .ids: 0.57, .codes: 0.42,
+    ]
     /// The most of what should stay that may be covered.
-    static let overCoverCeiling = 1.0
+    static let overCoverCeiling = 0.03
 
     struct Tally {
         var whole = 0

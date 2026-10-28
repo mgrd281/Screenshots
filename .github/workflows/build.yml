@@ -191,6 +191,12 @@ jobs:
         run: |
           grep -h "PDFKIT LINE" "$RUNNER_TEMP/tests.log" | sed 's/^.*PDFKIT LINE::/PDFKit reads: /' || true
 
+      # How much of the made-up documents the recommended kinds cover
+      # (CoverAccuracyTests), last in the log so it can be read there.
+      - name: Say how well covering does
+        if: always()
+        run: grep -hE "^(ACCURACY|MISSED|OVER) " "$RUNNER_TEMP/tests.log" || true
+
   # The iPhone app (iOS/), built for a device but not signed, so a change to
   # the code both apps share is checked on the iPhone too.
   iphone:
