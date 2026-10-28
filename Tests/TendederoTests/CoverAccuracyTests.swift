@@ -94,7 +94,7 @@ final class CoverAccuracyTests: XCTestCase {
 
     func testTheCorpusIsWhatItSays() {
         let documents = CoverCorpus.documents
-        XCTAssertEqual(documents.count, 98)
+        XCTAssertEqual(documents.count, 110)
         XCTAssertEqual(Set(documents.map(\.language)).count, 7)
         for document in documents {
             for part in document.secrets + document.kept {

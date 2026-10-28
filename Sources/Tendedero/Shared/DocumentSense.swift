@@ -481,6 +481,9 @@ enum DocumentSense {
         add(.beneficiary, ["zahlungsempfängerin", "zahlungsempfänger", "begünstigte", "begünstigter",
                            "empfängername", "beneficiary", "payee", "المستفيد", "получатель"])
         add(.sender, ["absenderin", "absender", "auftraggeberin", "auftraggeber", "sender", "المرسل"])
+        // A bank statement's bookings: "Gutschrift von Miriam Schulz", "Überweisung an Jonas Becker".
+        add(.sender, ["gutschrift von", "eingang von", "zahlung von"])
+        add(.beneficiary, ["überweisung an", "dauerauftrag an", "echtzeitüberweisung an", "zahlung an"])
         add(.sender, labelOnly: true, ["von", "from"])
         add(.recipient, ["empfängerin", "empfänger", "adressat", "recipient", "المستلم"])
         add(.recipient, labelOnly: true, ["an", "to"])

@@ -2335,18 +2335,28 @@ enum Finder {
         "fehler", "warnung", "summe", "total", "q", "a",
     ]
 
+    /// The date and time before a writer's name, as a chat's export or a
+    /// copied message has it: "[12.03.26, 14:05:12] ", "12.03.26, 14:05 - ".
+    private static let messageTime = #"^\[?\d{1,2}[./]\d{1,2}[./]\d{2,4},?\s\d{1,2}:\d{2}(?::\d{2})?\]?\s(?:-\s)?"#
+
     static func speakers(_ strings: [String], _ chosen: Set<PrivateDetail>, learned: inout Set<String>) -> [Hit] {
         var lines: [String: [Int]] = [:]
+        var starts: [Int: String.Index] = [:]
+        var timed = Set<String>()
         for (index, string) in strings.enumerated() {
-            guard let colon = string.firstIndex(of: ":"), string.index(after: colon) < string.endIndex,
+            let start = string.range(of: messageTime, options: .regularExpression)?.upperBound ?? string.startIndex
+            guard let colon = string[start...].firstIndex(of: ":"), string.index(after: colon) < string.endIndex,
                   string[string.index(after: colon)] == " " else { continue }
-            let word = String(string[..<colon])
+            let word = String(string[start..<colon])
             guard (2...20).contains(word.count), word.allSatisfy({ $0.isLetter || "'’-".contains($0) }),
                   let first = word.first, first.isUppercase || first.isLetter && !first.isLowercase,
                   labels[normalized(word)] == nil, !notSpeakers.contains(normalized(word)) else { continue }
             lines[word, default: []].append(index)
+            starts[index] = start
+            if start > string.startIndex { timed.insert(word) }
         }
-        let speaking = lines.filter { $0.value.count >= 2 }
+        // A writer after a message's date and time counts from one message.
+        let speaking = lines.filter { $0.value.count >= 2 || timed.contains($0.key) }
         guard !speaking.isEmpty, speaking.count >= 2 || speaking.values.contains(where: { $0.count >= 3 }) else {
             return []
         }
@@ -2356,7 +2366,8 @@ enum Finder {
             guard chosen.contains(.names) else { continue }
             for index in indices {
                 let string = strings[index]
-                hits.append(Hit(line: index, range: NSRange(string.startIndex..<string.firstIndex(of: ":")!, in: string),
+                let start = starts[index] ?? string.startIndex
+                hits.append(Hit(line: index, range: NSRange(start..<string[start...].firstIndex(of: ":")!, in: string),
                                 kind: .names))
             }
         }

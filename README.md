@@ -1816,7 +1816,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `StudioRender.swift` | Draws a recording through Studio's camera with its marks and clicks, writes the video, and reads the timeline's pictures and sound |
 | `StudioEditor.swift`, `StudioEditorView.swift` | Studio's window: the video as it will be saved, the timeline, the inspector, Undo and Save Video |
 | `Tests/TendederoTests` | Tests for the logic that needs no screen, run by CI with `swift test` |
-| `Tests/TendederoTests/CoverCorpus.swift`, `CoverAccuracyTests.swift` | 98 made-up documents (invoices, medical letters, transfers, payslips, chats, emails, forms) in German, English, French, Spanish, Turkish, Arabic and Portuguese, each detail marked with its kind, and how much of each the recommended kinds cover whole. The build fails when a kind falls below its floor or more of what should stay is covered; Build Snapfly prints the numbers last ("Say how well covering does") |
+| `Tests/TendederoTests/CoverCorpus.swift`, `CoverCorpusGerman.swift`, `CoverAccuracyTests.swift` | 110 made-up documents (invoices, medical letters, transfers, payslips, chats, emails, forms) in German, English, French, Spanish, Turkish, Arabic and Portuguese, and more German papers (a tax notice, a tenancy agreement, a bank statement, a chat export, a CV, an order confirmation), each detail marked with its kind, and how much of each the recommended kinds cover whole. The build fails when a kind falls below its floor or more of what should stay is covered; Build Snapfly prints the numbers last ("Say how well covering does") |
 | `FullScreen.swift` | Knows when to stay hidden (the App Store edition goes by the windows on screen) |
 | `Line.swift` | What is hanging, and what you can do with it |
 
