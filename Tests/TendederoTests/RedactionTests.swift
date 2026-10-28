@@ -620,6 +620,21 @@ final class RedactionTests: XCTestCase {
         }
     }
 
+    func testAGermanTaxIDWithOrWithoutAColonAfterItsName() {
+        for (line, id) in [("Steuer-ID 10 234 568 786", "10 234 568 786"), ("Steuer-ID: 47293185644", "47293185644"),
+                           ("Steuer-IdNr. 86095742719", "86095742719"),
+                           ("Identifikationsnummer (IdNr.) 39 162 508 432", "39 162 508 432"),
+                           ("Ihre Nummer: 10 923 456 792", "10 923 456 792")] {
+            XCTAssertTrue(protect([line], [.ids]).covered.contains { $0.contains(id) }, line)
+            XCTAssertTrue(Finder.isSteuerID(id), id)
+        }
+        // A wrong check digit, eleven digits all different, or a zero first is no tax ID.
+        for other in ["10 234 568 787", "12345678901", "01234567891"] {
+            XCTAssertFalse(Finder.isSteuerID(other), other)
+        }
+        XCTAssertTrue(protect(["Steuer-ID 10 234 568 787"], [.ids]).covered.allSatisfy { !$0.contains("787") })
+    }
+
     func testANameInAnEmailsHeaderIsCoveredInItsGreetingAndSignature() {
         for (email, name) in [(["Kime: Mehmet Yılmaz <mehmet.yilmaz@example.com>", "Merhaba Mehmet,"], "Mehmet"),
                               (["Para: Juliana Souza <juliana.souza@example.com>", "Oi Juliana,"], "Juliana"),

@@ -532,7 +532,8 @@ enum CoverCorpus {
             ["\(l.word("employee")): ", .secret(Kind.names, employee.name)],
             [.secret(Kind.addresses, employee.street)],
             [.secret(Kind.addresses, employee.town)],
-            ["\(id.label) ", .secret(Kind.ids, id.value)],
+            // A German payslip prints the tax ID's name without a colon, as many do.
+            ["\(l.code == "de" ? "Steuer-ID" : id.label) ", .secret(Kind.ids, id.value)],
             ["\(l.word("gross")): ", .keep(l.money(gross))],
             ["\(l.word("net")): ", .keep(l.money(gross * 64 / 100))],
             ["\(l.word("bank")): ", .secret(Kind.bank, l.iban(&random))],

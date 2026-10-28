@@ -107,6 +107,8 @@ final class CoverAccuracyTests: XCTestCase {
         XCTAssertEqual(CoverCorpus.dni(12_345_678), "12345678Z")
         XCTAssertEqual(CoverCorpus.cpf([1, 2, 3, 4, 5, 6, 7, 8, 9]), "123.456.789-09")
         XCTAssertEqual(CoverCorpus.kimlik([1, 0, 0, 0, 0, 0, 0, 0, 1]), "10000000146")
+        // A German tax ID without a colon after its name is among them.
+        XCTAssertTrue(documents.contains { $0.lines.contains { $0.hasPrefix("Steuer-ID 1") || $0.hasPrefix("Steuer-ID 2") } })
     }
 
     // MARK: Measuring
