@@ -1,4 +1,5 @@
 import Foundation
+@testable import Tendedero
 
 /// Made-up documents to measure covering by: invoices, medical letters,
 /// transfers, payslips, chats, emails and forms, in seven languages, each
@@ -10,6 +11,8 @@ import Foundation
 /// numbers carry valid check digits, as real ones do. None is a real
 /// document or a real person.
 enum CoverCorpus {
+    typealias Kind = PrivateDetail
+
     /// One part of a line: plain text, text that should stay, or a detail
     /// of a kind that should be covered.
     enum Part: ExpressibleByStringInterpolation {
@@ -472,107 +475,115 @@ enum CoverCorpus {
             [.keep(l.word("invoice"))],
             ["\(l.word("number")) ", .keep(number)],
             ["\(l.word("date")): ", .keep(l.date)],
-            ["\(l.word("customer")): ", .secret(.names, customer.name)],
-            [.secret(.addresses, customer.street)],
-            [.secret(.addresses, customer.town)],
-            ["\(l.word("email")): ", .secret(.emails, customer.email)],
+            ["\(l.word("customer")): ", .secret(Kind.names, customer.name)],
+            [.secret(Kind.addresses, customer.street)],
+            [.secret(Kind.addresses, customer.town)],
+            ["\(l.word("email")): ", .secret(Kind.emails, customer.email)],
             [.keep(l.word("item")), " ", .keep(l.word("price"))],
         ]
         for (item, price) in zip(l.items, prices) {
             rows.append([.keep(item), " ", .keep(l.money(price))])
         }
         rows.append(["\(l.word("total")): ", .keep(l.money(prices.reduce(0, +)))])
-        rows.append(["\(l.word("pay")): ", .secret(.bank, l.iban(&random))])
+        rows.append(["\(l.word("pay")): ", .secret(Kind.bank, l.iban(&random))])
         return Document(l.code, "invoice", rows)
     }
 
     static func letter(_ l: Language, _ random: inout Seeded) -> Document {
         let patient = person(l, &random)
         let doctor = "\(random.pick(l.first)) \(random.pick(l.last))"
-        return Document(l.code, "medical letter", [
+        let rows: [[Part]] = [
             [.keep(l.practice)],
-            [.plain(l.doctor + " "), .secret(.names, doctor)],
+            [.plain(l.doctor + " "), .secret(Kind.names, doctor)],
             ["\(l.word("date")): ", .keep(l.date)],
-            ["\(l.word("patient")): ", .secret(.names, patient.name), ", \(l.birth.label) ",
-             .secret(.birthDates, l.birth.value)],
-            [.secret(.addresses, patient.street), ", ", .secret(.addresses, patient.town)],
+            ["\(l.word("patient")): ", .secret(Kind.names, patient.name), ", \(l.birth.label) ",
+             .secret(Kind.birthDates, l.birth.value)],
+            [.secret(Kind.addresses, patient.street), ", ", .secret(Kind.addresses, patient.town)],
             [.plain(l.word("report") + ".")],
-            ["\(l.word("diagnosis")): ", .secret(.health, l.word("illness"))],
+            ["\(l.word("diagnosis")): ", .secret(Kind.health, l.word("illness"))],
             [.keep(l.word("regards"))],
-            [.plain(l.doctor + " "), .secret(.names, doctor)],
-        ])
+            [.plain(l.doctor + " "), .secret(Kind.names, doctor)],
+        ]
+        return Document(l.code, "medical letter", rows)
     }
 
     static func transfer(_ l: Language, _ random: inout Seeded) -> Document {
         let sender = person(l, &random), recipient = person(l, &random)
-        return Document(l.code, "transfer", [
+        let rows: [[Part]] = [
             [.keep(l.word("transfer"))],
-            ["\(l.word("sender")): ", .secret(.names, sender.name)],
-            ["IBAN: ", .secret(.bank, l.iban(&random))],
-            ["\(l.word("recipient")): ", .secret(.names, recipient.name)],
-            ["IBAN: ", .secret(.bank, l.iban(&random))],
+            ["\(l.word("sender")): ", .secret(Kind.names, sender.name)],
+            ["IBAN: ", .secret(Kind.bank, l.iban(&random))],
+            ["\(l.word("recipient")): ", .secret(Kind.names, recipient.name)],
+            ["IBAN: ", .secret(Kind.bank, l.iban(&random))],
             ["\(l.word("amount")): ", .keep(l.money(random.int(1_000...99_000)))],
             ["\(l.word("purpose")): ", .keep("\(l.word("invoice")) \(random.digits(6))")],
             ["\(l.word("date")): ", .keep(l.date)],
-        ])
+        ]
+        return Document(l.code, "transfer", rows)
     }
 
     static func payslip(_ l: Language, _ random: inout Seeded) -> Document {
         let employee = person(l, &random)
         let id = l.id(&random)
         let gross = random.int(250_000...650_000)
-        return Document(l.code, "payslip", [
+        let rows: [[Part]] = [
             [.keep(l.shop)],
             [.keep(l.word("payslip"))],
-            ["\(l.word("employee")): ", .secret(.names, employee.name)],
-            [.secret(.addresses, employee.street)],
-            [.secret(.addresses, employee.town)],
-            ["\(id.label) ", .secret(.ids, id.value)],
+            ["\(l.word("employee")): ", .secret(Kind.names, employee.name)],
+            [.secret(Kind.addresses, employee.street)],
+            [.secret(Kind.addresses, employee.town)],
+            ["\(id.label) ", .secret(Kind.ids, id.value)],
             ["\(l.word("gross")): ", .keep(l.money(gross))],
             ["\(l.word("net")): ", .keep(l.money(gross * 64 / 100))],
-            ["\(l.word("bank")): ", .secret(.bank, l.iban(&random))],
-        ])
+            ["\(l.word("bank")): ", .secret(Kind.bank, l.iban(&random))],
+        ]
+        return Document(l.code, "payslip", rows)
     }
 
     static func chat(_ l: Language, _ random: inout Seeded) -> Document {
         let one = person(l, &random), other = person(l, &random)
         let code = random.digits(6)
-        return Document(l.code, "chat", [
-            [.secret(.names, one.first), ": \(l.word("hello")) ", .secret(.names, other.first), "!"],
-            [.secret(.names, other.first), ": \(l.word("callMe")) ", .secret(.phones, other.phone)],
-            [.secret(.names, one.first), ": \(l.word("sendAddress")) ", .secret(.addresses, one.street), ", ",
-             .secret(.addresses, one.town)],
-            [.secret(.names, other.first), ": \(l.word("codeText")) ", .secret(.codes, code)],
-            [.secret(.names, one.first), ": \(l.word("thanks"))"],
-        ])
+        let rows: [[Part]] = [
+            [.secret(Kind.names, one.first), ": \(l.word("hello")) ", .secret(Kind.names, other.first), "!"],
+            [.secret(Kind.names, other.first), ": \(l.word("callMe")) ", .secret(Kind.phones, other.phone)],
+            [.secret(Kind.names, one.first), ": \(l.word("sendAddress")) ", .secret(Kind.addresses, one.street), ", ",
+             .secret(Kind.addresses, one.town)],
+            [.secret(Kind.names, other.first), ": \(l.word("codeText")) ", .secret(Kind.codes, code)],
+            [.secret(Kind.names, one.first), ": \(l.word("thanks"))"],
+        ]
+        return Document(l.code, "chat", rows)
     }
 
     static func email(_ l: Language, _ random: inout Seeded) -> Document {
         let sender = person(l, &random), recipient = person(l, &random)
-        return Document(l.code, "email", [
-            ["\(l.word("from")): ", .secret(.names, sender.name), " <", .secret(.emails, sender.email), ">"],
-            ["\(l.word("to")): ", .secret(.names, recipient.name), " <", .secret(.emails, recipient.email), ">"],
+        let rows: [[Part]] = [
+            ["\(l.word("from")): ", .secret(Kind.names, sender.name), " <", .secret(Kind.emails, sender.email), ">"],
+            ["\(l.word("to")): ", .secret(Kind.names, recipient.name), " <",
+             .secret(Kind.emails, recipient.email), ">"],
             ["\(l.word("subject")): ", .keep(l.word("subjectText"))],
-            ["\(l.word("hello")) ", .secret(.names, recipient.first), ","],
-            ["\(l.word("callMe")) ", .secret(.phones, sender.phone), "."],
+            ["\(l.word("hello")) ", .secret(Kind.names, recipient.first), ","],
+            ["\(l.word("callMe")) ", .secret(Kind.phones, sender.phone), "."],
             [.keep(l.word("regards"))],
-            [.secret(.names, sender.name)],
-            [.secret(.addresses, sender.street), ", ", .secret(.addresses, sender.town)],
-        ])
+            [.secret(Kind.names, sender.name)],
+            [.secret(Kind.addresses, sender.street), ", ", .secret(Kind.addresses, sender.town)],
+        ]
+        return Document(l.code, "email", rows)
     }
 
     static func form(_ l: Language, _ random: inout Seeded) -> Document {
         let member = person(l, &random)
         let id = l.id(&random)
-        return Document(l.code, "form", [
+        let rows: [[Part]] = [
             [.keep(l.word("form"))],
-            ["\(l.word("name")): ", .secret(.names, member.name)],
-            ["\(l.birth.label) ", .secret(.birthDates, l.birth.value)],
-            ["\(l.word("address")): ", .secret(.addresses, member.street), ", ", .secret(.addresses, member.town)],
-            ["\(l.word("phone")): ", .secret(.phones, member.phone)],
-            ["\(l.word("email")): ", .secret(.emails, member.email)],
-            ["\(id.label) ", .secret(.ids, id.value)],
-            ["\(l.word("bank")): ", .secret(.bank, l.iban(&random))],
-        ])
+            ["\(l.word("name")): ", .secret(Kind.names, member.name)],
+            ["\(l.birth.label) ", .secret(Kind.birthDates, l.birth.value)],
+            ["\(l.word("address")): ", .secret(Kind.addresses, member.street), ", ",
+             .secret(Kind.addresses, member.town)],
+            ["\(l.word("phone")): ", .secret(Kind.phones, member.phone)],
+            ["\(l.word("email")): ", .secret(Kind.emails, member.email)],
+            ["\(id.label) ", .secret(Kind.ids, id.value)],
+            ["\(l.word("bank")): ", .secret(Kind.bank, l.iban(&random))],
+        ]
+        return Document(l.code, "form", rows)
     }
 }
