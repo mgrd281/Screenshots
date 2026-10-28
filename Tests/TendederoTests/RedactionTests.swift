@@ -643,6 +643,15 @@ final class RedactionTests: XCTestCase {
         XCTAssertFalse(found.covered.contains { $0.contains("Nordlicht") || $0.contains("248") }, "\(found.covered)")
     }
 
+    func testANameBeforeItsAddressOnOneLine() {
+        for line in ["Miriam Brandt, Birkenallee 146, 10115 Berlin", "Tobias Brandt, Am Mühlbach 69, 10115 Berlin"] {
+            let name = String(line.prefix { $0 != "," })
+            XCTAssertTrue(protect([line], [.names]).covered.contains(name), line)
+        }
+        // A company before its address stays: it is no one's name.
+        XCTAssertTrue(protect(["Nordlicht Versand GmbH, Hafenstraße 3, 20095 Hamburg"], [.names]).covered.isEmpty)
+    }
+
     func testAGermanTaxIDWithOrWithoutAColonAfterItsName() {
         for (line, id) in [("Steuer-ID 10 234 568 786", "10 234 568 786"), ("Steuer-ID: 47293185644", "47293185644"),
                            ("Steuer-IdNr. 86095742719", "86095742719"),

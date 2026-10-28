@@ -2539,6 +2539,14 @@ enum Finder {
                let range = DocumentSense.nameAtStart(of: text.strings[below]) {
                 add(below, range, title: title.title)
             }
+            // A name before its address on one line, as a contract's parties
+            // or a list of addresses write it: "Miriam Brandt, Birkenallee 146, 10115 Berlin".
+            if let comma = string.firstIndex(of: ","),
+               DocumentSense.nameWords(String(string[..<comma])) != nil,
+               !DocumentSense.isOrganization(String(string[..<comma])),
+               isAddress(string[string.index(after: comma)...].trimmingCharacters(in: .whitespaces)) {
+                add(i, string.startIndex..<comma)
+            }
             // A table's header of name labels, the names in the row under it.
             if isNameHeader(string), let below = Self.line(below: i, in: text.boxes, gap: 2.5),
                let range = DocumentSense.nameAtStart(of: text.strings[below]) {
