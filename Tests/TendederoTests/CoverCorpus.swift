@@ -2,7 +2,8 @@ import Foundation
 @testable import Tendedero
 
 /// Made-up documents to measure covering by: invoices, medical letters,
-/// transfers, payslips, chats, emails and forms, in seven languages, each
+/// transfers, payslips, chats, emails and forms, in seven languages, and
+/// more German papers (`germanDocuments`), each
 /// part of each line marked as what it is. A private detail should be
 /// covered whole; what is marked to stay, like a shop, an item, an amount
 /// or a heading, should stay readable with the recommended kinds. Every
@@ -463,7 +464,7 @@ enum CoverCorpus {
                 all.append(form(language, &random))
             }
         }
-        return all
+        return all + germanDocuments
     }
 
     static func invoice(_ l: Language, _ random: inout Seeded) -> Document {
@@ -532,7 +533,8 @@ enum CoverCorpus {
             ["\(l.word("employee")): ", .secret(Kind.names, employee.name)],
             [.secret(Kind.addresses, employee.street)],
             [.secret(Kind.addresses, employee.town)],
-            ["\(id.label) ", .secret(Kind.ids, id.value)],
+            // A German payslip prints the tax ID's name without a colon, as many do.
+            ["\(l.code == "de" ? "Steuer-ID" : id.label) ", .secret(Kind.ids, id.value)],
             ["\(l.word("gross")): ", .keep(l.money(gross))],
             ["\(l.word("net")): ", .keep(l.money(gross * 64 / 100))],
             ["\(l.word("bank")): ", .secret(Kind.bank, l.iban(&random))],

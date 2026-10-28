@@ -620,6 +620,53 @@ final class RedactionTests: XCTestCase {
         }
     }
 
+    func testAChatsWritersAfterTheDateAndTimeOfAnExport() {
+        for chat in [["[12.03.26, 14:10:00] Lukas: Hat jemand die Adresse?", "[12.03.26, 14:12:02] Tobias: Gleich",
+                      "[12.03.26, 14:20:00] Lena: Lukas, ich hol dich ab"],
+                     ["12.03.26, 14:10 - Lukas: Hat jemand die Adresse?", "12.03.26, 14:12 - Tobias: Gleich",
+                      "12.03.26, 14:20 - Lena: Lukas, ich hol dich ab"]] {
+            let found = protect(chat, PrivateDetail.recommended)
+            XCTAssertGreaterThanOrEqual(found.covered.filter { $0.contains("Lukas") }.count, 2, "\(found.covered)")
+            // Lena wrote once, after a message's time: a writer all the same.
+            XCTAssertTrue(found.covered.contains("Lena") && found.covered.contains("Tobias"), "\(found.covered)")
+            XCTAssertFalse(found.covered.contains { $0.contains("14:") }, "\(found.covered)")
+        }
+    }
+
+    func testThePeopleInABankStatementsBookings() {
+        let lines = ["Kontoinhaber: Sabine Vogel", "05.03. Überweisung an Lena Krüger -248,64 €",
+                     "10.03. Gutschrift von Miriam Lorenz 102,57 €", "01.03. Gutschrift von Nordlicht Versand GmbH 3524,14 €"]
+        let found = protect(lines, PrivateDetail.recommended)
+        for name in ["Lena Krüger", "Miriam Lorenz"] {
+            XCTAssertTrue(found.covered.contains { $0.contains(name) }, "\(name): \(found.covered)")
+        }
+        XCTAssertFalse(found.covered.contains { $0.contains("Nordlicht") || $0.contains("248") }, "\(found.covered)")
+    }
+
+    func testANameBeforeItsAddressOnOneLine() {
+        for line in ["Miriam Brandt, Birkenallee 146, 10115 Berlin", "Tobias Brandt, Am Mühlbach 69, 10115 Berlin"] {
+            let name = String(line.prefix { $0 != "," })
+            XCTAssertTrue(protect([line], [.names]).covered.contains(name), line)
+        }
+        // A company before its address stays: it is no one's name.
+        XCTAssertTrue(protect(["Nordlicht Versand GmbH, Hafenstraße 3, 20095 Hamburg"], [.names]).covered.isEmpty)
+    }
+
+    func testAGermanTaxIDWithOrWithoutAColonAfterItsName() {
+        for (line, id) in [("Steuer-ID 10 234 568 786", "10 234 568 786"), ("Steuer-ID: 47293185644", "47293185644"),
+                           ("Steuer-IdNr. 86095742719", "86095742719"),
+                           ("Identifikationsnummer (IdNr.) 39 162 508 432", "39 162 508 432"),
+                           ("Ihre Nummer: 10 923 456 792", "10 923 456 792")] {
+            XCTAssertTrue(protect([line], [.ids]).covered.contains { $0.contains(id) }, line)
+            XCTAssertTrue(Finder.isSteuerID(id), id)
+        }
+        // A wrong check digit, eleven digits all different, or a zero first is no tax ID.
+        for other in ["10 234 568 787", "12345678901", "01234567891"] {
+            XCTAssertFalse(Finder.isSteuerID(other), other)
+        }
+        XCTAssertTrue(protect(["Steuer-ID 10 234 568 787"], [.ids]).covered.allSatisfy { !$0.contains("787") })
+    }
+
     func testANameInAnEmailsHeaderIsCoveredInItsGreetingAndSignature() {
         for (email, name) in [(["Kime: Mehmet Yılmaz <mehmet.yilmaz@example.com>", "Merhaba Mehmet,"], "Mehmet"),
                               (["Para: Juliana Souza <juliana.souza@example.com>", "Oi Juliana,"], "Juliana"),

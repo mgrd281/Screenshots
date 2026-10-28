@@ -2133,6 +2133,14 @@ enum Finder {
             found += matches(#"\b\d{2} ?\d{6} ?[A-Z] ?\d{3}\b"#)
             // The British National Insurance number.
             found += matches(#"\b[A-CEGHJ-PR-TW-Z][A-CEGHJ-NPR-TW-Z] ?\d{2} ?\d{2} ?\d{2} ?[A-D]\b"#)
+            // The German tax ID, eleven digits that pass its check: grouped
+            // as the tax office prints it, "10 234 568 786", anywhere; and
+            // after its name, with or without a colon, "Steuer-IdNr. 12345678903".
+            found += matches(#"(?<!\d)(?<!\d )\d{2} \d{3} \d{3} \d{3}(?! ?\d)"#)
+                .filter { isSteuerID(text.substring(with: $0)) }
+            found += matches(#"\b(?:Steuer-?ID|Steuer-?IdNr|IdNr|Steuer-?Identifikationsnummer|steuerliche Identifikationsnummer|Identifikationsnummer)\.?[ \t]*(?:\(IdNr\.?\)[ \t]*)?:?[ \t]*(\d(?:[ /]?\d){10})(?!\d)"#,
+                             .caseInsensitive, group: 1)
+                .filter { isSteuerID(text.substring(with: $0)) }
         }
         if chosen.contains(.codes) {
             // "Dein Code lautet 482913", "PIN: 1234", "TAN 123 456": the digits after the word.
@@ -2327,18 +2335,28 @@ enum Finder {
         "fehler", "warnung", "summe", "total", "q", "a",
     ]
 
+    /// The date and time before a writer's name, as a chat's export or a
+    /// copied message has it: "[12.03.26, 14:05:12] ", "12.03.26, 14:05 - ".
+    private static let messageTime = #"^\[?\d{1,2}[./]\d{1,2}[./]\d{2,4},?\s\d{1,2}:\d{2}(?::\d{2})?\]?\s(?:-\s)?"#
+
     static func speakers(_ strings: [String], _ chosen: Set<PrivateDetail>, learned: inout Set<String>) -> [Hit] {
         var lines: [String: [Int]] = [:]
+        var starts: [Int: String.Index] = [:]
+        var timed = Set<String>()
         for (index, string) in strings.enumerated() {
-            guard let colon = string.firstIndex(of: ":"), string.index(after: colon) < string.endIndex,
+            let start = string.range(of: messageTime, options: .regularExpression)?.upperBound ?? string.startIndex
+            guard let colon = string[start...].firstIndex(of: ":"), string.index(after: colon) < string.endIndex,
                   string[string.index(after: colon)] == " " else { continue }
-            let word = String(string[..<colon])
+            let word = String(string[start..<colon])
             guard (2...20).contains(word.count), word.allSatisfy({ $0.isLetter || "'’-".contains($0) }),
                   let first = word.first, first.isUppercase || first.isLetter && !first.isLowercase,
                   labels[normalized(word)] == nil, !notSpeakers.contains(normalized(word)) else { continue }
             lines[word, default: []].append(index)
+            starts[index] = start
+            if start > string.startIndex { timed.insert(word) }
         }
-        let speaking = lines.filter { $0.value.count >= 2 }
+        // A writer after a message's date and time counts from one message.
+        let speaking = lines.filter { $0.value.count >= 2 || timed.contains($0.key) }
         guard !speaking.isEmpty, speaking.count >= 2 || speaking.values.contains(where: { $0.count >= 3 }) else {
             return []
         }
@@ -2348,7 +2366,8 @@ enum Finder {
             guard chosen.contains(.names) else { continue }
             for index in indices {
                 let string = strings[index]
-                hits.append(Hit(line: index, range: NSRange(string.startIndex..<string.firstIndex(of: ":")!, in: string),
+                let start = starts[index] ?? string.startIndex
+                hits.append(Hit(line: index, range: NSRange(start..<string[start...].firstIndex(of: ":")!, in: string),
                                 kind: .names))
             }
         }
@@ -2519,6 +2538,14 @@ enum Finder {
                let below = Self.line(below: i, in: text.boxes, gap: 1.6),
                let range = DocumentSense.nameAtStart(of: text.strings[below]) {
                 add(below, range, title: title.title)
+            }
+            // A name before its address on one line, as a contract's parties
+            // or a list of addresses write it: "Miriam Brandt, Birkenallee 146, 10115 Berlin".
+            if let comma = string.firstIndex(of: ","),
+               DocumentSense.nameWords(String(string[..<comma])) != nil,
+               !DocumentSense.isOrganization(String(string[..<comma])),
+               isAddress(string[string.index(after: comma)...].trimmingCharacters(in: .whitespaces)) {
+                add(i, string.startIndex..<comma)
             }
             // A table's header of name labels, the names in the row under it.
             if isNameHeader(string), let below = Self.line(below: i, in: text.boxes, gap: 2.5),
@@ -3019,6 +3046,23 @@ enum Finder {
 
     private static func hasBothCases(_ text: String) -> Bool {
         text.contains(where: \.isUppercase) && text.contains(where: \.isLowercase)
+    }
+
+    /// Whether eleven digits are a German tax ID: no zero first, one digit
+    /// of the first ten there twice or three times, and the last the
+    /// check digit of ISO 7064, MOD 11,10.
+    static func isSteuerID(_ number: String) -> Bool {
+        let digits = number.compactMap(\.wholeNumberValue)
+        guard digits.count == 11, digits[0] != 0 else { return false }
+        let repeated = Dictionary(grouping: digits.prefix(10), by: { $0 }).values.map(\.count).filter { $0 > 1 }
+        guard repeated.count == 1, (2...3).contains(repeated[0]) else { return false }
+        var product = 10
+        for digit in digits.prefix(10) {
+            var sum = (digit + product) % 10
+            if sum == 0 { sum = 10 }
+            product = sum * 2 % 11
+        }
+        return (11 - product) % 10 == digits[10]
     }
 
     private static func passesLuhn(_ number: String) -> Bool {

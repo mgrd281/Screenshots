@@ -11,8 +11,13 @@ keeps a download of each version.
   and dates of birth in Spanish, Portuguese, Turkish and Arabic, Turkish and
   Arabic streets, and the writers' names in a chat. A name from an email's
   To or From line is covered again in its greeting and signature, Arabic
-  names too, and a Turkish or Arabic address inside a message. Every build
-  now measures covering on 98 made-up documents in seven languages.
+  names too, and a Turkish or Arabic address inside a message. A German tax
+  ID is covered by its shape and check digit, with or without a colon
+  after its name. A chat's writers are covered after the date and time an
+  export puts before them, and the people in a bank statement's bookings.
+  Every build now measures covering on 110 made-up documents in seven
+  languages, among them a German tax notice, tenancy agreement, bank
+  statement, chat export, CV and order confirmation.
 - What an invoice charges for is no longer covered as a person's name: an
   item like "Druckpatronen Schwarz", with its price on its row, under a
   column headed Beschreibung, Artikel or Item, stays readable and is only

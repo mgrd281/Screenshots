@@ -481,6 +481,9 @@ enum DocumentSense {
         add(.beneficiary, ["zahlungsempfängerin", "zahlungsempfänger", "begünstigte", "begünstigter",
                            "empfängername", "beneficiary", "payee", "المستفيد", "получатель"])
         add(.sender, ["absenderin", "absender", "auftraggeberin", "auftraggeber", "sender", "المرسل"])
+        // A bank statement's bookings: "Gutschrift von Miriam Schulz", "Überweisung an Jonas Becker".
+        add(.sender, ["gutschrift von", "eingang von", "zahlung von"])
+        add(.beneficiary, ["überweisung an", "dauerauftrag an", "echtzeitüberweisung an", "zahlung an"])
         add(.sender, labelOnly: true, ["von", "from"])
         add(.recipient, ["empfängerin", "empfänger", "adressat", "recipient", "المستلم"])
         add(.recipient, labelOnly: true, ["an", "to"])
@@ -670,8 +673,11 @@ enum DocumentSense {
             guard j < all.count, let range = nameRun(in: line, tokens: all, from: j, minWords: 1) else { continue }
             let words = line[range].split(separator: " ")
             let commaForm = line[range].contains(",")
+            // A company's name is no person's, its legal form after it too:
+            // "Gutschrift von Nordlicht Versand GmbH".
             guard words.count >= 2 || commaForm, !found.contains(where: { $0.overlaps(range) }),
-                  !isOrganization(String(line[range])) else { continue }
+                  !isOrganization(String(line[range])),
+                  !organizationRanges(in: line).contains(where: { $0.overlaps(range) }) else { continue }
             found.append(range)
         }
         return found
