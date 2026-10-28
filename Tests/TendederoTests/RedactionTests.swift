@@ -555,6 +555,71 @@ final class RedactionTests: XCTestCase {
         }
     }
 
+    // MARK: Other languages and chats, from CoverAccuracyTests
+
+    func testAChatsWritersAreCoveredByTheNameBeforeTheirMessages() {
+        let chat = ["Lena: Hallo Jonas!", "Jonas: Ruf mich bitte an unter +49 30 1234567", "Lena: Bis morgen",
+                    "Jonas: Gut"]
+        let found = protect(chat, PrivateDetail.recommended)
+        for name in ["Lena", "Jonas"] {
+            XCTAssertGreaterThanOrEqual(found.covered.filter { $0.contains(name) }.count, 2, "\(name): \(found.covered)")
+        }
+        let arabic = protect(["خالد: مرحبا", "سارة: أهلا", "خالد: كيف حالك؟", "سارة: بخير"], PrivateDetail.recommended)
+        XCTAssertTrue(arabic.covered.contains("خالد") && arabic.covered.contains("سارة"), "\(arabic.covered)")
+    }
+
+    func testALogsErrorAndWarningLinesAreNoPeople() {
+        let log = ["Error: file not found", "Warning: disk almost full", "Error: retry failed", "Warning: slow"]
+        let found = protect(log, PrivateDetail.recommended)
+        XCTAssertFalse(found.covered.contains { $0.contains("Error") || $0.contains("Warning") }, "\(found.covered)")
+    }
+
+    func testLabelsInOtherLanguagesAnnounceTheirNames() {
+        let lines = ["Ordenante: Diego Navarro", "Beneficiario: Elena Martínez", "Bénéficiaire: Léa Bernard",
+                     "Favorecido: Pedro Silva", "Müşteri: Emre Şahin", "Personel: Zeynep Kaya"]
+        for line in lines {
+            let name = String(line[line.index(after: line.firstIndex(of: ":")!)...].dropFirst())
+            let found = protect([line], PrivateDetail.recommended)
+            XCTAssertTrue(found.covered.contains { $0.contains(name) }, "\(line): \(found.covered)")
+        }
+    }
+
+    func testVerificationCodesInOtherLanguagesButNoPostcode() {
+        for (line, code) in [("Tu código de verificación es 202886", "202886"), ("Doğrulama kodun 271030", "271030"),
+                             ("Seu código de verificação é 413190", "413190"),
+                             ("رمز التحقق الخاص بك هو 042088", "042088")] {
+            XCTAssertTrue(protect([line], [.codes]).covered.contains(code), line)
+        }
+        for line in ["Código postal 28013", "Posta kodu 34710"] {
+            XCTAssertFalse(protect([line], [.codes]).hits.contains { $0.kind == .codes }, line)
+        }
+    }
+
+    func testStreetsAndTownsAsTurkishAndArabicLettersWriteThem() {
+        for street in ["Atatürk Caddesi No: 61", "Gül Sokak No: 109", "Atatürk Caddesi No: 10, 06420 Çankaya/Ankara",
+                       "شارع التحلية 44", "شارع التحلية 44, جدة 21577"] {
+            XCTAssertTrue(Finder.isStreetLine(street), street)
+        }
+        for town in ["34710 Kadıköy/İstanbul", "الرياض 12271"] {
+            XCTAssertTrue(Finder.isTownLine(town), town)
+        }
+        for other in ["مصباح مكتب 19.26 ر.س", "ورق طباعة A4 20.71 ر.س", "رقم الفاتورة 12345", "Druckerpapier A4 63,44 €"] {
+            XCTAssertFalse(Finder.isStreetLine(other) || Finder.isTownLine(other), other)
+        }
+    }
+
+    func testDatesOfBirthAndIDNumbersByTheirLabelsInOtherLanguages() {
+        for (line, born) in [("Paciente: Sergio Ruiz, Fecha de nacimiento: 14/03/1987", "14/03/1987"),
+                             ("Doğum tarihi: 14.03.1987", "14.03.1987"),
+                             ("Data de nascimento: 14/03/1987", "14/03/1987")] {
+            XCTAssertTrue(protect([line], PrivateDetail.recommended).covered.contains { $0.contains(born) }, line)
+        }
+        for (line, id) in [("DNI: 12345678Z", "12345678Z"), ("CPF: 123.456.789-09", "123.456.789-09"),
+                           ("T.C. Kimlik No: 10000000146", "10000000146")] {
+            XCTAssertTrue(protect([line], [.ids]).covered.contains { $0.contains(id) }, line)
+        }
+    }
+
     // MARK: Helpers
 
     /// What the engine covers on a page as Vision read it, as

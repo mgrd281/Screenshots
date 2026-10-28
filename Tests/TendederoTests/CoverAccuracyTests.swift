@@ -28,18 +28,18 @@ final class CoverAccuracyTests: XCTestCase {
     }
 
     func testTheMadeUpDocumentsAreCoveredAsWellAsBefore() {
-        var kinds: [PrivateDetail: Tally] = [:], languages: [String: Tally] = [:], types: [String: Tally] = [:]
+        var byKind: [PrivateDetail: Tally] = [:], languages: [String: Tally] = [:], types: [String: Tally] = [:]
         var all = Tally(), kept = 0, touched = 0
         var missed: [String] = [], over: [String] = []
         for document in CoverCorpus.documents {
-            let covered = coveredCharacters(document)
+            let (covered, coveredAs) = coveredCharacters(document)
             for secret in document.secrets {
                 let characters = significant(secret, in: document)
                 let hidden = characters.filter { covered[secret.line]?.contains($0) == true }.count
                 let whole = hidden == characters.count
                 let kind = secret.kind!
-                kinds[kind, default: Tally()].total += 1
-                if whole { kinds[kind]!.whole += 1 } else if hidden > 0 { kinds[kind]!.partly += 1 }
+                byKind[kind, default: Tally()].total += 1
+                if whole { byKind[kind]!.whole += 1 } else if hidden > 0 { byKind[kind]!.partly += 1 }
                 languages[document.language, default: Tally()].total += 1
                 types[document.type, default: Tally()].total += 1
                 all.total += 1
@@ -59,14 +59,15 @@ final class CoverAccuracyTests: XCTestCase {
                 let characters = significant(part, in: document)
                 if characters.contains(where: { covered[part.line]?.contains($0) == true }) {
                     touched += 1
-                    over.append("OVER \(document.name): \"\(part.text)\" in \"\(document.lines[part.line])\"")
+                    let by = (coveredAs[part.line] ?? []).compactMap { $0?.rawValue }.sorted().joined(separator: ", ")
+                    over.append("OVER \(document.name) (\(by)): \"\(part.text)\" in \"\(document.lines[part.line])\"")
                 }
             }
         }
 
         print("ACCURACY all \(all.said)")
         for kind in PrivateDetail.allCases {
-            if let tally = kinds[kind] { print("ACCURACY kind \(kind.rawValue) \(tally.said)") }
+            if let tally = byKind[kind] { print("ACCURACY kind \(kind.rawValue) \(tally.said)") }
         }
         for (language, tally) in languages.sorted(by: { $0.key < $1.key }) {
             print("ACCURACY language \(language) \(tally.said)")
@@ -81,9 +82,9 @@ final class CoverAccuracyTests: XCTestCase {
         over.forEach { print($0) }
 
         for (kind, floor) in Self.floors {
-            let share = kinds[kind]?.share ?? 1
+            let share = byKind[kind]?.share ?? 1
             XCTAssertGreaterThanOrEqual(share, floor,
-                                        "\(kind.rawValue) covered less than before: \(kinds[kind]?.said ?? "")")
+                                        "\(kind.rawValue) covered less than before: \(byKind[kind]?.said ?? "")")
         }
         XCTAssertLessThanOrEqual(overShare, Self.overCoverCeiling, "more of what should stay is covered than before")
     }
@@ -102,7 +103,7 @@ final class CoverAccuracyTests: XCTestCase {
         XCTAssertEqual(CoverCorpus.iban("DE", "370400440532013000"), "DE89 3704 0044 0532 0130 00")
         XCTAssertEqual(CoverCorpus.dni(12_345_678), "12345678Z")
         XCTAssertEqual(CoverCorpus.cpf([1, 2, 3, 4, 5, 6, 7, 8, 9]), "123.456.789-09")
-        XCTAssertEqual(CoverCorpus.kimlik([1, 0, 0, 0, 0, 0, 0, 1, 4]), "10000000146")
+        XCTAssertEqual(CoverCorpus.kimlik([1, 0, 0, 0, 0, 0, 0, 0, 1]), "10000000146")
     }
 
     // MARK: Measuring
@@ -116,7 +117,8 @@ final class CoverAccuracyTests: XCTestCase {
     /// Which characters of each line the recommended kinds cover, those
     /// marked to check too, as the app shows them; what is only offered is
     /// not covered.
-    private func coveredCharacters(_ document: CoverCorpus.Document) -> [Int: Set<Int>] {
+    private func coveredCharacters(_ document: CoverCorpus.Document)
+        -> (covered: [Int: Set<Int>], kinds: [Int: Set<PrivateDetail?>]) {
         let lines = document.lines
         let boxes = lines.indices.map { i in
             CGRect(x: 0.1, y: 0.9 - CGFloat(i) * 0.03, width: CGFloat(lines[i].count) * 0.01, height: 0.02)
@@ -129,14 +131,15 @@ final class CoverAccuracyTests: XCTestCase {
                           width: CGFloat(count) * 0.01, height: boxes[index].height)
         }
         let found = Finder.findings(lines, boxes: boxes, part: part, PrivateDetail.recommended)
-        var covered: [Int: Set<Int>] = [:]
+        var covered: [Int: Set<Int>] = [:], kinds: [Int: Set<PrivateDetail?>] = [:]
         for hit in found.hits {
+            kinds[hit.line, default: []].insert(hit.kind)
             let line = lines[hit.line]
             let range = hit.range.flatMap { Range($0, in: line) } ?? line.startIndex..<line.endIndex
             let start = line.distance(from: line.startIndex, to: range.lowerBound)
             let end = line.distance(from: line.startIndex, to: range.upperBound)
             covered[hit.line, default: []].formUnion(start..<end)
         }
-        return covered
+        return (covered, kinds)
     }
 }
