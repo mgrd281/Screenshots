@@ -620,6 +620,31 @@ final class RedactionTests: XCTestCase {
         }
     }
 
+    func testANameInAnEmailsHeaderIsCoveredInItsGreetingAndSignature() {
+        for (email, name) in [(["Kime: Mehmet Yılmaz <mehmet.yilmaz@example.com>", "Merhaba Mehmet,"], "Mehmet"),
+                              (["Para: Juliana Souza <juliana.souza@example.com>", "Oi Juliana,"], "Juliana"),
+                              (["إلى: مريم الحسن <maryam@example.com>", "مرحبا مريم,"], "مريم")] {
+            let found = protect(email, PrivateDetail.recommended)
+            XCTAssertEqual(found.covered.filter { $0.contains(name) }.count, 2, "\(email): \(found.covered)")
+        }
+        // An Arabic signature: the sender's name, and the address under it.
+        let arabic = protect(["من: أحمد الخطيب <ahmad@example.com>", "مع خالص التحية", "أحمد الخطيب",
+                              "طريق الملك عبدالله 132, الدمام 32241"], PrivateDetail.recommended)
+        XCTAssertGreaterThanOrEqual(arabic.covered.filter { $0.contains("الخطيب") }.count, 2, "\(arabic.covered)")
+        XCTAssertTrue(arabic.covered.contains { $0.contains("132") }, "\(arabic.covered)")
+        XCTAssertFalse(arabic.covered.contains { $0.contains("التحية") }, "\(arabic.covered)")
+    }
+
+    func testAnAddressInsideAMessageInTurkishAndArabic() {
+        for (line, address) in [("Emre: Şu adrese gönder Atatürk Caddesi No: 61, 06420 Çankaya/Ankara", "Çankaya/Ankara"),
+                                ("Bağdat Caddesi No: 46 de buluşalım", "Bağdat Caddesi No: 46"),
+                                ("خالد: أرسله إلى شارع العليا 76, الرياض 12271", "شارع العليا 76")] {
+            XCTAssertTrue(protect([line], [.addresses]).covered.contains { $0.contains(address) }, line)
+        }
+        // "عن طريق" is "by way of", no street.
+        XCTAssertTrue(protect(["أرسلها عن طريق البريد 3 مرات"], [.addresses]).covered.isEmpty)
+    }
+
     // MARK: Helpers
 
     /// What the engine covers on a page as Vision read it, as

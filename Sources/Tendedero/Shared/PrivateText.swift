@@ -2081,8 +2081,16 @@ enum Finder {
         }
         if chosen.contains(.addresses) {
             // A street and its number, a comma, and a postcode with its town,
-            // on one line, as a letter's subject writes an address.
-            found += matches(#"\b\p{Lu}[\p{L}'’.\-]+(?:[ \-][\p{L}'’.\-]+){0,3}\s\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?\s?,\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:\s(?:am|an der|im|in der|bei|ob der|vor der)\s\p{Lu}[\p{L}'’.\-]+)?"#)
+            // on one line, as a letter's subject writes an address, or a
+            // message: "Atatürk Caddesi No: 61, 06420 Çankaya/Ankara".
+            found += matches(#"\b\p{Lu}[\p{L}'’.\-]+(?:[ \-][\p{L}'’.\-]+){0,3}\s(?:(?:No|Nº|N°|nº|n°)[.:]?\s?)?\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?\s?,\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:/\p{Lu}[\p{L}'’.\-]+|\s(?:am|an der|im|in der|bei|ob der|vor der)\s\p{Lu}[\p{L}'’.\-]+)?"#)
+            // A Turkish street by the word that makes it one, with "No" and
+            // its number: "Bağdat Caddesi No: 46".
+            found += matches(#"\b\p{Lu}[\p{L}'’.\-]+(?: \p{Lu}[\p{L}'’.\-]+){0,2} (?:Caddesi|Cad\.|Cd\.|Sokak|Sokağı|Sok\.|Sk\.|Bulvarı|Blv\.) No ?[.:]? ?\d{1,4}[a-zA-Z]?(?:/\d{1,4})?(?!\d)"#)
+            // An Arabic street by the word that makes it one, with its number
+            // and maybe its town and postcode, inside a sentence too:
+            // "أرسله إلى شارع العليا 76، الرياض 12271"; never "عن طريق", "by way of".
+            found += matches(#"(?<![\p{L}\p{M}])(?<!عن )(?:شارع|طريق|جادة)(?: \p{Lo}[\p{Lo}\p{M}]*){1,4} \d{1,4}(?: ?[,،] ?\p{Lo}[\p{Lo}\p{M}]*(?: \p{Lo}[\p{Lo}\p{M}]*){0,2} \d{5})?(?!\d)"#)
             // Coordinates, as maps give them: "52.520008, 13.404954",
             // 52.52° N, 13.40° E or 52°31'12.0"N 13°24'17.8"E. A plain pair
             // needs five decimals, so two numbers in a table are left. The
@@ -2366,12 +2374,15 @@ enum Finder {
         if let name = DocumentSense.leadingName(in: string, from: start) {
             let rest = string[name.upperBound...].trimmingCharacters(in: CharacterSet(charactersIn: " ,;-–"))
             let followedByComma = string[name.upperBound...].first == ","
-            if !address || DocumentSense.nameWords(value) != nil
+            // An email's sender or recipient: the name, then the address in
+            // angle brackets, "Mehmet Yılmaz <mehmet@example.com>".
+            let mailbox = rest.hasPrefix("<") && rest.contains("@")
+            if !address || mailbox || DocumentSense.nameWords(value) != nil
                 || followedByComma && string[name].split(separator: " ").count >= 2 {
                 // The name alone, without a title before it, like "Dr. med.".
                 guard !rest.isEmpty else { return [(String(string[name]) == value ? whole : name, .names, false)] }
                 var found: [(range: Range<String.Index>?, kind: PrivateDetail, check: Bool)] = [(name, .names, false)]
-                if address, let after = string.range(of: rest, range: name.upperBound..<string.endIndex) {
+                if address, !mailbox, let after = string.range(of: rest, range: name.upperBound..<string.endIndex) {
                     found.append((after, block.rest, false))
                 }
                 return found
@@ -2387,6 +2398,8 @@ enum Finder {
     private static func learn(_ name: String, into learned: inout Set<String>) {
         if let words = DocumentSense.nameWords(name) {
             learned.formUnion(words)
+        } else if let words = caselessNameWords(name) {
+            learned.formUnion(words)
         } else {
             let word = name.trimmingCharacters(in: .whitespaces)
             if word.count >= 2, !word.contains(" "), word.first?.isUppercase == true,
@@ -2394,6 +2407,22 @@ enum Finder {
                 learned.insert(fold(word))
             }
         }
+    }
+
+    /// The words of a name in a script without capitals, like Arabic, that
+    /// a label or a chat vouched for: "مريم الحسن". Nil for any other.
+    static func caselessNameWords(_ name: String) -> [String]? {
+        let words = name.split(separator: " ").map(String.init)
+        guard (1...5).contains(words.count),
+              words.allSatisfy({ isCaseless($0) && DocumentSense.isNameWord($0) }) else { return nil }
+        let names = words.filter { $0.count >= 2 && !DocumentSense.isParticle($0) }.map(fold)
+        return names.isEmpty ? nil : names
+    }
+
+    /// Whether a word is written in a script without capitals, like Arabic.
+    static func isCaseless(_ word: String) -> Bool {
+        guard let first = word.first else { return false }
+        return first.isLetter && !first.isUppercase && !first.isLowercase
     }
 
     /// The line right under another, starting in the same column, or nil
@@ -2737,8 +2766,10 @@ enum Finder {
                 guard let range = Range(match.range, in: string) else { continue }
                 let raw = String(string[range]).trimmingCharacters(in: CharacterSet.punctuationCharacters)
                 // A title is no one's name, wherever it comes again: "Herr" in "Sehr geehrter Herr Kollege".
-                guard raw.count >= 3, raw.first?.isUppercase == true, !DocumentSense.isTitle(raw),
-                      isKnown(fold(raw), in: words, own: own), DocumentSense.isNameWord(raw, caseless: false),
+                // In a script without capitals, like Arabic, a name met before is enough: "مرحبا مريم".
+                let caseless = isCaseless(raw)
+                guard raw.count >= 3, raw.first?.isUppercase == true || caseless, !DocumentSense.isTitle(raw),
+                      isKnown(fold(raw), in: words, own: own), DocumentSense.isNameWord(raw, caseless: caseless),
                       var inner = string.range(of: raw, range: range) else { continue }
                 // An initial before it goes with it: "M. Mustermann".
                 if let initial = string.range(of: #"\p{Lu}\.\s?$"#, options: .regularExpression,
