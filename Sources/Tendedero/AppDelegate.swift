@@ -848,14 +848,54 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     /// With an AI chat chosen in Settings, the new screenshot goes there once
-    /// it has landed on the line: into the chat in front, or a new one.
+    /// it has landed on the line: when the chat is in front, with any others
+    /// waiting for it; or at once, into the chat in front or a new one.
     private func sendToChatIfChosen(_ id: UUID) {
         guard let chat = CaptureToChat.chat, !Calls.shared.keepingAway else { return }
-        let forceNew = CaptureToChat.place == .new
+        let place = CaptureToChat.place
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self, self.line.items.contains(where: { $0.id == id && !$0.falling }) else { return }
-            self.line.send(id, to: chat, forceNew: forceNew, keep: CaptureToChat.keepsOnLine)
+            guard place == .whenOpened else {
+                return self.line.send(id, to: chat, forceNew: place == .new, keep: CaptureToChat.keepsOnLine)
+            }
+            let first = self.waitingForChat.isEmpty
+            self.waitingForChat.append(id)
+            if chat.isInFront { return self.sendWaiting(to: chat) }
+            if first { Notice.show(String(format: L("It goes into %@ as soon as you open it."), chat.name)) }
+            self.watchForChat()
         }
+    }
+
+    /// Screenshots waiting on the line for their AI chat to come to the front.
+    private var waitingForChat: [UUID] = []
+    private var chatWatch: Timer?
+
+    private func watchForChat() {
+        guard chatWatch == nil else { return }
+        chatWatch = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                // Taken down meanwhile, or the chat no longer chosen: they wait no more.
+                self.waitingForChat.removeAll { id in !self.line.items.contains { $0.id == id && !$0.falling } }
+                guard let chat = CaptureToChat.chat, CaptureToChat.place == .whenOpened,
+                      !self.waitingForChat.isEmpty else { return self.stopWatchingForChat() }
+                if chat.isInFront { self.sendWaiting(to: chat) }
+            }
+        }
+    }
+
+    private func stopWatchingForChat() {
+        chatWatch?.invalidate()
+        chatWatch = nil
+        waitingForChat = []
+    }
+
+    /// All that waited, together, into the conversation open in front.
+    private func sendWaiting(to chat: ChatTarget) {
+        let ids = waitingForChat
+        stopWatchingForChat()
+        guard !ids.isEmpty, !Calls.shared.keepingAway else { return }
+        line.send(ids, to: chat, keep: CaptureToChat.keepsOnLine)
     }
 
     private func fly(_ id: UUID, from: CGRect) {

@@ -2024,9 +2024,11 @@
 "Nowhere" = "보내지 않음";
 "Send each screenshot to" = "각 스크린샷을 보낼 곳";
 "It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "걸리는 즉시 채팅의 메시지 입력란에 들어가며 개인 정보는 가려지고 Return을 기다립니다. 누르기 전에는 아무것도 전송되지 않습니다.";
-"The chat in front, else a new chat" = "앞에 있는 채팅, 없으면 새 채팅";
 "Always a new chat" = "항상 새 채팅";
 "Where it goes" = "들어가는 곳";
-"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "채팅이 앞에 열려 있으면 그 대화에 이어집니다. 스크린샷마다 따로 두려면 새 채팅을 선택하세요.";
 "Keep it on the line" = "줄에 남겨 두기";
 "It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "보낸 뒤에도 위에 남아 다시 보내거나 다른 곳에 보낼 수 있습니다. 끄면 줄에서 빠지며, 어디로 갔는지 알려 주는 알림을 클릭하면 다시 걸립니다.";
+"When you open the chat" = "채팅을 열 때";
+"At once: the chat in front, else a new chat" = "바로: 앞에 있는 채팅, 없으면 새 채팅";
+"Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "원하는 만큼 찍으세요. 줄에서 기다렸다가 채팅으로 가면 열려 있는 대화에 함께, 이미 쓴 글 옆에 들어갑니다. '바로'는 찍을 때마다 채팅을 엽니다.";
+"It goes into %@ as soon as you open it." = "%@을(를) 열면 바로 들어갑니다.";

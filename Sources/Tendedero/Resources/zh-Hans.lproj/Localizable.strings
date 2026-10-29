@@ -2024,9 +2024,11 @@
 "Nowhere" = "不发送";
 "Send each screenshot to" = "每张截图发送到";
 "It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "截图挂上后会进入聊天的消息框，隐私细节已遮盖，并等待你按下 Return。在你按下之前不会发送任何内容。";
-"The chat in front, else a new chat" = "前台的聊天，没有则新建聊天";
 "Always a new chat" = "始终新建聊天";
 "Where it goes" = "发到哪里";
-"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "前台打开着聊天时，截图会加入该对话。选择新建聊天可让每张截图各自独立。";
 "Keep it on the line" = "留在晾绳上";
 "It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "发送后仍挂在上方，可再次发送或发到别处。关闭后它会离开晾绳，点按说明去向的通知即可挂回。";
+"When you open the chat" = "打开聊天时";
+"At once: the chat in front, else a new chat" = "立即：前台的聊天，没有则新建";
+"Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "想拍多少就拍多少：它们在晾绳上等待，你一打开聊天就一起进入当前对话，放在你已写的内容旁。“立即”会在每张之后打开聊天。";
+"It goes into %@ as soon as you open it." = "你一打开 %@ 它就会进入。";

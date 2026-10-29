@@ -262,6 +262,15 @@ extension ChatTarget {
     /// a new chat. Calls back once the chat is in front and has had a moment
     /// to put its message box in reach; if it never comes, a note says so
     /// instead.
+    /// Whether the chat is in front: in its app, or on its website in a
+    /// browser.
+    @MainActor
+    var isInFront: Bool {
+        guard let front = Paste.frontApp?.bundleIdentifier else { return false }
+        if opensInApp(), front == installedAppID { return true }
+        return ChatButton.browserIDs.contains(front) && owns(host: ChatButton.pageInFront()?.host)
+    }
+
     /// - Parameter forceNew: opens a new chat even when the chat is in
     ///   front already.
     @MainActor

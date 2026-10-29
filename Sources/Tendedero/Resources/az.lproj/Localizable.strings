@@ -2026,9 +2026,11 @@
 "Nowhere" = "Heç hara";
 "Send each screenshot to" = "Hər ekran şəklini göndər:";
 "It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "Asıldığı anda çatın mesaj qutusuna düşür, şəxsi məlumatları örtülü olaraq, və Return gözləyir. Sən basana qədər heç nə göndərilmir.";
-"The chat in front, else a new chat" = "Önündəki çat, yoxsa yeni çat";
 "Always a new chat" = "Həmişə yeni çat";
 "Where it goes" = "Hara gedir";
-"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "Çat önündə açıqdırsa, ekran şəkli həmin söhbətə qoşulur. Hər ekran şəklini ayrı saxlamaq üçün yeni çat seç.";
 "Keep it on the line" = "Xətdə saxla";
 "It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "Göndəriləndən sonra yuxarıda qalır, yenidən və ya başqa yerə göndərmək üçün. Söndürülsə xətti tərk edir, hara getdiyini deyən qeydə klik onu geri qaytarır.";
+"When you open the chat" = "Çatı açanda";
+"At once: the chat in front, else a new chat" = "Dərhal: öndəki çat, yoxsa yeni çat";
+"Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "İstədiyin qədər çək: xətdə gözləyirlər və çata keçəndə açıq olan söhbətə birlikdə, orada yazdığının yanına düşürlər. «Dərhal» hər birindən sonra çatı açır.";
+"It goes into %@ as soon as you open it." = "%@ açan kimi ora düşür.";

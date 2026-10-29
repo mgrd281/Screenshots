@@ -2024,9 +2024,11 @@
 "Nowhere" = "Nirgendwohin";
 "Send each screenshot to" = "Jeden Screenshot senden an";
 "It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "Er landet beim Aufhängen im Nachrichtenfeld des Chats, seine privaten Details verdeckt, und wartet auf Return. Nichts wird gesendet, bis du es drückst.";
-"The chat in front, else a new chat" = "Der Chat davor, sonst ein neuer Chat";
 "Always a new chat" = "Immer ein neuer Chat";
 "Where it goes" = "Wohin er kommt";
-"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "Ist der Chat vorn geöffnet, gehört der Screenshot zu diesem Gespräch. Wähle einen neuen Chat, um jeden Screenshot getrennt zu halten.";
 "Keep it on the line" = "Auf der Leine lassen";
 "It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "Er bleibt nach dem Senden oben, um ihn noch einmal oder woandershin zu senden. Aus, verlässt er die Leine, und ein Klick auf die Notiz, die sagt, wohin er ging, hängt ihn zurück.";
+"When you open the chat" = "Wenn du den Chat öffnest";
+"At once: the chat in front, else a new chat" = "Sofort: der Chat davor, sonst ein neuer Chat";
+"Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "Nimm so viele auf, wie du willst: Sie warten auf der Leine und kommen zusammen in das offene Gespräch, sobald du zum Chat gehst, neben das, was du dort schon geschrieben hast. „Sofort“ öffnet den Chat nach jedem.";
+"It goes into %@ as soon as you open it." = "Er kommt in %@, sobald du es öffnest.";

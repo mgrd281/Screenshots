@@ -563,6 +563,18 @@ final class Line: ObservableObject {
         let photos = pickedIDs.contains(id)
             ? items.filter { pickedIDs.contains($0.id) && !$0.falling && ChatTarget.takes($0) }
             : items.filter { $0.id == id && !$0.falling && ChatTarget.takes($0) }
+        send(photos, to: chat, asking: question, forceNew: forceNew, keep: keep)
+    }
+
+    /// These photos together, as one message, like the screenshots that
+    /// waited for their AI chat to be opened.
+    func send(_ ids: [UUID], to chat: ChatTarget, keep: Bool) {
+        let photos = items.filter { ids.contains($0.id) && !$0.falling && ChatTarget.takes($0) }
+        send(photos, to: chat, asking: nil, forceNew: false, keep: keep)
+    }
+
+    private func send(_ photos: [Pegged], to chat: ChatTarget, asking question: String?, forceNew: Bool,
+                      keep: Bool) {
         // In an AI chat, every kind with Cover Everything in AI Chats on.
         let chosen = chat.isAI
             ? CoveringProfile.details(PrivateDetails.details, inAIChat: true, coversAll: CoveringProfile.coversAllInAIChats)

@@ -2024,9 +2024,11 @@
 "Nowhere" = "Nulle part";
 "Send each screenshot to" = "Envoyer chaque capture à";
 "It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "Elle arrive dans la zone de message du chat dès qu’elle est accrochée, ses détails privés masqués, et attend Retour. Rien n’est envoyé avant que tu l’appuies.";
-"The chat in front, else a new chat" = "Le chat au premier plan, sinon un nouveau chat";
 "Always a new chat" = "Toujours un nouveau chat";
 "Where it goes" = "Où elle va";
-"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "Avec le chat ouvert au premier plan, la capture rejoint cette conversation. Choisis un nouveau chat pour garder chaque capture à part.";
 "Keep it on the line" = "La garder sur le fil";
 "It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "Elle reste en haut une fois envoyée, pour l’envoyer encore ou ailleurs. Désactivé, elle quitte le fil, et un clic sur la note qui dit où elle est allée la remet.";
+"When you open the chat" = "Quand tu ouvres le chat";
+"At once: the chat in front, else a new chat" = "Tout de suite : le chat au premier plan, sinon un nouveau";
+"Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "Prends-en autant que tu veux : elles attendent sur le fil et arrivent ensemble dans la conversation ouverte quand tu vas sur le chat, à côté de ce que tu y as écrit. « Tout de suite » ouvre le chat après chacune.";
+"It goes into %@ as soon as you open it." = "Elle arrive dans %@ dès que tu l’ouvres.";
