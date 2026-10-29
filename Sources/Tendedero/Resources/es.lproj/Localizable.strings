@@ -2018,3 +2018,5 @@
 "Payment Due" = "Pago pendiente";
 "Amount: %@" = "Importe: %@";
 "Invoice number: %@" = "Número de factura: %@";
+"Drag a photo into the window, or click its paper plane." = "Arrastra una foto a la ventana o haz clic en su avión de papel.";
+"The file window closed before the photo could go into it." = "La ventana de archivos se cerró antes de que llegara la foto.";

@@ -2018,3 +2018,5 @@
 "Payment Due" = "결제 기한";
 "Amount: %@" = "금액: %@";
 "Invoice number: %@" = "청구서 번호: %@";
+"Drag a photo into the window, or click its paper plane." = "사진을 창으로 드래그하거나 사진의 종이비행기를 클릭하세요.";
+"The file window closed before the photo could go into it." = "사진이 들어가기 전에 파일 창이 닫혔습니다.";

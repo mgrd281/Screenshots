@@ -178,6 +178,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         DesktopIcons.shared.start()
         line.frameOfPhoto = { [weak self] id in self?.cardFrame(for: id) }
         line.onSearch = { [weak self] in self?.openSearch() }
+        OpenPanelWatch.shared.onAppear = { [weak self] dialog in self?.fileWindowOpened(dialog) }
+        OpenPanelWatch.shared.onDisappear = { [weak self] in self?.fileWindowClosed() }
 
         line.$items
             .receive(on: RunLoop.main)
@@ -540,6 +542,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// An empty line goes away, unless it was opened on purpose.
     private func itemsChanged() {
+        // A file window in front matters only while there is a photo for it.
+        OpenPanelWatch.shared.watch(line.liveCount > 0)
         // New on a line that did not come down for it: the dot says so.
         let count = line.liveCount
         if count > lastCount && !isRevealed { unseen = true }
@@ -579,6 +583,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func callChanged() {
         if Calls.shared.keepingAway, isRevealed, !pinned { setRevealed(false) }
         chatButton?.refresh()
+    }
+
+    // MARK: File windows
+
+    /// A file window came up in front, as a website shows to attach a file:
+    /// the line comes down on its screen, says how to put a photo in, and
+    /// an arrow goes from the newest photo to the window.
+    private func fileWindowOpened(_ dialog: CGRect) {
+        guard line.liveCount > 0, !Calls.shared.keepingAway else { return }
+        let middle = CGPoint(x: dialog.midX, y: dialog.midY)
+        let screen = NSScreen.screens.first { NSMouseInRect(middle, $0.frame, false) }
+        comeDown(on: screen)
+        // Down while the window is open, until the pointer has been to it and left.
+        reveal(peekFor: 60)
+        guard isRevealed else { return }
+        Notice.show(L("Drag a photo into the window, or click its paper plane."), on: screen, lasting: 6)
+        // Once the line has come down and laid out.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { [weak self] in
+            guard let self, OpenPanelWatch.shared.frame != nil, self.isRevealed,
+                  let newest = self.line.items.last(where: { !$0.falling }),
+                  let card = self.cardFrame(for: newest.id) else { return }
+            let start = CGPoint(x: card.midX, y: card.minY - OpenPanelArrow.side)
+            // Just above the window's top edge, so it covers nothing of it.
+            let end = CGPoint(x: dialog.midX, y: dialog.maxY + OpenPanelArrow.side * 0.75)
+            OpenPanelArrow.shared.show(from: start, to: end)
+        }
+    }
+
+    /// The file window went: the arrow with it, and the line tucks away
+    /// once the pointer is elsewhere.
+    private func fileWindowClosed() {
+        OpenPanelArrow.shared.hide()
+        if peekUntil > Date() { peekUntil = Date() }
     }
 
     // MARK: Photos and PDFs from anywhere

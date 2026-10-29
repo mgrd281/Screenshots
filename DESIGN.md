@@ -895,6 +895,24 @@ apps.
   - Its help tag says both ways. VoiceOver has Move Left and Move Right (a
     photo's place, on `spring.spread`) and Back to the Middle.
 
+
+### Arrow to a file window
+- When another app shows its Open window, as a website does to attach a
+  file, and photos hang, the line comes down on that screen and a note says
+  "Drag a photo into the window, or click its paper plane."
+- A 28 pt circle of `controlGlass` (a floating control, like the tag's
+  tools) with `arrow.right`, 11 pt bold, turned toward the window
+  (`OpenPanelArrow`). It starts under the newest photo and travels once to
+  just above the window's top edge, so it covers nothing of it, on
+  `duration.travel` (0.6 s) and `ease.out`, fading in as it leaves. It rests
+  there and fades out over 0.2 s when the window goes, or after 8 s.
+- It takes no clicks and VoiceOver skips it; the note says the same in
+  words.
+- With Reduce Motion it fades in over 0.15 s where it rests.
+- A photo sent while the window is in front flies to the window's middle
+  and is chosen there (Go to Folder, its copy's place, Open), rather than
+  pasted. Only with Accessibility: the store edition pastes as before.
+
 ### Navigation
 - **Menu bar icon.** Snapfly's own mark, drawn in code as a template
   (`LineIcon.swift`) on an 18 pt square: a line sagging 1.7 pt across the

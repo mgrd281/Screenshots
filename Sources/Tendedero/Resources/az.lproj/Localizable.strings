@@ -2020,3 +2020,5 @@
 "Payment Due" = "Ödəniş vaxtı";
 "Amount: %@" = "Məbləğ: %@";
 "Invoice number: %@" = "Faktura nömrəsi: %@";
+"Drag a photo into the window, or click its paper plane." = "Şəkli pəncərəyə sürüşdür və ya onun kağız təyyarəsinə klik et.";
+"The file window closed before the photo could go into it." = "Fayl pəncərəsi şəkil ora çatmamış bağlandı.";

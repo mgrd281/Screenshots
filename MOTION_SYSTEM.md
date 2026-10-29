@@ -215,6 +215,7 @@ Motion and Low Power Mode. The first run uses them all.
 | Step taken (a guide) | A 40 pt accent ring spreads from 0.45 to 1 and fades where the click landed, 0.45 s ease-out; with Reduce Motion it only fades, 0.3 s |
 | Copy | A small nudge, and "Copied" shows (`duration.short`) |
 | Send | The paper plane (below); the line closes the gap with `spring.reflow` |
+| File window in front | The arrow to it travels once from the newest photo, 0.6 s on `ease.out`, fading in as it leaves; it fades out over 0.2 s when the window goes. With Reduce Motion it only fades in, 0.15 s |
 | Take down | Falls off the line (0.55 s in the app); leaves with a short fade on `ease.exit` on the site's desktop |
 | Done or undoable | A note rises above the Dock with Undo (site desktop demo) |
 | Failure | No shake or beep: a `Notice` says what happened and what to do |
