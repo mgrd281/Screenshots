@@ -854,7 +854,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let forceNew = CaptureToChat.place == .new
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self, self.line.items.contains(where: { $0.id == id && !$0.falling }) else { return }
-            self.line.send(id, to: chat, forceNew: forceNew)
+            self.line.send(id, to: chat, forceNew: forceNew, keep: CaptureToChat.keepsOnLine)
         }
     }
 

@@ -2028,3 +2028,5 @@
 "Always a new chat" = "常に新しいチャット";
 "Where it goes" = "入る場所";
 "With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "チャットが前面で開いていれば、そのやり取りに追加されます。スクリーンショットごとに分けたいときは新しいチャットを選びます。";
+"Keep it on the line" = "ラインに残す";
+"It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "送信後も上に残り、もう一度または別の場所に送れます。オフにするとラインから外れ、送信先を示す通知をクリックすると戻ります。";

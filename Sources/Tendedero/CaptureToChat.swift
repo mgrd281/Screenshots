@@ -17,6 +17,14 @@ enum CaptureToChat {
 
     private static let chatKey = "captureChat"
     private static let placeKey = "captureChatPlace"
+    private static let leavesKey = "captureChatLeaves"
+
+    /// Whether a screenshot sent this way stays on the line, to send again
+    /// or put elsewhere; on until turned off.
+    static var keepsOnLine: Bool {
+        get { !UserDefaults.standard.bool(forKey: leavesKey) }
+        set { UserDefaults.standard.set(!newValue, forKey: leavesKey) }
+    }
 
     /// The AI chat each screenshot goes to; nil is none, as it begins.
     static var chat: ChatTarget? {

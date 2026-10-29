@@ -2028,3 +2028,5 @@
 "Always a new chat" = "Siempre un chat nuevo";
 "Where it goes" = "Adónde va";
 "With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "Con el chat abierto delante, la captura se une a esa conversación. Elige un chat nuevo para mantener cada captura aparte.";
+"Keep it on the line" = "Dejarla en la cuerda";
+"It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "Se queda arriba tras enviarse, para enviarla de nuevo o a otro sitio. Desactivado, deja la cuerda, y un clic en la nota que dice adónde fue la devuelve.";

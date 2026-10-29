@@ -2028,3 +2028,5 @@
 "Always a new chat" = "始终新建聊天";
 "Where it goes" = "发到哪里";
 "With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "前台打开着聊天时，截图会加入该对话。选择新建聊天可让每张截图各自独立。";
+"Keep it on the line" = "留在晾绳上";
+"It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "发送后仍挂在上方，可再次发送或发到别处。关闭后它会离开晾绳，点按说明去向的通知即可挂回。";

@@ -2028,3 +2028,5 @@
 "Always a new chat" = "Her zaman yeni sohbet";
 "Where it goes" = "Nereye gider";
 "With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "Sohbet önde açıksa ekran görüntüsü o konuşmaya eklenir. Her ekran görüntüsünü ayrı tutmak için yeni sohbet seç.";
+"Keep it on the line" = "İpte tut";
+"It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "Gönderildikten sonra yukarıda kalır, yeniden ya da başka yere göndermek için. Kapalıyken ipten ayrılır; nereye gittiğini söyleyen nota tıklamak onu geri asar.";

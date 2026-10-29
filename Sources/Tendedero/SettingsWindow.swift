@@ -276,6 +276,11 @@ final class Preferences: ObservableObject {
         set { change { CaptureToChat.chat = newValue } }
     }
 
+    var captureChatKeeps: Bool {
+        get { CaptureToChat.keepsOnLine }
+        set { change { CaptureToChat.keepsOnLine = newValue } }
+    }
+
     var captureChatPlace: CaptureToChat.Place {
         get { CaptureToChat.place }
         set { change { CaptureToChat.place = newValue } }
@@ -1328,6 +1333,10 @@ private struct LinePane: View {
                     } label: {
                         Text(L("Where it goes"))
                         Text(L("With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart."))
+                    }
+                    Toggle(isOn: $prefs.captureChatKeeps) {
+                        Text(L("Keep it on the line"))
+                        Text(L("It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back."))
                     }
                 }
             }

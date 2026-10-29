@@ -2030,3 +2030,5 @@
 "Always a new chat" = "Həmişə yeni çat";
 "Where it goes" = "Hara gedir";
 "With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "Çat önündə açıqdırsa, ekran şəkli həmin söhbətə qoşulur. Hər ekran şəklini ayrı saxlamaq üçün yeni çat seç.";
+"Keep it on the line" = "Xətdə saxla";
+"It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "Göndəriləndən sonra yuxarıda qalır, yenidən və ya başqa yerə göndərmək üçün. Söndürülsə xətti tərk edir, hara getdiyini deyən qeydə klik onu geri qaytarır.";

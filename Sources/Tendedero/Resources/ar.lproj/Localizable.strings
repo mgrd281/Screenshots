@@ -2028,3 +2028,5 @@
 "Always a new chat" = "دردشة جديدة دائمًا";
 "Where it goes" = "أين تذهب";
 "With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "مع وجود الدردشة مفتوحة أمامك تنضم اللقطة إلى تلك المحادثة. اختر دردشة جديدة لإبقاء كل لقطة منفصلة.";
+"Keep it on the line" = "أبقها على الخط";
+"It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "تبقى في الأعلى بعد إرسالها، لترسلها مرة أخرى أو إلى مكان آخر. إذا أوقفته تغادر الخط، والنقر على الملاحظة التي تقول أين ذهبت يعيدها.";

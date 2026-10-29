@@ -868,7 +868,9 @@ chat's message box, its private details covered as in any AI chat, after
 the check before sending, and waits for Return: nothing is sent until you
 press it. Where it goes is yours: with the chat open in front, even one of
 several tabs, it joins that conversation; with another app or tab in
-front, a new chat opens. Always a new chat keeps each screenshot apart.
+front, a new chat opens. Always a new chat keeps each screenshot apart. A screenshot sent this way stays on the line, to send again or
+elsewhere; turn off Keep it on the line and it leaves like anything sent,
+with the note that says where it went putting it back on a click.
 Snapfly pastes into the tab that is in front; it doesn't pick one of
 several open tabs by itself.
 
