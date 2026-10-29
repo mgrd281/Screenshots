@@ -6,6 +6,8 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The screenshot shortcut takes an open menu as it is, a website's list
+  included, instead of closing it (with Accessibility).
 - A website's Open window, asking for a file, brings the line down with an
   arrow to it. Drag a photo in, or click its paper plane, and the photo is
   chosen there, covered, ready to attach.

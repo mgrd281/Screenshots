@@ -213,7 +213,16 @@ area again), its icon and its color, with a preview. Drag it anywhere, right-cli
 Screenshot Button in the menu bar. While the screen is recorded, it is the
 stop button.
 
-For a menu that closes when you press a shortcut, choose Take Screenshot with
+An open menu stays open: a list chosen from on a website, a right-click
+menu or a menu bar menu. macOS keeps shortcuts from Snapfly while a menu is
+open, and the key would close it, so with the Accessibility permission (the
+one pasting asks for) Snapfly hears the screenshot and recording shortcuts
+first, keeps the key from the menu and takes the screen as it is. It
+listens for those two shortcuts and nothing else; every other key goes on
+untouched. The Mac App Store edition can't, and the timer below takes a
+menu there.
+
+For a menu that closes anyway, choose Take Screenshot with
 Timer, then 3, 5 or 10 seconds. Choose what to take, open the menu, and a
 countdown above the Dock takes it when it runs out. A click on the countdown
 cancels it. If something goes wrong anywhere in Snapfly, a short note above
@@ -1790,6 +1799,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `ChatLayouts.swift` | Where the chat button sits over each chat it knows, on a new chat and once started |
 | `ChatButton.swift` | The send button that floats over a chat while photos hang |
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen, now or after a countdown |
+| `ShortcutTap.swift` | The screenshot and recording shortcuts heard while another app's menu is open, so the menu stays in the picture (with Accessibility) |
 | `FullPage.swift` | Captures a whole page by scrolling the window in front |
 | `PageStitch.swift` | Joins the views of a scrolled page into one picture |
 | `CaptureButton.swift` | The screenshot button: one click takes a screenshot, from the edge of the screen |

@@ -1185,20 +1185,40 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func registerShortcut(_ role: Shortcut.Role) {
         hotKeys[role] = nil
         guard let shortcut = Shortcut.current(role) else { return }
-        hotKeys[role] = HotKey(shortcut, for: role) { [weak self] in
-            switch role {
-            case .toggle: self?.toggle()
-            case .send: self?.line.pasteNewest()
-            case .search: self?.openSearch()
-            case .capture: Capture.shared.start()
-            case .record:
-                if Recording.shared.isRecording {
-                    Recording.shared.stop()
-                } else {
-                    Capture.shared.start(mode: .record)
-                }
-            case .page: FullPage.shared.start()
+        hotKeys[role] = HotKey(shortcut, for: role) { [weak self] in self?.shortcutPressed(role) }
+        listenUnderMenus()
+    }
+
+    /// The shortcuts that take the screen are heard while another app's
+    /// menu is open too, the ones registered: one another app took stays
+    /// that app's.
+    private func listenUnderMenus() {
+        let registered = Dictionary(uniqueKeysWithValues: hotKeys.keys.compactMap { role in
+            Shortcut.current(role).map { (role, $0) }
+        })
+        ShortcutTap.shared.onPress = { [weak self] role in self?.shortcutPressed(role) }
+        ShortcutTap.shared.listen(for: registered)
+    }
+
+    /// When a shortcut was last done, so one heard twice, by its hot key
+    /// and under a menu, is done once.
+    private var lastShortcut: (role: Shortcut.Role, at: Date)?
+
+    private func shortcutPressed(_ role: Shortcut.Role) {
+        if let last = lastShortcut, last.role == role, Date().timeIntervalSince(last.at) < 0.4 { return }
+        lastShortcut = (role, Date())
+        switch role {
+        case .toggle: toggle()
+        case .send: line.pasteNewest()
+        case .search: openSearch()
+        case .capture: Capture.shared.start()
+        case .record:
+            if Recording.shared.isRecording {
+                Recording.shared.stop()
+            } else {
+                Capture.shared.start(mode: .record)
             }
+        case .page: FullPage.shared.start()
         }
     }
 
@@ -1206,6 +1226,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // All off while recording, so pressing one records it instead of
         // doing what it does.
         hotKeys = [:]
+        listenUnderMenus()
         ShortcutRecorder.shared.record { [weak self] result in
             guard let self else { return }
             for other in Shortcut.Role.allCases where other != role { self.registerShortcut(other) }
