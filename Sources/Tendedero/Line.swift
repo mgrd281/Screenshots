@@ -555,7 +555,10 @@ final class Line: ObservableObject {
     /// the chats don't take them.
     /// - Parameter question: one of the questions from Settings, pasted into
     ///   the message box after the photos, to send with them.
-    func send(_ id: UUID, to chat: ChatTarget, asking question: String? = nil) {
+    /// - Parameter keep: the photos stay on the line once sent, as a
+    ///   screenshot sent by itself does unless Settings says otherwise.
+    func send(_ id: UUID, to chat: ChatTarget, asking question: String? = nil, forceNew: Bool = false,
+              keep: Bool = false) {
         Guide.shared.happened(.photoUsed)
         let photos = pickedIDs.contains(id)
             ? items.filter { pickedIDs.contains($0.id) && !$0.falling && ChatTarget.takes($0) }
@@ -566,7 +569,7 @@ final class Line: ObservableObject {
             : PrivateDetails.details
         guard !photos.isEmpty, !stillCovering(photos, chosen) else { return }
         let go = { [weak self] in
-            chat.open {
+            chat.open(forceNew: forceNew) {
                 // A mailbox takes a photo only once a message is started: copied
                 // for you to paste, and left on the line.
                 if chat.copiesOnly {
@@ -576,7 +579,7 @@ final class Line: ObservableObject {
                 }
                 // A new message starts in the address field; the photo is for its body.
                 if chat.startsFresh { Paste.pressTab(times: 2) }
-                self?.deliver(photos, then: question, replacing: [:], covering: chosen)
+                self?.deliver(photos, then: question, replacing: [:], covering: chosen, keep: keep)
             }
         }
         // The card first, as for any AI chat or place not known, before it opens.
@@ -647,7 +650,7 @@ final class Line: ObservableObject {
     /// Not copied, like a PDF changed meanwhile and still being covered,
     /// nothing goes: the clipboard holds something else.
     private func deliver(_ chosenPhotos: [Pegged], then caption: String?, replacing files: [UUID: URL],
-                         covering chosen: Set<PrivateDetail>) {
+                         covering chosen: Set<PrivateDetail>, keep: Bool = false) {
         let photos = chosenPhotos.filter { photo in items.contains { $0.id == photo.id && !$0.falling } }
         guard !photos.isEmpty, copy(photos, covering: chosen, replacing: files) else { return }
         pickedIDs = []
@@ -669,7 +672,7 @@ final class Line: ObservableObject {
         } else {
             Paste.intoFrontApp(after: flight)
         }
-        if willPaste { takeDown(sent: photos, after: flight, to: destination) }
+        if willPaste, !keep { takeDown(sent: photos, after: flight, to: destination) }
         // Once the app has taken the photos, the clipboard turns to the text.
         guard let caption, willPaste, !intoFileWindow else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + flight + 0.5) {

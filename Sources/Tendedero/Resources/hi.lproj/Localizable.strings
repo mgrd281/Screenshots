@@ -2022,3 +2022,13 @@
 "Invoice number: %@" = "इनवॉइस नंबर: %@";
 "Drag a photo into the window, or click its paper plane." = "किसी फ़ोटो को विंडो में ड्रैग करें, या उसके काग़ज़ के हवाई जहाज़ पर क्लिक करें।";
 "The file window closed before the photo could go into it." = "फ़ोटो पहुँचने से पहले फ़ाइल विंडो बंद हो गई।";
+"Screenshots to an AI chat" = "स्क्रीनशॉट एक AI चैट में";
+"Nowhere" = "कहीं नहीं";
+"Send each screenshot to" = "हर स्क्रीनशॉट भेजें";
+"It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "लटकते ही यह चैट के संदेश बॉक्स में जाता है, निजी जानकारी ढकी हुई, और Return का इंतज़ार करता है। जब तक आप इसे नहीं दबाते, कुछ नहीं भेजा जाता।";
+"The chat in front, else a new chat" = "सामने वाला चैट, नहीं तो नया चैट";
+"Always a new chat" = "हमेशा नया चैट";
+"Where it goes" = "कहाँ जाता है";
+"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "सामने चैट खुला हो तो स्क्रीनशॉट उसी बातचीत में जुड़ता है। हर स्क्रीनशॉट अलग रखने के लिए नया चैट चुनें।";
+"Keep it on the line" = "इसे लाइन पर रखें";
+"It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "भेजने के बाद यह ऊपर रहता है, फिर से या कहीं और भेजने के लिए। बंद हो तो यह लाइन छोड़ देता है, और यह बताने वाले नोट पर क्लिक, कि यह कहाँ गया, इसे वापस लाता है।";

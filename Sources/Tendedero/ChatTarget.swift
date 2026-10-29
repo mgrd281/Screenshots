@@ -262,13 +262,15 @@ extension ChatTarget {
     /// a new chat. Calls back once the chat is in front and has had a moment
     /// to put its message box in reach; if it never comes, a note says so
     /// instead.
+    /// - Parameter forceNew: opens a new chat even when the chat is in
+    ///   front already.
     @MainActor
-    func open(then ready: @escaping () -> Void) {
+    func open(forceNew: Bool = false, then ready: @escaping () -> Void) {
         let front = Paste.frontApp?.bundleIdentifier
         // Opening in the browser, the app in front is not the place.
-        if !startsFresh, opensInApp(), let front, front == installedAppID { return ready() }
+        if !forceNew, !startsFresh, opensInApp(), let front, front == installedAppID { return ready() }
         // Asking a browser for its page takes a moment: only a browser.
-        if !startsFresh, let front, ChatButton.browserIDs.contains(front),
+        if !forceNew, !startsFresh, let front, ChatButton.browserIDs.contains(front),
            owns(host: ChatButton.pageInFront()?.host) {
             return ready()
         }

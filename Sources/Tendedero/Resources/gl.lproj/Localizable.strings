@@ -2020,3 +2020,13 @@
 "Invoice number: %@" = "Número de factura: %@";
 "Drag a photo into the window, or click its paper plane." = "Arrastra unha foto á xanela ou fai clic no seu avión de papel.";
 "The file window closed before the photo could go into it." = "A xanela de ficheiros pechouse antes de que chegase a foto.";
+"Screenshots to an AI chat" = "Capturas a un chat de IA";
+"Nowhere" = "A ningún sitio";
+"Send each screenshot to" = "Enviar cada captura a";
+"It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "Entra na caixa de mensaxe do chat ao colgarse, cos seus datos privados tapados, e agarda a Return. Non se envía nada ata que o premas.";
+"The chat in front, else a new chat" = "O chat de diante, se non un novo";
+"Always a new chat" = "Sempre un chat novo";
+"Where it goes" = "Onde vai";
+"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "Co chat aberto diante, a captura únese a esa conversa. Escolle un chat novo para manter cada captura á parte.";
+"Keep it on the line" = "Deixala na corda";
+"It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back." = "Queda arriba despois de enviala, para enviala de novo ou a outro sitio. Desactivado, deixa a corda, e un clic na nota que di onde foi devólvea.";
