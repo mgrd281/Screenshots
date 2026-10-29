@@ -2018,3 +2018,5 @@
 "Payment Due" = "Ödeme günü";
 "Amount: %@" = "Tutar: %@";
 "Invoice number: %@" = "Fatura numarası: %@";
+"Drag a photo into the window, or click its paper plane." = "Bir fotoğrafı pencereye sürükle ya da kâğıt uçağına tıkla.";
+"The file window closed before the photo could go into it." = "Fotoğraf ulaşmadan dosya penceresi kapandı.";

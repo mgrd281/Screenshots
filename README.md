@@ -852,6 +852,14 @@ has them all under Send to: the ones under photos first, the rest under
 More Chats. Turn each icon off in Settings, under Line › Icons under
 photos, each on its own.
 
+A website asking for a file, with its Open window? The line comes down by
+itself, says how, and a small arrow travels once from the newest photo to
+the window. Drag a photo into it, or click the photo's paper plane: the
+photo flies to the window and is chosen there, covered like anything that
+leaves the line, then opened, ready to attach. Several picked photos are
+chosen together. This needs the Accessibility permission, as pasting does,
+so the Mac App Store edition pastes as before.
+
 Too large for a chat, or for someone without one? Copy Link, in the photo's
 menu, uploads it as it leaves the line, its private details covered, and
 copies a link that works for seven days: the page shows the photo, plays
@@ -1635,6 +1643,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Guide.swift` | The introduction on the screen itself: the steps, the shade with its hole round what is pointed at, the card beside it, lessons one at a time, and tips |
 | `Shared/GuideFlow.swift`, `Shared/GuideShade.swift` | Where the introduction stands, kept with the settings, its steps in order, where its card goes, and its shade, for the Mac and the iPhone |
 | `Paste.swift` | Pastes into the app in front, for the send button |
+| `OpenPanel.swift` | Another app's Open window: finds it with Accessibility, chooses the photos sent to it there, and the arrow that shows the way to it |
+| `Shared/OpenPanelPlan.swift` | The keys pressed in an Open window to choose the photos: Go to Folder, their place, Open |
 | `ChatTarget.swift` | ChatGPT, Claude, WhatsApp, Gmail, GMX, WEB.DE and twelve more in a row under a photo, the rest behind ⋯: their logos or app icons, and their app or website in the browser chosen, as each is set, opened and waited for, in the order dragged in Settings |
 | `Shared/Chats.swift` | The apps a covered picture goes to, for both apps: their names, websites, which are on at first and their order from Settings, and on the iPhone, which have an app there and where a tap opens it |
 | `assets/chat-logos/` | The logos the row shows (every chat but ChatGPT and Claude), as PNG with their SVG sources; the iPhone first run's share row draws ChatGPT, WhatsApp and WEB.DE from SVG copies in its asset catalogue |

@@ -89,12 +89,16 @@ enum Paste {
     }
 
     /// Where a paste shows up on the given screen, in AppKit screen
-    /// coordinates: the field being typed in, like a chat's message box,
-    /// near its start; else the bottom of the app's window, where message
-    /// boxes sit; else the bottom of the screen.
+    /// coordinates: the middle of a file window, which chooses the photos;
+    /// the field being typed in, like a chat's message box, near its start;
+    /// else the bottom of the app's window, where message boxes sit; else
+    /// the bottom of the screen.
     static func landingPoint(on screen: NSScreen) -> CGPoint {
         let bottom = CGPoint(x: screen.visibleFrame.midX, y: screen.visibleFrame.minY + 90)
         guard let app = frontApp else { return bottom }
+        if let dialog = OpenPanel.frontFrame(), screen.frame.contains(CGPoint(x: dialog.midX, y: dialog.midY)) {
+            return CGPoint(x: dialog.midX, y: dialog.midY)
+        }
         let system = AXUIElementCreateSystemWide()
         if let field = element(system, kAXFocusedUIElementAttribute), let frame = frame(of: field),
            frame.height < 200, screen.frame.contains(CGPoint(x: frame.midX, y: frame.midY)) {

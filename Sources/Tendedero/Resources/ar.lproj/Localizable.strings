@@ -2018,3 +2018,5 @@
 "Payment Due" = "موعد الدفع";
 "Amount: %@" = "المبلغ: %@";
 "Invoice number: %@" = "رقم الفاتورة: %@";
+"Drag a photo into the window, or click its paper plane." = "اسحب صورة إلى النافذة، أو انقر طائرتها الورقية.";
+"The file window closed before the photo could go into it." = "أُغلقت نافذة الملفات قبل أن تصل الصورة إليها.";

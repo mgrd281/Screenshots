@@ -2018,3 +2018,5 @@
 "Payment Due" = "支払い期限";
 "Amount: %@" = "金額：%@";
 "Invoice number: %@" = "請求書番号：%@";
+"Drag a photo into the window, or click its paper plane." = "写真をウインドウにドラッグするか、写真の紙飛行機をクリックします。";
+"The file window closed before the photo could go into it." = "写真が届く前にファイルのウインドウが閉じられました。";

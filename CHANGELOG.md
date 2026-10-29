@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- A website's Open window, asking for a file, brings the line down with an
+  arrow to it. Drag a photo in, or click its paper plane, and the photo is
+  chosen there, covered, ready to attach.
 - Covering reads more languages: labels like Beneficiario, Favorecido,
   Müşteri, Bénéficiaire, DNI, CPF and T.C. Kimlik No, verification codes
   and dates of birth in Spanish, Portuguese, Turkish and Arabic, Turkish and

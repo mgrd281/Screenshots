@@ -2020,3 +2020,5 @@
 "Payment Due" = "Payment Due";
 "Amount: %@" = "Amount: %@";
 "Invoice number: %@" = "Invoice number: %@";
+"Drag a photo into the window, or click its paper plane." = "Drag a photo into the window, or click its paper plane.";
+"The file window closed before the photo could go into it." = "The file window closed before the photo could go into it.";

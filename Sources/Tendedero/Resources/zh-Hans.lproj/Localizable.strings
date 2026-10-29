@@ -2018,3 +2018,5 @@
 "Payment Due" = "付款到期";
 "Amount: %@" = "金额：%@";
 "Invoice number: %@" = "发票号码：%@";
+"Drag a photo into the window, or click its paper plane." = "将照片拖到窗口中，或点按照片上的纸飞机。";
+"The file window closed before the photo could go into it." = "照片放入之前，文件窗口已关闭。";

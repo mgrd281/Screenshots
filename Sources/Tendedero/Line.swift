@@ -660,10 +660,18 @@ final class Line: ObservableObject {
         }
         if willPaste { tally(photos.map(\.url), covering: chosen) }
         let flight = willPaste ? onSend?(photos) ?? 0 : 0
-        Paste.intoFrontApp(after: flight)
+        // A file window, as a website shows to attach a file, chooses the
+        // copies; anywhere else they are pasted.
+        let intoFileWindow = willPaste && OpenPanel.isInFront
+        if intoFileWindow {
+            OpenPanel.choose(photos.map { files[$0.id] ?? PrivateDetails.shareable($0.url, covering: chosen) },
+                             after: flight)
+        } else {
+            Paste.intoFrontApp(after: flight)
+        }
         if willPaste { takeDown(sent: photos, after: flight, to: destination) }
         // Once the app has taken the photos, the clipboard turns to the text.
-        guard let caption, willPaste else { return }
+        guard let caption, willPaste, !intoFileWindow else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + flight + 0.5) {
             MainActor.assumeIsolated { Self.pasteText(caption) }
         }
