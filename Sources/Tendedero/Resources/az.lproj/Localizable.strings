@@ -2022,3 +2022,11 @@
 "Invoice number: %@" = "Faktura nömrəsi: %@";
 "Drag a photo into the window, or click its paper plane." = "Şəkli pəncərəyə sürüşdür və ya onun kağız təyyarəsinə klik et.";
 "The file window closed before the photo could go into it." = "Fayl pəncərəsi şəkil ora çatmamış bağlandı.";
+"Screenshots to an AI chat" = "Ekran şəkilləri süni intellekt çatına";
+"Nowhere" = "Heç hara";
+"Send each screenshot to" = "Hər ekran şəklini göndər:";
+"It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "Asıldığı anda çatın mesaj qutusuna düşür, şəxsi məlumatları örtülü olaraq, və Return gözləyir. Sən basana qədər heç nə göndərilmir.";
+"The chat in front, else a new chat" = "Önündəki çat, yoxsa yeni çat";
+"Always a new chat" = "Həmişə yeni çat";
+"Where it goes" = "Hara gedir";
+"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "Çat önündə açıqdırsa, ekran şəkli həmin söhbətə qoşulur. Hər ekran şəklini ayrı saxlamaq üçün yeni çat seç.";

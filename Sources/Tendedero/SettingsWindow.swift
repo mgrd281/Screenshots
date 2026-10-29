@@ -271,6 +271,16 @@ final class Preferences: ObservableObject {
         set { change { CaptureButton.isEnabled = newValue } }
     }
 
+    var captureChat: ChatTarget? {
+        get { CaptureToChat.chat }
+        set { change { CaptureToChat.chat = newValue } }
+    }
+
+    var captureChatPlace: CaptureToChat.Place {
+        get { CaptureToChat.place }
+        set { change { CaptureToChat.place = newValue } }
+    }
+
     var captureButtonClick: CaptureButton.Click {
         get { CaptureButton.click }
         set { change { CaptureButton.click = newValue } }
@@ -1300,6 +1310,26 @@ private struct LinePane: View {
                     ChatRow(chat: chat, prefs: prefs)
                 }
                 ChatBrowserRow(prefs: prefs)
+            }
+            Section(L("Screenshots to an AI chat")) {
+                Picker(selection: $prefs.captureChat) {
+                    Text(L("Nowhere")).tag(ChatTarget?.none)
+                    ForEach(CaptureToChat.choices) { chat in
+                        Text(chat.name).tag(ChatTarget?.some(chat))
+                    }
+                } label: {
+                    Text(L("Send each screenshot to"))
+                    Text(L("It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it."))
+                }
+                if prefs.captureChat != nil {
+                    Picker(selection: $prefs.captureChatPlace) {
+                        Text(L("The chat in front, else a new chat")).tag(CaptureToChat.Place.inFront)
+                        Text(L("Always a new chat")).tag(CaptureToChat.Place.new)
+                    } label: {
+                        Text(L("Where it goes"))
+                        Text(L("With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart."))
+                    }
+                }
             }
             ChatButtonSection(prefs: prefs)
             SavedMessagesSection(prefs: prefs)

@@ -2020,3 +2020,11 @@
 "Invoice number: %@" = "Fatura numarası: %@";
 "Drag a photo into the window, or click its paper plane." = "Bir fotoğrafı pencereye sürükle ya da kâğıt uçağına tıkla.";
 "The file window closed before the photo could go into it." = "Fotoğraf ulaşmadan dosya penceresi kapandı.";
+"Screenshots to an AI chat" = "Ekran görüntüleri bir YZ sohbetine";
+"Nowhere" = "Hiçbir yere";
+"Send each screenshot to" = "Her ekran görüntüsünü şuraya gönder";
+"It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "Asılır asılmaz sohbetin mesaj kutusuna girer, özel ayrıntıları örtülü olarak, ve Return’ü bekler. Sen basana kadar hiçbir şey gönderilmez.";
+"The chat in front, else a new chat" = "Öndeki sohbet, yoksa yeni sohbet";
+"Always a new chat" = "Her zaman yeni sohbet";
+"Where it goes" = "Nereye gider";
+"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "Sohbet önde açıksa ekran görüntüsü o konuşmaya eklenir. Her ekran görüntüsünü ayrı tutmak için yeni sohbet seç.";

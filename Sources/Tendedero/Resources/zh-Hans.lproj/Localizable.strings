@@ -2020,3 +2020,11 @@
 "Invoice number: %@" = "发票号码：%@";
 "Drag a photo into the window, or click its paper plane." = "将照片拖到窗口中，或点按照片上的纸飞机。";
 "The file window closed before the photo could go into it." = "照片放入之前，文件窗口已关闭。";
+"Screenshots to an AI chat" = "截图发到 AI 聊天";
+"Nowhere" = "不发送";
+"Send each screenshot to" = "每张截图发送到";
+"It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "截图挂上后会进入聊天的消息框，隐私细节已遮盖，并等待你按下 Return。在你按下之前不会发送任何内容。";
+"The chat in front, else a new chat" = "前台的聊天，没有则新建聊天";
+"Always a new chat" = "始终新建聊天";
+"Where it goes" = "发到哪里";
+"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "前台打开着聊天时，截图会加入该对话。选择新建聊天可让每张截图各自独立。";

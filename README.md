@@ -861,6 +861,17 @@ has them all under Send to: the ones under photos first, the rest under
 More Chats. Turn each icon off in Settings, under Line › Icons under
 photos, each on its own.
 
+Every screenshot to an AI chat, as it is taken? Choose one under Line in
+Settings, Send each screenshot to: ChatGPT, Claude, Perplexity, Grok,
+DeepSeek or Qwen. The screenshot hangs as always, then goes into that
+chat's message box, its private details covered as in any AI chat, after
+the check before sending, and waits for Return: nothing is sent until you
+press it. Where it goes is yours: with the chat open in front, even one of
+several tabs, it joins that conversation; with another app or tab in
+front, a new chat opens. Always a new chat keeps each screenshot apart.
+Snapfly pastes into the tab that is in front; it doesn't pick one of
+several open tabs by itself.
+
 A website asking for a file, with its Open window? The line comes down by
 itself, says how, and a small arrow travels once from the newest photo to
 the window. Drag a photo into it, or click the photo's paper plane: the
@@ -1798,6 +1809,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `CaptionBar.swift` | The line over the chat button to write a message sent with the photos |
 | `ChatLayouts.swift` | Where the chat button sits over each chat it knows, on a new chat and once started |
 | `ChatButton.swift` | The send button that floats over a chat while photos hang |
+| `CaptureToChat.swift` | The AI chat a new screenshot goes to by itself, and where: the chat in front, or a new one |
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen, now or after a countdown |
 | `ShortcutTap.swift` | The screenshot and recording shortcuts heard while another app's menu is open, so the menu stays in the picture (with Accessibility) |
 | `FullPage.swift` | Captures a whole page by scrolling the window in front |

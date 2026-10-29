@@ -836,6 +836,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         // Its covered copy is being made: old ones may go.
         pruneCoveredCopies()
+        sendToChatIfChosen(id)
         guard let from else {
             Guide.shared.happened(.photoHung)
             return
@@ -843,6 +844,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Let the line come down and lay out before measuring the landing spot.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self] in
             self?.fly(id, from: from)
+        }
+    }
+
+    /// With an AI chat chosen in Settings, the new screenshot goes there once
+    /// it has landed on the line: into the chat in front, or a new one.
+    private func sendToChatIfChosen(_ id: UUID) {
+        guard let chat = CaptureToChat.chat, !Calls.shared.keepingAway else { return }
+        let forceNew = CaptureToChat.place == .new
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self, self.line.items.contains(where: { $0.id == id && !$0.falling }) else { return }
+            self.line.send(id, to: chat, forceNew: forceNew)
         }
     }
 

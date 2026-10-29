@@ -555,7 +555,7 @@ final class Line: ObservableObject {
     /// the chats don't take them.
     /// - Parameter question: one of the questions from Settings, pasted into
     ///   the message box after the photos, to send with them.
-    func send(_ id: UUID, to chat: ChatTarget, asking question: String? = nil) {
+    func send(_ id: UUID, to chat: ChatTarget, asking question: String? = nil, forceNew: Bool = false) {
         Guide.shared.happened(.photoUsed)
         let photos = pickedIDs.contains(id)
             ? items.filter { pickedIDs.contains($0.id) && !$0.falling && ChatTarget.takes($0) }
@@ -566,7 +566,7 @@ final class Line: ObservableObject {
             : PrivateDetails.details
         guard !photos.isEmpty, !stillCovering(photos, chosen) else { return }
         let go = { [weak self] in
-            chat.open {
+            chat.open(forceNew: forceNew) {
                 // A mailbox takes a photo only once a message is started: copied
                 // for you to paste, and left on the line.
                 if chat.copiesOnly {

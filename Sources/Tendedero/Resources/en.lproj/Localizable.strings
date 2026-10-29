@@ -2022,3 +2022,11 @@
 "Invoice number: %@" = "Invoice number: %@";
 "Drag a photo into the window, or click its paper plane." = "Drag a photo into the window, or click its paper plane.";
 "The file window closed before the photo could go into it." = "The file window closed before the photo could go into it.";
+"Screenshots to an AI chat" = "Screenshots to an AI chat";
+"Nowhere" = "Nowhere";
+"Send each screenshot to" = "Send each screenshot to";
+"It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it.";
+"The chat in front, else a new chat" = "The chat in front, else a new chat";
+"Always a new chat" = "Always a new chat";
+"Where it goes" = "Where it goes";
+"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart.";

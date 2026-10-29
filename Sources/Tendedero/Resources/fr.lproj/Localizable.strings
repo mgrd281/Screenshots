@@ -2020,3 +2020,11 @@
 "Invoice number: %@" = "Numéro de facture : %@";
 "Drag a photo into the window, or click its paper plane." = "Fais glisser une photo dans la fenêtre ou clique sur son avion en papier.";
 "The file window closed before the photo could go into it." = "La fenêtre de fichiers s’est fermée avant que la photo n’y arrive.";
+"Screenshots to an AI chat" = "Captures vers un chat d’IA";
+"Nowhere" = "Nulle part";
+"Send each screenshot to" = "Envoyer chaque capture à";
+"It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "Elle arrive dans la zone de message du chat dès qu’elle est accrochée, ses détails privés masqués, et attend Retour. Rien n’est envoyé avant que tu l’appuies.";
+"The chat in front, else a new chat" = "Le chat au premier plan, sinon un nouveau chat";
+"Always a new chat" = "Toujours un nouveau chat";
+"Where it goes" = "Où elle va";
+"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "Avec le chat ouvert au premier plan, la capture rejoint cette conversation. Choisis un nouveau chat pour garder chaque capture à part.";

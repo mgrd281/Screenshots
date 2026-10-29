@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Each screenshot can go straight into an AI chat as it is taken (Settings,
+  Line › Screenshots to an AI chat): into the chat in front, or always a
+  new one. It waits in the message box for Return.
 - The screenshot shortcut takes an open menu as it is, a website's list
   included, instead of closing it (with Accessibility).
 - A website's Open window, asking for a file, brings the line down with an

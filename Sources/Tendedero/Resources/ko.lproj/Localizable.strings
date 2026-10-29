@@ -2020,3 +2020,11 @@
 "Invoice number: %@" = "청구서 번호: %@";
 "Drag a photo into the window, or click its paper plane." = "사진을 창으로 드래그하거나 사진의 종이비행기를 클릭하세요.";
 "The file window closed before the photo could go into it." = "사진이 들어가기 전에 파일 창이 닫혔습니다.";
+"Screenshots to an AI chat" = "스크린샷을 AI 채팅으로";
+"Nowhere" = "보내지 않음";
+"Send each screenshot to" = "각 스크린샷을 보낼 곳";
+"It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "걸리는 즉시 채팅의 메시지 입력란에 들어가며 개인 정보는 가려지고 Return을 기다립니다. 누르기 전에는 아무것도 전송되지 않습니다.";
+"The chat in front, else a new chat" = "앞에 있는 채팅, 없으면 새 채팅";
+"Always a new chat" = "항상 새 채팅";
+"Where it goes" = "들어가는 곳";
+"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "채팅이 앞에 열려 있으면 그 대화에 이어집니다. 스크린샷마다 따로 두려면 새 채팅을 선택하세요.";

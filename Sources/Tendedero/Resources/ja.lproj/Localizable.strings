@@ -2020,3 +2020,11 @@
 "Invoice number: %@" = "請求書番号：%@";
 "Drag a photo into the window, or click its paper plane." = "写真をウインドウにドラッグするか、写真の紙飛行機をクリックします。";
 "The file window closed before the photo could go into it." = "写真が届く前にファイルのウインドウが閉じられました。";
+"Screenshots to an AI chat" = "スクリーンショットをAIチャットへ";
+"Nowhere" = "どこにも送らない";
+"Send each screenshot to" = "スクリーンショットの送信先";
+"It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it." = "吊るされると同時にチャットのメッセージ欄に入り、個人情報は隠され、Returnを待ちます。Returnを押すまで何も送信されません。";
+"The chat in front, else a new chat" = "前面のチャット、なければ新しいチャット";
+"Always a new chat" = "常に新しいチャット";
+"Where it goes" = "入る場所";
+"With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart." = "チャットが前面で開いていれば、そのやり取りに追加されます。スクリーンショットごとに分けたいときは新しいチャットを選びます。";
