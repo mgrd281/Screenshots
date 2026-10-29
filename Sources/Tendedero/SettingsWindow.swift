@@ -1328,11 +1328,12 @@ private struct LinePane: View {
                 }
                 if prefs.captureChat != nil {
                     Picker(selection: $prefs.captureChatPlace) {
-                        Text(L("The chat in front, else a new chat")).tag(CaptureToChat.Place.inFront)
+                        Text(L("When you open the chat")).tag(CaptureToChat.Place.whenOpened)
+                        Text(L("At once: the chat in front, else a new chat")).tag(CaptureToChat.Place.inFront)
                         Text(L("Always a new chat")).tag(CaptureToChat.Place.new)
                     } label: {
                         Text(L("Where it goes"))
-                        Text(L("With the chat open in front, the screenshot joins that conversation. Choose a new chat to keep each screenshot apart."))
+                        Text(L("Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one."))
                     }
                     Toggle(isOn: $prefs.captureChatKeeps) {
                         Text(L("Keep it on the line"))

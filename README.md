@@ -861,18 +861,20 @@ has them all under Send to: the ones under photos first, the rest under
 More Chats. Turn each icon off in Settings, under Line › Icons under
 photos, each on its own.
 
-Every screenshot to an AI chat, as it is taken? Choose one under Line in
-Settings, Send each screenshot to: ChatGPT, Claude, Perplexity, Grok,
-DeepSeek or Qwen. The screenshot hangs as always, then goes into that
-chat's message box, its private details covered as in any AI chat, after
-the check before sending, and waits for Return: nothing is sent until you
-press it. Where it goes is yours: with the chat open in front, even one of
-several tabs, it joins that conversation; with another app or tab in
-front, a new chat opens. Always a new chat keeps each screenshot apart. A screenshot sent this way stays on the line, to send again or
-elsewhere; turn off Keep it on the line and it leaves like anything sent,
-with the note that says where it went putting it back on a click.
-Snapfly pastes into the tab that is in front; it doesn't pick one of
-several open tabs by itself.
+Every screenshot to an AI chat? Choose one under Line in Settings, Send
+each screenshot to: ChatGPT, Claude, Perplexity, Grok, DeepSeek or Qwen.
+Take as many as you like: they hang as always and wait, a note says where
+they will go, and when you go to that chat yourself they go in together,
+into the conversation open there, next to anything you already typed,
+covered as in any AI chat and after the check before sending. They wait
+for Return: nothing is sent until you press it. Taken with the chat in
+front, a screenshot goes in at once. Where it goes can be At once instead
+(the chat in front, else a new chat, after each screenshot) or Always a new
+chat. Snapfly pastes into the tab that is in front; it doesn't pick one of
+several open tabs by itself. A screenshot sent this way stays on the line,
+to send again or elsewhere; turn off Keep it on the line and it leaves like
+anything sent, with the note that says where it went putting it back on a
+click.
 
 A website asking for a file, with its Open window? The line comes down by
 itself, says how, and a small arrow travels once from the newest photo to
