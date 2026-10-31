@@ -40,12 +40,12 @@ struct SyncPane: View {
     private var choices: some View {
         Section {
             Toggle(isOn: Binding(get: { sync.settings.on }, set: { sync.setOn($0) })) {
-                Text(L("Sync with your iPhone"))
-                Text(L("What hangs on the line goes to Snapfly on your iPhone with its private details covered, and what you send from the iPhone hangs on the line."))
+                SettingText(.syncWithYourIPhone, L("Sync with your iPhone"),
+                            L("What hangs on the line goes to Snapfly on your iPhone with its private details covered, and what you send from the iPhone hangs on the line."))
             }
             Toggle(isOn: Binding(get: { sync.settings.originals }, set: { sync.setOriginals($0) })) {
-                Text(L("Originals too"))
-                Text(L("Screenshots also go as they were taken, with nothing covered. Only those taken from now on."))
+                SettingText(.originalsToo, L("Originals too"),
+                            L("Screenshots also go as they were taken, with nothing covered. Only those taken from now on."))
             }
             .disabled(!sync.settings.on)
         } footer: {
@@ -59,12 +59,9 @@ struct SyncPane: View {
                 SettingsButton(L("Sync Now")) { sync.syncNow() }
                     .disabled(!sync.settings.on)
             } label: {
-                Text(L("This Mac"))
-                if sync.state.needsAttention {
-                    Text("\(Image(systemName: "exclamationmark.triangle.fill")) \(sync.state.text)")
-                } else {
-                    Text(sync.state.text)
-                }
+                SettingText(.thisMac, L("This Mac"), subtitle: sync.state.needsAttention
+                    ? Text("\(Image(systemName: "exclamationmark.triangle.fill")) \(sync.state.text)")
+                    : Text(sync.state.text))
             }
         }
     }
@@ -98,10 +95,10 @@ struct SyncPane: View {
                 SettingsButton(L("Show Code…")) { pairing = true }
                     .disabled(!sync.canShare)
             } label: {
-                Text(L("Connect with a code"))
-                Text(sync.canShare
-                     ? L("For an iPhone signed in to another Apple account: it types the code this Mac shows.")
-                     : L("Turn on syncing on this Mac first, then try again."))
+                SettingText(.connectWithACode, L("Connect with a code"),
+                            sync.canShare
+                                ? L("For an iPhone signed in to another Apple account: it types the code this Mac shows.")
+                                : L("Turn on syncing on this Mac first, then try again."))
             }
             if let problem {
                 Label(problem, systemImage: "exclamationmark.triangle.fill")

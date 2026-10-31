@@ -2032,3 +2032,4 @@
 "At once: the chat in front, else a new chat" = "Tout de suite : le chat au premier plan, sinon un nouveau";
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "Prends-en autant que tu veux : elles attendent sur le fil et arrivent ensemble dans la conversation ouverte quand tu vas sur le chat, à côté de ce que tu y as écrit. « Tout de suite » ouvre le chat après chacune.";
 "It goes into %@ as soon as you open it." = "Elle arrive dans %@ dès que tu l’ouvres.";
+"How %@ works" = "Comment fonctionne « %@ »";

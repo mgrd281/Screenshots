@@ -2032,3 +2032,4 @@
 "At once: the chat in front, else a new chat" = "立即：前台的聊天，没有则新建";
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "想拍多少就拍多少：它们在晾绳上等待，你一打开聊天就一起进入当前对话，放在你已写的内容旁。“立即”会在每张之后打开聊天。";
 "It goes into %@ as soon as you open it." = "你一打开 %@ 它就会进入。";
+"How %@ works" = "“%@”的工作方式";

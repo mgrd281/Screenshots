@@ -6,6 +6,8 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Every setting has a symbol before its name. Rest the pointer on it, or
+  click it, and a short film shows what the setting does.
 - Screenshots can go into an AI chat by themselves (Settings, Line ›
   Screenshots to an AI chat). They wait on the line until you open the chat,
   then go in together, into the conversation open there; or at once, or

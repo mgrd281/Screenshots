@@ -20,8 +20,8 @@ struct WorkspacePane: View {
             Section {
                 Toggle(isOn: Binding(get: { workspace.isOn },
                                      set: { $0 ? workspace.enable() : workspace.disable() })) {
-                    Text(L("Keep screenshots in a workspace folder"))
-                    Text(L("A folder of its own on your Desktop, with a folder for each kind of screenshot"))
+                    SettingText(.keepScreenshotsInAWorkspaceFolder, L("Keep screenshots in a workspace folder"),
+                                L("A folder of its own on your Desktop, with a folder for each kind of screenshot"))
                 }
                 if let problem = workspace.problem {
                     problemRow(problem)
@@ -94,8 +94,7 @@ struct WorkspacePane: View {
                         .disabled(workspace.busy)
                 }
             } label: {
-                Text(L("Folder"))
-                Text(Folders.placeName(workspace.root))
+                SettingText(.workspaceFolder, L("Folder"), Folders.placeName(workspace.root))
             }
             TextField(L("Folder name"), text: $folderName)
                 .focused($folderFocused)
@@ -127,13 +126,15 @@ struct WorkspacePane: View {
 
     private var categories: some View {
         Section {
-            Picker(L("New screenshots go to"), selection: Binding(
+            Picker(selection: Binding(
                 get: { workspace.config.defaultCategory.id },
                 set: { workspace.setDefaultCategory($0) })
             ) {
                 ForEach(workspace.config.categories) { category in
                     Text(category.name).tag(category.id)
                 }
+            } label: {
+                SettingText(.newScreenshotsGoTo, L("New screenshots go to"))
             }
             ForEach(workspace.config.categories) { category in
                 CategoryRow(workspace: workspace, category: category,
@@ -149,8 +150,8 @@ struct WorkspacePane: View {
             LabeledContent {
                 SettingsButton(L("Restore Defaults")) { workspace.restoreCategories() }
             } label: {
-                Text(L("Order and visibility"))
-                Text(L("Shows every category again, in the usual order"))
+                SettingText(.orderAndVisibility, L("Order and visibility"),
+                            L("Shows every category again, in the usual order"))
             }
         } header: {
             Text(L("Categories"))
@@ -174,8 +175,8 @@ struct WorkspacePane: View {
                 }
                 .disabled(workspace.busy)
             } label: {
-                Text(L("Delete the workspace"))
-                Text(L("Moves its screenshots to the Trash, after asking. Other files in it stay."))
+                SettingText(.deleteTheWorkspace, L("Delete the workspace"),
+                            L("Moves its screenshots to the Trash, after asking. Other files in it stay."))
             }
         } footer: {
             Text(L("To stop using the workspace and keep everything, turn it off above."))

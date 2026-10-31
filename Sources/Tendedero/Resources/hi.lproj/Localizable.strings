@@ -2034,3 +2034,4 @@
 "At once: the chat in front, else a new chat" = "तुरंत: सामने वाला चैट, नहीं तो नया चैट";
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "जितने चाहें लें: वे लाइन पर इंतज़ार करते हैं और चैट पर जाते ही खुली बातचीत में साथ जाते हैं, आपके लिखे के पास। «तुरंत» हर एक के बाद चैट खोलता है।";
 "It goes into %@ as soon as you open it." = "%@ खोलते ही यह उसमें जाता है।";
+"How %@ works" = "%@ कैसे काम करता है";
