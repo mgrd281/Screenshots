@@ -145,6 +145,14 @@ enum FormFields {
         field(#"(?:au\s*-?\s*begr[üu]ndende\s+)?diagnose(?:\s*\(n\)|n)?(?:\s*\(icd\s*-?\s*10\))?|diagnos[ei]s"#,
               .medicalDiagnosis, lines: 4),
         field(#"icd\s*-?\s*10(?:\s*-?\s*codes?)?"#, .medicalDiagnosis, lines: 3),
+        // What the certificate prints beside its checkboxes and under its
+        // stamp, never anyone's detail: labels that announce nothing, and end
+        // the value above them.
+        field(#"arbeitsunfall(?:\s*,\s*arbeitsunfallfolgen)?(?:\s*,\s*berufskrankheit)?|dem\s+durchgangsarzt\s+zugewiesen"#,
+              .formCode, lines: 0),
+        field(#"sonstiger\s+unfall(?:\s*,\s*unfallfolgen)?|versorgungsleiden(?:\s*\(\s*bvg\s*\))?"#, .formCode, lines: 0),
+        field(#"(?:erst|folge|arbeitsunf[äa]higkeits)\s*-?\s*bescheinigung|vertragsarztstempel(?:\s*/\s*unterschrift\s+des\s+arztes)?"#,
+              .formCode, lines: 0),
     ]
 
     /// The labels in a line, each with its field, left to right. A label
@@ -152,11 +160,16 @@ enum FormFields {
     /// form's headings reads; one whose value has a shape of its own, like
     /// "geb. am", anywhere after a space.
     private static func labels(in line: String) -> [(range: Range<String.Index>, field: Field)] {
-        let whole = NSRange(line.startIndex..., in: line)
+        // Matched in the line as its labels' words are meant, each back where it was read.
+        let (meant, origin) = readable(line)
+        let whole = NSRange(meant.startIndex..., in: meant)
         var all: [(range: Range<String.Index>, field: Field)] = []
         for field in fields {
-            for match in field.regex.matches(in: line, range: whole) {
-                if let range = Range(match.range, in: line) { all.append((range, field)) }
+            for match in field.regex.matches(in: meant, range: whole) {
+                guard let range = Range(match.range, in: meant) else { continue }
+                let lower = origin[meant.distance(from: meant.startIndex, to: range.lowerBound)]
+                let upper = origin[meant.distance(from: meant.startIndex, to: range.upperBound)]
+                if lower < upper { all.append((lower..<upper, field)) }
             }
         }
         // The longest label wins where two overlap: "Name, Vorname" over "Name".
@@ -177,6 +190,89 @@ enum FormFields {
             from = label.range.upperBound
         }
         return accepted
+    }
+
+    // MARK: Labels as tiny print is read
+
+    /// The long words of the labels, as printed. Text recognition often
+    /// reads small print a letter off, "Vomame", "Versicherlen",
+    /// "Kostentrâgerkennung", "Betriebsstätlen", and a word that close to
+    /// one of these is read as it, as a person reading the form would.
+    private static let labelWords = [
+        "krankenkasse", "kostenträger", "kostenträgerkennung", "krankenversicherung", "vorname", "nachname",
+        "familienname", "geburtsname", "geburtsdatum", "versicherten", "versichertennummer",
+        "krankenversichertennummer", "kassennummer", "institutionskennzeichen", "betriebsstätten",
+        "betriebsstättennummer", "arztnummer", "arbeitsunfähig", "arbeitsunfähigkeit", "voraussichtlich",
+        "einschließlich", "festgestellt", "begründende", "diagnose",
+    ]
+
+    /// A word as misreadings leave it the same: small letters, no accents,
+    /// "ß" as one letter, often read as "B", and "rn" as the "m" it is often
+    /// read as.
+    static func misreadFold(_ word: some StringProtocol) -> [Character] {
+        Array(String(word).lowercased().replacingOccurrences(of: "ß", with: "s")
+            .folding(options: .diacriticInsensitive, locale: nil).replacingOccurrences(of: "rn", with: "m"))
+    }
+
+    /// Whether a word, as text recognition read it, is `meant`: the same once
+    /// misreadings are folded away, "Vomame" for "Vorname"; or, in a long word,
+    /// one letter read as another, two from fourteen letters on. A letter more
+    /// or less never counts: "Nachnahme" is no "Nachname".
+    static func reads(_ word: some StringProtocol, as meant: String) -> Bool {
+        reads(folded: misreadFold(word), as: misreadFold(meant))
+    }
+
+    /// The same, for words already folded, as a page's words are held
+    /// against many labels' or phrases' words.
+    static func reads(folded read: [Character], as label: [Character]) -> Bool {
+        guard read.count == label.count, read.first == label.first else { return false }
+        let allowed = label.count >= 14 ? 2 : label.count >= 7 ? 1 : 0
+        return zip(read, label).filter { $0 != $1 }.count <= allowed
+    }
+
+    /// The labels' words folded once, as every word of a page is held against them.
+    private static let foldedLabelWords = labelWords.map { (word: $0, folded: misreadFold($0)) }
+
+    /// The label's word a word was meant as, where it is one misread: a
+    /// letter read as another, two in a long word, or "rn" read as "m".
+    /// A letter more or less is left alone: "Nachnahme" is no "Nachname",
+    /// and "arbeitsfähig" no "arbeitsunfähig".
+    private static func labelWord(near word: Substring) -> String? {
+        guard word.count >= 6 else { return nil }
+        let read = misreadFold(word)
+        return foldedLabelWords.first { reads(folded: read, as: $0.folded) }?.word
+    }
+
+    /// Whether a word is one of a form's labels' long words, as printed or
+    /// a letter off: "Kostenträgerkennung", "Geburtsdatum", "Versicherlen".
+    static func isLabelWord(_ word: some StringProtocol) -> Bool {
+        labelWord(near: Substring(word.trimmingCharacters(in: CharacterSet.letters.inverted))) != nil
+    }
+
+    /// The line with each misread label's word as it is meant, and where
+    /// in the line each of its letters, and its end, was read.
+    private static func readable(_ line: String) -> (text: String, origin: [String.Index]) {
+        var text = "", origin: [String.Index] = []
+        var i = line.startIndex
+        while i < line.endIndex {
+            guard line[i].isLetter else {
+                text.append(line[i]); origin.append(i); i = line.index(after: i); continue
+            }
+            var j = i
+            while j < line.endIndex, line[j].isLetter { j = line.index(after: j) }
+            if let meant = labelWord(near: line[i..<j]) {
+                let count = line.distance(from: i, to: j)
+                for (k, letter) in meant.enumerated() {
+                    text.append(letter)
+                    origin.append(line.index(i, offsetBy: min(k, count - 1)))
+                }
+            } else {
+                for k in line[i..<j].indices { text.append(line[k]); origin.append(k) }
+            }
+            i = j
+        }
+        origin.append(line.endIndex)
+        return (text, origin)
     }
 
     // MARK: Reading the fields
@@ -217,7 +313,33 @@ enum FormFields {
                 if taken.insert(key).inserted { reading.values.append(value) }
             }
         }
+        reading.values += repeats(of: reading.values, in: strings)
         return reading
+    }
+
+    /// A number a label announces, printed again elsewhere on the page
+    /// without it, is the same field's value there: a doctor's stamp
+    /// repeats the practice's and the doctor's numbers from the form's
+    /// boxes, and neither is a phone number for that.
+    private static func repeats(of values: [Value], in strings: [String]) -> [Value] {
+        var found: [Value] = []
+        for value in values where [.healthInsuranceNumber, .identificationNumber, .institutionNumber].contains(value.entity) {
+            let digits = String(strings[value.line][value.range].filter(\.isNumber))
+            guard digits.count >= 7 else { continue }
+            for (i, line) in strings.enumerated() {
+                var from = line.startIndex
+                while let place = line.range(of: digits, range: from..<line.endIndex) {
+                    from = place.upperBound
+                    // The whole number, not part of a longer one, nor a place already read.
+                    guard place.lowerBound == line.startIndex || !line[line.index(before: place.lowerBound)].isNumber,
+                          place.upperBound == line.endIndex || !line[place.upperBound].isNumber,
+                          !(values + found).contains(where: { $0.line == i && $0.range.overlaps(place) }) else { continue }
+                    found.append(Value(line: i, range: place, entity: value.entity, role: value.role,
+                                       confidence: value.confidence, label: value.label))
+                }
+            }
+        }
+        return found
     }
 
     private static func sameRow(_ a: CGRect, _ b: CGRect) -> Bool {
@@ -230,6 +352,8 @@ enum FormFields {
 
     private static func values(of label: Found, among found: [Found], _ strings: [String], boxes: [CGRect],
                                place: (Int, Range<String.Index>) -> CGRect) -> [Value] {
+        // A caption announces nothing.
+        guard label.field.lines > 0 else { return [] }
         let entity = label.field.entity
         let string = strings[label.line]
         let labelText = String(string[label.range])
@@ -246,16 +370,27 @@ enum FormFields {
             if string[start] == ":" { colon = true }
             start = string.index(after: start)
         }
-        let inline = trimmed(start..<nextOnLine, in: string)
+        let framed = unframed(trimmed(start..<nextOnLine, in: string), in: string)
+        // A border or a comma read after a label, "Arzt-Nr. |", "Arzt-Nr.,", is no value: look beside and under it.
+        let inline = string[framed].contains(where: { $0.isLetter || $0.isNumber }) ? framed : framed.upperBound..<framed.upperBound
+        // What is read far along the label's line, apart from it, is another
+        // column's, as a checkbox's words across the page: it ends the label's.
+        var far: CGFloat?
         if !inline.isEmpty {
             // On its line: after a colon, or a date or a number of its own.
-            guard colon || entity.isTyped, let read = shaped(inline, in: string, as: entity) else { return [] }
-            return [value(label.line, read.range, entity, read.confidence)]
+            if colon || entity.isTyped, let read = shaped(inline, in: string, as: entity) {
+                return [value(label.line, read.range, entity, read.confidence)]
+            }
+            let after = place(label.line, inline)
+            let letter = label.box.width / CGFloat(max(1, string.distance(from: label.range.lowerBound, to: label.range.upperBound)))
+            guard after.minX - label.box.maxX > letter * 4 else { return [] }
+            far = after.minX
         }
         // Its row: the next label to its right ends its column.
-        let right = found.filter { $0.line != label.line || $0.range != label.range }
+        let nextLabel = found.filter { $0.line != label.line || $0.range != label.range }
             .filter { sameRow($0.box, label.box) && $0.box.minX > label.box.maxX - 0.002 }
             .map(\.box.minX).min()
+        let right = [nextLabel, far].compactMap { $0 }.min()
         let headed = found.contains { sameRow($0.box, label.box) && $0.box.maxX <= label.box.minX + 0.002 }
 
         // Beside it on its row, as "Vorname:" and its value in the next column.
@@ -263,12 +398,25 @@ enum FormFields {
             i != label.line && i < strings.count && sameRow(boxes[i], label.box)
                 && boxes[i].minX >= label.box.maxX - 0.005 && boxes[i].minX < (right ?? label.box.maxX + 0.35)
         }.min { boxes[$0].minX < boxes[$1].minX }
+        // A value beside its label is sure by its colon, by a shape of its own, a
+        // date or a number, or as a name of one line close by, as a shop's
+        // "Vorname | Max". Else it counts only where nothing is under the label: a
+        // form's box holds its value under it, and words beside it, like a doctor's
+        // stamp beside "Diagnose" or a box's caption beside the insured person's
+        // name, are another column's.
+        var besideValue: Value?
         if let beside {
             let line = strings[beside]
             let end = found.filter { $0.line == beside }.map(\.range.lowerBound).min() ?? line.endIndex
-            let range = trimmed(line.startIndex..<end, in: line)
+            let range = unframed(trimmed(line.startIndex..<end, in: line), in: line)
             if !range.isEmpty, let read = shaped(range, in: line, as: entity) {
-                return [value(beside, read.range, entity, read.confidence)]
+                let near = value(beside, read.range, entity, read.confidence)
+                let close = boxes[beside].minX - label.box.maxX <= label.box.width
+                if colon || entity.isTyped
+                    || entity == .personName && label.field.lines == 1 && read.confidence == .high && close {
+                    return [near]
+                }
+                besideValue = near
             }
         }
 
@@ -279,6 +427,8 @@ enum FormFields {
         var above = label.box
         var used = Set<Int>([label.line])
         var names = 0
+        // Where the value's first line starts: the lines after it start there too.
+        var opening: CGRect?
         for n in 0..<label.field.lines {
             var best: (line: Int, range: Range<String.Index>, box: CGRect)?
             // The nearest line under it; of two on one row, the one that
@@ -290,22 +440,46 @@ enum FormFields {
                 return box.maxY > other.maxY
             }
             for (i, box) in boxes.enumerated() where i < strings.count && !used.contains(i) {
-                guard box.maxY <= above.minY + above.height * 0.3,
-                      above.minY - box.maxY < max(above.height, box.height) * (n == 0 ? 1.8 : 1.2),
-                      // A line under a label alone on its row starts in its column.
-                      headed || box.minX >= left,
-                      let cut = column(of: i, in: strings[i], from: left, to: columnRight, place: place) else { continue }
-                let cutBox = place(i, cut)
-                if let current = best, !nearer(cutBox, than: current.box) { continue }
-                best = (i, cut, cutBox)
+                guard let cut = column(of: i, in: strings[i], from: left, to: columnRight, place: place) else { continue }
+                // Where the part that would be the value is: a small label read
+                // on its line, like "geb. am" between two rows, is not.
+                let end = found.filter { $0.line == i && $0.range.lowerBound > cut.lowerBound }.map(\.range.lowerBound).min()
+                let piece = end.map { trimmed(cut.lowerBound..<min($0, cut.upperBound), in: strings[i]) } ?? cut
+                // What the form prints in the column, like a box's caption
+                // beside the name's box, is no line of a person's details.
+                if entity == .personName, DocumentSense.isFormText(String(strings[i][piece])) { continue }
+                // A border read on its own, "|", is no line of the value.
+                guard !unframed(piece, in: strings[i]).isEmpty else { continue }
+                let pieceBox = place(i, piece)
+                // Under the last line; or the first, printed over its label, as
+                // a printer off the form's boxes types it: starting within the
+                // label, no higher, and reaching below it.
+                let over = n == 0 && pieceBox.maxY <= label.box.maxY + 0.002 && pieceBox.minY < label.box.minY
+                    && pieceBox.minX < label.box.maxX - 0.005
+                guard pieceBox.maxY <= above.minY + above.height * 0.3 || over,
+                      above.minY - pieceBox.maxY < max(above.height, pieceBox.height) * (n == 0 ? 1.8 : 1.2) else { continue }
+                // A line under a label alone on its row starts in its column,
+                // unless its part there stands apart from the words before it,
+                // as a box's value does where a row of boxes is read as one line.
+                guard headed || nextLabel != nil || box.minX >= left || apart(cut, of: i, in: strings[i], place: place)
+                else { continue }
+                // A value starts under its label, not across the page.
+                if opening == nil, pieceBox.minX > label.box.maxX + slack { continue }
+                // The lines of one value start where its first does: what starts
+                // further along, like "geb. am" beside a name, is another field's.
+                if let opening, abs(place(i, unframed(cut, in: strings[i])).minX - opening.minX) > slack { continue }
+                if let current = best, !nearer(pieceBox, than: current.box) { continue }
+                best = (i, cut, pieceBox)
             }
             guard let best else { break }
-            // The next row of labels ends the value.
-            if found.contains(where: { $0.line == best.line && $0.range.overlaps(best.range) }) { break }
+            // The next row of labels ends the value; a label further along
+            // the line, like "geb. am" after a given name, ends only its part.
+            if found.contains(where: { $0.line == best.line && $0.range.overlaps(best.range)
+                && $0.range.lowerBound <= best.range.lowerBound }) { break }
             let line = strings[best.line]
-            let range = found.filter { $0.line == best.line && $0.range.lowerBound > best.range.lowerBound }
+            let range = unframed(found.filter { $0.line == best.line && $0.range.lowerBound > best.range.lowerBound }
                 .map(\.range.lowerBound).min().map { trimmed(best.range.lowerBound..<min($0, best.range.upperBound), in: line) }
-                ?? best.range
+                ?? best.range, in: line)
             guard !range.isEmpty else { break }
             // A doctor's stamp, or an address, right under a diagnosis is no part of it.
             if n > 0, entity != .personName, entity != .address {
@@ -329,9 +503,11 @@ enum FormFields {
             values.append(value(best.line, read.range, kind, read.confidence))
             used.insert(best.line)
             above = best.box
+            if opening == nil { opening = place(best.line, range) }
             // A value of a shape of its own takes one line.
             if entity.isTyped { break }
         }
+        if values.isEmpty, let besideValue { return [besideValue] }
         return values
     }
 
@@ -351,6 +527,52 @@ enum FormFields {
         }
         guard let first, let last else { return nil }
         return first..<last
+    }
+
+    /// Whether the part of a line in a column stands apart from the word
+    /// before it by more than a space or two, as the values of a row of
+    /// boxes do when they are read as one line, and no sentence's words do.
+    private static func apart(_ cut: Range<String.Index>, of index: Int, in line: String,
+                              place: (Int, Range<String.Index>) -> CGRect) -> Bool {
+        let all = words(in: line)
+        guard let previous = all.last(where: { $0.upperBound <= cut.lowerBound }),
+              let first = all.first(where: { $0.lowerBound >= cut.lowerBound }) else { return true }
+        let box = place(index, first)
+        let letter = box.width / CGFloat(max(1, line.distance(from: first.lowerBound, to: first.upperBound)))
+        return box.minX - place(index, previous).maxX > letter * 2.5
+    }
+
+    /// Strokes text recognition reads a box's border as.
+    private static let strokes: Set<Character> = ["|", "¦", "l", "I", "ł", "!", "[", "]"]
+
+    /// A value without the box's borders read at its edges: "| Mustermann",
+    /// "Sonnenhang 9 |", "l345678812", "05.10.2026ł". A stroke on its own is
+    /// dropped, and one stuck to a word only where no word has it: a bar
+    /// anywhere, a small "l" before a number's digits, one after them. The
+    /// postal block reads its lines so too (`Finder.bare`,
+    /// `DocumentSense.namePart`).
+    static func unframed(_ range: Range<String.Index>, in line: String) -> Range<String.Index> {
+        var lower = range.lowerBound, upper = range.upperBound
+        while lower < upper {
+            if line[lower].isWhitespace { lower = line.index(after: lower); continue }
+            let last = line.index(before: upper)
+            if line[last].isWhitespace { upper = last; continue }
+            let second = line.index(after: lower)
+            let first = line[lower]
+            if strokes.contains(first), second == upper || line[second].isWhitespace || "|¦[]".contains(first)
+                || "lł".contains(first) && line[second].isNumber {
+                lower = second
+                continue
+            }
+            let end = line[last]
+            if strokes.contains(end), last == lower || line[line.index(before: last)].isWhitespace || "|¦[]".contains(end)
+                || "lłI".contains(end) && line[line.index(before: last)].isNumber {
+                upper = last
+                continue
+            }
+            break
+        }
+        return lower..<upper
     }
 
     private static func words(in line: String) -> [Range<String.Index>] {
@@ -411,7 +633,8 @@ enum FormFields {
         case .personName:
             // A person's name, without the title before it and what follows it.
             let piece = String(text)
-            if DocumentSense.isOrganization(piece) { return nil }
+            // What the form prints, like a box's label beside the field, is no one's.
+            if DocumentSense.isOrganization(piece) || DocumentSense.isFormText(piece) { return nil }
             if let name = DocumentSense.leadingName(in: piece, from: piece.startIndex) {
                 return (moved(name, from: piece, into: line, at: range.lowerBound), .high)
             }

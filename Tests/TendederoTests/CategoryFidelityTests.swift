@@ -434,6 +434,18 @@ final class CategoryFidelityTests: XCTestCase {
         XCTAssertTrue(none.hits.isEmpty && none.possible.isEmpty, "\(none.hits) \(none.possible)")
     }
 
+    func testAModelsBareNumberOnADocumentIsNoPhoneNumber() {
+        let strings = Self.letter.map(\.text)
+        let pieces = answer([
+            ("Unser Zeichen: 7654321", .phones, "7654321"),
+            ("Telefon 040 3333333-0", .phones, "040 3333333-0"),
+        ])
+        XCTAssertEqual(pieces.count, 2)
+        // A letter prints its numbers with their labels: only the one said to be a phone number is one.
+        let found = Finder.vetted(pieces, in: strings, Set(PrivateDetail.allCases))
+        XCTAssertEqual(found.hits.map { "\($0.kind!.rawValue): \(text($0, in: strings))" }, ["phones: 040 3333333-0"])
+    }
+
     // MARK: The whole entity
 
     func testAPlaceIsCoveredWhole() {

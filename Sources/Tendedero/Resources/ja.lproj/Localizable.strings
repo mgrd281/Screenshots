@@ -1833,6 +1833,9 @@
 "Letter" = "手紙";
 "Form" = "書式";
 "Receipt" = "領収書";
+"Sick note" = "就業不能証明書";
+"Health insurance form" = "健康保険の書類";
+"%@ recognized" = "%@を認識しました";
 "Scan %@" = "スキャン %@";
 "Explain the Document" = "書類を説明";
 "Summarize" = "要約";

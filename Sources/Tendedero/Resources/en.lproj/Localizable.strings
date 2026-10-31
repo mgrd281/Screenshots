@@ -1835,6 +1835,9 @@
 "Letter" = "Letter";
 "Form" = "Form";
 "Receipt" = "Receipt";
+"Sick note" = "Sick note";
+"Health insurance form" = "Health insurance form";
+"%@ recognized" = "%@ recognized";
 "Scan %@" = "Scan %@";
 "Explain the Document" = "Explain the Document";
 "Summarize" = "Summarize";

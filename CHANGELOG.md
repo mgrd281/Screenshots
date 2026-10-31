@@ -26,13 +26,30 @@ keeps a download of each version.
   ID is covered by its shape and check digit, with or without a colon
   after its name. A chat's writers are covered after the date and time an
   export puts before them, and the people in a bank statement's bookings.
-  Every build now measures covering on 110 made-up documents in seven
+  Every build now measures covering on 116 made-up documents in seven
   languages, among them a German tax notice, tenancy agreement, bank
-  statement, chat export, CV and order confirmation.
+  statement, chat export, CV, order confirmation and sick note.
 - What an invoice charges for is no longer covered as a person's name: an
   item like "Druckpatronen Schwarz", with its price on its row, under a
   column headed Beschreibung, Artikel or Item, stays readable and is only
   offered to cover. A column of people, like Teilnehmer, stays covered.
+- Covering reads a scanned form as its paper says. A German sick note is
+  known as one, even read poorly, and Review says so
+  ("Arbeitsunfähigkeitsbescheinigung erkannt") and whose each detail is
+  (Patient, Ärzte). The insured person's name and address are found under
+  a misread label, or by where they stand; the practice's and the doctor's
+  numbers are ID numbers in the boxes and in the stamp alike, never phone
+  numbers, and one number is listed once; under a misread label, an ID
+  number to check. A box's printed words, like Arbeitsunfall or
+  Durchgangsarzt, and a doctor's field, like Proktologie, are no names,
+  while a surname that is an everyday word, like Menge, still is.
+- On a document, a number is a phone number only when it is written as one
+  (+49, groups) or says so (Tel., Fax, Mobil, over it or beside it); one
+  shaped like a number dialled at home, with nothing to say so, is still
+  covered, to check. A chat keeps bare numbers. A postcode after "D " is an
+  address, and words with a number, like "Typ 2" or "Seite 2", are no
+  street. A letter's subject right under the address is no part of it,
+  while any country under the town still is.
 - On the Mac, opening Snapfly again while it runs opens Settings, and when
   the menu bar does not show its icon, Settings opens by itself at launch
   and says where to allow it (on macOS 26, System Settings › Menu Bar), so

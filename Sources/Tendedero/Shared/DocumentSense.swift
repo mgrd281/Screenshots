@@ -41,6 +41,24 @@ enum DocumentKind: String, Sendable {
     case medical, invoice, banking, general
 }
 
+/// A paper Snapfly knows by what it prints, read once for a page: the sick
+/// note, any other statutory health insurance form by the header they all
+/// share, an invoice. Each is a kind of document too, and its name tells
+/// the owner what was read.
+enum DocumentPaper: String, CaseIterable, Sendable {
+    case sickNote, insuranceForm, invoice
+
+    var kind: DocumentKind { self == .invoice ? .invoice : .medical }
+
+    var title: String {
+        switch self {
+        case .sickNote: L("Sick note")
+        case .insuranceForm: L("Health insurance form")
+        case .invoice: L("Invoice")
+        }
+    }
+}
+
 /// Reading a document's text the way a person would: which capitalized
 /// words are a person and which a company, whose name a name is, and where
 /// a label's value stops being a name. Pure text, so all of it is checked
@@ -64,14 +82,109 @@ enum DocumentSense {
                                        "beneficiary", "payee", "überweisungsbetrag", "zahlungsempfänger",
                                        "حساب", "банк", "получатель"]
 
-    /// The kind whose words a document has most of, at least two of them.
+    /// What every statutory health insurance form prints round its boxes.
+    private static let insuranceHeader = ["krankenkasse bzw kostenträger", "name vorname des versicherten",
+                                          "kostenträgerkennung", "versicherten nr", "betriebsstätten nr", "arzt nr",
+                                          "vertragsarztstempel"]
+    /// The sick note's title, and what it prints round its boxes.
+    private static let sickNoteTitles = ["arbeitsunfähigkeitsbescheinigung", "bescheinigung über arbeitsunfähigkeit"]
+    private static let sickNoteLabels = ["arbeitsunfähig seit", "voraussichtlich arbeitsunfähig bis", "festgestellt am",
+                                         "erstbescheinigung", "folgebescheinigung", "au begründende diagnose",
+                                         "dem durchgangsarzt zugewiesen", "arbeitsunfall arbeitsunfallfolgen berufskrankheit"]
+    /// An invoice's title, as the first word of a short line, and its words.
+    private static let invoiceTitles = ["rechnung", "invoice"]
+    private static let invoiceTerms = ["rechnungsnummer", "rechnungsnr", "rechnungsdatum", "leistungsdatum", "lieferdatum",
+                                       "kundennummer", "ust idnr", "steuernummer", "zwischensumme", "gesamtbetrag",
+                                       "rechnungsbetrag", "nettobetrag", "zzgl", "mwst", "umsatzsteuer", "zahlbar",
+                                       "zahlungsziel", "invoice no", "invoice number", "invoice date", "subtotal", "vat",
+                                       "amount due", "due date", "einzelpreis"]
+
+    /// The kind of a paper Snapfly knows, else the kind whose words a
+    /// document has most of, at least two of them.
     static func kind(of lines: [String]) -> DocumentKind {
+        if let paper = paper(of: lines) { return paper.kind }
         let text = " " + lines.joined(separator: " ").lowercased() + " "
-        func score(_ words: [String]) -> Int { words.filter { text.contains($0) }.count }
+        func score(_ words: [String]) -> Int { words.filter { hasWord($0, in: text) }.count }
         let scores: [(DocumentKind, Int)] = [(.medical, score(medicalWords)), (.banking, score(bankingWords)),
                                              (.invoice, score(invoiceWords))]
         guard let best = scores.max(by: { $0.1 < $1.1 }), best.1 >= 2 else { return .general }
         return best.0
+    }
+
+    /// The paper a page is printed on, by its title and the words printed
+    /// round its boxes, as text recognition reads small print, a letter
+    /// off: a sick note, by its title and its labels, or by its labels and
+    /// the header; any other health insurance form, by the header; an
+    /// invoice, by its title and its words, or by its words alone. Each
+    /// phrase counts once, whichever line holds it. Nil for anything else,
+    /// a chat about a sick note or a bill too.
+    static func paper(of lines: [String]) -> DocumentPaper? {
+        // Each word folded once, as misreadings leave it, for the many phrases held against it.
+        let words = paperWords(lines).map { $0.map(FormFields.misreadFold) }
+        func count(_ phrases: [[[Character]]]) -> Int {
+            phrases.filter { phrase in words.contains { holds($0, phrase) } }.count
+        }
+        let header = count(foldedHeader), titles = count(foldedSickNoteTitles), labels = count(foldedSickNoteLabels)
+        if titles >= 1 && labels + header >= 2 || labels >= 3 && header >= 1 { return .sickNote }
+        if header >= 3 { return .insuranceForm }
+        let titled = words.contains { line in
+            (1...4).contains(line.count) && foldedInvoiceTitles.contains { FormFields.reads(folded: line[0], as: $0) }
+        }
+        let terms = count(foldedInvoiceTerms)
+        if titled && terms >= 2 || terms >= 4 { return .invoice }
+        return nil
+    }
+
+    /// The papers' phrases, each word folded as misreadings leave it, once.
+    private static let foldedHeader = foldedPhrases(insuranceHeader)
+    private static let foldedSickNoteTitles = foldedPhrases(sickNoteTitles)
+    private static let foldedSickNoteLabels = foldedPhrases(sickNoteLabels)
+    private static let foldedInvoiceTitles = invoiceTitles.map(FormFields.misreadFold)
+    private static let foldedInvoiceTerms = foldedPhrases(invoiceTerms)
+
+    private static func foldedPhrases(_ phrases: [String]) -> [[[Character]]] {
+        phrases.map { $0.split(separator: " ").map(FormFields.misreadFold) }
+    }
+
+    /// The words of each line, small letters and digits only, as a paper's
+    /// phrases are held against them. A word broken over two lines with a
+    /// hyphen is one word, on the first: "Arbeitsunfähigkeits-" over
+    /// "bescheinigung".
+    private static func paperWords(_ lines: [String]) -> [[String]] {
+        var all = lines.map { line in
+            String(line.lowercased().map { $0.isLetter || $0.isNumber ? $0 : " " }).split(separator: " ").map(String.init)
+        }
+        for i in lines.indices.dropLast() where lines[i].trimmingCharacters(in: .whitespaces).hasSuffix("-")
+            && !all[i].isEmpty && !all[i + 1].isEmpty {
+            all[i][all[i].count - 1] += all[i + 1].removeFirst()
+        }
+        return all
+    }
+
+    /// Whether a line's words hold a phrase's words in a row, each as a
+    /// form's label is read (`FormFields.reads`): the same once misreadings
+    /// are folded away, or a letter off in a long word.
+    private static func holds(_ words: [[Character]], _ phrase: [[Character]]) -> Bool {
+        guard !phrase.isEmpty, words.count >= phrase.count else { return false }
+        return (0...(words.count - phrase.count)).contains { start in
+            phrase.indices.allSatisfy { FormFields.reads(folded: words[start + $0], as: phrase[$0]) }
+        }
+    }
+
+    /// Whether a kind's word stands in the text as a word: whole, or, of four
+    /// letters or more, the start or the end of a compound, "Rechnungsnummer",
+    /// "Gesamtbetrag"; never inside another word, as "ust" in "Mustermann" or
+    /// "Customer". A word in a script without capitals, which Arabic writes
+    /// with its article, anywhere.
+    private static func hasWord(_ word: String, in text: String) -> Bool {
+        guard let first = word.first, first.isUppercase || first.isLowercase else { return text.contains(word) }
+        var from = text.startIndex
+        while let found = text.range(of: word, range: from..<text.endIndex) {
+            let starts = isWordStart(found.lowerBound, in: text), ends = isWordEnd(found.upperBound, in: text)
+            if starts && ends || word.count >= 4 && (starts || ends) { return true }
+            from = text.index(after: found.lowerBound)
+        }
+        return false
     }
 
     // MARK: Companies and organizations
@@ -248,6 +361,97 @@ enum DocumentSense {
     /// "-keit", "-schaft", and a finding's, "-extrusion", "-algie".
     private static let nounEndings = ["ung", "ungen", "heit", "keit", "schaft", "tion", "ität", "sion", "itis", "algie",
                                       "ektomie", "graphie", "skopie", "pathie", "therapie"]
+    /// What German health insurance and medical forms print that no one
+    /// is named, though written with a capital: what a box is ticked for,
+    /// "Arbeitsunfall, Arbeitsunfallfolgen, Berufskrankheit", "dem
+    /// Durchgangsarzt zugewiesen", "Versorgungsleiden"; whose copy it is;
+    /// where the stamp and the signature go.
+    private static let formWords: Set<String> = [
+        "arbeitsunfall", "arbeitsunfallfolgen", "unfall", "unfallfolgen", "berufskrankheit", "durchgangsarzt",
+        "durchgangsärztin", "versorgungsleiden", "rehabilitation", "wiedereingliederung", "krankengeld",
+        "krankengeldfall", "endbescheinigung", "erstbescheinigung", "folgebescheinigung", "bescheinigung",
+        "ausfertigung", "vertragsarzt", "vertragsärztin", "vertragsarztstempel", "arztstempel", "praxisstempel",
+        "unterschrift", "betriebsstätte", "betriebsstätten", "arztnummer", "versichertennummer", "arbeitgeber",
+        "arbeitnehmer", "ersatzkasse", "notfall", "heilmittel", "hilfsmittel", "zugewiesen", "sonstiger",
+        "folgen", "maßnahmen", "leistungen", "noctu", "versicherte", "versicherten", "versicherter",
+    ]
+    /// Endings of a doctor's field and of a form's words, never of a name,
+    /// after three letters at least: "Proktologie", "Psychiatrie",
+    /// "Unfallchirurgie", "Allgemeinmedizin", "Zahnheilkunde", "Orthopädie",
+    /// "Urologe", "Hausarzt", "Wegeunfall", "Spätfolgen". Alone, the words a
+    /// field is named by, "Chirurgie", "Medizin", "Heilkunde".
+    private static let fieldEndings = ["logie", "logia", "logía", "ology", "iatrie", "iatry", "iatrics", "chirurgie",
+                                       "chirurg", "chirurgin", "surgery", "medizin", "medicine", "heilkunde", "pädie",
+                                       "diagnostik", "loge", "login", "iater", "iaterin", "internist",
+                                       "internistin", "arzt", "ärztin", "unfall", "folgen"]
+    private static let fieldWords: Set<String> = ["chirurgie", "chirurg", "chirurgin", "medizin", "heilkunde",
+                                                  "internist", "internistin", "surgery", "medicine"]
+
+    /// Whether a word is one a form prints, or names a doctor's field,
+    /// so it is no one's name in any case: "Proktologie", "Arbeitsunfall-".
+    static func isFormWord(_ word: String) -> Bool {
+        let lower = word.lowercased().trimmingCharacters(in: CharacterSet(charactersIn: "-–,;:.()[]|/"))
+        guard lower.count >= 4 else { return false }
+        if formWords.contains(lower) || fieldWords.contains(lower) { return true }
+        return fieldEndings.contains { lower.hasSuffix($0) && lower.count >= $0.count + 3 }
+    }
+
+    /// Whether a word is one a document prints, never part of a name,
+    /// written in any case: a title, a word a sentence starts with, a word
+    /// that tells the document's kind, a form's word, an organization's.
+    static func isPrintedWord(_ word: String) -> Bool {
+        let lower = word.lowercased()
+        if notNames.contains(lower) || documentWords.contains(lower) || titles.contains(lower)
+            || titleParts.contains(lower) || isFormWord(lower) || isOrganizationWord(word) { return true }
+        return lower.count >= 9 && nounEndings.contains { lower.hasSuffix($0) }
+    }
+
+    /// Whether a piece of text is nothing but words a document prints, like
+    /// a letter's subject, "Bestätigung Ihrer Kündigung", or a form's label
+    /// read on its own, "Kostenträgerkennung": every word of three letters
+    /// or more is printed (`printedWords`). Such words may still be someone's
+    /// name under a name's label, as "Menge" or "Preis" are surnames; what
+    /// is no one's name even there is `isFormText`.
+    static func isPrintedText(_ text: String) -> Bool {
+        guard !text.contains(where: \.isNumber) else { return false }
+        let found = printedWords(of: text)
+        return !found.isEmpty && found.allSatisfy(isPrintedWord)
+    }
+
+    /// Whether a piece of text is what a form prints round its boxes, like a
+    /// box's caption, "☐ Arbeitsunfall, Arbeitsunfallfolgen, Berufskrankheit",
+    /// "Ausfertigung für Versicherte", or a doctor's field, "Proktologie":
+    /// a form's word at least (`isFormWord`), and besides only form's words,
+    /// long nouns no one is named, like "Bescheinigung", and the small words
+    /// between them, whatever box, line or stroke of a signature is read
+    /// beside them, like "|", "l" or "ll". So it is no one's name, not even
+    /// to check. Everyday words that are surnames too, like "Menge",
+    /// "Preis" or "Kunde", are no form's words: under a name's label they
+    /// stay a name, covered to check.
+    static func isFormText(_ text: String) -> Bool {
+        guard !text.contains(where: \.isNumber) else { return false }
+        let found = printedWords(of: text)
+        return found.contains(where: isFormWord) && found.allSatisfy { word in
+            let lower = word.lowercased()
+            return isFormWord(lower) || formLinks.contains(lower)
+                || lower.count >= 9 && nounEndings.contains { lower.hasSuffix($0) }
+        }
+    }
+
+    /// The small words between a form's printed words: "für", "dem", "bzw".
+    private static let formLinks: Set<String> = ["für", "fur", "dem", "den", "des", "der", "die", "das", "und", "bzw",
+                                                 "oder", "zur", "zum", "beim", "bei", "vom", "nach", "mit", "for", "and",
+                                                 "the"]
+
+    /// The words of a piece of text as its printed words are told: letters
+    /// only, three of them at least, so a stroke of a signature or a box's
+    /// border read beside them, "l", "ll", "Ml", "|", or "Ill", counts for
+    /// nothing.
+    private static func printedWords(of text: String) -> [String] {
+        words(of: text).map { $0.trimmingCharacters(in: CharacterSet.letters.inverted) }
+            .filter { $0.count >= 3 && !$0.allSatisfy { "lIiłŁ".contains($0) } }
+    }
+
     private static let particles: Set<String> = ["van", "von", "de", "da", "del", "der", "den", "la", "le", "bin",
                                                  "ibn", "al", "el", "di", "du", "zu", "ten", "ter", "dos", "das"]
 
@@ -259,7 +463,7 @@ enum DocumentSense {
         // A word's possessive is no more a name than the word: "Doctor's".
         let bare = ["'s", "’s"].first { core.lowercased().hasSuffix($0) }.map { String(core.lowercased().dropLast($0.count)) }
         guard let first = core.first, core.count >= 2, !notNames.contains(core.lowercased()),
-              !documentWords.contains(core.lowercased()), !isOrganizationWord(core),
+              !documentWords.contains(core.lowercased()), !isOrganizationWord(core), !isFormWord(core),
               bare.map({ !notNames.contains($0) && !documentWords.contains($0) }) ?? true else { return false }
         guard core.allSatisfy({ $0.isLetter || "'’.-".contains($0) }) else { return false }
         // A long German noun of a kind no one is named, like "Erstbescheinigung".
@@ -497,7 +701,19 @@ enum DocumentSense {
     private static let closings = ["mit freundlichen grüßen", "mit freundlichen kollegialen grüßen",
                                    "mit kollegialen grüßen", "freundliche grüße", "viele grüße", "beste grüße",
                                    "sincerely", "kind regards", "best regards", "yours faithfully", "unterschrift",
-                                   "ärztliche unterschrift", "gez.", "i.a.", "i.v.", "مع التحية", "с уважением"]
+                                   "ärztliche unterschrift", "gez.", "i.a.", "i.v.", "مع التحية", "с уважением",
+                                   "herzliche grüße", "liebe grüße", "schöne grüße", "mit besten grüßen",
+                                   "hochachtungsvoll", "warm regards", "yours sincerely", "cordialement",
+                                   "bien à vous", "atentamente", "saludos", "un saludo", "cordialmente",
+                                   "saygılarımızla", "saygılarımla", "atenciosamente", "cumprimentos",
+                                   "مع خالص التحية"]
+
+    /// Whether a line is a letter's closing, as over its signature: "Mit
+    /// freundlichen Grüßen", "Atentamente".
+    static func isClosing(_ line: String) -> Bool {
+        let lower = line.trimmingCharacters(in: CharacterSet.whitespaces.union(CharacterSet(charactersIn: ",!."))).lowercased()
+        return lower.split(separator: " ").count <= 5 && closings.contains { lower.hasPrefix($0) }
+    }
 
     /// The cue nearest the end of a piece of text, and what follows it there.
     private static func cue(in text: String) -> (cue: Cue, rest: String)? {
@@ -643,8 +859,9 @@ enum DocumentSense {
         return lower.hasPrefix("*") || birthCues.contains { lower.hasPrefix($0) }
     }
 
-    /// Whether text starts with a date, as a date of birth after a name does.
-    private static func startsWithDate(_ text: String) -> Bool {
+    /// Whether text starts with a date, as a date of birth after a name does,
+    /// its year in two digits or four: "14.03.1987", "14.03.87".
+    static func startsWithDate(_ text: String) -> Bool {
         text.trimmingCharacters(in: CharacterSet(charactersIn: " ,;(*"))
             .range(of: #"^\d{1,2}[./]\d{1,2}[./]\d{2,4}"#, options: .regularExpression) != nil
     }
@@ -732,6 +949,47 @@ enum DocumentSense {
               !isOrganization(String(line[range])) else { return nil }
         return range
     }
+
+    /// Words a form or a page prints over a person's name or an address,
+    /// never part of a name: "Name", "Kontakt", "Impressum".
+    private static let nameLabels: Set<String> = Set(["name", "vorname", "nachname", "familienname", "geburtsname",
+                                                  "anschrift", "adresse", "wohnort", "kontakt", "impressum",
+                                                  "standort", "hauptsitz", "postanschrift", "anfahrt", "contact",
+                                                  "location", "headquarters", "persönlich", "vertraulich", "privat",
+                                                  "einschreiben", "eilt", "dringend", "personal", "confidential",
+                                                  "private", "urgent"].map(fold))
+
+    /// The name a line of a postal block holds: one to four name words at
+    /// its start, as a form prints a surname and a given name on lines of
+    /// their own, "Beispielyan", maybe with the date of birth beside it or its
+    /// label read on its row, "Nare 14.03.1987", "Beispielyan geb. am".
+    /// Nil for a line that starts with a title, which `titledNames` reads,
+    /// a company, a label, or more than a date of birth after the name.
+    static func namePart(of line: String) -> Range<String.Index>? {
+        // The lines of a form's box, read as a letter beside the name or stuck
+        // to it: "| Beispielyan", "|Beispielyan", "Nare 14.03.1987|".
+        let inner = FormFields.unframed(line.startIndex..<line.endIndex, in: line)
+        let all = tokens(in: line, within: inner)
+        let start = all.firstIndex { !boxLines.contains(String(line[$0])) } ?? all.count
+        guard start < all.count, !line.trimmingCharacters(in: .whitespaces).hasSuffix(":"),
+              !isTitle(String(line[all[start]])),
+              !nameLabels.contains(fold(String(line[all[start]]).trimmingCharacters(in: CharacterSet(charactersIn: ",")))),
+              // A surname may start with its particle: "von Beispiel".
+              let run = nameRun(in: line, tokens: all, from: particles.contains(String(line[all[start]])) ? start + 1 : start,
+                                minWords: 1),
+              !isOrganization(String(line[run])) else { return nil }
+        let range = all[start].lowerBound..<run.upperBound
+        guard line[range].split(separator: " ").count <= 4 else { return nil }
+        let rest = line[range.upperBound..<inner.upperBound].split(separator: " ").filter { !boxLines.contains(String($0)) }
+            .joined(separator: " ").trimmingCharacters(in: CharacterSet(charactersIn: " ,;"))
+        guard rest.isEmpty || startsWithBirth(rest)
+                || rest.range(of: #"^\d{1,2}[./]\d{1,2}[./]\d{2,4}$"#, options: .regularExpression) != nil else { return nil }
+        return range
+    }
+
+    /// What text recognition makes of the lines of a form's box beside a
+    /// value: "|", "ł", a lone "I" or "l".
+    static let boxLines: Set<String> = ["|", "||", "¦", "ł", "Ł", "[", "]", "I", "l"]
 
     /// A short line that only announces what follows, like "Patient:".
     private static func isLabelLine(_ line: String) -> Bool {

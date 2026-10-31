@@ -1835,6 +1835,9 @@
 "Letter" = "Məktub";
 "Form" = "Forma";
 "Receipt" = "Qəbz";
+"Sick note" = "Xəstəlik vərəqəsi";
+"Health insurance form" = "Tibbi sığorta forması";
+"%@ recognized" = "%@ tanındı";
 "Scan %@" = "Skan %@";
 "Explain the Document" = "Sənədi izah et";
 "Summarize" = "Xülasə et";

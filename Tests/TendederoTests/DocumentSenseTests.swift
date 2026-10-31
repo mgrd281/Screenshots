@@ -37,6 +37,51 @@ final class DocumentSenseTests: XCTestCase {
         XCTAssertEqual(DocumentSense.kind(of: ["Hi Lena", "See you tomorrow"]), .general)
     }
 
+    func testASickNoteIsKnownByItsTitleAndLabelsThoughReadPoorly() {
+        // The insured person's copy as tiny print is read: labels a letter
+        // off, its title broken over two lines.
+        let scanned = ["Krankenkasse bzw. Kostentrâger", "Arbeitsunfähigkeits-", "bescheinigung",
+                       "Name, Vomame des Versicherlen", "Kostentrâgerkennung | Versicherlen-Nr. | Status",
+                       "Betriebsstätlen-Nr. | Arzt-Nr. | Datum", "Erstbescheinigung", "arbeitsunfähig seit",
+                       "festgestellt am"]
+        XCTAssertEqual(DocumentSense.paper(of: scanned), .sickNote)
+        XCTAssertEqual(DocumentSense.kind(of: scanned), .medical)
+        // The employer's copy prints no header: its title and its labels.
+        XCTAssertEqual(DocumentSense.paper(of: ["Arbeitsunfähigkeitsbescheinigung", "Ausfertigung zur Vorlage beim Arbeitgeber",
+                                                "Erstbescheinigung", "arbeitsunfähig seit", "festgestellt am"]), .sickNote)
+        XCTAssertEqual(DocumentSense.paper(of: FormFieldsTests.insuredCopy.map(\.text)), .sickNote)
+        // Another form of the health insurance, by the header they all share.
+        XCTAssertEqual(DocumentSense.paper(of: ["Überweisungsschein", "Krankenkasse bzw. Kostenträger",
+                                                "Name, Vorname des Versicherten", "Kostenträgerkennung Versicherten-Nr. Status",
+                                                "Betriebsstätten-Nr. Arzt-Nr. Datum"]), .insuranceForm)
+        // A chat about a sick note or a bill is no paper, nor is a doctor's letter.
+        XCTAssertNil(DocumentSense.paper(of: ["Lena: Ich bin seit Montag arbeitsunfähig", "Ich: Gute Besserung!",
+                                              "Lena: Die AU schick ich dem Chef"]))
+        XCTAssertNil(DocumentSense.paper(of: ["Lena: Hast du die Rechnung schon bezahlt?", "Ich: Ja, gestern"]))
+        XCTAssertNil(DocumentSense.paper(of: report))
+        XCTAssertEqual(DocumentSense.kind(of: report), .medical)
+    }
+
+    func testAnInvoiceIsKnownByItsOwnWords() {
+        XCTAssertEqual(DocumentSense.paper(of: ["Nordlicht Versand GmbH · Hafenstraße 3 · 20095 Hamburg", "Lena Weber",
+                                                "Birkenweg 4", "12345 Musterstadt", "Rechnung", "Rechnungsnr.: RE-2026-1024",
+                                                "Rechnungsdatum: 28.09.2026", "Kundennummer: 40711", "Zwischensumme 39,80 €",
+                                                "zzgl. 19 % MwSt. 7,56 €", "Gesamtbetrag 47,36 €"]), .invoice)
+        XCTAssertEqual(DocumentSense.paper(of: ["INVOICE", "Invoice No. 2026-88", "Bill to", "Lena Weber", "Subtotal $40.00",
+                                                "Amount due $48.00"]), .invoice)
+        XCTAssertNil(DocumentSense.paper(of: ["Bitte bezahl die Rechnung bis Freitag", "Danke!"]))
+    }
+
+    func testAKindsWordIsAWholeWordNotPartOfAName() {
+        // "ust" in "Mustermann", "August" or "Musterstadt" is no tax.
+        XCTAssertEqual(DocumentSense.kind(of: ["Erika Mustermann", "Hast du das Brutto gesehen?"]), .general)
+        XCTAssertEqual(DocumentSense.kind(of: ["Hallo Lena", "Im August fahren wir nach Musterstadt", "Der Kunde war nett"]),
+                       .general)
+        // A compound starts or ends with a kind's word.
+        XCTAssertEqual(DocumentSense.kind(of: ["Gesamtbetrag 20 €", "zzgl. MwSt.", "Summe netto 16,81 €"]), .invoice)
+        XCTAssertEqual(DocumentSense.kind(of: ["Arztpraxis Dr. Beispiel", "Diagnose: Gastritis"]), .medical)
+    }
+
     func testAFormsNounsAreNoNames() {
         for text in ["Erstbescheinigung Folgebescheinigung", "Arbeitsunfähigkeit Bescheinigung", "Krankenversicherung Nord",
                      "Wiedereingliederung Empfehlung"] {
@@ -45,6 +90,68 @@ final class DocumentSenseTests: XCTestCase {
         // Short names with those endings stay names.
         XCTAssertEqual(DocumentSense.nameWords("Lena Jung"), ["lena", "jung"])
         XCTAssertEqual(DocumentSense.nameWords("Max Hornung"), ["max", "hornung"])
+    }
+
+    func testAFormsPrintedWordsAndADoctorsFieldAreNoNames() {
+        for word in ["Proktologie", "Arbeitsunfall-", "Psychiatrie", "Unfallchirurgie", "Allgemeinmedizin", "Zahnheilkunde",
+                     "Orthopädie", "Urologe", "Durchgangsarzt", "Wegeunfall", "Medizin", "Proctology", "Gastroenterologie",
+                     "Hals-Nasen-Ohrenheilkunde"] {
+            XCTAssertFalse(DocumentSense.isNameWord(word), word)
+        }
+        for text in ["Arbeitsunfall, Arbeitsunfallfolgen", "Proktologie Phlebologie", "Innere Medizin", "Unfall, Unfallfolgen",
+                     "Arbeitsunfall, Arbeitsunfall-", "Proktologie Ik"] {
+            XCTAssertNil(DocumentSense.nameWords(text), text)
+        }
+        // Names that share a field's ending or a form's letters stay names.
+        XCTAssertEqual(DocumentSense.nameWords("John Logie Baird"), ["john", "logie", "baird"])
+        XCTAssertEqual(DocumentSense.nameWords("Rosalie Folger"), ["rosalie", "folger"])
+        XCTAssertEqual(DocumentSense.nameWords("Lena Schwarz"), ["lena", "schwarz"])
+        XCTAssertEqual(DocumentSense.nameWords("Leo Fall"), ["leo", "fall"])
+        XCTAssertEqual(DocumentSense.nameWords("Natalie Stempel"), ["natalie", "stempel"])
+        XCTAssertEqual(DocumentSense.nameWords("Max Hornung"), ["max", "hornung"])
+        XCTAssertEqual(DocumentSense.nameWords("Lena Logemann"), ["lena", "logemann"])
+    }
+
+    func testABoxsCaptionIsPrintedTextWhateverIsReadBesideIt() {
+        for text in ["☐ Arbeitsunfall, Arbeitsunfallfolgen, Berufskrankheit", "dem Durchgangsarzt zugewiesen",
+                     "Ausfertigung für Versicherte", "Proktologie l", "Proktologie ll", "Proktologie Ml", "|Proktologie",
+                     "Fachärztin für Chirurgie /"] {
+            XCTAssertTrue(DocumentSense.isFormText(text), text)
+            XCTAssertTrue(DocumentSense.isPrintedText(text), text)
+        }
+        for text in ["mustermann erika", "Erika Musterfrau", "Beispielyan", "Dr. med. Hanna Beispiel", "Sonnenhang 9",
+                     "Lena Jung", "Wu"] {
+            XCTAssertFalse(DocumentSense.isFormText(text), text)
+            XCTAssertFalse(DocumentSense.isPrintedText(text), text)
+        }
+        // Words a page prints that are surnames too are no form's words: under a
+        // name's label they stay a name. A letter's subject and a label read on
+        // its own are printed, and so no country under a town.
+        for text in ["Menge", "Preis", "Lieber", "Kunde", "Bestätigung Ihrer Kündigung", "Kostenträgerkennung"] {
+            XCTAssertFalse(DocumentSense.isFormText(text), text)
+            XCTAssertTrue(DocumentSense.isPrintedText(text), text)
+        }
+    }
+
+    func testAPostalBlocksNameLine() {
+        func name(_ line: String) -> String? { DocumentSense.namePart(of: line).map { String(line[$0]) } }
+        // A form prints the surname and the given name on lines of their own,
+        // a box's border or its label read beside them.
+        XCTAssertEqual(name("Beispielyan"), "Beispielyan")
+        XCTAssertEqual(name("Beispielyan geb. am"), "Beispielyan")
+        XCTAssertEqual(name("| Beispielyan"), "Beispielyan")
+        XCTAssertEqual(name("Nare 14.03.1987"), "Nare")
+        XCTAssertEqual(name("von Beispiel"), "von Beispiel")
+        XCTAssertEqual(name("Hans Peter"), "Hans Peter")
+        for line in ["Name, Vomame", "Name, Vomame des Versicherlen", "Muster BKK", "Dr. med. Hanna Beispiel", "Herrn",
+                     "Kostenträgerkennung:", "Impressum", "Persönlich", "021234560", "Lindenallee 12",
+                     "Stadtwerke Musterstadt GmbH", "Proktologie", "Erika Muster · Kirchweg 2 · 12345 Musterstadt"] {
+            XCTAssertNil(name(line), line)
+        }
+        XCTAssertTrue(DocumentSense.isClosing("Atentamente"))
+        XCTAssertTrue(DocumentSense.isClosing("Liebe Grüße,"))
+        XCTAssertTrue(DocumentSense.isClosing("Mit freundlichen Grüßen"))
+        XCTAssertFalse(DocumentSense.isClosing("Liebe Grüße an Lena und Jonas aus dem Urlaub"), "a sentence, not a closing")
     }
 
     func testCompaniesAreNotPeople() {

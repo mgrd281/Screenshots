@@ -1835,6 +1835,9 @@
 "Letter" = "पत्र";
 "Form" = "फ़ॉर्म";
 "Receipt" = "रसीद";
+"Sick note" = "बीमारी प्रमाणपत्र";
+"Health insurance form" = "स्वास्थ्य बीमा फ़ॉर्म";
+"%@ recognized" = "पहचाना गया दस्तावेज़: %@";
 "Scan %@" = "स्कैन %@";
 "Explain the Document" = "दस्तावेज़ समझाएँ";
 "Summarize" = "सारांश दें";

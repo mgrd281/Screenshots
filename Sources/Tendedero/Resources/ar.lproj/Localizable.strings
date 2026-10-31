@@ -1833,6 +1833,9 @@
 "Letter" = "رسالة";
 "Form" = "استمارة";
 "Receipt" = "إيصال";
+"Sick note" = "شهادة مرضية";
+"Health insurance form" = "استمارة التأمين الصحي";
+"%@ recognized" = "تم التعرّف على %@";
 "Scan %@" = "مسح %@";
 "Explain the Document" = "اشرح المستند";
 "Summarize" = "لخّص";

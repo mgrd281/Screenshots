@@ -1833,6 +1833,9 @@
 "Letter" = "Brief";
 "Form" = "Formular";
 "Receipt" = "Beleg";
+"Sick note" = "Arbeitsunfähigkeitsbescheinigung";
+"Health insurance form" = "Formular der Krankenkasse";
+"%@ recognized" = "%@ erkannt";
 "Scan %@" = "Scan %@";
 "Explain the Document" = "Dokument erklären";
 "Summarize" = "Zusammenfassen";

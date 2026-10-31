@@ -1833,6 +1833,9 @@
 "Letter" = "Carta";
 "Form" = "Formulário";
 "Receipt" = "Recibo";
+"Sick note" = "Atestado médico";
+"Health insurance form" = "Formulário do plano de saúde";
+"%@ recognized" = "Documento reconhecido: %@";
 "Scan %@" = "Escaneamento %@";
 "Explain the Document" = "Explicar o documento";
 "Summarize" = "Resumir";

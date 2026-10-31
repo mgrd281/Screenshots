@@ -630,14 +630,7 @@ struct ReviewSheet: View {
     }
 
     static func name(of topic: ProtectionPlan.Topic) -> String {
-        switch topic {
-        case .patient: L("Patient")
-        case .doctors: L("Doctors")
-        case .otherPeople: L("Other people")
-        case .group(let group): group.title
-        case .hand: L("Hidden by hand")
-        case .rules: L("Your details and rules")
-        }
+        topic.title
     }
 
     static func symbol(of topic: ProtectionPlan.Topic) -> String {
