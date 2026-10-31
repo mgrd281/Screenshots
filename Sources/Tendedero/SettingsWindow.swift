@@ -1327,12 +1327,14 @@ private struct LinePane: View {
                 }
             }
             // The row of chats under each photo: which show, and where they open.
-            Section(L("Icons under photos")) {
+            Section {
                 ChatOrderRow(prefs: prefs)
                 ForEach(prefs.chatOrder) { chat in
                     ChatRow(chat: chat, prefs: prefs)
                 }
                 ChatBrowserRow(prefs: prefs)
+            } header: {
+                SettingText(.iconsUnderPhotos, L("Icons under photos"))
             }
             Section(L("Screenshots to an AI chat")) {
                 Picker(selection: $prefs.captureChat) {
@@ -1586,7 +1588,7 @@ private struct ChatAppsSection: View {
             }
             SettingsButton(L("Add App…")) { prefs.addChatApp() }
         } header: {
-            Text(L("Chat apps"))
+            SettingText(.chatApps, L("Chat apps"))
         } footer: {
             Text(L("It shows over these apps while photos hang."))
                 .foregroundStyle(.secondary)
@@ -1630,7 +1632,7 @@ private struct ChatSitesSection: View {
                     .foregroundStyle(.secondary)
             }
         } header: {
-            Text(L("Chat websites"))
+            SettingText(.chatWebsites, L("Chat websites"))
         } footer: {
             Text(L("In Safari, Chrome and other browsers, it shows only on these websites. macOS asks once whether Snapfly may see which page is open."))
                 .foregroundStyle(.secondary)
@@ -1856,7 +1858,7 @@ private struct PrivacyPane: View {
                 }
                 .controlSize(.small)
             } header: {
-                Text(L("Hide private details"))
+                SettingText(.hidePrivateDetails, L("Hide private details"))
             } footer: {
                 Text(L("What is checked is covered in whatever leaves the line"))
                     .foregroundStyle(.secondary)

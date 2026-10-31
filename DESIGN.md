@@ -2113,8 +2113,9 @@ it does in a short wordless film (`SettingFilm`, drawn by
   6 (the keycap radius), the setting's SF Symbol at 11 pt semibold knocked
   out of it (`InkTile.fill` and `InkTile.glyph`, as the sidebar's). It
   grows to 1.08 under the pointer on `Motion.spring` (0.3, 0.8). A row
-  with no label of its own (the line styles, cover looks, assistants and
-  the sample test) carries it in its section's header.
+  with no label of its own (the line styles, the icons under photos, the
+  chat apps and websites, Check All and its neighbours, the cover looks,
+  the assistants and the sample test) carries it in its section's header.
 - **Popover.** After the pointer rests 0.35 s on the tile, or at a click
   on it, a popover beside it, on its trailing side: the film at 240 × 150
   (16:10), rounded 10 with a 1 pt hairline of `.primary` at 12%, and the
@@ -2134,9 +2135,14 @@ it does in a short wordless film (`SettingFilm`, drawn by
   switches show their page hanging from a bare rope, the kind's badge
   beside it and covers growing over that kind's lines; the capture rows a
   page under the line; the send button's rows a chat window.
-- **Accessibility.** The tile is a button named "How (setting) works";
-  VoiceOver reads the name in the popover and skips the film. With Reduce
-  Motion the film shows its last moment, still.
+- **States.** The tile sits beside the name's first line. It stays live
+  in a row that is off, since that is where the film helps most. A click
+  only opens the film; leaving the tile, Escape or a click elsewhere
+  closes it.
+- **Accessibility.** The film adds nothing to hear, so VoiceOver skips the
+  tile and reads the row's name and description as before, and the tile
+  is no stop for the keyboard. With Reduce Motion the film shows its last
+  moment, still.
 
 ### Time stamp
 

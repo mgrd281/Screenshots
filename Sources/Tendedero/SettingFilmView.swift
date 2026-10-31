@@ -21,8 +21,14 @@ struct SettingText: View {
     }
 
     var body: some View {
-        HStack(alignment: .center, spacing: 10) {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            // Beside the name's first line, whatever the description's length.
+            // The film adds nothing to hear, so VoiceOver reads the row as it
+            // was, and the tile is no stop for the keyboard.
             FilmTile(id: id, title: title)
+                .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + 4.5 }
+                .accessibilityHidden(true)
+                .focusable(false)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                 if let subtitle {
@@ -32,6 +38,7 @@ struct SettingText: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
+            .accessibilityElement(children: .combine)
         }
     }
 }
@@ -81,9 +88,11 @@ struct FilmTile: View {
 
     var body: some View {
         let film = SettingFilms.film(id)
+        // A click only opens it: leaving the tile, Escape or a click
+        // elsewhere closes it.
         Button {
             waiting?.cancel()
-            shown.toggle()
+            shown = true
         } label: {
             Image(systemName: film.symbol)
                 .font(.system(size: 11, weight: .semibold))
@@ -94,6 +103,8 @@ struct FilmTile: View {
                 .animation(Motion.spring(response: 0.3, damping: 0.8, reduced: Motion.reduced), value: hovering)
         }
         .buttonStyle(.plain)
+        // A row that is off still shows what it would do.
+        .environment(\.isEnabled, true)
         .onHover { inside in
             hovering = inside
             waiting?.cancel()
