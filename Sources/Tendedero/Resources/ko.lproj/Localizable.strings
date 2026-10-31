@@ -2032,3 +2032,4 @@
 "At once: the chat in front, else a new chat" = "바로: 앞에 있는 채팅, 없으면 새 채팅";
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "원하는 만큼 찍으세요. 줄에서 기다렸다가 채팅으로 가면 열려 있는 대화에 함께, 이미 쓴 글 옆에 들어갑니다. '바로'는 찍을 때마다 채팅을 엽니다.";
 "It goes into %@ as soon as you open it." = "%@을(를) 열면 바로 들어갑니다.";
+"How %@ works" = "%@ 작동 방식";

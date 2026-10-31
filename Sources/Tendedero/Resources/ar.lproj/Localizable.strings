@@ -2032,3 +2032,4 @@
 "At once: the chat in front, else a new chat" = "فورًا: الدردشة المفتوحة أمامك، وإلا دردشة جديدة";
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "التقط ما شئت: تنتظر اللقطات على الخط وتدخل معًا إلى المحادثة المفتوحة عندما تذهب إلى الدردشة، بجانب ما كتبته هناك. «فورًا» يفتح الدردشة بعد كل لقطة.";
 "It goes into %@ as soon as you open it." = "تدخل إلى %@ فور أن تفتحه.";
+"How %@ works" = "كيف يعمل %@";

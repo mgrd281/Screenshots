@@ -27,7 +27,7 @@ struct AIAssistantPane: View {
 
     var body: some View {
         Form {
-            Section(L("Assistant")) {
+            Section {
                 HStack(spacing: 12) {
                     ForEach(AIProvider.allCases) { choice in
                         AIProviderTile(provider: choice, chosen: choice == provider,
@@ -39,6 +39,8 @@ struct AIAssistantPane: View {
                 .padding(.vertical, 4)
                 .accessibilityElement(children: .contain)
                 .accessibilityLabel(L("Assistant"))
+            } header: {
+                SettingText(.assistant, L("Assistant"))
             }
             Section(L("Connection")) {
                 if kept != nil || keychainFailed { statusRow }
@@ -46,12 +48,14 @@ struct AIAssistantPane: View {
                 keyRow
             }
             Section {
-                Picker(L("Model"), selection: modelChoice) {
+                Picker(selection: modelChoice) {
                     ForEach(models) { choice in
                         Text(verbatim: choice.name).tag(choice.id)
                     }
                     Divider()
                     Text(L("Other…")).tag(Self.otherTag)
+                } label: {
+                    SettingText(.assistantModel, L("Model"))
                 }
                 if showsModelField {
                     TextField(L("Model ID"), text: $model, prompt: Text(verbatim: provider.defaultModel))
@@ -64,17 +68,17 @@ struct AIAssistantPane: View {
                     .foregroundStyle(.secondary)
             }
             Section {
-                use(L("Write a Reply"), symbol: "arrowshape.turn.up.left",
-                    L("Writes the reply to send, from a conversation, an order or a review."))
-                use(String(format: L("Explain with %@"), provider.name), symbol: "bubble.left.and.text.bubble.right",
-                    L("Says what a screenshot shows and what matters in it, or answers your question about it."))
-                use(L("Order Details"), symbol: "list.bullet.rectangle",
-                    L("Reads an order’s number, date, total, product and tracking."))
+                SettingText(.writeAReply, L("Write a Reply"),
+                            L("Writes the reply to send, from a conversation, an order or a review."))
+                SettingText(.explainWith, String(format: L("Explain with %@"), provider.name),
+                            L("Says what a screenshot shows and what matters in it, or answers your question about it."))
+                SettingText(.orderDetails, L("Order Details"),
+                            L("Reads an order’s number, date, total, product and tracking."))
                 Toggle(isOn: $prefs.assistantFindsPrivate) {
-                    Text(String(format: L("Find more with %@"), provider.name))
-                    Text(prefs.aiSetUp
-                         ? L("Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer.")
-                         : L("Needs an AI assistant key; add one under AI Assistant."))
+                    SettingText(.findMoreWithModel, String(format: L("Find more with %@"), provider.name),
+                                prefs.aiSetUp
+                                    ? L("Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer.")
+                                    : L("Needs an AI assistant key; add one under AI Assistant."))
                 }
                 .disabled(!prefs.aiSetUp)
             } header: {
@@ -232,25 +236,6 @@ struct AIAssistantPane: View {
             other = false
             model = id == provider.defaultModel ? "" : id
         }
-    }
-
-    // MARK: What it does
-
-    private func use(_ title: String, symbol: String, _ text: String) -> some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: symbol)
-                .font(.system(size: 13))
-                .foregroundStyle(.secondary)
-                .frame(width: 20, height: 16)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                Text(text)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .accessibilityElement(children: .combine)
     }
 
     // MARK: Keeping the key

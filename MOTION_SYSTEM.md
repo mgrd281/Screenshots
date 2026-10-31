@@ -106,6 +106,24 @@ It is the video's own motion, so it plays the same for every viewer.
 The video is sixty frames a second, so the camera moves smoothly over a
 screen that only sent a picture when something changed.
 
+### Setting films (Mac)
+
+The short films Settings shows from a row's tile (`SettingFilm`,
+`SettingFilmView`). Each is a list of moments per part, so its timing is
+its own, checked by `SettingFilmTests`.
+
+| Token | Value | Where it ships |
+|---|---|---|
+| `film.wait` | 0.35 s | The pointer resting on a tile before its film shows |
+| `film.ease` | cubic ease-in-out | Every part between two of its moments |
+| `film.fade` | 0.2 s | A part coming or going |
+| `film.length` | 2–3.5 s, once | A film from the start each time it shows, then resting on its last moment |
+| `film.ring` | 0.45 s | A click's ring spreading and fading, as Studio's does |
+| `film.tile` | `Motion.spring` 0.3 / 0.8, to 1.08 | The tile under the pointer |
+
+With Reduce Motion a film shows its last moment, still, and the tile does
+not grow.
+
 ### Named motion on the iPhone
 
 `SnapflyMotion` in `iOS/Snapfly/Motion.swift`: each is a SwiftUI animation

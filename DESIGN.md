@@ -2099,10 +2099,44 @@ apps.
 
 ### Forms and lists
 - Grouped `Form` sections.
-- A toggle label plus a secondary description line, as in the `Toggle` init
-  with two `Text`s.
+- A setting's label is a `SettingText`: its film tile, then its name and,
+  under it, a secondary description line (`.subheadline`, secondary).
 - Pickers: segmented for 2–3 choices, menu for more, and a visual tile picker
   where the choice is visual (line style).
+
+### Setting films
+Every row in Settings that turns on, chooses or does something shows what
+it does in a short wordless film (`SettingFilm`, drawn by
+`SettingFilmView`).
+
+- **Tile.** Before the row's name, 10 pt from it: a 22 pt ink tile, rounded
+  6 (the keycap radius), the setting's SF Symbol at 11 pt semibold knocked
+  out of it (`InkTile.fill` and `InkTile.glyph`, as the sidebar's). It
+  grows to 1.08 under the pointer on `Motion.spring` (0.3, 0.8). A row
+  with no label of its own (the line styles, cover looks, assistants and
+  the sample test) carries it in its section's header.
+- **Popover.** After the pointer rests 0.35 s on the tile, or at a click
+  on it, a popover beside it, on its trailing side: the film at 240 × 150
+  (16:10), rounded 10 with a 1 pt hairline of `.primary` at 12%, and the
+  setting's name under it in 11 pt semibold; 12 pt padding. It closes as
+  the pointer leaves the tile.
+- **Grammar.** The scene as it is, the pointer or a key doing what you
+  would do, then what Snapfly does, held still at the end. 2 to 3.5 s,
+  played once from the start each time it shows.
+- **Drawing.** Small and plain, in fixed colours, as the line styles'
+  tiles draw them: the wallpaper's gradient, the menu bar, white cards with
+  a green, purple or orange bar, cover ink for covers and for a symbol's
+  round badge (its glyph in white), the system blue for the outline,
+  selection and click rings. A cover lies exactly on a drawn line of text
+  (`FilmScene.cover`). No words, so a film needs no translating: only key
+  glyphs and the stamp's 09:41.
+- **Families.** Related rows share one composition: the private-detail
+  switches show their page hanging from a bare rope, the kind's badge
+  beside it and covers growing over that kind's lines; the capture rows a
+  page under the line; the send button's rows a chat window.
+- **Accessibility.** The tile is a button named "How (setting) works";
+  VoiceOver reads the name in the popover and skips the film. With Reduce
+  Motion the film shows its last moment, still.
 
 ### Time stamp
 

@@ -2032,3 +2032,4 @@
 "At once: the chat in front, else a new chat" = "すぐに：前面のチャット、なければ新しいチャット";
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "好きなだけ撮れます。ラインで待ち、チャットに移ると開いている会話にまとめて、入力済みの文の横に入ります。「すぐに」は1枚ごとにチャットを開きます。";
 "It goes into %@ as soon as you open it." = "%@を開くとすぐに入ります。";
+"How %@ works" = "「%@」のしくみ";

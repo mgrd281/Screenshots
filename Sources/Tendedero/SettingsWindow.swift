@@ -1115,41 +1115,41 @@ private struct GeneralPane: View {
                     LabeledContent {
                         SettingsButton(L("Try It Now")) { prefs.tryCapture() }
                     } label: {
-                        Text(L("Take screenshots with Snapfly"))
-                        Text(String(format: L("Press %@ or click the screenshot button. Nothing to set up."),
-                                    prefs.shortcut(.capture)))
+                        SettingText(.takeScreenshotsWithSnapfly, L("Take screenshots with Snapfly"),
+                                    String(format: L("Press %@ or click the screenshot button. Nothing to set up."), prefs.shortcut(.capture)))
                     }
                     // The sandbox keeps Snapfly out of the screenshot
                     // settings, so this shows where to change them.
                     LabeledContent {
                         SettingsButton(L("Set Up…")) { prefs.setUpScreenshots() }
                     } label: {
-                        Text(L("Also from the Screenshot app"))
-                        Text(L("Screenshots saved to Pictures › Snapfly hang on the line"))
+                        SettingText(.alsoFromTheScreenshotApp, L("Also from the Screenshot app"),
+                                    L("Screenshots saved to Pictures › Snapfly hang on the line"))
                     }
                 } else {
                     Toggle(isOn: $prefs.handlesScreenshots) {
-                        Text(L("Handle screenshots"))
-                        Text(L("Screenshots hang instantly and skip the Desktop"))
+                        SettingText(.handlesScreenshots, L("Handle screenshots"),
+                                    L("Screenshots hang instantly and skip the Desktop"))
                     }
                 }
                 Toggle(isOn: $prefs.hangsCopiedImages) {
-                    Text(L("Hang copied images"))
-                    Text(L("Images you copy hang on the line too"))
+                    SettingText(.hangsCopiedImages, L("Hang copied images"), L("Images you copy hang on the line too"))
                 }
                 Toggle(isOn: $prefs.smartSelection) {
-                    Text(L("Smart selection"))
-                    Text(L("Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely."))
+                    SettingText(.smartSelection, L("Smart selection"),
+                                L("Outlines the picture or part under the pointer, keeps a drag to its edges and trims empty space. Hold ⌘ to drag freely."))
                 }
             }
             Section {
                 Toggle(isOn: $prefs.stampsTime) {
-                    Text(L("Stamp the date and time"))
-                    Text(L("At the top, on the line and in a copy next to the screenshot"))
+                    SettingText(.stampsTime, L("Stamp the date and time"),
+                                L("At the top, on the line and in a copy next to the screenshot"))
                 }
-                Picker(L("Which screenshots"), selection: $prefs.stampScope) {
+                Picker(selection: $prefs.stampScope) {
                     Text(L("Screenshots of the whole screen")).tag(TimeStamp.Scope.wholeScreen)
                     Text(L("Every screenshot")).tag(TimeStamp.Scope.all)
+                } label: {
+                    SettingText(.whichScreenshots, L("Which screenshots"))
                 }
                 .disabled(!prefs.stampsTime)
                 TextField(L("Words before the date"), text: $prefs.stampText,
@@ -1165,13 +1165,17 @@ private struct GeneralPane: View {
                 .foregroundStyle(.secondary)
             }
             Section {
-                Picker(L("Sound"), selection: $prefs.recordingSound) {
+                Picker(selection: $prefs.recordingSound) {
                     ForEach(RecordingSound.allCases, id: \.self) { sound in
                         Text(sound.title).tag(sound)
                             .disabled(sound.hasVoice && !RecordingSound.microphoneAvailable)
                     }
+                } label: {
+                    SettingText(.sound, L("Sound"))
                 }
-                Toggle(L("Open Studio after recording"), isOn: $prefs.opensStudio)
+                Toggle(isOn: $prefs.opensStudio) {
+                    SettingText(.openStudioAfterRecording, L("Open Studio after recording"))
+                }
             } header: {
                 Text(L("Screen recordings"))
             } footer: {
@@ -1184,8 +1188,12 @@ private struct GeneralPane: View {
                 .foregroundStyle(.secondary)
             }
             Section {
-                Toggle(L("Sounds"), isOn: $prefs.sounds)
-                Toggle(L("Open at login"), isOn: $prefs.opensAtLogin)
+                Toggle(isOn: $prefs.sounds) {
+                    SettingText(.sounds, L("Sounds"))
+                }
+                Toggle(isOn: $prefs.opensAtLogin) {
+                    SettingText(.openAtLogin, L("Open at login"))
+                }
             }
             Section(L("Also watch folders")) {
                 ForEach(prefs.folders, id: \.self) { folder in
@@ -1204,18 +1212,16 @@ private struct GeneralPane: View {
                     SettingsButton(L("Add Folder…")) { prefs.addFolder() }
                         .disabled(prefs.folders.count >= AppDelegate.maxExtraFolders)
                 } label: {
-                    Text(L("Watch another folder"))
-                    Text(L("Pictures saved into it hang on the line too"))
+                    SettingText(.watchAnotherFolder, L("Watch another folder"),
+                                L("Pictures saved into it hang on the line too"))
                 }
             }
             Section {
                 LabeledContent {
                     SettingsButton(L("Show in Finder")) { prefs.openScreenshotsFolder() }
                 } label: {
-                    Text(L("Screenshots folder"))
-                    if let folder = prefs.screenshotsFolder {
-                        Text(Folders.placeName(folder))
-                    }
+                    SettingText(.screenshotsFolder, L("Screenshots folder"),
+                                prefs.screenshotsFolder.map(Folders.placeName))
                 }
             }
         }
@@ -1252,42 +1258,54 @@ private struct LinePane: View {
 
     var body: some View {
         Form {
-            Section(L("Line style")) {
+            Section {
                 StylePicker(selection: $prefs.style)
+            } header: {
+                SettingText(.lineStyle, L("Line style"))
             }
             Section(L("Bring the line down")) {
-                Toggle(L("When the pointer rests in the menu bar"), isOn: $prefs.opensFromMenuBar)
-                Toggle(L("When something new hangs"), isOn: $prefs.peeksAtNew)
-                Toggle(L("Over full screen apps"), isOn: $prefs.overFullScreen)
+                Toggle(isOn: $prefs.opensFromMenuBar) {
+                    SettingText(.whenThePointerRestsInTheMenuBar, L("When the pointer rests in the menu bar"))
+                }
+                Toggle(isOn: $prefs.peeksAtNew) {
+                    SettingText(.whenSomethingNewHangs, L("When something new hangs"))
+                }
+                Toggle(isOn: $prefs.overFullScreen) {
+                    SettingText(.overFullScreenApps, L("Over full screen apps"))
+                }
                 Toggle(isOn: $prefs.keepsAwayDuringCalls) {
-                    Text(L("Not during a call"))
-                    Text(L("While the microphone is in use, in Zoom, Teams, FaceTime or a call in the browser, the line stays up unless the shortcut or the menu brings it down, the send button over chats stays away, and nothing of Snapfly's shows in what you share."))
+                    SettingText(.notDuringACall, L("Not during a call"),
+                                L("While the microphone is in use, in Zoom, Teams, FaceTime or a call in the browser, the line stays up unless the shortcut or the menu brings it down, the send button over chats stays away, and nothing of Snapfly's shows in what you share."))
                 }
             }
             Section {
-                Picker(L("Size"), selection: $prefs.size) {
+                Picker(selection: $prefs.size) {
                     Text(L("Small")).tag(Layout.Size.small)
                     Text(L("Medium")).tag(Layout.Size.medium)
                     Text(L("Large")).tag(Layout.Size.large)
+                } label: {
+                    SettingText(.lineSize, L("Size"))
                 }
                 .pickerStyle(.segmented)
-                Picker(L("Keep on line"), selection: $prefs.keepOnLine) {
+                Picker(selection: $prefs.keepOnLine) {
                     Text(L("As many as fit")).tag(Int?.none)
                     ForEach(Line.keepChoices, id: \.self) { n in
                         Text(String(format: L("%d photos"), n)).tag(Int?.some(n))
                     }
+                } label: {
+                    SettingText(.keepOnLine, L("Keep on line"))
                 }
                 Toggle(isOn: $prefs.countsInMenuBar) {
-                    Text(L("Count on the menu bar icon"))
-                    Text(L("How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet."))
+                    SettingText(.countOnTheMenuBarIcon, L("Count on the menu bar icon"),
+                                L("How many photos hang shows beside the icon, and a small dot on it while something new hangs that the line has not shown yet."))
                 }
                 Toggle(isOn: $prefs.takesDownSent) {
-                    Text(L("Take photos down once sent"))
-                    Text(L("Sent into a chat, they leave the line. Pinned ones stay."))
+                    SettingText(.takePhotosDownOnceSent, L("Take photos down once sent"),
+                                L("Sent into a chat, they leave the line. Pinned ones stay."))
                 }
                 Toggle(isOn: $prefs.marksSentBefore) {
-                    Text(L("Mark photos sent before"))
-                    Text(L("A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history."))
+                    SettingText(.markPhotosSentBefore, L("Mark photos sent before"),
+                                L("A paper plane on a photo says one like it was sent lately. Its menu says where to and when. Needs a history."))
                 }
                 .disabled(prefs.historyDays == nil)
                 LabeledContent {
@@ -1304,8 +1322,8 @@ private struct LinePane: View {
                             .disabled(prefs.historyDays == nil)
                     }
                 } label: {
-                    Text(L("Keep a history"))
-                    Text(L("What leaves the line stays in the History, from the menu bar, to find and hang again."))
+                    SettingText(.keepAHistory, L("Keep a history"),
+                                L("What leaves the line stays in the History, from the menu bar, to find and hang again."))
                 }
             }
             // The row of chats under each photo: which show, and where they open.
@@ -1323,8 +1341,8 @@ private struct LinePane: View {
                         Text(chat.name).tag(ChatTarget?.some(chat))
                     }
                 } label: {
-                    Text(L("Send each screenshot to"))
-                    Text(L("It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it."))
+                    SettingText(.sendEachScreenshotTo, L("Send each screenshot to"),
+                                L("It goes into the chat's message box as it hangs, its private details covered, and waits for Return. Nothing is sent until you press it."))
                 }
                 if prefs.captureChat != nil {
                     Picker(selection: $prefs.captureChatPlace) {
@@ -1332,12 +1350,12 @@ private struct LinePane: View {
                         Text(L("At once: the chat in front, else a new chat")).tag(CaptureToChat.Place.inFront)
                         Text(L("Always a new chat")).tag(CaptureToChat.Place.new)
                     } label: {
-                        Text(L("Where it goes"))
-                        Text(L("Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one."))
+                        SettingText(.whereItGoes, L("Where it goes"),
+                                    L("Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one."))
                     }
                     Toggle(isOn: $prefs.captureChatKeeps) {
-                        Text(L("Keep it on the line"))
-                        Text(L("It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back."))
+                        SettingText(.keepItOnTheLine, L("Keep it on the line"),
+                                    L("It stays up there once sent, to send again or somewhere else. Off, it leaves the line, and a click on the note that says where it went puts it back."))
                     }
                 }
             }
@@ -1349,16 +1367,18 @@ private struct LinePane: View {
             ShopHeaderSection(prefs: prefs)
             Section(L("Screenshot button")) {
                 Toggle(isOn: $prefs.captureButton) {
-                    Text(L("Show the screenshot button"))
-                    Text(L("A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere."))
+                    SettingText(.showTheScreenshotButton, L("Show the screenshot button"),
+                                L("A small button at the edge of the screen takes a screenshot in one click. Drag it anywhere."))
                 }
                 Group {
-                    Picker(L("A click"), selection: $prefs.captureButtonClick) {
+                    Picker(selection: $prefs.captureButtonClick) {
                         Text(L("Chooses an area")).tag(CaptureButton.Click.choose)
                         Text(L("Takes the whole screen")).tag(CaptureButton.Click.screen)
                         Text(L("Takes the last area again")).tag(CaptureButton.Click.lastArea)
+                    } label: {
+                        SettingText(.captureButtonClick, L("A click"))
                     }
-                    LabeledContent(L("Icon")) {
+                    LabeledContent {
                         // Two rows of six, so all of them fit beside the label.
                         LazyVGrid(columns: Array(repeating: GridItem(.fixed(28), spacing: 8), count: 6), spacing: 8) {
                             ForEach(CaptureButtonSymbol.allCases) { symbol in
@@ -1378,14 +1398,18 @@ private struct LinePane: View {
                             }
                         }
                         .frame(width: 6 * 28 + 5 * 8)
+                    } label: {
+                        SettingText(.captureButtonIcon, L("Icon"))
                     }
-                    LabeledContent(L("Color")) {
+                    LabeledContent {
                         HStack(spacing: 4) {
                             tintButton(nil, name: L("Glass"))
                             ForEach(ChatButtonTint.allCases) { tint in
                                 tintButton(tint, name: tint.name)
                             }
                         }
+                    } label: {
+                        SettingText(.captureButtonColor, L("Color"))
                     }
                     LabeledContent(L("Preview")) {
                         CaptureButtonFace(symbol: prefs.captureButtonSymbol, tint: prefs.captureButtonTint)
@@ -1396,12 +1420,12 @@ private struct LinePane: View {
                 .disabled(!prefs.captureButton)
             }
             Section {
-                shortcutRow(L("Show or hide the line"), .toggle)
-                shortcutRow(L("Send the newest photo"), .send)
-                shortcutRow(L("Search screenshots"), .search)
-                shortcutRow(L("Take a screenshot"), .capture)
-                shortcutRow(L("Capture a whole page"), .page)
-                shortcutRow(L("Record the screen"), .record)
+                shortcutRow(.showOrHideTheLine, L("Show or hide the line"), .toggle)
+                shortcutRow(.sendTheNewestPhoto, L("Send the newest photo"), .send)
+                shortcutRow(.searchScreenshots, L("Search screenshots"), .search)
+                shortcutRow(.takeAScreenshot, L("Take a screenshot"), .capture)
+                shortcutRow(.captureAWholePage, L("Capture a whole page"), .page)
+                shortcutRow(.recordTheScreen, L("Record the screen"), .record)
             }
         }
         .formStyle(.grouped)
@@ -1430,8 +1454,8 @@ private struct LinePane: View {
         .accessibilityAddTraits(chosen ? .isSelected : [])
     }
 
-    private func shortcutRow(_ title: String, _ role: Shortcut.Role) -> some View {
-        LabeledContent(title) {
+    private func shortcutRow(_ id: SettingFilm.ID, _ title: String, _ role: Shortcut.Role) -> some View {
+        LabeledContent {
             HStack {
                 Text(prefs.shortcut(role))
                     .font(.system(.body, design: .rounded).weight(.medium))
@@ -1440,6 +1464,8 @@ private struct LinePane: View {
                     .background(.quaternary, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
                 SettingsButton(L("Change Shortcut…")) { prefs.changeShortcut(role) }
             }
+        } label: {
+            SettingText(id, title)
         }
     }
 }
@@ -1452,25 +1478,29 @@ private struct ChatButtonSection: View {
     var body: some View {
         Section(L("Send button over chats")) {
             Toggle(isOn: $prefs.chatButton) {
-                Text(L("Show it while photos hang"))
-                Text(L("While photos hang, a send button waits just above the chat's own. Drag it where you like it."))
+                SettingText(.showItWhilePhotosHang, L("Show it while photos hang"),
+                            L("While photos hang, a send button waits just above the chat's own. Drag it where you like it."))
             }
             Group {
                 Toggle(isOn: $prefs.chatButtonInApps) {
-                    Text(L("In chat apps"))
-                    Text(L("ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others."))
+                    SettingText(.inChatApps, L("In chat apps"),
+                                L("ChatGPT, Claude, WhatsApp, Telegram, Messages, Mail, Outlook and others."))
                 }
-                Picker(L("Position"), selection: $prefs.chatButtonPlacement) {
+                Picker(selection: $prefs.chatButtonPlacement) {
                     ForEach(ChatButtonPlacement.allCases) { placement in
                         Text(placement.title).tag(placement)
                     }
+                } label: {
+                    SettingText(.chatButtonPosition, L("Position"))
                 }
-                Picker(L("Style"), selection: $prefs.chatButtonLook) {
+                Picker(selection: $prefs.chatButtonLook) {
                     Text(L("Photo and count")).tag(ChatButtonLook.full)
                     Text(L("Icon only")).tag(ChatButtonLook.compact)
+                } label: {
+                    SettingText(.chatButtonStyle, L("Style"))
                 }
                 .pickerStyle(.segmented)
-                LabeledContent(L("Icon")) {
+                LabeledContent {
                     HStack(spacing: 8) {
                         ForEach(ChatButtonSymbol.allCases) { symbol in
                             let chosen = prefs.chatButtonSymbol == symbol
@@ -1488,8 +1518,10 @@ private struct ChatButtonSection: View {
                             .accessibilityAddTraits(chosen ? .isSelected : [])
                         }
                     }
+                } label: {
+                    SettingText(.chatButtonIcon, L("Icon"))
                 }
-                LabeledContent(L("Color")) {
+                LabeledContent {
                     HStack(spacing: 4) {
                         ForEach(ChatButtonTint.allCases) { tint in
                             let chosen = prefs.chatButtonTint == tint
@@ -1508,6 +1540,8 @@ private struct ChatButtonSection: View {
                             .accessibilityAddTraits(chosen ? .isSelected : [])
                         }
                     }
+                } label: {
+                    SettingText(.chatButtonColor, L("Color"))
                 }
                 LabeledContent(L("Preview")) {
                     ChatButtonLabel(model: prefs.chatButtonPreview)
@@ -1831,8 +1865,7 @@ private struct PrivacyPane: View {
                 Section {
                     ForEach(group.kinds, id: \.self) { detail in
                         Toggle(isOn: prefs.hides(detail)) {
-                            Text(detail.title)
-                            if let subtitle = detail.subtitle { Text(subtitle) }
+                            SettingText(SettingFilm.ID(detail), detail.title, detail.subtitle)
                         }
                     }
                 } header: {
@@ -1847,32 +1880,32 @@ private struct PrivacyPane: View {
             Section {
                 CoverLookPicker(selection: $prefs.coverStyle)
                 Toggle(isOn: $prefs.keepsLastDigits) {
-                    Text(L("Keep the last four digits"))
-                    Text(L("Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement."))
+                    SettingText(.keepTheLastFourDigits, L("Keep the last four digits"),
+                                L("Card, account and phone numbers stay recognisable by their last four digits, as on a bank statement."))
                 }
             } header: {
-                Text(L("Cover look"))
+                SettingText(.coverLook, L("Cover look"))
             } footer: {
                 Text(L("Every look hides for good: blur, pixels, dots and erased are drawn from the colors around what is covered, never from it, so it cannot be brought back."))
                     .foregroundStyle(.secondary)
             }
             Section {
                 Toggle(isOn: $prefs.strongest) {
-                    Text(L("Strongest protection"))
-                    Text(L("Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was."))
+                    SettingText(.strongestProtection, L("Strongest protection"),
+                                L("Every line with something private is covered whole, with more room around it, so nothing of it shows, not even how long it was."))
                 }
                 Toggle(isOn: $prefs.usesIntelligence) {
-                    Text(L("Find more with Apple Intelligence"))
-                    Text(prefs.intelligenceAvailable
-                         ? L("Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device.")
-                         : L("Needs Apple Intelligence on this device."))
+                    SettingText(.findMoreWithAppleIntelligence, L("Find more with Apple Intelligence"),
+                                prefs.intelligenceAvailable
+                                    ? L("Reads the words right here and covers what the patterns miss, like a name in a sentence. Nothing leaves this device.")
+                                    : L("Needs Apple Intelligence on this device."))
                 }
                 .disabled(!prefs.intelligenceAvailable)
                 Toggle(isOn: $prefs.assistantFindsPrivate) {
-                    Text(String(format: L("Find more with %@"), prefs.aiProvider.name))
-                    Text(prefs.aiSetUp
-                         ? L("Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer.")
-                         : L("Needs an AI assistant key; add one under AI Assistant."))
+                    SettingText(.findMoreWithModel, String(format: L("Find more with %@"), prefs.aiProvider.name),
+                                prefs.aiSetUp
+                                    ? L("Sends the words of each screenshot to the AI assistant, to cover what the patterns miss. Covering takes a few seconds longer.")
+                                    : L("Needs an AI assistant key; add one under AI Assistant."))
                 }
                 .disabled(!prefs.aiSetUp)
             } header: {
@@ -1882,29 +1915,37 @@ private struct PrivacyPane: View {
                     .foregroundStyle(.secondary)
             }
             Section {
-                Toggle(L("Cover everything in AI chats"), isOn: $prefs.coversAllInAIChats)
+                Toggle(isOn: $prefs.coversAllInAIChats) {
+                    SettingText(.coverEverythingInAIChats, L("Cover everything in AI chats"))
+                }
             } footer: {
                 Text(L("Whatever is sent or copied while ChatGPT, Claude, Gemini or another AI chat is in front has every kind above covered, checked or not."))
                     .foregroundStyle(.secondary)
             }
             Section {
-                Picker(L("Check before sending"), selection: $prefs.checkBeforeSending) {
+                Picker(selection: $prefs.checkBeforeSending) {
                     ForEach(SendCheck.When.allCases) { when in
                         Text(when.title).tag(when)
                     }
+                } label: {
+                    SettingText(.checkBeforeSending, L("Check before sending"))
                 }
             } footer: {
                 Text(L("A card shows the photos as they will go, and what is covered, before they go in. Return sends them, Escape keeps them on the line."))
                     .foregroundStyle(.secondary)
             }
             Section {
-                Toggle(L("Plain file names"), isOn: $prefs.plainNames)
+                Toggle(isOn: $prefs.plainNames) {
+                    SettingText(.plainFileNames, L("Plain file names"))
+                }
             } footer: {
                 Text(L("Pictures leave as fresh files, without notes on when, where or with what they were made. With plain file names they are called “Image” too, and PDFs “Document”, not after when they were taken. A name that holds a detail you cover is replaced either way."))
                     .foregroundStyle(.secondary)
             }
             Section {
-                Toggle(L("Cover what lands in a folder"), isOn: $prefs.coversFolder)
+                Toggle(isOn: $prefs.coversFolder) {
+                    SettingText(.coverWhatLandsInAFolder, L("Cover what lands in a folder"))
+                }
                 folderRow(L("Watched folder"), prefs.folderCoverSource) { prefs.chooseFolderCover(source: true) }
                 folderRow(L("Save copies in"), prefs.folderCoverTarget) { prefs.chooseFolderCover(source: false) }
             } header: {
@@ -1934,7 +1975,7 @@ private struct PrivacyPane: View {
                         .disabled(prefs.testing)
                 }
             } header: {
-                Text(L("Test"))
+                SettingText(.testOnASample, L("Test"))
             } footer: {
                 Text(L("Covers a made-up order with what is checked above, to show what each kind hides. It speaks for this sample only: a real screenshot can read differently."))
                     .foregroundStyle(.secondary)
@@ -1992,8 +2033,8 @@ private struct BookkeepingSection: View {
                     SettingsButton(L("Choose…")) { prefs.chooseBookkeepingFolder() }
                 }
             } label: {
-                Text(L("Folder"))
-                Text(L("Receipts saved for the books go here, each with a line in Snapfly.csv."))
+                SettingText(.bookkeepingFolder, L("Folder"),
+                            L("Receipts saved for the books go here, each with a line in Snapfly.csv."))
             }
             TextField(L("Email"), text: $prefs.bookkeepingAddress, prompt: Text(L("Who keeps the books")))
             LabeledContent {
@@ -2009,8 +2050,8 @@ private struct BookkeepingSection: View {
                 }
                 .disabled(prefs.packMonths.isEmpty)
             } label: {
-                Text(L("Monthly pack"))
-                Text(L("A month's receipts in one PDF, with a page listing them, to hand to your tax advisor."))
+                SettingText(.monthlyPack, L("Monthly pack"),
+                            L("A month's receipts in one PDF, with a page listing them, to hand to your tax advisor."))
             }
         } header: {
             Text(L("Bookkeeping"))
@@ -2049,8 +2090,7 @@ private struct ShopHeaderSection: View {
                     SettingsButton(L("Choose…")) { prefs.chooseShopLogo() }
                 }
             } label: {
-                Text(L("Logo"))
-                Text(L("A square picture works best."))
+                SettingText(.shopLogo, L("Logo"), L("A square picture works best."))
             }
             if let preview = prefs.shopPreview {
                 Image(nsImage: preview)
@@ -2171,8 +2211,8 @@ private struct AIPromptsSection: View {
     var body: some View {
         Section {
             Toggle(isOn: $prefs.promptsBesideButton) {
-                Text(L("Numbers beside the send button"))
-                Text(L("Over ChatGPT, Claude and other AI chats only. A number sends the photos with that prompt after them."))
+                SettingText(.numbersBesideTheSendButton, L("Numbers beside the send button"),
+                            L("Over ChatGPT, Claude and other AI chats only. A number sends the photos with that prompt after them."))
             }
             ForEach(Array(prefs.aiPrompts.enumerated()), id: \.element.id) { index, prompt in
                 LabeledContent {
@@ -2387,8 +2427,8 @@ private struct ChatBrowserRow: View {
             .labelsHidden()
             .fixedSize()
         } label: {
-            Text(L("Websites open in"))
-            Text(L("Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac."))
+            SettingText(.websitesOpenIn, L("Websites open in"),
+                        L("Beside each icon, Browser opens its website here and App opens its own app, when it is on this Mac."))
         }
     }
 

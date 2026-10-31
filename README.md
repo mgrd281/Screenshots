@@ -823,6 +823,16 @@ the same on each.
 
 <br>
 
+## Every setting, shown.
+
+Each setting has a small symbol before its name. Rest the pointer on it,
+or click it, and a short film shows what the setting does: a screenshot
+flying onto the line, a detail being covered, the line coming down when
+the pointer reaches the menu bar. No words, so it reads the same in every
+language. With Reduce Motion it shows how the film ends, still.
+
+<br>
+
 ## Calm for everyone.
 
 Turn on Reduce Motion and the line fades in instead of sliding. Photos stop
@@ -1657,6 +1667,9 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `AppDelegate.swift` | Menu bar, shortcut, revealing and tucking away the line |
 | `LineIcon.swift` | Snapfly's mark in the menu bar and Settings: a photo hanging on a line |
 | `SettingsWindow.swift` | The settings window: General, Workspace, Line, AI Assistant, Privacy, Permissions, Support and About |
+| `SettingFilmView.swift` | The symbol before each setting and its film in a popover, drawn and played once |
+| `SettingFilm.swift`, `FilmScene.swift` | A setting's film as plain values: its parts and their moments, and the scene most films share (the wallpaper, the menu bar, the line and where its photos hang) |
+| `SettingFilms.swift` | Every setting's film, one for each row in Settings that turns on, chooses or does something |
 | `AIAssistantSettings.swift` | Settings › AI Assistant: the assistant tiles, the key checked with the provider, the model from its own list, and what it does |
 | `Support.swift` | Settings › Support: the introduction and Show Me How, which stays in Settings with a note when the line has nothing to show, the help page, an email about a problem or an idea with the details filled in, and those details to copy |
 | `LinePanel.swift` | The transparent strip along the top of the screen |
