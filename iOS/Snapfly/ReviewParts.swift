@@ -549,14 +549,17 @@ struct ReviewPlace: Identifiable {
 }
 
 /// The list of places to check, as tall as what it holds: "2 Stellen zu
-/// prüfen" (or "Alles geprüft") and that nothing leaves the iPhone; then
-/// each place still open, on any page, with what it is, its first words and
-/// its page, and Leave or Cover, with Cover All over them; the private
-/// details the categories chosen leave visible, each with Cover, and a word
-/// where no name of the owner's is kept in Always Hide on this iPhone; the
-/// page's faults, with Look, which opens that page's own tools; and what is
-/// covered, in one line that opens into the list of it. Each decision is
-/// one change to undo, and the mark on the page turns with it.
+/// prüfen" (or "Alles geprüft") and that nothing leaves the iPhone, and,
+/// where a page was read as a paper Snapfly knows, which it is
+/// ("Arbeitsunfähigkeitsbescheinigung erkannt"); then each place still open,
+/// on any page, with what it is, whose it is where Snapfly is sure, its
+/// first words and its page, and Leave or Cover, with Cover All over them;
+/// the private details the categories chosen leave visible, each with
+/// Cover, and a word where no name of the owner's is kept in Always Hide on
+/// this iPhone; the page's faults, with Look, which opens that page's own
+/// tools; and what is covered, in one line that opens into the list of it.
+/// Each decision is one change to undo, and the mark on the page turns
+/// with it.
 struct ReviewListSheet: View {
     @ObservedObject var store: ScannedPages
     let current: UUID
@@ -600,6 +603,13 @@ struct ReviewListSheet: View {
             session.plan.marks.filter { $0.origin == .spared && !$0.covered }
                 .map { ReviewPlace(page: page.id, number: number, mark: $0) }
         }
+    }
+
+    /// The papers the opened pages were read as, like a sick note, each
+    /// once, in page order.
+    private var papers: [DocumentPaper] {
+        var seen = Set<DocumentPaper>()
+        return sessions.compactMap { $0.session.paper }.filter { seen.insert($0).inserted }
     }
 
     private var faults: [(page: ScannedPages.Page, number: Int, issue: ScanIssue)] {
@@ -654,6 +664,16 @@ struct ReviewListSheet: View {
                 Text(L("Decide what is covered. Nothing leaves your iPhone."))
                     .font(.subheadline)
                     .foregroundStyle(SnapflyTokens.hideSecondary)
+                // What the page was read as, so the owner knows why each
+                // detail is what the list says.
+                if !papers.isEmpty {
+                    Label(String(format: L("%@ recognized"), ListFormatter.localizedString(byJoining: papers.map(\.title))),
+                          systemImage: "doc.text.magnifyingglass")
+                        .font(.footnote)
+                        .foregroundStyle(SnapflyTokens.hideSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("review-paper")
+                }
             }
             Spacer(minLength: 8)
             Button { dismiss() } label: {
@@ -717,7 +737,7 @@ struct ReviewListSheet: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(Self.name(of: place.mark)), \(L("To check")), \(String(format: L("Page %d"), place.number))")
+        .accessibilityLabel(Self.spoken(place, L("To check")))
         .accessibilityAction(named: L("Cover")) { decide(place, covered: true) }
         .accessibilityAction(named: L("Leave")) { decide(place, covered: false) }
     }
@@ -803,7 +823,7 @@ struct ReviewListSheet: View {
                     .id(place.id)
                     .transition(.opacity)
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("\(Self.name(of: place.mark)), \(L("Left visible")), \(String(format: L("Page %d"), place.number))")
+                    .accessibilityLabel(Self.spoken(place, L("Left visible")))
                     .accessibilityAction(named: L("Cover")) { decide(place, covered: true) }
                 }
             }
@@ -995,12 +1015,27 @@ struct ReviewListSheet: View {
                 .font(.subheadline.weight(.semibold))
                 .lineLimit(typeSize.isAccessibilitySize ? 3 : 1)
                 .truncationMode(.tail)
-            Text(Self.excerpt(of: place.mark) + " · " + String(format: L("Page %d"), place.number))
+            Text(Self.detail(of: place))
                 .font(.footnote)
                 .foregroundStyle(SnapflyTokens.hideSecondary)
                 .lineLimit(1)
                 .truncationMode(.tail)
         }
+    }
+
+    /// A row's second line: whose it is first, where Snapfly is sure, then
+    /// its first words and its page, "Patient · Beispielyan · Seite 1". Not
+    /// on the first line, which the kind's name fills beside the buttons.
+    private static func detail(of place: ReviewPlace) -> String {
+        [ProtectionPlan.whose(of: place.mark), excerpt(of: place.mark), String(format: L("Page %d"), place.number)]
+            .compactMap { $0 }.joined(separator: " · ")
+    }
+
+    /// What VoiceOver says for a row: what the place is, whose it is where
+    /// Snapfly is sure, how it stands, and its page.
+    private static func spoken(_ place: ReviewPlace, _ state: String) -> String {
+        [name(of: place.mark), ProtectionPlan.whose(of: place.mark), state, String(format: L("Page %d"), place.number)]
+            .compactMap { $0 }.joined(separator: ", ")
     }
 
     /// What a place is: its kind, the owner's details, or covered by hand.

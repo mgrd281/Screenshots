@@ -566,6 +566,9 @@ enum Finder {
         /// Vision could not read the picture's text, as iOS may keep it from
         /// doing in the background: nothing found is then not nothing there.
         var unread = false
+        /// The paper the picture's text was read as, like a sick note,
+        /// whatever kinds are chosen; nil for any other page.
+        var paper: DocumentPaper? = nil
     }
 
     /// The kinds a picture's places are found for, beyond those chosen, so
@@ -617,7 +620,8 @@ enum Finder {
         }
         // The last word is Settings', whatever found a place.
         return Analysis(areas: areas.filter { allowed($0.kind, chosen) },
-                        possible: possible.filter { allowed($0.kind, chosen) }, spared: spared, unread: found.unread)
+                        possible: possible.filter { allowed($0.kind, chosen) }, spared: spared, unread: found.unread,
+                        paper: found.paper)
     }
 
     /// Whether a place may be covered, or offered to be: its kind is on, or
@@ -976,14 +980,19 @@ enum Finder {
         let printedHits = patterns.isEmpty ? [] : Text(lines).hits(forPatterns: patterns)
         var found = Timing.measure("find") { findings(in: lines, chosen, rules: rules, scope: scope) }
         if intelligence {
-            let strings = lines.map(\.string)
+            let strings = lines.map(\.string), boxes = lines.map(\.box), form = form(of: lines)
+            let document = DocumentSense.kind(of: strings)
             let more = Timing.measure("intelligence") { intelligentHits(in: lines, chosen) }
-            found.hits += decided(isolated(more.hits, by: form(of: lines), in: strings), in: strings, chosen,
-                                  scope: scope, own: ownWords(in: rules),
-                                  doctors: doctorsColumn(strings, boxes: lines.map(\.box)))
+            let read = decided(isolated(more.hits, by: form, in: strings), in: strings, chosen, scope: scope,
+                               own: ownWords(in: rules), doctors: doctorsColumn(strings, boxes: boxes, kind: document),
+                               kind: document)
+            // One kind for each number, what the rules found and what the model named alike.
+            found.hits = oneKind(found.hits + read,
+                                 named: namedNumbers(strings, boxes: boxes, form: form, document: document),
+                                 in: strings, boxes: boxes, chosen, document: document)
             // What it named that only may be what it says is offered, not covered.
             let taken = Set(found.hits.map(\.line))
-            found.possible += isolated(more.possible, by: form(of: lines), in: strings).filter { !taken.contains($0.line) }
+            found.possible += isolated(more.possible, by: form, in: strings).filter { !taken.contains($0.line) }
         }
         let all = keepingLastDigits(found.hits, in: lines) + printedHits
         let covered = Set(all.map(\.line)), boxes = lines.map(\.box)
@@ -1008,7 +1017,7 @@ enum Finder {
             }
         }
         return Analysis(areas: all.compactMap(place), possible: possible, spared: spared.compactMap(place),
-                        unread: reading == nil)
+                        unread: reading == nil, paper: reading == nil ? nil : DocumentSense.paper(of: lines.map(\.string)))
     }
 
     /// Where a detail found in a line is, and what it says: just its words,
@@ -1043,7 +1052,7 @@ enum Finder {
     /// only may fit is offered, for the owner to check. Pure text, so it
     /// can be checked without a picture or a model.
     static func vetted(_ pieces: [IntelligentPiece], in strings: [String], _ chosen: Set<PrivateDetail>) -> Findings {
-        let medical = DocumentSense.kind(of: strings) == .medical
+        let document = DocumentSense.kind(of: strings), medical = document == .medical
         var found = Findings()
         for piece in pieces where piece.line < strings.count {
             // A company it took for a person is a company, covered only as one.
@@ -1053,7 +1062,7 @@ enum Finder {
             let range = wholeEntity(words, kind: kind, in: line, widely: true)
             let hit = Hit(line: piece.line, range: NSRange(range, in: line), kind: kind)
             let above = piece.line > 0 ? strings[piece.line - 1] : ""
-            switch fit(kind, range, in: line, after: above, medical: medical) {
+            switch fit(kind, range, in: line, after: above, medical: medical, document: document) {
             case .sure: found.hits.append(hit)
             case .unsure:
                 var offered = hit
@@ -1075,8 +1084,10 @@ enum Finder {
     /// says is checked the same way every time.
     /// - Parameter above: the line before, where a term this line ends may
     ///   start, as "Morbus" before "Scheuermann".
+    /// - Parameter document: the kind of document the line is in, where a
+    ///   bare run of digits is a phone number only off a document.
     static func fit(_ kind: PrivateDetail, _ range: Range<String.Index>, in line: String, after above: String = "",
-                    medical: Bool) -> Fit {
+                    medical: Bool, document: DocumentKind = .general) -> Fit {
         let text = String(line[range]).trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty else { return .no }
         let digits = text.filter(\.isNumber).count
@@ -1104,7 +1115,10 @@ enum Finder {
         case .emails:
             return text.range(of: emailPattern, options: [.regularExpression, .caseInsensitive]) != nil ? .sure : .no
         case .phones:
-            return digits >= 6 && text.allSatisfy({ $0.isNumber || " +()/.-–".contains($0) }) && !isDate ? .sure : .no
+            guard digits >= 6, text.allSatisfy({ $0.isNumber || " +()/.-–".contains($0) }), !isDate else { return .no }
+            // Written as one is dialled, or said to be one, on any page; a bare run on a document only maybe.
+            if isPhone(range, in: line, above: above.isEmpty ? nil : above, document: document) { return .sure }
+            return isNationalNumber(Substring(text)) ? .unsure : .no
         case .bank:
             let compact = text.replacingOccurrences(of: " ", with: "")
             let iban = compact.range(of: #"^[A-Z]{2}\d{2}[A-Z0-9]{8,30}$"#, options: .regularExpression) != nil
@@ -1178,7 +1192,7 @@ enum Finder {
         }
         if kind == .addresses {
             widen(by: #"\p{Lu}[\p{L}'’.\-]*(?:\s[\p{L}'’.\-]+){0,4}\s\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?\b"#)
-            widen(by: #"(?:[A-Z]{1,2}\s?-\s?)?\b\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:\s(?:am|an der|im|in der|bei|ob der|vor der)\s\p{Lu}[\p{L}'’.\-]+)?"#)
+            widen(by: #"(?:\b[A-Z]{1,2}(?:\s?[-–]\s?|\s))?\b\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:\s(?:am|an der|im|in der|bei|ob der|vor der)\s\p{Lu}[\p{L}'’.\-]+)?"#)
         }
         guard widely, let kind else { return whole }
         if kind == .names {
@@ -1244,10 +1258,15 @@ enum Finder {
         var hidden = [IndexSet](repeating: IndexSet(), count: lines.count)
         let (chosen, scope) = resolved(chosen)
         // What Apple Intelligence found when the photo was read, never waited for here.
-        let found = hits(in: lines, chosen, rules: rules, scope: scope)
-            + decided(isolated(intelligentHits(in: lines, chosen, waits: false).hits, by: form(of: lines),
-                               in: lines.map(\.string)), in: lines.map(\.string), chosen, scope: scope,
-                      own: ownWords(in: rules), doctors: doctorsColumn(lines.map(\.string), boxes: lines.map(\.box)))
+        let strings = lines.map(\.string), boxes = lines.map(\.box), form = form(of: lines)
+        let document = DocumentSense.kind(of: strings)
+        let read = decided(isolated(intelligentHits(in: lines, chosen, waits: false).hits, by: form, in: strings),
+                           in: strings, chosen, scope: scope, own: ownWords(in: rules),
+                           doctors: doctorsColumn(strings, boxes: boxes, kind: document), kind: document)
+        // One kind for each number, what the rules found and what the model named alike.
+        let found = oneKind(hits(in: lines, chosen, rules: rules, scope: scope) + read,
+                            named: namedNumbers(strings, boxes: boxes, form: form, document: document),
+                            in: strings, boxes: boxes, chosen, document: document)
         for hit in keepingLastDigits(found, in: lines) where allowed(hit.kind, chosen) {
             let length = lines[hit.line].string.utf16.count
             // The strongest protection leaves out whole lines, as it covers them.
@@ -1327,12 +1346,15 @@ enum Finder {
         let rules = rules.filter(\.isActive)
         guard !strings.isEmpty, !chosen.isEmpty || !rules.isEmpty else { return Findings() }
         let text = Text(strings, boxes: boxes)
+        let document = DocumentSense.kind(of: strings)
         let mine = ownWords(in: rules)
         var learned = Set<String>()
         var found = patterns(in: text, chosen)
         found += labelled(strings, boxes: boxes, part: part, chosen, learned: &learned)
         found += speakers(strings, chosen, learned: &learned)
         let form = FormFields.read(strings, boxes: boxes, part: part)
+        let blocks = postalBlocks(strings, boxes: boxes)
+        let named = namedNumbers(strings, boxes: boxes, form: form, document: document)
         var possible: [Hit] = []
         for value in form.values {
             // A name a form's label announces is looked for elsewhere too.
@@ -1344,23 +1366,26 @@ enum Finder {
             if value.confidence == .low { possible.append(hit) } else { found.append(hit) }
         }
         if chosen.contains(.names) {
-            let people = names(in: text, learned: learned, own: mine)
+            let people = names(in: text, learned: learned, own: mine, blocks: blocks, kind: document)
             found += people.hits
             possible += people.possible
         }
-        let document = DocumentSense.kind(of: strings)
         // The people named, whether their names are covered or not: what
         // goes with a name, like the address under it, is theirs.
         var people = found.filter { $0.kind == .names }
         if !chosen.contains(.names), !chosen.isDisjoint(with: [.addresses, .birthDates]) {
-            people += names(in: text, learned: learned, own: mine).hits
+            people += names(in: text, learned: learned, own: mine, blocks: blocks, kind: document).hits
             people += form.values.filter { $0.entity == .personName }.map { value in
                 Hit(line: value.line, range: NSRange(value.range, in: strings[value.line]), kind: .names,
                     role: value.role.map { NameRole(role: $0, confidence: 0.9, reason: "form") })
             }
         }
         // A letter's address: under a person's name, or after it on its line.
-        if chosen.contains(.addresses) { found += addresses(after: people, in: text) }
+        if chosen.contains(.addresses) {
+            found += addresses(after: people, in: text)
+            found += postalAddresses(blocks, people: people)
+        }
+        if chosen.contains(.birthDates) { found += postalBirthDates(blocks, in: text) }
         // In a medical letter, a reference number is the patient's case.
         if chosen.contains(.ids), document == .medical {
             found += references(in: text).map { hit in
@@ -1388,11 +1413,13 @@ enum Finder {
             whole.range = NSRange(wholeEntity(range, kind: hit.kind, in: line), in: line)
             return whole
         }
-        let column = doctorsColumn(strings, boxes: boxes)
-        let kept = merged(decided(isolated(found, by: form, in: strings), in: strings, chosen, scope: scope, own: mine,
-                                  doctors: column))
+        let column = doctorsColumn(strings, boxes: boxes, kind: document)
+        // One kind for each number, then only what the owner chose.
+        let kinds = oneKind(isolated(found, by: form, in: strings), named: named, in: strings, boxes: boxes, chosen,
+                            document: document)
+        let kept = merged(decided(kinds, in: strings, chosen, scope: scope, own: mine, doctors: column, kind: document))
         // Each person's role, read as when everyone's names are covered.
-        let whose = decided(people, in: strings, [.names], scope: .everyone, own: mine, doctors: column)
+        let whose = decided(people, in: strings, [.names], scope: .everyone, own: mine, doctors: column, kind: document)
         return sure(of: Findings(hits: owned(kept, by: whose, kind: document),
                                  possible: isolated(possible, by: form, in: strings)))
     }
@@ -1460,7 +1487,7 @@ enum Finder {
                 let isTown = isTownLine(candidate)
                 guard isStreetLine(candidate) || isTown || town && isCountryLine(candidate) else { break }
                 hits.append(Hit(line: next, range: nil, kind: .addresses, owner: owner))
-                town = town || isTown || candidate.range(of: #",\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s"#,
+                town = town || isTown || candidate.range(of: #",\s?(?:[A-Z]{1,2}(?:\s?[-–]\s?|\s))?\d{4,5}\s"#,
                                                           options: .regularExpression) != nil
                 last = next
             }
@@ -1468,9 +1495,132 @@ enum Finder {
         return hits
     }
 
+    /// A letter's or a form's postal block, by where its lines stand, with
+    /// no label read: a street right over its postcode and town in one
+    /// column, or both on one line, and the name's line right over the
+    /// street, as an envelope's window prints them; or two, as a form
+    /// prints the surname over the given names, beside the date of birth:
+    /// "Beispielyan", "Nare", "Sonnenhang 9", "D 12345 Musterstadt". A
+    /// line is a name's only in the size the street is printed in: a form
+    /// prints its labels smaller, and a letter its headings larger.
+    struct PostalBlock: Equatable {
+        /// The name's lines, top first; none where no name is over the street.
+        var names: [Int]
+        /// The street, the town under it and the country after them.
+        var address: [Int]
+        /// Whether a date of birth's label is read on the name's rows, or
+        /// right after the name, as a form prints it.
+        var born = false
+    }
+
+    static func postalBlocks(_ strings: [String], boxes: [CGRect]) -> [PostalBlock] {
+        guard boxes.count == strings.count else { return [] }
+        // The line right over each, in its column.
+        var above = [Int?](repeating: nil, count: strings.count)
+        for i in strings.indices {
+            guard let under = line(below: i, in: boxes, gap: 2) else { continue }
+            if let over = above[under], boxes[over].minY <= boxes[i].minY { continue }
+            above[under] = i
+        }
+        func onRow(_ a: CGRect, _ b: CGRect) -> Bool { min(a.maxY, b.maxY) - max(a.minY, b.minY) > a.height * 0.5 }
+        // A date, its year in four digits or in two, as a health insurance form prints it: "14.03.87".
+        func startsWithDate(_ text: Substring) -> Bool { DocumentSense.startsWithDate(String(text)) }
+        var blocks: [PostalBlock] = []
+        for street in strings.indices {
+            let text = bare(strings[street])
+            guard isStreetLine(text), !isTownLine(text) else { continue }
+            var address = [street]
+            if text.range(of: #",\s?(?:[A-Z]{1,2}(?:\s?[-–]\s?|\s))?\d{4,5}\s\p{Lu}"#, options: .regularExpression) == nil {
+                guard let town = line(below: street, in: boxes, gap: 1.6), isTownLine(bare(strings[town])) else { continue }
+                address.append(town)
+            }
+            if let country = line(below: address[address.count - 1], in: boxes, gap: 1.6),
+               isCountryLine(bare(strings[country])) {
+                address.append(country)
+            }
+            // A thing an invoice charges for, beside its price, is no street.
+            if address.contains(where: { isItem($0, strings: strings, boxes: boxes) }) { continue }
+            var names: [Int] = []
+            var top = street
+            while names.count < 2, let over = above[top], !isLabel(strings[over]), !DocumentSense.isClosing(strings[over]),
+                  (0.7...1.5).contains(boxes[over].height / max(boxes[street].height, 0.0001)),
+                  DocumentSense.namePart(of: strings[over]) != nil {
+                names.insert(over, at: 0)
+                top = over
+            }
+            let rests = names.compactMap { i in
+                DocumentSense.namePart(of: strings[i]).map { strings[i][$0.upperBound...].drop { $0 == " " } }
+            }
+            let born = rests.contains { DocumentSense.startsWithBirth(String($0)) || startsWithDate($0) }
+                || names.first.map { first in
+                    let top = boxes[first], bottom = boxes[names[names.count - 1]]
+                    return strings.indices.contains { i in
+                        boxes[i].midY < top.maxY && boxes[i].midY > bottom.minY - bottom.height * 0.5
+                            && boxes[i].minX > top.maxX && DocumentSense.startsWithBirth(strings[i])
+                    }
+                } ?? false
+            let dated = names.contains { name in
+                strings.indices.contains { i in
+                    onRow(boxes[name], boxes[i]) && boxes[i].minX > boxes[name].maxX && startsWithDate(strings[i][...])
+                }
+            }
+            // In a letter, the line over a name is a heading, like "Lebenslauf".
+            if names.count == 2, !born, !dated { names.removeFirst() }
+            // A word alone under a company's name is its department's: "Kundenservice".
+            if names.count == 1, let over = above[names[0]], DocumentSense.isOrganization(strings[over]),
+               DocumentSense.namePart(of: strings[names[0]]).map({ strings[names[0]][$0].split(separator: " ").count }) == 1 {
+                names = []
+            }
+            blocks.append(PostalBlock(names: names, address: address, born: born))
+        }
+        return blocks
+    }
+
+    /// A line without the lines of a form's box read at its ends, as "|"
+    /// or "ł", on their own or stuck to a word as `FormFields.unframed`
+    /// reads them, or a stroke of a signature drawn across it, as "/" or "~":
+    /// "Sonnenhang 9 |" and "Sonnenhang 9|" are read as "Sonnenhang 9".
+    static func bare(_ line: String) -> String {
+        var words = line.split(separator: " ").map(String.init)
+        while words.count > 1, let last = words.last, strayMarks.contains(last) { words.removeLast() }
+        while words.count > 1, let first = words.first, strayMarks.contains(first) { words.removeFirst() }
+        let joined = words.joined(separator: " ")
+        let inner = FormFields.unframed(joined.startIndex..<joined.endIndex, in: joined)
+        return inner.isEmpty ? joined : String(joined[inner])
+    }
+
+    private static let strayMarks = DocumentSense.boxLines.union(["/", "\\", "~", "_", "-", "–", "—", "(", ")", ",", ".",
+                                                                  ";", ":", "'", "\"", "*"])
+
+    /// A postal block's street and town are an address wherever they stand,
+    /// with no name or label read over them; the name over them, where one
+    /// is, is whose they are.
+    private static func postalAddresses(_ blocks: [PostalBlock], people: [Hit]) -> [Hit] {
+        blocks.flatMap { block -> [Hit] in
+            let name = block.names.reversed().lazy.compactMap { line in people.first { $0.line == line } }.first
+            let owner = name.map { NameLink(line: $0.line, range: $0.range) }
+            return block.address.map { Hit(line: $0, range: nil, kind: .addresses, owner: owner) }
+        }
+    }
+
+    /// A date right after a postal block's name, where a date of birth's
+    /// label is read on its rows, is the date of birth: "Nare 14.03.1987"
+    /// under "Beispielyan geb. am", as a form's row is read whole, or
+    /// "Nare 14.03.87", as a health insurance form prints the year.
+    private static func postalBirthDates(_ blocks: [PostalBlock], in text: Text) -> [Hit] {
+        blocks.filter(\.born).flatMap(\.names).compactMap { i in
+            let line = text.strings[i]
+            guard let name = DocumentSense.namePart(of: line),
+                  let date = line.range(of: #"\d{1,2}[./]\d{1,2}[./](?:\d{4}|\d{2})(?!\d)"#, options: .regularExpression,
+                                        range: name.upperBound..<line.endIndex),
+                  line[name.upperBound..<date.lowerBound].allSatisfy({ $0 == " " }) else { return nil }
+            return Hit(line: i, range: NSRange(date, in: line), kind: .birthDates)
+        }
+    }
+
     /// The start of an address after a name: a street with its number and,
     /// maybe, its postcode and town, or a postcode and town alone.
-    private static let addressStart = #"^(?:\p{Lu}[\p{L}'’.\-]*(?:\s[\p{L}'’.\-]+){0,4}\s\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?(?:\s?,\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:\s(?:am|an der|im|in der|bei|ob der|vor der)\s\p{Lu}[\p{L}'’.\-]+)?)?|(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+)"#
+    private static let addressStart = #"^(?:\p{Lu}[\p{L}'’.\-]*(?:\s[\p{L}'’.\-]+){0,4}\s\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?(?:\s?,\s?(?:[A-Z]{1,2}(?:\s?[-–]\s?|\s))?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:\s(?:am|an der|im|in der|bei|ob der|vor der)\s\p{Lu}[\p{L}'’.\-]+)?)?|(?:[A-Z]{1,2}(?:\s?[-–]\s?|\s))?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+)"#
 
     /// Words that start a line of a number that is no street: a telephone,
     /// a page, a room, a vertebra.
@@ -1480,6 +1630,28 @@ enum Finder {
         "bett", "gruppe", "klasse", "version", "jahr", "woche", "tag", "termin", "konto", "kunde", "order",
         "bestellung", "rechnung", "nr", "no", "iban", "bic", "ust", "steuer", "geb", "dr", "prof", "zeichen", "ref",
         "befund", "datum", "date", "uhr", "pos", "position", "menge", "anzahl",
+        "status", "bereich", "stufe", "teil", "abschnitt", "punkt", "schritt", "zeile", "spalte", "typ", "type",
+        "grad", "stadium", "phase", "level", "anlage", "anlagen", "monat", "quartal", "kw", "frage", "aufgabe",
+        "lektion", "runde", "folge", "tabelle", "abbildung", "abb", "section", "chapter", "step", "part",
+        "ausgabe", "heft", "nummer",
+    ]
+
+    /// Words a number follows that is no house number, wherever they stand
+    /// in the line, as no street's name ends in one: "Diabetes mellitus Typ
+    /// 2", "Ergebnis Stufe 3", "Bescheid Seite 2".
+    private static let notHouseNumbers: Set<String> = [
+        "seite", "page", "kapitel", "chapter", "abschnitt", "section", "teil", "part", "schritt", "step", "anlage",
+        "anlagen", "status", "typ", "type", "stufe", "grad", "grade", "stadium", "stage", "phase", "level", "version",
+        "klasse", "kw", "woche", "monat", "quartal", "jahr", "frage", "aufgabe", "lektion", "tabelle", "abbildung",
+        "abb", "termin", "position", "pos", "menge", "anzahl", "bereich", "gruppe", "ausgabe", "heft", "nummer",
+    ]
+
+    /// Words that read as a town after a number but count something:
+    /// "1000 Euro", "2000 Stück".
+    private static let notTowns: Set<String> = [
+        "stück", "stk", "euro", "eur", "blatt", "seiten", "punkte", "mal", "jahre", "monate", "tage", "stunden",
+        "minuten", "kcal", "kalorien", "meter", "km", "liter", "gramm", "kg", "mitglieder", "besucher", "exemplare",
+        "einheiten", "teilnehmer", "pieces", "pages", "points", "years", "days", "units", "members",
     ]
 
     /// Whether a line is a street and its house number, maybe with its
@@ -1490,7 +1662,11 @@ enum Finder {
         guard (2...7).contains(words.count),
               let first = words.first.map({ String($0).lowercased().trimmingCharacters(in: .punctuationCharacters) }),
               !notStreets.contains(first) else { return false }
-        return line.range(of: #"^\p{Lu}[\p{L}'’.\-]*(?:\s[\p{L}'’.\-]+){0,4}\s(?:(?:No|Nº|N°|nº|n°)[.:]?\s?)?\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?(?:\s?,\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-/]+(?:\s[\p{L}'’.\-()/]+){0,3})?$"#,
+        if let number = words.firstIndex(where: { $0.first?.isNumber == true }), number > 0,
+           notHouseNumbers.contains(String(words[number - 1]).lowercased().trimmingCharacters(in: .punctuationCharacters)) {
+            return false
+        }
+        return line.range(of: #"^\p{Lu}[\p{L}'’.\-]*(?:\s[\p{L}'’.\-]+){0,4}\s(?:(?:No|Nº|N°|nº|n°)[.:]?\s?)?\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?(?:\s?,\s?(?:[A-Z]{1,2}(?:\s?[-–]\s?|\s))?\d{4,5}\s\p{Lu}[\p{L}'’.\-/]+(?:\s[\p{L}'’.\-()/]+){0,3})?$"#,
                           options: .regularExpression) != nil
             // A street in a script without capitals, like Arabic: "شارع التحلية 44",
             // maybe with its town and postcode after a comma: ", جدة 21577".
@@ -1503,7 +1679,8 @@ enum Finder {
     /// Whether a line is a postcode with its town: "23456 Musterstadt",
     /// "D-23456 Musterstadt", "1010 Wien", "Springfield, IL 62704".
     static func isTownLine(_ line: String) -> Bool {
-        line.range(of: #"^(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s+\p{Lu}[\p{L}'’.\-/]+(?:\s[\p{L}'’.\-()/]+){0,3}$"#,
+        if countsSomething(line) { return false }
+        return line.range(of: #"^(?:[A-Z]{1,2}(?:\s?[-–]\s?|\s))?\d{4,5}\s+\p{Lu}[\p{L}'’.\-/]+(?:\s[\p{L}'’.\-()/]+){0,3}$"#,
                    options: .regularExpression) != nil
             // A town before its postcode, in a script without capitals: "الرياض 12271";
             // never a number's label, like "رقم الطلب 12345".
@@ -1513,17 +1690,43 @@ enum Finder {
                           options: .regularExpression) != nil
     }
 
-    /// Whether a line is a country alone, as under a town: a word or two.
+    /// Whether a number in a line counts something, by the word after it:
+    /// "1000 Euro", "2000 Stück", never a postcode and its town.
+    private static func countsSomething(_ line: String) -> Bool {
+        let words = line.split(separator: " ")
+        guard let number = words.firstIndex(where: { $0.allSatisfy(\.isNumber) }), number + 1 < words.count else {
+            return false
+        }
+        return notTowns.contains(words[number + 1].lowercased().trimmingCharacters(in: .punctuationCharacters))
+    }
+
+    /// Whether a line is only a word and the number it counts, or a number
+    /// and what it counts, as no address has a line: "Stufe 3", "Kapitel 4",
+    /// "1000 Euro".
+    private static func countsOnly(_ line: String) -> Bool {
+        let words = line.split(separator: " ")
+        guard words.count == 2 else { return false }
+        let word = words[0].lowercased().trimmingCharacters(in: .punctuationCharacters)
+        return words[1].allSatisfy(\.isNumber) && notHouseNumbers.contains(word) || countsSomething(line)
+    }
+
+    /// Whether a line is a country alone, as under a town: a word or two,
+    /// "Schweden", "Vereinigtes Königreich", or up to three in capitals, as
+    /// an envelope prints them; never what a page prints on a line of its
+    /// own, like a form's label, "Kostenträgerkennung", or a letter's
+    /// subject, "Bestätigung Ihrer Kündigung".
     private static func isCountryLine(_ line: String) -> Bool {
         let words = line.split(separator: " ")
-        return (1...2).contains(words.count) && line.count <= 24 && line.first?.isUppercase == true
-            && line.allSatisfy { $0.isLetter || $0 == " " || $0 == "-" }
+        guard (1...3).contains(words.count), line.count <= 24, line.first?.isUppercase == true,
+              line.allSatisfy({ $0.isLetter || $0 == " " || $0 == "-" }),
+              words.count <= 2 || line == line.uppercased() && line.count >= 4 else { return false }
+        return !DocumentSense.isPrintedText(line) && !words.contains { FormFields.isLabelWord($0) }
     }
 
     /// Whether what follows a name is an address, not a date or a word.
     private static func isAddress(_ text: String) -> Bool {
         isStreetLine(text) || isTownLine(text)
-            || text.range(of: #",\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}"#, options: .regularExpression) != nil
+            || text.range(of: #",\s?(?:[A-Z]{1,2}(?:\s?[-–]\s?|\s))?\d{4,5}\s\p{Lu}"#, options: .regularExpression) != nil
     }
 
     /// Reference numbers by their label, as a practice's letter writes them:
@@ -2019,12 +2222,18 @@ enum Finder {
 
     /// Details that are private wherever they appear.
     private static func patterns(in text: Text, _ chosen: Set<PrivateDetail>) -> [Hit] {
-        // Kind by kind, so each place is known by the kind that found it.
-        var hits = chosen.flatMap { kind in patternRanges(in: text.full, [kind]).flatMap { text.hits($0, kind) } }
+        // Kind by kind, so each place is known by the kind that found it,
+        // and always in the same order, so a place two kinds find is the
+        // same kind's at every launch.
+        var hits = PrivateDetail.allCases.filter(chosen.contains).flatMap { kind in
+            patternRanges(in: text.full, [kind]).flatMap { text.hits($0, kind) }
+        }
         if chosen.contains(.addresses),
            let addresses = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.address.rawValue) {
             for match in addresses.matches(in: text.full, range: text.whole) {
                 let lines = text.hits(match.range, .addresses)
+                // Words with a number that only count something are no address, wherever they stand.
+                if lines.contains(where: { countsOnly(text.strings[$0.line]) }) { continue }
                 hits += lines
                 // The detector often stops at the street. The postcode, the
                 // town and the country follow just below.
@@ -2083,7 +2292,7 @@ enum Finder {
             // A street and its number, a comma, and a postcode with its town,
             // on one line, as a letter's subject writes an address, or a
             // message: "Atatürk Caddesi No: 61, 06420 Çankaya/Ankara".
-            found += matches(#"\b\p{Lu}[\p{L}'’.\-]+(?:[ \-][\p{L}'’.\-]+){0,3}\s(?:(?:No|Nº|N°|nº|n°)[.:]?\s?)?\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?\s?,\s?(?:[A-Z]{1,2}\s?-\s?)?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:/\p{Lu}[\p{L}'’.\-]+|\s(?:am|an der|im|in der|bei|ob der|vor der)\s\p{Lu}[\p{L}'’.\-]+)?"#)
+            found += matches(#"\b\p{Lu}[\p{L}'’.\-]+(?:[ \-][\p{L}'’.\-]+){0,3}\s(?:(?:No|Nº|N°|nº|n°)[.:]?\s?)?\d{1,4}\s?[a-zA-Z]?(?:\s?[-/]\s?\d{1,4}\s?[a-zA-Z]?)?\s?,\s?(?:[A-Z]{1,2}(?:\s?[-–]\s?|\s))?\d{4,5}\s\p{Lu}[\p{L}'’.\-]+(?:/\p{Lu}[\p{L}'’.\-]+|\s(?:am|an der|im|in der|bei|ob der|vor der)\s\p{Lu}[\p{L}'’.\-]+)?"#)
             // A Turkish street by the word that makes it one, with "No" and
             // its number: "Bağdat Caddesi No: 46".
             found += matches(#"\b\p{Lu}[\p{L}'’.\-]+(?: \p{Lu}[\p{L}'’.\-]+){0,2} (?:Caddesi|Cad\.|Cd\.|Sokak|Sokağı|Sok\.|Sk\.|Bulvarı|Blv\.) No ?[.:]? ?\d{1,4}[a-zA-Z]?(?:/\d{1,4})?(?!\d)"#)
@@ -2237,12 +2446,16 @@ enum Finder {
         return ibanLengths[String(compact.prefix(2))] == compact.count
     }
 
-    /// A postcode with its town, or a town or country on its own.
+    /// A postcode with its town, or a town or a country on its own, as
+    /// goes on under an address the detector found.
     private static func looksLikeAddress(_ line: String) -> Bool {
         let words = line.split(separator: " ")
-        if line.range(of: #"(^|\s)\d{4,6}(\s|$)"#, options: .regularExpression) != nil { return words.count <= 6 }
-        return (1...3).contains(words.count) && line.first?.isUppercase == true
-            && line.allSatisfy { $0.isLetter || $0 == " " || $0 == "-" }
+        if line.range(of: #"(?:^|\s|\b[A-Z]{1,2}\s?[-–]\s?)\d{4,6}(?:\s|$)"#, options: .regularExpression) != nil {
+            return words.count <= 6 && !countsSomething(line)
+        }
+        // Without a postcode, only a country: a letter's subject right under
+        // the address, "Bestätigung Ihrer Kündigung", is none.
+        return isCountryLine(line)
     }
 
     /// Details announced by a label: on the same line, as in "IBAN: DE89…",
@@ -2298,6 +2511,12 @@ enum Finder {
                 label = normalized(String(text[..<colon]))
             }
             guard let block = labels[label] else { continue }
+            // A word that goes on beside it on its row, as "Fachärztin" and
+            // "für Chirurgie" read in two pieces, is no label: a phrase.
+            if !text.hasSuffix(":"), let next = Self.line(beside: i, in: boxes),
+               boxes[next].minX - boxes[i].maxX < boxes[i].height * 1.5,
+               let word = strings[next].split(separator: " ").first.map({ $0.lowercased() }),
+               continuations.contains(word) { continue }
             let role = DocumentSense.nameRole(ofLabel: label)
             var last = i
             var first = 0
@@ -2322,6 +2541,10 @@ enum Finder {
         }
         return hits
     }
+
+    /// Small words that carry a phrase on, never the start of a value.
+    private static let continuations: Set<String> = ["für", "fur", "der", "des", "und", "&", "/", "-", "of", "for",
+                                                     "in", "im", "am"]
 
     /// The people writing in a chat, by the name before the colon at the
     /// start of their messages: "Lena: Bis morgen!". A name counts when it
@@ -2388,6 +2611,8 @@ enum Finder {
         guard block.first == .names else { return [(whole, block.first, false)] }
         let head = String(value.prefix { !",;(".contains($0) })
         if DocumentSense.isOrganization(head) { return [(whole, .organizations, false)] }
+        // What a form prints, like a doctor's field under "Fachärztin", is no one's name.
+        if DocumentSense.isFormText(value) { return [] }
         // An address's label announces a name first, then the address.
         let address = block.rest != .names
         if let name = DocumentSense.leadingName(in: string, from: start) {
@@ -2520,10 +2745,13 @@ enum Finder {
     /// - Parameter own: the words of the owner's own name (`ownWords`): a
     ///   line or a word of it is a name for sure, read as loosely as a
     ///   misread letter in a word of five letters or more.
-    private static func names(in text: Text, learned: Set<String>, own: Set<String> = []) -> Findings {
+    /// - Parameter blocks: the page's postal blocks (`postalBlocks`).
+    /// - Parameter document: the document's kind, where it is known already.
+    private static func names(in text: Text, learned: Set<String>, own: Set<String> = [],
+                              blocks: [PostalBlock] = [], kind document: DocumentKind? = nil) -> Findings {
         var known = learned.union(own)
         var hits: [Hit] = []
-        let kind = DocumentSense.kind(of: text.strings)
+        let kind = document ?? DocumentSense.kind(of: text.strings)
         func add(_ i: Int, _ range: Range<String.Index>, title: String? = nil) {
             let string = text.strings[i]
             hits.append(Hit(line: i, range: NSRange(range, in: string), kind: .names, title: title))
@@ -2551,6 +2779,33 @@ enum Finder {
             if isNameHeader(string), let below = Self.line(below: i, in: text.boxes, gap: 2.5),
                let range = DocumentSense.nameAtStart(of: text.strings[below]) {
                 add(below, range)
+            }
+        }
+        // A letter's or a form's postal block, with no label read: the
+        // name's lines over its street and town. Two words or more on one
+        // line are a name, and so are a form's two lines; one word alone may
+        // be a heading, like "Impressum", and is only checked. One person's
+        // lines take one role: the surest the words round them give, or,
+        // with the date of birth's label read on their rows, whose the
+        // document is, as a medical one's patient.
+        var lone: [Hit] = []
+        for block in blocks {
+            let parts = block.names.compactMap { i in DocumentSense.namePart(of: text.strings[i]).map { (line: i, range: $0) } }
+            guard let first = parts.first else { continue }
+            let words = parts.reduce(0) { $0 + text.strings[$1.line][$1.range].split(separator: " ").count }
+            let read = parts.map { DocumentSense.role(ofNameIn: $0.line, at: $0.range, lines: text.strings, kind: kind) }
+            let role = read.first(where: \.isSure)
+                ?? (block.born ? NameRole(role: DocumentSense.subject(in: kind), confidence: kind == .medical ? 0.75 : 0.6,
+                                          reason: "birth") : nil)
+            if parts.count >= 2 || words >= 2 {
+                for part in parts {
+                    hits.append(Hit(line: part.line, range: NSRange(part.range, in: text.strings[part.line]), kind: .names,
+                                    role: role))
+                    learn(String(text.strings[part.line][part.range]), into: &known)
+                }
+            } else {
+                lone.append(Hit(line: first.line, range: NSRange(first.range, in: text.strings[first.line]), kind: .names,
+                                role: role, check: true))
             }
         }
         var tagged = Set<Int>()
@@ -2640,7 +2895,8 @@ enum Finder {
         hits += repeats(of: known, in: text, skipping: found, own: own)
         hits += mentions(of: own, in: text, skipping: found)
         let offered = sensitive ? headings : unvouched
-        let possible = offered.map { Hit(line: $0, range: nil, kind: .names, check: true) }
+        var possible = offered.map { Hit(line: $0, range: nil, kind: .names, check: true) }
+        if sensitive { hits += lone } else { possible += lone }
         return Findings(hits: hits, possible: possible)
     }
 
@@ -2876,9 +3132,11 @@ enum Finder {
     /// - Parameter own: the words of the owner's own name (`ownWords`).
     /// - Parameter doctors: the lines a letterhead lists among its doctors
     ///   (`doctorsColumn`), where a name with nothing round it is a doctor's.
+    /// - Parameter kind: the document's kind, where it is known already.
     private static func decided(_ hits: [Hit], in strings: [String], _ chosen: Set<PrivateDetail>,
-                                scope: NameScope, own: Set<String> = [], doctors: Set<Int> = []) -> [Hit] {
-        let document = DocumentSense.kind(of: strings)
+                                scope: NameScope, own: Set<String> = [], doctors: Set<Int> = [],
+                                kind: DocumentKind? = nil) -> [Hit] {
+        let document = kind ?? DocumentSense.kind(of: strings)
         var kept: [Hit] = []
         var named: [Hit] = []
         // The places of the owner's own name, by their place in `named`.
@@ -2960,8 +3218,9 @@ enum Finder {
     /// a line shaped like a name right between two doctors' names in its
     /// column. Each is read as a doctor's. A name after the doctors, as a
     /// patient's may be, is not.
-    static func doctorsColumn(_ strings: [String], boxes: [CGRect]) -> Set<Int> {
-        guard boxes.count == strings.count, DocumentSense.kind(of: strings) == .medical else { return [] }
+    /// - Parameter kind: the document's kind, where it is known already.
+    static func doctorsColumn(_ strings: [String], boxes: [CGRect], kind: DocumentKind? = nil) -> Set<Int> {
+        guard boxes.count == strings.count, (kind ?? DocumentSense.kind(of: strings)) == .medical else { return [] }
         let doctors = Set(strings.indices.filter { DocumentSense.namesADoctor(strings[$0]) })
         guard doctors.count >= 2 else { return [] }
         // Each line's neighbours in its column, the nearest above and below.
@@ -3074,6 +3333,307 @@ enum Finder {
             sum += i % 2 == 1 ? (doubled > 9 ? doubled - 9 : doubled) : digit
         }
         return sum % 10 == 0
+    }
+}
+
+extension Finder {
+    // MARK: Phone numbers
+
+    /// Words that say the number after them, or the one under them, is a
+    /// phone number, folded, in the app's languages: a word of its own,
+    private static let phoneWords: Set<String> = [
+        "tel", "fon", "fax", "ph", "mob", "cell", "gsm", "sms", "hotline", "call", "ring", "ruf", "ara",
+        "faks", "zəng", "movil", "mobil", "mobile", "handy", "celular", "cel", "fone", "tlf", "tfno", "telf",
+        "portable", "helpline", "liga",
+    ]
+    /// the start of one, as "Telefonnummer", "appelez" or "llámame",
+    private static let phoneWordStarts = ["telefon", "telephon", "phone", "mobil", "handy", "rufnummer", "durchwahl",
+                                          "anruf", "ruckruf", "notruf", "erreichbar", "appel", "llam", "ligu", "ligar",
+                                          "chama", "telefax", "whatsapp"]
+    /// or a word in a script written without spaces, or a sign.
+    private static let phoneSigns = ["هاتف", "جوال", "موبايل", "فاكس", "اتصل", "تلفون", "واتساب", "फ़ोन", "फोन",
+                                     "मोबाइल", "कॉल", "दूरभाष", "電話", "携帯", "ファックス", "ファクス", "전화", "휴대폰",
+                                     "핸드폰", "팩스", "电话", "手机", "传真", "致电", "☎", "📞", "✆", "📱", "℡"]
+
+    private static func folded(_ text: Substring) -> String {
+        text.folding(options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive], locale: nil)
+    }
+
+    /// Whether a piece of a line holds a word that says a phone number
+    /// follows: "Tel.", "Fax:", "Mobil", "Ruf mich an unter", "هاتف", "电话";
+    /// a single letter before a colon, as a letterhead prints "T: …".
+    static func hasPhoneWord(_ text: Substring) -> Bool {
+        let text = folded(text)
+        if phoneSigns.contains(where: { text.contains(folded($0[...])) }) { return true }
+        // "Tel." as small print, or a signature over it, reads it: "Te!.", "TeI.".
+        if text.range(of: #"(?<!\p{L})te[l1i!|](?!\p{L})"#, options: .regularExpression) != nil { return true }
+        var start: String.Index?
+        for i in text.indices + [text.endIndex] {
+            if i < text.endIndex, text[i].isLetter {
+                if start == nil { start = i }
+                continue
+            }
+            guard let from = start else { continue }
+            start = nil
+            let word = String(text[from..<i])
+            if phoneWords.contains(word) || phoneWordStarts.contains(where: word.hasPrefix) { return true }
+            if word.count == 1, "tfm".contains(word), i < text.endIndex, ":.".contains(text[i]) { return true }
+        }
+        return false
+    }
+
+    /// Whether a number is written as a phone number is dialled: after a
+    /// country's code, "+49 …", "0049 …", or in groups, "040 1234567",
+    /// "(030) 12 34 56", "0176-1234567".
+    static func isDialled(_ number: Substring) -> Bool {
+        let number = number.trimmingCharacters(in: .whitespaces)
+        return hasCountryCode(number[...])
+            || number.hasPrefix("(") || number.range(of: #"\d[ \-–/.()\x{00A0}]+\d"#, options: .regularExpression) != nil
+    }
+
+    private static func hasCountryCode(_ number: Substring) -> Bool {
+        let number = number.trimmingCharacters(in: .whitespaces)
+        return number.hasPrefix("+") || number.range(of: #"^00[1-9]"#, options: .regularExpression) != nil
+    }
+
+    /// What stands before a number on its line, back to the number before
+    /// it or the line's start: its label, as "Fax: " in
+    /// "Tel. 040 1234567 Fax: 040 1234568".
+    static func label(before range: Range<String.Index>, in line: String) -> Substring {
+        var start = range.lowerBound
+        while start > line.startIndex, !line[line.index(before: start)].isNumber { start = line.index(before: start) }
+        return line[start..<range.lowerBound]
+    }
+
+    /// Whether a line is a phone number's label alone, as over a column of
+    /// numbers: "Telefon", "Tel.:", "Mobil / WhatsApp".
+    static func isPhoneLabel(_ line: String) -> Bool {
+        let words = line.split(whereSeparator: \.isWhitespace)
+        return (1...3).contains(words.count) && !line.contains(where: \.isNumber) && hasPhoneWord(line[...])
+    }
+
+    /// Whether what the phone numbers' detector found is one. A number
+    /// written as one is dialled, or after a word that says it is one, on
+    /// its line, as the label over it or, for a hit, beside it on its row,
+    /// is, on any page. A bare run of
+    /// digits is only on a page that is no document, like a chat, where
+    /// numbers are typed so: a form, an invoice or a letter prints its
+    /// numbers with their labels, and a bare run there is a practice's, a
+    /// doctor's or a customer's number.
+    /// - Parameter above: the line over it, in its column.
+    static func isPhone(_ range: Range<String.Index>, in line: String, above: String?, document: DocumentKind) -> Bool {
+        isDialled(line[range]) || hasPhoneWord(label(before: range, in: line)) || above.map(isPhoneLabel) == true
+            || document == .general
+    }
+
+    /// The same for a hit, with its label found by its place: over it in
+    /// its column, or before it on its row, read as a line of its own, as
+    /// an invoice prints "Telefon" and, a column on, "040123456".
+    static func isPhone(_ hit: Hit, in strings: [String], boxes: [CGRect], document: DocumentKind) -> Bool {
+        let string = strings[hit.line]
+        guard let range = hit.range.flatMap({ Range($0, in: string) }) else { return true }
+        guard boxes.count == strings.count else { return isPhone(range, in: string, above: nil, document: document) }
+        let above = line(above: hit.line, in: boxes, gap: 1.6).map { strings[$0] }
+        if isPhone(range, in: string, above: above, document: document) { return true }
+        // A label beside it counts for the first number on its line only.
+        guard !label(before: range, in: string).contains(where: \.isLetter) else { return false }
+        return strings.indices.contains { i in
+            i != hit.line && isPhoneLabel(strings[i]) && line(beside: i, in: boxes) == hit.line
+        }
+    }
+
+    /// Whether a bare run of digits is shaped like a number dialled at
+    /// home, as most countries write one: a 0, then nine to eleven digits.
+    /// On a document, with no word to say so, it is covered for the owner
+    /// to check.
+    static func isNationalNumber(_ number: Substring) -> Bool {
+        number.range(of: #"^0[1-9]\d{8,10}$"#, options: .regularExpression) != nil
+    }
+
+    /// Whether a phone number says so itself: a word like "Tel." before it,
+    /// or a country's code, which no other kind of number has.
+    private static func saysPhone(_ hit: Hit, in strings: [String]) -> Bool {
+        let string = strings[hit.line]
+        guard let range = hit.range.flatMap({ Range($0, in: string) }) else { return false }
+        return hasCountryCode(string[range]) || hasPhoneWord(label(before: range, in: string))
+    }
+
+    /// The line right over another, starting in its column, as a label
+    /// over its value.
+    static func line(above index: Int, in boxes: [CGRect], gap: CGFloat) -> Int? {
+        let below = boxes[index]
+        var best: Int?
+        for (i, box) in boxes.enumerated() where i != index {
+            guard box.minY >= below.maxY - below.height * 0.3,
+                  box.minY - below.maxY < max(box.height, below.height) * gap,
+                  abs(box.minX - below.minX) < 0.03 else { continue }
+            if let current = best, boxes[current].minY <= box.minY { continue }
+            best = i
+        }
+        return best
+    }
+
+    // MARK: One kind for each number
+
+    /// Whether nine digits are a German doctor's lifetime number (LANR):
+    /// the seventh digit is the check digit of the first six, weighted 4
+    /// and 9 in turn. One run of nine digits in ten passes by chance, so it
+    /// counts only for a bare run in a medical document.
+    static func isDoctorNumber(_ number: Substring) -> Bool {
+        let digits = number.compactMap(\.wholeNumberValue)
+        guard digits.count == 9, number.allSatisfy({ $0.isASCII && $0.isNumber }) else { return false }
+        let sum = zip(digits, [4, 9, 4, 9, 4, 9]).map(*).reduce(0, +)
+        return (10 - sum % 10) % 10 == digits[6]
+    }
+
+    /// What the page itself says a number is, and whose: nil where it is
+    /// a code the form prints, like the insured person's status.
+    struct NamedNumber: Equatable {
+        let kind: PrivateDetail?
+        let role: NameRole?
+    }
+
+    /// A number as numbers are compared: its digits, six at least, as a
+    /// shorter one may be anything.
+    static func numberKey(_ text: Substring) -> String? {
+        let digits = String(text.filter { $0.isASCII && $0.isNumber })
+        return digits.count >= 6 ? digits : nil
+    }
+
+    /// The numbers the page names, by their digits: a form field's by its
+    /// label ("Arzt-Nr.", "Versicherten-Nr.", "Status"), a medical letter's
+    /// reference, one after an order's or an ID's label ("Kundennummer",
+    /// "Steuernummer"); the first that names one wins. Whatever the kinds
+    /// chosen, so a number named so is never a phone number.
+    static func namedNumbers(_ strings: [String], boxes: [CGRect], form: FormFields.Reading,
+                             document: DocumentKind) -> [String: NamedNumber] {
+        var named: [String: NamedNumber] = [:]
+        func name(_ hit: Hit, as number: NamedNumber) {
+            let string = strings[hit.line]
+            guard let range = hit.range.flatMap({ Range($0, in: string) }), let key = numberKey(string[range]),
+                  named[key] == nil else { return }
+            named[key] = number
+        }
+        let fields: [FormFields.Entity] = [.healthInsuranceNumber, .identificationNumber, .institutionNumber, .formCode]
+        for value in form.values where value.confidence == .high && fields.contains(value.entity) {
+            guard let key = numberKey(strings[value.line][value.range]), named[key] == nil else { continue }
+            named[key] = NamedNumber(kind: value.entity.detail,
+                                     role: value.role.map { NameRole(role: $0, confidence: 0.9, reason: "form") })
+        }
+        let text = Text(strings, boxes: boxes)
+        // A medical letter's reference is the patient's case, as `collect` reads it.
+        if document == .medical {
+            for hit in references(in: text) {
+                name(hit, as: NamedNumber(kind: .ids, role: NameRole(role: .patient, confidence: 0.7, reason: "reference")))
+            }
+        }
+        for kind in [PrivateDetail.ids, .orders] {
+            for range in patternRanges(in: text.full, [kind]) {
+                for hit in text.hits(range, kind) { name(hit, as: NamedNumber(kind: kind, role: nil)) }
+            }
+        }
+        return named
+    }
+
+    /// A number as it is printed again: its digits, maybe after a capital or two.
+    private static let numberRun = try! NSRegularExpression(pattern: #"(?<![\p{L}\d])\p{Lu}{0,2}\d{6,15}(?![\p{L}\d])"#)
+
+    /// What the page names the number a hit is, if it does.
+    static func namedNumber(of hit: Hit, in strings: [String], _ named: [String: NamedNumber]) -> NamedNumber? {
+        let string = strings[hit.line]
+        return hit.range.flatMap { Range($0, in: string) }.flatMap { numberKey(string[$0]) }.flatMap { named[$0] }
+    }
+
+    /// The kinds of number, the one that wins first where two find one
+    /// place: a bank's account and an ID by their checks and labels, an
+    /// order's by its label, then a parcel's by its length alone.
+    private static let numberKinds: [PrivateDetail] = [.bank, .ids, .orders, .codes, .tracking, .phones]
+
+    /// One kind for each number, as a person reads a page, between finding
+    /// the places and keeping those the owner chose (`decided`). A phone
+    /// number the detector found is one where it is written as one is
+    /// dialled or said to be one, or on a page that is no document; a bare
+    /// run on a document shaped like a number dialled at home is covered
+    /// for the owner to check, and any other is a number of another kind:
+    /// in a medical document an ID, covered for the owner to check, as a
+    /// practice's or an insurer's number is where its label is misread.
+    /// A number the page names by its label is that kind wherever it is
+    /// printed again, as a practice's stamp repeats the numbers of a form's
+    /// header; never a phone number too, unless "Tel." or a country's code
+    /// says so where it stands. In a medical document, a bare run of nine
+    /// digits that passes a doctor's number's check is one, the doctor's
+    /// where it is in the block of a doctor's name. And a place two kinds
+    /// of number found is one place of one kind, so it is listed once.
+    static func oneKind(_ hits: [Hit], named: [String: NamedNumber], in strings: [String], boxes: [CGRect],
+                        _ chosen: Set<PrivateDetail>, document: DocumentKind) -> [Hit] {
+        var kept: [Hit] = []
+        for hit in hits {
+            guard hit.kind == .phones else { kept.append(hit); continue }
+            let number = namedNumber(of: hit, in: strings, named)
+            if let number, number.kind != .phones, !saysPhone(hit, in: strings) {
+                // A number the page names as another kind is that kind, never a phone number too.
+                guard let kind = number.kind, chosen.contains(kind),
+                      !hits.contains(where: { $0.line == hit.line && $0.kind == kind && overlap($0.range, hit.range) })
+                else { continue }
+                kept.append(Hit(line: hit.line, range: hit.range, kind: kind, role: number.role))
+            } else if isPhone(hit, in: strings, boxes: boxes, document: document) {
+                kept.append(hit)
+            } else if number == nil, let range = hit.range.flatMap({ Range($0, in: strings[hit.line]) }),
+                      isNationalNumber(Substring(strings[hit.line][range].trimmingCharacters(in: .whitespaces))) {
+                // Shaped like a number dialled at home, with no word to say so: covered, for the owner to check.
+                var checked = hit
+                checked.check = true
+                kept.append(checked)
+            } else if number == nil, document == .medical, chosen.contains(.ids),
+                      let range = hit.range.flatMap({ Range($0, in: strings[hit.line]) }),
+                      let key = numberKey(strings[hit.line][range]), key.count >= 7,
+                      !isDoctorNumber(Substring(strings[hit.line][range].trimmingCharacters(in: .whitespaces))) {
+                // In a medical document, a bare run nothing names is most likely an ID, a
+                // practice's, an insurer's or a case's: covered as one, for the owner to check.
+                kept.append(Hit(line: hit.line, range: hit.range, kind: .ids, check: true))
+            }
+            // Any other bare run on a document is a number of another kind, no phone number.
+        }
+        // Each place a named number is printed again, and a doctor's number by its check.
+        func add(_ line: Int, _ range: NSRange, _ kind: PrivateDetail, _ role: NameRole?) {
+            guard chosen.contains(kind),
+                  !kept.contains(where: { $0.line == line && $0.kind != .phones && overlap($0.range, range) }) else { return }
+            kept.append(Hit(line: line, range: range, kind: kind, role: role))
+        }
+        let doctors = document == .medical ? strings.indices.filter { DocumentSense.namesADoctor(strings[$0]) } : []
+        for (i, string) in strings.enumerated() {
+            for match in numberRun.matches(in: string, range: NSRange(string.startIndex..., in: string)) {
+                guard let range = Range(match.range, in: string), let key = numberKey(string[range]) else { continue }
+                if let number = named[key], let kind = number.kind {
+                    add(i, match.range, kind, number.role)
+                } else if named[key] == nil, document == .medical, isDoctorNumber(string[range]),
+                          !hasPhoneWord(label(before: range, in: string)) {
+                    // The doctor's, in the block of a doctor's name: their stamp.
+                    let near = boxes.count == strings.count && doctors.contains { d in
+                        abs(boxes[d].minX - boxes[i].minX) < 0.05 && abs(boxes[d].midY - boxes[i].midY) < boxes[i].height * 12
+                    }
+                    add(i, match.range, .ids, near ? NameRole(role: .doctor, confidence: 0.7, reason: "check digit") : nil)
+                }
+            }
+        }
+        // One kind for each place: a phone number that says so wins; else
+        // the kind first in `numberKinds`, over the whole of both.
+        var placed: [Hit] = []
+        for hit in kept {
+            guard let kind = hit.kind, let rank = numberKinds.firstIndex(of: kind),
+                  let i = placed.firstIndex(where: { other in
+                      other.line == hit.line && other.kind != kind && other.kind.map(numberKinds.contains) == true
+                          && overlap(other.range, hit.range)
+                  }), let otherKind = placed[i].kind, let otherRank = numberKinds.firstIndex(of: otherKind)
+            else { placed.append(hit); continue }
+            let other = placed[i]
+            let phone = kind == .phones ? hit : otherKind == .phones ? other : nil
+            let wins = phone.map { saysPhone($0, in: strings) == (kind == .phones) } ?? (rank < otherRank)
+            var winner = wins ? hit : other
+            winner.range = union(hit.range, other.range)
+            placed[i] = winner
+        }
+        return placed
     }
 }
 

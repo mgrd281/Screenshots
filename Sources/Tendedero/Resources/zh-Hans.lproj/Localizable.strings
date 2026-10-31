@@ -1833,6 +1833,9 @@
 "Letter" = "信函";
 "Form" = "表格";
 "Receipt" = "收据";
+"Sick note" = "病假证明";
+"Health insurance form" = "医保表格";
+"%@ recognized" = "已识别：%@";
 "Scan %@" = "扫描 %@";
 "Explain the Document" = "解释文档";
 "Summarize" = "总结";

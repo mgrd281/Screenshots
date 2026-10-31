@@ -364,4 +364,16 @@ final class ProtectionPlanTests: XCTestCase {
         // Each from the top of the picture down.
         XCTAssertEqual(topics[0].marks.map(\.kind), [.names, .addresses])
     }
+
+    func testAPlacesOwnerIsSaidInTheTopicsWords() {
+        var plan = ProtectionPlan()
+        plan.add(found: [area(0.1, 0.9, .names, role: .patient), area(0.1, 0.7, .ids, role: .doctor),
+                         area(0.1, 0.5, .names, role: .customer), area(0.1, 0.3, .health, role: nil)])
+        plan.cover(CGRect(x: 0.5, y: 0.05, width: 0.2, height: 0.05))
+        // Whose it is where Snapfly is sure, in the words Details lists them by; nothing for what it is.
+        XCTAssertEqual(plan.marks.map(ProtectionPlan.whose(of:)), [L("Patient"), L("Doctors"), L("Other people"), nil, nil])
+        XCTAssertEqual(ProtectionPlan.Topic.patient.title, L("Patient"))
+        XCTAssertEqual(ProtectionPlan.Topic.group(.money).title, PrivateDetail.Group.money.title)
+        XCTAssertEqual(ProtectionPlan.Topic.hand.title, L("Hidden by hand"))
+    }
 }

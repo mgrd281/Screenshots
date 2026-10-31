@@ -1833,6 +1833,9 @@
 "Letter" = "Lettre";
 "Form" = "Formulaire";
 "Receipt" = "Reçu";
+"Sick note" = "Arrêt de travail";
+"Health insurance form" = "Formulaire d’assurance maladie";
+"%@ recognized" = "Document reconnu : %@";
 "Scan %@" = "Scan %@";
 "Explain the Document" = "Expliquer le document";
 "Summarize" = "Résumer";

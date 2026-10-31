@@ -1833,6 +1833,9 @@
 "Letter" = "편지";
 "Form" = "양식";
 "Receipt" = "영수증";
+"Sick note" = "근로불능 진단서";
+"Health insurance form" = "건강보험 서식";
+"%@ recognized" = "%@ 인식됨";
 "Scan %@" = "스캔 %@";
 "Explain the Document" = "문서 설명";
 "Summarize" = "요약";

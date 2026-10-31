@@ -94,7 +94,7 @@ final class CoverAccuracyTests: XCTestCase {
 
     func testTheCorpusIsWhatItSays() {
         let documents = CoverCorpus.documents
-        XCTAssertEqual(documents.count, 110)
+        XCTAssertEqual(documents.count, 116)
         XCTAssertEqual(Set(documents.map(\.language)).count, 7)
         for document in documents {
             for part in document.secrets + document.kept {
@@ -109,6 +109,24 @@ final class CoverAccuracyTests: XCTestCase {
         XCTAssertEqual(CoverCorpus.kimlik([1, 0, 0, 0, 0, 0, 0, 0, 1]), "10000000146")
         // A German tax ID without a colon after its name is among them.
         XCTAssertTrue(documents.contains { $0.lines.contains { $0.hasPrefix("Steuer-ID 1") || $0.hasPrefix("Steuer-ID 2") } })
+    }
+
+    /// On a document, the phone numbers' detector's find is kept only where
+    /// it is written as one is dialled or said to be one (`Finder.isPhone`).
+    /// Every phone number of the corpus is, so the phones' floor holds; the
+    /// detector itself runs only on macOS, this rule everywhere.
+    func testEveryPhoneOfTheCorpusIsWrittenAsOne() {
+        for document in CoverCorpus.documents {
+            let kind = DocumentSense.kind(of: document.lines)
+            for secret in document.secrets where secret.kind == .phones {
+                let line = document.lines[secret.line]
+                let range = line.index(line.startIndex, offsetBy: secret.range.lowerBound)
+                    ..< line.index(line.startIndex, offsetBy: secret.range.upperBound)
+                let above = secret.line > 0 ? document.lines[secret.line - 1] : nil
+                XCTAssertTrue(Finder.isPhone(range, in: line, above: above, document: kind),
+                              "\(document.name) (\(kind.rawValue)): \(secret.text) in \(line)")
+            }
+        }
     }
 
     // MARK: Measuring

@@ -1833,6 +1833,9 @@
 "Letter" = "Mektup";
 "Form" = "Form";
 "Receipt" = "Fiş";
+"Sick note" = "İş göremezlik belgesi";
+"Health insurance form" = "Sağlık sigortası formu";
+"%@ recognized" = "%@ tanındı";
 "Scan %@" = "Tarama %@";
 "Explain the Document" = "Belgeyi açıkla";
 "Summarize" = "Özetle";

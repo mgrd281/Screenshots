@@ -343,7 +343,12 @@ readable, and so do a phone number, an address, an amount or a diagnosis,
 each a kind of its own. A line that only looks like a name, with nothing to
 vouch for it, is offered to check; in a doctor's letter, an invoice or a
 bank statement it is covered and marked to check instead, so a patient's
-name never stays readable as a mere suggestion. What an invoice charges for
+name never stays readable as a mere suggestion. Which of these a page is
+comes from its words as words, whole or starting or ending a compound like
+Rechnungsnummer, never from letters inside another word, so "ust" inside
+"Mustermann" is no VAT; and a paper Snapfly knows, a German sick note, any
+other statutory health insurance form or an invoice, is recognized by its
+title and its printed labels, even read poorly. What an invoice charges for
 is no one's name: a line like "Druckpatronen Schwarz", with its price on its
 row, under a column headed Beschreibung, Artikel, Leistung, Description or
 Item, is only offered. A column headed Name, Teilnehmer or Kunde holds
@@ -366,10 +371,35 @@ health details. So each kind covers its own fields and no other's: Names
 alone leaves the diagnosis, the dates and the numbers readable, Health
 alone leaves the names, and a label itself is never covered. What a field
 holds also wins over what it looks like: a disease named after a person
-under Diagnose is no name, and an insurance number no phone number. A
+under Diagnose is no name, and an insurance number no phone number. On a
+document, a bare run of digits is a phone number only with Tel., Fax, Mobil
+or a word like it before it, over it or beside it on its row, a country's
+code, or its digits in groups; one shaped like a number dialled at home,
+with nothing to say so, is covered and marked to check; in a medical
+document, any other that nothing names, like a practice's number under a
+misread label, is covered as an ID number, with ID numbers chosen, and
+marked to check; a chat keeps every number. A
 value that fits its label only in part, like a name read in small letters,
 is covered and marked to check; one that barely does, like a number too
 short for its field, is only offered.
+
+A form is read as a scan reads its small print. A label is still its label
+read a letter off ("Vomame", "Versicherlen"), and a box's border read beside
+a value, or stuck to it ("|Beispielyan"), is no part of it. A checkbox's
+printed words, like "Arbeitsunfall, Arbeitsunfallfolgen, Berufskrankheit"
+or "dem Durchgangsarzt zugewiesen", and the stamp's caption are labels,
+never a value or a name, and a doctor's field, like Proktologie, is no
+one's name, whatever strokes of a signature are read beside it. An everyday
+word that is a surname too, like Menge or Preis, is still a name under a
+name's label, covered and marked to check. A number a label names keeps that
+kind wherever the page prints it again, as the doctor's stamp repeats the
+Betriebsstätten-Nr. and the Arzt-Nr.: an ID number in the boxes and in the
+stamp alike, never a phone number, and each place listed once. A doctor's
+number is also known by its check digit, where its label is misread. Where
+the name's label is not read at all, the postal block still finds the
+insured person: a name over a street over a postcode and town, the surname
+over the given name as the form prints them, with "geb. am" between them or
+the date of birth beside the given name, its year in four digits or two.
 
 Three switches choose whose names are covered, each its own: Patient
 names, the patients'; Other people, the doctors, customers, staff, payees,
@@ -406,15 +436,22 @@ name is that person's: the street and house number, even one without a word
 like Straße, as in "Lindenberg 12", the postcode with its town and the
 country under them, in the name's column; and the street and town after a
 name on its line, as a letter's subject writes "Mustermann, Erika,
-Lindenberg 12, 23456 Musterstadt". A date of birth is found by the word
-before it, like geb., geboren am, Geburtsdatum, DOB or a star, and is a
-kind of its own, so a letter's other dates stay readable. A reference
-number after its label, like Unser Zeichen, Referenznummer or Patienten-Nr.,
-is an ID number, and in a doctor's letter the patient's. An IBAN read with
-a space after its country, as small print often is, is found at that
-country's length, and a bank's BIC beside an IBAN or the word BIC. So in a
-radiology letter the patient's name, address, date of birth and case
-numbers are known as the patient's, and the doctors' names as the doctors'.
+Lindenberg 12, 23456 Musterstadt". A street over its town is an address
+with or without a name over it, and the postcode may follow the country's
+letter ("D 12345 Musterstadt", "CH-8001 Zürich"); words with a number, like
+"Typ 2", "Seite 2" or "Status 1", are no street, and "1000 Euro" is no
+town. The country under the town is any country's name, never what a page
+prints on a line of its own, so a letter's subject right under the address,
+like "Bestätigung Ihrer Kündigung", stays readable. A date of birth is
+found by the word before it, like geb., geboren am, Geburtsdatum, DOB or a
+star, and is a kind of its own, so a letter's other dates stay readable. A
+reference number after its label, like Unser Zeichen, Referenznummer or
+Patienten-Nr., is an ID number, and in a doctor's letter the patient's. An
+IBAN read with a space after its country, as small print often is, is
+found at that country's length, and a bank's BIC beside an IBAN or the word
+BIC. So in a radiology letter the patient's name, address, date of birth
+and case numbers are known as the patient's, and the doctors' names as the
+doctors'.
 
 API keys and tokens are found by how services start them, like `sk-`,
 `ghp_` or `AKIA`, by what follows Bearer or a setting like `API_KEY=`, by a
@@ -1164,9 +1201,11 @@ watch the screen, so there is no line there. What it keeps is the covering:
   whose one job is checking the covers: its own bar (back, "Prüfen" with
   "Seite 1 von 3", the menu and Next); a status chip ("4 verdeckt · 2 zu
   prüfen", never "Nichts Privates gefunden" while anything is open) that
-  opens the list of places to check on every page, each with Lassen and
-  Verdecken, Alle verdecken, the pages' hints with Ansehen, and what is
-  covered; the page as large as it can be, its places to check outlined in
+  opens the list of places to check on every page, which says which paper
+  it recognized ("Arbeitsunfähigkeitsbescheinigung erkannt") and, where
+  Snapfly is sure, whose each place is ("Patient · Beispielyan · Seite 1"),
+  each with Lassen and Verdecken, Alle verdecken, the pages' hints with
+  Ansehen, and what is covered; the page as large as it can be, its places to check outlined in
   orange, an eye in its bottom corner to see it without covers, a swipe
   sideways to the next page; where the page's text could not be read,
   the chip says so with Try Again, never that nothing private was found; the pages small under it, a dot on each with something
@@ -1700,13 +1739,13 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Documents.swift` | A PDF from outside, covered page by page and drawn into a new PDF, or its pages painted whole where that fails |
 | `HideSend.swift` | Send covered, in Hide Private Details: the copy straight to a chat, the clipboard or the Share menu |
 | `SaveCopy.swift` | The copy saved beside a photo or PDF from Finder: its name, its kind and how it is written |
-| `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-two kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names, Patient names and Other people each their own people, a name in a column of doctors a doctor's; a letter's address under a name, a date of birth and a reference number known as that person's; and, for the iPhone's Details, what Settings leaves visible; the lines read kept a while in memory, or given from a photo prepared ahead of time; a reading Vision could not do is counted, never kept |
+| `Shared/PrivateText.swift` | Finds private details in a screenshot, twenty-two kinds and the owner's own rules, on the Mac and the iPhone: found, told what each is, then kept as the owner chose, Names, Patient names and Other people each their own people, a name in a column of doctors a doctor's; a letter's address under a name, a date of birth and a reference number known as that person's; and, for the iPhone's Details, what Settings leaves visible; the lines read kept a while in memory, or given from a photo prepared ahead of time; a reading Vision could not do is counted, never kept; on a document, a phone number only where it is written or said to be one, one kind for each number (a number a label names is that kind wherever it is printed again, a doctor's number known by its check digit), and the postal block, a name over a street over its town, found without a label; the paper a page was read as, for Review |
 | `Shared/ReviewStatus.swift` | The line under Review: covered, still to check and the page's faults, never "nothing private" while anything is open (tested on Linux) |
 | `Shared/HandShape.swift`, `Shared/ProtectionPlan.swift` | Hiding by hand: the marker's strokes, boxes that turn and outlines, on the original picture's places, and every place of a picture with the owner's changes, each undone and done again, and the count of what is protected, to check and left |
 | `Shared/PrivacyIndex.swift` | Pictures prepared ahead of time: what is kept of each, what is left to read, newest first, and when preparing waits |
-| `Shared/FormFields.swift` | Reads a printed form's fields: each label, like "Name, Vorname des Versicherten", Versicherten-Nr. or "Arbeitsunfähig seit", and its value beside it or under it in its column, told as what the label says it is (a name, an address, a date of birth, an insurance or ID number, a diagnosis, a day of illness), with whose it is and how sure |
-| `Shared/DocumentSense.swift` | Reads a document as a person would: a person's name from a company's, where a label's value stops being a name, whose a name is (patient, doctor, customer, staff), and whose names Settings covers |
-| `Shared/ProtectionPlan.swift` | A picture being protected, place by place: found, offered, left visible as Settings says, turned on or off one by one or a topic at once, or covered by hand, with undo and redo; and the places by whose they are and what they are, for Details |
+| `Shared/FormFields.swift` | Reads a printed form's fields: each label, like "Name, Vorname des Versicherten", Versicherten-Nr. or "Arbeitsunfähig seit", and its value beside it or under it in its column, told as what the label says it is (a name, an address, a date of birth, an insurance or ID number, a diagnosis, a day of illness), with whose it is and how sure; labels read a letter off in small print, a box's border no part of its value, a checkbox's printed words and the stamp's caption labels and never values, and a number a label names read as that field wherever the page prints it again |
+| `Shared/DocumentSense.swift` | Reads a document as a person would: a person's name from a company's, where a label's value stops being a name, whose a name is (patient, doctor, customer, staff), and whose names Settings covers; the kind of document from whole words, and the paper a page is (a sick note, another statutory health insurance form, an invoice) by its title and printed labels; a form's printed words and doctors' fields, which are no names; a postal block's name line and a letter's closing |
+| `Shared/ProtectionPlan.swift` | A picture being protected, place by place: found, offered, left visible as Settings says, turned on or off one by one or a topic at once, or covered by hand, with undo and redo; and the places by whose they are and what they are, for Details, with the topics' names, and whose a place is (Patient, Ärzte, Weitere Personen) for Review's list |
 | `Shared/ExportCheck.swift` | The last check before a copy leaves: every cover landed where something showed |
 | `Shared/Timing.swift` | How long each step of covering takes, for Instruments and the log, numbers only |
 | `Shared/CoverLook.swift` | How covers look (ink, labelled, blur, pixels, dots, erased), drawn from the colors around what is covered; keeping the last four digits; the samples Settings shows |
@@ -1766,7 +1805,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/AppTabs.swift` | The iPhone's four tabs (Photos, Scan, Protected, More), the Protected tab with Remove, Undo and Delete from Photos, and covering a screenshot from its menu in any tab |
 | `Shared/ProtectedList.swift` | The iPhone's list of the screenshots protected lately: noted newest first, twelve at most, some taken off and put back in their places with Undo (tested on Linux) |
 | `iOS/Snapfly/ScanTab.swift`, `ScannedPages.swift` | The Scan tab: the system's document camera or photos chosen in Photos, the pages scanned while the app is open (`ScannedPages`), each made ready off the main thread and opened to review and cover, kept as left, and all of them sent to an app with one tap, or saved and shared, covered or not |
-| `iOS/Snapfly/ReviewParts.swift` | Review's own parts: its bar with back, title, menu and Next; the one bar of tools with Abdecken and Seite; the pages small with their dots; the list of places to check on every page, the pages' hints and what is covered; a fault's short name |
+| `iOS/Snapfly/ReviewParts.swift` | Review's own parts: its bar with back, title, menu and Next; the one bar of tools with Abdecken and Seite; the pages small with their dots; the list of places to check on every page, with the paper it recognized ("Arbeitsunfähigkeitsbescheinigung erkannt") and whose each place is where Snapfly is sure, the pages' hints and what is covered; a fault's short name |
 | `iOS/Snapfly/ScanEditing.swift`, `ScanCorners.swift`, `ScanSaveSheet.swift` | A scanned page in Review, page after page, and Before and After's labels; the corner editor with its loupe; Save and Share, with the format (PDF, Picture or Text), covers, searchable text, the check line, Send To and the payment reminder |
 | `iOS/Snapfly/PaymentReminder.swift` | The calendar's own form for a payment reminder, filled in: shown by iOS apart from Snapfly, which needs no access to the calendar |
 | `iOS/Snapfly/ScanReadingSheet.swift`, `ScanReadingParts.swift`, `ScanSpeaker.swift` | The pages' text open whole, in reading order, every cover a black bar: a heading larger, a table as a grid with a menu to copy it as cells or share it as CSV, every word to select, the lines read unsurely washed in orange, search, Seite (the pages with those lines outlined) and correcting against the page, translation, Copy, Vorlesen with a player (the word being said marked, pause, back and on, speed, the best voice for the language, a cover read out as "verdeckt") and Share as a .txt file |
@@ -1865,7 +1904,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `StudioRender.swift` | Draws a recording through Studio's camera with its marks and clicks, writes the video, and reads the timeline's pictures and sound |
 | `StudioEditor.swift`, `StudioEditorView.swift` | Studio's window: the video as it will be saved, the timeline, the inspector, Undo and Save Video |
 | `Tests/TendederoTests` | Tests for the logic that needs no screen, run by CI with `swift test` |
-| `Tests/TendederoTests/CoverCorpus.swift`, `CoverCorpusGerman.swift`, `CoverAccuracyTests.swift` | 110 made-up documents (invoices, medical letters, transfers, payslips, chats, emails, forms) in German, English, French, Spanish, Turkish, Arabic and Portuguese, and more German papers (a tax notice, a tenancy agreement, a bank statement, a chat export, a CV, an order confirmation), each detail marked with its kind, and how much of each the recommended kinds cover whole. The build fails when a kind falls below its floor or more of what should stay is covered; Build Snapfly prints the numbers last ("Say how well covering does") |
+| `Tests/TendederoTests/CoverCorpus.swift`, `CoverCorpusGerman.swift`, `CoverCorpusPostal.swift`, `CoverAccuracyTests.swift` | 116 made-up documents (invoices, medical letters, transfers, payslips, chats, emails, forms) in German, English, French, Spanish, Turkish, Arabic and Portuguese, and more German papers (a tax notice, a tenancy agreement, a bank statement, a chat export, a CV, an order confirmation; a sick note's insured copy whose name has no label read over it and whose stamp repeats the practice's and the doctor's numbers, a company's letter, a newsletter whose words with a number are no streets), each detail marked with its kind, and how much of each the recommended kinds cover whole. The build fails when a kind falls below its floor or more of what should stay is covered; Build Snapfly prints the numbers last ("Say how well covering does") |
 | `FullScreen.swift` | Knows when to stay hidden (the App Store edition goes by the windows on screen) |
 | `Line.swift` | What is hanging, and what you can do with it |
 

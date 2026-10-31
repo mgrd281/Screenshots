@@ -488,6 +488,18 @@ struct ProtectionPlan: Equatable {
         /// The order they are listed in.
         static let all: [Topic] = [.patient, .doctors, .otherPeople] + PrivateDetail.Group.allCases.map(Topic.group)
             + [.hand, .rules]
+
+        /// What the editor calls a topic, in a word or two.
+        var title: String {
+            switch self {
+            case .patient: L("Patient")
+            case .doctors: L("Doctors")
+            case .otherPeople: L("Other people")
+            case .group(let group): group.title
+            case .hand: L("Hidden by hand")
+            case .rules: L("Your details and rules")
+            }
+        }
     }
 
     /// One topic and its places, as the editor lists them.
@@ -504,6 +516,16 @@ struct ProtectionPlan: Equatable {
         case .doctor: return .doctors
         case .some: return .otherPeople
         case nil: return mark.kind.map { .group($0.group) } ?? .rules
+        }
+    }
+
+    /// Whose a place is, in the words the editor's Details uses, where Snapfly
+    /// is sure: "Patient", "Doctors", "Other people"; nil where nothing says
+    /// whose it is, and for what was hidden by hand.
+    static func whose(of mark: Mark) -> String? {
+        switch topic(of: mark) {
+        case .patient, .doctors, .otherPeople: topic(of: mark).title
+        default: nil
         }
     }
 

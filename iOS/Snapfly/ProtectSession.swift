@@ -44,6 +44,9 @@ final class ProtectSession: ObservableObject {
     @Published private(set) var plan = ProtectionPlan()
     /// The first pass is done and its places are marked.
     @Published private(set) var found = false
+    /// The paper the page was read as, like a sick note, for Review to say;
+    /// nil for any other page.
+    @Published private(set) var paper: DocumentPaper?
     /// A copy is being made and checked.
     @Published private(set) var making = false
     /// Apple Intelligence is still reading, and the copy waits for it.
@@ -85,6 +88,7 @@ final class ProtectSession: ObservableObject {
         let words: [(text: String, box: CGRect)]
         let copy: UIImage?
         let png: Data?
+        let paper: DocumentPaper?
     }
 
     init(source: Source) {
@@ -200,6 +204,7 @@ final class ProtectSession: ObservableObject {
         if holdsCovers, !cleaned { restored = plan.kept }
         holdsCovers = false
         plan = ProtectionPlan()
+        paper = nil
         copy = nil
         png = nil
         found = false
@@ -272,6 +277,8 @@ final class ProtectSession: ObservableObject {
             Finder.analysis(in: image, chosen, rules: rules, intelligence: false, spare: true)
         }
         guard !Task.isCancelled else { return }
+        // What the page was read as; nothing where its text could not be read.
+        paper = first.unread ? nil : first.paper
         // Text that could not be read is never taken for nothing private.
         guard !first.unread else {
             failure = L("The text could not be read. Nothing is covered yet.")
@@ -357,11 +364,13 @@ final class ProtectSession: ObservableObject {
                 UINotificationFeedbackGenerator().notificationOccurred(.warning)
                 return
             }
-            beforeCleaning = Kept(image: image, original: original, plan: plan, words: words, copy: copy, png: png)
+            beforeCleaning = Kept(image: image, original: original, plan: plan, words: words, copy: copy, png: png,
+                                  paper: paper)
             stopWork()
             self.image = prepared.cleaned
             original = UIImage(cgImage: prepared.cleaned)
             plan = ProtectionPlan()
+            paper = nil
             words = []
             copy = nil
             png = nil
@@ -380,6 +389,7 @@ final class ProtectSession: ObservableObject {
         image = kept.image
         original = kept.original
         plan = kept.plan
+        paper = kept.paper
         words = kept.words
         copy = kept.copy
         png = kept.png

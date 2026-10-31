@@ -190,6 +190,54 @@ final class PrivateDetailTests: XCTestCase {
         XCTAssertEqual(pieces(text, [.phones]), ["+49 30 1234 5678"])
     }
 
+    // MARK: Phone numbers
+
+    func testWhatMakesAPhoneNumber() {
+        /// Whether `number` in `line` is a phone number on this kind of document.
+        func phone(_ number: String, in line: String? = nil, above: String? = nil, on document: DocumentKind) -> Bool {
+            let line = line ?? number
+            let range = line.range(of: number)!
+            return Finder.isPhone(range, in: line, above: above, document: document)
+        }
+        // Written as one is dialled, or after a word that says so, in any of the app's languages.
+        XCTAssertTrue(phone("040-1234567", in: "Tel.: 040-1234567", on: .medical))
+        XCTAssertTrue(phone("+491761234567", on: .invoice))
+        XCTAssertTrue(phone("0401234568", in: "Fax 0401234568", on: .medical))
+        XCTAssertTrue(phone("0301234567", above: "Telefon", on: .invoice))
+        for line in ["Teléfono 912345678", "Cep Tel: 05321234567", "GSM 05321234567", "هاتف: 0501234567",
+                     "मोबाइल: 9876543210", "电话：13812345678", "ＴＥＬ 0312345678", "전화 0212345678", "Tlf. 912345678",
+                     "Portable : 0612345678", "Me liga no 0612345678"] {
+            let number = String(line.split(whereSeparator: { !$0.isNumber }).last!)
+            XCTAssertTrue(phone(number, in: line, on: .invoice), line)
+        }
+        // "Tel." as small print reads it, and a call back.
+        XCTAssertTrue(phone("0401234567", in: "Te!.: 0401234567", on: .medical))
+        XCTAssertTrue(phone("0401234567", in: "Rückruf unter 0401234567", on: .medical))
+        // A chat types its numbers bare.
+        XCTAssertTrue(phone("017612345678", in: "Jonas: 017612345678", on: .general))
+        XCTAssertTrue(phone("612345678", in: "mi número es 612345678", on: .general))
+        // A document's bare run, or one after a word for another kind of number, is none.
+        XCTAssertFalse(phone("021234560", on: .medical))
+        XCTAssertFalse(phone("345678812", above: "Proktologie", on: .medical))
+        for (number, line) in [("4711081500", "Kundennummer 4711081500"), ("4711081500", "Tel. 0301234567 Kd-Nr. 4711081500"),
+                               ("912345679", "Factura 912345679"), ("0501234568", "رقم الفاتورة 0501234568"),
+                               ("123456789", "Invoice Number 123456789"), ("0301234567", "Telekom Rechnung 0301234567"),
+                               ("01310100", "CEP 01310100")] {
+            XCTAssertFalse(phone(number, in: line, on: .invoice), line)
+        }
+    }
+
+    func testTheDoctorsNumberCheckAndAHomeNumbersShape() {
+        XCTAssertTrue(Finder.isDoctorNumber("345678812"))
+        for number in ["021234560", "34567881", "3456788120", "34567881a"] {
+            XCTAssertFalse(Finder.isDoctorNumber(number[...]), number)
+        }
+        XCTAssertTrue(Finder.isNationalNumber("017612345678"))
+        XCTAssertTrue(Finder.isNationalNumber("0401234567"))
+        XCTAssertFalse(Finder.isNationalNumber("021234560"))
+        XCTAssertFalse(Finder.isNationalNumber("4711081500"))
+    }
+
     // MARK: QR codes and barcodes
 
     func testWhatACodeHoldsIsReadByItsFormatAndItsText() {
