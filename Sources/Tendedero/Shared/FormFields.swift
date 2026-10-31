@@ -619,8 +619,13 @@ enum FormFields {
         -> (range: Range<String.Index>, confidence: Confidence)? {
         let text = line[range]
         guard text.contains(where: { $0.isLetter || $0.isNumber }) else { return nil }
+        // Read on its own, so what the border strokes left outside it (a stuck
+        // "l" or "ł") is not seen by a lookbehind or lookahead: the Mac's
+        // regular expressions look past a search range, Linux's do not.
         func first(_ pattern: String) -> Range<String.Index>? {
-            line.range(of: pattern, options: .regularExpression, range: range)
+            let piece = String(text)
+            return piece.range(of: pattern, options: .regularExpression)
+                .map { moved($0, from: piece, into: line, at: range.lowerBound) }
         }
         switch entity {
         case .dateOfBirth, .medicalDate, .date:
