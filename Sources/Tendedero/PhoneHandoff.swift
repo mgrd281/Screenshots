@@ -62,13 +62,11 @@ final class PhoneHandoff: NSObject, NSUserActivityDelegate {
 
     // MARK: The iPhone asks
 
-    nonisolated func userActivity(_ userActivity: NSUserActivity, didReceive inputStream: InputStream,
+    nonisolated func userActivity(_ userActivity: NSUserActivity?, didReceive inputStream: InputStream,
                                   outputStream: OutputStream) {
         DispatchQueue.main.async {
-            MainActor.assumeIsolated {
-                Task { @MainActor in
-                    await PhoneHandoff.shared.send(to: outputStream, closing: inputStream)
-                }
+            Task { @MainActor in
+                await PhoneHandoff.shared.send(to: outputStream, closing: inputStream)
             }
         }
     }
